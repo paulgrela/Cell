@@ -79,7 +79,7 @@
     <IncludePath>c:\projects\Programs\C++\Cell\Common\Include;c:\projects\Programs\C++\Cell\Common\Logger;c:\projects\Programs\C++\Cell\Common\Platform;c:\Projects\Programs\C++\Cell\Common\StringUtils\;c:\Projects\Programs\C++\Cell\Common\MathUtils\;c:\projects\Programs\C++\Cell\Common\DateTimeUtils;c:\projects\Programs\C++\Cell\Common\TerminalColorsUtils;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>c:\Projects\Programs\C++\Common\MathUtils\;$(IncludePath)</IncludePath>
+    <IncludePath>c:\projects\Programs\C++\Cell\Common\Include;c:\projects\Programs\C++\Cell\Common\Logger;c:\projects\Programs\C++\Cell\Common\Platform;c:\Projects\Programs\C++\Cell\Common\MathUtils\;c:\Projects\Programs\C++\Cell\Common\StringUtils\;c:\projects\Programs\C++\Cell\Common\DateTimeUtils;c:\projects\Programs\C++\Cell\Common\TerminalColorsUtils;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>

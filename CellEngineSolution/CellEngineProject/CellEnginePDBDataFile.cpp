@@ -30,7 +30,9 @@ char* Atom::GetAtomSymbol(const char* Name, char* AtomSymbol)
 	{
 		AtomSymbol[1] = Name[Index];
 	}
-	else AtomSymbol[1] = '\0';
+	else 
+		AtomSymbol[1] = '\0';
+
 	AtomSymbol[2] = '\0';
 
 	return AtomSymbol;
