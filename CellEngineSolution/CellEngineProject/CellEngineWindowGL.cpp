@@ -1,40 +1,12 @@
 #include "CellEngineWindowGL.h"
 
-#define _USE_MATH_DEFINES
-#include <math.h>
+#include "AdditionalFunctions.h"
 
 #define IDI_GLICON 101
 
 #include <cstdint>
 
 using namespace std;
-
-
-							double DegToRad(double deg)
-							{
-								return M_PI * deg / 180.0f;
-							}
-
-							double sinDeg(double deg)
-							{
-								return sin(DegToRad(deg));
-							}
-
-							double cosDeg(double deg)
-							{
-								return cos(DegToRad(deg));
-							}
-
-							float sinDegf(float deg)
-							{
-								return (float)sinDeg(deg);
-							}
-
-							float cosDegf(float deg)
-							{
-								return (float)cosDeg(deg);
-							}
-
 							
 #pragma region Functions WinMain and WndProc
 extern WindowGL* WindowGLPointer;
@@ -437,26 +409,20 @@ bool WindowGL::UstalFormatPikseli(HDC HandleDC) const
 	return true;
 }
 
-// ----------------- OpenGL -----------------
-
 void WindowGL::SetStage(bool IsometricProjection)
 {
-	glViewport(0, 0, UserAreaWidth, UserAreaHeight); //okno OpenGL = wnetrze formy (domyslnie) 
-	glClearColor(0.0, 0.0, 0.0, 1.0); //czarne tlo	
+	glViewport(0, 0, UserAreaWidth, UserAreaHeight);
+	glClearColor(0.0, 0.0, 0.0, 1.0);
 
-	//ustawienie punktu projekcji 
-	glMatrixMode(GL_PROJECTION); //prze³¹czenie na macierz projekcji
+	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	//left,right,bottom,top,znear,zfar (clipping) 
 	float wsp = UserAreaHeight / (float)UserAreaWidth;
 	if (!IsometricProjection)
-		glFrustum(-0.1, 0.1, wsp * -0.1, wsp * 0.1, 0.3, 100.0); //mnozenie macierzy rzutowania przez macierz perspektywy - ustalanie frustum 	
-		//gluPerspective(RadToDeg(2*atan(wsp*0.1/0.3)),1/wsp,0.3,100.0);
+		glFrustum(-0.1, 0.1, wsp * -0.1, wsp * 0.1, 0.3, 100.0);
 	else
-		glOrtho(-3, 3, wsp * -3, wsp * 3, 0.3, 100.0); //rzutowanie rownolegle
-	//glScalef(1,-1,1); //do góry-nogami
-	glMatrixMode(GL_MODELVIEW); //powrót do macierzy widoku modelu 
-	glEnable(GL_DEPTH_TEST); //Z-buffer aktywny = ukrywanie niewidocznych powierzchni 	
+		glOrtho(-3, 3, wsp * -3, wsp * 3, 0.3, 100.0);
+	glMatrixMode(GL_MODELVIEW);
+	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 
 	ArcBall->setBounds((float)UserAreaWidth, (float)UserAreaHeight);
@@ -473,21 +439,11 @@ void WindowGL::SetCamera()
 
 	glTranslatef(0, 0, -CameraR);
 
-	//gluLookAt(-CameraX,-CameraY,-CameraZ+CameraR, 
-	//		  -CameraX+CameraR*sinDegf(CameraCelPhi),-CameraY-CameraR*sinDegf(CameraCelTheta),-CameraZ,
-	//	      0,1,0);
-
-	//wykonanie transformacji
 	glMultMatrixf(Transform.M);
 
-	//obliczenie polozenia kamery
 	CameraPosition[0] = -CameraX - Transform.s.XZ * CameraR;
 	CameraPosition[1] = -CameraY - Transform.s.YZ * CameraR;
 	CameraPosition[2] = -CameraZ - Transform.s.ZZ * CameraR;
-
-	
-	//glLoadIdentity();
-	//gluLookAt(-CameraPosition[0],-CameraPosition[1],-CameraPosition[2], 0,0,0, 0,1,0);
 }
 
 float* WindowGL::SetCameraPosition(float* Buffer) const
@@ -499,16 +455,14 @@ float* WindowGL::SetCameraPosition(float* Buffer) const
 
 void WindowGL::DrawStage()
 {
-	//Przygotowanie bufora 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT); //czysci bufory 
-	glLoadIdentity(); //macierz model-widok = macierz jednostkowa 
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT); 
+	glLoadIdentity();
 
 	ShowRenderingFrequency();
 
 	SetCamera();
 	DrawActors();
 
-	//Z bufora na ekran 
 	SwapBuffers(HandleDC);
 }
 
@@ -527,27 +481,21 @@ void WindowGL::ShowRenderingFrequency()
 	SetWindowText(HandleWindow, strcat(_gcvt(f, 10, Buffer), "Hz"));
 }
 
-
-//oswietlenie
 void WindowGL::Lighting()
 {
-	glEnable(GL_LIGHTING); //wlaczenie systemu oswietlania
+	glEnable(GL_LIGHTING);
 
-	//Light tla			
 	const float kolor_tla[] = { BackgroundLightIntensity, BackgroundLightIntensity, BackgroundLightIntensity };
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, kolor_tla);
 
-	//material
 	glEnable(GL_COLOR_MATERIAL);
 	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 
-	//zrodla swiatla
 	glPushMatrix();
 	glLoadIdentity();
 	LightSources();
 	glPopMatrix();
 
-	//mieszanie kolorow
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
@@ -556,7 +504,6 @@ void WindowGL::InitArcBall()
 {
 	Matrix3fSetIdentity(&LastRot);
 	Matrix3fSetIdentity(&ThisRot);
-	//Matrix4fSetRotationFromMatrix3f(&Transform, &ThisRot);
 	for (IntType Index1 = 0; Index1 < 4; Index1++)
 		for (IntType Index2 = 0; Index2 < 4; Index2++)
 			Transform.M[Index1 + 4 * Index2] = (Index1 == Index2) ? 1.0f : 0.0f;

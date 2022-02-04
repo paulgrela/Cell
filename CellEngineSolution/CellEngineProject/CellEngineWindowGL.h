@@ -67,9 +67,8 @@ private:
 	Point2fT MousePt;
 public:
 	void InitArcBall();
-	~WindowGL(); //usuwanie obiektu ArcBall
+	~WindowGL();
 
-//swobodne obroty
 	bool FreeRotationAcitve;
 	bool FreeRotationBlanking;
 	Quat4fT FreeRotationQuaternionOfRotation;

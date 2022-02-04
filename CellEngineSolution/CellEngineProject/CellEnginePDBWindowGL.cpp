@@ -55,7 +55,6 @@ void PDBWindowGL::DrawAtoms(PDBDataFile* PDBDataFileObjectPtr, const double Leng
 
 	glPushMatrix();
 
-	//zero ukladu wspolrzednych w srodku masy	
 	DoubleVectorType MassCenter = LengthUnit * PDBDataFileObjectPtr->MassCenter();
 	glTranslated(-MassCenter.X, -MassCenter.Y, -MassCenter.Z);
 
@@ -63,16 +62,14 @@ void PDBWindowGL::DrawAtoms(PDBDataFile* PDBDataFileObjectPtr, const double Leng
 	gluQuadricDrawStyle(Quadriga, GLU_FILL);
 	glShadeModel(GL_SMOOTH);
 
-	const IntType HowManyPointsInEachDimension = 10; //jakosc sfery (moze byc zalezna np. od tego, czy trwa przeciaganie)
+	const IntType HowManyPointsInEachDimension = 10; 
 
-	glInitNames(); //tworzenie stosu nazw
-	glPushName(-1); //kladzenie "pustego" elementu (nazwy) na stosie
+	glInitNames(); 
+	glPushName(-1);
 
 	for (const unique_ptr<Atom>& AtomObjectPtr : PDBDataFileObjectPtr->GetAtoms())
 	{
 		DoubleVectorType AtomPosition = LengthUnit * AtomObjectPtr->Position();
-
-		//tu jest dobre miejsce na ewentalne filtrowanie rysowanych atomow
 
 		if (MakeColors == true)
 		{
@@ -83,12 +80,12 @@ void PDBWindowGL::DrawAtoms(PDBDataFile* PDBDataFileObjectPtr, const double Leng
 
 		glPushMatrix();
 		glTranslated(AtomPosition.X, AtomPosition.Y, AtomPosition.Z);
-		glLoadName(AtomObjectPtr->AtomIndex); //zastepowanie nazwy z wierzchu stosu
+		glLoadName(AtomObjectPtr->AtomIndex);
 		gluSphere(Quadriga, LengthUnit * AtomSizeLengthUnit, HowManyPointsInEachDimension, HowManyPointsInEachDimension);
 		glPopMatrix();
 	}
 
-	glPopName(); //usuwanie elementu ze stosu
+	glPopName();
 
 	gluDeleteQuadric(Quadriga);
 	glPopMatrix();
@@ -115,21 +112,16 @@ void PDBWindowGL::DrawChosenAtom(PDBDataFile* PDBDataFileObject, const double Le
 	glPopMatrix();
 }
 
-							
-							void Print(char* Text, IntType CharactersNumber, UnsignedIntType Font, IntType FirstCharCode)
-							{
-								if (Text == NULL || Text == "")
-									return;
+void Print(char* Text, IntType CharactersNumber, UnsignedIntType Font, IntType FirstCharCode)
+{
+	if (Text == NULL || Text == "")
+		return;
 
-								//MessageBox(HandleWindow, Text, "PDB VIEWER", MB_OK);
-
-								glPushAttrib(GL_LIST_BIT);   //Odklada na stos atrybuty wyswietlania
-								//glListBase(Font - FirstCharCode);    //Ustawia podstawe znakow
-								glListBase(0);    //Ustawia podstawe znakow
-								glCallLists(CharactersNumber, GL_UNSIGNED_BYTE, Text);
-								//Wyswietla kolejno listy liter (Text)
-								glPopAttrib();               //Przywraca ze stosu atrybuty wyswietlania
-							}
+	glPushAttrib(GL_LIST_BIT);
+	glListBase(Font - FirstCharCode);
+	glCallLists(CharactersNumber, GL_UNSIGNED_BYTE, Text);
+	glPopAttrib();
+}
 
 void PDBWindowGL::DrawChosenAtomDescription(IntType ChosenAtomIndex, IntType BitmapFont)
 {
@@ -140,26 +132,22 @@ void PDBWindowGL::DrawChosenAtomDescription(IntType ChosenAtomIndex, IntType Bit
 	strcat(ChosenAtomDescription, " (");
 	strcat(ChosenAtomDescription, PDBDataFileObjectPointer->GetAtom(ChosenAtomIndex)->ResName);
 	strcat(ChosenAtomDescription, ")");
-
-	//MessageBox(HandleWindow, ChosenAtomDescription, "PDB VIEWER", MB_OK);
 	
-							glPushMatrix();
-							glLoadIdentity();
-							//napis umieszczony w lewym dolnym rogu			
-							float Coordinates = UserAreaHeight / (float)UserAreaWidth;
-							float TextPosition = (!ProjectionType) ? -0.095f : -2.85f; //porownaj z parametrami frustum (argumenty wywolania glFrustum/glOrtho)
+	glPushMatrix();
+	glLoadIdentity();
 
-							glRasterPos3f(TextPosition, TextPosition * Coordinates, -0.3f);
-							Print(ChosenAtomDescription, 256, BitmapFont, 32);
+	float Coordinates = UserAreaHeight / (float)UserAreaWidth;
+	float TextPosition = (!ProjectionType) ? -0.095f : -2.85f;
 
-							glPopMatrix();
-	
+	glRasterPos3f(TextPosition, TextPosition * Coordinates, -0.3f);
+	Print(ChosenAtomDescription, 256, BitmapFont, 32);
+
+	glPopMatrix();
 }
-
 
 void PDBWindowGL::ChooseAtomColor(const char* AtomSymbol, const float Alpha = 1.0f) const
 {
-	switch (AtomSymbol[0]) //na razie tylko jednoliterowe
+	switch (AtomSymbol[0])
 	{
 		case 'C': glColor4f(0.25f, 0.75f, 0.75f, Alpha); break;
 		case 'O': glColor4f(1.00f, 0.00f, 0.00f, Alpha); break;
@@ -177,7 +165,6 @@ void PDBWindowGL::DrawBonds(PDBDataFile* PDBDataFileObject, const double LengthU
 
 	glPushMatrix();
 
-	//zero ukladu wspolrzednych w srodku masy
 	DoubleVectorType MassCenter = LengthUnit * PDBDataFileObject->MassCenter();;
 	glTranslated(-MassCenter.X, -MassCenter.Y, -MassCenter.Z);
 
@@ -195,7 +182,7 @@ void PDBWindowGL::DrawBonds(PDBDataFile* PDBDataFileObject, const double LengthU
 			DoubleVectorType Atom2Position = LengthUnit * PDBDataFileObject->GetAtom(AtomIndex2)->Position();
 			DoubleVectorType Position12 = Atom2Position - Atom1Position;
 
-			if (Position12.Length() < 0.17) //w AA
+			if (Position12.Length() < 0.17)
 			{
 				if (MakeColors)
 				{
@@ -220,7 +207,6 @@ void PDBWindowGL::DrawBonds(PDBDataFile* PDBDataFileObject, const double LengthU
 	glPopMatrix();
 }
 
-//lista wyswietlania
 UnsignedIntType PDBWindowGL::CreateListOfDrawing(const double LengthUnit) const
 {
 	GLuint DrawList = glGenLists(1);
@@ -307,56 +293,40 @@ LRESULT PDBWindowGL::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 	return Result;
 }
 
-//selekcja
 IntType PDBWindowGL::ChooseAtom(POINT MouseCursorPosition)
 {
-	//przygotowanie bufora zaznaczania
 	const IntType MarkingBufferSize = 1024;
 	unsigned int MarkingBuffer[MarkingBufferSize];
 	ZeroMemory(MarkingBuffer, MarkingBufferSize);
 	glSelectBuffer(MarkingBufferSize, MarkingBuffer);
 
-	//przygotowanie promienia pod myszka = b. waskie frustum
-	//niestety powtorzenie kodu z CWindowGL::SetStage
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
-	//przez ta funkcje nie mozna po prostu wywolac metody SetStage (mozna ja tam wstrzyknac, ale wowczas zamieszanie w tekscie)
+
 	int Viewport[4];
 	glGetIntegerv(GL_VIEWPORT, Viewport);
 	gluPickMatrix(MouseCursorPosition.x, UserAreaHeight - MouseCursorPosition.y, 1, 1, Viewport);
 	float wsp = UserAreaHeight / (float)UserAreaWidth;
 	if (!ProjectionType)
-		//left,right,bottom,top,znear,zfar (clipping) 	
-		//mnozenie macierzy rzutowania przez macierz perspektywy - ustalanie frustum 	
 		glFrustum(-0.1, 0.1, wsp * -0.1, wsp * 0.1, 0.3, 100.0);
 	else
-		glOrtho(-3, 3, wsp * -3, wsp * 3, 0.3, 100.0); //ZLE DZIALA Z glOrtho
+		glOrtho(-3, 3, wsp * -3, wsp * 3, 0.3, 100.0);
 
 	glMatrixMode(GL_MODELVIEW);
 
-	//przelaczenie w tryb selekcji HitIndex renderowanie sceny
-	glRenderMode(GL_SELECT); //zakomentuj to polecenie, zeby zobaczyc co "widzi" myszka
+	glRenderMode(GL_SELECT);
 	DrawStage();
 
-	//powrot do normalnego trybu renderowania
 	IntType HitsNumber = glRenderMode(GL_RENDER);
-	//IntType nrBledu=glGetError();
 
-	//przywracanie oryginalnej macierzy rzutowania
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
 
 	glMatrixMode(GL_MODELVIEW);
 
-	//char bufor[256];
-	//_itoa(HitsNumber,bufor,10);
-	//SetWindowText(HandleWindow,bufor);
-
-	//interpretacja zawartosci bufora zaznaczania
 	if (HitsNumber > 0)
 	{
-		//zwracam obiekt najblizszy kamery
 		UnsignedIntType ClosestAtomIndex = MarkingBuffer[3];
 		UnsignedIntType ClosestAtomDistance = MarkingBuffer[1];
 		IntType CurrentIndex = 0;
@@ -366,34 +336,32 @@ IntType PDBWindowGL::ChooseAtom(POINT MouseCursorPosition)
 			{
 				ClosestAtomDistance = MarkingBuffer[CurrentIndex + 1];
 				if (MarkingBuffer[CurrentIndex] > 0)
-					ClosestAtomIndex = MarkingBuffer[CurrentIndex + 3]; //zdaza sie, ze ilosc nazw=0; w naszym przypadku moze byc tylko jedna nazwa w trafieniu
+					ClosestAtomIndex = MarkingBuffer[CurrentIndex + 3];
 			}
-			CurrentIndex += 3 + MarkingBuffer[CurrentIndex]; //ilosc nazw,z_min,z_max HitIndex nazwy (w ilosci zadanej przez ilosc nazw)
+			CurrentIndex += 3 + MarkingBuffer[CurrentIndex];
 		}
-		//SetWindowText(HandleWindow,PDBDataFileObjectPtr->GetAtom(ClosestAtomIndex)->PDBRecord);
 		return ClosestAtomIndex;
 	}
 	else return -1;
 }
 #pragma endregion
 
-							UnsignedIntType CreateFont1(HWND HandleWindow, const char* FontName, IntType HeightInPixels, bool Bold, bool Italics, IntType FirstCharCode, IntType LastCharCode)
-							{
-								UnsignedIntType FirstListIndex = glGenLists(LastCharCode + 1 - FirstCharCode);   //Tworzy liste na pelen zestaw czcionek
+UnsignedIntType CreateFontGeneral(HWND HandleWindow, const char* FontName, IntType HeightInPixels, bool Bold, bool Italics, IntType FirstCharCode, IntType LastCharCode)
+{
+	UnsignedIntType FirstListIndex = glGenLists(LastCharCode + 1 - FirstCharCode);
 
-								HFONT FontHandle = CreateFont(HeightInPixels, 0, 0, 0, Bold ? FW_BOLD : FALSE, Italics ? TRUE : FALSE, FALSE, FALSE, ANSI_CHARSET, OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY, FF_DONTCARE | DEFAULT_PITCH, FontName);
+	HFONT FontHandle = CreateFont(HeightInPixels, 0, 0, 0, Bold ? FW_BOLD : FALSE, Italics ? TRUE : FALSE, FALSE, FALSE, ANSI_CHARSET, OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY, FF_DONTCARE | DEFAULT_PITCH, FontName);
 
-								HDC HandleDC = GetDC(HandleWindow);
-								HFONT DCFontHandle = (HFONT)SelectObject(HandleDC, FontHandle);   //zwiazanie z naszym kontekstem okna
-								//Funkcja WGL (specyficzna dla Windows); 32-spacja; ilosc: 96 - alfabet lacinski, 256 - gdy tez polskie znaki
+	HDC HandleDC = GetDC(HandleWindow);
+	HFONT DCFontHandle = (HFONT)SelectObject(HandleDC, FontHandle);
 
-								wglUseFontBitmaps(HandleDC, FirstCharCode, LastCharCode + 1 - FirstCharCode, FirstListIndex);
+	wglUseFontBitmaps(HandleDC, FirstCharCode, LastCharCode + 1 - FirstCharCode, FirstListIndex);
 
-								SelectObject(HandleDC, DCFontHandle);   //Wybor czcionki, ktora stworzylismy
-								DeleteObject(FontHandle);        //Usuwanie pomocniczego
+	SelectObject(HandleDC, DCFontHandle);
+	DeleteObject(FontHandle);
 
-								return FirstListIndex; //=indeks tablicy list
-							}
+	return FirstListIndex;
+}
 
 void PDBWindowGL::DrawActors()
 {
@@ -401,7 +369,6 @@ void PDBWindowGL::DrawActors()
 
 	const double LengthUnit = 0.1;
 
-	//tworzenie list wyswietlania
 	static GLuint DrawingList = NULL;
 	if (!glIsList(DrawingList) || RefreshListOfDrawing)
 	{
@@ -411,15 +378,9 @@ void PDBWindowGL::DrawActors()
 		RefreshListOfDrawing = false;
 	}
 
-								//tworzenie czcionki bitmapowej	
-								static UnsignedIntType BitmapFont = NULL;
-								//XXX from Varia
-								if (BitmapFont == NULL)
-									//BitmapFont = CreateFont1(false, HandleWindow, "Calibri", 20, true, false, 32, 255);
-									BitmapFont = CreateFont1(HandleWindow, "Calibri", 20, true, false, 0, 255);
-
-	//DrawBonds(PDBDataFileObjectPtr,LengthUnit,true);		
-	//DrawAtoms(PDBDataFileObjectPtr,LengthUnit,1,true);
+	static UnsignedIntType BitmapFont = NULL;
+	if (BitmapFont == NULL)
+		BitmapFont = CreateFontGeneral(HandleWindow, "Calibri", 20, true, false, 32, 255);
 
 	glCallList(DrawingList);
 	int RenderingMode = 0;
@@ -430,26 +391,18 @@ void PDBWindowGL::DrawActors()
 		{
 			glColor3f(1, 1, 0);
 			DrawChosenAtom(PDBDataFileObjectPointer, LengthUnit, 1.05 * ShowPDBSize, ChosenAtomIndex, false);
-			glColor3f(5, 0, 5); //jasniejszy niz bialy!
+			glColor3f(5, 0, 5);
 			DrawChosenAtomDescription(ChosenAtomIndex, BitmapFont);
 		}
 	}
 }
 
 #pragma region Source of lights
-//zrodla swiatla
+
 void PDBWindowGL::LightSources()
 {
 	BackgroundLightIntensity = 0.5f;
 	MilkyBulb(0.5f);
-
-	//mgla
-	//glEnable(GL_FOG);
-	//const float biel[4]={1.0,1.0,1.0,1.0};
-	//glFogfv(GL_FOG_COLOR,biel);
-	//glFogf(GL_FOG_START,0.0);
-	//glFogf(GL_FOG_END,100.0);
-	//glFogf(GL_FOG_MODE,GL_LINEAR);
 }
 
 void PDBWindowGL::MilkyBulb(float jasnosc)
@@ -461,39 +414,4 @@ void PDBWindowGL::MilkyBulb(float jasnosc)
 	glEnable(GL_LIGHT1);
 }
 
-void PDBWindowGL::YellowGreenMilkyBulbs()
-{
-	//zolta mleczna zarowka
-	const float YellowColor[4] = { 1.0f, 1.0f, 0.0f, 1.0f };
-	const float YellowPosition[4] = { -2.0f, 0.0f, 1.0f, 1.0f };
-	glLightfv(GL_LIGHT2, GL_POSITION, YellowPosition);
-	glLightfv(GL_LIGHT2, GL_DIFFUSE, YellowColor);
-	//glEnable(GL_LIGHT2);
-
-	//zielona mleczna zarowka
-	const float GreenColor[4] = { 0.0f, 1.0f, 0.0f, 1.0f };
-	const float GreenPosition[4] = { 2.0f, 0.0f, 1.0f, 1.0f };
-	glLightfv(GL_LIGHT3, GL_POSITION, GreenPosition);
-	glLightfv(GL_LIGHT3, GL_DIFFUSE, GreenColor);
-	//glEnable(GL_LIGHT3);
-}
-
-void PDBWindowGL::Reflector(float FlareBirghtness, float BrigthnessDisperesed)
-{
-	const float ColorDispersed[4] = { BrigthnessDisperesed, BrigthnessDisperesed, BrigthnessDisperesed, 1.0f };
-	const float ColorFlare[4] = { FlareBirghtness, FlareBirghtness, FlareBirghtness, 1.0 };
-	const float Position[4] = { -10.0f, -10.0f, 10.0f, 1.0f };
-	const float Direction[4] = { 1.0, 1.0, -1.0, 1.0 };
-	const float BundleWidth = 30.0f; //w stopniach
-	const float Extinction = 1.0f;
-
-	glLightfv(GL_LIGHT4, GL_POSITION, Position);
-	glLightfv(GL_LIGHT4, GL_DIFFUSE, ColorDispersed);
-
-	glLightfv(GL_LIGHT4, GL_SPECULAR, ColorFlare);
-	glLightfv(GL_LIGHT4, GL_SPOT_DIRECTION, Direction);
-	glLightf(GL_LIGHT4, GL_SPOT_CUTOFF, BundleWidth);
-	glLightf(GL_LIGHT4, GL_SPOT_EXPONENT, Extinction);
-	//glEnable(GL_LIGHT4);
-}
 #pragma endregion

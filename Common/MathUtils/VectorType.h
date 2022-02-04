@@ -43,8 +43,8 @@ public:
 
 	bool Equivalent(const VectorType& v) const
 	{
-		//if (W == 0 || v.W == 0)
-		//	throw std::exception("One or two points are in infinitt (W=0)");
+		if (W == 0 || v.W == 0)
+			throw std::runtime_error("One or two points are in infinitt (W=0)");
 
 		return X / W == v.X / v.W && Y / W == v.Y / v.W && Z / W == v.Z / v.W;
 	}
@@ -135,17 +135,15 @@ public:
 		return *this;
 	};
 
-	//iloczyn skalarny
 	T operator*(const VectorType& v) const
 	{
-		return (X * v.X + Y * v.Y + Z * v.Z) / (W * v.W); //wartosc z przestrzeni trojwymiarowej (to nie jest iloczyn skalarny v rozumieniu przestrzeni 4D)
+		return (X * v.X + Y * v.Y + Z * v.Z) / (W * v.W);
 	};
 
-	//iloczyn wektorowy
-	VectorType<T> operator^(const VectorType& v) const //operator ^ ma niski priorytet
+	VectorType<T> operator^(const VectorType& v) const
 	{
-		//if (W != 1 || v.W != 1)
-		//	throw std::exception("The vector product is not specified in homogeneous coordinates (the W coordinate must be 1)");
+		if (W != 1 || v.W != 1)
+			throw std::runtime_error("The vector product is not specified in homogeneous coordinates (the W coordinate must be 1)");
 
 		VectorType Result;
 		Result.X = Y * v.Z - Z * v.Y;
@@ -154,15 +152,15 @@ public:
 		return Result;
 	}
 
-	VectorType<T> operator%(const VectorType& v) const //operator % ma taki sam priorytet jak *
+	VectorType<T> operator%(const VectorType& v) const
 	{
 		return *this ^ v;
 	}
 
 	T LengthSquare() const
 	{
-		//if (W == 0)
-		//	throw std::exception("Point is in infinity (W=0)");
+		if (W == 0)
+			throw std::runtime_error("Point is in infinity (W=0)");
 
 		return (X * X + Y * Y + Z * Z) / (W * W);
 	}
@@ -170,10 +168,9 @@ public:
 	T Length() const
 	{
 		return sqrt(LengthSquare());
-		//return (T)sqrt((long double)KwadratDlugosci());
 	}
 
-	void Normalize() //normalizacja v przestrzeni trojwymiarowej
+	void Normalize()
 	{
 		T Length = Length();
 		if (Length != 0)
@@ -189,10 +186,10 @@ public:
 		return v;
 	}
 
-	T* WriteInArray(T Array[3]) const //przeksztalca do wspolrzednych trojwymiarowych
+	T* WriteInArray(T Array[3]) const
 	{
-		//if (W == 0)
-		//	throw std::exception("Point is in infinity (W = 0)");
+		if (W == 0)
+			throw std::runtime_error("Point is in infinity (W = 0)");
 
 		Array[0] = X / W;
 		Array[1] = Y / W;
@@ -239,7 +236,6 @@ template<typename T>
 VectorType<T> inline operator*(const T a, const VectorType<T>& v)
 {
 	return v * a;
-	//return VectorType<T>(a*v.X, a*v.Y, a*v.Z);	
 }
 
 template<typename T> 
@@ -248,12 +244,6 @@ VectorType<T> IloczynWektorowy(VectorType<T> a, VectorType<T> b)
 	return a ^ b;
 }
 
-/*
-template<> int VectorType<int>::Length() const
-{
-	return (int)sqrt((long double)LengthSquare());
-}
-*/
 typedef VectorType<double> DoubleVectorType;
 
 #endif

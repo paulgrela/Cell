@@ -9,7 +9,7 @@ set(CMAKE_CXX_FLAGS "-Ofast")
 include_directories(
         "../../boost/*"
         "../../Common/Platform"
-		"../../Common/MathUtils"
+	"../../Common/MathUtils"
         "../../Common/Include"
         "../../Common/Logger"
         "../../Common/FileUtils"
@@ -21,13 +21,14 @@ include_directories(
 add_executable(
         CellEngineProject
         ../../Common/Logger/Logger.cpp
-		../../Common/MathUtils/ArcBall.cpp
+	../../Common/MathUtils/ArcBall.cpp
         ../../Common/FileUtils/FileUtils.cpp
         ../../Common/StringUtils/StringUtils.cpp
         ../../Common/DateTimeUtils/DateTimeUtils.cpp
+	../../Common/MathUtils/AdditionalFunctions.cpp
         CellEnginePDBDataFile.cpp
-		CellEnginePDBWindowGL.cpp
-		CellEngineWindowGL.cpp
+	CellEnginePDBWindowGL.cpp
+	CellEngineWindowGL.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} -static-libgcc -static-libstdc++ -lpthread -lopengl32 -lglu32)

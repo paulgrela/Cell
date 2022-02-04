@@ -76,6 +76,9 @@
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>c:\projects\Programs\C++\Cell\Common\Include;c:\projects\Programs\C++\Cell\Common\Logger;c:\projects\Programs\C++\Cell\Common\Platform;c:\Projects\Programs\C++\Cell\Common\StringUtils\;c:\Projects\Programs\C++\Cell\Common\MathUtils\;c:\projects\Programs\C++\Cell\Common\DateTimeUtils;c:\projects\Programs\C++\Cell\Common\TerminalColorsUtils;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>c:\Projects\Programs\C++\Common\MathUtils\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -165,14 +168,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Common\MathUtils\AdditionalFunctions.cpp" />
     <ClCompile Include="..\..\Common\MathUtils\ArcBall.cpp" />
+    <ClCompile Include="..\..\Common\StringUtils\StringUtils.cpp" />
     <ClCompile Include="CellEnginePDBWindowGL.cpp" />
     <ClCompile Include="CellEngineWindowGL.cpp" />
     <ClCompile Include="CellEnginePDBDataFile.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Common\MathUtils\AdditionalFunctions.h" />
     <ClInclude Include="..\..\Common\MathUtils\ArcBall.h" />
     <ClInclude Include="..\..\Common\MathUtils\VectorType.h" />
+    <ClInclude Include="..\..\Common\StringUtils\StringUtils.h" />
     <ClInclude Include="CellEngineTypes.h" />
     <ClInclude Include="CellEnginePDBWindowGL.h" />
     <ClInclude Include="CellEngineWindowGL.h" />
