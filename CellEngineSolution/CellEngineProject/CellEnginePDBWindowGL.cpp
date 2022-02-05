@@ -7,15 +7,15 @@
 using namespace std;
 
 #pragma region PDB
-PDBWindowGL::PDBWindowGL() : WindowGL(), PDBDataFileObjectPointer(NULL), ShowBonds(true), ShowPDBSize(1.00f), RefreshListOfDrawing(false), ProjectionType(false), ChosenAtomIndex(-1)
+PDBWindowGL::PDBWindowGL() : WindowGL(), PDBDataFileObjectPointer(nullptr), ShowBonds(true), ShowPDBSize(1.00f), RefreshListOfDrawing(false), ProjectionType(false), ChosenAtomIndex(-1)
 {
-	char* FileName = NULL;
+	char* FileName;
 	
 	if (__argc > 1)
 		FileName = __argv[1];
 	else
 	{
-		MessageBox(NULL, "Brak nazwy pliku w parametrze linii komend", "Przegladarka PDB", MB_OK | MB_ICONWARNING);
+		MessageBox(nullptr, "Lack of file name in program parameters", "Cell Engine View PDB", MB_OK | MB_ICONWARNING);
 		PostQuitMessage(0);
 		return;
 	}
@@ -27,7 +27,7 @@ PDBWindowGL::PDBWindowGL() : WindowGL(), PDBDataFileObjectPointer(NULL), ShowBon
 PDBWindowGL::~PDBWindowGL()
 {
 	delete PDBDataFileObjectPointer;
-	PDBDataFileObjectPointer = NULL;
+	PDBDataFileObjectPointer = nullptr;
 }
 
 bool PDBWindowGL::OpenPDBFile(const char* FileName)
@@ -38,17 +38,18 @@ bool PDBWindowGL::OpenPDBFile(const char* FileName)
 	}
 	catch (const std::exception& exc)
 	{
-		char komunikat[256] = "Error with loading PDB object:\n";
-		strcat(komunikat, exc.what());
-		MessageBox(HandleWindow, komunikat, "PDB VIEWER", MB_OK | MB_ICONERROR);
+		char Communicate[256] = "Error with loading PDB object:\n";
+		strcat(Communicate, exc.what());
+		MessageBox(HandleWindow, Communicate, "PDB VIEWER", MB_OK | MB_ICONERROR);
 		return false;
 	}
 
 	return true;
 }
 
-
-void PDBWindowGL::DrawAtoms(PDBDataFile* PDBDataFileObjectPtr, const double LengthUnit, const double AtomSizeLengthUnit, bool MakeColors) const
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "Simplify"
+void PDBWindowGL::DrawAtoms(PDBDataFile* PDBDataFileObjectPtr, const double LengthUnit, const double AtomSizeLengthUnit, bool MakeColors)
 {
 	if (PDBDataFileObjectPtr == nullptr)
 		return;
@@ -90,11 +91,11 @@ void PDBWindowGL::DrawAtoms(PDBDataFile* PDBDataFileObjectPtr, const double Leng
 	gluDeleteQuadric(Quadriga);
 	glPopMatrix();
 }
+#pragma clang diagnostic pop
 
-
-void PDBWindowGL::DrawChosenAtom(PDBDataFile* PDBDataFileObject, const double LengthUnit, const double AtomSizeLengthUnit, IntType ChosenAtomIndex, bool UseGrid) const
+void PDBWindowGL::DrawChosenAtom(PDBDataFile* PDBDataFileObject, const double LengthUnit, const double AtomSizeLengthUnit, IntType LocalChosenAtomIndex, bool UseGrid)
 {
-	if (ChosenAtomIndex < 0)
+	if (LocalChosenAtomIndex < 0)
 		return;
 
 	glPushMatrix();
@@ -104,8 +105,8 @@ void PDBWindowGL::DrawChosenAtom(PDBDataFile* PDBDataFileObject, const double Le
 		gluQuadricDrawStyle(Quadric, GLU_LINE);
 	glLineWidth(1.0f);
 	glShadeModel(GL_SMOOTH);
-	DoubleVectorType polozenieWskazanegoAtomu = LengthUnit * (PDBDataFileObject->GetAtom(ChosenAtomIndex)->Position() - PDBDataFileObject->MassCenter());
-	glTranslated(polozenieWskazanegoAtomu.X, polozenieWskazanegoAtomu.Y, polozenieWskazanegoAtomu.Z);
+	DoubleVectorType ChosenAtomPosition = LengthUnit * (PDBDataFileObject->GetAtom(LocalChosenAtomIndex)->Position() - PDBDataFileObject->MassCenter());
+	glTranslated(ChosenAtomPosition.X, ChosenAtomPosition.Y, ChosenAtomPosition.Z);
 	gluSphere(Quadric, LengthUnit * AtomSizeLengthUnit, 15, 15);
 	gluDeleteQuadric(Quadric);
 
@@ -114,7 +115,7 @@ void PDBWindowGL::DrawChosenAtom(PDBDataFile* PDBDataFileObject, const double Le
 
 void Print(char* Text, IntType CharactersNumber, UnsignedIntType Font, IntType FirstCharCode)
 {
-	if (Text == NULL || Text == "")
+	if (Text == nullptr)
 		return;
 
 	glPushAttrib(GL_LIST_BIT);
@@ -123,14 +124,14 @@ void Print(char* Text, IntType CharactersNumber, UnsignedIntType Font, IntType F
 	glPopAttrib();
 }
 
-void PDBWindowGL::DrawChosenAtomDescription(IntType ChosenAtomIndex, IntType BitmapFont)
+void PDBWindowGL::DrawChosenAtomDescription(IntType LocalChosenAtomIndex, IntType BitmapFont)
 {
 	char ChosenAtomDescription[256] = "";
-	_itoa(PDBDataFileObjectPointer->GetAtom(ChosenAtomIndex)->Serial, ChosenAtomDescription, 10);
+	_itoa(PDBDataFileObjectPointer->GetAtom(LocalChosenAtomIndex)->Serial, ChosenAtomDescription, 10);
 	strcat(ChosenAtomDescription, ". ");
-	strcat(ChosenAtomDescription, PDBDataFileObjectPointer->GetAtom(ChosenAtomIndex)->Name);
+	strcat(ChosenAtomDescription, PDBDataFileObjectPointer->GetAtom(LocalChosenAtomIndex)->Name);
 	strcat(ChosenAtomDescription, " (");
-	strcat(ChosenAtomDescription, PDBDataFileObjectPointer->GetAtom(ChosenAtomIndex)->ResName);
+	strcat(ChosenAtomDescription, PDBDataFileObjectPointer->GetAtom(LocalChosenAtomIndex)->ResName);
 	strcat(ChosenAtomDescription, ")");
 	
 	glPushMatrix();
@@ -145,7 +146,7 @@ void PDBWindowGL::DrawChosenAtomDescription(IntType ChosenAtomIndex, IntType Bit
 	glPopMatrix();
 }
 
-void PDBWindowGL::ChooseAtomColor(const char* AtomSymbol, const float Alpha = 1.0f) const
+void PDBWindowGL::ChooseAtomColor(const char* AtomSymbol, const float Alpha = 1.0f)
 {
 	switch (AtomSymbol[0])
 	{
@@ -158,9 +159,9 @@ void PDBWindowGL::ChooseAtomColor(const char* AtomSymbol, const float Alpha = 1.
 	}
 }
 
-void PDBWindowGL::DrawBonds(PDBDataFile* PDBDataFileObject, const double LengthUnit, bool MakeColors) const
+void PDBWindowGL::DrawBonds(PDBDataFile* PDBDataFileObject, const double LengthUnit, bool MakeColors)
 {
-	if (PDBDataFileObject == NULL)
+	if (PDBDataFileObject == nullptr)
 		return;
 
 	glPushMatrix();
@@ -236,7 +237,7 @@ LRESULT PDBWindowGL::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 			bool CallDrawStage = false;
 			switch (wParam)
 			{
-				case VK_F1: MessageBox(HandleWindow, "Shortcut Keys: \ nZ - show / hide bonds \ nX - size of atoms \ nC - projection mode", "PDB VIEWER", MB_OK); break;
+				case VK_F1: MessageBox(HandleWindow, "Shortcut Keys: \nZ - show / hide bonds \nX - size of atoms \nC - projection mode", "PDB VIEWER", MB_OK); break;
 				case 'Z': ShowBonds = !ShowBonds; CallDrawStage = true; break;
 				case 'X':
 				{
@@ -307,7 +308,7 @@ IntType PDBWindowGL::ChooseAtom(POINT MouseCursorPosition)
 	int Viewport[4];
 	glGetIntegerv(GL_VIEWPORT, Viewport);
 	gluPickMatrix(MouseCursorPosition.x, UserAreaHeight - MouseCursorPosition.y, 1, 1, Viewport);
-	float wsp = UserAreaHeight / (float)UserAreaWidth;
+	float wsp = static_cast<float>(UserAreaHeight) / static_cast<float>(UserAreaWidth);
 	if (!ProjectionType)
 		glFrustum(-0.1, 0.1, wsp * -0.1, wsp * 0.1, 0.3, 100.0);
 	else
@@ -353,7 +354,7 @@ UnsignedIntType CreateFontGeneral(HWND HandleWindow, const char* FontName, IntTy
 	HFONT FontHandle = CreateFont(HeightInPixels, 0, 0, 0, Bold ? FW_BOLD : FALSE, Italics ? TRUE : FALSE, FALSE, FALSE, ANSI_CHARSET, OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY, FF_DONTCARE | DEFAULT_PITCH, FontName);
 
 	HDC HandleDC = GetDC(HandleWindow);
-	HFONT DCFontHandle = (HFONT)SelectObject(HandleDC, FontHandle);
+	auto DCFontHandle = static_cast<HFONT>(SelectObject(HandleDC, FontHandle));
 
 	wglUseFontBitmaps(HandleDC, FirstCharCode, LastCharCode + 1 - FirstCharCode, FirstListIndex);
 
@@ -369,7 +370,7 @@ void PDBWindowGL::DrawActors()
 
 	const double LengthUnit = 0.1;
 
-	static GLuint DrawingList = NULL;
+	static GLuint DrawingList = 0;
 	if (!glIsList(DrawingList) || RefreshListOfDrawing)
 	{
 		if (RefreshListOfDrawing)
@@ -378,8 +379,8 @@ void PDBWindowGL::DrawActors()
 		RefreshListOfDrawing = false;
 	}
 
-	static UnsignedIntType BitmapFont = NULL;
-	if (BitmapFont == NULL)
+	static UnsignedIntType BitmapFont = 0;
+	if (BitmapFont == 0)
 		BitmapFont = CreateFontGeneral(HandleWindow, "Calibri", 20, true, false, 32, 255);
 
 	glCallList(DrawingList);

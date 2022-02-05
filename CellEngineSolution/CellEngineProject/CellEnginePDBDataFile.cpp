@@ -51,46 +51,46 @@ Atom::~Atom()
 	delete[] PDBRecord;
 }
 
-void Atom::ParseRecord(const char* PDBRecord)
+void Atom::ParseRecord(const char* LocalPDBRecord)
 {
 	char SSerial[5], SResSeq[4];
 	char SX[8], SY[8], SZ[8];
 	char SOccupancy[6], STempFactor[6], SCharge[3];
 	char* EndPtr;
 
-	strncpy(RecordName, PDBRecord, 6);
+	strncpy(RecordName, LocalPDBRecord, 6);
 	RecordName[6] = '\0';
 	
-	strncpy(SSerial, PDBRecord + 6, 5);
+	strncpy(SSerial, LocalPDBRecord + 6, 5);
 	Serial = strtol(SSerial, &EndPtr, 10);
 	
-	strncpy(Name, PDBRecord + 12, 4);
+	strncpy(Name, LocalPDBRecord + 12, 4);
 	Name[4] = '\0';
 
-	AltLoc = PDBRecord[16];
+	AltLoc = LocalPDBRecord[16];
 	
-	strncpy(ResName, PDBRecord + 17, 3);
+	strncpy(ResName, LocalPDBRecord + 17, 3);
 	ResName[3] = '\0';
 	
-	ChainID = PDBRecord[21];
-	strncpy(SResSeq, PDBRecord + 22, 4);
+	ChainID = LocalPDBRecord[21];
+	strncpy(SResSeq, LocalPDBRecord + 22, 4);
 	ResSeq = strtol(SResSeq, &EndPtr, 10);
-	ICode = PDBRecord[26];
-	strncpy(SX, PDBRecord + 30, 8);
+	ICode = LocalPDBRecord[26];
+	strncpy(SX, LocalPDBRecord + 30, 8);
 	X = strtod(SX, &EndPtr);
-	strncpy(SY, PDBRecord + 38, 8);
+	strncpy(SY, LocalPDBRecord + 38, 8);
 	Y = strtod(SY, &EndPtr);
-	strncpy(SZ, PDBRecord + 46, 8);
+	strncpy(SZ, LocalPDBRecord + 46, 8);
 	Z = strtod(SZ, &EndPtr);
-	strncpy(SOccupancy, PDBRecord + 54, 6);
+	strncpy(SOccupancy, LocalPDBRecord + 54, 6);
 	Occupancy = strtod(SOccupancy, &EndPtr);
-	strncpy(STempFactor, PDBRecord + 60, 6);
+	strncpy(STempFactor, LocalPDBRecord + 60, 6);
 	TempFactor = strtod(STempFactor, &EndPtr);
 	
-	strncpy(Element, PDBRecord + 76, 2);
+	strncpy(Element, LocalPDBRecord + 76, 2);
 	Element[2] = '\0';
 
-	strncpy(SCharge, PDBRecord + 78, 2);
+	strncpy(SCharge, LocalPDBRecord + 78, 2);
 	Charge = strtod(SCharge, &EndPtr);
 
 	string RecordNameStr = trim_whitespace_surrounding(RecordName);
@@ -115,10 +115,6 @@ PDBDataFile::PDBDataFile(const char* FileName) : FileName(FileName), NumberOfDat
 {
 	AnalyzeFile();
 	ReadDataFromFile();
-}
-
-PDBDataFile::~PDBDataFile()
-{
 }
 
 bool PDBDataFile::IsMarkerOfLastFrame(const char* PDBRecord)
@@ -178,12 +174,15 @@ IntType PDBDataFile::GetNumberOfAtoms() const
 	return NumberOfDataRaws;
 }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wreturn-local-addr"
 const unique_ptr<Atom>& PDBDataFile::GetAtom(IntType DataRawIndex) const
 {
 	if (DataRawIndex < 0 || DataRawIndex >= NumberOfDataRaws)
-		return nullptr;
+		return std::unique_ptr<Atom>(nullptr);
 	return Atoms[DataRawIndex];
 }
+#pragma GCC diagnostic pop
 
 DoubleVectorType PDBDataFile::MassCenter() const
 {

@@ -44,11 +44,10 @@ public:
 
 	Atom(const char* PDBRecord, UnsignedIntType AtomIndex);
 	~Atom();
-	DoubleVectorType Position() const;
+	[[nodiscard]] DoubleVectorType Position() const;
 
 private:
-	void ParseRecord(const char* PDBRecord);
-
+	void ParseRecord(const char* LocalPDBRecord);
 };
 
 class PDBDataFile
@@ -65,16 +64,16 @@ private:
 	void ReadDataFromFile();
 
 public:
-	PDBDataFile(const char* FileName);
-	~PDBDataFile();
+	explicit PDBDataFile(const char* FileName);
+	~PDBDataFile() = default;
 public:
-	IntType GetNumberOfAtoms() const;
-	const std::vector<std::unique_ptr<Atom>>& GetAtoms() const
+	[[nodiscard]] IntType GetNumberOfAtoms() const;
+    [[nodiscard]] const std::vector<std::unique_ptr<Atom>>& GetAtoms() const
 	{
 		return Atoms;
 	}
-	const std::unique_ptr<Atom>& GetAtom(IntType Index) const;
-	DoubleVectorType MassCenter() const;
+    [[nodiscard]] const std::unique_ptr<Atom>& GetAtom(IntType Index) const;
+    [[nodiscard]] DoubleVectorType MassCenter() const;
 };
 
 #endif

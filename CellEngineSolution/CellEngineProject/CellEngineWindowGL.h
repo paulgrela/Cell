@@ -13,16 +13,16 @@
 class Window
 {
 protected:
-	long UserAreaWidth;
-	long UserAreaHeight;
+	IntType UserAreaWidth;
+	IntType UserAreaHeight;
 	HWND HandleWindow;
 public:
-	Window() : HandleWindow(NULL) {};
+	Window() : HandleWindow(nullptr) {};
 	bool Init(HINSTANCE ApplicationHandle, POINT WindowPosition, POINT WindowSize);
 	WPARAM Run();
 	virtual LRESULT WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-private:
-	bool ChangeResolution(long Width, long Height, long ColorsDepth = 32) const;
+//private:
+	//[[nodiscard]] bool ChangeResolution(IntType Width, IntType Height, IntType ColorsDepth = 32) const;
 };
 
 #include "ArcBall.h"
@@ -32,7 +32,7 @@ class WindowGL : public Window
 private:
 	HGLRC HandleRC; 
 	HDC HandleDC; 
-	bool UstalFormatPikseli(HDC HandleDC) const;
+	static bool SetPixelFormatWindow(HDC HandleDC);
 	bool InitWGL(HWND HandleWindow);
 	void DeleteWGL();
 protected:
@@ -42,12 +42,11 @@ protected:
 	virtual void DrawActors() = 0;
 	void ShowRenderingFrequency();
 public:
-	WindowGL() : Window(), HandleRC(NULL), HandleDC(NULL), ControlCameraByUser(true), MouseCursorInitialPosition(POINT()), CameraR(10), CameraCelPhi(0), CameraCelTheta(0), CameraX(0), CameraY(0), CameraZ(0), ArcBall(NULL), BackgroundLightIntensity(0.5f)
+	WindowGL() : Window(), HandleRC(nullptr), HandleDC(nullptr), ControlCameraByUser(true), MouseCursorInitialPosition(POINT()), CameraR(10), CameraCelPhi(0), CameraCelTheta(0), CameraX(0), CameraY(0), CameraZ(0), ArcBall(nullptr), BackgroundLightIntensity(0.5f)
 	{
 		InitArcBall();
 	};
-	virtual LRESULT WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-
+	LRESULT WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam) override;
 protected:
 	bool ControlCameraByUser;
 private:
@@ -56,9 +55,8 @@ private:
 	float CameraCelPhi, CameraCelTheta;
 	float CameraX, CameraY, CameraZ;
 	float CameraPosition[3];
-public:
-	float* SetCameraPosition(float* Buffer) const;
-
+//public:
+//	float* SetCameraPosition(float* Buffer) const;
 private:
 	Matrix4fT Transform;
 	Matrix3fT LastRot;
@@ -68,12 +66,10 @@ private:
 public:
 	void InitArcBall();
 	~WindowGL();
-
+public:
 	bool FreeRotationAcitve;
 	bool FreeRotationBlanking;
 	Quat4fT FreeRotationQuaternionOfRotation;
-
-	//oswietlenie
 public:
 	float BackgroundLightIntensity;
 private:

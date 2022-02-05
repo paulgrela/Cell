@@ -8,35 +8,32 @@
 #include "CellEngineWindowGL.h"
 #include "CellEnginePDBDataFile.h"
 
-
 class PDBWindowGL : public WindowGL
 {
 private:
-	void DrawActors();
+	void DrawActors() final;
 private:
-	void LightSources();
-	void MilkyBulb(float Brightness);
-	void YellowGreenMilkyBulbs();
-	void Reflector(float FlareBrightness = 1.0f, float BrightnessDisperesed = 0.3f);
+	void LightSources() final;
+	static void MilkyBulb(float Brightness);
 public:
 	PDBWindowGL();
 	~PDBWindowGL();
 private:
 	PDBDataFile* PDBDataFileObjectPointer;
 	bool OpenPDBFile(const char* FileName);
-	void DrawAtoms(PDBDataFile* PDBDataFileObject, const double LengthUnit, const double AtomSizeLengthUnit, bool MakeColors) const;
-	void DrawBonds(PDBDataFile* PDBDataFileObject, const double LengthUnit, bool MakeColors) const;
-	void ChooseAtomColor(const char* AtomSymbol, const float Alpha) const;
-	UnsignedIntType CreateListOfDrawing(const double LengthUnit) const;
-	LRESULT WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+	static void DrawAtoms(PDBDataFile* PDBDataFileObject, const double LengthUnit, const double AtomSizeLengthUnit, bool MakeColors);
+	static void DrawBonds(PDBDataFile* PDBDataFileObject, const double LengthUnit, bool MakeColors);
+	static void ChooseAtomColor(const char* AtomSymbol, const float Alpha);
+    [[nodiscard]] UnsignedIntType CreateListOfDrawing(const double LengthUnit) const;
+	LRESULT WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) final;
 private:
-	bool ShowBonds; //wlaczanie/wylaczanie wiezow i sfer
+	bool ShowBonds;
 	float ShowPDBSize;
 	bool RefreshListOfDrawing;
-	bool ProjectionType; //false=perspektywa,true=izometryczne
+	bool ProjectionType;
 	IntType ChooseAtom(POINT MouseCursorPosition);
-	void DrawChosenAtom(PDBDataFile* PDBDataFileObject, const double LengthUnit, const double AtomSizeLengthUnit, IntType ChosenAtomIndex, bool UseGrid) const;
-	void DrawChosenAtomDescription(IntType ChosenAtomIndex, IntType BitmapFont);
+	static void DrawChosenAtom(PDBDataFile* PDBDataFileObject, const double LengthUnit, const double AtomSizeLengthUnit, IntType LocalChosenAtomIndex, bool UseGrid);
+	void DrawChosenAtomDescription(IntType LocalChosenAtomIndex, IntType BitmapFont);
 	IntType ChosenAtomIndex;
 } 
 PDBWindowGLObject;

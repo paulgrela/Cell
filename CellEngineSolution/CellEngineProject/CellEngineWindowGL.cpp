@@ -18,7 +18,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	if (!WindowGLPointer->Init(hInstance, WindowPosition, WindowSize))
 	{
-		MessageBox(NULL, "Window initation failed!", "OpenGL PDB Viewer Application", MB_OK | MB_ICONERROR);
+		MessageBox(nullptr, "Window initiation failed!", "OpenGL PDB Viewer Application", MB_OK | MB_ICONERROR);
 		return EXIT_FAILURE;
 	}
 	else 
@@ -46,35 +46,35 @@ bool Window::Init(HINSTANCE ApplicationHandle, POINT WindowPosition, POINT Windo
 	WindowClassObject.hInstance = ApplicationHandle; 
 	WindowClassObject.hIcon = LoadIcon(ApplicationHandle, MAKEINTRESOURCE(IDI_GLICON));
 	WindowClassObject.hIconSm = LoadIcon(ApplicationHandle, MAKEINTRESOURCE(IDI_GLICON));
-	WindowClassObject.hCursor = LoadCursor(NULL, IDC_ARROW);
-	WindowClassObject.hbrBackground = NULL;
-	WindowClassObject.lpszMenuName = NULL;
+	WindowClassObject.hCursor = LoadCursor(nullptr, IDC_ARROW);
+	WindowClassObject.hbrBackground = nullptr;
+	WindowClassObject.lpszMenuName = nullptr;
 	WindowClassObject.lpszClassName = WindowName;
 
 	if (RegisterClassEx(&WindowClassObject) == 0) 
 		return false;
 
-	bool FullScreenMode = false;
+	//bool FullScreenMode = false;
 
 	DWORD WindowStyle = WS_OVERLAPPEDWINDOW;
 
-	if (FullScreenMode)
-	{
-		WindowPosition.x = 0;
-		WindowPosition.y = 0;
-		RECT ScreenSize;
-		GetWindowRect(GetDesktopWindow(), &ScreenSize);
-		WindowSize.x = ScreenSize.right - ScreenSize.left;
-		WindowSize.y = ScreenSize.bottom - ScreenSize.top;
-		WindowStyle = WS_POPUP;
+//	if (FullScreenMode)
+//	{
+//		WindowPosition.x = 0;
+//		WindowPosition.y = 0;
+//		RECT ScreenSize;
+//		GetWindowRect(GetDesktopWindow(), &ScreenSize);
+//		WindowSize.x = ScreenSize.right - ScreenSize.left;
+//		WindowSize.y = ScreenSize.bottom - ScreenSize.top;
+//		WindowStyle = WS_POPUP;
+//
+//		if (!ChangeResolution(WindowSize.x, WindowSize.y))
+//			return false;
+//	}
 
-		if (!ChangeResolution(WindowSize.x, WindowSize.y)) 
-			return false;
-	}
+	HandleWindow = CreateWindow(WindowName, WindowName, WindowStyle, WindowPosition.x, WindowPosition.y, WindowSize.x, WindowSize.y, nullptr, nullptr, ApplicationHandle, nullptr );
 
-	HandleWindow = CreateWindow(WindowName, WindowName, WindowStyle, WindowPosition.x, WindowPosition.y, WindowSize.x, WindowSize.y, NULL, NULL, ApplicationHandle, NULL );
-
-	if (HandleWindow == NULL) 
+	if (HandleWindow == nullptr)
 		return false;
 
 	ShowWindow(HandleWindow, SW_SHOW);
@@ -86,7 +86,7 @@ bool Window::Init(HINSTANCE ApplicationHandle, POINT WindowPosition, POINT Windo
 WPARAM Window::Run()
 {
 	MSG msg;
-	while (GetMessage(&msg, NULL, 0, 0))
+	while (GetMessage(&msg, nullptr, 0, 0))
 	{
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
@@ -114,7 +114,8 @@ LRESULT Window::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	return 0L;
 }
 
-bool Window::ChangeResolution(long Width, long Height, long ColorsDepth) const
+/*
+bool Window::ChangeResolution(IntType Width, IntType Height, IntType ColorsDepth) const
 {
 	DEVMODE dmScreenSettings;
 	memset(&dmScreenSettings, 0, sizeof(dmScreenSettings));
@@ -125,18 +126,21 @@ bool Window::ChangeResolution(long Width, long Height, long ColorsDepth) const
 	dmScreenSettings.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
 	return ChangeDisplaySettings(&dmScreenSettings, CDS_FULLSCREEN) == DISP_CHANGE_SUCCESSFUL;
 }
+*/
 #pragma endregion
 
 #pragma region Class CWindowGL
-LRESULT WindowGL::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "Simplify"
+LRESULT WindowGL::WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 {
-	const bool FreeRotationOfCamera = false;
+	//const bool FreeRotationOfCamera = false;
 	const IntType CameraRotationIdtTimer = 2;
-	const IntType TimerInterval = 50;
+	//const IntType TimerInterval = 50;
 
-	long Result = Window::WndProc(hWnd, message, wParam, lParam);
+	IntType Result = Window::WndProc(hWnd, Message, wParam, lParam);
 
-	switch (message)
+	switch (Message)
 	{
 		case WM_CREATE: 
 			InitWGL(hWnd);
@@ -148,40 +152,35 @@ LRESULT WindowGL::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				strcat_s(Title, (char*)gluGetString(GLU_VERSION));
 				SetWindowText(hWnd, Title);
 			}
-			if (FreeRotationOfCamera)
-				if (SetTimer(hWnd, CameraRotationIdtTimer, 50, NULL) == 0)
-					MessageBox(hWnd, "Setting timer failed", "", MB_OK | MB_ICONERROR);
+			//if (FreeRotationOfCamera)
+			//	if (SetTimer(hWnd, CameraRotationIdtTimer, 50, nullptr) == 0)
+			//		MessageBox(hWnd, "Setting timer failed", "", MB_OK | MB_ICONERROR);
 			break;
 
 		case WM_TIMER:
-			switch (wParam)
-			{
-				case CameraRotationIdtTimer:
-					if (FreeRotationAcitve == true)
-					{
-						Matrix3fSetRotationFromQuat4f(&ThisRot, &FreeRotationQuaternionOfRotation);
-						Matrix3fMulMatrix3f(&ThisRot, &LastRot); //powtorzenie ostatniego obrotu
-						Matrix4fSetRotationFromMatrix3f(&Transform, &ThisRot);
-						LastRot = ThisRot;
+			if (wParam == CameraRotationIdtTimer)
+                if (FreeRotationAcitve == true)
+                {
+                    Matrix3fSetRotationFromQuat4f(&ThisRot, &FreeRotationQuaternionOfRotation);
+                    Matrix3fMulMatrix3f(&ThisRot, &LastRot); //powtorzenie ostatniego obrotu
+                    Matrix4fSetRotationFromMatrix3f(&Transform, &ThisRot);
+                    LastRot = ThisRot;
 
-						//Blanking swobodnych obrotow = zmniejszanie kata kolejnego obrotu
-						if (FreeRotationBlanking)
-						{
-							const float ExtinctionRate = 0.97f;
-							FreeRotationQuaternionOfRotation.s.W /= ExtinctionRate;
-							FreeRotationQuaternionOfRotation.s.X *= ExtinctionRate;
-							FreeRotationQuaternionOfRotation.s.Y *= ExtinctionRate;
-							FreeRotationQuaternionOfRotation.s.Z *= ExtinctionRate;
-							if (fabs(FreeRotationQuaternionOfRotation.s.X) < 1E-3 && fabs(FreeRotationQuaternionOfRotation.s.Y) < 1E-3 && fabs(FreeRotationQuaternionOfRotation.s.Z) < 1E-3)
-							{
-								FreeRotationAcitve = false;
-							}
-						}
+                    if (FreeRotationBlanking == true)
+                    {
+                        const float ExtinctionRate = 0.97f;
+                        FreeRotationQuaternionOfRotation.s.W /= ExtinctionRate;
+                        FreeRotationQuaternionOfRotation.s.X *= ExtinctionRate;
+                        FreeRotationQuaternionOfRotation.s.Y *= ExtinctionRate;
+                        FreeRotationQuaternionOfRotation.s.Z *= ExtinctionRate;
+                        if (fabs(FreeRotationQuaternionOfRotation.s.X) < 1E-3 && fabs(FreeRotationQuaternionOfRotation.s.Y) < 1E-3 && fabs(FreeRotationQuaternionOfRotation.s.Z) < 1E-3)
+                        {
+                            FreeRotationAcitve = false;
+                        }
+                    }
 
-						DrawStage();
-					}
-					break;
-			}
+                    DrawStage();
+                }
 			Result = 0;
 			break;
 
@@ -196,7 +195,7 @@ LRESULT WindowGL::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		case WM_PAINT: 
 			DrawStage();
-			ValidateRect(hWnd, NULL);
+			ValidateRect(hWnd, nullptr);
 			break;
 
 		case WM_KEYDOWN:
@@ -224,6 +223,8 @@ LRESULT WindowGL::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					IsometricProjection = !IsometricProjection;
 					SetStage(IsometricProjection);
 					break;
+
+			    default: break;
 			}
 
 			if (wParam >= '0' && wParam <= '7')
@@ -249,12 +250,13 @@ LRESULT WindowGL::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 			DrawStage();
 			break;
+
+	    default: break;
 	}
 
-	//kamera
 	if (ControlCameraByUser)
 	{
-		switch (message)
+		switch (Message)
 		{
 			case WM_LBUTTONDOWN:
 
@@ -290,7 +292,6 @@ LRESULT WindowGL::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 						Matrix3fSetRotationFromQuat4f(&ThisRot, &ThisQuat);
 						Matrix3fMulMatrix3f(&ThisRot, &LastRot);
 						Matrix4fSetRotationFromMatrix3f(&Transform, &ThisRot);
-						//swobodne obroty
 						FreeRotationAcitve = true;
 						FreeRotationQuaternionOfRotation = ThisQuat;
 					}
@@ -311,7 +312,7 @@ LRESULT WindowGL::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 					MouseCursorInitialPosition.x = LOWORD(lParam);
 					MouseCursorInitialPosition.y = HIWORD(lParam);
-					//MouseCursorPositionInWindow(HandleWindow,&pozycjaPoczatkowaKursoraMyszy);
+
 					DrawStage();
 				}
 				Result = 0;
@@ -320,9 +321,9 @@ LRESULT WindowGL::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			case WM_MOUSEWHEEL:
 			{
 				const float MouseSensitivity = 10.0f;
-				short RollingPositionChange = (short)HIWORD(wParam);
-				//zmiana odleglosci kamery od pocz. ukl. wsp.
-				CameraR *= 1 + RollingPositionChange / abs(RollingPositionChange) / MouseSensitivity;
+				auto RollingPositionChange = static_cast<short>(HIWORD(wParam));
+
+				CameraR *= 1 + static_cast<float>(RollingPositionChange) / abs(static_cast<float>(RollingPositionChange)) / MouseSensitivity;
 				DrawStage();
 				Result = 0;
 				break;
@@ -352,6 +353,7 @@ LRESULT WindowGL::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 						CameraZ -= sinDegf(CameraCelPhi) * Shift;
 						CameraX -= cosDegf(CameraCelPhi) * Shift;
 						break;
+                    default: break;
 				}
 
 				DrawStage();
@@ -361,17 +363,18 @@ LRESULT WindowGL::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 	return Result;
 }
+#pragma clang diagnostic pop
 
 bool WindowGL::InitWGL(HWND HandleWindow)
 {
 	HandleDC = ::GetDC(HandleWindow);
 
-	if (!UstalFormatPikseli(HandleDC)) 
-		return false; //Utworzenie kontekstu renderowania Index uczynienie go aktywnym
+	if (!SetPixelFormatWindow(HandleDC))
+		return false;
 
 	HandleRC = wglCreateContext(HandleDC);
 
-	if (HandleRC == NULL) 
+	if (HandleRC == nullptr)
 		return false;
 
 	if (!wglMakeCurrent(HandleDC, HandleRC)) 
@@ -382,12 +385,12 @@ bool WindowGL::InitWGL(HWND HandleWindow)
 
 void WindowGL::DeleteWGL()
 {
-	wglMakeCurrent(NULL, NULL);
+	wglMakeCurrent(nullptr, nullptr);
 	wglDeleteContext(HandleRC);
 	::ReleaseDC(HandleWindow, HandleDC);
 }
 
-bool WindowGL::UstalFormatPikseli(HDC HandleDC) const
+bool WindowGL::SetPixelFormatWindow(HDC HandleDC)
 {
 	PIXELFORMATDESCRIPTOR PixelFormatDescription;
 	ZeroMemory(&PixelFormatDescription, sizeof(PixelFormatDescription));
@@ -446,12 +449,12 @@ void WindowGL::SetCamera()
 	CameraPosition[2] = -CameraZ - Transform.s.ZZ * CameraR;
 }
 
-float* WindowGL::SetCameraPosition(float* Buffer) const
-{
-	for (IntType Index = 0; Index < 3; Index++) 
-		Buffer[Index] = CameraPosition[Index];
-	return Buffer;
-}
+//float* WindowGL::SetCameraPosition(float* Buffer) const
+//{
+//	for (IntType Index = 0; Index < 3; Index++)
+//		Buffer[Index] = CameraPosition[Index];
+//	return Buffer;
+//}
 
 void WindowGL::DrawStage()
 {
@@ -473,7 +476,8 @@ void WindowGL::ShowRenderingFrequency()
 
 	if (NewTickNumber == OldTickNumber) 
 		return;
-	double f = 1E3 / (NewTickNumber - OldTickNumber);
+
+	double f = 1E3 / (static_cast<double>(NewTickNumber) - static_cast<double>(OldTickNumber));
 	f = floor(10.0 * f) / 10.0;
 	OldTickNumber = NewTickNumber;
 
