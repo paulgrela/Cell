@@ -19,13 +19,14 @@ public:
 	PDBWindowGL();
 	~PDBWindowGL();
 private:
+    char ChosenAtomDescription[256] = "";
 	PDBDataFile* PDBDataFileObjectPointer;
 	bool OpenPDBFile(const char* FileName);
 	static void DrawAtoms(PDBDataFile* PDBDataFileObject, const double LengthUnit, const double AtomSizeLengthUnit, bool MakeColors);
 	static void DrawBonds(PDBDataFile* PDBDataFileObject, const double LengthUnit, bool MakeColors);
 	static void ChooseAtomColor(const char* AtomSymbol, const float Alpha);
     [[nodiscard]] UnsignedIntType CreateListOfDrawing(const double LengthUnit) const;
-	LRESULT WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) final;
+	LRESULT WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam) final;
 private:
 	bool ShowBonds;
 	float ShowPDBSize;

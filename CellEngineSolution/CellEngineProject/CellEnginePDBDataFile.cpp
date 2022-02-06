@@ -1,7 +1,7 @@
 
-#include <math.h>
+#include <cmath>
 #include <fstream>
-#include <string.h>
+#include <cstring>
 
 #include "StringUtils.h"
 #include "CellEnginePDBDataFile.h"

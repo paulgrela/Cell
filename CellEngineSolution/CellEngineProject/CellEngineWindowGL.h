@@ -19,10 +19,8 @@ protected:
 public:
 	Window() : HandleWindow(nullptr) {};
 	bool Init(HINSTANCE ApplicationHandle, POINT WindowPosition, POINT WindowSize);
-	WPARAM Run();
-	virtual LRESULT WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-//private:
-	//[[nodiscard]] bool ChangeResolution(IntType Width, IntType Height, IntType ColorsDepth = 32) const;
+	static WPARAM Run();
+	virtual LRESULT WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam);
 };
 
 #include "ArcBall.h"
@@ -55,8 +53,6 @@ private:
 	float CameraCelPhi, CameraCelTheta;
 	float CameraX, CameraY, CameraZ;
 	float CameraPosition[3];
-//public:
-//	float* SetCameraPosition(float* Buffer) const;
 private:
 	Matrix4fT Transform;
 	Matrix3fT LastRot;
@@ -67,7 +63,7 @@ public:
 	void InitArcBall();
 	~WindowGL();
 public:
-	bool FreeRotationAcitve;
+	bool FreeRotationActive;
 	bool FreeRotationBlanking;
 	Quat4fT FreeRotationQuaternionOfRotation;
 public:

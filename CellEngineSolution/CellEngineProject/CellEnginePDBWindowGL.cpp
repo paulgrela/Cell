@@ -126,7 +126,6 @@ void Print(char* Text, IntType CharactersNumber, UnsignedIntType Font, IntType F
 
 void PDBWindowGL::DrawChosenAtomDescription(IntType LocalChosenAtomIndex, IntType BitmapFont)
 {
-	char ChosenAtomDescription[256] = "";
 	_itoa(PDBDataFileObjectPointer->GetAtom(LocalChosenAtomIndex)->Serial, ChosenAtomDescription, 10);
 	strcat(ChosenAtomDescription, ". ");
 	strcat(ChosenAtomDescription, PDBDataFileObjectPointer->GetAtom(LocalChosenAtomIndex)->Name);
@@ -226,11 +225,11 @@ UnsignedIntType PDBWindowGL::CreateListOfDrawing(const double LengthUnit) const
 	return DrawList;
 }
 
-LRESULT PDBWindowGL::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT PDBWindowGL::WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 {
-	long Result = WindowGL::WndProc(hWnd, message, wParam, lParam);
+	long Result = WindowGL::WndProc(hWnd, Message, wParam, lParam);
 
-	switch (message)
+	switch (Message)
 	{
 		case WM_KEYDOWN:
 		{
@@ -238,6 +237,7 @@ LRESULT PDBWindowGL::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 			switch (wParam)
 			{
 				case VK_F1: MessageBox(HandleWindow, "Shortcut Keys: \nZ - show / hide bonds \nX - size of atoms \nC - projection mode", "PDB VIEWER", MB_OK); break;
+                case VK_F2: MessageBox(HandleWindow, ChosenAtomDescription, "PDB VIEWER", MB_OK); break;
 				case 'Z': ShowBonds = !ShowBonds; CallDrawStage = true; break;
 				case 'X':
 				{

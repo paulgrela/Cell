@@ -1,14 +1,14 @@
+
 #include "CellEngineWindowGL.h"
 
 #include "AdditionalFunctions.h"
-
-#define IDI_GLICON 101
 
 #include <cstdint>
 
 using namespace std;
 							
 #pragma region Functions WinMain and WndProc
+
 extern WindowGL* WindowGLPointer;
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
@@ -44,8 +44,8 @@ bool Window::Init(HINSTANCE ApplicationHandle, POINT WindowPosition, POINT Windo
 	WindowClassObject.cbClsExtra = 0; 
 	WindowClassObject.cbWndExtra = 0; 
 	WindowClassObject.hInstance = ApplicationHandle; 
-	WindowClassObject.hIcon = LoadIcon(ApplicationHandle, MAKEINTRESOURCE(IDI_GLICON));
-	WindowClassObject.hIconSm = LoadIcon(ApplicationHandle, MAKEINTRESOURCE(IDI_GLICON));
+    WindowClassObject.hIcon = nullptr;
+    WindowClassObject.hIconSm = nullptr;
 	WindowClassObject.hCursor = LoadCursor(nullptr, IDC_ARROW);
 	WindowClassObject.hbrBackground = nullptr;
 	WindowClassObject.lpszMenuName = nullptr;
@@ -54,23 +54,7 @@ bool Window::Init(HINSTANCE ApplicationHandle, POINT WindowPosition, POINT Windo
 	if (RegisterClassEx(&WindowClassObject) == 0) 
 		return false;
 
-	//bool FullScreenMode = false;
-
 	DWORD WindowStyle = WS_OVERLAPPEDWINDOW;
-
-//	if (FullScreenMode)
-//	{
-//		WindowPosition.x = 0;
-//		WindowPosition.y = 0;
-//		RECT ScreenSize;
-//		GetWindowRect(GetDesktopWindow(), &ScreenSize);
-//		WindowSize.x = ScreenSize.right - ScreenSize.left;
-//		WindowSize.y = ScreenSize.bottom - ScreenSize.top;
-//		WindowStyle = WS_POPUP;
-//
-//		if (!ChangeResolution(WindowSize.x, WindowSize.y))
-//			return false;
-//	}
 
 	HandleWindow = CreateWindow(WindowName, WindowName, WindowStyle, WindowPosition.x, WindowPosition.y, WindowSize.x, WindowSize.y, nullptr, nullptr, ApplicationHandle, nullptr );
 
@@ -94,9 +78,9 @@ WPARAM Window::Run()
 	return msg.wParam;
 }
 
-LRESULT Window::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT Window::WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 {
-	switch (message)
+	switch (Message)
 	{
 		case WM_DESTROY:
 			PostQuitMessage(0);
@@ -108,25 +92,12 @@ LRESULT Window::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			UserAreaHeight = rect.bottom - rect.top;
 			break;
 		default: 
-			return (DefWindowProc(hWnd, message, wParam, lParam));
+			return (DefWindowProc(hWnd, Message, wParam, lParam));
 	}
 
 	return 0L;
 }
 
-/*
-bool Window::ChangeResolution(IntType Width, IntType Height, IntType ColorsDepth) const
-{
-	DEVMODE dmScreenSettings;
-	memset(&dmScreenSettings, 0, sizeof(dmScreenSettings));
-	dmScreenSettings.dmSize = sizeof(dmScreenSettings);
-	dmScreenSettings.dmPelsWidth = Width;
-	dmScreenSettings.dmPelsHeight = Height;
-	dmScreenSettings.dmBitsPerPel = ColorsDepth;
-	dmScreenSettings.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
-	return ChangeDisplaySettings(&dmScreenSettings, CDS_FULLSCREEN) == DISP_CHANGE_SUCCESSFUL;
-}
-*/
 #pragma endregion
 
 #pragma region Class CWindowGL
@@ -134,9 +105,7 @@ bool Window::ChangeResolution(IntType Width, IntType Height, IntType ColorsDepth
 #pragma ide diagnostic ignored "Simplify"
 LRESULT WindowGL::WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 {
-	//const bool FreeRotationOfCamera = false;
 	const IntType CameraRotationIdtTimer = 2;
-	//const IntType TimerInterval = 50;
 
 	IntType Result = Window::WndProc(hWnd, Message, wParam, lParam);
 
@@ -152,17 +121,14 @@ LRESULT WindowGL::WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 				strcat_s(Title, (char*)gluGetString(GLU_VERSION));
 				SetWindowText(hWnd, Title);
 			}
-			//if (FreeRotationOfCamera)
-			//	if (SetTimer(hWnd, CameraRotationIdtTimer, 50, nullptr) == 0)
-			//		MessageBox(hWnd, "Setting timer failed", "", MB_OK | MB_ICONERROR);
 			break;
 
 		case WM_TIMER:
 			if (wParam == CameraRotationIdtTimer)
-                if (FreeRotationAcitve == true)
+                if (FreeRotationActive == true)
                 {
                     Matrix3fSetRotationFromQuat4f(&ThisRot, &FreeRotationQuaternionOfRotation);
-                    Matrix3fMulMatrix3f(&ThisRot, &LastRot); //powtorzenie ostatniego obrotu
+                    Matrix3fMulMatrix3f(&ThisRot, &LastRot);
                     Matrix4fSetRotationFromMatrix3f(&Transform, &ThisRot);
                     LastRot = ThisRot;
 
@@ -175,7 +141,7 @@ LRESULT WindowGL::WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
                         FreeRotationQuaternionOfRotation.s.Z *= ExtinctionRate;
                         if (fabs(FreeRotationQuaternionOfRotation.s.X) < 1E-3 && fabs(FreeRotationQuaternionOfRotation.s.Y) < 1E-3 && fabs(FreeRotationQuaternionOfRotation.s.Z) < 1E-3)
                         {
-                            FreeRotationAcitve = false;
+                            FreeRotationActive = false;
                         }
                     }
 
@@ -265,7 +231,7 @@ LRESULT WindowGL::WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 				LastRot = ThisRot;
 				ArcBall->click(&MousePt);
 
-				FreeRotationAcitve = false;
+                FreeRotationActive = false;
 
 			case WM_RBUTTONDOWN:
 			case WM_MBUTTONDOWN:
@@ -292,7 +258,7 @@ LRESULT WindowGL::WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 						Matrix3fSetRotationFromQuat4f(&ThisRot, &ThisQuat);
 						Matrix3fMulMatrix3f(&ThisRot, &LastRot);
 						Matrix4fSetRotationFromMatrix3f(&Transform, &ThisRot);
-						FreeRotationAcitve = true;
+                        FreeRotationActive = true;
 						FreeRotationQuaternionOfRotation = ThisQuat;
 					}
 					if (wParam & MK_RBUTTON)
@@ -401,12 +367,12 @@ bool WindowGL::SetPixelFormatWindow(HDC HandleDC)
 	PixelFormatDescription.cDepthBits = 16; 
 	PixelFormatDescription.cStencilBits = 1;
 	PixelFormatDescription.iLayerType = PFD_MAIN_PLANE;
-	IntType formatPikseli = ChoosePixelFormat(HandleDC, &PixelFormatDescription);
+	IntType PixelFormat = ChoosePixelFormat(HandleDC, &PixelFormatDescription);
 
-	if (formatPikseli == 0) 
+	if (PixelFormat == 0)
 		return false;
 
-	if (!SetPixelFormat(HandleDC, formatPikseli, &PixelFormatDescription)) 
+	if (!SetPixelFormat(HandleDC, PixelFormat, &PixelFormatDescription))
 		return false;
 
 	return true;
@@ -448,13 +414,6 @@ void WindowGL::SetCamera()
 	CameraPosition[1] = -CameraY - Transform.s.YZ * CameraR;
 	CameraPosition[2] = -CameraZ - Transform.s.ZZ * CameraR;
 }
-
-//float* WindowGL::SetCameraPosition(float* Buffer) const
-//{
-//	for (IntType Index = 0; Index < 3; Index++)
-//		Buffer[Index] = CameraPosition[Index];
-//	return Buffer;
-//}
 
 void WindowGL::DrawStage()
 {
