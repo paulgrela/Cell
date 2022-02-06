@@ -8,6 +8,8 @@
 #include <gl\gl.h>
 #include <gl\glu.h>
 
+#include <memory>
+
 #include "CellEngineTypes.h"
 
 class Window
@@ -52,20 +54,19 @@ private:
 	float CameraR;
 	float CameraCelPhi, CameraCelTheta;
 	float CameraX, CameraY, CameraZ;
-	float CameraPosition[3];
 private:
 	Matrix4fT Transform;
 	Matrix3fT LastRot;
 	Matrix3fT ThisRot;
-	ArcBallT* ArcBall;
+    std::unique_ptr<ArcBallT> ArcBall;
 	Point2fT MousePt;
 public:
 	void InitArcBall();
-	~WindowGL();
-public:
-	bool FreeRotationActive;
-	bool FreeRotationBlanking;
-	Quat4fT FreeRotationQuaternionOfRotation;
+	~WindowGL() = default;
+//public:
+//	bool FreeRotationActive;
+//	bool FreeRotationBlanking;
+//	Quat4fT FreeRotationQuaternionOfRotation;
 public:
 	float BackgroundLightIntensity;
 private:

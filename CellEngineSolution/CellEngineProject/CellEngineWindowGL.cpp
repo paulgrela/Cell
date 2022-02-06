@@ -101,7 +101,7 @@ LRESULT Window::WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 #pragma endregion
 
 #pragma region Class CWindowGL
-#pragma clang diagnostic push
+#pragma GCC diagnostic push
 #pragma ide diagnostic ignored "Simplify"
 LRESULT WindowGL::WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 {
@@ -123,32 +123,32 @@ LRESULT WindowGL::WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 			}
 			break;
 
-		case WM_TIMER:
-			if (wParam == CameraRotationIdtTimer)
-                if (FreeRotationActive == true)
-                {
-                    Matrix3fSetRotationFromQuat4f(&ThisRot, &FreeRotationQuaternionOfRotation);
-                    Matrix3fMulMatrix3f(&ThisRot, &LastRot);
-                    Matrix4fSetRotationFromMatrix3f(&Transform, &ThisRot);
-                    LastRot = ThisRot;
-
-                    if (FreeRotationBlanking == true)
-                    {
-                        const float ExtinctionRate = 0.97f;
-                        FreeRotationQuaternionOfRotation.s.W /= ExtinctionRate;
-                        FreeRotationQuaternionOfRotation.s.X *= ExtinctionRate;
-                        FreeRotationQuaternionOfRotation.s.Y *= ExtinctionRate;
-                        FreeRotationQuaternionOfRotation.s.Z *= ExtinctionRate;
-                        if (fabs(FreeRotationQuaternionOfRotation.s.X) < 1E-3 && fabs(FreeRotationQuaternionOfRotation.s.Y) < 1E-3 && fabs(FreeRotationQuaternionOfRotation.s.Z) < 1E-3)
-                        {
-                            FreeRotationActive = false;
-                        }
-                    }
-
-                    DrawStage();
-                }
-			Result = 0;
-			break;
+//		case WM_TIMER:
+//			if (wParam == CameraRotationIdtTimer)
+//                if (FreeRotationActive == true)
+//                {
+//                    Matrix3fSetRotationFromQuat4f(&ThisRot, &FreeRotationQuaternionOfRotation);
+//                    Matrix3fMulMatrix3f(&ThisRot, &LastRot);
+//                    Matrix4fSetRotationFromMatrix3f(&Transform, &ThisRot);
+//                    LastRot = ThisRot;
+//
+//                    if (FreeRotationBlanking == true)
+//                    {
+//                        const float ExtinctionRate = 0.97f;
+//                        FreeRotationQuaternionOfRotation.s.W /= ExtinctionRate;
+//                        FreeRotationQuaternionOfRotation.s.X *= ExtinctionRate;
+//                        FreeRotationQuaternionOfRotation.s.Y *= ExtinctionRate;
+//                        FreeRotationQuaternionOfRotation.s.Z *= ExtinctionRate;
+//                        if (fabs(FreeRotationQuaternionOfRotation.s.X) < 1E-3 && fabs(FreeRotationQuaternionOfRotation.s.Y) < 1E-3 && fabs(FreeRotationQuaternionOfRotation.s.Z) < 1E-3)
+//                        {
+//                            FreeRotationActive = false;
+//                        }
+//                    }
+//
+//                    DrawStage();
+//                }
+//			Result = 0;
+//			break;
 
 		case WM_DESTROY: 
 			DeleteWGL();
@@ -190,7 +190,7 @@ LRESULT WindowGL::WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 					SetStage(IsometricProjection);
 					break;
 
-			    default: break;
+			    //default: break;
 			}
 
 			if (wParam >= '0' && wParam <= '7')
@@ -231,7 +231,7 @@ LRESULT WindowGL::WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 				LastRot = ThisRot;
 				ArcBall->click(&MousePt);
 
-                FreeRotationActive = false;
+//                FreeRotationActive = false;
 
 			case WM_RBUTTONDOWN:
 			case WM_MBUTTONDOWN:
@@ -258,8 +258,8 @@ LRESULT WindowGL::WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 						Matrix3fSetRotationFromQuat4f(&ThisRot, &ThisQuat);
 						Matrix3fMulMatrix3f(&ThisRot, &LastRot);
 						Matrix4fSetRotationFromMatrix3f(&Transform, &ThisRot);
-                        FreeRotationActive = true;
-						FreeRotationQuaternionOfRotation = ThisQuat;
+//						FreeRotationActive = true;
+//						FreeRotationQuaternionOfRotation = ThisQuat;
 					}
 					if (wParam & MK_RBUTTON)
 					{
@@ -329,7 +329,7 @@ LRESULT WindowGL::WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 
 	return Result;
 }
-#pragma clang diagnostic pop
+#pragma GCC diagnostic pop
 
 bool WindowGL::InitWGL(HWND HandleWindow)
 {
@@ -367,7 +367,7 @@ bool WindowGL::SetPixelFormatWindow(HDC HandleDC)
 	PixelFormatDescription.cDepthBits = 16; 
 	PixelFormatDescription.cStencilBits = 1;
 	PixelFormatDescription.iLayerType = PFD_MAIN_PLANE;
-	IntType PixelFormat = ChoosePixelFormat(HandleDC, &PixelFormatDescription);
+	int PixelFormat = ChoosePixelFormat(HandleDC, &PixelFormatDescription);
 
 	if (PixelFormat == 0)
 		return false;
@@ -380,16 +380,16 @@ bool WindowGL::SetPixelFormatWindow(HDC HandleDC)
 
 void WindowGL::SetStage(bool IsometricProjection)
 {
-	glViewport(0, 0, UserAreaWidth, UserAreaHeight);
+	glViewport(0, 0, static_cast<GLsizei>(UserAreaWidth), static_cast<GLsizei>(UserAreaHeight));
 	glClearColor(0.0, 0.0, 0.0, 1.0);
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	float wsp = UserAreaHeight / (float)UserAreaWidth;
+	float Coordiantes = static_cast<float>(UserAreaHeight) / static_cast<float>(UserAreaWidth);
 	if (!IsometricProjection)
-		glFrustum(-0.1, 0.1, wsp * -0.1, wsp * 0.1, 0.3, 100.0);
+		glFrustum(-0.1, 0.1, Coordiantes * -0.1, Coordiantes * 0.1, 0.3, 100.0);
 	else
-		glOrtho(-3, 3, wsp * -3, wsp * 3, 0.3, 100.0);
+		glOrtho(-3, 3, Coordiantes * -3, Coordiantes * 3, 0.3, 100.0);
 	glMatrixMode(GL_MODELVIEW);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
@@ -409,10 +409,6 @@ void WindowGL::SetCamera()
 	glTranslatef(0, 0, -CameraR);
 
 	glMultMatrixf(Transform.M);
-
-	CameraPosition[0] = -CameraX - Transform.s.XZ * CameraR;
-	CameraPosition[1] = -CameraY - Transform.s.YZ * CameraR;
-	CameraPosition[2] = -CameraZ - Transform.s.ZZ * CameraR;
 }
 
 void WindowGL::DrawStage()
@@ -448,8 +444,8 @@ void WindowGL::Lighting()
 {
 	glEnable(GL_LIGHTING);
 
-	const float kolor_tla[] = { BackgroundLightIntensity, BackgroundLightIntensity, BackgroundLightIntensity };
-	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, kolor_tla);
+	const float BackgroundColor[] = { BackgroundLightIntensity, BackgroundLightIntensity, BackgroundLightIntensity };
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, BackgroundColor);
 
 	glEnable(GL_COLOR_MATERIAL);
 	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
@@ -467,15 +463,12 @@ void WindowGL::InitArcBall()
 {
 	Matrix3fSetIdentity(&LastRot);
 	Matrix3fSetIdentity(&ThisRot);
+
 	for (IntType Index1 = 0; Index1 < 4; Index1++)
 		for (IntType Index2 = 0; Index2 < 4; Index2++)
 			Transform.M[Index1 + 4 * Index2] = (Index1 == Index2) ? 1.0f : 0.0f;
-	ArcBall = new ArcBallT(640.0f, 480.0f);
-}
 
-WindowGL::~WindowGL()
-{
-	delete ArcBall;
+	ArcBall = make_unique<ArcBallT>(ArcBallT(640.0f, 480.0f));
 }
 
 #pragma endregion

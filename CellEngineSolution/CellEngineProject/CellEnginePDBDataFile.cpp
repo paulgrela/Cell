@@ -160,8 +160,8 @@ void PDBDataFile::ReadDataFromFile()
 
 			if (IsMarkerOfLastFrame(Line))
 			{
+                File.close();
 				throw std::logic_error("Too early end of frame");
-				File.close();
 			}
 		}
 	}

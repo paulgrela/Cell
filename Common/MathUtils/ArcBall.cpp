@@ -1,4 +1,6 @@
 
+#include <windows.h>
+
 #include <gl\gl.h>
 
 #include "ArcBall.h"

@@ -185,14 +185,6 @@
     <ClInclude Include="CellEngineWindowGL.h" />
     <ClInclude Include="CellEnginePDBDataFile.h" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="ApplicationIcon.ico">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="Application.rc" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
