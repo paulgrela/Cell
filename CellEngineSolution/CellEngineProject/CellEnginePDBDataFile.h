@@ -60,9 +60,7 @@ private:
 
 	std::vector<std::unique_ptr<Atom>> Atoms;
 
-	void AnalyzeFile();
 	void ReadDataFromFile();
-
 public:
 	explicit PDBDataFile(const char* FileName);
 	~PDBDataFile() = default;

@@ -260,6 +260,14 @@ LRESULT PDBWindowGL::WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lPar
 				break;
 			
 				case 'C': ProjectionType = !ProjectionType; SetStage(ProjectionType); CallDrawStage = true; break;
+//				case 'N':
+//                {
+//                    PDBDataFileObjectPointer->GetAtom(ChosenAtomIndex)->X += 1;
+//                    PDBDataFileObjectPointer->GetAtom(ChosenAtomIndex)->Y += 1;
+//                    //PDBDataFileObjectPointer->GetAtom(ChosenAtomIndex)->Z += 1;
+//                    DrawActors();
+//                }
+//                break;
 			}
 
 			if (CallDrawStage)

@@ -63,10 +63,6 @@ private:
 public:
 	void InitArcBall();
 	~WindowGL() = default;
-//public:
-//	bool FreeRotationActive;
-//	bool FreeRotationBlanking;
-//	Quat4fT FreeRotationQuaternionOfRotation;
 public:
 	float BackgroundLightIntensity;
 private:

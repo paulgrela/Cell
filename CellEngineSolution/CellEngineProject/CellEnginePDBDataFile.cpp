@@ -113,32 +113,12 @@ DoubleVectorType Atom::Position() const
 
 PDBDataFile::PDBDataFile(const char* FileName) : FileName(FileName), NumberOfDataRaws(0)
 {
-	AnalyzeFile();
 	ReadDataFromFile();
 }
 
 bool PDBDataFile::IsMarkerOfLastFrame(const char* PDBRecord)
 {
 	return strstr(PDBRecord, "END") == PDBRecord;
-}
-
-void PDBDataFile::AnalyzeFile()
-{
-	const IntType MaxLineSize = 256;
-	char Line[MaxLineSize] = "\0";
-
-	NumberOfDataRaws = 0;
-
-	std::ifstream File(FileName, std::ios_base::in);
-
-	while (!IsMarkerOfLastFrame(Line))
-	{
-		File.getline(Line, MaxLineSize);
-		if (Atom::IsDataRecord(Line))
-			NumberOfDataRaws++;
-	}
-
-	File.close();
 }
 
 void PDBDataFile::ReadDataFromFile()
@@ -148,15 +128,15 @@ void PDBDataFile::ReadDataFromFile()
 
 	std::ifstream File(FileName, std::ios_base::in);
 
-	for (IntType DataRawIndex = 0; DataRawIndex < NumberOfDataRaws; DataRawIndex++)
+    NumberOfDataRaws = 0;
+    while (!IsMarkerOfLastFrame(Line))
 	{
 		File.getline(Line, MaxLineSize);
 
-		if (!Atom::IsDataRecord(Line))
-			DataRawIndex--;
-		else
+		if (Atom::IsDataRecord(Line))
 		{
-			Atoms.push_back(make_unique<Atom>(Line, DataRawIndex));
+			Atoms.push_back(make_unique<Atom>(Line, NumberOfDataRaws));
+            NumberOfDataRaws++;
 
 			if (IsMarkerOfLastFrame(Line))
 			{

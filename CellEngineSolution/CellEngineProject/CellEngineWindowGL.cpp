@@ -101,7 +101,7 @@ LRESULT Window::WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 #pragma endregion
 
 #pragma region Class CWindowGL
-#pragma GCC diagnostic push
+#pragma clang diagnostic push
 #pragma ide diagnostic ignored "Simplify"
 LRESULT WindowGL::WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 {
@@ -122,33 +122,6 @@ LRESULT WindowGL::WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 				SetWindowText(hWnd, Title);
 			}
 			break;
-
-//		case WM_TIMER:
-//			if (wParam == CameraRotationIdtTimer)
-//                if (FreeRotationActive == true)
-//                {
-//                    Matrix3fSetRotationFromQuat4f(&ThisRot, &FreeRotationQuaternionOfRotation);
-//                    Matrix3fMulMatrix3f(&ThisRot, &LastRot);
-//                    Matrix4fSetRotationFromMatrix3f(&Transform, &ThisRot);
-//                    LastRot = ThisRot;
-//
-//                    if (FreeRotationBlanking == true)
-//                    {
-//                        const float ExtinctionRate = 0.97f;
-//                        FreeRotationQuaternionOfRotation.s.W /= ExtinctionRate;
-//                        FreeRotationQuaternionOfRotation.s.X *= ExtinctionRate;
-//                        FreeRotationQuaternionOfRotation.s.Y *= ExtinctionRate;
-//                        FreeRotationQuaternionOfRotation.s.Z *= ExtinctionRate;
-//                        if (fabs(FreeRotationQuaternionOfRotation.s.X) < 1E-3 && fabs(FreeRotationQuaternionOfRotation.s.Y) < 1E-3 && fabs(FreeRotationQuaternionOfRotation.s.Z) < 1E-3)
-//                        {
-//                            FreeRotationActive = false;
-//                        }
-//                    }
-//
-//                    DrawStage();
-//                }
-//			Result = 0;
-//			break;
 
 		case WM_DESTROY: 
 			DeleteWGL();
@@ -189,8 +162,6 @@ LRESULT WindowGL::WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 					IsometricProjection = !IsometricProjection;
 					SetStage(IsometricProjection);
 					break;
-
-			    //default: break;
 			}
 
 			if (wParam >= '0' && wParam <= '7')
@@ -220,8 +191,7 @@ LRESULT WindowGL::WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 	    default: break;
 	}
 
-	if (ControlCameraByUser)
-	{
+	if (ControlCameraByUser == true)
 		switch (Message)
 		{
 			case WM_LBUTTONDOWN:
@@ -230,8 +200,6 @@ LRESULT WindowGL::WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 				MousePt.s.Y = (GLfloat)HIWORD(lParam);
 				LastRot = ThisRot;
 				ArcBall->click(&MousePt);
-
-//                FreeRotationActive = false;
 
 			case WM_RBUTTONDOWN:
 			case WM_MBUTTONDOWN:
@@ -258,8 +226,6 @@ LRESULT WindowGL::WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 						Matrix3fSetRotationFromQuat4f(&ThisRot, &ThisQuat);
 						Matrix3fMulMatrix3f(&ThisRot, &LastRot);
 						Matrix4fSetRotationFromMatrix3f(&Transform, &ThisRot);
-//						FreeRotationActive = true;
-//						FreeRotationQuaternionOfRotation = ThisQuat;
 					}
 					if (wParam & MK_RBUTTON)
 					{
@@ -324,12 +290,11 @@ LRESULT WindowGL::WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 
 				DrawStage();
 				break;
-		}
-	}
+        }
 
 	return Result;
 }
-#pragma GCC diagnostic pop
+#pragma clang diagnostic pop
 
 bool WindowGL::InitWGL(HWND HandleWindow)
 {
@@ -385,11 +350,11 @@ void WindowGL::SetStage(bool IsometricProjection)
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	float Coordiantes = static_cast<float>(UserAreaHeight) / static_cast<float>(UserAreaWidth);
+	float Coordinates = static_cast<float>(UserAreaHeight) / static_cast<float>(UserAreaWidth);
 	if (!IsometricProjection)
-		glFrustum(-0.1, 0.1, Coordiantes * -0.1, Coordiantes * 0.1, 0.3, 100.0);
+		glFrustum(-0.1, 0.1, Coordinates * -0.1, Coordinates * 0.1, 0.3, 100.0);
 	else
-		glOrtho(-3, 3, Coordiantes * -3, Coordiantes * 3, 0.3, 100.0);
+		glOrtho(-3, 3, Coordinates * -3, Coordinates * 3, 0.3, 100.0);
 	glMatrixMode(GL_MODELVIEW);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
