@@ -22,21 +22,15 @@ PDBWindowGL::PDBWindowGL() : WindowGL(), PDBDataFileObjectPointer(nullptr), Show
 		return;
 	}
 
-	if (!OpenPDBFile(FileName))
+	if (OpenPDBFile(FileName) == false)
 		PostQuitMessage(0);
-}
-
-PDBWindowGL::~PDBWindowGL()
-{
-	delete PDBDataFileObjectPointer;
-	PDBDataFileObjectPointer = nullptr;
 }
 
 bool PDBWindowGL::OpenPDBFile(const char* FileName)
 {
 	try
 	{
-		PDBDataFileObjectPointer = new PDBDataFile(FileName);
+		PDBDataFileObjectPointer = make_unique<PDBDataFile>(FileName);
 	}
 	catch (const std::exception& exc)
 	{
@@ -49,14 +43,11 @@ bool PDBWindowGL::OpenPDBFile(const char* FileName)
 	return true;
 }
 
-void PDBWindowGL::DrawAtoms(PDBDataFile* PDBDataFileObjectPtr, const double LengthUnit, const double AtomSizeLengthUnit, bool MakeColors)
+void PDBWindowGL::DrawAtoms(const double LengthUnit, const double AtomSizeLengthUnit, bool MakeColors) const
 {
-	if (PDBDataFileObjectPtr == nullptr)
-		return;
-
 	glPushMatrix();
 
-	DoubleVectorType MassCenter = LengthUnit * PDBDataFileObjectPtr->MassCenter();
+	DoubleVectorType MassCenter = LengthUnit * PDBDataFileObjectPointer->MassCenter();
 	glTranslated(-MassCenter.X, -MassCenter.Y, -MassCenter.Z);
 
 	GLUquadricObj* Quadriga = gluNewQuadric();
@@ -68,7 +59,7 @@ void PDBWindowGL::DrawAtoms(PDBDataFile* PDBDataFileObjectPtr, const double Leng
 	glInitNames(); 
 	glPushName(-1);
 
-	for (const Atom& AtomObjectPtr : PDBDataFileObjectPtr->GetAtoms())
+	for (const Atom& AtomObjectPtr : PDBDataFileObjectPointer->GetAtoms())
 	{
 		DoubleVectorType AtomPosition = LengthUnit * AtomObjectPtr.Position();
 
@@ -92,7 +83,7 @@ void PDBWindowGL::DrawAtoms(PDBDataFile* PDBDataFileObjectPtr, const double Leng
 	glPopMatrix();
 }
 
-void PDBWindowGL::DrawChosenAtom(PDBDataFile* PDBDataFileObject, const double LengthUnit, const double AtomSizeLengthUnit, IntType LocalChosenAtomIndex, bool UseGrid)
+void PDBWindowGL::DrawChosenAtom(const double LengthUnit, const double AtomSizeLengthUnit, IntType LocalChosenAtomIndex, bool UseGrid) const
 {
 	if (LocalChosenAtomIndex < 0)
 		return;
@@ -104,7 +95,7 @@ void PDBWindowGL::DrawChosenAtom(PDBDataFile* PDBDataFileObject, const double Le
 		gluQuadricDrawStyle(Quadric, GLU_LINE);
 	glLineWidth(1.0f);
 	glShadeModel(GL_SMOOTH);
-	DoubleVectorType ChosenAtomPosition = LengthUnit * (PDBDataFileObject->GetAtom(LocalChosenAtomIndex).Position() - PDBDataFileObject->MassCenter());
+	DoubleVectorType ChosenAtomPosition = LengthUnit * (PDBDataFileObjectPointer->GetAtom(LocalChosenAtomIndex).Position() - PDBDataFileObjectPointer->MassCenter());
 	glTranslated(ChosenAtomPosition.X, ChosenAtomPosition.Y, ChosenAtomPosition.Z);
 	gluSphere(Quadric, LengthUnit * AtomSizeLengthUnit, 15, 15);
 	gluDeleteQuadric(Quadric);
@@ -157,14 +148,11 @@ void PDBWindowGL::ChooseAtomColor(const char* AtomSymbol, const float Alpha = 1.
 	}
 }
 
-void PDBWindowGL::DrawBonds(PDBDataFile* PDBDataFileObject, const double LengthUnit, bool MakeColors)
+void PDBWindowGL::DrawBonds(const double LengthUnit, bool MakeColors) const
 {
-	if (PDBDataFileObject == nullptr)
-		return;
-
 	glPushMatrix();
 
-	DoubleVectorType MassCenter = LengthUnit * PDBDataFileObject->MassCenter();;
+	DoubleVectorType MassCenter = LengthUnit * PDBDataFileObjectPointer->MassCenter();;
 	glTranslated(-MassCenter.X, -MassCenter.Y, -MassCenter.Z);
 
 	glColor3f(0, 0, 0);
@@ -174,11 +162,11 @@ void PDBWindowGL::DrawBonds(PDBDataFile* PDBDataFileObject, const double LengthU
 	glLineWidth(2);
 	glBegin(GL_LINES);
 
-	for (IntType AtomIndex1 = 0; AtomIndex1 < PDBDataFileObject->GetNumberOfAtoms(); AtomIndex1++)
-		for (IntType AtomIndex2 = AtomIndex1 + 1; AtomIndex2 < PDBDataFileObject->GetNumberOfAtoms(); AtomIndex2++)
+	for (IntType AtomIndex1 = 0; AtomIndex1 < PDBDataFileObjectPointer->GetNumberOfAtoms(); AtomIndex1++)
+		for (IntType AtomIndex2 = AtomIndex1 + 1; AtomIndex2 < PDBDataFileObjectPointer->GetNumberOfAtoms(); AtomIndex2++)
 		{
-			DoubleVectorType Atom1Position = LengthUnit * PDBDataFileObject->GetAtom(AtomIndex1).Position();
-			DoubleVectorType Atom2Position = LengthUnit * PDBDataFileObject->GetAtom(AtomIndex2).Position();
+			DoubleVectorType Atom1Position = LengthUnit * PDBDataFileObjectPointer->GetAtom(AtomIndex1).Position();
+			DoubleVectorType Atom2Position = LengthUnit * PDBDataFileObjectPointer->GetAtom(AtomIndex2).Position();
 			DoubleVectorType Position12 = Atom2Position - Atom1Position;
 
 			if (Position12.Length() < 0.17)
@@ -186,14 +174,14 @@ void PDBWindowGL::DrawBonds(PDBDataFile* PDBDataFileObject, const double LengthU
 				if (MakeColors)
 				{
 					char AtomSymbol[3];
-					Atom::GetAtomSymbol(PDBDataFileObject->GetAtom(AtomIndex1).Name, AtomSymbol);
+					Atom::GetAtomSymbol(PDBDataFileObjectPointer->GetAtom(AtomIndex1).Name, AtomSymbol);
 					ChooseAtomColor(AtomSymbol, 1.0f);
 				}
 				glVertex3d(Atom1Position.X, Atom1Position.Y, Atom1Position.Z);
 				if (MakeColors)
 				{
 					char AtomSymbol[3];
-					Atom::GetAtomSymbol(PDBDataFileObject->GetAtom(AtomIndex2).Name, AtomSymbol);
+					Atom::GetAtomSymbol(PDBDataFileObjectPointer->GetAtom(AtomIndex2).Name, AtomSymbol);
 					ChooseAtomColor(AtomSymbol, 1.0f);
 				}
 				glVertex3d(Atom2Position.X, Atom2Position.Y, Atom2Position.Z);
@@ -206,7 +194,7 @@ void PDBWindowGL::DrawBonds(PDBDataFile* PDBDataFileObject, const double LengthU
 	glPopMatrix();
 }
 
-UnsignedIntType PDBWindowGL::CreateListOfDrawing(const double LengthUnit) const
+UnsignedIntType PDBWindowGL::CreateListOfDrawing(const double LengthUnit)
 {
 	GLuint DrawList = glGenLists(1);
 
@@ -214,10 +202,10 @@ UnsignedIntType PDBWindowGL::CreateListOfDrawing(const double LengthUnit) const
 	glColor3f(1, 1, 1);
 
 	if (ShowBonds)
-		DrawBonds(PDBDataFileObjectPointer, LengthUnit, true);
+		DrawBonds(LengthUnit, true);
 
 	if (ShowPDBSize != 0)
-		DrawAtoms(PDBDataFileObjectPointer, LengthUnit, ShowPDBSize, true);
+		DrawAtoms(LengthUnit, ShowPDBSize, true);
 
 	glEndList();
 
@@ -358,7 +346,8 @@ IntType PDBWindowGL::ChooseAtom(POINT MouseCursorPosition)
 		}
 		return ClosestAtomIndex;
 	}
-	else return -1;
+	else
+	    return -1;
 }
 #pragma endregion
 
@@ -406,7 +395,7 @@ void PDBWindowGL::DrawActors()
 		if (ChosenAtomIndex >= 0 && ShowPDBSize > 0)
 		{
 			glColor3f(1, 1, 0);
-			DrawChosenAtom(PDBDataFileObjectPointer, LengthUnit, 1.05 * ShowPDBSize, ChosenAtomIndex, false);
+			DrawChosenAtom(LengthUnit, 1.05 * ShowPDBSize, ChosenAtomIndex, false);
 			glColor3f(5, 0, 5);
 			DrawChosenAtomDescription(ChosenAtomIndex, BitmapFont);
 		}

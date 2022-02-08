@@ -3,6 +3,8 @@
 #ifndef CELL_ENGINE_PDB_WINDOW_GL_H
 #define CELL_ENGINE_PDB_WINDOW_GL_H
 
+#include <memory>
+
 #include "VectorType.h"
 
 #include "CellEngineWindowGL.h"
@@ -17,15 +19,15 @@ private:
 	static void MilkyBulb(float Brightness);
 public:
 	PDBWindowGL();
-	~PDBWindowGL();
+	~PDBWindowGL() = default;
 private:
     char ChosenAtomDescription[256] = "";
-	PDBDataFile* PDBDataFileObjectPointer;
+	std::unique_ptr<PDBDataFile> PDBDataFileObjectPointer;
 	bool OpenPDBFile(const char* FileName);
-	static void DrawAtoms(PDBDataFile* PDBDataFileObject, const double LengthUnit, const double AtomSizeLengthUnit, bool MakeColors);
-	static void DrawBonds(PDBDataFile* PDBDataFileObject, const double LengthUnit, bool MakeColors);
+	void DrawAtoms(const double LengthUnit, const double AtomSizeLengthUnit, bool MakeColors) const;
+	void DrawBonds(const double LengthUnit, bool MakeColors) const;
 	static void ChooseAtomColor(const char* AtomSymbol, const float Alpha);
-    [[nodiscard]] UnsignedIntType CreateListOfDrawing(const double LengthUnit) const;
+    [[nodiscard]] UnsignedIntType CreateListOfDrawing(const double LengthUnit);
 	LRESULT WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam) final;
 private:
 	bool ShowBonds;
@@ -33,7 +35,7 @@ private:
 	bool RefreshListOfDrawing;
 	bool ProjectionType;
 	IntType ChooseAtom(POINT MouseCursorPosition);
-	static void DrawChosenAtom(PDBDataFile* PDBDataFileObject, const double LengthUnit, const double AtomSizeLengthUnit, IntType LocalChosenAtomIndex, bool UseGrid);
+	void DrawChosenAtom(const double LengthUnit, const double AtomSizeLengthUnit, IntType LocalChosenAtomIndex, bool UseGrid) const;
 	void DrawChosenAtomDescription(IntType LocalChosenAtomIndex, IntType BitmapFont);
 	IntType ChosenAtomIndex;
 } 
