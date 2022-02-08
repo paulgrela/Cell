@@ -1,8 +1,8 @@
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "Simplify"
 
 #include <memory>
 #include <exception>
+
+#include "ExceptionsMacro.h"
 
 #include "CellEnginePDBWindowGL.h"
 
@@ -32,13 +32,7 @@ bool PDBWindowGL::OpenPDBFile(const char* FileName)
 	{
 		PDBDataFileObjectPointer = make_unique<PDBDataFile>(FileName);
 	}
-	catch (const std::exception& exc)
-	{
-		char Communicate[256] = "Error with loading PDB object:\n";
-		strcat(Communicate, exc.what());
-		MessageBox(HandleWindow, Communicate, "PDB VIEWER", MB_OK | MB_ICONERROR);
-		return false;
-	}
+	CATCH("Error with loading PDB object");
 
 	return true;
 }
@@ -420,5 +414,3 @@ void PDBWindowGL::MilkyBulb(float jasnosc)
 }
 
 #pragma endregion
-
-#pragma clang diagnostic pop

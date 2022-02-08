@@ -1,9 +1,8 @@
 
-#include "CellEngineWindowGL.h"
-
-#include "AdditionalFunctions.h"
-
 #include <cstdint>
+
+#include "CellEngineWindowGL.h"
+#include "AdditionalFunctions.h"
 
 using namespace std;
 							
