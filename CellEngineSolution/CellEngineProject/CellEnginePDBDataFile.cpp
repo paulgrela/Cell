@@ -9,11 +9,6 @@
 using namespace std;
 using namespace string_utils;
 
-bool Atom::IsDataRecord(const char* PDBRecord)
-{
-	return strstr(PDBRecord, "ATOM") == PDBRecord;
-}
-
 char* Atom::GetAtomSymbol(const char* Name, char* AtomSymbol)
 {
 	strcpy(AtomSymbol, "\0\0\0");
@@ -111,66 +106,53 @@ DoubleVectorType Atom::Position() const
 	return DoubleVectorType(X, Y, Z);
 }
 
-PDBDataFile::PDBDataFile(const char* FileName) : FileName(FileName), NumberOfDataRaws(0)
+PDBDataFile::PDBDataFile(const char* FileName) : FileName(FileName)//, NumberOfDataRaws(0)
 {
-	ReadDataFromFile();
-}
+    ChosenStructureIndex = 0;
 
-bool PDBDataFile::IsMarkerOfLastFrame(const char* PDBRecord)
-{
-	return strstr(PDBRecord, "END") == PDBRecord;
+	ReadDataFromFile();
 }
 
 void PDBDataFile::ReadDataFromFile()
 {
+    std::vector<Atom> StructureObject;
+
 	const IntType MaxLineSize = 256;
 	char Line[MaxLineSize] = "\0";
 
 	std::ifstream File(FileName, std::ios_base::in);
 
-    NumberOfDataRaws = 0;
-    while (!IsMarkerOfLastFrame(Line))
+    while (File.getline(Line, MaxLineSize))
 	{
-		File.getline(Line, MaxLineSize);
-
-		if (Atom::IsDataRecord(Line))
-		{
-			Atoms.push_back(make_unique<Atom>(Line, NumberOfDataRaws));
-            NumberOfDataRaws++;
-
-			if (IsMarkerOfLastFrame(Line))
-			{
-                File.close();
-				throw std::logic_error("Too early end of frame");
-			}
-		}
+		if (strstr(Line, "ATOM") == Line)
+			StructureObject.emplace_back(Atom(Line, StructureObject.size()));
+		else
+        if (strstr(Line, "END") == Line)
+        {
+            Atoms.push_back(StructureObject);
+            StructureObject.clear();
+        }
 	}
-
 	File.close();
 }
 
 IntType PDBDataFile::GetNumberOfAtoms() const
 {
-	return NumberOfDataRaws;
+	return Atoms[ChosenStructureIndex].size();
 }
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wreturn-local-addr"
-const unique_ptr<Atom>& PDBDataFile::GetAtom(IntType DataRawIndex) const
+const Atom& PDBDataFile::GetAtom(IntType DataRawIndex) const
 {
-	if (DataRawIndex < 0 || DataRawIndex >= NumberOfDataRaws)
-		return std::unique_ptr<Atom>(nullptr);
-	return Atoms[DataRawIndex];
+	return Atoms[ChosenStructureIndex][DataRawIndex];
 }
-#pragma GCC diagnostic pop
 
 DoubleVectorType PDBDataFile::MassCenter() const
 {
 	DoubleVectorType MassCenter(0.0, 0.0, 0.0);
-	for (IntType DataRawIndex = 0; DataRawIndex < NumberOfDataRaws; DataRawIndex++)
-	{
-		MassCenter += Atoms[DataRawIndex]->Position();
-	}
-	MassCenter /= (double)NumberOfDataRaws;
+
+    for (const Atom& AtomObject : Atoms[ChosenStructureIndex])
+    	MassCenter += AtomObject.Position();
+
+	MassCenter /= Atoms[ChosenStructureIndex].size();
 	return MassCenter;
 }

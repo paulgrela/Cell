@@ -47,8 +47,6 @@ bool PDBWindowGL::OpenPDBFile(const char* FileName)
 	return true;
 }
 
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "Simplify"
 void PDBWindowGL::DrawAtoms(PDBDataFile* PDBDataFileObjectPtr, const double LengthUnit, const double AtomSizeLengthUnit, bool MakeColors)
 {
 	if (PDBDataFileObjectPtr == nullptr)
@@ -68,20 +66,20 @@ void PDBWindowGL::DrawAtoms(PDBDataFile* PDBDataFileObjectPtr, const double Leng
 	glInitNames(); 
 	glPushName(-1);
 
-	for (const unique_ptr<Atom>& AtomObjectPtr : PDBDataFileObjectPtr->GetAtoms())
+	for (const Atom& AtomObjectPtr : PDBDataFileObjectPtr->GetAtoms())
 	{
-		DoubleVectorType AtomPosition = LengthUnit * AtomObjectPtr->Position();
+		DoubleVectorType AtomPosition = LengthUnit * AtomObjectPtr.Position();
 
 		if (MakeColors == true)
 		{
 			char AtomSymbol[3];
-			Atom::GetAtomSymbol(AtomObjectPtr->Name, AtomSymbol);
+			Atom::GetAtomSymbol(AtomObjectPtr.Name, AtomSymbol);
 			ChooseAtomColor(AtomSymbol, 1.0f);
 		}
 
 		glPushMatrix();
 		glTranslated(AtomPosition.X, AtomPosition.Y, AtomPosition.Z);
-		glLoadName(AtomObjectPtr->AtomIndex);
+		glLoadName(AtomObjectPtr.AtomIndex);
 		gluSphere(Quadriga, LengthUnit * AtomSizeLengthUnit, HowManyPointsInEachDimension, HowManyPointsInEachDimension);
 		glPopMatrix();
 	}
@@ -91,7 +89,6 @@ void PDBWindowGL::DrawAtoms(PDBDataFile* PDBDataFileObjectPtr, const double Leng
 	gluDeleteQuadric(Quadriga);
 	glPopMatrix();
 }
-#pragma clang diagnostic pop
 
 void PDBWindowGL::DrawChosenAtom(PDBDataFile* PDBDataFileObject, const double LengthUnit, const double AtomSizeLengthUnit, IntType LocalChosenAtomIndex, bool UseGrid)
 {
@@ -105,7 +102,7 @@ void PDBWindowGL::DrawChosenAtom(PDBDataFile* PDBDataFileObject, const double Le
 		gluQuadricDrawStyle(Quadric, GLU_LINE);
 	glLineWidth(1.0f);
 	glShadeModel(GL_SMOOTH);
-	DoubleVectorType ChosenAtomPosition = LengthUnit * (PDBDataFileObject->GetAtom(LocalChosenAtomIndex)->Position() - PDBDataFileObject->MassCenter());
+	DoubleVectorType ChosenAtomPosition = LengthUnit * (PDBDataFileObject->GetAtom(LocalChosenAtomIndex).Position() - PDBDataFileObject->MassCenter());
 	glTranslated(ChosenAtomPosition.X, ChosenAtomPosition.Y, ChosenAtomPosition.Z);
 	gluSphere(Quadric, LengthUnit * AtomSizeLengthUnit, 15, 15);
 	gluDeleteQuadric(Quadric);
@@ -126,11 +123,11 @@ void Print(char* Text, IntType CharactersNumber, UnsignedIntType Font, IntType F
 
 void PDBWindowGL::DrawChosenAtomDescription(IntType LocalChosenAtomIndex, IntType BitmapFont)
 {
-	_itoa(PDBDataFileObjectPointer->GetAtom(LocalChosenAtomIndex)->Serial, ChosenAtomDescription, 10);
+	_itoa(PDBDataFileObjectPointer->GetAtom(LocalChosenAtomIndex).Serial, ChosenAtomDescription, 10);
 	strcat(ChosenAtomDescription, ". ");
-	strcat(ChosenAtomDescription, PDBDataFileObjectPointer->GetAtom(LocalChosenAtomIndex)->Name);
+	strcat(ChosenAtomDescription, PDBDataFileObjectPointer->GetAtom(LocalChosenAtomIndex).Name);
 	strcat(ChosenAtomDescription, " (");
-	strcat(ChosenAtomDescription, PDBDataFileObjectPointer->GetAtom(LocalChosenAtomIndex)->ResName);
+	strcat(ChosenAtomDescription, PDBDataFileObjectPointer->GetAtom(LocalChosenAtomIndex).ResName);
 	strcat(ChosenAtomDescription, ")");
 	
 	glPushMatrix();
@@ -178,8 +175,8 @@ void PDBWindowGL::DrawBonds(PDBDataFile* PDBDataFileObject, const double LengthU
 	for (IntType AtomIndex1 = 0; AtomIndex1 < PDBDataFileObject->GetNumberOfAtoms(); AtomIndex1++)
 		for (IntType AtomIndex2 = AtomIndex1 + 1; AtomIndex2 < PDBDataFileObject->GetNumberOfAtoms(); AtomIndex2++)
 		{
-			DoubleVectorType Atom1Position = LengthUnit * PDBDataFileObject->GetAtom(AtomIndex1)->Position();
-			DoubleVectorType Atom2Position = LengthUnit * PDBDataFileObject->GetAtom(AtomIndex2)->Position();
+			DoubleVectorType Atom1Position = LengthUnit * PDBDataFileObject->GetAtom(AtomIndex1).Position();
+			DoubleVectorType Atom2Position = LengthUnit * PDBDataFileObject->GetAtom(AtomIndex2).Position();
 			DoubleVectorType Position12 = Atom2Position - Atom1Position;
 
 			if (Position12.Length() < 0.17)
@@ -187,14 +184,14 @@ void PDBWindowGL::DrawBonds(PDBDataFile* PDBDataFileObject, const double LengthU
 				if (MakeColors)
 				{
 					char AtomSymbol[3];
-					Atom::GetAtomSymbol(PDBDataFileObject->GetAtom(AtomIndex1)->Name, AtomSymbol);
+					Atom::GetAtomSymbol(PDBDataFileObject->GetAtom(AtomIndex1).Name, AtomSymbol);
 					ChooseAtomColor(AtomSymbol, 1.0f);
 				}
 				glVertex3d(Atom1Position.X, Atom1Position.Y, Atom1Position.Z);
 				if (MakeColors)
 				{
 					char AtomSymbol[3];
-					Atom::GetAtomSymbol(PDBDataFileObject->GetAtom(AtomIndex2)->Name, AtomSymbol);
+					Atom::GetAtomSymbol(PDBDataFileObject->GetAtom(AtomIndex2).Name, AtomSymbol);
 					ChooseAtomColor(AtomSymbol, 1.0f);
 				}
 				glVertex3d(Atom2Position.X, Atom2Position.Y, Atom2Position.Z);
@@ -260,14 +257,22 @@ LRESULT PDBWindowGL::WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lPar
 				break;
 			
 				case 'C': ProjectionType = !ProjectionType; SetStage(ProjectionType); CallDrawStage = true; break;
-//				case 'N':
-//                {
-//                    PDBDataFileObjectPointer->GetAtom(ChosenAtomIndex)->X += 1;
-//                    PDBDataFileObjectPointer->GetAtom(ChosenAtomIndex)->Y += 1;
-//                    //PDBDataFileObjectPointer->GetAtom(ChosenAtomIndex)->Z += 1;
-//                    DrawActors();
-//                }
-//                break;
+				case 'N':
+                {
+                    if (PDBDataFileObjectPointer->ChosenStructureIndex < PDBDataFileObjectPointer->GetNumberOfStructures() - 1)
+                        PDBDataFileObjectPointer->ChosenStructureIndex++;
+                    //DrawActors();
+                    DrawStage();
+                }
+                break;
+                case 'M':
+                {
+                    if (PDBDataFileObjectPointer->ChosenStructureIndex > 0)
+                        PDBDataFileObjectPointer->ChosenStructureIndex--;
+                    //DrawActors();
+                    DrawStage();
+                }
+                break;
 			}
 
 			if (CallDrawStage)

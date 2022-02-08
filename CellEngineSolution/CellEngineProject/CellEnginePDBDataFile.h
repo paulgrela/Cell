@@ -18,9 +18,6 @@
 struct Atom
 {
 public:
-	static bool IsDataRecord(const char* PDBRecord);
-	static char* GetAtomSymbol(const char* Name, char* elementSymbol);
-
 	char* PDBRecord;	
 	char RecordName[7];
 	UnsignedIntType AtomIndex;	
@@ -41,11 +38,13 @@ public:
 	
 	char Element[3];
 	double Charge;
-
+public:
 	Atom(const char* PDBRecord, UnsignedIntType AtomIndex);
 	~Atom();
+public:
 	[[nodiscard]] DoubleVectorType Position() const;
-
+public:
+    static char* GetAtomSymbol(const char* Name, char* elementSymbol);
 private:
 	void ParseRecord(const char* LocalPDBRecord);
 };
@@ -53,24 +52,27 @@ private:
 class PDBDataFile
 {
 private:
-	static bool IsMarkerOfLastFrame(const char* PDBRecord);
-
 	const char* FileName;
-	IntType NumberOfDataRaws;
-
-	std::vector<std::unique_ptr<Atom>> Atoms;
-
+    std::vector<std::vector<Atom>> Atoms;
+private:
 	void ReadDataFromFile();
+public:
+    //IntType NumberOfDataRaws;
+    UnsignedIntType ChosenStructureIndex;
 public:
 	explicit PDBDataFile(const char* FileName);
 	~PDBDataFile() = default;
 public:
-	[[nodiscard]] IntType GetNumberOfAtoms() const;
-    [[nodiscard]] const std::vector<std::unique_ptr<Atom>>& GetAtoms() const
-	{
-		return Atoms;
-	}
-    [[nodiscard]] const std::unique_ptr<Atom>& GetAtom(IntType Index) const;
+    [[nodiscard]] const std::vector<Atom>& GetAtoms() const
+    {
+        return Atoms[ChosenStructureIndex];
+    }
+    [[nodiscard]] IntType GetNumberOfStructures() const
+    {
+        return Atoms.size();
+    }
+    [[nodiscard]] IntType GetNumberOfAtoms() const;
+    [[nodiscard]] const Atom& GetAtom(IntType Index) const;
     [[nodiscard]] DoubleVectorType MassCenter() const;
 };
 

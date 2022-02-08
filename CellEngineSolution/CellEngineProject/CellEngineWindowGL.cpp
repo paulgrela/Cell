@@ -146,14 +146,16 @@ LRESULT WindowGL::WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 
 				case VK_OEM_MINUS:
 					BackgroundLightIntensity -= 0.01f;
-					if (BackgroundLightIntensity < 0) BackgroundLightIntensity = 0;
+					if (BackgroundLightIntensity < 0)
+					    BackgroundLightIntensity = 0;
 					Lighting();
 					break;
 
 				case VK_OEM_PLUS:
 				case '=':
 					BackgroundLightIntensity += 0.01f;
-					if (BackgroundLightIntensity > 1) BackgroundLightIntensity = 1;
+					if (BackgroundLightIntensity > 1)
+					    BackgroundLightIntensity = 1;
 					Lighting();
 					break;
 
@@ -229,9 +231,9 @@ LRESULT WindowGL::WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 					}
 					if (wParam & MK_RBUTTON)
 					{
-						const float czuloscMyszy = 75.0f;
-						CameraX += MouseCursorShift.x / czuloscMyszy;
-						CameraY -= MouseCursorShift.y / czuloscMyszy;
+						const float MouseSensitivity = 75.0f;
+						CameraX += MouseCursorShift.x / MouseSensitivity;
+						CameraY -= MouseCursorShift.y / MouseSensitivity;
 					}
 					if (wParam & MK_MBUTTON)
 					{
@@ -254,9 +256,10 @@ LRESULT WindowGL::WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 			{
 				const float MouseSensitivity = 10.0f;
 				auto RollingPositionChange = static_cast<short>(HIWORD(wParam));
-
 				CameraR *= 1 + static_cast<float>(RollingPositionChange) / abs(static_cast<float>(RollingPositionChange)) / MouseSensitivity;
+
 				DrawStage();
+
 				Result = 0;
 				break;
 			}
@@ -359,7 +362,7 @@ void WindowGL::SetStage(bool IsometricProjection)
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 
-	ArcBall->setBounds((float)UserAreaWidth, (float)UserAreaHeight);
+	ArcBall->setBounds(static_cast<float>(UserAreaWidth), static_cast<float>(UserAreaHeight));
 
 	Lighting();
 }
