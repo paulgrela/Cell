@@ -1,3 +1,5 @@
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "Simplify"
 
 #include <memory>
 #include <exception>
@@ -261,7 +263,7 @@ LRESULT PDBWindowGL::WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lPar
                 {
                     if (PDBDataFileObjectPointer->ChosenStructureIndex < PDBDataFileObjectPointer->GetNumberOfStructures() - 1)
                         PDBDataFileObjectPointer->ChosenStructureIndex++;
-                    //DrawActors();
+                    RefreshListOfDrawing = true;
                     DrawStage();
                 }
                 break;
@@ -269,7 +271,7 @@ LRESULT PDBWindowGL::WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lPar
                 {
                     if (PDBDataFileObjectPointer->ChosenStructureIndex > 0)
                         PDBDataFileObjectPointer->ChosenStructureIndex--;
-                    //DrawActors();
+                    RefreshListOfDrawing = true;
                     DrawStage();
                 }
                 break;
@@ -384,9 +386,9 @@ void PDBWindowGL::DrawActors()
 	const double LengthUnit = 0.1;
 
 	static GLuint DrawingList = 0;
-	if (!glIsList(DrawingList) || RefreshListOfDrawing)
+	if (glIsList(DrawingList) == false || RefreshListOfDrawing == true)
 	{
-		if (RefreshListOfDrawing)
+		if (RefreshListOfDrawing == true)
 			glDeleteLists(DrawingList, 1);
 		DrawingList = CreateListOfDrawing(LengthUnit);
 		RefreshListOfDrawing = false;
@@ -429,3 +431,5 @@ void PDBWindowGL::MilkyBulb(float jasnosc)
 }
 
 #pragma endregion
+
+#pragma clang diagnostic pop

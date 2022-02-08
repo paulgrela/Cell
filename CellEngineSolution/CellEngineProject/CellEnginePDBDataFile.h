@@ -57,7 +57,6 @@ private:
 private:
 	void ReadDataFromFile();
 public:
-    //IntType NumberOfDataRaws;
     UnsignedIntType ChosenStructureIndex;
 public:
 	explicit PDBDataFile(const char* FileName);
