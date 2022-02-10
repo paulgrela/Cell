@@ -18,7 +18,8 @@
 struct Atom
 {
 public:
-	char* PDBRecord;	
+	//char* PDBRecord;
+
 	char RecordName[7];
 	UnsignedIntType AtomIndex;	
 	IntType Serial;	

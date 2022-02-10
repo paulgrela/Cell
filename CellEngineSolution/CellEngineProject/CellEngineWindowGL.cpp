@@ -1,27 +1,54 @@
 
 #include <cstdint>
 
+#include "ExceptionsMacro.h"
+
 #include "CellEngineWindowGL.h"
 #include "AdditionalFunctions.h"
 
+#include "StringUtils.h"
+#include "DateTimeUtils.h"
+
 using namespace std;
-							
+
+void InitializeLoggerManagerParameters()
+{
+    try
+    {
+        using namespace string_utils;
+
+        LoggersManagerObject.InitializeFilesNames({ "AllMessages" });
+        LoggersManagerObject.InitializeSelectiveWordsFunctions({ [](const string& s) { return true; } });
+        LoggersManagerObject.InitializePrintingParameters(true, true, false, false, false, false, false, true, true, false, false, false, 10000);
+        LoggersManagerObject.InitializeLoggerManagerDataForTask(string("CELL_RESULTS").c_str(), ".\\", string("Logs." + GetActualDateTimeStandardCPP(".", ".", ".", ".", ".")), true, 0, function<void(const uint64_t& CurrentThreadId, const uint64_t FileNumber, const string& MessageStr)>());
+    }
+    CATCH("initializing logger manager parameters")
+}
+
 #pragma region Functions WinMain and WndProc
 
 extern WindowGL* WindowGLPointer;
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	POINT WindowPosition = { 480,100 };
-	POINT WindowSize = { 1600,1200 };
+    try
+    {
+        InitializeLoggerManagerParameters();
 
-	if (!WindowGLPointer->Init(hInstance, WindowPosition, WindowSize))
-	{
-		MessageBox(nullptr, "Window initiation failed!", "OpenGL PDB Viewer Application", MB_OK | MB_ICONERROR);
-		return EXIT_FAILURE;
+        POINT WindowPosition = { 480,100 };
+        POINT WindowSize = { 1600,1200 };
+
+        if (!WindowGLPointer->Init(hInstance, WindowPosition, WindowSize))
+        {
+            MessageBox(nullptr, "Window initiation failed!", "OpenGL PDB Viewer Application", MB_OK | MB_ICONERROR);
+            return EXIT_FAILURE;
+        }
+        else
+            return WindowGLPointer->Run();
 	}
-	else 
-		return WindowGLPointer->Run();
+    CATCH("execution WinMain")
+
+    return 0;
 }
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -32,67 +59,82 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 #pragma endregion
 
 #pragma region Class CWindow
+
 bool Window::Init(HINSTANCE ApplicationHandle, POINT WindowPosition, POINT WindowSize)
 {
-	char WindowName[] = "OpenGL PDB Viewer Application";
+    try
+    {
+        char WindowName[] = "OpenGL PDB Viewer Application";
 
-	WNDCLASSEX WindowClassObject;
-	WindowClassObject.cbSize = sizeof(WindowClassObject);
-	WindowClassObject.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
-	WindowClassObject.lpfnWndProc = (WNDPROC)::WndProc; 
-	WindowClassObject.cbClsExtra = 0; 
-	WindowClassObject.cbWndExtra = 0; 
-	WindowClassObject.hInstance = ApplicationHandle; 
-    WindowClassObject.hIcon = nullptr;
-    WindowClassObject.hIconSm = nullptr;
-	WindowClassObject.hCursor = LoadCursor(nullptr, IDC_ARROW);
-	WindowClassObject.hbrBackground = nullptr;
-	WindowClassObject.lpszMenuName = nullptr;
-	WindowClassObject.lpszClassName = WindowName;
+        WNDCLASSEX WindowClassObject;
+        WindowClassObject.cbSize = sizeof(WindowClassObject);
+        WindowClassObject.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
+        WindowClassObject.lpfnWndProc = (WNDPROC)::WndProc;
+        WindowClassObject.cbClsExtra = 0;
+        WindowClassObject.cbWndExtra = 0;
+        WindowClassObject.hInstance = ApplicationHandle;
+        WindowClassObject.hIcon = nullptr;
+        WindowClassObject.hIconSm = nullptr;
+        WindowClassObject.hCursor = LoadCursor(nullptr, IDC_ARROW);
+        WindowClassObject.hbrBackground = nullptr;
+        WindowClassObject.lpszMenuName = nullptr;
+        WindowClassObject.lpszClassName = WindowName;
 
-	if (RegisterClassEx(&WindowClassObject) == 0) 
-		return false;
+        if (RegisterClassEx(&WindowClassObject) == 0)
+            return false;
 
-	DWORD WindowStyle = WS_OVERLAPPEDWINDOW;
+        DWORD WindowStyle = WS_OVERLAPPEDWINDOW;
 
-	HandleWindow = CreateWindow(WindowName, WindowName, WindowStyle, WindowPosition.x, WindowPosition.y, WindowSize.x, WindowSize.y, nullptr, nullptr, ApplicationHandle, nullptr );
+        HandleWindow = CreateWindow(WindowName, WindowName, WindowStyle, WindowPosition.x, WindowPosition.y, WindowSize.x, WindowSize.y, nullptr, nullptr, ApplicationHandle, nullptr );
 
-	if (HandleWindow == nullptr)
-		return false;
+        if (HandleWindow == nullptr)
+            return false;
 
-	ShowWindow(HandleWindow, SW_SHOW);
-	UpdateWindow(HandleWindow);
+        ShowWindow(HandleWindow, SW_SHOW);
+        UpdateWindow(HandleWindow);
+	}
+    CATCH("initiation of window")
 
 	return true;
 };
 
 WPARAM Window::Run()
 {
-	MSG msg;
-	while (GetMessage(&msg, nullptr, 0, 0))
-	{
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
+    MSG msg;
+
+    try
+    {
+        while (GetMessage(&msg, nullptr, 0, 0))
+        {
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
 	}
+    CATCH("running of window")
+
 	return msg.wParam;
 }
 
 LRESULT Window::WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 {
-	switch (Message)
-	{
-		case WM_DESTROY:
-			PostQuitMessage(0);
-			break;
-		case WM_SIZE:
-			RECT rect;
-			GetClientRect(hWnd, &rect);
-			UserAreaWidth = rect.right - rect.left;
-			UserAreaHeight = rect.bottom - rect.top;
-			break;
-		default: 
-			return (DefWindowProc(hWnd, Message, wParam, lParam));
+    try
+    {
+        switch (Message)
+        {
+            case WM_DESTROY:
+                PostQuitMessage(0);
+                break;
+            case WM_SIZE:
+                RECT rect;
+                GetClientRect(hWnd, &rect);
+                UserAreaWidth = rect.right - rect.left;
+                UserAreaHeight = rect.bottom - rect.top;
+                break;
+            default:
+                return (DefWindowProc(hWnd, Message, wParam, lParam));
+        }
 	}
+    CATCH("executing Window::WndProc")
 
 	return 0L;
 }
@@ -100,17 +142,20 @@ LRESULT Window::WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 #pragma endregion
 
 #pragma region Class CWindowGL
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "Simplify"
+
 LRESULT WindowGL::WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 {
+    IntType Result;
+
+    try
+    {
 	const IntType CameraRotationIdtTimer = 2;
 
-	IntType Result = Window::WndProc(hWnd, Message, wParam, lParam);
+	Result = Window::WndProc(hWnd, Message, wParam, lParam);
 
 	switch (Message)
 	{
-		case WM_CREATE: 
+		case WM_CREATE:
 			InitWGL(hWnd);
 			SetStage();
 			{
@@ -122,16 +167,16 @@ LRESULT WindowGL::WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 			}
 			break;
 
-		case WM_DESTROY: 
+		case WM_DESTROY:
 			DeleteWGL();
 			KillTimer(HandleWindow, CameraRotationIdtTimer);
 			break;
 
-		case WM_SIZE: 
+		case WM_SIZE:
 			SetStage();
 			break;
 
-		case WM_PAINT: 
+		case WM_PAINT:
 			DrawStage();
 			ValidateRect(hWnd, nullptr);
 			break;
@@ -180,9 +225,9 @@ LRESULT WindowGL::WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 					default: Light = GL_LIGHT0;
 				}
 
-				if (glIsEnabled(Light)) 
+				if (glIsEnabled(Light))
 					glDisable(Light);
-				else 
+				else
 					glEnable(Light);
 			}
 
@@ -239,7 +284,7 @@ LRESULT WindowGL::WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 						const float MouseSensitivity = 5.0f;
 						CameraCelPhi += MouseCursorShift.x / MouseSensitivity;
 						float ChangeAimTheta = MouseCursorShift.y / MouseSensitivity;
-						if (fabs(CameraCelTheta + ChangeAimTheta) < 90) 
+						if (fabs(CameraCelTheta + ChangeAimTheta) < 90)
 							CameraCelTheta += ChangeAimTheta;
 					}
 
@@ -293,149 +338,186 @@ LRESULT WindowGL::WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 				DrawStage();
 				break;
         }
+    }
+    CATCH("executing WindowGL::WndProc")
 
 	return Result;
 }
-#pragma clang diagnostic pop
 
 bool WindowGL::InitWGL(HWND HandleWindow)
 {
-	HandleDC = ::GetDC(HandleWindow);
+    try
+    {
+        HandleDC = ::GetDC(HandleWindow);
 
-	if (!SetPixelFormatWindow(HandleDC))
-		return false;
+        if (!SetPixelFormatWindow(HandleDC))
+            return false;
 
-	HandleRC = wglCreateContext(HandleDC);
+        HandleRC = wglCreateContext(HandleDC);
 
-	if (HandleRC == nullptr)
-		return false;
+        if (HandleRC == nullptr)
+            return false;
 
-	if (!wglMakeCurrent(HandleDC, HandleRC)) 
-		return false;
+        if (!wglMakeCurrent(HandleDC, HandleRC))
+            return false;
+    }
+    CATCH("initating WGL")
 
 	return true;
 }
 
 void WindowGL::DeleteWGL()
 {
-	wglMakeCurrent(nullptr, nullptr);
-	wglDeleteContext(HandleRC);
-	::ReleaseDC(HandleWindow, HandleDC);
+    try
+    {
+        wglMakeCurrent(nullptr, nullptr);
+        wglDeleteContext(HandleRC);
+        ::ReleaseDC(HandleWindow, HandleDC);
+    }
+    CATCH("deleting WGL")
 }
 
 bool WindowGL::SetPixelFormatWindow(HDC HandleDC)
 {
-	PIXELFORMATDESCRIPTOR PixelFormatDescription;
-	ZeroMemory(&PixelFormatDescription, sizeof(PixelFormatDescription));
-	PixelFormatDescription.nVersion = 1;
-	PixelFormatDescription.dwFlags = PFD_SUPPORT_OPENGL | PFD_DRAW_TO_WINDOW | PFD_DOUBLEBUFFER; 
-	PixelFormatDescription.iPixelType = PFD_TYPE_RGBA; 
-	PixelFormatDescription.cColorBits = 32; 
-	PixelFormatDescription.cDepthBits = 16; 
-	PixelFormatDescription.cStencilBits = 1;
-	PixelFormatDescription.iLayerType = PFD_MAIN_PLANE;
-	int PixelFormat = ChoosePixelFormat(HandleDC, &PixelFormatDescription);
+    try
+    {
+        PIXELFORMATDESCRIPTOR PixelFormatDescription;
+        ZeroMemory(&PixelFormatDescription, sizeof(PixelFormatDescription));
+        PixelFormatDescription.nVersion = 1;
+        PixelFormatDescription.dwFlags = PFD_SUPPORT_OPENGL | PFD_DRAW_TO_WINDOW | PFD_DOUBLEBUFFER;
+        PixelFormatDescription.iPixelType = PFD_TYPE_RGBA;
+        PixelFormatDescription.cColorBits = 32;
+        PixelFormatDescription.cDepthBits = 16;
+        PixelFormatDescription.cStencilBits = 1;
+        PixelFormatDescription.iLayerType = PFD_MAIN_PLANE;
+        int PixelFormat = ChoosePixelFormat(HandleDC, &PixelFormatDescription);
 
-	if (PixelFormat == 0)
-		return false;
+        if (PixelFormat == 0)
+            return false;
 
-	if (!SetPixelFormat(HandleDC, PixelFormat, &PixelFormatDescription))
-		return false;
+        if (!SetPixelFormat(HandleDC, PixelFormat, &PixelFormatDescription))
+            return false;
+    }
+    CATCH("setting pixel fromat window")
 
 	return true;
 }
 
 void WindowGL::SetStage(bool IsometricProjection)
 {
-	glViewport(0, 0, static_cast<GLsizei>(UserAreaWidth), static_cast<GLsizei>(UserAreaHeight));
-	glClearColor(0.0, 0.0, 0.0, 1.0);
+    try
+    {
+        glViewport(0, 0, static_cast<GLsizei>(UserAreaWidth), static_cast<GLsizei>(UserAreaHeight));
+        glClearColor(0.0, 0.0, 0.0, 1.0);
 
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	float Coordinates = static_cast<float>(UserAreaHeight) / static_cast<float>(UserAreaWidth);
-	if (!IsometricProjection)
-		glFrustum(-0.1, 0.1, Coordinates * -0.1, Coordinates * 0.1, 0.3, 100.0);
-	else
-		glOrtho(-3, 3, Coordinates * -3, Coordinates * 3, 0.3, 100.0);
-	glMatrixMode(GL_MODELVIEW);
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LEQUAL);
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        float Coordinates = static_cast<float>(UserAreaHeight) / static_cast<float>(UserAreaWidth);
+        if (!IsometricProjection)
+            glFrustum(-0.1, 0.1, Coordinates * -0.1, Coordinates * 0.1, 0.3, 100.0);
+        else
+            glOrtho(-3, 3, Coordinates * -3, Coordinates * 3, 0.3, 100.0);
+        glMatrixMode(GL_MODELVIEW);
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LEQUAL);
 
-	ArcBall->setBounds(static_cast<float>(UserAreaWidth), static_cast<float>(UserAreaHeight));
+        ArcBall->setBounds(static_cast<float>(UserAreaWidth), static_cast<float>(UserAreaHeight));
 
-	Lighting();
+        Lighting();
+    }
+    CATCH("setting stage")
 }
 
 void WindowGL::SetCamera()
 {
-	glLoadIdentity();
-	glRotatef(CameraCelPhi, 0, 1, 0);
-	glRotatef(CameraCelTheta, cosDegf(CameraCelPhi), 0, sinDegf(CameraCelPhi));
-	glTranslatef(CameraX, CameraY, CameraZ);
+    try
+    {
+        glLoadIdentity();
+        glRotatef(CameraCelPhi, 0, 1, 0);
+        glRotatef(CameraCelTheta, cosDegf(CameraCelPhi), 0, sinDegf(CameraCelPhi));
+        glTranslatef(CameraX, CameraY, CameraZ);
 
-	glTranslatef(0, 0, -CameraR);
+        glTranslatef(0, 0, -CameraR);
 
-	glMultMatrixf(Transform.M);
+        glMultMatrixf(Transform.M);
+    }
+    CATCH("setting camera")
 }
 
 void WindowGL::DrawStage()
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT); 
-	glLoadIdentity();
+    try
+    {
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        glLoadIdentity();
 
-	ShowRenderingFrequency();
+        ShowRenderingFrequency();
 
-	SetCamera();
-	DrawActors();
+        SetCamera();
+        DrawActors();
 
-	SwapBuffers(HandleDC);
+        SwapBuffers(HandleDC);
+    }
+    CATCH("drawing stage")
 }
 
 void WindowGL::ShowRenderingFrequency()
 {
-	static uint64_t OldTickNumber = GetTickCount();
-	uint64_t NewTickNumber = GetTickCount();
+    try
+    {
+        static uint64_t OldTickNumber = GetTickCount();
+        uint64_t NewTickNumber = GetTickCount();
 
-	if (NewTickNumber == OldTickNumber) 
-		return;
+        if (NewTickNumber == OldTickNumber)
+            return;
 
-	double f = 1E3 / (static_cast<double>(NewTickNumber) - static_cast<double>(OldTickNumber));
-	f = floor(10.0 * f) / 10.0;
-	OldTickNumber = NewTickNumber;
+        double f = 1E3 / (static_cast<double>(NewTickNumber) - static_cast<double>(OldTickNumber));
+        f = floor(10.0 * f) / 10.0;
+        OldTickNumber = NewTickNumber;
 
-	char Buffer[256];
-	SetWindowText(HandleWindow, strcat(_gcvt(f, 10, Buffer), "Hz"));
+        char Buffer[256];
+        SetWindowText(HandleWindow, strcat(_gcvt(f, 10, Buffer), "Hz"));
+	}
+    CATCH("showing rendering frequency")
 }
 
 void WindowGL::Lighting()
 {
-	glEnable(GL_LIGHTING);
+    try
+    {
+        glEnable(GL_LIGHTING);
 
-	const float BackgroundColor[] = { BackgroundLightIntensity, BackgroundLightIntensity, BackgroundLightIntensity };
-	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, BackgroundColor);
+        const float BackgroundColor[] = { BackgroundLightIntensity, BackgroundLightIntensity, BackgroundLightIntensity };
+        glLightModelfv(GL_LIGHT_MODEL_AMBIENT, BackgroundColor);
 
-	glEnable(GL_COLOR_MATERIAL);
-	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+        glEnable(GL_COLOR_MATERIAL);
+        glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 
-	glPushMatrix();
-	glLoadIdentity();
-	LightSources();
-	glPopMatrix();
+        glPushMatrix();
+        glLoadIdentity();
+        LightSources();
+        glPopMatrix();
 
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	}
+    CATCH("lighting")
 }
 
 void WindowGL::InitArcBall()
 {
-	Matrix3fSetIdentity(&LastRot);
-	Matrix3fSetIdentity(&ThisRot);
+    try
+    {
+        Matrix3fSetIdentity(&LastRot);
+        Matrix3fSetIdentity(&ThisRot);
 
-	for (IntType Index1 = 0; Index1 < 4; Index1++)
-		for (IntType Index2 = 0; Index2 < 4; Index2++)
-			Transform.M[Index1 + 4 * Index2] = (Index1 == Index2) ? 1.0f : 0.0f;
+        for (IntType Index1 = 0; Index1 < 4; Index1++)
+            for (IntType Index2 = 0; Index2 < 4; Index2++)
+                Transform.M[Index1 + 4 * Index2] = (Index1 == Index2) ? 1.0f : 0.0f;
 
-	ArcBall = make_unique<ArcBallT>(ArcBallT(640.0f, 480.0f));
+        ArcBall = make_unique<ArcBallT>(ArcBallT(640.0f, 480.0f));
+	}
+    CATCH("initating arc ball")
 }
 
 #pragma endregion
