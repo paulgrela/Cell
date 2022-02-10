@@ -18,30 +18,18 @@
 struct Atom
 {
 public:
-	//char* PDBRecord;
-
 	char RecordName[7];
 	UnsignedIntType AtomIndex;	
 	IntType Serial;	
 	char Name[5];	
-	char AltLoc;
-	char ResName[4];	
-	char ChainID;
-	IntType ResSeq;
-	char ICode;
-
+	char ResName[4];
 	double X;
 	double Y;
 	double Z;
-	
-	double Occupancy;
-	double TempFactor;
-	
 	char Element[3];
-	double Charge;
 public:
 	Atom(const char* PDBRecord, UnsignedIntType AtomIndex);
-	~Atom();
+	~Atom() = default;
 public:
 	[[nodiscard]] DoubleVectorType Position() const;
 public:

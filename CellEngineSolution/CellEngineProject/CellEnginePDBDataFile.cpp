@@ -17,18 +17,16 @@ char* Atom::GetAtomSymbol(const char* Name, char* AtomSymbol)
     {
         strcpy(AtomSymbol, "\0\0\0");
 
-        IntType Index = 0;
+        IntType CharIndex = 0;
         do
         {
-            AtomSymbol[0] = Name[Index];
-            Index++;
+            AtomSymbol[0] = Name[CharIndex];
+            CharIndex++;
         }
         while (AtomSymbol[0] < 'A' || AtomSymbol[0] > 'Z');
 
-        if (Name[Index] >= 'a' && Name[Index] <= 'z')
-        {
-            AtomSymbol[1] = Name[Index];
-        }
+        if (Name[CharIndex] >= 'a' && Name[CharIndex] <= 'z')
+            AtomSymbol[1] = Name[CharIndex];
         else
             AtomSymbol[1] = '\0';
 
@@ -43,27 +41,18 @@ Atom::Atom(const char* PDBRecord, UnsignedIntType AtomIndex)
 {
     try
     {
-        //this->PDBRecord = new char[strlen(PDBRecord) + 1];
-        //strcpy(this->PDBRecord, PDBRecord);
-        //ParseRecord(this->PDBRecord);
         ParseRecord(PDBRecord);
         this->AtomIndex = AtomIndex;
     }
     CATCH("initation of atom")
 }
 
-Atom::~Atom()
-{
-	//delete[] PDBRecord;
-}
-
 void Atom::ParseRecord(const char* LocalPDBRecord)
 {
     try
     {
-        char SSerial[5], SResSeq[4];
+        char SSerial[5];
         char SX[8], SY[8], SZ[8];
-        char SOccupancy[6], STempFactor[6], SCharge[3];
         char* EndPtr;
 
         strncpy(RecordName, LocalPDBRecord, 6);
@@ -75,31 +64,18 @@ void Atom::ParseRecord(const char* LocalPDBRecord)
         strncpy(Name, LocalPDBRecord + 12, 4);
         Name[4] = '\0';
 
-        AltLoc = LocalPDBRecord[16];
-
         strncpy(ResName, LocalPDBRecord + 17, 3);
         ResName[3] = '\0';
 
-        ChainID = LocalPDBRecord[21];
-        strncpy(SResSeq, LocalPDBRecord + 22, 4);
-        ResSeq = strtol(SResSeq, &EndPtr, 10);
-        ICode = LocalPDBRecord[26];
         strncpy(SX, LocalPDBRecord + 30, 8);
         X = strtod(SX, &EndPtr);
         strncpy(SY, LocalPDBRecord + 38, 8);
         Y = strtod(SY, &EndPtr);
         strncpy(SZ, LocalPDBRecord + 46, 8);
         Z = strtod(SZ, &EndPtr);
-        strncpy(SOccupancy, LocalPDBRecord + 54, 6);
-        Occupancy = strtod(SOccupancy, &EndPtr);
-        strncpy(STempFactor, LocalPDBRecord + 60, 6);
-        TempFactor = strtod(STempFactor, &EndPtr);
 
         strncpy(Element, LocalPDBRecord + 76, 2);
         Element[2] = '\0';
-
-        strncpy(SCharge, LocalPDBRecord + 78, 2);
-        Charge = strtod(SCharge, &EndPtr);
 
         string RecordNameStr = trim_whitespace_surrounding(RecordName);
         strncpy(RecordName, RecordNameStr.c_str(), RecordNameStr.length());
@@ -121,7 +97,7 @@ DoubleVectorType Atom::Position() const
 	return DoubleVectorType(X, Y, Z);
 }
 
-PDBDataFile::PDBDataFile(const char* FileName) : FileName(FileName)//, NumberOfDataRaws(0)
+PDBDataFile::PDBDataFile(const char* FileName) : FileName(FileName)
 {
     ChosenStructureIndex = 0;
 

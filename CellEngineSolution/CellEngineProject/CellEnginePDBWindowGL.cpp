@@ -2,6 +2,8 @@
 #include <memory>
 #include <exception>
 
+#include <string>
+
 #include "ExceptionsMacro.h"
 #include "CellEnginePDBWindowGL.h"
 
@@ -294,6 +296,16 @@ LRESULT PDBWindowGL::WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lPar
                             PDBDataFileObjectPointer->ChosenStructureIndex--;
                         RefreshListOfDrawing = true;
                         DrawStage();
+                    }
+                    break;
+                    case 'F':
+                    {
+                        for (PDBDataFileObjectPointer->ChosenStructureIndex = 0; PDBDataFileObjectPointer->ChosenStructureIndex < PDBDataFileObjectPointer->GetNumberOfStructures() - 1; PDBDataFileObjectPointer->ChosenStructureIndex++)
+                        {
+                            RefreshListOfDrawing = true;
+                            DrawStage();
+                            Sleep(20);
+                        }
                     }
                     break;
                 }
