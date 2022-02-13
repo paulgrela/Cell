@@ -149,195 +149,185 @@ LRESULT WindowGL::WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 
     try
     {
-	const IntType CameraRotationIdtTimer = 2;
+        const IntType CameraRotationIdtTimer = 2;
 
-	Result = Window::WndProc(hWnd, Message, wParam, lParam);
+        Result = Window::WndProc(hWnd, Message, wParam, lParam);
 
-	switch (Message)
-	{
-		case WM_CREATE:
-			InitWGL(hWnd);
-			SetStage();
-			{
-				char Title[1024] = "OpenGL ";
-				strcat_s(Title, (char*)glGetString(GL_VERSION));
-				strcat_s(Title, ", GLU ");
-				strcat_s(Title, (char*)gluGetString(GLU_VERSION));
-				SetWindowText(hWnd, Title);
-			}
-			break;
+        switch (Message)
+        {
+            case WM_CREATE:
+                InitWGL(hWnd);
+                SetStage();
+                {
+                    char Title[1024] = "OpenGL ";
+                    strcat_s(Title, (char*)glGetString(GL_VERSION));
+                    strcat_s(Title, ", GLU ");
+                    strcat_s(Title, (char*)gluGetString(GLU_VERSION));
+                    SetWindowText(hWnd, Title);
+                }
+                break;
 
-		case WM_DESTROY:
-			DeleteWGL();
-			KillTimer(HandleWindow, CameraRotationIdtTimer);
-			break;
+            case WM_DESTROY:
+                DeleteWGL();
+                break;
 
-		case WM_SIZE:
-			SetStage();
-			break;
+            case WM_SIZE:
+                SetStage();
+                break;
 
-		case WM_PAINT:
-			DrawStage();
-			ValidateRect(hWnd, nullptr);
-			break;
+            case WM_PAINT:
+                DrawStage();
+                ValidateRect(hWnd, nullptr);
+                break;
 
-		case WM_KEYDOWN:
-			switch (wParam)
-			{
-				case VK_ESCAPE:
-					SendMessage(HandleWindow, WM_DESTROY, 0, 0);
-					break;
+            case WM_KEYDOWN:
+                switch (wParam)
+                {
+                    case VK_ESCAPE:
+                        SendMessage(HandleWindow, WM_DESTROY, 0, 0);
+                        break;
 
-				case VK_OEM_MINUS:
-					BackgroundLightIntensity -= 0.01f;
-					if (BackgroundLightIntensity < 0)
-					    BackgroundLightIntensity = 0;
-					Lighting();
-					break;
+                    case VK_OEM_MINUS:
+                        BackgroundLightIntensity -= 0.01f;
+                        if (BackgroundLightIntensity < 0)
+                            BackgroundLightIntensity = 0;
+                        Lighting();
+                        break;
 
-				case VK_OEM_PLUS:
-				case '=':
-					BackgroundLightIntensity += 0.01f;
-					if (BackgroundLightIntensity > 1)
-					    BackgroundLightIntensity = 1;
-					Lighting();
-					break;
+                    case VK_OEM_PLUS:
+                    case '=':
+                        BackgroundLightIntensity += 0.01f;
+                        if (BackgroundLightIntensity > 1)
+                            BackgroundLightIntensity = 1;
+                        Lighting();
+                        break;
 
-				case 'C':
-					static bool IsometricProjection = false;
-					IsometricProjection = !IsometricProjection;
-					SetStage(IsometricProjection);
-					break;
-			}
+                    case 'C':
+                        static bool IsometricProjection = false;
+                        IsometricProjection = !IsometricProjection;
+                        SetStage(IsometricProjection);
+                        break;
+                }
 
-			if (wParam >= '0' && wParam <= '7')
-			{
-				GLenum Light = GL_LIGHT0;
-				switch (wParam)
-				{
-					case '1': Light = GL_LIGHT1; break;
-					case '2': Light = GL_LIGHT2; break;
-					case '3': Light = GL_LIGHT3; break;
-					case '4': Light = GL_LIGHT4; break;
-					case '5': Light = GL_LIGHT5; break;
-					case '6': Light = GL_LIGHT6; break;
-					case '7': Light = GL_LIGHT7; break;
-					default: Light = GL_LIGHT0;
-				}
+                if (wParam >= '0' && wParam <= '7')
+                {
+                    GLenum Light = GL_LIGHT0;
+                    if (wParam == 1)
+                        Light = GL_LIGHT1;
 
-				if (glIsEnabled(Light))
-					glDisable(Light);
-				else
-					glEnable(Light);
-			}
+                    if (glIsEnabled(Light))
+                        glDisable(Light);
+                    else
+                        glEnable(Light);
+                }
 
-			DrawStage();
-			break;
+                DrawStage();
+                break;
 
-	    default: break;
-	}
-
-	if (ControlCameraByUser == true)
-		switch (Message)
-		{
-			case WM_LBUTTONDOWN:
-
-				MousePt.s.X = (GLfloat)LOWORD(lParam);
-				MousePt.s.Y = (GLfloat)HIWORD(lParam);
-				LastRot = ThisRot;
-				ArcBall->click(&MousePt);
-
-			case WM_RBUTTONDOWN:
-			case WM_MBUTTONDOWN:
-				MouseCursorInitialPosition.x = LOWORD(lParam);
-				MouseCursorInitialPosition.y = HIWORD(lParam);
-				Result = 0;
-				break;
-
-			case WM_MOUSEMOVE:
-				if (wParam & (MK_LBUTTON | MK_RBUTTON | MK_MBUTTON))
-				{
-					POINT MouseCursorCurrentPosition = { LOWORD(lParam),HIWORD(lParam) };
-					POINT MouseCursorShift = { MouseCursorCurrentPosition.x - MouseCursorInitialPosition.x, MouseCursorCurrentPosition.y - MouseCursorInitialPosition.y };
-
-					if (MouseCursorShift.x == 0 && MouseCursorShift.y == 0)
-						break;
-
-					if (wParam & MK_LBUTTON)
-					{
-						MousePt.s.X = (GLfloat)MouseCursorCurrentPosition.x;
-						MousePt.s.Y = (GLfloat)MouseCursorCurrentPosition.y;
-						Quat4fT ThisQuat;
-						ArcBall->drag(&MousePt, &ThisQuat);
-						Matrix3fSetRotationFromQuat4f(&ThisRot, &ThisQuat);
-						Matrix3fMulMatrix3f(&ThisRot, &LastRot);
-						Matrix4fSetRotationFromMatrix3f(&Transform, &ThisRot);
-					}
-					if (wParam & MK_RBUTTON)
-					{
-						const float MouseSensitivity = 75.0f;
-						CameraX += MouseCursorShift.x / MouseSensitivity;
-						CameraY -= MouseCursorShift.y / MouseSensitivity;
-					}
-					if (wParam & MK_MBUTTON)
-					{
-						const float MouseSensitivity = 5.0f;
-						CameraCelPhi += MouseCursorShift.x / MouseSensitivity;
-						float ChangeAimTheta = MouseCursorShift.y / MouseSensitivity;
-						if (fabs(CameraCelTheta + ChangeAimTheta) < 90)
-							CameraCelTheta += ChangeAimTheta;
-					}
-
-					MouseCursorInitialPosition.x = LOWORD(lParam);
-					MouseCursorInitialPosition.y = HIWORD(lParam);
-
-					DrawStage();
-				}
-				Result = 0;
-				break;
-
-			case WM_MOUSEWHEEL:
-			{
-				const float MouseSensitivity = 10.0f;
-				auto RollingPositionChange = static_cast<short>(HIWORD(wParam));
-				CameraR *= 1 + static_cast<float>(RollingPositionChange) / abs(static_cast<float>(RollingPositionChange)) / MouseSensitivity;
-
-				DrawStage();
-
-				Result = 0;
-				break;
-			}
-
-			case WM_KEYDOWN:
-				const float Shift = 0.1f;
-				switch (wParam)
-				{
-					case 'W':
-					case VK_UP:
-						CameraZ += cosDegf(CameraCelPhi) * Shift;
-						CameraX -= sinDegf(CameraCelPhi) * Shift;
-						break;
-					case 'S':
-					case VK_DOWN:
-						CameraZ -= cosDegf(CameraCelPhi) * Shift;
-						CameraX += sinDegf(CameraCelPhi) * Shift;
-						break;
-					case 'A':
-					case VK_LEFT:
-						CameraZ += sinDegf(CameraCelPhi) * Shift;
-						CameraX += cosDegf(CameraCelPhi) * Shift;
-						break;
-					case 'D':
-					case VK_RIGHT:
-						CameraZ -= sinDegf(CameraCelPhi) * Shift;
-						CameraX -= cosDegf(CameraCelPhi) * Shift;
-						break;
-                    default: break;
-				}
-
-				DrawStage();
-				break;
+            default: break;
         }
+
+        if (ControlCameraByUser == true)
+            switch (Message)
+            {
+                case WM_LBUTTONDOWN:
+
+                    MousePt.s.X = (GLfloat)LOWORD(lParam);
+                    MousePt.s.Y = (GLfloat)HIWORD(lParam);
+                    LastRot = ThisRot;
+                    ArcBall->click(&MousePt);
+
+                case WM_RBUTTONDOWN:
+                case WM_MBUTTONDOWN:
+                    MouseCursorInitialPosition.x = LOWORD(lParam);
+                    MouseCursorInitialPosition.y = HIWORD(lParam);
+                    Result = 0;
+                    break;
+
+                case WM_MOUSEMOVE:
+                    if (wParam & (MK_LBUTTON | MK_RBUTTON | MK_MBUTTON))
+                    {
+                        POINT MouseCursorCurrentPosition = { LOWORD(lParam),HIWORD(lParam) };
+                        POINT MouseCursorShift = { MouseCursorCurrentPosition.x - MouseCursorInitialPosition.x, MouseCursorCurrentPosition.y - MouseCursorInitialPosition.y };
+
+                        if (MouseCursorShift.x == 0 && MouseCursorShift.y == 0)
+                            break;
+
+                        if (wParam & MK_LBUTTON)
+                        {
+                            MousePt.s.X = (GLfloat)MouseCursorCurrentPosition.x;
+                            MousePt.s.Y = (GLfloat)MouseCursorCurrentPosition.y;
+                            Quat4fT ThisQuat;
+                            ArcBall->drag(&MousePt, &ThisQuat);
+                            Matrix3fSetRotationFromQuat4f(&ThisRot, &ThisQuat);
+                            Matrix3fMulMatrix3f(&ThisRot, &LastRot);
+                            Matrix4fSetRotationFromMatrix3f(&Transform, &ThisRot);
+                        }
+                        if (wParam & MK_RBUTTON)
+                        {
+                            const float MouseSensitivity = 75.0f;
+                            CameraX += MouseCursorShift.x / MouseSensitivity;
+                            CameraY -= MouseCursorShift.y / MouseSensitivity;
+                        }
+                        if (wParam & MK_MBUTTON)
+                        {
+                            const float MouseSensitivity = 5.0f;
+                            CameraCelPhi += MouseCursorShift.x / MouseSensitivity;
+                            float ChangeAimTheta = MouseCursorShift.y / MouseSensitivity;
+                            if (fabs(CameraCelTheta + ChangeAimTheta) < 90)
+                                CameraCelTheta += ChangeAimTheta;
+                        }
+
+                        MouseCursorInitialPosition.x = LOWORD(lParam);
+                        MouseCursorInitialPosition.y = HIWORD(lParam);
+
+                        DrawStage();
+                    }
+                    Result = 0;
+                    break;
+
+                case WM_MOUSEWHEEL:
+                {
+                    const float MouseSensitivity = 10.0f;
+                    auto RollingPositionChange = static_cast<short>(HIWORD(wParam));
+                    CameraR *= 1 + static_cast<float>(RollingPositionChange) / abs(static_cast<float>(RollingPositionChange)) / MouseSensitivity;
+
+                    DrawStage();
+
+                    Result = 0;
+                    break;
+                }
+
+                case WM_KEYDOWN:
+                    const float Shift = 0.1f;
+                    switch (wParam)
+                    {
+                        case 'W':
+                        case VK_UP:
+                            CameraZ += cosDegf(CameraCelPhi) * Shift;
+                            CameraX -= sinDegf(CameraCelPhi) * Shift;
+                            break;
+                        case 'S':
+                        case VK_DOWN:
+                            CameraZ -= cosDegf(CameraCelPhi) * Shift;
+                            CameraX += sinDegf(CameraCelPhi) * Shift;
+                            break;
+                        case 'A':
+                        case VK_LEFT:
+                            CameraZ += sinDegf(CameraCelPhi) * Shift;
+                            CameraX += cosDegf(CameraCelPhi) * Shift;
+                            break;
+                        case 'D':
+                        case VK_RIGHT:
+                            CameraZ -= sinDegf(CameraCelPhi) * Shift;
+                            CameraX -= cosDegf(CameraCelPhi) * Shift;
+                            break;
+                        default: break;
+                    }
+
+                    DrawStage();
+                    break;
+            }
     }
     CATCH("executing WindowGL::WndProc")
 

@@ -21,12 +21,12 @@ public:
 	PDBWindowGL();
 	~PDBWindowGL() = default;
 private:
-    char ChosenAtomDescription[256] = "";
+    std::string ChosenAtomDescription;
 	std::unique_ptr<PDBDataFile> PDBDataFileObjectPointer;
 	bool OpenPDBFile(const char* FileName);
 	void DrawAtoms(const double LengthUnit, const double AtomSizeLengthUnit, bool MakeColors) const;
 	void DrawBonds(const double LengthUnit, bool MakeColors) const;
-	static void ChooseAtomColor(const char* AtomSymbol, const float Alpha);
+	void ChooseAtomColor(const std::string_view Name, const float Alpha) const;
     [[nodiscard]] UnsignedIntType CreateListOfDrawing(const double LengthUnit);
 	LRESULT WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam) final;
 private:

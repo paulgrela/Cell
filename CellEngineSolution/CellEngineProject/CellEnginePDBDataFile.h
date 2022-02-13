@@ -18,22 +18,18 @@
 struct Atom
 {
 public:
-	char RecordName[7];
-	UnsignedIntType AtomIndex;	
-	IntType Serial;	
-	char Name[5];	
-	char ResName[4];
+	UnsignedIntType AtomIndex;
+	IntType Serial;
+	std::string Name;
+	std::string ResName;
 	double X;
 	double Y;
 	double Z;
-	char Element[3];
 public:
 	Atom(const char* PDBRecord, UnsignedIntType AtomIndex);
 	~Atom() = default;
 public:
 	[[nodiscard]] DoubleVectorType Position() const;
-public:
-    static char* GetAtomSymbol(const char* Name, char* elementSymbol);
 private:
 	void ParseRecord(const char* LocalPDBRecord);
 };

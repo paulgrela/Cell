@@ -11,32 +11,6 @@
 using namespace std;
 using namespace string_utils;
 
-char* Atom::GetAtomSymbol(const char* Name, char* AtomSymbol)
-{
-    try
-    {
-        strcpy(AtomSymbol, "\0\0\0");
-
-        IntType CharIndex = 0;
-        do
-        {
-            AtomSymbol[0] = Name[CharIndex];
-            CharIndex++;
-        }
-        while (AtomSymbol[0] < 'A' || AtomSymbol[0] > 'Z');
-
-        if (Name[CharIndex] >= 'a' && Name[CharIndex] <= 'z')
-            AtomSymbol[1] = Name[CharIndex];
-        else
-            AtomSymbol[1] = '\0';
-
-        AtomSymbol[2] = '\0';
-    }
-    CATCH("getting atom symbol")
-
-	return AtomSymbol;
-}
-
 Atom::Atom(const char* PDBRecord, UnsignedIntType AtomIndex)
 {
     try
@@ -51,44 +25,16 @@ void Atom::ParseRecord(const char* LocalPDBRecord)
 {
     try
     {
-        char SSerial[5];
-        char SX[8], SY[8], SZ[8];
-        char* EndPtr;
+        string RecordStr = LocalPDBRecord;
 
-        strncpy(RecordName, LocalPDBRecord, 6);
-        RecordName[6] = '\0';
+        Serial = stoi(RecordStr.substr(6, 5));
+        Name = trim_whitespace_surrounding(RecordStr.substr(12, 4));
+        ResName = trim_whitespace_surrounding(RecordStr.substr(17, 3));
 
-        strncpy(SSerial, LocalPDBRecord + 6, 5);
-        Serial = strtol(SSerial, &EndPtr, 10);
-
-        strncpy(Name, LocalPDBRecord + 12, 4);
-        Name[4] = '\0';
-
-        strncpy(ResName, LocalPDBRecord + 17, 3);
-        ResName[3] = '\0';
-
-        strncpy(SX, LocalPDBRecord + 30, 8);
-        X = strtod(SX, &EndPtr);
-        strncpy(SY, LocalPDBRecord + 38, 8);
-        Y = strtod(SY, &EndPtr);
-        strncpy(SZ, LocalPDBRecord + 46, 8);
-        Z = strtod(SZ, &EndPtr);
-
-        strncpy(Element, LocalPDBRecord + 76, 2);
-        Element[2] = '\0';
-
-        string RecordNameStr = trim_whitespace_surrounding(RecordName);
-        strncpy(RecordName, RecordNameStr.c_str(), RecordNameStr.length());
-
-        string NameStr = trim_whitespace_surrounding(Name);
-        strncpy(Name, NameStr.c_str(), NameStr.length());
-
-        string ResNameStr = trim_whitespace_surrounding(ResName);
-        strncpy(ResName, ResNameStr.c_str(), ResNameStr.length());
-
-        string ElementStr = trim_whitespace_surrounding(Element);
-        strncpy(Element, ElementStr.c_str(), ElementStr.length());
-	}
+        X = stod(RecordStr.substr(30, 8));
+        Y = stod(RecordStr.substr(38, 8));
+        Z = stod(RecordStr.substr(46, 8));
+    }
     CATCH("parsing arom record")
 }
 
