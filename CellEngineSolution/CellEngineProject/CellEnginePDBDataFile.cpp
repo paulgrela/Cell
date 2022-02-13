@@ -57,21 +57,34 @@ void PDBDataFile::ReadDataFromFile()
         std::vector<Atom> StructureObject;
 
         const IntType MaxLineSize = 256;
-        char Line[MaxLineSize] = "\0";
+        //char Line[MaxLineSize] = "\0";
+        string Line;
 
+        //std::ifstream File(FileName, std::ios_base::in);
         std::ifstream File(FileName, std::ios_base::in);
-
-        while (File.getline(Line, MaxLineSize))
+        int a = 0;
+        //while (File.getline(Line, MaxLineSize))
+        while (getline(File, Line, '\n'))
+        //while (getline(File, Line, '\n') && a < 100000)
         {
-            if (strstr(Line, "ATOM") == Line)
-                StructureObject.emplace_back(Atom(Line, StructureObject.size()));
-            else
-            if (strstr(Line, "END") == Line)
-            {
-                Atoms.push_back(StructureObject);
-                StructureObject.clear();
-            }
+            a++;
+            if (a % 10000 == 0 )
+                cout << a << endl;
+            //if (strstr(Line, "ATOM") == Line || strstr(Line, "HETATM") == Line)
+            if (Line.substr(0, 4) == "ATOM" || Line.substr(0, 6) == "HETATM")
+                StructureObject.emplace_back(Atom(Line.c_str(), StructureObject.size()));
+//            else
+//            if (Line.substr(0, 3) == "END" )//lub koniec pliku
+//            //if (strstr(Line, "END") == Line)
+//            {
+//                Atoms.push_back(StructureObject);
+//                StructureObject.clear();
+//            }
         }
+
+        Atoms.push_back(StructureObject);
+        StructureObject.clear();
+
         File.close();
     }
     CATCH("reading data from PDB file")

@@ -11,7 +11,7 @@ using namespace std;
 
 #pragma region DrawPDB
 
-PDBWindowGL::PDBWindowGL() : WindowGL(), PDBDataFileObjectPointer(nullptr), ShowBonds(true), ShowPDBSize(1.00f), RefreshListOfDrawing(false), ProjectionType(false), ChosenAtomIndex(-1)
+PDBWindowGL::PDBWindowGL() : WindowGL(), PDBDataFileObjectPointer(nullptr), ShowBonds(false), ShowPDBSize(1.00f), RefreshListOfDrawing(false), ProjectionType(false), ChosenAtomIndex(-1)
 {
     try
     {
@@ -146,34 +146,21 @@ void PDBWindowGL::ChooseAtomColor(const string_view Name, const float Alpha = 1.
 {
     try
     {
-//        string AtomSymbolStr = AtomSymbol;
-//
-//        if (AtomSymbolStr.substr(0, 2) == "CA")
+//        if (Name == "CA")
 //            glColor4f(0.25f, 0.75f, 0.75f, Alpha);
 //        else
-//        if (AtomSymbolStr.substr(0, 2) == "CB")
+//        if (Name == "CB")
 //            glColor4f(1.00f, 0.00f, 0.00f, Alpha);
 
-        //string AtomSymbolStr = AtomSymbol;
-        //cout << "#" << Name << "#" << endl;
-        if (Name == "CA")
-            glColor4f(0.25f, 0.75f, 0.75f, Alpha);
-        else
-        if (Name == "CB")
-            glColor4f(1.00f, 0.00f, 0.00f, Alpha);
-
-        //SetWindowText(HandleWindow, AtomSymbolStr.c_str());
-        //MessageBox(HandleWindow, AtomSymbolStr.c_str(), "PDB VIEWER", MB_OK);
-
-//        switch(Name[1])
-//        {
-//            case 'C': glColor4f(0.25f, 0.75f, 0.75f, Alpha); break;
-//            case 'O': glColor4f(1.00f, 0.00f, 0.00f, Alpha); break;
-//            case 'H': glColor4f(1.00f, 1.00f, 1.00f, Alpha); break;
-//            case 'N': glColor4f(0.00f, 0.00f, 1.00f, Alpha); break;
-//            case 'P': glColor4f(0.50f, 0.50f, 0.20f, Alpha); break;
-//            default: glColor4f(0.50f, 0.50f, 0.50f, Alpha); break;
-//        }
+        switch(Name[0])
+        {
+            case 'C': glColor4f(0.25f, 0.75f, 0.75f, Alpha); break;
+            case 'O': glColor4f(1.00f, 0.00f, 0.00f, Alpha); break;
+            case 'H': glColor4f(1.00f, 1.00f, 1.00f, Alpha); break;
+            case 'N': glColor4f(0.00f, 0.00f, 1.00f, Alpha); break;
+            case 'P': glColor4f(0.50f, 0.50f, 0.20f, Alpha); break;
+            default: glColor4f(0.50f, 0.50f, 0.50f, Alpha); break;
+        }
     }
     CATCH("chossing atom color")
 }
@@ -260,9 +247,10 @@ LRESULT PDBWindowGL::WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lPar
         {
             case WM_DESTROY: KillTimer(HandleWindow, 1); break;
 
-            case WM_TIMER: //SendMessage(HandleWindow, WM_KEYDOWN, 'N', 0); break;
+            case WM_TIMER:
             {
-                if (PDBDataFileObjectPointer->ChosenStructureIndex < PDBDataFileObjectPointer->GetNumberOfStructures() - 1) {
+                if (PDBDataFileObjectPointer->ChosenStructureIndex < PDBDataFileObjectPointer->GetNumberOfStructures() - 1)
+                {
                     PDBDataFileObjectPointer->ChosenStructureIndex++;
                     RefreshListOfDrawing = true;
                     DrawStage();
