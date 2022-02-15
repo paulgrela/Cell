@@ -20,6 +20,8 @@ private:
 public:
 	PDBWindowGL();
 	~PDBWindowGL() = default;
+public:
+    LRESULT WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam) final;
 private:
     std::string ChosenAtomDescription;
 	std::unique_ptr<PDBDataFile> PDBDataFileObjectPointer;
@@ -28,7 +30,6 @@ private:
 	void DrawBonds(const double LengthUnit, bool MakeColors) const;
 	void ChooseAtomColor(const std::string_view Name, const float Alpha) const;
     [[nodiscard]] UnsignedIntType CreateListOfDrawing(const double LengthUnit);
-	LRESULT WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam) final;
 private:
 	bool ShowBonds;
 	float ShowPDBSize;
@@ -38,9 +39,6 @@ private:
 	void DrawChosenAtom(const double LengthUnit, const double AtomSizeLengthUnit, IntType LocalChosenAtomIndex, bool UseGrid) const;
 	void DrawChosenAtomDescription(IntType LocalChosenAtomIndex, IntType BitmapFont);
 	IntType ChosenAtomIndex;
-} 
-PDBWindowGLObject;
-
-WindowGL* WindowGLPointer = &PDBWindowGLObject;
+};
 
 #endif

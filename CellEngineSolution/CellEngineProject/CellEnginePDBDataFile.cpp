@@ -1,11 +1,10 @@
 
-#include <cmath>
 #include <fstream>
-#include <cstring>
 
 #include "ExceptionsMacro.h"
 
 #include "StringUtils.h"
+#include "DateTimeUtils.h"
 #include "CellEnginePDBDataFile.h"
 
 using namespace std;
@@ -54,45 +53,31 @@ void PDBDataFile::ReadDataFromFile()
 {
     try
     {
+        string Line;
         std::vector<Atom> StructureObject;
 
-        //const IntType MaxLineSize = 256;
-        //char Line[MaxLineSize] = "\0";
-        string Line;
+        const auto start_time = chrono::high_resolution_clock::now();
 
-        //std::ifstream File(FileName, std::ios_base::in);
         std::ifstream File(FileName, std::ios_base::in);
-        //int a = 0;
-        //while (File.getline(Line, MaxLineSize))
-//        bool EndOfModelFound = false;
 
         while (getline(File, Line, '\n'))
-        //while (getline(File, Line, '\n') && a < 100000)
         {
-            //a++;
-            //if (a % 10000 == 0 )
-            //    cout << a << endl;
-            //if (strstr(Line, "ATOM") == Line || strstr(Line, "HETATM") == Line)
             if (Line.substr(0, 4) == "ATOM" || Line.substr(0, 6) == "HETATM")
-            {
                 StructureObject.emplace_back(Atom(Line.c_str(), StructureObject.size()));
-//                EndOfModelFound = false;
-            }
             else
-            if (Line.substr(0, 3) == "END" )//lub koniec pliku
-//            //if (strstr(Line, "END") == Line)
+            if (Line.substr(0, 3) == "END" )
             {
                 Atoms.push_back(StructureObject);
                 StructureObject.clear();
-//                EndOfModelFound = true;
             }
         }
 
-//        if (EndOfModelFound == false)
-//        {
-//            Atoms.push_back(StructureObject);
-//            StructureObject.clear();
-//        }
+        LoggersManagerObject.Log(STREAM("FINISHED READING OF PDB FILE"));
+
+        const auto stop_time = chrono::high_resolution_clock::now();
+
+        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Execution of reading data from pdb file has taken time: ","executing printing duration_time")));
+
         File.close();
     }
     CATCH("reading data from PDB file")

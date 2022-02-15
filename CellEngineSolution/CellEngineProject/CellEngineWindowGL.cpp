@@ -9,6 +9,8 @@
 #include "StringUtils.h"
 #include "DateTimeUtils.h"
 
+#include "CellEnginePDBWindowGL.h"
+
 using namespace std;
 
 void InitializeLoggerManagerParameters()
@@ -20,20 +22,23 @@ void InitializeLoggerManagerParameters()
         LoggersManagerObject.InitializeFilesNames({ "AllMessages" });
         LoggersManagerObject.InitializeSelectiveWordsFunctions({ [](const string& s) { return true; } });
         LoggersManagerObject.InitializePrintingParameters(true, true, false, false, false, false, false, true, true, false, false, false, 10000);
-        LoggersManagerObject.InitializeLoggerManagerDataForTask(string("CELL_RESULTS").c_str(), ".\\", string("Logs." + GetActualDateTimeStandardCPP(".", ".", ".", ".", ".")), true, 0, function<void(const uint64_t& CurrentThreadId, const uint64_t FileNumber, const string& MessageStr)>());
+        LoggersManagerObject.InitializeLoggerManagerDataForTask("CELL_RESULTS", ".\\", string("Logs." + GetActualDateTimeStandardCPP(".", ".", ".", ".", ".")), true, 0, function<void(const uint64_t& CurrentThreadId, const uint64_t FileNumber, const string& MessageStr)>());
     }
     CATCH("initializing logger manager parameters")
 }
 
 #pragma region Functions WinMain and WndProc
 
-extern WindowGL* WindowGLPointer;
+unique_ptr<PDBWindowGL> WindowGLPointer;
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
     try
     {
         InitializeLoggerManagerParameters();
+        LoggersManagerObject.Log(STREAM("START CELL"));
+
+        WindowGLPointer = make_unique<PDBWindowGL>();
 
         POINT WindowPosition = { 480,100 };
         POINT WindowSize = { 1600,1200 };

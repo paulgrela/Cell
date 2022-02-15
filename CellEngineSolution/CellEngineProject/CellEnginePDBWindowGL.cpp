@@ -5,6 +5,7 @@
 #include <string>
 
 #include "ExceptionsMacro.h"
+#include "DateTimeUtils.h"
 #include "CellEnginePDBWindowGL.h"
 
 using namespace std;
@@ -79,7 +80,7 @@ void PDBWindowGL::DrawAtoms(const double LengthUnit, const double AtomSizeLength
 
         gluDeleteQuadric(Quadriga);
         glPopMatrix();
-	}
+    }
     CATCH("drawing atoms")
 }
 
@@ -107,21 +108,6 @@ void PDBWindowGL::DrawChosenAtom(const double LengthUnit, const double AtomSizeL
     CATCH("drawing chosen atom")
 }
 
-void PrintTextInGL(const char* Text, IntType CharactersNumber, UnsignedIntType Font, IntType FirstCharCode)
-{
-    try
-    {
-        if (Text == nullptr)
-            return;
-
-        glPushAttrib(GL_LIST_BIT);
-        glListBase(Font - FirstCharCode);
-        glCallLists(CharactersNumber, GL_UNSIGNED_BYTE, Text);
-        glPopAttrib();
-    }
-    CATCH("printing text in gl")
-}
-
 void PDBWindowGL::DrawChosenAtomDescription(IntType LocalChosenAtomIndex, IntType BitmapFont)
 {
     try
@@ -129,13 +115,18 @@ void PDBWindowGL::DrawChosenAtomDescription(IntType LocalChosenAtomIndex, IntTyp
         ChosenAtomDescription = to_string(PDBDataFileObjectPointer->GetAtom(LocalChosenAtomIndex).Serial) + "." + PDBDataFileObjectPointer->GetAtom(LocalChosenAtomIndex).Name + "(" + PDBDataFileObjectPointer->GetAtom(LocalChosenAtomIndex).ResName + ")";
 
         glPushMatrix();
+
         glLoadIdentity();
 
         float Coordinates = UserAreaHeight / (float)UserAreaWidth;
         float TextPosition = (!ProjectionType) ? -0.095f : -2.85f;
 
         glRasterPos3f(TextPosition, TextPosition * Coordinates, -0.3f);
-        PrintTextInGL(ChosenAtomDescription.c_str(), 256, BitmapFont, 32);
+
+        glPushAttrib(GL_LIST_BIT);
+        glListBase(BitmapFont - 32);
+        glCallLists(ChosenAtomDescription.length(), GL_UNSIGNED_BYTE, ChosenAtomDescription.c_str());
+        glPopAttrib();
 
         glPopMatrix();
 	}
@@ -146,12 +137,6 @@ void PDBWindowGL::ChooseAtomColor(const string_view Name, const float Alpha = 1.
 {
     try
     {
-//        if (Name == "CA")
-//            glColor4f(0.25f, 0.75f, 0.75f, Alpha);
-//        else
-//        if (Name == "CB")
-//            glColor4f(1.00f, 0.00f, 0.00f, Alpha);
-
         switch(Name[0])
         {
             case 'C': glColor4f(0.25f, 0.75f, 0.75f, Alpha); break;
@@ -223,10 +208,26 @@ UnsignedIntType PDBWindowGL::CreateListOfDrawing(const double LengthUnit)
         glColor3f(1, 1, 1);
 
         if (ShowBonds)
+        {
+            const auto start_time = chrono::high_resolution_clock::now();
+
             DrawBonds(LengthUnit, true);
 
+            const auto stop_time = chrono::high_resolution_clock::now();
+
+            LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Execution of drawing bonds has taken time: ","executing printing duration_time")));
+        }
+
         if (ShowPDBSize != 0)
+        {
+            const auto start_time = chrono::high_resolution_clock::now();
+
             DrawAtoms(LengthUnit, ShowPDBSize, true);
+
+            const auto stop_time = chrono::high_resolution_clock::now();
+
+            LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Execution of drawing atoms has taken time: ","executing printing duration_time")));
+        }
 
         glEndList();
     }
