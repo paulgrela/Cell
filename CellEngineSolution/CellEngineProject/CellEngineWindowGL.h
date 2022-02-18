@@ -23,6 +23,7 @@ public:
 	bool Init(HINSTANCE ApplicationHandle, POINT WindowPosition, POINT WindowSize);
 	static WPARAM Run();
 	virtual LRESULT WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam);
+    void ResizeWindow();
 };
 
 #include "ArcBall.h"
@@ -37,18 +38,33 @@ private:
 	void DeleteWGL();
 protected:
 	void SetCamera();
-	void SetStage(bool IsometricProjection = false);
+	void SetStage();
 	void DrawStage();
 	virtual void DrawActors() = 0;
 	void ShowRenderingFrequency();
 public:
-	WindowGL() : Window(), HandleRC(nullptr), HandleDC(nullptr), ControlCameraByUser(true), MouseCursorInitialPosition(POINT()), CameraR(10), CameraCelPhi(0), CameraCelTheta(0), CameraX(0), CameraY(0), CameraZ(0), ArcBall(nullptr), BackgroundLightIntensity(0.5f)
+	WindowGL() : Window(), HandleRC(nullptr), HandleDC(nullptr), IsometricProjection(false), MouseCursorInitialPosition(POINT()), CameraR(10), CameraCelPhi(0), CameraCelTheta(0), CameraX(0), CameraY(0), CameraZ(0), ArcBall(nullptr), BackgroundLightIntensity(0.5f)
 	{
 		InitArcBall();
 	};
 	LRESULT WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam) override;
+private:
+    void KeyboardKeyDownPressedEvent(WPARAM wParam);
+    UnsignedIntType MouseLeftButtonDownEvent(WPARAM wParam, LPARAM lParam);
+    UnsignedIntType MouseRightButtonDownEvent(WPARAM wParam, LPARAM lParam);
+    UnsignedIntType MouseMoveEvent(WPARAM wParam, LPARAM lParam);
+    UnsignedIntType MouseWheelEvent(WPARAM wParam, LPARAM lParam);
+private:
+    void ChangeProjectionType();
+    void ShiftCameraCloser();
+    void ShiftCameraFarer();
+    void ShiftCameraRight();
+    void ShiftCameraLeft();
+private:
+    void CreateWindowEvent(HWND hWnd);
+    void PaintEvent(HWND hWnd);
 protected:
-	bool ControlCameraByUser;
+    bool IsometricProjection;
 private:
 	POINT MouseCursorInitialPosition;
 	float CameraR;

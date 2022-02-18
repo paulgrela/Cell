@@ -12,7 +12,7 @@ using namespace std;
 
 #pragma region DrawPDB
 
-PDBWindowGL::PDBWindowGL() : WindowGL(), PDBDataFileObjectPointer(nullptr), ShowBonds(false), ShowPDBSize(1.00f), RefreshListOfDrawing(false), ProjectionType(false), ChosenAtomIndex(-1)
+PDBWindowGL::PDBWindowGL() : WindowGL(), PDBDataFileObjectPointer(nullptr), ShowBonds(false), ShowPDBSize(1.00f), RefreshListOfDrawing(false), ChosenElementIndex(-1)
 {
     try
     {
@@ -44,7 +44,7 @@ bool PDBWindowGL::OpenPDBFile(const char* FileName)
 	return true;
 }
 
-void PDBWindowGL::DrawAtoms(const double LengthUnit, const double AtomSizeLengthUnit, bool MakeColors) const
+void PDBWindowGL::DrawElements(const double LengthUnit, const double ElementSizeLengthUnit, bool MakeColors) const
 {
     try
     {
@@ -62,17 +62,17 @@ void PDBWindowGL::DrawAtoms(const double LengthUnit, const double AtomSizeLength
         glInitNames();
         glPushName(-1);
 
-        for (const Atom& AtomObjectPtr : PDBDataFileObjectPointer->GetAtoms())
+        for (const Element& ElementObjectPtr : PDBDataFileObjectPointer->GetElements())
         {
-            DoubleVectorType AtomPosition = LengthUnit * AtomObjectPtr.Position();
+            DoubleVectorType ElementPosition = LengthUnit * ElementObjectPtr.Position();
 
             if (MakeColors == true)
-                ChooseAtomColor(AtomObjectPtr.Name, 1.0f);
+                ChooseElementColor(ElementObjectPtr.Name, 1.0f);
 
             glPushMatrix();
-            glTranslated(AtomPosition.X, AtomPosition.Y, AtomPosition.Z);
-            glLoadName(AtomObjectPtr.AtomIndex);
-            gluSphere(Quadriga, LengthUnit * AtomSizeLengthUnit, HowManyPointsInEachDimension, HowManyPointsInEachDimension);
+            glTranslated(ElementPosition.X, ElementPosition.Y, ElementPosition.Z);
+            glLoadName(ElementObjectPtr.ElementIndex);
+            gluSphere(Quadriga, LengthUnit * ElementSizeLengthUnit, HowManyPointsInEachDimension, HowManyPointsInEachDimension);
             glPopMatrix();
         }
 
@@ -81,14 +81,14 @@ void PDBWindowGL::DrawAtoms(const double LengthUnit, const double AtomSizeLength
         gluDeleteQuadric(Quadriga);
         glPopMatrix();
     }
-    CATCH("drawing atoms")
+    CATCH("drawing Elements")
 }
 
-void PDBWindowGL::DrawChosenAtom(const double LengthUnit, const double AtomSizeLengthUnit, IntType LocalChosenAtomIndex, bool UseGrid) const
+void PDBWindowGL::DrawChosenElement(const double LengthUnit, const double ElementSizeLengthUnit, IntType LocalChosenElementIndex, bool UseGrid) const
 {
     try
     {
-        if (LocalChosenAtomIndex < 0)
+        if (LocalChosenElementIndex < 0)
             return;
 
         glPushMatrix();
@@ -98,42 +98,42 @@ void PDBWindowGL::DrawChosenAtom(const double LengthUnit, const double AtomSizeL
             gluQuadricDrawStyle(Quadric, GLU_LINE);
         glLineWidth(1.0f);
         glShadeModel(GL_SMOOTH);
-        DoubleVectorType ChosenAtomPosition = LengthUnit * (PDBDataFileObjectPointer->GetAtom(LocalChosenAtomIndex).Position() - PDBDataFileObjectPointer->MassCenter());
-        glTranslated(ChosenAtomPosition.X, ChosenAtomPosition.Y, ChosenAtomPosition.Z);
-        gluSphere(Quadric, LengthUnit * AtomSizeLengthUnit, 15, 15);
+        DoubleVectorType ChosenElementPosition = LengthUnit * (PDBDataFileObjectPointer->GetElement(LocalChosenElementIndex).Position() - PDBDataFileObjectPointer->MassCenter());
+        glTranslated(ChosenElementPosition.X, ChosenElementPosition.Y, ChosenElementPosition.Z);
+        gluSphere(Quadric, LengthUnit * ElementSizeLengthUnit, 15, 15);
         gluDeleteQuadric(Quadric);
 
         glPopMatrix();
 	}
-    CATCH("drawing chosen atom")
+    CATCH("drawing chosen Element")
 }
 
-void PDBWindowGL::DrawChosenAtomDescription(IntType LocalChosenAtomIndex, IntType BitmapFont)
+void PDBWindowGL::DrawChosenElementDescription(IntType LocalChosenElementIndex, IntType BitmapFont)
 {
     try
     {
-        ChosenAtomDescription = to_string(PDBDataFileObjectPointer->GetAtom(LocalChosenAtomIndex).Serial) + "." + PDBDataFileObjectPointer->GetAtom(LocalChosenAtomIndex).Name + "(" + PDBDataFileObjectPointer->GetAtom(LocalChosenAtomIndex).ResName + ")";
+        ChosenElementDescription = to_string(PDBDataFileObjectPointer->GetElement(LocalChosenElementIndex).Serial) + "." + PDBDataFileObjectPointer->GetElement(LocalChosenElementIndex).Name + "(" + PDBDataFileObjectPointer->GetElement(LocalChosenElementIndex).ResName + ")";
 
         glPushMatrix();
 
         glLoadIdentity();
 
         float Coordinates = UserAreaHeight / (float)UserAreaWidth;
-        float TextPosition = (!ProjectionType) ? -0.095f : -2.85f;
+        float TextPosition = (IsometricProjection == false) ? -0.095f : -2.85f;
 
         glRasterPos3f(TextPosition, TextPosition * Coordinates, -0.3f);
 
         glPushAttrib(GL_LIST_BIT);
         glListBase(BitmapFont - 32);
-        glCallLists(ChosenAtomDescription.length(), GL_UNSIGNED_BYTE, ChosenAtomDescription.c_str());
+        glCallLists(ChosenElementDescription.length(), GL_UNSIGNED_BYTE, ChosenElementDescription.c_str());
         glPopAttrib();
 
         glPopMatrix();
 	}
-    CATCH("drawing chosen atom description")
+    CATCH("drawing chosen Element description")
 }
 
-void PDBWindowGL::ChooseAtomColor(const string_view Name, const float Alpha = 1.0f) const
+void PDBWindowGL::ChooseElementColor(const string_view Name, const float Alpha = 1.0f) const
 {
     try
     {
@@ -147,7 +147,7 @@ void PDBWindowGL::ChooseAtomColor(const string_view Name, const float Alpha = 1.
             default: glColor4f(0.50f, 0.50f, 0.50f, Alpha); break;
         }
     }
-    CATCH("chossing atom color")
+    CATCH("chossing Element color")
 }
 
 void PDBWindowGL::DrawBonds(const double LengthUnit, bool MakeColors) const
@@ -164,26 +164,27 @@ void PDBWindowGL::DrawBonds(const double LengthUnit, bool MakeColors) const
 
         glShadeModel(GL_SMOOTH);
         glLineWidth(2);
+
         glBegin(GL_LINES);
 
-        for (IntType AtomIndex1 = 0; AtomIndex1 < PDBDataFileObjectPointer->GetNumberOfAtoms(); AtomIndex1++)
-            for (IntType AtomIndex2 = AtomIndex1 + 1; AtomIndex2 < PDBDataFileObjectPointer->GetNumberOfAtoms(); AtomIndex2++)
+        for (IntType ElementIndex1 = 0; ElementIndex1 < PDBDataFileObjectPointer->GetNumberOfElements(); ElementIndex1++)
+            for (IntType ElementIndex2 = ElementIndex1 + 1; ElementIndex2 < PDBDataFileObjectPointer->GetNumberOfElements(); ElementIndex2++)
             {
-                DoubleVectorType Atom1Position = LengthUnit * PDBDataFileObjectPointer->GetAtom(AtomIndex1).Position();
-                DoubleVectorType Atom2Position = LengthUnit * PDBDataFileObjectPointer->GetAtom(AtomIndex2).Position();
-                DoubleVectorType Position12 = Atom2Position - Atom1Position;
+                DoubleVectorType Element1Position = LengthUnit * PDBDataFileObjectPointer->GetElement(ElementIndex1).Position();
+                DoubleVectorType Element2Position = LengthUnit * PDBDataFileObjectPointer->GetElement(ElementIndex2).Position();
+                DoubleVectorType Position12 = Element2Position - Element1Position;
 
                 if (Position12.Length() < 0.17)
                 {
                     if (MakeColors)
-                        ChooseAtomColor(PDBDataFileObjectPointer->GetAtom(AtomIndex1).Name.c_str(), 1.0f);
+                        ChooseElementColor(PDBDataFileObjectPointer->GetElement(ElementIndex1).Name.c_str(), 1.0f);
 
-                    glVertex3d(Atom1Position.X, Atom1Position.Y, Atom1Position.Z);
+                    glVertex3d(Element1Position.X, Element1Position.Y, Element1Position.Z);
 
                     if (MakeColors)
-                        ChooseAtomColor(PDBDataFileObjectPointer->GetAtom(AtomIndex2).Name.c_str(), 1.0f);
+                        ChooseElementColor(PDBDataFileObjectPointer->GetElement(ElementIndex2).Name.c_str(), 1.0f);
 
-                    glVertex3d(Atom2Position.X, Atom2Position.Y, Atom2Position.Z);
+                    glVertex3d(Element2Position.X, Element2Position.Y, Element2Position.Z);
                 }
             }
 
@@ -207,7 +208,7 @@ UnsignedIntType PDBWindowGL::CreateListOfDrawing(const double LengthUnit)
         glNewList(DrawList, GL_COMPILE);
         glColor3f(1, 1, 1);
 
-        if (ShowBonds)
+        if (ShowBonds == true)
         {
             const auto start_time = chrono::high_resolution_clock::now();
 
@@ -222,11 +223,11 @@ UnsignedIntType PDBWindowGL::CreateListOfDrawing(const double LengthUnit)
         {
             const auto start_time = chrono::high_resolution_clock::now();
 
-            DrawAtoms(LengthUnit, ShowPDBSize, true);
+            DrawElements(LengthUnit, ShowPDBSize, true);
 
             const auto stop_time = chrono::high_resolution_clock::now();
 
-            LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Execution of drawing atoms has taken time: ","executing printing duration_time")));
+            LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Execution of drawing Elements has taken time: ","executing printing duration_time")));
         }
 
         glEndList();
@@ -234,6 +235,144 @@ UnsignedIntType PDBWindowGL::CreateListOfDrawing(const double LengthUnit)
     CATCH("creating list of drawing")
 
 	return DrawList;
+}
+
+void PDBWindowGL::FullDrawStage()
+{
+    try
+    {
+        RefreshListOfDrawing = true;
+        DrawStage();
+    }
+    CATCH("full draw stage")
+}
+
+void PDBWindowGL::StartTimerEvent()
+{
+    try
+    {
+        PDBDataFileObjectPointer->ChosenStructureIndex = 0;
+
+        if (SetTimer(HandleWindow, 1, 50, NULL) == 0 )
+            MessageBox(HandleWindow, "Nie udało się ustawić timera", "", MB_OK | MB_ICONERROR);
+    }
+    CATCH("start timer event")
+}
+
+void PDBWindowGL::FilmTimerEvent()
+{
+    try
+    {
+        if (PDBDataFileObjectPointer->ChosenStructureIndex < PDBDataFileObjectPointer->GetNumberOfStructures() - 1)
+        {
+            PDBDataFileObjectPointer->ChosenStructureIndex++;
+            FullDrawStage();
+        }
+        else
+            KillTimer(HandleWindow, 1);
+    }
+    CATCH("timer event")
+}
+
+void PDBWindowGL::ChangeElementsSize()
+{
+    try
+    {
+        float NewSize = -1.0f;
+
+        if (ShowPDBSize == 0.0f)
+            NewSize = 0.25f;
+        if (ShowPDBSize == 0.25f)
+            NewSize = 0.5f;
+        if (ShowPDBSize == 0.5f)
+            NewSize = 1.0f;
+        if (ShowPDBSize == 1.0f)
+            NewSize = 0.0f;
+        if (NewSize == -1.0f)
+            NewSize = 1.0f;
+
+        ShowPDBSize = NewSize;
+
+        FullDrawStage();
+    }
+    CATCH("changing elements size")
+}
+
+void PDBWindowGL::ShowNextStructure()
+{
+    try
+    {
+        if (PDBDataFileObjectPointer->ChosenStructureIndex < PDBDataFileObjectPointer->GetNumberOfStructures() - 1)
+            PDBDataFileObjectPointer->ChosenStructureIndex++;
+        FullDrawStage();
+    }
+    CATCH("showing next structure")
+}
+
+void PDBWindowGL::ShowPrevStructure()
+{
+    try
+    {
+        if (PDBDataFileObjectPointer->ChosenStructureIndex > 0)
+            PDBDataFileObjectPointer->ChosenStructureIndex--;
+        FullDrawStage();
+    }
+    CATCH("showing previous structure")
+}
+
+void PDBWindowGL::ChangeShowOfBonds()
+{
+    try
+    {
+        ShowBonds = !ShowBonds;
+        FullDrawStage();
+    }
+    CATCH("changing showing of bonds")
+}
+
+void PDBWindowGL::KeyboardKeyDownPressedEvent(WPARAM wParam)
+{
+    try
+    {
+        switch (wParam)
+        {
+            case VK_F1: MessageBox(HandleWindow, "Shortcut Keys: \nZ - show / hide bonds \nX - size of Elements \nC - projection mode", "PDB VIEWER", MB_OK); break;
+            case VK_F2: MessageBox(HandleWindow, ChosenElementDescription.c_str(), "PDB VIEWER", MB_OK); break;
+            case 'Z': ChangeShowOfBonds(); break;
+            case 'X': ChangeElementsSize(); break;
+            case 'N': ShowNextStructure(); break;
+            case 'M': ShowPrevStructure(); break;
+            case 'F': StartTimerEvent(); break;
+
+            default: break;
+        }
+
+        DrawStage();
+    }
+    CATCH("PDBWindow key down pressed event")
+}
+
+void PDBWindowGL::MouseLeftButtonDownEvent(WPARAM wParam, LPARAM lParam)
+{
+    try
+    {
+        if (ShowPDBSize == 0)
+            return;
+
+        POINT CursorMouseIndex;
+        CursorMouseIndex.x = LOWORD(lParam);
+        CursorMouseIndex.y = HIWORD(lParam);
+
+        IntType PrevIndex = ChosenElementIndex;
+        IntType NextIndex = ChooseElement(CursorMouseIndex);
+
+        if (NextIndex != -1)
+            ChosenElementIndex = NextIndex;
+
+        if (PrevIndex != -1 || ChosenElementIndex != -1)
+            DrawStage();
+    }
+    CATCH("mouse move event")
 }
 
 LRESULT PDBWindowGL::WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
@@ -247,109 +386,11 @@ LRESULT PDBWindowGL::WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lPar
         switch (Message)
         {
             case WM_DESTROY: KillTimer(HandleWindow, 1); break;
+            case WM_TIMER: FilmTimerEvent(); break;
+            case WM_KEYDOWN: KeyboardKeyDownPressedEvent(wParam); break;
+            case WM_LBUTTONDOWN: MouseLeftButtonDownEvent(wParam, lParam); break;
 
-            case WM_TIMER:
-            {
-                if (PDBDataFileObjectPointer->ChosenStructureIndex < PDBDataFileObjectPointer->GetNumberOfStructures() - 1)
-                {
-                    PDBDataFileObjectPointer->ChosenStructureIndex++;
-                    RefreshListOfDrawing = true;
-                    DrawStage();
-                }
-                else
-                    KillTimer(HandleWindow, 1);
-            }
-
-            case WM_KEYDOWN:
-            {
-                bool CallDrawStage = false;
-                switch (wParam)
-                {
-                    case VK_F1: MessageBox(HandleWindow, "Shortcut Keys: \nZ - show / hide bonds \nX - size of atoms \nC - projection mode", "PDB VIEWER", MB_OK); break;
-                    case VK_F2: MessageBox(HandleWindow, ChosenAtomDescription.c_str(), "PDB VIEWER", MB_OK); break;
-                    case 'Z': ShowBonds = !ShowBonds; CallDrawStage = true; break;
-                    case 'X':
-                    {
-                        float NewSize = -1.0f;
-
-                        if (ShowPDBSize == 0.0f)
-                            NewSize = 0.25f;
-                        if (ShowPDBSize == 0.25f)
-                            NewSize = 0.5f;
-                        if (ShowPDBSize == 0.5f)
-                            NewSize = 1.0f;
-                        if (ShowPDBSize == 1.0f)
-                            NewSize = 0.0f;
-                        if (NewSize == -1.0f)
-                            NewSize = 1.0f;
-
-                        ShowPDBSize = NewSize;
-                    }
-                    CallDrawStage = true;
-                    break;
-
-                    case 'C':
-                    {
-                        ProjectionType = !ProjectionType;
-                        SetStage(ProjectionType);
-                        CallDrawStage = true;
-                    }
-                    break;
-
-                    case 'N':
-                    {
-                        if (PDBDataFileObjectPointer->ChosenStructureIndex < PDBDataFileObjectPointer->GetNumberOfStructures() - 1)
-                            PDBDataFileObjectPointer->ChosenStructureIndex++;
-                        CallDrawStage = true;
-                    }
-                    break;
-                    case 'M':
-                    {
-                        if (PDBDataFileObjectPointer->ChosenStructureIndex > 0)
-                            PDBDataFileObjectPointer->ChosenStructureIndex--;
-                        CallDrawStage = true;
-                    }
-                    break;
-                    case 'F':
-                    {
-                        PDBDataFileObjectPointer->ChosenStructureIndex = 0;
-
-                        if (SetTimer(hWnd, 1, 50, NULL) == 0 )
-                            MessageBox(hWnd, "Nie udało się ustawić timera", "", MB_OK | MB_ICONERROR);
-                    }
-                    break;
-
-                    default: break;
-                }
-
-                if (CallDrawStage)
-                {
-                    RefreshListOfDrawing = true;
-                    DrawStage();
-                }
-
-                break;
-            }
-
-            case WM_LBUTTONDOWN:
-
-                if (ShowPDBSize == 0)
-                    break;
-
-                POINT CursorMouseIndex;
-                CursorMouseIndex.x = LOWORD(lParam);
-                CursorMouseIndex.y = HIWORD(lParam);
-
-                IntType PrevIndex = ChosenAtomIndex;
-                IntType NextIndex = ChooseAtom(CursorMouseIndex);
-
-                if (NextIndex != -1)
-                    ChosenAtomIndex = NextIndex;
-
-                if (PrevIndex != -1 || ChosenAtomIndex != -1)
-                    DrawStage();
-
-                break;
+            default: break;
         }
     }
     CATCH("execution of PDBWindowGL::WndProc")
@@ -357,7 +398,7 @@ LRESULT PDBWindowGL::WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lPar
 	return Result;
 }
 
-IntType PDBWindowGL::ChooseAtom(POINT MouseCursorPosition)
+IntType PDBWindowGL::ChooseElement(POINT MouseCursorPosition)
 {
     try
     {
@@ -374,7 +415,7 @@ IntType PDBWindowGL::ChooseAtom(POINT MouseCursorPosition)
         glGetIntegerv(GL_VIEWPORT, Viewport);
         gluPickMatrix(MouseCursorPosition.x, UserAreaHeight - MouseCursorPosition.y, 1, 1, Viewport);
         float wsp = static_cast<float>(UserAreaHeight) / static_cast<float>(UserAreaWidth);
-        if (!ProjectionType)
+        if (IsometricProjection == false)
             glFrustum(-0.1, 0.1, wsp * -0.1, wsp * 0.1, 0.3, 100.0);
         else
             glOrtho(-3, 3, wsp * -3, wsp * 3, 0.3, 100.0);
@@ -393,25 +434,25 @@ IntType PDBWindowGL::ChooseAtom(POINT MouseCursorPosition)
 
         if (HitsNumber > 0)
         {
-            UnsignedIntType ClosestAtomIndex = MarkingBuffer[3];
-            UnsignedIntType ClosestAtomDistance = MarkingBuffer[1];
+            UnsignedIntType ClosestElementIndex = MarkingBuffer[3];
+            UnsignedIntType ClosestElementDistance = MarkingBuffer[1];
             IntType CurrentIndex = 0;
             for (IntType HitIndex = 0; HitIndex < HitsNumber; HitIndex++)
             {
-                if (MarkingBuffer[CurrentIndex + 1] < ClosestAtomDistance)
+                if (MarkingBuffer[CurrentIndex + 1] < ClosestElementDistance)
                 {
-                    ClosestAtomDistance = MarkingBuffer[CurrentIndex + 1];
+                    ClosestElementDistance = MarkingBuffer[CurrentIndex + 1];
                     if (MarkingBuffer[CurrentIndex] > 0)
-                        ClosestAtomIndex = MarkingBuffer[CurrentIndex + 3];
+                        ClosestElementIndex = MarkingBuffer[CurrentIndex + 3];
                 }
                 CurrentIndex += 3 + MarkingBuffer[CurrentIndex];
             }
-            return ClosestAtomIndex;
+            return ClosestElementIndex;
         }
         else
             return -1;
 	}
-    CATCH("choosing atom")
+    CATCH("choosing Element")
 
     return -1;
 }
@@ -441,6 +482,7 @@ UnsignedIntType CreateFontGeneral(HWND HandleWindow, const char* FontName, IntTy
 	return FirstListIndex;
 }
 
+
 void PDBWindowGL::DrawActors()
 {
     try
@@ -467,12 +509,12 @@ void PDBWindowGL::DrawActors()
         glGetIntegerv(GL_RENDER_MODE, &RenderingMode);
         if (RenderingMode == GL_RENDER)
         {
-            if (ChosenAtomIndex >= 0 && ShowPDBSize > 0)
+            if (ChosenElementIndex >= 0 && ShowPDBSize > 0)
             {
                 glColor3f(1, 1, 0);
-                DrawChosenAtom(LengthUnit, 1.05 * ShowPDBSize, ChosenAtomIndex, false);
+                DrawChosenElement(LengthUnit, 1.05 * ShowPDBSize, ChosenElementIndex, false);
                 glColor3f(5, 0, 5);
-                DrawChosenAtomDescription(ChosenAtomIndex, BitmapFont);
+                DrawChosenElementDescription(ChosenElementIndex, BitmapFont);
             }
         }
 	}

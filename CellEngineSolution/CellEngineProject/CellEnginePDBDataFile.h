@@ -15,10 +15,10 @@
 
 #include "CellEngineTypes.h"
 
-struct Atom
+struct Element
 {
 public:
-	UnsignedIntType AtomIndex;
+	UnsignedIntType ElementIndex;
 	IntType Serial;
 	std::string Name;
 	std::string ResName;
@@ -26,8 +26,8 @@ public:
 	double Y;
 	double Z;
 public:
-	Atom(const char* PDBRecord, UnsignedIntType AtomIndex);
-	~Atom() = default;
+	Element(const char* PDBRecord, UnsignedIntType ElementIndex);
+	~Element() = default;
 public:
 	[[nodiscard]] DoubleVectorType Position() const;
 private:
@@ -38,7 +38,7 @@ class PDBDataFile
 {
 private:
 	const char* FileName;
-    std::vector<std::vector<Atom>> Atoms;
+    std::vector<std::vector<Element>> Elements;
 private:
 	void ReadDataFromFile();
 public:
@@ -47,16 +47,16 @@ public:
 	explicit PDBDataFile(const char* FileName);
 	~PDBDataFile() = default;
 public:
-    [[nodiscard]] const std::vector<Atom>& GetAtoms() const
+    [[nodiscard]] const std::vector<Element>& GetElements() const
     {
-        return Atoms[ChosenStructureIndex];
+        return Elements[ChosenStructureIndex];
     }
     [[nodiscard]] IntType GetNumberOfStructures() const
     {
-        return Atoms.size();
+        return Elements.size();
     }
-    [[nodiscard]] IntType GetNumberOfAtoms() const;
-    [[nodiscard]] const Atom& GetAtom(IntType Index) const;
+    [[nodiscard]] IntType GetNumberOfElements() const;
+    [[nodiscard]] const Element& GetElement(IntType Index) const;
     [[nodiscard]] DoubleVectorType MassCenter() const;
 };
 

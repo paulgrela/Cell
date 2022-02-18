@@ -23,22 +23,34 @@ public:
 public:
     LRESULT WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam) final;
 private:
-    std::string ChosenAtomDescription;
+    void StartTimerEvent();
+    void FilmTimerEvent();
+private:
+    void ChangeElementsSize();
+    void ChangeShowOfBonds();
+    void ShowNextStructure();
+    void ShowPrevStructure();
+private:
+    void KeyboardKeyDownPressedEvent(WPARAM wParam);
+    void MouseLeftButtonDownEvent(WPARAM wParam, LPARAM lParam);
+private:
+    void FullDrawStage();
+private:
+    std::string ChosenElementDescription;
 	std::unique_ptr<PDBDataFile> PDBDataFileObjectPointer;
 	bool OpenPDBFile(const char* FileName);
-	void DrawAtoms(const double LengthUnit, const double AtomSizeLengthUnit, bool MakeColors) const;
+	void DrawElements(const double LengthUnit, const double ElementSizeLengthUnit, bool MakeColors) const;
 	void DrawBonds(const double LengthUnit, bool MakeColors) const;
-	void ChooseAtomColor(const std::string_view Name, const float Alpha) const;
+	void ChooseElementColor(const std::string_view Name, const float Alpha) const;
     [[nodiscard]] UnsignedIntType CreateListOfDrawing(const double LengthUnit);
 private:
 	bool ShowBonds;
 	float ShowPDBSize;
 	bool RefreshListOfDrawing;
-	bool ProjectionType;
-	IntType ChooseAtom(POINT MouseCursorPosition);
-	void DrawChosenAtom(const double LengthUnit, const double AtomSizeLengthUnit, IntType LocalChosenAtomIndex, bool UseGrid) const;
-	void DrawChosenAtomDescription(IntType LocalChosenAtomIndex, IntType BitmapFont);
-	IntType ChosenAtomIndex;
+	IntType ChooseElement(POINT MouseCursorPosition);
+	void DrawChosenElement(const double LengthUnit, const double ElementSizeLengthUnit, IntType LocalChosenElementIndex, bool UseGrid) const;
+	void DrawChosenElementDescription(IntType LocalChosenElementIndex, IntType BitmapFont);
+	IntType ChosenElementIndex;
 };
 
 #endif

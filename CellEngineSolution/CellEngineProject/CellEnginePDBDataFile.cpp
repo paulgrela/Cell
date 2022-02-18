@@ -10,17 +10,17 @@
 using namespace std;
 using namespace string_utils;
 
-Atom::Atom(const char* PDBRecord, UnsignedIntType AtomIndex)
+Element::Element(const char* PDBRecord, UnsignedIntType ElementIndex)
 {
     try
     {
         ParseRecord(PDBRecord);
-        this->AtomIndex = AtomIndex;
+        this->ElementIndex = ElementIndex;
     }
-    CATCH("initation of atom")
+    CATCH("initation of element")
 }
 
-void Atom::ParseRecord(const char* LocalPDBRecord)
+void Element::ParseRecord(const char* LocalPDBRecord)
 {
     try
     {
@@ -34,10 +34,10 @@ void Atom::ParseRecord(const char* LocalPDBRecord)
         Y = stod(RecordStr.substr(38, 8));
         Z = stod(RecordStr.substr(46, 8));
     }
-    CATCH("parsing arom record")
+    CATCH("parsing element record")
 }
 
-DoubleVectorType Atom::Position() const
+DoubleVectorType Element::Position() const
 {
 	return DoubleVectorType(X, Y, Z);
 }
@@ -54,7 +54,7 @@ void PDBDataFile::ReadDataFromFile()
     try
     {
         string Line;
-        std::vector<Atom> StructureObject;
+        std::vector<Element> StructureObject;
 
         const auto start_time = chrono::high_resolution_clock::now();
 
@@ -63,11 +63,11 @@ void PDBDataFile::ReadDataFromFile()
         while (getline(File, Line, '\n'))
         {
             if (Line.substr(0, 4) == "ATOM" || Line.substr(0, 6) == "HETATM")
-                StructureObject.emplace_back(Atom(Line.c_str(), StructureObject.size()));
+                StructureObject.emplace_back(Element(Line.c_str(), StructureObject.size()));
             else
             if (Line.substr(0, 3) == "END" )
             {
-                Atoms.push_back(StructureObject);
+                Elements.push_back(StructureObject);
                 StructureObject.clear();
             }
         }
@@ -83,14 +83,14 @@ void PDBDataFile::ReadDataFromFile()
     CATCH("reading data from PDB file")
 }
 
-IntType PDBDataFile::GetNumberOfAtoms() const
+IntType PDBDataFile::GetNumberOfElements() const
 {
-	return Atoms[ChosenStructureIndex].size();
+	return Elements[ChosenStructureIndex].size();
 }
 
-const Atom& PDBDataFile::GetAtom(IntType DataRawIndex) const
+const Element& PDBDataFile::GetElement(IntType DataRawIndex) const
 {
-	return Atoms[ChosenStructureIndex][DataRawIndex];
+	return Elements[ChosenStructureIndex][DataRawIndex];
 }
 
 DoubleVectorType PDBDataFile::MassCenter() const
@@ -99,10 +99,10 @@ DoubleVectorType PDBDataFile::MassCenter() const
 
 	try
     {
-        for (const Atom& AtomObject : Atoms[ChosenStructureIndex])
-            MassCenter += AtomObject.Position();
+        for (const Element& ElementObject : Elements[ChosenStructureIndex])
+            MassCenter += ElementObject.Position();
 
-        MassCenter /= Atoms[ChosenStructureIndex].size();
+        MassCenter /= Elements[ChosenStructureIndex].size();
 	}
     CATCH_AND_THROW("counting mass center")
 
