@@ -30,8 +30,11 @@ add_executable(
 	../../Common/MathUtils/AdditionalFunctions.cpp
 	CellEnginePDBDataFile.cpp
 	CellEnginePDBWindowGL.cpp
-	CellEngineWindowGL.cpp
-)
+	CellEngineCIFDataFile.h
+	CellEngineCIFDataFile.cpp
+	CellEngineCIFWindowGL.h
+	CellEngineCIFWindowGL.cpp
+	CellEngineWindowGL.cpp)
 
 target_link_libraries(${PROJECT_NAME} -static-libgcc -static-libstdc++ -lpthread -lopengl32 -lglu32)
 

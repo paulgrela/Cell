@@ -1,5 +1,4 @@
 
-
 #include <memory>
 #include <exception>
 
@@ -7,13 +6,13 @@
 
 #include "ExceptionsMacro.h"
 #include "DateTimeUtils.h"
-#include "CellEnginePDBWindowGL.h"
+#include "CellEngineCIFWindowGL.h"
 
 using namespace std;
 
-#pragma region DrawPDB
+#pragma region DrawCIF
 
-PDBWindowGL::PDBWindowGL() : WindowGL(), PDBDataFileObjectPointer(nullptr), ShowBonds(false), ShowPDBSize(1.00f), RefreshListOfDrawing(false), ChosenElementIndex(-1)
+CIFWindowGL::CIFWindowGL() : WindowGL(), CIFDataFileObjectPointer(nullptr), ShowBonds(false), ShowCIFSize(1.00f), RefreshListOfDrawing(false), ChosenAtomIndex(-1)
 {
     try
     {
@@ -23,40 +22,40 @@ PDBWindowGL::PDBWindowGL() : WindowGL(), PDBDataFileObjectPointer(nullptr), Show
             FileName = __argv[1];
         else
         {
-            MessageBox(nullptr, "Lack of file name in program parameters", "Cell Engine View PDB", MB_OK | MB_ICONWARNING);
+            MessageBox(nullptr, "Lack of file name in program parameters", "Cell Engine View CIF", MB_OK | MB_ICONWARNING);
             PostQuitMessage(0);
             return;
         }
 
-        if (OpenPDBFile(FileName) == false)
+        if (OpenCIFFile(FileName) == false)
             PostQuitMessage(0);
-	}
-    CATCH("initiation PDBWindowGL")
+    }
+    CATCH("initiation CIFWindowGL")
 }
 
 #include <algorithm>
 
-bool PDBWindowGL::OpenPDBFile(const char* FileName)
+bool CIFWindowGL::OpenCIFFile(const char* FileName)
 {
-	try
-	{
-        std::string LogExt = ".pdb";
+    try
+    {
+        std::string LogExt = ".cif";
         if (std::equal(LogExt.rbegin(), LogExt.rend(), string(FileName).rbegin()))
-            PDBDataFileObjectPointer = make_unique<PDBDataFile>(FileName);
-	}
-	CATCH("Error with loading PDB object");
+            CIFDataFileObjectPointer = make_unique<CIFDataFile>(FileName);
+    }
+    CATCH("Error with loading CIF object");
 
-	return true;
+    return true;
 }
 
 /*
-void PDBWindowGL::DrawElements(const double LengthUnit, const double ElementSizeLengthUnit, bool MakeColors) const
+void CIFWindowGL::DrawAtoms(const double LengthUnit, const double AtomsizeLengthUnit, bool MakeColors) const
 {
     try
     {
         glPushMatrix();
 
-        DoubleVectorType MassCenter = LengthUnit * PDBDataFileObjectPointer->MassCenter();;
+        DoubleVectorType MassCenter = LengthUnit * CIFDataFileObjectPointer->MassCenter();;
         glTranslated(-MassCenter.X, -MassCenter.Y, -MassCenter.Z);
 
         glColor3f(0, 0, 0);
@@ -66,14 +65,14 @@ void PDBWindowGL::DrawElements(const double LengthUnit, const double ElementSize
 
         glBegin(GL_POINTS);
 
-        for (IntType ElementIndex1 = 0; ElementIndex1 < PDBDataFileObjectPointer->GetNumberOfElements(); ElementIndex1++)
+        for (IntType AtomIndex1 = 0; AtomIndex1 < CIFDataFileObjectPointer->GetNumberOfAtoms(); AtomIndex1++)
         {
-            DoubleVectorType Element1Position = LengthUnit * PDBDataFileObjectPointer->GetElement(ElementIndex1).Position();
+            DoubleVectorType Atom1Position = LengthUnit * CIFDataFileObjectPointer->GetAtom(AtomIndex1).Position();
 
             if (MakeColors)
-                ChooseElementColor(PDBDataFileObjectPointer->GetElement(ElementIndex1).Name.c_str(), 1.0f);
+                ChooseAtomColor(CIFDataFileObjectPointer->GetAtom(AtomIndex1).Name.c_str(), 1.0f);
 
-            glVertex3d(Element1Position.X, Element1Position.Y, Element1Position.Z);
+            glVertex3d(Atom1Position.X, Atom1Position.Y, Atom1Position.Z);
         }
 
         glEnd();
@@ -82,17 +81,17 @@ void PDBWindowGL::DrawElements(const double LengthUnit, const double ElementSize
 
         glPopMatrix();
     }
-    CATCH("drawing elements")
+    CATCH("drawing Atoms")
 }
 */
 
-void PDBWindowGL::DrawElements(const double LengthUnit, const double ElementSizeLengthUnit, bool MakeColors) const
+void CIFWindowGL::DrawAtoms(const double LengthUnit, const double AtomsizeLengthUnit, bool MakeColors) const
 {
     try
     {
         glPushMatrix();
 
-        DoubleVectorType MassCenter = LengthUnit * PDBDataFileObjectPointer->MassCenter();
+        DoubleVectorType MassCenter = LengthUnit * CIFDataFileObjectPointer->MassCenter();
         glTranslated(-MassCenter.X, -MassCenter.Y, -MassCenter.Z);
 
         GLUquadricObj* Quadriga = gluNewQuadric();
@@ -107,17 +106,17 @@ void PDBWindowGL::DrawElements(const double LengthUnit, const double ElementSize
         glInitNames();
         glPushName(-1);
 
-        for (const Element& ElementObjectPtr : PDBDataFileObjectPointer->GetElements())
+        for (const Atom& AtomObjectPtr : CIFDataFileObjectPointer->GetAtoms())
         {
-            DoubleVectorType ElementPosition = LengthUnit * ElementObjectPtr.Position();
+            DoubleVectorType AtomPosition = LengthUnit * AtomObjectPtr.Position();
 
             if (MakeColors == true)
-                ChooseElementColor(ElementObjectPtr.Name, 1.0f);
+                ChooseAtomColor(AtomObjectPtr.Name, 1.0f);
 
             glPushMatrix();
-            glTranslated(ElementPosition.X, ElementPosition.Y, ElementPosition.Z);
-            glLoadName(ElementObjectPtr.ElementIndex);
-            gluSphere(Quadriga, LengthUnit * ElementSizeLengthUnit, HowManyPointsInEachDimension, HowManyPointsInEachDimension);
+            glTranslated(AtomPosition.X, AtomPosition.Y, AtomPosition.Z);
+            glLoadName(AtomObjectPtr.AtomIndex);
+            gluSphere(Quadriga, LengthUnit * AtomsizeLengthUnit, HowManyPointsInEachDimension, HowManyPointsInEachDimension);
             glPopMatrix();
         }
 
@@ -126,14 +125,14 @@ void PDBWindowGL::DrawElements(const double LengthUnit, const double ElementSize
         gluDeleteQuadric(Quadriga);
         glPopMatrix();
     }
-    CATCH("drawing elements")
+    CATCH("drawing Atoms")
 }
 
-void PDBWindowGL::DrawChosenElement(const double LengthUnit, const double ElementSizeLengthUnit, IntType LocalChosenElementIndex, bool UseGrid) const
+void CIFWindowGL::DrawChosenAtom(const double LengthUnit, const double AtomsizeLengthUnit, IntType LocalChosenAtomIndex, bool UseGrid) const
 {
     try
     {
-        if (LocalChosenElementIndex < 0)
+        if (LocalChosenAtomIndex < 0)
             return;
 
         glPushMatrix();
@@ -143,21 +142,21 @@ void PDBWindowGL::DrawChosenElement(const double LengthUnit, const double Elemen
             gluQuadricDrawStyle(Quadric, GLU_LINE);
         glLineWidth(1.0f);
         glShadeModel(GL_SMOOTH);
-        DoubleVectorType ChosenElementPosition = LengthUnit * (PDBDataFileObjectPointer->GetElement(LocalChosenElementIndex).Position() - PDBDataFileObjectPointer->MassCenter());
-        glTranslated(ChosenElementPosition.X, ChosenElementPosition.Y, ChosenElementPosition.Z);
-        gluSphere(Quadric, LengthUnit * ElementSizeLengthUnit, 15, 15);
+        DoubleVectorType ChosenAtomPosition = LengthUnit * (CIFDataFileObjectPointer->GetAtom(LocalChosenAtomIndex).Position() - CIFDataFileObjectPointer->MassCenter());
+        glTranslated(ChosenAtomPosition.X, ChosenAtomPosition.Y, ChosenAtomPosition.Z);
+        gluSphere(Quadric, LengthUnit * AtomsizeLengthUnit, 15, 15);
         gluDeleteQuadric(Quadric);
 
         glPopMatrix();
-	}
-    CATCH("drawing chosen Element")
+    }
+    CATCH("drawing chosen Atom")
 }
 
-void PDBWindowGL::DrawChosenElementDescription(IntType LocalChosenElementIndex, IntType BitmapFont)
+void CIFWindowGL::DrawChosenAtomDescription(IntType LocalChosenAtomIndex, IntType BitmapFont)
 {
     try
     {
-        ChosenElementDescription = to_string(PDBDataFileObjectPointer->GetElement(LocalChosenElementIndex).Serial) + "." + PDBDataFileObjectPointer->GetElement(LocalChosenElementIndex).Name + "(" + PDBDataFileObjectPointer->GetElement(LocalChosenElementIndex).ResName + ")";
+        ChosenAtomDescription = to_string(CIFDataFileObjectPointer->GetAtom(LocalChosenAtomIndex).Serial) + "." + CIFDataFileObjectPointer->GetAtom(LocalChosenAtomIndex).Name + "(" + CIFDataFileObjectPointer->GetAtom(LocalChosenAtomIndex).ResName + ")";
 
         glPushMatrix();
 
@@ -170,15 +169,15 @@ void PDBWindowGL::DrawChosenElementDescription(IntType LocalChosenElementIndex, 
 
         glPushAttrib(GL_LIST_BIT);
         glListBase(BitmapFont - 32);
-        glCallLists(ChosenElementDescription.length(), GL_UNSIGNED_BYTE, ChosenElementDescription.c_str());
+        glCallLists(ChosenAtomDescription.length(), GL_UNSIGNED_BYTE, ChosenAtomDescription.c_str());
         glPopAttrib();
 
         glPopMatrix();
-	}
-    CATCH("drawing chosen Element description")
+    }
+    CATCH("drawing chosen Atom description")
 }
 
-void PDBWindowGL::ChooseElementColor(const string_view Name, const float Alpha = 1.0f) const
+void CIFWindowGL::ChooseAtomColor(const string_view Name, const float Alpha = 1.0f) const
 {
     try
     {
@@ -192,16 +191,16 @@ void PDBWindowGL::ChooseElementColor(const string_view Name, const float Alpha =
             default: glColor4f(0.50f, 0.50f, 0.50f, Alpha); break;
         }
     }
-    CATCH("chossing Element color")
+    CATCH("chossing Atom color")
 }
 
-void PDBWindowGL::DrawBonds(const double LengthUnit, bool MakeColors) const
+void CIFWindowGL::DrawBonds(const double LengthUnit, bool MakeColors) const
 {
     try
     {
         glPushMatrix();
 
-        DoubleVectorType MassCenter = LengthUnit * PDBDataFileObjectPointer->MassCenter();;
+        DoubleVectorType MassCenter = LengthUnit * CIFDataFileObjectPointer->MassCenter();;
         glTranslated(-MassCenter.X, -MassCenter.Y, -MassCenter.Z);
 
         glColor3f(0, 0, 0);
@@ -212,24 +211,24 @@ void PDBWindowGL::DrawBonds(const double LengthUnit, bool MakeColors) const
 
         glBegin(GL_LINES);
 
-        for (IntType ElementIndex1 = 0; ElementIndex1 < PDBDataFileObjectPointer->GetNumberOfElements(); ElementIndex1++)
-            for (IntType ElementIndex2 = ElementIndex1 + 1; ElementIndex2 < PDBDataFileObjectPointer->GetNumberOfElements(); ElementIndex2++)
+        for (IntType AtomIndex1 = 0; AtomIndex1 < CIFDataFileObjectPointer->GetNumberOfAtoms(); AtomIndex1++)
+            for (IntType AtomIndex2 = AtomIndex1 + 1; AtomIndex2 < CIFDataFileObjectPointer->GetNumberOfAtoms(); AtomIndex2++)
             {
-                DoubleVectorType Element1Position = LengthUnit * PDBDataFileObjectPointer->GetElement(ElementIndex1).Position();
-                DoubleVectorType Element2Position = LengthUnit * PDBDataFileObjectPointer->GetElement(ElementIndex2).Position();
-                DoubleVectorType Position12 = Element2Position - Element1Position;
+                DoubleVectorType Atom1Position = LengthUnit * CIFDataFileObjectPointer->GetAtom(AtomIndex1).Position();
+                DoubleVectorType Atom2Position = LengthUnit * CIFDataFileObjectPointer->GetAtom(AtomIndex2).Position();
+                DoubleVectorType Position12 = Atom2Position - Atom1Position;
 
                 if (Position12.Length() < 0.17)
                 {
                     if (MakeColors)
-                        ChooseElementColor(PDBDataFileObjectPointer->GetElement(ElementIndex1).Name.c_str(), 1.0f);
+                        ChooseAtomColor(CIFDataFileObjectPointer->GetAtom(AtomIndex1).Name.c_str(), 1.0f);
 
-                    glVertex3d(Element1Position.X, Element1Position.Y, Element1Position.Z);
+                    glVertex3d(Atom1Position.X, Atom1Position.Y, Atom1Position.Z);
 
                     if (MakeColors)
-                        ChooseElementColor(PDBDataFileObjectPointer->GetElement(ElementIndex2).Name.c_str(), 1.0f);
+                        ChooseAtomColor(CIFDataFileObjectPointer->GetAtom(AtomIndex2).Name.c_str(), 1.0f);
 
-                    glVertex3d(Element2Position.X, Element2Position.Y, Element2Position.Z);
+                    glVertex3d(Atom2Position.X, Atom2Position.Y, Atom2Position.Z);
                 }
             }
 
@@ -238,11 +237,11 @@ void PDBWindowGL::DrawBonds(const double LengthUnit, bool MakeColors) const
         glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 
         glPopMatrix();
-	}
+    }
     CATCH("drawing bonds")
 }
 
-UnsignedIntType PDBWindowGL::CreateListOfDrawing(const double LengthUnit)
+UnsignedIntType CIFWindowGL::CreateListOfDrawing(const double LengthUnit)
 {
     GLuint DrawList;
 
@@ -264,25 +263,25 @@ UnsignedIntType PDBWindowGL::CreateListOfDrawing(const double LengthUnit)
             LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Execution of drawing bonds has taken time: ","executing printing duration_time")));
         }
 
-        if (ShowPDBSize != 0)
+        if (ShowCIFSize != 0)
         {
             const auto start_time = chrono::high_resolution_clock::now();
 
-            DrawElements(LengthUnit, ShowPDBSize, true);
+            DrawAtoms(LengthUnit, ShowCIFSize, true);
 
             const auto stop_time = chrono::high_resolution_clock::now();
 
-            LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Execution of drawing elements has taken time: ","executing printing duration_time")));
+            LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Execution of drawing Atoms has taken time: ","executing printing duration_time")));
         }
 
         glEndList();
     }
     CATCH("creating list of drawing")
 
-	return DrawList;
+    return DrawList;
 }
 
-void PDBWindowGL::FullDrawStage()
+void CIFWindowGL::FullDrawStage()
 {
     try
     {
@@ -292,11 +291,11 @@ void PDBWindowGL::FullDrawStage()
     CATCH("full draw stage")
 }
 
-void PDBWindowGL::StartTimerEvent()
+void CIFWindowGL::StartTimerEvent()
 {
     try
     {
-        PDBDataFileObjectPointer->ChosenStructureIndex = 0;
+        CIFDataFileObjectPointer->ChosenStructureIndex = 0;
 
         if (SetTimer(HandleWindow, 1, 50, nullptr) == 0 )
             MessageBox(HandleWindow, "Nie udało się ustawić timera", "", MB_OK | MB_ICONERROR);
@@ -304,13 +303,13 @@ void PDBWindowGL::StartTimerEvent()
     CATCH("start timer event")
 }
 
-void PDBWindowGL::FilmTimerEvent()
+void CIFWindowGL::FilmTimerEvent()
 {
     try
     {
-        if (PDBDataFileObjectPointer->ChosenStructureIndex < PDBDataFileObjectPointer->GetNumberOfStructures() - 1)
+        if (CIFDataFileObjectPointer->ChosenStructureIndex < CIFDataFileObjectPointer->GetNumberOfStructures() - 1)
         {
-            PDBDataFileObjectPointer->ChosenStructureIndex++;
+            CIFDataFileObjectPointer->ChosenStructureIndex++;
             FullDrawStage();
         }
         else
@@ -319,53 +318,53 @@ void PDBWindowGL::FilmTimerEvent()
     CATCH("timer event")
 }
 
-void PDBWindowGL::ChangeElementsSize()
+void CIFWindowGL::ChangeAtomsSize()
 {
     try
     {
         float NewSize = -1.0f;
 
-        if (ShowPDBSize == 0.0f)
+        if (ShowCIFSize == 0.0f)
             NewSize = 0.25f;
-        if (ShowPDBSize == 0.25f)
+        if (ShowCIFSize == 0.25f)
             NewSize = 0.5f;
-        if (ShowPDBSize == 0.5f)
+        if (ShowCIFSize == 0.5f)
             NewSize = 1.0f;
-        if (ShowPDBSize == 1.0f)
+        if (ShowCIFSize == 1.0f)
             NewSize = 0.0f;
         if (NewSize == -1.0f)
             NewSize = 1.0f;
 
-        ShowPDBSize = NewSize;
+        ShowCIFSize = NewSize;
 
         FullDrawStage();
     }
-    CATCH("changing elements size")
+    CATCH("changing Atoms size")
 }
 
-void PDBWindowGL::ShowNextStructure()
+void CIFWindowGL::ShowNextStructure()
 {
     try
     {
-        if (PDBDataFileObjectPointer->ChosenStructureIndex < PDBDataFileObjectPointer->GetNumberOfStructures() - 1)
-            PDBDataFileObjectPointer->ChosenStructureIndex++;
+        if (CIFDataFileObjectPointer->ChosenStructureIndex < CIFDataFileObjectPointer->GetNumberOfStructures() - 1)
+            CIFDataFileObjectPointer->ChosenStructureIndex++;
         FullDrawStage();
     }
     CATCH("showing next structure")
 }
 
-void PDBWindowGL::ShowPrevStructure()
+void CIFWindowGL::ShowPrevStructure()
 {
     try
     {
-        if (PDBDataFileObjectPointer->ChosenStructureIndex > 0)
-            PDBDataFileObjectPointer->ChosenStructureIndex--;
+        if (CIFDataFileObjectPointer->ChosenStructureIndex > 0)
+            CIFDataFileObjectPointer->ChosenStructureIndex--;
         FullDrawStage();
     }
     CATCH("showing previous structure")
 }
 
-void PDBWindowGL::ChangeShowOfBonds()
+void CIFWindowGL::ChangeShowOfBonds()
 {
     try
     {
@@ -375,16 +374,16 @@ void PDBWindowGL::ChangeShowOfBonds()
     CATCH("changing showing of bonds")
 }
 
-void PDBWindowGL::KeyboardKeyDownPressedEvent(WPARAM wParam)
+void CIFWindowGL::KeyboardKeyDownPressedEvent(WPARAM wParam)
 {
     try
     {
         switch (wParam)
         {
-            case VK_F1: MessageBox(HandleWindow, "Shortcut Keys: \nZ - show / hide bonds \nX - size of Elements \nC - projection mode", "PDB VIEWER", MB_OK); break;
-            case VK_F2: MessageBox(HandleWindow, ChosenElementDescription.c_str(), "PDB VIEWER", MB_OK); break;
+            case VK_F1: MessageBox(HandleWindow, "Shortcut Keys: \nZ - show / hide bonds \nX - size of Atoms \nC - projection mode", "CIF VIEWER", MB_OK); break;
+            case VK_F2: MessageBox(HandleWindow, ChosenAtomDescription.c_str(), "CIF VIEWER", MB_OK); break;
             case 'Z': ChangeShowOfBonds(); break;
-            case 'X': ChangeElementsSize(); break;
+            case 'X': ChangeAtomsSize(); break;
             case 'N': ShowNextStructure(); break;
             case 'M': ShowPrevStructure(); break;
             case 'F': StartTimerEvent(); break;
@@ -394,37 +393,37 @@ void PDBWindowGL::KeyboardKeyDownPressedEvent(WPARAM wParam)
 
         DrawStage();
     }
-    CATCH("PDBWindow key down pressed event")
+    CATCH("CIFWindow key down pressed event")
 }
 
-void PDBWindowGL::MouseLeftButtonDownEvent(WPARAM wParam, LPARAM lParam)
+void CIFWindowGL::MouseLeftButtonDownEvent(WPARAM wParam, LPARAM lParam)
 {
     try
     {
-        if (ShowPDBSize == 0)
+        if (ShowCIFSize == 0)
             return;
 
         POINT CursorMouseIndex;
         CursorMouseIndex.x = LOWORD(lParam);
         CursorMouseIndex.y = HIWORD(lParam);
 
-        IntType PrevIndex = ChosenElementIndex;
-        IntType NextIndex = ChooseElement(CursorMouseIndex);
+        IntType PrevIndex = ChosenAtomIndex;
+        IntType NextIndex = ChooseAtom(CursorMouseIndex);
 
         if (NextIndex != -1)
-            ChosenElementIndex = NextIndex;
+            ChosenAtomIndex = NextIndex;
 
-        if (PrevIndex != -1 || ChosenElementIndex != -1)
+        if (PrevIndex != -1 || ChosenAtomIndex != -1)
             DrawStage();
     }
     CATCH("mouse move event")
 }
 
-LRESULT PDBWindowGL::WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
+LRESULT CIFWindowGL::WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 {
-	UnsignedIntType Result;
+    UnsignedIntType Result;
 
-	try
+    try
     {
         Result = WindowGL::WndProc(hWnd, Message, wParam, lParam);
 
@@ -438,12 +437,12 @@ LRESULT PDBWindowGL::WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lPar
             default: break;
         }
     }
-    CATCH("execution of PDBWindowGL::WndProc")
+    CATCH("execution of CIFWindowGL::WndProc")
 
-	return Result;
+    return Result;
 }
 
-IntType PDBWindowGL::ChooseElement(POINT MouseCursorPosition)
+IntType CIFWindowGL::ChooseAtom(POINT MouseCursorPosition)
 {
     try
     {
@@ -479,32 +478,32 @@ IntType PDBWindowGL::ChooseElement(POINT MouseCursorPosition)
 
         if (HitsNumber > 0)
         {
-            UnsignedIntType ClosestElementIndex = MarkingBuffer[3];
-            UnsignedIntType ClosestElementDistance = MarkingBuffer[1];
+            UnsignedIntType ClosestAtomIndex = MarkingBuffer[3];
+            UnsignedIntType ClosestAtomDistance = MarkingBuffer[1];
             IntType CurrentIndex = 0;
             for (IntType HitIndex = 0; HitIndex < HitsNumber; HitIndex++)
             {
-                if (MarkingBuffer[CurrentIndex + 1] < ClosestElementDistance)
+                if (MarkingBuffer[CurrentIndex + 1] < ClosestAtomDistance)
                 {
-                    ClosestElementDistance = MarkingBuffer[CurrentIndex + 1];
+                    ClosestAtomDistance = MarkingBuffer[CurrentIndex + 1];
                     if (MarkingBuffer[CurrentIndex] > 0)
-                        ClosestElementIndex = MarkingBuffer[CurrentIndex + 3];
+                        ClosestAtomIndex = MarkingBuffer[CurrentIndex + 3];
                 }
                 CurrentIndex += 3 + MarkingBuffer[CurrentIndex];
             }
-            return ClosestElementIndex;
+            return ClosestAtomIndex;
         }
         else
             return -1;
-	}
-    CATCH("choosing Element")
+    }
+    CATCH("choosing Atom")
 
     return -1;
 }
 
 #pragma endregion
 
-UnsignedIntType CreateFontGeneral(HWND HandleWindow, const char* FontName, IntType HeightInPixels, bool Bold, bool Italics, IntType FirstCharCode, IntType LastCharCode)
+UnsignedIntType CreateFontGeneral1(HWND HandleWindow, const char* FontName, IntType HeightInPixels, bool Bold, bool Italics, IntType FirstCharCode, IntType LastCharCode)
 {
     UnsignedIntType FirstListIndex;
 
@@ -524,10 +523,10 @@ UnsignedIntType CreateFontGeneral(HWND HandleWindow, const char* FontName, IntTy
     }
     CATCH("creating font general")
 
-	return FirstListIndex;
+    return FirstListIndex;
 }
 
-void PDBWindowGL::DrawActors()
+void CIFWindowGL::DrawActors()
 {
     try
     {
@@ -552,7 +551,7 @@ void PDBWindowGL::DrawActors()
 
         static UnsignedIntType BitmapFont = 0;
         if (BitmapFont == 0)
-            BitmapFont = CreateFontGeneral(HandleWindow, "Calibri", 20, true, false, 32, 255);
+            BitmapFont = CreateFontGeneral1(HandleWindow, "Calibri", 20, true, false, 32, 255);
         const auto start_time2 = chrono::high_resolution_clock::now();
 
         glCallList(DrawingList);
@@ -568,12 +567,12 @@ void PDBWindowGL::DrawActors()
         glGetIntegerv(GL_RENDER_MODE, &RenderingMode);
         if (RenderingMode == GL_RENDER)
         {
-            if (ChosenElementIndex >= 0 && ShowPDBSize > 0)
+            if (ChosenAtomIndex >= 0 && ShowCIFSize > 0)
             {
                 glColor3f(1, 1, 0);
-                DrawChosenElement(LengthUnit, 1.05 * ShowPDBSize, ChosenElementIndex, false);
+                DrawChosenAtom(LengthUnit, 1.05 * ShowCIFSize, ChosenAtomIndex, false);
                 glColor3f(5, 0, 5);
-                DrawChosenElementDescription(ChosenElementIndex, BitmapFont);
+                DrawChosenAtomDescription(ChosenAtomIndex, BitmapFont);
             }
         }
 
@@ -586,13 +585,13 @@ void PDBWindowGL::DrawActors()
 
 #pragma region SourceOfLights
 
-void PDBWindowGL::LightSources()
+void CIFWindowGL::LightSources()
 {
-	BackgroundLightIntensity = 0.5f;
-	MilkyBulb(0.5f);
+    BackgroundLightIntensity = 0.5f;
+    MilkyBulb(0.5f);
 }
 
-void PDBWindowGL::MilkyBulb(float jasnosc)
+void CIFWindowGL::MilkyBulb(float jasnosc)
 {
     try
     {
@@ -601,7 +600,7 @@ void PDBWindowGL::MilkyBulb(float jasnosc)
         glLightfv(GL_LIGHT1, GL_POSITION, Position);
         glLightfv(GL_LIGHT1, GL_DIFFUSE, Color);
         glEnable(GL_LIGHT1);
-	}
+    }
     CATCH("setting milkybulb")
 }
 

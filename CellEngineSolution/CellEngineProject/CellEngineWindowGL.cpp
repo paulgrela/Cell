@@ -11,6 +11,7 @@
 
 #include "CellConstants.h"
 #include "CellEnginePDBWindowGL.h"
+#include "CellEngineCIFWindowGL.h"
 
 using namespace std;
 
@@ -30,7 +31,8 @@ void InitializeLoggerManagerParameters()
 
 #pragma region Functions WinMain and WndProc
 
-unique_ptr<PDBWindowGL> WindowGLPointer;
+unique_ptr<PDBWindowGL> PDBWindowGLPointer;
+unique_ptr<CIFWindowGL> CIFWindowGLPointer;
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
@@ -39,18 +41,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         InitializeLoggerManagerParameters();
         LoggersManagerObject.Log(STREAM("START CELL"));
 
-        WindowGLPointer = make_unique<PDBWindowGL>();
+        PDBWindowGLPointer = make_unique<PDBWindowGL>();
+        CIFWindowGLPointer = make_unique<CIFWindowGL>();
 
         POINT WindowPosition = { 480,100 };
         POINT WindowSize = { 1600,1200 };
 
-        if (!WindowGLPointer->Init(hInstance, WindowPosition, WindowSize))
+        if (!PDBWindowGLPointer->Init(hInstance, WindowPosition, WindowSize))
         {
             MessageBox(nullptr, "Window initiation failed!", "OpenGL PDB Viewer Application", MB_OK | MB_ICONERROR);
             return EXIT_FAILURE;
         }
         else
-            return WindowGLPointer->Run();
+            return PDBWindowGLPointer->Run();
 	}
     CATCH("execution WinMain")
 
@@ -59,7 +62,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	return WindowGLPointer->WndProc(hWnd, message, wParam, lParam);
+	return PDBWindowGLPointer->WndProc(hWnd, message, wParam, lParam);
 }
 
 #pragma endregion
@@ -486,8 +489,18 @@ void WindowGL::DrawStage()
 
         ShowRenderingFrequency();
 
+        //const auto start_time1 = chrono::high_resolution_clock::now();
         SetCamera();
+        //const auto stop_time1 = chrono::high_resolution_clock::now();
+        //LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time1, stop_time1, "Execution of setting camera has taken time: ","executing printing duration_time")));
+
+        const auto start_time2 = chrono::high_resolution_clock::now();
+
         DrawActors();
+
+        const auto stop_time2 = chrono::high_resolution_clock::now();
+
+        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time2, stop_time2, "Execution of drawing actors has taken time: ","executing printing duration_time")));
 
         SwapBuffers(HandleDC);
     }
