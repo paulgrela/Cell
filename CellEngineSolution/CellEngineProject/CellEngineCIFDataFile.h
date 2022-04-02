@@ -10,6 +10,7 @@
 #include <stdexcept>
 
 #include <memory>
+#include <unordered_map>
 
 #include "VectorType.h"
 
@@ -25,6 +26,8 @@ public:
     double X;
     double Y;
     double Z;
+    std::string Chain;
+    UnsignedIntType EntityId;
 public:
     Atom(const char* CIFRecord, UnsignedIntType AtomIndex);
     ~Atom() = default;
@@ -34,9 +37,26 @@ private:
     void ParseRecord(const char* LocalPDBRecord);
 };
 
+struct Entity
+{
+public:
+    UnsignedIntType  EntityId;
+    std::vector<Atom> Atoms;
+};
+
+struct Matrix
+{
+public:
+    double Matrix[3][3];
+};
+
 class CIFDataFile
 {
 private:
+    std::vector<Matrix> Matrixes;
+    std::unordered_map<std::string, Entity> Entities; // Created during reading atoms for temporary purpose
+private:
+    std::vector<Atom> AtomsFinal;
     std::vector<std::vector<Atom>> Atoms;
 private:
     void ReadDataFromFile(const std::string_view);

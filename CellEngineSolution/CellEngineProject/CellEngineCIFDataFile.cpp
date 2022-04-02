@@ -60,6 +60,23 @@ void CIFDataFile::ReadDataFromFile(const std::string_view FileName)
 
         std::ifstream File(string(FileName).c_str(), std::ios_base::in);
 
+        std::vector<string> ApplyEntities;
+        std::vector<UnsignedIntType> MatrixesId;
+
+        //PODCZAS WCZYTYWANIA APLLY_LINE
+            MatrixesId.resize(0);
+            ApplyEntities.resize(0);
+            //WCZYTAJ MACIERZE_IDS
+            //WCZYTAJ ENTITIES_IDS
+            for (const auto& MatrixId : MatrixesId)
+                for (const auto& ApplyEntity : ApplyEntities)
+                    for (const auto& Atom : Entities.find(ApplyEntity)->second.Atoms)
+                    {
+                        //POMNOZ ATOM PRZEZ globalny obiekt
+                        Matrixes[MatrixId].Matrix[1][1] * Atom.X;
+                        AtomsFinal.push_back(Atom);
+                    }
+
         while (getline(File, Line, '\n'))
         {
             if (Line.substr(0, 4) == "ATOM" || Line.substr(0, 6) == "HETATM")
