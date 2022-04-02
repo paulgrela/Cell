@@ -31,8 +31,12 @@ void InitializeLoggerManagerParameters()
 
 #pragma region Functions WinMain and WndProc
 
-unique_ptr<PDBWindowGL> PDBWindowGLPointer;
-unique_ptr<CIFWindowGL> CIFWindowGLPointer;
+unique_ptr<WindowGL> WindowGLPointer;
+
+bool check_end_str(const string_view FileName, const string_view FileExtension)
+{
+    return std::equal(FileExtension.rbegin(), FileExtension.rend(), string(FileName).rbegin());
+}
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
@@ -41,19 +45,30 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         InitializeLoggerManagerParameters();
         LoggersManagerObject.Log(STREAM("START CELL"));
 
-        PDBWindowGLPointer = make_unique<PDBWindowGL>();
-        CIFWindowGLPointer = make_unique<CIFWindowGL>();
+                string FileName;
+                if (__argc > 1)
+                    FileName = __argv[1];
+                else
+                {
+                    MessageBox(nullptr, "Lack of file name in program parameters", "Cell Engine View PDB", MB_OK | MB_ICONWARNING);
+                    PostQuitMessage(0);
+                }
+
+        if (check_end_str(FileName, ".pdb") == true)
+            WindowGLPointer = make_unique<PDBWindowGL>(FileName);
+        else
+            WindowGLPointer = make_unique<CIFWindowGL>(FileName);
 
         POINT WindowPosition = { 480,100 };
         POINT WindowSize = { 1600,1200 };
 
-        if (!PDBWindowGLPointer->Init(hInstance, WindowPosition, WindowSize))
+        if (WindowGLPointer->Init(hInstance, WindowPosition, WindowSize) == false)
         {
             MessageBox(nullptr, "Window initiation failed!", "OpenGL PDB Viewer Application", MB_OK | MB_ICONERROR);
             return EXIT_FAILURE;
         }
         else
-            return PDBWindowGLPointer->Run();
+            return WindowGLPointer->Run();
 	}
     CATCH("execution WinMain")
 
@@ -62,7 +77,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	return PDBWindowGLPointer->WndProc(hWnd, message, wParam, lParam);
+	return WindowGLPointer->WndProc(hWnd, message, wParam, lParam);
 }
 
 #pragma endregion

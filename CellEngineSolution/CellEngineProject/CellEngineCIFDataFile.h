@@ -37,14 +37,13 @@ private:
 class CIFDataFile
 {
 private:
-    const char* FileName;
     std::vector<std::vector<Atom>> Atoms;
 private:
-    void ReadDataFromFile();
+    void ReadDataFromFile(const std::string_view);
 public:
     UnsignedIntType ChosenStructureIndex;
 public:
-    explicit CIFDataFile(const char* FileName);
+    explicit CIFDataFile(const std::string_view FileName);
     ~CIFDataFile() = default;
 public:
     [[nodiscard]] const std::vector<Atom>& GetAtoms() const

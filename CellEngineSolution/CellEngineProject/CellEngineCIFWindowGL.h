@@ -18,7 +18,7 @@ private:
     void LightSources() final;
     static void MilkyBulb(float Brightness);
 public:
-    CIFWindowGL();
+    explicit CIFWindowGL(const std::string_view FileName);
     ~CIFWindowGL() = default;
 public:
     LRESULT WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam) final;
@@ -38,7 +38,7 @@ private:
 private:
     std::string ChosenAtomDescription;
     std::unique_ptr<CIFDataFile> CIFDataFileObjectPointer;
-    bool OpenCIFFile(const char* FileName);
+    bool OpenCIFFile(const std::string_view FileName);
     void DrawAtoms(const double LengthUnit, const double AtomSizeLengthUnit, bool MakeColors) const;
     void DrawBonds(const double LengthUnit, bool MakeColors) const;
     void ChooseAtomColor(const std::string_view Name, const float Alpha) const;

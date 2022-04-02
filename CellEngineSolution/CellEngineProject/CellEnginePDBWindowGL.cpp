@@ -1,5 +1,4 @@
 
-
 #include <memory>
 #include <exception>
 
@@ -13,78 +12,26 @@ using namespace std;
 
 #pragma region DrawPDB
 
-PDBWindowGL::PDBWindowGL() : WindowGL(), PDBDataFileObjectPointer(nullptr), ShowBonds(false), ShowPDBSize(1.00f), RefreshListOfDrawing(false), ChosenElementIndex(-1)
+PDBWindowGL::PDBWindowGL(const string_view FileName) : WindowGL(), PDBDataFileObjectPointer(nullptr), ShowBonds(false), ShowPDBSize(1.00f), RefreshListOfDrawing(false), ChosenElementIndex(-1)
 {
     try
     {
-        char* FileName;
-
-        if (__argc > 1)
-            FileName = __argv[1];
-        else
-        {
-            MessageBox(nullptr, "Lack of file name in program parameters", "Cell Engine View PDB", MB_OK | MB_ICONWARNING);
-            PostQuitMessage(0);
-            return;
-        }
-
         if (OpenPDBFile(FileName) == false)
             PostQuitMessage(0);
 	}
     CATCH("initiation PDBWindowGL")
 }
 
-#include <algorithm>
-
-bool PDBWindowGL::OpenPDBFile(const char* FileName)
+bool PDBWindowGL::OpenPDBFile(const string_view FileName)
 {
 	try
 	{
-        std::string LogExt = ".pdb";
-        if (std::equal(LogExt.rbegin(), LogExt.rend(), string(FileName).rbegin()))
-            PDBDataFileObjectPointer = make_unique<PDBDataFile>(FileName);
+        PDBDataFileObjectPointer = make_unique<PDBDataFile>(FileName);
 	}
 	CATCH("Error with loading PDB object");
 
 	return true;
 }
-
-/*
-void PDBWindowGL::DrawElements(const double LengthUnit, const double ElementSizeLengthUnit, bool MakeColors) const
-{
-    try
-    {
-        glPushMatrix();
-
-        DoubleVectorType MassCenter = LengthUnit * PDBDataFileObjectPointer->MassCenter();;
-        glTranslated(-MassCenter.X, -MassCenter.Y, -MassCenter.Z);
-
-        glColor3f(0, 0, 0);
-        glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT);
-
-        glShadeModel(GL_SMOOTH);
-
-        glBegin(GL_POINTS);
-
-        for (IntType ElementIndex1 = 0; ElementIndex1 < PDBDataFileObjectPointer->GetNumberOfElements(); ElementIndex1++)
-        {
-            DoubleVectorType Element1Position = LengthUnit * PDBDataFileObjectPointer->GetElement(ElementIndex1).Position();
-
-            if (MakeColors)
-                ChooseElementColor(PDBDataFileObjectPointer->GetElement(ElementIndex1).Name.c_str(), 1.0f);
-
-            glVertex3d(Element1Position.X, Element1Position.Y, Element1Position.Z);
-        }
-
-        glEnd();
-
-        glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-
-        glPopMatrix();
-    }
-    CATCH("drawing elements")
-}
-*/
 
 void PDBWindowGL::DrawElements(const double LengthUnit, const double ElementSizeLengthUnit, bool MakeColors) const
 {

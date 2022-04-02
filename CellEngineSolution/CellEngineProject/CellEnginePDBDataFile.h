@@ -37,14 +37,13 @@ private:
 class PDBDataFile
 {
 private:
-	const char* FileName;
     std::vector<std::vector<Element>> Elements;
 private:
-	void ReadDataFromFile();
+	void ReadDataFromFile(const std::string_view FileName);
 public:
     UnsignedIntType ChosenStructureIndex;
 public:
-	explicit PDBDataFile(const char* FileName);
+	explicit PDBDataFile(const std::string_view FileName);
 	~PDBDataFile() = default;
 public:
     [[nodiscard]] const std::vector<Element>& GetElements() const

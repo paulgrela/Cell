@@ -18,7 +18,7 @@ private:
 	void LightSources() final;
 	static void MilkyBulb(float Brightness);
 public:
-	PDBWindowGL();
+	explicit PDBWindowGL(const std::string_view FileName);
 	~PDBWindowGL() = default;
 public:
     LRESULT WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam) final;
@@ -38,7 +38,7 @@ private:
 private:
     std::string ChosenElementDescription;
 	std::unique_ptr<PDBDataFile> PDBDataFileObjectPointer;
-	bool OpenPDBFile(const char* FileName);
+	bool OpenPDBFile(const std::string_view FileName);
 	void DrawElements(const double LengthUnit, const double ElementSizeLengthUnit, bool MakeColors) const;
 	void DrawBonds(const double LengthUnit, bool MakeColors) const;
 	void ChooseElementColor(const std::string_view Name, const float Alpha) const;

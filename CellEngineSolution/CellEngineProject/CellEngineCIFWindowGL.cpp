@@ -12,78 +12,26 @@ using namespace std;
 
 #pragma region DrawCIF
 
-CIFWindowGL::CIFWindowGL() : WindowGL(), CIFDataFileObjectPointer(nullptr), ShowBonds(false), ShowCIFSize(1.00f), RefreshListOfDrawing(false), ChosenAtomIndex(-1)
+CIFWindowGL::CIFWindowGL(const string_view FileName) : WindowGL(), CIFDataFileObjectPointer(nullptr), ShowBonds(false), ShowCIFSize(1.00f), RefreshListOfDrawing(false), ChosenAtomIndex(-1)
 {
     try
     {
-        char* FileName;
-
-        if (__argc > 1)
-            FileName = __argv[1];
-        else
-        {
-            MessageBox(nullptr, "Lack of file name in program parameters", "Cell Engine View CIF", MB_OK | MB_ICONWARNING);
-            PostQuitMessage(0);
-            return;
-        }
-
         if (OpenCIFFile(FileName) == false)
             PostQuitMessage(0);
     }
     CATCH("initiation CIFWindowGL")
 }
 
-#include <algorithm>
-
-bool CIFWindowGL::OpenCIFFile(const char* FileName)
+bool CIFWindowGL::OpenCIFFile(const string_view FileName)
 {
     try
     {
-        std::string LogExt = ".cif";
-        if (std::equal(LogExt.rbegin(), LogExt.rend(), string(FileName).rbegin()))
-            CIFDataFileObjectPointer = make_unique<CIFDataFile>(FileName);
+        CIFDataFileObjectPointer = make_unique<CIFDataFile>(FileName);
     }
     CATCH("Error with loading CIF object");
 
     return true;
 }
-
-/*
-void CIFWindowGL::DrawAtoms(const double LengthUnit, const double AtomsizeLengthUnit, bool MakeColors) const
-{
-    try
-    {
-        glPushMatrix();
-
-        DoubleVectorType MassCenter = LengthUnit * CIFDataFileObjectPointer->MassCenter();;
-        glTranslated(-MassCenter.X, -MassCenter.Y, -MassCenter.Z);
-
-        glColor3f(0, 0, 0);
-        glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT);
-
-        glShadeModel(GL_SMOOTH);
-
-        glBegin(GL_POINTS);
-
-        for (IntType AtomIndex1 = 0; AtomIndex1 < CIFDataFileObjectPointer->GetNumberOfAtoms(); AtomIndex1++)
-        {
-            DoubleVectorType Atom1Position = LengthUnit * CIFDataFileObjectPointer->GetAtom(AtomIndex1).Position();
-
-            if (MakeColors)
-                ChooseAtomColor(CIFDataFileObjectPointer->GetAtom(AtomIndex1).Name.c_str(), 1.0f);
-
-            glVertex3d(Atom1Position.X, Atom1Position.Y, Atom1Position.Z);
-        }
-
-        glEnd();
-
-        glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-
-        glPopMatrix();
-    }
-    CATCH("drawing Atoms")
-}
-*/
 
 void CIFWindowGL::DrawAtoms(const double LengthUnit, const double AtomsizeLengthUnit, bool MakeColors) const
 {
@@ -96,12 +44,9 @@ void CIFWindowGL::DrawAtoms(const double LengthUnit, const double AtomsizeLength
 
         GLUquadricObj* Quadriga = gluNewQuadric();
         gluQuadricDrawStyle(Quadriga, GLU_FILL);
-        //gluQuadricDrawStyle(Quadriga, GLU_POINT);
-        //gluQuadricDrawStyle(Quadriga, GLU_LINE);
         glShadeModel(GL_SMOOTH);
 
         const IntType HowManyPointsInEachDimension = 10;
-        //const IntType HowManyPointsInEachDimension = 2;
 
         glInitNames();
         glPushName(-1);

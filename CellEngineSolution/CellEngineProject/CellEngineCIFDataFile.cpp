@@ -42,14 +42,14 @@ DoubleVectorType Atom::Position() const
     return DoubleVectorType(X, Y, Z);
 }
 
-CIFDataFile::CIFDataFile(const char* FileName) : FileName(FileName)
+CIFDataFile::CIFDataFile(const string_view FileName)
 {
     ChosenStructureIndex = 0;
 
-    ReadDataFromFile();
+    ReadDataFromFile(FileName);
 }
 
-void CIFDataFile::ReadDataFromFile()
+void CIFDataFile::ReadDataFromFile(const std::string_view FileName)
 {
     try
     {
@@ -58,7 +58,7 @@ void CIFDataFile::ReadDataFromFile()
 
         const auto start_time = chrono::high_resolution_clock::now();
 
-        std::ifstream File(FileName, std::ios_base::in);
+        std::ifstream File(string(FileName).c_str(), std::ios_base::in);
 
         while (getline(File, Line, '\n'))
         {

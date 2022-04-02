@@ -42,14 +42,14 @@ DoubleVectorType Element::Position() const
 	return DoubleVectorType(X, Y, Z);
 }
 
-PDBDataFile::PDBDataFile(const char* FileName) : FileName(FileName)
+PDBDataFile::PDBDataFile(const string_view FileName)// : FileName(FileName)
 {
     ChosenStructureIndex = 0;
 
-	ReadDataFromFile();
+	ReadDataFromFile(FileName);
 }
 
-void PDBDataFile::ReadDataFromFile()
+void PDBDataFile::ReadDataFromFile(const string_view FileName)
 {
     try
     {
@@ -58,7 +58,7 @@ void PDBDataFile::ReadDataFromFile()
 
         const auto start_time = chrono::high_resolution_clock::now();
 
-        std::ifstream File(FileName, std::ios_base::in);
+        std::ifstream File(string(FileName).c_str(), std::ios_base::in);
 
         while (getline(File, Line, '\n'))
         {
