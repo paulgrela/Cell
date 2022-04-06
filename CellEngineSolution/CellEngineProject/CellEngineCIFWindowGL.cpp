@@ -43,10 +43,12 @@ void CIFWindowGL::DrawAtoms(const double LengthUnit, const double AtomsizeLength
         glTranslated(-MassCenter.X, -MassCenter.Y, -MassCenter.Z);
 
         GLUquadricObj* Quadriga = gluNewQuadric();
-        gluQuadricDrawStyle(Quadriga, GLU_FILL);
+        //gluQuadricDrawStyle(Quadriga, GLU_FILL);
+        gluQuadricDrawStyle(Quadriga, GLU_POINT);
         glShadeModel(GL_SMOOTH);
 
-        const IntType HowManyPointsInEachDimension = 10;
+        //const IntType HowManyPointsInEachDimension = 10;
+        const IntType HowManyPointsInEachDimension = 2;
 
         glInitNames();
         glPushName(-1);

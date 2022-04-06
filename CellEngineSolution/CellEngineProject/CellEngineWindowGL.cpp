@@ -33,11 +33,6 @@ void InitializeLoggerManagerParameters()
 
 unique_ptr<WindowGL> WindowGLPointer;
 
-bool check_end_str(const string_view FileName, const string_view FileExtension)
-{
-    return std::equal(FileExtension.rbegin(), FileExtension.rend(), string(FileName).rbegin());
-}
-
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
     try
@@ -45,16 +40,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         InitializeLoggerManagerParameters();
         LoggersManagerObject.Log(STREAM("START CELL"));
 
-                string FileName;
-                if (__argc > 1)
-                    FileName = __argv[1];
-                else
-                {
-                    MessageBox(nullptr, "Lack of file name in program parameters", "Cell Engine View PDB", MB_OK | MB_ICONWARNING);
-                    PostQuitMessage(0);
-                }
+        string FileName;
+        if (__argc > 1)
+            FileName = __argv[1];
+        else
+        {
+            MessageBox(nullptr, "Lack of file name in program parameters", "Cell Engine View PDB", MB_OK | MB_ICONWARNING);
+            PostQuitMessage(0);
+        }
 
-        if (check_end_str(FileName, ".pdb") == true)
+        if (string_utils::check_end_str(FileName, ".pdb") == true)
             WindowGLPointer = make_unique<PDBWindowGL>(FileName);
         else
             WindowGLPointer = make_unique<CIFWindowGL>(FileName);
@@ -64,7 +59,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
         if (WindowGLPointer->Init(hInstance, WindowPosition, WindowSize) == false)
         {
-            MessageBox(nullptr, "Window initiation failed!", "OpenGL PDB Viewer Application", MB_OK | MB_ICONERROR);
+            MessageBox(nullptr, "Window initiation failed!", "OpenGL Cell Viewer Application", MB_OK | MB_ICONERROR);
             return EXIT_FAILURE;
         }
         else

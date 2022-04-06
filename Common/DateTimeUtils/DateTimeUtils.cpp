@@ -5,7 +5,6 @@
 #include <windows.h>
 #endif
 
-#include <sstream>
 #include <iomanip>
 #include <iostream>
 

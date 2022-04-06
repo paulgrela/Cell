@@ -42,7 +42,7 @@ DoubleVectorType Element::Position() const
 	return DoubleVectorType(X, Y, Z);
 }
 
-PDBDataFile::PDBDataFile(const string_view FileName)// : FileName(FileName)
+PDBDataFile::PDBDataFile(const string_view FileName)
 {
     ChosenStructureIndex = 0;
 
@@ -59,6 +59,8 @@ void PDBDataFile::ReadDataFromFile(const string_view FileName)
         const auto start_time = chrono::high_resolution_clock::now();
 
         std::ifstream File(string(FileName).c_str(), std::ios_base::in);
+
+        LoggersManagerObject.Log(STREAM("STARTED READING OF PDB FILE"));
 
         while (getline(File, Line, '\n'))
         {
