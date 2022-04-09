@@ -29,8 +29,8 @@ void Atom::ParseRecord(const char* LocalCIFRecord)
 
         vector<string> AtomFields = split(RecordStr, " ");
 
-        ResName = AtomFields[5];
-        Chain = AtomFields[6];
+        strncpy(ResName, AtomFields[5].c_str(), AtomFields[5].length() + 1);
+        strncpy(Chain, AtomFields[6].c_str(), AtomFields[6].length() + 1);
         EntityId = stoi(AtomFields[7]);
 
         X = stod(AtomFields[10]);
@@ -68,6 +68,9 @@ void CIFDataFile::ReadDataFromFile(const std::string_view FileName)
 
         LoggersManagerObject.Log(STREAM("STARTED READING FROM CIF FILE"));
 
+                                                                                      UnsignedIntType NumberOfAtoms = 0;
+                                                                                      UnsignedIntType NumberOfAtomsDNA = 0;
+
         while (getline(File, Line, '\n'))
         {
             if (Line.substr(0, 4) == "ATOM")
@@ -100,6 +103,8 @@ void CIFDataFile::ReadDataFromFile(const std::string_view FileName)
 
                 Matrixes.push_back(MatrixObject);
 
+                LocalAtomsObject.push_back(Atom(MatrixObject.Matrix[0][3], MatrixObject.Matrix[1][3], MatrixObject.Matrix[2][3], Matrixes.size(), 1, (char*)("H"), (char*)("MTR"), (char*)("BAG01") ));
+
                 //NAJPIERW NIECH PRZEPISZE do atomow tylko same matrixes
                 //i dopiero jak sie zblizam to przepisuje dla najblizszych punktow dodatkowe atomy
             }
@@ -113,24 +118,41 @@ void CIFDataFile::ReadDataFromFile(const std::string_view FileName)
                 auto end = Line.cend();
                 for ( ; regex_search(pos, end, SMatchObject, RegexObject); pos = SMatchObject.suffix().first)
                     for (UnsignedIntType MatrixId = stoi(SMatchObject.str(1)); MatrixId <= stoi(SMatchObject.str(2)); MatrixId++)
+                    {
+                        //LoggersManagerObject.Log(STREAM(MatrixId << " " << SMatchObject.str(1) << " " << SMatchObject.str(2) << endl));
+                        //getchar();
                         AppliedMatrixesIds.push_back(MatrixId);
+                    }
 
                 vector<string> AppliedChainsNames;
                 regex RegexObject1("([A-Z]+\\d*)");
                 pos = Line.cbegin();
                 end = Line.cend();
                 for ( ; regex_search(pos, end, SMatchObject, RegexObject1); pos = SMatchObject.suffix().first)
+                {
+                    //LoggersManagerObject.Log(STREAM(SMatchObject.str(1) << endl));
+                    //getchar();
                     AppliedChainsNames.push_back(SMatchObject.str(1));
+                }
 
                 for (const auto& AppliedMatrixId : AppliedMatrixesIds)
                     for (const auto& AppliedChainName : AppliedChainsNames)
-                        for (const Atom& Atom : ChainsNames.find(AppliedChainName)->second)
+                        for (Atom& Atom : ChainsNames.find(AppliedChainName)->second)
                         {
-                            Matrixes[AppliedMatrixId].Matrix[1][1] * Atom.X;
-                            LocalAtomsObject.push_back(Atom);
+                            NumberOfAtoms++;
+                            if (AppliedChainName == "BAR0")
+                                NumberOfAtomsDNA++;
+
+                            Atom.X = Matrixes[AppliedMatrixId - 2].Matrix[0][0] * Atom.X + Matrixes[AppliedMatrixId - 2].Matrix[0][1] * Atom.Y + Matrixes[AppliedMatrixId - 2].Matrix[0][2] * Atom.Z + Matrixes[AppliedMatrixId - 2].Matrix[0][3];
+                            Atom.Y = Matrixes[AppliedMatrixId - 2].Matrix[1][0] * Atom.X + Matrixes[AppliedMatrixId - 2].Matrix[1][1] * Atom.Y + Matrixes[AppliedMatrixId - 2].Matrix[1][2] * Atom.Z + Matrixes[AppliedMatrixId - 2].Matrix[1][3];
+                            Atom.Z = Matrixes[AppliedMatrixId - 2].Matrix[2][0] * Atom.X + Matrixes[AppliedMatrixId - 2].Matrix[2][1] * Atom.Y + Matrixes[AppliedMatrixId - 2].Matrix[2][2] * Atom.Z + Matrixes[AppliedMatrixId - 2].Matrix[2][3];
+                            //LocalAtomsObject.push_back(Atom);
                         }
             }
         }
+
+        LoggersManagerObject.Log(STREAM(NumberOfAtoms << " " << LocalAtomsObject.size() << " " << NumberOfAtomsDNA << " " << Matrixes.size() << " " << ChainsNames["BAF0"].size() << endl));
+        getchar();
 
         Atoms.push_back(LocalAtomsObject);
 

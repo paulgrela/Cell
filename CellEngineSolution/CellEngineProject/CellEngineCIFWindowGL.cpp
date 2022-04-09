@@ -43,12 +43,12 @@ void CIFWindowGL::DrawAtoms(const double LengthUnit, const double AtomsizeLength
         glTranslated(-MassCenter.X, -MassCenter.Y, -MassCenter.Z);
 
         GLUquadricObj* Quadriga = gluNewQuadric();
-        //gluQuadricDrawStyle(Quadriga, GLU_FILL);
-        gluQuadricDrawStyle(Quadriga, GLU_POINT);
+        gluQuadricDrawStyle(Quadriga, GLU_FILL);
+        //gluQuadricDrawStyle(Quadriga, GLU_POINT);
         glShadeModel(GL_SMOOTH);
 
-        //const IntType HowManyPointsInEachDimension = 10;
-        const IntType HowManyPointsInEachDimension = 2;
+        const IntType HowManyPointsInEachDimension = 10;
+        //const IntType HowManyPointsInEachDimension = 2;
 
         glInitNames();
         glPushName(-1);
@@ -104,6 +104,7 @@ void CIFWindowGL::DrawChosenAtomDescription(IntType LocalChosenAtomIndex, IntTyp
     try
     {
         ChosenAtomDescription = to_string(CIFDataFileObjectPointer->GetAtom(LocalChosenAtomIndex).Serial) + "." + CIFDataFileObjectPointer->GetAtom(LocalChosenAtomIndex).Name + "(" + CIFDataFileObjectPointer->GetAtom(LocalChosenAtomIndex).ResName + ")";
+        ChosenAtomDescription = "A";
 
         glPushMatrix();
 
@@ -168,12 +169,12 @@ void CIFWindowGL::DrawBonds(const double LengthUnit, bool MakeColors) const
                 if (Position12.Length() < 0.17)
                 {
                     if (MakeColors)
-                        ChooseAtomColor(CIFDataFileObjectPointer->GetAtom(AtomIndex1).Name.c_str(), 1.0f);
+                        ChooseAtomColor(CIFDataFileObjectPointer->GetAtom(AtomIndex1).Name, 1.0f);
 
                     glVertex3d(Atom1Position.X, Atom1Position.Y, Atom1Position.Z);
 
                     if (MakeColors)
-                        ChooseAtomColor(CIFDataFileObjectPointer->GetAtom(AtomIndex2).Name.c_str(), 1.0f);
+                        ChooseAtomColor(CIFDataFileObjectPointer->GetAtom(AtomIndex2).Name, 1.0f);
 
                     glVertex3d(Atom2Position.X, Atom2Position.Y, Atom2Position.Z);
                 }

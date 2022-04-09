@@ -21,15 +21,21 @@ struct Atom
 public:
     UnsignedIntType AtomIndex;
     IntType Serial;
-    std::string Name;
-    std::string ResName;
+    char Name[2];
+    char ResName[4];
     double X;
     double Y;
     double Z;
-    std::string Chain;
+    char Chain[6];
     UnsignedIntType EntityId;
 public:
     Atom(const char* CIFRecord, UnsignedIntType AtomIndex);
+    Atom(double XParam, double YParam, double ZParam,  UnsignedIntType AtomIndexParam, IntType SerialParam, char NameParam[2], char ResNameParam[4], char ChainParam[6]) : X(XParam), Y(YParam), Z(ZParam), AtomIndex(AtomIndexParam), Serial(SerialParam)//, strncpy(Name, NameParam, 6), strncpy(ResName, ResNameParam, 6), strncpy(Chain, ChainParam, 6)
+    {
+        strncpy(Name, NameParam, 2);
+        strncpy(ResName, ResNameParam, 4);
+        strncpy(Chain, ChainParam, 6);
+    }
     ~Atom() = default;
 public:
     [[nodiscard]] DoubleVectorType Position() const;
