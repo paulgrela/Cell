@@ -12,7 +12,7 @@ using namespace std;
 
 #pragma region DrawCIF
 
-CIFWindowGL::CIFWindowGL(const string_view FileName) : WindowGL(), CIFDataFileObjectPointer(nullptr), ShowBonds(false), ShowCIFSize(1.00f), RefreshListOfDrawing(false), ChosenAtomIndex(-1)
+CIFWindowGL::CIFWindowGL(const string_view FileName) : WindowGL(), CIFDataFileObjectPointer(nullptr), ShowBonds(false), ShowSpheres(false), ShowCIFSize(1.00f), RefreshListOfDrawing(false), ChosenAtomIndex(-1)
 {
     try
     {
@@ -43,8 +43,12 @@ void CIFWindowGL::DrawAtoms(const double LengthUnit, const double AtomsizeLength
         glTranslated(-MassCenter.X, -MassCenter.Y, -MassCenter.Z);
 
         GLUquadricObj* Quadriga = gluNewQuadric();
-        gluQuadricDrawStyle(Quadriga, GLU_FILL);
-        //gluQuadricDrawStyle(Quadriga, GLU_POINT);
+
+        if (ShowSpheres == true)
+            gluQuadricDrawStyle(Quadriga, GLU_FILL);
+        else
+            gluQuadricDrawStyle(Quadriga, GLU_POINT);
+
         glShadeModel(GL_SMOOTH);
 
         const IntType HowManyPointsInEachDimension = 10;
@@ -53,12 +57,17 @@ void CIFWindowGL::DrawAtoms(const double LengthUnit, const double AtomsizeLength
         glInitNames();
         glPushName(-1);
 
+
+        //TUTAJ DAĆ NIE WSZYSTKIE ATOMY ALE TE KTÓRE RYSUJĘ?
+        //int i = 0;
         for (const Atom& AtomObjectPtr : CIFDataFileObjectPointer->GetAtoms())
+        //if(i < 10000)
         {
+            //i++;
             DoubleVectorType AtomPosition = LengthUnit * AtomObjectPtr.Position();
 
             if (MakeColors == true)
-                ChooseAtomColor(AtomObjectPtr.Name, 1.0f);
+                ChooseAtomColor(AtomObjectPtr.Chain, 1.0f);
 
             glPushMatrix();
             glTranslated(AtomPosition.X, AtomPosition.Y, AtomPosition.Z);
@@ -125,10 +134,11 @@ void CIFWindowGL::DrawChosenAtomDescription(IntType LocalChosenAtomIndex, IntTyp
     CATCH("drawing chosen Atom description")
 }
 
-void CIFWindowGL::ChooseAtomColor(const string_view Name, const float Alpha = 1.0f) const
+void CIFWindowGL::ChooseAtomColor(const string_view Chain, const float Alpha = 1.0f) const
 {
     try
     {
+        /*
         switch(Name[0])
         {
             case 'C': glColor4f(0.25f, 0.75f, 0.75f, Alpha); break;
@@ -138,6 +148,24 @@ void CIFWindowGL::ChooseAtomColor(const string_view Name, const float Alpha = 1.
             case 'P': glColor4f(0.50f, 0.50f, 0.20f, Alpha); break;
             default: glColor4f(0.50f, 0.50f, 0.50f, Alpha); break;
         }
+        */
+
+        if(Chain.substr(0, 3) == "BAF")
+            glColor4f(0.25f, 0.75f, 0.75f, Alpha);
+        else
+        if(Chain.substr(0, 3) == "BAE")
+            glColor4f(1.00f, 0.00f, 0.00f, Alpha);
+        else
+        if(Chain.substr(0, 3) == "ATP")
+            glColor4f(1.00f, 1.00f, 1.00f, Alpha);
+        else
+        if(Chain.substr(0, 3) == "BAR")
+            glColor4f(0.00f, 0.00f, 1.00f, Alpha);
+        else
+        if(Chain.substr(0, 1) == "A")
+            glColor4f(0.50f, 0.50f, 0.20f, Alpha);
+        else
+            glColor4f(0.50f, 0.50f, 0.50f, Alpha);
     }
     CATCH("chossing Atom color")
 }
@@ -322,6 +350,16 @@ void CIFWindowGL::ChangeShowOfBonds()
     CATCH("changing showing of bonds")
 }
 
+void CIFWindowGL::ChangeShowOfSpheres()
+{
+    try
+    {
+        ShowSpheres = !ShowSpheres;
+        FullDrawStage();
+    }
+    CATCH("changing showing of bonds")
+}
+
 void CIFWindowGL::KeyboardKeyDownPressedEvent(WPARAM wParam)
 {
     try
@@ -331,11 +369,11 @@ void CIFWindowGL::KeyboardKeyDownPressedEvent(WPARAM wParam)
             case VK_F1: MessageBox(HandleWindow, "Shortcut Keys: \nZ - show / hide bonds \nX - size of Atoms \nC - projection mode", "CIF VIEWER", MB_OK); break;
             case VK_F2: MessageBox(HandleWindow, ChosenAtomDescription.c_str(), "CIF VIEWER", MB_OK); break;
             case 'Z': ChangeShowOfBonds(); break;
+            case 'J': ChangeShowOfSpheres(); break;
             case 'X': ChangeAtomsSize(); break;
             case 'N': ShowNextStructure(); break;
             case 'M': ShowPrevStructure(); break;
             case 'F': StartTimerEvent(); break;
-
             default: break;
         }
 

@@ -30,7 +30,7 @@ public:
     UnsignedIntType EntityId;
 public:
     Atom(const char* CIFRecord, UnsignedIntType AtomIndex);
-    Atom(double XParam, double YParam, double ZParam,  UnsignedIntType AtomIndexParam, IntType SerialParam, char NameParam[2], char ResNameParam[4], char ChainParam[6]) : X(XParam), Y(YParam), Z(ZParam), AtomIndex(AtomIndexParam), Serial(SerialParam)//, strncpy(Name, NameParam, 6), strncpy(ResName, ResNameParam, 6), strncpy(Chain, ChainParam, 6)
+    Atom(double XParam, double YParam, double ZParam,  UnsignedIntType AtomIndexParam, IntType SerialParam, char NameParam[2], char ResNameParam[4], char ChainParam[6]) : X(XParam), Y(YParam), Z(ZParam), AtomIndex(AtomIndexParam), Serial(SerialParam)
     {
         strncpy(Name, NameParam, 2);
         strncpy(ResName, ResNameParam, 4);

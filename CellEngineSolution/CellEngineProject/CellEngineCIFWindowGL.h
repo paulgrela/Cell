@@ -28,6 +28,7 @@ private:
 private:
     void ChangeAtomsSize();
     void ChangeShowOfBonds();
+    void ChangeShowOfSpheres();
     void ShowNextStructure();
     void ShowPrevStructure();
 private:
@@ -44,6 +45,7 @@ private:
     void ChooseAtomColor(const std::string_view Name, const float Alpha) const;
     [[nodiscard]] UnsignedIntType CreateListOfDrawing(const double LengthUnit);
 private:
+    bool ShowSpheres;
     bool ShowBonds;
     float ShowCIFSize;
     bool RefreshListOfDrawing;
