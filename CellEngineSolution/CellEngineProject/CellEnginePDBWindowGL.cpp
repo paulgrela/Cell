@@ -53,16 +53,16 @@ void PDBWindowGL::DrawElements(const double LengthUnit, const double ElementSize
         glInitNames();
         glPushName(-1);
 
-        for (const Element& ElementObjectPtr : PDBDataFileObjectPointer->GetElements())
+        for (const Element& ElementObject : PDBDataFileObjectPointer->GetElements())
         {
-            DoubleVectorType ElementPosition = LengthUnit * ElementObjectPtr.Position();
+            DoubleVectorType ElementPosition = LengthUnit * ElementObject.Position();
 
             if (MakeColors == true)
-                ChooseElementColor(ElementObjectPtr.Name, 1.0f);
+                ChooseElementColor(ElementObject.Name, 1.0f);
 
             glPushMatrix();
             glTranslated(ElementPosition.X, ElementPosition.Y, ElementPosition.Z);
-            glLoadName(ElementObjectPtr.ElementIndex);
+            glLoadName(ElementObject.ElementIndex);
             gluSphere(Quadriga, LengthUnit * ElementSizeLengthUnit, HowManyPointsInEachDimension, HowManyPointsInEachDimension);
             glPopMatrix();
         }
@@ -405,11 +405,11 @@ IntType PDBWindowGL::ChooseElement(POINT MouseCursorPosition)
         int Viewport[4];
         glGetIntegerv(GL_VIEWPORT, Viewport);
         gluPickMatrix(MouseCursorPosition.x, UserAreaHeight - MouseCursorPosition.y, 1, 1, Viewport);
-        float wsp = static_cast<float>(UserAreaHeight) / static_cast<float>(UserAreaWidth);
+        float Factor = static_cast<float>(UserAreaHeight) / static_cast<float>(UserAreaWidth);
         if (IsometricProjection == false)
-            glFrustum(-0.1, 0.1, wsp * -0.1, wsp * 0.1, 0.3, 100.0);
+            glFrustum(-0.1, 0.1, Factor * -0.1, Factor * 0.1, 0.3, 100.0);
         else
-            glOrtho(-3, 3, wsp * -3, wsp * 3, 0.3, 100.0);
+            glOrtho(-3, 3, Factor * -3, Factor * 3, 0.3, 100.0);
 
         glMatrixMode(GL_MODELVIEW);
 
@@ -479,7 +479,7 @@ void PDBWindowGL::DrawActors()
     {
         ShowRenderingFrequency();
 
-        const auto start_time = chrono::high_resolution_clock::now();
+        const auto start_time1 = chrono::high_resolution_clock::now();
 
         const double LengthUnit = 0.1;
 
@@ -492,9 +492,9 @@ void PDBWindowGL::DrawActors()
             RefreshListOfDrawing = false;
         }
 
-        const auto stop_time = chrono::high_resolution_clock::now();
+        const auto stop_time1 = chrono::high_resolution_clock::now();
 
-        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Execution of X1 has taken time: ","executing printing duration_time")));
+        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time1, stop_time1, "Execution of X1 has taken time: ","executing printing duration_time")));
 
         static UnsignedIntType BitmapFont = 0;
         if (BitmapFont == 0)

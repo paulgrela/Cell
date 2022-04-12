@@ -62,18 +62,18 @@ void CIFWindowGL::DrawAtoms(const double LengthUnit, const double AtomsizeLength
 
         //TUTAJ DAĆ NIE WSZYSTKIE ATOMY ALE TE KTÓRE RYSUJĘ?
         //int i = 0;
-        for (const Atom& AtomObjectPtr : CIFDataFileObjectPointer->GetAtoms())
+        for (const Atom& AtomObject : CIFDataFileObjectPointer->GetAtoms())
         //if(i < 10000)
         {
             //i++;
-            DoubleVectorType AtomPosition = LengthUnit * AtomObjectPtr.Position();
+            DoubleVectorType AtomPosition = LengthUnit * AtomObject.Position();
 
             if (MakeColors == true)
-                ChooseAtomColor(AtomObjectPtr.Chain, 1.0f);
+                ChooseAtomColor(AtomObject.Chain, 1.0f);
 
             glPushMatrix();
             glTranslated(AtomPosition.X, AtomPosition.Y, AtomPosition.Z);
-            glLoadName(AtomObjectPtr.AtomIndex);
+            glLoadName(AtomObject.AtomIndex);
             gluSphere(Quadriga, LengthUnit * AtomsizeLengthUnit, HowManyPointsInEachDimension, HowManyPointsInEachDimension);
             glPopMatrix();
         }
@@ -162,6 +162,7 @@ void CIFWindowGL::ChooseAtomColor(const string_view Chain, const float Alpha = 1
 
 void CIFWindowGL::DrawBonds(const double LengthUnit, bool MakeColors) const
 {
+    /*
     try
     {
         glPushMatrix();
@@ -205,6 +206,7 @@ void CIFWindowGL::DrawBonds(const double LengthUnit, bool MakeColors) const
         glPopMatrix();
     }
     CATCH("drawing bonds")
+    */
 }
 
 UnsignedIntType CIFWindowGL::CreateListOfDrawing(const double LengthUnit)
@@ -439,7 +441,7 @@ IntType CIFWindowGL::ChooseAtom(POINT MouseCursorPosition)
 {
     try
     {
-        const IntType MarkingBufferSize = 1024;
+        const IntType MarkingBufferSize = 10241;
         unsigned int MarkingBuffer[MarkingBufferSize];
         ZeroMemory(MarkingBuffer, MarkingBufferSize);
         glSelectBuffer(MarkingBufferSize, MarkingBuffer);
@@ -451,11 +453,11 @@ IntType CIFWindowGL::ChooseAtom(POINT MouseCursorPosition)
         int Viewport[4];
         glGetIntegerv(GL_VIEWPORT, Viewport);
         gluPickMatrix(MouseCursorPosition.x, UserAreaHeight - MouseCursorPosition.y, 1, 1, Viewport);
-        float wsp = static_cast<float>(UserAreaHeight) / static_cast<float>(UserAreaWidth);
+        float Factor = static_cast<float>(UserAreaHeight) / static_cast<float>(UserAreaWidth);
         if (IsometricProjection == false)
-            glFrustum(-0.1, 0.1, wsp * -0.1, wsp * 0.1, 0.3, 1000);
+            glFrustum(-0.1, 0.1, Factor * -0.1, Factor * 0.1, 0.3, 1000);
         else
-            glOrtho(-3, 3, wsp * -3, wsp * 3, 0.3, 1000.0);
+            glOrtho(-3, 3, Factor * -3, Factor * 3, 0.3, 1000.0);
 
         glMatrixMode(GL_MODELVIEW);
 
@@ -525,7 +527,7 @@ void CIFWindowGL::DrawActors()
     {
         ShowRenderingFrequency();
 
-        const auto start_time = chrono::high_resolution_clock::now();
+        const auto start_time1 = chrono::high_resolution_clock::now();
 
         const double LengthUnit = 0.1;
 
@@ -538,9 +540,9 @@ void CIFWindowGL::DrawActors()
             RefreshListOfDrawing = false;
         }
 
-        const auto stop_time = chrono::high_resolution_clock::now();
+        const auto stop_time1 = chrono::high_resolution_clock::now();
 
-        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Execution of X1 has taken time: ","executing printing duration_time")));
+        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time1, stop_time1, "Execution of X1 has taken time: ","executing printing duration_time")));
 
         static UnsignedIntType BitmapFont = 0;
         if (BitmapFont == 0)

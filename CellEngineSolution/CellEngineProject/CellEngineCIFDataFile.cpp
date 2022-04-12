@@ -102,8 +102,6 @@ void CIFDataFile::ReadDataFromFile(const std::string_view FileName)
                 MatrixObject.Matrix[2][3] = stod(AtomFields[Shift + 11]);
 
                 Matrixes.push_back(MatrixObject);
-
-                //LocalAtomsObject.emplace_back(Atom(MatrixObject.Matrix[0][3], MatrixObject.Matrix[1][3], MatrixObject.Matrix[2][3], Matrixes.size(), 1, (char*)("H"), (char*)("MTR"), (char*)("BAR0") ));
             }
             else
             if (Line.substr(0, 4) == "1 '(")
@@ -133,7 +131,7 @@ void CIFDataFile::ReadDataFromFile(const std::string_view FileName)
                             if (First == true)
                             {
                                 First = false;
-                                LocalAtomsObject.emplace_back(Atom(Matrixes[AppliedMatrixId - 2].Matrix[0][3], Matrixes[AppliedMatrixId - 2].Matrix[1][3], Matrixes[AppliedMatrixId - 2].Matrix[2][3], Matrixes.size(), 1, (char*)("H"), (char*)("MTR"), (char*)AppliedChainName.c_str()));
+                                LocalAtomsObject.emplace_back(Atom(Matrixes[AppliedMatrixId - 2].Matrix[0][3], Matrixes[AppliedMatrixId - 2].Matrix[1][3], Matrixes[AppliedMatrixId - 2].Matrix[2][3], LocalAtomsObject.size(), 1, (char*)("H"), (char*)("MTR"), (char*)AppliedChainName.c_str()));
                             }
 
                             NumberOfAtoms++;
