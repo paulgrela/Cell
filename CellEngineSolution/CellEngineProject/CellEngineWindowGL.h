@@ -65,6 +65,7 @@ private:
     void PaintEvent(HWND hWnd);
 protected:
     bool IsometricProjection;
+    float CameraShift;
 private:
 	POINT MouseCursorInitialPosition;
 	float CameraR;

@@ -133,7 +133,7 @@ void CIFDataFile::ReadDataFromFile(const std::string_view FileName)
                             if (First == true)
                             {
                                 First = false;
-                                LocalAtomsObject.push_back(Atom(Matrixes[AppliedMatrixId - 2].Matrix[0][3], Matrixes[AppliedMatrixId - 2].Matrix[1][3], Matrixes[AppliedMatrixId - 2].Matrix[2][3], Matrixes.size(), 1, (char*)("H"), (char*)("MTR"), (char*)AppliedChainName.c_str()));
+                                LocalAtomsObject.emplace_back(Atom(Matrixes[AppliedMatrixId - 2].Matrix[0][3], Matrixes[AppliedMatrixId - 2].Matrix[1][3], Matrixes[AppliedMatrixId - 2].Matrix[2][3], Matrixes.size(), 1, (char*)("H"), (char*)("MTR"), (char*)AppliedChainName.c_str()));
                             }
 
                             NumberOfAtoms++;

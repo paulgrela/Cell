@@ -16,6 +16,8 @@ CIFWindowGL::CIFWindowGL(const string_view FileName) : WindowGL(), CIFDataFileOb
 {
     try
     {
+        CameraShift = 10.5;
+
         if (OpenCIFFile(FileName) == false)
             PostQuitMessage(0);
     }
@@ -81,7 +83,7 @@ void CIFWindowGL::DrawAtoms(const double LengthUnit, const double AtomsizeLength
         gluDeleteQuadric(Quadriga);
         glPopMatrix();
     }
-    CATCH("drawing Atoms")
+    CATCH("drawing atoms")
 }
 
 void CIFWindowGL::DrawChosenAtom(const double LengthUnit, const double AtomsizeLengthUnit, IntType LocalChosenAtomIndex, bool UseGrid) const
@@ -94,7 +96,7 @@ void CIFWindowGL::DrawChosenAtom(const double LengthUnit, const double AtomsizeL
         glPushMatrix();
 
         GLUquadricObj* Quadric = gluNewQuadric();
-        if (UseGrid)
+        if (UseGrid == true)
             gluQuadricDrawStyle(Quadric, GLU_LINE);
         glLineWidth(1.0f);
         glShadeModel(GL_SMOOTH);
@@ -105,7 +107,7 @@ void CIFWindowGL::DrawChosenAtom(const double LengthUnit, const double AtomsizeL
 
         glPopMatrix();
     }
-    CATCH("drawing chosen Atom")
+    CATCH("drawing chosen atom")
 }
 
 void CIFWindowGL::DrawChosenAtomDescription(IntType LocalChosenAtomIndex, IntType BitmapFont)
@@ -131,25 +133,13 @@ void CIFWindowGL::DrawChosenAtomDescription(IntType LocalChosenAtomIndex, IntTyp
 
         glPopMatrix();
     }
-    CATCH("drawing chosen Atom description")
+    CATCH("drawing chosen atom description")
 }
 
 void CIFWindowGL::ChooseAtomColor(const string_view Chain, const float Alpha = 1.0f) const
 {
     try
     {
-        /*
-        switch(Name[0])
-        {
-            case 'C': glColor4f(0.25f, 0.75f, 0.75f, Alpha); break;
-            case 'O': glColor4f(1.00f, 0.00f, 0.00f, Alpha); break;
-            case 'H': glColor4f(1.00f, 1.00f, 1.00f, Alpha); break;
-            case 'N': glColor4f(0.00f, 0.00f, 1.00f, Alpha); break;
-            case 'P': glColor4f(0.50f, 0.50f, 0.20f, Alpha); break;
-            default: glColor4f(0.50f, 0.50f, 0.50f, Alpha); break;
-        }
-        */
-
         if(Chain.substr(0, 3) == "BAF")
             glColor4f(0.25f, 0.75f, 0.75f, Alpha);
         else
@@ -167,7 +157,7 @@ void CIFWindowGL::ChooseAtomColor(const string_view Chain, const float Alpha = 1
         else
             glColor4f(0.50f, 0.50f, 0.50f, Alpha);
     }
-    CATCH("chossing Atom color")
+    CATCH("chossing atom color")
 }
 
 void CIFWindowGL::DrawBonds(const double LengthUnit, bool MakeColors) const
@@ -315,7 +305,23 @@ void CIFWindowGL::ChangeAtomsSize()
 
         FullDrawStage();
     }
-    CATCH("changing Atoms size")
+    CATCH("changing atoms size")
+}
+
+void CIFWindowGL::ChangeCameraShift()
+{
+    try
+    {
+        if (CameraShift == 10.5)
+            CameraShift = 3;
+        else
+            CameraShift = 10.5;
+
+        LoggersManagerObject.Log(STREAM("CameraShift = " << to_string(CameraShift)));
+
+        FullDrawStage();
+    }
+    CATCH("changing mouse shift")
 }
 
 void CIFWindowGL::ShowNextStructure()
@@ -371,6 +377,7 @@ void CIFWindowGL::KeyboardKeyDownPressedEvent(WPARAM wParam)
             case 'Z': ChangeShowOfBonds(); break;
             case 'J': ChangeShowOfSpheres(); break;
             case 'X': ChangeAtomsSize(); break;
+            case 'Y': ChangeCameraShift(); break;
             case 'N': ShowNextStructure(); break;
             case 'M': ShowPrevStructure(); break;
             case 'F': StartTimerEvent(); break;
@@ -446,9 +453,9 @@ IntType CIFWindowGL::ChooseAtom(POINT MouseCursorPosition)
         gluPickMatrix(MouseCursorPosition.x, UserAreaHeight - MouseCursorPosition.y, 1, 1, Viewport);
         float wsp = static_cast<float>(UserAreaHeight) / static_cast<float>(UserAreaWidth);
         if (IsometricProjection == false)
-            glFrustum(-0.1, 0.1, wsp * -0.1, wsp * 0.1, 0.3, 100.0);
+            glFrustum(-0.1, 0.1, wsp * -0.1, wsp * 0.1, 0.3, 1000);
         else
-            glOrtho(-3, 3, wsp * -3, wsp * 3, 0.3, 100.0);
+            glOrtho(-3, 3, wsp * -3, wsp * 3, 0.3, 1000.0);
 
         glMatrixMode(GL_MODELVIEW);
 
@@ -482,14 +489,14 @@ IntType CIFWindowGL::ChooseAtom(POINT MouseCursorPosition)
         else
             return -1;
     }
-    CATCH("choosing Atom")
+    CATCH("choosing atom")
 
     return -1;
 }
 
 #pragma endregion
 
-UnsignedIntType CreateFontGeneral1(HWND HandleWindow, const char* FontName, IntType HeightInPixels, bool Bold, bool Italics, IntType FirstCharCode, IntType LastCharCode)
+UnsignedIntType CreateFontGeneralCIF(HWND HandleWindow, const char* FontName, IntType HeightInPixels, bool Bold, bool Italics, IntType FirstCharCode, IntType LastCharCode)
 {
     UnsignedIntType FirstListIndex;
 
@@ -537,7 +544,7 @@ void CIFWindowGL::DrawActors()
 
         static UnsignedIntType BitmapFont = 0;
         if (BitmapFont == 0)
-            BitmapFont = CreateFontGeneral1(HandleWindow, "Calibri", 20, true, false, 32, 255);
+            BitmapFont = CreateFontGeneralCIF(HandleWindow, "Calibri", 20, true, false, 32, 255);
         const auto start_time2 = chrono::high_resolution_clock::now();
 
         glCallList(DrawingList);
@@ -545,7 +552,6 @@ void CIFWindowGL::DrawActors()
         const auto stop_time2 = chrono::high_resolution_clock::now();
 
         LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time2, stop_time2, "Execution of X2 has taken time: ","executing printing duration_time")));
-
 
         const auto start_time3 = chrono::high_resolution_clock::now();
 
@@ -555,7 +561,7 @@ void CIFWindowGL::DrawActors()
         {
             if (ChosenAtomIndex >= 0 && ShowCIFSize > 0)
             {
-                glColor3f(1, 1, 0);
+                glColor3f(0.1, 1, 0);
                 DrawChosenAtom(LengthUnit, 1.05 * ShowCIFSize, ChosenAtomIndex, false);
                 glColor3f(5, 0, 5);
                 DrawChosenAtomDescription(ChosenAtomIndex, BitmapFont);

@@ -182,6 +182,7 @@ void WindowGL::ShiftCameraCloser()
     {
         CameraZ += cosDegf(CameraCelPhi) * CameraShift;
         CameraX -= sinDegf(CameraCelPhi) * CameraShift;
+        DrawStage();
     }
     CATCH("shifting camera up")
 }
@@ -192,6 +193,7 @@ void WindowGL::ShiftCameraFarer()
     {
         CameraZ -= cosDegf(CameraCelPhi) * CameraShift;
         CameraX += sinDegf(CameraCelPhi) * CameraShift;
+        DrawStage();
     }
     CATCH("shifting camera down")
 }
@@ -202,6 +204,7 @@ void WindowGL::ShiftCameraRight()
     {
         CameraZ -= sinDegf(CameraCelPhi) * CameraShift;
         CameraX -= cosDegf(CameraCelPhi) * CameraShift;
+        DrawStage();
     }
     CATCH("shifting camera right")
 }
@@ -212,6 +215,7 @@ void WindowGL::ShiftCameraLeft()
     {
         CameraZ += sinDegf(CameraCelPhi) * CameraShift;
         CameraX += cosDegf(CameraCelPhi) * CameraShift;
+        DrawStage();
     }
     CATCH("shifting camera left")
 }
@@ -331,11 +335,12 @@ UnsignedIntType WindowGL::MouseWheelEvent(WPARAM wParam, LPARAM lParam)
 {
     try
     {
-        const float MouseSensitivity = 10.0f;
         auto RollingPositionChange = static_cast<short>(HIWORD(wParam));
-        CameraR *= 1 + static_cast<float>(RollingPositionChange) / abs(static_cast<float>(RollingPositionChange)) / MouseSensitivity;
 
-        DrawStage();
+        if (RollingPositionChange >= 0)
+            ShiftCameraCloser();
+        else
+            ShiftCameraFarer();
     }
     CATCH("mouse wheel event")
 
@@ -460,9 +465,9 @@ void WindowGL::SetStage()
         glLoadIdentity();
         float Coordinates = static_cast<float>(UserAreaHeight) / static_cast<float>(UserAreaWidth);
         if (IsometricProjection == false)
-            glFrustum(-0.1, 0.1, Coordinates * -0.1, Coordinates * 0.1, 0.3, 100.0);
+            glFrustum(-0.1, 0.1, Coordinates * -0.1, Coordinates * 0.1, 0.3, 1000.0);
         else
-            glOrtho(-3, 3, Coordinates * -3, Coordinates * 3, 0.3, 100.0);
+            glOrtho(-3, 3, Coordinates * -3, Coordinates * 3, 0.3, 1000.0);
         glMatrixMode(GL_MODELVIEW);
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
@@ -499,18 +504,15 @@ void WindowGL::DrawStage()
 
         ShowRenderingFrequency();
 
-        //const auto start_time1 = chrono::high_resolution_clock::now();
         SetCamera();
-        //const auto stop_time1 = chrono::high_resolution_clock::now();
-        //LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time1, stop_time1, "Execution of setting camera has taken time: ","executing printing duration_time")));
 
-        const auto start_time2 = chrono::high_resolution_clock::now();
+        const auto start_time = chrono::high_resolution_clock::now();
 
         DrawActors();
 
-        const auto stop_time2 = chrono::high_resolution_clock::now();
+        const auto stop_time = chrono::high_resolution_clock::now();
 
-        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time2, stop_time2, "Execution of drawing actors has taken time: ","executing printing duration_time")));
+        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Execution of drawing actors has taken time: ","executing printing duration_time")));
 
         SwapBuffers(HandleDC);
     }

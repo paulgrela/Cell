@@ -16,6 +16,8 @@ PDBWindowGL::PDBWindowGL(const string_view FileName) : WindowGL(), PDBDataFileOb
 {
     try
     {
+        CameraShift = 3;
+
         if (OpenPDBFile(FileName) == false)
             PostQuitMessage(0);
 	}
@@ -44,12 +46,9 @@ void PDBWindowGL::DrawElements(const double LengthUnit, const double ElementSize
 
         GLUquadricObj* Quadriga = gluNewQuadric();
         gluQuadricDrawStyle(Quadriga, GLU_FILL);
-        //gluQuadricDrawStyle(Quadriga, GLU_POINT);
-        //gluQuadricDrawStyle(Quadriga, GLU_LINE);
         glShadeModel(GL_SMOOTH);
 
         const IntType HowManyPointsInEachDimension = 10;
-        //const IntType HowManyPointsInEachDimension = 2;
 
         glInitNames();
         glPushName(-1);
@@ -97,7 +96,7 @@ void PDBWindowGL::DrawChosenElement(const double LengthUnit, const double Elemen
 
         glPopMatrix();
 	}
-    CATCH("drawing chosen Element")
+    CATCH("drawing chosen element")
 }
 
 void PDBWindowGL::DrawChosenElementDescription(IntType LocalChosenElementIndex, IntType BitmapFont)
@@ -139,7 +138,7 @@ void PDBWindowGL::ChooseElementColor(const string_view Name, const float Alpha =
             default: glColor4f(0.50f, 0.50f, 0.50f, Alpha); break;
         }
     }
-    CATCH("chossing Element color")
+    CATCH("chossing element color")
 }
 
 void PDBWindowGL::DrawBonds(const double LengthUnit, bool MakeColors) const
@@ -444,7 +443,7 @@ IntType PDBWindowGL::ChooseElement(POINT MouseCursorPosition)
         else
             return -1;
 	}
-    CATCH("choosing Element")
+    CATCH("choosing element")
 
     return -1;
 }
@@ -500,6 +499,7 @@ void PDBWindowGL::DrawActors()
         static UnsignedIntType BitmapFont = 0;
         if (BitmapFont == 0)
             BitmapFont = CreateFontGeneral(HandleWindow, "Calibri", 20, true, false, 32, 255);
+
         const auto start_time2 = chrono::high_resolution_clock::now();
 
         glCallList(DrawingList);
@@ -514,7 +514,6 @@ void PDBWindowGL::DrawActors()
         int RenderingMode = 0;
         glGetIntegerv(GL_RENDER_MODE, &RenderingMode);
         if (RenderingMode == GL_RENDER)
-        {
             if (ChosenElementIndex >= 0 && ShowPDBSize > 0)
             {
                 glColor3f(1, 1, 0);
@@ -522,7 +521,6 @@ void PDBWindowGL::DrawActors()
                 glColor3f(5, 0, 5);
                 DrawChosenElementDescription(ChosenElementIndex, BitmapFont);
             }
-        }
 
         const auto stop_time3 = chrono::high_resolution_clock::now();
 

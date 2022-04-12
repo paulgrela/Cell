@@ -27,6 +27,7 @@ private:
     void FilmTimerEvent();
 private:
     void ChangeAtomsSize();
+    void ChangeCameraShift();
     void ChangeShowOfBonds();
     void ChangeShowOfSpheres();
     void ShowNextStructure();
