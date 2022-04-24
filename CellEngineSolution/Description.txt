@@ -1,6 +1,0 @@
-Pierwszym parametrem linii komend powinna byæ nazwa pliku PDB (np. dna.pdb)
-
-Klawisze:
-Z - wi¹zania
-X - rozmiar sfer
-C - rzutowanie
