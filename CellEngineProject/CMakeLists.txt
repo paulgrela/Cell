@@ -9,25 +9,25 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 set(CMAKE_CXX_FLAGS "-Ofast")
 
 include_directories(
-	"../../boost/*"
-	"../../Common/Platform"
-	"../../Common/MathUtils"
-	"../../Common/Include"
-	"../../Common/Logger"
-	"../../Common/FileUtils"
-	"../../Common/StringUtils"
-	"../../Common/DateTimeUtils"
-	"../../Common/TerminalColorsUtils"
+	"../boost/*"
+	"../Common/Platform"
+	"../Common/MathUtils"
+	"../Common/Include"
+	"../Common/Logger"
+	"../Common/FileUtils"
+	"../Common/StringUtils"
+	"../Common/DateTimeUtils"
+	"../Common/TerminalColorsUtils"
 )
 
 add_executable(
 	CellEngineProject
-	../../Common/Logger/Logger.cpp
-	../../Common/MathUtils/ArcBall.cpp
-	../../Common/FileUtils/FileUtils.cpp
-	../../Common/StringUtils/StringUtils.cpp
-	../../Common/DateTimeUtils/DateTimeUtils.cpp
-	../../Common/MathUtils/AdditionalFunctions.cpp
+	../Common/Logger/Logger.cpp
+	../Common/MathUtils/ArcBall.cpp
+	../Common/FileUtils/FileUtils.cpp
+	../Common/StringUtils/StringUtils.cpp
+	../Common/DateTimeUtils/DateTimeUtils.cpp
+	../Common/MathUtils/AdditionalFunctions.cpp
 	CellEnginePDBDataFile.cpp
 	CellEnginePDBWindowGL.cpp
 	CellEngineCIFDataFile.h
