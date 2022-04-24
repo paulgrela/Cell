@@ -10,6 +10,8 @@
 
 using namespace std;
 
+                                                                                                                        vector<UnsignedIntType> ListOfCloseIndexes;
+
 #pragma region DrawCIF
 
 CIFWindowGL::CIFWindowGL(const string_view FileName) : WindowGL(), CIFDataFileObjectPointer(nullptr), ShowBonds(false), ShowSpheres(false), ShowCIFSize(1.00f), RefreshListOfDrawing(false), ChosenAtomIndex(-1)
@@ -35,7 +37,7 @@ bool CIFWindowGL::OpenCIFFile(const string_view FileName)
     return true;
 }
 
-void CIFWindowGL::DrawAtoms(const double LengthUnit, const double AtomsizeLengthUnit, bool MakeColors) const
+void CIFWindowGL::DrawAtoms(const double LengthUnit, const double AtomSizeLengthUnit, bool MakeColors) const
 {
     try
     {
@@ -60,21 +62,38 @@ void CIFWindowGL::DrawAtoms(const double LengthUnit, const double AtomsizeLength
         glPushName(-1);
 
 
+//        for (const Atom& AtomObject : CIFDataFileObjectPointer->GetAtoms())
+//        {
+//        }
         //TUTAJ DAĆ NIE WSZYSTKIE ATOMY ALE TE KTÓRE RYSUJĘ?
-        //int i = 0;
+        //TU SPRAWDZAĆ W JEDNEJ PETLI KTORE SA Z Z TYCH NAJBLIZSZYCH
+        //PROBLEM JAK DOSTAC LISTE ATOMOW KTORE SA AKTUALNIE X,Y,Z
+
+        //I WTEDY DOPISYWAC JE DO LISTY ATOMOW ZAMIAST TEGO ATOMU PRZEZ INSERT DO WEKTORA, A MOZE NA KONIEC WEKTORA DOPISYWAC, A PUNKTY WSTĘPNE WTEDY NIE RYSOWAC DAJAC NOTDRAW na false
+        //I ZA KAZDYM RAZEM OBCINAC KONIEC I DODAWAC NOWE ATOMY te najblizsze i moze wyciszac rysowanie wszystkich zaleznie od opcji
+
+
         for (const Atom& AtomObject : CIFDataFileObjectPointer->GetAtoms())
-        //if(i < 10000)
         {
-            //i++;
             DoubleVectorType AtomPosition = LengthUnit * AtomObject.Position();
 
             if (MakeColors == true)
                 ChooseAtomColor(AtomObject.Chain, 1.0f);
 
             glPushMatrix();
+
+                                    //MessageBox(HandleWindow, string(to_string(AtomPosition.X) + " " + to_string(AtomPosition.Y) + " " + to_string(AtomPosition.Z)).c_str(), "A", MB_OK);
             glTranslated(AtomPosition.X, AtomPosition.Y, AtomPosition.Z);
+                                    //MessageBox(HandleWindow, string(to_string(AtomPosition.X) + " " + to_string(AtomPosition.Y) + " " + to_string(AtomPosition.Z)).c_str(), "B", MB_OK);
             glLoadName(AtomObject.AtomIndex);
-            gluSphere(Quadriga, LengthUnit * AtomsizeLengthUnit, HowManyPointsInEachDimension, HowManyPointsInEachDimension);
+            gluSphere(Quadriga, LengthUnit * AtomSizeLengthUnit, HowManyPointsInEachDimension, HowManyPointsInEachDimension);
+//                                    GLfloat matrixMV[16];
+//                                    glGetFloatv(GL_MODELVIEW_MATRIX, matrixMV);
+//                                    double xCenterTriangle = matrixMV[12];
+//                                    double yCenterTriangle = matrixMV[13];
+//                                    double zCenterTriangle = matrixMV[14];
+
+
             glPopMatrix();
         }
 
@@ -100,9 +119,18 @@ void CIFWindowGL::DrawChosenAtom(const double LengthUnit, const double AtomsizeL
             gluQuadricDrawStyle(Quadric, GLU_LINE);
         glLineWidth(1.0f);
         glShadeModel(GL_SMOOTH);
+
+
+                            //for (const auto& CloseAtomIndex : ListOfCloseIndexes)
+                            //{
+
         DoubleVectorType ChosenAtomPosition = LengthUnit * (CIFDataFileObjectPointer->GetAtom(LocalChosenAtomIndex).Position() - CIFDataFileObjectPointer->MassCenter());
+        //DoubleVectorType ChosenAtomPosition = LengthUnit * (CIFDataFileObjectPointer->GetAtom(CloseAtomIndex).Position() - CIFDataFileObjectPointer->MassCenter());
         glTranslated(ChosenAtomPosition.X, ChosenAtomPosition.Y, ChosenAtomPosition.Z);
         gluSphere(Quadric, LengthUnit * AtomsizeLengthUnit, 15, 15);
+
+                            //}
+
         gluDeleteQuadric(Quadric);
 
         glPopMatrix();
@@ -115,7 +143,6 @@ void CIFWindowGL::DrawChosenAtomDescription(IntType LocalChosenAtomIndex, IntTyp
     try
     {
         ChosenAtomDescription = to_string(CIFDataFileObjectPointer->GetAtom(LocalChosenAtomIndex).Serial) + "." + CIFDataFileObjectPointer->GetAtom(LocalChosenAtomIndex).Name + "(" + CIFDataFileObjectPointer->GetAtom(LocalChosenAtomIndex).ResName + ")";
-        ChosenAtomDescription = "A";
 
         glPushMatrix();
 
@@ -453,11 +480,12 @@ IntType CIFWindowGL::ChooseAtom(POINT MouseCursorPosition)
         int Viewport[4];
         glGetIntegerv(GL_VIEWPORT, Viewport);
         gluPickMatrix(MouseCursorPosition.x, UserAreaHeight - MouseCursorPosition.y, 1, 1, Viewport);
+        //gluPickMatrix(MouseCursorPosition.x, UserAreaHeight - MouseCursorPosition.y, 10, 10, Viewport);
         float Factor = static_cast<float>(UserAreaHeight) / static_cast<float>(UserAreaWidth);
         if (IsometricProjection == false)
             glFrustum(-0.1, 0.1, Factor * -0.1, Factor * 0.1, 0.3, 1000);
         else
-            glOrtho(-3, 3, Factor * -3, Factor * 3, 0.3, 1000.0);
+            glOrtho(-3, 3, Factor * -3, Factor * 3, 0.3, 1000);
 
         glMatrixMode(GL_MODELVIEW);
 
@@ -471,13 +499,18 @@ IntType CIFWindowGL::ChooseAtom(POINT MouseCursorPosition)
 
         glMatrixMode(GL_MODELVIEW);
 
+                                                    ListOfCloseIndexes.clear();
+
         if (HitsNumber > 0)
         {
             UnsignedIntType ClosestAtomIndex = MarkingBuffer[3];
             UnsignedIntType ClosestAtomDistance = MarkingBuffer[1];
             IntType CurrentIndex = 0;
+                                                    //MessageBox(HandleWindow, string(to_string(HitsNumber)).c_str(), "A", MB_OK);
             for (IntType HitIndex = 0; HitIndex < HitsNumber; HitIndex++)
             {
+                                                    ListOfCloseIndexes.push_back(MarkingBuffer[CurrentIndex + 3]);
+                                                    //MessageBox(HandleWindow, string(to_string(ListOfCloseIndexes.back())).c_str(), "A", MB_OK);
                 if (MarkingBuffer[CurrentIndex + 1] < ClosestAtomDistance)
                 {
                     ClosestAtomDistance = MarkingBuffer[CurrentIndex + 1];

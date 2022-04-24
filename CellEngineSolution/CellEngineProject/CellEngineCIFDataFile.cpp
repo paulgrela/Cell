@@ -63,13 +63,18 @@ void CIFDataFile::ReadDataFromFile(const std::string_view FileName)
 
         std::ifstream File(string(FileName).c_str(), std::ios_base::in);
 
-        std::vector<string> ApplyEntities;
-        std::vector<UnsignedIntType> MatrixesId;
-
         LoggersManagerObject.Log(STREAM("STARTED READING FROM CIF FILE"));
 
         UnsignedIntType NumberOfAtoms = 0;
         UnsignedIntType NumberOfAtomsDNA = 0;
+
+        smatch SMatchObject;
+
+        vector<UnsignedIntType> AppliedMatrixesIds;
+        regex RegexObject1("(\\d+)-(\\d+)");
+
+        vector<string> AppliedChainsNames;
+        regex RegexObject2("([A-Z]+\\d*)");
 
         while (getline(File, Line, '\n'))
         {
@@ -106,20 +111,17 @@ void CIFDataFile::ReadDataFromFile(const std::string_view FileName)
             else
             if (Line.substr(0, 4) == "1 '(")
             {
-                vector<UnsignedIntType> AppliedMatrixesIds;
-                smatch SMatchObject;
-                regex RegexObject("(\\d+)-(\\d+)");
+                AppliedMatrixesIds.clear();
                 auto pos = Line.cbegin();
                 auto end = Line.cend();
-                for ( ; regex_search(pos, end, SMatchObject, RegexObject); pos = SMatchObject.suffix().first)
+                for ( ; regex_search(pos, end, SMatchObject, RegexObject1); pos = SMatchObject.suffix().first)
                     for (UnsignedIntType MatrixId = stoi(SMatchObject.str(1)); MatrixId <= stoi(SMatchObject.str(2)); MatrixId++)
                         AppliedMatrixesIds.push_back(MatrixId);
 
-                vector<string> AppliedChainsNames;
-                regex RegexObject1("([A-Z]+\\d*)");
+                AppliedChainsNames.clear();
                 pos = Line.cbegin();
                 end = Line.cend();
-                for ( ; regex_search(pos, end, SMatchObject, RegexObject1); pos = SMatchObject.suffix().first)
+                for ( ; regex_search(pos, end, SMatchObject, RegexObject2); pos = SMatchObject.suffix().first)
                     AppliedChainsNames.push_back(SMatchObject.str(1));
 
                 for (const auto& AppliedMatrixId : AppliedMatrixesIds)
@@ -131,7 +133,7 @@ void CIFDataFile::ReadDataFromFile(const std::string_view FileName)
                             if (First == true)
                             {
                                 First = false;
-                                LocalAtomsObject.emplace_back(Atom(Matrixes[AppliedMatrixId - 2].Matrix[0][3], Matrixes[AppliedMatrixId - 2].Matrix[1][3], Matrixes[AppliedMatrixId - 2].Matrix[2][3], LocalAtomsObject.size(), 1, (char*)("H"), (char*)("MTR"), (char*)AppliedChainName.c_str()));
+                                LocalAtomsObject.emplace_back(Atom(Matrixes[AppliedMatrixId - 2].Matrix[0][3], Matrixes[AppliedMatrixId - 2].Matrix[1][3], Matrixes[AppliedMatrixId - 2].Matrix[2][3], LocalAtomsObject.size(), LocalAtomsObject.size(), (char*)("H"), (char*)("MTR"), (char*)AppliedChainName.c_str()));
                             }
 
                             NumberOfAtoms++;

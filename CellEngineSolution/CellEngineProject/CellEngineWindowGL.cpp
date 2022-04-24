@@ -278,7 +278,7 @@ UnsignedIntType WindowGL::MouseRightButtonDownEvent(WPARAM wParam, LPARAM lParam
         MouseCursorInitialPosition.x = LOWORD(lParam);
         MouseCursorInitialPosition.y = HIWORD(lParam);
     }
-    CATCH("mouse left button down event")
+    CATCH("mouse right button down event")
 
     return 0;
 }
@@ -304,7 +304,27 @@ UnsignedIntType WindowGL::MouseMoveEvent(WPARAM wParam, LPARAM lParam)
                 Matrix3fSetRotationFromQuat4f(&ThisRot, &ThisQuat);
                 Matrix3fMulMatrix3f(&ThisRot, &LastRot);
                 Matrix4fSetRotationFromMatrix3f(&Transform, &ThisRot);
+
+//                string s;
+//                for (int y = 0; y < 3; y++)
+//                    for (int x = 0; x < 3; x++)
+//                    {
+//                        //s += to_string(RotMat.data[x][y]) + " " + to_string(ThisRot.M[3 * y + x]) + " | ";
+//                        //s += to_string(LastRot.M[3 * y + x]) + " | ";
+//                    }
+//                s+= to_string(ThisRot.s.M00) + " | ";
+//                s+= to_string(ThisRot.s.M01) + " | ";
+//                s+= to_string(ThisRot.s.M02) + " | ";
+//                s+= to_string(ThisRot.s.M10) + " | ";
+//                s+= to_string(ThisRot.s.M11) + " | ";
+//                s+= to_string(ThisRot.s.M11) + " | ";
+//                s+= to_string(ThisRot.s.M20) + " | ";
+//                s+= to_string(ThisRot.s.M21) + " | ";
+//                s+= to_string(ThisRot.s.M22) + " | ";
+//
+//                MessageBox(nullptr, s.c_str(), "MATRIX", MB_OK);
             }
+
             if (wParam & MK_RBUTTON)
             {
                 const float MouseSensitivity = 75.0f;
@@ -484,8 +504,8 @@ void WindowGL::SetCamera()
     try
     {
         glLoadIdentity();
-        glRotatef(CameraCelPhi, 0, 1, 0);
-        glRotatef(CameraCelTheta, cosDegf(CameraCelPhi), 0, sinDegf(CameraCelPhi));
+        //glRotatef(CameraCelPhi, 0, 1, 0);
+        //glRotatef(CameraCelTheta, cosDegf(CameraCelPhi), 0, sinDegf(CameraCelPhi));
         glTranslatef(CameraX, CameraY, CameraZ);
 
         glTranslatef(0, 0, -CameraR);
