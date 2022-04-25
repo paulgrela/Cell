@@ -1,4 +1,4 @@
-
+/*
 #include "AdditionalFunctions.h"
 
 double DegToRad(double deg)
@@ -25,4 +25,4 @@ float cosDegf(float deg)
 {
 	return (float)cosDeg(deg);
 }
-
+*/

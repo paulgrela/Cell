@@ -1,4 +1,4 @@
-
+/*
 #include <memory>
 #include <exception>
 
@@ -551,3 +551,4 @@ void PDBWindowGL::MilkyBulb(float jasnosc)
 }
 
 #pragma endregion
+ */

@@ -2,7 +2,7 @@
 
 #ifndef CELL_ENGINE_WINDOW_GL_H
 #define CELL_ENGINE_WINDOW_GL_H
-
+/*
 #include <windows.h>
 
 #include <gl\gl.h>
@@ -88,5 +88,5 @@ protected:
 	virtual void LightSources() = 0;
 public:
 };
-
+*/
 #endif

@@ -1,4 +1,4 @@
-
+/*
 #include <memory>
 #include <exception>
 
@@ -189,51 +189,49 @@ void CIFWindowGL::ChooseAtomColor(const string_view Chain, const float Alpha = 1
 
 void CIFWindowGL::DrawBonds(const double LengthUnit, bool MakeColors) const
 {
-    /*
-    try
-    {
-        glPushMatrix();
-
-        DoubleVectorType MassCenter = LengthUnit * CIFDataFileObjectPointer->MassCenter();;
-        glTranslated(-MassCenter.X, -MassCenter.Y, -MassCenter.Z);
-
-        glColor3f(0, 0, 0);
-        glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT);
-
-        glShadeModel(GL_SMOOTH);
-        glLineWidth(2);
-
-        glBegin(GL_LINES);
-
-        for (IntType AtomIndex1 = 0; AtomIndex1 < CIFDataFileObjectPointer->GetNumberOfAtoms(); AtomIndex1++)
-            for (IntType AtomIndex2 = AtomIndex1 + 1; AtomIndex2 < CIFDataFileObjectPointer->GetNumberOfAtoms(); AtomIndex2++)
-            {
-                DoubleVectorType Atom1Position = LengthUnit * CIFDataFileObjectPointer->GetAtom(AtomIndex1).Position();
-                DoubleVectorType Atom2Position = LengthUnit * CIFDataFileObjectPointer->GetAtom(AtomIndex2).Position();
-                DoubleVectorType Position12 = Atom2Position - Atom1Position;
-
-                if (Position12.Length() < 0.17)
-                {
-                    if (MakeColors)
-                        ChooseAtomColor(CIFDataFileObjectPointer->GetAtom(AtomIndex1).Name, 1.0f);
-
-                    glVertex3d(Atom1Position.X, Atom1Position.Y, Atom1Position.Z);
-
-                    if (MakeColors)
-                        ChooseAtomColor(CIFDataFileObjectPointer->GetAtom(AtomIndex2).Name, 1.0f);
-
-                    glVertex3d(Atom2Position.X, Atom2Position.Y, Atom2Position.Z);
-                }
-            }
-
-        glEnd();
-
-        glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-
-        glPopMatrix();
-    }
-    CATCH("drawing bonds")
-    */
+//    try
+//    {
+//        glPushMatrix();
+//
+//        DoubleVectorType MassCenter = LengthUnit * CIFDataFileObjectPointer->MassCenter();;
+//        glTranslated(-MassCenter.X, -MassCenter.Y, -MassCenter.Z);
+//
+//        glColor3f(0, 0, 0);
+//        glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT);
+//
+//        glShadeModel(GL_SMOOTH);
+//        glLineWidth(2);
+//
+//        glBegin(GL_LINES);
+//
+//        for (IntType AtomIndex1 = 0; AtomIndex1 < CIFDataFileObjectPointer->GetNumberOfAtoms(); AtomIndex1++)
+//            for (IntType AtomIndex2 = AtomIndex1 + 1; AtomIndex2 < CIFDataFileObjectPointer->GetNumberOfAtoms(); AtomIndex2++)
+//            {
+//                DoubleVectorType Atom1Position = LengthUnit * CIFDataFileObjectPointer->GetAtom(AtomIndex1).Position();
+//                DoubleVectorType Atom2Position = LengthUnit * CIFDataFileObjectPointer->GetAtom(AtomIndex2).Position();
+//                DoubleVectorType Position12 = Atom2Position - Atom1Position;
+//
+//                if (Position12.Length() < 0.17)
+//                {
+//                    if (MakeColors)
+//                        ChooseAtomColor(CIFDataFileObjectPointer->GetAtom(AtomIndex1).Name, 1.0f);
+//
+//                    glVertex3d(Atom1Position.X, Atom1Position.Y, Atom1Position.Z);
+//
+//                    if (MakeColors)
+//                        ChooseAtomColor(CIFDataFileObjectPointer->GetAtom(AtomIndex2).Name, 1.0f);
+//
+//                    glVertex3d(Atom2Position.X, Atom2Position.Y, Atom2Position.Z);
+//                }
+//            }
+//
+//        glEnd();
+//
+//        glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+//
+//        glPopMatrix();
+//    }
+//    CATCH("drawing bonds")
 }
 
 UnsignedIntType CIFWindowGL::CreateListOfDrawing(const double LengthUnit)
@@ -632,3 +630,4 @@ void CIFWindowGL::MilkyBulb(float jasnosc)
 }
 
 #pragma endregion
+ */

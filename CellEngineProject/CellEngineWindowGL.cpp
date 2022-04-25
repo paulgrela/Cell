@@ -1,4 +1,4 @@
-
+/*
 #include <cstdint>
 
 #include "ExceptionsMacro.h"
@@ -32,6 +32,7 @@ void InitializeLoggerManagerParameters()
 #pragma region Functions WinMain and WndProc
 
 unique_ptr<WindowGL> WindowGLPointer;
+
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
@@ -598,3 +599,4 @@ void WindowGL::InitArcBall()
 }
 
 #pragma endregion
+ */

@@ -3,6 +3,7 @@
 #ifndef CELL_ENGINE_CIF_WINDOW_GL_H
 #define CELL_ENGINE_CIF_WINDOW_GL_H
 
+/*
 #include <memory>
 
 #include "VectorType.h"
@@ -55,5 +56,6 @@ private:
     void DrawChosenAtomDescription(IntType LocalChosenAtomIndex, IntType BitmapFont);
     IntType ChosenAtomIndex;
 };
+*/
 
 #endif

@@ -2,7 +2,7 @@
 
 #ifndef CELL_ENGINE_PDB_WINDOW_GL_H
 #define CELL_ENGINE_PDB_WINDOW_GL_H
-
+/*
 #include <memory>
 
 #include "VectorType.h"
@@ -52,5 +52,5 @@ private:
 	void DrawChosenElementDescription(IntType LocalChosenElementIndex, IntType BitmapFont);
 	IntType ChosenElementIndex;
 };
-
+*/
 #endif
