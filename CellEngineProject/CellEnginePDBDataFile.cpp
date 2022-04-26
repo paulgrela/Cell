@@ -30,16 +30,16 @@ void Element::ParseRecord(const char* LocalPDBRecord)
         Name = trim_whitespace_surrounding(RecordStr.substr(12, 4));
         ResName = trim_whitespace_surrounding(RecordStr.substr(17, 3));
 
-        X = stod(RecordStr.substr(30, 8));
-        Y = stod(RecordStr.substr(38, 8));
-        Z = stod(RecordStr.substr(46, 8));
+        X = stof(RecordStr.substr(30, 8));
+        Y = stof(RecordStr.substr(38, 8));
+        Z = stof(RecordStr.substr(46, 8));
     }
     CATCH("parsing element record")
 }
 
-DoubleVectorType Element::Position() const
+FloatVectorType Element::Position() const
 {
-	return DoubleVectorType(X, Y, Z);
+	return FloatVectorType(X, Y, Z);
 }
 
 PDBDataFile::PDBDataFile(const string_view FileName)
@@ -78,7 +78,7 @@ void PDBDataFile::ReadDataFromFile(const string_view FileName)
 
         const auto stop_time = chrono::high_resolution_clock::now();
 
-        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Execution of reading data from pdb file has taken time: ","executing printing duration_time")));
+        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Reading data from pdb file has taken time: ","executing printing duration_time")));
 
         File.close();
     }
@@ -95,9 +95,9 @@ const Element& PDBDataFile::GetElement(IntType DataRawIndex) const
 	return Elements[ChosenStructureIndex][DataRawIndex];
 }
 
-DoubleVectorType PDBDataFile::MassCenter() const
+FloatVectorType PDBDataFile::MassCenter() const
 {
-	DoubleVectorType MassCenter(0.0, 0.0, 0.0);
+	FloatVectorType MassCenter(0.0, 0.0, 0.0);
 
 	try
     {

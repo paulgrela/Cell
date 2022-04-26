@@ -22,14 +22,14 @@ public:
 	IntType Serial;
 	std::string Name;
 	std::string ResName;
-	double X;
-	double Y;
-	double Z;
+	float X;
+	float Y;
+	float Z;
 public:
 	Element(const char* PDBRecord, UnsignedIntType ElementIndex);
 	~Element() = default;
 public:
-	[[nodiscard]] DoubleVectorType Position() const;
+	[[nodiscard]] FloatVectorType Position() const;
 private:
 	void ParseRecord(const char* LocalPDBRecord);
 };
@@ -56,7 +56,7 @@ public:
     }
     [[nodiscard]] IntType GetNumberOfElements() const;
     [[nodiscard]] const Element& GetElement(IntType Index) const;
-    [[nodiscard]] DoubleVectorType MassCenter() const;
+    [[nodiscard]] FloatVectorType MassCenter() const;
 };
 
 #endif

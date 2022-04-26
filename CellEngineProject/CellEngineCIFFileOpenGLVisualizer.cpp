@@ -12,7 +12,13 @@
 #include <string>
 #include <memory>
 #include "ArcBall.h"
+#include "Logger.h"
+#include "StringUtils.h"
+#include "DateTimeUtils.h"
+#include "ExceptionsMacro.h"
 #include "AdditionalFunctions.h"
+
+#include "CellEnginePDBDataFile.h"
 
 using namespace std;
 
@@ -24,7 +30,7 @@ public:
     }
 
 protected:
-    void init()
+    void init() override
     {
         static const char title[] = "Cell Engine Visualizer - OpenGL";
 
@@ -35,14 +41,14 @@ protected:
 
     void InitArcBall();
 
-    void startup();
+    void startup() override;
     void load_shaders();
-    void render(double currentTime);
-    void onKey(int key, int action);
-    void onMouseWheel(int pos);    
-    void onMouseButton(int button, int action);
-    void onMouseMove(int x, int y);
-    void onResize(int w, int h);
+    void render(double currentTime) override;
+    void onKey(int key, int action) override;
+    void onMouseWheel(int pos) override;
+    void onMouseButton(int button, int action) override;
+    void onMouseMove(int x, int y) override;
+    void onResize(int w, int h) override;
 
 
     GLuint per_fragment_program;
@@ -83,12 +89,11 @@ private:
     std::unique_ptr<ArcBallT> ArcBall;
     Point2fT MousePosition;
 private:
-
-    //float CameraXPosition = 40.0;
+    std::unique_ptr<PDBDataFile> PDBDataFileObjectPointer;
+private:
     float CameraXPosition = 0.0;
     float CameraYPosition = 0.0;
     float CameraZPosition = 0.0;
-    //float CameraZPosition = 50.0;
 
     float ViewZ = 50.0;
 
@@ -98,6 +103,21 @@ private:
     float RotationAngle2 = 0.0;
     float RotationAngle3 = 0.0;
 };
+
+void InitializeLoggerManagerParameters()
+{
+    try
+    {
+        using namespace string_utils;
+
+        LoggersManagerObject.InitializeFilesNames({ "AllMessages" });
+        LoggersManagerObject.InitializeSelectiveWordsFunctions({ [](const string& s) { return true; } });
+        LoggersManagerObject.InitializePrintingParameters(true, true, false, false, false, false, false, true, true, false, false, false, 10000);
+        LoggersManagerObject.InitializeLoggerManagerDataForTask("CELL_RESULTS", ".\\", string("Logs." + GetActualDateTimeStandardCPP(".", ".", ".", ".", ".")), true, 0, function<void(const uint64_t& CurrentThreadId, const uint64_t FileNumber, const string& MessageStr)>());
+    }
+    CATCH("initializing logger manager parameters")
+}
+
 
 const uint64_t MaxX = 170 / 1;
 const uint64_t MaxY = 170 / 1;
@@ -166,8 +186,15 @@ void phonglighting_app::startup()
     GenereteRandomColors();
 
     InitArcBall();
+
+    InitializeLoggerManagerParameters();
+
+    string FileName = R"(c:\Projects\Programs\C++\Cell\PDBFiles\struct0\117E.pdb)";
+
+    PDBDataFileObjectPointer = make_unique<PDBDataFile>(FileName);
 }
 
+/*
 void phonglighting_app::render(double currentTime)
 {
     static const GLfloat zeros[] = { 0.0f, 0.0f, 0.0f, 0.0f };
@@ -192,6 +219,7 @@ void phonglighting_app::render(double currentTime)
     vmath::mat4 light_proj_matrix = vmath::frustum(-1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 200.0f);
     vmath::mat4 light_view_matrix = vmath::lookat(light_position, vmath::vec3(0.0f), vmath::vec3(0.0f, 1.0f, 0.0f));
 
+    //GenereteRandomColors();
     for (float a = 0.1f, j = 0; j < MaxX; j++, a < 1 ? a++ : a = 0.1f)
         for (float b = 0.1f, i = 0; i < MaxY; i++, b < 1 ? b++ : b = 0.1f)
             for (float c = 0.1f, z = 0; z < MaxZ; z++, c < 1 ? c++ : c = 0.1f)
@@ -214,6 +242,79 @@ void phonglighting_app::render(double currentTime)
 
                 object.render();
             }
+}
+*/
+
+void phonglighting_app::render(double currentTime)
+{
+    //LoggersManagerObject.Log(STREAM(PDBDataFileObjectPointer->GetElements().size() << endl));
+    const float LengthUnit = 0.3;
+    FloatVectorType MassCenter = LengthUnit * PDBDataFileObjectPointer->MassCenter();
+    //glTranslated(-MassCenter.X, -MassCenter.Y, -MassCenter.Z);
+    //LoggersManagerObject.Log(STREAM(PDBDataFileObjectPointer->GetElements().size() << endl));
+
+
+
+    static const GLfloat zeros[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+    static const GLfloat gray[] = { 0.1f, 0.1f, 0.1f, 0.0f };
+    static const GLfloat ones[] = { 1.0f };
+
+    glUseProgram(per_vertex ? per_vertex_program : per_fragment_program);
+    glViewport(0, 0, info.windowWidth, info.windowHeight);
+
+    glClearBufferfv(GL_COLOR, 0, gray);
+    glClearBufferfv(GL_DEPTH, 0, ones);
+
+    vmath::vec3 view_position = vmath::vec3(0.0f, 0.0f, ViewZ);
+    //vmath::vec3 view_position = vmath::vec3(0.0f, 0.0f, 0.0f);
+    //vmath::vec3 view_position = vmath::vec3(-MassCenter.X, -MassCenter.Y, -MassCenter.Z);
+    //vmath::vec3 view_position = vmath::vec3(MassCenter.X, MassCenter.Y, MassCenter.Z);
+    //vmath::vec3 view_position = vmath::vec3(CameraXPosition, CameraYPosition, CameraZPosition);
+    //vmath::mat4 view_matrix = vmath::lookat(view_position, vmath::vec3(0.0f, 0.0f, 0.0f), vmath::vec3(0.0f, 1.0f, 0.0f)) * vmath::rotate(RotationAngle1, RotationAngle2, RotationAngle3) * RotationMatrix * vmath::translate(CameraXPosition, CameraYPosition, CameraZPosition);
+
+    vmath::mat4 view_matrix = vmath::lookat(view_position, vmath::vec3(0.0f, 0.0f, 0.0f), vmath::vec3(0.0f, 1.0f, 0.0f)) * vmath::rotate(RotationAngle1, RotationAngle2, RotationAngle3) * RotationMatrix;
+    //vmath::mat4 view_matrix = vmath::lookat(view_position, vmath::vec3(0.0f, 0.0f, 0.0f), vmath::vec3(0.0f, 1.0f, 0.0f)) * vmath::translate(MassCenter.X, MassCenter.Y, MassCenter.Z) * vmath::rotate(RotationAngle1, RotationAngle2, RotationAngle3) * RotationMatrix;
+    //vmath::mat4 view_matrix = vmath::lookat(view_position, vmath::vec3(0.0f, 0.0f, 0.0f), vmath::vec3(0.0f, 1.0f, 0.0f)) * vmath::rotate(RotationAngle1, RotationAngle2, RotationAngle3) * RotationMatrix * vmath::translate(MassCenter.X, MassCenter.Y, MassCenter.Z);
+
+    vmath::vec3 light_position = vmath::vec3(0.0f, 0.0f, 100.0f);
+
+    vmath::mat4 light_proj_matrix = vmath::frustum(-1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 200.0f);
+    vmath::mat4 light_view_matrix = vmath::lookat(light_position, vmath::vec3(0.0f), vmath::vec3(0.0f, 1.0f, 0.0f));
+
+    int j = 1;
+    for (const Element& ElementObject : PDBDataFileObjectPointer->GetElements())
+    {
+        glBindBufferBase(GL_UNIFORM_BUFFER, 0, uniforms_buffer);
+        uniforms_block* block = (uniforms_block*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(uniforms_block), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
+
+        FloatVectorType ElementPosition = LengthUnit * ElementObject.Position();
+        vmath::mat4 model_matrix = vmath::translate(ElementPosition.X * 3.0f - CameraXPosition, ElementPosition.Y * 3.0f + CameraYPosition, ElementPosition.Z * 3.0f + CameraZPosition);
+        //vmath::mat4 model_matrix = vmath::translate(ElementPosition.X * 3.0f - CameraXPosition + MassCenter.X, ElementPosition.Y * 3.0f + CameraYPosition + MassCenter.Y, ElementPosition.Z * 3.0f + CameraZPosition + MassCenter.Z);
+
+        block->mv_matrix = view_matrix * model_matrix;
+        block->view_matrix = view_matrix;
+        block->proj_matrix = vmath::perspective(50.0f, (float)info.windowWidth / (float)info.windowHeight, 0.1f, 2000.0f);
+
+        //block->color = Colors[uint64_t(j)][uint64_t(i)][uint64_t(z)];
+        switch(ElementObject.Name[0])
+        {
+            case 'C': block->color = vmath::vec3(0.25f, 0.75f, 0.75f); break;
+            case 'O': block->color = vmath::vec3(1.00f, 0.00f, 0.00f); break;
+            case 'H': block->color = vmath::vec3(1.00f, 1.00f, 1.00f); break;
+            case 'N': block->color = vmath::vec3(0.00f, 0.00f, 1.00f); break;
+            case 'P': block->color = vmath::vec3(0.50f, 0.50f, 0.20f); break;
+            default: block->color = vmath::vec3(0.50f, 0.50f, 0.50f); break;
+        }
+        //block->color = vmath::vec3(0.7, 0.2, 0.9);
+
+        glUnmapBuffer(GL_UNIFORM_BUFFER);
+
+        glUniform1f(uniforms[per_vertex ? 1 : 0].specular_power, powf(2.0f, (float)j + 2.0f));
+        glUniform3fv(uniforms[per_vertex ? 1 : 0].specular_albedo, 1, vmath::vec3((float)j / 9.0f + 1.0f / 9.0f));
+        j++;
+
+        object.render();
+    }
 }
 
 void phonglighting_app::onKey(int key, int action)
@@ -313,13 +414,4 @@ void phonglighting_app::onResize(int w, int h)
     ArcBall->setBounds(static_cast<float>(info.windowWidth), static_cast<float>(info.windowHeight));
 }
 
-//DECLARE_MAIN(phonglighting_app)
-
-sb7::application *app = 0;
-int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
-{
-    phonglighting_app *app = new phonglighting_app;
-    app->run(app);
-    delete app;
-    return 0;
-}
+DECLARE_MAIN(phonglighting_app)

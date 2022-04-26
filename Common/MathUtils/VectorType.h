@@ -244,6 +244,6 @@ VectorType<T> IloczynWektorowy(VectorType<T> a, VectorType<T> b)
 	return a ^ b;
 }
 
-typedef VectorType<double> DoubleVectorType;
+typedef VectorType<float> FloatVectorType;
 
 #endif

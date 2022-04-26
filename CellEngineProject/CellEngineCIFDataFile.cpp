@@ -33,16 +33,16 @@ void Atom::ParseRecord(const char* LocalCIFRecord)
         strncpy(Chain, AtomFields[6].c_str(), AtomFields[6].length() + 1);
         EntityId = stoi(AtomFields[7]);
 
-        X = stod(AtomFields[10]);
-        Y = stod(AtomFields[11]);
-        Z = stod(AtomFields[12]);
+        X = stof(AtomFields[10]);
+        Y = stof(AtomFields[11]);
+        Z = stof(AtomFields[12]);
     }
     CATCH("parsing atom record")
 }
 
-DoubleVectorType Atom::Position() const
+FloatVectorType Atom::Position() const
 {
-    return DoubleVectorType(X, Y, Z);
+    return FloatVectorType(X, Y, Z);
 }
 
 CIFDataFile::CIFDataFile(const string_view FileName)
@@ -175,9 +175,9 @@ const Atom& CIFDataFile::GetAtom(IntType DataRawIndex) const
     return Atoms[ChosenStructureIndex][DataRawIndex];
 }
 
-DoubleVectorType CIFDataFile::MassCenter() const
+FloatVectorType CIFDataFile::MassCenter() const
 {
-    DoubleVectorType MassCenter(0.0, 0.0, 0.0);
+    FloatVectorType MassCenter(0.0, 0.0, 0.0);
 
     try
     {

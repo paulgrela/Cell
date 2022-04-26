@@ -23,14 +23,14 @@ public:
     IntType Serial;
     char Name[2];
     char ResName[4];
-    double X;
-    double Y;
-    double Z;
+    float X;
+    float Y;
+    float Z;
     char Chain[6];
     UnsignedIntType EntityId;
 public:
     Atom(const char* CIFRecord, UnsignedIntType AtomIndex);
-    Atom(double XParam, double YParam, double ZParam,  UnsignedIntType AtomIndexParam, IntType SerialParam, char NameParam[2], char ResNameParam[4], char ChainParam[6]) : X(XParam), Y(YParam), Z(ZParam), AtomIndex(AtomIndexParam), Serial(SerialParam)
+    Atom(float XParam, float YParam, float ZParam,  UnsignedIntType AtomIndexParam, IntType SerialParam, char NameParam[2], char ResNameParam[4], char ChainParam[6]) : X(XParam), Y(YParam), Z(ZParam), AtomIndex(AtomIndexParam), Serial(SerialParam)
     {
         strncpy(Name, NameParam, 2);
         strncpy(ResName, ResNameParam, 4);
@@ -38,7 +38,7 @@ public:
     }
     ~Atom() = default;
 public:
-    [[nodiscard]] DoubleVectorType Position() const;
+    [[nodiscard]] FloatVectorType Position() const;
 private:
     void ParseRecord(const char* LocalPDBRecord);
 };
@@ -47,7 +47,7 @@ struct Matrix
 {
 public:
     UnsignedIntType MatrixId;
-    double Matrix[3][4];
+    float Matrix[3][4];
 };
 
 class CIFDataFile
@@ -75,7 +75,7 @@ public:
     }
     [[nodiscard]] IntType GetNumberOfAtoms() const;
     [[nodiscard]] const Atom& GetAtom(IntType Index) const;
-    [[nodiscard]] DoubleVectorType MassCenter() const;
+    [[nodiscard]] FloatVectorType MassCenter() const;
 };
 
 #endif
