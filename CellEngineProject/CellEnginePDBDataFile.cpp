@@ -106,7 +106,7 @@ FloatVectorType PDBDataFile::MassCenter() const
 
         MassCenter /= Elements[ChosenStructureIndex].size();
 	}
-    CATCH_AND_THROW("counting mass center")
+    CATCH_AND_THROW("counting mass center for PDB file")
 
 	return MassCenter;
 }

@@ -17,7 +17,8 @@ out VS_OUT
     vec3 L;
     vec3 V;
 	vec3 C;
-} vs_out;
+} 
+vs_out;
 
 uniform vec3 light_pos = vec3(100.0, 100.0, 100.0);
 

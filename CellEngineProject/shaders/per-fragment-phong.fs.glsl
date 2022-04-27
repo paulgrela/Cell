@@ -8,7 +8,8 @@ in VS_OUT
     vec3 L;
     vec3 V;
 	vec3 C;
-} fs_in;
+} 
+fs_in;
 
 uniform vec3 specular_albedo = vec3(0.7);
 uniform float specular_power = 300.0;

@@ -5,7 +5,8 @@ layout (location = 0) out vec4 color;
 in VS_OUT
 {
     vec3 color;
-} fs_in;
+} 
+fs_in;
 
 void main(void)
 {

@@ -138,8 +138,8 @@ void phonglighting_app::load_shaders()
     GLuint vs;
     GLuint fs;
 
-    vs = sb7::shader::load("per-fragment-phong.vs.glsl", GL_VERTEX_SHADER);
-    fs = sb7::shader::load("per-fragment-phong.fs.glsl", GL_FRAGMENT_SHADER);
+    vs = sb7::shader::load("..\\shaders\\per-fragment-phong.vs.glsl", GL_VERTEX_SHADER);
+    fs = sb7::shader::load("..\\shaders\\per-fragment-phong.fs.glsl", GL_FRAGMENT_SHADER);
 
     if (per_fragment_program)
         glDeleteProgram(per_fragment_program);
@@ -153,8 +153,8 @@ void phonglighting_app::load_shaders()
     uniforms[0].specular_albedo = glGetUniformLocation(per_fragment_program, "specular_albedo");
     uniforms[0].specular_power = glGetUniformLocation(per_fragment_program, "specular_power");
 
-    vs = sb7::shader::load("per-vertex-phong.vs.glsl", GL_VERTEX_SHADER);
-    fs = sb7::shader::load("per-vertex-phong.fs.glsl", GL_FRAGMENT_SHADER);
+    vs = sb7::shader::load("..\\shaders\\per-vertex-phong.vs.glsl", GL_VERTEX_SHADER);
+    fs = sb7::shader::load("..\\shaders\\per-vertex-phong.fs.glsl", GL_FRAGMENT_SHADER);
 
     if (per_vertex_program)
         glDeleteProgram(per_vertex_program);
@@ -247,11 +247,11 @@ void phonglighting_app::render(double currentTime)
 
 void phonglighting_app::render(double currentTime)
 {
-    //LoggersManagerObject.Log(STREAM(PDBDataFileObjectPointer->GetElements().size() << endl));
     const float LengthUnit = 0.3;
-    FloatVectorType MassCenter = LengthUnit * PDBDataFileObjectPointer->MassCenter();
+    FloatVectorType MassCenter = PDBDataFileObjectPointer->MassCenter();
+
     //glTranslated(-MassCenter.X, -MassCenter.Y, -MassCenter.Z);
-    //LoggersManagerObject.Log(STREAM(PDBDataFileObjectPointer->GetElements().size() << endl));
+    //LoggersManagerObject.Log(STREAM(PDBDataFileObjectPointer->GetElements().size() << " " << to_string(MassCenter.X) << " " << to_string(MassCenter.Y) << " " << to_string(MassCenter.Z) << endl));
 
 
 
@@ -272,12 +272,15 @@ void phonglighting_app::render(double currentTime)
     //vmath::vec3 view_position = vmath::vec3(CameraXPosition, CameraYPosition, CameraZPosition);
     //vmath::mat4 view_matrix = vmath::lookat(view_position, vmath::vec3(0.0f, 0.0f, 0.0f), vmath::vec3(0.0f, 1.0f, 0.0f)) * vmath::rotate(RotationAngle1, RotationAngle2, RotationAngle3) * RotationMatrix * vmath::translate(CameraXPosition, CameraYPosition, CameraZPosition);
 
+    //vmath::mat4 view_matrix = vmath::lookat(view_position, vmath::vec3(0.0f, 0.0f, 0.0f), vmath::vec3(0.0f, 1.0f, 0.0f));
     vmath::mat4 view_matrix = vmath::lookat(view_position, vmath::vec3(0.0f, 0.0f, 0.0f), vmath::vec3(0.0f, 1.0f, 0.0f)) * vmath::rotate(RotationAngle1, RotationAngle2, RotationAngle3) * RotationMatrix;
+    //vmath::mat4 view_matrix = vmath::lookat(view_position, vmath::vec3(0.0f, 0.0f, 0.0f), vmath::vec3(0.0f, 1.0f, 0.0f)) * vmath::rotate(RotationAngle1, RotationAngle2, RotationAngle3);
+    //vmath::mat4 view_matrix = vmath::lookat(view_position, vmath::vec3(0.0f, 0.0f, 0.0f), vmath::vec3(0.0f, 1.0f, 0.0f)) * vmath::rotate(RotationAngle1, RotationAngle2, RotationAngle3);
+    //vmath::mat4 view_matrix = vmath::lookat(view_position, vmath::vec3(0.0f, 0.0f, 0.0f), vmath::vec3(0.0f, 1.0f, 0.0f)) * vmath::rotate(RotationAngle1, RotationAngle2, RotationAngle3) * RotationMatrix;
     //vmath::mat4 view_matrix = vmath::lookat(view_position, vmath::vec3(0.0f, 0.0f, 0.0f), vmath::vec3(0.0f, 1.0f, 0.0f)) * vmath::translate(MassCenter.X, MassCenter.Y, MassCenter.Z) * vmath::rotate(RotationAngle1, RotationAngle2, RotationAngle3) * RotationMatrix;
     //vmath::mat4 view_matrix = vmath::lookat(view_position, vmath::vec3(0.0f, 0.0f, 0.0f), vmath::vec3(0.0f, 1.0f, 0.0f)) * vmath::rotate(RotationAngle1, RotationAngle2, RotationAngle3) * RotationMatrix * vmath::translate(MassCenter.X, MassCenter.Y, MassCenter.Z);
 
     vmath::vec3 light_position = vmath::vec3(0.0f, 0.0f, 100.0f);
-
     vmath::mat4 light_proj_matrix = vmath::frustum(-1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 200.0f);
     vmath::mat4 light_view_matrix = vmath::lookat(light_position, vmath::vec3(0.0f), vmath::vec3(0.0f, 1.0f, 0.0f));
 
@@ -285,17 +288,19 @@ void phonglighting_app::render(double currentTime)
     for (const Element& ElementObject : PDBDataFileObjectPointer->GetElements())
     {
         glBindBufferBase(GL_UNIFORM_BUFFER, 0, uniforms_buffer);
-        uniforms_block* block = (uniforms_block*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(uniforms_block), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
+        auto block = (uniforms_block*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(uniforms_block), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
 
         FloatVectorType ElementPosition = LengthUnit * ElementObject.Position();
-        vmath::mat4 model_matrix = vmath::translate(ElementPosition.X * 3.0f - CameraXPosition, ElementPosition.Y * 3.0f + CameraYPosition, ElementPosition.Z * 3.0f + CameraZPosition);
+
+        //vmath::mat4 model_matrix = vmath::translate(ElementPosition.X * 3.0f - CameraXPosition, ElementPosition.Y * 3.0f + CameraYPosition, ElementPosition.Z * 3.0f + CameraZPosition);
+        //vmath::mat4 model_matrix = vmath::translate(ElementPosition.X * 3.0f - CameraXPosition, ElementPosition.Y * 3.0f + CameraYPosition, ElementPosition.Z * 3.0f + CameraZPosition);
         //vmath::mat4 model_matrix = vmath::translate(ElementPosition.X * 3.0f - CameraXPosition + MassCenter.X, ElementPosition.Y * 3.0f + CameraYPosition + MassCenter.Y, ElementPosition.Z * 3.0f + CameraZPosition + MassCenter.Z);
+        vmath::mat4 model_matrix = vmath::translate(ElementPosition.X * 3.0f - CameraXPosition - MassCenter.X, ElementPosition.Y * 3.0f + CameraYPosition + abs(MassCenter.Y), ElementPosition.Z * 3.0f + CameraZPosition + abs(MassCenter.Z));
 
         block->mv_matrix = view_matrix * model_matrix;
         block->view_matrix = view_matrix;
         block->proj_matrix = vmath::perspective(50.0f, (float)info.windowWidth / (float)info.windowHeight, 0.1f, 2000.0f);
 
-        //block->color = Colors[uint64_t(j)][uint64_t(i)][uint64_t(z)];
         switch(ElementObject.Name[0])
         {
             case 'C': block->color = vmath::vec3(0.25f, 0.75f, 0.75f); break;
@@ -315,6 +320,26 @@ void phonglighting_app::render(double currentTime)
 
         object.render();
     }
+
+
+
+    glBindBufferBase(GL_UNIFORM_BUFFER, 0, uniforms_buffer);
+    auto block = (uniforms_block*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(uniforms_block), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
+
+    vmath::mat4 model_matrix = vmath::translate(0.0f, 0.0f, 0.0f);
+
+    block->mv_matrix = model_matrix * view_matrix;
+    block->view_matrix = view_matrix;
+    block->proj_matrix = vmath::perspective(50.0f, (float)info.windowWidth / (float)info.windowHeight, 0.1f, 2000.0f);
+
+    block->color = vmath::vec3(0.7, 0.2, 0.9);
+
+    glUnmapBuffer(GL_UNIFORM_BUFFER);
+
+    glUniform1f(uniforms[per_vertex ? 1 : 0].specular_power, powf(2.0f, (float)j + 2.0f));
+    glUniform3fv(uniforms[per_vertex ? 1 : 0].specular_albedo, 1, vmath::vec3((float)j / 9.0f + 1.0f / 9.0f));
+
+    object.render();
 }
 
 void phonglighting_app::onKey(int key, int action)
