@@ -28,7 +28,7 @@ bool PDBWindowGL::OpenPDBFile(const string_view FileName)
 {
 	try
 	{
-        PDBDataFileObjectPointer = make_unique<PDBDataFile>(FileName);
+        PDBDataFileObjectPointer = make_unique<CellEnginePDBDataFile>(FileName);
 	}
 	CATCH("Error with loading PDB object");
 

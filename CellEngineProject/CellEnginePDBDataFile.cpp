@@ -10,9 +10,9 @@
 using namespace std;
 using namespace string_utils;
 
-AtomBase PDBDataFile::ParseRecord(const char* LocalPDBRecord)
+CellEngineAtom CellEnginePDBDataFile::ParseRecord(const char* LocalPDBRecord)
 {
-    AtomBase CellEngineAtomObject;
+    CellEngineAtom CellEngineAtomObject;
 
     try
     {
@@ -33,19 +33,19 @@ AtomBase PDBDataFile::ParseRecord(const char* LocalPDBRecord)
     return CellEngineAtomObject;
 }
 
-PDBDataFile::PDBDataFile(const string_view FileName)
+CellEnginePDBDataFile::CellEnginePDBDataFile(const string_view FileName)
 {
     ChosenStructureIndex = 0;
 
 	ReadDataFromFile(FileName);
 }
 
-void PDBDataFile::ReadDataFromFile(const string_view FileName)
+void CellEnginePDBDataFile::ReadDataFromFile(const string_view FileName)
 {
     try
     {
         string Line;
-        std::vector<AtomBase> StructureObject;
+        std::vector<CellEngineAtom> StructureObject;
 
         const auto start_time = chrono::high_resolution_clock::now();
 
@@ -60,7 +60,7 @@ void PDBDataFile::ReadDataFromFile(const string_view FileName)
             else
             if (Line.substr(0, 3) == "END" )
             {
-                StructureObject.emplace_back(AtomBase());
+                StructureObject.emplace_back(CellEngineAtom());
                 Atoms.push_back(StructureObject);
                 StructureObject.clear();
             }
@@ -77,24 +77,24 @@ void PDBDataFile::ReadDataFromFile(const string_view FileName)
     CATCH("reading data from PDB file")
 }
 
-IntType PDBDataFile::GetNumberOfElements() const
+IntType CellEnginePDBDataFile::GetNumberOfElements() const
 {
 	return Atoms[ChosenStructureIndex].size();
 }
 
-const AtomBase& PDBDataFile::GetElement(IntType DataRawIndex) const
+const CellEngineAtom& CellEnginePDBDataFile::GetElement(IntType DataRawIndex) const
 {
 	return Atoms[ChosenStructureIndex][DataRawIndex];
 }
 
-FloatVectorType PDBDataFile::MassCenter() const
+FloatVectorType CellEnginePDBDataFile::MassCenter()
 {
 	FloatVectorType MassCenter(0.0, 0.0, 0.0);
 
 	try
     {
-        for (const AtomBase& ElementObject : Atoms[ChosenStructureIndex])
-            MassCenter += ElementObject.Position();
+        for (const CellEngineAtom& AtomObject : Atoms[ChosenStructureIndex])
+            MassCenter += AtomObject.Position();
 
         MassCenter /= Atoms[ChosenStructureIndex].size();
 	}

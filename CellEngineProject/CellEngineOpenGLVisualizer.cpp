@@ -1,6 +1,5 @@
 
 #include <iostream>
-#include <numeric>
 
 #include <sb7.h>
 #include <vmath.h>
@@ -16,6 +15,8 @@
 #include "DateTimeUtils.h"
 #include "ExceptionsMacro.h"
 #include "AdditionalFunctions.h"
+
+#include "CellEngineDataFile.h"
 
 #include "CellEnginePDBDataFile.h"
 #include "CellEngineCIFDataFile.h"
@@ -40,7 +41,7 @@ protected:
     }
 
     void InitArcBall();
-    static vmath::vec3 ChooseColor(const AtomBase& ElementObject) ;
+    vmath::vec3 ChooseColor(const CellEngineAtom& ElementObject) ;
 
     void startup() override;
     void load_shaders();
@@ -83,14 +84,12 @@ protected:
     sb7::object object;
 
     bool per_vertex;
+
 private:
     Matrix3fT ArcBallPrevRotationMatrix;
     Matrix3fT ArcBallActualRotationMatrix;
     std::unique_ptr<ArcBallT> ArcBall;
     Point2fT MousePosition;
-private:
-    std::unique_ptr<PDBDataFile> PDBDataFileObjectPointer;
-    std::unique_ptr<CIFDataFile> CIFDataFileObjectPointer;
 private:
     float LengthUnit = 1;
 
@@ -109,6 +108,12 @@ private:
     float RotationAngle3 = 0.0;
 private:
     uint64_t PressedRightMouseButton = 0;
+
+private:
+    std::shared_ptr<CellEnginePDBDataFile> PDBDataFileObjectPointer;
+    std::shared_ptr<CellEngineCIFDataFile> CIFDataFileObjectPointer;
+
+    std::shared_ptr<CellEngineDataFile> CellEngineDataFileObjectPointer;
 };
 
 void InitializeLoggerManagerParameters()
@@ -196,27 +201,49 @@ void CellEngineOpenGLVisualiser::startup()
         CIFDataFileObjectPointer = nullptr;
 
         if (string_utils::check_end_str(FileName, ".pdb") == true)
-            PDBDataFileObjectPointer = make_unique<PDBDataFile>(FileName);
+            CellEngineDataFileObjectPointer = PDBDataFileObjectPointer = make_unique<CellEnginePDBDataFile>(FileName);
         else
-            CIFDataFileObjectPointer = make_unique<CIFDataFile>(FileName);
+            CellEngineDataFileObjectPointer = CIFDataFileObjectPointer = make_unique<CellEngineCIFDataFile>(FileName);
     }
     CATCH("initation of data for cell visualization")
 }
 
-vmath::vec3 CellEngineOpenGLVisualiser::ChooseColor(const AtomBase& ElementObject)
+vmath::vec3 CellEngineOpenGLVisualiser::ChooseColor(const CellEngineAtom& ElementObject)
 {
     vmath::vec3 ChosenColor;
 
     try
     {
-        switch(ElementObject.Name[0])
+        if (PDBDataFileObjectPointer == nullptr)
         {
-            case 'C': ChosenColor = vmath::vec3(0.25f, 0.75f, 0.75f); break;
-            case 'O': ChosenColor = vmath::vec3(1.00f, 0.00f, 0.00f); break;
-            case 'H': ChosenColor = vmath::vec3(1.00f, 1.00f, 1.00f); break;
-            case 'N': ChosenColor = vmath::vec3(0.00f, 0.00f, 1.00f); break;
-            case 'P': ChosenColor = vmath::vec3(0.50f, 0.50f, 0.20f); break;
-            default: ChosenColor = vmath::vec3(0.50f, 0.50f, 0.50f); break;
+            if (string(ElementObject.Chain).substr(0, 3) == "BAF")
+                ChosenColor = vmath::vec3(0.25f, 0.75f, 0.75f);
+            else
+            if(string(ElementObject.Chain).substr(0, 3) == "BAE")
+                ChosenColor = vmath::vec3(1.00f, 0.00f, 0.00f);
+            else
+            if(string(ElementObject.Chain).substr(0, 3) == "ATP")
+                ChosenColor = vmath::vec3(1.00f, 1.00f, 1.00f);
+            else
+            if(string(ElementObject.Chain).substr(0, 3) == "BAR")
+                ChosenColor = vmath::vec3(0.00f, 0.00f, 1.00f);
+            else
+            if(string(ElementObject.Chain).substr(0, 1) == "A")
+                ChosenColor = vmath::vec3(0.50f, 0.50f, 0.20f);
+            else
+                ChosenColor = vmath::vec3(0.50f, 0.50f, 0.50f);
+        }
+        else
+        {
+            switch(ElementObject.Name[0])
+            {
+                case 'C': ChosenColor = vmath::vec3(0.25f, 0.75f, 0.75f); break;
+                case 'O': ChosenColor = vmath::vec3(1.00f, 0.00f, 0.00f); break;
+                case 'H': ChosenColor = vmath::vec3(1.00f, 1.00f, 1.00f); break;
+                case 'N': ChosenColor = vmath::vec3(0.00f, 0.00f, 1.00f); break;
+                case 'P': ChosenColor = vmath::vec3(0.50f, 0.50f, 0.20f); break;
+                default: ChosenColor = vmath::vec3(0.50f, 0.50f, 0.50f); break;
+            }
         }
     }
     CATCH("chosing color for atom for cell visualization")
@@ -240,8 +267,11 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
         vmath::vec3 view_position = vmath::vec3(ViewX, ViewY, ViewZ);
         vmath::mat4 view_matrix = vmath::lookat(view_position, vmath::vec3(0.0f, 0.0f, 0.0f), vmath::vec3(0.0f, 1.0f, 0.0f)) * vmath::rotate(RotationAngle1, RotationAngle2, RotationAngle3) * RotationMatrix;
 
+
+        //CellEngineDataFile CellEngineDataFile = &
+        /*
         FloatVectorType MassCenter;
-        std::vector<AtomBase>* AtomsPointer;
+        std::vector<CellEngineAtom>* AtomsPointer;
         if (CIFDataFileObjectPointer == nullptr)
         {
             AtomsPointer = &PDBDataFileObjectPointer->GetAtoms();
@@ -253,7 +283,11 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
             MassCenter = CIFDataFileObjectPointer->MassCenter();
         }
 
+
         for (auto ElementIterator = AtomsPointer->begin(); ElementIterator != AtomsPointer->end(); ++ElementIterator)
+        */
+        FloatVectorType MassCenter = CellEngineDataFileObjectPointer->MassCenter();
+        for (auto ElementIterator = CellEngineDataFileObjectPointer->GetAtoms().begin(); ElementIterator != CellEngineDataFileObjectPointer->GetAtoms().end(); ++ElementIterator)
         {
             auto ElementObject = *ElementIterator;
 
@@ -262,7 +296,7 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
 
             FloatVectorType ElementPosition = LengthUnit * ElementObject.Position();
             vmath::mat4 model_matrix;
-            if (ElementIterator != AtomsPointer->end() - 1)
+            if (ElementIterator != CellEngineDataFileObjectPointer->GetAtoms().end() - 1)
             {
                 model_matrix = vmath::translate(ElementPosition.X - CameraXPosition - MassCenter.X, ElementPosition.Y + CameraYPosition - MassCenter.Y, ElementPosition.Z + CameraZPosition - MassCenter.Z);
                 block->color = ChooseColor(ElementObject);

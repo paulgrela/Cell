@@ -16,20 +16,22 @@
 #include "CellEngineTypes.h"
 #include "CellEngineAtom.h"
 
-class PDBDataFile
+#include "CellEngineDataFile.h"
+
+class CellEnginePDBDataFile: public CellEngineDataFile
 {
 private:
-    std::vector<std::vector<AtomBase>> Atoms;
+    std::vector<std::vector<CellEngineAtom>> Atoms;
 private:
     void ReadDataFromFile(const std::string_view FileName);
 public:
     UnsignedIntType ChosenStructureIndex;
 public:
-    explicit PDBDataFile(const std::string_view FileName);
-    ~PDBDataFile() = default;
+    explicit CellEnginePDBDataFile(const std::string_view FileName);
+    ~CellEnginePDBDataFile() = default;
 public:
-    static AtomBase ParseRecord(const char* LocalPDBRecord);
-    [[nodiscard]] std::vector<AtomBase>& GetAtoms()
+    static CellEngineAtom ParseRecord(const char* LocalPDBRecord);
+    [[nodiscard]] std::vector<CellEngineAtom>& GetAtoms() override
     {
         return Atoms[ChosenStructureIndex];
     }
@@ -38,8 +40,8 @@ public:
         return Atoms.size();
     }
     [[nodiscard]] IntType GetNumberOfElements() const;
-    [[nodiscard]] const AtomBase& GetElement(IntType Index) const;
-    [[nodiscard]] FloatVectorType MassCenter() const;
+    [[nodiscard]] const CellEngineAtom& GetElement(IntType Index) const;
+    [[nodiscard]] FloatVectorType MassCenter() override;
 };
 
 #endif

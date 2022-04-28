@@ -40,7 +40,7 @@ private:
     void FullDrawStage();
 private:
     std::string ChosenAtomDescription;
-    std::unique_ptr<CIFDataFile> CIFDataFileObjectPointer;
+    std::unique_ptr<CellEngineCIFDataFile> CIFDataFileObjectPointer;
     bool OpenCIFFile(const std::string_view FileName);
     void DrawAtoms(const double LengthUnit, const double AtomSizeLengthUnit, bool MakeColors) const;
     void DrawBonds(const double LengthUnit, bool MakeColors) const;

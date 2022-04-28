@@ -30,7 +30,7 @@ bool CIFWindowGL::OpenCIFFile(const string_view FileName)
 {
     try
     {
-        CIFDataFileObjectPointer = make_unique<CIFDataFile>(FileName);
+        CIFDataFileObjectPointer = make_unique<CellEngineCIFDataFile>(FileName);
     }
     CATCH("Error with loading CIF object");
 

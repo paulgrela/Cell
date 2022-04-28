@@ -75,12 +75,7 @@ add_executable(
 	CellEngineWindowGL.cpp
 	CellEngineOpenGLVisualizer.cpp)
 
-
-#target_link_libraries(${PROJECT_NAME} -static-libgcc -static-libstdc++ -lpthread -lopengl32 -lglu32 -lsb7 -lglfw3 glew32.lib)
-#target_link_libraries(${PROJECT_NAME} -static-libgcc -static-libstdc++ -lpthread -lopengl32 -lglu32 libsb7.a libglfw3.a glew32.lib)
-
-target_link_libraries(${PROJECT_NAME} -static-libgcc -static-libstdc++ -lpthread -lopengl32 -lglu32 -lsb7 -lglfw3 -lglew32)
-target_link_libraries(${PROJECT_NAME} -static-libgcc -static-libstdc++ -lpthread -lopengl32 -lglu32 libsb7.a libglfw3.a -lglew32)
+target_link_libraries(${PROJECT_NAME} -static-libgcc -static-libstdc++ -lpthread -lglew32 -lsb7 -lglfw3 -lopengl32 -lglu32)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})

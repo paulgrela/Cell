@@ -17,30 +17,32 @@
 #include "CellEngineTypes.h"
 #include "CellEngineAtom.h"
 
-struct Matrix
+#include "CellEngineDataFile.h"
+
+struct AtomsPositionMatrix3x4
 {
 public:
     UnsignedIntType MatrixId;
     float Matrix[3][4];
 };
 
-class CIFDataFile
+class CellEngineCIFDataFile: public CellEngineDataFile
 {
 private:
-    std::vector<Matrix> Matrixes;
-    std::unordered_map<std::string, std::vector<AtomBase>> ChainsNames;
+    std::vector<AtomsPositionMatrix3x4> AtomsPositiosnMatrixes;
+    std::unordered_map<std::string, std::vector<CellEngineAtom>> ChainsNames;
 private:
-    std::vector<std::vector<AtomBase>> Atoms;
+    std::vector<std::vector<CellEngineAtom>> Atoms;
 private:
     void ReadDataFromFile(const std::string_view LocalCIFRecord);
 public:
     UnsignedIntType ChosenStructureIndex;
 public:
-    explicit CIFDataFile(const std::string_view FileName);
-    ~CIFDataFile() = default;
+    explicit CellEngineCIFDataFile(const std::string_view FileName);
+    ~CellEngineCIFDataFile() = default;
 public:
-    static AtomBase ParseRecord(const char* LocalPDBRecord);
-    [[nodiscard]] std::vector<AtomBase>& GetAtoms()
+    static CellEngineAtom ParseRecord(const char* LocalPDBRecord);
+    [[nodiscard]] std::vector<CellEngineAtom>& GetAtoms() override
     {
         return Atoms[ChosenStructureIndex];
     }
@@ -49,8 +51,8 @@ public:
         return Atoms.size();
     }
     [[nodiscard]] IntType GetNumberOfAtoms() const;
-    [[nodiscard]] const AtomBase& GetAtom(IntType Index) const;
-    [[nodiscard]] FloatVectorType MassCenter() const;
+    [[nodiscard]] const CellEngineAtom& GetAtom(IntType Index) const;
+    [[nodiscard]] FloatVectorType MassCenter() override;
 };
 
 #endif

@@ -37,7 +37,7 @@ private:
     void FullDrawStage();
 private:
     std::string ChosenElementDescription;
-	std::unique_ptr<PDBDataFile> PDBDataFileObjectPointer;
+	std::unique_ptr<CellEnginePDBDataFile> PDBDataFileObjectPointer;
 	bool OpenPDBFile(const std::string_view FileName);
 	void DrawElements(const double LengthUnit, const double ElementSizeLengthUnit, bool MakeColors) const;
 	void DrawBonds(const double LengthUnit, bool MakeColors) const;
