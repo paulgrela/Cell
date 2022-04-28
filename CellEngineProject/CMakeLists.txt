@@ -85,7 +85,7 @@ add_executable(
 	CellEngineCIFWindowGL.h
 	CellEngineCIFWindowGL.cpp
 	CellEngineWindowGL.cpp
-	CellEngineCIFFileOpenGLVisualizer.cpp)
+	CellEngineOpenGLVisualizer.cpp)
 
 
 #target_link_libraries(${PROJECT_NAME} -static-libgcc -static-libstdc++ -lpthread -lopengl32 -lglu32 -lsb7 -lglfw3 glew32.lib)

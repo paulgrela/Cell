@@ -93,18 +93,18 @@ void CIFDataFile::ReadDataFromFile(const std::string_view FileName)
                 MatrixObject.MatrixId = stoi(AtomFields[0]);
 
                 UnsignedIntType Shift = 6;
-                MatrixObject.Matrix[0][0] = stod(AtomFields[Shift + 0]);
-                MatrixObject.Matrix[0][1] = stod(AtomFields[Shift + 1]);
-                MatrixObject.Matrix[0][2] = stod(AtomFields[Shift + 2]);
-                MatrixObject.Matrix[0][3] = stod(AtomFields[Shift + 3]);
-                MatrixObject.Matrix[1][0] = stod(AtomFields[Shift + 4]);
-                MatrixObject.Matrix[1][1] = stod(AtomFields[Shift + 5]);
-                MatrixObject.Matrix[1][2] = stod(AtomFields[Shift + 6]);
-                MatrixObject.Matrix[1][3] = stod(AtomFields[Shift + 7]);
-                MatrixObject.Matrix[2][0] = stod(AtomFields[Shift + 8]);
-                MatrixObject.Matrix[2][1] = stod(AtomFields[Shift + 9]);
-                MatrixObject.Matrix[2][2] = stod(AtomFields[Shift + 10]);
-                MatrixObject.Matrix[2][3] = stod(AtomFields[Shift + 11]);
+                MatrixObject.Matrix[0][0] = stof(AtomFields[Shift + 0]);
+                MatrixObject.Matrix[0][1] = stof(AtomFields[Shift + 1]);
+                MatrixObject.Matrix[0][2] = stof(AtomFields[Shift + 2]);
+                MatrixObject.Matrix[0][3] = stof(AtomFields[Shift + 3]);
+                MatrixObject.Matrix[1][0] = stof(AtomFields[Shift + 4]);
+                MatrixObject.Matrix[1][1] = stof(AtomFields[Shift + 5]);
+                MatrixObject.Matrix[1][2] = stof(AtomFields[Shift + 6]);
+                MatrixObject.Matrix[1][3] = stof(AtomFields[Shift + 7]);
+                MatrixObject.Matrix[2][0] = stof(AtomFields[Shift + 8]);
+                MatrixObject.Matrix[2][1] = stof(AtomFields[Shift + 9]);
+                MatrixObject.Matrix[2][2] = stof(AtomFields[Shift + 10]);
+                MatrixObject.Matrix[2][3] = stof(AtomFields[Shift + 11]);
 
                 Matrixes.push_back(MatrixObject);
             }

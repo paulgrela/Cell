@@ -3,7 +3,7 @@
 
 #define _USE_MATH_DEFINES  1
 
-#include <math.h>
+#include <cmath>
 
 namespace vmath
 {
@@ -26,7 +26,7 @@ namespace vmath
     template <typename T>
     struct random
     {
-        operator T()
+        explicit operator T()
         {
             static unsigned int seed = 0x13371337;
             unsigned int res;
@@ -45,7 +45,7 @@ namespace vmath
     template<>
     struct random<float>
     {
-        operator float()
+        explicit operator float()
         {
             static unsigned int seed = 0x13371337;
             float res;
@@ -64,7 +64,7 @@ namespace vmath
     template<>
     struct random<unsigned int>
     {
-        operator unsigned int()
+        explicit operator unsigned int()
         {
             static unsigned int seed = 0x13371337;
             unsigned int res;
@@ -87,9 +87,7 @@ namespace vmath
         typedef class vecN<T,len> my_type;
         typedef T element_type;
 
-        inline vecN()
-        {
-        }
+        inline vecN() = default;
 
         inline vecN(const vecN& that)
         {
@@ -256,8 +254,8 @@ namespace vmath
     public:
         typedef vecN<T,2> base;
 
-        inline Tvec2() {}
-        inline Tvec2(const base& v) : base(v) {}
+        explicit inline Tvec2() = default;
+        explicit inline Tvec2(const base& v) : base(v) {}
 
         inline Tvec2(T x, T y)
         {
@@ -272,7 +270,7 @@ namespace vmath
     public:
         typedef vecN<T,3> base;
 
-        inline Tvec3() {}
+        explicit inline Tvec3() = default;
 
         inline Tvec3(const base& v) : base(v) {}
 
@@ -304,7 +302,7 @@ namespace vmath
     public:
         typedef vecN<T,4> base;
 
-        inline Tvec4() {}
+        explicit inline Tvec4() = default;
 
         inline Tvec4(const base& v) : base(v) {}
 
@@ -461,15 +459,13 @@ namespace vmath
     class Tquaternion
     {
     public:
-        inline Tquaternion()
-        {
-        }
+        inline Tquaternion() = default;
 
         inline Tquaternion(const Tquaternion& q) : r(q.r), v(q.v)
         {
         }
 
-        inline Tquaternion(T _r) : r(_r), v(T(0))
+        explicit inline Tquaternion(T _r) : r(_r), v(T(0))
         {
         }
 
@@ -477,7 +473,7 @@ namespace vmath
         {
         }
 
-        inline Tquaternion(const Tvec4<T>& _v) : r(_v[0]), v(_v[1], _v[2], _v[3])
+        explicit inline Tquaternion(const Tvec4<T>& _v) : r(_v[0]), v(_v[1], _v[2], _v[3])
         {
         }
 

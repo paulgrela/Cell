@@ -22,10 +22,10 @@
 
 using namespace std;
 
-class phonglighting_app : public sb7::application
+class CellEngineOpenGLVisualiser : public sb7::application
 {
 public:
-    phonglighting_app() : per_fragment_program(0), per_vertex_program(0), per_vertex(false)
+    CellEngineOpenGLVisualiser() : per_fragment_program(0), per_vertex_program(0), per_vertex(false)
     {
     }
 
@@ -40,6 +40,7 @@ protected:
     }
 
     void InitArcBall();
+    static vmath::vec3 ChooseColor(const Element& ElementObject) ;
 
     void startup() override;
     void load_shaders();
@@ -121,7 +122,7 @@ void InitializeLoggerManagerParameters()
     CATCH("initializing logger manager parameters")
 }
 
-void phonglighting_app::load_shaders()
+void CellEngineOpenGLVisualiser::load_shaders()
 {
     try
     {
@@ -161,7 +162,7 @@ void phonglighting_app::load_shaders()
     CATCH("loading shaders for cell visualization")
 }
 
-void phonglighting_app::startup()
+void CellEngineOpenGLVisualiser::startup()
 {
     try
     {
@@ -188,7 +189,28 @@ void phonglighting_app::startup()
     CATCH("initation of data for cell visualization")
 }
 
-void phonglighting_app::render(double currentTime)
+vmath::vec3 CellEngineOpenGLVisualiser::ChooseColor(const Element& ElementObject)
+{
+    vmath::vec3 ChosenColor;
+    
+    try
+    {
+        switch(ElementObject.Name[0])
+        {
+            case 'C': ChosenColor = vmath::vec3(0.25f, 0.75f, 0.75f); break;
+            case 'O': ChosenColor = vmath::vec3(1.00f, 0.00f, 0.00f); break;
+            case 'H': ChosenColor = vmath::vec3(1.00f, 1.00f, 1.00f); break;
+            case 'N': ChosenColor = vmath::vec3(0.00f, 0.00f, 1.00f); break;
+            case 'P': ChosenColor = vmath::vec3(0.50f, 0.50f, 0.20f); break;
+            default: ChosenColor = vmath::vec3(0.50f, 0.50f, 0.50f); break;
+        }
+    }
+    CATCH("chosing color for atom for cell visualization")
+
+    return ChosenColor;
+}
+
+void CellEngineOpenGLVisualiser::render(double currentTime)
 {
     try
     {
@@ -208,7 +230,6 @@ void phonglighting_app::render(double currentTime)
         vmath::vec3 view_position = vmath::vec3(ViewX, ViewY, ViewZ);
         vmath::mat4 view_matrix = vmath::lookat(view_position, vmath::vec3(0.0f, 0.0f, 0.0f), vmath::vec3(0.0f, 1.0f, 0.0f)) * vmath::rotate(RotationAngle1, RotationAngle2, RotationAngle3) * RotationMatrix;
 
-        int j = 1;
         for (const Element& ElementObject : PDBDataFileObjectPointer->GetElements())
         {
             glBindBufferBase(GL_UNIFORM_BUFFER, 0, uniforms_buffer);
@@ -222,22 +243,12 @@ void phonglighting_app::render(double currentTime)
             block->view_matrix = view_matrix;
             block->proj_matrix = vmath::perspective(50.0f, (float)info.windowWidth / (float)info.windowHeight, 0.1f, 2000.0f);
 
-            switch(ElementObject.Name[0])
-            {
-                case 'C': block->color = vmath::vec3(0.25f, 0.75f, 0.75f); break;
-                case 'O': block->color = vmath::vec3(1.00f, 0.00f, 0.00f); break;
-                case 'H': block->color = vmath::vec3(1.00f, 1.00f, 1.00f); break;
-                case 'N': block->color = vmath::vec3(0.00f, 0.00f, 1.00f); break;
-                case 'P': block->color = vmath::vec3(0.50f, 0.50f, 0.20f); break;
-                default: block->color = vmath::vec3(0.50f, 0.50f, 0.50f); break;
-            }
-            //block->color = vmath::vec3((float)rand() / RAND_MAX, (float)rand() / RAND_MAX, (float)rand() / RAND_MAX);;
+            block->color = ChooseColor(ElementObject);
 
             glUnmapBuffer(GL_UNIFORM_BUFFER);
 
-            glUniform1f(uniforms[per_vertex ? 1 : 0].specular_power, powf(2.0f, (float)j + 2.0f));
-            glUniform3fv(uniforms[per_vertex ? 1 : 0].specular_albedo, 1, vmath::vec3((float)j / 9.0f + 1.0f / 9.0f));
-            j++;
+            glUniform1f(uniforms[per_vertex ? 1 : 0].specular_power, powf(2.0f, 3.0f));
+            glUniform3fv(uniforms[per_vertex ? 1 : 0].specular_albedo, 1, vmath::vec3(1.0f / 9.0f + 1.0f / 9.0f));
 
             object.render();
         }
@@ -257,16 +268,15 @@ void phonglighting_app::render(double currentTime)
 
         glUnmapBuffer(GL_UNIFORM_BUFFER);
 
-        glUniform1f(uniforms[per_vertex ? 1 : 0].specular_power, powf(2.0f, (float)j + 2.0f));
-        glUniform3fv(uniforms[per_vertex ? 1 : 0].specular_albedo, 1, vmath::vec3((float)j / 9.0f + 1.0f / 9.0f));
+        glUniform1f(uniforms[per_vertex ? 1 : 0].specular_power, powf(2.0f, 5000.0f + 2.0f));
+        glUniform3fv(uniforms[per_vertex ? 1 : 0].specular_albedo, 1, vmath::vec3(5000.0f / 9.0f + 1.0f / 9.0f));
 
         object.render();
-
     }
     CATCH("rendering cell visualization")
 }
 
-void phonglighting_app::onKey(int key, int action)
+void CellEngineOpenGLVisualiser::onKey(int key, int action)
 {
     try
     {
@@ -303,7 +313,7 @@ void phonglighting_app::onKey(int key, int action)
     CATCH("executing on key event for cell visualisation")
 }
 
-void phonglighting_app::onMouseWheel(int pos)
+void CellEngineOpenGLVisualiser::onMouseWheel(int pos)
 {
     try
     {
@@ -315,7 +325,7 @@ void phonglighting_app::onMouseWheel(int pos)
     CATCH("executing on mouse wheel event")
 }
 
-void phonglighting_app::onMouseButton(int button, int action)
+void CellEngineOpenGLVisualiser::onMouseButton(int button, int action)
 {
     try
     {
@@ -335,7 +345,7 @@ void phonglighting_app::onMouseButton(int button, int action)
     CATCH("executing on mouse button event for cell visualisation")
 }
 
-void phonglighting_app::onMouseMove(int x, int y)
+void CellEngineOpenGLVisualiser::onMouseMove(int x, int y)
 {
     try
     {
@@ -365,7 +375,7 @@ void phonglighting_app::onMouseMove(int x, int y)
     CATCH("executing on mouse event for cell visualisation")
 }
 
-void phonglighting_app::InitArcBall()
+void CellEngineOpenGLVisualiser::InitArcBall()
 {
     try
     {
@@ -380,7 +390,7 @@ void phonglighting_app::InitArcBall()
     CATCH("initiation of arc ball counting data for cell visualisation")
 }
 
-void phonglighting_app::onResize(int w, int h)
+void CellEngineOpenGLVisualiser::onResize(int w, int h)
 {
     try
     {
@@ -391,4 +401,4 @@ void phonglighting_app::onResize(int w, int h)
     CATCH("executing window resize event - setting bounds of arc ball counting data for cell visualisation")
 }
 
-DECLARE_MAIN(phonglighting_app)
+DECLARE_MAIN(CellEngineOpenGLVisualiser)
