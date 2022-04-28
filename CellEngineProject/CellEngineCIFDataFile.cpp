@@ -11,39 +11,43 @@
 using namespace std;
 using namespace string_utils;
 
-Atom::Atom(const char* CIFRecord, UnsignedIntType AtomIndex)
-{
-    try
-    {
-        ParseRecord(CIFRecord);
-        this->AtomIndex = AtomIndex;
-    }
-    CATCH("initation of Atom")
-}
+//AtomCIF::AtomCIF(const char* CIFRecord, UnsignedIntType AtomIndex)
+//{
+//    try
+//    {
+//        ParseRecord(CIFRecord);
+//        this->AtomIndex = AtomIndex;
+//    }
+//    CATCH("initation of Atom")
+//}
 
-void Atom::ParseRecord(const char* LocalCIFRecord)
+AtomBase CIFDataFile::ParseRecord(const char* LocalCIFRecord)
 {
+    AtomBase CellEngineAtomObject;
+
     try
     {
         string RecordStr = LocalCIFRecord;
 
         vector<string> AtomFields = split(RecordStr, " ");
 
-        strncpy(ResName, AtomFields[5].c_str(), AtomFields[5].length() + 1);
-        strncpy(Chain, AtomFields[6].c_str(), AtomFields[6].length() + 1);
-        EntityId = stoi(AtomFields[7]);
+        strncpy(CellEngineAtomObject.ResName, AtomFields[5].c_str(), AtomFields[5].length() + 1);
+        strncpy(CellEngineAtomObject.Chain, AtomFields[6].c_str(), AtomFields[6].length() + 1);
+        CellEngineAtomObject.EntityId = stoi(AtomFields[7]);
 
-        X = stof(AtomFields[10]);
-        Y = stof(AtomFields[11]);
-        Z = stof(AtomFields[12]);
+        CellEngineAtomObject.X = stof(AtomFields[10]);
+        CellEngineAtomObject.Y = stof(AtomFields[11]);
+        CellEngineAtomObject.Z = stof(AtomFields[12]);
     }
     CATCH("parsing atom record")
+
+    return CellEngineAtomObject;
 }
 
-FloatVectorType Atom::Position() const
-{
-    return FloatVectorType(X, Y, Z);
-}
+//FloatVectorType AtomCIF::Position() const
+//{
+//    return FloatVectorType(X, Y, Z);
+//}
 
 CIFDataFile::CIFDataFile(const string_view FileName)
 {
@@ -57,7 +61,7 @@ void CIFDataFile::ReadDataFromFile(const std::string_view FileName)
     try
     {
         string Line;
-        std::vector<Atom> LocalAtomsObject;
+        std::vector<AtomBase> LocalAtomsObject;
 
         const auto start_time = chrono::high_resolution_clock::now();
 
@@ -80,8 +84,9 @@ void CIFDataFile::ReadDataFromFile(const std::string_view FileName)
         {
             if (Line.substr(0, 4) == "ATOM")
             {
-                Atom AtomObject(Line.c_str(), LocalAtomsObject.size());
-                ChainsNames[AtomObject.Chain].push_back(AtomObject);
+                //AtomCIF AtomObject(Line.c_str(), LocalAtomsObject.size());
+                AtomBase CellEngineAtomObject = ParseRecord(Line.c_str());
+                ChainsNames[CellEngineAtomObject.Chain].emplace_back(CellEngineAtomObject);
             }
             else
             if (Line.find("point symmetry operation") != std::string::npos)
@@ -128,12 +133,12 @@ void CIFDataFile::ReadDataFromFile(const std::string_view FileName)
                     for (const auto& AppliedChainName : AppliedChainsNames)
                     {
                         bool First = true;
-                        for (Atom& AppliedAtom : ChainsNames.find(AppliedChainName)->second)
+                        for (AtomBase& AppliedAtom : ChainsNames.find(AppliedChainName)->second)
                         {
                             if (First == true)
                             {
                                 First = false;
-                                LocalAtomsObject.emplace_back(Atom(Matrixes[AppliedMatrixId - 2].Matrix[0][3], Matrixes[AppliedMatrixId - 2].Matrix[1][3], Matrixes[AppliedMatrixId - 2].Matrix[2][3], LocalAtomsObject.size(), LocalAtomsObject.size(), (char*)("H"), (char*)("MTR"), (char*)AppliedChainName.c_str()));
+                                LocalAtomsObject.emplace_back(AtomBase(Matrixes[AppliedMatrixId - 2].Matrix[0][3], Matrixes[AppliedMatrixId - 2].Matrix[1][3], Matrixes[AppliedMatrixId - 2].Matrix[2][3], LocalAtomsObject.size(), LocalAtomsObject.size(), (char*)("H"), (char*)("MTR"), (char*)AppliedChainName.c_str()));
                             }
 
                             NumberOfAtoms++;
@@ -143,7 +148,8 @@ void CIFDataFile::ReadDataFromFile(const std::string_view FileName)
                             AppliedAtom.X = Matrixes[AppliedMatrixId - 2].Matrix[0][0] * AppliedAtom.X + Matrixes[AppliedMatrixId - 2].Matrix[0][1] * AppliedAtom.Y + Matrixes[AppliedMatrixId - 2].Matrix[0][2] * AppliedAtom.Z + Matrixes[AppliedMatrixId - 2].Matrix[0][3];
                             AppliedAtom.Y = Matrixes[AppliedMatrixId - 2].Matrix[1][0] * AppliedAtom.X + Matrixes[AppliedMatrixId - 2].Matrix[1][1] * AppliedAtom.Y + Matrixes[AppliedMatrixId - 2].Matrix[1][2] * AppliedAtom.Z + Matrixes[AppliedMatrixId - 2].Matrix[1][3];
                             AppliedAtom.Z = Matrixes[AppliedMatrixId - 2].Matrix[2][0] * AppliedAtom.X + Matrixes[AppliedMatrixId - 2].Matrix[2][1] * AppliedAtom.Y + Matrixes[AppliedMatrixId - 2].Matrix[2][2] * AppliedAtom.Z + Matrixes[AppliedMatrixId - 2].Matrix[2][3];
-                            //LocalAtomsObject.push_back(Atom);
+
+                            //LocalAtomsObject.push_back(AppliedAtom);
                         }
                     }
             }
@@ -152,13 +158,13 @@ void CIFDataFile::ReadDataFromFile(const std::string_view FileName)
         LoggersManagerObject.Log(STREAM(NumberOfAtoms << " " << LocalAtomsObject.size() << " " << NumberOfAtomsDNA << " " << Matrixes.size() << " " << ChainsNames["BAF0"].size() << endl));
         getchar();
 
-        Atoms.push_back(LocalAtomsObject);
-
-        LoggersManagerObject.Log(STREAM("FINISHED READING FROM CIF FILE"));
+        Atoms.emplace_back(LocalAtomsObject);
 
         const auto stop_time = chrono::high_resolution_clock::now();
 
-        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Execution of reading data from CIF file has taken time: ","executing printing duration_time")));
+        LoggersManagerObject.Log(STREAM("FINISHED READING FROM CIF FILE"));
+
+        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Execution of reading data from CIF file has taken time: ", "executing printing duration_time")));
 
         File.close();
     }
@@ -170,7 +176,7 @@ IntType CIFDataFile::GetNumberOfAtoms() const
     return Atoms[ChosenStructureIndex].size();
 }
 
-const Atom& CIFDataFile::GetAtom(IntType DataRawIndex) const
+const AtomBase& CIFDataFile::GetAtom(IntType DataRawIndex) const
 {
     return Atoms[ChosenStructureIndex][DataRawIndex];
 }
@@ -181,7 +187,7 @@ FloatVectorType CIFDataFile::MassCenter() const
 
     try
     {
-        for (const Atom& AtomObject : Atoms[ChosenStructureIndex])
+        for (const AtomBase& AtomObject : Atoms[ChosenStructureIndex])
             MassCenter += AtomObject.Position();
 
         MassCenter /= Atoms[ChosenStructureIndex].size();

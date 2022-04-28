@@ -15,7 +15,9 @@
 #include "VectorType.h"
 
 #include "CellEngineTypes.h"
+#include "CellEngineAtom.h"
 
+/*
 struct Atom
 {
 public:
@@ -42,7 +44,29 @@ public:
 private:
     void ParseRecord(const char* LocalPDBRecord);
 };
-
+*/
+/*
+class AtomCIF: public AtomBase
+{
+public:
+    AtomCIF() = default;
+    AtomCIF(float XParam, float YParam, float ZParam,  UnsignedIntType AtomIndexParam, IntType SerialParam, char NameParam[2], char ResNameParam[4], char ChainParam[6])// : X(XParam), Y(YParam), Z(ZParam), AtomIndex(AtomIndexParam), Serial(SerialParam)
+    {
+        X = XParam;
+        Y = YParam;
+        Z = ZParam;
+        AtomIndex = AtomIndexParam;
+        Serial = SerialParam;
+        strncpy(Name, NameParam, 2);
+        strncpy(ResName, ResNameParam, 4);
+        strncpy(Chain, ChainParam, 6);
+    }
+    AtomCIF(const char* CIFRecord, UnsignedIntType AtomIndex);
+public:
+    //[[nodiscard]] FloatVectorType Position() const;
+    //void ParseRecord(const char* LocalPDBRecord);
+};
+*/
 struct Matrix
 {
 public:
@@ -54,18 +78,19 @@ class CIFDataFile
 {
 private:
     std::vector<Matrix> Matrixes;
-    std::unordered_map<std::string, std::vector<Atom>> ChainsNames;
+    std::unordered_map<std::string, std::vector<AtomBase>> ChainsNames;
 private:
-    std::vector<std::vector<Atom>> Atoms;
+    std::vector<std::vector<AtomBase>> Atoms;
 private:
-    void ReadDataFromFile(const std::string_view);
+    void ReadDataFromFile(const std::string_view LocalCIFRecord);
 public:
     UnsignedIntType ChosenStructureIndex;
 public:
     explicit CIFDataFile(const std::string_view FileName);
     ~CIFDataFile() = default;
 public:
-    [[nodiscard]] const std::vector<Atom>& GetAtoms() const
+    static AtomBase ParseRecord(const char* LocalPDBRecord);
+    [[nodiscard]] std::vector<AtomBase>& GetAtoms()
     {
         return Atoms[ChosenStructureIndex];
     }
@@ -74,7 +99,7 @@ public:
         return Atoms.size();
     }
     [[nodiscard]] IntType GetNumberOfAtoms() const;
-    [[nodiscard]] const Atom& GetAtom(IntType Index) const;
+    [[nodiscard]] const AtomBase& GetAtom(IntType Index) const;
     [[nodiscard]] FloatVectorType MassCenter() const;
 };
 

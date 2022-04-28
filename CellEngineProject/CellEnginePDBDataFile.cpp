@@ -10,37 +10,45 @@
 using namespace std;
 using namespace string_utils;
 
-Element::Element(const char* PDBRecord, UnsignedIntType ElementIndex)
+/*
+AtomPDB::AtomPDB(const char* PDBRecord, UnsignedIntType ElementIndex)
 {
     try
     {
         ParseRecord(PDBRecord);
-        this->ElementIndex = ElementIndex;
+        this->AtomIndex = ElementIndex;
     }
     CATCH("initation of element")
 }
+*/
 
-void Element::ParseRecord(const char* LocalPDBRecord)
+AtomBase PDBDataFile::ParseRecord(const char* LocalPDBRecord)
 {
+    AtomBase CellEngineAtomObject;
+
     try
     {
         string RecordStr = LocalPDBRecord;
 
-        Serial = stoi(RecordStr.substr(6, 5));
-        Name = trim_whitespace_surrounding(RecordStr.substr(12, 4));
-        ResName = trim_whitespace_surrounding(RecordStr.substr(17, 3));
+        CellEngineAtomObject.Serial = stoi(RecordStr.substr(6, 5));
+        string NameStr = trim_whitespace_surrounding(RecordStr.substr(12, 4));
+        string ResNameStr = trim_whitespace_surrounding(RecordStr.substr(17, 3));
+        strncpy(CellEngineAtomObject.Name, NameStr.c_str(), NameStr.length() + 1);
+        strncpy(CellEngineAtomObject.ResName, ResNameStr.c_str(), ResNameStr.length() + 1);
 
-        X = stof(RecordStr.substr(30, 8));
-        Y = stof(RecordStr.substr(38, 8));
-        Z = stof(RecordStr.substr(46, 8));
+        CellEngineAtomObject.X = stof(RecordStr.substr(30, 8));
+        CellEngineAtomObject.Y = stof(RecordStr.substr(38, 8));
+        CellEngineAtomObject.Z = stof(RecordStr.substr(46, 8));
     }
     CATCH("parsing element record")
+
+    return CellEngineAtomObject;
 }
 
-FloatVectorType Element::Position() const
-{
-	return FloatVectorType(X, Y, Z);
-}
+//FloatVectorType AtomPDB::Position() const
+//{
+//	return FloatVectorType(X, Y, Z);
+//}
 
 PDBDataFile::PDBDataFile(const string_view FileName)
 {
@@ -54,7 +62,7 @@ void PDBDataFile::ReadDataFromFile(const string_view FileName)
     try
     {
         string Line;
-        std::vector<Element> StructureObject;
+        std::vector<AtomBase> StructureObject;
 
         const auto start_time = chrono::high_resolution_clock::now();
 
@@ -65,12 +73,13 @@ void PDBDataFile::ReadDataFromFile(const string_view FileName)
         while (getline(File, Line, '\n'))
         {
             if (Line.substr(0, 4) == "ATOM" || Line.substr(0, 6) == "HETATM")
-                StructureObject.emplace_back(Element(Line.c_str(), StructureObject.size()));
+                //StructureObject.emplace_back(AtomBase(Line.c_str(), StructureObject.size()));
+                StructureObject.emplace_back(ParseRecord(Line.c_str()));
             else
             if (Line.substr(0, 3) == "END" )
             {
-                StructureObject.emplace_back(Element());
-                Elements.push_back(StructureObject);
+                StructureObject.emplace_back(AtomBase());
+                Atoms.push_back(StructureObject);
                 StructureObject.clear();
             }
         }
@@ -88,12 +97,12 @@ void PDBDataFile::ReadDataFromFile(const string_view FileName)
 
 IntType PDBDataFile::GetNumberOfElements() const
 {
-	return Elements[ChosenStructureIndex].size();
+	return Atoms[ChosenStructureIndex].size();
 }
 
-const Element& PDBDataFile::GetElement(IntType DataRawIndex) const
+const AtomBase& PDBDataFile::GetElement(IntType DataRawIndex) const
 {
-	return Elements[ChosenStructureIndex][DataRawIndex];
+	return Atoms[ChosenStructureIndex][DataRawIndex];
 }
 
 FloatVectorType PDBDataFile::MassCenter() const
@@ -102,10 +111,10 @@ FloatVectorType PDBDataFile::MassCenter() const
 
 	try
     {
-        for (const Element& ElementObject : Elements[ChosenStructureIndex])
+        for (const AtomBase& ElementObject : Atoms[ChosenStructureIndex])
             MassCenter += ElementObject.Position();
 
-        MassCenter /= Elements[ChosenStructureIndex].size();
+        MassCenter /= Atoms[ChosenStructureIndex].size();
 	}
     CATCH_AND_THROW("counting mass center for PDB file")
 

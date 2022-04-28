@@ -6,7 +6,6 @@
 #include <vmath.h>
 
 #include <object.h>
-#include <sb7ktx.h>
 #include <shader.h>
 
 #include <string>
@@ -19,6 +18,7 @@
 #include "AdditionalFunctions.h"
 
 #include "CellEnginePDBDataFile.h"
+#include "CellEngineCIFDataFile.h"
 
 using namespace std;
 
@@ -40,7 +40,7 @@ protected:
     }
 
     void InitArcBall();
-    static vmath::vec3 ChooseColor(const Element& ElementObject) ;
+    static vmath::vec3 ChooseColor(const AtomBase& ElementObject) ;
 
     void startup() override;
     void load_shaders();
@@ -90,6 +90,7 @@ private:
     Point2fT MousePosition;
 private:
     std::unique_ptr<PDBDataFile> PDBDataFileObjectPointer;
+    std::unique_ptr<CIFDataFile> CIFDataFileObjectPointer;
 private:
     float LengthUnit = 1;
 
@@ -183,15 +184,26 @@ void CellEngineOpenGLVisualiser::startup()
         InitArcBall();
 
         InitializeLoggerManagerParameters();
+        LoggersManagerObject.Log(STREAM("START CELL"));
 
-        string FileName = R"(c:\Projects\Programs\C++\Cell\PDBFiles\struct0\117E.pdb)";
+        string FileName;
+        if (__argc > 1)
+            FileName = __argv[1];
+        else
+            LoggersManagerObject.Log(STREAM("Lack of file name in program parameters"));
 
-        PDBDataFileObjectPointer = make_unique<PDBDataFile>(FileName);
+        PDBDataFileObjectPointer = nullptr;
+        CIFDataFileObjectPointer = nullptr;
+
+        if (string_utils::check_end_str(FileName, ".pdb") == true)
+            PDBDataFileObjectPointer = make_unique<PDBDataFile>(FileName);
+        else
+            CIFDataFileObjectPointer = make_unique<CIFDataFile>(FileName);
     }
     CATCH("initation of data for cell visualization")
 }
 
-vmath::vec3 CellEngineOpenGLVisualiser::ChooseColor(const Element& ElementObject)
+vmath::vec3 CellEngineOpenGLVisualiser::ChooseColor(const AtomBase& ElementObject)
 {
     vmath::vec3 ChosenColor;
 
@@ -218,7 +230,6 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
     {
         FloatVectorType MassCenter = PDBDataFileObjectPointer->MassCenter();
 
-        static const GLfloat zeros[] = { 0.0f, 0.0f, 0.0f, 0.0f };
         static const GLfloat gray[] = { 0.1f, 0.1f, 0.1f, 0.0f };
         static const GLfloat ones[] = { 1.0f };
 
@@ -231,7 +242,14 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
         vmath::vec3 view_position = vmath::vec3(ViewX, ViewY, ViewZ);
         vmath::mat4 view_matrix = vmath::lookat(view_position, vmath::vec3(0.0f, 0.0f, 0.0f), vmath::vec3(0.0f, 1.0f, 0.0f)) * vmath::rotate(RotationAngle1, RotationAngle2, RotationAngle3) * RotationMatrix;
 
-        for (auto ElementIterator = PDBDataFileObjectPointer->GetElements().begin(); ElementIterator != PDBDataFileObjectPointer->GetElements().end(); ++ElementIterator)
+        std::vector<AtomBase>* AtomsPointer;
+        if (CIFDataFileObjectPointer == nullptr)
+            AtomsPointer = &PDBDataFileObjectPointer->GetAtoms();
+        else
+            AtomsPointer = &CIFDataFileObjectPointer->GetAtoms();
+
+        for (auto ElementIterator = AtomsPointer->begin(); ElementIterator != AtomsPointer->end(); ++ElementIterator)
+        //for (auto ElementIterator = PDBDataFileObjectPointer->GetElements().begin(); ElementIterator != PDBDataFileObjectPointer->GetElements().end(); ++ElementIterator)
         {
             auto ElementObject = *ElementIterator;
 
@@ -240,7 +258,7 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
 
             FloatVectorType ElementPosition = LengthUnit * ElementObject.Position();
             vmath::mat4 model_matrix;
-            if (ElementIterator != PDBDataFileObjectPointer->GetElements().end() - 1)
+            if (ElementIterator != AtomsPointer->end() - 1)
             {
                 model_matrix = vmath::translate(ElementPosition.X - CameraXPosition - MassCenter.X, ElementPosition.Y + CameraYPosition - MassCenter.Y, ElementPosition.Z + CameraZPosition - MassCenter.Z);
                 block->color = ChooseColor(ElementObject);
@@ -262,26 +280,6 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
 
             object.render();
         }
-
-
-
-//        glBindBufferBase(GL_UNIFORM_BUFFER, 0, uniforms_buffer);
-//        auto block = (uniforms_block*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(uniforms_block), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
-//
-//        vmath::mat4 model_matrix = vmath::translate(0.0f, 0.0f, 0.0f);
-//
-//        block->mv_matrix = model_matrix * view_matrix;
-//        block->view_matrix = view_matrix;
-//        block->proj_matrix = vmath::perspective(50.0f, (float)info.windowWidth / (float)info.windowHeight, 0.1f, 2000.0f);
-//
-//        block->color = vmath::vec3(0.7, 0.2, 0.9);
-//
-//        glUnmapBuffer(GL_UNIFORM_BUFFER);
-//
-//        glUniform1f(uniforms[per_vertex ? 1 : 0].specular_power, powf(2.0f, 5000.0f + 2.0f));
-//        glUniform3fv(uniforms[per_vertex ? 1 : 0].specular_albedo, 1, vmath::vec3(5000.0f / 9.0f + 1.0f / 9.0f));
-//
-//        object.render();
     }
     CATCH("rendering cell visualization")
 }
@@ -327,10 +325,22 @@ void CellEngineOpenGLVisualiser::onMouseWheel(int pos)
 {
     try
     {
+//        int ViewStep;
+//        if (CIFDataFileObjectPointer == nullptr)
+//            ViewStep = 1;
+//        else
+//            ViewStep = 10;
+//
+//        if (pos > 0)
+//            ViewZ += ViewStep;
+//        else
+//            ViewZ -= ViewStep;
+
         if (pos > 0)
-            ViewZ += 1;
+            ViewZ += 10;
         else
-            ViewZ -= 1;
+            ViewZ -= 10;
+
     }
     CATCH("executing on mouse wheel event")
 }
