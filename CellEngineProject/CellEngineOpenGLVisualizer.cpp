@@ -21,11 +21,8 @@
 #include "CellEnginePDBDataFile.h"
 #include "CellEngineCIFDataFile.h"
 
-#include <tuple>
-//#include <boost/property_tree/ptree.hpp>
-//#include <boost/property_tree/xml_parser.hpp>
-
-#include "ExceptionsMacro.h"
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
 
 using namespace std;
 

@@ -48,7 +48,7 @@ add_library(sb7
 include_directories(include)
 include_directories(extern/glfw-3.0.4/include)
 include_directories(
-	"../boost/*"
+	"../../Boost/*"
 	"../Common/Platform"
 	"../Common/MathUtils"
 	"../Common/Include"
