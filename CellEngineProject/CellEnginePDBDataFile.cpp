@@ -10,18 +10,6 @@
 using namespace std;
 using namespace string_utils;
 
-/*
-AtomPDB::AtomPDB(const char* PDBRecord, UnsignedIntType ElementIndex)
-{
-    try
-    {
-        ParseRecord(PDBRecord);
-        this->AtomIndex = ElementIndex;
-    }
-    CATCH("initation of element")
-}
-*/
-
 AtomBase PDBDataFile::ParseRecord(const char* LocalPDBRecord)
 {
     AtomBase CellEngineAtomObject;
@@ -44,11 +32,6 @@ AtomBase PDBDataFile::ParseRecord(const char* LocalPDBRecord)
 
     return CellEngineAtomObject;
 }
-
-//FloatVectorType AtomPDB::Position() const
-//{
-//	return FloatVectorType(X, Y, Z);
-//}
 
 PDBDataFile::PDBDataFile(const string_view FileName)
 {
@@ -73,7 +56,6 @@ void PDBDataFile::ReadDataFromFile(const string_view FileName)
         while (getline(File, Line, '\n'))
         {
             if (Line.substr(0, 4) == "ATOM" || Line.substr(0, 6) == "HETATM")
-                //StructureObject.emplace_back(AtomBase(Line.c_str(), StructureObject.size()));
                 StructureObject.emplace_back(ParseRecord(Line.c_str()));
             else
             if (Line.substr(0, 3) == "END" )

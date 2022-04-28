@@ -11,16 +11,6 @@
 using namespace std;
 using namespace string_utils;
 
-//AtomCIF::AtomCIF(const char* CIFRecord, UnsignedIntType AtomIndex)
-//{
-//    try
-//    {
-//        ParseRecord(CIFRecord);
-//        this->AtomIndex = AtomIndex;
-//    }
-//    CATCH("initation of Atom")
-//}
-
 AtomBase CIFDataFile::ParseRecord(const char* LocalCIFRecord)
 {
     AtomBase CellEngineAtomObject;
@@ -43,11 +33,6 @@ AtomBase CIFDataFile::ParseRecord(const char* LocalCIFRecord)
 
     return CellEngineAtomObject;
 }
-
-//FloatVectorType AtomCIF::Position() const
-//{
-//    return FloatVectorType(X, Y, Z);
-//}
 
 CIFDataFile::CIFDataFile(const string_view FileName)
 {
@@ -156,7 +141,6 @@ void CIFDataFile::ReadDataFromFile(const std::string_view FileName)
         }
 
         LoggersManagerObject.Log(STREAM(NumberOfAtoms << " " << LocalAtomsObject.size() << " " << NumberOfAtomsDNA << " " << Matrixes.size() << " " << ChainsNames["BAF0"].size() << endl));
-        getchar();
 
         Atoms.emplace_back(LocalAtomsObject);
 

@@ -228,8 +228,6 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
 {
     try
     {
-        FloatVectorType MassCenter = PDBDataFileObjectPointer->MassCenter();
-
         static const GLfloat gray[] = { 0.1f, 0.1f, 0.1f, 0.0f };
         static const GLfloat ones[] = { 1.0f };
 
@@ -242,14 +240,20 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
         vmath::vec3 view_position = vmath::vec3(ViewX, ViewY, ViewZ);
         vmath::mat4 view_matrix = vmath::lookat(view_position, vmath::vec3(0.0f, 0.0f, 0.0f), vmath::vec3(0.0f, 1.0f, 0.0f)) * vmath::rotate(RotationAngle1, RotationAngle2, RotationAngle3) * RotationMatrix;
 
+        FloatVectorType MassCenter;
         std::vector<AtomBase>* AtomsPointer;
         if (CIFDataFileObjectPointer == nullptr)
+        {
             AtomsPointer = &PDBDataFileObjectPointer->GetAtoms();
+            MassCenter = PDBDataFileObjectPointer->MassCenter();
+        }
         else
+        {
             AtomsPointer = &CIFDataFileObjectPointer->GetAtoms();
+            MassCenter = CIFDataFileObjectPointer->MassCenter();
+        }
 
         for (auto ElementIterator = AtomsPointer->begin(); ElementIterator != AtomsPointer->end(); ++ElementIterator)
-        //for (auto ElementIterator = PDBDataFileObjectPointer->GetElements().begin(); ElementIterator != PDBDataFileObjectPointer->GetElements().end(); ++ElementIterator)
         {
             auto ElementObject = *ElementIterator;
 
@@ -325,22 +329,16 @@ void CellEngineOpenGLVisualiser::onMouseWheel(int pos)
 {
     try
     {
-//        int ViewStep;
-//        if (CIFDataFileObjectPointer == nullptr)
-//            ViewStep = 1;
-//        else
-//            ViewStep = 10;
-//
-//        if (pos > 0)
-//            ViewZ += ViewStep;
-//        else
-//            ViewZ -= ViewStep;
+        float ViewStep;
+        if (CIFDataFileObjectPointer == nullptr)
+            ViewStep = 3;
+        else
+            ViewStep = 50;
 
         if (pos > 0)
-            ViewZ += 10;
+            ViewZ += ViewStep;
         else
-            ViewZ -= 10;
-
+            ViewZ -= ViewStep;
     }
     CATCH("executing on mouse wheel event")
 }

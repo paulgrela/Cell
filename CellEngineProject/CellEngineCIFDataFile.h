@@ -17,56 +17,6 @@
 #include "CellEngineTypes.h"
 #include "CellEngineAtom.h"
 
-/*
-struct Atom
-{
-public:
-    UnsignedIntType AtomIndex;
-    IntType Serial;
-    char Name[2];
-    char ResName[4];
-    float X;
-    float Y;
-    float Z;
-    char Chain[6];
-    UnsignedIntType EntityId;
-public:
-    Atom(const char* CIFRecord, UnsignedIntType AtomIndex);
-    Atom(float XParam, float YParam, float ZParam,  UnsignedIntType AtomIndexParam, IntType SerialParam, char NameParam[2], char ResNameParam[4], char ChainParam[6]) : X(XParam), Y(YParam), Z(ZParam), AtomIndex(AtomIndexParam), Serial(SerialParam)
-    {
-        strncpy(Name, NameParam, 2);
-        strncpy(ResName, ResNameParam, 4);
-        strncpy(Chain, ChainParam, 6);
-    }
-    ~Atom() = default;
-public:
-    [[nodiscard]] FloatVectorType Position() const;
-private:
-    void ParseRecord(const char* LocalPDBRecord);
-};
-*/
-/*
-class AtomCIF: public AtomBase
-{
-public:
-    AtomCIF() = default;
-    AtomCIF(float XParam, float YParam, float ZParam,  UnsignedIntType AtomIndexParam, IntType SerialParam, char NameParam[2], char ResNameParam[4], char ChainParam[6])// : X(XParam), Y(YParam), Z(ZParam), AtomIndex(AtomIndexParam), Serial(SerialParam)
-    {
-        X = XParam;
-        Y = YParam;
-        Z = ZParam;
-        AtomIndex = AtomIndexParam;
-        Serial = SerialParam;
-        strncpy(Name, NameParam, 2);
-        strncpy(ResName, ResNameParam, 4);
-        strncpy(Chain, ChainParam, 6);
-    }
-    AtomCIF(const char* CIFRecord, UnsignedIntType AtomIndex);
-public:
-    //[[nodiscard]] FloatVectorType Position() const;
-    //void ParseRecord(const char* LocalPDBRecord);
-};
-*/
 struct Matrix
 {
 public:
