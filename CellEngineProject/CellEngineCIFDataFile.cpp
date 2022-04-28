@@ -13,7 +13,7 @@ using namespace string_utils;
 
 CellEngineAtom CellEngineCIFDataFile::ParseRecord(const char* LocalCIFRecord)
 {
-    CellEngineAtom CellEngineAtomObject;
+    CellEngineAtom CellEngineAtomObject{};
 
     try
     {

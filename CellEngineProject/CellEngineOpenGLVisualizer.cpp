@@ -21,6 +21,12 @@
 #include "CellEnginePDBDataFile.h"
 #include "CellEngineCIFDataFile.h"
 
+#include <tuple>
+//#include <boost/property_tree/ptree.hpp>
+//#include <boost/property_tree/xml_parser.hpp>
+
+#include "ExceptionsMacro.h"
+
 using namespace std;
 
 class CellEngineOpenGLVisualiser : public sb7::application
@@ -52,7 +58,6 @@ protected:
     void onMouseMove(int x, int y) override;
     void onResize(int w, int h) override;
 
-
     GLuint per_fragment_program;
     GLuint per_vertex_program;
 
@@ -61,7 +66,7 @@ protected:
         GLuint color;
         GLuint normals;
     } 
-    textures;
+    textures{};
 
     struct uniforms_block
     {
@@ -71,7 +76,7 @@ protected:
         vmath::vec3 color;
     };
 
-    GLuint uniforms_buffer;
+    GLuint uniforms_buffer{};
 
     struct
     {
@@ -79,17 +84,17 @@ protected:
         GLint specular_albedo;
         GLint specular_power;
     } 
-    uniforms[2];
+    uniforms[2]{};
 
     sb7::object object;
 
     bool per_vertex;
 
 private:
-    Matrix3fT ArcBallPrevRotationMatrix;
-    Matrix3fT ArcBallActualRotationMatrix;
+    Matrix3fT ArcBallPrevRotationMatrix{};
+    Matrix3fT ArcBallActualRotationMatrix{};
     std::unique_ptr<ArcBallT> ArcBall;
-    Point2fT MousePosition;
+    Point2fT MousePosition{};
 private:
     float LengthUnit = 1;
 
@@ -267,25 +272,6 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
         vmath::vec3 view_position = vmath::vec3(ViewX, ViewY, ViewZ);
         vmath::mat4 view_matrix = vmath::lookat(view_position, vmath::vec3(0.0f, 0.0f, 0.0f), vmath::vec3(0.0f, 1.0f, 0.0f)) * vmath::rotate(RotationAngle1, RotationAngle2, RotationAngle3) * RotationMatrix;
 
-
-        //CellEngineDataFile CellEngineDataFile = &
-        /*
-        FloatVectorType MassCenter;
-        std::vector<CellEngineAtom>* AtomsPointer;
-        if (CIFDataFileObjectPointer == nullptr)
-        {
-            AtomsPointer = &PDBDataFileObjectPointer->GetAtoms();
-            MassCenter = PDBDataFileObjectPointer->MassCenter();
-        }
-        else
-        {
-            AtomsPointer = &CIFDataFileObjectPointer->GetAtoms();
-            MassCenter = CIFDataFileObjectPointer->MassCenter();
-        }
-
-
-        for (auto ElementIterator = AtomsPointer->begin(); ElementIterator != AtomsPointer->end(); ++ElementIterator)
-        */
         FloatVectorType MassCenter = CellEngineDataFileObjectPointer->MassCenter();
         for (auto ElementIterator = CellEngineDataFileObjectPointer->GetAtoms().begin(); ElementIterator != CellEngineDataFileObjectPointer->GetAtoms().end(); ++ElementIterator)
         {
@@ -306,7 +292,6 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
                 model_matrix = vmath::translate(0.0f, 0.0f, 0.0f);
                 block->color = vmath::vec3(0.7, 0.2, 0.9);
             }
-
             block->mv_matrix = view_matrix * model_matrix;
             block->view_matrix = view_matrix;
             block->proj_matrix = vmath::perspective(50.0f, (float)info.windowWidth / (float)info.windowHeight, 0.1f, 2000.0f);
