@@ -23,11 +23,11 @@ class CellEnginePDBDataFile: public CellEngineDataFile
 private:
     std::vector<std::vector<CellEngineAtom>> Atoms;
 private:
-    void ReadDataFromFile(const std::string_view FileName);
+    void ReadDataFromFile(std::string_view FileName);
 public:
     UnsignedIntType ChosenStructureIndex;
 public:
-    explicit CellEnginePDBDataFile(const std::string_view FileName);
+    explicit CellEnginePDBDataFile(std::string_view FileName);
     ~CellEnginePDBDataFile() = default;
 public:
     static CellEngineAtom ParseRecord(const char* LocalPDBRecord);

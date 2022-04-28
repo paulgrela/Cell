@@ -109,6 +109,10 @@ private:
     float RotationAngle2 = 0.0;
     float RotationAngle3 = 0.0;
 private:
+    float SizeX = 1;
+    float SizeY = 1;
+    float SizeZ = 1;
+private:
     uint64_t PressedRightMouseButton = 0;
 
 private:
@@ -182,7 +186,7 @@ void CellEngineOpenGLVisualiser::startup()
         glBindBuffer(GL_UNIFORM_BUFFER, uniforms_buffer);
         glBufferData(GL_UNIFORM_BUFFER, sizeof(uniforms_block), nullptr, GL_DYNAMIC_DRAW);
 
-        object.load("sphere.sbm");
+        object.load("..//objects//sphere.sbm");
 
         glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
@@ -281,7 +285,7 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
             vmath::mat4 model_matrix;
             if (ElementIterator != CellEngineDataFileObjectPointer->GetAtoms().end() - 1)
             {
-                model_matrix = vmath::translate(ElementPosition.X - CameraXPosition - MassCenter.X, ElementPosition.Y + CameraYPosition - MassCenter.Y, ElementPosition.Z + CameraZPosition - MassCenter.Z);
+                model_matrix = vmath::translate(ElementPosition.X - CameraXPosition - MassCenter.X, ElementPosition.Y + CameraYPosition - MassCenter.Y, ElementPosition.Z + CameraZPosition - MassCenter.Z) * vmath::scale(vmath::vec3(SizeX, SizeY, SizeZ));
                 block->color = ChooseColor(ElementObject);
             }
             else
@@ -291,7 +295,7 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
             }
             block->mv_matrix = view_matrix * model_matrix;
             block->view_matrix = view_matrix;
-            block->proj_matrix = vmath::perspective(50.0f, (float)info.windowWidth / (float)info.windowHeight, 0.1f, 2000.0f);
+            block->proj_matrix = vmath::perspective(50.0f, (float)info.windowWidth / (float)info.windowHeight, 0.1f, 5000.0f);
 
             glUnmapBuffer(GL_UNIFORM_BUFFER);
 
@@ -311,8 +315,8 @@ void CellEngineOpenGLVisualiser::onKey(int key, int action)
         if (action)
             switch (key)
             {
-                case 'M': load_shaders(); break;
-                case 'V': per_vertex = !per_vertex; break;
+                case 'L': load_shaders(); break;
+                case 'K': per_vertex = !per_vertex; break;
 
                 case '1': CameraZPosition += 1; break;
                 case '2': CameraZPosition -= 1; break;
@@ -334,6 +338,12 @@ void CellEngineOpenGLVisualiser::onKey(int key, int action)
                 case 'F': RotationAngle2 -= 1; break;
                 case 'G': RotationAngle3 += 1; break;
                 case 'H': RotationAngle3 -= 1; break;
+
+                case 'B': break;
+                case 'N': break;
+                case 'M': break;
+                case 'Z': SizeX -= 0.25; SizeY -= 0.25; SizeZ -= 0.25; break;
+                case 'X': SizeX += 0.25; SizeY += 0.25; SizeZ += 0.25; break;
 
                 default: break;
             }

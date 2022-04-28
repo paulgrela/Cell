@@ -34,11 +34,11 @@ private:
 private:
     std::vector<std::vector<CellEngineAtom>> Atoms;
 private:
-    void ReadDataFromFile(const std::string_view LocalCIFRecord);
+    void ReadDataFromFile(std::string_view LocalCIFRecord);
 public:
     UnsignedIntType ChosenStructureIndex;
 public:
-    explicit CellEngineCIFDataFile(const std::string_view FileName);
+    explicit CellEngineCIFDataFile(std::string_view FileName);
     ~CellEngineCIFDataFile() = default;
 public:
     static CellEngineAtom ParseRecord(const char* LocalPDBRecord);
