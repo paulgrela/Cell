@@ -20,7 +20,9 @@ out VS_OUT
 } 
 vs_out;
 
-uniform vec3 light_pos = vec3(100.0, 100.0, 100.0);
+//uniform vec3 light_pos = vec3(100.0, 100.0, 100.0);
+uniform vec3 light_pos = vec3(30.0, 30.0, 30.0);
+//uniform vec3 light_pos = vec3(0.0, 0.0, 100.0);
 
 void main(void)
 {

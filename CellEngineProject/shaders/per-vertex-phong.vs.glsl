@@ -12,6 +12,7 @@ layout (std140) uniform constants
 };
 
 uniform vec3 light_pos = vec3(100.0, 100.0, 100.0);
+//uniform vec3 light_pos = vec3(0.0, 0.0, 100.0);
 
 uniform vec3 specular_albedo = vec3(0.7);
 uniform float specular_power = 128.0;
@@ -20,7 +21,8 @@ uniform vec3 ambient = vec3(0.1, 0.1, 0.1);
 out VS_OUT
 {
     vec3 color;
-} vs_out;
+} 
+vs_out;
 
 void main(void)
 {	

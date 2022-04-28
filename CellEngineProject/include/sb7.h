@@ -301,7 +301,7 @@ int CALLBACK WinMain(HINSTANCE hInstance,           \
                      LPSTR lpCmdLine,               \
                      int nCmdShow)                  \
 {                                                   \
-    a *app = new a;                                 \
+    auto app = new a;                               \
     app->run(app);                                  \
     delete app;                                     \
     return 0;                                       \
@@ -310,7 +310,7 @@ int CALLBACK WinMain(HINSTANCE hInstance,           \
 #define DECLARE_MAIN(a)                             \
 int main(int argc, const char ** argv)              \
 {                                                   \
-    a *app = new a;                                 \
+    auto app = new a;                               \
     app->run(app);                                  \
     delete app;                                     \
     return 0;                                       \
