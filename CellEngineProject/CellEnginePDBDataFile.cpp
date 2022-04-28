@@ -69,6 +69,7 @@ void PDBDataFile::ReadDataFromFile(const string_view FileName)
             else
             if (Line.substr(0, 3) == "END" )
             {
+                StructureObject.emplace_back(Element());
                 Elements.push_back(StructureObject);
                 StructureObject.clear();
             }

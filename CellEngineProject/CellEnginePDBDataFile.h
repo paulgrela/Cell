@@ -27,6 +27,7 @@ public:
 	float Z;
 public:
 	Element(const char* PDBRecord, UnsignedIntType ElementIndex);
+    Element() = default;
 	~Element() = default;
 public:
 	[[nodiscard]] FloatVectorType Position() const;

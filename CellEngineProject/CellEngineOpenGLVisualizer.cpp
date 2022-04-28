@@ -91,6 +91,8 @@ private:
 private:
     std::unique_ptr<PDBDataFile> PDBDataFileObjectPointer;
 private:
+    float LengthUnit = 1;
+
     float CameraXPosition = 0.0;
     float CameraYPosition = 0.0;
     float CameraZPosition = 0.0;
@@ -192,7 +194,7 @@ void CellEngineOpenGLVisualiser::startup()
 vmath::vec3 CellEngineOpenGLVisualiser::ChooseColor(const Element& ElementObject)
 {
     vmath::vec3 ChosenColor;
-    
+
     try
     {
         switch(ElementObject.Name[0])
@@ -214,7 +216,6 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
 {
     try
     {
-        const float LengthUnit = 0.3;
         FloatVectorType MassCenter = PDBDataFileObjectPointer->MassCenter();
 
         static const GLfloat zeros[] = { 0.0f, 0.0f, 0.0f, 0.0f };
@@ -230,20 +231,29 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
         vmath::vec3 view_position = vmath::vec3(ViewX, ViewY, ViewZ);
         vmath::mat4 view_matrix = vmath::lookat(view_position, vmath::vec3(0.0f, 0.0f, 0.0f), vmath::vec3(0.0f, 1.0f, 0.0f)) * vmath::rotate(RotationAngle1, RotationAngle2, RotationAngle3) * RotationMatrix;
 
-        for (const Element& ElementObject : PDBDataFileObjectPointer->GetElements())
+        for (auto ElementIterator = PDBDataFileObjectPointer->GetElements().begin(); ElementIterator != PDBDataFileObjectPointer->GetElements().end(); ++ElementIterator)
         {
+            auto ElementObject = *ElementIterator;
+
             glBindBufferBase(GL_UNIFORM_BUFFER, 0, uniforms_buffer);
             auto block = (uniforms_block*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(uniforms_block), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
 
             FloatVectorType ElementPosition = LengthUnit * ElementObject.Position();
-
-            vmath::mat4 model_matrix = vmath::translate(ElementPosition.X * 3.0f - CameraXPosition - MassCenter.X, ElementPosition.Y * 3.0f + CameraYPosition - MassCenter.Y, ElementPosition.Z * 3.0f + CameraZPosition - MassCenter.Z);
+            vmath::mat4 model_matrix;
+            if (ElementIterator != PDBDataFileObjectPointer->GetElements().end() - 1)
+            {
+                model_matrix = vmath::translate(ElementPosition.X - CameraXPosition - MassCenter.X, ElementPosition.Y + CameraYPosition - MassCenter.Y, ElementPosition.Z + CameraZPosition - MassCenter.Z);
+                block->color = ChooseColor(ElementObject);
+            }
+            else
+            {
+                model_matrix = vmath::translate(0.0f, 0.0f, 0.0f);
+                block->color = vmath::vec3(0.7, 0.2, 0.9);
+            }
 
             block->mv_matrix = view_matrix * model_matrix;
             block->view_matrix = view_matrix;
             block->proj_matrix = vmath::perspective(50.0f, (float)info.windowWidth / (float)info.windowHeight, 0.1f, 2000.0f);
-
-            block->color = ChooseColor(ElementObject);
 
             glUnmapBuffer(GL_UNIFORM_BUFFER);
 
@@ -255,23 +265,23 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
 
 
 
-        glBindBufferBase(GL_UNIFORM_BUFFER, 0, uniforms_buffer);
-        auto block = (uniforms_block*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(uniforms_block), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
-
-        vmath::mat4 model_matrix = vmath::translate(0.0f, 0.0f, 0.0f);
-
-        block->mv_matrix = model_matrix * view_matrix;
-        block->view_matrix = view_matrix;
-        block->proj_matrix = vmath::perspective(50.0f, (float)info.windowWidth / (float)info.windowHeight, 0.1f, 2000.0f);
-
-        block->color = vmath::vec3(0.7, 0.2, 0.9);
-
-        glUnmapBuffer(GL_UNIFORM_BUFFER);
-
-        glUniform1f(uniforms[per_vertex ? 1 : 0].specular_power, powf(2.0f, 5000.0f + 2.0f));
-        glUniform3fv(uniforms[per_vertex ? 1 : 0].specular_albedo, 1, vmath::vec3(5000.0f / 9.0f + 1.0f / 9.0f));
-
-        object.render();
+//        glBindBufferBase(GL_UNIFORM_BUFFER, 0, uniforms_buffer);
+//        auto block = (uniforms_block*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(uniforms_block), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
+//
+//        vmath::mat4 model_matrix = vmath::translate(0.0f, 0.0f, 0.0f);
+//
+//        block->mv_matrix = model_matrix * view_matrix;
+//        block->view_matrix = view_matrix;
+//        block->proj_matrix = vmath::perspective(50.0f, (float)info.windowWidth / (float)info.windowHeight, 0.1f, 2000.0f);
+//
+//        block->color = vmath::vec3(0.7, 0.2, 0.9);
+//
+//        glUnmapBuffer(GL_UNIFORM_BUFFER);
+//
+//        glUniform1f(uniforms[per_vertex ? 1 : 0].specular_power, powf(2.0f, 5000.0f + 2.0f));
+//        glUniform3fv(uniforms[per_vertex ? 1 : 0].specular_albedo, 1, vmath::vec3(5000.0f / 9.0f + 1.0f / 9.0f));
+//
+//        object.render();
     }
     CATCH("rendering cell visualization")
 }
