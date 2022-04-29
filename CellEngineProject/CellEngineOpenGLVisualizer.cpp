@@ -55,6 +55,14 @@ protected:
     void onMouseMove(int x, int y) override;
     void onResize(int w, int h) override;
 
+//    void ShowNextStructure();
+//    void ShowPrevStructure();
+//    void StartFilmOfStructures();
+//    void StopFilmOfStructures();
+//    void ShowNextStructureFromActiveFilm();
+//private:
+//    bool FilmOfStructuresActive = false;
+private:
     GLuint per_fragment_program;
     GLuint per_vertex_program;
 
@@ -304,9 +312,66 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
 
             object.render();
         }
+        CellEngineDataFileObjectPointer->ShowNextStructureFromActiveFilm();
     }
     CATCH("rendering cell visualization")
 }
+
+/*
+void CellEngineOpenGLVisualiser::ShowNextStructureFromActiveFilm()
+{
+    try
+    {
+        //if (PDBDataFileObjectPointer != nullptr)
+        if (FilmOfStructuresActive == true)
+            ShowNextStructure();
+    }
+    CATCH("showing next structure from film")
+}
+
+void CellEngineOpenGLVisualiser::StartFilmOfStructures()
+{
+    try
+    {
+        //if (PDBDataFileObjectPointer != nullptr)
+        PDBDataFileObjectPointer->ChosenStructureIndex = 0;
+        FilmOfStructuresActive = true;
+    }
+    CATCH("starting film of structures")
+}
+
+void CellEngineOpenGLVisualiser::StopFilmOfStructures()
+{
+    try
+    {
+        //if (PDBDataFileObjectPointer != nullptr)
+        FilmOfStructuresActive = false;
+    }
+    CATCH("starting film of structures")
+}
+
+void CellEngineOpenGLVisualiser::ShowNextStructure()
+{
+    try
+    {
+        //if (PDBDataFileObjectPointer != nullptr)
+        if (PDBDataFileObjectPointer->ChosenStructureIndex < PDBDataFileObjectPointer->GetNumberOfStructures() - 1)
+            PDBDataFileObjectPointer->ChosenStructureIndex++;
+    }
+    CATCH("showing next structure")
+}
+
+void CellEngineOpenGLVisualiser::ShowPrevStructure()
+{
+    try
+    {
+        //if (PDBDataFileObjectPointer != nullptr)
+        if (PDBDataFileObjectPointer->ChosenStructureIndex > 0)
+            PDBDataFileObjectPointer->ChosenStructureIndex--;
+    }
+    CATCH("showing previous structure")
+}
+*/
 
 void CellEngineOpenGLVisualiser::onKey(int key, int action)
 {
@@ -339,9 +404,10 @@ void CellEngineOpenGLVisualiser::onKey(int key, int action)
                 case 'G': RotationAngle3 += 1; break;
                 case 'H': RotationAngle3 -= 1; break;
 
-                case 'B': break;
-                case 'N': break;
-                case 'M': break;
+                case 'O': CellEngineDataFileObjectPointer->StartFilmOfStructures(); break;
+                case 'P': CellEngineDataFileObjectPointer->StopFilmOfStructures(); break;
+                case 'N': CellEngineDataFileObjectPointer->ShowNextStructure(); break;
+                case 'M': CellEngineDataFileObjectPointer->ShowPrevStructure(); break;
                 case 'Z': SizeX -= 0.25; SizeY -= 0.25; SizeZ -= 0.25; break;
                 case 'X': SizeX += 0.25; SizeY += 0.25; SizeZ += 0.25; break;
 
