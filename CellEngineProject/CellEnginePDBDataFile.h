@@ -24,9 +24,6 @@ private:
     std::vector<std::vector<CellEngineAtom>> Atoms;
 private:
     void ReadDataFromFile(std::string_view FileName);
-//public:
-//    UnsignedIntType ChosenStructureIndex = 0;
-//    bool FilmOfStructuresActive = false;
 public:
     explicit CellEnginePDBDataFile(std::string_view FileName);
     ~CellEnginePDBDataFile() = default;

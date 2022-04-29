@@ -42,10 +42,10 @@ protected:
 
         memcpy(info.title, title, sizeof(title));
     }
-
+protected:
     void InitArcBall();
     vmath::vec3 ChooseColor(const CellEngineAtom& ElementObject) ;
-
+protected:
     void startup() override;
     void load_shaders();
     void render(double currentTime) override;
@@ -54,14 +54,6 @@ protected:
     void onMouseButton(int button, int action) override;
     void onMouseMove(int x, int y) override;
     void onResize(int w, int h) override;
-
-//    void ShowNextStructure();
-//    void ShowPrevStructure();
-//    void StartFilmOfStructures();
-//    void StopFilmOfStructures();
-//    void ShowNextStructureFromActiveFilm();
-//private:
-//    bool FilmOfStructuresActive = false;
 private:
     GLuint per_fragment_program;
     GLuint per_vertex_program;
@@ -316,62 +308,6 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
     }
     CATCH("rendering cell visualization")
 }
-
-/*
-void CellEngineOpenGLVisualiser::ShowNextStructureFromActiveFilm()
-{
-    try
-    {
-        //if (PDBDataFileObjectPointer != nullptr)
-        if (FilmOfStructuresActive == true)
-            ShowNextStructure();
-    }
-    CATCH("showing next structure from film")
-}
-
-void CellEngineOpenGLVisualiser::StartFilmOfStructures()
-{
-    try
-    {
-        //if (PDBDataFileObjectPointer != nullptr)
-        PDBDataFileObjectPointer->ChosenStructureIndex = 0;
-        FilmOfStructuresActive = true;
-    }
-    CATCH("starting film of structures")
-}
-
-void CellEngineOpenGLVisualiser::StopFilmOfStructures()
-{
-    try
-    {
-        //if (PDBDataFileObjectPointer != nullptr)
-        FilmOfStructuresActive = false;
-    }
-    CATCH("starting film of structures")
-}
-
-void CellEngineOpenGLVisualiser::ShowNextStructure()
-{
-    try
-    {
-        //if (PDBDataFileObjectPointer != nullptr)
-        if (PDBDataFileObjectPointer->ChosenStructureIndex < PDBDataFileObjectPointer->GetNumberOfStructures() - 1)
-            PDBDataFileObjectPointer->ChosenStructureIndex++;
-    }
-    CATCH("showing next structure")
-}
-
-void CellEngineOpenGLVisualiser::ShowPrevStructure()
-{
-    try
-    {
-        //if (PDBDataFileObjectPointer != nullptr)
-        if (PDBDataFileObjectPointer->ChosenStructureIndex > 0)
-            PDBDataFileObjectPointer->ChosenStructureIndex--;
-    }
-    CATCH("showing previous structure")
-}
-*/
 
 void CellEngineOpenGLVisualiser::onKey(int key, int action)
 {
