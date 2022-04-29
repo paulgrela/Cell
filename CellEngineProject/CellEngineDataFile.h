@@ -13,14 +13,8 @@ public:
     virtual std::vector<CellEngineAtom>& GetAtoms() = 0;
     [[nodiscard]] virtual FloatVectorType MassCenter() = 0;
 public:
-//    virtual void ShowNextStructureFromActiveFilm() = 0;
-//    virtual void StartFilmOfStructures() = 0;
-//    virtual void StopFilmOfStructures() = 0;
-//    virtual void ShowNextStructure() = 0;
-//    virtual void ShowPrevStructure() = 0;
-public:
     [[nodiscard]] virtual IntType GetNumberOfStructures() = 0;
-
+public:
     void ShowNextStructureFromActiveFilm()
     {
         try
