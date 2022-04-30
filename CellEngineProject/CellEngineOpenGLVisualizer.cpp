@@ -274,19 +274,19 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
         vmath::mat4 view_matrix = vmath::lookat(view_position, vmath::vec3(0.0f, 0.0f, 0.0f), vmath::vec3(0.0f, 1.0f, 0.0f)) * vmath::rotate(RotationAngle1, RotationAngle2, RotationAngle3) * RotationMatrix;
 
         FloatVectorType MassCenter = CellEngineDataFileObjectPointer->MassCenter();
-        for (auto ElementIterator = CellEngineDataFileObjectPointer->GetAtoms().begin(); ElementIterator != CellEngineDataFileObjectPointer->GetAtoms().end(); ++ElementIterator)
+        for (auto AtomsIterator = CellEngineDataFileObjectPointer->GetAtoms().begin(); AtomsIterator != CellEngineDataFileObjectPointer->GetAtoms().end(); ++AtomsIterator)
         {
-            auto ElementObject = *ElementIterator;
+            auto AtomObject = *AtomsIterator;
 
             glBindBufferBase(GL_UNIFORM_BUFFER, 0, uniforms_buffer);
             auto block = (uniforms_block*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(uniforms_block), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
 
-            FloatVectorType ElementPosition = LengthUnit * ElementObject.Position();
+            FloatVectorType AtomPosition = LengthUnit * AtomObject.Position();
             vmath::mat4 model_matrix;
-            if (ElementIterator != CellEngineDataFileObjectPointer->GetAtoms().end() - 1)
+            if (AtomsIterator != CellEngineDataFileObjectPointer->GetAtoms().end() - 1)
             {
-                model_matrix = vmath::translate(ElementPosition.X - CameraXPosition - MassCenter.X, ElementPosition.Y + CameraYPosition - MassCenter.Y, ElementPosition.Z + CameraZPosition - MassCenter.Z) * vmath::scale(vmath::vec3(SizeX, SizeY, SizeZ));
-                block->color = ChooseColor(ElementObject);
+                model_matrix = vmath::translate(AtomPosition.X - CameraXPosition - MassCenter.X, AtomPosition.Y + CameraYPosition - MassCenter.Y, AtomPosition.Z + CameraZPosition - MassCenter.Z) * vmath::scale(vmath::vec3(SizeX, SizeY, SizeZ));
+                block->color = ChooseColor(AtomObject);
             }
             else
             {
@@ -296,6 +296,19 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
             block->mv_matrix = view_matrix * model_matrix;
             block->view_matrix = view_matrix;
             block->proj_matrix = vmath::perspective(50.0f, (float)info.windowWidth / (float)info.windowHeight, 0.1f, 5000.0f);
+
+
+
+
+            float XNew = block->mv_matrix[0][0] * (AtomPosition.X - CameraXPosition - MassCenter.X) + block->mv_matrix[1][0] * (AtomPosition.Y- CameraYPosition - MassCenter.Y) + block->mv_matrix[2][0] * (AtomPosition.Z - CameraZPosition - MassCenter.Z);
+            float YNew = block->mv_matrix[0][1] * (AtomPosition.X - CameraXPosition - MassCenter.X) + block->mv_matrix[1][1] * (AtomPosition.Y - CameraYPosition - MassCenter.Y) + block->mv_matrix[2][1] * (AtomPosition.Z - CameraZPosition - MassCenter.Z);
+            float ZNew = block->mv_matrix[0][2] * (AtomPosition.X - CameraXPosition - MassCenter.X) + block->mv_matrix[1][2] * (AtomPosition.Y - CameraYPosition - MassCenter.Y) + block->mv_matrix[2][2] * (AtomPosition.Z - CameraZPosition - MassCenter.Z);
+
+            //if (XNew > -10 && XNew < 10 && YNew >- 10 && YNew < 10 && ZNew > -10 && ZNew < 10)
+            if (XNew > -10 && XNew < 10 && YNew >- 10 && YNew < 10 && ZNew > -10)
+                block->color = vmath::vec3(0.7, 0.2, 0.9);
+
+
 
             glUnmapBuffer(GL_UNIFORM_BUFFER);
 

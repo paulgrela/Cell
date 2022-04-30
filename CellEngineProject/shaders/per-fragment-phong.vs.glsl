@@ -35,4 +35,7 @@ void main(void)
     gl_Position = proj_matrix * P;
 	
 	vs_out.C = color;
+	
+	//if (P.x < 10 && P.x > -10 && P.y < 10 && P.y > -10)
+	//	vs_out.C = vec3(0.7, 0.2, 0.9);
 }

@@ -24,7 +24,7 @@ public:
         }
         CATCH("showing next structure from film")
     }
-
+public:
     void StartFilmOfStructures()
     {
         try
@@ -34,7 +34,7 @@ public:
         }
         CATCH("starting film of structures")
     }
-
+public:
     void StopFilmOfStructures()
     {
         try
@@ -43,7 +43,7 @@ public:
         }
         CATCH("starting film of structures")
     }
-
+public:
     void ShowNextStructure()
     {
         try
@@ -53,7 +53,7 @@ public:
         }
         CATCH("showing next structure")
     }
-
+public:
     void ShowPrevStructure()
     {
         try
