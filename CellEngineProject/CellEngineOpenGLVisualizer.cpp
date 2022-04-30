@@ -274,6 +274,23 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
         vmath::mat4 view_matrix = vmath::lookat(view_position, vmath::vec3(0.0f, 0.0f, 0.0f), vmath::vec3(0.0f, 1.0f, 0.0f)) * vmath::rotate(RotationAngle1, RotationAngle2, RotationAngle3) * RotationMatrix;
 
         FloatVectorType MassCenter = CellEngineDataFileObjectPointer->MassCenter();
+
+        for (auto AtomsIterator = CellEngineDataFileObjectPointer->GetAtoms().begin(); AtomsIterator != CellEngineDataFileObjectPointer->GetAtoms().end(); ++AtomsIterator)
+        {
+            auto AtomObject = *AtomsIterator;
+            FloatVectorType AtomPosition = LengthUnit * AtomObject.Position();
+            vmath::mat4 model_matrix = vmath::translate(AtomPosition.X - CameraXPosition - MassCenter.X, AtomPosition.Y + CameraYPosition - MassCenter.Y, AtomPosition.Z + CameraZPosition - MassCenter.Z) * vmath::scale(vmath::vec3(SizeX, SizeY, SizeZ));
+            vmath::mat4 mv_matrix = view_matrix * model_matrix;
+            float XNew = mv_matrix[0][0] * (AtomPosition.X - CameraXPosition - MassCenter.X) + mv_matrix[1][0] * (AtomPosition.Y- CameraYPosition - MassCenter.Y) + mv_matrix[2][0] * (AtomPosition.Z - CameraZPosition - MassCenter.Z);
+            float YNew = mv_matrix[0][1] * (AtomPosition.X - CameraXPosition - MassCenter.X) + mv_matrix[1][1] * (AtomPosition.Y - CameraYPosition - MassCenter.Y) + mv_matrix[2][1] * (AtomPosition.Z - CameraZPosition - MassCenter.Z);
+            float ZNew = mv_matrix[0][2] * (AtomPosition.X - CameraXPosition - MassCenter.X) + mv_matrix[1][2] * (AtomPosition.Y - CameraYPosition - MassCenter.Y) + mv_matrix[2][2] * (AtomPosition.Z - CameraZPosition - MassCenter.Z);
+            if (XNew > -1000 && XNew < 1000 && YNew >- 1000 && YNew < 1000 && ZNew > -10 && ZNew < 1000)
+            {
+                //I WTEDY DOPISYWAC JE DO LISTY ATOMOW ZAMIAST TEGO ATOMU PRZEZ INSERT DO WEKTORA, A MOZE NA KONIEC WEKTORA DOPISYWAC, A PUNKTY WSTĘPNE WTEDY NIE RYSOWAC DAJAC NOTDRAW na false
+                //I ZA KAZDYM RAZEM OBCINAC KONIEC I DODAWAC NOWE ATOMY te najblizsze i moze wyciszac rysowanie wszystkich zaleznie od opcji
+            }
+        }
+
         for (auto AtomsIterator = CellEngineDataFileObjectPointer->GetAtoms().begin(); AtomsIterator != CellEngineDataFileObjectPointer->GetAtoms().end(); ++AtomsIterator)
         {
             auto AtomObject = *AtomsIterator;
@@ -300,13 +317,15 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
 
 
 
-            float XNew = block->mv_matrix[0][0] * (AtomPosition.X - CameraXPosition - MassCenter.X) + block->mv_matrix[1][0] * (AtomPosition.Y- CameraYPosition - MassCenter.Y) + block->mv_matrix[2][0] * (AtomPosition.Z - CameraZPosition - MassCenter.Z);
-            float YNew = block->mv_matrix[0][1] * (AtomPosition.X - CameraXPosition - MassCenter.X) + block->mv_matrix[1][1] * (AtomPosition.Y - CameraYPosition - MassCenter.Y) + block->mv_matrix[2][1] * (AtomPosition.Z - CameraZPosition - MassCenter.Z);
-            float ZNew = block->mv_matrix[0][2] * (AtomPosition.X - CameraXPosition - MassCenter.X) + block->mv_matrix[1][2] * (AtomPosition.Y - CameraYPosition - MassCenter.Y) + block->mv_matrix[2][2] * (AtomPosition.Z - CameraZPosition - MassCenter.Z);
-
-            //if (XNew > -10 && XNew < 10 && YNew >- 10 && YNew < 10 && ZNew > -10 && ZNew < 10)
-            if (XNew > -10 && XNew < 10 && YNew >- 10 && YNew < 10 && ZNew > -10)
-                block->color = vmath::vec3(0.7, 0.2, 0.9);
+//            float XNew = block->mv_matrix[0][0] * (AtomPosition.X - CameraXPosition - MassCenter.X) + block->mv_matrix[1][0] * (AtomPosition.Y- CameraYPosition - MassCenter.Y) + block->mv_matrix[2][0] * (AtomPosition.Z - CameraZPosition - MassCenter.Z);
+//            float YNew = block->mv_matrix[0][1] * (AtomPosition.X - CameraXPosition - MassCenter.X) + block->mv_matrix[1][1] * (AtomPosition.Y - CameraYPosition - MassCenter.Y) + block->mv_matrix[2][1] * (AtomPosition.Z - CameraZPosition - MassCenter.Z);
+//            float ZNew = block->mv_matrix[0][2] * (AtomPosition.X - CameraXPosition - MassCenter.X) + block->mv_matrix[1][2] * (AtomPosition.Y - CameraYPosition - MassCenter.Y) + block->mv_matrix[2][2] * (AtomPosition.Z - CameraZPosition - MassCenter.Z);
+//
+//            //if (XNew > -10 && XNew < 10 && YNew >- 10 && YNew < 10 && ZNew > -10 && ZNew < 10)
+//            //if (XNew > -10 && XNew < 10 && YNew >- 10 && YNew < 10 && ZNew > -10)
+//            //if (ZNew > -10 && ZNew < 1000)
+//            if (XNew > -1000 && XNew < 1000 && YNew >- 1000 && YNew < 1000 && ZNew > -10 && ZNew < 1000)
+//                block->color = vmath::vec3(0.7, 0.2, 0.9);
 
 
 
