@@ -306,11 +306,15 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
 //        }
 //        LoggersManagerObject.Log(STREAM("NumberOfFoundParticlesToBeVisibleInAtomDetails1 = " << to_string(NumberOfFoundParticlesToBeVisibleInAtomDetails1)));
 
+        int NumberOfFoundParticlesToBeVisibleInAtomDetails2 = 0;
+        int NumberOfAllRenderedAtoms = 0;
+
         auto& AllAtomsLocalReferenceObject = CellEngineDataFileObjectPointer->GetAllAtoms();
 
-        int NumberOfFoundParticlesToBeVisibleInAtomDetails2 = 0;
         for (auto AtomsIterator = CellEngineDataFileObjectPointer->GetAtoms().begin(); AtomsIterator != CellEngineDataFileObjectPointer->GetAtoms().end(); ++AtomsIterator)
         {
+            NumberOfAllRenderedAtoms++;
+
             auto AtomObject = *AtomsIterator;
 
             glBindBufferBase(GL_UNIFORM_BUFFER, 0, uniforms_buffer);
@@ -332,51 +336,55 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
             block->view_matrix = view_matrix;
             block->proj_matrix = vmath::perspective(50.0f, (float)info.windowWidth / (float)info.windowHeight, 0.1f, 5000.0f);
 
-            //if (PDBDataFileObjectPointer == nullptr)
-//                float XNew = block->mv_matrix[0][0] * (AtomPosition.X - CameraXPosition - MassCenter.X) + block->mv_matrix[1][0] * (AtomPosition.Y - CameraYPosition - MassCenter.Y) + block->mv_matrix[2][0] * (AtomPosition.Z - CameraZPosition - MassCenter.Z);
-//                float YNew = block->mv_matrix[0][1] * (AtomPosition.X - CameraXPosition - MassCenter.X) + block->mv_matrix[1][1] * (AtomPosition.Y - CameraYPosition - MassCenter.Y) + block->mv_matrix[2][1] * (AtomPosition.Z - CameraZPosition - MassCenter.Z);
-//                float ZNew = block->mv_matrix[0][2] * (AtomPosition.X - CameraXPosition - MassCenter.X) + block->mv_matrix[1][2] * (AtomPosition.Y - CameraYPosition - MassCenter.Y) + block->mv_matrix[2][2] * (AtomPosition.Z - CameraZPosition - MassCenter.Z);
-//                if (XNew > -100 && XNew < 100 && YNew >- 100 && YNew < 100 && ZNew > -50 * 2 + ViewZ)
-//                {
-//                    NumberOfFoundParticlesToBeVisibleInAtomDetails2++;
-//                    block->color = vmath::vec3(0.7, 0.2, 0.9);
-//
-//                    //CellEngineDataFileObjectPointer->GetAllAtoms();
-//
-//                    for(auto Atom : AllAtomsLocalReferenceObject[AtomObject.AtomIndex])
-//                    {
-//                        glBindBufferBase(GL_UNIFORM_BUFFER, 0, uniforms_buffer);
-//                        auto block1 = (uniforms_block*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(uniforms_block), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
-//
-//                        FloatVectorType AtomPosition1 = LengthUnit * AtomObject.Position();
-//                        vmath::mat4 model_matrix1;
-//                        model_matrix1 = vmath::translate(AtomPosition1.X - CameraXPosition - MassCenter.X, AtomPosition1.Y + CameraYPosition - MassCenter.Y, AtomPosition1.Z + CameraZPosition - MassCenter.Z) * vmath::scale(vmath::vec3(SizeX, SizeY, SizeZ));
-//                        block1->color = ChooseColor(AtomObject);
-//                        block1->mv_matrix = view_matrix * model_matrix1;
-//                        block1->view_matrix = view_matrix;
-//                        block1->proj_matrix = vmath::perspective(50.0f, (float)info.windowWidth / (float)info.windowHeight, 0.1f, 5000.0f);
-//
-//                        glUnmapBuffer(GL_UNIFORM_BUFFER);
-//
-//                        glUniform1f(uniforms[per_vertex ? 1 : 0].specular_power, powf(2.0f, 3.0f));
-//                        glUniform3fv(uniforms[per_vertex ? 1 : 0].specular_albedo, 1, vmath::vec3(1.0f / 9.0f + 1.0f / 9.0f));
-//                    }
-//                    //petla Index
-//                }
-
             glUnmapBuffer(GL_UNIFORM_BUFFER);
 
-            glUniform1f(uniforms[per_vertex ? 1 : 0].specular_power, powf(2.0f, 3.0f));
-            glUniform3fv(uniforms[per_vertex ? 1 : 0].specular_albedo, 1, vmath::vec3(1.0f / 9.0f + 1.0f / 9.0f));
+
+            if (PDBDataFileObjectPointer == nullptr)
+            {
+                float XNew = block->mv_matrix[0][0] * (AtomPosition.X - CameraXPosition - MassCenter.X) + block->mv_matrix[1][0] * (AtomPosition.Y - CameraYPosition - MassCenter.Y) + block->mv_matrix[2][0] * (AtomPosition.Z - CameraZPosition - MassCenter.Z);
+                float YNew = block->mv_matrix[0][1] * (AtomPosition.X - CameraXPosition - MassCenter.X) + block->mv_matrix[1][1] * (AtomPosition.Y - CameraYPosition - MassCenter.Y) + block->mv_matrix[2][1] * (AtomPosition.Z - CameraZPosition - MassCenter.Z);
+                float ZNew = block->mv_matrix[0][2] * (AtomPosition.X - CameraXPosition - MassCenter.X) + block->mv_matrix[1][2] * (AtomPosition.Y - CameraYPosition - MassCenter.Y) + block->mv_matrix[2][2] * (AtomPosition.Z - CameraZPosition - MassCenter.Z);
+                if (XNew > -100 && XNew < 100 && YNew >- 100 && YNew < 100 && ZNew > -50 * 2 + ViewZ)
+                {
+                    NumberOfFoundParticlesToBeVisibleInAtomDetails2++;
+
+                    for(auto& Atom : AllAtomsLocalReferenceObject[AtomObject.AtomIndex])
+                    {
+                        NumberOfAllRenderedAtoms++;
+
+                        glBindBufferBase(GL_UNIFORM_BUFFER, 0, uniforms_buffer);
+                        auto block1 = (uniforms_block*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(uniforms_block), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
+
+                        FloatVectorType AtomPosition1 = LengthUnit * Atom.Position();
+                        vmath::mat4 model_matrix1;
+                        model_matrix1 = vmath::translate(AtomPosition1.X - CameraXPosition - MassCenter.X, AtomPosition1.Y + CameraYPosition - MassCenter.Y, AtomPosition1.Z + CameraZPosition - MassCenter.Z) * vmath::scale(vmath::vec3(SizeX * 4, SizeY * 4, SizeZ * 4));
+
+                        //block1->color = ChooseColor(AtomObject);
+                        block1->mv_matrix = view_matrix * model_matrix1;
+                        block1->view_matrix = view_matrix;
+                        block1->proj_matrix = vmath::perspective(50.0f, (float)info.windowWidth / (float)info.windowHeight, 0.1f, 5000.0f);
+                        block1->color = vmath::vec3(0.7, 0.5, 0.2);
+
+                        glUnmapBuffer(GL_UNIFORM_BUFFER);
+                    }
+                }
+            }
+
+
+
+
+
+//            glUniform1f(uniforms[per_vertex ? 1 : 0].specular_power, powf(2.0f, 3.0f));
+//            glUniform3fv(uniforms[per_vertex ? 1 : 0].specular_albedo, 1, vmath::vec3(1.0f / 9.0f + 1.0f / 9.0f));
 
             object.render();
         }
         CellEngineDataFileObjectPointer->ShowNextStructureFromActiveFilm();
 
-//        glUniform1f(uniforms[per_vertex ? 1 : 0].specular_power, powf(2.0f, 3.0f));
-//        glUniform3fv(uniforms[per_vertex ? 1 : 0].specular_albedo, 1, vmath::vec3(1.0f / 9.0f + 1.0f / 9.0f));
+        glUniform1f(uniforms[per_vertex ? 1 : 0].specular_power, powf(2.0f, 3.0f));
+        glUniform3fv(uniforms[per_vertex ? 1 : 0].specular_albedo, 1, vmath::vec3(1.0f / 9.0f + 1.0f / 9.0f));
 
-//        LoggersManagerObject.Log(STREAM("NumberOfFoundParticlesToBeVisibleInAtomDetails2 = " << to_string(NumberOfFoundParticlesToBeVisibleInAtomDetails2)));
+        LoggersManagerObject.Log(STREAM("NumberOfFoundParticlesToBeVisibleInAtomDetails2 = " << to_string(NumberOfFoundParticlesToBeVisibleInAtomDetails2) << " NumberOfAllRenderedAtoms = " << to_string(NumberOfAllRenderedAtoms)));
     }
     CATCH("rendering cell visualization")
 }
