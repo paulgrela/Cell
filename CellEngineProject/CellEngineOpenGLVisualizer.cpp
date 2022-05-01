@@ -46,8 +46,10 @@ protected:
     void InitArcBall();
     vmath::vec3 ChooseColor(const CellEngineAtom& ElementObject) ;
 protected:
-    void startup() override;
+    void InitExternalData() override;
+protected:
     void load_shaders();
+    void startup() override;
     void render(double currentTime) override;
     void onKey(int key, int action) override;
     void onMouseWheel(int pos) override;
@@ -136,6 +138,30 @@ void InitializeLoggerManagerParameters()
     CATCH("initializing logger manager parameters")
 }
 
+void CellEngineOpenGLVisualiser::InitExternalData()
+{
+    try
+    {
+        InitializeLoggerManagerParameters();
+        LoggersManagerObject.Log(STREAM("START CELL"));
+
+        string FileName;
+        if (__argc > 1)
+            FileName = __argv[1];
+        else
+            LoggersManagerObject.Log(STREAM("Lack of file name in program parameters"));
+
+        PDBDataFileObjectPointer = nullptr;
+        CIFDataFileObjectPointer = nullptr;
+
+        if (string_utils::check_end_str(FileName, ".pdb") == true)
+            CellEngineDataFileObjectPointer = PDBDataFileObjectPointer = make_unique<CellEnginePDBDataFile>(FileName);
+        else
+            CellEngineDataFileObjectPointer = CIFDataFileObjectPointer = make_unique<CellEngineCIFDataFile>(FileName);
+    }
+    CATCH("reading of data file")
+}
+
 void CellEngineOpenGLVisualiser::load_shaders()
 {
     try
@@ -193,23 +219,6 @@ void CellEngineOpenGLVisualiser::startup()
         glDepthFunc(GL_LEQUAL);
 
         InitArcBall();
-
-        InitializeLoggerManagerParameters();
-        LoggersManagerObject.Log(STREAM("START CELL"));
-
-        string FileName;
-        if (__argc > 1)
-            FileName = __argv[1];
-        else
-            LoggersManagerObject.Log(STREAM("Lack of file name in program parameters"));
-
-        PDBDataFileObjectPointer = nullptr;
-        CIFDataFileObjectPointer = nullptr;
-
-        if (string_utils::check_end_str(FileName, ".pdb") == true)
-            CellEngineDataFileObjectPointer = PDBDataFileObjectPointer = make_unique<CellEnginePDBDataFile>(FileName);
-        else
-            CellEngineDataFileObjectPointer = CIFDataFileObjectPointer = make_unique<CellEngineCIFDataFile>(FileName);
     }
     CATCH("initation of data for cell visualization")
 }
@@ -288,8 +297,11 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
             {
                 //I WTEDY DOPISYWAC JE DO LISTY ATOMOW ZAMIAST TEGO ATOMU PRZEZ INSERT DO WEKTORA, A MOZE NA KONIEC WEKTORA DOPISYWAC, A PUNKTY WSTĘPNE WTEDY NIE RYSOWAC DAJAC NOTDRAW na false
                 //I ZA KAZDYM RAZEM OBCINAC KONIEC I DODAWAC NOWE ATOMY te najblizsze i moze wyciszac rysowanie wszystkich zaleznie od opcji
+                //najpierw sprawdzic ile nowych atomow
             }
         }
+
+        int NumberOfFoundParticlesToBeVisibleInAtomDetails = 0;
 
         for (auto AtomsIterator = CellEngineDataFileObjectPointer->GetAtoms().begin(); AtomsIterator != CellEngineDataFileObjectPointer->GetAtoms().end(); ++AtomsIterator)
         {
@@ -317,17 +329,26 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
 
 
 
-//            float XNew = block->mv_matrix[0][0] * (AtomPosition.X - CameraXPosition - MassCenter.X) + block->mv_matrix[1][0] * (AtomPosition.Y- CameraYPosition - MassCenter.Y) + block->mv_matrix[2][0] * (AtomPosition.Z - CameraZPosition - MassCenter.Z);
-//            float YNew = block->mv_matrix[0][1] * (AtomPosition.X - CameraXPosition - MassCenter.X) + block->mv_matrix[1][1] * (AtomPosition.Y - CameraYPosition - MassCenter.Y) + block->mv_matrix[2][1] * (AtomPosition.Z - CameraZPosition - MassCenter.Z);
-//            float ZNew = block->mv_matrix[0][2] * (AtomPosition.X - CameraXPosition - MassCenter.X) + block->mv_matrix[1][2] * (AtomPosition.Y - CameraYPosition - MassCenter.Y) + block->mv_matrix[2][2] * (AtomPosition.Z - CameraZPosition - MassCenter.Z);
-//
-//            //if (XNew > -10 && XNew < 10 && YNew >- 10 && YNew < 10 && ZNew > -10 && ZNew < 10)
-//            //if (XNew > -10 && XNew < 10 && YNew >- 10 && YNew < 10 && ZNew > -10)
-//            //if (ZNew > -10 && ZNew < 1000)
+            float XNew = block->mv_matrix[0][0] * (AtomPosition.X - CameraXPosition - MassCenter.X) + block->mv_matrix[1][0] * (AtomPosition.Y - CameraYPosition - MassCenter.Y) + block->mv_matrix[2][0] * (AtomPosition.Z - CameraZPosition - MassCenter.Z);
+            float YNew = block->mv_matrix[0][1] * (AtomPosition.X - CameraXPosition - MassCenter.X) + block->mv_matrix[1][1] * (AtomPosition.Y - CameraYPosition - MassCenter.Y) + block->mv_matrix[2][1] * (AtomPosition.Z - CameraZPosition - MassCenter.Z);
+            float ZNew = block->mv_matrix[0][2] * (AtomPosition.X - CameraXPosition - MassCenter.X) + block->mv_matrix[1][2] * (AtomPosition.Y - CameraYPosition - MassCenter.Y) + block->mv_matrix[2][2] * (AtomPosition.Z - CameraZPosition - MassCenter.Z);
+            //ograniczenia wzgledem pozycji kamery
+//            if (XNew > -10 && XNew < 10 && YNew >- 10 && YNew < 10 && ZNew > -10 && ZNew < 10)
+//                block->color = vmath::vec3(0.7, 0.2, 0.9);
 //            if (XNew > -1000 && XNew < 1000 && YNew >- 1000 && YNew < 1000 && ZNew > -10 && ZNew < 1000)
 //                block->color = vmath::vec3(0.7, 0.2, 0.9);
+            //if (XNew > -10000 && XNew < 10000 && YNew >- 10000 && YNew < 10000 && ZNew > -10 + ViewZ && ZNew < 1000 + ViewZ)
+            //if (XNew > -1000 && XNew < 1000 && YNew >- 1000 && YNew < 1000 && ZNew > -10 + ViewZ && ZNew < 1000 + ViewZ)
+            //if (XNew > -1000 && XNew < 1000 && YNew >- 1000 && YNew < 1000 && ZNew > -ViewZ && ZNew < 100 - ViewZ)
+            //if (XNew > -100 && XNew < 100 && YNew >- 100 && YNew < 100 && ZNew > -ViewZ && ZNew < 100 - ViewZ)
+            //if (XNew > -1000 && XNew < 1000 && YNew >- 1000 && YNew < 1000 && ZNew > ViewZ && ZNew < ViewZ + 500)
 
-
+            //if (XNew > -1000 && XNew < 1000 && YNew >- 1000 && YNew < 1000 && ZNew > -50 * 2 + ViewZ)
+            if (XNew > -100 && XNew < 100 && YNew >- 100 && YNew < 100 && ZNew > -50 * 2 + ViewZ)
+            {
+                NumberOfFoundParticlesToBeVisibleInAtomDetails++;
+                block->color = vmath::vec3(0.7, 0.2, 0.9);
+            }
 
             glUnmapBuffer(GL_UNIFORM_BUFFER);
 
@@ -337,6 +358,8 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
             object.render();
         }
         CellEngineDataFileObjectPointer->ShowNextStructureFromActiveFilm();
+
+        LoggersManagerObject.Log(STREAM("NumberOfFoundParticlesToBeVisibleInAtomDetails = " << to_string(NumberOfFoundParticlesToBeVisibleInAtomDetails)));
     }
     CATCH("rendering cell visualization")
 }
@@ -399,6 +422,8 @@ void CellEngineOpenGLVisualiser::onMouseWheel(int pos)
             ViewZ += ViewStep;
         else
             ViewZ -= ViewStep;
+
+                                                                                                                        LoggersManagerObject.Log(STREAM("ViewZ = " << to_string(ViewZ)));
     }
     CATCH("executing on mouse wheel event")
 }

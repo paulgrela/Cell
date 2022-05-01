@@ -44,6 +44,8 @@ namespace sb7
 
         virtual void run(sb7::application* the_app)
         {
+            InitExternalData();
+
             bool running = true;
             app = the_app;
 
@@ -171,6 +173,10 @@ namespace sb7
             #ifdef _DEBUG
             info.flags.debug = 1;
             #endif
+        }
+
+        virtual void InitExternalData()
+        {
         }
 
         virtual void startup()
