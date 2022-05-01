@@ -47,6 +47,7 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
     {
         string Line;
         std::vector<CellEngineAtom> LocalCellEngineAtomsObject;
+        std::vector<CellEngineAtom> LocalCellEngineAllAtomsObject;
 
         const auto start_time = chrono::high_resolution_clock::now();
 
@@ -116,6 +117,8 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
                 for (const auto& AppliedMatrixId : AppliedMatrixesIds)
                     for (const auto& AppliedChainName : AppliedChainsNames)
                     {
+                        LocalCellEngineAllAtomsObject.clear();
+
                         bool First = true;
                         for (CellEngineAtom& AppliedAtom : ChainsNames.find(AppliedChainName)->second)
                         {
@@ -133,8 +136,10 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
                             AppliedAtom.Y = AtomsPositiosnMatrixes[AppliedMatrixId - 2].Matrix[1][0] * AppliedAtom.X + AtomsPositiosnMatrixes[AppliedMatrixId - 2].Matrix[1][1] * AppliedAtom.Y + AtomsPositiosnMatrixes[AppliedMatrixId - 2].Matrix[1][2] * AppliedAtom.Z + AtomsPositiosnMatrixes[AppliedMatrixId - 2].Matrix[1][3];
                             AppliedAtom.Z = AtomsPositiosnMatrixes[AppliedMatrixId - 2].Matrix[2][0] * AppliedAtom.X + AtomsPositiosnMatrixes[AppliedMatrixId - 2].Matrix[2][1] * AppliedAtom.Y + AtomsPositiosnMatrixes[AppliedMatrixId - 2].Matrix[2][2] * AppliedAtom.Z + AtomsPositiosnMatrixes[AppliedMatrixId - 2].Matrix[2][3];
 
-                            //LocalCellEngineAtomsObject.push_back(AppliedAtom);
+                            LocalCellEngineAllAtomsObject.emplace_back(AppliedAtom);
                         }
+
+                        AllAtoms.emplace_back(LocalCellEngineAllAtomsObject);
                     }
             }
         }

@@ -9,11 +9,27 @@ class CellEngineDataFile
 public:
     UnsignedIntType ChosenStructureIndex = 0;
     bool FilmOfStructuresActive = false;
+protected:
+    std::vector<std::vector<CellEngineAtom>> Atoms;
+    std::vector<std::vector<CellEngineAtom>> AllAtoms;
 public:
-    virtual std::vector<CellEngineAtom>& GetAtoms() = 0;
+    //virtual std::vector<CellEngineAtom>& GetAtoms() = 0;
     [[nodiscard]] virtual FloatVectorType MassCenter() = 0;
 public:
-    [[nodiscard]] virtual IntType GetNumberOfStructures() = 0;
+    //[[nodiscard]] virtual IntType GetNumberOfStructures() = 0;
+public:
+    [[nodiscard]] std::vector<std::vector<CellEngineAtom>>& GetAllAtoms()
+    {
+        return AllAtoms;
+    }
+    [[nodiscard]] std::vector<CellEngineAtom>& GetAtoms()
+    {
+        return Atoms[ChosenStructureIndex];
+    }
+    [[nodiscard]] IntType GetNumberOfStructures()
+    {
+        return Atoms.size();
+    }
 public:
     void ShowNextStructureFromActiveFilm()
     {

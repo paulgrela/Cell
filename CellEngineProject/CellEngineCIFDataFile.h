@@ -31,8 +31,9 @@ class CellEngineCIFDataFile: public CellEngineDataFile
 private:
     std::vector<AtomsPositionMatrix3x4> AtomsPositiosnMatrixes;
     std::unordered_map<std::string, std::vector<CellEngineAtom>> ChainsNames;
-private:
-    std::vector<std::vector<CellEngineAtom>> Atoms;
+//private:
+//    std::vector<std::vector<CellEngineAtom>> Atoms;
+//    std::vector<std::vector<CellEngineAtom>> AllAtoms;
 private:
     void ReadDataFromFile(std::string_view LocalCIFRecord);
 public:
@@ -40,14 +41,14 @@ public:
     ~CellEngineCIFDataFile() = default;
 public:
     static CellEngineAtom ParseRecord(const char* LocalPDBRecord);
-    [[nodiscard]] std::vector<CellEngineAtom>& GetAtoms() override
-    {
-        return Atoms[ChosenStructureIndex];
-    }
-    [[nodiscard]] IntType GetNumberOfStructures() override
-    {
-        return Atoms.size();
-    }
+//    [[nodiscard]] std::vector<CellEngineAtom>& GetAtoms() override
+//    {
+//        return Atoms[ChosenStructureIndex];
+//    }
+//    [[nodiscard]] IntType GetNumberOfStructures() override
+//    {
+//        return Atoms.size();
+//    }
     [[nodiscard]] IntType GetNumberOfAtoms() const;
     [[nodiscard]] const CellEngineAtom& GetAtom(IntType Index) const;
     [[nodiscard]] FloatVectorType MassCenter() override;
