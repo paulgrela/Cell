@@ -20,9 +20,6 @@
 
 class CellEnginePDBDataFile: public CellEngineDataFile
 {
-//private:
-//    std::vector<std::vector<CellEngineAtom>> Atoms;
-//    std::vector<std::vector<CellEngineAtom>> AllAtoms;
 private:
     void ReadDataFromFile(std::string_view FileName);
 public:
@@ -30,14 +27,6 @@ public:
     ~CellEnginePDBDataFile() = default;
 public:
     static CellEngineAtom ParseRecord(const char* LocalPDBRecord);
-//    [[nodiscard]] std::vector<CellEngineAtom>& GetAtoms() override
-//    {
-//        return Atoms[ChosenStructureIndex];
-//    }
-//    [[nodiscard]] IntType GetNumberOfStructures() override
-//    {
-//        return Atoms.size();
-//    }
     [[nodiscard]] IntType GetNumberOfElements() const;
     [[nodiscard]] const CellEngineAtom& GetElement(IntType Index) const;
     [[nodiscard]] FloatVectorType MassCenter() override;

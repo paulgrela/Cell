@@ -13,10 +13,7 @@ protected:
     std::vector<std::vector<CellEngineAtom>> Atoms;
     std::vector<std::vector<CellEngineAtom>> AllAtoms;
 public:
-    //virtual std::vector<CellEngineAtom>& GetAtoms() = 0;
     [[nodiscard]] virtual FloatVectorType MassCenter() = 0;
-public:
-    //[[nodiscard]] virtual IntType GetNumberOfStructures() = 0;
 public:
     [[nodiscard]] std::vector<std::vector<CellEngineAtom>>& GetAllAtoms()
     {
