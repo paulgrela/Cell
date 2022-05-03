@@ -135,9 +135,7 @@ inline static GLfloat Vector3fLengthSquared(const Vector3fT* NewObj)
 {
 	assert(NewObj);
 
-	return  (NewObj->s.X * NewObj->s.X) +
-		(NewObj->s.Y * NewObj->s.Y) +
-		(NewObj->s.Z * NewObj->s.Z);
+	return  (NewObj->s.X * NewObj->s.X) + (NewObj->s.Y * NewObj->s.Y) + (NewObj->s.Z * NewObj->s.Z);
 }
 
 inline static GLfloat Vector3fLength(const Vector3fT* NewObj)

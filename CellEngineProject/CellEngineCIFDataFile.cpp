@@ -135,9 +135,87 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
                             if (AppliedChainName == "BAR0")
                                 NumberOfAtomsDNA++;
 
-                            AppliedAtom.X = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][0] * AppliedAtom.X + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][1] * AppliedAtom.Y + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][2] * AppliedAtom.Z + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][3];
-                            AppliedAtom.Y = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][0] * AppliedAtom.X + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][1] * AppliedAtom.Y + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][2] * AppliedAtom.Z + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][3];
-                            AppliedAtom.Z = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][0] * AppliedAtom.X + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][1] * AppliedAtom.Y + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][2] * AppliedAtom.Z + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][3];
+
+
+
+
+
+                            auto RotationMatrix = vmath::rotate(0.0f, 0.0f, 0.0f);
+
+//                            RotationMatrix.data[0][0] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][0];
+//                            RotationMatrix.data[1][0] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][1];
+//                            RotationMatrix.data[2][0] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][2];
+//                            RotationMatrix.data[0][1] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][0];
+//                            RotationMatrix.data[1][1] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][1];
+//                            RotationMatrix.data[2][1] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][2];
+//                            RotationMatrix.data[0][2] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][0];
+//                            RotationMatrix.data[1][2] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][1];
+//                            RotationMatrix.data[2][2] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][2];
+
+                            RotationMatrix.data[0][0] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][0];
+                            RotationMatrix.data[1][0] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][0];
+                            RotationMatrix.data[2][0] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][0];
+                            RotationMatrix.data[0][1] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][1];
+                            RotationMatrix.data[1][1] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][1];
+                            RotationMatrix.data[2][1] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][1];
+                            RotationMatrix.data[0][2] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][2];
+                            RotationMatrix.data[1][2] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][2];
+                            RotationMatrix.data[2][2] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][2];
+
+                            auto TranslationMatrix = vmath::translate(AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][3], AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][3], AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][3]);
+
+                            auto Result = vmath::vec4(AppliedAtom.X, AppliedAtom.Y, AppliedAtom.Z, 1) * RotationMatrix * TranslationMatrix;
+                            AppliedAtom.X = Result.data[0];
+                            AppliedAtom.Y = Result.data[1];
+                            AppliedAtom.Z = Result.data[2];
+
+                            //auto Result = RotationMatrix * TranslationMatrix * vmath::vec4(AppliedAtom.X, AppliedAtom.Y, AppliedAtom.Z, 0);
+                            //auto Result = vmath::vec4(AppliedAtom.X, AppliedAtom.Y, AppliedAtom.Z, 0) * RotationMatrix * TranslationMatrix;
+                            //auto Result1 = RotationMatrix * TranslationMatrix;
+                            //auto Result2 = vmath::vec4(AppliedAtom.X, AppliedAtom.Y, AppliedAtom.Z, 0) * Result1;
+//                            AppliedAtom.X = Result2.data[0];
+//                            AppliedAtom.Y = Result2.data[1];
+//                            AppliedAtom.Z = Result2.data[2];
+
+//                            LoggersManagerObject.Log(STREAM("MATRIX = [ " << to_string(AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][0]) << " " << to_string(AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][1]) << " " << to_string(AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][2]) << " " << to_string(AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][3]) << " " << to_string(AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][0]) << " " << to_string(AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][1]) << " " << to_string(AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][2]) << " " << to_string(AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][3]) << " " << to_string(AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][0]) << " " << to_string(AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][1]) << " " << to_string(AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][2]) << " " << to_string(AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][3]) << " ]"));
+//
+//                            LoggersManagerObject.Log(STREAM("B1: " << to_string(AppliedAtom.X) << " " << to_string(AppliedAtom.Y) << " " << to_string(AppliedAtom.Z) << " " << AppliedAtom.Chain));
+
+//                            AppliedAtom.X = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][3];
+//                            AppliedAtom.Y = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][3];
+//                            AppliedAtom.Z = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][3];
+
+//                            AppliedAtom.X = AppliedAtom.X + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][3];
+//                            AppliedAtom.Y = AppliedAtom.Y + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][3];
+//                            AppliedAtom.Z = AppliedAtom.Z + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][3];
+
+//                            AppliedAtom.X = AppliedAtom.X + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][3] * AppliedAtom.X;
+//                            AppliedAtom.Y = AppliedAtom.Y + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][3] * AppliedAtom.Y;
+//                            AppliedAtom.Z = AppliedAtom.Z + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][3] * AppliedAtom.Z;
+
+//                            AppliedAtom.X = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][0] * AppliedAtom.X + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][1] * AppliedAtom.Y + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][2] * AppliedAtom.Z;
+//                            AppliedAtom.Y = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][0] * AppliedAtom.X + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][1] * AppliedAtom.Y + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][2] * AppliedAtom.Z;
+//                            AppliedAtom.Z = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][0] * AppliedAtom.X + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][1] * AppliedAtom.Y + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][2] * AppliedAtom.Z;
+
+//                            LoggersManagerObject.Log(STREAM("B2: " << to_string(AppliedAtom.X) << " " << to_string(AppliedAtom.Y) << " " << to_string(AppliedAtom.Z) << " " << AppliedAtom.Chain));
+
+//                            AppliedAtom.X = AppliedAtom.X + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][3] * AppliedAtom.X;
+//                            AppliedAtom.Y = AppliedAtom.Y + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][3] * AppliedAtom.Y;
+//                            AppliedAtom.Z = AppliedAtom.Z + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][3] * AppliedAtom.Z;
+
+//                            AppliedAtom.X = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][0] * AppliedAtom.X + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][1] * AppliedAtom.Y + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][2] * AppliedAtom.Z;
+//                            AppliedAtom.Y = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][0] * AppliedAtom.X + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][1] * AppliedAtom.Y + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][2] * AppliedAtom.Z;
+//                            AppliedAtom.Z = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][0] * AppliedAtom.X + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][1] * AppliedAtom.Y + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][2] * AppliedAtom.Z;
+
+//                            LoggersManagerObject.Log(STREAM("B3: " << to_string(AppliedAtom.X) << " " << to_string(AppliedAtom.Y) << " " << to_string(AppliedAtom.Z) << " " << AppliedAtom.Chain << endl));
+//                            getchar();
+
+
+//                            AppliedAtom.X = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][0] * AppliedAtom.X + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][1] * AppliedAtom.Y + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][2] * AppliedAtom.Z + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][3];
+//                            AppliedAtom.Y = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][0] * AppliedAtom.X + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][1] * AppliedAtom.Y + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][2] * AppliedAtom.Z + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][3];
+//                            AppliedAtom.Z = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][0] * AppliedAtom.X + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][1] * AppliedAtom.Y + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][2] * AppliedAtom.Z + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][3];
+
+
 
 //                            AppliedAtom.X = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][0] * AppliedAtom.X + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][0] * AppliedAtom.Y + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][0] * AppliedAtom.Z + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[3][0];
 //                            AppliedAtom.Y = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][1] * AppliedAtom.X + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][1] * AppliedAtom.Y + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][1] * AppliedAtom.Z + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[3][1];

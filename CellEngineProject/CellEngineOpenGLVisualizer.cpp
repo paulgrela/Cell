@@ -284,28 +284,6 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
 
         FloatVectorType MassCenter = CellEngineDataFileObjectPointer->MassCenter();
 
-//        int NumberOfFoundParticlesToBeVisibleInAtomDetails1 = 0;
-//
-//        for (auto AtomsIterator = CellEngineDataFileObjectPointer->GetAtoms().begin(); AtomsIterator != CellEngineDataFileObjectPointer->GetAtoms().end(); ++AtomsIterator)
-//        {
-//            auto AtomObject = *AtomsIterator;
-//            FloatVectorType AtomPosition = LengthUnit * AtomObject.Position();
-//            vmath::mat4 model_matrix = vmath::translate(AtomPosition.X - CameraXPosition - MassCenter.X, AtomPosition.Y + CameraYPosition - MassCenter.Y, AtomPosition.Z + CameraZPosition - MassCenter.Z) * vmath::scale(vmath::vec3(SizeX, SizeY, SizeZ));
-//            vmath::mat4 mv_matrix = view_matrix * model_matrix;
-//            float XNew = mv_matrix[0][0] * (AtomPosition.X - CameraXPosition - MassCenter.X) + mv_matrix[1][0] * (AtomPosition.Y- CameraYPosition - MassCenter.Y) + mv_matrix[2][0] * (AtomPosition.Z - CameraZPosition - MassCenter.Z);
-//            float YNew = mv_matrix[0][1] * (AtomPosition.X - CameraXPosition - MassCenter.X) + mv_matrix[1][1] * (AtomPosition.Y - CameraYPosition - MassCenter.Y) + mv_matrix[2][1] * (AtomPosition.Z - CameraZPosition - MassCenter.Z);
-//            float ZNew = mv_matrix[0][2] * (AtomPosition.X - CameraXPosition - MassCenter.X) + mv_matrix[1][2] * (AtomPosition.Y - CameraYPosition - MassCenter.Y) + mv_matrix[2][2] * (AtomPosition.Z - CameraZPosition - MassCenter.Z);
-//            if (XNew > -100 && XNew < 100 && YNew >- 100 && YNew < 100 && ZNew > -50 * 2 + ViewZ)
-//            {
-//                NumberOfFoundParticlesToBeVisibleInAtomDetails1++;
-//                //W klasie Atom ma być zaznaczone czy rysowana w detalach ???
-//                //MOZE NIECH WYLICZA CZY RYSOWAC W DETALACH i WTEDY RYSUJE
-//                //I WTEDY DOPISYWAC JE DO LISTY ATOMOW ZAMIAST TEGO ATOMU PRZEZ INSERT DO WEKTORA, A MOZE NA KONIEC WEKTORA DOPISYWAC, A PUNKTY WSTĘPNE WTEDY NIE RYSOWAC DAJAC NOTDRAW na false
-//                //I ZA KAZDYM RAZEM OBCINAC KONIEC I DODAWAC NOWE ATOMY te najblizsze i moze wyciszac rysowanie wszystkich zaleznie od opcji
-//            }
-//        }
-//        LoggersManagerObject.Log(STREAM("NumberOfFoundParticlesToBeVisibleInAtomDetails1 = " << to_string(NumberOfFoundParticlesToBeVisibleInAtomDetails1)));
-
         glUniform1f(uniforms[per_vertex ? 1 : 0].specular_power, powf(2.0f, 3.0f));
         glUniform3fv(uniforms[per_vertex ? 1 : 0].specular_albedo, 1, vmath::vec3(1.0f / 9.0f + 1.0f / 9.0f));
 
@@ -327,7 +305,10 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
             vmath::mat4 model_matrix;
             if (AtomsIterator != CellEngineDataFileObjectPointer->GetAtoms().end() - 1)
             {
+                //model_matrix = vmath::translate(AtomPosition.X - CameraXPosition - MassCenter.X, AtomPosition.Y + CameraYPosition - MassCenter.Y, AtomPosition.Z + CameraZPosition - MassCenter.Z) * vmath::scale(vmath::vec3(SizeX, SizeY, SizeZ));
                 model_matrix = vmath::translate(AtomPosition.X - CameraXPosition - MassCenter.X, AtomPosition.Y + CameraYPosition - MassCenter.Y, AtomPosition.Z + CameraZPosition - MassCenter.Z) * vmath::scale(vmath::vec3(SizeX, SizeY, SizeZ));
+                //model_matrix = vmath::translate(AtomPosition.X - CameraXPosition, AtomPosition.Y + CameraYPosition, AtomPosition.Z + CameraZPosition) * vmath::scale(vmath::vec3(10, 10, 10));
+                //model_matrix = vmath::translate(AtomPosition.X, AtomPosition.Y, AtomPosition.Z) * vmath::scale(vmath::vec3(15, 15, 15));
                 block->color = ChooseColor(AtomObject);
             }
             else
@@ -337,7 +318,9 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
             }
             block->mv_matrix = view_matrix * model_matrix;
             block->view_matrix = view_matrix;
-            block->proj_matrix = vmath::perspective(50.0f, (float)info.windowWidth / (float)info.windowHeight, 0.1f, 5000.0f);
+            block->proj_matrix = vmath::perspective(50.0f, (float)info.windowWidth / (float)info.windowHeight, 0.1f, 105000.0f);
+
+
 
             float XNew = block->mv_matrix[0][0] * (AtomPosition.X - CameraXPosition - MassCenter.X) + block->mv_matrix[1][0] * (AtomPosition.Y - CameraYPosition - MassCenter.Y) + block->mv_matrix[2][0] * (AtomPosition.Z - CameraZPosition - MassCenter.Z);
             float YNew = block->mv_matrix[0][1] * (AtomPosition.X - CameraXPosition - MassCenter.X) + block->mv_matrix[1][1] * (AtomPosition.Y - CameraYPosition - MassCenter.Y) + block->mv_matrix[2][1] * (AtomPosition.Z - CameraZPosition - MassCenter.Z);
@@ -345,11 +328,16 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
             if (XNew > -25 && XNew < 25 && YNew >- 25 && YNew < 25 && ZNew > -50 * 2 + ViewZ)
                 block->color = vmath::vec3(0.7, 0.2, 0.9);
 
+
             glUnmapBuffer(GL_UNIFORM_BUFFER);
 
 
             if (PDBDataFileObjectPointer == nullptr)
                 if (XNew > -25 && XNew < 25 && YNew > -25 && YNew < 25 && ZNew > -50 * 2 + ViewZ)
+                //if (XNew > -25 && XNew < 25 && YNew > -25 && YNew < 25 && ZNew > -10 + ViewZ)
+                //jesli odleglosc od CAMERA czyli pierwiastek z kwadratow sqrt(sqr(XNew - ViewX)      < od okreslonej to rysuj
+                //lub odleglosc od punktu 0,0,0 czyli > od okreslonej to rysuj tam bialka i tak powinien powstac
+                //stestowac na pdb
                 {
                     NumberOfFoundParticlesToBeVisibleInAtomDetails2++;
 
@@ -357,21 +345,21 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
                     {
                         NumberOfAllRenderedAtoms++;
 
-                        glBindBufferBase(GL_UNIFORM_BUFFER, 0, uniforms_buffer);
-                        auto block1 = (uniforms_block*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(uniforms_block), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
-
-                        FloatVectorType AtomPosition1 = LengthUnit * Atom.Position();
-                        vmath::mat4 model_matrix1;
-                        model_matrix1 = vmath::translate(AtomPosition1.X - CameraXPosition - MassCenter.X, AtomPosition1.Y + CameraYPosition - MassCenter.Y, AtomPosition1.Z + CameraZPosition - MassCenter.Z) * vmath::scale(vmath::vec3(SizeX * 4, SizeY * 4, SizeZ * 4));
-
-                        //block1->color = ChooseColor(AtomObject);
-                        block1->mv_matrix = view_matrix * model_matrix1;
-                        block1->view_matrix = view_matrix;
-                        block1->proj_matrix = vmath::perspective(50.0f, (float)info.windowWidth / (float)info.windowHeight, 0.1f, 5000.0f);
-                        //block1->color = vmath::vec3(0.2, 0.5, 0.2);
-                        block1->color = vmath::vec3(0.7, 0.2, 0.9);
-
-                        glUnmapBuffer(GL_UNIFORM_BUFFER);
+//                        glBindBufferBase(GL_UNIFORM_BUFFER, 0, uniforms_buffer);
+//                        auto block1 = (uniforms_block*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(uniforms_block), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
+//
+//                        FloatVectorType AtomPosition1 = LengthUnit * Atom.Position();
+//                        vmath::mat4 model_matrix1;
+//                        model_matrix1 = vmath::translate(AtomPosition1.X - CameraXPosition - MassCenter.X, AtomPosition1.Y + CameraYPosition - MassCenter.Y, AtomPosition1.Z + CameraZPosition - MassCenter.Z) * vmath::scale(vmath::vec3(SizeX * 4, SizeY * 4, SizeZ * 4));
+//
+//                        //block1->color = ChooseColor(AtomObject);
+//                        block1->mv_matrix = view_matrix * model_matrix1;
+//                        block1->view_matrix = view_matrix;
+//                        block1->proj_matrix = vmath::perspective(50.0f, (float)info.windowWidth / (float)info.windowHeight, 0.1f, 5000.0f);
+//                        //block1->color = vmath::vec3(0.2, 0.5, 0.2);
+//                        block1->color = vmath::vec3(0.7, 0.2, 0.9);
+//
+//                        glUnmapBuffer(GL_UNIFORM_BUFFER);
                     }
                 }
 
@@ -437,6 +425,7 @@ void CellEngineOpenGLVisualiser::onMouseWheel(int pos)
             ViewStep = 3;
         else
             ViewStep = 50;
+            //ViewStep = 250;
 
         if (pos > 0)
             ViewZ += ViewStep;

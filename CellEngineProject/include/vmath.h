@@ -239,6 +239,7 @@ namespace vmath
         }
 
     protected:
+    public:
         T data[len];
 
         inline void assign(const vecN& that)
