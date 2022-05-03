@@ -124,11 +124,12 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
                     AppliedChainsNames.push_back(SMatchObject.str(1));
 
                 for (const auto& AppliedMatrixId : AppliedMatrixesIds)
+                {
+                    LocalCellEngineAllAtomsObject.clear();
+                    bool First = true;
+
                     for (const auto& AppliedChainName : AppliedChainsNames)
                     {
-                        LocalCellEngineAllAtomsObject.clear();
-
-                        bool First = true;
                         for (CellEngineAtom& AppliedAtom : ChainsNames.find(AppliedChainName)->second)
                         {
                             NumberOfAtoms++;
@@ -142,40 +143,37 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
 
                             auto RotationMatrix = vmath::rotate(0.0f, 0.0f, 0.0f);
 
-//                            RotationMatrix.data[0][0] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][0];
-//                            RotationMatrix.data[1][0] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][1];
-//                            RotationMatrix.data[2][0] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][2];
-//                            RotationMatrix.data[0][1] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][0];
-//                            RotationMatrix.data[1][1] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][1];
-//                            RotationMatrix.data[2][1] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][2];
-//                            RotationMatrix.data[0][2] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][0];
-//                            RotationMatrix.data[1][2] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][1];
-//                            RotationMatrix.data[2][2] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][2];
-
                             RotationMatrix.data[0][0] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][0];
-                            RotationMatrix.data[1][0] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][0];
-                            RotationMatrix.data[2][0] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][0];
-                            RotationMatrix.data[0][1] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][1];
+                            RotationMatrix.data[1][0] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][1];
+                            RotationMatrix.data[2][0] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][2];
+                            RotationMatrix.data[0][1] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][0];
                             RotationMatrix.data[1][1] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][1];
-                            RotationMatrix.data[2][1] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][1];
-                            RotationMatrix.data[0][2] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][2];
-                            RotationMatrix.data[1][2] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][2];
+                            RotationMatrix.data[2][1] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][2];
+                            RotationMatrix.data[0][2] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][0];
+                            RotationMatrix.data[1][2] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][1];
                             RotationMatrix.data[2][2] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][2];
+
+//                            RotationMatrix.data[0][0] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][0];
+//                            RotationMatrix.data[1][0] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][0];
+//                            RotationMatrix.data[2][0] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][0];
+//                            RotationMatrix.data[0][1] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][1];
+//                            RotationMatrix.data[1][1] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][1];
+//                            RotationMatrix.data[2][1] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][1];
+//                            RotationMatrix.data[0][2] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][2];
+//                            RotationMatrix.data[1][2] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][2];
+//                            RotationMatrix.data[2][2] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][2];
 
                             auto TranslationMatrix = vmath::translate(AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][3], AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][3], AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][3]);
 
                             auto Result = vmath::vec4(AppliedAtom.X, AppliedAtom.Y, AppliedAtom.Z, 1) * RotationMatrix * TranslationMatrix;
+
                             AppliedAtom.X = Result.data[0];
                             AppliedAtom.Y = Result.data[1];
                             AppliedAtom.Z = Result.data[2];
 
-                            //auto Result = RotationMatrix * TranslationMatrix * vmath::vec4(AppliedAtom.X, AppliedAtom.Y, AppliedAtom.Z, 0);
-                            //auto Result = vmath::vec4(AppliedAtom.X, AppliedAtom.Y, AppliedAtom.Z, 0) * RotationMatrix * TranslationMatrix;
-                            //auto Result1 = RotationMatrix * TranslationMatrix;
-                            //auto Result2 = vmath::vec4(AppliedAtom.X, AppliedAtom.Y, AppliedAtom.Z, 0) * Result1;
-//                            AppliedAtom.X = Result2.data[0];
-//                            AppliedAtom.Y = Result2.data[1];
-//                            AppliedAtom.Z = Result2.data[2];
+
+
+
 
 //                            LoggersManagerObject.Log(STREAM("MATRIX = [ " << to_string(AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][0]) << " " << to_string(AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][1]) << " " << to_string(AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][2]) << " " << to_string(AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][3]) << " " << to_string(AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][0]) << " " << to_string(AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][1]) << " " << to_string(AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][2]) << " " << to_string(AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][3]) << " " << to_string(AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][0]) << " " << to_string(AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][1]) << " " << to_string(AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][2]) << " " << to_string(AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][3]) << " ]"));
 //
@@ -215,28 +213,38 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
 //                            AppliedAtom.Y = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][0] * AppliedAtom.X + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][1] * AppliedAtom.Y + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][2] * AppliedAtom.Z + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][3];
 //                            AppliedAtom.Z = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][0] * AppliedAtom.X + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][1] * AppliedAtom.Y + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][2] * AppliedAtom.Z + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][3];
 
+//                            AppliedAtom.X = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][0] * AppliedAtom.X + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][1] * AppliedAtom.Y + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][2] * AppliedAtom.Z + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][3] + AppliedAtom.X;
+//                            AppliedAtom.Y = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][0] * AppliedAtom.X + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][1] * AppliedAtom.Y + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][2] * AppliedAtom.Z + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][3] + AppliedAtom.Y;
+//                            AppliedAtom.Z = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][0] * AppliedAtom.X + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][1] * AppliedAtom.Y + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][2] * AppliedAtom.Z + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][3] + AppliedAtom.Z;
 
 
 //                            AppliedAtom.X = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][0] * AppliedAtom.X + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][0] * AppliedAtom.Y + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][0] * AppliedAtom.Z + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[3][0];
 //                            AppliedAtom.Y = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][1] * AppliedAtom.X + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][1] * AppliedAtom.Y + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][1] * AppliedAtom.Z + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[3][1];
 //                            AppliedAtom.Z = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][2] * AppliedAtom.X + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][2] * AppliedAtom.Y + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][2] * AppliedAtom.Z + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[3][2];
 
-                            LocalCellEngineAllAtomsObject.emplace_back(AppliedAtom);
-
                             if (First == true)
                             {
                                 First = false;
                                 //LocalCellEngineAtomsObject.emplace_back(CellEngineAtom(AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][3], AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][3], AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][3], LocalCellEngineAtomsObject.size(), LocalCellEngineAtomsObject.size(), (char*)("H"), (char*)("MTR"), (char*)AppliedChainName.c_str()));
-                                LocalCellEngineAtomsObject.emplace_back(CellEngineAtom(AppliedAtom.X, AppliedAtom.Y, AppliedAtom.Z, LocalCellEngineAtomsObject.size(), LocalCellEngineAtomsObject.size(), (char*)("H"), (char*)("MTR"), (char*)AppliedChainName.c_str()));
+                                //LocalCellEngineAtomsObject.emplace_back(CellEngineAtom(AppliedAtom.X, AppliedAtom.Y, AppliedAtom.Z, LocalCellEngineAtomsObject.size(), LocalCellEngineAtomsObject.size(), (char*)("H"), (char*)("MTR"), (char*)AppliedChainName.c_str()));
+                                LocalCellEngineAtomsObject.emplace_back(CellEngineAtom(AppliedAtom.X, AppliedAtom.Y, AppliedAtom.Z, AllAtoms.size(), LocalCellEngineAtomsObject.size(), (char*)("H"), (char*)("MTR"), (char*)AppliedChainName.c_str()));
                             }
+
+                            LocalCellEngineAllAtomsObject.emplace_back(AppliedAtom);
                         }
 
-                        AllAtoms.emplace_back(LocalCellEngineAllAtomsObject);
+                        //AllAtoms.emplace_back(LocalCellEngineAllAtomsObject);
                     }
+                    AllAtoms.emplace_back(LocalCellEngineAllAtomsObject);
+
+                    //goto TempExit;
+                }
             }
         }
 
-        LoggersManagerObject.Log(STREAM(NumberOfAtoms << " " << LocalCellEngineAtomsObject.size() << " " << NumberOfAtomsDNA << " " << AtomsPositionsMatrixes.size() << " " << ChainsNames["BAF0"].size() << endl));
+//TempExit:
+
+        LoggersManagerObject.Log(STREAM(NumberOfAtoms << " " << LocalCellEngineAtomsObject.size() << " " << AllAtoms.size() << " " << AllAtoms.back().size() << " " << NumberOfAtomsDNA << " " << AtomsPositionsMatrixes.size() << " " << ChainsNames["BAF0"].size() << endl));
 
         Atoms.emplace_back(LocalCellEngineAtomsObject);
 
@@ -247,6 +255,8 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
         LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Execution of reading data from CIF file has taken time: ", "executing printing duration_time")));
 
         File.close();
+
+        getchar();
     }
     CATCH("reading data from CIF file")
 }
