@@ -22,7 +22,6 @@
 struct AtomsPositionMatrix3x4
 {
 public:
-    //UnsignedIntType MatrixId;
     float Matrix[3][4];
 };
 

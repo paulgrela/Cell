@@ -10,6 +10,27 @@
 using namespace std;
 using namespace string_utils;
 
+vmath::vec3 ChooseColor(const CellEngineAtom& ElementObject)
+{
+    vmath::vec3 ChosenColor;
+
+    try
+    {
+        switch(ElementObject.Name[0])
+        {
+            case 'C': ChosenColor = vmath::vec3(0.25f, 0.75f, 0.75f); break;
+            case 'O': ChosenColor = vmath::vec3(1.00f, 0.00f, 0.00f); break;
+            case 'H': ChosenColor = vmath::vec3(1.00f, 1.00f, 1.00f); break;
+            case 'N': ChosenColor = vmath::vec3(0.00f, 0.00f, 1.00f); break;
+            case 'P': ChosenColor = vmath::vec3(0.50f, 0.50f, 0.20f); break;
+            default: ChosenColor = vmath::vec3(0.50f, 0.50f, 0.50f); break;
+        }
+    }
+    CATCH("chosing color for atom for cell visualization")
+
+    return ChosenColor;
+}
+
 CellEngineAtom CellEnginePDBDataFile::ParseRecord(const char* LocalPDBRecord)
 {
     CellEngineAtom CellEngineAtomObject;
@@ -27,6 +48,8 @@ CellEngineAtom CellEnginePDBDataFile::ParseRecord(const char* LocalPDBRecord)
         CellEngineAtomObject.X = stof(RecordStr.substr(30, 8));
         CellEngineAtomObject.Y = stof(RecordStr.substr(38, 8));
         CellEngineAtomObject.Z = stof(RecordStr.substr(46, 8));
+
+        CellEngineAtomObject.Color = ChooseColor(CellEngineAtomObject);
     }
     CATCH("parsing element record")
 
