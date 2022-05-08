@@ -7,6 +7,8 @@
 class CellEngineDataFile
 {
 public:
+    float ViewStep;
+public:
     UnsignedIntType ChosenStructureIndex = 0;
     bool FilmOfStructuresActive = false;
 protected:

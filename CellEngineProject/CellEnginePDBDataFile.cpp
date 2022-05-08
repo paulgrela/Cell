@@ -58,6 +58,8 @@ CellEngineAtom CellEnginePDBDataFile::ParseRecord(const char* LocalPDBRecord)
 
 CellEnginePDBDataFile::CellEnginePDBDataFile(const string_view FileName)
 {
+    ViewStep = 3;
+
     ChosenStructureIndex = 0;
 
 	ReadDataFromFile(FileName);

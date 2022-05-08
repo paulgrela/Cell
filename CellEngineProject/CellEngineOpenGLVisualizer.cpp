@@ -223,49 +223,6 @@ void CellEngineOpenGLVisualiser::startup()
     CATCH("initation of data for cell visualization")
 }
 
-vmath::vec3 CellEngineOpenGLVisualiser::ChooseColor(const CellEngineAtom& ElementObject)
-{
-    vmath::vec3 ChosenColor;
-
-    try
-    {
-        if (PDBDataFileObjectPointer == nullptr)
-        {
-            if (string(ElementObject.Chain).substr(0, 3) == "BAF")
-                ChosenColor = vmath::vec3(0.25f, 0.75f, 0.75f);
-            else
-            if(string(ElementObject.Chain).substr(0, 3) == "BAE")
-                ChosenColor = vmath::vec3(1.00f, 0.00f, 0.00f);
-            else
-            if(string(ElementObject.Chain).substr(0, 3) == "ATP")
-                ChosenColor = vmath::vec3(1.00f, 1.00f, 1.00f);
-            else
-            if(string(ElementObject.Chain).substr(0, 3) == "BAR")
-                ChosenColor = vmath::vec3(0.00f, 0.00f, 1.00f);
-            else
-            if(string(ElementObject.Chain).substr(0, 1) == "A")
-                ChosenColor = vmath::vec3(0.50f, 0.50f, 0.20f);
-            else
-                ChosenColor = vmath::vec3(0.50f, 0.50f, 0.50f);
-        }
-        else
-        {
-            switch(ElementObject.Name[0])
-            {
-                case 'C': ChosenColor = vmath::vec3(0.25f, 0.75f, 0.75f); break;
-                case 'O': ChosenColor = vmath::vec3(1.00f, 0.00f, 0.00f); break;
-                case 'H': ChosenColor = vmath::vec3(1.00f, 1.00f, 1.00f); break;
-                case 'N': ChosenColor = vmath::vec3(0.00f, 0.00f, 1.00f); break;
-                case 'P': ChosenColor = vmath::vec3(0.50f, 0.50f, 0.20f); break;
-                default: ChosenColor = vmath::vec3(0.50f, 0.50f, 0.50f); break;
-            }
-        }
-    }
-    CATCH("chosing color for atom for cell visualization")
-
-    return ChosenColor;
-}
-
 void CellEngineOpenGLVisualiser::render(double currentTime)
 {
     try
@@ -433,8 +390,6 @@ void CellEngineOpenGLVisualiser::onKey(int key, int action)
                 case 'P': CellEngineDataFileObjectPointer->StopFilmOfStructures(); break;
                 case 'N': CellEngineDataFileObjectPointer->ShowNextStructure(); break;
                 case 'M': CellEngineDataFileObjectPointer->ShowPrevStructure(); break;
-                //case 'Z': SizeX -= 0.25; SizeY -= 0.25; SizeZ -= 0.25; break;
-                //case 'X': SizeX += 0.25; SizeY += 0.25; SizeZ += 0.25; break;
                 case 'Z': SizeX -= 0.01; SizeY -= 0.01; SizeZ -= 0.01; break;
                 case 'X': SizeX += 0.01; SizeY += 0.01; SizeZ += 0.01; break;
 
@@ -448,19 +403,7 @@ void CellEngineOpenGLVisualiser::onMouseWheel(int pos)
 {
     try
     {
-        float ViewStep;
-        if (CIFDataFileObjectPointer == nullptr)
-            ViewStep = 3;
-            //ViewStep = 100;
-        else
-            ViewStep = 50;
-
-        if (pos > 0)
-            ViewZ += ViewStep;
-        else
-            ViewZ -= ViewStep;
-
-                                                                                                                        LoggersManagerObject.Log(STREAM("ViewZ = " << to_string(ViewZ)));
+        ViewZ += static_cast<float>(pos) * CellEngineDataFileObjectPointer->ViewStep;
     }
     CATCH("executing on mouse wheel event")
 }

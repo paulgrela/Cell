@@ -22,6 +22,8 @@
 struct AtomsPositionMatrix3x4
 {
 public:
+    bool Used = false;
+public:
     float Matrix[3][4];
 };
 

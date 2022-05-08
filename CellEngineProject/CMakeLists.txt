@@ -67,12 +67,7 @@ add_executable(
 	../Common/DateTimeUtils/DateTimeUtils.cpp
 	../Common/MathUtils/AdditionalFunctions.cpp
 	CellEnginePDBDataFile.cpp
-	CellEnginePDBWindowGL.cpp
-	CellEngineCIFDataFile.h
 	CellEngineCIFDataFile.cpp
-	CellEngineCIFWindowGL.h
-	CellEngineCIFWindowGL.cpp
-	CellEngineWindowGL.cpp
 	CellEngineOpenGLVisualizer.cpp)
 
 target_link_libraries(${PROJECT_NAME} -static-libgcc -static-libstdc++ -lpthread -lglew32 -lsb7 -lglfw3 -lopengl32 -lglu32)
