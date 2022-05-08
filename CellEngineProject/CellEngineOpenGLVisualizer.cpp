@@ -14,7 +14,6 @@
 #include "StringUtils.h"
 #include "DateTimeUtils.h"
 #include "ExceptionsMacro.h"
-#include "AdditionalFunctions.h"
 
 #include "CellEngineDataFile.h"
 
@@ -28,33 +27,6 @@ using namespace std;
 
 class CellEngineOpenGLVisualiser : public sb7::application
 {
-public:
-    CellEngineOpenGLVisualiser() : per_fragment_program(0), per_vertex_program(0), per_vertex(false)
-    {
-    }
-
-protected:
-    void init() override
-    {
-        static const char title[] = "Cell Engine Visualizer - OpenGL";
-
-        sb7::application::init();
-
-        memcpy(info.title, title, sizeof(title));
-    }
-protected:
-    void InitArcBall();
-protected:
-    void InitExternalData() override;
-protected:
-    void load_shaders();
-    void startup() override;
-    void render(double currentTime) override;
-    void onKey(int key, int action) override;
-    void onMouseWheel(int pos) override;
-    void onMouseButton(int button, int action) override;
-    void onMouseMove(int x, int y) override;
-    void onResize(int w, int h) override;
 private:
     GLuint per_fragment_program;
     GLuint per_vertex_program;
@@ -63,7 +35,7 @@ private:
     {
         GLuint color;
         GLuint normals;
-    } 
+    }
     textures{};
 
     struct uniforms_block
@@ -81,7 +53,7 @@ private:
         GLint diffuse_albedo;
         GLint specular_albedo;
         GLint specular_power;
-    } 
+    }
     uniforms[2]{};
 
     sb7::object object;
@@ -116,6 +88,36 @@ private:
     uint64_t PressedRightMouseButton = 0;
 private:
     std::unique_ptr<CellEngineDataFile> CellEngineDataFileObjectPointer;
+public:
+    CellEngineOpenGLVisualiser() : per_fragment_program(0), per_vertex_program(0), per_vertex(false)
+    {
+    }
+protected:
+    void init() override
+    {
+        static const char title[] = "Cell Engine Visualizer - OpenGL";
+
+        sb7::application::init();
+
+        memcpy(info.title, title, sizeof(title));
+    }
+protected:
+    void InitArcBall();
+protected:
+    void InitExternalData() override;
+protected:
+    void load_shaders();
+    void startup() override;
+    void render(double currentTime) override;
+    void onKey(int key, int action) override;
+    void onMouseWheel(int pos) override;
+    void onMouseButton(int button, int action) override;
+    void onMouseMove(int x, int y) override;
+    void onResize(int w, int h) override;
+protected:
+    static void DrawCenterPoint(uniforms_block*  MatrixUniformBlockForVertexShaderPointer, vmath::mat4& ModelMatrix);
+    FloatVectorType GetFinalModelPosition(const FloatVectorType& AtomPosition, uniforms_block*  MatrixUniformBlockForVertexShaderPointer, const FloatVectorType& MassCenter, const float Distance, const bool CountNewPosition, const bool DrawOutsideBorder) const;
+    FloatVectorType RenderObject(const CellEngineAtom& AtomObject, const vmath::mat4& ViewMatrix, const FloatVectorType& MassCenter, const float Distance, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, uint64_t& NumberOfAllRenderedAtoms);
 };
 
 void InitializeLoggerManagerParameters()
@@ -214,6 +216,71 @@ void CellEngineOpenGLVisualiser::startup()
     CATCH("initation of data for cell visualization")
 }
 
+void CellEngineOpenGLVisualiser::DrawCenterPoint(uniforms_block*  MatrixUniformBlockForVertexShaderPointer, vmath::mat4& ModelMatrix)
+{
+    try
+    {
+        ModelMatrix = vmath::translate(0.0f, 0.0f, 0.0f);
+        MatrixUniformBlockForVertexShaderPointer->color = vmath::vec3(0.7, 0.2, 0.9);
+    }
+    CATCH("getting final model position for data for cell visualization")
+}
+
+FloatVectorType CellEngineOpenGLVisualiser::GetFinalModelPosition(const FloatVectorType& AtomPosition, uniforms_block*  MatrixUniformBlockForVertexShaderPointer, const FloatVectorType& MassCenter, const float Distance, const bool CountNewPosition, const bool DrawOutsideBorder) const
+{
+    try
+    {
+        if (CountNewPosition == true)
+        {
+            float XNew = MatrixUniformBlockForVertexShaderPointer->mv_matrix[0][0] * (AtomPosition.X + CameraXPosition - MassCenter.X) + MatrixUniformBlockForVertexShaderPointer->mv_matrix[1][0] * (AtomPosition.Y + CameraYPosition - MassCenter.Y) + MatrixUniformBlockForVertexShaderPointer->mv_matrix[2][0] * (AtomPosition.Z + CameraZPosition - MassCenter.Z);
+            float YNew = MatrixUniformBlockForVertexShaderPointer->mv_matrix[0][1] * (AtomPosition.X + CameraXPosition - MassCenter.X) + MatrixUniformBlockForVertexShaderPointer->mv_matrix[1][1] * (AtomPosition.Y + CameraYPosition - MassCenter.Y) + MatrixUniformBlockForVertexShaderPointer->mv_matrix[2][1] * (AtomPosition.Z + CameraZPosition - MassCenter.Z);
+            float ZNew = MatrixUniformBlockForVertexShaderPointer->mv_matrix[0][2] * (AtomPosition.X + CameraXPosition - MassCenter.X) + MatrixUniformBlockForVertexShaderPointer->mv_matrix[1][2] * (AtomPosition.Y + CameraYPosition - MassCenter.Y) + MatrixUniformBlockForVertexShaderPointer->mv_matrix[2][2] * (AtomPosition.Z + CameraZPosition - MassCenter.Z);
+
+            if (DrawOutsideBorder == true)
+                if (sqrt((XNew * XNew) + (YNew * YNew) + (ZNew * ZNew)) > Distance)
+                    MatrixUniformBlockForVertexShaderPointer->color = vmath::vec3(0.7, 0.2, 0.9);
+
+            return FloatVectorType(XNew, YNew, ZNew);
+        }
+    }
+    CATCH("getting final model position for data for cell visualization")
+
+    return FloatVectorType(0, 0, 0);
+}
+
+FloatVectorType CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom& AtomObject, const vmath::mat4& ViewMatrix, const FloatVectorType& MassCenter, const float Distance, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, uint64_t& NumberOfAllRenderedAtoms)
+{
+    FloatVectorType FinalModelPosition;
+
+    try
+    {
+        NumberOfAllRenderedAtoms++;
+
+        glBindBufferBase(GL_UNIFORM_BUFFER, 0, uniforms_buffer);
+        auto MatrixUniformBlockForVertexShaderPointer = (uniforms_block*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(uniforms_block), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
+
+        FloatVectorType AtomPosition = LengthUnit * AtomObject.Position();
+        vmath::mat4 ModelMatrix = vmath::translate(AtomPosition.X - CameraXPosition - MassCenter.X, AtomPosition.Y + CameraYPosition - MassCenter.Y, AtomPosition.Z + CameraZPosition - MassCenter.Z) * vmath::scale(vmath::vec3(SizeX, SizeY, SizeZ));
+
+        //MatrixUniformBlockForVertexShaderPointer->mv_matrix = ViewMatrix * ModelMatrix;
+        MatrixUniformBlockForVertexShaderPointer->view_matrix = ViewMatrix;
+        MatrixUniformBlockForVertexShaderPointer->proj_matrix = vmath::perspective(50.0f, (float)info.windowWidth / (float)info.windowHeight, 0.1f, 5000.0f);
+        MatrixUniformBlockForVertexShaderPointer->color = AtomObject.Color;
+
+        FinalModelPosition = GetFinalModelPosition(AtomPosition, MatrixUniformBlockForVertexShaderPointer, MassCenter, Distance, CountNewPosition, DrawOutsideBorder);
+        if (DrawCenter == true)
+            DrawCenterPoint(MatrixUniformBlockForVertexShaderPointer, ModelMatrix);
+
+        MatrixUniformBlockForVertexShaderPointer->mv_matrix = ViewMatrix * ModelMatrix;
+
+        glUnmapBuffer(GL_UNIFORM_BUFFER);
+        object.render();
+    }
+    CATCH("rendering object for data for cell visualization")
+
+    return FinalModelPosition;
+}
+
 void CellEngineOpenGLVisualiser::render(double currentTime)
 {
     try
@@ -235,76 +302,84 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
         glUniform1f(uniforms[per_vertex ? 1 : 0].specular_power, powf(2.0f, 3.0f));
         glUniform3fv(uniforms[per_vertex ? 1 : 0].specular_albedo, 1, vmath::vec3(1.0f / 9.0f + 1.0f / 9.0f));
 
-        int NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = 0;
-        int NumberOfAllRenderedAtoms = 0;
+        uint64_t NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = 0;
+        uint64_t NumberOfAllRenderedAtoms = 0;
+
+        float Distance = 400.00;
 
         for (auto ParticlesCenterIterator = CellEngineDataFileObjectPointer->GetParticlesCenters().begin(); ParticlesCenterIterator != CellEngineDataFileObjectPointer->GetParticlesCenters().end(); ++ParticlesCenterIterator)
         {
-            NumberOfAllRenderedAtoms++;
+            //NumberOfAllRenderedAtoms++;
 
             auto ParticlesCenterObject = *ParticlesCenterIterator;
 
-            glBindBufferBase(GL_UNIFORM_BUFFER, 0, uniforms_buffer);
-            auto MatrixUniformBlockForVertexShader = (uniforms_block*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(uniforms_block), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
+            FloatVectorType FinalModelPosition = RenderObject(ParticlesCenterObject, ViewMatrix, MassCenter, Distance, true, ParticlesCenterIterator == CellEngineDataFileObjectPointer->GetParticlesCenters().end() - 1, true, NumberOfAllRenderedAtoms);
+            //FloatVectorType FinalModelPosition = RenderObject(ParticlesCenterObject, ViewMatrix, MassCenter, Distance, true, true, ParticlesCenterIterator == CellEngineDataFileObjectPointer->GetParticlesCenters().end() - 1);
 
-            FloatVectorType ParticlesCenterPosition = LengthUnit * ParticlesCenterObject.Position();
-            vmath::mat4 ModelMatrix;
-            if (ParticlesCenterIterator != CellEngineDataFileObjectPointer->GetParticlesCenters().end() - 1)
-            {
-                ModelMatrix = vmath::translate(ParticlesCenterPosition.X + CameraXPosition - MassCenter.X, ParticlesCenterPosition.Y + CameraYPosition - MassCenter.Y, ParticlesCenterPosition.Z + CameraZPosition - MassCenter.Z) * vmath::scale(vmath::vec3(SizeX, SizeY, SizeZ));
-                MatrixUniformBlockForVertexShader->color = ParticlesCenterObject.Color;
-            }
-            else
-            {
-                ModelMatrix = vmath::translate(0.0f, 0.0f, 0.0f);
-                MatrixUniformBlockForVertexShader->color = vmath::vec3(0.7, 0.2, 0.9);
-            }
-            MatrixUniformBlockForVertexShader->mv_matrix = ViewMatrix * ModelMatrix;
-            MatrixUniformBlockForVertexShader->view_matrix = ViewMatrix;
-            MatrixUniformBlockForVertexShader->proj_matrix = vmath::perspective(50.0f, (float)info.windowWidth / (float)info.windowHeight, 0.1f, 5000.0f);
+
+//            glBindBufferBase(GL_UNIFORM_BUFFER, 0, uniforms_buffer);
+//            auto MatrixUniformBlockForVertexShader = (uniforms_block*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(uniforms_block), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
+//
+//            FloatVectorType ParticlesCenterPosition = LengthUnit * ParticlesCenterObject.Position();
+//            vmath::mat4 ModelMatrix;
+//            if (ParticlesCenterIterator != CellEngineDataFileObjectPointer->GetParticlesCenters().end() - 1)
+//            {
+//                ModelMatrix = vmath::translate(ParticlesCenterPosition.X + CameraXPosition - MassCenter.X, ParticlesCenterPosition.Y + CameraYPosition - MassCenter.Y, ParticlesCenterPosition.Z + CameraZPosition - MassCenter.Z) * vmath::scale(vmath::vec3(SizeX, SizeY, SizeZ));
+//                MatrixUniformBlockForVertexShader->color = ParticlesCenterObject.Color;
+//            }
+//            else
+//            {
+//                ModelMatrix = vmath::translate(0.0f, 0.0f, 0.0f);
+//                MatrixUniformBlockForVertexShader->color = vmath::vec3(0.7, 0.2, 0.9);
+//            }
+//            MatrixUniformBlockForVertexShader->mv_matrix = ViewMatrix * ModelMatrix;
+//            MatrixUniformBlockForVertexShader->view_matrix = ViewMatrix;
+//            MatrixUniformBlockForVertexShader->proj_matrix = vmath::perspective(50.0f, (float)info.windowWidth / (float)info.windowHeight, 0.1f, 5000.0f);
 
 
             //float Distance = 250;
-            float Distance = 400;
-            float XNew = MatrixUniformBlockForVertexShader->mv_matrix[0][0] * (ParticlesCenterPosition.X + CameraXPosition - MassCenter.X) + MatrixUniformBlockForVertexShader->mv_matrix[1][0] * (ParticlesCenterPosition.Y + CameraYPosition - MassCenter.Y) + MatrixUniformBlockForVertexShader->mv_matrix[2][0] * (ParticlesCenterPosition.Z + CameraZPosition - MassCenter.Z);
-            float YNew = MatrixUniformBlockForVertexShader->mv_matrix[0][1] * (ParticlesCenterPosition.X + CameraXPosition - MassCenter.X) + MatrixUniformBlockForVertexShader->mv_matrix[1][1] * (ParticlesCenterPosition.Y + CameraYPosition - MassCenter.Y) + MatrixUniformBlockForVertexShader->mv_matrix[2][1] * (ParticlesCenterPosition.Z + CameraZPosition - MassCenter.Z);
-            float ZNew = MatrixUniformBlockForVertexShader->mv_matrix[0][2] * (ParticlesCenterPosition.X + CameraXPosition - MassCenter.X) + MatrixUniformBlockForVertexShader->mv_matrix[1][2] * (ParticlesCenterPosition.Y + CameraYPosition - MassCenter.Y) + MatrixUniformBlockForVertexShader->mv_matrix[2][2] * (ParticlesCenterPosition.Z + CameraZPosition - MassCenter.Z);
+//            float Distance = 400;
+//            float XNew = MatrixUniformBlockForVertexShader->mv_matrix[0][0] * (ParticlesCenterPosition.X + CameraXPosition - MassCenter.X) + MatrixUniformBlockForVertexShader->mv_matrix[1][0] * (ParticlesCenterPosition.Y + CameraYPosition - MassCenter.Y) + MatrixUniformBlockForVertexShader->mv_matrix[2][0] * (ParticlesCenterPosition.Z + CameraZPosition - MassCenter.Z);
+//            float YNew = MatrixUniformBlockForVertexShader->mv_matrix[0][1] * (ParticlesCenterPosition.X + CameraXPosition - MassCenter.X) + MatrixUniformBlockForVertexShader->mv_matrix[1][1] * (ParticlesCenterPosition.Y + CameraYPosition - MassCenter.Y) + MatrixUniformBlockForVertexShader->mv_matrix[2][1] * (ParticlesCenterPosition.Z + CameraZPosition - MassCenter.Z);
+//            float ZNew = MatrixUniformBlockForVertexShader->mv_matrix[0][2] * (ParticlesCenterPosition.X + CameraXPosition - MassCenter.X) + MatrixUniformBlockForVertexShader->mv_matrix[1][2] * (ParticlesCenterPosition.Y + CameraYPosition - MassCenter.Y) + MatrixUniformBlockForVertexShader->mv_matrix[2][2] * (ParticlesCenterPosition.Z + CameraZPosition - MassCenter.Z);
+//
+//            if (sqrt((XNew * XNew) + (YNew * YNew) + (ZNew * ZNew)) > Distance)
+//            //if (sqrt((XNew * XNew) + (YNew * YNew) + (ZNew * ZNew)) > Distance && ZNew > 200 && XNew > -100 && XNew < 100 && YNew >- 100 && YNew < 100)
+//                MatrixUniformBlockForVertexShader->color = vmath::vec3(0.7, 0.2, 0.9);
 
-            if (sqrt((XNew * XNew) + (YNew * YNew) + (ZNew * ZNew)) > Distance)
-            //if (sqrt((XNew * XNew) + (YNew * YNew) + (ZNew * ZNew)) > Distance && ZNew > 200 && XNew > -100 && XNew < 100 && YNew >- 100 && YNew < 100)
-                MatrixUniformBlockForVertexShader->color = vmath::vec3(0.7, 0.2, 0.9);
-
-            glUnmapBuffer(GL_UNIFORM_BUFFER);
-
-            object.render();
+//            glUnmapBuffer(GL_UNIFORM_BUFFER);
+//
+//            object.render();
 
 
             if (CellEngineDataFileObjectPointer->ShowDetailsInAtomScale == true)
-                if (sqrt((XNew * XNew) + (YNew * YNew) + (ZNew * ZNew)) > Distance && ZNew > 200 && XNew > -100 && XNew < 100 && YNew >- 100 && YNew < 100)
+                if (sqrt((FinalModelPosition.X * FinalModelPosition.X) + (FinalModelPosition.Y * FinalModelPosition.Y) + (FinalModelPosition.Z * FinalModelPosition.Z)) > Distance && FinalModelPosition.Z > 200 && FinalModelPosition.X > -100 && FinalModelPosition.X < 100 && FinalModelPosition.Y >- 100 && FinalModelPosition.Y < 100)
+                //if (sqrt((XNew * XNew) + (YNew * YNew) + (ZNew * ZNew)) > Distance)
 //                if (sqrt((XNew * XNew) + (YNew * YNew) + (ZNew * ZNew)) > Distance && ZNew > 1500)
 //                if (sqrt((XNew * XNew) + (YNew * YNew) + (ZNew * ZNew)) > Distance)
                 {
                     NumberOfFoundParticlesCenterToBeRenderedInAtomDetails++;
 
-                    for(auto& AtomObject : CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex])
-                    {
-                        NumberOfAllRenderedAtoms++;
-
-                        glBindBufferBase(GL_UNIFORM_BUFFER, 0, uniforms_buffer);
-                        MatrixUniformBlockForVertexShader = (uniforms_block*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(uniforms_block), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
-
-                        FloatVectorType AtomPosition = LengthUnit * AtomObject.Position();
-                        ModelMatrix = vmath::translate(AtomPosition.X - CameraXPosition - MassCenter.X, AtomPosition.Y + CameraYPosition - MassCenter.Y, AtomPosition.Z + CameraZPosition - MassCenter.Z) * vmath::scale(vmath::vec3(SizeX, SizeY, SizeZ));
-
-                        MatrixUniformBlockForVertexShader->mv_matrix = ViewMatrix * ModelMatrix;
-                        MatrixUniformBlockForVertexShader->view_matrix = ViewMatrix;
-                        MatrixUniformBlockForVertexShader->proj_matrix = vmath::perspective(50.0f, (float)info.windowWidth / (float)info.windowHeight, 0.1f, 5000.0f);
-                        MatrixUniformBlockForVertexShader->color = AtomObject.Color;
-
-                        glUnmapBuffer(GL_UNIFORM_BUFFER);
-
-                        object.render();
-                    }
+                    for(const auto& AtomObject : CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex])
+                        RenderObject(AtomObject, ViewMatrix, MassCenter, Distance, false, false, false, NumberOfAllRenderedAtoms);
+//                    {
+//                        NumberOfAllRenderedAtoms++;
+//
+//                        glBindBufferBase(GL_UNIFORM_BUFFER, 0, uniforms_buffer);
+//                        MatrixUniformBlockForVertexShader = (uniforms_block*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(uniforms_block), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
+//
+//                        FloatVectorType AtomPosition = LengthUnit * AtomObject.Position();
+//                        ModelMatrix = vmath::translate(AtomPosition.X - CameraXPosition - MassCenter.X, AtomPosition.Y + CameraYPosition - MassCenter.Y, AtomPosition.Z + CameraZPosition - MassCenter.Z) * vmath::scale(vmath::vec3(SizeX, SizeY, SizeZ));
+//
+//                        MatrixUniformBlockForVertexShader->mv_matrix = ViewMatrix * ModelMatrix;
+//                        MatrixUniformBlockForVertexShader->view_matrix = ViewMatrix;
+//                        MatrixUniformBlockForVertexShader->proj_matrix = vmath::perspective(50.0f, (float)info.windowWidth / (float)info.windowHeight, 0.1f, 5000.0f);
+//                        MatrixUniformBlockForVertexShader->color = AtomObject.Color;
+//
+//                        glUnmapBuffer(GL_UNIFORM_BUFFER);
+//
+//                        object.render();
+//                    }
                 }
 
         }
