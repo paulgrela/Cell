@@ -16,9 +16,9 @@ protected:
     std::vector<std::vector<CellEngineAtom>> ParticlesCenters;
     std::vector<std::vector<CellEngineAtom>> AllAtoms;
 public:
-    static FloatVectorType GetMassCenter(const std::vector<CellEngineAtom>& AtomsParam)
+    static vmath::vec3 GetMassCenter(const std::vector<CellEngineAtom>& AtomsParam)
     {
-        FloatVectorType MassCenter(0.0, 0.0, 0.0);
+        vmath::vec3 MassCenter(0.0, 0.0, 0.0);
 
         try
         {

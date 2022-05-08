@@ -12,8 +12,6 @@
 #include <memory>
 #include <unordered_map>
 
-#include "VectorType.h"
-
 #include "CellEngineTypes.h"
 #include "CellEngineAtom.h"
 

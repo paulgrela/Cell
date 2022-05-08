@@ -6,7 +6,6 @@
 #include <utility>
 
 #include "vmath.h"
-#include "VectorType.h"
 #include "CellEngineTypes.h"
 
 struct CellEngineAtom
@@ -32,9 +31,9 @@ public:
     CellEngineAtom() = default;
     ~CellEngineAtom() = default;
 public:
-    [[nodiscard]] FloatVectorType Position() const
+    [[nodiscard]] vmath::vec3 Position() const
     {
-        return FloatVectorType(X, Y, Z);
+        return vmath::vec3(X, Y, Z);
     }
 };
 

@@ -295,6 +295,19 @@ namespace vmath
             base::data[1] = v[0];
             base::data[2] = v[1];
         }
+    public:
+        [[nodiscard]] inline float X() const
+        {
+            return base::data[0];
+        }
+        [[nodiscard]] inline float Y() const
+        {
+            return base::data[1];
+        }
+        [[nodiscard]] inline float Z() const
+        {
+            return base::data[2];
+        }
     };
 
     template <typename T>

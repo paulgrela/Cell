@@ -11,8 +11,6 @@
 
 #include <memory>
 
-#include "VectorType.h"
-
 #include "CellEngineTypes.h"
 #include "CellEngineAtom.h"
 

@@ -116,8 +116,8 @@ protected:
     void onResize(int w, int h) override;
 protected:
     static inline void DrawCenterPoint(uniforms_block*  MatrixUniformBlockForVertexShaderPointer, vmath::mat4& ModelMatrix);
-    inline FloatVectorType GetFinalModelPosition(const FloatVectorType& AtomPosition, uniforms_block*  MatrixUniformBlockForVertexShaderPointer, const FloatVectorType& MassCenter, const float Distance, const bool CountNewPosition, const bool DrawOutsideBorder) const;
-    inline FloatVectorType RenderObject(const CellEngineAtom& AtomObject, const vmath::mat4& ViewMatrix, const FloatVectorType& MassCenter, const float Distance, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, uint64_t& NumberOfAllRenderedAtoms);
+    inline vmath::vec3 GetFinalModelPosition(const vmath::vec3& AtomPosition, uniforms_block*  MatrixUniformBlockForVertexShaderPointer, const vmath::vec3& MassCenter, const float Distance, const bool CountNewPosition, const bool DrawOutsideBorder) const;
+    inline vmath::vec3 RenderObject(const CellEngineAtom& AtomObject, const vmath::mat4& ViewMatrix, const vmath::vec3& MassCenter, const float Distance, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, uint64_t& NumberOfAllRenderedAtoms);
 protected:
     static inline bool CheckDistanceToDrawDetailsInAtomScale(const float XNew, const float YNew, const float ZNew, const float Distance);
 };
@@ -233,31 +233,31 @@ inline void CellEngineOpenGLVisualiser::DrawCenterPoint(uniforms_block*  MatrixU
     CATCH("drawing center point for data for cell visualization")
 }
 
-inline FloatVectorType CellEngineOpenGLVisualiser::GetFinalModelPosition(const FloatVectorType& AtomPosition, uniforms_block*  MatrixUniformBlockForVertexShaderPointer, const FloatVectorType& MassCenter, const float Distance, const bool CountNewPosition, const bool DrawOutsideBorder) const
+inline vmath::vec3 CellEngineOpenGLVisualiser::GetFinalModelPosition(const vmath::vec3& AtomPosition, uniforms_block*  MatrixUniformBlockForVertexShaderPointer, const vmath::vec3& MassCenter, const float Distance, const bool CountNewPosition, const bool DrawOutsideBorder) const
 {
     try
     {
         if (CountNewPosition == true)
         {
-            float XNew = MatrixUniformBlockForVertexShaderPointer->mv_matrix[0][0] * (AtomPosition.X + CameraXPosition - MassCenter.X) + MatrixUniformBlockForVertexShaderPointer->mv_matrix[1][0] * (AtomPosition.Y + CameraYPosition - MassCenter.Y) + MatrixUniformBlockForVertexShaderPointer->mv_matrix[2][0] * (AtomPosition.Z + CameraZPosition - MassCenter.Z);
-            float YNew = MatrixUniformBlockForVertexShaderPointer->mv_matrix[0][1] * (AtomPosition.X + CameraXPosition - MassCenter.X) + MatrixUniformBlockForVertexShaderPointer->mv_matrix[1][1] * (AtomPosition.Y + CameraYPosition - MassCenter.Y) + MatrixUniformBlockForVertexShaderPointer->mv_matrix[2][1] * (AtomPosition.Z + CameraZPosition - MassCenter.Z);
-            float ZNew = MatrixUniformBlockForVertexShaderPointer->mv_matrix[0][2] * (AtomPosition.X + CameraXPosition - MassCenter.X) + MatrixUniformBlockForVertexShaderPointer->mv_matrix[1][2] * (AtomPosition.Y + CameraYPosition - MassCenter.Y) + MatrixUniformBlockForVertexShaderPointer->mv_matrix[2][2] * (AtomPosition.Z + CameraZPosition - MassCenter.Z);
+            float XNew = MatrixUniformBlockForVertexShaderPointer->mv_matrix[0][0] * (AtomPosition.X() + CameraXPosition - MassCenter.X()) + MatrixUniformBlockForVertexShaderPointer->mv_matrix[1][0] * (AtomPosition.Y() + CameraYPosition - MassCenter.Y()) + MatrixUniformBlockForVertexShaderPointer->mv_matrix[2][0] * (AtomPosition.Z() + CameraZPosition - MassCenter.Z());
+            float YNew = MatrixUniformBlockForVertexShaderPointer->mv_matrix[0][1] * (AtomPosition.X() + CameraXPosition - MassCenter.X()) + MatrixUniformBlockForVertexShaderPointer->mv_matrix[1][1] * (AtomPosition.Y() + CameraYPosition - MassCenter.Y()) + MatrixUniformBlockForVertexShaderPointer->mv_matrix[2][1] * (AtomPosition.Z() + CameraZPosition - MassCenter.Z());
+            float ZNew = MatrixUniformBlockForVertexShaderPointer->mv_matrix[0][2] * (AtomPosition.X() + CameraXPosition - MassCenter.X()) + MatrixUniformBlockForVertexShaderPointer->mv_matrix[1][2] * (AtomPosition.Y() + CameraYPosition - MassCenter.Y()) + MatrixUniformBlockForVertexShaderPointer->mv_matrix[2][2] * (AtomPosition.Z() + CameraZPosition - MassCenter.Z());
 
             if (DrawOutsideBorder == true)
                 if (CheckDistanceToDrawDetailsInAtomScale(XNew, YNew, ZNew, Distance) == true)
                     MatrixUniformBlockForVertexShaderPointer->color = vmath::vec3(0.7, 0.2, 0.9);
 
-            return FloatVectorType(XNew, YNew, ZNew);
+            return vmath::vec3(XNew, YNew, ZNew);
         }
     }
     CATCH("getting final model position for data for cell visualization")
 
-    return FloatVectorType(0, 0, 0);
+    return vmath::vec3(0, 0, 0);
 }
 
-inline FloatVectorType CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom& AtomObject, const vmath::mat4& ViewMatrix, const FloatVectorType& MassCenter, const float Distance, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, uint64_t& NumberOfAllRenderedAtoms)
+inline vmath::vec3 CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom& AtomObject, const vmath::mat4& ViewMatrix, const vmath::vec3& MassCenter, const float Distance, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, uint64_t& NumberOfAllRenderedAtoms)
 {
-    FloatVectorType FinalModelPosition;
+    vmath::vec3 FinalModelPosition;
 
     try
     {
@@ -266,8 +266,8 @@ inline FloatVectorType CellEngineOpenGLVisualiser::RenderObject(const CellEngine
         glBindBufferBase(GL_UNIFORM_BUFFER, 0, uniforms_buffer);
         auto MatrixUniformBlockForVertexShaderPointer = (uniforms_block*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(uniforms_block), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
 
-        FloatVectorType AtomPosition = LengthUnit * AtomObject.Position();
-        vmath::mat4 ModelMatrix = vmath::translate(AtomPosition.X - CameraXPosition - MassCenter.X, AtomPosition.Y + CameraYPosition - MassCenter.Y, AtomPosition.Z + CameraZPosition - MassCenter.Z) * vmath::scale(vmath::vec3(SizeX, SizeY, SizeZ));
+        vmath::vec3 AtomPosition = LengthUnit * AtomObject.Position();
+        vmath::mat4 ModelMatrix = vmath::translate(AtomPosition.X() - CameraXPosition - MassCenter.X(), AtomPosition.Y() + CameraYPosition - MassCenter.Y(), AtomPosition.Z() + CameraZPosition - MassCenter.Z()) * vmath::scale(vmath::vec3(SizeX, SizeY, SizeZ));
 
         MatrixUniformBlockForVertexShaderPointer->view_matrix = ViewMatrix;
         MatrixUniformBlockForVertexShaderPointer->proj_matrix = vmath::perspective(50.0f, (float)info.windowWidth / (float)info.windowHeight, 0.1f, 5000.0f);
@@ -303,7 +303,7 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
         vmath::vec3 ViewPositionVector = vmath::vec3(ViewX, ViewY, ViewZ);
         vmath::mat4 ViewMatrix = vmath::lookat(ViewPositionVector, vmath::vec3(0.0f, 0.0f, 0.0f), vmath::vec3(0.0f, 1.0f, 0.0f)) * vmath::rotate(RotationAngle1, RotationAngle2, RotationAngle3) * RotationMatrix;
 
-        FloatVectorType MassCenter = CellEngineDataFileObjectPointer->GetMassCenter(CellEngineDataFileObjectPointer->GetParticlesCenters());
+        vmath::vec3 MassCenter = CellEngineDataFileObjectPointer->GetMassCenter(CellEngineDataFileObjectPointer->GetParticlesCenters());
 
         glUniform1f(uniforms[per_vertex ? 1 : 0].specular_power, powf(2.0f, 3.0f));
         glUniform3fv(uniforms[per_vertex ? 1 : 0].specular_albedo, 1, vmath::vec3(1.0f / 9.0f + 1.0f / 9.0f));
@@ -317,10 +317,10 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
         {
             auto ParticlesCenterObject = *ParticlesCenterIterator;
 
-            FloatVectorType FinalModelPosition = RenderObject(ParticlesCenterObject, ViewMatrix, MassCenter, Distance, true, ParticlesCenterIterator == CellEngineDataFileObjectPointer->GetParticlesCenters().end() - 1, true, NumberOfAllRenderedAtoms);
+            vmath::vec3 FinalModelPosition = RenderObject(ParticlesCenterObject, ViewMatrix, MassCenter, Distance, true, ParticlesCenterIterator == CellEngineDataFileObjectPointer->GetParticlesCenters().end() - 1, true, NumberOfAllRenderedAtoms);
 
             if (CellEngineDataFileObjectPointer->ShowDetailsInAtomScale == true)
-                if (CheckDistanceToDrawDetailsInAtomScale(FinalModelPosition.X, FinalModelPosition.Y, FinalModelPosition.Z, Distance) == true)
+                if (CheckDistanceToDrawDetailsInAtomScale(FinalModelPosition.X(), FinalModelPosition.Y(), FinalModelPosition.Z(), Distance) == true)
                 {
                     NumberOfFoundParticlesCenterToBeRenderedInAtomDetails++;
 

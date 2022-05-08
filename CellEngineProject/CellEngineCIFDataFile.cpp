@@ -346,8 +346,8 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
                         }
                     }
 
-                    FloatVectorType MassCenter = GetMassCenter(LocalCellEngineAllAtomsObject);
-                    LocalCellEngineParticlesCentersObject.emplace_back(CellEngineAtom(MassCenter.X, MassCenter.Y, MassCenter.Z, AllAtoms.size(), LocalCellEngineParticlesCentersObject.size(), (char*)("H"), (char*)("MTR"), (char*)LocalCellEngineAllAtomsObject.front().Chain, LocalCellEngineAllAtomsObject.front().Color));
+                    vmath::vec3 MassCenter = GetMassCenter(LocalCellEngineAllAtomsObject);
+                    LocalCellEngineParticlesCentersObject.emplace_back(CellEngineAtom(MassCenter.X(), MassCenter.Y(), MassCenter.Z(), AllAtoms.size(), LocalCellEngineParticlesCentersObject.size(), (char*)("H"), (char*)("MTR"), (char*)LocalCellEngineAllAtomsObject.front().Chain, LocalCellEngineAllAtomsObject.front().Color));
 
                     AllAtoms.emplace_back(LocalCellEngineAllAtomsObject);
                 }
