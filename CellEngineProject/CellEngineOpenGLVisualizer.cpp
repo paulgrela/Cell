@@ -44,7 +44,6 @@ protected:
     }
 protected:
     void InitArcBall();
-    vmath::vec3 ChooseColor(const CellEngineAtom& ElementObject) ;
 protected:
     void InitExternalData() override;
 protected:
@@ -262,7 +261,6 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
             {
                 model_matrix = vmath::translate(AtomPosition.X + CameraXPosition - MassCenter.X, AtomPosition.Y + CameraYPosition - MassCenter.Y, AtomPosition.Z + CameraZPosition - MassCenter.Z) * vmath::scale(vmath::vec3(SizeX, SizeY, SizeZ));
                 //model_matrix = vmath::translate(AtomPosition.X + CameraXPosition, AtomPosition.Y + CameraYPosition, AtomPosition.Z + CameraZPosition) * vmath::scale(vmath::vec3(SizeX, SizeY, SizeZ));
-                //block->color = ChooseColor(AtomObject);
                 block->color = AtomObject.Color;
             }
             else
@@ -276,7 +274,8 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
 
 
 
-            float Distance = 1550;
+            //float Distance = 1550;
+            float Distance = 250;
             float XNew = block->mv_matrix[0][0] * (AtomPosition.X + CameraXPosition - MassCenter.X) + block->mv_matrix[1][0] * (AtomPosition.Y + CameraYPosition - MassCenter.Y) + block->mv_matrix[2][0] * (AtomPosition.Z + CameraZPosition - MassCenter.Z);
             float YNew = block->mv_matrix[0][1] * (AtomPosition.X + CameraXPosition - MassCenter.X) + block->mv_matrix[1][1] * (AtomPosition.Y + CameraYPosition - MassCenter.Y) + block->mv_matrix[2][1] * (AtomPosition.Z + CameraZPosition - MassCenter.Z);
             float ZNew = block->mv_matrix[0][2] * (AtomPosition.X + CameraXPosition - MassCenter.X) + block->mv_matrix[1][2] * (AtomPosition.Y + CameraYPosition - MassCenter.Y) + block->mv_matrix[2][2] * (AtomPosition.Z + CameraZPosition - MassCenter.Z);
@@ -291,9 +290,10 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
 //                        getchar();
 
 
-            if (sqrt((XNew * XNew) + (YNew * YNew) + (ZNew * ZNew)) > Distance && ZNew > 1500)
-                //block->color = vmath::vec3(0.7, 0.2, 0.9);
-                block->color = vmath::vec3((float)rand() / RAND_MAX, (float)rand() / RAND_MAX, (float)rand() / RAND_MAX);
+            //if (sqrt((XNew * XNew) + (YNew * YNew) + (ZNew * ZNew)) > Distance && ZNew > 1500)
+            if (sqrt((XNew * XNew) + (YNew * YNew) + (ZNew * ZNew)) > Distance && ZNew > 200 && XNew > -100 && XNew < 100 && YNew >- 100 && YNew < 100)
+                block->color = vmath::vec3(0.7, 0.2, 0.9);
+                //block->color = vmath::vec3((float)rand() / RAND_MAX, (float)rand() / RAND_MAX, (float)rand() / RAND_MAX);
             //if (XNew > -25 && XNew < 25 && YNew >- 25 && YNew < 25 && ZNew > -100 + ViewZ)
 //            if (XNew > -25 && XNew < 25 && YNew >- 25 && YNew < 25 && ZNew > -50 * 2 + ViewZ)
 //            if (XNew > -10 && XNew < 10 && YNew >- 10 && YNew < 10 && ZNew > -10 && ZNew < 10)

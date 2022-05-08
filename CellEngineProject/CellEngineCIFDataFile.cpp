@@ -95,7 +95,6 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
         regex RegexObject1("(\\d+)-(\\d+)");
 
         vector<string> AppliedChainsNames;
-        //regex RegexObject2("([A-Z]+\\d+)");
         regex RegexObject2("([A-z]+[0-9]*)");
 
         while (getline(File, Line, '\n'))
@@ -144,18 +143,24 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
                 for ( ; regex_search(pos, end, SMatchObject, RegexObject2); pos = SMatchObject.suffix().first)
                     AppliedChainsNames.push_back(SMatchObject.str(1));
 
+                vmath::vec3 ChainColor;
+                if (AppliedChainsNames.empty() == false)
+                    ChainColor = ChooseColor(*AppliedChainsNames.begin());
+                if (ChainColor.data[0] == 0.0 && ChainColor.data[1] == 0.0 && ChainColor.data[2] == 0.0)
+                    ChainColor = vmath::vec3((float)rand() / RAND_MAX, (float)rand() / RAND_MAX, (float)rand() / RAND_MAX);
+
                 for (const auto& AppliedMatrixId : AppliedMatrixesIds)
                 {
                     LocalCellEngineAllAtomsObject.clear();
                     bool First = true;
 
-                    //AtomsPositionsMatrixes[AppliedMatrixId - 2].Used = true;
+                    AtomsPositionsMatrixes[AppliedMatrixId - 2].Used = true;
 
-                    vmath::vec3 ChainColor;
-                    if (AppliedChainsNames.empty() == false)
-                        ChainColor = ChooseColor(*AppliedChainsNames.begin());
-                    if (ChainColor.data[0] == 0.0 && ChainColor.data[1] == 0.0 && ChainColor.data[2] == 0.0)
-                        ChainColor = vmath::vec3((float)rand() / RAND_MAX, (float)rand() / RAND_MAX, (float)rand() / RAND_MAX);
+//                    vmath::vec3 ChainColor;
+//                    if (AppliedChainsNames.empty() == false)
+//                        ChainColor = ChooseColor(*AppliedChainsNames.begin());
+//                    if (ChainColor.data[0] == 0.0 && ChainColor.data[1] == 0.0 && ChainColor.data[2] == 0.0)
+//                        ChainColor = vmath::vec3((float)rand() / RAND_MAX, (float)rand() / RAND_MAX, (float)rand() / RAND_MAX);
 
                     if (AppliedChainsNames.empty() == true)
                         LoggersManagerObject.Log(STREAM("ERROR IN CIF FILE AppliedChainsNames EMPTY = " << to_string(AppliedMatrixId)));
@@ -167,8 +172,6 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
                             LoggersManagerObject.Log(STREAM("ERROR IN CIF FILE LACKS AppliedChainName: " << AppliedChainName));
                         else
                         {
-                            //AtomsPositionsMatrixes[AppliedMatrixId - 2].Used = true;
-
                             if (ChainsNames.find(AppliedChainName)->second.empty() == true)
                                 LoggersManagerObject.Log(STREAM("ERROR IN CIF FILE - ChainsNames.find(AppliedChainName)->second.size() == 0 " << AppliedChainName));
 
@@ -326,7 +329,6 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
     //                            AppliedAtom.Y = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][0] * AppliedAtom.X + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][1] * AppliedAtom.Y + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][2] * AppliedAtom.Z + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][3] + AppliedAtom.Y;
     //                            AppliedAtom.Z = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][0] * AppliedAtom.X + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][1] * AppliedAtom.Y + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][2] * AppliedAtom.Z + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][3] + AppliedAtom.Z;
 
-
     //                            AppliedAtom.X = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][0] * AppliedAtom.X + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][0] * AppliedAtom.Y + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][0] * AppliedAtom.Z + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[3][0];
     //                            AppliedAtom.Y = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][1] * AppliedAtom.X + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][1] * AppliedAtom.Y + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][1] * AppliedAtom.Z + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[3][1];
     //                            AppliedAtom.Z = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][2] * AppliedAtom.X + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][2] * AppliedAtom.Y + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][2] * AppliedAtom.Z + AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[3][2];
@@ -335,24 +337,31 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
                                         LoggersManagerObject.Log(STREAM("B4: " << to_string(AppliedAtom.X) << " " << to_string(AppliedAtom.Y) << " " << to_string(AppliedAtom.Z) << " " << AppliedAtom.Chain << endl));
                                 if(aaa)
                                         getchar();
-                                //AtomsPositionsMatrixes[AppliedMatrixId - 2].Used = true;
 
 
                                 AppliedAtom.Color = ChainColor;
 
-                                if (First == true)
-                                {
-                                    First = false;
-                                    //AtomsPositionsMatrixes[AppliedMatrixId - 2].Used = true;
-                                    //LocalCellEngineAtomsObject.emplace_back(CellEngineAtom(AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][3], AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][3], AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][3], AllAtoms.size() , LocalCellEngineAtomsObject.size(), (char*)("H"), (char*)("MTR"), (char*)AppliedChainName.c_str()));
-                                    //LocalCellEngineAtomsObject.emplace_back(CellEngineAtom(AppliedAtom.X, AppliedAtom.Y, AppliedAtom.Z, LocalCellEngineAtomsObject.size(), LocalCellEngineAtomsObject.size(), (char*)("H"), (char*)("MTR"), (char*)AppliedChainName.c_str()));
-                                    LocalCellEngineAtomsObject.emplace_back(CellEngineAtom(AppliedAtom.X, AppliedAtom.Y, AppliedAtom.Z, AllAtoms.size(), LocalCellEngineAtomsObject.size(), (char*)("H"), (char*)("MTR"), (char*)AppliedChainName.c_str(), AppliedAtom.Color));
-                                }
+//                                if (First == true)
+//                                {
+//                                    First = false;
+//                                    //LocalCellEngineAtomsObject.emplace_back(CellEngineAtom(AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][3], AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][3], AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][3], AllAtoms.size() , LocalCellEngineAtomsObject.size(), (char*)("H"), (char*)("MTR"), (char*)AppliedChainName.c_str()));
+//                                    //LocalCellEngineAtomsObject.emplace_back(CellEngineAtom(AppliedAtom.X, AppliedAtom.Y, AppliedAtom.Z, LocalCellEngineAtomsObject.size(), LocalCellEngineAtomsObject.size(), (char*)("H"), (char*)("MTR"), (char*)AppliedChainName.c_str()));
+//                                    LocalCellEngineAtomsObject.emplace_back(CellEngineAtom(AppliedAtom.X, AppliedAtom.Y, AppliedAtom.Z, AllAtoms.size(), LocalCellEngineAtomsObject.size(), (char*)("H"), (char*)("MTR"), (char*)AppliedChainName.c_str(), AppliedAtom.Color));
+//                                }
 
                                 LocalCellEngineAllAtomsObject.emplace_back(AppliedAtom);
                             }
                         }
                     }
+
+
+                    FloatVectorType MassCenter(0.0, 0.0, 0.0);
+                    for (const CellEngineAtom& AtomObject : LocalCellEngineAllAtomsObject)
+                        MassCenter += AtomObject.Position();
+                    MassCenter /= LocalCellEngineAllAtomsObject.size();
+                    LocalCellEngineAtomsObject.emplace_back(CellEngineAtom(MassCenter.X, MassCenter.Y, MassCenter.Z, AllAtoms.size(), LocalCellEngineAtomsObject.size(), (char*)("H"), (char*)("MTR"), (char*)LocalCellEngineAllAtomsObject.front().Chain, LocalCellEngineAllAtomsObject.front().Color));
+
+
                     AllAtoms.emplace_back(LocalCellEngineAllAtomsObject);
                 }
             }
