@@ -14,7 +14,7 @@ namespace sb7
             GLuint result = 0;
             FILE * fp;
             size_t filesize;
-            char * data;
+            char* data;
 
             fp = fopen(filename, "rb");
 
@@ -39,7 +39,7 @@ namespace sb7
             if (!result)
                 goto fail_shader_alloc;
 
-            glShaderSource(result, 1, &data, NULL);
+            glShaderSource(result, 1, &data, nullptr);
 
             delete [] data;
 
@@ -53,15 +53,15 @@ namespace sb7
                 if (!status)
                 {
                     char buffer[4096];
-                    glGetShaderInfoLog(result, 4096, NULL, buffer);
-        #ifdef _WIN32
+                    glGetShaderInfoLog(result, 4096, nullptr, buffer);
+                    #ifdef _WIN32
                     OutputDebugStringA(filename);
                     OutputDebugStringA(":");
                     OutputDebugStringA(buffer);
                     OutputDebugStringA("\n");
-        #else
+                    #else
                     fprintf(stderr, "%s: %s\n", filename, buffer);
-        #endif
+                    #endif
                     goto fail_compile_shader;
                 }
             }
@@ -77,9 +77,7 @@ namespace sb7
             return result;
         }
 
-        GLuint from_string(const char * source,
-                           GLenum shader_type,
-                           bool check_errors)
+        GLuint from_string(const char * source, GLenum shader_type, bool check_errors)
         {
             GLuint sh;
 
@@ -98,13 +96,13 @@ namespace sb7
                 if (!status)
                 {
                     char buffer[4096];
-                    glGetShaderInfoLog(sh, 4096, NULL, buffer);
-        #ifdef _WIN32
+                    glGetShaderInfoLog(sh, 4096, nullptr, buffer);
+                    #ifdef _WIN32
                     OutputDebugStringA(buffer);
                     OutputDebugStringA("\n");
-        #else
+                    #else
                     fprintf(stderr, "%s\n", buffer);
-        #endif
+                    #endif
                     goto fail_compile_shader;
                 }
             }
@@ -121,52 +119,44 @@ namespace sb7
 
         namespace program
         {
-
-        GLuint link_from_shaders(const GLuint * shaders,
-                                 int shader_count,
-                                 bool delete_shaders,
-                                 bool check_errors)
-        {
-            int shader_index;
-
-            GLuint program;
-
-            program = glCreateProgram();
-
-            for (shader_index = 0; shader_index < shader_count; shader_index++)
+            GLuint link_from_shaders(const GLuint * shaders, int shader_count, bool delete_shaders, bool check_errors)
             {
-                glAttachShader(program, shaders[shader_index]);
-            }
+                int shader_index;
 
-            glLinkProgram(program);
+                GLuint program;
 
-            if (check_errors)
-            {
-                GLint status;
-                glGetProgramiv(program, GL_LINK_STATUS, &status);
+                program = glCreateProgram();
 
-                if (!status)
-                {
-                    char buffer[4096];
-                    glGetProgramInfoLog(program, 4096, NULL, buffer);
-        #ifdef _WIN32
-                    OutputDebugStringA(buffer);
-                    OutputDebugStringA("\n");
-        #endif
-                    glDeleteProgram(program);
-                    return 0;
-                }
-            }
-
-            if (delete_shaders)
-            {
                 for (shader_index = 0; shader_index < shader_count; shader_index++)
-                {
-                    glDeleteShader(shaders[shader_index]);
-                }
-            }
+                    glAttachShader(program, shaders[shader_index]);
 
-            return program;
-        }
+                glLinkProgram(program);
+
+                if (check_errors)
+                {
+                    GLint status;
+                    glGetProgramiv(program, GL_LINK_STATUS, &status);
+
+                    if (!status)
+                    {
+                        char buffer[4096];
+                        glGetProgramInfoLog(program, 4096, nullptr, buffer);
+                        #ifdef _WIN32
+                        OutputDebugStringA(buffer);
+                        OutputDebugStringA("\n");
+                        #endif
+                        glDeleteProgram(program);
+                        return 0;
+                    }
+                }
+
+                if (delete_shaders)
+                    for (shader_index = 0; shader_index < shader_count; shader_index++)
+                    {
+                        glDeleteShader(shaders[shader_index]);
+                    }
+
+                return program;
+            }
     }
 }

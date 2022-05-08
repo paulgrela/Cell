@@ -84,7 +84,7 @@ namespace vmath
     class vecN
     {
     public:
-        typedef class vecN<T,len> my_type;
+        typedef class vecN<T, len> my_type;
         typedef T element_type;
 
         inline vecN() = default;
@@ -250,7 +250,7 @@ namespace vmath
     };
 
     template <typename T>
-    class Tvec2 : public vecN<T,2>
+    class Tvec2 : public vecN<T, 2>
     {
     public:
         typedef vecN<T,2> base;
@@ -266,10 +266,10 @@ namespace vmath
     };
 
     template <typename T>
-    class Tvec3 : public vecN<T,3>
+    class Tvec3 : public vecN<T, 3>
     {
     public:
-        typedef vecN<T,3> base;
+        typedef vecN<T, 3> base;
 
         explicit inline Tvec3() = default;
 
@@ -298,10 +298,10 @@ namespace vmath
     };
 
     template <typename T>
-    class Tvec4 : public vecN<T,4>
+    class Tvec4 : public vecN<T, 4>
     {
     public:
-        typedef vecN<T,4> base;
+        typedef vecN<T, 4> base;
 
         explicit inline Tvec4() = default;
 
@@ -385,7 +385,7 @@ namespace vmath
     typedef Tvec4<double> dvec4;
 
     template <typename T, int n>
-    static inline const vecN<T,n> operator * (T x, const vecN<T,n>& v)
+    static inline const vecN<T, n> operator * (T x, const vecN<T, n>& v)
     {
         return v * x;
     }
@@ -409,7 +409,7 @@ namespace vmath
     }
 
     template <typename T, int len>
-    static inline T dot(const vecN<T,len>& a, const vecN<T,len>& b)
+    static inline T dot(const vecN<T, len>& a, const vecN<T, len>& b)
     {
         T total = T(0);
 
@@ -420,7 +420,7 @@ namespace vmath
     }
 
     template <typename T>
-    static inline vecN<T,3> cross(const vecN<T,3>& a, const vecN<T,3>& b)
+    static inline vecN<T,3> cross(const vecN<T,3>& a, const vecN<T, 3>& b)
     {
         return Tvec3<T>(a[1] * b[2] - b[1] * a[2],
                         a[2] * b[0] - b[2] * a[0],
@@ -439,19 +439,19 @@ namespace vmath
     }
 
     template <typename T, int len>
-    static inline vecN<T,len> normalize(const vecN<T,len>& v)
+    static inline vecN<T,len> normalize(const vecN<T, len>& v)
     {
         return v / length(v);
     }
 
     template <typename T, int len>
-    static inline T distance(const vecN<T,len>& a, const vecN<T,len>& b)
+    static inline T distance(const vecN<T, len>& a, const vecN<T, len>& b)
     {
         return length(b - a);
     }
 
     template <typename T, int len>
-    static inline T angle(const vecN<T,len>& a, const vecN<T,len>& b)
+    static inline T angle(const vecN<T, len>& a, const vecN<T, len>& b)
     {
         return arccos(dot(a, b));
     }
@@ -624,12 +624,10 @@ namespace vmath
             return m;
         }
 
-        /*
         inline T length() const
         {
-            return vmath::length( Tvec4<T>(r, v) );
+            return vmath::length(Tvec4<T>(r, v));
         }
-        */
 
     private:
         union
@@ -677,8 +675,8 @@ namespace vmath
     class matNM
     {
     public:
-        typedef class matNM<T,w,h> my_type;
-        typedef class vecN<T,h> vector_type;
+        typedef class matNM<T, w, h> my_type;
+        typedef class vecN<T, h> vector_type;
 
         inline matNM()
         {
@@ -799,9 +797,9 @@ namespace vmath
             return &data[0][0]; 
         }
 
-        inline matNM<T,h,w> transpose(void) const
+        inline matNM<T, h, w> transpose(void) const
         {
-            matNM<T,h,w> result;
+            matNM<T, h, w> result;
 
             for (int y = 0; y < w; y++)
                 for (int x = 0; x < h; x++)
@@ -824,7 +822,7 @@ namespace vmath
         static inline int height(void) { return h; }
 
     public:
-        vecN<T,h> data[w];
+        vecN<T, h> data[w];
 
         inline void assign(const matNM& that)
         {
@@ -833,13 +831,12 @@ namespace vmath
         }
     };
 
-    /*
     template <typename T, const int N>
-    class TmatN : public matNM<T,N,N>
+    class TmatN : public matNM<T, N, N>
     {
     public:
-        typedef matNM<T,N,N> base;
-        typedef TmatN<T,N> my_type;
+        typedef matNM<T, N, N> base;
+        typedef TmatN<T, N> my_type;
 
         inline TmatN() {}
         inline TmatN(const my_type& that) : base(that) {}
@@ -851,20 +848,22 @@ namespace vmath
             my_type result;
             int x, y;
 
-            for (y = 0; y < h; y++)
-                for (x = 0; x < h; x++)
+            for (y = 0; y < N; y++)
+                for (x = 0; x < N; x++)
                     result[x][y] = data[y][x];
 
             return result;
         }
+    public:
+        vecN<T, N> data[N];
     };
-    */
+
 
     template <typename T>
-    class Tmat4 : public matNM<T,4,4>
+    class Tmat4 : public matNM<T, 4, 4>
     {
     public:
-        typedef matNM<T,4,4> base;
+        typedef matNM<T, 4, 4> base;
         typedef Tmat4<T> my_type;
 
         inline Tmat4() {}
@@ -889,10 +888,10 @@ namespace vmath
     typedef Tmat4<double> dmat4;
 
     template <typename T>
-    class Tmat3 : public matNM<T,3,3>
+    class Tmat3 : public matNM<T, 3, 3>
     {
     public:
-        typedef matNM<T,3,3> base;
+        typedef matNM<T, 3, 3> base;
         typedef Tmat3<T> my_type;
 
         inline Tmat3() {}
@@ -915,10 +914,10 @@ namespace vmath
     typedef Tmat3<double> dmat3;
 
     template <typename T>
-    class Tmat2 : public matNM<T,2,2>
+    class Tmat2 : public matNM<T, 2, 2>
     {
     public:
-        typedef matNM<T,2,2> base;
+        typedef matNM<T, 2, 2> base;
         typedef Tmat2<T> my_type;
 
         inline Tmat2() {}
@@ -1184,9 +1183,8 @@ namespace vmath
         return result;
     }
 
-    /*
     template <typename T>
-    static inline void quaternionToMatrix(const Tquaternion<T>& q, matNM<T,4,4>& m)
+    static inline void quaternionToMatrixDetailed(const Tquaternion<T>& q, matNM<T,4,4>& m)
     {
         m[0][0] = q[0] * q[0] + q[1] * q[1] - q[2] * q[2] - q[3] * q[3];
         m[0][1] = T(2) * (q[1] * q[2] + q[0] * q[3]);
@@ -1208,7 +1206,6 @@ namespace vmath
         m[3][2] = 0.0f;
         m[3][3] = 1.0f;
     }
-    */
 
     template <typename T>
     static inline void quaternionToMatrix(const Tquaternion<T>& q, matNM<T,4,4>& m)

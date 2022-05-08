@@ -9,8 +9,6 @@
 #include <cstdlib>
 #include <cstring>
 
-// #include <sb7.h>
-
 #include "GL/gl3w.h"
 
 namespace sb7
@@ -86,8 +84,7 @@ namespace sb7
                 return stride * h.pixelheight;
             }
 
-            extern
-            unsigned int load(const char * filename, unsigned int tex)
+            extern unsigned int load(const char * filename, unsigned int tex)
             {
                 FILE * fp;
                 GLuint temp = 0;
@@ -190,9 +187,7 @@ namespace sb7
                     case GL_TEXTURE_2D:
                         // glTexImage2D(GL_TEXTURE_2D, 0, h.glinternalformat, h.pixelwidth, h.pixelheight, 0, h.glformat, h.gltype, data);
                         if (h.gltype == GL_NONE)
-                        {
                             glCompressedTexImage2D(GL_TEXTURE_2D, 0, h.glinternalformat, h.pixelwidth, h.pixelheight, 0, 420 * 380 / 2, data);
-                        }
                         else
                         {
                             glTexStorage2D(GL_TEXTURE_2D, h.miplevels, h.glinternalformat, h.pixelwidth, h.pixelheight);

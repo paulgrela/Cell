@@ -60,6 +60,8 @@ CellEnginePDBDataFile::CellEnginePDBDataFile(const string_view FileName)
 {
     ViewStep = 3;
 
+    ShowDetailsInAtomScale = false;
+
     ChosenStructureIndex = 0;
 
 	ReadDataFromFile(FileName);

@@ -87,7 +87,6 @@ private:
     sb7::object object;
 
     bool per_vertex;
-
 private:
     Matrix3fT ArcBallPrevRotationMatrix{};
     Matrix3fT ArcBallActualRotationMatrix{};
@@ -115,12 +114,8 @@ private:
     float SizeZ = 1;
 private:
     uint64_t PressedRightMouseButton = 0;
-
 private:
-    std::shared_ptr<CellEnginePDBDataFile> PDBDataFileObjectPointer;
-    std::shared_ptr<CellEngineCIFDataFile> CIFDataFileObjectPointer;
-
-    std::shared_ptr<CellEngineDataFile> CellEngineDataFileObjectPointer;
+    std::unique_ptr<CellEngineDataFile> CellEngineDataFileObjectPointer;
 };
 
 void InitializeLoggerManagerParameters()
@@ -150,13 +145,10 @@ void CellEngineOpenGLVisualiser::InitExternalData()
         else
             LoggersManagerObject.Log(STREAM("Lack of file name in program parameters"));
 
-        PDBDataFileObjectPointer = nullptr;
-        CIFDataFileObjectPointer = nullptr;
-
         if (string_utils::check_end_str(FileName, ".pdb") == true)
-            CellEngineDataFileObjectPointer = PDBDataFileObjectPointer = make_unique<CellEnginePDBDataFile>(FileName);
+            CellEngineDataFileObjectPointer = make_unique<CellEnginePDBDataFile>(FileName);
         else
-            CellEngineDataFileObjectPointer = CIFDataFileObjectPointer = make_unique<CellEngineCIFDataFile>(FileName);
+            CellEngineDataFileObjectPointer = make_unique<CellEngineCIFDataFile>(FileName);
     }
     CATCH("reading of data file")
 }
@@ -287,7 +279,7 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
             object.render();
 
 
-            if (PDBDataFileObjectPointer == nullptr)
+            if (CellEngineDataFileObjectPointer->ShowDetailsInAtomScale == true)
                 if (sqrt((XNew * XNew) + (YNew * YNew) + (ZNew * ZNew)) > Distance && ZNew > 200 && XNew > -100 && XNew < 100 && YNew >- 100 && YNew < 100)
 //                if (sqrt((XNew * XNew) + (YNew * YNew) + (ZNew * ZNew)) > Distance && ZNew > 1500)
 //                if (sqrt((XNew * XNew) + (YNew * YNew) + (ZNew * ZNew)) > Distance)
@@ -353,6 +345,8 @@ void CellEngineOpenGLVisualiser::onKey(int key, int action)
                 case 'F': RotationAngle2 -= 1; break;
                 case 'G': RotationAngle3 += 1; break;
                 case 'H': RotationAngle3 -= 1; break;
+
+                case 'J': CellEngineDataFileObjectPointer->ShowDetailsInAtomScale = !CellEngineDataFileObjectPointer->ShowDetailsInAtomScale; break;
 
                 case 'O': CellEngineDataFileObjectPointer->StartFilmOfStructures(); break;
                 case 'P': CellEngineDataFileObjectPointer->StopFilmOfStructures(); break;

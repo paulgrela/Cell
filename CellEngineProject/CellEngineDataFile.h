@@ -8,6 +8,7 @@ class CellEngineDataFile
 {
 public:
     float ViewStep;
+    bool ShowDetailsInAtomScale = false;
 public:
     UnsignedIntType ChosenStructureIndex = 0;
     bool FilmOfStructuresActive = false;

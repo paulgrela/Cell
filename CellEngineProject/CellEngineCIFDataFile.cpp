@@ -67,6 +67,8 @@ CellEngineCIFDataFile::CellEngineCIFDataFile(const string_view FileName)
 {
     ViewStep = 50;
 
+    ShowDetailsInAtomScale = true;
+
     ChosenStructureIndex = 0;
 
     ReadDataFromFile(FileName);
