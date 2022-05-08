@@ -39,9 +39,6 @@ public:
     ~CellEngineCIFDataFile() = default;
 public:
     static CellEngineAtom ParseRecord(const char* LocalPDBRecord);
-//    [[nodiscard]] IntType GetNumberOfAtoms() const;
-//    [[nodiscard]] const CellEngineAtom& GetAtom(IntType Index) const;
-//    [[nodiscard]] FloatVectorType MassCenter() override;
 };
 
 #endif

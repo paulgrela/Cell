@@ -12,10 +12,10 @@ public:
     UnsignedIntType ChosenStructureIndex = 0;
     bool FilmOfStructuresActive = false;
 protected:
-    std::vector<std::vector<CellEngineAtom>> Atoms;
+    std::vector<std::vector<CellEngineAtom>> ParticlesCenters;
     std::vector<std::vector<CellEngineAtom>> AllAtoms;
 public:
-    FloatVectorType GetMassCenter(const std::vector<CellEngineAtom> AtomsParam)
+    static FloatVectorType GetMassCenter(const std::vector<CellEngineAtom>& AtomsParam)
     {
         FloatVectorType MassCenter(0.0, 0.0, 0.0);
 
@@ -34,13 +34,13 @@ public:
     {
         return AllAtoms;
     }
-    [[nodiscard]] std::vector<CellEngineAtom>& GetAtoms()
+    [[nodiscard]] std::vector<CellEngineAtom>& GetParticlesCenters()
     {
-        return Atoms[ChosenStructureIndex];
+        return ParticlesCenters[ChosenStructureIndex];
     }
     [[nodiscard]] IntType GetNumberOfStructures()
     {
-        return Atoms.size();
+        return ParticlesCenters.size();
     }
 public:
     void ShowNextStructureFromActiveFilm()

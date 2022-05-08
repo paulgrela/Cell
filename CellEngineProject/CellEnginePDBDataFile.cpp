@@ -86,7 +86,7 @@ void CellEnginePDBDataFile::ReadDataFromFile(const string_view FileName)
             if (Line.substr(0, 3) == "END" )
             {
                 StructureObject.emplace_back(CellEngineAtom());
-                Atoms.push_back(StructureObject);
+                ParticlesCenters.push_back(StructureObject);
                 StructureObject.clear();
             }
         }

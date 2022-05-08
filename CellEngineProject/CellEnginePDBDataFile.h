@@ -27,9 +27,6 @@ public:
     ~CellEnginePDBDataFile() = default;
 public:
     static CellEngineAtom ParseRecord(const char* LocalPDBRecord);
-//    [[nodiscard]] IntType GetNumberOfElements() const;
-//    [[nodiscard]] const CellEngineAtom& GetElement(IntType Index) const;
-//    [[nodiscard]] FloatVectorType MassCenter() override;
 };
 
 #endif

@@ -77,7 +77,7 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
     try
     {
         string Line;
-        std::vector<CellEngineAtom> LocalCellEngineAtomsObject;
+        std::vector<CellEngineAtom> LocalCellEngineParticlesCentersObject;
         std::vector<CellEngineAtom> LocalCellEngineAllAtomsObject;
 
         const auto start_time = chrono::high_resolution_clock::now();
@@ -152,7 +152,6 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
                 for (const auto& AppliedMatrixId : AppliedMatrixesIds)
                 {
                     LocalCellEngineAllAtomsObject.clear();
-//                    bool First = true;
 
                     AtomsPositionsMatrixes[AppliedMatrixId - 2].Used = true;
 
@@ -333,28 +332,20 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
                                         getchar();
 
 
-                                AppliedAtom.Color = ChainColor;
 
-//                                if (First == true)
-//                                {
-//                                    First = false;
-//                                    //LocalCellEngineAtomsObject.emplace_back(CellEngineAtom(AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][3], AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][3], AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][3], AllAtoms.size() , LocalCellEngineAtomsObject.size(), (char*)("H"), (char*)("MTR"), (char*)AppliedChainName.c_str()));
-//                                    //LocalCellEngineAtomsObject.emplace_back(CellEngineAtom(AppliedAtom.X, AppliedAtom.Y, AppliedAtom.Z, LocalCellEngineAtomsObject.size(), LocalCellEngineAtomsObject.size(), (char*)("H"), (char*)("MTR"), (char*)AppliedChainName.c_str()));
-//                                    LocalCellEngineAtomsObject.emplace_back(CellEngineAtom(AppliedAtom.X, AppliedAtom.Y, AppliedAtom.Z, AllAtoms.size(), LocalCellEngineAtomsObject.size(), (char*)("H"), (char*)("MTR"), (char*)AppliedChainName.c_str(), AppliedAtom.Color));
-//                                }
+
+
+
+
+                                AppliedAtom.Color = ChainColor;
 
                                 LocalCellEngineAllAtomsObject.emplace_back(AppliedAtom);
                             }
                         }
                     }
 
-
                     FloatVectorType MassCenter = GetMassCenter(LocalCellEngineAllAtomsObject);
-
-//                    for (const CellEngineAtom& AtomObject : LocalCellEngineAllAtomsObject)
-//                        MassCenter += AtomObject.Position();
-//                    MassCenter /= LocalCellEngineAllAtomsObject.size();
-                    LocalCellEngineAtomsObject.emplace_back(CellEngineAtom(MassCenter.X, MassCenter.Y, MassCenter.Z, AllAtoms.size(), LocalCellEngineAtomsObject.size(), (char*)("H"), (char*)("MTR"), (char*)LocalCellEngineAllAtomsObject.front().Chain, LocalCellEngineAllAtomsObject.front().Color));
+                    LocalCellEngineParticlesCentersObject.emplace_back(CellEngineAtom(MassCenter.X, MassCenter.Y, MassCenter.Z, AllAtoms.size(), LocalCellEngineParticlesCentersObject.size(), (char*)("H"), (char*)("MTR"), (char*)LocalCellEngineAllAtomsObject.front().Chain, LocalCellEngineAllAtomsObject.front().Color));
 
                     AllAtoms.emplace_back(LocalCellEngineAllAtomsObject);
                 }
@@ -363,9 +354,9 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
 
         LoggersManagerObject.Log(STREAM("Number of matrixes used = " << to_string(count_if(AtomsPositionsMatrixes.begin(), AtomsPositionsMatrixes.end(), [](AtomsPositionMatrix3x4& AtomsPositionMatrix3x4Object){ return AtomsPositionMatrix3x4Object.Used == 1; }))));
 
-        LoggersManagerObject.Log(STREAM("NumberOfAtoms = " << NumberOfAtoms << " | LocalCellEngineAtomsObject.size() = " << LocalCellEngineAtomsObject.size() << " | AllAtoms.size() = " << AllAtoms.size() << " | AllAtoms.back().size() = " << AllAtoms.back().size() << " | NumberOfAtomsDNA = " << NumberOfAtomsDNA << " | AtomsPositionsMatrixes.size() = " << AtomsPositionsMatrixes.size() << " | ChainsNames[\"BAF0\"].size() = " << ChainsNames["BAF0"].size() << " | " << endl));
+        LoggersManagerObject.Log(STREAM("NumberOfAtoms = " << NumberOfAtoms << " | LocalCellEngineParticlesCentersObject.size() = " << LocalCellEngineParticlesCentersObject.size() << " | AllAtoms.size() = " << AllAtoms.size() << " | AllAtoms.back().size() = " << AllAtoms.back().size() << " | NumberOfAtomsDNA = " << NumberOfAtomsDNA << " | AtomsPositionsMatrixes.size() = " << AtomsPositionsMatrixes.size() << " | ChainsNames[\"BAF0\"].size() = " << ChainsNames["BAF0"].size() << " | " << endl));
 
-        Atoms.emplace_back(LocalCellEngineAtomsObject);
+        ParticlesCenters.emplace_back(LocalCellEngineParticlesCentersObject);
 
         const auto stop_time = chrono::high_resolution_clock::now();
 
