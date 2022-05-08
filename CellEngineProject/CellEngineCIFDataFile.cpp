@@ -152,15 +152,9 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
                 for (const auto& AppliedMatrixId : AppliedMatrixesIds)
                 {
                     LocalCellEngineAllAtomsObject.clear();
-                    bool First = true;
+//                    bool First = true;
 
                     AtomsPositionsMatrixes[AppliedMatrixId - 2].Used = true;
-
-//                    vmath::vec3 ChainColor;
-//                    if (AppliedChainsNames.empty() == false)
-//                        ChainColor = ChooseColor(*AppliedChainsNames.begin());
-//                    if (ChainColor.data[0] == 0.0 && ChainColor.data[1] == 0.0 && ChainColor.data[2] == 0.0)
-//                        ChainColor = vmath::vec3((float)rand() / RAND_MAX, (float)rand() / RAND_MAX, (float)rand() / RAND_MAX);
 
                     if (AppliedChainsNames.empty() == true)
                         LoggersManagerObject.Log(STREAM("ERROR IN CIF FILE AppliedChainsNames EMPTY = " << to_string(AppliedMatrixId)));
@@ -355,12 +349,12 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
                     }
 
 
-                    FloatVectorType MassCenter(0.0, 0.0, 0.0);
-                    for (const CellEngineAtom& AtomObject : LocalCellEngineAllAtomsObject)
-                        MassCenter += AtomObject.Position();
-                    MassCenter /= LocalCellEngineAllAtomsObject.size();
-                    LocalCellEngineAtomsObject.emplace_back(CellEngineAtom(MassCenter.X, MassCenter.Y, MassCenter.Z, AllAtoms.size(), LocalCellEngineAtomsObject.size(), (char*)("H"), (char*)("MTR"), (char*)LocalCellEngineAllAtomsObject.front().Chain, LocalCellEngineAllAtomsObject.front().Color));
+                    FloatVectorType MassCenter = GetMassCenter(LocalCellEngineAllAtomsObject);
 
+//                    for (const CellEngineAtom& AtomObject : LocalCellEngineAllAtomsObject)
+//                        MassCenter += AtomObject.Position();
+//                    MassCenter /= LocalCellEngineAllAtomsObject.size();
+                    LocalCellEngineAtomsObject.emplace_back(CellEngineAtom(MassCenter.X, MassCenter.Y, MassCenter.Z, AllAtoms.size(), LocalCellEngineAtomsObject.size(), (char*)("H"), (char*)("MTR"), (char*)LocalCellEngineAllAtomsObject.front().Chain, LocalCellEngineAllAtomsObject.front().Color));
 
                     AllAtoms.emplace_back(LocalCellEngineAllAtomsObject);
                 }
@@ -382,30 +376,4 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
         File.close();
     }
     CATCH("reading data from CIF file")
-}
-
-IntType CellEngineCIFDataFile::GetNumberOfAtoms() const
-{
-    return Atoms[ChosenStructureIndex].size();
-}
-
-const CellEngineAtom& CellEngineCIFDataFile::GetAtom(IntType DataRawIndex) const
-{
-    return Atoms[ChosenStructureIndex][DataRawIndex];
-}
-
-FloatVectorType CellEngineCIFDataFile::MassCenter()
-{
-    FloatVectorType MassCenter(0.0, 0.0, 0.0);
-
-    try
-    {
-        for (const CellEngineAtom& AtomObject : Atoms[ChosenStructureIndex])
-            MassCenter += AtomObject.Position();
-
-        MassCenter /= Atoms[ChosenStructureIndex].size();
-    }
-    CATCH_AND_THROW("counting mass center")
-
-    return MassCenter;
 }

@@ -101,29 +101,3 @@ void CellEnginePDBDataFile::ReadDataFromFile(const string_view FileName)
     }
     CATCH("reading data from PDB file")
 }
-
-IntType CellEnginePDBDataFile::GetNumberOfElements() const
-{
-	return Atoms[ChosenStructureIndex].size();
-}
-
-const CellEngineAtom& CellEnginePDBDataFile::GetElement(IntType DataRawIndex) const
-{
-	return Atoms[ChosenStructureIndex][DataRawIndex];
-}
-
-FloatVectorType CellEnginePDBDataFile::MassCenter()
-{
-	FloatVectorType MassCenter(0.0, 0.0, 0.0);
-
-	try
-    {
-        for (const CellEngineAtom& AtomObject : Atoms[ChosenStructureIndex])
-            MassCenter += AtomObject.Position();
-
-        MassCenter /= Atoms[ChosenStructureIndex].size();
-	}
-    CATCH_AND_THROW("counting mass center for PDB file")
-
-	return MassCenter;
-}

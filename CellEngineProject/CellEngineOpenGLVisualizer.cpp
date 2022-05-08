@@ -238,7 +238,7 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
         vmath::vec3 view_position = vmath::vec3(ViewX, ViewY, ViewZ);
         vmath::mat4 view_matrix = vmath::lookat(view_position, vmath::vec3(0.0f, 0.0f, 0.0f), vmath::vec3(0.0f, 1.0f, 0.0f)) * vmath::rotate(RotationAngle1, RotationAngle2, RotationAngle3) * RotationMatrix;
 
-        FloatVectorType MassCenter = CellEngineDataFileObjectPointer->MassCenter();
+        FloatVectorType MassCenter = CellEngineDataFileObjectPointer->GetMassCenter(CellEngineDataFileObjectPointer->GetAtoms());
 
         glUniform1f(uniforms[per_vertex ? 1 : 0].specular_power, powf(2.0f, 3.0f));
         glUniform3fv(uniforms[per_vertex ? 1 : 0].specular_albedo, 1, vmath::vec3(1.0f / 9.0f + 1.0f / 9.0f));

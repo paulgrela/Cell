@@ -15,7 +15,20 @@ protected:
     std::vector<std::vector<CellEngineAtom>> Atoms;
     std::vector<std::vector<CellEngineAtom>> AllAtoms;
 public:
-    [[nodiscard]] virtual FloatVectorType MassCenter() = 0;
+    FloatVectorType GetMassCenter(const std::vector<CellEngineAtom> AtomsParam)
+    {
+        FloatVectorType MassCenter(0.0, 0.0, 0.0);
+
+        try
+        {
+            for (const CellEngineAtom& AtomObject : AtomsParam)
+                MassCenter += AtomObject.Position();
+            MassCenter /= AtomsParam.size();
+        }
+        CATCH_AND_THROW("counting mass center")
+
+        return MassCenter;
+    }
 public:
     [[nodiscard]] std::vector<std::vector<CellEngineAtom>>& GetAllAtoms()
     {
