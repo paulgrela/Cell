@@ -28,7 +28,7 @@ public:
 class CellEngineCIFDataFile: public CellEngineDataFile
 {
 private:
-    std::vector<AtomsPositionMatrix3x4> AtomsPositionsMatrixes;
+    std::vector<AtomsPositionMatrix3x4> TransofrmationsMatrixes;
     std::unordered_map<std::string, std::vector<CellEngineAtom>> ChainsNames;
 private:
     void ReadDataFromFile(std::string_view LocalCIFRecord);
