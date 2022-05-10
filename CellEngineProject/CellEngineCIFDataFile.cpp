@@ -198,7 +198,7 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
                                 TransformationMatrix.data[1][3] = 0.0;
                                 TransformationMatrix.data[2][3] = 0.0;
                                 TransformationMatrix.data[3][3] = 1.0;
-
+                                
                                 auto Result1 = vmath::vec4(AppliedAtom.X, AppliedAtom.Y, AppliedAtom.Z, 1) * TransformationMatrix;
 
                                 AppliedAtom.X = Result1.data[0];
