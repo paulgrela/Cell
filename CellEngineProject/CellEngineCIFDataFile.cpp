@@ -109,23 +109,23 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
             else
             if (Line.find("point symmetry operation") != std::string::npos)
             {
-                vector<string> AtomFields = split(Line, " ");
+                vector<string> MatrixFields = split(Line, " ");
 
                 AtomsPositionMatrix3x4 Matrix3x4Object;
 
                 UnsignedIntType Shift = 6;
-                Matrix3x4Object.Matrix[0][0] = stof(AtomFields[Shift + 0]);
-                Matrix3x4Object.Matrix[0][1] = stof(AtomFields[Shift + 1]);
-                Matrix3x4Object.Matrix[0][2] = stof(AtomFields[Shift + 2]);
-                Matrix3x4Object.Matrix[0][3] = stof(AtomFields[Shift + 3]);
-                Matrix3x4Object.Matrix[1][0] = stof(AtomFields[Shift + 4]);
-                Matrix3x4Object.Matrix[1][1] = stof(AtomFields[Shift + 5]);
-                Matrix3x4Object.Matrix[1][2] = stof(AtomFields[Shift + 6]);
-                Matrix3x4Object.Matrix[1][3] = stof(AtomFields[Shift + 7]);
-                Matrix3x4Object.Matrix[2][0] = stof(AtomFields[Shift + 8]);
-                Matrix3x4Object.Matrix[2][1] = stof(AtomFields[Shift + 9]);
-                Matrix3x4Object.Matrix[2][2] = stof(AtomFields[Shift + 10]);
-                Matrix3x4Object.Matrix[2][3] = stof(AtomFields[Shift + 11]);
+                Matrix3x4Object.Matrix[0][0] = stof(MatrixFields[Shift + 0]);
+                Matrix3x4Object.Matrix[0][1] = stof(MatrixFields[Shift + 1]);
+                Matrix3x4Object.Matrix[0][2] = stof(MatrixFields[Shift + 2]);
+                Matrix3x4Object.Matrix[0][3] = stof(MatrixFields[Shift + 3]);
+                Matrix3x4Object.Matrix[1][0] = stof(MatrixFields[Shift + 4]);
+                Matrix3x4Object.Matrix[1][1] = stof(MatrixFields[Shift + 5]);
+                Matrix3x4Object.Matrix[1][2] = stof(MatrixFields[Shift + 6]);
+                Matrix3x4Object.Matrix[1][3] = stof(MatrixFields[Shift + 7]);
+                Matrix3x4Object.Matrix[2][0] = stof(MatrixFields[Shift + 8]);
+                Matrix3x4Object.Matrix[2][1] = stof(MatrixFields[Shift + 9]);
+                Matrix3x4Object.Matrix[2][2] = stof(MatrixFields[Shift + 10]);
+                Matrix3x4Object.Matrix[2][3] = stof(MatrixFields[Shift + 11]);
 
                 AtomsPositionsMatrixes.push_back(Matrix3x4Object);
             }
@@ -198,7 +198,7 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
                                 TransformationMatrix.data[1][3] = 0.0;
                                 TransformationMatrix.data[2][3] = 0.0;
                                 TransformationMatrix.data[3][3] = 1.0;
-                                
+
                                 auto Result1 = vmath::vec4(AppliedAtom.X, AppliedAtom.Y, AppliedAtom.Z, 1) * TransformationMatrix;
 
                                 AppliedAtom.X = Result1.data[0];
