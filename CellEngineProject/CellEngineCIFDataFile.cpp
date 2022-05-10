@@ -177,26 +177,28 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
                                 if (AppliedChainName == "BAR0" || AppliedChainName == "NR0" || AppliedChainName == "NR1")
                                     NumberOfAtomsDNA++;
 
-                                auto TransformationMatrix = vmath::rotate(0.0f, 0.0f, 0.0f);
+                                auto TransformationMatrix = vmath::mat4();
 
-                                TransformationMatrix.data[0][0] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][0];
-                                TransformationMatrix.data[1][0] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][1];
-                                TransformationMatrix.data[2][0] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][2];
-                                TransformationMatrix.data[3][0] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[0][3];
+                                uint64_t AppliedMatrixIdPosition = AppliedMatrixId - 2;
 
-                                TransformationMatrix.data[0][1] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][0];
-                                TransformationMatrix.data[1][1] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][1];
-                                TransformationMatrix.data[2][1] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][2];
-                                TransformationMatrix.data[3][1] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[1][3];
+                                TransformationMatrix.data[0][0] = AtomsPositionsMatrixes[AppliedMatrixIdPosition].Matrix[0][0];
+                                TransformationMatrix.data[0][0] = AtomsPositionsMatrixes[AppliedMatrixIdPosition].Matrix[0][1];
+                                TransformationMatrix.data[0][0] = AtomsPositionsMatrixes[AppliedMatrixIdPosition].Matrix[0][2];
+                                TransformationMatrix.data[0][0] = AtomsPositionsMatrixes[AppliedMatrixIdPosition].Matrix[0][3];
 
-                                TransformationMatrix.data[0][2] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][0];
-                                TransformationMatrix.data[1][2] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][1];
-                                TransformationMatrix.data[2][2] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][2];
-                                TransformationMatrix.data[3][2] = AtomsPositionsMatrixes[AppliedMatrixId - 2].Matrix[2][3];
+                                TransformationMatrix.data[1][0] = AtomsPositionsMatrixes[AppliedMatrixIdPosition].Matrix[1][0];
+                                TransformationMatrix.data[1][1] = AtomsPositionsMatrixes[AppliedMatrixIdPosition].Matrix[1][1];
+                                TransformationMatrix.data[1][2] = AtomsPositionsMatrixes[AppliedMatrixIdPosition].Matrix[1][2];
+                                TransformationMatrix.data[1][3] = AtomsPositionsMatrixes[AppliedMatrixIdPosition].Matrix[1][3];
 
-                                TransformationMatrix.data[0][3] = 0.0;
-                                TransformationMatrix.data[1][3] = 0.0;
-                                TransformationMatrix.data[2][3] = 0.0;
+                                TransformationMatrix.data[2][0] = AtomsPositionsMatrixes[AppliedMatrixIdPosition].Matrix[2][0];
+                                TransformationMatrix.data[2][1] = AtomsPositionsMatrixes[AppliedMatrixIdPosition].Matrix[2][1];
+                                TransformationMatrix.data[2][2] = AtomsPositionsMatrixes[AppliedMatrixIdPosition].Matrix[2][2];
+                                TransformationMatrix.data[2][3] = AtomsPositionsMatrixes[AppliedMatrixIdPosition].Matrix[2][3];
+
+                                TransformationMatrix.data[3][0] = 0.0;
+                                TransformationMatrix.data[3][1] = 0.0;
+                                TransformationMatrix.data[3][2] = 0.0;
                                 TransformationMatrix.data[3][3] = 1.0;
 
                                 auto Result1 = vmath::vec4(AppliedAtom.X, AppliedAtom.Y, AppliedAtom.Z, 1) * TransformationMatrix;
