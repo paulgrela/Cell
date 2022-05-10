@@ -111,7 +111,7 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
             {
                 vector<string> MatrixFields = split(Line, " ");
 
-                AtomsPositionMatrix3x4 Matrix3x4Object;
+                TransformationMatrix3x4 Matrix3x4Object;
 
                 UnsignedIntType Shift = 6;
                 Matrix3x4Object.Matrix[0][0] = stof(MatrixFields[Shift + 0]);
@@ -222,7 +222,7 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
             }
         }
 
-        LoggersManagerObject.Log(STREAM("Number of matrixes used = " << to_string(count_if(TransofrmationsMatrixes.begin(), TransofrmationsMatrixes.end(), [](AtomsPositionMatrix3x4& AtomsPositionMatrix3x4Object){ return AtomsPositionMatrix3x4Object.Used == 1; }))));
+        LoggersManagerObject.Log(STREAM("Number of matrixes used = " << to_string(count_if(TransofrmationsMatrixes.begin(), TransofrmationsMatrixes.end(), [](TransformationMatrix3x4& AtomsPositionMatrix3x4Object){ return AtomsPositionMatrix3x4Object.Used == 1; }))));
 
         LoggersManagerObject.Log(STREAM("NumberOfAtoms = " << NumberOfAtoms << " | LocalCellEngineParticlesCentersObject.size() = " << LocalCellEngineParticlesCentersObject.size() << " | AllAtoms.size() = " << AllAtoms.size() << " | AllAtoms.back().size() = " << AllAtoms.back().size() << " | NumberOfAtomsDNA = " << NumberOfAtomsDNA << " | AtomsPositionsMatrixes.size() = " << TransofrmationsMatrixes.size() << " | ChainsNames[\"BAF0\"].size() = " << ChainsNames["BAF0"].size() << " | " << endl));
 
