@@ -45,6 +45,7 @@ add_library(sb7
 		srcsb7/sb7textoverlay.cpp
 		srcsb7/gl3w.c)
 
+include_directories(glm)
 include_directories(include)
 include_directories(extern/glfw-3.0.4/include)
 include_directories(

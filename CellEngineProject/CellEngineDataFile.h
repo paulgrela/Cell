@@ -16,19 +16,19 @@ protected:
     std::vector<std::vector<CellEngineAtom>> ParticlesCenters;
     std::vector<std::vector<CellEngineAtom>> AllAtoms;
 public:
-    static vmath::vec3 GetMassCenter(const std::vector<CellEngineAtom>& AtomsParam)
+    static vmath::vec3 GetCenter(const std::vector<CellEngineAtom>& AtomsParam)
     {
-        vmath::vec3 MassCenter(0.0, 0.0, 0.0);
+        vmath::vec3 Center(0.0, 0.0, 0.0);
 
         try
         {
             for (const CellEngineAtom& AtomObject : AtomsParam)
-                MassCenter += AtomObject.Position();
-            MassCenter /= AtomsParam.size();
+                Center += AtomObject.Position();
+            Center /= AtomsParam.size();
         }
         CATCH_AND_THROW("counting mass center")
 
-        return MassCenter;
+        return Center;
     }
 public:
     [[nodiscard]] std::vector<std::vector<CellEngineAtom>>& GetAllAtoms()

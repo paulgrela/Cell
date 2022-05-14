@@ -9,6 +9,10 @@
 #include "DateTimeUtils.h"
 #include "CellEngineCIFDataFile.h"
 
+#include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
+#include <glm/mat4x4.hpp>
+
 using namespace std;
 using namespace string_utils;
 
@@ -111,23 +115,25 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
             {
                 vector<string> MatrixFields = split(Line, " ");
 
-                TransformationMatrix3x4 Matrix3x4Object;
+                TransformationMatrix3x4 TransofrmationMatrix3x4Object;
+
+                uint64_t TransofrmationMatrix3x4ObjectId = stoi(MatrixFields[0]);
 
                 UnsignedIntType Shift = 6;
-                Matrix3x4Object.Matrix[0][0] = stof(MatrixFields[Shift + 0]);
-                Matrix3x4Object.Matrix[0][1] = stof(MatrixFields[Shift + 1]);
-                Matrix3x4Object.Matrix[0][2] = stof(MatrixFields[Shift + 2]);
-                Matrix3x4Object.Matrix[0][3] = stof(MatrixFields[Shift + 3]);
-                Matrix3x4Object.Matrix[1][0] = stof(MatrixFields[Shift + 4]);
-                Matrix3x4Object.Matrix[1][1] = stof(MatrixFields[Shift + 5]);
-                Matrix3x4Object.Matrix[1][2] = stof(MatrixFields[Shift + 6]);
-                Matrix3x4Object.Matrix[1][3] = stof(MatrixFields[Shift + 7]);
-                Matrix3x4Object.Matrix[2][0] = stof(MatrixFields[Shift + 8]);
-                Matrix3x4Object.Matrix[2][1] = stof(MatrixFields[Shift + 9]);
-                Matrix3x4Object.Matrix[2][2] = stof(MatrixFields[Shift + 10]);
-                Matrix3x4Object.Matrix[2][3] = stof(MatrixFields[Shift + 11]);
+                TransofrmationMatrix3x4Object.Matrix[0][0] = stof(MatrixFields[Shift + 0]);
+                TransofrmationMatrix3x4Object.Matrix[0][1] = stof(MatrixFields[Shift + 1]);
+                TransofrmationMatrix3x4Object.Matrix[0][2] = stof(MatrixFields[Shift + 2]);
+                TransofrmationMatrix3x4Object.Matrix[0][3] = stof(MatrixFields[Shift + 3]);
+                TransofrmationMatrix3x4Object.Matrix[1][0] = stof(MatrixFields[Shift + 4]);
+                TransofrmationMatrix3x4Object.Matrix[1][1] = stof(MatrixFields[Shift + 5]);
+                TransofrmationMatrix3x4Object.Matrix[1][2] = stof(MatrixFields[Shift + 6]);
+                TransofrmationMatrix3x4Object.Matrix[1][3] = stof(MatrixFields[Shift + 7]);
+                TransofrmationMatrix3x4Object.Matrix[2][0] = stof(MatrixFields[Shift + 8]);
+                TransofrmationMatrix3x4Object.Matrix[2][1] = stof(MatrixFields[Shift + 9]);
+                TransofrmationMatrix3x4Object.Matrix[2][2] = stof(MatrixFields[Shift + 10]);
+                TransofrmationMatrix3x4Object.Matrix[2][3] = stof(MatrixFields[Shift + 11]);
 
-                TransofrmationsMatrixes.push_back(Matrix3x4Object);
+                TransformationsMatrixes[TransofrmationMatrix3x4ObjectId] = TransofrmationMatrix3x4Object;
             }
             else
             if (Line.substr(0, 4) == "1 '(")
@@ -155,8 +161,6 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
                 {
                     LocalCellEngineAllAtomsObject.clear();
 
-                    TransofrmationsMatrixes[AppliedMatrixId - 2].Used = true;
-
                     if (AppliedChainsNames.empty() == true)
                         LoggersManagerObject.Log(STREAM("ERROR IN CIF FILE AppliedChainsNames EMPTY = " << to_string(AppliedMatrixId)));
 
@@ -177,35 +181,39 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
                                 if (AppliedChainName == "BAR0" || AppliedChainName == "NR0" || AppliedChainName == "NR1")
                                     NumberOfAtomsDNA++;
 
-                                auto TransformationMatrix = vmath::mat4();
+                                auto TransformationMatrixIterator = TransformationsMatrixes.find(AppliedMatrixId);
 
-                                uint64_t AppliedMatrixIdPosition = AppliedMatrixId - 2;
+                                auto TransformationMatrix = glm::mat4();
 
-                                TransformationMatrix.data[0][0] = TransofrmationsMatrixes[AppliedMatrixIdPosition].Matrix[0][0];
-                                TransformationMatrix.data[0][1] = TransofrmationsMatrixes[AppliedMatrixIdPosition].Matrix[0][1];
-                                TransformationMatrix.data[0][2] = TransofrmationsMatrixes[AppliedMatrixIdPosition].Matrix[0][2];
-                                TransformationMatrix.data[0][3] = TransofrmationsMatrixes[AppliedMatrixIdPosition].Matrix[0][3];
+                                TransformationMatrix[0][0] = TransformationMatrixIterator->second.Matrix[0][0];
+                                TransformationMatrix[0][1] = TransformationMatrixIterator->second.Matrix[0][1];
+                                TransformationMatrix[0][2] = TransformationMatrixIterator->second.Matrix[0][2];
+                                TransformationMatrix[0][3] = TransformationMatrixIterator->second.Matrix[0][3];
 
-                                TransformationMatrix.data[1][0] = TransofrmationsMatrixes[AppliedMatrixIdPosition].Matrix[1][0];
-                                TransformationMatrix.data[1][1] = TransofrmationsMatrixes[AppliedMatrixIdPosition].Matrix[1][1];
-                                TransformationMatrix.data[1][2] = TransofrmationsMatrixes[AppliedMatrixIdPosition].Matrix[1][2];
-                                TransformationMatrix.data[1][3] = TransofrmationsMatrixes[AppliedMatrixIdPosition].Matrix[1][3];
+                                TransformationMatrix[1][0] = TransformationMatrixIterator->second.Matrix[1][0];
+                                TransformationMatrix[1][1] = TransformationMatrixIterator->second.Matrix[1][1];
+                                TransformationMatrix[1][2] = TransformationMatrixIterator->second.Matrix[1][2];
+                                TransformationMatrix[1][3] = TransformationMatrixIterator->second.Matrix[1][3];
 
-                                TransformationMatrix.data[2][0] = TransofrmationsMatrixes[AppliedMatrixIdPosition].Matrix[2][0];
-                                TransformationMatrix.data[2][1] = TransofrmationsMatrixes[AppliedMatrixIdPosition].Matrix[2][1];
-                                TransformationMatrix.data[2][2] = TransofrmationsMatrixes[AppliedMatrixIdPosition].Matrix[2][2];
-                                TransformationMatrix.data[2][3] = TransofrmationsMatrixes[AppliedMatrixIdPosition].Matrix[2][3];
+                                TransformationMatrix[2][0] = TransformationMatrixIterator->second.Matrix[2][0];
+                                TransformationMatrix[2][1] = TransformationMatrixIterator->second.Matrix[2][1];
+                                TransformationMatrix[2][2] = TransformationMatrixIterator->second.Matrix[2][2];
+                                TransformationMatrix[2][3] = TransformationMatrixIterator->second.Matrix[2][3];
 
-                                TransformationMatrix.data[3][0] = 0.0;
-                                TransformationMatrix.data[3][1] = 0.0;
-                                TransformationMatrix.data[3][2] = 0.0;
-                                TransformationMatrix.data[3][3] = 1.0;
+                                TransformationMatrix[3][0] = 0.0;
+                                TransformationMatrix[3][1] = 0.0;
+                                TransformationMatrix[3][2] = 0.0;
+                                TransformationMatrix[3][3] = 1.0;
 
-                                auto Result1 = vmath::vec4(AppliedAtom.X, AppliedAtom.Y, AppliedAtom.Z, 1) * TransformationMatrix;
+                                TransformationMatrix[0][3] = 0.0;
+                                TransformationMatrix[1][3] = 0.0;
+                                TransformationMatrix[2][3] = 0.0;
 
-                                AppliedAtom.X = Result1.data[0];
-                                AppliedAtom.Y = Result1.data[1];
-                                AppliedAtom.Z = Result1.data[2];
+                                auto Result = glm::vec4(TransformationMatrixIterator->second.Matrix[0][3], TransformationMatrixIterator->second.Matrix[1][3], TransformationMatrixIterator->second.Matrix[2][3], 0.0);
+
+                                AppliedAtom.X = Result[0];
+                                AppliedAtom.Y = Result[1];
+                                AppliedAtom.Z = Result[2];
 
                                 AppliedAtom.Color = ChainColor;
 
@@ -214,7 +222,7 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
                         }
                     }
 
-                    vmath::vec3 MassCenter = GetMassCenter(LocalCellEngineAllAtomsObject);
+                    vmath::vec3 MassCenter = GetCenter(LocalCellEngineAllAtomsObject);
                     LocalCellEngineParticlesCentersObject.emplace_back(CellEngineAtom(MassCenter.X(), MassCenter.Y(), MassCenter.Z(), AllAtoms.size(), LocalCellEngineParticlesCentersObject.size(), (char*)("H"), (char*)("MTR"), (char*)LocalCellEngineAllAtomsObject.front().Chain, LocalCellEngineAllAtomsObject.front().Color));
 
                     AllAtoms.emplace_back(LocalCellEngineAllAtomsObject);
@@ -222,9 +230,7 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
             }
         }
 
-        LoggersManagerObject.Log(STREAM("Number of matrixes used = " << to_string(count_if(TransofrmationsMatrixes.begin(), TransofrmationsMatrixes.end(), [](TransformationMatrix3x4& AtomsPositionMatrix3x4Object){ return AtomsPositionMatrix3x4Object.Used == 1; }))));
-
-        LoggersManagerObject.Log(STREAM("NumberOfAtoms = " << NumberOfAtoms << " | LocalCellEngineParticlesCentersObject.size() = " << LocalCellEngineParticlesCentersObject.size() << " | AllAtoms.size() = " << AllAtoms.size() << " | AllAtoms.back().size() = " << AllAtoms.back().size() << " | NumberOfAtomsDNA = " << NumberOfAtomsDNA << " | AtomsPositionsMatrixes.size() = " << TransofrmationsMatrixes.size() << " | ChainsNames[\"BAF0\"].size() = " << ChainsNames["BAF0"].size() << " | " << endl));
+        LoggersManagerObject.Log(STREAM("NumberOfAtoms = " << NumberOfAtoms << " | LocalCellEngineParticlesCentersObject.size() = " << LocalCellEngineParticlesCentersObject.size() << " | AllAtoms.size() = " << AllAtoms.size() << " | AllAtoms.back().size() = " << AllAtoms.back().size() << " | NumberOfAtomsDNA = " << NumberOfAtomsDNA << " | AtomsPositionsMatrixes.size() = " << TransformationsMatrixes.size() << " | ChainsNames[\"BAF0\"].size() = " << ChainsNames["BAF0"].size() << " | " << endl));
 
         ParticlesCenters.emplace_back(LocalCellEngineParticlesCentersObject);
 

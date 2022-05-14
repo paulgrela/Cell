@@ -7,6 +7,31 @@
 
 namespace vmath
 {
+    inline double DegToRad(double deg)
+    {
+        return M_PI * deg / 180.0f;
+    }
+
+    inline double sinDeg(double deg)
+    {
+        return sin(DegToRad(deg));
+    }
+
+    inline double cosDeg(double deg)
+    {
+        return cos(DegToRad(deg));
+    }
+
+    inline float sinDegf(float deg)
+    {
+        return (float)sinDeg(deg);
+    }
+
+    inline float cosDegf(float deg)
+    {
+        return (float)cosDeg(deg);
+    }
+
     template <typename T, const int w, const int h> class matNM;
     template <typename T, const int len> class vecN;
     template <typename T> class Tquaternion;
@@ -599,9 +624,9 @@ namespace vmath
             return (r != q.r) || (v != q.v);
         }
 
-        inline matNM<T,4,4> asMatrix() const
+        inline matNM<T, 4, 4> asMatrix() const
         {
-            matNM<T,4,4> m;
+            matNM<T, 4, 4> m;
 
             const T xx = x * x;
             const T yy = y * y;
@@ -1073,7 +1098,7 @@ namespace vmath
     }
 
     template <typename T>
-    static inline Tmat4<T> rotate(T angle, const vecN<T,3>& v)
+    static inline Tmat4<T> rotate(T angle, const vecN<T, 3>& v)
     {
         return rotate<T>(angle, v[0], v[1], v[2]);
     }
@@ -1105,9 +1130,9 @@ namespace vmath
     }
 
     template <typename T, const int N>
-    static inline vecN<T,N> min(const vecN<T,N>& x, const vecN<T,N>& y)
+    static inline vecN<T, N> min(const vecN<T, N>& x, const vecN<T, N>& y)
     {
-        vecN<T,N> t;
+        vecN<T, N> t;
         int n;
 
         for (n = 0; n < N; n++)
@@ -1117,9 +1142,9 @@ namespace vmath
     }
 
     template <typename T, const int N>
-    static inline vecN<T,N> max(const vecN<T,N>& x, const vecN<T,N>& y)
+    static inline vecN<T, N> max(const vecN<T, N>& x, const vecN<T, N>& y)
     {
-        vecN<T,N> t;
+        vecN<T, N> t;
         int n;
 
         for (n = 0; n < N; n++)
@@ -1129,28 +1154,28 @@ namespace vmath
     }
 
     template <typename T, const int N>
-    static inline vecN<T,N> clamp(const vecN<T,N>& x, const vecN<T,N>& minVal, const vecN<T,N>& maxVal)
+    static inline vecN<T, N> clamp(const vecN<T, N>& x, const vecN<T, N>& minVal, const vecN<T, N>& maxVal)
     {
         return min<T>(max<T>(x, minVal), maxVal);
     }
 
     template <typename T, const int N>
-    static inline vecN<T,N> smoothstep(const vecN<T,N>& edge0, const vecN<T,N>& edge1, const vecN<T,N>& x)
+    static inline vecN<T, N> smoothstep(const vecN<T, N>& edge0, const vecN<T, N>& edge1, const vecN<T, N>& x)
     {
-        vecN<T,N> t;
+        vecN<T, N> t;
         t = clamp((x - edge0) / (edge1 - edge0), vecN<T,N>(T(0)), vecN<T,N>(T(1)));
 
-        return t * t * (vecN<T,N>(T(3)) - vecN<T,N>(T(2)) * t);
+        return t * t * (vecN<T, N>(T(3)) - vecN<T, N>(T(2)) * t);
     }
 
     template <typename T, const int S>
-    static inline vecN<T,S> reflect(const vecN<T,S>& I, const vecN<T,S>& N)
+    static inline vecN<T, S> reflect(const vecN<T, S>& I, const vecN<T, S>& N)
     {
         return I - 2 * dot(N, I) * N;
     }
 
     template <typename T, const int S>
-    static inline vecN<T,S> refract(const vecN<T,S>& I, const vecN<T,S>& N, T eta)
+    static inline vecN<T, S> refract(const vecN<T, S>& I, const vecN<T, S>& N, T eta)
     {
         T d = dot(N, I);
         T k = T(1) - eta * eta * (T(1) - d * d);
@@ -1162,7 +1187,7 @@ namespace vmath
     }
 
     template <typename T, const int N, const int M>
-    static inline matNM<T,N,M> matrixCompMult(const matNM<T,N,M>& x, const matNM<T,N,M>& y)
+    static inline matNM<T, N, M> matrixCompMult(const matNM<T, N, M>& x, const matNM<T, N, M>& y)
     {
         matNM<T,N,M> result;
 
@@ -1174,9 +1199,9 @@ namespace vmath
     }
 
     template <typename T, const int N, const int M>
-    static inline vecN<T,N> operator*(const vecN<T,M>& vec, const matNM<T,N,M>& mat)
+    static inline vecN<T, N> operator*(const vecN<T, M>& vec, const matNM<T, N, M>& mat)
     {
-        vecN<T,N> result(T(0));
+        vecN<T, N> result(T(0));
 
         for (int m = 0; m < M; m++)
             for (int n = 0; n < N; n++)
@@ -1186,9 +1211,9 @@ namespace vmath
     }
 
     template <typename T, const int N>
-    static inline vecN<T,N> operator/(const T s, const vecN<T,N>& v)
+    static inline vecN<T, N> operator/(const T s, const vecN<T, N>& v)
     {
-        vecN<T,N> result;
+        vecN<T, N> result;
 
         for (int n = 0; n < N; n++)
             result[n] = s / v[n];
@@ -1197,7 +1222,7 @@ namespace vmath
     }
 
     template <typename T>
-    static inline void quaternionToMatrixDetailed(const Tquaternion<T>& q, matNM<T,4,4>& m)
+    static inline void quaternionToMatrixDetailed(const Tquaternion<T>& q, matNM<T, 4, 4>& m)
     {
         m[0][0] = q[0] * q[0] + q[1] * q[1] - q[2] * q[2] - q[3] * q[3];
         m[0][1] = T(2) * (q[1] * q[2] + q[0] * q[3]);
@@ -1221,7 +1246,7 @@ namespace vmath
     }
 
     template <typename T>
-    static inline void quaternionToMatrix(const Tquaternion<T>& q, matNM<T,4,4>& m)
+    static inline void quaternionToMatrix(const Tquaternion<T>& q, matNM<T, 4, 4>& m)
     {
         m = q.asMatrix();
     }

@@ -19,16 +19,13 @@
 
 struct TransformationMatrix3x4
 {
-public:
-    bool Used = false;
-public:
     float Matrix[3][4];
 };
 
 class CellEngineCIFDataFile: public CellEngineDataFile
 {
 private:
-    std::vector<TransformationMatrix3x4> TransofrmationsMatrixes;
+    std::unordered_map<std::uint64_t, TransformationMatrix3x4> TransformationsMatrixes;
     std::unordered_map<std::string, std::vector<CellEngineAtom>> ChainsNames;
 private:
     void ReadDataFromFile(std::string_view LocalCIFRecord);
