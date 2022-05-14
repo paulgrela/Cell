@@ -66,7 +66,6 @@ add_executable(
 	../Common/FileUtils/FileUtils.cpp
 	../Common/StringUtils/StringUtils.cpp
 	../Common/DateTimeUtils/DateTimeUtils.cpp
-	../Common/MathUtils/AdditionalFunctions.cpp
 	CellEnginePDBDataFile.cpp
 	CellEngineCIFDataFile.cpp
 	CellEngineOpenGLVisualizer.cpp)

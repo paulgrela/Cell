@@ -166,16 +166,21 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
 
                     for (const auto& AppliedChainName : AppliedChainsNames)
                     {
-                        auto CNI = ChainsNames.find(AppliedChainName);
-                        if (CNI == ChainsNames.end())
+                        auto AtomsForChainNameIterator = ChainsNames.find(AppliedChainName);
+                        if (AtomsForChainNameIterator == ChainsNames.end())
                             LoggersManagerObject.Log(STREAM("ERROR IN CIF FILE LACKS AppliedChainName: " << AppliedChainName));
                         else
                         {
-                            if (ChainsNames.find(AppliedChainName)->second.empty() == true)
+                            if (AtomsForChainNameIterator->second.empty() == true)
                                 LoggersManagerObject.Log(STREAM("ERROR IN CIF FILE - ChainsNames.find(AppliedChainName)->second.size() == 0 " << AppliedChainName));
 
-                            for (CellEngineAtom& AppliedAtom : ChainsNames.find(AppliedChainName)->second)
+                            auto& AtomsForChainName = AtomsForChainNameIterator->second;
+                            //for (CellEngineAtom& AppliedAtom : ChainsNames.find(AppliedChainName)->second)
+                            //for (uint64_t AppliedAtomIndex = 0; AppliedAtomIndex < AtomsForChainName.size(); AppliedAtomIndex += 10)
+                            for (uint64_t AppliedAtomIndex = 0; AppliedAtomIndex < AtomsForChainName.size(); AppliedAtomIndex += 100)
                             {
+                                auto AppliedAtom = AtomsForChainName[AppliedAtomIndex];
+
                                 NumberOfAtoms++;
 
                                 if (AppliedChainName == "BAR0" || AppliedChainName == "NR0" || AppliedChainName == "NR1")
@@ -183,22 +188,48 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
 
                                 auto TransformationMatrixIterator = TransformationsMatrixes.find(AppliedMatrixId);
 
-                                auto TransformationMatrix = glm::mat4();
+//                                auto TransformationMatrix = glm::mat4();
+//
+//                                TransformationMatrix[0][0] = TransformationMatrixIterator->second.Matrix[0][0];
+//                                TransformationMatrix[0][1] = TransformationMatrixIterator->second.Matrix[0][1];
+//                                TransformationMatrix[0][2] = TransformationMatrixIterator->second.Matrix[0][2];
+//
+//                                TransformationMatrix[1][0] = TransformationMatrixIterator->second.Matrix[1][0];
+//                                TransformationMatrix[1][1] = TransformationMatrixIterator->second.Matrix[1][1];
+//                                TransformationMatrix[1][2] = TransformationMatrixIterator->second.Matrix[1][2];
+//
+//                                TransformationMatrix[2][0] = TransformationMatrixIterator->second.Matrix[2][0];
+//                                TransformationMatrix[2][1] = TransformationMatrixIterator->second.Matrix[2][1];
+//                                TransformationMatrix[2][2] = TransformationMatrixIterator->second.Matrix[2][2];
+//
+//                                TransformationMatrix[3][0] = 0.0;
+//                                TransformationMatrix[3][1] = 0.0;
+//                                TransformationMatrix[3][2] = 0.0;
+//                                TransformationMatrix[3][3] = 1.0;
+//
+//                                TransformationMatrix[0][3] = 0.0;
+//                                TransformationMatrix[1][3] = 0.0;
+//                                TransformationMatrix[2][3] = 0.0;
+//
+//                                auto Result = glm::vec4(AppliedAtom.X, AppliedAtom.Y, AppliedAtom.Z, 1) + glm::vec4(TransformationMatrixIterator->second.Matrix[0][3], TransformationMatrixIterator->second.Matrix[1][3], TransformationMatrixIterator->second.Matrix[2][3], 1.0) * TransformationMatrix;
+//
+//                                AppliedAtom.X = Result[0];
+//                                AppliedAtom.Y = Result[1];
+//                                AppliedAtom.Z = Result[2];
+
+                                auto TransformationMatrix = vmath::mat4();
 
                                 TransformationMatrix[0][0] = TransformationMatrixIterator->second.Matrix[0][0];
                                 TransformationMatrix[0][1] = TransformationMatrixIterator->second.Matrix[0][1];
                                 TransformationMatrix[0][2] = TransformationMatrixIterator->second.Matrix[0][2];
-                                TransformationMatrix[0][3] = TransformationMatrixIterator->second.Matrix[0][3];
 
                                 TransformationMatrix[1][0] = TransformationMatrixIterator->second.Matrix[1][0];
                                 TransformationMatrix[1][1] = TransformationMatrixIterator->second.Matrix[1][1];
                                 TransformationMatrix[1][2] = TransformationMatrixIterator->second.Matrix[1][2];
-                                TransformationMatrix[1][3] = TransformationMatrixIterator->second.Matrix[1][3];
 
                                 TransformationMatrix[2][0] = TransformationMatrixIterator->second.Matrix[2][0];
                                 TransformationMatrix[2][1] = TransformationMatrixIterator->second.Matrix[2][1];
                                 TransformationMatrix[2][2] = TransformationMatrixIterator->second.Matrix[2][2];
-                                TransformationMatrix[2][3] = TransformationMatrixIterator->second.Matrix[2][3];
 
                                 TransformationMatrix[3][0] = 0.0;
                                 TransformationMatrix[3][1] = 0.0;
@@ -209,11 +240,13 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
                                 TransformationMatrix[1][3] = 0.0;
                                 TransformationMatrix[2][3] = 0.0;
 
-                                auto Result = glm::vec4(TransformationMatrixIterator->second.Matrix[0][3], TransformationMatrixIterator->second.Matrix[1][3], TransformationMatrixIterator->second.Matrix[2][3], 0.0);
+                                auto Result = vmath::vec4(AppliedAtom.X, AppliedAtom.Y, AppliedAtom.Z, 1) + vmath::vec4(TransformationMatrixIterator->second.Matrix[0][3], TransformationMatrixIterator->second.Matrix[1][3], TransformationMatrixIterator->second.Matrix[2][3], 1.0) * TransformationMatrix;
 
                                 AppliedAtom.X = Result[0];
                                 AppliedAtom.Y = Result[1];
                                 AppliedAtom.Z = Result[2];
+
+
 
                                 AppliedAtom.Color = ChainColor;
 
@@ -222,19 +255,19 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
                         }
                     }
 
-                    vmath::vec3 MassCenter = GetCenter(LocalCellEngineAllAtomsObject);
-                    LocalCellEngineParticlesCentersObject.emplace_back(CellEngineAtom(MassCenter.X(), MassCenter.Y(), MassCenter.Z(), AllAtoms.size(), LocalCellEngineParticlesCentersObject.size(), (char*)("H"), (char*)("MTR"), (char*)LocalCellEngineAllAtomsObject.front().Chain, LocalCellEngineAllAtomsObject.front().Color));
+                    vmath::vec3 Center = GetCenter(LocalCellEngineAllAtomsObject);
+                    LocalCellEngineParticlesCentersObject.emplace_back(CellEngineAtom(Center.X(), Center.Y(), Center.Z(), AllAtoms.size(), LocalCellEngineParticlesCentersObject.size(), (char*)("H"), (char*)("MTR"), (char*)LocalCellEngineAllAtomsObject.front().Chain, LocalCellEngineAllAtomsObject.front().Color));
 
                     AllAtoms.emplace_back(LocalCellEngineAllAtomsObject);
                 }
             }
         }
 
-        LoggersManagerObject.Log(STREAM("NumberOfAtoms = " << NumberOfAtoms << " | LocalCellEngineParticlesCentersObject.size() = " << LocalCellEngineParticlesCentersObject.size() << " | AllAtoms.size() = " << AllAtoms.size() << " | AllAtoms.back().size() = " << AllAtoms.back().size() << " | NumberOfAtomsDNA = " << NumberOfAtomsDNA << " | AtomsPositionsMatrixes.size() = " << TransformationsMatrixes.size() << " | ChainsNames[\"BAF0\"].size() = " << ChainsNames["BAF0"].size() << " | " << endl));
-
         ParticlesCenters.emplace_back(LocalCellEngineParticlesCentersObject);
 
         const auto stop_time = chrono::high_resolution_clock::now();
+
+        LoggersManagerObject.Log(STREAM("NumberOfAtoms = " << NumberOfAtoms << " | LocalCellEngineParticlesCentersObject.size() = " << LocalCellEngineParticlesCentersObject.size() << " | AllAtoms.size() = " << AllAtoms.size() << " | AllAtoms.back().size() = " << AllAtoms.back().size() << " | NumberOfAtomsDNA = " << NumberOfAtomsDNA << " | AtomsPositionsMatrixes.size() = " << TransformationsMatrixes.size() << " | ChainsNames[\"BAF0\"].size() = " << ChainsNames["BAF0"].size() << " | " << endl));
 
         LoggersManagerObject.Log(STREAM("FINISHED READING FROM CIF FILE"));
 
