@@ -9,10 +9,6 @@
 #include "DateTimeUtils.h"
 #include "CellEngineCIFDataFile.h"
 
-#include <glm/vec3.hpp>
-#include <glm/vec4.hpp>
-#include <glm/mat4x4.hpp>
-
 using namespace std;
 using namespace string_utils;
 
@@ -188,35 +184,6 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
 
                                 auto TransformationMatrixIterator = TransformationsMatrixes.find(AppliedMatrixId);
 
-//                                auto TransformationMatrix = glm::mat4();
-//
-//                                TransformationMatrix[0][0] = TransformationMatrixIterator->second.Matrix[0][0];
-//                                TransformationMatrix[0][1] = TransformationMatrixIterator->second.Matrix[0][1];
-//                                TransformationMatrix[0][2] = TransformationMatrixIterator->second.Matrix[0][2];
-//
-//                                TransformationMatrix[1][0] = TransformationMatrixIterator->second.Matrix[1][0];
-//                                TransformationMatrix[1][1] = TransformationMatrixIterator->second.Matrix[1][1];
-//                                TransformationMatrix[1][2] = TransformationMatrixIterator->second.Matrix[1][2];
-//
-//                                TransformationMatrix[2][0] = TransformationMatrixIterator->second.Matrix[2][0];
-//                                TransformationMatrix[2][1] = TransformationMatrixIterator->second.Matrix[2][1];
-//                                TransformationMatrix[2][2] = TransformationMatrixIterator->second.Matrix[2][2];
-//
-//                                TransformationMatrix[3][0] = 0.0;
-//                                TransformationMatrix[3][1] = 0.0;
-//                                TransformationMatrix[3][2] = 0.0;
-//                                TransformationMatrix[3][3] = 1.0;
-//
-//                                TransformationMatrix[0][3] = 0.0;
-//                                TransformationMatrix[1][3] = 0.0;
-//                                TransformationMatrix[2][3] = 0.0;
-//
-//                                auto Result = glm::vec4(AppliedAtom.X, AppliedAtom.Y, AppliedAtom.Z, 1) + glm::vec4(TransformationMatrixIterator->second.Matrix[0][3], TransformationMatrixIterator->second.Matrix[1][3], TransformationMatrixIterator->second.Matrix[2][3], 1.0) * TransformationMatrix;
-//
-//                                AppliedAtom.X = Result[0];
-//                                AppliedAtom.Y = Result[1];
-//                                AppliedAtom.Z = Result[2];
-
                                 auto TransformationMatrix = vmath::mat4();
 
                                 TransformationMatrix[0][0] = TransformationMatrixIterator->second.Matrix[0][0];
@@ -245,8 +212,6 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
                                 AppliedAtom.X = Result[0];
                                 AppliedAtom.Y = Result[1];
                                 AppliedAtom.Z = Result[2];
-
-
 
                                 AppliedAtom.Color = ChainColor;
 
