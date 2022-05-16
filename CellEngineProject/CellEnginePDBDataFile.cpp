@@ -58,7 +58,21 @@ CellEngineAtom CellEnginePDBDataFile::ParseRecord(const char* LocalPDBRecord)
 
 CellEnginePDBDataFile::CellEnginePDBDataFile(const string_view FileName)
 {
+    SizeX = 1;
+    SizeY = 1;
+    SizeZ = 1;
+
+    SizeStep = 0.01;
+
     ViewStep = 3;
+
+    CameraXMoveStep = 1;
+    CameraYMoveStep = 1;
+    CameraZMoveStep = 1;
+
+    ViewXMoveStep = 1;
+    ViewYMoveStep = 1;
+    ViewZMoveStep = 1;
 
     ShowDetailsInAtomScale = false;
 

@@ -2,12 +2,24 @@
 #ifndef CELL_ENGINE_PROJECT_DATA_FILE_H
 #define CELL_ENGINE_PROJECT_DATA_FILE_H
 
+#include <cinttypes>
 #include "CellEngineAtom.h"
 
 class CellEngineDataFile
 {
 public:
+    float SizeX;
+    float SizeY;
+    float SizeZ;
+    float SizeStep;
+    uint64_t LoadOfAtomsStep;
     float ViewStep;
+    float CameraXMoveStep;
+    float CameraYMoveStep;
+    float CameraZMoveStep;
+    float ViewXMoveStep;
+    float ViewYMoveStep;
+    float ViewZMoveStep;
     bool ShowDetailsInAtomScale = false;
 public:
     UnsignedIntType ChosenStructureIndex = 0;
