@@ -115,7 +115,7 @@ protected:
     inline vmath::vec3 GetFinalModelPosition(const vmath::vec3& AtomPosition, uniforms_block*  MatrixUniformBlockForVertexShaderPointer, const vmath::vec3& Center, const bool CountNewPosition, const bool DrawOutsideBorder) const;
     inline vmath::vec3 RenderObject(const CellEngineAtom& AtomObject, const vmath::mat4& ViewMatrix, const vmath::vec3& Center, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, uint64_t& NumberOfAllRenderedAtoms);
 protected:
-    inline bool CheckDistanceToDrawDetailsInAtomScale(const float XNew, const float YNew, const float ZNew) const;
+    [[nodiscard]] inline bool CheckDistanceToDrawDetailsInAtomScale(const float XNew, const float YNew, const float ZNew) const;
 };
 
 void InitializeLoggerManagerParameters()
@@ -222,8 +222,7 @@ inline bool CellEngineOpenGLVisualiser::CheckDistanceToDrawDetailsInAtomScale(co
         if (ViewZ > CellEngineDataFileObjectPointer->Distance)
             return sqrt((XNew * XNew) + (YNew * YNew) + (ZNew * ZNew)) > CellEngineDataFileObjectPointer->Distance && ZNew > CellEngineDataFileObjectPointer->CutZ;
         else
-            //return (ZNew > ViewZ - 200 && ZNew < ViewZ && XNew >- 100 && XNew < 100 && YNew > -100 && YNew < 100);
-            return (ZNew > ViewZ - 200 && ZNew < ViewZ && XNew >- 200 && XNew < 200 && YNew > -200 && YNew < 200);
+            return (ZNew > ViewZ - 300 && ZNew < ViewZ && XNew >- 200 && XNew < 200 && YNew > -200 && YNew < 200);
     }
     else
         return false;
