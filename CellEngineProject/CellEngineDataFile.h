@@ -8,6 +8,9 @@
 class CellEngineDataFile
 {
 public:
+    bool CheckAtomVisibility;
+    float CutZ;
+    float Distance;
     float SizeX;
     float SizeY;
     float SizeZ;

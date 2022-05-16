@@ -58,6 +58,10 @@ CellEngineAtom CellEnginePDBDataFile::ParseRecord(const char* LocalPDBRecord)
 
 CellEnginePDBDataFile::CellEnginePDBDataFile(const string_view FileName)
 {
+    CheckAtomVisibility = false;
+    CutZ = 1000;
+    Distance = 1000;
+
     SizeX = 1;
     SizeY = 1;
     SizeZ = 1;

@@ -65,6 +65,10 @@ CellEngineAtom CellEngineCIFDataFile::ParseRecord(const char* LocalCIFRecord)
 
 CellEngineCIFDataFile::CellEngineCIFDataFile(const string_view FileName)
 {
+    CheckAtomVisibility =  true;
+    CutZ = 200;
+    Distance = 1500;
+
     SizeX = 1;
     SizeY = 1;
     SizeZ = 1;
@@ -187,7 +191,9 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
                                 LoggersManagerObject.Log(STREAM("ERROR IN CIF FILE - ChainsNames.find(AppliedChainName)->second.size() == 0 " << AppliedChainName));
 
                             auto& AtomsForChainName = AtomsForChainNameIterator->second;
-                            for (uint64_t AppliedAtomIndex = 0; AppliedAtomIndex < AtomsForChainName.size(); AppliedAtomIndex += 1)
+                            //for (CellEngineAtom& AppliedAtom : AtomsForChainName)
+                            //for (uint64_t AppliedAtomIndex = 0; AppliedAtomIndex < AtomsForChainName.size(); AppliedAtomIndex += 1)
+                            for (uint64_t AppliedAtomIndex = 0; AppliedAtomIndex < AtomsForChainName.size(); AppliedAtomIndex++)
                             {
                                 auto AppliedAtom = AtomsForChainName[AppliedAtomIndex];
 
