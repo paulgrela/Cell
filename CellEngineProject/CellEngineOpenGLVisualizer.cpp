@@ -204,7 +204,6 @@ void CellEngineOpenGLVisualiser::startup()
         glBufferData(GL_UNIFORM_BUFFER, sizeof(uniforms_block), nullptr, GL_DYNAMIC_DRAW);
 
         object.load("..//objects//sphere.sbm");
-        //object.load("..//objects//cube.sbm");
 
         glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
@@ -381,6 +380,9 @@ void CellEngineOpenGLVisualiser::onKey(int key, int action)
 
                 case 'U': CellEngineDataFileObjectPointer->LoadOfAtomsStep == 100 ? CellEngineDataFileObjectPointer->LoadOfAtomsStep = 10 : CellEngineDataFileObjectPointer->LoadOfAtomsStep = 100;  break;
                 case 'I': CellEngineDataFileObjectPointer->LoadOfAtomsStep = 1;  break;
+
+                case '9': object.load("..//objects//cube.sbm");  break;
+                case '0': object.load("..//objects//sphere.sbm");  break;
 
                 default: break;
             }

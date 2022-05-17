@@ -190,13 +190,8 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
                             if (AtomsForChainNameIterator->second.empty() == true)
                                 LoggersManagerObject.Log(STREAM("ERROR IN CIF FILE - ChainsNames.find(AppliedChainName)->second.size() == 0 " << AppliedChainName));
 
-                            auto& AtomsForChainName = AtomsForChainNameIterator->second;
-                            //for (CellEngineAtom& AppliedAtom : AtomsForChainName)
-                            //for (uint64_t AppliedAtomIndex = 0; AppliedAtomIndex < AtomsForChainName.size(); AppliedAtomIndex += 1)
-                            for (uint64_t AppliedAtomIndex = 0; AppliedAtomIndex < AtomsForChainName.size(); AppliedAtomIndex++)
+                            for (auto AppliedAtom : AtomsForChainNameIterator->second)
                             {
-                                auto AppliedAtom = AtomsForChainName[AppliedAtomIndex];
-
                                 NumberOfAtoms++;
 
                                 if (AppliedChainName == "BAR0" || AppliedChainName == "NR0" || AppliedChainName == "NR1")
