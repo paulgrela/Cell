@@ -1,12 +1,10 @@
 
-#include <iostream>
-
 #include <sb7.h>
 #include <vmath.h>
-
 #include <object.h>
 #include <shader.h>
 
+#include <iostream>
 #include <string>
 #include <memory>
 #include "ArcBall.h"
@@ -27,6 +25,12 @@ using namespace std;
 
 class CellEngineOpenGLVisualiser : public sb7::application
 {
+private:
+    GLuint LineDataBuffer;
+    GLuint LineVAO;
+
+
+
 private:
     GLuint per_fragment_program;
     GLuint per_vertex_program;
@@ -57,6 +61,7 @@ private:
     uniforms[2]{};
 
     sb7::object object;
+                                                                                                                        sb7::object object1;
 
     bool per_vertex;
 private:
@@ -101,6 +106,10 @@ protected:
     void InitArcBall();
 protected:
     void InitExternalData() override;
+protected:
+    void InitLineVertexes();
+    void DeleteLineVertexes();
+    void DrawBonds();
 protected:
     void load_shaders();
     void startup() override;
@@ -193,6 +202,71 @@ void CellEngineOpenGLVisualiser::load_shaders()
     CATCH("loading shaders for cell visualization")
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+void CellEngineOpenGLVisualiser::DeleteLineVertexes()
+{
+    try
+    {
+        glDeleteVertexArrays(1, &LineVAO);
+        glDeleteBuffers(1, &LineDataBuffer);
+
+        LineVAO = 0;
+        LineDataBuffer = 0;
+    }
+    CATCH("deleting line vertexes")
+}
+
+void CellEngineOpenGLVisualiser::InitLineVertexes()
+{
+    try
+    {
+        DeleteLineVertexes();
+
+        const float LineVertexes[] = { -1.0, -1.0, 0.0,  1.0, -1.0, 0.0,  0.0, 1.0, 0.0 };
+
+        glGenVertexArrays(1, &LineVAO);
+        glBindVertexArray(LineVAO);
+
+        glGenBuffers(1, &LineDataBuffer);
+        glBindBuffer(GL_ARRAY_BUFFER, LineDataBuffer);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(LineVertexes), LineVertexes, GL_STATIC_DRAW);
+
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+        glEnableVertexAttribArray(0);
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    }
+    CATCH("initiation of line vertexes")
+}
+
+void CellEngineOpenGLVisualiser::DrawBonds()
+{
+    try
+    {
+        glBindVertexArray(LineVAO);
+        //const float LineVertexes[] = { -1.0, -1.0, 0.0,  1.0, -1.0, 0.0,  0.0, 1.0, 0.0 };
+        //glBufferData(GL_ARRAY_BUFFER, sizeof(LineVertexes), LineVertexes, GL_STATIC_DRAW);
+        //glDrawArrays(GL_LINES, 0, 2);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+    }
+    CATCH("drawing bonds")
+}
+
+
+
+
+
 void CellEngineOpenGLVisualiser::startup()
 {
     try
@@ -203,7 +277,10 @@ void CellEngineOpenGLVisualiser::startup()
         glBindBuffer(GL_UNIFORM_BUFFER, uniforms_buffer);
         glBufferData(GL_UNIFORM_BUFFER, sizeof(uniforms_block), nullptr, GL_DYNAMIC_DRAW);
 
+                                                                                                                        //InitLineVertexes();
         object.load("..//objects//sphere.sbm");
+                                                                                                                        //object1.load("..//objects//cube.sbm");
+                                                                                                                        InitLineVertexes();
 
         glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
@@ -211,7 +288,7 @@ void CellEngineOpenGLVisualiser::startup()
 
         InitArcBall();
     }
-    CATCH("initation of data for cell visualization")
+    CATCH("initiation of data for cell visualization")
 }
 
 inline bool CellEngineOpenGLVisualiser::CheckDistanceToDrawDetailsInAtomScale(const float XNew, const float YNew, const float ZNew) const
@@ -284,7 +361,32 @@ inline vmath::vec3 CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom
         MatrixUniformBlockForVertexShaderPointer->mv_matrix = ViewMatrix * ModelMatrix;
 
         glUnmapBuffer(GL_UNIFORM_BUFFER);
+
         object.render();
+
+
+
+//        glBindBufferBase(GL_UNIFORM_BUFFER, 0, uniforms_buffer);
+//        MatrixUniformBlockForVertexShaderPointer = (uniforms_block*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(uniforms_block), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
+//
+//        AtomPosition = LengthUnit * AtomObject.Position();
+//        //ModelMatrix = vmath::translate(AtomPosition.X() - CameraXPosition - Center.X(), AtomPosition.Y() + CameraYPosition - Center.Y(), AtomPosition.Z() + CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(CellEngineDataFileObjectPointer->SizeX, CellEngineDataFileObjectPointer->SizeY, CellEngineDataFileObjectPointer->SizeZ));
+//        ModelMatrix = vmath::translate(AtomPosition.X() - CameraXPosition, AtomPosition.Y() + CameraYPosition, AtomPosition.Z() + CameraZPosition) * vmath::scale(vmath::vec3(CellEngineDataFileObjectPointer->SizeX, CellEngineDataFileObjectPointer->SizeY, CellEngineDataFileObjectPointer->SizeZ));
+//
+//        MatrixUniformBlockForVertexShaderPointer->view_matrix = ViewMatrix;
+//        MatrixUniformBlockForVertexShaderPointer->proj_matrix = vmath::perspective(50.0f, (float)info.windowWidth / (float)info.windowHeight, 0.1f, 95000.0f);
+//        MatrixUniformBlockForVertexShaderPointer->color = AtomObject.Color;
+//
+//        FinalModelPosition = GetFinalModelPosition(AtomPosition, MatrixUniformBlockForVertexShaderPointer, Center, CountNewPosition, DrawOutsideBorder);
+//        if (DrawCenter == true)
+//            DrawCenterPoint(MatrixUniformBlockForVertexShaderPointer, ModelMatrix);
+//
+//        MatrixUniformBlockForVertexShaderPointer->mv_matrix = ViewMatrix * ModelMatrix;
+//
+//        glUnmapBuffer(GL_UNIFORM_BUFFER);
+//
+//        object1.render();
+                                                                                                                        DrawBonds();
     }
     CATCH("rendering object for data for cell visualization")
 

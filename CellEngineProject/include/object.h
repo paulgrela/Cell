@@ -37,29 +37,28 @@ namespace sb7
             }
         }
 
-        unsigned int get_sub_object_count() const           
+        [[nodiscard]] unsigned int get_sub_object_count() const
         { 
             return num_sub_objects; 
         }
 
-        GLuint get_vao() const                        
+        [[nodiscard]] GLuint get_vao() const
         { 
             return vao; 
         }
 
-        void load(const char * filename);
+        void load(const char* filename);
         void free();
 
     private:
         GLuint data_buffer;
         GLuint vao;
         GLuint index_type;
-        GLuint index_offset;
 
         enum { MAX_SUB_OBJECTS = 256 };
 
         unsigned int num_sub_objects;
-        SB6M_SUB_OBJECT_DECL    sub_object[MAX_SUB_OBJECTS];
+        SB6M_SUB_OBJECT_DECL sub_object[MAX_SUB_OBJECTS];
     };
 }
 

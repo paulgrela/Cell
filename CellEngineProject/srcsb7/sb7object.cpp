@@ -4,7 +4,7 @@
 #include "GL/gl3w.h"
 #include <object.h>
 
-#include <stdio.h>
+#include <cstdio>
 
 namespace sb7
 {
@@ -12,15 +12,13 @@ namespace sb7
     {
     }
 
-    object::~object()
-    {
-    }
+    object::~object() = default;
 
-    void object::load(const char * filename)
+    void object::load(const char* filename)
     {
-        FILE * infile = fopen(filename, "rb");
+        FILE* infile = fopen(filename, "rb");
         size_t filesize;
-        char * data;
+        char* data;
 
         this->free();
 
@@ -32,27 +30,27 @@ namespace sb7
 
         fread(data, filesize, 1, infile);
 
-        char * ptr = data;
-        SB6M_HEADER * header = (SB6M_HEADER *)ptr;
+        char* ptr = data;
+        auto header = (SB6M_HEADER *)ptr;
         ptr += header->size;
 
-        SB6M_VERTEX_ATTRIB_CHUNK * vertex_attrib_chunk = NULL;
-        SB6M_CHUNK_VERTEX_DATA * vertex_data_chunk = NULL;
-        SB6M_CHUNK_INDEX_DATA * index_data_chunk = NULL;
-        SB6M_CHUNK_SUB_OBJECT_LIST * sub_object_chunk = NULL;
-        SB6M_DATA_CHUNK * data_chunk = NULL;
+        SB6M_VERTEX_ATTRIB_CHUNK* vertex_attrib_chunk = nullptr;
+        SB6M_CHUNK_VERTEX_DATA* vertex_data_chunk = nullptr;
+        SB6M_CHUNK_INDEX_DATA* index_data_chunk = nullptr;
+        SB6M_CHUNK_SUB_OBJECT_LIST* sub_object_chunk = nullptr;
+        SB6M_DATA_CHUNK* data_chunk = nullptr;
 
         for (unsigned int chunk_index = 0; chunk_index < header->num_chunks; chunk_index++)
         {
-            SB6M_CHUNK_HEADER * chunk = (SB6M_CHUNK_HEADER *)ptr;
+            auto chunk = (SB6M_CHUNK_HEADER*)ptr;
             ptr += chunk->size;
             switch (chunk->chunk_type)
             {
                 case SB6M_CHUNK_TYPE_VERTEX_ATTRIBS: vertex_attrib_chunk = (SB6M_VERTEX_ATTRIB_CHUNK*)chunk; break;
-                case SB6M_CHUNK_TYPE_VERTEX_DATA: vertex_data_chunk = (SB6M_CHUNK_VERTEX_DATA *)chunk; break;
-                case SB6M_CHUNK_TYPE_INDEX_DATA: index_data_chunk = (SB6M_CHUNK_INDEX_DATA *)chunk; break;
-                case SB6M_CHUNK_TYPE_SUB_OBJECT_LIST: sub_object_chunk = (SB6M_CHUNK_SUB_OBJECT_LIST *)chunk; break;
-                case SB6M_CHUNK_TYPE_DATA: data_chunk = (SB6M_DATA_CHUNK *)chunk; break;
+                case SB6M_CHUNK_TYPE_VERTEX_DATA: vertex_data_chunk = (SB6M_CHUNK_VERTEX_DATA*)chunk; break;
+                case SB6M_CHUNK_TYPE_INDEX_DATA: index_data_chunk = (SB6M_CHUNK_INDEX_DATA*)chunk; break;
+                case SB6M_CHUNK_TYPE_SUB_OBJECT_LIST: sub_object_chunk = (SB6M_CHUNK_SUB_OBJECT_LIST*)chunk; break;
+                case SB6M_CHUNK_TYPE_DATA: data_chunk = (SB6M_DATA_CHUNK*)chunk; break;
                 default: break;
             }
         }
@@ -60,7 +58,7 @@ namespace sb7
         glGenVertexArrays(1, &vao);
         glBindVertexArray(vao);
 
-        if (data_chunk != NULL)
+        if (data_chunk != nullptr)
         {
             glGenBuffers(1, &data_buffer);
             glBindBuffer(GL_ARRAY_BUFFER, data_buffer);
@@ -71,49 +69,42 @@ namespace sb7
             unsigned int data_size = 0;
             unsigned int size_used = 0;
 
-            if (vertex_data_chunk != NULL)
-            {
+            if (vertex_data_chunk != nullptr)
                 data_size += vertex_data_chunk->data_size;
-            }
 
-            if (index_data_chunk != NULL)
-            {
+            if (index_data_chunk != nullptr)
                 data_size += index_data_chunk->index_count * (index_data_chunk->index_type == GL_UNSIGNED_SHORT ? sizeof(GLushort) : sizeof(GLubyte));
-            }
 
             glGenBuffers(1, &data_buffer);
             glBindBuffer(GL_ARRAY_BUFFER, data_buffer);
-            glBufferData(GL_ARRAY_BUFFER, data_size, NULL, GL_STATIC_DRAW);
+            glBufferData(GL_ARRAY_BUFFER, data_size, nullptr, GL_STATIC_DRAW);
 
-            if (vertex_data_chunk != NULL)
+            if (vertex_data_chunk != nullptr)
             {
                 glBufferSubData(GL_ARRAY_BUFFER, 0, vertex_data_chunk->data_size, data + vertex_data_chunk->data_offset);
                 size_used += vertex_data_chunk->data_offset;
             }
 
-            if (index_data_chunk != NULL)
-            {
+            if (index_data_chunk != nullptr)
                 glBufferSubData(GL_ARRAY_BUFFER, size_used, index_data_chunk->index_count * (index_data_chunk->index_type == GL_UNSIGNED_SHORT ? sizeof(GLushort) : sizeof(GLubyte)), data + index_data_chunk->index_data_offset);
-            }
         }
 
         for (unsigned int attrib_index = 0; attrib_index < vertex_attrib_chunk->attrib_count; attrib_index++)
         {
             SB6M_VERTEX_ATTRIB_DECL &attrib_decl = vertex_attrib_chunk->attrib_data[attrib_index];
-            glVertexAttribPointer(attrib_index, attrib_decl.size, attrib_decl.type, attrib_decl.flags & SB6M_VERTEX_ATTRIB_FLAG_NORMALIZED ? GL_TRUE : GL_FALSE, attrib_decl.stride, (GLvoid *)(uintptr_t)attrib_decl.data_offset);
+            glVertexAttribPointer(attrib_index, attrib_decl.size, attrib_decl.type, attrib_decl.flags & SB6M_VERTEX_ATTRIB_FLAG_NORMALIZED ? GL_TRUE : GL_FALSE, attrib_decl.stride, (GLvoid*)(uintptr_t)attrib_decl.data_offset);
             glEnableVertexAttribArray(attrib_index);
         }
 
-        if (index_data_chunk != NULL)
+        if (index_data_chunk != nullptr)
         {
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, data_buffer);
             index_type = index_data_chunk->index_type;
-            index_offset = index_data_chunk->index_data_offset;
         }
         else
             index_type = GL_NONE;
 
-        if (sub_object_chunk != NULL)
+        if (sub_object_chunk != nullptr)
         {
             if (sub_object_chunk->count > MAX_SUB_OBJECTS)
                 sub_object_chunk->count = MAX_SUB_OBJECTS;
@@ -147,6 +138,8 @@ namespace sb7
         data_buffer = 0;
     }
 
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wint-to-pointer-cast"
     void object::render_sub_object(unsigned int object_index, unsigned int instance_count, unsigned int base_instance)
     {
         glBindVertexArray(vao);
@@ -156,4 +149,5 @@ namespace sb7
         else
             glDrawArraysInstancedBaseInstance(GL_TRIANGLES, sub_object[object_index].first, sub_object[object_index].count, instance_count, base_instance);
     }
+    #pragma GCC diagnostic pop
 }
