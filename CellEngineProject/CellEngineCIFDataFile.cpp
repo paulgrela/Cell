@@ -68,6 +68,7 @@ CellEngineCIFDataFile::CellEngineCIFDataFile(const string_view FileName)
     CheckAtomVisibility =  true;
     CutZ = 200;
     Distance = 1500;
+    //Distance = 200;
 
     SizeX = 1;
     SizeY = 1;

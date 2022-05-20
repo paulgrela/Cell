@@ -1,4 +1,5 @@
 
+
 #include <sb7.h>
 #include <vmath.h>
 #include <object.h>
@@ -26,11 +27,8 @@ using namespace std;
 class CellEngineOpenGLVisualiser : public sb7::application
 {
 private:
-    GLuint LineDataBuffer;
     GLuint LineVAO;
-
-
-
+    GLuint LineDataBuffer[2];
 private:
     GLuint per_fragment_program;
     GLuint per_vertex_program;
@@ -60,8 +58,8 @@ private:
     }
     uniforms[2]{};
 
-    sb7::object object;
-                                                                                                                        sb7::object object1;
+    sb7::object AtomGraphicsObject;
+                                                                                                                        sb7::object BondGraphicsObject;
 
     bool per_vertex;
 private:
@@ -219,10 +217,7 @@ void CellEngineOpenGLVisualiser::DeleteLineVertexes()
     try
     {
         glDeleteVertexArrays(1, &LineVAO);
-        glDeleteBuffers(1, &LineDataBuffer);
-
-        LineVAO = 0;
-        LineDataBuffer = 0;
+        glDeleteBuffers(2, LineDataBuffer);
     }
     CATCH("deleting line vertexes")
 }
@@ -233,19 +228,78 @@ void CellEngineOpenGLVisualiser::InitLineVertexes()
     {
         DeleteLineVertexes();
 
-        const float LineVertexes[] = { -1.0, -1.0, 0.0,  1.0, -1.0, 0.0,  0.0, 1.0, 0.0 };
+        //const float LineVertexes[] = { 0, 0, 0,  0, 100, 0, 100, 100, 100 };
+        const float LineVertexes[] = { -1.0, -1.0, 0.0,   1.0, -1.0, 0.0,   0.0, 1.0, 0.0,   1.0, -1.0, 0.0,  -1.0, -1.0, 0.0,   0.0, 1.0, 0.0 };
+        const float LineNormals[] = { 1.0, 1.0, 1.0,  1.0, 1.0, 1.0,  1.0, 1.0, 1.0,  1.0, 1.0, 1.0,  1.0, 1.0, 1.0,  1.0, 1.0, 1.0 };
+        //const float LineVertexes[] = { -1.0, -1.0, 0.0,  1.0, -1.0, 0.0,  0.0, 1.0, 0.0,  0.0, 1.0, 0.0, 1.0, -1.0, 0.0, -1.0, -1.0, 0.0 };
+//        static const GLfloat LineVertexes[] =
+//                {
+//                        -1.00f,  1.00f, -1.00f,
+//                        -1.00f, -1.00f, -1.00f,
+//                        1.00f, -1.00f, -1.00f,
+//
+//                        1.00f, -1.00f, -1.00f,
+//                        1.00f,  1.00f, -1.00f,
+//                        -1.00f,  1.00f, -1.00f,
+//
+//                        1.00f, -1.00f, -1.00f,
+//                        1.00f, -1.00f,  1.00f,
+//                        1.00f,  1.00f, -1.00f,
+//
+//                        1.00f, -1.00f,  1.00f,
+//                        1.00f,  1.00f,  1.00f,
+//                        1.00f,  1.00f, -1.00f,
+//
+//                        1.00f, -1.00f,  1.00f,
+//                        -1.00f, -1.00f,  1.00f,
+//                        1.00f,  1.00f,  1.00f,
+//
+//                        -1.00f, -1.00f,  1.00f,
+//                        -1.00f,  1.00f,  1.00f,
+//                        1.00f,  1.00f,  1.00f,
+//
+//                        -1.00f, -1.00f,  1.00f,
+//                        -1.00f, -1.00f, -1.00f,
+//                        -1.00f,  1.00f,  1.00f,
+//
+//                        -1.00f, -1.00f, -1.00f,
+//                        -1.00f,  1.00f, -1.00f,
+//                        -1.00f,  1.00f,  1.00f,
+//
+//                        -1.00f, -1.00f,  1.00f,
+//                        1.00f, -1.00f,  1.00f,
+//                        1.00f, -1.00f, -1.00f,
+//
+//                        1.00f, -1.00f, -1.00f,
+//                        -1.00f, -1.00f, -1.00f,
+//                        -1.00f, -1.00f,  1.00f,
+//
+//                        -1.00f,  1.00f, -1.00f,
+//                        1.00f,  1.00f, -1.00f,
+//                        1.00f,  1.00f,  1.00f,
+//
+//                        1.00f,  1.00f,  1.00f,
+//                        -1.00f,  1.00f,  1.00f,
+//                        -1.00f,  1.00f, -1.00f
+//                };
 
         glGenVertexArrays(1, &LineVAO);
         glBindVertexArray(LineVAO);
 
-        glGenBuffers(1, &LineDataBuffer);
-        glBindBuffer(GL_ARRAY_BUFFER, LineDataBuffer);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(LineVertexes), LineVertexes, GL_STATIC_DRAW);
+        glGenBuffers(2, &LineDataBuffer[0]);
 
+        glBindBuffer(GL_ARRAY_BUFFER, LineDataBuffer[0]);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(LineVertexes), LineVertexes, GL_STATIC_DRAW);
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
         glEnableVertexAttribArray(0);
 
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        glBindBuffer(GL_ARRAY_BUFFER, LineDataBuffer[1]);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(LineNormals), LineNormals, GL_STATIC_DRAW);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+        glEnableVertexAttribArray(1);
+
+        glBindVertexArray(0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
     CATCH("initiation of line vertexes")
 }
@@ -255,10 +309,9 @@ void CellEngineOpenGLVisualiser::DrawBonds()
     try
     {
         glBindVertexArray(LineVAO);
-        //const float LineVertexes[] = { -1.0, -1.0, 0.0,  1.0, -1.0, 0.0,  0.0, 1.0, 0.0 };
-        //glBufferData(GL_ARRAY_BUFFER, sizeof(LineVertexes), LineVertexes, GL_STATIC_DRAW);
-        //glDrawArrays(GL_LINES, 0, 2);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawArrays(GL_LINES, 0, 6);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        //glDrawArrays(GL_TRIANGLES, 12, 36);
     }
     CATCH("drawing bonds")
 }
@@ -277,14 +330,15 @@ void CellEngineOpenGLVisualiser::startup()
         glBindBuffer(GL_UNIFORM_BUFFER, uniforms_buffer);
         glBufferData(GL_UNIFORM_BUFFER, sizeof(uniforms_block), nullptr, GL_DYNAMIC_DRAW);
 
-                                                                                                                        //InitLineVertexes();
-        object.load("..//objects//sphere.sbm");
-                                                                                                                        //object1.load("..//objects//cube.sbm");
+        AtomGraphicsObject.load("..//objects//sphere.sbm");
+                                                                                                                        BondGraphicsObject.load("..//objects//cube.sbm");
                                                                                                                         InitLineVertexes();
-
         glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
+//                                                                                                                        glFrontFace(GL_CCW);
+//                                                                                                                        glPolygonMode(GL_FRONT, GL_FILL);
+//                                                                                                                        glPolygonMode(GL_FRONT, GL_LINE);
 
         InitArcBall();
     }
@@ -336,6 +390,11 @@ inline vmath::vec3 CellEngineOpenGLVisualiser::GetFinalModelPosition(const vmath
     return vmath::vec3(0, 0, 0);
 }
 
+//                                                                                                                        CellEngineAtom AtomObjectPrev;
+//                                                                                                                        float PrevX;
+//                                                                                                                        float PrevY;
+//                                                                                                                        float PrevZ;
+
 inline vmath::vec3 CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom& AtomObject, const vmath::mat4& ViewMatrix, const vmath::vec3& Center, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, uint64_t& NumberOfAllRenderedAtoms)
 {
     vmath::vec3 FinalModelPosition;
@@ -362,31 +421,74 @@ inline vmath::vec3 CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom
 
         glUnmapBuffer(GL_UNIFORM_BUFFER);
 
-        object.render();
+        AtomGraphicsObject.render();
+
+                                                                                                                        glBindBufferBase(GL_UNIFORM_BUFFER, 0, uniforms_buffer);
+                                                                                                                        MatrixUniformBlockForVertexShaderPointer = (uniforms_block*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(uniforms_block), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
+
+                                                                                                                        //AtomPosition = LengthUnit * AtomObject.Position();
+
+//                                                                                                                        float Lenght1 = sqrt((AtomPosition.X() * AtomPosition.X()) + (AtomPosition.Y() * AtomPosition.Y()) + (AtomPosition.Z() * AtomPosition.Z()));
+//                                                                                                                        float Length2 = sqrt((AtomObjectPrev.X * AtomObjectPrev.X) + (AtomObjectPrev.Y * AtomObjectPrev.Y) + (AtomObjectPrev.Z * AtomObjectPrev.Z));
+//
+//                                                                                                                        float NewPosX = (AtomPosition.X() + AtomObjectPrev.X) / 2;
+//                                                                                                                        float NewPosY = (AtomPosition.Y() + AtomObjectPrev.Y) / 2;
+//                                                                                                                        float NewPosZ = (AtomPosition.Z() + AtomObjectPrev.Z) / 2;
+
+                                                                                                                        //float BondLength = sqrt((AtomPosition.X() - AtomObjectPrev.X) * (AtomPosition.X() - AtomObjectPrev.X) + (AtomPosition.Y() - AtomObjectPrev.Y) * (AtomPosition.Y() - AtomObjectPrev.Y) + (AtomPosition.Z() - AtomObjectPrev.Z) * (AtomPosition.Z() - AtomObjectPrev.Z));
+                                                                                                                        //ModelMatrix = vmath::translate(NewPosX - CameraXPosition - Center.X(), NewPosY + CameraYPosition - Center.Y(), NewPosZ + CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(0.01, 0.01, BondLength));
+
+//                                                                                                                        ModelMatrix = vmath::translate(NewPosX - CameraXPosition - Center.X(), NewPosY + CameraYPosition - Center.Y(), NewPosZ + CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(0.01, 0.01, 1));
+
+                                                                                                                        //ModelMatrix = vmath::translate(AtomPosition.X() - CameraXPosition - Center.X(), AtomPosition.Y() + CameraYPosition - Center.Y(), AtomPosition.Z() + CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(CellEngineDataFileObjectPointer->SizeX, CellEngineDataFileObjectPointer->SizeY, CellEngineDataFileObjectPointer->SizeZ));
+                                                                                                                        //ModelMatrix = vmath::translate(AtomPosition.X() - CameraXPosition - Center.X() + 1, AtomPosition.Y() + CameraYPosition - Center.Y(), AtomPosition.Z() + CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(0.01, 0.01, 1));
+                                                                                                                        ModelMatrix = vmath::translate(AtomPosition.X() - CameraXPosition - Center.X() + 1, AtomPosition.Y() + CameraYPosition - Center.Y(), AtomPosition.Z() + CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(1,1, 1));
+                                                                                                                        //ModelMatrix = vmath::translate(AtomPosition.X() - CameraXPosition, AtomPosition.Y() + CameraYPosition, AtomPosition.Z() + CameraZPosition) * vmath::scale(vmath::vec3(CellEngineDataFileObjectPointer->SizeX * 0.01, CellEngineDataFileObjectPointer->SizeY * 0.01, CellEngineDataFileObjectPointer->SizeZ));
 
 
+                                                                                                                        MatrixUniformBlockForVertexShaderPointer->view_matrix = ViewMatrix;
+                                                                                                                        MatrixUniformBlockForVertexShaderPointer->proj_matrix = vmath::perspective(50.0f, (float)info.windowWidth / (float)info.windowHeight, 0.1f, 95000.0f);
+                                                                                                                        MatrixUniformBlockForVertexShaderPointer->color = AtomObject.Color;
 
-//        glBindBufferBase(GL_UNIFORM_BUFFER, 0, uniforms_buffer);
-//        MatrixUniformBlockForVertexShaderPointer = (uniforms_block*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(uniforms_block), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
-//
-//        AtomPosition = LengthUnit * AtomObject.Position();
-//        //ModelMatrix = vmath::translate(AtomPosition.X() - CameraXPosition - Center.X(), AtomPosition.Y() + CameraYPosition - Center.Y(), AtomPosition.Z() + CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(CellEngineDataFileObjectPointer->SizeX, CellEngineDataFileObjectPointer->SizeY, CellEngineDataFileObjectPointer->SizeZ));
-//        ModelMatrix = vmath::translate(AtomPosition.X() - CameraXPosition, AtomPosition.Y() + CameraYPosition, AtomPosition.Z() + CameraZPosition) * vmath::scale(vmath::vec3(CellEngineDataFileObjectPointer->SizeX, CellEngineDataFileObjectPointer->SizeY, CellEngineDataFileObjectPointer->SizeZ));
-//
-//        MatrixUniformBlockForVertexShaderPointer->view_matrix = ViewMatrix;
-//        MatrixUniformBlockForVertexShaderPointer->proj_matrix = vmath::perspective(50.0f, (float)info.windowWidth / (float)info.windowHeight, 0.1f, 95000.0f);
-//        MatrixUniformBlockForVertexShaderPointer->color = AtomObject.Color;
-//
-//        FinalModelPosition = GetFinalModelPosition(AtomPosition, MatrixUniformBlockForVertexShaderPointer, Center, CountNewPosition, DrawOutsideBorder);
-//        if (DrawCenter == true)
-//            DrawCenterPoint(MatrixUniformBlockForVertexShaderPointer, ModelMatrix);
-//
-//        MatrixUniformBlockForVertexShaderPointer->mv_matrix = ViewMatrix * ModelMatrix;
-//
-//        glUnmapBuffer(GL_UNIFORM_BUFFER);
-//
-//        object1.render();
+                                                                                                                        MatrixUniformBlockForVertexShaderPointer->mv_matrix = ViewMatrix * ModelMatrix;
+
+                                                                                                                        glUnmapBuffer(GL_UNIFORM_BUFFER);
+
+
                                                                                                                         DrawBonds();
+
+
+//                                                                                                                        glBindBufferBase(GL_UNIFORM_BUFFER, 0, uniforms_buffer);
+//                                                                                                                        MatrixUniformBlockForVertexShaderPointer = (uniforms_block*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(uniforms_block), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
+//
+//                                                                                                                        //AtomPosition = LengthUnit * AtomObject.Position();
+//
+////                                                                                                                        float Lenght1 = sqrt((AtomPosition.X() * AtomPosition.X()) + (AtomPosition.Y() * AtomPosition.Y()) + (AtomPosition.Z() * AtomPosition.Z()));
+////                                                                                                                        float Length2 = sqrt((AtomObjectPrev.X * AtomObjectPrev.X) + (AtomObjectPrev.Y * AtomObjectPrev.Y) + (AtomObjectPrev.Z * AtomObjectPrev.Z));
+////
+////                                                                                                                        float NewPosX = (AtomPosition.X() + AtomObjectPrev.X) / 2;
+////                                                                                                                        float NewPosY = (AtomPosition.Y() + AtomObjectPrev.Y) / 2;
+////                                                                                                                        float NewPosZ = (AtomPosition.Z() + AtomObjectPrev.Z) / 2;
+//
+//                                                                                                                        //float BondLength = sqrt((AtomPosition.X() - AtomObjectPrev.X) * (AtomPosition.X() - AtomObjectPrev.X) + (AtomPosition.Y() - AtomObjectPrev.Y) * (AtomPosition.Y() - AtomObjectPrev.Y) + (AtomPosition.Z() - AtomObjectPrev.Z) * (AtomPosition.Z() - AtomObjectPrev.Z));
+//                                                                                                                        //ModelMatrix = vmath::translate(NewPosX - CameraXPosition - Center.X(), NewPosY + CameraYPosition - Center.Y(), NewPosZ + CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(0.01, 0.01, BondLength));
+//
+////                                                                                                                        ModelMatrix = vmath::translate(NewPosX - CameraXPosition - Center.X(), NewPosY + CameraYPosition - Center.Y(), NewPosZ + CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(0.01, 0.01, 1));
+//
+//                                                                                                                        //ModelMatrix = vmath::translate(AtomPosition.X() - CameraXPosition - Center.X(), AtomPosition.Y() + CameraYPosition - Center.Y(), AtomPosition.Z() + CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(CellEngineDataFileObjectPointer->SizeX, CellEngineDataFileObjectPointer->SizeY, CellEngineDataFileObjectPointer->SizeZ));
+//                                                                                                                        ModelMatrix = vmath::translate(AtomPosition.X() - CameraXPosition - Center.X() + 1, AtomPosition.Y() + CameraYPosition - Center.Y(), AtomPosition.Z() + CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(0.01, 0.01, 1));
+//                                                                                                                        //ModelMatrix = vmath::translate(AtomPosition.X() - CameraXPosition, AtomPosition.Y() + CameraYPosition, AtomPosition.Z() + CameraZPosition) * vmath::scale(vmath::vec3(CellEngineDataFileObjectPointer->SizeX * 0.01, CellEngineDataFileObjectPointer->SizeY * 0.01, CellEngineDataFileObjectPointer->SizeZ));
+//
+//
+//                                                                                                                        MatrixUniformBlockForVertexShaderPointer->view_matrix = ViewMatrix;
+//                                                                                                                        MatrixUniformBlockForVertexShaderPointer->proj_matrix = vmath::perspective(50.0f, (float)info.windowWidth / (float)info.windowHeight, 0.1f, 95000.0f);
+//                                                                                                                        MatrixUniformBlockForVertexShaderPointer->color = AtomObject.Color;
+//
+//                                                                                                                        MatrixUniformBlockForVertexShaderPointer->mv_matrix = ViewMatrix * ModelMatrix;
+//
+//                                                                                                                        glUnmapBuffer(GL_UNIFORM_BUFFER);
+//
+//                                                                                                                        BondGraphicsObject.render();
     }
     CATCH("rendering object for data for cell visualization")
 
@@ -428,10 +530,11 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
                 {
                     NumberOfFoundParticlesCenterToBeRenderedInAtomDetails++;
 
-                    for(uint64_t AtomObjectIndex = 0; AtomObjectIndex < CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex].size(); AtomObjectIndex += CellEngineDataFileObjectPointer->LoadOfAtomsStep)
+                    uint64_t AtomObjectIndex;
+                    for (AtomObjectIndex = 0; AtomObjectIndex < CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex].size(); AtomObjectIndex += CellEngineDataFileObjectPointer->LoadOfAtomsStep)
                         RenderObject(CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex][AtomObjectIndex], ViewMatrix, Center, false, false, false, NumberOfAllRenderedAtoms);
                 }
-
+//                                                                                                                        AtomObjectPrev = ParticlesCenterObject;
         }
         CellEngineDataFileObjectPointer->ShowNextStructureFromActiveFilm();
 
@@ -483,8 +586,8 @@ void CellEngineOpenGLVisualiser::onKey(int key, int action)
                 case 'U': CellEngineDataFileObjectPointer->LoadOfAtomsStep == 100 ? CellEngineDataFileObjectPointer->LoadOfAtomsStep = 10 : CellEngineDataFileObjectPointer->LoadOfAtomsStep = 100;  break;
                 case 'I': CellEngineDataFileObjectPointer->LoadOfAtomsStep = 1;  break;
 
-                case '9': object.load("..//objects//cube.sbm");  break;
-                case '0': object.load("..//objects//sphere.sbm");  break;
+                case '9': AtomGraphicsObject.load("..//objects//cube.sbm");  break;
+                case '0': AtomGraphicsObject.load("..//objects//sphere.sbm");  break;
 
                 default: break;
             }
