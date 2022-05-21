@@ -277,53 +277,20 @@ void CellEngineOpenGLVisualiser::DrawBonds(const vmath::mat4& ViewMatrix, const 
                 float DiffY = ParticlesCenterObject2.Y - ParticlesCenterObject1.Y;
                 float DiffZ = ParticlesCenterObject2.Z - ParticlesCenterObject1.Z;
                 float VectorLength = sqrt(DiffX * DiffX + DiffY * DiffY + DiffZ * DiffZ);
-                if (VectorLength < 0.17)
+                if (VectorLength < 1.5)
                 {
                     glBindBufferBase(GL_UNIFORM_BUFFER, 0, uniforms_buffer);
                     auto MatrixUniformBlockForVertexShaderPointer = (uniforms_block*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(uniforms_block), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
 
-                    vmath::vec3 AtomPosition1 = LengthUnit * ParticlesCenterObject1.Position();
-                    vmath::vec3 AtomPosition2 = LengthUnit * ParticlesCenterObject2.Position();
-                    vmath::mat4 ModelMatrix1 = vmath::translate(AtomPosition1.X() - CameraXPosition - Center.X(), AtomPosition1.Y() + CameraYPosition - Center.Y(), AtomPosition1.Z() + CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(CellEngineDataFileObjectPointer->SizeX, CellEngineDataFileObjectPointer->SizeY, CellEngineDataFileObjectPointer->SizeZ));
-
                     MatrixUniformBlockForVertexShaderPointer->view_matrix = ViewMatrix;
                     MatrixUniformBlockForVertexShaderPointer->proj_matrix = vmath::perspective(50.0f, (float)info.windowWidth / (float)info.windowHeight, 0.1f, 95000.0f);
-                    MatrixUniformBlockForVertexShaderPointer->color = vmath::vec3(0.25f, 0.75f, 0.75f);;
+                    MatrixUniformBlockForVertexShaderPointer->color = vmath::vec3(0.25f, 0.75f, 0.75f);
 
-                    MatrixUniformBlockForVertexShaderPointer->mv_matrix = ViewMatrix * ModelMatrix1;
+                    MatrixUniformBlockForVertexShaderPointer->mv_matrix = ViewMatrix;
 
                     glUnmapBuffer(GL_UNIFORM_BUFFER);
 
-                    vmath::mat4 ModelMatrix11 = vmath::translate(AtomPosition1.X() - CameraXPosition - Center.X(), AtomPosition1.Y() + CameraYPosition - Center.Y(), AtomPosition1.Z() + CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(CellEngineDataFileObjectPointer->SizeX, CellEngineDataFileObjectPointer->SizeY, CellEngineDataFileObjectPointer->SizeZ));
-                    vmath::mat4 mv_matrix = ViewMatrix * ModelMatrix11;
-                    float x1 = mv_matrix[0][0] * (AtomPosition1.X() + CameraXPosition - Center.X()) + mv_matrix[1][0] * (AtomPosition1.Y() + CameraYPosition - Center.Y()) + mv_matrix[2][0] * (AtomPosition1.Z() + CameraZPosition - Center.Z());
-                    float y1 = mv_matrix[0][1] * (AtomPosition1.X() + CameraXPosition - Center.X()) + mv_matrix[1][1] * (AtomPosition1.Y() + CameraYPosition - Center.Y()) + mv_matrix[2][1] * (AtomPosition1.Z() + CameraZPosition - Center.Z());
-                    float z1 = mv_matrix[0][2] * (AtomPosition1.X() + CameraXPosition - Center.X()) + mv_matrix[1][2] * (AtomPosition1.Y() + CameraYPosition - Center.Y()) + mv_matrix[2][2] * (AtomPosition1.Z() + CameraZPosition - Center.Z());
-
-                    vmath::mat4 ModelMatrix22 = vmath::translate(AtomPosition2.X() - CameraXPosition - Center.X(), AtomPosition2.Y() + CameraYPosition - Center.Y(), AtomPosition2.Z() + CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(CellEngineDataFileObjectPointer->SizeX, CellEngineDataFileObjectPointer->SizeY, CellEngineDataFileObjectPointer->SizeZ));
-                    mv_matrix = ViewMatrix * ModelMatrix22;
-                    float x2 = mv_matrix[0][0] * (AtomPosition2.X() + CameraXPosition - Center.X()) + mv_matrix[1][0] * (AtomPosition2.Y() + CameraYPosition - Center.Y()) + mv_matrix[2][0] * (AtomPosition2.Z() + CameraZPosition - Center.Z());
-                    float y2 = mv_matrix[0][1] * (AtomPosition2.X() + CameraXPosition - Center.X()) + mv_matrix[1][1] * (AtomPosition2.Y() + CameraYPosition - Center.Y()) + mv_matrix[2][1] * (AtomPosition2.Z() + CameraZPosition - Center.Z());
-                    float z2 = mv_matrix[0][2] * (AtomPosition2.X() + CameraXPosition - Center.X()) + mv_matrix[1][2] * (AtomPosition2.Y() + CameraYPosition - Center.Y()) + mv_matrix[2][2] * (AtomPosition2.Z() + CameraZPosition - Center.Z());
-
-                    DrawBond(x1, y1, z1, x2, y2, z2);
-
-
-
-//            ModelMatrix = vmath::translate(AtomPosition.X() - CameraXPosition - Center.X(), AtomPosition.Y() + CameraYPosition - Center.Y(), AtomPosition.Z() + CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(CellEngineDataFileObjectPointer->SizeX, CellEngineDataFileObjectPointer->SizeY, CellEngineDataFileObjectPointer->SizeZ));
-//            vmath::mat4 mv_matrix = ViewMatrix * ModelMatrix;
-//            float XNew = mv_matrix[0][0] * (AtomPosition.X() + CameraXPosition - Center.X()) + mv_matrix[1][0] * (AtomPosition.Y() + CameraYPosition - Center.Y()) + mv_matrix[2][0] * (AtomPosition.Z() + CameraZPosition - Center.Z());
-//            float YNew = mv_matrix[0][1] * (AtomPosition.X() + CameraXPosition - Center.X()) + mv_matrix[1][1] * (AtomPosition.Y() + CameraYPosition - Center.Y()) + mv_matrix[2][1] * (AtomPosition.Z() + CameraZPosition - Center.Z());
-//            float ZNew = mv_matrix[0][2] * (AtomPosition.X() + CameraXPosition - Center.X()) + mv_matrix[1][2] * (AtomPosition.Y() + CameraYPosition - Center.Y()) + mv_matrix[2][2] * (AtomPosition.Z() + CameraZPosition - Center.Z());
-//
-//            ModelMatrix = vmath::translate(AtomObjectPrev.X - CameraXPosition - Center.X(), AtomObjectPrev.Y + CameraYPosition - Center.Y(), AtomObjectPrev.Z + CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(CellEngineDataFileObjectPointer->SizeX, CellEngineDataFileObjectPointer->SizeY, CellEngineDataFileObjectPointer->SizeZ));
-//            mv_matrix = ViewMatrix * ModelMatrix;
-//            float XNewPrev = mv_matrix[0][0] * (AtomObjectPrev.X + CameraXPosition - Center.X()) + mv_matrix[1][0] * (AtomObjectPrev.Y + CameraYPosition - Center.Y()) + mv_matrix[2][0] * (AtomObjectPrev.Z + CameraZPosition - Center.Z());
-//            float YNewPrev = mv_matrix[0][1] * (AtomObjectPrev.X + CameraXPosition - Center.X()) + mv_matrix[1][1] * (AtomObjectPrev.Y + CameraYPosition - Center.Y()) + mv_matrix[2][1] * (AtomObjectPrev.Z + CameraZPosition - Center.Z());
-//            float ZNewPrev = mv_matrix[0][2] * (AtomObjectPrev.X + CameraXPosition - Center.X()) + mv_matrix[1][2] * (AtomObjectPrev.Y + CameraYPosition - Center.Y()) + mv_matrix[2][2] * (AtomObjectPrev.Z + CameraZPosition - Center.Z());
-//
-//            //DrawBonds(XNew, YNew, ZNew, XNewPrev, YNewPrev, ZNewPrev);
-
+                    DrawBond(ParticlesCenterObject1.X - CameraXPosition - Center.X(), ParticlesCenterObject1.Y - CameraYPosition - Center.Y(), ParticlesCenterObject1.Z - CameraZPosition - Center.Z(), ParticlesCenterObject2.X - CameraXPosition - Center.X(), ParticlesCenterObject2.Y - CameraYPosition - Center.Y(), ParticlesCenterObject2.Z - CameraZPosition - Center.Z());
             }
         }
     }
@@ -400,8 +367,6 @@ inline vmath::vec3 CellEngineOpenGLVisualiser::GetFinalModelPosition(const vmath
     return vmath::vec3(0, 0, 0);
 }
 
-//                                                                                                                        CellEngineAtom AtomObjectPrev;
-
 inline vmath::vec3 CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom& AtomObject, const vmath::mat4& ViewMatrix, const vmath::vec3& Center, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, uint64_t& NumberOfAllRenderedAtoms)
 {
     vmath::vec3 FinalModelPosition;
@@ -437,47 +402,18 @@ inline vmath::vec3 CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom
 
 
 
-            glBindBufferBase(GL_UNIFORM_BUFFER, 0, uniforms_buffer);
-            MatrixUniformBlockForVertexShaderPointer = (uniforms_block*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(uniforms_block), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
-
-            AtomPosition = LengthUnit * AtomObject.Position();
-            //ModelMatrix = vmath::translate(AtomPosition.X() - CameraXPosition - Center.X(), AtomPosition.Y() + CameraYPosition - Center.Y(), AtomPosition.Z() + CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(CellEngineDataFileObjectPointer->SizeX, CellEngineDataFileObjectPointer->SizeY, CellEngineDataFileObjectPointer->SizeZ));
-            ModelMatrix = vmath::translate(AtomPosition.X() - CameraXPosition - Center.X(), AtomPosition.Y() + CameraYPosition - Center.Y(), AtomPosition.Z() + CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(CellEngineDataFileObjectPointer->SizeX, CellEngineDataFileObjectPointer->SizeY, CellEngineDataFileObjectPointer->SizeZ));
-
-            MatrixUniformBlockForVertexShaderPointer->view_matrix = ViewMatrix;
-            MatrixUniformBlockForVertexShaderPointer->proj_matrix = vmath::perspective(50.0f, (float)info.windowWidth / (float)info.windowHeight, 0.1f, 95000.0f);
-            MatrixUniformBlockForVertexShaderPointer->color = AtomObject.Color;
-
-            FinalModelPosition = GetFinalModelPosition(AtomPosition, MatrixUniformBlockForVertexShaderPointer, Center, CountNewPosition, DrawOutsideBorder);
-
-            //MatrixUniformBlockForVertexShaderPointer->mv_matrix = ViewMatrix * ModelMatrix;
-            MatrixUniformBlockForVertexShaderPointer->mv_matrix = ViewMatrix;
-
-            glUnmapBuffer(GL_UNIFORM_BUFFER);
-
-
-
-            //ModelMatrix = vmath::translate(AtomPosition.X() - CameraXPosition - Center.X(), AtomPosition.Y() + CameraYPosition - Center.Y(), AtomPosition.Z() + CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(CellEngineDataFileObjectPointer->SizeX, CellEngineDataFileObjectPointer->SizeY, CellEngineDataFileObjectPointer->SizeZ));
-            ModelMatrix = vmath::translate(AtomPosition.X() - CameraXPosition - Center.X(), AtomPosition.Y() + CameraYPosition - Center.Y(), AtomPosition.Z() + CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(1.0, 1.0, 1.0));
-            vmath::mat4 mv_matrix = ViewMatrix * ModelMatrix;
-            float XNew = mv_matrix[0][0] * (AtomPosition.X() + CameraXPosition - Center.X()) + mv_matrix[1][0] * (AtomPosition.Y() + CameraYPosition - Center.Y()) + mv_matrix[2][0] * (AtomPosition.Z() + CameraZPosition - Center.Z());
-            float YNew = mv_matrix[0][1] * (AtomPosition.X() + CameraXPosition - Center.X()) + mv_matrix[1][1] * (AtomPosition.Y() + CameraYPosition - Center.Y()) + mv_matrix[2][1] * (AtomPosition.Z() + CameraZPosition - Center.Z());
-            float ZNew = mv_matrix[0][2] * (AtomPosition.X() + CameraXPosition - Center.X()) + mv_matrix[1][2] * (AtomPosition.Y() + CameraYPosition - Center.Y()) + mv_matrix[2][2] * (AtomPosition.Z() + CameraZPosition - Center.Z());
+//            glBindBufferBase(GL_UNIFORM_BUFFER, 0, uniforms_buffer);
+//            MatrixUniformBlockForVertexShaderPointer = (uniforms_block*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(uniforms_block), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
 //
-//            ModelMatrix = vmath::translate(AtomObjectPrev.X - CameraXPosition - Center.X(), AtomObjectPrev.Y + CameraYPosition - Center.Y(), AtomObjectPrev.Z + CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(CellEngineDataFileObjectPointer->SizeX, CellEngineDataFileObjectPointer->SizeY, CellEngineDataFileObjectPointer->SizeZ));
-//            mv_matrix = ViewMatrix * ModelMatrix;
-//            float XNewPrev = mv_matrix[0][0] * (AtomObjectPrev.X + CameraXPosition - Center.X()) + mv_matrix[1][0] * (AtomObjectPrev.Y + CameraYPosition - Center.Y()) + mv_matrix[2][0] * (AtomObjectPrev.Z + CameraZPosition - Center.Z());
-//            float YNewPrev = mv_matrix[0][1] * (AtomObjectPrev.X + CameraXPosition - Center.X()) + mv_matrix[1][1] * (AtomObjectPrev.Y + CameraYPosition - Center.Y()) + mv_matrix[2][1] * (AtomObjectPrev.Z + CameraZPosition - Center.Z());
-//            float ZNewPrev = mv_matrix[0][2] * (AtomObjectPrev.X + CameraXPosition - Center.X()) + mv_matrix[1][2] * (AtomObjectPrev.Y + CameraYPosition - Center.Y()) + mv_matrix[2][2] * (AtomObjectPrev.Z + CameraZPosition - Center.Z());
+//            MatrixUniformBlockForVertexShaderPointer->view_matrix = ViewMatrix;
+//            MatrixUniformBlockForVertexShaderPointer->proj_matrix = vmath::perspective(50.0f, (float)info.windowWidth / (float)info.windowHeight, 0.1f, 95000.0f);
+//            MatrixUniformBlockForVertexShaderPointer->color = AtomObject.Color;
 //
-//            //DrawBonds(XNew, YNew, ZNew, XNewPrev, YNewPrev, ZNewPrev);
-            //DrawBond(XNew, YNew, ZNew,  CameraXPosition - Center.X(), CameraYPosition - Center.Y(), CameraZPosition - Center.Z());
-            //DrawBond(XNew, YNew, ZNew,  0.0, 0.0, 0.0);
-            //DrawBond(0.0, 0.0, 0.0, XNew, YNew, ZNew);
-            DrawBond(0.0, 0.0, 0.0, AtomPosition.X() - CameraXPosition - Center.X(), AtomPosition.Y() + CameraYPosition - Center.Y(), AtomPosition.Z() + CameraZPosition - Center.Z());
-            //DrawBond(0.0, 0.0, 0.0, AtomPosition.X(), AtomPosition.Y(), AtomPosition.Z());
-
-
+//            MatrixUniformBlockForVertexShaderPointer->mv_matrix = ViewMatrix;
+//
+//            glUnmapBuffer(GL_UNIFORM_BUFFER);
+//
+//            DrawBond(0.0, 0.0, 0.0, AtomPosition.X() - CameraXPosition - Center.X(), AtomPosition.Y() + CameraYPosition - Center.Y(), AtomPosition.Z() + CameraZPosition - Center.Z());
     }
     CATCH("rendering object for data for cell visualization")
 
@@ -508,7 +444,7 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
         uint64_t NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = 0;
         uint64_t NumberOfAllRenderedAtoms = 0;
 
-        //DrawBonds(ViewMatrix, Center);
+        DrawBonds(ViewMatrix, Center);
 
         for (auto ParticlesCenterIterator = CellEngineDataFileObjectPointer->GetParticlesCenters().begin(); ParticlesCenterIterator != CellEngineDataFileObjectPointer->GetParticlesCenters().end(); ++ParticlesCenterIterator)
         {
@@ -525,7 +461,6 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
                     for (AtomObjectIndex = 0; AtomObjectIndex < CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex].size(); AtomObjectIndex += CellEngineDataFileObjectPointer->LoadOfAtomsStep)
                         RenderObject(CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex][AtomObjectIndex], ViewMatrix, Center, false, false, false, NumberOfAllRenderedAtoms);
                 }
-//                                                                                                                        AtomObjectPrev = ParticlesCenterObject;
         }
         CellEngineDataFileObjectPointer->ShowNextStructureFromActiveFilm();
 
