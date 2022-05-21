@@ -65,6 +65,7 @@ CellEngineAtom CellEngineCIFDataFile::ParseRecord(const char* LocalCIFRecord)
 
 CellEngineCIFDataFile::CellEngineCIFDataFile(const string_view FileName)
 {
+    ShowBonds = false;
     CheckAtomVisibility =  true;
     CutZ = 200;
     Distance = 1500;

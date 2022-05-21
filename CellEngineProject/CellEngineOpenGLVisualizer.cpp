@@ -1,5 +1,4 @@
 
-
 #include <sb7.h>
 #include <vmath.h>
 #include <object.h>
@@ -59,7 +58,6 @@ private:
     uniforms[2]{};
 
     sb7::object AtomGraphicsObject;
-                                                                                                                        sb7::object BondGraphicsObject;
 
     bool per_vertex;
 private:
@@ -201,18 +199,6 @@ void CellEngineOpenGLVisualiser::load_shaders()
     CATCH("loading shaders for cell visualization")
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
 void CellEngineOpenGLVisualiser::DeleteLineVertexes()
 {
     try
@@ -270,35 +256,33 @@ void CellEngineOpenGLVisualiser::DrawBonds(const vmath::mat4& ViewMatrix, const 
 {
     try
     {
-        for (const auto& ParticlesCenterObject1 : CellEngineDataFileObjectPointer->GetParticlesCenters())
-            for (const auto& ParticlesCenterObject2 : CellEngineDataFileObjectPointer->GetParticlesCenters())
-            {
-                float DiffX = ParticlesCenterObject2.X - ParticlesCenterObject1.X;
-                float DiffY = ParticlesCenterObject2.Y - ParticlesCenterObject1.Y;
-                float DiffZ = ParticlesCenterObject2.Z - ParticlesCenterObject1.Z;
-                float VectorLength = sqrt(DiffX * DiffX + DiffY * DiffY + DiffZ * DiffZ);
-                if (VectorLength < 1.5)
+        if (CellEngineDataFileObjectPointer->ShowBonds == true)
+            for (const auto& ParticlesCenterObject1 : CellEngineDataFileObjectPointer->GetParticlesCenters())
+                for (const auto& ParticlesCenterObject2 : CellEngineDataFileObjectPointer->GetParticlesCenters())
                 {
-                    glBindBufferBase(GL_UNIFORM_BUFFER, 0, uniforms_buffer);
-                    auto MatrixUniformBlockForVertexShaderPointer = (uniforms_block*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(uniforms_block), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
+                    float DiffX = ParticlesCenterObject2.X - ParticlesCenterObject1.X;
+                    float DiffY = ParticlesCenterObject2.Y - ParticlesCenterObject1.Y;
+                    float DiffZ = ParticlesCenterObject2.Z - ParticlesCenterObject1.Z;
+                    float VectorLength = sqrt(DiffX * DiffX + DiffY * DiffY + DiffZ * DiffZ);
+                    if (VectorLength < 1.5)
+                    {
+                        glBindBufferBase(GL_UNIFORM_BUFFER, 0, uniforms_buffer);
+                        auto MatrixUniformBlockForVertexShaderPointer = (uniforms_block*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(uniforms_block), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
 
-                    MatrixUniformBlockForVertexShaderPointer->view_matrix = ViewMatrix;
-                    MatrixUniformBlockForVertexShaderPointer->proj_matrix = vmath::perspective(50.0f, (float)info.windowWidth / (float)info.windowHeight, 0.1f, 95000.0f);
-                    MatrixUniformBlockForVertexShaderPointer->color = vmath::vec3(0.25f, 0.75f, 0.75f);
+                        MatrixUniformBlockForVertexShaderPointer->view_matrix = ViewMatrix;
+                        MatrixUniformBlockForVertexShaderPointer->proj_matrix = vmath::perspective(50.0f, (float)info.windowWidth / (float)info.windowHeight, 0.1f, 95000.0f);
+                        MatrixUniformBlockForVertexShaderPointer->color = vmath::vec3(0.25f, 0.75f, 0.75f);
 
-                    MatrixUniformBlockForVertexShaderPointer->mv_matrix = ViewMatrix;
+                        MatrixUniformBlockForVertexShaderPointer->mv_matrix = ViewMatrix;
 
-                    glUnmapBuffer(GL_UNIFORM_BUFFER);
+                        glUnmapBuffer(GL_UNIFORM_BUFFER);
 
-                    DrawBond(ParticlesCenterObject1.X - CameraXPosition - Center.X(), ParticlesCenterObject1.Y - CameraYPosition - Center.Y(), ParticlesCenterObject1.Z - CameraZPosition - Center.Z(), ParticlesCenterObject2.X - CameraXPosition - Center.X(), ParticlesCenterObject2.Y - CameraYPosition - Center.Y(), ParticlesCenterObject2.Z - CameraZPosition - Center.Z());
-            }
-        }
+                        DrawBond(ParticlesCenterObject1.X - CameraXPosition - Center.X(), ParticlesCenterObject1.Y - CameraYPosition - Center.Y(), ParticlesCenterObject1.Z - CameraZPosition - Center.Z(), ParticlesCenterObject2.X - CameraXPosition - Center.X(), ParticlesCenterObject2.Y - CameraYPosition - Center.Y(), ParticlesCenterObject2.Z - CameraZPosition - Center.Z());
+                    }
+                }
     }
     CATCH("drawing bonds")
 }
-
-
-
 
 void CellEngineOpenGLVisualiser::startup()
 {
@@ -311,8 +295,8 @@ void CellEngineOpenGLVisualiser::startup()
         glBufferData(GL_UNIFORM_BUFFER, sizeof(uniforms_block), nullptr, GL_DYNAMIC_DRAW);
 
         AtomGraphicsObject.load("..//objects//sphere.sbm");
-                                                                                                                        BondGraphicsObject.load("..//objects//cube.sbm");
-                                                                                                                        InitLineVertexes();
+        InitLineVertexes();
+
         glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
@@ -394,26 +378,6 @@ inline vmath::vec3 CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom
         glUnmapBuffer(GL_UNIFORM_BUFFER);
 
         AtomGraphicsObject.render();
-
-
-
-
-
-
-
-
-//            glBindBufferBase(GL_UNIFORM_BUFFER, 0, uniforms_buffer);
-//            MatrixUniformBlockForVertexShaderPointer = (uniforms_block*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(uniforms_block), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
-//
-//            MatrixUniformBlockForVertexShaderPointer->view_matrix = ViewMatrix;
-//            MatrixUniformBlockForVertexShaderPointer->proj_matrix = vmath::perspective(50.0f, (float)info.windowWidth / (float)info.windowHeight, 0.1f, 95000.0f);
-//            MatrixUniformBlockForVertexShaderPointer->color = AtomObject.Color;
-//
-//            MatrixUniformBlockForVertexShaderPointer->mv_matrix = ViewMatrix;
-//
-//            glUnmapBuffer(GL_UNIFORM_BUFFER);
-//
-//            DrawBond(0.0, 0.0, 0.0, AtomPosition.X() - CameraXPosition - Center.X(), AtomPosition.Y() + CameraYPosition - Center.Y(), AtomPosition.Z() + CameraZPosition - Center.Z());
     }
     CATCH("rendering object for data for cell visualization")
 
@@ -500,6 +464,7 @@ void CellEngineOpenGLVisualiser::onKey(int key, int action)
                 case 'G': RotationAngle3 += 1; break;
                 case 'H': RotationAngle3 -= 1; break;
 
+                case 'B': CellEngineDataFileObjectPointer->ShowBonds = !CellEngineDataFileObjectPointer->ShowBonds; break;
                 case 'J': CellEngineDataFileObjectPointer->ShowDetailsInAtomScale = !CellEngineDataFileObjectPointer->ShowDetailsInAtomScale; break;
 
                 case 'O': CellEngineDataFileObjectPointer->StartFilmOfStructures(); break;
