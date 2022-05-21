@@ -34,13 +34,9 @@ namespace sb7
         static void APIENTRY debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, GLvoid* userParam);
 
     public:
-        application()
-        {
-        }
+        application() = default;
 
-        virtual ~application()
-        {
-        }
+        virtual ~application() = default;
 
         virtual void run(sb7::application* the_app)
         {
@@ -63,13 +59,11 @@ namespace sb7
             #ifndef _DEBUG
             if (info.flags.debug)
             #endif
-            {
                 glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
-            }
+
             if (info.flags.robust)
-            {
                 glfwWindowHint(GLFW_CONTEXT_ROBUSTNESS, GLFW_LOSE_CONTEXT_ON_RESET);
-            }
+
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
             glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
             glfwWindowHint(GLFW_SAMPLES, info.samples);
@@ -107,9 +101,7 @@ namespace sb7
             glfwSetCursorPosCallback(window, glfw_onMouseMove);
             glfwSetScrollCallback(window, glfw_onMouseWheel);
             if (!info.flags.cursor)
-            {
                 glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-            }
 
             // info.flags.stereo = (glfwGetWindowParam(GLFW_STEREO) ? 1 : 0);
 
