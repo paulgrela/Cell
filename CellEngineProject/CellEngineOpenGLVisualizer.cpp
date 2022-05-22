@@ -263,22 +263,20 @@ void CellEngineOpenGLVisualiser::FindBondsToDraw(const vector<CellEngineAtom>& A
 {
     try
     {
-        //if (DrawBonds == true)
-        //    if (BondsToDraw.empty() == true)
-                for (uint64_t AtomObjectIndex1 = 0; AtomObjectIndex1 < Atoms.size(); AtomObjectIndex1++)
-                    for (uint64_t AtomObjectIndex2 = 0; AtomObjectIndex2 < Atoms.size(); AtomObjectIndex2++)
-                        if (AtomObjectIndex1 != AtomObjectIndex2)
-                        {
-                            const auto& ParticlesCenterObject1 = Atoms[AtomObjectIndex1];
-                            const auto& ParticlesCenterObject2 = Atoms[AtomObjectIndex2];
+        for (uint64_t AtomObjectIndex1 = 0; AtomObjectIndex1 < Atoms.size(); AtomObjectIndex1++)
+            for (uint64_t AtomObjectIndex2 = 0; AtomObjectIndex2 < Atoms.size(); AtomObjectIndex2++)
+                if (AtomObjectIndex1 != AtomObjectIndex2)
+                {
+                    const auto& ParticlesCenterObject1 = Atoms[AtomObjectIndex1];
+                    const auto& ParticlesCenterObject2 = Atoms[AtomObjectIndex2];
 
-                            float DiffX = ParticlesCenterObject2.X - ParticlesCenterObject1.X;
-                            float DiffY = ParticlesCenterObject2.Y - ParticlesCenterObject1.Y;
-                            float DiffZ = ParticlesCenterObject2.Z - ParticlesCenterObject1.Z;
-                            float VectorLength = sqrt(DiffX * DiffX + DiffY * DiffY + DiffZ * DiffZ);
-                            if (VectorLength < 1.5)
-                                BondsToDraw.emplace_back(make_pair(AtomObjectIndex1, AtomObjectIndex2));
-                        }
+                    float DiffX = ParticlesCenterObject2.X - ParticlesCenterObject1.X;
+                    float DiffY = ParticlesCenterObject2.Y - ParticlesCenterObject1.Y;
+                    float DiffZ = ParticlesCenterObject2.Z - ParticlesCenterObject1.Z;
+                    float VectorLength = sqrt(DiffX * DiffX + DiffY * DiffY + DiffZ * DiffZ);
+                    if (VectorLength < 1.5)
+                        BondsToDraw.emplace_back(make_pair(AtomObjectIndex1, AtomObjectIndex2));
+                }
     }
     CATCH("finding bonds")
 }
@@ -446,7 +444,6 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
         uint64_t NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = 0;
         uint64_t NumberOfAllRenderedAtoms = 0;
 
-        //FindBondsToDraw(CellEngineDataFileObjectPointer->GetParticlesCenters(), BondsBetweenParticlesCentersToDraw, CellEngineDataFileObjectPointer->DrawBondsBetweenParticlesCenters);
         DrawBonds(CellEngineDataFileObjectPointer->GetParticlesCenters(), BondsBetweenParticlesCentersToDraw, CellEngineDataFileObjectPointer->DrawBondsBetweenParticlesCenters, ViewMatrix, Center);
 
         for (auto ParticlesCenterIterator = CellEngineDataFileObjectPointer->GetParticlesCenters().begin(); ParticlesCenterIterator != CellEngineDataFileObjectPointer->GetParticlesCenters().end(); ++ParticlesCenterIterator)
@@ -460,7 +457,6 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
                 {
                     NumberOfFoundParticlesCenterToBeRenderedInAtomDetails++;
 
-                    //FindBondsToDraw(CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex], BondsBetweenAtomsToDraw[ParticlesCenterObject.AtomIndex], CellEngineDataFileObjectPointer->DrawBondsBetweenAtoms);
                     DrawBonds(CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex], BondsBetweenAtomsToDraw[ParticlesCenterObject.AtomIndex], CellEngineDataFileObjectPointer->DrawBondsBetweenAtoms, ViewMatrix, Center);
 
                     for (uint64_t AtomObjectIndex = 0; AtomObjectIndex < CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex].size(); AtomObjectIndex += CellEngineDataFileObjectPointer->LoadOfAtomsStep)
