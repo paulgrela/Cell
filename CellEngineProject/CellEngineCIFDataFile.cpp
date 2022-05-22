@@ -240,7 +240,7 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
                     }
 
                     vmath::vec3 Center = GetCenter(LocalCellEngineAllAtomsObject);
-                    LocalCellEngineParticlesCentersObject.emplace_back(CellEngineAtom(Center.X(), Center.Y(), Center.Z(), AllAtoms.size(), LocalCellEngineParticlesCentersObject.size(), (char*)("H"), (char*)("MTR"), (char*)LocalCellEngineAllAtomsObject.front().Chain, LocalCellEngineAllAtomsObject.front().Color));
+                    LocalCellEngineParticlesCentersObject.emplace_back(CellEngineAtom(Center.X(), Center.Y(), Center.Z(), AllAtoms.size(), LocalCellEngineParticlesCentersObject.size(), LocalCellEngineAllAtomsObject.front().Name, LocalCellEngineAllAtomsObject.front().ResName, LocalCellEngineAllAtomsObject.front().Chain, LocalCellEngineAllAtomsObject.front().Color));
 
                     AllAtoms.emplace_back(LocalCellEngineAllAtomsObject);
                 }
