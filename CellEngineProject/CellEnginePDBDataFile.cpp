@@ -58,7 +58,9 @@ CellEngineAtom CellEnginePDBDataFile::ParseRecord(const char* LocalPDBRecord)
 
 CellEnginePDBDataFile::CellEnginePDBDataFile(const string_view FileName)
 {
-    DrawBonds = false;
+    DrawBondsBetweenParticlesCenters = false;
+    DrawBondsBetweenAtoms = false;
+
     CheckAtomVisibility = false;
     CutZ = 1000;
     Distance = 1000;

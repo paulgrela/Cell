@@ -8,7 +8,8 @@
 class CellEngineDataFile
 {
 public:
-    bool DrawBonds;
+    bool DrawBondsBetweenParticlesCenters;
+    bool DrawBondsBetweenAtoms;
     bool CheckAtomVisibility;
     float CutZ;
     float Distance;

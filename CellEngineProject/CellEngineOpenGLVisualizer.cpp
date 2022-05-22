@@ -31,14 +31,14 @@ private:
 private:
     GLuint per_fragment_program;
     GLuint per_vertex_program;
-
+private:
     struct
     {
         GLuint color;
         GLuint normals;
     }
     textures{};
-
+private:
     struct uniforms_block
     {
         vmath::mat4 mv_matrix;
@@ -46,9 +46,9 @@ private:
         vmath::mat4 proj_matrix;
         vmath::vec3 color;
     };
-
+private:
     GLuint uniforms_buffer{};
-
+private:
     struct
     {
         GLint diffuse_albedo;
@@ -56,9 +56,9 @@ private:
         GLint specular_power;
     }
     uniforms[2]{};
-
+private:
     sb7::object AtomGraphicsObject;
-
+private:
     bool per_vertex;
 private:
     Matrix3fT ArcBallPrevRotationMatrix{};
@@ -67,25 +67,25 @@ private:
     Point2fT MousePosition{};
 private:
     float LengthUnit = 1;
-
+private:
     float CameraXPosition = 0.0;
     float CameraYPosition = 0.0;
     float CameraZPosition = 0.0;
-
+private:
     float ViewX = 0.0;
     float ViewY = 0.0;
     float ViewZ = 50.0;
-
+private:
     vmath::mat4 RotationMatrix;
-
+private:
     float RotationAngle1 = 0.0;
     float RotationAngle2 = 0.0;
     float RotationAngle3 = 0.0;
 private:
     uint64_t PressedRightMouseButton = 0;
 private:
-    vector<pair<uint64_t, uint64_t>> AtomBondsToDraw;
-    bool FindBondsToDrawFirstTime = true;
+    vector<pair<uint64_t, uint64_t>> BondsBetweenParticlesCentersToDraw;
+    vector<vector<pair<uint64_t, uint64_t>>> BondsBetweenAtomsToDraw;
 private:
     std::unique_ptr<CellEngineDataFile> CellEngineDataFileObjectPointer;
 public:
@@ -95,7 +95,7 @@ public:
 protected:
     void init() override
     {
-        static const char title[] = "Cell Engine Visualizer - OpenGL";
+        static const char title[] = "Cell Engine Visualizer";
 
         sb7::application::init();
 
@@ -108,8 +108,8 @@ protected:
 protected:
     void InitLineVertexes();
     void DeleteLineVertexes();
-    void FindBondsToDraw(const vector<CellEngineAtom>& Atoms);
-    void DrawBonds(const vector<CellEngineAtom>& Atoms, const vmath::mat4& ViewMatrix, const vmath::vec3& Center);
+    void FindBondsToDraw(const vector<CellEngineAtom>& Atoms, vector<pair<uint64_t, uint64_t>>& BondsToDraw, const bool DrawBonds);
+    void DrawBonds(const vector<CellEngineAtom>& Atoms, vector<pair<uint64_t, uint64_t>>& BondsToDraw, const bool DrawBonds, const vmath::mat4& ViewMatrix, const vmath::vec3& Center);
     void DrawBond(float x1, float y1, float z1, float x2, float y2, float z2);
 protected:
     void load_shaders();
@@ -159,6 +159,8 @@ void CellEngineOpenGLVisualiser::InitExternalData()
             CellEngineDataFileObjectPointer = make_unique<CellEnginePDBDataFile>(FileName);
         else
             CellEngineDataFileObjectPointer = make_unique<CellEngineCIFDataFile>(FileName);
+
+        BondsBetweenAtomsToDraw.resize(CellEngineDataFileObjectPointer->GetParticlesCenters().size());
     }
     CATCH("reading of data file")
 }
@@ -256,18 +258,16 @@ void CellEngineOpenGLVisualiser::DrawBond(float x1, float y1, float z1, float x2
     CATCH("drawing bond")
 }
 
-void CellEngineOpenGLVisualiser::FindBondsToDraw(const vector<CellEngineAtom>& Atoms)
+void CellEngineOpenGLVisualiser::FindBondsToDraw(const vector<CellEngineAtom>& Atoms, vector<pair<uint64_t, uint64_t>>& BondsToDraw, const bool DrawBonds)
 {
     try
     {
-        if (CellEngineDataFileObjectPointer->DrawBonds == true)
-            if (FindBondsToDrawFirstTime == true)
-            {
-                FindBondsToDrawFirstTime = false;
-                AtomBondsToDraw.clear();
+        //if (CellEngineDataFileObjectPointer->DrawBonds == true)
+        if (DrawBonds == true)
+            if (BondsToDraw.empty() == true)
                 for (uint64_t AtomObjectIndex1 = 0; AtomObjectIndex1 < Atoms.size(); AtomObjectIndex1++)
                     for (uint64_t AtomObjectIndex2 = 0; AtomObjectIndex2 < Atoms.size(); AtomObjectIndex2++)
-                        if(AtomObjectIndex1 != AtomObjectIndex2)
+                        if (AtomObjectIndex1 != AtomObjectIndex2)
                         {
                             const auto& ParticlesCenterObject1 = Atoms[AtomObjectIndex1];
                             const auto& ParticlesCenterObject2 = Atoms[AtomObjectIndex2];
@@ -277,22 +277,22 @@ void CellEngineOpenGLVisualiser::FindBondsToDraw(const vector<CellEngineAtom>& A
                             float DiffZ = ParticlesCenterObject2.Z - ParticlesCenterObject1.Z;
                             float VectorLength = sqrt(DiffX * DiffX + DiffY * DiffY + DiffZ * DiffZ);
                             if (VectorLength < 1.5)
-                                AtomBondsToDraw.emplace_back(make_pair(AtomObjectIndex1, AtomObjectIndex2));
+                                BondsToDraw.emplace_back(make_pair(AtomObjectIndex1, AtomObjectIndex2));
                         }
-            }
     }
     CATCH("finding bonds")
 }
 
-void CellEngineOpenGLVisualiser::DrawBonds(const vector<CellEngineAtom>& Atoms, const vmath::mat4& ViewMatrix, const vmath::vec3& Center)
+void CellEngineOpenGLVisualiser::DrawBonds(const vector<CellEngineAtom>& Atoms, vector<pair<uint64_t, uint64_t>>& BondsToDraw, const bool DrawBonds, const vmath::mat4& ViewMatrix, const vmath::vec3& Center)
 {
     try
     {
-        if (CellEngineDataFileObjectPointer->DrawBonds == true)
-            for (const auto& AtomBondToDrawObject : AtomBondsToDraw)
+        //if (CellEngineDataFileObjectPointer->DrawBonds == true)
+        if (DrawBonds == true)
+            for (const auto& BondToDrawObject : BondsToDraw)
             {
-                const auto& ParticlesCenterObject1 = Atoms[AtomBondToDrawObject.first];
-                const auto& ParticlesCenterObject2 = Atoms[AtomBondToDrawObject.second];
+                const auto& AtomObject1 = Atoms[BondToDrawObject.first];
+                const auto& AtomObject2 = Atoms[BondToDrawObject.second];
 
                 glBindBufferBase(GL_UNIFORM_BUFFER, 0, uniforms_buffer);
                 auto MatrixUniformBlockForVertexShaderPointer = (uniforms_block*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(uniforms_block), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
@@ -305,7 +305,7 @@ void CellEngineOpenGLVisualiser::DrawBonds(const vector<CellEngineAtom>& Atoms, 
 
                 glUnmapBuffer(GL_UNIFORM_BUFFER);
 
-                DrawBond(ParticlesCenterObject1.X - CameraXPosition - Center.X(), ParticlesCenterObject1.Y - CameraYPosition - Center.Y(), ParticlesCenterObject1.Z - CameraZPosition - Center.Z(), ParticlesCenterObject2.X - CameraXPosition - Center.X(), ParticlesCenterObject2.Y - CameraYPosition - Center.Y(), ParticlesCenterObject2.Z - CameraZPosition - Center.Z());
+                DrawBond(AtomObject1.X - CameraXPosition - Center.X(), AtomObject1.Y - CameraYPosition - Center.Y(), AtomObject1.Z - CameraZPosition - Center.Z(), AtomObject2.X - CameraXPosition - Center.X(), AtomObject2.Y - CameraYPosition - Center.Y(), AtomObject2.Z - CameraZPosition - Center.Z());
             }
     }
     CATCH("drawing bonds")
@@ -435,8 +435,8 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
         uint64_t NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = 0;
         uint64_t NumberOfAllRenderedAtoms = 0;
 
-        FindBondsToDraw(CellEngineDataFileObjectPointer->GetParticlesCenters());
-        DrawBonds(CellEngineDataFileObjectPointer->GetParticlesCenters(), ViewMatrix, Center);
+        FindBondsToDraw(CellEngineDataFileObjectPointer->GetParticlesCenters(), BondsBetweenParticlesCentersToDraw, CellEngineDataFileObjectPointer->DrawBondsBetweenParticlesCenters);
+        DrawBonds(CellEngineDataFileObjectPointer->GetParticlesCenters(), BondsBetweenParticlesCentersToDraw, CellEngineDataFileObjectPointer->DrawBondsBetweenParticlesCenters, ViewMatrix, Center);
 
         for (auto ParticlesCenterIterator = CellEngineDataFileObjectPointer->GetParticlesCenters().begin(); ParticlesCenterIterator != CellEngineDataFileObjectPointer->GetParticlesCenters().end(); ++ParticlesCenterIterator)
         {
@@ -448,6 +448,9 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
                 if (CheckDistanceToDrawDetailsInAtomScale(FinalModelPosition.X(), FinalModelPosition.Y(), FinalModelPosition.Z()) == true)
                 {
                     NumberOfFoundParticlesCenterToBeRenderedInAtomDetails++;
+
+                    FindBondsToDraw(CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex], BondsBetweenAtomsToDraw[ParticlesCenterObject.AtomIndex], CellEngineDataFileObjectPointer->DrawBondsBetweenAtoms);
+                    DrawBonds(CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex], BondsBetweenAtomsToDraw[ParticlesCenterObject.AtomIndex], CellEngineDataFileObjectPointer->DrawBondsBetweenAtoms, ViewMatrix, Center);
 
                     for (uint64_t AtomObjectIndex = 0; AtomObjectIndex < CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex].size(); AtomObjectIndex += CellEngineDataFileObjectPointer->LoadOfAtomsStep)
                         RenderObject(CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex][AtomObjectIndex], ViewMatrix, Center, false, false, false, NumberOfAllRenderedAtoms);
@@ -491,7 +494,9 @@ void CellEngineOpenGLVisualiser::onKey(int key, int action)
                 case 'G': RotationAngle3 += 1; break;
                 case 'H': RotationAngle3 -= 1; break;
 
-                case 'B': CellEngineDataFileObjectPointer->DrawBonds = !CellEngineDataFileObjectPointer->DrawBonds; break;
+                case 'B': CellEngineDataFileObjectPointer->DrawBondsBetweenParticlesCenters = !CellEngineDataFileObjectPointer->DrawBondsBetweenParticlesCenters; break;
+                case 'C': CellEngineDataFileObjectPointer->DrawBondsBetweenAtoms = !CellEngineDataFileObjectPointer->DrawBondsBetweenAtoms; break;
+
                 case 'J': CellEngineDataFileObjectPointer->ShowDetailsInAtomScale = !CellEngineDataFileObjectPointer->ShowDetailsInAtomScale; break;
 
                 case 'O': CellEngineDataFileObjectPointer->StartFilmOfStructures(); break;
