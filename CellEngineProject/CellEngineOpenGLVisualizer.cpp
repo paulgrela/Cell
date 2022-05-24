@@ -82,10 +82,10 @@ private:
     float RotationAngle2 = 0.0;
     float RotationAngle3 = 0.0;
 private:
-    uint64_t PressedRightMouseButton = 0;
+    UnsignedIntType PressedRightMouseButton = 0;
 private:
-    vector<pair<uint64_t, uint64_t>> BondsBetweenParticlesCentersToDraw;
-    vector<vector<pair<uint64_t, uint64_t>>> BondsBetweenAtomsToDraw;
+    vector<pair<UnsignedIntType, UnsignedIntType>> BondsBetweenParticlesCentersToDraw;
+    vector<vector<pair<UnsignedIntType, UnsignedIntType>>> BondsBetweenAtomsToDraw;
 private:
     std::unique_ptr<CellEngineDataFile> CellEngineDataFileObjectPointer;
 public:
@@ -108,9 +108,13 @@ protected:
 protected:
     void InitLineVertexes();
     void DeleteLineVertexes();
-    void FindBondsToDraw(const vector<CellEngineAtom>& Atoms, vector<pair<uint64_t, uint64_t>>& BondsToDraw);
-    void DrawBonds(const vector<CellEngineAtom>& Atoms, vector<pair<uint64_t, uint64_t>>& BondsToDraw, const bool DrawBonds, const vmath::mat4& ViewMatrix, const vmath::vec3& Center);
+    void FindBondsToDraw(const vector<CellEngineAtom>& Atoms, vector<pair<UnsignedIntType, UnsignedIntType>>& BondsToDraw);
+    void DrawBonds(const vector<CellEngineAtom>& Atoms, vector<pair<UnsignedIntType, UnsignedIntType>>& BondsToDraw, const bool DrawBonds, const vmath::mat4& ViewMatrix, const vmath::vec3& Center);
     void DrawBond(float x1, float y1, float z1, float x2, float y2, float z2);
+protected:
+    bool CheckVisibilityOfParticles(UnsignedIntType EntityId);
+    void SetVisibilityOfAllParticles(bool VisibleParam);
+    void SetVisibilityOfParticlesExcept(UnsignedIntType EntityId, bool VisibleParam);
 protected:
     void load_shaders();
     void startup() override;
@@ -123,7 +127,7 @@ protected:
 protected:
     static inline void DrawCenterPoint(uniforms_block*  MatrixUniformBlockForVertexShaderPointer, vmath::mat4& ModelMatrix);
     inline vmath::vec3 GetFinalModelPosition(const vmath::vec3& AtomPosition, uniforms_block*  MatrixUniformBlockForVertexShaderPointer, const vmath::vec3& Center, const bool CountNewPosition, const bool DrawOutsideBorder) const;
-    inline vmath::vec3 RenderObject(const CellEngineAtom& AtomObject, const vmath::mat4& ViewMatrix, const vmath::vec3& Center, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, uint64_t& NumberOfAllRenderedAtoms);
+    inline vmath::vec3 RenderObject(const CellEngineAtom& AtomObject, const vmath::mat4& ViewMatrix, const vmath::vec3& Center, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, UnsignedIntType& NumberOfAllRenderedAtoms);
     inline vmath::vec3 CreateUniformBlockForVertexShader(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4 ModelMatrix, const vmath::vec3& Center, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, bool DrawAdditional);
 protected:
     [[nodiscard]] inline bool CheckDistanceToDrawDetailsInAtomScale(const float XNew, const float YNew, const float ZNew) const;
@@ -281,12 +285,12 @@ void CellEngineOpenGLVisualiser::DrawBond(float x1, float y1, float z1, float x2
     CATCH("drawing bond")
 }
 
-void CellEngineOpenGLVisualiser::FindBondsToDraw(const vector<CellEngineAtom>& Atoms, vector<pair<uint64_t, uint64_t>>& BondsToDraw)
+void CellEngineOpenGLVisualiser::FindBondsToDraw(const vector<CellEngineAtom>& Atoms, vector<pair<UnsignedIntType, UnsignedIntType>>& BondsToDraw)
 {
     try
     {
-        for (uint64_t AtomObjectIndex1 = 0; AtomObjectIndex1 < Atoms.size(); AtomObjectIndex1++)
-            for (uint64_t AtomObjectIndex2 = 0; AtomObjectIndex2 < Atoms.size(); AtomObjectIndex2++)
+        for (UnsignedIntType AtomObjectIndex1 = 0; AtomObjectIndex1 < Atoms.size(); AtomObjectIndex1++)
+            for (UnsignedIntType AtomObjectIndex2 = 0; AtomObjectIndex2 < Atoms.size(); AtomObjectIndex2++)
                 if (AtomObjectIndex1 != AtomObjectIndex2)
                 {
                     const auto& ParticlesCenterObject1 = Atoms[AtomObjectIndex1];
@@ -303,7 +307,7 @@ void CellEngineOpenGLVisualiser::FindBondsToDraw(const vector<CellEngineAtom>& A
     CATCH("finding bonds")
 }
 
-void CellEngineOpenGLVisualiser::DrawBonds(const vector<CellEngineAtom>& Atoms, vector<pair<uint64_t, uint64_t>>& BondsToDraw, const bool DrawBonds, const vmath::mat4& ViewMatrix, const vmath::vec3& Center)
+void CellEngineOpenGLVisualiser::DrawBonds(const vector<CellEngineAtom>& Atoms, vector<pair<UnsignedIntType, UnsignedIntType>>& BondsToDraw, const bool DrawBonds, const vmath::mat4& ViewMatrix, const vmath::vec3& Center)
 {
     try
     {
@@ -400,7 +404,7 @@ inline vmath::vec3 CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader
     return FinalModelPosition;
 }
 
-inline vmath::vec3 CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom& AtomObject, const vmath::mat4& ViewMatrix, const vmath::vec3& Center, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, uint64_t& NumberOfAllRenderedAtoms)
+inline vmath::vec3 CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom& AtomObject, const vmath::mat4& ViewMatrix, const vmath::vec3& Center, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, UnsignedIntType& NumberOfAllRenderedAtoms)
 {
     vmath::vec3 FinalModelPosition;
 
@@ -441,8 +445,8 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
         glUniform1f(uniforms[per_vertex ? 1 : 0].specular_power, powf(2.0f, 3.0f));
         glUniform3fv(uniforms[per_vertex ? 1 : 0].specular_albedo, 1, vmath::vec3(1.0f / 9.0f + 1.0f / 9.0f));
 
-        uint64_t NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = 0;
-        uint64_t NumberOfAllRenderedAtoms = 0;
+        UnsignedIntType NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = 0;
+        UnsignedIntType NumberOfAllRenderedAtoms = 0;
 
         DrawBonds(CellEngineDataFileObjectPointer->GetParticlesCenters(), BondsBetweenParticlesCentersToDraw, CellEngineDataFileObjectPointer->DrawBondsBetweenParticlesCenters, ViewMatrix, Center);
 
@@ -454,20 +458,55 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
 
             if (CellEngineDataFileObjectPointer->ShowDetailsInAtomScale == true)
                 if (CheckDistanceToDrawDetailsInAtomScale(FinalModelPosition.X(), FinalModelPosition.Y(), FinalModelPosition.Z()) == true)
-                {
-                    NumberOfFoundParticlesCenterToBeRenderedInAtomDetails++;
+                    if (CheckVisibilityOfParticles(ParticlesCenterObject.EntityId) == true)
+                                    //if (ParticlesCenterObject.EntityId == 694)//LISTA WIDZIALNYCH ELEMENTOW
+                    {
+                        NumberOfFoundParticlesCenterToBeRenderedInAtomDetails++;
 
-                    DrawBonds(CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex], BondsBetweenAtomsToDraw[ParticlesCenterObject.AtomIndex], CellEngineDataFileObjectPointer->DrawBondsBetweenAtoms, ViewMatrix, Center);
+                        DrawBonds(CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex], BondsBetweenAtomsToDraw[ParticlesCenterObject.AtomIndex], CellEngineDataFileObjectPointer->DrawBondsBetweenAtoms, ViewMatrix, Center);
 
-                    for (uint64_t AtomObjectIndex = 0; AtomObjectIndex < CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex].size(); AtomObjectIndex += CellEngineDataFileObjectPointer->LoadOfAtomsStep)
-                        RenderObject(CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex][AtomObjectIndex], ViewMatrix, Center, false, false, false, NumberOfAllRenderedAtoms);
-                }
+                        for (UnsignedIntType AtomObjectIndex = 0; AtomObjectIndex < CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex].size(); AtomObjectIndex += CellEngineDataFileObjectPointer->LoadOfAtomsStep)
+                            RenderObject(CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex][AtomObjectIndex], ViewMatrix, Center, false, false, false, NumberOfAllRenderedAtoms);
+                    }
         }
         CellEngineDataFileObjectPointer->ShowNextStructureFromActiveFilm();
 
         LoggersManagerObject.Log(STREAM("NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = " << to_string(NumberOfFoundParticlesCenterToBeRenderedInAtomDetails) << " NumberOfAllRenderedAtoms = " << to_string(NumberOfAllRenderedAtoms) << " ViewZ = " << to_string(ViewZ) << " AtomSize = " << to_string(CellEngineDataFileObjectPointer->SizeX) << endl));
     }
     CATCH("rendering cell visualization")
+}
+
+void CellEngineOpenGLVisualiser::SetVisibilityOfAllParticles(bool VisibleParam)
+{
+    try
+    {
+        for (auto& ParticleKindObject : CellEngineDataFileObjectPointer->ParticlesKinds)
+            ParticleKindObject.second.Visible = VisibleParam;
+    }
+    CATCH("setting visibility of all particles")
+}
+
+void CellEngineOpenGLVisualiser::SetVisibilityOfParticlesExcept(UnsignedIntType EntityId, bool VisibleParam)
+{
+    try
+    {
+        SetVisibilityOfAllParticles(VisibleParam);
+        CellEngineDataFileObjectPointer->ParticlesKinds.find(EntityId)->second.Visible = !VisibleParam;
+    }
+    CATCH("setting visibility of particles except")
+}
+
+bool CellEngineOpenGLVisualiser::CheckVisibilityOfParticles(UnsignedIntType EntityId)
+{
+    bool Visible = false;
+
+    try
+    {
+        Visible = CellEngineDataFileObjectPointer->ParticlesKinds.find(EntityId)->second.Visible;
+    }
+    CATCH("checking visibility of particles")
+
+    return Visible;
 }
 
 void CellEngineOpenGLVisualiser::onKey(int key, int action)
@@ -518,6 +557,9 @@ void CellEngineOpenGLVisualiser::onKey(int key, int action)
 
                 case '9': AtomGraphicsObject.load("..//objects//cube.sbm");  break;
                 case '0': AtomGraphicsObject.load("..//objects//sphere.sbm");  break;
+
+                case GLFW_KEY_F10: SetVisibilityOfParticlesExcept(694, false); break;
+                case GLFW_KEY_F12: SetVisibilityOfAllParticles(true); break;
 
                 default: break;
             }

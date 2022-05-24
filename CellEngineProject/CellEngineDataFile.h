@@ -5,6 +5,12 @@
 #include <cinttypes>
 #include "CellEngineAtom.h"
 
+struct Particle
+{
+    bool Visible;
+    std::string Name;
+};
+
 class CellEngineDataFile
 {
 public:
@@ -29,6 +35,8 @@ public:
 public:
     UnsignedIntType ChosenStructureIndex = 0;
     bool FilmOfStructuresActive = false;
+public:
+    std::unordered_map<UnsignedIntType, Particle> ParticlesKinds;
 protected:
     std::vector<std::vector<CellEngineAtom>> ParticlesCenters;
     std::vector<std::vector<CellEngineAtom>> AllAtoms;
