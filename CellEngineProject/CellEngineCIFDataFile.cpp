@@ -12,6 +12,7 @@
 using namespace std;
 using namespace string_utils;
 
+
 vmath::vec3 ChooseColor(const string& ChainName)
 {
     vmath::vec3 ChosenColor;
@@ -30,10 +31,68 @@ vmath::vec3 ChooseColor(const string& ChainName)
         if(ChainName.substr(0, 3) == "BAR")
             ChosenColor = vmath::vec3(0.00f, 0.00f, 1.00f);
         else
-        if(ChainName.substr(0, 1) == "A")
-            ChosenColor = vmath::vec3(0.50f, 0.50f, 0.20f);
+        if(ChainName.substr(0, 1) == "BAS0")
+            ChosenColor = vmath::vec3(0.75f, 1.00f, 1.00f);
         else
             ChosenColor = vmath::vec3(0, 0, 0);
+    }
+    CATCH("chosing color for atom for cell visualization")
+
+    return ChosenColor;
+}
+
+#include <sb7color.h>
+
+//czytac z pliku XML
+const uint64_t DNACode = 694;
+const uint64_t RNACode = 695;
+const uint64_t RIBOSOME_70SCode = 682;
+const uint64_t RIBOSOME_50SCode = 681;
+const uint64_t RIBOSOME_30SCode = 679;
+const uint64_t DNA_POLYMERASE_GAMMA_COMPLEXCode = 516;
+const uint64_t DNA_POLYMERASE_CORECode = 513;
+const uint64_t RNA_POLYMERASECode = 683;
+
+//const vmath::vec3 RedColor = vmath::vec3(1.00f, 0.00f, 0.00f);
+//const vmath::vec3 GranateColor = vmath::vec3(0.00f, 0.00f, 1.00f);
+//const vmath::vec3 DarkVioletColor = vmath::vec3(0.75f, 1.00f, 1.00f);
+
+vmath::vec3 FromVec4ToVec3(const vmath::vec4& Vector4)
+{
+    return vmath::vec3(Vector4.data[0], Vector4.data[1], Vector4.data[2]);
+}
+
+vmath::vec3 ChooseColorForCell(const CellEngineAtom& AtomObject)
+{
+    vmath::vec3 ChosenColor;
+
+    try
+    {
+        if (AtomObject.EntityId == RNACode)
+            ChosenColor = FromVec4ToVec3(sb7::color::Blue);
+        else
+        if(AtomObject.EntityId == DNACode)
+            ChosenColor = FromVec4ToVec3(sb7::color::Red);
+        else
+        if(AtomObject.EntityId == RIBOSOME_70SCode)
+            ChosenColor = FromVec4ToVec3(sb7::color::Lime);
+        else
+        if(AtomObject.EntityId == RIBOSOME_50SCode)
+            ChosenColor = FromVec4ToVec3(sb7::color::Pink);
+        else
+        if(AtomObject.EntityId == RIBOSOME_30SCode)
+            ChosenColor = FromVec4ToVec3(sb7::color::Orange);
+        else
+        if(AtomObject.EntityId == DNA_POLYMERASE_GAMMA_COMPLEXCode)
+            ChosenColor = FromVec4ToVec3(sb7::color::Yellow);
+        else
+        if(AtomObject.EntityId == DNA_POLYMERASE_CORECode)
+            ChosenColor = FromVec4ToVec3(sb7::color::Cyan);
+        else
+        if(AtomObject.EntityId == RNA_POLYMERASECode)
+            ChosenColor = FromVec4ToVec3(sb7::color::Purple);
+        else
+            ChosenColor = FromVec4ToVec3(sb7::color::Green);
     }
     CATCH("chosing color for atom for cell visualization")
 
@@ -57,6 +116,8 @@ CellEngineAtom CellEngineCIFDataFile::ParseRecord(const char* LocalCIFRecord)
         CellEngineAtomObject.X = stof(AtomFields[10]);
         CellEngineAtomObject.Y = stof(AtomFields[11]);
         CellEngineAtomObject.Z = stof(AtomFields[12]);
+
+        CellEngineAtomObject.Color = ChooseColorForCell(CellEngineAtomObject);
     }
     CATCH("parsing atom record")
 
@@ -171,11 +232,11 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
                 for ( ; regex_search(pos, end, SMatchObject, RegexObject2); pos = SMatchObject.suffix().first)
                     AppliedChainsNames.push_back(SMatchObject.str(1));
 
-                vmath::vec3 ChainColor;
-                if (AppliedChainsNames.empty() == false)
-                    ChainColor = ChooseColor(*AppliedChainsNames.begin());
-                if (ChainColor.data[0] == 0.0 && ChainColor.data[1] == 0.0 && ChainColor.data[2] == 0.0)
-                    ChainColor = vmath::vec3((float)rand() / RAND_MAX, (float)rand() / RAND_MAX, (float)rand() / RAND_MAX);
+//                vmath::vec3 ChainColor;
+//                if (AppliedChainsNames.empty() == false)
+//                    ChainColor = ChooseColor(*AppliedChainsNames.begin());
+//                if (ChainColor.data[0] == 0.0 && ChainColor.data[1] == 0.0 && ChainColor.data[2] == 0.0)
+//                    ChainColor = vmath::vec3((float)rand() / RAND_MAX, (float)rand() / RAND_MAX, (float)rand() / RAND_MAX);
 
                 for (const auto& AppliedMatrixId : AppliedMatrixesIds)
                 {
@@ -198,7 +259,32 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
                             {
                                 NumberOfAtoms++;
 
-                                if (AppliedChainName == "BAR0" || AppliedChainName == "NR0" || AppliedChainName == "NR1")
+
+                                //if (AppliedChainName == "NR0" || AppliedChainName == "NR1") //149 curated
+                                // NumberOfAtoms = 134056344 | LocalCellEngineParticlesCentersObject.size() = 108263 | AllAtoms.size() = 108263 | AllAtoms.back().size() = 223 | NumberOfAtomsDNA = 26158000 | AtomsPositionsMatrixes.size() = 108263 | ChainsNames["BAF0"].size() = 0 |
+
+                                //if (AppliedChainName == "BAR0" || AppliedChainName == "BAR1") //1189_curated
+                                //BLAD BO TYLKO PUNKT
+                                //NumberOfAtoms = 136419962 | LocalCellEngineParticlesCentersObject.size() = 108741 | AllAtoms.size() = 108741 | AllAtoms.back().size() = 223 | NumberOfAtomsDNA = 12934000 | AtomsPositionsMatrixes.size() = 108741 | ChainsNames["BAF0"].size() = 60602 |
+                                //NumberOfAtoms = 136419962 | LocalCellEngineParticlesCentersObject.size() = 108741 | AllAtoms.size() = 108741 | AllAtoms.back().size() = 223 | NumberOfAtomsDNA = 26158000 | AtomsPositionsMatrixes.size() = 108741 | ChainsNames["BAF0"].size() = 60602 |
+
+                                //if (AppliedChainName == "BAR0" || AppliedChainName == "BAR1") //6973_curated
+                                //NumberOfAtoms = 152806279 | LocalCellEngineParticlesCentersObject.size() = 120435 | AllAtoms.size() = 120435 | AllAtoms.back().size() = 223 | NumberOfAtomsDNA = 12934000 | AtomsPositionsMatrixes.size() = 120435 | ChainsNames["BAF0"].size() = 60602 |
+                                //NumberOfAtoms = 152806279 | LocalCellEngineParticlesCentersObject.size() = 120435 | AllAtoms.size() = 120435 | AllAtoms.back().size() = 223 | NumberOfAtomsDNA = 26158000 | AtomsPositionsMatrixes.size() = 120435 | ChainsNames["BAF0"].size() = 60602 |
+
+                                //if (AppliedChainName == "BAQ0" || AppliedChainName == "BAQ1") //149_auto
+                                //NumberOfAtoms = 128419298 | LocalCellEngineParticlesCentersObject.size() = 108263 | AllAtoms.size() = 108263 | AllAtoms.back().size() = 223 | NumberOfAtomsDNA = 12934000 | AtomsPositionsMatrixes.size() = 108263 | ChainsNames["BAF0"].size() = 2496 |
+                                //NumberOfAtoms = 128419298 | LocalCellEngineParticlesCentersObject.size() = 108263 | AllAtoms.size() = 108263 | AllAtoms.back().size() = 223 | NumberOfAtomsDNA = 26158000 | AtomsPositionsMatrixes.size() = 108263 | ChainsNames["BAF0"].size() = 2496 |
+
+                                //if (AppliedChainName == "BAQ0" || AppliedChainName == "BAQ1") //1189_auto
+                                //NumberOfAtoms = 130606892 | LocalCellEngineParticlesCentersObject.size() = 108741 | AllAtoms.size() = 108741 | AllAtoms.back().size() = 223 | NumberOfAtomsDNA = 12934000 | AtomsPositionsMatrixes.size() = 108741 | ChainsNames["BAF0"].size() = 2496 |
+                                //NumberOfAtoms = 130606892 | LocalCellEngineParticlesCentersObject.size() = 108741 | AllAtoms.size() = 108741 | AllAtoms.back().size() = 223 | NumberOfAtomsDNA = 26158000 | AtomsPositionsMatrixes.size() = 108741 | ChainsNames["BAF0"].size() = 2496 |
+
+                                //if (AppliedChainName == "BAQ0" || "AppliedChainName == "BAQ1") //6973_auto
+                                //NumberOfAtoms = 145595149 | LocalCellEngineParticlesCentersObject.size() = 120435 | AllAtoms.size() = 120435 | AllAtoms.back().size() = 223 | NumberOfAtomsDNA = 12934000 | AtomsPositionsMatrixes.size() = 120435 | ChainsNames["BAF0"].size() = 2496 |
+                                //NumberOfAtoms = 145595149 | LocalCellEngineParticlesCentersObject.size() = 120435 | AllAtoms.size() = 120435 | AllAtoms.back().size() = 223 | NumberOfAtomsDNA = 26158000 | AtomsPositionsMatrixes.size() = 120435 | ChainsNames["BAF0"].size() = 2496 |
+
+                                if (AppliedChainName == "BAR0" || AppliedChainName == "BAR1") //6973_curated
                                     NumberOfAtomsDNA++;
 
                                 auto TransformationMatrixIterator = TransformationsMatrixes.find(AppliedMatrixId);
@@ -232,7 +318,8 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
                                 AppliedAtom.Y = Result[1];
                                 AppliedAtom.Z = Result[2];
 
-                                AppliedAtom.Color = ChainColor;
+                                //AppliedAtom.Color = ChainColor;
+                                //AppliedAtom.Color = ChooseColor(AppliedAtom);
 
                                 LocalCellEngineAllAtomsObject.emplace_back(AppliedAtom);
                             }

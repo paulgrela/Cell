@@ -143,6 +143,28 @@ void InitializeLoggerManagerParameters()
     CATCH("initializing logger manager parameters")
 }
 
+void CellEngineOpenGLVisualiser::startup()
+{
+    try
+    {
+        load_shaders();
+
+        glGenBuffers(1, &uniforms_buffer);
+        glBindBuffer(GL_UNIFORM_BUFFER, uniforms_buffer);
+        glBufferData(GL_UNIFORM_BUFFER, sizeof(uniforms_block), nullptr, GL_DYNAMIC_DRAW);
+
+        AtomGraphicsObject.load("..//objects//sphere.sbm");
+        InitLineVertexes();
+
+        glEnable(GL_CULL_FACE);
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LEQUAL);
+
+        InitArcBall();
+    }
+    CATCH("initiation of data for cell visualization")
+}
+
 void CellEngineOpenGLVisualiser::InitExternalData()
 {
     try
@@ -302,28 +324,6 @@ void CellEngineOpenGLVisualiser::DrawBonds(const vector<CellEngineAtom>& Atoms, 
         }
     }
     CATCH("drawing bonds")
-}
-
-void CellEngineOpenGLVisualiser::startup()
-{
-    try
-    {
-        load_shaders();
-
-        glGenBuffers(1, &uniforms_buffer);
-        glBindBuffer(GL_UNIFORM_BUFFER, uniforms_buffer);
-        glBufferData(GL_UNIFORM_BUFFER, sizeof(uniforms_block), nullptr, GL_DYNAMIC_DRAW);
-
-        AtomGraphicsObject.load("..//objects//sphere.sbm");
-        InitLineVertexes();
-
-        glEnable(GL_CULL_FACE);
-        glEnable(GL_DEPTH_TEST);
-        glDepthFunc(GL_LEQUAL);
-
-        InitArcBall();
-    }
-    CATCH("initiation of data for cell visualization")
 }
 
 inline bool CellEngineOpenGLVisualiser::CheckDistanceToDrawDetailsInAtomScale(const float XNew, const float YNew, const float ZNew) const

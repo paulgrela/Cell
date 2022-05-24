@@ -10,13 +10,13 @@
 using namespace std;
 using namespace string_utils;
 
-vmath::vec3 ChooseColor(const CellEngineAtom& ElementObject)
+vmath::vec3 ChooseColor(const CellEngineAtom& AtomObject)
 {
     vmath::vec3 ChosenColor;
 
     try
     {
-        switch(ElementObject.Name[0])
+        switch(AtomObject.Name[0])
         {
             case 'C': ChosenColor = vmath::vec3(0.25f, 0.75f, 0.75f); break;
             case 'O': ChosenColor = vmath::vec3(1.00f, 0.00f, 0.00f); break;
@@ -51,7 +51,7 @@ CellEngineAtom CellEnginePDBDataFile::ParseRecord(const char* LocalPDBRecord)
 
         CellEngineAtomObject.Color = ChooseColor(CellEngineAtomObject);
     }
-    CATCH("parsing element record")
+    CATCH("parsing atom record")
 
     return CellEngineAtomObject;
 }
