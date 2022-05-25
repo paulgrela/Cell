@@ -28,7 +28,7 @@ CellEngineAtom CellEnginePDBDataFile::ParseRecord(const char* LocalPDBRecord)
         CellEngineAtomObject.Y = stof(RecordStr.substr(38, 8));
         CellEngineAtomObject.Z = stof(RecordStr.substr(46, 8));
 
-        CellEngineAtomObject.AtomColor = CellEngineAtomObject.ParticleColor = ChooseColorForAtom(CellEngineAtomObject);
+        CellEngineAtomObject.AtomColor = CellEngineAtomObject.ParticleColor = CellEngineAtomObject.RandomParticleColor = ChooseColorForAtom(CellEngineAtomObject);
     }
     CATCH("parsing atom record")
 
@@ -37,6 +37,7 @@ CellEngineAtom CellEnginePDBDataFile::ParseRecord(const char* LocalPDBRecord)
 
 CellEnginePDBDataFile::CellEnginePDBDataFile(const string_view FileName)
 {
+    DrawRandomColorForEveryParticle = false;
     DrawColorForEveryAtom = false;
 
     DrawBondsBetweenParticlesCenters = false;

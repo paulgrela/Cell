@@ -127,6 +127,7 @@ protected:
     void onMouseMove(int x, int y) override;
     void onResize(int w, int h) override;
 protected:
+    inline vmath::vec3 GetColor(const CellEngineAtom& AtomObject);
     static inline void DrawCenterPoint(uniforms_block*  MatrixUniformBlockForVertexShaderPointer, vmath::mat4& ModelMatrix);
     inline vmath::vec3 GetFinalModelPosition(const vmath::vec3& AtomPosition, uniforms_block*  MatrixUniformBlockForVertexShaderPointer, const vmath::vec3& Center, const bool CountNewPosition, const bool DrawOutsideBorder) const;
     inline vmath::vec3 RenderObject(const CellEngineAtom& AtomObject, const vmath::mat4& ViewMatrix, const vmath::vec3& Center, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, UnsignedIntType& NumberOfAllRenderedAtoms);
@@ -406,6 +407,21 @@ inline vmath::vec3 CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader
     return FinalModelPosition;
 }
 
+inline vmath::vec3 CellEngineOpenGLVisualiser::GetColor(const CellEngineAtom& AtomObject)
+{
+    vmath::vec3 FinalColor;
+    try
+    {
+        if (CellEngineDataFileObjectPointer->DrawRandomColorForEveryParticle == true)
+            FinalColor = AtomObject.RandomParticleColor;
+        else
+            FinalColor = (CellEngineDataFileObjectPointer->DrawColorForEveryAtom == false ? AtomObject.ParticleColor : AtomObject.AtomColor);
+    }
+    CATCH("getting color")
+
+    return FinalColor;
+}
+
 inline vmath::vec3 CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom& AtomObject, const vmath::mat4& ViewMatrix, const vmath::vec3& Center, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, UnsignedIntType& NumberOfAllRenderedAtoms)
 {
     vmath::vec3 FinalModelPosition;
@@ -417,7 +433,7 @@ inline vmath::vec3 CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom
         vmath::vec3 AtomPosition = LengthUnit * AtomObject.Position();
         vmath::mat4 ModelMatrix = vmath::translate(AtomPosition.X() - CameraXPosition - Center.X(), AtomPosition.Y() + CameraYPosition - Center.Y(), AtomPosition.Z() + CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(CellEngineDataFileObjectPointer->SizeX, CellEngineDataFileObjectPointer->SizeY, CellEngineDataFileObjectPointer->SizeZ));
 
-        FinalModelPosition = CreateUniformBlockForVertexShader(AtomPosition, (CellEngineDataFileObjectPointer->DrawColorForEveryAtom == false ? AtomObject.ParticleColor : AtomObject.AtomColor), ViewMatrix, ModelMatrix, Center, CountNewPosition, DrawCenter, DrawOutsideBorder, true);
+        FinalModelPosition = CreateUniformBlockForVertexShader(AtomPosition, GetColor(AtomObject), ViewMatrix, ModelMatrix, Center, CountNewPosition, DrawCenter, DrawOutsideBorder, true);
 
         AtomGraphicsObject.render();
     }
@@ -560,6 +576,7 @@ void CellEngineOpenGLVisualiser::onKey(int key, int action)
                 case '0': AtomGraphicsObject.load("..//objects//sphere.sbm");  break;
 
                 case GLFW_KEY_F9: CellEngineDataFileObjectPointer->DrawColorForEveryAtom = !CellEngineDataFileObjectPointer->DrawColorForEveryAtom; break;
+                case GLFW_KEY_F11: CellEngineDataFileObjectPointer->DrawRandomColorForEveryParticle = !CellEngineDataFileObjectPointer->DrawRandomColorForEveryParticle; break;
                 case GLFW_KEY_F10: SetVisibilityOfParticlesExcept(694, false); break;
                 case GLFW_KEY_F12: SetVisibilityOfAllParticles(true); break;
 

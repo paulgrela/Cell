@@ -41,6 +41,7 @@ CellEngineAtom CellEngineCIFDataFile::ParseRecord(const char* LocalCIFRecord)
 
 CellEngineCIFDataFile::CellEngineCIFDataFile(const string_view FileName)
 {
+    DrawRandomColorForEveryParticle = false;
     DrawColorForEveryAtom = false;
 
     DrawBondsBetweenParticlesCenters = false;
@@ -158,11 +159,7 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
                 for ( ; regex_search(pos, end, SMatchObject, RegexObject2); pos = SMatchObject.suffix().first)
                     AppliedChainsNames.push_back(SMatchObject.str(1));
 
-//                vmath::vec3 ChainColor;
-//                if (AppliedChainsNames.empty() == false)
-//                    ChainColor = ChooseColorForAtom(*AppliedChainsNames.begin());
-//                if (ChainColor.data[0] == 0.0 && ChainColor.data[1] == 0.0 && ChainColor.data[2] == 0.0)
-//                    ChainColor = vmath::vec3((float)rand() / RAND_MAX, (float)rand() / RAND_MAX, (float)rand() / RAND_MAX);
+                vmath::vec3 ChainColor = vmath::vec3((float)rand() / RAND_MAX, (float)rand() / RAND_MAX, (float)rand() / RAND_MAX);
 
                 for (const auto& AppliedMatrixId : AppliedMatrixesIds)
                 {
@@ -218,6 +215,8 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
                                 AppliedAtom.X = Result[0];
                                 AppliedAtom.Y = Result[1];
                                 AppliedAtom.Z = Result[2];
+
+                                AppliedAtom.RandomParticleColor = ChainColor;
 
                                 LocalCellEngineAllAtomsObject.emplace_back(AppliedAtom);
                             }
