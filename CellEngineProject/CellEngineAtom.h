@@ -20,9 +20,10 @@ public:
     float Z;
     char Chain[6];
     UnsignedIntType EntityId;
-    vmath::vec3 Color;
+    vmath::vec3 AtomColor;
+    vmath::vec3 ParticleColor;
 public:
-    CellEngineAtom(float XParam, float YParam, float ZParam, UnsignedIntType AtomIndexParam, IntType SerialParam, char NameParam[2], char ResNameParam[4], char ChainParam[6], vmath::vec3 ColorParam) : X(XParam), Y(YParam), Z(ZParam), AtomIndex(AtomIndexParam), Serial(SerialParam), Color(std::move(ColorParam))
+    CellEngineAtom(float XParam, float YParam, float ZParam, UnsignedIntType AtomIndexParam, IntType SerialParam, char NameParam[2], char ResNameParam[4], char ChainParam[6], vmath::vec3 ColorParam) : X(XParam), Y(YParam), Z(ZParam), AtomIndex(AtomIndexParam), Serial(SerialParam), ParticleColor(std::move(ColorParam))
     {
         strncpy(Name, NameParam, 2);
         strncpy(ResName, ResNameParam, 4);

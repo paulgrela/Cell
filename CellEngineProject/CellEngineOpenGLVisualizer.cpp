@@ -1,5 +1,6 @@
 
 #include <sb7.h>
+#include <sb7color.h>
 #include <vmath.h>
 #include <object.h>
 #include <shader.h>
@@ -7,6 +8,7 @@
 #include <iostream>
 #include <string>
 #include <memory>
+
 #include "ArcBall.h"
 #include "Logger.h"
 #include "StringUtils.h"
@@ -321,7 +323,7 @@ void CellEngineOpenGLVisualiser::DrawBonds(const vector<CellEngineAtom>& Atoms, 
                 const auto& AtomObject1 = Atoms[BondToDrawObject.first];
                 const auto& AtomObject2 = Atoms[BondToDrawObject.second];
 
-                CreateUniformBlockForVertexShader(vmath::vec3(0.0, 0.0, 0.0), vmath::vec3(0.25f, 0.75f, 0.75f), ViewMatrix, vmath::translate(0.0f, 0.0f, 0.0f), Center, false, false, false, false);
+                CreateUniformBlockForVertexShader(vmath::vec3(0.0, 0.0, 0.0), FromVec4ToVec3(sb7::color::DarkCyan), ViewMatrix, vmath::translate(0.0f, 0.0f, 0.0f), Center, false, false, false, false);
 
                 DrawBond(AtomObject1.X - CameraXPosition - Center.X(), AtomObject1.Y - CameraYPosition - Center.Y(), AtomObject1.Z - CameraZPosition - Center.Z(), AtomObject2.X - CameraXPosition - Center.X(), AtomObject2.Y - CameraYPosition - Center.Y(), AtomObject2.Z - CameraZPosition - Center.Z());
             }
@@ -348,7 +350,7 @@ inline void CellEngineOpenGLVisualiser::DrawCenterPoint(uniforms_block*  MatrixU
     try
     {
         ModelMatrix = vmath::translate(0.0f, 0.0f, 0.0f) * vmath::scale(vmath::vec3(0.5, 0.5, 0.5));
-        MatrixUniformBlockForVertexShaderPointer->color = vmath::vec3(0.7, 0.2, 0.9);
+        MatrixUniformBlockForVertexShaderPointer->color = FromVec4ToVec3(sb7::color::Purple);
     }
     CATCH("drawing center point for data for cell visualization")
 }
@@ -365,7 +367,7 @@ inline vmath::vec3 CellEngineOpenGLVisualiser::GetFinalModelPosition(const vmath
 
             if (DrawOutsideBorder == true)
                 if (CheckDistanceToDrawDetailsInAtomScale(XNew, YNew, ZNew) == true)
-                    MatrixUniformBlockForVertexShaderPointer->color = vmath::vec3(0.7, 0.2, 0.9);
+                    MatrixUniformBlockForVertexShaderPointer->color = FromVec4ToVec3(sb7::color::Purple);
 
             return vmath::vec3(XNew, YNew, ZNew);
         }
@@ -415,7 +417,7 @@ inline vmath::vec3 CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom
         vmath::vec3 AtomPosition = LengthUnit * AtomObject.Position();
         vmath::mat4 ModelMatrix = vmath::translate(AtomPosition.X() - CameraXPosition - Center.X(), AtomPosition.Y() + CameraYPosition - Center.Y(), AtomPosition.Z() + CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(CellEngineDataFileObjectPointer->SizeX, CellEngineDataFileObjectPointer->SizeY, CellEngineDataFileObjectPointer->SizeZ));
 
-        FinalModelPosition = CreateUniformBlockForVertexShader(AtomPosition, AtomObject.Color, ViewMatrix, ModelMatrix, Center, CountNewPosition, DrawCenter, DrawOutsideBorder, true);
+        FinalModelPosition = CreateUniformBlockForVertexShader(AtomPosition, (CellEngineDataFileObjectPointer->DrawColorForEveryAtom == false ? AtomObject.ParticleColor : AtomObject.AtomColor), ViewMatrix, ModelMatrix, Center, CountNewPosition, DrawCenter, DrawOutsideBorder, true);
 
         AtomGraphicsObject.render();
     }
@@ -459,7 +461,6 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
             if (CellEngineDataFileObjectPointer->ShowDetailsInAtomScale == true)
                 if (CheckDistanceToDrawDetailsInAtomScale(FinalModelPosition.X(), FinalModelPosition.Y(), FinalModelPosition.Z()) == true)
                     if (CheckVisibilityOfParticles(ParticlesCenterObject.EntityId) == true)
-                                    //if (ParticlesCenterObject.EntityId == 694)//LISTA WIDZIALNYCH ELEMENTOW
                     {
                         NumberOfFoundParticlesCenterToBeRenderedInAtomDetails++;
 
@@ -558,6 +559,7 @@ void CellEngineOpenGLVisualiser::onKey(int key, int action)
                 case '9': AtomGraphicsObject.load("..//objects//cube.sbm");  break;
                 case '0': AtomGraphicsObject.load("..//objects//sphere.sbm");  break;
 
+                case GLFW_KEY_F9: CellEngineDataFileObjectPointer->DrawColorForEveryAtom = !CellEngineDataFileObjectPointer->DrawColorForEveryAtom; break;
                 case GLFW_KEY_F10: SetVisibilityOfParticlesExcept(694, false); break;
                 case GLFW_KEY_F12: SetVisibilityOfAllParticles(true); break;
 

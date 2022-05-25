@@ -3,7 +3,81 @@
 #define CELL_ENGINE_PROJECT_DATA_FILE_H
 
 #include <cinttypes>
+#include <sb7color.h>
 #include "CellEngineAtom.h"
+
+//czytac z pliku XML
+const uint64_t DNACode = 694;
+const uint64_t RNACode = 695;
+const uint64_t RIBOSOME_70SCode = 682;
+const uint64_t RIBOSOME_50SCode = 681;
+const uint64_t RIBOSOME_30SCode = 679;
+const uint64_t DNA_POLYMERASE_GAMMA_COMPLEXCode = 516;
+const uint64_t DNA_POLYMERASE_CORECode = 513;
+const uint64_t RNA_POLYMERASECode = 683;
+
+inline vmath::vec3 FromVec4ToVec3(const vmath::vec4& Vector4)
+{
+    return vmath::vec3(Vector4.data[0], Vector4.data[1], Vector4.data[2]);
+}
+
+inline vmath::vec3 ChooseColorForParticle(const CellEngineAtom& AtomObject)
+{
+    vmath::vec3 ChosenColor;
+
+    try
+    {
+        if (AtomObject.EntityId == RNACode)
+            ChosenColor = FromVec4ToVec3(sb7::color::Blue);
+        else
+        if(AtomObject.EntityId == DNACode)
+            ChosenColor = FromVec4ToVec3(sb7::color::Red);
+        else
+        if(AtomObject.EntityId == RIBOSOME_70SCode)
+            ChosenColor = FromVec4ToVec3(sb7::color::Lime);
+        else
+        if(AtomObject.EntityId == RIBOSOME_50SCode)
+            ChosenColor = FromVec4ToVec3(sb7::color::Pink);
+        else
+        if(AtomObject.EntityId == RIBOSOME_30SCode)
+            ChosenColor = FromVec4ToVec3(sb7::color::Orange);
+        else
+        if(AtomObject.EntityId == DNA_POLYMERASE_GAMMA_COMPLEXCode)
+            ChosenColor = FromVec4ToVec3(sb7::color::Yellow);
+        else
+        if(AtomObject.EntityId == DNA_POLYMERASE_CORECode)
+            ChosenColor = FromVec4ToVec3(sb7::color::Cyan);
+        else
+        if(AtomObject.EntityId == RNA_POLYMERASECode)
+            ChosenColor = FromVec4ToVec3(sb7::color::Purple);
+        else
+            ChosenColor = FromVec4ToVec3(sb7::color::Green);
+    }
+    CATCH("chosing color for atom for cell visualization")
+
+    return ChosenColor;
+}
+
+inline vmath::vec3 ChooseColorForAtom(const CellEngineAtom& AtomObject)
+{
+    vmath::vec3 ChosenColor;
+
+    try
+    {
+        switch(AtomObject.Name[0])
+        {
+            case 'C': ChosenColor = FromVec4ToVec3(sb7::color::Turquoise);  break;
+            case 'O': ChosenColor = FromVec4ToVec3(sb7::color::Red); break;
+            case 'H': ChosenColor = FromVec4ToVec3(sb7::color::White); break;
+            case 'N': ChosenColor = FromVec4ToVec3(sb7::color::Blue); break;
+            case 'P': ChosenColor = FromVec4ToVec3(sb7::color::Green); break;
+            default: ChosenColor = FromVec4ToVec3(sb7::color::Gray); break;
+        }
+    }
+    CATCH("chosing color for atom for cell visualization")
+
+    return ChosenColor;
+}
 
 struct Particle
 {
@@ -14,6 +88,7 @@ struct Particle
 class CellEngineDataFile
 {
 public:
+    bool DrawColorForEveryAtom;
     bool DrawBondsBetweenParticlesCenters;
     bool DrawBondsBetweenAtoms;
     bool CheckAtomVisibility;

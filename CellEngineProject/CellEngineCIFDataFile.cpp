@@ -2,8 +2,6 @@
 #include <regex>
 #include <fstream>
 
-#include <sb7color.h>
-
 #include "vmath.h"
 #include "ExceptionsMacro.h"
 
@@ -13,87 +11,6 @@
 
 using namespace std;
 using namespace string_utils;
-
-vmath::vec3 ChooseColor(const string& ChainName)
-{
-    vmath::vec3 ChosenColor;
-
-    try
-    {
-        if (ChainName.substr(0, 3) == "BAF")
-            ChosenColor = vmath::vec3(0.25f, 0.75f, 0.75f);
-        else
-        if(ChainName.substr(0, 3) == "BAE")
-            ChosenColor = vmath::vec3(1.00f, 0.00f, 0.00f);
-        else
-        if(ChainName.substr(0, 3) == "ATP")
-            ChosenColor = vmath::vec3(1.00f, 1.00f, 1.00f);
-        else
-        if(ChainName.substr(0, 3) == "BAR")
-            ChosenColor = vmath::vec3(0.00f, 0.00f, 1.00f);
-        else
-        if(ChainName.substr(0, 1) == "BAS0")
-            ChosenColor = vmath::vec3(0.75f, 1.00f, 1.00f);
-        else
-            ChosenColor = vmath::vec3(0, 0, 0);
-    }
-    CATCH("chosing color for atom for cell visualization")
-
-    return ChosenColor;
-}
-
-
-//czytac z pliku XML
-const uint64_t DNACode = 694;
-const uint64_t RNACode = 695;
-const uint64_t RIBOSOME_70SCode = 682;
-const uint64_t RIBOSOME_50SCode = 681;
-const uint64_t RIBOSOME_30SCode = 679;
-const uint64_t DNA_POLYMERASE_GAMMA_COMPLEXCode = 516;
-const uint64_t DNA_POLYMERASE_CORECode = 513;
-const uint64_t RNA_POLYMERASECode = 683;
-
-vmath::vec3 FromVec4ToVec3(const vmath::vec4& Vector4)
-{
-    return vmath::vec3(Vector4.data[0], Vector4.data[1], Vector4.data[2]);
-}
-
-vmath::vec3 ChooseColorForCell(const CellEngineAtom& AtomObject)
-{
-    vmath::vec3 ChosenColor;
-
-    try
-    {
-        if (AtomObject.EntityId == RNACode)
-            ChosenColor = FromVec4ToVec3(sb7::color::Blue);
-        else
-        if(AtomObject.EntityId == DNACode)
-            ChosenColor = FromVec4ToVec3(sb7::color::Red);
-        else
-        if(AtomObject.EntityId == RIBOSOME_70SCode)
-            ChosenColor = FromVec4ToVec3(sb7::color::Lime);
-        else
-        if(AtomObject.EntityId == RIBOSOME_50SCode)
-            ChosenColor = FromVec4ToVec3(sb7::color::Pink);
-        else
-        if(AtomObject.EntityId == RIBOSOME_30SCode)
-            ChosenColor = FromVec4ToVec3(sb7::color::Orange);
-        else
-        if(AtomObject.EntityId == DNA_POLYMERASE_GAMMA_COMPLEXCode)
-            ChosenColor = FromVec4ToVec3(sb7::color::Yellow);
-        else
-        if(AtomObject.EntityId == DNA_POLYMERASE_CORECode)
-            ChosenColor = FromVec4ToVec3(sb7::color::Cyan);
-        else
-        if(AtomObject.EntityId == RNA_POLYMERASECode)
-            ChosenColor = FromVec4ToVec3(sb7::color::Purple);
-        else
-            ChosenColor = FromVec4ToVec3(sb7::color::Green);
-    }
-    CATCH("chosing color for atom for cell visualization")
-
-    return ChosenColor;
-}
 
 CellEngineAtom CellEngineCIFDataFile::ParseRecord(const char* LocalCIFRecord)
 {
@@ -114,7 +31,8 @@ CellEngineAtom CellEngineCIFDataFile::ParseRecord(const char* LocalCIFRecord)
         CellEngineAtomObject.Y = stof(AtomFields[11]);
         CellEngineAtomObject.Z = stof(AtomFields[12]);
 
-        CellEngineAtomObject.Color = ChooseColorForCell(CellEngineAtomObject);
+        CellEngineAtomObject.AtomColor = ChooseColorForAtom(CellEngineAtomObject);
+        CellEngineAtomObject.ParticleColor = ChooseColorForParticle(CellEngineAtomObject);
     }
     CATCH("parsing atom record")
 
@@ -123,6 +41,8 @@ CellEngineAtom CellEngineCIFDataFile::ParseRecord(const char* LocalCIFRecord)
 
 CellEngineCIFDataFile::CellEngineCIFDataFile(const string_view FileName)
 {
+    DrawColorForEveryAtom = false;
+
     DrawBondsBetweenParticlesCenters = false;
     DrawBondsBetweenAtoms = false;
 
@@ -189,12 +109,7 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
 
                 vector<string> AtomFields = split(RecordStr, " ");
 
-                //if (stoi(AtomFields[2]) == 694)//LISTA WIDZIALNYCH ELEMENTOW
-
                 ParticlesKinds[stoi(AtomFields[2])] = Particle{ true, AtomFields[5].substr(1, AtomFields[5].length() - 2) };
-                //LoggersManagerObject.Log(STREAM("CHECK|" << AtomFields[0] << "|" << AtomFields[1] << "|" << AtomFields[2] << "|" << AtomFields[3] << "|" << AtomFields[4] << "|" << AtomFields[5] << "|" << AtomFields[6] << "|" << AtomFields[7] << "|" << AtomFields[8] << "|" << AtomFields[9] << "|" << AtomFields[10] << "|" << AtomFields[11] << "|" << AtomFields[12] << "|" << AtomFields[13] << "|" << AtomFields[14] << "|"));
-                //LoggersManagerObject.Log(STREAM("CHECK|" << AtomFields[0] << "|" << AtomFields[1] << "|" << AtomFields[2] << "|" << AtomFields[3] << "|" << AtomFields[4] << "|" << AtomFields[5].substr(1, AtomFields[5].length() - 2) << "|" << AtomFields[6] << "|" << AtomFields[7] << "|"));
-                //getchar();
             }
             else
             if (Line.substr(0, 4) == "ATOM")
@@ -245,7 +160,7 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
 
 //                vmath::vec3 ChainColor;
 //                if (AppliedChainsNames.empty() == false)
-//                    ChainColor = ChooseColor(*AppliedChainsNames.begin());
+//                    ChainColor = ChooseColorForAtom(*AppliedChainsNames.begin());
 //                if (ChainColor.data[0] == 0.0 && ChainColor.data[1] == 0.0 && ChainColor.data[2] == 0.0)
 //                    ChainColor = vmath::vec3((float)rand() / RAND_MAX, (float)rand() / RAND_MAX, (float)rand() / RAND_MAX);
 
@@ -255,11 +170,6 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
 
                     if (AppliedChainsNames.empty() == true)
                         LoggersManagerObject.Log(STREAM("ERROR IN CIF FILE AppliedChainsNames EMPTY = " << to_string(AppliedMatrixId)));
-
-                                        //if (*AppliedChainsNames.begin() == "BAR0" || *AppliedChainsNames.begin() == "BAR1")
-//                                        if (*AppliedChainsNames.begin() == "BAR0")
-//                                        {
-//                                            LoggersManagerObject.Log(STREAM("FOUND BAR0"));
 
                     for (const auto& AppliedChainName : AppliedChainsNames)
                     {
@@ -315,11 +225,10 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
                     }
 
                     vmath::vec3 Center = GetCenter(LocalCellEngineAllAtomsObject);
-                    LocalCellEngineParticlesCentersObject.emplace_back(CellEngineAtom(Center.X(), Center.Y(), Center.Z(), AllAtoms.size(), LocalCellEngineParticlesCentersObject.size(), LocalCellEngineAllAtomsObject.front().Name, LocalCellEngineAllAtomsObject.front().ResName, LocalCellEngineAllAtomsObject.front().Chain, LocalCellEngineAllAtomsObject.front().Color));
+                    LocalCellEngineParticlesCentersObject.emplace_back(CellEngineAtom(Center.X(), Center.Y(), Center.Z(), AllAtoms.size(), LocalCellEngineParticlesCentersObject.size(), LocalCellEngineAllAtomsObject.front().Name, LocalCellEngineAllAtomsObject.front().ResName, LocalCellEngineAllAtomsObject.front().Chain, LocalCellEngineAllAtomsObject.front().ParticleColor));
 
                     AllAtoms.emplace_back(LocalCellEngineAllAtomsObject);
                 }
-//                                        }
             }
         }
 
