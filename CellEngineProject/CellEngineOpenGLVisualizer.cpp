@@ -31,15 +31,7 @@ private:
     GLuint LineVAO;
     GLuint LineDataBuffer[2];
 private:
-    GLuint per_fragment_program;
-    GLuint per_vertex_program;
-private:
-    struct
-    {
-        GLuint color;
-        GLuint normals;
-    }
-    textures{};
+    GLuint ShaderProgram = 0;
 private:
     struct uniforms_block
     {
@@ -57,11 +49,9 @@ private:
         GLint specular_albedo;
         GLint specular_power;
     }
-    uniforms[2]{};
+    uniforms{};
 private:
     sb7::object AtomGraphicsObject;
-private:
-    bool per_vertex;
 private:
     Matrix3fT ArcBallPrevRotationMatrix{};
     Matrix3fT ArcBallActualRotationMatrix{};
@@ -91,9 +81,7 @@ private:
 private:
     std::unique_ptr<CellEngineDataFile> CellEngineDataFileObjectPointer;
 public:
-    CellEngineOpenGLVisualiser() : per_fragment_program(0), per_vertex_program(0), per_vertex(false)
-    {
-    }
+    CellEngineOpenGLVisualiser() = default;
 protected:
     void init() override
     {
@@ -118,7 +106,8 @@ protected:
     void SetVisibilityOfAllParticles(bool VisibleParam);
     void SetVisibilityOfParticlesExcept(UnsignedIntType EntityId, bool VisibleParam);
 protected:
-    void load_shaders();
+    void LoadShaders();
+protected:
     void startup() override;
     void render(double currentTime) override;
     void onKey(int key, int action) override;
@@ -154,7 +143,7 @@ void CellEngineOpenGLVisualiser::startup()
 {
     try
     {
-        load_shaders();
+        LoadShaders();
 
         glGenBuffers(1, &uniforms_buffer);
         glBindBuffer(GL_UNIFORM_BUFFER, uniforms_buffer);
@@ -195,42 +184,24 @@ void CellEngineOpenGLVisualiser::InitExternalData()
     CATCH("reading of data file")
 }
 
-void CellEngineOpenGLVisualiser::load_shaders()
+void CellEngineOpenGLVisualiser::LoadShaders()
 {
     try
     {
-        GLuint vs;
-        GLuint fs;
+        GLuint VertexShader = sb7::shader::load("..\\shaders\\per-fragment-phong.vs.glsl", GL_VERTEX_SHADER);
+        GLuint FragmentShader = sb7::shader::load("..\\shaders\\per-fragment-phong.fs.glsl", GL_FRAGMENT_SHADER);
 
-        vs = sb7::shader::load("..\\shaders\\per-fragment-phong.vs.glsl", GL_VERTEX_SHADER);
-        fs = sb7::shader::load("..\\shaders\\per-fragment-phong.fs.glsl", GL_FRAGMENT_SHADER);
+        if (ShaderProgram)
+            glDeleteProgram(ShaderProgram);
 
-        if (per_fragment_program)
-            glDeleteProgram(per_fragment_program);
+        ShaderProgram = glCreateProgram();
+        glAttachShader(ShaderProgram, VertexShader);
+        glAttachShader(ShaderProgram, FragmentShader);
+        glLinkProgram(ShaderProgram);
 
-        per_fragment_program = glCreateProgram();
-        glAttachShader(per_fragment_program, vs);
-        glAttachShader(per_fragment_program, fs);
-        glLinkProgram(per_fragment_program);
-
-        uniforms[0].diffuse_albedo = glGetUniformLocation(per_fragment_program, "diffuse_albedo");
-        uniforms[0].specular_albedo = glGetUniformLocation(per_fragment_program, "specular_albedo");
-        uniforms[0].specular_power = glGetUniformLocation(per_fragment_program, "specular_power");
-
-        vs = sb7::shader::load("..\\shaders\\per-vertex-phong.vs.glsl", GL_VERTEX_SHADER);
-        fs = sb7::shader::load("..\\shaders\\per-vertex-phong.fs.glsl", GL_FRAGMENT_SHADER);
-
-        if (per_vertex_program)
-            glDeleteProgram(per_vertex_program);
-
-        per_vertex_program = glCreateProgram();
-        glAttachShader(per_vertex_program, vs);
-        glAttachShader(per_vertex_program, fs);
-        glLinkProgram(per_vertex_program);
-
-        uniforms[1].diffuse_albedo = glGetUniformLocation(per_vertex_program, "diffuse_albedo");
-        uniforms[1].specular_albedo = glGetUniformLocation(per_vertex_program, "specular_albedo");
-        uniforms[1].specular_power = glGetUniformLocation(per_vertex_program, "specular_power");
+        uniforms.diffuse_albedo = glGetUniformLocation(ShaderProgram, "diffuse_albedo");
+        uniforms.specular_albedo = glGetUniformLocation(ShaderProgram, "specular_albedo");
+        uniforms.specular_power = glGetUniformLocation(ShaderProgram, "specular_power");
     }
     CATCH("loading shaders for cell visualization")
 }
@@ -340,7 +311,8 @@ inline bool CellEngineOpenGLVisualiser::CheckDistanceToDrawDetailsInAtomScale(co
         if (ViewZ > CellEngineDataFileObjectPointer->Distance)
             return sqrt((XNew * XNew) + (YNew * YNew) + (ZNew * ZNew)) > CellEngineDataFileObjectPointer->Distance && ZNew > CellEngineDataFileObjectPointer->CutZ;
         else
-            return (ZNew > ViewZ - 300 && ZNew < ViewZ && XNew >- 200 && XNew < 200 && YNew > -200 && YNew < 200);
+            //return (ZNew > ViewZ - 300 && ZNew < ViewZ && XNew >- 200 && XNew < 200 && YNew > -200 && YNew < 200);
+            return (ZNew > ViewZ - 300 && ZNew < ViewZ + 100 && XNew >- 200 && XNew < 200 && YNew > -200 && YNew < 200);
     }
     else
         return false;
@@ -449,7 +421,7 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
         static const GLfloat gray[] = { 0.1f, 0.1f, 0.1f, 0.0f };
         static const GLfloat ones[] = { 1.0f };
 
-        glUseProgram(per_vertex ? per_vertex_program : per_fragment_program);
+        glUseProgram(ShaderProgram);
         glViewport(0, 0, info.windowWidth, info.windowHeight);
 
         glClearBufferfv(GL_COLOR, 0, gray);
@@ -460,8 +432,8 @@ void CellEngineOpenGLVisualiser::render(double currentTime)
 
         vmath::vec3 Center = CellEngineDataFileObjectPointer->GetCenter(CellEngineDataFileObjectPointer->GetParticlesCenters());
 
-        glUniform1f(uniforms[per_vertex ? 1 : 0].specular_power, powf(2.0f, 3.0f));
-        glUniform3fv(uniforms[per_vertex ? 1 : 0].specular_albedo, 1, vmath::vec3(1.0f / 9.0f + 1.0f / 9.0f));
+        glUniform1f(uniforms.specular_power, powf(2.0f, 3.0f));
+        glUniform3fv(uniforms.specular_albedo, 1, vmath::vec3(1.0f / 9.0f + 1.0f / 9.0f));
 
         UnsignedIntType NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = 0;
         UnsignedIntType NumberOfAllRenderedAtoms = 0;
@@ -533,9 +505,6 @@ void CellEngineOpenGLVisualiser::onKey(int key, int action)
         if (action)
             switch (key)
             {
-                case 'L': load_shaders(); break;
-                case 'K': per_vertex = !per_vertex; break;
-
                 case '1': CameraZPosition += CellEngineDataFileObjectPointer->CameraXMoveStep; break;
                 case '2': CameraZPosition -= CellEngineDataFileObjectPointer->CameraXMoveStep; break;
                 case '3': CameraXPosition += CellEngineDataFileObjectPointer->CameraYMoveStep; break;
