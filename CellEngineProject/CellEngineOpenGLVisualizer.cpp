@@ -25,7 +25,7 @@
 
 using namespace std;
 
-class CellEngineOpenGLVisualiser : public sb7::application
+class CellEngineOpenGLVisualiser : public sb7::OpenGLApplication
 {
 private:
     GLuint LineVAO;
@@ -83,11 +83,11 @@ private:
 public:
     CellEngineOpenGLVisualiser() = default;
 protected:
-    void init() override
+    void Init() override
     {
         static const char title[] = "Cell Engine Visualizer";
 
-        sb7::application::init();
+        sb7::OpenGLApplication::Init();
 
         memcpy(info.title, title, sizeof(title));
     }
@@ -98,7 +98,7 @@ protected:
 protected:
     void InitLineVertexes();
     void DeleteLineVertexes();
-    void FindBondsToDraw(const vector<CellEngineAtom>& Atoms, vector<pair<UnsignedIntType, UnsignedIntType>>& BondsToDraw);
+    static void FindBondsToDraw(const vector<CellEngineAtom>& Atoms, vector<pair<UnsignedIntType, UnsignedIntType>>& BondsToDraw);
     void DrawBonds(const vector<CellEngineAtom>& Atoms, vector<pair<UnsignedIntType, UnsignedIntType>>& BondsToDraw, const bool DrawBonds, const vmath::mat4& ViewMatrix, const vmath::vec3& Center);
     void DrawBond(float x1, float y1, float z1, float x2, float y2, float z2);
 protected:
@@ -108,8 +108,8 @@ protected:
 protected:
     void LoadShaders();
 protected:
-    void startup() override;
-    void render(double currentTime) override;
+    void StartUp() override;
+    void Render(double currentTime) override;
     void onKey(int key, int action) override;
     void onMouseWheel(int pos) override;
     void onMouseButton(int button, int action) override;
@@ -139,7 +139,7 @@ void InitializeLoggerManagerParameters()
     CATCH("initializing logger manager parameters")
 }
 
-void CellEngineOpenGLVisualiser::startup()
+void CellEngineOpenGLVisualiser::StartUp()
 {
     try
     {
@@ -414,7 +414,7 @@ inline vmath::vec3 CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom
     return FinalModelPosition;
 }
 
-void CellEngineOpenGLVisualiser::render(double currentTime)
+void CellEngineOpenGLVisualiser::Render(double currentTime)
 {
     try
     {

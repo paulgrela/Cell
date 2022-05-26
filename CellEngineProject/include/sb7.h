@@ -28,22 +28,22 @@
 
 namespace sb7
 {
-    class application
+    class OpenGLApplication
     {
     private:
         static void APIENTRY debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, GLvoid* userParam);
 
     public:
-        application() = default;
+        OpenGLApplication() = default;
 
-        virtual ~application() = default;
+        virtual ~OpenGLApplication() = default;
 
-        virtual void run(sb7::application* the_app)
+        virtual void Run(sb7::OpenGLApplication* the_app)
         {
             InitExternalData();
 
             bool running = true;
-            app = the_app;
+            OpenGLApplicationObject = the_app;
 
             if (!glfwInit())
             {
@@ -51,7 +51,7 @@ namespace sb7
                 return;
             }
 
-            init();
+            Init();
 
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, info.majorVersion);
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, info.minorVersion);
@@ -127,11 +127,11 @@ namespace sb7
                 }
             }
 
-            startup();
+            StartUp();
 
             do
             {
-                render(glfwGetTime());
+                Render(glfwGetTime());
 
                 glfwSwapBuffers(window);
                 glfwPollEvents();
@@ -141,13 +141,13 @@ namespace sb7
             }
             while (running);
 
-            shutdown();
+            ShutDown();
 
             glfwDestroyWindow(window);
             glfwTerminate();
         }
 
-        virtual void init()
+        virtual void Init()
         {
             strcpy(info.title, "OpenGL Window");
             info.windowWidth = 1600;
@@ -171,19 +171,19 @@ namespace sb7
         {
         }
 
-        virtual void startup()
+        virtual void StartUp()
         {
         }
 
-        virtual void render(double currentTime)
+        virtual void Render(double currentTime)
         {
         }
 
-        virtual void shutdown()
+        virtual void ShutDown()
         {
         }
 
-        void setWindowTitle(const char * title)
+        void setWindowTitle(const char* title)
         {
             glfwSetWindowTitle(window, title);
         }
@@ -240,46 +240,46 @@ namespace sb7
             {
                 struct
                 {
-                    unsigned int    fullscreen  : 1;
-                    unsigned int    vsync       : 1;
-                    unsigned int    cursor      : 1;
-                    unsigned int    stereo      : 1;
-                    unsigned int    debug       : 1;
-                    unsigned int    robust      : 1;
+                    unsigned int fullscreen : 1;
+                    unsigned int vsync : 1;
+                    unsigned int cursor : 1;
+                    unsigned int stereo : 1;
+                    unsigned int debug : 1;
+                    unsigned int robust : 1;
                 };
-                unsigned int        all;
+                unsigned int all;
             }
             flags;
         };
 
     protected:
         APPINFO info;
-        static sb7::application * app;
+        static sb7::OpenGLApplication* OpenGLApplicationObject;
         GLFWwindow* window;
 
         static void glfw_onResize(GLFWwindow* window, int w, int h)
         {
-            app->onResize(w, h);
+            OpenGLApplicationObject->onResize(w, h);
         }
 
         static void glfw_onKey(GLFWwindow* window, int key, int scancode, int action, int mods)
         {
-            app->onKey(key, action);
+            OpenGLApplicationObject->onKey(key, action);
         }
 
         static void glfw_onMouseButton(GLFWwindow* window, int button, int action, int mods)
         {
-            app->onMouseButton(button, action);
+            OpenGLApplicationObject->onMouseButton(button, action);
         }
 
         static void glfw_onMouseMove(GLFWwindow* window, double x, double y)
         {
-            app->onMouseMove(static_cast<int>(x), static_cast<int>(y));
+            OpenGLApplicationObject->onMouseMove(static_cast<int>(x), static_cast<int>(y));
         }
 
         static void glfw_onMouseWheel(GLFWwindow* window, double xoffset, double yoffset)
         {
-            app->onMouseWheel(static_cast<int>(yoffset));
+            OpenGLApplicationObject->onMouseWheel(static_cast<int>(yoffset));
         }
 
         void setVsync(bool enable)
@@ -291,26 +291,22 @@ namespace sb7
 };
 
 #if defined _WIN32
-#define DECLARE_MAIN(a)                             \
-sb7::application *app = 0;                          \
-int CALLBACK WinMain(HINSTANCE hInstance,           \
-                     HINSTANCE hPrevInstance,       \
-                     LPSTR lpCmdLine,               \
-                     int nCmdShow)                  \
-{                                                   \
-    auto app = new a;                               \
-    app->run(app);                                  \
-    delete app;                                     \
-    return 0;                                       \
+#define DECLARE_MAIN(MainApplicationClass)                                                                              \
+int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)                       \
+{                                                                                                                       \
+    auto MainApplicationObject = new MainApplicationClass;                                                              \
+    MainApplicationObject->Run(MainApplicationObject);                                                                  \
+    delete MainApplicationObject;                                                                                       \
+    return 0;                                                                                                           \
 }
 #elif defined _LINUX || defined __APPLE__
-#define DECLARE_MAIN(a)                             \
-int main(int argc, const char ** argv)              \
-{                                                   \
-    auto app = new a;                               \
-    app->run(app);                                  \
-    delete app;                                     \
-    return 0;                                       \
+#define DECLARE_MAIN(MainApplicationClass)                                                                              \
+int main(int argc, const char ** argv)                                                                                  \
+{                                                                                                                       \
+    auto MainApplicationObject = new MainApplicationClass;                                                              \
+    MainApplicationObject->Run(MainApplicationObject);                                                                  \
+    delete MainApplicationObject;                                                                                       \
+    return 0;                                                                                                           \
 }
 #else
 #error Undefined platform!

@@ -4,7 +4,7 @@
 
 #include "GL/glext.h"
 
-GL3WglProc sb6GetProcAddress(const char * funcname);
-int sb6IsExtensionSupported(const char * extname);
+GL3WglProc sb6GetProcAddress(const char * FunctionName);
+int sb6IsExtensionSupported(const char * ExtensionName);
 
 #endif
