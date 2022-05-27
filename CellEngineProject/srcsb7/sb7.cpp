@@ -29,7 +29,7 @@ int sb6IsExtensionSupported(const char* ExtensionName)
     return 0;
 }
 
-void APIENTRY sb7::OpenGLApplication::debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, GLvoid* userParam)
+void APIENTRY sb7::OpenGLApplication::debug_callback(GLenum Source, GLenum Type, GLuint Id, GLenum Severity, GLsizei Length, const GLchar* Message, GLvoid* UserParam)
 {
-    reinterpret_cast<OpenGLApplication*>(userParam)->onDebugMessage(source, type, id, severity, length, message);
+    reinterpret_cast<OpenGLApplication *>(UserParam)->OnDebugMessage(Source, Type, Id, Severity, Length, Message);
 }

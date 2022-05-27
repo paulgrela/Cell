@@ -24,12 +24,12 @@ typedef struct SB6M_HEADER_t
 {
     union
     {
-        unsigned int magic;
-        char magic_name[4];
+        unsigned int Magic;
+        char MagicName[4];
     };
-    unsigned int size;
-    unsigned int num_chunks;
-    unsigned int flags;
+    unsigned int Size;
+    unsigned int NumberOfChunks;
+    unsigned int Flags;
 } 
 SB6M_HEADER;
 
@@ -37,39 +37,39 @@ typedef struct SB6M_CHUNK_HEADER_t
 {
     union
     {
-        unsigned int chunk_type;
-        char chunk_name[4];
+        unsigned int ChunkType;
+        char ChunkName[4];
     };
-    unsigned int size;
+    unsigned int Size;
 } 
 SB6M_CHUNK_HEADER;
 
 typedef struct SB6M_CHUNK_INDEX_DATA_t
 {
-    SB6M_CHUNK_HEADER header;
-    unsigned int index_type;
-    unsigned int index_count;
-    unsigned int index_data_offset;
+    SB6M_CHUNK_HEADER Header;
+    unsigned int IndexType;
+    unsigned int IndexCount;
+    unsigned int IndexDataOffset;
 } 
 SB6M_CHUNK_INDEX_DATA;
 
 typedef struct SB6M_CHUNK_VERTEX_DATA_t
 {
-    SB6M_CHUNK_HEADER header;
-    unsigned int data_size;
-    unsigned int data_offset;
-    unsigned int total_vertices;
+    SB6M_CHUNK_HEADER Header;
+    unsigned int DataSize;
+    unsigned int DataOffset;
+    unsigned int TotalVertices;
 } 
 SB6M_CHUNK_VERTEX_DATA;
 
 typedef struct SB6M_VERTEX_ATTRIB_DECL_t
 {
-    char name[64];
-    unsigned int size;
-    unsigned int type;
-    unsigned int stride;
-    unsigned int flags;
-    unsigned int data_offset;
+    char Name[64];
+    unsigned int Size;
+    unsigned int Type;
+    unsigned int Stride;
+    unsigned int Flags;
+    unsigned int DataOffset;
 } 
 SB6M_VERTEX_ATTRIB_DECL;
 
@@ -78,9 +78,9 @@ SB6M_VERTEX_ATTRIB_DECL;
 
 typedef struct SB6M_VERTEX_ATTRIB_CHUNK_t
 {
-    SB6M_CHUNK_HEADER header;
-    unsigned int attrib_count;
-    SB6M_VERTEX_ATTRIB_DECL attrib_data[1];
+    SB6M_CHUNK_HEADER Header;
+    unsigned int AttribCount;
+    SB6M_VERTEX_ATTRIB_DECL AttribData[1];
 } 
 SB6M_VERTEX_ATTRIB_CHUNK;
 
@@ -92,32 +92,32 @@ SB6M_DATA_ENCODING;
 
 typedef struct SB6M_DATA_CHUNK_t
 {
-    SB6M_CHUNK_HEADER header;
-    unsigned int encoding;
-    unsigned int data_offset;
-    unsigned int data_length;
+    SB6M_CHUNK_HEADER Header;
+    unsigned int Encoding;
+    unsigned int DataOffset;
+    unsigned int DataLength;
 } 
 SB6M_DATA_CHUNK;
 
 typedef struct SB6M_SUB_OBJECT_DECL_t
 {
-    unsigned int first;
-    unsigned int count;
+    unsigned int First;
+    unsigned int Count;
 } 
 SB6M_SUB_OBJECT_DECL;
 
 typedef struct SB6M_CHUNK_SUB_OBJECT_LIST_t
 {
-    SB6M_CHUNK_HEADER header;
-    unsigned int count;
-    SB6M_SUB_OBJECT_DECL sub_object[1];
+    SB6M_CHUNK_HEADER Header;
+    unsigned int Count;
+    SB6M_SUB_OBJECT_DECL SubObject[1];
 } 
 SB6M_CHUNK_SUB_OBJECT_LIST;
 
 typedef struct SB6M_CHUNK_COMMENT_t
 {
-    SB6M_CHUNK_HEADER header;
-    char comment[1];
+    SB6M_CHUNK_HEADER Header;
+    char Comment[1];
 } 
 SB6M_CHUNK_COMMENT;
 

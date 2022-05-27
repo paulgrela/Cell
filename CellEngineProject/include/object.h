@@ -10,55 +10,55 @@
 
 namespace sb7
 {
-    class object
+    class GraphicObject
     {
     public:
-        object();
-        ~object();
+        GraphicObject();
+        ~GraphicObject();
 
-        inline void render(unsigned int instance_count = 1, unsigned int base_instance = 0)
+        inline void Render(unsigned int InstanceCount = 1, unsigned int BaseInstance = 0)
         {
-            render_sub_object(0, instance_count, base_instance);
+            RenderSubGraphicObject(0, InstanceCount, BaseInstance);
         }
 
-        void render_sub_object(unsigned int object_index, unsigned int instance_count = 1, unsigned int base_instance = 0);
+        void RenderSubGraphicObject(unsigned int GraphicObjectIndex, unsigned int InstanceCount = 1, unsigned int BaseInstance = 0);
 
-        void get_sub_object_info(unsigned int index, GLuint &first, GLuint &count)
+        void GetSubGraphicObjectInfo(unsigned int Index, GLuint &First, GLuint &NumberOfGraphicObjectsParameter)
         {
-            if (index >= num_sub_objects)
+            if (Index >= NumberOfSubGraphicObjects)
             {
-                first = 0;
-                count = 0;
+                First = 0;
+                NumberOfGraphicObjectsParameter = 0;
             }
             else
             {
-                first = sub_object[index].first;
-                count = sub_object[index].count;
+                First = SubGraphicObjects[Index].First;
+                NumberOfGraphicObjectsParameter = SubGraphicObjects[Index].Count;
             }
         }
 
-        [[nodiscard]] unsigned int get_sub_object_count() const
+        [[nodiscard]] unsigned int GetNumberOfSubGraphicObject() const
         { 
-            return num_sub_objects; 
+            return NumberOfSubGraphicObjects;
         }
 
-        [[nodiscard]] GLuint get_vao() const
+        [[nodiscard]] GLuint GetVAO() const
         { 
-            return vao; 
+            return VAO;
         }
 
-        void load(const char* filename);
-        void free();
+        void Load(const char* FileName);
+        void Free();
 
     private:
-        GLuint data_buffer;
-        GLuint vao;
-        GLuint index_type;
+        GLuint DataBuffer;
+        GLuint VAO;
+        GLuint IndexType;
 
-        enum { MAX_SUB_OBJECTS = 256 };
+        enum { MAX_SUB_GRAPHIC_OBJECTS = 256 };
 
-        unsigned int num_sub_objects;
-        SB6M_SUB_OBJECT_DECL sub_object[MAX_SUB_OBJECTS];
+        unsigned int NumberOfSubGraphicObjects;
+        SB6M_SUB_OBJECT_DECL SubGraphicObjects[MAX_SUB_GRAPHIC_OBJECTS];
     };
 }
 

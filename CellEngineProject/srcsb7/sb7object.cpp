@@ -8,146 +8,146 @@
 
 namespace sb7
 {
-    object::object() : data_buffer(0), index_type(0), vao(0)
+    GraphicObject::GraphicObject() : DataBuffer(0), IndexType(0), VAO(0)
     {
     }
 
-    object::~object() = default;
+    GraphicObject::~GraphicObject() = default;
 
-    void object::load(const char* filename)
+    void GraphicObject::Load(const char* FileName)
     {
-        FILE* infile = fopen(filename, "rb");
-        size_t filesize;
-        char* data;
+        FILE* GraphicObjectFile = fopen(FileName, "rb");
+        size_t FileSize;
+        char* FileData;
 
-        this->free();
+        this->Free();
 
-        fseek(infile, 0, SEEK_END);
-        filesize = ftell(infile);
-        fseek(infile, 0, SEEK_SET);
+        fseek(GraphicObjectFile, 0, SEEK_END);
+        FileSize = ftell(GraphicObjectFile);
+        fseek(GraphicObjectFile, 0, SEEK_SET);
 
-        data = new char[filesize];
+        FileData = new char[FileSize];
 
-        fread(data, filesize, 1, infile);
+        fread(FileData, FileSize, 1, GraphicObjectFile);
 
-        char* ptr = data;
-        auto header = (SB6M_HEADER *)ptr;
-        ptr += header->size;
+        char* Ptr = FileData;
+        auto Header = (SB6M_HEADER*)Ptr;
+        Ptr += Header->Size;
 
-        SB6M_VERTEX_ATTRIB_CHUNK* vertex_attrib_chunk = nullptr;
-        SB6M_CHUNK_VERTEX_DATA* vertex_data_chunk = nullptr;
-        SB6M_CHUNK_INDEX_DATA* index_data_chunk = nullptr;
-        SB6M_CHUNK_SUB_OBJECT_LIST* sub_object_chunk = nullptr;
-        SB6M_DATA_CHUNK* data_chunk = nullptr;
+        SB6M_VERTEX_ATTRIB_CHUNK* VertexAttribChunk = nullptr;
+        SB6M_CHUNK_VERTEX_DATA* VertexDataChunk = nullptr;
+        SB6M_CHUNK_INDEX_DATA* IndexDataChunk = nullptr;
+        SB6M_CHUNK_SUB_OBJECT_LIST* SubGraphicObjectChunk = nullptr;
+        SB6M_DATA_CHUNK* DataChunk = nullptr;
 
-        for (unsigned int chunk_index = 0; chunk_index < header->num_chunks; chunk_index++)
+        for (unsigned int ChunkIndex = 0; ChunkIndex < Header->NumberOfChunks; ChunkIndex++)
         {
-            auto chunk = (SB6M_CHUNK_HEADER*)ptr;
-            ptr += chunk->size;
-            switch (chunk->chunk_type)
+            auto Chunk = (SB6M_CHUNK_HEADER*)Ptr;
+            Ptr += Chunk->Size;
+            switch (Chunk->ChunkType)
             {
-                case SB6M_CHUNK_TYPE_VERTEX_ATTRIBS: vertex_attrib_chunk = (SB6M_VERTEX_ATTRIB_CHUNK*)chunk; break;
-                case SB6M_CHUNK_TYPE_VERTEX_DATA: vertex_data_chunk = (SB6M_CHUNK_VERTEX_DATA*)chunk; break;
-                case SB6M_CHUNK_TYPE_INDEX_DATA: index_data_chunk = (SB6M_CHUNK_INDEX_DATA*)chunk; break;
-                case SB6M_CHUNK_TYPE_SUB_OBJECT_LIST: sub_object_chunk = (SB6M_CHUNK_SUB_OBJECT_LIST*)chunk; break;
-                case SB6M_CHUNK_TYPE_DATA: data_chunk = (SB6M_DATA_CHUNK*)chunk; break;
+                case SB6M_CHUNK_TYPE_VERTEX_ATTRIBS: VertexAttribChunk = (SB6M_VERTEX_ATTRIB_CHUNK*)Chunk; break;
+                case SB6M_CHUNK_TYPE_VERTEX_DATA: VertexDataChunk = (SB6M_CHUNK_VERTEX_DATA*)Chunk; break;
+                case SB6M_CHUNK_TYPE_INDEX_DATA: IndexDataChunk = (SB6M_CHUNK_INDEX_DATA*)Chunk; break;
+                case SB6M_CHUNK_TYPE_SUB_OBJECT_LIST: SubGraphicObjectChunk = (SB6M_CHUNK_SUB_OBJECT_LIST*)Chunk; break;
+                case SB6M_CHUNK_TYPE_DATA: DataChunk = (SB6M_DATA_CHUNK*)Chunk; break;
                 default: break;
             }
         }
 
-        glGenVertexArrays(1, &vao);
-        glBindVertexArray(vao);
+        glGenVertexArrays(1, &VAO);
+        glBindVertexArray(VAO);
 
-        if (data_chunk != nullptr)
+        if (DataChunk != nullptr)
         {
-            glGenBuffers(1, &data_buffer);
-            glBindBuffer(GL_ARRAY_BUFFER, data_buffer);
-            glBufferData(GL_ARRAY_BUFFER, data_chunk->data_length, (unsigned char*)data_chunk + data_chunk->data_offset, GL_STATIC_DRAW);
+            glGenBuffers(1, &DataBuffer);
+            glBindBuffer(GL_ARRAY_BUFFER, DataBuffer);
+            glBufferData(GL_ARRAY_BUFFER, DataChunk->DataLength, (unsigned char*)DataChunk + DataChunk->DataOffset, GL_STATIC_DRAW);
         }
         else
         {
-            unsigned int data_size = 0;
-            unsigned int size_used = 0;
+            unsigned int DataSize = 0;
+            unsigned int SizeUsed = 0;
 
-            if (vertex_data_chunk != nullptr)
-                data_size += vertex_data_chunk->data_size;
+            if (VertexDataChunk != nullptr)
+                DataSize += VertexDataChunk->DataSize;
 
-            if (index_data_chunk != nullptr)
-                data_size += index_data_chunk->index_count * (index_data_chunk->index_type == GL_UNSIGNED_SHORT ? sizeof(GLushort) : sizeof(GLubyte));
+            if (IndexDataChunk != nullptr)
+                DataSize += IndexDataChunk->IndexCount * (IndexDataChunk->IndexType == GL_UNSIGNED_SHORT ? sizeof(GLushort) : sizeof(GLubyte));
 
-            glGenBuffers(1, &data_buffer);
-            glBindBuffer(GL_ARRAY_BUFFER, data_buffer);
-            glBufferData(GL_ARRAY_BUFFER, data_size, nullptr, GL_STATIC_DRAW);
+            glGenBuffers(1, &DataBuffer);
+            glBindBuffer(GL_ARRAY_BUFFER, DataBuffer);
+            glBufferData(GL_ARRAY_BUFFER, DataSize, nullptr, GL_STATIC_DRAW);
 
-            if (vertex_data_chunk != nullptr)
+            if (VertexDataChunk != nullptr)
             {
-                glBufferSubData(GL_ARRAY_BUFFER, 0, vertex_data_chunk->data_size, data + vertex_data_chunk->data_offset);
-                size_used += vertex_data_chunk->data_offset;
+                glBufferSubData(GL_ARRAY_BUFFER, 0, VertexDataChunk->DataSize, FileData + VertexDataChunk->DataOffset);
+                SizeUsed += VertexDataChunk->DataOffset;
             }
 
-            if (index_data_chunk != nullptr)
-                glBufferSubData(GL_ARRAY_BUFFER, size_used, index_data_chunk->index_count * (index_data_chunk->index_type == GL_UNSIGNED_SHORT ? sizeof(GLushort) : sizeof(GLubyte)), data + index_data_chunk->index_data_offset);
+            if (IndexDataChunk != nullptr)
+                glBufferSubData(GL_ARRAY_BUFFER, SizeUsed, IndexDataChunk->IndexCount * (IndexDataChunk->IndexType == GL_UNSIGNED_SHORT ? sizeof(GLushort) : sizeof(GLubyte)), FileData + IndexDataChunk->IndexDataOffset);
         }
 
-        for (unsigned int attrib_index = 0; attrib_index < vertex_attrib_chunk->attrib_count; attrib_index++)
+        for (unsigned int attrib_index = 0; attrib_index < VertexAttribChunk->AttribCount; attrib_index++)
         {
-            SB6M_VERTEX_ATTRIB_DECL &attrib_decl = vertex_attrib_chunk->attrib_data[attrib_index];
-            glVertexAttribPointer(attrib_index, attrib_decl.size, attrib_decl.type, attrib_decl.flags & SB6M_VERTEX_ATTRIB_FLAG_NORMALIZED ? GL_TRUE : GL_FALSE, attrib_decl.stride, (GLvoid*)(uintptr_t)attrib_decl.data_offset);
+            SB6M_VERTEX_ATTRIB_DECL &attrib_decl = VertexAttribChunk->AttribData[attrib_index];
+            glVertexAttribPointer(attrib_index, attrib_decl.Size, attrib_decl.Type, attrib_decl.Flags & SB6M_VERTEX_ATTRIB_FLAG_NORMALIZED ? GL_TRUE : GL_FALSE, attrib_decl.Stride, (GLvoid*)(uintptr_t)attrib_decl.DataOffset);
             glEnableVertexAttribArray(attrib_index);
         }
 
-        if (index_data_chunk != nullptr)
+        if (IndexDataChunk != nullptr)
         {
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, data_buffer);
-            index_type = index_data_chunk->index_type;
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, DataBuffer);
+            IndexType = IndexDataChunk->IndexType;
         }
         else
-            index_type = GL_NONE;
+            IndexType = GL_NONE;
 
-        if (sub_object_chunk != nullptr)
+        if (SubGraphicObjectChunk != nullptr)
         {
-            if (sub_object_chunk->count > MAX_SUB_OBJECTS)
-                sub_object_chunk->count = MAX_SUB_OBJECTS;
+            if (SubGraphicObjectChunk->Count > MAX_SUB_GRAPHIC_OBJECTS)
+                SubGraphicObjectChunk->Count = MAX_SUB_GRAPHIC_OBJECTS;
 
-            for (unsigned int chunk_index = 0; chunk_index < sub_object_chunk->count; chunk_index++)
-                sub_object[chunk_index] = sub_object_chunk->sub_object[chunk_index];
+            for (unsigned int chunk_index = 0; chunk_index < SubGraphicObjectChunk->Count; chunk_index++)
+                SubGraphicObjects[chunk_index] = SubGraphicObjectChunk->SubObject[chunk_index];
 
-            num_sub_objects = sub_object_chunk->count;
+            NumberOfSubGraphicObjects = SubGraphicObjectChunk->Count;
         }
         else
         {
-            sub_object[0].first = 0;
-            sub_object[0].count = index_type != GL_NONE ? index_data_chunk->index_count : vertex_data_chunk->total_vertices;
-            num_sub_objects = 1;
+            SubGraphicObjects[0].First = 0;
+            SubGraphicObjects[0].Count = IndexType != GL_NONE ? IndexDataChunk->IndexCount : VertexDataChunk->TotalVertices;
+            NumberOfSubGraphicObjects = 1;
         }
 
-        delete[] data;
+        delete[] FileData;
 
-        fclose(infile);
+        fclose(GraphicObjectFile);
 
         glBindVertexArray(0);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 
-    void object::free()
+    void GraphicObject::Free()
     {
-        glDeleteVertexArrays(1, &vao);
-        glDeleteBuffers(1, &data_buffer);
+        glDeleteVertexArrays(1, &VAO);
+        glDeleteBuffers(1, &DataBuffer);
 
-        vao = 0;
-        data_buffer = 0;
+        VAO = 0;
+        DataBuffer = 0;
     }
 
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wint-to-pointer-cast"
-    void object::render_sub_object(unsigned int object_index, unsigned int instance_count, unsigned int base_instance)
+    void GraphicObject::RenderSubGraphicObject(unsigned int GraphicObjectIndex, unsigned int InstanceCount, unsigned int BaseInstance)
     {
-        glBindVertexArray(vao);
+        glBindVertexArray(VAO);
 
-        if (index_type != GL_NONE)
-            glDrawElementsInstancedBaseInstance(GL_TRIANGLES, sub_object[object_index].count, index_type, (void*)sub_object[object_index].first, instance_count, base_instance);
+        if (IndexType != GL_NONE)
+            glDrawElementsInstancedBaseInstance(GL_TRIANGLES, SubGraphicObjects[GraphicObjectIndex].Count, IndexType, (void*)SubGraphicObjects[GraphicObjectIndex].First, InstanceCount, BaseInstance);
         else
-            glDrawArraysInstancedBaseInstance(GL_TRIANGLES, sub_object[object_index].first, sub_object[object_index].count, instance_count, base_instance);
+            glDrawArraysInstancedBaseInstance(GL_TRIANGLES, SubGraphicObjects[GraphicObjectIndex].First, SubGraphicObjects[GraphicObjectIndex].Count, InstanceCount, BaseInstance);
     }
     #pragma GCC diagnostic pop
 }

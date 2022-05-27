@@ -9,108 +9,108 @@ namespace sb7
 {
     namespace shader
     {
-        extern GLuint load(const char * filename, GLenum shader_type, bool check_errors)
+        extern GLuint Load(const char * FileName, GLenum ShaderType, bool CheckErrors)
         {
-            GLuint result = 0;
-            FILE * fp;
-            size_t filesize;
-            char* data;
+            GLuint Result = 0;
+            FILE * ShaderFile;
+            size_t FileSize;
+            char* Data;
 
-            fp = fopen(filename, "rb");
+            ShaderFile = fopen(FileName, "rb");
 
-            if (!fp)
+            if (!ShaderFile)
                 return 0;
 
-            fseek(fp, 0, SEEK_END);
-            filesize = ftell(fp);
-            fseek(fp, 0, SEEK_SET);
+            fseek(ShaderFile, 0, SEEK_END);
+            FileSize = ftell(ShaderFile);
+            fseek(ShaderFile, 0, SEEK_SET);
 
-            data = new char [filesize + 1];
+            Data = new char [FileSize + 1];
 
-            if (!data)
-                goto fail_data_alloc;
+            if (!Data)
+                goto FailDataAllocLabel;
 
-            fread(data, 1, filesize, fp);
-            data[filesize] = 0;
-            fclose(fp);
+            fread(Data, 1, FileSize, ShaderFile);
+            Data[FileSize] = 0;
+            fclose(ShaderFile);
 
-            result = glCreateShader(shader_type);
+            Result = glCreateShader(ShaderType);
 
-            if (!result)
-                goto fail_shader_alloc;
+            if (!Result)
+                goto FailShaderAlloc;
 
-            glShaderSource(result, 1, &data, nullptr);
+            glShaderSource(Result, 1, &Data, nullptr);
 
-            delete [] data;
+            delete [] Data;
 
-            glCompileShader(result);
+            glCompileShader(Result);
 
-            if (check_errors)
+            if (CheckErrors)
             {
                 GLint status = 0;
-                glGetShaderiv(result, GL_COMPILE_STATUS, &status);
+                glGetShaderiv(Result, GL_COMPILE_STATUS, &status);
 
                 if (!status)
                 {
                     char buffer[4096];
-                    glGetShaderInfoLog(result, 4096, nullptr, buffer);
+                    glGetShaderInfoLog(Result, 4096, nullptr, buffer);
                     #ifdef _WIN32
-                    OutputDebugStringA(filename);
+                    OutputDebugStringA(FileName);
                     OutputDebugStringA(":");
                     OutputDebugStringA(buffer);
                     OutputDebugStringA("\n");
                     #else
-                    fprintf(stderr, "%s: %s\n", filename, buffer);
+                    fprintf(stderr, "%s: %s\n", FileName, buffer);
                     #endif
-                    goto fail_compile_shader;
+                    goto FailCompileShader;
                 }
             }
 
-            return result;
+            return Result;
 
-        fail_compile_shader:
-            glDeleteShader(result);
+        FailCompileShader:
+            glDeleteShader(Result);
 
-        fail_shader_alloc:;
-        fail_data_alloc:
+        FailShaderAlloc:;
+        FailDataAllocLabel:
 
-            return result;
+            return Result;
         }
 
-        GLuint from_string(const char * source, GLenum shader_type, bool check_errors)
+        GLuint FromString(const char* Source, GLenum shader_type, bool CheckErrors)
         {
-            GLuint sh;
+            GLuint Shader;
 
-            sh = glCreateShader(shader_type);
+            Shader = glCreateShader(shader_type);
 
-            const char * strings[] = { source };
-            glShaderSource(sh, 1, strings, nullptr);
+            const char * Strings[] = { Source };
+            glShaderSource(Shader, 1, Strings, nullptr);
 
-            glCompileShader(sh);
+            glCompileShader(Shader);
 
-            if (check_errors)
+            if (CheckErrors)
             {
-                GLint status = 0;
-                glGetShaderiv(sh, GL_COMPILE_STATUS, &status);
+                GLint Status = 0;
+                glGetShaderiv(Shader, GL_COMPILE_STATUS, &Status);
 
-                if (!status)
+                if (!Status)
                 {
-                    char buffer[4096];
-                    glGetShaderInfoLog(sh, 4096, nullptr, buffer);
+                    char Buffer[4096];
+                    glGetShaderInfoLog(Shader, 4096, nullptr, Buffer);
                     #ifdef _WIN32
-                    OutputDebugStringA(buffer);
+                    OutputDebugStringA(Buffer);
                     OutputDebugStringA("\n");
                     #else
-                    fprintf(stderr, "%s\n", buffer);
+                    fprintf(stderr, "%s\n", Buffer);
                     #endif
-                    goto fail_compile_shader;
+                    goto FailCompileShaderLabel;
                 }
             }
 
-            return sh;
+            return Shader;
 
-        fail_compile_shader:
-            glDeleteShader(sh);
+        FailCompileShaderLabel:
+            glDeleteShader(Shader);
 
             return 0;
         }
@@ -119,44 +119,42 @@ namespace sb7
 
         namespace program
         {
-            GLuint link_from_shaders(const GLuint * shaders, int shader_count, bool delete_shaders, bool check_errors)
+            GLuint LinkFromShaders(const GLuint* Shaders, int ShaderCount, bool DeleteShaders, bool CheckErrors)
             {
-                int shader_index;
+                int ShaderIndex;
 
-                GLuint program;
+                GLuint Program;
 
-                program = glCreateProgram();
+                Program = glCreateProgram();
 
-                for (shader_index = 0; shader_index < shader_count; shader_index++)
-                    glAttachShader(program, shaders[shader_index]);
+                for (ShaderIndex = 0; ShaderIndex < ShaderCount; ShaderIndex++)
+                    glAttachShader(Program, Shaders[ShaderIndex]);
 
-                glLinkProgram(program);
+                glLinkProgram(Program);
 
-                if (check_errors)
+                if (CheckErrors)
                 {
-                    GLint status;
-                    glGetProgramiv(program, GL_LINK_STATUS, &status);
+                    GLint Status;
+                    glGetProgramiv(Program, GL_LINK_STATUS, &Status);
 
-                    if (!status)
+                    if (!Status)
                     {
-                        char buffer[4096];
-                        glGetProgramInfoLog(program, 4096, nullptr, buffer);
+                        char Buffer[4096];
+                        glGetProgramInfoLog(Program, 4096, nullptr, Buffer);
                         #ifdef _WIN32
-                        OutputDebugStringA(buffer);
+                        OutputDebugStringA(Buffer);
                         OutputDebugStringA("\n");
                         #endif
-                        glDeleteProgram(program);
+                        glDeleteProgram(Program);
                         return 0;
                     }
                 }
 
-                if (delete_shaders)
-                    for (shader_index = 0; shader_index < shader_count; shader_index++)
-                    {
-                        glDeleteShader(shaders[shader_index]);
-                    }
+                if (DeleteShaders)
+                    for (ShaderIndex = 0; ShaderIndex < ShaderCount; ShaderIndex++)
+                        glDeleteShader(Shaders[ShaderIndex]);
 
-                return program;
+                return Program;
             }
     }
 }

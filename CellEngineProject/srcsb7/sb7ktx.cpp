@@ -15,14 +15,14 @@ namespace sb7
 {
     namespace ktx
     {
-        namespace file
+        namespace File
         {
-            static const unsigned char identifier[] =
+            static const unsigned char Identifier[] =
             {
                 0xAB, 0x4B, 0x54, 0x58, 0x20, 0x31, 0x31, 0xBB, 0x0D, 0x0A, 0x1A, 0x0A
             };
 
-            static const unsigned int swap32(const unsigned int u32)
+            static const unsigned int Swap32(const unsigned int u32)
             {
                 union
                 {
@@ -40,7 +40,7 @@ namespace sb7
                 return b.u32;
             }
 
-            static const unsigned short swap16(const unsigned short u16)
+            static const unsigned short Swap16(const unsigned short u16)
             {
                 union
                 {
@@ -56,219 +56,217 @@ namespace sb7
                 return b.u16;
             }
 
-            static unsigned int calculate_stride(const header& h, unsigned int width, unsigned int pad = 4)
+            static unsigned int CalculateStride(const Header& HeaderParameter, unsigned int Width, unsigned int Pad = 4)
             {
-                unsigned int channels = 0;
+                unsigned int Channels = 0;
 
-                switch (h.glbaseinternalformat)
+                switch (HeaderParameter.glBaseInternalFormat)
                 {
-                    case GL_RED: channels = 1; break;
-                    case GL_RG: channels = 2; break;
+                    case GL_RED: Channels = 1; break;
+                    case GL_RG: Channels = 2; break;
                     case GL_BGR:
-                    case GL_RGB: channels = 3; break;
+                    case GL_RGB: Channels = 3; break;
                     case GL_BGRA:
-                    case GL_RGBA: channels = 4; break;
+                    case GL_RGBA: Channels = 4; break;
                 }
 
-                unsigned int stride = h.gltypesize * channels * width;
+                unsigned int Stride = HeaderParameter.glTypeSize * Channels * Width;
 
-                stride = (stride + (pad - 1)) & ~(pad - 1);
+                Stride = (Stride + (Pad - 1)) & ~(Pad - 1);
 
-                return stride;
+                return Stride;
             }
 
-            static unsigned int calculate_face_size(const header& h)
+            static unsigned int CalculateFaceSize(const Header& HeaderParameter)
             {
-                unsigned int stride = calculate_stride(h, h.pixelwidth);
+                unsigned int Stride = CalculateStride(HeaderParameter, HeaderParameter.PixelWidth);
 
-                return stride * h.pixelheight;
+                return Stride * HeaderParameter.PixelHeight;
             }
 
-            extern unsigned int load(const char * filename, unsigned int tex)
+            extern unsigned int Load(const char * FileName, unsigned int Tex)
             {
-                FILE * fp;
-                GLuint temp = 0;
-                GLuint retval = 0;
-                header h;
-                size_t data_start, data_end;
-                unsigned char * data;
-                GLenum target = GL_NONE;
+                FILE* ktxFile;
+                GLuint Temporary = 0;
+                GLuint ReturnValue = 0;
+                Header HeaderObject;
+                size_t DataStart, DataEnd;
+                unsigned char* Data;
+                GLenum Target = GL_NONE;
 
-                fp = fopen(filename, "rb");
+                ktxFile = fopen(FileName, "rb");
 
-                if (!fp)
+                if (!ktxFile)
                     return 0;
 
-                if (fread(&h, sizeof(h), 1, fp) != 1)
-                    goto fail_read;
+                if (fread(&HeaderObject, sizeof(HeaderObject), 1, ktxFile) != 1)
+                    goto FailReadLabel;
 
-                if (memcmp(h.identifier, identifier, sizeof(identifier)) != 0)
-                    goto fail_header;
+                if (memcmp(HeaderObject.Identifier, Identifier, sizeof(Identifier)) != 0)
+                    goto FailHeaderLabel;
 
-                if (h.endianness == 0x04030201)
+                if (HeaderObject.Endianness == 0x04030201)
                 {
                 }
                 else 
-                if (h.endianness == 0x01020304)
+                if (HeaderObject.Endianness == 0x01020304)
                 {
-                    h.endianness            = swap32(h.endianness);
-                    h.gltype                = swap32(h.gltype);
-                    h.gltypesize            = swap32(h.gltypesize);
-                    h.glformat              = swap32(h.glformat);
-                    h.glinternalformat      = swap32(h.glinternalformat);
-                    h.glbaseinternalformat  = swap32(h.glbaseinternalformat);
-                    h.pixelwidth            = swap32(h.pixelwidth);
-                    h.pixelheight           = swap32(h.pixelheight);
-                    h.pixeldepth            = swap32(h.pixeldepth);
-                    h.arrayelements         = swap32(h.arrayelements);
-                    h.faces                 = swap32(h.faces);
-                    h.miplevels             = swap32(h.miplevels);
-                    h.keypairbytes          = swap32(h.keypairbytes);
+                    HeaderObject.Endianness = Swap32(HeaderObject.Endianness);
+                    HeaderObject.glType = Swap32(HeaderObject.glType);
+                    HeaderObject.glTypeSize = Swap32(HeaderObject.glTypeSize);
+                    HeaderObject.glFormat = Swap32(HeaderObject.glFormat);
+                    HeaderObject.glInternalFormat = Swap32(HeaderObject.glInternalFormat);
+                    HeaderObject.glBaseInternalFormat = Swap32(HeaderObject.glBaseInternalFormat);
+                    HeaderObject.PixelWidth = Swap32(HeaderObject.PixelWidth);
+                    HeaderObject.PixelHeight = Swap32(HeaderObject.PixelHeight);
+                    HeaderObject.PixelDepth = Swap32(HeaderObject.PixelDepth);
+                    HeaderObject.ArrayElements = Swap32(HeaderObject.ArrayElements);
+                    HeaderObject.Faces = Swap32(HeaderObject.Faces);
+                    HeaderObject.mipLevels = Swap32(HeaderObject.mipLevels);
+                    HeaderObject.KeyPairBytes = Swap32(HeaderObject.KeyPairBytes);
                 }
                 else
-                    goto fail_header;
+                    goto FailHeaderLabel;
 
-                if (h.pixelheight == 0)
+                if (HeaderObject.PixelHeight == 0)
                 {
-                    if (h.arrayelements == 0)
-                        target = GL_TEXTURE_1D;
+                    if (HeaderObject.ArrayElements == 0)
+                        Target = GL_TEXTURE_1D;
                     else
-                        target = GL_TEXTURE_1D_ARRAY;
+                        Target = GL_TEXTURE_1D_ARRAY;
                 }
                 else 
-                if (h.pixeldepth == 0)
+                if (HeaderObject.PixelDepth == 0)
                 {
-                    if (h.arrayelements == 0)
+                    if (HeaderObject.ArrayElements == 0)
                     {
-                        if (h.faces == 0)
-                            target = GL_TEXTURE_2D;
+                        if (HeaderObject.Faces == 0)
+                            Target = GL_TEXTURE_2D;
                         else
-                            target = GL_TEXTURE_CUBE_MAP;
+                            Target = GL_TEXTURE_CUBE_MAP;
                     }
                     else
                     {
-                        if (h.faces == 0)
-                            target = GL_TEXTURE_2D_ARRAY;
+                        if (HeaderObject.Faces == 0)
+                            Target = GL_TEXTURE_2D_ARRAY;
                         else
-                            target = GL_TEXTURE_CUBE_MAP_ARRAY;
+                            Target = GL_TEXTURE_CUBE_MAP_ARRAY;
                     }
                 }
                 else
-                    target = GL_TEXTURE_3D;
+                    Target = GL_TEXTURE_3D;
 
-                if (target == GL_NONE || (h.pixelwidth == 0) || (h.pixelheight == 0 && h.pixeldepth != 0))
-                    goto fail_header;
+                if (Target == GL_NONE || (HeaderObject.PixelWidth == 0) || (HeaderObject.PixelHeight == 0 && HeaderObject.PixelDepth != 0))
+                    goto FailHeaderLabel;
 
-                temp = tex;
-                if (tex == 0)
-                    glGenTextures(1, &tex);
+                Temporary = Tex;
+                if (Tex == 0)
+                    glGenTextures(1, &Tex);
 
-                glBindTexture(target, tex);
+                glBindTexture(Target, Tex);
 
-                data_start = ftell(fp) + h.keypairbytes;
-                fseek(fp, 0, SEEK_END);
-                data_end = ftell(fp);
-                fseek(fp, data_start, SEEK_SET);
+                DataStart = ftell(ktxFile) + HeaderObject.KeyPairBytes;
+                fseek(ktxFile, 0, SEEK_END);
+                DataEnd = ftell(ktxFile);
+                fseek(ktxFile, DataStart, SEEK_SET);
 
-                data = new unsigned char [data_end - data_start];
-                memset(data, 0, data_end - data_start);
+                Data = new unsigned char [DataEnd - DataStart];
+                memset(Data, 0, DataEnd - DataStart);
 
-                fread(data, 1, data_end - data_start, fp);
+                fread(Data, 1, DataEnd - DataStart, ktxFile);
 
-                if (h.miplevels == 0)
-                    h.miplevels = 1;
+                if (HeaderObject.mipLevels == 0)
+                    HeaderObject.mipLevels = 1;
 
-                switch (target)
+                switch (Target)
                 {
                     case GL_TEXTURE_1D:
-                        glTexStorage1D(GL_TEXTURE_1D, h.miplevels, h.glinternalformat, h.pixelwidth);
-                        glTexSubImage1D(GL_TEXTURE_1D, 0, 0, h.pixelwidth, h.glformat, h.glinternalformat, data);
+                        glTexStorage1D(GL_TEXTURE_1D, HeaderObject.mipLevels, HeaderObject.glInternalFormat, HeaderObject.PixelWidth);
+                        glTexSubImage1D(GL_TEXTURE_1D, 0, 0, HeaderObject.PixelWidth, HeaderObject.glFormat, HeaderObject.glInternalFormat, Data);
                         break;
                     case GL_TEXTURE_2D:
-                        // glTexImage2D(GL_TEXTURE_2D, 0, h.glinternalformat, h.pixelwidth, h.pixelheight, 0, h.glformat, h.gltype, data);
-                        if (h.gltype == GL_NONE)
-                            glCompressedTexImage2D(GL_TEXTURE_2D, 0, h.glinternalformat, h.pixelwidth, h.pixelheight, 0, 420 * 380 / 2, data);
+                        // glTexImage2D(GL_TEXTURE_2D, 0, HeaderObject.glInternalFormat, HeaderObject.PixelWidth, HeaderObject.PixelHeight, 0, HeaderObject.glFormat, HeaderObject.glType, Data);
+                        if (HeaderObject.glType == GL_NONE)
+                            glCompressedTexImage2D(GL_TEXTURE_2D, 0, HeaderObject.glInternalFormat, HeaderObject.PixelWidth, HeaderObject.PixelHeight, 0, 420 * 380 / 2, Data);
                         else
                         {
-                            glTexStorage2D(GL_TEXTURE_2D, h.miplevels, h.glinternalformat, h.pixelwidth, h.pixelheight);
+                            glTexStorage2D(GL_TEXTURE_2D, HeaderObject.mipLevels, HeaderObject.glInternalFormat, HeaderObject.PixelWidth, HeaderObject.PixelHeight);
                             {
-                                unsigned char * ptr = data;
-                                unsigned int height = h.pixelheight;
-                                unsigned int width = h.pixelwidth;
+                                unsigned char* Ptr = Data;
+                                unsigned int Height = HeaderObject.PixelHeight;
+                                unsigned int Width = HeaderObject.PixelWidth;
                                 glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-                                for (unsigned int i = 0; i < h.miplevels; i++)
+                                for (unsigned int mipLevel = 0; mipLevel < HeaderObject.mipLevels; mipLevel++)
                                 {
-                                    glTexSubImage2D(GL_TEXTURE_2D, i, 0, 0, width, height, h.glformat, h.gltype, ptr);
-                                    ptr += height * calculate_stride(h, width, 1);
-                                    height >>= 1;
-                                    width >>= 1;
-                                    if (!height)
-                                        height = 1;
-                                    if (!width)
-                                        width = 1;
+                                    glTexSubImage2D(GL_TEXTURE_2D, mipLevel, 0, 0, Width, Height, HeaderObject.glFormat, HeaderObject.glType, Ptr);
+                                    Ptr += Height * CalculateStride(HeaderObject, Width, 1);
+                                    Height >>= 1;
+                                    Width >>= 1;
+                                    if (!Height)
+                                        Height = 1;
+                                    if (!Width)
+                                        Width = 1;
                                 }
                             }
                         }
                         break;
                     case GL_TEXTURE_3D:
-                        glTexStorage3D(GL_TEXTURE_3D, h.miplevels, h.glinternalformat, h.pixelwidth, h.pixelheight, h.pixeldepth);
-                        glTexSubImage3D(GL_TEXTURE_3D, 0, 0, 0, 0, h.pixelwidth, h.pixelheight, h.pixeldepth, h.glformat, h.gltype, data);
+                        glTexStorage3D(GL_TEXTURE_3D, HeaderObject.mipLevels, HeaderObject.glInternalFormat, HeaderObject.PixelWidth, HeaderObject.PixelHeight, HeaderObject.PixelDepth);
+                        glTexSubImage3D(GL_TEXTURE_3D, 0, 0, 0, 0, HeaderObject.PixelWidth, HeaderObject.PixelHeight, HeaderObject.PixelDepth, HeaderObject.glFormat, HeaderObject.glType, Data);
                         break;
                     case GL_TEXTURE_1D_ARRAY:
-                        glTexStorage2D(GL_TEXTURE_1D_ARRAY, h.miplevels, h.glinternalformat, h.pixelwidth, h.arrayelements);
-                        glTexSubImage2D(GL_TEXTURE_1D_ARRAY, 0, 0, 0, h.pixelwidth, h.arrayelements, h.glformat, h.gltype, data);
+                        glTexStorage2D(GL_TEXTURE_1D_ARRAY, HeaderObject.mipLevels, HeaderObject.glInternalFormat, HeaderObject.PixelWidth, HeaderObject.ArrayElements);
+                        glTexSubImage2D(GL_TEXTURE_1D_ARRAY, 0, 0, 0, HeaderObject.PixelWidth, HeaderObject.ArrayElements, HeaderObject.glFormat, HeaderObject.glType, Data);
                         break;
                     case GL_TEXTURE_2D_ARRAY:
-                        glTexStorage3D(GL_TEXTURE_2D_ARRAY, h.miplevels, h.glinternalformat, h.pixelwidth, h.pixelheight, h.arrayelements);
-                        glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, 0, h.pixelwidth, h.pixelheight, h.arrayelements, h.glformat, h.gltype, data);
+                        glTexStorage3D(GL_TEXTURE_2D_ARRAY, HeaderObject.mipLevels, HeaderObject.glInternalFormat, HeaderObject.PixelWidth, HeaderObject.PixelHeight, HeaderObject.ArrayElements);
+                        glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, 0, HeaderObject.PixelWidth, HeaderObject.PixelHeight, HeaderObject.ArrayElements, HeaderObject.glFormat, HeaderObject.glType, Data);
                         break;
                     case GL_TEXTURE_CUBE_MAP:
-                        glTexStorage2D(GL_TEXTURE_CUBE_MAP, h.miplevels, h.glinternalformat, h.pixelwidth, h.pixelheight);
-                        // glTexSubImage3D(GL_TEXTURE_CUBE_MAP, 0, 0, 0, 0, h.pixelwidth, h.pixelheight, h.faces, h.glformat, h.gltype, data);
+                        glTexStorage2D(GL_TEXTURE_CUBE_MAP, HeaderObject.mipLevels, HeaderObject.glInternalFormat, HeaderObject.PixelWidth, HeaderObject.PixelHeight);
+                        // glTexSubImage3D(GL_TEXTURE_CUBE_MAP, 0, 0, 0, 0, HeaderObject.PixelWidth, HeaderObject.PixelHeight, HeaderObject.Faces, HeaderObject.glFormat, HeaderObject.glType, Data);
                         {
-                            unsigned int face_size = calculate_face_size(h);
-                            for (unsigned int i = 0; i < h.faces; i++)
-                                glTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, 0, 0, h.pixelwidth, h.pixelheight, h.glformat, h.gltype, data + face_size * i);
+                            unsigned int face_size = CalculateFaceSize(HeaderObject);
+                            for (unsigned int i = 0; i < HeaderObject.Faces; i++)
+                                glTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, 0, 0, HeaderObject.PixelWidth, HeaderObject.PixelHeight, HeaderObject.glFormat, HeaderObject.glType, Data + face_size * i);
                         }
                         break;
                     case GL_TEXTURE_CUBE_MAP_ARRAY:
-                        glTexStorage3D(GL_TEXTURE_CUBE_MAP_ARRAY, h.miplevels, h.glinternalformat, h.pixelwidth, h.pixelheight, h.arrayelements);
-                        glTexSubImage3D(GL_TEXTURE_CUBE_MAP_ARRAY, 0, 0, 0, 0, h.pixelwidth, h.pixelheight, h.faces * h.arrayelements, h.glformat, h.gltype, data);
+                        glTexStorage3D(GL_TEXTURE_CUBE_MAP_ARRAY, HeaderObject.mipLevels, HeaderObject.glInternalFormat, HeaderObject.PixelWidth, HeaderObject.PixelHeight, HeaderObject.ArrayElements);
+                        glTexSubImage3D(GL_TEXTURE_CUBE_MAP_ARRAY, 0, 0, 0, 0, HeaderObject.PixelWidth, HeaderObject.PixelHeight, HeaderObject.Faces * HeaderObject.ArrayElements, HeaderObject.glFormat, HeaderObject.glType, Data);
                         break;
                     default:
                         goto fail_target;
                 }
 
-                if (h.miplevels == 1)
-                {
-                    glGenerateMipmap(target);
-                }
+                if (HeaderObject.mipLevels == 1)
+                    glGenerateMipmap(Target);
 
-                retval = tex;
+                ReturnValue = Tex;
 
             fail_target:
-                delete [] data;
+                delete [] Data;
 
-            fail_header:;
-            fail_read:;
-                fclose(fp);
+            FailHeaderLabel:;
+            FailReadLabel:;
+                fclose(ktxFile);
 
-                return retval;
+                return ReturnValue;
             }
 
-            bool save(const char * filename, unsigned int target, unsigned int tex)
+            bool Save(const char * FileName, unsigned int Target, unsigned int Tex)
             {
-                header h;
+                Header HeaderObject;
 
-                memset(&h, 0, sizeof(h));
-                memcpy(h.identifier, identifier, sizeof(identifier));
-                h.endianness = 0x04030201;
+                memset(&HeaderObject, 0, sizeof(HeaderObject));
+                memcpy(HeaderObject.Identifier, Identifier, sizeof(Identifier));
+                HeaderObject.Endianness = 0x04030201;
 
-                glBindTexture(target, tex);
+                glBindTexture(Target, Tex);
 
-                glGetTexLevelParameteriv(target, 0, GL_TEXTURE_WIDTH, (GLint *)&h.pixelwidth);
-                glGetTexLevelParameteriv(target, 0, GL_TEXTURE_HEIGHT, (GLint *)&h.pixelheight);
-                glGetTexLevelParameteriv(target, 0, GL_TEXTURE_DEPTH, (GLint *)&h.pixeldepth);
+                glGetTexLevelParameteriv(Target, 0, GL_TEXTURE_WIDTH, (GLint *)&HeaderObject.PixelWidth);
+                glGetTexLevelParameteriv(Target, 0, GL_TEXTURE_HEIGHT, (GLint *)&HeaderObject.PixelHeight);
+                glGetTexLevelParameteriv(Target, 0, GL_TEXTURE_DEPTH, (GLint *)&HeaderObject.PixelDepth);
 
                 return true;
             }

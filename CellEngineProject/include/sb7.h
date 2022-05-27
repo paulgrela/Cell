@@ -22,28 +22,28 @@
 
 #include "sb7ext.h"
 
-#include <stdio.h>
-#include <string.h>
-#include <math.h>
+#include <cstdio>
+#include <cstring>
+#include <cmath>
 
 namespace sb7
 {
     class OpenGLApplication
     {
     private:
-        static void APIENTRY debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, GLvoid* userParam);
+        static void APIENTRY debug_callback(GLenum Source, GLenum Type, GLuint Id, GLenum Severity, GLsizei Length, const GLchar* Message, GLvoid* UserParam);
 
     public:
         OpenGLApplication() = default;
 
         virtual ~OpenGLApplication() = default;
 
-        virtual void Run(sb7::OpenGLApplication* the_app)
+        virtual void Run(sb7::OpenGLApplication* OpenGLApplicationObjectParameter)
         {
             InitExternalData();
 
-            bool running = true;
-            OpenGLApplicationObject = the_app;
+            bool Running = true;
+            OpenGLApplicationObject = OpenGLApplicationObjectParameter;
 
             if (!glfwInit())
             {
@@ -53,57 +53,57 @@ namespace sb7
 
             Init();
 
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, info.majorVersion);
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, info.minorVersion);
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, Info.MajorVersion);
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, Info.MinorVersion);
 
             #ifndef _DEBUG
-            if (info.flags.debug)
+            if (Info.Flags.Debug)
             #endif
                 glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
 
-            if (info.flags.robust)
+            if (Info.Flags.Robust)
                 glfwWindowHint(GLFW_CONTEXT_ROBUSTNESS, GLFW_LOSE_CONTEXT_ON_RESET);
 
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
             glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-            glfwWindowHint(GLFW_SAMPLES, info.samples);
-            glfwWindowHint(GLFW_STEREO, info.flags.stereo ? GL_TRUE : GL_FALSE);
+            glfwWindowHint(GLFW_SAMPLES, Info.Samples);
+            glfwWindowHint(GLFW_STEREO, Info.Flags.Stereo ? GL_TRUE : GL_FALSE);
 
-    //        if (info.flags.fullscreen)
+    //        if (Info.Flags.FullScreen)
     //        {
-    //            if (info.windowWidth == 0 || info.windowHeight == 0)
+    //            if (Info.WindowWidth == 0 || Info.WindowHeight == 0)
     //            {
     //                GLFWvidmode mode;
     //                glfwGetDesktopMode(&mode);
-    //                info.windowWidth = mode.Width;
-    //                info.windowHeight = mode.Height;
+    //                Info.WindowWidth = mode.Width;
+    //                Info.WindowHeight = mode.Height;
     //            }
     //
-    //            glfwOpenWindow(info.windowWidth, info.windowHeight, 8, 8, 8, 0, 32, 0, GLFW_FULLSCREEN);
-    //            glfwSwapInterval((int)info.flags.vsync);
+    //            glfwOpenWindow(Info.WindowWidth, Info.WindowHeight, 8, 8, 8, 0, 32, 0, GLFW_FULLSCREEN);
+    //            glfwSwapInterval((int)Info.flags.vsync);
     //        }
     //        else
             {
-                window = glfwCreateWindow(info.windowWidth, info.windowHeight, info.title, info.flags.fullscreen ? glfwGetPrimaryMonitor() : NULL, NULL);
-                if (!window)
+                Window = glfwCreateWindow(Info.WindowWidth, Info.WindowHeight, Info.Title, Info.Flags.FullScreen ? glfwGetPrimaryMonitor() : NULL, NULL);
+                if (!Window)
                 {
                     fprintf(stderr, "Failed to open window\n");
                     return;
                 }
-                glfwSetWindowPos(window, 480, 100);
+                glfwSetWindowPos(Window, 480, 100);
             }
 
-            glfwMakeContextCurrent(window);
+            glfwMakeContextCurrent(Window);
 
-            glfwSetWindowSizeCallback(window, glfw_onResize);
-            glfwSetKeyCallback(window, glfw_onKey);
-            glfwSetMouseButtonCallback(window, glfw_onMouseButton);
-            glfwSetCursorPosCallback(window, glfw_onMouseMove);
-            glfwSetScrollCallback(window, glfw_onMouseWheel);
-            if (!info.flags.cursor)
-                glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+            glfwSetWindowSizeCallback(Window, glfw_onResize);
+            glfwSetKeyCallback(Window, glfw_onKey);
+            glfwSetMouseButtonCallback(Window, glfw_onMouseButton);
+            glfwSetCursorPosCallback(Window, glfw_onMouseMove);
+            glfwSetScrollCallback(Window, glfw_onMouseWheel);
+            if (!Info.Flags.Cursor)
+                glfwSetInputMode(Window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
-            // info.flags.stereo = (glfwGetWindowParam(GLFW_STEREO) ? 1 : 0);
+            // Info.flags.Stereo = (glfwGetWindowParam(GLFW_STEREO) ? 1 : 0);
 
             gl3wInit();
 
@@ -113,7 +113,7 @@ namespace sb7
             fprintf(stderr, "RENDERER: %s\n", (char *)glGetString(GL_RENDERER));
             #endif
 
-            if (info.flags.debug)
+            if (Info.Flags.Debug)
             {
                 if (gl3wIsSupported(4, 3))
                 {
@@ -133,37 +133,37 @@ namespace sb7
             {
                 Render(glfwGetTime());
 
-                glfwSwapBuffers(window);
+                glfwSwapBuffers(Window);
                 glfwPollEvents();
 
-                running &= (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_RELEASE);
-                running &= (glfwWindowShouldClose(window) != GL_TRUE);
+                Running &= (glfwGetKey(Window, GLFW_KEY_ESCAPE) == GLFW_RELEASE);
+                Running &= (glfwWindowShouldClose(Window) != GL_TRUE);
             }
-            while (running);
+            while (Running);
 
             ShutDown();
 
-            glfwDestroyWindow(window);
+            glfwDestroyWindow(Window);
             glfwTerminate();
         }
 
         virtual void Init()
         {
-            strcpy(info.title, "OpenGL Window");
-            info.windowWidth = 1600;
-            info.windowHeight = 1200;
+            strcpy(Info.Title, "OpenGL Window");
+            Info.WindowWidth = 1600;
+            Info.WindowHeight = 1200;
             #ifdef __APPLE__
-            info.majorVersion = 3;
-            info.minorVersion = 2;
+            Info.MajorVersion = 3;
+            Info.MinorVersion = 2;
             #else
-            info.majorVersion = 4;
-            info.minorVersion = 3;
+            Info.MajorVersion = 4;
+            Info.MinorVersion = 3;
             #endif
-            info.samples = 0;
-            info.flags.all = 0;
-            info.flags.cursor = 1;
+            Info.Samples = 0;
+            Info.Flags.All = 0;
+            Info.Flags.Cursor = 1;
             #ifdef _DEBUG
-            info.flags.debug = 1;
+            Info.flags.Debug = 1;
             #endif
         }
 
@@ -175,7 +175,7 @@ namespace sb7
         {
         }
 
-        virtual void Render(double currentTime)
+        virtual void Render(double CurrentTime)
         {
         }
 
@@ -183,34 +183,34 @@ namespace sb7
         {
         }
 
-        void setWindowTitle(const char* title)
+        void SetWindowTitle(const char* Title)
         {
-            glfwSetWindowTitle(window, title);
+            glfwSetWindowTitle(Window, Title);
         }
 
-        virtual void onResize(int w, int h)
+        virtual void OnResize(int Width, int Height)
         {
-            info.windowWidth = w;
-            info.windowHeight = h;
+            Info.WindowWidth = Width;
+            Info.WindowHeight = Height;
         }
 
-        virtual void onKey(int key, int action)
-        {
-        }
-
-        virtual void onMouseButton(int button, int action)
+        virtual void OnKey(int Key, int Action)
         {
         }
 
-        virtual void onMouseMove(int x, int y)
+        virtual void OnMouseButton(int Button, int Action)
         {
         }
 
-        virtual void onMouseWheel(int pos)
+        virtual void OnMouseMove(int X, int Y)
         {
         }
 
-        virtual void onDebugMessage(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message)
+        virtual void OnMouseWheel(int Pos)
+        {
+        }
+
+        virtual void OnDebugMessage(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message)
         {
             #ifdef _WIN32
             OutputDebugStringA(message);
@@ -218,74 +218,74 @@ namespace sb7
             #endif
         }
 
-        void getMousePosition(int& x, int& y)
+        void GetMousePosition(int& X, int& Y)
         {
-            double dx, dy;
-            glfwGetCursorPos(window, &dx, &dy);
+            double DX, DY;
+            glfwGetCursorPos(Window, &DX, &DY);
 
-            x = static_cast<int>(floor(dx));
-            y = static_cast<int>(floor(dy));
+            X = static_cast<int>(floor(DX));
+            Y = static_cast<int>(floor(DY));
         }
 
     public:
         struct APPINFO
         {
-            char title[128];
-            int windowWidth;
-            int windowHeight;
-            int majorVersion;
-            int minorVersion;
-            int samples;
+            char Title[128];
+            int WindowWidth;
+            int WindowHeight;
+            int MajorVersion;
+            int MinorVersion;
+            int Samples;
             union
             {
                 struct
                 {
-                    unsigned int fullscreen : 1;
-                    unsigned int vsync : 1;
-                    unsigned int cursor : 1;
-                    unsigned int stereo : 1;
-                    unsigned int debug : 1;
-                    unsigned int robust : 1;
+                    unsigned int FullScreen : 1;
+                    unsigned int VSync : 1;
+                    unsigned int Cursor : 1;
+                    unsigned int Stereo : 1;
+                    unsigned int Debug : 1;
+                    unsigned int Robust : 1;
                 };
-                unsigned int all;
+                unsigned int All;
             }
-            flags;
+            Flags;
         };
 
     protected:
-        APPINFO info;
+        APPINFO Info;
         static sb7::OpenGLApplication* OpenGLApplicationObject;
-        GLFWwindow* window;
+        GLFWwindow* Window;
 
-        static void glfw_onResize(GLFWwindow* window, int w, int h)
+        static void glfw_onResize(GLFWwindow* Window, int w, int h)
         {
-            OpenGLApplicationObject->onResize(w, h);
+            OpenGLApplicationObject->OnResize(w, h);
         }
 
-        static void glfw_onKey(GLFWwindow* window, int key, int scancode, int action, int mods)
+        static void glfw_onKey(GLFWwindow* Window, int Key, int ScanCode, int Action, int Mods)
         {
-            OpenGLApplicationObject->onKey(key, action);
+            OpenGLApplicationObject->OnKey(Key, Action);
         }
 
-        static void glfw_onMouseButton(GLFWwindow* window, int button, int action, int mods)
+        static void glfw_onMouseButton(GLFWwindow* Window, int Button, int Action, int Mods)
         {
-            OpenGLApplicationObject->onMouseButton(button, action);
+            OpenGLApplicationObject->OnMouseButton(Button, Action);
         }
 
-        static void glfw_onMouseMove(GLFWwindow* window, double x, double y)
+        static void glfw_onMouseMove(GLFWwindow* Window, double X, double Y)
         {
-            OpenGLApplicationObject->onMouseMove(static_cast<int>(x), static_cast<int>(y));
+            OpenGLApplicationObject->OnMouseMove(static_cast<int>(X), static_cast<int>(Y));
         }
 
-        static void glfw_onMouseWheel(GLFWwindow* window, double xoffset, double yoffset)
+        static void glfw_onMouseWheel(GLFWwindow* Window, double XOffset, double YOffset)
         {
-            OpenGLApplicationObject->onMouseWheel(static_cast<int>(yoffset));
+            OpenGLApplicationObject->OnMouseWheel(static_cast<int>(YOffset));
         }
 
-        void setVsync(bool enable)
+        void setVsync(bool Enable)
         {
-            info.flags.vsync = enable ? 1 : 0;
-            glfwSwapInterval((int)info.flags.vsync);
+            Info.Flags.VSync = Enable ? 1 : 0;
+            glfwSwapInterval((int)Info.Flags.VSync);
         }
     };
 };

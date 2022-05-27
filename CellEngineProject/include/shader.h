@@ -6,33 +6,29 @@ namespace sb7
 {
     namespace shader
     {
-        GLuint load(const char * filename,
-                    GLenum shader_type = GL_FRAGMENT_SHADER,
+        GLuint Load(const char* FileName, GLenum ShaderType = GL_FRAGMENT_SHADER,
         #ifdef _DEBUG
-                    bool check_errors = true);
+                                bool CheckErrors = true);
         #else
-                    bool check_errors = false);
+                                bool CheckErrors = false);
         #endif
 
-        GLuint from_string(const char * source,
-                           GLenum shader_type,
+        GLuint FromString(const char* Source, GLenum ShaderType,
         #ifdef _DEBUG
-                           bool check_errors = true);
+                                bool CheckErrors = true);
         #else
-                           bool check_errors = false);
+                                bool CheckErrors = false);
         #endif
     }
 
     namespace program
     {
 
-        GLuint link_from_shaders(const GLuint * shaders,
-                                 int shader_count,
-                                 bool delete_shaders,
+        GLuint LinkFromShaders(const GLuint* Shaders, int ShaderCount, bool DeleteShaders,
         #ifdef _DEBUG
-                                 bool check_errors = true);
+                                bool CheckErrors = true);
         #else
-                                 bool check_errors = false);
+                                bool CheckErrors = false);
         #endif
     }
 }

@@ -23,6 +23,7 @@ static GL3WglProc get_proc(const char *proc)
 	res = (GL3WglProc) wglGetProcAddress(proc);
 	if (!res)
 		res = (GL3WglProc) GetProcAddress(libgl, proc);
+
 	return res;
 }
 #elif defined(__APPLE__) || defined(__APPLE_CC__)
@@ -84,9 +85,11 @@ static GL3WglProc get_proc(const char *proc)
 }
 #endif
 
-static struct {
+static struct
+{
 	int major, minor;
-} version;
+}
+version;
 
 static int parse_version(void)
 {

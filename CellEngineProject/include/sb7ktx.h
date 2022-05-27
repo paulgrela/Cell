@@ -6,34 +6,34 @@ namespace sb7
 {
     namespace ktx
     {
-        namespace file
+        namespace File
         {
-            struct header
+            struct Header
             {
-                unsigned char identifier[12];
-                unsigned int endianness;
-                unsigned int gltype;
-                unsigned int gltypesize;
-                unsigned int glformat;
-                unsigned int glinternalformat;
-                unsigned int glbaseinternalformat;
-                unsigned int pixelwidth;
-                unsigned int pixelheight;
-                unsigned int pixeldepth;
-                unsigned int arrayelements;
-                unsigned int faces;
-                unsigned int miplevels;
-                unsigned int keypairbytes;
+                unsigned char Identifier[12];
+                unsigned int Endianness;
+                unsigned int glType;
+                unsigned int glTypeSize;
+                unsigned int glFormat;
+                unsigned int glInternalFormat;
+                unsigned int glBaseInternalFormat;
+                unsigned int PixelWidth;
+                unsigned int PixelHeight;
+                unsigned int PixelDepth;
+                unsigned int ArrayElements;
+                unsigned int Faces;
+                unsigned int mipLevels;
+                unsigned int KeyPairBytes;
             };
 
-            union keyvaluepair
+            union KeyValuePair
             {
-                unsigned int size;
-                unsigned char rawbytes[4];
+                unsigned int Size;
+                unsigned char RawBytes[4];
             };
 
-            unsigned int load(const char * filename, unsigned int tex = 0);
-            bool save(const char * filename, unsigned int target, unsigned int tex);
+            unsigned int Load(const char * FileName, unsigned int Tex = 0);
+            bool Save(const char * FileName, unsigned int Target, unsigned int Tex);
         }
     }
 }

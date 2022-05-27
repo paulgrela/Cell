@@ -6,35 +6,35 @@
 
 namespace sb7
 {
-    class text_overlay
+    class TextOverlay
     {
     public:
-        text_overlay() : cursor_x(0), cursor_y(0)
+        TextOverlay() : CursorX(0), CursorY(0)
         {
         }
 
-        void init(int width, int height, const char* font = nullptr);
-        void teardown();
-        void draw();
+        void Init(int width, int height, const char* font = nullptr);
+        void TearDown();
+        void Draw();
 
-        void drawText(const char* str, int x, int y);
-        void print(const char* str);
-        void scroll(int lines);
-        void moveCursor(int x, int y);
-        void clear();
+        void DrawText(const char* StringParameter, int X, int Y);
+        void Print(const char* StringParameter);
+        void Scroll(int Lines);
+        void MoveCursor(int x, int y);
+        void Clear();
 
     private:
-        GLuint text_buffer;
-        GLuint font_texture;
-        GLuint vao;
+        GLuint TextBuffer;
+        GLuint FontTexture;
+        GLuint VAO;
 
-        GLuint text_program;
-        char *screen_buffer;
-        int buffer_width;
-        int buffer_height;
-        bool dirty;
-        int cursor_x;
-        int cursor_y;
+        GLuint TextProgram;
+        char* ScreenBuffer;
+        int BufferWidth;
+        int BufferHeight;
+        bool Dirty;
+        int CursorX;
+        int CursorY;
     };
 }
 

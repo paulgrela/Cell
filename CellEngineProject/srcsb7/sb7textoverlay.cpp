@@ -5,18 +5,18 @@
 
 namespace sb7
 {
-    void text_overlay::init(int width, int height, const char* font)
+    void TextOverlay::Init(int width, int height, const char* font)
     {
-        GLuint vs;
-        GLuint fs;
+        GLuint VertexShader;
+        GLuint FragmentShader;
 
-        buffer_width = width;
-        buffer_height = height;
+        BufferWidth = width;
+        BufferHeight = height;
 
-        vs = glCreateShader(GL_VERTEX_SHADER);
-        fs = glCreateShader(GL_FRAGMENT_SHADER);
+        VertexShader = glCreateShader(GL_VERTEX_SHADER);
+        FragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 
-        static const char * vs_source[] =
+        static const char * VertexShaderSource[] =
         {
             "#version 440 core\n"
             "void main(void)\n"
@@ -27,151 +27,151 @@ namespace sb7
             "}\n"
         };
 
-        static const char * fs_source[] =
+        static const char * FragmentShaderSource[] =
         {
             "#version 440 core\n"
             "layout (origin_upper_left) in vec4 gl_FragCoord;\n"
             "layout (location = 0) out vec4 o_color;\n"
-            "layout (binding = 0) uniform isampler2D text_buffer;\n"
-            "layout (binding = 1) uniform isampler2DArray font_texture;\n"
+            "layout (binding = 0) uniform isampler2D TextBuffer;\n"
+            "layout (binding = 1) uniform isampler2DArray FontTexture;\n"
             "void main(void)\n"
             "{\n"
             "    ivec2 frag_coord = ivec2(gl_FragCoord.xy);\n"
-            "    ivec2 char_size = textureSize(font_texture, 0).xy;\n"
+            "    ivec2 char_size = textureSize(FontTexture, 0).xy;\n"
             "    ivec2 char_location = frag_coord / char_size;\n"
             "    ivec2 texel_coord = frag_coord % char_size;\n"
-            "    int character = texelFetch(text_buffer, char_location, 0).x;\n"
-            "    float val = texelFetch(font_texture, ivec3(texel_coord, character), 0).x;\n"
+            "    int character = texelFetch(TextBuffer, char_location, 0).x;\n"
+            "    float val = texelFetch(FontTexture, ivec3(texel_coord, character), 0).x;\n"
             "    if (val == 0.0)\n"
             "        discard;\n"
             "    o_color = vec4(1.0);\n"
             "}\n"
         };
 
-        glShaderSource(vs, 1, vs_source, nullptr);
-        glCompileShader(vs);
+        glShaderSource(VertexShader, 1, VertexShaderSource, nullptr);
+        glCompileShader(VertexShader);
 
-        glShaderSource(fs, 1, fs_source, nullptr);
-        glCompileShader(fs);
+        glShaderSource(FragmentShader, 1, FragmentShaderSource, nullptr);
+        glCompileShader(FragmentShader);
 
-        text_program = glCreateProgram();
-        glAttachShader(text_program, vs);
-        glAttachShader(text_program, fs);
-        glLinkProgram(text_program);
+        TextProgram = glCreateProgram();
+        glAttachShader(TextProgram, VertexShader);
+        glAttachShader(TextProgram, FragmentShader);
+        glLinkProgram(TextProgram);
 
-        glDeleteShader(fs);
-        glDeleteShader(vs);
+        glDeleteShader(FragmentShader);
+        glDeleteShader(VertexShader);
 
-        // glCreateVertexArrays(1, &vao);
-        glGenVertexArrays(1, &vao);
-        glBindVertexArray(vao);
+        // glCreateVertexArrays(1, &VAO);
+        glGenVertexArrays(1, &VAO);
+        glBindVertexArray(VAO);
 
-        // glCreateTextures(GL_TEXTURE_2D, 1, &text_buffer);
-        glGenTextures(1, &text_buffer);
-        glBindTexture(GL_TEXTURE_2D, text_buffer);
+        // glCreateTextures(GL_TEXTURE_2D, 1, &TextBuffer);
+        glGenTextures(1, &TextBuffer);
+        glBindTexture(GL_TEXTURE_2D, TextBuffer);
         glTexStorage2D(GL_TEXTURE_2D, 1, GL_R8UI, width, height);
 
-        font_texture = sb7::ktx::file::load(font ? font : "media/textures/cp437_9x16.ktx");
+        FontTexture = sb7::ktx::File::Load(font ? font : "media/textures/cp437_9x16.ktx");
 
-        screen_buffer = new char[width * height];
-        memset(screen_buffer, 0, width * height);
+        ScreenBuffer = new char[width * height];
+        memset(ScreenBuffer, 0, width * height);
     }
 
-    void text_overlay::teardown()
+    void TextOverlay::TearDown()
     {
-        delete[] screen_buffer;
-        glDeleteTextures(1, &font_texture);
-        glDeleteTextures(1, &text_buffer);
-        glDeleteVertexArrays(1, &vao);
-        glDeleteProgram(text_program);
+        delete[] ScreenBuffer;
+        glDeleteTextures(1, &FontTexture);
+        glDeleteTextures(1, &TextBuffer);
+        glDeleteVertexArrays(1, &VAO);
+        glDeleteProgram(TextProgram);
     }
 
-    void text_overlay::draw()
+    void TextOverlay::Draw()
     {
-        glUseProgram(text_program);
+        glUseProgram(TextProgram);
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, text_buffer);
-        if (dirty)
+        glBindTexture(GL_TEXTURE_2D, TextBuffer);
+        if (Dirty)
         {
-            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, buffer_width, buffer_height, GL_RED_INTEGER, GL_UNSIGNED_BYTE, screen_buffer);
-            dirty = false;
+            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, BufferWidth, BufferHeight, GL_RED_INTEGER, GL_UNSIGNED_BYTE, ScreenBuffer);
+            Dirty = false;
         }
         glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D_ARRAY, font_texture);
+        glBindTexture(GL_TEXTURE_2D_ARRAY, FontTexture);
 
-        glBindVertexArray(vao);
+        glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     }
 
-    void text_overlay::drawText(const char* str, int x, int y)
+    void TextOverlay::DrawText(const char* StringParameter, int X, int Y)
     {
-        char* dst = screen_buffer + y * buffer_width + x;
-        strcpy(dst, str);
-        dirty = true;
+        char* Destination = ScreenBuffer + Y * BufferWidth + X;
+        strcpy(Destination, StringParameter);
+        Dirty = true;
     }
 
-    void text_overlay::scroll(int lines)
+    void TextOverlay::Scroll(int Lines)
     {
-        const char* src = screen_buffer + lines * buffer_width;
-        char * dst = screen_buffer;
+        const char* Source = ScreenBuffer + Lines * BufferWidth;
+        char * Destination = ScreenBuffer;
 
-        memmove(dst, src, (buffer_height - lines) * buffer_width);
+        memmove(Destination, Source, (BufferHeight - Lines) * BufferWidth);
 
-        dirty = true;
+        Dirty = true;
     }
 
-    void text_overlay::print(const char* str)
+    void TextOverlay::Print(const char* StringParameter)
     {
-        const char* p = str;
-        char c;
-        char* dst = screen_buffer + cursor_y * buffer_width + cursor_x;
+        const char* StringPtr = StringParameter;
+        char Character;
+        char* Destination = ScreenBuffer + CursorY * BufferWidth + CursorX;
 
-        while (*p != 0)
+        while (*StringPtr != 0)
         {
-            c = *p++;
-            if (c == '\n')
+            Character = *StringPtr++;
+            if (Character == '\n')
             {
-                cursor_y++;
-                cursor_x = 0;
-                if (cursor_y >= buffer_height)
+                CursorY++;
+                CursorX = 0;
+                if (CursorY >= BufferHeight)
                 {
-                    cursor_y--;
-                    scroll(1);
+                    CursorY--;
+                    Scroll(1);
                 }
-                dst = screen_buffer + cursor_y * buffer_width + cursor_x;
+                Destination = ScreenBuffer + CursorY * BufferWidth + CursorX;
             }
             else
             {
-                *dst++ = c;
-                cursor_x++;
-                if (cursor_x >= buffer_width)
+                *Destination++ = Character;
+                CursorX++;
+                if (CursorX >= BufferWidth)
                 {
-                    cursor_y++;
-                    cursor_x = 0;
-                    if (cursor_y >= buffer_height)
+                    CursorY++;
+                    CursorX = 0;
+                    if (CursorY >= BufferHeight)
                     {
-                        cursor_y--;
-                        scroll(1);
+                        CursorY--;
+                        Scroll(1);
                     }
-                    dst = screen_buffer + cursor_y * buffer_width + cursor_x;
+                    Destination = ScreenBuffer + CursorY * BufferWidth + CursorX;
                 }
             }
         }
 
-        dirty = true;
+        Dirty = true;
     }
 
-    void text_overlay::moveCursor(int x, int y)
+    void TextOverlay::MoveCursor(int x, int y)
     {
-        cursor_x = x;
-        cursor_y = y;
+        CursorX = x;
+        CursorY = y;
     }
 
-    void text_overlay::clear()
+    void TextOverlay::Clear()
     {
-        memset(screen_buffer, 0, buffer_width * buffer_height);
-        dirty = true;
-        cursor_x = 0;
-        cursor_y = 0;
+        memset(ScreenBuffer, 0, BufferWidth * BufferHeight);
+        Dirty = true;
+        CursorX = 0;
+        CursorY = 0;
     }
 }

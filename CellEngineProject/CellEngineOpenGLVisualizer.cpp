@@ -51,7 +51,7 @@ private:
     }
     uniforms{};
 private:
-    sb7::object AtomGraphicsObject;
+    sb7::GraphicObject AtomGraphicsObject;
 private:
     Matrix3fT ArcBallPrevRotationMatrix{};
     Matrix3fT ArcBallActualRotationMatrix{};
@@ -89,7 +89,7 @@ protected:
 
         sb7::OpenGLApplication::Init();
 
-        memcpy(info.title, title, sizeof(title));
+        memcpy(Info.Title, title, sizeof(title));
     }
 protected:
     void InitArcBall();
@@ -109,12 +109,12 @@ protected:
     void LoadShaders();
 protected:
     void StartUp() override;
-    void Render(double currentTime) override;
-    void onKey(int key, int action) override;
-    void onMouseWheel(int pos) override;
-    void onMouseButton(int button, int action) override;
-    void onMouseMove(int x, int y) override;
-    void onResize(int w, int h) override;
+    void Render(double CurrentTime) override;
+    void OnKey(int Key, int Action) override;
+    void OnMouseWheel(int Pos) override;
+    void OnMouseButton(int Button, int Action) override;
+    void OnMouseMove(int X, int Y) override;
+    void OnResize(int Width, int Height) override;
 protected:
     inline vmath::vec3 GetColor(const CellEngineAtom& AtomObject);
     static inline void DrawCenterPoint(uniforms_block*  MatrixUniformBlockForVertexShaderPointer, vmath::mat4& ModelMatrix);
@@ -149,7 +149,7 @@ void CellEngineOpenGLVisualiser::StartUp()
         glBindBuffer(GL_UNIFORM_BUFFER, uniforms_buffer);
         glBufferData(GL_UNIFORM_BUFFER, sizeof(uniforms_block), nullptr, GL_DYNAMIC_DRAW);
 
-        AtomGraphicsObject.load("..//objects//sphere.sbm");
+        AtomGraphicsObject.Load("..//objects//sphere.sbm");
         InitLineVertexes();
 
         glEnable(GL_CULL_FACE);
@@ -188,8 +188,8 @@ void CellEngineOpenGLVisualiser::LoadShaders()
 {
     try
     {
-        GLuint VertexShader = sb7::shader::load("..\\shaders\\per-fragment-phong.vs.glsl", GL_VERTEX_SHADER);
-        GLuint FragmentShader = sb7::shader::load("..\\shaders\\per-fragment-phong.fs.glsl", GL_FRAGMENT_SHADER);
+        GLuint VertexShader = sb7::shader::Load("..\\shaders\\per-fragment-phong.vs.glsl", GL_VERTEX_SHADER);
+        GLuint FragmentShader = sb7::shader::Load("..\\shaders\\per-fragment-phong.fs.glsl", GL_FRAGMENT_SHADER);
 
         if (ShaderProgram)
             glDeleteProgram(ShaderProgram);
@@ -360,7 +360,7 @@ inline vmath::vec3 CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader
         auto MatrixUniformBlockForVertexShaderPointer = (uniforms_block*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(uniforms_block), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
 
         MatrixUniformBlockForVertexShaderPointer->view_matrix = ViewMatrix;
-        MatrixUniformBlockForVertexShaderPointer->proj_matrix = vmath::perspective(50.0f, (float)info.windowWidth / (float)info.windowHeight, 0.1f, 95000.0f);
+        MatrixUniformBlockForVertexShaderPointer->proj_matrix = vmath::perspective(50.0f, (float)Info.WindowWidth / (float)Info.WindowHeight, 0.1f, 95000.0f);
         MatrixUniformBlockForVertexShaderPointer->color = Color;
 
         if (DrawAdditional == true)
@@ -407,14 +407,14 @@ inline vmath::vec3 CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom
 
         FinalModelPosition = CreateUniformBlockForVertexShader(AtomPosition, GetColor(AtomObject), ViewMatrix, ModelMatrix, Center, CountNewPosition, DrawCenter, DrawOutsideBorder, true);
 
-        AtomGraphicsObject.render();
+        AtomGraphicsObject.Render();
     }
     CATCH("rendering object for data for cell visualization")
 
     return FinalModelPosition;
 }
 
-void CellEngineOpenGLVisualiser::Render(double currentTime)
+void CellEngineOpenGLVisualiser::Render(double CurrentTime)
 {
     try
     {
@@ -422,7 +422,7 @@ void CellEngineOpenGLVisualiser::Render(double currentTime)
         static const GLfloat ones[] = { 1.0f };
 
         glUseProgram(ShaderProgram);
-        glViewport(0, 0, info.windowWidth, info.windowHeight);
+        glViewport(0, 0, Info.WindowWidth, Info.WindowHeight);
 
         glClearBufferfv(GL_COLOR, 0, gray);
         glClearBufferfv(GL_DEPTH, 0, ones);
@@ -498,12 +498,12 @@ bool CellEngineOpenGLVisualiser::CheckVisibilityOfParticles(UnsignedIntType Enti
     return Visible;
 }
 
-void CellEngineOpenGLVisualiser::onKey(int key, int action)
+void CellEngineOpenGLVisualiser::OnKey(int Key, int Action)
 {
     try
     {
-        if (action)
-            switch (key)
+        if (Action)
+            switch (Key)
             {
                 case '1': CameraZPosition += CellEngineDataFileObjectPointer->CameraXMoveStep; break;
                 case '2': CameraZPosition -= CellEngineDataFileObjectPointer->CameraXMoveStep; break;
@@ -541,8 +541,10 @@ void CellEngineOpenGLVisualiser::onKey(int key, int action)
                 case 'U': CellEngineDataFileObjectPointer->LoadOfAtomsStep == 100 ? CellEngineDataFileObjectPointer->LoadOfAtomsStep = 10 : CellEngineDataFileObjectPointer->LoadOfAtomsStep = 100;  break;
                 case 'I': CellEngineDataFileObjectPointer->LoadOfAtomsStep = 1;  break;
 
-                case '9': AtomGraphicsObject.load("..//objects//cube.sbm");  break;
-                case '0': AtomGraphicsObject.load("..//objects//sphere.sbm");  break;
+                case '9':
+                    AtomGraphicsObject.Load("..//objects//cube.sbm");  break;
+                case '0':
+                    AtomGraphicsObject.Load("..//objects//sphere.sbm");  break;
 
                 case GLFW_KEY_F9: CellEngineDataFileObjectPointer->DrawColorForEveryAtom = !CellEngineDataFileObjectPointer->DrawColorForEveryAtom; break;
                 case GLFW_KEY_F11: CellEngineDataFileObjectPointer->DrawRandomColorForEveryParticle = !CellEngineDataFileObjectPointer->DrawRandomColorForEveryParticle; break;
@@ -552,23 +554,23 @@ void CellEngineOpenGLVisualiser::onKey(int key, int action)
                 default: break;
             }
     }
-    CATCH("executing on key event for cell visualisation")
+    CATCH("executing on Key event for cell visualisation")
 }
 
-void CellEngineOpenGLVisualiser::onMouseWheel(int pos)
+void CellEngineOpenGLVisualiser::OnMouseWheel(int Pos)
 {
     try
     {
-        ViewZ += static_cast<float>(pos) * CellEngineDataFileObjectPointer->ViewStep;
+        ViewZ += static_cast<float>(Pos) * CellEngineDataFileObjectPointer->ViewStep;
     }
     CATCH("executing on mouse wheel event for cell visualisation")
 }
 
-void CellEngineOpenGLVisualiser::onMouseButton(int button, int action)
+void CellEngineOpenGLVisualiser::OnMouseButton(int Button, int Action)
 {
     try
     {
-        if (button == 0)
+        if (Button == 0)
         {
             PressedRightMouseButton++;
             if (PressedRightMouseButton == 1)
@@ -581,15 +583,15 @@ void CellEngineOpenGLVisualiser::onMouseButton(int button, int action)
                 PressedRightMouseButton = 0;
         }
     }
-    CATCH("executing on mouse button event for cell visualisation")
+    CATCH("executing on mouse Button event for cell visualisation")
 }
 
-void CellEngineOpenGLVisualiser::onMouseMove(int x, int y)
+void CellEngineOpenGLVisualiser::OnMouseMove(int X, int Y)
 {
     try
     {
-        MousePosition.s.X = x;
-        MousePosition.s.Y = y;
+        MousePosition.s.X = X;
+        MousePosition.s.Y = Y;
 
         if (PressedRightMouseButton == true)
         {
@@ -622,20 +624,20 @@ void CellEngineOpenGLVisualiser::InitArcBall()
         Matrix3fSetIdentity(&ArcBallActualRotationMatrix);
 
         ArcBall = make_unique<ArcBallT>(ArcBallT(640.0f, 480.0f));
-        ArcBall->setBounds(static_cast<float>(info.windowWidth), static_cast<float>(info.windowHeight));
+        ArcBall->setBounds(static_cast<float>(Info.WindowWidth), static_cast<float>(Info.WindowHeight));
 
         RotationMatrix = vmath::rotate(0.0f, 0.0f, 0.0f);
     }
     CATCH("initiation of arc ball counting data for cell visualisation")
 }
 
-void CellEngineOpenGLVisualiser::onResize(int w, int h)
+void CellEngineOpenGLVisualiser::OnResize(int Width, int Height)
 {
     try
     {
-        info.windowWidth = w;
-        info.windowHeight = h;
-        ArcBall->setBounds(static_cast<float>(info.windowWidth), static_cast<float>(info.windowHeight));
+        Info.WindowWidth = Width;
+        Info.WindowHeight = Height;
+        ArcBall->setBounds(static_cast<float>(Info.WindowWidth), static_cast<float>(Info.WindowHeight));
     }
     CATCH("executing window resize event - setting bounds of arc ball counting data for cell visualisation")
 }
