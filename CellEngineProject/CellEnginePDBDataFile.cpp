@@ -10,31 +10,6 @@
 using namespace std;
 using namespace string_utils;
 
-CellEngineAtom CellEnginePDBDataFile::ParseRecord(const char* LocalPDBRecord)
-{
-    CellEngineAtom CellEngineAtomObject;
-
-    try
-    {
-        string RecordStr = LocalPDBRecord;
-
-        CellEngineAtomObject.Serial = stoi(RecordStr.substr(6, 5));
-        string NameStr = trim_whitespace_surrounding(RecordStr.substr(12, 4));
-        string ResNameStr = trim_whitespace_surrounding(RecordStr.substr(17, 3));
-        strncpy(CellEngineAtomObject.Name, NameStr.c_str(), NameStr.length() + 1);
-        strncpy(CellEngineAtomObject.ResName, ResNameStr.c_str(), ResNameStr.length() + 1);
-
-        CellEngineAtomObject.X = stof(RecordStr.substr(30, 8));
-        CellEngineAtomObject.Y = stof(RecordStr.substr(38, 8));
-        CellEngineAtomObject.Z = stof(RecordStr.substr(46, 8));
-
-        CellEngineAtomObject.AtomColor = CellEngineAtomObject.ParticleColor = CellEngineAtomObject.RandomParticleColor = ChooseColorForAtom(CellEngineAtomObject);
-    }
-    CATCH("parsing atom record")
-
-    return CellEngineAtomObject;
-}
-
 CellEnginePDBDataFile::CellEnginePDBDataFile(const string_view FileName)
 {
     DrawRandomColorForEveryParticle = false;
@@ -68,6 +43,31 @@ CellEnginePDBDataFile::CellEnginePDBDataFile(const string_view FileName)
     ChosenStructureIndex = 0;
 
 	ReadDataFromFile(FileName);
+}
+
+CellEngineAtom CellEnginePDBDataFile::ParseRecord(const char* LocalPDBRecord)
+{
+    CellEngineAtom CellEngineAtomObject;
+
+    try
+    {
+        string RecordStr = LocalPDBRecord;
+
+        CellEngineAtomObject.Serial = stoi(RecordStr.substr(6, 5));
+        string NameStr = trim_whitespace_surrounding(RecordStr.substr(12, 4));
+        string ResNameStr = trim_whitespace_surrounding(RecordStr.substr(17, 3));
+        strncpy(CellEngineAtomObject.Name, NameStr.c_str(), NameStr.length() + 1);
+        strncpy(CellEngineAtomObject.ResName, ResNameStr.c_str(), ResNameStr.length() + 1);
+
+        CellEngineAtomObject.X = stof(RecordStr.substr(30, 8));
+        CellEngineAtomObject.Y = stof(RecordStr.substr(38, 8));
+        CellEngineAtomObject.Z = stof(RecordStr.substr(46, 8));
+
+        CellEngineAtomObject.AtomColor = CellEngineAtomObject.ParticleColor = CellEngineAtomObject.RandomParticleColor = ChooseColorForAtom(CellEngineAtomObject);
+    }
+    CATCH("parsing atom record")
+
+    return CellEngineAtomObject;
 }
 
 void CellEnginePDBDataFile::ReadDataFromFile(const string_view FileName)

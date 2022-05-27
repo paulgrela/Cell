@@ -33,23 +33,23 @@ private:
 private:
     GLuint ShaderProgram = 0;
 private:
-    struct uniforms_block
+    struct UniformsBlock
     {
-        vmath::mat4 mv_matrix;
-        vmath::mat4 view_matrix;
-        vmath::mat4 proj_matrix;
-        vmath::vec3 color;
+        vmath::mat4 MoveMatrix;
+        vmath::mat4 ViewMatrix;
+        vmath::mat4 ProjMatrix;
+        vmath::vec3 Color;
     };
 private:
-    GLuint uniforms_buffer{};
+    GLuint UniformsBuffer{};
 private:
     struct
     {
-        GLint diffuse_albedo;
-        GLint specular_albedo;
-        GLint specular_power;
+        GLint DiffuseAlbedo;
+        GLint SpecularAlbedo;
+        GLint SpecularPower;
     }
-    uniforms{};
+    Uniforms{};
 private:
     sb7::GraphicObject AtomGraphicsObject;
 private:
@@ -117,8 +117,8 @@ protected:
     void OnResize(int Width, int Height) override;
 protected:
     inline vmath::vec3 GetColor(const CellEngineAtom& AtomObject);
-    static inline void DrawCenterPoint(uniforms_block*  MatrixUniformBlockForVertexShaderPointer, vmath::mat4& ModelMatrix);
-    inline vmath::vec3 GetFinalModelPosition(const vmath::vec3& AtomPosition, uniforms_block*  MatrixUniformBlockForVertexShaderPointer, const vmath::vec3& Center, const bool CountNewPosition, const bool DrawOutsideBorder) const;
+    static inline void DrawCenterPoint(UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, vmath::mat4& ModelMatrix);
+    inline vmath::vec3 GetFinalModelPosition(const vmath::vec3& AtomPosition, UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, const vmath::vec3& Center, const bool CountNewPosition, const bool DrawOutsideBorder) const;
     inline vmath::vec3 RenderObject(const CellEngineAtom& AtomObject, const vmath::mat4& ViewMatrix, const vmath::vec3& Center, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, UnsignedIntType& NumberOfAllRenderedAtoms);
     inline vmath::vec3 CreateUniformBlockForVertexShader(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4 ModelMatrix, const vmath::vec3& Center, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, bool DrawAdditional);
 protected:
@@ -145,9 +145,9 @@ void CellEngineOpenGLVisualiser::StartUp()
     {
         LoadShaders();
 
-        glGenBuffers(1, &uniforms_buffer);
-        glBindBuffer(GL_UNIFORM_BUFFER, uniforms_buffer);
-        glBufferData(GL_UNIFORM_BUFFER, sizeof(uniforms_block), nullptr, GL_DYNAMIC_DRAW);
+        glGenBuffers(1, &UniformsBuffer);
+        glBindBuffer(GL_UNIFORM_BUFFER, UniformsBuffer);
+        glBufferData(GL_UNIFORM_BUFFER, sizeof(UniformsBlock), nullptr, GL_DYNAMIC_DRAW);
 
         AtomGraphicsObject.Load("..//objects//sphere.sbm");
         InitLineVertexes();
@@ -199,9 +199,9 @@ void CellEngineOpenGLVisualiser::LoadShaders()
         glAttachShader(ShaderProgram, FragmentShader);
         glLinkProgram(ShaderProgram);
 
-        uniforms.diffuse_albedo = glGetUniformLocation(ShaderProgram, "diffuse_albedo");
-        uniforms.specular_albedo = glGetUniformLocation(ShaderProgram, "specular_albedo");
-        uniforms.specular_power = glGetUniformLocation(ShaderProgram, "specular_power");
+        Uniforms.DiffuseAlbedo = glGetUniformLocation(ShaderProgram, "diffuse_albedo");
+        Uniforms.SpecularAlbedo = glGetUniformLocation(ShaderProgram, "specular_albedo");
+        Uniforms.SpecularPower = glGetUniformLocation(ShaderProgram, "specular_power");
     }
     CATCH("loading shaders for cell visualization")
 }
@@ -318,29 +318,29 @@ inline bool CellEngineOpenGLVisualiser::CheckDistanceToDrawDetailsInAtomScale(co
         return false;
 }
 
-inline void CellEngineOpenGLVisualiser::DrawCenterPoint(uniforms_block*  MatrixUniformBlockForVertexShaderPointer, vmath::mat4& ModelMatrix)
+inline void CellEngineOpenGLVisualiser::DrawCenterPoint(UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, vmath::mat4& ModelMatrix)
 {
     try
     {
         ModelMatrix = vmath::translate(0.0f, 0.0f, 0.0f) * vmath::scale(vmath::vec3(0.5, 0.5, 0.5));
-        MatrixUniformBlockForVertexShaderPointer->color = FromVec4ToVec3(sb7::color::Purple);
+        MatrixUniformBlockForVertexShaderPointer->Color = FromVec4ToVec3(sb7::color::Purple);
     }
     CATCH("drawing center point for data for cell visualization")
 }
 
-inline vmath::vec3 CellEngineOpenGLVisualiser::GetFinalModelPosition(const vmath::vec3& AtomPosition, uniforms_block*  MatrixUniformBlockForVertexShaderPointer, const vmath::vec3& Center, const bool CountNewPosition, const bool DrawOutsideBorder) const
+inline vmath::vec3 CellEngineOpenGLVisualiser::GetFinalModelPosition(const vmath::vec3& AtomPosition, UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, const vmath::vec3& Center, const bool CountNewPosition, const bool DrawOutsideBorder) const
 {
     try
     {
         if (CountNewPosition == true)
         {
-            float XNew = MatrixUniformBlockForVertexShaderPointer->mv_matrix[0][0] * (AtomPosition.X() + CameraXPosition - Center.X()) + MatrixUniformBlockForVertexShaderPointer->mv_matrix[1][0] * (AtomPosition.Y() + CameraYPosition - Center.Y()) + MatrixUniformBlockForVertexShaderPointer->mv_matrix[2][0] * (AtomPosition.Z() + CameraZPosition - Center.Z());
-            float YNew = MatrixUniformBlockForVertexShaderPointer->mv_matrix[0][1] * (AtomPosition.X() + CameraXPosition - Center.X()) + MatrixUniformBlockForVertexShaderPointer->mv_matrix[1][1] * (AtomPosition.Y() + CameraYPosition - Center.Y()) + MatrixUniformBlockForVertexShaderPointer->mv_matrix[2][1] * (AtomPosition.Z() + CameraZPosition - Center.Z());
-            float ZNew = MatrixUniformBlockForVertexShaderPointer->mv_matrix[0][2] * (AtomPosition.X() + CameraXPosition - Center.X()) + MatrixUniformBlockForVertexShaderPointer->mv_matrix[1][2] * (AtomPosition.Y() + CameraYPosition - Center.Y()) + MatrixUniformBlockForVertexShaderPointer->mv_matrix[2][2] * (AtomPosition.Z() + CameraZPosition - Center.Z());
+            float XNew = MatrixUniformBlockForVertexShaderPointer->MoveMatrix[0][0] * (AtomPosition.X() + CameraXPosition - Center.X()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[1][0] * (AtomPosition.Y() + CameraYPosition - Center.Y()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[2][0] * (AtomPosition.Z() + CameraZPosition - Center.Z());
+            float YNew = MatrixUniformBlockForVertexShaderPointer->MoveMatrix[0][1] * (AtomPosition.X() + CameraXPosition - Center.X()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[1][1] * (AtomPosition.Y() + CameraYPosition - Center.Y()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[2][1] * (AtomPosition.Z() + CameraZPosition - Center.Z());
+            float ZNew = MatrixUniformBlockForVertexShaderPointer->MoveMatrix[0][2] * (AtomPosition.X() + CameraXPosition - Center.X()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[1][2] * (AtomPosition.Y() + CameraYPosition - Center.Y()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[2][2] * (AtomPosition.Z() + CameraZPosition - Center.Z());
 
             if (DrawOutsideBorder == true)
                 if (CheckDistanceToDrawDetailsInAtomScale(XNew, YNew, ZNew) == true)
-                    MatrixUniformBlockForVertexShaderPointer->color = FromVec4ToVec3(sb7::color::Purple);
+                    MatrixUniformBlockForVertexShaderPointer->Color = FromVec4ToVec3(sb7::color::Purple);
 
             return vmath::vec3(XNew, YNew, ZNew);
         }
@@ -356,12 +356,12 @@ inline vmath::vec3 CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader
 
     try
     {
-        glBindBufferBase(GL_UNIFORM_BUFFER, 0, uniforms_buffer);
-        auto MatrixUniformBlockForVertexShaderPointer = (uniforms_block*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(uniforms_block), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
+        glBindBufferBase(GL_UNIFORM_BUFFER, 0, UniformsBuffer);
+        auto MatrixUniformBlockForVertexShaderPointer = (UniformsBlock*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(UniformsBlock), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
 
-        MatrixUniformBlockForVertexShaderPointer->view_matrix = ViewMatrix;
-        MatrixUniformBlockForVertexShaderPointer->proj_matrix = vmath::perspective(50.0f, (float)Info.WindowWidth / (float)Info.WindowHeight, 0.1f, 95000.0f);
-        MatrixUniformBlockForVertexShaderPointer->color = Color;
+        MatrixUniformBlockForVertexShaderPointer->ViewMatrix = ViewMatrix;
+        MatrixUniformBlockForVertexShaderPointer->ProjMatrix = vmath::perspective(50.0f, (float)Info.WindowWidth / (float)Info.WindowHeight, 0.1f, 95000.0f);
+        MatrixUniformBlockForVertexShaderPointer->Color = Color;
 
         if (DrawAdditional == true)
         {
@@ -370,7 +370,7 @@ inline vmath::vec3 CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader
                 DrawCenterPoint(MatrixUniformBlockForVertexShaderPointer, ModelMatrix);
         }
 
-        MatrixUniformBlockForVertexShaderPointer->mv_matrix = ViewMatrix * ModelMatrix;
+        MatrixUniformBlockForVertexShaderPointer->MoveMatrix = ViewMatrix * ModelMatrix;
 
         glUnmapBuffer(GL_UNIFORM_BUFFER);
     }
@@ -432,8 +432,8 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
 
         vmath::vec3 Center = CellEngineDataFileObjectPointer->GetCenter(CellEngineDataFileObjectPointer->GetParticlesCenters());
 
-        glUniform1f(uniforms.specular_power, powf(2.0f, 3.0f));
-        glUniform3fv(uniforms.specular_albedo, 1, vmath::vec3(1.0f / 9.0f + 1.0f / 9.0f));
+        glUniform1f(Uniforms.SpecularPower, powf(2.0f, 3.0f));
+        glUniform3fv(Uniforms.SpecularAlbedo, 1, vmath::vec3(1.0f / 9.0f + 1.0f / 9.0f));
 
         UnsignedIntType NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = 0;
         UnsignedIntType NumberOfAllRenderedAtoms = 0;
