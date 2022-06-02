@@ -976,11 +976,7 @@ namespace vmath
     {
         mat4 result(mat4::identity());
 
-        if ((right == left) ||
-            (top == bottom) ||
-            (n == f) ||
-            (n < 0.0) ||
-            (f < 0.0))
+        if ((right == left) || (top == bottom) || (n == f) || (n < 0.0) || (f < 0.0))
            return result;
 
         result[0][0] = (2.0f * n) / (right - left);
