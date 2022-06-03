@@ -121,10 +121,10 @@ protected:
     void OnMouseMove(int X, int Y) override;
     void OnResize(int Width, int Height) override;
 protected:
-    inline vmath::vec3 GetColor(const CellEngineAtom& AtomObject);
+    inline vmath::vec3 GetColor(const CellEngineAtom& AtomObject, bool Chosen);
     static inline void DrawCenterPoint(UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, vmath::mat4& ModelMatrix);
     inline vmath::vec3 GetFinalModelPosition(const vmath::vec3& AtomPosition, UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, const vmath::vec3& Center, const bool CountNewPosition, const bool DrawOutsideBorder) const;
-    inline vmath::vec3 RenderObject(const CellEngineAtom& AtomObject, const vmath::mat4& ViewMatrix, const vmath::vec3& Center, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, UnsignedIntType& NumberOfAllRenderedAtoms);
+    inline vmath::vec3 RenderObject(const CellEngineAtom& AtomObject, const vmath::mat4& ViewMatrix, const vmath::vec3& Center, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, UnsignedIntType& NumberOfAllRenderedAtoms, bool Chosen);
     inline vmath::vec3 CreateUniformBlockForVertexShader(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4 ModelMatrix, const vmath::vec3& Center, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, bool DrawAdditional);
 protected:
     [[nodiscard]] inline bool CheckDistanceToDrawDetailsInAtomScale(const float XNew, const float YNew, const float ZNew) const;
@@ -290,9 +290,13 @@ void CellEngineOpenGLVisualiser::FindBondsToDraw(const vector<CellEngineAtom>& A
 {
     try
     {
-        //..#pragma omp parallel for shared(Atoms) private(BondsToDraw)
-        for (UnsignedIntType AtomObjectIndex1 = 0; AtomObjectIndex1 < Atoms.size(); AtomObjectIndex1++)
-            for (UnsignedIntType AtomObjectIndex2 = 0; AtomObjectIndex2 < Atoms.size(); AtomObjectIndex2++)
+        vector<vector<pair<UnsignedIntType, UnsignedIntType>>> BondsToDrawLocal;
+        BondsToDrawLocal.resize(std::thread::hardware_concurrency());
+        UnsignedIntType AtomObjectIndex1 = 0;
+        UnsignedIntType AtomObjectIndex2 = 0;
+        #pragma omp parallel for default(none) shared(BondsToDrawLocal, Atoms, LoggersManagerObject) private(AtomObjectIndex1, AtomObjectIndex2)
+        for (AtomObjectIndex1 = 0; AtomObjectIndex1 < Atoms.size(); AtomObjectIndex1++)
+            for (AtomObjectIndex2 = 0; AtomObjectIndex2 < Atoms.size(); AtomObjectIndex2++)
                 if (AtomObjectIndex1 != AtomObjectIndex2)
                 {
                     const auto& ParticlesCenterObject1 = Atoms[AtomObjectIndex1];
@@ -303,8 +307,12 @@ void CellEngineOpenGLVisualiser::FindBondsToDraw(const vector<CellEngineAtom>& A
                     float DiffZ = ParticlesCenterObject2.Z - ParticlesCenterObject1.Z;
                     float VectorLength = sqrt(DiffX * DiffX + DiffY * DiffY + DiffZ * DiffZ);
                     if (VectorLength < 1.5)
-                        BondsToDraw.emplace_back(make_pair(AtomObjectIndex1, AtomObjectIndex2));
+                        BondsToDrawLocal[omp_get_thread_num()].emplace_back(make_pair(AtomObjectIndex1, AtomObjectIndex2));
                 }
+
+        for (const auto& BondsToDrawLocalObject : BondsToDrawLocal)
+            for (const auto& BondsToDrawObject : BondsToDrawLocalObject)
+                BondsToDraw.emplace_back(BondsToDrawObject);
     }
     CATCH("finding bonds")
 }
@@ -407,23 +415,28 @@ inline vmath::vec3 CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader
     return FinalModelPosition;
 }
 
-inline vmath::vec3 CellEngineOpenGLVisualiser::GetColor(const CellEngineAtom& AtomObject)
+inline vmath::vec3 CellEngineOpenGLVisualiser::GetColor(const CellEngineAtom& AtomObject, bool Chosen)
 {
     vmath::vec3 FinalColor;
 
     try
     {
-        if (CellEngineDataFileObjectPointer->DrawRandomColorForEveryParticle == true)
-            FinalColor = AtomObject.RandomParticleColor;
+        if (Chosen == true)
+            FinalColor = FromVec4ToVec3(sb7::color::Yellow);
         else
-            FinalColor = (CellEngineDataFileObjectPointer->DrawColorForEveryAtom == false ? AtomObject.ParticleColor : AtomObject.AtomColor);
+        {
+            if (CellEngineDataFileObjectPointer->DrawRandomColorForEveryParticle == true)
+                FinalColor = AtomObject.RandomParticleColor;
+            else
+                FinalColor = (CellEngineDataFileObjectPointer->DrawColorForEveryAtom == false ? AtomObject.ParticleColor : AtomObject.AtomColor);
+        }
     }
     CATCH("getting color")
 
     return FinalColor;
 }
 
-inline vmath::vec3 CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom& AtomObject, const vmath::mat4& ViewMatrix, const vmath::vec3& Center, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, UnsignedIntType& NumberOfAllRenderedAtoms)
+inline vmath::vec3 CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom& AtomObject, const vmath::mat4& ViewMatrix, const vmath::vec3& Center, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, UnsignedIntType& NumberOfAllRenderedAtoms, bool Chosen)
 {
     vmath::vec3 FinalModelPosition;
 
@@ -434,7 +447,7 @@ inline vmath::vec3 CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom
         vmath::vec3 AtomPosition = LengthUnit * AtomObject.Position();
         vmath::mat4 ModelMatrix = vmath::translate(AtomPosition.X() - CameraXPosition - Center.X(), AtomPosition.Y() + CameraYPosition - Center.Y(), AtomPosition.Z() + CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(CellEngineDataFileObjectPointer->SizeX, CellEngineDataFileObjectPointer->SizeY, CellEngineDataFileObjectPointer->SizeZ));
 
-        FinalModelPosition = CreateUniformBlockForVertexShader(AtomPosition, GetColor(AtomObject), ViewMatrix, ModelMatrix, Center, CountNewPosition, DrawCenter, DrawOutsideBorder, true);
+        FinalModelPosition = CreateUniformBlockForVertexShader(AtomPosition, GetColor(AtomObject, Chosen), ViewMatrix, ModelMatrix, Center, CountNewPosition, DrawCenter, DrawOutsideBorder, true);
 
         if (RenderObjects == true)
             AtomGraphicsObject.Render();
@@ -501,7 +514,7 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
 
                 auto ParticlesCenterObject = *ParticlesCenterIterator;
 
-                vmath::vec3 FinalModelPosition = RenderObject(ParticlesCenterObject, ViewMatrix, Center, true, ParticlesCenterIterator == CellEngineDataFileObjectPointer->GetParticlesCenters().end() - 1, true, NumberOfAllRenderedAtoms);
+                vmath::vec3 FinalModelPosition = RenderObject(ParticlesCenterObject, ViewMatrix, Center, true, ParticlesCenterIterator == CellEngineDataFileObjectPointer->GetParticlesCenters().end() - 1, true, NumberOfAllRenderedAtoms, false);
 
                 if (CellEngineDataFileObjectPointer->ShowDetailsInAtomScale == true)
                     if (CheckDistanceToDrawDetailsInAtomScale(FinalModelPosition.X(), FinalModelPosition.Y(), FinalModelPosition.Z()) == true)
@@ -513,8 +526,9 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
                             DrawBonds(CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex], BondsBetweenAtomsToDraw[ParticlesCenterObject.AtomIndex], CellEngineDataFileObjectPointer->DrawBondsBetweenAtoms, ViewMatrix, Center);
 
                             glUseProgram(ShaderProgramPhong);
-                            for (UnsignedIntType AtomObjectIndex = 0; AtomObjectIndex < CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex].size(); AtomObjectIndex += CellEngineDataFileObjectPointer->LoadOfAtomsStep)
-                                RenderObject(CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex][AtomObjectIndex], ViewMatrix, Center, false, false, false, NumberOfAllRenderedAtoms);
+                            UnsignedIntType AtomObjectIndex;
+                            for (AtomObjectIndex = 0; AtomObjectIndex < CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex].size(); AtomObjectIndex += CellEngineDataFileObjectPointer->LoadOfAtomsStep)
+                                RenderObject(CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex][AtomObjectIndex], ViewMatrix, Center, false, false, false, NumberOfAllRenderedAtoms, false);
                         }
             }
             CellEngineDataFileObjectPointer->ShowNextStructureFromActiveFilm();
@@ -529,32 +543,17 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
         if (ParticleCenterIndex > CellEngineDataFileObjectPointer->GetParticlesCenters().size())
             throw std::runtime_error("ERROR STENCIL INDEX TOO BIG = " + to_string(ParticleCenterIndex) + " MAXIMAL NUMBER OF OBJECTS = " + to_string(CellEngineDataFileObjectPointer->GetParticlesCenters().size()));
 
-        auto FoundParticleObjectMarked = CellEngineDataFileObjectPointer->GetParticlesCenters()[ParticleCenterIndex];
+        if (ParticleCenterIndex > 0)
+        {
+            auto FoundParticleObjectMarked = CellEngineDataFileObjectPointer->GetParticlesCenters()[ParticleCenterIndex];
 
-        glDisable(GL_SCISSOR_TEST);
+            glDisable(GL_SCISSOR_TEST);
 
+            RenderObject(FoundParticleObjectMarked, ViewMatrix, Center, false, false, false, NumberOfAllRenderedAtoms, true);
 
-
-
-        //RenderObject(*FoundParticleObjectMarked, ViewMatrix, Center, false, true, false, NumberOfAllRenderedAtoms);
-
-        vmath::vec3 AtomPosition = LengthUnit * FoundParticleObjectMarked.Position();
-
-        vmath::mat4 ModelMatrix = vmath::translate(AtomPosition.X() - CameraXPosition - Center.X(), AtomPosition.Y() + CameraYPosition - Center.Y(), AtomPosition.Z() + CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(CellEngineDataFileObjectPointer->SizeX, CellEngineDataFileObjectPointer->SizeY, CellEngineDataFileObjectPointer->SizeZ));
-
-        glBindBufferBase(GL_UNIFORM_BUFFER, 0, UniformsBuffer);
-        auto MatrixUniformBlockForVertexShaderPointer = (UniformsBlock*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(UniformsBlock), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
-
-        MatrixUniformBlockForVertexShaderPointer->ProjMatrix = vmath::perspective(50.0f, (float)Info.WindowWidth / (float)Info.WindowHeight, 0.1f, 95000.0f);
-        MatrixUniformBlockForVertexShaderPointer->Color = FromVec4ToVec3(sb7::color::Yellow);
-
-        MatrixUniformBlockForVertexShaderPointer->MoveMatrix = ViewMatrix * ModelMatrix;
-
-        glUnmapBuffer(GL_UNIFORM_BUFFER);
-
-        AtomGraphicsObject.Render();
-        LoggersManagerObject.Log(STREAM("FOUND CHOSEN OBJECT INDEX = " << ParticleCenterIndex << " POSITION[ X = " << AtomPosition.X() << " Y = " << AtomPosition.Y() << " Z = " << AtomPosition.Z() << " ] " << endl));
-
+            vmath::vec3 AtomPosition = LengthUnit * FoundParticleObjectMarked.Position();
+            LoggersManagerObject.Log(STREAM("FOUND CHOSEN OBJECT INDEX = " << ParticleCenterIndex << " POSITION[ X = " << AtomPosition.X() << " Y = " << AtomPosition.Y() << " Z = " << AtomPosition.Z() << " ] " << endl));
+        }
 
         LoggersManagerObject.Log(STREAM("NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = " << to_string(NumberOfFoundParticlesCenterToBeRenderedInAtomDetails) << " NumberOfAllRenderedAtoms = " << to_string(NumberOfAllRenderedAtoms) << " ViewZ = " << to_string(ViewZ) << " AtomSize = " << to_string(CellEngineDataFileObjectPointer->SizeX) << endl));
     }
