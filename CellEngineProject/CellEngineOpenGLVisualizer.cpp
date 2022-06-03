@@ -1,5 +1,4 @@
 
-
 #include <sb7.h>
 #include <sb7color.h>
 #include <vmath.h>
@@ -32,12 +31,12 @@ private:
     GLuint LineVAO;
     GLuint LineDataBuffer[2];
 private:
-    GLuint ShaderProgram = 0;
+    GLuint ShaderProgramPhong = 0;
+    GLuint ShaderProgramSimple = 0;
 private:
     struct UniformsBlock
     {
         vmath::mat4 MoveMatrix;
-        vmath::mat4 ViewMatrix;
         vmath::mat4 ProjMatrix;
         vmath::vec3 Color;
     };
@@ -107,7 +106,9 @@ protected:
     void SetVisibilityOfAllParticles(bool VisibleParam);
     void SetVisibilityOfParticlesExcept(UnsignedIntType EntityId, bool VisibleParam);
 protected:
-    void LoadShaders();
+    void LoadShadersPhong();
+    void LoadShadersSimple();
+    static void LoadShaders(const char* VertexShaderFileName, const char* FragmentShaderFileName, GLuint& ShaderProgram);
 protected:
     void StartUp() override;
     void Render(double CurrentTime) override;
@@ -144,7 +145,8 @@ void CellEngineOpenGLVisualiser::StartUp()
 {
     try
     {
-        LoadShaders();
+        LoadShadersSimple();
+        LoadShadersPhong();
 
         glGenBuffers(1, &UniformsBuffer);
         glBindBuffer(GL_UNIFORM_BUFFER, UniformsBuffer);
@@ -185,12 +187,12 @@ void CellEngineOpenGLVisualiser::InitExternalData()
     CATCH("reading of data file")
 }
 
-void CellEngineOpenGLVisualiser::LoadShaders()
+void CellEngineOpenGLVisualiser::LoadShaders(const char* VertexShaderFileName, const char* FragmentShaderFileName, GLuint& ShaderProgram)
 {
     try
     {
-        GLuint VertexShader = sb7::shader::Load("..\\shaders\\per-fragment-phong.vs.glsl", GL_VERTEX_SHADER);
-        GLuint FragmentShader = sb7::shader::Load("..\\shaders\\per-fragment-phong.fs.glsl", GL_FRAGMENT_SHADER);
+        GLuint VertexShader = sb7::shader::Load(VertexShaderFileName, GL_VERTEX_SHADER);
+        GLuint FragmentShader = sb7::shader::Load(FragmentShaderFileName, GL_FRAGMENT_SHADER);
 
         if (ShaderProgram)
             glDeleteProgram(ShaderProgram);
@@ -200,11 +202,32 @@ void CellEngineOpenGLVisualiser::LoadShaders()
         glAttachShader(ShaderProgram, FragmentShader);
         glLinkProgram(ShaderProgram);
 
-        Uniforms.DiffuseAlbedo = glGetUniformLocation(ShaderProgram, "diffuse_albedo");
-        Uniforms.SpecularAlbedo = glGetUniformLocation(ShaderProgram, "specular_albedo");
-        Uniforms.SpecularPower = glGetUniformLocation(ShaderProgram, "specular_power");
+        glDeleteShader(VertexShader);
+        glDeleteShader(FragmentShader);
     }
-    CATCH("loading shaders for cell visualization")
+    CATCH_AND_THROW("loading phong shaders for cell visualization")
+}
+
+void CellEngineOpenGLVisualiser::LoadShadersPhong()
+{
+    try
+    {
+        LoadShaders("..\\shaders\\per-fragment-phong.vs.glsl", "..\\shaders\\per-fragment-phong.fs.glsl", ShaderProgramPhong);
+
+        Uniforms.DiffuseAlbedo = glGetUniformLocation(ShaderProgramPhong, "diffuse_albedo");
+        Uniforms.SpecularAlbedo = glGetUniformLocation(ShaderProgramPhong, "specular_albedo");
+        Uniforms.SpecularPower = glGetUniformLocation(ShaderProgramPhong, "specular_power");
+    }
+    CATCH("loading phong shaders for cell visualization")
+}
+
+void CellEngineOpenGLVisualiser::LoadShadersSimple()
+{
+    try
+    {
+        LoadShaders("..\\shaders\\per-fragment-simple.vs.glsl", "..\\shaders\\per-fragment-simple.fs.glsl", ShaderProgramSimple);
+    }
+    CATCH("loading simple shaders for cell visualization")
 }
 
 void CellEngineOpenGLVisualiser::DeleteLineVertexes()
@@ -361,7 +384,6 @@ inline vmath::vec3 CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader
         glBindBufferBase(GL_UNIFORM_BUFFER, 0, UniformsBuffer);
         auto MatrixUniformBlockForVertexShaderPointer = (UniformsBlock*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(UniformsBlock), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
 
-        MatrixUniformBlockForVertexShaderPointer->ViewMatrix = ViewMatrix;
         MatrixUniformBlockForVertexShaderPointer->ProjMatrix = vmath::perspective(50.0f, (float)Info.WindowWidth / (float)Info.WindowHeight, 0.1f, 95000.0f);
         MatrixUniformBlockForVertexShaderPointer->Color = Color;
 
@@ -426,7 +448,6 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
 
         glDisable(GL_SCISSOR_TEST);
 
-        glUseProgram(ShaderProgram);
         glViewport(0, 0, Info.WindowWidth, Info.WindowHeight);
 
         glClearBufferfv(GL_COLOR, 0, gray);
@@ -450,8 +471,10 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
         UnsignedIntType NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = 0;
         UnsignedIntType NumberOfAllRenderedAtoms = 0;
 
+        glUseProgram(ShaderProgramSimple);
         DrawBonds(CellEngineDataFileObjectPointer->GetParticlesCenters(), BondsBetweenParticlesCentersToDraw, CellEngineDataFileObjectPointer->DrawBondsBetweenParticlesCenters, ViewMatrix, Center);
 
+        glUseProgram(ShaderProgramPhong);
         GLuint PartOfStencilBufferIndex[3];
         for (uint64_t LoopCounter = 0; LoopCounter < CellEngineDataFileObjectPointer->NumberOfStencilBufferLoop; LoopCounter++)
         {
@@ -515,7 +538,6 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
         glBindBufferBase(GL_UNIFORM_BUFFER, 0, UniformsBuffer);
         auto MatrixUniformBlockForVertexShaderPointer = (UniformsBlock*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(UniformsBlock), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
 
-        MatrixUniformBlockForVertexShaderPointer->ViewMatrix = ViewMatrix;
         MatrixUniformBlockForVertexShaderPointer->ProjMatrix = vmath::perspective(50.0f, (float)Info.WindowWidth / (float)Info.WindowHeight, 0.1f, 95000.0f);
         MatrixUniformBlockForVertexShaderPointer->Color = FromVec4ToVec3(sb7::color::Yellow);
 
