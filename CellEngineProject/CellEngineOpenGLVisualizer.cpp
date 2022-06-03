@@ -1,4 +1,5 @@
 
+#include <omp.h>
 #include <sb7.h>
 #include <sb7color.h>
 #include <vmath.h>
@@ -75,6 +76,8 @@ private:
     float RotationAngle3 = 0.0;
 private:
     UnsignedIntType PressedRightMouseButton = 0;
+private:
+    bool RenderObjects = true;
 private:
     vector<pair<UnsignedIntType, UnsignedIntType>> BondsBetweenParticlesCentersToDraw;
     vector<vector<pair<UnsignedIntType, UnsignedIntType>>> BondsBetweenAtomsToDraw;
@@ -287,6 +290,7 @@ void CellEngineOpenGLVisualiser::FindBondsToDraw(const vector<CellEngineAtom>& A
 {
     try
     {
+        //..#pragma omp parallel for shared(Atoms) private(BondsToDraw)
         for (UnsignedIntType AtomObjectIndex1 = 0; AtomObjectIndex1 < Atoms.size(); AtomObjectIndex1++)
             for (UnsignedIntType AtomObjectIndex2 = 0; AtomObjectIndex2 < Atoms.size(); AtomObjectIndex2++)
                 if (AtomObjectIndex1 != AtomObjectIndex2)
@@ -432,7 +436,8 @@ inline vmath::vec3 CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom
 
         FinalModelPosition = CreateUniformBlockForVertexShader(AtomPosition, GetColor(AtomObject), ViewMatrix, ModelMatrix, Center, CountNewPosition, DrawCenter, DrawOutsideBorder, true);
 
-        AtomGraphicsObject.Render();
+        if (RenderObjects == true)
+            AtomGraphicsObject.Render();
     }
     CATCH("rendering object for data for cell visualization")
 
@@ -504,8 +509,10 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
                         {
                             NumberOfFoundParticlesCenterToBeRenderedInAtomDetails++;
 
+                            glUseProgram(ShaderProgramSimple);
                             DrawBonds(CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex], BondsBetweenAtomsToDraw[ParticlesCenterObject.AtomIndex], CellEngineDataFileObjectPointer->DrawBondsBetweenAtoms, ViewMatrix, Center);
 
+                            glUseProgram(ShaderProgramPhong);
                             for (UnsignedIntType AtomObjectIndex = 0; AtomObjectIndex < CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex].size(); AtomObjectIndex += CellEngineDataFileObjectPointer->LoadOfAtomsStep)
                                 RenderObject(CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex][AtomObjectIndex], ViewMatrix, Center, false, false, false, NumberOfAllRenderedAtoms);
                         }
@@ -633,6 +640,8 @@ void CellEngineOpenGLVisualiser::OnKey(int Key, int Action)
                 case '9': AtomGraphicsObject.Load("..//objects//cube.sbm");  break;
                 case '0': AtomGraphicsObject.Load("..//objects//sphere.sbm");  break;
 
+                case GLFW_KEY_F7: RenderObjects = !RenderObjects; break;
+                case GLFW_KEY_F8: CellEngineDataFileObjectPointer->NumberOfStencilBufferLoop == 1 ? CellEngineDataFileObjectPointer->NumberOfStencilBufferLoop = 3 : CellEngineDataFileObjectPointer->NumberOfStencilBufferLoop = 1; break;
                 case GLFW_KEY_F9: CellEngineDataFileObjectPointer->DrawColorForEveryAtom = !CellEngineDataFileObjectPointer->DrawColorForEveryAtom; break;
                 case GLFW_KEY_F11: CellEngineDataFileObjectPointer->DrawRandomColorForEveryParticle = !CellEngineDataFileObjectPointer->DrawRandomColorForEveryParticle; break;
                 case GLFW_KEY_F10: SetVisibilityOfParticlesExcept(694, false); break;
