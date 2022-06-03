@@ -42,6 +42,8 @@ CellEnginePDBDataFile::CellEnginePDBDataFile(const string_view FileName)
 
     ChosenStructureIndex = 0;
 
+    NumberOfStencilBufferLoop = 3;
+
 	ReadDataFromFile(FileName);
 }
 

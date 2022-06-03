@@ -2,7 +2,9 @@
 #include <regex>
 #include <fstream>
 
-#include "vmath.h"
+#include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
+#include <glm/mat4x4.hpp>
 #include "ExceptionsMacro.h"
 
 #include "StringUtils.h"
@@ -58,8 +60,6 @@ CellEngineCIFDataFile::CellEngineCIFDataFile(const string_view FileName)
 
     SizeStep = 0.1;
 
-    LoadOfAtomsStep = 100;
-
     ViewStep = 50;
 
     CameraXMoveStep = 100;
@@ -73,6 +73,9 @@ CellEngineCIFDataFile::CellEngineCIFDataFile(const string_view FileName)
     ShowDetailsInAtomScale = false;
 
     ChosenStructureIndex = 0;
+
+    LoadOfAtomsStep = 100;
+    NumberOfStencilBufferLoop = 1;
 
     ReadDataFromFile(FileName);
 }
@@ -187,30 +190,21 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
 
                                 auto TransformationMatrixIterator = TransformationsMatrixes.find(AppliedMatrixId);
 
-                                auto TransformationMatrix = vmath::mat4();
+                                auto TransformationMatrix = glm::mat3();
 
                                 TransformationMatrix[0][0] = TransformationMatrixIterator->second.Matrix[0][0];
-                                TransformationMatrix[0][1] = TransformationMatrixIterator->second.Matrix[0][1];
-                                TransformationMatrix[0][2] = TransformationMatrixIterator->second.Matrix[0][2];
+                                TransformationMatrix[0][1] = TransformationMatrixIterator->second.Matrix[1][0];
+                                TransformationMatrix[0][2] = TransformationMatrixIterator->second.Matrix[2][0];
 
-                                TransformationMatrix[1][0] = TransformationMatrixIterator->second.Matrix[1][0];
+                                TransformationMatrix[1][0] = TransformationMatrixIterator->second.Matrix[0][1];
                                 TransformationMatrix[1][1] = TransformationMatrixIterator->second.Matrix[1][1];
-                                TransformationMatrix[1][2] = TransformationMatrixIterator->second.Matrix[1][2];
+                                TransformationMatrix[1][2] = TransformationMatrixIterator->second.Matrix[2][1];
 
-                                TransformationMatrix[2][0] = TransformationMatrixIterator->second.Matrix[2][0];
-                                TransformationMatrix[2][1] = TransformationMatrixIterator->second.Matrix[2][1];
+                                TransformationMatrix[2][0] = TransformationMatrixIterator->second.Matrix[0][2];
+                                TransformationMatrix[2][1] = TransformationMatrixIterator->second.Matrix[1][2];
                                 TransformationMatrix[2][2] = TransformationMatrixIterator->second.Matrix[2][2];
 
-                                TransformationMatrix[3][0] = 0.0;
-                                TransformationMatrix[3][1] = 0.0;
-                                TransformationMatrix[3][2] = 0.0;
-                                TransformationMatrix[3][3] = 1.0;
-
-                                TransformationMatrix[0][3] = 0.0;
-                                TransformationMatrix[1][3] = 0.0;
-                                TransformationMatrix[2][3] = 0.0;
-
-                                auto Result = vmath::vec4(AppliedAtom.X, AppliedAtom.Y, AppliedAtom.Z, 1) + vmath::vec4(TransformationMatrixIterator->second.Matrix[0][3], TransformationMatrixIterator->second.Matrix[1][3], TransformationMatrixIterator->second.Matrix[2][3], 1.0) * TransformationMatrix;
+                                auto Result = TransformationMatrix * glm::vec3(AppliedAtom.X, AppliedAtom.Y, AppliedAtom.Z) + glm::vec3(TransformationMatrixIterator->second.Matrix[0][3], TransformationMatrixIterator->second.Matrix[1][3], TransformationMatrixIterator->second.Matrix[2][3]);
 
                                 AppliedAtom.X = Result[0];
                                 AppliedAtom.Y = Result[1];

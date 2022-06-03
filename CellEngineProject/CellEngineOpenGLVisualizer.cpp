@@ -453,7 +453,7 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
         DrawBonds(CellEngineDataFileObjectPointer->GetParticlesCenters(), BondsBetweenParticlesCentersToDraw, CellEngineDataFileObjectPointer->DrawBondsBetweenParticlesCenters, ViewMatrix, Center);
 
         GLuint PartOfStencilBufferIndex[3];
-        for (uint64_t LoopCounter = 0; LoopCounter < 3; LoopCounter++)
+        for (uint64_t LoopCounter = 0; LoopCounter < CellEngineDataFileObjectPointer->NumberOfStencilBufferLoop; LoopCounter++)
         {
             NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = 0;
             NumberOfAllRenderedAtoms = 0;

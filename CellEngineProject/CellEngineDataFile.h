@@ -99,7 +99,8 @@ public:
     float SizeY;
     float SizeZ;
     float SizeStep;
-    uint64_t LoadOfAtomsStep;
+    std::uint64_t NumberOfStencilBufferLoop;
+    std::uint64_t LoadOfAtomsStep;
     float ViewStep;
     float CameraXMoveStep;
     float CameraYMoveStep;
