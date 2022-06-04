@@ -43,6 +43,9 @@ CellEngineAtom CellEngineCIFDataFile::ParseRecord(const char* LocalCIFRecord)
 
 CellEngineCIFDataFile::CellEngineCIFDataFile(const string_view FileName)
 {
+    NumberOfStencilBufferLoop = 3;
+    StencilForParticlesCenters = false;
+
     DrawRandomColorForEveryParticle = false;
     DrawColorForEveryAtom = false;
 
@@ -75,7 +78,6 @@ CellEngineCIFDataFile::CellEngineCIFDataFile(const string_view FileName)
     ChosenStructureIndex = 0;
 
     LoadOfAtomsStep = 100;
-    NumberOfStencilBufferLoop = 1;
 
     ReadDataFromFile(FileName);
 }

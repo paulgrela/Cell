@@ -1,10 +1,12 @@
 
 #include <omp.h>
+
 #include <sb7.h>
 #include <sb7color.h>
 #include <vmath.h>
 #include <object.h>
 #include <shader.h>
+#include <sb7textoverlay.h>
 
 #include <iostream>
 #include <string>
@@ -53,6 +55,7 @@ private:
     Uniforms{};
 private:
     sb7::GraphicObject AtomGraphicsObject;
+    sb7::TextOverlay TextOverlayObject;
 private:
     Matrix3fT ArcBallPrevRotationMatrix{};
     Matrix3fT ArcBallActualRotationMatrix{};
@@ -114,6 +117,7 @@ protected:
     static void LoadShaders(const char* VertexShaderFileName, const char* FragmentShaderFileName, GLuint& ShaderProgram);
 protected:
     void StartUp() override;
+    void ShutDown() override;
     void Render(double CurrentTime) override;
     void OnKey(int Key, int Action) override;
     void OnMouseWheel(int Pos) override;
@@ -151,6 +155,8 @@ void CellEngineOpenGLVisualiser::StartUp()
         LoadShadersSimple();
         LoadShadersPhong();
 
+        TextOverlayObject.Init(120, 80, "..//textures//cp437_9x16.ktx");
+
         glGenBuffers(1, &UniformsBuffer);
         glBindBuffer(GL_UNIFORM_BUFFER, UniformsBuffer);
         glBufferData(GL_UNIFORM_BUFFER, sizeof(UniformsBlock), nullptr, GL_DYNAMIC_DRAW);
@@ -165,6 +171,15 @@ void CellEngineOpenGLVisualiser::StartUp()
         InitArcBall();
     }
     CATCH("initiation of data for cell visualization")
+}
+
+void CellEngineOpenGLVisualiser::ShutDown()
+{
+    try
+    {
+        TextOverlayObject.TearDown();
+    }
+    CATCH("deleting of data for cell visualization")
 }
 
 void CellEngineOpenGLVisualiser::InitExternalData()
@@ -464,6 +479,7 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
         static const GLfloat gray[] = { 0.1f, 0.1f, 0.1f, 0.0f };
         static const GLfloat ones[] = { 1.0f };
 
+        glUseProgram(ShaderProgramPhong);
         glDisable(GL_SCISSOR_TEST);
 
         glViewport(0, 0, Info.WindowWidth, Info.WindowHeight);
@@ -492,6 +508,7 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
         glUseProgram(ShaderProgramSimple);
         DrawBonds(CellEngineDataFileObjectPointer->GetParticlesCenters(), BondsBetweenParticlesCentersToDraw, CellEngineDataFileObjectPointer->DrawBondsBetweenParticlesCenters, ViewMatrix, Center);
 
+        vector<pair<uint64_t, uint64_t>> TemporaryRenderedAtomsList;
         glUseProgram(ShaderProgramPhong);
         GLuint PartOfStencilBufferIndex[3];
         for (uint64_t LoopCounter = 0; LoopCounter < CellEngineDataFileObjectPointer->NumberOfStencilBufferLoop; LoopCounter++)
@@ -507,10 +524,15 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
             else
                 glDisable(GL_SCISSOR_TEST);
 
+            TemporaryRenderedAtomsList.clear();
+
             for (auto ParticlesCenterIterator = CellEngineDataFileObjectPointer->GetParticlesCenters().begin(); ParticlesCenterIterator != CellEngineDataFileObjectPointer->GetParticlesCenters().end(); ++ParticlesCenterIterator)
             {
-                uint8_t ToInsert = (NumberOfAllRenderedAtoms) >> (8 * LoopCounter);
-                glStencilFunc(GL_ALWAYS, ToInsert, -1);
+                if (CellEngineDataFileObjectPointer->StencilForParticlesCenters == true)
+                {
+                    uint8_t ToInsert = (NumberOfAllRenderedAtoms) >> (8 * LoopCounter);
+                    glStencilFunc(GL_ALWAYS, ToInsert, -1);
+                }
 
                 auto ParticlesCenterObject = *ParticlesCenterIterator;
 
@@ -528,7 +550,15 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
                             glUseProgram(ShaderProgramPhong);
                             UnsignedIntType AtomObjectIndex;
                             for (AtomObjectIndex = 0; AtomObjectIndex < CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex].size(); AtomObjectIndex += CellEngineDataFileObjectPointer->LoadOfAtomsStep)
+                            {
+                                if (CellEngineDataFileObjectPointer->StencilForParticlesCenters == false)
+                                {
+                                    uint8_t ToInsert = (TemporaryRenderedAtomsList.size()) >> (8 * LoopCounter);
+                                    glStencilFunc(GL_ALWAYS, ToInsert, -1);
+                                    TemporaryRenderedAtomsList.emplace_back(make_pair(ParticlesCenterObject.AtomIndex, AtomObjectIndex));
+                                }
                                 RenderObject(CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex][AtomObjectIndex], ViewMatrix, Center, false, false, false, NumberOfAllRenderedAtoms, false);
+                            }
                         }
             }
             CellEngineDataFileObjectPointer->ShowNextStructureFromActiveFilm();
@@ -538,21 +568,32 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
             PartOfStencilBufferIndex[LoopCounter] = StencilIndex;
         }
 
-        uint64_t ParticleCenterIndex = PartOfStencilBufferIndex[0] | (PartOfStencilBufferIndex[1] << 8) | (PartOfStencilBufferIndex[2] << 16);
+        uint64_t ChosenParticleCenterIndex = PartOfStencilBufferIndex[0] | (PartOfStencilBufferIndex[1] << 8) | (PartOfStencilBufferIndex[2] << 16);
 
-        if (ParticleCenterIndex > CellEngineDataFileObjectPointer->GetParticlesCenters().size())
-            throw std::runtime_error("ERROR STENCIL INDEX TOO BIG = " + to_string(ParticleCenterIndex) + " MAXIMAL NUMBER OF OBJECTS = " + to_string(CellEngineDataFileObjectPointer->GetParticlesCenters().size()));
+        //if (ChosenParticleCenterIndex > CellEngineDataFileObjectPointer->GetParticlesCenters().size())
+        //    throw std::runtime_error("ERROR STENCIL INDEX TOO BIG = " + to_string(ChosenParticleCenterIndex) + " MAXIMAL NUMBER OF OBJECTS = " + to_string(CellEngineDataFileObjectPointer->GetParticlesCenters().size()));
 
-        if (ParticleCenterIndex > 0)
+        if (ChosenParticleCenterIndex > 0)
         {
-            auto FoundParticleObjectMarked = CellEngineDataFileObjectPointer->GetParticlesCenters()[ParticleCenterIndex];
+            CellEngineAtom ChosenParticleObject;
+            if (CellEngineDataFileObjectPointer->StencilForParticlesCenters == true)
+                ChosenParticleObject = CellEngineDataFileObjectPointer->GetParticlesCenters()[ChosenParticleCenterIndex];
+            else
+                ChosenParticleObject = CellEngineDataFileObjectPointer->GetAllAtoms()[TemporaryRenderedAtomsList[ChosenParticleCenterIndex].first][TemporaryRenderedAtomsList[ChosenParticleCenterIndex].second];
 
             glDisable(GL_SCISSOR_TEST);
 
-            RenderObject(FoundParticleObjectMarked, ViewMatrix, Center, false, false, false, NumberOfAllRenderedAtoms, true);
+            RenderObject(ChosenParticleObject, ViewMatrix, Center, false, false, false, NumberOfAllRenderedAtoms, true);
 
-            vmath::vec3 AtomPosition = LengthUnit * FoundParticleObjectMarked.Position();
-            LoggersManagerObject.Log(STREAM("FOUND CHOSEN OBJECT INDEX = " << ParticleCenterIndex << " POSITION[ X = " << AtomPosition.X() << " Y = " << AtomPosition.Y() << " Z = " << AtomPosition.Z() << " ] " << endl));
+            //vmath::vec3 AtomPosition = LengthUnit * ChosenParticleObject.Position();
+
+            glDisable(GL_CULL_FACE);
+            TextOverlayObject.Clear();
+            TextOverlayObject.DrawText(string("ATOM DATA: Index = " + to_string(ChosenParticleObject.AtomIndex) + " Name = " + ChosenParticleObject.Name + " ResName = " + ChosenParticleObject.ResName + " Chain [" + ChosenParticleObject.Chain + "] EntityId = " + to_string(ChosenParticleObject.EntityId)).c_str(), 2, 2);
+            TextOverlayObject.Draw();
+            glEnable(GL_CULL_FACE);
+
+            //LoggersManagerObject.Log(STREAM("FOUND CHOSEN OBJECT INDEX = " << ChosenParticleCenterIndex << " POSITION[ X = " << AtomPosition.X() << " Y = " << AtomPosition.Y() << " Z = " << AtomPosition.Z() << " ] " << endl));
         }
 
         LoggersManagerObject.Log(STREAM("NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = " << to_string(NumberOfFoundParticlesCenterToBeRenderedInAtomDetails) << " NumberOfAllRenderedAtoms = " << to_string(NumberOfAllRenderedAtoms) << " ViewZ = " << to_string(ViewZ) << " AtomSize = " << to_string(CellEngineDataFileObjectPointer->SizeX) << endl));
@@ -639,7 +680,8 @@ void CellEngineOpenGLVisualiser::OnKey(int Key, int Action)
                 case '9': AtomGraphicsObject.Load("..//objects//cube.sbm");  break;
                 case '0': AtomGraphicsObject.Load("..//objects//sphere.sbm");  break;
 
-                case GLFW_KEY_F7: RenderObjects = !RenderObjects; break;
+                case GLFW_KEY_F6: RenderObjects = !RenderObjects; break;
+                case GLFW_KEY_F7: CellEngineDataFileObjectPointer->StencilForParticlesCenters = !CellEngineDataFileObjectPointer->StencilForParticlesCenters;  break;
                 case GLFW_KEY_F8: CellEngineDataFileObjectPointer->NumberOfStencilBufferLoop == 1 ? CellEngineDataFileObjectPointer->NumberOfStencilBufferLoop = 3 : CellEngineDataFileObjectPointer->NumberOfStencilBufferLoop = 1; break;
                 case GLFW_KEY_F9: CellEngineDataFileObjectPointer->DrawColorForEveryAtom = !CellEngineDataFileObjectPointer->DrawColorForEveryAtom; break;
                 case GLFW_KEY_F11: CellEngineDataFileObjectPointer->DrawRandomColorForEveryParticle = !CellEngineDataFileObjectPointer->DrawRandomColorForEveryParticle; break;

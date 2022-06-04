@@ -13,7 +13,7 @@ namespace sb7
         {
         }
 
-        void Init(int width, int height, const char* font = nullptr);
+        void Init(int Width, int Height, const char* FontFileName);
         void TearDown();
         void Draw();
 
@@ -24,11 +24,10 @@ namespace sb7
         void Clear();
 
     private:
+        GLuint TextProgram;
+        GLuint VAO;
         GLuint TextBuffer;
         GLuint FontTexture;
-        GLuint VAO;
-
-        GLuint TextProgram;
         char* ScreenBuffer;
         int BufferWidth;
         int BufferHeight;

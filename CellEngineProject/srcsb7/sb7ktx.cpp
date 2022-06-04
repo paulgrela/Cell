@@ -202,9 +202,9 @@ namespace sb7
                                     Ptr += Height * CalculateStride(HeaderObject, Width, 1);
                                     Height >>= 1;
                                     Width >>= 1;
-                                    if (!Height)
+                                    if (Height == false)
                                         Height = 1;
-                                    if (!Width)
+                                    if (Width == false)
                                         Width = 1;
                                 }
                             }
@@ -226,9 +226,9 @@ namespace sb7
                         glTexStorage2D(GL_TEXTURE_CUBE_MAP, HeaderObject.mipLevels, HeaderObject.glInternalFormat, HeaderObject.PixelWidth, HeaderObject.PixelHeight);
                         // glTexSubImage3D(GL_TEXTURE_CUBE_MAP, 0, 0, 0, 0, HeaderObject.PixelWidth, HeaderObject.PixelHeight, HeaderObject.Faces, HeaderObject.glFormat, HeaderObject.glType, Data);
                         {
-                            unsigned int face_size = CalculateFaceSize(HeaderObject);
-                            for (unsigned int i = 0; i < HeaderObject.Faces; i++)
-                                glTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, 0, 0, HeaderObject.PixelWidth, HeaderObject.PixelHeight, HeaderObject.glFormat, HeaderObject.glType, Data + face_size * i);
+                            unsigned int FaceSize = CalculateFaceSize(HeaderObject);
+                            for (unsigned int Face = 0; Face < HeaderObject.Faces; Face++)
+                                glTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + Face, 0, 0, 0, HeaderObject.PixelWidth, HeaderObject.PixelHeight, HeaderObject.glFormat, HeaderObject.glType, Data + FaceSize * Face);
                         }
                         break;
                     case GL_TEXTURE_CUBE_MAP_ARRAY:
@@ -236,7 +236,7 @@ namespace sb7
                         glTexSubImage3D(GL_TEXTURE_CUBE_MAP_ARRAY, 0, 0, 0, 0, HeaderObject.PixelWidth, HeaderObject.PixelHeight, HeaderObject.Faces * HeaderObject.ArrayElements, HeaderObject.glFormat, HeaderObject.glType, Data);
                         break;
                     default:
-                        goto fail_target;
+                        goto FailTarget;
                 }
 
                 if (HeaderObject.mipLevels == 1)
@@ -244,7 +244,7 @@ namespace sb7
 
                 ReturnValue = Tex;
 
-            fail_target:
+            FailTarget:
                 delete [] Data;
 
             FailHeaderLabel:;

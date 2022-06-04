@@ -5,13 +5,13 @@
 
 namespace sb7
 {
-    void TextOverlay::Init(int width, int height, const char* font)
+    void TextOverlay::Init(int Width, int Height, const char* FontFileName)
     {
         GLuint VertexShader;
         GLuint FragmentShader;
 
-        BufferWidth = width;
-        BufferHeight = height;
+        BufferWidth = Width;
+        BufferHeight = Height;
 
         VertexShader = glCreateShader(GL_VERTEX_SHADER);
         FragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
@@ -62,24 +62,27 @@ namespace sb7
         glDeleteShader(FragmentShader);
         glDeleteShader(VertexShader);
 
-        // glCreateVertexArrays(1, &VAO);
+        glUseProgram(TextProgram);
+
+        //glCreateVertexArrays(1, &VAO);
         glGenVertexArrays(1, &VAO);
         glBindVertexArray(VAO);
 
-        // glCreateTextures(GL_TEXTURE_2D, 1, &TextBuffer);
+        //glCreateTextures(GL_TEXTURE_2D, 1, &TextBuffer);
         glGenTextures(1, &TextBuffer);
         glBindTexture(GL_TEXTURE_2D, TextBuffer);
-        glTexStorage2D(GL_TEXTURE_2D, 1, GL_R8UI, width, height);
+        glTexStorage2D(GL_TEXTURE_2D, 1, GL_R8UI, Width, Height);
 
-        FontTexture = sb7::ktx::File::Load(font ? font : "media/textures/cp437_9x16.ktx");
+        FontTexture = sb7::ktx::File::Load(FontFileName);
 
-        ScreenBuffer = new char[width * height];
-        memset(ScreenBuffer, 0, width * height);
+        ScreenBuffer = new char[Width * Height];
+        memset(ScreenBuffer, 0, Width * Height);
     }
 
     void TextOverlay::TearDown()
     {
         delete[] ScreenBuffer;
+
         glDeleteTextures(1, &FontTexture);
         glDeleteTextures(1, &TextBuffer);
         glDeleteVertexArrays(1, &VAO);
@@ -89,9 +92,10 @@ namespace sb7
     void TextOverlay::Draw()
     {
         glUseProgram(TextProgram);
+
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, TextBuffer);
-        if (Dirty)
+        if (Dirty == true)
         {
             glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, BufferWidth, BufferHeight, GL_RED_INTEGER, GL_UNSIGNED_BYTE, ScreenBuffer);
             Dirty = false;

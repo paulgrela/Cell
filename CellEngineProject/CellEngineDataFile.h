@@ -88,6 +88,7 @@ struct Particle
 class CellEngineDataFile
 {
 public:
+    bool StencilForParticlesCenters;
     bool DrawRandomColorForEveryParticle;
     bool DrawColorForEveryAtom;
     bool DrawBondsBetweenParticlesCenters;

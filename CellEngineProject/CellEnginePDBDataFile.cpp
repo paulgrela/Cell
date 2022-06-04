@@ -12,6 +12,9 @@ using namespace string_utils;
 
 CellEnginePDBDataFile::CellEnginePDBDataFile(const string_view FileName)
 {
+    NumberOfStencilBufferLoop = 3;
+    StencilForParticlesCenters = true;
+
     DrawRandomColorForEveryParticle = false;
     DrawColorForEveryAtom = false;
 
@@ -41,8 +44,6 @@ CellEnginePDBDataFile::CellEnginePDBDataFile(const string_view FileName)
     ShowDetailsInAtomScale = false;
 
     ChosenStructureIndex = 0;
-
-    NumberOfStencilBufferLoop = 3;
 
 	ReadDataFromFile(FileName);
 }
