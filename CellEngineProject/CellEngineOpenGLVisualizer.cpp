@@ -338,6 +338,8 @@ void CellEngineOpenGLVisualiser::DrawBonds(const vector<CellEngineAtom>& Atoms, 
     {
         if (DrawBonds == true)
         {
+            glUseProgram(ShaderProgramSimple);
+
             if (BondsToDraw.empty() == true)
                 FindBondsToDraw(Atoms, BondsToDraw);
 
@@ -505,7 +507,7 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
         UnsignedIntType NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = 0;
         UnsignedIntType NumberOfAllRenderedAtoms = 0;
 
-        glUseProgram(ShaderProgramSimple);
+        //glUseProgram(ShaderProgramSimple);
         DrawBonds(CellEngineDataFileObjectPointer->GetParticlesCenters(), BondsBetweenParticlesCentersToDraw, CellEngineDataFileObjectPointer->DrawBondsBetweenParticlesCenters, ViewMatrix, Center);
 
         vector<pair<uint64_t, uint64_t>> TemporaryRenderedAtomsList;
@@ -544,7 +546,7 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
                         {
                             NumberOfFoundParticlesCenterToBeRenderedInAtomDetails++;
 
-                            glUseProgram(ShaderProgramSimple);
+                            //glUseProgram(ShaderProgramSimple); //TO DO SRODKA DRAW BONDS by normalnie nie rysowal
                             DrawBonds(CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex], BondsBetweenAtomsToDraw[ParticlesCenterObject.AtomIndex], CellEngineDataFileObjectPointer->DrawBondsBetweenAtoms, ViewMatrix, Center);
 
                             glUseProgram(ShaderProgramPhong);
@@ -570,30 +572,38 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
 
         uint64_t ChosenParticleCenterIndex = PartOfStencilBufferIndex[0] | (PartOfStencilBufferIndex[1] << 8) | (PartOfStencilBufferIndex[2] << 16);
 
-        //if (ChosenParticleCenterIndex > CellEngineDataFileObjectPointer->GetParticlesCenters().size())
-        //    throw std::runtime_error("ERROR STENCIL INDEX TOO BIG = " + to_string(ChosenParticleCenterIndex) + " MAXIMAL NUMBER OF OBJECTS = " + to_string(CellEngineDataFileObjectPointer->GetParticlesCenters().size()));
-
         if (ChosenParticleCenterIndex > 0)
         {
             CellEngineAtom ChosenParticleObject;
             if (CellEngineDataFileObjectPointer->StencilForParticlesCenters == true)
-                ChosenParticleObject = CellEngineDataFileObjectPointer->GetParticlesCenters()[ChosenParticleCenterIndex];
+            {
+                if (ChosenParticleCenterIndex > CellEngineDataFileObjectPointer->GetParticlesCenters().size())
+                    throw std::runtime_error("ERROR STENCIL INDEX TOO BIG = " + to_string(ChosenParticleCenterIndex) + " MAXIMAL NUMBER OF OBJECTS = " + to_string(CellEngineDataFileObjectPointer->GetParticlesCenters().size()));
+                else
+                    ChosenParticleObject = CellEngineDataFileObjectPointer->GetParticlesCenters()[ChosenParticleCenterIndex];
+            }
             else
-                ChosenParticleObject = CellEngineDataFileObjectPointer->GetAllAtoms()[TemporaryRenderedAtomsList[ChosenParticleCenterIndex].first][TemporaryRenderedAtomsList[ChosenParticleCenterIndex].second];
+            {
+                if (TemporaryRenderedAtomsList[ChosenParticleCenterIndex].first > CellEngineDataFileObjectPointer->GetAllAtoms().size())
+                    throw std::runtime_error("ERROR STENCIL INDEX TOO BIG IN INNER 1 = " + to_string(TemporaryRenderedAtomsList[ChosenParticleCenterIndex].first) + " MAXIMAL NUMBER OF OBJECTS = " + to_string(CellEngineDataFileObjectPointer->GetAllAtoms().size()));
+                else
+                {
+                    if (TemporaryRenderedAtomsList[ChosenParticleCenterIndex].second > CellEngineDataFileObjectPointer->GetAllAtoms()[TemporaryRenderedAtomsList[ChosenParticleCenterIndex].first].size())
+                        throw std::runtime_error("ERROR STENCIL INDEX TOO BIG IN INNER 2 = " + to_string(TemporaryRenderedAtomsList[ChosenParticleCenterIndex].second) + " MAXIMAL NUMBER OF OBJECTS = " + to_string(CellEngineDataFileObjectPointer->GetAllAtoms()[TemporaryRenderedAtomsList[ChosenParticleCenterIndex].first].size()));
+                    else
+                        ChosenParticleObject = CellEngineDataFileObjectPointer->GetAllAtoms()[TemporaryRenderedAtomsList[ChosenParticleCenterIndex].first][TemporaryRenderedAtomsList[ChosenParticleCenterIndex].second];
+                }
+            }
 
             glDisable(GL_SCISSOR_TEST);
 
             RenderObject(ChosenParticleObject, ViewMatrix, Center, false, false, false, NumberOfAllRenderedAtoms, true);
 
-            //vmath::vec3 AtomPosition = LengthUnit * ChosenParticleObject.Position();
-
             glDisable(GL_CULL_FACE);
             TextOverlayObject.Clear();
-            TextOverlayObject.DrawText(string("ATOM DATA: Index = " + to_string(ChosenParticleObject.AtomIndex) + " Name = " + ChosenParticleObject.Name + " ResName = " + ChosenParticleObject.ResName + " Chain [" + ChosenParticleObject.Chain + "] EntityId = " + to_string(ChosenParticleObject.EntityId)).c_str(), 2, 2);
+            TextOverlayObject.DrawText(string("ATOM DATA: Serial = " + to_string(ChosenParticleObject.Serial) + " Name = " + ChosenParticleObject.Name + " ResName = " + ChosenParticleObject.ResName + " Chain [" + ChosenParticleObject.Chain + "] EntityId = " + to_string(ChosenParticleObject.EntityId)).c_str(), 2, 2);
             TextOverlayObject.Draw();
             glEnable(GL_CULL_FACE);
-
-            //LoggersManagerObject.Log(STREAM("FOUND CHOSEN OBJECT INDEX = " << ChosenParticleCenterIndex << " POSITION[ X = " << AtomPosition.X() << " Y = " << AtomPosition.Y() << " Z = " << AtomPosition.Z() << " ] " << endl));
         }
 
         LoggersManagerObject.Log(STREAM("NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = " << to_string(NumberOfFoundParticlesCenterToBeRenderedInAtomDetails) << " NumberOfAllRenderedAtoms = " << to_string(NumberOfAllRenderedAtoms) << " ViewZ = " << to_string(ViewZ) << " AtomSize = " << to_string(CellEngineDataFileObjectPointer->SizeX) << endl));
