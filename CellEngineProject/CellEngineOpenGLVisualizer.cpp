@@ -108,6 +108,8 @@ protected:
     void DrawBonds(const vector<CellEngineAtom>& Atoms, vector<pair<UnsignedIntType, UnsignedIntType>>& BondsToDraw, const bool DrawBonds, const vmath::mat4& ViewMatrix, const vmath::vec3& Center);
     void DrawBond(float x1, float y1, float z1, float x2, float y2, float z2);
 protected:
+    string GetEntityName(const uint64_t EntityId);
+protected:
     bool CheckVisibilityOfParticles(UnsignedIntType EntityId);
     void SetVisibilityOfAllParticles(bool VisibleParam);
     void SetVisibilityOfParticlesExcept(UnsignedIntType EntityId, bool VisibleParam);
@@ -155,7 +157,7 @@ void CellEngineOpenGLVisualiser::StartUp()
         LoadShadersSimple();
         LoadShadersPhong();
 
-        TextOverlayObject.Init(120, 80, "..//textures//cp437_9x16.ktx");
+        TextOverlayObject.Init(160, 80, "..//textures//cp437_9x16.ktx");
 
         glGenBuffers(1, &UniformsBuffer);
         glBindBuffer(GL_UNIFORM_BUFFER, UniformsBuffer);
@@ -507,7 +509,6 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
         UnsignedIntType NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = 0;
         UnsignedIntType NumberOfAllRenderedAtoms = 0;
 
-        //glUseProgram(ShaderProgramSimple);
         DrawBonds(CellEngineDataFileObjectPointer->GetParticlesCenters(), BondsBetweenParticlesCentersToDraw, CellEngineDataFileObjectPointer->DrawBondsBetweenParticlesCenters, ViewMatrix, Center);
 
         vector<pair<uint64_t, uint64_t>> TemporaryRenderedAtomsList;
@@ -546,7 +547,6 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
                         {
                             NumberOfFoundParticlesCenterToBeRenderedInAtomDetails++;
 
-                            //glUseProgram(ShaderProgramSimple); //TO DO SRODKA DRAW BONDS by normalnie nie rysowal
                             DrawBonds(CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex], BondsBetweenAtomsToDraw[ParticlesCenterObject.AtomIndex], CellEngineDataFileObjectPointer->DrawBondsBetweenAtoms, ViewMatrix, Center);
 
                             glUseProgram(ShaderProgramPhong);
@@ -601,7 +601,7 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
 
             glDisable(GL_CULL_FACE);
             TextOverlayObject.Clear();
-            TextOverlayObject.DrawText(string("ATOM DATA: Serial = " + to_string(ChosenParticleObject.Serial) + " Name = " + ChosenParticleObject.Name + " ResName = " + ChosenParticleObject.ResName + " Chain [" + ChosenParticleObject.Chain + "] EntityId = " + to_string(ChosenParticleObject.EntityId)).c_str(), 2, 2);
+            TextOverlayObject.DrawText(string("ATOM DATA: Serial = " + to_string(ChosenParticleObject.Serial) + " Name = " + ChosenParticleObject.Name + " ResName = " + ChosenParticleObject.ResName + " Chain [" + ChosenParticleObject.Chain + "] EntityId = " + to_string(ChosenParticleObject.EntityId) + " Entity Name = [" + GetEntityName(ChosenParticleObject.EntityId) + "]").c_str(), 2, 2);
             TextOverlayObject.Draw();
             glEnable(GL_CULL_FACE);
         }
@@ -609,6 +609,23 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
         LoggersManagerObject.Log(STREAM("NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = " << to_string(NumberOfFoundParticlesCenterToBeRenderedInAtomDetails) << " NumberOfAllRenderedAtoms = " << to_string(NumberOfAllRenderedAtoms) << " ViewZ = " << to_string(ViewZ) << " AtomSize = " << to_string(CellEngineDataFileObjectPointer->SizeX) << endl));
     }
     CATCH("rendering cell visualization")
+}
+
+string CellEngineOpenGLVisualiser::GetEntityName(const uint64_t EntityId)
+{
+    string EntityName;
+
+    try
+    {
+        auto EntityIterator = CellEngineDataFileObjectPointer->ParticlesKinds.find(EntityId);
+        if (EntityIterator != CellEngineDataFileObjectPointer->ParticlesKinds.end())
+            EntityName = EntityIterator->second.Name;
+        else
+            EntityName = "";
+    }
+    CATCH("getting entity name")
+
+    return EntityName;
 }
 
 void CellEngineOpenGLVisualiser::SetVisibilityOfAllParticles(bool VisibleParam)
