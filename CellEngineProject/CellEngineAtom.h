@@ -13,7 +13,7 @@ struct CellEngineAtom
 public:
     UnsignedIntType AtomIndex;
     IntType Serial;
-    char Name[2];
+    char Name[5];
     char ResName[4];
     float X;
     float Y;

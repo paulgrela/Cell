@@ -6,6 +6,8 @@
 #include <sb7color.h>
 #include "CellEngineAtom.h"
 
+using namespace sb7;
+
 //czytac z pliku XML
 const uint64_t DNACode = 694;
 const uint64_t RNACode = 695;

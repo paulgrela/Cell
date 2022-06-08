@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Settings>
+	<Algorithm>
+		<MultiThreaded>true</MultiThreaded>
+		<SetProcessPriorityHighest>true</SetProcessPriorityHighest>
+	</Algorithm>
+	<CellTextColors>
+		<Windows>
+			<Color1>10</Color1>
+			<Color2>13</Color2>
+			<Color3>10</Color3>
+			<Color4>13</Color4>
+		</Windows>							
+		<Linux>
+			<Color1>92</Color1>
+			<Color2>95</Color2>
+			<Color3>92</Color3>
+			<Color4>95</Color4>
+		</Linux>						
+	</CellTextColors>
+	<Logger>
+		<PrintToConsole>true</PrintToConsole>
+		<PrintToFiles>true</PrintToFiles>
+		<PrintLineNumberToConsole>false</PrintLineNumberToConsole>
+		<PrintDateTimeToConsole>false</PrintDateTimeToConsole>
+		<PrintProcessIdToConsole>false</PrintProcessIdToConsole>
+		<PrintProcessPriorityLevelToConsole>false</PrintProcessPriorityLevelToConsole>
+		<PrintThreadIdToConsole>false</PrintThreadIdToConsole>
+		<PrintLineNumberToFile>true</PrintLineNumberToFile>
+		<PrintDateTimeToFile>true</PrintDateTimeToFile>
+		<PrintProcessIdToFile>false</PrintProcessIdToFile>
+		<PrintProcessPriorityLevelToFile>false</PrintProcessPriorityLevelToFile>
+		<PrintThreadIdToFile>true</PrintThreadIdToFile>
+		<MaximalNumberOfLinesInOneFile>200</MaximalNumberOfLinesInOneFile>
+	</Logger>
+	<Cells>
+		<Cell id="1">
+			<ExecuteCellBool>true</ExecuteCellBool>
+			<CellFileName>c:\Projects\Programs\C++\Cell\WholeCellData\cellpack_atom_instances_6973_curated.cif</CellFileName>
+			<InheritCommonColors>false</InheritCommonColors>
+			<RandomColors>false</RandomColors>
+			<NumberOfStencilBufferLoop>3</NumberOfStencilBufferLoop>
+			<StencilForParticlesCenters>false</StencilForParticlesCenters>
+			<DrawRandomColorForEveryParticle>false</DrawRandomColorForEveryParticle>
+			<DrawColorForEveryAtom>false</DrawColorForEveryAtom>
+			<DrawBondsBetweenParticlesCenters>false</DrawBondsBetweenParticlesCenters>
+			<DrawBondsBetweenAtoms>false</DrawBondsBetweenAtoms>
+			<CheckAtomVisibility>true</CheckAtomVisibility>
+			<CutZ>200</CutZ>
+			<Distance>1500</Distance>
+			<SizeX>1</SizeX>
+			<SizeY>1</SizeY>
+			<SizeZ>1</SizeZ>
+			<SizeStep>0.1</SizeStep>
+			<ViewStep>50</ViewStep>
+			<CameraXMoveStep>100</CameraXMoveStep>
+			<CameraYMoveStep>100</CameraYMoveStep>
+			<CameraZMoveStep>100</CameraZMoveStep>
+			<ViewXMoveStep>100</ViewXMoveStep>
+			<ViewYMoveStep>100</ViewYMoveStep>
+			<ViewZMoveStep>100</ViewZMoveStep>
+			<ShowDetailsInAtomScale>false</ShowDetailsInAtomScale>
+			<ChosenStructureIndex>0</ChosenStructureIndex>
+			<LoadOfAtomsStep>100</LoadOfAtomsStep>			
+			<AtomsColors>
+				<C>Turquoise</C>
+				<0>Red</0>
+				<H>White</H>
+				<N>Blue</N>
+				<P>Green</P>
+				<E>Gray</E>
+			</AtomsColors>
+			<Particles>				
+				<Particle id="694">
+					<Name>DNA</Name>
+					<Color>Red</Color>					
+				</Particle>
+			</Particles>			
+		</Cell>
+		
+		<Cell id="2">
+		</Cell>
+		
+		<Cell id="3">
+		</Cell>
+	</Cells>
+</Settings>

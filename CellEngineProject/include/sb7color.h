@@ -2,10 +2,13 @@
 #ifndef __SB7COLOR_H__
 #define __SB7COLOR_H__
 
+#include <string>
 #include <vmath.h>
 
 namespace sb7
 {
+    vmath::vec4 GetColorVec4FromColorName(const std::string& ColorName);
+
     struct color
     {
         static const vmath::vec4 AliceBlue;
