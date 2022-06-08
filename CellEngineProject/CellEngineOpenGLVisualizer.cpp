@@ -565,45 +565,54 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
             }
             CellEngineDataFileObjectPointer->ShowNextStructureFromActiveFilm();
 
-            GLuint StencilIndex;
-            glReadPixels(MousePosition.s.X, (float)Info.WindowHeight - MousePosition.s.Y - 1, 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &StencilIndex);
-            PartOfStencilBufferIndex[LoopCounter] = StencilIndex;
+            if (CellEngineDataFileObjectPointer->NumberOfStencilBufferLoop > 1)
+            {
+                GLuint StencilIndex;
+                glReadPixels(MousePosition.s.X, (float)Info.WindowHeight - MousePosition.s.Y - 1, 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &StencilIndex);
+                PartOfStencilBufferIndex[LoopCounter] = StencilIndex;
+            }
         }
 
-        uint64_t ChosenParticleCenterIndex = PartOfStencilBufferIndex[0] | (PartOfStencilBufferIndex[1] << 8) | (PartOfStencilBufferIndex[2] << 16);
-
-        if (ChosenParticleCenterIndex > 0)
+        if (CellEngineDataFileObjectPointer->NumberOfStencilBufferLoop > 1)
         {
-            CellEngineAtom ChosenParticleObject;
-            if (CellEngineDataFileObjectPointer->StencilForParticlesCenters == true)
+            uint64_t ChosenParticleCenterIndex = PartOfStencilBufferIndex[0] | (PartOfStencilBufferIndex[1] << 8) | (PartOfStencilBufferIndex[2] << 16);
+
+            if (ChosenParticleCenterIndex > 0)
             {
-                if (ChosenParticleCenterIndex > CellEngineDataFileObjectPointer->GetParticlesCenters().size())
-                    throw std::runtime_error("ERROR STENCIL INDEX TOO BIG = " + to_string(ChosenParticleCenterIndex) + " MAXIMAL NUMBER OF OBJECTS = " + to_string(CellEngineDataFileObjectPointer->GetParticlesCenters().size()));
-                else
-                    ChosenParticleObject = CellEngineDataFileObjectPointer->GetParticlesCenters()[ChosenParticleCenterIndex];
-            }
-            else
-            {
-                if (TemporaryRenderedAtomsList[ChosenParticleCenterIndex].first > CellEngineDataFileObjectPointer->GetAllAtoms().size())
-                    throw std::runtime_error("ERROR STENCIL INDEX TOO BIG IN INNER 1 = " + to_string(TemporaryRenderedAtomsList[ChosenParticleCenterIndex].first) + " MAXIMAL NUMBER OF OBJECTS = " + to_string(CellEngineDataFileObjectPointer->GetAllAtoms().size()));
+                CellEngineAtom ChosenParticleObject;
+                if (CellEngineDataFileObjectPointer->StencilForParticlesCenters == true)
+                {
+                    if (ChosenParticleCenterIndex > CellEngineDataFileObjectPointer->GetParticlesCenters().size())
+                        throw std::runtime_error("ERROR STENCIL INDEX TOO BIG = " + to_string(ChosenParticleCenterIndex) + " MAXIMAL NUMBER OF OBJECTS = " + to_string(CellEngineDataFileObjectPointer->GetParticlesCenters().size()));
+                    else
+                        ChosenParticleObject = CellEngineDataFileObjectPointer->GetParticlesCenters()[ChosenParticleCenterIndex];
+                }
                 else
                 {
-                    if (TemporaryRenderedAtomsList[ChosenParticleCenterIndex].second > CellEngineDataFileObjectPointer->GetAllAtoms()[TemporaryRenderedAtomsList[ChosenParticleCenterIndex].first].size())
-                        throw std::runtime_error("ERROR STENCIL INDEX TOO BIG IN INNER 2 = " + to_string(TemporaryRenderedAtomsList[ChosenParticleCenterIndex].second) + " MAXIMAL NUMBER OF OBJECTS = " + to_string(CellEngineDataFileObjectPointer->GetAllAtoms()[TemporaryRenderedAtomsList[ChosenParticleCenterIndex].first].size()));
+                    if (TemporaryRenderedAtomsList[ChosenParticleCenterIndex].first > CellEngineDataFileObjectPointer->GetAllAtoms().size())
+                        throw std::runtime_error("ERROR STENCIL INDEX TOO BIG IN INNER 1 = " + to_string(TemporaryRenderedAtomsList[ChosenParticleCenterIndex].first) + " MAXIMAL NUMBER OF OBJECTS = " + to_string(CellEngineDataFileObjectPointer->GetAllAtoms().size()));
                     else
-                        ChosenParticleObject = CellEngineDataFileObjectPointer->GetAllAtoms()[TemporaryRenderedAtomsList[ChosenParticleCenterIndex].first][TemporaryRenderedAtomsList[ChosenParticleCenterIndex].second];
+                    {
+                        if (TemporaryRenderedAtomsList[ChosenParticleCenterIndex].second > CellEngineDataFileObjectPointer->GetAllAtoms()[TemporaryRenderedAtomsList[ChosenParticleCenterIndex].first].size())
+                            throw std::runtime_error("ERROR STENCIL INDEX TOO BIG IN INNER 2 = " + to_string(TemporaryRenderedAtomsList[ChosenParticleCenterIndex].second) + " MAXIMAL NUMBER OF OBJECTS = " + to_string(CellEngineDataFileObjectPointer->GetAllAtoms()[TemporaryRenderedAtomsList[ChosenParticleCenterIndex].first].size()));
+                        else
+                            ChosenParticleObject = CellEngineDataFileObjectPointer->GetAllAtoms()[TemporaryRenderedAtomsList[ChosenParticleCenterIndex].first][TemporaryRenderedAtomsList[ChosenParticleCenterIndex].second];
+                    }
                 }
+
+                glDisable(GL_SCISSOR_TEST);
+
+                RenderObject(ChosenParticleObject, ViewMatrix, Center, false, false, false, NumberOfAllRenderedAtoms, true);
+
+                glDisable(GL_CULL_FACE);
+                TextOverlayObject.Clear();
+                string AtomDescription = "ATOM DATA: Serial = " + to_string(ChosenParticleObject.Serial) + " Name = " + ChosenParticleObject.Name + " ResName = " + ChosenParticleObject.ResName;
+                if (CellEngineDataFileObjectPointer->StencilForParticlesCenters == false)
+                    AtomDescription += " Chain [" + string(ChosenParticleObject.Chain) + "] EntityId = " + to_string(ChosenParticleObject.EntityId) + " Entity Name = [" + GetEntityName(ChosenParticleObject.EntityId) + "]";
+                TextOverlayObject.DrawText(AtomDescription.c_str(), 2, 2);
+                TextOverlayObject.Draw();
+                glEnable(GL_CULL_FACE);
             }
-
-            glDisable(GL_SCISSOR_TEST);
-
-            RenderObject(ChosenParticleObject, ViewMatrix, Center, false, false, false, NumberOfAllRenderedAtoms, true);
-
-            glDisable(GL_CULL_FACE);
-            TextOverlayObject.Clear();
-            TextOverlayObject.DrawText(string("ATOM DATA: Serial = " + to_string(ChosenParticleObject.Serial) + " Name = " + ChosenParticleObject.Name + " ResName = " + ChosenParticleObject.ResName + " Chain [" + ChosenParticleObject.Chain + "] EntityId = " + to_string(ChosenParticleObject.EntityId) + " Entity Name = [" + GetEntityName(ChosenParticleObject.EntityId) + "]").c_str(), 2, 2);
-            TextOverlayObject.Draw();
-            glEnable(GL_CULL_FACE);
         }
 
         LoggersManagerObject.Log(STREAM("NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = " << to_string(NumberOfFoundParticlesCenterToBeRenderedInAtomDetails) << " NumberOfAllRenderedAtoms = " << to_string(NumberOfAllRenderedAtoms) << " ViewZ = " << to_string(ViewZ) << " AtomSize = " << to_string(CellEngineDataFileObjectPointer->SizeX) << endl));
@@ -708,7 +717,7 @@ void CellEngineOpenGLVisualiser::OnKey(int Key, int Action)
                 case '0': AtomGraphicsObject.Load("..//objects//sphere.sbm");  break;
 
                 case GLFW_KEY_F6: RenderObjects = !RenderObjects; break;
-                case GLFW_KEY_F7: CellEngineDataFileObjectPointer->StencilForParticlesCenters = !CellEngineDataFileObjectPointer->StencilForParticlesCenters;  break;
+                //case GLFW_KEY_F7: CellEngineDataFileObjectPointer->StencilForParticlesCenters = !CellEngineDataFileObjectPointer->StencilForParticlesCenters;  break;
                 case GLFW_KEY_F8: CellEngineDataFileObjectPointer->NumberOfStencilBufferLoop == 1 ? CellEngineDataFileObjectPointer->NumberOfStencilBufferLoop = 3 : CellEngineDataFileObjectPointer->NumberOfStencilBufferLoop = 1; break;
                 case GLFW_KEY_F9: CellEngineDataFileObjectPointer->DrawColorForEveryAtom = !CellEngineDataFileObjectPointer->DrawColorForEveryAtom; break;
                 case GLFW_KEY_F11: CellEngineDataFileObjectPointer->DrawRandomColorForEveryParticle = !CellEngineDataFileObjectPointer->DrawRandomColorForEveryParticle; break;
