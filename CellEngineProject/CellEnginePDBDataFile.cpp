@@ -15,8 +15,7 @@ CellEnginePDBDataFile::CellEnginePDBDataFile(const string_view FileName)
     NumberOfStencilBufferLoop = 3;
     StencilForParticlesCenters = true;
 
-    DrawRandomColorForEveryParticle = false;
-    DrawColorForEveryAtom = false;
+    MakeColorsTypeObject = MakeColorsType::DrawColorForEveryAtom;
 
     DrawBondsBetweenParticlesCenters = false;
     DrawBondsBetweenAtoms = false;

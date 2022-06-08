@@ -48,8 +48,7 @@ CellEngineCIFDataFile::CellEngineCIFDataFile(const string_view FileName)
     NumberOfStencilBufferLoop = 3;
     StencilForParticlesCenters = false;
 
-    DrawRandomColorForEveryParticle = false;
-    DrawColorForEveryAtom = false;
+    MakeColorsTypeObject = MakeColorsType::DrawColorForEveryParticle;
 
     DrawBondsBetweenParticlesCenters = false;
     DrawBondsBetweenAtoms = false;

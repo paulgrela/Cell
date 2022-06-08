@@ -443,12 +443,13 @@ inline vmath::vec3 CellEngineOpenGLVisualiser::GetColor(const CellEngineAtom& At
         if (Chosen == true)
             FinalColor = FromVec4ToVec3(sb7::color::Yellow);
         else
-        {
-            if (CellEngineDataFileObjectPointer->DrawRandomColorForEveryParticle == true)
-                FinalColor = AtomObject.RandomParticleColor;
-            else
-                FinalColor = (CellEngineDataFileObjectPointer->DrawColorForEveryAtom == false ? AtomObject.ParticleColor : AtomObject.AtomColor);
-        }
+            switch (CellEngineDataFileObjectPointer->MakeColorsTypeObject)
+            {
+                case CellEngineDataFile::MakeColorsType::DrawColorForEveryAtom : FinalColor = AtomObject.AtomColor; break;
+                case CellEngineDataFile::MakeColorsType::DrawColorForEveryParticle : FinalColor = AtomObject.ParticleColor; break;
+                case CellEngineDataFile::MakeColorsType::DrawRandomColorForEveryParticle : FinalColor = AtomObject.RandomParticleColor; break;
+                default : break;
+            }
     }
     CATCH("getting color")
 
@@ -604,13 +605,12 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
 
                 RenderObject(ChosenParticleObject, ViewMatrix, Center, false, false, false, NumberOfAllRenderedAtoms, true);
 
+                glEnable(GL_SCISSOR_TEST);
+                glScissor(0, Info.WindowHeight - 16, Info.WindowWidth, 16);
+                glClear(GL_COLOR_BUFFER_BIT);
+                glDisable(GL_SCISSOR_TEST);
+
                 glDisable(GL_CULL_FACE);
-
-                                                                                                                        glEnable(GL_SCISSOR_TEST);
-                                                                                                                        glScissor(0, Info.WindowHeight - 16, Info.WindowWidth, 16);
-                                                                                                                        glClear(GL_COLOR_BUFFER_BIT);
-                                                                                                                        glDisable(GL_SCISSOR_TEST);
-
                 TextOverlayObject.Clear();
                 string AtomDescription = "ATOM DATA: Serial = " + to_string(ChosenParticleObject.Serial) + " Name = " + ChosenParticleObject.Name + " ResName = " + ChosenParticleObject.ResName;
                 if (CellEngineDataFileObjectPointer->StencilForParticlesCenters == false)
@@ -723,10 +723,13 @@ void CellEngineOpenGLVisualiser::OnKey(int Key, int Action)
                 case '0': AtomGraphicsObject.Load("..//objects//sphere.sbm");  break;
 
                 case GLFW_KEY_F6: RenderObjects = !RenderObjects; break;
-                case GLFW_KEY_F8: CellEngineDataFileObjectPointer->NumberOfStencilBufferLoop == 1 ? CellEngineDataFileObjectPointer->NumberOfStencilBufferLoop = 3 : CellEngineDataFileObjectPointer->NumberOfStencilBufferLoop = 1; break;
-                case GLFW_KEY_F9: CellEngineDataFileObjectPointer->DrawColorForEveryAtom = !CellEngineDataFileObjectPointer->DrawColorForEveryAtom; break;
-                case GLFW_KEY_F11: CellEngineDataFileObjectPointer->DrawRandomColorForEveryParticle = !CellEngineDataFileObjectPointer->DrawRandomColorForEveryParticle; break;
-                case GLFW_KEY_F10: SetVisibilityOfParticlesExcept(694, false); break;
+                case GLFW_KEY_F7: CellEngineDataFileObjectPointer->NumberOfStencilBufferLoop == 1 ? CellEngineDataFileObjectPointer->NumberOfStencilBufferLoop = 3 : CellEngineDataFileObjectPointer->NumberOfStencilBufferLoop = 1; break;
+
+                case GLFW_KEY_F8: CellEngineDataFileObjectPointer->MakeColorsTypeObject = CellEngineDataFile::MakeColorsType::DrawColorForEveryAtom; break;
+                case GLFW_KEY_F9: CellEngineDataFileObjectPointer->MakeColorsTypeObject = CellEngineDataFile::MakeColorsType::DrawColorForEveryParticle; break;
+                case GLFW_KEY_F10: CellEngineDataFileObjectPointer->MakeColorsTypeObject = CellEngineDataFile::MakeColorsType::DrawRandomColorForEveryParticle; break;
+
+                case GLFW_KEY_F11: SetVisibilityOfParticlesExcept(694, false); break;
                 case GLFW_KEY_F12: SetVisibilityOfAllParticles(true); break;
 
                 default: break;

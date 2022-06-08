@@ -91,10 +91,20 @@ class CellEngineDataFile
 {
 public:
     bool StencilForParticlesCenters;
-    bool DrawRandomColorForEveryParticle;
-    bool DrawColorForEveryAtom;
+    std::uint64_t NumberOfStencilBufferLoop;
+    std::uint64_t LoadOfAtomsStep;
+
+    enum class MakeColorsType
+    {
+        DrawColorForEveryAtom,
+        DrawColorForEveryParticle,
+        DrawRandomColorForEveryParticle
+    };
+    MakeColorsType MakeColorsTypeObject;
+
     bool DrawBondsBetweenParticlesCenters;
     bool DrawBondsBetweenAtoms;
+
     bool CheckAtomVisibility;
     float CutZ;
     float Distance;
@@ -102,8 +112,6 @@ public:
     float SizeY;
     float SizeZ;
     float SizeStep;
-    std::uint64_t NumberOfStencilBufferLoop;
-    std::uint64_t LoadOfAtomsStep;
     float ViewStep;
     float CameraXMoveStep;
     float CameraYMoveStep;

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Settings>
+	<ExecuteCell>1<ExecuteCell>	
 	<Algorithm>
 		<MultiThreaded>true</MultiThreaded>
 		<SetProcessPriorityHighest>true</SetProcessPriorityHighest>
@@ -8,14 +9,10 @@
 		<Windows>
 			<Color1>10</Color1>
 			<Color2>13</Color2>
-			<Color3>10</Color3>
-			<Color4>13</Color4>
 		</Windows>							
 		<Linux>
 			<Color1>92</Color1>
 			<Color2>95</Color2>
-			<Color3>92</Color3>
-			<Color4>95</Color4>
 		</Linux>						
 	</CellTextColors>
 	<Logger>
@@ -35,16 +32,17 @@
 	</Logger>
 	<Cells>
 		<Cell id="1">
-			<ExecuteCellBool>true</ExecuteCellBool>
 			<CellFileName>c:\Projects\Programs\C++\Cell\WholeCellData\cellpack_atom_instances_6973_curated.cif</CellFileName>
-			<InheritCommonColors>false</InheritCommonColors>
-			<RandomColors>false</RandomColors>
+			
 			<NumberOfStencilBufferLoop>3</NumberOfStencilBufferLoop>
 			<StencilForParticlesCenters>false</StencilForParticlesCenters>
+			
 			<DrawRandomColorForEveryParticle>false</DrawRandomColorForEveryParticle>
 			<DrawColorForEveryAtom>false</DrawColorForEveryAtom>
+			
 			<DrawBondsBetweenParticlesCenters>false</DrawBondsBetweenParticlesCenters>
 			<DrawBondsBetweenAtoms>false</DrawBondsBetweenAtoms>
+			
 			<CheckAtomVisibility>true</CheckAtomVisibility>
 			<CutZ>200</CutZ>
 			<Distance>1500</Distance>
@@ -61,7 +59,8 @@
 			<ViewZMoveStep>100</ViewZMoveStep>
 			<ShowDetailsInAtomScale>false</ShowDetailsInAtomScale>
 			<ChosenStructureIndex>0</ChosenStructureIndex>
-			<LoadOfAtomsStep>100</LoadOfAtomsStep>			
+			<LoadOfAtomsStep>100</LoadOfAtomsStep>		
+			
 			<AtomsColors>
 				<C>Turquoise</C>
 				<0>Red</0>
@@ -75,6 +74,38 @@
 					<Name>DNA</Name>
 					<Color>Red</Color>					
 				</Particle>
+				<Particle id="695">
+					<Name>RNA</Name>
+					<Color>Blue</Color>					
+				</Particle>				
+				<Particle id="682">
+					<Name>RIBOSOME_70S</Name>
+					<Color>Lime</Color>					
+				</Particle>				
+				<Particle id="681">
+					<Name>RIBOSOME_50S</Name>
+					<Color>Pink</Color>					
+				</Particle>				
+				<Particle id="679">
+					<Name>RIBOSOME_30S</Name>
+					<Color>Orange</Color>					
+				</Particle>				
+				<Particle id="683">
+					<Name>RNA_POLYMERASE</Name>
+					<Color>Purple</Color>					
+				</Particle>								
+				<Particle id="516">
+					<Name>DNA_POLYMERASE_GAMMA_COMPLEX</Name>
+					<Color>Yellow</Color>					
+				</Particle>				
+				<Particle id="513">
+					<Name>DNA_POLYMERASE_CORE</Name>
+					<Color>Cyan</Color>					
+				</Particle>				
+				<Particle id="1000">
+					<Name>OTHERS</Name>
+					<Color>Green</Color>					
+				</Particle>								
 			</Particles>			
 		</Cell>
 		
