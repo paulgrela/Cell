@@ -12,6 +12,8 @@ using namespace string_utils;
 
 CellEnginePDBDataFile::CellEnginePDBDataFile(const string_view FileName)
 {
+    ChosenStructureIndex = 0;
+
     NumberOfStencilBufferLoop = 3;
     StencilForDrawingObjectsTypesObject = StencilForDrawingObjectsTypes::StencilForDrawingOnlyParticlesCenters;
 
@@ -20,16 +22,24 @@ CellEnginePDBDataFile::CellEnginePDBDataFile(const string_view FileName)
     DrawBondsBetweenParticlesCenters = false;
     DrawBondsBetweenAtoms = false;
 
+    ShowDetailsInAtomScale = false;
     CheckAtomVisibility = false;
     CutZ = 1000;
     Distance = 1000;
+    LoadOfAtomsStep = 0;
+
+    XLowToDrawInAtomScale = 0;
+    XHighToDrawInAtomScale = 0;
+    YLowToDrawInAtomScale = 0;
+    YHighToDrawInAtomScale = 0;
+    ZLowToDrawInAtomScale = 0;
+    ZHighToDrawInAtomScale = 0;
 
     SizeX = 1;
     SizeY = 1;
     SizeZ = 1;
 
     SizeStep = 0.01;
-
     ViewStep = 3;
 
     CameraXMoveStep = 1;
@@ -39,10 +49,6 @@ CellEnginePDBDataFile::CellEnginePDBDataFile(const string_view FileName)
     ViewXMoveStep = 1;
     ViewYMoveStep = 1;
     ViewZMoveStep = 1;
-
-    ShowDetailsInAtomScale = false;
-
-    ChosenStructureIndex = 0;
 
 	ReadDataFromFile(FileName);
 }

@@ -45,6 +45,8 @@ CellEngineAtom CellEngineCIFDataFile::ParseRecord(const char* LocalCIFRecord)
 
 CellEngineCIFDataFile::CellEngineCIFDataFile(const string_view FileName)
 {
+    ChosenStructureIndex = 0;
+
     NumberOfStencilBufferLoop = 3;
     StencilForDrawingObjectsTypesObject = StencilForDrawingObjectsTypes::StencilForDrawingOnlyInAtomScale;
 
@@ -53,10 +55,19 @@ CellEngineCIFDataFile::CellEngineCIFDataFile(const string_view FileName)
     DrawBondsBetweenParticlesCenters = false;
     DrawBondsBetweenAtoms = false;
 
+    ShowDetailsInAtomScale = true;//ShowDetailsInAtomScale = false;
     CheckAtomVisibility =  true;
     CutZ = 200;
     Distance = 1500;
     //Distance = 200;
+    LoadOfAtomsStep = 1;//LoadOfAtomsStep = 100;
+
+    XLowToDrawInAtomScale = -200;
+    XHighToDrawInAtomScale = 200;
+    YLowToDrawInAtomScale = -200;
+    YHighToDrawInAtomScale = 200;
+    ZLowToDrawInAtomScale = -300;
+    ZHighToDrawInAtomScale = 100;
 
     SizeX = 1;
     SizeY = 1;
@@ -73,12 +84,6 @@ CellEngineCIFDataFile::CellEngineCIFDataFile(const string_view FileName)
     ViewXMoveStep = 100;
     ViewYMoveStep = 100;
     ViewZMoveStep = 100;
-
-    ShowDetailsInAtomScale = false;
-
-    ChosenStructureIndex = 0;
-
-    LoadOfAtomsStep = 100;
 
     ReadDataFromFile(FileName);
 }

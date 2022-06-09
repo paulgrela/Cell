@@ -115,6 +115,13 @@ public:
     float Distance;
     std::uint64_t LoadOfAtomsStep;
 public:
+    float XLowToDrawInAtomScale;
+    float XHighToDrawInAtomScale;
+    float YLowToDrawInAtomScale;
+    float YHighToDrawInAtomScale;
+    float ZLowToDrawInAtomScale;
+    float ZHighToDrawInAtomScale;
+public:
     float SizeX;
     float SizeY;
     float SizeZ;
