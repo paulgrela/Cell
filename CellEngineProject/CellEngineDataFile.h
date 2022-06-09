@@ -90,24 +90,31 @@ struct Particle
 class CellEngineDataFile
 {
 public:
-    bool StencilForParticlesCenters;
-    std::uint64_t NumberOfStencilBufferLoop;
-    std::uint64_t LoadOfAtomsStep;
-
     enum class MakeColorsType
     {
-        DrawColorForEveryAtom,
-        DrawColorForEveryParticle,
-        DrawRandomColorForEveryParticle
+        DrawColorForEveryAtom = 1,
+        DrawColorForEveryParticle = 2,
+        DrawRandomColorForEveryParticle = 3
     };
     MakeColorsType MakeColorsTypeObject;
-
+public:
+    enum class StencilForDrawingObjectsTypes
+    {
+        StencilForDrawingOnlyParticlesCenters = 1,
+        StencilForDrawingOnlyInAtomScale = 2
+    };
+    StencilForDrawingObjectsTypes StencilForDrawingObjectsTypesObject;
+    std::uint64_t NumberOfStencilBufferLoop;
+public:
     bool DrawBondsBetweenParticlesCenters;
     bool DrawBondsBetweenAtoms;
-
+public:
+    bool ShowDetailsInAtomScale = false;
     bool CheckAtomVisibility;
     float CutZ;
     float Distance;
+    std::uint64_t LoadOfAtomsStep;
+public:
     float SizeX;
     float SizeY;
     float SizeZ;
@@ -119,7 +126,6 @@ public:
     float ViewXMoveStep;
     float ViewYMoveStep;
     float ViewZMoveStep;
-    bool ShowDetailsInAtomScale = false;
 public:
     UnsignedIntType ChosenStructureIndex = 0;
     bool FilmOfStructuresActive = false;

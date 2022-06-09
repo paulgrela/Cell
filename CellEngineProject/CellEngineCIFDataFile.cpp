@@ -46,7 +46,7 @@ CellEngineAtom CellEngineCIFDataFile::ParseRecord(const char* LocalCIFRecord)
 CellEngineCIFDataFile::CellEngineCIFDataFile(const string_view FileName)
 {
     NumberOfStencilBufferLoop = 3;
-    StencilForParticlesCenters = false;
+    StencilForDrawingObjectsTypesObject = StencilForDrawingObjectsTypes::StencilForDrawingOnlyInAtomScale;
 
     MakeColorsTypeObject = MakeColorsType::DrawColorForEveryParticle;
 

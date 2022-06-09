@@ -34,33 +34,41 @@
 		<Cell id="1">
 			<CellFileName>c:\Projects\Programs\C++\Cell\WholeCellData\cellpack_atom_instances_6973_curated.cif</CellFileName>
 			
-			<NumberOfStencilBufferLoop>3</NumberOfStencilBufferLoop>
-			<StencilForParticlesCenters>false</StencilForParticlesCenters>
+			<ChosenStructureIndex>0</ChosenStructureIndex>
 			
-			<DrawRandomColorForEveryParticle>false</DrawRandomColorForEveryParticle>
-			<DrawColorForEveryAtom>false</DrawColorForEveryAtom>
+			<NumberOfStencilBufferLoop>3</NumberOfStencilBufferLoop>
+			<StencilForDrawingObjectsTypes>2</StencilForDrawingObjectsTypes> <!--StencilForDrawingOnlyParticlesCenters = 1, StencilForDrawingOnlyInAtomScale = 2-->
+			
+			<MakeColorsType>2</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticle = 3-->
 			
 			<DrawBondsBetweenParticlesCenters>false</DrawBondsBetweenParticlesCenters>
 			<DrawBondsBetweenAtoms>false</DrawBondsBetweenAtoms>
 			
+			<ShowDetailsInAtomScale>false</ShowDetailsInAtomScale>
 			<CheckAtomVisibility>true</CheckAtomVisibility>
 			<CutZ>200</CutZ>
 			<Distance>1500</Distance>
+			<LoadOfAtomsStep>100</LoadOfAtomsStep>
+
+			<XLow>-200</XLow>
+			<XHigh>200</XHigh>
+			<YLow>-200</YLow>
+			<YHigh>200</YHigh>
+			<ZLow>-300</ZLow>
+			<ZHigh>100</ZHigh>
+			
+			<SizeStep>0.1</SizeStep>
+			<ViewStep>50</ViewStep>			
 			<SizeX>1</SizeX>
 			<SizeY>1</SizeY>
 			<SizeZ>1</SizeZ>
-			<SizeStep>0.1</SizeStep>
-			<ViewStep>50</ViewStep>
 			<CameraXMoveStep>100</CameraXMoveStep>
 			<CameraYMoveStep>100</CameraYMoveStep>
 			<CameraZMoveStep>100</CameraZMoveStep>
 			<ViewXMoveStep>100</ViewXMoveStep>
 			<ViewYMoveStep>100</ViewYMoveStep>
 			<ViewZMoveStep>100</ViewZMoveStep>
-			<ShowDetailsInAtomScale>false</ShowDetailsInAtomScale>
-			<ChosenStructureIndex>0</ChosenStructureIndex>
-			<LoadOfAtomsStep>100</LoadOfAtomsStep>		
-			
+										
 			<AtomsColors>
 				<C>Turquoise</C>
 				<0>Red</0>

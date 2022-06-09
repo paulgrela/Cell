@@ -129,9 +129,9 @@ protected:
 protected:
     inline vmath::vec3 GetColor(const CellEngineAtom& AtomObject, bool Chosen);
     static inline void DrawCenterPoint(UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, vmath::mat4& ModelMatrix);
-    inline vmath::vec3 GetFinalModelPosition(const vmath::vec3& AtomPosition, UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, const vmath::vec3& Center, const bool CountNewPosition, const bool DrawOutsideBorder) const;
-    inline vmath::vec3 RenderObject(const CellEngineAtom& AtomObject, const vmath::mat4& ViewMatrix, const vmath::vec3& Center, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, UnsignedIntType& NumberOfAllRenderedAtoms, bool Chosen);
-    inline vmath::vec3 CreateUniformBlockForVertexShader(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4 ModelMatrix, const vmath::vec3& Center, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, bool DrawAdditional);
+    inline bool GetFinalModelVisibility(const vmath::vec3& AtomPosition, UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, const vmath::vec3& Center, const bool CountNewPosition, const bool DrawOutsideBorder) const;
+    inline bool RenderObject(const CellEngineAtom& AtomObject, const vmath::mat4& ViewMatrix, const vmath::vec3& Center, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, UnsignedIntType& NumberOfAllRenderedAtoms, bool Chosen);
+    inline bool CreateUniformBlockForVertexShader(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4 ModelMatrix, const vmath::vec3& Center, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, bool DrawAdditional);
 protected:
     [[nodiscard]] inline bool CheckDistanceToDrawDetailsInAtomScale(const float XNew, const float YNew, const float ZNew) const;
 };
@@ -364,11 +364,10 @@ inline bool CellEngineOpenGLVisualiser::CheckDistanceToDrawDetailsInAtomScale(co
     if (CellEngineDataFileObjectPointer->CheckAtomVisibility == true)
     {
         if (ViewZ > CellEngineDataFileObjectPointer->Distance)
-            return sqrt((XNew * XNew) + (YNew * YNew) + (ZNew * ZNew)) > CellEngineDataFileObjectPointer->Distance && ZNew > CellEngineDataFileObjectPointer->CutZ;
+            return ZNew > CellEngineDataFileObjectPointer->CutZ && sqrt((XNew * XNew) + (YNew * YNew) + (ZNew * ZNew)) > CellEngineDataFileObjectPointer->Distance;
             //return ((XNew * XNew) + (YNew * YNew) + (ZNew * ZNew) > CellEngineDataFileObjectPointer->Distance * CellEngineDataFileObjectPointer->Distance) && ZNew > CellEngineDataFileObjectPointer->CutZ;
         else
-            return (ZNew > ViewZ - 300 && ZNew < ViewZ + 100 && XNew >- 200 && XNew < 200 && YNew > -200 && YNew < 200);
-            //return (XNew >- 10 && XNew < 10 && YNew > -10 && YNew < 10 && ZNew > -10);
+            return (ZNew > ViewZ - 300 && ZNew < ViewZ + 100 && XNew > -200 && XNew < 200 && YNew > -200 && YNew < 200);
     }
     else
         return false;
@@ -384,7 +383,7 @@ inline void CellEngineOpenGLVisualiser::DrawCenterPoint(UniformsBlock*  MatrixUn
     CATCH("drawing center point for data for cell visualization")
 }
 
-inline vmath::vec3 CellEngineOpenGLVisualiser::GetFinalModelPosition(const vmath::vec3& AtomPosition, UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, const vmath::vec3& Center, const bool CountNewPosition, const bool DrawOutsideBorder) const
+inline bool CellEngineOpenGLVisualiser::GetFinalModelVisibility(const vmath::vec3& AtomPosition, UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, const vmath::vec3& Center, const bool CountNewPosition, const bool DrawOutsideBorder) const
 {
     try
     {
@@ -396,19 +395,22 @@ inline vmath::vec3 CellEngineOpenGLVisualiser::GetFinalModelPosition(const vmath
 
             if (DrawOutsideBorder == true)
                 if (CheckDistanceToDrawDetailsInAtomScale(XNew, YNew, ZNew) == true)
+                {
                     MatrixUniformBlockForVertexShaderPointer->Color = FromVec4ToVec3(sb7::color::Purple);
+                    return true;
+                }
 
-            return vmath::vec3(XNew, YNew, ZNew);
+            return false;
         }
     }
     CATCH("getting final model position for data for cell visualization")
 
-    return vmath::vec3(0, 0, 0);
+    return false;
 }
 
-inline vmath::vec3 CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4 ModelMatrix, const vmath::vec3& Center, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, bool DrawAdditional)
+inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4 ModelMatrix, const vmath::vec3& Center, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, bool DrawAdditional)
 {
-    vmath::vec3 FinalModelPosition;
+    bool FinalModelVisibility;
 
     try
     {
@@ -420,7 +422,7 @@ inline vmath::vec3 CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader
 
         if (DrawAdditional == true)
         {
-            FinalModelPosition = GetFinalModelPosition(Position, MatrixUniformBlockForVertexShaderPointer, Center, CountNewPosition, DrawOutsideBorder);
+            FinalModelVisibility = GetFinalModelVisibility(Position, MatrixUniformBlockForVertexShaderPointer, Center, CountNewPosition, DrawOutsideBorder);
             if (DrawCenter == true)
                 DrawCenterPoint(MatrixUniformBlockForVertexShaderPointer, ModelMatrix);
         }
@@ -431,7 +433,7 @@ inline vmath::vec3 CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader
     }
     CATCH("rendering object for data for cell visualization")
 
-    return FinalModelPosition;
+    return FinalModelVisibility;
 }
 
 inline vmath::vec3 CellEngineOpenGLVisualiser::GetColor(const CellEngineAtom& AtomObject, bool Chosen)
@@ -456,9 +458,9 @@ inline vmath::vec3 CellEngineOpenGLVisualiser::GetColor(const CellEngineAtom& At
     return FinalColor;
 }
 
-inline vmath::vec3 CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom& AtomObject, const vmath::mat4& ViewMatrix, const vmath::vec3& Center, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, UnsignedIntType& NumberOfAllRenderedAtoms, bool Chosen)
+inline bool CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom& AtomObject, const vmath::mat4& ViewMatrix, const vmath::vec3& Center, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, UnsignedIntType& NumberOfAllRenderedAtoms, bool Chosen)
 {
-    vmath::vec3 FinalModelPosition;
+    bool FinalModelVisibility;
 
     try
     {
@@ -467,14 +469,14 @@ inline vmath::vec3 CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom
         vmath::vec3 AtomPosition = LengthUnit * AtomObject.Position();
         vmath::mat4 ModelMatrix = vmath::translate(AtomPosition.X() - CameraXPosition - Center.X(), AtomPosition.Y() + CameraYPosition - Center.Y(), AtomPosition.Z() + CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(CellEngineDataFileObjectPointer->SizeX, CellEngineDataFileObjectPointer->SizeY, CellEngineDataFileObjectPointer->SizeZ));
 
-        FinalModelPosition = CreateUniformBlockForVertexShader(AtomPosition, GetColor(AtomObject, Chosen), ViewMatrix, ModelMatrix, Center, CountNewPosition, DrawCenter, DrawOutsideBorder, true);
+        FinalModelVisibility = CreateUniformBlockForVertexShader(AtomPosition, GetColor(AtomObject, Chosen), ViewMatrix, ModelMatrix, Center, CountNewPosition, DrawCenter, DrawOutsideBorder, true);
 
         if (RenderObjects == true)
             AtomGraphicsObject.Render();
     }
     CATCH("rendering object for data for cell visualization")
 
-    return FinalModelPosition;
+    return FinalModelVisibility;
 }
 
 void CellEngineOpenGLVisualiser::Render(double CurrentTime)
@@ -532,7 +534,7 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
 
             for (auto ParticlesCenterIterator = CellEngineDataFileObjectPointer->GetParticlesCenters().begin(); ParticlesCenterIterator != CellEngineDataFileObjectPointer->GetParticlesCenters().end(); ++ParticlesCenterIterator)
             {
-                if (CellEngineDataFileObjectPointer->StencilForParticlesCenters == true)
+                if (CellEngineDataFileObjectPointer->StencilForDrawingObjectsTypesObject == CellEngineDataFile::StencilForDrawingObjectsTypes::StencilForDrawingOnlyParticlesCenters)
                 {
                     uint8_t ToInsert = (NumberOfAllRenderedAtoms) >> (8 * LoopCounter);
                     glStencilFunc(GL_ALWAYS, ToInsert, -1);
@@ -540,10 +542,10 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
 
                 auto ParticlesCenterObject = *ParticlesCenterIterator;
 
-                vmath::vec3 FinalModelPosition = RenderObject(ParticlesCenterObject, ViewMatrix, Center, true, ParticlesCenterIterator == CellEngineDataFileObjectPointer->GetParticlesCenters().end() - 1, true, NumberOfAllRenderedAtoms, false);
+                bool FinalModelVisibility = RenderObject(ParticlesCenterObject, ViewMatrix, Center, true, ParticlesCenterIterator == CellEngineDataFileObjectPointer->GetParticlesCenters().end() - 1, true, NumberOfAllRenderedAtoms, false);
 
                 if (CellEngineDataFileObjectPointer->ShowDetailsInAtomScale == true)
-                    if (CheckDistanceToDrawDetailsInAtomScale(FinalModelPosition.X(), FinalModelPosition.Y(), FinalModelPosition.Z()) == true)
+                    if (FinalModelVisibility == true)
                         if (CheckVisibilityOfParticles(ParticlesCenterObject.EntityId) == true)
                         {
                             NumberOfFoundParticlesCenterToBeRenderedInAtomDetails++;
@@ -554,7 +556,7 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
                             UnsignedIntType AtomObjectIndex;
                             for (AtomObjectIndex = 0; AtomObjectIndex < CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex].size(); AtomObjectIndex += CellEngineDataFileObjectPointer->LoadOfAtomsStep)
                             {
-                                if (CellEngineDataFileObjectPointer->StencilForParticlesCenters == false)
+                                if (CellEngineDataFileObjectPointer->StencilForDrawingObjectsTypesObject == CellEngineDataFile::StencilForDrawingObjectsTypes::StencilForDrawingOnlyInAtomScale)
                                 {
                                     uint8_t ToInsert = (TemporaryRenderedAtomsList.size()) >> (8 * LoopCounter);
                                     glStencilFunc(GL_ALWAYS, ToInsert, -1);
@@ -581,7 +583,7 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
             if (ChosenParticleCenterIndex > 0)
             {
                 CellEngineAtom ChosenParticleObject;
-                if (CellEngineDataFileObjectPointer->StencilForParticlesCenters == true)
+                if (CellEngineDataFileObjectPointer->StencilForDrawingObjectsTypesObject == CellEngineDataFile::StencilForDrawingObjectsTypes::StencilForDrawingOnlyParticlesCenters)
                 {
                     if (ChosenParticleCenterIndex > CellEngineDataFileObjectPointer->GetParticlesCenters().size())
                         throw std::runtime_error("ERROR STENCIL INDEX TOO BIG = " + to_string(ChosenParticleCenterIndex) + " MAXIMAL NUMBER OF OBJECTS = " + to_string(CellEngineDataFileObjectPointer->GetParticlesCenters().size()));
@@ -613,7 +615,7 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
                 glDisable(GL_CULL_FACE);
                 TextOverlayObject.Clear();
                 string AtomDescription = "ATOM DATA: Serial = " + to_string(ChosenParticleObject.Serial) + " Name = " + ChosenParticleObject.Name + " ResName = " + ChosenParticleObject.ResName;
-                if (CellEngineDataFileObjectPointer->StencilForParticlesCenters == false)
+                if (CellEngineDataFileObjectPointer->StencilForDrawingObjectsTypesObject == CellEngineDataFile::StencilForDrawingObjectsTypes::StencilForDrawingOnlyInAtomScale)
                     AtomDescription += " Chain [" + string(ChosenParticleObject.Chain) + "] EntityId = " + to_string(ChosenParticleObject.EntityId) + " Entity Name = [" + GetEntityName(ChosenParticleObject.EntityId) + "]";
                 TextOverlayObject.DrawText(AtomDescription.c_str(), 0, 0);
                 TextOverlayObject.Draw();

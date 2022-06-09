@@ -13,7 +13,7 @@ using namespace string_utils;
 CellEnginePDBDataFile::CellEnginePDBDataFile(const string_view FileName)
 {
     NumberOfStencilBufferLoop = 3;
-    StencilForParticlesCenters = true;
+    StencilForDrawingObjectsTypesObject = StencilForDrawingObjectsTypes::StencilForDrawingOnlyParticlesCenters;
 
     MakeColorsTypeObject = MakeColorsType::DrawColorForEveryAtom;
 
