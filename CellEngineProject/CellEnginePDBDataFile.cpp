@@ -35,20 +35,32 @@ CellEnginePDBDataFile::CellEnginePDBDataFile(const string_view FileName)
     ZLowToDrawInAtomScale = 0;
     ZHighToDrawInAtomScale = 0;
 
-    SizeX = 1;
-    SizeY = 1;
-    SizeZ = 1;
-
     SizeStep = 0.01;
-    ViewStep = 3;
 
-    CameraXMoveStep = 1;
-    CameraYMoveStep = 1;
-    CameraZMoveStep = 1;
+    SizeOfAtomX = 1;
+    SizeOfAtomY = 1;
+    SizeOfAtomZ = 1;
 
-    ViewXMoveStep = 1;
-    ViewYMoveStep = 1;
-    ViewZMoveStep = 1;
+    CameraXMoveShortStep = 1;
+    CameraYMoveShortStep = 1;
+    CameraZMoveShortStep = 1;
+
+    CameraXMoveLongStep = 1;
+    CameraYMoveLongStep = 1;
+    CameraZMoveLongStep = 1;
+
+    ViewXMoveShortStep = 1;
+    ViewYMoveShortStep = 1;
+    ViewZMoveShortStep = 1;
+    ViewZMoveMouseShortStep = 3;
+
+    ViewXMoveLongStep = 1;
+    ViewYMoveLongStep = 1;
+    ViewZMoveLongStep = 1;
+    ViewZMoveMouseShortStep = 3;
+
+    ViewChangeUsingLongStep = false;
+    AutomaticChangeOfSizeOfAtom = false;
 
 	ReadDataFromFile(FileName);
 }

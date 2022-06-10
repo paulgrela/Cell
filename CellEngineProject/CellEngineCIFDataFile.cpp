@@ -66,54 +66,34 @@ CellEngineCIFDataFile::CellEngineCIFDataFile(const string_view FileName)
     YLowToDrawInAtomScale = -200;
     YHighToDrawInAtomScale = 200;
     ZLowToDrawInAtomScale = -650;
-    ZHighToDrawInAtomScale = -50;
+    ZHighToDrawInAtomScale = -10;
 
+    SizeStep = 0.01;
 
-//    XLowToDrawInAtomScale = -200;
-//    XHighToDrawInAtomScale = 200;
-//    YLowToDrawInAtomScale = -200;
-//    YHighToDrawInAtomScale = 200;
-//    ZLowToDrawInAtomScale = -300;
-//    ZHighToDrawInAtomScale = 100;
+    SizeOfAtomX = 1;
+    SizeOfAtomY = 1;
+    SizeOfAtomZ = 1;
 
-//    XLowToDrawInAtomScale = -150;
-//    XHighToDrawInAtomScale = 150;
-//    YLowToDrawInAtomScale = -150;
-//    YHighToDrawInAtomScale = 150;
-//    ZLowToDrawInAtomScale = -300;
-//    ZHighToDrawInAtomScale = 100;
+    CameraXMoveShortStep = 5;
+    CameraYMoveShortStep = 5;
+    CameraZMoveShortStep = 5;
 
-//    XLowToDrawInAtomScale = -100;
-//    XHighToDrawInAtomScale = 100;
-//    YLowToDrawInAtomScale = -100;
-//    YHighToDrawInAtomScale = 100;
-//    ZLowToDrawInAtomScale = -300;
-//    ZHighToDrawInAtomScale = 100;
+    CameraXMoveLongStep = 50;
+    CameraYMoveLongStep = 50;
+    CameraZMoveLongStep = 50;
 
+    ViewXMoveShortStep = 5;
+    ViewYMoveShortStep = 5;
+    ViewZMoveShortStep = 5;
+    ViewZMoveMouseShortStep = 5;
 
-    SizeX = 1;
-    SizeY = 1;
-    SizeZ = 1;
+    ViewXMoveLongStep = 50;
+    ViewYMoveLongStep = 50;
+    ViewZMoveLongStep = 50;
+    ViewZMoveMouseLongStep = 50;
 
-    SizeStep = 0.1;
-
-    ViewStep = 50;
-
-//    CameraXMoveStep = 100;
-//    CameraYMoveStep = 100;
-//    CameraZMoveStep = 100;
-//
-//    ViewXMoveStep = 100;
-//    ViewYMoveStep = 100;
-//    ViewZMoveStep = 100;
-
-    CameraXMoveStep = 50;
-    CameraYMoveStep = 50;
-    CameraZMoveStep = 5;
-
-    ViewXMoveStep = 50;
-    ViewYMoveStep = 50;
-    ViewZMoveStep = 50;
+    ViewChangeUsingLongStep = true;
+    AutomaticChangeOfSizeOfAtom = true;
 
     ReadDataFromFile(FileName);
 }

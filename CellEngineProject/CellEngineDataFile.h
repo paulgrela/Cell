@@ -136,17 +136,27 @@ public:
     float ZLowToDrawInAtomScale;
     float ZHighToDrawInAtomScale;
 public:
-    float SizeX;
-    float SizeY;
-    float SizeZ;
     float SizeStep;
-    float ViewStep;
-    float CameraXMoveStep;
-    float CameraYMoveStep;
-    float CameraZMoveStep;
-    float ViewXMoveStep;
-    float ViewYMoveStep;
-    float ViewZMoveStep;
+    float SizeOfAtomX;
+    float SizeOfAtomY;
+    float SizeOfAtomZ;
+    float CameraXMoveShortStep;
+    float CameraYMoveShortStep;
+    float CameraZMoveShortStep;
+    float CameraXMoveLongStep;
+    float CameraYMoveLongStep;
+    float CameraZMoveLongStep;
+    float ViewXMoveShortStep;
+    float ViewYMoveShortStep;
+    float ViewZMoveShortStep;
+    float ViewZMoveMouseShortStep;
+    float ViewXMoveLongStep;
+    float ViewYMoveLongStep;
+    float ViewZMoveLongStep;
+    float ViewZMoveMouseLongStep;
+public:
+    bool ViewChangeUsingLongStep;
+    bool AutomaticChangeOfSizeOfAtom;
 public:
     UnsignedIntType ChosenStructureIndex = 0;
     bool FilmOfStructuresActive = false;

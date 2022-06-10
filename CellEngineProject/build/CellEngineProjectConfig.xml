@@ -50,24 +50,39 @@
 			<Distance>1500</Distance>
 			<LoadOfAtomsStep>100</LoadOfAtomsStep>
 
-			<XLow>-200</XLow>
-			<XHigh>200</XHigh>
-			<YLow>-200</YLow>
-			<YHigh>200</YHigh>
-			<ZLow>-300</ZLow>
-			<ZHigh>100</ZHigh>
+			<XLowToDrawInAtomScale>-200</XLowToDrawInAtomScale>
+			<XHighToDrawInAtomScale>200</XHighToDrawInAtomScale>
+			<YLowToDrawInAtomScale>-200</YLowToDrawInAtomScale>
+			<YHighToDrawInAtomScale>200</YHighToDrawInAtomScale>
+			<ZLowToDrawInAtomScale>-650</ZLowToDrawInAtomScale>
+			<ZHighToDrawInAtomScale>-50</ZHighToDrawInAtomScale>
 			
 			<SizeStep>0.1</SizeStep>
-			<ViewStep>50</ViewStep>			
-			<SizeX>1</SizeX>
-			<SizeY>1</SizeY>
-			<SizeZ>1</SizeZ>
-			<CameraXMoveStep>100</CameraXMoveStep>
-			<CameraYMoveStep>100</CameraYMoveStep>
-			<CameraZMoveStep>100</CameraZMoveStep>
-			<ViewXMoveStep>100</ViewXMoveStep>
-			<ViewYMoveStep>100</ViewYMoveStep>
-			<ViewZMoveStep>100</ViewZMoveStep>
+	
+			<SizeOfAtomX>1</SizeOfAtomX>
+			<SizeOfAtomY>1</SizeOfAtomY>
+			<SizeOfAtomZ>1</SizeOfAtomZ>
+			
+			<CameraXMoveShortStep>5</CameraXMoveShortStep>
+			<CameraYMoveShortStep>5</CameraYMoveShortStep>
+			<CameraZMoveShortStep>5</CameraZMoveShortStep>
+
+			<CameraXMoveLongStep>50</CameraXMoveLongStep>
+			<CameraYMoveLongStep>50</CameraYMoveLongStep>
+			<CameraZMoveLongStep>50</CameraZMoveLongStep>
+			
+			<ViewXMoveShortStep>5</ViewXMoveShortStep>
+			<ViewYMoveShortStep>5</ViewYMoveShortStep>
+			<ViewZMoveShortStep>5</ViewZMoveShortStep>			
+			<ViewZMoveMouseShortStep>5</ViewMoveMouseShortStep>
+			
+			<ViewXMoveLongStep>50</ViewXMoveLongStep>
+			<ViewYMoveLongStep>50</ViewYMoveLongStep>
+			<ViewZMoveLongStep>50</ViewZMoveLongStep>
+			<ViewZMoveMouseLongStep>50</ViewMoveMouseLongStep>
+
+			<ViewChangeUsingLongStep>false</ViewChangeUsingLongStep>
+			<AutomaticChangeOfSizeOfAtom>false</AutomaticChangeOfSizeOfAtom> 
 										
 			<AtomsColors>
 				<C>Turquoise</C>
