@@ -47,7 +47,7 @@ CellEngineCIFDataFile::CellEngineCIFDataFile(const string_view FileName)
 {
     ChosenStructureIndex = 0;
 
-    NumberOfStencilBufferLoop = 3;
+    NumberOfStencilBufferLoops = 3;
     StencilForDrawingObjectsTypesObject = StencilForDrawingObjectsTypes::StencilForDrawingOnlyInAtomScale;
 
     MakeColorsTypeObject = MakeColorsType::DrawColorForEveryParticle;
@@ -55,19 +55,41 @@ CellEngineCIFDataFile::CellEngineCIFDataFile(const string_view FileName)
     DrawBondsBetweenParticlesCenters = false;
     DrawBondsBetweenAtoms = false;
 
-    ShowDetailsInAtomScale = true;//ShowDetailsInAtomScale = false;
+    ShowDetailsInAtomScale = true;
     CheckAtomVisibility =  true;
     CutZ = 200;
-    Distance = 1500;
-    //Distance = 200;
-    LoadOfAtomsStep = 1;//LoadOfAtomsStep = 100;
+    Distance = 1700; //Distance = 200;
+    LoadOfAtomsStep = 1;
 
     XLowToDrawInAtomScale = -200;
     XHighToDrawInAtomScale = 200;
     YLowToDrawInAtomScale = -200;
     YHighToDrawInAtomScale = 200;
-    ZLowToDrawInAtomScale = -300;
-    ZHighToDrawInAtomScale = 100;
+    ZLowToDrawInAtomScale = -650;
+    ZHighToDrawInAtomScale = -50;
+
+
+//    XLowToDrawInAtomScale = -200;
+//    XHighToDrawInAtomScale = 200;
+//    YLowToDrawInAtomScale = -200;
+//    YHighToDrawInAtomScale = 200;
+//    ZLowToDrawInAtomScale = -300;
+//    ZHighToDrawInAtomScale = 100;
+
+//    XLowToDrawInAtomScale = -150;
+//    XHighToDrawInAtomScale = 150;
+//    YLowToDrawInAtomScale = -150;
+//    YHighToDrawInAtomScale = 150;
+//    ZLowToDrawInAtomScale = -300;
+//    ZHighToDrawInAtomScale = 100;
+
+//    XLowToDrawInAtomScale = -100;
+//    XHighToDrawInAtomScale = 100;
+//    YLowToDrawInAtomScale = -100;
+//    YHighToDrawInAtomScale = 100;
+//    ZLowToDrawInAtomScale = -300;
+//    ZHighToDrawInAtomScale = 100;
+
 
     SizeX = 1;
     SizeY = 1;
@@ -77,13 +99,21 @@ CellEngineCIFDataFile::CellEngineCIFDataFile(const string_view FileName)
 
     ViewStep = 50;
 
-    CameraXMoveStep = 100;
-    CameraYMoveStep = 100;
-    CameraZMoveStep = 100;
+//    CameraXMoveStep = 100;
+//    CameraYMoveStep = 100;
+//    CameraZMoveStep = 100;
+//
+//    ViewXMoveStep = 100;
+//    ViewYMoveStep = 100;
+//    ViewZMoveStep = 100;
 
-    ViewXMoveStep = 100;
-    ViewYMoveStep = 100;
-    ViewZMoveStep = 100;
+    CameraXMoveStep = 50;
+    CameraYMoveStep = 50;
+    CameraZMoveStep = 5;
+
+    ViewXMoveStep = 50;
+    ViewYMoveStep = 50;
+    ViewZMoveStep = 50;
 
     ReadDataFromFile(FileName);
 }

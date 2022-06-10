@@ -17,6 +17,8 @@ const uint64_t RIBOSOME_30SCode = 679;
 const uint64_t DNA_POLYMERASE_GAMMA_COMPLEXCode = 516;
 const uint64_t DNA_POLYMERASE_CORECode = 513;
 const uint64_t RNA_POLYMERASECode = 683;
+const uint64_t tRNACode = 688;
+const uint64_t tRNA_aminoacylatedCode = 689;
 
 inline vmath::vec3 FromVec4ToVec3(const vmath::vec4& Vector4)
 {
@@ -30,6 +32,12 @@ inline vmath::vec3 ChooseColorForParticle(const CellEngineAtom& AtomObject)
     try
     {
         if (AtomObject.EntityId == RNACode)
+            ChosenColor = FromVec4ToVec3(sb7::color::Blue);
+        else
+        if (AtomObject.EntityId == tRNA_aminoacylatedCode)
+            ChosenColor = FromVec4ToVec3(sb7::color::Blue);
+        else
+        if (AtomObject.EntityId == tRNACode)
             ChosenColor = FromVec4ToVec3(sb7::color::Blue);
         else
         if(AtomObject.EntityId == DNACode)
@@ -46,6 +54,12 @@ inline vmath::vec3 ChooseColorForParticle(const CellEngineAtom& AtomObject)
         else
         if(AtomObject.EntityId == DNA_POLYMERASE_GAMMA_COMPLEXCode)
             ChosenColor = FromVec4ToVec3(sb7::color::Yellow);
+        else
+        if(AtomObject.EntityId == DNA_POLYMERASE_CORECode)
+            ChosenColor = FromVec4ToVec3(sb7::color::Cyan);
+        else
+        if(AtomObject.EntityId == RNA_POLYMERASECode)
+            ChosenColor = FromVec4ToVec3(sb7::color::Purple);
         else
         if(AtomObject.EntityId == DNA_POLYMERASE_CORECode)
             ChosenColor = FromVec4ToVec3(sb7::color::Cyan);
@@ -104,7 +118,7 @@ public:
         StencilForDrawingOnlyInAtomScale = 2
     };
     StencilForDrawingObjectsTypes StencilForDrawingObjectsTypesObject;
-    std::uint64_t NumberOfStencilBufferLoop;
+    std::uint64_t NumberOfStencilBufferLoops;
 public:
     bool DrawBondsBetweenParticlesCenters;
     bool DrawBondsBetweenAtoms;

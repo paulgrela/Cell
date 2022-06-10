@@ -14,7 +14,7 @@ CellEnginePDBDataFile::CellEnginePDBDataFile(const string_view FileName)
 {
     ChosenStructureIndex = 0;
 
-    NumberOfStencilBufferLoop = 3;
+    NumberOfStencilBufferLoops = 3;
     StencilForDrawingObjectsTypesObject = StencilForDrawingObjectsTypes::StencilForDrawingOnlyParticlesCenters;
 
     MakeColorsTypeObject = MakeColorsType::DrawColorForEveryAtom;
