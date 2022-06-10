@@ -20,6 +20,12 @@ public:
     float Z;
     char Chain[6];
     UnsignedIntType EntityId;
+    float SizeXAtom;
+    float SizeYAtom;
+    float SizeZAtom;
+    float SizeXParticle;
+    float SizeYParticle;
+    float SizeZParticle;
     vmath::vec3 AtomColor;
     vmath::vec3 ParticleColor;
     vmath::vec3 RandomParticleColor;

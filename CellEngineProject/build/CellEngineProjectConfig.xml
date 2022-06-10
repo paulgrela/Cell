@@ -83,70 +83,144 @@
 
 			<ViewChangeUsingLongStep>false</ViewChangeUsingLongStep>
 			<AutomaticChangeOfSizeOfAtom>false</AutomaticChangeOfSizeOfAtom> 
+
+			<BackgroundColor1>Cyan</BackgroundColor1>
+			<BackgroundColor2>White</BackgroundColor2>
+			<BackgroundColor3>Black</BackgroundColor3>
+
+			<Atoms>
+				<Atom id="1">
+					<Name>C</Name>
+					<Color>Turquoise</Color>
+					<SizeX>1<SizeX>
+					<SizeY>1<SizeY>
+					<SizeZ>1<SizeZ>
+				<Atom>
+				<Atom id="2">
+					<Name>O</Name>
+					<Color>Red</Color>
+					<SizeX>1<SizeX>
+					<SizeY>1<SizeY>
+					<SizeZ>1<SizeZ>
+				<Atom>
+				<Atom id="3">
+					<Name>N</Name>
+					<Color>Blue</Color>
+					<SizeX>1<SizeX>
+					<SizeY>1<SizeY>
+					<SizeZ>1<SizeZ>
+				<Atom>
+				<Atom id="4">
+					<Name>P</Name>
+					<Color>Green</Color>
+					<SizeX>1<SizeX>
+					<SizeY>1<SizeY>
+					<SizeZ>1<SizeZ>
+				<Atom>
+				<Atom id="5">
+					<Name>C</Name>
+					<Color>Turquoise</Color>
+					<SizeX>1<SizeX>
+					<SizeY>1<SizeY>
+					<SizeZ>1<SizeZ>
+				<Atom>
+				<Atom id="6">
+					<Name>E</Name>
+					<Color>Gray</Color>
+					<SizeX>1<SizeX>
+					<SizeY>1<SizeY>
+					<SizeZ>1<SizeZ>
+				<Atom>				
+			</Atoms>
 										
-			<AtomsColors>
-				<C>Turquoise</C>
-				<0>Red</0>
-				<H>White</H>
-				<N>Blue</N>
-				<P>Green</P>
-				<E>Gray</E>
-			</AtomsColors>
 			<Particles>				
 				<Particle id="694">
 					<Name>DNA</Name>
 					<Color>Red</Color>
-					<Visible>true</Visible>					
+					<Visible>true</Visible>
+					<SizeX>1<SizeX>
+					<SizeY>1<SizeY>
+					<SizeZ>1<SizeZ>
 				</Particle>
 				<Particle id="695">
 					<Name>RNA</Name>
 					<Color>Blue</Color>	
 					<Visible>true</Visible>					
+					<SizeX>1<SizeX>
+					<SizeY>1<SizeY>
+					<SizeZ>1<SizeZ>					
 				</Particle>			
 				<Particle id="688">
 					<Name>tRNA</Name>
 					<Color>Blue</Color>	
 					<Visible>true</Visible>					
+					<SizeX>1<SizeX>
+					<SizeY>1<SizeY>
+					<SizeZ>1<SizeZ>					
 				</Particle>				
 				<Particle id="689">
 					<Name>tRNA_aminoacylated</Name>
 					<Color>Blue</Color>	
 					<Visible>true</Visible>					
+					<SizeX>1<SizeX>
+					<SizeY>1<SizeY>
+					<SizeZ>1<SizeZ>					
 				</Particle>				
 				<Particle id="682">
 					<Name>RIBOSOME_70S</Name>
 					<Color>Lime</Color>					
 					<Visible>true</Visible>
+					<SizeX>1<SizeX>
+					<SizeY>1<SizeY>
+					<SizeZ>1<SizeZ>					
 				</Particle>				
 				<Particle id="681">
 					<Name>RIBOSOME_50S</Name>
 					<Color>Pink</Color>
 					<Visible>true</Visible>					
+					<SizeX>1<SizeX>
+					<SizeY>1<SizeY>
+					<SizeZ>1<SizeZ>					
 				</Particle>				
 				<Particle id="679">
 					<Name>RIBOSOME_30S</Name>
 					<Color>Orange</Color>					
 					<Visible>true</Visible>
+					<SizeX>1<SizeX>
+					<SizeY>1<SizeY>
+					<SizeZ>1<SizeZ>					
 				</Particle>				
 				<Particle id="683">
 					<Name>RNA_POLYMERASE</Name>
 					<Color>Purple</Color>
 					<Visible>true</Visible>					
+					<SizeX>1<SizeX>
+					<SizeY>1<SizeY>
+					<SizeZ>1<SizeZ>					
 				</Particle>								
 				<Particle id="516">
 					<Name>DNA_POLYMERASE_GAMMA_COMPLEX</Name>
 					<Color>Yellow</Color>					
 					<Visible>true</Visible>
+					<SizeX>1<SizeX>
+					<SizeY>1<SizeY>
+					<SizeZ>1<SizeZ>					
 				</Particle>				
 				<Particle id="513">
 					<Name>DNA_POLYMERASE_CORE</Name>
 					<Color>Cyan</Color>
 					<Visible>true</Visible>
+					<SizeX>1<SizeX>
+					<SizeY>1<SizeY>
+					<SizeZ>1<SizeZ>					
 				</Particle>				
 				<Particle id="1000">
 					<Name>OTHERS</Name>
 					<Color>Green</Color>
 					<Visible>true</Visible>					
+					<SizeX>1<SizeX>
+					<SizeY>1<SizeY>
+					<SizeZ>1<SizeZ>					
 				</Particle>								
 			</Particles>			
 		</Cell>

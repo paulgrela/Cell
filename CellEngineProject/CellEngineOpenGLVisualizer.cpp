@@ -1,4 +1,5 @@
 
+
 #include <omp.h>
 
 #include <sb7.h>
@@ -82,7 +83,7 @@ private:
 private:
     UnsignedIntType PressedRightMouseButton = 0;
 private:
-    bool RenderObjects = true;
+    bool RenderObjectsBool = true;
 private:
     vector<pair<UnsignedIntType, UnsignedIntType>> BondsBetweenParticlesCentersToDraw;
     vector<vector<pair<UnsignedIntType, UnsignedIntType>>> BondsBetweenAtomsToDraw;
@@ -129,10 +130,11 @@ protected:
     void OnMouseMove(int X, int Y) override;
     void OnResize(int Width, int Height) override;
 protected:
+    inline vmath::vec3 GetSize(const CellEngineAtom& AtomObject);
     inline vmath::vec3 GetColor(const CellEngineAtom& AtomObject, bool Chosen);
     static inline void DrawCenterPoint(UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, vmath::mat4& ModelMatrix);
     inline bool GetFinalVisibilityInModelWorld(const vmath::vec3& AtomPosition, UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, const bool CountNewPosition, const bool DrawOutsideBorder) const;
-    inline bool RenderObject(const CellEngineAtom& AtomObject, const vmath::mat4& ViewMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, UnsignedIntType& NumberOfAllRenderedAtoms, bool Chosen);
+    inline bool RenderObject(const CellEngineAtom& AtomObject, const vmath::mat4& ViewMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, UnsignedIntType& NumberOfAllRenderedAtoms, const bool Chosen, const bool RenderObjectParameter);
     inline bool CreateUniformBlockForVertexShader(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4 ModelMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, bool DrawAdditional);
 protected:
     [[nodiscard]] inline bool CheckDistanceToDrawDetailsInAtomScale(const float XNew, const float YNew, const float ZNew) const;
@@ -461,21 +463,42 @@ inline vmath::vec3 CellEngineOpenGLVisualiser::GetColor(const CellEngineAtom& At
     return FinalColor;
 }
 
-inline bool CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom& AtomObject, const vmath::mat4& ViewMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, UnsignedIntType& NumberOfAllRenderedAtoms, bool Chosen)
+inline vmath::vec3 CellEngineOpenGLVisualiser::GetSize(const CellEngineAtom& AtomObject)
+{
+    vmath::vec3 Size;
+
+    try
+    {
+        if (CellEngineDataFileObjectPointer->SizeOfAtomsDrawingTypesObject == CellEngineDataFile::SizeOfAtomsDrawingTypes::AtomSize)
+            Size = vmath::vec3(AtomObject.SizeXAtom, AtomObject.SizeYAtom, AtomObject.SizeZAtom);
+        else
+        if (CellEngineDataFileObjectPointer->SizeOfAtomsDrawingTypesObject == CellEngineDataFile::SizeOfAtomsDrawingTypes::ParticleSize)
+            Size = vmath::vec3(AtomObject.SizeYAtom, AtomObject.SizeYAtom, AtomObject.SizeZAtom);
+        else
+        if (CellEngineDataFileObjectPointer->SizeOfAtomsDrawingTypesObject == CellEngineDataFile::SizeOfAtomsDrawingTypes::AutomaticChangeSize)
+            Size = vmath::vec3(CellEngineDataFileObjectPointer->SizeOfAtomX, CellEngineDataFileObjectPointer->SizeOfAtomY, CellEngineDataFileObjectPointer->SizeOfAtomZ);
+    }
+    CATCH("getting size")
+
+    return Size;
+}
+
+inline bool CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom& AtomObject, const vmath::mat4& ViewMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, UnsignedIntType& NumberOfAllRenderedAtoms, const bool Chosen, const bool RenderObjectParameter)
 {
     bool FinalVisibilityInModelWorld;
 
     try
     {
-                                                                                                                        if (RenderObjects == true)
-        NumberOfAllRenderedAtoms++;
+        if (RenderObjectParameter == true)
+            NumberOfAllRenderedAtoms++;
 
         vmath::vec3 AtomPosition = LengthUnit * AtomObject.Position();
-        vmath::mat4 ModelMatrix = vmath::translate(AtomPosition.X() - CameraXPosition - Center.X(), AtomPosition.Y() + CameraYPosition - Center.Y(), AtomPosition.Z() + CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(CellEngineDataFileObjectPointer->SizeOfAtomX, CellEngineDataFileObjectPointer->SizeOfAtomY, CellEngineDataFileObjectPointer->SizeOfAtomZ));
+        vmath::vec3 SizeLocal = GetSize(AtomObject);
+        vmath::mat4 ModelMatrix = vmath::translate(AtomPosition.X() - CameraXPosition - Center.X(), AtomPosition.Y() + CameraYPosition - Center.Y(), AtomPosition.Z() + CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(SizeLocal.X(), SizeLocal.Y(), SizeLocal.Z()));
 
         FinalVisibilityInModelWorld = CreateUniformBlockForVertexShader(AtomPosition, GetColor(AtomObject, Chosen), ViewMatrix, ModelMatrix, CountNewPosition, DrawCenter, DrawOutsideBorder, true);
 
-        if (RenderObjects == true)
+        if (RenderObjectParameter == true)
             AtomGraphicsObject.Render();
     }
     CATCH("rendering object for data for cell visualization")
@@ -489,21 +512,17 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
     {
         if (CellEngineDataFileObjectPointer->ShowDetailsInAtomScale == true)
         {
-//            if (ViewZ > CellEngineDataFileObjectPointer->Distance && ViewZ < CellEngineDataFileObjectPointer->Distance + 300)
-//            {
-//                CellEngineDataFileObjectPointer->LoadOfAtomsStep = 10;
-//                CellEngineDataFileObjectPointer->SizeOfAtomX = CellEngineDataFileObjectPointer->SizeOfAtomY = CellEngineDataFileObjectPointer->SizeOfAtomZ = 2;
-//            }
-//            else
             if (ViewZ > CellEngineDataFileObjectPointer->Distance)
             {
-                CellEngineDataFileObjectPointer->LoadOfAtomsStep = 100;
+                if (CellEngineDataFileObjectPointer->AutomaticChangeOfLoadAtomsStep == true)
+                    CellEngineDataFileObjectPointer->LoadOfAtomsStep = 100;
                 if (CellEngineDataFileObjectPointer->AutomaticChangeOfSizeOfAtom == true)
-                    CellEngineDataFileObjectPointer->SizeOfAtomX = CellEngineDataFileObjectPointer->SizeOfAtomY = CellEngineDataFileObjectPointer->SizeOfAtomZ = 2;
+                    CellEngineDataFileObjectPointer->SizeOfAtomX = CellEngineDataFileObjectPointer->SizeOfAtomY = CellEngineDataFileObjectPointer->SizeOfAtomZ = 3;
             }
             else
             {
-                CellEngineDataFileObjectPointer->LoadOfAtomsStep = 1;
+                if (CellEngineDataFileObjectPointer->AutomaticChangeOfLoadAtomsStep == true)
+                    CellEngineDataFileObjectPointer->LoadOfAtomsStep = 1;
                 if (CellEngineDataFileObjectPointer->AutomaticChangeOfSizeOfAtom == true)
                     CellEngineDataFileObjectPointer->SizeOfAtomX = CellEngineDataFileObjectPointer->SizeOfAtomY = CellEngineDataFileObjectPointer->SizeOfAtomZ = 1;
             }
@@ -568,9 +587,7 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
 
                 auto ParticlesCenterObject = *ParticlesCenterIterator;
 
-                                                                                                                        RenderObjects = !CellEngineDataFileObjectPointer->ShowDetailsInAtomScale;
-                bool FinalVisibilityInModelWorld = RenderObject(ParticlesCenterObject, ViewMatrix, true, ParticlesCenterIterator == CellEngineDataFileObjectPointer->GetParticlesCenters().end() - 1, true, NumberOfAllRenderedAtoms, false);
-                                                                                                                        RenderObjects = true;
+                bool FinalVisibilityInModelWorld = RenderObject(ParticlesCenterObject, ViewMatrix, true, ParticlesCenterIterator == CellEngineDataFileObjectPointer->GetParticlesCenters().end() - 1, true, NumberOfAllRenderedAtoms, false, !CellEngineDataFileObjectPointer->ShowDetailsInAtomScale);
 
                 if (CellEngineDataFileObjectPointer->ShowDetailsInAtomScale == true)
                     if (FinalVisibilityInModelWorld == true)
@@ -590,7 +607,7 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
                                     glStencilFunc(GL_ALWAYS, ToInsert, -1);
                                     TemporaryRenderedAtomsList.emplace_back(make_pair(ParticlesCenterObject.AtomIndex, AtomObjectIndex));
                                 }
-                                RenderObject(CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex][AtomObjectIndex], ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, false);
+                                RenderObject(CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex][AtomObjectIndex], ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, false, RenderObjectsBool);
                             }
                         }
             }
@@ -633,7 +650,7 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
 
                 glDisable(GL_SCISSOR_TEST);
 
-                RenderObject(ChosenParticleObject, ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, true);
+                RenderObject(ChosenParticleObject, ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, true, RenderObjectsBool);
 
                 glEnable(GL_SCISSOR_TEST);
                 glScissor(0, Info.WindowHeight - 16, Info.WindowWidth, 16);
@@ -715,10 +732,10 @@ void CellEngineOpenGLVisualiser::OnKey(int Key, int Action)
             {
                 case '1': CameraZPosition += (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->CameraZMoveShortStep : CellEngineDataFileObjectPointer->CameraZMoveLongStep); break;
                 case '2': CameraZPosition -= (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->CameraZMoveShortStep : CellEngineDataFileObjectPointer->CameraZMoveLongStep); break;
-                case '3': CameraXPosition += (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->CameraZMoveShortStep : CellEngineDataFileObjectPointer->CameraXMoveLongStep); break;
+                case '3': CameraXPosition += (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->CameraXMoveShortStep : CellEngineDataFileObjectPointer->CameraXMoveLongStep); break;
                 case '4': CameraXPosition -= (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->CameraZMoveShortStep : CellEngineDataFileObjectPointer->CameraXMoveLongStep); break;
-                case '5': CameraYPosition += (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->CameraZMoveShortStep : CellEngineDataFileObjectPointer->CameraYMoveLongStep); break;
-                case '6': CameraYPosition -= (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->CameraZMoveShortStep : CellEngineDataFileObjectPointer->CameraYMoveLongStep); break;
+                case '5': CameraYPosition += (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->CameraYMoveShortStep : CellEngineDataFileObjectPointer->CameraYMoveLongStep); break;
+                case '6': CameraYPosition -= (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->CameraYMoveShortStep : CellEngineDataFileObjectPointer->CameraYMoveLongStep); break;
 
                 case 'Q': ViewX += (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->ViewXMoveShortStep : CellEngineDataFileObjectPointer->ViewXMoveLongStep); break;
                 case 'W': ViewX -= (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->ViewXMoveShortStep : CellEngineDataFileObjectPointer->ViewXMoveLongStep); break;
@@ -752,9 +769,10 @@ void CellEngineOpenGLVisualiser::OnKey(int Key, int Action)
                 case '9': AtomGraphicsObject.Load("..//objects//cube.sbm");  break;
                 case '0': AtomGraphicsObject.Load("..//objects//sphere.sbm");  break;
 
+                case GLFW_KEY_F3: RenderObjectsBool = !RenderObjectsBool; break;
                 case GLFW_KEY_F4: CellEngineDataFileObjectPointer->AutomaticChangeOfSizeOfAtom = !CellEngineDataFileObjectPointer->AutomaticChangeOfSizeOfAtom; break;
-                case GLFW_KEY_F5: CellEngineDataFileObjectPointer->ViewChangeUsingLongStep = !CellEngineDataFileObjectPointer->ViewChangeUsingLongStep; break;
-                case GLFW_KEY_F6: RenderObjects = !RenderObjects; break;
+                case GLFW_KEY_F5: CellEngineDataFileObjectPointer->AutomaticChangeOfLoadAtomsStep = !CellEngineDataFileObjectPointer->AutomaticChangeOfLoadAtomsStep; break;
+                case GLFW_KEY_F6: CellEngineDataFileObjectPointer->ViewChangeUsingLongStep = !CellEngineDataFileObjectPointer->ViewChangeUsingLongStep; break;
                 case GLFW_KEY_F7: CellEngineDataFileObjectPointer->NumberOfStencilBufferLoops == 1 ? CellEngineDataFileObjectPointer->NumberOfStencilBufferLoops = 3 : CellEngineDataFileObjectPointer->NumberOfStencilBufferLoops = 1; break;
 
                 case GLFW_KEY_F8: CellEngineDataFileObjectPointer->MakeColorsTypeObject = CellEngineDataFile::MakeColorsType::DrawColorForEveryAtom; break;

@@ -37,6 +37,12 @@ CellEngineAtom CellEngineCIFDataFile::ParseRecord(const char* LocalCIFRecord)
 
         CellEngineAtomObject.AtomColor = ChooseColorForAtom(CellEngineAtomObject);
         CellEngineAtomObject.ParticleColor = ChooseColorForParticle(CellEngineAtomObject);
+        CellEngineAtomObject.SizeXAtom = 1;
+        CellEngineAtomObject.SizeYAtom = 1;
+        CellEngineAtomObject.SizeZAtom = 1;
+        CellEngineAtomObject.SizeXParticle = 1;
+        CellEngineAtomObject.SizeYParticle = 1;
+        CellEngineAtomObject.SizeZParticle = 1;
     }
     CATCH("parsing atom record")
 
@@ -68,6 +74,8 @@ CellEngineCIFDataFile::CellEngineCIFDataFile(const string_view FileName)
     ZLowToDrawInAtomScale = -650;
     ZHighToDrawInAtomScale = -10;
 
+    SizeOfAtomsDrawingTypesObject = CellEngineDataFile::SizeOfAtomsDrawingTypes::AutomaticChangeSize;
+
     SizeStep = 0.01;
 
     SizeOfAtomX = 1;
@@ -85,15 +93,18 @@ CellEngineCIFDataFile::CellEngineCIFDataFile(const string_view FileName)
     ViewXMoveShortStep = 5;
     ViewYMoveShortStep = 5;
     ViewZMoveShortStep = 5;
-    ViewZMoveMouseShortStep = 5;
 
     ViewXMoveLongStep = 50;
     ViewYMoveLongStep = 50;
     ViewZMoveLongStep = 50;
-    ViewZMoveMouseLongStep = 50;
 
     ViewChangeUsingLongStep = true;
     AutomaticChangeOfSizeOfAtom = true;
+    AutomaticChangeOfLoadAtomsStep = true;
+
+    Background1Color = FromVec4ToVec3(sb7::color::Cyan);
+    Background2Color = FromVec4ToVec3(sb7::color::White);
+    Background3Color = FromVec4ToVec3(sb7::color::Black);
 
     ReadDataFromFile(FileName);
 }
@@ -131,7 +142,7 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
 
                 vector<string> AtomFields = split(RecordStr, " ");
 
-                ParticlesKinds[stoi(AtomFields[2])] = Particle{ true, AtomFields[5].substr(1, AtomFields[5].length() - 2) };
+                ParticlesKinds[stoi(AtomFields[2])] = Particle{ true, 1, 1, 1, AtomFields[5].substr(1, AtomFields[5].length() - 2) };
             }
             else
             if (Line.substr(0, 4) == "ATOM")

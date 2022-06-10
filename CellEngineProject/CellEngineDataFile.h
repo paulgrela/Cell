@@ -98,6 +98,9 @@ inline vmath::vec3 ChooseColorForAtom(const CellEngineAtom& AtomObject)
 struct Particle
 {
     bool Visible;
+    float SizeX;
+    float SizeY;
+    float SizeZ;
     std::string Name;
 };
 
@@ -136,6 +139,14 @@ public:
     float ZLowToDrawInAtomScale;
     float ZHighToDrawInAtomScale;
 public:
+    enum class SizeOfAtomsDrawingTypes
+    {
+        AtomSize = 1,
+        ParticleSize = 2,
+        AutomaticChangeSize = 3
+    };
+    SizeOfAtomsDrawingTypes SizeOfAtomsDrawingTypesObject;
+public:
     float SizeStep;
     float SizeOfAtomX;
     float SizeOfAtomY;
@@ -149,17 +160,20 @@ public:
     float ViewXMoveShortStep;
     float ViewYMoveShortStep;
     float ViewZMoveShortStep;
-    float ViewZMoveMouseShortStep;
     float ViewXMoveLongStep;
     float ViewYMoveLongStep;
     float ViewZMoveLongStep;
-    float ViewZMoveMouseLongStep;
 public:
     bool ViewChangeUsingLongStep;
     bool AutomaticChangeOfSizeOfAtom;
+    bool AutomaticChangeOfLoadAtomsStep;
 public:
     UnsignedIntType ChosenStructureIndex = 0;
     bool FilmOfStructuresActive = false;
+public:
+    vmath::vec3 Background1Color;
+    vmath::vec3 Background2Color;
+    vmath::vec3 Background3Color;
 public:
     std::unordered_map<UnsignedIntType, Particle> ParticlesKinds;
 protected:

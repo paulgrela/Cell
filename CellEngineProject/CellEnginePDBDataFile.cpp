@@ -35,6 +35,8 @@ CellEnginePDBDataFile::CellEnginePDBDataFile(const string_view FileName)
     ZLowToDrawInAtomScale = 0;
     ZHighToDrawInAtomScale = 0;
 
+    SizeOfAtomsDrawingTypesObject = CellEngineDataFile::SizeOfAtomsDrawingTypes::AutomaticChangeSize;
+
     SizeStep = 0.01;
 
     SizeOfAtomX = 1;
@@ -52,15 +54,18 @@ CellEnginePDBDataFile::CellEnginePDBDataFile(const string_view FileName)
     ViewXMoveShortStep = 1;
     ViewYMoveShortStep = 1;
     ViewZMoveShortStep = 1;
-    ViewZMoveMouseShortStep = 3;
 
     ViewXMoveLongStep = 1;
     ViewYMoveLongStep = 1;
     ViewZMoveLongStep = 1;
-    ViewZMoveMouseShortStep = 3;
 
     ViewChangeUsingLongStep = false;
     AutomaticChangeOfSizeOfAtom = false;
+    AutomaticChangeOfLoadAtomsStep = false;
+
+    Background1Color = FromVec4ToVec3(sb7::color::Cyan);
+    Background2Color = FromVec4ToVec3(sb7::color::White);
+    Background3Color = FromVec4ToVec3(sb7::color::Black);
 
 	ReadDataFromFile(FileName);
 }
@@ -85,6 +90,7 @@ CellEngineAtom CellEnginePDBDataFile::ParseRecord(const char* LocalPDBRecord)
         CellEngineAtomObject.Z = stof(RecordStr.substr(46, 8));
 
         CellEngineAtomObject.AtomColor = CellEngineAtomObject.ParticleColor = CellEngineAtomObject.RandomParticleColor = ChooseColorForAtom(CellEngineAtomObject);
+        CellEngineAtomObject.SizeXAtom = CellEngineAtomObject.SizeYAtom = CellEngineAtomObject.SizeZAtom =  CellEngineAtomObject.SizeXParticle = CellEngineAtomObject.SizeYParticle = CellEngineAtomObject.SizeZParticle = 1;
     }
     CATCH("parsing atom record")
 
