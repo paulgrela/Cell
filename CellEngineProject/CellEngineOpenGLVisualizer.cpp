@@ -177,6 +177,10 @@ void CellEngineOpenGLVisualiser::StartUp()
         InitArcBall();
 
         Center = CellEngineDataFileObjectPointer->GetCenter(CellEngineDataFileObjectPointer->GetParticlesCenters());
+
+        CameraXPosition = CellEngineDataFileObjectPointer->CameraXPosition;
+        CameraYPosition = CellEngineDataFileObjectPointer->CameraYPosition;
+        CameraZPosition = CellEngineDataFileObjectPointer->CameraZPosition;
     }
     CATCH("initiation of data for cell visualization")
 }
@@ -506,6 +510,19 @@ inline bool CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom& AtomO
     return FinalVisibilityInModelWorld;
 }
 
+//vmath::vec3 CellEngineOpenGLVisualiser::GetBackgroundColor()
+//{
+//    vmath::vec3 FinalColor;
+//
+//    try
+//    {
+//        FinalColor = CellEngineDataFileObjectPointer->BackgroundsColor[]; break;
+//    }
+//    CATCH("getting background color")
+//
+//    return FinalColor;
+//}
+
 void CellEngineOpenGLVisualiser::Render(double CurrentTime)
 {
     try
@@ -540,8 +557,11 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
         glClearBufferfv(GL_DEPTH, 0, ones);
 
 
-                                                                                                                        glClearColor(0, 0, 0, 0);
+
+                                                                                                                        //glClearColor(0, 0, 0, 0);
                                                                                                                         //glClearColor(sb7::color::Cyan.data[0], sb7::color::Cyan.data[1], sb7::color::Cyan.data[2], 0.0f);
+                                                                                                                        vmath::vec3 BackgroundColor = CellEngineDataFileObjectPointer->BackgroundColors[CellEngineDataFileObjectPointer->ChosenBackgroundColor];
+                                                                                                                        glClearColor(BackgroundColor.data[0], BackgroundColor.data[1], BackgroundColor.data[2], 0.0f);
         glClearStencil(0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
@@ -768,6 +788,9 @@ void CellEngineOpenGLVisualiser::OnKey(int Key, int Action)
 
                 case '9': AtomGraphicsObject.Load("..//objects//cube.sbm");  break;
                 case '0': AtomGraphicsObject.Load("..//objects//sphere.sbm");  break;
+
+                case GLFW_KEY_F1: CellEngineDataFileObjectPointer->ChosenBackgroundColor = 1; break;
+                case GLFW_KEY_F2: CellEngineDataFileObjectPointer->ChosenBackgroundColor = 3; break;
 
                 case GLFW_KEY_F3: RenderObjectsBool = !RenderObjectsBool; break;
                 case GLFW_KEY_F4: CellEngineDataFileObjectPointer->AutomaticChangeOfSizeOfAtom = !CellEngineDataFileObjectPointer->AutomaticChangeOfSizeOfAtom; break;

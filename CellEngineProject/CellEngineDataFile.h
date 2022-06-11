@@ -151,6 +151,9 @@ public:
     float SizeOfAtomX;
     float SizeOfAtomY;
     float SizeOfAtomZ;
+    float CameraXPosition;
+    float CameraYPosition;
+    float CameraZPosition;
     float CameraXMoveShortStep;
     float CameraYMoveShortStep;
     float CameraZMoveShortStep;
@@ -171,9 +174,15 @@ public:
     UnsignedIntType ChosenStructureIndex = 0;
     bool FilmOfStructuresActive = false;
 public:
-    vmath::vec3 Background1Color;
-    vmath::vec3 Background2Color;
-    vmath::vec3 Background3Color;
+//    enum class BackgroundColorType
+//    {
+//        Background1Color = 1,
+//        Background2Color = 2,
+//        Background3Color = 3
+//    };
+    vmath::vec3 BackgroundColors[4];
+    std::uint64_t ChosenBackgroundColor;
+//    BackgroundColorType BackgroundColorTypeObject;
 public:
     std::unordered_map<UnsignedIntType, Particle> ParticlesKinds;
 protected:

@@ -62,6 +62,10 @@
 			<SizeOfAtomX>1</SizeOfAtomX>
 			<SizeOfAtomY>1</SizeOfAtomY>
 			<SizeOfAtomZ>1</SizeOfAtomZ>
+
+			<CameraXPosition>0</CameraXPosition>
+			<CameraYPosition>0</CameraYPosition>
+			<CameraZPosition>0</CameraZPosition>
 			
 			<CameraXMoveShortStep>5</CameraXMoveShortStep>
 			<CameraYMoveShortStep>5</CameraYMoveShortStep>

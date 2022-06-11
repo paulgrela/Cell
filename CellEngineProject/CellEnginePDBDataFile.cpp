@@ -43,6 +43,10 @@ CellEnginePDBDataFile::CellEnginePDBDataFile(const string_view FileName)
     SizeOfAtomY = 1;
     SizeOfAtomZ = 1;
 
+    CameraXPosition = 0.0;
+    CameraYPosition = 0.0;
+    CameraZPosition = 0.0;
+
     CameraXMoveShortStep = 1;
     CameraYMoveShortStep = 1;
     CameraZMoveShortStep = 1;
@@ -63,9 +67,12 @@ CellEnginePDBDataFile::CellEnginePDBDataFile(const string_view FileName)
     AutomaticChangeOfSizeOfAtom = false;
     AutomaticChangeOfLoadAtomsStep = false;
 
-    Background1Color = FromVec4ToVec3(sb7::color::Cyan);
-    Background2Color = FromVec4ToVec3(sb7::color::White);
-    Background3Color = FromVec4ToVec3(sb7::color::Black);
+    BackgroundColors[1] = FromVec4ToVec3(sb7::color::Cyan);
+    BackgroundColors[2] = FromVec4ToVec3(sb7::color::White);
+    BackgroundColors[3] = FromVec4ToVec3(sb7::color::Black);
+
+    ChosenBackgroundColor = 3;
+    //BackgroundColorTypeObject = BackgroundColorType::Background1Color;
 
 	ReadDataFromFile(FileName);
 }

@@ -37,6 +37,7 @@ CellEngineAtom CellEngineCIFDataFile::ParseRecord(const char* LocalCIFRecord)
 
         CellEngineAtomObject.AtomColor = ChooseColorForAtom(CellEngineAtomObject);
         CellEngineAtomObject.ParticleColor = ChooseColorForParticle(CellEngineAtomObject);
+
         CellEngineAtomObject.SizeXAtom = 1;
         CellEngineAtomObject.SizeYAtom = 1;
         CellEngineAtomObject.SizeZAtom = 1;
@@ -82,6 +83,10 @@ CellEngineCIFDataFile::CellEngineCIFDataFile(const string_view FileName)
     SizeOfAtomY = 1;
     SizeOfAtomZ = 1;
 
+    CameraXPosition = 0.0;
+    CameraYPosition = 0.0;
+    CameraZPosition = 0.0;
+
     CameraXMoveShortStep = 5;
     CameraYMoveShortStep = 5;
     CameraZMoveShortStep = 5;
@@ -102,9 +107,16 @@ CellEngineCIFDataFile::CellEngineCIFDataFile(const string_view FileName)
     AutomaticChangeOfSizeOfAtom = true;
     AutomaticChangeOfLoadAtomsStep = true;
 
-    Background1Color = FromVec4ToVec3(sb7::color::Cyan);
-    Background2Color = FromVec4ToVec3(sb7::color::White);
-    Background3Color = FromVec4ToVec3(sb7::color::Black);
+    BackgroundColors[1] = FromVec4ToVec3(sb7::color::Cyan);
+    BackgroundColors[2] = FromVec4ToVec3(sb7::color::White);
+    BackgroundColors[3] = FromVec4ToVec3(sb7::color::Black);
+
+    ChosenBackgroundColor = 1;
+//    Background1Color = FromVec4ToVec3(sb7::color::Cyan);
+//    Background2Color = FromVec4ToVec3(sb7::color::White);
+//    Background3Color = FromVec4ToVec3(sb7::color::Black);
+
+    //BackgroundColorTypeObject = BackgroundColorType::Background1Color;
 
     ReadDataFromFile(FileName);
 }
