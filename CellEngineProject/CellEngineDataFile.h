@@ -174,15 +174,8 @@ public:
     UnsignedIntType ChosenStructureIndex = 0;
     bool FilmOfStructuresActive = false;
 public:
-//    enum class BackgroundColorType
-//    {
-//        Background1Color = 1,
-//        Background2Color = 2,
-//        Background3Color = 3
-//    };
     vmath::vec3 BackgroundColors[4];
     std::uint64_t ChosenBackgroundColor;
-//    BackgroundColorType BackgroundColorTypeObject;
 public:
     std::unordered_map<UnsignedIntType, Particle> ParticlesKinds;
 protected:

@@ -72,7 +72,6 @@ CellEnginePDBDataFile::CellEnginePDBDataFile(const string_view FileName)
     BackgroundColors[3] = FromVec4ToVec3(sb7::color::Black);
 
     ChosenBackgroundColor = 3;
-    //BackgroundColorTypeObject = BackgroundColorType::Background1Color;
 
 	ReadDataFromFile(FileName);
 }

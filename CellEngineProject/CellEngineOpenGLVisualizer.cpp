@@ -134,8 +134,12 @@ protected:
     inline vmath::vec3 GetColor(const CellEngineAtom& AtomObject, bool Chosen);
     static inline void DrawCenterPoint(UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, vmath::mat4& ModelMatrix);
     inline bool GetFinalVisibilityInModelWorld(const vmath::vec3& AtomPosition, UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, const bool CountNewPosition, const bool DrawOutsideBorder) const;
-    inline bool RenderObject(const CellEngineAtom& AtomObject, const vmath::mat4& ViewMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, UnsignedIntType& NumberOfAllRenderedAtoms, const bool Chosen, const bool RenderObjectParameter);
     inline bool CreateUniformBlockForVertexShader(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4 ModelMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, bool DrawAdditional);
+    inline bool RenderObject(const CellEngineAtom& AtomObject, const vmath::mat4& ViewMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, UnsignedIntType& NumberOfAllRenderedAtoms, const bool Chosen, const bool RenderObjectParameter);
+    inline void SetAutomaticParametersForRendering();
+    inline void PrepareOpenGLToRenderObjectsOnScene();
+    inline void PrintAtomDescriptionOnScreen(CellEngineAtom& ChosenParticleObject);
+    inline void ChooseAtomUsingStencilBuffer(const vmath::mat4& ViewMatrix, const GLuint* PartOfStencilBufferIndex, const vector<pair<uint64_t, uint64_t>>& TemporaryRenderedAtomsList, UnsignedIntType& NumberOfAllRenderedAtoms);
 protected:
     [[nodiscard]] inline bool CheckDistanceToDrawDetailsInAtomScale(const float XNew, const float YNew, const float ZNew) const;
 };
@@ -510,20 +514,7 @@ inline bool CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom& AtomO
     return FinalVisibilityInModelWorld;
 }
 
-//vmath::vec3 CellEngineOpenGLVisualiser::GetBackgroundColor()
-//{
-//    vmath::vec3 FinalColor;
-//
-//    try
-//    {
-//        FinalColor = CellEngineDataFileObjectPointer->BackgroundsColor[]; break;
-//    }
-//    CATCH("getting background color")
-//
-//    return FinalColor;
-//}
-
-void CellEngineOpenGLVisualiser::Render(double CurrentTime)
+inline void CellEngineOpenGLVisualiser::SetAutomaticParametersForRendering()
 {
     try
     {
@@ -544,9 +535,16 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
                     CellEngineDataFileObjectPointer->SizeOfAtomX = CellEngineDataFileObjectPointer->SizeOfAtomY = CellEngineDataFileObjectPointer->SizeOfAtomZ = 1;
             }
         }
+    }
+    CATCH("setting automatic parameters for rendering")
+}
 
-        static const GLfloat gray[] = { 0.1f, 0.1f, 0.1f, 0.0f };
-        static const GLfloat ones[] = { 1.0f };
+inline void CellEngineOpenGLVisualiser::PrepareOpenGLToRenderObjectsOnScene()
+{
+    try
+    {
+        static const GLfloat gray[] = {0.1f, 0.1f, 0.1f, 0.0f};
+        static const GLfloat ones[] = {1.0f};
 
         glUseProgram(ShaderProgramPhong);
         glDisable(GL_SCISSOR_TEST);
@@ -556,32 +554,41 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
         glClearBufferfv(GL_COLOR, 0, gray);
         glClearBufferfv(GL_DEPTH, 0, ones);
 
+        vmath::vec3 BackgroundColor = CellEngineDataFileObjectPointer->BackgroundColors[CellEngineDataFileObjectPointer->ChosenBackgroundColor];
+        glClearColor(BackgroundColor.data[0], BackgroundColor.data[1], BackgroundColor.data[2], 0.0f);
 
-
-                                                                                                                        //glClearColor(0, 0, 0, 0);
-                                                                                                                        //glClearColor(sb7::color::Cyan.data[0], sb7::color::Cyan.data[1], sb7::color::Cyan.data[2], 0.0f);
-                                                                                                                        vmath::vec3 BackgroundColor = CellEngineDataFileObjectPointer->BackgroundColors[CellEngineDataFileObjectPointer->ChosenBackgroundColor];
-                                                                                                                        glClearColor(BackgroundColor.data[0], BackgroundColor.data[1], BackgroundColor.data[2], 0.0f);
         glClearStencil(0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
         glEnable(GL_STENCIL_TEST);
         glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
+        glUniform1f(Uniforms.SpecularPower, powf(2.0f, 3.0f));
+        glUniform3fv(Uniforms.SpecularAlbedo, 1, vmath::vec3(1.0f / 9.0f + 1.0f / 9.0f));
+    }
+    CATCH("preparing opengl to render objects on scene")
+}
+
+void CellEngineOpenGLVisualiser::Render(double CurrentTime)
+{
+    try
+    {
+        SetAutomaticParametersForRendering();
+
+        PrepareOpenGLToRenderObjectsOnScene();
+
         vmath::vec3 ViewPositionVector = vmath::vec3(ViewX, ViewY, ViewZ);
         vmath::mat4 ViewMatrix = vmath::lookat(ViewPositionVector, vmath::vec3(0.0f, 0.0f, 0.0f), vmath::vec3(0.0f, 1.0f, 0.0f)) * vmath::rotate(RotationAngle1, RotationAngle2, RotationAngle3) * RotationMatrix;
 
-        glUniform1f(Uniforms.SpecularPower, powf(2.0f, 3.0f));
-        glUniform3fv(Uniforms.SpecularAlbedo, 1, vmath::vec3(1.0f / 9.0f + 1.0f / 9.0f));
+        DrawBonds(CellEngineDataFileObjectPointer->GetParticlesCenters(), BondsBetweenParticlesCentersToDraw, CellEngineDataFileObjectPointer->DrawBondsBetweenParticlesCenters, ViewMatrix, Center);
 
         UnsignedIntType NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = 0;
         UnsignedIntType NumberOfAllRenderedAtoms = 0;
 
-        DrawBonds(CellEngineDataFileObjectPointer->GetParticlesCenters(), BondsBetweenParticlesCentersToDraw, CellEngineDataFileObjectPointer->DrawBondsBetweenParticlesCenters, ViewMatrix, Center);
-
         vector<pair<uint64_t, uint64_t>> TemporaryRenderedAtomsList;
         glUseProgram(ShaderProgramPhong);
         GLuint PartOfStencilBufferIndex[3];
+
         for (uint64_t StencilBufferLoopCounter = 0; StencilBufferLoopCounter < CellEngineDataFileObjectPointer->NumberOfStencilBufferLoops; StencilBufferLoopCounter++)
         {
             NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = 0;
@@ -641,6 +648,45 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
             }
         }
 
+        ChooseAtomUsingStencilBuffer(ViewMatrix, PartOfStencilBufferIndex, TemporaryRenderedAtomsList, NumberOfAllRenderedAtoms);
+
+        LoggersManagerObject.Log(STREAM("NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = " << to_string(NumberOfFoundParticlesCenterToBeRenderedInAtomDetails) << " NumberOfAllRenderedAtoms = " << to_string(NumberOfAllRenderedAtoms) << " ViewZ = " << to_string(ViewZ) << " CameraZPosition = " << to_string(CameraZPosition) << " AtomSize = " << to_string(CellEngineDataFileObjectPointer->SizeOfAtomX) << endl));
+    }
+    CATCH("rendering cell visualization")
+}
+
+inline void ClearRectangleOnScreen(const GLint XStart, const GLint YStart, const GLsizei  XWidth, const GLsizei YHeight)
+{
+    try
+    {
+        glEnable(GL_SCISSOR_TEST);
+        glScissor(XStart, YStart, XWidth, YHeight);
+        glClear(GL_COLOR_BUFFER_BIT);
+        glDisable(GL_SCISSOR_TEST);
+    }
+    CATCH("filling rectangle on screen")
+}
+
+inline void CellEngineOpenGLVisualiser::PrintAtomDescriptionOnScreen(CellEngineAtom& ChosenParticleObject)
+{
+    try
+    {
+        glDisable(GL_CULL_FACE);
+        TextOverlayObject.Clear();
+        string AtomDescription = "ATOM DATA: Serial = " + to_string(ChosenParticleObject.Serial) + " Name = " + ChosenParticleObject.Name + " ResName = " + ChosenParticleObject.ResName;
+        if (CellEngineDataFileObjectPointer->StencilForDrawingObjectsTypesObject == CellEngineDataFile::StencilForDrawingObjectsTypes::StencilForDrawingOnlyInAtomScale)
+        AtomDescription += " Chain [" + string(ChosenParticleObject.Chain) + "] EntityId = " + to_string(ChosenParticleObject.EntityId) + " Entity Name = [" + GetEntityName(ChosenParticleObject.EntityId) + "]";
+        TextOverlayObject.DrawText(AtomDescription.c_str(), 0, 0);
+        TextOverlayObject.Draw();
+        glEnable(GL_CULL_FACE);
+    }
+    CATCH("printing atom description on screen")
+}
+
+inline void CellEngineOpenGLVisualiser::ChooseAtomUsingStencilBuffer(const vmath::mat4& ViewMatrix, const GLuint* PartOfStencilBufferIndex, const vector<pair<uint64_t, uint64_t>>& TemporaryRenderedAtomsList, UnsignedIntType& NumberOfAllRenderedAtoms)
+{
+    try
+    {
         if (CellEngineDataFileObjectPointer->NumberOfStencilBufferLoops > 1)
         {
             uint64_t ChosenParticleCenterIndex = PartOfStencilBufferIndex[0] | (PartOfStencilBufferIndex[1] << 8) | (PartOfStencilBufferIndex[2] << 16);
@@ -672,25 +718,13 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
 
                 RenderObject(ChosenParticleObject, ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, true, RenderObjectsBool);
 
-                glEnable(GL_SCISSOR_TEST);
-                glScissor(0, Info.WindowHeight - 16, Info.WindowWidth, 16);
-                glClear(GL_COLOR_BUFFER_BIT);
-                glDisable(GL_SCISSOR_TEST);
+                ClearRectangleOnScreen(0, Info.WindowHeight - 16, Info.WindowWidth, 16);
 
-                glDisable(GL_CULL_FACE);
-                TextOverlayObject.Clear();
-                string AtomDescription = "ATOM DATA: Serial = " + to_string(ChosenParticleObject.Serial) + " Name = " + ChosenParticleObject.Name + " ResName = " + ChosenParticleObject.ResName;
-                if (CellEngineDataFileObjectPointer->StencilForDrawingObjectsTypesObject == CellEngineDataFile::StencilForDrawingObjectsTypes::StencilForDrawingOnlyInAtomScale)
-                    AtomDescription += " Chain [" + string(ChosenParticleObject.Chain) + "] EntityId = " + to_string(ChosenParticleObject.EntityId) + " Entity Name = [" + GetEntityName(ChosenParticleObject.EntityId) + "]";
-                TextOverlayObject.DrawText(AtomDescription.c_str(), 0, 0);
-                TextOverlayObject.Draw();
-                glEnable(GL_CULL_FACE);
+                PrintAtomDescriptionOnScreen(ChosenParticleObject);
             }
         }
-
-        LoggersManagerObject.Log(STREAM("NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = " << to_string(NumberOfFoundParticlesCenterToBeRenderedInAtomDetails) << " NumberOfAllRenderedAtoms = " << to_string(NumberOfAllRenderedAtoms) << " ViewZ = " << to_string(ViewZ) << " CameraZPosition = " << to_string(CameraZPosition) << " AtomSize = " << to_string(CellEngineDataFileObjectPointer->SizeOfAtomX) << endl));
     }
-    CATCH("rendering cell visualization")
+    CATCH("choosing atom using stencil buffer")
 }
 
 string CellEngineOpenGLVisualiser::GetEntityName(const uint64_t EntityId)
