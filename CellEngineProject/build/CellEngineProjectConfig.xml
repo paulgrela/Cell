@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Settings>
-	<ExecuteCell>1<ExecuteCell>	
+	<ExecuteCellState>1<ExecuteCellState>	
 	<Algorithm>
 		<MultiThreaded>true</MultiThreaded>
 		<SetProcessPriorityHighest>true</SetProcessPriorityHighest>
@@ -31,8 +31,8 @@
 		<MaximalNumberOfLinesInOneFile>200</MaximalNumberOfLinesInOneFile>
 	</Logger>
 	<Cells>
-		<Cell id="1">
-			<CellFileName>c:\Projects\Programs\C++\Cell\WholeCellData\cellpack_atom_instances_6973_curated.cif</CellFileName>
+		<CellState id="1">
+			<CellStateFileName>c:\Projects\Programs\C++\Cell\WholeCellData\cellpack_atom_instances_6973_curated.cif</CellStateFileName>
 			
 			<ChosenStructureIndex>0</ChosenStructureIndex>
 			
@@ -40,6 +40,9 @@
 			<StencilForDrawingObjectsTypes>2</StencilForDrawingObjectsTypes> <!--StencilForDrawingOnlyParticlesCenters = 1, StencilForDrawingOnlyInAtomScale = 2-->
 			
 			<MakeColorsType>2</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticle = 3-->
+			
+			<SpecularPower>16</SpecularPower>
+			<SpecularAlbedo>0.4444</SpecularAlbedo>
 			
 			<DrawBondsBetweenParticlesCenters>false</DrawBondsBetweenParticlesCenters>
 			<DrawBondsBetweenAtoms>false</DrawBondsBetweenAtoms>
@@ -227,12 +230,12 @@
 					<SizeZ>1<SizeZ>					
 				</Particle>								
 			</Particles>			
-		</Cell>
+		</CellState>
 		
-		<Cell id="2">
-		</Cell>
+		<CellState id="2">
+		</CellState>
 		
-		<Cell id="3">
-		</Cell>
+		<CellState id="3">
+		</CellState>
 	</Cells>
 </Settings>

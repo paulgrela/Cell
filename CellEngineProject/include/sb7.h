@@ -129,6 +129,11 @@ namespace sb7
 
             StartUp();
 
+            glClearColor(0, 0, 0, 0);
+            glClear(GL_COLOR_BUFFER_BIT);
+            glfwSwapBuffers(Window);
+            glfwPollEvents();
+
             do
             {
                 Render(glfwGetTime());

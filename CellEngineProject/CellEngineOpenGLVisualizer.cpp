@@ -24,9 +24,6 @@
 #include "CellEnginePDBDataFile.h"
 #include "CellEngineCIFDataFile.h"
 
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
-
 using namespace std;
 
 class CellEngineOpenGLVisualiser : public sb7::OpenGLApplication
@@ -563,8 +560,8 @@ inline void CellEngineOpenGLVisualiser::PrepareOpenGLToRenderObjectsOnScene()
         glEnable(GL_STENCIL_TEST);
         glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
-        glUniform1f(Uniforms.SpecularPower, powf(2.0f, 3.0f));
-        glUniform3fv(Uniforms.SpecularAlbedo, 1, vmath::vec3(1.0f / 9.0f + 1.0f / 9.0f));
+        glUniform1f(Uniforms.SpecularPower, CellEngineDataFileObjectPointer->SpecularPower);
+        glUniform3fv(Uniforms.SpecularAlbedo, 1, vmath::vec3(CellEngineDataFileObjectPointer->SpecularAlbedo));
     }
     CATCH("preparing opengl to render objects on scene")
 }
@@ -573,6 +570,8 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
 {
     try
     {
+        const auto start_time = chrono::high_resolution_clock::now();
+
         SetAutomaticParametersForRendering();
 
         PrepareOpenGLToRenderObjectsOnScene();
@@ -607,10 +606,7 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
             for (auto ParticlesCenterIterator = CellEngineDataFileObjectPointer->GetParticlesCenters().begin(); ParticlesCenterIterator != CellEngineDataFileObjectPointer->GetParticlesCenters().end(); ++ParticlesCenterIterator)
             {
                 if (CellEngineDataFileObjectPointer->StencilForDrawingObjectsTypesObject == CellEngineDataFile::StencilForDrawingObjectsTypes::StencilForDrawingOnlyParticlesCenters)
-                {
-                    uint8_t ToInsert = (NumberOfAllRenderedAtoms) >> (8 * StencilBufferLoopCounter);
-                    glStencilFunc(GL_ALWAYS, ToInsert, -1);
-                }
+                    glStencilFunc(GL_ALWAYS, uint8_t((NumberOfAllRenderedAtoms) >> (8 * StencilBufferLoopCounter)), -1);
 
                 auto ParticlesCenterObject = *ParticlesCenterIterator;
 
@@ -650,6 +646,9 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
 
         ChooseAtomUsingStencilBuffer(ViewMatrix, PartOfStencilBufferIndex, TemporaryRenderedAtomsList, NumberOfAllRenderedAtoms);
 
+        const auto stop_time = chrono::high_resolution_clock::now();
+
+        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Time of one frame = ", "Exception in measuring time")));
         LoggersManagerObject.Log(STREAM("NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = " << to_string(NumberOfFoundParticlesCenterToBeRenderedInAtomDetails) << " NumberOfAllRenderedAtoms = " << to_string(NumberOfAllRenderedAtoms) << " ViewZ = " << to_string(ViewZ) << " CameraZPosition = " << to_string(CameraZPosition) << " AtomSize = " << to_string(CellEngineDataFileObjectPointer->SizeOfAtomX) << endl));
     }
     CATCH("rendering cell visualization")

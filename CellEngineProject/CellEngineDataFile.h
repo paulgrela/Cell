@@ -107,6 +107,9 @@ struct Particle
 class CellEngineDataFile
 {
 public:
+    float SpecularPower = 8.0f;
+    float SpecularAlbedo = 0.2222f;
+public:
     enum class MakeColorsType
     {
         DrawColorForEveryAtom = 1,
