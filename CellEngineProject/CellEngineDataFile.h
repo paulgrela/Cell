@@ -185,6 +185,8 @@ protected:
     std::vector<std::vector<CellEngineAtom>> ParticlesCenters;
     std::vector<std::vector<CellEngineAtom>> AllAtoms;
 public:
+    virtual void ReadDataFromFile(std::string_view LocalCIFRecord) = 0;
+public:
     static vmath::vec3 GetCenter(const std::vector<CellEngineAtom>& AtomsParam)
     {
         vmath::vec3 Center(0.0, 0.0, 0.0);

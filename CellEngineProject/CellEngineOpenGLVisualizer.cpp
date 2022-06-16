@@ -24,6 +24,8 @@
 #include "CellEnginePDBDataFile.h"
 #include "CellEngineCIFDataFile.h"
 
+#include "CellEngineConfigurationFileReaderWriter.h"
+
 using namespace std;
 
 class CellEngineOpenGLVisualiser : public sb7::OpenGLApplication
@@ -91,10 +93,9 @@ public:
 protected:
     void Init() override
     {
-        static const char title[] = "Cell Engine Visualizer";
-
         sb7::OpenGLApplication::Init();
 
+        static const char title[] = "Cell Engine Visualizer";
         memcpy(Info.Title, title, sizeof(title));
     }
 protected:
@@ -155,6 +156,32 @@ void InitializeLoggerManagerParameters()
     CATCH("initializing logger manager parameters")
 }
 
+void CellEngineOpenGLVisualiser::InitExternalData()
+{
+    try
+    {
+        InitializeLoggerManagerParameters();
+        LoggersManagerObject.Log(STREAM("START CELL"));
+
+        string FileName;
+        if (__argc > 1)
+            FileName = __argv[1];
+        else
+            LoggersManagerObject.Log(STREAM("Lack of file name in program parameters"));
+
+        if (string_utils::check_end_str(FileName, ".pdb") == true)
+            CellEngineDataFileObjectPointer = make_unique<CellEnginePDBDataFile>(FileName);
+        else
+            CellEngineDataFileObjectPointer = make_unique<CellEngineCIFDataFile>(FileName);
+
+        CellEngineConfigurationFileReaderWriterObject.ReadChessConfigurationFile("CellEngineProjectConfig.xml", CellEngineDataFileObjectPointer);
+        CellEngineDataFileObjectPointer->ReadDataFromFile(FileName);
+
+        BondsBetweenAtomsToDraw.resize(CellEngineDataFileObjectPointer->GetParticlesCenters().size());
+    }
+    CATCH("reading of data file")
+}
+
 void CellEngineOpenGLVisualiser::StartUp()
 {
     try
@@ -184,38 +211,6 @@ void CellEngineOpenGLVisualiser::StartUp()
         CameraZPosition = CellEngineDataFileObjectPointer->CameraZPosition;
     }
     CATCH("initiation of data for cell visualization")
-}
-
-void CellEngineOpenGLVisualiser::ShutDown()
-{
-    try
-    {
-        TextOverlayObject.TearDown();
-    }
-    CATCH("deleting of data for cell visualization")
-}
-
-void CellEngineOpenGLVisualiser::InitExternalData()
-{
-    try
-    {
-        InitializeLoggerManagerParameters();
-        LoggersManagerObject.Log(STREAM("START CELL"));
-
-        string FileName;
-        if (__argc > 1)
-            FileName = __argv[1];
-        else
-            LoggersManagerObject.Log(STREAM("Lack of file name in program parameters"));
-
-        if (string_utils::check_end_str(FileName, ".pdb") == true)
-            CellEngineDataFileObjectPointer = make_unique<CellEnginePDBDataFile>(FileName);
-        else
-            CellEngineDataFileObjectPointer = make_unique<CellEngineCIFDataFile>(FileName);
-
-        BondsBetweenAtomsToDraw.resize(CellEngineDataFileObjectPointer->GetParticlesCenters().size());
-    }
-    CATCH("reading of data file")
 }
 
 void CellEngineOpenGLVisualiser::LoadShaders(const char* VertexShaderFileName, const char* FragmentShaderFileName, GLuint& ShaderProgram)
@@ -259,6 +254,15 @@ void CellEngineOpenGLVisualiser::LoadShadersSimple()
         LoadShaders("..\\shaders\\per-fragment-simple.vs.glsl", "..\\shaders\\per-fragment-simple.fs.glsl", ShaderProgramSimple);
     }
     CATCH("loading simple shaders for cell visualization")
+}
+
+void CellEngineOpenGLVisualiser::ShutDown()
+{
+    try
+    {
+        TextOverlayObject.TearDown();
+    }
+    CATCH("deleting of data for cell visualization")
 }
 
 void CellEngineOpenGLVisualiser::DeleteLineVertexes()

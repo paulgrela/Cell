@@ -73,7 +73,7 @@ CellEnginePDBDataFile::CellEnginePDBDataFile(const string_view FileName)
 
     ChosenBackgroundColor = 3;
 
-	ReadDataFromFile(FileName);
+	//ReadDataFromFile(FileName);
 }
 
 CellEngineAtom CellEnginePDBDataFile::ParseRecord(const char* LocalPDBRecord)

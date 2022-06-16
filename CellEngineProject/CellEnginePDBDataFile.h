@@ -19,7 +19,7 @@
 class CellEnginePDBDataFile: public CellEngineDataFile
 {
 private:
-    void ReadDataFromFile(std::string_view FileName);
+    void ReadDataFromFile(std::string_view FileName) override;
 public:
     explicit CellEnginePDBDataFile(std::string_view FileName);
     ~CellEnginePDBDataFile() = default;

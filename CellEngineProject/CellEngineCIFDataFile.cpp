@@ -113,7 +113,7 @@ CellEngineCIFDataFile::CellEngineCIFDataFile(const string_view FileName)
 
     ChosenBackgroundColor = 1;
 
-    ReadDataFromFile(FileName);
+    //ReadDataFromFile(FileName);
 }
 
 void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)

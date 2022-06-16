@@ -132,7 +132,7 @@ public:
 public:
     CellEngineConfigurationFileReaderWriter() = default;
 public:
-    void ReadChessConfigurationFile(const char* ConfigFileNameParameter);
+    void ReadChessConfigurationFile(const char* ConfigFileNameParameter, const std::unique_ptr<CellEngineDataFile>& CellEngineDataFileObjectPointer);
 public:
     void SaveTestStatisticsToFile(const CellEngineState& CellEngineStateObject) const;
 };
