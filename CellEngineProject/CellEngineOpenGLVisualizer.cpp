@@ -478,14 +478,21 @@ inline vmath::vec3 CellEngineOpenGLVisualiser::GetSize(const CellEngineAtom& Ato
 
     try
     {
-        if (CellEngineDataFileObjectPointer->SizeOfAtomsDrawingTypesObject == CellEngineDataFile::SizeOfAtomsDrawingTypes::AtomSize)
-            Size = vmath::vec3(AtomObject.SizeXAtom, AtomObject.SizeYAtom, AtomObject.SizeZAtom);
-        else
-        if (CellEngineDataFileObjectPointer->SizeOfAtomsDrawingTypesObject == CellEngineDataFile::SizeOfAtomsDrawingTypes::ParticleSize)
-            Size = vmath::vec3(AtomObject.SizeYAtom, AtomObject.SizeYAtom, AtomObject.SizeZAtom);
-        else
-        if (CellEngineDataFileObjectPointer->SizeOfAtomsDrawingTypesObject == CellEngineDataFile::SizeOfAtomsDrawingTypes::AutomaticChangeSize)
-            Size = vmath::vec3(CellEngineDataFileObjectPointer->SizeOfAtomX, CellEngineDataFileObjectPointer->SizeOfAtomY, CellEngineDataFileObjectPointer->SizeOfAtomZ);
+        switch(CellEngineDataFileObjectPointer->SizeOfAtomsDrawingTypesObject)
+        {
+            case CellEngineDataFile::SizeOfAtomsDrawingTypes::AtomSize : Size = vmath::vec3(AtomObject.SizeXAtom, AtomObject.SizeYAtom, AtomObject.SizeZAtom); break;
+            case CellEngineDataFile::SizeOfAtomsDrawingTypes::ParticleSize : Size = vmath::vec3(AtomObject.SizeXParticle, AtomObject.SizeYParticle, AtomObject.SizeZParticle); break;
+            case CellEngineDataFile::SizeOfAtomsDrawingTypes::AutomaticChangeSize : Size = vmath::vec3(CellEngineDataFileObjectPointer->SizeOfAtomX, CellEngineDataFileObjectPointer->SizeOfAtomY, CellEngineDataFileObjectPointer->SizeOfAtomZ); break;
+            default : break;
+        }
+//        if (CellEngineDataFileObjectPointer->SizeOfAtomsDrawingTypesObject == CellEngineDataFile::SizeOfAtomsDrawingTypes::AtomSize)
+//            Size = vmath::vec3(AtomObject.SizeXAtom, AtomObject.SizeYAtom, AtomObject.SizeZAtom);
+//        else
+//        if (CellEngineDataFileObjectPointer->SizeOfAtomsDrawingTypesObject == CellEngineDataFile::SizeOfAtomsDrawingTypes::ParticleSize)
+//            Size = vmath::vec3(AtomObject.SizeXAtom, AtomObject.SizeYAtom, AtomObject.SizeZAtom);
+//        else
+//        if (CellEngineDataFileObjectPointer->SizeOfAtomsDrawingTypesObject == CellEngineDataFile::SizeOfAtomsDrawingTypes::AutomaticChangeSize)
+//            Size = vmath::vec3(CellEngineDataFileObjectPointer->SizeOfAtomX, CellEngineDataFileObjectPointer->SizeOfAtomY, CellEngineDataFileObjectPointer->SizeOfAtomZ);
     }
     CATCH("getting size")
 
