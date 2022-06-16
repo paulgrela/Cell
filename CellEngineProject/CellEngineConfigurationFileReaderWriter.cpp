@@ -29,7 +29,6 @@ void CellEngineConfigurationFileReaderWriter::ReadChessConfigurationFile(const c
         read_xml(ConfigFileName, MainConfigPropertyTree, boost::property_tree::xml_parser::trim_whitespace);
         LoggersManagerObject.Log(STREAM("Reading xml config file finished"));
 
-        //auto ExecuteCellStateId = MainConfigPropertyTree.get_child("Settings").get<uint64_t>("ExecuteCellStateId");
         LoggersManagerObject.Log(STREAM("ExecuteCellStateId = " << ExecuteCellStateId));
 
         for (const ptree::value_type& MainConfigPropertyTreeElement : MainConfigPropertyTree.get_child("Settings"))

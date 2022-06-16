@@ -249,7 +249,7 @@
 			<SizeOfAtomsDrawingTypes>3</SizeOfAtomsDrawingTypes> 
 			
 			<SpecularPower>8.0</SpecularPower> <!--16 or 8-->
-			<SpecularAlbedo>0.2222</SpecularAlbedo> <!--0.4444 or 0.2222-->
+			<SpecularAlbedo>0.4444</SpecularAlbedo> <!--0.4444 or 0.2222-->
 			
 			<DrawBondsBetweenParticlesCenters>false</DrawBondsBetweenParticlesCenters>
 			<DrawBondsBetweenAtoms>false</DrawBondsBetweenAtoms>

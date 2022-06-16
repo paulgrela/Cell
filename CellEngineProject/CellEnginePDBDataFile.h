@@ -21,7 +21,7 @@ class CellEnginePDBDataFile: public CellEngineDataFile
 private:
     void ReadDataFromFile() override;
 public:
-    explicit CellEnginePDBDataFile();
+    explicit CellEnginePDBDataFile() = default;
     ~CellEnginePDBDataFile() = default;
 public:
     static CellEngineAtom ParseRecord(const char* LocalPDBRecord);

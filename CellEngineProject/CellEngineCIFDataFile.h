@@ -30,7 +30,7 @@ private:
 private:
     void ReadDataFromFile() override;
 public:
-    explicit CellEngineCIFDataFile();
+    explicit CellEngineCIFDataFile() = default;
     ~CellEngineCIFDataFile() = default;
 public:
     static CellEngineAtom ParseRecord(const char* LocalPDBRecord);

@@ -50,8 +50,8 @@ CellEngineAtom CellEngineCIFDataFile::ParseRecord(const char* LocalCIFRecord)
     return CellEngineAtomObject;
 }
 
-CellEngineCIFDataFile::CellEngineCIFDataFile()
-{
+//CellEngineCIFDataFile::CellEngineCIFDataFile()
+//{
 //    ChosenStructureIndex = 0;
 //
 //    NumberOfStencilBufferLoops = 3;
@@ -114,7 +114,7 @@ CellEngineCIFDataFile::CellEngineCIFDataFile()
 //    ChosenBackgroundColor = 1;
 
     //ReadDataFromFile(FileName);
-}
+//}
 
 void CellEngineCIFDataFile::ReadDataFromFile()
 {
