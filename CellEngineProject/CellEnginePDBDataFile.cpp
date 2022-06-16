@@ -10,7 +10,7 @@
 using namespace std;
 using namespace string_utils;
 
-CellEnginePDBDataFile::CellEnginePDBDataFile(const string_view FileName)
+CellEnginePDBDataFile::CellEnginePDBDataFile()
 {
     ChosenStructureIndex = 0;
 
@@ -103,7 +103,7 @@ CellEngineAtom CellEnginePDBDataFile::ParseRecord(const char* LocalPDBRecord)
     return CellEngineAtomObject;
 }
 
-void CellEnginePDBDataFile::ReadDataFromFile(const string_view FileName)
+void CellEnginePDBDataFile::ReadDataFromFile()
 {
     try
     {
@@ -112,7 +112,7 @@ void CellEnginePDBDataFile::ReadDataFromFile(const string_view FileName)
 
         const auto start_time = chrono::high_resolution_clock::now();
 
-        std::ifstream File(string(FileName).c_str(), std::ios_base::in);
+        std::ifstream File(string(CellStateFileName).c_str(), std::ios_base::in);
 
         LoggersManagerObject.Log(STREAM("STARTED READING OF PDB FILE"));
 

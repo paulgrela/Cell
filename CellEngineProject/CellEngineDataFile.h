@@ -95,17 +95,29 @@ inline vmath::vec3 ChooseColorForAtom(const CellEngineAtom& AtomObject)
     return ChosenColor;
 }
 
-struct Particle
+struct ParticleKind
 {
     bool Visible;
     float SizeX;
     float SizeY;
     float SizeZ;
+    vmath::vec3 Color;
+    std::string Name;
+};
+
+struct AtomKind
+{
+    float SizeX;
+    float SizeY;
+    float SizeZ;
+    vmath::vec3 Color;
     std::string Name;
 };
 
 class CellEngineDataFile
 {
+public:
+    std::string CellStateFileName;
 public:
     float SpecularPower = 8.0f;
     float SpecularAlbedo = 0.2222f;
@@ -180,12 +192,13 @@ public:
     vmath::vec3 BackgroundColors[4];
     std::uint64_t ChosenBackgroundColor;
 public:
-    std::unordered_map<UnsignedIntType, Particle> ParticlesKinds;
+    std::unordered_map<std::string, AtomKind> AtomKinds;
+    std::unordered_map<UnsignedIntType, ParticleKind> ParticlesKinds;
 protected:
     std::vector<std::vector<CellEngineAtom>> ParticlesCenters;
     std::vector<std::vector<CellEngineAtom>> AllAtoms;
 public:
-    virtual void ReadDataFromFile(std::string_view LocalCIFRecord) = 0;
+    virtual void ReadDataFromFile() = 0;
 public:
     static vmath::vec3 GetCenter(const std::vector<CellEngineAtom>& AtomsParam)
     {

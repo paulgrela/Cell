@@ -50,7 +50,7 @@ CellEngineAtom CellEngineCIFDataFile::ParseRecord(const char* LocalCIFRecord)
     return CellEngineAtomObject;
 }
 
-CellEngineCIFDataFile::CellEngineCIFDataFile(const string_view FileName)
+CellEngineCIFDataFile::CellEngineCIFDataFile()
 {
 //    ChosenStructureIndex = 0;
 //
@@ -116,7 +116,7 @@ CellEngineCIFDataFile::CellEngineCIFDataFile(const string_view FileName)
     //ReadDataFromFile(FileName);
 }
 
-void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
+void CellEngineCIFDataFile::ReadDataFromFile()
 {
     try
     {
@@ -126,7 +126,7 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
 
         const auto start_time = chrono::high_resolution_clock::now();
 
-        std::ifstream File(string(FileName).c_str(), std::ios_base::in);
+        std::ifstream File(string(CellStateFileName).c_str(), std::ios_base::in);
 
         LoggersManagerObject.Log(STREAM("STARTED READING FROM CIF FILE"));
 
@@ -145,11 +145,11 @@ void CellEngineCIFDataFile::ReadDataFromFile(const std::string_view FileName)
         {
             if (Line.substr(0, 4) == ". . ")
             {
-                string RecordStr = Line.c_str();
+                string RecordStr = Line;//Line.c_str();
 
                 vector<string> AtomFields = split(RecordStr, " ");
 
-                ParticlesKinds[stoi(AtomFields[2])] = Particle{ true, 1, 1, 1, AtomFields[5].substr(1, AtomFields[5].length() - 2) };
+                ParticlesKinds[stoi(AtomFields[2])] = ParticleKind{ true, 1, 1, 1, vmath::vec3(0.0), AtomFields[5].substr(1, AtomFields[5].length() - 2) };
             }
             else
             if (Line.substr(0, 4) == "ATOM")

@@ -9,14 +9,14 @@
 
 #include "CellEngineTypes.h"
 
-struct CellEngineState
-{
-public:
-    std::uint64_t CellStateId;
-    bool ExecuteStateBool;
-    std::string CellStateFileName;
-public:
-    std::uint64_t ChosenStructureIndex;
+//struct CellEngineState
+//{
+//public:
+//    std::uint64_t CellStateId;
+//    bool ExecuteStateBool;
+//    std::string CellStateFileName;
+//public:
+//    std::uint64_t ChosenStructureIndex;
 //    std::uint64_t MaxDeepLevel;
 //    bool ReverseColorOfPieces;
 //public:
@@ -39,7 +39,7 @@ public:
 //    PathScoreType TheHighestFoundCaptureMovesPathScoreForAdvantageOfBlack;
 //    PathScoreType TheHighestFoundMateMovesPathScoreForAdvantageOfWhite;
 //    PathScoreType TheHighestFoundMateMovesPathScoreForAdvantageOfBlack;
-};
+//};
 
 class CellEngineConfigurationFileReaderWriter
 {
@@ -122,8 +122,8 @@ public:
 //    std::uint64_t ModuloToWriteMove;
 //
 //    bool WaitForKeyOnTheEnd;
-public:
-    std::vector<CellEngineState> CellEngineStates;
+//public:
+//    std::vector<CellEngineState> CellEngineStates;
 //public:
 //    bool FirstMove;
 //    std::string FirstPossibleMove;
@@ -132,9 +132,10 @@ public:
 public:
     CellEngineConfigurationFileReaderWriter() = default;
 public:
-    void ReadChessConfigurationFile(const char* ConfigFileNameParameter, const std::unique_ptr<CellEngineDataFile>& CellEngineDataFileObjectPointer);
+    void ReadChessConfigurationFile(const char* ConfigFileNameParameter, std::unique_ptr<CellEngineDataFile>& CellEngineDataFileObjectPointer, const std::uint64_t ExecuteCellStateId);
 public:
-    void SaveTestStatisticsToFile(const CellEngineState& CellEngineStateObject) const;
+    //void SaveTestStatisticsToFile(const CellEngineState& CellEngineStateObject) const;
+    void SaveTestStatisticsToFile(std::unique_ptr<CellEngineDataFile>& CellEngineDataFileObjectPointer, const uint64_t ExecuteCellStateId) const;
 };
 
 inline CellEngineConfigurationFileReaderWriter CellEngineConfigurationFileReaderWriterObject;

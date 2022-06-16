@@ -163,19 +163,30 @@ void CellEngineOpenGLVisualiser::InitExternalData()
         InitializeLoggerManagerParameters();
         LoggersManagerObject.Log(STREAM("START CELL"));
 
-        string FileName;
+//        string FileName;
+//        if (__argc > 1)
+//            FileName = __argv[1];
+//        else
+//            LoggersManagerObject.Log(STREAM("Lack of file name in program parameters"));
+
+        uint64_t ExecuteCellStateId;
         if (__argc > 1)
-            FileName = __argv[1];
+            ExecuteCellStateId = stoi(__argv[1]);
         else
-            LoggersManagerObject.Log(STREAM("Lack of file name in program parameters"));
+            LoggersManagerObject.Log(STREAM("Lack of cell id to execute in program parameters"));
 
-        if (string_utils::check_end_str(FileName, ".pdb") == true)
-            CellEngineDataFileObjectPointer = make_unique<CellEnginePDBDataFile>(FileName);
-        else
-            CellEngineDataFileObjectPointer = make_unique<CellEngineCIFDataFile>(FileName);
+//        if (string_utils::check_end_str(FileName, ".pdb") == true)
+//            CellEngineDataFileObjectPointer = make_unique<CellEnginePDBDataFile>(FileName);
+//        else
+//            CellEngineDataFileObjectPointer = make_unique<CellEngineCIFDataFile>(FileName);
 
-        CellEngineConfigurationFileReaderWriterObject.ReadChessConfigurationFile("CellEngineProjectConfig.xml", CellEngineDataFileObjectPointer);
-        CellEngineDataFileObjectPointer->ReadDataFromFile(FileName);
+//        if (string_utils::check_end_str(FileName, ".pdb") == true)
+//            CellEngineDataFileObjectPointer = make_unique<CellEnginePDBDataFile>(FileName);
+//        else
+//            CellEngineDataFileObjectPointer = make_unique<CellEngineCIFDataFile>(FileName);
+
+        CellEngineConfigurationFileReaderWriterObject.ReadChessConfigurationFile("CellEngineProjectConfig.xml", CellEngineDataFileObjectPointer, ExecuteCellStateId);
+        CellEngineDataFileObjectPointer->ReadDataFromFile();
 
         BondsBetweenAtomsToDraw.resize(CellEngineDataFileObjectPointer->GetParticlesCenters().size());
     }

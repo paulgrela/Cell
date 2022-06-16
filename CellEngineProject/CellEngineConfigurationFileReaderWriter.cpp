@@ -4,14 +4,19 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
+#include "StringUtils.h"
 #include "ExceptionsMacro.h"
 
 #include "CellEngineDataFile.h"
+
+#include "CellEnginePDBDataFile.h"
+#include "CellEngineCIFDataFile.h"
+
 #include "CellEngineConfigurationFileReaderWriter.h"
 
 using namespace std;
 
-void CellEngineConfigurationFileReaderWriter::ReadChessConfigurationFile(const char* ConfigFileNameParameter, const unique_ptr<CellEngineDataFile>& CellEngineDataFileObjectPointer)
+void CellEngineConfigurationFileReaderWriter::ReadChessConfigurationFile(const char* ConfigFileNameParameter, unique_ptr<CellEngineDataFile>& CellEngineDataFileObjectPointer, const uint64_t ExecuteCellStateId)
 {
     try
     {
@@ -24,7 +29,7 @@ void CellEngineConfigurationFileReaderWriter::ReadChessConfigurationFile(const c
         read_xml(ConfigFileName, MainConfigPropertyTree, boost::property_tree::xml_parser::trim_whitespace);
         LoggersManagerObject.Log(STREAM("Reading xml config file finished"));
 
-        auto ExecuteCellStateId = MainConfigPropertyTree.get_child("Settings").get<uint64_t>("ExecuteCellStateId");
+        //auto ExecuteCellStateId = MainConfigPropertyTree.get_child("Settings").get<uint64_t>("ExecuteCellStateId");
         LoggersManagerObject.Log(STREAM("ExecuteCellStateId = " << ExecuteCellStateId));
 
         for (const ptree::value_type& MainConfigPropertyTreeElement : MainConfigPropertyTree.get_child("Settings"))
@@ -57,9 +62,14 @@ void CellEngineConfigurationFileReaderWriter::ReadChessConfigurationFile(const c
                 for (const ptree::value_type& TestPropertyTreeElement : MainConfigPropertyTree.get_child("Settings.CellsStates"))
                     if (TestPropertyTreeElement.second.get<uint64_t>("<xmlattr>.id") == ExecuteCellStateId)
                     {
-                        CellEngineState CellEngineStateObject;
+                        auto CellStateFileName = TestPropertyTreeElement.second.get<string>("CellStateFileName");
 
-                        CellEngineStateObject.CellStateFileName = TestPropertyTreeElement.second.get<string>("CellStateFileName");
+                        if (string_utils::check_end_str(CellStateFileName, ".pdb") == true)
+                            CellEngineDataFileObjectPointer = make_unique<CellEnginePDBDataFile>();
+                        else
+                            CellEngineDataFileObjectPointer = make_unique<CellEngineCIFDataFile>();
+
+                        CellEngineDataFileObjectPointer->CellStateFileName = CellStateFileName;
 
                         CellEngineDataFileObjectPointer->ChosenStructureIndex = TestPropertyTreeElement.second.get<uint64_t>("ChosenStructureIndex");
                         CellEngineDataFileObjectPointer->FilmOfStructuresActive = TestPropertyTreeElement.second.get<bool>("FilmOfStructuresActive");
@@ -123,7 +133,7 @@ void CellEngineConfigurationFileReaderWriter::ReadChessConfigurationFile(const c
     CATCH("cell print configuration constructor")
 }
 
-void CellEngineConfigurationFileReaderWriter::SaveTestStatisticsToFile(const CellEngineState& CellEngineStateObject) const
+void CellEngineConfigurationFileReaderWriter::SaveTestStatisticsToFile(unique_ptr<CellEngineDataFile>& CellEngineDataFileObjectPointer, const uint64_t ExecuteCellStateId) const
 {
     try
     {
@@ -134,10 +144,13 @@ void CellEngineConfigurationFileReaderWriter::SaveTestStatisticsToFile(const Cel
         read_xml(this->ConfigFileName, MainConfigPropertyTree, boost::property_tree::xml_parser::trim_whitespace);
 
         for (ptree::value_type& TestPropertyTreeElement : MainConfigPropertyTree.get_child("Settings.Tests"))
-            if (CellEngineStateObject.CellStateId == TestPropertyTreeElement.second.get<uint64_t>("<xmlattr>.id"))
+            if (ExecuteCellStateId == TestPropertyTreeElement.second.get<uint64_t>("<xmlattr>.id"))
             {
                 ptree& TestPropertyTreeElementToWriteInFile = TestPropertyTreeElement.second;
-                TestPropertyTreeElementToWriteInFile.put("ChosenStructureIndex", CellEngineStateObject.ChosenStructureIndex);
+
+                TestPropertyTreeElementToWriteInFile.put("CellStateFileName", CellEngineDataFileObjectPointer->CellStateFileName);
+
+                TestPropertyTreeElementToWriteInFile.put("ChosenStructureIndex", CellEngineDataFileObjectPointer->ChosenStructureIndex);
             }
 
         std::ofstream OutputConfigFile(this->ConfigFileName);

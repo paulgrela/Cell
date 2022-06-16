@@ -19,9 +19,9 @@
 class CellEnginePDBDataFile: public CellEngineDataFile
 {
 private:
-    void ReadDataFromFile(std::string_view FileName) override;
+    void ReadDataFromFile() override;
 public:
-    explicit CellEnginePDBDataFile(std::string_view FileName);
+    explicit CellEnginePDBDataFile();
     ~CellEnginePDBDataFile() = default;
 public:
     static CellEngineAtom ParseRecord(const char* LocalPDBRecord);
