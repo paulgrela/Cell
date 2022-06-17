@@ -163,27 +163,11 @@ void CellEngineOpenGLVisualiser::InitExternalData()
         InitializeLoggerManagerParameters();
         LoggersManagerObject.Log(STREAM("START CELL"));
 
-//        string FileName;
-//        if (__argc > 1)
-//            FileName = __argv[1];
-//        else
-//            LoggersManagerObject.Log(STREAM("Lack of file name in program parameters"));
-
         uint64_t ExecuteCellStateId;
         if (__argc > 1)
             ExecuteCellStateId = stoi(__argv[1]);
         else
             LoggersManagerObject.Log(STREAM("Lack of cell id to execute in program parameters"));
-
-//        if (string_utils::check_end_str(FileName, ".pdb") == true)
-//            CellEngineDataFileObjectPointer = make_unique<CellEnginePDBDataFile>(FileName);
-//        else
-//            CellEngineDataFileObjectPointer = make_unique<CellEngineCIFDataFile>(FileName);
-
-//        if (string_utils::check_end_str(FileName, ".pdb") == true)
-//            CellEngineDataFileObjectPointer = make_unique<CellEnginePDBDataFile>(FileName);
-//        else
-//            CellEngineDataFileObjectPointer = make_unique<CellEngineCIFDataFile>(FileName);
 
         CellEngineConfigurationFileReaderWriterObject.ReadChessConfigurationFile("CellEngineProjectConfig.xml", CellEngineDataFileObjectPointer, ExecuteCellStateId);
         CellEngineDataFileObjectPointer->ReadDataFromFile();
@@ -376,7 +360,7 @@ void CellEngineOpenGLVisualiser::DrawBonds(const vector<CellEngineAtom>& Atoms, 
                 const auto& AtomObject1 = Atoms[BondToDrawObject.first];
                 const auto& AtomObject2 = Atoms[BondToDrawObject.second];
 
-                CreateUniformBlockForVertexShader(vmath::vec3(0.0, 0.0, 0.0), FromVec4ToVec3(sb7::color::DarkCyan), ViewMatrix, vmath::translate(0.0f, 0.0f, 0.0f), false, false, false, false);
+                CreateUniformBlockForVertexShader(vmath::vec3(0.0, 0.0, 0.0), sb7::FromVec4ToVec3(sb7::color::DarkCyan), ViewMatrix, vmath::translate(0.0f, 0.0f, 0.0f), false, false, false, false);
 
                 DrawBond(AtomObject1.X - CameraXPosition - Center.X(), AtomObject1.Y - CameraYPosition - Center.Y(), AtomObject1.Z - CameraZPosition - Center.Z(), AtomObject2.X - CameraXPosition - Center.X(), AtomObject2.Y - CameraYPosition - Center.Y(), AtomObject2.Z - CameraZPosition - Center.Z());
             }
@@ -403,7 +387,7 @@ inline void CellEngineOpenGLVisualiser::DrawCenterPoint(UniformsBlock*  MatrixUn
     try
     {
         ModelMatrix = vmath::translate(0.0f, 0.0f, 0.0f) * vmath::scale(vmath::vec3(0.5, 0.5, 0.5));
-        MatrixUniformBlockForVertexShaderPointer->Color = FromVec4ToVec3(sb7::color::Purple);
+        MatrixUniformBlockForVertexShaderPointer->Color = sb7::FromVec4ToVec3(sb7::color::Purple);
     }
     CATCH("drawing center point for data for cell visualization")
 }
@@ -421,7 +405,7 @@ inline bool CellEngineOpenGLVisualiser::GetFinalVisibilityInModelWorld(const vma
             if (DrawOutsideBorder == true)
                 if (CheckDistanceToDrawDetailsInAtomScale(XNew, YNew, ZNew) == true)
                 {
-                    MatrixUniformBlockForVertexShaderPointer->Color = FromVec4ToVec3(sb7::color::Purple);
+                    MatrixUniformBlockForVertexShaderPointer->Color = sb7::FromVec4ToVec3(sb7::color::Purple);
                     return true;
                 }
 
@@ -468,7 +452,7 @@ inline vmath::vec3 CellEngineOpenGLVisualiser::GetColor(const CellEngineAtom& At
     try
     {
         if (Chosen == true)
-            FinalColor = FromVec4ToVec3(sb7::color::Yellow);
+            FinalColor = sb7::FromVec4ToVec3(sb7::color::Yellow);
         else
             switch (CellEngineDataFileObjectPointer->MakeColorsTypeObject)
             {
@@ -496,14 +480,6 @@ inline vmath::vec3 CellEngineOpenGLVisualiser::GetSize(const CellEngineAtom& Ato
             case CellEngineDataFile::SizeOfAtomsDrawingTypes::AutomaticChangeSize : Size = vmath::vec3(CellEngineDataFileObjectPointer->SizeOfAtomX, CellEngineDataFileObjectPointer->SizeOfAtomY, CellEngineDataFileObjectPointer->SizeOfAtomZ); break;
             default : break;
         }
-//        if (CellEngineDataFileObjectPointer->SizeOfAtomsDrawingTypesObject == CellEngineDataFile::SizeOfAtomsDrawingTypes::AtomSize)
-//            Size = vmath::vec3(AtomObject.SizeXAtom, AtomObject.SizeYAtom, AtomObject.SizeZAtom);
-//        else
-//        if (CellEngineDataFileObjectPointer->SizeOfAtomsDrawingTypesObject == CellEngineDataFile::SizeOfAtomsDrawingTypes::ParticleSize)
-//            Size = vmath::vec3(AtomObject.SizeXAtom, AtomObject.SizeYAtom, AtomObject.SizeZAtom);
-//        else
-//        if (CellEngineDataFileObjectPointer->SizeOfAtomsDrawingTypesObject == CellEngineDataFile::SizeOfAtomsDrawingTypes::AutomaticChangeSize)
-//            Size = vmath::vec3(CellEngineDataFileObjectPointer->SizeOfAtomX, CellEngineDataFileObjectPointer->SizeOfAtomY, CellEngineDataFileObjectPointer->SizeOfAtomZ);
     }
     CATCH("getting size")
 

@@ -10,72 +10,6 @@
 using namespace std;
 using namespace string_utils;
 
-//CellEnginePDBDataFile::CellEnginePDBDataFile()
-//{
-//    ChosenStructureIndex = 0;
-//
-//    NumberOfStencilBufferLoops = 3;
-//    StencilForDrawingObjectsTypesObject = StencilForDrawingObjectsTypes::StencilForDrawingOnlyParticlesCenters;
-//
-//    MakeColorsTypeObject = MakeColorsType::DrawColorForEveryAtom;
-//
-//    DrawBondsBetweenParticlesCenters = false;
-//    DrawBondsBetweenAtoms = false;
-//
-//    ShowDetailsInAtomScale = false;
-//    CheckAtomVisibility = false;
-//    CutZ = 1000;
-//    Distance = 1000;
-//    LoadOfAtomsStep = 0;
-//
-//    XLowToDrawInAtomScale = 0;
-//    XHighToDrawInAtomScale = 0;
-//    YLowToDrawInAtomScale = 0;
-//    YHighToDrawInAtomScale = 0;
-//    ZLowToDrawInAtomScale = 0;
-//    ZHighToDrawInAtomScale = 0;
-//
-//    SizeOfAtomsDrawingTypesObject = CellEngineDataFile::SizeOfAtomsDrawingTypes::AutomaticChangeSize;
-//
-//    SizeStep = 0.01;
-//
-//    SizeOfAtomX = 1;
-//    SizeOfAtomY = 1;
-//    SizeOfAtomZ = 1;
-//
-//    CameraXPosition = 0.0;
-//    CameraYPosition = 0.0;
-//    CameraZPosition = 0.0;
-//
-//    CameraXMoveShortStep = 1;
-//    CameraYMoveShortStep = 1;
-//    CameraZMoveShortStep = 1;
-//
-//    CameraXMoveLongStep = 1;
-//    CameraYMoveLongStep = 1;
-//    CameraZMoveLongStep = 1;
-//
-//    ViewXMoveShortStep = 1;
-//    ViewYMoveShortStep = 1;
-//    ViewZMoveShortStep = 1;
-//
-//    ViewXMoveLongStep = 1;
-//    ViewYMoveLongStep = 1;
-//    ViewZMoveLongStep = 1;
-//
-//    ViewChangeUsingLongStep = false;
-//    AutomaticChangeOfSizeOfAtom = false;
-//    AutomaticChangeOfLoadAtomsStep = false;
-//
-//    BackgroundColors[1] = FromVec4ToVec3(sb7::color::Cyan);
-//    BackgroundColors[2] = FromVec4ToVec3(sb7::color::White);
-//    BackgroundColors[3] = FromVec4ToVec3(sb7::color::Black);
-//
-//    ChosenBackgroundColor = 3;
-
-	//ReadDataFromFile(FileName);
-//}
-
 CellEngineAtom CellEnginePDBDataFile::ParseRecord(const char* LocalPDBRecord)
 {
     CellEngineAtom CellEngineAtomObject;
@@ -95,8 +29,26 @@ CellEngineAtom CellEnginePDBDataFile::ParseRecord(const char* LocalPDBRecord)
         CellEngineAtomObject.Y = stof(RecordStr.substr(38, 8));
         CellEngineAtomObject.Z = stof(RecordStr.substr(46, 8));
 
-        CellEngineAtomObject.AtomColor = CellEngineAtomObject.ParticleColor = CellEngineAtomObject.RandomParticleColor = ChooseColorForAtom(CellEngineAtomObject);
-        CellEngineAtomObject.SizeXAtom = CellEngineAtomObject.SizeYAtom = CellEngineAtomObject.SizeZAtom =  CellEngineAtomObject.SizeXParticle = CellEngineAtomObject.SizeYParticle = CellEngineAtomObject.SizeZParticle = 1;
+        //CellEngineAtomObject.AtomColor = CellEngineAtomObject.ParticleColor = CellEngineAtomObject.RandomParticleColor = ChooseColorForAtom(CellEngineAtomObject);
+        //CellEngineAtomObject.SizeXAtom = CellEngineAtomObject.SizeYAtom = CellEngineAtomObject.SizeZAtom =  CellEngineAtomObject.SizeXParticle = CellEngineAtomObject.SizeYParticle = CellEngineAtomObject.SizeZParticle = 1;
+
+        //LoggersManagerObject.Log(STREAM("Particle Kind Color = " << AtomsKinds.find(string(1, CellEngineAtomObject.Name[0]))->second.Color));
+
+        auto AtomKindObjectIterator = AtomsKinds.find(string(1, CellEngineAtomObject.Name[0]));
+        if (AtomKindObjectIterator == AtomsKinds.end())
+            AtomKindObjectIterator = AtomsKinds.find(string(1, 'E'));
+        auto AtomKindObject = AtomKindObjectIterator->second;
+        CellEngineAtomObject.AtomColor = AtomKindObject.Color;
+
+//        auto ParticleKind = ParticlesKinds.find(CellEngineAtomObject.Name)->second;
+//        CellEngineAtomObject.ParticleColor = ChooseColorForParticle(CellEngineAtomObject);
+
+        CellEngineAtomObject.SizeXAtom = AtomKindObject.SizeX;
+        CellEngineAtomObject.SizeYAtom = AtomKindObject.SizeY;
+        CellEngineAtomObject.SizeZAtom = AtomKindObject.SizeZ;
+        CellEngineAtomObject.SizeXParticle = 1;
+        CellEngineAtomObject.SizeYParticle = 1;
+        CellEngineAtomObject.SizeZParticle = 1;
     }
     CATCH("parsing atom record")
 

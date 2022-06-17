@@ -35,86 +35,42 @@ CellEngineAtom CellEngineCIFDataFile::ParseRecord(const char* LocalCIFRecord)
         CellEngineAtomObject.Y = stof(AtomFields[11]);
         CellEngineAtomObject.Z = stof(AtomFields[12]);
 
-        CellEngineAtomObject.AtomColor = ChooseColorForAtom(CellEngineAtomObject);
-        CellEngineAtomObject.ParticleColor = ChooseColorForParticle(CellEngineAtomObject);
+        
+        auto AtomKindObjectIterator = AtomsKinds.find(string(1, CellEngineAtomObject.Name[0]));
+        if (AtomKindObjectIterator == AtomsKinds.end())
+            AtomKindObjectIterator = AtomsKinds.find(string(1, 'E'));
+        auto AtomKindObject = AtomKindObjectIterator->second;
+        CellEngineAtomObject.AtomColor = AtomKindObject.Color;
+        CellEngineAtomObject.SizeXAtom = AtomKindObject.SizeX;
+        CellEngineAtomObject.SizeYAtom = AtomKindObject.SizeY;
+        CellEngineAtomObject.SizeZAtom = AtomKindObject.SizeZ;
 
-        CellEngineAtomObject.SizeXAtom = 1;
-        CellEngineAtomObject.SizeYAtom = 1;
-        CellEngineAtomObject.SizeZAtom = 1;
-        CellEngineAtomObject.SizeXParticle = 1;
-        CellEngineAtomObject.SizeYParticle = 1;
-        CellEngineAtomObject.SizeZParticle = 1;
+
+
+        auto ParticleKindObjectIterator = ParticlesKinds.find(CellEngineAtomObject.EntityId);
+        if (ParticleKindObjectIterator == ParticlesKinds.end())
+            ParticleKindObjectIterator = ParticlesKinds.find(1000);
+        auto ParticleKindObject = ParticleKindObjectIterator->second;
+        CellEngineAtomObject.Visible = ParticleKindObject.Visible;
+        CellEngineAtomObject.ParticleColor = ParticleKindObject.Color;
+        CellEngineAtomObject.SizeXParticle = ParticleKindObject.SizeX;
+        CellEngineAtomObject.SizeYParticle = ParticleKindObject.SizeY;
+        CellEngineAtomObject.SizeZParticle = ParticleKindObject.SizeZ;
+
+//        CellEngineAtomObject.AtomColor = ChooseColorForAtom(CellEngineAtomObject);
+//        CellEngineAtomObject.ParticleColor = ChooseColorForParticle(CellEngineAtomObject);
+//
+//        CellEngineAtomObject.SizeXAtom = 1;
+//        CellEngineAtomObject.SizeYAtom = 1;
+//        CellEngineAtomObject.SizeZAtom = 1;
+//        CellEngineAtomObject.SizeXParticle = 1;
+//        CellEngineAtomObject.SizeYParticle = 1;
+//        CellEngineAtomObject.SizeZParticle = 1;
     }
     CATCH("parsing atom record")
 
     return CellEngineAtomObject;
 }
-
-//CellEngineCIFDataFile::CellEngineCIFDataFile()
-//{
-//    ChosenStructureIndex = 0;
-//
-//    NumberOfStencilBufferLoops = 3;
-//    StencilForDrawingObjectsTypesObject = StencilForDrawingObjectsTypes::StencilForDrawingOnlyInAtomScale;
-//
-//    MakeColorsTypeObject = MakeColorsType::DrawColorForEveryParticle;
-//
-//    DrawBondsBetweenParticlesCenters = false;
-//    DrawBondsBetweenAtoms = false;
-//
-//    ShowDetailsInAtomScale = true;
-//    CheckAtomVisibility =  true;
-//    CutZ = 200;
-//    Distance = 1700; //Distance = 200;
-//    LoadOfAtomsStep = 1;
-//
-//    XLowToDrawInAtomScale = -200;
-//    XHighToDrawInAtomScale = 200;
-//    YLowToDrawInAtomScale = -200;
-//    YHighToDrawInAtomScale = 200;
-//    ZLowToDrawInAtomScale = -650;
-//    ZHighToDrawInAtomScale = -10;
-//
-//    SizeOfAtomsDrawingTypesObject = CellEngineDataFile::SizeOfAtomsDrawingTypes::AutomaticChangeSize;
-//
-//    SizeStep = 0.01;
-//
-//    SizeOfAtomX = 1;
-//    SizeOfAtomY = 1;
-//    SizeOfAtomZ = 1;
-//
-//    CameraXPosition = 0.0;
-//    CameraYPosition = 0.0;
-//    CameraZPosition = 0.0;
-//
-//    CameraXMoveShortStep = 5;
-//    CameraYMoveShortStep = 5;
-//    CameraZMoveShortStep = 5;
-//
-//    CameraXMoveLongStep = 50;
-//    CameraYMoveLongStep = 50;
-//    CameraZMoveLongStep = 50;
-//
-//    ViewXMoveShortStep = 5;
-//    ViewYMoveShortStep = 5;
-//    ViewZMoveShortStep = 5;
-//
-//    ViewXMoveLongStep = 50;
-//    ViewYMoveLongStep = 50;
-//    ViewZMoveLongStep = 50;
-//
-//    ViewChangeUsingLongStep = true;
-//    AutomaticChangeOfSizeOfAtom = true;
-//    AutomaticChangeOfLoadAtomsStep = true;
-//
-//    BackgroundColors[1] = FromVec4ToVec3(sb7::color::Cyan);
-//    BackgroundColors[2] = FromVec4ToVec3(sb7::color::White);
-//    BackgroundColors[3] = FromVec4ToVec3(sb7::color::Black);
-//
-//    ChosenBackgroundColor = 1;
-
-    //ReadDataFromFile(FileName);
-//}
 
 void CellEngineCIFDataFile::ReadDataFromFile()
 {

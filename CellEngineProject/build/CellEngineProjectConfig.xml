@@ -318,22 +318,22 @@
 					<SizeZ>1</SizeZ>
 				</Atom>
 				<Atom id="3">
+					<Name>H</Name>
+					<Color>White</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>				
+				<Atom id="4">
 					<Name>N</Name>
 					<Color>Blue</Color>
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>
 				</Atom>
-				<Atom id="4">
+				<Atom id="5">
 					<Name>P</Name>
 					<Color>Green</Color>
-					<SizeX>1</SizeX>
-					<SizeY>1</SizeY>
-					<SizeZ>1</SizeZ>
-				</Atom>
-				<Atom id="5">
-					<Name>C</Name>
-					<Color>Turquoise</Color>
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>

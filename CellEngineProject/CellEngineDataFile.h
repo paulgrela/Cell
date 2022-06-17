@@ -3,28 +3,27 @@
 #define CELL_ENGINE_PROJECT_DATA_FILE_H
 
 #include <cinttypes>
-#include <sb7color.h>
 #include "CellEngineAtom.h"
 
-using namespace sb7;
+//using namespace sb7;
 
-//czytac z pliku XML
-const uint64_t DNACode = 694;
-const uint64_t RNACode = 695;
-const uint64_t RIBOSOME_70SCode = 682;
-const uint64_t RIBOSOME_50SCode = 681;
-const uint64_t RIBOSOME_30SCode = 679;
-const uint64_t DNA_POLYMERASE_GAMMA_COMPLEXCode = 516;
-const uint64_t DNA_POLYMERASE_CORECode = 513;
-const uint64_t RNA_POLYMERASECode = 683;
-const uint64_t tRNACode = 688;
-const uint64_t tRNA_aminoacylatedCode = 689;
+////czytac z pliku XML
+//const uint64_t DNACode = 694;
+//const uint64_t RNACode = 695;
+//const uint64_t RIBOSOME_70SCode = 682;
+//const uint64_t RIBOSOME_50SCode = 681;
+//const uint64_t RIBOSOME_30SCode = 679;
+//const uint64_t DNA_POLYMERASE_GAMMA_COMPLEXCode = 516;
+//const uint64_t DNA_POLYMERASE_CORECode = 513;
+//const uint64_t RNA_POLYMERASECode = 683;
+//const uint64_t tRNACode = 688;
+//const uint64_t tRNA_aminoacylatedCode = 689;
 
-inline vmath::vec3 FromVec4ToVec3(const vmath::vec4& Vector4)
-{
-    return vmath::vec3(Vector4.data[0], Vector4.data[1], Vector4.data[2]);
-}
-
+//inline vmath::vec3 FromVec4ToVec3(const vmath::vec4& Vector4)
+//{
+//    return vmath::vec3(Vector4.data[0], Vector4.data[1], Vector4.data[2]);
+//}
+/*
 inline vmath::vec3 ChooseColorForParticle(const CellEngineAtom& AtomObject)
 {
     vmath::vec3 ChosenColor;
@@ -58,12 +57,12 @@ inline vmath::vec3 ChooseColorForParticle(const CellEngineAtom& AtomObject)
         if(AtomObject.EntityId == DNA_POLYMERASE_CORECode)
             ChosenColor = FromVec4ToVec3(sb7::color::Cyan);
         else
-        if(AtomObject.EntityId == RNA_POLYMERASECode)
-            ChosenColor = FromVec4ToVec3(sb7::color::Purple);
-        else
-        if(AtomObject.EntityId == DNA_POLYMERASE_CORECode)
-            ChosenColor = FromVec4ToVec3(sb7::color::Cyan);
-        else
+                            //if(AtomObject.EntityId == RNA_POLYMERASECode)
+                            //    ChosenColor = FromVec4ToVec3(sb7::color::Purple);
+                            //else
+                            //if(AtomObject.EntityId == DNA_POLYMERASE_CORECode)
+                            //    ChosenColor = FromVec4ToVec3(sb7::color::Cyan);
+                            //else
         if(AtomObject.EntityId == RNA_POLYMERASECode)
             ChosenColor = FromVec4ToVec3(sb7::color::Purple);
         else
@@ -94,7 +93,7 @@ inline vmath::vec3 ChooseColorForAtom(const CellEngineAtom& AtomObject)
 
     return ChosenColor;
 }
-
+*/
 struct ParticleKind
 {
     bool Visible;
@@ -111,7 +110,6 @@ struct AtomKind
     float SizeY;
     float SizeZ;
     vmath::vec3 Color;
-    std::string Name;
 };
 
 class CellEngineDataFile
@@ -192,7 +190,7 @@ public:
     vmath::vec3 BackgroundColors[4];
     std::uint64_t ChosenBackgroundColor;
 public:
-    std::unordered_map<std::string, AtomKind> AtomKinds;
+    std::unordered_map<std::string, AtomKind> AtomsKinds;
     std::unordered_map<UnsignedIntType, ParticleKind> ParticlesKinds;
 protected:
     std::vector<std::vector<CellEngineAtom>> ParticlesCenters;

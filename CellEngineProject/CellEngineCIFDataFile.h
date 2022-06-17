@@ -33,7 +33,7 @@ public:
     explicit CellEngineCIFDataFile() = default;
     ~CellEngineCIFDataFile() = default;
 public:
-    static CellEngineAtom ParseRecord(const char* LocalPDBRecord);
+    CellEngineAtom ParseRecord(const char* LocalPDBRecord);
 };
 
 #endif
