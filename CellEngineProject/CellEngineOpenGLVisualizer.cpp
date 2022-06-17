@@ -150,8 +150,20 @@ void InitializeLoggerManagerParameters()
 
         LoggersManagerObject.InitializeFilesNames({ "AllMessages" });
         LoggersManagerObject.InitializeSelectiveWordsFunctions({ [](const string& s) { return true; } });
-        LoggersManagerObject.InitializePrintingParameters(true, true, false, false, false, false, false, true, true, false, false, false, 10000);
         LoggersManagerObject.InitializeLoggerManagerDataForTask("CELL_RESULTS", ".\\", string("Logs." + GetActualDateTimeStandardCPP(".", ".", ".", ".", ".")), true, 0, function<void(const uint64_t& CurrentThreadId, const uint64_t FileNumber, const string& MessageStr)>());
+        LoggersManagerObject.InitializePrintingParameters(CellEngineConfigurationFileReaderWriterObject.PrintLogToConsole,
+                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogToFiles,
+                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogLineNumberToConsole,
+                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogDateTimeToConsole,
+                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogProcessIdToConsole,
+                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogProcessPriorityLevelToConsole,
+                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogThreadIdToConsole,
+                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogLineNumberToFile,
+                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogDateTimeToFile,
+                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogProcessIdToFile,
+                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogProcessPriorityLevelToFile,
+                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogThreadIdToFile,
+                                                          CellEngineConfigurationFileReaderWriterObject.MaximalNumberOfLinesInOneFile);
     }
     CATCH("initializing logger manager parameters")
 }

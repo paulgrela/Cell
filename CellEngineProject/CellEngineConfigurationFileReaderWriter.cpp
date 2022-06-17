@@ -57,6 +57,8 @@ void CellEngineConfigurationFileReaderWriter::ReadChessConfigurationFile(const c
                 PrintLogProcessIdToFile = MainConfigPropertyTreeElement.second.get<bool>("PrintProcessIdToFile");
                 PrintLogProcessPriorityLevelToFile = MainConfigPropertyTreeElement.second.get<bool>("PrintProcessPriorityLevelToFile");
                 PrintLogThreadIdToFile = MainConfigPropertyTreeElement.second.get<bool>("PrintThreadIdToFile");
+
+                MaximalNumberOfLinesInOneFile = MainConfigPropertyTreeElement.second.get<uint64_t>("MaximalNumberOfLinesInOneFile");
             }
             else
             if (MainConfigPropertyTreeElement.first == "CellsStates")

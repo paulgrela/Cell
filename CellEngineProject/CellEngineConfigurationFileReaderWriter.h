@@ -29,13 +29,14 @@ public:
     bool PrintLogProcessIdToFile = false;
     bool PrintLogProcessPriorityLevelToFile = false;
     bool PrintLogThreadIdToFile = false;
+
+    uint64_t MaximalNumberOfLinesInOneFile = 100000;
 public:
     std::string ConfigFileName;
 public:
     CellEngineConfigurationFileReaderWriter() = default;
 public:
     void ReadChessConfigurationFile(const char* ConfigFileNameParameter, std::unique_ptr<CellEngineDataFile>& CellEngineDataFileObjectPointer, const std::uint64_t ExecuteCellStateId);
-public:
     void SaveTestStatisticsToFile(std::unique_ptr<CellEngineDataFile>& CellEngineDataFileObjectPointer, const uint64_t ExecuteCellStateId) const;
 };
 
