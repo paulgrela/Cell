@@ -149,14 +149,16 @@ void CellEngineConfigurationFileReaderWriter::ReadChessConfigurationFile(const c
                         {
                             ParticleKind ParticleKindObject;
 
-                            LoggersManagerObject.Log(STREAM("Particle Kind Name = " << ParticleKindPropertyTreeElement.second.get<string>("Name") << " ID = " << ParticleKindPropertyTreeElement.second.get<uint64_t>("<xmlattr>.id") << " COLOR = " << ParticleKindPropertyTreeElement.second.get<string>("Color")));
+                            LoggersManagerObject.Log(STREAM("Particle Kind Name = " << ParticleKindPropertyTreeElement.second.get<string>("Name") << " ID = " << ParticleKindPropertyTreeElement.second.get<UnsignedIntType>("<xmlattr>.id") << " COLOR = " << ParticleKindPropertyTreeElement.second.get<string>("Color")));
 
+                            ParticleKindObject.NameFromXML = ParticleKindPropertyTreeElement.second.get<string>("Name");
                             ParticleKindObject.Color = sb7::FromVec4ToVec3(sb7::GetColorVec4FromColorName(ParticleKindPropertyTreeElement.second.get<string>("Color")));
+                                                                                                                        //LoggersManagerObject.Log(STREAM("COLOR = " << ParticleKindObject.Color[0] << " " << ParticleKindObject.Color[1] << " " << ParticleKindObject.Color[2]));
                             ParticleKindObject.Visible = ParticleKindPropertyTreeElement.second.get<bool>("Visible");
                             ParticleKindObject.SizeX = ParticleKindPropertyTreeElement.second.get<float>("SizeX");
                             ParticleKindObject.SizeY = ParticleKindPropertyTreeElement.second.get<float>("SizeY");
                             ParticleKindObject.SizeZ = ParticleKindPropertyTreeElement.second.get<float>("SizeZ");
-                            CellEngineDataFileObjectPointer->ParticlesKinds[ParticleKindPropertyTreeElement.second.get<uint64_t>("<xmlattr>.id")] = ParticleKindObject;
+                            CellEngineDataFileObjectPointer->ParticlesKinds[ParticleKindPropertyTreeElement.second.get<UnsignedIntType>("<xmlattr>.id")] = ParticleKindObject;
                         }
                     }
         }

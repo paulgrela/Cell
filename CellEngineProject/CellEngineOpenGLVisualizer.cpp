@@ -732,7 +732,7 @@ string CellEngineOpenGLVisualiser::GetEntityName(const uint64_t EntityId)
     {
         auto EntityIterator = CellEngineDataFileObjectPointer->ParticlesKinds.find(EntityId);
         if (EntityIterator != CellEngineDataFileObjectPointer->ParticlesKinds.end())
-            EntityName = EntityIterator->second.Name;
+            EntityName = EntityIterator->second.NameFromDataFile + " Name from xml file = " + EntityIterator->second.NameFromXML;
         else
             EntityName = "";
     }

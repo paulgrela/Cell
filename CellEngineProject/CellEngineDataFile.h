@@ -101,7 +101,8 @@ struct ParticleKind
     float SizeY;
     float SizeZ;
     vmath::vec3 Color;
-    std::string Name;
+    std::string NameFromXML;
+    std::string NameFromDataFile;
 };
 
 struct AtomKind
