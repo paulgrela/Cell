@@ -35,7 +35,6 @@ CellEngineAtom CellEngineCIFDataFile::ParseRecord(const char* LocalCIFRecord)
         CellEngineAtomObject.Y = stof(AtomFields[11]);
         CellEngineAtomObject.Z = stof(AtomFields[12]);
 
-        
         auto AtomKindObjectIterator = AtomsKinds.find(string(1, CellEngineAtomObject.Name[0]));
         if (AtomKindObjectIterator == AtomsKinds.end())
             AtomKindObjectIterator = AtomsKinds.find(string(1, 'E'));
@@ -45,42 +44,12 @@ CellEngineAtom CellEngineCIFDataFile::ParseRecord(const char* LocalCIFRecord)
         CellEngineAtomObject.SizeYAtom = AtomKindObject.SizeY;
         CellEngineAtomObject.SizeZAtom = AtomKindObject.SizeZ;
 
-
-//                                                                                                                        LoggersManagerObject.Log(STREAM("EntityId = " << CellEngineAtomObject.EntityId));
-//                                                                                                                        string s = "";
-//                                                                                                                        for (auto& ParticleKindObject1 : ParticlesKinds)
-//                                                                                                                            LoggersManagerObject.Log(STREAM("Name = " << ParticleKindObject1.second.Name << "COLOR = " << ParticleKindObject1.second.Color[0] << " " << ParticleKindObject1.second.Color[1] << " " << ParticleKindObject1.second.Color[2]));
-
-        //auto ParticleKindObjectIterator = ParticlesKinds.find(CellEngineAtomObject.EntityId);
-
-        //sytuacja niemozliwa bo wczesniej wczytal dane z datafile i zawsze trafi - nigdy w zielone - ale kolor juz skopiowany wczesniej
-//        if (ParticleKindObjectIterator == ParticlesKinds.end())
-//                {
-////                                                                                                                        LoggersManagerObject.Log(STREAM("V"));
-//            ParticleKindObjectIterator = ParticlesKinds.find(1000);
-//                }
-        //auto ParticleKindObject = ParticleKindObjectIterator->second;
-
         auto ParticleKindObject = ParticlesKinds.find(CellEngineAtomObject.EntityId)->second;
-
         CellEngineAtomObject.Visible = ParticleKindObject.Visible;
         CellEngineAtomObject.ParticleColor = ParticleKindObject.Color;
         CellEngineAtomObject.SizeXParticle = ParticleKindObject.SizeX;
         CellEngineAtomObject.SizeYParticle = ParticleKindObject.SizeY;
         CellEngineAtomObject.SizeZParticle = ParticleKindObject.SizeZ;
-
-//                                                                                                                        LoggersManagerObject.Log(STREAM("COLOR = " << ParticleKindObject.Color[0] << " " << ParticleKindObject.Color[1] << " " << ParticleKindObject.Color[2]));
-                                                                                                                        //LoggersManagerObject.Log(STREAM(CellEngineAtomObject.ParticleColor[0] << " " << CellEngineAtomObject.ParticleColor[1] << " " << CellEngineAtomObject.ParticleColor[2]));
-
-//        CellEngineAtomObject.AtomColor = ChooseColorForAtom(CellEngineAtomObject);
-//        CellEngineAtomObject.ParticleColor = ChooseColorForParticle(CellEngineAtomObject);
-//
-//        CellEngineAtomObject.SizeXAtom = 1;
-//        CellEngineAtomObject.SizeYAtom = 1;
-//        CellEngineAtomObject.SizeZAtom = 1;
-//        CellEngineAtomObject.SizeXParticle = 1;
-//        CellEngineAtomObject.SizeYParticle = 1;
-//        CellEngineAtomObject.SizeZParticle = 1;
     }
     CATCH("parsing atom record")
 
@@ -116,9 +85,6 @@ void CellEngineCIFDataFile::ReadDataFromFile()
         {
             if (Line.substr(0, 4) == ". . ")
             {
-                //string RecordStr = Line;//Line.c_str();
-
-                //vector<string> AtomFields = split(RecordStr, " ");
                 vector<string> AtomFields = split(Line, " ");
 
                 auto ParticleKindObjectIterator = ParticlesKinds.find(stoi(AtomFields[2]));
@@ -129,10 +95,6 @@ void CellEngineCIFDataFile::ReadDataFromFile()
                 }
                 else
                     ParticleKindObjectIterator->second.NameFromDataFile = AtomFields[5].substr(1, AtomFields[5].length() - 2);
-
-
-
-                //ParticlesKinds[stoi(AtomFields[2])] = ParticleKind{ true, 1, 1, 1, vmath::vec3(0.0), AtomFields[5].substr(1, AtomFields[5].length() - 2) };
             }
             else
             if (Line.substr(0, 4) == "ATOM")

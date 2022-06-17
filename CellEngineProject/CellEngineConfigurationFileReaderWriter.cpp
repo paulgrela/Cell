@@ -17,7 +17,6 @@
 #include "CellEngineConfigurationFileReaderWriter.h"
 
 using namespace std;
-//using namespace sb7;
 
 void CellEngineConfigurationFileReaderWriter::ReadChessConfigurationFile(const char* ConfigFileNameParameter, unique_ptr<CellEngineDataFile>& CellEngineDataFileObjectPointer, const uint64_t ExecuteCellStateId)
 {
@@ -153,7 +152,6 @@ void CellEngineConfigurationFileReaderWriter::ReadChessConfigurationFile(const c
 
                             ParticleKindObject.NameFromXML = ParticleKindPropertyTreeElement.second.get<string>("Name");
                             ParticleKindObject.Color = sb7::FromVec4ToVec3(sb7::GetColorVec4FromColorName(ParticleKindPropertyTreeElement.second.get<string>("Color")));
-                                                                                                                        //LoggersManagerObject.Log(STREAM("COLOR = " << ParticleKindObject.Color[0] << " " << ParticleKindObject.Color[1] << " " << ParticleKindObject.Color[2]));
                             ParticleKindObject.Visible = ParticleKindPropertyTreeElement.second.get<bool>("Visible");
                             ParticleKindObject.SizeX = ParticleKindPropertyTreeElement.second.get<float>("SizeX");
                             ParticleKindObject.SizeY = ParticleKindPropertyTreeElement.second.get<float>("SizeY");

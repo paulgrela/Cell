@@ -672,7 +672,7 @@ inline void CellEngineOpenGLVisualiser::PrintAtomDescriptionOnScreen(CellEngineA
         TextOverlayObject.Clear();
         string AtomDescription = "ATOM DATA: Serial = " + to_string(ChosenParticleObject.Serial) + " Name = " + ChosenParticleObject.Name + " ResName = " + ChosenParticleObject.ResName;
         if (CellEngineDataFileObjectPointer->StencilForDrawingObjectsTypesObject == CellEngineDataFile::StencilForDrawingObjectsTypes::StencilForDrawingOnlyInAtomScale)
-        AtomDescription += " Chain [" + string(ChosenParticleObject.Chain) + "] EntityId = " + to_string(ChosenParticleObject.EntityId) + " Entity Name = [" + GetEntityName(ChosenParticleObject.EntityId) + "]";
+            AtomDescription += " Chain [" + string(ChosenParticleObject.Chain) + "] EntityId = " + to_string(ChosenParticleObject.EntityId) + " Entity Name = [" + GetEntityName(ChosenParticleObject.EntityId) + "]";
         TextOverlayObject.DrawText(AtomDescription.c_str(), 0, 0);
         TextOverlayObject.Draw();
         glEnable(GL_CULL_FACE);
@@ -732,7 +732,7 @@ string CellEngineOpenGLVisualiser::GetEntityName(const uint64_t EntityId)
     {
         auto EntityIterator = CellEngineDataFileObjectPointer->ParticlesKinds.find(EntityId);
         if (EntityIterator != CellEngineDataFileObjectPointer->ParticlesKinds.end())
-            EntityName = EntityIterator->second.NameFromDataFile + " Name from xml file = " + EntityIterator->second.NameFromXML;
+            EntityName = EntityIterator->second.NameFromDataFile + " CONFIG NAME = " + EntityIterator->second.NameFromXML;
         else
             EntityName = "";
     }

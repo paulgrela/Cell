@@ -29,19 +29,11 @@ CellEngineAtom CellEnginePDBDataFile::ParseRecord(const char* LocalPDBRecord)
         CellEngineAtomObject.Y = stof(RecordStr.substr(38, 8));
         CellEngineAtomObject.Z = stof(RecordStr.substr(46, 8));
 
-        //CellEngineAtomObject.AtomColor = CellEngineAtomObject.ParticleColor = CellEngineAtomObject.RandomParticleColor = ChooseColorForAtom(CellEngineAtomObject);
-        //CellEngineAtomObject.SizeXAtom = CellEngineAtomObject.SizeYAtom = CellEngineAtomObject.SizeZAtom =  CellEngineAtomObject.SizeXParticle = CellEngineAtomObject.SizeYParticle = CellEngineAtomObject.SizeZParticle = 1;
-
-        //LoggersManagerObject.Log(STREAM("Particle Kind Color = " << AtomsKinds.find(string(1, CellEngineAtomObject.Name[0]))->second.Color));
-
         auto AtomKindObjectIterator = AtomsKinds.find(string(1, CellEngineAtomObject.Name[0]));
         if (AtomKindObjectIterator == AtomsKinds.end())
             AtomKindObjectIterator = AtomsKinds.find(string(1, 'E'));
         auto AtomKindObject = AtomKindObjectIterator->second;
         CellEngineAtomObject.AtomColor = AtomKindObject.Color;
-
-//        auto ParticleKind = ParticlesKinds.find(CellEngineAtomObject.Name)->second;
-//        CellEngineAtomObject.ParticleColor = ChooseColorForParticle(CellEngineAtomObject);
 
         CellEngineAtomObject.SizeXAtom = AtomKindObject.SizeX;
         CellEngineAtomObject.SizeYAtom = AtomKindObject.SizeY;
