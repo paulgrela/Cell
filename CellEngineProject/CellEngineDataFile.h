@@ -76,6 +76,9 @@ public:
     float SizeOfAtomX;
     float SizeOfAtomY;
     float SizeOfAtomZ;
+    float RotationAngle1;
+    float RotationAngle2;
+    float RotationAngle3;
     float CameraXPosition;
     float CameraYPosition;
     float CameraZPosition;
@@ -85,6 +88,9 @@ public:
     float CameraXMoveLongStep;
     float CameraYMoveLongStep;
     float CameraZMoveLongStep;
+    float ViewX;
+    float ViewY;
+    float ViewZ;
     float ViewXMoveShortStep;
     float ViewYMoveShortStep;
     float ViewZMoveShortStep;

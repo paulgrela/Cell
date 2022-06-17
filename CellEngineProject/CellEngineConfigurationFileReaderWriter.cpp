@@ -106,6 +106,12 @@ void CellEngineConfigurationFileReaderWriter::ReadChessConfigurationFile(const c
                         CellEngineDataFileObjectPointer->SizeOfAtomX = CellStatePropertyTreeElement.second.get<float>("SizeOfAtomX");
                         CellEngineDataFileObjectPointer->SizeOfAtomY = CellStatePropertyTreeElement.second.get<float>("SizeOfAtomY");
                         CellEngineDataFileObjectPointer->SizeOfAtomZ = CellStatePropertyTreeElement.second.get<float>("SizeOfAtomZ");
+                        CellEngineDataFileObjectPointer->RotationAngle1 = CellStatePropertyTreeElement.second.get<float>("RotationAngle1");
+                        CellEngineDataFileObjectPointer->RotationAngle2 = CellStatePropertyTreeElement.second.get<float>("RotationAngle2");
+                        CellEngineDataFileObjectPointer->RotationAngle3 = CellStatePropertyTreeElement.second.get<float>("RotationAngle3");
+                        CellEngineDataFileObjectPointer->ViewX = CellStatePropertyTreeElement.second.get<float>("ViewX");
+                        CellEngineDataFileObjectPointer->ViewY = CellStatePropertyTreeElement.second.get<float>("ViewY");
+                        CellEngineDataFileObjectPointer->ViewZ = CellStatePropertyTreeElement.second.get<float>("ViewZ");
                         CellEngineDataFileObjectPointer->CameraXPosition = CellStatePropertyTreeElement.second.get<float>("CameraXPosition");
                         CellEngineDataFileObjectPointer->CameraYPosition = CellStatePropertyTreeElement.second.get<float>("CameraYPosition");
                         CellEngineDataFileObjectPointer->CameraZPosition = CellStatePropertyTreeElement.second.get<float>("CameraZPosition");
@@ -115,6 +121,9 @@ void CellEngineConfigurationFileReaderWriter::ReadChessConfigurationFile(const c
                         CellEngineDataFileObjectPointer->CameraXMoveLongStep = CellStatePropertyTreeElement.second.get<float>("CameraXMoveLongStep");
                         CellEngineDataFileObjectPointer->CameraYMoveLongStep = CellStatePropertyTreeElement.second.get<float>("CameraYMoveLongStep");
                         CellEngineDataFileObjectPointer->CameraZMoveLongStep = CellStatePropertyTreeElement.second.get<float>("CameraZMoveLongStep");
+                        CellEngineDataFileObjectPointer->ViewX = CellStatePropertyTreeElement.second.get<float>("ViewX");
+                        CellEngineDataFileObjectPointer->ViewY = CellStatePropertyTreeElement.second.get<float>("ViewY");
+                        CellEngineDataFileObjectPointer->ViewZ = CellStatePropertyTreeElement.second.get<float>("ViewZ");
                         CellEngineDataFileObjectPointer->ViewXMoveShortStep = CellStatePropertyTreeElement.second.get<float>("ViewXMoveShortStep");
                         CellEngineDataFileObjectPointer->ViewYMoveShortStep = CellStatePropertyTreeElement.second.get<float>("ViewYMoveShortStep");
                         CellEngineDataFileObjectPointer->ViewZMoveShortStep = CellStatePropertyTreeElement.second.get<float>("ViewZMoveShortStep");

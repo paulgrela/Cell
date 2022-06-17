@@ -65,20 +65,20 @@ private:
     float LengthUnit = 1;
 private:
     vmath::vec3 Center;
-private:
-    float CameraXPosition = 0.0;
-    float CameraYPosition = 0.0;
-    float CameraZPosition = 0.0;
-private:
-    float ViewX = 0.0;
-    float ViewY = 0.0;
-    float ViewZ = 50.0;
+//private:
+//    float CameraXPosition = 0.0;
+//    float CameraYPosition = 0.0;
+//    float CameraZPosition = 0.0;
+//private:
+//    float ViewX = 0.0;
+//    float ViewY = 0.0;
+//    float ViewZ = 50.0;
+//private:
+//    float RotationAngle1 = 0.0;
+//    float RotationAngle2 = 0.0;
+//    float RotationAngle3 = 0.0;
 private:
     vmath::mat4 RotationMatrix;
-private:
-    float RotationAngle1 = 0.0;
-    float RotationAngle2 = 0.0;
-    float RotationAngle3 = 0.0;
 private:
     UnsignedIntType PressedRightMouseButton = 0;
 private:
@@ -213,9 +213,9 @@ void CellEngineOpenGLVisualiser::StartUp()
 
         Center = CellEngineDataFileObjectPointer->GetCenter(CellEngineDataFileObjectPointer->GetParticlesCenters());
 
-        CameraXPosition = CellEngineDataFileObjectPointer->CameraXPosition;
-        CameraYPosition = CellEngineDataFileObjectPointer->CameraYPosition;
-        CameraZPosition = CellEngineDataFileObjectPointer->CameraZPosition;
+//        CameraXPosition = CellEngineDataFileObjectPointer->CameraXPosition;
+//        CameraYPosition = CellEngineDataFileObjectPointer->CameraYPosition;
+//        CameraZPosition = CellEngineDataFileObjectPointer->CameraZPosition;
     }
     CATCH("initiation of data for cell visualization")
 }
@@ -374,7 +374,7 @@ void CellEngineOpenGLVisualiser::DrawBonds(const vector<CellEngineAtom>& Atoms, 
 
                 CreateUniformBlockForVertexShader(vmath::vec3(0.0, 0.0, 0.0), sb7::FromVec4ToVec3(sb7::color::DarkCyan), ViewMatrix, vmath::translate(0.0f, 0.0f, 0.0f), false, false, false, false);
 
-                DrawBond(AtomObject1.X - CameraXPosition - Center.X(), AtomObject1.Y - CameraYPosition - Center.Y(), AtomObject1.Z - CameraZPosition - Center.Z(), AtomObject2.X - CameraXPosition - Center.X(), AtomObject2.Y - CameraYPosition - Center.Y(), AtomObject2.Z - CameraZPosition - Center.Z());
+                DrawBond(AtomObject1.X - CellEngineDataFileObjectPointer->CameraXPosition - Center.X(), AtomObject1.Y - CellEngineDataFileObjectPointer->CameraYPosition - Center.Y(), AtomObject1.Z - CellEngineDataFileObjectPointer->CameraZPosition - Center.Z(), AtomObject2.X - CellEngineDataFileObjectPointer->CameraXPosition - Center.X(), AtomObject2.Y - CellEngineDataFileObjectPointer->CameraYPosition - Center.Y(), AtomObject2.Z - CellEngineDataFileObjectPointer->CameraZPosition - Center.Z());
             }
         }
     }
@@ -385,10 +385,10 @@ inline bool CellEngineOpenGLVisualiser::CheckDistanceToDrawDetailsInAtomScale(co
 {
     if (CellEngineDataFileObjectPointer->CheckAtomVisibility == true)
     {
-        if (ViewZ > CellEngineDataFileObjectPointer->Distance)
+        if (CellEngineDataFileObjectPointer->ViewZ > CellEngineDataFileObjectPointer->Distance)
             return ZNew > CellEngineDataFileObjectPointer->CutZ && sqrt((XNew * XNew) + (YNew * YNew) + (ZNew * ZNew)) > CellEngineDataFileObjectPointer->Distance;
         else
-            return (ZNew > ViewZ + CellEngineDataFileObjectPointer->ZLowToDrawInAtomScale && ZNew < ViewZ + CellEngineDataFileObjectPointer->ZHighToDrawInAtomScale && XNew > CellEngineDataFileObjectPointer->XLowToDrawInAtomScale && XNew < CellEngineDataFileObjectPointer->XHighToDrawInAtomScale && YNew > CellEngineDataFileObjectPointer->YLowToDrawInAtomScale && YNew < CellEngineDataFileObjectPointer->YHighToDrawInAtomScale);
+            return (ZNew > CellEngineDataFileObjectPointer->ViewZ + CellEngineDataFileObjectPointer->ZLowToDrawInAtomScale && ZNew < CellEngineDataFileObjectPointer->ViewZ + CellEngineDataFileObjectPointer->ZHighToDrawInAtomScale && XNew > CellEngineDataFileObjectPointer->XLowToDrawInAtomScale && XNew < CellEngineDataFileObjectPointer->XHighToDrawInAtomScale && YNew > CellEngineDataFileObjectPointer->YLowToDrawInAtomScale && YNew < CellEngineDataFileObjectPointer->YHighToDrawInAtomScale);
     }
     else
         return false;
@@ -410,9 +410,9 @@ inline bool CellEngineOpenGLVisualiser::GetFinalVisibilityInModelWorld(const vma
     {
         if (CountNewPosition == true)
         {
-            float XNew = MatrixUniformBlockForVertexShaderPointer->MoveMatrix[0][0] * (AtomPosition.X() + CameraXPosition - Center.X()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[1][0] * (AtomPosition.Y() + CameraYPosition - Center.Y()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[2][0] * (AtomPosition.Z() + CameraZPosition - Center.Z());
-            float YNew = MatrixUniformBlockForVertexShaderPointer->MoveMatrix[0][1] * (AtomPosition.X() + CameraXPosition - Center.X()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[1][1] * (AtomPosition.Y() + CameraYPosition - Center.Y()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[2][1] * (AtomPosition.Z() + CameraZPosition - Center.Z());
-            float ZNew = MatrixUniformBlockForVertexShaderPointer->MoveMatrix[0][2] * (AtomPosition.X() + CameraXPosition - Center.X()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[1][2] * (AtomPosition.Y() + CameraYPosition - Center.Y()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[2][2] * (AtomPosition.Z() + CameraZPosition - Center.Z());
+            float XNew = MatrixUniformBlockForVertexShaderPointer->MoveMatrix[0][0] * (AtomPosition.X() + CellEngineDataFileObjectPointer->CameraXPosition - Center.X()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[1][0] * (AtomPosition.Y() + CellEngineDataFileObjectPointer->CameraYPosition - Center.Y()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[2][0] * (AtomPosition.Z() + CellEngineDataFileObjectPointer->CameraZPosition - Center.Z());
+            float YNew = MatrixUniformBlockForVertexShaderPointer->MoveMatrix[0][1] * (AtomPosition.X() + CellEngineDataFileObjectPointer->CameraXPosition - Center.X()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[1][1] * (AtomPosition.Y() + CellEngineDataFileObjectPointer->CameraYPosition - Center.Y()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[2][1] * (AtomPosition.Z() + CellEngineDataFileObjectPointer->CameraZPosition - Center.Z());
+            float ZNew = MatrixUniformBlockForVertexShaderPointer->MoveMatrix[0][2] * (AtomPosition.X() + CellEngineDataFileObjectPointer->CameraXPosition - Center.X()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[1][2] * (AtomPosition.Y() + CellEngineDataFileObjectPointer->CameraYPosition - Center.Y()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[2][2] * (AtomPosition.Z() + CellEngineDataFileObjectPointer->CameraZPosition - Center.Z());
 
             if (DrawOutsideBorder == true)
                 if (CheckDistanceToDrawDetailsInAtomScale(XNew, YNew, ZNew) == true)
@@ -509,7 +509,7 @@ inline bool CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom& AtomO
 
         vmath::vec3 AtomPosition = LengthUnit * AtomObject.Position();
         vmath::vec3 SizeLocal = GetSize(AtomObject);
-        vmath::mat4 ModelMatrix = vmath::translate(AtomPosition.X() - CameraXPosition - Center.X(), AtomPosition.Y() + CameraYPosition - Center.Y(), AtomPosition.Z() + CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(SizeLocal.X(), SizeLocal.Y(), SizeLocal.Z()));
+        vmath::mat4 ModelMatrix = vmath::translate(AtomPosition.X() - CellEngineDataFileObjectPointer->CameraXPosition - Center.X(), AtomPosition.Y() + CellEngineDataFileObjectPointer->CameraYPosition - Center.Y(), AtomPosition.Z() + CellEngineDataFileObjectPointer->CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(SizeLocal.X(), SizeLocal.Y(), SizeLocal.Z()));
 
         FinalVisibilityInModelWorld = CreateUniformBlockForVertexShader(AtomPosition, GetColor(AtomObject, Chosen), ViewMatrix, ModelMatrix, CountNewPosition, DrawCenter, DrawOutsideBorder, true);
 
@@ -527,7 +527,7 @@ inline void CellEngineOpenGLVisualiser::SetAutomaticParametersForRendering()
     {
         if (CellEngineDataFileObjectPointer->ShowDetailsInAtomScale == true)
         {
-            if (ViewZ > CellEngineDataFileObjectPointer->Distance)
+            if (CellEngineDataFileObjectPointer->ViewZ > CellEngineDataFileObjectPointer->Distance)
             {
                 if (CellEngineDataFileObjectPointer->AutomaticChangeOfLoadAtomsStep == true)
                     CellEngineDataFileObjectPointer->LoadOfAtomsStep = 100;
@@ -586,8 +586,8 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
 
         PrepareOpenGLToRenderObjectsOnScene();
 
-        vmath::vec3 ViewPositionVector = vmath::vec3(ViewX, ViewY, ViewZ);
-        vmath::mat4 ViewMatrix = vmath::lookat(ViewPositionVector, vmath::vec3(0.0f, 0.0f, 0.0f), vmath::vec3(0.0f, 1.0f, 0.0f)) * vmath::rotate(RotationAngle1, RotationAngle2, RotationAngle3) * RotationMatrix;
+        vmath::vec3 ViewPositionVector = vmath::vec3(CellEngineDataFileObjectPointer->ViewX, CellEngineDataFileObjectPointer->ViewY, CellEngineDataFileObjectPointer->ViewZ);
+        vmath::mat4 ViewMatrix = vmath::lookat(ViewPositionVector, vmath::vec3(0.0f, 0.0f, 0.0f), vmath::vec3(0.0f, 1.0f, 0.0f)) * vmath::rotate(CellEngineDataFileObjectPointer->RotationAngle1, CellEngineDataFileObjectPointer->RotationAngle2, CellEngineDataFileObjectPointer->RotationAngle3) * RotationMatrix;
 
         DrawBonds(CellEngineDataFileObjectPointer->GetParticlesCenters(), BondsBetweenParticlesCentersToDraw, CellEngineDataFileObjectPointer->DrawBondsBetweenParticlesCenters, ViewMatrix, Center);
 
@@ -659,7 +659,7 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
         const auto stop_time = chrono::high_resolution_clock::now();
 
         LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Time of one frame = ", "Exception in measuring time")));
-        LoggersManagerObject.Log(STREAM("NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = " << to_string(NumberOfFoundParticlesCenterToBeRenderedInAtomDetails) << " NumberOfAllRenderedAtoms = " << to_string(NumberOfAllRenderedAtoms) << " ViewZ = " << to_string(ViewZ) << " CameraZPosition = " << to_string(CameraZPosition) << " AtomSize = " << to_string(CellEngineDataFileObjectPointer->SizeOfAtomX) << endl));
+        LoggersManagerObject.Log(STREAM("NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = " << to_string(NumberOfFoundParticlesCenterToBeRenderedInAtomDetails) << " NumberOfAllRenderedAtoms = " << to_string(NumberOfAllRenderedAtoms) << " ViewZ = " << to_string(CellEngineDataFileObjectPointer->ViewZ) << " CameraZPosition = " << to_string(CellEngineDataFileObjectPointer->CameraZPosition) << " AtomSize = " << to_string(CellEngineDataFileObjectPointer->SizeOfAtomX) << endl));
     }
     CATCH("rendering cell visualization")
 }
@@ -793,26 +793,26 @@ void CellEngineOpenGLVisualiser::OnKey(int Key, int Action)
         if (Action)
             switch (Key)
             {
-                case '1': CameraZPosition += (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->CameraZMoveShortStep : CellEngineDataFileObjectPointer->CameraZMoveLongStep); break;
-                case '2': CameraZPosition -= (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->CameraZMoveShortStep : CellEngineDataFileObjectPointer->CameraZMoveLongStep); break;
-                case '3': CameraXPosition += (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->CameraXMoveShortStep : CellEngineDataFileObjectPointer->CameraXMoveLongStep); break;
-                case '4': CameraXPosition -= (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->CameraZMoveShortStep : CellEngineDataFileObjectPointer->CameraXMoveLongStep); break;
-                case '5': CameraYPosition += (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->CameraYMoveShortStep : CellEngineDataFileObjectPointer->CameraYMoveLongStep); break;
-                case '6': CameraYPosition -= (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->CameraYMoveShortStep : CellEngineDataFileObjectPointer->CameraYMoveLongStep); break;
+                case '1': CellEngineDataFileObjectPointer->CameraZPosition += (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->CameraZMoveShortStep : CellEngineDataFileObjectPointer->CameraZMoveLongStep); break;
+                case '2': CellEngineDataFileObjectPointer->CameraZPosition -= (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->CameraZMoveShortStep : CellEngineDataFileObjectPointer->CameraZMoveLongStep); break;
+                case '3': CellEngineDataFileObjectPointer->CameraXPosition += (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->CameraXMoveShortStep : CellEngineDataFileObjectPointer->CameraXMoveLongStep); break;
+                case '4': CellEngineDataFileObjectPointer->CameraXPosition -= (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->CameraZMoveShortStep : CellEngineDataFileObjectPointer->CameraXMoveLongStep); break;
+                case '5': CellEngineDataFileObjectPointer->CameraYPosition += (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->CameraYMoveShortStep : CellEngineDataFileObjectPointer->CameraYMoveLongStep); break;
+                case '6': CellEngineDataFileObjectPointer->CameraYPosition -= (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->CameraYMoveShortStep : CellEngineDataFileObjectPointer->CameraYMoveLongStep); break;
 
-                case 'Q': ViewX += (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->ViewXMoveShortStep : CellEngineDataFileObjectPointer->ViewXMoveLongStep); break;
-                case 'W': ViewX -= (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->ViewXMoveShortStep : CellEngineDataFileObjectPointer->ViewXMoveLongStep); break;
-                case 'E': ViewY += (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->ViewYMoveShortStep : CellEngineDataFileObjectPointer->ViewYMoveLongStep); break;
-                case 'R': ViewY -= (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->ViewYMoveShortStep : CellEngineDataFileObjectPointer->ViewYMoveLongStep); break;
-                case 'T': ViewZ += (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->ViewZMoveShortStep : CellEngineDataFileObjectPointer->ViewZMoveLongStep); break;
-                case 'Y': ViewZ -= (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->ViewZMoveShortStep : CellEngineDataFileObjectPointer->ViewZMoveLongStep); break;
+                case 'Q': CellEngineDataFileObjectPointer->ViewX += (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->ViewXMoveShortStep : CellEngineDataFileObjectPointer->ViewXMoveLongStep); break;
+                case 'W': CellEngineDataFileObjectPointer->ViewX -= (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->ViewXMoveShortStep : CellEngineDataFileObjectPointer->ViewXMoveLongStep); break;
+                case 'E': CellEngineDataFileObjectPointer->ViewY += (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->ViewYMoveShortStep : CellEngineDataFileObjectPointer->ViewYMoveLongStep); break;
+                case 'R': CellEngineDataFileObjectPointer->ViewY -= (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->ViewYMoveShortStep : CellEngineDataFileObjectPointer->ViewYMoveLongStep); break;
+                case 'T': CellEngineDataFileObjectPointer->ViewZ += (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->ViewZMoveShortStep : CellEngineDataFileObjectPointer->ViewZMoveLongStep); break;
+                case 'Y': CellEngineDataFileObjectPointer->ViewZ -= (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->ViewZMoveShortStep : CellEngineDataFileObjectPointer->ViewZMoveLongStep); break;
 
-                case 'A': RotationAngle1 += 1; break;
-                case 'S': RotationAngle1 -= 1; break;
-                case 'D': RotationAngle2 += 1; break;
-                case 'F': RotationAngle2 -= 1; break;
-                case 'G': RotationAngle3 += 1; break;
-                case 'H': RotationAngle3 -= 1; break;
+                case 'A': CellEngineDataFileObjectPointer->RotationAngle1 += 1; break;
+                case 'S': CellEngineDataFileObjectPointer->RotationAngle1 -= 1; break;
+                case 'D': CellEngineDataFileObjectPointer->RotationAngle2 += 1; break;
+                case 'F': CellEngineDataFileObjectPointer->RotationAngle2 -= 1; break;
+                case 'G': CellEngineDataFileObjectPointer->RotationAngle3 += 1; break;
+                case 'H': CellEngineDataFileObjectPointer->RotationAngle3 -= 1; break;
 
                 case 'B': CellEngineDataFileObjectPointer->DrawBondsBetweenParticlesCenters = !CellEngineDataFileObjectPointer->DrawBondsBetweenParticlesCenters; break;
                 case 'C': CellEngineDataFileObjectPointer->DrawBondsBetweenAtoms = !CellEngineDataFileObjectPointer->DrawBondsBetweenAtoms; break;
@@ -858,7 +858,7 @@ void CellEngineOpenGLVisualiser::OnMouseWheel(int Pos)
 {
     try
     {
-        ViewZ += static_cast<float>(Pos) * (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->ViewZMoveShortStep : CellEngineDataFileObjectPointer->ViewZMoveLongStep);
+        CellEngineDataFileObjectPointer->ViewZ += static_cast<float>(Pos) * (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->ViewZMoveShortStep : CellEngineDataFileObjectPointer->ViewZMoveLongStep);
     }
     CATCH("executing on mouse wheel event for cell visualisation")
 }

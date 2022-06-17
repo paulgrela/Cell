@@ -68,7 +68,11 @@
 			<SizeOfAtomX>1</SizeOfAtomX>
 			<SizeOfAtomY>1</SizeOfAtomY>
 			<SizeOfAtomZ>1</SizeOfAtomZ>
-
+			
+			<RotationAngle1>0</RotationAngle1>
+			<RotationAngle2>0</RotationAngle2>
+			<RotationAngle3>0</RotationAngle3>
+			
 			<CameraXPosition>0</CameraXPosition>
 			<CameraYPosition>0</CameraYPosition>
 			<CameraZPosition>0</CameraZPosition>
@@ -80,6 +84,10 @@
 			<CameraXMoveLongStep>50</CameraXMoveLongStep>
 			<CameraYMoveLongStep>50</CameraYMoveLongStep>
 			<CameraZMoveLongStep>50</CameraZMoveLongStep>
+			
+			<ViewX>0</ViewX>
+			<ViewY>0</ViewY>
+			<ViewZ>50</ViewZ>						
 			
 			<ViewXMoveShortStep>5</ViewXMoveShortStep>
 			<ViewYMoveShortStep>5</ViewYMoveShortStep>
@@ -272,11 +280,15 @@
 			<SizeOfAtomX>1</SizeOfAtomX>
 			<SizeOfAtomY>1</SizeOfAtomY>
 			<SizeOfAtomZ>1</SizeOfAtomZ>
-
+			
+			<RotationAngle1>0</RotationAngle1>
+			<RotationAngle2>0</RotationAngle2>
+			<RotationAngle3>0</RotationAngle3>
+			
 			<CameraXPosition>0</CameraXPosition>
 			<CameraYPosition>0</CameraYPosition>
 			<CameraZPosition>0</CameraZPosition>
-			
+						
 			<CameraXMoveShortStep>1</CameraXMoveShortStep>
 			<CameraYMoveShortStep>1</CameraYMoveShortStep>
 			<CameraZMoveShortStep>1</CameraZMoveShortStep>
@@ -284,6 +296,10 @@
 			<CameraXMoveLongStep>1</CameraXMoveLongStep>
 			<CameraYMoveLongStep>1</CameraYMoveLongStep>
 			<CameraZMoveLongStep>1</CameraZMoveLongStep>
+			
+			<ViewX>0</ViewX>
+			<ViewY>0</ViewY>
+			<ViewZ>50</ViewZ>			
 			
 			<ViewXMoveShortStep>1</ViewXMoveShortStep>
 			<ViewYMoveShortStep>1</ViewYMoveShortStep>
@@ -478,6 +494,14 @@
 			<SizeOfAtomY>1</SizeOfAtomY>
 			<SizeOfAtomZ>1</SizeOfAtomZ>
 
+			<RotationAngle1>0</RotationAngle1>
+			<RotationAngle2>0</RotationAngle2>
+			<RotationAngle3>0</RotationAngle3>
+			
+			<ViewX>0</ViewX>
+			<ViewY>0</ViewY>
+			<ViewZ>1000</ViewZ>
+
 			<CameraXPosition>0</CameraXPosition>
 			<CameraYPosition>0</CameraYPosition>
 			<CameraZPosition>1000</CameraZPosition>
@@ -489,6 +513,10 @@
 			<CameraXMoveLongStep>50</CameraXMoveLongStep>
 			<CameraYMoveLongStep>50</CameraYMoveLongStep>
 			<CameraZMoveLongStep>50</CameraZMoveLongStep>
+
+			<ViewX>0</ViewX>
+			<ViewY>0</ViewY>
+			<ViewZ>1000</ViewZ>
 			
 			<ViewXMoveShortStep>5</ViewXMoveShortStep>
 			<ViewYMoveShortStep>5</ViewYMoveShortStep>

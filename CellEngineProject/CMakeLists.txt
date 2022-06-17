@@ -71,7 +71,8 @@ add_executable(
 	CellEngineOpenGLVisualizer.cpp
 	CellEngineConfigurationFileReaderWriter.cpp)
 
-target_link_libraries(${PROJECT_NAME} -static-libgcc -static-libstdc++ -lpthread -lglew32 -lsb7 -lglfw3 -lopengl32 -lglu32)
+target_link_libraries(${PROJECT_NAME} -static-libgcc -static-libstdc++ -lpthread -lglew32 -lsb7 -lglfw3 -lopengl32 -lglu32
+		-lgdi32 -limm32)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
