@@ -45,9 +45,23 @@ add_library(sb7
 		srcsb7/sb7textoverlay.cpp
 		srcsb7/gl3w.c)
 
+add_library(imgui
+		extern/imgui/imgui.cpp
+		extern/imgui/imgui_demo.cpp
+		extern/imgui/imgui_draw.cpp
+		extern/imgui/imgui_tables.cpp
+		extern/imgui/imgui_widgets.cpp
+		extern/imgui/backends/imgui_impl_glfw.cpp
+		extern/imgui/backends/imgui_impl_opengl3.cpp)
+
 include_directories(glm)
 include_directories(include)
-include_directories(extern/glfw-3.0.4/include)
+
+include_directories(extern/imgui)
+include_directories(extern/imgui/backends)
+
+#include_directories(extern/glfw-3.0.4/include)
+include_directories(extern/glfw-3.3.7.bin.WIN64/include)
 include_directories(
 	"../../Boost/*"
 	"../Common/Platform"
@@ -69,10 +83,10 @@ add_executable(
 	CellEnginePDBDataFile.cpp
 	CellEngineCIFDataFile.cpp
 	CellEngineOpenGLVisualizer.cpp
-	CellEngineConfigurationFileReaderWriter.cpp)
+	CellEngineConfigurationFileReaderWriter.cpp
+)
 
-target_link_libraries(${PROJECT_NAME} -static-libgcc -static-libstdc++ -lpthread -lglew32 -lsb7 -lglfw3 -lopengl32 -lglu32
-		-lgdi32 -limm32)
+target_link_libraries(${PROJECT_NAME} -static-libgcc -static-libstdc++ -lpthread -lglew32 -lsb7 -lglfw3 -lopengl32 -lglu32 -limgui)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})

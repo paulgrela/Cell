@@ -6,6 +6,7 @@ CellEngineProject/cmake-build-debug/
 CellEngineProject/extern/glfw-3.0.4/CMake/
 CellEngineProject/extern/glfw-3.0.4/cmake_uninstall.cmake.in
 CellEngineProject/extern/glfw-3.0.4/tests/
+CellEngineProject/extern/glfw-3.3.7.bin.WIN64/
 CellEngineProject/glm/.appveyor.yml
 CellEngineProject/glm/.gitignore
 CellEngineProject/glm/.travis.yml

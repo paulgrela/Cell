@@ -69,29 +69,13 @@ namespace sb7
             glfwWindowHint(GLFW_SAMPLES, Info.Samples);
             glfwWindowHint(GLFW_STEREO, Info.Flags.Stereo ? GL_TRUE : GL_FALSE);
 
-    //        if (Info.Flags.FullScreen)
-    //        {
-    //            if (Info.WindowWidth == 0 || Info.WindowHeight == 0)
-    //            {
-    //                GLFWvidmode mode;
-    //                glfwGetDesktopMode(&mode);
-    //                Info.WindowWidth = mode.Width;
-    //                Info.WindowHeight = mode.Height;
-    //            }
-    //
-    //            glfwOpenWindow(Info.WindowWidth, Info.WindowHeight, 8, 8, 8, 0, 32, 0, GLFW_FULLSCREEN);
-    //            glfwSwapInterval((int)Info.flags.vsync);
-    //        }
-    //        else
+            Window = glfwCreateWindow(Info.WindowWidth, Info.WindowHeight, Info.Title, Info.Flags.FullScreen ? glfwGetPrimaryMonitor() : NULL, NULL);
+            if (!Window)
             {
-                Window = glfwCreateWindow(Info.WindowWidth, Info.WindowHeight, Info.Title, Info.Flags.FullScreen ? glfwGetPrimaryMonitor() : NULL, NULL);
-                if (!Window)
-                {
-                    fprintf(stderr, "Failed to open window\n");
-                    return;
-                }
-                glfwSetWindowPos(Window, 480, 100);
+                fprintf(stderr, "Failed to open window\n");
+                return;
             }
+            glfwSetWindowPos(Window, 480, 100);
 
             glfwMakeContextCurrent(Window);
 
@@ -102,8 +86,6 @@ namespace sb7
             glfwSetScrollCallback(Window, glfw_onMouseWheel);
             if (!Info.Flags.Cursor)
                 glfwSetInputMode(Window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-
-            // Info.flags.Stereo = (glfwGetWindowParam(GLFW_STEREO) ? 1 : 0);
 
             gl3wInit();
 
@@ -149,7 +131,6 @@ namespace sb7
             ShutDown();
 
             glfwDestroyWindow(Window);
-            glfwTerminate();
         }
 
         virtual void Init()

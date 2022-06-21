@@ -1,6 +1,9 @@
 
-
 #include <omp.h>
+
+//#include "imgui.h"
+//#include "imgui_impl_glfw.h"
+//#include "imgui_impl_opengl3.h"
 
 #include <sb7.h>
 #include <sb7color.h>
@@ -20,9 +23,6 @@
 #include "ExceptionsMacro.h"
 
 #include "CellEngineDataFile.h"
-
-#include "CellEnginePDBDataFile.h"
-#include "CellEngineCIFDataFile.h"
 
 #include "CellEngineConfigurationFileReaderWriter.h"
 
@@ -65,18 +65,6 @@ private:
     float LengthUnit = 1;
 private:
     vmath::vec3 Center;
-//private:
-//    float CameraXPosition = 0.0;
-//    float CameraYPosition = 0.0;
-//    float CameraZPosition = 0.0;
-//private:
-//    float ViewX = 0.0;
-//    float ViewY = 0.0;
-//    float ViewZ = 50.0;
-//private:
-//    float RotationAngle1 = 0.0;
-//    float RotationAngle2 = 0.0;
-//    float RotationAngle3 = 0.0;
 private:
     vmath::mat4 RotationMatrix;
 private:
@@ -122,6 +110,7 @@ protected:
     void StartUp() override;
     void ShutDown() override;
     void Render(double CurrentTime) override;
+public:
     void OnKey(int Key, int Action) override;
     void OnMouseWheel(int Pos) override;
     void OnMouseButton(int Button, int Action) override;
@@ -212,10 +201,6 @@ void CellEngineOpenGLVisualiser::StartUp()
         InitArcBall();
 
         Center = CellEngineDataFileObjectPointer->GetCenter(CellEngineDataFileObjectPointer->GetParticlesCenters());
-
-//        CameraXPosition = CellEngineDataFileObjectPointer->CameraXPosition;
-//        CameraYPosition = CellEngineDataFileObjectPointer->CameraYPosition;
-//        CameraZPosition = CellEngineDataFileObjectPointer->CameraZPosition;
     }
     CATCH("initiation of data for cell visualization")
 }
@@ -858,6 +843,7 @@ void CellEngineOpenGLVisualiser::OnMouseWheel(int Pos)
 {
     try
     {
+        //CellEngineDataFileObjectPointer->ViewZ += static_cast<float>(Pos) * (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->ViewZMoveShortStep : CellEngineDataFileObjectPointer->ViewZMoveLongStep);
         CellEngineDataFileObjectPointer->ViewZ += static_cast<float>(Pos) * (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->ViewZMoveShortStep : CellEngineDataFileObjectPointer->ViewZMoveLongStep);
     }
     CATCH("executing on mouse wheel event for cell visualisation")
@@ -939,4 +925,212 @@ void CellEngineOpenGLVisualiser::OnResize(int Width, int Height)
     CATCH("executing window resize event - setting bounds of arc ball counting data for cell visualisation")
 }
 
-DECLARE_MAIN(CellEngineOpenGLVisualiser)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CellEngineOpenGLVisualiser* CellEngineOpenGLVisualiserPointer;
+
+void Thread1()
+{
+    CellEngineOpenGLVisualiserPointer = new CellEngineOpenGLVisualiser;
+    CellEngineOpenGLVisualiserPointer->Run(CellEngineOpenGLVisualiserPointer);
+    delete CellEngineOpenGLVisualiserPointer;
+}
+
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+
+struct APPINFO
+{
+    char Title[128];
+    int WindowWidth;
+    int WindowHeight;
+    int MajorVersion;
+    int MinorVersion;
+    int Samples;
+    union
+    {
+        struct
+        {
+            unsigned int FullScreen : 1;
+            unsigned int VSync : 1;
+            unsigned int Cursor : 1;
+            unsigned int Stereo : 1;
+            unsigned int Debug : 1;
+            unsigned int Robust : 1;
+        };
+        unsigned int All;
+    }
+    Flags;
+};
+
+APPINFO Info;
+
+static void glfw_error_callback(int error, const char* description)
+{
+    fprintf(stderr, "Glfw Error %d: %s\n", error, description);
+}
+                                                                                                                        #include <future>
+//int main(int, char**)
+int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+{
+    glfwSetErrorCallback(glfw_error_callback);
+    if (!glfwInit())
+        return 1;
+
+    Info.WindowWidth = 1600;
+    Info.WindowHeight = 1200;
+    Info.MajorVersion = 4;
+    Info.MinorVersion = 3;
+    Info.Samples = 0;
+    Info.Flags.All = 0;
+    Info.Flags.Cursor = 1;
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, Info.MajorVersion);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, Info.MinorVersion);
+
+    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
+
+    if (Info.Flags.Robust)
+        glfwWindowHint(GLFW_CONTEXT_ROBUSTNESS, GLFW_LOSE_CONTEXT_ON_RESET);
+
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    glfwWindowHint(GLFW_SAMPLES, Info.Samples);
+    glfwWindowHint(GLFW_STEREO, Info.Flags.Stereo ? GL_TRUE : GL_FALSE);
+
+    GLFWwindow* window = glfwCreateWindow(1280, 720, "Dear ImGui GLFW+OpenGL3 example", NULL, NULL);
+    if (window == NULL)
+        return 1;
+
+    glfwSetWindowPos(window, 480, 100);
+
+    if (!Info.Flags.Cursor)
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+
+    gl3wInit();
+
+    glfwMakeContextCurrent(window);
+
+    glfwSwapInterval(1); // Enable vsync
+
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+
+    ImGui::StyleColorsDark();
+    //ImGui::StyleColorsClassic();
+
+    // Setup Platform/Renderer backends
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    const char* glsl_version = "#version 130";
+    ImGui_ImplOpenGL3_Init(glsl_version);
+
+    bool show_demo_window = true;
+    bool show_another_window = true;
+    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
+    thread t1(Thread1);
+
+    while (!glfwWindowShouldClose(window))
+    {
+        // Poll and handle events (inputs, window resize, etc.)
+        // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
+        // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application, or clear/overwrite your copy of the mouse data.
+        // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application, or clear/overwrite your copy of the keyboard data.
+        // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
+        glfwPollEvents();
+
+        // Start the Dear ImGui frame
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+        // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
+        if (show_demo_window)
+            ImGui::ShowDemoWindow(&show_demo_window);
+
+        // 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
+        //{
+        static float f = 0.0f;
+        static int counter = 0;
+
+        ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+
+        ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
+        ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
+        ImGui::Checkbox("Another Window", &show_another_window);
+
+        ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+        ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
+
+        if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
+        {
+            CellEngineOpenGLVisualiserPointer->OnMouseWheel(1);
+            counter++;
+        }
+        ImGui::SameLine();
+        ImGui::Text("counter = %d", counter);
+
+        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+        ImGui::End();
+        //}
+
+        if (show_another_window)
+        {
+            ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
+            ImGui::Text("Hello from another window!");
+            if (ImGui::Button("Close Me"))
+                show_another_window = false;
+            ImGui::End();
+        }
+
+        ImGui::Render();
+
+        int display_w, display_h;
+        glfwGetFramebufferSize(window, &display_w, &display_h);
+        glViewport(0, 0, display_w, display_h);
+        glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
+        glClear(GL_COLOR_BUFFER_BIT);
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+        glfwSwapBuffers(window);
+    }
+
+    //t1.join();
+    t1.detach();
+
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+
+    glfwDestroyWindow(window);
+    glfwTerminate();
+
+    return 0;
+}
