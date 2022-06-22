@@ -1036,6 +1036,8 @@ int main(int argc, const char ** argv)
     glfwWindowHint(GLFW_SAMPLES, Info.Samples);
     glfwWindowHint(GLFW_STEREO, Info.Flags.Stereo ? GL_TRUE : GL_FALSE);
 
+    //cout << CellEngineConfigurationFileReaderWriterObject.XTopMenuWindow << " " << CellEngineConfigurationFileReaderWriterObject.YTopMenuWindow << " " << CellEngineConfigurationFileReaderWriterObject.WidthMenuWindow << " " << CellEngineConfigurationFileReaderWriterObject.HeightMenuWindow << endl;
+    //getchar();
     //GLFWwindow* window = glfwCreateWindow(1280, 720, "Dear ImGui GLFW+OpenGL3 example", NULL, NULL);
     GLFWwindow* window = glfwCreateWindow(CellEngineConfigurationFileReaderWriterObject.WidthMenuWindow, CellEngineConfigurationFileReaderWriterObject.HeightMenuWindow, "Dear ImGui GLFW+OpenGL3 example", NULL, NULL);
     if (window == NULL)
@@ -1083,6 +1085,7 @@ int main(int argc, const char ** argv)
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
+        //ImGui::SetWindowPos(ImVec2(15, 20), ImGuiCond_FirstUseEver);
         if (show_demo_window)
             ImGui::ShowDemoWindow(&show_demo_window);
 

@@ -73,7 +73,6 @@ namespace sb7
                 fprintf(stderr, "Failed to open window\n");
                 return;
             }
-            //glfwSetWindowPos(Window, 480, 100);
             glfwSetWindowPos(Window, XPosWindow, YPosWindow);
 
             glfwMakeContextCurrent(Window);
@@ -136,8 +135,6 @@ namespace sb7
         virtual void Init(int WindowWidth, int WindowHeight)
         {
             strcpy(Info.Title, "OpenGL Window");
-            //Info.WindowWidth = 1600;
-            //Info.WindowHeight = 1200;
             Info.WindowWidth = WindowWidth;
             Info.WindowHeight = WindowHeight;
             #ifdef __APPLE__
