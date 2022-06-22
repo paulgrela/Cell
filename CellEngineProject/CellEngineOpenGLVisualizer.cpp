@@ -962,13 +962,16 @@ void CellEngineOpenGLVisualiser::OnResize(int Width, int Height)
 
 
 
-CellEngineOpenGLVisualiser* CellEngineOpenGLVisualiserPointer;
+//CellEngineOpenGLVisualiser* CellEngineOpenGLVisualiserPointer;
+unique_ptr<CellEngineOpenGLVisualiser> CellEngineOpenGLVisualiserPointer;
 
-void StartFunction(int XPosWindow, int YPosWindow, int WidthWindow, int HeightWindow)
+void CellEngineOpenGLVisualiserThreadFunction(int XPosWindow, int YPosWindow, int WidthWindow, int HeightWindow)
 {
-    CellEngineOpenGLVisualiserPointer = new CellEngineOpenGLVisualiser;
+    CellEngineOpenGLVisualiserPointer = make_unique<CellEngineOpenGLVisualiser>();
     CellEngineOpenGLVisualiserPointer->Run(XPosWindow, YPosWindow, WidthWindow, HeightWindow);
-    delete CellEngineOpenGLVisualiserPointer;
+    //CellEngineOpenGLVisualiserPointer = new CellEngineOpenGLVisualiser;
+    //CellEngineOpenGLVisualiserPointer->Run(XPosWindow, YPosWindow, WidthWindow, HeightWindow);
+    //delete CellEngineOpenGLVisualiserPointer;
 }
 
 #include "imgui.h"
@@ -1010,8 +1013,6 @@ int main(int argc, const char ** argv)
 {
     ReadInitConfiguration();
 
-    //PRZEKAZAC DANE O OKNACH DO WATKU A WATEK DO PARAMETROW CellEngineOpenGLVisualiser i TAM OKNO TWORZEONE DLA GLOWNEGO OKNA KOMORKI OPENGL
-
     glfwSetErrorCallback(glfw_error_callback);
     if (!glfwInit())
         return 1;
@@ -1036,14 +1037,10 @@ int main(int argc, const char ** argv)
     glfwWindowHint(GLFW_SAMPLES, Info.Samples);
     glfwWindowHint(GLFW_STEREO, Info.Flags.Stereo ? GL_TRUE : GL_FALSE);
 
-    //cout << CellEngineConfigurationFileReaderWriterObject.XTopMenuWindow << " " << CellEngineConfigurationFileReaderWriterObject.YTopMenuWindow << " " << CellEngineConfigurationFileReaderWriterObject.WidthMenuWindow << " " << CellEngineConfigurationFileReaderWriterObject.HeightMenuWindow << endl;
-    //getchar();
-    //GLFWwindow* window = glfwCreateWindow(1280, 720, "Dear ImGui GLFW+OpenGL3 example", NULL, NULL);
     GLFWwindow* window = glfwCreateWindow(CellEngineConfigurationFileReaderWriterObject.WidthMenuWindow, CellEngineConfigurationFileReaderWriterObject.HeightMenuWindow, "Dear ImGui GLFW+OpenGL3 example", NULL, NULL);
     if (window == NULL)
         return 1;
 
-    //glfwSetWindowPos(window, 480, 100);
     glfwSetWindowPos(window, CellEngineConfigurationFileReaderWriterObject.XTopMenuWindow, CellEngineConfigurationFileReaderWriterObject.YTopMenuWindow);
 
     if (!Info.Flags.Cursor)
@@ -1072,10 +1069,7 @@ int main(int argc, const char ** argv)
     bool show_another_window = true;
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-
-    //cout << CellEngineConfigurationFileReaderWriterObject.XTopMainWindow << " " << CellEngineConfigurationFileReaderWriterObject.YTopMainWindow << " " << CellEngineConfigurationFileReaderWriterObject.WidthMainWindow << " " << CellEngineConfigurationFileReaderWriterObject.HeightMainWindow << endl;
-    //getchar();
-    thread t1(StartFunction, CellEngineConfigurationFileReaderWriterObject.XTopMainWindow, CellEngineConfigurationFileReaderWriterObject.YTopMainWindow, CellEngineConfigurationFileReaderWriterObject.WidthMainWindow, CellEngineConfigurationFileReaderWriterObject.HeightMainWindow);
+    thread CellEngineOpenGLVisualiserThreadObject(CellEngineOpenGLVisualiserThreadFunction, CellEngineConfigurationFileReaderWriterObject.XTopMainWindow, CellEngineConfigurationFileReaderWriterObject.YTopMainWindow, CellEngineConfigurationFileReaderWriterObject.WidthMainWindow, CellEngineConfigurationFileReaderWriterObject.HeightMainWindow);
 
     while (!glfwWindowShouldClose(window))
     {
@@ -1085,7 +1079,6 @@ int main(int argc, const char ** argv)
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        //ImGui::SetWindowPos(ImVec2(15, 20), ImGuiCond_FirstUseEver);
         if (show_demo_window)
             ImGui::ShowDemoWindow(&show_demo_window);
 
@@ -1133,7 +1126,7 @@ int main(int argc, const char ** argv)
         glfwSwapBuffers(window);
     }
 
-    t1.detach();
+    CellEngineOpenGLVisualiserThreadObject.detach();
 
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
