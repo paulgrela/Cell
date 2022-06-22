@@ -1,6 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Settings>
 	<ExecuteCellStateId>1</ExecuteCellStateId>
+	<WindowParameters>
+		<XTopMain>0</XTopMain>
+		<YTopMain>30</YTopMain>
+		<WidthMain>2000</WidthMain>
+		<HeightMain>1500</HeightMain>
+		<XTopMenu>2001</XTopMenu>
+		<YTopMenu>30</YTopMenu>
+		<WidthMenu>560</WidthMenu>
+		<HeightMenu>1500</HeightMenu>		
+		<XTopSecond>0</XTopSecond>
+		<YTopSecond>0</YTopSecond>
+		<WidthSecond>1280</WidthSecond>
+		<HeightSecond>1024</HeightSecond>				
+	</WindowParameters>
 	<Algorithm>
 		<MultiThreaded>true</MultiThreaded>
 		<SetProcessPriorityHighest>true</SetProcessPriorityHighest>

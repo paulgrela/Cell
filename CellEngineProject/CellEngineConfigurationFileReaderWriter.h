@@ -12,6 +12,19 @@
 class CellEngineConfigurationFileReaderWriter
 {
 public:
+    int XTopMainWindow;
+    int YTopMainWindow;
+    int WidthMainWindow;
+    int HeightMainWindow;
+    int XTopMenuWindow;
+    int YTopMenuWindow;
+    int WidthMenuWindow;
+    int HeightMenuWindow;
+    int XTopSecondWindow;
+    int YTopSecondWindow;
+    int WidthSecondWindow;
+    int HeightSecondWindow;
+public:
     bool MultiThreaded;
     bool SetProcessPriorityHighest;
 public:

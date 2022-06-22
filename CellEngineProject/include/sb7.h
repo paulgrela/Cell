@@ -15,7 +15,6 @@
 
 #include "GL/gl3w.h"
 
-#define GLFW_NO_GLU 1
 #define GLFW_INCLUDE_GLCOREARB 1
 
 #include "GLFW/glfw3.h"
@@ -38,12 +37,11 @@ namespace sb7
 
         virtual ~OpenGLApplication() = default;
 
-        virtual void Run(sb7::OpenGLApplication* OpenGLApplicationObjectParameter)
+        virtual void Run(int XPosWindow, int YPosWindow, int WidthWindow, int HeightWindow)
         {
             InitExternalData();
 
-            bool Running = true;
-            OpenGLApplicationObject = OpenGLApplicationObjectParameter;
+            OpenGLApplicationObject = this;
 
             if (!glfwInit())
             {
@@ -51,7 +49,7 @@ namespace sb7
                 return;
             }
 
-            Init();
+            Init(WidthWindow, HeightWindow);
 
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, Info.MajorVersion);
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, Info.MinorVersion);
@@ -75,7 +73,8 @@ namespace sb7
                 fprintf(stderr, "Failed to open window\n");
                 return;
             }
-            glfwSetWindowPos(Window, 480, 100);
+            //glfwSetWindowPos(Window, 480, 100);
+            glfwSetWindowPos(Window, XPosWindow, YPosWindow);
 
             glfwMakeContextCurrent(Window);
 
@@ -116,6 +115,7 @@ namespace sb7
             glfwSwapBuffers(Window);
             glfwPollEvents();
 
+            bool Running = true;
             do
             {
                 Render(glfwGetTime());
@@ -133,11 +133,13 @@ namespace sb7
             glfwDestroyWindow(Window);
         }
 
-        virtual void Init()
+        virtual void Init(int WindowWidth, int WindowHeight)
         {
             strcpy(Info.Title, "OpenGL Window");
-            Info.WindowWidth = 1600;
-            Info.WindowHeight = 1200;
+            //Info.WindowWidth = 1600;
+            //Info.WindowHeight = 1200;
+            Info.WindowWidth = WindowWidth;
+            Info.WindowHeight = WindowHeight;
             #ifdef __APPLE__
             Info.MajorVersion = 3;
             Info.MinorVersion = 2;

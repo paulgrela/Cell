@@ -74,14 +74,14 @@ private:
 private:
     vector<pair<UnsignedIntType, UnsignedIntType>> BondsBetweenParticlesCentersToDraw;
     vector<vector<pair<UnsignedIntType, UnsignedIntType>>> BondsBetweenAtomsToDraw;
-private:
-    std::unique_ptr<CellEngineDataFile> CellEngineDataFileObjectPointer;
+//private:
+//    std::unique_ptr<CellEngineDataFile> CellEngineDataFileObjectPointer;
 public:
     CellEngineOpenGLVisualiser() = default;
 protected:
-    void Init() override
+    void Init(int WindowWidth, int WindowHeight) override
     {
-        sb7::OpenGLApplication::Init();
+        sb7::OpenGLApplication::Init(WindowWidth, WindowHeight);
 
         static const char title[] = "Cell Engine Visualizer";
         memcpy(Info.Title, title, sizeof(title));
@@ -131,6 +131,8 @@ protected:
     [[nodiscard]] inline bool CheckDistanceToDrawDetailsInAtomScale(const float XNew, const float YNew, const float ZNew) const;
 };
 
+std::unique_ptr<CellEngineDataFile> CellEngineDataFileObjectPointer;
+
 void InitializeLoggerManagerParameters()
 {
     try
@@ -157,7 +159,7 @@ void InitializeLoggerManagerParameters()
     CATCH("initializing logger manager parameters")
 }
 
-void CellEngineOpenGLVisualiser::InitExternalData()
+void ReadInitConfiguration()
 {
     try
     {
@@ -171,6 +173,16 @@ void CellEngineOpenGLVisualiser::InitExternalData()
             LoggersManagerObject.Log(STREAM("Lack of cell id to execute in program parameters"));
 
         CellEngineConfigurationFileReaderWriterObject.ReadChessConfigurationFile("CellEngineProjectConfig.xml", CellEngineDataFileObjectPointer, ExecuteCellStateId);
+    }
+    CATCH("reading of data file")
+}
+
+void CellEngineOpenGLVisualiser::InitExternalData()
+{
+    try
+    {
+        //TO DO INNEJ FUNKCJI // tak by Run Glownej funkcji gdzie ustalam wielkosc okna byl odpalany
+
         CellEngineDataFileObjectPointer->ReadDataFromFile();
 
         BondsBetweenAtomsToDraw.resize(CellEngineDataFileObjectPointer->GetParticlesCenters().size());
@@ -843,7 +855,6 @@ void CellEngineOpenGLVisualiser::OnMouseWheel(int Pos)
 {
     try
     {
-        //CellEngineDataFileObjectPointer->ViewZ += static_cast<float>(Pos) * (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->ViewZMoveShortStep : CellEngineDataFileObjectPointer->ViewZMoveLongStep);
         CellEngineDataFileObjectPointer->ViewZ += static_cast<float>(Pos) * (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->ViewZMoveShortStep : CellEngineDataFileObjectPointer->ViewZMoveLongStep);
     }
     CATCH("executing on mouse wheel event for cell visualisation")
@@ -953,10 +964,10 @@ void CellEngineOpenGLVisualiser::OnResize(int Width, int Height)
 
 CellEngineOpenGLVisualiser* CellEngineOpenGLVisualiserPointer;
 
-void Thread1()
+void StartFunction(int XPosWindow, int YPosWindow, int WidthWindow, int HeightWindow)
 {
     CellEngineOpenGLVisualiserPointer = new CellEngineOpenGLVisualiser;
-    CellEngineOpenGLVisualiserPointer->Run(CellEngineOpenGLVisualiserPointer);
+    CellEngineOpenGLVisualiserPointer->Run(XPosWindow, YPosWindow, WidthWindow, HeightWindow);
     delete CellEngineOpenGLVisualiserPointer;
 }
 
@@ -994,10 +1005,13 @@ static void glfw_error_callback(int error, const char* description)
 {
     fprintf(stderr, "Glfw Error %d: %s\n", error, description);
 }
-                                                                                                                        #include <future>
-//int main(int, char**)
-int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+
+int main(int argc, const char ** argv)
 {
+    ReadInitConfiguration();
+
+    //PRZEKAZAC DANE O OKNACH DO WATKU A WATEK DO PARAMETROW CellEngineOpenGLVisualiser i TAM OKNO TWORZEONE DLA GLOWNEGO OKNA KOMORKI OPENGL
+
     glfwSetErrorCallback(glfw_error_callback);
     if (!glfwInit())
         return 1;
@@ -1022,11 +1036,13 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     glfwWindowHint(GLFW_SAMPLES, Info.Samples);
     glfwWindowHint(GLFW_STEREO, Info.Flags.Stereo ? GL_TRUE : GL_FALSE);
 
-    GLFWwindow* window = glfwCreateWindow(1280, 720, "Dear ImGui GLFW+OpenGL3 example", NULL, NULL);
+    //GLFWwindow* window = glfwCreateWindow(1280, 720, "Dear ImGui GLFW+OpenGL3 example", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(CellEngineConfigurationFileReaderWriterObject.WidthMenuWindow, CellEngineConfigurationFileReaderWriterObject.HeightMenuWindow, "Dear ImGui GLFW+OpenGL3 example", NULL, NULL);
     if (window == NULL)
         return 1;
 
-    glfwSetWindowPos(window, 480, 100);
+    //glfwSetWindowPos(window, 480, 100);
+    glfwSetWindowPos(window, CellEngineConfigurationFileReaderWriterObject.XTopMenuWindow, CellEngineConfigurationFileReaderWriterObject.YTopMenuWindow);
 
     if (!Info.Flags.Cursor)
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
@@ -1039,14 +1055,13 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    ImGuiIO& io = ImGui::GetIO();
     //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
     //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 
     ImGui::StyleColorsDark();
     //ImGui::StyleColorsClassic();
 
-    // Setup Platform/Renderer backends
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     const char* glsl_version = "#version 130";
     ImGui_ImplOpenGL3_Init(glsl_version);
@@ -1055,41 +1070,35 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     bool show_another_window = true;
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-    thread t1(Thread1);
+
+    //cout << CellEngineConfigurationFileReaderWriterObject.XTopMainWindow << " " << CellEngineConfigurationFileReaderWriterObject.YTopMainWindow << " " << CellEngineConfigurationFileReaderWriterObject.WidthMainWindow << " " << CellEngineConfigurationFileReaderWriterObject.HeightMainWindow << endl;
+    //getchar();
+    thread t1(StartFunction, CellEngineConfigurationFileReaderWriterObject.XTopMainWindow, CellEngineConfigurationFileReaderWriterObject.YTopMainWindow, CellEngineConfigurationFileReaderWriterObject.WidthMainWindow, CellEngineConfigurationFileReaderWriterObject.HeightMainWindow);
 
     while (!glfwWindowShouldClose(window))
     {
-        // Poll and handle events (inputs, window resize, etc.)
-        // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
-        // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application, or clear/overwrite your copy of the mouse data.
-        // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application, or clear/overwrite your copy of the keyboard data.
-        // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
         glfwPollEvents();
 
-        // Start the Dear ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
         if (show_demo_window)
             ImGui::ShowDemoWindow(&show_demo_window);
 
-        // 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
-        //{
         static float f = 0.0f;
         static int counter = 0;
 
-        ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+        ImGui::Begin("Hello, world!");
 
-        ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-        ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
+        ImGui::Text("This is some useful text.");
+        ImGui::Checkbox("Demo Window", &show_demo_window);
         ImGui::Checkbox("Another Window", &show_another_window);
 
-        ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-        ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
+        ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+        ImGui::ColorEdit3("clear color", (float*)&clear_color);
 
-        if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
+        if (ImGui::Button("Button"))
         {
             CellEngineOpenGLVisualiserPointer->OnMouseWheel(1);
             counter++;
@@ -1099,11 +1108,10 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
         ImGui::End();
-        //}
 
         if (show_another_window)
         {
-            ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
+            ImGui::Begin("Another Window", &show_another_window);
             ImGui::Text("Hello from another window!");
             if (ImGui::Button("Close Me"))
                 show_another_window = false;
@@ -1122,7 +1130,6 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
         glfwSwapBuffers(window);
     }
 
-    //t1.join();
     t1.detach();
 
     ImGui_ImplOpenGL3_Shutdown();

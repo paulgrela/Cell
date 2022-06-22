@@ -35,6 +35,22 @@ void CellEngineConfigurationFileReaderWriter::ReadChessConfigurationFile(const c
 
         for (const ptree::value_type& MainConfigPropertyTreeElement : MainConfigPropertyTree.get_child("Settings"))
         {
+            if (MainConfigPropertyTreeElement.first == "WindowParameters")
+            {
+                XTopMainWindow = MainConfigPropertyTreeElement.second.get<int>("XTopMain");
+                YTopMainWindow = MainConfigPropertyTreeElement.second.get<int>("YTopMain");
+                WidthMainWindow = MainConfigPropertyTreeElement.second.get<int>("WidthMain");
+                HeightMainWindow = MainConfigPropertyTreeElement.second.get<int>("HeightMain");
+                XTopMenuWindow = MainConfigPropertyTreeElement.second.get<int>("XTopMenu");
+                YTopMenuWindow = MainConfigPropertyTreeElement.second.get<int>("YTopMenu");
+                WidthMenuWindow = MainConfigPropertyTreeElement.second.get<int>("WidthMenu");
+                HeightMenuWindow = MainConfigPropertyTreeElement.second.get<int>("HeightMenu");
+                XTopSecondWindow = MainConfigPropertyTreeElement.second.get<int>("XTopSecond");
+                YTopSecondWindow = MainConfigPropertyTreeElement.second.get<int>("YTopSecond");
+                WidthSecondWindow = MainConfigPropertyTreeElement.second.get<int>("XTopSecond");
+                HeightSecondWindow = MainConfigPropertyTreeElement.second.get<int>("HeightSecond");
+            }
+            else
             if (MainConfigPropertyTreeElement.first == "Algorithm")
             {
                 MultiThreaded = MainConfigPropertyTreeElement.second.get<bool>("MultiThreaded");
