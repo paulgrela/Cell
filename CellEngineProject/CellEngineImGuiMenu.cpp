@@ -3,13 +3,6 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
-#include <sb7.h>
-#include <sb7color.h>
-#include <vmath.h>
-#include <object.h>
-#include <shader.h>
-#include <sb7textoverlay.h>
-
 #include <string>
 #include <memory>
 
@@ -19,6 +12,7 @@
 #include "ExceptionsMacro.h"
 
 #include "CellEngineDataFile.h"
+#include "CellEngineConfigData.h"
 #include "CellEngineOpenGLVisualiser.h"
 #include "CellEngineConfigurationFileReaderWriter.h"
 
@@ -59,19 +53,7 @@ void InitializeLoggerManagerParameters()
         LoggersManagerObject.InitializeFilesNames({ "AllMessages" });
         LoggersManagerObject.InitializeSelectiveWordsFunctions({ [](const string& s) { return true; } });
         LoggersManagerObject.InitializeLoggerManagerDataForTask("CELL_RESULTS", ".\\", string("Logs." + GetActualDateTimeStandardCPP(".", ".", ".", ".", ".")), true, 0, function<void(const uint64_t& CurrentThreadId, const uint64_t FileNumber, const string& MessageStr)>());
-        LoggersManagerObject.InitializePrintingParameters(CellEngineConfigurationFileReaderWriterObject.PrintLogToConsole,
-                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogToFiles,
-                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogLineNumberToConsole,
-                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogDateTimeToConsole,
-                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogProcessIdToConsole,
-                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogProcessPriorityLevelToConsole,
-                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogThreadIdToConsole,
-                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogLineNumberToFile,
-                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogDateTimeToFile,
-                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogProcessIdToFile,
-                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogProcessPriorityLevelToFile,
-                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogThreadIdToFile,
-                                                          CellEngineConfigurationFileReaderWriterObject.MaximalNumberOfLinesInOneFile);
+        LoggersManagerObject.InitializePrintingParameters(CellEngineConfigDataObject.PrintLogToConsole, CellEngineConfigDataObject.PrintLogToFiles, CellEngineConfigDataObject.PrintLogLineNumberToConsole, CellEngineConfigDataObject.PrintLogDateTimeToConsole, CellEngineConfigDataObject.PrintLogProcessIdToConsole, CellEngineConfigDataObject.PrintLogProcessPriorityLevelToConsole, CellEngineConfigDataObject.PrintLogThreadIdToConsole, CellEngineConfigDataObject.PrintLogLineNumberToFile, CellEngineConfigDataObject.PrintLogDateTimeToFile, CellEngineConfigDataObject.PrintLogProcessIdToFile, CellEngineConfigDataObject.PrintLogProcessPriorityLevelToFile, CellEngineConfigDataObject.PrintLogThreadIdToFile, CellEngineConfigDataObject.MaximalNumberOfLinesInOneFile);
     }
     CATCH("initializing logger manager parameters")
 }
@@ -135,11 +117,11 @@ int main(int argc, const char ** argv)
     glfwWindowHint(GLFW_SAMPLES, Info.Samples);
     glfwWindowHint(GLFW_STEREO, Info.Flags.Stereo ? GL_TRUE : GL_FALSE);
 
-    GLFWwindow* window = glfwCreateWindow(CellEngineConfigurationFileReaderWriterObject.WidthMenuWindow, CellEngineConfigurationFileReaderWriterObject.HeightMenuWindow, "Dear ImGui GLFW+OpenGL3 example", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(CellEngineConfigDataObject.WidthMenuWindow, CellEngineConfigDataObject.HeightMenuWindow, "Dear ImGui GLFW+OpenGL3 example", NULL, NULL);
     if (window == NULL)
         return 1;
 
-    glfwSetWindowPos(window, CellEngineConfigurationFileReaderWriterObject.XTopMenuWindow, CellEngineConfigurationFileReaderWriterObject.YTopMenuWindow);
+    glfwSetWindowPos(window, CellEngineConfigDataObject.XTopMenuWindow, CellEngineConfigDataObject.YTopMenuWindow);
 
     if (!Info.Flags.Cursor)
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
@@ -167,7 +149,7 @@ int main(int argc, const char ** argv)
     bool show_another_window = true;
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-    thread CellEngineOpenGLVisualiserThreadObject(CellEngineOpenGLVisualiserThreadFunction, CellEngineConfigurationFileReaderWriterObject.XTopMainWindow, CellEngineConfigurationFileReaderWriterObject.YTopMainWindow, CellEngineConfigurationFileReaderWriterObject.WidthMainWindow, CellEngineConfigurationFileReaderWriterObject.HeightMainWindow);
+    thread CellEngineOpenGLVisualiserThreadObject(CellEngineOpenGLVisualiserThreadFunction, CellEngineConfigDataObject.XTopMainWindow, CellEngineConfigDataObject.YTopMainWindow, CellEngineConfigDataObject.WidthMainWindow, CellEngineConfigDataObject.HeightMainWindow);
 
     while (!glfwWindowShouldClose(window))
     {

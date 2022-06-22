@@ -38,44 +38,44 @@ void CellEngineConfigurationFileReaderWriter::ReadChessConfigurationFile(const c
         {
             if (MainConfigPropertyTreeElement.first == "WindowParameters")
             {
-                XTopMainWindow = MainConfigPropertyTreeElement.second.get<int>("XTopMain");
-                YTopMainWindow = MainConfigPropertyTreeElement.second.get<int>("YTopMain");
-                WidthMainWindow = MainConfigPropertyTreeElement.second.get<int>("WidthMain");
-                HeightMainWindow = MainConfigPropertyTreeElement.second.get<int>("HeightMain");
-                XTopMenuWindow = MainConfigPropertyTreeElement.second.get<int>("XTopMenu");
-                YTopMenuWindow = MainConfigPropertyTreeElement.second.get<int>("YTopMenu");
-                WidthMenuWindow = MainConfigPropertyTreeElement.second.get<int>("WidthMenu");
-                HeightMenuWindow = MainConfigPropertyTreeElement.second.get<int>("HeightMenu");
-                XTopSecondWindow = MainConfigPropertyTreeElement.second.get<int>("XTopSecond");
-                YTopSecondWindow = MainConfigPropertyTreeElement.second.get<int>("YTopSecond");
-                WidthSecondWindow = MainConfigPropertyTreeElement.second.get<int>("XTopSecond");
-                HeightSecondWindow = MainConfigPropertyTreeElement.second.get<int>("HeightSecond");
+                CellEngineConfigDataObject.XTopMainWindow = MainConfigPropertyTreeElement.second.get<int>("XTopMain");
+                CellEngineConfigDataObject.YTopMainWindow = MainConfigPropertyTreeElement.second.get<int>("YTopMain");
+                CellEngineConfigDataObject.WidthMainWindow = MainConfigPropertyTreeElement.second.get<int>("WidthMain");
+                CellEngineConfigDataObject.HeightMainWindow = MainConfigPropertyTreeElement.second.get<int>("HeightMain");
+                CellEngineConfigDataObject.XTopMenuWindow = MainConfigPropertyTreeElement.second.get<int>("XTopMenu");
+                CellEngineConfigDataObject.YTopMenuWindow = MainConfigPropertyTreeElement.second.get<int>("YTopMenu");
+                CellEngineConfigDataObject.WidthMenuWindow = MainConfigPropertyTreeElement.second.get<int>("WidthMenu");
+                CellEngineConfigDataObject.HeightMenuWindow = MainConfigPropertyTreeElement.second.get<int>("HeightMenu");
+                CellEngineConfigDataObject.XTopSecondWindow = MainConfigPropertyTreeElement.second.get<int>("XTopSecond");
+                CellEngineConfigDataObject.YTopSecondWindow = MainConfigPropertyTreeElement.second.get<int>("YTopSecond");
+                CellEngineConfigDataObject.WidthSecondWindow = MainConfigPropertyTreeElement.second.get<int>("XTopSecond");
+                CellEngineConfigDataObject.HeightSecondWindow = MainConfigPropertyTreeElement.second.get<int>("HeightSecond");
             }
             else
             if (MainConfigPropertyTreeElement.first == "Algorithm")
             {
-                MultiThreaded = MainConfigPropertyTreeElement.second.get<bool>("MultiThreaded");
-                SetProcessPriorityHighest = MainConfigPropertyTreeElement.second.get<bool>("SetProcessPriorityHighest");
+                CellEngineConfigDataObject.MultiThreaded = MainConfigPropertyTreeElement.second.get<bool>("MultiThreaded");
+                CellEngineConfigDataObject.SetProcessPriorityHighest = MainConfigPropertyTreeElement.second.get<bool>("SetProcessPriorityHighest");
             }
             else
             if (MainConfigPropertyTreeElement.first == "Logger")
             {
-                PrintLogToConsole = MainConfigPropertyTreeElement.second.get<bool>("PrintToConsole");
-                PrintLogToFiles = MainConfigPropertyTreeElement.second.get<bool>("PrintToFiles");
+                CellEngineConfigDataObject.PrintLogToConsole = MainConfigPropertyTreeElement.second.get<bool>("PrintToConsole");
+                CellEngineConfigDataObject.PrintLogToFiles = MainConfigPropertyTreeElement.second.get<bool>("PrintToFiles");
 
-                PrintLogLineNumberToConsole = MainConfigPropertyTreeElement.second.get<bool>("PrintLineNumberToConsole");
-                PrintLogDateTimeToConsole = MainConfigPropertyTreeElement.second.get<bool>("PrintDateTimeToConsole");
-                PrintLogProcessIdToConsole = MainConfigPropertyTreeElement.second.get<bool>("PrintProcessIdToConsole");
-                PrintLogProcessPriorityLevelToConsole = MainConfigPropertyTreeElement.second.get<bool>("PrintProcessPriorityLevelToConsole");
-                PrintLogThreadIdToConsole = MainConfigPropertyTreeElement.second.get<bool>("PrintThreadIdToConsole");
+                CellEngineConfigDataObject.PrintLogLineNumberToConsole = MainConfigPropertyTreeElement.second.get<bool>("PrintLineNumberToConsole");
+                CellEngineConfigDataObject.PrintLogDateTimeToConsole = MainConfigPropertyTreeElement.second.get<bool>("PrintDateTimeToConsole");
+                CellEngineConfigDataObject.PrintLogProcessIdToConsole = MainConfigPropertyTreeElement.second.get<bool>("PrintProcessIdToConsole");
+                CellEngineConfigDataObject.PrintLogProcessPriorityLevelToConsole = MainConfigPropertyTreeElement.second.get<bool>("PrintProcessPriorityLevelToConsole");
+                CellEngineConfigDataObject.PrintLogThreadIdToConsole = MainConfigPropertyTreeElement.second.get<bool>("PrintThreadIdToConsole");
 
-                PrintLogLineNumberToFile = MainConfigPropertyTreeElement.second.get<bool>("PrintLineNumberToFile");
-                PrintLogDateTimeToFile = MainConfigPropertyTreeElement.second.get<bool>("PrintDateTimeToFile");
-                PrintLogProcessIdToFile = MainConfigPropertyTreeElement.second.get<bool>("PrintProcessIdToFile");
-                PrintLogProcessPriorityLevelToFile = MainConfigPropertyTreeElement.second.get<bool>("PrintProcessPriorityLevelToFile");
-                PrintLogThreadIdToFile = MainConfigPropertyTreeElement.second.get<bool>("PrintThreadIdToFile");
+                CellEngineConfigDataObject.PrintLogLineNumberToFile = MainConfigPropertyTreeElement.second.get<bool>("PrintLineNumberToFile");
+                CellEngineConfigDataObject.PrintLogDateTimeToFile = MainConfigPropertyTreeElement.second.get<bool>("PrintDateTimeToFile");
+                CellEngineConfigDataObject.PrintLogProcessIdToFile = MainConfigPropertyTreeElement.second.get<bool>("PrintProcessIdToFile");
+                CellEngineConfigDataObject.PrintLogProcessPriorityLevelToFile = MainConfigPropertyTreeElement.second.get<bool>("PrintProcessPriorityLevelToFile");
+                CellEngineConfigDataObject.PrintLogThreadIdToFile = MainConfigPropertyTreeElement.second.get<bool>("PrintThreadIdToFile");
 
-                MaximalNumberOfLinesInOneFile = MainConfigPropertyTreeElement.second.get<uint64_t>("MaximalNumberOfLinesInOneFile");
+                CellEngineConfigDataObject.MaximalNumberOfLinesInOneFile = MainConfigPropertyTreeElement.second.get<uint64_t>("MaximalNumberOfLinesInOneFile");
             }
             else
             if (MainConfigPropertyTreeElement.first == "CellsStates")

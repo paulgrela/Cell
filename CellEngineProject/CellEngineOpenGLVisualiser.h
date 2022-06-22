@@ -2,6 +2,10 @@
 #ifndef CELL_ENGINE_OPENGL_VISUALISER_H
 #define CELL_ENGINE_OPENGL_VISUALISER_H
 
+#include <object.h>
+#include <sb7color.h>
+#include <sb7textoverlay.h>
+
 #include "ArcBall.h"
 
 class CellEngineOpenGLVisualiser : public sb7::OpenGLApplication
@@ -28,7 +32,7 @@ private:
         GLint SpecularAlbedo;
         GLint SpecularPower;
     }
-            Uniforms{};
+    Uniforms{};
 private:
     sb7::GraphicObject AtomGraphicsObject;
     sb7::TextOverlay TextOverlayObject;
@@ -50,8 +54,6 @@ private:
 private:
     std::vector<std::pair<UnsignedIntType, UnsignedIntType>> BondsBetweenParticlesCentersToDraw;
     std::vector<std::vector<std::pair<UnsignedIntType, UnsignedIntType>>> BondsBetweenAtomsToDraw;
-//private:
-//    std::unique_ptr<CellEngineDataFile> CellEngineDataFileObjectPointer;
 public:
     CellEngineOpenGLVisualiser() = default;
 protected:
@@ -70,14 +72,13 @@ protected:
     void InitLineVertexes();
     void DeleteLineVertexes();
     static void FindBondsToDraw(const std::vector<CellEngineAtom>& Atoms, std::vector<std::pair<UnsignedIntType, UnsignedIntType>>& BondsToDraw);
-    void DrawBonds(const std::vector<CellEngineAtom>& Atoms, std::vector<std::pair<UnsignedIntType, UnsignedIntType>>& BondsToDraw, const bool DrawBonds, const vmath::mat4& ViewMatrix, const vmath::vec3& Center);
+    void DrawBonds(const std::vector<CellEngineAtom>& Atoms, std::vector<std::pair<UnsignedIntType, UnsignedIntType>>& BondsToDraw, const bool DrawBonds, const vmath::mat4& ViewMatrix);
     void DrawBond(float x1, float y1, float z1, float x2, float y2, float z2);
 protected:
-    std::string GetEntityName(const uint64_t EntityId);
-protected:
-    bool CheckVisibilityOfParticles(UnsignedIntType EntityId);
-    void SetVisibilityOfAllParticles(bool VisibleParam);
-    void SetVisibilityOfParticlesExcept(UnsignedIntType EntityId, bool VisibleParam);
+    static inline std::string GetEntityName(const uint64_t EntityId);
+    static inline bool CheckVisibilityOfParticles(UnsignedIntType EntityId);
+    static inline void SetVisibilityOfAllParticles(bool VisibleParam);
+    static inline void SetVisibilityOfParticlesExcept(UnsignedIntType EntityId, bool VisibleParam);
 protected:
     void LoadShadersPhong();
     void LoadShadersSimple();
@@ -93,8 +94,8 @@ public:
     void OnMouseMove(int X, int Y) override;
     void OnResize(int Width, int Height) override;
 protected:
-    inline vmath::vec3 GetSize(const CellEngineAtom& AtomObject);
-    inline vmath::vec3 GetColor(const CellEngineAtom& AtomObject, bool Chosen);
+    static inline vmath::vec3 GetSize(const CellEngineAtom& AtomObject);
+    static inline vmath::vec3 GetColor(const CellEngineAtom& AtomObject, bool Chosen);
     static inline void DrawCenterPoint(UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, vmath::mat4& ModelMatrix);
     inline bool GetFinalVisibilityInModelWorld(const vmath::vec3& AtomPosition, UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, const bool CountNewPosition, const bool DrawOutsideBorder) const;
     inline bool CreateUniformBlockForVertexShader(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4 ModelMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, bool DrawAdditional);
@@ -104,7 +105,7 @@ protected:
     inline void PrintAtomDescriptionOnScreen(CellEngineAtom& ChosenParticleObject);
     inline void ChooseAtomUsingStencilBuffer(const vmath::mat4& ViewMatrix, const GLuint* PartOfStencilBufferIndex, const std::vector<std::pair<uint64_t, uint64_t>>& TemporaryRenderedAtomsList, UnsignedIntType& NumberOfAllRenderedAtoms);
 protected:
-    [[nodiscard]] inline bool CheckDistanceToDrawDetailsInAtomScale(const float XNew, const float YNew, const float ZNew) const;
+    [[nodiscard]] static inline bool CheckDistanceToDrawDetailsInAtomScale(const float XNew, const float YNew, const float ZNew);
 };
 
 #endif

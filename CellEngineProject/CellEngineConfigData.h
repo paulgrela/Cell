@@ -28,6 +28,39 @@ struct AtomKind
 class CellEngineConfigData
 {
 public:
+    int XTopMainWindow;
+    int YTopMainWindow;
+    int WidthMainWindow;
+    int HeightMainWindow;
+    int XTopMenuWindow;
+    int YTopMenuWindow;
+    int WidthMenuWindow;
+    int HeightMenuWindow;
+    int XTopSecondWindow;
+    int YTopSecondWindow;
+    int WidthSecondWindow;
+    int HeightSecondWindow;
+public:
+    bool MultiThreaded;
+    bool SetProcessPriorityHighest;
+public:
+    bool PrintLogToConsole = true;
+    bool PrintLogToFiles = true;
+
+    bool PrintLogLineNumberToConsole = false;
+    bool PrintLogDateTimeToConsole = false;
+    bool PrintLogProcessIdToConsole = false;
+    bool PrintLogProcessPriorityLevelToConsole = false;
+    bool PrintLogThreadIdToConsole = false;
+
+    bool PrintLogLineNumberToFile = true;
+    bool PrintLogDateTimeToFile = true;
+    bool PrintLogProcessIdToFile = false;
+    bool PrintLogProcessPriorityLevelToFile = false;
+    bool PrintLogThreadIdToFile = false;
+
+    uint64_t MaximalNumberOfLinesInOneFile = 100000;
+public:
     std::string CellStateFileName;
 public:
     float SpecularPower = 8.0f;

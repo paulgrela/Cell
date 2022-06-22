@@ -3,17 +3,6 @@
 #ifndef CELL_ENGINE_PDB_DATA_FILE_H
 #define CELL_ENGINE_PDB_DATA_FILE_H
 
-#include <vector>
-#include <cstring>
-
-#include <fstream>
-#include <stdexcept>
-
-#include <memory>
-
-#include "CellEngineTypes.h"
-#include "CellEngineAtom.h"
-
 #include "CellEngineDataFile.h"
 
 class CellEnginePDBDataFile: public CellEngineDataFile

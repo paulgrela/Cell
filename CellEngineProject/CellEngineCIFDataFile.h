@@ -3,18 +3,6 @@
 #ifndef CELL_ENGINE_CIF_DATA_FILE_H
 #define CELL_ENGINE_CIF_DATA_FILE_H
 
-#include <string>
-#include <vector>
-
-#include <fstream>
-#include <stdexcept>
-
-#include <memory>
-#include <unordered_map>
-
-#include "CellEngineTypes.h"
-#include "CellEngineAtom.h"
-
 #include "CellEngineDataFile.h"
 
 struct TransformationMatrix3x4

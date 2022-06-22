@@ -4,6 +4,7 @@
 #define CELL_ENGINE_PROJECT_ATOM_H
 
 #include <utility>
+#include <cstring>
 
 #include "vmath.h"
 #include "CellEngineTypes.h"

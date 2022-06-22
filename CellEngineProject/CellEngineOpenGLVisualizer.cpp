@@ -1,22 +1,14 @@
 
 #include <omp.h>
 
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
-
 #include <sb7.h>
-#include <sb7color.h>
 #include <vmath.h>
-#include <object.h>
 #include <shader.h>
-#include <sb7textoverlay.h>
 
-#include <iostream>
 #include <string>
 #include <memory>
+#include <iostream>
 
-#include "ArcBall.h"
 #include "Logger.h"
 #include "StringUtils.h"
 #include "DateTimeUtils.h"
@@ -25,158 +17,8 @@
 #include "CellEngineDataFile.h"
 #include "CellEngineConfigData.h"
 #include "CellEngineOpenGLVisualiser.h"
-#include "CellEngineConfigurationFileReaderWriter.h"
 
 using namespace std;
-
-//class CellEngineOpenGLVisualiser : public sb7::OpenGLApplication
-//{
-//private:
-//    GLuint LineVAO;
-//    GLuint LineDataBuffer[2];
-//private:
-//    GLuint ShaderProgramPhong = 0;
-//    GLuint ShaderProgramSimple = 0;
-//private:
-//    struct UniformsBlock
-//    {
-//        vmath::mat4 MoveMatrix;
-//        vmath::mat4 ProjectionMatrix;
-//        vmath::vec3 Color;
-//    };
-//private:
-//    GLuint UniformsBuffer{};
-//private:
-//    struct
-//    {
-//        GLint DiffuseAlbedo;
-//        GLint SpecularAlbedo;
-//        GLint SpecularPower;
-//    }
-//    Uniforms{};
-//private:
-//    sb7::GraphicObject AtomGraphicsObject;
-//    sb7::TextOverlay TextOverlayObject;
-//private:
-//    Matrix3fT ArcBallPrevRotationMatrix{};
-//    Matrix3fT ArcBallActualRotationMatrix{};
-//    std::unique_ptr<ArcBallT> ArcBall;
-//    Point2fT MousePosition{};
-//private:
-//    float LengthUnit = 1;
-//private:
-//    vmath::vec3 Center;
-//private:
-//    vmath::mat4 RotationMatrix;
-//private:
-//    UnsignedIntType PressedRightMouseButton = 0;
-//private:
-//    bool RenderObjectsBool = true;
-//private:
-//    vector<pair<UnsignedIntType, UnsignedIntType>> BondsBetweenParticlesCentersToDraw;
-//    vector<vector<pair<UnsignedIntType, UnsignedIntType>>> BondsBetweenAtomsToDraw;
-////private:
-////    std::unique_ptr<CellEngineDataFile> CellEngineDataFileObjectPointer;
-//public:
-//    CellEngineOpenGLVisualiser() = default;
-//protected:
-//    void Init(int WindowWidth, int WindowHeight) override
-//    {
-//        sb7::OpenGLApplication::Init(WindowWidth, WindowHeight);
-//
-//        static const char title[] = "Cell Engine Visualizer";
-//        memcpy(Info.Title, title, sizeof(title));
-//    }
-//protected:
-//    void InitArcBall();
-//protected:
-//    void InitExternalData() override;
-//protected:
-//    void InitLineVertexes();
-//    void DeleteLineVertexes();
-//    static void FindBondsToDraw(const vector<CellEngineAtom>& Atoms, vector<pair<UnsignedIntType, UnsignedIntType>>& BondsToDraw);
-//    void DrawBonds(const vector<CellEngineAtom>& Atoms, vector<pair<UnsignedIntType, UnsignedIntType>>& BondsToDraw, const bool DrawBonds, const vmath::mat4& ViewMatrix, const vmath::vec3& Center);
-//    void DrawBond(float x1, float y1, float z1, float x2, float y2, float z2);
-//protected:
-//    string GetEntityName(const uint64_t EntityId);
-//protected:
-//    bool CheckVisibilityOfParticles(UnsignedIntType EntityId);
-//    void SetVisibilityOfAllParticles(bool VisibleParam);
-//    void SetVisibilityOfParticlesExcept(UnsignedIntType EntityId, bool VisibleParam);
-//protected:
-//    void LoadShadersPhong();
-//    void LoadShadersSimple();
-//    static void LoadShaders(const char* VertexShaderFileName, const char* FragmentShaderFileName, GLuint& ShaderProgram);
-//protected:
-//    void StartUp() override;
-//    void ShutDown() override;
-//    void Render(double CurrentTime) override;
-//public:
-//    void OnKey(int Key, int Action) override;
-//    void OnMouseWheel(int Pos) override;
-//    void OnMouseButton(int Button, int Action) override;
-//    void OnMouseMove(int X, int Y) override;
-//    void OnResize(int Width, int Height) override;
-//protected:
-//    inline vmath::vec3 GetSize(const CellEngineAtom& AtomObject);
-//    inline vmath::vec3 GetColor(const CellEngineAtom& AtomObject, bool Chosen);
-//    static inline void DrawCenterPoint(UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, vmath::mat4& ModelMatrix);
-//    inline bool GetFinalVisibilityInModelWorld(const vmath::vec3& AtomPosition, UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, const bool CountNewPosition, const bool DrawOutsideBorder) const;
-//    inline bool CreateUniformBlockForVertexShader(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4 ModelMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, bool DrawAdditional);
-//    inline bool RenderObject(const CellEngineAtom& AtomObject, const vmath::mat4& ViewMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, UnsignedIntType& NumberOfAllRenderedAtoms, const bool Chosen, const bool RenderObjectParameter);
-//    inline void SetAutomaticParametersForRendering();
-//    inline void PrepareOpenGLToRenderObjectsOnScene();
-//    inline void PrintAtomDescriptionOnScreen(CellEngineAtom& ChosenParticleObject);
-//    inline void ChooseAtomUsingStencilBuffer(const vmath::mat4& ViewMatrix, const GLuint* PartOfStencilBufferIndex, const vector<pair<uint64_t, uint64_t>>& TemporaryRenderedAtomsList, UnsignedIntType& NumberOfAllRenderedAtoms);
-//protected:
-//    [[nodiscard]] inline bool CheckDistanceToDrawDetailsInAtomScale(const float XNew, const float YNew, const float ZNew) const;
-//};
-
-//std::unique_ptr<CellEngineDataFile> CellEngineDataFileObjectPointer;
-
-//void InitializeLoggerManagerParameters()
-//{
-//    try
-//    {
-//        using namespace string_utils;
-//
-//        LoggersManagerObject.InitializeFilesNames({ "AllMessages" });
-//        LoggersManagerObject.InitializeSelectiveWordsFunctions({ [](const string& s) { return true; } });
-//        LoggersManagerObject.InitializeLoggerManagerDataForTask("CELL_RESULTS", ".\\", string("Logs." + GetActualDateTimeStandardCPP(".", ".", ".", ".", ".")), true, 0, function<void(const uint64_t& CurrentThreadId, const uint64_t FileNumber, const string& MessageStr)>());
-//        LoggersManagerObject.InitializePrintingParameters(CellEngineConfigurationFileReaderWriterObject.PrintLogToConsole,
-//                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogToFiles,
-//                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogLineNumberToConsole,
-//                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogDateTimeToConsole,
-//                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogProcessIdToConsole,
-//                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogProcessPriorityLevelToConsole,
-//                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogThreadIdToConsole,
-//                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogLineNumberToFile,
-//                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogDateTimeToFile,
-//                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogProcessIdToFile,
-//                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogProcessPriorityLevelToFile,
-//                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogThreadIdToFile,
-//                                                          CellEngineConfigurationFileReaderWriterObject.MaximalNumberOfLinesInOneFile);
-//    }
-//    CATCH("initializing logger manager parameters")
-//}
-//
-//void ReadInitConfiguration()
-//{
-//    try
-//    {
-//        InitializeLoggerManagerParameters();
-//        LoggersManagerObject.Log(STREAM("START CELL"));
-//
-//        uint64_t ExecuteCellStateId;
-//        if (__argc > 1)
-//            ExecuteCellStateId = stoi(__argv[1]);
-//        else
-//            LoggersManagerObject.Log(STREAM("Lack of cell id to execute in program parameters"));
-//
-//        CellEngineConfigurationFileReaderWriterObject.ReadChessConfigurationFile("CellEngineProjectConfig.xml", CellEngineDataFileObjectPointer, ExecuteCellStateId);
-//    }
-//    CATCH("reading of data file")
-//}
 
 void CellEngineOpenGLVisualiser::InitExternalData()
 {
@@ -352,7 +194,7 @@ void CellEngineOpenGLVisualiser::FindBondsToDraw(const vector<CellEngineAtom>& A
     CATCH("finding bonds")
 }
 
-void CellEngineOpenGLVisualiser::DrawBonds(const vector<CellEngineAtom>& Atoms, vector<pair<UnsignedIntType, UnsignedIntType>>& BondsToDraw, const bool DrawBonds, const vmath::mat4& ViewMatrix, const vmath::vec3& Center)
+void CellEngineOpenGLVisualiser::DrawBonds(const vector<CellEngineAtom>& Atoms, vector<pair<UnsignedIntType, UnsignedIntType>>& BondsToDraw, const bool DrawBonds, const vmath::mat4& ViewMatrix)
 {
     try
     {
@@ -377,7 +219,7 @@ void CellEngineOpenGLVisualiser::DrawBonds(const vector<CellEngineAtom>& Atoms, 
     CATCH("drawing bonds")
 }
 
-inline bool CellEngineOpenGLVisualiser::CheckDistanceToDrawDetailsInAtomScale(const float XNew, const float YNew, const float ZNew) const
+inline bool CellEngineOpenGLVisualiser::CheckDistanceToDrawDetailsInAtomScale(const float XNew, const float YNew, const float ZNew)
 {
     if (CellEngineConfigDataObject.CheckAtomVisibility == true)
     {
@@ -585,7 +427,7 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
         vmath::vec3 ViewPositionVector = vmath::vec3(CellEngineConfigDataObject.ViewX, CellEngineConfigDataObject.ViewY, CellEngineConfigDataObject.ViewZ);
         vmath::mat4 ViewMatrix = vmath::lookat(ViewPositionVector, vmath::vec3(0.0f, 0.0f, 0.0f), vmath::vec3(0.0f, 1.0f, 0.0f)) * vmath::rotate(CellEngineConfigDataObject.RotationAngle1, CellEngineConfigDataObject.RotationAngle2, CellEngineConfigDataObject.RotationAngle3) * RotationMatrix;
 
-        DrawBonds(CellEngineDataFileObjectPointer->GetParticlesCenters(), BondsBetweenParticlesCentersToDraw, CellEngineConfigDataObject.DrawBondsBetweenParticlesCenters, ViewMatrix, Center);
+        DrawBonds(CellEngineDataFileObjectPointer->GetParticlesCenters(), BondsBetweenParticlesCentersToDraw, CellEngineConfigDataObject.DrawBondsBetweenParticlesCenters, ViewMatrix);
 
         UnsignedIntType NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = 0;
         UnsignedIntType NumberOfAllRenderedAtoms = 0;
@@ -624,7 +466,7 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
                         {
                             NumberOfFoundParticlesCenterToBeRenderedInAtomDetails++;
 
-                            DrawBonds(CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex], BondsBetweenAtomsToDraw[ParticlesCenterObject.AtomIndex], CellEngineConfigDataObject.DrawBondsBetweenAtoms, ViewMatrix, Center);
+                            DrawBonds(CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex], BondsBetweenAtomsToDraw[ParticlesCenterObject.AtomIndex], CellEngineConfigDataObject.DrawBondsBetweenAtoms, ViewMatrix);
 
                             glUseProgram(ShaderProgramPhong);
                             UnsignedIntType AtomObjectIndex;
@@ -934,201 +776,3 @@ void CellEngineOpenGLVisualiser::OnResize(int Width, int Height)
     }
     CATCH("executing window resize event - setting bounds of arc ball counting data for cell visualisation")
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//unique_ptr<CellEngineOpenGLVisualiser> CellEngineOpenGLVisualiserPointer;
-//
-//void CellEngineOpenGLVisualiserThreadFunction(int XPosWindow, int YPosWindow, int WidthWindow, int HeightWindow)
-//{
-//    CellEngineOpenGLVisualiserPointer = make_unique<CellEngineOpenGLVisualiser>();
-//    CellEngineOpenGLVisualiserPointer->Run(XPosWindow, YPosWindow, WidthWindow, HeightWindow);
-//}
-//
-//#include "imgui.h"
-//#include "imgui_impl_glfw.h"
-//#include "imgui_impl_opengl3.h"
-//
-//struct APPINFO
-//{
-//    char Title[128];
-//    int WindowWidth;
-//    int WindowHeight;
-//    int MajorVersion;
-//    int MinorVersion;
-//    int Samples;
-//    union
-//    {
-//        struct
-//        {
-//            unsigned int FullScreen : 1;
-//            unsigned int VSync : 1;
-//            unsigned int Cursor : 1;
-//            unsigned int Stereo : 1;
-//            unsigned int Debug : 1;
-//            unsigned int Robust : 1;
-//        };
-//        unsigned int All;
-//    }
-//    Flags;
-//};
-//
-//APPINFO Info;
-//
-//static void glfw_error_callback(int error, const char* description)
-//{
-//    fprintf(stderr, "Glfw Error %d: %s\n", error, description);
-//}
-//
-//int main(int argc, const char ** argv)
-//{
-//    ReadInitConfiguration();
-//
-//    glfwSetErrorCallback(glfw_error_callback);
-//    if (!glfwInit())
-//        return 1;
-//
-//    Info.WindowWidth = 1600;
-//    Info.WindowHeight = 1200;
-//    Info.MajorVersion = 4;
-//    Info.MinorVersion = 3;
-//    Info.Samples = 0;
-//    Info.Flags.All = 0;
-//    Info.Flags.Cursor = 1;
-//    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, Info.MajorVersion);
-//    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, Info.MinorVersion);
-//
-//    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
-//
-//    if (Info.Flags.Robust)
-//        glfwWindowHint(GLFW_CONTEXT_ROBUSTNESS, GLFW_LOSE_CONTEXT_ON_RESET);
-//
-//    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-//    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-//    glfwWindowHint(GLFW_SAMPLES, Info.Samples);
-//    glfwWindowHint(GLFW_STEREO, Info.Flags.Stereo ? GL_TRUE : GL_FALSE);
-//
-//    GLFWwindow* window = glfwCreateWindow(CellEngineConfigurationFileReaderWriterObject.WidthMenuWindow, CellEngineConfigurationFileReaderWriterObject.HeightMenuWindow, "Dear ImGui GLFW+OpenGL3 example", NULL, NULL);
-//    if (window == NULL)
-//        return 1;
-//
-//    glfwSetWindowPos(window, CellEngineConfigurationFileReaderWriterObject.XTopMenuWindow, CellEngineConfigurationFileReaderWriterObject.YTopMenuWindow);
-//
-//    if (!Info.Flags.Cursor)
-//        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-//
-//    gl3wInit();
-//
-//    glfwMakeContextCurrent(window);
-//
-//    glfwSwapInterval(1); // Enable vsync
-//
-//    IMGUI_CHECKVERSION();
-//    ImGui::CreateContext();
-//    ImGuiIO& io = ImGui::GetIO();
-//    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-//    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-//
-//    ImGui::StyleColorsDark();
-//    //ImGui::StyleColorsClassic();
-//
-//    ImGui_ImplGlfw_InitForOpenGL(window, true);
-//    const char* glsl_version = "#version 130";
-//    ImGui_ImplOpenGL3_Init(glsl_version);
-//
-//    bool show_demo_window = true;
-//    bool show_another_window = true;
-//    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-//
-//    thread CellEngineOpenGLVisualiserThreadObject(CellEngineOpenGLVisualiserThreadFunction, CellEngineConfigurationFileReaderWriterObject.XTopMainWindow, CellEngineConfigurationFileReaderWriterObject.YTopMainWindow, CellEngineConfigurationFileReaderWriterObject.WidthMainWindow, CellEngineConfigurationFileReaderWriterObject.HeightMainWindow);
-//
-//    while (!glfwWindowShouldClose(window))
-//    {
-//        glfwPollEvents();
-//
-//        ImGui_ImplOpenGL3_NewFrame();
-//        ImGui_ImplGlfw_NewFrame();
-//        ImGui::NewFrame();
-//
-//        if (show_demo_window)
-//            ImGui::ShowDemoWindow(&show_demo_window);
-//
-//        static float f = 0.0f;
-//        static int counter = 0;
-//
-//        ImGui::Begin("Hello, world!");
-//
-//        ImGui::Text("This is some useful text.");
-//        ImGui::Checkbox("Demo Window", &show_demo_window);
-//        ImGui::Checkbox("Another Window", &show_another_window);
-//
-//        ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
-//        ImGui::ColorEdit3("clear color", (float*)&clear_color);
-//
-//        if (ImGui::Button("Button"))
-//        {
-//            CellEngineOpenGLVisualiserPointer->OnMouseWheel(1);
-//            counter++;
-//        }
-//        ImGui::SameLine();
-//        ImGui::Text("counter = %d", counter);
-//
-//        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-//        ImGui::End();
-//
-//        if (show_another_window)
-//        {
-//            ImGui::Begin("Another Window", &show_another_window);
-//            ImGui::Text("Hello from another window!");
-//            if (ImGui::Button("Close Me"))
-//                show_another_window = false;
-//            ImGui::End();
-//        }
-//
-//        ImGui::Render();
-//
-//        int display_w, display_h;
-//        glfwGetFramebufferSize(window, &display_w, &display_h);
-//        glViewport(0, 0, display_w, display_h);
-//        glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
-//        glClear(GL_COLOR_BUFFER_BIT);
-//        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-//
-//        glfwSwapBuffers(window);
-//    }
-//
-//    CellEngineOpenGLVisualiserThreadObject.detach();
-//
-//    ImGui_ImplOpenGL3_Shutdown();
-//    ImGui_ImplGlfw_Shutdown();
-//    ImGui::DestroyContext();
-//
-//    glfwDestroyWindow(window);
-//    glfwTerminate();
-//
-//    return 0;
-//}
