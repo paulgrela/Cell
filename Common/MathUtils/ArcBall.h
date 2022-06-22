@@ -4,8 +4,6 @@
 
 #include <cmath>
 
-#define assert(x) { }
-
 typedef union Tuple2f_t
 {
 	struct
@@ -97,16 +95,12 @@ typedef union Matrix4f_t
 
 inline static void Point2fAdd(Point2fT* NewObj, const Tuple2fT* t1)
 {
-	assert(NewObj && t1);
-
 	NewObj->s.X += t1->s.X;
 	NewObj->s.Y += t1->s.Y;
 }
 
 inline static void Point2fSub(Point2fT* NewObj, const Tuple2fT* t1)
 {
-	assert(NewObj && t1);
-
 	NewObj->s.X -= t1->s.X;
 	NewObj->s.Y -= t1->s.Y;
 }
@@ -114,8 +108,6 @@ inline static void Point2fSub(Point2fT* NewObj, const Tuple2fT* t1)
 inline static void Vector3fCross(Vector3fT* NewObj, const Vector3fT* v1, const Vector3fT* v2)
 {
 	Vector3fT Result;
-
-	assert(NewObj && v1 && v2);
 
 	Result.s.X = (v1->s.Y * v2->s.Z) - (v1->s.Z * v2->s.Y);
 	Result.s.Y = (v1->s.Z * v2->s.X) - (v1->s.X * v2->s.Z);
@@ -126,22 +118,16 @@ inline static void Vector3fCross(Vector3fT* NewObj, const Vector3fT* v1, const V
 
 inline static GLfloat Vector3fDot(const Vector3fT* NewObj, const Vector3fT* v1)
 {
-	assert(NewObj && v1);
-
 	return  (NewObj->s.X * v1->s.X) + (NewObj->s.Y * v1->s.Y) + (NewObj->s.Z * v1->s.Z);
 }
 
 inline static GLfloat Vector3fLengthSquared(const Vector3fT* NewObj)
 {
-	assert(NewObj);
-
 	return  (NewObj->s.X * NewObj->s.X) + (NewObj->s.Y * NewObj->s.Y) + (NewObj->s.Z * NewObj->s.Z);
 }
 
 inline static GLfloat Vector3fLength(const Vector3fT* NewObj)
 {
-	assert(NewObj);
-
 	return FuncSqrt(Vector3fLengthSquared(NewObj));
 }
 
@@ -165,8 +151,6 @@ inline static void Matrix3fSetRotationFromQuat4f(Matrix3fT* NewObj, const Quat4f
 	GLfloat xx, xy, xz;
 	GLfloat yy, yz, zz;
 
-	assert(NewObj && q1);
-
 	n = (q1->s.X * q1->s.X) + (q1->s.Y * q1->s.Y) + (q1->s.Z * q1->s.Z) + (q1->s.W * q1->s.W);
 	s = (n > 0.0f) ? (2.0f / n) : 0.0f;
 
@@ -183,8 +167,6 @@ inline static void Matrix3fSetRotationFromQuat4f(Matrix3fT* NewObj, const Quat4f
 inline static void Matrix3fMulMatrix3f(Matrix3fT* NewObj, const Matrix3fT* m1)
 {
 	Matrix3fT Result;
-
-	assert(NewObj && m1);
 
 	Result.s.M00 = (NewObj->s.M00 * m1->s.M00) + (NewObj->s.M01 * m1->s.M10) + (NewObj->s.M02 * m1->s.M20);
 	Result.s.M01 = (NewObj->s.M00 * m1->s.M01) + (NewObj->s.M01 * m1->s.M11) + (NewObj->s.M02 * m1->s.M21);
@@ -203,8 +185,6 @@ inline static void Matrix3fMulMatrix3f(Matrix3fT* NewObj, const Matrix3fT* m1)
 
 inline static void Matrix4fSetRotationScaleFromMatrix4f(Matrix4fT* NewObj, const Matrix4fT* m1)
 {
-	assert(NewObj && m1);
-
 	NewObj->s.XX = m1->s.XX; NewObj->s.YX = m1->s.YX; NewObj->s.ZX = m1->s.ZX;
 	NewObj->s.XY = m1->s.XY; NewObj->s.YY = m1->s.YY; NewObj->s.ZY = m1->s.ZY;
 	NewObj->s.XZ = m1->s.XZ; NewObj->s.YZ = m1->s.YZ; NewObj->s.ZZ = m1->s.ZZ;
@@ -213,8 +193,6 @@ inline static void Matrix4fSetRotationScaleFromMatrix4f(Matrix4fT* NewObj, const
 inline static GLfloat Matrix4fSVD(const Matrix4fT* NewObj, Matrix3fT* rot3, Matrix4fT* rot4)
 {
 	GLfloat s, n;
-
-	assert(NewObj);
 
 	s = FuncSqrt(((NewObj->s.XX * NewObj->s.XX) + (NewObj->s.XY * NewObj->s.XY) + (NewObj->s.XZ * NewObj->s.XZ) + (NewObj->s.YX * NewObj->s.YX) + (NewObj->s.YY * NewObj->s.YY) + (NewObj->s.YZ * NewObj->s.YZ) + (NewObj->s.ZX * NewObj->s.ZX) + (NewObj->s.ZY * NewObj->s.ZY) + (NewObj->s.ZZ * NewObj->s.ZZ)) / 3.0f);
 
@@ -251,9 +229,7 @@ inline static GLfloat Matrix4fSVD(const Matrix4fT* NewObj, Matrix3fT* rot3, Matr
 	if (rot4)
 	{
 		if (rot4 != NewObj)
-		{
 			Matrix4fSetRotationScaleFromMatrix4f(rot4, NewObj);
-		}
 
 		n = 1.0f / FuncSqrt((NewObj->s.XX * NewObj->s.XX) + (NewObj->s.XY * NewObj->s.XY) + (NewObj->s.XZ * NewObj->s.XZ));
 		rot4->s.XX *= n;
@@ -276,8 +252,6 @@ inline static GLfloat Matrix4fSVD(const Matrix4fT* NewObj, Matrix3fT* rot3, Matr
 
 inline static void Matrix4fSetRotationScaleFromMatrix3f(Matrix4fT* NewObj, const Matrix3fT* m1)
 {
-	assert(NewObj && m1);
-
 	NewObj->s.XX = m1->s.XX; NewObj->s.YX = m1->s.YX; NewObj->s.ZX = m1->s.ZX;
 	NewObj->s.XY = m1->s.XY; NewObj->s.YY = m1->s.YY; NewObj->s.ZY = m1->s.ZY;
 	NewObj->s.XZ = m1->s.XZ; NewObj->s.YZ = m1->s.YZ; NewObj->s.ZZ = m1->s.ZZ;
@@ -285,8 +259,6 @@ inline static void Matrix4fSetRotationScaleFromMatrix3f(Matrix4fT* NewObj, const
 
 inline static void Matrix4fMulRotationScale(Matrix4fT* NewObj, GLfloat scale)
 {
-	assert(NewObj);
-
 	NewObj->s.XX *= scale; NewObj->s.YX *= scale; NewObj->s.ZX *= scale;
 	NewObj->s.XY *= scale; NewObj->s.YY *= scale; NewObj->s.ZY *= scale;
 	NewObj->s.XZ *= scale; NewObj->s.YZ *= scale; NewObj->s.ZZ *= scale;
@@ -295,8 +267,6 @@ inline static void Matrix4fMulRotationScale(Matrix4fT* NewObj, GLfloat scale)
 inline static void Matrix4fSetRotationFromMatrix3f(Matrix4fT* NewObj, const Matrix3fT* m1)
 {
 	GLfloat scale;
-
-	assert(NewObj && m1);
 
 	scale = Matrix4fSVD(NewObj, nullptr, nullptr);
 
@@ -315,8 +285,6 @@ public:
 
 	inline void setBounds(GLfloat NewWidth, GLfloat NewHeight)
 	{
-		assert((NewWidth > 1.0f) && (NewHeight > 1.0f));
-
 		this->AdjustWidth = 1.0f / ((NewWidth - 1.0f) * 0.5f);
 		this->AdjustHeight = 1.0f / ((NewHeight - 1.0f) * 0.5f);
 	}

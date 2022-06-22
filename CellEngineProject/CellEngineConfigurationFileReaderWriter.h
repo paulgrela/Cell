@@ -49,8 +49,8 @@ public:
 public:
     CellEngineConfigurationFileReaderWriter() = default;
 public:
-    void ReadChessConfigurationFile(const char* ConfigFileNameParameter, std::unique_ptr<CellEngineDataFile>& CellEngineDataFileObjectPointer, const std::uint64_t ExecuteCellStateId);
-    void SaveTestStatisticsToFile(std::unique_ptr<CellEngineDataFile>& CellEngineDataFileObjectPointer, const uint64_t ExecuteCellStateId) const;
+    void ReadChessConfigurationFile(const char* ConfigFileNameParameter, const std::uint64_t ExecuteCellStateId);
+    void SaveTestStatisticsToFile(const uint64_t ExecuteCellStateId) const;
 };
 
 inline CellEngineConfigurationFileReaderWriter CellEngineConfigurationFileReaderWriterObject;

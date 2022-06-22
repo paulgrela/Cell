@@ -1,9 +1,9 @@
 
 #include <omp.h>
 
-//#include "imgui.h"
-//#include "imgui_impl_glfw.h"
-//#include "imgui_impl_opengl3.h"
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
 
 #include <sb7.h>
 #include <sb7color.h>
@@ -23,166 +23,165 @@
 #include "ExceptionsMacro.h"
 
 #include "CellEngineDataFile.h"
-
+#include "CellEngineConfigData.h"
+#include "CellEngineOpenGLVisualiser.h"
 #include "CellEngineConfigurationFileReaderWriter.h"
 
 using namespace std;
 
-class CellEngineOpenGLVisualiser : public sb7::OpenGLApplication
-{
-private:
-    GLuint LineVAO;
-    GLuint LineDataBuffer[2];
-private:
-    GLuint ShaderProgramPhong = 0;
-    GLuint ShaderProgramSimple = 0;
-private:
-    struct UniformsBlock
-    {
-        vmath::mat4 MoveMatrix;
-        vmath::mat4 ProjectionMatrix;
-        vmath::vec3 Color;
-    };
-private:
-    GLuint UniformsBuffer{};
-private:
-    struct
-    {
-        GLint DiffuseAlbedo;
-        GLint SpecularAlbedo;
-        GLint SpecularPower;
-    }
-    Uniforms{};
-private:
-    sb7::GraphicObject AtomGraphicsObject;
-    sb7::TextOverlay TextOverlayObject;
-private:
-    Matrix3fT ArcBallPrevRotationMatrix{};
-    Matrix3fT ArcBallActualRotationMatrix{};
-    std::unique_ptr<ArcBallT> ArcBall;
-    Point2fT MousePosition{};
-private:
-    float LengthUnit = 1;
-private:
-    vmath::vec3 Center;
-private:
-    vmath::mat4 RotationMatrix;
-private:
-    UnsignedIntType PressedRightMouseButton = 0;
-private:
-    bool RenderObjectsBool = true;
-private:
-    vector<pair<UnsignedIntType, UnsignedIntType>> BondsBetweenParticlesCentersToDraw;
-    vector<vector<pair<UnsignedIntType, UnsignedIntType>>> BondsBetweenAtomsToDraw;
+//class CellEngineOpenGLVisualiser : public sb7::OpenGLApplication
+//{
 //private:
-//    std::unique_ptr<CellEngineDataFile> CellEngineDataFileObjectPointer;
-public:
-    CellEngineOpenGLVisualiser() = default;
-protected:
-    void Init(int WindowWidth, int WindowHeight) override
-    {
-        sb7::OpenGLApplication::Init(WindowWidth, WindowHeight);
+//    GLuint LineVAO;
+//    GLuint LineDataBuffer[2];
+//private:
+//    GLuint ShaderProgramPhong = 0;
+//    GLuint ShaderProgramSimple = 0;
+//private:
+//    struct UniformsBlock
+//    {
+//        vmath::mat4 MoveMatrix;
+//        vmath::mat4 ProjectionMatrix;
+//        vmath::vec3 Color;
+//    };
+//private:
+//    GLuint UniformsBuffer{};
+//private:
+//    struct
+//    {
+//        GLint DiffuseAlbedo;
+//        GLint SpecularAlbedo;
+//        GLint SpecularPower;
+//    }
+//    Uniforms{};
+//private:
+//    sb7::GraphicObject AtomGraphicsObject;
+//    sb7::TextOverlay TextOverlayObject;
+//private:
+//    Matrix3fT ArcBallPrevRotationMatrix{};
+//    Matrix3fT ArcBallActualRotationMatrix{};
+//    std::unique_ptr<ArcBallT> ArcBall;
+//    Point2fT MousePosition{};
+//private:
+//    float LengthUnit = 1;
+//private:
+//    vmath::vec3 Center;
+//private:
+//    vmath::mat4 RotationMatrix;
+//private:
+//    UnsignedIntType PressedRightMouseButton = 0;
+//private:
+//    bool RenderObjectsBool = true;
+//private:
+//    vector<pair<UnsignedIntType, UnsignedIntType>> BondsBetweenParticlesCentersToDraw;
+//    vector<vector<pair<UnsignedIntType, UnsignedIntType>>> BondsBetweenAtomsToDraw;
+////private:
+////    std::unique_ptr<CellEngineDataFile> CellEngineDataFileObjectPointer;
+//public:
+//    CellEngineOpenGLVisualiser() = default;
+//protected:
+//    void Init(int WindowWidth, int WindowHeight) override
+//    {
+//        sb7::OpenGLApplication::Init(WindowWidth, WindowHeight);
+//
+//        static const char title[] = "Cell Engine Visualizer";
+//        memcpy(Info.Title, title, sizeof(title));
+//    }
+//protected:
+//    void InitArcBall();
+//protected:
+//    void InitExternalData() override;
+//protected:
+//    void InitLineVertexes();
+//    void DeleteLineVertexes();
+//    static void FindBondsToDraw(const vector<CellEngineAtom>& Atoms, vector<pair<UnsignedIntType, UnsignedIntType>>& BondsToDraw);
+//    void DrawBonds(const vector<CellEngineAtom>& Atoms, vector<pair<UnsignedIntType, UnsignedIntType>>& BondsToDraw, const bool DrawBonds, const vmath::mat4& ViewMatrix, const vmath::vec3& Center);
+//    void DrawBond(float x1, float y1, float z1, float x2, float y2, float z2);
+//protected:
+//    string GetEntityName(const uint64_t EntityId);
+//protected:
+//    bool CheckVisibilityOfParticles(UnsignedIntType EntityId);
+//    void SetVisibilityOfAllParticles(bool VisibleParam);
+//    void SetVisibilityOfParticlesExcept(UnsignedIntType EntityId, bool VisibleParam);
+//protected:
+//    void LoadShadersPhong();
+//    void LoadShadersSimple();
+//    static void LoadShaders(const char* VertexShaderFileName, const char* FragmentShaderFileName, GLuint& ShaderProgram);
+//protected:
+//    void StartUp() override;
+//    void ShutDown() override;
+//    void Render(double CurrentTime) override;
+//public:
+//    void OnKey(int Key, int Action) override;
+//    void OnMouseWheel(int Pos) override;
+//    void OnMouseButton(int Button, int Action) override;
+//    void OnMouseMove(int X, int Y) override;
+//    void OnResize(int Width, int Height) override;
+//protected:
+//    inline vmath::vec3 GetSize(const CellEngineAtom& AtomObject);
+//    inline vmath::vec3 GetColor(const CellEngineAtom& AtomObject, bool Chosen);
+//    static inline void DrawCenterPoint(UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, vmath::mat4& ModelMatrix);
+//    inline bool GetFinalVisibilityInModelWorld(const vmath::vec3& AtomPosition, UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, const bool CountNewPosition, const bool DrawOutsideBorder) const;
+//    inline bool CreateUniformBlockForVertexShader(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4 ModelMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, bool DrawAdditional);
+//    inline bool RenderObject(const CellEngineAtom& AtomObject, const vmath::mat4& ViewMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, UnsignedIntType& NumberOfAllRenderedAtoms, const bool Chosen, const bool RenderObjectParameter);
+//    inline void SetAutomaticParametersForRendering();
+//    inline void PrepareOpenGLToRenderObjectsOnScene();
+//    inline void PrintAtomDescriptionOnScreen(CellEngineAtom& ChosenParticleObject);
+//    inline void ChooseAtomUsingStencilBuffer(const vmath::mat4& ViewMatrix, const GLuint* PartOfStencilBufferIndex, const vector<pair<uint64_t, uint64_t>>& TemporaryRenderedAtomsList, UnsignedIntType& NumberOfAllRenderedAtoms);
+//protected:
+//    [[nodiscard]] inline bool CheckDistanceToDrawDetailsInAtomScale(const float XNew, const float YNew, const float ZNew) const;
+//};
 
-        static const char title[] = "Cell Engine Visualizer";
-        memcpy(Info.Title, title, sizeof(title));
-    }
-protected:
-    void InitArcBall();
-protected:
-    void InitExternalData() override;
-protected:
-    void InitLineVertexes();
-    void DeleteLineVertexes();
-    static void FindBondsToDraw(const vector<CellEngineAtom>& Atoms, vector<pair<UnsignedIntType, UnsignedIntType>>& BondsToDraw);
-    void DrawBonds(const vector<CellEngineAtom>& Atoms, vector<pair<UnsignedIntType, UnsignedIntType>>& BondsToDraw, const bool DrawBonds, const vmath::mat4& ViewMatrix, const vmath::vec3& Center);
-    void DrawBond(float x1, float y1, float z1, float x2, float y2, float z2);
-protected:
-    string GetEntityName(const uint64_t EntityId);
-protected:
-    bool CheckVisibilityOfParticles(UnsignedIntType EntityId);
-    void SetVisibilityOfAllParticles(bool VisibleParam);
-    void SetVisibilityOfParticlesExcept(UnsignedIntType EntityId, bool VisibleParam);
-protected:
-    void LoadShadersPhong();
-    void LoadShadersSimple();
-    static void LoadShaders(const char* VertexShaderFileName, const char* FragmentShaderFileName, GLuint& ShaderProgram);
-protected:
-    void StartUp() override;
-    void ShutDown() override;
-    void Render(double CurrentTime) override;
-public:
-    void OnKey(int Key, int Action) override;
-    void OnMouseWheel(int Pos) override;
-    void OnMouseButton(int Button, int Action) override;
-    void OnMouseMove(int X, int Y) override;
-    void OnResize(int Width, int Height) override;
-protected:
-    inline vmath::vec3 GetSize(const CellEngineAtom& AtomObject);
-    inline vmath::vec3 GetColor(const CellEngineAtom& AtomObject, bool Chosen);
-    static inline void DrawCenterPoint(UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, vmath::mat4& ModelMatrix);
-    inline bool GetFinalVisibilityInModelWorld(const vmath::vec3& AtomPosition, UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, const bool CountNewPosition, const bool DrawOutsideBorder) const;
-    inline bool CreateUniformBlockForVertexShader(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4 ModelMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, bool DrawAdditional);
-    inline bool RenderObject(const CellEngineAtom& AtomObject, const vmath::mat4& ViewMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, UnsignedIntType& NumberOfAllRenderedAtoms, const bool Chosen, const bool RenderObjectParameter);
-    inline void SetAutomaticParametersForRendering();
-    inline void PrepareOpenGLToRenderObjectsOnScene();
-    inline void PrintAtomDescriptionOnScreen(CellEngineAtom& ChosenParticleObject);
-    inline void ChooseAtomUsingStencilBuffer(const vmath::mat4& ViewMatrix, const GLuint* PartOfStencilBufferIndex, const vector<pair<uint64_t, uint64_t>>& TemporaryRenderedAtomsList, UnsignedIntType& NumberOfAllRenderedAtoms);
-protected:
-    [[nodiscard]] inline bool CheckDistanceToDrawDetailsInAtomScale(const float XNew, const float YNew, const float ZNew) const;
-};
+//std::unique_ptr<CellEngineDataFile> CellEngineDataFileObjectPointer;
 
-std::unique_ptr<CellEngineDataFile> CellEngineDataFileObjectPointer;
-
-void InitializeLoggerManagerParameters()
-{
-    try
-    {
-        using namespace string_utils;
-
-        LoggersManagerObject.InitializeFilesNames({ "AllMessages" });
-        LoggersManagerObject.InitializeSelectiveWordsFunctions({ [](const string& s) { return true; } });
-        LoggersManagerObject.InitializeLoggerManagerDataForTask("CELL_RESULTS", ".\\", string("Logs." + GetActualDateTimeStandardCPP(".", ".", ".", ".", ".")), true, 0, function<void(const uint64_t& CurrentThreadId, const uint64_t FileNumber, const string& MessageStr)>());
-        LoggersManagerObject.InitializePrintingParameters(CellEngineConfigurationFileReaderWriterObject.PrintLogToConsole,
-                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogToFiles,
-                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogLineNumberToConsole,
-                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogDateTimeToConsole,
-                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogProcessIdToConsole,
-                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogProcessPriorityLevelToConsole,
-                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogThreadIdToConsole,
-                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogLineNumberToFile,
-                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogDateTimeToFile,
-                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogProcessIdToFile,
-                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogProcessPriorityLevelToFile,
-                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogThreadIdToFile,
-                                                          CellEngineConfigurationFileReaderWriterObject.MaximalNumberOfLinesInOneFile);
-    }
-    CATCH("initializing logger manager parameters")
-}
-
-void ReadInitConfiguration()
-{
-    try
-    {
-        InitializeLoggerManagerParameters();
-        LoggersManagerObject.Log(STREAM("START CELL"));
-
-        uint64_t ExecuteCellStateId;
-        if (__argc > 1)
-            ExecuteCellStateId = stoi(__argv[1]);
-        else
-            LoggersManagerObject.Log(STREAM("Lack of cell id to execute in program parameters"));
-
-        CellEngineConfigurationFileReaderWriterObject.ReadChessConfigurationFile("CellEngineProjectConfig.xml", CellEngineDataFileObjectPointer, ExecuteCellStateId);
-    }
-    CATCH("reading of data file")
-}
+//void InitializeLoggerManagerParameters()
+//{
+//    try
+//    {
+//        using namespace string_utils;
+//
+//        LoggersManagerObject.InitializeFilesNames({ "AllMessages" });
+//        LoggersManagerObject.InitializeSelectiveWordsFunctions({ [](const string& s) { return true; } });
+//        LoggersManagerObject.InitializeLoggerManagerDataForTask("CELL_RESULTS", ".\\", string("Logs." + GetActualDateTimeStandardCPP(".", ".", ".", ".", ".")), true, 0, function<void(const uint64_t& CurrentThreadId, const uint64_t FileNumber, const string& MessageStr)>());
+//        LoggersManagerObject.InitializePrintingParameters(CellEngineConfigurationFileReaderWriterObject.PrintLogToConsole,
+//                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogToFiles,
+//                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogLineNumberToConsole,
+//                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogDateTimeToConsole,
+//                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogProcessIdToConsole,
+//                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogProcessPriorityLevelToConsole,
+//                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogThreadIdToConsole,
+//                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogLineNumberToFile,
+//                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogDateTimeToFile,
+//                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogProcessIdToFile,
+//                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogProcessPriorityLevelToFile,
+//                                                          CellEngineConfigurationFileReaderWriterObject.PrintLogThreadIdToFile,
+//                                                          CellEngineConfigurationFileReaderWriterObject.MaximalNumberOfLinesInOneFile);
+//    }
+//    CATCH("initializing logger manager parameters")
+//}
+//
+//void ReadInitConfiguration()
+//{
+//    try
+//    {
+//        InitializeLoggerManagerParameters();
+//        LoggersManagerObject.Log(STREAM("START CELL"));
+//
+//        uint64_t ExecuteCellStateId;
+//        if (__argc > 1)
+//            ExecuteCellStateId = stoi(__argv[1]);
+//        else
+//            LoggersManagerObject.Log(STREAM("Lack of cell id to execute in program parameters"));
+//
+//        CellEngineConfigurationFileReaderWriterObject.ReadChessConfigurationFile("CellEngineProjectConfig.xml", CellEngineDataFileObjectPointer, ExecuteCellStateId);
+//    }
+//    CATCH("reading of data file")
+//}
 
 void CellEngineOpenGLVisualiser::InitExternalData()
 {
     try
     {
-        //TO DO INNEJ FUNKCJI // tak by Run Glownej funkcji gdzie ustalam wielkosc okna byl odpalany
-
         CellEngineDataFileObjectPointer->ReadDataFromFile();
 
         BondsBetweenAtomsToDraw.resize(CellEngineDataFileObjectPointer->GetParticlesCenters().size());
@@ -371,7 +370,7 @@ void CellEngineOpenGLVisualiser::DrawBonds(const vector<CellEngineAtom>& Atoms, 
 
                 CreateUniformBlockForVertexShader(vmath::vec3(0.0, 0.0, 0.0), sb7::FromVec4ToVec3(sb7::color::DarkCyan), ViewMatrix, vmath::translate(0.0f, 0.0f, 0.0f), false, false, false, false);
 
-                DrawBond(AtomObject1.X - CellEngineDataFileObjectPointer->CameraXPosition - Center.X(), AtomObject1.Y - CellEngineDataFileObjectPointer->CameraYPosition - Center.Y(), AtomObject1.Z - CellEngineDataFileObjectPointer->CameraZPosition - Center.Z(), AtomObject2.X - CellEngineDataFileObjectPointer->CameraXPosition - Center.X(), AtomObject2.Y - CellEngineDataFileObjectPointer->CameraYPosition - Center.Y(), AtomObject2.Z - CellEngineDataFileObjectPointer->CameraZPosition - Center.Z());
+                DrawBond(AtomObject1.X - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomObject1.Y - CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomObject1.Z - CellEngineConfigDataObject.CameraZPosition - Center.Z(), AtomObject2.X - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomObject2.Y - CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomObject2.Z - CellEngineConfigDataObject.CameraZPosition - Center.Z());
             }
         }
     }
@@ -380,12 +379,12 @@ void CellEngineOpenGLVisualiser::DrawBonds(const vector<CellEngineAtom>& Atoms, 
 
 inline bool CellEngineOpenGLVisualiser::CheckDistanceToDrawDetailsInAtomScale(const float XNew, const float YNew, const float ZNew) const
 {
-    if (CellEngineDataFileObjectPointer->CheckAtomVisibility == true)
+    if (CellEngineConfigDataObject.CheckAtomVisibility == true)
     {
-        if (CellEngineDataFileObjectPointer->ViewZ > CellEngineDataFileObjectPointer->Distance)
-            return ZNew > CellEngineDataFileObjectPointer->CutZ && sqrt((XNew * XNew) + (YNew * YNew) + (ZNew * ZNew)) > CellEngineDataFileObjectPointer->Distance;
+        if (CellEngineConfigDataObject.ViewZ > CellEngineConfigDataObject.Distance)
+            return ZNew > CellEngineConfigDataObject.CutZ && sqrt((XNew * XNew) + (YNew * YNew) + (ZNew * ZNew)) > CellEngineConfigDataObject.Distance;
         else
-            return (ZNew > CellEngineDataFileObjectPointer->ViewZ + CellEngineDataFileObjectPointer->ZLowToDrawInAtomScale && ZNew < CellEngineDataFileObjectPointer->ViewZ + CellEngineDataFileObjectPointer->ZHighToDrawInAtomScale && XNew > CellEngineDataFileObjectPointer->XLowToDrawInAtomScale && XNew < CellEngineDataFileObjectPointer->XHighToDrawInAtomScale && YNew > CellEngineDataFileObjectPointer->YLowToDrawInAtomScale && YNew < CellEngineDataFileObjectPointer->YHighToDrawInAtomScale);
+            return (ZNew > CellEngineConfigDataObject.ViewZ + CellEngineConfigDataObject.ZLowToDrawInAtomScale && ZNew < CellEngineConfigDataObject.ViewZ + CellEngineConfigDataObject.ZHighToDrawInAtomScale && XNew > CellEngineConfigDataObject.XLowToDrawInAtomScale && XNew < CellEngineConfigDataObject.XHighToDrawInAtomScale && YNew > CellEngineConfigDataObject.YLowToDrawInAtomScale && YNew < CellEngineConfigDataObject.YHighToDrawInAtomScale);
     }
     else
         return false;
@@ -407,9 +406,9 @@ inline bool CellEngineOpenGLVisualiser::GetFinalVisibilityInModelWorld(const vma
     {
         if (CountNewPosition == true)
         {
-            float XNew = MatrixUniformBlockForVertexShaderPointer->MoveMatrix[0][0] * (AtomPosition.X() + CellEngineDataFileObjectPointer->CameraXPosition - Center.X()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[1][0] * (AtomPosition.Y() + CellEngineDataFileObjectPointer->CameraYPosition - Center.Y()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[2][0] * (AtomPosition.Z() + CellEngineDataFileObjectPointer->CameraZPosition - Center.Z());
-            float YNew = MatrixUniformBlockForVertexShaderPointer->MoveMatrix[0][1] * (AtomPosition.X() + CellEngineDataFileObjectPointer->CameraXPosition - Center.X()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[1][1] * (AtomPosition.Y() + CellEngineDataFileObjectPointer->CameraYPosition - Center.Y()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[2][1] * (AtomPosition.Z() + CellEngineDataFileObjectPointer->CameraZPosition - Center.Z());
-            float ZNew = MatrixUniformBlockForVertexShaderPointer->MoveMatrix[0][2] * (AtomPosition.X() + CellEngineDataFileObjectPointer->CameraXPosition - Center.X()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[1][2] * (AtomPosition.Y() + CellEngineDataFileObjectPointer->CameraYPosition - Center.Y()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[2][2] * (AtomPosition.Z() + CellEngineDataFileObjectPointer->CameraZPosition - Center.Z());
+            float XNew = MatrixUniformBlockForVertexShaderPointer->MoveMatrix[0][0] * (AtomPosition.X() + CellEngineConfigDataObject.CameraXPosition - Center.X()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[1][0] * (AtomPosition.Y() + CellEngineConfigDataObject.CameraYPosition - Center.Y()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[2][0] * (AtomPosition.Z() + CellEngineConfigDataObject.CameraZPosition - Center.Z());
+            float YNew = MatrixUniformBlockForVertexShaderPointer->MoveMatrix[0][1] * (AtomPosition.X() + CellEngineConfigDataObject.CameraXPosition - Center.X()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[1][1] * (AtomPosition.Y() + CellEngineConfigDataObject.CameraYPosition - Center.Y()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[2][1] * (AtomPosition.Z() + CellEngineConfigDataObject.CameraZPosition - Center.Z());
+            float ZNew = MatrixUniformBlockForVertexShaderPointer->MoveMatrix[0][2] * (AtomPosition.X() + CellEngineConfigDataObject.CameraXPosition - Center.X()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[1][2] * (AtomPosition.Y() + CellEngineConfigDataObject.CameraYPosition - Center.Y()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[2][2] * (AtomPosition.Z() + CellEngineConfigDataObject.CameraZPosition - Center.Z());
 
             if (DrawOutsideBorder == true)
                 if (CheckDistanceToDrawDetailsInAtomScale(XNew, YNew, ZNew) == true)
@@ -463,11 +462,11 @@ inline vmath::vec3 CellEngineOpenGLVisualiser::GetColor(const CellEngineAtom& At
         if (Chosen == true)
             FinalColor = sb7::FromVec4ToVec3(sb7::color::Yellow);
         else
-            switch (CellEngineDataFileObjectPointer->MakeColorsTypeObject)
+            switch (CellEngineConfigDataObject.MakeColorsTypeObject)
             {
-                case CellEngineDataFile::MakeColorsType::DrawColorForEveryAtom : FinalColor = AtomObject.AtomColor; break;
-                case CellEngineDataFile::MakeColorsType::DrawColorForEveryParticle : FinalColor = AtomObject.ParticleColor; break;
-                case CellEngineDataFile::MakeColorsType::DrawRandomColorForEveryParticle : FinalColor = AtomObject.RandomParticleColor; break;
+                case CellEngineConfigData::MakeColorsType::DrawColorForEveryAtom : FinalColor = AtomObject.AtomColor; break;
+                case CellEngineConfigData::MakeColorsType::DrawColorForEveryParticle : FinalColor = AtomObject.ParticleColor; break;
+                case CellEngineConfigData::MakeColorsType::DrawRandomColorForEveryParticle : FinalColor = AtomObject.RandomParticleColor; break;
                 default : break;
             }
     }
@@ -482,11 +481,11 @@ inline vmath::vec3 CellEngineOpenGLVisualiser::GetSize(const CellEngineAtom& Ato
 
     try
     {
-        switch(CellEngineDataFileObjectPointer->SizeOfAtomsDrawingTypesObject)
+        switch(CellEngineConfigDataObject.SizeOfAtomsDrawingTypesObject)
         {
-            case CellEngineDataFile::SizeOfAtomsDrawingTypes::AtomSize : Size = vmath::vec3(AtomObject.SizeXAtom, AtomObject.SizeYAtom, AtomObject.SizeZAtom); break;
-            case CellEngineDataFile::SizeOfAtomsDrawingTypes::ParticleSize : Size = vmath::vec3(AtomObject.SizeXParticle, AtomObject.SizeYParticle, AtomObject.SizeZParticle); break;
-            case CellEngineDataFile::SizeOfAtomsDrawingTypes::AutomaticChangeSize : Size = vmath::vec3(CellEngineDataFileObjectPointer->SizeOfAtomX, CellEngineDataFileObjectPointer->SizeOfAtomY, CellEngineDataFileObjectPointer->SizeOfAtomZ); break;
+            case CellEngineConfigData::SizeOfAtomsDrawingTypes::AtomSize : Size = vmath::vec3(AtomObject.SizeXAtom, AtomObject.SizeYAtom, AtomObject.SizeZAtom); break;
+            case CellEngineConfigData::SizeOfAtomsDrawingTypes::ParticleSize : Size = vmath::vec3(AtomObject.SizeXParticle, AtomObject.SizeYParticle, AtomObject.SizeZParticle); break;
+            case CellEngineConfigData::SizeOfAtomsDrawingTypes::AutomaticChangeSize : Size = vmath::vec3(CellEngineConfigDataObject.SizeOfAtomX, CellEngineConfigDataObject.SizeOfAtomY, CellEngineConfigDataObject.SizeOfAtomZ); break;
             default : break;
         }
     }
@@ -506,7 +505,7 @@ inline bool CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom& AtomO
 
         vmath::vec3 AtomPosition = LengthUnit * AtomObject.Position();
         vmath::vec3 SizeLocal = GetSize(AtomObject);
-        vmath::mat4 ModelMatrix = vmath::translate(AtomPosition.X() - CellEngineDataFileObjectPointer->CameraXPosition - Center.X(), AtomPosition.Y() + CellEngineDataFileObjectPointer->CameraYPosition - Center.Y(), AtomPosition.Z() + CellEngineDataFileObjectPointer->CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(SizeLocal.X(), SizeLocal.Y(), SizeLocal.Z()));
+        vmath::mat4 ModelMatrix = vmath::translate(AtomPosition.X() - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomPosition.Y() + CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomPosition.Z() + CellEngineConfigDataObject.CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(SizeLocal.X(), SizeLocal.Y(), SizeLocal.Z()));
 
         FinalVisibilityInModelWorld = CreateUniformBlockForVertexShader(AtomPosition, GetColor(AtomObject, Chosen), ViewMatrix, ModelMatrix, CountNewPosition, DrawCenter, DrawOutsideBorder, true);
 
@@ -522,21 +521,21 @@ inline void CellEngineOpenGLVisualiser::SetAutomaticParametersForRendering()
 {
     try
     {
-        if (CellEngineDataFileObjectPointer->ShowDetailsInAtomScale == true)
+        if (CellEngineConfigDataObject.ShowDetailsInAtomScale == true)
         {
-            if (CellEngineDataFileObjectPointer->ViewZ > CellEngineDataFileObjectPointer->Distance)
+            if (CellEngineConfigDataObject.ViewZ > CellEngineConfigDataObject.Distance)
             {
-                if (CellEngineDataFileObjectPointer->AutomaticChangeOfLoadAtomsStep == true)
-                    CellEngineDataFileObjectPointer->LoadOfAtomsStep = 100;
-                if (CellEngineDataFileObjectPointer->AutomaticChangeOfSizeOfAtom == true)
-                    CellEngineDataFileObjectPointer->SizeOfAtomX = CellEngineDataFileObjectPointer->SizeOfAtomY = CellEngineDataFileObjectPointer->SizeOfAtomZ = 3;
+                if (CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep == true)
+                    CellEngineConfigDataObject.LoadOfAtomsStep = 100;
+                if (CellEngineConfigDataObject.AutomaticChangeOfSizeOfAtom == true)
+                    CellEngineConfigDataObject.SizeOfAtomX = CellEngineConfigDataObject.SizeOfAtomY = CellEngineConfigDataObject.SizeOfAtomZ = 3;
             }
             else
             {
-                if (CellEngineDataFileObjectPointer->AutomaticChangeOfLoadAtomsStep == true)
-                    CellEngineDataFileObjectPointer->LoadOfAtomsStep = 1;
-                if (CellEngineDataFileObjectPointer->AutomaticChangeOfSizeOfAtom == true)
-                    CellEngineDataFileObjectPointer->SizeOfAtomX = CellEngineDataFileObjectPointer->SizeOfAtomY = CellEngineDataFileObjectPointer->SizeOfAtomZ = 1;
+                if (CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep == true)
+                    CellEngineConfigDataObject.LoadOfAtomsStep = 1;
+                if (CellEngineConfigDataObject.AutomaticChangeOfSizeOfAtom == true)
+                    CellEngineConfigDataObject.SizeOfAtomX = CellEngineConfigDataObject.SizeOfAtomY = CellEngineConfigDataObject.SizeOfAtomZ = 1;
             }
         }
     }
@@ -558,7 +557,7 @@ inline void CellEngineOpenGLVisualiser::PrepareOpenGLToRenderObjectsOnScene()
         glClearBufferfv(GL_COLOR, 0, gray);
         glClearBufferfv(GL_DEPTH, 0, ones);
 
-        vmath::vec3 BackgroundColor = CellEngineDataFileObjectPointer->BackgroundColors[CellEngineDataFileObjectPointer->ChosenBackgroundColor];
+        vmath::vec3 BackgroundColor = CellEngineConfigDataObject.BackgroundColors[CellEngineConfigDataObject.ChosenBackgroundColor];
         glClearColor(BackgroundColor.data[0], BackgroundColor.data[1], BackgroundColor.data[2], 0.0f);
 
         glClearStencil(0);
@@ -567,8 +566,8 @@ inline void CellEngineOpenGLVisualiser::PrepareOpenGLToRenderObjectsOnScene()
         glEnable(GL_STENCIL_TEST);
         glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
-        glUniform1f(Uniforms.SpecularPower, CellEngineDataFileObjectPointer->SpecularPower);
-        glUniform3fv(Uniforms.SpecularAlbedo, 1, vmath::vec3(CellEngineDataFileObjectPointer->SpecularAlbedo));
+        glUniform1f(Uniforms.SpecularPower, CellEngineConfigDataObject.SpecularPower);
+        glUniform3fv(Uniforms.SpecularAlbedo, 1, vmath::vec3(CellEngineConfigDataObject.SpecularAlbedo));
     }
     CATCH("preparing opengl to render objects on scene")
 }
@@ -583,10 +582,10 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
 
         PrepareOpenGLToRenderObjectsOnScene();
 
-        vmath::vec3 ViewPositionVector = vmath::vec3(CellEngineDataFileObjectPointer->ViewX, CellEngineDataFileObjectPointer->ViewY, CellEngineDataFileObjectPointer->ViewZ);
-        vmath::mat4 ViewMatrix = vmath::lookat(ViewPositionVector, vmath::vec3(0.0f, 0.0f, 0.0f), vmath::vec3(0.0f, 1.0f, 0.0f)) * vmath::rotate(CellEngineDataFileObjectPointer->RotationAngle1, CellEngineDataFileObjectPointer->RotationAngle2, CellEngineDataFileObjectPointer->RotationAngle3) * RotationMatrix;
+        vmath::vec3 ViewPositionVector = vmath::vec3(CellEngineConfigDataObject.ViewX, CellEngineConfigDataObject.ViewY, CellEngineConfigDataObject.ViewZ);
+        vmath::mat4 ViewMatrix = vmath::lookat(ViewPositionVector, vmath::vec3(0.0f, 0.0f, 0.0f), vmath::vec3(0.0f, 1.0f, 0.0f)) * vmath::rotate(CellEngineConfigDataObject.RotationAngle1, CellEngineConfigDataObject.RotationAngle2, CellEngineConfigDataObject.RotationAngle3) * RotationMatrix;
 
-        DrawBonds(CellEngineDataFileObjectPointer->GetParticlesCenters(), BondsBetweenParticlesCentersToDraw, CellEngineDataFileObjectPointer->DrawBondsBetweenParticlesCenters, ViewMatrix, Center);
+        DrawBonds(CellEngineDataFileObjectPointer->GetParticlesCenters(), BondsBetweenParticlesCentersToDraw, CellEngineConfigDataObject.DrawBondsBetweenParticlesCenters, ViewMatrix, Center);
 
         UnsignedIntType NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = 0;
         UnsignedIntType NumberOfAllRenderedAtoms = 0;
@@ -595,7 +594,7 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
         glUseProgram(ShaderProgramPhong);
         GLuint PartOfStencilBufferIndex[3];
 
-        for (uint64_t StencilBufferLoopCounter = 0; StencilBufferLoopCounter < CellEngineDataFileObjectPointer->NumberOfStencilBufferLoops; StencilBufferLoopCounter++)
+        for (uint64_t StencilBufferLoopCounter = 0; StencilBufferLoopCounter < CellEngineConfigDataObject.NumberOfStencilBufferLoops; StencilBufferLoopCounter++)
         {
             NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = 0;
             NumberOfAllRenderedAtoms = 0;
@@ -612,26 +611,26 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
 
             for (auto ParticlesCenterIterator = CellEngineDataFileObjectPointer->GetParticlesCenters().begin(); ParticlesCenterIterator != CellEngineDataFileObjectPointer->GetParticlesCenters().end(); ++ParticlesCenterIterator)
             {
-                if (CellEngineDataFileObjectPointer->StencilForDrawingObjectsTypesObject == CellEngineDataFile::StencilForDrawingObjectsTypes::StencilForDrawingOnlyParticlesCenters)
+                if (CellEngineConfigDataObject.StencilForDrawingObjectsTypesObject == CellEngineConfigData::StencilForDrawingObjectsTypes::StencilForDrawingOnlyParticlesCenters)
                     glStencilFunc(GL_ALWAYS, uint8_t((NumberOfAllRenderedAtoms) >> (8 * StencilBufferLoopCounter)), -1);
 
                 auto ParticlesCenterObject = *ParticlesCenterIterator;
 
-                bool FinalVisibilityInModelWorld = RenderObject(ParticlesCenterObject, ViewMatrix, true, ParticlesCenterIterator == CellEngineDataFileObjectPointer->GetParticlesCenters().end() - 1, true, NumberOfAllRenderedAtoms, false, !CellEngineDataFileObjectPointer->ShowDetailsInAtomScale);
+                bool FinalVisibilityInModelWorld = RenderObject(ParticlesCenterObject, ViewMatrix, true, ParticlesCenterIterator == CellEngineDataFileObjectPointer->GetParticlesCenters().end() - 1, true, NumberOfAllRenderedAtoms, false, !CellEngineConfigDataObject.ShowDetailsInAtomScale);
 
-                if (CellEngineDataFileObjectPointer->ShowDetailsInAtomScale == true)
+                if (CellEngineConfigDataObject.ShowDetailsInAtomScale == true)
                     if (FinalVisibilityInModelWorld == true)
                         if (CheckVisibilityOfParticles(ParticlesCenterObject.EntityId) == true)
                         {
                             NumberOfFoundParticlesCenterToBeRenderedInAtomDetails++;
 
-                            DrawBonds(CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex], BondsBetweenAtomsToDraw[ParticlesCenterObject.AtomIndex], CellEngineDataFileObjectPointer->DrawBondsBetweenAtoms, ViewMatrix, Center);
+                            DrawBonds(CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex], BondsBetweenAtomsToDraw[ParticlesCenterObject.AtomIndex], CellEngineConfigDataObject.DrawBondsBetweenAtoms, ViewMatrix, Center);
 
                             glUseProgram(ShaderProgramPhong);
                             UnsignedIntType AtomObjectIndex;
-                            for (AtomObjectIndex = 0; AtomObjectIndex < CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex].size(); AtomObjectIndex += CellEngineDataFileObjectPointer->LoadOfAtomsStep)
+                            for (AtomObjectIndex = 0; AtomObjectIndex < CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex].size(); AtomObjectIndex += CellEngineConfigDataObject.LoadOfAtomsStep)
                             {
-                                if (CellEngineDataFileObjectPointer->StencilForDrawingObjectsTypesObject == CellEngineDataFile::StencilForDrawingObjectsTypes::StencilForDrawingOnlyInAtomScale)
+                                if (CellEngineConfigDataObject.StencilForDrawingObjectsTypesObject == CellEngineConfigData::StencilForDrawingObjectsTypes::StencilForDrawingOnlyInAtomScale)
                                 {
                                     uint8_t ToInsert = (TemporaryRenderedAtomsList.size()) >> (8 * StencilBufferLoopCounter);
                                     glStencilFunc(GL_ALWAYS, ToInsert, -1);
@@ -643,7 +642,7 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
             }
             CellEngineDataFileObjectPointer->ShowNextStructureFromActiveFilm();
 
-            if (CellEngineDataFileObjectPointer->NumberOfStencilBufferLoops > 1)
+            if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
             {
                 GLuint StencilIndex;
                 glReadPixels(MousePosition.s.X, (float)Info.WindowHeight - MousePosition.s.Y - 1, 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &StencilIndex);
@@ -656,7 +655,7 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
         const auto stop_time = chrono::high_resolution_clock::now();
 
         LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Time of one frame = ", "Exception in measuring time")));
-        LoggersManagerObject.Log(STREAM("NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = " << to_string(NumberOfFoundParticlesCenterToBeRenderedInAtomDetails) << " NumberOfAllRenderedAtoms = " << to_string(NumberOfAllRenderedAtoms) << " ViewZ = " << to_string(CellEngineDataFileObjectPointer->ViewZ) << " CameraZPosition = " << to_string(CellEngineDataFileObjectPointer->CameraZPosition) << " AtomSize = " << to_string(CellEngineDataFileObjectPointer->SizeOfAtomX) << endl));
+        LoggersManagerObject.Log(STREAM("NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = " << to_string(NumberOfFoundParticlesCenterToBeRenderedInAtomDetails) << " NumberOfAllRenderedAtoms = " << to_string(NumberOfAllRenderedAtoms) << " ViewZ = " << to_string(CellEngineConfigDataObject.ViewZ) << " CameraZPosition = " << to_string(CellEngineConfigDataObject.CameraZPosition) << " AtomSize = " << to_string(CellEngineConfigDataObject.SizeOfAtomX) << endl));
     }
     CATCH("rendering cell visualization")
 }
@@ -680,7 +679,7 @@ inline void CellEngineOpenGLVisualiser::PrintAtomDescriptionOnScreen(CellEngineA
         glDisable(GL_CULL_FACE);
         TextOverlayObject.Clear();
         string AtomDescription = "ATOM DATA: Serial = " + to_string(ChosenParticleObject.Serial) + " Name = " + ChosenParticleObject.Name + " ResName = " + ChosenParticleObject.ResName;
-        if (CellEngineDataFileObjectPointer->StencilForDrawingObjectsTypesObject == CellEngineDataFile::StencilForDrawingObjectsTypes::StencilForDrawingOnlyInAtomScale)
+        if (CellEngineConfigDataObject.StencilForDrawingObjectsTypesObject == CellEngineConfigData::StencilForDrawingObjectsTypes::StencilForDrawingOnlyInAtomScale)
             AtomDescription += " Chain [" + string(ChosenParticleObject.Chain) + "] EntityId = " + to_string(ChosenParticleObject.EntityId) + " Entity Name = [" + GetEntityName(ChosenParticleObject.EntityId) + "]";
         TextOverlayObject.DrawText(AtomDescription.c_str(), 0, 0);
         TextOverlayObject.Draw();
@@ -693,14 +692,14 @@ inline void CellEngineOpenGLVisualiser::ChooseAtomUsingStencilBuffer(const vmath
 {
     try
     {
-        if (CellEngineDataFileObjectPointer->NumberOfStencilBufferLoops > 1)
+        if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
         {
             uint64_t ChosenParticleCenterIndex = PartOfStencilBufferIndex[0] | (PartOfStencilBufferIndex[1] << 8) | (PartOfStencilBufferIndex[2] << 16);
 
             if (ChosenParticleCenterIndex > 0)
             {
                 CellEngineAtom ChosenParticleObject;
-                if (CellEngineDataFileObjectPointer->StencilForDrawingObjectsTypesObject == CellEngineDataFile::StencilForDrawingObjectsTypes::StencilForDrawingOnlyParticlesCenters)
+                if (CellEngineConfigDataObject.StencilForDrawingObjectsTypesObject == CellEngineConfigData::StencilForDrawingObjectsTypes::StencilForDrawingOnlyParticlesCenters)
                 {
                     if (ChosenParticleCenterIndex > CellEngineDataFileObjectPointer->GetParticlesCenters().size())
                         throw std::runtime_error("ERROR STENCIL INDEX TOO BIG = " + to_string(ChosenParticleCenterIndex) + " MAXIMAL NUMBER OF OBJECTS = " + to_string(CellEngineDataFileObjectPointer->GetParticlesCenters().size()));
@@ -739,8 +738,8 @@ string CellEngineOpenGLVisualiser::GetEntityName(const uint64_t EntityId)
 
     try
     {
-        auto EntityIterator = CellEngineDataFileObjectPointer->ParticlesKinds.find(EntityId);
-        if (EntityIterator != CellEngineDataFileObjectPointer->ParticlesKinds.end())
+        auto EntityIterator = CellEngineConfigDataObject.ParticlesKinds.find(EntityId);
+        if (EntityIterator != CellEngineConfigDataObject.ParticlesKinds.end())
             EntityName = EntityIterator->second.NameFromDataFile + " CONFIG NAME = " + EntityIterator->second.NameFromXML;
         else
             EntityName = "";
@@ -754,7 +753,7 @@ void CellEngineOpenGLVisualiser::SetVisibilityOfAllParticles(bool VisibleParam)
 {
     try
     {
-        for (auto& ParticleKindObject : CellEngineDataFileObjectPointer->ParticlesKinds)
+        for (auto& ParticleKindObject : CellEngineConfigDataObject.ParticlesKinds)
             ParticleKindObject.second.Visible = VisibleParam;
     }
     CATCH("setting visibility of all particles")
@@ -765,7 +764,7 @@ void CellEngineOpenGLVisualiser::SetVisibilityOfParticlesExcept(UnsignedIntType 
     try
     {
         SetVisibilityOfAllParticles(VisibleParam);
-        CellEngineDataFileObjectPointer->ParticlesKinds.find(EntityId)->second.Visible = !VisibleParam;
+        CellEngineConfigDataObject.ParticlesKinds.find(EntityId)->second.Visible = !VisibleParam;
     }
     CATCH("setting visibility of particles except")
 }
@@ -776,7 +775,7 @@ bool CellEngineOpenGLVisualiser::CheckVisibilityOfParticles(UnsignedIntType Enti
 
     try
     {
-        Visible = CellEngineDataFileObjectPointer->ParticlesKinds.find(EntityId)->second.Visible;
+        Visible = CellEngineConfigDataObject.ParticlesKinds.find(EntityId)->second.Visible;
     }
     CATCH("checking visibility of particles")
 
@@ -790,57 +789,57 @@ void CellEngineOpenGLVisualiser::OnKey(int Key, int Action)
         if (Action)
             switch (Key)
             {
-                case '1': CellEngineDataFileObjectPointer->CameraZPosition += (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->CameraZMoveShortStep : CellEngineDataFileObjectPointer->CameraZMoveLongStep); break;
-                case '2': CellEngineDataFileObjectPointer->CameraZPosition -= (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->CameraZMoveShortStep : CellEngineDataFileObjectPointer->CameraZMoveLongStep); break;
-                case '3': CellEngineDataFileObjectPointer->CameraXPosition += (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->CameraXMoveShortStep : CellEngineDataFileObjectPointer->CameraXMoveLongStep); break;
-                case '4': CellEngineDataFileObjectPointer->CameraXPosition -= (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->CameraZMoveShortStep : CellEngineDataFileObjectPointer->CameraXMoveLongStep); break;
-                case '5': CellEngineDataFileObjectPointer->CameraYPosition += (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->CameraYMoveShortStep : CellEngineDataFileObjectPointer->CameraYMoveLongStep); break;
-                case '6': CellEngineDataFileObjectPointer->CameraYPosition -= (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->CameraYMoveShortStep : CellEngineDataFileObjectPointer->CameraYMoveLongStep); break;
+                case '1': CellEngineConfigDataObject.CameraZPosition += (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.CameraZMoveShortStep : CellEngineConfigDataObject.CameraZMoveLongStep); break;
+                case '2': CellEngineConfigDataObject.CameraZPosition -= (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.CameraZMoveShortStep : CellEngineConfigDataObject.CameraZMoveLongStep); break;
+                case '3': CellEngineConfigDataObject.CameraXPosition += (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.CameraXMoveShortStep : CellEngineConfigDataObject.CameraXMoveLongStep); break;
+                case '4': CellEngineConfigDataObject.CameraXPosition -= (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.CameraZMoveShortStep : CellEngineConfigDataObject.CameraXMoveLongStep); break;
+                case '5': CellEngineConfigDataObject.CameraYPosition += (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.CameraYMoveShortStep : CellEngineConfigDataObject.CameraYMoveLongStep); break;
+                case '6': CellEngineConfigDataObject.CameraYPosition -= (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.CameraYMoveShortStep : CellEngineConfigDataObject.CameraYMoveLongStep); break;
 
-                case 'Q': CellEngineDataFileObjectPointer->ViewX += (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->ViewXMoveShortStep : CellEngineDataFileObjectPointer->ViewXMoveLongStep); break;
-                case 'W': CellEngineDataFileObjectPointer->ViewX -= (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->ViewXMoveShortStep : CellEngineDataFileObjectPointer->ViewXMoveLongStep); break;
-                case 'E': CellEngineDataFileObjectPointer->ViewY += (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->ViewYMoveShortStep : CellEngineDataFileObjectPointer->ViewYMoveLongStep); break;
-                case 'R': CellEngineDataFileObjectPointer->ViewY -= (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->ViewYMoveShortStep : CellEngineDataFileObjectPointer->ViewYMoveLongStep); break;
-                case 'T': CellEngineDataFileObjectPointer->ViewZ += (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->ViewZMoveShortStep : CellEngineDataFileObjectPointer->ViewZMoveLongStep); break;
-                case 'Y': CellEngineDataFileObjectPointer->ViewZ -= (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->ViewZMoveShortStep : CellEngineDataFileObjectPointer->ViewZMoveLongStep); break;
+                case 'Q': CellEngineConfigDataObject.ViewX += (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.ViewXMoveShortStep : CellEngineConfigDataObject.ViewXMoveLongStep); break;
+                case 'W': CellEngineConfigDataObject.ViewX -= (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.ViewXMoveShortStep : CellEngineConfigDataObject.ViewXMoveLongStep); break;
+                case 'E': CellEngineConfigDataObject.ViewY += (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.ViewYMoveShortStep : CellEngineConfigDataObject.ViewYMoveLongStep); break;
+                case 'R': CellEngineConfigDataObject.ViewY -= (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.ViewYMoveShortStep : CellEngineConfigDataObject.ViewYMoveLongStep); break;
+                case 'T': CellEngineConfigDataObject.ViewZ += (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.ViewZMoveShortStep : CellEngineConfigDataObject.ViewZMoveLongStep); break;
+                case 'Y': CellEngineConfigDataObject.ViewZ -= (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.ViewZMoveShortStep : CellEngineConfigDataObject.ViewZMoveLongStep); break;
 
-                case 'A': CellEngineDataFileObjectPointer->RotationAngle1 += 1; break;
-                case 'S': CellEngineDataFileObjectPointer->RotationAngle1 -= 1; break;
-                case 'D': CellEngineDataFileObjectPointer->RotationAngle2 += 1; break;
-                case 'F': CellEngineDataFileObjectPointer->RotationAngle2 -= 1; break;
-                case 'G': CellEngineDataFileObjectPointer->RotationAngle3 += 1; break;
-                case 'H': CellEngineDataFileObjectPointer->RotationAngle3 -= 1; break;
+                case 'A': CellEngineConfigDataObject.RotationAngle1 += 1; break;
+                case 'S': CellEngineConfigDataObject.RotationAngle1 -= 1; break;
+                case 'D': CellEngineConfigDataObject.RotationAngle2 += 1; break;
+                case 'F': CellEngineConfigDataObject.RotationAngle2 -= 1; break;
+                case 'G': CellEngineConfigDataObject.RotationAngle3 += 1; break;
+                case 'H': CellEngineConfigDataObject.RotationAngle3 -= 1; break;
 
-                case 'B': CellEngineDataFileObjectPointer->DrawBondsBetweenParticlesCenters = !CellEngineDataFileObjectPointer->DrawBondsBetweenParticlesCenters; break;
-                case 'C': CellEngineDataFileObjectPointer->DrawBondsBetweenAtoms = !CellEngineDataFileObjectPointer->DrawBondsBetweenAtoms; break;
+                case 'B': CellEngineConfigDataObject.DrawBondsBetweenParticlesCenters = !CellEngineConfigDataObject.DrawBondsBetweenParticlesCenters; break;
+                case 'C': CellEngineConfigDataObject.DrawBondsBetweenAtoms = !CellEngineConfigDataObject.DrawBondsBetweenAtoms; break;
 
-                case 'J': CellEngineDataFileObjectPointer->ShowDetailsInAtomScale = !CellEngineDataFileObjectPointer->ShowDetailsInAtomScale; break;
+                case 'J': CellEngineConfigDataObject.ShowDetailsInAtomScale = !CellEngineConfigDataObject.ShowDetailsInAtomScale; break;
 
                 case 'O': CellEngineDataFileObjectPointer->StartFilmOfStructures(); break;
                 case 'P': CellEngineDataFileObjectPointer->StopFilmOfStructures(); break;
                 case 'N': CellEngineDataFileObjectPointer->ShowNextStructure(); break;
                 case 'M': CellEngineDataFileObjectPointer->ShowPrevStructure(); break;
-                case 'Z': CellEngineDataFileObjectPointer->SizeOfAtomX -= CellEngineDataFileObjectPointer->SizeStep; CellEngineDataFileObjectPointer->SizeOfAtomY -= CellEngineDataFileObjectPointer->SizeStep; CellEngineDataFileObjectPointer->SizeOfAtomZ -= CellEngineDataFileObjectPointer->SizeStep; break;
-                case 'X': CellEngineDataFileObjectPointer->SizeOfAtomX += CellEngineDataFileObjectPointer->SizeStep; CellEngineDataFileObjectPointer->SizeOfAtomY += CellEngineDataFileObjectPointer->SizeStep; CellEngineDataFileObjectPointer->SizeOfAtomZ += CellEngineDataFileObjectPointer->SizeStep; break;
+                case 'Z': CellEngineConfigDataObject.SizeOfAtomX -= CellEngineConfigDataObject.SizeStep; CellEngineConfigDataObject.SizeOfAtomY -= CellEngineConfigDataObject.SizeStep; CellEngineConfigDataObject.SizeOfAtomZ -= CellEngineConfigDataObject.SizeStep; break;
+                case 'X': CellEngineConfigDataObject.SizeOfAtomX += CellEngineConfigDataObject.SizeStep; CellEngineConfigDataObject.SizeOfAtomY += CellEngineConfigDataObject.SizeStep; CellEngineConfigDataObject.SizeOfAtomZ += CellEngineConfigDataObject.SizeStep; break;
 
-                case 'U': CellEngineDataFileObjectPointer->LoadOfAtomsStep == 100 ? CellEngineDataFileObjectPointer->LoadOfAtomsStep = 10 : CellEngineDataFileObjectPointer->LoadOfAtomsStep = 100;  break;
-                case 'I': CellEngineDataFileObjectPointer->LoadOfAtomsStep = 1;  break;
+                case 'U': CellEngineConfigDataObject.LoadOfAtomsStep == 100 ? CellEngineConfigDataObject.LoadOfAtomsStep = 10 : CellEngineConfigDataObject.LoadOfAtomsStep = 100;  break;
+                case 'I': CellEngineConfigDataObject.LoadOfAtomsStep = 1;  break;
 
                 case '9': AtomGraphicsObject.Load("..//objects//cube.sbm");  break;
                 case '0': AtomGraphicsObject.Load("..//objects//sphere.sbm");  break;
 
-                case GLFW_KEY_F1: CellEngineDataFileObjectPointer->ChosenBackgroundColor = 1; break;
-                case GLFW_KEY_F2: CellEngineDataFileObjectPointer->ChosenBackgroundColor = 3; break;
+                case GLFW_KEY_F1: CellEngineConfigDataObject.ChosenBackgroundColor = 1; break;
+                case GLFW_KEY_F2: CellEngineConfigDataObject.ChosenBackgroundColor = 3; break;
 
                 case GLFW_KEY_F3: RenderObjectsBool = !RenderObjectsBool; break;
-                case GLFW_KEY_F4: CellEngineDataFileObjectPointer->AutomaticChangeOfSizeOfAtom = !CellEngineDataFileObjectPointer->AutomaticChangeOfSizeOfAtom; break;
-                case GLFW_KEY_F5: CellEngineDataFileObjectPointer->AutomaticChangeOfLoadAtomsStep = !CellEngineDataFileObjectPointer->AutomaticChangeOfLoadAtomsStep; break;
-                case GLFW_KEY_F6: CellEngineDataFileObjectPointer->ViewChangeUsingLongStep = !CellEngineDataFileObjectPointer->ViewChangeUsingLongStep; break;
-                case GLFW_KEY_F7: CellEngineDataFileObjectPointer->NumberOfStencilBufferLoops == 1 ? CellEngineDataFileObjectPointer->NumberOfStencilBufferLoops = 3 : CellEngineDataFileObjectPointer->NumberOfStencilBufferLoops = 1; break;
+                case GLFW_KEY_F4: CellEngineConfigDataObject.AutomaticChangeOfSizeOfAtom = !CellEngineConfigDataObject.AutomaticChangeOfSizeOfAtom; break;
+                case GLFW_KEY_F5: CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep = !CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep; break;
+                case GLFW_KEY_F6: CellEngineConfigDataObject.ViewChangeUsingLongStep = !CellEngineConfigDataObject.ViewChangeUsingLongStep; break;
+                case GLFW_KEY_F7: CellEngineConfigDataObject.NumberOfStencilBufferLoops == 1 ? CellEngineConfigDataObject.NumberOfStencilBufferLoops = 3 : CellEngineConfigDataObject.NumberOfStencilBufferLoops = 1; break;
 
-                case GLFW_KEY_F8: CellEngineDataFileObjectPointer->MakeColorsTypeObject = CellEngineDataFile::MakeColorsType::DrawColorForEveryAtom; break;
-                case GLFW_KEY_F9: CellEngineDataFileObjectPointer->MakeColorsTypeObject = CellEngineDataFile::MakeColorsType::DrawColorForEveryParticle; break;
-                case GLFW_KEY_F10: CellEngineDataFileObjectPointer->MakeColorsTypeObject = CellEngineDataFile::MakeColorsType::DrawRandomColorForEveryParticle; break;
+                case GLFW_KEY_F8: CellEngineConfigDataObject.MakeColorsTypeObject = CellEngineConfigData::MakeColorsType::DrawColorForEveryAtom; break;
+                case GLFW_KEY_F9: CellEngineConfigDataObject.MakeColorsTypeObject = CellEngineConfigData::MakeColorsType::DrawColorForEveryParticle; break;
+                case GLFW_KEY_F10: CellEngineConfigDataObject.MakeColorsTypeObject = CellEngineConfigData::MakeColorsType::DrawRandomColorForEveryParticle; break;
 
                 case GLFW_KEY_F11: SetVisibilityOfParticlesExcept(694, false); break;
                 case GLFW_KEY_F12: SetVisibilityOfAllParticles(true); break;
@@ -855,7 +854,7 @@ void CellEngineOpenGLVisualiser::OnMouseWheel(int Pos)
 {
     try
     {
-        CellEngineDataFileObjectPointer->ViewZ += static_cast<float>(Pos) * (CellEngineDataFileObjectPointer->ViewChangeUsingLongStep == false ? CellEngineDataFileObjectPointer->ViewZMoveShortStep : CellEngineDataFileObjectPointer->ViewZMoveLongStep);
+        CellEngineConfigDataObject.ViewZ += static_cast<float>(Pos) * (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.ViewZMoveShortStep : CellEngineConfigDataObject.ViewZMoveLongStep);
     }
     CATCH("executing on mouse wheel event for cell visualisation")
 }
@@ -962,178 +961,174 @@ void CellEngineOpenGLVisualiser::OnResize(int Width, int Height)
 
 
 
-//CellEngineOpenGLVisualiser* CellEngineOpenGLVisualiserPointer;
-unique_ptr<CellEngineOpenGLVisualiser> CellEngineOpenGLVisualiserPointer;
-
-void CellEngineOpenGLVisualiserThreadFunction(int XPosWindow, int YPosWindow, int WidthWindow, int HeightWindow)
-{
-    CellEngineOpenGLVisualiserPointer = make_unique<CellEngineOpenGLVisualiser>();
-    CellEngineOpenGLVisualiserPointer->Run(XPosWindow, YPosWindow, WidthWindow, HeightWindow);
-    //CellEngineOpenGLVisualiserPointer = new CellEngineOpenGLVisualiser;
-    //CellEngineOpenGLVisualiserPointer->Run(XPosWindow, YPosWindow, WidthWindow, HeightWindow);
-    //delete CellEngineOpenGLVisualiserPointer;
-}
-
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
-
-struct APPINFO
-{
-    char Title[128];
-    int WindowWidth;
-    int WindowHeight;
-    int MajorVersion;
-    int MinorVersion;
-    int Samples;
-    union
-    {
-        struct
-        {
-            unsigned int FullScreen : 1;
-            unsigned int VSync : 1;
-            unsigned int Cursor : 1;
-            unsigned int Stereo : 1;
-            unsigned int Debug : 1;
-            unsigned int Robust : 1;
-        };
-        unsigned int All;
-    }
-    Flags;
-};
-
-APPINFO Info;
-
-static void glfw_error_callback(int error, const char* description)
-{
-    fprintf(stderr, "Glfw Error %d: %s\n", error, description);
-}
-
-int main(int argc, const char ** argv)
-{
-    ReadInitConfiguration();
-
-    glfwSetErrorCallback(glfw_error_callback);
-    if (!glfwInit())
-        return 1;
-
-    Info.WindowWidth = 1600;
-    Info.WindowHeight = 1200;
-    Info.MajorVersion = 4;
-    Info.MinorVersion = 3;
-    Info.Samples = 0;
-    Info.Flags.All = 0;
-    Info.Flags.Cursor = 1;
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, Info.MajorVersion);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, Info.MinorVersion);
-
-    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
-
-    if (Info.Flags.Robust)
-        glfwWindowHint(GLFW_CONTEXT_ROBUSTNESS, GLFW_LOSE_CONTEXT_ON_RESET);
-
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    glfwWindowHint(GLFW_SAMPLES, Info.Samples);
-    glfwWindowHint(GLFW_STEREO, Info.Flags.Stereo ? GL_TRUE : GL_FALSE);
-
-    GLFWwindow* window = glfwCreateWindow(CellEngineConfigurationFileReaderWriterObject.WidthMenuWindow, CellEngineConfigurationFileReaderWriterObject.HeightMenuWindow, "Dear ImGui GLFW+OpenGL3 example", NULL, NULL);
-    if (window == NULL)
-        return 1;
-
-    glfwSetWindowPos(window, CellEngineConfigurationFileReaderWriterObject.XTopMenuWindow, CellEngineConfigurationFileReaderWriterObject.YTopMenuWindow);
-
-    if (!Info.Flags.Cursor)
-        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-
-    gl3wInit();
-
-    glfwMakeContextCurrent(window);
-
-    glfwSwapInterval(1); // Enable vsync
-
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO();
-    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-
-    ImGui::StyleColorsDark();
-    //ImGui::StyleColorsClassic();
-
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
-    const char* glsl_version = "#version 130";
-    ImGui_ImplOpenGL3_Init(glsl_version);
-
-    bool show_demo_window = true;
-    bool show_another_window = true;
-    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-
-    thread CellEngineOpenGLVisualiserThreadObject(CellEngineOpenGLVisualiserThreadFunction, CellEngineConfigurationFileReaderWriterObject.XTopMainWindow, CellEngineConfigurationFileReaderWriterObject.YTopMainWindow, CellEngineConfigurationFileReaderWriterObject.WidthMainWindow, CellEngineConfigurationFileReaderWriterObject.HeightMainWindow);
-
-    while (!glfwWindowShouldClose(window))
-    {
-        glfwPollEvents();
-
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-
-        if (show_demo_window)
-            ImGui::ShowDemoWindow(&show_demo_window);
-
-        static float f = 0.0f;
-        static int counter = 0;
-
-        ImGui::Begin("Hello, world!");
-
-        ImGui::Text("This is some useful text.");
-        ImGui::Checkbox("Demo Window", &show_demo_window);
-        ImGui::Checkbox("Another Window", &show_another_window);
-
-        ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
-        ImGui::ColorEdit3("clear color", (float*)&clear_color);
-
-        if (ImGui::Button("Button"))
-        {
-            CellEngineOpenGLVisualiserPointer->OnMouseWheel(1);
-            counter++;
-        }
-        ImGui::SameLine();
-        ImGui::Text("counter = %d", counter);
-
-        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-        ImGui::End();
-
-        if (show_another_window)
-        {
-            ImGui::Begin("Another Window", &show_another_window);
-            ImGui::Text("Hello from another window!");
-            if (ImGui::Button("Close Me"))
-                show_another_window = false;
-            ImGui::End();
-        }
-
-        ImGui::Render();
-
-        int display_w, display_h;
-        glfwGetFramebufferSize(window, &display_w, &display_h);
-        glViewport(0, 0, display_w, display_h);
-        glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
-        glClear(GL_COLOR_BUFFER_BIT);
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-        glfwSwapBuffers(window);
-    }
-
-    CellEngineOpenGLVisualiserThreadObject.detach();
-
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
-
-    glfwDestroyWindow(window);
-    glfwTerminate();
-
-    return 0;
-}
+//unique_ptr<CellEngineOpenGLVisualiser> CellEngineOpenGLVisualiserPointer;
+//
+//void CellEngineOpenGLVisualiserThreadFunction(int XPosWindow, int YPosWindow, int WidthWindow, int HeightWindow)
+//{
+//    CellEngineOpenGLVisualiserPointer = make_unique<CellEngineOpenGLVisualiser>();
+//    CellEngineOpenGLVisualiserPointer->Run(XPosWindow, YPosWindow, WidthWindow, HeightWindow);
+//}
+//
+//#include "imgui.h"
+//#include "imgui_impl_glfw.h"
+//#include "imgui_impl_opengl3.h"
+//
+//struct APPINFO
+//{
+//    char Title[128];
+//    int WindowWidth;
+//    int WindowHeight;
+//    int MajorVersion;
+//    int MinorVersion;
+//    int Samples;
+//    union
+//    {
+//        struct
+//        {
+//            unsigned int FullScreen : 1;
+//            unsigned int VSync : 1;
+//            unsigned int Cursor : 1;
+//            unsigned int Stereo : 1;
+//            unsigned int Debug : 1;
+//            unsigned int Robust : 1;
+//        };
+//        unsigned int All;
+//    }
+//    Flags;
+//};
+//
+//APPINFO Info;
+//
+//static void glfw_error_callback(int error, const char* description)
+//{
+//    fprintf(stderr, "Glfw Error %d: %s\n", error, description);
+//}
+//
+//int main(int argc, const char ** argv)
+//{
+//    ReadInitConfiguration();
+//
+//    glfwSetErrorCallback(glfw_error_callback);
+//    if (!glfwInit())
+//        return 1;
+//
+//    Info.WindowWidth = 1600;
+//    Info.WindowHeight = 1200;
+//    Info.MajorVersion = 4;
+//    Info.MinorVersion = 3;
+//    Info.Samples = 0;
+//    Info.Flags.All = 0;
+//    Info.Flags.Cursor = 1;
+//    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, Info.MajorVersion);
+//    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, Info.MinorVersion);
+//
+//    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
+//
+//    if (Info.Flags.Robust)
+//        glfwWindowHint(GLFW_CONTEXT_ROBUSTNESS, GLFW_LOSE_CONTEXT_ON_RESET);
+//
+//    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+//    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+//    glfwWindowHint(GLFW_SAMPLES, Info.Samples);
+//    glfwWindowHint(GLFW_STEREO, Info.Flags.Stereo ? GL_TRUE : GL_FALSE);
+//
+//    GLFWwindow* window = glfwCreateWindow(CellEngineConfigurationFileReaderWriterObject.WidthMenuWindow, CellEngineConfigurationFileReaderWriterObject.HeightMenuWindow, "Dear ImGui GLFW+OpenGL3 example", NULL, NULL);
+//    if (window == NULL)
+//        return 1;
+//
+//    glfwSetWindowPos(window, CellEngineConfigurationFileReaderWriterObject.XTopMenuWindow, CellEngineConfigurationFileReaderWriterObject.YTopMenuWindow);
+//
+//    if (!Info.Flags.Cursor)
+//        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+//
+//    gl3wInit();
+//
+//    glfwMakeContextCurrent(window);
+//
+//    glfwSwapInterval(1); // Enable vsync
+//
+//    IMGUI_CHECKVERSION();
+//    ImGui::CreateContext();
+//    ImGuiIO& io = ImGui::GetIO();
+//    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+//    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+//
+//    ImGui::StyleColorsDark();
+//    //ImGui::StyleColorsClassic();
+//
+//    ImGui_ImplGlfw_InitForOpenGL(window, true);
+//    const char* glsl_version = "#version 130";
+//    ImGui_ImplOpenGL3_Init(glsl_version);
+//
+//    bool show_demo_window = true;
+//    bool show_another_window = true;
+//    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+//
+//    thread CellEngineOpenGLVisualiserThreadObject(CellEngineOpenGLVisualiserThreadFunction, CellEngineConfigurationFileReaderWriterObject.XTopMainWindow, CellEngineConfigurationFileReaderWriterObject.YTopMainWindow, CellEngineConfigurationFileReaderWriterObject.WidthMainWindow, CellEngineConfigurationFileReaderWriterObject.HeightMainWindow);
+//
+//    while (!glfwWindowShouldClose(window))
+//    {
+//        glfwPollEvents();
+//
+//        ImGui_ImplOpenGL3_NewFrame();
+//        ImGui_ImplGlfw_NewFrame();
+//        ImGui::NewFrame();
+//
+//        if (show_demo_window)
+//            ImGui::ShowDemoWindow(&show_demo_window);
+//
+//        static float f = 0.0f;
+//        static int counter = 0;
+//
+//        ImGui::Begin("Hello, world!");
+//
+//        ImGui::Text("This is some useful text.");
+//        ImGui::Checkbox("Demo Window", &show_demo_window);
+//        ImGui::Checkbox("Another Window", &show_another_window);
+//
+//        ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+//        ImGui::ColorEdit3("clear color", (float*)&clear_color);
+//
+//        if (ImGui::Button("Button"))
+//        {
+//            CellEngineOpenGLVisualiserPointer->OnMouseWheel(1);
+//            counter++;
+//        }
+//        ImGui::SameLine();
+//        ImGui::Text("counter = %d", counter);
+//
+//        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+//        ImGui::End();
+//
+//        if (show_another_window)
+//        {
+//            ImGui::Begin("Another Window", &show_another_window);
+//            ImGui::Text("Hello from another window!");
+//            if (ImGui::Button("Close Me"))
+//                show_another_window = false;
+//            ImGui::End();
+//        }
+//
+//        ImGui::Render();
+//
+//        int display_w, display_h;
+//        glfwGetFramebufferSize(window, &display_w, &display_h);
+//        glViewport(0, 0, display_w, display_h);
+//        glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
+//        glClear(GL_COLOR_BUFFER_BIT);
+//        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+//
+//        glfwSwapBuffers(window);
+//    }
+//
+//    CellEngineOpenGLVisualiserThreadObject.detach();
+//
+//    ImGui_ImplOpenGL3_Shutdown();
+//    ImGui_ImplGlfw_Shutdown();
+//    ImGui::DestroyContext();
+//
+//    glfwDestroyWindow(window);
+//    glfwTerminate();
+//
+//    return 0;
+//}

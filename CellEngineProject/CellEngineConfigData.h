@@ -1,0 +1,118 @@
+
+#ifndef CELL_ENGINE_CONFIG_DATA_H
+#define CELL_ENGINE_CONFIG_DATA_H
+
+#include "vmath.h"
+
+#include "CellEngineTypes.h"
+
+struct ParticleKind
+{
+    bool Visible;
+    float SizeX;
+    float SizeY;
+    float SizeZ;
+    vmath::vec3 Color;
+    std::string NameFromXML;
+    std::string NameFromDataFile;
+};
+
+struct AtomKind
+{
+    float SizeX;
+    float SizeY;
+    float SizeZ;
+    vmath::vec3 Color;
+};
+
+class CellEngineConfigData
+{
+public:
+    std::string CellStateFileName;
+public:
+    float SpecularPower = 8.0f;
+    float SpecularAlbedo = 0.2222f;
+public:
+    enum class MakeColorsType
+    {
+        DrawColorForEveryAtom = 1,
+        DrawColorForEveryParticle = 2,
+        DrawRandomColorForEveryParticle = 3
+    };
+    MakeColorsType MakeColorsTypeObject;
+public:
+    enum class StencilForDrawingObjectsTypes
+    {
+        StencilForDrawingOnlyParticlesCenters = 1,
+        StencilForDrawingOnlyInAtomScale = 2
+    };
+    StencilForDrawingObjectsTypes StencilForDrawingObjectsTypesObject;
+    std::uint64_t NumberOfStencilBufferLoops;
+public:
+    bool DrawBondsBetweenParticlesCenters;
+    bool DrawBondsBetweenAtoms;
+public:
+    bool ShowDetailsInAtomScale = false;
+    bool CheckAtomVisibility;
+    float CutZ;
+    float Distance;
+    std::uint64_t LoadOfAtomsStep;
+public:
+    float XLowToDrawInAtomScale;
+    float XHighToDrawInAtomScale;
+    float YLowToDrawInAtomScale;
+    float YHighToDrawInAtomScale;
+    float ZLowToDrawInAtomScale;
+    float ZHighToDrawInAtomScale;
+public:
+    enum class SizeOfAtomsDrawingTypes
+    {
+        AtomSize = 1,
+        ParticleSize = 2,
+        AutomaticChangeSize = 3
+    };
+    SizeOfAtomsDrawingTypes SizeOfAtomsDrawingTypesObject;
+public:
+    float SizeStep;
+    float SizeOfAtomX;
+    float SizeOfAtomY;
+    float SizeOfAtomZ;
+    float RotationAngle1;
+    float RotationAngle2;
+    float RotationAngle3;
+    float CameraXPosition;
+    float CameraYPosition;
+    float CameraZPosition;
+    float CameraXMoveShortStep;
+    float CameraYMoveShortStep;
+    float CameraZMoveShortStep;
+    float CameraXMoveLongStep;
+    float CameraYMoveLongStep;
+    float CameraZMoveLongStep;
+    float ViewX;
+    float ViewY;
+    float ViewZ;
+    float ViewXMoveShortStep;
+    float ViewYMoveShortStep;
+    float ViewZMoveShortStep;
+    float ViewXMoveLongStep;
+    float ViewYMoveLongStep;
+    float ViewZMoveLongStep;
+public:
+    bool ViewChangeUsingLongStep;
+    bool AutomaticChangeOfSizeOfAtom;
+    bool AutomaticChangeOfLoadAtomsStep;
+public:
+    UnsignedIntType ChosenStructureIndex = 0;
+    bool FilmOfStructuresActive = false;
+public:
+    vmath::vec3 BackgroundColors[4];
+    std::uint64_t ChosenBackgroundColor;
+public:
+    std::unordered_map<std::string, AtomKind> AtomsKinds;
+    std::unordered_map<UnsignedIntType, ParticleKind> ParticlesKinds;
+};
+
+inline CellEngineConfigData CellEngineConfigDataObject;
+
+#endif

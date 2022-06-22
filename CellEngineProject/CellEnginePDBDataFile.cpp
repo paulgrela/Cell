@@ -5,6 +5,7 @@
 
 #include "StringUtils.h"
 #include "DateTimeUtils.h"
+#include "CellEngineConfigData.h"
 #include "CellEnginePDBDataFile.h"
 
 using namespace std;
@@ -29,9 +30,9 @@ CellEngineAtom CellEnginePDBDataFile::ParseRecord(const char* LocalPDBRecord)
         CellEngineAtomObject.Y = stof(RecordStr.substr(38, 8));
         CellEngineAtomObject.Z = stof(RecordStr.substr(46, 8));
 
-        auto AtomKindObjectIterator = AtomsKinds.find(string(1, CellEngineAtomObject.Name[0]));
-        if (AtomKindObjectIterator == AtomsKinds.end())
-            AtomKindObjectIterator = AtomsKinds.find(string(1, 'E'));
+        auto AtomKindObjectIterator = CellEngineConfigDataObject.AtomsKinds.find(string(1, CellEngineAtomObject.Name[0]));
+        if (AtomKindObjectIterator == CellEngineConfigDataObject.AtomsKinds.end())
+            AtomKindObjectIterator = CellEngineConfigDataObject.AtomsKinds.find(string(1, 'E'));
         auto AtomKindObject = AtomKindObjectIterator->second;
         CellEngineAtomObject.AtomColor = AtomKindObject.Color;
 
@@ -56,7 +57,7 @@ void CellEnginePDBDataFile::ReadDataFromFile()
 
         const auto start_time = chrono::high_resolution_clock::now();
 
-        std::ifstream File(string(CellStateFileName).c_str(), std::ios_base::in);
+        std::ifstream File(string(CellEngineConfigDataObject.CellStateFileName).c_str(), std::ios_base::in);
 
         LoggersManagerObject.Log(STREAM("STARTED READING OF PDB FILE"));
 

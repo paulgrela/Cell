@@ -10,6 +10,7 @@
 #include "ExceptionsMacro.h"
 
 #include "CellEngineDataFile.h"
+#include "CellEngineConfigData.h"
 
 #include "CellEnginePDBDataFile.h"
 #include "CellEngineCIFDataFile.h"
@@ -18,7 +19,7 @@
 
 using namespace std;
 
-void CellEngineConfigurationFileReaderWriter::ReadChessConfigurationFile(const char* ConfigFileNameParameter, unique_ptr<CellEngineDataFile>& CellEngineDataFileObjectPointer, const uint64_t ExecuteCellStateId)
+void CellEngineConfigurationFileReaderWriter::ReadChessConfigurationFile(const char* ConfigFileNameParameter, const uint64_t ExecuteCellStateId)
 {
     try
     {
@@ -88,75 +89,75 @@ void CellEngineConfigurationFileReaderWriter::ReadChessConfigurationFile(const c
                         else
                             CellEngineDataFileObjectPointer = make_unique<CellEngineCIFDataFile>();
 
-                        CellEngineDataFileObjectPointer->CellStateFileName = CellStateFileName;
+                        CellEngineConfigDataObject.CellStateFileName = CellStateFileName;
 
-                        CellEngineDataFileObjectPointer->ChosenStructureIndex = CellStatePropertyTreeElement.second.get<uint64_t>("ChosenStructureIndex");
-                        CellEngineDataFileObjectPointer->FilmOfStructuresActive = CellStatePropertyTreeElement.second.get<bool>("FilmOfStructuresActive");
+                        CellEngineConfigDataObject.ChosenStructureIndex = CellStatePropertyTreeElement.second.get<uint64_t>("ChosenStructureIndex");
+                        CellEngineConfigDataObject.FilmOfStructuresActive = CellStatePropertyTreeElement.second.get<bool>("FilmOfStructuresActive");
 
-                        CellEngineDataFileObjectPointer->SpecularPower = CellStatePropertyTreeElement.second.get<float>("SpecularPower");
-                        CellEngineDataFileObjectPointer->SpecularAlbedo = CellStatePropertyTreeElement.second.get<float>("SpecularAlbedo");
-                        CellEngineDataFileObjectPointer->MakeColorsTypeObject = static_cast<CellEngineDataFile::MakeColorsType>(CellStatePropertyTreeElement.second.get<uint64_t>("MakeColorsType"));
+                        CellEngineConfigDataObject.SpecularPower = CellStatePropertyTreeElement.second.get<float>("SpecularPower");
+                        CellEngineConfigDataObject.SpecularAlbedo = CellStatePropertyTreeElement.second.get<float>("SpecularAlbedo");
+                        CellEngineConfigDataObject.MakeColorsTypeObject = static_cast<CellEngineConfigData::MakeColorsType>(CellStatePropertyTreeElement.second.get<uint64_t>("MakeColorsType"));
 
-                        CellEngineDataFileObjectPointer->StencilForDrawingObjectsTypesObject = static_cast<CellEngineDataFile::StencilForDrawingObjectsTypes>(CellStatePropertyTreeElement.second.get<uint64_t>("StencilForDrawingObjectsTypes"));
-                        CellEngineDataFileObjectPointer->NumberOfStencilBufferLoops = CellStatePropertyTreeElement.second.get<uint64_t>("NumberOfStencilBufferLoops");
+                        CellEngineConfigDataObject.StencilForDrawingObjectsTypesObject = static_cast<CellEngineConfigData::StencilForDrawingObjectsTypes>(CellStatePropertyTreeElement.second.get<uint64_t>("StencilForDrawingObjectsTypes"));
+                        CellEngineConfigDataObject.NumberOfStencilBufferLoops = CellStatePropertyTreeElement.second.get<uint64_t>("NumberOfStencilBufferLoops");
 
-                        CellEngineDataFileObjectPointer->DrawBondsBetweenParticlesCenters = CellStatePropertyTreeElement.second.get<bool>("DrawBondsBetweenParticlesCenters");
-                        CellEngineDataFileObjectPointer->DrawBondsBetweenAtoms = CellStatePropertyTreeElement.second.get<bool>("DrawBondsBetweenAtoms");
+                        CellEngineConfigDataObject.DrawBondsBetweenParticlesCenters = CellStatePropertyTreeElement.second.get<bool>("DrawBondsBetweenParticlesCenters");
+                        CellEngineConfigDataObject.DrawBondsBetweenAtoms = CellStatePropertyTreeElement.second.get<bool>("DrawBondsBetweenAtoms");
 
-                        CellEngineDataFileObjectPointer->ShowDetailsInAtomScale = CellStatePropertyTreeElement.second.get<bool>("ShowDetailsInAtomScale");
-                        CellEngineDataFileObjectPointer->CheckAtomVisibility = CellStatePropertyTreeElement.second.get<bool>("CheckAtomVisibility");
-                        CellEngineDataFileObjectPointer->CutZ = CellStatePropertyTreeElement.second.get<float>("CutZ");
-                        CellEngineDataFileObjectPointer->Distance = CellStatePropertyTreeElement.second.get<float>("Distance");
-                        CellEngineDataFileObjectPointer->LoadOfAtomsStep = CellStatePropertyTreeElement.second.get<uint64_t>("LoadOfAtomsStep");
+                        CellEngineConfigDataObject.ShowDetailsInAtomScale = CellStatePropertyTreeElement.second.get<bool>("ShowDetailsInAtomScale");
+                        CellEngineConfigDataObject.CheckAtomVisibility = CellStatePropertyTreeElement.second.get<bool>("CheckAtomVisibility");
+                        CellEngineConfigDataObject.CutZ = CellStatePropertyTreeElement.second.get<float>("CutZ");
+                        CellEngineConfigDataObject.Distance = CellStatePropertyTreeElement.second.get<float>("Distance");
+                        CellEngineConfigDataObject.LoadOfAtomsStep = CellStatePropertyTreeElement.second.get<uint64_t>("LoadOfAtomsStep");
 
-                        CellEngineDataFileObjectPointer->XLowToDrawInAtomScale = CellStatePropertyTreeElement.second.get<float>("XLowToDrawInAtomScale");
-                        CellEngineDataFileObjectPointer->XHighToDrawInAtomScale = CellStatePropertyTreeElement.second.get<float>("XHighToDrawInAtomScale");
-                        CellEngineDataFileObjectPointer->YLowToDrawInAtomScale = CellStatePropertyTreeElement.second.get<float>("YLowToDrawInAtomScale");
-                        CellEngineDataFileObjectPointer->YHighToDrawInAtomScale = CellStatePropertyTreeElement.second.get<float>("YHighToDrawInAtomScale");
-                        CellEngineDataFileObjectPointer->ZLowToDrawInAtomScale = CellStatePropertyTreeElement.second.get<float>("ZLowToDrawInAtomScale");
-                        CellEngineDataFileObjectPointer->ZHighToDrawInAtomScale = CellStatePropertyTreeElement.second.get<float>("ZHighToDrawInAtomScale");
+                        CellEngineConfigDataObject.XLowToDrawInAtomScale = CellStatePropertyTreeElement.second.get<float>("XLowToDrawInAtomScale");
+                        CellEngineConfigDataObject.XHighToDrawInAtomScale = CellStatePropertyTreeElement.second.get<float>("XHighToDrawInAtomScale");
+                        CellEngineConfigDataObject.YLowToDrawInAtomScale = CellStatePropertyTreeElement.second.get<float>("YLowToDrawInAtomScale");
+                        CellEngineConfigDataObject.YHighToDrawInAtomScale = CellStatePropertyTreeElement.second.get<float>("YHighToDrawInAtomScale");
+                        CellEngineConfigDataObject.ZLowToDrawInAtomScale = CellStatePropertyTreeElement.second.get<float>("ZLowToDrawInAtomScale");
+                        CellEngineConfigDataObject.ZHighToDrawInAtomScale = CellStatePropertyTreeElement.second.get<float>("ZHighToDrawInAtomScale");
 
-                        CellEngineDataFileObjectPointer->SizeOfAtomsDrawingTypesObject = static_cast<CellEngineDataFile::SizeOfAtomsDrawingTypes>(CellStatePropertyTreeElement.second.get<uint64_t>("SizeOfAtomsDrawingTypes"));
+                        CellEngineConfigDataObject.SizeOfAtomsDrawingTypesObject = static_cast<CellEngineConfigData::SizeOfAtomsDrawingTypes>(CellStatePropertyTreeElement.second.get<uint64_t>("SizeOfAtomsDrawingTypes"));
 
-                        CellEngineDataFileObjectPointer->SizeStep = CellStatePropertyTreeElement.second.get<float>("SizeStep");
-                        CellEngineDataFileObjectPointer->SizeOfAtomX = CellStatePropertyTreeElement.second.get<float>("SizeOfAtomX");
-                        CellEngineDataFileObjectPointer->SizeOfAtomY = CellStatePropertyTreeElement.second.get<float>("SizeOfAtomY");
-                        CellEngineDataFileObjectPointer->SizeOfAtomZ = CellStatePropertyTreeElement.second.get<float>("SizeOfAtomZ");
-                        CellEngineDataFileObjectPointer->RotationAngle1 = CellStatePropertyTreeElement.second.get<float>("RotationAngle1");
-                        CellEngineDataFileObjectPointer->RotationAngle2 = CellStatePropertyTreeElement.second.get<float>("RotationAngle2");
-                        CellEngineDataFileObjectPointer->RotationAngle3 = CellStatePropertyTreeElement.second.get<float>("RotationAngle3");
-                        CellEngineDataFileObjectPointer->ViewX = CellStatePropertyTreeElement.second.get<float>("ViewX");
-                        CellEngineDataFileObjectPointer->ViewY = CellStatePropertyTreeElement.second.get<float>("ViewY");
-                        CellEngineDataFileObjectPointer->ViewZ = CellStatePropertyTreeElement.second.get<float>("ViewZ");
-                        CellEngineDataFileObjectPointer->CameraXPosition = CellStatePropertyTreeElement.second.get<float>("CameraXPosition");
-                        CellEngineDataFileObjectPointer->CameraYPosition = CellStatePropertyTreeElement.second.get<float>("CameraYPosition");
-                        CellEngineDataFileObjectPointer->CameraZPosition = CellStatePropertyTreeElement.second.get<float>("CameraZPosition");
-                        CellEngineDataFileObjectPointer->CameraXMoveShortStep = CellStatePropertyTreeElement.second.get<float>("CameraXMoveShortStep");
-                        CellEngineDataFileObjectPointer->CameraYMoveShortStep = CellStatePropertyTreeElement.second.get<float>("CameraYMoveShortStep");
-                        CellEngineDataFileObjectPointer->CameraZMoveShortStep = CellStatePropertyTreeElement.second.get<float>("CameraZMoveShortStep");
-                        CellEngineDataFileObjectPointer->CameraXMoveLongStep = CellStatePropertyTreeElement.second.get<float>("CameraXMoveLongStep");
-                        CellEngineDataFileObjectPointer->CameraYMoveLongStep = CellStatePropertyTreeElement.second.get<float>("CameraYMoveLongStep");
-                        CellEngineDataFileObjectPointer->CameraZMoveLongStep = CellStatePropertyTreeElement.second.get<float>("CameraZMoveLongStep");
-                        CellEngineDataFileObjectPointer->ViewX = CellStatePropertyTreeElement.second.get<float>("ViewX");
-                        CellEngineDataFileObjectPointer->ViewY = CellStatePropertyTreeElement.second.get<float>("ViewY");
-                        CellEngineDataFileObjectPointer->ViewZ = CellStatePropertyTreeElement.second.get<float>("ViewZ");
-                        CellEngineDataFileObjectPointer->ViewXMoveShortStep = CellStatePropertyTreeElement.second.get<float>("ViewXMoveShortStep");
-                        CellEngineDataFileObjectPointer->ViewYMoveShortStep = CellStatePropertyTreeElement.second.get<float>("ViewYMoveShortStep");
-                        CellEngineDataFileObjectPointer->ViewZMoveShortStep = CellStatePropertyTreeElement.second.get<float>("ViewZMoveShortStep");
-                        CellEngineDataFileObjectPointer->ViewXMoveLongStep = CellStatePropertyTreeElement.second.get<float>("ViewXMoveLongStep");
-                        CellEngineDataFileObjectPointer->ViewYMoveLongStep = CellStatePropertyTreeElement.second.get<float>("ViewYMoveLongStep");
-                        CellEngineDataFileObjectPointer->ViewZMoveLongStep = CellStatePropertyTreeElement.second.get<float>("ViewZMoveLongStep");
+                        CellEngineConfigDataObject.SizeStep = CellStatePropertyTreeElement.second.get<float>("SizeStep");
+                        CellEngineConfigDataObject.SizeOfAtomX = CellStatePropertyTreeElement.second.get<float>("SizeOfAtomX");
+                        CellEngineConfigDataObject.SizeOfAtomY = CellStatePropertyTreeElement.second.get<float>("SizeOfAtomY");
+                        CellEngineConfigDataObject.SizeOfAtomZ = CellStatePropertyTreeElement.second.get<float>("SizeOfAtomZ");
+                        CellEngineConfigDataObject.RotationAngle1 = CellStatePropertyTreeElement.second.get<float>("RotationAngle1");
+                        CellEngineConfigDataObject.RotationAngle2 = CellStatePropertyTreeElement.second.get<float>("RotationAngle2");
+                        CellEngineConfigDataObject.RotationAngle3 = CellStatePropertyTreeElement.second.get<float>("RotationAngle3");
+                        CellEngineConfigDataObject.ViewX = CellStatePropertyTreeElement.second.get<float>("ViewX");
+                        CellEngineConfigDataObject.ViewY = CellStatePropertyTreeElement.second.get<float>("ViewY");
+                        CellEngineConfigDataObject.ViewZ = CellStatePropertyTreeElement.second.get<float>("ViewZ");
+                        CellEngineConfigDataObject.CameraXPosition = CellStatePropertyTreeElement.second.get<float>("CameraXPosition");
+                        CellEngineConfigDataObject.CameraYPosition = CellStatePropertyTreeElement.second.get<float>("CameraYPosition");
+                        CellEngineConfigDataObject.CameraZPosition = CellStatePropertyTreeElement.second.get<float>("CameraZPosition");
+                        CellEngineConfigDataObject.CameraXMoveShortStep = CellStatePropertyTreeElement.second.get<float>("CameraXMoveShortStep");
+                        CellEngineConfigDataObject.CameraYMoveShortStep = CellStatePropertyTreeElement.second.get<float>("CameraYMoveShortStep");
+                        CellEngineConfigDataObject.CameraZMoveShortStep = CellStatePropertyTreeElement.second.get<float>("CameraZMoveShortStep");
+                        CellEngineConfigDataObject.CameraXMoveLongStep = CellStatePropertyTreeElement.second.get<float>("CameraXMoveLongStep");
+                        CellEngineConfigDataObject.CameraYMoveLongStep = CellStatePropertyTreeElement.second.get<float>("CameraYMoveLongStep");
+                        CellEngineConfigDataObject.CameraZMoveLongStep = CellStatePropertyTreeElement.second.get<float>("CameraZMoveLongStep");
+                        CellEngineConfigDataObject.ViewX = CellStatePropertyTreeElement.second.get<float>("ViewX");
+                        CellEngineConfigDataObject.ViewY = CellStatePropertyTreeElement.second.get<float>("ViewY");
+                        CellEngineConfigDataObject.ViewZ = CellStatePropertyTreeElement.second.get<float>("ViewZ");
+                        CellEngineConfigDataObject.ViewXMoveShortStep = CellStatePropertyTreeElement.second.get<float>("ViewXMoveShortStep");
+                        CellEngineConfigDataObject.ViewYMoveShortStep = CellStatePropertyTreeElement.second.get<float>("ViewYMoveShortStep");
+                        CellEngineConfigDataObject.ViewZMoveShortStep = CellStatePropertyTreeElement.second.get<float>("ViewZMoveShortStep");
+                        CellEngineConfigDataObject.ViewXMoveLongStep = CellStatePropertyTreeElement.second.get<float>("ViewXMoveLongStep");
+                        CellEngineConfigDataObject.ViewYMoveLongStep = CellStatePropertyTreeElement.second.get<float>("ViewYMoveLongStep");
+                        CellEngineConfigDataObject.ViewZMoveLongStep = CellStatePropertyTreeElement.second.get<float>("ViewZMoveLongStep");
 
-                        CellEngineDataFileObjectPointer->ViewChangeUsingLongStep = CellStatePropertyTreeElement.second.get<bool>("ViewChangeUsingLongStep");
-                        CellEngineDataFileObjectPointer->AutomaticChangeOfSizeOfAtom = CellStatePropertyTreeElement.second.get<bool>("AutomaticChangeOfSizeOfAtom");
-                        CellEngineDataFileObjectPointer->AutomaticChangeOfLoadAtomsStep = CellStatePropertyTreeElement.second.get<bool>("AutomaticChangeOfLoadAtomsStep");
+                        CellEngineConfigDataObject.ViewChangeUsingLongStep = CellStatePropertyTreeElement.second.get<bool>("ViewChangeUsingLongStep");
+                        CellEngineConfigDataObject.AutomaticChangeOfSizeOfAtom = CellStatePropertyTreeElement.second.get<bool>("AutomaticChangeOfSizeOfAtom");
+                        CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep = CellStatePropertyTreeElement.second.get<bool>("AutomaticChangeOfLoadAtomsStep");
 
-                        CellEngineDataFileObjectPointer->BackgroundColors[1] = sb7::FromVec4ToVec3(sb7::GetColorVec4FromColorName(CellStatePropertyTreeElement.second.get<string>("BackgroundColor1")));
-                        CellEngineDataFileObjectPointer->BackgroundColors[2] = sb7::FromVec4ToVec3(sb7::GetColorVec4FromColorName(CellStatePropertyTreeElement.second.get<string>("BackgroundColor2")));
-                        CellEngineDataFileObjectPointer->BackgroundColors[3] = sb7::FromVec4ToVec3(sb7::GetColorVec4FromColorName(CellStatePropertyTreeElement.second.get<string>("BackgroundColor3")));
-                        CellEngineDataFileObjectPointer->ChosenBackgroundColor = CellStatePropertyTreeElement.second.get<uint64_t>("ChosenBackgroundColor");
+                        CellEngineConfigDataObject.BackgroundColors[1] = sb7::FromVec4ToVec3(sb7::GetColorVec4FromColorName(CellStatePropertyTreeElement.second.get<string>("BackgroundColor1")));
+                        CellEngineConfigDataObject.BackgroundColors[2] = sb7::FromVec4ToVec3(sb7::GetColorVec4FromColorName(CellStatePropertyTreeElement.second.get<string>("BackgroundColor2")));
+                        CellEngineConfigDataObject.BackgroundColors[3] = sb7::FromVec4ToVec3(sb7::GetColorVec4FromColorName(CellStatePropertyTreeElement.second.get<string>("BackgroundColor3")));
+                        CellEngineConfigDataObject.ChosenBackgroundColor = CellStatePropertyTreeElement.second.get<uint64_t>("ChosenBackgroundColor");
 
-                        CellEngineDataFileObjectPointer->AtomsKinds.clear();
+                        CellEngineConfigDataObject.AtomsKinds.clear();
                         for (const ptree::value_type& AtomKindPropertyTreeElement : CellStatePropertyTreeElement.second.get_child("Atoms"))
                         {
                             AtomKind AtomKindObject;
@@ -167,10 +168,10 @@ void CellEngineConfigurationFileReaderWriter::ReadChessConfigurationFile(const c
                             AtomKindObject.SizeX = AtomKindPropertyTreeElement.second.get<float>("SizeX");
                             AtomKindObject.SizeY = AtomKindPropertyTreeElement.second.get<float>("SizeY");
                             AtomKindObject.SizeZ = AtomKindPropertyTreeElement.second.get<float>("SizeZ");
-                            CellEngineDataFileObjectPointer->AtomsKinds[AtomKindPropertyTreeElement.second.get<string>("Name")] = AtomKindObject;
+                            CellEngineConfigDataObject.AtomsKinds[AtomKindPropertyTreeElement.second.get<string>("Name")] = AtomKindObject;
                         }
 
-                        CellEngineDataFileObjectPointer->ParticlesKinds.clear();
+                        CellEngineConfigDataObject.ParticlesKinds.clear();
                         for (const ptree::value_type& ParticleKindPropertyTreeElement : CellStatePropertyTreeElement.second.get_child("Particles"))
                         {
                             ParticleKind ParticleKindObject;
@@ -183,7 +184,7 @@ void CellEngineConfigurationFileReaderWriter::ReadChessConfigurationFile(const c
                             ParticleKindObject.SizeX = ParticleKindPropertyTreeElement.second.get<float>("SizeX");
                             ParticleKindObject.SizeY = ParticleKindPropertyTreeElement.second.get<float>("SizeY");
                             ParticleKindObject.SizeZ = ParticleKindPropertyTreeElement.second.get<float>("SizeZ");
-                            CellEngineDataFileObjectPointer->ParticlesKinds[ParticleKindPropertyTreeElement.second.get<UnsignedIntType>("<xmlattr>.id")] = ParticleKindObject;
+                            CellEngineConfigDataObject.ParticlesKinds[ParticleKindPropertyTreeElement.second.get<UnsignedIntType>("<xmlattr>.id")] = ParticleKindObject;
                         }
                     }
         }
@@ -191,7 +192,7 @@ void CellEngineConfigurationFileReaderWriter::ReadChessConfigurationFile(const c
     CATCH("cell print configuration constructor")
 }
 
-void CellEngineConfigurationFileReaderWriter::SaveTestStatisticsToFile(unique_ptr<CellEngineDataFile>& CellEngineDataFileObjectPointer, const uint64_t ExecuteCellStateId) const
+void CellEngineConfigurationFileReaderWriter::SaveTestStatisticsToFile(const uint64_t ExecuteCellStateId) const
 {
     try
     {
@@ -206,9 +207,9 @@ void CellEngineConfigurationFileReaderWriter::SaveTestStatisticsToFile(unique_pt
             {
                 ptree& TestPropertyTreeElementToWriteInFile = TestPropertyTreeElement.second;
 
-                TestPropertyTreeElementToWriteInFile.put("CellStateFileName", CellEngineDataFileObjectPointer->CellStateFileName);
+                TestPropertyTreeElementToWriteInFile.put("CellStateFileName", CellEngineConfigDataObject.CellStateFileName);
 
-                TestPropertyTreeElementToWriteInFile.put("ChosenStructureIndex", CellEngineDataFileObjectPointer->ChosenStructureIndex);
+                TestPropertyTreeElementToWriteInFile.put("ChosenStructureIndex", CellEngineConfigDataObject.ChosenStructureIndex);
             }
 
         std::ofstream OutputConfigFile(ConfigFileName);

@@ -84,7 +84,7 @@ add_executable(
 	CellEngineCIFDataFile.cpp
 	CellEngineOpenGLVisualizer.cpp
 	CellEngineConfigurationFileReaderWriter.cpp
-)
+        CellEngineImGuiMenu.cpp CellEngineOpenGLVisualiser.h CellEngineConfigData.h)
 
 target_link_libraries(${PROJECT_NAME} -static-libgcc -static-libstdc++ -lpthread -lglew32 -lsb7 -lglfw3 -lopengl32 -lglu32 -limgui)
 

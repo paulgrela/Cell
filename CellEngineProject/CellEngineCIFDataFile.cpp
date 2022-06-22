@@ -9,6 +9,7 @@
 
 #include "StringUtils.h"
 #include "DateTimeUtils.h"
+#include "CellEngineConfigData.h"
 #include "CellEngineCIFDataFile.h"
 
 using namespace std;
@@ -35,16 +36,16 @@ CellEngineAtom CellEngineCIFDataFile::ParseRecord(const char* LocalCIFRecord)
         CellEngineAtomObject.Y = stof(AtomFields[11]);
         CellEngineAtomObject.Z = stof(AtomFields[12]);
 
-        auto AtomKindObjectIterator = AtomsKinds.find(string(1, CellEngineAtomObject.Name[0]));
-        if (AtomKindObjectIterator == AtomsKinds.end())
-            AtomKindObjectIterator = AtomsKinds.find(string(1, 'E'));
+        auto AtomKindObjectIterator = CellEngineConfigDataObject.AtomsKinds.find(string(1, CellEngineAtomObject.Name[0]));
+        if (AtomKindObjectIterator == CellEngineConfigDataObject.AtomsKinds.end())
+            AtomKindObjectIterator = CellEngineConfigDataObject.AtomsKinds.find(string(1, 'E'));
         auto AtomKindObject = AtomKindObjectIterator->second;
         CellEngineAtomObject.AtomColor = AtomKindObject.Color;
         CellEngineAtomObject.SizeXAtom = AtomKindObject.SizeX;
         CellEngineAtomObject.SizeYAtom = AtomKindObject.SizeY;
         CellEngineAtomObject.SizeZAtom = AtomKindObject.SizeZ;
 
-        auto ParticleKindObject = ParticlesKinds.find(CellEngineAtomObject.EntityId)->second;
+        auto ParticleKindObject = CellEngineConfigDataObject.ParticlesKinds.find(CellEngineAtomObject.EntityId)->second;
         CellEngineAtomObject.Visible = ParticleKindObject.Visible;
         CellEngineAtomObject.ParticleColor = ParticleKindObject.Color;
         CellEngineAtomObject.SizeXParticle = ParticleKindObject.SizeX;
@@ -66,7 +67,7 @@ void CellEngineCIFDataFile::ReadDataFromFile()
 
         const auto start_time = chrono::high_resolution_clock::now();
 
-        std::ifstream File(string(CellStateFileName).c_str(), std::ios_base::in);
+        std::ifstream File(string(CellEngineConfigDataObject.CellStateFileName).c_str(), std::ios_base::in);
 
         LoggersManagerObject.Log(STREAM("STARTED READING FROM CIF FILE"));
 
@@ -87,11 +88,11 @@ void CellEngineCIFDataFile::ReadDataFromFile()
             {
                 vector<string> AtomFields = split(Line, " ");
 
-                auto ParticleKindObjectIterator = ParticlesKinds.find(stoi(AtomFields[2]));
-                if (ParticleKindObjectIterator == ParticlesKinds.end())
+                auto ParticleKindObjectIterator = CellEngineConfigDataObject.ParticlesKinds.find(stoi(AtomFields[2]));
+                if (ParticleKindObjectIterator == CellEngineConfigDataObject.ParticlesKinds.end())
                 {
-                    auto OthersParticleKindObjectIterator = ParticlesKinds.find(1000);
-                    ParticlesKinds[stoi(AtomFields[2])] = ParticleKind{ OthersParticleKindObjectIterator->second.Visible, OthersParticleKindObjectIterator->second.SizeX, OthersParticleKindObjectIterator->second.SizeY, OthersParticleKindObjectIterator->second.SizeZ, OthersParticleKindObjectIterator->second.Color, OthersParticleKindObjectIterator->second.NameFromXML, AtomFields[5].substr(1, AtomFields[5].length() - 2) };
+                    auto OthersParticleKindObjectIterator = CellEngineConfigDataObject.ParticlesKinds.find(1000);
+                    CellEngineConfigDataObject.ParticlesKinds[stoi(AtomFields[2])] = ParticleKind{ OthersParticleKindObjectIterator->second.Visible, OthersParticleKindObjectIterator->second.SizeX, OthersParticleKindObjectIterator->second.SizeY, OthersParticleKindObjectIterator->second.SizeZ, OthersParticleKindObjectIterator->second.Color, OthersParticleKindObjectIterator->second.NameFromXML, AtomFields[5].substr(1, AtomFields[5].length() - 2) };
                 }
                 else
                     ParticleKindObjectIterator->second.NameFromDataFile = AtomFields[5].substr(1, AtomFields[5].length() - 2);
