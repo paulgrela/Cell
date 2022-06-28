@@ -596,7 +596,6 @@ void CellEngineOpenGLVisualiser::SetVisibilityOfAllParticles(bool VisibleParam)
     try
     {
         for (auto& ParticleKindObject : CellEngineConfigDataObject.ParticlesKinds)
-            //ParticleKindObject.second.Visible = VisibleParam;
             ParticleKindObject.Visible = VisibleParam;
     }
     CATCH("setting visibility of all particles")
@@ -607,7 +606,6 @@ void CellEngineOpenGLVisualiser::SetVisibilityOfParticlesExcept(UnsignedIntType 
     try
     {
         SetVisibilityOfAllParticles(VisibleParam);
-        //CellEngineConfigDataObject.ParticlesKinds.find(EntityId)->second.Visible = !VisibleParam;
         CellEngineConfigDataObject.ParticlesKinds[CellEngineConfigDataObject.ParticlesKindsPos.find(EntityId)->second].Visible = !VisibleParam;
     }
     CATCH("setting visibility of particles except")

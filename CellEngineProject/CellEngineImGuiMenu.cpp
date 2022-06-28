@@ -89,8 +89,6 @@ static void glfw_error_callback(int error, const char* description)
     fprintf(stderr, "Glfw Error %d: %s\n", error, description);
 }
 
-bool ProteinsVisible[10000];
-
 int main(int argc, const char ** argv)
 {
     ReadInitConfiguration();
@@ -153,10 +151,6 @@ int main(int argc, const char ** argv)
 
     thread CellEngineOpenGLVisualiserThreadObject(CellEngineOpenGLVisualiserThreadFunction, CellEngineConfigDataObject.XTopMainWindow, CellEngineConfigDataObject.YTopMainWindow, CellEngineConfigDataObject.WidthMainWindow, CellEngineConfigDataObject.HeightMainWindow);
 
-//    for (const auto& ParticleKind : CellEngineConfigDataObject.ParticlesKinds)
-//        if (ParticleKind.Identifier != 10000)
-//            ProteinsVisible[ParticleKind.Identifier] = ParticleKind.Visible;
-
     while (!glfwWindowShouldClose(window))
     {
         glfwPollEvents();
@@ -210,19 +204,8 @@ int main(int argc, const char ** argv)
                 if (ImGui::TreeNode("Proteins"))
                 {
 
-                    //for (const auto& ParticleKind : CellEngineConfigDataObject.ParticlesKinds)
                     for(int ParticleKindIndex = 0; ParticleKindIndex < CellEngineConfigDataObject.ParticlesKinds.size(); ParticleKindIndex++)
-//                        if (ParticleKind.first != 10000)
-//                        {
-//                            ImGui::Checkbox(string(to_string(ParticleKind.first) + " " + ParticleKind.second.NameFromDataFile).c_str(), &ProteinsVisible[ParticleKind.first]);
-//                            CellEngineConfigDataObject.ParticlesKinds[ParticleKind.first].Visible = ProteinsVisible[ParticleKind.first];
-//                        }
-                        //if (ParticleKind. != 10000)
-                        {
-                            ImGui::Checkbox(string(to_string(CellEngineConfigDataObject.ParticlesKinds[ParticleKindIndex].Identifier) + " " + CellEngineConfigDataObject.ParticlesKinds[ParticleKindIndex].NameFromDataFile).c_str(), &CellEngineConfigDataObject.ParticlesKinds[ParticleKindIndex].Visible);
-                            //ImGui::Checkbox(string(to_string(ParticleKind.Identifier) + " " + ParticleKind.NameFromDataFile).c_str(), &CellEngineConfigDataObject.ParticlesKinds[100].Visible);
-                            //CellEngineConfigDataObject.ParticlesKinds[ParticleKind.first].Visible = ProteinsVisible[ParticleKind.first];
-                        }
+                        ImGui::Checkbox(string(to_string(CellEngineConfigDataObject.ParticlesKinds[ParticleKindIndex].Identifier) + " " + CellEngineConfigDataObject.ParticlesKinds[ParticleKindIndex].NameFromDataFile).c_str(), &CellEngineConfigDataObject.ParticlesKinds[ParticleKindIndex].Visible);
 
                     ImGui::TreePop();
                 }
