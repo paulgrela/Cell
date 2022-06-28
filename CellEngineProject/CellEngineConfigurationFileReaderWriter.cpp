@@ -171,7 +171,7 @@ void CellEngineConfigurationFileReaderWriter::ReadChessConfigurationFile(const c
                             CellEngineConfigDataObject.AtomsKinds[AtomKindPropertyTreeElement.second.get<string>("Name")] = AtomKindObject;
                         }
 
-                        CellEngineConfigDataObject.ParticlesKinds.clear();
+                        CellEngineConfigDataObject.ParticlesKindsXML.clear();
                         for (const ptree::value_type& ParticleKindPropertyTreeElement : CellStatePropertyTreeElement.second.get_child("Particles"))
                         {
                             ParticleKind ParticleKindObject;
@@ -184,7 +184,7 @@ void CellEngineConfigurationFileReaderWriter::ReadChessConfigurationFile(const c
                             ParticleKindObject.SizeX = ParticleKindPropertyTreeElement.second.get<float>("SizeX");
                             ParticleKindObject.SizeY = ParticleKindPropertyTreeElement.second.get<float>("SizeY");
                             ParticleKindObject.SizeZ = ParticleKindPropertyTreeElement.second.get<float>("SizeZ");
-                            CellEngineConfigDataObject.ParticlesKinds[ParticleKindPropertyTreeElement.second.get<UnsignedIntType>("<xmlattr>.id")] = ParticleKindObject;
+                            CellEngineConfigDataObject.ParticlesKindsXML[ParticleKindPropertyTreeElement.second.get<UnsignedIntType>("<xmlattr>.id")] = ParticleKindObject;
                         }
                     }
         }

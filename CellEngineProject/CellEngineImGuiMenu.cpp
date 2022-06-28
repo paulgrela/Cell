@@ -89,6 +89,8 @@ static void glfw_error_callback(int error, const char* description)
     fprintf(stderr, "Glfw Error %d: %s\n", error, description);
 }
 
+bool ProteinsVisible[10000];
+
 int main(int argc, const char ** argv)
 {
     ReadInitConfiguration();
@@ -130,14 +132,14 @@ int main(int argc, const char ** argv)
 
     glfwMakeContextCurrent(window);
 
-    glfwSwapInterval(1); // Enable vsync
+    glfwSwapInterval(1);
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
     //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 
+    //ImGui::StyleColorsLight();
     ImGui::StyleColorsDark();
     //ImGui::StyleColorsClassic();
 
@@ -150,6 +152,10 @@ int main(int argc, const char ** argv)
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
     thread CellEngineOpenGLVisualiserThreadObject(CellEngineOpenGLVisualiserThreadFunction, CellEngineConfigDataObject.XTopMainWindow, CellEngineConfigDataObject.YTopMainWindow, CellEngineConfigDataObject.WidthMainWindow, CellEngineConfigDataObject.HeightMainWindow);
+
+//    for (const auto& ParticleKind : CellEngineConfigDataObject.ParticlesKinds)
+//        if (ParticleKind.Identifier != 10000)
+//            ProteinsVisible[ParticleKind.Identifier] = ParticleKind.Visible;
 
     while (!glfwWindowShouldClose(window))
     {
@@ -191,8 +197,50 @@ int main(int argc, const char ** argv)
             ImGui::Text("Hello from another window!");
             if (ImGui::Button("Close Me"))
                 show_another_window = false;
+
+            if (ImGui::Button("HEJ"))
+            {
+                CellEngineOpenGLVisualiserPointer->OnMouseWheel(1);
+                counter++;
+            }
+
+            if (ImGui::CollapsingHeader("Configuration"))
+            {
+                //if (ImGui::TreeNode("Configuration##2"))
+                if (ImGui::TreeNode("Proteins"))
+                {
+
+                    //for (const auto& ParticleKind : CellEngineConfigDataObject.ParticlesKinds)
+                    for(int ParticleKindIndex = 0; ParticleKindIndex < CellEngineConfigDataObject.ParticlesKinds.size(); ParticleKindIndex++)
+//                        if (ParticleKind.first != 10000)
+//                        {
+//                            ImGui::Checkbox(string(to_string(ParticleKind.first) + " " + ParticleKind.second.NameFromDataFile).c_str(), &ProteinsVisible[ParticleKind.first]);
+//                            CellEngineConfigDataObject.ParticlesKinds[ParticleKind.first].Visible = ProteinsVisible[ParticleKind.first];
+//                        }
+                        //if (ParticleKind. != 10000)
+                        {
+                            ImGui::Checkbox(string(to_string(CellEngineConfigDataObject.ParticlesKinds[ParticleKindIndex].Identifier) + " " + CellEngineConfigDataObject.ParticlesKinds[ParticleKindIndex].NameFromDataFile).c_str(), &CellEngineConfigDataObject.ParticlesKinds[ParticleKindIndex].Visible);
+                            //ImGui::Checkbox(string(to_string(ParticleKind.Identifier) + " " + ParticleKind.NameFromDataFile).c_str(), &CellEngineConfigDataObject.ParticlesKinds[100].Visible);
+                            //CellEngineConfigDataObject.ParticlesKinds[ParticleKind.first].Visible = ProteinsVisible[ParticleKind.first];
+                        }
+
+                    ImGui::TreePop();
+                }
+
+                if (ImGui::TreeNode("Atoms"))
+                {
+                    ImGui::TreePop();
+                }
+            }
+
             ImGui::End();
         }
+
+
+
+
+
+
 
         ImGui::Render();
 

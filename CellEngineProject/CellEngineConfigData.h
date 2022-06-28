@@ -8,6 +8,7 @@
 
 struct ParticleKind
 {
+    int Identifier;
     bool Visible;
     float SizeX;
     float SizeY;
@@ -143,7 +144,10 @@ public:
     std::uint64_t ChosenBackgroundColor;
 public:
     std::unordered_map<std::string, AtomKind> AtomsKinds;
-    std::unordered_map<UnsignedIntType, ParticleKind> ParticlesKinds;
+
+    std::vector<ParticleKind> ParticlesKinds;
+    std::unordered_map<UnsignedIntType, ParticleKind> ParticlesKindsXML;
+    std::unordered_map<UnsignedIntType, UnsignedIntType> ParticlesKindsPos;
 };
 
 inline CellEngineConfigData CellEngineConfigDataObject;

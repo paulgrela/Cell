@@ -45,7 +45,8 @@ CellEngineAtom CellEngineCIFDataFile::ParseRecord(const char* LocalCIFRecord)
         CellEngineAtomObject.SizeYAtom = AtomKindObject.SizeY;
         CellEngineAtomObject.SizeZAtom = AtomKindObject.SizeZ;
 
-        auto ParticleKindObject = CellEngineConfigDataObject.ParticlesKinds.find(CellEngineAtomObject.EntityId)->second;
+        //auto ParticleKindObject = CellEngineConfigDataObject.ParticlesKinds.find(CellEngineAtomObject.EntityId)->second;
+        auto ParticleKindObject = CellEngineConfigDataObject.ParticlesKinds[CellEngineConfigDataObject.ParticlesKindsPos.find(CellEngineAtomObject.EntityId)->second];
         CellEngineAtomObject.Visible = ParticleKindObject.Visible;
         CellEngineAtomObject.ParticleColor = ParticleKindObject.Color;
         CellEngineAtomObject.SizeXParticle = ParticleKindObject.SizeX;
@@ -88,14 +89,30 @@ void CellEngineCIFDataFile::ReadDataFromFile()
             {
                 vector<string> AtomFields = split(Line, " ");
 
-                auto ParticleKindObjectIterator = CellEngineConfigDataObject.ParticlesKinds.find(stoi(AtomFields[2]));
-                if (ParticleKindObjectIterator == CellEngineConfigDataObject.ParticlesKinds.end())
+                //TRZEBA WCZYTYWAC DO VECTORA i INDEKS W WEKTORZE ParticklesKindsPos - DZIEKI TEMU ULOZONE PO KOLEJI i TAK WSTAWIANE DO CHECKBOX_LIST
+                //W CHECKBOX_LIST ZAZNACZENIE OZNACZA
+
+                auto ParticleKindObjectIterator = CellEngineConfigDataObject.ParticlesKindsXML.find(stoi(AtomFields[2]));
+                if (ParticleKindObjectIterator == CellEngineConfigDataObject.ParticlesKindsXML.end())
                 {
-                    auto OthersParticleKindObjectIterator = CellEngineConfigDataObject.ParticlesKinds.find(1000);
-                    CellEngineConfigDataObject.ParticlesKinds[stoi(AtomFields[2])] = ParticleKind{ OthersParticleKindObjectIterator->second.Visible, OthersParticleKindObjectIterator->second.SizeX, OthersParticleKindObjectIterator->second.SizeY, OthersParticleKindObjectIterator->second.SizeZ, OthersParticleKindObjectIterator->second.Color, OthersParticleKindObjectIterator->second.NameFromXML, AtomFields[5].substr(1, AtomFields[5].length() - 2) };
+                    auto OthersParticleKindObjectIterator = CellEngineConfigDataObject.ParticlesKindsXML.find(10000);
+                    //CellEngineConfigDataObject.ParticlesKinds[stoi(AtomFields[2])] = ParticleKind{ OthersParticleKindObjectIterator->second.Visible, OthersParticleKindObjectIterator->second.SizeX, OthersParticleKindObjectIterator->second.SizeY, OthersParticleKindObjectIterator->second.SizeZ, OthersParticleKindObjectIterator->second.Color, OthersParticleKindObjectIterator->second.NameFromXML, AtomFields[5].substr(1, AtomFields[5].length() - 2) };
+                    CellEngineConfigDataObject.ParticlesKinds.emplace_back(ParticleKind{ stoi(AtomFields[2]), OthersParticleKindObjectIterator->second.Visible, OthersParticleKindObjectIterator->second.SizeX, OthersParticleKindObjectIterator->second.SizeY, OthersParticleKindObjectIterator->second.SizeZ, OthersParticleKindObjectIterator->second.Color, OthersParticleKindObjectIterator->second.NameFromXML, AtomFields[5].substr(1, AtomFields[5].length() - 2) });
+
+//                    auto ParticleKindObjectIterator = CellEngineConfigDataObject.ParticlesKindsXML.find(stoi(AtomFields[2]));
+//                    if (ParticleKindObjectIterator == CellEngineConfigDataObject.ParticlesKindsXML.end())
+//                        ParticleKindObjectIterator->second.NameFromDataFile = AtomFields[5].substr(1, AtomFields[5].length() - 2);
+                    CellEngineConfigDataObject.ParticlesKindsPos[stoi(AtomFields[2])] = CellEngineConfigDataObject.ParticlesKinds.size() - 1;
                 }
                 else
-                    ParticleKindObjectIterator->second.NameFromDataFile = AtomFields[5].substr(1, AtomFields[5].length() - 2);
+                {
+                    //CellEngineConfigDataObject.ParticlesKinds[stoi(AtomFields[2])] = ParticleKind{ OthersParticleKindObjectIterator->second.Visible, OthersParticleKindObjectIterator->second.SizeX, OthersParticleKindObjectIterator->second.SizeY, OthersParticleKindObjectIterator->second.SizeZ, OthersParticleKindObjectIterator->second.Color, OthersParticleKindObjectIterator->second.NameFromXML, AtomFields[5].substr(1, AtomFields[5].length() - 2) };
+                    CellEngineConfigDataObject.ParticlesKinds.emplace_back(ParticleKind{ stoi(AtomFields[2]), ParticleKindObjectIterator->second.Visible, ParticleKindObjectIterator->second.SizeX, ParticleKindObjectIterator->second.SizeY, ParticleKindObjectIterator->second.SizeZ, ParticleKindObjectIterator->second.Color, ParticleKindObjectIterator->second.NameFromXML, AtomFields[5].substr(1, AtomFields[5].length() - 2) });
+                    CellEngineConfigDataObject.ParticlesKindsPos[stoi(AtomFields[2])] = CellEngineConfigDataObject.ParticlesKinds.size() - 1;
+                }
+                //else
+//                if (ParticleKindObjectIterator == CellEngineConfigDataObject.ParticlesKindsXML.end())
+//                    ParticleKindObjectIterator->second.NameFromDataFile = AtomFields[5].substr(1, AtomFields[5].length() - 2);
             }
             else
             if (Line.substr(0, 4) == "ATOM")

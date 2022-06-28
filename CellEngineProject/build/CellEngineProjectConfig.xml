@@ -246,7 +246,7 @@
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>					
 				</Particle>				
-				<Particle id="1000">
+				<Particle id="10000">
 					<Name>OTHERS</Name>
 					<Color>Green</Color>
 					<Visible>true</Visible>					
@@ -458,7 +458,7 @@
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>					
 				</Particle>				
-				<Particle id="1000">
+				<Particle id="10000">
 					<Name>OTHERS</Name>
 					<Color>Green</Color>
 					<Visible>true</Visible>					
@@ -675,7 +675,7 @@
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>					
 				</Particle>				
-				<Particle id="1000">
+				<Particle id="10000">
 					<Name>OTHERS</Name>
 					<Color>Green</Color>
 					<Visible>true</Visible>					

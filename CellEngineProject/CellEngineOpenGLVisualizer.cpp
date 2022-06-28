@@ -496,8 +496,8 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
 
         const auto stop_time = chrono::high_resolution_clock::now();
 
-        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Time of one frame = ", "Exception in measuring time")));
-        LoggersManagerObject.Log(STREAM("NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = " << to_string(NumberOfFoundParticlesCenterToBeRenderedInAtomDetails) << " NumberOfAllRenderedAtoms = " << to_string(NumberOfAllRenderedAtoms) << " ViewZ = " << to_string(CellEngineConfigDataObject.ViewZ) << " CameraZPosition = " << to_string(CellEngineConfigDataObject.CameraZPosition) << " AtomSize = " << to_string(CellEngineConfigDataObject.SizeOfAtomX) << endl));
+        //LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Time of one frame = ", "Exception in measuring time")));
+        //LoggersManagerObject.Log(STREAM("NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = " << to_string(NumberOfFoundParticlesCenterToBeRenderedInAtomDetails) << " NumberOfAllRenderedAtoms = " << to_string(NumberOfAllRenderedAtoms) << " ViewZ = " << to_string(CellEngineConfigDataObject.ViewZ) << " CameraZPosition = " << to_string(CellEngineConfigDataObject.CameraZPosition) << " AtomSize = " << to_string(CellEngineConfigDataObject.SizeOfAtomX) << endl));
     }
     CATCH("rendering cell visualization")
 }
@@ -580,9 +580,9 @@ string CellEngineOpenGLVisualiser::GetEntityName(const uint64_t EntityId)
 
     try
     {
-        auto EntityIterator = CellEngineConfigDataObject.ParticlesKinds.find(EntityId);
-        if (EntityIterator != CellEngineConfigDataObject.ParticlesKinds.end())
-            EntityName = EntityIterator->second.NameFromDataFile + " CONFIG NAME = " + EntityIterator->second.NameFromXML;
+        auto EntityIterator = CellEngineConfigDataObject.ParticlesKindsPos.find(EntityId);
+        if (EntityIterator != CellEngineConfigDataObject.ParticlesKindsPos.end())
+            EntityName = CellEngineConfigDataObject.ParticlesKinds[EntityIterator->second].NameFromDataFile + " CONFIG NAME = " + CellEngineConfigDataObject.ParticlesKinds[EntityIterator->second].NameFromXML;
         else
             EntityName = "";
     }
@@ -596,7 +596,8 @@ void CellEngineOpenGLVisualiser::SetVisibilityOfAllParticles(bool VisibleParam)
     try
     {
         for (auto& ParticleKindObject : CellEngineConfigDataObject.ParticlesKinds)
-            ParticleKindObject.second.Visible = VisibleParam;
+            //ParticleKindObject.second.Visible = VisibleParam;
+            ParticleKindObject.Visible = VisibleParam;
     }
     CATCH("setting visibility of all particles")
 }
@@ -606,7 +607,8 @@ void CellEngineOpenGLVisualiser::SetVisibilityOfParticlesExcept(UnsignedIntType 
     try
     {
         SetVisibilityOfAllParticles(VisibleParam);
-        CellEngineConfigDataObject.ParticlesKinds.find(EntityId)->second.Visible = !VisibleParam;
+        //CellEngineConfigDataObject.ParticlesKinds.find(EntityId)->second.Visible = !VisibleParam;
+        CellEngineConfigDataObject.ParticlesKinds[CellEngineConfigDataObject.ParticlesKindsPos.find(EntityId)->second].Visible = !VisibleParam;
     }
     CATCH("setting visibility of particles except")
 }
@@ -617,7 +619,7 @@ bool CellEngineOpenGLVisualiser::CheckVisibilityOfParticles(UnsignedIntType Enti
 
     try
     {
-        Visible = CellEngineConfigDataObject.ParticlesKinds.find(EntityId)->second.Visible;
+        Visible = CellEngineConfigDataObject.ParticlesKinds[CellEngineConfigDataObject.ParticlesKindsPos.find(EntityId)->second].Visible;
     }
     CATCH("checking visibility of particles")
 
