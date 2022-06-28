@@ -20,11 +20,17 @@ struct ParticleKind
 
 struct AtomKind
 {
+    std::string Name;
     float SizeX;
     float SizeY;
     float SizeZ;
     vmath::vec3 Color;
 };
+
+inline bool operator==(const AtomKind& AtomKindParameter, const std::string& NameStr)
+{
+    return AtomKindParameter.Name == NameStr;
+}
 
 class CellEngineConfigData
 {
@@ -143,7 +149,8 @@ public:
     vmath::vec3 BackgroundColors[4];
     std::uint64_t ChosenBackgroundColor;
 public:
-    std::unordered_map<std::string, AtomKind> AtomsKinds;
+    //std::unordered_map<std::string, AtomKind> AtomsKinds;
+    std::vector<AtomKind> AtomsKinds;
 
     std::vector<ParticleKind> ParticlesKinds;
     std::unordered_map<UnsignedIntType, ParticleKind> ParticlesKindsXML;

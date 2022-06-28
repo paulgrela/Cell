@@ -150,8 +150,8 @@
 					<SizeZ>1</SizeZ>
 				</Atom>
 				<Atom id="5">
-					<Name>C</Name>
-					<Color>Turquoise</Color>
+					<Name>H</Name>
+					<Color>White</Color>
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>
@@ -579,8 +579,8 @@
 					<SizeZ>1</SizeZ>
 				</Atom>
 				<Atom id="5">
-					<Name>C</Name>
-					<Color>Turquoise</Color>
+					<Name>H</Name>
+					<Color>White</Color>
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>

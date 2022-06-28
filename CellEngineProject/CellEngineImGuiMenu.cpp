@@ -147,7 +147,7 @@ int main(int argc, const char ** argv)
 
     bool show_demo_window = true;
     bool show_another_window = true;
-    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+    ImVec4 BackgroundColor = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
     thread CellEngineOpenGLVisualiserThreadObject(CellEngineOpenGLVisualiserThreadFunction, CellEngineConfigDataObject.XTopMainWindow, CellEngineConfigDataObject.YTopMainWindow, CellEngineConfigDataObject.WidthMainWindow, CellEngineConfigDataObject.HeightMainWindow);
 
@@ -165,14 +165,11 @@ int main(int argc, const char ** argv)
         static float f = 0.0f;
         static int counter = 0;
 
-        ImGui::Begin("Hello, world!");
-
-        ImGui::Text("This is some useful text.");
-        ImGui::Checkbox("Demo Window", &show_demo_window);
-        ImGui::Checkbox("Another Window", &show_another_window);
+        ImGui::Begin("Cell Engine Visualiser");
+        ImGui::Text("STATUS");
 
         ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
-        ImGui::ColorEdit3("clear color", (float*)&clear_color);
+        ImGui::ColorEdit3("Background Color", (float*)&BackgroundColor);
 
         if (ImGui::Button("Button"))
         {
@@ -200,18 +197,24 @@ int main(int argc, const char ** argv)
 
             if (ImGui::CollapsingHeader("Configuration"))
             {
-                //if (ImGui::TreeNode("Configuration##2"))
-                if (ImGui::TreeNode("Proteins"))
+                if (ImGui::TreeNode("Particles Kinds"))
                 {
-
-                    for(int ParticleKindIndex = 0; ParticleKindIndex < CellEngineConfigDataObject.ParticlesKinds.size(); ParticleKindIndex++)
+                    for (int ParticleKindIndex = 0; ParticleKindIndex < CellEngineConfigDataObject.ParticlesKinds.size(); ParticleKindIndex++)
                         ImGui::Checkbox(string(to_string(CellEngineConfigDataObject.ParticlesKinds[ParticleKindIndex].Identifier) + " " + CellEngineConfigDataObject.ParticlesKinds[ParticleKindIndex].NameFromDataFile).c_str(), &CellEngineConfigDataObject.ParticlesKinds[ParticleKindIndex].Visible);
 
                     ImGui::TreePop();
                 }
 
+
                 if (ImGui::TreeNode("Atoms"))
                 {
+                    //for (const auto& AtomKind : CellEngineConfigDataObject.AtomsKinds)
+                    for (int AtomKindIndex = 0; AtomKindIndex < CellEngineConfigDataObject.AtomsKinds.size(); AtomKindIndex++)
+                    {
+                        //ImGui::Checkbox(string(AtomKind.first),
+                        //ImGui::ColorEdit3(string(AtomKind.first + " Atom Color").c_str(), (float*)&);
+                        ImGui::ColorEdit3(string(CellEngineConfigDataObject.AtomsKinds[AtomKindIndex].Name + " Atom Color").c_str(), (float*)&CellEngineConfigDataObject.AtomsKinds[AtomKindIndex].Color);
+                    }
                     ImGui::TreePop();
                 }
             }
@@ -230,7 +233,7 @@ int main(int argc, const char ** argv)
         int display_w, display_h;
         glfwGetFramebufferSize(window, &display_w, &display_h);
         glViewport(0, 0, display_w, display_h);
-        glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
+        glClearColor(BackgroundColor.x * BackgroundColor.w, BackgroundColor.y * BackgroundColor.w, BackgroundColor.z * BackgroundColor.w, BackgroundColor.w);
         glClear(GL_COLOR_BUFFER_BIT);
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 

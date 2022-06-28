@@ -168,7 +168,9 @@ void CellEngineConfigurationFileReaderWriter::ReadChessConfigurationFile(const c
                             AtomKindObject.SizeX = AtomKindPropertyTreeElement.second.get<float>("SizeX");
                             AtomKindObject.SizeY = AtomKindPropertyTreeElement.second.get<float>("SizeY");
                             AtomKindObject.SizeZ = AtomKindPropertyTreeElement.second.get<float>("SizeZ");
-                            CellEngineConfigDataObject.AtomsKinds[AtomKindPropertyTreeElement.second.get<string>("Name")] = AtomKindObject;
+                            AtomKindObject.Name = AtomKindPropertyTreeElement.second.get<string>("Name");
+                            //CellEngineConfigDataObject.AtomsKinds[AtomKindPropertyTreeElement.second.get<string>("Name")] = AtomKindObject;
+                            CellEngineConfigDataObject.AtomsKinds.emplace_back(AtomKindObject);
                         }
 
                         CellEngineConfigDataObject.ParticlesKindsXML.clear();
