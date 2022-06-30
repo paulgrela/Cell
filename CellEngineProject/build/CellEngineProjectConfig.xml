@@ -18,6 +18,8 @@
 	<Algorithm>
 		<MultiThreaded>true</MultiThreaded>
 		<SetProcessPriorityHighest>true</SetProcessPriorityHighest>
+		<PrintAtomDescriptionOnScreen>false</PrintAtomDescriptionOnScreen>
+		<LogParametersOfRenderingToFile>false</LogParametersOfRenderingToFile>
 	</Algorithm>
 	<CellTextColors>
 		<Windows>
@@ -580,7 +582,7 @@
 				</Atom>
 				<Atom id="5">
 					<Name>H</Name>
-					<Color>White</Color>
+					<Color>White	</Color>
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>

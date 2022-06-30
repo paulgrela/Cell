@@ -149,9 +149,17 @@ public:
     vmath::vec3 BackgroundColors[4];
     std::uint64_t ChosenBackgroundColor;
 public:
-    //std::unordered_map<std::string, AtomKind> AtomsKinds;
+    bool PrintAtomDescriptionOnScreen;
+    bool LogParametersOfRenderingToFile;
+public:
+    std::string AtomDescriptionStr1;
+    std::string AtomDescriptionStr2;
+    std::string AtomDescriptionStr3;
+    std::string AtomDescriptionStr4;
+    std::string TimeParametersOfRenderingStr;
+    std::string NumberOfRenderedAtomsParametersOfRenderingStr;
+public:
     std::vector<AtomKind> AtomsKinds;
-
     std::vector<ParticleKind> ParticlesKinds;
     std::unordered_map<UnsignedIntType, ParticleKind> ParticlesKindsXML;
     std::unordered_map<UnsignedIntType, UnsignedIntType> ParticlesKindsPos;

@@ -162,13 +162,16 @@ int main(int argc, const char ** argv)
         if (show_demo_window)
             ImGui::ShowDemoWindow(&show_demo_window);
 
-        static float f = 0.0f;
+
+
         static int counter = 0;
 
         ImGui::Begin("Cell Engine Visualiser");
+
         ImGui::Text("STATUS");
 
-        ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+
+
         ImGui::ColorEdit3("Background Color", (float*)&BackgroundColor);
 
         if (ImGui::Button("Button"))
@@ -179,7 +182,29 @@ int main(int argc, const char ** argv)
         ImGui::SameLine();
         ImGui::Text("counter = %d", counter);
 
-        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+
+
+
+
+        ImGui::Checkbox("Log parameters of rendering to file", &CellEngineConfigDataObject.LogParametersOfRenderingToFile);
+
+        bool UseStencilBuffer = true;
+        CellEngineConfigDataObject.NumberOfStencilBufferLoops == 1 ? UseStencilBuffer = false : UseStencilBuffer = true;
+        ImGui::Checkbox("Show details of picked atom", &UseStencilBuffer);
+        UseStencilBuffer == true ? CellEngineConfigDataObject.NumberOfStencilBufferLoops = 3 : CellEngineConfigDataObject.NumberOfStencilBufferLoops = 1;
+
+        ImGui::Checkbox("Print atom description on screen", &CellEngineConfigDataObject.PrintAtomDescriptionOnScreen);
+
+        if (CellEngineConfigDataObject.NumberOfStencilBufferLoops == 3)
+        {
+            ImGui::Text("ATOM DATA:");
+            ImGui::Text("%s", string(CellEngineConfigDataObject.AtomDescriptionStr1 + " " + CellEngineConfigDataObject.AtomDescriptionStr2).c_str());
+            ImGui::Text("%s", string(CellEngineConfigDataObject.AtomDescriptionStr3 + " " + CellEngineConfigDataObject.AtomDescriptionStr4).c_str());
+        }
+
+        ImGui::Text("%s", CellEngineConfigDataObject.TimeParametersOfRenderingStr.c_str());
+        ImGui::Text("%s", CellEngineConfigDataObject.NumberOfRenderedAtomsParametersOfRenderingStr.c_str());
+
         ImGui::End();
 
         if (show_another_window)
@@ -201,20 +226,13 @@ int main(int argc, const char ** argv)
                 {
                     for (int ParticleKindIndex = 0; ParticleKindIndex < CellEngineConfigDataObject.ParticlesKinds.size(); ParticleKindIndex++)
                         ImGui::Checkbox(string(to_string(CellEngineConfigDataObject.ParticlesKinds[ParticleKindIndex].Identifier) + " " + CellEngineConfigDataObject.ParticlesKinds[ParticleKindIndex].NameFromDataFile).c_str(), &CellEngineConfigDataObject.ParticlesKinds[ParticleKindIndex].Visible);
-
                     ImGui::TreePop();
                 }
 
-
                 if (ImGui::TreeNode("Atoms"))
                 {
-                    //for (const auto& AtomKind : CellEngineConfigDataObject.AtomsKinds)
                     for (int AtomKindIndex = 0; AtomKindIndex < CellEngineConfigDataObject.AtomsKinds.size(); AtomKindIndex++)
-                    {
-                        //ImGui::Checkbox(string(AtomKind.first),
-                        //ImGui::ColorEdit3(string(AtomKind.first + " Atom Color").c_str(), (float*)&);
                         ImGui::ColorEdit3(string(CellEngineConfigDataObject.AtomsKinds[AtomKindIndex].Name + " Atom Color").c_str(), (float*)&CellEngineConfigDataObject.AtomsKinds[AtomKindIndex].Color);
-                    }
                     ImGui::TreePop();
                 }
             }

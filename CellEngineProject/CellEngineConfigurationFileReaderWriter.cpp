@@ -56,6 +56,8 @@ void CellEngineConfigurationFileReaderWriter::ReadChessConfigurationFile(const c
             {
                 CellEngineConfigDataObject.MultiThreaded = MainConfigPropertyTreeElement.second.get<bool>("MultiThreaded");
                 CellEngineConfigDataObject.SetProcessPriorityHighest = MainConfigPropertyTreeElement.second.get<bool>("SetProcessPriorityHighest");
+                CellEngineConfigDataObject.PrintAtomDescriptionOnScreen = MainConfigPropertyTreeElement.second.get<bool>("PrintAtomDescriptionOnScreen");
+                CellEngineConfigDataObject.LogParametersOfRenderingToFile = MainConfigPropertyTreeElement.second.get<bool>("LogParametersOfRenderingToFile");
             }
             else
             if (MainConfigPropertyTreeElement.first == "Logger")
@@ -169,7 +171,7 @@ void CellEngineConfigurationFileReaderWriter::ReadChessConfigurationFile(const c
                             AtomKindObject.SizeY = AtomKindPropertyTreeElement.second.get<float>("SizeY");
                             AtomKindObject.SizeZ = AtomKindPropertyTreeElement.second.get<float>("SizeZ");
                             AtomKindObject.Name = AtomKindPropertyTreeElement.second.get<string>("Name");
-                            //CellEngineConfigDataObject.AtomsKinds[AtomKindPropertyTreeElement.second.get<string>("Name")] = AtomKindObject;
+
                             CellEngineConfigDataObject.AtomsKinds.emplace_back(AtomKindObject);
                         }
 

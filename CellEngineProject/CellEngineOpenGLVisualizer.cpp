@@ -496,8 +496,13 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
 
         const auto stop_time = chrono::high_resolution_clock::now();
 
-        //LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Time of one frame = ", "Exception in measuring time")));
-        //LoggersManagerObject.Log(STREAM("NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = " << to_string(NumberOfFoundParticlesCenterToBeRenderedInAtomDetails) << " NumberOfAllRenderedAtoms = " << to_string(NumberOfAllRenderedAtoms) << " ViewZ = " << to_string(CellEngineConfigDataObject.ViewZ) << " CameraZPosition = " << to_string(CellEngineConfigDataObject.CameraZPosition) << " AtomSize = " << to_string(CellEngineConfigDataObject.SizeOfAtomX) << endl));
+        CellEngineConfigDataObject.TimeParametersOfRenderingStr = GetDurationTimeInOneLineStr(start_time, stop_time, "Time of one frame = ", "Exception in measuring time");
+        CellEngineConfigDataObject.NumberOfRenderedAtomsParametersOfRenderingStr = "NumberOfFoundParticlesCenter = " + to_string(NumberOfFoundParticlesCenterToBeRenderedInAtomDetails) + " NumberOfAllRenderedAtoms = " + to_string(NumberOfAllRenderedAtoms);
+        if (CellEngineConfigDataObject.LogParametersOfRenderingToFile == true)
+        {
+            LoggersManagerObject.Log(STREAM(CellEngineConfigDataObject.TimeParametersOfRenderingStr));
+            LoggersManagerObject.Log(STREAM(CellEngineConfigDataObject.NumberOfRenderedAtomsParametersOfRenderingStr << " ViewZ = " << to_string(CellEngineConfigDataObject.ViewZ) << " CameraZPosition = " << to_string(CellEngineConfigDataObject.CameraZPosition) << " AtomSize = " << to_string(CellEngineConfigDataObject.SizeOfAtomX) << endl));
+        }
     }
     CATCH("rendering cell visualization")
 }
@@ -519,12 +524,25 @@ inline void CellEngineOpenGLVisualiser::PrintAtomDescriptionOnScreen(CellEngineA
     try
     {
         glDisable(GL_CULL_FACE);
+
         TextOverlayObject.Clear();
-        string AtomDescription = "ATOM DATA: Serial = " + to_string(ChosenParticleObject.Serial) + " Name = " + ChosenParticleObject.Name + " ResName = " + ChosenParticleObject.ResName;
+        string LocalTextStr = CellEngineConfigDataObject.AtomDescriptionStr1 = "Serial = " + to_string(ChosenParticleObject.Serial) + " Name = " + ChosenParticleObject.Name + " ResName = " + ChosenParticleObject.ResName;
         if (CellEngineConfigDataObject.StencilForDrawingObjectsTypesObject == CellEngineConfigData::StencilForDrawingObjectsTypes::StencilForDrawingOnlyInAtomScale)
-            AtomDescription += " Chain [" + string(ChosenParticleObject.Chain) + "] EntityId = " + to_string(ChosenParticleObject.EntityId) + " Entity Name = [" + GetEntityName(ChosenParticleObject.EntityId) + "]";
-        TextOverlayObject.DrawText(AtomDescription.c_str(), 0, 0);
-        TextOverlayObject.Draw();
+        {
+            CellEngineConfigDataObject.AtomDescriptionStr2 = "Chain [" + string(ChosenParticleObject.Chain) + "]";
+            CellEngineConfigDataObject.AtomDescriptionStr3 = "EntityId = " + to_string(ChosenParticleObject.EntityId);
+            CellEngineConfigDataObject.AtomDescriptionStr4 = "Entity Name = [" + GetEntityName(ChosenParticleObject.EntityId) + "]";
+            LocalTextStr += " " + CellEngineConfigDataObject.AtomDescriptionStr2 + " " + CellEngineConfigDataObject.AtomDescriptionStr3 + " " + CellEngineConfigDataObject.AtomDescriptionStr4;
+        }
+
+        if (CellEngineConfigDataObject.PrintAtomDescriptionOnScreen == true)
+        {
+            ClearRectangleOnScreen(0, Info.WindowHeight - 16, Info.WindowWidth, 16);
+
+            TextOverlayObject.DrawText(string("ATOM DATA: " + LocalTextStr).c_str(), 0, 0);
+            TextOverlayObject.Draw();
+        }
+
         glEnable(GL_CULL_FACE);
     }
     CATCH("printing atom description on screen")
@@ -565,8 +583,6 @@ inline void CellEngineOpenGLVisualiser::ChooseAtomUsingStencilBuffer(const vmath
 
                 RenderObject(ChosenParticleObject, ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, true, RenderObjectsBool);
 
-                ClearRectangleOnScreen(0, Info.WindowHeight - 16, Info.WindowWidth, 16);
-
                 PrintAtomDescriptionOnScreen(ChosenParticleObject);
             }
         }
@@ -582,7 +598,7 @@ string CellEngineOpenGLVisualiser::GetEntityName(const uint64_t EntityId)
     {
         auto EntityIterator = CellEngineConfigDataObject.ParticlesKindsPos.find(EntityId);
         if (EntityIterator != CellEngineConfigDataObject.ParticlesKindsPos.end())
-            EntityName = CellEngineConfigDataObject.ParticlesKinds[EntityIterator->second].NameFromDataFile + " CONFIG NAME = " + CellEngineConfigDataObject.ParticlesKinds[EntityIterator->second].NameFromXML;
+            EntityName = CellEngineConfigDataObject.ParticlesKinds[EntityIterator->second].NameFromDataFile;
         else
             EntityName = "";
     }

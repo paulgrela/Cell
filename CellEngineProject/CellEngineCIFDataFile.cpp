@@ -36,11 +36,9 @@ CellEngineAtom CellEngineCIFDataFile::ParseRecord(const char* LocalCIFRecord)
         CellEngineAtomObject.Y = stof(AtomFields[11]);
         CellEngineAtomObject.Z = stof(AtomFields[12]);
 
-        //auto AtomKindObjectIterator = CellEngineConfigDataObject.AtomsKinds.find(string(1, CellEngineAtomObject.Name[0]));
         auto AtomKindObjectIterator = std::find(CellEngineConfigDataObject.AtomsKinds.begin(), CellEngineConfigDataObject.AtomsKinds.end(), string(1, CellEngineAtomObject.Name[0]));
         if (AtomKindObjectIterator == CellEngineConfigDataObject.AtomsKinds.end())
             AtomKindObjectIterator = std::find(CellEngineConfigDataObject.AtomsKinds.begin(), CellEngineConfigDataObject.AtomsKinds.end(), string(1, 'E'));
-        //auto AtomKindObject = AtomKindObjectIterator;
         CellEngineAtomObject.AtomColor = AtomKindObjectIterator->Color;
         CellEngineAtomObject.SizeXAtom = AtomKindObjectIterator->SizeX;
         CellEngineAtomObject.SizeYAtom = AtomKindObjectIterator->SizeY;

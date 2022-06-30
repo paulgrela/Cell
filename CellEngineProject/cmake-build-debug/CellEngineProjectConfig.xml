@@ -18,6 +18,8 @@
 	<Algorithm>
 		<MultiThreaded>true</MultiThreaded>
 		<SetProcessPriorityHighest>true</SetProcessPriorityHighest>
+		<PrintAtomDescriptionOnScreen>false</PrintAtomDescriptionOnScreen>
+		<LogParametersOfRenderingToFile>false</LogParametersOfRenderingToFile>
 	</Algorithm>
 	<CellTextColors>
 		<Windows>

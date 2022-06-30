@@ -29,25 +29,15 @@ CellEngineAtom CellEnginePDBDataFile::ParseRecord(const char* LocalPDBRecord)
         CellEngineAtomObject.X = stof(RecordStr.substr(30, 8));
         CellEngineAtomObject.Y = stof(RecordStr.substr(38, 8));
         CellEngineAtomObject.Z = stof(RecordStr.substr(46, 8));
-
-//        auto AtomKindObjectIterator = CellEngineConfigDataObject.AtomsKinds.find(string(1, CellEngineAtomObject.Name[0]));
-//        if (AtomKindObjectIterator == CellEngineConfigDataObject.AtomsKinds.end())
-//            AtomKindObjectIterator = CellEngineConfigDataObject.AtomsKinds.find(string(1, 'E'));
-//        auto AtomKindObject = AtomKindObjectIterator->second;
-//        CellEngineAtomObject.AtomColor = AtomKindObject.Color;
-
+        
         auto AtomKindObjectIterator = std::find(CellEngineConfigDataObject.AtomsKinds.begin(), CellEngineConfigDataObject.AtomsKinds.end(), string(1, CellEngineAtomObject.Name[0]));
         if (AtomKindObjectIterator == CellEngineConfigDataObject.AtomsKinds.end())
             AtomKindObjectIterator = std::find(CellEngineConfigDataObject.AtomsKinds.begin(), CellEngineConfigDataObject.AtomsKinds.end(), string(1, 'E'));
-        //auto AtomKindObject = AtomKindObjectIterator;
         CellEngineAtomObject.AtomColor = AtomKindObjectIterator->Color;
         CellEngineAtomObject.SizeXAtom = AtomKindObjectIterator->SizeX;
         CellEngineAtomObject.SizeYAtom = AtomKindObjectIterator->SizeY;
         CellEngineAtomObject.SizeZAtom = AtomKindObjectIterator->SizeZ;
 
-//        CellEngineAtomObject.SizeXAtom = AtomKindObject.SizeX;
-//        CellEngineAtomObject.SizeYAtom = AtomKindObject.SizeY;
-//        CellEngineAtomObject.SizeZAtom = AtomKindObject.SizeZ;
         CellEngineAtomObject.SizeXParticle = 1;
         CellEngineAtomObject.SizeYParticle = 1;
         CellEngineAtomObject.SizeZParticle = 1;
