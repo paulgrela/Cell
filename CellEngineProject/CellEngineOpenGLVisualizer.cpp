@@ -648,20 +648,21 @@ void CellEngineOpenGLVisualiser::OnKey(int Key, int Action)
             switch (Key)
             {
                 //STEP - INPUT SCALAR  - SLIDER S32 LOW
-                case '1': CellEngineConfigDataObject.CameraZPosition += (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.CameraZMoveShortStep : CellEngineConfigDataObject.CameraZMoveLongStep); break; //INPUT SCALAR
-                case '2': CellEngineConfigDataObject.CameraZPosition -= (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.CameraZMoveShortStep : CellEngineConfigDataObject.CameraZMoveLongStep); break; //INPUT SCALAR
-                case '3': CellEngineConfigDataObject.CameraXPosition += (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.CameraXMoveShortStep : CellEngineConfigDataObject.CameraXMoveLongStep); break; //INPUT SCALAR
-                case '4': CellEngineConfigDataObject.CameraXPosition -= (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.CameraZMoveShortStep : CellEngineConfigDataObject.CameraXMoveLongStep); break; //INPUT SCALAR
-                case '5': CellEngineConfigDataObject.CameraYPosition += (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.CameraYMoveShortStep : CellEngineConfigDataObject.CameraYMoveLongStep); break; //INPUT SCALAR
-                case '6': CellEngineConfigDataObject.CameraYPosition -= (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.CameraYMoveShortStep : CellEngineConfigDataObject.CameraYMoveLongStep); break; //INPUT SCALAR
+                //6 x step type - a moze wystarczylby 3 type an nie krotki dlugi ale nie bo mozna przelaczac szybko. Step zmieniany co 1 zawsze.
+//                case '1': CellEngineConfigDataObject.CameraZPosition += (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.CameraZMoveShortStep : CellEngineConfigDataObject.CameraZMoveLongStep); break; //INPUT SCALAR
+//                case '2': CellEngineConfigDataObject.CameraZPosition -= (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.CameraZMoveShortStep : CellEngineConfigDataObject.CameraZMoveLongStep); break; //INPUT SCALAR
+//                case '3': CellEngineConfigDataObject.CameraXPosition += (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.CameraXMoveShortStep : CellEngineConfigDataObject.CameraXMoveLongStep); break; //INPUT SCALAR
+//                case '4': CellEngineConfigDataObject.CameraXPosition -= (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.CameraXMoveShortStep : CellEngineConfigDataObject.CameraXMoveLongStep); break; //INPUT SCALAR
+//                case '5': CellEngineConfigDataObject.CameraYPosition += (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.CameraYMoveShortStep : CellEngineConfigDataObject.CameraYMoveLongStep); break; //INPUT SCALAR
+//                case '6': CellEngineConfigDataObject.CameraYPosition -= (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.CameraYMoveShortStep : CellEngineConfigDataObject.CameraYMoveLongStep); break; //INPUT SCALAR
 
                 //STEP - INPUT SCALAR  - SLIDER S32 LOW
-                case 'Q': CellEngineConfigDataObject.ViewX += (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.ViewXMoveShortStep : CellEngineConfigDataObject.ViewXMoveLongStep); break; //INPUT SCALAR
-                case 'W': CellEngineConfigDataObject.ViewX -= (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.ViewXMoveShortStep : CellEngineConfigDataObject.ViewXMoveLongStep); break; //INPUT SCALAR
-                case 'E': CellEngineConfigDataObject.ViewY += (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.ViewYMoveShortStep : CellEngineConfigDataObject.ViewYMoveLongStep); break; //INPUT SCALAR
-                case 'R': CellEngineConfigDataObject.ViewY -= (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.ViewYMoveShortStep : CellEngineConfigDataObject.ViewYMoveLongStep); break; //INPUT SCALAR
-                case 'T': CellEngineConfigDataObject.ViewZ += (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.ViewZMoveShortStep : CellEngineConfigDataObject.ViewZMoveLongStep); break; //INPUT SCALAR
-                case 'Y': CellEngineConfigDataObject.ViewZ -= (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.ViewZMoveShortStep : CellEngineConfigDataObject.ViewZMoveLongStep); break; //INPUT SCALAR
+//                case 'Q': CellEngineConfigDataObject.ViewX += (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.ViewXMoveShortStep : CellEngineConfigDataObject.ViewXMoveLongStep); break; //INPUT SCALAR
+//                case 'W': CellEngineConfigDataObject.ViewX -= (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.ViewXMoveShortStep : CellEngineConfigDataObject.ViewXMoveLongStep); break; //INPUT SCALAR
+//                case 'E': CellEngineConfigDataObject.ViewY += (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.ViewYMoveShortStep : CellEngineConfigDataObject.ViewYMoveLongStep); break; //INPUT SCALAR
+//                case 'R': CellEngineConfigDataObject.ViewY -= (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.ViewYMoveShortStep : CellEngineConfigDataObject.ViewYMoveLongStep); break; //INPUT SCALAR
+//                case 'T': CellEngineConfigDataObject.ViewZ += (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.ViewZMoveShortStep : CellEngineConfigDataObject.ViewZMoveLongStep); break; //INPUT SCALAR
+//                case 'Y': CellEngineConfigDataObject.ViewZ -= (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.ViewZMoveShortStep : CellEngineConfigDataObject.ViewZMoveLongStep); break; //INPUT SCALAR
 
                 case 'A': CellEngineConfigDataObject.RotationAngle1 += 1; break; //INPUT SCALAR
                 case 'S': CellEngineConfigDataObject.RotationAngle1 -= 1; break; //INPUT SCALAR

@@ -309,9 +309,9 @@
 			<CameraYMoveShortStep>1</CameraYMoveShortStep>
 			<CameraZMoveShortStep>1</CameraZMoveShortStep>
 
-			<CameraXMoveLongStep>1</CameraXMoveLongStep>
-			<CameraYMoveLongStep>1</CameraYMoveLongStep>
-			<CameraZMoveLongStep>1</CameraZMoveLongStep>
+			<CameraXMoveLongStep>10</CameraXMoveLongStep>
+			<CameraYMoveLongStep>10</CameraYMoveLongStep>
+			<CameraZMoveLongStep>10</CameraZMoveLongStep>
 			
 			<ViewX>0</ViewX>
 			<ViewY>0</ViewY>
@@ -321,9 +321,9 @@
 			<ViewYMoveShortStep>1</ViewYMoveShortStep>
 			<ViewZMoveShortStep>1</ViewZMoveShortStep>			
 			
-			<ViewXMoveLongStep>1</ViewXMoveLongStep>
-			<ViewYMoveLongStep>1</ViewYMoveLongStep>
-			<ViewZMoveLongStep>1</ViewZMoveLongStep>
+			<ViewXMoveLongStep>10</ViewXMoveLongStep>
+			<ViewYMoveLongStep>10</ViewYMoveLongStep>
+			<ViewZMoveLongStep>10</ViewZMoveLongStep>
 
 			<ViewChangeUsingLongStep>false</ViewChangeUsingLongStep>
 			<AutomaticChangeOfSizeOfAtom>false</AutomaticChangeOfSizeOfAtom> 

@@ -89,9 +89,33 @@ static void glfw_error_callback(int error, const char* description)
     fprintf(stderr, "Glfw Error %d: %s\n", error, description);
 }
 
-void DrawPlusMinusButton()
+void DrawPlusMinusScalarButton(float& VariableToChange, const int64_t Step, const int64_t MinValue, const int64_t MaxValue, const string& Description, int& IDButton)
 {
+    ImGui::PushID(IDButton);
+    ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0 / 7.0f, 0.6f, 0.6f));
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0 / 7.0f, 0.7f, 0.7f));
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0 / 7.0f, 0.8f, 0.8f));
+    if (ImGui::Button(" - "))
+        if (VariableToChange - Step >= MinValue)
+            VariableToChange -= Step;
+    ImGui::PopStyleColor(3);
+    ImGui::PopID();
+    IDButton++;
 
+    ImGui::SameLine();
+    ImGui::PushID(IDButton);
+    ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(3 / 7.0f, 0.6f, 0.6f));
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(3 / 7.0f, 0.7f, 0.7f));
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(3 / 7.0f, 0.8f, 0.8f));
+    if (ImGui::Button(" + "))
+        if (VariableToChange + Step <= MaxValue)
+            VariableToChange += Step;
+    ImGui::PopStyleColor(3);
+    ImGui::PopID();
+    IDButton++;
+
+    ImGui::SameLine();
+    ImGui::Text("%s", string(to_string(VariableToChange) + " [" + Description + "]").c_str());
 }
 
 int main(int argc, const char ** argv)
@@ -169,55 +193,67 @@ int main(int argc, const char ** argv)
 
         //static bool closef = false;
         //bool* p_open = &closef;
-        ImGuiWindowFlags window_flags = 0;
-        window_flags |= ImGuiWindowFlags_NoMove;
-        window_flags |= ImGuiWindowFlags_NoResize;
 
-        ImGui::Begin("Cell Engine Visualiser", NULL, window_flags);
+//        ImGuiWindowFlags window_flags = 0;
+//        window_flags |= ImGuiWindowFlags_NoMove;
+//        window_flags |= ImGuiWindowFlags_NoResize;
+//        ImGui::Begin("Cell Engine Visualiser", NULL, window_flags);
+        ImGui::Begin("Cell Engine Visualiser");
 
+
+//        static int e = 0;
+//        ImGui::RadioButton("radio a", &e, 0); ImGui::SameLine();
+//        ImGui::RadioButton("radio b", &e, 1); ImGui::SameLine();
+//        ImGui::RadioButton("radio c", &e, 2);
 
 
 
         ImGui::Text("STATUS");
 
-        static int counter = 0;
+        int IDButton = 1;
 
-        ImGui::ColorEdit3("Background Color", (float*)&BackgroundColor);
-
-        ImGui::Text("120");
-
-        ImGui::SameLine();
-        ImGui::PushID(0);
-        ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0 / 7.0f, 0.6f, 0.6f));
-        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0 / 7.0f, 0.7f, 0.7f));
-        ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0 / 7.0f, 0.8f, 0.8f));
-        ImGui::Button("-");
-        ImGui::PopStyleColor(3);
-        ImGui::PopID();
-
-        ImGui::SameLine();
-        ImGui::PushID(3);
-        ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(3 / 7.0f, 0.6f, 0.6f));
-        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(3 / 7.0f, 0.7f, 0.7f));
-        ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(3 / 7.0f, 0.8f, 0.8f));
-        ImGui::Button("+");
-        ImGui::PopStyleColor(3);
-        ImGui::PopID();
-
-        ImGui::SameLine();
-        ImGui::Text("DESCRIPTION");
-
-
-        if (ImGui::Button("Button"))
+        if (ImGui::CollapsingHeader("View Move"))
         {
-            CellEngineOpenGLVisualiserPointer->OnMouseWheel(1);
-            counter++;
+            DrawPlusMinusScalarButton(CellEngineConfigDataObject.ViewXMoveShortStep, 1, 1, 10, "View X Move Short Step", IDButton);
+            DrawPlusMinusScalarButton(CellEngineConfigDataObject.ViewYMoveShortStep, 1, 1, 10, "View Y Move Short Step", IDButton);
+            DrawPlusMinusScalarButton(CellEngineConfigDataObject.ViewZMoveShortStep, 1, 1, 10, "View Z Move Short Step", IDButton);
+
+            DrawPlusMinusScalarButton(CellEngineConfigDataObject.ViewX, CellEngineConfigDataObject.ViewXMoveShortStep, -3000, 3000, "View X Change Using Short Step", IDButton);
+            DrawPlusMinusScalarButton(CellEngineConfigDataObject.ViewY, CellEngineConfigDataObject.ViewYMoveShortStep, -3000, 3000, "View Y Change Using Short Step", IDButton);
+            DrawPlusMinusScalarButton(CellEngineConfigDataObject.ViewZ, CellEngineConfigDataObject.ViewZMoveShortStep, -3000, 3000, "View Z Change Using Short Step", IDButton);
+
+            DrawPlusMinusScalarButton(CellEngineConfigDataObject.ViewXMoveLongStep, 10, 0, 100, "View X Move Long Step", IDButton);
+            DrawPlusMinusScalarButton(CellEngineConfigDataObject.ViewYMoveLongStep, 10, 0, 100, "View Y Move Long Step", IDButton);
+            DrawPlusMinusScalarButton(CellEngineConfigDataObject.ViewZMoveLongStep, 10, 0, 100, "View Z Move Long Step", IDButton);
+
+            DrawPlusMinusScalarButton(CellEngineConfigDataObject.ViewX, CellEngineConfigDataObject.ViewXMoveLongStep, -3000, 3000, "View X Change Using Long Step", IDButton);
+            DrawPlusMinusScalarButton(CellEngineConfigDataObject.ViewY, CellEngineConfigDataObject.ViewYMoveLongStep, -3000, 3000, "View Y Change Using Long Step", IDButton);
+            DrawPlusMinusScalarButton(CellEngineConfigDataObject.ViewZ, CellEngineConfigDataObject.ViewZMoveLongStep, -3000, 3000, "View Z Change Using Long Step", IDButton);
         }
-        ImGui::SameLine();
-        ImGui::Text("counter = %d", counter);
+        if (ImGui::CollapsingHeader("Camera Move"))
+        {
+            DrawPlusMinusScalarButton(CellEngineConfigDataObject.CameraXMoveShortStep, 1, 1, 10, "Camera X Move Short Step", IDButton);
+            DrawPlusMinusScalarButton(CellEngineConfigDataObject.CameraYMoveShortStep, 1, 1, 10, "Camera Y Move Short Step", IDButton);
+            DrawPlusMinusScalarButton(CellEngineConfigDataObject.CameraZMoveShortStep, 1, 1, 10, "Camera Z Move Short Step", IDButton);
 
+            DrawPlusMinusScalarButton(CellEngineConfigDataObject.CameraXPosition, CellEngineConfigDataObject.CameraXMoveShortStep, -3000, 3000, "Camera X Position Change Using Short Step", IDButton);
+            DrawPlusMinusScalarButton(CellEngineConfigDataObject.CameraYPosition, CellEngineConfigDataObject.CameraYMoveShortStep, -3000, 3000, "Camera Y Position Change Using Short Step", IDButton);
+            DrawPlusMinusScalarButton(CellEngineConfigDataObject.CameraZPosition, CellEngineConfigDataObject.CameraZMoveShortStep, -3000, 3000, "Camera Z Position Change Using Short Step", IDButton);
 
+            DrawPlusMinusScalarButton(CellEngineConfigDataObject.CameraXMoveLongStep, 10, 0, 100, "Camera X Move Long Step", IDButton);
+            DrawPlusMinusScalarButton(CellEngineConfigDataObject.CameraYMoveLongStep, 10, 0, 100, "Camera Y Move Long Step", IDButton);
+            DrawPlusMinusScalarButton(CellEngineConfigDataObject.CameraZMoveLongStep, 10, 0, 100, "Camera Z Move Long Step", IDButton);
 
+            DrawPlusMinusScalarButton(CellEngineConfigDataObject.CameraXPosition, CellEngineConfigDataObject.CameraXMoveLongStep, -3000, 3000, "Camera X Position Change Using Long Step", IDButton);
+            DrawPlusMinusScalarButton(CellEngineConfigDataObject.CameraYPosition, CellEngineConfigDataObject.CameraYMoveLongStep, -3000, 3000, "Camera Y Position Change Using Long Step", IDButton);
+            DrawPlusMinusScalarButton(CellEngineConfigDataObject.CameraZPosition, CellEngineConfigDataObject.CameraZMoveLongStep, -3000, 3000, "Camera Z Position Change Using Long Step", IDButton);
+        }
+        if (ImGui::CollapsingHeader("Rotation Angle"))
+        {
+            DrawPlusMinusScalarButton(CellEngineConfigDataObject.RotationAngle1, 1, -360, 360, "Rotation Angle 1", IDButton);
+            DrawPlusMinusScalarButton(CellEngineConfigDataObject.RotationAngle2, 1, -360, 360, "Rotation Angle 2", IDButton);
+            DrawPlusMinusScalarButton(CellEngineConfigDataObject.RotationAngle3, 1, -360, 360, "Rotation Angle 3", IDButton);
+        }
 
 
         ImGui::Checkbox("Log parameters of rendering to file", &CellEngineConfigDataObject.LogParametersOfRenderingToFile);
@@ -239,6 +275,8 @@ int main(int argc, const char ** argv)
         ImGui::Text("%s", CellEngineConfigDataObject.TimeParametersOfRenderingStr.c_str());
         ImGui::Text("%s", CellEngineConfigDataObject.NumberOfRenderedAtomsParametersOfRenderingStr.c_str());
 
+        ImGui::ColorEdit3("Background Color", (float*)&BackgroundColor);
+
         ImGui::End();
 
         if (show_another_window)
@@ -247,12 +285,6 @@ int main(int argc, const char ** argv)
             ImGui::Text("Hello from another window!");
             if (ImGui::Button("Close Me"))
                 show_another_window = false;
-
-            if (ImGui::Button("HEJ"))
-            {
-                CellEngineOpenGLVisualiserPointer->OnMouseWheel(1);
-                counter++;
-            }
 
             if (ImGui::CollapsingHeader("Configuration"))
             {
@@ -273,18 +305,8 @@ int main(int argc, const char ** argv)
 
 
             static char   s8_v  = 127;
-            static ImU8   u8_v  = 255;
-            static short  s16_v = 32767;
-            static ImU16  u16_v = 65535;
-            static ImS32  s32_v = -1;
-            static ImU32  u32_v = (ImU32)-1;
-            static ImS64  s64_v = -1;
-            static ImU64  u64_v = (ImU64)-1;
-            static float  f32_v = 0.123f;
-            static double f64_v = 90000.01234567890123456789;
-
             char s8 = 1;
-            char s8Fast = 20;
+
             ImGui::InputScalar("input long value with text s8", ImGuiDataType_S8, &s8_v, &s8, NULL, "%d");
 
             ImGui::End();
