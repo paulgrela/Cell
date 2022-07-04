@@ -647,60 +647,67 @@ void CellEngineOpenGLVisualiser::OnKey(int Key, int Action)
         if (Action)
             switch (Key)
             {
-                case '1': CellEngineConfigDataObject.CameraZPosition += (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.CameraZMoveShortStep : CellEngineConfigDataObject.CameraZMoveLongStep); break;
-                case '2': CellEngineConfigDataObject.CameraZPosition -= (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.CameraZMoveShortStep : CellEngineConfigDataObject.CameraZMoveLongStep); break;
-                case '3': CellEngineConfigDataObject.CameraXPosition += (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.CameraXMoveShortStep : CellEngineConfigDataObject.CameraXMoveLongStep); break;
-                case '4': CellEngineConfigDataObject.CameraXPosition -= (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.CameraZMoveShortStep : CellEngineConfigDataObject.CameraXMoveLongStep); break;
-                case '5': CellEngineConfigDataObject.CameraYPosition += (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.CameraYMoveShortStep : CellEngineConfigDataObject.CameraYMoveLongStep); break;
-                case '6': CellEngineConfigDataObject.CameraYPosition -= (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.CameraYMoveShortStep : CellEngineConfigDataObject.CameraYMoveLongStep); break;
+                //STEP - INPUT SCALAR  - SLIDER S32 LOW
+                case '1': CellEngineConfigDataObject.CameraZPosition += (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.CameraZMoveShortStep : CellEngineConfigDataObject.CameraZMoveLongStep); break; //INPUT SCALAR
+                case '2': CellEngineConfigDataObject.CameraZPosition -= (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.CameraZMoveShortStep : CellEngineConfigDataObject.CameraZMoveLongStep); break; //INPUT SCALAR
+                case '3': CellEngineConfigDataObject.CameraXPosition += (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.CameraXMoveShortStep : CellEngineConfigDataObject.CameraXMoveLongStep); break; //INPUT SCALAR
+                case '4': CellEngineConfigDataObject.CameraXPosition -= (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.CameraZMoveShortStep : CellEngineConfigDataObject.CameraXMoveLongStep); break; //INPUT SCALAR
+                case '5': CellEngineConfigDataObject.CameraYPosition += (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.CameraYMoveShortStep : CellEngineConfigDataObject.CameraYMoveLongStep); break; //INPUT SCALAR
+                case '6': CellEngineConfigDataObject.CameraYPosition -= (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.CameraYMoveShortStep : CellEngineConfigDataObject.CameraYMoveLongStep); break; //INPUT SCALAR
 
-                case 'Q': CellEngineConfigDataObject.ViewX += (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.ViewXMoveShortStep : CellEngineConfigDataObject.ViewXMoveLongStep); break;
-                case 'W': CellEngineConfigDataObject.ViewX -= (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.ViewXMoveShortStep : CellEngineConfigDataObject.ViewXMoveLongStep); break;
-                case 'E': CellEngineConfigDataObject.ViewY += (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.ViewYMoveShortStep : CellEngineConfigDataObject.ViewYMoveLongStep); break;
-                case 'R': CellEngineConfigDataObject.ViewY -= (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.ViewYMoveShortStep : CellEngineConfigDataObject.ViewYMoveLongStep); break;
-                case 'T': CellEngineConfigDataObject.ViewZ += (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.ViewZMoveShortStep : CellEngineConfigDataObject.ViewZMoveLongStep); break;
-                case 'Y': CellEngineConfigDataObject.ViewZ -= (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.ViewZMoveShortStep : CellEngineConfigDataObject.ViewZMoveLongStep); break;
+                //STEP - INPUT SCALAR  - SLIDER S32 LOW
+                case 'Q': CellEngineConfigDataObject.ViewX += (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.ViewXMoveShortStep : CellEngineConfigDataObject.ViewXMoveLongStep); break; //INPUT SCALAR
+                case 'W': CellEngineConfigDataObject.ViewX -= (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.ViewXMoveShortStep : CellEngineConfigDataObject.ViewXMoveLongStep); break; //INPUT SCALAR
+                case 'E': CellEngineConfigDataObject.ViewY += (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.ViewYMoveShortStep : CellEngineConfigDataObject.ViewYMoveLongStep); break; //INPUT SCALAR
+                case 'R': CellEngineConfigDataObject.ViewY -= (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.ViewYMoveShortStep : CellEngineConfigDataObject.ViewYMoveLongStep); break; //INPUT SCALAR
+                case 'T': CellEngineConfigDataObject.ViewZ += (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.ViewZMoveShortStep : CellEngineConfigDataObject.ViewZMoveLongStep); break; //INPUT SCALAR
+                case 'Y': CellEngineConfigDataObject.ViewZ -= (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.ViewZMoveShortStep : CellEngineConfigDataObject.ViewZMoveLongStep); break; //INPUT SCALAR
 
-                case 'A': CellEngineConfigDataObject.RotationAngle1 += 1; break;
-                case 'S': CellEngineConfigDataObject.RotationAngle1 -= 1; break;
-                case 'D': CellEngineConfigDataObject.RotationAngle2 += 1; break;
-                case 'F': CellEngineConfigDataObject.RotationAngle2 -= 1; break;
-                case 'G': CellEngineConfigDataObject.RotationAngle3 += 1; break;
-                case 'H': CellEngineConfigDataObject.RotationAngle3 -= 1; break;
+                case 'A': CellEngineConfigDataObject.RotationAngle1 += 1; break; //INPUT SCALAR
+                case 'S': CellEngineConfigDataObject.RotationAngle1 -= 1; break; //INPUT SCALAR
+                case 'D': CellEngineConfigDataObject.RotationAngle2 += 1; break; //INPUT SCALAR
+                case 'F': CellEngineConfigDataObject.RotationAngle2 -= 1; break; //INPUT SCALAR
+                case 'G': CellEngineConfigDataObject.RotationAngle3 += 1; break; //INPUT SCALAR
+                case 'H': CellEngineConfigDataObject.RotationAngle3 -= 1; break; //INPUT SCALAR
 
-                case 'B': CellEngineConfigDataObject.DrawBondsBetweenParticlesCenters = !CellEngineConfigDataObject.DrawBondsBetweenParticlesCenters; break;
-                case 'C': CellEngineConfigDataObject.DrawBondsBetweenAtoms = !CellEngineConfigDataObject.DrawBondsBetweenAtoms; break;
+                case 'B': CellEngineConfigDataObject.DrawBondsBetweenParticlesCenters = !CellEngineConfigDataObject.DrawBondsBetweenParticlesCenters; break; //CHECKBOX
+                case 'C': CellEngineConfigDataObject.DrawBondsBetweenAtoms = !CellEngineConfigDataObject.DrawBondsBetweenAtoms; break; //CHECKBOX
 
-                case 'J': CellEngineConfigDataObject.ShowDetailsInAtomScale = !CellEngineConfigDataObject.ShowDetailsInAtomScale; break;
+                case 'J': CellEngineConfigDataObject.ShowDetailsInAtomScale = !CellEngineConfigDataObject.ShowDetailsInAtomScale; break; //CHECKBOX
 
-                case 'O': CellEngineDataFileObjectPointer->StartFilmOfStructures(); break;
-                case 'P': CellEngineDataFileObjectPointer->StopFilmOfStructures(); break;
-                case 'N': CellEngineDataFileObjectPointer->ShowNextStructure(); break;
-                case 'M': CellEngineDataFileObjectPointer->ShowPrevStructure(); break;
-                case 'Z': CellEngineConfigDataObject.SizeOfAtomX -= CellEngineConfigDataObject.SizeStep; CellEngineConfigDataObject.SizeOfAtomY -= CellEngineConfigDataObject.SizeStep; CellEngineConfigDataObject.SizeOfAtomZ -= CellEngineConfigDataObject.SizeStep; break;
-                case 'X': CellEngineConfigDataObject.SizeOfAtomX += CellEngineConfigDataObject.SizeStep; CellEngineConfigDataObject.SizeOfAtomY += CellEngineConfigDataObject.SizeStep; CellEngineConfigDataObject.SizeOfAtomZ += CellEngineConfigDataObject.SizeStep; break;
+                case 'O': CellEngineDataFileObjectPointer->StartFilmOfStructures(); break; //BUTTON
+                case 'P': CellEngineDataFileObjectPointer->StopFilmOfStructures(); break; //BUTTON
+                case 'N': CellEngineDataFileObjectPointer->ShowNextStructure(); break; //BUTTON
+                case 'M': CellEngineDataFileObjectPointer->ShowPrevStructure(); break; //BUTTON
 
+                //CHANGE WITH STEP W 3 WERSJACH X Y Z SAMO  - SLIDER S32 LOW
+                case 'Z': CellEngineConfigDataObject.SizeOfAtomX -= CellEngineConfigDataObject.SizeStep; CellEngineConfigDataObject.SizeOfAtomY -= CellEngineConfigDataObject.SizeStep; CellEngineConfigDataObject.SizeOfAtomZ -= CellEngineConfigDataObject.SizeStep; break; //INPUT SCALAR
+                case 'X': CellEngineConfigDataObject.SizeOfAtomX += CellEngineConfigDataObject.SizeStep; CellEngineConfigDataObject.SizeOfAtomY += CellEngineConfigDataObject.SizeStep; CellEngineConfigDataObject.SizeOfAtomZ += CellEngineConfigDataObject.SizeStep; break; //INPUT SCALAR
+
+                //OBA PONIZSZE DAC JEDEN COMBOBOX ALBO LISTBOX
                 case 'U': CellEngineConfigDataObject.LoadOfAtomsStep == 100 ? CellEngineConfigDataObject.LoadOfAtomsStep = 10 : CellEngineConfigDataObject.LoadOfAtomsStep = 100;  break;
                 case 'I': CellEngineConfigDataObject.LoadOfAtomsStep = 1;  break;
 
-                case '9': AtomGraphicsObject.Load("..//objects//cube.sbm");  break;
-                case '0': AtomGraphicsObject.Load("..//objects//sphere.sbm");  break;
+                //RADIO BUTTON - OBA PONIZSZE DAC JEDEN
+                case '9': AtomGraphicsObject.Load("..//objects//cube.sbm");  break; //RADIO BUTTON
+                case '0': AtomGraphicsObject.Load("..//objects//sphere.sbm");  break; //RADIO BUTTON
 
-                case GLFW_KEY_F1: CellEngineConfigDataObject.ChosenBackgroundColor = 1; break;
-                case GLFW_KEY_F2: CellEngineConfigDataObject.ChosenBackgroundColor = 3; break;
+                //COLOR TLA //COLOR EDIT3 - OBA PONIZSZE DAC JEDEN
+                case GLFW_KEY_F1: CellEngineConfigDataObject.ChosenBackgroundColor = 1; break; //COLOR EDIT3
+                case GLFW_KEY_F2: CellEngineConfigDataObject.ChosenBackgroundColor = 3; break; //COLOR EDIT3
 
-                case GLFW_KEY_F3: RenderObjectsBool = !RenderObjectsBool; break;
-                case GLFW_KEY_F4: CellEngineConfigDataObject.AutomaticChangeOfSizeOfAtom = !CellEngineConfigDataObject.AutomaticChangeOfSizeOfAtom; break;
-                case GLFW_KEY_F5: CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep = !CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep; break;
-                case GLFW_KEY_F6: CellEngineConfigDataObject.ViewChangeUsingLongStep = !CellEngineConfigDataObject.ViewChangeUsingLongStep; break;
-                case GLFW_KEY_F7: CellEngineConfigDataObject.NumberOfStencilBufferLoops == 1 ? CellEngineConfigDataObject.NumberOfStencilBufferLoops = 3 : CellEngineConfigDataObject.NumberOfStencilBufferLoops = 1; break;
+                case GLFW_KEY_F3: RenderObjectsBool = !RenderObjectsBool; break; //CHECKBOX
+                case GLFW_KEY_F4: CellEngineConfigDataObject.AutomaticChangeOfSizeOfAtom = !CellEngineConfigDataObject.AutomaticChangeOfSizeOfAtom; break; //CHECKBOX
+                case GLFW_KEY_F5: CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep = !CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep; break; //CHECKBOX
+                case GLFW_KEY_F6: CellEngineConfigDataObject.ViewChangeUsingLongStep = !CellEngineConfigDataObject.ViewChangeUsingLongStep; break; //CHECKBOX
 
-                case GLFW_KEY_F8: CellEngineConfigDataObject.MakeColorsTypeObject = CellEngineConfigData::MakeColorsType::DrawColorForEveryAtom; break;
-                case GLFW_KEY_F9: CellEngineConfigDataObject.MakeColorsTypeObject = CellEngineConfigData::MakeColorsType::DrawColorForEveryParticle; break;
-                case GLFW_KEY_F10: CellEngineConfigDataObject.MakeColorsTypeObject = CellEngineConfigData::MakeColorsType::DrawRandomColorForEveryParticle; break;
+                //3 PONIZSZE DO WYBORU PUNKTOWEGO RADIO BUTTON
+                case GLFW_KEY_F8: CellEngineConfigDataObject.MakeColorsTypeObject = CellEngineConfigData::MakeColorsType::DrawColorForEveryAtom; break; //RADIO BUTTON
+                case GLFW_KEY_F9: CellEngineConfigDataObject.MakeColorsTypeObject = CellEngineConfigData::MakeColorsType::DrawColorForEveryParticle; break; //RADIO BUTTON
+                case GLFW_KEY_F10: CellEngineConfigDataObject.MakeColorsTypeObject = CellEngineConfigData::MakeColorsType::DrawRandomColorForEveryParticle; break; //RADIO BUTTON
 
-                case GLFW_KEY_F11: SetVisibilityOfParticlesExcept(694, false); break;
-                case GLFW_KEY_F12: SetVisibilityOfAllParticles(true); break;
+                case GLFW_KEY_F11: SetVisibilityOfParticlesExcept(694, false); break; // LISTBOX ZWIJANY ALBO COMBOBOX Z PONIZSZYM
+                case GLFW_KEY_F12: SetVisibilityOfAllParticles(true); break; // BUTTON
 
                 default: break;
             }

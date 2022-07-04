@@ -89,6 +89,11 @@ static void glfw_error_callback(int error, const char* description)
     fprintf(stderr, "Glfw Error %d: %s\n", error, description);
 }
 
+void DrawPlusMinusButton()
+{
+
+}
+
 int main(int argc, const char ** argv)
 {
     ReadInitConfiguration();
@@ -162,17 +167,46 @@ int main(int argc, const char ** argv)
         if (show_demo_window)
             ImGui::ShowDemoWindow(&show_demo_window);
 
+        //static bool closef = false;
+        //bool* p_open = &closef;
+        ImGuiWindowFlags window_flags = 0;
+        window_flags |= ImGuiWindowFlags_NoMove;
+        window_flags |= ImGuiWindowFlags_NoResize;
+
+        ImGui::Begin("Cell Engine Visualiser", NULL, window_flags);
 
 
-        static int counter = 0;
 
-        ImGui::Begin("Cell Engine Visualiser");
 
         ImGui::Text("STATUS");
 
-
+        static int counter = 0;
 
         ImGui::ColorEdit3("Background Color", (float*)&BackgroundColor);
+
+        ImGui::Text("120");
+
+        ImGui::SameLine();
+        ImGui::PushID(0);
+        ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0 / 7.0f, 0.6f, 0.6f));
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0 / 7.0f, 0.7f, 0.7f));
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0 / 7.0f, 0.8f, 0.8f));
+        ImGui::Button("-");
+        ImGui::PopStyleColor(3);
+        ImGui::PopID();
+
+        ImGui::SameLine();
+        ImGui::PushID(3);
+        ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(3 / 7.0f, 0.6f, 0.6f));
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(3 / 7.0f, 0.7f, 0.7f));
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(3 / 7.0f, 0.8f, 0.8f));
+        ImGui::Button("+");
+        ImGui::PopStyleColor(3);
+        ImGui::PopID();
+
+        ImGui::SameLine();
+        ImGui::Text("DESCRIPTION");
+
 
         if (ImGui::Button("Button"))
         {
@@ -236,6 +270,22 @@ int main(int argc, const char ** argv)
                     ImGui::TreePop();
                 }
             }
+
+
+            static char   s8_v  = 127;
+            static ImU8   u8_v  = 255;
+            static short  s16_v = 32767;
+            static ImU16  u16_v = 65535;
+            static ImS32  s32_v = -1;
+            static ImU32  u32_v = (ImU32)-1;
+            static ImS64  s64_v = -1;
+            static ImU64  u64_v = (ImU64)-1;
+            static float  f32_v = 0.123f;
+            static double f64_v = 90000.01234567890123456789;
+
+            char s8 = 1;
+            char s8Fast = 20;
+            ImGui::InputScalar("input long value with text s8", ImGuiDataType_S8, &s8_v, &s8, NULL, "%d");
 
             ImGui::End();
         }
