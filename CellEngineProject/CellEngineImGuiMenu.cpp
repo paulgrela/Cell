@@ -165,41 +165,52 @@ int main(int argc, const char ** argv)
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
 
-    //ImGui::StyleColorsLight();
-    ImGui::StyleColorsDark();
-
-
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     const char* glsl_version = "#version 130";
     ImGui_ImplOpenGL3_Init(glsl_version);
 
-    //bool show_demo_window = true;
     ImVec4 BackgroundColor = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
     thread CellEngineOpenGLVisualiserThreadObject(CellEngineOpenGLVisualiserThreadFunction, CellEngineConfigDataObject.XTopMainWindow, CellEngineConfigDataObject.YTopMainWindow, CellEngineConfigDataObject.WidthMainWindow, CellEngineConfigDataObject.HeightMainWindow);
 
+    static bool ModifiableWindow = false;
+
     while (!glfwWindowShouldClose(window))
     {
+        if (CellEngineConfigDataObject.ImGuiLightVersion == true)
+            ImGui::StyleColorsLight();
+        else
+            ImGui::StyleColorsDark();
+
         glfwPollEvents();
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        //ImGui::ShowDemoWindow(&show_demo_window);
-        ImGui::ShowDemoWindow();
+        if (CellEngineConfigDataObject.ImGuiDemoWindowMenu == true)
+            ImGui::ShowDemoWindow();
 
-//        ImGuiWindowFlags window_flags = 0;
-//        window_flags |= ImGuiWindowFlags_NoMove;
-//        window_flags |= ImGuiWindowFlags_NoResize;
-//        ImGui::Begin("Cell Engine Visualiser", NULL, window_flags);
-        ImGui::Begin("Cell Engine Visualiser");
+        ImGuiWindowFlags window_flags = 0;
+        window_flags |= ImGuiWindowFlags_NoMove;
+        window_flags |= ImGuiWindowFlags_NoResize;
+
+        if (ModifiableWindow == false)
+            ImGui::Begin("Cell Engine Visualiser", nullptr, window_flags);
+        else
+            ImGui::Begin("Cell Engine Visualiser");
 
         ImGui::Text("STATUS");
 
+        if (ImGui::CollapsingHeader("Menu"))
+        {
+            ImGui::Checkbox("Menu Style Of Colors", &CellEngineConfigDataObject.ImGuiLightVersion);
+            ImGui::Checkbox("Modifiable Window", &ModifiableWindow);
+        }
+
         int IDButton = 1;
 
-        if (ImGui::CollapsingHeader("View Move"))
+        if (ImGui::CollapsingHeader("View Move", ImGuiTreeNodeFlags_DefaultOpen))
         {
             DrawPlusMinusScalarButton(CellEngineConfigDataObject.ViewXMoveShortStep, 1, 1, 10, "View X Move Short Step", IDButton);
             DrawPlusMinusScalarButton(CellEngineConfigDataObject.ViewYMoveShortStep, 1, 1, 10, "View Y Move Short Step", IDButton);
@@ -255,8 +266,6 @@ int main(int argc, const char ** argv)
             CellEngineConfigDataObject.SizeOfAtomZ = SizeOfAtom3Axis;
         }
 
-
-
         if (ImGui::CollapsingHeader("Film"))
         {
             ImGui::PushID(IDButton);
@@ -291,22 +300,15 @@ int main(int argc, const char ** argv)
 
         if (ImGui::CollapsingHeader("Shape of particles - atoms"))
         {
-            static int ShapeOfAtoms;
-            ImGui::RadioButton("Sphere", &ShapeOfAtoms, 1);
+            ImGui::RadioButton("Sphere", &CellEngineConfigDataObject.ChosenShapeOfAtoms, 1);
             ImGui::SameLine();
-            ImGui::RadioButton("Cube", &ShapeOfAtoms, 2);
-            switch (ShapeOfAtoms)
-            {
-                case 1 : CellEngineOpenGLVisualiserPointer->AtomGraphicsObject.Load("..//objects//sphere.sbm"); break;
-                case 2 : CellEngineOpenGLVisualiserPointer->AtomGraphicsObject.Load("..//objects//cube.sbm"); break;
-                default : break;
-            }
+            ImGui::RadioButton("Cube", &CellEngineConfigDataObject.ChosenShapeOfAtoms, 2);
+            ImGui::SameLine();
+            ImGui::RadioButton("Torus", &CellEngineConfigDataObject.ChosenShapeOfAtoms, 3);
         }
-        //SKONCZYC GDY LOCK GUARD
-        //CellEngineOpenGLVisualiserPointer->AtomGraphicsObject.Load("..//objects//cube.sbm");
 
 
-        if (ImGui::CollapsingHeader("Picked Atom Detailed Information"))
+        if (ImGui::CollapsingHeader("Picked Atom Detailed Information", ImGuiTreeNodeFlags_DefaultOpen))
         {
             bool UseStencilBuffer = true;
             CellEngineConfigDataObject.NumberOfStencilBufferLoops == 1 ? UseStencilBuffer = false : UseStencilBuffer = true;
@@ -323,7 +325,7 @@ int main(int argc, const char ** argv)
             }
         }
 
-        if (ImGui::CollapsingHeader("Rendering Information"))
+        if (ImGui::CollapsingHeader("Rendering Information", ImGuiTreeNodeFlags_DefaultOpen))
         {
             ImGui::Text("%s", CellEngineConfigDataObject.TimeParametersOfRenderingStr.c_str());
             ImGui::Text("%s", CellEngineConfigDataObject.NumberOfRenderedAtomsParametersOfRenderingStr.c_str());
@@ -333,13 +335,19 @@ int main(int argc, const char ** argv)
         if (ImGui::CollapsingHeader("Background"))
         {
             ImGui::ColorEdit3("Background Color", (float*)&BackgroundColor);
+            //COLOR TLA //COLOR EDIT3 - OBA PONIZSZE DAC JEDEN 3 x RADIO
+            //case GLFW_KEY_F1: CellEngineConfigDataObject.ChosenBackgroundColor = 1; break; //RADIO
+            //case GLFW_KEY_F2: CellEngineConfigDataObject.ChosenBackgroundColor = 3; break; //RADIO
         }
 
         ImGui::End();
 
-        ImGui::Begin("Details");
+        if (ModifiableWindow == false)
+            ImGui::Begin("Details Of Cell Drawing", nullptr, window_flags);
+        else
+            ImGui::Begin("Details Of Cell Drawing");
 
-        if (ImGui::CollapsingHeader("Visibility parameters of particles"))
+        if (ImGui::CollapsingHeader("Visibility parameters of particles", ImGuiTreeNodeFlags_DefaultOpen))
         {
             const char* DensityOfDrawedAtomsComboBoxItems[] = { "1", "10", "100", "AUTOMATIC" };
             int DensityOfDrawedAtomsItemIndex;
@@ -405,8 +413,6 @@ int main(int argc, const char ** argv)
         }
 
         ImGui::End();
-
-
 
 
         ImGui::Render();

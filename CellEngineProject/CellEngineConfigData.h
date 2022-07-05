@@ -163,6 +163,11 @@ public:
     std::vector<ParticleKind> ParticlesKinds;
     std::unordered_map<UnsignedIntType, ParticleKind> ParticlesKindsXML;
     std::unordered_map<UnsignedIntType, UnsignedIntType> ParticlesKindsPos;
+public:
+    bool ImGuiDemoWindowMenu = false;
+    bool ImGuiLightVersion = false;
+public:
+    int ChosenShapeOfAtoms = 1;
 };
 
 inline CellEngineConfigData CellEngineConfigDataObject;

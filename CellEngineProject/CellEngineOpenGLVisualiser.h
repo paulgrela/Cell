@@ -102,6 +102,7 @@ protected:
     inline bool RenderObject(const CellEngineAtom& AtomObject, const vmath::mat4& ViewMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, UnsignedIntType& NumberOfAllRenderedAtoms, const bool Chosen, const bool RenderObjectParameter);
     inline void SetAutomaticParametersForRendering();
     inline void PrepareOpenGLToRenderObjectsOnScene();
+    inline void LoadShapeOfAtomsWhenChanged();
     inline void PrintAtomDescriptionOnScreen(CellEngineAtom& ChosenParticleObject);
     inline void ChooseAtomUsingStencilBuffer(const vmath::mat4& ViewMatrix, const GLuint* PartOfStencilBufferIndex, const std::vector<std::pair<uint64_t, uint64_t>>& TemporaryRenderedAtomsList, UnsignedIntType& NumberOfAllRenderedAtoms);
 protected:

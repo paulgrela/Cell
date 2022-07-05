@@ -414,11 +414,34 @@ inline void CellEngineOpenGLVisualiser::PrepareOpenGLToRenderObjectsOnScene()
     CATCH("preparing opengl to render objects on scene")
 }
 
+inline void CellEngineOpenGLVisualiser::LoadShapeOfAtomsWhenChanged()
+{
+    try
+    {
+        static int PrevShapesOfAtoms = 1;
+
+        if (CellEngineConfigDataObject.ChosenShapeOfAtoms != PrevShapesOfAtoms)
+        {
+            switch (CellEngineConfigDataObject.ChosenShapeOfAtoms)
+            {
+                case 1 : AtomGraphicsObject.Load("..//objects//sphere.sbm"); break;
+                case 2 : AtomGraphicsObject.Load("..//objects//cube.sbm"); break;
+                case 3 : AtomGraphicsObject.Load("..//objects//torus.sbm"); break;
+                default : break;
+            }
+            PrevShapesOfAtoms = CellEngineConfigDataObject.ChosenShapeOfAtoms;
+        }
+    }
+    CATCH("preparing opengl to render objects on scene")
+}
+
 void CellEngineOpenGLVisualiser::Render(double CurrentTime)
 {
     try
     {
         const auto start_time = chrono::high_resolution_clock::now();
+
+        LoadShapeOfAtomsWhenChanged();
 
         SetAutomaticParametersForRendering();
 
@@ -647,9 +670,7 @@ void CellEngineOpenGLVisualiser::OnKey(int Key, int Action)
         if (Action)
             switch (Key)
             {
-                //COLOR TLA //COLOR EDIT3 - OBA PONIZSZE DAC JEDEN 3 x RADIO
-                case GLFW_KEY_F1: CellEngineConfigDataObject.ChosenBackgroundColor = 1; break; //RADIO
-                case GLFW_KEY_F2: CellEngineConfigDataObject.ChosenBackgroundColor = 3; break; //RADIO
+                case GLFW_KEY_F1: CellEngineConfigDataObject.ImGuiDemoWindowMenu = !CellEngineConfigDataObject.ImGuiDemoWindowMenu; break;
                 default: break;
             }
     }
