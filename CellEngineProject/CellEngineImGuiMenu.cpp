@@ -89,7 +89,7 @@ static void glfw_error_callback(int error, const char* description)
     fprintf(stderr, "Glfw Error %d: %s\n", error, description);
 }
 
-void DrawPlusMinusScalarButton(float& VariableToChange, const int64_t Step, const int64_t MinValue, const int64_t MaxValue, const string& Description, int& IDButton)
+void DrawPlusMinusScalarButton(float& VariableToChange, const float Step, const float MinValue, const float MaxValue, const string& Description, int& IDButton)
 {
     ImGui::PushID(IDButton);
     ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0 / 7.0f, 0.6f, 0.6f));
@@ -164,18 +164,16 @@ int main(int argc, const char ** argv)
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
-    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 
     //ImGui::StyleColorsLight();
     ImGui::StyleColorsDark();
-    //ImGui::StyleColorsClassic();
+
 
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     const char* glsl_version = "#version 130";
     ImGui_ImplOpenGL3_Init(glsl_version);
 
-    bool show_demo_window = true;
-    bool show_another_window = true;
+    //bool show_demo_window = true;
     ImVec4 BackgroundColor = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
     thread CellEngineOpenGLVisualiserThreadObject(CellEngineOpenGLVisualiserThreadFunction, CellEngineConfigDataObject.XTopMainWindow, CellEngineConfigDataObject.YTopMainWindow, CellEngineConfigDataObject.WidthMainWindow, CellEngineConfigDataObject.HeightMainWindow);
@@ -188,25 +186,14 @@ int main(int argc, const char ** argv)
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        if (show_demo_window)
-            ImGui::ShowDemoWindow(&show_demo_window);
-
-        //static bool closef = false;
-        //bool* p_open = &closef;
+        //ImGui::ShowDemoWindow(&show_demo_window);
+        ImGui::ShowDemoWindow();
 
 //        ImGuiWindowFlags window_flags = 0;
 //        window_flags |= ImGuiWindowFlags_NoMove;
 //        window_flags |= ImGuiWindowFlags_NoResize;
 //        ImGui::Begin("Cell Engine Visualiser", NULL, window_flags);
         ImGui::Begin("Cell Engine Visualiser");
-
-
-//        static int e = 0;
-//        ImGui::RadioButton("radio a", &e, 0); ImGui::SameLine();
-//        ImGui::RadioButton("radio b", &e, 1); ImGui::SameLine();
-//        ImGui::RadioButton("radio c", &e, 2);
-
-
 
         ImGui::Text("STATUS");
 
@@ -230,6 +217,7 @@ int main(int argc, const char ** argv)
             DrawPlusMinusScalarButton(CellEngineConfigDataObject.ViewY, CellEngineConfigDataObject.ViewYMoveLongStep, -3000, 3000, "View Y Change Using Long Step", IDButton);
             DrawPlusMinusScalarButton(CellEngineConfigDataObject.ViewZ, CellEngineConfigDataObject.ViewZMoveLongStep, -3000, 3000, "View Z Change Using Long Step", IDButton);
         }
+
         if (ImGui::CollapsingHeader("Camera Move"))
         {
             DrawPlusMinusScalarButton(CellEngineConfigDataObject.CameraXMoveShortStep, 1, 1, 10, "Camera X Move Short Step", IDButton);
@@ -248,6 +236,7 @@ int main(int argc, const char ** argv)
             DrawPlusMinusScalarButton(CellEngineConfigDataObject.CameraYPosition, CellEngineConfigDataObject.CameraYMoveLongStep, -3000, 3000, "Camera Y Position Change Using Long Step", IDButton);
             DrawPlusMinusScalarButton(CellEngineConfigDataObject.CameraZPosition, CellEngineConfigDataObject.CameraZMoveLongStep, -3000, 3000, "Camera Z Position Change Using Long Step", IDButton);
         }
+
         if (ImGui::CollapsingHeader("Rotation Angle"))
         {
             DrawPlusMinusScalarButton(CellEngineConfigDataObject.RotationAngle1, 1, -360, 360, "Rotation Angle 1", IDButton);
@@ -255,65 +244,161 @@ int main(int argc, const char ** argv)
             DrawPlusMinusScalarButton(CellEngineConfigDataObject.RotationAngle3, 1, -360, 360, "Rotation Angle 3", IDButton);
         }
 
-
-        ImGui::Checkbox("Log parameters of rendering to file", &CellEngineConfigDataObject.LogParametersOfRenderingToFile);
-
-        bool UseStencilBuffer = true;
-        CellEngineConfigDataObject.NumberOfStencilBufferLoops == 1 ? UseStencilBuffer = false : UseStencilBuffer = true;
-        ImGui::Checkbox("Show details of picked atom", &UseStencilBuffer);
-        UseStencilBuffer == true ? CellEngineConfigDataObject.NumberOfStencilBufferLoops = 3 : CellEngineConfigDataObject.NumberOfStencilBufferLoops = 1;
-
-        ImGui::Checkbox("Print atom description on screen", &CellEngineConfigDataObject.PrintAtomDescriptionOnScreen);
-
-        if (CellEngineConfigDataObject.NumberOfStencilBufferLoops == 3)
+        if (ImGui::CollapsingHeader("Size Of Atoms"))
         {
-            ImGui::Text("ATOM DATA:");
-            ImGui::Text("%s", string(CellEngineConfigDataObject.AtomDescriptionStr1 + " " + CellEngineConfigDataObject.AtomDescriptionStr2).c_str());
-            ImGui::Text("%s", string(CellEngineConfigDataObject.AtomDescriptionStr3 + " " + CellEngineConfigDataObject.AtomDescriptionStr4).c_str());
+            DrawPlusMinusScalarButton(CellEngineConfigDataObject.SizeStep, 0.01, 0, 10, "Size Of Atoms Change Step", IDButton);
+
+            static float SizeOfAtom3Axis = CellEngineConfigDataObject.SizeOfAtomX;
+            DrawPlusMinusScalarButton(SizeOfAtom3Axis, CellEngineConfigDataObject.SizeStep, 0, 10, "Size Of Atoms 3 Axis", IDButton);
+            CellEngineConfigDataObject.SizeOfAtomX = SizeOfAtom3Axis;
+            CellEngineConfigDataObject.SizeOfAtomY = SizeOfAtom3Axis;
+            CellEngineConfigDataObject.SizeOfAtomZ = SizeOfAtom3Axis;
         }
 
-        ImGui::Text("%s", CellEngineConfigDataObject.TimeParametersOfRenderingStr.c_str());
-        ImGui::Text("%s", CellEngineConfigDataObject.NumberOfRenderedAtomsParametersOfRenderingStr.c_str());
 
-        ImGui::ColorEdit3("Background Color", (float*)&BackgroundColor);
+
+        if (ImGui::CollapsingHeader("Film"))
+        {
+            ImGui::PushID(IDButton);
+            ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(3 / 7.0f, 0.6f, 0.6f));
+            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(3 / 7.0f, 0.7f, 0.7f));
+            ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(3 / 7.0f, 0.8f, 0.8f));
+            if (ImGui::Button(" START "))
+                CellEngineDataFileObjectPointer->StartFilmOfStructures();
+            ImGui::PopStyleColor(3);
+            ImGui::PopID();
+            IDButton++;
+
+            ImGui::SameLine();
+            if (ImGui::Button(" NEXT "))
+                CellEngineDataFileObjectPointer->ShowNextStructure();
+
+            ImGui::SameLine();
+            if (ImGui::Button(" PREV "))
+                CellEngineDataFileObjectPointer->ShowPrevStructure();
+
+            ImGui::SameLine();
+            ImGui::PushID(IDButton);
+            ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0 / 7.0f, 0.6f, 0.6f));
+            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0 / 7.0f, 0.7f, 0.7f));
+            ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0 / 7.0f, 0.8f, 0.8f));
+            if (ImGui::Button(" STOP "))
+                CellEngineDataFileObjectPointer->StopFilmOfStructures();
+            ImGui::PopStyleColor(3);
+            ImGui::PopID();
+            IDButton++;
+        }
+
+        if (ImGui::CollapsingHeader("Shape of particles - atoms"))
+        {
+            static int ShapeOfAtoms;
+            ImGui::RadioButton("Sphere", &ShapeOfAtoms, 1);
+            ImGui::SameLine();
+            ImGui::RadioButton("Cube", &ShapeOfAtoms, 2);
+            switch (ShapeOfAtoms)
+            {
+                case 1 : CellEngineOpenGLVisualiserPointer->AtomGraphicsObject.Load("..//objects//sphere.sbm"); break;
+                case 2 : CellEngineOpenGLVisualiserPointer->AtomGraphicsObject.Load("..//objects//cube.sbm"); break;
+                default : break;
+            }
+        }
+        //SKONCZYC GDY LOCK GUARD
+        //CellEngineOpenGLVisualiserPointer->AtomGraphicsObject.Load("..//objects//cube.sbm");
+
+
+        if (ImGui::CollapsingHeader("Picked Atom Detailed Information"))
+        {
+            bool UseStencilBuffer = true;
+            CellEngineConfigDataObject.NumberOfStencilBufferLoops == 1 ? UseStencilBuffer = false : UseStencilBuffer = true;
+            ImGui::Checkbox("Show details of picked atom", &UseStencilBuffer);
+            UseStencilBuffer == true ? CellEngineConfigDataObject.NumberOfStencilBufferLoops = 3 : CellEngineConfigDataObject.NumberOfStencilBufferLoops = 1;
+
+            ImGui::Checkbox("Print atom description on screen", &CellEngineConfigDataObject.PrintAtomDescriptionOnScreen);
+
+            if (CellEngineConfigDataObject.NumberOfStencilBufferLoops == 3)
+            {
+                ImGui::Text("ATOM DATA:");
+                ImGui::Text("%s", string(CellEngineConfigDataObject.AtomDescriptionStr1 + " " + CellEngineConfigDataObject.AtomDescriptionStr2).c_str());
+                ImGui::Text("%s", string(CellEngineConfigDataObject.AtomDescriptionStr3 + " " + CellEngineConfigDataObject.AtomDescriptionStr4).c_str());
+            }
+        }
+
+        if (ImGui::CollapsingHeader("Rendering Information"))
+        {
+            ImGui::Text("%s", CellEngineConfigDataObject.TimeParametersOfRenderingStr.c_str());
+            ImGui::Text("%s", CellEngineConfigDataObject.NumberOfRenderedAtomsParametersOfRenderingStr.c_str());
+            ImGui::Checkbox("Log parameters of rendering to file", &CellEngineConfigDataObject.LogParametersOfRenderingToFile);
+        }
+
+        if (ImGui::CollapsingHeader("Background"))
+        {
+            ImGui::ColorEdit3("Background Color", (float*)&BackgroundColor);
+        }
 
         ImGui::End();
 
-        if (show_another_window)
+        ImGui::Begin("Details");
+
+        if (ImGui::CollapsingHeader("Configuration"))
         {
-            ImGui::Begin("Another Window", &show_another_window);
-            ImGui::Text("Hello from another window!");
-            if (ImGui::Button("Close Me"))
-                show_another_window = false;
-
-            if (ImGui::CollapsingHeader("Configuration"))
+            const char* TypesOfVisibilityComboBoxItems[] = { "ALL", "ONLY DNA", "SELECTED" };
+            static int TypesOfVisibilityComboBoxCurrentItemIndex = 0;
+            ImGui::Combo( " Types of Visibility", &TypesOfVisibilityComboBoxCurrentItemIndex, TypesOfVisibilityComboBoxItems, IM_ARRAYSIZE(TypesOfVisibilityComboBoxItems));
+            switch (TypesOfVisibilityComboBoxCurrentItemIndex)
             {
-                if (ImGui::TreeNode("Particles Kinds"))
-                {
-                    for (int ParticleKindIndex = 0; ParticleKindIndex < CellEngineConfigDataObject.ParticlesKinds.size(); ParticleKindIndex++)
-                        ImGui::Checkbox(string(to_string(CellEngineConfigDataObject.ParticlesKinds[ParticleKindIndex].Identifier) + " " + CellEngineConfigDataObject.ParticlesKinds[ParticleKindIndex].NameFromDataFile).c_str(), &CellEngineConfigDataObject.ParticlesKinds[ParticleKindIndex].Visible);
-                    ImGui::TreePop();
-                }
+                case 0 : CellEngineOpenGLVisualiserPointer->SetVisibilityOfAllParticles(true); break;
+                case 1 : CellEngineOpenGLVisualiserPointer->SetVisibilityOfParticlesExcept(694, false); break;
+                default : break;
+            }
 
-                if (ImGui::TreeNode("Atoms"))
-                {
-                    for (int AtomKindIndex = 0; AtomKindIndex < CellEngineConfigDataObject.AtomsKinds.size(); AtomKindIndex++)
-                        ImGui::ColorEdit3(string(CellEngineConfigDataObject.AtomsKinds[AtomKindIndex].Name + " Atom Color").c_str(), (float*)&CellEngineConfigDataObject.AtomsKinds[AtomKindIndex].Color);
-                    ImGui::TreePop();
-                }
+            const char* DensityOfDrawedAtomsComboBoxItems[] = { "1", "10", "100", "AUTOMATIC" };
+            int DensityOfDrawedAtomsItemIndex;
+            switch (CellEngineConfigDataObject.LoadOfAtomsStep)
+            {
+                case 1 : DensityOfDrawedAtomsItemIndex = 0; break;
+                case 10 : DensityOfDrawedAtomsItemIndex = 1; break;
+                case 100 : DensityOfDrawedAtomsItemIndex = 2; break;
+                default : break;
+            }
+            if (CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep == true)
+                DensityOfDrawedAtomsItemIndex = 3;
+            ImGui::Combo( " Density Of Drawed Atoms", &DensityOfDrawedAtomsItemIndex, DensityOfDrawedAtomsComboBoxItems, IM_ARRAYSIZE(DensityOfDrawedAtomsComboBoxItems));
+            switch (DensityOfDrawedAtomsItemIndex)
+            {
+                case 0 : CellEngineConfigDataObject.LoadOfAtomsStep = 1; CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep = false; break;
+                case 1 : CellEngineConfigDataObject.LoadOfAtomsStep = 10; CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep = false; break;
+                case 2 : CellEngineConfigDataObject.LoadOfAtomsStep = 100; CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep = false; break;
+                case 4 : CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep = true; break;
+                default : break;
             }
 
 
-            static char   s8_v  = 127;
-            char s8 = 1;
+            if (ImGui::TreeNode("Particles Kinds"))
+            {
+                for (auto & ParticlesKind : CellEngineConfigDataObject.ParticlesKinds)
+                    ImGui::Checkbox(string(to_string(ParticlesKind.Identifier) + " " + ParticlesKind.NameFromDataFile).c_str(), &ParticlesKind.Visible);
+                ImGui::TreePop();
+            }
 
-            ImGui::InputScalar("input long value with text s8", ImGuiDataType_S8, &s8_v, &s8, NULL, "%d");
+            if (ImGui::TreeNode("Atoms"))
+            {
+                for (auto & AtomsKind : CellEngineConfigDataObject.AtomsKinds)
+                    ImGui::ColorEdit3(string(AtomsKind.Name + " Atom Color").c_str(), (float*)&AtomsKind.Color);
+                ImGui::TreePop();
+            }
 
-            ImGui::End();
+            if (ImGui::TreeNode("Type of generated colors"))
+            {
+                static int MakeColorsTypeData = static_cast<int>(CellEngineConfigDataObject.MakeColorsTypeObject);
+                ImGui::RadioButton("Draw Color For Every Atom", &MakeColorsTypeData, 1);
+                ImGui::RadioButton("Draw Color For Every Particle", &MakeColorsTypeData, 2);
+                ImGui::RadioButton("Draw Random ColorFor Every Particle", &MakeColorsTypeData, 3);
+                CellEngineConfigDataObject.MakeColorsTypeObject = static_cast<CellEngineConfigData::MakeColorsType>(MakeColorsTypeData);
+                ImGui::TreePop();
+            }
         }
 
-
-
+        ImGui::End();
 
 
 

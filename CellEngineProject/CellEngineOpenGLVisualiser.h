@@ -10,6 +10,9 @@
 
 class CellEngineOpenGLVisualiser : public sb7::OpenGLApplication
 {
+public:
+    sb7::GraphicObject AtomGraphicsObject;
+    sb7::TextOverlay TextOverlayObject;
 private:
     GLuint LineVAO;
     GLuint LineDataBuffer[2];
@@ -33,9 +36,6 @@ private:
         GLint SpecularPower;
     }
     Uniforms{};
-private:
-    sb7::GraphicObject AtomGraphicsObject;
-    sb7::TextOverlay TextOverlayObject;
 private:
     Matrix3fT ArcBallPrevRotationMatrix{};
     Matrix3fT ArcBallActualRotationMatrix{};
@@ -74,11 +74,11 @@ protected:
     static void FindBondsToDraw(const std::vector<CellEngineAtom>& Atoms, std::vector<std::pair<UnsignedIntType, UnsignedIntType>>& BondsToDraw);
     void DrawBonds(const std::vector<CellEngineAtom>& Atoms, std::vector<std::pair<UnsignedIntType, UnsignedIntType>>& BondsToDraw, const bool DrawBonds, const vmath::mat4& ViewMatrix);
     void DrawBond(float x1, float y1, float z1, float x2, float y2, float z2);
-protected:
-    static inline std::string GetEntityName(const uint64_t EntityId);
-    static inline bool CheckVisibilityOfParticles(UnsignedIntType EntityId);
-    static inline void SetVisibilityOfAllParticles(bool VisibleParam);
-    static inline void SetVisibilityOfParticlesExcept(UnsignedIntType EntityId, bool VisibleParam);
+public:
+    static std::string GetEntityName(const uint64_t EntityId);
+    static bool CheckVisibilityOfParticles(UnsignedIntType EntityId);
+    static void SetVisibilityOfAllParticles(bool VisibleParam);
+    static void SetVisibilityOfParticlesExcept(UnsignedIntType EntityId, bool VisibleParam);
 protected:
     void LoadShadersPhong();
     void LoadShadersSimple();
