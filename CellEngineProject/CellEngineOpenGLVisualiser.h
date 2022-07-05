@@ -50,10 +50,10 @@ private:
 private:
     UnsignedIntType PressedRightMouseButton = 0;
 private:
-    bool RenderObjectsBool = true;
-private:
     std::vector<std::pair<UnsignedIntType, UnsignedIntType>> BondsBetweenParticlesCentersToDraw;
     std::vector<std::vector<std::pair<UnsignedIntType, UnsignedIntType>>> BondsBetweenAtomsToDraw;
+public:
+    bool RenderObjectsBool = true;
 public:
     CellEngineOpenGLVisualiser() = default;
 protected:

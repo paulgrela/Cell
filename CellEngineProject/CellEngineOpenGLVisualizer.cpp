@@ -647,26 +647,9 @@ void CellEngineOpenGLVisualiser::OnKey(int Key, int Action)
         if (Action)
             switch (Key)
             {
-                case 'B': CellEngineConfigDataObject.DrawBondsBetweenParticlesCenters = !CellEngineConfigDataObject.DrawBondsBetweenParticlesCenters; break; //CHECKBOX
-                case 'C': CellEngineConfigDataObject.DrawBondsBetweenAtoms = !CellEngineConfigDataObject.DrawBondsBetweenAtoms; break; //CHECKBOX
-
-                case 'J': CellEngineConfigDataObject.ShowDetailsInAtomScale = !CellEngineConfigDataObject.ShowDetailsInAtomScale; break; //CHECKBOX
-
-
-
-
                 //COLOR TLA //COLOR EDIT3 - OBA PONIZSZE DAC JEDEN 3 x RADIO
                 case GLFW_KEY_F1: CellEngineConfigDataObject.ChosenBackgroundColor = 1; break; //RADIO
                 case GLFW_KEY_F2: CellEngineConfigDataObject.ChosenBackgroundColor = 3; break; //RADIO
-
-
-                case GLFW_KEY_F3: RenderObjectsBool = !RenderObjectsBool; break; //CHECKBOX
-                case GLFW_KEY_F4: CellEngineConfigDataObject.AutomaticChangeOfSizeOfAtom = !CellEngineConfigDataObject.AutomaticChangeOfSizeOfAtom; break; //CHECKBOX
-
-
-
-
-
                 default: break;
             }
     }

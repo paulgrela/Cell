@@ -339,18 +339,8 @@ int main(int argc, const char ** argv)
 
         ImGui::Begin("Details");
 
-        if (ImGui::CollapsingHeader("Configuration"))
+        if (ImGui::CollapsingHeader("Visibility parameters of particles"))
         {
-            const char* TypesOfVisibilityComboBoxItems[] = { "ALL", "ONLY DNA", "SELECTED" };
-            static int TypesOfVisibilityComboBoxCurrentItemIndex = 0;
-            ImGui::Combo( " Types of Visibility", &TypesOfVisibilityComboBoxCurrentItemIndex, TypesOfVisibilityComboBoxItems, IM_ARRAYSIZE(TypesOfVisibilityComboBoxItems));
-            switch (TypesOfVisibilityComboBoxCurrentItemIndex)
-            {
-                case 0 : CellEngineOpenGLVisualiserPointer->SetVisibilityOfAllParticles(true); break;
-                case 1 : CellEngineOpenGLVisualiserPointer->SetVisibilityOfParticlesExcept(694, false); break;
-                default : break;
-            }
-
             const char* DensityOfDrawedAtomsComboBoxItems[] = { "1", "10", "100", "AUTOMATIC" };
             int DensityOfDrawedAtomsItemIndex;
             switch (CellEngineConfigDataObject.LoadOfAtomsStep)
@@ -372,13 +362,29 @@ int main(int argc, const char ** argv)
                 default : break;
             }
 
+            ImGui::Checkbox("Automatic Change Of Size Of Atom", &CellEngineConfigDataObject.AutomaticChangeOfSizeOfAtom);
+            ImGui::Checkbox("Show Details In Atom Scale", &CellEngineConfigDataObject.ShowDetailsInAtomScale);
+            ImGui::Checkbox("Draw Bonds Between Atoms", &CellEngineConfigDataObject.DrawBondsBetweenAtoms);
+            ImGui::Checkbox("Draw Bonds Between Particles Centers", &CellEngineConfigDataObject.DrawBondsBetweenParticlesCenters);
+            ImGui::Checkbox("Render Objects", &CellEngineOpenGLVisualiserPointer->RenderObjectsBool);
 
-            if (ImGui::TreeNode("Particles Kinds"))
+            const char* TypesOfVisibilityComboBoxItems[] = { "ALL", "ONLY DNA", "SELECTED" };
+            static int TypesOfVisibilityComboBoxCurrentItemIndex = 0;
+            ImGui::Combo( " Types of Visibility", &TypesOfVisibilityComboBoxCurrentItemIndex, TypesOfVisibilityComboBoxItems, IM_ARRAYSIZE(TypesOfVisibilityComboBoxItems));
+            switch (TypesOfVisibilityComboBoxCurrentItemIndex)
             {
-                for (auto & ParticlesKind : CellEngineConfigDataObject.ParticlesKinds)
-                    ImGui::Checkbox(string(to_string(ParticlesKind.Identifier) + " " + ParticlesKind.NameFromDataFile).c_str(), &ParticlesKind.Visible);
-                ImGui::TreePop();
+                case 0 : CellEngineOpenGLVisualiserPointer->SetVisibilityOfAllParticles(true); break;
+                case 1 : CellEngineOpenGLVisualiserPointer->SetVisibilityOfParticlesExcept(694, false); break;
+                default : break;
             }
+
+            if (TypesOfVisibilityComboBoxCurrentItemIndex == 2)
+                if (ImGui::TreeNode("Particles Kinds"))
+                {
+                    for (auto & ParticlesKind : CellEngineConfigDataObject.ParticlesKinds)
+                        ImGui::Checkbox(string(to_string(ParticlesKind.Identifier) + " " + ParticlesKind.NameFromDataFile).c_str(), &ParticlesKind.Visible);
+                    ImGui::TreePop();
+                }
 
             if (ImGui::TreeNode("Atoms"))
             {
