@@ -30,10 +30,6 @@ CellEngineAtom CellEnginePDBDataFile::ParseRecord(const char* LocalPDBRecord)
         CellEngineAtomObject.Y = stof(RecordStr.substr(38, 8));
         CellEngineAtomObject.Z = stof(RecordStr.substr(46, 8));
         
-//        auto AtomKindObjectIterator = std::find(CellEngineConfigDataObject.AtomsKinds.begin(), CellEngineConfigDataObject.AtomsKinds.end(), string(1, CellEngineAtomObject.Name[0]));
-//        if (AtomKindObjectIterator == CellEngineConfigDataObject.AtomsKinds.end())
-//            AtomKindObjectIterator = std::find(CellEngineConfigDataObject.AtomsKinds.begin(), CellEngineConfigDataObject.AtomsKinds.end(), string(1, 'E'));
-
         auto AtomKindObjectIterator = CellEngineConfigDataObject.GetAtomKindDataForAtom(CellEngineAtomObject.Name[0]);
         CellEngineAtomObject.AtomColor = AtomKindObjectIterator->Color;
         CellEngineAtomObject.SizeXAtom = AtomKindObjectIterator->SizeX;

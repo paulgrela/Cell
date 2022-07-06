@@ -191,7 +191,7 @@ int main(int argc, const char ** argv)
 
         ImGuiWindowFlags window_flags = 0;
         window_flags |= ImGuiWindowFlags_NoMove;
-        //window_flags |= ImGuiWindowFlags_NoResize;
+        window_flags |= ImGuiWindowFlags_NoResize;
 
         if (ModifiableWindow == false)
             ImGui::Begin("Cell Engine Visualiser", nullptr, window_flags);
@@ -403,14 +403,14 @@ int main(int argc, const char ** argv)
                 for (auto& AtomsKind : CellEngineConfigDataObject.AtomsKinds)
                     ImGui::ColorEdit3(string(AtomsKind.Name + " Atom Color").c_str(), (float*)&AtomsKind.Color);
 
-                for (auto& AtomObject : CellEngineDataFileObjectPointer->GetParticlesCenters())
-                    AtomObject.AtomColor = CellEngineConfigDataObject.GetAtomKindDataForAtom(AtomObject.Name[0])->Color;
-//                {
-//                    auto AtomKindObjectIterator = std::find(CellEngineConfigDataObject.AtomsKinds.begin(), CellEngineConfigDataObject.AtomsKinds.end(), string(1, AtomObject.Name[0]));
-//                    if (AtomKindObjectIterator == CellEngineConfigDataObject.AtomsKinds.end())
-//                        AtomKindObjectIterator = std::find(CellEngineConfigDataObject.AtomsKinds.begin(), CellEngineConfigDataObject.AtomsKinds.end(), string(1, 'E'));
-//                    AtomObject.AtomColor = AtomKindObjectIterator->Color;
-//                }
+                for (auto& ParticleCenter : CellEngineDataFileObjectPointer->GetParticlesCenters())
+                {
+                    ParticleCenter.AtomColor = CellEngineConfigDataObject.GetAtomKindDataForAtom(ParticleCenter.Name[0])->Color;
+                    if (CellEngineConfigDataObject.ShowDetailsInAtomScale == true)
+                        //DODATKOWY WARUNEK
+                        for (auto& AtomObject : CellEngineDataFileObjectPointer->GetAllAtoms()[ParticleCenter.AtomIndex])
+                            AtomObject.AtomColor = CellEngineConfigDataObject.GetAtomKindDataForAtom(AtomObject.Name[0])->Color;
+                }
 
                 ImGui::TreePop();
             }
