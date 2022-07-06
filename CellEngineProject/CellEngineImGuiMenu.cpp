@@ -7,7 +7,6 @@
 #include <memory>
 
 #include "Logger.h"
-#include "StringUtils.h"
 #include "DateTimeUtils.h"
 #include "ExceptionsMacro.h"
 
@@ -48,8 +47,6 @@ void InitializeLoggerManagerParameters()
 {
     try
     {
-        using namespace string_utils;
-
         LoggersManagerObject.InitializeFilesNames({ "AllMessages" });
         LoggersManagerObject.InitializeSelectiveWordsFunctions({ [](const string& s) { return true; } });
         LoggersManagerObject.InitializeLoggerManagerDataForTask("CELL_RESULTS", ".\\", string("Logs." + GetActualDateTimeStandardCPP(".", ".", ".", ".", ".")), true, 0, function<void(const uint64_t& CurrentThreadId, const uint64_t FileNumber, const string& MessageStr)>());
@@ -202,7 +199,7 @@ int main(int argc, const char ** argv)
 
         if (ImGui::CollapsingHeader("Menu"))
         {
-            ImGui::Checkbox("Menu Style Of Colors", &CellEngineConfigDataObject.ImGuiLightVersion);
+            ImGui::Checkbox("Menu Type Of Colors - Light Style", &CellEngineConfigDataObject.ImGuiLightVersion);
             ImGui::Checkbox("Modifiable Window", &ModifiableWindow);
         }
 
@@ -214,17 +211,19 @@ int main(int argc, const char ** argv)
             DrawPlusMinusScalarButton(CellEngineConfigDataObject.ViewYMoveShortStep, 1, 1, 10, "View Y Move Short Step", IDButton);
             DrawPlusMinusScalarButton(CellEngineConfigDataObject.ViewZMoveShortStep, 1, 1, 10, "View Z Move Short Step", IDButton);
 
-            DrawPlusMinusScalarButton(CellEngineConfigDataObject.ViewX, CellEngineConfigDataObject.ViewXMoveShortStep, -3000, 3000, "View X Change Using Short Step", IDButton);
-            DrawPlusMinusScalarButton(CellEngineConfigDataObject.ViewY, CellEngineConfigDataObject.ViewYMoveShortStep, -3000, 3000, "View Y Change Using Short Step", IDButton);
-            DrawPlusMinusScalarButton(CellEngineConfigDataObject.ViewZ, CellEngineConfigDataObject.ViewZMoveShortStep, -3000, 3000, "View Z Change Using Short Step", IDButton);
+            DrawPlusMinusScalarButton(CellEngineConfigDataObject.ViewPositionX, CellEngineConfigDataObject.ViewXMoveShortStep, -3000, 3000, "View X Change Using Short Step", IDButton);
+            DrawPlusMinusScalarButton(CellEngineConfigDataObject.ViewPositionY, CellEngineConfigDataObject.ViewYMoveShortStep, -3000, 3000, "View Y Change Using Short Step", IDButton);
+            DrawPlusMinusScalarButton(CellEngineConfigDataObject.ViewPositionZ, CellEngineConfigDataObject.ViewZMoveShortStep, -3000, 3000, "View Z Change Using Short Step", IDButton);
 
             DrawPlusMinusScalarButton(CellEngineConfigDataObject.ViewXMoveLongStep, 10, 0, 100, "View X Move Long Step", IDButton);
             DrawPlusMinusScalarButton(CellEngineConfigDataObject.ViewYMoveLongStep, 10, 0, 100, "View Y Move Long Step", IDButton);
             DrawPlusMinusScalarButton(CellEngineConfigDataObject.ViewZMoveLongStep, 10, 0, 100, "View Z Move Long Step", IDButton);
 
-            DrawPlusMinusScalarButton(CellEngineConfigDataObject.ViewX, CellEngineConfigDataObject.ViewXMoveLongStep, -3000, 3000, "View X Change Using Long Step", IDButton);
-            DrawPlusMinusScalarButton(CellEngineConfigDataObject.ViewY, CellEngineConfigDataObject.ViewYMoveLongStep, -3000, 3000, "View Y Change Using Long Step", IDButton);
-            DrawPlusMinusScalarButton(CellEngineConfigDataObject.ViewZ, CellEngineConfigDataObject.ViewZMoveLongStep, -3000, 3000, "View Z Change Using Long Step", IDButton);
+            DrawPlusMinusScalarButton(CellEngineConfigDataObject.ViewPositionX, CellEngineConfigDataObject.ViewXMoveLongStep, -3000, 3000, "View X Change Using Long Step", IDButton);
+            DrawPlusMinusScalarButton(CellEngineConfigDataObject.ViewPositionY, CellEngineConfigDataObject.ViewYMoveLongStep, -3000, 3000, "View Y Change Using Long Step", IDButton);
+            DrawPlusMinusScalarButton(CellEngineConfigDataObject.ViewPositionZ, CellEngineConfigDataObject.ViewZMoveLongStep, -3000, 3000, "View Z Change Using Long Step", IDButton);
+
+            ImGui::Checkbox("View Change Using Long Step", &CellEngineConfigDataObject.ViewChangeUsingLongStep);
         }
 
         if (ImGui::CollapsingHeader("Camera Move"))
@@ -255,10 +254,10 @@ int main(int argc, const char ** argv)
 
         if (ImGui::CollapsingHeader("Size Of Atoms"))
         {
-            DrawPlusMinusScalarButton(CellEngineConfigDataObject.SizeStep, 0.01, 0, 10, "Size Of Atoms Change Step", IDButton);
+            DrawPlusMinusScalarButton(CellEngineConfigDataObject.SizeOfAtomChangeStep, 0.01, 0, 10, "Size Of Atoms Change Step", IDButton);
 
             static float SizeOfAtom3Axis = CellEngineConfigDataObject.SizeOfAtomX;
-            DrawPlusMinusScalarButton(SizeOfAtom3Axis, CellEngineConfigDataObject.SizeStep, 0, 10, "Size Of Atoms 3 Axis", IDButton);
+            DrawPlusMinusScalarButton(SizeOfAtom3Axis, CellEngineConfigDataObject.SizeOfAtomChangeStep, 0, 10, "Size Of Atoms 3 Axis", IDButton);
             CellEngineConfigDataObject.SizeOfAtomX = SizeOfAtom3Axis;
             CellEngineConfigDataObject.SizeOfAtomY = SizeOfAtom3Axis;
             CellEngineConfigDataObject.SizeOfAtomZ = SizeOfAtom3Axis;
@@ -304,7 +303,6 @@ int main(int argc, const char ** argv)
             ImGui::SameLine();
             ImGui::RadioButton("Torus", &CellEngineConfigDataObject.ChosenShapeOfAtoms, 3);
         }
-
 
         if (ImGui::CollapsingHeader("Picked Atom Detailed Information", ImGuiTreeNodeFlags_DefaultOpen))
         {
@@ -391,14 +389,13 @@ int main(int argc, const char ** argv)
             }
 
             if (TypesOfVisibilityComboBoxCurrentItemIndex == 2)
-                if (ImGui::TreeNode("Particles Kinds"))
+                if (ImGui::CollapsingHeader("Particles Kinds", ImGuiTreeNodeFlags_DefaultOpen))
                 {
                     for (auto& ParticlesKind : CellEngineConfigDataObject.ParticlesKinds)
                         ImGui::Checkbox(string(to_string(ParticlesKind.Identifier) + " " + ParticlesKind.NameFromDataFile).c_str(), &ParticlesKind.Visible);
-                    ImGui::TreePop();
                 }
 
-            if (ImGui::TreeNode("Atoms"))
+            if (ImGui::CollapsingHeader("Atoms Kinds", ImGuiTreeNodeFlags_DefaultOpen))
             {
                 bool ChangeColor = false;
                 for (auto& AtomsKind : CellEngineConfigDataObject.AtomsKinds)
@@ -413,23 +410,19 @@ int main(int argc, const char ** argv)
                             for (auto& AtomObject : CellEngineDataFileObjectPointer->GetAllAtoms()[ParticleCenter.AtomIndex])
                                 AtomObject.AtomColor = CellEngineConfigDataObject.GetAtomKindDataForAtom(AtomObject.Name[0])->Color;
                     }
-
-                ImGui::TreePop();
             }
 
-            if (ImGui::TreeNode("Type of generated colors"))
+            if (ImGui::CollapsingHeader("Type of generated colors", ImGuiTreeNodeFlags_DefaultOpen))
             {
                 static int MakeColorsTypeData = static_cast<int>(CellEngineConfigDataObject.MakeColorsTypeObject);
                 ImGui::RadioButton("Draw Color For Every Atom", &MakeColorsTypeData, 1);
                 ImGui::RadioButton("Draw Color For Every Particle", &MakeColorsTypeData, 2);
                 ImGui::RadioButton("Draw Random ColorFor Every Particle", &MakeColorsTypeData, 3);
                 CellEngineConfigDataObject.MakeColorsTypeObject = static_cast<CellEngineConfigData::MakeColorsType>(MakeColorsTypeData);
-                ImGui::TreePop();
             }
         }
 
         ImGui::End();
-
 
         ImGui::Render();
 

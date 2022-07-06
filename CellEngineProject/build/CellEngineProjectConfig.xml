@@ -79,7 +79,7 @@
 			<ZLowToDrawInAtomScale>-650</ZLowToDrawInAtomScale>
 			<ZHighToDrawInAtomScale>-50</ZHighToDrawInAtomScale>
 			
-			<SizeStep>0.1</SizeStep>
+			<SizeOfAtomChangeStep>0.1</SizeOfAtomChangeStep>
 	
 			<SizeOfAtomX>1</SizeOfAtomX>
 			<SizeOfAtomY>1</SizeOfAtomY>
@@ -101,9 +101,9 @@
 			<CameraYMoveLongStep>50</CameraYMoveLongStep>
 			<CameraZMoveLongStep>50</CameraZMoveLongStep>
 			
-			<ViewX>0</ViewX>
-			<ViewY>0</ViewY>
-			<ViewZ>50</ViewZ>						
+			<ViewPositionX>0</ViewPositionX>
+			<ViewPositionY>0</ViewPositionY>
+			<ViewPositionZ>50</ViewPositionZ>						
 			
 			<ViewXMoveShortStep>5</ViewXMoveShortStep>
 			<ViewYMoveShortStep>5</ViewYMoveShortStep>
@@ -291,7 +291,7 @@
 			<ZLowToDrawInAtomScale>0</ZLowToDrawInAtomScale>
 			<ZHighToDrawInAtomScale>0</ZHighToDrawInAtomScale>
 			
-			<SizeStep>0.01</SizeStep>
+			<SizeOfAtomChangeStep>0.01</SizeOfAtomChangeStep>
 	
 			<SizeOfAtomX>1</SizeOfAtomX>
 			<SizeOfAtomY>1</SizeOfAtomY>
@@ -313,9 +313,9 @@
 			<CameraYMoveLongStep>10</CameraYMoveLongStep>
 			<CameraZMoveLongStep>10</CameraZMoveLongStep>
 			
-			<ViewX>0</ViewX>
-			<ViewY>0</ViewY>
-			<ViewZ>50</ViewZ>			
+			<ViewPositionX>0</ViewPositionX>
+			<ViewPositionY>0</ViewPositionY>
+			<ViewPositionZ>50</ViewPositionZ>			
 			
 			<ViewXMoveShortStep>1</ViewXMoveShortStep>
 			<ViewYMoveShortStep>1</ViewYMoveShortStep>
@@ -504,7 +504,7 @@
 			<ZLowToDrawInAtomScale>-650</ZLowToDrawInAtomScale>
 			<ZHighToDrawInAtomScale>-50</ZHighToDrawInAtomScale>
 			
-			<SizeStep>0.1</SizeStep>
+			<SizeOfAtomChangeStep>0.1</SizeOfAtomChangeStep>
 	
 			<SizeOfAtomX>1</SizeOfAtomX>
 			<SizeOfAtomY>1</SizeOfAtomY>
@@ -514,9 +514,9 @@
 			<RotationAngle2>0</RotationAngle2>
 			<RotationAngle3>0</RotationAngle3>
 			
-			<ViewX>0</ViewX>
-			<ViewY>0</ViewY>
-			<ViewZ>1000</ViewZ>
+			<ViewPositionX>0</ViewPositionX>
+			<ViewPositionY>0</ViewPositionY>
+			<ViewPositionZ>1000</ViewPositionZ>
 
 			<CameraXPosition>0</CameraXPosition>
 			<CameraYPosition>0</CameraYPosition>
@@ -530,9 +530,9 @@
 			<CameraYMoveLongStep>50</CameraYMoveLongStep>
 			<CameraZMoveLongStep>50</CameraZMoveLongStep>
 
-			<ViewX>0</ViewX>
-			<ViewY>0</ViewY>
-			<ViewZ>1000</ViewZ>
+			<ViewPositionX>0</ViewPositionX>
+			<ViewPositionY>0</ViewPositionY>
+			<ViewPositionZ>1000</ViewPositionZ>
 			
 			<ViewXMoveShortStep>5</ViewXMoveShortStep>
 			<ViewYMoveShortStep>5</ViewYMoveShortStep>
@@ -721,7 +721,7 @@
 			<ZLowToDrawInAtomScale>0</ZLowToDrawInAtomScale>
 			<ZHighToDrawInAtomScale>0</ZHighToDrawInAtomScale>
 			
-			<SizeStep>0.01</SizeStep>
+			<SizeOfAtomChangeStep>0.01</SizeOfAtomChangeStep>
 	
 			<SizeOfAtomX>1</SizeOfAtomX>
 			<SizeOfAtomY>1</SizeOfAtomY>
@@ -743,9 +743,9 @@
 			<CameraYMoveLongStep>10</CameraYMoveLongStep>
 			<CameraZMoveLongStep>10</CameraZMoveLongStep>
 			
-			<ViewX>0</ViewX>
-			<ViewY>0</ViewY>
-			<ViewZ>100</ViewZ>			
+			<ViewPositionX>0</ViewPositionX>
+			<ViewPositionY>0</ViewPositionY>
+			<ViewPositionZ>100</ViewPositionZ>			
 			
 			<ViewXMoveShortStep>1</ViewXMoveShortStep>
 			<ViewYMoveShortStep>1</ViewYMoveShortStep>

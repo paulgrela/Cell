@@ -121,16 +121,16 @@ void CellEngineConfigurationFileReaderWriter::ReadChessConfigurationFile(const c
 
                         CellEngineConfigDataObject.SizeOfAtomsDrawingTypesObject = static_cast<CellEngineConfigData::SizeOfAtomsDrawingTypes>(CellStatePropertyTreeElement.second.get<uint64_t>("SizeOfAtomsDrawingTypes"));
 
-                        CellEngineConfigDataObject.SizeStep = CellStatePropertyTreeElement.second.get<float>("SizeStep");
+                        CellEngineConfigDataObject.SizeOfAtomChangeStep = CellStatePropertyTreeElement.second.get<float>("SizeOfAtomChangeStep");
                         CellEngineConfigDataObject.SizeOfAtomX = CellStatePropertyTreeElement.second.get<float>("SizeOfAtomX");
                         CellEngineConfigDataObject.SizeOfAtomY = CellStatePropertyTreeElement.second.get<float>("SizeOfAtomY");
                         CellEngineConfigDataObject.SizeOfAtomZ = CellStatePropertyTreeElement.second.get<float>("SizeOfAtomZ");
                         CellEngineConfigDataObject.RotationAngle1 = CellStatePropertyTreeElement.second.get<float>("RotationAngle1");
                         CellEngineConfigDataObject.RotationAngle2 = CellStatePropertyTreeElement.second.get<float>("RotationAngle2");
                         CellEngineConfigDataObject.RotationAngle3 = CellStatePropertyTreeElement.second.get<float>("RotationAngle3");
-                        CellEngineConfigDataObject.ViewX = CellStatePropertyTreeElement.second.get<float>("ViewX");
-                        CellEngineConfigDataObject.ViewY = CellStatePropertyTreeElement.second.get<float>("ViewY");
-                        CellEngineConfigDataObject.ViewZ = CellStatePropertyTreeElement.second.get<float>("ViewZ");
+                        CellEngineConfigDataObject.ViewPositionX = CellStatePropertyTreeElement.second.get<float>("ViewPositionX");
+                        CellEngineConfigDataObject.ViewPositionY = CellStatePropertyTreeElement.second.get<float>("ViewPositionY");
+                        CellEngineConfigDataObject.ViewPositionZ = CellStatePropertyTreeElement.second.get<float>("ViewPositionZ");
                         CellEngineConfigDataObject.CameraXPosition = CellStatePropertyTreeElement.second.get<float>("CameraXPosition");
                         CellEngineConfigDataObject.CameraYPosition = CellStatePropertyTreeElement.second.get<float>("CameraYPosition");
                         CellEngineConfigDataObject.CameraZPosition = CellStatePropertyTreeElement.second.get<float>("CameraZPosition");
@@ -140,9 +140,9 @@ void CellEngineConfigurationFileReaderWriter::ReadChessConfigurationFile(const c
                         CellEngineConfigDataObject.CameraXMoveLongStep = CellStatePropertyTreeElement.second.get<float>("CameraXMoveLongStep");
                         CellEngineConfigDataObject.CameraYMoveLongStep = CellStatePropertyTreeElement.second.get<float>("CameraYMoveLongStep");
                         CellEngineConfigDataObject.CameraZMoveLongStep = CellStatePropertyTreeElement.second.get<float>("CameraZMoveLongStep");
-                        CellEngineConfigDataObject.ViewX = CellStatePropertyTreeElement.second.get<float>("ViewX");
-                        CellEngineConfigDataObject.ViewY = CellStatePropertyTreeElement.second.get<float>("ViewY");
-                        CellEngineConfigDataObject.ViewZ = CellStatePropertyTreeElement.second.get<float>("ViewZ");
+                        CellEngineConfigDataObject.ViewPositionX = CellStatePropertyTreeElement.second.get<float>("ViewPositionX");
+                        CellEngineConfigDataObject.ViewPositionY = CellStatePropertyTreeElement.second.get<float>("ViewPositionY");
+                        CellEngineConfigDataObject.ViewPositionZ = CellStatePropertyTreeElement.second.get<float>("ViewPositionZ");
                         CellEngineConfigDataObject.ViewXMoveShortStep = CellStatePropertyTreeElement.second.get<float>("ViewXMoveShortStep");
                         CellEngineConfigDataObject.ViewYMoveShortStep = CellStatePropertyTreeElement.second.get<float>("ViewYMoveShortStep");
                         CellEngineConfigDataObject.ViewZMoveShortStep = CellStatePropertyTreeElement.second.get<float>("ViewZMoveShortStep");

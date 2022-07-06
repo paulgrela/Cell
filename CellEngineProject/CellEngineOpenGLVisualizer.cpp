@@ -223,10 +223,10 @@ inline bool CellEngineOpenGLVisualiser::CheckDistanceToDrawDetailsInAtomScale(co
 {
     if (CellEngineConfigDataObject.CheckAtomVisibility == true)
     {
-        if (CellEngineConfigDataObject.ViewZ > CellEngineConfigDataObject.Distance)
+        if (CellEngineConfigDataObject.ViewPositionZ > CellEngineConfigDataObject.Distance)
             return ZNew > CellEngineConfigDataObject.CutZ && sqrt((XNew * XNew) + (YNew * YNew) + (ZNew * ZNew)) > CellEngineConfigDataObject.Distance;
         else
-            return (ZNew > CellEngineConfigDataObject.ViewZ + CellEngineConfigDataObject.ZLowToDrawInAtomScale && ZNew < CellEngineConfigDataObject.ViewZ + CellEngineConfigDataObject.ZHighToDrawInAtomScale && XNew > CellEngineConfigDataObject.XLowToDrawInAtomScale && XNew < CellEngineConfigDataObject.XHighToDrawInAtomScale && YNew > CellEngineConfigDataObject.YLowToDrawInAtomScale && YNew < CellEngineConfigDataObject.YHighToDrawInAtomScale);
+            return (ZNew > CellEngineConfigDataObject.ViewPositionZ + CellEngineConfigDataObject.ZLowToDrawInAtomScale && ZNew < CellEngineConfigDataObject.ViewPositionZ + CellEngineConfigDataObject.ZHighToDrawInAtomScale && XNew > CellEngineConfigDataObject.XLowToDrawInAtomScale && XNew < CellEngineConfigDataObject.XHighToDrawInAtomScale && YNew > CellEngineConfigDataObject.YLowToDrawInAtomScale && YNew < CellEngineConfigDataObject.YHighToDrawInAtomScale);
     }
     else
         return false;
@@ -365,7 +365,7 @@ inline void CellEngineOpenGLVisualiser::SetAutomaticParametersForRendering()
     {
         if (CellEngineConfigDataObject.ShowDetailsInAtomScale == true)
         {
-            if (CellEngineConfigDataObject.ViewZ > CellEngineConfigDataObject.Distance)
+            if (CellEngineConfigDataObject.ViewPositionZ > CellEngineConfigDataObject.Distance)
             {
                 if (CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep == true)
                     CellEngineConfigDataObject.LoadOfAtomsStep = 100;
@@ -447,7 +447,7 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
 
         PrepareOpenGLToRenderObjectsOnScene();
 
-        vmath::vec3 ViewPositionVector = vmath::vec3(CellEngineConfigDataObject.ViewX, CellEngineConfigDataObject.ViewY, CellEngineConfigDataObject.ViewZ);
+        vmath::vec3 ViewPositionVector = vmath::vec3(CellEngineConfigDataObject.ViewPositionX, CellEngineConfigDataObject.ViewPositionY, CellEngineConfigDataObject.ViewPositionZ);
         vmath::mat4 ViewMatrix = vmath::lookat(ViewPositionVector, vmath::vec3(0.0f, 0.0f, 0.0f), vmath::vec3(0.0f, 1.0f, 0.0f)) * vmath::rotate(CellEngineConfigDataObject.RotationAngle1, CellEngineConfigDataObject.RotationAngle2, CellEngineConfigDataObject.RotationAngle3) * RotationMatrix;
 
         DrawBonds(CellEngineDataFileObjectPointer->GetParticlesCenters(), BondsBetweenParticlesCentersToDraw, CellEngineConfigDataObject.DrawBondsBetweenParticlesCenters, ViewMatrix);
@@ -524,7 +524,7 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
         if (CellEngineConfigDataObject.LogParametersOfRenderingToFile == true)
         {
             LoggersManagerObject.Log(STREAM(CellEngineConfigDataObject.TimeParametersOfRenderingStr));
-            LoggersManagerObject.Log(STREAM(CellEngineConfigDataObject.NumberOfRenderedAtomsParametersOfRenderingStr << " ViewZ = " << to_string(CellEngineConfigDataObject.ViewZ) << " CameraZPosition = " << to_string(CellEngineConfigDataObject.CameraZPosition) << " AtomSize = " << to_string(CellEngineConfigDataObject.SizeOfAtomX) << endl));
+            LoggersManagerObject.Log(STREAM(CellEngineConfigDataObject.NumberOfRenderedAtomsParametersOfRenderingStr << " ViewZ = " << to_string(CellEngineConfigDataObject.ViewPositionZ) << " CameraZPosition = " << to_string(CellEngineConfigDataObject.CameraZPosition) << " AtomSize = " << to_string(CellEngineConfigDataObject.SizeOfAtomX) << endl));
         }
     }
     CATCH("rendering cell visualization")
@@ -681,7 +681,7 @@ void CellEngineOpenGLVisualiser::OnMouseWheel(int Pos)
 {
     try
     {
-        CellEngineConfigDataObject.ViewZ += static_cast<float>(Pos) * (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.ViewZMoveShortStep : CellEngineConfigDataObject.ViewZMoveLongStep);
+        CellEngineConfigDataObject.ViewPositionZ += static_cast<float>(Pos) * (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.ViewZMoveShortStep : CellEngineConfigDataObject.ViewZMoveLongStep);
     }
     CATCH("executing on mouse wheel event for cell visualisation")
 }

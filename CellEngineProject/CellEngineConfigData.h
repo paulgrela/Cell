@@ -114,7 +114,7 @@ public:
     };
     SizeOfAtomsDrawingTypes SizeOfAtomsDrawingTypesObject;
 public:
-    float SizeStep;
+    float SizeOfAtomChangeStep;
     float SizeOfAtomX;
     float SizeOfAtomY;
     float SizeOfAtomZ;
@@ -130,9 +130,9 @@ public:
     float CameraXMoveLongStep;
     float CameraYMoveLongStep;
     float CameraZMoveLongStep;
-    float ViewX;
-    float ViewY;
-    float ViewZ;
+    float ViewPositionX;
+    float ViewPositionY;
+    float ViewPositionZ;
     float ViewXMoveShortStep;
     float ViewYMoveShortStep;
     float ViewZMoveShortStep;
