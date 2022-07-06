@@ -86,30 +86,47 @@ static void glfw_error_callback(int error, const char* description)
     fprintf(stderr, "Glfw Error %d: %s\n", error, description);
 }
 
-void DrawPlusMinusScalarButton(float& VariableToChange, const float Step, const float MinValue, const float MaxValue, const string& Description, int& IDButton)
+void ColorButton(const char* Text, float& VariableToChange, const float Step, const float MinValue, const float MaxValue, const float ColorParam, int& IDButton, void (*FunctionToExecute)(float& VariableToChange, const float Step, const float MinValue, const float MaxValue))
 {
     ImGui::PushID(IDButton);
-    ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0 / 7.0f, 0.6f, 0.6f));
-    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0 / 7.0f, 0.7f, 0.7f));
-    ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0 / 7.0f, 0.8f, 0.8f));
-    if (ImGui::Button(" - "))
-        if (VariableToChange - Step >= MinValue)
-            VariableToChange -= Step;
+    ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(ColorParam / 7.0f, 0.6f, 0.6f));
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(ColorParam / 7.0f, 0.7f, 0.7f));
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(ColorParam / 7.0f, 0.8f, 0.8f));
+    if (ImGui::Button(Text))
+        FunctionToExecute(VariableToChange, Step, MinValue, MaxValue);
     ImGui::PopStyleColor(3);
     ImGui::PopID();
     IDButton++;
+}
 
+void DrawPlusMinusScalarButton(float& VariableToChange, const float Step, const float MinValue, const float MaxValue, const string& Description, int& IDButton)
+{
+    ColorButton(" - ", VariableToChange, Step, MinValue, MaxValue, 0, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue){ if (VariableToChange - Step >= MinValue) VariableToChange -= Step; });
     ImGui::SameLine();
-    ImGui::PushID(IDButton);
-    ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(3 / 7.0f, 0.6f, 0.6f));
-    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(3 / 7.0f, 0.7f, 0.7f));
-    ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(3 / 7.0f, 0.8f, 0.8f));
-    if (ImGui::Button(" + "))
-        if (VariableToChange + Step <= MaxValue)
-            VariableToChange += Step;
-    ImGui::PopStyleColor(3);
-    ImGui::PopID();
-    IDButton++;
+    ColorButton(" + ", VariableToChange, Step, MinValue, MaxValue, 3, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue){ if (VariableToChange + Step <= MaxValue) VariableToChange += Step; });
+
+//    ImGui::PushID(IDButton);
+//    ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0 / 7.0f, 0.6f, 0.6f));
+//    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0 / 7.0f, 0.7f, 0.7f));
+//    ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0 / 7.0f, 0.8f, 0.8f));
+//    if (ImGui::Button(" - "))
+//        if (VariableToChange - Step >= MinValue)
+//            VariableToChange -= Step;
+//    ImGui::PopStyleColor(3);
+//    ImGui::PopID();
+//    IDButton++;
+//
+//    ImGui::SameLine();
+//    ImGui::PushID(IDButton);
+//    ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(3 / 7.0f, 0.6f, 0.6f));
+//    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(3 / 7.0f, 0.7f, 0.7f));
+//    ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(3 / 7.0f, 0.8f, 0.8f));
+//    if (ImGui::Button(" + "))
+//        if (VariableToChange + Step <= MaxValue)
+//            VariableToChange += Step;
+//    ImGui::PopStyleColor(3);
+//    ImGui::PopID();
+//    IDButton++;
 
     ImGui::SameLine();
     ImGui::Text("%s", string(to_string(VariableToChange) + " [" + Description + "]").c_str());
@@ -265,15 +282,18 @@ int main(int argc, const char ** argv)
 
         if (ImGui::CollapsingHeader("Film"))
         {
-            ImGui::PushID(IDButton);
-            ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(3 / 7.0f, 0.6f, 0.6f));
-            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(3 / 7.0f, 0.7f, 0.7f));
-            ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(3 / 7.0f, 0.8f, 0.8f));
-            if (ImGui::Button(" START "))
-                CellEngineDataFileObjectPointer->StartFilmOfStructures();
-            ImGui::PopStyleColor(3);
-            ImGui::PopID();
-            IDButton++;
+            float Nothing;
+            ColorButton(" START ", Nothing, 0, 0, 0, 3, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue){ CellEngineDataFileObjectPointer->StartFilmOfStructures(); });
+
+//            ImGui::PushID(IDButton);
+//            ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(3 / 7.0f, 0.6f, 0.6f));
+//            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(3 / 7.0f, 0.7f, 0.7f));
+//            ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(3 / 7.0f, 0.8f, 0.8f));
+//            if (ImGui::Button(" START "))
+//                CellEngineDataFileObjectPointer->StartFilmOfStructures();
+//            ImGui::PopStyleColor(3);
+//            ImGui::PopID();
+//            IDButton++;
 
             ImGui::SameLine();
             if (ImGui::Button(" NEXT "))
@@ -284,15 +304,18 @@ int main(int argc, const char ** argv)
                 CellEngineDataFileObjectPointer->ShowPrevStructure();
 
             ImGui::SameLine();
-            ImGui::PushID(IDButton);
-            ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0 / 7.0f, 0.6f, 0.6f));
-            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0 / 7.0f, 0.7f, 0.7f));
-            ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0 / 7.0f, 0.8f, 0.8f));
-            if (ImGui::Button(" STOP "))
-                CellEngineDataFileObjectPointer->StopFilmOfStructures();
-            ImGui::PopStyleColor(3);
-            ImGui::PopID();
-            IDButton++;
+
+            ColorButton(" STOP ", Nothing, 0, 0, 0, 0, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue){ CellEngineDataFileObjectPointer->StopFilmOfStructures(); });
+
+//            ImGui::PushID(IDButton);
+//            ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0 / 7.0f, 0.6f, 0.6f));
+//            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0 / 7.0f, 0.7f, 0.7f));
+//            ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0 / 7.0f, 0.8f, 0.8f));
+//            if (ImGui::Button(" STOP "))
+//                CellEngineDataFileObjectPointer->StopFilmOfStructures();
+//            ImGui::PopStyleColor(3);
+//            ImGui::PopID();
+//            IDButton++;
         }
 
         if (ImGui::CollapsingHeader("Shape of particles - atoms"))
