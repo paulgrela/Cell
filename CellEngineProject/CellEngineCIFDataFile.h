@@ -21,7 +21,7 @@ public:
     explicit CellEngineCIFDataFile() = default;
     ~CellEngineCIFDataFile() = default;
 public:
-    CellEngineAtom ParseRecord(const char* LocalPDBRecord);
+    static CellEngineAtom ParseRecord(const char* LocalPDBRecord);
 };
 
 #endif

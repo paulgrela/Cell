@@ -169,8 +169,6 @@ int main(int argc, const char ** argv)
     const char* glsl_version = "#version 130";
     ImGui_ImplOpenGL3_Init(glsl_version);
 
-    ImVec4 BackgroundColor = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-
     thread CellEngineOpenGLVisualiserThreadObject(CellEngineOpenGLVisualiserThreadFunction, CellEngineConfigDataObject.XTopMainWindow, CellEngineConfigDataObject.YTopMainWindow, CellEngineConfigDataObject.WidthMainWindow, CellEngineConfigDataObject.HeightMainWindow);
 
     static bool ModifiableWindow = false;
@@ -193,7 +191,7 @@ int main(int argc, const char ** argv)
 
         ImGuiWindowFlags window_flags = 0;
         window_flags |= ImGuiWindowFlags_NoMove;
-        window_flags |= ImGuiWindowFlags_NoResize;
+        //window_flags |= ImGuiWindowFlags_NoResize;
 
         if (ModifiableWindow == false)
             ImGui::Begin("Cell Engine Visualiser", nullptr, window_flags);
@@ -334,10 +332,16 @@ int main(int argc, const char ** argv)
 
         if (ImGui::CollapsingHeader("Background"))
         {
-            ImGui::ColorEdit3("Background Color", (float*)&BackgroundColor);
-            //COLOR TLA //COLOR EDIT3 - OBA PONIZSZE DAC JEDEN 3 x RADIO
-            //case GLFW_KEY_F1: CellEngineConfigDataObject.ChosenBackgroundColor = 1; break; //RADIO
-            //case GLFW_KEY_F2: CellEngineConfigDataObject.ChosenBackgroundColor = 3; break; //RADIO
+            for (uint64_t BackgroundColorIndex = 1; BackgroundColorIndex <= 3; BackgroundColorIndex++)
+            {
+                ImVec4 BackgroundColor = ImVec4(CellEngineConfigDataObject.BackgroundColors[BackgroundColorIndex].X(), CellEngineConfigDataObject.BackgroundColors[BackgroundColorIndex].Y(), CellEngineConfigDataObject.BackgroundColors[BackgroundColorIndex].Z(), 1.00f);
+                ImGui::ColorEdit3(string("Background Color " + to_string(BackgroundColorIndex)).c_str(), (float*)&BackgroundColor);
+                CellEngineConfigDataObject.BackgroundColors[BackgroundColorIndex] = vmath::vec3(BackgroundColor.x, BackgroundColor.y, BackgroundColor.z);
+            }
+            const char* BackgroundColorComboBoxItems[] = { "Background Color 1", "Background Color 2", "Background Color 3" };
+            static int BackgroundColorComboBoxItemsIndex = static_cast<int>(CellEngineConfigDataObject.ChosenBackgroundColor - 1);
+            ImGui::Combo( " Chosen Background Color", &BackgroundColorComboBoxItemsIndex, BackgroundColorComboBoxItems, IM_ARRAYSIZE(BackgroundColorComboBoxItems));
+            CellEngineConfigDataObject.ChosenBackgroundColor = BackgroundColorComboBoxItemsIndex + 1;
         }
 
         ImGui::End();
@@ -389,15 +393,25 @@ int main(int argc, const char ** argv)
             if (TypesOfVisibilityComboBoxCurrentItemIndex == 2)
                 if (ImGui::TreeNode("Particles Kinds"))
                 {
-                    for (auto & ParticlesKind : CellEngineConfigDataObject.ParticlesKinds)
+                    for (auto& ParticlesKind : CellEngineConfigDataObject.ParticlesKinds)
                         ImGui::Checkbox(string(to_string(ParticlesKind.Identifier) + " " + ParticlesKind.NameFromDataFile).c_str(), &ParticlesKind.Visible);
                     ImGui::TreePop();
                 }
 
             if (ImGui::TreeNode("Atoms"))
             {
-                for (auto & AtomsKind : CellEngineConfigDataObject.AtomsKinds)
+                for (auto& AtomsKind : CellEngineConfigDataObject.AtomsKinds)
                     ImGui::ColorEdit3(string(AtomsKind.Name + " Atom Color").c_str(), (float*)&AtomsKind.Color);
+
+                for (auto& AtomObject : CellEngineDataFileObjectPointer->GetParticlesCenters())
+                    AtomObject.AtomColor = CellEngineConfigDataObject.GetAtomKindDataForAtom(AtomObject.Name[0])->Color;
+//                {
+//                    auto AtomKindObjectIterator = std::find(CellEngineConfigDataObject.AtomsKinds.begin(), CellEngineConfigDataObject.AtomsKinds.end(), string(1, AtomObject.Name[0]));
+//                    if (AtomKindObjectIterator == CellEngineConfigDataObject.AtomsKinds.end())
+//                        AtomKindObjectIterator = std::find(CellEngineConfigDataObject.AtomsKinds.begin(), CellEngineConfigDataObject.AtomsKinds.end(), string(1, 'E'));
+//                    AtomObject.AtomColor = AtomKindObjectIterator->Color;
+//                }
+
                 ImGui::TreePop();
             }
 
@@ -420,6 +434,7 @@ int main(int argc, const char ** argv)
         int display_w, display_h;
         glfwGetFramebufferSize(window, &display_w, &display_h);
         glViewport(0, 0, display_w, display_h);
+        ImVec4 BackgroundColor = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
         glClearColor(BackgroundColor.x * BackgroundColor.w, BackgroundColor.y * BackgroundColor.w, BackgroundColor.z * BackgroundColor.w, BackgroundColor.w);
         glClear(GL_COLOR_BUFFER_BIT);
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

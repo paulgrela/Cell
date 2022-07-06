@@ -4,6 +4,7 @@
 
 #include "vmath.h"
 
+#include "ExceptionsMacro.h"
 #include "CellEngineTypes.h"
 
 struct ParticleKind
@@ -168,6 +169,21 @@ public:
     bool ImGuiLightVersion = false;
 public:
     int ChosenShapeOfAtoms = 1;
+public:
+    std::vector<AtomKind>::iterator GetAtomKindDataForAtom(char Name)
+    {
+        std::vector<AtomKind>::iterator AtomKindObjectIterator;
+
+        try
+        {
+            AtomKindObjectIterator = std::find(AtomsKinds.begin(), AtomsKinds.end(), std::string(1, Name));
+            if (AtomKindObjectIterator == AtomsKinds.end())
+                AtomKindObjectIterator = std::find(AtomsKinds.begin(), AtomsKinds.end(), std::string(1, 'E'));
+        }
+        CATCH("getting atom kind data for atom")
+
+        return AtomKindObjectIterator;
+    }
 };
 
 inline CellEngineConfigData CellEngineConfigDataObject;
