@@ -400,17 +400,19 @@ int main(int argc, const char ** argv)
 
             if (ImGui::TreeNode("Atoms"))
             {
+                bool ChangeColor = false;
                 for (auto& AtomsKind : CellEngineConfigDataObject.AtomsKinds)
-                    ImGui::ColorEdit3(string(AtomsKind.Name + " Atom Color").c_str(), (float*)&AtomsKind.Color);
+                    if (ImGui::ColorEdit3(string(AtomsKind.Name + " Atom Color").c_str(), (float*)&AtomsKind.Color) == true)
+                        ChangeColor = true;
 
-                for (auto& ParticleCenter : CellEngineDataFileObjectPointer->GetParticlesCenters())
-                {
-                    ParticleCenter.AtomColor = CellEngineConfigDataObject.GetAtomKindDataForAtom(ParticleCenter.Name[0])->Color;
-                    if (CellEngineConfigDataObject.ShowDetailsInAtomScale == true)
-                        //DODATKOWY WARUNEK
-                        for (auto& AtomObject : CellEngineDataFileObjectPointer->GetAllAtoms()[ParticleCenter.AtomIndex])
-                            AtomObject.AtomColor = CellEngineConfigDataObject.GetAtomKindDataForAtom(AtomObject.Name[0])->Color;
-                }
+                if (ChangeColor == true)
+                    for (auto& ParticleCenter : CellEngineDataFileObjectPointer->GetParticlesCenters())
+                    {
+                        ParticleCenter.AtomColor = CellEngineConfigDataObject.GetAtomKindDataForAtom(ParticleCenter.Name[0])->Color;
+                        if (CellEngineConfigDataObject.ShowDetailsInAtomScale == true)
+                            for (auto& AtomObject : CellEngineDataFileObjectPointer->GetAllAtoms()[ParticleCenter.AtomIndex])
+                                AtomObject.AtomColor = CellEngineConfigDataObject.GetAtomKindDataForAtom(AtomObject.Name[0])->Color;
+                    }
 
                 ImGui::TreePop();
             }
