@@ -75,7 +75,7 @@ protected:
     void DrawBonds(const std::vector<CellEngineAtom>& Atoms, std::vector<std::pair<UnsignedIntType, UnsignedIntType>>& BondsToDraw, const bool DrawBonds, const vmath::mat4& ViewMatrix);
     void DrawBond(float x1, float y1, float z1, float x2, float y2, float z2);
 public:
-    static std::string GetEntityName(const uint64_t EntityId);
+    static std::string GetEntityName(const UnsignedIntType EntityId);
     static bool CheckVisibilityOfParticles(UnsignedIntType EntityId);
     static void SetVisibilityOfAllParticles(bool VisibleParam);
     static void SetVisibilityOfParticlesExcept(UnsignedIntType EntityId, bool VisibleParam);
@@ -104,7 +104,7 @@ protected:
     inline void PrepareOpenGLToRenderObjectsOnScene();
     inline void LoadShapeOfAtomsWhenChanged();
     inline void PrintAtomDescriptionOnScreen(CellEngineAtom& ChosenParticleObject);
-    inline void ChooseAtomUsingStencilBuffer(const vmath::mat4& ViewMatrix, const GLuint* PartOfStencilBufferIndex, const std::vector<std::pair<uint64_t, uint64_t>>& TemporaryRenderedAtomsList, UnsignedIntType& NumberOfAllRenderedAtoms);
+    inline void ChooseAtomUsingStencilBuffer(const vmath::mat4& ViewMatrix, const GLuint* PartOfStencilBufferIndex, const std::vector<std::pair<UnsignedIntType, UnsignedIntType>>& TemporaryRenderedAtomsList, UnsignedIntType& NumberOfAllRenderedAtoms);
 protected:
     [[nodiscard]] static inline bool CheckDistanceToDrawDetailsInAtomScale(const float XNew, const float YNew, const float ZNew);
 };

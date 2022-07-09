@@ -455,11 +455,11 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
         UnsignedIntType NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = 0;
         UnsignedIntType NumberOfAllRenderedAtoms = 0;
 
-        vector<pair<uint64_t, uint64_t>> TemporaryRenderedAtomsList;
+        vector<pair<UnsignedIntType, UnsignedIntType>> TemporaryRenderedAtomsList;
         glUseProgram(ShaderProgramPhong);
         GLuint PartOfStencilBufferIndex[3];
 
-        for (uint64_t StencilBufferLoopCounter = 0; StencilBufferLoopCounter < CellEngineConfigDataObject.NumberOfStencilBufferLoops; StencilBufferLoopCounter++)
+        for (UnsignedIntType StencilBufferLoopCounter = 0; StencilBufferLoopCounter < CellEngineConfigDataObject.NumberOfStencilBufferLoops; StencilBufferLoopCounter++)
         {
             NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = 0;
             NumberOfAllRenderedAtoms = 0;
@@ -571,13 +571,13 @@ inline void CellEngineOpenGLVisualiser::PrintAtomDescriptionOnScreen(CellEngineA
     CATCH("printing atom description on screen")
 }
 
-inline void CellEngineOpenGLVisualiser::ChooseAtomUsingStencilBuffer(const vmath::mat4& ViewMatrix, const GLuint* PartOfStencilBufferIndex, const vector<pair<uint64_t, uint64_t>>& TemporaryRenderedAtomsList, UnsignedIntType& NumberOfAllRenderedAtoms)
+inline void CellEngineOpenGLVisualiser::ChooseAtomUsingStencilBuffer(const vmath::mat4& ViewMatrix, const GLuint* PartOfStencilBufferIndex, const vector<pair<UnsignedIntType, UnsignedIntType>>& TemporaryRenderedAtomsList, UnsignedIntType& NumberOfAllRenderedAtoms)
 {
     try
     {
         if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
         {
-            uint64_t ChosenParticleCenterIndex = PartOfStencilBufferIndex[0] | (PartOfStencilBufferIndex[1] << 8) | (PartOfStencilBufferIndex[2] << 16);
+            UnsignedIntType ChosenParticleCenterIndex = PartOfStencilBufferIndex[0] | (PartOfStencilBufferIndex[1] << 8) | (PartOfStencilBufferIndex[2] << 16);
 
             if (ChosenParticleCenterIndex > 0)
             {
@@ -613,7 +613,7 @@ inline void CellEngineOpenGLVisualiser::ChooseAtomUsingStencilBuffer(const vmath
     CATCH("choosing atom using stencil buffer")
 }
 
-string CellEngineOpenGLVisualiser::GetEntityName(const uint64_t EntityId)
+string CellEngineOpenGLVisualiser::GetEntityName(const UnsignedIntType EntityId)
 {
     string EntityName;
 

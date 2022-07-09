@@ -38,7 +38,7 @@ public:
     {
         return ParticlesCenters[ChosenStructureIndex];
     }
-    [[nodiscard]] IntType GetNumberOfStructures()
+    [[nodiscard]] UnsignedIntType GetNumberOfStructures()
     {
         return ParticlesCenters.size();
     }

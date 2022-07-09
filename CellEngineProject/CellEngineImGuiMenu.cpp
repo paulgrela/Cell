@@ -52,7 +52,7 @@ public:
         {
             LoggersManagerObject.InitializeFilesNames({ "AllMessages" });
             LoggersManagerObject.InitializeSelectiveWordsFunctions({ [](const string& s) { return true; } });
-            LoggersManagerObject.InitializeLoggerManagerDataForTask("CELL_RESULTS", ".\\", string("Logs." + GetActualDateTimeStandardCPP(".", ".", ".", ".", ".")), true, 0, function<void(const uint64_t& CurrentThreadId, const uint64_t FileNumber, const string& MessageStr)>());
+            LoggersManagerObject.InitializeLoggerManagerDataForTask("CELL_RESULTS", ".\\", string("Logs." + GetActualDateTimeStandardCPP(".", ".", ".", ".", ".")), true, 0, function<void(const UnsignedIntType& CurrentThreadId, const uint64_t FileNumber, const string& MessageStr)>());
             LoggersManagerObject.InitializePrintingParameters(CellEngineConfigDataObject.PrintLogToConsole, CellEngineConfigDataObject.PrintLogToFiles, CellEngineConfigDataObject.PrintLogLineNumberToConsole, CellEngineConfigDataObject.PrintLogDateTimeToConsole, CellEngineConfigDataObject.PrintLogProcessIdToConsole, CellEngineConfigDataObject.PrintLogProcessPriorityLevelToConsole, CellEngineConfigDataObject.PrintLogThreadIdToConsole, CellEngineConfigDataObject.PrintLogLineNumberToFile, CellEngineConfigDataObject.PrintLogDateTimeToFile, CellEngineConfigDataObject.PrintLogProcessIdToFile, CellEngineConfigDataObject.PrintLogProcessPriorityLevelToFile, CellEngineConfigDataObject.PrintLogThreadIdToFile, CellEngineConfigDataObject.MaximalNumberOfLinesInOneFile);
         }
         CATCH("initializing logger manager parameters")
@@ -65,7 +65,7 @@ public:
             InitializeLoggerManagerParameters();
             LoggersManagerObject.Log(STREAM("START CELL"));
 
-            uint64_t ExecuteCellStateId;
+            UnsignedIntType ExecuteCellStateId;
             if (__argc > 1)
                 ExecuteCellStateId = stoi(__argv[1]);
             else
@@ -354,7 +354,7 @@ public:
         {
             if (ImGui::CollapsingHeader("Background"))
             {
-                for (uint64_t BackgroundColorIndex = 1; BackgroundColorIndex <= 3; BackgroundColorIndex++)
+                for (UnsignedIntType BackgroundColorIndex = 1; BackgroundColorIndex <= 3; BackgroundColorIndex++)
                 {
                     ImVec4 BackgroundColor = ImVec4(CellEngineConfigDataObject.BackgroundColors[BackgroundColorIndex].X(), CellEngineConfigDataObject.BackgroundColors[BackgroundColorIndex].Y(), CellEngineConfigDataObject.BackgroundColors[BackgroundColorIndex].Z(), 1.00f);
                     ImGui::ColorEdit3(string("Background Color " + to_string(BackgroundColorIndex)).c_str(), (float*)&BackgroundColor);

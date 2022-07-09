@@ -109,7 +109,7 @@ void CellEngineCIFDataFile::ReadDataFromFile()
 
                 TransformationMatrix3x4 TransofrmationMatrix3x4Object;
 
-                uint64_t TransofrmationMatrix3x4ObjectId = stoi(MatrixFields[0]);
+                UnsignedIntType TransofrmationMatrix3x4ObjectId = stoi(MatrixFields[0]);
 
                 UnsignedIntType Shift = 6;
                 TransofrmationMatrix3x4Object.Matrix[0][0] = stof(MatrixFields[Shift + 0]);
