@@ -3,6 +3,8 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
+#include "DestinationPlatform.h"
+
 #include <string>
 #include <memory>
 
@@ -50,15 +52,16 @@ public:
     {
         try
         {
+            const char* LogDirectory = "." OS_DIR_SEP;
             LoggersManagerObject.InitializeFilesNames({ "AllMessages" });
             LoggersManagerObject.InitializeSelectiveWordsFunctions({ [](const string& s) { return true; } });
-            LoggersManagerObject.InitializeLoggerManagerDataForTask("CELL_RESULTS", ".\\", string("Logs." + GetActualDateTimeStandardCPP(".", ".", ".", ".", ".")), true, 0, function<void(const UnsignedIntType& CurrentThreadId, const uint64_t FileNumber, const string& MessageStr)>());
+            LoggersManagerObject.InitializeLoggerManagerDataForTask("CELL_RESULTS", LogDirectory, string("Logs." + GetActualDateTimeStandardCPP(".", ".", ".", ".", ".")), true, 0, function<void(const UnsignedIntType& CurrentThreadId, const uint64_t FileNumber, const string& MessageStr)>());
             LoggersManagerObject.InitializePrintingParameters(CellEngineConfigDataObject.PrintLogToConsole, CellEngineConfigDataObject.PrintLogToFiles, CellEngineConfigDataObject.PrintLogLineNumberToConsole, CellEngineConfigDataObject.PrintLogDateTimeToConsole, CellEngineConfigDataObject.PrintLogProcessIdToConsole, CellEngineConfigDataObject.PrintLogProcessPriorityLevelToConsole, CellEngineConfigDataObject.PrintLogThreadIdToConsole, CellEngineConfigDataObject.PrintLogLineNumberToFile, CellEngineConfigDataObject.PrintLogDateTimeToFile, CellEngineConfigDataObject.PrintLogProcessIdToFile, CellEngineConfigDataObject.PrintLogProcessPriorityLevelToFile, CellEngineConfigDataObject.PrintLogThreadIdToFile, CellEngineConfigDataObject.MaximalNumberOfLinesInOneFile);
         }
         CATCH("initializing logger manager parameters")
     }
 
-    static void ReadInitConfiguration()
+    static void ReadInitConfiguration(int argc, const char** argv)
     {
         try
         {
@@ -66,8 +69,8 @@ public:
             LoggersManagerObject.Log(STREAM("START CELL"));
 
             UnsignedIntType ExecuteCellStateId;
-            if (__argc > 1)
-                ExecuteCellStateId = stoi(__argv[1]);
+            if (argc > 1)
+                ExecuteCellStateId = stoi(argv[1]);
             else
                 LoggersManagerObject.Log(STREAM("Lack of cell id to execute in program parameters"));
 
@@ -119,7 +122,12 @@ public:
         {
             glfwSetErrorCallback(glfw_error_callback);
             if (!glfwInit())
+                #ifdef WINDOWS_PLATFORM
                 ExitProcess(1);
+                #endif
+                #ifdef UNIX_PLATFORM
+                exit(1);
+                #endif
 
             Info.WindowWidth = 1600;
             Info.WindowHeight = 1200;
@@ -143,7 +151,12 @@ public:
 
             ImGuiMenuWindow = glfwCreateWindow(CellEngineConfigDataObject.WidthMenuWindow, CellEngineConfigDataObject.HeightMenuWindow, "Dear ImGui GLFW+OpenGL3 example", NULL, NULL);
             if (ImGuiMenuWindow == nullptr)
+                #ifdef WINDOWS_PLATFORM
                 ExitProcess(1);
+                #endif
+                #ifdef UNIX_PLATFORM
+                exit(1);
+                #endif
 
             glfwSetWindowPos(ImGuiMenuWindow, CellEngineConfigDataObject.XTopMenuWindow, CellEngineConfigDataObject.YTopMenuWindow);
 
@@ -604,11 +617,11 @@ public:
     }
 
 public:
-    CellEngineOpenGLVisualiserImGuiMenu()
+    CellEngineOpenGLVisualiserImGuiMenu(int argc, const char** argv)
     {
         try
         {
-            ReadInitConfiguration();
+            ReadInitConfiguration(argc, argv);
 
             GLFWwindow* ImGuiMenuWindow = PrepareImGuiMenuGLFWData();
 
@@ -626,6 +639,6 @@ public:
 
 int main(int argc, const char ** argv)
 {
-    CellEngineOpenGLVisualiserImGuiMenu CellEngineOpenGLVisualiserImGuiMenuObject;
+    CellEngineOpenGLVisualiserImGuiMenu CellEngineOpenGLVisualiserImGuiMenuObject(argc, argv);
     return 0;
 }

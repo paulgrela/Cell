@@ -48,12 +48,12 @@
 	</Logger>	
 	<CellsStates>
 		<CellState id="1">
-			<CellStateFileName>c:\Projects\Programs\C++\Cell\WholeCellData\cellpack_atom_instances_6973_curated.cif</CellStateFileName>
+			<CellStateFileName>../../WholeCellData/cellpack_atom_instances_6973_curated.cif</CellStateFileName>
 			
 			<ChosenStructureIndex>0</ChosenStructureIndex>
 			<FilmOfStructuresActive>0</FilmOfStructuresActive>
 			
-			<NumberOfStencilBufferLoops>3</NumberOfStencilBufferLoops>
+			<NumberOfStencilBufferLoops>1</NumberOfStencilBufferLoops>
 			<StencilForDrawingObjectsTypes>2</StencilForDrawingObjectsTypes> <!--StencilForDrawingOnlyParticlesCenters = 1, StencilForDrawingOnlyInAtomScale = 2-->
 			
 			<MakeColorsType>2</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticle = 3-->
@@ -260,7 +260,7 @@
 		</CellState>
 
 		<CellState id="2">
-			<CellStateFileName>c:\Projects\Programs\C++\Cell\PDBFiles\struct0\117E.pdb</CellStateFileName>
+			<CellStateFileName>../../PDBFiles/struct0/117E.pdb</CellStateFileName>
 			
 			<ChosenStructureIndex>0</ChosenStructureIndex>
 			<FilmOfStructuresActive>0</FilmOfStructuresActive>
@@ -473,7 +473,7 @@
 		</CellState>
 		
 		<CellState id="3">
-			<CellStateFileName>c:\Projects\Programs\C++\Cell\WholeCellData\cellpack_atom_instances_small.cif</CellStateFileName>
+			<CellStateFileName>../../WholeCellData/cellpack_atom_instances_small.cif</CellStateFileName>
 			
 			<ChosenStructureIndex>0</ChosenStructureIndex>
 			<FilmOfStructuresActive>0</FilmOfStructuresActive>
@@ -690,7 +690,7 @@
 		
 		
 		<CellState id="4">
-			<CellStateFileName>c:\Projects\Programs\C++\Cell\PDBFiles\struct1\1rjk_MD_MD000.pdb</CellStateFileName>
+			<CellStateFileName>../../PDBFiles/struct1/1rjk_MD_MD000.pdb</CellStateFileName>
 			
 			<ChosenStructureIndex>0</ChosenStructureIndex>
 			<FilmOfStructuresActive>0</FilmOfStructuresActive>

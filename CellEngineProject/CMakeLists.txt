@@ -22,19 +22,7 @@ if (OPENMP_FOUND)
 	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 endif()
 
-#set (CMAKE_DEBUG_POSTFIX "_d")
-#
-#if(WIN32)
-#	set(COMMON_LIBS sb7 optimized glfw3 debug glfw3_d ${GLFW_LIBRARIES} ${OPENGL_LIBRARIES})
-#elseif (UNIX)
-#	find_package(PkgConfig REQUIRED)
-#	pkg_check_modules(GLFW REQUIRED glfw3)
-#	set(COMMON_LIBS sb7 glfw3 X11 Xrandr Xinerama Xi Xxf86vm Xcursor GL rt dl)
-#else()
-#	set(COMMON_LIBS sb7)
-#endif()
-#
-#set(COMMON_LIBS ${COMMON_LIBS} ${EXTRA_LIBS})
+set(COMMON_LIBS ${COMMON_LIBS} ${EXTRA_LIBS})
 
 add_library(sb7
 		srcsb7/sb7.cpp
@@ -54,13 +42,14 @@ add_library(imgui
 		extern/imgui/backends/imgui_impl_glfw.cpp
 		extern/imgui/backends/imgui_impl_opengl3.cpp)
 
+install(TARGETS sb7 DESTINATION lib/sb7)
+
 include_directories(glm)
 include_directories(include)
 
 include_directories(extern/imgui)
 include_directories(extern/imgui/backends)
 
-#include_directories(extern/glfw-3.0.4/include)
 include_directories(extern/glfw-3.3.7.bin.WIN64/include)
 include_directories(
 	"../../Boost/*"
@@ -86,7 +75,11 @@ add_executable(
 	CellEngineOpenGLVisualizer.cpp
 	CellEngineConfigurationFileReaderWriter.cpp)
 
+if(WIN32)
 target_link_libraries(${PROJECT_NAME} -static-libgcc -static-libstdc++ -lpthread -lglew32 -lsb7 -lglfw3 -lopengl32 -lglu32 -limgui)
+else()
+target_link_libraries(${PROJECT_NAME} -static-libgcc -static-libstdc++ -lpthread sb7 ${OPENGL_LIBRARIES} glfw3 X11 Xrandr Xinerama Xi Xxf86vm Xcursor GL rt dl imgui)
+endif()
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})

@@ -1,7 +1,17 @@
 
-#include <windows.h>
+#include "DestinationPlatform.h"
 
+#ifdef WINDOWS_PLATFORM
+#include <windows.h>
+#endif
+
+#ifdef WINDOWS_PLATFORM
 #include <gl\gl.h>
+#endif
+
+#ifdef UNIX_PLATFORM
+#include <GL/gl.h>
+#endif
 
 #include "ArcBall.h"
 

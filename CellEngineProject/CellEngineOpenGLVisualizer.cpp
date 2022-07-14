@@ -83,7 +83,7 @@ void CellEngineOpenGLVisualiser::LoadShadersPhong()
 {
     try
     {
-        LoadShaders("..\\shaders\\per-fragment-phong.vs.glsl", "..\\shaders\\per-fragment-phong.fs.glsl", ShaderProgramPhong);
+        LoadShaders("..//shaders//per-fragment-phong.vs.glsl", "..//shaders//per-fragment-phong.fs.glsl", ShaderProgramPhong);
 
         Uniforms.DiffuseAlbedo = glGetUniformLocation(ShaderProgramPhong, "diffuse_albedo");
         Uniforms.SpecularAlbedo = glGetUniformLocation(ShaderProgramPhong, "specular_albedo");
@@ -200,7 +200,7 @@ void CellEngineOpenGLVisualiser::DrawBonds(const vector<CellEngineAtom>& Atoms, 
     {
         if (DrawBonds == true)
         {
-            glUseProgram(ShaderProgramSimple);
+                                                                                                                        //glUseProgram(ShaderProgramSimple);
 
             if (BondsToDraw.empty() == true)
                 FindBondsToDraw(Atoms, BondsToDraw);
@@ -456,7 +456,7 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
         UnsignedIntType NumberOfAllRenderedAtoms = 0;
 
         vector<pair<UnsignedIntType, UnsignedIntType>> TemporaryRenderedAtomsList;
-        glUseProgram(ShaderProgramPhong);
+                                                                                                                        //glUseProgram(ShaderProgramPhong);
         GLuint PartOfStencilBufferIndex[3];
 
         for (UnsignedIntType StencilBufferLoopCounter = 0; StencilBufferLoopCounter < CellEngineConfigDataObject.NumberOfStencilBufferLoops; StencilBufferLoopCounter++)
@@ -491,7 +491,7 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
 
                             DrawBonds(CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex], BondsBetweenAtomsToDraw[ParticlesCenterObject.AtomIndex], CellEngineConfigDataObject.DrawBondsBetweenAtoms, ViewMatrix);
 
-                            glUseProgram(ShaderProgramPhong);
+                                                                                                                        //glUseProgram(ShaderProgramPhong);
                             UnsignedIntType AtomObjectIndex;
                             for (AtomObjectIndex = 0; AtomObjectIndex < CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex].size(); AtomObjectIndex += CellEngineConfigDataObject.LoadOfAtomsStep)
                             {

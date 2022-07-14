@@ -293,8 +293,8 @@ int main(int argc, const char ** argv)                                          
     delete MainApplicationObject;                                                                                       \
     return 0;                                                                                                           \
 }
-#else
-#error Undefined platform!
+//#else
+//#error Undefined platform!
 #endif
 
 #endif

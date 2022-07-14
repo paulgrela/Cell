@@ -14,12 +14,12 @@ struct CellEngineAtom
 public:
     UnsignedIntType AtomIndex;
     IntType Serial;
-    char Name[5];
-    char ResName[4];
+    char Name[5 + 1];
+    char ResName[4 + 1];
     float X;
     float Y;
     float Z;
-    char Chain[6];
+    char Chain[6 + 1];
     UnsignedIntType EntityId;
     float SizeXAtom;
     float SizeYAtom;
@@ -33,6 +33,7 @@ public:
     bool Visible;
 public:
     CellEngineAtom(float XParam, float YParam, float ZParam, UnsignedIntType AtomIndexParam, IntType SerialParam, char NameParam[2], char ResNameParam[4], char ChainParam[6], vmath::vec3 ColorParam) : X(XParam), Y(YParam), Z(ZParam), AtomIndex(AtomIndexParam), Serial(SerialParam), ParticleColor(std::move(ColorParam))
+    //CellEngineAtom(float XParam, float YParam, float ZParam, UnsignedIntType AtomIndexParam, UnsignedIntType SerialParam, char NameParam[2], char ResNameParam[4], char ChainParam[6], vmath::vec3 ColorParam) : X(XParam), Y(YParam), Z(ZParam), AtomIndex(AtomIndexParam), Serial(SerialParam), ParticleColor(std::move(ColorParam))
     {
         strncpy(Name, NameParam, 2);
         strncpy(ResName, ResNameParam, 4);
