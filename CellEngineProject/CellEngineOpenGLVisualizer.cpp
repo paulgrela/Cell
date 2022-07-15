@@ -13,10 +13,15 @@
 #include "StringUtils.h"
 #include "DateTimeUtils.h"
 #include "ExceptionsMacro.h"
+#include "DestinationPlatform.h"
 
 #include "CellEngineDataFile.h"
 #include "CellEngineConfigData.h"
 #include "CellEngineOpenGLVisualiser.h"
+
+#ifdef WINDOWS_PLATFORM
+#define USE_GL_USE_PROGRAM_FUNCTION_DURING_RENDERING
+#endif
 
 using namespace std;
 
@@ -200,7 +205,9 @@ void CellEngineOpenGLVisualiser::DrawBonds(const vector<CellEngineAtom>& Atoms, 
     {
         if (DrawBonds == true)
         {
-                                                                                                                        //glUseProgram(ShaderProgramSimple);
+            #ifdef USE_GL_USE_PROGRAM_FUNCTION_DURING_RENDERING
+            glUseProgram(ShaderProgramSimple);
+            #endif
 
             if (BondsToDraw.empty() == true)
                 FindBondsToDraw(Atoms, BondsToDraw);
@@ -458,7 +465,11 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
         UnsignedIntType NumberOfAllRenderedAtoms = 0;
 
         vector<pair<UnsignedIntType, UnsignedIntType>> TemporaryRenderedAtomsList;
-                                                                                                                        //glUseProgram(ShaderProgramPhong);
+
+        #ifdef USE_GL_USE_PROGRAM_FUNCTION_DURING_RENDERING
+        glUseProgram(ShaderProgramPhong);
+        #endif
+
         GLuint PartOfStencilBufferIndex[3];
 
         for (UnsignedIntType StencilBufferLoopCounter = 0; StencilBufferLoopCounter < CellEngineConfigDataObject.NumberOfStencilBufferLoops; StencilBufferLoopCounter++)
@@ -493,7 +504,10 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
 
                             DrawBonds(CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex], BondsBetweenAtomsToDraw[ParticlesCenterObject.AtomIndex], CellEngineConfigDataObject.DrawBondsBetweenAtoms, ViewMatrix);
 
-                                                                                                                        //glUseProgram(ShaderProgramPhong);
+                            #ifdef USE_GL_USE_PROGRAM_FUNCTION_DURING_RENDERING
+                            glUseProgram(ShaderProgramPhong);
+                            #endif
+
                             UnsignedIntType AtomObjectIndex;
                             for (AtomObjectIndex = 0; AtomObjectIndex < CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex].size(); AtomObjectIndex += CellEngineConfigDataObject.LoadOfAtomsStep)
                             {

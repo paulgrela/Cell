@@ -120,6 +120,9 @@ namespace sb7
                 Render(glfwGetTime());
 
                 glfwSwapBuffers(Window);
+                #ifdef WINDOWS_PLATFORM
+                glfwPollEvents();
+                #endif
 
                 Running &= (glfwGetKey(Window, GLFW_KEY_ESCAPE) == GLFW_RELEASE);
                 Running &= (glfwWindowShouldClose(Window) != GL_TRUE);
