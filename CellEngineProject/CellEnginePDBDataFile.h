@@ -13,7 +13,7 @@ public:
     explicit CellEnginePDBDataFile() = default;
     ~CellEnginePDBDataFile() = default;
 public:
-    CellEngineAtom ParseRecord(const char* LocalPDBRecord);
+    static CellEngineAtom ParseRecord(const char* LocalPDBRecord);
 };
 
 #endif
