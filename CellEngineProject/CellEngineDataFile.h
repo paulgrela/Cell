@@ -3,11 +3,11 @@
 #define CELL_ENGINE_PROJECT_DATA_FILE_H
 
 #include "CellEngineAtom.h"
+#include "CellEngineConfigData.h"
 
 class CellEngineDataFile
 {
 public:
-    UnsignedIntType ChosenStructureIndex = 0;
     bool FilmOfStructuresActive = false;
 protected:
     std::vector<std::vector<CellEngineAtom>> ParticlesCenters;
@@ -36,7 +36,7 @@ public:
     }
     [[nodiscard]] std::vector<CellEngineAtom>& GetParticlesCenters()
     {
-        return ParticlesCenters[ChosenStructureIndex];
+        return ParticlesCenters[CellEngineConfigDataObject.ChosenStructureIndex];
     }
     [[nodiscard]] UnsignedIntType GetNumberOfStructures()
     {
@@ -57,7 +57,7 @@ public:
     {
         try
         {
-            ChosenStructureIndex = 0;
+            CellEngineConfigDataObject.ChosenStructureIndex = 0;
             FilmOfStructuresActive = true;
         }
         CATCH("starting film of structures")
@@ -76,8 +76,8 @@ public:
     {
         try
         {
-            if (ChosenStructureIndex < GetNumberOfStructures() - 1)
-                ChosenStructureIndex++;
+            if (CellEngineConfigDataObject.ChosenStructureIndex < GetNumberOfStructures() - 1)
+                CellEngineConfigDataObject.ChosenStructureIndex++;
         }
         CATCH("showing next structure")
     }
@@ -86,8 +86,8 @@ public:
     {
         try
         {
-            if (ChosenStructureIndex > 0)
-                ChosenStructureIndex--;
+            if (CellEngineConfigDataObject.ChosenStructureIndex > 0)
+                CellEngineConfigDataObject.ChosenStructureIndex--;
         }
         CATCH("showing previous structure")
     }

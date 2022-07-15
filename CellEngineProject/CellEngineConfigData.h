@@ -89,6 +89,7 @@ public:
     };
     StencilForDrawingObjectsTypes StencilForDrawingObjectsTypesObject;
     std::uint64_t NumberOfStencilBufferLoops;
+    bool UseStencilBuffer = false;
 public:
     bool DrawBondsBetweenParticlesCenters;
     bool DrawBondsBetweenAtoms;
@@ -145,7 +146,6 @@ public:
     bool AutomaticChangeOfLoadAtomsStep;
 public:
     UnsignedIntType ChosenStructureIndex = 0;
-    bool FilmOfStructuresActive = false;
 public:
     vmath::vec3 BackgroundColors[4];
     std::uint64_t ChosenBackgroundColor;

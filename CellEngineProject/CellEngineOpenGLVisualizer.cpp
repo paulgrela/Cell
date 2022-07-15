@@ -439,6 +439,8 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
 {
     try
     {
+        CellEngineConfigDataObject.UseStencilBuffer == true ? CellEngineConfigDataObject.NumberOfStencilBufferLoops = 3 : CellEngineConfigDataObject.NumberOfStencilBufferLoops = 1;
+
         const auto start_time = chrono::high_resolution_clock::now();
 
         LoadShapeOfAtomsWhenChanged();
@@ -590,6 +592,7 @@ inline void CellEngineOpenGLVisualiser::ChooseAtomUsingStencilBuffer(const vmath
                         ChosenParticleObject = CellEngineDataFileObjectPointer->GetParticlesCenters()[ChosenParticleCenterIndex];
                 }
                 else
+                                if (ChosenParticleCenterIndex < TemporaryRenderedAtomsList.size())
                 {
                     if (TemporaryRenderedAtomsList[ChosenParticleCenterIndex].first > CellEngineDataFileObjectPointer->GetAllAtoms().size())
                         throw std::runtime_error("ERROR STENCIL INDEX TOO BIG IN INNER 1 = " + to_string(TemporaryRenderedAtomsList[ChosenParticleCenterIndex].first) + " MAXIMAL NUMBER OF OBJECTS = " + to_string(CellEngineDataFileObjectPointer->GetAllAtoms().size()));

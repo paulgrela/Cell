@@ -94,7 +94,6 @@ void CellEngineConfigurationFileReaderWriter::ReadChessConfigurationFile(const c
                         CellEngineConfigDataObject.CellStateFileName = CellStateFileName;
 
                         CellEngineConfigDataObject.ChosenStructureIndex = CellStatePropertyTreeElement.second.get<uint64_t>("ChosenStructureIndex");
-                        CellEngineConfigDataObject.FilmOfStructuresActive = CellStatePropertyTreeElement.second.get<bool>("FilmOfStructuresActive");
 
                         CellEngineConfigDataObject.SpecularPower = CellStatePropertyTreeElement.second.get<float>("SpecularPower");
                         CellEngineConfigDataObject.SpecularAlbedo = CellStatePropertyTreeElement.second.get<float>("SpecularAlbedo");
