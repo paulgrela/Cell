@@ -18,7 +18,6 @@ private:
     GLuint LineDataBuffer[2];
 private:
     GLuint ShaderProgramPhong = 0;
-    GLuint ShaderProgramSimple = 0;
 private:
     struct UniformsBlock
     {
@@ -81,7 +80,6 @@ public:
     static void SetVisibilityOfParticlesExcept(UnsignedIntType EntityId, bool VisibleParam);
 protected:
     void LoadShadersPhong();
-    void LoadShadersSimple();
     static void LoadShaders(const char* VertexShaderFileName, const char* FragmentShaderFileName, GLuint& ShaderProgram);
 protected:
     void StartUp() override;

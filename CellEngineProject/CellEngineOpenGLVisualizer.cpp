@@ -19,10 +19,6 @@
 #include "CellEngineConfigData.h"
 #include "CellEngineOpenGLVisualiser.h"
 
-#ifdef WINDOWS_PLATFORM
-#define USE_GL_USE_PROGRAM_FUNCTION_DURING_RENDERING
-#endif
-
 using namespace std;
 
 void CellEngineOpenGLVisualiser::InitExternalData()
@@ -40,7 +36,6 @@ void CellEngineOpenGLVisualiser::StartUp()
 {
     try
     {
-        LoadShadersSimple();
         LoadShadersPhong();
 
         TextOverlayObject.Init(160, 80, "..//textures//cp437_9x16.ktx");
@@ -95,15 +90,6 @@ void CellEngineOpenGLVisualiser::LoadShadersPhong()
         Uniforms.SpecularPower = glGetUniformLocation(ShaderProgramPhong, "specular_power");
     }
     CATCH("loading phong shaders for cell visualization")
-}
-
-void CellEngineOpenGLVisualiser::LoadShadersSimple()
-{
-    try
-    {
-        LoadShaders("..\\shaders\\per-fragment-simple.vs.glsl", "..\\shaders\\per-fragment-simple.fs.glsl", ShaderProgramSimple);
-    }
-    CATCH("loading simple shaders for cell visualization")
 }
 
 void CellEngineOpenGLVisualiser::ShutDown()
@@ -205,10 +191,6 @@ void CellEngineOpenGLVisualiser::DrawBonds(const vector<CellEngineAtom>& Atoms, 
     {
         if (DrawBonds == true)
         {
-            #ifdef USE_GL_USE_PROGRAM_FUNCTION_DURING_RENDERING
-            glUseProgram(ShaderProgramSimple);
-            #endif
-
             if (BondsToDraw.empty() == true)
                 FindBondsToDraw(Atoms, BondsToDraw);
 
@@ -217,7 +199,7 @@ void CellEngineOpenGLVisualiser::DrawBonds(const vector<CellEngineAtom>& Atoms, 
                 const auto& AtomObject1 = Atoms[BondToDrawObject.first];
                 const auto& AtomObject2 = Atoms[BondToDrawObject.second];
 
-                CreateUniformBlockForVertexShader(vmath::vec3(0.0, 0.0, 0.0), sb7::FromVec4ToVec3(sb7::color::DarkCyan), ViewMatrix, vmath::translate(0.0f, 0.0f, 0.0f), false, false, false, false);
+                CreateUniformBlockForVertexShader(vmath::vec3(0.0, 0.0, 0.0), vmath::vec3(-1.0, -1.0, -1.0), ViewMatrix, vmath::translate(0.0f, 0.0f, 0.0f), false, false, false, false);
 
                 DrawBond(AtomObject1.X - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomObject1.Y - CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomObject1.Z - CellEngineConfigDataObject.CameraZPosition - Center.Z(), AtomObject2.X - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomObject2.Y - CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomObject2.Z - CellEngineConfigDataObject.CameraZPosition - Center.Z());
             }
@@ -466,10 +448,6 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
 
         vector<pair<UnsignedIntType, UnsignedIntType>> TemporaryRenderedAtomsList;
 
-        #ifdef USE_GL_USE_PROGRAM_FUNCTION_DURING_RENDERING
-        glUseProgram(ShaderProgramPhong);
-        #endif
-
         GLuint PartOfStencilBufferIndex[3];
 
         for (UnsignedIntType StencilBufferLoopCounter = 0; StencilBufferLoopCounter < CellEngineConfigDataObject.NumberOfStencilBufferLoops; StencilBufferLoopCounter++)
@@ -503,10 +481,6 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
                             NumberOfFoundParticlesCenterToBeRenderedInAtomDetails++;
 
                             DrawBonds(CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex], BondsBetweenAtomsToDraw[ParticlesCenterObject.AtomIndex], CellEngineConfigDataObject.DrawBondsBetweenAtoms, ViewMatrix);
-
-                            #ifdef USE_GL_USE_PROGRAM_FUNCTION_DURING_RENDERING
-                            glUseProgram(ShaderProgramPhong);
-                            #endif
 
                             UnsignedIntType AtomObjectIndex;
                             for (AtomObjectIndex = 0; AtomObjectIndex < CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex].size(); AtomObjectIndex += CellEngineConfigDataObject.LoadOfAtomsStep)

@@ -1,20 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Settings>
 	<ExecuteCellStateId>1</ExecuteCellStateId>
-	<WindowParameters>
-		<XTopMain>0</XTopMain>
-		<YTopMain>30</YTopMain>
-		<WidthMain>2000</WidthMain>
-		<HeightMain>1530</HeightMain>
-		<XTopMenu>2002</XTopMenu>
-		<YTopMenu>30</YTopMenu>
-		<WidthMenu>560</WidthMenu>
-		<HeightMenu>1530</HeightMenu>		
-		<XTopSecond>0</XTopSecond>
-		<YTopSecond>0</YTopSecond>
-		<WidthSecond>1280</WidthSecond>
-		<HeightSecond>1024</HeightSecond>				
-	</WindowParameters>
+	<WindowsParameters>
+		<XTopMainWindows>0</XTopMainWindows>
+		<YTopMainWindows>30</YTopMainWindows>
+		<WidthMainWindows>2000</WidthMainWindows>
+		<HeightMainWindows>1530</HeightMainWindows>
+		<XTopMenuWindows>2002</XTopMenuWindows>
+		<YTopMenuWindows>30</YTopMenuWindows>
+		<WidthMenuWindows>560</WidthMenuWindows>
+		<HeightMenuWindows>1530</HeightMenuWindows>
+		<XTopSecondWindows>0</XTopSecondWindows>
+		<YTopSecondWindows>0</YTopSecondWindows>
+		<WidthSecondWindows>1280</WidthSecondWindows>
+		<HeightSecondWindows>1024</HeightSecondWindows>
+
+		<XTopMainLinux>65</XTopMainLinux>
+		<YTopMainLinux>30</YTopMainLinux>
+		<WidthMainLinux>1930</WidthMainLinux>
+		<HeightMainLinux>1535</HeightMainLinux>
+		<XTopMenuLinux>2002</XTopMenuLinux>
+		<YTopMenuLinux>30</YTopMenuLinux>
+		<WidthMenuLinux>560</WidthMenuLinux>
+		<HeightMenuLinux>1535</HeightMenuLinux>
+		<XTopSecondLinux>0</XTopSecondLinux>
+		<YTopSecondLinux>0</YTopSecondLinux>
+		<WidthSecondLinux>1280</WidthSecondLinux>
+		<HeightSecondLinux>1024</HeightSecondLinux>
+	</WindowsParameters>
 	<Algorithm>
 		<MultiThreaded>true</MultiThreaded>
 		<SetProcessPriorityHighest>true</SetProcessPriorityHighest>
