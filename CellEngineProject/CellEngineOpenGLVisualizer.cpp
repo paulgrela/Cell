@@ -212,7 +212,12 @@ inline bool CellEngineOpenGLVisualiser::CheckDistanceToDrawDetailsInAtomScale(co
     if (CellEngineConfigDataObject.CheckAtomVisibility == true)
     {
         if (CellEngineConfigDataObject.ViewPositionZ > CellEngineConfigDataObject.Distance)
-            return ZNew > CellEngineConfigDataObject.CutZ && sqrt((XNew * XNew) + (YNew * YNew) + (ZNew * ZNew)) > CellEngineConfigDataObject.Distance;
+        {
+            if (CellEngineConfigDataObject.ShowAtomsInEachPartOfTheCellWhenObserverIsFromOutside == false)
+                return ZNew > CellEngineConfigDataObject.CutZ && sqrt((XNew * XNew) + (YNew * YNew) + (ZNew * ZNew)) > CellEngineConfigDataObject.Distance;
+            else
+                return true;
+        }
         else
             return (ZNew > CellEngineConfigDataObject.ViewPositionZ + CellEngineConfigDataObject.ZLowToDrawInAtomScale && ZNew < CellEngineConfigDataObject.ViewPositionZ + CellEngineConfigDataObject.ZHighToDrawInAtomScale && XNew > CellEngineConfigDataObject.XLowToDrawInAtomScale && XNew < CellEngineConfigDataObject.XHighToDrawInAtomScale && YNew > CellEngineConfigDataObject.YLowToDrawInAtomScale && YNew < CellEngineConfigDataObject.YHighToDrawInAtomScale);
     }
@@ -579,7 +584,7 @@ inline void CellEngineOpenGLVisualiser::ChooseAtomUsingStencilBuffer(const vmath
                         ChosenParticleObject = CellEngineDataFileObjectPointer->GetParticlesCenters()[ChosenParticleCenterIndex];
                 }
                 else
-                                if (ChosenParticleCenterIndex < TemporaryRenderedAtomsList.size())
+                if (ChosenParticleCenterIndex < TemporaryRenderedAtomsList.size())
                 {
                     if (TemporaryRenderedAtomsList[ChosenParticleCenterIndex].first > CellEngineDataFileObjectPointer->GetAllAtoms().size())
                         throw std::runtime_error("ERROR STENCIL INDEX TOO BIG IN INNER 1 = " + to_string(TemporaryRenderedAtomsList[ChosenParticleCenterIndex].first) + " MAXIMAL NUMBER OF OBJECTS = " + to_string(CellEngineDataFileObjectPointer->GetAllAtoms().size()));

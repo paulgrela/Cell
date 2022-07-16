@@ -99,6 +99,7 @@ public:
     float CutZ;
     float Distance;
     std::uint64_t LoadOfAtomsStep;
+    bool ShowAtomsInEachPartOfTheCellWhenObserverIsFromOutside = false;
 public:
     float XLowToDrawInAtomScale;
     float XHighToDrawInAtomScale;
