@@ -13,7 +13,6 @@
 #include "StringUtils.h"
 #include "DateTimeUtils.h"
 #include "ExceptionsMacro.h"
-#include "DestinationPlatform.h"
 
 #include "CellEngineDataFile.h"
 #include "CellEngineConfigData.h"
