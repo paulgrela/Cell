@@ -469,6 +469,8 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
 
             TemporaryRenderedAtomsList.clear();
 
+            std::lock_guard<std::mutex> LockGuardObject{CellEngineDataFileObjectPointer->ChosenStructureMutexObject};
+
             for (auto ParticlesCenterIterator = CellEngineDataFileObjectPointer->GetParticlesCenters().begin(); ParticlesCenterIterator != CellEngineDataFileObjectPointer->GetParticlesCenters().end(); ++ParticlesCenterIterator)
             {
                 if (CellEngineConfigDataObject.StencilForDrawingObjectsTypesObject == CellEngineConfigData::StencilForDrawingObjectsTypes::StencilForDrawingOnlyParticlesCenters)
@@ -499,7 +501,6 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
                             }
                         }
             }
-            CellEngineDataFileObjectPointer->ShowNextStructureFromActiveFilm();
 
             if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
             {
@@ -512,6 +513,8 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
         ChooseAtomUsingStencilBuffer(ViewMatrix, PartOfStencilBufferIndex, TemporaryRenderedAtomsList, NumberOfAllRenderedAtoms);
 
         const auto stop_time = chrono::high_resolution_clock::now();
+
+        CellEngineDataFileObjectPointer->ShowNextStructureFromActiveFilm();
 
         CellEngineConfigDataObject.TimeParametersOfRenderingStr = GetDurationTimeInOneLineStr(start_time, stop_time, "Time of one frame = ", "Exception in measuring time");
         CellEngineConfigDataObject.NumberOfRenderedAtomsParametersOfRenderingStr = "NumberOfFoundParticlesCenter = " + to_string(NumberOfFoundParticlesCenterToBeRenderedInAtomDetails) + " NumberOfAllRenderedAtoms = " + to_string(NumberOfAllRenderedAtoms);

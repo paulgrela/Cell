@@ -57,6 +57,8 @@ public:
     {
         try
         {
+            std::lock_guard<std::mutex> LockGuardObject{ChosenStructureMutexObject};
+
             CellEngineConfigDataObject.ChosenStructureIndex = 0;
             FilmOfStructuresActive = true;
         }
@@ -76,8 +78,12 @@ public:
     {
         try
         {
+            std::lock_guard<std::mutex> LockGuardObject{ChosenStructureMutexObject};
+
             if (CellEngineConfigDataObject.ChosenStructureIndex < GetNumberOfStructures() - 1)
                 CellEngineConfigDataObject.ChosenStructureIndex++;
+            else
+                FilmOfStructuresActive = false;
         }
         CATCH("showing next structure")
     }
@@ -86,11 +92,15 @@ public:
     {
         try
         {
+            std::lock_guard<std::mutex> LockGuardObject{ChosenStructureMutexObject};
+
             if (CellEngineConfigDataObject.ChosenStructureIndex > 0)
                 CellEngineConfigDataObject.ChosenStructureIndex--;
         }
         CATCH("showing previous structure")
     }
+public:
+    static inline std::mutex ChosenStructureMutexObject;
 };
 
 inline std::unique_ptr<CellEngineDataFile> CellEngineDataFileObjectPointer;
