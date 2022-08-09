@@ -53,6 +53,8 @@ void CellEngineOpenGLVisualiser::StartUp()
         InitArcBall();
 
         Center = CellEngineDataFileObjectPointer->GetCenter(CellEngineDataFileObjectPointer->GetParticlesCenters());
+
+        glUseProgram(ShaderProgramPhong);
     }
     CATCH("initiation of data for cell visualization")
 }
@@ -384,9 +386,6 @@ inline void CellEngineOpenGLVisualiser::PrepareOpenGLToRenderObjectsOnScene()
         static const GLfloat gray[] = {0.1f, 0.1f, 0.1f, 0.0f};
         static const GLfloat ones[] = {1.0f};
 
-        glUseProgram(ShaderProgramPhong);
-        glDisable(GL_SCISSOR_TEST);
-
         glViewport(0, 0, Info.WindowWidth, Info.WindowHeight);
 
         glClearBufferfv(GL_COLOR, 0, gray);
@@ -432,6 +431,8 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
 {
     try
     {
+        Point2fT MousePositionLocal = MousePosition;
+
         CellEngineConfigDataObject.UseStencilBuffer == true ? CellEngineConfigDataObject.NumberOfStencilBufferLoops = 3 : CellEngineConfigDataObject.NumberOfStencilBufferLoops = 1;
 
         const auto start_time = chrono::high_resolution_clock::now();
@@ -452,6 +453,8 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
 
         vector<pair<UnsignedIntType, UnsignedIntType>> TemporaryRenderedAtomsList;
 
+        auto ParticlesCenters = CellEngineDataFileObjectPointer->GetParticlesCenters();
+
         GLuint PartOfStencilBufferIndex[3];
 
         for (UnsignedIntType StencilBufferLoopCounter = 0; StencilBufferLoopCounter < CellEngineConfigDataObject.NumberOfStencilBufferLoops; StencilBufferLoopCounter++)
@@ -459,22 +462,14 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
             NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = 0;
             NumberOfAllRenderedAtoms = 0;
 
-            if (StencilBufferLoopCounter > 0)
-            {
-                glEnable(GL_SCISSOR_TEST);
-                glScissor(MousePosition.s.X, (float)Info.WindowHeight - MousePosition.s.Y - 1, 1, 1);
-            }
-            else
-                glDisable(GL_SCISSOR_TEST);
-
             TemporaryRenderedAtomsList.clear();
 
             std::lock_guard<std::mutex> LockGuardObject{CellEngineDataFileObjectPointer->ChosenStructureMutexObject};
 
-            for (auto ParticlesCenterIterator = CellEngineDataFileObjectPointer->GetParticlesCenters().begin(); ParticlesCenterIterator != CellEngineDataFileObjectPointer->GetParticlesCenters().end(); ++ParticlesCenterIterator)
+            for (auto ParticlesCenterIterator = ParticlesCenters.begin(); ParticlesCenterIterator != ParticlesCenters.end(); ++ParticlesCenterIterator)
             {
                 if (CellEngineConfigDataObject.StencilForDrawingObjectsTypesObject == CellEngineConfigData::StencilForDrawingObjectsTypes::StencilForDrawingOnlyParticlesCenters)
-                    glStencilFunc(GL_ALWAYS, uint8_t((NumberOfAllRenderedAtoms) >> (8 * StencilBufferLoopCounter)), -1);
+                    glStencilFunc(GL_ALWAYS, uint8_t((NumberOfAllRenderedAtoms >> (8 * StencilBufferLoopCounter))), -1);
 
                 auto ParticlesCenterObject = *ParticlesCenterIterator;
 
@@ -505,7 +500,7 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
             if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
             {
                 GLuint StencilIndex;
-                glReadPixels(MousePosition.s.X, (float)Info.WindowHeight - MousePosition.s.Y - 1, 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &StencilIndex);
+                glReadPixels(GLint(MousePositionLocal.s.X), GLint((float)Info.WindowHeight - MousePositionLocal.s.Y - 1), 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &StencilIndex);
                 PartOfStencilBufferIndex[StencilBufferLoopCounter] = StencilIndex;
             }
         }
@@ -599,8 +594,6 @@ inline void CellEngineOpenGLVisualiser::ChooseAtomUsingStencilBuffer(const vmath
                             ChosenParticleObject = CellEngineDataFileObjectPointer->GetAllAtoms()[TemporaryRenderedAtomsList[ChosenParticleCenterIndex].first][TemporaryRenderedAtomsList[ChosenParticleCenterIndex].second];
                     }
                 }
-
-                glDisable(GL_SCISSOR_TEST);
 
                 RenderObject(ChosenParticleObject, ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, true, RenderObjectsBool);
 
