@@ -475,7 +475,7 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
 
                 auto ParticlesCenterObject = *ParticlesCenterIterator;
 
-                bool FinalVisibilityInModelWorld = RenderObject(ParticlesCenterObject, ViewMatrix, true, ParticlesCenterIterator == CellEngineDataFileObjectPointer->GetParticlesCenters().end() - 1, true, NumberOfAllRenderedAtoms, false, !CellEngineConfigDataObject.ShowDetailsInAtomScale);
+                bool FinalVisibilityInModelWorld = RenderObject(ParticlesCenterObject, ViewMatrix, true, ParticlesCenterIterator == ParticlesCenters.end() - 1, true, NumberOfAllRenderedAtoms, false, !CellEngineConfigDataObject.ShowDetailsInAtomScale);
 
                 if (CellEngineConfigDataObject.ShowDetailsInAtomScale == true)
                     if (FinalVisibilityInModelWorld == true)
