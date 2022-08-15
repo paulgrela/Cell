@@ -301,9 +301,9 @@ inline vmath::vec3 CellEngineOpenGLVisualiser::GetColor(const CellEngineAtom& At
         else
             switch (CellEngineConfigDataObject.MakeColorsTypeObject)
             {
-                case CellEngineConfigData::MakeColorsType::DrawColorForEveryAtom : FinalColor = AtomObject.AtomColor; break;
-                case CellEngineConfigData::MakeColorsType::DrawColorForEveryParticle : FinalColor = AtomObject.ParticleColor; break;
-                case CellEngineConfigData::MakeColorsType::DrawRandomColorForEveryParticle : FinalColor = AtomObject.RandomParticleColor; break;
+                case CellEngineConfigData::MakeColorsType::DrawColorForEveryAtom : FinalColor = GetVMathVec3FromVector3(AtomObject.AtomColor); break;
+                case CellEngineConfigData::MakeColorsType::DrawColorForEveryParticle : FinalColor = GetVMathVec3FromVector3(AtomObject.ParticleColor); break;
+                case CellEngineConfigData::MakeColorsType::DrawRandomColorForEveryParticle : FinalColor = GetVMathVec3FromVector3(AtomObject.RandomParticleColor); break;
                 default : break;
             }
     }
@@ -320,8 +320,10 @@ inline vmath::vec3 CellEngineOpenGLVisualiser::GetSize(const CellEngineAtom& Ato
     {
         switch(CellEngineConfigDataObject.SizeOfAtomsDrawingTypesObject)
         {
+            #ifdef EXTENDED_RAM_MEMORY
             case CellEngineConfigData::SizeOfAtomsDrawingTypes::AtomSize : Size = vmath::vec3(AtomObject.SizeXAtom, AtomObject.SizeYAtom, AtomObject.SizeZAtom); break;
             case CellEngineConfigData::SizeOfAtomsDrawingTypes::ParticleSize : Size = vmath::vec3(AtomObject.SizeXParticle, AtomObject.SizeYParticle, AtomObject.SizeZParticle); break;
+            #endif
             case CellEngineConfigData::SizeOfAtomsDrawingTypes::AutomaticChangeSize : Size = vmath::vec3(CellEngineConfigDataObject.SizeOfAtomX, CellEngineConfigDataObject.SizeOfAtomY, CellEngineConfigDataObject.SizeOfAtomZ); break;
             default : break;
         }

@@ -37,17 +37,21 @@ CellEngineAtom CellEngineCIFDataFile::ParseRecord(const char* LocalCIFRecord)
         CellEngineAtomObject.Z = stof(AtomFields[12]);
 
         auto AtomKindObjectIterator = CellEngineConfigDataObject.GetAtomKindDataForAtom(CellEngineAtomObject.Name[0]);
-        CellEngineAtomObject.AtomColor = AtomKindObjectIterator->Color;
+        CellEngineAtomObject.AtomColor = GetVector3FormVMathVec3(AtomKindObjectIterator->Color);
+        #ifdef EXTENDED_RAM_MEMORY
         CellEngineAtomObject.SizeXAtom = AtomKindObjectIterator->SizeX;
         CellEngineAtomObject.SizeYAtom = AtomKindObjectIterator->SizeY;
         CellEngineAtomObject.SizeZAtom = AtomKindObjectIterator->SizeZ;
+        #endif
 
         auto ParticleKindObject = CellEngineConfigDataObject.ParticlesKinds[CellEngineConfigDataObject.ParticlesKindsPos.find(CellEngineAtomObject.EntityId)->second];
         CellEngineAtomObject.Visible = ParticleKindObject.Visible;
-        CellEngineAtomObject.ParticleColor = ParticleKindObject.Color;
+        CellEngineAtomObject.ParticleColor = GetVector3FormVMathVec3(ParticleKindObject.Color);
+        #ifdef EXTENDED_RAM_MEMORY
         CellEngineAtomObject.SizeXParticle = ParticleKindObject.SizeX;
         CellEngineAtomObject.SizeYParticle = ParticleKindObject.SizeY;
         CellEngineAtomObject.SizeZParticle = ParticleKindObject.SizeZ;
+        #endif
     }
     CATCH("parsing atom record")
 
@@ -191,7 +195,7 @@ void CellEngineCIFDataFile::ReadDataFromFile()
                                 AppliedAtom.Y = Result[1];
                                 AppliedAtom.Z = Result[2];
 
-                                AppliedAtom.RandomParticleColor = ChainColor;
+                                AppliedAtom.RandomParticleColor = GetVector3FormVMathVec3(ChainColor);
 
                                 LocalCellEngineAllAtomsObject.emplace_back(AppliedAtom);
                             }

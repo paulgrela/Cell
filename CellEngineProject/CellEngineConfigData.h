@@ -170,6 +170,7 @@ public:
     bool ImGuiLightVersion = false;
 public:
     int ChosenShapeOfAtoms = 1;
+    UnsignedIntType DNAIdentifier;
 public:
     std::vector<AtomKind>::iterator GetAtomKindDataForAtom(char Name)
     {

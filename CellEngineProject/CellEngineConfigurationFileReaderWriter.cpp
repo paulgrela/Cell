@@ -199,6 +199,7 @@ void CellEngineConfigurationFileReaderWriter::ReadChessConfigurationFile(const c
                             LoggersManagerObject.Log(STREAM("Particle Kind Name = " << ParticleKindPropertyTreeElement.second.get<string>("Name") << " ID = " << ParticleKindPropertyTreeElement.second.get<UnsignedIntType>("<xmlattr>.id") << " COLOR = " << ParticleKindPropertyTreeElement.second.get<string>("Color")));
 
                             ParticleKindObject.NameFromXML = ParticleKindPropertyTreeElement.second.get<string>("Name");
+                            ParticleKindObject.NameFromXML == "DNA" ? CellEngineConfigDataObject.DNAIdentifier = ParticleKindPropertyTreeElement.second.get<UnsignedIntType>("<xmlattr>.id") : 0;
                             ParticleKindObject.Color = sb7::FromVec4ToVec3(sb7::GetColorVec4FromColorName(ParticleKindPropertyTreeElement.second.get<string>("Color")));
                             ParticleKindObject.Visible = ParticleKindPropertyTreeElement.second.get<bool>("Visible");
                             ParticleKindObject.SizeX = ParticleKindPropertyTreeElement.second.get<float>("SizeX");

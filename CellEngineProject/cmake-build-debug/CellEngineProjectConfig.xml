@@ -61,7 +61,7 @@
 	</Logger>	
 	<CellsStates>
 		<CellState id="1">
-			<CellStateFileName>../../WholeCellData/cellpack_atom_instances_6973_curated.cif</CellStateFileName>
+			<CellStateFileName>../../WholeCellData/Mycoplasma Genitalium/cellpack_atom_instances_6973_curated.cif</CellStateFileName>
 			
 			<ChosenStructureIndex>0</ChosenStructureIndex>
 			<FilmOfStructuresActive>0</FilmOfStructuresActive>
@@ -485,7 +485,7 @@
 		</CellState>
 		
 		<CellState id="3">
-			<CellStateFileName>../../WholeCellData/cellpack_atom_instances_small.cif</CellStateFileName>
+			<CellStateFileName>../../WholeCellData/Mycoplasma Genitalium/cellpack_atom_instances_small.cif</CellStateFileName>
 			
 			<ChosenStructureIndex>0</ChosenStructureIndex>
 			<FilmOfStructuresActive>0</FilmOfStructuresActive>
@@ -909,7 +909,7 @@
 		</CellState>
 
 		<CellState id="5">
-			<CellStateFileName>../../WholeCellData/cellpack_atom_instances_149_curated.cif</CellStateFileName>
+			<CellStateFileName>../../WholeCellData/Mycoplasma Genitalium/cellpack_atom_instances_149_curated.cif</CellStateFileName>
 
 			<ChosenStructureIndex>0</ChosenStructureIndex>
 			<FilmOfStructuresActive>0</FilmOfStructuresActive>

@@ -31,7 +31,9 @@ CellEngineAtom CellEnginePDBDataFile::ParseRecord(const char* LocalPDBRecord)
         CellEngineAtomObject.Z = stof(RecordStr.substr(46, 8));
         
         auto AtomKindObjectIterator = CellEngineConfigDataObject.GetAtomKindDataForAtom(CellEngineAtomObject.Name[0]);
-        CellEngineAtomObject.AtomColor = AtomKindObjectIterator->Color;
+        CellEngineAtomObject.AtomColor = GetVector3FormVMathVec3(AtomKindObjectIterator->Color);
+
+        #ifdef EXTENDED_RAM_MEMORY
         CellEngineAtomObject.SizeXAtom = AtomKindObjectIterator->SizeX;
         CellEngineAtomObject.SizeYAtom = AtomKindObjectIterator->SizeY;
         CellEngineAtomObject.SizeZAtom = AtomKindObjectIterator->SizeZ;
@@ -39,6 +41,7 @@ CellEngineAtom CellEnginePDBDataFile::ParseRecord(const char* LocalPDBRecord)
         CellEngineAtomObject.SizeXParticle = 1;
         CellEngineAtomObject.SizeYParticle = 1;
         CellEngineAtomObject.SizeZParticle = 1;
+        #endif
     }
     CATCH("parsing atom record")
 
