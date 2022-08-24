@@ -433,6 +433,8 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
 {
     try
     {
+        glUseProgram(ShaderProgramPhong);
+
         Point2fT MousePositionLocal = MousePosition;
 
         CellEngineConfigDataObject.UseStencilBuffer == true ? CellEngineConfigDataObject.NumberOfStencilBufferLoops = 3 : CellEngineConfigDataObject.NumberOfStencilBufferLoops = 1;
