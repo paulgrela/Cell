@@ -455,8 +455,6 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
         UnsignedIntType NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = 0;
         UnsignedIntType NumberOfAllRenderedAtoms = 0;
 
-        vector<pair<UnsignedIntType, UnsignedIntType>> TemporaryRenderedAtomsList;
-
         auto ParticlesCenters = CellEngineDataFileObjectPointer->GetParticlesCenters();
 
         GLuint PartOfStencilBufferIndex[3];
@@ -490,12 +488,13 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
                             UnsignedIntType AtomObjectIndex;
                             for (AtomObjectIndex = 0; AtomObjectIndex < CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex].size(); AtomObjectIndex += CellEngineConfigDataObject.LoadOfAtomsStep)
                             {
-                                if (CellEngineConfigDataObject.StencilForDrawingObjectsTypesObject == CellEngineConfigData::StencilForDrawingObjectsTypes::StencilForDrawingOnlyInAtomScale)
-                                {
-                                    uint8_t ToInsert = (TemporaryRenderedAtomsList.size()) >> (8 * StencilBufferLoopCounter);
-                                    glStencilFunc(GL_ALWAYS, ToInsert, -1);
-                                    TemporaryRenderedAtomsList.emplace_back(make_pair(ParticlesCenterObject.AtomIndex, AtomObjectIndex));
-                                }
+                                if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
+                                    if (CellEngineConfigDataObject.StencilForDrawingObjectsTypesObject == CellEngineConfigData::StencilForDrawingObjectsTypes::StencilForDrawingOnlyInAtomScale)
+                                    {
+                                        uint8_t ToInsert = (TemporaryRenderedAtomsList.size()) >> (8 * StencilBufferLoopCounter);
+                                        glStencilFunc(GL_ALWAYS, ToInsert, -1);
+                                        TemporaryRenderedAtomsList.emplace_back(make_pair(ParticlesCenterObject.AtomIndex, AtomObjectIndex));
+                                    }
                                 RenderObject(CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex][AtomObjectIndex], ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, false, RenderObjectsBool);
                             }
                         }

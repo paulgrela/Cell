@@ -51,6 +51,8 @@ private:
 private:
     std::vector<std::pair<UnsignedIntType, UnsignedIntType>> BondsBetweenParticlesCentersToDraw;
     std::vector<std::vector<std::pair<UnsignedIntType, UnsignedIntType>>> BondsBetweenAtomsToDraw;
+private:
+    std::vector<std::pair<UnsignedIntType, UnsignedIntType>> TemporaryRenderedAtomsList;
 public:
     bool RenderObjectsBool = true;
 public:
