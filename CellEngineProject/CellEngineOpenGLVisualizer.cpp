@@ -142,7 +142,7 @@ void CellEngineOpenGLVisualiser::InitLineVertexes()
     CATCH("initiation of line vertexes")
 }
 
-void CellEngineOpenGLVisualiser::DrawBond(float x1, float y1, float z1, float x2, float y2, float z2)
+void CellEngineOpenGLVisualiser::DrawBond(const float x1, const float y1, const float z1, const float x2, const float y2, const float z2)
 {
     try
     {
@@ -493,7 +493,7 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
                                     {
                                         uint8_t ToInsert = (TemporaryRenderedAtomsList.size()) >> (8 * StencilBufferLoopCounter);
                                         glStencilFunc(GL_ALWAYS, ToInsert, -1);
-                                        TemporaryRenderedAtomsList.emplace_back(make_pair(ParticlesCenterObject.AtomIndex, AtomObjectIndex));
+                                        TemporaryRenderedAtomsList.emplace_back(ParticlesCenterObject.AtomIndex, AtomObjectIndex);
                                     }
                                 RenderObject(CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex][AtomObjectIndex], ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, false, RenderObjectsBool);
                             }
@@ -508,7 +508,7 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
             }
         }
 
-        ChooseAtomUsingStencilBuffer(ViewMatrix, PartOfStencilBufferIndex, TemporaryRenderedAtomsList, NumberOfAllRenderedAtoms);
+        ChooseAtomUsingStencilBuffer(ViewMatrix, PartOfStencilBufferIndex, NumberOfAllRenderedAtoms);
 
         const auto stop_time = chrono::high_resolution_clock::now();
 
@@ -566,7 +566,7 @@ inline void CellEngineOpenGLVisualiser::PrintAtomDescriptionOnScreen(CellEngineA
     CATCH("printing atom description on screen")
 }
 
-inline void CellEngineOpenGLVisualiser::ChooseAtomUsingStencilBuffer(const vmath::mat4& ViewMatrix, const GLuint* PartOfStencilBufferIndex, const vector<pair<UnsignedIntType, UnsignedIntType>>& TemporaryRenderedAtomsList, UnsignedIntType& NumberOfAllRenderedAtoms)
+inline void CellEngineOpenGLVisualiser::ChooseAtomUsingStencilBuffer(const vmath::mat4& ViewMatrix, const GLuint* PartOfStencilBufferIndex, UnsignedIntType& NumberOfAllRenderedAtoms)
 {
     try
     {
@@ -624,7 +624,7 @@ string CellEngineOpenGLVisualiser::GetEntityName(const UnsignedIntType EntityId)
     return EntityName;
 }
 
-void CellEngineOpenGLVisualiser::SetVisibilityOfAllParticles(bool VisibleParam)
+void CellEngineOpenGLVisualiser::SetVisibilityOfAllParticles(const bool VisibleParam)
 {
     try
     {
@@ -634,7 +634,7 @@ void CellEngineOpenGLVisualiser::SetVisibilityOfAllParticles(bool VisibleParam)
     CATCH("setting visibility of all particles")
 }
 
-void CellEngineOpenGLVisualiser::SetVisibilityOfParticlesExcept(UnsignedIntType EntityId, bool VisibleParam)
+void CellEngineOpenGLVisualiser::SetVisibilityOfParticlesExcept(const UnsignedIntType EntityId, const bool VisibleParam)
 {
     try
     {
@@ -644,7 +644,7 @@ void CellEngineOpenGLVisualiser::SetVisibilityOfParticlesExcept(UnsignedIntType 
     CATCH("setting visibility of particles except")
 }
 
-bool CellEngineOpenGLVisualiser::CheckVisibilityOfParticles(UnsignedIntType EntityId)
+bool CellEngineOpenGLVisualiser::CheckVisibilityOfParticles(const UnsignedIntType EntityId)
 {
     bool Visible = false;
 

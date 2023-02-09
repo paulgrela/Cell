@@ -74,12 +74,12 @@ protected:
     void DeleteLineVertexes();
     static void FindBondsToDraw(const std::vector<CellEngineAtom>& Atoms, std::vector<std::pair<UnsignedIntType, UnsignedIntType>>& BondsToDraw);
     void DrawBonds(const std::vector<CellEngineAtom>& Atoms, std::vector<std::pair<UnsignedIntType, UnsignedIntType>>& BondsToDraw, const bool DrawBonds, const vmath::mat4& ViewMatrix);
-    void DrawBond(float x1, float y1, float z1, float x2, float y2, float z2);
+    void DrawBond(const float x1, const float y1, const float z1, const float x2, const float y2, const float z2);
 public:
     static std::string GetEntityName(const UnsignedIntType EntityId);
-    static bool CheckVisibilityOfParticles(UnsignedIntType EntityId);
-    static void SetVisibilityOfAllParticles(bool VisibleParam);
-    static void SetVisibilityOfParticlesExcept(UnsignedIntType EntityId, bool VisibleParam);
+    static bool CheckVisibilityOfParticles(const UnsignedIntType EntityId);
+    static void SetVisibilityOfAllParticles(const bool VisibleParam);
+    static void SetVisibilityOfParticlesExcept(const UnsignedIntType EntityId, const bool VisibleParam);
 protected:
     void LoadShadersPhong();
     static void LoadShaders(const char* VertexShaderFileName, const char* FragmentShaderFileName, GLuint& ShaderProgram);
@@ -100,11 +100,11 @@ protected:
     inline bool GetFinalVisibilityInModelWorld(const vmath::vec3& AtomPosition, UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, const bool CountNewPosition, const bool DrawOutsideBorder) const;
     inline bool CreateUniformBlockForVertexShader(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4 ModelMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, bool DrawAdditional);
     inline bool RenderObject(const CellEngineAtom& AtomObject, const vmath::mat4& ViewMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, UnsignedIntType& NumberOfAllRenderedAtoms, const bool Chosen, const bool RenderObjectParameter);
-    inline void SetAutomaticParametersForRendering();
+    static inline void SetAutomaticParametersForRendering();
     inline void PrepareOpenGLToRenderObjectsOnScene();
     inline void LoadShapeOfAtomsWhenChanged();
     inline void PrintAtomDescriptionOnScreen(CellEngineAtom& ChosenParticleObject);
-    inline void ChooseAtomUsingStencilBuffer(const vmath::mat4& ViewMatrix, const GLuint* PartOfStencilBufferIndex, const std::vector<std::pair<UnsignedIntType, UnsignedIntType>>& TemporaryRenderedAtomsList, UnsignedIntType& NumberOfAllRenderedAtoms);
+    inline void ChooseAtomUsingStencilBuffer(const vmath::mat4& ViewMatrix, const GLuint* PartOfStencilBufferIndex, UnsignedIntType& NumberOfAllRenderedAtoms);
 protected:
     [[nodiscard]] static inline bool CheckDistanceToDrawDetailsInAtomScale(const float XNew, const float YNew, const float ZNew);
 };
