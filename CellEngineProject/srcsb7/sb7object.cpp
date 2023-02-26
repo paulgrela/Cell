@@ -92,7 +92,7 @@ namespace sb7
         for (unsigned int attrib_index = 0; attrib_index < VertexAttribChunk->AttribCount; attrib_index++)
         {
             SB6M_VERTEX_ATTRIB_DECL &attrib_decl = VertexAttribChunk->AttribData[attrib_index];
-            glVertexAttribPointer(attrib_index, attrib_decl.Size, attrib_decl.Type, attrib_decl.Flags & SB6M_VERTEX_ATTRIB_FLAG_NORMALIZED ? GL_TRUE : GL_FALSE, attrib_decl.Stride, (GLvoid*)(uintptr_t)attrib_decl.DataOffset);
+            glVertexAttribPointer(attrib_index, static_cast<GLint>(attrib_decl.Size), attrib_decl.Type, attrib_decl.Flags & SB6M_VERTEX_ATTRIB_FLAG_NORMALIZED ? GL_TRUE : GL_FALSE, static_cast<GLsizei>(attrib_decl.Stride), (GLvoid*)(uintptr_t)attrib_decl.DataOffset);
             glEnableVertexAttribArray(attrib_index);
         }
 
@@ -145,9 +145,9 @@ namespace sb7
         glBindVertexArray(VAO);
 
         if (IndexType != GL_NONE)
-            glDrawElementsInstancedBaseInstance(GL_TRIANGLES, SubGraphicObjects[GraphicObjectIndex].Count, IndexType, (void*)SubGraphicObjects[GraphicObjectIndex].First, InstanceCount, BaseInstance);
+            glDrawElementsInstancedBaseInstance(GL_TRIANGLES, static_cast<GLint>(SubGraphicObjects[GraphicObjectIndex].Count), IndexType, (void*)SubGraphicObjects[GraphicObjectIndex].First, static_cast<GLsizei>(InstanceCount), BaseInstance);
         else
-            glDrawArraysInstancedBaseInstance(GL_TRIANGLES, SubGraphicObjects[GraphicObjectIndex].First, SubGraphicObjects[GraphicObjectIndex].Count, InstanceCount, BaseInstance);
+            glDrawArraysInstancedBaseInstance(GL_TRIANGLES, static_cast<GLint>(SubGraphicObjects[GraphicObjectIndex].First), static_cast<GLsizei>(SubGraphicObjects[GraphicObjectIndex].Count), static_cast<GLsizei>(InstanceCount), BaseInstance);
     }
     #pragma GCC diagnostic pop
 }

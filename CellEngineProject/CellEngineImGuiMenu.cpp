@@ -68,7 +68,7 @@ public:
             InitializeLoggerManagerParameters();
             LoggersManagerObject.Log(STREAM("START CELL"));
 
-            UnsignedIntType ExecuteCellStateId;
+            UnsignedIntType ExecuteCellStateId = 1;
             if (argc > 1)
                 ExecuteCellStateId = stoi(argv[1]);
             else

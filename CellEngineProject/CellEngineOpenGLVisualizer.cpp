@@ -264,7 +264,7 @@ inline bool CellEngineOpenGLVisualiser::GetFinalVisibilityInModelWorld(const vma
 
 inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4 ModelMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, bool DrawAdditional)
 {
-    bool FinalVisibilityInModelWorld;
+    bool FinalVisibilityInModelWorld = false;
 
     try
     {
@@ -665,6 +665,7 @@ void CellEngineOpenGLVisualiser::OnKey(int Key, int Action)
             switch (Key)
             {
                 case GLFW_KEY_F1: CellEngineConfigDataObject.ImGuiDemoWindowMenu = !CellEngineConfigDataObject.ImGuiDemoWindowMenu; break;
+                case GLFW_KEY_F12: CellEngineConfigDataObject.ViewChangeUsingLongStep = !CellEngineConfigDataObject.ViewChangeUsingLongStep; break;
                 default: break;
             }
     }
@@ -704,8 +705,8 @@ void CellEngineOpenGLVisualiser::OnMouseMove(int X, int Y)
 {
     try
     {
-        MousePosition.s.X = X;
-        MousePosition.s.Y = Y;
+        MousePosition.s.X = static_cast<GLfloat>(X);
+        MousePosition.s.Y = static_cast<GLfloat>(Y);
 
         if (PressedRightMouseButton == true)
         {
