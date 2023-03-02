@@ -47,7 +47,7 @@ public:
 public:
     [[nodiscard]] vmath::vec3 Position() const
     {
-        return vmath::vec3(X, Y, Z);
+        return {X, Y, Z};
     }
 };
 

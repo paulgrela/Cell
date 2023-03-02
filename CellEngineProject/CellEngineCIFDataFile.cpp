@@ -78,7 +78,7 @@ void CellEngineCIFDataFile::ReadDataFromFile()
         smatch SMatchObject;
 
         vector<UnsignedIntType> AppliedMatrixesIds;
-        regex RegexObject1("(\\d+)-(\\d+)");
+        regex RegexObject1("(\\d+)-(\\d+)|\\((\\d+)\\)");
 
         vector<string> AppliedChainsNames;
         regex RegexObject2("([A-z]+[0-9]*)");
@@ -138,8 +138,11 @@ void CellEngineCIFDataFile::ReadDataFromFile()
                 auto pos = Line.cbegin();
                 auto end = Line.cend();
                 for ( ; regex_search(pos, end, SMatchObject, RegexObject1); pos = SMatchObject.suffix().first)
-                    for (UnsignedIntType MatrixId = stoi(SMatchObject.str(1)); MatrixId <= stoi(SMatchObject.str(2)); MatrixId++)
-                        AppliedMatrixesIds.push_back(MatrixId);
+                    if (SMatchObject.str(1).empty() == false && SMatchObject.str(2).empty() == false)
+                        for (UnsignedIntType MatrixId = stoi(SMatchObject.str(1)); MatrixId <= stoi(SMatchObject.str(2)); MatrixId++)
+                            AppliedMatrixesIds.push_back(MatrixId);
+                    else
+                        AppliedMatrixesIds.push_back(stoi(SMatchObject.str(3)));
 
                 AppliedChainsNames.clear();
                 pos = Line.cbegin();
