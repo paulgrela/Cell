@@ -23,7 +23,7 @@ public:
         {
             for (const CellEngineAtom& AtomObject : AtomsParam)
                 Center += AtomObject.Position();
-            Center /= AtomsParam.size();
+            Center /= static_cast<float>(AtomsParam.size());
         }
         CATCH_AND_THROW("counting mass center")
 
@@ -88,7 +88,7 @@ public:
         CATCH("showing next structure")
     }
 public:
-    void ShowPrevStructure()
+    static void ShowPrevStructure()
     {
         try
         {

@@ -1,6 +1,6 @@
 
-#ifndef __SB7COLOR_H__
-#define __SB7COLOR_H__
+#ifndef SB7COLOR_H
+#define SB7COLOR_H
 
 #include <string>
 #include <unordered_map>
@@ -11,7 +11,7 @@ namespace sb7
 {
     inline vmath::vec3 FromVec4ToVec3(const vmath::vec4& Vector4)
     {
-        return {Vector4.data[0], Vector4.data[1], Vector4.data[2]};
+        return { Vector4.data[0], Vector4.data[1], Vector4.data[2] };
     }
 
     struct color

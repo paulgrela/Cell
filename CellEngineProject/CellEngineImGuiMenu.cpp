@@ -45,7 +45,7 @@ public:
         }
         Flags;
     };
-    APPINFO Info;
+    APPINFO Info{};
 
 public:
     static void InitializeLoggerManagerParameters()

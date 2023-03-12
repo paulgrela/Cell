@@ -3,7 +3,6 @@
 #include <fstream>
 
 #include <glm/vec3.hpp>
-#include <glm/vec4.hpp>
 #include <glm/mat4x4.hpp>
 #include "ExceptionsMacro.h"
 
@@ -78,7 +77,7 @@ void CellEngineCIFDataFile::ReadDataFromFile()
         smatch SMatchObject;
 
         vector<UnsignedIntType> AppliedMatrixesIds;
-        regex RegexObject1("(\\d+)-(\\d+)|\\((\\d+)\\)");
+        regex RegexObject1(R"((\d+)-(\d+)|\((\d+)\))");
 
         vector<string> AppliedChainsNames;
         regex RegexObject2("([A-z]+[0-9]*)");
@@ -111,7 +110,7 @@ void CellEngineCIFDataFile::ReadDataFromFile()
             {
                 vector<string> MatrixFields = split(Line, " ");
 
-                TransformationMatrix3x4 TransofrmationMatrix3x4Object;
+                TransformationMatrix3x4 TransofrmationMatrix3x4Object{};
 
                 UnsignedIntType TransofrmationMatrix3x4ObjectId = stoi(MatrixFields[0]);
 

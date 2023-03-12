@@ -4,6 +4,8 @@
 
 #include "vmath.h"
 
+#include "sb7color.h"
+
 #include "ExceptionsMacro.h"
 #include "CellEngineTypes.h"
 
@@ -36,21 +38,21 @@ inline bool operator==(const AtomKind& AtomKindParameter, const std::string& Nam
 class CellEngineConfigData
 {
 public:
-    int XTopMainWindow;
-    int YTopMainWindow;
-    int WidthMainWindow;
-    int HeightMainWindow;
-    int XTopMenuWindow;
-    int YTopMenuWindow;
-    int WidthMenuWindow;
-    int HeightMenuWindow;
-    int XTopSecondWindow;
-    int YTopSecondWindow;
-    int WidthSecondWindow;
-    int HeightSecondWindow;
+    int XTopMainWindow{};
+    int YTopMainWindow{};
+    int WidthMainWindow{};
+    int HeightMainWindow{};
+    int XTopMenuWindow{};
+    int YTopMenuWindow{};
+    int WidthMenuWindow{};
+    int HeightMenuWindow{};
+    int XTopSecondWindow{};
+    int YTopSecondWindow{};
+    int WidthSecondWindow{};
+    int HeightSecondWindow{};
 public:
-    bool MultiThreaded;
-    bool SetProcessPriorityHighest;
+    bool MultiThreaded{};
+    bool SetProcessPriorityHighest{};
 public:
     bool PrintLogToConsole = true;
     bool PrintLogToFiles = true;
@@ -80,33 +82,33 @@ public:
         DrawColorForEveryParticle = 2,
         DrawRandomColorForEveryParticle = 3
     };
-    MakeColorsType MakeColorsTypeObject;
+    MakeColorsType MakeColorsTypeObject = MakeColorsType::DrawColorForEveryParticle;
 public:
     enum class StencilForDrawingObjectsTypes
     {
         StencilForDrawingOnlyParticlesCenters = 1,
         StencilForDrawingOnlyInAtomScale = 2
     };
-    StencilForDrawingObjectsTypes StencilForDrawingObjectsTypesObject;
-    std::uint64_t NumberOfStencilBufferLoops;
+    StencilForDrawingObjectsTypes StencilForDrawingObjectsTypesObject = StencilForDrawingObjectsTypes::StencilForDrawingOnlyInAtomScale;
+    std::uint64_t NumberOfStencilBufferLoops{};
     bool UseStencilBuffer = false;
 public:
-    bool DrawBondsBetweenParticlesCenters;
-    bool DrawBondsBetweenAtoms;
+    bool DrawBondsBetweenParticlesCenters{};
+    bool DrawBondsBetweenAtoms{};
 public:
     bool ShowDetailsInAtomScale = false;
-    bool CheckAtomVisibility;
-    float CutZ;
-    float Distance;
-    std::uint64_t LoadOfAtomsStep;
+    bool CheckAtomVisibility{};
+    float CutZ{};
+    float Distance{};
+    std::uint64_t LoadOfAtomsStep{};
     bool ShowAtomsInEachPartOfTheCellWhenObserverIsFromOutside = false;
 public:
-    float XLowToDrawInAtomScale;
-    float XHighToDrawInAtomScale;
-    float YLowToDrawInAtomScale;
-    float YHighToDrawInAtomScale;
-    float ZLowToDrawInAtomScale;
-    float ZHighToDrawInAtomScale;
+    float XLowToDrawInAtomScale{};
+    float XHighToDrawInAtomScale{};
+    float YLowToDrawInAtomScale{};
+    float YHighToDrawInAtomScale{};
+    float ZLowToDrawInAtomScale{};
+    float ZHighToDrawInAtomScale{};
 public:
     enum class SizeOfAtomsDrawingTypes
     {
@@ -114,45 +116,45 @@ public:
         ParticleSize = 2,
         AutomaticChangeSize = 3
     };
-    SizeOfAtomsDrawingTypes SizeOfAtomsDrawingTypesObject;
+    SizeOfAtomsDrawingTypes SizeOfAtomsDrawingTypesObject = SizeOfAtomsDrawingTypes::AutomaticChangeSize;
 public:
-    float SizeOfAtomChangeStep;
-    float SizeOfAtomX;
-    float SizeOfAtomY;
-    float SizeOfAtomZ;
-    float RotationAngle1;
-    float RotationAngle2;
-    float RotationAngle3;
-    float CameraXPosition;
-    float CameraYPosition;
-    float CameraZPosition;
-    float CameraXMoveShortStep;
-    float CameraYMoveShortStep;
-    float CameraZMoveShortStep;
-    float CameraXMoveLongStep;
-    float CameraYMoveLongStep;
-    float CameraZMoveLongStep;
-    float ViewPositionX;
-    float ViewPositionY;
-    float ViewPositionZ;
-    float ViewXMoveShortStep;
-    float ViewYMoveShortStep;
-    float ViewZMoveShortStep;
-    float ViewXMoveLongStep;
-    float ViewYMoveLongStep;
-    float ViewZMoveLongStep;
+    float SizeOfAtomChangeStep{};
+    float SizeOfAtomX{};
+    float SizeOfAtomY{};
+    float SizeOfAtomZ{};
+    float RotationAngle1{};
+    float RotationAngle2{};
+    float RotationAngle3{};
+    float CameraXPosition{};
+    float CameraYPosition{};
+    float CameraZPosition{};
+    float CameraXMoveShortStep{};
+    float CameraYMoveShortStep{};
+    float CameraZMoveShortStep{};
+    float CameraXMoveLongStep{};
+    float CameraYMoveLongStep{};
+    float CameraZMoveLongStep{};
+    float ViewPositionX{};
+    float ViewPositionY{};
+    float ViewPositionZ{};
+    float ViewXMoveShortStep{};
+    float ViewYMoveShortStep{};
+    float ViewZMoveShortStep{};
+    float ViewXMoveLongStep{};
+    float ViewYMoveLongStep{};
+    float ViewZMoveLongStep{};
 public:
-    bool ViewChangeUsingLongStep;
-    bool AutomaticChangeOfSizeOfAtom;
-    bool AutomaticChangeOfLoadAtomsStep;
+    bool ViewChangeUsingLongStep{};
+    bool AutomaticChangeOfSizeOfAtom{};
+    bool AutomaticChangeOfLoadAtomsStep{};
 public:
     UnsignedIntType ChosenStructureIndex = 0;
 public:
-    vmath::vec3 BackgroundColors[4];
-    std::uint64_t ChosenBackgroundColor;
+    vmath::vec3 BackgroundColors[4] = { sb7::FromVec4ToVec3(sb7::color::White), sb7::FromVec4ToVec3(sb7::color::White), sb7::FromVec4ToVec3(sb7::color::White), sb7::FromVec4ToVec3(sb7::color::White) };
+    std::uint64_t ChosenBackgroundColor{};
 public:
-    bool PrintAtomDescriptionOnScreen;
-    bool LogParametersOfRenderingToFile;
+    bool PrintAtomDescriptionOnScreen{};
+    bool LogParametersOfRenderingToFile{};
 public:
     std::string AtomDescriptionStr1;
     std::string AtomDescriptionStr2;
@@ -170,7 +172,7 @@ public:
     bool ImGuiLightVersion = false;
 public:
     int ChosenShapeOfAtoms = 1;
-    UnsignedIntType DNAIdentifier;
+    UnsignedIntType DNAIdentifier{};
 public:
     std::vector<AtomKind>::iterator GetAtomKindDataForAtom(char Name)
     {

@@ -576,7 +576,7 @@ inline void CellEngineOpenGLVisualiser::ChooseAtomUsingStencilBuffer(const vmath
 
             if (ChosenParticleCenterIndex > 0)
             {
-                CellEngineAtom ChosenParticleObject;
+                CellEngineAtom ChosenParticleObject{};
                 if (CellEngineConfigDataObject.StencilForDrawingObjectsTypesObject == CellEngineConfigData::StencilForDrawingObjectsTypes::StencilForDrawingOnlyParticlesCenters)
                 {
                     if (ChosenParticleCenterIndex > CellEngineDataFileObjectPointer->GetParticlesCenters().size())

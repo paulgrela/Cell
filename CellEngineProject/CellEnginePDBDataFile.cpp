@@ -13,7 +13,7 @@ using namespace string_utils;
 
 CellEngineAtom CellEnginePDBDataFile::ParseRecord(const char* LocalPDBRecord)
 {
-    CellEngineAtom CellEngineAtomObject;
+    CellEngineAtom CellEngineAtomObject{};
 
     try
     {
@@ -68,7 +68,7 @@ void CellEnginePDBDataFile::ReadDataFromFile()
             else
             if (Line.substr(0, 3) == "END" )
             {
-                StructureObject.emplace_back(CellEngineAtom());
+                StructureObject.emplace_back();
                 ParticlesCenters.push_back(StructureObject);
                 StructureObject.clear();
             }
