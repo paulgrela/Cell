@@ -14,26 +14,26 @@
 struct CellEngineAtom
 {
 public:
-    UnsignedIntType AtomIndex;
-    IntType Serial;
-    char Name[5 + 1];
-    char ResName[4 + 1];
-    float X;
-    float Y;
-    float Z;
-    char Chain[6 + 1];
+    UnsignedIntType AtomIndex{};
+    IntType Serial{};
+    char Name[5 + 1]{};
+    char ResName[4 + 1]{};
+    float X{};
+    float Y{};
+    float Z{};
+    char Chain[6 + 1]{};
     UnsignedIntType EntityId;
-    vector3 AtomColor;
-    vector3 ParticleColor;
-    vector3 RandomParticleColor;
-    bool Visible;
+    vector3 AtomColor{};
+    vector3 ParticleColor{};
+    vector3 RandomParticleColor{};
+    bool Visible{};
     #ifdef EXTENDED_RAM_MEMORY
-    float SizeXAtom;
-    float SizeYAtom;
-    float SizeZAtom;
-    float SizeXParticle;
-    float SizeYParticle;
-    float SizeZParticle;
+    float SizeXAtom{};
+    float SizeYAtom{};
+    float SizeZAtom{};
+    float SizeXParticle{};
+    float SizeYParticle{};
+    float SizeZParticle{};
     #endif
 public:
     CellEngineAtom(float XParam, float YParam, float ZParam, UnsignedIntType AtomIndexParam, UnsignedIntType SerialParam, char NameParam[2], char ResNameParam[4], char ChainParam[6], vector3 ColorParam) : X(XParam), Y(YParam), Z(ZParam), AtomIndex(AtomIndexParam), Serial(static_cast<IntType>(SerialParam)), ParticleColor(ColorParam)
