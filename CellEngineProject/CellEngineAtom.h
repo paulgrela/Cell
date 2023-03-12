@@ -36,7 +36,7 @@ public:
     float SizeZParticle;
     #endif
 public:
-    CellEngineAtom(float XParam, float YParam, float ZParam, UnsignedIntType AtomIndexParam, UnsignedIntType SerialParam, char NameParam[2], char ResNameParam[4], char ChainParam[6], vector3 ColorParam) : X(XParam), Y(YParam), Z(ZParam), AtomIndex(AtomIndexParam), Serial(SerialParam), ParticleColor(std::move(ColorParam))
+    CellEngineAtom(float XParam, float YParam, float ZParam, UnsignedIntType AtomIndexParam, UnsignedIntType SerialParam, char NameParam[2], char ResNameParam[4], char ChainParam[6], vector3 ColorParam) : X(XParam), Y(YParam), Z(ZParam), AtomIndex(AtomIndexParam), Serial(static_cast<IntType>(SerialParam)), ParticleColor(ColorParam)
     {
         strncpy(Name, NameParam, 2);
         strncpy(ResName, ResNameParam, 4);
