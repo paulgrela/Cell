@@ -33,6 +33,7 @@
 		<SetProcessPriorityHighest>true</SetProcessPriorityHighest>
 		<PrintAtomDescriptionOnScreen>false</PrintAtomDescriptionOnScreen>
 		<LogParametersOfRenderingToFile>false</LogParametersOfRenderingToFile>
+                <RandomColorEngineTypes>2</RandomColorEngineTypes>
 	</Algorithm>
 	<CellTextColors>
 		<Windows>
@@ -62,7 +63,7 @@
 	<CellsStates>
 		<CellState id="1">
 			<CellStateFileName>../../WholeCellData/Mycoplasma Genitalium/cellpack_atom_instances_6973_curated.cif</CellStateFileName>
-			
+
 			<ChosenStructureIndex>0</ChosenStructureIndex>
 			<FilmOfStructuresActive>0</FilmOfStructuresActive>
 			

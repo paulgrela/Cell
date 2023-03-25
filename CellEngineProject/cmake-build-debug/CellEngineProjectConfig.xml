@@ -33,6 +33,7 @@
 		<SetProcessPriorityHighest>true</SetProcessPriorityHighest>
 		<PrintAtomDescriptionOnScreen>false</PrintAtomDescriptionOnScreen>
 		<LogParametersOfRenderingToFile>false</LogParametersOfRenderingToFile>
+                <RandomColorEngineTypes>1</RandomColorEngineTypes>
 	</Algorithm>
 	<CellTextColors>
 		<Windows>

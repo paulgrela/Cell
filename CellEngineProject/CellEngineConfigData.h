@@ -3,6 +3,7 @@
 #define CELL_ENGINE_CONFIG_DATA_H
 
 #include "vmath.h"
+#include <random>
 
 #include "sb7color.h"
 
@@ -70,6 +71,14 @@ public:
     bool PrintLogThreadIdToFile = false;
 
     uint64_t MaximalNumberOfLinesInOneFile = 100000;
+public:
+    enum class RandomColorEngineTypes
+    {
+        Rand = 1,
+        mt19937 = 2,
+        DefaultRandomEngine = 3
+    };
+    RandomColorEngineTypes RandomColorEnigneObject = RandomColorEngineTypes::Rand;
 public:
     std::string CellStateFileName;
 public:
@@ -188,6 +197,25 @@ public:
 
         return AtomKindObjectIterator;
     }
+public:
+    std::mt19937 mt;
+    std::default_random_engine DefaultRandomEngineObject;
+public:
+    void SelectRandomEngineForColors()
+    {
+        try
+        {
+            switch (RandomColorEnigneObject)
+            {
+                case RandomColorEngineTypes::Rand : srand((unsigned int) time(nullptr)); break;
+                case RandomColorEngineTypes::mt19937 : mt.seed(std::random_device{}() ); break;
+                case RandomColorEngineTypes::DefaultRandomEngine: DefaultRandomEngineObject.seed(static_cast<unsigned int>(std::chrono::steady_clock::now().time_since_epoch().count())); break;
+                default:  break;
+            }
+        }
+        CATCH("selecting random engines for colors");
+    }
+
 };
 
 inline CellEngineConfigData CellEngineConfigDataObject;

@@ -1,5 +1,6 @@
 
 #include <regex>
+#include <random>
 #include <fstream>
 
 #include <glm/vec3.hpp>
@@ -13,6 +14,25 @@
 
 using namespace std;
 using namespace string_utils;
+
+vmath::vec3 GetRandomColor(uniform_real_distribution<float>& UniformDistributionObject)
+{
+    vmath::vec3 ReturnRandomColor;
+
+    try
+    {
+        switch (CellEngineConfigDataObject.RandomColorEnigneObject)
+        {
+            case CellEngineConfigData::RandomColorEngineTypes::Rand : ReturnRandomColor = vmath::vec3((float)rand() / static_cast<float>(RAND_MAX), (float)rand() / static_cast<float>(RAND_MAX), (float)rand() / static_cast<float>(RAND_MAX)); break;
+            case CellEngineConfigData::RandomColorEngineTypes::mt19937 : ReturnRandomColor = vmath::vec3(UniformDistributionObject(CellEngineConfigDataObject.mt), UniformDistributionObject(CellEngineConfigDataObject.mt), UniformDistributionObject(CellEngineConfigDataObject.mt)); break;
+            case CellEngineConfigData::RandomColorEngineTypes::DefaultRandomEngine : ReturnRandomColor = vmath::vec3(UniformDistributionObject(CellEngineConfigDataObject.DefaultRandomEngineObject), UniformDistributionObject(CellEngineConfigDataObject.DefaultRandomEngineObject), UniformDistributionObject(CellEngineConfigDataObject.DefaultRandomEngineObject));break;
+            default:  break;
+        }
+    }
+    CATCH("getting random color")
+
+    return ReturnRandomColor;
+}
 
 CellEngineAtom CellEngineCIFDataFile::ParseRecord(const char* LocalCIFRecord)
 {
@@ -74,6 +94,9 @@ void CellEngineCIFDataFile::ReadDataFromFile()
         UnsignedIntType NumberOfAtoms = 0;
         UnsignedIntType NumberOfAtomsDNA = 0;
 
+        CellEngineConfigDataObject.SelectRandomEngineForColors();
+        uniform_real_distribution<float> UniformRealDistributionObject;
+
         smatch SMatchObject;
 
         vector<UnsignedIntType> AppliedMatrixesIds;
@@ -110,25 +133,25 @@ void CellEngineCIFDataFile::ReadDataFromFile()
             {
                 vector<string> MatrixFields = split(Line, " ");
 
-                TransformationMatrix3x4 TransofrmationMatrix3x4Object{};
+                TransformationMatrix3x4 TransformationMatrix3x4Object{};
 
-                UnsignedIntType TransofrmationMatrix3x4ObjectId = stoi(MatrixFields[0]);
+                UnsignedIntType TransformationMatrix3x4ObjectId = stoi(MatrixFields[0]);
 
                 UnsignedIntType Shift = 6;
-                TransofrmationMatrix3x4Object.Matrix[0][0] = stof(MatrixFields[Shift + 0]);
-                TransofrmationMatrix3x4Object.Matrix[0][1] = stof(MatrixFields[Shift + 1]);
-                TransofrmationMatrix3x4Object.Matrix[0][2] = stof(MatrixFields[Shift + 2]);
-                TransofrmationMatrix3x4Object.Matrix[0][3] = stof(MatrixFields[Shift + 3]);
-                TransofrmationMatrix3x4Object.Matrix[1][0] = stof(MatrixFields[Shift + 4]);
-                TransofrmationMatrix3x4Object.Matrix[1][1] = stof(MatrixFields[Shift + 5]);
-                TransofrmationMatrix3x4Object.Matrix[1][2] = stof(MatrixFields[Shift + 6]);
-                TransofrmationMatrix3x4Object.Matrix[1][3] = stof(MatrixFields[Shift + 7]);
-                TransofrmationMatrix3x4Object.Matrix[2][0] = stof(MatrixFields[Shift + 8]);
-                TransofrmationMatrix3x4Object.Matrix[2][1] = stof(MatrixFields[Shift + 9]);
-                TransofrmationMatrix3x4Object.Matrix[2][2] = stof(MatrixFields[Shift + 10]);
-                TransofrmationMatrix3x4Object.Matrix[2][3] = stof(MatrixFields[Shift + 11]);
+                TransformationMatrix3x4Object.Matrix[0][0] = stof(MatrixFields[Shift + 0]);
+                TransformationMatrix3x4Object.Matrix[0][1] = stof(MatrixFields[Shift + 1]);
+                TransformationMatrix3x4Object.Matrix[0][2] = stof(MatrixFields[Shift + 2]);
+                TransformationMatrix3x4Object.Matrix[0][3] = stof(MatrixFields[Shift + 3]);
+                TransformationMatrix3x4Object.Matrix[1][0] = stof(MatrixFields[Shift + 4]);
+                TransformationMatrix3x4Object.Matrix[1][1] = stof(MatrixFields[Shift + 5]);
+                TransformationMatrix3x4Object.Matrix[1][2] = stof(MatrixFields[Shift + 6]);
+                TransformationMatrix3x4Object.Matrix[1][3] = stof(MatrixFields[Shift + 7]);
+                TransformationMatrix3x4Object.Matrix[2][0] = stof(MatrixFields[Shift + 8]);
+                TransformationMatrix3x4Object.Matrix[2][1] = stof(MatrixFields[Shift + 9]);
+                TransformationMatrix3x4Object.Matrix[2][2] = stof(MatrixFields[Shift + 10]);
+                TransformationMatrix3x4Object.Matrix[2][3] = stof(MatrixFields[Shift + 11]);
 
-                TransformationsMatrixes[TransofrmationMatrix3x4ObjectId] = TransofrmationMatrix3x4Object;
+                TransformationsMatrixes[TransformationMatrix3x4ObjectId] = TransformationMatrix3x4Object;
             }
             else
             if (Line.substr(0, 4) == "1 '(")
@@ -149,7 +172,7 @@ void CellEngineCIFDataFile::ReadDataFromFile()
                 for ( ; regex_search(pos, end, SMatchObject, RegexObject2); pos = SMatchObject.suffix().first)
                     AppliedChainsNames.push_back(SMatchObject.str(1));
 
-                vmath::vec3 ChainColor = vmath::vec3((float)rand() / RAND_MAX, (float)rand() / RAND_MAX, (float)rand() / RAND_MAX);
+                vmath::vec3 ChainColor = GetRandomColor(UniformRealDistributionObject);
 
                 for (const auto& AppliedMatrixId : AppliedMatrixesIds)
                 {
