@@ -15,25 +15,6 @@
 using namespace std;
 using namespace string_utils;
 
-vmath::vec3 GetRandomColor(uniform_real_distribution<float>& UniformDistributionObject)
-{
-    vmath::vec3 ReturnRandomColor;
-
-    try
-    {
-        switch (CellEngineConfigDataObject.RandomColorEnigneObject)
-        {
-            case CellEngineConfigData::RandomColorEngineTypes::Rand : ReturnRandomColor = vmath::vec3((float)rand() / static_cast<float>(RAND_MAX), (float)rand() / static_cast<float>(RAND_MAX), (float)rand() / static_cast<float>(RAND_MAX)); break;
-            case CellEngineConfigData::RandomColorEngineTypes::mt19937 : ReturnRandomColor = vmath::vec3(UniformDistributionObject(CellEngineConfigDataObject.mt), UniformDistributionObject(CellEngineConfigDataObject.mt), UniformDistributionObject(CellEngineConfigDataObject.mt)); break;
-            case CellEngineConfigData::RandomColorEngineTypes::DefaultRandomEngine : ReturnRandomColor = vmath::vec3(UniformDistributionObject(CellEngineConfigDataObject.DefaultRandomEngineObject), UniformDistributionObject(CellEngineConfigDataObject.DefaultRandomEngineObject), UniformDistributionObject(CellEngineConfigDataObject.DefaultRandomEngineObject));break;
-            default:  break;
-        }
-    }
-    CATCH("getting random color")
-
-    return ReturnRandomColor;
-}
-
 CellEngineAtom CellEngineCIFDataFile::ParseRecord(const char* LocalCIFRecord)
 {
     CellEngineAtom CellEngineAtomObject{};
@@ -95,7 +76,6 @@ void CellEngineCIFDataFile::ReadDataFromFile()
         UnsignedIntType NumberOfAtomsDNA = 0;
 
         CellEngineConfigDataObject.SelectRandomEngineForColors();
-        uniform_real_distribution<float> UniformRealDistributionObject;
 
         smatch SMatchObject;
 
@@ -172,7 +152,7 @@ void CellEngineCIFDataFile::ReadDataFromFile()
                 for ( ; regex_search(pos, end, SMatchObject, RegexObject2); pos = SMatchObject.suffix().first)
                     AppliedChainsNames.push_back(SMatchObject.str(1));
 
-                vmath::vec3 ChainColor = GetRandomColor(UniformRealDistributionObject);
+                vmath::vec3 ChainColor = CellEngineConfigDataObject.GetRandomColor();
 
                 for (const auto& AppliedMatrixId : AppliedMatrixesIds)
                 {

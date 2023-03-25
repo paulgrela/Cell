@@ -198,8 +198,10 @@ public:
         return AtomKindObjectIterator;
     }
 public:
-    std::mt19937 mt;
+    std::mt19937_64 mt64;
     std::default_random_engine DefaultRandomEngineObject;
+public:
+    std::uniform_real_distribution<float> UniformDistributionObject;
 public:
     void SelectRandomEngineForColors()
     {
@@ -207,15 +209,33 @@ public:
         {
             switch (RandomColorEnigneObject)
             {
-                case RandomColorEngineTypes::Rand : srand((unsigned int) time(nullptr)); break;
-                case RandomColorEngineTypes::mt19937 : mt.seed(std::random_device{}() ); break;
+                case RandomColorEngineTypes::Rand : srand((unsigned int)time(nullptr)); break;
+                case RandomColorEngineTypes::mt19937 : mt64.seed(std::random_device{}()); break;
                 case RandomColorEngineTypes::DefaultRandomEngine: DefaultRandomEngineObject.seed(static_cast<unsigned int>(std::chrono::steady_clock::now().time_since_epoch().count())); break;
                 default:  break;
             }
         }
         CATCH("selecting random engines for colors");
     }
+public:
+    vmath::vec3 GetRandomColor()
+    {
+        vmath::vec3 ReturnRandomColor;
 
+        try
+        {
+            switch (RandomColorEnigneObject)
+            {
+                case CellEngineConfigData::RandomColorEngineTypes::Rand : ReturnRandomColor = vmath::vec3((float)rand() / static_cast<float>(RAND_MAX), (float)rand() / static_cast<float>(RAND_MAX), (float)rand() / static_cast<float>(RAND_MAX)); break;
+                case CellEngineConfigData::RandomColorEngineTypes::mt19937 : ReturnRandomColor = vmath::vec3(UniformDistributionObject(mt64), UniformDistributionObject(mt64), UniformDistributionObject(mt64)); break;
+                case CellEngineConfigData::RandomColorEngineTypes::DefaultRandomEngine : ReturnRandomColor = vmath::vec3(UniformDistributionObject(DefaultRandomEngineObject), UniformDistributionObject(DefaultRandomEngineObject), UniformDistributionObject(DefaultRandomEngineObject));break;
+                default:  break;
+            }
+        }
+        CATCH("getting random color")
+
+        return ReturnRandomColor;
+    }
 };
 
 inline CellEngineConfigData CellEngineConfigDataObject;
