@@ -58,6 +58,9 @@ CellEngineAtom CellEngineCIFDataFile::ParseRecord(const char* LocalCIFRecord)
     return CellEngineAtomObject;
 }
 
+int64_t XMin = 10000, XMax = -10000, YMin = 10000, YMax = -10000, ZMin = 10000, ZMax = -10000, FirstAccessToVoxel = 0;
+const bool VoxelWorld = false;
+
 void CellEngineCIFDataFile::ReadDataFromFile()
 {
     try
@@ -175,7 +178,7 @@ void CellEngineCIFDataFile::ReadDataFromFile()
                             {
                                 NumberOfAtoms++;
 
-                                if (AppliedChainName == "BAR0" || AppliedChainName == "BAR1")
+                                if (AppliedChainName == "NU01" || AppliedChainName == "NU11" || AppliedChainName == "NU02" || AppliedChainName == "NU12" || AppliedChainName == "NU03" || AppliedChainName == "NU13" || AppliedChainName == "NU04" || AppliedChainName == "NU14")
                                     NumberOfAtomsDNA++;
 
                                 auto TransformationMatrixIterator = TransformationsMatrixes.find(AppliedMatrixId);
@@ -202,24 +205,67 @@ void CellEngineCIFDataFile::ReadDataFromFile()
 
                                 AppliedAtom.RandomParticleColor = GetVector3FormVMathVec3(ChainColor);
 
-                                LocalCellEngineAllAtomsObject.emplace_back(AppliedAtom);
+                                if (VoxelWorld == true)
+                                {
+                                    auto SpaceX1 = static_cast<int64_t>(round(AppliedAtom.X / 4.0));
+                                    auto SpaceY1 = static_cast<int64_t>(round(AppliedAtom.Y / 4.0));
+                                    auto SpaceZ1 = static_cast<int64_t>(round(AppliedAtom.Z / 4.0));
+
+                                    int64_t SpaceX = static_cast<int64_t>(round(AppliedAtom.X / 4.0)) + 512;
+                                    int64_t SpaceY = static_cast<int64_t>(round(AppliedAtom.Y / 4.0)) + 512;
+                                    int64_t SpaceZ = static_cast<int64_t>(round(AppliedAtom.Z / 4.0)) + 512;
+
+                                    XMin = min(SpaceX, XMin);
+                                    XMax = max(SpaceX, XMax);
+                                    YMin = min(SpaceY, YMin);
+                                    YMax = max(SpaceY, YMax);
+                                    ZMin = min(SpaceZ, YMin);
+                                    ZMax = max(SpaceZ, YMax);
+
+                                    if (Space[SpaceX][SpaceY][SpaceZ] == 0)
+                                    {
+                                        FirstAccessToVoxel++;
+
+                                        AppliedAtom.X = (static_cast<float>(SpaceX1)) * 4;
+                                        AppliedAtom.Y = (static_cast<float>(SpaceY1)) * 4;
+                                        AppliedAtom.Z = (static_cast<float>(SpaceZ1)) * 4;
+
+                                        LocalCellEngineAllAtomsObject.emplace_back(AppliedAtom);
+                                    }
+                                    Space[SpaceX][SpaceY][SpaceZ]++;
+                                }
+                                else
+                                    LocalCellEngineAllAtomsObject.emplace_back(AppliedAtom);
                             }
                         }
                     }
 
-                    vmath::vec3 Center = GetCenter(LocalCellEngineAllAtomsObject);
-                    LocalCellEngineParticlesCentersObject.emplace_back(CellEngineAtom(Center.X(), Center.Y(), Center.Z(), AllAtoms.size(), LocalCellEngineParticlesCentersObject.size(), LocalCellEngineAllAtomsObject.front().Name, LocalCellEngineAllAtomsObject.front().ResName, LocalCellEngineAllAtomsObject.front().Chain, LocalCellEngineAllAtomsObject.front().ParticleColor));
+                    LocalCellEngineParticlesCentersObject.emplace_back(CellEngineAtom(LocalCellEngineAllAtomsObject.front().X, LocalCellEngineAllAtomsObject.front().Y, LocalCellEngineAllAtomsObject.front().Z, AllAtoms.size(), LocalCellEngineParticlesCentersObject.size(), LocalCellEngineAllAtomsObject.front().Name, LocalCellEngineAllAtomsObject.front().ResName, LocalCellEngineAllAtomsObject.front().Chain, LocalCellEngineAllAtomsObject.front().ParticleColor));
 
                     AllAtoms.emplace_back(LocalCellEngineAllAtomsObject);
                 }
             }
         }
 
+        cout << "CELL SPACE LIMITS PARAMETERS [ Xmin = " << to_string(XMin) << " ][ Xmax = " << to_string(XMax) << " ][ Ymin = " << to_string(YMin) << " ][ Ymax = " << to_string(YMax) << " ][ Zmin = " << to_string(ZMin) << " ][ Zmax = " << to_string(XMax) << " ] " << endl;
+        uint64_t MaxRepVoxels = 0;
+        uint64_t SumOfFullVoxels = 0;
+        for (uint64_t X = 0; X < 1024; X++)
+            for (uint64_t Y = 0; Y < 1024; Y++)
+                for (uint64_t Z = 0; Z < 1024; Z++)
+                    if (Space[X][Y][Z] != 0)
+                    {
+                        SumOfFullVoxels++;
+                        MaxRepVoxels = max(Space[X][Y][Z], MaxRepVoxels);
+                    }
+        cout << "SumOfFullVoxels = " << to_string(SumOfFullVoxels) << " MaxRepVoxels = " << to_string(MaxRepVoxels) << " FirstAccessToVoxel = " << to_string(FirstAccessToVoxel) << endl;
+
+
         ParticlesCenters.emplace_back(LocalCellEngineParticlesCentersObject);
 
         const auto stop_time = chrono::high_resolution_clock::now();
 
-        LoggersManagerObject.Log(STREAM("NumberOfAtoms = " << NumberOfAtoms << " | LocalCellEngineParticlesCentersObject.size() = " << LocalCellEngineParticlesCentersObject.size() << " | AllAtoms.size() = " << AllAtoms.size() << " | AllAtoms.back().size() = " << AllAtoms.back().size() << " | NumberOfAtomsDNA = " << NumberOfAtomsDNA << " | AtomsPositionsMatrixes.size() = " << TransformationsMatrixes.size() << " | ChainsNames[\"BAF0\"].size() = " << ChainsNames["BAF0"].size() << " | " << endl));
+        LoggersManagerObject.Log(STREAM("NumberOfAtoms = " << NumberOfAtoms << " | LocalCellEngineParticlesCentersObject.size() = " << LocalCellEngineParticlesCentersObject.size() << " | AllAtoms.size() = " << AllAtoms.size() << " | AllAtoms.back().size() = " << AllAtoms.back().size() << " | NumberOfAtomsDNA = " << NumberOfAtomsDNA << " | AtomsPositionsMatrixes.size() = " << TransformationsMatrixes.size() << " | " << endl));
 
         LoggersManagerObject.Log(STREAM("FINISHED READING FROM CIF FILE"));
 

@@ -13,6 +13,16 @@ protected:
     std::vector<std::vector<CellEngineAtom>> ParticlesCenters;
     std::vector<std::vector<CellEngineAtom>> AllAtoms;
 public:
+    uint64_t Space[1024][1024][1024]{};
+public:
+    CellEngineDataFile()
+    {
+        for (auto& SelectedX : Space)
+            for (auto& SelectedXY : SelectedX)
+                for (uint64_t& SelectedXYZ : SelectedXY)
+                    SelectedXYZ = 0;
+    }
+public:
     virtual void ReadDataFromFile() = 0;
 public:
     static vmath::vec3 GetCenter(const std::vector<CellEngineAtom>& AtomsParam)
