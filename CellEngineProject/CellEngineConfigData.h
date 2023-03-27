@@ -52,9 +52,6 @@ public:
     int WidthSecondWindow{};
     int HeightSecondWindow{};
 public:
-    bool MultiThreaded{};
-    bool SetProcessPriorityHighest{};
-public:
     bool PrintLogToConsole = true;
     bool PrintLogToFiles = true;
 
@@ -71,6 +68,11 @@ public:
     bool PrintLogThreadIdToFile = false;
 
     uint64_t MaximalNumberOfLinesInOneFile = 100000;
+public:
+    bool MultiThreaded{};
+    bool SetProcessPriorityHighest{};
+public:
+    bool VoxelWorld = true;
 public:
     enum class RandomColorEngineTypes
     {
@@ -198,8 +200,8 @@ public:
         return AtomKindObjectIterator;
     }
 public:
-    std::mt19937_64 mt64;
-    std::default_random_engine DefaultRandomEngineObject;
+    std::mt19937_64 mt64{ std::random_device{}() };
+    std::default_random_engine DefaultRandomEngineObject{ static_cast<unsigned int>(std::chrono::steady_clock::now().time_since_epoch().count()) };
 public:
     std::uniform_real_distribution<float> UniformDistributionObject;
 public:

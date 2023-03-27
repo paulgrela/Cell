@@ -59,7 +59,6 @@ CellEngineAtom CellEngineCIFDataFile::ParseRecord(const char* LocalCIFRecord)
 }
 
 int64_t XMin = 10000, XMax = -10000, YMin = 10000, YMax = -10000, ZMin = 10000, ZMax = -10000, FirstAccessToVoxel = 0;
-const bool VoxelWorld = false;
 
 void CellEngineCIFDataFile::ReadDataFromFile()
 {
@@ -205,12 +204,8 @@ void CellEngineCIFDataFile::ReadDataFromFile()
 
                                 AppliedAtom.RandomParticleColor = GetVector3FormVMathVec3(ChainColor);
 
-                                if (VoxelWorld == true)
+                                if (CellEngineConfigDataObject.VoxelWorld == true)
                                 {
-                                    auto SpaceX1 = static_cast<int64_t>(round(AppliedAtom.X / 4.0));
-                                    auto SpaceY1 = static_cast<int64_t>(round(AppliedAtom.Y / 4.0));
-                                    auto SpaceZ1 = static_cast<int64_t>(round(AppliedAtom.Z / 4.0));
-
                                     int64_t SpaceX = static_cast<int64_t>(round(AppliedAtom.X / 4.0)) + 512;
                                     int64_t SpaceY = static_cast<int64_t>(round(AppliedAtom.Y / 4.0)) + 512;
                                     int64_t SpaceZ = static_cast<int64_t>(round(AppliedAtom.Z / 4.0)) + 512;
@@ -226,13 +221,14 @@ void CellEngineCIFDataFile::ReadDataFromFile()
                                     {
                                         FirstAccessToVoxel++;
 
-                                        AppliedAtom.X = (static_cast<float>(SpaceX1)) * 4;
-                                        AppliedAtom.Y = (static_cast<float>(SpaceY1)) * 4;
-                                        AppliedAtom.Z = (static_cast<float>(SpaceZ1)) * 4;
+                                        AppliedAtom.X = (static_cast<float>(SpaceX - 512)) * 4;
+                                        AppliedAtom.Y = (static_cast<float>(SpaceY - 512)) * 4;
+                                        AppliedAtom.Z = (static_cast<float>(SpaceZ - 512)) * 4;
 
                                         LocalCellEngineAllAtomsObject.emplace_back(AppliedAtom);
                                     }
-                                    Space[SpaceX][SpaceY][SpaceZ]++;
+
+                                    Space[SpaceX][SpaceY][SpaceZ] = AppliedAtom.EntityId;
                                 }
                                 else
                                     LocalCellEngineAllAtomsObject.emplace_back(AppliedAtom);
