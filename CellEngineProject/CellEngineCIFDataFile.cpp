@@ -58,12 +58,12 @@ CellEngineAtom CellEngineCIFDataFile::ParseRecord(const char* LocalCIFRecord)
     return CellEngineAtomObject;
 }
 
-int64_t XMin = 10000, XMax = -10000, YMin = 10000, YMax = -10000, ZMin = 10000, ZMax = -10000, FirstAccessToVoxel = 0;
-
 void CellEngineCIFDataFile::ReadDataFromFile()
 {
     try
     {
+        CellEngineSimulationSpaceObject.SetStartValuesForSpaceMinMax();
+
         string Line;
         std::vector<CellEngineAtom> LocalCellEngineParticlesCentersObject;
         std::vector<CellEngineAtom> LocalCellEngineAllAtomsObject;
@@ -210,17 +210,10 @@ void CellEngineCIFDataFile::ReadDataFromFile()
                                     int64_t SpaceY = static_cast<int64_t>(round(AppliedAtom.Y / 4.0)) + 512;
                                     int64_t SpaceZ = static_cast<int64_t>(round(AppliedAtom.Z / 4.0)) + 512;
 
-                                    XMin = min(SpaceX, XMin);
-                                    XMax = max(SpaceX, XMax);
-                                    YMin = min(SpaceY, YMin);
-                                    YMax = max(SpaceY, YMax);
-                                    ZMin = min(SpaceZ, YMin);
-                                    ZMax = max(SpaceZ, YMax);
+                                    CellEngineSimulationSpaceObject.CompareAndGetSpaceMinMax(SpaceX, SpaceY, SpaceZ);
 
-                                    if (Space[SpaceX][SpaceY][SpaceZ] == 0)
+                                    if (CellEngineSimulationSpaceObject.Space[SpaceX][SpaceY][SpaceZ] == 0)
                                     {
-                                        FirstAccessToVoxel++;
-
                                         AppliedAtom.X = (static_cast<float>(SpaceX - 512)) * 4;
                                         AppliedAtom.Y = (static_cast<float>(SpaceY - 512)) * 4;
                                         AppliedAtom.Z = (static_cast<float>(SpaceZ - 512)) * 4;
@@ -228,7 +221,7 @@ void CellEngineCIFDataFile::ReadDataFromFile()
                                         LocalCellEngineAllAtomsObject.emplace_back(AppliedAtom);
                                     }
 
-                                    Space[SpaceX][SpaceY][SpaceZ] = AppliedAtom.EntityId;
+                                    CellEngineSimulationSpaceObject.Space[SpaceX][SpaceY][SpaceZ] = AppliedAtom.EntityId;
                                 }
                                 else
                                     LocalCellEngineAllAtomsObject.emplace_back(AppliedAtom);
@@ -243,19 +236,9 @@ void CellEngineCIFDataFile::ReadDataFromFile()
             }
         }
 
-        cout << "CELL SPACE LIMITS PARAMETERS [ Xmin = " << to_string(XMin) << " ][ Xmax = " << to_string(XMax) << " ][ Ymin = " << to_string(YMin) << " ][ Ymax = " << to_string(YMax) << " ][ Zmin = " << to_string(ZMin) << " ][ Zmax = " << to_string(XMax) << " ] " << endl;
-        uint64_t MaxRepVoxels = 0;
-        uint64_t SumOfFullVoxels = 0;
-        for (uint64_t X = 0; X < 1024; X++)
-            for (uint64_t Y = 0; Y < 1024; Y++)
-                for (uint64_t Z = 0; Z < 1024; Z++)
-                    if (Space[X][Y][Z] != 0)
-                    {
-                        SumOfFullVoxels++;
-                        MaxRepVoxels = max(Space[X][Y][Z], MaxRepVoxels);
-                    }
-        cout << "SumOfFullVoxels = " << to_string(SumOfFullVoxels) << " MaxRepVoxels = " << to_string(MaxRepVoxels) << " FirstAccessToVoxel = " << to_string(FirstAccessToVoxel) << endl;
-
+        LoggersManagerObject.Log(CellEngineSimulationSpaceObject.PrintSpaceMinMaxValues());
+        CellEngineSimulationSpaceObject.CountStatisticsOfSpace();
+        LoggersManagerObject.Log(STREAM("Sum Of Not Empty Voxels = " << CellEngineSimulationSpaceObject.SumOfNotEmptyVoxels));
 
         ParticlesCenters.emplace_back(LocalCellEngineParticlesCentersObject);
 

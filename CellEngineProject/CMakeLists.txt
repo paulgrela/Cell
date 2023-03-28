@@ -64,15 +64,26 @@ include_directories(
 
 add_executable(
 	CellEngineProject
+	../Common/Logger/Logger.h
 	../Common/Logger/Logger.cpp
+	../Common/MathUtils/ArcBall.h
 	../Common/MathUtils/ArcBall.cpp
+	../Common/FileUtils/FileUtils.h
 	../Common/FileUtils/FileUtils.cpp
+	../Common/StringUtils/StringUtils.h
 	../Common/StringUtils/StringUtils.cpp
+	../Common/DateTimeUtils/DateTimeUtils.h
 	../Common/DateTimeUtils/DateTimeUtils.cpp
 	CellEngineImGuiMenu.cpp
+	CellEnginePDBDataFile.h
 	CellEnginePDBDataFile.cpp
+	CellEngineCIFDataFile.h
 	CellEngineCIFDataFile.cpp
-	CellEngineOpenGLVisualizer.cpp
+	CellEngineSimulationSpace.h
+	CellEngineSimulationSpace.cpp
+	CellEngineOpenGLVisualiser.h
+	CellEngineOpenGLVisualiser.cpp
+	CellEngineConfigurationFileReaderWriter.h
 	CellEngineConfigurationFileReaderWriter.cpp)
 
 if(WIN32)

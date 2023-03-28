@@ -519,13 +519,13 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
                                 for (UnsignedIntType SpaceXP = SpaceX; SpaceXP < SpaceX + 64; SpaceXP += CellEngineConfigDataObject.LoadOfAtomsStep)
                                     for (UnsignedIntType SpaceYP = SpaceY; SpaceYP < SpaceY + 64; SpaceYP += CellEngineConfigDataObject.LoadOfAtomsStep)
                                         for (UnsignedIntType SpaceZP = SpaceZ; SpaceZP < SpaceZ + 64; SpaceZP += CellEngineConfigDataObject.LoadOfAtomsStep)
-                                            if (CellEngineDataFileObjectPointer->Space[SpaceXP][SpaceYP][SpaceZP] != 0)
+                                            if (CellEngineDataFileObjectPointer->CellEngineSimulationSpaceObject.Space[SpaceXP][SpaceYP][SpaceZP] != 0)
                                             {
                                                 TempAtomObject.X = (static_cast<float>(SpaceXP - 512)) * 4;
                                                 TempAtomObject.Y = (static_cast<float>(SpaceYP - 512)) * 4;
                                                 TempAtomObject.Z = (static_cast<float>(SpaceZP - 512)) * 4;
-                                                TempAtomObject.EntityId = CellEngineDataFileObjectPointer->Space[SpaceXP][SpaceYP][SpaceZP];
-                                                auto ParticleKindObject = CellEngineConfigDataObject.ParticlesKinds[CellEngineConfigDataObject.ParticlesKindsPos.find(CellEngineDataFileObjectPointer->Space[SpaceXP][SpaceYP][SpaceZP])->second];
+                                                TempAtomObject.EntityId = CellEngineDataFileObjectPointer->CellEngineSimulationSpaceObject.Space[SpaceXP][SpaceYP][SpaceZP];
+                                                auto ParticleKindObject = CellEngineConfigDataObject.ParticlesKinds[CellEngineConfigDataObject.ParticlesKindsPos.find(CellEngineDataFileObjectPointer->CellEngineSimulationSpaceObject.Space[SpaceXP][SpaceYP][SpaceZP])->second];
                                                 TempAtomObject.ParticleColor = GetVector3FormVMathVec3(ParticleKindObject.Color);
                                                 RenderObject(TempAtomObject, ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, false, RenderObjectsBool);
                                             }
