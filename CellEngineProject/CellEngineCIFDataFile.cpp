@@ -206,17 +206,17 @@ void CellEngineCIFDataFile::ReadDataFromFile()
 
                                 if (CellEngineConfigDataObject.VoxelWorld == true)
                                 {
-                                    int64_t SpaceX = static_cast<int64_t>(round(AppliedAtom.X / 4.0)) + 512;
-                                    int64_t SpaceY = static_cast<int64_t>(round(AppliedAtom.Y / 4.0)) + 512;
-                                    int64_t SpaceZ = static_cast<int64_t>(round(AppliedAtom.Z / 4.0)) + 512;
+                                    IntType SpaceX = CellEngineSimulationSpace::ConvertToSpaceCoordinate(AppliedAtom.X);
+                                    IntType SpaceY = CellEngineSimulationSpace::ConvertToSpaceCoordinate(AppliedAtom.Y);
+                                    IntType SpaceZ = CellEngineSimulationSpace::ConvertToSpaceCoordinate(AppliedAtom.Z);
 
                                     CellEngineSimulationSpaceObject.CompareAndGetSpaceMinMax(SpaceX, SpaceY, SpaceZ);
 
                                     if (CellEngineSimulationSpaceObject.Space[SpaceX][SpaceY][SpaceZ] == 0)
                                     {
-                                        AppliedAtom.X = (static_cast<float>(SpaceX - 512)) * 4;
-                                        AppliedAtom.Y = (static_cast<float>(SpaceY - 512)) * 4;
-                                        AppliedAtom.Z = (static_cast<float>(SpaceZ - 512)) * 4;
+                                        AppliedAtom.X = CellEngineSimulationSpace::ConvertToGraphicsCoordinate(SpaceX);
+                                        AppliedAtom.Y = CellEngineSimulationSpace::ConvertToGraphicsCoordinate(SpaceY);
+                                        AppliedAtom.Z = CellEngineSimulationSpace::ConvertToGraphicsCoordinate(SpaceZ);
 
                                         LocalCellEngineAllAtomsObject.emplace_back(AppliedAtom);
                                     }
@@ -236,18 +236,16 @@ void CellEngineCIFDataFile::ReadDataFromFile()
             }
         }
 
-        LoggersManagerObject.Log(CellEngineSimulationSpaceObject.PrintSpaceMinMaxValues());
-        CellEngineSimulationSpaceObject.CountStatisticsOfSpace();
-        LoggersManagerObject.Log(STREAM("Sum Of Not Empty Voxels = " << CellEngineSimulationSpaceObject.SumOfNotEmptyVoxels));
-
         ParticlesCenters.emplace_back(LocalCellEngineParticlesCentersObject);
 
         const auto stop_time = chrono::high_resolution_clock::now();
 
+        LoggersManagerObject.Log(CellEngineSimulationSpaceObject.PrintSpaceMinMaxValues());
+        CellEngineSimulationSpaceObject.CountStatisticsOfSpace();
+        LoggersManagerObject.Log(STREAM("Sum Of Not Empty Voxels = " << CellEngineSimulationSpaceObject.SumOfNotEmptyVoxels));
+
         LoggersManagerObject.Log(STREAM("NumberOfAtoms = " << NumberOfAtoms << " | LocalCellEngineParticlesCentersObject.size() = " << LocalCellEngineParticlesCentersObject.size() << " | AllAtoms.size() = " << AllAtoms.size() << " | AllAtoms.back().size() = " << AllAtoms.back().size() << " | NumberOfAtomsDNA = " << NumberOfAtomsDNA << " | AtomsPositionsMatrixes.size() = " << TransformationsMatrixes.size() << " | " << endl));
-
         LoggersManagerObject.Log(STREAM("FINISHED READING FROM CIF FILE"));
-
         LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Execution of reading data from CIF file has taken time: ", "executing printing duration_time")));
 
         File.close();

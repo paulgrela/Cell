@@ -8,6 +8,15 @@
 class CellEngineSimulationSpace
 {
 public:
+    [[nodiscard]] static float ConvertToGraphicsCoordinate(IntType CoordinateParam)
+    {
+        return static_cast<float>(CoordinateParam - 512) * 4;
+    };
+    [[nodiscard]] static IntType ConvertToSpaceCoordinate(double CoordinateParam)
+    {
+        return static_cast<IntType>(round(CoordinateParam / 4.0)) + 512;
+    };
+public:
     IntType XMin{}, XMax{}, YMin{}, YMax{}, ZMin{}, ZMax{};
 public:
     void SetStartValuesForSpaceMinMax()

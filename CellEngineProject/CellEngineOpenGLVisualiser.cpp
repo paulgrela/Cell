@@ -507,23 +507,23 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
 
                 NumberOfAllRenderedAtoms = 0;
 
-                for (UnsignedIntType SpaceX = 0; SpaceX < 1024; SpaceX += 64)
-                    for (UnsignedIntType SpaceY = 0; SpaceY < 1024; SpaceY += 64)
-                        for (UnsignedIntType SpaceZ = 0; SpaceZ < 1024; SpaceZ += 64)
+                for (IntType SpaceX = 0; SpaceX < 1024; SpaceX += 64)
+                    for (IntType SpaceY = 0; SpaceY < 1024; SpaceY += 64)
+                        for (IntType SpaceZ = 0; SpaceZ < 1024; SpaceZ += 64)
                         {
-                            TempAtomObject.X = (static_cast<float>(SpaceX - 512)) * 4;
-                            TempAtomObject.Y = (static_cast<float>(SpaceY - 512)) * 4;
-                            TempAtomObject.Z = (static_cast<float>(SpaceZ - 512)) * 4;
+                            TempAtomObject.X = CellEngineSimulationSpace::ConvertToGraphicsCoordinate(SpaceX);
+                            TempAtomObject.Y = CellEngineSimulationSpace::ConvertToGraphicsCoordinate(SpaceY);
+                            TempAtomObject.Z = CellEngineSimulationSpace::ConvertToGraphicsCoordinate(SpaceZ);
 
                             if (RenderObject(TempAtomObject, ViewMatrix, true, false, true, NumberOfAllRenderedAtoms, false, !CellEngineConfigDataObject.ShowDetailsInAtomScale) == true)
-                                for (UnsignedIntType SpaceXP = SpaceX; SpaceXP < SpaceX + 64; SpaceXP += CellEngineConfigDataObject.LoadOfAtomsStep)
-                                    for (UnsignedIntType SpaceYP = SpaceY; SpaceYP < SpaceY + 64; SpaceYP += CellEngineConfigDataObject.LoadOfAtomsStep)
-                                        for (UnsignedIntType SpaceZP = SpaceZ; SpaceZP < SpaceZ + 64; SpaceZP += CellEngineConfigDataObject.LoadOfAtomsStep)
+                                for (IntType SpaceXP = SpaceX; SpaceXP < SpaceX + 64; SpaceXP += CellEngineConfigDataObject.LoadOfAtomsStep)
+                                    for (IntType SpaceYP = SpaceY; SpaceYP < SpaceY + 64; SpaceYP += CellEngineConfigDataObject.LoadOfAtomsStep)
+                                        for (IntType SpaceZP = SpaceZ; SpaceZP < SpaceZ + 64; SpaceZP += CellEngineConfigDataObject.LoadOfAtomsStep)
                                             if (CellEngineDataFileObjectPointer->CellEngineSimulationSpaceObject.Space[SpaceXP][SpaceYP][SpaceZP] != 0)
                                             {
-                                                TempAtomObject.X = (static_cast<float>(SpaceXP - 512)) * 4;
-                                                TempAtomObject.Y = (static_cast<float>(SpaceYP - 512)) * 4;
-                                                TempAtomObject.Z = (static_cast<float>(SpaceZP - 512)) * 4;
+                                                TempAtomObject.X = CellEngineSimulationSpace::ConvertToGraphicsCoordinate(SpaceXP);
+                                                TempAtomObject.Y = CellEngineSimulationSpace::ConvertToGraphicsCoordinate(SpaceYP);
+                                                TempAtomObject.Z = CellEngineSimulationSpace::ConvertToGraphicsCoordinate(SpaceZP);
                                                 TempAtomObject.EntityId = CellEngineDataFileObjectPointer->CellEngineSimulationSpaceObject.Space[SpaceXP][SpaceYP][SpaceZP];
                                                 auto ParticleKindObject = CellEngineConfigDataObject.ParticlesKinds[CellEngineConfigDataObject.ParticlesKindsPos.find(CellEngineDataFileObjectPointer->CellEngineSimulationSpaceObject.Space[SpaceXP][SpaceYP][SpaceZP])->second];
                                                 TempAtomObject.ParticleColor = GetVector3FormVMathVec3(ParticleKindObject.Color);
