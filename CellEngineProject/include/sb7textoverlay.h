@@ -1,6 +1,6 @@
 ﻿
-#ifndef __SB7TEXTOVERLAY_H__
-#define __SB7TEXTOVERLAY_H__
+#ifndef SB7TEXTOVERLAY_H
+#define SB7TEXTOVERLAY_H
 
 #include <sb7.h>
 
@@ -24,14 +24,14 @@ namespace sb7
         void Clear();
 
     private:
-        GLuint TextProgram;
-        GLuint VAO;
-        GLuint TextBuffer;
-        GLuint FontTexture;
-        char* ScreenBuffer;
-        int BufferWidth;
-        int BufferHeight;
-        bool Dirty;
+        GLuint TextProgram{};
+        GLuint VAO{};
+        GLuint TextBuffer{};
+        GLuint FontTexture{};
+        char* ScreenBuffer{};
+        int BufferWidth{};
+        int BufferHeight{};
+        bool Dirty{};
         int CursorX;
         int CursorY;
     };

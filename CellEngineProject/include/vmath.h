@@ -1,7 +1,7 @@
-#ifndef __VMATH_H__
-#define __VMATH_H__
+#ifndef VMATH_H
+#define VMATH_H
 
-#define _USE_MATH_DEFINES  1
+#define USE_MATH_DEFINES  1
 
 #include <cmath>
 
@@ -119,7 +119,7 @@ namespace vmath
             assign(that);
         }
 
-        inline vecN(T s)
+        inline explicit vecN(T s)
         {
             for (int n = 0; n < len; n++)
                 data[n] = s;
@@ -249,7 +249,7 @@ namespace vmath
         inline T& operator[](int n) { return data[n]; }
         inline const T& operator[](int n) const { return data[n]; }
 
-        inline static int size(void) { return len; }
+        inline static int size() { return len; }
 
         inline operator const T* () const { return &data[0]; }
 
@@ -277,6 +277,7 @@ namespace vmath
     template <typename T>
     class Tvec2 : public vecN<T, 2>
     {
+        using vecN<T, 2>::vecN;
     public:
         typedef vecN<T,2> base;
 
@@ -293,6 +294,7 @@ namespace vmath
     template <typename T>
     class Tvec3 : public vecN<T, 3>
     {
+        using vecN<T, 3>::vecN;
     public:
         typedef vecN<T, 3> base;
 

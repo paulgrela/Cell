@@ -1,6 +1,6 @@
 
-#ifndef __SB6EXT_H__
-#define __SB6EXT_H__
+#ifndef SB6EXT_H
+#define SB6EXT_H
 
 #include "GL/glext.h"
 

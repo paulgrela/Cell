@@ -1,6 +1,6 @@
 
-#ifndef __OBJECT_H__
-#define __OBJECT_H__
+#ifndef OBJECT_H
+#define OBJECT_H
 
 #include "sb6mfile.h"
 

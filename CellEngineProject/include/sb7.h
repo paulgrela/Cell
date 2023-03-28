@@ -1,6 +1,6 @@
 
-#ifndef __SB7_H__
-#define __SB7_H__
+#ifndef SB7_H
+#define SB7_H
 
 #ifdef WIN32
     #pragma once
@@ -240,9 +240,9 @@ namespace sb7
         };
 
     protected:
-        APPINFO Info;
+        APPINFO Info{};
         static sb7::OpenGLApplication* OpenGLApplicationObject;
-        GLFWwindow* Window;
+        GLFWwindow* Window{};
 
         static void glfw_onResize(GLFWwindow* Window, int w, int h)
         {

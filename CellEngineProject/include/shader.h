@@ -1,6 +1,6 @@
 
-#ifndef __SHADER_H__
-#define __SHADER_H__
+#ifndef SHADER_H
+#define SHADER_H
 
 namespace sb7
 {

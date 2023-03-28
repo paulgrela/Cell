@@ -1,6 +1,6 @@
 
-#ifndef __SB6MFILE_H__
-#define __SB6MFILE_H__
+#ifndef SB6MFILE_H
+#define SB6MFILE_H
 
 #define SB6M_FOURCC(a,b,c,d) ( ((unsigned int)(a) << 0) | ((unsigned int)(b) << 8) | ((unsigned int)(c) << 16) | ((unsigned int)(d) << 24) )
 #define SB6M_MAGIC SB6M_FOURCC('S','B','6','M')
