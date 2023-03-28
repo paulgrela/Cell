@@ -95,7 +95,7 @@ public:
     void OnResize(int Width, int Height) override;
 protected:
     static inline vmath::vec3 GetSize(const CellEngineAtom& AtomObject);
-    static inline vmath::vec3 GetColor(const CellEngineAtom& AtomObject, bool Chosen);
+    template <class T> static inline vector3 GetColor(const T& Object, bool Chosen);
     static inline void DrawCenterPoint(UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, vmath::mat4& ModelMatrix);
     inline bool GetFinalVisibilityInModelWorld(const vmath::vec3& AtomPosition, UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, bool CountNewPosition, bool DrawOutsideBorder) const;
     inline bool CreateUniformBlockForVertexShader(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4 ModelMatrix, bool CountNewPosition, bool DrawCenter, bool DrawOutsideBorder, bool DrawAdditional);
@@ -103,8 +103,10 @@ protected:
     static inline void SetAutomaticParametersForRendering();
     inline void PrepareOpenGLToRenderObjectsOnScene();
     inline void LoadShapeOfAtomsWhenChanged();
-    inline void PrintAtomDescriptionOnScreen(CellEngineAtom& ChosenParticleObject);
+    inline void RenderVoxelSpace(UnsignedIntType& NumberOfAllRenderedAtoms, const vmath::mat4& ViewMatrix);
+    inline void RenderFullAtomScene(UnsignedIntType& NumberOfAllRenderedAtoms, UnsignedIntType& NumberOfFoundParticlesCenterToBeRenderedInAtomDetails, const vmath::mat4& ViewMatrix, const Point2fT& MousePositionLocal);
     inline void ChooseAtomUsingStencilBuffer(const vmath::mat4& ViewMatrix, const GLuint* PartOfStencilBufferIndex, UnsignedIntType& NumberOfAllRenderedAtoms);
+    inline void PrintAtomDescriptionOnScreen(CellEngineAtom& ChosenParticleObject);
 protected:
     [[nodiscard]] static inline bool CheckDistanceToDrawDetailsInAtomScale(float XNew, float YNew, float ZNew);
 };

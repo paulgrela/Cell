@@ -183,7 +183,8 @@ void CellEngineConfigurationFileReaderWriter::ReadChessConfigurationFile(const c
 
                             LoggersManagerObject.Log(STREAM("Atom Kind Name = " << AtomKindPropertyTreeElement.second.get<string>("Name")));
 
-                            AtomKindObject.Color = sb7::FromVec4ToVec3(sb7::GetColorVec4FromColorName(AtomKindPropertyTreeElement.second.get<string>("Color")));
+                            AtomKindObject.Color = GetVector3FormVMathVec3(sb7::FromVec4ToVec3(sb7::GetColorVec4FromColorName(AtomKindPropertyTreeElement.second.get<string>("Color"))));
+                            AtomKindObject.ColorVmathVec3 = sb7::FromVec4ToVec3(sb7::GetColorVec4FromColorName(AtomKindPropertyTreeElement.second.get<string>("Color")));
                             AtomKindObject.SizeX = AtomKindPropertyTreeElement.second.get<float>("SizeX");
                             AtomKindObject.SizeY = AtomKindPropertyTreeElement.second.get<float>("SizeY");
                             AtomKindObject.SizeZ = AtomKindPropertyTreeElement.second.get<float>("SizeZ");
@@ -201,7 +202,7 @@ void CellEngineConfigurationFileReaderWriter::ReadChessConfigurationFile(const c
 
                             ParticleKindObject.NameFromXML = ParticleKindPropertyTreeElement.second.get<string>("Name");
                             ParticleKindObject.NameFromXML == "DNA" ? CellEngineConfigDataObject.DNAIdentifier = ParticleKindPropertyTreeElement.second.get<UnsignedIntType>("<xmlattr>.id") : 0;
-                            ParticleKindObject.Color = sb7::FromVec4ToVec3(sb7::GetColorVec4FromColorName(ParticleKindPropertyTreeElement.second.get<string>("Color")));
+                            ParticleKindObject.ParticleColor = GetVector3FormVMathVec3(sb7::FromVec4ToVec3(sb7::GetColorVec4FromColorName(ParticleKindPropertyTreeElement.second.get<string>("Color"))));
                             ParticleKindObject.Visible = ParticleKindPropertyTreeElement.second.get<bool>("Visible");
                             ParticleKindObject.SizeX = ParticleKindPropertyTreeElement.second.get<float>("SizeX");
                             ParticleKindObject.SizeY = ParticleKindPropertyTreeElement.second.get<float>("SizeY");

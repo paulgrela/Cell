@@ -37,7 +37,7 @@ CellEngineAtom CellEngineCIFDataFile::ParseRecord(const char* LocalCIFRecord)
         CellEngineAtomObject.Z = stof(AtomFields[12]);
 
         auto AtomKindObjectIterator = CellEngineConfigDataObject.GetAtomKindDataForAtom(CellEngineAtomObject.Name[0]);
-        CellEngineAtomObject.AtomColor = GetVector3FormVMathVec3(AtomKindObjectIterator->Color);
+        CellEngineAtomObject.AtomColor = AtomKindObjectIterator->Color;
         #ifdef EXTENDED_RAM_MEMORY
         CellEngineAtomObject.SizeXAtom = AtomKindObjectIterator->SizeX;
         CellEngineAtomObject.SizeYAtom = AtomKindObjectIterator->SizeY;
@@ -46,7 +46,7 @@ CellEngineAtom CellEngineCIFDataFile::ParseRecord(const char* LocalCIFRecord)
 
         auto ParticleKindObject = CellEngineConfigDataObject.ParticlesKinds[CellEngineConfigDataObject.ParticlesKindsPos.find(CellEngineAtomObject.EntityId)->second];
         CellEngineAtomObject.Visible = ParticleKindObject.Visible;
-        CellEngineAtomObject.ParticleColor = GetVector3FormVMathVec3(ParticleKindObject.Color);
+        CellEngineAtomObject.ParticleColor = ParticleKindObject.AtomColor;
         #ifdef EXTENDED_RAM_MEMORY
         CellEngineAtomObject.SizeXParticle = ParticleKindObject.SizeX;
         CellEngineAtomObject.SizeYParticle = ParticleKindObject.SizeY;
@@ -97,10 +97,10 @@ void CellEngineCIFDataFile::ReadDataFromFile()
                 if (ParticleKindObjectIterator == CellEngineConfigDataObject.ParticlesKindsXML.end())
                 {
                     auto OthersParticleKindObjectIterator = CellEngineConfigDataObject.ParticlesKindsXML.find(10000);
-                    CellEngineConfigDataObject.ParticlesKinds.emplace_back(ParticleKind{ stoi(AtomFields[2]), OthersParticleKindObjectIterator->second.Visible, OthersParticleKindObjectIterator->second.SizeX, OthersParticleKindObjectIterator->second.SizeY, OthersParticleKindObjectIterator->second.SizeZ, OthersParticleKindObjectIterator->second.Color, OthersParticleKindObjectIterator->second.NameFromXML, AtomFields[5].substr(1, AtomFields[5].length() - 2) });
+                    CellEngineConfigDataObject.ParticlesKinds.emplace_back(ParticleKind{ stoi(AtomFields[2]), OthersParticleKindObjectIterator->second.Visible, OthersParticleKindObjectIterator->second.SizeX, OthersParticleKindObjectIterator->second.SizeY, OthersParticleKindObjectIterator->second.SizeZ, OthersParticleKindObjectIterator->second.ParticleColor, OthersParticleKindObjectIterator->second.ParticleColor, GetVector3FormVMathVec3(CellEngineConfigDataObject.GetRandomColor()), OthersParticleKindObjectIterator->second.NameFromXML, AtomFields[5].substr(1, AtomFields[5].length() - 2) });
                 }
                 else
-                    CellEngineConfigDataObject.ParticlesKinds.emplace_back(ParticleKind{ stoi(AtomFields[2]), ParticleKindObjectIterator->second.Visible, ParticleKindObjectIterator->second.SizeX, ParticleKindObjectIterator->second.SizeY, ParticleKindObjectIterator->second.SizeZ, ParticleKindObjectIterator->second.Color, ParticleKindObjectIterator->second.NameFromXML, AtomFields[5].substr(1, AtomFields[5].length() - 2) });
+                    CellEngineConfigDataObject.ParticlesKinds.emplace_back(ParticleKind{ stoi(AtomFields[2]), ParticleKindObjectIterator->second.Visible, ParticleKindObjectIterator->second.SizeX, ParticleKindObjectIterator->second.SizeY, ParticleKindObjectIterator->second.SizeZ, ParticleKindObjectIterator->second.ParticleColor, ParticleKindObjectIterator->second.ParticleColor, GetVector3FormVMathVec3(CellEngineConfigDataObject.GetRandomColor()), ParticleKindObjectIterator->second.NameFromXML, AtomFields[5].substr(1, AtomFields[5].length() - 2) });
 
                 CellEngineConfigDataObject.ParticlesKindsPos[stoi(AtomFields[2])] = CellEngineConfigDataObject.ParticlesKinds.size() - 1;
             }
@@ -205,24 +205,7 @@ void CellEngineCIFDataFile::ReadDataFromFile()
                                 AppliedAtom.RandomParticleColor = GetVector3FormVMathVec3(ChainColor);
 
                                 if (CellEngineConfigDataObject.VoxelWorld == true)
-                                {
-                                    IntType SpaceX = CellEngineSimulationSpace::ConvertToSpaceCoordinate(AppliedAtom.X);
-                                    IntType SpaceY = CellEngineSimulationSpace::ConvertToSpaceCoordinate(AppliedAtom.Y);
-                                    IntType SpaceZ = CellEngineSimulationSpace::ConvertToSpaceCoordinate(AppliedAtom.Z);
-
-                                    CellEngineSimulationSpaceObject.CompareAndGetSpaceMinMax(SpaceX, SpaceY, SpaceZ);
-
-                                    if (CellEngineSimulationSpaceObject.Space[SpaceX][SpaceY][SpaceZ] == 0)
-                                    {
-                                        AppliedAtom.X = CellEngineSimulationSpace::ConvertToGraphicsCoordinate(SpaceX);
-                                        AppliedAtom.Y = CellEngineSimulationSpace::ConvertToGraphicsCoordinate(SpaceY);
-                                        AppliedAtom.Z = CellEngineSimulationSpace::ConvertToGraphicsCoordinate(SpaceZ);
-
-                                        LocalCellEngineAllAtomsObject.emplace_back(AppliedAtom);
-                                    }
-
-                                    CellEngineSimulationSpaceObject.Space[SpaceX][SpaceY][SpaceZ] = AppliedAtom.EntityId;
-                                }
+                                    CellEngineSimulationSpaceObject.SetAtomInVoxelSpace(LocalCellEngineAllAtomsObject, AppliedAtom);
                                 else
                                     LocalCellEngineAllAtomsObject.emplace_back(AppliedAtom);
                             }

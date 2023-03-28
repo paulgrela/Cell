@@ -477,16 +477,21 @@ public:
             {
                 bool ChangeColor = false;
                 for (auto& AtomsKind : CellEngineConfigDataObject.AtomsKinds)
-                    if (ImGui::ColorEdit3(string(AtomsKind.Name + " Atom Color").c_str(), (float*)&AtomsKind.Color) == true)
+                {
+                    if (ImGui::ColorEdit3(string(AtomsKind.Name + " Atom Color").c_str(), (float*)&AtomsKind.ColorVmathVec3) == true)
+                    {
+                        AtomsKind.Color = GetVector3FormVMathVec3(AtomsKind.ColorVmathVec3);
                         ChangeColor = true;
+                    }
+                }
 
                 if (ChangeColor == true)
                     for (auto& ParticleCenter : CellEngineDataFileObjectPointer->GetParticlesCenters())
                     {
-                        ParticleCenter.AtomColor = GetVector3FormVMathVec3(CellEngineConfigDataObject.GetAtomKindDataForAtom(ParticleCenter.Name[0])->Color);
+                        ParticleCenter.AtomColor = CellEngineConfigDataObject.GetAtomKindDataForAtom(ParticleCenter.Name[0])->Color;
                         if (CellEngineConfigDataObject.ShowDetailsInAtomScale == true)
                             for (auto& AtomObject : CellEngineDataFileObjectPointer->GetAllAtoms()[ParticleCenter.AtomIndex])
-                                AtomObject.AtomColor = GetVector3FormVMathVec3(CellEngineConfigDataObject.GetAtomKindDataForAtom(AtomObject.Name[0])->Color);
+                                AtomObject.AtomColor = CellEngineConfigDataObject.GetAtomKindDataForAtom(AtomObject.Name[0])->Color;
                     }
             }
         }

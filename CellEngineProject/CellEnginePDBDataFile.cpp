@@ -31,7 +31,7 @@ CellEngineAtom CellEnginePDBDataFile::ParseRecord(const char* LocalPDBRecord)
         CellEngineAtomObject.Z = stof(RecordStr.substr(46, 8));
         
         auto AtomKindObjectIterator = CellEngineConfigDataObject.GetAtomKindDataForAtom(CellEngineAtomObject.Name[0]);
-        CellEngineAtomObject.AtomColor = GetVector3FormVMathVec3(AtomKindObjectIterator->Color);
+        CellEngineAtomObject.AtomColor = AtomKindObjectIterator->Color;
 
         #ifdef EXTENDED_RAM_MEMORY
         CellEngineAtomObject.SizeXAtom = AtomKindObjectIterator->SizeX;

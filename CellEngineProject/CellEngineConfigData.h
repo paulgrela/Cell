@@ -17,7 +17,9 @@ struct ParticleKind
     float SizeX;
     float SizeY;
     float SizeZ;
-    vmath::vec3 Color;
+    vector3 AtomColor;
+    vector3 ParticleColor;
+    vector3 RandomParticleColor;
     std::string NameFromXML;
     std::string NameFromDataFile;
 };
@@ -28,7 +30,8 @@ struct AtomKind
     float SizeX;
     float SizeY;
     float SizeZ;
-    vmath::vec3 Color;
+    vector3 Color;
+    vmath::vec3 ColorVmathVec3;
 };
 
 inline bool operator==(const AtomKind& AtomKindParameter, const std::string& NameStr)
@@ -72,7 +75,7 @@ public:
     bool MultiThreaded{};
     bool SetProcessPriorityHighest{};
 public:
-    bool VoxelWorld = true;
+    bool VoxelWorld = false;
 public:
     enum class RandomColorEngineTypes
     {

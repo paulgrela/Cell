@@ -61,6 +61,27 @@ public:
 public:
     uint64_t Space[1024][1024][1024]{};
 public:
+    void SetAtomInVoxelSpace(std::vector<CellEngineAtom>& LocalCellEngineAllAtomsObject, CellEngineAtom& AppliedAtom)
+    {
+        IntType SpaceX = CellEngineSimulationSpace::ConvertToSpaceCoordinate(AppliedAtom.X);
+        IntType SpaceY = CellEngineSimulationSpace::ConvertToSpaceCoordinate(AppliedAtom.Y);
+        IntType SpaceZ = CellEngineSimulationSpace::ConvertToSpaceCoordinate(AppliedAtom.Z);
+
+        CompareAndGetSpaceMinMax(SpaceX, SpaceY, SpaceZ);
+
+        if (Space[SpaceX][SpaceY][SpaceZ] == 0)
+        {
+            AppliedAtom.X = CellEngineSimulationSpace::ConvertToGraphicsCoordinate(SpaceX);
+            AppliedAtom.Y = CellEngineSimulationSpace::ConvertToGraphicsCoordinate(SpaceY);
+            AppliedAtom.Z = CellEngineSimulationSpace::ConvertToGraphicsCoordinate(SpaceZ);
+
+            LocalCellEngineAllAtomsObject.emplace_back(AppliedAtom);
+        }
+
+        Space[SpaceX][SpaceY][SpaceZ] = AppliedAtom.EntityId;
+    }
+
+public:
     CellEngineSimulationSpace()
     {
         SetStartValuesForSpaceMinMax();
