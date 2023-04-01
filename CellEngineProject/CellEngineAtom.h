@@ -26,10 +26,6 @@ public:
     vector3 AtomColor{};
     vector3 ParticleColor{};
     vector3 RandomParticleColor{};
-//    vmath::vec3 AtomColor{};
-//    vmath::vec3 ParticleColor{};
-//    vmath::vec3 RandomParticleColor{};
-
     bool Visible{};
     #ifdef EXTENDED_RAM_MEMORY
     float SizeXAtom{};
@@ -40,7 +36,6 @@ public:
     float SizeZParticle{};
     #endif
 public:
-    //CellEngineAtom(float XParam, float YParam, float ZParam, UnsignedIntType AtomIndexParam, UnsignedIntType SerialParam, char NameParam[2], char ResNameParam[4], char ChainParam[6], vmath::vec3 ColorParam) : X(XParam), Y(YParam), Z(ZParam), AtomIndex(AtomIndexParam), Serial(static_cast<IntType>(SerialParam)), ParticleColor(ColorParam)
     CellEngineAtom(float XParam, float YParam, float ZParam, UnsignedIntType AtomIndexParam, UnsignedIntType SerialParam, char NameParam[2], char ResNameParam[4], char ChainParam[6], vector3 ColorParam) : X(XParam), Y(YParam), Z(ZParam), AtomIndex(AtomIndexParam), Serial(static_cast<IntType>(SerialParam)), ParticleColor(ColorParam)
     {
         strncpy(Name, NameParam, 2);

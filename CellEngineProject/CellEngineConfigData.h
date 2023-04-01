@@ -75,7 +75,7 @@ public:
     bool MultiThreaded{};
     bool SetProcessPriorityHighest{};
 public:
-    bool VoxelWorld = false;
+    bool VoxelWorld = true;
 public:
     enum class RandomColorEngineTypes
     {
