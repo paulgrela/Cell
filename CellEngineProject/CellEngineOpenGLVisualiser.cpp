@@ -26,7 +26,8 @@ void CellEngineOpenGLVisualiser::InitExternalData()
     {
         CellEngineDataFileObjectPointer->ReadDataFromFile();
 
-        BondsBetweenAtomsToDraw.resize(CellEngineDataFileObjectPointer->GetParticlesCenters().size());
+        if (CellEngineConfigDataObject.VoxelWorld == false)
+            BondsBetweenAtomsToDraw.resize(CellEngineDataFileObjectPointer->GetParticlesCenters().size());
     }
     CATCH("reading of data file")
 }
@@ -52,7 +53,10 @@ void CellEngineOpenGLVisualiser::StartUp()
 
         InitArcBall();
 
-        Center = CellEngineDataFileObjectPointer->GetCenter(CellEngineDataFileObjectPointer->GetParticlesCenters());
+        if (CellEngineConfigDataObject.VoxelWorld == false)
+            Center = CellEngineDataFileObjectPointer->GetCenter(CellEngineDataFileObjectPointer->GetParticlesCenters());
+        else
+            Center = { 0.0f, 0.0f, 0.0f };
 
         glUseProgram(ShaderProgramPhong);
     }
@@ -163,6 +167,7 @@ void CellEngineOpenGLVisualiser::FindBondsToDraw(const vector<CellEngineAtom>& A
         BondsToDrawLocal.resize(std::thread::hardware_concurrency());
         UnsignedIntType AtomObjectIndex1 = 0;
         UnsignedIntType AtomObjectIndex2 = 0;
+
         #pragma omp parallel for default(none) shared(BondsToDrawLocal, Atoms, LoggersManagerObject) private(AtomObjectIndex1, AtomObjectIndex2)
         for (AtomObjectIndex1 = 0; AtomObjectIndex1 < Atoms.size(); AtomObjectIndex1++)
             for (AtomObjectIndex2 = 0; AtomObjectIndex2 < Atoms.size(); AtomObjectIndex2++)
@@ -498,16 +503,16 @@ inline void CellEngineOpenGLVisualiser::DrawChosenAtomUsingStencilBufferForVoxel
     {
         if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
         {
-            UnsignedIntType ChosenParticleCenterIndex = PartOfStencilBufferIndex[0] | (PartOfStencilBufferIndex[1] << 8) | (PartOfStencilBufferIndex[2] << 16);
+            UnsignedIntType ChosenVoxelIndex = PartOfStencilBufferIndex[0] | (PartOfStencilBufferIndex[1] << 8) | (PartOfStencilBufferIndex[2] << 16);
 
-            if (ChosenParticleCenterIndex > 0)
+            if (ChosenVoxelIndex > 0)
             {
                 CellEngineAtom ChosenParticleObject{};
 
-                if (ChosenParticleCenterIndex > TemporaryRenderedVoxelsList.size())
-                    throw std::runtime_error("ERROR STENCIL INDEX TOO BIG = " + to_string(ChosenParticleCenterIndex) + " MAXIMAL NUMBER OF OBJECTS = " + to_string(TemporaryRenderedVoxelsList.size()));
+                if (ChosenVoxelIndex > TemporaryRenderedVoxelsList.size())
+                    throw std::runtime_error("ERROR STENCIL INDEX TOO BIG = " + to_string(ChosenVoxelIndex) + " MAXIMAL NUMBER OF OBJECTS = " + to_string(TemporaryRenderedVoxelsList.size()));
                 else
-                    ChosenParticleObject = TemporaryRenderedVoxelsList[ChosenParticleCenterIndex];
+                    ChosenParticleObject = TemporaryRenderedVoxelsList[ChosenVoxelIndex];
 
                 RenderObject(ChosenParticleObject, ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, true, RenderObjectsBool);
 
@@ -634,7 +639,8 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
         vmath::vec3 ViewPositionVector = vmath::vec3(CellEngineConfigDataObject.ViewPositionX, CellEngineConfigDataObject.ViewPositionY, CellEngineConfigDataObject.ViewPositionZ);
         vmath::mat4 ViewMatrix = vmath::lookat(ViewPositionVector, vmath::vec3(0.0f, 0.0f, 0.0f), vmath::vec3(0.0f, 1.0f, 0.0f)) * vmath::rotate(CellEngineConfigDataObject.RotationAngle1, CellEngineConfigDataObject.RotationAngle2, CellEngineConfigDataObject.RotationAngle3) * RotationMatrix;
 
-        DrawBonds(CellEngineDataFileObjectPointer->GetParticlesCenters(), BondsBetweenParticlesCentersToDraw, CellEngineConfigDataObject.DrawBondsBetweenParticlesCenters, ViewMatrix);
+        if (CellEngineConfigDataObject.VoxelWorld == false)
+            DrawBonds(CellEngineDataFileObjectPointer->GetParticlesCenters(), BondsBetweenParticlesCentersToDraw, CellEngineConfigDataObject.DrawBondsBetweenParticlesCenters, ViewMatrix);
 
         UnsignedIntType NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = 0;
         UnsignedIntType NumberOfAllRenderedAtoms = 0;

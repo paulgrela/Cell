@@ -83,7 +83,7 @@ public:
         mt19937 = 2,
         DefaultRandomEngine = 3
     };
-    RandomColorEngineTypes RandomColorEnigneObject = RandomColorEngineTypes::Rand;
+    RandomColorEngineTypes RandomColorEngineObject = RandomColorEngineTypes::Rand;
 public:
     std::string CellStateFileName;
 public:
@@ -212,7 +212,7 @@ public:
     {
         try
         {
-            switch (RandomColorEnigneObject)
+            switch (RandomColorEngineObject)
             {
                 case RandomColorEngineTypes::Rand : srand((unsigned int)time(nullptr)); break;
                 case RandomColorEngineTypes::mt19937 : mt64.seed(std::random_device{}()); break;
@@ -229,7 +229,7 @@ public:
 
         try
         {
-            switch (RandomColorEnigneObject)
+            switch (RandomColorEngineObject)
             {
                 case CellEngineConfigData::RandomColorEngineTypes::Rand : ReturnRandomColor = vmath::vec3((float)rand() / static_cast<float>(RAND_MAX), (float)rand() / static_cast<float>(RAND_MAX), (float)rand() / static_cast<float>(RAND_MAX)); break;
                 case CellEngineConfigData::RandomColorEngineTypes::mt19937 : ReturnRandomColor = vmath::vec3(UniformDistributionObject(mt64), UniformDistributionObject(mt64), UniformDistributionObject(mt64)); break;

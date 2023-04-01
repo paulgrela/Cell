@@ -212,22 +212,30 @@ void CellEngineCIFDataFile::ReadDataFromFile()
                         }
                     }
 
-                    LocalCellEngineParticlesCentersObject.emplace_back(CellEngineAtom(LocalCellEngineAllAtomsObject.front().X, LocalCellEngineAllAtomsObject.front().Y, LocalCellEngineAllAtomsObject.front().Z, AllAtoms.size(), LocalCellEngineParticlesCentersObject.size(), LocalCellEngineAllAtomsObject.front().Name, LocalCellEngineAllAtomsObject.front().ResName, LocalCellEngineAllAtomsObject.front().Chain, LocalCellEngineAllAtomsObject.front().ParticleColor));
-
-                    AllAtoms.emplace_back(LocalCellEngineAllAtomsObject);
+                    if (CellEngineConfigDataObject.VoxelWorld == false)
+                    {
+                        LocalCellEngineParticlesCentersObject.emplace_back(CellEngineAtom(LocalCellEngineAllAtomsObject.front().X, LocalCellEngineAllAtomsObject.front().Y, LocalCellEngineAllAtomsObject.front().Z, AllAtoms.size(), LocalCellEngineParticlesCentersObject.size(), LocalCellEngineAllAtomsObject.front().Name, LocalCellEngineAllAtomsObject.front().ResName, LocalCellEngineAllAtomsObject.front().Chain, LocalCellEngineAllAtomsObject.front().ParticleColor));
+                        AllAtoms.emplace_back(LocalCellEngineAllAtomsObject);
+                    }
                 }
             }
         }
 
-        ParticlesCenters.emplace_back(LocalCellEngineParticlesCentersObject);
+        if (CellEngineConfigDataObject.VoxelWorld == false)
+            ParticlesCenters.emplace_back(LocalCellEngineParticlesCentersObject);
 
         const auto stop_time = chrono::high_resolution_clock::now();
 
-        LoggersManagerObject.Log(CellEngineSimulationSpaceObject.PrintSpaceMinMaxValues());
-        CellEngineSimulationSpaceObject.CountStatisticsOfSpace();
-        LoggersManagerObject.Log(STREAM("Sum Of Not Empty Voxels = " << CellEngineSimulationSpaceObject.SumOfNotEmptyVoxels));
+        if (CellEngineConfigDataObject.VoxelWorld == true)
+        {
+            LoggersManagerObject.Log(CellEngineSimulationSpaceObject.PrintSpaceMinMaxValues());
+            CellEngineSimulationSpaceObject.CountStatisticsOfSpace();
+            LoggersManagerObject.Log(STREAM("Sum Of Not Empty Voxels = " << CellEngineSimulationSpaceObject.SumOfNotEmptyVoxels));
+        }
 
-        LoggersManagerObject.Log(STREAM("NumberOfAtoms = " << NumberOfAtoms << " | LocalCellEngineParticlesCentersObject.size() = " << LocalCellEngineParticlesCentersObject.size() << " | AllAtoms.size() = " << AllAtoms.size() << " | AllAtoms.back().size() = " << AllAtoms.back().size() << " | NumberOfAtomsDNA = " << NumberOfAtomsDNA << " | AtomsPositionsMatrixes.size() = " << TransformationsMatrixes.size() << " | " << endl));
+        if (CellEngineConfigDataObject.VoxelWorld == false)
+            LoggersManagerObject.Log(STREAM("NumberOfAtoms = " << NumberOfAtoms << " | LocalCellEngineParticlesCentersObject.size() = " << LocalCellEngineParticlesCentersObject.size() << " | AllAtoms.size() = " << AllAtoms.size() << " | AllAtoms.back().size() = " << AllAtoms.back().size() << " | NumberOfAtomsDNA = " << NumberOfAtomsDNA << " | AtomsPositionsMatrixes.size() = " << TransformationsMatrixes.size() << " | " << endl));
+
         LoggersManagerObject.Log(STREAM("FINISHED READING FROM CIF FILE"));
         LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Execution of reading data from CIF file has taken time: ", "executing printing duration_time")));
 

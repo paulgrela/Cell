@@ -75,7 +75,7 @@ void CellEngineConfigurationFileReaderWriter::ReadChessConfigurationFile(const c
                 CellEngineConfigDataObject.SetProcessPriorityHighest = MainConfigPropertyTreeElement.second.get<bool>("SetProcessPriorityHighest");
                 CellEngineConfigDataObject.PrintAtomDescriptionOnScreen = MainConfigPropertyTreeElement.second.get<bool>("PrintAtomDescriptionOnScreen");
                 CellEngineConfigDataObject.LogParametersOfRenderingToFile = MainConfigPropertyTreeElement.second.get<bool>("LogParametersOfRenderingToFile");
-                CellEngineConfigDataObject.RandomColorEnigneObject = static_cast<CellEngineConfigData::RandomColorEngineTypes>(MainConfigPropertyTreeElement.second.get<uint64_t>("RandomColorEngineTypes"));
+                CellEngineConfigDataObject.RandomColorEngineObject = static_cast<CellEngineConfigData::RandomColorEngineTypes>(MainConfigPropertyTreeElement.second.get<uint64_t>("RandomColorEngineTypes"));
             }
             else
             if (MainConfigPropertyTreeElement.first == "Logger")
