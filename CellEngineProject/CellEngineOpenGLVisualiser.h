@@ -42,7 +42,7 @@ private:
     Point2fT MousePosition{};
 private:
     float LengthUnit = 1;
-private:
+protected:
     vmath::vec3 Center{};
 private:
     vmath::mat4 RotationMatrix;
@@ -50,6 +50,7 @@ private:
     UnsignedIntType PressedRightMouseButton = 0;
 private:
     std::vector<std::pair<UnsignedIntType, UnsignedIntType>> BondsBetweenParticlesCentersToDraw;
+protected:
     std::vector<std::vector<std::pair<UnsignedIntType, UnsignedIntType>>> BondsBetweenAtomsToDraw;
 public:
     bool RenderObjectsBool = true;
@@ -93,19 +94,21 @@ public:
     void OnResize(int Width, int Height) override;
 protected:
     static inline vmath::vec3 GetSize(const CellEngineAtom& AtomObject);
-    template <class T> static inline vector3 GetColor(const T& Object, bool Chosen);
+    template <class T> static vector3 GetColor(const T& Object, bool Chosen);
     static inline void DrawCenterPoint(UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, vmath::mat4& ModelMatrix);
     inline bool GetFinalVisibilityInModelWorld(const vmath::vec3& AtomPosition, UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, bool CountNewPosition, bool DrawOutsideBorder) const;
     inline bool CreateUniformBlockForVertexShader(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4 ModelMatrix, bool CountNewPosition, bool DrawCenter, bool DrawOutsideBorder, bool DrawAdditional);
-    inline bool RenderObject(const CellEngineAtom& AtomObject, const vmath::mat4& ViewMatrix, bool CountNewPosition, bool DrawCenter, bool DrawOutsideBorder, UnsignedIntType& NumberOfAllRenderedAtoms, bool Chosen, bool RenderObjectParameter);
+    bool RenderObject(const CellEngineAtom& AtomObject, const vmath::mat4& ViewMatrix, bool CountNewPosition, bool DrawCenter, bool DrawOutsideBorder, UnsignedIntType& NumberOfAllRenderedAtoms, bool Chosen, bool RenderObjectParameter);
     static inline void SetAutomaticParametersForRendering();
     inline void PrepareOpenGLToRenderObjectsOnScene();
     inline void LoadShapeOfAtomsWhenChanged();
-    inline void RenderVoxelSpace(UnsignedIntType& NumberOfAllRenderedAtoms, UnsignedIntType& NumberOfFoundParticlesCenterToBeRenderedInAtomDetails, const vmath::mat4& ViewMatrix, const Point2fT& MousePositionLocal);
-    inline void RenderFullAtomScene(UnsignedIntType& NumberOfAllRenderedAtoms, UnsignedIntType& NumberOfFoundParticlesCenterToBeRenderedInAtomDetails, const vmath::mat4& ViewMatrix, const Point2fT& MousePositionLocal);
-    inline void DrawChosenAtomUsingStencilBufferForFullAtomScene(const vmath::mat4& ViewMatrix, const GLuint* PartOfStencilBufferIndex, UnsignedIntType& NumberOfAllRenderedAtoms, const std::vector<std::pair<UnsignedIntType, UnsignedIntType>>& TemporaryRenderedAtomsList);
-    inline void DrawChosenAtomUsingStencilBufferForVoxelSpace(const vmath::mat4& ViewMatrix, const GLuint* PartOfStencilBufferIndex, UnsignedIntType& NumberOfAllRenderedAtoms, const std::vector<CellEngineAtom>& TemporaryRenderedVoxelsList);
-    inline void PrintAtomDescriptionOnScreen(CellEngineAtom& ChosenParticleObject);
+    void PrintAtomDescriptionOnScreen(CellEngineAtom& ChosenParticleObject);
+public:
+    virtual void RenderSpace(UnsignedIntType& NumberOfAllRenderedAtoms, UnsignedIntType& NumberOfFoundParticlesCenterToBeRenderedInAtomDetails, const vmath::mat4& ViewMatrix, const Point2fT& MousePositionLocal) = 0;
+public:
+    virtual void GetStartCenterPoint() = 0;
+    virtual void GetMemoryForBondsBetweenAtomsToDraw() = 0;
+    virtual void DrawBondsForParticlesCenters(std::vector<std::pair<UnsignedIntType, UnsignedIntType>>& BondsToDraw, const bool DrawBonds, const vmath::mat4& ViewMatrix) = 0;
 protected:
     [[nodiscard]] static inline bool CheckDistanceToDrawDetailsInAtomScale(float XNew, float YNew, float ZNew);
 };

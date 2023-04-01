@@ -83,6 +83,8 @@ add_executable(
 	CellEngineSimulationSpace.cpp
 	CellEngineOpenGLVisualiser.h
 	CellEngineOpenGLVisualiser.cpp
+	CellEngineOpenGLFullAtomSimulationSpaceVisualiser.h
+	CellEngineOpenGLVoxelSimulationSpaceVisualiser.h
 	CellEngineConfigurationFileReaderWriter.h
 	CellEngineConfigurationFileReaderWriter.cpp)
 

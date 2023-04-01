@@ -15,6 +15,9 @@
 #include "CellEngineDataFile.h"
 #include "CellEngineConfigData.h"
 #include "CellEngineOpenGLVisualiser.h"
+#include "CellEngineOpenGLVisualiser.h"
+#include "CellEngineOpenGLVoxelSimulationSpaceVisualiser.h"
+#include "CellEngineOpenGLFullAtomSimulationSpaceVisualiser.h"
 #include "CellEngineConfigurationFileReaderWriter.h"
 
 using namespace std;
@@ -603,7 +606,7 @@ public:
             glfwDestroyWindow(ImGuiMenuWindow);
             glfwTerminate();
         }
-        CATCH("sutting down imgui menu")
+        CATCH("shutting down imgui menu")
     }
 
 public:
@@ -613,7 +616,10 @@ public:
     {
         try
         {
-            CellEngineOpenGLVisualiserPointer = make_unique<CellEngineOpenGLVisualiser>();
+            if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSpace)
+                CellEngineOpenGLVisualiserPointer = make_unique<CellEngineOpenGLFullAtomSimulationSpaceVisualiser>();
+            else
+                CellEngineOpenGLVisualiserPointer = make_unique<CellEngineOpenGLVoxelSimulationSpaceVisualiser>();
             CellEngineOpenGLVisualiserPointer->Run(XPosWindow, YPosWindow, WidthWindow, HeightWindow);
         }
         CATCH("running cell engine opengl visualiser thread function");

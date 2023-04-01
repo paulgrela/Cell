@@ -26,8 +26,7 @@ void CellEngineOpenGLVisualiser::InitExternalData()
     {
         CellEngineDataFileObjectPointer->ReadDataFromFile();
 
-        if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSpace)
-            BondsBetweenAtomsToDraw.resize(CellEngineDataFileObjectPointer->GetParticlesCenters().size());
+        GetMemoryForBondsBetweenAtomsToDraw();
     }
     CATCH("reading of data file")
 }
@@ -53,10 +52,7 @@ void CellEngineOpenGLVisualiser::StartUp()
 
         InitArcBall();
 
-        if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSpace)
-            Center = CellEngineDataFileObjectPointer->GetCenter(CellEngineDataFileObjectPointer->GetParticlesCenters());
-        else
-            Center = { 0.0f, 0.0f, 0.0f };
+        GetStartCenterPoint();
 
         glUseProgram(ShaderProgramPhong);
     }
@@ -296,7 +292,7 @@ inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader(const 
 }
 
 template <class T>
-inline vector3 CellEngineOpenGLVisualiser::GetColor(const T& Object, bool Chosen)
+vector3 CellEngineOpenGLVisualiser::GetColor(const T& Object, bool Chosen)
 {
     vector3 FinalColor{};
 
@@ -317,6 +313,8 @@ inline vector3 CellEngineOpenGLVisualiser::GetColor(const T& Object, bool Chosen
 
     return FinalColor;
 }
+
+template vector3 CellEngineOpenGLVisualiser::GetColor<ParticleKind>(const ParticleKind& Object, bool Chosen);
 
 inline vmath::vec3 CellEngineOpenGLVisualiser::GetSize(const CellEngineAtom& AtomObject)
 {
@@ -339,7 +337,7 @@ inline vmath::vec3 CellEngineOpenGLVisualiser::GetSize(const CellEngineAtom& Ato
     return Size;
 }
 
-inline bool CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom& AtomObject, const vmath::mat4& ViewMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, UnsignedIntType& NumberOfAllRenderedAtoms, const bool Chosen, const bool RenderObjectParameter)
+bool CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom& AtomObject, const vmath::mat4& ViewMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, UnsignedIntType& NumberOfAllRenderedAtoms, const bool Chosen, const bool RenderObjectParameter)
 {
     bool FinalVisibilityInModelWorld;
 
@@ -435,189 +433,6 @@ inline void CellEngineOpenGLVisualiser::LoadShapeOfAtomsWhenChanged()
     CATCH("preparing opengl to render objects on scene")
 }
 
-void CellEngineOpenGLVisualiser::RenderVoxelSpace(UnsignedIntType& NumberOfAllRenderedAtoms, UnsignedIntType& NumberOfFoundParticlesCenterToBeRenderedInAtomDetails, const vmath::mat4& ViewMatrix, const Point2fT& MousePositionLocal)
-{
-    GLuint PartOfStencilBufferIndex[3];
-
-    CellEngineAtom TempAtomObject;
-    TempAtomObject.Visible = true;
-
-    NumberOfAllRenderedAtoms = 0;
-
-    std::vector<CellEngineAtom> TemporaryRenderedVoxelsList;
-
-    CellEngineConfigDataObject.LoadOfAtomsStep > 10 ? CellEngineConfigDataObject.LoadOfAtomsStep = 4 : 1;
-
-    for (UnsignedIntType StencilBufferLoopCounter = 0; StencilBufferLoopCounter < CellEngineConfigDataObject.NumberOfStencilBufferLoops; StencilBufferLoopCounter++)
-    {
-        NumberOfAllRenderedAtoms = 0;
-
-        TemporaryRenderedVoxelsList.clear();
-
-        for (IntType SpaceX = 0; SpaceX < 1024; SpaceX += 64)
-            for (IntType SpaceY = 0; SpaceY < 1024; SpaceY += 64)
-                for (IntType SpaceZ = 0; SpaceZ < 1024; SpaceZ += 64)
-                {
-                    TempAtomObject.X = CellEngineSimulationSpace::ConvertToGraphicsCoordinate(SpaceX);
-                    TempAtomObject.Y = CellEngineSimulationSpace::ConvertToGraphicsCoordinate(SpaceY);
-                    TempAtomObject.Z = CellEngineSimulationSpace::ConvertToGraphicsCoordinate(SpaceZ);
-                    if (RenderObject(TempAtomObject, ViewMatrix, true, false, true, NumberOfAllRenderedAtoms, false, !CellEngineConfigDataObject.ShowDetailsInAtomScale) == true)
-                    {
-                        NumberOfFoundParticlesCenterToBeRenderedInAtomDetails++;
-
-                        for (UnsignedIntType SpaceXP = SpaceX; SpaceXP < SpaceX + 64; SpaceXP += CellEngineConfigDataObject.LoadOfAtomsStep)
-                            for (UnsignedIntType SpaceYP = SpaceY; SpaceYP < SpaceY + 64; SpaceYP += CellEngineConfigDataObject.LoadOfAtomsStep)
-                                for (UnsignedIntType SpaceZP = SpaceZ; SpaceZP < SpaceZ + 64; SpaceZP += CellEngineConfigDataObject.LoadOfAtomsStep)
-                                    if (CellEngineDataFileObjectPointer->CellEngineSimulationSpaceObjectPointer->Space[SpaceXP][SpaceYP][SpaceZP] != 0)
-                                    {
-                                        TempAtomObject.X = CellEngineSimulationSpace::ConvertToGraphicsCoordinate(static_cast<IntType>(SpaceXP));
-                                        TempAtomObject.Y = CellEngineSimulationSpace::ConvertToGraphicsCoordinate(static_cast<IntType>(SpaceYP));
-                                        TempAtomObject.Z = CellEngineSimulationSpace::ConvertToGraphicsCoordinate(static_cast<IntType>(SpaceZP));
-                                        TempAtomObject.EntityId = CellEngineDataFileObjectPointer->CellEngineSimulationSpaceObjectPointer->Space[SpaceXP][SpaceYP][SpaceZP];
-                                        auto ParticleKindObject = CellEngineConfigDataObject.ParticlesKinds[CellEngineConfigDataObject.ParticlesKindsPos.find(CellEngineDataFileObjectPointer->CellEngineSimulationSpaceObjectPointer->Space[SpaceXP][SpaceYP][SpaceZP])->second];
-                                        TempAtomObject.AtomColor = GetColor(ParticleKindObject, false);
-                                        TempAtomObject.ParticleColor = GetColor(ParticleKindObject, false);
-                                        TempAtomObject.RandomParticleColor = GetColor(ParticleKindObject, false);
-
-                                        if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
-                                        {
-                                            glStencilFunc(GL_ALWAYS, uint8_t((TemporaryRenderedVoxelsList.size()) >> (8 * StencilBufferLoopCounter)), -1);
-                                            TemporaryRenderedVoxelsList.emplace_back(TempAtomObject);
-                                        }
-
-                                        RenderObject(TempAtomObject, ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, false, RenderObjectsBool);
-                                    }
-                    }
-                }
-
-        if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
-            glReadPixels(GLint(MousePositionLocal.s.X), GLint((float)Info.WindowHeight - MousePositionLocal.s.Y - 1), 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &PartOfStencilBufferIndex[StencilBufferLoopCounter]);
-    }
-
-    DrawChosenAtomUsingStencilBufferForVoxelSpace(ViewMatrix, PartOfStencilBufferIndex, NumberOfAllRenderedAtoms, TemporaryRenderedVoxelsList);
-}
-
-inline void CellEngineOpenGLVisualiser::DrawChosenAtomUsingStencilBufferForVoxelSpace(const vmath::mat4& ViewMatrix, const GLuint* PartOfStencilBufferIndex, UnsignedIntType& NumberOfAllRenderedAtoms, const std::vector<CellEngineAtom>& TemporaryRenderedVoxelsList)
-{
-    try
-    {
-        if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
-        {
-            UnsignedIntType ChosenVoxelIndex = PartOfStencilBufferIndex[0] | (PartOfStencilBufferIndex[1] << 8) | (PartOfStencilBufferIndex[2] << 16);
-
-            if (ChosenVoxelIndex > 0)
-            {
-                CellEngineAtom ChosenParticleObject{};
-
-                if (ChosenVoxelIndex > TemporaryRenderedVoxelsList.size())
-                    throw std::runtime_error("ERROR STENCIL INDEX TOO BIG = " + to_string(ChosenVoxelIndex) + " MAXIMAL NUMBER OF OBJECTS = " + to_string(TemporaryRenderedVoxelsList.size()));
-                else
-                    ChosenParticleObject = TemporaryRenderedVoxelsList[ChosenVoxelIndex];
-
-                RenderObject(ChosenParticleObject, ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, true, RenderObjectsBool);
-
-                PrintAtomDescriptionOnScreen(ChosenParticleObject);
-            }
-        }
-    }
-    CATCH("choosing atom using stencil buffer")
-}
-
-void CellEngineOpenGLVisualiser::RenderFullAtomScene(UnsignedIntType& NumberOfAllRenderedAtoms, UnsignedIntType& NumberOfFoundParticlesCenterToBeRenderedInAtomDetails, const vmath::mat4& ViewMatrix, const Point2fT& MousePositionLocal)
-{
-    auto ParticlesCenters = CellEngineDataFileObjectPointer->GetParticlesCenters();
-
-    GLuint PartOfStencilBufferIndex[3];
-    std::vector<std::pair<UnsignedIntType, UnsignedIntType>> TemporaryRenderedAtomsList;
-
-    for (UnsignedIntType StencilBufferLoopCounter = 0; StencilBufferLoopCounter < CellEngineConfigDataObject.NumberOfStencilBufferLoops; StencilBufferLoopCounter++)
-    {
-        NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = 0;
-        NumberOfAllRenderedAtoms = 0;
-
-        TemporaryRenderedAtomsList.clear();
-
-        std::lock_guard<std::mutex> LockGuardObject{CellEngineDataFileObjectPointer->ChosenStructureMutexObject};
-
-        for (auto ParticlesCenterIterator = ParticlesCenters.begin(); ParticlesCenterIterator != ParticlesCenters.end(); ++ParticlesCenterIterator)
-        {
-            if (CellEngineConfigDataObject.StencilForDrawingObjectsTypesObject == CellEngineConfigData::StencilForDrawingObjectsTypes::StencilForDrawingOnlyParticlesCenters)
-                glStencilFunc(GL_ALWAYS, uint8_t((NumberOfAllRenderedAtoms >> (8 * StencilBufferLoopCounter))), -1);
-
-            auto ParticlesCenterObject = *ParticlesCenterIterator;
-
-            bool FinalVisibilityInModelWorld = RenderObject(ParticlesCenterObject, ViewMatrix, true, ParticlesCenterIterator == ParticlesCenters.end() - 1, true, NumberOfAllRenderedAtoms, false, !CellEngineConfigDataObject.ShowDetailsInAtomScale);
-
-            if (CellEngineConfigDataObject.ShowDetailsInAtomScale == true)
-                if (FinalVisibilityInModelWorld == true)
-                    if (CheckVisibilityOfParticles(ParticlesCenterObject.EntityId) == true)
-                    {
-                        NumberOfFoundParticlesCenterToBeRenderedInAtomDetails++;
-
-                        DrawBonds(CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex], BondsBetweenAtomsToDraw[ParticlesCenterObject.AtomIndex], CellEngineConfigDataObject.DrawBondsBetweenAtoms, ViewMatrix);
-
-                        UnsignedIntType AtomObjectIndex;
-                        for (AtomObjectIndex = 0; AtomObjectIndex < CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex].size(); AtomObjectIndex += CellEngineConfigDataObject.LoadOfAtomsStep)
-                        {
-                            if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
-                                if (CellEngineConfigDataObject.StencilForDrawingObjectsTypesObject == CellEngineConfigData::StencilForDrawingObjectsTypes::StencilForDrawingOnlyInAtomScale)
-                                {
-                                    glStencilFunc(GL_ALWAYS, uint8_t((TemporaryRenderedAtomsList.size()) >> (8 * StencilBufferLoopCounter)), -1);
-                                    TemporaryRenderedAtomsList.emplace_back(ParticlesCenterObject.AtomIndex, AtomObjectIndex);
-                                }
-                            RenderObject(CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex][AtomObjectIndex], ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, false, RenderObjectsBool);
-                        }
-                    }
-        }
-
-        if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
-            glReadPixels(GLint(MousePositionLocal.s.X), GLint((float)Info.WindowHeight - MousePositionLocal.s.Y - 1), 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &PartOfStencilBufferIndex[StencilBufferLoopCounter]);
-    }
-
-    DrawChosenAtomUsingStencilBufferForFullAtomScene(ViewMatrix, PartOfStencilBufferIndex, NumberOfAllRenderedAtoms, TemporaryRenderedAtomsList);
-}
-
-inline void CellEngineOpenGLVisualiser::DrawChosenAtomUsingStencilBufferForFullAtomScene(const vmath::mat4& ViewMatrix, const GLuint* PartOfStencilBufferIndex, UnsignedIntType& NumberOfAllRenderedAtoms, const std::vector<std::pair<UnsignedIntType, UnsignedIntType>>& TemporaryRenderedAtomsList)
-{
-    try
-    {
-        if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
-        {
-            UnsignedIntType ChosenParticleCenterIndex = PartOfStencilBufferIndex[0] | (PartOfStencilBufferIndex[1] << 8) | (PartOfStencilBufferIndex[2] << 16);
-
-            if (ChosenParticleCenterIndex > 0)
-            {
-                CellEngineAtom ChosenParticleObject{};
-                if (CellEngineConfigDataObject.StencilForDrawingObjectsTypesObject == CellEngineConfigData::StencilForDrawingObjectsTypes::StencilForDrawingOnlyParticlesCenters)
-                {
-                    if (ChosenParticleCenterIndex > CellEngineDataFileObjectPointer->GetParticlesCenters().size())
-                        throw std::runtime_error("ERROR STENCIL INDEX TOO BIG = " + to_string(ChosenParticleCenterIndex) + " MAXIMAL NUMBER OF OBJECTS = " + to_string(CellEngineDataFileObjectPointer->GetParticlesCenters().size()));
-                    else
-                        ChosenParticleObject = CellEngineDataFileObjectPointer->GetParticlesCenters()[ChosenParticleCenterIndex];
-                }
-                else
-                if (ChosenParticleCenterIndex < TemporaryRenderedAtomsList.size())
-                {
-                    if (TemporaryRenderedAtomsList[ChosenParticleCenterIndex].first > CellEngineDataFileObjectPointer->GetAllAtoms().size())
-                        throw std::runtime_error("ERROR STENCIL INDEX TOO BIG IN INNER 1 = " + to_string(TemporaryRenderedAtomsList[ChosenParticleCenterIndex].first) + " MAXIMAL NUMBER OF OBJECTS = " + to_string(CellEngineDataFileObjectPointer->GetAllAtoms().size()));
-                    else
-                    {
-                        if (TemporaryRenderedAtomsList[ChosenParticleCenterIndex].second > CellEngineDataFileObjectPointer->GetAllAtoms()[TemporaryRenderedAtomsList[ChosenParticleCenterIndex].first].size())
-                            throw std::runtime_error("ERROR STENCIL INDEX TOO BIG IN INNER 2 = " + to_string(TemporaryRenderedAtomsList[ChosenParticleCenterIndex].second) + " MAXIMAL NUMBER OF OBJECTS = " + to_string(CellEngineDataFileObjectPointer->GetAllAtoms()[TemporaryRenderedAtomsList[ChosenParticleCenterIndex].first].size()));
-                        else
-                            ChosenParticleObject = CellEngineDataFileObjectPointer->GetAllAtoms()[TemporaryRenderedAtomsList[ChosenParticleCenterIndex].first][TemporaryRenderedAtomsList[ChosenParticleCenterIndex].second];
-                    }
-                }
-
-                RenderObject(ChosenParticleObject, ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, true, RenderObjectsBool);
-
-                PrintAtomDescriptionOnScreen(ChosenParticleObject);
-            }
-        }
-    }
-    CATCH("choosing atom using stencil buffer")
-}
-
 void CellEngineOpenGLVisualiser::Render(double CurrentTime)
 {
     try
@@ -639,16 +454,12 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
         vmath::vec3 ViewPositionVector = vmath::vec3(CellEngineConfigDataObject.ViewPositionX, CellEngineConfigDataObject.ViewPositionY, CellEngineConfigDataObject.ViewPositionZ);
         vmath::mat4 ViewMatrix = vmath::lookat(ViewPositionVector, vmath::vec3(0.0f, 0.0f, 0.0f), vmath::vec3(0.0f, 1.0f, 0.0f)) * vmath::rotate(CellEngineConfigDataObject.RotationAngle1, CellEngineConfigDataObject.RotationAngle2, CellEngineConfigDataObject.RotationAngle3) * RotationMatrix;
 
-        if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSpace)
-            DrawBonds(CellEngineDataFileObjectPointer->GetParticlesCenters(), BondsBetweenParticlesCentersToDraw, CellEngineConfigDataObject.DrawBondsBetweenParticlesCenters, ViewMatrix);
+        DrawBondsForParticlesCenters(BondsBetweenParticlesCentersToDraw, CellEngineConfigDataObject.DrawBondsBetweenParticlesCenters, ViewMatrix);
 
         UnsignedIntType NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = 0;
         UnsignedIntType NumberOfAllRenderedAtoms = 0;
 
-        if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSpace)
-            RenderFullAtomScene(NumberOfAllRenderedAtoms, NumberOfFoundParticlesCenterToBeRenderedInAtomDetails, ViewMatrix, MousePositionLocal);
-        else
-            RenderVoxelSpace(NumberOfAllRenderedAtoms, NumberOfFoundParticlesCenterToBeRenderedInAtomDetails, ViewMatrix, MousePositionLocal);
+        RenderSpace(NumberOfAllRenderedAtoms, NumberOfFoundParticlesCenterToBeRenderedInAtomDetails, ViewMatrix, MousePositionLocal);
 
         const auto stop_time = chrono::high_resolution_clock::now();
 
@@ -677,7 +488,7 @@ inline void ClearRectangleOnScreen(const GLint XStart, const GLint YStart, const
     CATCH("filling rectangle on screen")
 }
 
-inline void CellEngineOpenGLVisualiser::PrintAtomDescriptionOnScreen(CellEngineAtom& ChosenParticleObject)
+void CellEngineOpenGLVisualiser::PrintAtomDescriptionOnScreen(CellEngineAtom& ChosenParticleObject)
 {
     try
     {
