@@ -62,6 +62,8 @@
 	</Logger>	
 	<CellsStates>
 		<CellState id="1">
+                        <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2, Both = 3-->
+
 			<CellStateFileName>../../WholeCellData/Mycoplasma Genitalium/cellpack_atom_instances_6973_curated.cif</CellStateFileName>
 			
 			<ChosenStructureIndex>0</ChosenStructureIndex>
@@ -274,6 +276,8 @@
 		</CellState>
 
 		<CellState id="2">
+                        <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2, Both = 3-->
+
 			<CellStateFileName>../../PDBFiles/struct0/117E.pdb</CellStateFileName>
 			
 			<ChosenStructureIndex>0</ChosenStructureIndex>
@@ -486,6 +490,8 @@
 		</CellState>
 		
 		<CellState id="3">
+                        <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2, Both = 3-->
+
 			<CellStateFileName>../../WholeCellData/Mycoplasma Genitalium/cellpack_atom_instances_small.cif</CellStateFileName>
 			
 			<ChosenStructureIndex>0</ChosenStructureIndex>
@@ -698,6 +704,8 @@
 		</CellState>		
 		
 		<CellState id="4">
+                        <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2, Both = 3-->
+
 			<CellStateFileName>../../PDBFiles/struct1/1rjk_MD_MD000.pdb</CellStateFileName>
 			
 			<ChosenStructureIndex>0</ChosenStructureIndex>
@@ -910,6 +918,8 @@
 		</CellState>
 
 		<CellState id="5">
+                        <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2, Both = 3-->
+
 			<CellStateFileName>../../WholeCellData/Mycoplasma Genitalium/cellpack_atom_instances_149_curated.cif</CellStateFileName>
 
 			<ChosenStructureIndex>0</ChosenStructureIndex>
@@ -1122,6 +1132,8 @@
 		</CellState>
 
 		<CellState id="6">
+                        <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2, Both = 3-->
+
 			<CellStateFileName>/home/pawel/Projects/Repos/CellExtensions/Fortran/Unres4/unres4/build/bin/Test2/1BL0_MD000.pdb</CellStateFileName>
                         <!--CellStateFileName>/home/pawel/Projects/Repos/CellExtensions/Fortran/Unres4/unres4/build/bin/Test1/microProducePDB_MD000.pdb</CellStateFileName-->
 

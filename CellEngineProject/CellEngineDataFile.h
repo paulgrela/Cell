@@ -9,7 +9,13 @@
 class CellEngineDataFile
 {
 public:
-    CellEngineSimulationSpace CellEngineSimulationSpaceObject;
+    CellEngineDataFile()
+    {
+        if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)
+            CellEngineSimulationSpaceObjectPointer = std::make_unique<CellEngineSimulationSpace>();
+    }
+public:
+    std::unique_ptr<CellEngineSimulationSpace> CellEngineSimulationSpaceObjectPointer;
 public:
     bool FilmOfStructuresActive = false;
 protected:

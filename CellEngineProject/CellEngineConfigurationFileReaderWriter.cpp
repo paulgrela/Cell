@@ -102,6 +102,8 @@ void CellEngineConfigurationFileReaderWriter::ReadChessConfigurationFile(const c
                 for (const ptree::value_type& CellStatePropertyTreeElement : MainConfigPropertyTree.get_child("Settings.CellsStates"))
                     if (CellStatePropertyTreeElement.second.get<uint64_t>("<xmlattr>.id") == ExecuteCellStateId)
                     {
+                        CellEngineConfigDataObject.TypeOfSpace = static_cast<CellEngineConfigData::TypesOfSpace>(CellStatePropertyTreeElement.second.get<uint64_t>("TypeOfSpace"));
+
                         auto CellStateFileName = CellStatePropertyTreeElement.second.get<string>("CellStateFileName");
 
                         if (string_utils::check_end_str(CellStateFileName, ".pdb") == true)

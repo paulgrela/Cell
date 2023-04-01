@@ -75,7 +75,13 @@ public:
     bool MultiThreaded{};
     bool SetProcessPriorityHighest{};
 public:
-    bool VoxelWorld = true;
+    enum class TypesOfSpace : uint64_t
+    {
+        FullAtomSpace = 1,
+        VoxelSimulationSpace = 2,
+        Both = 3
+    };
+    TypesOfSpace TypeOfSpace = TypesOfSpace::FullAtomSpace;
 public:
     enum class RandomColorEngineTypes
     {

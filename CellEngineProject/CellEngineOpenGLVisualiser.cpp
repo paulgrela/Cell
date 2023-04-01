@@ -26,7 +26,7 @@ void CellEngineOpenGLVisualiser::InitExternalData()
     {
         CellEngineDataFileObjectPointer->ReadDataFromFile();
 
-        if (CellEngineConfigDataObject.VoxelWorld == false)
+        if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSpace)
             BondsBetweenAtomsToDraw.resize(CellEngineDataFileObjectPointer->GetParticlesCenters().size());
     }
     CATCH("reading of data file")
@@ -53,7 +53,7 @@ void CellEngineOpenGLVisualiser::StartUp()
 
         InitArcBall();
 
-        if (CellEngineConfigDataObject.VoxelWorld == false)
+        if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSpace)
             Center = CellEngineDataFileObjectPointer->GetCenter(CellEngineDataFileObjectPointer->GetParticlesCenters());
         else
             Center = { 0.0f, 0.0f, 0.0f };
@@ -468,13 +468,13 @@ void CellEngineOpenGLVisualiser::RenderVoxelSpace(UnsignedIntType& NumberOfAllRe
                         for (UnsignedIntType SpaceXP = SpaceX; SpaceXP < SpaceX + 64; SpaceXP += CellEngineConfigDataObject.LoadOfAtomsStep)
                             for (UnsignedIntType SpaceYP = SpaceY; SpaceYP < SpaceY + 64; SpaceYP += CellEngineConfigDataObject.LoadOfAtomsStep)
                                 for (UnsignedIntType SpaceZP = SpaceZ; SpaceZP < SpaceZ + 64; SpaceZP += CellEngineConfigDataObject.LoadOfAtomsStep)
-                                    if (CellEngineDataFileObjectPointer->CellEngineSimulationSpaceObject.Space[SpaceXP][SpaceYP][SpaceZP] != 0)
+                                    if (CellEngineDataFileObjectPointer->CellEngineSimulationSpaceObjectPointer->Space[SpaceXP][SpaceYP][SpaceZP] != 0)
                                     {
                                         TempAtomObject.X = CellEngineSimulationSpace::ConvertToGraphicsCoordinate(static_cast<IntType>(SpaceXP));
                                         TempAtomObject.Y = CellEngineSimulationSpace::ConvertToGraphicsCoordinate(static_cast<IntType>(SpaceYP));
                                         TempAtomObject.Z = CellEngineSimulationSpace::ConvertToGraphicsCoordinate(static_cast<IntType>(SpaceZP));
-                                        TempAtomObject.EntityId = CellEngineDataFileObjectPointer->CellEngineSimulationSpaceObject.Space[SpaceXP][SpaceYP][SpaceZP];
-                                        auto ParticleKindObject = CellEngineConfigDataObject.ParticlesKinds[CellEngineConfigDataObject.ParticlesKindsPos.find(CellEngineDataFileObjectPointer->CellEngineSimulationSpaceObject.Space[SpaceXP][SpaceYP][SpaceZP])->second];
+                                        TempAtomObject.EntityId = CellEngineDataFileObjectPointer->CellEngineSimulationSpaceObjectPointer->Space[SpaceXP][SpaceYP][SpaceZP];
+                                        auto ParticleKindObject = CellEngineConfigDataObject.ParticlesKinds[CellEngineConfigDataObject.ParticlesKindsPos.find(CellEngineDataFileObjectPointer->CellEngineSimulationSpaceObjectPointer->Space[SpaceXP][SpaceYP][SpaceZP])->second];
                                         TempAtomObject.AtomColor = GetColor(ParticleKindObject, false);
                                         TempAtomObject.ParticleColor = GetColor(ParticleKindObject, false);
                                         TempAtomObject.RandomParticleColor = GetColor(ParticleKindObject, false);
@@ -639,13 +639,13 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
         vmath::vec3 ViewPositionVector = vmath::vec3(CellEngineConfigDataObject.ViewPositionX, CellEngineConfigDataObject.ViewPositionY, CellEngineConfigDataObject.ViewPositionZ);
         vmath::mat4 ViewMatrix = vmath::lookat(ViewPositionVector, vmath::vec3(0.0f, 0.0f, 0.0f), vmath::vec3(0.0f, 1.0f, 0.0f)) * vmath::rotate(CellEngineConfigDataObject.RotationAngle1, CellEngineConfigDataObject.RotationAngle2, CellEngineConfigDataObject.RotationAngle3) * RotationMatrix;
 
-        if (CellEngineConfigDataObject.VoxelWorld == false)
+        if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSpace)
             DrawBonds(CellEngineDataFileObjectPointer->GetParticlesCenters(), BondsBetweenParticlesCentersToDraw, CellEngineConfigDataObject.DrawBondsBetweenParticlesCenters, ViewMatrix);
 
         UnsignedIntType NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = 0;
         UnsignedIntType NumberOfAllRenderedAtoms = 0;
 
-        if (CellEngineConfigDataObject.VoxelWorld == false)
+        if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSpace)
             RenderFullAtomScene(NumberOfAllRenderedAtoms, NumberOfFoundParticlesCenterToBeRenderedInAtomDetails, ViewMatrix, MousePositionLocal);
         else
             RenderVoxelSpace(NumberOfAllRenderedAtoms, NumberOfFoundParticlesCenterToBeRenderedInAtomDetails, ViewMatrix, MousePositionLocal);

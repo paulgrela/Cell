@@ -62,7 +62,8 @@ void CellEngineCIFDataFile::ReadDataFromFile()
 {
     try
     {
-        CellEngineSimulationSpaceObject.SetStartValuesForSpaceMinMax();
+        if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)
+            CellEngineSimulationSpaceObjectPointer->SetStartValuesForSpaceMinMax();
 
         string Line;
         std::vector<CellEngineAtom> LocalCellEngineParticlesCentersObject;
@@ -204,15 +205,16 @@ void CellEngineCIFDataFile::ReadDataFromFile()
 
                                 AppliedAtom.RandomParticleColor = GetVector3FormVMathVec3(ChainColor);
 
-                                if (CellEngineConfigDataObject.VoxelWorld == true)
-                                    CellEngineSimulationSpaceObject.SetAtomInVoxelSpace(LocalCellEngineAllAtomsObject, AppliedAtom);
-                                else
+                                if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)
+                                    CellEngineSimulationSpaceObjectPointer->SetAtomInVoxelSpace(LocalCellEngineAllAtomsObject, AppliedAtom);
+
+                                if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSpace)
                                     LocalCellEngineAllAtomsObject.emplace_back(AppliedAtom);
                             }
                         }
                     }
 
-                    if (CellEngineConfigDataObject.VoxelWorld == false)
+                    if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSpace)
                     {
                         LocalCellEngineParticlesCentersObject.emplace_back(CellEngineAtom(LocalCellEngineAllAtomsObject.front().X, LocalCellEngineAllAtomsObject.front().Y, LocalCellEngineAllAtomsObject.front().Z, AllAtoms.size(), LocalCellEngineParticlesCentersObject.size(), LocalCellEngineAllAtomsObject.front().Name, LocalCellEngineAllAtomsObject.front().ResName, LocalCellEngineAllAtomsObject.front().Chain, LocalCellEngineAllAtomsObject.front().ParticleColor));
                         AllAtoms.emplace_back(LocalCellEngineAllAtomsObject);
@@ -221,19 +223,19 @@ void CellEngineCIFDataFile::ReadDataFromFile()
             }
         }
 
-        if (CellEngineConfigDataObject.VoxelWorld == false)
+        if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSpace)
             ParticlesCenters.emplace_back(LocalCellEngineParticlesCentersObject);
 
         const auto stop_time = chrono::high_resolution_clock::now();
 
-        if (CellEngineConfigDataObject.VoxelWorld == true)
+        if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)
         {
-            LoggersManagerObject.Log(CellEngineSimulationSpaceObject.PrintSpaceMinMaxValues());
-            CellEngineSimulationSpaceObject.CountStatisticsOfSpace();
-            LoggersManagerObject.Log(STREAM("Sum Of Not Empty Voxels = " << CellEngineSimulationSpaceObject.SumOfNotEmptyVoxels));
+            LoggersManagerObject.Log(CellEngineSimulationSpaceObjectPointer->PrintSpaceMinMaxValues());
+            CellEngineSimulationSpaceObjectPointer->CountStatisticsOfSpace();
+            LoggersManagerObject.Log(STREAM("Sum Of Not Empty Voxels = " << CellEngineSimulationSpaceObjectPointer->SumOfNotEmptyVoxels));
         }
 
-        if (CellEngineConfigDataObject.VoxelWorld == false)
+        if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSpace)
             LoggersManagerObject.Log(STREAM("NumberOfAtoms = " << NumberOfAtoms << " | LocalCellEngineParticlesCentersObject.size() = " << LocalCellEngineParticlesCentersObject.size() << " | AllAtoms.size() = " << AllAtoms.size() << " | AllAtoms.back().size() = " << AllAtoms.back().size() << " | NumberOfAtomsDNA = " << NumberOfAtomsDNA << " | AtomsPositionsMatrixes.size() = " << TransformationsMatrixes.size() << " | " << endl));
 
         LoggersManagerObject.Log(STREAM("FINISHED READING FROM CIF FILE"));

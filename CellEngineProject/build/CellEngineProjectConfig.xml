@@ -62,6 +62,8 @@
 	</Logger>	
 	<CellsStates>
 		<CellState id="1">
+                        <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2, Both = 3-->
+
 			<CellStateFileName>../../WholeCellData/Mycoplasma Genitalium/cellpack_atom_instances_6973_curated.cif</CellStateFileName>
 
 			<ChosenStructureIndex>0</ChosenStructureIndex>
@@ -274,6 +276,8 @@
 		</CellState>
 
 		<CellState id="2">
+                        <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2, Both = 3-->
+
 			<CellStateFileName>../../PDBFiles/struct0/117E.pdb</CellStateFileName>
 			
 			<ChosenStructureIndex>0</ChosenStructureIndex>
@@ -487,6 +491,8 @@
 		</CellState>
 		
 		<CellState id="3">
+                        <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2, Both = 3-->
+
 			<CellStateFileName>../../WholeCellData/Mycoplasma Genitalium/cellpack_atom_instances_small.cif</CellStateFileName>
 			
 			<ChosenStructureIndex>0</ChosenStructureIndex>
@@ -704,6 +710,8 @@
 		
 		
 		<CellState id="4">
+                        <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2, Both = 3-->
+
 			<CellStateFileName>../../PDBFiles/struct1/1rjk_MD_MD000.pdb</CellStateFileName>
 			
 			<ChosenStructureIndex>0</ChosenStructureIndex>
@@ -916,6 +924,8 @@
 		</CellState>
 
 		<CellState id="5">
+                        <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2, Both = 3-->
+
 			<CellStateFileName>../../WholeCellData/Mycoplasma Genitalium/cellpack_atom_instances_149_curated.cif</CellStateFileName>
 
 			<ChosenStructureIndex>0</ChosenStructureIndex>
@@ -1128,6 +1138,8 @@
 		</CellState>
 
 		<CellState id="6">
+                        <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2, Both = 3-->
+
 			<!--CellStateFileName>/home/pawel/Projects/Repos/CellExtensions/Fortran/Unres4/unres4/build/bin/Test2/1BL0_MD000.pdb</CellStateFileName-->
                         <!--CellStateFileName>/home/pawel/Projects/Repos/CellExtensions/Fortran/Unres4/unres4/build/bin/Test1/microProducePDB_MD000.pdb</CellStateFileName-->
                         <CellStateFileName>/home/pawel/Projects/Repos/CellExtensions/cabsdock/test1/output_pdbs/replica_0.pdb</CellStateFileName>
@@ -1343,6 +1355,8 @@
 		</CellState>
 
                 <CellState id="7">
+                        <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2, Both = 3-->
+
 			<CellStateFileName>/home/pawel/Projects/Repos/CellExtensions/Fortran/Unres4/unres4/build/bin/Test2/1BL0_MD000.pdb</CellStateFileName>
                         <!--CellStateFileName>/home/pawel/Projects/Repos/CellExtensions/Fortran/Unres4/unres4/build/bin/Test1/microProducePDB_MD000.pdb</CellStateFileName-->
 
@@ -1557,6 +1571,8 @@
 		</CellState>
 
                 <CellState id="8">
+                        <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2, Both = 3-->
+
                         <CellStateFileName>/home/pawel/Projects/Repos/CellExtensions/Fortran/Unres4/unres4/build/bin/Test1/microProducePDB_MD000.pdb</CellStateFileName>
 
 			<ChosenStructureIndex>0</ChosenStructureIndex>
@@ -1770,6 +1786,8 @@
 		</CellState>
 
 		<CellState id="9">
+                        <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2, Both = 3-->
+
 			<CellStateFileName>../../WholeCellData/JCVI-syn3A/extended_cellpack_atom_instances.cif</CellStateFileName>
 
 			<ChosenStructureIndex>0</ChosenStructureIndex>
@@ -1943,6 +1961,8 @@
 
 
                 <CellState id="10">
+                        <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2, Both = 3-->
+
                         <CellStateFileName>/home/pawel/Projects/Repos/Cell/PDBFiles/struct2/rp_new10.pdb</CellStateFileName>
 
 			<ChosenStructureIndex>0</ChosenStructureIndex>
@@ -2156,6 +2176,8 @@
 		</CellState>
 
                 <CellState id="11">
+                        <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2, Both = 3-->
+
                         <CellStateFileName>/home/pawel/Projects/Repos/Cell/PDBFiles/struct2/RP_NEW_2_E2E3_2.pdb</CellStateFileName>
 
 			<ChosenStructureIndex>0</ChosenStructureIndex>
@@ -2369,6 +2391,8 @@
 		</CellState>
 
                 <CellState id="12">
+                        <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2, Both = 3-->
+
                         <CellStateFileName>/home/pawel/Projects/Repos/Cell/PDBFiles/struct2/RP_NEW_2_6rut.pdb</CellStateFileName>
 
 			<ChosenStructureIndex>0</ChosenStructureIndex>
@@ -2582,6 +2606,8 @@
 		</CellState>
 
 		<CellState id="13">
+                        <TypeOfSpace>2</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2, Both = 3-->
+
 			<CellStateFileName>../../WholeCellData/Mycoplasma Genitalium/MG_1184_cellpack_atom_instances_1.cif</CellStateFileName>
 
 			<ChosenStructureIndex>0</ChosenStructureIndex>
