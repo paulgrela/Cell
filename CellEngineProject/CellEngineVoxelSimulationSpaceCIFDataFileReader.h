@@ -10,6 +10,8 @@ class CellEngineVoxelSimulationSpaceCIFDataFileReader : public CellEngineCIFData
 protected:
     void SetStartValues() override
     {
+        CellEngineSimulationSpaceObjectPointer = std::make_unique<CellEngineSimulationSpace>();
+
         CellEngineSimulationSpaceObjectPointer->SetStartValuesForSpaceMinMax();
     }
 protected:

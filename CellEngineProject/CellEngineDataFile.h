@@ -9,11 +9,7 @@
 class CellEngineDataFile
 {
 public:
-    CellEngineDataFile()
-    {
-        if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)
-            CellEngineSimulationSpaceObjectPointer = std::make_unique<CellEngineSimulationSpace>();
-    }
+    CellEngineDataFile() = default;
 public:
     std::unique_ptr<CellEngineSimulationSpace> CellEngineSimulationSpaceObjectPointer;
 public:
