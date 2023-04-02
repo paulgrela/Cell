@@ -611,7 +611,7 @@ public:
 public:
     unique_ptr<CellEngineOpenGLVisualiser> CellEngineOpenGLVisualiserPointer;
 
-    static unique_ptr<CellEngineOpenGLVisualiser> CreateCellEngineOpenGLVisualiserObjectPointer(const CellEngineConfigData::TypesOfSpace TypeOfSpace)
+    static unique_ptr<CellEngineOpenGLVisualiser> CreateCellEngineOpenGLVisualiserObject(const CellEngineConfigData::TypesOfSpace TypeOfSpace)
     {
         if (TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSpace)
             return make_unique<CellEngineOpenGLFullAtomSimulationSpaceVisualiser>();
@@ -623,7 +623,7 @@ public:
     {
         try
         {
-            CellEngineOpenGLVisualiserPointer = CreateCellEngineOpenGLVisualiserObjectPointer(CellEngineConfigDataObject.TypeOfSpace);
+            CellEngineOpenGLVisualiserPointer = CreateCellEngineOpenGLVisualiserObject(CellEngineConfigDataObject.TypeOfSpace);
             CellEngineOpenGLVisualiserPointer->Run(XPosWindow, YPosWindow, WidthWindow, HeightWindow);
         }
         CATCH("running cell engine opengl visualiser thread function");

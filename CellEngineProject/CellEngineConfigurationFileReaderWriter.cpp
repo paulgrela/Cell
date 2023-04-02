@@ -14,13 +14,24 @@
 #include "CellEngineConfigData.h"
 
 #include "CellEnginePDBDataFile.h"
-#include "CellEngineCIFDataFile.h"
-
 #include "CellEngineConfigurationFileReaderWriter.h"
 #include "CellEngineVoxelSimulationSpaceCIFDataFileReader.h"
 #include "CellEngineFullAtomSimulationSpaceCIFDataFileReader.h"
 
 using namespace std;
+
+std::unique_ptr<CellEngineDataFile> CreateCellEngineDataFileObject(const string_view& CellStateFileName)
+{
+    if (string_utils::check_end_str(CellStateFileName, ".pdb") == true)
+        return make_unique<CellEnginePDBDataFile>();
+    else
+    {
+        if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)
+            return make_unique<CellEngineVoxelSimulationSpaceCIFDataFileReader>();
+        else
+            return make_unique<CellEngineFullAtomSimulationSpaceCIFDataFileReader>();
+    }
+};
 
 void CellEngineConfigurationFileReaderWriter::ReadChessConfigurationFile(const char* ConfigFileNameParameter, const uint64_t ExecuteCellStateId)
 {
@@ -108,15 +119,7 @@ void CellEngineConfigurationFileReaderWriter::ReadChessConfigurationFile(const c
 
                         auto CellStateFileName = CellStatePropertyTreeElement.second.get<string>("CellStateFileName");
 
-                        if (string_utils::check_end_str(CellStateFileName, ".pdb") == true)
-                            CellEngineDataFileObjectPointer = make_unique<CellEnginePDBDataFile>();
-                        else
-                        {
-                            if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)
-                                CellEngineDataFileObjectPointer = make_unique<CellEngineVoxelSimulationSpaceCIFDataFileReader>();
-                            else
-                                CellEngineDataFileObjectPointer = make_unique<CellEngineFullAtomSimulationSpaceCIFDataFileReader>();
-                        }
+                        CellEngineDataFileObjectPointer = CreateCellEngineDataFileObject(CellStateFileName);
 
                         CellEngineConfigDataObject.CellStateFileName = CellStateFileName;
 
