@@ -5,7 +5,7 @@
 
 #include "CellEngineTypes.h"
 
-class CellEngineSimulationSpace
+class CellEngineVoxelSimulationSpace
 {
 public:
     uint64_t Space[1024][1024][1024]{};
@@ -63,9 +63,9 @@ public:
 public:
     void SetAtomInVoxelSpace(std::vector<CellEngineAtom>& LocalCellEngineAllAtomsObject, const CellEngineAtom& AppliedAtom)
     {
-        IntType SpaceX = CellEngineSimulationSpace::ConvertToSpaceCoordinate(AppliedAtom.X);
-        IntType SpaceY = CellEngineSimulationSpace::ConvertToSpaceCoordinate(AppliedAtom.Y);
-        IntType SpaceZ = CellEngineSimulationSpace::ConvertToSpaceCoordinate(AppliedAtom.Z);
+        IntType SpaceX = CellEngineVoxelSimulationSpace::ConvertToSpaceCoordinate(AppliedAtom.X);
+        IntType SpaceY = CellEngineVoxelSimulationSpace::ConvertToSpaceCoordinate(AppliedAtom.Y);
+        IntType SpaceZ = CellEngineVoxelSimulationSpace::ConvertToSpaceCoordinate(AppliedAtom.Z);
 
         CompareAndGetSpaceMinMax(SpaceX, SpaceY, SpaceZ);
 
@@ -74,7 +74,7 @@ public:
     }
 
 public:
-    CellEngineSimulationSpace()
+    CellEngineVoxelSimulationSpace()
     {
         SetStartValuesForSpaceMinMax();
 

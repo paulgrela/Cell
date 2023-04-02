@@ -35,9 +35,9 @@ private:
                 for (IntType SpaceY = 0; SpaceY < 1024; SpaceY += 64)
                     for (IntType SpaceZ = 0; SpaceZ < 1024; SpaceZ += 64)
                     {
-                        TempAtomObject.X = CellEngineSimulationSpace::ConvertToGraphicsCoordinate(SpaceX);
-                        TempAtomObject.Y = CellEngineSimulationSpace::ConvertToGraphicsCoordinate(SpaceY);
-                        TempAtomObject.Z = CellEngineSimulationSpace::ConvertToGraphicsCoordinate(SpaceZ);
+                        TempAtomObject.X = CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(SpaceX);
+                        TempAtomObject.Y = CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(SpaceY);
+                        TempAtomObject.Z = CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(SpaceZ);
                         if (RenderObject(TempAtomObject, ViewMatrix, true, false, true, NumberOfAllRenderedAtoms, false, !CellEngineConfigDataObject.ShowDetailsInAtomScale) == true)
                         {
                             NumberOfFoundParticlesCenterToBeRenderedInAtomDetails++;
@@ -47,9 +47,9 @@ private:
                                     for (UnsignedIntType SpaceZP = SpaceZ; SpaceZP < SpaceZ + 64; SpaceZP += CellEngineConfigDataObject.LoadOfAtomsStep)
                                         if (CellEngineDataFileObjectPointer->CellEngineSimulationSpaceObjectPointer->Space[SpaceXP][SpaceYP][SpaceZP] != 0)
                                         {
-                                            TempAtomObject.X = CellEngineSimulationSpace::ConvertToGraphicsCoordinate(static_cast<IntType>(SpaceXP));
-                                            TempAtomObject.Y = CellEngineSimulationSpace::ConvertToGraphicsCoordinate(static_cast<IntType>(SpaceYP));
-                                            TempAtomObject.Z = CellEngineSimulationSpace::ConvertToGraphicsCoordinate(static_cast<IntType>(SpaceZP));
+                                            TempAtomObject.X = CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(static_cast<IntType>(SpaceXP));
+                                            TempAtomObject.Y = CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(static_cast<IntType>(SpaceYP));
+                                            TempAtomObject.Z = CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(static_cast<IntType>(SpaceZP));
                                             TempAtomObject.EntityId = CellEngineDataFileObjectPointer->CellEngineSimulationSpaceObjectPointer->Space[SpaceXP][SpaceYP][SpaceZP];
                                             auto ParticleKindObject = CellEngineConfigDataObject.ParticlesKinds[CellEngineConfigDataObject.ParticlesKindsPos.find(CellEngineDataFileObjectPointer->CellEngineSimulationSpaceObjectPointer->Space[SpaceXP][SpaceYP][SpaceZP])->second];
                                             TempAtomObject.AtomColor = GetColor(ParticleKindObject, false);

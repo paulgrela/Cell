@@ -79,8 +79,8 @@ add_executable(
 	CellEnginePDBDataFile.cpp
 	CellEngineCIFDataFile.h
 	CellEngineCIFDataFile.cpp
-	CellEngineSimulationSpace.h
-	CellEngineSimulationSpace.cpp
+	CellEngineVoxelSimulationSpace.h
+	CellEngineVoxelSimulationSpace.cpp
 	CellEngineOpenGLVisualiser.h
 	CellEngineOpenGLVisualiser.cpp
 	CellEngineOpenGLFullAtomSimulationSpaceVisualiser.h

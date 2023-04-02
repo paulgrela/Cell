@@ -4,14 +4,14 @@
 
 #include "CellEngineAtom.h"
 #include "CellEngineConfigData.h"
-#include "CellEngineSimulationSpace.h"
+#include "CellEngineVoxelSimulationSpace.h"
 
 class CellEngineDataFile
 {
 public:
     CellEngineDataFile() = default;
 public:
-    std::unique_ptr<CellEngineSimulationSpace> CellEngineSimulationSpaceObjectPointer;
+    std::unique_ptr<CellEngineVoxelSimulationSpace> CellEngineSimulationSpaceObjectPointer;
 public:
     bool FilmOfStructuresActive = false;
 protected:
