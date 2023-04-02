@@ -61,7 +61,7 @@ public:
                 }
     }
 public:
-    void SetAtomInVoxelSpace(std::vector<CellEngineAtom>& LocalCellEngineAllAtomsObject, CellEngineAtom& AppliedAtom)
+    void SetAtomInVoxelSpace(std::vector<CellEngineAtom>& LocalCellEngineAllAtomsObject, const CellEngineAtom& AppliedAtom)
     {
         IntType SpaceX = CellEngineSimulationSpace::ConvertToSpaceCoordinate(AppliedAtom.X);
         IntType SpaceY = CellEngineSimulationSpace::ConvertToSpaceCoordinate(AppliedAtom.Y);

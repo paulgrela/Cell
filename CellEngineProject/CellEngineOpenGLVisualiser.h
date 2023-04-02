@@ -103,9 +103,9 @@ protected:
     inline void PrepareOpenGLToRenderObjectsOnScene();
     inline void LoadShapeOfAtomsWhenChanged();
     void PrintAtomDescriptionOnScreen(CellEngineAtom& ChosenParticleObject);
-public:
+protected:
     virtual void RenderSpace(UnsignedIntType& NumberOfAllRenderedAtoms, UnsignedIntType& NumberOfFoundParticlesCenterToBeRenderedInAtomDetails, const vmath::mat4& ViewMatrix, const Point2fT& MousePositionLocal) = 0;
-public:
+protected:
     virtual void GetStartCenterPoint() = 0;
     virtual void GetMemoryForBondsBetweenAtomsToDraw() = 0;
     virtual void DrawBondsForParticlesCenters(std::vector<std::pair<UnsignedIntType, UnsignedIntType>>& BondsToDraw, const bool DrawBonds, const vmath::mat4& ViewMatrix) = 0;

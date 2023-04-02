@@ -15,7 +15,6 @@
 #include "CellEngineDataFile.h"
 #include "CellEngineConfigData.h"
 #include "CellEngineOpenGLVisualiser.h"
-#include "CellEngineOpenGLVisualiser.h"
 #include "CellEngineOpenGLVoxelSimulationSpaceVisualiser.h"
 #include "CellEngineOpenGLFullAtomSimulationSpaceVisualiser.h"
 #include "CellEngineConfigurationFileReaderWriter.h"
@@ -612,14 +611,19 @@ public:
 public:
     unique_ptr<CellEngineOpenGLVisualiser> CellEngineOpenGLVisualiserPointer;
 
+    static unique_ptr<CellEngineOpenGLVisualiser> CreateCellEngineOpenGLVisualiserObjectPointer(const CellEngineConfigData::TypesOfSpace TypeOfSpace)
+    {
+        if (TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSpace)
+            return make_unique<CellEngineOpenGLFullAtomSimulationSpaceVisualiser>();
+        else
+            return make_unique<CellEngineOpenGLVoxelSimulationSpaceVisualiser>();
+    }
+
     void CellEngineOpenGLVisualiserThreadFunction(int XPosWindow, int YPosWindow, int WidthWindow, int HeightWindow)
     {
         try
         {
-            if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSpace)
-                CellEngineOpenGLVisualiserPointer = make_unique<CellEngineOpenGLFullAtomSimulationSpaceVisualiser>();
-            else
-                CellEngineOpenGLVisualiserPointer = make_unique<CellEngineOpenGLVoxelSimulationSpaceVisualiser>();
+            CellEngineOpenGLVisualiserPointer = CreateCellEngineOpenGLVisualiserObjectPointer(CellEngineConfigDataObject.TypeOfSpace);
             CellEngineOpenGLVisualiserPointer->Run(XPosWindow, YPosWindow, WidthWindow, HeightWindow);
         }
         CATCH("running cell engine opengl visualiser thread function");

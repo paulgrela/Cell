@@ -17,6 +17,8 @@
 #include "CellEngineCIFDataFile.h"
 
 #include "CellEngineConfigurationFileReaderWriter.h"
+#include "CellEngineVoxelSimulationSpaceCIFDataFileReader.h"
+#include "CellEngineFullAtomSimulationSpaceCIFDataFileReader.h"
 
 using namespace std;
 
@@ -109,7 +111,12 @@ void CellEngineConfigurationFileReaderWriter::ReadChessConfigurationFile(const c
                         if (string_utils::check_end_str(CellStateFileName, ".pdb") == true)
                             CellEngineDataFileObjectPointer = make_unique<CellEnginePDBDataFile>();
                         else
-                            CellEngineDataFileObjectPointer = make_unique<CellEngineCIFDataFile>();
+                        {
+                            if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)
+                                CellEngineDataFileObjectPointer = make_unique<CellEngineVoxelSimulationSpaceCIFDataFileReader>();
+                            else
+                                CellEngineDataFileObjectPointer = make_unique<CellEngineFullAtomSimulationSpaceCIFDataFileReader>();
+                        }
 
                         CellEngineConfigDataObject.CellStateFileName = CellStateFileName;
 

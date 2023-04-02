@@ -1,6 +1,5 @@
 
 #include <regex>
-#include <random>
 #include <fstream>
 
 #include <glm/vec3.hpp>
@@ -32,11 +31,14 @@ CellEngineAtom CellEngineCIFDataFile::ParseRecord(const char* LocalCIFRecord)
         strncpy(CellEngineAtomObject.Chain, AtomFields[6].c_str(), AtomFields[6].length() + 1);
         CellEngineAtomObject.EntityId = stoi(AtomFields[7]);
 
+        if(CellEngineAtomObject.EntityId == 0)
+            LoggersManagerObject.Log(STREAM("AAA" << CellEngineAtomObject.EntityId));
+
         CellEngineAtomObject.X = stof(AtomFields[10]);
         CellEngineAtomObject.Y = stof(AtomFields[11]);
         CellEngineAtomObject.Z = stof(AtomFields[12]);
 
-        auto AtomKindObjectIterator = CellEngineConfigDataObject.GetAtomKindDataForAtom(CellEngineAtomObject.Name[0]);
+        auto AtomKindObjectIterator = CellEngineConfigDataObject.GetAtomKindDataForAtom(AtomFields[3][0]);
         CellEngineAtomObject.AtomColor = AtomKindObjectIterator->Color;
         #ifdef EXTENDED_RAM_MEMORY
         CellEngineAtomObject.SizeXAtom = AtomKindObjectIterator->SizeX;
@@ -62,12 +64,11 @@ void CellEngineCIFDataFile::ReadDataFromFile()
 {
     try
     {
-        if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)
-            CellEngineSimulationSpaceObjectPointer->SetStartValuesForSpaceMinMax();
+        SetStartValues();
 
         string Line;
-        std::vector<CellEngineAtom> LocalCellEngineParticlesCentersObject;
         std::vector<CellEngineAtom> LocalCellEngineAllAtomsObject;
+        std::vector<CellEngineAtom> LocalCellEngineParticlesCentersObject;
 
         const auto start_time = chrono::high_resolution_clock::now();
 
@@ -77,6 +78,7 @@ void CellEngineCIFDataFile::ReadDataFromFile()
 
         UnsignedIntType NumberOfAtoms = 0;
         UnsignedIntType NumberOfAtomsDNA = 0;
+        UnsignedIntType NumberOfNucleotidesInDNA = 0;
 
         CellEngineConfigDataObject.SelectRandomEngineForColors();
 
@@ -166,6 +168,9 @@ void CellEngineCIFDataFile::ReadDataFromFile()
 
                     for (const auto& AppliedChainName : AppliedChainsNames)
                     {
+                        if (AppliedChainName == "NU01" || AppliedChainName == "NU11" || AppliedChainName == "NU02" || AppliedChainName == "NU12" || AppliedChainName == "NU03" || AppliedChainName == "NU13" || AppliedChainName == "NU04" || AppliedChainName == "NU14")
+                            NumberOfNucleotidesInDNA++;
+
                         auto AtomsForChainNameIterator = ChainsNames.find(AppliedChainName);
                         if (AtomsForChainNameIterator == ChainsNames.end())
                             LoggersManagerObject.Log(STREAM("ERROR IN CIF FILE LACKS AppliedChainName: " << AppliedChainName));
@@ -205,38 +210,23 @@ void CellEngineCIFDataFile::ReadDataFromFile()
 
                                 AppliedAtom.RandomParticleColor = GetVector3FormVMathVec3(ChainColor);
 
-                                if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)
-                                    CellEngineSimulationSpaceObjectPointer->SetAtomInVoxelSpace(LocalCellEngineAllAtomsObject, AppliedAtom);
-
-                                if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSpace)
-                                    LocalCellEngineAllAtomsObject.emplace_back(AppliedAtom);
+                                InsertAtom(LocalCellEngineAllAtomsObject, AppliedAtom);
                             }
                         }
                     }
 
-                    if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSpace)
-                    {
-                        LocalCellEngineParticlesCentersObject.emplace_back(CellEngineAtom(LocalCellEngineAllAtomsObject.front().X, LocalCellEngineAllAtomsObject.front().Y, LocalCellEngineAllAtomsObject.front().Z, AllAtoms.size(), LocalCellEngineParticlesCentersObject.size(), LocalCellEngineAllAtomsObject.front().Name, LocalCellEngineAllAtomsObject.front().ResName, LocalCellEngineAllAtomsObject.front().Chain, LocalCellEngineAllAtomsObject.front().ParticleColor));
-                        AllAtoms.emplace_back(LocalCellEngineAllAtomsObject);
-                    }
+                    InsertGroupOfAtoms(LocalCellEngineParticlesCentersObject, LocalCellEngineAllAtomsObject);
                 }
             }
         }
 
-        if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSpace)
-            ParticlesCenters.emplace_back(LocalCellEngineParticlesCentersObject);
+        InsertParticlesCenters(LocalCellEngineParticlesCentersObject);
 
         const auto stop_time = chrono::high_resolution_clock::now();
 
-        if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)
-        {
-            LoggersManagerObject.Log(CellEngineSimulationSpaceObjectPointer->PrintSpaceMinMaxValues());
-            CellEngineSimulationSpaceObjectPointer->CountStatisticsOfSpace();
-            LoggersManagerObject.Log(STREAM("Sum Of Not Empty Voxels = " << CellEngineSimulationSpaceObjectPointer->SumOfNotEmptyVoxels));
-        }
+        PrintStatistics();
 
-        if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSpace)
-            LoggersManagerObject.Log(STREAM("NumberOfAtoms = " << NumberOfAtoms << " | LocalCellEngineParticlesCentersObject.size() = " << LocalCellEngineParticlesCentersObject.size() << " | AllAtoms.size() = " << AllAtoms.size() << " | AllAtoms.back().size() = " << AllAtoms.back().size() << " | NumberOfAtomsDNA = " << NumberOfAtomsDNA << " | AtomsPositionsMatrixes.size() = " << TransformationsMatrixes.size() << " | " << endl));
+        LoggersManagerObject.Log(STREAM("NumberOfAtoms = " << NumberOfAtoms << " | LocalCellEngineParticlesCentersObject.size() = " << LocalCellEngineParticlesCentersObject.size() << " | AllAtoms.size() = " << AllAtoms.size() << " | NumberOfAtomsDNA = " << NumberOfAtomsDNA << " | NumberOfNucleotidesInDNA = " << NumberOfNucleotidesInDNA <<" | AtomsPositionsMatrixes.size() = " << TransformationsMatrixes.size() << " | " << endl));
 
         LoggersManagerObject.Log(STREAM("FINISHED READING FROM CIF FILE"));
         LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Execution of reading data from CIF file has taken time: ", "executing printing duration_time")));

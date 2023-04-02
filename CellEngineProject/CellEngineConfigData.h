@@ -79,7 +79,6 @@ public:
     {
         FullAtomSpace = 1,
         VoxelSimulationSpace = 2,
-        Both = 3
     };
     TypesOfSpace TypeOfSpace = TypesOfSpace::FullAtomSpace;
 public:

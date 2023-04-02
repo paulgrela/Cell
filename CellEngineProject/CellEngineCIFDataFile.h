@@ -10,7 +10,7 @@ struct TransformationMatrix3x4
     float Matrix[3][4];
 };
 
-class CellEngineCIFDataFile: public CellEngineDataFile
+class CellEngineCIFDataFile : public CellEngineDataFile
 {
 private:
     std::unordered_map<std::uint64_t, TransformationMatrix3x4> TransformationsMatrixes;
@@ -22,6 +22,12 @@ public:
     ~CellEngineCIFDataFile() = default;
 public:
     static CellEngineAtom ParseRecord(const char* LocalPDBRecord);
+protected:
+    virtual void SetStartValues() = 0;
+    virtual void InsertAtom(std::vector<CellEngineAtom>& LocalCellEngineAllAtomsObject, const CellEngineAtom& AppliedAtom) = 0;
+    virtual void InsertGroupOfAtoms(std::vector<CellEngineAtom>& LocalCellEngineParticlesCentersObject, std::vector<CellEngineAtom>& LocalCellEngineAllAtomsObject) = 0;
+    virtual void InsertParticlesCenters(std::vector<CellEngineAtom>& LocalCellEngineParticlesCentersObject) = 0;
+    virtual void PrintStatistics() = 0;
 };
 
 #endif

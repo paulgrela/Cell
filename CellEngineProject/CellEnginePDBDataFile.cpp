@@ -21,6 +21,7 @@ CellEngineAtom CellEnginePDBDataFile::ParseRecord(const char* LocalPDBRecord)
 
         CellEngineAtomObject.EntityId = 0;
         CellEngineAtomObject.Serial = stoi(RecordStr.substr(6, 5));
+
         string NameStr = trim_whitespace_surrounding(RecordStr.substr(12, 4));
         string ResNameStr = trim_whitespace_surrounding(RecordStr.substr(17, 3));
         strncpy(CellEngineAtomObject.Name, NameStr.c_str(), NameStr.length() + 1);
