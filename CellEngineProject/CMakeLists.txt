@@ -88,7 +88,9 @@ add_executable(
 	CellEngineConfigurationFileReaderWriter.h
 	CellEngineConfigurationFileReaderWriter.cpp
 	CellEngineVoxelSimulationSpaceCIFDataFileReader.h
-	CellEngineFullAtomSimulationSpaceCIFDataFileReader.h)
+	CellEngineFullAtomSimulationSpaceCIFDataFileReader.h
+	CellEngineWellStirredChemicalReactionsSimulation.h
+	CellEngineWellStirredChemicalReactionsSimulation.cpp)
 
 if(WIN32)
 target_link_libraries(${PROJECT_NAME} -static-libgcc -static-libstdc++ -lpthread -lglew32 -lsb7 -lglfw3 -lopengl32 -lglu32 -limgui)

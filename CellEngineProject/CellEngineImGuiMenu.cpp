@@ -19,6 +19,8 @@
 #include "CellEngineOpenGLFullAtomSimulationSpaceVisualiser.h"
 #include "CellEngineConfigurationFileReaderWriter.h"
 
+#include "CellEngineWellStirredChemicalReactionsSimulation.h"
+
 using namespace std;
 
 class CellEngineOpenGLVisualiserImGuiMenu
@@ -635,6 +637,9 @@ public:
         try
         {
             ReadInitConfiguration(argc, argv);
+
+                                                                                                                        TestWellStirredChemicalReactionsSimulation();
+                                                                                                                        exit(0);
 
             GLFWwindow* ImGuiMenuWindow = PrepareImGuiMenuGLFWData();
 

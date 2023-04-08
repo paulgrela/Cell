@@ -12,7 +12,7 @@
 
 struct ParticleKind
 {
-    int Identifier;
+    UnsignedIntType Identifier;
     bool Visible;
     float SizeX;
     float SizeY;
