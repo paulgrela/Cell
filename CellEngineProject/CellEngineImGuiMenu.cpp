@@ -638,8 +638,7 @@ public:
         {
             ReadInitConfiguration(argc, argv);
 
-                                                                                                                        TestWellStirredChemicalReactionsSimulation();
-                                                                                                                        exit(0);
+            //TestWellStirredChemicalReactionsSimulation(); exit(0);
 
             GLFWwindow* ImGuiMenuWindow = PrepareImGuiMenuGLFWData();
 
