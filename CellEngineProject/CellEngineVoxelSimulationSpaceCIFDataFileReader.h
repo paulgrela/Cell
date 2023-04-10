@@ -17,7 +17,7 @@ protected:
 protected:
     void InsertAtom(std::vector<CellEngineAtom>& LocalCellEngineAllAtomsObject, const CellEngineAtom& AppliedAtom) override
     {
-        CellEngineSimulationSpaceObjectPointer->SetAtomInVoxelSpace(LocalCellEngineAllAtomsObject, AppliedAtom);
+        CellEngineSimulationSpaceObjectPointer->SetAtomInVoxelSpace(AppliedAtom);
     }
 protected:
     void InsertGroupOfAtoms(std::vector<CellEngineAtom>& LocalCellEngineParticlesCentersObject, std::vector<CellEngineAtom>& LocalCellEngineAllAtomsObject) override

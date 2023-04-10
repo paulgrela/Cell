@@ -5,7 +5,6 @@ void CellEngineWellStirredChemicalReactionsSimulation::TryToDoRandomReaction(con
 {
     LoggersManagerObject.Log(STREAM(endl << "REACTION" << endl));
 
-    std::mt19937_64 mt64X{ std::random_device{}() };
     std::uniform_int_distribution<uint64_t> UniformDistributionObject1X_Uint64t(1, Particles.size());
 
     vector<UnsignedIntType> RandomParticlesTypes;
@@ -14,6 +13,11 @@ void CellEngineWellStirredChemicalReactionsSimulation::TryToDoRandomReaction(con
         RandomParticlesTypes.emplace_back(UniformDistributionObject1X_Uint64t(mt64X));
         LoggersManagerObject.Log(STREAM("Particle Reactant " << to_string(ReactantNumber) << " (" << to_string(RandomParticlesTypes.back()) << ")"));
         RandomParticlesTypes.back()--;
+        if (Particles[RandomParticlesTypes.back()].Counter == 0)
+        {
+            LoggersManagerObject.Log(STREAM("Number of random reactant is zero!"));
+            return;
+        }
     }
 
     //RandomParticlesTypes.clear(); RandomParticlesTypes = {9, 0};

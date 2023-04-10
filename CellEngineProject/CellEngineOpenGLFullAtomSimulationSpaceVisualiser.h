@@ -14,56 +14,60 @@ class CellEngineOpenGLFullAtomSimulationSpaceVisualiser : public CellEngineOpenG
 private:
     void RenderSpace(UnsignedIntType& NumberOfAllRenderedAtoms, UnsignedIntType& NumberOfFoundParticlesCenterToBeRenderedInAtomDetails, const vmath::mat4& ViewMatrix, const Point2fT& MousePositionLocal) override
     {
-        auto ParticlesCenters = CellEngineDataFileObjectPointer->GetParticlesCenters();
-
-        GLuint PartOfStencilBufferIndex[3];
-        std::vector<std::pair<UnsignedIntType, UnsignedIntType>> TemporaryRenderedAtomsList;
-
-        for (UnsignedIntType StencilBufferLoopCounter = 0; StencilBufferLoopCounter < CellEngineConfigDataObject.NumberOfStencilBufferLoops; StencilBufferLoopCounter++)
+        try
         {
-            NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = 0;
-            NumberOfAllRenderedAtoms = 0;
+            auto ParticlesCenters = CellEngineDataFileObjectPointer->GetParticlesCenters();
 
-            TemporaryRenderedAtomsList.clear();
+            GLuint PartOfStencilBufferIndex[3];
+            std::vector<std::pair<UnsignedIntType, UnsignedIntType>> TemporaryRenderedAtomsList;
 
-            std::lock_guard<std::mutex> LockGuardObject{CellEngineDataFileObjectPointer->ChosenStructureMutexObject};
-
-            for (auto ParticlesCenterIterator = ParticlesCenters.begin(); ParticlesCenterIterator != ParticlesCenters.end(); ++ParticlesCenterIterator)
+            for (UnsignedIntType StencilBufferLoopCounter = 0; StencilBufferLoopCounter < CellEngineConfigDataObject.NumberOfStencilBufferLoops; StencilBufferLoopCounter++)
             {
-                if (CellEngineConfigDataObject.StencilForDrawingObjectsTypesObject == CellEngineConfigData::StencilForDrawingObjectsTypes::StencilForDrawingOnlyParticlesCenters)
-                    glStencilFunc(GL_ALWAYS, uint8_t((NumberOfAllRenderedAtoms >> (8 * StencilBufferLoopCounter))), -1);
+                NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = 0;
+                NumberOfAllRenderedAtoms = 0;
 
-                auto ParticlesCenterObject = *ParticlesCenterIterator;
+                TemporaryRenderedAtomsList.clear();
 
-                bool FinalVisibilityInModelWorld = RenderObject(ParticlesCenterObject, ViewMatrix, true, ParticlesCenterIterator == ParticlesCenters.end() - 1, true, NumberOfAllRenderedAtoms, false, !CellEngineConfigDataObject.ShowDetailsInAtomScale);
+                std::lock_guard<std::mutex> LockGuardObject{CellEngineDataFileObjectPointer->ChosenStructureMutexObject};
 
-                if (CellEngineConfigDataObject.ShowDetailsInAtomScale == true)
-                    if (FinalVisibilityInModelWorld == true)
-                        if (CheckVisibilityOfParticles(ParticlesCenterObject.EntityId) == true)
-                        {
-                            NumberOfFoundParticlesCenterToBeRenderedInAtomDetails++;
+                for (auto ParticlesCenterIterator = ParticlesCenters.begin(); ParticlesCenterIterator != ParticlesCenters.end(); ++ParticlesCenterIterator)
+                {
+                    if (CellEngineConfigDataObject.StencilForDrawingObjectsTypesObject == CellEngineConfigData::StencilForDrawingObjectsTypes::StencilForDrawingOnlyParticlesCenters)
+                        glStencilFunc(GL_ALWAYS, uint8_t((NumberOfAllRenderedAtoms >> (8 * StencilBufferLoopCounter))), -1);
 
-                            DrawBonds(CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex], BondsBetweenAtomsToDraw[ParticlesCenterObject.AtomIndex], CellEngineConfigDataObject.DrawBondsBetweenAtoms, ViewMatrix);
+                    auto ParticlesCenterObject = *ParticlesCenterIterator;
 
-                            UnsignedIntType AtomObjectIndex;
-                            for (AtomObjectIndex = 0; AtomObjectIndex < CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex].size(); AtomObjectIndex += CellEngineConfigDataObject.LoadOfAtomsStep)
+                    bool FinalVisibilityInModelWorld = RenderObject(ParticlesCenterObject, ViewMatrix, true, ParticlesCenterIterator == ParticlesCenters.end() - 1, true, NumberOfAllRenderedAtoms, false, !CellEngineConfigDataObject.ShowDetailsInAtomScale);
+
+                    if (CellEngineConfigDataObject.ShowDetailsInAtomScale == true)
+                        if (FinalVisibilityInModelWorld == true)
+                            if (CheckVisibilityOfParticles(ParticlesCenterObject.EntityId) == true)
                             {
-                                if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
-                                    if (CellEngineConfigDataObject.StencilForDrawingObjectsTypesObject == CellEngineConfigData::StencilForDrawingObjectsTypes::StencilForDrawingOnlyInAtomScale)
-                                    {
-                                        glStencilFunc(GL_ALWAYS, uint8_t((TemporaryRenderedAtomsList.size()) >> (8 * StencilBufferLoopCounter)), -1);
-                                        TemporaryRenderedAtomsList.emplace_back(ParticlesCenterObject.AtomIndex, AtomObjectIndex);
-                                    }
-                                RenderObject(CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex][AtomObjectIndex], ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, false, RenderObjectsBool);
+                                NumberOfFoundParticlesCenterToBeRenderedInAtomDetails++;
+
+                                DrawBonds(CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex], BondsBetweenAtomsToDraw[ParticlesCenterObject.AtomIndex], CellEngineConfigDataObject.DrawBondsBetweenAtoms, ViewMatrix);
+
+                                UnsignedIntType AtomObjectIndex;
+                                for (AtomObjectIndex = 0; AtomObjectIndex < CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex].size(); AtomObjectIndex += CellEngineConfigDataObject.LoadOfAtomsStep)
+                                {
+                                    if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
+                                        if (CellEngineConfigDataObject.StencilForDrawingObjectsTypesObject == CellEngineConfigData::StencilForDrawingObjectsTypes::StencilForDrawingOnlyInAtomScale)
+                                        {
+                                            glStencilFunc(GL_ALWAYS, uint8_t((TemporaryRenderedAtomsList.size()) >> (8 * StencilBufferLoopCounter)), -1);
+                                            TemporaryRenderedAtomsList.emplace_back(ParticlesCenterObject.AtomIndex, AtomObjectIndex);
+                                        }
+                                    RenderObject(CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex][AtomObjectIndex], ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, false, RenderObjectsBool);
+                                }
                             }
-                        }
+                }
+
+                if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
+                    glReadPixels(GLint(MousePositionLocal.s.X), GLint((float)Info.WindowHeight - MousePositionLocal.s.Y - 1), 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &PartOfStencilBufferIndex[StencilBufferLoopCounter]);
             }
 
-            if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
-                glReadPixels(GLint(MousePositionLocal.s.X), GLint((float)Info.WindowHeight - MousePositionLocal.s.Y - 1), 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &PartOfStencilBufferIndex[StencilBufferLoopCounter]);
+            DrawChosenAtomUsingStencilBuffer(ViewMatrix, PartOfStencilBufferIndex, NumberOfAllRenderedAtoms, TemporaryRenderedAtomsList);
         }
-
-        DrawChosenAtomUsingStencilBuffer(ViewMatrix, PartOfStencilBufferIndex, NumberOfAllRenderedAtoms, TemporaryRenderedAtomsList);
+        CATCH("rendering full atom simulation space");
     }
 
     inline void DrawChosenAtomUsingStencilBuffer(const vmath::mat4& ViewMatrix, const GLuint* PartOfStencilBufferIndex, UnsignedIntType& NumberOfAllRenderedAtoms, const std::vector<std::pair<UnsignedIntType, UnsignedIntType>>& TemporaryRenderedAtomsList)

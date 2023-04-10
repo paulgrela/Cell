@@ -48,6 +48,8 @@ public:
 class CellEngineWellStirredChemicalReactionsSimulation
 {
 public:
+    std::mt19937_64 mt64X{ std::random_device{}() };
+public:
     std::vector<Particle> Particles;
     std::unordered_map<std::string, ReactionType> Reactions;
 public:
