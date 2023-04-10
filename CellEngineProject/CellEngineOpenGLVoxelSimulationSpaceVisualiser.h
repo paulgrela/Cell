@@ -9,24 +9,30 @@
 #include "CellEngineConfigData.h"
 #include "CellEngineOpenGLVisualiser.h"
 
+bool OnlySelectedSpace = true;
+
 class CellEngineOpenGLVoxelSimulationSpaceVisualiser : public CellEngineOpenGLVisualiser
 {
 public:
     UnsignedIntType XStart = 0, YStart = 0, ZStart = 0;
     UnsignedIntType XStep = 64, YStep = 64, ZStep = 64;
-    UnsignedIntType XEnd = 1024, YEnd = 1024, ZEnd = 1024;
+    UnsignedIntType XSize = 1024, YSize = 1024, ZSize = 1024;
 private:
-    void SetVoxelSpaceSelection(UnsignedIntType XStartParam, UnsignedIntType YStartParam, UnsignedIntType ZStartParam, UnsignedIntType XStepParam, UnsignedIntType YStepParam, UnsignedIntType ZStepParam, UnsignedIntType XEndParam, UnsignedIntType YEndParam, UnsignedIntType ZEndParam)
+    void SetVoxelSpaceSelection(UnsignedIntType XStartParam, UnsignedIntType YStartParam, UnsignedIntType ZStartParam, UnsignedIntType XStepParam, UnsignedIntType YStepParam, UnsignedIntType ZStepParam, UnsignedIntType XSizeParam, UnsignedIntType YSizeParam, UnsignedIntType ZSizeParam)
     {
         XStart = XStartParam, YStart = YStartParam, ZStart = ZStartParam;
         XStep = XStepParam, YStep = YStepParam, ZStep = ZStepParam;
-        XEnd = XEndParam, YEnd = YEndParam, ZEnd = ZEndParam;
+        XSize = XSizeParam, YSize = YSizeParam, ZSize = ZSizeParam;
     }
 private:
     void RenderSelectedSpace(UnsignedIntType& NumberOfAllRenderedAtoms, const vmath::mat4& ViewMatrix, CellEngineAtom& TempAtomObject, std::vector<CellEngineAtom>& TemporaryRenderedVoxelsList, UnsignedIntType StencilBufferLoopCounter)
     {
         try
         {
+            UnsignedIntType XEnd = XStart + XSize;
+            UnsignedIntType YEnd = YStart + YSize;
+            UnsignedIntType ZEnd = ZStart + ZSize;
+
             for (UnsignedIntType SpaceXP = XStart; SpaceXP < XEnd; SpaceXP += XStep)
                 for (UnsignedIntType SpaceYP = YStart; SpaceYP < YEnd; SpaceYP += YStep)
                     for (UnsignedIntType SpaceZP = ZStart; SpaceZP < ZEnd; SpaceZP += ZStep)
@@ -74,23 +80,28 @@ private:
 
                 TemporaryRenderedVoxelsList.clear();
 
-                for (IntType SpaceX = 0; SpaceX < 1024; SpaceX += 64)
-                    for (IntType SpaceY = 0; SpaceY < 1024; SpaceY += 64)
-                        for (IntType SpaceZ = 0; SpaceZ < 1024; SpaceZ += 64)
-                        {
-                            TempAtomObject.X = CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(SpaceX);
-                            TempAtomObject.Y = CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(SpaceY);
-                            TempAtomObject.Z = CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(SpaceZ);
-                            if (RenderObject(TempAtomObject, ViewMatrix, true, false, true, NumberOfAllRenderedAtoms, false, !CellEngineConfigDataObject.ShowDetailsInAtomScale) == true)
+                if (OnlySelectedSpace == false)
+                    for (IntType SpaceX = 0; SpaceX < 1024; SpaceX += 64)
+                        for (IntType SpaceY = 0; SpaceY < 1024; SpaceY += 64)
+                            for (IntType SpaceZ = 0; SpaceZ < 1024; SpaceZ += 64)
                             {
-                                NumberOfFoundParticlesCenterToBeRenderedInAtomDetails++;
+                                TempAtomObject.X = CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(SpaceX);
+                                TempAtomObject.Y = CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(SpaceY);
+                                TempAtomObject.Z = CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(SpaceZ);
+                                if (RenderObject(TempAtomObject, ViewMatrix, true, false, true, NumberOfAllRenderedAtoms, false, !CellEngineConfigDataObject.ShowDetailsInAtomScale) == true)
+                                {
+                                    NumberOfFoundParticlesCenterToBeRenderedInAtomDetails++;
 
-                                SetVoxelSpaceSelection(SpaceX, SpaceY, SpaceZ, CellEngineConfigDataObject.LoadOfAtomsStep, CellEngineConfigDataObject.LoadOfAtomsStep, CellEngineConfigDataObject.LoadOfAtomsStep, SpaceX + 64, SpaceY + 64, SpaceZ + 64);
+                                    SetVoxelSpaceSelection(SpaceX, SpaceY, SpaceZ, CellEngineConfigDataObject.LoadOfAtomsStep, CellEngineConfigDataObject.LoadOfAtomsStep, CellEngineConfigDataObject.LoadOfAtomsStep, 64, 64, 64);
 
-                                RenderSelectedSpace(NumberOfAllRenderedAtoms, ViewMatrix, TempAtomObject, TemporaryRenderedVoxelsList, StencilBufferLoopCounter);
-
+                                    RenderSelectedSpace(NumberOfAllRenderedAtoms, ViewMatrix, TempAtomObject, TemporaryRenderedVoxelsList, StencilBufferLoopCounter);
+                                }
                             }
-                        }
+                else
+                {
+                    SetVoxelSpaceSelection(512, 512, 512, 1, 1, 1, 16, 16, 16);
+                    RenderSelectedSpace(NumberOfAllRenderedAtoms, ViewMatrix, TempAtomObject, TemporaryRenderedVoxelsList, StencilBufferLoopCounter);
+                }
 
                 if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
                     glReadPixels(GLint(MousePositionLocal.s.X), GLint((float)Info.WindowHeight - MousePositionLocal.s.Y - 1), 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &PartOfStencilBufferIndex[StencilBufferLoopCounter]);
