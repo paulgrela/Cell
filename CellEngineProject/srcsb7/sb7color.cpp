@@ -6,7 +6,7 @@ namespace sb7
 {
     static vmath::vec4 ColorFromHex(const unsigned int hex)
     {
-        return vmath::vec4(float((hex >> 16) & 0xFF) / 255.0f, float((hex >> 8) & 0xFF) / 255.0f, float((hex >> 0) & 0xFF) / 255.0f, 1.0f);
+        return { float((hex >> 16) & 0xFF) / 255.0f, float((hex >> 8) & 0xFF) / 255.0f, float((hex >> 0) & 0xFF) / 255.0f, 1.0f };
     }
 
     const vmath::vec4 color::AliceBlue = ColorFromHex(0xF0F8FF);

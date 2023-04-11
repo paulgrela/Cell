@@ -23,7 +23,7 @@
 
 using namespace std;
 
-class CellEngineOpenGLVisualiserImGuiMenu
+class CellEngineImGuiMenu
 {
 public:
     struct APPINFO
@@ -545,6 +545,55 @@ public:
                 TypeOfGeneratedColorsMenu();
             }
 
+            if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)
+                if (ImGui::CollapsingHeader("Visibility of Voxel Simulation Space", ImGuiTreeNodeFlags_DefaultOpen))
+                {
+                    const auto StartPos = dynamic_cast<CellEngineOpenGLVoxelSimulationSpaceVisualiser*>(CellEngineOpenGLVisualiserPointer.get())->GetStartPositions();
+                    static int DrawSpaceStartXYZ[3] = { static_cast<int>(get<0>(StartPos)), static_cast<int>(get<1>(StartPos)), static_cast<int>(get<2>(StartPos)) };
+                    ImGui::DragInt3("StartX StartY StartZ", DrawSpaceStartXYZ, 1, 0, 1024, "%d", ImGuiSliderFlags_AlwaysClamp);
+
+                    const auto Steps = dynamic_cast<CellEngineOpenGLVoxelSimulationSpaceVisualiser*>(CellEngineOpenGLVisualiserPointer.get())->GetSteps();
+                    static int DrawSpaceStepsXYZ[3] = { static_cast<int>(get<0>(Steps)), static_cast<int>(get<1>(Steps)), static_cast<int>(get<2>(Steps)) };
+                    ImGui::DragInt3("StepX StepY StepZ", DrawSpaceStepsXYZ, 1, 0, 1024, "%d", ImGuiSliderFlags_AlwaysClamp);
+
+                    const auto Sizes = dynamic_cast<CellEngineOpenGLVoxelSimulationSpaceVisualiser*>(CellEngineOpenGLVisualiserPointer.get())->GetSizes();
+                    static int DrawSpaceSizesXYZ[3] = { static_cast<int>(get<0>(Sizes)), static_cast<int>(get<1>(Sizes)), static_cast<int>(get<2>(Sizes)) };
+                    ImGui::DragInt3("SizeX SizeY SizeZ", DrawSpaceSizesXYZ, 1, 0, 1024, "%d", ImGuiSliderFlags_AlwaysClamp);
+
+                    static bool DrawEmptyVoxels;
+                    ImGui::Checkbox("Draw empty voxels", &dynamic_cast<CellEngineOpenGLVoxelSimulationSpaceVisualiser*>(CellEngineOpenGLVisualiserPointer.get())->DrawEmptyVoxels);
+
+                    static int TypeOfDrawingVoxelSpace = 1;
+                    ImGui::RadioButton("Draw Voxel Space FULL", &TypeOfDrawingVoxelSpace, 1);
+                    ImGui::RadioButton("Draw Voxel Space SELECTED", &TypeOfDrawingVoxelSpace, 2);
+                    //JESLI SELECTED ZAZNACZONY TO WTEDY RYSYUJE WEDLUG WYBRANYCH ELSE CALY
+                    if (TypeOfDrawingVoxelSpace == 1)
+                    {
+                        dynamic_cast<CellEngineOpenGLVoxelSimulationSpaceVisualiser*>(CellEngineOpenGLVisualiserPointer.get())->SetVoxelSpaceSelection(0, 0, 0, 64, 64, 64, 1024, 1024, 1024);
+                        dynamic_cast<CellEngineOpenGLVoxelSimulationSpaceVisualiser*>(CellEngineOpenGLVisualiserPointer.get())->OnlySelectedSpace = false;
+                    }
+                    else
+                    if (TypeOfDrawingVoxelSpace == 2)
+                    {
+                        dynamic_cast<CellEngineOpenGLVoxelSimulationSpaceVisualiser*>(CellEngineOpenGLVisualiserPointer.get())->SetVoxelSpaceSelection(DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceStepsXYZ[0], DrawSpaceStepsXYZ[1], DrawSpaceStepsXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
+                        dynamic_cast<CellEngineOpenGLVoxelSimulationSpaceVisualiser*>(CellEngineOpenGLVisualiserPointer.get())->OnlySelectedSpace = true;
+                    }
+
+                    //JESLI KLIKNE PRZYCISK FROM MOUSE TO POZYCJE Z MYSZY TAM GDZIE ZOLTY
+                    //Z MYSZY JAKO SRODEK
+                    //Z MYSZY JAKO ROG
+
+
+                    if (ImGui::Button(" DRAW RANDOM PARTICLES "))
+                    {
+                    }
+                    int IDButton = 1;
+                    float Nothing;
+                    ColorButton("    START DIFFUSION    ", Nothing, 0, 0, 0, 3, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue){ });
+                    ColorButton("    STOP DIFFUSION     ", Nothing, 0, 0, 0, 0, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue){ });
+                }
+
+
             ImGui::End();
         }
         CATCH("executing menu window 2");
@@ -632,7 +681,7 @@ public:
     }
 
 public:
-    CellEngineOpenGLVisualiserImGuiMenu(int argc, const char** argv)
+    CellEngineImGuiMenu(int argc, const char** argv)
     {
         try
         {
@@ -642,7 +691,7 @@ public:
 
             GLFWwindow* ImGuiMenuWindow = PrepareImGuiMenuGLFWData();
 
-            thread CellEngineOpenGLVisualiserThreadObject(&CellEngineOpenGLVisualiserImGuiMenu::CellEngineOpenGLVisualiserThreadFunction, this, CellEngineConfigDataObject.XTopMainWindow, CellEngineConfigDataObject.YTopMainWindow, CellEngineConfigDataObject.WidthMainWindow, CellEngineConfigDataObject.HeightMainWindow);
+            thread CellEngineOpenGLVisualiserThreadObject(&CellEngineImGuiMenu::CellEngineOpenGLVisualiserThreadFunction, this, CellEngineConfigDataObject.XTopMainWindow, CellEngineConfigDataObject.YTopMainWindow, CellEngineConfigDataObject.WidthMainWindow, CellEngineConfigDataObject.HeightMainWindow);
 
             ImGuiMenuGLFWMainLoop(ImGuiMenuWindow);
 
@@ -656,6 +705,6 @@ public:
 
 int main(int argc, const char ** argv)
 {
-    CellEngineOpenGLVisualiserImGuiMenu CellEngineOpenGLVisualiserImGuiMenuObject(argc, argv);
+    CellEngineImGuiMenu CellEngineImGuiMenuObject(argc, argv);
     return 0;
 }
