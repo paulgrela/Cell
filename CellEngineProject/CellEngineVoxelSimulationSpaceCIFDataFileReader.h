@@ -10,14 +10,14 @@ class CellEngineVoxelSimulationSpaceCIFDataFileReader : public CellEngineCIFData
 protected:
     void SetStartValues() override
     {
-        CellEngineSimulationSpaceObjectPointer = std::make_unique<CellEngineVoxelSimulationSpace>();
+        CellEngineVoxelSimulationSpaceObjectPointer = std::make_unique<CellEngineVoxelSimulationSpace>();
 
-        CellEngineSimulationSpaceObjectPointer->SetStartValuesForSpaceMinMax();
+        CellEngineVoxelSimulationSpaceObjectPointer->SetStartValuesForSpaceMinMax();
     }
 protected:
     void InsertAtom(std::vector<CellEngineAtom>& LocalCellEngineAllAtomsObject, const CellEngineAtom& AppliedAtom) override
     {
-        CellEngineSimulationSpaceObjectPointer->SetAtomInVoxelSpace(AppliedAtom);
+        CellEngineVoxelSimulationSpaceObjectPointer->SetAtomInVoxelSpace(AppliedAtom);
     }
 protected:
     void InsertGroupOfAtoms(std::vector<CellEngineAtom>& LocalCellEngineParticlesCentersObject, std::vector<CellEngineAtom>& LocalCellEngineAllAtomsObject) override
@@ -30,9 +30,9 @@ protected:
 protected:
     void PrintStatistics() override
     {
-        LoggersManagerObject.Log(CellEngineSimulationSpaceObjectPointer->PrintSpaceMinMaxValues());
-        CellEngineSimulationSpaceObjectPointer->CountStatisticsOfSpace();
-        LoggersManagerObject.Log(STREAM("Sum Of Not Empty Voxels = " << CellEngineSimulationSpaceObjectPointer->SumOfNotEmptyVoxels));
+        LoggersManagerObject.Log(CellEngineVoxelSimulationSpaceObjectPointer->PrintSpaceMinMaxValues());
+        CellEngineVoxelSimulationSpaceObjectPointer->CountStatisticsOfSpace();
+        LoggersManagerObject.Log(STREAM("Sum Of Not Empty Voxels = " << CellEngineVoxelSimulationSpaceObjectPointer->SumOfNotEmptyVoxels));
     }
 };
 

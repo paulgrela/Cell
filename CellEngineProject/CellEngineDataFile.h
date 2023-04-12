@@ -11,7 +11,7 @@ class CellEngineDataFile
 public:
     CellEngineDataFile() = default;
 public:
-    std::unique_ptr<CellEngineVoxelSimulationSpace> CellEngineSimulationSpaceObjectPointer;
+    std::unique_ptr<CellEngineVoxelSimulationSpace> CellEngineVoxelSimulationSpaceObjectPointer;
 public:
     bool FilmOfStructuresActive = false;
 protected:

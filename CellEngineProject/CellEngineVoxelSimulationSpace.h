@@ -5,6 +5,23 @@
 
 #include "CellEngineTypes.h"
 
+constexpr UnsignedIntType NumberOfVoxelsInOneDimension = 1024;
+//TYLKO 2 PONIZSZE BEZ KUBELKOWZ Z PLIKU KONFIGURACYJNEGO
+using T1024 = uint64_t[1024][1024][1024]; //voxel 0.5 nm
+using T512 = uint64_t[512][512][512]; //voxel 1 nm
+using T256 = uint64_t[256][256][256]; // voxel 2 nm
+
+//TE 2 z kubelkami
+using T128 = uint64_t[128][128][128]; //voxel 4 nm
+using T64 = uint64_t[64][64][64]; // voxel 8 nm
+
+inline void Test1()
+{
+    auto a = new T256;
+    a[1][2][3] = 2;
+}
+
+
 class CellEngineVoxelSimulationSpace
 {
 public:

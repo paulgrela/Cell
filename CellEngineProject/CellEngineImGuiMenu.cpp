@@ -422,23 +422,23 @@ public:
     }
 
 public:
-    static void DensityOfDrawedAtomsMenu()
+    static void DensityOfDrawnAtomsMenu()
     {
         try
         {
-            const char* DensityOfDrawedAtomsComboBoxItems[] = { "1", "10", "100", "AUTOMATIC" };
-            int DensityOfDrawedAtomsItemIndex;
+            const char* DensityOfDrawnAtomsComboBoxItems[] = {"1", "10", "100", "AUTOMATIC" };
+            int DensityOfDrawnAtomsItemIndex;
             switch (CellEngineConfigDataObject.LoadOfAtomsStep)
             {
-                case 1 : DensityOfDrawedAtomsItemIndex = 0; break;
-                case 10 : DensityOfDrawedAtomsItemIndex = 1; break;
-                case 100 : DensityOfDrawedAtomsItemIndex = 2; break;
+                case 1 : DensityOfDrawnAtomsItemIndex = 0; break;
+                case 10 : DensityOfDrawnAtomsItemIndex = 1; break;
+                case 100 : DensityOfDrawnAtomsItemIndex = 2; break;
                 default : break;
             }
             if (CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep == true)
-                DensityOfDrawedAtomsItemIndex = 3;
-            ImGui::Combo( " Density Of Drawed Atoms", &DensityOfDrawedAtomsItemIndex, DensityOfDrawedAtomsComboBoxItems, IM_ARRAYSIZE(DensityOfDrawedAtomsComboBoxItems));
-            switch (DensityOfDrawedAtomsItemIndex)
+                DensityOfDrawnAtomsItemIndex = 3;
+            ImGui::Combo(" Density Of Drawn Atoms", &DensityOfDrawnAtomsItemIndex, DensityOfDrawnAtomsComboBoxItems, IM_ARRAYSIZE(DensityOfDrawnAtomsComboBoxItems));
+            switch (DensityOfDrawnAtomsItemIndex)
             {
                 case 0 : CellEngineConfigDataObject.LoadOfAtomsStep = 1; CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep = false; break;
                 case 1 : CellEngineConfigDataObject.LoadOfAtomsStep = 10; CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep = false; break;
@@ -447,10 +447,10 @@ public:
                 default : break;
             }
         }
-        CATCH("executing of density of drawed atoms menu");
+        CATCH("executing of density of drawn atoms menu");
     }
 
-    void TypesOfVisibiltyMenu() const
+    void TypesOfVisibilityMenu() const
     {
         try
         {
@@ -518,66 +518,41 @@ public:
         CATCH("executing types of generated colors menu");
     }
 
-    void MenuWindow2(ImGuiWindowFlags WindowFlags, const bool ModifiableWindow) const
+    void VoxelSimulationSpaceVisibility() const
     {
         try
         {
-            if (ModifiableWindow == false)
-                ImGui::Begin("Details Of Cell Drawing", nullptr, WindowFlags);
-            else
-                ImGui::Begin("Details Of Cell Drawing");
-
-            if (ImGui::CollapsingHeader("Visibility parameters of particles", ImGuiTreeNodeFlags_DefaultOpen))
-            {
-                DensityOfDrawedAtomsMenu();
-
-                ImGui::Checkbox("Automatic Change Of Size Of Atom", &CellEngineConfigDataObject.AutomaticChangeOfSizeOfAtom);
-                ImGui::Checkbox("Show Details In Atom Scale", &CellEngineConfigDataObject.ShowDetailsInAtomScale);
-                ImGui::Checkbox("Show Atoms In Each Part Of the Cell", &CellEngineConfigDataObject.ShowAtomsInEachPartOfTheCellWhenObserverIsFromOutside);
-                ImGui::Checkbox("Draw Bonds Between Atoms", &CellEngineConfigDataObject.DrawBondsBetweenAtoms);
-                ImGui::Checkbox("Draw Bonds Between Particles Centers", &CellEngineConfigDataObject.DrawBondsBetweenParticlesCenters);
-                ImGui::Checkbox("Render Objects", &CellEngineOpenGLVisualiserPointer->RenderObjectsBool);
-
-                TypesOfVisibiltyMenu();
-
-                AtomKindsMenu();
-
-                TypeOfGeneratedColorsMenu();
-            }
-
             if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)
                 if (ImGui::CollapsingHeader("Visibility of Voxel Simulation Space", ImGuiTreeNodeFlags_DefaultOpen))
                 {
-                    const auto StartPos = dynamic_cast<CellEngineOpenGLVoxelSimulationSpaceVisualiser*>(CellEngineOpenGLVisualiserPointer.get())->GetStartPositions();
+                    auto  CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer = dynamic_cast<CellEngineOpenGLVoxelSimulationSpaceVisualiser*>(CellEngineOpenGLVisualiserPointer.get());
+
+                    const auto StartPos = CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->GetStartPositions();
                     static int DrawSpaceStartXYZ[3] = { static_cast<int>(get<0>(StartPos)), static_cast<int>(get<1>(StartPos)), static_cast<int>(get<2>(StartPos)) };
                     ImGui::DragInt3("StartX StartY StartZ", DrawSpaceStartXYZ, 1, 0, 1024, "%d", ImGuiSliderFlags_AlwaysClamp);
 
-                    const auto Steps = dynamic_cast<CellEngineOpenGLVoxelSimulationSpaceVisualiser*>(CellEngineOpenGLVisualiserPointer.get())->GetSteps();
+                    const auto Steps = CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->GetSteps();
                     static int DrawSpaceStepsXYZ[3] = { static_cast<int>(get<0>(Steps)), static_cast<int>(get<1>(Steps)), static_cast<int>(get<2>(Steps)) };
                     ImGui::DragInt3("StepX StepY StepZ", DrawSpaceStepsXYZ, 1, 0, 1024, "%d", ImGuiSliderFlags_AlwaysClamp);
 
-                    const auto Sizes = dynamic_cast<CellEngineOpenGLVoxelSimulationSpaceVisualiser*>(CellEngineOpenGLVisualiserPointer.get())->GetSizes();
+                    const auto Sizes = CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->GetSizes();
                     static int DrawSpaceSizesXYZ[3] = { static_cast<int>(get<0>(Sizes)), static_cast<int>(get<1>(Sizes)), static_cast<int>(get<2>(Sizes)) };
                     ImGui::DragInt3("SizeX SizeY SizeZ", DrawSpaceSizesXYZ, 1, 0, 1024, "%d", ImGuiSliderFlags_AlwaysClamp);
 
-                    static bool DrawEmptyVoxels;
-                    ImGui::Checkbox("Draw empty voxels", &dynamic_cast<CellEngineOpenGLVoxelSimulationSpaceVisualiser*>(CellEngineOpenGLVisualiserPointer.get())->DrawEmptyVoxels);
+                    CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->SetVoxelSpaceSelection(DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceStepsXYZ[0], DrawSpaceStepsXYZ[1], DrawSpaceStepsXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
 
-                    static int TypeOfDrawingVoxelSpace = 1;
+                    ImGui::Checkbox("Draw empty voxels", &CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->DrawEmptyVoxels);
+
+                    static int TypeOfDrawingVoxelSpace = static_cast<int>(CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->SpaceDrawingType);
                     ImGui::RadioButton("Draw Voxel Space FULL", &TypeOfDrawingVoxelSpace, 1);
                     ImGui::RadioButton("Draw Voxel Space SELECTED", &TypeOfDrawingVoxelSpace, 2);
-                    //JESLI SELECTED ZAZNACZONY TO WTEDY RYSYUJE WEDLUG WYBRANYCH ELSE CALY
-                    if (TypeOfDrawingVoxelSpace == 1)
-                    {
-                        dynamic_cast<CellEngineOpenGLVoxelSimulationSpaceVisualiser*>(CellEngineOpenGLVisualiserPointer.get())->SetVoxelSpaceSelection(0, 0, 0, 64, 64, 64, 1024, 1024, 1024);
-                        dynamic_cast<CellEngineOpenGLVoxelSimulationSpaceVisualiser*>(CellEngineOpenGLVisualiserPointer.get())->OnlySelectedSpace = false;
-                    }
+                    CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->SpaceDrawingType = static_cast<CellEngineOpenGLVoxelSimulationSpaceVisualiser::VoxelSpaceDrawingTypes>(TypeOfDrawingVoxelSpace);
+
+                    if (CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->SpaceDrawingType == CellEngineOpenGLVoxelSimulationSpaceVisualiser::VoxelSpaceDrawingTypes::DrawVoxelSpaceFull)
+                        CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->SetVoxelSpaceSelection(0, 0, 0, 64, 64, 64, 1024, 1024, 1024);
                     else
-                    if (TypeOfDrawingVoxelSpace == 2)
-                    {
-                        dynamic_cast<CellEngineOpenGLVoxelSimulationSpaceVisualiser*>(CellEngineOpenGLVisualiserPointer.get())->SetVoxelSpaceSelection(DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceStepsXYZ[0], DrawSpaceStepsXYZ[1], DrawSpaceStepsXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-                        dynamic_cast<CellEngineOpenGLVoxelSimulationSpaceVisualiser*>(CellEngineOpenGLVisualiserPointer.get())->OnlySelectedSpace = true;
-                    }
+                    if (CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->SpaceDrawingType == CellEngineOpenGLVoxelSimulationSpaceVisualiser::VoxelSpaceDrawingTypes::DrawVoxelSpaceSelected)
+                        CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->SetVoxelSpaceSelection(DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceStepsXYZ[0], DrawSpaceStepsXYZ[1], DrawSpaceStepsXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
 
                     //JESLI KLIKNE PRZYCISK FROM MOUSE TO POZYCJE Z MYSZY TAM GDZIE ZOLTY
                     //Z MYSZY JAKO SRODEK
@@ -592,7 +567,38 @@ public:
                     ColorButton("    START DIFFUSION    ", Nothing, 0, 0, 0, 3, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue){ });
                     ColorButton("    STOP DIFFUSION     ", Nothing, 0, 0, 0, 0, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue){ });
                 }
+        }
+        CATCH("executing voxel simulation space visibility menu")
+    }
 
+    void MenuWindow2(ImGuiWindowFlags WindowFlags, const bool ModifiableWindow) const
+    {
+        try
+        {
+            if (ModifiableWindow == false)
+                ImGui::Begin("Details Of Cell Drawing", nullptr, WindowFlags);
+            else
+                ImGui::Begin("Details Of Cell Drawing");
+
+            if (ImGui::CollapsingHeader("Visibility parameters of particles", ImGuiTreeNodeFlags_DefaultOpen))
+            {
+                DensityOfDrawnAtomsMenu();
+
+                ImGui::Checkbox("Automatic Change Of Size Of Atom", &CellEngineConfigDataObject.AutomaticChangeOfSizeOfAtom);
+                ImGui::Checkbox("Show Details In Atom Scale", &CellEngineConfigDataObject.ShowDetailsInAtomScale);
+                ImGui::Checkbox("Show Atoms In Each Part Of the Cell", &CellEngineConfigDataObject.ShowAtomsInEachPartOfTheCellWhenObserverIsFromOutside);
+                ImGui::Checkbox("Draw Bonds Between Atoms", &CellEngineConfigDataObject.DrawBondsBetweenAtoms);
+                ImGui::Checkbox("Draw Bonds Between Particles Centers", &CellEngineConfigDataObject.DrawBondsBetweenParticlesCenters);
+                ImGui::Checkbox("Render Objects", &CellEngineOpenGLVisualiserPointer->RenderObjectsBool);
+
+                TypesOfVisibilityMenu();
+
+                AtomKindsMenu();
+
+                TypeOfGeneratedColorsMenu();
+            }
+
+            VoxelSimulationSpaceVisibility();
 
             ImGui::End();
         }

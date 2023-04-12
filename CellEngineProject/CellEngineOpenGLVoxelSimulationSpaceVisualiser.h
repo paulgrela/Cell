@@ -14,13 +14,20 @@
 
 class CellEngineOpenGLVoxelSimulationSpaceVisualiser : public CellEngineOpenGLVisualiser
 {
+public:
+    enum class VoxelSpaceDrawingTypes : int
+    {
+        DrawVoxelSpaceFull = 1,
+        DrawVoxelSpaceSelected = 2
+    };
+public:
+    VoxelSpaceDrawingTypes SpaceDrawingType = VoxelSpaceDrawingTypes::DrawVoxelSpaceFull;
+    bool DrawEmptyVoxels = false;
 private:
-    UnsignedIntType XStart = 512, YStart = 512, ZStart = 512;
+    UnsignedIntType XStart = 412, YStart = 412, ZStart = 412;
+    //UnsignedIntType XStart = 512, YStart = 512, ZStart = 512;
     UnsignedIntType XStep = 1, YStep = 1, ZStep = 1;
     UnsignedIntType XSize = 16, YSize = 16, ZSize = 16;
-public:
-    bool DrawEmptyVoxels = false;
-    bool OnlySelectedSpace = false;
 public:
     std::tuple<UnsignedIntType, UnsignedIntType, UnsignedIntType> GetStartPositions()
     {
@@ -41,34 +48,39 @@ public:
         XSize = XSizeParam, YSize = YSizeParam, ZSize = ZSizeParam;
     }
 private:
-    void RenderSelectedSpace(UnsignedIntType XStartParam, UnsignedIntType YStartParam, UnsignedIntType ZStartParam, UnsignedIntType XStepParam, UnsignedIntType YStepParam, UnsignedIntType ZStepParam, UnsignedIntType XSizeParam, UnsignedIntType YSizeParam, UnsignedIntType ZSizeParam, UnsignedIntType& NumberOfAllRenderedAtoms, const vmath::mat4& ViewMatrix, CellEngineAtom& TempAtomObject, std::vector<CellEngineAtom>& TemporaryRenderedVoxelsList, UnsignedIntType StencilBufferLoopCounter)
+    void RenderSelectedSpace(const UnsignedIntType XStartParam, const UnsignedIntType YStartParam, const UnsignedIntType ZStartParam, const UnsignedIntType XStepParam, const UnsignedIntType YStepParam, const UnsignedIntType ZStepParam, const UnsignedIntType XSizeParam, UnsignedIntType YSizeParam, const UnsignedIntType ZSizeParam, const IntType XGraphicShiftParam, const IntType YGraphicShiftParam, const IntType ZGraphicShiftParam, UnsignedIntType& NumberOfAllRenderedAtoms, const vmath::mat4& ViewMatrix, CellEngineAtom& TempAtomObject, std::vector<CellEngineAtom>& TemporaryRenderedVoxelsList, UnsignedIntType StencilBufferLoopCounter)
     {
         try
         {
             for (UnsignedIntType SpaceXP = XStartParam; SpaceXP < XStartParam + XSizeParam; SpaceXP += XStepParam)
                 for (UnsignedIntType SpaceYP = YStartParam; SpaceYP < YStartParam + YSizeParam; SpaceYP += YStepParam)
                     for (UnsignedIntType SpaceZP = ZStartParam; SpaceZP < ZStartParam + ZSizeParam; SpaceZP += ZStepParam)
-                        if (DrawEmptyVoxels == true || (DrawEmptyVoxels == false && CellEngineDataFileObjectPointer->CellEngineSimulationSpaceObjectPointer->Space[SpaceXP][SpaceYP][SpaceZP] != 0))
+                        if (DrawEmptyVoxels == true || (DrawEmptyVoxels == false && CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->Space[SpaceXP][SpaceYP][SpaceZP] != 0))
                         {
-                            TempAtomObject.X = CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(static_cast<IntType>(SpaceXP));
-                            TempAtomObject.Y = CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(static_cast<IntType>(SpaceYP));
-                            TempAtomObject.Z = CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(static_cast<IntType>(SpaceZP));
-
-                            if (DrawEmptyVoxels == false || (DrawEmptyVoxels == true && CellEngineDataFileObjectPointer->CellEngineSimulationSpaceObjectPointer->Space[SpaceXP][SpaceYP][SpaceZP] != 0))
+                            if (SpaceDrawingType == VoxelSpaceDrawingTypes::DrawVoxelSpaceSelected)
                             {
-                                TempAtomObject.EntityId = CellEngineDataFileObjectPointer->CellEngineSimulationSpaceObjectPointer->Space[SpaceXP][SpaceYP][SpaceZP];
-                                auto ParticleKindObject = CellEngineConfigDataObject.ParticlesKinds[CellEngineConfigDataObject.ParticlesKindsPos.find(CellEngineDataFileObjectPointer->CellEngineSimulationSpaceObjectPointer->Space[SpaceXP][SpaceYP][SpaceZP])->second];
+                                TempAtomObject.X = static_cast<float>((XStartParam + XSizeParam) - SpaceXP) * 4;
+                                TempAtomObject.Y = static_cast<float>((YStartParam + YSizeParam) - SpaceYP) * 4;
+                                TempAtomObject.Z = static_cast<float>((ZStartParam + ZSizeParam) - SpaceZP) * 4;
+                            }
+                            else
+                            {
+                                TempAtomObject.X = CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(static_cast<IntType>(SpaceXP));
+                                TempAtomObject.Y = CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(static_cast<IntType>(SpaceYP));
+                                TempAtomObject.Z = CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(static_cast<IntType>(SpaceZP));
+                            }
+
+                            if (DrawEmptyVoxels == false || (DrawEmptyVoxels == true && CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->Space[SpaceXP][SpaceYP][SpaceZP] != 0))
+                            {
+                                TempAtomObject.EntityId = CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->Space[SpaceXP][SpaceYP][SpaceZP];
+                                auto ParticleKindObject = CellEngineConfigDataObject.ParticlesKinds[CellEngineConfigDataObject.ParticlesKindsPos.find(CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->Space[SpaceXP][SpaceYP][SpaceZP])->second];
                                 TempAtomObject.AtomColor = GetColor(ParticleKindObject, false);
                                 TempAtomObject.ParticleColor = GetColor(ParticleKindObject, false);
                                 TempAtomObject.RandomParticleColor = GetColor(ParticleKindObject, false);
                             }
                             else
                             if (DrawEmptyVoxels == true)
-                            {
-                                TempAtomObject.AtomColor = GetVector3FormVMathVec3(sb7::FromVec4ToVec3(sb7::color::DeepSkyBlue));
-                                TempAtomObject.ParticleColor = GetVector3FormVMathVec3(sb7::FromVec4ToVec3(sb7::color::DeepSkyBlue));
-                                TempAtomObject.RandomParticleColor = GetVector3FormVMathVec3(sb7::FromVec4ToVec3(sb7::color::DeepSkyBlue));
-                            }
+                                TempAtomObject.AtomColor = TempAtomObject.ParticleColor = TempAtomObject.RandomParticleColor = GetVector3FormVMathVec3(sb7::FromVec4ToVec3(sb7::color::DeepSkyBlue));
 
                             if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
                             {
@@ -103,7 +115,7 @@ private:
 
                 TemporaryRenderedVoxelsList.clear();
 
-                if (OnlySelectedSpace == false)
+                if (SpaceDrawingType == VoxelSpaceDrawingTypes::DrawVoxelSpaceFull)
                     for (IntType SpaceX = XStart; SpaceX < XSize; SpaceX += XStep)
                         for (IntType SpaceY = YStart; SpaceY < YSize; SpaceY += YStep)
                             for (IntType SpaceZ = ZStart; SpaceZ < ZSize; SpaceZ += ZStep)
@@ -114,12 +126,11 @@ private:
                                 if (RenderObject(TempAtomObject, ViewMatrix, true, false, true, NumberOfAllRenderedAtoms, false, !CellEngineConfigDataObject.ShowDetailsInAtomScale) == true)
                                 {
                                     NumberOfFoundParticlesCenterToBeRenderedInAtomDetails++;
-
-                                    RenderSelectedSpace(SpaceX, SpaceY, SpaceZ, CellEngineConfigDataObject.LoadOfAtomsStep, CellEngineConfigDataObject.LoadOfAtomsStep, CellEngineConfigDataObject.LoadOfAtomsStep, 64, 64, 64, NumberOfAllRenderedAtoms, ViewMatrix, TempAtomObject, TemporaryRenderedVoxelsList, StencilBufferLoopCounter);
+                                    RenderSelectedSpace(SpaceX, SpaceY, SpaceZ, CellEngineConfigDataObject.LoadOfAtomsStep, CellEngineConfigDataObject.LoadOfAtomsStep, CellEngineConfigDataObject.LoadOfAtomsStep, 64, 64, 64, 0, 0, 0, NumberOfAllRenderedAtoms, ViewMatrix, TempAtomObject, TemporaryRenderedVoxelsList, StencilBufferLoopCounter);
                                 }
                             }
                 else
-                    RenderSelectedSpace(XStart, YStart, ZStart, XStep, YStep, ZStep, XSize, YSize, YSize, NumberOfAllRenderedAtoms, ViewMatrix, TempAtomObject, TemporaryRenderedVoxelsList, StencilBufferLoopCounter);
+                    RenderSelectedSpace(XStart, YStart, ZStart, XStep, YStep, ZStep, XSize, YSize, YSize, 512,512,512, NumberOfAllRenderedAtoms, ViewMatrix, TempAtomObject, TemporaryRenderedVoxelsList, StencilBufferLoopCounter);
 
                 if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
                     glReadPixels(GLint(MousePositionLocal.s.X), GLint((float)Info.WindowHeight - MousePositionLocal.s.Y - 1), 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &PartOfStencilBufferIndex[StencilBufferLoopCounter]);
