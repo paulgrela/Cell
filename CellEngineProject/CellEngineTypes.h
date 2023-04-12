@@ -6,8 +6,8 @@
 #include <cstdint>
 #include "vmath.h"
 
-using IntType = std::int64_t;
-using UnsignedIntType = std::uint64_t;
+using Int = std::int64_t;
+using UnsignedInt = std::uint64_t;
 
 struct vector3
 {

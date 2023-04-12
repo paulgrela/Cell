@@ -14,9 +14,9 @@
 class CellEngineAtom
 {
 public:
-    UnsignedIntType AtomIndex{};
-    UnsignedIntType Serial{};
-    UnsignedIntType EntityId{};
+    UnsignedInt AtomIndex{};
+    UnsignedInt Serial{};
+    UnsignedInt EntityId{};
     char Name[5 + 1]{};
     char ResName[4 + 1]{};
     char Chain[6 + 1]{};
@@ -36,7 +36,7 @@ public:
     float SizeZParticle{};
     #endif
 public:
-    CellEngineAtom(float XParam, float YParam, float ZParam, UnsignedIntType AtomIndexParam, UnsignedIntType SerialParam, UnsignedIntType EntityIdParam, char NameParam[2], char ResNameParam[4], char ChainParam[6], vector3 ColorParam) : X(XParam), Y(YParam), Z(ZParam), AtomIndex(AtomIndexParam), Serial(SerialParam), EntityId(EntityIdParam), ParticleColor(ColorParam)
+    CellEngineAtom(float XParam, float YParam, float ZParam, UnsignedInt AtomIndexParam, UnsignedInt SerialParam, UnsignedInt EntityIdParam, char NameParam[2], char ResNameParam[4], char ChainParam[6], vector3 ColorParam) : X(XParam), Y(YParam), Z(ZParam), AtomIndex(AtomIndexParam), Serial(SerialParam), EntityId(EntityIdParam), ParticleColor(ColorParam)
     {
         strncpy(Name, NameParam, 2);
         strncpy(ResName, ResNameParam, 4);

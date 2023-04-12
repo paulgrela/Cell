@@ -13,7 +13,7 @@ struct TransformationMatrix3x4
 class CellEngineCIFDataFile : public CellEngineDataFile
 {
 private:
-    std::unordered_map<std::uint64_t, TransformationMatrix3x4> TransformationsMatrixes;
+    std::unordered_map<UnsignedInt, TransformationMatrix3x4> TransformationsMatrixes;
     std::unordered_map<std::string, std::vector<CellEngineAtom>> ChainsNames;
 private:
     void ReadDataFromFile() override;

@@ -5,38 +5,70 @@
 
 #include "CellEngineTypes.h"
 
-constexpr UnsignedIntType NumberOfVoxelsInOneDimension = 1024;
-//TYLKO 2 PONIZSZE BEZ KUBELKOWZ Z PLIKU KONFIGURACYJNEGO
-using T1024 = uint64_t[1024][1024][1024]; //voxel 0.5 nm
-using T512 = uint64_t[512][512][512]; //voxel 1 nm
-using T256 = uint64_t[256][256][256]; // voxel 2 nm
+constexpr UnsignedInt NumberOfVoxelSimulationSpaceInEachDimension = 1024;
+constexpr UnsignedInt NumberOfVoxelsInEachDimension1 = 512;
+constexpr UnsignedInt NumberOfVoxelsInEachDimension2 = 256;
+constexpr UnsignedInt NumberOfVoxelSimulationSpaceInDimensionX = NumberOfVoxelSimulationSpaceInEachDimension;
+constexpr UnsignedInt NumberOfVoxelSimulationSpaceInDimensionY = NumberOfVoxelSimulationSpaceInEachDimension;
+constexpr UnsignedInt NumberOfVoxelSimulationSpaceInDimensionZ = NumberOfVoxelSimulationSpaceInEachDimension;
 
-//TE 2 z kubelkami
-using T128 = uint64_t[128][128][128]; //voxel 4 nm
-using T64 = uint64_t[64][64][64]; // voxel 8 nm
+//TYLKO 2 PONIZSZE BEZ KUBELKOW Z PLIKU KONFIGURACYJNEGO
 
-inline void Test1()
-{
-    auto a = new T256;
-    a[1][2][3] = 2;
-}
+//using VoxelSimulationSpaceType1024 = UnsignedInt[NumberOfVoxelSimulationSpaceInDimensionX][NumberOfVoxelSimulationSpaceInDimensionY][NumberOfVoxelSimulationSpaceInDimensionZ];
+//using VoxelSimulationSpaceType512 = UnsignedInt[512][512][512];
+//using VoxelSimulationSpaceType256 = UnsignedInt[256][256][256];
+//
+////TE 2 z kubelkami
+//using T128 = uint64_t[128][128][128];
+//using T64 = uint64_t[64][64][64];
+//
+//inline void Test1()
+//{
+//    auto a = new T256;
+//    a[1][2][3] = 2;
+//}
 
 
 class CellEngineVoxelSimulationSpace
 {
 public:
-    uint64_t Space[1024][1024][1024]{};
+    UnsignedInt Space[NumberOfVoxelSimulationSpaceInDimensionX][NumberOfVoxelSimulationSpaceInDimensionY][NumberOfVoxelSimulationSpaceInDimensionZ]{};
 public:
-    [[nodiscard]] static float ConvertToGraphicsCoordinate(UnsignedIntType CoordinateParam)
+    [[nodiscard]] static float ConvertToGraphicsCoordinate(UnsignedInt CoordinateParam)
     {
-        return static_cast<float>(static_cast<IntType>(CoordinateParam) - 512) * 4;
+        return static_cast<float>(static_cast<Int>(CoordinateParam) - (static_cast<Int>(NumberOfVoxelSimulationSpaceInEachDimension / 2))) * 4;
     };
-    [[nodiscard]] static UnsignedIntType ConvertToSpaceCoordinate(double CoordinateParam)
+    [[nodiscard]] static UnsignedInt ConvertToSpaceCoordinate(double CoordinateParam)
     {
-        return static_cast<UnsignedIntType>(round(CoordinateParam / 4.0)) + 512;
+        return static_cast<UnsignedInt>(round(CoordinateParam / 4.0)) + (NumberOfVoxelSimulationSpaceInEachDimension / 2);
     };
 public:
-    UnsignedIntType XMin{}, XMax{}, YMin{}, YMax{}, ZMin{}, ZMax{};
+    [[nodiscard]] static float ConvertToGraphicsCoordinateX(UnsignedInt CoordinateParam)
+    {
+        return ConvertToGraphicsCoordinate(CoordinateParam);
+    };
+    [[nodiscard]] static UnsignedInt ConvertToSpaceCoordinateX(double CoordinateParam)
+    {
+        return ConvertToSpaceCoordinate(CoordinateParam);
+    };
+    [[nodiscard]] static float ConvertToGraphicsCoordinateY(UnsignedInt CoordinateParam)
+    {
+        return ConvertToGraphicsCoordinate(CoordinateParam);
+    };
+    [[nodiscard]] static UnsignedInt ConvertToSpaceCoordinateY(double CoordinateParam)
+    {
+        return ConvertToSpaceCoordinate(CoordinateParam);
+    };
+    [[nodiscard]] static float ConvertToGraphicsCoordinateZ(UnsignedInt CoordinateParam)
+    {
+        return ConvertToGraphicsCoordinate(CoordinateParam);
+    };
+    [[nodiscard]] static UnsignedInt ConvertToSpaceCoordinateZ(double CoordinateParam)
+    {
+        return ConvertToSpaceCoordinate(CoordinateParam);
+    };
+public:
+    UnsignedInt XMin{}, XMax{}, YMin{}, YMax{}, ZMin{}, ZMax{};
 public:
     void SetStartValuesForSpaceMinMax()
     {
@@ -48,7 +80,7 @@ public:
         ZMax = 0;
     }
 public:
-    void CompareAndGetSpaceMinMax(const UnsignedIntType SpaceX, const UnsignedIntType SpaceY, const UnsignedIntType SpaceZ)
+    void CompareAndGetSpaceMinMax(const UnsignedInt SpaceX, const UnsignedInt SpaceY, const UnsignedInt SpaceZ)
     {
         XMin = std::min(SpaceX, XMin);
         XMax = std::max(SpaceX, XMax);
@@ -65,13 +97,13 @@ public:
         return ss;
     }
 public:
-    UnsignedIntType SumOfNotEmptyVoxels{};
+    UnsignedInt SumOfNotEmptyVoxels{};
 public:
     void CountStatisticsOfSpace()
     {
         for (auto& SelectedX : Space)
             for (auto& SelectedXY : SelectedX)
-                for (uint64_t& SelectedXYZ : SelectedXY)
+                for (UnsignedInt& SelectedXYZ : SelectedXY)
                 {
                     if (SelectedXYZ != 0)
                         SumOfNotEmptyVoxels++;
@@ -80,9 +112,9 @@ public:
 public:
     void SetAtomInVoxelSpace(const CellEngineAtom& AppliedAtom)
     {
-        UnsignedIntType SpaceX = CellEngineVoxelSimulationSpace::ConvertToSpaceCoordinate(AppliedAtom.X);
-        UnsignedIntType SpaceY = CellEngineVoxelSimulationSpace::ConvertToSpaceCoordinate(AppliedAtom.Y);
-        UnsignedIntType SpaceZ = CellEngineVoxelSimulationSpace::ConvertToSpaceCoordinate(AppliedAtom.Z);
+        UnsignedInt SpaceX = CellEngineVoxelSimulationSpace::ConvertToSpaceCoordinateX(AppliedAtom.X);
+        UnsignedInt SpaceY = CellEngineVoxelSimulationSpace::ConvertToSpaceCoordinateY(AppliedAtom.Y);
+        UnsignedInt SpaceZ = CellEngineVoxelSimulationSpace::ConvertToSpaceCoordinateZ(AppliedAtom.Z);
 
         CompareAndGetSpaceMinMax(SpaceX, SpaceY, SpaceZ);
 
@@ -97,7 +129,7 @@ public:
 
         for (auto& SelectedX : Space)
             for (auto& SelectedXY : SelectedX)
-                for (uint64_t& SelectedXYZ : SelectedXY)
+                for (UnsignedInt& SelectedXYZ : SelectedXY)
                     SelectedXYZ = 0;
     }
 };

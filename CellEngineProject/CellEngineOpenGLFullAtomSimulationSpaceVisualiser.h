@@ -12,16 +12,16 @@
 class CellEngineOpenGLFullAtomSimulationSpaceVisualiser : public CellEngineOpenGLVisualiser
 {
 private:
-    void RenderSpace(UnsignedIntType& NumberOfAllRenderedAtoms, UnsignedIntType& NumberOfFoundParticlesCenterToBeRenderedInAtomDetails, const vmath::mat4& ViewMatrix, const Point2fT& MousePositionLocal) override
+    void RenderSpace(UnsignedInt& NumberOfAllRenderedAtoms, UnsignedInt& NumberOfFoundParticlesCenterToBeRenderedInAtomDetails, const vmath::mat4& ViewMatrix, const Point2fT& MousePositionLocal) override
     {
         try
         {
             auto ParticlesCenters = CellEngineDataFileObjectPointer->GetParticlesCenters();
 
             GLuint PartOfStencilBufferIndex[3];
-            std::vector<std::pair<UnsignedIntType, UnsignedIntType>> TemporaryRenderedAtomsList;
+            std::vector<std::pair<UnsignedInt, UnsignedInt>> TemporaryRenderedAtomsList;
 
-            for (UnsignedIntType StencilBufferLoopCounter = 0; StencilBufferLoopCounter < CellEngineConfigDataObject.NumberOfStencilBufferLoops; StencilBufferLoopCounter++)
+            for (UnsignedInt StencilBufferLoopCounter = 0; StencilBufferLoopCounter < CellEngineConfigDataObject.NumberOfStencilBufferLoops; StencilBufferLoopCounter++)
             {
                 NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = 0;
                 NumberOfAllRenderedAtoms = 0;
@@ -47,7 +47,7 @@ private:
 
                                 DrawBonds(CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex], BondsBetweenAtomsToDraw[ParticlesCenterObject.AtomIndex], CellEngineConfigDataObject.DrawBondsBetweenAtoms, ViewMatrix);
 
-                                UnsignedIntType AtomObjectIndex;
+                                UnsignedInt AtomObjectIndex;
                                 for (AtomObjectIndex = 0; AtomObjectIndex < CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex].size(); AtomObjectIndex += CellEngineConfigDataObject.LoadOfAtomsStep)
                                 {
                                     if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
@@ -70,13 +70,13 @@ private:
         CATCH("rendering full atom simulation space");
     }
 
-    inline void DrawChosenAtomUsingStencilBuffer(const vmath::mat4& ViewMatrix, const GLuint* PartOfStencilBufferIndex, UnsignedIntType& NumberOfAllRenderedAtoms, const std::vector<std::pair<UnsignedIntType, UnsignedIntType>>& TemporaryRenderedAtomsList)
+    inline void DrawChosenAtomUsingStencilBuffer(const vmath::mat4& ViewMatrix, const GLuint* PartOfStencilBufferIndex, UnsignedInt& NumberOfAllRenderedAtoms, const std::vector<std::pair<UnsignedInt, UnsignedInt>>& TemporaryRenderedAtomsList)
     {
         try
         {
             if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
             {
-                UnsignedIntType ChosenParticleCenterIndex = PartOfStencilBufferIndex[0] | (PartOfStencilBufferIndex[1] << 8) | (PartOfStencilBufferIndex[2] << 16);
+                UnsignedInt ChosenParticleCenterIndex = PartOfStencilBufferIndex[0] | (PartOfStencilBufferIndex[1] << 8) | (PartOfStencilBufferIndex[2] << 16);
 
                 if (ChosenParticleCenterIndex > 0)
                 {
@@ -121,7 +121,7 @@ public:
         BondsBetweenAtomsToDraw.resize(CellEngineDataFileObjectPointer->GetParticlesCenters().size());
     }
 public:
-    void DrawBondsForParticlesCenters(std::vector<std::pair<UnsignedIntType, UnsignedIntType>>& BondsToDraw, const bool DrawBonds, const vmath::mat4& ViewMatrix) override
+    void DrawBondsForParticlesCenters(std::vector<std::pair<UnsignedInt, UnsignedInt>>& BondsToDraw, const bool DrawBonds, const vmath::mat4& ViewMatrix) override
     {
         CellEngineOpenGLVisualiser::DrawBonds(CellEngineDataFileObjectPointer->GetParticlesCenters(), BondsToDraw, CellEngineConfigDataObject.DrawBondsBetweenParticlesCenters, ViewMatrix);
     }

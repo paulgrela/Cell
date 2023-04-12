@@ -15,7 +15,7 @@
 class CellEngineOpenGLVoxelSimulationSpaceVisualiser : public CellEngineOpenGLVisualiser
 {
 public:
-    enum class VoxelSpaceDrawingTypes : int
+    enum class VoxelSpaceDrawingTypes : UnsignedInt
     {
         DrawVoxelSpaceFull = 1,
         DrawVoxelSpaceSelected = 2
@@ -24,36 +24,36 @@ public:
     VoxelSpaceDrawingTypes SpaceDrawingType = VoxelSpaceDrawingTypes::DrawVoxelSpaceFull;
     bool DrawEmptyVoxels = false;
 private:
-    UnsignedIntType XStart = 512, YStart = 512, ZStart = 512;
-    UnsignedIntType XStep = 1, YStep = 1, ZStep = 1;
-    UnsignedIntType XSize = 16, YSize = 16, ZSize = 16;
+    UnsignedInt XStart = 512, YStart = 512, ZStart = 512;
+    UnsignedInt XStep = 1, YStep = 1, ZStep = 1;
+    UnsignedInt XSize = 16, YSize = 16, ZSize = 16;
 public:
-    std::tuple<UnsignedIntType, UnsignedIntType, UnsignedIntType> GetStartPositions()
+    std::tuple<UnsignedInt, UnsignedInt, UnsignedInt> GetStartPositions()
     {
         return { XStart, YStart, ZStart };
     }
-    std::tuple<UnsignedIntType, UnsignedIntType, UnsignedIntType> GetSteps()
+    std::tuple<UnsignedInt, UnsignedInt, UnsignedInt> GetSteps()
     {
         return { XStep, YStep, ZStep };
     }
-    std::tuple<UnsignedIntType, UnsignedIntType, UnsignedIntType> GetSizes()
+    std::tuple<UnsignedInt, UnsignedInt, UnsignedInt> GetSizes()
     {
         return { XSize, YSize, ZSize };
     }
-    void SetVoxelSpaceSelection(const UnsignedIntType XStartParam, const UnsignedIntType YStartParam, const UnsignedIntType ZStartParam, const UnsignedIntType XStepParam, const UnsignedIntType YStepParam, const UnsignedIntType ZStepParam, const UnsignedIntType XSizeParam, const UnsignedIntType YSizeParam, const UnsignedIntType ZSizeParam)
+    void SetVoxelSpaceSelection(const UnsignedInt XStartParam, const UnsignedInt YStartParam, const UnsignedInt ZStartParam, const UnsignedInt XStepParam, const UnsignedInt YStepParam, const UnsignedInt ZStepParam, const UnsignedInt XSizeParam, const UnsignedInt YSizeParam, const UnsignedInt ZSizeParam)
     {
         XStart = XStartParam, YStart = YStartParam, ZStart = ZStartParam;
         XStep = XStepParam, YStep = YStepParam, ZStep = ZStepParam;
         XSize = XSizeParam, YSize = YSizeParam, ZSize = ZSizeParam;
     }
 private:
-    void RenderSelectedSpace(const UnsignedIntType XStartParam, const UnsignedIntType YStartParam, const UnsignedIntType ZStartParam, const UnsignedIntType XStepParam, const UnsignedIntType YStepParam, const UnsignedIntType ZStepParam, const UnsignedIntType XSizeParam, UnsignedIntType YSizeParam, const UnsignedIntType ZSizeParam, UnsignedIntType& NumberOfAllRenderedAtoms, const vmath::mat4& ViewMatrix, CellEngineAtom& TempAtomObject, std::vector<CellEngineAtom>& TemporaryRenderedVoxelsList, UnsignedIntType StencilBufferLoopCounter)
+    void RenderSelectedSpace(const UnsignedInt XStartParam, const UnsignedInt YStartParam, const UnsignedInt ZStartParam, const UnsignedInt XStepParam, const UnsignedInt YStepParam, const UnsignedInt ZStepParam, const UnsignedInt XSizeParam, UnsignedInt YSizeParam, const UnsignedInt ZSizeParam, UnsignedInt& NumberOfAllRenderedAtoms, const vmath::mat4& ViewMatrix, CellEngineAtom& TempAtomObject, std::vector<CellEngineAtom>& TemporaryRenderedVoxelsList, UnsignedInt StencilBufferLoopCounter)
     {
         try
         {
-            for (UnsignedIntType SpaceXP = XStartParam; SpaceXP < XStartParam + XSizeParam; SpaceXP += XStepParam)
-                for (UnsignedIntType SpaceYP = YStartParam; SpaceYP < YStartParam + YSizeParam; SpaceYP += YStepParam)
-                    for (UnsignedIntType SpaceZP = ZStartParam; SpaceZP < ZStartParam + ZSizeParam; SpaceZP += ZStepParam)
+            for (UnsignedInt SpaceXP = XStartParam; SpaceXP < XStartParam + XSizeParam; SpaceXP += XStepParam)
+                for (UnsignedInt SpaceYP = YStartParam; SpaceYP < YStartParam + YSizeParam; SpaceYP += YStepParam)
+                    for (UnsignedInt SpaceZP = ZStartParam; SpaceZP < ZStartParam + ZSizeParam; SpaceZP += ZStepParam)
                         if (DrawEmptyVoxels == true || (DrawEmptyVoxels == false && CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->Space[SpaceXP][SpaceYP][SpaceZP] != 0))
                         {
                             if (SpaceDrawingType == VoxelSpaceDrawingTypes::DrawVoxelSpaceSelected)
@@ -64,9 +64,9 @@ private:
                             }
                             else
                             {
-                                TempAtomObject.X = CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(SpaceXP);
-                                TempAtomObject.Y = CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(SpaceYP);
-                                TempAtomObject.Z = CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(SpaceZP);
+                                TempAtomObject.X = CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinateX(SpaceXP);
+                                TempAtomObject.Y = CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinateY(SpaceYP);
+                                TempAtomObject.Z = CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinateZ(SpaceZP);
                             }
 
                             if (DrawEmptyVoxels == false || (DrawEmptyVoxels == true && CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->Space[SpaceXP][SpaceYP][SpaceZP] != 0))
@@ -93,7 +93,7 @@ private:
         CATCH("rendering selected voxel simulation space")
     }
 private:
-    void RenderSpace(UnsignedIntType& NumberOfAllRenderedAtoms, UnsignedIntType& NumberOfFoundParticlesCenterToBeRenderedInAtomDetails, const vmath::mat4& ViewMatrix, const Point2fT& MousePositionLocal) override
+    void RenderSpace(UnsignedInt& NumberOfAllRenderedAtoms, UnsignedInt& NumberOfFoundParticlesCenterToBeRenderedInAtomDetails, const vmath::mat4& ViewMatrix, const Point2fT& MousePositionLocal) override
     {
         try
         {
@@ -110,20 +110,20 @@ private:
 
             CellEngineConfigDataObject.LoadOfAtomsStep > 10 ? CellEngineConfigDataObject.LoadOfAtomsStep = 4 : 1;
 
-            for (UnsignedIntType StencilBufferLoopCounter = 0; StencilBufferLoopCounter < CellEngineConfigDataObject.NumberOfStencilBufferLoops; StencilBufferLoopCounter++)
+            for (UnsignedInt StencilBufferLoopCounter = 0; StencilBufferLoopCounter < CellEngineConfigDataObject.NumberOfStencilBufferLoops; StencilBufferLoopCounter++)
             {
                 NumberOfAllRenderedAtoms = 0;
 
                 TemporaryRenderedVoxelsList.clear();
 
                 if (SpaceDrawingType == VoxelSpaceDrawingTypes::DrawVoxelSpaceFull)
-                    for (UnsignedIntType SpaceX = XStart; SpaceX < XSize; SpaceX += XStep)
-                        for (UnsignedIntType SpaceY = YStart; SpaceY < YSize; SpaceY += YStep)
-                            for (UnsignedIntType SpaceZ = ZStart; SpaceZ < ZSize; SpaceZ += ZStep)
+                    for (UnsignedInt SpaceX = XStart; SpaceX < XSize; SpaceX += XStep)
+                        for (UnsignedInt SpaceY = YStart; SpaceY < YSize; SpaceY += YStep)
+                            for (UnsignedInt SpaceZ = ZStart; SpaceZ < ZSize; SpaceZ += ZStep)
                             {
-                                TempAtomObject.X = CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(SpaceX);
-                                TempAtomObject.Y = CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(SpaceY);
-                                TempAtomObject.Z = CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(SpaceZ);
+                                TempAtomObject.X = CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinateX(SpaceX);
+                                TempAtomObject.Y = CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinateY(SpaceY);
+                                TempAtomObject.Z = CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinateZ(SpaceZ);
                                 if (RenderObject(TempAtomObject, ViewMatrix, true, false, true, NumberOfAllRenderedAtoms, false, !CellEngineConfigDataObject.ShowDetailsInAtomScale) == true)
                                 {
                                     NumberOfFoundParticlesCenterToBeRenderedInAtomDetails++;
@@ -142,13 +142,13 @@ private:
         CATCH("rendering voxel simulation space");
     }
 public:
-    inline void DrawChosenAtomUsingStencilBuffer(const vmath::mat4& ViewMatrix, const GLuint* PartOfStencilBufferIndex, UnsignedIntType& NumberOfAllRenderedAtoms, const std::vector<CellEngineAtom>& TemporaryRenderedVoxelsList)
+    inline void DrawChosenAtomUsingStencilBuffer(const vmath::mat4& ViewMatrix, const GLuint* PartOfStencilBufferIndex, UnsignedInt& NumberOfAllRenderedAtoms, const std::vector<CellEngineAtom>& TemporaryRenderedVoxelsList)
     {
         try
         {
             if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
             {
-                UnsignedIntType ChosenVoxelIndex = PartOfStencilBufferIndex[0] | (PartOfStencilBufferIndex[1] << 8) | (PartOfStencilBufferIndex[2] << 16);
+                UnsignedInt ChosenVoxelIndex = PartOfStencilBufferIndex[0] | (PartOfStencilBufferIndex[1] << 8) | (PartOfStencilBufferIndex[2] << 16);
 
                 if (ChosenVoxelIndex > 0)
                 {
@@ -177,7 +177,7 @@ public:
     {
     }
 public:
-    void DrawBondsForParticlesCenters(std::vector<std::pair<UnsignedIntType, UnsignedIntType>>& BondsToDraw, const bool DrawBonds, const vmath::mat4& ViewMatrix) override
+    void DrawBondsForParticlesCenters(std::vector<std::pair<UnsignedInt, UnsignedInt>>& BondsToDraw, const bool DrawBonds, const vmath::mat4& ViewMatrix) override
     {
     }
 public:

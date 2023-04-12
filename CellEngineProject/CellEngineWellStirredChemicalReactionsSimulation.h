@@ -17,22 +17,22 @@ using namespace std;
 class Particle
 {
 public:
-    UnsignedIntType Identifier{};
+    UnsignedInt Identifier{};
     std::string Name;
     std::string Symbol;
     bool SelectedForReaction;
-    UnsignedIntType Counter;
+    UnsignedInt Counter;
 public:
-    Particle(UnsignedIntType IdentifierParam, std::string NameParam, std::string SymbolParam, bool SelectedForReactionParam, UnsignedIntType CounterParam) : Identifier(IdentifierParam), Name(std::move(NameParam)), Symbol(std::move(SymbolParam)), SelectedForReaction(SelectedForReactionParam), Counter(CounterParam)
+    Particle(UnsignedInt IdentifierParam, std::string NameParam, std::string SymbolParam, bool SelectedForReactionParam, UnsignedInt CounterParam) : Identifier(IdentifierParam), Name(std::move(NameParam)), Symbol(std::move(SymbolParam)), SelectedForReaction(SelectedForReactionParam), Counter(CounterParam)
     {}
-    Particle(UnsignedIntType IdentifierParam, UnsignedIntType CounterParam) : Identifier(IdentifierParam), SelectedForReaction(false), Counter(CounterParam)
+    Particle(UnsignedInt IdentifierParam, UnsignedInt CounterParam) : Identifier(IdentifierParam), SelectedForReaction(false), Counter(CounterParam)
     {}
 };
 
 class ReactionType
 {
 private:
-    UnsignedIntType Identifier{};
+    UnsignedInt Identifier{};
 public:
     std::string ReactantsStr;
 public:
@@ -63,9 +63,9 @@ public:
         Reactions.insert(std::make_pair(ReactionParam.ReactantsStr, ReactionParam));
     }
 public:
-    void TryToDoRandomReaction(UnsignedIntType NumberOfReactants);
+    void TryToDoRandomReaction(UnsignedInt NumberOfReactants);
 public:
-    void Run(UnsignedIntType NumberOfSteps);
+    void Run(UnsignedInt NumberOfSteps);
 };
 
 void TestWellStirredChemicalReactionsSimulation();

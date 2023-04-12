@@ -12,7 +12,7 @@
 
 struct ParticleKind
 {
-    UnsignedIntType Identifier;
+    UnsignedInt Identifier;
     bool Visible;
     float SizeX;
     float SizeY;
@@ -70,19 +70,19 @@ public:
     bool PrintLogProcessPriorityLevelToFile = false;
     bool PrintLogThreadIdToFile = false;
 
-    uint64_t MaximalNumberOfLinesInOneFile = 100000;
+    UnsignedInt MaximalNumberOfLinesInOneFile = 100000;
 public:
     bool MultiThreaded{};
     bool SetProcessPriorityHighest{};
 public:
-    enum class TypesOfSpace : uint64_t
+    enum class TypesOfSpace : UnsignedInt
     {
         FullAtomSpace = 1,
         VoxelSimulationSpace = 2,
     };
     TypesOfSpace TypeOfSpace = TypesOfSpace::FullAtomSpace;
 public:
-    enum class RandomColorEngineTypes
+    enum class RandomColorEngineTypes : UnsignedInt
     {
         Rand = 1,
         mt19937 = 2,
@@ -95,7 +95,7 @@ public:
     float SpecularPower = 8.0f;
     float SpecularAlbedo = 0.2222f;
 public:
-    enum class MakeColorsType
+    enum class MakeColorsType : UnsignedInt
     {
         DrawColorForEveryAtom = 1,
         DrawColorForEveryParticle = 2,
@@ -103,13 +103,13 @@ public:
     };
     MakeColorsType MakeColorsTypeObject = MakeColorsType::DrawColorForEveryParticle;
 public:
-    enum class StencilForDrawingObjectsTypes
+    enum class StencilForDrawingObjectsTypes : UnsignedInt
     {
         StencilForDrawingOnlyParticlesCenters = 1,
         StencilForDrawingOnlyInAtomScale = 2
     };
     StencilForDrawingObjectsTypes StencilForDrawingObjectsTypesObject = StencilForDrawingObjectsTypes::StencilForDrawingOnlyInAtomScale;
-    std::uint64_t NumberOfStencilBufferLoops{};
+    UnsignedInt NumberOfStencilBufferLoops{};
     bool UseStencilBuffer = false;
 public:
     bool DrawBondsBetweenParticlesCenters{};
@@ -119,7 +119,7 @@ public:
     bool CheckAtomVisibility{};
     float CutZ{};
     float Distance{};
-    std::uint64_t LoadOfAtomsStep{};
+    UnsignedInt LoadOfAtomsStep{};
     bool ShowAtomsInEachPartOfTheCellWhenObserverIsFromOutside = false;
 public:
     float XLowToDrawInAtomScale{};
@@ -167,10 +167,10 @@ public:
     bool AutomaticChangeOfSizeOfAtom{};
     bool AutomaticChangeOfLoadAtomsStep{};
 public:
-    UnsignedIntType ChosenStructureIndex = 0;
+    UnsignedInt ChosenStructureIndex = 0;
 public:
     vmath::vec3 BackgroundColors[4] = { sb7::FromVec4ToVec3(sb7::color::White), sb7::FromVec4ToVec3(sb7::color::White), sb7::FromVec4ToVec3(sb7::color::White), sb7::FromVec4ToVec3(sb7::color::White) };
-    std::uint64_t ChosenBackgroundColor{};
+    UnsignedInt ChosenBackgroundColor{};
 public:
     bool PrintAtomDescriptionOnScreen{};
     bool LogParametersOfRenderingToFile{};
@@ -184,14 +184,14 @@ public:
 public:
     std::vector<AtomKind> AtomsKinds;
     std::vector<ParticleKind> ParticlesKinds;
-    std::unordered_map<UnsignedIntType, ParticleKind> ParticlesKindsXML;
-    std::unordered_map<UnsignedIntType, UnsignedIntType> ParticlesKindsPos;
+    std::unordered_map<UnsignedInt, ParticleKind> ParticlesKindsXML;
+    std::unordered_map<UnsignedInt, UnsignedInt> ParticlesKindsPos;
 public:
     bool ImGuiDemoWindowMenu = false;
     bool ImGuiLightVersion = false;
 public:
     int ChosenShapeOfAtoms = 1;
-    UnsignedIntType DNAIdentifier{};
+    UnsignedInt DNAIdentifier{};
 public:
     std::vector<AtomKind>::iterator GetAtomKindDataForAtom(char Name)
     {

@@ -1,14 +1,14 @@
 
 #include "CellEngineWellStirredChemicalReactionsSimulation.h"
 
-void CellEngineWellStirredChemicalReactionsSimulation::TryToDoRandomReaction(const UnsignedIntType NumberOfReactants)
+void CellEngineWellStirredChemicalReactionsSimulation::TryToDoRandomReaction(const UnsignedInt NumberOfReactants)
 {
     LoggersManagerObject.Log(STREAM(endl << "REACTION" << endl));
 
-    std::uniform_int_distribution<uint64_t> UniformDistributionObject1X_Uint64t(1, Particles.size());
+    std::uniform_int_distribution<UnsignedInt> UniformDistributionObject1X_Uint64t(1, Particles.size());
 
-    vector<UnsignedIntType> RandomParticlesTypes;
-    for (UnsignedIntType ReactantNumber = 1; ReactantNumber <= NumberOfReactants; ReactantNumber++)
+    vector<UnsignedInt> RandomParticlesTypes;
+    for (UnsignedInt ReactantNumber = 1; ReactantNumber <= NumberOfReactants; ReactantNumber++)
     {
         RandomParticlesTypes.emplace_back(UniformDistributionObject1X_Uint64t(mt64X));
         LoggersManagerObject.Log(STREAM("Particle Reactant " << to_string(ReactantNumber) << " (" << to_string(RandomParticlesTypes.back()) << ")"));
@@ -81,9 +81,9 @@ void CellEngineWellStirredChemicalReactionsSimulation::TryToDoRandomReaction(con
     LoggersManagerObject.Log(STREAM("END OF REACTION" << endl));
 }
 
-void CellEngineWellStirredChemicalReactionsSimulation::Run(UnsignedIntType NumberOfSteps)
+void CellEngineWellStirredChemicalReactionsSimulation::Run(UnsignedInt NumberOfSteps)
 {
-    for (UnsignedIntType Steps = 1; Steps <= NumberOfSteps; Steps++)
+    for (UnsignedInt Steps = 1; Steps <= NumberOfSteps; Steps++)
         TryToDoRandomReaction(2);
 }
 

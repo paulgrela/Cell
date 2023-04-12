@@ -43,7 +43,7 @@ public:
     {
         return ParticlesCenters[CellEngineConfigDataObject.ChosenStructureIndex];
     }
-    [[nodiscard]] UnsignedIntType GetNumberOfStructures()
+    [[nodiscard]] UnsignedInt GetNumberOfStructures()
     {
         return ParticlesCenters.size();
     }

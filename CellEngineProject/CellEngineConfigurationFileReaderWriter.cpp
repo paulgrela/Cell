@@ -33,7 +33,7 @@ std::unique_ptr<CellEngineDataFile> CreateCellEngineDataFileObject(const string_
     }
 };
 
-void CellEngineConfigurationFileReaderWriter::ReadChessConfigurationFile(const char* ConfigFileNameParameter, const uint64_t ExecuteCellStateId)
+void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const char* ConfigFileNameParameter, const UnsignedInt ExecuteCellStateId)
 {
     try
     {
@@ -88,7 +88,7 @@ void CellEngineConfigurationFileReaderWriter::ReadChessConfigurationFile(const c
                 CellEngineConfigDataObject.SetProcessPriorityHighest = MainConfigPropertyTreeElement.second.get<bool>("SetProcessPriorityHighest");
                 CellEngineConfigDataObject.PrintAtomDescriptionOnScreen = MainConfigPropertyTreeElement.second.get<bool>("PrintAtomDescriptionOnScreen");
                 CellEngineConfigDataObject.LogParametersOfRenderingToFile = MainConfigPropertyTreeElement.second.get<bool>("LogParametersOfRenderingToFile");
-                CellEngineConfigDataObject.RandomColorEngineObject = static_cast<CellEngineConfigData::RandomColorEngineTypes>(MainConfigPropertyTreeElement.second.get<uint64_t>("RandomColorEngineTypes"));
+                CellEngineConfigDataObject.RandomColorEngineObject = static_cast<CellEngineConfigData::RandomColorEngineTypes>(MainConfigPropertyTreeElement.second.get<UnsignedInt>("RandomColorEngineTypes"));
             }
             else
             if (MainConfigPropertyTreeElement.first == "Logger")
@@ -108,14 +108,14 @@ void CellEngineConfigurationFileReaderWriter::ReadChessConfigurationFile(const c
                 CellEngineConfigDataObject.PrintLogProcessPriorityLevelToFile = MainConfigPropertyTreeElement.second.get<bool>("PrintProcessPriorityLevelToFile");
                 CellEngineConfigDataObject.PrintLogThreadIdToFile = MainConfigPropertyTreeElement.second.get<bool>("PrintThreadIdToFile");
 
-                CellEngineConfigDataObject.MaximalNumberOfLinesInOneFile = MainConfigPropertyTreeElement.second.get<uint64_t>("MaximalNumberOfLinesInOneFile");
+                CellEngineConfigDataObject.MaximalNumberOfLinesInOneFile = MainConfigPropertyTreeElement.second.get<UnsignedInt>("MaximalNumberOfLinesInOneFile");
             }
             else
             if (MainConfigPropertyTreeElement.first == "CellsStates")
                 for (const ptree::value_type& CellStatePropertyTreeElement : MainConfigPropertyTree.get_child("Settings.CellsStates"))
-                    if (CellStatePropertyTreeElement.second.get<uint64_t>("<xmlattr>.id") == ExecuteCellStateId)
+                    if (CellStatePropertyTreeElement.second.get<UnsignedInt>("<xmlattr>.id") == ExecuteCellStateId)
                     {
-                        CellEngineConfigDataObject.TypeOfSpace = static_cast<CellEngineConfigData::TypesOfSpace>(CellStatePropertyTreeElement.second.get<uint64_t>("TypeOfSpace"));
+                        CellEngineConfigDataObject.TypeOfSpace = static_cast<CellEngineConfigData::TypesOfSpace>(CellStatePropertyTreeElement.second.get<UnsignedInt>("TypeOfSpace"));
 
                         auto CellStateFileName = CellStatePropertyTreeElement.second.get<string>("CellStateFileName");
 
@@ -123,14 +123,14 @@ void CellEngineConfigurationFileReaderWriter::ReadChessConfigurationFile(const c
 
                         CellEngineConfigDataObject.CellStateFileName = CellStateFileName;
 
-                        CellEngineConfigDataObject.ChosenStructureIndex = CellStatePropertyTreeElement.second.get<uint64_t>("ChosenStructureIndex");
+                        CellEngineConfigDataObject.ChosenStructureIndex = CellStatePropertyTreeElement.second.get<UnsignedInt>("ChosenStructureIndex");
 
                         CellEngineConfigDataObject.SpecularPower = CellStatePropertyTreeElement.second.get<float>("SpecularPower");
                         CellEngineConfigDataObject.SpecularAlbedo = CellStatePropertyTreeElement.second.get<float>("SpecularAlbedo");
-                        CellEngineConfigDataObject.MakeColorsTypeObject = static_cast<CellEngineConfigData::MakeColorsType>(CellStatePropertyTreeElement.second.get<uint64_t>("MakeColorsType"));
+                        CellEngineConfigDataObject.MakeColorsTypeObject = static_cast<CellEngineConfigData::MakeColorsType>(CellStatePropertyTreeElement.second.get<UnsignedInt>("MakeColorsType"));
 
-                        CellEngineConfigDataObject.StencilForDrawingObjectsTypesObject = static_cast<CellEngineConfigData::StencilForDrawingObjectsTypes>(CellStatePropertyTreeElement.second.get<uint64_t>("StencilForDrawingObjectsTypes"));
-                        CellEngineConfigDataObject.NumberOfStencilBufferLoops = CellStatePropertyTreeElement.second.get<uint64_t>("NumberOfStencilBufferLoops");
+                        CellEngineConfigDataObject.StencilForDrawingObjectsTypesObject = static_cast<CellEngineConfigData::StencilForDrawingObjectsTypes>(CellStatePropertyTreeElement.second.get<UnsignedInt>("StencilForDrawingObjectsTypes"));
+                        CellEngineConfigDataObject.NumberOfStencilBufferLoops = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfStencilBufferLoops");
 
                         CellEngineConfigDataObject.DrawBondsBetweenParticlesCenters = CellStatePropertyTreeElement.second.get<bool>("DrawBondsBetweenParticlesCenters");
                         CellEngineConfigDataObject.DrawBondsBetweenAtoms = CellStatePropertyTreeElement.second.get<bool>("DrawBondsBetweenAtoms");
@@ -139,7 +139,7 @@ void CellEngineConfigurationFileReaderWriter::ReadChessConfigurationFile(const c
                         CellEngineConfigDataObject.CheckAtomVisibility = CellStatePropertyTreeElement.second.get<bool>("CheckAtomVisibility");
                         CellEngineConfigDataObject.CutZ = CellStatePropertyTreeElement.second.get<float>("CutZ");
                         CellEngineConfigDataObject.Distance = CellStatePropertyTreeElement.second.get<float>("Distance");
-                        CellEngineConfigDataObject.LoadOfAtomsStep = CellStatePropertyTreeElement.second.get<uint64_t>("LoadOfAtomsStep");
+                        CellEngineConfigDataObject.LoadOfAtomsStep = CellStatePropertyTreeElement.second.get<UnsignedInt>("LoadOfAtomsStep");
 
                         CellEngineConfigDataObject.XLowToDrawInAtomScale = CellStatePropertyTreeElement.second.get<float>("XLowToDrawInAtomScale");
                         CellEngineConfigDataObject.XHighToDrawInAtomScale = CellStatePropertyTreeElement.second.get<float>("XHighToDrawInAtomScale");
@@ -148,7 +148,7 @@ void CellEngineConfigurationFileReaderWriter::ReadChessConfigurationFile(const c
                         CellEngineConfigDataObject.ZLowToDrawInAtomScale = CellStatePropertyTreeElement.second.get<float>("ZLowToDrawInAtomScale");
                         CellEngineConfigDataObject.ZHighToDrawInAtomScale = CellStatePropertyTreeElement.second.get<float>("ZHighToDrawInAtomScale");
 
-                        CellEngineConfigDataObject.SizeOfAtomsDrawingTypesObject = static_cast<CellEngineConfigData::SizeOfAtomsDrawingTypes>(CellStatePropertyTreeElement.second.get<uint64_t>("SizeOfAtomsDrawingTypes"));
+                        CellEngineConfigDataObject.SizeOfAtomsDrawingTypesObject = static_cast<CellEngineConfigData::SizeOfAtomsDrawingTypes>(CellStatePropertyTreeElement.second.get<UnsignedInt>("SizeOfAtomsDrawingTypes"));
 
                         CellEngineConfigDataObject.SizeOfAtomChangeStep = CellStatePropertyTreeElement.second.get<float>("SizeOfAtomChangeStep");
                         CellEngineConfigDataObject.SizeOfAtomX = CellStatePropertyTreeElement.second.get<float>("SizeOfAtomX");
@@ -186,7 +186,7 @@ void CellEngineConfigurationFileReaderWriter::ReadChessConfigurationFile(const c
                         CellEngineConfigDataObject.BackgroundColors[1] = sb7::FromVec4ToVec3(sb7::GetColorVec4FromColorName(CellStatePropertyTreeElement.second.get<string>("BackgroundColor1")));
                         CellEngineConfigDataObject.BackgroundColors[2] = sb7::FromVec4ToVec3(sb7::GetColorVec4FromColorName(CellStatePropertyTreeElement.second.get<string>("BackgroundColor2")));
                         CellEngineConfigDataObject.BackgroundColors[3] = sb7::FromVec4ToVec3(sb7::GetColorVec4FromColorName(CellStatePropertyTreeElement.second.get<string>("BackgroundColor3")));
-                        CellEngineConfigDataObject.ChosenBackgroundColor = CellStatePropertyTreeElement.second.get<uint64_t>("ChosenBackgroundColor");
+                        CellEngineConfigDataObject.ChosenBackgroundColor = CellStatePropertyTreeElement.second.get<UnsignedInt>("ChosenBackgroundColor");
 
                         CellEngineConfigDataObject.AtomsKinds.clear();
                         for (const ptree::value_type& AtomKindPropertyTreeElement : CellStatePropertyTreeElement.second.get_child("Atoms"))
@@ -210,16 +210,16 @@ void CellEngineConfigurationFileReaderWriter::ReadChessConfigurationFile(const c
                         {
                             ParticleKind ParticleKindObject;
 
-                            LoggersManagerObject.Log(STREAM("Particle Kind Name = " << ParticleKindPropertyTreeElement.second.get<string>("Name") << " ID = " << ParticleKindPropertyTreeElement.second.get<UnsignedIntType>("<xmlattr>.id") << " COLOR = " << ParticleKindPropertyTreeElement.second.get<string>("Color")));
+                            LoggersManagerObject.Log(STREAM("Particle Kind Name = " << ParticleKindPropertyTreeElement.second.get<string>("Name") << " ID = " << ParticleKindPropertyTreeElement.second.get<UnsignedInt>("<xmlattr>.id") << " COLOR = " << ParticleKindPropertyTreeElement.second.get<string>("Color")));
 
                             ParticleKindObject.NameFromXML = ParticleKindPropertyTreeElement.second.get<string>("Name");
-                            ParticleKindObject.NameFromXML == "DNA" ? CellEngineConfigDataObject.DNAIdentifier = ParticleKindPropertyTreeElement.second.get<UnsignedIntType>("<xmlattr>.id") : 0;
+                            ParticleKindObject.NameFromXML == "DNA" ? CellEngineConfigDataObject.DNAIdentifier = ParticleKindPropertyTreeElement.second.get<UnsignedInt>("<xmlattr>.id") : 0;
                             ParticleKindObject.ParticleColor = GetVector3FormVMathVec3(sb7::FromVec4ToVec3(sb7::GetColorVec4FromColorName(ParticleKindPropertyTreeElement.second.get<string>("Color"))));
                             ParticleKindObject.Visible = ParticleKindPropertyTreeElement.second.get<bool>("Visible");
                             ParticleKindObject.SizeX = ParticleKindPropertyTreeElement.second.get<float>("SizeX");
                             ParticleKindObject.SizeY = ParticleKindPropertyTreeElement.second.get<float>("SizeY");
                             ParticleKindObject.SizeZ = ParticleKindPropertyTreeElement.second.get<float>("SizeZ");
-                            CellEngineConfigDataObject.ParticlesKindsXML[ParticleKindPropertyTreeElement.second.get<UnsignedIntType>("<xmlattr>.id")] = ParticleKindObject;
+                            CellEngineConfigDataObject.ParticlesKindsXML[ParticleKindPropertyTreeElement.second.get<UnsignedInt>("<xmlattr>.id")] = ParticleKindObject;
                         }
                     }
         }
@@ -227,7 +227,7 @@ void CellEngineConfigurationFileReaderWriter::ReadChessConfigurationFile(const c
     CATCH("cell print configuration constructor")
 }
 
-void CellEngineConfigurationFileReaderWriter::SaveTestStatisticsToFile(const uint64_t ExecuteCellStateId) const
+void CellEngineConfigurationFileReaderWriter::SaveTestStatisticsToFile(const UnsignedInt ExecuteCellStateId) const
 {
     try
     {
@@ -238,7 +238,7 @@ void CellEngineConfigurationFileReaderWriter::SaveTestStatisticsToFile(const uin
         read_xml(ConfigFileName, MainConfigPropertyTree, boost::property_tree::xml_parser::trim_whitespace);
 
         for (ptree::value_type& TestPropertyTreeElement : MainConfigPropertyTree.get_child("Settings.Tests"))
-            if (ExecuteCellStateId == TestPropertyTreeElement.second.get<uint64_t>("<xmlattr>.id"))
+            if (ExecuteCellStateId == TestPropertyTreeElement.second.get<UnsignedInt>("<xmlattr>.id"))
             {
                 ptree& TestPropertyTreeElementToWriteInFile = TestPropertyTreeElement.second;
 

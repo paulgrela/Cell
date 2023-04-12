@@ -155,14 +155,14 @@ void CellEngineOpenGLVisualiser::DrawBond(const float x1, const float y1, const 
     CATCH("drawing bond")
 }
 
-void CellEngineOpenGLVisualiser::FindBondsToDraw(const vector<CellEngineAtom>& Atoms, vector<pair<UnsignedIntType, UnsignedIntType>>& BondsToDraw)
+void CellEngineOpenGLVisualiser::FindBondsToDraw(const vector<CellEngineAtom>& Atoms, vector<pair<UnsignedInt, UnsignedInt>>& BondsToDraw)
 {
     try
     {
-        vector<vector<pair<UnsignedIntType, UnsignedIntType>>> BondsToDrawLocal;
+        vector<vector<pair<UnsignedInt, UnsignedInt>>> BondsToDrawLocal;
         BondsToDrawLocal.resize(std::thread::hardware_concurrency());
-        UnsignedIntType AtomObjectIndex1 = 0;
-        UnsignedIntType AtomObjectIndex2 = 0;
+        UnsignedInt AtomObjectIndex1 = 0;
+        UnsignedInt AtomObjectIndex2 = 0;
 
         #pragma omp parallel for default(none) shared(BondsToDrawLocal, Atoms, LoggersManagerObject) private(AtomObjectIndex1, AtomObjectIndex2)
         for (AtomObjectIndex1 = 0; AtomObjectIndex1 < Atoms.size(); AtomObjectIndex1++)
@@ -187,7 +187,7 @@ void CellEngineOpenGLVisualiser::FindBondsToDraw(const vector<CellEngineAtom>& A
     CATCH("finding bonds")
 }
 
-void CellEngineOpenGLVisualiser::DrawBonds(const vector<CellEngineAtom>& Atoms, vector<pair<UnsignedIntType, UnsignedIntType>>& BondsToDraw, const bool DrawBonds, const vmath::mat4& ViewMatrix)
+void CellEngineOpenGLVisualiser::DrawBonds(const vector<CellEngineAtom>& Atoms, vector<pair<UnsignedInt, UnsignedInt>>& BondsToDraw, const bool DrawBonds, const vmath::mat4& ViewMatrix)
 {
     try
     {
@@ -337,7 +337,7 @@ inline vmath::vec3 CellEngineOpenGLVisualiser::GetSize(const CellEngineAtom& Ato
     return Size;
 }
 
-bool CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom& AtomObject, const vmath::mat4& ViewMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, UnsignedIntType& NumberOfAllRenderedAtoms, const bool Chosen, const bool RenderObjectParameter)
+bool CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom& AtomObject, const vmath::mat4& ViewMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, UnsignedInt& NumberOfAllRenderedAtoms, const bool Chosen, const bool RenderObjectParameter)
 {
     bool FinalVisibilityInModelWorld;
 
@@ -456,8 +456,8 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
 
         DrawBondsForParticlesCenters(BondsBetweenParticlesCentersToDraw, CellEngineConfigDataObject.DrawBondsBetweenParticlesCenters, ViewMatrix);
 
-        UnsignedIntType NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = 0;
-        UnsignedIntType NumberOfAllRenderedAtoms = 0;
+        UnsignedInt NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = 0;
+        UnsignedInt NumberOfAllRenderedAtoms = 0;
 
         RenderSpace(NumberOfAllRenderedAtoms, NumberOfFoundParticlesCenterToBeRenderedInAtomDetails, ViewMatrix, MousePositionLocal);
 
@@ -517,7 +517,7 @@ void CellEngineOpenGLVisualiser::PrintAtomDescriptionOnScreen(CellEngineAtom& Ch
     CATCH("printing atom description on screen")
 }
 
-string CellEngineOpenGLVisualiser::GetEntityName(const UnsignedIntType EntityId)
+string CellEngineOpenGLVisualiser::GetEntityName(const UnsignedInt EntityId)
 {
     string EntityName;
 
@@ -544,7 +544,7 @@ void CellEngineOpenGLVisualiser::SetVisibilityOfAllParticles(const bool VisibleP
     CATCH("setting visibility of all particles")
 }
 
-void CellEngineOpenGLVisualiser::SetVisibilityOfParticlesExcept(const UnsignedIntType EntityId, const bool VisibleParam)
+void CellEngineOpenGLVisualiser::SetVisibilityOfParticlesExcept(const UnsignedInt EntityId, const bool VisibleParam)
 {
     try
     {
@@ -554,7 +554,7 @@ void CellEngineOpenGLVisualiser::SetVisibilityOfParticlesExcept(const UnsignedIn
     CATCH("setting visibility of particles except")
 }
 
-bool CellEngineOpenGLVisualiser::CheckVisibilityOfParticles(const UnsignedIntType EntityId)
+bool CellEngineOpenGLVisualiser::CheckVisibilityOfParticles(const UnsignedInt EntityId)
 {
     bool Visible = false;
 

@@ -76,15 +76,15 @@ void CellEngineCIFDataFile::ReadDataFromFile()
 
         LoggersManagerObject.Log(STREAM("STARTED READING FROM CIF FILE"));
 
-        UnsignedIntType NumberOfAtoms = 0;
-        UnsignedIntType NumberOfAtomsDNA = 0;
-        UnsignedIntType NumberOfNucleotidesInDNA = 0;
+        UnsignedInt NumberOfAtoms = 0;
+        UnsignedInt NumberOfAtomsDNA = 0;
+        UnsignedInt NumberOfNucleotidesInDNA = 0;
 
         CellEngineConfigDataObject.SelectRandomEngineForColors();
 
         smatch SMatchObject;
 
-        vector<UnsignedIntType> AppliedMatrixesIds;
+        vector<UnsignedInt> AppliedMatrixesIds;
         regex RegexObject1(R"((\d+)-(\d+)|\((\d+)\))");
 
         vector<string> AppliedChainsNames;
@@ -100,10 +100,10 @@ void CellEngineCIFDataFile::ReadDataFromFile()
                 if (ParticleKindObjectIterator == CellEngineConfigDataObject.ParticlesKindsXML.end())
                 {
                     auto OthersParticleKindObjectIterator = CellEngineConfigDataObject.ParticlesKindsXML.find(10000);
-                    CellEngineConfigDataObject.ParticlesKinds.emplace_back(ParticleKind{ static_cast<UnsignedIntType>(stoi(AtomFields[2])), OthersParticleKindObjectIterator->second.Visible, OthersParticleKindObjectIterator->second.SizeX, OthersParticleKindObjectIterator->second.SizeY, OthersParticleKindObjectIterator->second.SizeZ, OthersParticleKindObjectIterator->second.ParticleColor, OthersParticleKindObjectIterator->second.ParticleColor, GetVector3FormVMathVec3(CellEngineConfigDataObject.GetRandomColor()), OthersParticleKindObjectIterator->second.NameFromXML, AtomFields[5].substr(1, AtomFields[5].length() - 2) });
+                    CellEngineConfigDataObject.ParticlesKinds.emplace_back(ParticleKind{static_cast<UnsignedInt>(stoi(AtomFields[2])), OthersParticleKindObjectIterator->second.Visible, OthersParticleKindObjectIterator->second.SizeX, OthersParticleKindObjectIterator->second.SizeY, OthersParticleKindObjectIterator->second.SizeZ, OthersParticleKindObjectIterator->second.ParticleColor, OthersParticleKindObjectIterator->second.ParticleColor, GetVector3FormVMathVec3(CellEngineConfigDataObject.GetRandomColor()), OthersParticleKindObjectIterator->second.NameFromXML, AtomFields[5].substr(1, AtomFields[5].length() - 2) });
                 }
                 else
-                    CellEngineConfigDataObject.ParticlesKinds.emplace_back(ParticleKind{ static_cast<UnsignedIntType>(stoi(AtomFields[2])), ParticleKindObjectIterator->second.Visible, ParticleKindObjectIterator->second.SizeX, ParticleKindObjectIterator->second.SizeY, ParticleKindObjectIterator->second.SizeZ, ParticleKindObjectIterator->second.ParticleColor, ParticleKindObjectIterator->second.ParticleColor, GetVector3FormVMathVec3(CellEngineConfigDataObject.GetRandomColor()), ParticleKindObjectIterator->second.NameFromXML, AtomFields[5].substr(1, AtomFields[5].length() - 2) });
+                    CellEngineConfigDataObject.ParticlesKinds.emplace_back(ParticleKind{static_cast<UnsignedInt>(stoi(AtomFields[2])), ParticleKindObjectIterator->second.Visible, ParticleKindObjectIterator->second.SizeX, ParticleKindObjectIterator->second.SizeY, ParticleKindObjectIterator->second.SizeZ, ParticleKindObjectIterator->second.ParticleColor, ParticleKindObjectIterator->second.ParticleColor, GetVector3FormVMathVec3(CellEngineConfigDataObject.GetRandomColor()), ParticleKindObjectIterator->second.NameFromXML, AtomFields[5].substr(1, AtomFields[5].length() - 2) });
 
                 CellEngineConfigDataObject.ParticlesKindsPos[stoi(AtomFields[2])] = CellEngineConfigDataObject.ParticlesKinds.size() - 1;
             }
@@ -120,9 +120,9 @@ void CellEngineCIFDataFile::ReadDataFromFile()
 
                 TransformationMatrix3x4 TransformationMatrix3x4Object{};
 
-                UnsignedIntType TransformationMatrix3x4ObjectId = stoi(MatrixFields[0]);
+                UnsignedInt TransformationMatrix3x4ObjectId = stoi(MatrixFields[0]);
 
-                UnsignedIntType Shift = 6;
+                UnsignedInt Shift = 6;
                 TransformationMatrix3x4Object.Matrix[0][0] = stof(MatrixFields[Shift + 0]);
                 TransformationMatrix3x4Object.Matrix[0][1] = stof(MatrixFields[Shift + 1]);
                 TransformationMatrix3x4Object.Matrix[0][2] = stof(MatrixFields[Shift + 2]);
@@ -146,7 +146,7 @@ void CellEngineCIFDataFile::ReadDataFromFile()
                 auto end = Line.cend();
                 for ( ; regex_search(pos, end, SMatchObject, RegexObject1); pos = SMatchObject.suffix().first)
                     if (SMatchObject.str(1).empty() == false && SMatchObject.str(2).empty() == false)
-                        for (UnsignedIntType MatrixId = stoi(SMatchObject.str(1)); MatrixId <= stoi(SMatchObject.str(2)); MatrixId++)
+                        for (UnsignedInt MatrixId = stoi(SMatchObject.str(1)); MatrixId <= stoi(SMatchObject.str(2)); MatrixId++)
                             AppliedMatrixesIds.push_back(MatrixId);
                     else
                         AppliedMatrixesIds.push_back(stoi(SMatchObject.str(3)));
