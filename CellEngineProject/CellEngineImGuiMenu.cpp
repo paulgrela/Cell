@@ -525,6 +525,8 @@ public:
             if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)
                 if (ImGui::CollapsingHeader("Visibility of Voxel Simulation Space", ImGuiTreeNodeFlags_DefaultOpen))
                 {
+                    std::lock_guard<std::mutex> LockGuardObject{CellEngineOpenGLVoxelSimulationSpaceVisualiser::RenderMenuAndVoxelSimulationSpaceMutexObject};
+
                     auto  CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer = dynamic_cast<CellEngineOpenGLVoxelSimulationSpaceVisualiser*>(CellEngineOpenGLVisualiserPointer.get());
 
                     const auto StartPos = CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->GetStartPositions();

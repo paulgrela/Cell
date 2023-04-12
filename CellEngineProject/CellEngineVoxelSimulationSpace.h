@@ -27,28 +27,28 @@ class CellEngineVoxelSimulationSpace
 public:
     uint64_t Space[1024][1024][1024]{};
 public:
-    [[nodiscard]] static float ConvertToGraphicsCoordinate(IntType CoordinateParam)
+    [[nodiscard]] static float ConvertToGraphicsCoordinate(UnsignedIntType CoordinateParam)
     {
-        return static_cast<float>(CoordinateParam - 512) * 4;
+        return static_cast<float>(static_cast<IntType>(CoordinateParam) - 512) * 4;
     };
-    [[nodiscard]] static IntType ConvertToSpaceCoordinate(double CoordinateParam)
+    [[nodiscard]] static UnsignedIntType ConvertToSpaceCoordinate(double CoordinateParam)
     {
-        return static_cast<IntType>(round(CoordinateParam / 4.0)) + 512;
+        return static_cast<UnsignedIntType>(round(CoordinateParam / 4.0)) + 512;
     };
 public:
-    IntType XMin{}, XMax{}, YMin{}, YMax{}, ZMin{}, ZMax{};
+    UnsignedIntType XMin{}, XMax{}, YMin{}, YMax{}, ZMin{}, ZMax{};
 public:
     void SetStartValuesForSpaceMinMax()
     {
         XMin = 10000;
-        XMax = -10000;
+        XMax = 0;
         YMin = 10000;
-        YMax = -10000;
+        YMax = 0;
         ZMin = 10000;
-        ZMax = -10000;
+        ZMax = 0;
     }
 public:
-    void CompareAndGetSpaceMinMax(const IntType SpaceX, const IntType SpaceY, const IntType SpaceZ)
+    void CompareAndGetSpaceMinMax(const UnsignedIntType SpaceX, const UnsignedIntType SpaceY, const UnsignedIntType SpaceZ)
     {
         XMin = std::min(SpaceX, XMin);
         XMax = std::max(SpaceX, XMax);
@@ -80,9 +80,9 @@ public:
 public:
     void SetAtomInVoxelSpace(const CellEngineAtom& AppliedAtom)
     {
-        IntType SpaceX = CellEngineVoxelSimulationSpace::ConvertToSpaceCoordinate(AppliedAtom.X);
-        IntType SpaceY = CellEngineVoxelSimulationSpace::ConvertToSpaceCoordinate(AppliedAtom.Y);
-        IntType SpaceZ = CellEngineVoxelSimulationSpace::ConvertToSpaceCoordinate(AppliedAtom.Z);
+        UnsignedIntType SpaceX = CellEngineVoxelSimulationSpace::ConvertToSpaceCoordinate(AppliedAtom.X);
+        UnsignedIntType SpaceY = CellEngineVoxelSimulationSpace::ConvertToSpaceCoordinate(AppliedAtom.Y);
+        UnsignedIntType SpaceZ = CellEngineVoxelSimulationSpace::ConvertToSpaceCoordinate(AppliedAtom.Z);
 
         CompareAndGetSpaceMinMax(SpaceX, SpaceY, SpaceZ);
 
