@@ -12,7 +12,7 @@
 #include "CellEngineConfigData.h"
 #include "CellEngineOpenGLVisualiser.h"
 
-class CellEngineOpenGLVoxelSimulationSpaceVisualiser : public CellEngineOpenGLVisualiser
+class CellEngineOpenGLVisualiserOfVoxelSimulationSpace : public CellEngineOpenGLVisualiser
 {
 public:
     enum class VoxelSpaceDrawingTypes : UnsignedInt

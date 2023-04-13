@@ -5,7 +5,7 @@
 #include "CellEngineConfigData.h"
 #include "CellEngineCIFDataFile.h"
 
-class CellEngineVoxelSimulationSpaceCIFDataFileReader : public CellEngineCIFDataFile
+class CellEngineCIFDataFileReaderOfVoxelSimulationSpace : public CellEngineCIFDataFile
 {
 protected:
     void SetStartValues() override

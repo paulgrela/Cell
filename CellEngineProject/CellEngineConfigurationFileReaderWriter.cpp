@@ -15,8 +15,8 @@
 
 #include "CellEnginePDBDataFile.h"
 #include "CellEngineConfigurationFileReaderWriter.h"
-#include "CellEngineVoxelSimulationSpaceCIFDataFileReader.h"
-#include "CellEngineFullAtomSimulationSpaceCIFDataFileReader.h"
+#include "CellEngineCIFDataFileReaderOfVoxelSimulationSpace.h"
+#include "CellEngineCIFDataFileReaderOfFullAtomSimulationSpace.h"
 
 using namespace std;
 
@@ -27,9 +27,9 @@ std::unique_ptr<CellEngineDataFile> CreateCellEngineDataFileObject(const string_
     else
     {
         if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)
-            return make_unique<CellEngineVoxelSimulationSpaceCIFDataFileReader>();
+            return make_unique<CellEngineCIFDataFileReaderOfVoxelSimulationSpace>();
         else
-            return make_unique<CellEngineFullAtomSimulationSpaceCIFDataFileReader>();
+            return make_unique<CellEngineCIFDataFileReaderOfFullAtomSimulationSpace>();
     }
 };
 

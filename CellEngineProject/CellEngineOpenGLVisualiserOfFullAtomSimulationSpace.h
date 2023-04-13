@@ -9,7 +9,7 @@
 #include "CellEngineConfigData.h"
 #include "CellEngineOpenGLVisualiser.h"
 
-class CellEngineOpenGLFullAtomSimulationSpaceVisualiser : public CellEngineOpenGLVisualiser
+class CellEngineOpenGLVisualiserOfFullAtomSimulationSpace : public CellEngineOpenGLVisualiser
 {
 private:
     void RenderSpace(UnsignedInt& NumberOfAllRenderedAtoms, UnsignedInt& NumberOfFoundParticlesCenterToBeRenderedInAtomDetails, const vmath::mat4& ViewMatrix) override

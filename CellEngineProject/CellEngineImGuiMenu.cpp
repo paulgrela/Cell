@@ -15,8 +15,8 @@
 #include "CellEngineDataFile.h"
 #include "CellEngineConfigData.h"
 #include "CellEngineOpenGLVisualiser.h"
-#include "CellEngineOpenGLVoxelSimulationSpaceVisualiser.h"
-#include "CellEngineOpenGLFullAtomSimulationSpaceVisualiser.h"
+#include "CellEngineOpenGLVisualiserOfVoxelSimulationSpace.h"
+#include "CellEngineOpenGLVisualiserOfFullAtomSimulationSpace.h"
 #include "CellEngineConfigurationFileReaderWriter.h"
 
 #include "CellEngineWellStirredChemicalReactionsSimulation.h"
@@ -522,9 +522,9 @@ public:
     {
         try
         {
-            std::lock_guard<std::mutex> LockGuardObject{CellEngineOpenGLVoxelSimulationSpaceVisualiser::RenderMenuAndVoxelSimulationSpaceMutexObject};
+            std::lock_guard<std::mutex> LockGuardObject{CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderMenuAndVoxelSimulationSpaceMutexObject};
 
-            auto  CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer = dynamic_cast<CellEngineOpenGLVoxelSimulationSpaceVisualiser*>(CellEngineOpenGLVisualiserPointer.get());
+            auto  CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer = dynamic_cast<CellEngineOpenGLVisualiserOfVoxelSimulationSpace*>(CellEngineOpenGLVisualiserPointer.get());
 
             const auto StartPos = CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->GetStartPositions();
             static int DrawSpaceStartXYZ[3] = { static_cast<int>(get<0>(StartPos)), static_cast<int>(get<1>(StartPos)), static_cast<int>(get<2>(StartPos)) };
@@ -545,12 +545,12 @@ public:
             static int TypeOfDrawingVoxelSpace = static_cast<int>(CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->SpaceDrawingType);
             ImGui::RadioButton("Draw Voxel Space FULL", &TypeOfDrawingVoxelSpace, 1);
             ImGui::RadioButton("Draw Voxel Space SELECTED", &TypeOfDrawingVoxelSpace, 2);
-            CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->SpaceDrawingType = static_cast<CellEngineOpenGLVoxelSimulationSpaceVisualiser::VoxelSpaceDrawingTypes>(TypeOfDrawingVoxelSpace);
+            CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->SpaceDrawingType = static_cast<CellEngineOpenGLVisualiserOfVoxelSimulationSpace::VoxelSpaceDrawingTypes>(TypeOfDrawingVoxelSpace);
 
-            if (CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->SpaceDrawingType == CellEngineOpenGLVoxelSimulationSpaceVisualiser::VoxelSpaceDrawingTypes::DrawVoxelSpaceFull)
+            if (CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->SpaceDrawingType == CellEngineOpenGLVisualiserOfVoxelSimulationSpace::VoxelSpaceDrawingTypes::DrawVoxelSpaceFull)
                 CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->SetVoxelSpaceSelection(0, 0, 0, 64, 64, 64, NumberOfVoxelSimulationSpaceInDimensionX, NumberOfVoxelSimulationSpaceInDimensionY, NumberOfVoxelSimulationSpaceInDimensionZ);
             else
-            if (CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->SpaceDrawingType == CellEngineOpenGLVoxelSimulationSpaceVisualiser::VoxelSpaceDrawingTypes::DrawVoxelSpaceSelected)
+            if (CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->SpaceDrawingType == CellEngineOpenGLVisualiserOfVoxelSimulationSpace::VoxelSpaceDrawingTypes::DrawVoxelSpaceSelected)
                 CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->SetVoxelSpaceSelection(DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceStepsXYZ[0], DrawSpaceStepsXYZ[1], DrawSpaceStepsXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
 
             if (ImGui::Button("  SAVE MOUSE POSITION  ") == true)
@@ -677,9 +677,9 @@ public:
     static unique_ptr<CellEngineOpenGLVisualiser> CreateCellEngineOpenGLVisualiserObject(const CellEngineConfigData::TypesOfSpace TypeOfSpace)
     {
         if (TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSpace)
-            return make_unique<CellEngineOpenGLFullAtomSimulationSpaceVisualiser>();
+            return make_unique<CellEngineOpenGLVisualiserOfFullAtomSimulationSpace>();
         else
-            return make_unique<CellEngineOpenGLVoxelSimulationSpaceVisualiser>();
+            return make_unique<CellEngineOpenGLVisualiserOfVoxelSimulationSpace>();
     }
 
     void CellEngineOpenGLVisualiserThreadFunction(int XPosWindow, int YPosWindow, int WidthWindow, int HeightWindow)

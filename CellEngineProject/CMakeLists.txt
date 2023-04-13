@@ -79,16 +79,16 @@ add_executable(
 	CellEnginePDBDataFile.cpp
 	CellEngineCIFDataFile.h
 	CellEngineCIFDataFile.cpp
+	CellEngineCIFDataFileReaderOfVoxelSimulationSpace.h
+	CellEngineCIFDataFileReaderOfFullAtomSimulationSpace.h
 	CellEngineVoxelSimulationSpace.h
 	CellEngineVoxelSimulationSpace.cpp
 	CellEngineOpenGLVisualiser.h
 	CellEngineOpenGLVisualiser.cpp
-	CellEngineOpenGLFullAtomSimulationSpaceVisualiser.h
-	CellEngineOpenGLVoxelSimulationSpaceVisualiser.h
+	CellEngineOpenGLVisualiserOfVoxelSimulationSpace.h
+	CellEngineOpenGLVisualiserOfFullAtomSimulationSpace.h
 	CellEngineConfigurationFileReaderWriter.h
 	CellEngineConfigurationFileReaderWriter.cpp
-	CellEngineVoxelSimulationSpaceCIFDataFileReader.h
-	CellEngineFullAtomSimulationSpaceCIFDataFileReader.h
 	CellEngineWellStirredChemicalReactionsSimulation.h
 	CellEngineWellStirredChemicalReactionsSimulation.cpp)
 
