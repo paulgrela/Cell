@@ -433,20 +433,22 @@ inline void CellEngineOpenGLVisualiser::LoadShapeOfAtomsWhenChanged()
     CATCH("preparing opengl to render objects on scene")
 }
 
-bool PressedRightMouseButtonBool = false;
+void CellEngineOpenGLVisualiser::CopyMousePositionWhenButtonPressed()
+{
+    if (PressedRightMouseButtonBool == true)
+    {
+        MousePositionLocal = MousePosition;
+        PressedRightMouseButtonBool = false;
+    }
+};
 
 void CellEngineOpenGLVisualiser::Render(double CurrentTime)
 {
-    try {
+    try
+    {
         glUseProgram(ShaderProgramPhong);
 
-        //Point2fT MousePositionLocal = MousePosition;
-        static Point2fT MousePositionLocal;
-        if (PressedRightMouseButtonBool)
-        {
-            MousePositionLocal = MousePosition;
-            PressedRightMouseButtonBool = false;
-        }
+        CopyMousePositionWhenButtonPressed();
 
         CellEngineConfigDataObject.UseStencilBuffer == true ? CellEngineConfigDataObject.NumberOfStencilBufferLoops = 3 : CellEngineConfigDataObject.NumberOfStencilBufferLoops = 1;
 
@@ -466,7 +468,7 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
         UnsignedInt NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = 0;
         UnsignedInt NumberOfAllRenderedAtoms = 0;
 
-        RenderSpace(NumberOfAllRenderedAtoms, NumberOfFoundParticlesCenterToBeRenderedInAtomDetails, ViewMatrix, MousePositionLocal);
+        RenderSpace(NumberOfAllRenderedAtoms, NumberOfFoundParticlesCenterToBeRenderedInAtomDetails, ViewMatrix);
 
         const auto stop_time = chrono::high_resolution_clock::now();
 
@@ -605,7 +607,6 @@ void CellEngineOpenGLVisualiser::OnMouseButton(int Button, int Action)
         if (Button == 0)
         {
             PressedRightMouseButtonBool = true;
-
             PressedRightMouseButton++;
             if (PressedRightMouseButton == 1)
             {

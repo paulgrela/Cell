@@ -39,15 +39,18 @@ private:
     Matrix3fT ArcBallPrevRotationMatrix{};
     Matrix3fT ArcBallActualRotationMatrix{};
     std::unique_ptr<ArcBallT> ArcBall;
+protected:
     Point2fT MousePosition{};
+    Point2fT MousePositionLocal{};
 private:
     float LengthUnit = 1;
 protected:
     vmath::vec3 Center{};
 private:
     vmath::mat4 RotationMatrix;
-private:
+protected:
     UnsignedInt PressedRightMouseButton = 0;
+    bool PressedRightMouseButtonBool = false;
 private:
     std::vector<std::pair<UnsignedInt, UnsignedInt>> BondsBetweenParticlesCentersToDraw;
 protected:
@@ -64,6 +67,8 @@ protected:
         static const char title[] = "Cell Engine Visualizer";
         memcpy(Info.Title, title, sizeof(title));
     }
+protected:
+    void CopyMousePositionWhenButtonPressed();
 protected:
     void InitArcBall();
 protected:
@@ -104,7 +109,7 @@ protected:
     inline void LoadShapeOfAtomsWhenChanged();
     void PrintAtomDescriptionOnScreen(CellEngineAtom& ChosenParticleObject);
 protected:
-    virtual void RenderSpace(UnsignedInt& NumberOfAllRenderedAtoms, UnsignedInt& NumberOfFoundParticlesCenterToBeRenderedInAtomDetails, const vmath::mat4& ViewMatrix, const Point2fT& MousePositionLocal) = 0;
+    virtual void RenderSpace(UnsignedInt& NumberOfAllRenderedAtoms, UnsignedInt& NumberOfFoundParticlesCenterToBeRenderedInAtomDetails, const vmath::mat4& ViewMatrix) = 0;
 protected:
     virtual void GetStartCenterPoint() = 0;
     virtual void GetMemoryForBondsBetweenAtomsToDraw() = 0;
