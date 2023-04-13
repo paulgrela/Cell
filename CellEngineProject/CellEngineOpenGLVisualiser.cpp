@@ -433,13 +433,20 @@ inline void CellEngineOpenGLVisualiser::LoadShapeOfAtomsWhenChanged()
     CATCH("preparing opengl to render objects on scene")
 }
 
+bool PressedRightMouseButtonBool = false;
+
 void CellEngineOpenGLVisualiser::Render(double CurrentTime)
 {
-    try
-    {
+    try {
         glUseProgram(ShaderProgramPhong);
 
-        Point2fT MousePositionLocal = MousePosition;
+        //Point2fT MousePositionLocal = MousePosition;
+        static Point2fT MousePositionLocal;
+        if (PressedRightMouseButtonBool)
+        {
+            MousePositionLocal = MousePosition;
+            PressedRightMouseButtonBool = false;
+        }
 
         CellEngineConfigDataObject.UseStencilBuffer == true ? CellEngineConfigDataObject.NumberOfStencilBufferLoops = 3 : CellEngineConfigDataObject.NumberOfStencilBufferLoops = 1;
 
@@ -597,6 +604,8 @@ void CellEngineOpenGLVisualiser::OnMouseButton(int Button, int Action)
     {
         if (Button == 0)
         {
+            PressedRightMouseButtonBool = true;
+
             PressedRightMouseButton++;
             if (PressedRightMouseButton == 1)
             {
@@ -620,9 +629,9 @@ void CellEngineOpenGLVisualiser::OnMouseMove(int X, int Y)
 
         if (PressedRightMouseButton == true)
         {
-            Quat4fT ThisQuat;
-            ArcBall->drag(&MousePosition, &ThisQuat);
-            Matrix3fSetRotationFromQuat4f(&ArcBallActualRotationMatrix, &ThisQuat);
+            Quat4fT ThisQuaternion;
+            ArcBall->drag(&MousePosition, &ThisQuaternion);
+            Matrix3fSetRotationFromQuat4f(&ArcBallActualRotationMatrix, &ThisQuaternion);
             Matrix3fMulMatrix3f(&ArcBallActualRotationMatrix, &ArcBallPrevRotationMatrix);
 
             RotationMatrix = vmath::rotate(0.0f, 0.0f, 0.0f);

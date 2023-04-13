@@ -532,11 +532,11 @@ public:
 
             const auto Steps = CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->GetSteps();
             static int DrawSpaceStepsXYZ[3] = { static_cast<int>(get<0>(Steps)), static_cast<int>(get<1>(Steps)), static_cast<int>(get<2>(Steps)) };
-            ImGui::DragInt3("StepX StepY StepZ", DrawSpaceStepsXYZ, 1, 0, NumberOfVoxelSimulationSpaceInEachDimension, "%d", ImGuiSliderFlags_AlwaysClamp);
+            ImGui::DragInt3("StepX  StepY  StepZ", DrawSpaceStepsXYZ, 1, 0, NumberOfVoxelSimulationSpaceInEachDimension, "%d", ImGuiSliderFlags_AlwaysClamp);
 
             const auto Sizes = CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->GetSizes();
             static int DrawSpaceSizesXYZ[3] = { static_cast<int>(get<0>(Sizes)), static_cast<int>(get<1>(Sizes)), static_cast<int>(get<2>(Sizes)) };
-            ImGui::DragInt3("SizeX SizeY SizeZ", DrawSpaceSizesXYZ, 1, 0, NumberOfVoxelSimulationSpaceInEachDimension, "%d", ImGuiSliderFlags_AlwaysClamp);
+            ImGui::DragInt3("SizeX  SizeY  SizeZ", DrawSpaceSizesXYZ, 1, 0, NumberOfVoxelSimulationSpaceInEachDimension, "%d", ImGuiSliderFlags_AlwaysClamp);
 
             CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->SetVoxelSpaceSelection(DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceStepsXYZ[0], DrawSpaceStepsXYZ[1], DrawSpaceStepsXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
 
@@ -553,14 +553,20 @@ public:
             if (CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->SpaceDrawingType == CellEngineOpenGLVoxelSimulationSpaceVisualiser::VoxelSpaceDrawingTypes::DrawVoxelSpaceSelected)
                 CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->SetVoxelSpaceSelection(DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceStepsXYZ[0], DrawSpaceStepsXYZ[1], DrawSpaceStepsXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
 
-            //JESLI KLIKNE PRZYCISK FROM MOUSE TO POZYCJE Z MYSZY TAM GDZIE ZOLTY
-            //Z MYSZY JAKO SRODEK
-            //Z MYSZY JAKO ROG
+            if (ImGui::Button("  SAVE MOUSE POSITION  ") == true)
+            {
+                CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->SaveVoxelPositionChosenByMouse();
 
+                const auto TempStartPos = CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->GetStartPositions();
+                DrawSpaceStartXYZ[0] = static_cast<int>(get<0>(TempStartPos));
+                DrawSpaceStartXYZ[1] = static_cast<int>(get<1>(TempStartPos));
+                DrawSpaceStartXYZ[2] = static_cast<int>(get<2>(TempStartPos));
+            }
 
-            if (ImGui::Button(" DRAW RANDOM PARTICLES "))
+            if (ImGui::Button(" DRAW RANDOM PARTICLES ") == true)
             {
             }
+
             int IDButton = 1;
             float Nothing;
             ColorButton("    START DIFFUSION    ", Nothing, 0, 0, 0, 3, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue){ });
