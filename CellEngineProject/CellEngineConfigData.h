@@ -246,6 +246,55 @@ public:
 
         return ReturnRandomColor;
     }
+public:
+    static inline bool IsDNAorRNA(const EntityIdInt EntityId)
+    {
+        return EntityId == 699 || EntityId == 700;
+    }
+public:
+    vector3 DNANR1Color = GetVector3FormVMathVec3(GetRandomColor());
+    vector3 DNANR2Color = GetVector3FormVMathVec3(GetRandomColor());
+    vector3 DNANR3Color = GetVector3FormVMathVec3(GetRandomColor());
+    vector3 DNANR4Color = GetVector3FormVMathVec3(GetRandomColor());
+
+    vector3 RNANR1Color = GetVector3FormVMathVec3(GetRandomColor());
+    vector3 RNANR2Color = GetVector3FormVMathVec3(GetRandomColor());
+    vector3 RNANR3Color = GetVector3FormVMathVec3(GetRandomColor());
+    vector3 RNANR4Color = GetVector3FormVMathVec3(GetRandomColor());
+
+    vector3 GetDNAorRNAColor(EntityIdInt EntityId, ChainIdInt ChainId) const
+    {
+        if (EntityId == 699)
+        {
+            switch (ChainId)
+            {
+                case 01:
+                case 11: return DNANR1Color; break;
+                case 02:
+                case 12: return DNANR2Color; break;
+                case 03:
+                case 13: return DNANR3Color; break;
+                case 04:
+                case 14: return DNANR4Color; break;
+                default : break;
+            }
+        }
+        else
+        if (EntityId == 700)
+        {
+            switch (ChainId)
+            {
+                case 01: return RNANR1Color; break;
+                case 02: return RNANR2Color; break;
+                case 03: return RNANR3Color; break;
+                case 04: return RNANR4Color; break;
+                default : break;
+            }
+        }
+
+        return { 0, 0, 0 };
+    }
+
 };
 
 inline CellEngineConfigData CellEngineConfigDataObject;

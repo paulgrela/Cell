@@ -29,10 +29,17 @@ constexpr UnsignedInt NumberOfVoxelSimulationSpaceInDimensionZ = NumberOfVoxelSi
 //}
 
 
+struct SimulationSpaceVoxel
+{
+    EntityIdInt EntityId;
+    ChainIdInt ChainId;
+};
+
 class CellEngineVoxelSimulationSpace
 {
 public:
-    UnsignedInt Space[NumberOfVoxelSimulationSpaceInDimensionX][NumberOfVoxelSimulationSpaceInDimensionY][NumberOfVoxelSimulationSpaceInDimensionZ]{};
+    //UnsignedInt Space[NumberOfVoxelSimulationSpaceInDimensionX][NumberOfVoxelSimulationSpaceInDimensionY][NumberOfVoxelSimulationSpaceInDimensionZ]{};
+    SimulationSpaceVoxel Space[NumberOfVoxelSimulationSpaceInDimensionX][NumberOfVoxelSimulationSpaceInDimensionY][NumberOfVoxelSimulationSpaceInDimensionZ]{};
 public:
     [[nodiscard]] static float ConvertToGraphicsCoordinate(UnsignedInt CoordinateParam)
     {
@@ -103,11 +110,12 @@ public:
     {
         for (auto& SelectedX : Space)
             for (auto& SelectedXY : SelectedX)
-                for (UnsignedInt& SelectedXYZ : SelectedXY)
+                for (SimulationSpaceVoxel& SelectedXYZ : SelectedXY)
                 {
-                    if (SelectedXYZ != 0)
+                    if (SelectedXYZ.EntityId != 0)
                         SumOfNotEmptyVoxels++;
                 }
+
     }
 public:
     void SetAtomInVoxelSpace(const CellEngineAtom& AppliedAtom)
@@ -118,8 +126,12 @@ public:
 
         CompareAndGetSpaceMinMax(SpaceX, SpaceY, SpaceZ);
 
-        if (Space[SpaceX][SpaceY][SpaceZ] == 0)
-            Space[SpaceX][SpaceY][SpaceZ] = AppliedAtom.EntityId;
+        if (Space[SpaceX][SpaceY][SpaceZ].EntityId == 0)
+        {
+            Space[SpaceX][SpaceY][SpaceZ].EntityId = AppliedAtom.EntityId;
+            if (CellEngineConfigData::IsDNAorRNA(AppliedAtom.EntityId) == true)
+                Space[SpaceX][SpaceY][SpaceZ].ChainId = stoi(std::string(AppliedAtom.Chain).substr(2,2));
+        }
     }
 
 public:
@@ -129,8 +141,8 @@ public:
 
         for (auto& SelectedX : Space)
             for (auto& SelectedXY : SelectedX)
-                for (UnsignedInt& SelectedXYZ : SelectedXY)
-                    SelectedXYZ = 0;
+                for (SimulationSpaceVoxel& SelectedXYZ : SelectedXY)
+                    SelectedXYZ.EntityId = SelectedXYZ.ChainId = 0;
     }
 };
 

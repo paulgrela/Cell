@@ -16,7 +16,7 @@ class CellEngineAtom
 public:
     UnsignedInt AtomIndex{};
     UnsignedInt Serial{};
-    UnsignedInt EntityId{};
+    EntityIdInt EntityId{};
     char Name[5 + 1]{};
     char ResName[4 + 1]{};
     char Chain[6 + 1]{};

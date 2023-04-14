@@ -9,6 +9,9 @@
 using Int = std::int64_t;
 using UnsignedInt = std::uint64_t;
 
+using EntityIdInt = std::uint32_t;
+using ChainIdInt = std::uint32_t;
+
 struct vector3
 {
     uint16_t X, Y, Z;

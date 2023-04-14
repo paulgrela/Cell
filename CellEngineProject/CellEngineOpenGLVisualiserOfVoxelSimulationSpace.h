@@ -77,7 +77,7 @@ private:
                 for (UnsignedInt SpaceYP = YStartParam; SpaceYP < YStartParam + YSizeParam; SpaceYP += YStepParam)
                     for (UnsignedInt SpaceZP = ZStartParam; SpaceZP < ZStartParam + ZSizeParam; SpaceZP += ZStepParam)
                         if (SpaceXP < NumberOfVoxelSimulationSpaceInDimensionX &&  SpaceYP < NumberOfVoxelSimulationSpaceInDimensionY && SpaceZP < NumberOfVoxelSimulationSpaceInDimensionZ)
-                            if (DrawEmptyVoxels == true || (DrawEmptyVoxels == false && CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->Space[SpaceXP][SpaceYP][SpaceZP] != 0))
+                            if (DrawEmptyVoxels == true || (DrawEmptyVoxels == false && CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->Space[SpaceXP][SpaceYP][SpaceZP].EntityId != 0))
                             {
                                 if (SpaceDrawingType == VoxelSpaceDrawingTypes::DrawVoxelSpaceSelected)
                                 {
@@ -92,13 +92,16 @@ private:
                                     TempAtomObject.Z = CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinateZ(SpaceZP);
                                 }
 
-                                if (DrawEmptyVoxels == false || (DrawEmptyVoxels == true && CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->Space[SpaceXP][SpaceYP][SpaceZP] != 0))
+                                if (DrawEmptyVoxels == false || (DrawEmptyVoxels == true && CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->Space[SpaceXP][SpaceYP][SpaceZP].EntityId != 0))
                                 {
-                                    TempAtomObject.EntityId = CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->Space[SpaceXP][SpaceYP][SpaceZP];
-                                    auto ParticleKindObject = CellEngineConfigDataObject.ParticlesKinds[CellEngineConfigDataObject.ParticlesKindsPos.find(CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->Space[SpaceXP][SpaceYP][SpaceZP])->second];
-                                    TempAtomObject.AtomColor = GetColor(ParticleKindObject, false);
-                                    TempAtomObject.ParticleColor = GetColor(ParticleKindObject, false);
-                                    TempAtomObject.RandomParticleColor = GetColor(ParticleKindObject, false);
+                                    TempAtomObject.EntityId = CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->Space[SpaceXP][SpaceYP][SpaceZP].EntityId;
+                                    auto ParticleKindObject = CellEngineConfigDataObject.ParticlesKinds[CellEngineConfigDataObject.ParticlesKindsPos.find(CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->Space[SpaceXP][SpaceYP][SpaceZP].EntityId)->second];
+                                    TempAtomObject.AtomColor = ParticleKindObject.AtomColor;
+                                    TempAtomObject.ParticleColor = ParticleKindObject.ParticleColor;
+                                    if (CellEngineConfigData::IsDNAorRNA(TempAtomObject.EntityId))
+                                        TempAtomObject.RandomParticleColor = CellEngineConfigDataObject.GetDNAorRNAColor(TempAtomObject.EntityId, CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->Space[SpaceXP][SpaceYP][SpaceZP].ChainId);
+                                    else
+                                        TempAtomObject.RandomParticleColor = ParticleKindObject.RandomParticleColor;
                                 }
                                 else
                                 if (DrawEmptyVoxels == true)
