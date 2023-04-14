@@ -34,9 +34,7 @@ CellEngineAtom CellEngineCIFDataFile::ParseRecord(const char* LocalCIFRecord)
         if(CellEngineAtomObject.EntityId == 0)
             LoggersManagerObject.Log(STREAM("AAA" << CellEngineAtomObject.EntityId));
 
-        CellEngineAtomObject.X = stof(AtomFields[10]);
-        CellEngineAtomObject.Y = stof(AtomFields[11]);
-        CellEngineAtomObject.Z = stof(AtomFields[12]);
+        CellEngineAtomObject.SetAtomPositionsData(stof(AtomFields[10]), stof(AtomFields[11]), stof(AtomFields[12]));
 
         auto AtomKindObjectIterator = CellEngineConfigDataObject.GetAtomKindDataForAtom(AtomFields[3][0]);
         CellEngineAtomObject.AtomColor = AtomKindObjectIterator->Color;
@@ -204,9 +202,7 @@ void CellEngineCIFDataFile::ReadDataFromFile()
 
                                 auto Result = TransformationMatrix * glm::vec3(AppliedAtom.X, AppliedAtom.Y, AppliedAtom.Z) + glm::vec3(TransformationMatrixIterator->second.Matrix[0][3], TransformationMatrixIterator->second.Matrix[1][3], TransformationMatrixIterator->second.Matrix[2][3]);
 
-                                AppliedAtom.X = Result[0];
-                                AppliedAtom.Y = Result[1];
-                                AppliedAtom.Z = Result[2];
+                                AppliedAtom.SetAtomPositionsData(Result[0], Result[1], Result[2]);
 
                                 AppliedAtom.RandomParticleColor = GetVector3FormVMathVec3(ChainColor);
 

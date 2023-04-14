@@ -28,19 +28,19 @@ private:
     UnsignedInt XStep = 1, YStep = 1, ZStep = 1;
     UnsignedInt XSize = 16, YSize = 16, ZSize = 16;
 public:
-    std::tuple<UnsignedInt, UnsignedInt, UnsignedInt> GetStartPositions()
+    inline std::tuple<UnsignedInt, UnsignedInt, UnsignedInt> GetStartPositions()
     {
         return { XStart, YStart, ZStart };
     }
-    std::tuple<UnsignedInt, UnsignedInt, UnsignedInt> GetSteps()
+    inline std::tuple<UnsignedInt, UnsignedInt, UnsignedInt> GetSteps()
     {
         return { XStep, YStep, ZStep };
     }
-    std::tuple<UnsignedInt, UnsignedInt, UnsignedInt> GetSizes()
+    inline std::tuple<UnsignedInt, UnsignedInt, UnsignedInt> GetSizes()
     {
         return { XSize, YSize, ZSize };
     }
-    void SetVoxelSpaceSelection(const UnsignedInt XStartParam, const UnsignedInt YStartParam, const UnsignedInt ZStartParam, const UnsignedInt XStepParam, const UnsignedInt YStepParam, const UnsignedInt ZStepParam, const UnsignedInt XSizeParam, const UnsignedInt YSizeParam, const UnsignedInt ZSizeParam)
+    inline void SetVoxelSpaceSelection(const UnsignedInt XStartParam, const UnsignedInt YStartParam, const UnsignedInt ZStartParam, const UnsignedInt XStepParam, const UnsignedInt YStepParam, const UnsignedInt ZStepParam, const UnsignedInt XSizeParam, const UnsignedInt YSizeParam, const UnsignedInt ZSizeParam)
     {
         XStart = XStartParam, YStart = YStartParam, ZStart = ZStartParam;
         XStep = XStepParam, YStep = YStepParam, ZStep = ZStepParam;
@@ -54,20 +54,33 @@ private:
     };
     UnsignedInt SaveX, SaveY, SaveZ;
 public:
-    void SaveVoxelPositionChosenByMouse()
+    inline void SaveVoxelPositionChosenByMouse()
     {
         XStart = SaveX;
         YStart = SaveY;
         ZStart = SaveZ;
     }
 private:
-    void SetSaveXYZPositions(const UnsignedInt SaveXParam, const UnsignedInt SaveYParam, const UnsignedInt SaveZParam)
+    inline void SetSaveXYZPositions(const UnsignedInt SaveXParam, const UnsignedInt SaveYParam, const UnsignedInt SaveZParam)
     {
         SaveX = SaveXParam;
         SaveY = SaveYParam;
         SaveZ = SaveZParam;
     }
-
+private:
+    static inline float CovertToGraphicsCoordinateSelected(const UnsignedInt StartParam, const UnsignedInt SpaceP, const UnsignedInt SizeParam)
+    {
+        return ((static_cast<float>((StartParam + SizeParam) - SpaceP) - static_cast<float>(SizeParam) / 2) * 4);
+    }
+private:
+    inline void ConvertAtomPosToGraphicCoordinate(CellEngineAtom& CellEngineAtomObjectParam, const UnsignedInt XStartParam, const UnsignedInt YStartParam, const UnsignedInt ZStartParam, const UnsignedInt SpaceXP, const UnsignedInt SpaceYP, const UnsignedInt SpaceZP, const UnsignedInt XSizeParam, UnsignedInt YSizeParam, const UnsignedInt ZSizeParam) const
+    {
+        if (SpaceDrawingType == VoxelSpaceDrawingTypes::DrawVoxelSpaceSelected)
+            CellEngineAtomObjectParam.SetAtomPositionsData(CovertToGraphicsCoordinateSelected(XStartParam, SpaceXP, XSizeParam), CovertToGraphicsCoordinateSelected(YStartParam, SpaceYP, YSizeParam), CovertToGraphicsCoordinateSelected(ZStartParam, SpaceZP, ZSizeParam));
+        else
+        if (SpaceDrawingType == VoxelSpaceDrawingTypes::DrawVoxelSpaceFull)
+            CellEngineAtomObjectParam.SetAtomPositionsData(CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinateX(SpaceXP), CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinateY(SpaceYP), CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinateY(SpaceZP));
+    }
 private:
     void RenderSelectedSpace(const UnsignedInt XStartParam, const UnsignedInt YStartParam, const UnsignedInt ZStartParam, const UnsignedInt XStepParam, const UnsignedInt YStepParam, const UnsignedInt ZStepParam, const UnsignedInt XSizeParam, UnsignedInt YSizeParam, const UnsignedInt ZSizeParam, UnsignedInt& NumberOfAllRenderedAtoms, const vmath::mat4& ViewMatrix, CellEngineAtom& TempAtomObject, std::vector<TemporaryRenderedVoxel>& TemporaryRenderedVoxelsList, UnsignedInt StencilBufferLoopCounter)
     {
@@ -79,18 +92,7 @@ private:
                         if (SpaceXP < NumberOfVoxelSimulationSpaceInDimensionX &&  SpaceYP < NumberOfVoxelSimulationSpaceInDimensionY && SpaceZP < NumberOfVoxelSimulationSpaceInDimensionZ)
                             if (DrawEmptyVoxels == true || (DrawEmptyVoxels == false && CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->Space[SpaceXP][SpaceYP][SpaceZP].EntityId != 0))
                             {
-                                if (SpaceDrawingType == VoxelSpaceDrawingTypes::DrawVoxelSpaceSelected)
-                                {
-                                    TempAtomObject.X = (static_cast<float>((XStartParam + XSizeParam) - SpaceXP) - static_cast<float>(XSizeParam) / 2) * 4;
-                                    TempAtomObject.Y = (static_cast<float>((YStartParam + YSizeParam) - SpaceYP) - static_cast<float>(YSizeParam) / 2) * 4;
-                                    TempAtomObject.Z = (static_cast<float>((ZStartParam + ZSizeParam) - SpaceZP) - static_cast<float>(ZSizeParam) / 2) * 4;
-                                }
-                                else
-                                {
-                                    TempAtomObject.X = CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinateX(SpaceXP);
-                                    TempAtomObject.Y = CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinateY(SpaceYP);
-                                    TempAtomObject.Z = CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinateZ(SpaceZP);
-                                }
+                                ConvertAtomPosToGraphicCoordinate(TempAtomObject, XStartParam, YStartParam, ZStartParam, SpaceXP, SpaceYP, SpaceZP, XSizeParam, YSizeParam, ZSizeParam);
 
                                 if (DrawEmptyVoxels == false || (DrawEmptyVoxels == true && CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->Space[SpaceXP][SpaceYP][SpaceZP].EntityId != 0))
                                 {

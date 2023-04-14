@@ -74,6 +74,8 @@ add_executable(
 	../Common/StringUtils/StringUtils.cpp
 	../Common/DateTimeUtils/DateTimeUtils.h
 	../Common/DateTimeUtils/DateTimeUtils.cpp
+	CellEngineAtom.h
+	CellEngineAtom.cpp
 	CellEngineImGuiMenu.cpp
 	CellEnginePDBDataFile.h
 	CellEnginePDBDataFile.cpp
