@@ -117,6 +117,9 @@ void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const ch
                     {
                         CellEngineConfigDataObject.TypeOfSpace = static_cast<CellEngineConfigData::TypesOfSpace>(CellStatePropertyTreeElement.second.get<UnsignedInt>("TypeOfSpace"));
 
+                        if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)
+                            CellEngineConfigDataObject.NumberOfVoxelSimulationSpaceInEachDimension = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfVoxelSimulationSpaceInEachDimension");
+
                         auto CellStateFileName = CellStatePropertyTreeElement.second.get<string>("CellStateFileName");
 
                         CellEngineDataFileObjectPointer = CreateCellEngineDataFileObject(CellStateFileName);

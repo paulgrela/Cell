@@ -10,7 +10,7 @@ class CellEngineCIFDataFileReaderOfVoxelSimulationSpace : public CellEngineCIFDa
 protected:
     void SetStartValues() override
     {
-        CellEngineVoxelSimulationSpaceObjectPointer = std::make_shared<CellEngineVoxelSimulationSpace>();
+        CellEngineVoxelSimulationSpaceObjectPointer = std::make_unique<CellEngineVoxelSimulationSpace>();
     }
 protected:
     void InsertAtom(std::vector<CellEngineAtom>& LocalCellEngineAllAtomsObject, const CellEngineAtom& AppliedAtom) override

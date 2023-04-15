@@ -4,6 +4,7 @@
 #define CELL_ENGINE_SIMULATION_SPACE_H
 
 #include "CellEngineTypes.h"
+#include "CellEngineConfigData.h"
 
 constexpr UnsignedInt NumberOfVoxelSimulationSpaceInEachDimensionMaxConst = 1024;
 
@@ -18,15 +19,13 @@ class CellEngineVoxelSimulationSpace
 public:
     SimulationSpaceVoxel Space[NumberOfVoxelSimulationSpaceInEachDimensionMaxConst][NumberOfVoxelSimulationSpaceInEachDimensionMaxConst][NumberOfVoxelSimulationSpaceInEachDimensionMaxConst]{};
 public:
-    UnsignedInt NumberOfVoxelSimulationSpaceInEachDimension = NumberOfVoxelSimulationSpaceInEachDimensionMaxConst;
-public:
-    [[nodiscard]] float ConvertToGraphicsCoordinate(UnsignedInt CoordinateParam) const
+    [[nodiscard]] static float ConvertToGraphicsCoordinate(UnsignedInt CoordinateParam)
     {
-        return static_cast<float>(static_cast<Int>(CoordinateParam) - (static_cast<Int>(NumberOfVoxelSimulationSpaceInEachDimension / 2))) * 4;
+        return static_cast<float>(static_cast<Int>(CoordinateParam) - (static_cast<Int>(CellEngineConfigDataObject.NumberOfVoxelSimulationSpaceInEachDimension / 2))) * 4;
     };
-    [[nodiscard]] UnsignedInt ConvertToSpaceCoordinate(double CoordinateParam) const
+    [[nodiscard]] static UnsignedInt ConvertToSpaceCoordinate(double CoordinateParam)
     {
-        return static_cast<UnsignedInt>(round(CoordinateParam / 4.0)) + (NumberOfVoxelSimulationSpaceInEachDimension / 2);
+        return static_cast<UnsignedInt>(round(CoordinateParam / 4.0)) + (CellEngineConfigDataObject.NumberOfVoxelSimulationSpaceInEachDimension / 2);
     };
 public:
     UnsignedInt XMin{}, XMax{}, YMin{}, YMax{}, ZMin{}, ZMax{};
@@ -58,11 +57,11 @@ public:
 public:
     void CountStatisticsOfSpace()
     {
-        for (auto& SelectedX : Space)
-            for (auto& SelectedXY : SelectedX)
-                for (SimulationSpaceVoxel& SelectedXYZ : SelectedXY)
+        for(UnsignedInt PosX = 0; PosX < CellEngineConfigDataObject.NumberOfVoxelSimulationSpaceInEachDimension; PosX++)
+            for(UnsignedInt PosY = 0; PosY < CellEngineConfigDataObject.NumberOfVoxelSimulationSpaceInEachDimension; PosY++)
+                for(UnsignedInt PosZ = 0; PosZ < CellEngineConfigDataObject.NumberOfVoxelSimulationSpaceInEachDimension; PosZ++)
                 {
-                    if (SelectedXYZ.EntityId != 0)
+                    if (Space[PosX][PosY][PosZ].EntityId != 0)
                         SumOfNotEmptyVoxels++;
                 }
 

@@ -82,6 +82,8 @@ public:
     };
     TypesOfSpace TypeOfSpace = TypesOfSpace::FullAtomSpace;
 public:
+    UnsignedInt NumberOfVoxelSimulationSpaceInEachDimension;
+public:
     enum class RandomColorEngineTypes : UnsignedInt
     {
         Rand = 1,
