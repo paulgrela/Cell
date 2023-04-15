@@ -248,7 +248,7 @@ public:
         return ReturnRandomColor;
     }
 public:
-    inline bool IsDNAorRNA(const EntityIdInt EntityId)
+    inline bool IsDNAorRNA(const EntityIdInt EntityId) const
     {
         return EntityId == DNAIdentifier || EntityId == RNAIdentifier;
     }

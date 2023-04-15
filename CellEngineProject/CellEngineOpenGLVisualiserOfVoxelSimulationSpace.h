@@ -53,7 +53,7 @@ private:
         CellEngineAtom CellEngineAtomObject;
         UnsignedInt X, Y, Z;
     };
-    UnsignedInt SaveX, SaveY, SaveZ;
+    UnsignedInt SaveX{}, SaveY{}, SaveZ{};
 public:
     inline void SaveVoxelPositionChosenByMouse()
     {
@@ -76,21 +76,25 @@ private:
 private:
     inline void ConvertAtomPosToGraphicCoordinate(CellEngineAtom& CellEngineAtomObjectParam, const UnsignedInt XStartParam, const UnsignedInt YStartParam, const UnsignedInt ZStartParam, const UnsignedInt SpaceXP, const UnsignedInt SpaceYP, const UnsignedInt SpaceZP, const UnsignedInt XSizeParam, UnsignedInt YSizeParam, const UnsignedInt ZSizeParam) const
     {
+        std::shared_ptr<CellEngineVoxelSimulationSpace> VoxelSimulationSpaceObjectPointer = CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer;
+
         if (SpaceDrawingType == VoxelSpaceDrawingTypes::DrawVoxelSpaceSelected)
             CellEngineAtomObjectParam.SetAtomPositionsData(CovertToGraphicsCoordinateSelected(XStartParam, SpaceXP, XSizeParam), CovertToGraphicsCoordinateSelected(YStartParam, SpaceYP, YSizeParam), CovertToGraphicsCoordinateSelected(ZStartParam, SpaceZP, ZSizeParam));
         else
         if (SpaceDrawingType == VoxelSpaceDrawingTypes::DrawVoxelSpaceFull)
-            CellEngineAtomObjectParam.SetAtomPositionsData(CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinateX(SpaceXP), CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinateY(SpaceYP), CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinateY(SpaceZP));
+            CellEngineAtomObjectParam.SetAtomPositionsData(VoxelSimulationSpaceObjectPointer->ConvertToGraphicsCoordinate(SpaceXP), VoxelSimulationSpaceObjectPointer->ConvertToGraphicsCoordinate(SpaceYP), VoxelSimulationSpaceObjectPointer->ConvertToGraphicsCoordinate(SpaceZP));
     }
 private:
     void RenderSelectedSpace(const UnsignedInt XStartParam, const UnsignedInt YStartParam, const UnsignedInt ZStartParam, const UnsignedInt XStepParam, const UnsignedInt YStepParam, const UnsignedInt ZStepParam, const UnsignedInt XSizeParam, UnsignedInt YSizeParam, const UnsignedInt ZSizeParam, UnsignedInt& NumberOfAllRenderedAtoms, const vmath::mat4& ViewMatrix, CellEngineAtom& TempAtomObject, std::vector<TemporaryRenderedVoxel>& TemporaryRenderedVoxelsList, UnsignedInt StencilBufferLoopCounter)
     {
         try
         {
+            UnsignedInt NumberOfVoxelSimulationSpaceInEachDimension = CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->NumberOfVoxelSimulationSpaceInEachDimension;
+
             for (UnsignedInt SpaceXP = XStartParam; SpaceXP < XStartParam + XSizeParam; SpaceXP += XStepParam)
                 for (UnsignedInt SpaceYP = YStartParam; SpaceYP < YStartParam + YSizeParam; SpaceYP += YStepParam)
                     for (UnsignedInt SpaceZP = ZStartParam; SpaceZP < ZStartParam + ZSizeParam; SpaceZP += ZStepParam)
-                        if (SpaceXP < NumberOfVoxelSimulationSpaceInDimensionX &&  SpaceYP < NumberOfVoxelSimulationSpaceInDimensionY && SpaceZP < NumberOfVoxelSimulationSpaceInDimensionZ)
+                        if (SpaceXP < NumberOfVoxelSimulationSpaceInEachDimension &&  SpaceYP < NumberOfVoxelSimulationSpaceInEachDimension && SpaceZP < NumberOfVoxelSimulationSpaceInEachDimension)
                         {
                             SimulationSpaceVoxel SimulationSpaceVoxelObject = CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->Space[SpaceXP][SpaceYP][SpaceZP];
 
@@ -129,6 +133,8 @@ private:
         {
             std::lock_guard<std::mutex> LockGuardObject{RenderMenuAndVoxelSimulationSpaceMutexObject};
 
+            std::shared_ptr<CellEngineVoxelSimulationSpace> VoxelSimulationSpaceObjectPointer = CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer;
+
             GLuint PartOfStencilBufferIndex[3];
 
             CellEngineAtom TempAtomObject;
@@ -151,9 +157,8 @@ private:
                         for (UnsignedInt SpaceY = YStart; SpaceY < YSize; SpaceY += YStep)
                             for (UnsignedInt SpaceZ = ZStart; SpaceZ < ZSize; SpaceZ += ZStep)
                             {
-                                TempAtomObject.X = CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinateX(SpaceX);
-                                TempAtomObject.Y = CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinateY(SpaceY);
-                                TempAtomObject.Z = CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinateZ(SpaceZ);
+                                TempAtomObject.SetAtomPositionsData(VoxelSimulationSpaceObjectPointer->ConvertToGraphicsCoordinate(SpaceX), VoxelSimulationSpaceObjectPointer->ConvertToGraphicsCoordinate(SpaceY), VoxelSimulationSpaceObjectPointer->ConvertToGraphicsCoordinate(SpaceZ));
+
                                 if (RenderObject(TempAtomObject, ViewMatrix, true, false, true, NumberOfAllRenderedAtoms, false, !CellEngineConfigDataObject.ShowDetailsInAtomScale) == true)
                                 {
                                     NumberOfFoundParticlesCenterToBeRenderedInAtomDetails++;

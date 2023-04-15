@@ -523,55 +523,60 @@ public:
     {
         try
         {
-            std::lock_guard<std::mutex> LockGuardObject{CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderMenuAndVoxelSimulationSpaceMutexObject};
+            if (CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer != nullptr)
+            {
+                std::lock_guard<std::mutex> LockGuardObject{CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderMenuAndVoxelSimulationSpaceMutexObject};
 
-            auto  CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer = dynamic_cast<CellEngineOpenGLVisualiserOfVoxelSimulationSpace*>(CellEngineOpenGLVisualiserPointer.get());
+                UnsignedInt NumberOfVoxelSimulationSpaceInEachDimension = CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->NumberOfVoxelSimulationSpaceInEachDimension;
 
-            const auto StartPos = CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->GetStartPositions();
-            static int DrawSpaceStartXYZ[3] = { static_cast<int>(get<0>(StartPos)), static_cast<int>(get<1>(StartPos)), static_cast<int>(get<2>(StartPos)) };
-            ImGui::DragInt3("StartX StartY StartZ", DrawSpaceStartXYZ, 1, 0, NumberOfVoxelSimulationSpaceInEachDimension, "%d", ImGuiSliderFlags_AlwaysClamp);
+                auto  CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer = dynamic_cast<CellEngineOpenGLVisualiserOfVoxelSimulationSpace*>(CellEngineOpenGLVisualiserPointer.get());
 
-            const auto Steps = CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->GetSteps();
-            static int DrawSpaceStepsXYZ[3] = { static_cast<int>(get<0>(Steps)), static_cast<int>(get<1>(Steps)), static_cast<int>(get<2>(Steps)) };
-            ImGui::DragInt3("StepX  StepY  StepZ", DrawSpaceStepsXYZ, 1, 0, NumberOfVoxelSimulationSpaceInEachDimension, "%d", ImGuiSliderFlags_AlwaysClamp);
+                const auto StartPos = CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->GetStartPositions();
+                static int DrawSpaceStartXYZ[3] = { static_cast<int>(get<0>(StartPos)), static_cast<int>(get<1>(StartPos)), static_cast<int>(get<2>(StartPos)) };
+                ImGui::DragInt3("StartX StartY StartZ", DrawSpaceStartXYZ, 1, 0, static_cast<int>(NumberOfVoxelSimulationSpaceInEachDimension), "%d", ImGuiSliderFlags_AlwaysClamp);
 
-            const auto Sizes = CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->GetSizes();
-            static int DrawSpaceSizesXYZ[3] = { static_cast<int>(get<0>(Sizes)), static_cast<int>(get<1>(Sizes)), static_cast<int>(get<2>(Sizes)) };
-            ImGui::DragInt3("SizeX  SizeY  SizeZ", DrawSpaceSizesXYZ, 1, 0, NumberOfVoxelSimulationSpaceInEachDimension, "%d", ImGuiSliderFlags_AlwaysClamp);
+                const auto Steps = CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->GetSteps();
+                static int DrawSpaceStepsXYZ[3] = { static_cast<int>(get<0>(Steps)), static_cast<int>(get<1>(Steps)), static_cast<int>(get<2>(Steps)) };
+                ImGui::DragInt3("StepX  StepY  StepZ", DrawSpaceStepsXYZ, 1, 0, static_cast<int>(NumberOfVoxelSimulationSpaceInEachDimension), "%d", ImGuiSliderFlags_AlwaysClamp);
 
-            CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->SetVoxelSpaceSelection(DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceStepsXYZ[0], DrawSpaceStepsXYZ[1], DrawSpaceStepsXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
+                const auto Sizes = CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->GetSizes();
+                static int DrawSpaceSizesXYZ[3] = { static_cast<int>(get<0>(Sizes)), static_cast<int>(get<1>(Sizes)), static_cast<int>(get<2>(Sizes)) };
+                ImGui::DragInt3("SizeX  SizeY  SizeZ", DrawSpaceSizesXYZ, 1, 0, static_cast<int>(NumberOfVoxelSimulationSpaceInEachDimension), "%d", ImGuiSliderFlags_AlwaysClamp);
 
-            ImGui::Checkbox("Draw empty voxels", &CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->DrawEmptyVoxels);
-
-            static int TypeOfDrawingVoxelSpace = static_cast<int>(CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->SpaceDrawingType);
-            ImGui::RadioButton("Draw Voxel Space FULL", &TypeOfDrawingVoxelSpace, 1);
-            ImGui::RadioButton("Draw Voxel Space SELECTED", &TypeOfDrawingVoxelSpace, 2);
-            CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->SpaceDrawingType = static_cast<CellEngineOpenGLVisualiserOfVoxelSimulationSpace::VoxelSpaceDrawingTypes>(TypeOfDrawingVoxelSpace);
-
-            if (CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->SpaceDrawingType == CellEngineOpenGLVisualiserOfVoxelSimulationSpace::VoxelSpaceDrawingTypes::DrawVoxelSpaceFull)
-                CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->SetVoxelSpaceSelection(0, 0, 0, 64, 64, 64, NumberOfVoxelSimulationSpaceInDimensionX, NumberOfVoxelSimulationSpaceInDimensionY, NumberOfVoxelSimulationSpaceInDimensionZ);
-            else
-            if (CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->SpaceDrawingType == CellEngineOpenGLVisualiserOfVoxelSimulationSpace::VoxelSpaceDrawingTypes::DrawVoxelSpaceSelected)
                 CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->SetVoxelSpaceSelection(DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceStepsXYZ[0], DrawSpaceStepsXYZ[1], DrawSpaceStepsXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
 
-            if (ImGui::Button("  SAVE MOUSE POSITION  ") == true)
-            {
-                CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->SaveVoxelPositionChosenByMouse();
+                ImGui::Checkbox("Draw empty voxels", &CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->DrawEmptyVoxels);
 
-                const auto TempStartPos = CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->GetStartPositions();
-                DrawSpaceStartXYZ[0] = static_cast<int>(get<0>(TempStartPos));
-                DrawSpaceStartXYZ[1] = static_cast<int>(get<1>(TempStartPos));
-                DrawSpaceStartXYZ[2] = static_cast<int>(get<2>(TempStartPos));
+                static int TypeOfDrawingVoxelSpace = static_cast<int>(CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->SpaceDrawingType);
+                ImGui::RadioButton("Draw Voxel Space FULL", &TypeOfDrawingVoxelSpace, 1);
+                ImGui::RadioButton("Draw Voxel Space SELECTED", &TypeOfDrawingVoxelSpace, 2);
+                CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->SpaceDrawingType = static_cast<CellEngineOpenGLVisualiserOfVoxelSimulationSpace::VoxelSpaceDrawingTypes>(TypeOfDrawingVoxelSpace);
+
+                if (CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->SpaceDrawingType == CellEngineOpenGLVisualiserOfVoxelSimulationSpace::VoxelSpaceDrawingTypes::DrawVoxelSpaceFull)
+                    CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->SetVoxelSpaceSelection(0, 0, 0, 64, 64, 64, NumberOfVoxelSimulationSpaceInEachDimension, NumberOfVoxelSimulationSpaceInEachDimension, NumberOfVoxelSimulationSpaceInEachDimension);
+                else
+                if (CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->SpaceDrawingType == CellEngineOpenGLVisualiserOfVoxelSimulationSpace::VoxelSpaceDrawingTypes::DrawVoxelSpaceSelected)
+                    CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->SetVoxelSpaceSelection(DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceStepsXYZ[0], DrawSpaceStepsXYZ[1], DrawSpaceStepsXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
+
+                if (ImGui::Button("  SAVE MOUSE POSITION  ") == true)
+                {
+                    CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->SaveVoxelPositionChosenByMouse();
+
+                    const auto TempStartPos = CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->GetStartPositions();
+                    DrawSpaceStartXYZ[0] = static_cast<int>(get<0>(TempStartPos));
+                    DrawSpaceStartXYZ[1] = static_cast<int>(get<1>(TempStartPos));
+                    DrawSpaceStartXYZ[2] = static_cast<int>(get<2>(TempStartPos));
+                }
+
+                if (ImGui::Button(" DRAW RANDOM PARTICLES ") == true)
+                {
+                }
+
+                int IDButton = 1;
+                float Nothing;
+                ColorButton("    START DIFFUSION    ", Nothing, 0, 0, 0, 3, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue){ });
+                ColorButton("    STOP DIFFUSION     ", Nothing, 0, 0, 0, 0, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue){ });
             }
-
-            if (ImGui::Button(" DRAW RANDOM PARTICLES ") == true)
-            {
-            }
-
-            int IDButton = 1;
-            float Nothing;
-            ColorButton("    START DIFFUSION    ", Nothing, 0, 0, 0, 3, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue){ });
-            ColorButton("    STOP DIFFUSION     ", Nothing, 0, 0, 0, 0, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue){ });
         }
         CATCH("executing voxel simulation space visibility menu")
     }

@@ -2,6 +2,8 @@
 #ifndef CELL_ENGINE_PROJECT_DATA_FILE_H
 #define CELL_ENGINE_PROJECT_DATA_FILE_H
 
+#include <memory>
+
 #include "CellEngineAtom.h"
 #include "CellEngineConfigData.h"
 #include "CellEngineVoxelSimulationSpace.h"
@@ -11,7 +13,7 @@ class CellEngineDataFile
 public:
     CellEngineDataFile() = default;
 public:
-    std::unique_ptr<CellEngineVoxelSimulationSpace> CellEngineVoxelSimulationSpaceObjectPointer;
+    std::shared_ptr<CellEngineVoxelSimulationSpace> CellEngineVoxelSimulationSpaceObjectPointer;
 public:
     bool FilmOfStructuresActive = false;
 protected:
