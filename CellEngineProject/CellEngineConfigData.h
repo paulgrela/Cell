@@ -192,6 +192,7 @@ public:
 public:
     int ChosenShapeOfAtoms = 1;
     UnsignedInt DNAIdentifier{};
+    UnsignedInt RNAIdentifier{};
 public:
     std::vector<AtomKind>::iterator GetAtomKindDataForAtom(char Name)
     {
@@ -247,9 +248,9 @@ public:
         return ReturnRandomColor;
     }
 public:
-    static inline bool IsDNAorRNA(const EntityIdInt EntityId)
+    inline bool IsDNAorRNA(const EntityIdInt EntityId)
     {
-        return EntityId == 699 || EntityId == 700;
+        return EntityId == DNAIdentifier || EntityId == RNAIdentifier;
     }
 public:
     vector3 DNANR1Color = GetVector3FormVMathVec3(GetRandomColor());
@@ -264,7 +265,7 @@ public:
 
     vector3 GetDNAorRNAColor(EntityIdInt EntityId, ChainIdInt ChainId) const
     {
-        if (EntityId == 699)
+        if (EntityId == DNAIdentifier)
         {
             switch (ChainId)
             {
@@ -280,7 +281,7 @@ public:
             }
         }
         else
-        if (EntityId == 700)
+        if (EntityId == RNAIdentifier)
         {
             switch (ChainId)
             {

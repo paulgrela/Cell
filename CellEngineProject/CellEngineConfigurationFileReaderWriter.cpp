@@ -214,6 +214,7 @@ void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const ch
 
                             ParticleKindObject.NameFromXML = ParticleKindPropertyTreeElement.second.get<string>("Name");
                             ParticleKindObject.NameFromXML == "DNA" ? CellEngineConfigDataObject.DNAIdentifier = ParticleKindPropertyTreeElement.second.get<UnsignedInt>("<xmlattr>.id") : 0;
+                            ParticleKindObject.NameFromXML == "RNA" ? CellEngineConfigDataObject.RNAIdentifier = ParticleKindPropertyTreeElement.second.get<UnsignedInt>("<xmlattr>.id") : 0;
                             ParticleKindObject.ParticleColor = GetVector3FormVMathVec3(sb7::FromVec4ToVec3(sb7::GetColorVec4FromColorName(ParticleKindPropertyTreeElement.second.get<string>("Color"))));
                             ParticleKindObject.Visible = ParticleKindPropertyTreeElement.second.get<bool>("Visible");
                             ParticleKindObject.SizeX = ParticleKindPropertyTreeElement.second.get<float>("SizeX");

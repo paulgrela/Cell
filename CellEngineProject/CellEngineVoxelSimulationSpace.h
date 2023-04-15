@@ -38,7 +38,6 @@ struct SimulationSpaceVoxel
 class CellEngineVoxelSimulationSpace
 {
 public:
-    //UnsignedInt Space[NumberOfVoxelSimulationSpaceInDimensionX][NumberOfVoxelSimulationSpaceInDimensionY][NumberOfVoxelSimulationSpaceInDimensionZ]{};
     SimulationSpaceVoxel Space[NumberOfVoxelSimulationSpaceInDimensionX][NumberOfVoxelSimulationSpaceInDimensionY][NumberOfVoxelSimulationSpaceInDimensionZ]{};
 public:
     [[nodiscard]] static float ConvertToGraphicsCoordinate(UnsignedInt CoordinateParam)
@@ -129,7 +128,7 @@ public:
         if (Space[SpaceX][SpaceY][SpaceZ].EntityId == 0)
         {
             Space[SpaceX][SpaceY][SpaceZ].EntityId = AppliedAtom.EntityId;
-            if (CellEngineConfigData::IsDNAorRNA(AppliedAtom.EntityId) == true)
+            if (CellEngineConfigDataObject.IsDNAorRNA(AppliedAtom.EntityId) == true)
                 Space[SpaceX][SpaceY][SpaceZ].ChainId = stoi(std::string(AppliedAtom.Chain).substr(2,2));
         }
     }

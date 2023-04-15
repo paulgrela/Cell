@@ -454,16 +454,17 @@ public:
     {
         try
         {
-            const char* TypesOfVisibilityComboBoxItems[] = { "ALL", "ONLY DNA", "SELECTED" };
+            const char* TypesOfVisibilityComboBoxItems[] = { "ALL", "ONLY DNA", "ONLY RNA", "SELECTED" };
             static int TypesOfVisibilityComboBoxCurrentItemIndex = 0;
             ImGui::Combo( " Types of Visibility", &TypesOfVisibilityComboBoxCurrentItemIndex, TypesOfVisibilityComboBoxItems, IM_ARRAYSIZE(TypesOfVisibilityComboBoxItems));
             switch (TypesOfVisibilityComboBoxCurrentItemIndex)
             {
                 case 0 : CellEngineOpenGLVisualiserPointer->SetVisibilityOfAllParticles(true); break;
                 case 1 : CellEngineOpenGLVisualiserPointer->SetVisibilityOfParticlesExcept(CellEngineConfigDataObject.DNAIdentifier, false); break;
+                case 2 : CellEngineOpenGLVisualiserPointer->SetVisibilityOfParticlesExcept(CellEngineConfigDataObject.RNAIdentifier, false); break;
                 default : break;
             }
-            if (TypesOfVisibilityComboBoxCurrentItemIndex == 2)
+            if (TypesOfVisibilityComboBoxCurrentItemIndex == 3)
                 if (ImGui::CollapsingHeader("Particles Kinds", ImGuiTreeNodeFlags_DefaultOpen))
                 {
                     for (auto& ParticlesKind : CellEngineConfigDataObject.ParticlesKinds)

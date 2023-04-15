@@ -11,6 +11,7 @@
 #include "CellEngineDataFile.h"
 #include "CellEngineConfigData.h"
 #include "CellEngineOpenGLVisualiser.h"
+#include "CellEngineVoxelSimulationSpace.h"
 
 class CellEngineOpenGLVisualiserOfVoxelSimulationSpace : public CellEngineOpenGLVisualiser
 {
@@ -90,20 +91,20 @@ private:
                 for (UnsignedInt SpaceYP = YStartParam; SpaceYP < YStartParam + YSizeParam; SpaceYP += YStepParam)
                     for (UnsignedInt SpaceZP = ZStartParam; SpaceZP < ZStartParam + ZSizeParam; SpaceZP += ZStepParam)
                         if (SpaceXP < NumberOfVoxelSimulationSpaceInDimensionX &&  SpaceYP < NumberOfVoxelSimulationSpaceInDimensionY && SpaceZP < NumberOfVoxelSimulationSpaceInDimensionZ)
-                            if (DrawEmptyVoxels == true || (DrawEmptyVoxels == false && CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->Space[SpaceXP][SpaceYP][SpaceZP].EntityId != 0))
+                        {
+                            SimulationSpaceVoxel SimulationSpaceVoxelObject = CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->Space[SpaceXP][SpaceYP][SpaceZP];
+
+                            if (DrawEmptyVoxels == true || (DrawEmptyVoxels == false && SimulationSpaceVoxelObject.EntityId != 0 && CheckVisibilityOfParticles(SimulationSpaceVoxelObject.EntityId) == true))
                             {
                                 ConvertAtomPosToGraphicCoordinate(TempAtomObject, XStartParam, YStartParam, ZStartParam, SpaceXP, SpaceYP, SpaceZP, XSizeParam, YSizeParam, ZSizeParam);
 
-                                if (DrawEmptyVoxels == false || (DrawEmptyVoxels == true && CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->Space[SpaceXP][SpaceYP][SpaceZP].EntityId != 0))
+                                if (DrawEmptyVoxels == false || (DrawEmptyVoxels == true && SimulationSpaceVoxelObject.EntityId != 0))
                                 {
-                                    TempAtomObject.EntityId = CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->Space[SpaceXP][SpaceYP][SpaceZP].EntityId;
-                                    auto ParticleKindObject = CellEngineConfigDataObject.ParticlesKinds[CellEngineConfigDataObject.ParticlesKindsPos.find(CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->Space[SpaceXP][SpaceYP][SpaceZP].EntityId)->second];
+                                    TempAtomObject.EntityId = SimulationSpaceVoxelObject.EntityId;
+                                    auto ParticleKindObject = CellEngineConfigDataObject.ParticlesKinds[CellEngineConfigDataObject.ParticlesKindsPos.find(SimulationSpaceVoxelObject.EntityId)->second];
                                     TempAtomObject.AtomColor = ParticleKindObject.AtomColor;
                                     TempAtomObject.ParticleColor = ParticleKindObject.ParticleColor;
-                                    if (CellEngineConfigData::IsDNAorRNA(TempAtomObject.EntityId))
-                                        TempAtomObject.RandomParticleColor = CellEngineConfigDataObject.GetDNAorRNAColor(TempAtomObject.EntityId, CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->Space[SpaceXP][SpaceYP][SpaceZP].ChainId);
-                                    else
-                                        TempAtomObject.RandomParticleColor = ParticleKindObject.RandomParticleColor;
+                                    TempAtomObject.RandomParticleColor = (CellEngineConfigDataObject.IsDNAorRNA(TempAtomObject.EntityId) ? CellEngineConfigDataObject.GetDNAorRNAColor(TempAtomObject.EntityId, SimulationSpaceVoxelObject.ChainId) : ParticleKindObject.RandomParticleColor);
                                 }
                                 else
                                 if (DrawEmptyVoxels == true)
@@ -117,6 +118,7 @@ private:
 
                                 RenderObject(TempAtomObject, ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, false, RenderObjectsBool);
                             }
+                        }
             }
         CATCH("rendering selected voxel simulation space")
     }
