@@ -292,9 +292,9 @@ inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader(const 
 }
 
 template <class T>
-vector3 CellEngineOpenGLVisualiser::GetColor(const T& Object, bool Chosen)
+vector3_16 CellEngineOpenGLVisualiser::GetColor(const T& Object, bool Chosen)
 {
-    vector3 FinalColor{};
+    vector3_16 FinalColor{};
 
     try
     {
@@ -314,7 +314,7 @@ vector3 CellEngineOpenGLVisualiser::GetColor(const T& Object, bool Chosen)
     return FinalColor;
 }
 
-template vector3 CellEngineOpenGLVisualiser::GetColor<ParticleKind>(const ParticleKind& Object, bool Chosen);
+template vector3_16 CellEngineOpenGLVisualiser::GetColor<ParticleKind>(const ParticleKind& Object, bool Chosen);
 
 inline vmath::vec3 CellEngineOpenGLVisualiser::GetSize(const CellEngineAtom& AtomObject)
 {

@@ -17,9 +17,9 @@ struct ParticleKind
     float SizeX;
     float SizeY;
     float SizeZ;
-    vector3 AtomColor;
-    vector3 ParticleColor;
-    vector3 RandomParticleColor;
+    vector3_16 AtomColor;
+    vector3_16 ParticleColor;
+    vector3_16 RandomParticleColor;
     std::string NameFromXML;
     std::string NameFromDataFile;
 };
@@ -30,7 +30,7 @@ struct AtomKind
     float SizeX;
     float SizeY;
     float SizeZ;
-    vector3 Color;
+    vector3_16 Color;
     vmath::vec3 ColorVmathVec3;
 };
 
@@ -82,7 +82,7 @@ public:
     };
     TypesOfSpace TypeOfSpace = TypesOfSpace::FullAtomSpace;
 public:
-    UnsignedInt NumberOfVoxelSimulationSpaceInEachDimension;
+    UnsignedInt NumberOfVoxelSimulationSpaceInEachDimension{};
 public:
     enum class RandomColorEngineTypes : UnsignedInt
     {
@@ -255,17 +255,17 @@ public:
         return EntityId == DNAIdentifier || EntityId == RNAIdentifier;
     }
 public:
-    vector3 DNANR1Color = GetVector3FormVMathVec3(GetRandomColor());
-    vector3 DNANR2Color = GetVector3FormVMathVec3(GetRandomColor());
-    vector3 DNANR3Color = GetVector3FormVMathVec3(GetRandomColor());
-    vector3 DNANR4Color = GetVector3FormVMathVec3(GetRandomColor());
+    vector3_16 DNANR1Color = GetVector3FormVMathVec3(GetRandomColor());
+    vector3_16 DNANR2Color = GetVector3FormVMathVec3(GetRandomColor());
+    vector3_16 DNANR3Color = GetVector3FormVMathVec3(GetRandomColor());
+    vector3_16 DNANR4Color = GetVector3FormVMathVec3(GetRandomColor());
 
-    vector3 RNANR1Color = GetVector3FormVMathVec3(GetRandomColor());
-    vector3 RNANR2Color = GetVector3FormVMathVec3(GetRandomColor());
-    vector3 RNANR3Color = GetVector3FormVMathVec3(GetRandomColor());
-    vector3 RNANR4Color = GetVector3FormVMathVec3(GetRandomColor());
+    vector3_16 RNANR1Color = GetVector3FormVMathVec3(GetRandomColor());
+    vector3_16 RNANR2Color = GetVector3FormVMathVec3(GetRandomColor());
+    vector3_16 RNANR3Color = GetVector3FormVMathVec3(GetRandomColor());
+    vector3_16 RNANR4Color = GetVector3FormVMathVec3(GetRandomColor());
 
-    vector3 GetDNAorRNAColor(EntityIdInt EntityId, ChainIdInt ChainId) const
+    vector3_16 GetDNAorRNAColor(EntityIdInt EntityId, ChainIdInt ChainId) const
     {
         if (EntityId == DNAIdentifier)
         {

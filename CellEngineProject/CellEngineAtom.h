@@ -23,9 +23,9 @@ public:
     float X{};
     float Y{};
     float Z{};
-    vector3 AtomColor{};
-    vector3 ParticleColor{};
-    vector3 RandomParticleColor{};
+    vector3_16 AtomColor{};
+    vector3_16 ParticleColor{};
+    vector3_16 RandomParticleColor{};
     bool Visible{};
     #ifdef EXTENDED_RAM_MEMORY
     float SizeXAtom{};
@@ -36,7 +36,7 @@ public:
     float SizeZParticle{};
     #endif
 public:
-    CellEngineAtom(float XParam, float YParam, float ZParam, UnsignedInt AtomIndexParam, UnsignedInt SerialParam, UnsignedInt EntityIdParam, char NameParam[2], char ResNameParam[4], char ChainParam[6], vector3 ColorParam) : X(XParam), Y(YParam), Z(ZParam), AtomIndex(AtomIndexParam), Serial(SerialParam), EntityId(EntityIdParam), ParticleColor(ColorParam)
+    CellEngineAtom(float XParam, float YParam, float ZParam, UnsignedInt AtomIndexParam, UnsignedInt SerialParam, UnsignedInt EntityIdParam, char NameParam[2], char ResNameParam[4], char ChainParam[6], vector3_16 ColorParam) : X(XParam), Y(YParam), Z(ZParam), AtomIndex(AtomIndexParam), Serial(SerialParam), EntityId(EntityIdParam), ParticleColor(ColorParam)
     {
         strncpy(Name, NameParam, 2);
         strncpy(ResName, ResNameParam, 4);

@@ -98,8 +98,11 @@ public:
     {
         try
         {
+            std::vector<vector3_64> FilledVoxelsForRandomParticle;
+
             std::mt19937_64 mt64R{ std::random_device{}() };
 
+            std::uniform_int_distribution<UnsignedInt> UniformDistributionObjectSizeOfParticle_Uint64t(1, 2);
             std::uniform_int_distribution<UnsignedInt> UniformDistributionObjectTypeOfParticle_Uint64t(1, 4);
             std::uniform_int_distribution<UnsignedInt> UniformDistributionObjectX_Uint64t(XStartParam, XStartParam + XSizeParam);
             std::uniform_int_distribution<UnsignedInt> UniformDistributionObjectY_Uint64t(YStartParam, YStartParam + YSizeParam);
@@ -116,11 +119,30 @@ public:
                 UnsignedInt RandomPosY = UniformDistributionObjectY_Uint64t(mt64R);
                 UnsignedInt RandomPosZ = UniformDistributionObjectZ_Uint64t(mt64R);
 
-                if (Space[RandomPosX][RandomPosY][RandomPosZ].EntityId == 0)
-                {
-                    Space[RandomPosX][RandomPosY][RandomPosZ].EntityId = CellEngineConfigDataObject.DNAIdentifier;
-                    Space[RandomPosX][RandomPosY][RandomPosZ].ChainId = UniformDistributionObjectTypeOfParticle_Uint64t(mt64R);
-                }
+                UnsignedInt RandomSizeOfParticle = UniformDistributionObjectSizeOfParticle_Uint64t(mt64R);
+
+                UnsignedInt RandomChainId = UniformDistributionObjectTypeOfParticle_Uint64t(mt64R);
+
+                FilledVoxelsForRandomParticle.clear();
+
+                for (UnsignedInt SpaceXP = RandomPosX; SpaceXP < RandomPosX + RandomSizeOfParticle; SpaceXP++)
+                    for (UnsignedInt SpaceYP = RandomPosY; SpaceYP < RandomPosY + RandomSizeOfParticle; SpaceYP++)
+                        for (UnsignedInt SpaceZP = RandomPosZ; SpaceZP < RandomPosZ + RandomSizeOfParticle; SpaceZP++)
+                        {
+                            if (Space[SpaceXP][SpaceXP][SpaceXP].EntityId == 0)
+                            {
+                                FilledVoxelsForRandomParticle.emplace_back(SpaceXP, SpaceYP, SpaceZP);
+                                Space[SpaceXP][SpaceYP][SpaceZP].EntityId = CellEngineConfigDataObject.DNAIdentifier;
+                                Space[SpaceXP][SpaceYP][SpaceZP].ChainId = RandomChainId;
+                            }
+                            else
+                            {
+                                for (auto& VoxelForRandomParticle : FilledVoxelsForRandomParticle)
+                                    Space[VoxelForRandomParticle.X][VoxelForRandomParticle.Y][VoxelForRandomParticle.Z].EntityId = Space[VoxelForRandomParticle.X][VoxelForRandomParticle.Y][VoxelForRandomParticle.Z].ChainId = 0;
+                                goto NextRandomParticleOutsideLoopLabel;
+                            }
+                        }
+                NextRandomParticleOutsideLoopLabel:;
             }
         }
         CATCH("generating random particles in selected space")
