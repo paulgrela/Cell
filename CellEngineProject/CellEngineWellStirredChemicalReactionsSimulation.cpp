@@ -5,12 +5,12 @@ void CellEngineWellStirredChemicalReactionsSimulation::TryToDoRandomReaction(con
 {
     LoggersManagerObject.Log(STREAM(endl << "REACTION" << endl));
 
-    std::uniform_int_distribution<UnsignedInt> UniformDistributionObject1X_Uint64t(1, Particles.size());
+    std::uniform_int_distribution<UnsignedInt> UniformDistributionObjectUint64t(1, Particles.size());
 
     vector<UnsignedInt> RandomParticlesTypes;
     for (UnsignedInt ReactantNumber = 1; ReactantNumber <= NumberOfReactants; ReactantNumber++)
     {
-        RandomParticlesTypes.emplace_back(UniformDistributionObject1X_Uint64t(mt64X));
+        RandomParticlesTypes.emplace_back(UniformDistributionObjectUint64t(mt64X));
         LoggersManagerObject.Log(STREAM("Particle Reactant " << to_string(ReactantNumber) << " (" << to_string(RandomParticlesTypes.back()) << ")"));
         RandomParticlesTypes.back()--;
         if (Particles[RandomParticlesTypes.back()].Counter == 0)

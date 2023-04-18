@@ -15,7 +15,7 @@ protected:
 protected:
     void InsertAtom(std::vector<CellEngineAtom>& LocalCellEngineAllAtomsObject, const CellEngineAtom& AppliedAtom) override
     {
-        CellEngineVoxelSimulationSpaceObjectPointer->SetAtomInVoxelSpace(AppliedAtom);
+        CellEngineVoxelSimulationSpaceObjectPointer->SetAtomInVoxelSimulationSpace(AppliedAtom);
     }
 protected:
     void InsertGroupOfAtoms(std::vector<CellEngineAtom>& LocalCellEngineParticlesCentersObject, std::vector<CellEngineAtom>& LocalCellEngineAllAtomsObject) override
@@ -29,7 +29,7 @@ protected:
     void PrintStatistics() override
     {
         LoggersManagerObject.Log(CellEngineVoxelSimulationSpaceObjectPointer->PrintSpaceMinMaxValues());
-        CellEngineVoxelSimulationSpaceObjectPointer->CountStatisticsOfSpace();
+        CellEngineVoxelSimulationSpaceObjectPointer->CountStatisticsOfVoxelSimulationSpace();
         LoggersManagerObject.Log(STREAM("Sum Of Not Empty Voxels = " << CellEngineVoxelSimulationSpaceObjectPointer->SumOfNotEmptyVoxels));
     }
 };
