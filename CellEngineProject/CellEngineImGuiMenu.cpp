@@ -511,8 +511,8 @@ public:
             {
                 static int MakeColorsTypeData = static_cast<int>(CellEngineConfigDataObject.MakeColorsTypeObject);
                 ImGui::RadioButton("Draw Color For Every Atom", &MakeColorsTypeData, 1);
-                ImGui::RadioButton("Draw Color For Every Particle", &MakeColorsTypeData, 2);
-                ImGui::RadioButton("Draw Random ColorFor Every Particle", &MakeColorsTypeData, 3);
+                ImGui::RadioButton("Draw Color For Every ParticleKind", &MakeColorsTypeData, 2);
+                ImGui::RadioButton("Draw Random ColorFor Every ParticleKind", &MakeColorsTypeData, 3);
                 CellEngineConfigDataObject.MakeColorsTypeObject = static_cast<CellEngineConfigData::MakeColorsType>(MakeColorsTypeData);
             }
         }
@@ -571,7 +571,8 @@ public:
 
                 int IDButton = 1;
                 float Nothing;
-                ColorButton("    START DIFFUSION    ", Nothing, 0, 0, 0, 3, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue){ });
+                ColorButton("    START DIFFUSION    ", Nothing, 0, 0, 0, 3, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue){ CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateOneStepOfDiffusion(DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceStepsXYZ[0], DrawSpaceStepsXYZ[1], DrawSpaceStepsXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]); });
+
                 ColorButton("    STOP DIFFUSION     ", Nothing, 0, 0, 0, 0, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue){ });
             }
         }
@@ -702,7 +703,7 @@ public:
         {
             ReadInitConfiguration(argc, argv);
 
-            //TestWellStirredChemicalReactionsSimulation(); exit(0);
+                                                                                                                        //TestWellStirredChemicalReactionsSimulation(); exit(0);
 
             GLFWwindow* ImGuiMenuWindow = PrepareImGuiMenuGLFWData();
 

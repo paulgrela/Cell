@@ -11,7 +11,7 @@ void CellEngineWellStirredChemicalReactionsSimulation::TryToDoRandomReaction(con
     for (UnsignedInt ReactantNumber = 1; ReactantNumber <= NumberOfReactants; ReactantNumber++)
     {
         RandomParticlesTypes.emplace_back(UniformDistributionObjectUint64t(mt64X));
-        LoggersManagerObject.Log(STREAM("Particle Reactant " << to_string(ReactantNumber) << " (" << to_string(RandomParticlesTypes.back()) << ")"));
+        LoggersManagerObject.Log(STREAM("ParticleKind Reactant " << to_string(ReactantNumber) << " (" << to_string(RandomParticlesTypes.back()) << ")"));
         RandomParticlesTypes.back()--;
         if (Particles[RandomParticlesTypes.back()].Counter == 0)
         {
@@ -20,7 +20,7 @@ void CellEngineWellStirredChemicalReactionsSimulation::TryToDoRandomReaction(con
         }
     }
 
-    //RandomParticlesTypes.clear(); RandomParticlesTypes = {9, 0};
+                                                                                                                        RandomParticlesTypes.clear(); RandomParticlesTypes = {9, 0};
 
     sort(begin(RandomParticlesTypes), end(RandomParticlesTypes));
     auto IteratorUnique = unique(begin(RandomParticlesTypes), end(RandomParticlesTypes));
@@ -91,22 +91,22 @@ void TestWellStirredChemicalReactionsSimulation()
 {
     CellEngineWellStirredChemicalReactionsSimulation sim;
 
-    sim.AddParticles({ 0, "Water", "H2O", false, 100 });
-    sim.AddParticles({ 1, "Glucose", "C6H12O6", false, 50 });
-    sim.AddParticles({ 2, "Oxygen", "0", false, 10 });
-    sim.AddParticles({ 3, "Carbon dioxide", "CO2" , false, 5 });
-    sim.AddParticles({ 4, "Eten", "CH2CH2", false, 15 });
-    sim.AddParticles({ 5, "Ethanol", "CH3CH2(OH)", false, 25 });
-    sim.AddParticles({ 6, "Propen", "CH3CHCH2", false, 5 });
-    sim.AddParticles({ 7, "HX", "HX", false, 10 });
-    sim.AddParticles({ 8, "2Halogenopropan", "CH3CHXCH3",false, 10 });
-    sim.AddParticles({ 9, "Eten", "CH2CH2", false, 10 });
-    sim.AddParticles({ 10, "Ethylene", "CH2CH2O", false, 10 });
+    sim.AddParticleKind({0, "Water", "H2O", 100});
+    sim.AddParticleKind({1, "Glucose", "C6H12O6", 50});
+    sim.AddParticleKind({2, "Oxygen", "0", 10});
+    sim.AddParticleKind({3, "Carbon dioxide", "CO2", 5});
+    sim.AddParticleKind({4, "Eten", "CH2CH2", 15});
+    sim.AddParticleKind({5, "Ethanol", "CH3CH2(OH)", 25});
+    sim.AddParticleKind({6, "Propen", "CH3CHCH2", 5});
+    sim.AddParticleKind({7, "HX", "HX", 10});
+    sim.AddParticleKind({8, "2Halogenopropan", "CH3CHXCH3", 10});
+    sim.AddParticleKind({9, "Eten", "CH2CH2", 10});
+    sim.AddParticleKind({10, "Ethylene", "CH2CH2O", 10});
 
-    sim.AddReaction(ReactionType("C6H12O6 + O6 + ", { {1, 1}, {2, 6} }, { {3, 6}, {2, 6} }));
-    sim.AddReaction(ReactionType("CH2CH2 + H2O + ", { {4, 1}, {0, 1} }, { {5, 1} }));
-    sim.AddReaction(ReactionType("CH3CHCH2 + HX + ", { {6, 1}, {7, 1} }, { {8, 1} }));
-    sim.AddReaction(ReactionType("CH2CH2 + O + ", { {9, 1}, {2, 1} }, { {10, 1} }));
+    sim.AddReaction(Reaction("C6H12O6 + O6 + ", { {1, 1}, {2, 6} }, { {3, 6}, {2, 6} }));
+    sim.AddReaction(Reaction("CH2CH2 + H2O + ", { {4, 1}, {0, 1} }, { {5, 1} }));
+    sim.AddReaction(Reaction("CH3CHCH2 + HX + ", { {6, 1}, {7, 1} }, { {8, 1} }));
+    sim.AddReaction(Reaction("CH2CH2 + O + ", { {9, 1}, {2, 1} }, { {10, 1} }));
 
     sim.Run(2);
 }

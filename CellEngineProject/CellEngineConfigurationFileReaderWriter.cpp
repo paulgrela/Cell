@@ -194,7 +194,7 @@ void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const ch
                         CellEngineConfigDataObject.AtomsKinds.clear();
                         for (const ptree::value_type& AtomKindPropertyTreeElement : CellStatePropertyTreeElement.second.get_child("Atoms"))
                         {
-                            AtomKind AtomKindObject;
+                            GraphicAtomKind AtomKindObject;
 
                             LoggersManagerObject.Log(STREAM("Atom Kind Name = " << AtomKindPropertyTreeElement.second.get<string>("Name")));
 
@@ -211,9 +211,9 @@ void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const ch
                         CellEngineConfigDataObject.ParticlesKindsXML.clear();
                         for (const ptree::value_type& ParticleKindPropertyTreeElement : CellStatePropertyTreeElement.second.get_child("Particles"))
                         {
-                            ParticleKind ParticleKindObject;
+                            GraphicParticleKind ParticleKindObject;
 
-                            LoggersManagerObject.Log(STREAM("Particle Kind Name = " << ParticleKindPropertyTreeElement.second.get<string>("Name") << " ID = " << ParticleKindPropertyTreeElement.second.get<UnsignedInt>("<xmlattr>.id") << " COLOR = " << ParticleKindPropertyTreeElement.second.get<string>("Color")));
+                            LoggersManagerObject.Log(STREAM("ParticleKind Name = " << ParticleKindPropertyTreeElement.second.get<string>("Name") << " ID = " << ParticleKindPropertyTreeElement.second.get<UnsignedInt>("<xmlattr>.id") << " COLOR = " << ParticleKindPropertyTreeElement.second.get<string>("Color")));
 
                             ParticleKindObject.NameFromXML = ParticleKindPropertyTreeElement.second.get<string>("Name");
                             ParticleKindObject.NameFromXML == "DNA" ? CellEngineConfigDataObject.DNAIdentifier = ParticleKindPropertyTreeElement.second.get<UnsignedInt>("<xmlattr>.id") : 0;

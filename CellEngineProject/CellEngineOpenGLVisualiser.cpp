@@ -314,7 +314,7 @@ vector3_16 CellEngineOpenGLVisualiser::GetColor(const T& Object, bool Chosen)
     return FinalColor;
 }
 
-template vector3_16 CellEngineOpenGLVisualiser::GetColor<ParticleKind>(const ParticleKind& Object, bool Chosen);
+template vector3_16 CellEngineOpenGLVisualiser::GetColor<GraphicParticleKind>(const GraphicParticleKind& Object, bool Chosen);
 
 inline vmath::vec3 CellEngineOpenGLVisualiser::GetSize(const CellEngineAtom& AtomObject)
 {

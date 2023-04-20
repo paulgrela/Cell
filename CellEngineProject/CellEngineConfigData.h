@@ -10,7 +10,7 @@
 #include "ExceptionsMacro.h"
 #include "CellEngineTypes.h"
 
-struct ParticleKind
+struct GraphicParticleKind
 {
     UnsignedInt Identifier;
     bool Visible;
@@ -24,7 +24,7 @@ struct ParticleKind
     std::string NameFromDataFile;
 };
 
-struct AtomKind
+struct GraphicAtomKind
 {
     std::string Name;
     float SizeX;
@@ -34,7 +34,7 @@ struct AtomKind
     vmath::vec3 ColorVmathVec3;
 };
 
-inline bool operator==(const AtomKind& AtomKindParameter, const std::string& NameStr)
+inline bool operator==(const GraphicAtomKind& AtomKindParameter, const std::string& NameStr)
 {
     return AtomKindParameter.Name == NameStr;
 }
@@ -184,9 +184,9 @@ public:
     std::string TimeParametersOfRenderingStr;
     std::string NumberOfRenderedAtomsParametersOfRenderingStr;
 public:
-    std::vector<AtomKind> AtomsKinds;
-    std::vector<ParticleKind> ParticlesKinds;
-    std::unordered_map<UnsignedInt, ParticleKind> ParticlesKindsXML;
+    std::vector<GraphicAtomKind> AtomsKinds;
+    std::vector<GraphicParticleKind> ParticlesKinds;
+    std::unordered_map<UnsignedInt, GraphicParticleKind> ParticlesKindsXML;
     std::unordered_map<UnsignedInt, UnsignedInt> ParticlesKindsPos;
 public:
     bool ImGuiDemoWindowMenu = false;
@@ -196,9 +196,9 @@ public:
     UnsignedInt DNAIdentifier{};
     UnsignedInt RNAIdentifier{};
 public:
-    std::vector<AtomKind>::iterator GetAtomKindDataForAtom(char Name)
+    std::vector<GraphicAtomKind>::iterator GetAtomKindDataForAtom(char Name)
     {
-        std::vector<AtomKind>::iterator AtomKindObjectIterator;
+        std::vector<GraphicAtomKind>::iterator AtomKindObjectIterator;
 
         try
         {

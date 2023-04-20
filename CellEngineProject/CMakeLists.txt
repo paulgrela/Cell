@@ -76,6 +76,8 @@ add_executable(
 	../Common/DateTimeUtils/DateTimeUtils.cpp
 	CellEngineAtom.h
 	CellEngineAtom.cpp
+	CellEngineParticle.h
+	CellEngineReaction.h
 	CellEngineImGuiMenu.cpp
 	CellEnginePDBDataFile.h
 	CellEnginePDBDataFile.cpp
