@@ -92,7 +92,7 @@ private:
                     for (UnsignedInt SpaceZP = ZStartParam; SpaceZP < ZStartParam + ZSizeParam; SpaceZP += ZStepParam)
                         if (SpaceXP < CellEngineConfigDataObject.NumberOfVoxelSimulationSpaceInEachDimension &&  SpaceYP < CellEngineConfigDataObject.NumberOfVoxelSimulationSpaceInEachDimension && SpaceZP < CellEngineConfigDataObject.NumberOfVoxelSimulationSpaceInEachDimension)
                         {
-                            SimulationSpaceVoxel SimulationSpaceVoxelObject = CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->Space[SpaceXP][SpaceYP][SpaceZP];
+                            SimulationSpaceVoxel SimulationSpaceVoxelObject = CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GetSimulationSpaceVoxel(SpaceXP, SpaceYP, SpaceZP);
 
                             if (DrawEmptyVoxels == true || (DrawEmptyVoxels == false && SimulationSpaceVoxelObject.EntityId != 0 && CheckVisibilityOfParticles(SimulationSpaceVoxelObject.EntityId) == true))
                             {

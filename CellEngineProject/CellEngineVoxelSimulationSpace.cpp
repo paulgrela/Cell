@@ -6,7 +6,7 @@ using namespace std;
 
 [[nodiscard]] float CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(UnsignedInt CoordinateParam)
 {
-    return static_cast<float>(static_cast<Int>(CoordinateParam) - (static_cast<Int>(CellEngineConfigDataObject.NumberOfVoxelSimulationSpaceInEachDimension / 2))) * 4;
+    return static_cast<float>(static_cast<SignedInt>(CoordinateParam) - (static_cast<SignedInt>(CellEngineConfigDataObject.NumberOfVoxelSimulationSpaceInEachDimension / 2))) * 4;
 };
 [[nodiscard]] UnsignedInt CellEngineVoxelSimulationSpace::ConvertToSpaceCoordinate(double CoordinateParam)
 {
@@ -37,12 +37,12 @@ void CellEngineVoxelSimulationSpace::GetMinMaxOfCoordinates(const UnsignedInt Sp
 {
     try
     {
-        XMin = std::min(SpaceX, XMin);
-        XMax = std::max(SpaceX, XMax);
-        YMin = std::min(SpaceY, YMin);
-        YMax = std::max(SpaceY, YMax);
-        ZMin = std::min(SpaceZ, ZMin);
-        ZMax = std::max(SpaceZ, ZMax);
+        XMin = min(SpaceX, XMin);
+        XMax = max(SpaceX, XMax);
+        YMin = min(SpaceY, YMin);
+        YMax = max(SpaceY, YMax);
+        ZMin = min(SpaceZ, ZMin);
+        ZMax = max(SpaceZ, ZMax);
     }
     CATCH("getting min max of coordinates")
 }
@@ -89,6 +89,11 @@ void CellEngineVoxelSimulationSpace::SetAtomInVoxelSimulationSpace(const CellEng
     CATCH("setting atom in voxel simulation space")
 }
 
+SimulationSpaceVoxel CellEngineVoxelSimulationSpace::GetSimulationSpaceVoxel(UnsignedInt X, UnsignedInt Y, UnsignedInt Z)
+{
+    return Space[X][Y][Z];
+}
+
 void CellEngineVoxelSimulationSpace::AddParticleKind(const ParticleKind& ParticleParam)
 {
     Particles.emplace_back(ParticleParam);
@@ -98,20 +103,20 @@ void CellEngineVoxelSimulationSpace::GenerateRandomParticlesInSelectedSpace(cons
 {
     try
     {
+        Particles.clear();
+
         AddParticleKind({1, "A", "A1", 0});
         AddParticleKind({2, "B", "B1", 0});
         AddParticleKind({3, "C", "C1", 0});
         AddParticleKind({4, "D", "D1", 0});
 
-        std::vector<vector3_64> FilledVoxelsForRandomParticle;
+        vector<vector3_64> FilledVoxelsForRandomParticle;
 
-        std::mt19937_64 mt64R{ std::random_device{}() };
-
-        std::uniform_int_distribution<UnsignedInt> UniformDistributionObjectSizeOfParticle_Uint64t(1, 2);
-        std::uniform_int_distribution<UnsignedInt> UniformDistributionObjectTypeOfParticle_Uint64t(1, 4);
-        std::uniform_int_distribution<UnsignedInt> UniformDistributionObjectX_Uint64t(XStartParam, XStartParam + XSizeParam);
-        std::uniform_int_distribution<UnsignedInt> UniformDistributionObjectY_Uint64t(YStartParam, YStartParam + YSizeParam);
-        std::uniform_int_distribution<UnsignedInt> UniformDistributionObjectZ_Uint64t(ZStartParam, ZStartParam + ZSizeParam);
+        uniform_int_distribution<UnsignedInt> UniformDistributionObjectSizeOfParticle_Uint64t(1, 2);
+        uniform_int_distribution<UnsignedInt> UniformDistributionObjectTypeOfParticle_Uint64t(1, 4);
+        uniform_int_distribution<UnsignedInt> UniformDistributionObjectX_Uint64t(XStartParam, XStartParam + XSizeParam);
+        uniform_int_distribution<UnsignedInt> UniformDistributionObjectY_Uint64t(YStartParam, YStartParam + YSizeParam);
+        uniform_int_distribution<UnsignedInt> UniformDistributionObjectZ_Uint64t(ZStartParam, ZStartParam + ZSizeParam);
 
         for (UnsignedInt SpaceXP = XStartParam; SpaceXP < XStartParam + XSizeParam; SpaceXP += XStepParam)
             for (UnsignedInt SpaceYP = YStartParam; SpaceYP < YStartParam + YSizeParam; SpaceYP += YStepParam)
@@ -130,37 +135,76 @@ void CellEngineVoxelSimulationSpace::GenerateRandomParticlesInSelectedSpace(cons
 
             FilledVoxelsForRandomParticle.clear();
 
-            for (UnsignedInt SpaceXP = RandomPosX; SpaceXP < RandomPosX + RandomSizeOfParticle; SpaceXP++)
-                for (UnsignedInt SpaceYP = RandomPosY; SpaceYP < RandomPosY + RandomSizeOfParticle; SpaceYP++)
-                    for (UnsignedInt SpaceZP = RandomPosZ; SpaceZP < RandomPosZ + RandomSizeOfParticle; SpaceZP++)
-                    {
-                        if (Space[SpaceXP][SpaceXP][SpaceXP].EntityId == 0)
+            if (RandomPosX + RandomSizeOfParticle < XStartParam + XSizeParam && RandomPosY + RandomSizeOfParticle < YStartParam + YSizeParam && RandomPosZ + RandomSizeOfParticle < ZStartParam + ZSizeParam)
+                for (UnsignedInt SpaceXP = RandomPosX; SpaceXP < RandomPosX + RandomSizeOfParticle; SpaceXP++)
+                    for (UnsignedInt SpaceYP = RandomPosY; SpaceYP < RandomPosY + RandomSizeOfParticle; SpaceYP++)
+                        for (UnsignedInt SpaceZP = RandomPosZ; SpaceZP < RandomPosZ + RandomSizeOfParticle; SpaceZP++)
                         {
-                            FilledVoxelsForRandomParticle.emplace_back(SpaceXP, SpaceYP, SpaceZP);
-                            Space[SpaceXP][SpaceYP][SpaceZP].EntityId = CellEngineConfigDataObject.DNAIdentifier;
-                            Space[SpaceXP][SpaceYP][SpaceZP].ChainId = RandomChainId;
+                            if (Space[SpaceXP][SpaceXP][SpaceXP].EntityId == 0)
+                            {
+                                FilledVoxelsForRandomParticle.emplace_back(SpaceXP, SpaceYP, SpaceZP);
+                                Space[SpaceXP][SpaceYP][SpaceZP].EntityId = CellEngineConfigDataObject.DNAIdentifier;
+                                Space[SpaceXP][SpaceYP][SpaceZP].ChainId = RandomChainId;
+                            }
+                            else
+                            {
+                                for (auto& VoxelForRandomParticle : FilledVoxelsForRandomParticle)
+                                    Space[VoxelForRandomParticle.X][VoxelForRandomParticle.Y][VoxelForRandomParticle.Z].EntityId = Space[VoxelForRandomParticle.X][VoxelForRandomParticle.Y][VoxelForRandomParticle.Z].ChainId = 0;
+                                goto NextRandomParticleOutsideLoopLabel;
+                            }
                         }
-                        else
-                        {
-                            for (auto& VoxelForRandomParticle : FilledVoxelsForRandomParticle)
-                                Space[VoxelForRandomParticle.X][VoxelForRandomParticle.Y][VoxelForRandomParticle.Z].EntityId = Space[VoxelForRandomParticle.X][VoxelForRandomParticle.Y][VoxelForRandomParticle.Z].ChainId = 0;
-                            goto NextRandomParticleOutsideLoopLabel;
-                        }
-                    }
             NextRandomParticleOutsideLoopLabel:;
 
             if (FilledVoxelsForRandomParticle.empty() == false)
-                Particles[RandomChainId - 1].ParticlesObjects.emplace_back(RandomPosX, RandomPosY, RandomPosZ, FilledVoxelsForRandomParticle);
+                Particles[RandomChainId - 1].ParticlesObjects.emplace_back(FilledVoxelsForRandomParticle);
         }
     }
     CATCH("generating random particles in selected space")
 }
 
-void CellEngineVoxelSimulationSpace::GenerateOneStepOfDiffusion(const UnsignedInt XStartParam, const UnsignedInt YStartParam, const UnsignedInt ZStartParam, const UnsignedInt XStepParam, const UnsignedInt YStepParam, const UnsignedInt ZStepParam, const UnsignedInt XSizeParam, UnsignedInt YSizeParam, const UnsignedInt ZSizeParam)
+void CellEngineVoxelSimulationSpace::GenerateOneStepOfDiffusion(const UnsignedInt XStartParam, const UnsignedInt YStartParam, const UnsignedInt ZStartParam, const UnsignedInt XSizeParam, UnsignedInt YSizeParam, const UnsignedInt ZSizeParam)
 {
     try
     {
+        std::uniform_int_distribution<SignedInt> UniformDistributionObjectSizeOfParticle_int64t(-1, 1);
 
+        vector<vector3_64> NewVoxelsForParticle;
+
+        for (auto& ParticleKindObject : Particles)
+            for (auto& ParticleObject : ParticleKindObject.ParticlesObjects)
+            {
+                ChainIdInt RememberChainId = Space[ParticleObject.ListOfVoxels[0].X][ParticleObject.ListOfVoxels[0].Y][ParticleObject.ListOfVoxels[0].Z].ChainId;
+                for (auto& VoxelForParticle : ParticleObject.ListOfVoxels)
+                    Space[VoxelForParticle.X][VoxelForParticle.Y][VoxelForParticle.Z].EntityId = Space[VoxelForParticle.X][VoxelForParticle.Y][VoxelForParticle.Z].ChainId = 0;
+
+                SignedInt ShiftX = UniformDistributionObjectSizeOfParticle_int64t(mt64R);
+                SignedInt ShiftY = UniformDistributionObjectSizeOfParticle_int64t(mt64R);
+                SignedInt ShiftZ = UniformDistributionObjectSizeOfParticle_int64t(mt64R);
+
+                NewVoxelsForParticle.clear();
+                bool Collision = false;
+
+                for (auto& VoxelForParticle : ParticleObject.ListOfVoxels)
+                    if (Space[VoxelForParticle.X + ShiftX][VoxelForParticle.Y + ShiftY][VoxelForParticle.Z + ShiftZ].EntityId == 0 && VoxelForParticle.X + ShiftX >= XStartParam && VoxelForParticle.X + ShiftX < XStartParam + XSizeParam && VoxelForParticle.Y + ShiftY >= YStartParam && VoxelForParticle.Y + ShiftY < YStartParam + YSizeParam && VoxelForParticle.Z + ShiftZ >= ZStartParam && VoxelForParticle.Z + ShiftZ < ZStartParam + ZSizeParam)
+                    {
+                        Space[VoxelForParticle.X + ShiftX][VoxelForParticle.Y + ShiftY][VoxelForParticle.Z + ShiftZ] = { static_cast<EntityIdInt>(CellEngineConfigDataObject.DNAIdentifier), RememberChainId };
+                        NewVoxelsForParticle.emplace_back(VoxelForParticle.X + ShiftX, VoxelForParticle.Y + ShiftY, VoxelForParticle.Z + ShiftZ);
+                    }
+                    else
+                    {
+                        for (auto& NewVoxelForParticle : NewVoxelsForParticle)
+                            Space[NewVoxelForParticle.X][NewVoxelForParticle.Y][NewVoxelForParticle.Z].EntityId = Space[NewVoxelForParticle.X][NewVoxelForParticle.Y][NewVoxelForParticle.Z].ChainId = 0;
+
+                        for (auto& OldVoxelForParticle : ParticleObject.ListOfVoxels)
+                            Space[OldVoxelForParticle.X][OldVoxelForParticle.Y][OldVoxelForParticle.Z] = { static_cast<EntityIdInt>(CellEngineConfigDataObject.DNAIdentifier), RememberChainId };
+
+                        Collision = true;
+                        break;
+                    }
+
+                if (Collision == false)
+                    ParticleObject.ListOfVoxels = NewVoxelsForParticle;
+            }
     }
     CATCH("generating one step of diffusion")
 }

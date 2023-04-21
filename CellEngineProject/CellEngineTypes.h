@@ -6,7 +6,7 @@
 #include <cstdint>
 #include "vmath.h"
 
-using Int = std::int64_t;
+using SignedInt = std::int64_t;
 using UnsignedInt = std::uint64_t;
 
 using EntityIdInt = std::uint32_t;

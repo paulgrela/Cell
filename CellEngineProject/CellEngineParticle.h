@@ -13,11 +13,9 @@ class Particle
 public:
     bool SelectedForReaction;
 public:
-    UnsignedInt StartX, StartY, StartZ;
-public:
     std::vector<vector3_64> ListOfVoxels;
 public:
-    Particle(UnsignedInt StartXParam, UnsignedInt StartYParam, UnsignedInt StartZParam, std::vector<vector3_64> ListOfVoxelsParam) : StartX(StartXParam), StartY(StartYParam), StartZ(StartZParam), ListOfVoxels(std::move(ListOfVoxelsParam)), SelectedForReaction(false)
+    explicit Particle(std::vector<vector3_64> ListOfVoxelsParam) : ListOfVoxels(std::move(ListOfVoxelsParam)), SelectedForReaction(false)
     {}
 };
 

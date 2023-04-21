@@ -18,11 +18,13 @@ struct SimulationSpaceVoxel
 
 class CellEngineVoxelSimulationSpace
 {
-public:
+private:
+    std::mt19937_64 mt64R{ std::random_device{}() };
+private:
     std::vector<ParticleKind> Particles;
-public:
+private:
     SimulationSpaceVoxel Space[NumberOfVoxelSimulationSpaceInEachDimensionMaxConst][NumberOfVoxelSimulationSpaceInEachDimensionMaxConst][NumberOfVoxelSimulationSpaceInEachDimensionMaxConst]{};
-public:
+private:
     UnsignedInt XMin{}, XMax{}, YMin{}, YMax{}, ZMin{}, ZMax{};
 public:
     [[nodiscard]] static float ConvertToGraphicsCoordinate(UnsignedInt CoordinateParam);
@@ -39,10 +41,12 @@ public:
     void CountStatisticsOfVoxelSimulationSpace();
     void SetAtomInVoxelSimulationSpace(const CellEngineAtom& AppliedAtom);
 public:
+    SimulationSpaceVoxel GetSimulationSpaceVoxel(UnsignedInt X, UnsignedInt Y, UnsignedInt Z);
+public:
     void AddParticleKind(const ParticleKind& ParticleParam);
 public:
     void GenerateRandomParticlesInSelectedSpace(UnsignedInt NumberOfRandomParticles, UnsignedInt XStartParam, UnsignedInt YStartParam, UnsignedInt ZStartParam, UnsignedInt XStepParam, UnsignedInt YStepParam, UnsignedInt ZStepParam, UnsignedInt XSizeParam, UnsignedInt YSizeParam, UnsignedInt ZSizeParam);
-    void GenerateOneStepOfDiffusion(UnsignedInt XStartParam, UnsignedInt YStartParam, UnsignedInt ZStartParam, UnsignedInt XStepParam, UnsignedInt YStepParam, UnsignedInt ZStepParam, UnsignedInt XSizeParam, UnsignedInt YSizeParam, UnsignedInt ZSizeParam);
+    void GenerateOneStepOfDiffusion(UnsignedInt XStartParam, UnsignedInt YStartParam, UnsignedInt ZStartParam, UnsignedInt XSizeParam, UnsignedInt YSizeParam, UnsignedInt ZSizeParam);
 public:
     CellEngineVoxelSimulationSpace();
 };
