@@ -22,17 +22,11 @@ public:
     std::mt19937_64 mt64X{ std::random_device{}() };
 public:
     std::vector<ParticleKind> Particles;
-    std::unordered_map<std::string, Reaction> Reactions;
+    std::vector<Reaction> Reactions;
+    std::unordered_map<std::string, UnsignedInt> ReactionsIdByString;
 public:
-    void AddParticleKind(const ParticleKind& ParticleParam)
-    {
-        Particles.emplace_back(ParticleParam);
-    }
-public:
-    void AddReaction(const Reaction& ReactionParam)
-    {
-        Reactions.insert(std::make_pair(ReactionParam.ReactantsStr, ReactionParam));
-    }
+    void AddParticleKind(const ParticleKind& ParticleParam);
+    void AddReaction(const Reaction& ReactionParam);
 public:
     void TryToDoRandomReaction(UnsignedInt NumberOfReactants);
 public:

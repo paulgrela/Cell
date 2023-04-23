@@ -6,11 +6,13 @@ using namespace std;
 
 [[nodiscard]] float CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(UnsignedInt CoordinateParam)
 {
-    return static_cast<float>(static_cast<SignedInt>(CoordinateParam) - (static_cast<SignedInt>(CellEngineConfigDataObject.NumberOfVoxelSimulationSpaceInEachDimension / 2))) * 4;
+    //return static_cast<float>(static_cast<SignedInt>(CoordinateParam) - (static_cast<SignedInt>(CellEngineConfigDataObject.NumberOfVoxelSimulationSpaceInEachDimension / 2))) * 4;
+    return static_cast<float>(static_cast<SignedInt>(CoordinateParam) - (static_cast<SignedInt>(CellEngineConfigDataObject.NumberOfVoxelSimulationSpaceInEachDimension / 2))) * 2;
 };
 [[nodiscard]] UnsignedInt CellEngineVoxelSimulationSpace::ConvertToSpaceCoordinate(double CoordinateParam)
 {
-    return static_cast<UnsignedInt>(round(CoordinateParam / 4.0)) + (CellEngineConfigDataObject.NumberOfVoxelSimulationSpaceInEachDimension / 2);
+    //return static_cast<UnsignedInt>(round(CoordinateParam / 4.0)) + (CellEngineConfigDataObject.NumberOfVoxelSimulationSpaceInEachDimension / 2);
+    return static_cast<UnsignedInt>(round(CoordinateParam) / 2.0) + (CellEngineConfigDataObject.NumberOfVoxelSimulationSpaceInEachDimension / 2);
 };
 
 CellEngineVoxelSimulationSpace::CellEngineVoxelSimulationSpace()
@@ -99,16 +101,27 @@ void CellEngineVoxelSimulationSpace::AddParticleKind(const ParticleKind& Particl
     Particles.emplace_back(ParticleParam);
 }
 
+void CellEngineVoxelSimulationSpace::AddReaction(const Reaction& ReactionParam)
+{
+    Reactions.emplace_back(ReactionParam);
+    ReactionsIdByString.insert(std::make_pair(ReactionParam.ReactantsStr, Reactions.size() - 1));
+}
+
 void CellEngineVoxelSimulationSpace::GenerateRandomParticlesInSelectedSpace(const UnsignedInt NumberOfRandomParticles, const UnsignedInt XStartParam, const UnsignedInt YStartParam, const UnsignedInt ZStartParam, const UnsignedInt XStepParam, const UnsignedInt YStepParam, const UnsignedInt ZStepParam, const UnsignedInt XSizeParam, UnsignedInt YSizeParam, const UnsignedInt ZSizeParam)
 {
     try
     {
         Particles.clear();
 
-        AddParticleKind({1, "A", "A1", 0});
-        AddParticleKind({2, "B", "B1", 0});
-        AddParticleKind({3, "C", "C1", 0});
-        AddParticleKind({4, "D", "D1", 0});
+        AddParticleKind({ 1, "A", "A", 0, { { "A + B + ", 0 }, { "D + A + ", 3 } } });
+        AddParticleKind({ 2, "B", "B", 0, { { "A + B + ", 0 }, { "B + C + ", 1 } } });
+        AddParticleKind({ 3, "C", "C", 0, { { "B + C + ", 1 }, { "C + D + ", 2 } } });
+        AddParticleKind({ 4, "D", "D", 0, { { "C + D + ", 2 }, { "D + A + ", 3 } } });
+
+        AddReaction(Reaction("A + B + ", { {1, 1}, {2, 1} }, { {3, 1}, {4, 1} }));
+        AddReaction(Reaction("B + C + ", { {2, 1}, {3, 1} }, { {4, 1} }));
+        AddReaction(Reaction("C + D + ", { {3, 1}, {4, 1} }, { {1, 1} }));
+        AddReaction(Reaction("D + A + ", { {4, 1}, {1, 1} }, { {2, 1} }));
 
         vector<vector3_64> FilledVoxelsForRandomParticle;
 

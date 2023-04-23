@@ -14,6 +14,9 @@
 using namespace std;
 using namespace string_utils;
 
+//                                                                                                                        //const string f2 = "../../WholeCellData/Mycoplasma Genitalium/cellpack_atom_instances_6973_curated.cif";
+//                                                                                                                        const string f2 = "../../WholeCellData/Mycoplasma Genitalium/cellpack_atom_instances_1189_curated.cif";
+
 CellEngineAtom CellEngineCIFDataFile::ParseRecord(const char* LocalCIFRecord)
 {
     CellEngineAtom CellEngineAtomObject{};
@@ -31,9 +34,12 @@ CellEngineAtom CellEngineCIFDataFile::ParseRecord(const char* LocalCIFRecord)
         strncpy(CellEngineAtomObject.Chain, AtomFields[6].c_str(), AtomFields[6].length() + 1);
         CellEngineAtomObject.EntityId = stoi(AtomFields[7]);
 
-        if(CellEngineAtomObject.EntityId == 0)
-            LoggersManagerObject.Log(STREAM("AAA" << CellEngineAtomObject.EntityId));
-
+//                                                                                                                        if (CellEngineConfigDataObject.CellStateFileName == f2)
+//                                                                                                                        {
+//                                                                                                                        if (CellEngineAtomObject.EntityId == 694) CellEngineAtomObject.EntityId = 699;
+//                                                                                                                        if (CellEngineAtomObject.EntityId != 699) return CellEngineAtomObject;
+//                                                                                                                        }
+//
         CellEngineAtomObject.SetAtomPositionsData(stof(AtomFields[10]), stof(AtomFields[11]), stof(AtomFields[12]));
 
         auto AtomKindObjectIterator = CellEngineConfigDataObject.GetAtomKindDataForAtom(AtomFields[3][0]);
@@ -64,6 +70,9 @@ void CellEngineCIFDataFile::ReadDataFromFile()
     {
         SetStartValues();
 
+        ChainsNames.clear();
+        TransformationsMatrixes.clear();
+
         string Line;
         std::vector<CellEngineAtom> LocalCellEngineAllAtomsObject;
         std::vector<CellEngineAtom> LocalCellEngineParticlesCentersObject;
@@ -92,6 +101,7 @@ void CellEngineCIFDataFile::ReadDataFromFile()
         {
             if (Line.substr(0, 4) == ". . ")
             {
+//                                                                                                                        if (CellEngineConfigDataObject.CellStateFileName != f2) {
                 vector<string> AtomFields = split(Line, " ");
 
                 auto ParticleKindObjectIterator = CellEngineConfigDataObject.ParticlesKindsXML.find(stoi(AtomFields[2]));
@@ -104,11 +114,14 @@ void CellEngineCIFDataFile::ReadDataFromFile()
                     CellEngineConfigDataObject.ParticlesKinds.emplace_back(GraphicParticleKind{static_cast<UnsignedInt>(stoi(AtomFields[2])), ParticleKindObjectIterator->second.Visible, ParticleKindObjectIterator->second.SizeX, ParticleKindObjectIterator->second.SizeY, ParticleKindObjectIterator->second.SizeZ, ParticleKindObjectIterator->second.ParticleColor, ParticleKindObjectIterator->second.ParticleColor, GetVector3FormVMathVec3(CellEngineConfigDataObject.GetRandomColor()), ParticleKindObjectIterator->second.NameFromXML, AtomFields[5].substr(1, AtomFields[5].length() - 2) });
 
                 CellEngineConfigDataObject.ParticlesKindsPos[stoi(AtomFields[2])] = CellEngineConfigDataObject.ParticlesKinds.size() - 1;
+//                                                                                                                        }
             }
             else
             if (Line.substr(0, 4) == "ATOM")
             {
                 CellEngineAtom CellEngineAtomObject = ParseRecord(Line.c_str());
+//                                                                                                                        if (CellEngineConfigDataObject.CellStateFileName != f2 ||
+//                                                                                                                        (CellEngineConfigDataObject.CellStateFileName == f2 && CellEngineAtomObject.EntityId == 699))
                 ChainsNames[CellEngineAtomObject.Chain].emplace_back(CellEngineAtomObject);
             }
             else
@@ -145,15 +158,15 @@ void CellEngineCIFDataFile::ReadDataFromFile()
                 for ( ; regex_search(pos, end, SMatchObject, RegexObject1); pos = SMatchObject.suffix().first)
                     if (SMatchObject.str(1).empty() == false && SMatchObject.str(2).empty() == false)
                         for (UnsignedInt MatrixId = stoi(SMatchObject.str(1)); MatrixId <= stoi(SMatchObject.str(2)); MatrixId++)
-                            AppliedMatrixesIds.push_back(MatrixId);
+                            AppliedMatrixesIds.emplace_back(MatrixId);
                     else
-                        AppliedMatrixesIds.push_back(stoi(SMatchObject.str(3)));
+                        AppliedMatrixesIds.emplace_back(stoi(SMatchObject.str(3)));
 
                 AppliedChainsNames.clear();
                 pos = Line.cbegin();
                 end = Line.cend();
                 for ( ; regex_search(pos, end, SMatchObject, RegexObject2); pos = SMatchObject.suffix().first)
-                    AppliedChainsNames.push_back(SMatchObject.str(1));
+                    AppliedChainsNames.emplace_back(SMatchObject.str(1));
 
                 vmath::vec3 ChainColor = CellEngineConfigDataObject.GetRandomColor();
 
@@ -166,9 +179,21 @@ void CellEngineCIFDataFile::ReadDataFromFile()
 
                     for (const auto& AppliedChainName : AppliedChainsNames)
                     {
+                        //PONIZSZE DO FUNKCJI
                         if (AppliedChainName == "NU01" || AppliedChainName == "NU11" || AppliedChainName == "NU02" || AppliedChainName == "NU12" || AppliedChainName == "NU03" || AppliedChainName == "NU13" || AppliedChainName == "NU04" || AppliedChainName == "NU14")
                             NumberOfNucleotidesInDNA++;
 
+//                                                                                                                        //REMOVE START----------------------------------------------------------------------------------
+//
+//                                                                                                                        if (CellEngineConfigDataObject.CellStateFileName != f2)
+//                                                                                                                            if (AppliedChainName == "NU01" || AppliedChainName == "NU11" || AppliedChainName == "NU02" || AppliedChainName == "NU12" || AppliedChainName == "NU03" || AppliedChainName == "NU13" || AppliedChainName == "NU04" || AppliedChainName == "NU14")
+//                                                                                                                                continue;
+//
+//                                                                                                                        if (CellEngineConfigDataObject.CellStateFileName == f2)
+//                                                                                                                            if (AppliedChainName != "BAR0" && AppliedChainName != "BAR1")
+//                                                                                                                                continue;
+//
+//                                                                                                                        //REMOVE END------------------------------------------------------------------------------------
                         auto AtomsForChainNameIterator = ChainsNames.find(AppliedChainName);
                         if (AtomsForChainNameIterator == ChainsNames.end())
                             LoggersManagerObject.Log(STREAM("ERROR IN CIF FILE LACKS AppliedChainName: " << AppliedChainName));
@@ -206,16 +231,20 @@ void CellEngineCIFDataFile::ReadDataFromFile()
 
                                 AppliedAtom.RandomParticleColor = GetVector3FormVMathVec3(ChainColor);
 
+
                                 InsertAtom(LocalCellEngineAllAtomsObject, AppliedAtom);
                             }
                         }
                     }
-
+//                                                                                                                        if (CellEngineConfigDataObject.CellStateFileName != f2)
                     InsertGroupOfAtoms(LocalCellEngineParticlesCentersObject, LocalCellEngineAllAtomsObject);
+//                                                                                                                        else
+//                                                                                                                        if (LocalCellEngineAllAtomsObject.empty() == false)
+//                                                                                                                            InsertGroupOfAtoms(ParticlesCenters[0], LocalCellEngineAllAtomsObject);
                 }
             }
         }
-
+//                                                                                                                        if (CellEngineConfigDataObject.CellStateFileName != f2)
         InsertParticlesCenters(LocalCellEngineParticlesCentersObject);
 
         const auto stop_time = chrono::high_resolution_clock::now();

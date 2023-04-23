@@ -1,6 +1,17 @@
 
 #include "CellEngineWellStirredChemicalReactionsSimulation.h"
 
+void CellEngineWellStirredChemicalReactionsSimulation::AddParticleKind(const ParticleKind& ParticleParam)
+{
+    Particles.emplace_back(ParticleParam);
+}
+
+void CellEngineWellStirredChemicalReactionsSimulation::AddReaction(const Reaction& ReactionParam)
+{
+    Reactions.emplace_back(ReactionParam);
+    ReactionsIdByString.insert(std::make_pair(ReactionParam.ReactantsStr, Reactions.size() - 1));
+}
+
 void CellEngineWellStirredChemicalReactionsSimulation::TryToDoRandomReaction(const UnsignedInt NumberOfReactants)
 {
     LoggersManagerObject.Log(STREAM(endl << "REACTION" << endl));
@@ -37,12 +48,14 @@ void CellEngineWellStirredChemicalReactionsSimulation::TryToDoRandomReaction(con
             ReactionSymbolsStr += (ParticleSymbolForReaction + " + ");
         LoggersManagerObject.Log(STREAM("Reaction Symbols = [" << ReactionSymbolsStr << "]" << endl));
 
-        auto ReactionIter = Reactions.find(ReactionSymbolsStr);
-        if (ReactionIter != Reactions.end())
+        auto ReactionIter = ReactionsIdByString.find(ReactionSymbolsStr);
+        if (ReactionIter != ReactionsIdByString.end())
         {
             bool IsPossible = true;
 
-            for (auto& ReactionReactant : ReactionIter->second.Reactants)
+            Reaction* ReactionObject = &Reactions[ReactionIter->second];
+
+            for (auto& ReactionReactant : ReactionObject->Reactants)
                 if (ReactionReactant.Counter > Particles[ReactionReactant.Identifier].Counter)
                 {
                     IsPossible = false;
@@ -51,21 +64,21 @@ void CellEngineWellStirredChemicalReactionsSimulation::TryToDoRandomReaction(con
 
             if (IsPossible == true)
             {
-                for (auto& ReactionReactant : ReactionIter->second.Reactants)
+                for (auto& ReactionReactant : ReactionObject->Reactants)
                     LoggersManagerObject.Log(STREAM("BEFORE REACTANT = " << ReactionReactant.Identifier << " "  << Particles[ReactionReactant.Identifier].Symbol << " " << Particles[ReactionReactant.Identifier].Counter));
-                for (auto& ReactionProduct : ReactionIter->second.Products)
+                for (auto& ReactionProduct : ReactionObject->Products)
                     LoggersManagerObject.Log(STREAM("BEFORE PRODUCT = " << ReactionProduct.Identifier << " "  << Particles[ReactionProduct.Identifier].Symbol << " " << Particles[ReactionProduct.Identifier].Counter));
                 LoggersManagerObject.Log(STREAM(""));
 
-                for (auto& ReactionReactant : ReactionIter->second.Reactants)
+                for (auto& ReactionReactant : ReactionObject->Reactants)
                     Particles[ReactionReactant.Identifier].Counter -=  ReactionReactant.Counter;
 
-                for (auto& ReactionProduct : ReactionIter->second.Products)
+                for (auto& ReactionProduct : ReactionObject->Products)
                     Particles[ReactionProduct.Identifier].Counter +=  ReactionProduct.Counter;
 
-                for (auto& ReactionReactant : ReactionIter->second.Reactants)
+                for (auto& ReactionReactant : ReactionObject->Reactants)
                     LoggersManagerObject.Log(STREAM("AFTER REACTANT = " << ReactionReactant.Identifier << " "  << Particles[ReactionReactant.Identifier].Symbol << " " << Particles[ReactionReactant.Identifier].Counter));
-                for (auto& ReactionProduct : ReactionIter->second.Products)
+                for (auto& ReactionProduct : ReactionObject->Products)
                     LoggersManagerObject.Log(STREAM("AFTER PRODUCT = " << ReactionProduct.Identifier << " " << Particles[ReactionProduct.Identifier].Symbol << " " << Particles[ReactionProduct.Identifier].Counter));
                 LoggersManagerObject.Log(STREAM(""));
             }
@@ -91,17 +104,17 @@ void TestWellStirredChemicalReactionsSimulation()
 {
     CellEngineWellStirredChemicalReactionsSimulation sim;
 
-    sim.AddParticleKind({0, "Water", "H2O", 100});
-    sim.AddParticleKind({1, "Glucose", "C6H12O6", 50});
-    sim.AddParticleKind({2, "Oxygen", "0", 10});
-    sim.AddParticleKind({3, "Carbon dioxide", "CO2", 5});
-    sim.AddParticleKind({4, "Eten", "CH2CH2", 15});
-    sim.AddParticleKind({5, "Ethanol", "CH3CH2(OH)", 25});
-    sim.AddParticleKind({6, "Propen", "CH3CHCH2", 5});
-    sim.AddParticleKind({7, "HX", "HX", 10});
-    sim.AddParticleKind({8, "2Halogenopropan", "CH3CHXCH3", 10});
-    sim.AddParticleKind({9, "Eten", "CH2CH2", 10});
-    sim.AddParticleKind({10, "Ethylene", "CH2CH2O", 10});
+    sim.AddParticleKind({ 0, "Water", "H2O", 100 });
+    sim.AddParticleKind({ 1, "Glucose", "C6H12O6", 50 });
+    sim.AddParticleKind({ 2, "Oxygen", "0", 10 });
+    sim.AddParticleKind({ 3, "Carbon dioxide", "CO2", 5 });
+    sim.AddParticleKind({ 4, "Eten", "CH2CH2", 15 });
+    sim.AddParticleKind({ 5, "Ethanol", "CH3CH2(OH)", 25 });
+    sim.AddParticleKind({ 6, "Propen", "CH3CHCH2", 5 });
+    sim.AddParticleKind({ 7, "HX", "HX", 10 });
+    sim.AddParticleKind({ 8, "2Halogenopropan", "CH3CHXCH3", 10 });
+    sim.AddParticleKind({ 9, "Eten", "CH2CH2", 10 });
+    sim.AddParticleKind({ 10, "Ethylene", "CH2CH2O", 10 });
 
     sim.AddReaction(Reaction("C6H12O6 + O6 + ", { {1, 1}, {2, 6} }, { {3, 6}, {2, 6} }));
     sim.AddReaction(Reaction("CH2CH2 + H2O + ", { {4, 1}, {0, 1} }, { {5, 1} }));

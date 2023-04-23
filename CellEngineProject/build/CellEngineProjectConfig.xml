@@ -2837,7 +2837,7 @@
 
                 <CellState id="14">
                         <TypeOfSpace>2</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
-                        <NumberOfVoxelSimulationSpaceInEachDimension>1024</NumberOfVoxelSimulationSpaceInEachDimension>
+                        <NumberOfVoxelSimulationSpaceInEachDimension>2048</NumberOfVoxelSimulationSpaceInEachDimension> <!--1024 or 2048 or less-->
 
 			<CellStateFileName>../../WholeCellData/Mycoplasma Genitalium/MG_1184_cellpack_atom_instances_1.cif</CellStateFileName>
 

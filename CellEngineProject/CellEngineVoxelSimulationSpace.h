@@ -8,7 +8,8 @@
 #include "CellEngineReaction.h"
 #include "CellEngineConfigData.h"
 
-constexpr UnsignedInt NumberOfVoxelSimulationSpaceInEachDimensionMaxConst = 1024;
+//constexpr UnsignedInt NumberOfVoxelSimulationSpaceInEachDimensionMaxConst = 1024;
+constexpr UnsignedInt NumberOfVoxelSimulationSpaceInEachDimensionMaxConst = 2048;
 
 struct SimulationSpaceVoxel
 {
@@ -22,6 +23,8 @@ private:
     std::mt19937_64 mt64R{ std::random_device{}() };
 private:
     std::vector<ParticleKind> Particles;
+    std::vector<Reaction> Reactions;
+    std::unordered_map<std::string, UnsignedInt> ReactionsIdByString;
 private:
     SimulationSpaceVoxel Space[NumberOfVoxelSimulationSpaceInEachDimensionMaxConst][NumberOfVoxelSimulationSpaceInEachDimensionMaxConst][NumberOfVoxelSimulationSpaceInEachDimensionMaxConst]{};
 private:
@@ -44,6 +47,7 @@ public:
     SimulationSpaceVoxel GetSimulationSpaceVoxel(UnsignedInt X, UnsignedInt Y, UnsignedInt Z);
 public:
     void AddParticleKind(const ParticleKind& ParticleParam);
+    void AddReaction(const Reaction& ReactionParam);
 public:
     void GenerateRandomParticlesInSelectedSpace(UnsignedInt NumberOfRandomParticles, UnsignedInt XStartParam, UnsignedInt YStartParam, UnsignedInt ZStartParam, UnsignedInt XStepParam, UnsignedInt YStepParam, UnsignedInt ZStepParam, UnsignedInt XSizeParam, UnsignedInt YSizeParam, UnsignedInt ZSizeParam);
     void GenerateOneStepOfDiffusion(UnsignedInt XStartParam, UnsignedInt YStartParam, UnsignedInt ZStartParam, UnsignedInt XSizeParam, UnsignedInt YSizeParam, UnsignedInt ZSizeParam);
