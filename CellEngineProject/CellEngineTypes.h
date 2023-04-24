@@ -9,9 +9,6 @@
 using SignedInt = std::int64_t;
 using UnsignedInt = std::uint64_t;
 
-//using EntityIdInt = std::uint32_t;
-//using ChainIdInt = std::uint32_t;
-
 using EntityIdInt = std::uint16_t;
 using ChainIdInt = std::uint16_t;
 
@@ -24,8 +21,7 @@ struct vector3
 using vector3_16 = vector3<uint16_t>;
 using vector3_64 = vector3<uint64_t>;
 
-//inline vector3_16 GetVector3FormVMathVec3(const vmath::vec3& Color)
-inline vector3_16 GetVector3FormVMathVec3(vmath::vec3 Color)
+inline vector3_16 GetVector3FormVMathVec3(const vmath::vec3& Color)
 {
     return {static_cast<uint16_t>(Color.X() * 100.00f), static_cast<uint16_t>(Color.Y() * 100.00f), static_cast<uint16_t>(Color.Z() * 100.00f) };
 }

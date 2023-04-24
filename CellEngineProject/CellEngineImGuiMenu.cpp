@@ -647,9 +647,9 @@ public:
 
                 ImGui::Render();
 
-                int ImGuiMenyWindowWidth, ImGuiMenyWindowHeight;
-                glfwGetFramebufferSize(ImGuiMenuWindow, &ImGuiMenyWindowWidth, &ImGuiMenyWindowHeight);
-                glViewport(0, 0, ImGuiMenyWindowWidth, ImGuiMenyWindowHeight);
+                int ImGuiMenuWindowWidth, ImGuiMenuWindowHeight;
+                glfwGetFramebufferSize(ImGuiMenuWindow, &ImGuiMenuWindowWidth, &ImGuiMenuWindowHeight);
+                glViewport(0, 0, ImGuiMenuWindowWidth, ImGuiMenuWindowHeight);
                 ImVec4 BackgroundColor = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
                 glClearColor(BackgroundColor.x * BackgroundColor.w, BackgroundColor.y * BackgroundColor.w, BackgroundColor.z * BackgroundColor.w, BackgroundColor.w);
                 glClear(GL_COLOR_BUFFER_BIT);
@@ -678,13 +678,18 @@ public:
 public:
     unique_ptr<CellEngineOpenGLVisualiser> CellEngineOpenGLVisualiserPointer;
 
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wreturn-type"
     static unique_ptr<CellEngineOpenGLVisualiser> CreateCellEngineOpenGLVisualiserObject(const CellEngineConfigData::TypesOfSpace TypeOfSpace)
     {
-        if (TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSpace)
-            return make_unique<CellEngineOpenGLVisualiserOfFullAtomSimulationSpace>();
-        else
-            return make_unique<CellEngineOpenGLVisualiserOfVoxelSimulationSpace>();
+        switch (TypeOfSpace)
+        {
+            case CellEngineConfigData::TypesOfSpace::FullAtomSpace : return make_unique<CellEngineOpenGLVisualiserOfFullAtomSimulationSpace>();
+            case CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace : return make_unique<CellEngineOpenGLVisualiserOfVoxelSimulationSpace>();
+            default : break;
+        }
     }
+    #pragma GCC diagnostic pop
 
     void CellEngineOpenGLVisualiserThreadFunction(int XPosWindow, int YPosWindow, int WidthWindow, int HeightWindow)
     {
@@ -703,7 +708,7 @@ public:
         {
             ReadInitConfiguration(argc, argv);
 
-                                                                                                                        //TestWellStirredChemicalReactionsSimulation(); exit(0);
+            //TestWellStirredChemicalReactionsSimulation(); exit(0);
 
             GLFWwindow* ImGuiMenuWindow = PrepareImGuiMenuGLFWData();
 

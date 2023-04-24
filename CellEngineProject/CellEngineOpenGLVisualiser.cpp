@@ -25,10 +25,6 @@ void CellEngineOpenGLVisualiser::InitExternalData()
     try
     {
         CellEngineDataFileObjectPointer->ReadDataFromFile();
-//                                                                                                                        //CellEngineConfigDataObject.CellStateFileName = "../../WholeCellData/Mycoplasma Genitalium/cellpack_atom_instances_6973_curated.cif";
-//
-//                                                                                                                        CellEngineConfigDataObject.CellStateFileName = "../../WholeCellData/Mycoplasma Genitalium/cellpack_atom_instances_1189_curated.cif";
-//                                                                                                                        CellEngineDataFileObjectPointer->ReadDataFromFile();
 
         GetMemoryForBondsBetweenAtomsToDraw();
     }

@@ -1,6 +1,6 @@
 
-#ifndef _ARC_BALL_h
-#define _ARC_BALL_h
+#ifndef ARC_BALL_H
+#define ARC_BALL_H
 
 #include <cmath>
 
@@ -294,10 +294,10 @@ public:
 	void drag(const Point2fT* NewPt, Quat4fT* NewRot);
 
 protected:
-	Vector3fT StVec;
-	Vector3fT EnVec;
-	GLfloat AdjustWidth;
-	GLfloat AdjustHeight;
+	Vector3fT StVec{};
+	Vector3fT EnVec{};
+	GLfloat AdjustWidth{};
+	GLfloat AdjustHeight{};
 
 } ArcBallT;
 

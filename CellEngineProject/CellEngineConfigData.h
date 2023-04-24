@@ -83,6 +83,7 @@ public:
     TypesOfSpace TypeOfSpace = TypesOfSpace::FullAtomSpace;
 public:
     UnsignedInt NumberOfVoxelSimulationSpaceInEachDimension{};
+    float DivisionFactorForVoxelSimulationSpace{};
 public:
     enum class RandomColorEngineTypes : UnsignedInt
     {
@@ -298,6 +299,10 @@ public:
         return { 0, 0, 0 };
     }
 
+    static bool IsNucleotide(const std::string_view ChainName)
+    {
+        return (ChainName == "NU01" || ChainName == "NU11" || ChainName == "NU02" || ChainName == "NU12" || ChainName == "NU03" || ChainName == "NU13" || ChainName == "NU04" || ChainName == "NU14");
+    }
 };
 
 inline CellEngineConfigData CellEngineConfigDataObject;

@@ -20,18 +20,21 @@
 
 using namespace std;
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wreturn-type"
 std::unique_ptr<CellEngineDataFile> CreateCellEngineDataFileObject(const string_view& CellStateFileName)
 {
     if (string_utils::check_end_str(CellStateFileName, ".pdb") == true)
         return make_unique<CellEnginePDBDataFile>();
     else
-    {
-        if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)
-            return make_unique<CellEngineCIFDataFileReaderOfVoxelSimulationSpace>();
-        else
-            return make_unique<CellEngineCIFDataFileReaderOfFullAtomSimulationSpace>();
-    }
-};
+        switch (CellEngineConfigDataObject.TypeOfSpace)
+        {
+            case CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace : return make_unique<CellEngineCIFDataFileReaderOfVoxelSimulationSpace>();
+            case CellEngineConfigData::TypesOfSpace::FullAtomSpace : return make_unique<CellEngineCIFDataFileReaderOfFullAtomSimulationSpace>();
+            default : break;
+        }
+}
+#pragma GCC diagnostic pop
 
 void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const char* ConfigFileNameParameter, const UnsignedInt ExecuteCellStateId)
 {
@@ -118,7 +121,10 @@ void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const ch
                         CellEngineConfigDataObject.TypeOfSpace = static_cast<CellEngineConfigData::TypesOfSpace>(CellStatePropertyTreeElement.second.get<UnsignedInt>("TypeOfSpace"));
 
                         if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)
+                        {
                             CellEngineConfigDataObject.NumberOfVoxelSimulationSpaceInEachDimension = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfVoxelSimulationSpaceInEachDimension");
+                            CellEngineConfigDataObject.DivisionFactorForVoxelSimulationSpace = CellStatePropertyTreeElement.second.get<float>("DivisionFactorForVoxelSimulationSpace");
+                        }
 
                         auto CellStateFileName = CellStatePropertyTreeElement.second.get<string>("CellStateFileName");
 
