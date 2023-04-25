@@ -8,14 +8,17 @@
 #include "CellEngineReaction.h"
 #include "CellEngineConfigData.h"
 
-//constexpr UnsignedInt NumberOfVoxelSimulationSpaceInEachDimensionMaxConst = 1024;
-constexpr UnsignedInt NumberOfVoxelSimulationSpaceInEachDimensionMaxConst = 2048;
-
 struct SimulationSpaceVoxel
 {
     EntityIdInt EntityId;
     ChainIdInt ChainId;
 };
+
+constexpr UnsignedInt NumberOfVoxelSimulationSpaceInEachDimensionMaxConst1024 = 1024;
+constexpr UnsignedInt NumberOfVoxelSimulationSpaceInEachDimensionMaxConst2048 = 2048;
+
+using Space_1024_1024_1024 = SimulationSpaceVoxel[NumberOfVoxelSimulationSpaceInEachDimensionMaxConst1024][NumberOfVoxelSimulationSpaceInEachDimensionMaxConst1024][NumberOfVoxelSimulationSpaceInEachDimensionMaxConst1024];
+using Space_2048_2048_2048 = SimulationSpaceVoxel[NumberOfVoxelSimulationSpaceInEachDimensionMaxConst2048][NumberOfVoxelSimulationSpaceInEachDimensionMaxConst2048][NumberOfVoxelSimulationSpaceInEachDimensionMaxConst2048];
 
 class CellEngineVoxelSimulationSpace
 {
@@ -26,7 +29,12 @@ private:
     std::vector<Reaction> Reactions;
     std::unordered_map<std::string, UnsignedInt> ReactionsIdByString;
 private:
-    SimulationSpaceVoxel Space[NumberOfVoxelSimulationSpaceInEachDimensionMaxConst][NumberOfVoxelSimulationSpaceInEachDimensionMaxConst][NumberOfVoxelSimulationSpaceInEachDimensionMaxConst]{};
+    void* SpacePointer;
+private:
+    inline SimulationSpaceVoxel& GetSpaceVoxel(UnsignedInt x, UnsignedInt y, UnsignedInt z)
+    {
+        return CellEngineConfigDataObject.NumberOfVoxelSimulationSpaceInEachDimension == 2048 ? (*static_cast<Space_2048_2048_2048*>(SpacePointer))[x][y][z] : (*static_cast<Space_1024_1024_1024*>(SpacePointer))[x][y][z];
+    }
 private:
     UnsignedInt XMin{}, XMax{}, YMin{}, YMax{}, ZMin{}, ZMax{};
 public:
@@ -53,6 +61,7 @@ public:
     void GenerateOneStepOfDiffusion(UnsignedInt XStartParam, UnsignedInt YStartParam, UnsignedInt ZStartParam, UnsignedInt XSizeParam, UnsignedInt YSizeParam, UnsignedInt ZSizeParam);
 public:
     CellEngineVoxelSimulationSpace();
+    ~CellEngineVoxelSimulationSpace();
 };
 
 #endif

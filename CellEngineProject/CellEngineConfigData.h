@@ -273,13 +273,13 @@ public:
             switch (ChainId)
             {
                 case 01:
-                case 11: return DNANR1Color; break;
+                case 11: return DNANR1Color;
                 case 02:
-                case 12: return DNANR2Color; break;
+                case 12: return DNANR2Color;
                 case 03:
-                case 13: return DNANR3Color; break;
+                case 13: return DNANR3Color;
                 case 04:
-                case 14: return DNANR4Color; break;
+                case 14: return DNANR4Color;
                 default : break;
             }
         }
@@ -288,10 +288,10 @@ public:
         {
             switch (ChainId)
             {
-                case 01: return RNANR1Color; break;
-                case 02: return RNANR2Color; break;
-                case 03: return RNANR3Color; break;
-                case 04: return RNANR4Color; break;
+                case 01: return RNANR1Color;
+                case 02: return RNANR2Color;
+                case 03: return RNANR3Color;
+                case 04: return RNANR4Color;
                 default : break;
             }
         }
