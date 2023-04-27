@@ -85,6 +85,10 @@ public:
     UnsignedInt NumberOfVoxelSimulationSpaceInEachDimension{};
     float DivisionFactorForVoxelSimulationSpace{};
 public:
+    UnsignedInt VoxelSimulationSpaceSelectionStartX, VoxelSimulationSpaceSelectionStartY, VoxelSimulationSpaceSelectionStartZ;
+    UnsignedInt VoxelSimulationSpaceSelectionStepX, VoxelSimulationSpaceSelectionStepY, VoxelSimulationSpaceSelectionStepZ;
+    UnsignedInt VoxelSimulationSpaceSelectionSizeX, VoxelSimulationSpaceSelectionSizeY, VoxelSimulationSpaceSelectionSizeZ;
+public:
     enum class RandomColorEngineTypes : UnsignedInt
     {
         Rand = 1,

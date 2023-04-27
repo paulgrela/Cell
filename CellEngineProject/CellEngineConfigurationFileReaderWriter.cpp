@@ -124,6 +124,15 @@ void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const ch
                         {
                             CellEngineConfigDataObject.NumberOfVoxelSimulationSpaceInEachDimension = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfVoxelSimulationSpaceInEachDimension");
                             CellEngineConfigDataObject.DivisionFactorForVoxelSimulationSpace = CellStatePropertyTreeElement.second.get<float>("DivisionFactorForVoxelSimulationSpace");
+                            CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartX = CellStatePropertyTreeElement.second.get<UnsignedInt>("VoxelSimulationSpaceSelectionStartX");
+                            CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartY = CellStatePropertyTreeElement.second.get<UnsignedInt>("VoxelSimulationSpaceSelectionStartY");
+                            CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartZ = CellStatePropertyTreeElement.second.get<UnsignedInt>("VoxelSimulationSpaceSelectionStartZ");
+                            CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStepX = CellStatePropertyTreeElement.second.get<UnsignedInt>("VoxelSimulationSpaceSelectionStepX");
+                            CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStepY = CellStatePropertyTreeElement.second.get<UnsignedInt>("VoxelSimulationSpaceSelectionStepY");
+                            CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStepZ = CellStatePropertyTreeElement.second.get<UnsignedInt>("VoxelSimulationSpaceSelectionStepZ");
+                            CellEngineConfigDataObject.VoxelSimulationSpaceSelectionSizeX = CellStatePropertyTreeElement.second.get<UnsignedInt>("VoxelSimulationSpaceSelectionSizeX");
+                            CellEngineConfigDataObject.VoxelSimulationSpaceSelectionSizeY = CellStatePropertyTreeElement.second.get<UnsignedInt>("VoxelSimulationSpaceSelectionSizeY");
+                            CellEngineConfigDataObject.VoxelSimulationSpaceSelectionSizeZ = CellStatePropertyTreeElement.second.get<UnsignedInt>("VoxelSimulationSpaceSelectionSizeZ");
                         }
 
                         auto CellStateFileName = CellStatePropertyTreeElement.second.get<string>("CellStateFileName");

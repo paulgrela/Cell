@@ -2840,6 +2840,18 @@
                         <NumberOfVoxelSimulationSpaceInEachDimension>1024</NumberOfVoxelSimulationSpaceInEachDimension> <!--1024 or 2048 or other-->
                         <DivisionFactorForVoxelSimulationSpace>4.0</DivisionFactorForVoxelSimulationSpace> <!--4 or 2 or other-->
 
+                        <VoxelSimulationSpaceSelectionStartX>512</VoxelSimulationSpaceSelectionStartX>
+                        <VoxelSimulationSpaceSelectionStartY>512</VoxelSimulationSpaceSelectionStartY>
+                        <VoxelSimulationSpaceSelectionStartZ>512</VoxelSimulationSpaceSelectionStartZ>
+
+                        <VoxelSimulationSpaceSelectionStepX>1</VoxelSimulationSpaceSelectionStepX>
+                        <VoxelSimulationSpaceSelectionStepY>1</VoxelSimulationSpaceSelectionStepY>
+                        <VoxelSimulationSpaceSelectionStepZ>1</VoxelSimulationSpaceSelectionStepZ>
+
+                        <VoxelSimulationSpaceSelectionSizeX>16</VoxelSimulationSpaceSelectionSizeX>
+                        <VoxelSimulationSpaceSelectionSizeY>16</VoxelSimulationSpaceSelectionSizeY>
+                        <VoxelSimulationSpaceSelectionSizeZ>16</VoxelSimulationSpaceSelectionSizeZ>
+
 			<CellStateFileName>../../WholeCellData/Mycoplasma Genitalium/MG_1184_cellpack_atom_instances_1.cif</CellStateFileName>
 
 			<ChosenStructureIndex>0</ChosenStructureIndex>
@@ -3071,6 +3083,18 @@
                         <TypeOfSpace>2</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
                         <NumberOfVoxelSimulationSpaceInEachDimension>2048</NumberOfVoxelSimulationSpaceInEachDimension> <!--1024 or 2048 or other-->
                         <DivisionFactorForVoxelSimulationSpace>2.0</DivisionFactorForVoxelSimulationSpace> <!--4 or 2 or other-->
+
+                        <VoxelSimulationSpaceSelectionStartX>789</VoxelSimulationSpaceSelectionStartX>
+                        <VoxelSimulationSpaceSelectionStartY>898</VoxelSimulationSpaceSelectionStartY>
+                        <VoxelSimulationSpaceSelectionStartZ>611</VoxelSimulationSpaceSelectionStartZ>
+
+                        <VoxelSimulationSpaceSelectionStepX>1</VoxelSimulationSpaceSelectionStepX>
+                        <VoxelSimulationSpaceSelectionStepY>1</VoxelSimulationSpaceSelectionStepY>
+                        <VoxelSimulationSpaceSelectionStepZ>1</VoxelSimulationSpaceSelectionStepZ>
+
+                        <VoxelSimulationSpaceSelectionSizeX>32</VoxelSimulationSpaceSelectionSizeX>
+                        <VoxelSimulationSpaceSelectionSizeY>32</VoxelSimulationSpaceSelectionSizeY>
+                        <VoxelSimulationSpaceSelectionSizeZ>32</VoxelSimulationSpaceSelectionSizeZ>
 
 			<CellStateFileName>../../WholeCellData/Mycoplasma Genitalium/MG_1184_cellpack_atom_instances_1.cif</CellStateFileName>
 

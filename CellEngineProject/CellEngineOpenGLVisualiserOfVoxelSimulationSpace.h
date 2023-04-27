@@ -25,27 +25,32 @@ public:
     VoxelSpaceDrawingTypes SpaceDrawingType = VoxelSpaceDrawingTypes::DrawVoxelSpaceFull;
     bool DrawEmptyVoxels = false;
 private:
-    UnsignedInt XStart = 512, YStart = 512, ZStart = 512;
-    UnsignedInt XStep = 1, YStep = 1, ZStep = 1;
-    UnsignedInt XSize = 16, YSize = 16, ZSize = 16;
+    UnsignedInt SelectionStartX{}, SelectionStartY{}, SelectionStartZ{};
+    UnsignedInt SelectionStepX{}, SelectionStepY{}, SelectionStepZ{};
+    UnsignedInt SelectionSizeX{}, SelectionSizeY{}, SelectionSizeZ{};
 public:
     inline std::tuple<UnsignedInt, UnsignedInt, UnsignedInt> GetStartPositions()
     {
-        return { XStart, YStart, ZStart };
+        return { SelectionStartX, SelectionStartY, SelectionStartZ };
     }
     inline std::tuple<UnsignedInt, UnsignedInt, UnsignedInt> GetSteps()
     {
-        return { XStep, YStep, ZStep };
+        return { SelectionStepX, SelectionStepY, SelectionStepZ };
     }
     inline std::tuple<UnsignedInt, UnsignedInt, UnsignedInt> GetSizes()
     {
-        return { XSize, YSize, ZSize };
+        return { SelectionSizeX, SelectionSizeY, SelectionSizeZ };
     }
-    inline void SetVoxelSpaceSelection(const UnsignedInt XStartParam, const UnsignedInt YStartParam, const UnsignedInt ZStartParam, const UnsignedInt XStepParam, const UnsignedInt YStepParam, const UnsignedInt ZStepParam, const UnsignedInt XSizeParam, const UnsignedInt YSizeParam, const UnsignedInt ZSizeParam)
+    inline void SetVoxelSpaceSelection(const UnsignedInt SelectionStartXParam, const UnsignedInt SelectionStartYParam, const UnsignedInt SelectionStartZParam, const UnsignedInt SelectionStepXParam, const UnsignedInt SelectionStepYParam, const UnsignedInt SelectionStepZParam, const UnsignedInt SelectionSizeXParam, const UnsignedInt SelectionSizeYParam, const UnsignedInt SelectionSizeZParam)
     {
-        XStart = XStartParam, YStart = YStartParam, ZStart = ZStartParam;
-        XStep = XStepParam, YStep = YStepParam, ZStep = ZStepParam;
-        XSize = XSizeParam, YSize = YSizeParam, ZSize = ZSizeParam;
+        SelectionStartX = SelectionStartXParam, SelectionStartY = SelectionStartYParam, SelectionStartZ = SelectionStartZParam;
+        SelectionStepX = SelectionStepXParam, SelectionStepY = SelectionStepYParam, SelectionStepZ = SelectionStepZParam;
+        SelectionSizeX = SelectionSizeXParam, SelectionSizeY = SelectionSizeYParam, SelectionSizeZ = SelectionSizeZParam;
+    }
+public:
+    CellEngineOpenGLVisualiserOfVoxelSimulationSpace()
+    {
+        SetVoxelSpaceSelection(CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartX, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartY, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartZ, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStepX, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStepY, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStepZ, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionSizeX, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionSizeY, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionSizeZ);
     }
 private:
     struct TemporaryRenderedVoxel
@@ -53,20 +58,20 @@ private:
         CellEngineAtom CellEngineAtomObject;
         UnsignedInt X, Y, Z;
     };
-    UnsignedInt SaveX{}, SaveY{}, SaveZ{};
+    UnsignedInt SaveXMousePosition{}, SaveYMousePosition{}, SaveZMousePosition{};
 public:
     inline void SaveVoxelPositionChosenByMouse()
     {
-        XStart = SaveX;
-        YStart = SaveY;
-        ZStart = SaveZ;
+        SelectionStartX = SaveXMousePosition;
+        SelectionStartY = SaveYMousePosition;
+        SelectionStartZ = SaveZMousePosition;
     }
 private:
     inline void SetSaveXYZPositions(const UnsignedInt SaveXParam, const UnsignedInt SaveYParam, const UnsignedInt SaveZParam)
     {
-        SaveX = SaveXParam;
-        SaveY = SaveYParam;
-        SaveZ = SaveZParam;
+        SaveXMousePosition = SaveXParam;
+        SaveYMousePosition = SaveYParam;
+        SaveZMousePosition = SaveZParam;
     }
 private:
     static inline float CovertToGraphicsCoordinateSelected(const UnsignedInt StartParam, const UnsignedInt SpaceP, const UnsignedInt SizeParam)
@@ -87,16 +92,16 @@ private:
     {
         try
         {
-            for (UnsignedInt SpaceXP = XStartParam; SpaceXP < XStartParam + XSizeParam; SpaceXP += XStepParam)
-                for (UnsignedInt SpaceYP = YStartParam; SpaceYP < YStartParam + YSizeParam; SpaceYP += YStepParam)
-                    for (UnsignedInt SpaceZP = ZStartParam; SpaceZP < ZStartParam + ZSizeParam; SpaceZP += ZStepParam)
-                        if (SpaceXP < CellEngineConfigDataObject.NumberOfVoxelSimulationSpaceInEachDimension &&  SpaceYP < CellEngineConfigDataObject.NumberOfVoxelSimulationSpaceInEachDimension && SpaceZP < CellEngineConfigDataObject.NumberOfVoxelSimulationSpaceInEachDimension)
+            for (UnsignedInt PosX = XStartParam; PosX < XStartParam + XSizeParam; PosX += XStepParam)
+                for (UnsignedInt PosY = YStartParam; PosY < YStartParam + YSizeParam; PosY += YStepParam)
+                    for (UnsignedInt PosZ = ZStartParam; PosZ < ZStartParam + ZSizeParam; PosZ += ZStepParam)
+                        if (PosX < CellEngineConfigDataObject.NumberOfVoxelSimulationSpaceInEachDimension && PosY < CellEngineConfigDataObject.NumberOfVoxelSimulationSpaceInEachDimension && PosZ < CellEngineConfigDataObject.NumberOfVoxelSimulationSpaceInEachDimension)
                         {
-                            SimulationSpaceVoxel SimulationSpaceVoxelObject = CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GetSimulationSpaceVoxel(SpaceXP, SpaceYP, SpaceZP);
+                            SimulationSpaceVoxel SimulationSpaceVoxelObject = CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GetSimulationSpaceVoxel(PosX, PosY, PosZ);
 
                             if (DrawEmptyVoxels == true || (DrawEmptyVoxels == false && SimulationSpaceVoxelObject.EntityId != 0 && CheckVisibilityOfParticles(SimulationSpaceVoxelObject.EntityId) == true))
                             {
-                                ConvertAtomPosToGraphicCoordinate(TempAtomObject, XStartParam, YStartParam, ZStartParam, SpaceXP, SpaceYP, SpaceZP, XSizeParam, YSizeParam, ZSizeParam);
+                                ConvertAtomPosToGraphicCoordinate(TempAtomObject, XStartParam, YStartParam, ZStartParam, PosX, PosY, PosZ, XSizeParam, YSizeParam, ZSizeParam);
 
                                 if (DrawEmptyVoxels == false || (DrawEmptyVoxels == true && SimulationSpaceVoxelObject.EntityId != 0))
                                 {
@@ -113,7 +118,7 @@ private:
                                 if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
                                 {
                                     glStencilFunc(GL_ALWAYS, uint8_t((TemporaryRenderedVoxelsList.size()) >> (8 * StencilBufferLoopCounter)), -1);
-                                    TemporaryRenderedVoxelsList.emplace_back(TemporaryRenderedVoxel{ TempAtomObject, SpaceXP, SpaceYP, SpaceZP });
+                                    TemporaryRenderedVoxelsList.emplace_back(TemporaryRenderedVoxel{TempAtomObject, PosX, PosY, PosZ });
                                 }
 
                                 RenderObject(TempAtomObject, ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, false, RenderObjectsBool);
@@ -147,20 +152,20 @@ private:
                 TemporaryRenderedVoxelsList.clear();
 
                 if (SpaceDrawingType == VoxelSpaceDrawingTypes::DrawVoxelSpaceFull)
-                    for (UnsignedInt SpaceX = XStart; SpaceX < XSize; SpaceX += XStep)
-                        for (UnsignedInt SpaceY = YStart; SpaceY < YSize; SpaceY += YStep)
-                            for (UnsignedInt SpaceZ = ZStart; SpaceZ < ZSize; SpaceZ += ZStep)
+                    for (UnsignedInt PosX = SelectionStartX; PosX < SelectionSizeX; PosX += SelectionStepX)
+                        for (UnsignedInt PosY = SelectionStartY; PosY < SelectionSizeY; PosY += SelectionStepY)
+                            for (UnsignedInt PosZ = SelectionStartZ; PosZ < SelectionSizeZ; PosZ += SelectionStepZ)
                             {
-                                TempAtomObject.SetAtomPositionsData(CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(SpaceX), CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(SpaceY), CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(SpaceZ));
+                                TempAtomObject.SetAtomPositionsData(CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(PosX), CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(PosY), CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(PosZ));
 
                                 if (RenderObject(TempAtomObject, ViewMatrix, true, false, true, NumberOfAllRenderedAtoms, false, !CellEngineConfigDataObject.ShowDetailsInAtomScale) == true)
                                 {
                                     NumberOfFoundParticlesCenterToBeRenderedInAtomDetails++;
-                                    RenderSelectedSpace(SpaceX, SpaceY, SpaceZ, CellEngineConfigDataObject.LoadOfAtomsStep, CellEngineConfigDataObject.LoadOfAtomsStep, CellEngineConfigDataObject.LoadOfAtomsStep, 64, 64, 64, NumberOfAllRenderedAtoms, ViewMatrix, TempAtomObject, TemporaryRenderedVoxelsList, StencilBufferLoopCounter);
+                                    RenderSelectedSpace(PosX, PosY, PosZ, CellEngineConfigDataObject.LoadOfAtomsStep, CellEngineConfigDataObject.LoadOfAtomsStep, CellEngineConfigDataObject.LoadOfAtomsStep, 64, 64, 64, NumberOfAllRenderedAtoms, ViewMatrix, TempAtomObject, TemporaryRenderedVoxelsList, StencilBufferLoopCounter);
                                 }
                             }
                 else
-                    RenderSelectedSpace(XStart, YStart, ZStart, XStep, YStep, ZStep, XSize, YSize, YSize, NumberOfAllRenderedAtoms, ViewMatrix, TempAtomObject, TemporaryRenderedVoxelsList, StencilBufferLoopCounter);
+                    RenderSelectedSpace(SelectionStartX, SelectionStartY, SelectionStartZ, SelectionStepX, SelectionStepY, SelectionStepZ, SelectionSizeX, SelectionSizeY, SelectionSizeY, NumberOfAllRenderedAtoms, ViewMatrix, TempAtomObject, TemporaryRenderedVoxelsList, StencilBufferLoopCounter);
 
                 if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
                     glReadPixels(GLint(MousePositionLocal.s.X), GLint((float)Info.WindowHeight - MousePositionLocal.s.Y - 1), 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &PartOfStencilBufferIndex[StencilBufferLoopCounter]);
