@@ -2837,12 +2837,12 @@
 
                 <CellState id="14">
                         <TypeOfSpace>2</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
-                        <NumberOfVoxelSimulationSpaceInEachDimension>1024</NumberOfVoxelSimulationSpaceInEachDimension> <!--1024 or 2048 or other-->
+                        <NumberOfVoxelsInVoxelSimulationSpaceInEachDimension>1024</NumberOfVoxelsInVoxelSimulationSpaceInEachDimension> <!--1024 or 2048 or other-->
                         <DivisionFactorForVoxelSimulationSpace>4.0</DivisionFactorForVoxelSimulationSpace> <!--4 or 2 or other-->
 
-                        <VoxelSimulationSpaceSelectionStartX>512</VoxelSimulationSpaceSelectionStartX>
-                        <VoxelSimulationSpaceSelectionStartY>512</VoxelSimulationSpaceSelectionStartY>
-                        <VoxelSimulationSpaceSelectionStartZ>512</VoxelSimulationSpaceSelectionStartZ>
+                        <VoxelSimulationSpaceSelectionStartXPos>512</VoxelSimulationSpaceSelectionStartXPos>
+                        <VoxelSimulationSpaceSelectionStartYPos>512</VoxelSimulationSpaceSelectionStartYPos>
+                        <VoxelSimulationSpaceSelectionStartZPos>512</VoxelSimulationSpaceSelectionStartZPos>
 
                         <VoxelSimulationSpaceSelectionStepX>1</VoxelSimulationSpaceSelectionStepX>
                         <VoxelSimulationSpaceSelectionStepY>1</VoxelSimulationSpaceSelectionStepY>
@@ -3081,12 +3081,12 @@
 
                 <CellState id="15">
                         <TypeOfSpace>2</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
-                        <NumberOfVoxelSimulationSpaceInEachDimension>2048</NumberOfVoxelSimulationSpaceInEachDimension> <!--1024 or 2048 or other-->
+                        <NumberOfVoxelsInVoxelSimulationSpaceInEachDimension>2048</NumberOfVoxelsInVoxelSimulationSpaceInEachDimension> <!--1024 or 2048 or other-->
                         <DivisionFactorForVoxelSimulationSpace>2.0</DivisionFactorForVoxelSimulationSpace> <!--4 or 2 or other-->
 
-                        <VoxelSimulationSpaceSelectionStartX>789</VoxelSimulationSpaceSelectionStartX>
-                        <VoxelSimulationSpaceSelectionStartY>898</VoxelSimulationSpaceSelectionStartY>
-                        <VoxelSimulationSpaceSelectionStartZ>611</VoxelSimulationSpaceSelectionStartZ>
+                        <VoxelSimulationSpaceSelectionStartXPos>789</VoxelSimulationSpaceSelectionStartXPos>
+                        <VoxelSimulationSpaceSelectionStartYPos>898</VoxelSimulationSpaceSelectionStartYPos>
+                        <VoxelSimulationSpaceSelectionStartZPos>611</VoxelSimulationSpaceSelectionStartZPos>
 
                         <VoxelSimulationSpaceSelectionStepX>1</VoxelSimulationSpaceSelectionStepX>
                         <VoxelSimulationSpaceSelectionStepY>1</VoxelSimulationSpaceSelectionStepY>

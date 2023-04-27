@@ -82,10 +82,10 @@ public:
     };
     TypesOfSpace TypeOfSpace = TypesOfSpace::FullAtomSpace;
 public:
-    UnsignedInt NumberOfVoxelSimulationSpaceInEachDimension{};
+    UnsignedInt NumberOfVoxelsInVoxelSimulationSpaceInEachDimension{};
     float DivisionFactorForVoxelSimulationSpace{};
 public:
-    UnsignedInt VoxelSimulationSpaceSelectionStartX, VoxelSimulationSpaceSelectionStartY, VoxelSimulationSpaceSelectionStartZ;
+    UnsignedInt VoxelSimulationSpaceSelectionStartXPos, VoxelSimulationSpaceSelectionStartYPos, VoxelSimulationSpaceSelectionStartZPos;
     UnsignedInt VoxelSimulationSpaceSelectionStepX, VoxelSimulationSpaceSelectionStepY, VoxelSimulationSpaceSelectionStepZ;
     UnsignedInt VoxelSimulationSpaceSelectionSizeX, VoxelSimulationSpaceSelectionSizeY, VoxelSimulationSpaceSelectionSizeZ;
 public:
