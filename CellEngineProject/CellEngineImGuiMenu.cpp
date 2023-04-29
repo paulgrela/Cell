@@ -12,6 +12,7 @@
 #include "DateTimeUtils.h"
 #include "ExceptionsMacro.h"
 
+#include "CellEngineUseful.h"
 #include "CellEngineDataFile.h"
 #include "CellEngineConfigData.h"
 #include "CellEngineOpenGLVisualiser.h"
@@ -485,7 +486,7 @@ public:
                 {
                     if (ImGui::ColorEdit3(string(AtomsKind.Name + " Atom Color").c_str(), (float*)&AtomsKind.ColorVmathVec3) == true)
                     {
-                        AtomsKind.Color = GetVector3FormVMathVec3(AtomsKind.ColorVmathVec3);
+                        AtomsKind.Color = CellEngineUseful::GetVector3FormVMathVec3(AtomsKind.ColorVmathVec3);
                         ChangeColor = true;
                     }
                 }

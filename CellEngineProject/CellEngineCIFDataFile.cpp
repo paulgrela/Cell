@@ -8,6 +8,7 @@
 
 #include "StringUtils.h"
 #include "DateTimeUtils.h"
+#include "CellEngineUseful.h"
 #include "CellEngineColors.h"
 #include "CellEngineConfigData.h"
 #include "CellEngineCIFDataFile.h"
@@ -99,10 +100,10 @@ void CellEngineCIFDataFile::ReadDataFromFile()
                 if (ParticleKindObjectIterator == CellEngineConfigDataObject.ParticlesKindsXML.end())
                 {
                     auto OthersParticleKindObjectIterator = CellEngineConfigDataObject.ParticlesKindsXML.find(10000);
-                    CellEngineConfigDataObject.ParticlesKinds.emplace_back(GraphicParticleKind{static_cast<UnsignedInt>(stoi(AtomFields[2])), OthersParticleKindObjectIterator->second.Visible, OthersParticleKindObjectIterator->second.SizeX, OthersParticleKindObjectIterator->second.SizeY, OthersParticleKindObjectIterator->second.SizeZ, OthersParticleKindObjectIterator->second.ParticleColor, OthersParticleKindObjectIterator->second.ParticleColor, GetVector3FormVMathVec3(CellEngineColorsObject.GetRandomColor()), OthersParticleKindObjectIterator->second.NameFromXML, AtomFields[5].substr(1, AtomFields[5].length() - 2) });
+                    CellEngineConfigDataObject.ParticlesKinds.emplace_back(GraphicParticleKind{static_cast<UnsignedInt>(stoi(AtomFields[2])), OthersParticleKindObjectIterator->second.Visible, OthersParticleKindObjectIterator->second.SizeX, OthersParticleKindObjectIterator->second.SizeY, OthersParticleKindObjectIterator->second.SizeZ, OthersParticleKindObjectIterator->second.ParticleColor, OthersParticleKindObjectIterator->second.ParticleColor, CellEngineUseful::GetVector3FormVMathVec3(CellEngineColorsObject.GetRandomColor()), OthersParticleKindObjectIterator->second.NameFromXML, AtomFields[5].substr(1, AtomFields[5].length() - 2) });
                 }
                 else
-                    CellEngineConfigDataObject.ParticlesKinds.emplace_back(GraphicParticleKind{static_cast<UnsignedInt>(stoi(AtomFields[2])), ParticleKindObjectIterator->second.Visible, ParticleKindObjectIterator->second.SizeX, ParticleKindObjectIterator->second.SizeY, ParticleKindObjectIterator->second.SizeZ, ParticleKindObjectIterator->second.ParticleColor, ParticleKindObjectIterator->second.ParticleColor, GetVector3FormVMathVec3(CellEngineColorsObject.GetRandomColor()), ParticleKindObjectIterator->second.NameFromXML, AtomFields[5].substr(1, AtomFields[5].length() - 2) });
+                    CellEngineConfigDataObject.ParticlesKinds.emplace_back(GraphicParticleKind{static_cast<UnsignedInt>(stoi(AtomFields[2])), ParticleKindObjectIterator->second.Visible, ParticleKindObjectIterator->second.SizeX, ParticleKindObjectIterator->second.SizeY, ParticleKindObjectIterator->second.SizeZ, ParticleKindObjectIterator->second.ParticleColor, ParticleKindObjectIterator->second.ParticleColor, CellEngineUseful::GetVector3FormVMathVec3(CellEngineColorsObject.GetRandomColor()), ParticleKindObjectIterator->second.NameFromXML, AtomFields[5].substr(1, AtomFields[5].length() - 2) });
 
                 CellEngineConfigDataObject.ParticlesKindsPos[stoi(AtomFields[2])] = CellEngineConfigDataObject.ParticlesKinds.size() - 1;
             }
@@ -168,10 +169,10 @@ void CellEngineCIFDataFile::ReadDataFromFile()
 
                     for (const auto& AppliedChainName : AppliedChainsNames)
                     {
-                        if (CellEngineConfigData::IsNucleotide(AppliedChainName))
+                        if (CellEngineUseful::IsNucleotide(AppliedChainName))
                         {
                             NumberOfNucleotidesInDNA++;
-                            AddNewParticle(stoi(std::string(AppliedChainName).substr(2, 2)));
+                            AddNewParticle(CellEngineUseful::GetChainIdFromChainName(AppliedChainName));
                         }
 
                         auto AtomsForChainNameIterator = ChainsNames.find(AppliedChainName);
@@ -188,7 +189,7 @@ void CellEngineCIFDataFile::ReadDataFromFile()
                             {
                                 NumberOfAtoms++;
 
-                                if (CellEngineConfigData::IsNucleotide(AppliedChainName))
+                                if (CellEngineUseful::IsNucleotide(AppliedChainName))
                                     NumberOfAtomsDNA++;
 
                                 auto TransformationMatrixIterator = TransformationsMatrixes.find(AppliedMatrixId);
@@ -211,8 +212,8 @@ void CellEngineCIFDataFile::ReadDataFromFile()
 
                                 AppliedAtom.SetAtomPositionsData(Result[0], Result[1], Result[2]);
 
-                                AppliedAtom.UniqueParticleColor = GetVector3FormVMathVec3(UniqueParticleColor);
-                                AppliedAtom.RandomParticleKindColor = GetVector3FormVMathVec3(ChainColor);
+                                AppliedAtom.UniqueParticleColor = CellEngineUseful::GetVector3FormVMathVec3(UniqueParticleColor);
+                                AppliedAtom.RandomParticleKindColor = CellEngineUseful::GetVector3FormVMathVec3(ChainColor);
 
                                 InsertAtom(LocalCellEngineAllAtomsObject, AppliedAtom);
                             }

@@ -216,14 +216,6 @@ public:
 
         return AtomKindObjectIterator;
     }
-    inline bool IsDNAorRNA(const EntityIdInt EntityId) const
-    {
-        return EntityId == DNAIdentifier || EntityId == RNAIdentifier;
-    }
-    static bool IsNucleotide(const std::string_view ChainName)
-    {
-        return (ChainName == "NU01" || ChainName == "NU11" || ChainName == "NU02" || ChainName == "NU12" || ChainName == "NU03" || ChainName == "NU13" || ChainName == "NU04" || ChainName == "NU14");
-    }
 };
 
 inline CellEngineConfigData CellEngineConfigDataObject;

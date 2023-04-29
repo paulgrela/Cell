@@ -8,7 +8,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 set(CMAKE_CXX_FLAGS "-Ofast")
-set(CMAKE_CXX_FLAGS "-fmodules-ts")
 
 LINK_DIRECTORIES(${CMAKE_SOURCE_DIR}/lib)
 
@@ -25,23 +24,25 @@ endif()
 
 set(COMMON_LIBS ${COMMON_LIBS} ${EXTRA_LIBS})
 
-add_library(sb7
-		srcsb7/sb7.cpp
-		srcsb7/sb7color.cpp
-		srcsb7/sb7ktx.cpp
-		srcsb7/sb7object.cpp
-		srcsb7/sb7shader.cpp
-		srcsb7/sb7textoverlay.cpp
-		srcsb7/gl3w.c)
+add_library(
+	sb7
+	srcsb7/sb7.cpp
+	srcsb7/sb7color.cpp
+	srcsb7/sb7ktx.cpp
+	srcsb7/sb7object.cpp
+	srcsb7/sb7shader.cpp
+	srcsb7/sb7textoverlay.cpp
+	srcsb7/gl3w.c)
 
-add_library(imgui
-		extern/imgui/imgui.cpp
-		extern/imgui/imgui_demo.cpp
-		extern/imgui/imgui_draw.cpp
-		extern/imgui/imgui_tables.cpp
-		extern/imgui/imgui_widgets.cpp
-		extern/imgui/backends/imgui_impl_glfw.cpp
-		extern/imgui/backends/imgui_impl_opengl3.cpp)
+add_library(
+	imgui
+	extern/imgui/imgui.cpp
+	extern/imgui/imgui_demo.cpp
+	extern/imgui/imgui_draw.cpp
+	extern/imgui/imgui_tables.cpp
+	extern/imgui/imgui_widgets.cpp
+	extern/imgui/backends/imgui_impl_glfw.cpp
+	extern/imgui/backends/imgui_impl_opengl3.cpp)
 
 install(TARGETS sb7 DESTINATION lib/sb7)
 
@@ -76,6 +77,7 @@ add_executable(
 	../Common/DateTimeUtils/DateTimeUtils.h
 	../Common/DateTimeUtils/DateTimeUtils.cpp
 	CellEngineTypes.h
+	CellEngineUseful.h
 	CellEngineColors.h
 	CellEngineColors.cpp
 	CellEngineAtom.h

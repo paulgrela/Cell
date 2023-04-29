@@ -14,6 +14,7 @@
 #include "DateTimeUtils.h"
 #include "ExceptionsMacro.h"
 
+#include "CellEngineUseful.h"
 #include "CellEngineDataFile.h"
 #include "CellEngineConfigData.h"
 #include "CellEngineOpenGLVisualiser.h"
@@ -299,7 +300,7 @@ vector3_16 CellEngineOpenGLVisualiser::GetColor(const T& Object, bool Chosen)
     try
     {
         if (Chosen == true)
-            FinalColor = GetVector3FormVMathVec3(vmath::FromVec4ToVec3(sb7::color::Yellow));
+            FinalColor = CellEngineUseful::GetVector3FormVMathVec3(vmath::FromVec4ToVec3(sb7::color::Yellow));
         else
             switch (CellEngineConfigDataObject.MakeColorsTypeObject)
             {
@@ -349,7 +350,7 @@ bool CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom& AtomObject, 
         vmath::vec3 SizeLocal = GetSize(AtomObject);
         vmath::mat4 ModelMatrix = vmath::translate(AtomPosition.X() - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomPosition.Y() + CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomPosition.Z() + CellEngineConfigDataObject.CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(SizeLocal.X(), SizeLocal.Y(), SizeLocal.Z()));
 
-        FinalVisibilityInModelWorld = CreateUniformBlockForVertexShader(AtomPosition, GetVMathVec3FromVector3(GetColor<CellEngineAtom>(AtomObject, Chosen)), ViewMatrix, ModelMatrix, CountNewPosition, DrawCenter, DrawOutsideBorder, true);
+        FinalVisibilityInModelWorld = CreateUniformBlockForVertexShader(AtomPosition, CellEngineUseful::GetVMathVec3FromVector3(GetColor<CellEngineAtom>(AtomObject, Chosen)), ViewMatrix, ModelMatrix, CountNewPosition, DrawCenter, DrawOutsideBorder, true);
 
         if (RenderObjectParameter == true)
             AtomGraphicsObject.Render();

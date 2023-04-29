@@ -6,6 +6,7 @@
 
 #include "CellEngineDataFile.h"
 #include "CellEngineColors.h"
+#include "CellEngineUseful.h"
 #include "CellEngineConfigData.h"
 #include "CellEngineOpenGLVisualiser.h"
 #include "CellEngineVoxelSimulationSpace.h"
@@ -87,12 +88,12 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSelectedSpace(const
                                 auto ParticleKindObject = CellEngineConfigDataObject.ParticlesKinds[CellEngineConfigDataObject.ParticlesKindsPos.find(SimulationSpaceVoxelObject.EntityId)->second];
                                 TempAtomObject.AtomColor = ParticleKindObject.AtomColor;
                                 TempAtomObject.ParticleColor = ParticleKindObject.ParticleColor;
-                                TempAtomObject.UniqueParticleColor = (CellEngineConfigDataObject.IsDNAorRNA(TempAtomObject.EntityId) == true ? SimulationSpaceVoxelObject.UniqueColor : ParticleKindObject.RandomParticleColor);
-                                TempAtomObject.RandomParticleKindColor = (CellEngineConfigDataObject.IsDNAorRNA(TempAtomObject.EntityId) == true ? CellEngineColorsObject.GetDNAorRNAColor(TempAtomObject.EntityId, SimulationSpaceVoxelObject.ChainId) : ParticleKindObject.RandomParticleColor);
+                                TempAtomObject.UniqueParticleColor = (CellEngineUseful::IsDNAorRNA(TempAtomObject.EntityId) == true ? SimulationSpaceVoxelObject.UniqueColor : ParticleKindObject.RandomParticleColor);
+                                TempAtomObject.RandomParticleKindColor = (CellEngineUseful::IsDNAorRNA(TempAtomObject.EntityId) == true ? CellEngineColorsObject.GetDNAorRNAColor(TempAtomObject.EntityId, SimulationSpaceVoxelObject.ChainId) : ParticleKindObject.RandomParticleColor);
                             }
                             else
                             if (DrawEmptyVoxels == true)
-                                TempAtomObject.AtomColor = TempAtomObject.ParticleColor = TempAtomObject.RandomParticleKindColor = GetVector3FormVMathVec3(vmath::FromVec4ToVec3(sb7::color::DeepSkyBlue));
+                                TempAtomObject.AtomColor = TempAtomObject.ParticleColor = TempAtomObject.RandomParticleKindColor = CellEngineUseful::GetVector3FormVMathVec3(vmath::FromVec4ToVec3(sb7::color::DeepSkyBlue));
 
                             if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
                             {

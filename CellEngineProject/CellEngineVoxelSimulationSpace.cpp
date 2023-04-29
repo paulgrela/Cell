@@ -1,5 +1,6 @@
 
 #include "CellEngineAtom.h"
+#include "CellEngineUseful.h"
 #include "CellEngineVoxelSimulationSpace.h"
 
 using namespace std;
@@ -101,17 +102,14 @@ void CellEngineVoxelSimulationSpace::SetAtomInVoxelSimulationSpace(const CellEng
         if (GetSpaceVoxel(PosX, PosY, PosZ).EntityId == 0)
         {
             GetSpaceVoxel(PosX, PosY, PosZ).EntityId = AppliedAtom.EntityId;
-            if (CellEngineConfigDataObject.IsDNAorRNA(AppliedAtom.EntityId) == true)
+            if (CellEngineUseful::IsDNAorRNA(AppliedAtom.EntityId) == true)
             {
-                GetSpaceVoxel(PosX, PosY, PosZ).ChainId = stoi(std::string(AppliedAtom.Chain).substr(2, 2));
+                UniqueIdInt ParticleKindIndex = CellEngineUseful::GetParticleKindIndexFromChainId(GetSpaceVoxel(PosX, PosY, PosZ).ChainId = CellEngineUseful::GetChainIdFromChainName(AppliedAtom.Chain));
 
-                ChainIdInt ChainId = GetSpaceVoxel(PosX, PosY, PosZ).ChainId;
-                ChainId > 10 ? ChainId = (ChainId - 10) : ChainId;
-                Particles[ChainId].ParticlesObjects.back().ListOfVoxels.emplace_back(PosX, PosY, PosZ);
-                GetSpaceVoxel(PosX, PosY, PosZ).UniqueId = Particles[ChainId].ParticlesObjects.back().UniqueIdentifier = Particles[ChainId].ParticlesObjects.size() - 1;
+                Particles[ParticleKindIndex].ParticlesObjects.back().ListOfVoxels.emplace_back(PosX, PosY, PosZ);
+                GetSpaceVoxel(PosX, PosY, PosZ).UniqueId = Particles[ParticleKindIndex].ParticlesObjects.back().UniqueIdentifier = Particles[ParticleKindIndex].ParticlesObjects.size() - 1;
 
                 GetSpaceVoxel(PosX, PosY, PosZ).UniqueColor = AppliedAtom.UniqueParticleColor;
-                //Particles[GetSpaceVoxel(PosX, PosY, PosZ).ChainId].ParticlesObjects.back().ListOfVoxels.emplace_back(PosX, PosY, PosZ);
             }
         }
     }
