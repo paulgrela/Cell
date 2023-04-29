@@ -85,9 +85,9 @@ public:
     UnsignedInt NumberOfVoxelsInVoxelSimulationSpaceInEachDimension{};
     float DivisionFactorForVoxelSimulationSpace{};
 public:
-    UnsignedInt VoxelSimulationSpaceSelectionStartXPos, VoxelSimulationSpaceSelectionStartYPos, VoxelSimulationSpaceSelectionStartZPos;
-    UnsignedInt VoxelSimulationSpaceSelectionStepX, VoxelSimulationSpaceSelectionStepY, VoxelSimulationSpaceSelectionStepZ;
-    UnsignedInt VoxelSimulationSpaceSelectionSizeX, VoxelSimulationSpaceSelectionSizeY, VoxelSimulationSpaceSelectionSizeZ;
+    UnsignedInt VoxelSimulationSpaceSelectionStartXPos{}, VoxelSimulationSpaceSelectionStartYPos{}, VoxelSimulationSpaceSelectionStartZPos{};
+    UnsignedInt VoxelSimulationSpaceSelectionStepX{}, VoxelSimulationSpaceSelectionStepY{}, VoxelSimulationSpaceSelectionStepZ{};
+    UnsignedInt VoxelSimulationSpaceSelectionSizeX{}, VoxelSimulationSpaceSelectionSizeY{}, VoxelSimulationSpaceSelectionSizeZ{};
 public:
     enum class RandomColorEngineTypes : UnsignedInt
     {
@@ -106,7 +106,8 @@ public:
     {
         DrawColorForEveryAtom = 1,
         DrawColorForEveryParticle = 2,
-        DrawRandomColorForEveryParticle = 3
+        DrawRandomColorForEveryParticleKind = 3,
+        DrawRandomColorForEveryUniqueParticle = 4
     };
     MakeColorsType MakeColorsTypeObject = MakeColorsType::DrawColorForEveryParticle;
 public:
@@ -176,7 +177,7 @@ public:
 public:
     UnsignedInt ChosenStructureIndex = 0;
 public:
-    vmath::vec3 BackgroundColors[4] = { sb7::FromVec4ToVec3(sb7::color::White), sb7::FromVec4ToVec3(sb7::color::White), sb7::FromVec4ToVec3(sb7::color::White), sb7::FromVec4ToVec3(sb7::color::White) };
+    vmath::vec3 BackgroundColors[4] = { vmath::FromVec4ToVec3(sb7::color::White), vmath::FromVec4ToVec3(sb7::color::White), vmath::FromVec4ToVec3(sb7::color::White), vmath::FromVec4ToVec3(sb7::color::White) };
     UnsignedInt ChosenBackgroundColor{};
 public:
     bool PrintAtomDescriptionOnScreen{};
@@ -215,94 +216,10 @@ public:
 
         return AtomKindObjectIterator;
     }
-public:
-    std::mt19937_64 mt64{ std::random_device{}() };
-    std::default_random_engine DefaultRandomEngineObject{ static_cast<unsigned int>(std::chrono::steady_clock::now().time_since_epoch().count()) };
-public:
-    std::uniform_real_distribution<float> UniformDistributionObject;
-public:
-    void SelectRandomEngineForColors()
-    {
-        try
-        {
-            switch (RandomColorEngineObject)
-            {
-                case RandomColorEngineTypes::Rand : srand((unsigned int)time(nullptr)); break;
-                case RandomColorEngineTypes::mt19937 : mt64.seed(std::random_device{}()); break;
-                case RandomColorEngineTypes::DefaultRandomEngine: DefaultRandomEngineObject.seed(static_cast<unsigned int>(std::chrono::steady_clock::now().time_since_epoch().count())); break;
-                default:  break;
-            }
-        }
-        CATCH("selecting random engines for colors");
-    }
-public:
-    vmath::vec3 GetRandomColor()
-    {
-        vmath::vec3 ReturnRandomColor;
-
-        try
-        {
-            switch (RandomColorEngineObject)
-            {
-                case CellEngineConfigData::RandomColorEngineTypes::Rand : ReturnRandomColor = vmath::vec3((float)rand() / static_cast<float>(RAND_MAX), (float)rand() / static_cast<float>(RAND_MAX), (float)rand() / static_cast<float>(RAND_MAX)); break;
-                case CellEngineConfigData::RandomColorEngineTypes::mt19937 : ReturnRandomColor = vmath::vec3(UniformDistributionObject(mt64), UniformDistributionObject(mt64), UniformDistributionObject(mt64)); break;
-                case CellEngineConfigData::RandomColorEngineTypes::DefaultRandomEngine : ReturnRandomColor = vmath::vec3(UniformDistributionObject(DefaultRandomEngineObject), UniformDistributionObject(DefaultRandomEngineObject), UniformDistributionObject(DefaultRandomEngineObject));break;
-                default:  break;
-            }
-        }
-        CATCH("getting random color")
-
-        return ReturnRandomColor;
-    }
-public:
     inline bool IsDNAorRNA(const EntityIdInt EntityId) const
     {
         return EntityId == DNAIdentifier || EntityId == RNAIdentifier;
     }
-public:
-    vector3_16 DNANR1Color = GetVector3FormVMathVec3(GetRandomColor());
-    vector3_16 DNANR2Color = GetVector3FormVMathVec3(GetRandomColor());
-    vector3_16 DNANR3Color = GetVector3FormVMathVec3(GetRandomColor());
-    vector3_16 DNANR4Color = GetVector3FormVMathVec3(GetRandomColor());
-
-    vector3_16 RNANR1Color = GetVector3FormVMathVec3(GetRandomColor());
-    vector3_16 RNANR2Color = GetVector3FormVMathVec3(GetRandomColor());
-    vector3_16 RNANR3Color = GetVector3FormVMathVec3(GetRandomColor());
-    vector3_16 RNANR4Color = GetVector3FormVMathVec3(GetRandomColor());
-
-    vector3_16 GetDNAorRNAColor(EntityIdInt EntityId, ChainIdInt ChainId) const
-    {
-        if (EntityId == DNAIdentifier)
-        {
-            switch (ChainId)
-            {
-                case 01:
-                case 11: return DNANR1Color;
-                case 02:
-                case 12: return DNANR2Color;
-                case 03:
-                case 13: return DNANR3Color;
-                case 04:
-                case 14: return DNANR4Color;
-                default : break;
-            }
-        }
-        else
-        if (EntityId == RNAIdentifier)
-        {
-            switch (ChainId)
-            {
-                case 01: return RNANR1Color;
-                case 02: return RNANR2Color;
-                case 03: return RNANR3Color;
-                case 04: return RNANR4Color;
-                default : break;
-            }
-        }
-
-        return { 0, 0, 0 };
-    }
-
     static bool IsNucleotide(const std::string_view ChainName)
     {
         return (ChainName == "NU01" || ChainName == "NU11" || ChainName == "NU02" || ChainName == "NU12" || ChainName == "NU03" || ChainName == "NU13" || ChainName == "NU04" || ChainName == "NU14");

@@ -9,11 +9,6 @@
 
 namespace sb7
 {
-    inline vmath::vec3 FromVec4ToVec3(const vmath::vec4& Vector4)
-    {
-        return { Vector4.data[0], Vector4.data[1], Vector4.data[2] };
-    }
-
     struct color
     {
         static const vmath::vec4 AliceBlue;

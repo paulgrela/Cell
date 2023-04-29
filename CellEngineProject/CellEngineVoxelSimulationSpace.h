@@ -12,6 +12,8 @@ struct SimulationSpaceVoxel
 {
     EntityIdInt EntityId;
     ChainIdInt ChainId;
+    UniqueIdInt UniqueId;
+    vector3_16 UniqueColor;
 };
 
 constexpr UnsignedInt NumberOfVoxelSimulationSpaceInEachDimensionMaxConst1024 = 1024;
@@ -53,6 +55,8 @@ public:
     void SetAtomInVoxelSimulationSpace(const CellEngineAtom& AppliedAtom);
 public:
     SimulationSpaceVoxel GetSimulationSpaceVoxel(UnsignedInt X, UnsignedInt Y, UnsignedInt Z);
+public:
+    void AddNewParticle(ChainIdInt ChainId);
 public:
     void AddParticleKind(const ParticleKind& ParticleParam);
     void AddReaction(const Reaction& ReactionParam);

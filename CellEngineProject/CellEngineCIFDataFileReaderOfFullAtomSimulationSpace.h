@@ -13,6 +13,10 @@ protected:
     {
     }
 protected:
+    void AddNewParticle(const ChainIdInt ChainId) override
+    {
+    }
+protected:
     void InsertAtom(std::vector<CellEngineAtom>& LocalCellEngineAllAtomsObject, const CellEngineAtom& AppliedAtom) override
     {
         LocalCellEngineAllAtomsObject.emplace_back(AppliedAtom);

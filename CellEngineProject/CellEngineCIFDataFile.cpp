@@ -8,6 +8,7 @@
 
 #include "StringUtils.h"
 #include "DateTimeUtils.h"
+#include "CellEngineColors.h"
 #include "CellEngineConfigData.h"
 #include "CellEngineCIFDataFile.h"
 
@@ -78,7 +79,7 @@ void CellEngineCIFDataFile::ReadDataFromFile()
         UnsignedInt NumberOfAtomsDNA = 0;
         UnsignedInt NumberOfNucleotidesInDNA = 0;
 
-        CellEngineConfigDataObject.SelectRandomEngineForColors();
+        CellEngineColorsObject.SelectRandomEngineForColors();
 
         smatch SMatchObject;
 
@@ -98,10 +99,10 @@ void CellEngineCIFDataFile::ReadDataFromFile()
                 if (ParticleKindObjectIterator == CellEngineConfigDataObject.ParticlesKindsXML.end())
                 {
                     auto OthersParticleKindObjectIterator = CellEngineConfigDataObject.ParticlesKindsXML.find(10000);
-                    CellEngineConfigDataObject.ParticlesKinds.emplace_back(GraphicParticleKind{static_cast<UnsignedInt>(stoi(AtomFields[2])), OthersParticleKindObjectIterator->second.Visible, OthersParticleKindObjectIterator->second.SizeX, OthersParticleKindObjectIterator->second.SizeY, OthersParticleKindObjectIterator->second.SizeZ, OthersParticleKindObjectIterator->second.ParticleColor, OthersParticleKindObjectIterator->second.ParticleColor, GetVector3FormVMathVec3(CellEngineConfigDataObject.GetRandomColor()), OthersParticleKindObjectIterator->second.NameFromXML, AtomFields[5].substr(1, AtomFields[5].length() - 2) });
+                    CellEngineConfigDataObject.ParticlesKinds.emplace_back(GraphicParticleKind{static_cast<UnsignedInt>(stoi(AtomFields[2])), OthersParticleKindObjectIterator->second.Visible, OthersParticleKindObjectIterator->second.SizeX, OthersParticleKindObjectIterator->second.SizeY, OthersParticleKindObjectIterator->second.SizeZ, OthersParticleKindObjectIterator->second.ParticleColor, OthersParticleKindObjectIterator->second.ParticleColor, GetVector3FormVMathVec3(CellEngineColorsObject.GetRandomColor()), OthersParticleKindObjectIterator->second.NameFromXML, AtomFields[5].substr(1, AtomFields[5].length() - 2) });
                 }
                 else
-                    CellEngineConfigDataObject.ParticlesKinds.emplace_back(GraphicParticleKind{static_cast<UnsignedInt>(stoi(AtomFields[2])), ParticleKindObjectIterator->second.Visible, ParticleKindObjectIterator->second.SizeX, ParticleKindObjectIterator->second.SizeY, ParticleKindObjectIterator->second.SizeZ, ParticleKindObjectIterator->second.ParticleColor, ParticleKindObjectIterator->second.ParticleColor, GetVector3FormVMathVec3(CellEngineConfigDataObject.GetRandomColor()), ParticleKindObjectIterator->second.NameFromXML, AtomFields[5].substr(1, AtomFields[5].length() - 2) });
+                    CellEngineConfigDataObject.ParticlesKinds.emplace_back(GraphicParticleKind{static_cast<UnsignedInt>(stoi(AtomFields[2])), ParticleKindObjectIterator->second.Visible, ParticleKindObjectIterator->second.SizeX, ParticleKindObjectIterator->second.SizeY, ParticleKindObjectIterator->second.SizeZ, ParticleKindObjectIterator->second.ParticleColor, ParticleKindObjectIterator->second.ParticleColor, GetVector3FormVMathVec3(CellEngineColorsObject.GetRandomColor()), ParticleKindObjectIterator->second.NameFromXML, AtomFields[5].substr(1, AtomFields[5].length() - 2) });
 
                 CellEngineConfigDataObject.ParticlesKindsPos[stoi(AtomFields[2])] = CellEngineConfigDataObject.ParticlesKinds.size() - 1;
             }
@@ -140,6 +141,7 @@ void CellEngineCIFDataFile::ReadDataFromFile()
             if (Line.substr(0, 4) == "1 '(")
             {
                 AppliedMatrixesIds.clear();
+                AppliedMatrixesIds.clear();
                 auto pos = Line.cbegin();
                 auto end = Line.cend();
                 for ( ; regex_search(pos, end, SMatchObject, RegexObject1); pos = SMatchObject.suffix().first)
@@ -155,7 +157,7 @@ void CellEngineCIFDataFile::ReadDataFromFile()
                 for ( ; regex_search(pos, end, SMatchObject, RegexObject2); pos = SMatchObject.suffix().first)
                     AppliedChainsNames.emplace_back(SMatchObject.str(1));
 
-                vmath::vec3 ChainColor = CellEngineConfigDataObject.GetRandomColor();
+                vmath::vec3 ChainColor = CellEngineColorsObject.GetRandomColor();
 
                 for (const auto& AppliedMatrixId : AppliedMatrixesIds)
                 {
@@ -167,7 +169,10 @@ void CellEngineCIFDataFile::ReadDataFromFile()
                     for (const auto& AppliedChainName : AppliedChainsNames)
                     {
                         if (CellEngineConfigData::IsNucleotide(AppliedChainName))
+                        {
                             NumberOfNucleotidesInDNA++;
+                            AddNewParticle(stoi(std::string(AppliedChainName).substr(2, 2)));
+                        }
 
                         auto AtomsForChainNameIterator = ChainsNames.find(AppliedChainName);
                         if (AtomsForChainNameIterator == ChainsNames.end())
@@ -176,6 +181,8 @@ void CellEngineCIFDataFile::ReadDataFromFile()
                         {
                             if (AtomsForChainNameIterator->second.empty() == true)
                                 LoggersManagerObject.Log(STREAM("ERROR IN CIF FILE - ChainsNames.find(AppliedChainName)->second.size() == 0 " << AppliedChainName));
+
+                            vmath::vec3 UniqueParticleColor = CellEngineColorsObject.GetRandomColor();
 
                             for (auto AppliedAtom : AtomsForChainNameIterator->second)
                             {
@@ -204,8 +211,8 @@ void CellEngineCIFDataFile::ReadDataFromFile()
 
                                 AppliedAtom.SetAtomPositionsData(Result[0], Result[1], Result[2]);
 
-                                AppliedAtom.RandomParticleColor = GetVector3FormVMathVec3(ChainColor);
-
+                                AppliedAtom.UniqueParticleColor = GetVector3FormVMathVec3(UniqueParticleColor);
+                                AppliedAtom.RandomParticleKindColor = GetVector3FormVMathVec3(ChainColor);
 
                                 InsertAtom(LocalCellEngineAllAtomsObject, AppliedAtom);
                             }

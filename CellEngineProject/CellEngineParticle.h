@@ -12,12 +12,16 @@
 class Particle
 {
 public:
-    bool SelectedForReaction;
+    bool SelectedForReaction{};
+public:
+    UnsignedInt UniqueIdentifier{};
 public:
     std::vector<vector3_64> ListOfVoxels;
 public:
     explicit Particle(std::vector<vector3_64>& ListOfVoxelsParam) : ListOfVoxels(std::move(ListOfVoxelsParam)), SelectedForReaction(false)
     {}
+public:
+    Particle() = default;
 };
 
 class ParticleKind

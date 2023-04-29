@@ -233,7 +233,7 @@ inline void CellEngineOpenGLVisualiser::DrawCenterPoint(UniformsBlock*  MatrixUn
     try
     {
         ModelMatrix = vmath::translate(0.0f, 0.0f, 0.0f) * vmath::scale(vmath::vec3(0.5, 0.5, 0.5));
-        MatrixUniformBlockForVertexShaderPointer->Color = sb7::FromVec4ToVec3(sb7::color::Purple);
+        MatrixUniformBlockForVertexShaderPointer->Color = vmath::FromVec4ToVec3(sb7::color::Purple);
     }
     CATCH("drawing center point for data for cell visualization")
 }
@@ -251,7 +251,7 @@ inline bool CellEngineOpenGLVisualiser::GetFinalVisibilityInModelWorld(const vma
             if (DrawOutsideBorder == true)
                 if (CheckDistanceToDrawDetailsInAtomScale(XNew, YNew, ZNew) == true)
                 {
-                    MatrixUniformBlockForVertexShaderPointer->Color = sb7::FromVec4ToVec3(sb7::color::Purple);
+                    MatrixUniformBlockForVertexShaderPointer->Color = vmath::FromVec4ToVec3(sb7::color::Purple);
                     return true;
                 }
 
@@ -299,13 +299,14 @@ vector3_16 CellEngineOpenGLVisualiser::GetColor(const T& Object, bool Chosen)
     try
     {
         if (Chosen == true)
-            FinalColor = GetVector3FormVMathVec3(sb7::FromVec4ToVec3(sb7::color::Yellow));
+            FinalColor = GetVector3FormVMathVec3(vmath::FromVec4ToVec3(sb7::color::Yellow));
         else
             switch (CellEngineConfigDataObject.MakeColorsTypeObject)
             {
                 case CellEngineConfigData::MakeColorsType::DrawColorForEveryAtom : FinalColor = Object.AtomColor; break;
                 case CellEngineConfigData::MakeColorsType::DrawColorForEveryParticle : FinalColor = Object.ParticleColor; break;
-                case CellEngineConfigData::MakeColorsType::DrawRandomColorForEveryParticle : FinalColor = Object.RandomParticleColor; break;
+                case CellEngineConfigData::MakeColorsType::DrawRandomColorForEveryParticleKind : FinalColor = Object.RandomParticleKindColor; break;
+                case CellEngineConfigData::MakeColorsType::DrawRandomColorForEveryUniqueParticle : FinalColor = Object.UniqueParticleColor; break;
                 default : break;
             }
     }
@@ -313,8 +314,6 @@ vector3_16 CellEngineOpenGLVisualiser::GetColor(const T& Object, bool Chosen)
 
     return FinalColor;
 }
-
-template vector3_16 CellEngineOpenGLVisualiser::GetColor<GraphicParticleKind>(const GraphicParticleKind& Object, bool Chosen);
 
 inline vmath::vec3 CellEngineOpenGLVisualiser::GetSize(const CellEngineAtom& AtomObject)
 {
@@ -350,7 +349,7 @@ bool CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom& AtomObject, 
         vmath::vec3 SizeLocal = GetSize(AtomObject);
         vmath::mat4 ModelMatrix = vmath::translate(AtomPosition.X() - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomPosition.Y() + CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomPosition.Z() + CellEngineConfigDataObject.CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(SizeLocal.X(), SizeLocal.Y(), SizeLocal.Z()));
 
-        FinalVisibilityInModelWorld = CreateUniformBlockForVertexShader(AtomPosition, GetVMathVec3FromVector3(GetColor(AtomObject, Chosen)), ViewMatrix, ModelMatrix, CountNewPosition, DrawCenter, DrawOutsideBorder, true);
+        FinalVisibilityInModelWorld = CreateUniformBlockForVertexShader(AtomPosition, GetVMathVec3FromVector3(GetColor<CellEngineAtom>(AtomObject, Chosen)), ViewMatrix, ModelMatrix, CountNewPosition, DrawCenter, DrawOutsideBorder, true);
 
         if (RenderObjectParameter == true)
             AtomGraphicsObject.Render();

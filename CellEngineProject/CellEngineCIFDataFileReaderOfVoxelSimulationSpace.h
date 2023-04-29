@@ -13,6 +13,11 @@ protected:
         CellEngineVoxelSimulationSpaceObjectPointer = std::make_unique<CellEngineVoxelSimulationSpace>();
     }
 protected:
+    void AddNewParticle(const ChainIdInt ChainId) override
+    {
+        CellEngineVoxelSimulationSpaceObjectPointer->AddNewParticle(ChainId);
+    }
+protected:
     void InsertAtom(std::vector<CellEngineAtom>& LocalCellEngineAllAtomsObject, const CellEngineAtom& AppliedAtom) override
     {
         CellEngineVoxelSimulationSpaceObjectPointer->SetAtomInVoxelSimulationSpace(AppliedAtom);

@@ -8,6 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 set(CMAKE_CXX_FLAGS "-Ofast")
+set(CMAKE_CXX_FLAGS "-fmodules-ts")
 
 LINK_DIRECTORIES(${CMAKE_SOURCE_DIR}/lib)
 
@@ -74,6 +75,9 @@ add_executable(
 	../Common/StringUtils/StringUtils.cpp
 	../Common/DateTimeUtils/DateTimeUtils.h
 	../Common/DateTimeUtils/DateTimeUtils.cpp
+	CellEngineTypes.h
+	CellEngineColors.h
+	CellEngineColors.cpp
 	CellEngineAtom.h
 	CellEngineAtom.cpp
 	CellEngineParticle.h
@@ -90,7 +94,9 @@ add_executable(
 	CellEngineOpenGLVisualiser.h
 	CellEngineOpenGLVisualiser.cpp
 	CellEngineOpenGLVisualiserOfVoxelSimulationSpace.h
+	CellEngineOpenGLVisualiserOfVoxelSimulationSpace.cpp
 	CellEngineOpenGLVisualiserOfFullAtomSimulationSpace.h
+	CellEngineOpenGLVisualiserOfFullAtomSimulationSpace.cpp
 	CellEngineConfigurationFileReaderWriter.h
 	CellEngineConfigurationFileReaderWriter.cpp
 	CellEngineWellStirredChemicalReactionsSimulation.h

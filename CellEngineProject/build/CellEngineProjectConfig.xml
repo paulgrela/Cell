@@ -72,7 +72,7 @@
 			<NumberOfStencilBufferLoops>1</NumberOfStencilBufferLoops>
 			<StencilForDrawingObjectsTypes>2</StencilForDrawingObjectsTypes> <!--StencilForDrawingOnlyParticlesCenters = 1, StencilForDrawingOnlyInAtomScale = 2-->
 			
-			<MakeColorsType>2</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticle = 3-->
+			<MakeColorsType>2</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticleKind = 3-->
 			
 			<SizeOfAtomsDrawingTypes>3</SizeOfAtomsDrawingTypes> 
 			
@@ -286,7 +286,7 @@
 			<NumberOfStencilBufferLoops>3</NumberOfStencilBufferLoops>
 			<StencilForDrawingObjectsTypes>1</StencilForDrawingObjectsTypes> <!--StencilForDrawingOnlyParticlesCenters = 1, StencilForDrawingOnlyInAtomScale = 2-->
 			
-			<MakeColorsType>1</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticle = 3-->
+			<MakeColorsType>1</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticleKind = 3-->
 			
 			<SizeOfAtomsDrawingTypes>3</SizeOfAtomsDrawingTypes> 
 			
@@ -501,7 +501,7 @@
 			<NumberOfStencilBufferLoops>3</NumberOfStencilBufferLoops>
 			<StencilForDrawingObjectsTypes>2</StencilForDrawingObjectsTypes> <!--StencilForDrawingOnlyParticlesCenters = 1, StencilForDrawingOnlyInAtomScale = 2-->
 			
-			<MakeColorsType>2</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticle = 3-->
+			<MakeColorsType>2</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticleKind = 3-->
 			
 			<SizeOfAtomsDrawingTypes>3</SizeOfAtomsDrawingTypes> 
 			
@@ -720,7 +720,7 @@
 			<NumberOfStencilBufferLoops>3</NumberOfStencilBufferLoops>
 			<StencilForDrawingObjectsTypes>1</StencilForDrawingObjectsTypes> <!--StencilForDrawingOnlyParticlesCenters = 1, StencilForDrawingOnlyInAtomScale = 2-->
 			
-			<MakeColorsType>1</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticle = 3-->
+			<MakeColorsType>1</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticleKind = 3-->
 			
 			<SizeOfAtomsDrawingTypes>3</SizeOfAtomsDrawingTypes> 
 			
@@ -934,7 +934,7 @@
 			<NumberOfStencilBufferLoops>1</NumberOfStencilBufferLoops>
 			<StencilForDrawingObjectsTypes>2</StencilForDrawingObjectsTypes> <!--StencilForDrawingOnlyParticlesCenters = 1, StencilForDrawingOnlyInAtomScale = 2-->
 
-			<MakeColorsType>2</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticle = 3-->
+			<MakeColorsType>2</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticleKind = 3-->
 
 			<SizeOfAtomsDrawingTypes>3</SizeOfAtomsDrawingTypes>
 
@@ -1150,7 +1150,7 @@
 			<NumberOfStencilBufferLoops>3</NumberOfStencilBufferLoops>
 			<StencilForDrawingObjectsTypes>1</StencilForDrawingObjectsTypes> <!--StencilForDrawingOnlyParticlesCenters = 1, StencilForDrawingOnlyInAtomScale = 2-->
 
-			<MakeColorsType>1</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticle = 3-->
+			<MakeColorsType>1</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticleKind = 3-->
 
 			<SizeOfAtomsDrawingTypes>3</SizeOfAtomsDrawingTypes>
 
@@ -1366,7 +1366,7 @@
 			<NumberOfStencilBufferLoops>3</NumberOfStencilBufferLoops>
 			<StencilForDrawingObjectsTypes>1</StencilForDrawingObjectsTypes> <!--StencilForDrawingOnlyParticlesCenters = 1, StencilForDrawingOnlyInAtomScale = 2-->
 
-			<MakeColorsType>1</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticle = 3-->
+			<MakeColorsType>1</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticleKind = 3-->
 
 			<SizeOfAtomsDrawingTypes>3</SizeOfAtomsDrawingTypes>
 
@@ -1581,7 +1581,7 @@
 			<NumberOfStencilBufferLoops>3</NumberOfStencilBufferLoops>
 			<StencilForDrawingObjectsTypes>1</StencilForDrawingObjectsTypes> <!--StencilForDrawingOnlyParticlesCenters = 1, StencilForDrawingOnlyInAtomScale = 2-->
 
-			<MakeColorsType>1</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticle = 3-->
+			<MakeColorsType>1</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticleKind = 3-->
 
 			<SizeOfAtomsDrawingTypes>3</SizeOfAtomsDrawingTypes>
 
@@ -1796,7 +1796,7 @@
 			<NumberOfStencilBufferLoops>1</NumberOfStencilBufferLoops>
 			<StencilForDrawingObjectsTypes>2</StencilForDrawingObjectsTypes> <!--StencilForDrawingOnlyParticlesCenters = 1, StencilForDrawingOnlyInAtomScale = 2-->
 
-			<MakeColorsType>2</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticle = 3-->
+			<MakeColorsType>2</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticleKind = 3-->
 
 			<SizeOfAtomsDrawingTypes>3</SizeOfAtomsDrawingTypes>
 
@@ -1971,7 +1971,7 @@
 			<NumberOfStencilBufferLoops>3</NumberOfStencilBufferLoops>
 			<StencilForDrawingObjectsTypes>1</StencilForDrawingObjectsTypes> <!--StencilForDrawingOnlyParticlesCenters = 1, StencilForDrawingOnlyInAtomScale = 2-->
 
-			<MakeColorsType>1</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticle = 3-->
+			<MakeColorsType>1</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticleKind = 3-->
 
 			<SizeOfAtomsDrawingTypes>3</SizeOfAtomsDrawingTypes>
 
@@ -2186,7 +2186,7 @@
 			<NumberOfStencilBufferLoops>3</NumberOfStencilBufferLoops>
 			<StencilForDrawingObjectsTypes>1</StencilForDrawingObjectsTypes> <!--StencilForDrawingOnlyParticlesCenters = 1, StencilForDrawingOnlyInAtomScale = 2-->
 
-			<MakeColorsType>1</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticle = 3-->
+			<MakeColorsType>1</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticleKind = 3-->
 
 			<SizeOfAtomsDrawingTypes>3</SizeOfAtomsDrawingTypes>
 
@@ -2401,7 +2401,7 @@
 			<NumberOfStencilBufferLoops>3</NumberOfStencilBufferLoops>
 			<StencilForDrawingObjectsTypes>1</StencilForDrawingObjectsTypes> <!--StencilForDrawingOnlyParticlesCenters = 1, StencilForDrawingOnlyInAtomScale = 2-->
 
-			<MakeColorsType>1</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticle = 3-->
+			<MakeColorsType>1</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticleKind = 3-->
 
 			<SizeOfAtomsDrawingTypes>3</SizeOfAtomsDrawingTypes>
 
@@ -2616,7 +2616,7 @@
 			<NumberOfStencilBufferLoops>1</NumberOfStencilBufferLoops>
 			<StencilForDrawingObjectsTypes>2</StencilForDrawingObjectsTypes> <!--StencilForDrawingOnlyParticlesCenters = 1, StencilForDrawingOnlyInAtomScale = 2-->
 
-			<MakeColorsType>2</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticle = 3-->
+			<MakeColorsType>2</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticleKind = 3-->
 
 			<SizeOfAtomsDrawingTypes>3</SizeOfAtomsDrawingTypes>
 
@@ -2860,7 +2860,7 @@
 			<NumberOfStencilBufferLoops>1</NumberOfStencilBufferLoops>
 			<StencilForDrawingObjectsTypes>2</StencilForDrawingObjectsTypes> <!--StencilForDrawingOnlyParticlesCenters = 1, StencilForDrawingOnlyInAtomScale = 2-->
 
-			<MakeColorsType>2</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticle = 3-->
+			<MakeColorsType>2</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticleKind = 3-->
 
 			<SizeOfAtomsDrawingTypes>3</SizeOfAtomsDrawingTypes>
 
@@ -3104,7 +3104,7 @@
 			<NumberOfStencilBufferLoops>1</NumberOfStencilBufferLoops>
 			<StencilForDrawingObjectsTypes>2</StencilForDrawingObjectsTypes> <!--StencilForDrawingOnlyParticlesCenters = 1, StencilForDrawingOnlyInAtomScale = 2-->
 
-			<MakeColorsType>2</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticle = 3-->
+			<MakeColorsType>2</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticleKind = 3-->
 
 			<SizeOfAtomsDrawingTypes>3</SizeOfAtomsDrawingTypes>
 

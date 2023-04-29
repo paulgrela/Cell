@@ -511,8 +511,9 @@ public:
             {
                 static int MakeColorsTypeData = static_cast<int>(CellEngineConfigDataObject.MakeColorsTypeObject);
                 ImGui::RadioButton("Draw Color For Every Atom", &MakeColorsTypeData, 1);
-                ImGui::RadioButton("Draw Color For Every ParticleKind", &MakeColorsTypeData, 2);
-                ImGui::RadioButton("Draw Random ColorFor Every ParticleKind", &MakeColorsTypeData, 3);
+                ImGui::RadioButton("Draw Color For Every Particle Kind", &MakeColorsTypeData, 2);
+                ImGui::RadioButton("Draw Random Color For Every Particle Kind", &MakeColorsTypeData, 3);
+                ImGui::RadioButton("Draw Random Color For Every Unique Particle", &MakeColorsTypeData, 4);
                 CellEngineConfigDataObject.MakeColorsTypeObject = static_cast<CellEngineConfigData::MakeColorsType>(MakeColorsTypeData);
             }
         }

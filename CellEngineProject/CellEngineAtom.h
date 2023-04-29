@@ -25,7 +25,8 @@ public:
     float Z{};
     vector3_16 AtomColor{};
     vector3_16 ParticleColor{};
-    vector3_16 RandomParticleColor{};
+    vector3_16 UniqueParticleColor{};
+    vector3_16 RandomParticleKindColor{};
     bool Visible{};
     #ifdef EXTENDED_RAM_MEMORY
     float SizeXAtom{};
@@ -49,7 +50,7 @@ public:
 public:
     [[nodiscard]] vmath::vec3 Position() const
     {
-        return {X, Y, Z};
+        return { X, Y, Z };
     }
 };
 
