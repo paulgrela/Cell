@@ -24,15 +24,15 @@ namespace CellEngineUseful
 
     inline UnsignedInt GetParticleKindIndexFromChainId(const ChainIdInt ChainId)
     {
-        return ChainId > 10 ? (ChainId - 10) : ChainId;;
+        return ChainId > 10 ? (ChainId - 10) : ChainId;
     }
 
-    inline vector3_16 GetVector3FormVMathVec3(const vmath::vec3& Color)
+    inline vector3_16 GetVector3FormVMathVec3ForColor(const vmath::vec3& Color)
     {
         return { static_cast<uint16_t>(Color.X() * 100.00f), static_cast<uint16_t>(Color.Y() * 100.00f), static_cast<uint16_t>(Color.Z() * 100.00f) };
     }
 
-    inline vmath::vec3 GetVMathVec3FromVector3(vector3_16 Color)
+    inline vmath::vec3 GetVMathVec3FromVector3ForColor(vector3_16 Color)
     {
         return { float(Color.X) / 100.00f, float(Color.Y) / 100.00f, float(Color.Z) / 100.00f };
     }

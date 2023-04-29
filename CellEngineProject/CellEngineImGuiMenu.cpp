@@ -486,7 +486,7 @@ public:
                 {
                     if (ImGui::ColorEdit3(string(AtomsKind.Name + " Atom Color").c_str(), (float*)&AtomsKind.ColorVmathVec3) == true)
                     {
-                        AtomsKind.Color = CellEngineUseful::GetVector3FormVMathVec3(AtomsKind.ColorVmathVec3);
+                        AtomsKind.Color = CellEngineUseful::GetVector3FormVMathVec3ForColor(AtomsKind.ColorVmathVec3);
                         ChangeColor = true;
                     }
                 }
