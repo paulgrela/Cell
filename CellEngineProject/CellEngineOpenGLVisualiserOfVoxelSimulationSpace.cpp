@@ -93,8 +93,7 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSelectedSpace(const
                             }
                             else
                             if (DrawEmptyVoxels == true)
-                                TempAtomObject.AtomColor = TempAtomObject.ParticleColor = TempAtomObject.RandomParticleKindColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(
-                                        vmath::FromVec4ToVec3(sb7::color::DeepSkyBlue));
+                                TempAtomObject.AtomColor = TempAtomObject.ParticleColor = TempAtomObject.RandomParticleKindColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(vmath::FromVec4ToVec3(sb7::color::DeepSkyBlue));
 
                             if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
                             {

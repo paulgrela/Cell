@@ -28,9 +28,11 @@ class ParticleKind
 {
 public:
     UnsignedInt Identifier{};
+    ChainIdInt ChainId{};
     std::string Name;
     std::string Symbol;
     UnsignedInt Counter;
+public:
     std::list<Particle> ParticlesObjects;
     std::unordered_map<std::string, UnsignedInt> ReactionsIdByString;
 public:

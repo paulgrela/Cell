@@ -15,6 +15,11 @@ using namespace std;
     return static_cast<UnsignedInt>(round(CoordinateParam) / CellEngineConfigDataObject.DivisionFactorForVoxelSimulationSpace) + (CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension / 2);
 };
 
+inline SimulationSpaceVoxel& CellEngineVoxelSimulationSpace::GetSpaceVoxel(UnsignedInt x, UnsignedInt y, UnsignedInt z)
+{
+    return CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension == 2048 ? (*static_cast<Space_2048_2048_2048*>(SpacePointer))[x][y][z] : (*static_cast<Space_1024_1024_1024*>(SpacePointer))[x][y][z];
+}
+
 CellEngineVoxelSimulationSpace::CellEngineVoxelSimulationSpace()
 {
     try
@@ -108,7 +113,6 @@ void CellEngineVoxelSimulationSpace::SetAtomInVoxelSimulationSpace(const CellEng
 
                 Particles[ParticleKindIndex].ParticlesObjects.back().ListOfVoxels.emplace_back(PosX, PosY, PosZ);
                 GetSpaceVoxel(PosX, PosY, PosZ).UniqueId = Particles[ParticleKindIndex].ParticlesObjects.back().UniqueIdentifier = Particles[ParticleKindIndex].ParticlesObjects.size() - 1;
-
                 GetSpaceVoxel(PosX, PosY, PosZ).UniqueColor = AppliedAtom.UniqueParticleColor;
             }
         }
@@ -128,14 +132,23 @@ void CellEngineVoxelSimulationSpace::AddParticleKind(const ParticleKind& Particl
 
 void CellEngineVoxelSimulationSpace::AddReaction(const Reaction& ReactionParam)
 {
-    Reactions.emplace_back(ReactionParam);
-    ReactionsIdByString.insert(std::make_pair(ReactionParam.ReactantsStr, Reactions.size() - 1));
+    try
+    {
+        Reactions.emplace_back(ReactionParam);
+        ReactionsIdByString.insert(std::make_pair(ReactionParam.ReactantsStr, Reactions.size() - 1));
+    }
+    CATCH("adding reaction")
 }
 
-void CellEngineVoxelSimulationSpace::AddNewParticle(ChainIdInt ChainId)
+void CellEngineVoxelSimulationSpace::SetParticleKindData(const EntityIdInt EntityId, const ChainIdInt ChainId)
 {
-    ChainId > 10 ? ChainId = (ChainId - 10) : ChainId;
-    Particles[ChainId].ParticlesObjects.emplace_back();
+    try
+    {
+        Particles[CellEngineUseful::GetParticleKindIndexFromChainId(ChainId)].Identifier = EntityId;
+        Particles[CellEngineUseful::GetParticleKindIndexFromChainId(ChainId)].ChainId = ChainId;
+        Particles[CellEngineUseful::GetParticleKindIndexFromChainId(ChainId)].ParticlesObjects.emplace_back();
+    }
+    CATCH("setting particle kind data")
 }
 
 void CellEngineVoxelSimulationSpace::GenerateRandomParticlesInSelectedSpace(const UnsignedInt NumberOfRandomParticles, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt StepXParam, const UnsignedInt StepYParam, const UnsignedInt StepZParam, const UnsignedInt SizeXParam, UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
@@ -253,4 +266,19 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfDiffusion(const UnsignedIn
             }
     }
     CATCH("generating one step of diffusion")
+}
+
+void CellEngineVoxelSimulationSpace::GetDNASequenceFromNucleotides()
+{
+    try
+    {
+        for (auto& ParticleKindObject : Particles)
+            if (CellEngineUseful::IsDNAorRNA(ParticleKindObject.Identifier))
+            {
+                for (auto& ParticleObject : ParticleKindObject.ParticlesObjects)
+                {
+                }
+            }
+    }
+    CATCH("getting dna sequence from nucleotides")
 }

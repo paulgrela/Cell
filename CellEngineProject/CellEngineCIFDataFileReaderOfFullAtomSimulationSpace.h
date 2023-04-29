@@ -13,7 +13,7 @@ protected:
     {
     }
 protected:
-    void AddNewParticle(const ChainIdInt ChainId) override
+    void SetParticleKindData(const EntityIdInt EntityId, const ChainIdInt ChainId) override
     {
     }
 protected:
