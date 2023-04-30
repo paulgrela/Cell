@@ -12,7 +12,8 @@ struct SimulationSpaceVoxel
 {
     EntityIdInt EntityId;
     ChainIdInt ChainId;
-    UniqueIdInt UniqueId;
+    //UniqueIdInt UniqueId;
+    Particle* ParticlePtr;
     vector3_16 UniqueColor;
 };
 

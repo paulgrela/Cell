@@ -35,6 +35,7 @@ CellEngineVoxelSimulationSpace::CellEngineVoxelSimulationSpace()
 
         Particles.clear();
         AddParticleKind({ 0, "WATER", "H2O", 0 });
+        //AddParticleKind({ 1, "NUCLEOTIDE", "NUCLEOTIDE", 0 });
         AddParticleKind({ 1, "ADENINE", "A", 0 });
         AddParticleKind({ 2, "CYTOSINE", "C", 0 });
         AddParticleKind({ 3, "GUANINE", "G", 0 });
@@ -111,8 +112,15 @@ void CellEngineVoxelSimulationSpace::SetAtomInVoxelSimulationSpace(const CellEng
             {
                 UniqueIdInt ParticleKindIndex = CellEngineUseful::GetParticleKindIndexFromChainId(GetSpaceVoxel(PosX, PosY, PosZ).ChainId = CellEngineUseful::GetChainIdFromChainName(AppliedAtom.Chain));
 
-                Particles[ParticleKindIndex].ParticlesObjects.back().ListOfVoxels.emplace_back(PosX, PosY, PosZ);
-                GetSpaceVoxel(PosX, PosY, PosZ).UniqueId = Particles[ParticleKindIndex].ParticlesObjects.back().UniqueIdentifier = Particles[ParticleKindIndex].ParticlesObjects.size() - 1;
+//                CellEngineUseful::GetParticleKindIndexFromChainId(GetSpaceVoxel(PosX, PosY, PosZ).ChainId = CellEngineUseful::GetChainIdFromChainName(AppliedAtom.Chain));
+//                UniqueIdInt ParticleKindIndex = 1;
+
+//                Particles[ParticleKindIndex].ParticlesObjects.back().ListOfVoxels.emplace_back(PosX, PosY, PosZ);
+//                GetSpaceVoxel(PosX, PosY, PosZ).UniqueId = Particles[ParticleKindIndex].ParticlesObjects.back().UniqueId = Particles[ParticleKindIndex].ParticlesObjects.size() - 1;
+
+                Particles[ParticleKindIndex].ParticlesObjects.back().UniqueId = Particles[ParticleKindIndex].ParticlesObjects.size() - 1;
+                GetSpaceVoxel(PosX, PosY, PosZ).ParticlePtr = &Particles[ParticleKindIndex].ParticlesObjects.back();
+
                 GetSpaceVoxel(PosX, PosY, PosZ).UniqueColor = AppliedAtom.UniqueParticleColor;
             }
         }
@@ -272,13 +280,37 @@ void CellEngineVoxelSimulationSpace::GetDNASequenceFromNucleotides()
 {
     try
     {
-        for (auto& ParticleKindObject : Particles)
-            if (CellEngineUseful::IsDNAorRNA(ParticleKindObject.Identifier))
+        UnsignedInt NumberOfNucleotides = 0;
+
+        Particle* PrevParticlePtr = nullptr;
+
+        auto& ParticleObject = Particles[1].ParticlesObjects.front();
+
+        while (NumberOfNucleotides < 580079)
+        {
+            unordered_map<Particle* , UnsignedInt> NeighbourNucleotideVoxelCounter;
+
+            for (auto& VoxelCoordinates : ParticleObject.ListOfVoxels)
             {
-                for (auto& ParticleObject : ParticleKindObject.ParticlesObjects)
-                {
-                }
+                auto Voxel = GetSpaceVoxel(VoxelCoordinates.X, VoxelCoordinates.Y, VoxelCoordinates.Z);
+                auto VoxelNeighbour = GetSpaceVoxel(VoxelCoordinates.X + 1, VoxelCoordinates.Y, VoxelCoordinates.Z);
+                if (VoxelNeighbour.EntityId != 0 && CellEngineUseful::IsDNAorRNA(VoxelNeighbour.EntityId) == true && VoxelNeighbour.ParticlePtr != PrevParticlePtr && VoxelNeighbour.ParticlePtr != Voxel.ParticlePtr)
+                    NeighbourNucleotideVoxelCounter[VoxelNeighbour.ParticlePtr]++;
             }
+
+            auto NeighbourNucleotideWithMaximalNumberOfBorderVoxel = std::max_element(NeighbourNucleotideVoxelCounter.begin(), NeighbourNucleotideVoxelCounter.end(), [](const auto &x, const auto &y) { return x.second < y.second; });
+
+            PrevParticlePtr = &ParticleObject;
+
+            ParticleObject = *NeighbourNucleotideWithMaximalNumberOfBorderVoxel->first;
+
+            NumberOfNucleotides++;
+
+            LoggersManagerObject.Log(STREAM("NumberOfNucleotides = " << NumberOfNucleotides << " PrevParticlePtr->UniqueId = " << PrevParticlePtr->UniqueId << " ParticleObject "));
+
+            vector<char> Genome;
+            //wpisz tez Literke DNA do tablicy Genome.emplace_back(Nucleotide);
+        }
     }
     CATCH("getting dna sequence from nucleotides")
 }

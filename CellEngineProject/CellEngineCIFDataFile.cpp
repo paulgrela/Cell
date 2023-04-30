@@ -169,6 +169,9 @@ void CellEngineCIFDataFile::ReadDataFromFile()
 
                     for (const auto& AppliedChainName : AppliedChainsNames)
                     {
+                                                                        //if(AppliedChainName == "NU02" || AppliedChainName == "NU12" || AppliedChainName == "NU03" || AppliedChainName == "NU13" || AppliedChainName == "NU04" || AppliedChainName == "NU14")
+                                                                        //    continue;
+
                         auto AtomsForChainNameIterator = ChainsNames.find(AppliedChainName);
                         if (AtomsForChainNameIterator == ChainsNames.end())
                             LoggersManagerObject.Log(STREAM("ERROR IN CIF FILE LACKS AppliedChainName: " << AppliedChainName));
@@ -212,10 +215,8 @@ void CellEngineCIFDataFile::ReadDataFromFile()
 
                                 AppliedAtom.SetAtomPositionsData(Result[0], Result[1], Result[2]);
 
-                                AppliedAtom.UniqueParticleColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(
-                                        UniqueParticleColor);
-                                AppliedAtom.RandomParticleKindColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(
-                                        ChainColor);
+                                AppliedAtom.UniqueParticleColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(UniqueParticleColor);
+                                AppliedAtom.RandomParticleKindColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(ChainColor);
 
                                 InsertAtom(LocalCellEngineAllAtomsObject, AppliedAtom);
                             }

@@ -14,7 +14,7 @@ class Particle
 public:
     bool SelectedForReaction{};
 public:
-    UnsignedInt UniqueIdentifier{};
+    UnsignedInt UniqueId{};
 public:
     std::vector<vector3_64> ListOfVoxels;
 public:
