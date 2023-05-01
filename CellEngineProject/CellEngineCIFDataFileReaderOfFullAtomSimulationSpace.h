@@ -13,11 +13,12 @@ protected:
     {
     }
 protected:
-    void SetParticleKindData(const EntityIdInt EntityId, const ChainIdInt ChainId) override
+    UniqueIdInt AddNewParticle(const UniqueIdInt ParticleIndex, const Particle& ParticleObjectParam) override
     {
+        return 0;
     }
 protected:
-    void InsertAtom(std::vector<CellEngineAtom>& LocalCellEngineAllAtomsObject, const CellEngineAtom& AppliedAtom) override
+    void InsertAtom(std::vector<CellEngineAtom>& LocalCellEngineAllAtomsObject, const CellEngineAtom& AppliedAtom, const UniqueIdInt ParticleIndex) override
     {
         LocalCellEngineAllAtomsObject.emplace_back(AppliedAtom);
     }

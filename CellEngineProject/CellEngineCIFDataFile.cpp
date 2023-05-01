@@ -79,6 +79,7 @@ void CellEngineCIFDataFile::ReadDataFromFile()
         UnsignedInt NumberOfAtoms = 0;
         UnsignedInt NumberOfAtomsDNA = 0;
         UnsignedInt NumberOfNucleotidesInDNA = 0;
+        UnsignedInt NumberOfParticles = 0;
 
         CellEngineColorsObject.SelectRandomEngineForColors();
 
@@ -104,7 +105,6 @@ void CellEngineCIFDataFile::ReadDataFromFile()
                 }
                 else
                     CellEngineConfigDataObject.ParticlesKinds.emplace_back(GraphicParticleKind{static_cast<UnsignedInt>(stoi(AtomFields[2])), ParticleKindObjectIterator->second.Visible, ParticleKindObjectIterator->second.SizeX, ParticleKindObjectIterator->second.SizeY, ParticleKindObjectIterator->second.SizeZ, ParticleKindObjectIterator->second.ParticleColor, ParticleKindObjectIterator->second.ParticleColor, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), ParticleKindObjectIterator->second.NameFromXML, AtomFields[5].substr(1, AtomFields[5].length() - 2) });
-
                 CellEngineConfigDataObject.ParticlesKindsPos[stoi(AtomFields[2])] = CellEngineConfigDataObject.ParticlesKinds.size() - 1;
             }
             else
@@ -169,9 +169,6 @@ void CellEngineCIFDataFile::ReadDataFromFile()
 
                     for (const auto& AppliedChainName : AppliedChainsNames)
                     {
-                                                                        //if(AppliedChainName == "NU02" || AppliedChainName == "NU12" || AppliedChainName == "NU03" || AppliedChainName == "NU13" || AppliedChainName == "NU04" || AppliedChainName == "NU14")
-                                                                        //    continue;
-
                         auto AtomsForChainNameIterator = ChainsNames.find(AppliedChainName);
                         if (AtomsForChainNameIterator == ChainsNames.end())
                             LoggersManagerObject.Log(STREAM("ERROR IN CIF FILE LACKS AppliedChainName: " << AppliedChainName));
@@ -182,11 +179,11 @@ void CellEngineCIFDataFile::ReadDataFromFile()
 
                             vmath::vec3 UniqueParticleColor = CellEngineColorsObject.GetRandomColor();
 
+                            NumberOfParticles++;
+                            UniqueIdInt ParticleIndex = AddNewParticle(NumberOfParticles, Particle(AtomsForChainNameIterator->second[0].EntityId, CellEngineUseful::GetChainIdFromChainName(AppliedChainName), CellEngineUseful::GetVector3FormVMathVec3ForColor(UniqueParticleColor)));
+
                             if (CellEngineUseful::IsNucleotide(AppliedChainName))
-                            {
                                 NumberOfNucleotidesInDNA++;
-                                SetParticleKindData(AtomsForChainNameIterator->second[0].EntityId, CellEngineUseful::GetChainIdFromChainName(AppliedChainName));
-                            }
 
                             for (auto AppliedAtom : AtomsForChainNameIterator->second)
                             {
@@ -218,7 +215,7 @@ void CellEngineCIFDataFile::ReadDataFromFile()
                                 AppliedAtom.UniqueParticleColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(UniqueParticleColor);
                                 AppliedAtom.RandomParticleKindColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(ChainColor);
 
-                                InsertAtom(LocalCellEngineAllAtomsObject, AppliedAtom);
+                                InsertAtom(LocalCellEngineAllAtomsObject, AppliedAtom, ParticleIndex);
                             }
                         }
                     }
@@ -234,7 +231,7 @@ void CellEngineCIFDataFile::ReadDataFromFile()
 
         PrintStatistics();
 
-        LoggersManagerObject.Log(STREAM("NumberOfAtoms = " << NumberOfAtoms << " | LocalCellEngineParticlesCentersObject.size() = " << LocalCellEngineParticlesCentersObject.size() << " | AllAtoms.size() = " << AllAtoms.size() << " | NumberOfAtomsDNA = " << NumberOfAtomsDNA << " | NumberOfNucleotidesInDNA = " << NumberOfNucleotidesInDNA <<" | AtomsPositionsMatrixes.size() = " << TransformationsMatrixes.size() << " | " << endl));
+        LoggersManagerObject.Log(STREAM("NumberOfAtoms = " << NumberOfAtoms << "NumberOfParticles = " << NumberOfParticles << " | LocalCellEngineParticlesCentersObject.size() = " << LocalCellEngineParticlesCentersObject.size() << " | AllAtoms.size() = " << AllAtoms.size() << " | NumberOfAtomsDNA = " << NumberOfAtomsDNA << " | NumberOfNucleotidesInDNA = " << NumberOfNucleotidesInDNA <<" | AtomsPositionsMatrixes.size() = " << TransformationsMatrixes.size() << " | " << endl));
 
         LoggersManagerObject.Log(STREAM("FINISHED READING FROM CIF FILE"));
         LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Execution of reading data from CIF file has taken time: ", "executing printing duration_time")));

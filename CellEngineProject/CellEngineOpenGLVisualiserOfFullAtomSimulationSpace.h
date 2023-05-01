@@ -18,7 +18,7 @@ public:
     void GetStartCenterPoint() override;
     void GetMemoryForBondsBetweenAtomsToDraw() override;
 public:
-    void DrawBondsForParticlesCenters(std::vector<std::pair<UnsignedInt, UnsignedInt>>& BondsToDraw, const bool DrawBonds, const vmath::mat4& ViewMatrix) override;
+    void DrawBondsForParticlesCenters(std::vector<std::pair<UnsignedInt, UnsignedInt>>& BondsToDraw, bool DrawBonds, const vmath::mat4& ViewMatrix) override;
 };
 
 #endif

@@ -56,7 +56,7 @@ void CellEngineWellStirredChemicalReactionsSimulation::TryToDoRandomReaction(con
             Reaction* ReactionObject = &Reactions[ReactionIter->second];
 
             for (auto& ReactionReactant : ReactionObject->Reactants)
-                if (ReactionReactant.Counter > Particles[ReactionReactant.Identifier].Counter)
+                if (ReactionReactant.Counter > Particles[ReactionReactant.EntityId].Counter)
                 {
                     IsPossible = false;
                     break;
@@ -65,21 +65,21 @@ void CellEngineWellStirredChemicalReactionsSimulation::TryToDoRandomReaction(con
             if (IsPossible == true)
             {
                 for (auto& ReactionReactant : ReactionObject->Reactants)
-                    LoggersManagerObject.Log(STREAM("BEFORE REACTANT = " << ReactionReactant.Identifier << " "  << Particles[ReactionReactant.Identifier].Symbol << " " << Particles[ReactionReactant.Identifier].Counter));
+                    LoggersManagerObject.Log(STREAM("BEFORE REACTANT = " << ReactionReactant.EntityId << " " << Particles[ReactionReactant.EntityId].Symbol << " " << Particles[ReactionReactant.EntityId].Counter));
                 for (auto& ReactionProduct : ReactionObject->Products)
-                    LoggersManagerObject.Log(STREAM("BEFORE PRODUCT = " << ReactionProduct.Identifier << " "  << Particles[ReactionProduct.Identifier].Symbol << " " << Particles[ReactionProduct.Identifier].Counter));
+                    LoggersManagerObject.Log(STREAM("BEFORE PRODUCT = " << ReactionProduct.EntityId << " " << Particles[ReactionProduct.EntityId].Symbol << " " << Particles[ReactionProduct.EntityId].Counter));
                 LoggersManagerObject.Log(STREAM(""));
 
                 for (auto& ReactionReactant : ReactionObject->Reactants)
-                    Particles[ReactionReactant.Identifier].Counter -=  ReactionReactant.Counter;
+                    Particles[ReactionReactant.EntityId].Counter -=  ReactionReactant.Counter;
 
                 for (auto& ReactionProduct : ReactionObject->Products)
-                    Particles[ReactionProduct.Identifier].Counter +=  ReactionProduct.Counter;
+                    Particles[ReactionProduct.EntityId].Counter +=  ReactionProduct.Counter;
 
                 for (auto& ReactionReactant : ReactionObject->Reactants)
-                    LoggersManagerObject.Log(STREAM("AFTER REACTANT = " << ReactionReactant.Identifier << " "  << Particles[ReactionReactant.Identifier].Symbol << " " << Particles[ReactionReactant.Identifier].Counter));
+                    LoggersManagerObject.Log(STREAM("AFTER REACTANT = " << ReactionReactant.EntityId << " " << Particles[ReactionReactant.EntityId].Symbol << " " << Particles[ReactionReactant.EntityId].Counter));
                 for (auto& ReactionProduct : ReactionObject->Products)
-                    LoggersManagerObject.Log(STREAM("AFTER PRODUCT = " << ReactionProduct.Identifier << " " << Particles[ReactionProduct.Identifier].Symbol << " " << Particles[ReactionProduct.Identifier].Counter));
+                    LoggersManagerObject.Log(STREAM("AFTER PRODUCT = " << ReactionProduct.EntityId << " " << Particles[ReactionProduct.EntityId].Symbol << " " << Particles[ReactionProduct.EntityId].Counter));
                 LoggersManagerObject.Log(STREAM(""));
             }
             else

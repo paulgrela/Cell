@@ -23,9 +23,9 @@ public:
 public:
     static CellEngineAtom ParseRecord(const char* LocalPDBRecord);
 protected:
+    virtual UniqueIdInt AddNewParticle(UniqueIdInt ParticleIndex, const Particle& ParticleObjectParam) = 0;
     virtual void SetStartValues() = 0;
-    virtual void SetParticleKindData(const EntityIdInt EntityId, const ChainIdInt ChainId) = 0;
-    virtual void InsertAtom(std::vector<CellEngineAtom>& LocalCellEngineAllAtomsObject, const CellEngineAtom& AppliedAtom) = 0;
+    virtual void InsertAtom(std::vector<CellEngineAtom>& LocalCellEngineAllAtomsObject, const CellEngineAtom& AppliedAtom, UniqueIdInt ParticleIndex) = 0;
     virtual void InsertGroupOfAtoms(std::vector<CellEngineAtom>& LocalCellEngineParticlesCentersObject, std::vector<CellEngineAtom>& LocalCellEngineAllAtomsObject) = 0;
     virtual void InsertParticlesCenters(std::vector<CellEngineAtom>& LocalCellEngineParticlesCentersObject) = 0;
     virtual void PrintStatistics() = 0;

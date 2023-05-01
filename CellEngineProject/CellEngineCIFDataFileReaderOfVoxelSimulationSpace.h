@@ -13,14 +13,14 @@ protected:
         CellEngineVoxelSimulationSpaceObjectPointer = std::make_unique<CellEngineVoxelSimulationSpace>();
     }
 protected:
-    void SetParticleKindData(const EntityIdInt EntityId, const ChainIdInt ChainId) override
+    UniqueIdInt AddNewParticle(const UniqueIdInt ParticleIndex, const Particle& ParticleObjectParam) override
     {
-        CellEngineVoxelSimulationSpaceObjectPointer->SetParticleKindData(EntityId, ChainId);
+        return CellEngineVoxelSimulationSpaceObjectPointer->AddNewParticle(ParticleIndex, ParticleObjectParam);
     }
 protected:
-    void InsertAtom(std::vector<CellEngineAtom>& LocalCellEngineAllAtomsObject, const CellEngineAtom& AppliedAtom) override
+    void InsertAtom(std::vector<CellEngineAtom>& LocalCellEngineAllAtomsObject, const CellEngineAtom& AppliedAtom, const UniqueIdInt ParticleIndex) override
     {
-        CellEngineVoxelSimulationSpaceObjectPointer->SetAtomInVoxelSimulationSpace(AppliedAtom);
+        CellEngineVoxelSimulationSpaceObjectPointer->SetAtomInVoxelSimulationSpace(ParticleIndex, AppliedAtom);
     }
 protected:
     void InsertGroupOfAtoms(std::vector<CellEngineAtom>& LocalCellEngineParticlesCentersObject, std::vector<CellEngineAtom>& LocalCellEngineAllAtomsObject) override

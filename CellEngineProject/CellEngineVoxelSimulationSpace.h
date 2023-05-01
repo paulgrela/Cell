@@ -8,14 +8,9 @@
 #include "CellEngineReaction.h"
 #include "CellEngineConfigData.h"
 
-struct SimulationSpaceVoxel
-{
-    EntityIdInt EntityId;
-    ChainIdInt ChainId;
-    //UniqueIdInt UniqueId;
-    Particle* ParticlePtr;
-    vector3_16 UniqueColor;
-};
+#define PARTICLES_IN_VECTOR_
+
+using SimulationSpaceVoxel = UniqueIdInt;
 
 constexpr UnsignedInt NumberOfVoxelSimulationSpaceInEachDimensionMaxConst1024 = 1024;
 constexpr UnsignedInt NumberOfVoxelSimulationSpaceInEachDimensionMaxConst2048 = 2048;
@@ -28,13 +23,21 @@ class CellEngineVoxelSimulationSpace
 private:
     std::mt19937_64 mt64R{ std::random_device{}() };
 private:
-    std::vector<ParticleKind> Particles;
+    std::vector<ParticleKind> ParticlesKinds;
+    UnsignedInt MaxParticleIndex;
+    #ifdef PARTICLES_IN_VECTOR
+    std::vector<Particle> Particles;
+    #else
+    std::unordered_map<UniqueIdInt, Particle> Particles;
+    #endif
+private:
     std::vector<Reaction> Reactions;
     std::unordered_map<std::string, UnsignedInt> ReactionsIdByString;
 private:
     void* SpacePointer;
 private:
     inline SimulationSpaceVoxel& GetSpaceVoxel(UnsignedInt x, UnsignedInt y, UnsignedInt z);
+    inline Particle& GetParticleFromIndex(UniqueIdInt ParticleIndex);
 private:
     UnsignedInt XMin{}, XMax{}, YMin{}, YMax{}, ZMin{}, ZMax{};
 public:
@@ -50,17 +53,17 @@ public:
     UnsignedInt SumOfNotEmptyVoxels{};
 public:
     void CountStatisticsOfVoxelSimulationSpace();
-    void SetAtomInVoxelSimulationSpace(const CellEngineAtom& AppliedAtom);
+    void SetAtomInVoxelSimulationSpace(UniqueIdInt ParticleIndex, const CellEngineAtom& AppliedAtom);
 public:
     SimulationSpaceVoxel GetSimulationSpaceVoxel(UnsignedInt X, UnsignedInt Y, UnsignedInt Z);
+    Particle& GetParticleFromIndexInSimulationSpaceVoxel(UniqueIdInt ParticleIndex);
 public:
-    void SetParticleKindData(const EntityIdInt EntityId, const ChainIdInt ChainId);
-public:
+    UniqueIdInt AddNewParticle(UniqueIdInt ParticleIndex, const Particle& ParticleParam);
     void AddParticleKind(const ParticleKind& ParticleParam);
     void AddReaction(const Reaction& ReactionParam);
 public:
     void GenerateRandomParticlesInSelectedSpace(UnsignedInt NumberOfRandomParticles, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt StepXParam, UnsignedInt StepYParam, UnsignedInt StepZParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
-    void GenerateOneStepOfDiffusion(UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
+    void GenerateOneStepOfDiffusion(UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
 public:
     void GetDNASequenceFromNucleotides();
 public:
