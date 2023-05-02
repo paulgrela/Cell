@@ -167,7 +167,7 @@ void CellEngineVoxelSimulationSpace::GenerateRandomParticlesInSelectedSpace(cons
         for (UniqueIdInt ParticleIndex = LocalMaxParticleIndex + 1; ParticleIndex <= LocalMaxParticleIndex + NumberOfRandomParticles; ParticleIndex++)
             LocalNewParticlesIndexes.emplace_back(AddNewParticle(ParticleIndex, Particle(CellEngineConfigDataObject.DNAIdentifier, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))));
 
-        vector<vector3_64> FilledVoxelsForRandomParticle;
+        vector<vector3_16> FilledVoxelsForRandomParticle;
 
         uniform_int_distribution<UnsignedInt> UniformDistributionObjectSizeOfParticle_Uint64t(1, 2);
         uniform_int_distribution<UnsignedInt> UniformDistributionObjectObjectOfParticle_Uint64t(1, NumberOfRandomParticles);
@@ -228,7 +228,7 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfDiffusion(UniqueIdInt Star
     {
         std::uniform_int_distribution<SignedInt> UniformDistributionObjectSizeOfParticle_int64t(-1, 1);
 
-        vector<vector3_64> NewVoxelsForParticle;
+        vector<vector3_16> NewVoxelsForParticle;
 
         if (EndParticleIndexParam == 0)
         {
@@ -275,131 +275,108 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfDiffusion(UniqueIdInt Star
     CATCH("generating one step of diffusion")
 }
 
+void CellEngineVoxelSimulationSpace::CheckVoxelNeighbour(int32_t AddX, int32_t AddY, int32_t AddZ, unordered_map<UniqueIdInt, UnsignedInt>& NeighbourNucleotideVoxelCounter, UniqueIdInt Voxel, UniqueIdInt PrevParticleIndex, vector3_16& VoxelCoordinates, bool WriteInfo)
+{
+    auto VoxelNeighbour = GetSpaceVoxel(VoxelCoordinates.X + AddX, VoxelCoordinates.Y + AddY, VoxelCoordinates.Z + AddZ);
+    if (WriteInfo == true)
+        LoggersManagerObject.Log(STREAM("VOXEL DATA ALL = " << VoxelCoordinates.X + AddX << " " << VoxelCoordinates.Y + AddY << " " << VoxelCoordinates.Z  + AddZ << " Voxel Value Particle Index " << VoxelNeighbour << " EntityId = " << GetParticleFromIndex(VoxelNeighbour).EntityId << " ChainId = " << GetParticleFromIndex(VoxelNeighbour).ChainId));
+    if (VoxelNeighbour != 0 && GetParticleFromIndex(VoxelNeighbour).EntityId == CellEngineConfigDataObject.DNAIdentifier && VoxelNeighbour != PrevParticleIndex && VoxelNeighbour != Voxel)
+    {
+        if (WriteInfo == true)
+            LoggersManagerObject.Log(STREAM("XP"));
+        NeighbourNucleotideVoxelCounter[VoxelNeighbour]++;
+    }
+}
+
 void CellEngineVoxelSimulationSpace::GetDNASequenceFromNucleotides()
 {
     try
     {
-//        vector<char> Genome;
-//        string GenomeStr0;
-//        string GenomeStr1;
-//
-//        UnsignedInt NumberOfNucleotides = 0;
-//
-//        Particle* PrevParticlePtr = nullptr;
-//
-//        LoggersManagerObject.Log(STREAM("LIST SIZE " << ParticlesKinds[1].ParticlesObjects.size() << " " << ParticlesKinds[2].ParticlesObjects.size() << " " << ParticlesKinds[3].ParticlesObjects.size() << " " << ParticlesKinds[4].ParticlesObjects.size()));
-//        auto& ParticleObject = ParticlesKinds[1].ParticlesObjects.front();
-//
-//        for (UnsignedInt Counter = 1; Counter <= 4; Counter++)
-//        {
-//            UnsignedInt FoundEmpty = 0;
-//            for (const auto& ParticleObjectLoop : ParticlesKinds[Counter].ParticlesObjects)
-//                if (ParticleObjectLoop.ListOfVoxels.empty() == true)
-//                    FoundEmpty++;
-//            LoggersManagerObject.Log(STREAM("EMPTY " << Counter << " " << FoundEmpty));
-//        }
-//
-//        while (NumberOfNucleotides < 580079)
-//        {
-//            unordered_map<Particle* , UnsignedInt> NeighbourNucleotideVoxelCounter;
-//
-//            LoggersManagerObject.Log(STREAM("1")); getchar();
-//
-//            if (ParticleObject.ListOfVoxels.empty() == true)
-//                LoggersManagerObject.Log(STREAM("EMPTY VECTOR"));
-//
-//            bool WRITE = false;
-//
-//            for (auto& VoxelCoordinates : ParticleObject.ListOfVoxels)
-//            {
-//                auto Voxel = GetSpaceVoxel(VoxelCoordinates.X, VoxelCoordinates.Y, VoxelCoordinates.Z);
-//
-//                if (WRITE) LoggersManagerObject.Log(STREAM("VOXEL DATA W " << VoxelCoordinates.X << " " << VoxelCoordinates.Y << " " << VoxelCoordinates.Z << " ParticlePtr " << Voxel.ParticlePtr << " EntityId = " << Voxel.EntityId << " ChainId = " << Voxel.ChainId));
-//
-//                auto VoxelNeighbourX1P = GetSpaceVoxel(VoxelCoordinates.X + 1, VoxelCoordinates.Y, VoxelCoordinates.Z);
-//                if (WRITE) LoggersManagerObject.Log(STREAM("VOXEL DATA X1P " << VoxelCoordinates.X + 1 << " " << VoxelCoordinates.Y << " " << VoxelCoordinates.Z << " ParticlePtr " << VoxelNeighbourX1P.ParticlePtr << " EntityId = " << VoxelNeighbourX1P.EntityId << " ChainId = " << VoxelNeighbourX1P.ChainId));
-//                if (VoxelNeighbourX1P.EntityId != 0 && CellEngineUseful::IsDNAorRNA(VoxelNeighbourX1P.EntityId) == true && VoxelNeighbourX1P.ParticlePtr != PrevParticlePtr && VoxelNeighbourX1P.ParticlePtr != Voxel.ParticlePtr)
-//                {
-//                    if (WRITE) LoggersManagerObject.Log(STREAM("XP"));
-//                    NeighbourNucleotideVoxelCounter[VoxelNeighbourX1P.ParticlePtr]++;
-//                }
-//
-//                auto VoxelNeighbourX1M = GetSpaceVoxel(VoxelCoordinates.X - 1, VoxelCoordinates.Y, VoxelCoordinates.Z);
-//                if (WRITE) LoggersManagerObject.Log(STREAM("VOXEL DATA X1M " << VoxelCoordinates.X - 1 << " " << VoxelCoordinates.Y << " " << VoxelCoordinates.Z << " ParticlePtr " << VoxelNeighbourX1M.ParticlePtr << " EntityId = " << VoxelNeighbourX1M.EntityId << " ChainId = " << VoxelNeighbourX1M.ChainId));
-//                if (VoxelNeighbourX1M.EntityId != 0 && CellEngineUseful::IsDNAorRNA(VoxelNeighbourX1M.EntityId) == true && VoxelNeighbourX1M.ParticlePtr != PrevParticlePtr && VoxelNeighbourX1M.ParticlePtr != Voxel.ParticlePtr)
-//                {
-//                    if (WRITE) LoggersManagerObject.Log(STREAM("XM"));
-//                    NeighbourNucleotideVoxelCounter[VoxelNeighbourX1M.ParticlePtr]++;
-//                }
-//
-//                auto VoxelNeighbourY1P = GetSpaceVoxel(VoxelCoordinates.X, VoxelCoordinates.Y + 1, VoxelCoordinates.Z);
-//                if (WRITE) LoggersManagerObject.Log(STREAM("VOXEL DATA Y1P " << VoxelCoordinates.X << " " << VoxelCoordinates.Y + 1 << " " << VoxelCoordinates.Z << " ParticlePtr " << VoxelNeighbourY1P.ParticlePtr << " EntityId = " << VoxelNeighbourY1P.EntityId << " ChainId = " << VoxelNeighbourY1P.ChainId));
-//                if (VoxelNeighbourY1P.EntityId != 0 && CellEngineUseful::IsDNAorRNA(VoxelNeighbourY1P.EntityId) == true && VoxelNeighbourY1P.ParticlePtr != PrevParticlePtr && VoxelNeighbourY1P.ParticlePtr != Voxel.ParticlePtr)
-//                {
-//                    if (WRITE) LoggersManagerObject.Log(STREAM("YP"));
-//                    NeighbourNucleotideVoxelCounter[VoxelNeighbourY1P.ParticlePtr]++;
-//                }
-//
-//                auto VoxelNeighbourY1M = GetSpaceVoxel(VoxelCoordinates.X, VoxelCoordinates.Y - 1, VoxelCoordinates.Z);
-//                if (WRITE) LoggersManagerObject.Log(STREAM("VOXEL DATA Y1M " << VoxelCoordinates.X << " " << VoxelCoordinates.Y - 1 << " " << VoxelCoordinates.Z << " ParticlePtr " << VoxelNeighbourY1M.ParticlePtr << " EntityId = " << VoxelNeighbourY1M.EntityId << " ChainId = " << VoxelNeighbourY1M.ChainId));
-//                if (VoxelNeighbourY1M.EntityId != 0 && CellEngineUseful::IsDNAorRNA(VoxelNeighbourY1M.EntityId) == true && VoxelNeighbourY1M.ParticlePtr != PrevParticlePtr && VoxelNeighbourY1M.ParticlePtr != Voxel.ParticlePtr)
-//                {
-//                    if (WRITE) LoggersManagerObject.Log(STREAM("YM"));
-//                    NeighbourNucleotideVoxelCounter[VoxelNeighbourY1M.ParticlePtr]++;
-//                }
-//
-//                auto VoxelNeighbourZ1P = GetSpaceVoxel(VoxelCoordinates.X, VoxelCoordinates.Y, VoxelCoordinates.Z + 1);
-//                if (WRITE) LoggersManagerObject.Log(STREAM("VOXEL DATA Z1P " << VoxelCoordinates.X << " " << VoxelCoordinates.Y << " " << VoxelCoordinates.Z + 1 << " ParticlePtr " << VoxelNeighbourZ1P.ParticlePtr << " EntityId = " << VoxelNeighbourZ1P.EntityId << " ChainId = " << VoxelNeighbourZ1P.ChainId));
-//                if (VoxelNeighbourZ1P.EntityId != 0 && CellEngineUseful::IsDNAorRNA(VoxelNeighbourZ1P.EntityId) == true && VoxelNeighbourZ1P.ParticlePtr != PrevParticlePtr && VoxelNeighbourZ1P.ParticlePtr != Voxel.ParticlePtr)
-//                {
-//                    if (WRITE) LoggersManagerObject.Log(STREAM("ZP"));
-//                    NeighbourNucleotideVoxelCounter[VoxelNeighbourZ1P.ParticlePtr]++;
-//                }
-//
-//                auto VoxelNeighbourZ1M = GetSpaceVoxel(VoxelCoordinates.X, VoxelCoordinates.Y, VoxelCoordinates.Z - 1);
-//                if (WRITE) LoggersManagerObject.Log(STREAM("VOXEL DATA Z1P " << VoxelCoordinates.X << " " << VoxelCoordinates.Y << " " << VoxelCoordinates.Z - 1 << " ParticlePtr " << VoxelNeighbourZ1P.ParticlePtr << " EntityId = " << VoxelNeighbourZ1P.EntityId << " ChainId = " << VoxelNeighbourZ1P.ChainId));
-//                if (VoxelNeighbourZ1M.EntityId != 0 && CellEngineUseful::IsDNAorRNA(VoxelNeighbourZ1M.EntityId) == true && VoxelNeighbourZ1M.ParticlePtr != PrevParticlePtr && VoxelNeighbourZ1M.ParticlePtr != Voxel.ParticlePtr)
-//                {
-//                    if (WRITE) LoggersManagerObject.Log(STREAM("ZM"));
-//                    NeighbourNucleotideVoxelCounter[VoxelNeighbourZ1M.ParticlePtr]++;
-//                }
-//            }
-//
-//            LoggersManagerObject.Log(STREAM("2")); getchar();
-//
-//            auto NeighbourNucleotideWithMaximalNumberOfBorderVoxel = std::max_element(NeighbourNucleotideVoxelCounter.begin(), NeighbourNucleotideVoxelCounter.end(), [](const auto &x, const auto &y) { return x.second < y.second; });
-//
-//            if (NeighbourNucleotideVoxelCounter.empty() == false)
-//                for (const auto& NeighbourNucleotideVoxelCounterOneObject : NeighbourNucleotideVoxelCounter)
-//                    LoggersManagerObject.Log(STREAM("MAP = " << NeighbourNucleotideVoxelCounterOneObject.first << " " << NeighbourNucleotideVoxelCounterOneObject.second));
-//            else
-//                LoggersManagerObject.Log(STREAM("EMPTY MAP"));
-//
-//            LoggersManagerObject.Log(STREAM("3")); getchar();
-//
-//            PrevParticlePtr = &ParticleObject;
-//
-//            LoggersManagerObject.Log(STREAM("4")); getchar();
-//
-//            ParticleObject = *NeighbourNucleotideWithMaximalNumberOfBorderVoxel->first;
-//
-//            LoggersManagerObject.Log(STREAM("5")); getchar();
-//
-//            NumberOfNucleotides++;
-//
-//            Genome.emplace_back(ParticleObject.ChainId);
-//
-//            LoggersManagerObject.Log(STREAM("6")); getchar();
-//
-//            GenomeStr0 += CellEngineUseful::GetLetterForDNAChainId0(ParticleObject.ChainId);
-//            GenomeStr1 += CellEngineUseful::GetLetterForDNAChainId1(ParticleObject.ChainId);
-//
-//            LoggersManagerObject.Log(STREAM("NumberOfNucleotides = " << NumberOfNucleotides << " PrevParticlePtr = " << PrevParticlePtr << " ParticleObjectPtr = " << &ParticleObject << " PrevParticlePtr->UniqueId = " << PrevParticlePtr->UniqueId << " ParticleObject.UniqueId = " << ParticleObject.UniqueId << " ParticleObject.ChainId " << ParticleObject.ChainId));
-//            getchar();
-//        }
-//
-//        FileUtils::RewriteTextToFile("Genome0.txt", GenomeStr0);
-//        FileUtils::RewriteTextToFile("Genome1.txt", GenomeStr1);
+        vector<char> Genome;
+        string GenomeStr0;
+        string GenomeStr1;
+
+        UnsignedInt NumberOfNucleotides = 0;
+
+        UniqueIdInt PrevParticleIndex = 0;
+
+        bool FirstNucleotideFound = true;
+        Particle* FirstNucleotideObject;
+
+        UnsignedInt FoundEmpty = 0;
+        for (auto& ParticleObject : Particles)
+            if (ParticleObject.second.EntityId == CellEngineConfigDataObject.DNAIdentifier)
+            {
+                if (FirstNucleotideFound == true)
+                {
+                    FirstNucleotideObject = &ParticleObject.second;
+                    FirstNucleotideFound = false;
+                }
+                NumberOfNucleotides++;
+                if (ParticleObject.second.ListOfVoxels.empty() == true)
+                    FoundEmpty++;
+            }
+
+        LoggersManagerObject.Log(STREAM("EMPTY FOUND = " << FoundEmpty << " ALL = " << NumberOfNucleotides));
+
+        NumberOfNucleotides = 0;
+        while (NumberOfNucleotides < 580079)
+        {
+            unordered_map<UniqueIdInt, UnsignedInt> NeighbourNucleotideVoxelCounter;
+
+                                                                                                                        LoggersManagerObject.Log(STREAM("1")); //getchar();
+            auto& ParticleObject = FirstNucleotideObject;
+
+            if (ParticleObject->ListOfVoxels.empty() == true)
+                LoggersManagerObject.Log(STREAM("EMPTY VECTOR"));
+
+            bool WRITE = true;
+            UniqueIdInt Voxel;
+
+            for (auto& VoxelCoordinates : ParticleObject->ListOfVoxels)
+            {
+                Voxel = GetSpaceVoxel(VoxelCoordinates.X, VoxelCoordinates.Y, VoxelCoordinates.Z);
+
+                if (WRITE == true)
+                    LoggersManagerObject.Log(STREAM("VOXEL DATA MAIN " << VoxelCoordinates.X << " " << VoxelCoordinates.Y << " " << VoxelCoordinates.Z << " Voxel Value Particle Index = " << Voxel << " EntityId = " << GetParticleFromIndex(Voxel).EntityId << " ChainId = " << GetParticleFromIndex(Voxel).ChainId));
+
+                CheckVoxelNeighbour(1, 0, 0, NeighbourNucleotideVoxelCounter, Voxel, PrevParticleIndex, VoxelCoordinates, WRITE);
+                CheckVoxelNeighbour(-1, 0, 0, NeighbourNucleotideVoxelCounter, Voxel, PrevParticleIndex, VoxelCoordinates, WRITE);
+                CheckVoxelNeighbour(0, 1, 0, NeighbourNucleotideVoxelCounter, Voxel, PrevParticleIndex, VoxelCoordinates, WRITE);
+                CheckVoxelNeighbour(0, -1, 0, NeighbourNucleotideVoxelCounter, Voxel, PrevParticleIndex, VoxelCoordinates, WRITE);
+                CheckVoxelNeighbour(0, 0, 1, NeighbourNucleotideVoxelCounter, Voxel, PrevParticleIndex, VoxelCoordinates, WRITE);
+                CheckVoxelNeighbour(0, 0, -1, NeighbourNucleotideVoxelCounter, Voxel, PrevParticleIndex, VoxelCoordinates, WRITE);
+            }
+                                                                                                                        LoggersManagerObject.Log(STREAM("2"));// getchar();
+
+            auto NeighbourNucleotideWithMaximalNumberOfBorderVoxel = std::max_element(NeighbourNucleotideVoxelCounter.begin(), NeighbourNucleotideVoxelCounter.end(), [](const auto &x, const auto &y) { return x.second < y.second; });
+
+            if (NeighbourNucleotideVoxelCounter.empty() == false)
+                for (const auto& NeighbourNucleotideVoxelCounterOneObject : NeighbourNucleotideVoxelCounter)
+                    LoggersManagerObject.Log(STREAM("MAP = " << NeighbourNucleotideVoxelCounterOneObject.first << " " << NeighbourNucleotideVoxelCounterOneObject.second));
+            else
+                LoggersManagerObject.Log(STREAM("EMPTY MAP"));
+                                                                                                                        LoggersManagerObject.Log(STREAM("3"));// getchar();
+            PrevParticleIndex = Voxel;
+                                                                                                                        LoggersManagerObject.Log(STREAM("4"));// getchar();
+
+            ParticleObject = &GetParticleFromIndex(NeighbourNucleotideWithMaximalNumberOfBorderVoxel->first);
+                                                                                                                        LoggersManagerObject.Log(STREAM("5"));// getchar();
+
+            NumberOfNucleotides++;
+
+            Genome.emplace_back(ParticleObject->ChainId);
+                                                                                                                        LoggersManagerObject.Log(STREAM("6")); getchar();
+
+            GenomeStr0 += CellEngineUseful::GetLetterForDNAChainId0(ParticleObject->ChainId);
+            GenomeStr1 += CellEngineUseful::GetLetterForDNAChainId1(ParticleObject->ChainId);
+
+            LoggersManagerObject.Log(STREAM("NumberOfNucleotides = " << NumberOfNucleotides));
+            getchar();
+        }
+
+        FileUtils::RewriteTextToFile("Genome0.txt", GenomeStr0);
+        FileUtils::RewriteTextToFile("Genome1.txt", GenomeStr1);
     }
     CATCH("getting dna sequence from nucleotides")
 }

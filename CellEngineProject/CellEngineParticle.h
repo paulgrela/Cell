@@ -18,9 +18,9 @@ public:
     ChainIdInt ChainId{};
     vector3_16 UniqueColor{};
 public:
-    std::vector<vector3_64> ListOfVoxels;
+    std::vector<vector3_16> ListOfVoxels;
 public:
-    explicit Particle(std::vector<vector3_64>& ListOfVoxelsParam) : ListOfVoxels(std::move(ListOfVoxelsParam)), SelectedForReaction(false)
+    explicit Particle(std::vector<vector3_16>& ListOfVoxelsParam) : ListOfVoxels(std::move(ListOfVoxelsParam)), SelectedForReaction(false)
     {
     }
     explicit Particle(EntityIdInt EntityIdParam, ChainIdInt ChainIdParam, vector3_16 UniqueColorParam) : EntityId(EntityIdParam), ChainId(ChainIdParam), UniqueColor(UniqueColorParam)
