@@ -66,7 +66,7 @@ public:
     void GenerateOneStepOfDiffusion(UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
 public:
     void CheckVoxelNeighbour(std::int32_t AddX, std::int32_t AddY, std::int32_t AddZ, std::unordered_map<UniqueIdInt, UnsignedInt>& NeighbourNucleotideVoxelCounter, UniqueIdInt Voxel, UniqueIdInt PrevParticleIndex, vector3_16& VoxelCoordinates, bool WriteInfo);
-    void GetDNASequenceFromNucleotides();
+    void GetDNASequenceFromNucleotides(int16_t Scale);
 public:
     CellEngineVoxelSimulationSpace();
     ~CellEngineVoxelSimulationSpace();

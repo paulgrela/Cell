@@ -22,11 +22,6 @@ namespace CellEngineUseful
         return ChainName.substr(0, 2) == "NU" || ChainName.substr(0, 2) == "NV" ? stoi(std::string(ChainName).substr(2, 2)) : 0;
     }
 
-    inline UnsignedInt GetParticleKindIndexFromChainId(const ChainIdInt ChainId)
-    {
-        return ChainId > 10 ? (ChainId - 10) : ChainId;
-    }
-
     inline char GetLetterForDNAChainId0(const ChainIdInt ChainId)
     {
         switch (ChainId)
@@ -66,6 +61,48 @@ namespace CellEngineUseful
 
         return 'I';
     }
+
+    inline char GetLetterForDNAChainId3(const ChainIdInt ChainId)
+    {
+        switch (ChainId)
+        {
+            case 1 : return 'G';//A
+            case 2 : return 'T';//C
+            case 3 : return 'A';//G
+            case 4 : return 'C';//T
+
+            case 11 : return 'T';
+            case 12 : return 'G';
+            case 13 : return 'C';
+            case 14 : return 'A';
+
+            default : break;
+        }
+
+        return 'I';
+    }
+
+    inline char GetLetterForDNAChainId4(const ChainIdInt ChainId)
+    {
+        switch (ChainId)
+        {
+            case 1 : return 'C';
+            case 2 : return 'A';
+            case 3 : return 'T';
+            case 4 : return 'G';
+
+            case 11 : return 'A';
+            case 12 : return 'C';
+            case 13 : return 'G';
+            case 14 : return 'T';
+
+            default : break;
+        }
+
+        return 'I';
+    }
+
+
 
     inline vector3_16 GetVector3FormVMathVec3ForColor(const vmath::vec3& Color)
     {
