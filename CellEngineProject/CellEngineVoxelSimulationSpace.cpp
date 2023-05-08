@@ -1,6 +1,4 @@
 
-#include <unordered_set>
-
 #include "FileUtils.h"
 
 #include "CellEngineAtom.h"
@@ -167,7 +165,7 @@ void CellEngineVoxelSimulationSpace::GenerateRandomParticlesInSelectedSpace(cons
 
         UnsignedInt LocalMaxParticleIndex = MaxParticleIndex;
         for (UniqueIdInt ParticleIndex = LocalMaxParticleIndex + 1; ParticleIndex <= LocalMaxParticleIndex + NumberOfRandomParticles; ParticleIndex++)
-            LocalNewParticlesIndexes.emplace_back(AddNewParticle(ParticleIndex, Particle(CellEngineConfigDataObject.DNAIdentifier, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))));
+            LocalNewParticlesIndexes.emplace_back(AddNewParticle(ParticleIndex, Particle(ParticleIndex, CellEngineConfigDataObject.DNAIdentifier, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))));
 
         vector<vector3_16> FilledVoxelsForRandomParticle;
 
@@ -277,142 +275,110 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfDiffusion(UniqueIdInt Star
     CATCH("generating one step of diffusion")
 }
 
-void CellEngineVoxelSimulationSpace::CheckVoxelNeighbour(int32_t AddX, int32_t AddY, int32_t AddZ, unordered_map<UniqueIdInt, UnsignedInt>& NeighbourNucleotideVoxelCounter, UniqueIdInt Voxel, UniqueIdInt PrevParticleIndex, vector3_16& VoxelCoordinates, bool WriteInfo)
-{
-    auto VoxelNeighbour = GetSpaceVoxel(VoxelCoordinates.X + AddX, VoxelCoordinates.Y + AddY, VoxelCoordinates.Z + AddZ);
-    if (WriteInfo == true)
-        LoggersManagerObject.Log(STREAM("VOXEL DATA ALL = " << VoxelCoordinates.X + AddX << " " << VoxelCoordinates.Y + AddY << " " << VoxelCoordinates.Z  + AddZ << " Voxel Value Particle Index " << VoxelNeighbour << " EntityId = " << GetParticleFromIndex(VoxelNeighbour).EntityId << " ChainId = " << GetParticleFromIndex(VoxelNeighbour).ChainId));
-    if (VoxelNeighbour != 0 && GetParticleFromIndex(VoxelNeighbour).EntityId == CellEngineConfigDataObject.DNAIdentifier && GetParticleFromIndex(VoxelNeighbour).ChainId < 10 && VoxelNeighbour != PrevParticleIndex && VoxelNeighbour != Voxel)
-    {
-        if (WriteInfo == true)
-            LoggersManagerObject.Log(STREAM("NEIGHBOUR UPDATE"));
-        NeighbourNucleotideVoxelCounter[VoxelNeighbour]++;
-    }
-}
+std::mt19937_64 mt64RR;
+vector<UniqueIdInt> Genome;
 
-void CellEngineVoxelSimulationSpace::GetDNASequenceFromNucleotides(int16_t Scale)
+void CellEngineVoxelSimulationSpace::GenerateRandomDNAInWholeCell()
 {
     try
     {
-        vector<pair<UniqueIdInt, char>> Genome;
-        unordered_set<UniqueIdInt> NotDNABackup;
-        string GenomeStr0;
-        string GenomeStr1;
-
-        UnsignedInt NumberOfNucleotides = 0;
-
-        UniqueIdInt PrevParticleIndex = 0;
-
-        bool FirstNucleotideFound = true;
-        Particle* FirstNucleotideObject;
-
-        UnsignedInt FoundEmpty = 0;
         for (auto& ParticleObjectLoop : Particles)
-            if (ParticleObjectLoop.second.EntityId == CellEngineConfigDataObject.DNAIdentifier && ParticleObjectLoop.second.ChainId < 10)
-            {
-                if (FirstNucleotideFound == true)
-                {
-                    FirstNucleotideObject = &ParticleObjectLoop.second;
-                    FirstNucleotideFound = false;
-                }
-                NumberOfNucleotides++;
-                if (ParticleObjectLoop.second.ListOfVoxels.empty() == true)
-                    FoundEmpty++;
-            }
+            if (ParticleObjectLoop.second.EntityId == CellEngineConfigDataObject.DNAIdentifier)
+                for (auto& VoxelCoordinates : ParticleObjectLoop.second.ListOfVoxels)
+                    GetSpaceVoxel(ParticleObjectLoop.second.ListOfVoxels[0].X, ParticleObjectLoop.second.ListOfVoxels[0].Y, ParticleObjectLoop.second.ListOfVoxels[0].Z) = 0;
 
-        LoggersManagerObject.Log(STREAM("EMPTY FOUND = " << FoundEmpty << " ALL = " << NumberOfNucleotides));
+        const auto RemovedDNAParticlesCounter = std::erase_if(Particles, [](const pair<UniqueIdInt, Particle>& item) { auto const& [key, value] = item; return (value.EntityId == CellEngineConfigDataObject.DNAIdentifier); });
+        LoggersManagerObject.Log(STREAM("RemovedDNAParticlesCounter = " << RemovedDNAParticlesCounter));
 
-        unordered_map<UniqueIdInt, UnsignedInt> NeighbourNucleotideVoxelCounter;
+        UnsignedInt DNAParticleCounter = 0;
+        for (auto& ParticleObjectLoop : Particles)
+            if (ParticleObjectLoop.second.EntityId == CellEngineConfigDataObject.DNAIdentifier)
+                DNAParticleCounter++;
+        LoggersManagerObject.Log(STREAM("DNAParticleCounter = " << DNAParticleCounter));
 
-        auto& ParticleObject = FirstNucleotideObject;
+        uniform_int_distribution<UnsignedInt> UniformDistributionObjectChainOfParticle_Uint64t(1, 4);
 
-        NumberOfNucleotides = 0;
+        uniform_int_distribution<UnsignedInt> UniformDistributionObjectMoveOfParticle_Uint64t(1, 6);
+        UnsignedInt RandomPosX = 539, RandomPosY = 727, RandomPosZ = 587;
+        UnsignedInt SizeX = 2, SizeY = 2, SizeZ = 2;
 
-        bool WriteInfo = false;
+        UnsignedInt NumberOfGeneratedNucleotides = 0;
+        vector<UnsignedInt> RandomMoveDirections = { 0, 0, 0, 0, 0, 0 };
 
-        while (NumberOfNucleotides < 580079)
+        auto CheckIfAllRandomMovesDirectionsWereChecked = std::all_of(RandomMoveDirections.begin(), RandomMoveDirections.end(), [&] (const UnsignedInt &Element) { return Element == 1; });
+
+        UnsignedInt NumberOfNucleotidesToBeGenerated = 10;
+
+        while (NumberOfGeneratedNucleotides < NumberOfNucleotidesToBeGenerated)
         {
-                                                                                                                        if (WriteInfo == true) getchar();
-            NeighbourNucleotideVoxelCounter.clear();
-                                                                                                                        if (WriteInfo == true) LoggersManagerObject.Log(STREAM("1"));
-                                                                                                                        //auto& ParticleObject = FirstNucleotideObject;
-
-            if (WriteInfo == true)
-                LoggersManagerObject.Log(STREAM("VOXELS VECTOR SIZE = " << ParticleObject->ListOfVoxels.size()));
-
-            UniqueIdInt Voxel = GetSpaceVoxel(ParticleObject->ListOfVoxels[0].X, ParticleObject->ListOfVoxels[0].Y, ParticleObject->ListOfVoxels[0].Z);
-
-            for (auto& VoxelCoordinates : ParticleObject->ListOfVoxels)
+            UnsignedInt RandomMoveDirection = 0;
+            //losuj tak dlugo az trafisz w 0
+            //osobno sprawdzic ta petle - niech wypisze Log bez pozostalych
+            do
             {
-                if (WriteInfo == true)
-                    LoggersManagerObject.Log(STREAM("VOXEL DATA MAIN " << VoxelCoordinates.X << " " << VoxelCoordinates.Y << " " << VoxelCoordinates.Z << " Voxel Value Particle Index = " << Voxel << " EntityId = " << GetParticleFromIndex(Voxel).EntityId << " ChainId = " << GetParticleFromIndex(Voxel).ChainId));
-
-                for (auto AddPosX = (std::int16_t)(-1 * Scale); AddPosX <= (1 * Scale); AddPosX++)
-                    for (auto AddPosY = (std::int16_t)(-1 * Scale); AddPosY <= (1 * Scale); AddPosY++)
-                        for (auto AddPosZ = (std::int16_t)(-1 * Scale); AddPosZ <= (1 * Scale); AddPosZ++)
-                            if((AddPosX == 0 && AddPosY == 0 && AddPosZ == 0) == false)
-                                CheckVoxelNeighbour(AddPosX, AddPosY, AddPosZ, NeighbourNucleotideVoxelCounter, Voxel, PrevParticleIndex, VoxelCoordinates, WriteInfo);
+                RandomMoveDirection = UniformDistributionObjectMoveOfParticle_Uint64t(mt64RR);
             }
-                                                                                                                        if (WriteInfo == true) LoggersManagerObject.Log(STREAM("2"));
+            while (RandomMoveDirections[RandomMoveDirection] == 1 && CheckIfAllRandomMovesDirectionsWereChecked == false);
 
-            auto NeighbourNucleotideWithMaximalNumberOfBorderVoxel = std::max_element(NeighbourNucleotideVoxelCounter.begin(), NeighbourNucleotideVoxelCounter.end(), [](const auto &x, const auto &y) { return x.second < y.second; });
-
-            if (NeighbourNucleotideVoxelCounter.empty() == false)
+            if (RandomMoveDirections[RandomMoveDirection] == 0)
             {
-                if (WriteInfo == true)
-                    for (const auto& NeighbourNucleotideVoxelCounterOneObject : NeighbourNucleotideVoxelCounter)
-                        LoggersManagerObject.Log(STREAM("MAP = " << NeighbourNucleotideVoxelCounterOneObject.first << " " << NeighbourNucleotideVoxelCounterOneObject.second));
+                switch (RandomMoveDirection)
+                {
+                    case 1 : RandomPosX++; break;
+                    case 2 : RandomPosX--; break;
+                    case 3 : RandomPosY++; break;
+                    case 4 : RandomPosY--; break;
+                    case 5 : RandomPosZ++; break;
+                    case 6 : RandomPosZ--; break;
+                    default : break;
+                }
+                RandomMoveDirections[RandomMoveDirection] = 1;
             }
-            else
+
+            bool EmptyVoxelSpaceForNewNucleotideBool = true;
+            while (EmptyVoxelSpaceForNewNucleotideBool == true && NumberOfGeneratedNucleotides < NumberOfNucleotidesToBeGenerated)
             {
-                if (WriteInfo == true)
-                    LoggersManagerObject.Log(STREAM("EMPTY MAP"));
+                for (UnsignedInt PosX = RandomPosX; PosX < RandomPosX + SizeX; PosX++)
+                    for (UnsignedInt PosY = RandomPosY; PosY < RandomPosY + SizeY; PosY++)
+                        for (UnsignedInt PosZ = RandomPosZ; PosZ < RandomPosZ + SizeZ; PosZ++)
+                            if (GetSpaceVoxel(PosX, PosY, PosZ) != 0)
+                            {
+                                EmptyVoxelSpaceForNewNucleotideBool = false;
+                                break;
+                            }
 
-                if (Genome.empty() == false)
-                    for (auto& GenomeObject : Genome)
-                        NotDNABackup.insert(GenomeObject.first);
-                else
-                    NotDNABackup.insert(Voxel);
+                if (EmptyVoxelSpaceForNewNucleotideBool == true)
+                {
+                    UnsignedInt ParticleIndex = Particles.size();
 
-                if (WriteInfo == true)
-                    for (auto& NotDNABackupObject : NotDNABackup)
-                        LoggersManagerObject.Log(STREAM("#" << NotDNABackupObject << "#"));
+                    NumberOfGeneratedNucleotides++;
 
-                Genome.clear();
-                GenomeStr0 = "";
-                GenomeStr1 = "";
-                NumberOfNucleotides = 0;
-                PrevParticleIndex = 0;
-                for (auto& ParticleObjectLoop : Particles)
-                    if (ParticleObjectLoop.second.EntityId == CellEngineConfigDataObject.DNAIdentifier && ParticleObjectLoop.second.ChainId < 10 && NotDNABackup.find(ParticleObjectLoop.first) == NotDNABackup.end())
-                    {
-                        ParticleObject = &ParticleObjectLoop.second;
-                        break;
-                    }
-
-                continue;
+                    ParticleIndex++;
+                    AddNewParticle(ParticleIndex, Particle(ParticleIndex, CellEngineConfigDataObject.DNAIdentifier, UniformDistributionObjectChainOfParticle_Uint64t(mt64RR), CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
+                    for (UnsignedInt PosX = RandomPosX; PosX < RandomPosX + SizeX; PosX++)
+                        for (UnsignedInt PosY = RandomPosY; PosY < RandomPosY + SizeY; PosY++)
+                            for (UnsignedInt PosZ = RandomPosZ; PosZ < RandomPosZ + SizeZ; PosZ++)
+                            {
+                                GetSpaceVoxel(PosX, PosY, PosZ) = ParticleIndex;
+                                GetParticleFromIndex(ParticleIndex).ListOfVoxels.emplace_back(PosX, PosY, PosZ);
+                            }
+                    Genome.emplace_back(ParticleIndex);
+                }
             }
-                                                                                                                        if (WriteInfo == true) LoggersManagerObject.Log(STREAM("3"));
-            PrevParticleIndex = Voxel;
-                                                                                                                        if (WriteInfo == true) LoggersManagerObject.Log(STREAM("4"));
 
-            ParticleObject = &GetParticleFromIndex(NeighbourNucleotideWithMaximalNumberOfBorderVoxel->first);
-                                                                                                                        if (WriteInfo == true) LoggersManagerObject.Log(STREAM("5"));
+            if (EmptyVoxelSpaceForNewNucleotideBool == false && CheckIfAllRandomMovesDirectionsWereChecked == true)
+            {
+                UnsignedInt PreviousParticleIndex = Particles.size() - 1;
+                RandomPosX = GetParticleFromIndex(PreviousParticleIndex).ListOfVoxels[0].X;
+                RandomPosY = GetParticleFromIndex(PreviousParticleIndex).ListOfVoxels[0].Y;
+                RandomPosZ = GetParticleFromIndex(PreviousParticleIndex).ListOfVoxels[0].Z;
+                for (auto& VoxelCoordinates : GetParticleFromIndex(PreviousParticleIndex).ListOfVoxels)
+                    GetSpaceVoxel(VoxelCoordinates.X, VoxelCoordinates.Y, VoxelCoordinates.Z) = GetZerSimulationSpaceVoxel();
+                Particles.erase(Particles.size() - 1);
 
-            NumberOfNucleotides++;
-
-            Genome.emplace_back(PrevParticleIndex, ParticleObject->ChainId);
-                                                                                                                        if (WriteInfo == true) LoggersManagerObject.Log(STREAM("6"));
-
-            GenomeStr0 += CellEngineUseful::GetLetterForDNAChainId3(ParticleObject->ChainId);
-            GenomeStr1 += CellEngineUseful::GetLetterForDNAChainId4(ParticleObject->ChainId);
-
-            if (WriteInfo == true || (WriteInfo == false && NumberOfNucleotides % 100000 == 0))
-                LoggersManagerObject.Log(STREAM("NumberOfNucleotides = " << NumberOfNucleotides));
+                fill(RandomMoveDirections.begin(), RandomMoveDirections.end(), 0);
+            }
         }
-
-        FileUtils::RewriteTextToFile("Genome0.txt", GenomeStr0);
-        FileUtils::RewriteTextToFile("Genome1.txt", GenomeStr1);
     }
-    CATCH("getting dna sequence from nucleotides")
+    CATCH("generating random dna in whole cell")
 }

@@ -180,7 +180,7 @@ void CellEngineCIFDataFile::ReadDataFromFile()
                             vmath::vec3 UniqueParticleColor = CellEngineColorsObject.GetRandomColor();
 
                             NumberOfParticles++;
-                            UniqueIdInt ParticleIndex = AddNewParticle(NumberOfParticles, Particle(AtomsForChainNameIterator->second[0].EntityId, CellEngineUseful::GetChainIdFromChainName(AppliedChainName), CellEngineUseful::GetVector3FormVMathVec3ForColor(UniqueParticleColor)));
+                            UniqueIdInt ParticleIndex = AddNewParticle(NumberOfParticles, Particle(NumberOfParticles, AtomsForChainNameIterator->second[0].EntityId, CellEngineUseful::GetChainIdFromChainName(AppliedChainName), CellEngineUseful::GetVector3FormVMathVec3ForColor(UniqueParticleColor)));
 
                             if (CellEngineUseful::IsNucleotide(AppliedChainName))
                                 NumberOfNucleotidesInDNA++;

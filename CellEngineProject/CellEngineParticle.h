@@ -16,6 +16,7 @@ public:
 public:
     EntityIdInt EntityId{};
     ChainIdInt ChainId{};
+    UniqueIdInt Index{};
     vector3_16 UniqueColor{};
 public:
     std::vector<vector3_16> ListOfVoxels;
@@ -23,7 +24,7 @@ public:
     explicit Particle(std::vector<vector3_16>& ListOfVoxelsParam) : ListOfVoxels(std::move(ListOfVoxelsParam)), SelectedForReaction(false)
     {
     }
-    explicit Particle(EntityIdInt EntityIdParam, ChainIdInt ChainIdParam, vector3_16 UniqueColorParam) : EntityId(EntityIdParam), ChainId(ChainIdParam), UniqueColor(UniqueColorParam)
+    explicit Particle(UniqueIdInt IndexParam, EntityIdInt EntityIdParam, ChainIdInt ChainIdParam, vector3_16 UniqueColorParam) : Index(IndexParam), EntityId(EntityIdParam), ChainId(ChainIdParam), UniqueColor(UniqueColorParam)
     {
     }
 public:

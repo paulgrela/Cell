@@ -78,7 +78,7 @@ public:
     enum class TypesOfSpace : UnsignedInt
     {
         FullAtomSpace = 1,
-        VoxelSimulationSpace = 2,
+        VoxelSimulationSpace = 2
     };
     TypesOfSpace TypeOfSpace = TypesOfSpace::FullAtomSpace;
 public:
@@ -88,6 +88,13 @@ public:
     UnsignedInt VoxelSimulationSpaceSelectionStartXPos{}, VoxelSimulationSpaceSelectionStartYPos{}, VoxelSimulationSpaceSelectionStartZPos{};
     UnsignedInt VoxelSimulationSpaceSelectionStepX{}, VoxelSimulationSpaceSelectionStepY{}, VoxelSimulationSpaceSelectionStepZ{};
     UnsignedInt VoxelSimulationSpaceSelectionSizeX{}, VoxelSimulationSpaceSelectionSizeY{}, VoxelSimulationSpaceSelectionSizeZ{};
+public:
+    enum class SelectedSpaceStartParametersDrawTypes : UnsignedInt
+    {
+        DrawFromCenter = 1,
+        DrawFromCorner = 2
+    };
+    SelectedSpaceStartParametersDrawTypes SelectedSpaceStartParametersDrawTypesObject =  SelectedSpaceStartParametersDrawTypes::DrawFromCenter;
 public:
     enum class RandomColorEngineTypes : UnsignedInt
     {

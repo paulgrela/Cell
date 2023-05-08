@@ -3,6 +3,8 @@
 #ifndef CELL_ENGINE_SIMULATION_SPACE_H
 #define CELL_ENGINE_SIMULATION_SPACE_H
 
+#include <unordered_set>
+
 #include "CellEngineTypes.h"
 #include "CellEngineParticle.h"
 #include "CellEngineReaction.h"
@@ -65,8 +67,7 @@ public:
     void GenerateRandomParticlesInSelectedSpace(UnsignedInt NumberOfRandomParticles, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt StepXParam, UnsignedInt StepYParam, UnsignedInt StepZParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
     void GenerateOneStepOfDiffusion(UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
 public:
-    void CheckVoxelNeighbour(std::int32_t AddX, std::int32_t AddY, std::int32_t AddZ, std::unordered_map<UniqueIdInt, UnsignedInt>& NeighbourNucleotideVoxelCounter, UniqueIdInt Voxel, UniqueIdInt PrevParticleIndex, vector3_16& VoxelCoordinates, bool WriteInfo);
-    void GetDNASequenceFromNucleotides(int16_t Scale);
+    void GenerateRandomDNAInWholeCell();
 public:
     CellEngineVoxelSimulationSpace();
     ~CellEngineVoxelSimulationSpace();
