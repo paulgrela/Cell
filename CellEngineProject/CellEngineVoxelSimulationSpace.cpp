@@ -5,6 +5,7 @@
 #include "CellEngineColors.h"
 #include "CellEngineUseful.h"
 #include "CellEngineVoxelSimulationSpace.h"
+#include "CellEngineOpenGLVisualiserOfVoxelSimulationSpace.h"
 
 using namespace std;
 
@@ -28,7 +29,7 @@ inline Particle& CellEngineVoxelSimulationSpace::GetParticleFromIndex(const Uniq
     return Particles[ParticleIndex];
 }
 
-inline SimulationSpaceVoxel GetZerSimulationSpaceVoxel()
+inline SimulationSpaceVoxel GetZeroSimulationSpaceVoxel()
 {
     return 0;
 }
@@ -54,7 +55,7 @@ CellEngineVoxelSimulationSpace::CellEngineVoxelSimulationSpace()
         for (UnsignedInt PosX = 0; PosX < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension; PosX++)
             for (UnsignedInt PosY = 0; PosY < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension; PosY++)
                 for (UnsignedInt PosZ = 0; PosZ < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension; PosZ++)
-                    GetSpaceVoxel(PosX, PosZ, PosY) = GetZerSimulationSpaceVoxel();
+                    GetSpaceVoxel(PosX, PosZ, PosY) = GetZeroSimulationSpaceVoxel();
     }
     CATCH("execution of constructor of voxel simulation space")
 }
@@ -178,7 +179,7 @@ void CellEngineVoxelSimulationSpace::GenerateRandomParticlesInSelectedSpace(cons
         for (UnsignedInt PosX = StartXPosParam; PosX < StartXPosParam + SizeXParam; PosX += StepXParam)
             for (UnsignedInt PosY = StartYPosParam; PosY < StartYPosParam + SizeYParam; PosY += StepYParam)
                 for (UnsignedInt PosZ = StartZPosParam; PosZ < StartZPosParam + SizeZParam; PosZ += StepZParam)
-                    GetSpaceVoxel(PosX, PosY, PosZ) = GetZerSimulationSpaceVoxel();
+                    GetSpaceVoxel(PosX, PosY, PosZ) = GetZeroSimulationSpaceVoxel();
 
         for (auto& LocalNewParticleIndex : LocalNewParticlesIndexes)
         {
@@ -203,7 +204,7 @@ void CellEngineVoxelSimulationSpace::GenerateRandomParticlesInSelectedSpace(cons
                             else
                             {
                                 for (auto& VoxelForRandomParticle : FilledVoxelsForRandomParticle)
-                                    GetSpaceVoxel(VoxelForRandomParticle.X, VoxelForRandomParticle.Y, VoxelForRandomParticle.Z) = GetZerSimulationSpaceVoxel();
+                                    GetSpaceVoxel(VoxelForRandomParticle.X, VoxelForRandomParticle.Y, VoxelForRandomParticle.Z) = GetZeroSimulationSpaceVoxel();
 
                                 FilledVoxelsForRandomParticle.clear();
 
@@ -241,7 +242,7 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfDiffusion(UniqueIdInt Star
             auto& LocalParticleObject = Particles[ParticleIndex];
 
             for (auto& VoxelForParticle : LocalParticleObject.ListOfVoxels)
-                GetSpaceVoxel(VoxelForParticle.X, VoxelForParticle.Y, VoxelForParticle.Z) = GetZerSimulationSpaceVoxel();
+                GetSpaceVoxel(VoxelForParticle.X, VoxelForParticle.Y, VoxelForParticle.Z) = GetZeroSimulationSpaceVoxel();
 
             SignedInt ShiftX = UniformDistributionObjectSizeOfParticle_int64t(mt64R);
             SignedInt ShiftY = UniformDistributionObjectSizeOfParticle_int64t(mt64R);
@@ -259,7 +260,7 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfDiffusion(UniqueIdInt Star
                 else
                 {
                     for (auto& NewVoxelForParticle : NewVoxelsForParticle)
-                        GetSpaceVoxel(NewVoxelForParticle.X, NewVoxelForParticle.Y, NewVoxelForParticle.Z) = GetZerSimulationSpaceVoxel();
+                        GetSpaceVoxel(NewVoxelForParticle.X, NewVoxelForParticle.Y, NewVoxelForParticle.Z) = GetZeroSimulationSpaceVoxel();
 
                     for (auto& OldVoxelForParticle : LocalParticleObject.ListOfVoxels)
                         GetSpaceVoxel(OldVoxelForParticle.X, OldVoxelForParticle.Y, OldVoxelForParticle.Z) = ParticleIndex;
@@ -278,6 +279,20 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfDiffusion(UniqueIdInt Star
 std::mt19937_64 mt64RR;
 vector<UniqueIdInt> Genome;
 
+void UpdateRandomPositions(const UnsignedInt RandomMoveDirection, UnsignedInt& RandomPosX, UnsignedInt& RandomPosY, UnsignedInt& RandomPosZ, const UnsignedInt Size)
+{
+    switch (RandomMoveDirection)
+    {
+        case 1 : RandomPosX += Size; break;
+        case 2 : RandomPosX -= Size; break;
+        case 3 : RandomPosY += Size; break;
+        case 4 : RandomPosY -= Size; break;
+        case 5 : RandomPosZ += Size; break;
+        case 6 : RandomPosZ -= Size; break;
+        default : break;
+    }
+}
+
 void CellEngineVoxelSimulationSpace::GenerateRandomDNAInWholeCell()
 {
     try
@@ -285,7 +300,7 @@ void CellEngineVoxelSimulationSpace::GenerateRandomDNAInWholeCell()
         for (auto& ParticleObjectLoop : Particles)
             if (ParticleObjectLoop.second.EntityId == CellEngineConfigDataObject.DNAIdentifier)
                 for (auto& VoxelCoordinates : ParticleObjectLoop.second.ListOfVoxels)
-                    GetSpaceVoxel(ParticleObjectLoop.second.ListOfVoxels[0].X, ParticleObjectLoop.second.ListOfVoxels[0].Y, ParticleObjectLoop.second.ListOfVoxels[0].Z) = 0;
+                    GetSpaceVoxel(VoxelCoordinates.X, VoxelCoordinates.Y, VoxelCoordinates.Z) = GetZeroSimulationSpaceVoxel();
 
         const auto RemovedDNAParticlesCounter = std::erase_if(Particles, [](const pair<UniqueIdInt, Particle>& item) { auto const& [key, value] = item; return (value.EntityId == CellEngineConfigDataObject.DNAIdentifier); });
         LoggersManagerObject.Log(STREAM("RemovedDNAParticlesCounter = " << RemovedDNAParticlesCounter));
@@ -295,57 +310,53 @@ void CellEngineVoxelSimulationSpace::GenerateRandomDNAInWholeCell()
             if (ParticleObjectLoop.second.EntityId == CellEngineConfigDataObject.DNAIdentifier)
                 DNAParticleCounter++;
         LoggersManagerObject.Log(STREAM("DNAParticleCounter = " << DNAParticleCounter));
-
+                                                                                                                        LoggersManagerObject.Log(STREAM("TU1")); getchar();
         uniform_int_distribution<UnsignedInt> UniformDistributionObjectChainOfParticle_Uint64t(1, 4);
-
         uniform_int_distribution<UnsignedInt> UniformDistributionObjectMoveOfParticle_Uint64t(1, 6);
+
         UnsignedInt RandomPosX = 539, RandomPosY = 727, RandomPosZ = 587;
-        UnsignedInt SizeX = 2, SizeY = 2, SizeZ = 2;
+        UnsignedInt ParticleSize = 2;
 
         UnsignedInt NumberOfGeneratedNucleotides = 0;
-        vector<UnsignedInt> RandomMoveDirections = { 0, 0, 0, 0, 0, 0 };
+        vector<UnsignedInt> RandomMovesDirections = { 0, 0, 0, 0, 0, 0 };
 
-        auto CheckIfAllRandomMovesDirectionsWereChecked = std::all_of(RandomMoveDirections.begin(), RandomMoveDirections.end(), [&] (const UnsignedInt &Element) { return Element == 1; });
+        auto CheckIfAllRandomMovesDirectionsWereChecked = std::all_of(RandomMovesDirections.begin(), RandomMovesDirections.end(), [&] (const UnsignedInt &Element) { return Element == 1; });
 
-        UnsignedInt NumberOfNucleotidesToBeGenerated = 10;
+        UnsignedInt NumberOfNucleotidesToBeGenerated = 4;
 
         while (NumberOfGeneratedNucleotides < NumberOfNucleotidesToBeGenerated)
         {
             UnsignedInt RandomMoveDirection = 0;
-            //losuj tak dlugo az trafisz w 0
-            //osobno sprawdzic ta petle - niech wypisze Log bez pozostalych
+
             do
             {
                 RandomMoveDirection = UniformDistributionObjectMoveOfParticle_Uint64t(mt64RR);
-            }
-            while (RandomMoveDirections[RandomMoveDirection] == 1 && CheckIfAllRandomMovesDirectionsWereChecked == false);
 
-            if (RandomMoveDirections[RandomMoveDirection] == 0)
+                LoggersManagerObject.Log(STREAM("RandomMoveDirection = " << RandomMoveDirection << " " << RandomMovesDirections[RandomMoveDirection - 1] << " " << CheckIfAllRandomMovesDirectionsWereChecked));
+            }
+            while (RandomMovesDirections[RandomMoveDirection - 1] == 1 && CheckIfAllRandomMovesDirectionsWereChecked == false);
+
+            if (RandomMovesDirections[RandomMoveDirection - 1] == 0)
             {
-                switch (RandomMoveDirection)
-                {
-                    case 1 : RandomPosX++; break;
-                    case 2 : RandomPosX--; break;
-                    case 3 : RandomPosY++; break;
-                    case 4 : RandomPosY--; break;
-                    case 5 : RandomPosZ++; break;
-                    case 6 : RandomPosZ--; break;
-                    default : break;
-                }
-                RandomMoveDirections[RandomMoveDirection] = 1;
+                UpdateRandomPositions(RandomMoveDirection, RandomPosX, RandomPosY, RandomPosZ, ParticleSize);
+
+                RandomMovesDirections[RandomMoveDirection - 1] = 1;
             }
 
             bool EmptyVoxelSpaceForNewNucleotideBool = true;
             while (EmptyVoxelSpaceForNewNucleotideBool == true && NumberOfGeneratedNucleotides < NumberOfNucleotidesToBeGenerated)
             {
-                for (UnsignedInt PosX = RandomPosX; PosX < RandomPosX + SizeX; PosX++)
-                    for (UnsignedInt PosY = RandomPosY; PosY < RandomPosY + SizeY; PosY++)
-                        for (UnsignedInt PosZ = RandomPosZ; PosZ < RandomPosZ + SizeZ; PosZ++)
+                for (UnsignedInt PosX = RandomPosX; PosX < RandomPosX + ParticleSize; PosX++)
+                    for (UnsignedInt PosY = RandomPosY; PosY < RandomPosY + ParticleSize; PosY++)
+                        for (UnsignedInt PosZ = RandomPosZ; PosZ < RandomPosZ + ParticleSize; PosZ++)
                             if (GetSpaceVoxel(PosX, PosY, PosZ) != 0)
                             {
+                                LoggersManagerObject.Log(STREAM("BROKEN POS = " << PosX << " " << PosY << " " << PosZ << " " << GetSpaceVoxel(PosX, PosY, PosZ)));
                                 EmptyVoxelSpaceForNewNucleotideBool = false;
                                 break;
                             }
+
+                LoggersManagerObject.Log(STREAM("EmptyVoxelSpaceForNewNucleotideBool = " << EmptyVoxelSpaceForNewNucleotideBool << " " << CheckIfAllRandomMovesDirectionsWereChecked));
 
                 if (EmptyVoxelSpaceForNewNucleotideBool == true)
                 {
@@ -355,29 +366,41 @@ void CellEngineVoxelSimulationSpace::GenerateRandomDNAInWholeCell()
 
                     ParticleIndex++;
                     AddNewParticle(ParticleIndex, Particle(ParticleIndex, CellEngineConfigDataObject.DNAIdentifier, UniformDistributionObjectChainOfParticle_Uint64t(mt64RR), CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
-                    for (UnsignedInt PosX = RandomPosX; PosX < RandomPosX + SizeX; PosX++)
-                        for (UnsignedInt PosY = RandomPosY; PosY < RandomPosY + SizeY; PosY++)
-                            for (UnsignedInt PosZ = RandomPosZ; PosZ < RandomPosZ + SizeZ; PosZ++)
+                    for (UnsignedInt PosX = RandomPosX; PosX < RandomPosX + ParticleSize; PosX++)
+                        for (UnsignedInt PosY = RandomPosY; PosY < RandomPosY + ParticleSize; PosY++)
+                            for (UnsignedInt PosZ = RandomPosZ; PosZ < RandomPosZ + ParticleSize; PosZ++)
                             {
                                 GetSpaceVoxel(PosX, PosY, PosZ) = ParticleIndex;
                                 GetParticleFromIndex(ParticleIndex).ListOfVoxels.emplace_back(PosX, PosY, PosZ);
                             }
                     Genome.emplace_back(ParticleIndex);
+
+                    fill(RandomMovesDirections.begin(), RandomMovesDirections.end(), 0);
+
+                    UpdateRandomPositions(RandomMoveDirection, RandomPosX, RandomPosY, RandomPosZ, ParticleSize);
+
+                    LoggersManagerObject.Log(STREAM("ParticleIndex = " << ParticleIndex << " RX = " << RandomPosX << " RY = " << RandomPosY << " RZ = " << RandomPosZ));
                 }
             }
 
             if (EmptyVoxelSpaceForNewNucleotideBool == false && CheckIfAllRandomMovesDirectionsWereChecked == true)
             {
                 UnsignedInt PreviousParticleIndex = Particles.size() - 1;
+
                 RandomPosX = GetParticleFromIndex(PreviousParticleIndex).ListOfVoxels[0].X;
                 RandomPosY = GetParticleFromIndex(PreviousParticleIndex).ListOfVoxels[0].Y;
                 RandomPosZ = GetParticleFromIndex(PreviousParticleIndex).ListOfVoxels[0].Z;
+
                 for (auto& VoxelCoordinates : GetParticleFromIndex(PreviousParticleIndex).ListOfVoxels)
-                    GetSpaceVoxel(VoxelCoordinates.X, VoxelCoordinates.Y, VoxelCoordinates.Z) = GetZerSimulationSpaceVoxel();
+                    GetSpaceVoxel(VoxelCoordinates.X, VoxelCoordinates.Y, VoxelCoordinates.Z) = GetZeroSimulationSpaceVoxel();
+
                 Particles.erase(Particles.size() - 1);
 
-                fill(RandomMoveDirections.begin(), RandomMoveDirections.end(), 0);
+                fill(RandomMovesDirections.begin(), RandomMovesDirections.end(), 0);
+
+                LoggersManagerObject.Log(STREAM("PreviousParticleIndex = " << PreviousParticleIndex << " RX = " << RandomPosX << " RY = " << RandomPosY << " RZ = " << RandomPosZ));
             }
+                                                                                                                        LoggersManagerObject.Log(STREAM("TU2")); getchar();
         }
     }
     CATCH("generating random dna in whole cell")
