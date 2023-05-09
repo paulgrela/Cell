@@ -323,8 +323,7 @@ void CellEngineVoxelSimulationSpace::GenerateRandomDNAInWholeCell()
 
         auto CheckIfAllRandomMovesDirectionsWereChecked = std::all_of(RandomMovesDirections.begin(), RandomMovesDirections.end(), [&] (const UnsignedInt &Element) { return Element == 1; });
 
-        //UnsignedInt NumberOfNucleotidesToBeGenerated = 193300;
-        UnsignedInt NumberOfNucleotidesToBeGenerated = 150;
+        UnsignedInt NumberOfNucleotidesToBeGenerated = 193300;
 
         while (NumberOfGeneratedNucleotides < NumberOfNucleotidesToBeGenerated)
         {
@@ -356,9 +355,9 @@ void CellEngineVoxelSimulationSpace::GenerateRandomDNAInWholeCell()
                                 LoggersManagerObject.Log(STREAM("BROKEN POS = " << PosX << " " << PosY << " " << PosZ << " " << GetSpaceVoxel(PosX, PosY, PosZ)));
                                 EmptyVoxelSpaceForNewNucleotideBool = false;
                                 UpdateRandomPositions(RandomMoveDirection, RandomPosX, RandomPosY, RandomPosZ, -ParticleSize);
-                                goto OutOfLoop;
+                                goto BreakOutOfLoop;
                             }
-                OutOfLoop:
+                BreakOutOfLoop:
 
                 LoggersManagerObject.Log(STREAM("EmptyVoxelSpaceForNewNucleotideBool = " << EmptyVoxelSpaceForNewNucleotideBool << " " << CheckIfAllRandomMovesDirectionsWereChecked));
 
