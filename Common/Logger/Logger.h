@@ -47,7 +47,7 @@ private:
 private:
 	std::string CreateLogString(const std::string& MessageStr, const bool LogLineInfo, const ThreadIdType CurrentThreadId, std::uint64_t LineNumberInCommonLog, const bool PrintLogLineNumber, const bool PrintLogDateTime, const bool PrintLogProcessId, const bool PrintLogProcessPriorityLevel, const bool PrintLogThreadId) const;
 private:
-	void WriteToCommonLogFromThread(const bool Condition, const std::string& MessageStr, std::ostream& StreamObject, const ThreadIdType CurrentThreadId, const std::uint64_t FileNumber);
+	static void WriteToCommonLogFromThread(const bool Condition, const std::string& MessageStr, std::ostream& StreamObject, const ThreadIdType CurrentThreadId, const std::uint64_t FileNumber);
 	void WriteToLogsFromThread(const std::string& MessageStrToFile, const ThreadIdType CurrentThreadId);
 public:
 	void LogMessageBool(const std::string& MessageStr, const bool LogLineInfo, const ThreadIdType CurrentThreadId, const bool PrintToConsole);
@@ -101,7 +101,7 @@ private:
 public:	
 	void InitializeFilesNames(const std::initializer_list<const std::string> InitialFilesNames);
 	void InitializeSelectiveWordsFunctions(const std::initializer_list<std::function<bool(const std::string&)>> InitialSelectiveWordsFunctions);
-	void InitializePrintingParameters(bool PrintLogToConsole, bool PrintLogToFiles, bool PrintLogLineNumberToConsole, bool PrintLogDateTimeToConsole, bool PrintLogProcessIdToConsole, bool PrintLogProcessPriorityLevelToConsole, bool PrintLogThreadIdToConsole, bool PrintLogLineNumberToFile, bool PrintLogDateTimeToFile, bool PrintLogProcessIdToFile, bool PrintLogProcessPriorityLevelToFile, bool PrintLogThreadIdToFile, uint64_t MaximalNumberOfLinesInOneFile);
+	void InitializePrintingParameters(bool PrintLogToConsoleParam, bool PrintLogToFilesParam, bool PrintLogLineNumberToConsoleParam, bool PrintLogDateTimeToConsoleParam, bool PrintLogProcessIdToConsoleParam, bool PrintLogProcessPriorityLevelToConsoleParam, bool PrintLogThreadIdToConsoleParam, bool PrintLogLineNumberToFileParam, bool PrintLogDateTimeToFileParam, bool PrintLogProcessIdToFileParam, bool PrintLogProcessPriorityLevelToFileParam, bool PrintLogThreadIdToFileParam, uint64_t MaximalNumberOfLinesInOneFileParam);
 	void InitializeLoggerManagerDataForTask(const std::string& TaskNameParameter, const std::string& LogDirectoryParameter, const std::string& ActualDateTimeStrParameter, const bool LogThreadsToSeparatedFilesParameter, const std::uint64_t FileNumberToIncreaseLineNumberParameter, std::function<void(const ThreadIdType CurrentThreadId, const std::uint64_t FileNumber, const std::string& MessageStr)> DrawMessageFunctionObjectParameter);
 };
 

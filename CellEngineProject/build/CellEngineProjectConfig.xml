@@ -58,7 +58,7 @@
 		<PrintProcessIdToFile>false</PrintProcessIdToFile>
 		<PrintProcessPriorityLevelToFile>false</PrintProcessPriorityLevelToFile>
 		<PrintThreadIdToFile>true</PrintThreadIdToFile>
-		<MaximalNumberOfLinesInOneFile>1000</MaximalNumberOfLinesInOneFile>
+		<MaximalNumberOfLinesInOneFile>100000</MaximalNumberOfLinesInOneFile>
 	</Logger>	
 	<CellsStates>
 		<CellState id="1">

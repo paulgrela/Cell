@@ -92,7 +92,7 @@ void Logger::AllocResourcesForFiles()
 			Files.resize(LoggersManagerObject.FilesNames.size());
 		}
 	}
-	CATCH_AND_THROW_COUT("aloccing resources for file in logger")
+	CATCH_AND_THROW_COUT("allocation of  resources for file in logger")
 }
 
 void Logger::OpenLogFiles()
@@ -282,31 +282,31 @@ void  LoggersManager::InitializeSelectiveWordsFunctions(const initializer_list<f
 	try
 	{
 		for (const auto& InitialSelectiveWordsFunction : InitialSelectiveWordsFunctions)
-			SelectiveWordsFunctions.push_back(InitialSelectiveWordsFunction);
+			SelectiveWordsFunctions.emplace_back(InitialSelectiveWordsFunction);
 	}
 	CATCH_AND_THROW_COUT("initializing loggers manager selective words functions")
 }
 
-void LoggersManager::InitializePrintingParameters(bool PrintLogToConsole, bool PrintLogToFiles, bool PrintLogLineNumberToConsole, bool PrintLogDateTimeToConsole, bool PrintLogProcessIdToConsole, bool PrintLogProcessPriorityLevelToConsole, bool PrintLogThreadIdToConsole, bool PrintLogLineNumberToFile, bool PrintLogDateTimeToFile, bool PrintLogProcessIdToFile, bool PrintLogProcessPriorityLevelToFile, bool PrintLogThreadIdToFile, uint64_t MaximalNumberOfLinesInOneFile)
+void LoggersManager::InitializePrintingParameters(bool PrintLogToConsoleParam, bool PrintLogToFilesParam, bool PrintLogLineNumberToConsoleParam, bool PrintLogDateTimeToConsoleParam, bool PrintLogProcessIdToConsoleParam, bool PrintLogProcessPriorityLevelToConsoleParam, bool PrintLogThreadIdToConsoleParam, bool PrintLogLineNumberToFileParam, bool PrintLogDateTimeToFileParam, bool PrintLogProcessIdToFileParam, bool PrintLogProcessPriorityLevelToFileParam, bool PrintLogThreadIdToFileParam, uint64_t MaximalNumberOfLinesInOneFileParam)
 {
 	try
 	{
-		this->PrintLogToConsole = PrintLogToConsole;
-		this->PrintLogToFiles = PrintLogToFiles;
+		this->PrintLogToConsole = PrintLogToConsoleParam;
+		this->PrintLogToFiles = PrintLogToFilesParam;
 	
-		this->PrintLogLineNumberToConsole = PrintLogLineNumberToConsole;
-		this->PrintLogDateTimeToConsole = PrintLogDateTimeToConsole;
-		this->PrintLogProcessIdToConsole = PrintLogProcessIdToConsole;
-		this->PrintLogProcessPriorityLevelToConsole = PrintLogProcessPriorityLevelToConsole;
-		this->PrintLogThreadIdToConsole = PrintLogThreadIdToConsole;
+		this->PrintLogLineNumberToConsole = PrintLogLineNumberToConsoleParam;
+		this->PrintLogDateTimeToConsole = PrintLogDateTimeToConsoleParam;
+		this->PrintLogProcessIdToConsole = PrintLogProcessIdToConsoleParam;
+		this->PrintLogProcessPriorityLevelToConsole = PrintLogProcessPriorityLevelToConsoleParam;
+		this->PrintLogThreadIdToConsole = PrintLogThreadIdToConsoleParam;
 
-		this->PrintLogLineNumberToFile = PrintLogLineNumberToFile;
-		this->PrintLogDateTimeToFile = PrintLogDateTimeToFile;
-		this->PrintLogProcessIdToFile = PrintLogProcessIdToFile;
-		this->PrintLogProcessPriorityLevelToFile = PrintLogProcessPriorityLevelToFile;
-		this->PrintLogThreadIdToFile = PrintLogThreadIdToFile;
+		this->PrintLogLineNumberToFile = PrintLogLineNumberToFileParam;
+		this->PrintLogDateTimeToFile = PrintLogDateTimeToFileParam;
+		this->PrintLogProcessIdToFile = PrintLogProcessIdToFileParam;
+		this->PrintLogProcessPriorityLevelToFile = PrintLogProcessPriorityLevelToFileParam;
+		this->PrintLogThreadIdToFile = PrintLogThreadIdToFileParam;
 
-		this->MaximalNumberOfLinesInOneFile = MaximalNumberOfLinesInOneFile;
+		this->MaximalNumberOfLinesInOneFile = MaximalNumberOfLinesInOneFileParam;
 	}
 	CATCH_AND_THROW_COUT("initializing loggers manager printing conditions")
 };
@@ -327,9 +327,9 @@ void LoggersManager::InitializeLoggerManagerDataForTask(const string& TaskNamePa
 		if (LoggersManagerObject.FileNumberToIncreaseLineNumber >= LoggersManagerObject.FilesNames.size())
 			throw runtime_error("FileNumberToIncreaseLineNumber is out of range of user defined files.");
 
-		DrawMessageFunctionObject = DrawMessageFunctionObjectParameter;
+		DrawMessageFunctionObject = std::move(DrawMessageFunctionObjectParameter);
 
-		ThreadIdType CurrentThreadId = stoll(static_cast<stringstream&>(stringstream() << this_thread::get_id()).str());
+		ThreadIdType CurrentThreadId = stoll(dynamic_cast<stringstream&>(stringstream() << this_thread::get_id()).str());
 		LoggerMainObjectPointer = make_unique<Logger>(LogDirectory.c_str(), ActualDateTimeStr.c_str(), string("LOGGER_COMMON").c_str(), TaskName.c_str(), CurrentThreadId);
 		LoggerMainObjectPointer->LogMessageBool("START MAIN LOGGER_COMMON\n", true, CurrentThreadId, true);
 	}
@@ -366,7 +366,7 @@ void LoggersManager::LogMessageBool(const string& MessageStr, const bool LogLine
 {
 	try
 	{
-		ThreadIdType CurrentThreadId = stoll(static_cast<stringstream&>(stringstream() << this_thread::get_id()).str());
+		ThreadIdType CurrentThreadId = stoll(dynamic_cast<stringstream&>(stringstream() << this_thread::get_id()).str());
 
         if (LoggerMainObjectPointer)
         {

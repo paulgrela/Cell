@@ -26,7 +26,7 @@ private:
     std::mt19937_64 mt64R{ std::random_device{}() };
 private:
     std::vector<ParticleKind> ParticlesKinds;
-    UnsignedInt MaxParticleIndex;
+    UnsignedInt MaxParticleIndex{};
     #ifdef PARTICLES_IN_VECTOR
     std::vector<Particle> Particles;
     #else
@@ -68,6 +68,8 @@ public:
     void GenerateOneStepOfDiffusion(UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
 public:
     void GenerateRandomDNAInWholeCell();
+    void EraseAllDNAParticles();
+    static void UpdateRandomPositions(UnsignedInt RandomMoveDirection, UnsignedInt& RandomPosX, UnsignedInt& RandomPosY, UnsignedInt& RandomPosZ, UnsignedInt Size);
 public:
     CellEngineVoxelSimulationSpace();
     ~CellEngineVoxelSimulationSpace();

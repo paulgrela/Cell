@@ -278,7 +278,28 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfDiffusion(UniqueIdInt Star
 
 std::mt19937_64 mt64RR;
 
-void UpdateRandomPositions(const UnsignedInt RandomMoveDirection, UnsignedInt& RandomPosX, UnsignedInt& RandomPosY, UnsignedInt& RandomPosZ, const UnsignedInt Size)
+void CellEngineVoxelSimulationSpace::EraseAllDNAParticles()
+{
+    try
+    {
+        for (auto& ParticleObjectLoop : Particles)
+            if (ParticleObjectLoop.second.EntityId == CellEngineConfigDataObject.DNAIdentifier)
+                for (auto& VoxelCoordinates : ParticleObjectLoop.second.ListOfVoxels)
+                    GetSpaceVoxel(VoxelCoordinates.X, VoxelCoordinates.Y, VoxelCoordinates.Z) = GetZeroSimulationSpaceVoxel();
+
+        const auto RemovedDNAParticlesCounter = std::erase_if(Particles, [](const pair<UniqueIdInt, Particle>& item) { auto const& [key, value] = item; return (value.EntityId == CellEngineConfigDataObject.DNAIdentifier); });
+        LoggersManagerObject.Log(STREAM("RemovedDNAParticlesCounter = " << RemovedDNAParticlesCounter));
+
+        UnsignedInt DNAParticleCounter = 0;
+        for (auto& ParticleObjectLoop : Particles)
+            if (ParticleObjectLoop.second.EntityId == CellEngineConfigDataObject.DNAIdentifier)
+                DNAParticleCounter++;
+        LoggersManagerObject.Log(STREAM("DNAParticleCounter = " << DNAParticleCounter));
+    }
+    CATCH("erasing all dna particles")
+}
+
+void CellEngineVoxelSimulationSpace::UpdateRandomPositions(const UnsignedInt RandomMoveDirection, UnsignedInt& RandomPosX, UnsignedInt& RandomPosY, UnsignedInt& RandomPosZ, const UnsignedInt Size)
 {
     switch (RandomMoveDirection)
     {
@@ -296,19 +317,9 @@ void CellEngineVoxelSimulationSpace::GenerateRandomDNAInWholeCell()
 {
     try
     {
-        for (auto& ParticleObjectLoop : Particles)
-            if (ParticleObjectLoop.second.EntityId == CellEngineConfigDataObject.DNAIdentifier)
-                for (auto& VoxelCoordinates : ParticleObjectLoop.second.ListOfVoxels)
-                    GetSpaceVoxel(VoxelCoordinates.X, VoxelCoordinates.Y, VoxelCoordinates.Z) = GetZeroSimulationSpaceVoxel();
+        EraseAllDNAParticles();
 
-        const auto RemovedDNAParticlesCounter = std::erase_if(Particles, [](const pair<UniqueIdInt, Particle>& item) { auto const& [key, value] = item; return (value.EntityId == CellEngineConfigDataObject.DNAIdentifier); });
-        LoggersManagerObject.Log(STREAM("RemovedDNAParticlesCounter = " << RemovedDNAParticlesCounter));
-
-        UnsignedInt DNAParticleCounter = 0;
-        for (auto& ParticleObjectLoop : Particles)
-            if (ParticleObjectLoop.second.EntityId == CellEngineConfigDataObject.DNAIdentifier)
-                DNAParticleCounter++;
-        LoggersManagerObject.Log(STREAM("DNAParticleCounter = " << DNAParticleCounter));
+        LoggersManagerObject.InitializePrintingParameters(false, false, false, false, false, false, false, false, false, false, false, false, CellEngineConfigDataObject.MaximalNumberOfLinesInOneFile);
 
         vector<UniqueIdInt> Genome;
 
@@ -319,9 +330,10 @@ void CellEngineVoxelSimulationSpace::GenerateRandomDNAInWholeCell()
         UnsignedInt ParticleSize = 2;
 
         UnsignedInt NumberOfGeneratedNucleotides = 0;
+
         vector<UnsignedInt> RandomMovesDirections = { 0, 0, 0, 0, 0, 0 };
 
-        auto CheckIfAllRandomMovesDirectionsWereChecked = std::all_of(RandomMovesDirections.begin(), RandomMovesDirections.end(), [&] (const UnsignedInt &Element) { return Element == 1; });
+        auto CheckIfAllRandomMovesDirectionsWereChecked = [](vector<UnsignedInt>& RandomMovesDirections) { return std::all_of(RandomMovesDirections.cbegin(), RandomMovesDirections.cend(), [] (const UnsignedInt Element) { return Element == 1; }); };
 
         UnsignedInt NumberOfNucleotidesToBeGenerated = 193300;
 
@@ -333,9 +345,9 @@ void CellEngineVoxelSimulationSpace::GenerateRandomDNAInWholeCell()
             {
                 RandomMoveDirection = UniformDistributionObjectMoveOfParticle_Uint64t(mt64RR);
 
-                LoggersManagerObject.Log(STREAM("RandomMoveDirection = " << RandomMoveDirection << " " << RandomMovesDirections[RandomMoveDirection - 1] << " " << CheckIfAllRandomMovesDirectionsWereChecked));
+                LoggersManagerObject.Log(STREAM("RandomMoveDirection = " << RandomMoveDirection << " " << RandomMovesDirections[RandomMoveDirection - 1] << " " << CheckIfAllRandomMovesDirectionsWereChecked(RandomMovesDirections)));
             }
-            while (RandomMovesDirections[RandomMoveDirection - 1] == 1 && CheckIfAllRandomMovesDirectionsWereChecked == false);
+            while (RandomMovesDirections[RandomMoveDirection - 1] == 1 && CheckIfAllRandomMovesDirectionsWereChecked(RandomMovesDirections) == false);
 
             if (RandomMovesDirections[RandomMoveDirection - 1] == 0)
             {
@@ -353,13 +365,14 @@ void CellEngineVoxelSimulationSpace::GenerateRandomDNAInWholeCell()
                             if (GetSpaceVoxel(PosX, PosY, PosZ) != 0)
                             {
                                 LoggersManagerObject.Log(STREAM("BROKEN POS = " << PosX << " " << PosY << " " << PosZ << " " << GetSpaceVoxel(PosX, PosY, PosZ)));
+
                                 EmptyVoxelSpaceForNewNucleotideBool = false;
                                 UpdateRandomPositions(RandomMoveDirection, RandomPosX, RandomPosY, RandomPosZ, -ParticleSize);
                                 goto BreakOutOfLoop;
                             }
                 BreakOutOfLoop:
 
-                LoggersManagerObject.Log(STREAM("EmptyVoxelSpaceForNewNucleotideBool = " << EmptyVoxelSpaceForNewNucleotideBool << " " << CheckIfAllRandomMovesDirectionsWereChecked));
+                LoggersManagerObject.Log(STREAM("EmptyVoxelSpaceForNewNucleotideBool = " << EmptyVoxelSpaceForNewNucleotideBool << " " << CheckIfAllRandomMovesDirectionsWereChecked(RandomMovesDirections)));
 
                 if (EmptyVoxelSpaceForNewNucleotideBool == true)
                 {
@@ -386,9 +399,10 @@ void CellEngineVoxelSimulationSpace::GenerateRandomDNAInWholeCell()
                 }
             }
 
-            if (EmptyVoxelSpaceForNewNucleotideBool == false && CheckIfAllRandomMovesDirectionsWereChecked == true)
+            if (EmptyVoxelSpaceForNewNucleotideBool == false && CheckIfAllRandomMovesDirectionsWereChecked(RandomMovesDirections) == true)
             {
                 UnsignedInt PreviousParticleIndex = Genome.back();
+                Genome.pop_back();
 
                 RandomPosX = GetParticleFromIndex(PreviousParticleIndex).ListOfVoxels[0].X;
                 RandomPosY = GetParticleFromIndex(PreviousParticleIndex).ListOfVoxels[0].Y;
@@ -406,6 +420,8 @@ void CellEngineVoxelSimulationSpace::GenerateRandomDNAInWholeCell()
 
             LoggersManagerObject.Log(STREAM("END OF GOING IN ONE DIRECTION"));
         }
+
+        LoggersManagerObject.InitializePrintingParameters(CellEngineConfigDataObject.PrintLogToConsole, CellEngineConfigDataObject.PrintLogToFiles, CellEngineConfigDataObject.PrintLogLineNumberToConsole, CellEngineConfigDataObject.PrintLogDateTimeToConsole, CellEngineConfigDataObject.PrintLogProcessIdToConsole, CellEngineConfigDataObject.PrintLogProcessPriorityLevelToConsole, CellEngineConfigDataObject.PrintLogThreadIdToConsole, CellEngineConfigDataObject.PrintLogLineNumberToFile, CellEngineConfigDataObject.PrintLogDateTimeToFile, CellEngineConfigDataObject.PrintLogProcessIdToFile, CellEngineConfigDataObject.PrintLogProcessPriorityLevelToFile, CellEngineConfigDataObject.PrintLogThreadIdToFile, CellEngineConfigDataObject.MaximalNumberOfLinesInOneFile);
     }
     CATCH("generating random dna in whole cell")
 }
