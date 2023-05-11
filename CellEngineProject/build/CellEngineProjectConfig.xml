@@ -2848,9 +2848,11 @@
                         <VoxelSimulationSpaceSelectionStepY>1</VoxelSimulationSpaceSelectionStepY>
                         <VoxelSimulationSpaceSelectionStepZ>1</VoxelSimulationSpaceSelectionStepZ>
 
-                        <VoxelSimulationSpaceSelectionSizeX>16</VoxelSimulationSpaceSelectionSizeX>
-                        <VoxelSimulationSpaceSelectionSizeY>16</VoxelSimulationSpaceSelectionSizeY>
-                        <VoxelSimulationSpaceSelectionSizeZ>16</VoxelSimulationSpaceSelectionSizeZ>
+                        <VoxelSimulationSpaceSelectionSizeX>24</VoxelSimulationSpaceSelectionSizeX>
+                        <VoxelSimulationSpaceSelectionSizeY>24</VoxelSimulationSpaceSelectionSizeY>
+                        <VoxelSimulationSpaceSelectionSizeZ>24</VoxelSimulationSpaceSelectionSizeZ>
+
+                        <RadiusOfCellForDNA>380</RadiusOfCellForDNA>
 
 			<CellStateFileName>../../WholeCellData/Mycoplasma Genitalium/MG_1184_cellpack_atom_instances_1.cif</CellStateFileName>
 
@@ -3095,6 +3097,8 @@
                         <VoxelSimulationSpaceSelectionSizeX>32</VoxelSimulationSpaceSelectionSizeX>
                         <VoxelSimulationSpaceSelectionSizeY>32</VoxelSimulationSpaceSelectionSizeY>
                         <VoxelSimulationSpaceSelectionSizeZ>32</VoxelSimulationSpaceSelectionSizeZ>
+
+                        <RadiusOfCellForDNA>760</RadiusOfCellForDNA>
 
 			<CellStateFileName>../../WholeCellData/Mycoplasma Genitalium/MG_1184_cellpack_atom_instances_1.cif</CellStateFileName>
 

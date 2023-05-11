@@ -133,6 +133,7 @@ void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const ch
                             CellEngineConfigDataObject.VoxelSimulationSpaceSelectionSizeX = CellStatePropertyTreeElement.second.get<UnsignedInt>("VoxelSimulationSpaceSelectionSizeX");
                             CellEngineConfigDataObject.VoxelSimulationSpaceSelectionSizeY = CellStatePropertyTreeElement.second.get<UnsignedInt>("VoxelSimulationSpaceSelectionSizeY");
                             CellEngineConfigDataObject.VoxelSimulationSpaceSelectionSizeZ = CellStatePropertyTreeElement.second.get<UnsignedInt>("VoxelSimulationSpaceSelectionSizeZ");
+                            CellEngineConfigDataObject.RadiusOfCellForDNA = CellStatePropertyTreeElement.second.get<double>("RadiusOfCellForDNA");
                         }
 
                         auto CellStateFileName = CellStatePropertyTreeElement.second.get<string>("CellStateFileName");

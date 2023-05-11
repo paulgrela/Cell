@@ -89,6 +89,8 @@ public:
     UnsignedInt VoxelSimulationSpaceSelectionStepX{}, VoxelSimulationSpaceSelectionStepY{}, VoxelSimulationSpaceSelectionStepZ{};
     UnsignedInt VoxelSimulationSpaceSelectionSizeX{}, VoxelSimulationSpaceSelectionSizeY{}, VoxelSimulationSpaceSelectionSizeZ{};
 public:
+    double RadiusOfCellForDNA;
+public:
     enum class SelectedSpaceStartParametersDrawTypes : UnsignedInt
     {
         DrawFromCenter = 1,
