@@ -1,5 +1,7 @@
 
 #include "FileUtils.h"
+#include "DateTimeUtils.h"
+#include "DestinationPlatform.h"
 
 #include "CellEngineAtom.h"
 #include "CellEngineColors.h"
@@ -293,6 +295,8 @@ void CellEngineVoxelSimulationSpace::EraseAllDNAParticles()
             if (ParticleObjectLoop.second.EntityId == CellEngineConfigDataObject.DNAIdentifier)
                 DNAParticleCounter++;
         LoggersManagerObject.Log(STREAM("DNAParticleCounter = " << DNAParticleCounter));
+
+        Genome.clear();
     }
     CATCH("erasing all dna particles")
 }
@@ -331,17 +335,11 @@ void CellEngineVoxelSimulationSpace::GenerateRandomDNAInWholeCell(UnsignedInt Nu
 {
     try
     {
-        UnsignedInt ParticleSizeFlatX = 1;
-        UnsignedInt ParticleSizeFlatY = 0;
-        UnsignedInt ParticleSizeFlatZ = 0;
-
         EraseAllDNAParticles();
 
         UnsignedInt ParticlesSizeBeforeAddingRandomDNA = Particles.size();
 
         LoggersManagerObject.InitializePrintingParameters(false, false, false, false, false, false, false, false, false, false, false, false, CellEngineConfigDataObject.MaximalNumberOfLinesInOneFile);
-
-        vector<UniqueIdInt> Genome;
 
         uniform_int_distribution<UnsignedInt> UniformDistributionObjectChainOfParticle_Uint64t(1, 4);
         uniform_int_distribution<UnsignedInt> UniformDistributionObjectMoveOfParticle_Uint64t(1, 6);
@@ -410,7 +408,8 @@ void CellEngineVoxelSimulationSpace::GenerateRandomDNAInWholeCell(UnsignedInt Nu
                 {
                     NumberOfGeneratedNucleotides++;
 
-                    UnsignedInt ParticleIndex = Particles.size();
+                    //UnsignedInt ParticleIndex = Particles.size();
+                    UnsignedInt ParticleIndex = MaxParticleIndex;
 
                     ParticleIndex++;
                     AddNewParticle(ParticleIndex, Particle(ParticleIndex, CellEngineConfigDataObject.DNAIdentifier, UniformDistributionObjectChainOfParticle_Uint64t(mt64R), Genome.size(), CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
@@ -498,4 +497,80 @@ void CellEngineVoxelSimulationSpace::GenerateRandomDNAInWholeCell(UnsignedInt Nu
         LoggersManagerObject.Log(STREAM("NUMBER OF ADDED PARTICLES = " << Particles.size() - ParticlesSizeBeforeAddingRandomDNA));
     }
     CATCH("generating random dna in whole cell")
+}
+
+void CellEngineVoxelSimulationSpace::SaveGenomeDataToFile(UnsignedInt ParticleSize)
+{
+    try
+    {
+        string FileName = string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("genome") + OS_DIR_SEP + string("GENOME.DAT");
+        ofstream FileToWriteGenome;
+        FileToWriteGenome.open(FileName, ios_base::out | ios_base::trunc);
+        FileToWriteGenome << to_string(ParticleSize) << endl;
+        FileToWriteGenome << to_string(Genome.size()) << endl;
+        for (const auto& Nucleotide : Genome)
+        {
+            EntityIdInt EntityId = GetParticleFromIndex(Nucleotide).EntityId;
+            EntityIdInt ChainId = GetParticleFromIndex(Nucleotide).ChainId;
+            EntityIdInt GenomeIndex = GetParticleFromIndex(Nucleotide).GenomeIndex;
+            UnsignedInt PosX = GetParticleFromIndex(Nucleotide).ListOfVoxels[0].X;
+            UnsignedInt PosY = GetParticleFromIndex(Nucleotide).ListOfVoxels[0].Y;
+            UnsignedInt PosZ = GetParticleFromIndex(Nucleotide).ListOfVoxels[0].Z;
+            FileToWriteGenome << to_string(EntityId) << "," << to_string(ChainId)  << "," << to_string(GenomeIndex) << "," << to_string(PosX) << "," << to_string(PosY) << "," << to_string(PosZ) << endl;
+        }
+        FileToWriteGenome.close();
+    }
+    CATCH("saving genome data to file")
+}
+
+void CellEngineVoxelSimulationSpace::ReadGenomeDataFromFile()
+{
+    try
+    {
+        EraseAllDNAParticles();
+
+        UnsignedInt ParticlesSizeBeforeAddingRandomDNA = Particles.size();
+
+        string Line, Word;
+        vector<string> Row;
+
+        string FileName = string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("genome") + OS_DIR_SEP + string("GENOME.DAT");
+        fstream FileToReadGenome(FileName, ios::in);
+
+        getline(FileToReadGenome, Line);
+        UnsignedInt ParticleSize = stoi(Line);
+        getline(FileToReadGenome, Line);
+        UnsignedInt GenomeSize = stoi(Line);
+
+        UnsignedInt ParticleIndex = MaxParticleIndex;
+        while(getline(FileToReadGenome, Line))
+        {
+            Row.clear();
+            stringstream Str(Line);
+
+            while(getline(Str, Word, ','))
+                Row.push_back(Word);
+
+            ParticleIndex++;
+            AddNewParticle(ParticleIndex, Particle(ParticleIndex, stoi(Row[0]), stoi(Row[1]), stoi(Row[2]), CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
+
+            UnsignedInt StartPosX = stoi(Row[3]);
+            UnsignedInt StartPosY = stoi(Row[4]);
+            UnsignedInt StartPosZ = stoi(Row[5]);
+
+            for (UnsignedInt PosX = StartPosX; PosX < StartPosX + ParticleSize; PosX++)
+                for (UnsignedInt PosY = StartPosY; PosY < StartPosY + ParticleSize; PosY++)
+                    for (UnsignedInt PosZ = StartPosZ; PosZ < StartPosZ + ParticleSize; PosZ++)
+                    {
+                        GetSpaceVoxel(PosX, PosY, PosZ) = ParticleIndex;
+                        GetParticleFromIndex(ParticleIndex).ListOfVoxels.emplace_back(PosX, PosY, PosZ);
+                    }
+            Genome.emplace_back(ParticleIndex);
+        }
+
+        FileToReadGenome.close();
+
+        LoggersManagerObject.Log(STREAM("NUMBER OF ADDED PARTICLES = " << Particles.size() - ParticlesSizeBeforeAddingRandomDNA));
+    }
+    CATCH("reading genome data from file")
 }

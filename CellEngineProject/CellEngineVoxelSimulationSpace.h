@@ -25,6 +25,8 @@ class CellEngineVoxelSimulationSpace
 public:
     std::mt19937_64 mt64R;
 private:
+    std::vector<UniqueIdInt> Genome;
+private:
     std::vector<ParticleKind> ParticlesKinds;
     UnsignedInt MaxParticleIndex{};
     #ifdef PARTICLES_IN_VECTOR
@@ -71,6 +73,9 @@ public:
     void EraseAllDNAParticles();
     static void UpdateRandomPositions(UnsignedInt RandomMoveDirection, UnsignedInt& RandomPosX, UnsignedInt& RandomPosY, UnsignedInt& RandomPosZ, UnsignedInt Size);
     static bool TestFormerForbiddenPositions(std::unordered_set<std::string>& TestedFormerForbiddenPositions, UnsignedInt RandomMoveDirection, UnsignedInt RandomPosX, UnsignedInt RandomPosY, UnsignedInt RandomPosZ, UnsignedInt Size);
+public:
+    void SaveGenomeDataToFile(UnsignedInt ParticleSize);
+    void ReadGenomeDataFromFile();
 public:
     CellEngineVoxelSimulationSpace();
     ~CellEngineVoxelSimulationSpace();
