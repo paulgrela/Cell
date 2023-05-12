@@ -57,6 +57,54 @@ CellEngineAtom CellEngineCIFDataFile::ParseRecord(const char* LocalCIFRecord)
     return CellEngineAtomObject;
 }
 
+void CopyFieldsToMatrix(TransformationMatrix3x4& TransformationMatrix3x4Object, vector<string>& MatrixFields)
+{
+    try
+    {
+        UnsignedInt Shift = 6;
+        TransformationMatrix3x4Object.Matrix[0][0] = stof(MatrixFields[Shift + 0]);
+        TransformationMatrix3x4Object.Matrix[0][1] = stof(MatrixFields[Shift + 1]);
+        TransformationMatrix3x4Object.Matrix[0][2] = stof(MatrixFields[Shift + 2]);
+        TransformationMatrix3x4Object.Matrix[0][3] = stof(MatrixFields[Shift + 3]);
+        TransformationMatrix3x4Object.Matrix[1][0] = stof(MatrixFields[Shift + 4]);
+        TransformationMatrix3x4Object.Matrix[1][1] = stof(MatrixFields[Shift + 5]);
+        TransformationMatrix3x4Object.Matrix[1][2] = stof(MatrixFields[Shift + 6]);
+        TransformationMatrix3x4Object.Matrix[1][3] = stof(MatrixFields[Shift + 7]);
+        TransformationMatrix3x4Object.Matrix[2][0] = stof(MatrixFields[Shift + 8]);
+        TransformationMatrix3x4Object.Matrix[2][1] = stof(MatrixFields[Shift + 9]);
+        TransformationMatrix3x4Object.Matrix[2][2] = stof(MatrixFields[Shift + 10]);
+        TransformationMatrix3x4Object.Matrix[2][3] = stof(MatrixFields[Shift + 11]);
+    }
+    CATCH("copying fields to matrix")
+}
+
+glm::vec3 CountResultPositionsFromTransformationMatrix(std::unordered_map<UnsignedInt, TransformationMatrix3x4>::iterator& TransformationMatrixIterator, CellEngineAtom& AppliedAtom)
+{
+    glm::vec3 Result;
+
+    try
+    {
+        auto TransformationMatrix = glm::mat3();
+
+        TransformationMatrix[0][0] = TransformationMatrixIterator->second.Matrix[0][0];
+        TransformationMatrix[0][1] = TransformationMatrixIterator->second.Matrix[1][0];
+        TransformationMatrix[0][2] = TransformationMatrixIterator->second.Matrix[2][0];
+
+        TransformationMatrix[1][0] = TransformationMatrixIterator->second.Matrix[0][1];
+        TransformationMatrix[1][1] = TransformationMatrixIterator->second.Matrix[1][1];
+        TransformationMatrix[1][2] = TransformationMatrixIterator->second.Matrix[2][1];
+
+        TransformationMatrix[2][0] = TransformationMatrixIterator->second.Matrix[0][2];
+        TransformationMatrix[2][1] = TransformationMatrixIterator->second.Matrix[1][2];
+        TransformationMatrix[2][2] = TransformationMatrixIterator->second.Matrix[2][2];
+
+        Result = TransformationMatrix * glm::vec3(AppliedAtom.X, AppliedAtom.Y, AppliedAtom.Z) + glm::vec3(TransformationMatrixIterator->second.Matrix[0][3], TransformationMatrixIterator->second.Matrix[1][3], TransformationMatrixIterator->second.Matrix[2][3]);
+    }
+    CATCH("copying from matrix to matrix")
+
+    return Result;
+}
+
 void CellEngineCIFDataFile::ReadDataFromFile()
 {
     try
@@ -122,19 +170,7 @@ void CellEngineCIFDataFile::ReadDataFromFile()
 
                 UnsignedInt TransformationMatrix3x4ObjectId = stoi(MatrixFields[0]);
 
-                UnsignedInt Shift = 6;
-                TransformationMatrix3x4Object.Matrix[0][0] = stof(MatrixFields[Shift + 0]);
-                TransformationMatrix3x4Object.Matrix[0][1] = stof(MatrixFields[Shift + 1]);
-                TransformationMatrix3x4Object.Matrix[0][2] = stof(MatrixFields[Shift + 2]);
-                TransformationMatrix3x4Object.Matrix[0][3] = stof(MatrixFields[Shift + 3]);
-                TransformationMatrix3x4Object.Matrix[1][0] = stof(MatrixFields[Shift + 4]);
-                TransformationMatrix3x4Object.Matrix[1][1] = stof(MatrixFields[Shift + 5]);
-                TransformationMatrix3x4Object.Matrix[1][2] = stof(MatrixFields[Shift + 6]);
-                TransformationMatrix3x4Object.Matrix[1][3] = stof(MatrixFields[Shift + 7]);
-                TransformationMatrix3x4Object.Matrix[2][0] = stof(MatrixFields[Shift + 8]);
-                TransformationMatrix3x4Object.Matrix[2][1] = stof(MatrixFields[Shift + 9]);
-                TransformationMatrix3x4Object.Matrix[2][2] = stof(MatrixFields[Shift + 10]);
-                TransformationMatrix3x4Object.Matrix[2][3] = stof(MatrixFields[Shift + 11]);
+                CopyFieldsToMatrix(TransformationMatrix3x4Object, MatrixFields);
 
                 TransformationsMatrixes[TransformationMatrix3x4ObjectId] = TransformationMatrix3x4Object;
             }
@@ -194,21 +230,7 @@ void CellEngineCIFDataFile::ReadDataFromFile()
 
                                 auto TransformationMatrixIterator = TransformationsMatrixes.find(AppliedMatrixId);
 
-                                auto TransformationMatrix = glm::mat3();
-
-                                TransformationMatrix[0][0] = TransformationMatrixIterator->second.Matrix[0][0];
-                                TransformationMatrix[0][1] = TransformationMatrixIterator->second.Matrix[1][0];
-                                TransformationMatrix[0][2] = TransformationMatrixIterator->second.Matrix[2][0];
-
-                                TransformationMatrix[1][0] = TransformationMatrixIterator->second.Matrix[0][1];
-                                TransformationMatrix[1][1] = TransformationMatrixIterator->second.Matrix[1][1];
-                                TransformationMatrix[1][2] = TransformationMatrixIterator->second.Matrix[2][1];
-
-                                TransformationMatrix[2][0] = TransformationMatrixIterator->second.Matrix[0][2];
-                                TransformationMatrix[2][1] = TransformationMatrixIterator->second.Matrix[1][2];
-                                TransformationMatrix[2][2] = TransformationMatrixIterator->second.Matrix[2][2];
-
-                                auto Result = TransformationMatrix * glm::vec3(AppliedAtom.X, AppliedAtom.Y, AppliedAtom.Z) + glm::vec3(TransformationMatrixIterator->second.Matrix[0][3], TransformationMatrixIterator->second.Matrix[1][3], TransformationMatrixIterator->second.Matrix[2][3]);
+                                auto Result = CountResultPositionsFromTransformationMatrix(TransformationMatrixIterator, AppliedAtom);
 
                                 AppliedAtom.SetAtomPositionsData(Result[0], Result[1], Result[2]);
 
