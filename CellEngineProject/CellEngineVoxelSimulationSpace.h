@@ -25,7 +25,8 @@ class CellEngineVoxelSimulationSpace
 public:
     std::mt19937_64 mt64R;
 private:
-    std::vector<UniqueIdInt> Genome;
+    std::vector<UniqueIdInt> Genome1;
+    std::vector<UniqueIdInt> Genome2;
 private:
     std::vector<ParticleKind> ParticlesKinds;
     UnsignedInt MaxParticleIndex{};
@@ -69,7 +70,7 @@ public:
     void GenerateRandomParticlesInSelectedSpace(UnsignedInt NumberOfRandomParticles, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt StepXParam, UnsignedInt StepYParam, UnsignedInt StepZParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
     void GenerateOneStepOfDiffusion(UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
 public:
-    void GenerateParticle(UnsignedInt& ParticleIndex, EntityIdInt EntityId, ChainIdInt ChainId, UnsignedInt GenomeIndex, UnsignedInt StartPosX, UnsignedInt StartPosY, UnsignedInt StartPosZ, UnsignedInt ParticleSizeX, UnsignedInt ParticleSizeY, UnsignedInt ParticleSizeZ);
+    void GenerateParticle(UnsignedInt& ParticleIndex, EntityIdInt EntityId, ChainIdInt ChainId, UnsignedInt GenomeIndex, UnsignedInt StartPosX, UnsignedInt StartPosY, UnsignedInt StartPosZ, UnsignedInt ParticleSizeX, UnsignedInt ParticleSizeY, UnsignedInt ParticleSizeZ, std::vector<UniqueIdInt>& Genome, vector3_16 UniqueColorParam);
 public:
     void GenerateRandomDNAInWholeCell(UnsignedInt NumberOfNucleotidesToBeGenerated, UnsignedInt RandomPosX, UnsignedInt RandomPosY, UnsignedInt RandomPosZ, UnsignedInt ParticleSizeX, UnsignedInt ParticleSizeY, UnsignedInt ParticleSizeZ, UnsignedInt ParticleSize1, UnsignedInt ParticleSize2, UnsignedInt ParticleSize3, UnsignedInt ParticleSize4, UnsignedInt ParticleSize5);
     void EraseAllDNAParticles();
@@ -78,6 +79,7 @@ public:
 public:
     void SaveGenomeDataToFile(UnsignedInt ParticleSize);
     void ReadGenomeDataFromFile();
+    void ReadRealGenomeDataFromFile();
 public:
     CellEngineVoxelSimulationSpace();
     ~CellEngineVoxelSimulationSpace();

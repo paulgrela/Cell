@@ -84,6 +84,8 @@ add_executable(
 	CellEngineAtom.cpp
 	CellEngineParticle.h
 	CellEngineReaction.h
+	CellEngineChemicalReactions.h
+	CellEngineChemicalReactions.cpp
 	CellEngineImGuiMenu.cpp
 	CellEnginePDBDataFile.h
 	CellEnginePDBDataFile.cpp

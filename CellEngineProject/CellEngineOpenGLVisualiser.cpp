@@ -18,6 +18,7 @@
 #include "CellEngineDataFile.h"
 #include "CellEngineConfigData.h"
 #include "CellEngineOpenGLVisualiser.h"
+#include "CellEngineChemicalReactions.h"
 
 using namespace std;
 
@@ -25,6 +26,8 @@ void CellEngineOpenGLVisualiser::InitExternalData()
 {
     try
     {
+        ReadChemicalReactionsFromFile();
+
         CellEngineDataFileObjectPointer->ReadDataFromFile();
 
         GetMemoryForBondsBetweenAtomsToDraw();
