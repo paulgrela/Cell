@@ -42,6 +42,22 @@ namespace CellEngineUseful
         return 'I';
     }
 
+    inline ChainIdInt GetChainIdFromLetter(const char Letter)
+    {
+        switch (Letter)
+        {
+            case 'A' : return 1;
+            case 'C' : return 2;
+            case 'G' : return 3;
+            case 'T' : return 4;
+
+            default : break;
+        }
+
+        return 0;
+    }
+
+
     inline ChainIdInt GetPairedChainId(ChainIdInt ChainId)
     {
         switch (ChainId)

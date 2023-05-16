@@ -506,7 +506,7 @@ void CellEngineVoxelSimulationSpace::SaveGenomeDataToFile(UnsignedInt ParticleSi
 {
     try
     {
-        string FileName = string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("genome") + OS_DIR_SEP + string("GENOME.DAT");
+        string FileName = string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("genome") + OS_DIR_SEP + string("GENOME_POSITIONS.DAT");
         ofstream FileToWriteGenome;
         FileToWriteGenome.open(FileName, ios_base::out | ios_base::trunc);
         FileToWriteGenome << to_string(ParticleSize) << endl;
@@ -514,8 +514,8 @@ void CellEngineVoxelSimulationSpace::SaveGenomeDataToFile(UnsignedInt ParticleSi
         for (const auto& Nucleotide : Genome1)
         {
             EntityIdInt EntityId = GetParticleFromIndex(Nucleotide).EntityId;
-            EntityIdInt ChainId = GetParticleFromIndex(Nucleotide).ChainId;
-            EntityIdInt GenomeIndex = GetParticleFromIndex(Nucleotide).GenomeIndex;
+            ChainIdInt ChainId = GetParticleFromIndex(Nucleotide).ChainId;
+            UniqueIdInt GenomeIndex = GetParticleFromIndex(Nucleotide).GenomeIndex;
             UnsignedInt PosX = GetParticleFromIndex(Nucleotide).ListOfVoxels[0].X;
             UnsignedInt PosY = GetParticleFromIndex(Nucleotide).ListOfVoxels[0].Y;
             UnsignedInt PosZ = GetParticleFromIndex(Nucleotide).ListOfVoxels[0].Z;
@@ -537,7 +537,7 @@ void CellEngineVoxelSimulationSpace::ReadGenomeDataFromFile()
         string Line, Word;
         vector<string> Row;
 
-        string FileName = string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("genome") + OS_DIR_SEP + string("GENOME.DAT");
+        string FileName = string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("genome") + OS_DIR_SEP + string("GENOME_POSITIONS.DAT");
         fstream FileToReadGenome(FileName, ios::in);
 
         getline(FileToReadGenome, Line);
@@ -551,6 +551,7 @@ void CellEngineVoxelSimulationSpace::ReadGenomeDataFromFile()
         UnsignedInt PrevStartPosY = 0;
         UnsignedInt PrevStartPosZ = 0;
 
+        UnsignedInt GenomeIndex = 0;
 
         while(getline(FileToReadGenome, Line))
         {
@@ -566,23 +567,22 @@ void CellEngineVoxelSimulationSpace::ReadGenomeDataFromFile()
             UnsignedInt StartPosY = stoi(Row[4]);
             UnsignedInt StartPosZ = stoi(Row[5]);
 
-
-
             if (abs(static_cast<long>(PrevStartPosX - StartPosX)) > 0)
             {
-                GenerateParticle(ParticleIndex, stoi(Row[0]), stoi(Row[1]), stoi(Row[2]), StartPosX, StartPosY, StartPosZ, ParticleSize, 1, ParticleSize, Genome1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
-                GenerateParticle(ParticleIndex, stoi(Row[0]), CellEngineUseful::GetPairedChainId(stoi(Row[1])), stoi(Row[2]), StartPosX, StartPosY + 1, StartPosZ, ParticleSize, 1, ParticleSize, Genome2, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
+                GenerateParticle(ParticleIndex, stoi(Row[0]), stoi(Row[1]), GenomeIndex, StartPosX, StartPosY, StartPosZ, ParticleSize, 1, ParticleSize, Genome1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
+                GenerateParticle(ParticleIndex, stoi(Row[0]), CellEngineUseful::GetPairedChainId(stoi(Row[1])), GenomeIndex, StartPosX, StartPosY + 1, StartPosZ, ParticleSize, 1, ParticleSize, Genome2, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
             }
             else
             {
-                GenerateParticle(ParticleIndex, stoi(Row[0]), stoi(Row[1]), stoi(Row[2]), StartPosX, StartPosY, StartPosZ, 1, ParticleSize, ParticleSize, Genome1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
-                GenerateParticle(ParticleIndex, stoi(Row[0]), CellEngineUseful::GetPairedChainId(stoi(Row[1])), stoi(Row[2]), StartPosX + 1, StartPosY, StartPosZ, 1, ParticleSize, ParticleSize, Genome2, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
+                GenerateParticle(ParticleIndex, stoi(Row[0]), stoi(Row[1]), GenomeIndex, StartPosX, StartPosY, StartPosZ, 1, ParticleSize, ParticleSize, Genome1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
+                GenerateParticle(ParticleIndex, stoi(Row[0]), CellEngineUseful::GetPairedChainId(stoi(Row[1])), GenomeIndex, StartPosX + 1, StartPosY, StartPosZ, 1, ParticleSize, ParticleSize, Genome2, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
             }
-
 
             PrevStartPosX = StartPosX;
             PrevStartPosY = StartPosY;
             PrevStartPosZ = StartPosZ;
+
+            GenomeIndex++;
         }
 
         FileToReadGenome.close();
@@ -592,12 +592,23 @@ void CellEngineVoxelSimulationSpace::ReadGenomeDataFromFile()
     CATCH("reading genome data from file")
 }
 
-void CellEngineVoxelSimulationSpace::ReadRealGenomeDataFromFile()
+void CellEngineVoxelSimulationSpace::ReadGenomeSequenceFromFile()
 {
     try
     {
-        //WCZYTAJ GENOM PRAWDZIWY
-        //DO GENOMU KTORY POWYZEJ WCZYTALES LUB WYGENEOROWALES PODMIEN JEDYNIE LITERKI - CHAINID i RESZTE POZOSTAW BEZ ZMIAN
+        string FileName = string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("genome") + OS_DIR_SEP + string("GENOME_SEQUENCE.DAT");
+
+        fstream FileToReadGenome(FileName, ios::in);
+
+        getline(FileToReadGenome, GenomeLine);
+
+        UnsignedInt ParticleIndex = 0;
+        for (auto& ParticleObject : Particles)
+            if (ParticleObject.second.EntityId == CellEngineConfigDataObject.DNAIdentifier)
+            {
+                ParticleObject.second.ChainId = (ParticleIndex % 2 == 0 ? CellEngineUseful::GetChainIdFromLetter(GenomeLine[ParticleObject.second.GenomeIndex]) : CellEngineUseful::GetPairedChainId(CellEngineUseful::GetChainIdFromLetter(GenomeLine[ParticleObject.second.GenomeIndex])));
+                ParticleIndex++;
+            }
     }
     CATCH("reading real genome data from file")
 }

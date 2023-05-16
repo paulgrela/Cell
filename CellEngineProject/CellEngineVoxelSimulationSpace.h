@@ -25,6 +25,8 @@ class CellEngineVoxelSimulationSpace
 public:
     std::mt19937_64 mt64R;
 private:
+    std::string GenomeLine;
+private:
     std::vector<UniqueIdInt> Genome1;
     std::vector<UniqueIdInt> Genome2;
 private:
@@ -79,7 +81,7 @@ public:
 public:
     void SaveGenomeDataToFile(UnsignedInt ParticleSize);
     void ReadGenomeDataFromFile();
-    void ReadRealGenomeDataFromFile();
+    void ReadGenomeSequenceFromFile();
 public:
     CellEngineVoxelSimulationSpace();
     ~CellEngineVoxelSimulationSpace();
