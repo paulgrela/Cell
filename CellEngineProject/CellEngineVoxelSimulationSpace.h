@@ -78,6 +78,7 @@ public:
     void EraseAllDNAParticles();
     static void UpdateRandomPositions(UnsignedInt RandomMoveDirection, UnsignedInt& RandomPosX, UnsignedInt& RandomPosY, UnsignedInt& RandomPosZ, UnsignedInt Size);
     static bool TestFormerForbiddenPositions(std::unordered_set<std::string>& TestedFormerForbiddenPositions, UnsignedInt RandomMoveDirection, UnsignedInt RandomPosX, UnsignedInt RandomPosY, UnsignedInt RandomPosZ, UnsignedInt Size);
+    std::tuple<UnsignedInt, UnsignedInt, UnsignedInt> EraseLastRandomParticle();
 public:
     void SaveGenomeDataToFile(UnsignedInt ParticleSize);
     void ReadGenomeDataFromFile();

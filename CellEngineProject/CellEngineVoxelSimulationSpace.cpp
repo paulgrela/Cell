@@ -346,6 +346,31 @@ bool CellEngineVoxelSimulationSpace::TestFormerForbiddenPositions(unordered_set<
     return (TestedFormerForbiddenPositions.find(to_string(PosX) + "|" + to_string(PosY) + "|" + to_string(PosZ)) != TestedFormerForbiddenPositions.end());
 }
 
+tuple<UnsignedInt, UnsignedInt, UnsignedInt> CellEngineVoxelSimulationSpace::EraseLastRandomParticle()
+{
+    UnsignedInt LocalRandomPosX, LocalRandomPosY, LocalRandomPosZ;
+
+    try
+    {
+        UnsignedInt PreviousParticleIndex = Genome1.back();
+        Genome1.pop_back();
+
+        LocalRandomPosX = GetParticleFromIndex(PreviousParticleIndex).ListOfVoxels[0].X;
+        LocalRandomPosY = GetParticleFromIndex(PreviousParticleIndex).ListOfVoxels[0].Y;
+        LocalRandomPosZ = GetParticleFromIndex(PreviousParticleIndex).ListOfVoxels[0].Z;
+
+        for (auto& VoxelCoordinates : GetParticleFromIndex(PreviousParticleIndex).ListOfVoxels)
+            GetSpaceVoxel(VoxelCoordinates.X, VoxelCoordinates.Y, VoxelCoordinates.Z) = GetZeroSimulationSpaceVoxel();
+
+        Particles.erase(PreviousParticleIndex);
+
+        LoggersManagerObject.Log(STREAM("ERASED PARTICLE PreviousParticleIndex = " << PreviousParticleIndex << " RandomPosX = " << LocalRandomPosX << " RandomPosY = " << LocalRandomPosY << " RandomPosZ = " << LocalRandomPosZ));
+    }
+    CATCH("erasing last random particle")
+
+    return { LocalRandomPosX, LocalRandomPosY, LocalRandomPosZ };
+}
+
 UnsignedInt Sqr(UnsignedInt Value)
 {
     return Value * Value;
@@ -434,7 +459,7 @@ void CellEngineVoxelSimulationSpace::GenerateRandomDNAInWholeCell(UnsignedInt Nu
                     ChainIdInt ChainId = UniformDistributionObjectChainOfParticle_Uint64t(mt64R);
 
                     UnsignedInt ParticleIndex = MaxParticleIndex;
-
+                    
                     if (RandomMoveDirection == 1 || RandomMoveDirection == 2)
                     {
                         GenerateParticle(ParticleIndex, CellEngineConfigDataObject.DNAIdentifier, ChainId, Genome1.size(), RandomPosX, RandomPosY, RandomPosZ, ParticleSizeX, 1, ParticleSizeZ, Genome1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
@@ -457,39 +482,15 @@ void CellEngineVoxelSimulationSpace::GenerateRandomDNAInWholeCell(UnsignedInt Nu
 
             if (EmptyVoxelSpaceForNewNucleotideBool == false && CheckIfAllRandomMovesDirectionsWereChecked(RandomMovesDirections) == true)
             {
-                UnsignedInt PreviousParticleIndex = Genome1.back();
-                Genome1.pop_back();
-
                 NumberOfGeneratedNucleotides--;
 
-                RandomPosX = GetParticleFromIndex(PreviousParticleIndex).ListOfVoxels[0].X;
-                RandomPosY = GetParticleFromIndex(PreviousParticleIndex).ListOfVoxels[0].Y;
-                RandomPosZ = GetParticleFromIndex(PreviousParticleIndex).ListOfVoxels[0].Z;
+                tie(RandomPosX, RandomPosY, RandomPosZ) = EraseLastRandomParticle();
 
                 TestedFormerForbiddenPositions.insert(to_string(RandomPosX) + "|" + to_string(RandomPosY) + "|" + to_string(RandomPosZ));
 
-                for (auto& VoxelCoordinates : GetParticleFromIndex(PreviousParticleIndex).ListOfVoxels)
-                    GetSpaceVoxel(VoxelCoordinates.X, VoxelCoordinates.Y, VoxelCoordinates.Z) = GetZeroSimulationSpaceVoxel();
-
-                Particles.erase(PreviousParticleIndex);
-
-
-
-
-                PreviousParticleIndex = Genome2.back();
-                Genome2.pop_back();
-
-                for (auto& VoxelCoordinates : GetParticleFromIndex(PreviousParticleIndex).ListOfVoxels)
-                    GetSpaceVoxel(VoxelCoordinates.X, VoxelCoordinates.Y, VoxelCoordinates.Z) = GetZeroSimulationSpaceVoxel();
-
-                Particles.erase(PreviousParticleIndex);
-
-
-
+                EraseLastRandomParticle();
 
                 fill(RandomMovesDirections.begin(), RandomMovesDirections.end(), 0);
-
-                LoggersManagerObject.Log(STREAM("ERASED PARTICLE PreviousParticleIndex = " << PreviousParticleIndex << " RX = " << RandomPosX << " RY = " << RandomPosY << " RZ = " << RandomPosZ));
             }
 
             LoggersManagerObject.Log(STREAM("END OF GOING IN ONE DIRECTION"));
@@ -602,13 +603,11 @@ void CellEngineVoxelSimulationSpace::ReadGenomeSequenceFromFile()
 
         getline(FileToReadGenome, GenomeLine);
 
-        UnsignedInt ParticleIndex = 0;
-        for (auto& ParticleObject : Particles)
-            if (ParticleObject.second.EntityId == CellEngineConfigDataObject.DNAIdentifier)
-            {
-                ParticleObject.second.ChainId = (ParticleIndex % 2 == 0 ? CellEngineUseful::GetChainIdFromLetter(GenomeLine[ParticleObject.second.GenomeIndex]) : CellEngineUseful::GetPairedChainId(CellEngineUseful::GetChainIdFromLetter(GenomeLine[ParticleObject.second.GenomeIndex])));
-                ParticleIndex++;
-            }
+        for (UnsignedInt GenomeIndex = 0; GenomeIndex < Genome1.size(); GenomeIndex++)
+        {
+            GetParticleFromIndex(Genome1[GenomeIndex]).ChainId = CellEngineUseful::GetChainIdFromLetter(GenomeLine[GenomeIndex]);
+            GetParticleFromIndex(Genome2[GenomeIndex]).ChainId = CellEngineUseful::GetPairedChainId(CellEngineUseful::GetChainIdFromLetter(GenomeLine[GenomeIndex]));
+        }
     }
     CATCH("reading real genome data from file")
 }
