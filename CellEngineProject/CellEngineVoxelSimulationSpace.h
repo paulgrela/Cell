@@ -23,7 +23,7 @@ using Space_2048_2048_2048 = SimulationSpaceVoxel[NumberOfVoxelSimulationSpaceIn
 class CellEngineVoxelSimulationSpace
 {
 public:
-    std::mt19937_64 mt64R;
+    std::mt19937_64 mt64R{ std::random_device{}() };
 private:
     std::string GenomeLine;
 private:
@@ -73,6 +73,7 @@ public:
     void GenerateOneStepOfDiffusion(UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
 public:
     void GenerateParticle(UnsignedInt& ParticleIndex, EntityIdInt EntityId, ChainIdInt ChainId, UnsignedInt GenomeIndex, UnsignedInt StartPosX, UnsignedInt StartPosY, UnsignedInt StartPosZ, UnsignedInt ParticleSizeX, UnsignedInt ParticleSizeY, UnsignedInt ParticleSizeZ, std::vector<UniqueIdInt>& Genome, vector3_16 UniqueColorParam);
+    void GenerateTwoPairedNucleotides(UnsignedInt& ParticleIndex, EntityIdInt EntityId, ChainIdInt ChainId, UnsignedInt GenomeIndex, UnsignedInt StartPosX, UnsignedInt StartPosY, UnsignedInt StartPosZ, UnsignedInt ParticleSizeX, UnsignedInt ParticleSizeY, UnsignedInt ParticleSizeZ, UnsignedInt AddSizeX, UnsignedInt AddSizeY, UnsignedInt AddSizeZ, vector3_16 UniqueColorParam);
 public:
     void GenerateRandomDNAInWholeCell(UnsignedInt NumberOfNucleotidesToBeGenerated, UnsignedInt RandomPosX, UnsignedInt RandomPosY, UnsignedInt RandomPosZ, UnsignedInt ParticleSizeX, UnsignedInt ParticleSizeY, UnsignedInt ParticleSizeZ, UnsignedInt ParticleSize1, UnsignedInt ParticleSize2, UnsignedInt ParticleSize3, UnsignedInt ParticleSize4, UnsignedInt ParticleSize5);
     void EraseAllDNAParticles();
@@ -81,7 +82,7 @@ public:
     std::tuple<UnsignedInt, UnsignedInt, UnsignedInt> EraseLastRandomParticle();
 public:
     void SaveGenomeDataToFile(UnsignedInt ParticleSize);
-    void ReadGenomeDataFromFile();
+    void ReadGenomeDataFromFile(bool Paired);
     void ReadGenomeSequenceFromFile();
 public:
     CellEngineVoxelSimulationSpace();

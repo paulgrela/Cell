@@ -315,7 +315,7 @@ void CellEngineVoxelSimulationSpace::UpdateRandomPositions(const UnsignedInt Ran
     }
 }
 
-void CellEngineVoxelSimulationSpace::GenerateParticle(UnsignedInt& ParticleIndex, const EntityIdInt EntityId, const ChainIdInt ChainId, const UnsignedInt GenomeIndex, const UnsignedInt StartPosX, const UnsignedInt StartPosY, const UnsignedInt StartPosZ, const UnsignedInt ParticleSizeX, const UnsignedInt ParticleSizeY, const UnsignedInt ParticleSizeZ, std::vector<UniqueIdInt>& Genome, const vector3_16 UniqueColorParam)
+void CellEngineVoxelSimulationSpace::GenerateParticle(UnsignedInt& ParticleIndex, const EntityIdInt EntityId, const ChainIdInt ChainId, const UnsignedInt GenomeIndex, const UnsignedInt StartPosX, const UnsignedInt StartPosY, const UnsignedInt StartPosZ, const UnsignedInt ParticleSizeX, const UnsignedInt ParticleSizeY, const UnsignedInt ParticleSizeZ, vector<UniqueIdInt>& Genome, const vector3_16 UniqueColorParam)
 {
     try
     {
@@ -333,6 +333,16 @@ void CellEngineVoxelSimulationSpace::GenerateParticle(UnsignedInt& ParticleIndex
         Genome.emplace_back(ParticleIndex);
     }
     CATCH("generating particle")
+}
+
+void CellEngineVoxelSimulationSpace::GenerateTwoPairedNucleotides(UnsignedInt& ParticleIndex, const EntityIdInt EntityId, const ChainIdInt ChainId, const UnsignedInt GenomeIndex, const UnsignedInt StartPosX, const UnsignedInt StartPosY, const UnsignedInt StartPosZ, const UnsignedInt ParticleSizeX, const UnsignedInt ParticleSizeY, const UnsignedInt ParticleSizeZ, const UnsignedInt AddSizeX, const UnsignedInt AddSizeY, const UnsignedInt AddSizeZ, const vector3_16 UniqueColorParam)
+{
+    try
+    {
+        GenerateParticle(ParticleIndex, CellEngineConfigDataObject.DNAIdentifier, ChainId, Genome1.size(), StartPosX, StartPosY, StartPosZ, ParticleSizeX, ParticleSizeY, ParticleSizeZ, Genome1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
+        GenerateParticle(ParticleIndex, CellEngineConfigDataObject.DNAIdentifier, CellEngineUseful::GetPairedChainId(ChainId), Genome2.size(), StartPosX + AddSizeX, StartPosY + AddSizeY, StartPosZ + AddSizeZ, ParticleSizeX, ParticleSizeY, ParticleSizeZ, Genome2, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
+    }
+    CATCH("generating two paired nucleotides")
 }
 
 bool CellEngineVoxelSimulationSpace::TestFormerForbiddenPositions(unordered_set<string>& TestedFormerForbiddenPositions, UnsignedInt RandomMoveDirection, UnsignedInt RandomPosX, UnsignedInt RandomPosY, UnsignedInt RandomPosZ, const UnsignedInt Size)
@@ -459,18 +469,12 @@ void CellEngineVoxelSimulationSpace::GenerateRandomDNAInWholeCell(UnsignedInt Nu
                     ChainIdInt ChainId = UniformDistributionObjectChainOfParticle_Uint64t(mt64R);
 
                     UnsignedInt ParticleIndex = MaxParticleIndex;
-                    
+
                     if (RandomMoveDirection == 1 || RandomMoveDirection == 2)
-                    {
-                        GenerateParticle(ParticleIndex, CellEngineConfigDataObject.DNAIdentifier, ChainId, Genome1.size(), RandomPosX, RandomPosY, RandomPosZ, ParticleSizeX, 1, ParticleSizeZ, Genome1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
-                        GenerateParticle(ParticleIndex, CellEngineConfigDataObject.DNAIdentifier, CellEngineUseful::GetPairedChainId(ChainId), Genome2.size(), RandomPosX, RandomPosY + 1, RandomPosZ, ParticleSizeX, 1, ParticleSizeZ, Genome2, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
-                    }
+                        GenerateTwoPairedNucleotides(ParticleIndex, CellEngineConfigDataObject.DNAIdentifier, ChainId, Genome1.size(), RandomPosX, RandomPosY, RandomPosZ, ParticleSizeX, 1, ParticleSizeZ, 0, 1, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
                     else
                     if (RandomMoveDirection == 3 || RandomMoveDirection == 4 || RandomMoveDirection == 5 || RandomMoveDirection == 6)
-                    {
-                        GenerateParticle(ParticleIndex, CellEngineConfigDataObject.DNAIdentifier, ChainId, Genome1.size(), RandomPosX, RandomPosY, RandomPosZ, 1, ParticleSizeY, ParticleSizeZ, Genome1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
-                        GenerateParticle(ParticleIndex, CellEngineConfigDataObject.DNAIdentifier, CellEngineUseful::GetPairedChainId(ChainId), Genome2.size(), RandomPosX + 1, RandomPosY, RandomPosZ, 1, ParticleSizeY, ParticleSizeZ, Genome2, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
-                    }
+                        GenerateTwoPairedNucleotides(ParticleIndex, CellEngineConfigDataObject.DNAIdentifier, ChainId, Genome1.size(), RandomPosX, RandomPosY, RandomPosZ, 1, ParticleSizeY, ParticleSizeZ, 1, 0, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
 
                     fill(RandomMovesDirections.begin(), RandomMovesDirections.end(), 0);
 
@@ -527,7 +531,7 @@ void CellEngineVoxelSimulationSpace::SaveGenomeDataToFile(UnsignedInt ParticleSi
     CATCH("saving genome data to file")
 }
 
-void CellEngineVoxelSimulationSpace::ReadGenomeDataFromFile()
+void CellEngineVoxelSimulationSpace::ReadGenomeDataFromFile(bool Paired)
 {
     try
     {
@@ -547,11 +551,7 @@ void CellEngineVoxelSimulationSpace::ReadGenomeDataFromFile()
         UnsignedInt GenomeSize = stoi(Line);
 
         UnsignedInt ParticleIndex = MaxParticleIndex;
-
         UnsignedInt PrevStartPosX = 0;
-        UnsignedInt PrevStartPosY = 0;
-        UnsignedInt PrevStartPosZ = 0;
-
         UnsignedInt GenomeIndex = 0;
 
         while(getline(FileToReadGenome, Line))
@@ -562,26 +562,21 @@ void CellEngineVoxelSimulationSpace::ReadGenomeDataFromFile()
             while(getline(Str, Word, ','))
                 Row.push_back(Word);
 
-            //GenerateParticle(ParticleIndex, stoi(Row[0]), stoi(Row[1]), stoi(Row[2]), stoi(Row[3]), stoi(Row[4]), stoi(Row[5]), ParticleSize, ParticleSize, ParticleSize, Genome1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
-
             UnsignedInt StartPosX = stoi(Row[3]);
             UnsignedInt StartPosY = stoi(Row[4]);
             UnsignedInt StartPosZ = stoi(Row[5]);
 
-            if (abs(static_cast<long>(PrevStartPosX - StartPosX)) > 0)
+            if (Paired == true)
             {
-                GenerateParticle(ParticleIndex, stoi(Row[0]), stoi(Row[1]), GenomeIndex, StartPosX, StartPosY, StartPosZ, ParticleSize, 1, ParticleSize, Genome1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
-                GenerateParticle(ParticleIndex, stoi(Row[0]), CellEngineUseful::GetPairedChainId(stoi(Row[1])), GenomeIndex, StartPosX, StartPosY + 1, StartPosZ, ParticleSize, 1, ParticleSize, Genome2, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
+                if (abs(static_cast<long>(PrevStartPosX - StartPosX)) > 0)
+                    GenerateTwoPairedNucleotides(ParticleIndex, stoi(Row[0]), stoi(Row[1]), GenomeIndex, StartPosX, StartPosY, StartPosZ, ParticleSize, 1, ParticleSize, 0, 1, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
+                else
+                    GenerateTwoPairedNucleotides(ParticleIndex, stoi(Row[0]), stoi(Row[1]), GenomeIndex, StartPosX, StartPosY, StartPosZ, 1, ParticleSize, ParticleSize, 1, 0, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
             }
             else
-            {
-                GenerateParticle(ParticleIndex, stoi(Row[0]), stoi(Row[1]), GenomeIndex, StartPosX, StartPosY, StartPosZ, 1, ParticleSize, ParticleSize, Genome1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
-                GenerateParticle(ParticleIndex, stoi(Row[0]), CellEngineUseful::GetPairedChainId(stoi(Row[1])), GenomeIndex, StartPosX + 1, StartPosY, StartPosZ, 1, ParticleSize, ParticleSize, Genome2, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
-            }
+                GenerateParticle(ParticleIndex, stoi(Row[0]), stoi(Row[1]), stoi(Row[2]), stoi(Row[3]), stoi(Row[4]), stoi(Row[5]), ParticleSize, ParticleSize, ParticleSize, Genome1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
 
             PrevStartPosX = StartPosX;
-            PrevStartPosY = StartPosY;
-            PrevStartPosZ = StartPosZ;
 
             GenomeIndex++;
         }
