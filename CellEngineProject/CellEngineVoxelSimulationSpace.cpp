@@ -356,14 +356,14 @@ bool CellEngineVoxelSimulationSpace::TestFormerForbiddenPositions(unordered_set<
     return (TestedFormerForbiddenPositions.find(to_string(PosX) + "|" + to_string(PosY) + "|" + to_string(PosZ)) != TestedFormerForbiddenPositions.end());
 }
 
-tuple<UnsignedInt, UnsignedInt, UnsignedInt> CellEngineVoxelSimulationSpace::EraseLastRandomParticle()
+tuple<UnsignedInt, UnsignedInt, UnsignedInt> CellEngineVoxelSimulationSpace::EraseLastRandomParticle(vector<UniqueIdInt>& Genome)
 {
     UnsignedInt LocalRandomPosX, LocalRandomPosY, LocalRandomPosZ;
 
     try
     {
-        UnsignedInt PreviousParticleIndex = Genome1.back();
-        Genome1.pop_back();
+        UnsignedInt PreviousParticleIndex = Genome.back();
+        Genome.pop_back();
 
         LocalRandomPosX = GetParticleFromIndex(PreviousParticleIndex).ListOfVoxels[0].X;
         LocalRandomPosY = GetParticleFromIndex(PreviousParticleIndex).ListOfVoxels[0].Y;
@@ -488,11 +488,11 @@ void CellEngineVoxelSimulationSpace::GenerateRandomDNAInWholeCell(UnsignedInt Nu
             {
                 NumberOfGeneratedNucleotides--;
 
-                tie(RandomPosX, RandomPosY, RandomPosZ) = EraseLastRandomParticle();
+                tie(RandomPosX, RandomPosY, RandomPosZ) = EraseLastRandomParticle(Genome1);
 
                 TestedFormerForbiddenPositions.insert(to_string(RandomPosX) + "|" + to_string(RandomPosY) + "|" + to_string(RandomPosZ));
 
-                EraseLastRandomParticle();
+                EraseLastRandomParticle(Genome2);
 
                 fill(RandomMovesDirections.begin(), RandomMovesDirections.end(), 0);
             }
@@ -605,4 +605,32 @@ void CellEngineVoxelSimulationSpace::ReadGenomeSequenceFromFile()
         }
     }
     CATCH("reading real genome data from file")
+}
+
+void CellEngineVoxelSimulationSpace::TestGeneratedGenomeCorrectness(const UnsignedInt ParticleSize)
+{
+    try
+    {
+        bool FoundBreak = false;
+
+        for (UnsignedInt GenomeIndex = 0; GenomeIndex < Genome1.size(); GenomeIndex++)
+            if (GenomeIndex > 3)
+            {
+                if ((abs(GetParticleFromIndex(Genome1[GenomeIndex]).ListOfVoxels[0].X - GetParticleFromIndex(Genome1[GenomeIndex - 1]).ListOfVoxels[0].X) != ParticleSize) &&
+                    (abs(GetParticleFromIndex(Genome1[GenomeIndex]).ListOfVoxels[0].Y - GetParticleFromIndex(Genome1[GenomeIndex - 1]).ListOfVoxels[0].Y) != ParticleSize) &&
+                    (abs(GetParticleFromIndex(Genome1[GenomeIndex]).ListOfVoxels[0].Z - GetParticleFromIndex(Genome1[GenomeIndex - 1]).ListOfVoxels[0].Z) != ParticleSize))
+                {
+                    LoggersManagerObject.Log(STREAM("GenomeIndex = " << GenomeIndex << " ChainId = " << GetParticleFromIndex(Genome1[GenomeIndex]).ChainId << " Letter = " << CellEngineUseful::GetLetterForDNAChainId(GetParticleFromIndex(Genome1[GenomeIndex]).ChainId)));
+                    LoggersManagerObject.Log(STREAM("DIFF X = " << GetParticleFromIndex(Genome1[GenomeIndex]).ListOfVoxels[0].X << " " << GetParticleFromIndex(Genome1[GenomeIndex - ParticleSize]).ListOfVoxels[0].X));
+                    LoggersManagerObject.Log(STREAM("DIFF Y = " << GetParticleFromIndex(Genome1[GenomeIndex]).ListOfVoxels[0].Y << " " << GetParticleFromIndex(Genome1[GenomeIndex - ParticleSize]).ListOfVoxels[0].Y));
+                    LoggersManagerObject.Log(STREAM("DIFF Z = " << GetParticleFromIndex(Genome1[GenomeIndex]).ListOfVoxels[0].Z << " " << GetParticleFromIndex(Genome1[GenomeIndex - ParticleSize]).ListOfVoxels[0].Z));
+                    FoundBreak = true;
+                    break;
+                }
+            }
+
+        if (FoundBreak == false)
+            LoggersManagerObject.Log(STREAM("Genome is continuous and correctly generated - OK!"));
+    }
+    CATCH("testing generated genome correctness")
 }
