@@ -39,6 +39,8 @@ public:
     std::string Name;
     std::string Symbol;
     UnsignedInt Counter;
+    std::string SequenceStr;
+    std::vector<ChainIdInt> Sequence;
 public:
     std::list<Particle> ParticlesObjects;
     std::unordered_map<std::string, UnsignedInt> ReactionsIdByString;

@@ -22,6 +22,10 @@ if (OPENMP_FOUND)
 	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 endif()
 
+find_package(GTest REQUIRED)
+
+include_directories(${GTEST_INCLUDE_DIRS})
+
 set(COMMON_LIBS ${COMMON_LIBS} ${EXTRA_LIBS})
 
 add_library(
@@ -110,6 +114,26 @@ if(WIN32)
 target_link_libraries(${PROJECT_NAME} -static-libgcc -static-libstdc++ -lpthread -lglew32 -lsb7 -lglfw3 -lopengl32 -lglu32 -limgui)
 else()
 target_link_libraries(${PROJECT_NAME} -static-libgcc -static-libstdc++ -lpthread sb7 ${OPENGL_LIBRARIES} glfw3 X11 Xrandr Xinerama Xi Xxf86vm Xcursor GL rt dl imgui)
+endif()
+
+add_executable(
+	CellEngineRunTests
+	../Common/Logger/Logger.h
+	../Common/Logger/Logger.cpp
+	../Common/MathUtils/ArcBall.h
+	../Common/MathUtils/ArcBall.cpp
+	../Common/FileUtils/FileUtils.h
+	../Common/FileUtils/FileUtils.cpp
+	../Common/StringUtils/StringUtils.h
+	../Common/StringUtils/StringUtils.cpp
+	../Common/DateTimeUtils/DateTimeUtils.h
+	../Common/DateTimeUtils/DateTimeUtils.cpp
+	./tests/CellEngineRunTests.cpp)
+
+if(WIN32)
+target_link_libraries(CellEngineRunTests -static-libgcc -static-libstdc++ -lpthread -lglew32 -lsb7 -lglfw3 -lopengl32 -lglu32 -limgui ${GTEST_LIBRARIES} pthread)
+else()
+target_link_libraries(CellEngineRunTests -static-libgcc -static-libstdc++ -lpthread sb7 ${OPENGL_LIBRARIES} glfw3 X11 Xrandr Xinerama Xi Xxf86vm Xcursor GL rt dl imgui ${GTEST_LIBRARIES} pthread)
 endif()
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
