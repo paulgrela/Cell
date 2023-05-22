@@ -22,10 +22,6 @@ if (OPENMP_FOUND)
 	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 endif()
 
-find_package(GTest REQUIRED)
-
-include_directories(${GTEST_INCLUDE_DIRS})
-
 set(COMMON_LIBS ${COMMON_LIBS} ${EXTRA_LIBS})
 
 add_library(
@@ -116,6 +112,16 @@ else()
 target_link_libraries(${PROJECT_NAME} -static-libgcc -static-libstdc++ -lpthread sb7 ${OPENGL_LIBRARIES} glfw3 X11 Xrandr Xinerama Xi Xxf86vm Xcursor GL rt dl imgui)
 endif()
 
+find_package(GTest REQUIRED)
+include_directories(${GTEST_INCLUDE_DIRS})
+
+include(CTest)
+enable_testing()
+
+set (GMOCK_DIR "/usr/src/googletest/googlemock")
+add_subdirectory(${GMOCK_DIR} ${CMAKE_BINARY_DIR}/gmock)
+include_directories("/usr/src/googletest/googlemock/include")
+
 add_executable(
 	CellEngineRunTests
 	../Common/Logger/Logger.h
@@ -128,13 +134,15 @@ add_executable(
 	../Common/StringUtils/StringUtils.cpp
 	../Common/DateTimeUtils/DateTimeUtils.h
 	../Common/DateTimeUtils/DateTimeUtils.cpp
-	./tests/CellEngineRunTests.cpp)
+	tests/CellEngineRunTests.cpp)
 
 if(WIN32)
-target_link_libraries(CellEngineRunTests -static-libgcc -static-libstdc++ -lpthread -lglew32 -lsb7 -lglfw3 -lopengl32 -lglu32 -limgui ${GTEST_LIBRARIES} pthread)
+target_link_libraries(CellEngineRunTests -static-libgcc -static-libstdc++ -lpthread -lglew32 -lsb7 -lglfw3 -lopengl32 -lglu32 -limgui)
 else()
-target_link_libraries(CellEngineRunTests -static-libgcc -static-libstdc++ -lpthread sb7 ${OPENGL_LIBRARIES} glfw3 X11 Xrandr Xinerama Xi Xxf86vm Xcursor GL rt dl imgui ${GTEST_LIBRARIES} pthread)
+target_link_libraries(CellEngineRunTests -static-libgcc -static-libstdc++ -lpthread sb7 ${OPENGL_LIBRARIES} glfw3 X11 Xrandr Xinerama Xi Xxf86vm Xcursor GL rt dl imgui gtest gmock)
 endif()
+
+add_test(CellEngineRunTests CellEngineRunTests)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})

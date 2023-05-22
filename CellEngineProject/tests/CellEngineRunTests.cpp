@@ -1,13 +1,14 @@
 
-#include <math.h>
+#include <cmath>
 #include <gtest/gtest.h>
+#include <gmock/gmock.h>
 
 #include "../CellEngineWellStirredChemicalReactionsSimulation.h"
 
 double squareRoot(const double a)
 {
     double b = sqrt(a);
-    if(b != b)
+    if (b != b)
         return -1.0;
     else
         return sqrt(a);
@@ -30,5 +31,6 @@ TEST(SquareRootTest, NegativeNos)
 int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);
+    testing::InitGoogleMock(&argc, argv);
     return RUN_ALL_TESTS();
 }
