@@ -28,11 +28,10 @@ public:
     void AddParticleKind(const ParticleKind& ParticleParam);
     void AddReaction(const Reaction& ReactionParam);
 public:
+    virtual std::vector<UnsignedInt> GetRandomParticles(UnsignedInt NumberOfReactants);
     void TryToDoRandomReaction(UnsignedInt NumberOfReactants);
 public:
     void Run(UnsignedInt NumberOfSteps);
 };
-
-void TestWellStirredChemicalReactionsSimulation();
 
 #endif

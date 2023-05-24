@@ -599,7 +599,7 @@ public:
 
                 static int SelectedSpaceStartParametersDrawTypesIndex = static_cast<int>(CellEngineConfigDataObject.SelectedSpaceStartParametersDrawTypesObject);
                 ImGui::RadioButton("Draw Selected Space From Center", &SelectedSpaceStartParametersDrawTypesIndex, 1);
-                ImGui::RadioButton("Draw Selected Space From CCorner", &SelectedSpaceStartParametersDrawTypesIndex, 2);
+                ImGui::RadioButton("Draw Selected Space From Corner", &SelectedSpaceStartParametersDrawTypesIndex, 2);
                 CellEngineConfigDataObject.SelectedSpaceStartParametersDrawTypesObject = static_cast<CellEngineConfigData::SelectedSpaceStartParametersDrawTypes>(SelectedSpaceStartParametersDrawTypesIndex);
             }
         }
@@ -734,8 +734,6 @@ public:
         try
         {
             ReadInitConfiguration(argc, argv);
-
-            //TestWellStirredChemicalReactionsSimulation(); exit(0);
 
             GLFWwindow* ImGuiMenuWindow = PrepareImGuiMenuGLFWData();
 

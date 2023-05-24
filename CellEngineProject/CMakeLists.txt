@@ -134,6 +134,8 @@ add_executable(
 	../Common/StringUtils/StringUtils.cpp
 	../Common/DateTimeUtils/DateTimeUtils.h
 	../Common/DateTimeUtils/DateTimeUtils.cpp
+	CellEngineWellStirredChemicalReactionsSimulation.h
+	CellEngineWellStirredChemicalReactionsSimulation.cpp
 	tests/CellEngineRunTests.cpp)
 
 if(WIN32)

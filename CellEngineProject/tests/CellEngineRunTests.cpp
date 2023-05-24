@@ -5,27 +5,50 @@
 
 #include "../CellEngineWellStirredChemicalReactionsSimulation.h"
 
-double squareRoot(const double a)
+using ::testing::Return;
+
+void TestWellStirredChemicalReactionsSimulation(CellEngineWellStirredChemicalReactionsSimulation& CellEngineWellStirredChemicalReactionsSimulationObjectObject)
 {
-    double b = sqrt(a);
-    if (b != b)
-        return -1.0;
-    else
-        return sqrt(a);
+    CellEngineWellStirredChemicalReactionsSimulationObjectObject.AddParticleKind({ 0, "Water", "H2O", 100 });
+    CellEngineWellStirredChemicalReactionsSimulationObjectObject.AddParticleKind({ 1, "Glucose", "C6H12O6", 50 });
+    CellEngineWellStirredChemicalReactionsSimulationObjectObject.AddParticleKind({ 2, "Oxygen", "0", 10 });
+    CellEngineWellStirredChemicalReactionsSimulationObjectObject.AddParticleKind({ 3, "Carbon dioxide", "CO2", 5 });
+    CellEngineWellStirredChemicalReactionsSimulationObjectObject.AddParticleKind({ 4, "Eten", "CH2CH2", 15 });
+    CellEngineWellStirredChemicalReactionsSimulationObjectObject.AddParticleKind({ 5, "Ethanol", "CH3CH2(OH)", 25 });
+    CellEngineWellStirredChemicalReactionsSimulationObjectObject.AddParticleKind({ 6, "Propen", "CH3CHCH2", 5 });
+    CellEngineWellStirredChemicalReactionsSimulationObjectObject.AddParticleKind({ 7, "HX", "HX", 10 });
+    CellEngineWellStirredChemicalReactionsSimulationObjectObject.AddParticleKind({ 8, "2Halogenopropan", "CH3CHXCH3", 10 });
+    CellEngineWellStirredChemicalReactionsSimulationObjectObject.AddParticleKind({ 9, "Eten", "CH2CH2", 10 });
+    CellEngineWellStirredChemicalReactionsSimulationObjectObject.AddParticleKind({ 10, "Ethylene", "CH2CH2O", 10 });
+    CellEngineWellStirredChemicalReactionsSimulationObjectObject.AddParticleKind({ 11, "DNA", "CGATATTAAATAGGGCCT", 10 });
+
+    CellEngineWellStirredChemicalReactionsSimulationObjectObject.AddReaction(Reaction("C6H12O6 + O6 + ", { { 1, 1 }, { 2, 6 } }, { { 3, 6 }, { 2, 6 } }));
+    CellEngineWellStirredChemicalReactionsSimulationObjectObject.AddReaction(Reaction("CH2CH2 + H2O + ", { { 4, 1 }, { 0, 1 } }, { { 5, 1 } }));
+    CellEngineWellStirredChemicalReactionsSimulationObjectObject.AddReaction(Reaction("CH3CHCH2 + HX + ", { { 6, 1 }, { 7, 1 } }, { { 8, 1 } }));
+    CellEngineWellStirredChemicalReactionsSimulationObjectObject.AddReaction(Reaction("CH2CH2 + O + ", { { 9, 1 }, { 2, 1 } }, { { 10, 1 } }));
 }
 
-TEST(SquareRootTest, PositiveNos)
+class MockCellEngineWellStirredChemicalReactionsSimulation : public CellEngineWellStirredChemicalReactionsSimulation
 {
-    ASSERT_EQ(6, squareRoot(36.0));
-    ASSERT_EQ(18.0, squareRoot(324.0));
-    ASSERT_EQ(25.4, squareRoot(645.16));
-    ASSERT_EQ(0, squareRoot(0.0));
-}
+public:
+    MOCK_METHOD(std::vector<UnsignedInt>, GetRandomParticles, (UnsignedInt));
+    //MOCK_METHOD1(GetRandomParticles, std::vector<UnsignedInt>(UnsignedInt));
+    MOCK_METHOD0(start, bool());
+};
 
-TEST(SquareRootTest, NegativeNos)
+TEST(CellEngineWellStirredChemicalReactionsSimulationTest, TryToDoRandomReactionTest1)
 {
-    ASSERT_EQ(-1.0, squareRoot(-15.0));
-    ASSERT_EQ(-1.0, squareRoot(-0.2));
+    MockCellEngineWellStirredChemicalReactionsSimulation MockCellEngineWellStirredChemicalReactionsSimulationObject;
+
+    EXPECT_CALL(MockCellEngineWellStirredChemicalReactionsSimulationObject, GetRandomParticles(2)).Times(2).WillRepeatedly(Return(vector<UnsignedInt>{ 9, 0 }));
+
+    TestWellStirredChemicalReactionsSimulation(MockCellEngineWellStirredChemicalReactionsSimulationObject);
+
+    MockCellEngineWellStirredChemicalReactionsSimulationObject.Run(2);
+
+    ASSERT_EQ(13, MockCellEngineWellStirredChemicalReactionsSimulationObject.Particles[4].Counter);
+    ASSERT_EQ(98, MockCellEngineWellStirredChemicalReactionsSimulationObject.Particles[0].Counter);
+    ASSERT_EQ(27, MockCellEngineWellStirredChemicalReactionsSimulationObject.Particles[5].Counter);
 }
 
 int main(int argc, char **argv)
