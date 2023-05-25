@@ -32,8 +32,6 @@ class MockCellEngineWellStirredChemicalReactionsSimulation : public CellEngineWe
 {
 public:
     MOCK_METHOD(std::vector<UnsignedInt>, GetRandomParticles, (UnsignedInt));
-    //MOCK_METHOD1(GetRandomParticles, std::vector<UnsignedInt>(UnsignedInt));
-    MOCK_METHOD0(start, bool());
 };
 
 TEST(CellEngineWellStirredChemicalReactionsSimulationTest, TryToDoRandomReactionTest1)

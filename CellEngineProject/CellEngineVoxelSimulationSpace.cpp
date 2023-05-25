@@ -224,7 +224,7 @@ void CellEngineVoxelSimulationSpace::GenerateRandomParticlesInSelectedSpace(cons
     CATCH("generating random particles in selected space")
 }
 
-void CellEngineVoxelSimulationSpace::GenerateOneStepOfDiffusion(UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
+void CellEngineVoxelSimulationSpace::GenerateOneStepOfDiffusionForSelectedRangeOfParticles(UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
 {
     try
     {
@@ -277,21 +277,78 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfDiffusion(UniqueIdInt Star
     CATCH("generating one step of diffusion")
 }
 
+void CellEngineVoxelSimulationSpace::GenerateRandomReactionForParticle(Particle& ParticleObject)
+{
+    try
+    {
+
+    }
+    CATCH("generating random reaction for particle")
+}
+
+void CellEngineVoxelSimulationSpace::GenerateOneStepOfReactionsForSelectedRangeOfParticles(UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
+{
+    try
+    {
+        if (EndParticleIndexParam == 0)
+        {
+            StartParticleIndexParam = MaxParticleIndex - StartParticleIndexParam;
+            EndParticleIndexParam = MaxParticleIndex;
+        }
+
+        for (UniqueIdInt ParticleIndex = StartParticleIndexParam; ParticleIndex <= EndParticleIndexParam; ParticleIndex++)
+        {
+            auto ParticlesIterator = Particles.find(ParticleIndex);
+            if (ParticlesIterator != Particles.end())
+                GenerateRandomReactionForParticle(ParticlesIterator->second);
+        }
+    }
+    CATCH("generating")
+}
+
+void CellEngineVoxelSimulationSpace::GenerateRandomReactionsForAllParticles()
+{
+    try
+    {
+        for (auto& ParticleObject : Particles)
+            if (ParticleObject.second.SelectedForReaction == false)
+                GenerateRandomReactionForParticle(ParticleObject.second);
+    }
+    CATCH("generating random reactions for all particles")
+}
+
+void CellEngineVoxelSimulationSpace::GenerateRandomReactionsInWholeVoxelSimulationSpace()
+{
+    try
+    {
+        for (UnsignedInt PosX = 0; PosX < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension; PosX++)
+            for (UnsignedInt PosY = 0; PosY < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension; PosY++)
+                for (UnsignedInt PosZ = 0; PosZ < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension; PosZ++)
+                    if (GetSpaceVoxel(PosX, PosZ, PosY) != 0)
+                    {
+                        auto& ParticleObject = GetParticleFromIndex(GetSpaceVoxel(PosX, PosZ, PosY));
+                        if (ParticleObject.SelectedForReaction == false)
+                            GenerateRandomReactionForParticle(ParticleObject);
+                    }
+    }
+    CATCH("generation random reactions in whole voxel simulation space")
+}
+
 void CellEngineVoxelSimulationSpace::EraseAllDNAParticles()
 {
     try
     {
-        for (auto& ParticleObjectLoop : Particles)
-            if (ParticleObjectLoop.second.EntityId == CellEngineConfigDataObject.DNAIdentifier)
-                for (auto& VoxelCoordinates : ParticleObjectLoop.second.ListOfVoxels)
+        for (auto& ParticleObject : Particles)
+            if (ParticleObject.second.EntityId == CellEngineConfigDataObject.DNAIdentifier)
+                for (auto& VoxelCoordinates : ParticleObject.second.ListOfVoxels)
                     GetSpaceVoxel(VoxelCoordinates.X, VoxelCoordinates.Y, VoxelCoordinates.Z) = GetZeroSimulationSpaceVoxel();
 
         const auto RemovedDNAParticlesCounter = erase_if(Particles, [](const pair<UniqueIdInt, Particle>& item) { auto const& [key, value] = item; return (value.EntityId == CellEngineConfigDataObject.DNAIdentifier); });
         LoggersManagerObject.Log(STREAM("RemovedDNAParticlesCounter = " << RemovedDNAParticlesCounter));
 
         UnsignedInt DNAParticleCounter = 0;
-        for (auto& ParticleObjectLoop : Particles)
-            if (ParticleObjectLoop.second.EntityId == CellEngineConfigDataObject.DNAIdentifier)
+        for (auto& ParticleObject : Particles)
+            if (ParticleObject.second.EntityId == CellEngineConfigDataObject.DNAIdentifier)
                 DNAParticleCounter++;
         LoggersManagerObject.Log(STREAM("DNAParticleCounter = " << DNAParticleCounter));
 
