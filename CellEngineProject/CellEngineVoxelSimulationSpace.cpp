@@ -224,6 +224,15 @@ void CellEngineVoxelSimulationSpace::GenerateRandomParticlesInSelectedSpace(cons
     CATCH("generating random particles in selected space")
 }
 
+inline void GetRangeOfParticlesForRandomParticles(UniqueIdInt& StartParticleIndexParam, UniqueIdInt& EndParticleIndexParam, UniqueIdInt MaxParticleIndex)
+{
+    if (EndParticleIndexParam == 0)
+    {
+        StartParticleIndexParam = MaxParticleIndex - StartParticleIndexParam;
+        EndParticleIndexParam = MaxParticleIndex;
+    }
+}
+
 void CellEngineVoxelSimulationSpace::GenerateOneStepOfDiffusionForSelectedRangeOfParticles(UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
 {
     try
@@ -232,11 +241,7 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfDiffusionForSelectedRangeO
 
         vector<vector3_16> NewVoxelsForParticle;
 
-        if (EndParticleIndexParam == 0)
-        {
-            StartParticleIndexParam = MaxParticleIndex - StartParticleIndexParam;
-            EndParticleIndexParam = MaxParticleIndex;
-        }
+        GetRangeOfParticlesForRandomParticles(StartParticleIndexParam, EndParticleIndexParam, MaxParticleIndex);
 
         for (UniqueIdInt ParticleIndex = StartParticleIndexParam; ParticleIndex <= EndParticleIndexParam; ParticleIndex++)
         {
@@ -286,16 +291,10 @@ void CellEngineVoxelSimulationSpace::GenerateRandomReactionForParticle(Particle&
     CATCH("generating random reaction for particle")
 }
 
-void CellEngineVoxelSimulationSpace::GenerateOneStepOfReactionsForSelectedRangeOfParticles(UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
+void CellEngineVoxelSimulationSpace::GenerateOneStepOfRandomReactionsForSelectedRangeOfParticles(UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam)
 {
     try
     {
-        if (EndParticleIndexParam == 0)
-        {
-            StartParticleIndexParam = MaxParticleIndex - StartParticleIndexParam;
-            EndParticleIndexParam = MaxParticleIndex;
-        }
-
         for (UniqueIdInt ParticleIndex = StartParticleIndexParam; ParticleIndex <= EndParticleIndexParam; ParticleIndex++)
         {
             auto ParticlesIterator = Particles.find(ParticleIndex);
@@ -303,7 +302,21 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfReactionsForSelectedRangeO
                 GenerateRandomReactionForParticle(ParticlesIterator->second);
         }
     }
-    CATCH("generating")
+    CATCH("generating one step of random reactions for selected range of particles")
+}
+
+void CellEngineVoxelSimulationSpace::GenerateOneStepOfRandomReactionsForRandomParticles(UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam)
+{
+    try
+    {
+        GetRangeOfParticlesForRandomParticles(StartParticleIndexParam, EndParticleIndexParam, MaxParticleIndex);
+
+        AddReaction(Reaction("A + B + ", { { StartParticleIndexParam, 1 }, { StartParticleIndexParam + 1, 1 } }, { { StartParticleIndexParam + 2, 6 }, { StartParticleIndexParam + 3, 1 } }));
+        AddReaction(Reaction("E + F + ", { { StartParticleIndexParam + 4, 1 }, { StartParticleIndexParam + 5, 1 } }, { { StartParticleIndexParam + 6, 1 } }));
+
+        GenerateOneStepOfRandomReactionsForSelectedRangeOfParticles(StartParticleIndexParam, EndParticleIndexParam, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
+    }
+    CATCH("generating one step of random reactions for random particles");
 }
 
 void CellEngineVoxelSimulationSpace::GenerateRandomReactionsForAllParticles()
