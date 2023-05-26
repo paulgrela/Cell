@@ -86,7 +86,7 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSelectedSpace(const
                             if (DrawEmptyVoxels == false || (DrawEmptyVoxels == true && SimulationSpaceVoxelObject != 0))
                             {
                                 TempAtomObject.EntityId = ParticleObject.EntityId;
-                                auto ParticleKindObject = CellEngineConfigDataObject.ParticlesKinds[CellEngineConfigDataObject.ParticlesKindsPos.find(ParticleObject.EntityId)->second];
+                                auto ParticleKindObject = CellEngineSimulationManagerObject.ParticlesKinds[CellEngineSimulationManagerObject.ParticlesKindsPos.find(ParticleObject.EntityId)->second];
                                 TempAtomObject.AtomColor = ParticleKindObject.AtomColor;
                                 TempAtomObject.ParticleColor = ParticleKindObject.ParticleColor;
                                 TempAtomObject.UniqueParticleColor = (CellEngineUseful::IsDNAorRNA(TempAtomObject.EntityId) == true ? ParticleObject.UniqueColor : ParticleKindObject.RandomParticleColor);

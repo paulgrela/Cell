@@ -535,9 +535,9 @@ string CellEngineOpenGLVisualiser::GetEntityName(const UnsignedInt EntityId)
 
     try
     {
-        auto EntityIterator = CellEngineConfigDataObject.ParticlesKindsPos.find(EntityId);
-        if (EntityIterator != CellEngineConfigDataObject.ParticlesKindsPos.end())
-            EntityName = CellEngineConfigDataObject.ParticlesKinds[EntityIterator->second].NameFromDataFile;
+        auto EntityIterator = CellEngineSimulationManagerObject.ParticlesKindsPos.find(EntityId);
+        if (EntityIterator != CellEngineSimulationManagerObject.ParticlesKindsPos.end())
+            EntityName = CellEngineSimulationManagerObject.ParticlesKinds[EntityIterator->second].NameFromDataFile;
         else
             EntityName = "";
     }
@@ -550,7 +550,7 @@ void CellEngineOpenGLVisualiser::SetVisibilityOfAllParticles(const bool VisibleP
 {
     try
     {
-        for (auto& ParticleKindObject : CellEngineConfigDataObject.ParticlesKinds)
+        for (auto& ParticleKindObject : CellEngineSimulationManagerObject.ParticlesKinds)
             ParticleKindObject.Visible = VisibleParam;
     }
     CATCH("setting visibility of all particles")
@@ -561,7 +561,7 @@ void CellEngineOpenGLVisualiser::SetVisibilityOfParticlesExcept(const UnsignedIn
     try
     {
         SetVisibilityOfAllParticles(VisibleParam);
-        CellEngineConfigDataObject.ParticlesKinds[CellEngineConfigDataObject.ParticlesKindsPos.find(EntityId)->second].Visible = !VisibleParam;
+        CellEngineSimulationManagerObject.ParticlesKinds[CellEngineSimulationManagerObject.ParticlesKindsPos.find(EntityId)->second].Visible = !VisibleParam;
     }
     CATCH("setting visibility of particles except")
 }
@@ -572,7 +572,7 @@ bool CellEngineOpenGLVisualiser::CheckVisibilityOfParticles(const UnsignedInt En
 
     try
     {
-        Visible = CellEngineConfigDataObject.ParticlesKinds[CellEngineConfigDataObject.ParticlesKindsPos.find(EntityId)->second].Visible;
+        Visible = CellEngineSimulationManagerObject.ParticlesKinds[CellEngineSimulationManagerObject.ParticlesKindsPos.find(EntityId)->second].Visible;
     }
     CATCH("checking visibility of particles")
 

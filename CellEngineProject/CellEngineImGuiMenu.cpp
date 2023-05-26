@@ -429,7 +429,7 @@ public:
     {
         try
         {
-            const char* DensityOfDrawnAtomsComboBoxItems[] = {"1", "10", "100", "AUTOMATIC" };
+            const char* DensityOfDrawnAtomsComboBoxItems[] = { "1", "10", "100", "AUTOMATIC" };
             int DensityOfDrawnAtomsItemIndex;
             switch (CellEngineConfigDataObject.LoadOfAtomsStep)
             {
@@ -458,21 +458,25 @@ public:
         try
         {
             const char* TypesOfVisibilityComboBoxItems[] = { "ALL", "ONLY DNA", "ONLY RNA", "SELECTED" };
+
             static int TypesOfVisibilityComboBoxCurrentItemIndex = 0;
+            static int PrevTypesOfVisibilityComboBoxCurrentItemIndex = 0;
+
             ImGui::Combo( " Types of Visibility", &TypesOfVisibilityComboBoxCurrentItemIndex, TypesOfVisibilityComboBoxItems, IM_ARRAYSIZE(TypesOfVisibilityComboBoxItems));
-            switch (TypesOfVisibilityComboBoxCurrentItemIndex)
-            {
-                case 0 : CellEngineOpenGLVisualiserPointer->SetVisibilityOfAllParticles(true); break;
-                case 1 : CellEngineOpenGLVisualiserPointer->SetVisibilityOfParticlesExcept(CellEngineConfigDataObject.DNAIdentifier, false); break;
-                case 2 : CellEngineOpenGLVisualiserPointer->SetVisibilityOfParticlesExcept(CellEngineConfigDataObject.RNAIdentifier, false); break;
-                default : break;
-            }
+            if (PrevTypesOfVisibilityComboBoxCurrentItemIndex != TypesOfVisibilityComboBoxCurrentItemIndex)
+                switch (TypesOfVisibilityComboBoxCurrentItemIndex)
+                {
+                    case 0 : CellEngineOpenGLVisualiserPointer->SetVisibilityOfAllParticles(true); break;
+                    case 1 : CellEngineOpenGLVisualiserPointer->SetVisibilityOfParticlesExcept(CellEngineConfigDataObject.DNAIdentifier, false); break;
+                    case 2 : CellEngineOpenGLVisualiserPointer->SetVisibilityOfParticlesExcept(CellEngineConfigDataObject.RNAIdentifier, false); break;
+                    default : break;
+                }
             if (TypesOfVisibilityComboBoxCurrentItemIndex == 3)
                 if (ImGui::CollapsingHeader("Particles Kinds", ImGuiTreeNodeFlags_DefaultOpen))
-                {
-                    for (auto& ParticlesKind : CellEngineConfigDataObject.ParticlesKinds)
+                    for (auto& ParticlesKind : CellEngineSimulationManagerObject.ParticlesKinds)
                         ImGui::Checkbox(string(to_string(ParticlesKind.Identifier) + " " + ParticlesKind.NameFromDataFile).c_str(), &ParticlesKind.Visible);
-                }
+
+            PrevTypesOfVisibilityComboBoxCurrentItemIndex = TypesOfVisibilityComboBoxCurrentItemIndex;
         }
         CATCH("executing types of visibility menu");
     }
@@ -484,7 +488,7 @@ public:
             if (ImGui::CollapsingHeader("Atoms Kinds", ImGuiTreeNodeFlags_DefaultOpen))
             {
                 bool ChangeColor = false;
-                for (auto& AtomsKind : CellEngineConfigDataObject.AtomsKinds)
+                for (auto& AtomsKind : CellEngineSimulationManagerObject.AtomsKinds)
                 {
                     if (ImGui::ColorEdit3(string(AtomsKind.Name + " Atom Color").c_str(), (float*)&AtomsKind.ColorVmathVec3) == true)
                     {
@@ -496,10 +500,10 @@ public:
                 if (ChangeColor == true)
                     for (auto& ParticleCenter : CellEngineDataFileObjectPointer->GetParticlesCenters())
                     {
-                        ParticleCenter.AtomColor = CellEngineConfigDataObject.GetAtomKindDataForAtom(ParticleCenter.Name[0])->Color;
+                        ParticleCenter.AtomColor = CellEngineSimulationManagerObject.GetAtomKindDataForAtom(ParticleCenter.Name[0])->Color;
                         if (CellEngineConfigDataObject.ShowDetailsInAtomScale == true)
                             for (auto& AtomObject : CellEngineDataFileObjectPointer->GetAllAtoms()[ParticleCenter.AtomIndex])
-                                AtomObject.AtomColor = CellEngineConfigDataObject.GetAtomKindDataForAtom(AtomObject.Name[0])->Color;
+                                AtomObject.AtomColor = CellEngineSimulationManagerObject.GetAtomKindDataForAtom(AtomObject.Name[0])->Color;
                     }
             }
         }
@@ -579,7 +583,7 @@ public:
                 ColorButton("    STOP DIFFUSION     ", Nothing, 0, 0, 0, 0, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue){ });
 
                 ColorButton(" MAKE ONE STEP OF DIFFUSION FOR RANDOM PARTICLES ", Nothing, 0, 0, 0, 3, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue){ CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateOneStepOfDiffusionForSelectedRangeOfParticles(10, 0, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]); });
-                ColorButton(" MAKE ONE STEP OF REACTIONS FOR RANDOM PARTICLES ", Nothing, 0, 0, 0, 0, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue){ CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateOneStepOfRandomReactionsForRandomParticles(10, 0, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]); });
+                ColorButton(" MAKE ONE STEP OF REACTIONS FOR RANDOM PARTICLES ", Nothing, 0, 0, 0, 0, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue){ CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateOneStepOfRandomReactionsForSelectedRangeOfParticles(10, 0, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]); });
 
                 if (ImGui::CollapsingHeader("Random DNA Generator", ImGuiTreeNodeFlags_DefaultOpen))
                 {

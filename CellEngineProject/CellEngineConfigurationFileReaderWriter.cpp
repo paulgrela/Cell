@@ -207,7 +207,7 @@ void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const ch
                         CellEngineConfigDataObject.BackgroundColors[3] = vmath::FromVec4ToVec3(sb7::GetColorVec4FromColorName(CellStatePropertyTreeElement.second.get<string>("BackgroundColor3")));
                         CellEngineConfigDataObject.ChosenBackgroundColor = CellStatePropertyTreeElement.second.get<UnsignedInt>("ChosenBackgroundColor");
 
-                        CellEngineConfigDataObject.AtomsKinds.clear();
+                        CellEngineSimulationManagerObject.AtomsKinds.clear();
                         for (const ptree::value_type& AtomKindPropertyTreeElement : CellStatePropertyTreeElement.second.get_child("Atoms"))
                         {
                             GraphicAtomKind AtomKindObject;
@@ -223,10 +223,10 @@ void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const ch
                             AtomKindObject.SizeZ = AtomKindPropertyTreeElement.second.get<float>("SizeZ");
                             AtomKindObject.Name = AtomKindPropertyTreeElement.second.get<string>("Name");
 
-                            CellEngineConfigDataObject.AtomsKinds.emplace_back(AtomKindObject);
+                            CellEngineSimulationManagerObject.AtomsKinds.emplace_back(AtomKindObject);
                         }
 
-                        CellEngineConfigDataObject.ParticlesKindsXML.clear();
+                        CellEngineSimulationManagerObject.ParticlesKindsXML.clear();
                         for (const ptree::value_type& ParticleKindPropertyTreeElement : CellStatePropertyTreeElement.second.get_child("Particles"))
                         {
                             GraphicParticleKind ParticleKindObject;
@@ -236,14 +236,12 @@ void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const ch
                             ParticleKindObject.NameFromXML = ParticleKindPropertyTreeElement.second.get<string>("Name");
                             ParticleKindObject.NameFromXML == "DNA" ? CellEngineConfigDataObject.DNAIdentifier = ParticleKindPropertyTreeElement.second.get<UnsignedInt>("<xmlattr>.id") : 0;
                             ParticleKindObject.NameFromXML == "RNA" ? CellEngineConfigDataObject.RNAIdentifier = ParticleKindPropertyTreeElement.second.get<UnsignedInt>("<xmlattr>.id") : 0;
-                            ParticleKindObject.ParticleColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(
-                                    vmath::FromVec4ToVec3(sb7::GetColorVec4FromColorName(
-                                            ParticleKindPropertyTreeElement.second.get<string>("Color"))));
+                            ParticleKindObject.ParticleColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(vmath::FromVec4ToVec3(sb7::GetColorVec4FromColorName(ParticleKindPropertyTreeElement.second.get<string>("Color"))));
                             ParticleKindObject.Visible = ParticleKindPropertyTreeElement.second.get<bool>("Visible");
                             ParticleKindObject.SizeX = ParticleKindPropertyTreeElement.second.get<float>("SizeX");
                             ParticleKindObject.SizeY = ParticleKindPropertyTreeElement.second.get<float>("SizeY");
                             ParticleKindObject.SizeZ = ParticleKindPropertyTreeElement.second.get<float>("SizeZ");
-                            CellEngineConfigDataObject.ParticlesKindsXML[ParticleKindPropertyTreeElement.second.get<UnsignedInt>("<xmlattr>.id")] = ParticleKindObject;
+                            CellEngineSimulationManagerObject.ParticlesKindsXML[ParticleKindPropertyTreeElement.second.get<UnsignedInt>("<xmlattr>.id")] = ParticleKindObject;
                         }
                     }
         }

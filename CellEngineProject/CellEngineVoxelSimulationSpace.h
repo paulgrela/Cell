@@ -24,27 +24,27 @@ class CellEngineVoxelSimulationSpace
 {
 public:
     std::mt19937_64 mt64R{ std::random_device{}() };
+//private:
+//    std::string GenomeLine;
+//private:
+//    std::vector<UniqueIdInt> Genome1;
+//    std::vector<UniqueIdInt> Genome2;
 private:
-    std::string GenomeLine;
-private:
-    std::vector<UniqueIdInt> Genome1;
-    std::vector<UniqueIdInt> Genome2;
-private:
-    std::vector<ParticleKind> ParticlesKinds;
-    UnsignedInt MaxParticleIndex{};
-    #ifdef PARTICLES_IN_VECTOR
-    std::vector<Particle> Particles;
-    #else
-    std::unordered_map<UniqueIdInt, Particle> Particles;
-    #endif
-private:
-    std::vector<Reaction> Reactions;
-    std::unordered_map<std::string, UnsignedInt> ReactionsIdByString;
+//    std::vector<ParticleKind> ParticlesKinds;
+//    UnsignedInt MaxParticleIndex{};
+//    #ifdef PARTICLES_IN_VECTOR
+//    std::vector<Particle> Particles;
+//    #else
+//    std::unordered_map<UniqueIdInt, Particle> Particles;
+//    #endif
+//private:
+//    std::vector<Reaction> Reactions;
+//    std::unordered_map<std::string, UnsignedInt> ReactionsIdByString;
 private:
     void* SpacePointer;
 private:
     inline SimulationSpaceVoxel& GetSpaceVoxel(UnsignedInt x, UnsignedInt y, UnsignedInt z);
-    inline Particle& GetParticleFromIndex(UniqueIdInt ParticleIndex);
+//    inline Particle& GetParticleFromIndex(UniqueIdInt ParticleIndex);
 private:
     UnsignedInt XMin{}, XMax{}, YMin{}, YMax{}, ZMin{}, ZMax{};
 public:
@@ -65,16 +65,17 @@ public:
     SimulationSpaceVoxel GetSimulationSpaceVoxel(UnsignedInt X, UnsignedInt Y, UnsignedInt Z);
     Particle& GetParticleFromIndexInSimulationSpaceVoxel(UniqueIdInt ParticleIndex);
 public:
-    UniqueIdInt AddNewParticle(UniqueIdInt ParticleIndex, const Particle& ParticleParam);
-    void AddParticleKind(const ParticleKind& ParticleParam);
-    void AddReaction(const Reaction& ReactionParam);
+//    UniqueIdInt AddNewParticle(UniqueIdInt ParticleIndex, const Particle& ParticleParam);
+//    void AddParticleKind(const ParticleKind& ParticleParam);
+//    void AddReaction(const Reaction& ReactionParam);
+public:
+    void AddBasicParticlesKindsAndReactions();
 public:
     void GenerateRandomParticlesInSelectedSpace(UnsignedInt NumberOfRandomParticles, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt StepXParam, UnsignedInt StepYParam, UnsignedInt StepZParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
     void GenerateOneStepOfDiffusionForSelectedRangeOfParticles(UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
 public:
     void GenerateRandomReactionForParticle(Particle& ParticleObject);
     void GenerateOneStepOfRandomReactionsForSelectedRangeOfParticles(UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
-    void GenerateOneStepOfRandomReactionsForRandomParticles(UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
     void GenerateRandomReactionsForAllParticles();
     void GenerateRandomReactionsInWholeVoxelSimulationSpace();
 public:

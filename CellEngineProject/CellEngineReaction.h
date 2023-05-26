@@ -6,7 +6,8 @@
 #include <vector>
 
 #include "CellEngineTypes.h"
-#include "CellEngineParticle.h"
+
+class ParticleKind;
 
 class Reaction
 {

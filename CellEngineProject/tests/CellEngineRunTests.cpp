@@ -3,6 +3,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
+#include "ExceptionsMacro.h"
 #include "../CellEngineWellStirredChemicalReactionsSimulation.h"
 
 using ::testing::Return;

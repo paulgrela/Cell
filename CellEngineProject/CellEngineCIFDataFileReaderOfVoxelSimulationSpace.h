@@ -15,7 +15,7 @@ protected:
 protected:
     UniqueIdInt AddNewParticle(const UniqueIdInt ParticleIndex, const Particle& ParticleObjectParam) override
     {
-        return CellEngineVoxelSimulationSpaceObjectPointer->AddNewParticle(ParticleIndex, ParticleObjectParam);
+        return CellEngineSimulationManagerObject.AddNewParticle(ParticleIndex, ParticleObjectParam);
     }
 protected:
     void InsertAtom(std::vector<CellEngineAtom>& LocalCellEngineAllAtomsObject, const CellEngineAtom& AppliedAtom, const UniqueIdInt ParticleIndex) override
