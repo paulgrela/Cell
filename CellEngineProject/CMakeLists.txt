@@ -134,6 +134,8 @@ add_executable(
 	../Common/StringUtils/StringUtils.cpp
 	../Common/DateTimeUtils/DateTimeUtils.h
 	../Common/DateTimeUtils/DateTimeUtils.cpp
+	CellEngineColors.h
+	CellEngineColors.cpp
 	CellEngineWellStirredChemicalReactionsSimulation.h
 	CellEngineWellStirredChemicalReactionsSimulation.cpp
 	tests/CellEngineRunTests.cpp)

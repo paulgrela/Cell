@@ -81,7 +81,6 @@ protected:
     void DrawBond(float x1, float y1, float z1, float x2, float y2, float z2);
 public:
     static std::string GetEntityName(UnsignedInt EntityId);
-    static bool CheckVisibilityOfParticles(UnsignedInt EntityId);
     static void SetVisibilityOfAllParticles(bool VisibleParam);
     static void SetVisibilityOfParticlesExcept(UnsignedInt EntityId, bool VisibleParam);
 protected:

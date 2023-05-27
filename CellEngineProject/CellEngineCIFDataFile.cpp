@@ -35,7 +35,7 @@ CellEngineAtom CellEngineCIFDataFile::ParseRecord(const char* LocalCIFRecord)
 
         CellEngineAtomObject.SetAtomPositionsData(stof(AtomFields[10]), stof(AtomFields[11]), stof(AtomFields[12]));
 
-        auto AtomKindObjectIterator = CellEngineSimulationManagerObject.GetAtomKindDataForAtom(AtomFields[3][0]);
+        auto AtomKindObjectIterator = ParticlesKindsManagerObject.GetGraphicAtomKindDataFromAtomName(AtomFields[3][0]);
         CellEngineAtomObject.AtomColor = AtomKindObjectIterator->Color;
         #ifdef EXTENDED_RAM_MEMORY
         CellEngineAtomObject.SizeXAtom = AtomKindObjectIterator->SizeX;
@@ -43,7 +43,7 @@ CellEngineAtom CellEngineCIFDataFile::ParseRecord(const char* LocalCIFRecord)
         CellEngineAtomObject.SizeZAtom = AtomKindObjectIterator->SizeZ;
         #endif
 
-        auto ParticleKindObject = CellEngineSimulationManagerObject.ParticlesKinds[CellEngineSimulationManagerObject.ParticlesKindsPos.find(CellEngineAtomObject.EntityId)->second];
+        auto ParticleKindObject = ParticlesKindsManagerObject.GetGraphicParticleKind(CellEngineAtomObject.EntityId);
         CellEngineAtomObject.Visible = ParticleKindObject.Visible;
         CellEngineAtomObject.ParticleColor = ParticleKindObject.AtomColor;
         #ifdef EXTENDED_RAM_MEMORY
@@ -145,16 +145,16 @@ void CellEngineCIFDataFile::ReadDataFromFile()
             {
                 vector<string> AtomFields = split(Line, " ");
 
-                auto ParticleKindObjectIterator = CellEngineSimulationManagerObject.ParticlesKindsXML.find(stoi(AtomFields[2]));
-                if (ParticleKindObjectIterator == CellEngineSimulationManagerObject.ParticlesKindsXML.end())
+                auto ParticleKindObjectIterator = ParticlesKindsManagerObject.GraphicParticlesKindsFromConfigXML.find(stoi(AtomFields[2]));
+                if (ParticleKindObjectIterator == ParticlesKindsManagerObject.GraphicParticlesKindsFromConfigXML.end())
                 {
-                    auto OthersParticleKindObjectIterator = CellEngineSimulationManagerObject.ParticlesKindsXML.find(10000);
-                    CellEngineSimulationManagerObject.ParticlesKinds.emplace_back(GraphicParticleKind{static_cast<UnsignedInt>(stoi(AtomFields[2])), OthersParticleKindObjectIterator->second.Visible, OthersParticleKindObjectIterator->second.SizeX, OthersParticleKindObjectIterator->second.SizeY, OthersParticleKindObjectIterator->second.SizeZ, OthersParticleKindObjectIterator->second.ParticleColor, OthersParticleKindObjectIterator->second.ParticleColor, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), OthersParticleKindObjectIterator->second.NameFromXML, AtomFields[5].substr(1, AtomFields[5].length() - 2) });
+                    auto OthersParticleKindObjectIterator = ParticlesKindsManagerObject.GraphicParticlesKindsFromConfigXML.find(10000);
+                    ParticlesKindsManagerObject.ParticlesKinds.emplace_back(ParticleKindGraphicData{static_cast<UnsignedInt>(stoi(AtomFields[2])), OthersParticleKindObjectIterator->second.Visible, OthersParticleKindObjectIterator->second.SizeX, OthersParticleKindObjectIterator->second.SizeY, OthersParticleKindObjectIterator->second.SizeZ, OthersParticleKindObjectIterator->second.ParticleColor, OthersParticleKindObjectIterator->second.ParticleColor, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), OthersParticleKindObjectIterator->second.NameFromXML, AtomFields[5].substr(1, AtomFields[5].length() - 2) });
                 }
                 else
-                    CellEngineSimulationManagerObject.ParticlesKinds.emplace_back(GraphicParticleKind{static_cast<UnsignedInt>(stoi(AtomFields[2])), ParticleKindObjectIterator->second.Visible, ParticleKindObjectIterator->second.SizeX, ParticleKindObjectIterator->second.SizeY, ParticleKindObjectIterator->second.SizeZ, ParticleKindObjectIterator->second.ParticleColor, ParticleKindObjectIterator->second.ParticleColor, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), ParticleKindObjectIterator->second.NameFromXML, AtomFields[5].substr(1, AtomFields[5].length() - 2) });
+                    ParticlesKindsManagerObject.ParticlesKinds.emplace_back(ParticleKindGraphicData{static_cast<UnsignedInt>(stoi(AtomFields[2])), ParticleKindObjectIterator->second.Visible, ParticleKindObjectIterator->second.SizeX, ParticleKindObjectIterator->second.SizeY, ParticleKindObjectIterator->second.SizeZ, ParticleKindObjectIterator->second.ParticleColor, ParticleKindObjectIterator->second.ParticleColor, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), ParticleKindObjectIterator->second.NameFromXML, AtomFields[5].substr(1, AtomFields[5].length() - 2) });
 
-                CellEngineSimulationManagerObject.ParticlesKindsPos[stoi(AtomFields[2])] = CellEngineSimulationManagerObject.ParticlesKinds.size() - 1;
+                ParticlesKindsManagerObject.ParticlesKindsPos[stoi(AtomFields[2])] = ParticlesKindsManagerObject.ParticlesKinds.size() - 1;
             }
             else
             if (Line.substr(0, 4) == "ATOM")

@@ -79,14 +79,14 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSelectedSpace(const
                         SimulationSpaceVoxel SimulationSpaceVoxelObject = CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GetSimulationSpaceVoxel(PosX, PosY, PosZ);
                         auto& ParticleObject = CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GetParticleFromIndexInSimulationSpaceVoxel(SimulationSpaceVoxelObject);
 
-                        if (DrawEmptyVoxels == true || (DrawEmptyVoxels == false && SimulationSpaceVoxelObject != 0 && CheckVisibilityOfParticles(ParticleObject.EntityId) == true))
+                        if (DrawEmptyVoxels == true || (DrawEmptyVoxels == false && SimulationSpaceVoxelObject != 0 && ParticlesKindsManagerObject.GetGraphicParticleKind(ParticleObject.EntityId).Visible == true))
                         {
                             ConvertAtomPosToGraphicCoordinate(TempAtomObject, XStartParam, YStartParam, ZStartParam, PosX, PosY, PosZ, XSizeParam, YSizeParam, ZSizeParam);
 
                             if (DrawEmptyVoxels == false || (DrawEmptyVoxels == true && SimulationSpaceVoxelObject != 0))
                             {
                                 TempAtomObject.EntityId = ParticleObject.EntityId;
-                                auto ParticleKindObject = CellEngineSimulationManagerObject.ParticlesKinds[CellEngineSimulationManagerObject.ParticlesKindsPos.find(ParticleObject.EntityId)->second];
+                                auto ParticleKindObject = ParticlesKindsManagerObject.GetGraphicParticleKind(ParticleObject.EntityId);
                                 TempAtomObject.AtomColor = ParticleKindObject.AtomColor;
                                 TempAtomObject.ParticleColor = ParticleKindObject.ParticleColor;
                                 TempAtomObject.UniqueParticleColor = (CellEngineUseful::IsDNAorRNA(TempAtomObject.EntityId) == true ? ParticleObject.UniqueColor : ParticleKindObject.RandomParticleColor);

@@ -11,35 +11,6 @@
 #include "ExceptionsMacro.h"
 #include "CellEngineTypes.h"
 
-//struct GraphicParticleKind
-//{
-//    UnsignedInt Identifier;
-//    bool Visible;
-//    float SizeX;
-//    float SizeY;
-//    float SizeZ;
-//    vector3_16 AtomColor;
-//    vector3_16 ParticleColor;
-//    vector3_16 RandomParticleColor;
-//    std::string NameFromXML;
-//    std::string NameFromDataFile;
-//};
-//
-//struct GraphicAtomKind
-//{
-//    std::string Name;
-//    float SizeX;
-//    float SizeY;
-//    float SizeZ;
-//    vector3_16 Color;
-//    vmath::vec3 ColorVmathVec3;
-//};
-//
-//inline bool operator==(const GraphicAtomKind& AtomKindParameter, const std::string& NameStr)
-//{
-//    return AtomKindParameter.Name == NameStr;
-//}
-
 class CellEngineConfigData
 {
 public:
@@ -199,11 +170,6 @@ public:
     std::string AtomDescriptionStr4;
     std::string TimeParametersOfRenderingStr;
     std::string NumberOfRenderedAtomsParametersOfRenderingStr;
-//public:
-//    std::vector<GraphicAtomKind> AtomsKinds;
-//    std::vector<GraphicParticleKind> ParticlesKinds;
-//    std::unordered_map<UnsignedInt, GraphicParticleKind> ParticlesKindsXML;
-//    std::unordered_map<UnsignedInt, UnsignedInt> ParticlesKindsPos;
 public:
     bool ImGuiDemoWindowMenu = false;
     bool ImGuiLightVersion = false;
@@ -211,21 +177,6 @@ public:
     int ChosenShapeOfAtoms = 1;
     UnsignedInt DNAIdentifier{};
     UnsignedInt RNAIdentifier{};
-//public:
-//    std::vector<GraphicAtomKind>::iterator GetAtomKindDataForAtom(char Name)
-//    {
-//        std::vector<GraphicAtomKind>::iterator AtomKindObjectIterator;
-//
-//        try
-//        {
-//            AtomKindObjectIterator = std::find(AtomsKinds.begin(), AtomsKinds.end(), std::string(1, Name));
-//            if (AtomKindObjectIterator == AtomsKinds.end())
-//                AtomKindObjectIterator = std::find(AtomsKinds.begin(), AtomsKinds.end(), std::string(1, 'E'));
-//        }
-//        CATCH("getting atom kind data for atom")
-//
-//        return AtomKindObjectIterator;
-//    }
 };
 
 inline CellEngineConfigData CellEngineConfigDataObject;

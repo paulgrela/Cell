@@ -535,9 +535,9 @@ string CellEngineOpenGLVisualiser::GetEntityName(const UnsignedInt EntityId)
 
     try
     {
-        auto EntityIterator = CellEngineSimulationManagerObject.ParticlesKindsPos.find(EntityId);
-        if (EntityIterator != CellEngineSimulationManagerObject.ParticlesKindsPos.end())
-            EntityName = CellEngineSimulationManagerObject.ParticlesKinds[EntityIterator->second].NameFromDataFile;
+        auto EntityIterator = ParticlesKindsManagerObject.ParticlesKindsPos.find(EntityId);
+        if (EntityIterator != ParticlesKindsManagerObject.ParticlesKindsPos.end())
+            EntityName = ParticlesKindsManagerObject.ParticlesKinds[EntityIterator->second].GraphicData.NameFromDataFile;
         else
             EntityName = "";
     }
@@ -550,8 +550,8 @@ void CellEngineOpenGLVisualiser::SetVisibilityOfAllParticles(const bool VisibleP
 {
     try
     {
-        for (auto& ParticleKindObject : CellEngineSimulationManagerObject.ParticlesKinds)
-            ParticleKindObject.Visible = VisibleParam;
+        for (auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
+            ParticleKindObject.GraphicData.Visible = VisibleParam;
     }
     CATCH("setting visibility of all particles")
 }
@@ -561,22 +561,9 @@ void CellEngineOpenGLVisualiser::SetVisibilityOfParticlesExcept(const UnsignedIn
     try
     {
         SetVisibilityOfAllParticles(VisibleParam);
-        CellEngineSimulationManagerObject.ParticlesKinds[CellEngineSimulationManagerObject.ParticlesKindsPos.find(EntityId)->second].Visible = !VisibleParam;
+        ParticlesKindsManagerObject.GetGraphicParticleKind(EntityId).Visible = !VisibleParam;
     }
     CATCH("setting visibility of particles except")
-}
-
-bool CellEngineOpenGLVisualiser::CheckVisibilityOfParticles(const UnsignedInt EntityId)
-{
-    bool Visible = false;
-
-    try
-    {
-        Visible = CellEngineSimulationManagerObject.ParticlesKinds[CellEngineSimulationManagerObject.ParticlesKindsPos.find(EntityId)->second].Visible;
-    }
-    CATCH("checking visibility of particles")
-
-    return Visible;
 }
 
 void CellEngineOpenGLVisualiser::OnKey(int Key, int Action)

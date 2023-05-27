@@ -473,8 +473,8 @@ public:
                 }
             if (TypesOfVisibilityComboBoxCurrentItemIndex == 3)
                 if (ImGui::CollapsingHeader("Particles Kinds", ImGuiTreeNodeFlags_DefaultOpen))
-                    for (auto& ParticlesKind : CellEngineSimulationManagerObject.ParticlesKinds)
-                        ImGui::Checkbox(string(to_string(ParticlesKind.Identifier) + " " + ParticlesKind.NameFromDataFile).c_str(), &ParticlesKind.Visible);
+                    for (auto& ParticlesKind : ParticlesKindsManagerObject.ParticlesKinds)
+                        ImGui::Checkbox(string(to_string(ParticlesKind.EntityId) + " " + ParticlesKind.GraphicData.NameFromDataFile).c_str(), &ParticlesKind.GraphicData.Visible);
 
             PrevTypesOfVisibilityComboBoxCurrentItemIndex = TypesOfVisibilityComboBoxCurrentItemIndex;
         }
@@ -488,7 +488,7 @@ public:
             if (ImGui::CollapsingHeader("Atoms Kinds", ImGuiTreeNodeFlags_DefaultOpen))
             {
                 bool ChangeColor = false;
-                for (auto& AtomsKind : CellEngineSimulationManagerObject.AtomsKinds)
+                for (auto& AtomsKind : ParticlesKindsManagerObject.AtomsKindsGraphicData)
                 {
                     if (ImGui::ColorEdit3(string(AtomsKind.Name + " Atom Color").c_str(), (float*)&AtomsKind.ColorVmathVec3) == true)
                     {
@@ -500,10 +500,10 @@ public:
                 if (ChangeColor == true)
                     for (auto& ParticleCenter : CellEngineDataFileObjectPointer->GetParticlesCenters())
                     {
-                        ParticleCenter.AtomColor = CellEngineSimulationManagerObject.GetAtomKindDataForAtom(ParticleCenter.Name[0])->Color;
+                        ParticleCenter.AtomColor = ParticlesKindsManagerObject.GetGraphicAtomKindDataFromAtomName(ParticleCenter.Name[0])->Color;
                         if (CellEngineConfigDataObject.ShowDetailsInAtomScale == true)
                             for (auto& AtomObject : CellEngineDataFileObjectPointer->GetAllAtoms()[ParticleCenter.AtomIndex])
-                                AtomObject.AtomColor = CellEngineSimulationManagerObject.GetAtomKindDataForAtom(AtomObject.Name[0])->Color;
+                                AtomObject.AtomColor = ParticlesKindsManagerObject.GetGraphicAtomKindDataFromAtomName(AtomObject.Name[0])->Color;
                     }
             }
         }

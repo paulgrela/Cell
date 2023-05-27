@@ -30,7 +30,7 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
 
                 if (CellEngineConfigDataObject.ShowDetailsInAtomScale == true)
                     if (FinalVisibilityInModelWorld == true)
-                        if (CheckVisibilityOfParticles(ParticlesCenterObject.EntityId) == true)
+                        if (ParticlesKindsManagerObject.GetGraphicParticleKind(ParticlesCenterObject.EntityId).Visible == true)
                         {
                             NumberOfFoundParticlesCenterToBeRenderedInAtomDetails++;
 

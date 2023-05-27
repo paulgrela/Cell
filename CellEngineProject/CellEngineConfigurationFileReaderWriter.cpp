@@ -207,29 +207,27 @@ void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const ch
                         CellEngineConfigDataObject.BackgroundColors[3] = vmath::FromVec4ToVec3(sb7::GetColorVec4FromColorName(CellStatePropertyTreeElement.second.get<string>("BackgroundColor3")));
                         CellEngineConfigDataObject.ChosenBackgroundColor = CellStatePropertyTreeElement.second.get<UnsignedInt>("ChosenBackgroundColor");
 
-                        CellEngineSimulationManagerObject.AtomsKinds.clear();
+                        ParticlesKindsManagerObject.AtomsKindsGraphicData.clear();
                         for (const ptree::value_type& AtomKindPropertyTreeElement : CellStatePropertyTreeElement.second.get_child("Atoms"))
                         {
-                            GraphicAtomKind AtomKindObject;
+                            AtomKindGraphicData AtomKindObject;
 
                             LoggersManagerObject.Log(STREAM("Atom Kind Name = " << AtomKindPropertyTreeElement.second.get<string>("Name")));
 
-                            AtomKindObject.Color = CellEngineUseful::GetVector3FormVMathVec3ForColor(
-                                    vmath::FromVec4ToVec3(sb7::GetColorVec4FromColorName(
-                                            AtomKindPropertyTreeElement.second.get<string>("Color"))));
+                            AtomKindObject.Color = CellEngineUseful::GetVector3FormVMathVec3ForColor(vmath::FromVec4ToVec3(sb7::GetColorVec4FromColorName(AtomKindPropertyTreeElement.second.get<string>("Color"))));
                             AtomKindObject.ColorVmathVec3 = vmath::FromVec4ToVec3(sb7::GetColorVec4FromColorName(AtomKindPropertyTreeElement.second.get<string>("Color")));
                             AtomKindObject.SizeX = AtomKindPropertyTreeElement.second.get<float>("SizeX");
                             AtomKindObject.SizeY = AtomKindPropertyTreeElement.second.get<float>("SizeY");
                             AtomKindObject.SizeZ = AtomKindPropertyTreeElement.second.get<float>("SizeZ");
                             AtomKindObject.Name = AtomKindPropertyTreeElement.second.get<string>("Name");
 
-                            CellEngineSimulationManagerObject.AtomsKinds.emplace_back(AtomKindObject);
+                            ParticlesKindsManagerObject.AtomsKindsGraphicData.emplace_back(AtomKindObject);
                         }
 
-                        CellEngineSimulationManagerObject.ParticlesKindsXML.clear();
+                        ParticlesKindsManagerObject.GraphicParticlesKindsFromConfigXML.clear();
                         for (const ptree::value_type& ParticleKindPropertyTreeElement : CellStatePropertyTreeElement.second.get_child("Particles"))
                         {
-                            GraphicParticleKind ParticleKindObject;
+                            ParticleKindGraphicData ParticleKindObject;
 
                             LoggersManagerObject.Log(STREAM("ParticleKind Name = " << ParticleKindPropertyTreeElement.second.get<string>("Name") << " ID = " << ParticleKindPropertyTreeElement.second.get<UnsignedInt>("<xmlattr>.id") << " COLOR = " << ParticleKindPropertyTreeElement.second.get<string>("Color")));
 
@@ -241,7 +239,7 @@ void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const ch
                             ParticleKindObject.SizeX = ParticleKindPropertyTreeElement.second.get<float>("SizeX");
                             ParticleKindObject.SizeY = ParticleKindPropertyTreeElement.second.get<float>("SizeY");
                             ParticleKindObject.SizeZ = ParticleKindPropertyTreeElement.second.get<float>("SizeZ");
-                            CellEngineSimulationManagerObject.ParticlesKindsXML[ParticleKindPropertyTreeElement.second.get<UnsignedInt>("<xmlattr>.id")] = ParticleKindObject;
+                            ParticlesKindsManagerObject.GraphicParticlesKindsFromConfigXML[ParticleKindPropertyTreeElement.second.get<UnsignedInt>("<xmlattr>.id")] = ParticleKindObject;
                         }
                     }
         }
