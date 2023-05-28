@@ -564,6 +564,8 @@ public:
                 if (CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->SpaceDrawingType == CellEngineOpenGLVisualiserOfVoxelSimulationSpace::VoxelSpaceDrawingTypes::DrawVoxelSpaceSelected)
                     CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->SetVoxelSpaceSelection(DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceStepsXYZ[0], DrawSpaceStepsXYZ[1], DrawSpaceStepsXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
 
+                ImGui::Text("%s", string("Number of free indexes for particles = " + to_string(CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GetFreeIndexesOfParticleSize())).c_str());
+
                 if (ImGui::Button("  SAVE MOUSE POSITION  ") == true)
                 {
                     CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->SaveVoxelPositionChosenByMouse();

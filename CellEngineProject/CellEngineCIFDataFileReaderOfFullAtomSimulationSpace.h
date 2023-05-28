@@ -13,7 +13,7 @@ protected:
     {
     }
 protected:
-    UniqueIdInt AddNewParticle(const UniqueIdInt ParticleIndex, const Particle& ParticleObjectParam) override
+    UniqueIdInt AddNewParticle(const Particle& ParticleObjectParam) override
     {
         return 0;
     }
@@ -32,6 +32,10 @@ protected:
     void InsertParticlesCenters(std::vector<CellEngineAtom>& LocalCellEngineParticlesCentersObject) override
     {
         ParticlesCenters.emplace_back(LocalCellEngineParticlesCentersObject);
+    }
+protected:
+    void PreprocessData() override
+    {
     }
 protected:
     void PrintStatistics() override

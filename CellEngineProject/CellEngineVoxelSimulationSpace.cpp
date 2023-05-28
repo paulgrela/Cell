@@ -70,6 +70,12 @@ CellEngineVoxelSimulationSpace::~CellEngineVoxelSimulationSpace()
     CATCH("execution of destructor of voxel simulation space")
 }
 
+void CellEngineVoxelSimulationSpace::PreprocessData()
+{
+    for (UnsignedInt FreeIndex = MaxParticleIndex + 100'000'000; FreeIndex >= MaxParticleIndex + 1; FreeIndex--)
+        FreeIndexesOfParticles.push(FreeIndex);
+}
+
 void CellEngineVoxelSimulationSpace::SetStartValuesForSpaceMinMax()
 {
     XMin = YMin = ZMin = 10000;
@@ -131,15 +137,10 @@ void CellEngineVoxelSimulationSpace::SetAtomInVoxelSimulationSpace(const UniqueI
     CATCH("setting atom in voxel simulation space")
 }
 
-UniqueIdInt CellEngineVoxelSimulationSpace::AddNewParticle(UniqueIdInt ParticleIndex, const Particle& ParticleParam)
+UniqueIdInt CellEngineVoxelSimulationSpace::AddNewParticle(const Particle& ParticleParam)
 {
-    #ifdef PARTICLES_IN_VECTOR
-    Particles.emplace_back(ParticleParam);
-    return MaxParticleIndex = Particles.size() - 1;
-    #else
-    Particles[ParticleIndex] = ParticleParam;
-    return MaxParticleIndex = ParticleIndex;
-    #endif
+    Particles[ParticleParam.Index] = ParticleParam;
+    return MaxParticleIndex = ParticleParam.Index;
 }
 
 void CellEngineVoxelSimulationSpace::AddReaction(const Reaction& ReactionParam)
@@ -150,6 +151,26 @@ void CellEngineVoxelSimulationSpace::AddReaction(const Reaction& ReactionParam)
         ReactionsIdByString.insert(make_pair(ReactionParam.ReactantsStr, Reactions.size() - 1));
     }
     CATCH("adding reaction")
+}
+
+UniqueIdInt CellEngineVoxelSimulationSpace::GetFreeIndexesOfParticleSize()
+{
+    return FreeIndexesOfParticles.size();
+}
+
+UniqueIdInt CellEngineVoxelSimulationSpace::GetNewFreeIndexOfParticle()
+{
+    if (FreeIndexesOfParticles.empty() == false)
+    {
+        UniqueIdInt FreeIndexOfParticle = FreeIndexesOfParticles.top();
+        FreeIndexesOfParticles.pop();
+        return FreeIndexOfParticle;
+    }
+    else
+    {
+        LoggersManagerObject.Log(STREAM("Lack of new free indexes of particles"));
+        return MaxParticleIndex + 1;
+    }
 }
 
 void CellEngineVoxelSimulationSpace::AddBasicParticlesKindsAndReactions()
@@ -194,9 +215,8 @@ void CellEngineVoxelSimulationSpace::GenerateRandomParticlesInSelectedSpace(cons
 
         vector<UnsignedInt> LocalNewParticlesIndexes;
 
-        UnsignedInt LocalMaxParticleIndex = MaxParticleIndex;
-        for (UniqueIdInt ParticleIndex = LocalMaxParticleIndex + 1; ParticleIndex <= LocalMaxParticleIndex + NumberOfRandomParticles; ParticleIndex++)
-            LocalNewParticlesIndexes.emplace_back(AddNewParticle(ParticleIndex, Particle(ParticleIndex, UniformDistributionObjectObjectOfParticle_Uint64t(mt64R), 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))));
+        for (UniqueIdInt ParticleNumber = 1; ParticleNumber <= NumberOfRandomParticles; ParticleNumber++)
+            LocalNewParticlesIndexes.emplace_back(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), UniformDistributionObjectObjectOfParticle_Uint64t(mt64R), 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))));
 
         vector<vector3_16> FilledVoxelsForRandomParticle;
 
@@ -268,9 +288,9 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfDiffusionForSelectedRangeO
 
         for (UniqueIdInt ParticleIndex = StartParticleIndexParam; ParticleIndex <= EndParticleIndexParam; ParticleIndex++)
         {
-            auto& LocalParticleObject = Particles[ParticleIndex];
+            auto &LocalParticleObject = Particles[ParticleIndex];
 
-            for (auto& VoxelForParticle : LocalParticleObject.ListOfVoxels)
+            for (auto &VoxelForParticle: LocalParticleObject.ListOfVoxels)
                 GetSpaceVoxel(VoxelForParticle.X, VoxelForParticle.Y, VoxelForParticle.Z) = GetZeroSimulationSpaceVoxel();
 
             SignedInt ShiftX = UniformDistributionObjectSizeOfParticle_int64t(mt64R);
@@ -280,18 +300,18 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfDiffusionForSelectedRangeO
             NewVoxelsForParticle.clear();
             bool Collision = false;
 
-            for (auto& VoxelForParticle : LocalParticleObject.ListOfVoxels)
-                if (GetSpaceVoxel(VoxelForParticle.X + ShiftX, VoxelForParticle.Y + ShiftY, VoxelForParticle.Z + ShiftZ) == 0 && VoxelForParticle.X + ShiftX >= StartXPosParam && VoxelForParticle.X + ShiftX < StartXPosParam + SizeXParam && VoxelForParticle.Y + ShiftY >= StartYPosParam && VoxelForParticle.Y + ShiftY < StartYPosParam + SizeYParam && VoxelForParticle.Z + ShiftZ >= StartZPosParam && VoxelForParticle.Z + ShiftZ < StartZPosParam + SizeZParam)
+            for (auto &VoxelForParticle: LocalParticleObject.ListOfVoxels)
+                if (GetSpaceVoxel(VoxelForParticle.X + ShiftX, VoxelForParticle.Y + ShiftY,VoxelForParticle.Z + ShiftZ) == 0 && VoxelForParticle.X + ShiftX >= StartXPosParam && VoxelForParticle.X + ShiftX < StartXPosParam + SizeXParam && VoxelForParticle.Y + ShiftY >= StartYPosParam && VoxelForParticle.Y + ShiftY < StartYPosParam + SizeYParam && VoxelForParticle.Z + ShiftZ >= StartZPosParam && VoxelForParticle.Z + ShiftZ < StartZPosParam + SizeZParam)
                 {
                     GetSpaceVoxel(VoxelForParticle.X + ShiftX, VoxelForParticle.Y + ShiftY, VoxelForParticle.Z + ShiftZ) = ParticleIndex;
                     NewVoxelsForParticle.emplace_back(VoxelForParticle.X + ShiftX, VoxelForParticle.Y + ShiftY, VoxelForParticle.Z + ShiftZ);
                 }
                 else
                 {
-                    for (auto& NewVoxelForParticle : NewVoxelsForParticle)
+                    for (auto &NewVoxelForParticle: NewVoxelsForParticle)
                         GetSpaceVoxel(NewVoxelForParticle.X, NewVoxelForParticle.Y, NewVoxelForParticle.Z) = GetZeroSimulationSpaceVoxel();
 
-                    for (auto& OldVoxelForParticle : LocalParticleObject.ListOfVoxels)
+                    for (auto &OldVoxelForParticle: LocalParticleObject.ListOfVoxels)
                         GetSpaceVoxel(OldVoxelForParticle.X, OldVoxelForParticle.Y, OldVoxelForParticle.Z) = ParticleIndex;
 
                     Collision = true;
@@ -309,7 +329,28 @@ void CellEngineVoxelSimulationSpace::GenerateRandomReactionForParticle(Particle&
 {
     try
     {
+        uniform_int_distribution<UnsignedInt> UniformDistributionObjectMainRandomCondition_Uint64t(0, 1);
+        if (UniformDistributionObjectMainRandomCondition_Uint64t(mt64R) == 0)
+            return;
 
+        //GDZIE ZASIEG SZESCIANU - ekstremalne punkty czastki - tu sie nie da latwo sprawdzic
+        //ONE MUSZA BYC ZAPAMIETANE NA STARCIE - dla duzej czastki to musza byc wieksze szesciany
+        // 2) pobieram na mapie czastki w bliskosci tej czastki - w szescianie zadanym
+
+        // 3) Losuje ilu N elementowa reakcja z listy dostepnych
+        // 4) Losuje N typow czastek do reakcji z listy dostepnych
+        // 5) Sprawdzam czy istnieje reakcja z tymi typami czastek - szukajac po stringu w mapie dla reakcji dla dla typu czastek
+        // LUB
+        // za 3 i 4 i 5 - Losuje reakcje z listy przyleglych do typu co zwieksza szanse trafienia
+
+        //Jesli krok 3 robie ponownie
+        //jesli 3 losowania odpadna to ide do kolejnej czastki
+
+        // 6) sprawdzam czy na lokalnej liscie jest dosc czastek do tej reakcji
+        // 7) Robie reakcje (jesli sie zmiesci)
+
+        //tzn usuwam czastki z mapy i indeksy wpisuje do wolnych i dodaje czastki do zakresu wolnych indeksow
+        //wolne indeksy w kolejce list lub queue
     }
     CATCH("generating random reaction for particle")
 }
@@ -364,8 +405,12 @@ void CellEngineVoxelSimulationSpace::EraseAllDNAParticles()
     {
         for (auto& ParticleObject : Particles)
             if (ParticleObject.second.EntityId == CellEngineConfigDataObject.DNAIdentifier)
+            {
                 for (auto& VoxelCoordinates : ParticleObject.second.ListOfVoxels)
                     GetSpaceVoxel(VoxelCoordinates.X, VoxelCoordinates.Y, VoxelCoordinates.Z) = GetZeroSimulationSpaceVoxel();
+
+                FreeIndexesOfParticles.push(ParticleObject.first);
+            }
 
         const auto RemovedDNAParticlesCounter = erase_if(Particles, [](const pair<UniqueIdInt, Particle>& item) { auto const& [key, value] = item; return (value.EntityId == CellEngineConfigDataObject.DNAIdentifier); });
         LoggersManagerObject.Log(STREAM("RemovedDNAParticlesCounter = " << RemovedDNAParticlesCounter));
@@ -396,12 +441,11 @@ void CellEngineVoxelSimulationSpace::UpdateRandomPositions(const UnsignedInt Ran
     }
 }
 
-void CellEngineVoxelSimulationSpace::GenerateParticle(UnsignedInt& ParticleIndex, const EntityIdInt EntityId, const ChainIdInt ChainId, const UnsignedInt GenomeIndex, const UnsignedInt StartPosX, const UnsignedInt StartPosY, const UnsignedInt StartPosZ, const UnsignedInt ParticleSizeX, const UnsignedInt ParticleSizeY, const UnsignedInt ParticleSizeZ, vector<UniqueIdInt>& Genome, const vector3_16 UniqueColorParam)
+void CellEngineVoxelSimulationSpace::GenerateParticle(const EntityIdInt EntityId, const ChainIdInt ChainId, const UnsignedInt GenomeIndex, const UnsignedInt StartPosX, const UnsignedInt StartPosY, const UnsignedInt StartPosZ, const UnsignedInt ParticleSizeX, const UnsignedInt ParticleSizeY, const UnsignedInt ParticleSizeZ, vector<UniqueIdInt>& Genome, const vector3_16 UniqueColorParam)
 {
     try
     {
-        ParticleIndex++;
-        AddNewParticle(ParticleIndex, Particle(ParticleIndex, EntityId, ChainId, GenomeIndex, UniqueColorParam));
+        UnsignedInt ParticleIndex = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), EntityId, ChainId, GenomeIndex, UniqueColorParam));
 
         for (UnsignedInt PosX = StartPosX; PosX < StartPosX + ParticleSizeX; PosX++)
             for (UnsignedInt PosY = StartPosY; PosY < StartPosY + ParticleSizeY; PosY++)
@@ -416,12 +460,12 @@ void CellEngineVoxelSimulationSpace::GenerateParticle(UnsignedInt& ParticleIndex
     CATCH("generating particle")
 }
 
-void CellEngineVoxelSimulationSpace::GenerateTwoPairedNucleotides(UnsignedInt& ParticleIndex, const EntityIdInt EntityId, const ChainIdInt ChainId, const UnsignedInt GenomeIndex, const UnsignedInt StartPosX, const UnsignedInt StartPosY, const UnsignedInt StartPosZ, const UnsignedInt ParticleSizeX, const UnsignedInt ParticleSizeY, const UnsignedInt ParticleSizeZ, const UnsignedInt AddSizeX, const UnsignedInt AddSizeY, const UnsignedInt AddSizeZ, const vector3_16 UniqueColorParam)
+void CellEngineVoxelSimulationSpace::GenerateTwoPairedNucleotides(const EntityIdInt EntityId, const ChainIdInt ChainId, const UnsignedInt GenomeIndex, const UnsignedInt StartPosX, const UnsignedInt StartPosY, const UnsignedInt StartPosZ, const UnsignedInt ParticleSizeX, const UnsignedInt ParticleSizeY, const UnsignedInt ParticleSizeZ, const UnsignedInt AddSizeX, const UnsignedInt AddSizeY, const UnsignedInt AddSizeZ, const vector3_16 UniqueColorParam)
 {
     try
     {
-        GenerateParticle(ParticleIndex, CellEngineConfigDataObject.DNAIdentifier, ChainId, Genome1.size(), StartPosX, StartPosY, StartPosZ, ParticleSizeX, ParticleSizeY, ParticleSizeZ, Genome1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
-        GenerateParticle(ParticleIndex, CellEngineConfigDataObject.DNAIdentifier, CellEngineUseful::GetPairedChainId(ChainId), Genome2.size(), StartPosX + AddSizeX, StartPosY + AddSizeY, StartPosZ + AddSizeZ, ParticleSizeX, ParticleSizeY, ParticleSizeZ, Genome2, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
+        GenerateParticle(CellEngineConfigDataObject.DNAIdentifier, ChainId, Genome1.size(), StartPosX, StartPosY, StartPosZ, ParticleSizeX, ParticleSizeY, ParticleSizeZ, Genome1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
+        GenerateParticle(CellEngineConfigDataObject.DNAIdentifier, CellEngineUseful::GetPairedChainId(ChainId), Genome2.size(), StartPosX + AddSizeX, StartPosY + AddSizeY, StartPosZ + AddSizeZ, ParticleSizeX, ParticleSizeY, ParticleSizeZ, Genome2, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
     }
     CATCH("generating two paired nucleotides")
 }
@@ -454,6 +498,8 @@ tuple<UnsignedInt, UnsignedInt, UnsignedInt> CellEngineVoxelSimulationSpace::Era
             GetSpaceVoxel(VoxelCoordinates.X, VoxelCoordinates.Y, VoxelCoordinates.Z) = GetZeroSimulationSpaceVoxel();
 
         Particles.erase(PreviousParticleIndex);
+
+        FreeIndexesOfParticles.push(PreviousParticleIndex);
 
         LoggersManagerObject.Log(STREAM("ERASED PARTICLE PreviousParticleIndex = " << PreviousParticleIndex << " RandomPosX = " << LocalRandomPosX << " RandomPosY = " << LocalRandomPosY << " RandomPosZ = " << LocalRandomPosZ));
     }
@@ -549,19 +595,17 @@ void CellEngineVoxelSimulationSpace::GenerateRandomDNAInWholeCell(UnsignedInt Nu
 
                     ChainIdInt ChainId = UniformDistributionObjectChainOfParticle_Uint64t(mt64R);
 
-                    UnsignedInt ParticleIndex = MaxParticleIndex;
-
                     if (RandomMoveDirection == 1 || RandomMoveDirection == 2)
-                        GenerateTwoPairedNucleotides(ParticleIndex, CellEngineConfigDataObject.DNAIdentifier, ChainId, Genome1.size(), RandomPosX, RandomPosY, RandomPosZ, ParticleSizeX, 1, ParticleSizeZ, 0, 1, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
+                        GenerateTwoPairedNucleotides(CellEngineConfigDataObject.DNAIdentifier, ChainId, Genome1.size(), RandomPosX, RandomPosY, RandomPosZ, ParticleSizeX, 1, ParticleSizeZ, 0, 1, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
                     else
                     if (RandomMoveDirection == 3 || RandomMoveDirection == 4 || RandomMoveDirection == 5 || RandomMoveDirection == 6)
-                        GenerateTwoPairedNucleotides(ParticleIndex, CellEngineConfigDataObject.DNAIdentifier, ChainId, Genome1.size(), RandomPosX, RandomPosY, RandomPosZ, 1, ParticleSizeY, ParticleSizeZ, 1, 0, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
+                        GenerateTwoPairedNucleotides(CellEngineConfigDataObject.DNAIdentifier, ChainId, Genome1.size(), RandomPosX, RandomPosY, RandomPosZ, 1, ParticleSizeY, ParticleSizeZ, 1, 0, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
 
                     fill(RandomMovesDirections.begin(), RandomMovesDirections.end(), 0);
 
                     UpdateRandomPositions(RandomMoveDirection, RandomPosX, RandomPosY, RandomPosZ, ParticleSize5);
 
-                    LoggersManagerObject.Log(STREAM("ADDED PARTICLE NumberOfGeneratedNucleotides = " << NumberOfGeneratedNucleotides << " ParticleIndex = " << ParticleIndex << " RX = " << RandomPosX << " RY = " << RandomPosY << " RZ = " << RandomPosZ));
+                    LoggersManagerObject.Log(STREAM("ADDED PARTICLE NumberOfGeneratedNucleotides = " << NumberOfGeneratedNucleotides << " RX = " << RandomPosX << " RY = " << RandomPosY << " RZ = " << RandomPosZ));
                 }
             }
 
@@ -631,7 +675,6 @@ void CellEngineVoxelSimulationSpace::ReadGenomeDataFromFile(bool Paired)
         getline(FileToReadGenome, Line);
         UnsignedInt GenomeSize = stoi(Line);
 
-        UnsignedInt ParticleIndex = MaxParticleIndex;
         UnsignedInt PrevStartPosX = 0;
         UnsignedInt GenomeIndex = 0;
 
@@ -650,12 +693,12 @@ void CellEngineVoxelSimulationSpace::ReadGenomeDataFromFile(bool Paired)
             if (Paired == true)
             {
                 if (abs(static_cast<long>(PrevStartPosX - StartPosX)) > 0)
-                    GenerateTwoPairedNucleotides(ParticleIndex, stoi(Row[0]), stoi(Row[1]), GenomeIndex, StartPosX, StartPosY, StartPosZ, ParticleSize, 1, ParticleSize, 0, 1, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
+                    GenerateTwoPairedNucleotides(stoi(Row[0]), stoi(Row[1]), GenomeIndex, StartPosX, StartPosY, StartPosZ, ParticleSize, 1, ParticleSize, 0, 1, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
                 else
-                    GenerateTwoPairedNucleotides(ParticleIndex, stoi(Row[0]), stoi(Row[1]), GenomeIndex, StartPosX, StartPosY, StartPosZ, 1, ParticleSize, ParticleSize, 1, 0, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
+                    GenerateTwoPairedNucleotides(stoi(Row[0]), stoi(Row[1]), GenomeIndex, StartPosX, StartPosY, StartPosZ, 1, ParticleSize, ParticleSize, 1, 0, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
             }
             else
-                GenerateParticle(ParticleIndex, stoi(Row[0]), stoi(Row[1]), stoi(Row[2]), stoi(Row[3]), stoi(Row[4]), stoi(Row[5]), ParticleSize, ParticleSize, ParticleSize, Genome1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
+                GenerateParticle(stoi(Row[0]), stoi(Row[1]), stoi(Row[2]), stoi(Row[3]), stoi(Row[4]), stoi(Row[5]), ParticleSize, ParticleSize, ParticleSize, Genome1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
 
             PrevStartPosX = StartPosX;
 

@@ -3,14 +3,13 @@
 #ifndef CELL_ENGINE_SIMULATION_SPACE_H
 #define CELL_ENGINE_SIMULATION_SPACE_H
 
+#include <stack>
 #include <unordered_set>
 
 #include "CellEngineTypes.h"
 #include "CellEngineParticle.h"
 #include "CellEngineReaction.h"
 #include "CellEngineConfigData.h"
-
-#define PARTICLES_IN_VECTOR_
 
 using SimulationSpaceVoxel = UniqueIdInt;
 
@@ -31,11 +30,8 @@ private:
     std::vector<UniqueIdInt> Genome2;
 private:
     UnsignedInt MaxParticleIndex{};
-    #ifdef PARTICLES_IN_VECTOR
-    std::vector<Particle> Particles;
-    #else
     std::unordered_map<UniqueIdInt, Particle> Particles;
-    #endif
+    std::stack<UniqueIdInt> FreeIndexesOfParticles;
 private:
     std::vector<Reaction> Reactions;
     std::unordered_map<std::string, UnsignedInt> ReactionsIdByString;
@@ -58,13 +54,16 @@ public:
 public:
     UnsignedInt SumOfNotEmptyVoxels{};
 public:
+    UniqueIdInt GetNewFreeIndexOfParticle();
+    UniqueIdInt GetFreeIndexesOfParticleSize();
+public:
     void CountStatisticsOfVoxelSimulationSpace();
     void SetAtomInVoxelSimulationSpace(UniqueIdInt ParticleIndex, const CellEngineAtom& AppliedAtom);
 public:
     SimulationSpaceVoxel GetSimulationSpaceVoxel(UnsignedInt X, UnsignedInt Y, UnsignedInt Z);
     Particle& GetParticleFromIndexInSimulationSpaceVoxel(UniqueIdInt ParticleIndex);
 public:
-    UniqueIdInt AddNewParticle(UniqueIdInt ParticleIndex, const Particle& ParticleParam);
+    UniqueIdInt AddNewParticle(const Particle& ParticleParam);
     void AddReaction(const Reaction& ReactionParam);
 public:
     void AddBasicParticlesKindsAndReactions();
@@ -77,8 +76,8 @@ public:
     void GenerateRandomReactionsForAllParticles();
     void GenerateRandomReactionsInWholeVoxelSimulationSpace();
 public:
-    void GenerateParticle(UnsignedInt& ParticleIndex, EntityIdInt EntityId, ChainIdInt ChainId, UnsignedInt GenomeIndex, UnsignedInt StartPosX, UnsignedInt StartPosY, UnsignedInt StartPosZ, UnsignedInt ParticleSizeX, UnsignedInt ParticleSizeY, UnsignedInt ParticleSizeZ, std::vector<UniqueIdInt>& Genome, vector3_16 UniqueColorParam);
-    void GenerateTwoPairedNucleotides(UnsignedInt& ParticleIndex, EntityIdInt EntityId, ChainIdInt ChainId, UnsignedInt GenomeIndex, UnsignedInt StartPosX, UnsignedInt StartPosY, UnsignedInt StartPosZ, UnsignedInt ParticleSizeX, UnsignedInt ParticleSizeY, UnsignedInt ParticleSizeZ, UnsignedInt AddSizeX, UnsignedInt AddSizeY, UnsignedInt AddSizeZ, vector3_16 UniqueColorParam);
+    void GenerateParticle(EntityIdInt EntityId, ChainIdInt ChainId, UnsignedInt GenomeIndex, UnsignedInt StartPosX, UnsignedInt StartPosY, UnsignedInt StartPosZ, UnsignedInt ParticleSizeX, UnsignedInt ParticleSizeY, UnsignedInt ParticleSizeZ, std::vector<UniqueIdInt>& Genome, vector3_16 UniqueColorParam);
+    void GenerateTwoPairedNucleotides(EntityIdInt EntityId, ChainIdInt ChainId, UnsignedInt GenomeIndex, UnsignedInt StartPosX, UnsignedInt StartPosY, UnsignedInt StartPosZ, UnsignedInt ParticleSizeX, UnsignedInt ParticleSizeY, UnsignedInt ParticleSizeZ, UnsignedInt AddSizeX, UnsignedInt AddSizeY, UnsignedInt AddSizeZ, vector3_16 UniqueColorParam);
 public:
     void GenerateRandomDNAInWholeCell(UnsignedInt NumberOfNucleotidesToBeGenerated, UnsignedInt RandomPosX, UnsignedInt RandomPosY, UnsignedInt RandomPosZ, UnsignedInt ParticleSizeX, UnsignedInt ParticleSizeY, UnsignedInt ParticleSizeZ, UnsignedInt ParticleSize1, UnsignedInt ParticleSize2, UnsignedInt ParticleSize3, UnsignedInt ParticleSize4, UnsignedInt ParticleSize5);
     void EraseAllDNAParticles();
@@ -90,6 +89,8 @@ public:
     void ReadGenomeDataFromFile(bool Paired);
     void ReadGenomeSequenceFromFile();
     void TestGeneratedGenomeCorrectness(UnsignedInt ParticleSize);
+public:
+    void PreprocessData();
 public:
     CellEngineVoxelSimulationSpace();
     ~CellEngineVoxelSimulationSpace();

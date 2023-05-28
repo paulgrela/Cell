@@ -217,7 +217,7 @@ void CellEngineCIFDataFile::ReadDataFromFile()
                             vmath::vec3 UniqueParticleColor = CellEngineColorsObject.GetRandomColor();
 
                             NumberOfParticles++;
-                            UniqueIdInt ParticleIndex = AddNewParticle(NumberOfParticles, Particle(NumberOfParticles, AtomsForChainNameIterator->second[0].EntityId, CellEngineUseful::GetChainIdFromChainName(AppliedChainName), 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(UniqueParticleColor)));
+                            UniqueIdInt ParticleIndex = AddNewParticle(Particle(NumberOfParticles, AtomsForChainNameIterator->second[0].EntityId, CellEngineUseful::GetChainIdFromChainName(AppliedChainName), 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(UniqueParticleColor)));
 
                             if (CellEngineUseful::IsNucleotide(AppliedChainName))
                                 NumberOfNucleotidesInDNA++;
@@ -249,6 +249,8 @@ void CellEngineCIFDataFile::ReadDataFromFile()
         }
 
         InsertParticlesCenters(LocalCellEngineParticlesCentersObject);
+
+        PreprocessData();
 
         const auto stop_time = chrono::high_resolution_clock::now();
 

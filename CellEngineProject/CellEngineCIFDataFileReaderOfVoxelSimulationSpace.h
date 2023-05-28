@@ -13,9 +13,9 @@ protected:
         CellEngineVoxelSimulationSpaceObjectPointer = std::make_unique<CellEngineVoxelSimulationSpace>();
     }
 protected:
-    UniqueIdInt AddNewParticle(const UniqueIdInt ParticleIndex, const Particle& ParticleObjectParam) override
+    UniqueIdInt AddNewParticle(const Particle& ParticleObjectParam) override
     {
-        return CellEngineVoxelSimulationSpaceObjectPointer->AddNewParticle(ParticleIndex, ParticleObjectParam);
+        return CellEngineVoxelSimulationSpaceObjectPointer->AddNewParticle(ParticleObjectParam);
     }
 protected:
     void InsertAtom(std::vector<CellEngineAtom>& LocalCellEngineAllAtomsObject, const CellEngineAtom& AppliedAtom, const UniqueIdInt ParticleIndex) override
@@ -29,6 +29,11 @@ protected:
 protected:
     void InsertParticlesCenters(std::vector<CellEngineAtom>& LocalCellEngineParticlesCentersObject) override
     {
+    }
+protected:
+    void PreprocessData() override
+    {
+        CellEngineVoxelSimulationSpaceObjectPointer->PreprocessData();
     }
 protected:
     void PrintStatistics() override
