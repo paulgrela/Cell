@@ -23,6 +23,14 @@ public:
     vector3_16 UniqueColor{};
 public:
     std::vector<vector3_16> ListOfVoxels;
+    UnsignedInt XCenter{}, YCenter{}, ZCenter{};
+public:
+    void SetCenterCoordinates(UnsignedInt XCenterParam, UnsignedInt YCenterParam, UnsignedInt ZCenterParam)
+    {
+        XCenter = XCenterParam;
+        YCenter = YCenterParam;
+        ZCenter = ZCenterParam;
+    }
 public:
     explicit Particle(std::vector<vector3_16>& ListOfVoxelsParam) : ListOfVoxels(std::move(ListOfVoxelsParam)), SelectedForReaction(false)
     {
@@ -58,14 +66,18 @@ public:
     std::string SequenceStr;
     std::vector<ChainIdInt> Sequence;
     std::vector<vector3_16> ListOfVoxels;
+    UnsignedInt XSizeDiv2{}, YSizeDiv2{}, ZSizeDiv2{};
+    UnsignedInt XMin{}, XMax{}, YMin{}, YMax{}, ZMin{}, ZMax{};
 public:
     ParticleKindGraphicData GraphicData;
-//public:
-//    std::unordered_map<std::string, UnsignedInt> ReactionsIdByString;
 public:
-//    ParticleKind(UnsignedInt EntityIdParam, std::string NameParam, std::string SymbolParam, UnsignedInt CounterParam, std::unordered_map<std::string, UnsignedInt> ReactionsIdByStringParam) : EntityId(EntityIdParam), Name(std::move(NameParam)), Symbol(std::move(SymbolParam)), Counter(CounterParam), ReactionsIdByString(std::move(ReactionsIdByStringParam))
-//    {
-//    }
+    std::unordered_map<std::string, UnsignedInt> ReactionsIdByString;
+public:
+    void SetReactionsIdByString(std::unordered_map<std::string, UnsignedInt>& ReactionsIdByStringParam)
+    {
+        ReactionsIdByString = ReactionsIdByStringParam;
+    }
+public:
     ParticleKind(UnsignedInt EntityIdParam, std::string NameParam, std::string SymbolParam, UnsignedInt CounterParam) : EntityId(EntityIdParam), Name(std::move(NameParam)), Symbol(std::move(SymbolParam)), Counter(CounterParam)
     {
     }
@@ -101,6 +113,10 @@ public:
 public:
     std::vector<AtomKindGraphicData> AtomsKindsGraphicData;
 public:
+    ParticleKind& GetParticleKind(const EntityIdInt EntityId)
+    {
+        return ParticlesKinds[ParticlesKindsPos.find(EntityId)->second];
+    }
     ParticleKindGraphicData& GetGraphicParticleKind(const EntityIdInt EntityId)
     {
         return ParticlesKinds[ParticlesKindsPos.find(EntityId)->second].GraphicData;

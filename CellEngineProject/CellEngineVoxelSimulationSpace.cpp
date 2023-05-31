@@ -70,10 +70,61 @@ CellEngineVoxelSimulationSpace::~CellEngineVoxelSimulationSpace()
     CATCH("execution of destructor of voxel simulation space")
 }
 
+void CellEngineVoxelSimulationSpace::InitiateFreeParticleIndexes()
+{
+    try
+    {
+        for (UnsignedInt FreeIndex = MaxParticleIndex + 100'000'000; FreeIndex >= MaxParticleIndex + 1; FreeIndex--)
+            FreeIndexesOfParticles.push(FreeIndex);
+    }
+    CATCH("initiating free particle indexes")
+}
+
+void CellEngineVoxelSimulationSpace::GetMinMaxCoordinatesForAllParticles()
+{
+    try
+    {
+        for (auto& ParticleObject : Particles)
+            GetMinMaxCoordinatesForParticle(ParticleObject.second);
+    }
+    CATCH("getting min max coordinates for all particles")
+}
+
+void CellEngineVoxelSimulationSpace::GetMinMaxCoordinatesForParticle(Particle& ParticleObject)
+{
+    try
+    {
+        UnsignedInt ParticleXMin{}, ParticleXMax{}, ParticleYMin{}, ParticleYMax{}, ParticleZMin{}, ParticleZMax{};
+        ParticleXMin = ParticleYMin = ParticleZMin = 10000;
+        ParticleXMax = ParticleYMax = ParticleZMax = 0;
+
+        for (auto& VoxelCoordinates : ParticleObject.ListOfVoxels)
+            GetMinMaxOfCoordinates(VoxelCoordinates.X, VoxelCoordinates.Y, VoxelCoordinates.Z, ParticleXMin, ParticleXMax, ParticleYMin, ParticleYMax, ParticleZMin, ParticleZMax);
+
+        ParticleObject.SetCenterCoordinates(ParticleXMin + (ParticleXMax - ParticleXMin) / 2, ParticleYMin + (ParticleYMax - ParticleYMin) / 2, ParticleZMin + (ParticleZMax - ParticleZMin) / 2);
+
+        auto& ParticleKindObject = ParticlesKindsManagerObject.GetParticleKind(ParticleObject.EntityId);
+        if (ParticleKindObject.ListOfVoxels.empty() == true)
+        {
+            vector<vector3_16> ParticleKindListOfVoxels(10000);
+            for (auto& VoxelCoordinates : ParticleObject.ListOfVoxels)
+                ParticleKindObject.ListOfVoxels.emplace_back(VoxelCoordinates.X - ParticleXMin, VoxelCoordinates.Y - ParticleYMin, VoxelCoordinates.Z - ParticleZMin);
+            ParticleKindObject.XSizeDiv2 = (ParticleXMax - ParticleXMin) / 2;
+            ParticleKindObject.YSizeDiv2 = (ParticleYMax - ParticleYMin) / 2;
+            ParticleKindObject.ZSizeDiv2 = (ParticleZMax - ParticleZMin) / 2;
+        }
+    }
+    CATCH("getting min max coordinates for one particle")
+}
+
 void CellEngineVoxelSimulationSpace::PreprocessData()
 {
-    for (UnsignedInt FreeIndex = MaxParticleIndex + 100'000'000; FreeIndex >= MaxParticleIndex + 1; FreeIndex--)
-        FreeIndexesOfParticles.push(FreeIndex);
+    try
+    {
+        InitiateFreeParticleIndexes();
+        GetMinMaxCoordinatesForAllParticles();
+    }
+    CATCH("preprocessing data for voxel simulation space")
 }
 
 void CellEngineVoxelSimulationSpace::SetStartValuesForSpaceMinMax()
@@ -82,16 +133,16 @@ void CellEngineVoxelSimulationSpace::SetStartValuesForSpaceMinMax()
     XMax = YMax = ZMax = 0;
 }
 
-void CellEngineVoxelSimulationSpace::GetMinMaxOfCoordinates(const UnsignedInt PosX, const UnsignedInt PosY, const UnsignedInt PosZ)
+inline void CellEngineVoxelSimulationSpace::GetMinMaxOfCoordinates(const UnsignedInt PosX, const UnsignedInt PosY, const UnsignedInt PosZ, UnsignedInt& XMinParam, UnsignedInt& XMaxParam, UnsignedInt& YMinParam, UnsignedInt& YMaxParam, UnsignedInt& ZMinParam, UnsignedInt& ZMaxParam)
 {
     try
     {
-        XMin = min(PosX, XMin);
-        XMax = max(PosX, XMax);
-        YMin = min(PosY, YMin);
-        YMax = max(PosY, YMax);
-        ZMin = min(PosZ, ZMin);
-        ZMax = max(PosZ, ZMax);
+        XMinParam = min(PosX, XMinParam);
+        XMaxParam = max(PosX, XMaxParam);
+        YMinParam = min(PosY, YMinParam);
+        YMaxParam = max(PosY, YMaxParam);
+        ZMinParam = min(PosZ, ZMinParam);
+        ZMaxParam = max(PosZ, ZMaxParam);
     }
     CATCH("getting min max of coordinates")
 }
@@ -126,7 +177,7 @@ void CellEngineVoxelSimulationSpace::SetAtomInVoxelSimulationSpace(const UniqueI
         UnsignedInt PosY = ConvertToSpaceCoordinate(AppliedAtom.Y);
         UnsignedInt PosZ = ConvertToSpaceCoordinate(AppliedAtom.Z);
 
-        GetMinMaxOfCoordinates(PosX, PosY, PosZ);
+        GetMinMaxOfCoordinates(PosX, PosY, PosZ, XMin, XMax, YMin, YMax, ZMin, ZMax);
 
         if (GetSpaceVoxel(PosX, PosY, PosZ) == 0)
         {
@@ -263,6 +314,9 @@ void CellEngineVoxelSimulationSpace::GenerateRandomParticlesInSelectedSpace(cons
                 Particles[LocalNewParticleIndex].ListOfVoxels = FilledVoxelsForRandomParticle;
             }
         }
+
+        for (auto& LocalNewParticleIndex : LocalNewParticlesIndexes)
+            GetMinMaxCoordinatesForParticle(Particles[LocalNewParticleIndex]);
     }
     CATCH("generating random particles in selected space")
 }
@@ -333,9 +387,9 @@ void CellEngineVoxelSimulationSpace::GenerateRandomReactionForParticle(Particle&
         if (UniformDistributionObjectMainRandomCondition_Uint64t(mt64R) == 0)
             return;
 
-        //GDZIE ZASIEG SZESCIANU - ekstremalne punkty czastki - tu sie nie da latwo sprawdzic
-        //ONE MUSZA BYC ZAPAMIETANE NA STARCIE - dla duzej czastki to musza byc wieksze szesciany
         // 2) pobieram na mapie czastki w bliskosci tej czastki - w szescianie zadanym
+        // PRZESZUKAJ OPISUJAC PROSTOPADLOSCIAN POWIEKSZONY O 10 (STALA) i ZAPISZ WSZYSTKIE WOKSELE O PARAMETRZE INNYM NIZ CZASTKI I ILE CZASTEK MOZE REAGOWAC Z DANA
+
 
         // 3) Losuje ilu N elementowa reakcja z listy dostepnych
         // 4) Losuje N typow czastek do reakcji z listy dostepnych
@@ -350,7 +404,6 @@ void CellEngineVoxelSimulationSpace::GenerateRandomReactionForParticle(Particle&
         // 7) Robie reakcje (jesli sie zmiesci)
 
         //tzn usuwam czastki z mapy i indeksy wpisuje do wolnych i dodaje czastki do zakresu wolnych indeksow
-        //wolne indeksy w kolejce list lub queue
     }
     CATCH("generating random reaction for particle")
 }
@@ -625,11 +678,25 @@ void CellEngineVoxelSimulationSpace::GenerateRandomDNAInWholeCell(UnsignedInt Nu
             LoggersManagerObject.Log(STREAM("END OF GOING IN ONE DIRECTION"));
         }
 
+        GetMinMaxCoordinatesForDNA();
+
         LoggersManagerObject.InitializePrintingParameters(CellEngineConfigDataObject.PrintLogToConsole, CellEngineConfigDataObject.PrintLogToFiles, CellEngineConfigDataObject.PrintLogLineNumberToConsole, CellEngineConfigDataObject.PrintLogDateTimeToConsole, CellEngineConfigDataObject.PrintLogProcessIdToConsole, CellEngineConfigDataObject.PrintLogProcessPriorityLevelToConsole, CellEngineConfigDataObject.PrintLogThreadIdToConsole, CellEngineConfigDataObject.PrintLogLineNumberToFile, CellEngineConfigDataObject.PrintLogDateTimeToFile, CellEngineConfigDataObject.PrintLogProcessIdToFile, CellEngineConfigDataObject.PrintLogProcessPriorityLevelToFile, CellEngineConfigDataObject.PrintLogThreadIdToFile, CellEngineConfigDataObject.MaximalNumberOfLinesInOneFile);
 
         LoggersManagerObject.Log(STREAM("NUMBER OF ADDED PARTICLES = " << Particles.size() - ParticlesSizeBeforeAddingRandomDNA));
     }
     CATCH("generating random dna in whole cell")
+}
+
+void CellEngineVoxelSimulationSpace::GetMinMaxCoordinatesForDNA()
+{
+    try
+    {
+        for (auto& LocalNewParticleIndex : Genome1)
+            GetMinMaxCoordinatesForParticle(Particles[LocalNewParticleIndex]);
+        for (auto& LocalNewParticleIndex : Genome2)
+            GetMinMaxCoordinatesForParticle(Particles[LocalNewParticleIndex]);
+    }
+    CATCH("getting min max of coordinates for DNA")
 }
 
 void CellEngineVoxelSimulationSpace::SaveGenomeDataToFile(UnsignedInt ParticleSize)
@@ -706,6 +773,8 @@ void CellEngineVoxelSimulationSpace::ReadGenomeDataFromFile(bool Paired)
         }
 
         FileToReadGenome.close();
+
+        GetMinMaxCoordinatesForDNA();
 
         LoggersManagerObject.Log(STREAM("NUMBER OF ADDED PARTICLES = " << Particles.size() - ParticlesSizeBeforeAddingRandomDNA));
     }

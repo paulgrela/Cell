@@ -48,7 +48,7 @@ public:
 public:
     void SetStartValuesForSpaceMinMax();
 public:
-    void GetMinMaxOfCoordinates(UnsignedInt PosX, UnsignedInt PosY, UnsignedInt PosZ);
+    static void GetMinMaxOfCoordinates(UnsignedInt PosX, UnsignedInt PosY, UnsignedInt PosZ, UnsignedInt& XMinParam, UnsignedInt& XMaxParam, UnsignedInt& YMinParam, UnsignedInt& YMaxParam, UnsignedInt& ZMinParam, UnsignedInt& ZMaxParam);
 public:
     [[nodiscard]] std::stringstream PrintSpaceMinMaxValues() const;
 public:
@@ -85,12 +85,17 @@ public:
     static bool TestFormerForbiddenPositions(std::unordered_set<std::string>& TestedFormerForbiddenPositions, UnsignedInt RandomMoveDirection, UnsignedInt RandomPosX, UnsignedInt RandomPosY, UnsignedInt RandomPosZ, UnsignedInt Size);
     std::tuple<UnsignedInt, UnsignedInt, UnsignedInt> EraseLastRandomParticle(std::vector<UniqueIdInt>& Genome);
 public:
+    void GetMinMaxCoordinatesForDNA();
+public:
     void SaveGenomeDataToFile(UnsignedInt ParticleSize);
     void ReadGenomeDataFromFile(bool Paired);
     void ReadGenomeSequenceFromFile();
     void TestGeneratedGenomeCorrectness(UnsignedInt ParticleSize);
 public:
     void PreprocessData();
+    void InitiateFreeParticleIndexes();
+    void GetMinMaxCoordinatesForAllParticles();
+    static void GetMinMaxCoordinatesForParticle(Particle& ParticleObject);
 public:
     CellEngineVoxelSimulationSpace();
     ~CellEngineVoxelSimulationSpace();
