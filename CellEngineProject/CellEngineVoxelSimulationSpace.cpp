@@ -1,4 +1,6 @@
 
+#include <set>
+
 #include "FileUtils.h"
 #include "DestinationPlatform.h"
 
@@ -387,18 +389,32 @@ void CellEngineVoxelSimulationSpace::GenerateRandomReactionForParticle(Particle&
         if (UniformDistributionObjectMainRandomCondition_Uint64t(mt64R) == 0)
             return;
 
-        // 2) pobieram na mapie czastki w bliskosci tej czastki - w szescianie zadanym
-        // PRZESZUKAJ OPISUJAC PROSTOPADLOSCIAN POWIEKSZONY O 10 (STALA) i ZAPISZ WSZYSTKIE WOKSELE O PARAMETRZE INNYM NIZ CZASTKI I ILE CZASTEK MOZE REAGOWAC Z DANA
+        UnsignedInt AdditionalBoundFactor = 10;
+
+        set<UniqueIdInt> ParticlesFoundInParticlesProximity;
+        set<EntityIdInt> ParticlesKindsFoundInParticlesProximity;
+
+        auto ParticleKindObject = ParticlesKindsManagerObject.GetParticleKind(ParticleObject.EntityId);
+        for (UnsignedInt PosX = ParticleObject.XCenter - ParticleKindObject.XSizeDiv2 - AdditionalBoundFactor; PosX < ParticleObject.XCenter + ParticleKindObject.XSizeDiv2 + AdditionalBoundFactor; PosX++)
+            for (UnsignedInt PosY = ParticleObject.YCenter - ParticleKindObject.YSizeDiv2 - AdditionalBoundFactor; PosX < ParticleObject.YCenter + ParticleKindObject.YSizeDiv2 + AdditionalBoundFactor; PosY++)
+                for (UnsignedInt PosZ = ParticleObject.ZCenter - ParticleKindObject.ZSizeDiv2 - AdditionalBoundFactor; PosX < ParticleObject.ZCenter + ParticleKindObject.ZSizeDiv2 + AdditionalBoundFactor; PosZ++)
+                    if (GetSpaceVoxel(PosX, PosZ, PosY) != 0 && GetSpaceVoxel(PosX, PosZ, PosY) != ParticleObject.EntityId)
+                    {
+                        ParticlesFoundInParticlesProximity.insert(GetSpaceVoxel(PosX, PosZ, PosY));
+                        ParticlesKindsFoundInParticlesProximity.insert(ParticlesKindsManagerObject.GetParticleKind(GetSpaceVoxel(PosX, PosZ, PosY)).EntityId);
+                    }
 
 
-        // 3) Losuje ilu N elementowa reakcja z listy dostepnych
-        // 4) Losuje N typow czastek do reakcji z listy dostepnych
-        // 5) Sprawdzam czy istnieje reakcja z tymi typami czastek - szukajac po stringu w mapie dla reakcji dla dla typu czastek
+
+
+        // 3) Losuje ilu N elementowa reakcja z listy dostepnych - w WellStirred wybrane a priori rowne 2
+        // 4) Losuje N typow czastek do reakcji z listy dostepnych - TO SAMO co w WellStirred
+        // 5) Sprawdzam czy istnieje reakcja z tymi typami czastek - szukajac po stringu w mapie dla reakcji dla typu czastek  - TO SAMOW co w WellStirred
         // LUB
-        // za 3 i 4 i 5 - Losuje reakcje z listy przyleglych do typu co zwieksza szanse trafienia
+        // za 3 i 4 i 5 - Losuje reakcje z listy przyleglych do typu co zwieksza szanse trafienia - ale nie uwzglednia czastek w poblizu
 
         //Jesli krok 3 robie ponownie
-        //jesli 3 losowania odpadna to ide do kolejnej czastki
+        //jesli 3 losowania odpadna to ide do kolejnej czastki - TEST ile razy losowac
 
         // 6) sprawdzam czy na lokalnej liscie jest dosc czastek do tej reakcji
         // 7) Robie reakcje (jesli sie zmiesci)

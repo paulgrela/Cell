@@ -33,7 +33,7 @@ std::vector<UnsignedInt> CellEngineWellStirredChemicalReactionsSimulation::GetRa
             }
         }
     }
-    CATCH("getting random particles")
+    CATCH("getting random particles kind")
 
     return RandomParticlesTypes;
 }
