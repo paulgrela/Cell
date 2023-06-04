@@ -25,7 +25,7 @@ public:
     std::vector<Reaction> Reactions;
     std::unordered_map<std::string, UnsignedInt> ReactionsIdByString;
 public:
-    void AddParticleKind(const ParticleKind& ParticleParam);
+    void AddGroupOfParticlesOfSelectedKind(const ParticleKind& ParticleParam);
     void AddReaction(const Reaction& ReactionParam);
 public:
     virtual std::vector<UnsignedInt> GetRandomParticles(UnsignedInt NumberOfReactants);

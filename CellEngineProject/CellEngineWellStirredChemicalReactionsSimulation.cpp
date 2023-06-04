@@ -2,7 +2,7 @@
 #include "ExceptionsMacro.h"
 #include "CellEngineWellStirredChemicalReactionsSimulation.h"
 
-void CellEngineWellStirredChemicalReactionsSimulation::AddParticleKind(const ParticleKind& ParticleParam)
+void CellEngineWellStirredChemicalReactionsSimulation::AddGroupOfParticlesOfSelectedKind(const ParticleKind& ParticleParam)
 {
     Particles.emplace_back(ParticleParam);
 }

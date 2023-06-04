@@ -1,5 +1,8 @@
 
 #include <set>
+#include <map>
+#include <algorithm>
+#include <unordered_map>
 
 #include "FileUtils.h"
 #include "DestinationPlatform.h"
@@ -230,19 +233,19 @@ void CellEngineVoxelSimulationSpace::AddBasicParticlesKindsAndReactions()
 {
     try
     {
-        ParticlesKindsManagerObject.AddParticleKind({ 0, "Water", "H2O", 100 });
-        ParticlesKindsManagerObject.AddParticleKind({ 1, "Glucose", "C6H12O6", 50 });
-        ParticlesKindsManagerObject.AddParticleKind({ 2, "Oxygen6", "06", 10 });
-        ParticlesKindsManagerObject.AddParticleKind({ 3, "Carbon dioxide", "CO2", 5 });
-        ParticlesKindsManagerObject.AddParticleKind({ 4, "Eten", "CH2CH2", 15 });
-        ParticlesKindsManagerObject.AddParticleKind({ 5, "Ethanol", "CH3CH2(OH)", 25 });
-        ParticlesKindsManagerObject.AddParticleKind({ 6, "Propen", "CH3CHCH2", 5 });
-        ParticlesKindsManagerObject.AddParticleKind({ 7, "HX", "HX", 10 });
-        ParticlesKindsManagerObject.AddParticleKind({ 8, "2Halogenopropan", "CH3CHXCH3", 10 });
-        ParticlesKindsManagerObject.AddParticleKind({ 9, "Eten", "CH2CH2", 10 });
-        ParticlesKindsManagerObject.AddParticleKind({ 10, "Ethylene", "CH2CH2O", 10 });
-        ParticlesKindsManagerObject.AddParticleKind({ 11, "Oxygen", "0", 10 });
-        ParticlesKindsManagerObject.AddParticleKind({ 12, "DNA", "CGATATTAAATAGGGCCT", 10 });
+        ParticlesKindsManagerObject.AddParticleKind({ 0, "Water", "H2O", 0});
+        ParticlesKindsManagerObject.AddParticleKind({ 1, "Glucose", "C6H12O6", 0 });
+        ParticlesKindsManagerObject.AddParticleKind({ 2, "Oxygen6", "06", 0 });
+        ParticlesKindsManagerObject.AddParticleKind({ 3, "Carbon dioxide", "CO2", 0 });
+        ParticlesKindsManagerObject.AddParticleKind({ 4, "Eten", "CH2CH2", 0 });
+        ParticlesKindsManagerObject.AddParticleKind({ 5, "Ethanol", "CH3CH2(OH)", 0 });
+        ParticlesKindsManagerObject.AddParticleKind({ 6, "Propen", "CH3CHCH2", 0 });
+        ParticlesKindsManagerObject.AddParticleKind({ 7, "HX", "HX", 0 });
+        ParticlesKindsManagerObject.AddParticleKind({ 8, "2Halogenopropan", "CH3CHXCH3", 0 });
+        ParticlesKindsManagerObject.AddParticleKind({ 9, "Eten", "CH2CH2", 0 });
+        ParticlesKindsManagerObject.AddParticleKind({ 10, "Ethylene", "CH2CH2O", 0 });
+        ParticlesKindsManagerObject.AddParticleKind({ 11, "Oxygen", "0", 0 });
+        ParticlesKindsManagerObject.AddParticleKind({ 12, "DNA", "CGATATTAAATAGGGCCT", 0 });
 
         AddReaction(Reaction("C6H12O6 + O6 + ", { { 1, 1 }, { 2, 2 } }, { { 0, 6 }, { 0, 6 } }));
         AddReaction(Reaction("CH2CH2 + H2O + ", { { 4, 1 }, { 0, 1 } }, { { 5, 1 } }));
@@ -381,6 +384,25 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfDiffusionForSelectedRangeO
     CATCH("generating one step of diffusion")
 }
 
+std::vector<UnsignedInt> CellEngineVoxelSimulationSpace::GetRandomParticles(const UnsignedInt NumberOfReactants, map<EntityIdInt, UnsignedInt>& ParticlesKinds)
+{
+    vector<UnsignedInt> RandomParticlesTypes;
+
+    try
+    {
+        std::uniform_int_distribution<UnsignedInt> UniformDistributionObjectUint64t(0, ParticlesKinds.size() - 1);
+
+        for (UnsignedInt ReactantNumber = 1; ReactantNumber <= NumberOfReactants; ReactantNumber++)
+        {
+            RandomParticlesTypes.emplace_back(std::next(std::begin(ParticlesKinds), static_cast<int>(UniformDistributionObjectUint64t(mt64R)))->first);
+            LoggersManagerObject.Log(STREAM("ParticleKind Reactant " << to_string(ReactantNumber) << " (" << to_string(RandomParticlesTypes.back()) << ")"));
+        }
+    }
+    CATCH("getting random particles kind")
+
+    return RandomParticlesTypes;
+}
+
 void CellEngineVoxelSimulationSpace::GenerateRandomReactionForParticle(Particle& ParticleObject)
 {
     try
@@ -389,10 +411,12 @@ void CellEngineVoxelSimulationSpace::GenerateRandomReactionForParticle(Particle&
         if (UniformDistributionObjectMainRandomCondition_Uint64t(mt64R) == 0)
             return;
 
+        uniform_int_distribution<UnsignedInt> UniformDistributionObjectNumberOfReactants_Uint64t(2, 2);
+
         UnsignedInt AdditionalBoundFactor = 10;
 
         set<UniqueIdInt> ParticlesFoundInParticlesProximity;
-        set<EntityIdInt> ParticlesKindsFoundInParticlesProximity;
+        map<EntityIdInt, UnsignedInt> ParticlesKindsFoundInParticlesProximity;
 
         auto ParticleKindObject = ParticlesKindsManagerObject.GetParticleKind(ParticleObject.EntityId);
         for (UnsignedInt PosX = ParticleObject.XCenter - ParticleKindObject.XSizeDiv2 - AdditionalBoundFactor; PosX < ParticleObject.XCenter + ParticleKindObject.XSizeDiv2 + AdditionalBoundFactor; PosX++)
@@ -401,25 +425,53 @@ void CellEngineVoxelSimulationSpace::GenerateRandomReactionForParticle(Particle&
                     if (GetSpaceVoxel(PosX, PosZ, PosY) != 0 && GetSpaceVoxel(PosX, PosZ, PosY) != ParticleObject.EntityId)
                     {
                         ParticlesFoundInParticlesProximity.insert(GetSpaceVoxel(PosX, PosZ, PosY));
-                        ParticlesKindsFoundInParticlesProximity.insert(ParticlesKindsManagerObject.GetParticleKind(GetSpaceVoxel(PosX, PosZ, PosY)).EntityId);
+                        ParticlesKindsFoundInParticlesProximity[ParticlesKindsManagerObject.GetParticleKind(GetSpaceVoxel(PosX, PosZ, PosY)).EntityId]++;
                     }
 
+        UnsignedInt NumberOfTries = 0;
+        while (NumberOfTries <= 10)
+        {
+            NumberOfTries++;
 
+            UnsignedInt NumberOfReactants = UniformDistributionObjectNumberOfReactants_Uint64t(mt64R);
+            auto RandomParticlesTypes = GetRandomParticles(NumberOfReactants, ParticlesKindsFoundInParticlesProximity);
 
+            sort(begin(RandomParticlesTypes), end(RandomParticlesTypes));
+            auto IteratorUnique = unique(begin(RandomParticlesTypes), end(RandomParticlesTypes));
+            if (IteratorUnique == RandomParticlesTypes.end())
+            {
+                vector<string> ParticlesSymbolsForReactionToSort;
+                ParticlesSymbolsForReactionToSort.reserve(10);
+                for (auto& RandomParticleType : RandomParticlesTypes)
+                    ParticlesSymbolsForReactionToSort.emplace_back(ParticlesKindsManagerObject.GetParticleKind(RandomParticleType).Symbol);
+                std::sort(ParticlesSymbolsForReactionToSort.begin(), ParticlesSymbolsForReactionToSort.end());
 
-        // 3) Losuje ilu N elementowa reakcja z listy dostepnych - w WellStirred wybrane a priori rowne 2
-        // 4) Losuje N typow czastek do reakcji z listy dostepnych - TO SAMO co w WellStirred
-        // 5) Sprawdzam czy istnieje reakcja z tymi typami czastek - szukajac po stringu w mapie dla reakcji dla typu czastek  - TO SAMOW co w WellStirred
-        // LUB
-        // za 3 i 4 i 5 - Losuje reakcje z listy przyleglych do typu co zwieksza szanse trafienia - ale nie uwzglednia czastek w poblizu
+                string ReactionSymbolsStr;
+                for (auto& ParticleSymbolForReaction : ParticlesSymbolsForReactionToSort)
+                    ReactionSymbolsStr += (ParticleSymbolForReaction + " + ");
+                LoggersManagerObject.Log(STREAM("Reaction Symbols = [" << ReactionSymbolsStr << "]" << endl));
 
-        //Jesli krok 3 robie ponownie
-        //jesli 3 losowania odpadna to ide do kolejnej czastki - TEST ile razy losowac
+                auto ReactionIter = ReactionsIdByString.find(ReactionSymbolsStr);
+                if (ReactionIter != ReactionsIdByString.end())
+                {
+                    Reaction* ReactionObject = &Reactions[ReactionIter->second];
 
-        // 6) sprawdzam czy na lokalnej liscie jest dosc czastek do tej reakcji
-        // 7) Robie reakcje (jesli sie zmiesci)
-
-        //tzn usuwam czastki z mapy i indeksy wpisuje do wolnych i dodaje czastki do zakresu wolnych indeksow
+                    bool IsPossible = all_of(ReactionObject->Reactants.begin(), ReactionObject->Reactants.end(), [&ParticlesKindsFoundInParticlesProximity](const ParticleKind& ReactionReactant){ return ReactionReactant.Counter <= ParticlesKindsFoundInParticlesProximity[ReactionReactant.EntityId]; });
+                    if (IsPossible == true)
+                    {
+                        //Robie reakcje (jesli sie zmiesci)
+                        //tzn usuwam czastki z mapy i indeksy wpisuje do wolnych i dodaje czastki do zakresu wolnych indeksow
+                        break;
+                    }
+                    else
+                        LoggersManagerObject.Log(STREAM("Particles types are the same!"));
+                }
+                else
+                    LoggersManagerObject.Log(STREAM("Reaction for particles does not exist!"));
+            }
+            else
+                LoggersManagerObject.Log(STREAM("Particles types for reaction are not unique!"));
+        }
     }
     CATCH("generating random reaction for particle")
 }
