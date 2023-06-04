@@ -416,6 +416,7 @@ void CellEngineVoxelSimulationSpace::GenerateRandomReactionForParticle(Particle&
         UnsignedInt AdditionalBoundFactor = 10;
 
         set<UniqueIdInt> ParticlesFoundInParticlesProximity;
+        map<UniqueIdInt, UnsignedInt> ParticlesSortedByCapacityFoundInParticlesProximity;
         map<EntityIdInt, UnsignedInt> ParticlesKindsFoundInParticlesProximity;
 
         auto ParticleKindObject = ParticlesKindsManagerObject.GetParticleKind(ParticleObject.EntityId);
@@ -424,8 +425,11 @@ void CellEngineVoxelSimulationSpace::GenerateRandomReactionForParticle(Particle&
                 for (UnsignedInt PosZ = ParticleObject.ZCenter - ParticleKindObject.ZSizeDiv2 - AdditionalBoundFactor; PosX < ParticleObject.ZCenter + ParticleKindObject.ZSizeDiv2 + AdditionalBoundFactor; PosZ++)
                     if (GetSpaceVoxel(PosX, PosZ, PosY) != 0 && GetSpaceVoxel(PosX, PosZ, PosY) != ParticleObject.EntityId)
                     {
-                        ParticlesFoundInParticlesProximity.insert(GetSpaceVoxel(PosX, PosZ, PosY));
-                        ParticlesKindsFoundInParticlesProximity[ParticlesKindsManagerObject.GetParticleKind(GetSpaceVoxel(PosX, PosZ, PosY)).EntityId]++;
+                        UniqueIdInt ParticleIndex = GetSpaceVoxel(PosX, PosZ, PosY);
+                        ParticlesFoundInParticlesProximity.insert(ParticleIndex);
+                        ParticlesSortedByCapacityFoundInParticlesProximity[ParticleIndex] = GetParticleFromIndex(ParticleIndex).ListOfVoxels.size();
+
+                        ParticlesKindsFoundInParticlesProximity[ParticlesKindsManagerObject.GetParticleKind(ParticleIndex).EntityId]++;
                     }
 
         UnsignedInt NumberOfTries = 0;
@@ -454,12 +458,31 @@ void CellEngineVoxelSimulationSpace::GenerateRandomReactionForParticle(Particle&
                 auto ReactionIter = ReactionsIdByString.find(ReactionSymbolsStr);
                 if (ReactionIter != ReactionsIdByString.end())
                 {
-                    Reaction* ReactionObject = &Reactions[ReactionIter->second];
+                    auto& ReactionObject = Reactions[ReactionIter->second];
+                    //Reaction ReactionObject = Reactions[ReactionIter->second];
+                    vector<UnsignedInt> ReactantsCounters(ReactionObject.Reactants.size());
+                    for (UnsignedInt ReactantIndex = 0; ReactantIndex < ReactionObject.Reactants.size(); ReactantIndex++)
+                        ReactantsCounters[ReactantIndex] = ReactionObject.Reactants[ReactantIndex].Counter;
 
-                    bool IsPossible = all_of(ReactionObject->Reactants.begin(), ReactionObject->Reactants.end(), [&ParticlesKindsFoundInParticlesProximity](const ParticleKind& ReactionReactant){ return ReactionReactant.Counter <= ParticlesKindsFoundInParticlesProximity[ReactionReactant.EntityId]; });
+                    bool IsPossible = all_of(ReactionObject.Reactants.begin(), ReactionObject.Reactants.end(), [&ParticlesKindsFoundInParticlesProximity](const ParticleKind& ReactionReactant){ return ReactionReactant.Counter <= ParticlesKindsFoundInParticlesProximity[ReactionReactant.EntityId]; });
                     if (IsPossible == true)
                     {
-                        //Robie reakcje (jesli sie zmiesci)
+                        for (auto& ParticleObjectToBeErased : ParticlesFoundInParticlesProximity)
+                        {
+                            auto ReactantIterator = find_if(ReactionObject.Reactants.begin(), ReactionObject.Reactants.end(), [this, &ParticleObjectToBeErased](ParticleKind& ParticleKindObject){ return ParticleKindObject.EntityId == GetParticleFromIndex(ParticleObjectToBeErased).EntityId; });
+                            //if (ReactantIterator != ReactionObject.Reactants.end() && ReactantIterator->Counter > 0)
+                            if (ReactantIterator != ReactionObject.Reactants.end() && ReactantsCounters[ReactantIterator - ReactionObject.Reactants.begin()] > 0)
+                            {
+                                for (auto& VoxelCoordinates : GetParticleFromIndex(ParticleObjectToBeErased).ListOfVoxels)
+                                    GetSpaceVoxel(VoxelCoordinates.X, VoxelCoordinates.Y, VoxelCoordinates.Z) = GetZeroSimulationSpaceVoxel();
+                                FreeIndexesOfParticles.push(ParticleObjectToBeErased);
+                                Particles.erase(ParticleObjectToBeErased);
+                                //ReactantIterator->Counter--;
+                                ReactantsCounters[ReactantIterator - ReactionObject.Reactants.begin()]--;
+                            }
+                        }
+
+                        //2) DODAJ NOWE CZASTKI DO MAPY i VoxelSpace
                         //tzn usuwam czastki z mapy i indeksy wpisuje do wolnych i dodaje czastki do zakresu wolnych indeksow
                         break;
                     }
