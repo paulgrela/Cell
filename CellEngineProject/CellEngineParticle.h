@@ -67,7 +67,6 @@ public:
     std::vector<ChainIdInt> Sequence;
     std::vector<vector3_16> ListOfVoxels;
     UnsignedInt XSizeDiv2{}, YSizeDiv2{}, ZSizeDiv2{};
-    UnsignedInt XMin{}, XMax{}, YMin{}, YMax{}, ZMin{}, ZMax{};
 public:
     ParticleKindGraphicData GraphicData;
 public:

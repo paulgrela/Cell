@@ -111,7 +111,6 @@ void CellEngineVoxelSimulationSpace::GetMinMaxCoordinatesForParticle(Particle& P
         auto& ParticleKindObject = ParticlesKindsManagerObject.GetParticleKind(ParticleObject.EntityId);
         if (ParticleKindObject.ListOfVoxels.empty() == true)
         {
-            vector<vector3_16> ParticleKindListOfVoxels(10000);
             for (auto& VoxelCoordinates : ParticleObject.ListOfVoxels)
                 ParticleKindObject.ListOfVoxels.emplace_back(VoxelCoordinates.X - ParticleXMin, VoxelCoordinates.Y - ParticleYMin, VoxelCoordinates.Z - ParticleZMin);
             ParticleKindObject.XSizeDiv2 = (ParticleXMax - ParticleXMin) / 2;
@@ -415,9 +414,8 @@ void CellEngineVoxelSimulationSpace::GenerateRandomReactionForParticle(Particle&
 
         UnsignedInt AdditionalBoundFactor = 10;
 
-        set<UniqueIdInt> ParticlesFoundInParticlesProximity;
-        map<UniqueIdInt, UnsignedInt> ParticlesSortedByCapacityFoundInParticlesProximity;
         map<EntityIdInt, UnsignedInt> ParticlesKindsFoundInParticlesProximity;
+        map<UnsignedInt, UniqueIdInt> ParticlesSortedByCapacityFoundInParticlesProximity;
 
         auto ParticleKindObject = ParticlesKindsManagerObject.GetParticleKind(ParticleObject.EntityId);
         for (UnsignedInt PosX = ParticleObject.XCenter - ParticleKindObject.XSizeDiv2 - AdditionalBoundFactor; PosX < ParticleObject.XCenter + ParticleKindObject.XSizeDiv2 + AdditionalBoundFactor; PosX++)
@@ -426,8 +424,7 @@ void CellEngineVoxelSimulationSpace::GenerateRandomReactionForParticle(Particle&
                     if (GetSpaceVoxel(PosX, PosZ, PosY) != 0 && GetSpaceVoxel(PosX, PosZ, PosY) != ParticleObject.EntityId)
                     {
                         UniqueIdInt ParticleIndex = GetSpaceVoxel(PosX, PosZ, PosY);
-                        ParticlesFoundInParticlesProximity.insert(ParticleIndex);
-                        ParticlesSortedByCapacityFoundInParticlesProximity[ParticleIndex] = GetParticleFromIndex(ParticleIndex).ListOfVoxels.size();
+                        ParticlesSortedByCapacityFoundInParticlesProximity[GetParticleFromIndex(ParticleIndex).ListOfVoxels.size()] = ParticleIndex;
 
                         ParticlesKindsFoundInParticlesProximity[ParticlesKindsManagerObject.GetParticleKind(ParticleIndex).EntityId]++;
                     }
@@ -458,32 +455,76 @@ void CellEngineVoxelSimulationSpace::GenerateRandomReactionForParticle(Particle&
                 auto ReactionIter = ReactionsIdByString.find(ReactionSymbolsStr);
                 if (ReactionIter != ReactionsIdByString.end())
                 {
-                    auto& ReactionObject = Reactions[ReactionIter->second];
-                    //Reaction ReactionObject = Reactions[ReactionIter->second];
-                    vector<UnsignedInt> ReactantsCounters(ReactionObject.Reactants.size());
-                    for (UnsignedInt ReactantIndex = 0; ReactantIndex < ReactionObject.Reactants.size(); ReactantIndex++)
-                        ReactantsCounters[ReactantIndex] = ReactionObject.Reactants[ReactantIndex].Counter;
+                    Reaction ReactionObject = Reactions[ReactionIter->second];
 
                     bool IsPossible = all_of(ReactionObject.Reactants.begin(), ReactionObject.Reactants.end(), [&ParticlesKindsFoundInParticlesProximity](const ParticleKind& ReactionReactant){ return ReactionReactant.Counter <= ParticlesKindsFoundInParticlesProximity[ReactionReactant.EntityId]; });
                     if (IsPossible == true)
                     {
-                        for (auto& ParticleObjectToBeErased : ParticlesFoundInParticlesProximity)
+                        //SPRAWDZ TU CZY JEDNA Z CZASTEK JEST DNA i GenomeIndex i pobierz z Genome +/- 20 indeksow
+
+                        //JESLI USUWAM DNA TO CZASEM USUWAM I WSTAWIAM INNE DNA, A CZASEM NIE USUWAM Z DNA
+                        //JESLI USUWAM i WSTAWIAM INNE DNA TO musi byc PRODUCT DO WSTAWIENIA PO OKRESLONEJ SEKWENCJI
+                        //JESLI TO ENZYM TO ONA NIE USUWANA ALE WARUNKIEM REAKCJI
+                        //CZYLI CZASTKA W REAKCJI MUSI MIEC NAPISANE CZY TO REMOVE CZY NIE - I TO CECHA REAKCJI A NIE CECHA ParticleKind bo to cecha reakcji
+
+                        //CZY GDY DNA - TO PROBLEM OSOBNY ??? ChainId i GenomeIndex - użyć GenerateParticle
+
+                        vector<UniqueIdInt> ParticlesChosenForReaction;
+
+                        for (auto& ParticleObjectIndexToBeErased : ParticlesSortedByCapacityFoundInParticlesProximity)
                         {
-                            auto ReactantIterator = find_if(ReactionObject.Reactants.begin(), ReactionObject.Reactants.end(), [this, &ParticleObjectToBeErased](ParticleKind& ParticleKindObject){ return ParticleKindObject.EntityId == GetParticleFromIndex(ParticleObjectToBeErased).EntityId; });
-                            //if (ReactantIterator != ReactionObject.Reactants.end() && ReactantIterator->Counter > 0)
-                            if (ReactantIterator != ReactionObject.Reactants.end() && ReactantsCounters[ReactantIterator - ReactionObject.Reactants.begin()] > 0)
+                            auto& ParticleObjectEntityId = GetParticleFromIndex(ParticleObjectIndexToBeErased.second).EntityId;
+
+                            if (CellEngineUseful::IsDNAorRNA(ParticleObjectEntityId) == true)
                             {
-                                for (auto& VoxelCoordinates : GetParticleFromIndex(ParticleObjectToBeErased).ListOfVoxels)
-                                    GetSpaceVoxel(VoxelCoordinates.X, VoxelCoordinates.Y, VoxelCoordinates.Z) = GetZeroSimulationSpaceVoxel();
-                                FreeIndexesOfParticles.push(ParticleObjectToBeErased);
-                                Particles.erase(ParticleObjectToBeErased);
-                                //ReactantIterator->Counter--;
-                                ReactantsCounters[ReactantIterator - ReactionObject.Reactants.begin()]--;
+                                auto& ParticleObjectToBeErased = GetParticleFromIndex(ParticleObjectIndexToBeErased.second);
+
                             }
+
+                            auto ReactantIterator = find_if(ReactionObject.Reactants.begin(), ReactionObject.Reactants.end(), [&ParticleObjectEntityId](ParticleKind& ParticleKindObject){ return ParticleKindObject.EntityId == ParticleObjectEntityId; });
+                            if (ReactantIterator != ReactionObject.Reactants.end() && ReactantIterator->Counter > 0)
+                                ParticlesChosenForReaction.emplace_back(ParticleObjectIndexToBeErased.second);
+
+                            ReactantIterator->Counter--;
                         }
 
-                        //2) DODAJ NOWE CZASTKI DO MAPY i VoxelSpace
-                        //tzn usuwam czastki z mapy i indeksy wpisuje do wolnych i dodaje czastki do zakresu wolnych indeksow
+                        vector<vector3_16> Centers;
+
+                        for (auto& ParticleChosenForReaction : ParticlesChosenForReaction)
+                        {
+                            auto& ParticleObjectToBeErased = GetParticleFromIndex(ParticleChosenForReaction);
+
+                            Centers.emplace_back(ParticleObjectToBeErased.XCenter, ParticleObjectToBeErased.YCenter, ParticleObjectToBeErased.ZCenter);
+
+                            for (auto& VoxelCoordinates : ParticleObjectToBeErased.ListOfVoxels)
+                                GetSpaceVoxel(VoxelCoordinates.X, VoxelCoordinates.Y, VoxelCoordinates.Z) = GetZeroSimulationSpaceVoxel();
+
+                            FreeIndexesOfParticles.push(ParticleChosenForReaction);
+                            Particles.erase(ParticleChosenForReaction);
+                        }
+
+                        UnsignedInt CenterIndex = 0;
+                        sort(ReactionObject.Products.begin(), ReactionObject.Products.end(), [](ParticleKind& PK1, ParticleKind& PK2){ return PK1.ListOfVoxels.size() > PK2.ListOfVoxels.size(); } );
+                        for (auto& ReactionProduct : ReactionObject.Products)
+                        {
+                            UnsignedInt ParticleIndex = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), ReactionProduct.EntityId, 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
+
+                            auto& ParticleKindObjectForProduct = ParticlesKindsManagerObject.GetParticleKind(ReactionProduct.EntityId);
+
+                            for (auto& ParticleKindVoxel : ParticleKindObjectForProduct.ListOfVoxels)
+                                if (CenterIndex < Centers.size())
+                                {
+                                    vector3_64 NewVoxel(Centers[CenterIndex].X - ParticleKindObjectForProduct.XSizeDiv2 + ParticleKindVoxel.X, Centers[CenterIndex].Y - ParticleKindObjectForProduct.YSizeDiv2 + ParticleKindVoxel.Y, Centers[CenterIndex].Z - ParticleKindObjectForProduct.ZSizeDiv2 + ParticleKindVoxel.Z);
+                                    GetSpaceVoxel(NewVoxel.X, NewVoxel.Y, NewVoxel.Z) = ParticleIndex;
+                                    GetParticleFromIndex(ParticleIndex).ListOfVoxels.emplace_back(NewVoxel.X, NewVoxel.Y, NewVoxel.Z);
+                                }
+                                else
+                                {
+                                }
+
+                            CenterIndex++;
+                        }
+
                         break;
                     }
                     else
