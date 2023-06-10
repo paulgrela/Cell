@@ -246,10 +246,10 @@ void CellEngineVoxelSimulationSpace::AddBasicParticlesKindsAndReactions()
         ParticlesKindsManagerObject.AddParticleKind({ 11, "Oxygen", "0", 0 });
         ParticlesKindsManagerObject.AddParticleKind({ 12, "DNA", "CGATATTAAATAGGGCCT", 0 });
 
-        AddReaction(Reaction("C6H12O6 + O6 + ", { { 1, 1 }, { 2, 2 } }, { { 0, 6 }, { 0, 6 } }));
-        AddReaction(Reaction("CH2CH2 + H2O + ", { { 4, 1 }, { 0, 1 } }, { { 5, 1 } }));
-        AddReaction(Reaction("CH3CHCH2 + HX + ", { { 6, 1 }, { 7, 1 } }, { { 8, 1 } }));
-        AddReaction(Reaction("CH2CH2 + O + ", { { 9, 1 }, { 11, 1 } }, { { 10, 1 } }));
+        AddReaction(Reaction("C6H12O6 + O6 + ", { { 1, 1, true }, { 2, 2, true } }, { { 0, 6, true }, { 0, 6, true } }));
+        AddReaction(Reaction("CH2CH2 + H2O + ", { { 4, 1, true }, { 0, 1, true } }, { { 5, 1, true } }));
+        AddReaction(Reaction("CH3CHCH2 + HX + ", { { 6, 1, true }, { 7, 1, true } }, { { 8, 1, true } }));
+        AddReaction(Reaction("CH2CH2 + O + ", { { 9, 1, true }, { 11, 1, true } }, { { 10, 1, true } }));
     }
     CATCH("adding particles kinds and reactions")
 };
@@ -457,40 +457,53 @@ void CellEngineVoxelSimulationSpace::GenerateRandomReactionForParticle(Particle&
                 {
                     Reaction ReactionObject = Reactions[ReactionIter->second];
 
-                    bool IsPossible = all_of(ReactionObject.Reactants.begin(), ReactionObject.Reactants.end(), [&ParticlesKindsFoundInParticlesProximity](const ParticleKind& ReactionReactant){ return ReactionReactant.Counter <= ParticlesKindsFoundInParticlesProximity[ReactionReactant.EntityId]; });
+                    bool IsPossible = all_of(ReactionObject.Reactants.begin(), ReactionObject.Reactants.end(), [&ParticlesKindsFoundInParticlesProximity](const ParticleKindForReaction& ReactionReactant){ return ReactionReactant.Counter <= ParticlesKindsFoundInParticlesProximity[ReactionReactant.EntityId]; });
                     if (IsPossible == true)
                     {
-                        //SPRAWDZ TU CZY JEDNA Z CZASTEK JEST DNA i GenomeIndex i pobierz z Genome +/- 20 indeksow
-
-                        //JESLI USUWAM DNA TO CZASEM USUWAM I WSTAWIAM INNE DNA, A CZASEM NIE USUWAM Z DNA
-                        //JESLI USUWAM i WSTAWIAM INNE DNA TO musi byc PRODUCT DO WSTAWIENIA PO OKRESLONEJ SEKWENCJI
-                        //JESLI TO ENZYM TO ONA NIE USUWANA ALE WARUNKIEM REAKCJI
-                        //CZYLI CZASTKA W REAKCJI MUSI MIEC NAPISANE CZY TO REMOVE CZY NIE - I TO CECHA REAKCJI A NIE CECHA ParticleKind bo to cecha reakcji
-
-                        //CZY GDY DNA - TO PROBLEM OSOBNY ??? ChainId i GenomeIndex - użyć GenerateParticle
-
                         vector<UniqueIdInt> ParticlesChosenForReaction;
 
-                        for (auto& ParticleObjectIndexToBeErased : ParticlesSortedByCapacityFoundInParticlesProximity)
+                        for (const auto& ParticleObjectIndexToBeErased : ParticlesSortedByCapacityFoundInParticlesProximity)
                         {
                             auto& ParticleObjectEntityId = GetParticleFromIndex(ParticleObjectIndexToBeErased.second).EntityId;
 
-                            if (CellEngineUseful::IsDNAorRNA(ParticleObjectEntityId) == true)
+                            //CO JESLI WIELE ROZNYCH ODCINKOW DNA TO MA TO SAMO ENTITY_ID - to mozliwe tylko dla DNA
+                            auto ReactantIterator = find_if(ReactionObject.Reactants.begin(), ReactionObject.Reactants.end(), [&ParticleObjectEntityId](ParticleKindForReaction& ParticleKindObject){ return ParticleKindObject.EntityId == ParticleObjectEntityId; });
+                            if (ReactantIterator != ReactionObject.Reactants.end() && ReactantIterator->Counter > 0 && ReactantIterator->ToRemoveInReaction == true)
                             {
-                                auto& ParticleObjectToBeErased = GetParticleFromIndex(ParticleObjectIndexToBeErased.second);
+                                if (CellEngineUseful::IsDNAorRNA(ParticleObjectEntityId) == true)
+                                {
+                                    auto& ParticleObjectForReaction = GetParticleFromIndex(ParticleObjectIndexToBeErased.second);
 
+                                    bool FoundSequenceOuter = false;
+                                    for (UnsignedInt GenomeIndex = ParticleObjectForReaction.GenomeIndex - 20; GenomeIndex < ParticleObjectForReaction.GenomeIndex + 20; GenomeIndex++)
+                                    {
+                                        bool FoundSequenceInner = true;
+                                        auto ParticleKindForReactionObject = ParticlesKindsManagerObject.GetParticleKind(ReactantIterator->EntityId);
+                                        for (UnsignedInt NucleotideNum = 0; NucleotideNum < ParticleKindForReactionObject.Sequence.size(); NucleotideNum++)
+                                            if (ParticleKindForReactionObject.Sequence[NucleotideNum] != GetParticleFromIndex(Genome1[GenomeIndex + NucleotideNum]).ChainId)
+                                            {
+                                                FoundSequenceInner = false;
+                                                break;
+                                            }
+                                        if (FoundSequenceInner == true)
+                                        {
+                                            FoundSequenceOuter = true;
+                                            break;
+                                        }
+                                    }
+                                    if (FoundSequenceOuter == true)
+                                        ParticlesChosenForReaction.emplace_back(ParticleObjectIndexToBeErased.second);
+                                }
+                                else
+                                    ParticlesChosenForReaction.emplace_back(ParticleObjectIndexToBeErased.second);
                             }
-
-                            auto ReactantIterator = find_if(ReactionObject.Reactants.begin(), ReactionObject.Reactants.end(), [&ParticleObjectEntityId](ParticleKind& ParticleKindObject){ return ParticleKindObject.EntityId == ParticleObjectEntityId; });
-                            if (ReactantIterator != ReactionObject.Reactants.end() && ReactantIterator->Counter > 0)
-                                ParticlesChosenForReaction.emplace_back(ParticleObjectIndexToBeErased.second);
 
                             ReactantIterator->Counter--;
                         }
 
                         vector<vector3_16> Centers;
 
-                        for (auto& ParticleChosenForReaction : ParticlesChosenForReaction)
+                        for (const auto& ParticleChosenForReaction : ParticlesChosenForReaction)
                         {
                             auto& ParticleObjectToBeErased = GetParticleFromIndex(ParticleChosenForReaction);
 
@@ -504,8 +517,8 @@ void CellEngineVoxelSimulationSpace::GenerateRandomReactionForParticle(Particle&
                         }
 
                         UnsignedInt CenterIndex = 0;
-                        sort(ReactionObject.Products.begin(), ReactionObject.Products.end(), [](ParticleKind& PK1, ParticleKind& PK2){ return PK1.ListOfVoxels.size() > PK2.ListOfVoxels.size(); } );
-                        for (auto& ReactionProduct : ReactionObject.Products)
+                        sort(ReactionObject.Products.begin(), ReactionObject.Products.end(), [](ParticleKindForReaction& PK1, ParticleKindForReaction& PK2){ return ParticlesKindsManagerObject.GetParticleKind(PK1.EntityId).ListOfVoxels.size() > ParticlesKindsManagerObject.GetParticleKind(PK2.EntityId).ListOfVoxels.size(); } );
+                        for (const auto& ReactionProduct : ReactionObject.Products)
                         {
                             UnsignedInt ParticleIndex = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), ReactionProduct.EntityId, 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
 

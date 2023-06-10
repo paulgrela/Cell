@@ -88,6 +88,18 @@ public:
     }
 };
 
+class ParticleKindForReaction
+{
+public:
+    UniqueIdInt EntityId{};
+    UnsignedInt Counter{};
+    bool ToRemoveInReaction;
+public:
+    ParticleKindForReaction(UnsignedInt EntityIdParam, UnsignedInt CounterParam, bool ToRemoveInReactionParam) : EntityId(EntityIdParam), Counter(CounterParam), ToRemoveInReaction(ToRemoveInReactionParam)
+    {
+    }
+};
+
 struct AtomKindGraphicData
 {
     std::string Name;

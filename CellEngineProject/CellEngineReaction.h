@@ -16,11 +16,11 @@ private:
 public:
     std::string ReactantsStr;
 public:
-    std::vector<ParticleKind> Reactants;
-    std::vector<ParticleKind> Products;
+    std::vector<ParticleKindForReaction> Reactants;
+    std::vector<ParticleKindForReaction> Products;
 public:
     Reaction() = delete;
-    Reaction(std::string ReactantsStrParam, std::vector<ParticleKind> ReactantsParam, std::vector<ParticleKind> ProductsParam) : ReactantsStr(std::move(ReactantsStrParam)), Reactants(std::move(ReactantsParam)), Products(std::move(ProductsParam))
+    Reaction(std::string ReactantsStrParam, std::vector<ParticleKindForReaction> ReactantsParam, std::vector<ParticleKindForReaction> ProductsParam) : ReactantsStr(std::move(ReactantsStrParam)), Reactants(std::move(ReactantsParam)), Products(std::move(ProductsParam))
     {
     }
 };

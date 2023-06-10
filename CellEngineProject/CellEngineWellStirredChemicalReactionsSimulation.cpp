@@ -66,7 +66,7 @@ void CellEngineWellStirredChemicalReactionsSimulation::TryToDoRandomReaction(con
             {
                 Reaction* ReactionObject = &Reactions[ReactionIter->second];
 
-                bool IsPossible = all_of(ReactionObject->Reactants.begin(), ReactionObject->Reactants.end(), [this](const ParticleKind& ReactionReactant){ return ReactionReactant.Counter <= Particles[ReactionReactant.EntityId].Counter; });
+                bool IsPossible = all_of(ReactionObject->Reactants.begin(), ReactionObject->Reactants.end(), [this](const ParticleKindForReaction& ReactionReactant){ return ReactionReactant.Counter <= Particles[ReactionReactant.EntityId].Counter; });
 
                 if (IsPossible == true)
                 {

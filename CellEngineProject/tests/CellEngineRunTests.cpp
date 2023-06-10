@@ -23,10 +23,10 @@ void TestWellStirredChemicalReactionsSimulation(CellEngineWellStirredChemicalRea
     CellEngineWellStirredChemicalReactionsSimulationObjectObject.AddGroupOfParticlesOfSelectedKind({10, "Ethylene", "CH2CH2O", 10});
     CellEngineWellStirredChemicalReactionsSimulationObjectObject.AddGroupOfParticlesOfSelectedKind({11, "DNA", "CGATATTAAATAGGGCCT", 10});
 
-    CellEngineWellStirredChemicalReactionsSimulationObjectObject.AddReaction(Reaction("C6H12O6 + O6 + ", { { 1, 1 }, { 2, 6 } }, { { 3, 6 }, { 2, 6 } }));
-    CellEngineWellStirredChemicalReactionsSimulationObjectObject.AddReaction(Reaction("CH2CH2 + H2O + ", { { 4, 1 }, { 0, 1 } }, { { 5, 1 } }));
-    CellEngineWellStirredChemicalReactionsSimulationObjectObject.AddReaction(Reaction("CH3CHCH2 + HX + ", { { 6, 1 }, { 7, 1 } }, { { 8, 1 } }));
-    CellEngineWellStirredChemicalReactionsSimulationObjectObject.AddReaction(Reaction("CH2CH2 + O + ", { { 9, 1 }, { 2, 1 } }, { { 10, 1 } }));
+    CellEngineWellStirredChemicalReactionsSimulationObjectObject.AddReaction(Reaction("C6H12O6 + O6 + ", { { 1, 1, true }, { 2, 6, true } }, { { 3, 6, true }, { 2, 6, true } }));
+    CellEngineWellStirredChemicalReactionsSimulationObjectObject.AddReaction(Reaction("CH2CH2 + H2O + ", { { 4, 1, true }, { 0, 1, true } }, { { 5, 1, true } }));
+    CellEngineWellStirredChemicalReactionsSimulationObjectObject.AddReaction(Reaction("CH3CHCH2 + HX + ", { { 6, 1, true }, { 7, 1, true } }, { { 8, 1, true } }));
+    CellEngineWellStirredChemicalReactionsSimulationObjectObject.AddReaction(Reaction("CH2CH2 + O + ", { { 9, 1, true }, { 2, 1, true } }, { { 10, 1, true } }));
 }
 
 class MockCellEngineWellStirredChemicalReactionsSimulation : public CellEngineWellStirredChemicalReactionsSimulation
