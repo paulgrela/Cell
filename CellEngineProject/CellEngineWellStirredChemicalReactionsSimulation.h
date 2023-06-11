@@ -23,8 +23,8 @@ public:
     std::mt19937_64 mt64X{ std::random_device{}() };
 public:
     std::vector<UnsignedInt> GetRandomParticles(UnsignedInt NumberOfReactants) override;
-    bool IsReactionPossible(const Reaction& ReactionObject)override;
-    void MakeReaction(Reaction& ReactionObject) override;
+    bool IsChemicalReactionPossible(const Reaction& ReactionObject)override;
+    void MakeChemicalReaction(Reaction& ReactionObject) override;
 public:
     void Run(UnsignedInt NumberOfSteps);
 };

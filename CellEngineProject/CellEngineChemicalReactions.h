@@ -13,19 +13,19 @@ protected:
     std::vector<Reaction> Reactions;
     std::unordered_map<std::string, UnsignedInt> ReactionsIdByString;
 public:
-    CellEngineChemicalReactions();
+    void PreprocessReactions();
 public:
-    void AddReaction(const Reaction& ReactionParam)
+    void AddChemicalReaction(const Reaction& ReactionParam)
     {
         Reactions.emplace_back(ReactionParam);
         ReactionsIdByString.insert(std::make_pair(ReactionParam.ReactantsStr, Reactions.size() - 1));
     }
 public:
     virtual std::vector<UnsignedInt> GetRandomParticles(UnsignedInt NumberOfReactants) = 0;
-    virtual bool IsReactionPossible(const Reaction& ReactionObject) = 0;
-    virtual void MakeReaction(Reaction& ReactionObject) = 0;
+    virtual bool IsChemicalReactionPossible(const Reaction& ReactionObject) = 0;
+    virtual void MakeChemicalReaction(Reaction& ReactionObject) = 0;
 public:
-    bool TryToMakeRandomReaction(UnsignedInt NumberOfReactants);
+    bool TryToMakeRandomChemicalReaction(UnsignedInt NumberOfReactants);
 };
 
 void ReadChemicalReactionsFromFile();

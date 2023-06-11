@@ -236,10 +236,12 @@ void CellEngineVoxelSimulationSpace::AddBasicParticlesKindsAndReactions()
         ParticlesKindsManagerObject.AddParticleKind({ 11, "Oxygen", "0", 0 });
         ParticlesKindsManagerObject.AddParticleKind({ 12, "DNA", "CGATATTAAATAGGGCCT", 0 });
 
-        AddReaction(Reaction("C6H12O6 + O6 + ", { { 1, 1, true }, { 2, 2, true } }, { { 0, 6, true }, { 0, 6, true } }));
-        AddReaction(Reaction("CH2CH2 + H2O + ", { { 4, 1, true }, { 0, 1, true } }, { { 5, 1, true } }));
-        AddReaction(Reaction("CH3CHCH2 + HX + ", { { 6, 1, true }, { 7, 1, true } }, { { 8, 1, true } }));
-        AddReaction(Reaction("CH2CH2 + O + ", { { 9, 1, true }, { 11, 1, true } }, { { 10, 1, true } }));
+        AddChemicalReaction(Reaction("C6H12O6 + O6 + ", { {1, 1, true}, {2, 2, true}}, {{0, 6, true}, {0, 6, true} }));
+        AddChemicalReaction(Reaction("CH2CH2 + H2O + ", { {4, 1, true}, {0, 1, true}}, {{5, 1, true} }));
+        AddChemicalReaction(Reaction("CH3CHCH2 + HX + ", { {6, 1, true}, {7, 1, true}}, {{8, 1, true} }));
+        AddChemicalReaction(Reaction("CH2CH2 + O + ", { {9,  1, true}, {11, 1, true}}, {{10, 1, true} }));
+
+        PreprocessReactions();
     }
     CATCH("adding particles kinds and reactions")
 };
@@ -499,7 +501,7 @@ void CellEngineVoxelSimulationSpace::EraseParticlesChosenForReactionAndGetCenter
     CATCH("erasing particles chosen for reaction and get centers for new products of reaction")
 }
 
-void CellEngineVoxelSimulationSpace::MakeReaction(Reaction& ReactionObject)
+void CellEngineVoxelSimulationSpace::MakeChemicalReaction(Reaction& ReactionObject)
 {
     try
     {
@@ -552,12 +554,12 @@ std::vector<UnsignedInt> CellEngineVoxelSimulationSpace::GetRandomParticles(cons
     return RandomParticlesTypes;
 }
 
-bool CellEngineVoxelSimulationSpace::IsReactionPossible(const Reaction& ReactionObject)
+bool CellEngineVoxelSimulationSpace::IsChemicalReactionPossible(const Reaction& ReactionObject)
 {
     return all_of(ReactionObject.Reactants.begin(), ReactionObject.Reactants.end(), [this](const ParticleKindForReaction& ReactionReactant){ return ReactionReactant.Counter <= ParticlesKindsFoundInParticlesProximity[ReactionReactant.EntityId]; });
 }
 
-//bool CellEngineVoxelSimulationSpace::TryToMakeRandomReaction(const UnsignedInt NumberOfReactants)
+//bool CellEngineVoxelSimulationSpace::TryToMakeRandomChemicalReaction(const UnsignedInt NumberOfReactants)
 //{
 //    try
 //    {
@@ -585,10 +587,10 @@ bool CellEngineVoxelSimulationSpace::IsReactionPossible(const Reaction& Reaction
 //            {
 //                auto& ReactionObject = Reactions[ReactionIter->second];
 //
-//                bool IsPossible = IsReactionPossible(ReactionObject);
+//                bool IsPossible = IsChemicalReactionPossible(ReactionObject);
 //                if (IsPossible == true)
 //                {
-//                    MakeReaction(ReactionObject);
+//                    MakeChemicalReaction(ReactionObject);
 //                    return true;
 //                }
 //                else
@@ -629,7 +631,7 @@ void CellEngineVoxelSimulationSpace::GenerateRandomReactionForParticle(Particle&
 
             UnsignedInt NumberOfReactants = UniformDistributionObjectNumberOfReactants_Uint64t(mt64R);
 
-            if (TryToMakeRandomReaction(NumberOfReactants) == true)
+            if (TryToMakeRandomChemicalReaction(NumberOfReactants) == true)
                 break;
         }
     }

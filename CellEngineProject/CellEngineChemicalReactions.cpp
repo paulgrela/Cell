@@ -11,7 +11,7 @@
 
 using namespace std;
 
-CellEngineChemicalReactions::CellEngineChemicalReactions()
+void CellEngineChemicalReactions::PreprocessReactions()
 {
     try
     {
@@ -21,7 +21,7 @@ CellEngineChemicalReactions::CellEngineChemicalReactions()
     CATCH("executing constructor CellEngineChemicalReactions")
 }
 
-bool CellEngineChemicalReactions::TryToMakeRandomReaction(const UnsignedInt NumberOfReactants)
+bool CellEngineChemicalReactions::TryToMakeRandomChemicalReaction(UnsignedInt NumberOfReactants)
 {
     try
     {
@@ -49,10 +49,10 @@ bool CellEngineChemicalReactions::TryToMakeRandomReaction(const UnsignedInt Numb
             {
                 auto& ReactionObject = Reactions[ReactionIter->second];
 
-                bool IsPossible = IsReactionPossible(ReactionObject);
+                bool IsPossible = IsChemicalReactionPossible(ReactionObject);
                 if (IsPossible == true)
                 {
-                    MakeReaction(ReactionObject);
+                    MakeChemicalReaction(ReactionObject);
                     return true;
                 }
                 else

@@ -78,8 +78,8 @@ public:
     void GenerateRandomReactionForParticle(Particle& ParticleObject);
 public:
     std::vector<UnsignedInt> GetRandomParticles(UnsignedInt NumberOfReactants) override;
-    bool IsReactionPossible(const Reaction& ReactionObject) override;
-    void MakeReaction(Reaction& ReactionObject) override;
+    bool IsChemicalReactionPossible(const Reaction& ReactionObject) override;
+    void MakeChemicalReaction(Reaction& ReactionObject) override;
 public:
     void FindParticlesInProximityOfVoxelSimulationSpaceForChosenParticle(const Particle& ParticleObject, UnsignedInt AdditionalBoundFactor);
     std::vector<UniqueIdInt> ChooseParticlesForReactionFromAllParticlesInProximity(Reaction& ReactionObject);

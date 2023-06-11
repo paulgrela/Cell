@@ -27,7 +27,7 @@ std::vector<UnsignedInt> CellEngineWellStirredChemicalReactionsSimulation::GetRa
     return RandomParticlesTypes;
 }
 
-void CellEngineWellStirredChemicalReactionsSimulation::MakeReaction(Reaction& ReactionObject)
+void CellEngineWellStirredChemicalReactionsSimulation::MakeChemicalReaction(Reaction& ReactionObject)
 {
     try
     {
@@ -52,12 +52,12 @@ void CellEngineWellStirredChemicalReactionsSimulation::MakeReaction(Reaction& Re
     CATCH("making reaction")
 }
 
-bool CellEngineWellStirredChemicalReactionsSimulation::IsReactionPossible(const Reaction& ReactionObject)
+bool CellEngineWellStirredChemicalReactionsSimulation::IsChemicalReactionPossible(const Reaction& ReactionObject)
 {
     return all_of(ReactionObject.Reactants.begin(), ReactionObject.Reactants.end(), [this](const ParticleKindForReaction& ReactionReactant){ return ReactionReactant.Counter <= ParticlesKindsManagerObject.ParticlesKinds[ReactionReactant.EntityId].Counter; });
 };
 
-//bool CellEngineWellStirredChemicalReactionsSimulation::TryToMakeRandomReaction(const UnsignedInt NumberOfReactants)
+//bool CellEngineWellStirredChemicalReactionsSimulation::TryToMakeRandomChemicalReaction(const UnsignedInt NumberOfReactants)
 //{
 //    try
 //    {
@@ -85,10 +85,10 @@ bool CellEngineWellStirredChemicalReactionsSimulation::IsReactionPossible(const 
 //            {
 //                auto& ReactionObject = Reactions[ReactionIter->second];
 //
-//                bool IsPossible = IsReactionPossible(ReactionObject);
+//                bool IsPossible = IsChemicalReactionPossible(ReactionObject);
 //                if (IsPossible == true)
 //                {
-//                    MakeReaction(ReactionObject);
+//                    MakeChemicalReaction(ReactionObject);
 //                    return true;
 //                }
 //                else
@@ -110,5 +110,5 @@ bool CellEngineWellStirredChemicalReactionsSimulation::IsReactionPossible(const 
 void CellEngineWellStirredChemicalReactionsSimulation::Run(UnsignedInt NumberOfSteps)
 {
     for (UnsignedInt Steps = 1; Steps <= NumberOfSteps; Steps++)
-        TryToMakeRandomReaction(2);
+        TryToMakeRandomChemicalReaction(2);
 }
