@@ -383,25 +383,6 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfDiffusionForSelectedRangeO
     CATCH("generating one step of diffusion")
 }
 
-std::vector<UnsignedInt> CellEngineVoxelSimulationSpace::GetRandomParticles(const UnsignedInt NumberOfReactants, map<EntityIdInt, UnsignedInt>& ParticlesKinds)
-{
-    vector<UnsignedInt> RandomParticlesTypes;
-
-    try
-    {
-        std::uniform_int_distribution<UnsignedInt> UniformDistributionObjectUint64t(0, ParticlesKinds.size() - 1);
-
-        for (UnsignedInt ReactantNumber = 1; ReactantNumber <= NumberOfReactants; ReactantNumber++)
-        {
-            RandomParticlesTypes.emplace_back(std::next(std::begin(ParticlesKinds), static_cast<int>(UniformDistributionObjectUint64t(mt64R)))->first);
-            LoggersManagerObject.Log(STREAM("ParticleKind Reactant " << to_string(ReactantNumber) << " (" << to_string(RandomParticlesTypes.back()) << ")"));
-        }
-    }
-    CATCH("getting random particles kind")
-
-    return RandomParticlesTypes;
-}
-
 bool CellEngineVoxelSimulationSpace::CompareFitnessOfDNASequenceByString(const EntityIdInt ReactantEntityId, const Particle& ParticleObjectForReaction)
 {
     bool FoundSequenceOuter = false;
@@ -555,6 +536,71 @@ void CellEngineVoxelSimulationSpace::MakeReaction(Reaction& ReactionObject, map<
     CATCH("making reaction")
 };
 
+std::vector<UnsignedInt> CellEngineVoxelSimulationSpace::GetRandomParticles(const UnsignedInt NumberOfReactants, map<EntityIdInt, UnsignedInt>& ParticlesKinds)
+{
+    vector<UnsignedInt> RandomParticlesTypes;
+
+    try
+    {
+        std::uniform_int_distribution<UnsignedInt> UniformDistributionObjectUint64t(0, ParticlesKinds.size() - 1);
+
+        for (UnsignedInt ReactantNumber = 1; ReactantNumber <= NumberOfReactants; ReactantNumber++)
+        {
+            RandomParticlesTypes.emplace_back(std::next(std::begin(ParticlesKinds), static_cast<int>(UniformDistributionObjectUint64t(mt64R)))->first);
+            LoggersManagerObject.Log(STREAM("ParticleKind Reactant " << to_string(ReactantNumber) << " (" << to_string(RandomParticlesTypes.back()) << ")"));
+        }
+    }
+    CATCH("getting random particles kind")
+
+    return RandomParticlesTypes;
+}
+
+bool CellEngineVoxelSimulationSpace::TryDoRandomReaction(const UnsignedInt NumberOfReactants, map<EntityIdInt, UnsignedInt>& ParticlesKindsFoundInParticlesProximity, map<UnsignedInt, UniqueIdInt>& ParticlesSortedByCapacityFoundInParticlesProximity)
+{
+    try
+    {
+        auto RandomParticlesTypes = GetRandomParticles(NumberOfReactants, ParticlesKindsFoundInParticlesProximity);
+
+        sort(begin(RandomParticlesTypes), end(RandomParticlesTypes));
+        auto IteratorUnique = unique(begin(RandomParticlesTypes), end(RandomParticlesTypes));
+        if (IteratorUnique == RandomParticlesTypes.end())
+        {
+            vector<string> ParticlesSymbolsForReactionToSort;
+            ParticlesSymbolsForReactionToSort.reserve(10);
+            for (auto& RandomParticleType : RandomParticlesTypes)
+                ParticlesSymbolsForReactionToSort.emplace_back(ParticlesKindsManagerObject.GetParticleKind(RandomParticleType).Symbol);
+            std::sort(ParticlesSymbolsForReactionToSort.begin(), ParticlesSymbolsForReactionToSort.end());
+
+            string ReactionSymbolsStr;
+            for (auto& ParticleSymbolForReaction : ParticlesSymbolsForReactionToSort)
+                ReactionSymbolsStr += (ParticleSymbolForReaction + " + ");
+            LoggersManagerObject.Log(STREAM("Reaction Symbols = [" << ReactionSymbolsStr << "]" << endl));
+
+            auto ReactionIter = ReactionsIdByString.find(ReactionSymbolsStr);
+            if (ReactionIter != ReactionsIdByString.end())
+            {
+                Reaction ReactionObject = Reactions[ReactionIter->second];
+
+                bool IsPossible = all_of(ReactionObject.Reactants.begin(), ReactionObject.Reactants.end(), [&ParticlesKindsFoundInParticlesProximity](const ParticleKindForReaction& ReactionReactant){ return ReactionReactant.Counter <= ParticlesKindsFoundInParticlesProximity[ReactionReactant.EntityId]; });
+                if (IsPossible == true)
+                {
+                    MakeReaction(ReactionObject, ParticlesKindsFoundInParticlesProximity, ParticlesSortedByCapacityFoundInParticlesProximity);
+                    return true;
+                }
+                else
+                    LoggersManagerObject.Log(STREAM("Particles types are the same!"));
+            }
+            else
+                LoggersManagerObject.Log(STREAM("Reaction for particles does not exist!"));
+        }
+        else
+            LoggersManagerObject.Log(STREAM("Particles types for reaction are not unique!"));
+    }
+    CATCH("trying to do random reaction")
+
+    return false;
+}
+
 void CellEngineVoxelSimulationSpace::GenerateRandomReactionForParticle(Particle& ParticleObject)
 {
     try
@@ -576,42 +622,9 @@ void CellEngineVoxelSimulationSpace::GenerateRandomReactionForParticle(Particle&
             NumberOfTries++;
 
             UnsignedInt NumberOfReactants = UniformDistributionObjectNumberOfReactants_Uint64t(mt64R);
-            auto RandomParticlesTypes = GetRandomParticles(NumberOfReactants, ParticlesKindsFoundInParticlesProximity);
 
-            sort(begin(RandomParticlesTypes), end(RandomParticlesTypes));
-            auto IteratorUnique = unique(begin(RandomParticlesTypes), end(RandomParticlesTypes));
-            if (IteratorUnique == RandomParticlesTypes.end())
-            {
-                vector<string> ParticlesSymbolsForReactionToSort;
-                ParticlesSymbolsForReactionToSort.reserve(10);
-                for (auto& RandomParticleType : RandomParticlesTypes)
-                    ParticlesSymbolsForReactionToSort.emplace_back(ParticlesKindsManagerObject.GetParticleKind(RandomParticleType).Symbol);
-                std::sort(ParticlesSymbolsForReactionToSort.begin(), ParticlesSymbolsForReactionToSort.end());
-
-                string ReactionSymbolsStr;
-                for (auto& ParticleSymbolForReaction : ParticlesSymbolsForReactionToSort)
-                    ReactionSymbolsStr += (ParticleSymbolForReaction + " + ");
-                LoggersManagerObject.Log(STREAM("Reaction Symbols = [" << ReactionSymbolsStr << "]" << endl));
-
-                auto ReactionIter = ReactionsIdByString.find(ReactionSymbolsStr);
-                if (ReactionIter != ReactionsIdByString.end())
-                {
-                    Reaction ReactionObject = Reactions[ReactionIter->second];
-
-                    bool IsPossible = all_of(ReactionObject.Reactants.begin(), ReactionObject.Reactants.end(), [&ParticlesKindsFoundInParticlesProximity](const ParticleKindForReaction& ReactionReactant){ return ReactionReactant.Counter <= ParticlesKindsFoundInParticlesProximity[ReactionReactant.EntityId]; });
-                    if (IsPossible == true)
-                    {
-                        MakeReaction(ReactionObject, ParticlesKindsFoundInParticlesProximity, ParticlesSortedByCapacityFoundInParticlesProximity);
-                        break;
-                    }
-                    else
-                        LoggersManagerObject.Log(STREAM("Particles types are the same!"));
-                }
-                else
-                    LoggersManagerObject.Log(STREAM("Reaction for particles does not exist!"));
-            }
-            else
-                LoggersManagerObject.Log(STREAM("Particles types for reaction are not unique!"));
+            if (TryDoRandomReaction(NumberOfReactants, ParticlesKindsFoundInParticlesProximity, ParticlesSortedByCapacityFoundInParticlesProximity) == true)
+                break;
         }
     }
     CATCH("generating random reaction for particle")

@@ -78,6 +78,7 @@ public:
 public:
     void GenerateRandomReactionForParticle(Particle& ParticleObject);
 public:
+    bool TryDoRandomReaction(UnsignedInt NumberOfReactants, std::map<EntityIdInt, UnsignedInt>& ParticlesKindsFoundInParticlesProximity, std::map<UnsignedInt, UniqueIdInt>& ParticlesSortedByCapacityFoundInParticlesProximity);
     void MakeReaction(Reaction& ReactionObject, std::map<EntityIdInt, UnsignedInt>& ParticlesKindsFoundInParticlesProximity, std::map<UnsignedInt, UniqueIdInt>& ParticlesSortedByCapacityFoundInParticlesProximity);
     void FindParticlesInProximityOfVoxelSimulationSpaceForChosenParticle(const Particle& ParticleObject, UnsignedInt AdditionalBoundFactor, std::map<EntityIdInt, UnsignedInt>& ParticlesKindsFoundInParticlesProximity, std::map<UnsignedInt, UniqueIdInt>& ParticlesSortedByCapacityFoundInParticlesProximity);
     std::vector<UniqueIdInt> ChooseParticlesForReactionFromAllParticlesInProximity(Reaction& ReactionObject, const std::map<UnsignedInt, UniqueIdInt>& ParticlesSortedByCapacityFoundInParticlesProximity);
