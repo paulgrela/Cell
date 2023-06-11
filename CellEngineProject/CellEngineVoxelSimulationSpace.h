@@ -77,6 +77,12 @@ public:
     void GenerateRandomReactionsForAllParticles();
     void GenerateRandomReactionsInWholeVoxelSimulationSpace();
 public:
+    void FindParticlesInProximityOfVoxelSimulationSpaceForChosenParticle(const Particle& ParticleObject, UnsignedInt AdditionalBoundFactor, std::map<EntityIdInt, UnsignedInt>& ParticlesKindsFoundInParticlesProximity, std::map<UnsignedInt, UniqueIdInt>& ParticlesSortedByCapacityFoundInParticlesProximity);
+    std::vector<UniqueIdInt> ChooseParticlesForReactionFromAllParticlesInProximity(Reaction& ReactionObject, const std::map<UnsignedInt, UniqueIdInt>& ParticlesSortedByCapacityFoundInParticlesProximity);
+    bool CompareFitnessOfDNASequenceByString(EntityIdInt ReactantEntityId, const Particle& ParticleObjectForReaction);
+    bool CompareFitnessOfDNASequenceByNucleotidesLoop(EntityIdInt ReactantEntityId, const Particle& ParticleObjectForReaction);
+    void EraseParticlesChosenForReactionAndGetCentersForNewProductsOfReaction(UnsignedInt ParticleIndexChosenForReaction, std::vector<vector3_16>& Centers);
+public:
     void GenerateParticle(EntityIdInt EntityId, ChainIdInt ChainId, UnsignedInt GenomeIndex, UnsignedInt StartPosX, UnsignedInt StartPosY, UnsignedInt StartPosZ, UnsignedInt ParticleSizeX, UnsignedInt ParticleSizeY, UnsignedInt ParticleSizeZ, std::vector<UniqueIdInt>& Genome, vector3_16 UniqueColorParam);
     void GenerateTwoPairedNucleotides(EntityIdInt EntityId, ChainIdInt ChainId, UnsignedInt GenomeIndex, UnsignedInt StartPosX, UnsignedInt StartPosY, UnsignedInt StartPosZ, UnsignedInt ParticleSizeX, UnsignedInt ParticleSizeY, UnsignedInt ParticleSizeZ, UnsignedInt AddSizeX, UnsignedInt AddSizeY, UnsignedInt AddSizeZ, vector3_16 UniqueColorParam);
 public:
