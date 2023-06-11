@@ -72,11 +72,13 @@ public:
     void GenerateOneStepOfDiffusionForSelectedRangeOfParticles(UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
 public:
     std::vector<UnsignedInt> GetRandomParticles(UnsignedInt NumberOfReactants, std::map<EntityIdInt, UnsignedInt>& ParticlesKinds);
-    void GenerateRandomReactionForParticle(Particle& ParticleObject);
     void GenerateOneStepOfRandomReactionsForSelectedRangeOfParticles(UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
     void GenerateRandomReactionsForAllParticles();
     void GenerateRandomReactionsInWholeVoxelSimulationSpace();
 public:
+    void GenerateRandomReactionForParticle(Particle& ParticleObject);
+public:
+    void MakeReaction(Reaction& ReactionObject, std::map<EntityIdInt, UnsignedInt>& ParticlesKindsFoundInParticlesProximity, std::map<UnsignedInt, UniqueIdInt>& ParticlesSortedByCapacityFoundInParticlesProximity);
     void FindParticlesInProximityOfVoxelSimulationSpaceForChosenParticle(const Particle& ParticleObject, UnsignedInt AdditionalBoundFactor, std::map<EntityIdInt, UnsignedInt>& ParticlesKindsFoundInParticlesProximity, std::map<UnsignedInt, UniqueIdInt>& ParticlesSortedByCapacityFoundInParticlesProximity);
     std::vector<UniqueIdInt> ChooseParticlesForReactionFromAllParticlesInProximity(Reaction& ReactionObject, const std::map<UnsignedInt, UniqueIdInt>& ParticlesSortedByCapacityFoundInParticlesProximity);
     bool CompareFitnessOfDNASequenceByString(EntityIdInt ReactantEntityId, const Particle& ParticleObjectForReaction);

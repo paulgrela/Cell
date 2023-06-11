@@ -520,6 +520,41 @@ void CellEngineVoxelSimulationSpace::EraseParticlesChosenForReactionAndGetCenter
     CATCH("erasing particles chosen for reaction and get centers for new products of reaction")
 }
 
+void CellEngineVoxelSimulationSpace::MakeReaction(Reaction& ReactionObject, map<EntityIdInt, UnsignedInt>& ParticlesKindsFoundInParticlesProximity, map<UnsignedInt, UniqueIdInt>& ParticlesSortedByCapacityFoundInParticlesProximity)
+{
+    try
+    {
+        vector<UniqueIdInt> ParticlesIndexesChosenForReaction = ChooseParticlesForReactionFromAllParticlesInProximity(ReactionObject, ParticlesSortedByCapacityFoundInParticlesProximity);
+
+        vector<vector3_16> Centers;
+        for (const auto& ParticleIndexChosenForReaction : ParticlesIndexesChosenForReaction)
+            EraseParticlesChosenForReactionAndGetCentersForNewProductsOfReaction(ParticleIndexChosenForReaction, Centers);
+
+        UnsignedInt CenterIndex = 0;
+        sort(ReactionObject.Products.begin(), ReactionObject.Products.end(), [](ParticleKindForReaction& PK1, ParticleKindForReaction& PK2){ return ParticlesKindsManagerObject.GetParticleKind(PK1.EntityId).ListOfVoxels.size() > ParticlesKindsManagerObject.GetParticleKind(PK2.EntityId).ListOfVoxels.size(); } );
+        for (const auto& ReactionProduct : ReactionObject.Products)
+        {
+            UnsignedInt ParticleIndex = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), ReactionProduct.EntityId, 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
+
+            auto& ParticleKindObjectForProduct = ParticlesKindsManagerObject.GetParticleKind(ReactionProduct.EntityId);
+
+            if (CenterIndex < Centers.size())
+                for (auto& ParticleKindVoxel : ParticleKindObjectForProduct.ListOfVoxels)
+                {
+                    vector3_64 NewVoxel(Centers[CenterIndex].X - ParticleKindObjectForProduct.XSizeDiv2 + ParticleKindVoxel.X, Centers[CenterIndex].Y - ParticleKindObjectForProduct.YSizeDiv2 + ParticleKindVoxel.Y, Centers[CenterIndex].Z - ParticleKindObjectForProduct.ZSizeDiv2 + ParticleKindVoxel.Z);
+                    GetSpaceVoxel(NewVoxel.X, NewVoxel.Y, NewVoxel.Z) = ParticleIndex;
+                    GetParticleFromIndex(ParticleIndex).ListOfVoxels.emplace_back(NewVoxel.X, NewVoxel.Y, NewVoxel.Z);
+                }
+            else
+            {
+            }
+
+            CenterIndex++;
+        }
+    }
+    CATCH("making reaction")
+};
+
 void CellEngineVoxelSimulationSpace::GenerateRandomReactionForParticle(Particle& ParticleObject)
 {
     try
@@ -566,34 +601,7 @@ void CellEngineVoxelSimulationSpace::GenerateRandomReactionForParticle(Particle&
                     bool IsPossible = all_of(ReactionObject.Reactants.begin(), ReactionObject.Reactants.end(), [&ParticlesKindsFoundInParticlesProximity](const ParticleKindForReaction& ReactionReactant){ return ReactionReactant.Counter <= ParticlesKindsFoundInParticlesProximity[ReactionReactant.EntityId]; });
                     if (IsPossible == true)
                     {
-                        vector<UniqueIdInt> ParticlesIndexesChosenForReaction = ChooseParticlesForReactionFromAllParticlesInProximity(ReactionObject, ParticlesSortedByCapacityFoundInParticlesProximity);
-
-                        vector<vector3_16> Centers;
-                        for (const auto& ParticleIndexChosenForReaction : ParticlesIndexesChosenForReaction)
-                            EraseParticlesChosenForReactionAndGetCentersForNewProductsOfReaction(ParticleIndexChosenForReaction, Centers);
-
-                        UnsignedInt CenterIndex = 0;
-                        sort(ReactionObject.Products.begin(), ReactionObject.Products.end(), [](ParticleKindForReaction& PK1, ParticleKindForReaction& PK2){ return ParticlesKindsManagerObject.GetParticleKind(PK1.EntityId).ListOfVoxels.size() > ParticlesKindsManagerObject.GetParticleKind(PK2.EntityId).ListOfVoxels.size(); } );
-                        for (const auto& ReactionProduct : ReactionObject.Products)
-                        {
-                            UnsignedInt ParticleIndex = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), ReactionProduct.EntityId, 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
-
-                            auto& ParticleKindObjectForProduct = ParticlesKindsManagerObject.GetParticleKind(ReactionProduct.EntityId);
-
-                            if (CenterIndex < Centers.size())
-                                for (auto& ParticleKindVoxel : ParticleKindObjectForProduct.ListOfVoxels)
-                                {
-                                    vector3_64 NewVoxel(Centers[CenterIndex].X - ParticleKindObjectForProduct.XSizeDiv2 + ParticleKindVoxel.X, Centers[CenterIndex].Y - ParticleKindObjectForProduct.YSizeDiv2 + ParticleKindVoxel.Y, Centers[CenterIndex].Z - ParticleKindObjectForProduct.ZSizeDiv2 + ParticleKindVoxel.Z);
-                                    GetSpaceVoxel(NewVoxel.X, NewVoxel.Y, NewVoxel.Z) = ParticleIndex;
-                                    GetParticleFromIndex(ParticleIndex).ListOfVoxels.emplace_back(NewVoxel.X, NewVoxel.Y, NewVoxel.Z);
-                                }
-                            else
-                            {
-                            }
-
-                            CenterIndex++;
-                        }
-
+                        MakeReaction(ReactionObject, ParticlesKindsFoundInParticlesProximity, ParticlesSortedByCapacityFoundInParticlesProximity);
                         break;
                     }
                     else
