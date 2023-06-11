@@ -13,7 +13,7 @@ protected:
     std::vector<Reaction> Reactions;
     std::unordered_map<std::string, UnsignedInt> ReactionsIdByString;
 public:
-    void PreprocessReactions();
+    void PreprocessChemicalReactions();
 public:
     void AddChemicalReaction(const Reaction& ReactionParam)
     {

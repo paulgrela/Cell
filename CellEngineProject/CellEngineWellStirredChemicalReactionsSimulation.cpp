@@ -57,56 +57,6 @@ bool CellEngineWellStirredChemicalReactionsSimulation::IsChemicalReactionPossibl
     return all_of(ReactionObject.Reactants.begin(), ReactionObject.Reactants.end(), [this](const ParticleKindForReaction& ReactionReactant){ return ReactionReactant.Counter <= ParticlesKindsManagerObject.ParticlesKinds[ReactionReactant.EntityId].Counter; });
 };
 
-//bool CellEngineWellStirredChemicalReactionsSimulation::TryToMakeRandomChemicalReaction(const UnsignedInt NumberOfReactants)
-//{
-//    try
-//    {
-//        LoggersManagerObject.Log(STREAM(endl << "REACTION" << endl));
-//
-//        vector<UnsignedInt> RandomParticlesTypes = GetRandomParticles(NumberOfReactants);
-//
-//        sort(begin(RandomParticlesTypes), end(RandomParticlesTypes));
-//        auto IteratorUnique = unique(begin(RandomParticlesTypes), end(RandomParticlesTypes));
-//        if (IteratorUnique == RandomParticlesTypes.end())
-//        {
-//            vector<string> ParticlesSymbolsForReactionToSort;
-//            ParticlesSymbolsForReactionToSort.reserve(10);
-//            for (auto& RandomParticleType : RandomParticlesTypes)
-//                ParticlesSymbolsForReactionToSort.emplace_back(ParticlesKindsManagerObject.GetParticleKind(RandomParticleType).Symbol);
-//            std::sort(ParticlesSymbolsForReactionToSort.begin(), ParticlesSymbolsForReactionToSort.end());
-//
-//            string ReactionSymbolsStr;
-//            for (auto& ParticleSymbolForReaction : ParticlesSymbolsForReactionToSort)
-//                ReactionSymbolsStr += (ParticleSymbolForReaction + " + ");
-//            LoggersManagerObject.Log(STREAM("Reaction Symbols = [" << ReactionSymbolsStr << "]" << endl));
-//
-//            auto ReactionIter = ReactionsIdByString.find(ReactionSymbolsStr);
-//            if (ReactionIter != ReactionsIdByString.end())
-//            {
-//                auto& ReactionObject = Reactions[ReactionIter->second];
-//
-//                bool IsPossible = IsChemicalReactionPossible(ReactionObject);
-//                if (IsPossible == true)
-//                {
-//                    MakeChemicalReaction(ReactionObject);
-//                    return true;
-//                }
-//                else
-//                    LoggersManagerObject.Log(STREAM("Particles types are the same!"));
-//            }
-//            else
-//                LoggersManagerObject.Log(STREAM("Reaction for particles does not exist!"));
-//        }
-//        else
-//            LoggersManagerObject.Log(STREAM("Particles types for reaction are not unique!"));
-//
-//        LoggersManagerObject.Log(STREAM("END OF REACTION" << endl));
-//    }
-//    CATCH("making random reaction")
-//
-//    return false;
-//}
-
 void CellEngineWellStirredChemicalReactionsSimulation::Run(UnsignedInt NumberOfSteps)
 {
     for (UnsignedInt Steps = 1; Steps <= NumberOfSteps; Steps++)

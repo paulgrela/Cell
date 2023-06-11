@@ -11,7 +11,7 @@
 
 using namespace std;
 
-void CellEngineChemicalReactions::PreprocessReactions()
+void CellEngineChemicalReactions::PreprocessChemicalReactions()
 {
     try
     {

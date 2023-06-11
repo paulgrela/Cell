@@ -241,7 +241,7 @@ void CellEngineVoxelSimulationSpace::AddBasicParticlesKindsAndReactions()
         AddChemicalReaction(Reaction("CH3CHCH2 + HX + ", { {6, 1, true}, {7, 1, true}}, {{8, 1, true} }));
         AddChemicalReaction(Reaction("CH2CH2 + O + ", { {9,  1, true}, {11, 1, true}}, {{10, 1, true} }));
 
-        PreprocessReactions();
+        PreprocessChemicalReactions();
     }
     CATCH("adding particles kinds and reactions")
 };
@@ -558,56 +558,6 @@ bool CellEngineVoxelSimulationSpace::IsChemicalReactionPossible(const Reaction& 
 {
     return all_of(ReactionObject.Reactants.begin(), ReactionObject.Reactants.end(), [this](const ParticleKindForReaction& ReactionReactant){ return ReactionReactant.Counter <= ParticlesKindsFoundInParticlesProximity[ReactionReactant.EntityId]; });
 }
-
-//bool CellEngineVoxelSimulationSpace::TryToMakeRandomChemicalReaction(const UnsignedInt NumberOfReactants)
-//{
-//    try
-//    {
-//        LoggersManagerObject.Log(STREAM(endl << "REACTION" << endl));
-//
-//        auto RandomParticlesTypes = GetRandomParticles(NumberOfReactants);
-//
-//        sort(begin(RandomParticlesTypes), end(RandomParticlesTypes));
-//        auto IteratorUnique = unique(begin(RandomParticlesTypes), end(RandomParticlesTypes));
-//        if (IteratorUnique == RandomParticlesTypes.end())
-//        {
-//            vector<string> ParticlesSymbolsForReactionToSort;
-//            ParticlesSymbolsForReactionToSort.reserve(10);
-//            for (auto& RandomParticleType : RandomParticlesTypes)
-//                ParticlesSymbolsForReactionToSort.emplace_back(ParticlesKindsManagerObject.GetParticleKind(RandomParticleType).Symbol);
-//            std::sort(ParticlesSymbolsForReactionToSort.begin(), ParticlesSymbolsForReactionToSort.end());
-//
-//            string ReactionSymbolsStr;
-//            for (auto& ParticleSymbolForReaction : ParticlesSymbolsForReactionToSort)
-//                ReactionSymbolsStr += (ParticleSymbolForReaction + " + ");
-//            LoggersManagerObject.Log(STREAM("Reaction Symbols = [" << ReactionSymbolsStr << "]" << endl));
-//
-//            auto ReactionIter = ReactionsIdByString.find(ReactionSymbolsStr);
-//            if (ReactionIter != ReactionsIdByString.end())
-//            {
-//                auto& ReactionObject = Reactions[ReactionIter->second];
-//
-//                bool IsPossible = IsChemicalReactionPossible(ReactionObject);
-//                if (IsPossible == true)
-//                {
-//                    MakeChemicalReaction(ReactionObject);
-//                    return true;
-//                }
-//                else
-//                    LoggersManagerObject.Log(STREAM("Particles types are the same!"));
-//            }
-//            else
-//                LoggersManagerObject.Log(STREAM("Reaction for particles does not exist!"));
-//        }
-//        else
-//            LoggersManagerObject.Log(STREAM("Particles types for reaction are not unique!"));
-//
-//        LoggersManagerObject.Log(STREAM("END OF REACTION" << endl));
-//    }
-//    CATCH("trying to do random reaction")
-//
-//    return false;
-//}
 
 void CellEngineVoxelSimulationSpace::GenerateRandomReactionForParticle(Particle& ParticleObject)
 {
