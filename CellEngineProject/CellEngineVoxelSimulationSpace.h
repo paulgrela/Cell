@@ -10,6 +10,7 @@
 #include "CellEngineParticle.h"
 #include "CellEngineReaction.h"
 #include "CellEngineConfigData.h"
+#include "CellEngineChemicalReactions.h"
 
 using SimulationSpaceVoxel = UniqueIdInt;
 
@@ -19,7 +20,7 @@ constexpr UnsignedInt NumberOfVoxelSimulationSpaceInEachDimensionMaxConst2048 = 
 using Space_1024_1024_1024 = SimulationSpaceVoxel[NumberOfVoxelSimulationSpaceInEachDimensionMaxConst1024][NumberOfVoxelSimulationSpaceInEachDimensionMaxConst1024][NumberOfVoxelSimulationSpaceInEachDimensionMaxConst1024];
 using Space_2048_2048_2048 = SimulationSpaceVoxel[NumberOfVoxelSimulationSpaceInEachDimensionMaxConst2048][NumberOfVoxelSimulationSpaceInEachDimensionMaxConst2048][NumberOfVoxelSimulationSpaceInEachDimensionMaxConst2048];
 
-class CellEngineVoxelSimulationSpace
+class CellEngineVoxelSimulationSpace : public CellEngineChemicalReactions
 {
 public:
     std::mt19937_64 mt64R{ std::random_device{}() };
@@ -33,8 +34,8 @@ private:
     std::unordered_map<UniqueIdInt, Particle> Particles;
     std::stack<UniqueIdInt> FreeIndexesOfParticles;
 private:
-    std::vector<Reaction> Reactions;
-    std::unordered_map<std::string, UnsignedInt> ReactionsIdByString;
+    std::map<EntityIdInt, UnsignedInt> ParticlesKindsFoundInParticlesProximity;
+    std::map<UnsignedInt, UniqueIdInt> ParticlesSortedByCapacityFoundInParticlesProximity;
 private:
     void* SpacePointer;
 private:
@@ -64,24 +65,24 @@ public:
     Particle& GetParticleFromIndexInSimulationSpaceVoxel(UniqueIdInt ParticleIndex);
 public:
     UniqueIdInt AddNewParticle(const Particle& ParticleParam);
-    void AddReaction(const Reaction& ReactionParam);
 public:
     void AddBasicParticlesKindsAndReactions();
 public:
     void GenerateRandomParticlesInSelectedSpace(UnsignedInt NumberOfRandomParticles, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt StepXParam, UnsignedInt StepYParam, UnsignedInt StepZParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
     void GenerateOneStepOfDiffusionForSelectedRangeOfParticles(UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
 public:
-    std::vector<UnsignedInt> GetRandomParticles(UnsignedInt NumberOfReactants, std::map<EntityIdInt, UnsignedInt>& ParticlesKinds);
     void GenerateOneStepOfRandomReactionsForSelectedRangeOfParticles(UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
     void GenerateRandomReactionsForAllParticles();
     void GenerateRandomReactionsInWholeVoxelSimulationSpace();
 public:
     void GenerateRandomReactionForParticle(Particle& ParticleObject);
 public:
-    bool TryDoRandomReaction(UnsignedInt NumberOfReactants, std::map<EntityIdInt, UnsignedInt>& ParticlesKindsFoundInParticlesProximity, std::map<UnsignedInt, UniqueIdInt>& ParticlesSortedByCapacityFoundInParticlesProximity);
-    void MakeReaction(Reaction& ReactionObject, std::map<EntityIdInt, UnsignedInt>& ParticlesKindsFoundInParticlesProximity, std::map<UnsignedInt, UniqueIdInt>& ParticlesSortedByCapacityFoundInParticlesProximity);
-    void FindParticlesInProximityOfVoxelSimulationSpaceForChosenParticle(const Particle& ParticleObject, UnsignedInt AdditionalBoundFactor, std::map<EntityIdInt, UnsignedInt>& ParticlesKindsFoundInParticlesProximity, std::map<UnsignedInt, UniqueIdInt>& ParticlesSortedByCapacityFoundInParticlesProximity);
-    std::vector<UniqueIdInt> ChooseParticlesForReactionFromAllParticlesInProximity(Reaction& ReactionObject, const std::map<UnsignedInt, UniqueIdInt>& ParticlesSortedByCapacityFoundInParticlesProximity);
+    std::vector<UnsignedInt> GetRandomParticles(UnsignedInt NumberOfReactants) override;
+    bool IsReactionPossible(const Reaction& ReactionObject) override;
+    void MakeReaction(Reaction& ReactionObject) override;
+public:
+    void FindParticlesInProximityOfVoxelSimulationSpaceForChosenParticle(const Particle& ParticleObject, UnsignedInt AdditionalBoundFactor);
+    std::vector<UniqueIdInt> ChooseParticlesForReactionFromAllParticlesInProximity(Reaction& ReactionObject);
     bool CompareFitnessOfDNASequenceByString(EntityIdInt ReactantEntityId, const Particle& ParticleObjectForReaction);
     bool CompareFitnessOfDNASequenceByNucleotidesLoop(EntityIdInt ReactantEntityId, const Particle& ParticleObjectForReaction);
     void EraseParticlesChosenForReactionAndGetCentersForNewProductsOfReaction(UnsignedInt ParticleIndexChosenForReaction, std::vector<vector3_16>& Centers);

@@ -198,16 +198,6 @@ UniqueIdInt CellEngineVoxelSimulationSpace::AddNewParticle(const Particle& Parti
     return MaxParticleIndex = ParticleParam.Index;
 }
 
-void CellEngineVoxelSimulationSpace::AddReaction(const Reaction& ReactionParam)
-{
-    try
-    {
-        Reactions.emplace_back(ReactionParam);
-        ReactionsIdByString.insert(make_pair(ReactionParam.ReactantsStr, Reactions.size() - 1));
-    }
-    CATCH("adding reaction")
-}
-
 UniqueIdInt CellEngineVoxelSimulationSpace::GetFreeIndexesOfParticleSize()
 {
     return FreeIndexesOfParticles.size();
@@ -232,7 +222,7 @@ void CellEngineVoxelSimulationSpace::AddBasicParticlesKindsAndReactions()
 {
     try
     {
-        ParticlesKindsManagerObject.AddParticleKind({ 0, "Water", "H2O", 0});
+        ParticlesKindsManagerObject.AddParticleKind({ 0, "Water", "H2O", 0 });
         ParticlesKindsManagerObject.AddParticleKind({ 1, "Glucose", "C6H12O6", 0 });
         ParticlesKindsManagerObject.AddParticleKind({ 2, "Oxygen6", "06", 0 });
         ParticlesKindsManagerObject.AddParticleKind({ 3, "Carbon dioxide", "CO2", 0 });
@@ -434,38 +424,46 @@ bool CellEngineVoxelSimulationSpace::CompareFitnessOfDNASequenceByNucleotidesLoo
     return FoundSequenceOuter;
 }
 
-void CellEngineVoxelSimulationSpace::FindParticlesInProximityOfVoxelSimulationSpaceForChosenParticle(const Particle& ParticleObject, const UnsignedInt AdditionalBoundFactor, map<EntityIdInt, UnsignedInt>& ParticlesKindsFoundInParticlesProximity, map<UnsignedInt, UniqueIdInt>& ParticlesSortedByCapacityFoundInParticlesProximity)
+void CellEngineVoxelSimulationSpace::FindParticlesInProximityOfVoxelSimulationSpaceForChosenParticle(const Particle& ParticleObject, const UnsignedInt AdditionalBoundFactor)
 {
-    auto ParticleKindObject = ParticlesKindsManagerObject.GetParticleKind(ParticleObject.EntityId);
-    for (UnsignedInt PosX = ParticleObject.XCenter - ParticleKindObject.XSizeDiv2 - AdditionalBoundFactor; PosX < ParticleObject.XCenter + ParticleKindObject.XSizeDiv2 + AdditionalBoundFactor; PosX++)
-        for (UnsignedInt PosY = ParticleObject.YCenter - ParticleKindObject.YSizeDiv2 - AdditionalBoundFactor; PosX < ParticleObject.YCenter + ParticleKindObject.YSizeDiv2 + AdditionalBoundFactor; PosY++)
-            for (UnsignedInt PosZ = ParticleObject.ZCenter - ParticleKindObject.ZSizeDiv2 - AdditionalBoundFactor; PosX < ParticleObject.ZCenter + ParticleKindObject.ZSizeDiv2 + AdditionalBoundFactor; PosZ++)
-                if (GetSpaceVoxel(PosX, PosZ, PosY) != 0 && GetSpaceVoxel(PosX, PosZ, PosY) != ParticleObject.EntityId)
-                {
-                    UniqueIdInt ParticleIndex = GetSpaceVoxel(PosX, PosZ, PosY);
-                    ParticlesSortedByCapacityFoundInParticlesProximity[GetParticleFromIndex(ParticleIndex).ListOfVoxels.size()] = ParticleIndex;
+    try
+    {
+        auto ParticleKindObject = ParticlesKindsManagerObject.GetParticleKind(ParticleObject.EntityId);
+        for (UnsignedInt PosX = ParticleObject.XCenter - ParticleKindObject.XSizeDiv2 - AdditionalBoundFactor; PosX < ParticleObject.XCenter + ParticleKindObject.XSizeDiv2 + AdditionalBoundFactor; PosX++)
+            for (UnsignedInt PosY = ParticleObject.YCenter - ParticleKindObject.YSizeDiv2 - AdditionalBoundFactor; PosX < ParticleObject.YCenter + ParticleKindObject.YSizeDiv2 + AdditionalBoundFactor; PosY++)
+                for (UnsignedInt PosZ = ParticleObject.ZCenter - ParticleKindObject.ZSizeDiv2 - AdditionalBoundFactor; PosX < ParticleObject.ZCenter + ParticleKindObject.ZSizeDiv2 + AdditionalBoundFactor; PosZ++)
+                    if (GetSpaceVoxel(PosX, PosZ, PosY) != 0 && GetSpaceVoxel(PosX, PosZ, PosY) != ParticleObject.EntityId)
+                    {
+                        UniqueIdInt ParticleIndex = GetSpaceVoxel(PosX, PosZ, PosY);
+                        ParticlesSortedByCapacityFoundInParticlesProximity[GetParticleFromIndex(ParticleIndex).ListOfVoxels.size()] = ParticleIndex;
 
-                    ParticlesKindsFoundInParticlesProximity[ParticlesKindsManagerObject.GetParticleKind(ParticleIndex).EntityId]++;
-                }
+                        ParticlesKindsFoundInParticlesProximity[ParticlesKindsManagerObject.GetParticleKind(ParticleIndex).EntityId]++;
+                    }
+    }
+    CATCH("finding particles in proximity of voxel simulation space for chosen particle")
 }
 
-vector<UniqueIdInt> CellEngineVoxelSimulationSpace::ChooseParticlesForReactionFromAllParticlesInProximity(Reaction& ReactionObject, const map<UnsignedInt, UniqueIdInt>& ParticlesSortedByCapacityFoundInParticlesProximity)
+vector<UniqueIdInt> CellEngineVoxelSimulationSpace::ChooseParticlesForReactionFromAllParticlesInProximity(Reaction& ReactionObject)
 {
     vector<UniqueIdInt> ParticlesIndexesChosenForReaction;
 
     try
     {
+        vector<UnsignedInt> ReactantsCounters(ReactionObject.Reactants.size());
+        for (UnsignedInt ReactantIndex = 0; ReactantIndex < ReactionObject.Reactants.size(); ReactantIndex++)
+            ReactantsCounters[ReactantIndex] = ReactionObject.Reactants[ReactantIndex].Counter;
+
         for (const auto& ParticleObjectIndex : ParticlesSortedByCapacityFoundInParticlesProximity)
         {
             auto& ParticleObjectToBeErased = GetParticleFromIndex(ParticleObjectIndex.second);
 
-            vector<ParticleKindForReaction>::iterator ReactantIterator;
+            vector<ParticleKindForReaction>::const_iterator ReactantIterator;
             if (CellEngineUseful::IsDNAorRNA(ParticleObjectToBeErased.EntityId) == false)
                 ReactantIterator = find_if(ReactionObject.Reactants.begin(), ReactionObject.Reactants.end(), [&ParticleObjectToBeErased](ParticleKindForReaction& ParticleKindObject){ return ParticleKindObject.EntityId == ParticleObjectToBeErased.EntityId; });
             else
                 ReactantIterator = find_if(ReactionObject.Reactants.begin(), ReactionObject.Reactants.end(), [&ParticleObjectToBeErased, this](ParticleKindForReaction& ParticleKindObject){ return ParticleKindObject.EntityId == ParticleObjectToBeErased.EntityId && CompareFitnessOfDNASequenceByNucleotidesLoop(ParticleKindObject.EntityId, ParticleObjectToBeErased) == true; });
 
-            if (ReactantIterator != ReactionObject.Reactants.end() && ReactantIterator->Counter > 0 && ReactantIterator->ToRemoveInReaction == true)
+            if (ReactantIterator != ReactionObject.Reactants.end() && ReactantsCounters[ReactantIterator - ReactionObject.Reactants.begin()] > 0 && ReactantIterator->ToRemoveInReaction == true)
             {
                 if (CellEngineUseful::IsDNAorRNA(ParticleObjectToBeErased.EntityId) == true)
                 {
@@ -476,7 +474,7 @@ vector<UniqueIdInt> CellEngineVoxelSimulationSpace::ChooseParticlesForReactionFr
                     ParticlesIndexesChosenForReaction.emplace_back(ParticleObjectIndex.second);
             }
 
-            ReactantIterator->Counter--;
+            ReactantsCounters[ReactantIterator - ReactionObject.Reactants.begin()]--;
         }
     }
     CATCH("choosing particles for reaction from all particles in proximity")
@@ -501,18 +499,17 @@ void CellEngineVoxelSimulationSpace::EraseParticlesChosenForReactionAndGetCenter
     CATCH("erasing particles chosen for reaction and get centers for new products of reaction")
 }
 
-void CellEngineVoxelSimulationSpace::MakeReaction(Reaction& ReactionObject, map<EntityIdInt, UnsignedInt>& ParticlesKindsFoundInParticlesProximity, map<UnsignedInt, UniqueIdInt>& ParticlesSortedByCapacityFoundInParticlesProximity)
+void CellEngineVoxelSimulationSpace::MakeReaction(Reaction& ReactionObject)
 {
     try
     {
-        vector<UniqueIdInt> ParticlesIndexesChosenForReaction = ChooseParticlesForReactionFromAllParticlesInProximity(ReactionObject, ParticlesSortedByCapacityFoundInParticlesProximity);
+        vector<UniqueIdInt> ParticlesIndexesChosenForReaction = ChooseParticlesForReactionFromAllParticlesInProximity(ReactionObject);
 
         vector<vector3_16> Centers;
         for (const auto& ParticleIndexChosenForReaction : ParticlesIndexesChosenForReaction)
             EraseParticlesChosenForReactionAndGetCentersForNewProductsOfReaction(ParticleIndexChosenForReaction, Centers);
 
         UnsignedInt CenterIndex = 0;
-        sort(ReactionObject.Products.begin(), ReactionObject.Products.end(), [](ParticleKindForReaction& PK1, ParticleKindForReaction& PK2){ return ParticlesKindsManagerObject.GetParticleKind(PK1.EntityId).ListOfVoxels.size() > ParticlesKindsManagerObject.GetParticleKind(PK2.EntityId).ListOfVoxels.size(); } );
         for (const auto& ReactionProduct : ReactionObject.Products)
         {
             UnsignedInt ParticleIndex = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), ReactionProduct.EntityId, 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
@@ -536,17 +533,17 @@ void CellEngineVoxelSimulationSpace::MakeReaction(Reaction& ReactionObject, map<
     CATCH("making reaction")
 };
 
-std::vector<UnsignedInt> CellEngineVoxelSimulationSpace::GetRandomParticles(const UnsignedInt NumberOfReactants, map<EntityIdInt, UnsignedInt>& ParticlesKinds)
+std::vector<UnsignedInt> CellEngineVoxelSimulationSpace::GetRandomParticles(const UnsignedInt NumberOfReactants)
 {
     vector<UnsignedInt> RandomParticlesTypes;
 
     try
     {
-        std::uniform_int_distribution<UnsignedInt> UniformDistributionObjectUint64t(0, ParticlesKinds.size() - 1);
+        std::uniform_int_distribution<UnsignedInt> UniformDistributionObjectUint64t(0, ParticlesKindsFoundInParticlesProximity.size() - 1);
 
         for (UnsignedInt ReactantNumber = 1; ReactantNumber <= NumberOfReactants; ReactantNumber++)
         {
-            RandomParticlesTypes.emplace_back(std::next(std::begin(ParticlesKinds), static_cast<int>(UniformDistributionObjectUint64t(mt64R)))->first);
+            RandomParticlesTypes.emplace_back(std::next(std::begin(ParticlesKindsFoundInParticlesProximity), static_cast<int>(UniformDistributionObjectUint64t(mt64R)))->first);
             LoggersManagerObject.Log(STREAM("ParticleKind Reactant " << to_string(ReactantNumber) << " (" << to_string(RandomParticlesTypes.back()) << ")"));
         }
     }
@@ -555,51 +552,60 @@ std::vector<UnsignedInt> CellEngineVoxelSimulationSpace::GetRandomParticles(cons
     return RandomParticlesTypes;
 }
 
-bool CellEngineVoxelSimulationSpace::TryDoRandomReaction(const UnsignedInt NumberOfReactants, map<EntityIdInt, UnsignedInt>& ParticlesKindsFoundInParticlesProximity, map<UnsignedInt, UniqueIdInt>& ParticlesSortedByCapacityFoundInParticlesProximity)
+bool CellEngineVoxelSimulationSpace::IsReactionPossible(const Reaction& ReactionObject)
 {
-    try
-    {
-        auto RandomParticlesTypes = GetRandomParticles(NumberOfReactants, ParticlesKindsFoundInParticlesProximity);
-
-        sort(begin(RandomParticlesTypes), end(RandomParticlesTypes));
-        auto IteratorUnique = unique(begin(RandomParticlesTypes), end(RandomParticlesTypes));
-        if (IteratorUnique == RandomParticlesTypes.end())
-        {
-            vector<string> ParticlesSymbolsForReactionToSort;
-            ParticlesSymbolsForReactionToSort.reserve(10);
-            for (auto& RandomParticleType : RandomParticlesTypes)
-                ParticlesSymbolsForReactionToSort.emplace_back(ParticlesKindsManagerObject.GetParticleKind(RandomParticleType).Symbol);
-            std::sort(ParticlesSymbolsForReactionToSort.begin(), ParticlesSymbolsForReactionToSort.end());
-
-            string ReactionSymbolsStr;
-            for (auto& ParticleSymbolForReaction : ParticlesSymbolsForReactionToSort)
-                ReactionSymbolsStr += (ParticleSymbolForReaction + " + ");
-            LoggersManagerObject.Log(STREAM("Reaction Symbols = [" << ReactionSymbolsStr << "]" << endl));
-
-            auto ReactionIter = ReactionsIdByString.find(ReactionSymbolsStr);
-            if (ReactionIter != ReactionsIdByString.end())
-            {
-                Reaction ReactionObject = Reactions[ReactionIter->second];
-
-                bool IsPossible = all_of(ReactionObject.Reactants.begin(), ReactionObject.Reactants.end(), [&ParticlesKindsFoundInParticlesProximity](const ParticleKindForReaction& ReactionReactant){ return ReactionReactant.Counter <= ParticlesKindsFoundInParticlesProximity[ReactionReactant.EntityId]; });
-                if (IsPossible == true)
-                {
-                    MakeReaction(ReactionObject, ParticlesKindsFoundInParticlesProximity, ParticlesSortedByCapacityFoundInParticlesProximity);
-                    return true;
-                }
-                else
-                    LoggersManagerObject.Log(STREAM("Particles types are the same!"));
-            }
-            else
-                LoggersManagerObject.Log(STREAM("Reaction for particles does not exist!"));
-        }
-        else
-            LoggersManagerObject.Log(STREAM("Particles types for reaction are not unique!"));
-    }
-    CATCH("trying to do random reaction")
-
-    return false;
+    return all_of(ReactionObject.Reactants.begin(), ReactionObject.Reactants.end(), [this](const ParticleKindForReaction& ReactionReactant){ return ReactionReactant.Counter <= ParticlesKindsFoundInParticlesProximity[ReactionReactant.EntityId]; });
 }
+
+//bool CellEngineVoxelSimulationSpace::TryToMakeRandomReaction(const UnsignedInt NumberOfReactants)
+//{
+//    try
+//    {
+//        LoggersManagerObject.Log(STREAM(endl << "REACTION" << endl));
+//
+//        auto RandomParticlesTypes = GetRandomParticles(NumberOfReactants);
+//
+//        sort(begin(RandomParticlesTypes), end(RandomParticlesTypes));
+//        auto IteratorUnique = unique(begin(RandomParticlesTypes), end(RandomParticlesTypes));
+//        if (IteratorUnique == RandomParticlesTypes.end())
+//        {
+//            vector<string> ParticlesSymbolsForReactionToSort;
+//            ParticlesSymbolsForReactionToSort.reserve(10);
+//            for (auto& RandomParticleType : RandomParticlesTypes)
+//                ParticlesSymbolsForReactionToSort.emplace_back(ParticlesKindsManagerObject.GetParticleKind(RandomParticleType).Symbol);
+//            std::sort(ParticlesSymbolsForReactionToSort.begin(), ParticlesSymbolsForReactionToSort.end());
+//
+//            string ReactionSymbolsStr;
+//            for (auto& ParticleSymbolForReaction : ParticlesSymbolsForReactionToSort)
+//                ReactionSymbolsStr += (ParticleSymbolForReaction + " + ");
+//            LoggersManagerObject.Log(STREAM("Reaction Symbols = [" << ReactionSymbolsStr << "]" << endl));
+//
+//            auto ReactionIter = ReactionsIdByString.find(ReactionSymbolsStr);
+//            if (ReactionIter != ReactionsIdByString.end())
+//            {
+//                auto& ReactionObject = Reactions[ReactionIter->second];
+//
+//                bool IsPossible = IsReactionPossible(ReactionObject);
+//                if (IsPossible == true)
+//                {
+//                    MakeReaction(ReactionObject);
+//                    return true;
+//                }
+//                else
+//                    LoggersManagerObject.Log(STREAM("Particles types are the same!"));
+//            }
+//            else
+//                LoggersManagerObject.Log(STREAM("Reaction for particles does not exist!"));
+//        }
+//        else
+//            LoggersManagerObject.Log(STREAM("Particles types for reaction are not unique!"));
+//
+//        LoggersManagerObject.Log(STREAM("END OF REACTION" << endl));
+//    }
+//    CATCH("trying to do random reaction")
+//
+//    return false;
+//}
 
 void CellEngineVoxelSimulationSpace::GenerateRandomReactionForParticle(Particle& ParticleObject)
 {
@@ -611,10 +617,10 @@ void CellEngineVoxelSimulationSpace::GenerateRandomReactionForParticle(Particle&
 
         uniform_int_distribution<UnsignedInt> UniformDistributionObjectNumberOfReactants_Uint64t(2, 2);
 
-        map<EntityIdInt, UnsignedInt> ParticlesKindsFoundInParticlesProximity;
-        map<UnsignedInt, UniqueIdInt> ParticlesSortedByCapacityFoundInParticlesProximity;
+        ParticlesKindsFoundInParticlesProximity.clear();
+        ParticlesSortedByCapacityFoundInParticlesProximity.clear();
 
-        FindParticlesInProximityOfVoxelSimulationSpaceForChosenParticle(ParticleObject, 10, ParticlesKindsFoundInParticlesProximity, ParticlesSortedByCapacityFoundInParticlesProximity);
+        FindParticlesInProximityOfVoxelSimulationSpaceForChosenParticle(ParticleObject, 10);
 
         UnsignedInt NumberOfTries = 0;
         while (NumberOfTries <= 10)
@@ -623,7 +629,7 @@ void CellEngineVoxelSimulationSpace::GenerateRandomReactionForParticle(Particle&
 
             UnsignedInt NumberOfReactants = UniformDistributionObjectNumberOfReactants_Uint64t(mt64R);
 
-            if (TryDoRandomReaction(NumberOfReactants, ParticlesKindsFoundInParticlesProximity, ParticlesSortedByCapacityFoundInParticlesProximity) == true)
+            if (TryToMakeRandomReaction(NumberOfReactants) == true)
                 break;
         }
     }

@@ -10,18 +10,18 @@ using ::testing::Return;
 
 void TestWellStirredChemicalReactionsSimulation(CellEngineWellStirredChemicalReactionsSimulation& CellEngineWellStirredChemicalReactionsSimulationObjectObject)
 {
-    CellEngineWellStirredChemicalReactionsSimulationObjectObject.AddGroupOfParticlesOfSelectedKind({0, "Water", "H2O", 100});
-    CellEngineWellStirredChemicalReactionsSimulationObjectObject.AddGroupOfParticlesOfSelectedKind({1, "Glucose", "C6H12O6", 50});
-    CellEngineWellStirredChemicalReactionsSimulationObjectObject.AddGroupOfParticlesOfSelectedKind({2, "Oxygen", "0", 10});
-    CellEngineWellStirredChemicalReactionsSimulationObjectObject.AddGroupOfParticlesOfSelectedKind({3, "Carbon dioxide", "CO2", 5});
-    CellEngineWellStirredChemicalReactionsSimulationObjectObject.AddGroupOfParticlesOfSelectedKind({4, "Eten", "CH2CH2", 15});
-    CellEngineWellStirredChemicalReactionsSimulationObjectObject.AddGroupOfParticlesOfSelectedKind({5, "Ethanol", "CH3CH2(OH)", 25});
-    CellEngineWellStirredChemicalReactionsSimulationObjectObject.AddGroupOfParticlesOfSelectedKind({6, "Propen", "CH3CHCH2", 5});
-    CellEngineWellStirredChemicalReactionsSimulationObjectObject.AddGroupOfParticlesOfSelectedKind({7, "HX", "HX", 10});
-    CellEngineWellStirredChemicalReactionsSimulationObjectObject.AddGroupOfParticlesOfSelectedKind({8, "2Halogenopropan", "CH3CHXCH3", 10});
-    CellEngineWellStirredChemicalReactionsSimulationObjectObject.AddGroupOfParticlesOfSelectedKind({9, "Eten", "CH2CH2", 10});
-    CellEngineWellStirredChemicalReactionsSimulationObjectObject.AddGroupOfParticlesOfSelectedKind({10, "Ethylene", "CH2CH2O", 10});
-    CellEngineWellStirredChemicalReactionsSimulationObjectObject.AddGroupOfParticlesOfSelectedKind({11, "DNA", "CGATATTAAATAGGGCCT", 10});
+    ParticlesKindsManagerObject.AddParticleKind({ 0, "Water", "H2O", 100 });
+    ParticlesKindsManagerObject.AddParticleKind({ 1, "Glucose", "C6H12O6", 50 });
+    ParticlesKindsManagerObject.AddParticleKind({ 2, "Oxygen", "0", 10 });
+    ParticlesKindsManagerObject.AddParticleKind({ 3, "Carbon dioxide", "CO2", 5 });
+    ParticlesKindsManagerObject.AddParticleKind({ 4, "Eten", "CH2CH2", 15 });
+    ParticlesKindsManagerObject.AddParticleKind({ 5, "Ethanol", "CH3CH2(OH)", 25 });
+    ParticlesKindsManagerObject.AddParticleKind({ 6, "Propen", "CH3CHCH2", 5 });
+    ParticlesKindsManagerObject.AddParticleKind({ 7, "HX", "HX", 10 });
+    ParticlesKindsManagerObject.AddParticleKind({ 8, "2Halogenopropan", "CH3CHXCH3", 10 });
+    ParticlesKindsManagerObject.AddParticleKind({ 9, "Eten", "CH2CH2", 10 });
+    ParticlesKindsManagerObject.AddParticleKind({ 10, "Ethylene", "CH2CH2O", 10 });
+    ParticlesKindsManagerObject.AddParticleKind({ 11, "DNA", "CGATATTAAATAGGGCCT", 10 });
 
     CellEngineWellStirredChemicalReactionsSimulationObjectObject.AddReaction(Reaction("C6H12O6 + O6 + ", { { 1, 1, true }, { 2, 6, true } }, { { 3, 6, true }, { 2, 6, true } }));
     CellEngineWellStirredChemicalReactionsSimulationObjectObject.AddReaction(Reaction("CH2CH2 + H2O + ", { { 4, 1, true }, { 0, 1, true } }, { { 5, 1, true } }));
@@ -45,9 +45,9 @@ TEST(CellEngineWellStirredChemicalReactionsSimulationTest, TryToDoRandomReaction
 
     MockCellEngineWellStirredChemicalReactionsSimulationObject.Run(2);
 
-    ASSERT_EQ(13, MockCellEngineWellStirredChemicalReactionsSimulationObject.Particles[4].Counter);
-    ASSERT_EQ(98, MockCellEngineWellStirredChemicalReactionsSimulationObject.Particles[0].Counter);
-    ASSERT_EQ(27, MockCellEngineWellStirredChemicalReactionsSimulationObject.Particles[5].Counter);
+    ASSERT_EQ(13, ParticlesKindsManagerObject.ParticlesKinds[4].Counter);
+    ASSERT_EQ(98, ParticlesKindsManagerObject.ParticlesKinds[0].Counter);
+    ASSERT_EQ(27, ParticlesKindsManagerObject.ParticlesKinds[5].Counter);
 }
 
 int main(int argc, char **argv)

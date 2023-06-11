@@ -13,23 +13,18 @@
 #include "CellEngineTypes.h"
 #include "CellEngineParticle.h"
 #include "CellEngineReaction.h"
+#include "CellEngineChemicalReactions.h"
 
 using namespace std;
 
-class CellEngineWellStirredChemicalReactionsSimulation
+class CellEngineWellStirredChemicalReactionsSimulation : public CellEngineChemicalReactions
 {
 public:
     std::mt19937_64 mt64X{ std::random_device{}() };
 public:
-    std::vector<ParticleKind> Particles;
-    std::vector<Reaction> Reactions;
-    std::unordered_map<std::string, UnsignedInt> ReactionsIdByString;
-public:
-    void AddGroupOfParticlesOfSelectedKind(const ParticleKind& ParticleParam);
-    void AddReaction(const Reaction& ReactionParam);
-public:
-    virtual std::vector<UnsignedInt> GetRandomParticles(UnsignedInt NumberOfReactants);
-    void TryToDoRandomReaction(UnsignedInt NumberOfReactants);
+    std::vector<UnsignedInt> GetRandomParticles(UnsignedInt NumberOfReactants) override;
+    bool IsReactionPossible(const Reaction& ReactionObject)override;
+    void MakeReaction(Reaction& ReactionObject) override;
 public:
     void Run(UnsignedInt NumberOfSteps);
 };

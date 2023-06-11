@@ -136,7 +136,7 @@ public:
     {
         ParticlesKinds.emplace_back(ParticleParam);
         ParticlesKinds.back().GraphicData = ParticleKindGraphicData{ParticleParam.EntityId, true, 1, 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), ParticleParam.Name, ParticleParam.Symbol };
-        ParticlesKindsPos[ParticleParam.EntityId]  = ParticlesKinds.size() - 1;
+        ParticlesKindsPos[ParticleParam.EntityId] = ParticlesKinds.size() - 1;
     }
 public:
     std::vector<AtomKindGraphicData>::iterator GetGraphicAtomKindDataFromAtomName(char Name)
