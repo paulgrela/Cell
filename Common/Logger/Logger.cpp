@@ -329,7 +329,7 @@ void LoggersManager::InitializeLoggerManagerDataForTask(const string& TaskNamePa
 
 		DrawMessageFunctionObject = std::move(DrawMessageFunctionObjectParameter);
 
-		ThreadIdType CurrentThreadId = stoll(dynamic_cast<stringstream&>(stringstream() << this_thread::get_id()).str());
+        ThreadIdType CurrentThreadId = stoll((stringstream() << this_thread::get_id()).str());
 		LoggerMainObjectPointer = make_unique<Logger>(LogDirectory.c_str(), ActualDateTimeStr.c_str(), string("LOGGER_COMMON").c_str(), TaskName.c_str(), CurrentThreadId);
 		LoggerMainObjectPointer->LogMessageBool("START MAIN LOGGER_COMMON\n", true, CurrentThreadId, true);
 	}
@@ -366,7 +366,7 @@ void LoggersManager::LogMessageBool(const string& MessageStr, const bool LogLine
 {
 	try
 	{
-		ThreadIdType CurrentThreadId = stoll(dynamic_cast<stringstream&>(stringstream() << this_thread::get_id()).str());
+        ThreadIdType CurrentThreadId = stoll((stringstream() << this_thread::get_id()).str());
 
         if (LoggerMainObjectPointer)
         {
@@ -382,7 +382,7 @@ void LoggersManager::LogMessageBool(const string& MessageStr, const bool LogLine
                         auto FoundLoggerIterator = LoggersThreadsObjectsPointersMap.find(CurrentThreadId);
 
                         if (FoundLoggerIterator == LoggersThreadsObjectsPointersMap.end())
-                            LoggersThreadsObjectsPointersMap[CurrentThreadId] = make_unique<Logger>(LogDirectory.c_str(), ActualDateTimeStr.c_str(), string("THREAD_" + to_string(LoggersThreadsObjectsPointersMap.size() + 1) + "_" + static_cast<stringstream&>(stringstream() << CurrentThreadId).str()).c_str(), TaskName.c_str(), CurrentThreadId);
+                            LoggersThreadsObjectsPointersMap[CurrentThreadId] = make_unique<Logger>(LogDirectory.c_str(), ActualDateTimeStr.c_str(), string("THREAD_" + to_string(LoggersThreadsObjectsPointersMap.size() + 1) + "_" + (stringstream() << CurrentThreadId).str()).c_str(), TaskName.c_str(), CurrentThreadId);
                     }
 
                     LoggersThreadsObjectsPointersMap[CurrentThreadId]->LogMessageBool(MessageStr, LogLineInfo, CurrentThreadId, PrintToConsole);

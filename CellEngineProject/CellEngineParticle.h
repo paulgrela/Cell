@@ -21,6 +21,7 @@ public:
     UniqueIdInt Index{};
     UniqueIdInt GenomeIndex{};
     vector3_16 UniqueColor{};
+    ElectricChargeIdInt ElectricCharge{};
 public:
     std::vector<vector3_16> ListOfVoxels;
     UnsignedInt XCenter{}, YCenter{}, ZCenter{};
@@ -63,8 +64,13 @@ public:
     std::string Name;
     std::string Symbol;
     UnsignedInt Counter{};
+    ElectricChargeIdInt ElectricCharge;
+public:
+    std::string SelfSequenceStr;
+    std::vector<ChainIdInt> SelfSequence;
     std::string SequenceStr;
     std::vector<ChainIdInt> Sequence;
+public:
     std::vector<vector3_16> ListOfVoxels;
     UnsignedInt XSizeDiv2{}, YSizeDiv2{}, ZSizeDiv2{};
 public:

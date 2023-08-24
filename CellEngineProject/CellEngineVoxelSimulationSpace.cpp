@@ -224,22 +224,22 @@ void CellEngineVoxelSimulationSpace::AddBasicParticlesKindsAndReactions()
     {
         ParticlesKindsManagerObject.AddParticleKind({ 0, "Water", "H2O", 0 });
         ParticlesKindsManagerObject.AddParticleKind({ 1, "Glucose", "C6H12O6", 0 });
-        ParticlesKindsManagerObject.AddParticleKind({ 2, "Oxygen6", "06", 0 });
+        ParticlesKindsManagerObject.AddParticleKind({ 2, "Oxygen", "02", 0 });
         ParticlesKindsManagerObject.AddParticleKind({ 3, "Carbon dioxide", "CO2", 0 });
         ParticlesKindsManagerObject.AddParticleKind({ 4, "Eten", "CH2CH2", 0 });
         ParticlesKindsManagerObject.AddParticleKind({ 5, "Ethanol", "CH3CH2(OH)", 0 });
         ParticlesKindsManagerObject.AddParticleKind({ 6, "Propen", "CH3CHCH2", 0 });
         ParticlesKindsManagerObject.AddParticleKind({ 7, "HX", "HX", 0 });
         ParticlesKindsManagerObject.AddParticleKind({ 8, "2Halogenopropan", "CH3CHXCH3", 0 });
-        ParticlesKindsManagerObject.AddParticleKind({ 9, "Eten", "CH2CH2", 0 });
+        ParticlesKindsManagerObject.AddParticleKind({ 9, "Test", "TEST", 0 });
         ParticlesKindsManagerObject.AddParticleKind({ 10, "Ethylene", "CH2CH2O", 0 });
         ParticlesKindsManagerObject.AddParticleKind({ 11, "Oxygen", "0", 0 });
         ParticlesKindsManagerObject.AddParticleKind({ 12, "DNA", "CGATATTAAATAGGGCCT", 0 });
 
-        AddChemicalReaction(Reaction("C6H12O6 + O6 + ", { {1, 1, true}, {2, 2, true}}, {{0, 6, true}, {0, 6, true} }));
-        AddChemicalReaction(Reaction("CH2CH2 + H2O + ", { {4, 1, true}, {0, 1, true}}, {{5, 1, true} }));
-        AddChemicalReaction(Reaction("CH3CHCH2 + HX + ", { {6, 1, true}, {7, 1, true}}, {{8, 1, true} }));
-        AddChemicalReaction(Reaction("CH2CH2 + O + ", { {9,  1, true}, {11, 1, true}}, {{10, 1, true} }));
+        AddChemicalReaction(Reaction("C6H12O6 + O2 + ", { { 1, 1, true }, { 2, 6, true} }, { {3, 6, true }, { 0, 6, true } }));
+        AddChemicalReaction(Reaction("CH2CH2 + H2O + ", { { 4, 1, true }, { 0, 1, true } }, { { 5, 1, true } }));
+        AddChemicalReaction(Reaction("CH3CHCH2 + HX + ", { { 6, 1, true }, { 7, 1, true } }, { { 8, 1, true } }));
+        AddChemicalReaction(Reaction("CH2CH2 + O + ", { { 4,  1, true }, { 11, 1, true } }, { { 10, 1, true } }));
 
         PreprocessChemicalReactions();
     }
@@ -272,7 +272,7 @@ void CellEngineVoxelSimulationSpace::GenerateRandomParticlesInSelectedSpace(cons
                 for (UnsignedInt PosZ = StartZPosParam; PosZ < StartZPosParam + SizeZParam; PosZ += StepZParam)
                     GetSpaceVoxel(PosX, PosY, PosZ) = GetZeroSimulationSpaceVoxel();
 
-        for (auto& LocalNewParticleIndex : LocalNewParticlesIndexes)
+        for (const auto& LocalNewParticleIndex : LocalNewParticlesIndexes)
         {
             UnsignedInt RandomPosX = UniformDistributionObjectX_Uint64t(mt64R);
             UnsignedInt RandomPosY = UniformDistributionObjectY_Uint64t(mt64R);
@@ -457,24 +457,24 @@ vector<UniqueIdInt> CellEngineVoxelSimulationSpace::ChooseParticlesForReactionFr
 
         for (const auto& ParticleObjectIndex : ParticlesSortedByCapacityFoundInParticlesProximity)
         {
-            auto& ParticleObjectToBeErased = GetParticleFromIndex(ParticleObjectIndex.second);
+            auto& ParticleObjectTestedForReaction = GetParticleFromIndex(ParticleObjectIndex.second);
 
             vector<ParticleKindForReaction>::const_iterator ReactantIterator;
-            if (CellEngineUseful::IsDNAorRNA(ParticleObjectToBeErased.EntityId) == false)
-                ReactantIterator = find_if(ReactionObject.Reactants.begin(), ReactionObject.Reactants.end(), [&ParticleObjectToBeErased](ParticleKindForReaction& ParticleKindObject){ return ParticleKindObject.EntityId == ParticleObjectToBeErased.EntityId; });
+            if (CellEngineUseful::IsDNAorRNA(ParticleObjectTestedForReaction.EntityId) == false)
+                ReactantIterator = find_if(ReactionObject.Reactants.begin(), ReactionObject.Reactants.end(), [&ParticleObjectTestedForReaction](ParticleKindForReaction& ParticleKindObject){ return ParticleKindObject.EntityId == ParticleObjectTestedForReaction.EntityId; });
             else
-                ReactantIterator = find_if(ReactionObject.Reactants.begin(), ReactionObject.Reactants.end(), [&ParticleObjectToBeErased, this](ParticleKindForReaction& ParticleKindObject){ return ParticleKindObject.EntityId == ParticleObjectToBeErased.EntityId && CompareFitnessOfDNASequenceByNucleotidesLoop(ParticleKindObject.EntityId, ParticleObjectToBeErased) == true; });
+                ReactantIterator = find_if(ReactionObject.Reactants.begin(), ReactionObject.Reactants.end(), [&ParticleObjectTestedForReaction, this](ParticleKindForReaction& ParticleKindObjectParam){ return ParticleKindObjectParam.EntityId == ParticleObjectTestedForReaction.EntityId && CompareFitnessOfDNASequenceByNucleotidesLoop(ParticleKindObjectParam.EntityId, ParticleObjectTestedForReaction) == true; });
 
             if (ReactantIterator != ReactionObject.Reactants.end() && ReactantsCounters[ReactantIterator - ReactionObject.Reactants.begin()] > 0 && ReactantIterator->ToRemoveInReaction == true)
-            {
-                if (CellEngineUseful::IsDNAorRNA(ParticleObjectToBeErased.EntityId) == true)
-                {
-                    if (CompareFitnessOfDNASequenceByNucleotidesLoop(ReactantIterator->EntityId, GetParticleFromIndex(ParticleObjectIndex.second)) == true)
-                        ParticlesIndexesChosenForReaction.emplace_back(ParticleObjectIndex.second);
-                }
-                else
+//            {
+//                if (CellEngineUseful::IsDNAorRNA(ParticleObjectTestedForReaction.EntityId) == true)
+//                {
+//                    if (CompareFitnessOfDNASequenceByNucleotidesLoop(ReactantIterator->EntityId, GetParticleFromIndex(ParticleObjectIndex.second)) == true)
+//                        ParticlesIndexesChosenForReaction.emplace_back(ParticleObjectIndex.second);
+//                }
+//                else
                     ParticlesIndexesChosenForReaction.emplace_back(ParticleObjectIndex.second);
-            }
+//            }
 
             ReactantsCounters[ReactantIterator - ReactionObject.Reactants.begin()]--;
         }
@@ -588,18 +588,57 @@ void CellEngineVoxelSimulationSpace::GenerateRandomReactionForParticle(Particle&
     CATCH("generating random reaction for particle")
 }
 
+
+void CellEngineVoxelSimulationSpace::Fill1(UnsignedInt RPosX, UnsignedInt RPosY, UnsignedInt RPosZ, UniqueIdInt EntityId)
+{
+    for (UnsignedInt PosX = RPosX; PosX < RPosX + 2; PosX++)
+        for (UnsignedInt PosY = RPosY; PosY < RPosY + 2; PosY++)
+            for (UnsignedInt PosZ = RPosZ; PosZ < RPosZ + 2; PosZ++)
+                GetSpaceVoxel(PosX, PosY, PosZ) = EntityId;
+}
+
 void CellEngineVoxelSimulationSpace::GenerateOneStepOfRandomReactionsForSelectedRangeOfParticles(UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam)
 {
     try
     {
         GetRangeOfParticlesForRandomParticles(StartParticleIndexParam, EndParticleIndexParam, MaxParticleIndex);
 
-        for (UniqueIdInt ParticleIndex = StartParticleIndexParam; ParticleIndex <= EndParticleIndexParam; ParticleIndex++)
-        {
-            auto ParticlesIterator = Particles.find(ParticleIndex);
-            if (ParticlesIterator != Particles.end())
-                GenerateRandomReactionForParticle(ParticlesIterator->second);
-        }
+        AddBasicParticlesKindsAndReactions();
+
+                                for (UnsignedInt PosX = StartXPosParam; PosX < StartXPosParam + SizeXParam; PosX += 1)
+                                    for (UnsignedInt PosY = StartYPosParam; PosY < StartYPosParam + SizeYParam; PosY += 1)
+                                        for (UnsignedInt PosZ = StartZPosParam; PosZ < StartZPosParam + SizeZParam; PosZ += 1)
+                                            GetSpaceVoxel(PosX, PosY, PosZ) = GetZeroSimulationSpaceVoxel();
+
+                                auto P0 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 0, 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
+                                GetSpaceVoxel(StartXPosParam + 1, StartYPosParam + 1, StartZPosParam + 1) = P0;
+
+                                auto P1 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 1, 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
+                                GetSpaceVoxel(StartXPosParam + 3, StartYPosParam + 3, StartZPosParam + 3) = P1;
+
+                                auto P2 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 2, 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
+                                GetSpaceVoxel(StartXPosParam + 6, StartYPosParam + 6, StartZPosParam + 6) = P2;
+
+                                auto P3 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 3, 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
+                                Fill1(StartXPosParam, StartYPosParam + 9, StartZPosParam + 9, P3);
+
+                                auto P4 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 4, 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
+                                Fill1(StartXPosParam + 13, StartYPosParam + 13, StartZPosParam + 17, P4);
+
+                                auto P5 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 5, 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
+                                Fill1(StartXPosParam + 17, StartYPosParam + 17, StartZPosParam + 17, P5);
+
+                                auto P6 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 6, 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
+                                Fill1(StartXPosParam + 21, StartYPosParam + 21, StartZPosParam + 21, P6);
+
+                                UniqueIdInt ParticleIndex = StartParticleIndexParam + 3;
+
+        //for (UniqueIdInt ParticleIndex = StartParticleIndexParam; ParticleIndex <= EndParticleIndexParam; ParticleIndex++)
+//        {
+//            auto ParticlesIterator = Particles.find(ParticleIndex);
+//            if (ParticlesIterator != Particles.end())
+//                GenerateRandomReactionForParticle(ParticlesIterator->second);
+//        }
     }
     CATCH("generating one step of random reactions for selected range of particles")
 }

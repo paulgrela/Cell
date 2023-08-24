@@ -107,6 +107,6 @@ public:
 
 inline LoggersManager LoggersManagerObject;
 
-#define STREAM(text) dynamic_cast<std::stringstream&>(std::stringstream() << text)
+#define STREAM(text) (std::stringstream&)(std::stringstream() << text)
 
 #endif

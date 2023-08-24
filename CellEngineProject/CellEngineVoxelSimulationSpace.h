@@ -110,6 +110,8 @@ public:
 public:
     CellEngineVoxelSimulationSpace();
     ~CellEngineVoxelSimulationSpace();
+
+                                                                                                                        void Fill1(UnsignedInt RPosX, UnsignedInt RPosY, UnsignedInt RPosZ, UniqueIdInt EntityId);
 };
 
 #endif
