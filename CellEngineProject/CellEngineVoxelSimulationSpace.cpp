@@ -589,12 +589,52 @@ void CellEngineVoxelSimulationSpace::GenerateRandomReactionForParticle(Particle&
 }
 
 
-void CellEngineVoxelSimulationSpace::Fill1(UnsignedInt RPosX, UnsignedInt RPosY, UnsignedInt RPosZ, UniqueIdInt EntityId)
+void CellEngineVoxelSimulationSpace::Fill1(UnsignedInt RPosX, UnsignedInt RPosY, UnsignedInt RPosZ, UniqueIdInt LocalNewParticleIndex, UniqueIdInt Size)
 {
-    for (UnsignedInt PosX = RPosX; PosX < RPosX + 2; PosX++)
-        for (UnsignedInt PosY = RPosY; PosY < RPosY + 2; PosY++)
-            for (UnsignedInt PosZ = RPosZ; PosZ < RPosZ + 2; PosZ++)
-                GetSpaceVoxel(PosX, PosY, PosZ) = EntityId;
+    vector<vector3_16> FilledVoxelsForRandomParticle;
+
+    for (UnsignedInt PosX = RPosX; PosX < RPosX + Size; PosX++)
+        for (UnsignedInt PosY = RPosY; PosY < RPosY + Size; PosY++)
+            for (UnsignedInt PosZ = RPosZ; PosZ < RPosZ + Size; PosZ++)
+            {
+                GetSpaceVoxel(PosX, PosY, PosZ) = LocalNewParticleIndex;
+                FilledVoxelsForRandomParticle.emplace_back(PosX, PosY, PosZ);
+            }
+
+    Particles[LocalNewParticleIndex].ListOfVoxels = FilledVoxelsForRandomParticle;
+
+    GetMinMaxCoordinatesForParticle(Particles[LocalNewParticleIndex]);
+}
+
+void CellEngineVoxelSimulationSpace::GeneratePlanedParticlesInSelectedSpace(const UnsignedInt NumberOfRandomParticles, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt StepXParam, const UnsignedInt StepYParam, const UnsignedInt StepZParam, const UnsignedInt SizeXParam, UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
+{
+    AddBasicParticlesKindsAndReactions();
+
+    for (UnsignedInt PosX = StartXPosParam; PosX < StartXPosParam + SizeXParam; PosX += 1)
+        for (UnsignedInt PosY = StartYPosParam; PosY < StartYPosParam + SizeYParam; PosY += 1)
+            for (UnsignedInt PosZ = StartZPosParam; PosZ < StartZPosParam + SizeZParam; PosZ += 1)
+                GetSpaceVoxel(PosX, PosY, PosZ) = GetZeroSimulationSpaceVoxel();
+
+    auto P0 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 0, 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
+    Fill1(StartXPosParam + 1, StartYPosParam + 3, StartZPosParam + 7, P0, 1);
+
+    auto P1 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 1, 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
+    Fill1(StartXPosParam + 3, StartYPosParam + 13, StartZPosParam + 6, P1, 1);
+
+    auto P2 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 2, 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
+    Fill1(StartXPosParam + 6, StartYPosParam + 12, StartZPosParam + 5, P2, 1);
+
+    auto P3 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 3, 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
+    Fill1(StartXPosParam + 9, StartYPosParam + 9, StartZPosParam + 9, P3, 2);
+
+    auto P4 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 4, 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
+    Fill1(StartXPosParam + 15, StartYPosParam + 13, StartZPosParam + 17, P4, 2);
+
+    auto P5 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 5, 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
+    Fill1(StartXPosParam + 17, StartYPosParam + 19, StartZPosParam + 4, P5, 2);
+
+    auto P6 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 6, 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
+    Fill1(StartXPosParam + 21, StartYPosParam + 20, StartZPosParam + 19, P6, 2);
 }
 
 void CellEngineVoxelSimulationSpace::GenerateOneStepOfRandomReactionsForSelectedRangeOfParticles(UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam)
@@ -603,37 +643,11 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfRandomReactionsForSelected
     {
         GetRangeOfParticlesForRandomParticles(StartParticleIndexParam, EndParticleIndexParam, MaxParticleIndex);
 
-        AddBasicParticlesKindsAndReactions();
+                                                                                                                        UniqueIdInt ParticleIndex = StartParticleIndexParam + 3;
 
-                                for (UnsignedInt PosX = StartXPosParam; PosX < StartXPosParam + SizeXParam; PosX += 1)
-                                    for (UnsignedInt PosY = StartYPosParam; PosY < StartYPosParam + SizeYParam; PosY += 1)
-                                        for (UnsignedInt PosZ = StartZPosParam; PosZ < StartZPosParam + SizeZParam; PosZ += 1)
-                                            GetSpaceVoxel(PosX, PosY, PosZ) = GetZeroSimulationSpaceVoxel();
+                                                                                                                        GenerateRandomReactionForParticle(GetParticleFromIndex(ParticleIndex));
 
-                                auto P0 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 0, 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
-                                GetSpaceVoxel(StartXPosParam + 1, StartYPosParam + 1, StartZPosParam + 1) = P0;
-
-                                auto P1 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 1, 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
-                                GetSpaceVoxel(StartXPosParam + 3, StartYPosParam + 3, StartZPosParam + 3) = P1;
-
-                                auto P2 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 2, 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
-                                GetSpaceVoxel(StartXPosParam + 6, StartYPosParam + 6, StartZPosParam + 6) = P2;
-
-                                auto P3 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 3, 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
-                                Fill1(StartXPosParam, StartYPosParam + 9, StartZPosParam + 9, P3);
-
-                                auto P4 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 4, 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
-                                Fill1(StartXPosParam + 13, StartYPosParam + 13, StartZPosParam + 17, P4);
-
-                                auto P5 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 5, 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
-                                Fill1(StartXPosParam + 17, StartYPosParam + 17, StartZPosParam + 17, P5);
-
-                                auto P6 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 6, 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
-                                Fill1(StartXPosParam + 21, StartYPosParam + 21, StartZPosParam + 21, P6);
-
-                                UniqueIdInt ParticleIndex = StartParticleIndexParam + 3;
-
-        //for (UniqueIdInt ParticleIndex = StartParticleIndexParam; ParticleIndex <= EndParticleIndexParam; ParticleIndex++)
+//        for (UniqueIdInt ParticleIndex = StartParticleIndexParam; ParticleIndex <= EndParticleIndexParam; ParticleIndex++)
 //        {
 //            auto ParticlesIterator = Particles.find(ParticleIndex);
 //            if (ParticlesIterator != Particles.end())
