@@ -35,7 +35,8 @@ private:
     std::stack<UniqueIdInt> FreeIndexesOfParticles;
 private:
     std::map<EntityIdInt, UnsignedInt> ParticlesKindsFoundInParticlesProximity;
-    std::map<UnsignedInt, UniqueIdInt> ParticlesSortedByCapacityFoundInParticlesProximity;
+    //std::multimap<UnsignedInt, UniqueIdInt> ParticlesSortedByCapacityFoundInParticlesProximity;
+    std::vector<UniqueIdInt> ParticlesSortedByCapacityFoundInParticlesProximity;
 private:
     void* SpacePointer;
 private:
@@ -87,7 +88,7 @@ public:
     bool CompareFitnessOfDNASequenceByNucleotidesLoop(EntityIdInt ReactantEntityId, const Particle& ParticleObjectForReaction);
     void EraseParticlesChosenForReactionAndGetCentersForNewProductsOfReaction(UnsignedInt ParticleIndexChosenForReaction, std::vector<vector3_16>& Centers);
 public:
-    void GenerateParticle(EntityIdInt EntityId, ChainIdInt ChainId, UnsignedInt GenomeIndex, UnsignedInt StartPosX, UnsignedInt StartPosY, UnsignedInt StartPosZ, UnsignedInt ParticleSizeX, UnsignedInt ParticleSizeY, UnsignedInt ParticleSizeZ, std::vector<UniqueIdInt>& Genome, vector3_16 UniqueColorParam);
+    void GenerateDNAParticle(EntityIdInt EntityId, ChainIdInt ChainId, UnsignedInt GenomeIndex, UnsignedInt StartPosX, UnsignedInt StartPosY, UnsignedInt StartPosZ, UnsignedInt ParticleSizeX, UnsignedInt ParticleSizeY, UnsignedInt ParticleSizeZ, std::vector<UniqueIdInt>& Genome, vector3_16 UniqueColorParam);
     void GenerateTwoPairedNucleotides(EntityIdInt EntityId, ChainIdInt ChainId, UnsignedInt GenomeIndex, UnsignedInt StartPosX, UnsignedInt StartPosY, UnsignedInt StartPosZ, UnsignedInt ParticleSizeX, UnsignedInt ParticleSizeY, UnsignedInt ParticleSizeZ, UnsignedInt AddSizeX, UnsignedInt AddSizeY, UnsignedInt AddSizeZ, vector3_16 UniqueColorParam);
 public:
     void GenerateRandomDNAInWholeCell(UnsignedInt NumberOfNucleotidesToBeGenerated, UnsignedInt RandomPosX, UnsignedInt RandomPosY, UnsignedInt RandomPosZ, UnsignedInt ParticleSizeX, UnsignedInt ParticleSizeY, UnsignedInt ParticleSizeZ, UnsignedInt ParticleSize1, UnsignedInt ParticleSize2, UnsignedInt ParticleSize3, UnsignedInt ParticleSize4, UnsignedInt ParticleSize5);
@@ -111,7 +112,7 @@ public:
     CellEngineVoxelSimulationSpace();
     ~CellEngineVoxelSimulationSpace();
 
-                                                                                                                        void Fill1(UnsignedInt RPosX, UnsignedInt RPosY, UnsignedInt RPosZ, UniqueIdInt LocalNewParticleIndex, UniqueIdInt Size);
+                                                                                                                        void FillSquareParticle(UnsignedInt RPosX, UnsignedInt RPosY, UnsignedInt RPosZ, UniqueIdInt LocalNewParticleIndex, UniqueIdInt Size);
                                                                                                                         void GeneratePlanedParticlesInSelectedSpace(UnsignedInt NumberOfRandomParticles, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt StepXParam, UnsignedInt StepYParam, UnsignedInt StepZParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
 };
 
