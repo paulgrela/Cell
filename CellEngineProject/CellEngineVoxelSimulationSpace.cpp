@@ -439,15 +439,16 @@ void CellEngineVoxelSimulationSpace::FindParticlesInProximityOfVoxelSimulationSp
             for (UnsignedInt PosY = ParticleObject.YCenter - ParticleKindObject.YSizeDiv2 - AdditionalBoundFactor; PosY < ParticleObject.YCenter + ParticleKindObject.YSizeDiv2 + AdditionalBoundFactor; PosY++)
                 for (UnsignedInt PosZ = ParticleObject.ZCenter - ParticleKindObject.ZSizeDiv2 - AdditionalBoundFactor; PosZ < ParticleObject.ZCenter + ParticleKindObject.ZSizeDiv2 + AdditionalBoundFactor; PosZ++)
                     if (PosX >= 0 && PosY >= 0 && PosZ >= 0 && PosX < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension && PosY < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension && PosZ < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension)
-                        if (GetSpaceVoxel(PosX, PosZ, PosY) != 0 && GetSpaceVoxel(PosX, PosZ, PosY) != ParticleObject.Index)
+                        if (GetSpaceVoxel(PosX, PosY, PosZ) != 0 && GetSpaceVoxel(PosX, PosY, PosZ) != ParticleObject.Index)
+                                                                                                                        if (GetParticleFromIndex(GetSpaceVoxel(PosX, PosY, PosZ)).EntityId < 14) //TEMPORARY - LATER TO REMOVE
                         {
-                            UniqueIdInt ParticleIndex = GetSpaceVoxel(PosX, PosZ, PosY);
+                            UniqueIdInt ParticleIndex = GetSpaceVoxel(PosX, PosY, PosZ);
                             if (FoundParticleIndexes.find(ParticleIndex) == FoundParticleIndexes.end())
                             {
                                 ParticlesSortedByCapacityFoundInParticlesProximity.emplace_back(ParticleIndex);
+                                ParticlesKindsFoundInParticlesProximity[GetParticleFromIndex(ParticleIndex).EntityId]++;
                                 FoundParticleIndexes.insert(ParticleIndex);
                             }
-                            ParticlesKindsFoundInParticlesProximity[GetParticleFromIndex(ParticleIndex).EntityId]++;
                         }
 
         sort(ParticlesSortedByCapacityFoundInParticlesProximity.begin(), ParticlesSortedByCapacityFoundInParticlesProximity.end(), [this](UnsignedInt PK1, UnsignedInt PK2) { return GetParticleFromIndex(PK1).ListOfVoxels.size() > GetParticleFromIndex(PK2).ListOfVoxels.size(); });
@@ -457,7 +458,7 @@ void CellEngineVoxelSimulationSpace::FindParticlesInProximityOfVoxelSimulationSp
             LoggersManagerObject.Log(STREAM("ParticleIndex = " << to_string(LocalParticleIndexObjectToWrite) << " EntityId = " << to_string(GetParticleFromIndex(LocalParticleIndexObjectToWrite).EntityId)));
         LoggersManagerObject.Log(STREAM(endl << "ParticlesKindsFoundInParticlesProximity List"));
         for (const auto& LocalParticleKindObjectToWrite : ParticlesKindsFoundInParticlesProximity)
-            LoggersManagerObject.Log(STREAM("ParticleKind = " << to_string(LocalParticleKindObjectToWrite.first) << " in quantity = " << to_string(LocalParticleKindObjectToWrite.second)));
+            LoggersManagerObject.Log(STREAM("ParticleKind EntityId = " << to_string(LocalParticleKindObjectToWrite.first) << " in quantity = " << to_string(LocalParticleKindObjectToWrite.second)));
     }
     CATCH("finding particles in proximity of voxel simulation space for chosen particle")
 }
@@ -591,7 +592,7 @@ void CellEngineVoxelSimulationSpace::GenerateRandomReactionForParticle(Particle&
         ParticlesKindsFoundInParticlesProximity.clear();
         ParticlesSortedByCapacityFoundInParticlesProximity.clear();
 
-        FindParticlesInProximityOfVoxelSimulationSpaceForChosenParticle(ParticleObject, 10);
+        FindParticlesInProximityOfVoxelSimulationSpaceForChosenParticle(ParticleObject, 20);
 
         UnsignedInt NumberOfTries = 0;
         while (NumberOfTries <= 10)
@@ -670,7 +671,7 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfRandomReactionsForSelected
     {
         GetRangeOfParticlesForRandomParticles(StartParticleIndexParam, EndParticleIndexParam, MaxParticleIndex);
 
-                                                                                                                        GenerateRandomReactionForParticle(GetParticleFromIndex(StartParticleIndexParam + 3));
+                                                                                                                        GenerateRandomReactionForParticle(GetParticleFromIndex(StartParticleIndexParam + 1));
 
 //        for (UniqueIdInt ParticleIndex = StartParticleIndexParam; ParticleIndex <= EndParticleIndexParam; ParticleIndex++)
 //        {
