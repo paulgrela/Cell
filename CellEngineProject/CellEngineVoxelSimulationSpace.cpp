@@ -243,7 +243,7 @@ void CellEngineVoxelSimulationSpace::AddBasicParticlesKindsAndReactions()
     {
         ParticlesKindsManagerObject.AddParticleKind({ 0, "Water", "H2O", 0 });
         ParticlesKindsManagerObject.AddParticleKind({ 1, "Glucose", "C6H12O6", 0 });
-        ParticlesKindsManagerObject.AddParticleKind({ 2, "Oxygen", "02", 0 });
+        ParticlesKindsManagerObject.AddParticleKind({ 2, "Oxygen2", "02", 0 });
         ParticlesKindsManagerObject.AddParticleKind({ 3, "Carbon dioxide", "CO2", 0 });
         ParticlesKindsManagerObject.AddParticleKind({ 4, "Eten", "CH2CH2", 0 });
         ParticlesKindsManagerObject.AddParticleKind({ 5, "Ethanol", "CH3CH2(OH)", 0 });
@@ -534,9 +534,13 @@ void CellEngineVoxelSimulationSpace::MakeChemicalReaction(Reaction& ReactionObje
     {
         vector<UniqueIdInt> ParticlesIndexesChosenForReaction = ChooseParticlesForReactionFromAllParticlesInProximity(ReactionObject);
 
+        LoggersManagerObject.Log(STREAM("Reaction Step 1" << endl));
+
         vector<vector3_16> Centers;
         for (const auto& ParticleIndexChosenForReaction : ParticlesIndexesChosenForReaction)
             EraseParticlesChosenForReactionAndGetCentersForNewProductsOfReaction(ParticleIndexChosenForReaction, Centers);
+
+        LoggersManagerObject.Log(STREAM("Reaction Step 2" << endl));
 
         UnsignedInt CenterIndex = 0;
         for (const auto& ReactionProduct : ReactionObject.Products)
@@ -558,6 +562,8 @@ void CellEngineVoxelSimulationSpace::MakeChemicalReaction(Reaction& ReactionObje
 
             CenterIndex++;
         }
+
+        LoggersManagerObject.Log(STREAM("Reaction Step 3" << endl));
     }
     CATCH("making reaction")
 };
@@ -604,7 +610,7 @@ void CellEngineVoxelSimulationSpace::GenerateRandomReactionForParticle(Particle&
         FindParticlesInProximityOfVoxelSimulationSpaceForChosenParticle(ParticleObject, 20);
 
         UnsignedInt NumberOfTries = 0;
-        while (NumberOfTries <= 10)
+        while (NumberOfTries <= 100)
         {
             NumberOfTries++;
 
@@ -685,7 +691,7 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfRandomReactionsForSelected
     {
         GetRangeOfParticlesForRandomParticles(StartParticleIndexParam, EndParticleIndexParam, MaxParticleIndex);
 
-                                                                                                                        GenerateRandomReactionForParticle(GetParticleFromIndex(StartParticleIndexParam + 1));
+                                                                                                                        GenerateRandomReactionForParticle(GetParticleFromIndex(StartParticleIndexParam + 4));
 
 //        for (UniqueIdInt ParticleIndex = StartParticleIndexParam; ParticleIndex <= EndParticleIndexParam; ParticleIndex++)
 //        {
