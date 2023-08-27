@@ -391,16 +391,14 @@ bool CellEngineVoxelSimulationSpace::CompareFitnessOfDNASequenceByString(const E
 
     try
     {
-        for (UnsignedInt GenomeIndex = ParticleObjectForReaction.GenomeIndex - 20; GenomeIndex < ParticleObjectForReaction.GenomeIndex + 20; GenomeIndex++)
-        {
-            auto ParticleKindForReactionObject = ParticlesKindsManagerObject.GetParticleKind(ReactantEntityId);
+        auto ParticleKindForReactionObject = ParticlesKindsManagerObject.GetParticleKind(ReactantEntityId);
 
-            if (ParticleKindForReactionObject.SequenceStr != GenomeLine.substr(GenomeIndex, ParticleKindForReactionObject.SequenceStr.size()))
+        for (UnsignedInt GenomeIndex = ParticleObjectForReaction.GenomeIndex - 20; GenomeIndex < ParticleObjectForReaction.GenomeIndex + 20; GenomeIndex++)
+            if (ParticleKindForReactionObject.SequenceStr == GenomeLine.substr(GenomeIndex, ParticleKindForReactionObject.SequenceStr.size()))
             {
                 FoundSequenceOuter = true;
                 break;
             }
-        }
     }
     CATCH("comparing fitness of dna sequence by string")
 
@@ -413,10 +411,10 @@ bool CellEngineVoxelSimulationSpace::CompareFitnessOfDNASequenceByNucleotidesLoo
 
     try
     {
+        auto ParticleKindForReactionObject = ParticlesKindsManagerObject.GetParticleKind(ReactantEntityId);
+
         for (UnsignedInt GenomeIndex = ParticleObjectForReaction.GenomeIndex - 20; GenomeIndex < ParticleObjectForReaction.GenomeIndex + 20; GenomeIndex++)
         {
-            auto ParticleKindForReactionObject = ParticlesKindsManagerObject.GetParticleKind(ReactantEntityId);
-
             bool FoundSequenceInner = true;
             for (UnsignedInt NucleotideNum = 0; NucleotideNum < ParticleKindForReactionObject.Sequence.size(); NucleotideNum++)
                 if (ParticleKindForReactionObject.Sequence[NucleotideNum] != GetParticleFromIndex(Genome1[GenomeIndex + NucleotideNum]).ChainId)
@@ -545,13 +543,13 @@ void CellEngineVoxelSimulationSpace::MakeChemicalReaction(Reaction& ReactionObje
         vector<UniqueIdInt> ParticlesIndexesChosenForReaction = ChooseParticlesForReactionFromAllParticlesInProximity(ReactionObject);
 
         LoggersManagerObject.Log(STREAM("Reaction Step 1" << endl));
-                                                                                                                        getchar();
+
         vector<vector3_16> Centers;
         for (const auto& ParticleIndexChosenForReaction : ParticlesIndexesChosenForReaction)
             EraseParticlesChosenForReactionAndGetCentersForNewProductsOfReaction(ParticleIndexChosenForReaction, Centers);
 
         LoggersManagerObject.Log(STREAM("Reaction Step 2" << endl));
-                                                                                                                        getchar();
+
         UnsignedInt CenterIndex = 0;
         for (const auto& ReactionProduct : ReactionObject.Products)
         {
@@ -676,7 +674,7 @@ void CellEngineVoxelSimulationSpace::GeneratePlanedParticlesInSelectedSpace(cons
         FillSquareParticle(StartXPosParam + 9, StartYPosParam + 9, StartZPosParam + 9, P3, 2);
 
         auto P4 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 4, 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
-        FillSquareParticle(StartXPosParam + 15, StartYPosParam + 13, StartZPosParam + 17, P4, 2);
+        FillSquareParticle(StartXPosParam + 17, StartYPosParam + 15, StartZPosParam + 15, P4, 2);
 
         auto P5 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 5, 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
         FillSquareParticle(StartXPosParam + 17, StartYPosParam + 19, StartZPosParam + 4, P5, 2);
@@ -703,6 +701,7 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfRandomReactionsForSelected
         GetRangeOfParticlesForRandomParticles(StartParticleIndexParam, EndParticleIndexParam, MaxParticleIndex);
 
                                                                                                                         GenerateRandomReactionForParticle(GetParticleFromIndex(StartParticleIndexParam + 4));
+
 
 //        for (UniqueIdInt ParticleIndex = StartParticleIndexParam; ParticleIndex <= EndParticleIndexParam; ParticleIndex++)
 //        {

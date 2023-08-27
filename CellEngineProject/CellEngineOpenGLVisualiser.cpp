@@ -513,6 +513,7 @@ void CellEngineOpenGLVisualiser::PrintAtomDescriptionOnScreen(CellEngineAtom& Ch
             CellEngineConfigDataObject.AtomDescriptionStr2 = "Chain [" + string(ChosenParticleObject.Chain) + "]";
             CellEngineConfigDataObject.AtomDescriptionStr3 = "EntityId = " + to_string(ChosenParticleObject.EntityId);
             CellEngineConfigDataObject.AtomDescriptionStr4 = "Entity Name = [" + GetEntityName(ChosenParticleObject.EntityId) + "]";
+            CellEngineConfigDataObject.AtomDescriptionStr5 = "Genome Index = [" + to_string(ChosenParticleObject.GenomeIndex) + "]";
             LocalTextStr += " " + CellEngineConfigDataObject.AtomDescriptionStr2 + " " + CellEngineConfigDataObject.AtomDescriptionStr3 + " " + CellEngineConfigDataObject.AtomDescriptionStr4;
         }
 

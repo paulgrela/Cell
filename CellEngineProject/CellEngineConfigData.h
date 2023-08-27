@@ -161,6 +161,14 @@ public:
     vmath::vec3 BackgroundColors[4] = { vmath::FromVec4ToVec3(sb7::color::White), vmath::FromVec4ToVec3(sb7::color::White), vmath::FromVec4ToVec3(sb7::color::White), vmath::FromVec4ToVec3(sb7::color::White) };
     UnsignedInt ChosenBackgroundColor{};
 public:
+    bool ImGuiDemoWindowMenu = false;
+    bool ImGuiLightVersion = false;
+public:
+    int ChosenShapeOfAtoms = 1;
+    UnsignedInt DNAIdentifier{};
+    UnsignedInt RNAIdentifier{};
+
+public:
     bool PrintAtomDescriptionOnScreen{};
     bool LogParametersOfRenderingToFile{};
 public:
@@ -168,15 +176,10 @@ public:
     std::string AtomDescriptionStr2;
     std::string AtomDescriptionStr3;
     std::string AtomDescriptionStr4;
+    std::string AtomDescriptionStr5;
+    std::string AtomDescriptionStr6;
     std::string TimeParametersOfRenderingStr;
     std::string NumberOfRenderedAtomsParametersOfRenderingStr;
-public:
-    bool ImGuiDemoWindowMenu = false;
-    bool ImGuiLightVersion = false;
-public:
-    int ChosenShapeOfAtoms = 1;
-    UnsignedInt DNAIdentifier{};
-    UnsignedInt RNAIdentifier{};
 };
 
 inline CellEngineConfigData CellEngineConfigDataObject;

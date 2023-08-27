@@ -93,6 +93,7 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSelectedSpace(const
                                 TempAtomObject.RandomParticleKindColor = (CellEngineUseful::IsDNAorRNA(TempAtomObject.EntityId) == true ? CellEngineColorsObject.GetDNAorRNAColor(TempAtomObject.EntityId, ParticleObject.ChainId) : ParticleKindObject.RandomParticleColor);
                                 if (CellEngineUseful::IsDNAorRNA(TempAtomObject.EntityId) && ParticleObject.GenomeIndex == 0)
                                     TempAtomObject.RandomParticleKindColor = TempAtomObject.UniqueParticleColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(vmath::FromVec4ToVec3(sb7::color::Blue));
+                                TempAtomObject.GenomeIndex = ParticleObject.GenomeIndex;
                             }
                             else
                             if (DrawEmptyVoxels == true)

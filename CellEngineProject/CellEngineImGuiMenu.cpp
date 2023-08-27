@@ -345,6 +345,7 @@ public:
                     ImGui::Text("ATOM DATA:");
                     ImGui::Text("%s", string(CellEngineConfigDataObject.AtomDescriptionStr1 + " " + CellEngineConfigDataObject.AtomDescriptionStr2).c_str());
                     ImGui::Text("%s", string(CellEngineConfigDataObject.AtomDescriptionStr3 + " " + CellEngineConfigDataObject.AtomDescriptionStr4).c_str());
+                    ImGui::Text("%s", string(CellEngineConfigDataObject.AtomDescriptionStr5 + " " + CellEngineConfigDataObject.AtomDescriptionStr6).c_str());
                 }
             }
         }
