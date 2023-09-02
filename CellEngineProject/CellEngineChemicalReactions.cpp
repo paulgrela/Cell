@@ -52,13 +52,13 @@ bool CellEngineChemicalReactions::TryToMakeRandomChemicalReaction(UnsignedInt Nu
                 bool IsPossible = IsChemicalReactionPossible(ReactionObject);
                 if (IsPossible == true)
                 {
-                    LoggersManagerObject.Log(STREAM("Reaction POSSIBLE" << endl));
+                    LoggersManagerObject.Log(STREAM("REACTION POSSIBLE" << endl));
 
                     MakeChemicalReaction(ReactionObject);
                     return true;
                 }
                 else
-                    LoggersManagerObject.Log(STREAM("Particles types are the same!"));
+                    LoggersManagerObject.Log(STREAM("Reaction impossible!"));
             }
             else
                 LoggersManagerObject.Log(STREAM("Reaction for particles does not exist!"));

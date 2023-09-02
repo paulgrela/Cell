@@ -14,6 +14,8 @@ class Reaction
 private:
     UnsignedInt Identifier{};
 public:
+    std::uint32_t Duration;
+public:
     std::string ReactantsStr;
 public:
     std::vector<ParticleKindForReaction> Reactants;

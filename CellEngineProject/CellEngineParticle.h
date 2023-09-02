@@ -19,6 +19,7 @@ public:
     EntityIdInt EntityId{};
     ChainIdInt ChainId{};
     UniqueIdInt Index{};
+    UniqueIdInt GenomeThread{};
     UniqueIdInt GenomeIndex{};
     vector3_16 UniqueColor{};
     ElectricChargeIdInt ElectricCharge{};
@@ -36,7 +37,7 @@ public:
     explicit Particle(std::vector<vector3_16>& ListOfVoxelsParam) : ListOfVoxels(std::move(ListOfVoxelsParam)), SelectedForReaction(false)
     {
     }
-    explicit Particle(UniqueIdInt IndexParam, EntityIdInt EntityIdParam, ChainIdInt ChainIdParam, UniqueIdInt GenomeIndexParam, vector3_16 UniqueColorParam) : Index(IndexParam), EntityId(EntityIdParam), ChainId(ChainIdParam), GenomeIndex(GenomeIndexParam), UniqueColor(UniqueColorParam)
+    explicit Particle(UniqueIdInt IndexParam, EntityIdInt EntityIdParam, ChainIdInt ChainIdParam, UniqueIdInt GenomeThreadParam, UniqueIdInt GenomeIndexParam, vector3_16 UniqueColorParam) : Index(IndexParam), EntityId(EntityIdParam), ChainId(ChainIdParam), GenomeThread(GenomeThreadParam), GenomeIndex(GenomeIndexParam), UniqueColor(UniqueColorParam)
     {
     }
 public:
@@ -141,7 +142,7 @@ public:
     void AddParticleKind(const ParticleKind& ParticleParam)
     {
         ParticlesKinds.emplace_back(ParticleParam);
-        ParticlesKinds.back().GraphicData = ParticleKindGraphicData{ParticleParam.EntityId, true, 1, 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), ParticleParam.Name, ParticleParam.Symbol };
+        ParticlesKinds.back().GraphicData = ParticleKindGraphicData{ ParticleParam.EntityId, true, 1, 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), ParticleParam.Name, ParticleParam.Symbol };
         ParticlesKindsPos[ParticleParam.EntityId] = ParticlesKinds.size() - 1;
     }
 public:
