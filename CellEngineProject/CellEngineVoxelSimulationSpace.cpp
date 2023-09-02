@@ -444,6 +444,7 @@ bool CellEngineVoxelSimulationSpace::FindParticlesInProximityOfVoxelSimulationSp
             for (UnsignedInt PosY = StartYPosParam; PosY < StartYPosParam + SizeYParam; PosY++)
                 for (UnsignedInt PosZ = StartZPosParam; PosZ < StartZPosParam + SizeZParam; PosZ++)
                     if (PosX >= 0 && PosY >= 0 && PosZ >= 0 && PosX < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension && PosY < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension && PosZ < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension)
+                                                                                                                        if (GetParticleFromIndex(GetSpaceVoxel(PosX, PosY, PosZ)).EntityId < 14) //TEMPORARY - LATER TO REMOVE
                         if (GetSpaceVoxel(PosX, PosY, PosZ) != 0)
                         {
                             UniqueIdInt ParticleIndex = GetSpaceVoxel(PosX, PosY, PosZ);
@@ -477,48 +478,15 @@ bool CellEngineVoxelSimulationSpace::FindParticlesInProximityOfVoxelSimulationSp
     return true;
 }
 
-
 bool CellEngineVoxelSimulationSpace::FindParticlesInProximityOfVoxelSimulationSpaceForChosenParticle(const Particle& ParticleObject, const UnsignedInt AdditionalBoundFactor)
 {
     try
     {
         LoggersManagerObject.Log(STREAM("EntityId = " << to_string(ParticleObject.EntityId)));
 
-        set<UnsignedInt> FoundParticleIndexes;
-
         auto ParticleKindObject = ParticlesKindsManagerObject.GetParticleKind(ParticleObject.EntityId);
-        for (UnsignedInt PosX = ParticleObject.XCenter - ParticleKindObject.XSizeDiv2 - AdditionalBoundFactor; PosX < ParticleObject.XCenter + ParticleKindObject.XSizeDiv2 + AdditionalBoundFactor; PosX++)
-            for (UnsignedInt PosY = ParticleObject.YCenter - ParticleKindObject.YSizeDiv2 - AdditionalBoundFactor; PosY < ParticleObject.YCenter + ParticleKindObject.YSizeDiv2 + AdditionalBoundFactor; PosY++)
-                for (UnsignedInt PosZ = ParticleObject.ZCenter - ParticleKindObject.ZSizeDiv2 - AdditionalBoundFactor; PosZ < ParticleObject.ZCenter + ParticleKindObject.ZSizeDiv2 + AdditionalBoundFactor; PosZ++)
-                    if (PosX >= 0 && PosY >= 0 && PosZ >= 0 && PosX < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension && PosY < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension && PosZ < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension)
-                        if (GetSpaceVoxel(PosX, PosY, PosZ) != 0)
-                                                                                                                        if (GetParticleFromIndex(GetSpaceVoxel(PosX, PosY, PosZ)).EntityId < 14) //TEMPORARY - LATER TO REMOVE
-                        {
-                            UniqueIdInt ParticleIndex = GetSpaceVoxel(PosX, PosY, PosZ);
-                            if (FoundParticleIndexes.find(ParticleIndex) == FoundParticleIndexes.end())
-                            {
-                                ParticlesSortedByCapacityFoundInParticlesProximity.emplace_back(ParticleIndex);
-                                ParticlesKindsFoundInParticlesProximity[GetParticleFromIndex(ParticleIndex).EntityId]++;
-                                FoundParticleIndexes.insert(ParticleIndex);
-                            }
-                        }
 
-        if (ParticlesSortedByCapacityFoundInParticlesProximity.empty() == false)
-        {
-            sort(ParticlesSortedByCapacityFoundInParticlesProximity.begin(), ParticlesSortedByCapacityFoundInParticlesProximity.end(), [this](UnsignedInt PK1, UnsignedInt PK2) { return GetParticleFromIndex(PK1).ListOfVoxels.size() > GetParticleFromIndex(PK2).ListOfVoxels.size(); });
-
-            LoggersManagerObject.Log(STREAM(endl << "ParticlesSortedByCapacityFoundInParticlesProximity List"));
-            for (const auto& LocalParticleIndexObjectToWrite : ParticlesSortedByCapacityFoundInParticlesProximity)
-                LoggersManagerObject.Log(STREAM("ParticleIndex = " << to_string(LocalParticleIndexObjectToWrite) << " EntityId = " << to_string(GetParticleFromIndex(LocalParticleIndexObjectToWrite).EntityId)));
-            LoggersManagerObject.Log(STREAM(endl << "ParticlesKindsFoundInParticlesProximity List"));
-            for (const auto& LocalParticleKindObjectToWrite : ParticlesKindsFoundInParticlesProximity)
-                LoggersManagerObject.Log(STREAM("ParticleKind EntityId = " << to_string(LocalParticleKindObjectToWrite.first) << " in quantity = " << to_string(LocalParticleKindObjectToWrite.second)));
-        }
-        else
-        {
-            LoggersManagerObject.Log(STREAM(endl << "No particle found in proximity "));
-            return false;
-        }
+        FindParticlesInProximityOfVoxelSimulationSpaceForSelectedVoxelSpace(ParticleObject.XCenter - ParticleKindObject.XSizeDiv2 - AdditionalBoundFactor, ParticleObject.YCenter - ParticleKindObject.YSizeDiv2 - AdditionalBoundFactor, ParticleObject.ZCenter - ParticleKindObject.ZSizeDiv2 - AdditionalBoundFactor, 2 * ParticleKindObject.XSizeDiv2 + 2 * AdditionalBoundFactor, 2 * ParticleKindObject.YSizeDiv2 + 2 * AdditionalBoundFactor, 2 * ParticleKindObject.ZSizeDiv2 + 2 * AdditionalBoundFactor);
     }
     CATCH("finding particles in proximity of voxel simulation space for chosen particle")
 
@@ -644,7 +612,7 @@ bool CellEngineVoxelSimulationSpace::IsChemicalReactionPossible(const Reaction& 
     return all_of(ReactionObject.Reactants.begin(), ReactionObject.Reactants.end(), [this](const ParticleKindForReaction& ReactionReactant){ return ReactionReactant.Counter <= ParticlesKindsFoundInParticlesProximity[ReactionReactant.EntityId]; });
 }
 
-void CellEngineVoxelSimulationSpace::GenerateRandomReactionForSelectedVoxelSpace(const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
+void CellEngineVoxelSimulationSpace::PrepareRandomReaction()
 {
     try
     {
@@ -652,26 +620,42 @@ void CellEngineVoxelSimulationSpace::GenerateRandomReactionForSelectedVoxelSpace
         if (UniformDistributionObjectMainRandomCondition_Uint64t(mt64R) == 0)
             return;
 
-        uniform_int_distribution<UnsignedInt> UniformDistributionObjectNumberOfReactants_Uint64t(2, 2);
-
         LoggersManagerObject.Log(STREAM("Looking for particles in proximity"));
 
         ParticlesKindsFoundInParticlesProximity.clear();
         ParticlesSortedByCapacityFoundInParticlesProximity.clear();
+    }
+    CATCH("preparing random reaction")
+}
+
+void CellEngineVoxelSimulationSpace::FindAndExecuteRandomReaction()
+{
+    try
+    {
+        uniform_int_distribution<UnsignedInt> UniformDistributionObjectNumberOfReactants_Uint64t(2, 2);
+
+        UnsignedInt NumberOfTries = 0;
+        while (NumberOfTries <= 100)
+        {
+            NumberOfTries++;
+
+            UnsignedInt NumberOfReactants = UniformDistributionObjectNumberOfReactants_Uint64t(mt64R);
+
+            if (TryToMakeRandomChemicalReaction(NumberOfReactants) == true)
+                break;
+        }
+    }
+    CATCH("finding and executing random reaction")
+}
+
+void CellEngineVoxelSimulationSpace::GenerateRandomReactionForSelectedVoxelSpace(const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
+{
+    try
+    {
+        PrepareRandomReaction();
 
         if (FindParticlesInProximityOfVoxelSimulationSpaceForSelectedVoxelSpace(StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam) == true)
-        {
-            UnsignedInt NumberOfTries = 0;
-            while (NumberOfTries <= 100)
-            {
-                NumberOfTries++;
-
-                UnsignedInt NumberOfReactants = UniformDistributionObjectNumberOfReactants_Uint64t(mt64R);
-
-                if (TryToMakeRandomChemicalReaction(NumberOfReactants) == true)
-                    break;
-            }
-        }
+            FindAndExecuteRandomReaction();
     }
     CATCH("generating random reaction for particle")
 }
@@ -680,30 +664,10 @@ void CellEngineVoxelSimulationSpace::GenerateRandomReactionForParticle(Particle&
 {
     try
     {
-        uniform_int_distribution<UnsignedInt> UniformDistributionObjectMainRandomCondition_Uint64t(0, 1);
-        if (UniformDistributionObjectMainRandomCondition_Uint64t(mt64R) == 0)
-            return;
-
-        uniform_int_distribution<UnsignedInt> UniformDistributionObjectNumberOfReactants_Uint64t(2, 2);
-
-        LoggersManagerObject.Log(STREAM("Looking for particles in proximity"));
-
-        ParticlesKindsFoundInParticlesProximity.clear();
-        ParticlesSortedByCapacityFoundInParticlesProximity.clear();
+        PrepareRandomReaction();
 
         if (FindParticlesInProximityOfVoxelSimulationSpaceForChosenParticle(ParticleObject, 20) == true)
-        {
-            UnsignedInt NumberOfTries = 0;
-            while (NumberOfTries <= 100)
-            {
-                NumberOfTries++;
-
-                UnsignedInt NumberOfReactants = UniformDistributionObjectNumberOfReactants_Uint64t(mt64R);
-
-                if (TryToMakeRandomChemicalReaction(NumberOfReactants) == true)
-                    break;
-            }
-        }
+            FindAndExecuteRandomReaction();
     }
     CATCH("generating random reaction for particle")
 }
