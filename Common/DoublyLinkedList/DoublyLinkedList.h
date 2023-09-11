@@ -30,7 +30,6 @@ void DoublyLinkedListNode<T>::InsertAtFront(T* Front, T* InsertedParticle)
     Front = InsertedParticle;
 }
 
-
 template <class T>
 void DoublyLinkedListNode<T>::InsertAtEnd(T* End, T* InsertedParticle)
 {
@@ -38,8 +37,8 @@ void DoublyLinkedListNode<T>::InsertAtEnd(T* End, T* InsertedParticle)
 
     if (End == nullptr)
         InsertedParticle->Prev = nullptr;
-
-    End->Next = InsertedParticle;
+    else
+        End->Next = InsertedParticle;
 
     InsertedParticle->Prev = End;
 }
@@ -61,8 +60,6 @@ void DoublyLinkedListNode<T>::InsertAfterGivenNode(T* ParticleInList, T* Inserte
     else
         InsertAtEnd(nullptr, InsertedParticle);
 }
-
-//void insert_before_given_node(DoublyLinkedListNode* given_node, int data)
 
 template <class T>
 void DoublyLinkedListNode<T>::InsertBeforeGivenNode(T* ParticleInList, T* InsertedParticle)

@@ -27,7 +27,7 @@ public:
 private:
     std::vector<std::string> GenomesLines;
 private:
-    std::vector<std::vector<UniqueIdInt>> Genomes; //USUNAC NIEPORZEBNE
+    std::vector<std::vector<UniqueIdInt>> Genomes;
 private:
     UnsignedInt MaxParticleIndex{};
     std::unordered_map<UniqueIdInt, Particle> Particles;

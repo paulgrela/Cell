@@ -21,8 +21,8 @@ public:
     EntityIdInt EntityId{};
     ChainIdInt ChainId{};
     UniqueIdInt Index{};
-                    UniqueIdInt GenomeThread{};//USUNAC
-                    UniqueIdInt GenomeIndex{};//USUNAC
+    UniqueIdInt GenomeThread{};
+    UniqueIdInt GenomeIndex{};
     vector3_16 UniqueColor{};
     ElectricChargeIdInt ElectricCharge{};
 public:
