@@ -7,11 +7,13 @@
 #include <string>
 #include <unordered_map>
 
+#include "DoublyLinkedList.h"
+
 #include "CellEngineTypes.h"
 #include "CellEngineUseful.h"
 #include "CellEngineColors.h"
 
-class Particle
+class Particle : public DoublyLinkedListNode<Particle>
 {
 public:
     bool SelectedForReaction{};
@@ -19,8 +21,8 @@ public:
     EntityIdInt EntityId{};
     ChainIdInt ChainId{};
     UniqueIdInt Index{};
-    UniqueIdInt GenomeThread{};
-    UniqueIdInt GenomeIndex{};
+                    UniqueIdInt GenomeThread{};//USUNAC
+                    UniqueIdInt GenomeIndex{};//USUNAC
     vector3_16 UniqueColor{};
     ElectricChargeIdInt ElectricCharge{};
 public:

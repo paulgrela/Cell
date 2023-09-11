@@ -62,6 +62,7 @@ include_directories(
 	"../Common/FileUtils"
 	"../Common/StringUtils"
 	"../Common/DateTimeUtils"
+	"../Common/DoublyLinkedList"
 	"../Common/TerminalColorsUtils")
 
 add_executable(
@@ -76,6 +77,8 @@ add_executable(
 	../Common/StringUtils/StringUtils.cpp
 	../Common/DateTimeUtils/DateTimeUtils.h
 	../Common/DateTimeUtils/DateTimeUtils.cpp
+	../Common/DoublyLinkedList/DoublyLinkedList.h
+	../Common/DoublyLinkedList/DoublyLinkedList.cpp
 	CellEngineTypes.h
 	CellEngineUseful.h
 	CellEngineColors.h
@@ -134,6 +137,8 @@ add_executable(
 	../Common/StringUtils/StringUtils.cpp
 	../Common/DateTimeUtils/DateTimeUtils.h
 	../Common/DateTimeUtils/DateTimeUtils.cpp
+	../Common/DoublyLinkedList/DoublyLinkedList.h
+	../Common/DoublyLinkedList/DoublyLinkedList.cpp
 	CellEngineTypes.h
 	CellEngineUseful.h
 	CellEngineColors.h

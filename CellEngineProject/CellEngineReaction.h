@@ -14,7 +14,7 @@ class Reaction
 private:
     UnsignedInt Identifier{};
 public:
-    std::uint32_t Duration;
+    std::uint32_t Duration{};
 public:
     std::string ReactantsStr;
 public:
