@@ -84,12 +84,12 @@ void DoublyLinkedListNode<T>::InsertBeforeGivenNode(T* ParticleInList, T* Insert
 template <class T>
 void DoublyLinkedListNode<T>::DeleteNode(T* Front, T* DeletedParticle)
 {
-    if(DeletedParticle == Front)
+    if (DeletedParticle == Front)
         Front = DeletedParticle->Next;
 
     DeletedParticle->Prev->Next = DeletedParticle->Next;
 
-    if(DeletedParticle->Next == nullptr)
+    if (DeletedParticle->Next == nullptr)
         return;
 
     DeletedParticle->Next->Prev = DeletedParticle->Prev;
