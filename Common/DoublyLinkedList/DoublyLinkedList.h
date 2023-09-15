@@ -14,7 +14,7 @@ public:
     static void InsertBeforeGivenNode(T* ParticleInList, T* InsertedParticle);
     static void InsertAfterGivenNode(T* ParticleInList, T* InsertedParticle);
     static void DeleteNode(T* Front, T* DeletedParticle);
-    static T* search(T* Front, int IndexToFind);
+    static T* Search(T* Front, int IndexToFind);
 };
 
 template <class T>
@@ -96,7 +96,7 @@ void DoublyLinkedListNode<T>::DeleteNode(T* Front, T* DeletedParticle)
 }
 
 template <class T>
-T* DoublyLinkedListNode<T>::search(T* Front, int IndexToFind)
+T* DoublyLinkedListNode<T>::Search(T* Front, int IndexToFind)
 {
     T* Temp = Front;
 

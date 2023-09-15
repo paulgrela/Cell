@@ -23,7 +23,7 @@ public:
 public:
     virtual std::vector<UnsignedInt> GetRandomParticles(UnsignedInt NumberOfReactants) = 0;
     virtual bool IsChemicalReactionPossible(const Reaction& ReactionObject) = 0;
-    virtual void MakeChemicalReaction(Reaction& ReactionObject) = 0;
+    virtual bool MakeChemicalReaction(Reaction& ReactionObject) = 0;
 public:
     bool TryToMakeRandomChemicalReaction(UnsignedInt NumberOfReactants);
 };

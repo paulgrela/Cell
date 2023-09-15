@@ -24,7 +24,7 @@ public:
 public:
     std::vector<UnsignedInt> GetRandomParticles(UnsignedInt NumberOfReactants) override;
     bool IsChemicalReactionPossible(const Reaction& ReactionObject)override;
-    void MakeChemicalReaction(Reaction& ReactionObject) override;
+    bool MakeChemicalReaction(Reaction& ReactionObject) override;
 public:
     void Run(UnsignedInt NumberOfSteps);
 };

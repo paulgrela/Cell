@@ -180,6 +180,8 @@ public:
     std::string AtomDescriptionStr6;
     std::string TimeParametersOfRenderingStr;
     std::string NumberOfRenderedAtomsParametersOfRenderingStr;
+public:
+    bool GenomeReadFromFile = false;
 };
 
 inline CellEngineConfigData CellEngineConfigDataObject;

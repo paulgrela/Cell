@@ -27,7 +27,7 @@ std::vector<UnsignedInt> CellEngineWellStirredChemicalReactionsSimulation::GetRa
     return RandomParticlesTypes;
 }
 
-void CellEngineWellStirredChemicalReactionsSimulation::MakeChemicalReaction(Reaction& ReactionObject)
+bool CellEngineWellStirredChemicalReactionsSimulation::MakeChemicalReaction(Reaction& ReactionObject)
 {
     try
     {
@@ -50,6 +50,8 @@ void CellEngineWellStirredChemicalReactionsSimulation::MakeChemicalReaction(Reac
         LoggersManagerObject.Log(STREAM(""));
     }
     CATCH("making reaction")
+
+    return true;
 }
 
 bool CellEngineWellStirredChemicalReactionsSimulation::IsChemicalReactionPossible(const Reaction& ReactionObject)

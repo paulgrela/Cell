@@ -3,6 +3,7 @@
 #define CELL_ENGINE_PARTICLE_H
 
 #include <list>
+#include <utility>
 #include <vector>
 #include <string>
 #include <unordered_map>
@@ -48,7 +49,7 @@ public:
 
 struct ParticleKindGraphicData
 {
-    UnsignedInt EntityId{};
+    EntityIdInt EntityId{};
     bool Visible{};
     float SizeX{};
     float SizeY{};
@@ -63,16 +64,11 @@ struct ParticleKindGraphicData
 class ParticleKind
 {
 public:
-    UnsignedInt EntityId{};
+    EntityIdInt EntityId{};
     std::string Name;
     std::string Symbol;
     UnsignedInt Counter{};
-    ElectricChargeIdInt ElectricCharge;
-public:
-    std::string SelfSequenceStr;
-    std::vector<ChainIdInt> SelfSequence;
-    std::string SequenceStr;
-    std::vector<ChainIdInt> Sequence;
+    ElectricChargeIdInt ElectricCharge{};
 public:
     std::vector<vector3_16> ListOfVoxels;
     UnsignedInt XSizeDiv2{}, YSizeDiv2{}, ZSizeDiv2{};
@@ -100,12 +96,17 @@ public:
 class ParticleKindForReaction
 {
 public:
-    UniqueIdInt EntityId{};
+    EntityIdInt EntityId{};
     UnsignedInt Counter{};
     bool ToRemoveInReaction;
 public:
-    ParticleKindForReaction(UnsignedInt EntityIdParam, UnsignedInt CounterParam, bool ToRemoveInReactionParam) : EntityId(EntityIdParam), Counter(CounterParam), ToRemoveInReaction(ToRemoveInReactionParam)
+    std::string SequenceStr;
+    std::vector<ChainIdInt> Sequence;
+public:
+    ParticleKindForReaction(EntityIdInt EntityIdParam, UnsignedInt CounterParam, std::string SequenceStrParam, bool ToRemoveInReactionParam) : EntityId(EntityIdParam), Counter(CounterParam), SequenceStr(std::move(SequenceStrParam)), ToRemoveInReaction(ToRemoveInReactionParam)
     {
+        for (auto& NucleotideLetter : SequenceStr)
+            Sequence.emplace_back(CellEngineUseful::GetChainIdFromLetter(NucleotideLetter));
     }
 };
 

@@ -7,9 +7,29 @@
 
 namespace CellEngineUseful
 {
+    inline EntityIdInt IfSpecialDNAThenReturnNormalDNACode(const EntityIdInt EntityId)
+    {
+        return EntityId > 10000 ? CellEngineConfigDataObject.DNAIdentifier : EntityId;
+    }
+
+    inline bool IsSpecialDNA(const EntityIdInt EntityId)
+    {
+        return EntityId > 10000;
+    }
+
     inline bool IsDNAorRNA(const EntityIdInt EntityId)
     {
         return EntityId == CellEngineConfigDataObject.DNAIdentifier || EntityId == CellEngineConfigDataObject.RNAIdentifier;
+    }
+
+    inline bool IsDNA(const EntityIdInt EntityId)
+    {
+        return EntityId == CellEngineConfigDataObject.DNAIdentifier;
+    }
+
+    inline bool IsRNA(const EntityIdInt EntityId)
+    {
+        return EntityId == CellEngineConfigDataObject.RNAIdentifier;
     }
 
     inline bool IsNucleotide(const std::string_view ChainName)

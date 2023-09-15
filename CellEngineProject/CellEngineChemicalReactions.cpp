@@ -54,8 +54,7 @@ bool CellEngineChemicalReactions::TryToMakeRandomChemicalReaction(UnsignedInt Nu
                 {
                     LoggersManagerObject.Log(STREAM("REACTION POSSIBLE" << endl));
 
-                    MakeChemicalReaction(ReactionObject);
-                    return true;
+                    return MakeChemicalReaction(ReactionObject);
                 }
                 else
                     LoggersManagerObject.Log(STREAM("Reaction impossible!"));

@@ -258,14 +258,16 @@ void CellEngineVoxelSimulationSpace::AddBasicParticlesKindsAndReactions()
         ParticlesKindsManagerObject.AddParticleKind({ 10, "Ethylene", "CH2CH2O", 0 });
         ParticlesKindsManagerObject.AddParticleKind({ 11, "Oxygen", "0", 0 });
 
-        const string DNASequenceForTest1 = "TACAAAAAAAGAGGTGTTAGC";
-        ParticlesKindsManagerObject.AddParticleKind({ 699, "DNA", DNASequenceForTest1, 0 });
+        ParticlesKindsManagerObject.AddParticleKind({ 699, "DNA", "DNA", 0 });
 
-        AddChemicalReaction(Reaction("C6H12O6 + O2 + ", { { 1, 1, true }, { 2, 6, true} }, { {3, 6, true }, { 0, 6, true } }));
-        AddChemicalReaction(Reaction("CH2CH2 + H2O + ", { { 4, 1, true }, { 0, 1, true } }, { { 5, 1, true } }));
-        AddChemicalReaction(Reaction("CH3CHCH2 + HX + ", { { 6, 1, true }, { 7, 1, true } }, { { 8, 1, true } }));
-        AddChemicalReaction(Reaction("CH2CH2 + O + ", { { 4,  1, true }, { 11, 1, true } }, { { 10, 1, true } }));
-        AddChemicalReaction(Reaction("CH3CH2(OH) + " + DNASequenceForTest1 + " + ", { { 5,  1, true }, { 699, 1, false } }, { { 10, 1, true } }));
+        const string DNASequenceForTest1 = "TACAAAAAAAGAGGTGTTAGC";
+        ParticlesKindsManagerObject.AddParticleKind({ 10001, "DNA", DNASequenceForTest1, 0 });
+
+        AddChemicalReaction(Reaction("C6H12O6 + O2 + ", { { 1, 1, "", true }, { 2, 6, "", true } }, { { 3, 6, "", true }, { 0, 6, "", true } }));
+        AddChemicalReaction(Reaction("CH2CH2 + H2O + ", { { 4, 1, "", true }, { 0, 1, "", true } }, { { 5, 1, "", true } }));
+        AddChemicalReaction(Reaction("CH3CHCH2 + HX + ", { { 6, 1, "", true }, { 7, 1, "", true } }, { { 8, 1, "", true } }));
+        AddChemicalReaction(Reaction("CH2CH2 + O + ", { { 4,  1, "", true }, { 11, 1, "", true } }, { { 10, 1, "", true } }));
+        AddChemicalReaction(Reaction("CH3CH2(OH) + DNA + ", { { 5,  1, "", true }, { 10001, 1, DNASequenceForTest1, false } }, { { 10, 1, "", true } }));
 
         PreprocessChemicalReactions();
     }
@@ -392,53 +394,65 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfDiffusionForSelectedRangeO
     CATCH("generating one step of diffusion")
 }
 
-bool CellEngineVoxelSimulationSpace::CompareFitnessOfDNASequenceByString(const EntityIdInt ReactantEntityId, const Particle& ParticleObjectForReaction)
+bool CellEngineVoxelSimulationSpace::CompareFitnessOfDNASequenceByString(const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction)
 {
-    bool FoundSequenceOuter = false;
+    string NucleotidesSequenceToCompareStr;
 
     try
     {
-        auto ParticleKindForReactionObject = ParticlesKindsManagerObject.GetParticleKind(ReactantEntityId);
-
-        for (UnsignedInt GenomeIndex = ParticleObjectForReaction.GenomeIndex - 20; GenomeIndex < ParticleObjectForReaction.GenomeIndex + 20; GenomeIndex++)
-            if (ParticleKindForReactionObject.SequenceStr == GenomesLines[ParticleObjectForReaction.GenomeThread].substr(GenomeIndex, ParticleKindForReactionObject.SequenceStr.size()))
-            {
-                FoundSequenceOuter = true;
-                break;
-            }
+        UnsignedInt NucleotidesCounter = 1;
+        Particle* ParticlePtr = &ParticleObjectForReaction;
+        while (NucleotidesCounter < ParticleKindForReactionObject.SequenceStr.length() + 1 && ParticleObjectForReaction.Next != nullptr)
+        {
+            NucleotidesSequenceToCompareStr += CellEngineUseful::GetLetterForDNAChainId(ParticlePtr->ChainId);
+            ParticlePtr = ParticlePtr->Next;
+            NucleotidesCounter++;
+        }
     }
     CATCH("comparing fitness of dna sequence by string")
 
-    return FoundSequenceOuter;
+    LoggersManagerObject.Log(STREAM("DNA SEQUENCE COMPARE = #" << NucleotidesSequenceToCompareStr << "#" << ParticleKindForReactionObject.SequenceStr << "#" << to_string(ParticleKindForReactionObject.EntityId)));
+
+    return NucleotidesSequenceToCompareStr == ParticleKindForReactionObject.SequenceStr;
 }
 
-bool CellEngineVoxelSimulationSpace::CompareFitnessOfDNASequenceByNucleotidesLoop(const EntityIdInt ReactantEntityId, const Particle& ParticleObjectForReaction)
+bool CellEngineVoxelSimulationSpace::CompareFitnessOfDNASequenceByNucleotidesLoop(const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction)
 {
-    bool FoundSequenceOuter = false;
+    bool FoundSequenceNotFit = false;
 
     try
     {
-        auto ParticleKindForReactionObject = ParticlesKindsManagerObject.GetParticleKind(ReactantEntityId);
+        string NucleotidesSequenceToCompareStr;
 
-        for (UnsignedInt GenomeIndex = ParticleObjectForReaction.GenomeIndex - 20; GenomeIndex < ParticleObjectForReaction.GenomeIndex + 20; GenomeIndex++)
+        vector<ChainIdInt> NucleotidesSequenceToCompare;
+        UnsignedInt NucleotidesCounter = 1;
+        Particle* ParticlePtr = &ParticleObjectForReaction;
+        while (NucleotidesCounter < ParticleKindForReactionObject.Sequence.size() + 1 && ParticleObjectForReaction.Next != nullptr)
         {
-            bool FoundSequenceInner = true;
-            for (UnsignedInt NucleotideNum = 0; NucleotideNum < ParticleKindForReactionObject.Sequence.size(); NucleotideNum++)
-                if (ParticleKindForReactionObject.Sequence[NucleotideNum] != GetParticleFromIndex(Genomes[ParticleObjectForReaction.GenomeThread][GenomeIndex + NucleotideNum]).ChainId)
-                {
-                    FoundSequenceInner = false;
-                    break;
-                }
-            if (FoundSequenceInner == true)
+            NucleotidesSequenceToCompare.emplace_back(ParticlePtr->ChainId);
+            NucleotidesSequenceToCompareStr += CellEngineUseful::GetLetterForDNAChainId(ParticlePtr->ChainId);
+            ParticlePtr = ParticlePtr->Next;
+            NucleotidesCounter++;
+        }
+
+        LoggersManagerObject.Log(STREAM("DNA SEQUENCE COMPARE = #" << NucleotidesSequenceToCompareStr << "#" << ParticleKindForReactionObject.SequenceStr << "#" << to_string(ParticleKindForReactionObject.EntityId)));
+
+        for (UnsignedInt NucleotideNum = 0; NucleotideNum < ParticleKindForReactionObject.Sequence.size(); NucleotideNum++)
+            if (ParticleKindForReactionObject.Sequence[NucleotideNum] != NucleotidesSequenceToCompare[NucleotideNum])
             {
-                FoundSequenceOuter = true;
+                if (NucleotidesSequenceToCompareStr == ParticleKindForReactionObject.SequenceStr)
+                    LoggersManagerObject.Log(STREAM("SEQUENCE DIFF = " << to_string(NucleotideNum) << " " << NucleotidesSequenceToCompare[NucleotideNum] << " " << ParticleKindForReactionObject.Sequence[NucleotideNum]));
+
+                FoundSequenceNotFit = true;
                 break;
             }
-        }
+
+        if (FoundSequenceNotFit == false)
+            LoggersManagerObject.Log(STREAM("DNA SEQUENCE FOUND"));
     }
     CATCH("comparing fitness of dna sequence by nucleotides loop")
 
-    return FoundSequenceOuter;
+    return !FoundSequenceNotFit;
 }
 
 bool CellEngineVoxelSimulationSpace::FindParticlesInProximityOfVoxelSimulationSpaceForSelectedVoxelSpace(const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
@@ -506,9 +520,10 @@ vector<UniqueIdInt> CellEngineVoxelSimulationSpace::ChooseParticlesForReactionFr
 {
     vector<UniqueIdInt> ParticlesIndexesChosenForReaction;
 
+    vector<UnsignedInt> ReactantsCounters(ReactionObject.Reactants.size());
+
     try
     {
-        vector<UnsignedInt> ReactantsCounters(ReactionObject.Reactants.size());
         for (UnsignedInt ReactantIndex = 0; ReactantIndex < ReactionObject.Reactants.size(); ReactantIndex++)
             ReactantsCounters[ReactantIndex] = ReactionObject.Reactants[ReactantIndex].Counter;
 
@@ -522,19 +537,27 @@ vector<UniqueIdInt> CellEngineVoxelSimulationSpace::ChooseParticlesForReactionFr
             if (CellEngineUseful::IsDNAorRNA(ParticleObjectTestedForReaction.EntityId) == false)
                 ReactantIterator = find_if(ReactionObject.Reactants.begin(), ReactionObject.Reactants.end(), [&ParticleObjectTestedForReaction](ParticleKindForReaction& ParticleKindObject){ return ParticleKindObject.EntityId == ParticleObjectTestedForReaction.EntityId; });
             else
-                ReactantIterator = find_if(ReactionObject.Reactants.begin(), ReactionObject.Reactants.end(), [&ParticleObjectTestedForReaction, this](ParticleKindForReaction& ParticleKindObjectParam){ return ParticleKindObjectParam.EntityId == ParticleObjectTestedForReaction.EntityId && CompareFitnessOfDNASequenceByNucleotidesLoop(ParticleKindObjectParam.EntityId, ParticleObjectTestedForReaction) == true; });
+                ReactantIterator = find_if(ReactionObject.Reactants.begin(), ReactionObject.Reactants.end(), [&ParticleObjectTestedForReaction](ParticleKindForReaction& ParticleKindForReactionObjectParam){ return CellEngineUseful::IsSpecialDNA(ParticleKindForReactionObjectParam.EntityId) && CompareFitnessOfDNASequenceByNucleotidesLoop(ParticleKindForReactionObjectParam, ParticleObjectTestedForReaction) == true; });
 
             if (ReactantIterator != ReactionObject.Reactants.end() && ReactantsCounters[ReactantIterator - ReactionObject.Reactants.begin()] > 0 && ReactantIterator->ToRemoveInReaction == true)
+                ParticlesIndexesChosenForReaction.emplace_back(ParticleObjectIndex);
+
+            if (ReactantIterator != ReactionObject.Reactants.end() && ReactantsCounters[ReactantIterator - ReactionObject.Reactants.begin()] > 0)
             {
                 LoggersManagerObject.Log(STREAM("CHOSEN ParticleObjectIndex = " << to_string(ParticleObjectIndex) <<" EntityId = " << to_string(ParticleObjectTestedForReaction.EntityId) << " X = " << to_string(ParticleObjectTestedForReaction.XCenter) << " Y = " << to_string(ParticleObjectTestedForReaction.YCenter) << " Z = " << to_string(ParticleObjectTestedForReaction.ZCenter) << endl));
-                ParticlesIndexesChosenForReaction.emplace_back(ParticleObjectIndex);
                 ReactantsCounters[ReactantIterator - ReactionObject.Reactants.begin()]--;
             }
+
+            if (all_of(ReactantsCounters.begin(), ReactantsCounters.end(), [this](const UnsignedInt& Counter){ return Counter == 0; }) == true)
+                break;
         }
     }
     CATCH("choosing particles for reaction from all particles in proximity")
 
-    return ParticlesIndexesChosenForReaction;
+    if (all_of(ReactantsCounters.begin(), ReactantsCounters.end(), [this](const UnsignedInt& Counter){ return Counter == 0; }) == true)
+        return ParticlesIndexesChosenForReaction;
+    else
+        return {};
 }
 
 void CellEngineVoxelSimulationSpace::EraseParticlesChosenForReactionAndGetCentersForNewProductsOfReaction(const UnsignedInt ParticleIndexChosenForReaction, vector<vector3_16>& Centers)
@@ -554,11 +577,13 @@ void CellEngineVoxelSimulationSpace::EraseParticlesChosenForReactionAndGetCenter
     CATCH("erasing particles chosen for reaction and get centers for new products of reaction")
 }
 
-void CellEngineVoxelSimulationSpace::MakeChemicalReaction(Reaction& ReactionObject)
+bool CellEngineVoxelSimulationSpace::MakeChemicalReaction(Reaction& ReactionObject)
 {
     try
     {
         vector<UniqueIdInt> ParticlesIndexesChosenForReaction = ChooseParticlesForReactionFromAllParticlesInProximity(ReactionObject);
+        if (ParticlesIndexesChosenForReaction.empty() == true)
+            return false;
 
         LoggersManagerObject.Log(STREAM("Reaction Step 1 - chosen particles for reaction from all particles in proximity" << endl));
 
@@ -597,6 +622,8 @@ void CellEngineVoxelSimulationSpace::MakeChemicalReaction(Reaction& ReactionObje
         LoggersManagerObject.Log(STREAM("Reaction Step 3 - Reaction finished" << endl));
     }
     CATCH("making reaction")
+
+    return true;
 };
 
 std::vector<UnsignedInt> CellEngineVoxelSimulationSpace::GetRandomParticles(const UnsignedInt NumberOfReactants)
@@ -610,6 +637,10 @@ std::vector<UnsignedInt> CellEngineVoxelSimulationSpace::GetRandomParticles(cons
         for (UnsignedInt ReactantNumber = 1; ReactantNumber <= NumberOfReactants; ReactantNumber++)
         {
             RandomParticlesTypes.emplace_back(std::next(std::begin(ParticlesKindsFoundInParticlesProximity), static_cast<int>(UniformDistributionObjectUint64t(mt64R)))->first);
+
+            if (CellEngineUseful::IsSpecialDNA(RandomParticlesTypes.back()))
+                RandomParticlesTypes.back() = CellEngineConfigDataObject.DNAIdentifier;
+
             LoggersManagerObject.Log(STREAM("ParticleKind Reactant " << to_string(ReactantNumber) << " (" << to_string(RandomParticlesTypes.back()) << ")"));
         }
     }
@@ -620,7 +651,7 @@ std::vector<UnsignedInt> CellEngineVoxelSimulationSpace::GetRandomParticles(cons
 
 bool CellEngineVoxelSimulationSpace::IsChemicalReactionPossible(const Reaction& ReactionObject)
 {
-    return all_of(ReactionObject.Reactants.begin(), ReactionObject.Reactants.end(), [this](const ParticleKindForReaction& ReactionReactant){ return ReactionReactant.Counter <= ParticlesKindsFoundInParticlesProximity[ReactionReactant.EntityId]; });
+    return all_of(ReactionObject.Reactants.begin(), ReactionObject.Reactants.end(), [this](const ParticleKindForReaction& ReactionReactant){ return ReactionReactant.Counter <= ParticlesKindsFoundInParticlesProximity[CellEngineUseful::IfSpecialDNAThenReturnNormalDNACode(ReactionReactant.EntityId)]; });
 }
 
 void CellEngineVoxelSimulationSpace::PrepareRandomReaction()

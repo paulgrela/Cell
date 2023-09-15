@@ -9,7 +9,7 @@
 using SignedInt = std::int64_t;
 using UnsignedInt = std::uint64_t;
 
-using EntityIdInt = std::uint16_t;
+using EntityIdInt = std::uint32_t;
 using ChainIdInt = std::uint16_t;
 using UniqueIdInt = std::uint32_t;
 using ElectricChargeIdInt = std::uint16_t;

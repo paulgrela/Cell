@@ -88,14 +88,14 @@ public:
 public:
     std::vector<UnsignedInt> GetRandomParticles(UnsignedInt NumberOfReactants) override;
     bool IsChemicalReactionPossible(const Reaction& ReactionObject) override;
-    void MakeChemicalReaction(Reaction& ReactionObject) override;
+    bool MakeChemicalReaction(Reaction& ReactionObject) override;
 public:
     bool FindParticlesInProximityOfVoxelSimulationSpaceForChosenParticle(const Particle& ParticleObject, UnsignedInt AdditionalBoundFactor);
     bool FindParticlesInProximityOfVoxelSimulationSpaceForSelectedVoxelSpace(UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
 public:
     std::vector<UniqueIdInt> ChooseParticlesForReactionFromAllParticlesInProximity(Reaction& ReactionObject);
-    bool CompareFitnessOfDNASequenceByString(EntityIdInt ReactantEntityId, const Particle& ParticleObjectForReaction);
-    bool CompareFitnessOfDNASequenceByNucleotidesLoop(EntityIdInt ReactantEntityId, const Particle& ParticleObjectForReaction);
+    static bool CompareFitnessOfDNASequenceByString(const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction);
+    static bool CompareFitnessOfDNASequenceByNucleotidesLoop(const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction);
     void EraseParticlesChosenForReactionAndGetCentersForNewProductsOfReaction(UnsignedInt ParticleIndexChosenForReaction, std::vector<vector3_16>& Centers);
 public:
     Particle* GenerateDNAParticle(Particle* ParticlePrev, EntityIdInt EntityId, ChainIdInt ChainId, UnsignedInt GenomeThread, UnsignedInt GenomeIndex, UnsignedInt StartPosX, UnsignedInt StartPosY, UnsignedInt StartPosZ, UnsignedInt ParticleSizeX, UnsignedInt ParticleSizeY, UnsignedInt ParticleSizeZ, std::vector<UniqueIdInt>& Genome, vector3_16 UniqueColorParam);
