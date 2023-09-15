@@ -1096,6 +1096,8 @@ void CellEngineVoxelSimulationSpace::ReadGenomeDataFromFile(bool Paired)
 {
     try
     {
+        CellEngineConfigDataObject.GenomeReadFromFile = true;
+
         EraseAllDNAParticles();
 
         UnsignedInt ParticlesSizeBeforeAddingRandomDNA = Particles.size();
