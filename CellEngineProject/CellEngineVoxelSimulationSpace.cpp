@@ -258,16 +258,46 @@ void CellEngineVoxelSimulationSpace::AddBasicParticlesKindsAndReactions()
         ParticlesKindsManagerObject.AddParticleKind({ 10, "Ethylene", "CH2CH2O", 0 });
         ParticlesKindsManagerObject.AddParticleKind({ 11, "Oxygen", "0", 0 });
 
-        ParticlesKindsManagerObject.AddParticleKind({ 699, "DNA", "DNA", 0 });
+        ParticlesKindsManagerObject.AddParticleKind({ CellEngineConfigDataObject.DNAIdentifier, "DNA", "DNA", 0 });
 
         const string DNASequenceForTest1 = "TACAAAAAAAGAGGTGTTAGC";
         ParticlesKindsManagerObject.AddParticleKind({ 10001, "DNA", DNASequenceForTest1, 0 });
 
-        AddChemicalReaction(Reaction("C6H12O6 + O2 + ", { { 1, 1, "", true }, { 2, 6, "", true } }, { { 3, 6, "", true }, { 0, 6, "", true } }));
-        AddChemicalReaction(Reaction("CH2CH2 + H2O + ", { { 4, 1, "", true }, { 0, 1, "", true } }, { { 5, 1, "", true } }));
-        AddChemicalReaction(Reaction("CH3CHCH2 + HX + ", { { 6, 1, "", true }, { 7, 1, "", true } }, { { 8, 1, "", true } }));
-        AddChemicalReaction(Reaction("CH2CH2 + O + ", { { 4,  1, "", true }, { 11, 1, "", true } }, { { 10, 1, "", true } }));
-        AddChemicalReaction(Reaction("CH3CH2(OH) + DNA + ", { { 5,  1, "", true }, { 10001, 1, DNASequenceForTest1, false } }, { { 10, 1, "", true } }));
+        const string DNASequenceForTest2Link1 = "TACAAAAAAAGAGGTGTT";
+        ParticlesKindsManagerObject.AddParticleKind({ 10002, "DNA", DNASequenceForTest2Link1, 0 });
+        const string DNASequenceForTest3Link1 = "AGC";
+        ParticlesKindsManagerObject.AddParticleKind({ 10003, "DNA", DNASequenceForTest3Link1, 0 });
+
+        const string DNASequenceForTest4Cut1 = "TACAAAAAAAGAGGTGTTAGC";
+        ParticlesKindsManagerObject.AddParticleKind({ 10001, "DNA", DNASequenceForTest4Cut1, 0 });
+
+        const string RNASequenceForTestCutCripser = "AGC";
+        ParticlesKindsManagerObject.AddParticleKind({ 10004, "RNA", DNASequenceForTest3Link1, 0 });
+
+        AddChemicalReaction(Reaction("", "C6H12O6 + O2 + ", { { 1, 1, "", true }, { 2, 6, "", true } }, { { 3, 6, "", true }, { 0, 6, "", true } }));
+        AddChemicalReaction(Reaction("", "CH2CH2 + H2O + ", { { 4, 1, "", true }, { 0, 1, "", true } }, { { 5, 1, "", true } }));
+        AddChemicalReaction(Reaction("", "CH3CHCH2 + HX + ", { { 6, 1, "", true }, { 7, 1, "", true } }, { { 8, 1, "", true } }));
+        AddChemicalReaction(Reaction("", "CH2CH2 + O + ", { { 4,  1, "", true }, { 11, 1, "", true } }, { { 10, 1, "", true } }));
+
+        AddChemicalReaction(Reaction("", "CH3CH2(OH) + DNA + ", { { 5, 1, "", true }, { 10001, 1, DNASequenceForTest1, false } }, { { 10, 1, "", true } }));
+
+        AddChemicalReaction(Reaction("LINK 1", "PROTEIN1 + DNA + DNA + ", { { 80, 1, "", true }, { 10002, 1, DNASequenceForTest2Link1, false }, { 10003, 1, DNASequenceForTest3Link1, false } }, { { 80, 1, "", true } }));
+
+        AddChemicalReaction(Reaction("CUT 1", "PROTEIN1 + DNA + ", { { 80, 1, "", true }, { 10002, 1, DNASequenceForTest2Link1, false } }, { { 80, 1, "", true } }));
+
+        AddChemicalReaction(Reaction("LINK 2", "PROTEIN1 + DNA + DNA + ", { { 80, 1, "", true }, { 10002, 1, DNASequenceForTest2Link1, false }, { 10003, 1, DNASequenceForTest3Link1, false } }, { { 80, 1, "", true } }));
+
+        AddChemicalReaction(Reaction("CUT 2", "PROTEIN1 + DNA + ", { { 80, 1, "", true }, { 10002, 1, DNASequenceForTest2Link1, false } }, { { 80, 1, "", true } }));
+
+        AddChemicalReaction(Reaction("CUT CRISPER 2", "CAS9 + RNA + DNA + ", { { 90, 1, "", true }, { 10001, 1, DNASequenceForTest2Link1, false } }, { { 90, 1, "", true } }));
+
+        AddChemicalReaction(Reaction("POLYMERASE DNA START", "POLYMERASE + DNA + NUCLEOTIDE + ", { { 100, 1, "", true }, { 10001, 1, DNASequenceForTest1, false } }, { { 100, 1, "", true } }));
+        AddChemicalReaction(Reaction("POLYMERASE DNA ADD", "POLYMERASE + DNA + NUCLEOTIDE + ", { { 100, 1, "", true }, { 10001, 1, DNASequenceForTest1, false } }, { { 100, 1, "", true } }));
+        AddChemicalReaction(Reaction("POLYMERASE DNA END", "POLYMERASE + DNA + NUCLEOTIDE + ", { { 100, 1, "", true }, { 10001, 1, DNASequenceForTest1, false } }, { { 100, 1, "", true } }));
+
+        AddChemicalReaction(Reaction("POLYMERASE RNA START", "POLYMERASE + DNA + NUCLEOTIDE + ", { { 101, 1, "", true }, { 10001, 1, DNASequenceForTest1, false } }, { { 101, 1, "", true } }));
+        AddChemicalReaction(Reaction("POLYMERASE RNA ADD", "POLYMERASE + DNA + NUCLEOTIDE + ", { { 101, 1, "", true }, { 10001, 1, DNASequenceForTest1, false } }, { { 101, 1, "", true } }));
+        AddChemicalReaction(Reaction("POLYMERASE RNA END", "POLYMERASE + DNA + NUCLEOTIDE + ", { { 101, 1, "", true }, { 10001, 1, DNASequenceForTest1, false } }, { { 101, 1, "", true } }));
 
         PreprocessChemicalReactions();
     }

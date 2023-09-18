@@ -12,6 +12,7 @@ class ParticleKind;
 class Reaction
 {
 private:
+    std::string Name;
     UnsignedInt Identifier{};
 public:
     std::uint32_t Duration{};
@@ -22,7 +23,7 @@ public:
     std::vector<ParticleKindForReaction> Products;
 public:
     Reaction() = delete;
-    Reaction(std::string ReactantsStrParam, std::vector<ParticleKindForReaction> ReactantsParam, std::vector<ParticleKindForReaction> ProductsParam) : ReactantsStr(std::move(ReactantsStrParam)), Reactants(std::move(ReactantsParam)), Products(std::move(ProductsParam))
+    Reaction(std::string NameParam, std::string ReactantsStrParam, std::vector<ParticleKindForReaction> ReactantsParam, std::vector<ParticleKindForReaction> ProductsParam) : Name(std::move(NameParam)), ReactantsStr(std::move(ReactantsStrParam)), Reactants(std::move(ReactantsParam)), Products(std::move(ProductsParam))
     {
     }
 };

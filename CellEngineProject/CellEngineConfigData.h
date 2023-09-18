@@ -165,8 +165,8 @@ public:
     bool ImGuiLightVersion = false;
 public:
     int ChosenShapeOfAtoms = 1;
-    UnsignedInt DNAIdentifier{};
-    UnsignedInt RNAIdentifier{};
+    EntityIdInt DNAIdentifier{};
+    EntityIdInt RNAIdentifier{};
 
 public:
     bool PrintAtomDescriptionOnScreen{};
