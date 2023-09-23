@@ -23,7 +23,7 @@ public:
     std::vector<ParticleKindForReaction> Products;
 public:
     Reaction() = delete;
-    Reaction(std::string NameParam, std::string ReactantsStrParam, std::vector<ParticleKindForReaction> ReactantsParam, std::vector<ParticleKindForReaction> ProductsParam) : Name(std::move(NameParam)), ReactantsStr(std::move(ReactantsStrParam)), Reactants(std::move(ReactantsParam)), Products(std::move(ProductsParam))
+    Reaction(UnsignedInt IdentifierParam, std::string NameParam, std::string ReactantsStrParam, std::vector<ParticleKindForReaction> ReactantsParam, std::vector<ParticleKindForReaction> ProductsParam) : Identifier(IdentifierParam), Name(std::move(NameParam)), ReactantsStr(std::move(ReactantsStrParam)), Reactants(std::move(ReactantsParam)), Products(std::move(ProductsParam))
     {
     }
 };
