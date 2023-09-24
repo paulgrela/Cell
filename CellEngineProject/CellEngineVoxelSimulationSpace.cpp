@@ -288,9 +288,15 @@ void CellEngineVoxelSimulationSpace::AddBasicParticlesKindsAndReactions()
 
         AddChemicalReaction(Reaction(2, "LINK 1", "CH3CH2(OH) + DNA + DNA + ", { { 5, 1, "", false }, { 10002, 1, DNASequence1ForTestCutLink1, false }, { 10003, 1, DNASequence2ForTestCutLink1, false } }, {}));
 
-        AddChemicalReaction(Reaction(3, "CUT 1", "CH3CHCH2 + RNA + ", { { 6, 1, "", false }, { 10004, 1, RNASequence1ForTestCutLink1, false } }, {}));
+
+        AddChemicalReaction(Reaction(4, "CUT 1", "CH3CHCH2 + RNA + ", { { 6, 1, "", false }, { 10004, 1, RNASequence1ForTestCutLink1, false } }, {}));
 
         AddChemicalReaction(Reaction(4, "LINK 1", "CH3CHCH2 + RNA + RNA", { { 6, 1, "", false }, { 10004, 1, RNASequence1ForTestCutLink1, false }, { 10005, 1, DNASequence2ForTestCutLink1, false } }, {}));
+
+
+        AddChemicalReaction(Reaction(5, "CUT 2", "CH3CHCH2 + DNA + ", 5, { { 6, 1, "", false }, { 10006, 1, DNASequence1ForTestCutLink2, false }, { 10007, 1, DNASequence2ForTestCutLink1, false } }, { { 86, 1, "", true } }));
+
+        AddChemicalReaction(Reaction(6, "LINK 2", "CH3CHCH2 + DNA + DNA + ", { { 6, 1, "", false }, { 10006, 1, DNASequence1ForTestCutLink2, false }, { 10007, 1, DNASequence2ForTestCutLink1, false } }, {}));
 
         AddChemicalReaction(Reaction(5, "CUT 2", "CH3CHCH2 + DNA + ", { { 6, 1, "", false }, { 10006, 1, DNASequence1ForTestCutLink2, false } }, { { 86, 1, "", true } }));
 
@@ -307,6 +313,9 @@ void CellEngineVoxelSimulationSpace::AddBasicParticlesKindsAndReactions()
         AddChemicalReaction(Reaction(11, "POLYMERASE RNA RUN", "POLYMERASE + DNA + NUCLEOTIDE_RNA + ", { { 101, 1, "", true }, { 10001, 1, DNASequenceForTestFindingDNA, false } }, { { 101, 1, "", true } }));
         AddChemicalReaction(Reaction(12, "POLYMERASE RNA ADD", "POLYMERASE + DNA + NUCLEOTIDE_RNA + ", { { 101, 1, "", true }, { 10001, 1, DNASequenceForTestFindingDNA, false } }, { { 101, 1, "", true } }));
         AddChemicalReaction(Reaction(13, "POLYMERASE RNA END", "POLYMERASE + DNA + NUCLEOTIDE_RNA + ", { { 101, 1, "", true }, { 10001, 1, DNASequenceForTestFindingDNA, false } }, { { 101, 1, "", true } }));
+
+        AddChemicalReaction(Reaction(14, "SEPARATE DNA STRAND", "SEPARATOR_PROTEIN + DNA + ", { { 102, 1, "", false }, { 10001, 1, DNASequenceForTestFindingDNA, false } }, {}));
+        AddChemicalReaction(Reaction(15, "LINK DNA STRAND", "LINKER_PROTEIN + DNA + DNA + ", { { 103, 1, "", false }, { 10001, 1, DNASequenceForTestFindingDNA, false } }, {}));
 
         AddChemicalReaction(Reaction(1001, "", "C6H12O6 + O2 + ", { { 1, 1, "", true }, { 2, 6, "", true } }, { { 3, 6, "", true }, { 0, 6, "", true } }));
         AddChemicalReaction(Reaction(1002, "", "CH2CH2 + H2O + ", { { 4, 1, "", true }, { 0, 1, "", true } }, { { 5, 1, "", true } }));
@@ -438,6 +447,15 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfDiffusionForSelectedRangeO
     CATCH("generating one step of diffusion")
 }
 
+//FUNKCJE na ciagu DNA -
+
+//-idz NEXT az do nullptr i nulceotidescounter < stringDNA i go zwroc jako string
+//-idz PREV az do nullptr i nulceotidescounter < stringDNA i go zwroc jako tabele
+
+//lub po prostu
+//-idz NEXT okreslona ilosc nukleotydow
+//-idz PREV okreslona ilosc nukleotydow
+
 bool CellEngineVoxelSimulationSpace::CompareFitnessOfDNASequenceByString(const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction)
 {
     string NucleotidesSequenceToCompareStr;
@@ -550,18 +568,15 @@ vector<UniqueIdInt> CellEngineVoxelSimulationSpace::ChooseParticlesForReactionFr
                 auto ParticleKindForReactionObject = ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[0].second];
                 string NucleotidesSequenceToCompareStr;
 
-                while (NucleotidesCounter < ParticleKindForReactionObject.Sequence.size() + 1 && NucleotideObjectForReactionPtr->Next != nullptr)
+                while (NucleotidesCounter < ParticleKindForReactionObject.Sequence.size() + 1 + ReactionObject.AdditionalParameter && NucleotideObjectForReactionPtr->Next != nullptr)
                 {
                     NucleotidesSequenceToCompareStr += CellEngineUseful::GetLetterForDNAChainId(NucleotideObjectForReactionPtr->ChainId);
                     NucleotideObjectForReactionPtr = NucleotideObjectForReactionPtr->Next;
                     NucleotidesCounter++;
                 }
 
-                if (NucleotidesSequenceToCompareStr == ParticleKindForReactionObject.SequenceStr)
-                {
-                    NucleotideObjectForReactionPtr->Next->Prev = nullptr;
-                    NucleotideObjectForReactionPtr->Next = nullptr;
-                }
+                NucleotideObjectForReactionPtr->Next->Prev = nullptr;
+                NucleotideObjectForReactionPtr->Next = nullptr;
             }
             else
                 return {};
@@ -573,14 +588,36 @@ vector<UniqueIdInt> CellEngineVoxelSimulationSpace::ChooseParticlesForReactionFr
             {
                 Particle* NucleotideObjectForReactionPtr1 = &GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first);
                 Particle* NucleotideObjectForReactionPtr2 = &GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first);
+                auto ParticleKindForReactionObject1 = ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[1].second];
+                auto ParticleKindForReactionObject2 = ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[1].second];
 
-                while (NucleotideObjectForReactionPtr1->Next != nullptr)
+                UnsignedInt NucleotidesCounter ;
+                NucleotidesCounter = 1;
+                while (NucleotidesCounter < ParticleKindForReactionObject1.Sequence.size() + 1 && NucleotideObjectForReactionPtr1->Next != nullptr)
                     NucleotideObjectForReactionPtr1 = NucleotideObjectForReactionPtr1->Next;
-                while (NucleotideObjectForReactionPtr2->Prev != nullptr)
+                NucleotidesCounter = 1;
+                while (NucleotidesCounter < ParticleKindForReactionObject2.Sequence.size() + 1 && NucleotideObjectForReactionPtr2->Prev != nullptr)
                     NucleotideObjectForReactionPtr2 = NucleotideObjectForReactionPtr2->Prev;
 
                 NucleotideObjectForReactionPtr1->Next = NucleotideObjectForReactionPtr2;
                 NucleotideObjectForReactionPtr2->Prev = NucleotideObjectForReactionPtr1;
+            }
+            else
+                return {};
+        }
+        else
+        if (ReactionObject.Id == 5)
+        {
+            if (NucleotidesIndexesChosenForReaction.size() == 1)
+            {
+                //PRZECINA OBIE NICI w JEDNYM MIEJSCU JAK ReactionObject.Id == 1 + AdditionalParameter
+            }
+            else
+            if (NucleotidesIndexesChosenForReaction.size() == 2)
+            {
+                //PRZECINA OBIE NICI:
+                //GORNA w MIEJSCU PO WYZNACZONYM NucleotidesIndexesChosenForReaction[0] + SequenceStr1 + AdditionalParameter
+                //A DOLNA w MIEJSCU NucleotidesIndexesChosenForReaction[0] + SequenceStr1 + SequenceStr2 + AdditionalParameter
             }
             else
                 return {};
@@ -971,12 +1008,14 @@ Particle* CellEngineVoxelSimulationSpace::GenerateDNAParticle(Particle* Particle
     return &GetParticleFromIndex(ParticleIndex);
 }
 
-tuple<Particle*, Particle*> CellEngineVoxelSimulationSpace::GenerateTwoPairedNucleotides(Particle* ParticlePrev1, Particle* ParticlePrev2, const EntityIdInt EntityId, const ChainIdInt ChainId, const UnsignedInt GenomeIndex, const UnsignedInt StartPosX, const UnsignedInt StartPosY, const UnsignedInt StartPosZ, const UnsignedInt ParticleSizeX, const UnsignedInt ParticleSizeY, const UnsignedInt ParticleSizeZ, const UnsignedInt AddSizeX, const UnsignedInt AddSizeY, const UnsignedInt AddSizeZ, const vector3_16 UniqueColorParam)
+tuple<Particle*, Particle*> CellEngineVoxelSimulationSpace::GenerateTwoPairedNucleotides(Particle* ParticlePrev1, Particle* ParticlePrev2, const EntityIdInt EntityId, const ChainIdInt ChainId, const UnsignedInt GenomeIndex, const UnsignedInt StartPosX, const UnsignedInt StartPosY, const UnsignedInt StartPosZ, const UnsignedInt ParticleSizeX, const UnsignedInt ParticleSizeY, const UnsignedInt ParticleSizeZ, const UnsignedInt AddSizeX, const UnsignedInt AddSizeY, const UnsignedInt AddSizeZ, const vector3_16 UniqueColorParam, const bool Linked)
 {
     try
     {
         ParticlePrev1 = GenerateDNAParticle(ParticlePrev1, CellEngineConfigDataObject.DNAIdentifier, ChainId, 0, Genomes[0].size(), StartPosX, StartPosY, StartPosZ, ParticleSizeX, ParticleSizeY, ParticleSizeZ, Genomes[0], CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
         ParticlePrev2 = GenerateDNAParticle(ParticlePrev2, CellEngineConfigDataObject.DNAIdentifier, CellEngineUseful::GetPairedChainId(ChainId), 1, Genomes[1].size(), StartPosX + AddSizeX, StartPosY + AddSizeY, StartPosZ + AddSizeZ, ParticleSizeX, ParticleSizeY, ParticleSizeZ, Genomes[1], CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
+        if (Linked == true)
+            PairedNucleotide<Particle>::LinkPairedNucleotides(ParticlePrev1, ParticlePrev2);
     }
     CATCH("generating two paired nucleotides")
 
@@ -1113,10 +1152,10 @@ void CellEngineVoxelSimulationSpace::GenerateRandomDNAInWholeCell(UnsignedInt Nu
                     ChainIdInt ChainId = UniformDistributionObjectChainOfParticle_Uint64t(mt64R);
 
                     if (RandomMoveDirection == 1 || RandomMoveDirection == 2)
-                        tie(ParticlePrev1, ParticlePrev2) = GenerateTwoPairedNucleotides(ParticlePrev1, ParticlePrev2, CellEngineConfigDataObject.DNAIdentifier, ChainId, Genomes[0].size(), RandomPosX, RandomPosY, RandomPosZ, ParticleSizeX, 1, ParticleSizeZ, 0, 1, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
+                        tie(ParticlePrev1, ParticlePrev2) = GenerateTwoPairedNucleotides(ParticlePrev1, ParticlePrev2, CellEngineConfigDataObject.DNAIdentifier, ChainId, Genomes[0].size(), RandomPosX, RandomPosY, RandomPosZ, ParticleSizeX, 1, ParticleSizeZ, 0, 1, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), true);
                     else
                     if (RandomMoveDirection == 3 || RandomMoveDirection == 4 || RandomMoveDirection == 5 || RandomMoveDirection == 6)
-                        tie(ParticlePrev1, ParticlePrev2) = GenerateTwoPairedNucleotides(ParticlePrev1, ParticlePrev2, CellEngineConfigDataObject.DNAIdentifier, ChainId, Genomes[0].size(), RandomPosX, RandomPosY, RandomPosZ, 1, ParticleSizeY, ParticleSizeZ, 1, 0, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
+                        tie(ParticlePrev1, ParticlePrev2) = GenerateTwoPairedNucleotides(ParticlePrev1, ParticlePrev2, CellEngineConfigDataObject.DNAIdentifier, ChainId, Genomes[0].size(), RandomPosX, RandomPosY, RandomPosZ, 1, ParticleSizeY, ParticleSizeZ, 1, 0, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), true);
 
                     fill(RandomMovesDirections.begin(), RandomMovesDirections.end(), 0);
 
@@ -1229,9 +1268,9 @@ void CellEngineVoxelSimulationSpace::ReadGenomeDataFromFile(bool Paired)
             if (Paired == true)
             {
                 if (abs(static_cast<long>(PrevStartPosX - StartPosX)) > 0)
-                    tie(ParticlePrev1, ParticlePrev2) = GenerateTwoPairedNucleotides(ParticlePrev1, ParticlePrev2, stoi(Row[0]), stoi(Row[1]), GenomeIndex, StartPosX, StartPosY, StartPosZ, ParticleSize, 1, ParticleSize, 0, 1, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
+                    tie(ParticlePrev1, ParticlePrev2) = GenerateTwoPairedNucleotides(ParticlePrev1, ParticlePrev2, stoi(Row[0]), stoi(Row[1]), GenomeIndex, StartPosX, StartPosY, StartPosZ, ParticleSize, 1, ParticleSize, 0, 1, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), true);
                 else
-                    tie(ParticlePrev1, ParticlePrev2) = GenerateTwoPairedNucleotides(ParticlePrev1, ParticlePrev2, stoi(Row[0]), stoi(Row[1]), GenomeIndex, StartPosX, StartPosY, StartPosZ, 1, ParticleSize, ParticleSize, 1, 0, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
+                    tie(ParticlePrev1, ParticlePrev2) = GenerateTwoPairedNucleotides(ParticlePrev1, ParticlePrev2, stoi(Row[0]), stoi(Row[1]), GenomeIndex, StartPosX, StartPosY, StartPosZ, 1, ParticleSize, ParticleSize, 1, 0, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), true);
             }
             else
                 ParticlePrev1 = GenerateDNAParticle(ParticlePrev1, stoi(Row[0]), stoi(Row[1]), 0, stoi(Row[2]), stoi(Row[3]), stoi(Row[4]), stoi(Row[5]), ParticleSize, ParticleSize, ParticleSize, Genomes[0], CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));

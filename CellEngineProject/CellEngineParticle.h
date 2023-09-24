@@ -14,7 +14,20 @@
 #include "CellEngineUseful.h"
 #include "CellEngineColors.h"
 
-class Particle : public DoublyLinkedListNode<Particle>
+template <class T>
+class PairedNucleotide
+{
+public:
+    T* PairedNucleotide = nullptr;
+public:
+    static void LinkPairedNucleotides(T* PairedNucleotide1, T* PairedNucleotide2)
+    {
+        PairedNucleotide1->PairedNucleotide = PairedNucleotide2;
+        PairedNucleotide2->PairedNucleotide = PairedNucleotide1;
+    }
+};
+
+class Particle : public DoublyLinkedListNode<Particle>, public PairedNucleotide<Particle>
 {
 public:
     bool SelectedForReaction{};
