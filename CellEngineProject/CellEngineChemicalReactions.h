@@ -9,9 +9,11 @@
 
 class CellEngineChemicalReactions
 {
+private:
+    std::mt19937_64 mt64R{ std::random_device{}() };
 protected:
     std::vector<Reaction> Reactions;
-    std::unordered_map<std::string, UnsignedInt> ReactionsIdByString;
+    std::unordered_multimap<std::string, UnsignedInt> ReactionsIdByString;
 public:
     void PreprocessChemicalReactions();
 public:

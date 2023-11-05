@@ -44,10 +44,20 @@ bool CellEngineChemicalReactions::TryToMakeRandomChemicalReaction(UnsignedInt Nu
                 ReactionSymbolsStr += (ParticleSymbolForReaction + " + ");
             LoggersManagerObject.Log(STREAM("Reaction Symbols = [" << ReactionSymbolsStr << "]" << endl));
 
-            auto ReactionIter = ReactionsIdByString.find(ReactionSymbolsStr);
-            if (ReactionIter != ReactionsIdByString.end())
+            auto NumberOfElementsForKey = ReactionsIdByString.count(ReactionSymbolsStr);
+            if (NumberOfElementsForKey > 0)
             {
+                uniform_int_distribution<UnsignedInt> UniformDistributionObjectSizeOfParticle_Uint64t(0, NumberOfElementsForKey - 1);
+                UnsignedInt RandomShift = UniformDistributionObjectSizeOfParticle_Uint64t(mt64R);
+
+                auto ReactionIter = ReactionsIdByString.equal_range(ReactionSymbolsStr).first;
+                if (NumberOfElementsForKey > 1 && RandomShift > 0)
+                    for (UnsignedInt Step = 0; Step < RandomShift; Step++)
+                        ++ReactionIter;
                 auto& ReactionObject = Reactions[ReactionIter->second];
+
+                LoggersManagerObject.Log(STREAM("Reaction Position In Array = [" << to_string(ReactionIter->second) << "]" << endl));
+                LoggersManagerObject.Log(STREAM("Reaction Id = [" << to_string(ReactionObject.Id) << "]" << endl));
 
                 bool IsPossible = IsChemicalReactionPossible(ReactionObject);
                 if (IsPossible == true)
