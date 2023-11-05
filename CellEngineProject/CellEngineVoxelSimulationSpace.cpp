@@ -286,41 +286,41 @@ void CellEngineVoxelSimulationSpace::AddBasicParticlesKindsAndReactions()
 
         AddChemicalReaction(Reaction(1, "CUT 1", "CH3CH2(OH) + DNA + ", { { 5, 1, "", false }, { 10002, 1, DNASequence1ForTestCutLink1, false } }, {}));
 
-        AddChemicalReaction(Reaction(2, "LINK 1", "CH3CH2(OH) + DNA + DNA + ", { { 5, 1, "", false }, { 10002, 1, DNASequence1ForTestCutLink1, false }, { 10003, 1, DNASequence2ForTestCutLink1, false } }, {}));
-
-
-        AddChemicalReaction(Reaction(3, "CUT 1", "CH3CHCH2 + RNA + ", { { 6, 1, "", false }, { 10004, 1, RNASequence1ForTestCutLink1, false } }, {}));
-
-        AddChemicalReaction(Reaction(4, "LINK 1", "CH3CHCH2 + RNA + RNA + ", { { 6, 1, "", false }, { 10004, 1, RNASequence1ForTestCutLink1, false }, { 10005, 1, DNASequence2ForTestCutLink1, false } }, {}));
-
-
-        AddChemicalReaction(Reaction(5, "CUT 2", "CH3CHCH2 + DNA + ", 5, { { 6, 1, "", false }, { 10006, 1, DNASequence1ForTestCutLink2, false }, { 10007, 1, DNASequence2ForTestCutLink1, false } }, { { 86, 1, "", true } }));
-
-        AddChemicalReaction(Reaction(6, "LINK 2", "CH3CHCH2 + DNA + DNA + ", { { 6, 1, "", false }, { 10006, 1, DNASequence1ForTestCutLink2, false }, { 10007, 1, DNASequence2ForTestCutLink1, false } }, {}));
-
-        AddChemicalReaction(Reaction(5, "CUT 2", "CH3CHCH2 + DNA + ", { { 6, 1, "", false }, { 10006, 1, DNASequence1ForTestCutLink2, false } }, { { 86, 1, "", true } }));
-
-        AddChemicalReaction(Reaction(6, "LINK 2", "CH3CHCH2 + DNA + DNA + ", { { 6, 1, "", false }, { 10006, 1, DNASequence1ForTestCutLink2, false }, { 10007, 1, DNASequence2ForTestCutLink1, false } }, {}));
-
-
-        AddChemicalReaction(Reaction(7, "CUT CRISPER 2", "CH3CHCH2 + RNA + DNA + ", { { 6, 1, "", false }, { 10008, 1, RNASequenceForTestCutCrisper, false } }, { { 90, 1, "", true } }));
-
-
-        AddChemicalReaction(Reaction(8, "POLYMERASE DNA RUN", "POLYMERASE + DNA + NUCLEOTIDE_DNA + ", { { 100, 1, "", false }, { 10001, 1, DNASequenceForTestFindingDNA, false } }, {}));
-        AddChemicalReaction(Reaction(9, "POLYMERASE DNA ADD", "POLYMERASE + DNA + NUCLEOTIDE_DNA + ", { { 100, 1, "", false }, { 10001, 1, DNASequenceForTestFindingDNA, false } }, {}));
-        AddChemicalReaction(Reaction(10, "POLYMERASE DNA END", "POLYMERASE + DNA + NUCLEOTIDE_DNA + ", { { 100, 1, "", false }, { 10001, 1, DNASequenceForTestFindingDNA, false } }, {}));
-
-        AddChemicalReaction(Reaction(11, "POLYMERASE RNA RUN", "POLYMERASE + DNA + NUCLEOTIDE_RNA + ", { { 101, 1, "", true }, { 10001, 1, DNASequenceForTestFindingDNA, false } }, { { 101, 1, "", true } }));
-        AddChemicalReaction(Reaction(12, "POLYMERASE RNA ADD", "POLYMERASE + DNA + NUCLEOTIDE_RNA + ", { { 101, 1, "", true }, { 10001, 1, DNASequenceForTestFindingDNA, false } }, { { 101, 1, "", true } }));
-        AddChemicalReaction(Reaction(13, "POLYMERASE RNA END", "POLYMERASE + DNA + NUCLEOTIDE_RNA + ", { { 101, 1, "", true }, { 10001, 1, DNASequenceForTestFindingDNA, false } }, { { 101, 1, "", true } }));
-
-        AddChemicalReaction(Reaction(14, "SEPARATE DNA STRAND", "SEPARATOR_PROTEIN + DNA + ", { { 102, 1, "", false }, { 10001, 1, DNASequenceForTestFindingDNA, false } }, {}));
-        AddChemicalReaction(Reaction(15, "LINK DNA STRAND", "LINKER_PROTEIN + DNA + DNA + ", { { 103, 1, "", false }, { 10001, 1, DNASequenceForTestFindingDNA, false } }, {}));
-
-        AddChemicalReaction(Reaction(1001, "", "C6H12O6 + O2 + ", { { 1, 1, "", true }, { 2, 6, "", true } }, { { 3, 6, "", true }, { 0, 6, "", true } }));
-        AddChemicalReaction(Reaction(1002, "", "CH2CH2 + H2O + ", { { 4, 1, "", true }, { 0, 1, "", true } }, { { 5, 1, "", true } }));
-        AddChemicalReaction(Reaction(1003, "", "CH3CHCH2 + HX + ", { { 6, 1, "", true }, { 7, 1, "", true } }, { { 8, 1, "", true } }));
-        AddChemicalReaction(Reaction(1004, "", "CH2CH2 + O + ", { { 4,  1, "", true }, { 11, 1, "", true } }, { { 10, 1, "", true } }));
+//        AddChemicalReaction(Reaction(2, "LINK 1", "CH3CH2(OH) + DNA + DNA + ", { { 5, 1, "", false }, { 10002, 1, DNASequence1ForTestCutLink1, false }, { 10003, 1, DNASequence2ForTestCutLink1, false } }, {}));
+//
+//
+//        AddChemicalReaction(Reaction(3, "CUT 1", "CH3CHCH2 + RNA + ", { { 6, 1, "", false }, { 10004, 1, RNASequence1ForTestCutLink1, false } }, {}));
+//
+//        AddChemicalReaction(Reaction(4, "LINK 1", "CH3CHCH2 + RNA + RNA + ", { { 6, 1, "", false }, { 10004, 1, RNASequence1ForTestCutLink1, false }, { 10005, 1, DNASequence2ForTestCutLink1, false } }, {}));
+//
+//
+//        AddChemicalReaction(Reaction(5, "CUT 2", "CH3CHCH2 + DNA + ", 5, { { 6, 1, "", false }, { 10006, 1, DNASequence1ForTestCutLink2, false }, { 10007, 1, DNASequence2ForTestCutLink1, false } }, { { 86, 1, "", true } }));
+//
+//        AddChemicalReaction(Reaction(6, "LINK 2", "CH3CHCH2 + DNA + DNA + ", { { 6, 1, "", false }, { 10006, 1, DNASequence1ForTestCutLink2, false }, { 10007, 1, DNASequence2ForTestCutLink1, false } }, {}));
+//
+//        AddChemicalReaction(Reaction(5, "CUT 2", "CH3CHCH2 + DNA + ", { { 6, 1, "", false }, { 10006, 1, DNASequence1ForTestCutLink2, false } }, { { 86, 1, "", true } }));
+//
+//        AddChemicalReaction(Reaction(6, "LINK 2", "CH3CHCH2 + DNA + DNA + ", { { 6, 1, "", false }, { 10006, 1, DNASequence1ForTestCutLink2, false }, { 10007, 1, DNASequence2ForTestCutLink1, false } }, {}));
+//
+//
+//        AddChemicalReaction(Reaction(7, "CUT CRISPER 2", "CH3CHCH2 + RNA + DNA + ", { { 6, 1, "", false }, { 10008, 1, RNASequenceForTestCutCrisper, false } }, { { 90, 1, "", true } }));
+//
+//
+//        AddChemicalReaction(Reaction(8, "POLYMERASE DNA RUN", "POLYMERASE + DNA + NUCLEOTIDE_DNA + ", { { 100, 1, "", false }, { 10001, 1, DNASequenceForTestFindingDNA, false } }, {}));
+//        AddChemicalReaction(Reaction(9, "POLYMERASE DNA ADD", "POLYMERASE + DNA + NUCLEOTIDE_DNA + ", { { 100, 1, "", false }, { 10001, 1, DNASequenceForTestFindingDNA, false } }, {}));
+//        AddChemicalReaction(Reaction(10, "POLYMERASE DNA END", "POLYMERASE + DNA + NUCLEOTIDE_DNA + ", { { 100, 1, "", false }, { 10001, 1, DNASequenceForTestFindingDNA, false } }, {}));
+//
+//        AddChemicalReaction(Reaction(11, "POLYMERASE RNA RUN", "POLYMERASE + DNA + NUCLEOTIDE_RNA + ", { { 101, 1, "", true }, { 10001, 1, DNASequenceForTestFindingDNA, false } }, { { 101, 1, "", true } }));
+//        AddChemicalReaction(Reaction(12, "POLYMERASE RNA ADD", "POLYMERASE + DNA + NUCLEOTIDE_RNA + ", { { 101, 1, "", true }, { 10001, 1, DNASequenceForTestFindingDNA, false } }, { { 101, 1, "", true } }));
+//        AddChemicalReaction(Reaction(13, "POLYMERASE RNA END", "POLYMERASE + DNA + NUCLEOTIDE_RNA + ", { { 101, 1, "", true }, { 10001, 1, DNASequenceForTestFindingDNA, false } }, { { 101, 1, "", true } }));
+//
+//        AddChemicalReaction(Reaction(14, "SEPARATE DNA STRAND", "SEPARATOR_PROTEIN + DNA + ", { { 102, 1, "", false }, { 10001, 1, DNASequenceForTestFindingDNA, false } }, {}));
+//        AddChemicalReaction(Reaction(15, "LINK DNA STRAND", "LINKER_PROTEIN + DNA + DNA + ", { { 103, 1, "", false }, { 10001, 1, DNASequenceForTestFindingDNA, false } }, {}));
+//
+//        AddChemicalReaction(Reaction(1001, "", "C6H12O6 + O2 + ", { { 1, 1, "", true }, { 2, 6, "", true } }, { { 3, 6, "", true }, { 0, 6, "", true } }));
+//        AddChemicalReaction(Reaction(1002, "", "CH2CH2 + H2O + ", { { 4, 1, "", true }, { 0, 1, "", true } }, { { 5, 1, "", true } }));
+//        AddChemicalReaction(Reaction(1003, "", "CH3CHCH2 + HX + ", { { 6, 1, "", true }, { 7, 1, "", true } }, { { 8, 1, "", true } }));
+//        AddChemicalReaction(Reaction(1004, "", "CH2CH2 + O + ", { { 4,  1, "", true }, { 11, 1, "", true } }, { { 10, 1, "", true } }));
 
         PreprocessChemicalReactions();
     }
@@ -517,7 +517,7 @@ bool CellEngineVoxelSimulationSpace::CompareFitnessOfDNASequenceByNucleotidesLoo
     return !FoundSequenceNotFit;
 }
 
-vector<UniqueIdInt> CellEngineVoxelSimulationSpace::ChooseParticlesForReactionFromAllParticlesInProximity(Reaction& ReactionObject)
+tuple<vector<UniqueIdInt>, bool> CellEngineVoxelSimulationSpace::ChooseParticlesForReactionFromAllParticlesInProximity(Reaction& ReactionObject)
 {
     vector<pair<UniqueIdInt, UnsignedInt>> NucleotidesIndexesChosenForReaction;
 
@@ -556,14 +556,20 @@ vector<UniqueIdInt> CellEngineVoxelSimulationSpace::ChooseParticlesForReactionFr
             }
 
             if (all_of(ReactantsCounters.begin(), ReactantsCounters.end(), [this](const UnsignedInt& Counter){ return Counter == 0; }) == true)
+            {
+                LoggersManagerObject.Log(STREAM("ALL ARE ZERO"));
                 break;
+            }
         }
 
         if (ReactionObject.Id == 1)
         {
             LoggersManagerObject.Log(STREAM("CUT 1"));
+
             if (NucleotidesIndexesChosenForReaction.size() == 1)
             {
+                LoggersManagerObject.Log(STREAM("CUT 1 inside 1"));
+
                 Particle* NucleotideObjectForReactionPtr = &GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first);
                 UnsignedInt NucleotidesCounter = 1;
                 auto ParticleKindForReactionObject = ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[0].second];
@@ -582,54 +588,57 @@ vector<UniqueIdInt> CellEngineVoxelSimulationSpace::ChooseParticlesForReactionFr
             else
                 return {};
         }
-        else
-        if (ReactionObject.Id == 2)
-        {
-            if (NucleotidesIndexesChosenForReaction.size() == 2)
-            {
-                Particle* NucleotideObjectForReactionPtr1 = &GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first);
-                Particle* NucleotideObjectForReactionPtr2 = &GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first);
-                auto ParticleKindForReactionObject1 = ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[1].second];
-                auto ParticleKindForReactionObject2 = ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[1].second];
-
-                UnsignedInt NucleotidesCounter ;
-                NucleotidesCounter = 1;
-                while (NucleotidesCounter < ParticleKindForReactionObject1.Sequence.size() + 1 && NucleotideObjectForReactionPtr1->Next != nullptr)
-                    NucleotideObjectForReactionPtr1 = NucleotideObjectForReactionPtr1->Next;
-                NucleotidesCounter = 1;
-                while (NucleotidesCounter < ParticleKindForReactionObject2.Sequence.size() + 1 && NucleotideObjectForReactionPtr2->Prev != nullptr)
-                    NucleotideObjectForReactionPtr2 = NucleotideObjectForReactionPtr2->Prev;
-
-                NucleotideObjectForReactionPtr1->Next = NucleotideObjectForReactionPtr2;
-                NucleotideObjectForReactionPtr2->Prev = NucleotideObjectForReactionPtr1;
-            }
-            else
-                return {};
-        }
-        else
-        if (ReactionObject.Id == 5)
-        {
-            if (NucleotidesIndexesChosenForReaction.size() == 1)
-            {
-                //PRZECINA OBIE NICI w JEDNYM MIEJSCU JAK ReactionObject.Id == 1 + AdditionalParameter
-            }
-            else
-            if (NucleotidesIndexesChosenForReaction.size() == 2)
-            {
-                //PRZECINA OBIE NICI:
-                //GORNA w MIEJSCU PO WYZNACZONYM NucleotidesIndexesChosenForReaction[0] + SequenceStr1 + AdditionalParameter
-                //A DOLNA w MIEJSCU NucleotidesIndexesChosenForReaction[0] + SequenceStr1 + SequenceStr2 + AdditionalParameter
-            }
-            else
-                return {};
-        }
+//        else
+//        if (ReactionObject.Id == 2)
+//        {
+//            if (NucleotidesIndexesChosenForReaction.size() == 2)
+//            {
+//                Particle* NucleotideObjectForReactionPtr1 = &GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first);
+//                Particle* NucleotideObjectForReactionPtr2 = &GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first);
+//                auto ParticleKindForReactionObject1 = ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[1].second];
+//                auto ParticleKindForReactionObject2 = ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[1].second];
+//
+//                UnsignedInt NucleotidesCounter ;
+//                NucleotidesCounter = 1;
+//                while (NucleotidesCounter < ParticleKindForReactionObject1.Sequence.size() + 1 && NucleotideObjectForReactionPtr1->Next != nullptr)
+//                    NucleotideObjectForReactionPtr1 = NucleotideObjectForReactionPtr1->Next;
+//                NucleotidesCounter = 1;
+//                while (NucleotidesCounter < ParticleKindForReactionObject2.Sequence.size() + 1 && NucleotideObjectForReactionPtr2->Prev != nullptr)
+//                    NucleotideObjectForReactionPtr2 = NucleotideObjectForReactionPtr2->Prev;
+//
+//                NucleotideObjectForReactionPtr1->Next = NucleotideObjectForReactionPtr2;
+//                NucleotideObjectForReactionPtr2->Prev = NucleotideObjectForReactionPtr1;
+//            }
+//            else
+//                return {};
+//        }
+//        else
+//        if (ReactionObject.Id == 5)
+//        {
+//            if (NucleotidesIndexesChosenForReaction.size() == 1)
+//            {
+//                //PRZECINA OBIE NICI w JEDNYM MIEJSCU JAK ReactionObject.Id == 1 + AdditionalParameter
+//            }
+//            else
+//            if (NucleotidesIndexesChosenForReaction.size() == 2)
+//            {
+//                //PRZECINA OBIE NICI:
+//                //GORNA w MIEJSCU PO WYZNACZONYM NucleotidesIndexesChosenForReaction[0] + SequenceStr1 + AdditionalParameter
+//                //A DOLNA w MIEJSCU NucleotidesIndexesChosenForReaction[0] + SequenceStr1 + SequenceStr2 + AdditionalParameter
+//            }
+//            else
+//                return {};
+//        }
     }
     CATCH("choosing particles for reaction from all particles in proximity")
 
     if (all_of(ReactantsCounters.begin(), ReactantsCounters.end(), [this](const UnsignedInt& Counter){ return Counter == 0; }) == true)
-        return ParticlesIndexesChosenForReaction;
+    {
+        LoggersManagerObject.Log(STREAM("ALL ARE ZERO AT END = " << to_string(ParticlesIndexesChosenForReaction.size())));
+        return { ParticlesIndexesChosenForReaction, true };
+    }
     else
-        return {};
+        return { vector<UniqueIdInt>(), false };
 }
 
 void CellEngineVoxelSimulationSpace::EraseParticlesChosenForReactionAndGetCentersForNewProductsOfReaction(const UnsignedInt ParticleIndexChosenForReaction, vector<vector3_16>& Centers)
@@ -653,8 +662,16 @@ bool CellEngineVoxelSimulationSpace::MakeChemicalReaction(Reaction& ReactionObje
 {
     try
     {
-        vector<UniqueIdInt> ParticlesIndexesChosenForReaction = ChooseParticlesForReactionFromAllParticlesInProximity(ReactionObject);
-        if (ParticlesIndexesChosenForReaction.empty() == true)
+//        bool FoundInProximity;
+//        vector<UniqueIdInt> ParticlesIndexesChosenForReaction;
+//        tie(ParticlesIndexesChosenForReaction, FoundInProximity) = ChooseParticlesForReactionFromAllParticlesInProximity(ReactionObject);
+
+        //bool FoundInProximity;
+        //vector<UniqueIdInt> ParticlesIndexesChosenForReaction;
+        auto [ParticlesIndexesChosenForReaction, FoundInProximity] = ChooseParticlesForReactionFromAllParticlesInProximity(ReactionObject);
+
+        //if (ParticlesIndexesChosenForReaction.empty() == true)
+        if (FoundInProximity == false)
             return false;
 
         LoggersManagerObject.Log(STREAM("Reaction Step 1 - chosen particles for reaction from all particles in proximity" << endl));
@@ -710,7 +727,7 @@ std::vector<UnsignedInt> CellEngineVoxelSimulationSpace::GetRandomParticles(cons
         {
             RandomParticlesTypes.emplace_back(std::next(std::begin(ParticlesKindsFoundInParticlesProximity), static_cast<int>(UniformDistributionObjectUint64t(mt64R)))->first);
 
-            if (CellEngineUseful::IsSpecialDNA(RandomParticlesTypes.back()))
+            if (CellEngineUseful::IsSpecialDNA(RandomParticlesTypes.back()) == true)
                 RandomParticlesTypes.back() = CellEngineConfigDataObject.DNAIdentifier;
 
             LoggersManagerObject.Log(STREAM("ParticleKind Reactant " << to_string(ReactantNumber) << " (" << to_string(RandomParticlesTypes.back()) << ")"));
