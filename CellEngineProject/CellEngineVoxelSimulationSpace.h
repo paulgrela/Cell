@@ -36,6 +36,7 @@ private:
     std::map<EntityIdInt, UnsignedInt> ParticlesKindsFoundInParticlesProximity;
     std::vector<UniqueIdInt> ParticlesSortedByCapacityFoundInParticlesProximity;
     std::vector<UniqueIdInt> NucleotidesWithFreeEndingsFoundInParticlesProximity;
+    std::vector<UniqueIdInt> NucleotidesFreeFoundInParticlesProximity;
 private:
     void* SpacePointer;
 private:
