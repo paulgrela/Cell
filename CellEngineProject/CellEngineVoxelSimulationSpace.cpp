@@ -486,12 +486,11 @@ bool CellEngineVoxelSimulationSpace::CompareFitnessOfDNASequenceByNucleotidesLoo
     try
     {
         string NucleotidesSequenceToCompareStr;
-                                                                                                                        //LoggersManagerObject.Log(STREAM("DNA LOOK 1"));
+
         vector<ChainIdInt> NucleotidesSequenceToCompare;
         UnsignedInt NucleotidesCounter = 1;
         Particle* ParticlePtr = &ParticleObjectForReaction;
         while (NucleotidesCounter < ParticleKindForReactionObject.Sequence.size() + 1 && ParticleObjectForReaction.Next != nullptr && ParticlePtr != nullptr)
-        //while (NucleotidesCounter < ParticleKindForReactionObject.Sequence.size() + 1 && ParticleObjectForReaction.Next != nullptr)
         {
             NucleotidesSequenceToCompare.emplace_back(ParticlePtr->ChainId);
             NucleotidesSequenceToCompareStr += CellEngineUseful::GetLetterForDNAChainId(ParticlePtr->ChainId);
@@ -548,12 +547,8 @@ tuple<vector<UniqueIdInt>, bool> CellEngineVoxelSimulationSpace::ChooseParticles
             else
             {
                 ReactantIterator = find_if(ReactionObject.Reactants.begin(), ReactionObject.Reactants.end(), [&ParticleObjectTestedForReaction](ParticleKindForReaction& ParticleKindForReactionObjectParam){ return CellEngineUseful::IsSpecialDNA(ParticleKindForReactionObjectParam.EntityId) && CompareFitnessOfDNASequenceByNucleotidesLoop(ParticleKindForReactionObjectParam, ParticleObjectTestedForReaction) == true; });
-                    //LoggersManagerObject.Log(STREAM("DNA FOUND 1"));
                 if (ReactantIterator != ReactionObject.Reactants.end() && ReactantsCounters[ReactantIterator - ReactionObject.Reactants.begin()] > 0 && ReactantIterator->ToRemoveInReaction == false)
-                    //{
                     NucleotidesIndexesChosenForReaction.emplace_back(ParticleObjectIndex, ReactantIterator - ReactionObject.Reactants.begin());
-                    //LoggersManagerObject.Log(STREAM("DNA FOUND 2"));
-                   // }
             }
 
             if (ReactantIterator != ReactionObject.Reactants.end() && ReactantsCounters[ReactantIterator - ReactionObject.Reactants.begin()] > 0 && ReactantIterator->ToRemoveInReaction == true)
@@ -611,68 +606,15 @@ tuple<vector<UniqueIdInt>, bool> CellEngineVoxelSimulationSpace::ChooseParticles
 
                 LoggersManagerObject.Log(STREAM("NUCLEOTIDE 1 GENOME INDEX = " << NucleotideObjectForReactionPtr1->GenomeIndex));
                 LoggersManagerObject.Log(STREAM("NUCLEOTIDE 2 GENOME INDEX = " << NucleotideObjectForReactionPtr2->GenomeIndex));
-//                auto ParticleKindForReactionObject1 = ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[0].second];
-//                auto ParticleKindForReactionObject2 = ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[1].second];
-//
-//                //MOZE INNY ALGORYTMY DAC i sprawdzic wszystkie nukleotydy czy maja prev i next wolne i dac laczenie tych wolnych - to 1 opcja ale wtedy to inna reakcja
-//                                                                                                                        string NucleotidesSequenceToCompareStr;
-//
-//                UnsignedInt NucleotidesCounter;
-//                NucleotidesCounter = 1;
-//                while (NucleotidesCounter < ParticleKindForReactionObject1.Sequence.size() + 1 && NucleotideObjectForReactionPtr1->Next != nullptr)
-//                    {
-//                    NucleotidesSequenceToCompareStr += CellEngineUseful::GetLetterForDNAChainId(NucleotideObjectForReactionPtr1->ChainId);
-//                    NucleotideObjectForReactionPtr1 = NucleotideObjectForReactionPtr1->Next;
-//                    }
-//                                                                                                                        LoggersManagerObject.Log(STREAM("DNA STR 1 = " << NucleotidesSequenceToCompareStr));
-//                                                                                                                        NucleotidesSequenceToCompareStr = "";
-//                NucleotidesCounter = 1;
-//                while (NucleotidesCounter < ParticleKindForReactionObject2.Sequence.size() + 1 && NucleotideObjectForReactionPtr2->Prev != nullptr)
-//                    {
-//                    NucleotidesSequenceToCompareStr += CellEngineUseful::GetLetterForDNAChainId(NucleotideObjectForReactionPtr1->ChainId);
-//                    NucleotideObjectForReactionPtr2 = NucleotideObjectForReactionPtr2->Prev;
-//                    }
-//                                                                                                                        LoggersManagerObject.Log(STREAM("DNA STR 2 = " << NucleotidesSequenceToCompareStr));
-//                NucleotideObjectForReactionPtr1->Next = NucleotideObjectForReactionPtr2;
-//                NucleotideObjectForReactionPtr2->Prev = NucleotideObjectForReactionPtr1;
-
-//                UnsignedInt NucleotidesCounter;
-//                NucleotidesCounter = 1;
-//                while (NucleotidesCounter < ParticleKindForReactionObject1.Sequence.size() + 1 && NucleotideObjectForReactionPtr1->Next != nullptr)
-//                {
-//                    NucleotidesSequenceToCompareStr += CellEngineUseful::GetLetterForDNAChainId(NucleotideObjectForReactionPtr1->ChainId);
-//                    NucleotideObjectForReactionPtr1 = NucleotideObjectForReactionPtr1->Next;
-//                }
-//                //LoggersManagerObject.Log(STREAM("DNA STR 1 = " << NucleotidesSequenceToCompareStr));
-//                NucleotidesSequenceToCompareStr = "";
-//                NucleotidesCounter = 1;
-//                while (NucleotidesCounter < ParticleKindForReactionObject2.Sequence.size() + 1 && NucleotideObjectForReactionPtr2->Prev != nullptr)
-//                {
-//                    NucleotidesSequenceToCompareStr += CellEngineUseful::GetLetterForDNAChainId(NucleotideObjectForReactionPtr1->ChainId);
-//                    NucleotideObjectForReactionPtr2 = NucleotideObjectForReactionPtr2->Prev;
-//                }
-//                //LoggersManagerObject.Log(STREAM("DNA STR 2 = " << NucleotidesSequenceToCompareStr));
-//                NucleotideObjectForReactionPtr1->Next = NucleotideObjectForReactionPtr2;
-//                NucleotideObjectForReactionPtr2->Prev = NucleotideObjectForReactionPtr1;
-
-
 
                                                                                                                         string NucleotidesSequenceToCompareStr;
                 UnsignedInt NucleotidesCounter = 1;
-                //while (NucleotidesCounter < ParticleKindForReactionObject2.Sequence.size() + 1 && NucleotideObjectForReactionPtr2->Prev != nullptr)
                 while (NucleotideObjectForReactionPtr2->Next != nullptr)
                     {
                     NucleotidesSequenceToCompareStr += CellEngineUseful::GetLetterForDNAChainId(NucleotideObjectForReactionPtr2->ChainId);
                     NucleotideObjectForReactionPtr2 = NucleotideObjectForReactionPtr2->Next;
                     }
                                                                                                                         LoggersManagerObject.Log(STREAM("DNA STR 2 = " << NucleotidesSequenceToCompareStr));
-
-
-
-
-
-
-
 
                 NucleotideObjectForReactionPtr1->Prev = NucleotideObjectForReactionPtr2;
                 NucleotideObjectForReactionPtr2->Next = NucleotideObjectForReactionPtr1;

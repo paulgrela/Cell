@@ -29,6 +29,8 @@ public:
     vector3_16 RandomParticleKindColor{};
     bool Visible{};
     UniqueIdInt GenomeIndex = 0;
+    UniqueIdInt GenomeIndexPrev = 0;
+    UniqueIdInt GenomeIndexNext = 0;
     #ifdef EXTENDED_RAM_MEMORY
     float SizeXAtom{};
     float SizeYAtom{};
