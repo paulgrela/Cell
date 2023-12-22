@@ -48,6 +48,7 @@ private:
     void SetSaveXYZPositions(UnsignedInt SaveXParam, UnsignedInt SaveYParam, UnsignedInt SaveZParam);
 private:
     inline void ConvertAtomPosToGraphicCoordinate(CellEngineAtom& CellEngineAtomObjectParam, UnsignedInt StartXParam, UnsignedInt StartYParam, UnsignedInt StartZParam, UnsignedInt SpaceXParam, UnsignedInt SpaceYParam, UnsignedInt SpaceZParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam) const;
+    static inline void SetParticleParametersToDraw(CellEngineAtom& TempAtomObject, const Particle& ParticleObject);
 private:
     void RenderSelectedSpace(UnsignedInt XStartParam, UnsignedInt YStartParam, UnsignedInt ZStartParam, UnsignedInt XStepParam, UnsignedInt YStepParam, UnsignedInt ZStepParam, UnsignedInt XSizeParam, UnsignedInt YSizeParam, UnsignedInt ZSizeParam, UnsignedInt& NumberOfAllRenderedAtoms, const vmath::mat4& ViewMatrix, CellEngineAtom& TempAtomObject, std::vector<TemporaryRenderedVoxel>& TemporaryRenderedVoxelsList, UnsignedInt StencilBufferLoopCounter);
     void RenderSpace(UnsignedInt& NumberOfAllRenderedAtoms, UnsignedInt& NumberOfFoundParticlesCenterToBeRenderedInAtomDetails, const vmath::mat4& ViewMatrix) override;

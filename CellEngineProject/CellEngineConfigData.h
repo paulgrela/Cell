@@ -44,8 +44,17 @@ public:
 
     UnsignedInt MaximalNumberOfLinesInOneFile = 100000;
 public:
+    bool PrintAtomDescriptionOnScreen{};
+    bool LogParametersOfRenderingToFile{};
+public:
+    std::string TimeParametersOfRenderingStr;
+    std::string NumberOfRenderedAtomsParametersOfRenderingStr;
+public:
+    bool GenomeReadFromFile = false;
+public:
     bool MultiThreaded{};
     bool SetProcessPriorityHighest{};
+
 public:
     enum class TypesOfSpace : UnsignedInt
     {
@@ -167,21 +176,6 @@ public:
     int ChosenShapeOfAtoms = 1;
     EntityIdInt DNAIdentifier{};
     EntityIdInt RNAIdentifier{};
-
-public:
-    bool PrintAtomDescriptionOnScreen{};
-    bool LogParametersOfRenderingToFile{};
-public:
-    std::string AtomDescriptionStr1;
-    std::string AtomDescriptionStr2;
-    std::string AtomDescriptionStr3;
-    std::string AtomDescriptionStr4;
-    std::string AtomDescriptionStr5;
-    std::string AtomDescriptionStr6;
-    std::string TimeParametersOfRenderingStr;
-    std::string NumberOfRenderedAtomsParametersOfRenderingStr;
-public:
-    bool GenomeReadFromFile = false;
 };
 
 inline CellEngineConfigData CellEngineConfigDataObject;

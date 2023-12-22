@@ -343,9 +343,9 @@ public:
                 if (CellEngineConfigDataObject.NumberOfStencilBufferLoops == 3)
                 {
                     ImGui::Text("ATOM DATA:");
-                    ImGui::Text("%s", string(CellEngineConfigDataObject.AtomDescriptionStr1 + " " + CellEngineConfigDataObject.AtomDescriptionStr2).c_str());
-                    ImGui::Text("%s", string(CellEngineConfigDataObject.AtomDescriptionStr3 + " " + CellEngineConfigDataObject.AtomDescriptionStr4).c_str());
-                    ImGui::Text("%s", string(CellEngineConfigDataObject.AtomDescriptionStr5 + " " + CellEngineConfigDataObject.AtomDescriptionStr6).c_str());
+                    ImGui::Text("%s", string(CellEngineUseful::AtomDescriptionTextsObject.Texts[0] + " " + CellEngineUseful::AtomDescriptionTextsObject.Texts[1]).c_str());
+                    ImGui::Text("%s", string(CellEngineUseful::AtomDescriptionTextsObject.Texts[2] + " " + CellEngineUseful::AtomDescriptionTextsObject.Texts[3]).c_str());
+                    ImGui::Text("%s", string(CellEngineUseful::AtomDescriptionTextsObject.Texts[4] + " " + CellEngineUseful::AtomDescriptionTextsObject.Texts[5]).c_str());
                 }
             }
         }

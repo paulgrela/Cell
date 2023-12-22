@@ -77,7 +77,6 @@ namespace CellEngineUseful
         return 0;
     }
 
-
     inline ChainIdInt GetPairedChainId(ChainIdInt ChainId)
     {
         switch (ChainId)
@@ -101,6 +100,14 @@ namespace CellEngineUseful
     {
         return { float(Color.X) / 100.00f, float(Color.Y) / 100.00f, float(Color.Z) / 100.00f };
     }
+
+    class AtomDescriptionTexts
+    {
+    public:
+        std::string Texts[6];
+    };
+
+    inline AtomDescriptionTexts AtomDescriptionTextsObject;
 }
 
 #endif

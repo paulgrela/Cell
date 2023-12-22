@@ -67,6 +67,28 @@ inline void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::ConvertAtomPosToGr
         CellEngineAtomObjectParam.SetAtomPositionsData(CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(SpaceXParam), CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(SpaceYParam), CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(SpaceZParam));
 }
 
+inline void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::SetParticleParametersToDraw(CellEngineAtom& TempAtomObject, const Particle& ParticleObject)
+{
+    try
+    {
+        TempAtomObject.EntityId = ParticleObject.EntityId;
+        auto ParticleKindObject = ParticlesKindsManagerObject.GetGraphicParticleKind(ParticleObject.EntityId);
+        TempAtomObject.AtomColor = ParticleKindObject.AtomColor;
+        TempAtomObject.ParticleColor = ParticleKindObject.ParticleColor;
+        TempAtomObject.UniqueParticleColor = ParticleObject.UniqueColor;
+        TempAtomObject.RandomParticleKindColor = (CellEngineUseful::IsDNAorRNA(TempAtomObject.EntityId) == true ? CellEngineColorsObject.GetDNAorRNAColor(TempAtomObject.EntityId, ParticleObject.ChainId) : ParticleKindObject.RandomParticleColor);
+        if (CellEngineUseful::IsDNAorRNA(TempAtomObject.EntityId) == true && ((CellEngineConfigDataObject.GenomeReadFromFile == false && ParticleObject.GenomeIndex == 0) || (CellEngineConfigDataObject.GenomeReadFromFile == true && (ParticleObject.Prev == nullptr || ParticleObject.Next == nullptr))))
+            TempAtomObject.RandomParticleKindColor = TempAtomObject.UniqueParticleColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(vmath::FromVec4ToVec3(sb7::color::Blue));
+        if (CellEngineUseful::IsDNAorRNA(TempAtomObject.EntityId) == true && (CellEngineConfigDataObject.GenomeReadFromFile == true))
+        {
+            TempAtomObject.GenomeIndexPrev = (ParticleObject.Prev != nullptr ? ParticleObject.Prev->GenomeIndex : 0);
+            TempAtomObject.GenomeIndexNext = (ParticleObject.Next != nullptr ? ParticleObject.Next->GenomeIndex : 0);
+        }
+        TempAtomObject.GenomeIndex = ParticleObject.GenomeIndex;
+    }
+    CATCH("setting particle parameters to draw")
+};
+
 void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSelectedSpace(const UnsignedInt XStartParam, const UnsignedInt YStartParam, const UnsignedInt ZStartParam, const UnsignedInt XStepParam, const UnsignedInt YStepParam, const UnsignedInt ZStepParam, const UnsignedInt XSizeParam, UnsignedInt YSizeParam, const UnsignedInt ZSizeParam, UnsignedInt& NumberOfAllRenderedAtoms, const vmath::mat4& ViewMatrix, CellEngineAtom& TempAtomObject, std::vector<TemporaryRenderedVoxel>& TemporaryRenderedVoxelsList, UnsignedInt StencilBufferLoopCounter)
 {
     try
@@ -84,23 +106,7 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSelectedSpace(const
                             ConvertAtomPosToGraphicCoordinate(TempAtomObject, XStartParam, YStartParam, ZStartParam, PosX, PosY, PosZ, XSizeParam, YSizeParam, ZSizeParam);
 
                             if (DrawEmptyVoxels == false || (DrawEmptyVoxels == true && SimulationSpaceVoxelObject != 0))
-                            {
-                                //PONIZSZE DO OSOBNEJ FUNKCJI
-                                TempAtomObject.EntityId = ParticleObject.EntityId;
-                                auto ParticleKindObject = ParticlesKindsManagerObject.GetGraphicParticleKind(ParticleObject.EntityId);
-                                TempAtomObject.AtomColor = ParticleKindObject.AtomColor;
-                                TempAtomObject.ParticleColor = ParticleKindObject.ParticleColor;
-                                TempAtomObject.UniqueParticleColor = ParticleObject.UniqueColor;
-                                TempAtomObject.RandomParticleKindColor = (CellEngineUseful::IsDNAorRNA(TempAtomObject.EntityId) == true ? CellEngineColorsObject.GetDNAorRNAColor(TempAtomObject.EntityId, ParticleObject.ChainId) : ParticleKindObject.RandomParticleColor);
-                                if (CellEngineUseful::IsDNAorRNA(TempAtomObject.EntityId) == true && ((CellEngineConfigDataObject.GenomeReadFromFile == false && ParticleObject.GenomeIndex == 0) || (CellEngineConfigDataObject.GenomeReadFromFile == true && (ParticleObject.Prev == nullptr || ParticleObject.Next == nullptr))))
-                                    TempAtomObject.RandomParticleKindColor = TempAtomObject.UniqueParticleColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(vmath::FromVec4ToVec3(sb7::color::Blue));
-                                if (CellEngineUseful::IsDNAorRNA(TempAtomObject.EntityId) == true && (CellEngineConfigDataObject.GenomeReadFromFile == true))
-                                {
-                                    TempAtomObject.GenomeIndexPrev = (ParticleObject.Prev != nullptr ? ParticleObject.Prev->GenomeIndex : 0);
-                                    TempAtomObject.GenomeIndexNext = (ParticleObject.Next != nullptr ? ParticleObject.Next->GenomeIndex : 0);
-                                }
-                                TempAtomObject.GenomeIndex = ParticleObject.GenomeIndex;
-                            }
+                                SetParticleParametersToDraw(TempAtomObject, ParticleObject);
                             else
                             if (DrawEmptyVoxels == true)
                                 TempAtomObject.AtomColor = TempAtomObject.ParticleColor = TempAtomObject.RandomParticleKindColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(vmath::FromVec4ToVec3(sb7::color::DeepSkyBlue));

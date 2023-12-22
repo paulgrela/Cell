@@ -507,15 +507,18 @@ void CellEngineOpenGLVisualiser::PrintAtomDescriptionOnScreen(CellEngineAtom& Ch
         glDisable(GL_CULL_FACE);
 
         TextOverlayObject.Clear();
-        string LocalTextStr = CellEngineConfigDataObject.AtomDescriptionStr1 = "Serial = " + to_string(ChosenParticleObject.Serial) + " Name = " + ChosenParticleObject.Name + " ResName = " + ChosenParticleObject.ResName;
+
+        CellEngineUseful::AtomDescriptionTextsObject.Texts[0];
+
+        string LocalTextStr = CellEngineUseful::AtomDescriptionTextsObject.Texts[0] = "Serial = " + to_string(ChosenParticleObject.Serial) + " Name = " + ChosenParticleObject.Name + " ResName = " + ChosenParticleObject.ResName;
         if (CellEngineConfigDataObject.StencilForDrawingObjectsTypesObject == CellEngineConfigData::StencilForDrawingObjectsTypes::StencilForDrawingOnlyInAtomScale)
         {
-            CellEngineConfigDataObject.AtomDescriptionStr2 = "Chain [" + string(ChosenParticleObject.Chain) + "]";
-            CellEngineConfigDataObject.AtomDescriptionStr3 = "EntityId = " + to_string(ChosenParticleObject.EntityId);
-            CellEngineConfigDataObject.AtomDescriptionStr4 = "Entity Name = [" + GetEntityName(ChosenParticleObject.EntityId) + "]";
-            CellEngineConfigDataObject.AtomDescriptionStr5 = "Gen Index = [" + to_string(ChosenParticleObject.GenomeIndex) + "]";
-            CellEngineConfigDataObject.AtomDescriptionStr6 = "Gen Index Prev = [" + to_string(ChosenParticleObject.GenomeIndexPrev) + "] Gen Index Next = [" + to_string(ChosenParticleObject.GenomeIndexNext) + "]";
-            LocalTextStr += " " + CellEngineConfigDataObject.AtomDescriptionStr2 + " " + CellEngineConfigDataObject.AtomDescriptionStr3 + " " + CellEngineConfigDataObject.AtomDescriptionStr4;
+            CellEngineUseful::AtomDescriptionTextsObject.Texts[1] = "Chain [" + string(ChosenParticleObject.Chain) + "]";
+            CellEngineUseful::AtomDescriptionTextsObject.Texts[2] = "EntityId = " + to_string(ChosenParticleObject.EntityId);
+            CellEngineUseful::AtomDescriptionTextsObject.Texts[3] = "Entity Name = [" + GetEntityName(ChosenParticleObject.EntityId) + "]";
+            CellEngineUseful::AtomDescriptionTextsObject.Texts[4] = "Gen Index = [" + to_string(ChosenParticleObject.GenomeIndex) + "]";
+            CellEngineUseful::AtomDescriptionTextsObject.Texts[5] = "Gen Index Prev = [" + to_string(ChosenParticleObject.GenomeIndexPrev) + "] Gen Index Next = [" + to_string(ChosenParticleObject.GenomeIndexNext) + "]";
+            LocalTextStr += " " + CellEngineUseful::AtomDescriptionTextsObject.Texts[1] + " " + CellEngineUseful::AtomDescriptionTextsObject.Texts[2] + " " + CellEngineUseful::AtomDescriptionTextsObject.Texts[3];
         }
 
         if (CellEngineConfigDataObject.PrintAtomDescriptionOnScreen == true)
