@@ -279,8 +279,11 @@ void CellEngineVoxelSimulationSpace::AddBasicParticlesKindsAndReactions()
         const string DNASequence2ForTestCutLink2 = "AGC";
         ParticlesKindsManagerObject.AddParticleKind({ 10007, "DNA", DNASequence2ForTestCutLink2, 0 });
 
+        const string DNASequenceForTestCutCrisper = "R1";
+        ParticlesKindsManagerObject.AddParticleKind({ 10008, "RNA", DNASequenceForTestCutCrisper, 0 });
+
         const string RNASequenceForTestCutCrisper = "AGC";
-        ParticlesKindsManagerObject.AddParticleKind({ 10008, "RNA", RNASequenceForTestCutCrisper, 0 });
+        ParticlesKindsManagerObject.AddParticleKind({ 10009, "RNA", RNASequenceForTestCutCrisper, 0 });
 
         AddChemicalReaction(Reaction(101, "", "CH3CH2(OH) + DNA + ", { { 5, 1, "", true }, { 10001, 1, DNASequenceForTestFindingDNA, false } }, { { 10, 1, "", true } }));
 
@@ -288,6 +291,11 @@ void CellEngineVoxelSimulationSpace::AddBasicParticlesKindsAndReactions()
         AddChemicalReaction(Reaction(1, "CUT 1", "CH3CH2(OH) + DNA + ", { { 5, 1, "", false }, { 10002, 1, DNASequence1ForTestCutLink1, false } }, {}));
 
         AddChemicalReaction(Reaction(2, "LINK 1", "CH3CH2(OH) + DNA + DNA + ", { { 5, 1, "", false }, { 10002, 1, DNASequence1ForTestCutLink1, false }, { 10003, 1, DNASequence2ForTestCutLink1, false } }, {}));
+
+        AddChemicalReaction(Reaction(3, "LINK 1 ANY", "CH3CH2(OH) + DNA + DNA + ", { { 5, 1, "", false }, { 10002, 1, "ANY", false }, { 10003, 1, "ANY", false } }, {}));
+
+        AddChemicalReaction(Reaction(7, "CUT CRISPER 2", "CH3CHCH2 + RNA + DNA + ", { { 6, 1, "", false }, { 10008, 1, DNASequenceForTestCutCrisper, false }, { 10009, 1, RNASequenceForTestCutCrisper, false } }, { { 90, 1, "", true } }));
+
 //
 //
 //        AddChemicalReaction(Reaction(3, "CUT 1", "CH3CHCH2 + RNA + ", { { 6, 1, "", false }, { 10004, 1, RNASequence1ForTestCutLink1, false } }, {}));
@@ -304,7 +312,7 @@ void CellEngineVoxelSimulationSpace::AddBasicParticlesKindsAndReactions()
 //        AddChemicalReaction(Reaction(6, "LINK 2", "CH3CHCH2 + DNA + DNA + ", { { 6, 1, "", false }, { 10006, 1, DNASequence1ForTestCutLink2, false }, { 10007, 1, DNASequence2ForTestCutLink1, false } }, {}));
 //
 //
-//        AddChemicalReaction(Reaction(7, "CUT CRISPER 2", "CH3CHCH2 + RNA + DNA + ", { { 6, 1, "", false }, { 10008, 1, RNASequenceForTestCutCrisper, false } }, { { 90, 1, "", true } }));
+
 //
 //
 //        AddChemicalReaction(Reaction(8, "POLYMERASE DNA RUN", "POLYMERASE + DNA + NUCLEOTIDE_DNA + ", { { 100, 1, "", false }, { 10001, 1, DNASequenceForTestFindingDNA, false } }, {}));
@@ -452,30 +460,45 @@ tuple<Particle*, UnsignedInt, string, vector<ChainIdInt>> GetNucleotidesSequence
 {
     string NucleotidesSequenceToCompareString;
     vector<ChainIdInt> NucleotidesSequenceToCompareVector;
+
     Particle* ParticlePtr = &ParticleObjectForReaction;
     UnsignedInt NucleotidesCounter = 1;
-    while (NucleotidesCounter < LengthOfSequence + 1 && ParticleObjectForReaction.Next != nullptr && ParticlePtr != nullptr)
+
+    try
     {
-        if (ToString)
-            NucleotidesSequenceToCompareString += CellEngineUseful::GetLetterForDNAChainId(ParticlePtr->ChainId);
-        if (ToVector)
-            NucleotidesSequenceToCompareVector.emplace_back(ParticlePtr->ChainId);
-        ParticlePtr = ParticlePtr->Next;
-        NucleotidesCounter++;
+        while (NucleotidesCounter < LengthOfSequence + 1 && ParticleObjectForReaction.Next != nullptr &&
+               ParticlePtr != nullptr) {
+            if (ToString == true)
+                NucleotidesSequenceToCompareString += CellEngineUseful::GetLetterForDNAChainId(ParticlePtr->ChainId);
+            if (ToVector == true)
+                NucleotidesSequenceToCompareVector.emplace_back(ParticlePtr->ChainId);
+            ParticlePtr = ParticlePtr->Next;
+            NucleotidesCounter++;
+        }
     }
+    CATCH("getting nucleotides sequence forward")
+
     return { ParticlePtr, NucleotidesCounter, NucleotidesSequenceToCompareString, NucleotidesSequenceToCompareVector };
 }
 
 void CutDNA(Particle* NucleotideObjectForReactionPtr)
 {
-    NucleotideObjectForReactionPtr->Next->Prev = nullptr;
-    NucleotideObjectForReactionPtr->Next = nullptr;
+    try
+    {
+        NucleotideObjectForReactionPtr->Next->Prev = nullptr;
+        NucleotideObjectForReactionPtr->Next = nullptr;
+    }
+    CATCH("cutting DNA")
 }
 
 void LinkDNA(Particle* NucleotideObjectForReactionPtr1, Particle* NucleotideObjectForReactionPtr2)
 {
-    NucleotideObjectForReactionPtr1->Prev = NucleotideObjectForReactionPtr2;
-    NucleotideObjectForReactionPtr2->Next = NucleotideObjectForReactionPtr1;
+    try
+    {
+        NucleotideObjectForReactionPtr1->Prev = NucleotideObjectForReactionPtr2;
+        NucleotideObjectForReactionPtr2->Next = NucleotideObjectForReactionPtr1;
+    }
+    CATCH("linking DNA")
 }
 
 bool CellEngineVoxelSimulationSpace::CompareFitnessOfDNASequenceByString(const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction)
@@ -483,13 +506,21 @@ bool CellEngineVoxelSimulationSpace::CompareFitnessOfDNASequenceByString(const P
     return get<2>(GetNucleotidesSequenceForward(ParticleKindForReactionObject.SequenceStr.length(), ParticleObjectForReaction, true, false)) == ParticleKindForReactionObject.SequenceStr;
 }
 
-bool CellEngineVoxelSimulationSpace::CompareFitnessOfDNASequenceByNucleotidesLoop(const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction)
+bool CellEngineVoxelSimulationSpace::CompareFitnessOfDNASequenceByNucleotidesLoop(const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction, Reaction& ReactionObject)
 {
     bool FoundSequenceNotFit = false;
 
     try
     {
-        auto [ParticlePtr, NucleotidesCounter, NucleotidesSequenceToCompareString, NucleotidesSequenceToCompareVector] = GetNucleotidesSequenceForward(ParticleKindForReactionObject.SequenceStr.length(), ParticleObjectForReaction, true, true);
+        if (ParticleKindForReactionObject.SequenceStr == "ANY")
+            return true;
+
+        string SequenceStrToCompare = ParticleKindForReactionObject.SequenceStr;
+        if (SequenceStrToCompare[0] == 'R')
+            SequenceStrToCompare = ReactionObject.Reactants[stoi(ParticleKindForReactionObject.SequenceStr.substr(1))].SequenceStr;
+
+
+        auto [ParticlePtr, NucleotidesCounter, NucleotidesSequenceToCompareString, NucleotidesSequenceToCompareVector] = GetNucleotidesSequenceForward(SequenceStrToCompare.length(), ParticleObjectForReaction, true, true);
 
         LoggersManagerObject.Log(STREAM("DNA SEQUENCE COMPARE = #" << NucleotidesSequenceToCompareString << "#" << ParticleKindForReactionObject.SequenceStr << "#" << to_string(ParticleKindForReactionObject.EntityId)));
 
@@ -498,7 +529,7 @@ bool CellEngineVoxelSimulationSpace::CompareFitnessOfDNASequenceByNucleotidesLoo
         for (UnsignedInt NucleotideNum = 0; NucleotideNum < ParticleKindForReactionObject.Sequence.size(); NucleotideNum++)
             if (ParticleKindForReactionObject.Sequence[NucleotideNum] != NucleotidesSequenceToCompareVector[NucleotideNum])
             {
-                if (NucleotidesSequenceToCompareString == ParticleKindForReactionObject.SequenceStr)
+                if (NucleotidesSequenceToCompareString == SequenceStrToCompare)
                     LoggersManagerObject.Log(STREAM("SEQUENCE DIFF = " << to_string(NucleotideNum) << " " << NucleotidesSequenceToCompareVector[NucleotideNum] << " " << ParticleKindForReactionObject.Sequence[NucleotideNum]));
 
                 FoundSequenceNotFit = true;
@@ -539,7 +570,7 @@ tuple<vector<UniqueIdInt>, bool> CellEngineVoxelSimulationSpace::ChooseParticles
                 ReactantIterator = find_if(ReactionObject.Reactants.begin(), ReactionObject.Reactants.end(), [&ParticleObjectTestedForReaction](ParticleKindForReaction& ParticleKindObject){ return ParticleKindObject.EntityId == ParticleObjectTestedForReaction.EntityId; });
             else
             {
-                ReactantIterator = find_if(ReactionObject.Reactants.begin(), ReactionObject.Reactants.end(), [&ParticleObjectTestedForReaction](ParticleKindForReaction& ParticleKindForReactionObjectParam){ return CellEngineUseful::IsSpecialDNA(ParticleKindForReactionObjectParam.EntityId) && CompareFitnessOfDNASequenceByNucleotidesLoop(ParticleKindForReactionObjectParam, ParticleObjectTestedForReaction) == true; });
+                ReactantIterator = find_if(ReactionObject.Reactants.begin(), ReactionObject.Reactants.end(), [&ParticleObjectTestedForReaction, &ReactionObject](ParticleKindForReaction& ParticleKindForReactionObjectParam){ return CellEngineUseful::IsSpecialDNA(ParticleKindForReactionObjectParam.EntityId) && CompareFitnessOfDNASequenceByNucleotidesLoop(ParticleKindForReactionObjectParam, ParticleObjectTestedForReaction, ReactionObject) == true; });
                 if (ReactantIterator != ReactionObject.Reactants.end() && ReactantsCounters[ReactantIterator - ReactionObject.Reactants.begin()] > 0 && ReactantIterator->ToRemoveInReaction == false)
                     NucleotidesIndexesChosenForReaction.emplace_back(ParticleObjectIndex, ReactantIterator - ReactionObject.Reactants.begin());
             }
@@ -580,10 +611,10 @@ tuple<vector<UniqueIdInt>, bool> CellEngineVoxelSimulationSpace::ChooseParticles
             if (NucleotidesIndexesChosenForReaction.size() == 2)
             {
                 LoggersManagerObject.Log(STREAM("LINK 1 inside 1"));
-                                                                                                                        Particle* NucleotideObjectForReactionPtr1 = &GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first);
-                                                                                                                        Particle* NucleotideObjectForReactionPtr2 = &GetParticleFromIndex(NucleotidesIndexesChosenForReaction[1].first);
-                                                                                                                        LoggersManagerObject.Log(STREAM("NUCLEOTIDE 1 GENOME INDEX = " << NucleotideObjectForReactionPtr1->GenomeIndex));
-                                                                                                                        LoggersManagerObject.Log(STREAM("NUCLEOTIDE 2 GENOME INDEX = " << NucleotideObjectForReactionPtr2->GenomeIndex));
+//                                                                                                                        Particle* NucleotideObjectForReactionPtr1 = &GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first);
+//                                                                                                                        Particle* NucleotideObjectForReactionPtr2 = &GetParticleFromIndex(NucleotidesIndexesChosenForReaction[1].first);
+//                                                                                                                        LoggersManagerObject.Log(STREAM("NUCLEOTIDE 1 GENOME INDEX = " << NucleotideObjectForReactionPtr1->GenomeIndex));
+//                                                                                                                        LoggersManagerObject.Log(STREAM("NUCLEOTIDE 2 GENOME INDEX = " << NucleotideObjectForReactionPtr2->GenomeIndex));
 
                 LinkDNA(&GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first), get<0>(GetNucleotidesSequenceForward(ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[1].second].SequenceStr.length(), GetParticleFromIndex(NucleotidesIndexesChosenForReaction[1].first), false, false)));
             }
