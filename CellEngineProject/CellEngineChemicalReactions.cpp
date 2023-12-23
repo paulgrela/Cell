@@ -52,10 +52,10 @@ bool CellEngineChemicalReactions::TryToMakeRandomChemicalReaction(UnsignedInt Nu
                                                                                                                         ReactionSymbolsStr = "CH3CH2(OH) + DNA + DNA + ";
             LoggersManagerObject.Log(STREAM("Reaction Symbols = [" << ReactionSymbolsStr << "]" << endl));
 
-            auto NumberOfElementsForKey = ReactionsIdByString.count(ReactionSymbolsStr);
+            auto NumberOfElementsForKey = ReactionsPosFromString.count(ReactionSymbolsStr);
             if (NumberOfElementsForKey > 0)
             {
-                auto ReactionIter = ReactionsIdByString.equal_range(ReactionSymbolsStr).first;
+                auto ReactionIter = ReactionsPosFromString.equal_range(ReactionSymbolsStr).first;
                 if (NumberOfElementsForKey > 1)
                 {
                     uniform_int_distribution<UnsignedInt> UniformDistributionObjectSizeOfParticle_Uint64t(0, NumberOfElementsForKey - 1);

@@ -13,15 +13,17 @@ private:
     std::mt19937_64 mt64R{ std::random_device{}() };
 protected:
     std::vector<Reaction> Reactions;
-    //std::unordered_multimap<std::string, UnsignedInt> ReactionsIdByString;
-    std::multimap<std::string, UnsignedInt> ReactionsIdByString;
+    std::unordered_map<UnsignedInt, UnsignedInt> ReactionsPosFromId;
+    //std::unordered_multimap<std::string, UnsignedInt> ReactionsPosFromString;
+    std::multimap<std::string, UnsignedInt> ReactionsPosFromString;
 public:
     void PreprocessChemicalReactions();
 public:
     void AddChemicalReaction(const Reaction& ReactionParam)
     {
         Reactions.emplace_back(ReactionParam);
-        ReactionsIdByString.insert(std::make_pair(ReactionParam.ReactantsStr, Reactions.size() - 1));
+        ReactionsPosFromId.insert(std::make_pair(ReactionParam.Id, Reactions.size() - 1));
+        ReactionsPosFromString.insert(std::make_pair(ReactionParam.ReactantsStr, Reactions.size() - 1));
     }
 public:
     virtual std::vector<UnsignedInt> GetRandomParticles(UnsignedInt NumberOfReactants) = 0;

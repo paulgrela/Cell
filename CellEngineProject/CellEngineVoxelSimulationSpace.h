@@ -84,9 +84,11 @@ public:
 public:
     void PrepareRandomReaction();
     void FindAndExecuteRandomReaction();
+    void FindAndExecuteChosenReaction(UnsignedInt ReactionId);
 public:
     void GenerateRandomReactionForParticle(Particle& ParticleObject);
     void GenerateRandomReactionForSelectedVoxelSpace(UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
+    void GenerateChosenReactionForSelectedVoxelSpace(UnsignedInt ReactionId, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
 public:
     std::vector<UnsignedInt> GetRandomParticles(UnsignedInt NumberOfReactants) override;
     bool IsChemicalReactionPossible(const Reaction& ReactionObject) override;

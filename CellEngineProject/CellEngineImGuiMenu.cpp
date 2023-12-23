@@ -528,7 +528,7 @@ public:
         CATCH("executing types of generated colors menu");
     }
 
-    void VoxelSimulationSpaceVisibility() const
+    void VoxelSimulationSpaceVisibility(ImGuiWindowFlags WindowFlags, const bool ModifiableWindow) const
     {
         try
         {
@@ -588,11 +588,18 @@ public:
                 ColorButton("    START DIFFUSION    ", Nothing, 0, 0, 0, 3, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue){ });
                 ColorButton("    STOP DIFFUSION     ", Nothing, 0, 0, 0, 0, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue){ });
 
-                ColorButton(" MAKE ONE STEP OF DIFFUSION FOR RANGE OF PARTICLES ", Nothing, 0, 0, 0, 3, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue){ CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateOneStepOfDiffusionForSelectedRangeOfParticles(10, 0, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]); });
+                ColorButton("    MAKE ONE STEP OF DIFFUSION FOR RANGE OF PARTICLES     ", Nothing, 0, 0, 0, 3, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue){ CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateOneStepOfDiffusionForSelectedRangeOfParticles(10, 0, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]); });
 
-                ColorButton(" MAKE ONE STEP OF REACTIONS FOR RANGE OF PARTICLES ", Nothing, 0, 0, 0, 0, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue){ CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateOneStepOfRandomReactionsForSelectedRangeOfParticles(10, 0); });
-                ColorButton("     MAKE ONE REACTION FOR ONE CHOSEN PARTICLE     ", Nothing, 0, 0, 0, 0, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue){ CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateOneStepOfRandomReactionsForOneParticle(10, 0); });
-                ColorButton("   MAKE ONE STEP OF REACTIONS FOR SELECTED SPACE   ", Nothing, 0, 0, 0, 0, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue){ CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateRandomReactionForSelectedVoxelSpace(DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]); });
+                ColorButton(" MAKE ONE STEP OF RANDOM REACTIONS FOR RANGE OF PARTICLES ", Nothing, 0, 0, 0, 0, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue){ CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateOneStepOfRandomReactionsForSelectedRangeOfParticles(10, 0); });
+                ColorButton("     MAKE ONE RANDOM REACTION FOR ONE CHOSEN PARTICLE     ", Nothing, 0, 0, 0, 0, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue){ CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateOneStepOfRandomReactionsForOneParticle(10, 0); });
+                ColorButton("   MAKE ONE STEP OF RANDOM REACTIONS FOR SELECTED SPACE   ", Nothing, 0, 0, 0, 0, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue){ CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateRandomReactionForSelectedVoxelSpace(DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]); });
+
+                static bool OpenMenuChemicalReactionsWindow = false;
+                if (ImGui::Button("  CHOOSE CHEMICAL REACTION  ") == true)
+                    OpenMenuChemicalReactionsWindow = true;
+
+                if (OpenMenuChemicalReactionsWindow == true)
+                    MenuChemicalReactions(WindowFlags, ModifiableWindow, DrawSpaceStartXYZ, DrawSpaceSizesXYZ, &OpenMenuChemicalReactionsWindow);
 
                 if (ImGui::CollapsingHeader("Random DNA Generator", ImGuiTreeNodeFlags_DefaultOpen))
                 {
@@ -620,6 +627,37 @@ public:
             }
         }
         CATCH("executing voxel simulation space visibility menu")
+    }
+
+    static void MenuChemicalReactions(ImGuiWindowFlags WindowFlags, const bool& ModifiableWindow, const int DrawSpaceStartXYZ[], const int DrawSpaceSizesXYZ[], bool* OpenMenuChemicalReactionsWindow)
+    {
+        try
+        {
+            if (ModifiableWindow == false)
+                ImGui::Begin("Chemical Reactions Menu", nullptr, WindowFlags);
+            else
+                ImGui::Begin("Chemical Reactions Menu");
+
+            ImGui::Text("CHOOSE REACTION");
+
+            if (ImGui::Button(" MAKE CHOSEN REACTION FOR SELECTED SPACE NR = 101 ") == true)
+                CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateChosenReactionForSelectedVoxelSpace(101, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
+
+            if (ImGui::Button(" MAKE CHOSEN REACTION FOR SELECTED SPACE NR = 1 CUT 1       ") == true)
+                CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateChosenReactionForSelectedVoxelSpace(1, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
+            if (ImGui::Button(" MAKE CHOSEN REACTION FOR SELECTED SPACE NR = 2 LINK 1      ") == true)
+                CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateChosenReactionForSelectedVoxelSpace(2, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
+            if (ImGui::Button(" MAKE CHOSEN REACTION FOR SELECTED SPACE NR = 3 LINK 1 ANY  ") == true)
+                CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateChosenReactionForSelectedVoxelSpace(3, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
+            if (ImGui::Button(" MAKE CHOSEN REACTION FOR SELECTED SPACE NR = 7 CRISPER     ") == true)
+                CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateChosenReactionForSelectedVoxelSpace(7, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
+
+            if (ImGui::Button(" CLOSE ") == true)
+                *OpenMenuChemicalReactionsWindow = false;
+
+            ImGui::End();
+        }
+        CATCH("executing menu window 1");
     }
 
     void MenuWindow2(ImGuiWindowFlags WindowFlags, const bool ModifiableWindow) const
@@ -651,7 +689,7 @@ public:
 
             if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)
                 if (ImGui::CollapsingHeader("Visibility of Voxel Simulation Space", ImGuiTreeNodeFlags_DefaultOpen))
-                    VoxelSimulationSpaceVisibility();
+                    VoxelSimulationSpaceVisibility(WindowFlags, ModifiableWindow);
 
             ImGui::End();
         }

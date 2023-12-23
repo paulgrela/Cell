@@ -778,6 +778,32 @@ void CellEngineVoxelSimulationSpace::FindAndExecuteRandomReaction()
     CATCH("finding and executing random reaction")
 }
 
+void CellEngineVoxelSimulationSpace::FindAndExecuteChosenReaction(const UnsignedInt ReactionId)
+{
+    try
+    {
+        auto ReactionIter = ReactionsPosFromId.find(ReactionId);
+        if (ReactionIter != ReactionsPosFromId.end())
+        {
+            auto& ReactionObject = Reactions[ReactionIter->second];
+
+            bool IsPossible = IsChemicalReactionPossible(ReactionObject);
+            if (IsPossible == true)
+            {
+                LoggersManagerObject.Log(STREAM("CHOSEN REACTION POSSIBLE" << endl));
+
+                if (MakeChemicalReaction(ReactionObject) == false)
+                    LoggersManagerObject.Log(STREAM("Chosen reaction not executed!"));
+            }
+            else
+                LoggersManagerObject.Log(STREAM("Chosen reaction impossible!"));
+        }
+        else
+            LoggersManagerObject.Log(STREAM("Chosen reaction Id not found!"));
+    }
+    CATCH("finding and executing chosen reaction")
+}
+
 bool CellEngineVoxelSimulationSpace::FindParticlesInProximityOfVoxelSimulationSpaceForSelectedVoxelSpace(const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
 {
     try
@@ -853,6 +879,16 @@ void CellEngineVoxelSimulationSpace::GenerateRandomReactionForSelectedVoxelSpace
 
         if (FindParticlesInProximityOfVoxelSimulationSpaceForSelectedVoxelSpace(StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam) == true)
             FindAndExecuteRandomReaction();
+    }
+    CATCH("generating random reaction for selected voxel space")
+}
+
+void CellEngineVoxelSimulationSpace::GenerateChosenReactionForSelectedVoxelSpace(const UnsignedInt ReactionId, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
+{
+    try
+    {
+        if (FindParticlesInProximityOfVoxelSimulationSpaceForSelectedVoxelSpace(StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam) == true)
+            FindAndExecuteChosenReaction(ReactionId);
     }
     CATCH("generating random reaction for particle")
 }
