@@ -23,7 +23,6 @@ void CellEngineChemicalReactions::PreprocessChemicalReactions()
 
 bool CellEngineChemicalReactions::TryToMakeRandomChemicalReaction(UnsignedInt NumberOfReactants)
 {
-                                                                                                                        static int COUNT = 1;
     try
     {
         LoggersManagerObject.Log(STREAM(endl << "REACTION" << endl));
@@ -43,13 +42,7 @@ bool CellEngineChemicalReactions::TryToMakeRandomChemicalReaction(UnsignedInt Nu
             string ReactionSymbolsStr;
             for (auto& ParticleSymbolForReaction : ParticlesSymbolsForReactionToSort)
                 ReactionSymbolsStr += (ParticleSymbolForReaction + " + ");
-                                                                                                                        if (COUNT == 1)
-                                                                                                                        {
-                                                                                                                        ReactionSymbolsStr = "CH3CH2(OH) + DNA + ";
-                                                                                                                        COUNT = 2;
-                                                                                                                        }
-                                                                                                                        else
-                                                                                                                        ReactionSymbolsStr = "CH3CH2(OH) + DNA + DNA + ";
+
             LoggersManagerObject.Log(STREAM("Reaction Symbols = [" << ReactionSymbolsStr << "]" << endl));
 
             auto NumberOfElementsForKey = ReactionsPosFromString.count(ReactionSymbolsStr);

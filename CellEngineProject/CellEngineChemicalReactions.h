@@ -14,8 +14,7 @@ private:
 protected:
     std::vector<Reaction> Reactions;
     std::unordered_map<UnsignedInt, UnsignedInt> ReactionsPosFromId;
-    //std::unordered_multimap<std::string, UnsignedInt> ReactionsPosFromString;
-    std::multimap<std::string, UnsignedInt> ReactionsPosFromString;
+    std::unordered_multimap<std::string, UnsignedInt> ReactionsPosFromString;
 public:
     void PreprocessChemicalReactions();
 public:
