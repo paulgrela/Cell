@@ -31,6 +31,7 @@ public:
     UniqueIdInt GenomeIndex = 0;
     UniqueIdInt GenomeIndexPrev = 0;
     UniqueIdInt GenomeIndexNext = 0;
+    char Nucleotide = '?';
     #ifdef EXTENDED_RAM_MEMORY
     float SizeXAtom{};
     float SizeYAtom{};
