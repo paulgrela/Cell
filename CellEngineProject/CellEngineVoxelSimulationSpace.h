@@ -33,10 +33,11 @@ private:
     std::unordered_map<UniqueIdInt, Particle> Particles;
     std::stack<UniqueIdInt> FreeIndexesOfParticles;
 private:
-    std::map<EntityIdInt, UnsignedInt> ParticlesKindsFoundInParticlesProximity;
-    std::vector<UniqueIdInt> ParticlesSortedByCapacityFoundInParticlesProximity;
-    std::vector<UniqueIdInt> NucleotidesWithFreeEndingsFoundInParticlesProximity;
-    std::vector<UniqueIdInt> NucleotidesFreeFoundInParticlesProximity;
+    std::map<EntityIdInt, UnsignedInt> ParticlesKindsFoundInProximity;
+    std::vector<UniqueIdInt> ParticlesSortedByCapacityFoundInProximity;
+    std::vector<UniqueIdInt> NucleotidesWithFreeNextEndingsFoundInProximity;
+    std::vector<UniqueIdInt> NucleotidesWithFreePrevEndingsFoundInProximity;
+    std::vector<UniqueIdInt> NucleotidesFreeFoundInProximity;
 private:
     void* SpacePointer;
 private:
