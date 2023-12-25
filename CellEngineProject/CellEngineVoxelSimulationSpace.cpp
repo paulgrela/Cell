@@ -267,7 +267,6 @@ void CellEngineVoxelSimulationSpace::AddBasicParticlesKindsAndReactions()
         const string DNASequence1ForTestCutLink1 = "TACAAAAAAAGAGGTGTT";
         ParticlesKindsManagerObject.AddParticleKind({ 10002, "DNA", DNASequence1ForTestCutLink1, 0 });
         const string DNASequence2ForTestCutLink1 = "AGCTCTTATTA";
-        //const string DNASequence2ForTestCutLink1 = "GCTCTTATTAT";
         ParticlesKindsManagerObject.AddParticleKind({ 10003, "DNA", DNASequence2ForTestCutLink1, 0 });
 
         const string DNASequence1ForTestCutLink1Any = "ANY";
@@ -505,9 +504,29 @@ void LinkDNA(Particle* NucleotideObjectForReactionPtr1, Particle* NucleotideObje
     CATCH("linking DNA")
 }
 
-bool CellEngineVoxelSimulationSpace::CompareFitnessOfDNASequenceByString(const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction)
+bool CellEngineVoxelSimulationSpace::CompareFitnessOfDNASequenceByString(const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction, Reaction& ReactionObject)
 {
-    return get<2>(GetNucleotidesSequenceForward(ParticleKindForReactionObject.SequenceStr.length(), ParticleObjectForReaction, true, false)) == ParticleKindForReactionObject.SequenceStr;
+    string SequenceStrToCompare, NucleotidesSequenceToCompareString;
+
+    try
+    {
+        if (ParticleKindForReactionObject.SequenceStr == "ANY")
+        {
+            LoggersManagerObject.Log(STREAM("DNA SEQUENCE FOUND"));
+            return true;
+        }
+
+        SequenceStrToCompare = ParticleKindForReactionObject.SequenceStr;
+        if (SequenceStrToCompare[0] == 'R')
+            SequenceStrToCompare = ReactionObject.Reactants[stoi(ParticleKindForReactionObject.SequenceStr.substr(1))].SequenceStr;
+
+        NucleotidesSequenceToCompareString = get<2>(GetNucleotidesSequenceForward(ParticleKindForReactionObject.SequenceStr.length(), ParticleObjectForReaction, true, false));
+
+        LoggersManagerObject.Log(STREAM("DNA SEQUENCE COMPARE = #" << NucleotidesSequenceToCompareString << "#" << ParticleKindForReactionObject.SequenceStr << "#" << to_string(ParticleKindForReactionObject.EntityId)));
+    }
+    CATCH("comparing fitness of dna sequence by string")
+
+    return NucleotidesSequenceToCompareString == SequenceStrToCompare;
 }
 
 bool CellEngineVoxelSimulationSpace::CompareFitnessOfDNASequenceByNucleotidesLoop(const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction, Reaction& ReactionObject)
@@ -526,25 +545,25 @@ bool CellEngineVoxelSimulationSpace::CompareFitnessOfDNASequenceByNucleotidesLoo
         if (SequenceStrToCompare[0] == 'R')
             SequenceStrToCompare = ReactionObject.Reactants[stoi(ParticleKindForReactionObject.SequenceStr.substr(1))].SequenceStr;
 
-
         auto [ParticlePtr, NucleotidesCounter, NucleotidesSequenceToCompareString, NucleotidesSequenceToCompareVector] = GetNucleotidesSequenceForward(SequenceStrToCompare.length(), ParticleObjectForReaction, true, true);
 
         LoggersManagerObject.Log(STREAM("DNA SEQUENCE COMPARE = #" << NucleotidesSequenceToCompareString << "#" << ParticleKindForReactionObject.SequenceStr << "#" << to_string(ParticleKindForReactionObject.EntityId)));
 
-                                                                                                                        if (NucleotidesSequenceToCompareVector.size() >= ParticleKindForReactionObject.Sequence.size())
-                                                                                                                        {
-        for (UnsignedInt NucleotideNum = 0; NucleotideNum < ParticleKindForReactionObject.Sequence.size(); NucleotideNum++)
-            if (ParticleKindForReactionObject.Sequence[NucleotideNum] != NucleotidesSequenceToCompareVector[NucleotideNum])
-            {
-                if (NucleotidesSequenceToCompareString == SequenceStrToCompare)
-                    LoggersManagerObject.Log(STREAM("SEQUENCE DIFF = " << to_string(NucleotideNum) << " " << NucleotidesSequenceToCompareVector[NucleotideNum] << " " << ParticleKindForReactionObject.Sequence[NucleotideNum]));
+        if (NucleotidesSequenceToCompareVector.size() >= ParticleKindForReactionObject.Sequence.size())
+        {
+            for (UnsignedInt NucleotideNum = 0; NucleotideNum < ParticleKindForReactionObject.Sequence.size(); NucleotideNum++)
+                if (ParticleKindForReactionObject.Sequence[NucleotideNum] != NucleotidesSequenceToCompareVector[NucleotideNum])
+                {
+                    if (NucleotidesSequenceToCompareString == SequenceStrToCompare)
+                        LoggersManagerObject.Log(STREAM("SEQUENCE DIFF = " << to_string(NucleotideNum) << " " << NucleotidesSequenceToCompareVector[NucleotideNum] << " " << ParticleKindForReactionObject.Sequence[NucleotideNum]));
 
-                FoundSequenceNotFit = true;
-                break;
-            }
-                                                                                                                        }
-                                                                                                                        else
-                                                                                                                            FoundSequenceNotFit = true;
+                    FoundSequenceNotFit = true;
+                    break;
+                }
+        }
+        else
+            FoundSequenceNotFit = true;
+
         if (FoundSequenceNotFit == false)
             LoggersManagerObject.Log(STREAM("DNA SEQUENCE FOUND"));
     }
@@ -577,7 +596,6 @@ tuple<vector<UniqueIdInt>, bool> CellEngineVoxelSimulationSpace::ChooseParticles
                 ReactantIterator = find_if(ReactionObject.Reactants.begin(), ReactionObject.Reactants.end(), [&ParticleObjectTestedForReaction](ParticleKindForReaction& ParticleKindObject){ return ParticleKindObject.EntityId == ParticleObjectTestedForReaction.EntityId; });
             else
                 ReactantIterator = find_if(ReactionObject.Reactants.begin(), ReactionObject.Reactants.end(), [&ParticleObjectTestedForReaction, &ReactionObject](ParticleKindForReaction& ParticleKindForReactionObjectParam){ return CellEngineUseful::IsSpecialDNA(ParticleKindForReactionObjectParam.EntityId) && CompareFitnessOfDNASequenceByNucleotidesLoop(ParticleKindForReactionObjectParam, ParticleObjectTestedForReaction, ReactionObject) == true; });
-                //ReactantIterator = find_if(ReactionObject.Reactants.begin(), ReactionObject.Reactants.end(), [&ParticleObjectTestedForReaction, &ReactionObject](ParticleKindForReaction& ParticleKindForReactionObjectParam){ return CellEngineUseful::IsSpecialDNA(ParticleKindForReactionObjectParam.EntityId) && CompareFitnessOfDNASequenceByString(ParticleKindForReactionObjectParam, ParticleObjectTestedForReaction) == true; });
 
             auto PositionInReactants = ReactantIterator - ReactionObject.Reactants.begin();
 
@@ -624,16 +642,14 @@ tuple<vector<UniqueIdInt>, bool> CellEngineVoxelSimulationSpace::ChooseParticles
 
                 Particle* NucleotideObjectForReactionPtr1 = &GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first);
                 Particle* NucleotideObjectForReactionPtr2 = &GetParticleFromIndex(NucleotidesIndexesChosenForReaction[1].first);
+                Particle* NucleotideObjectForReactionPtr3 = get<0>(GetNucleotidesSequenceForward(ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[1].second].SequenceStr.length() - 1, GetParticleFromIndex(NucleotidesIndexesChosenForReaction[1].first), false, false));
+
                 LoggersManagerObject.Log(STREAM("NUCLEOTIDE 1 GENOME INDEX = " << NucleotideObjectForReactionPtr1->GenomeIndex));
                 LoggersManagerObject.Log(STREAM("NUCLEOTIDE 2 GENOME INDEX = " << NucleotideObjectForReactionPtr2->GenomeIndex));
-                LoggersManagerObject.Log(STREAM("NUCLEOTIDE 3 GENOME INDEX = " << get<0>(GetNucleotidesSequenceForward(ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[1].second].SequenceStr.length() - 1, GetParticleFromIndex(NucleotidesIndexesChosenForReaction[1].first), false, false))->GenomeIndex));
+                LoggersManagerObject.Log(STREAM("NUCLEOTIDE 3 GENOME INDEX = " << NucleotideObjectForReactionPtr3->GenomeIndex));
 
-                //NucleotideObjectForReactionPtr1->Prev = NucleotideObjectForReactionPtr2;
-                //NucleotideObjectForReactionPtr2->Next = NucleotideObjectForReactionPtr1;
-
-                //BLAD BO LACZENIE Index 0 i Index 1 odwrotnie a to moze byc blad powazny
-                LinkDNA(&GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first), get<0>(GetNucleotidesSequenceForward(ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[1].second].SequenceStr.length() - 1, GetParticleFromIndex(NucleotidesIndexesChosenForReaction[1].first), false, false)));
-                //LinkDNA(get<0>(GetNucleotidesSequenceForward(ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[1].second].SequenceStr.length(), GetParticleFromIndex(NucleotidesIndexesChosenForReaction[1].first), false, false)), &GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first));
+                if (NucleotideObjectForReactionPtr1->Prev == nullptr && NucleotideObjectForReactionPtr3->Next == nullptr)
+                    LinkDNA(NucleotideObjectForReactionPtr1, NucleotideObjectForReactionPtr3);
             }
             else
                 return {};
@@ -995,6 +1011,8 @@ void CellEngineVoxelSimulationSpace::GeneratePlanedParticlesInSelectedSpace(cons
 
         auto P9 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 10, 1, -1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
         FillSquareParticle(StartXPosParam + 21, StartYPosParam + 5, StartZPosParam + 3, P9, 2);
+
+        GenerateOneStrand(CellEngineConfigDataObject.RNAIdentifier, "TATG", StartXPosParam + 5, StartYPosParam + 5, StartZPosParam + 3, 2, 1, 2, 2, 0, 0);
     }
     CATCH("generating planed particles in selected space")
 }
@@ -1077,7 +1095,20 @@ void CellEngineVoxelSimulationSpace::UpdateRandomPositions(const UnsignedInt Ran
     }
 }
 
-Particle* CellEngineVoxelSimulationSpace::GenerateDNAParticle(Particle* ParticlePrev, const EntityIdInt EntityId, const ChainIdInt ChainId, const UnsignedInt GenomeThread, const UnsignedInt GenomeIndex, const UnsignedInt StartPosX, const UnsignedInt StartPosY, const UnsignedInt StartPosZ, const UnsignedInt ParticleSizeX, const UnsignedInt ParticleSizeY, const UnsignedInt ParticleSizeZ, vector<UniqueIdInt>& Genome, const vector3_16 UniqueColorParam)
+void CellEngineVoxelSimulationSpace::GenerateOneStrand(const EntityIdInt EntityId, string_view Sequence, const UnsignedInt StartPosX, const UnsignedInt StartPosY, const UnsignedInt StartPosZ, const UnsignedInt ParticleSizeX, const UnsignedInt ParticleSizeY, const UnsignedInt ParticleSizeZ, const UnsignedInt ParticleStepX, const UnsignedInt ParticleStepY, const UnsignedInt ParticleStepZ)
+{
+    try
+    {
+        vector<UniqueIdInt> MockVector;
+        Particle* ParticlePrev1 = nullptr;
+
+        for (UnsignedInt SequenceIndex = 0; SequenceIndex < Sequence.size(); SequenceIndex++)
+            ParticlePrev1 = GenerateNucleotideParticle(ParticlePrev1, CellEngineConfigDataObject.RNAIdentifier, CellEngineUseful::GetChainIdFromLetter(Sequence[SequenceIndex]), 0, 1, StartPosX + SequenceIndex * ParticleStepX, StartPosY + SequenceIndex * ParticleStepY, StartPosZ + SequenceIndex * ParticleStepZ, ParticleSizeX, ParticleSizeY, ParticleSizeZ, false, MockVector, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
+    }
+    CATCH("generating one strand")
+}
+
+Particle* CellEngineVoxelSimulationSpace::GenerateNucleotideParticle(Particle* ParticlePrev, const EntityIdInt EntityId, const ChainIdInt ChainId, const UnsignedInt GenomeThread, const UnsignedInt GenomeIndex, const UnsignedInt StartPosX, const UnsignedInt StartPosY, const UnsignedInt StartPosZ, const UnsignedInt ParticleSizeX, const UnsignedInt ParticleSizeY, const UnsignedInt ParticleSizeZ, bool AddToGenome, vector<UniqueIdInt>& Genome, const vector3_16 UniqueColorParam)
 {
     UnsignedInt ParticleIndex;
 
@@ -1095,7 +1126,8 @@ Particle* CellEngineVoxelSimulationSpace::GenerateDNAParticle(Particle* Particle
                     GetParticleFromIndex(ParticleIndex).ListOfVoxels.emplace_back(PosX, PosY, PosZ);
                 }
 
-        Genome.emplace_back(ParticleIndex);
+        if (AddToGenome == true)
+            Genome.emplace_back(ParticleIndex);
     }
     CATCH("generating particle")
 
@@ -1106,8 +1138,9 @@ tuple<Particle*, Particle*> CellEngineVoxelSimulationSpace::GenerateTwoPairedNuc
 {
     try
     {
-        ParticlePrev1 = GenerateDNAParticle(ParticlePrev1, CellEngineConfigDataObject.DNAIdentifier, ChainId, 0, Genomes[0].size(), StartPosX, StartPosY, StartPosZ, ParticleSizeX, ParticleSizeY, ParticleSizeZ, Genomes[0], CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
-        ParticlePrev2 = GenerateDNAParticle(ParticlePrev2, CellEngineConfigDataObject.DNAIdentifier, CellEngineUseful::GetPairedChainId(ChainId), 1, Genomes[1].size(), StartPosX + AddSizeX, StartPosY + AddSizeY, StartPosZ + AddSizeZ, ParticleSizeX, ParticleSizeY, ParticleSizeZ, Genomes[1], CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
+        ParticlePrev1 = GenerateNucleotideParticle(ParticlePrev1, CellEngineConfigDataObject.DNAIdentifier, ChainId, 0, Genomes[0].size(), StartPosX, StartPosY, StartPosZ, ParticleSizeX, ParticleSizeY, ParticleSizeZ, true, Genomes[0], CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
+        ParticlePrev2 = GenerateNucleotideParticle(ParticlePrev2, CellEngineConfigDataObject.DNAIdentifier, CellEngineUseful::GetPairedChainId(ChainId), 1, Genomes[1].size(), StartPosX + AddSizeX, StartPosY + AddSizeY, StartPosZ + AddSizeZ, ParticleSizeX, ParticleSizeY, ParticleSizeZ, true, Genomes[1], CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
+
         if (Linked == true)
             PairedNucleotide<Particle>::LinkPairedNucleotides(ParticlePrev1, ParticlePrev2);
     }
@@ -1367,7 +1400,7 @@ void CellEngineVoxelSimulationSpace::ReadGenomeDataFromFile(bool Paired)
                     tie(ParticlePrev1, ParticlePrev2) = GenerateTwoPairedNucleotides(ParticlePrev1, ParticlePrev2, stoi(Row[0]), stoi(Row[1]), GenomeIndex, StartPosX, StartPosY, StartPosZ, 1, ParticleSize, ParticleSize, 1, 0, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), true);
             }
             else
-                ParticlePrev1 = GenerateDNAParticle(ParticlePrev1, stoi(Row[0]), stoi(Row[1]), 0, stoi(Row[2]), stoi(Row[3]), stoi(Row[4]), stoi(Row[5]), ParticleSize, ParticleSize, ParticleSize, Genomes[0], CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
+                ParticlePrev1 = GenerateNucleotideParticle(ParticlePrev1, stoi(Row[0]), stoi(Row[1]), 0, stoi(Row[2]), stoi(Row[3]), stoi(Row[4]), stoi(Row[5]), ParticleSize, ParticleSize, ParticleSize, true, Genomes[0], CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
 
             PrevStartPosX = StartPosX;
 
