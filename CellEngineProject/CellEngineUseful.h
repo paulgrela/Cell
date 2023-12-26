@@ -42,7 +42,7 @@ namespace CellEngineUseful
         return ChainName.substr(0, 2) == "NU" || ChainName.substr(0, 2) == "NV" ? stoi(std::string(ChainName).substr(2, 2)) : 0;
     }
 
-    inline char GetLetterForDNAChainId(const ChainIdInt ChainId)
+    inline char GetLetterChainIdForDNAorRNA(const ChainIdInt ChainId)
     {
         switch (ChainId)
         {
@@ -50,11 +50,13 @@ namespace CellEngineUseful
             case 2 : return 'C';
             case 3 : return 'G';
             case 4 : return 'T';
+            case 5 : return 'U';
 
             case 11 : return 'T';
             case 12 : return 'G';
             case 13 : return 'C';
             case 14 : return 'A';
+            case 15 : return 'U';
 
             default : break;
         }
@@ -62,7 +64,7 @@ namespace CellEngineUseful
         return 'I';
     }
 
-    inline ChainIdInt GetChainIdFromLetter(const char Letter)
+    inline ChainIdInt GetChainIdFromLetterForDNAorRNA(const char Letter)
     {
         switch (Letter)
         {
@@ -70,6 +72,7 @@ namespace CellEngineUseful
             case 'C' : return 2;
             case 'G' : return 3;
             case 'T' : return 4;
+            case 'U' : return 5;
 
             default : break;
         }
@@ -77,7 +80,7 @@ namespace CellEngineUseful
         return 0;
     }
 
-    inline ChainIdInt GetPairedChainId(ChainIdInt ChainId)
+    inline ChainIdInt GetPairedChainIdForDNAorRNA(ChainIdInt ChainId)
     {
         switch (ChainId)
         {
@@ -85,6 +88,7 @@ namespace CellEngineUseful
             case 2 : return 3;
             case 3 : return 2;
             case 4 : return 1;
+            case 5 : return 1;
             default : break;
         }
 

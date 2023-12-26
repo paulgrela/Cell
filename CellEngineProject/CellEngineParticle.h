@@ -119,7 +119,7 @@ public:
     ParticleKindForReaction(EntityIdInt EntityIdParam, UnsignedInt CounterParam, std::string SequenceStrParam, bool ToRemoveInReactionParam) : EntityId(EntityIdParam), Counter(CounterParam), SequenceStr(std::move(SequenceStrParam)), ToRemoveInReaction(ToRemoveInReactionParam)
     {
         for (auto& NucleotideLetter : SequenceStr)
-            Sequence.emplace_back(CellEngineUseful::GetChainIdFromLetter(NucleotideLetter));
+            Sequence.emplace_back(CellEngineUseful::GetChainIdFromLetterForDNAorRNA(NucleotideLetter));
     }
 };
 
