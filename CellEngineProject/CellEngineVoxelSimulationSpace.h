@@ -20,6 +20,8 @@ constexpr UnsignedInt NumberOfVoxelSimulationSpaceInEachDimensionMaxConst2048 = 
 using Space_1024_1024_1024 = SimulationSpaceVoxel[NumberOfVoxelSimulationSpaceInEachDimensionMaxConst1024][NumberOfVoxelSimulationSpaceInEachDimensionMaxConst1024][NumberOfVoxelSimulationSpaceInEachDimensionMaxConst1024];
 using Space_2048_2048_2048 = SimulationSpaceVoxel[NumberOfVoxelSimulationSpaceInEachDimensionMaxConst2048][NumberOfVoxelSimulationSpaceInEachDimensionMaxConst2048][NumberOfVoxelSimulationSpaceInEachDimensionMaxConst2048];
 
+enum class ComparisonType { ByVectorLoop, ByString };
+
 class CellEngineVoxelSimulationSpace : public CellEngineChemicalReactions
 {
 public:
@@ -100,8 +102,8 @@ public:
     bool FindParticlesInProximityOfVoxelSimulationSpaceForSelectedVoxelSpace(UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
 public:
     std::tuple<std::vector<UniqueIdInt>, bool> ChooseParticlesForReactionFromAllParticlesInProximity(Reaction& ReactionObject);
-    bool CompareFitnessOfDNASequenceByString(const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction);
-    bool CompareFitnessOfDNASequenceByNucleotidesLoop(const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction);
+    //bool CompareFitnessOfDNASequenceByString(const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction);
+    bool CompareFitnessOfDNASequenceByNucleotidesLoop(ComparisonType TypeOfComparison, const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction);
     void EraseParticlesChosenForReactionAndGetCentersForNewProductsOfReaction(UnsignedInt ParticleIndexChosenForReaction, std::vector<vector3_16>& Centers);
 public:
     void GenerateOneStrand(EntityIdInt EntityId, std::string_view Sequence, UnsignedInt StartPosX, UnsignedInt StartPosY, UnsignedInt StartPosZ, UnsignedInt ParticleSizeX, UnsignedInt ParticleSizeY, UnsignedInt ParticleSizeZ, UnsignedInt ParticleStepX, UnsignedInt ParticleStepY, UnsignedInt ParticleStepZ);

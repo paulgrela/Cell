@@ -284,8 +284,6 @@ void CellEngineVoxelSimulationSpace::AddBasicParticlesKindsAndReactions()
 
         const string DNASequenceForTestCutCrisper = "RNA";
         ParticlesKindsManagerObject.AddParticleKind({ 10008, "RNA", DNASequenceForTestCutCrisper, 0 });
-
-        //const string RNASequenceForTestCutCrisper = "TACAAAAAAAGAGGTGTT";
         const string RNASequenceForTestCutCrisper = "ANY";
         ParticlesKindsManagerObject.AddParticleKind({ 10009, "RNA", RNASequenceForTestCutCrisper, 0 });
 
@@ -504,85 +502,62 @@ void LinkDNA(Particle* NucleotideObjectForReactionPtr1, Particle* NucleotideObje
     CATCH("linking DNA")
 }
 
-bool CellEngineVoxelSimulationSpace::CompareFitnessOfDNASequenceByString(const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction)
-{
-    string SequenceStrToCompare, NucleotidesSequenceToCompareString;
-
-    try
-    {
-        SequenceStrToCompare = ParticleKindForReactionObject.SequenceStr;
-        if (SequenceStrToCompare == "ANY")
-        {
-            LoggersManagerObject.Log(STREAM("DNA SEQUENCE FOUND"));
-            return true;
-        }
-
-        if (SequenceStrToCompare == "RNA")
-        {
-            if (RNANucleotidesFoundInProximity.empty() == false)
-            {
-
-            }
-        }
-
-        //NucleotidesSequenceToCompareString = get<2>(GetNucleotidesSequenceForward(ParticleKindForReactionObject.SequenceStr.length(), ParticleObjectForReaction, true, false));
-        NucleotidesSequenceToCompareString = get<2>(GetNucleotidesSequence(&Particle::Next, ParticleKindForReactionObject.SequenceStr.length(), ParticleObjectForReaction, true, false));
-
-        LoggersManagerObject.Log(STREAM("DNA SEQUENCE COMPARE = #" << NucleotidesSequenceToCompareString << "#" << ParticleKindForReactionObject.SequenceStr << "#" << to_string(ParticleKindForReactionObject.EntityId)));
-    }
-    CATCH("comparing fitness of dna sequence by string")
-
-    return NucleotidesSequenceToCompareString == SequenceStrToCompare;
-}
-
-bool CellEngineVoxelSimulationSpace::CompareFitnessOfDNASequenceByNucleotidesLoop(const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction)
+bool CellEngineVoxelSimulationSpace::CompareFitnessOfDNASequenceByNucleotidesLoop(ComparisonType TypeOfComparison, const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction)
 {
     bool FoundSequenceNotFit = false;
 
     try
     {
-        string SequenceStrToCompare = ParticleKindForReactionObject.SequenceStr;
-        if (SequenceStrToCompare == "ANY")
+        string TemplateSequenceStr = ParticleKindForReactionObject.SequenceStr;
+        UnsignedInt LengthOfTemplate = TemplateSequenceStr == "RNA" ? 32 : TemplateSequenceStr.length();
+
+        if (TemplateSequenceStr == "ANY")
         {
             LoggersManagerObject.Log(STREAM("DNA SEQUENCE FOUND"));
             return true;
         }
 
-        //auto [ParticlePtr, NucleotidesCounter, NucleotidesSequenceToCompareString, NucleotidesSequenceToCompareVector] = GetNucleotidesSequenceForward(SequenceStrToCompare.length(), ParticleObjectForReaction, true, true);
-        auto [ParticlePtr, NucleotidesCounter, NucleotidesSequenceToCompareString, NucleotidesSequenceToCompareVector] = GetNucleotidesSequence(&Particle::Next, SequenceStrToCompare.length(), ParticleObjectForReaction, true, true);
+        vector<ChainIdInt> TemplateSequence = ParticleKindForReactionObject.Sequence;
 
-        if (SequenceStrToCompare == "RNA")
-        {
-            //W TYM MIEJSCU SPRAWDZA KOD ZA POMOCA przeszukania sekwencji rna
-            //Ona jest w tym wsrod RNANucleotidesFoundInProximity - czyli jesli jest rna tam to znajdz rna i znajdz poczatek i koniec w lewo i prawo i pobierz sekwencje do okreslonej dlugosci
+        if (TemplateSequenceStr == "RNA")
             if (RNANucleotidesFoundInProximity.empty() == false)
             {
-                //POBIERZ RNA w OBA KONCE - DODAJ DO SIEBIE W STRING ALE SKONWERTUJ NA ODPOWIEDNIE DNA PRZEZ CellEngineUseful::GetPairedChainIdForDNAorRNA(
-                //SPRAWDZ CZY SPELNIA CIAG DLA CRISPER - ale to musi byc ZAMIAST ANY - CRISPER NIE MA WZORCA i KAZDY RNA MOZE BYC
+                auto [ParticlePtrNext, NucleotidesCounterNext, NucleotidesSequenceToCompareStringNext, NucleotidesSequenceToCompareVectorNext] = GetNucleotidesSequence(&Particle::Next, LengthOfTemplate, GetParticleFromIndex(RNANucleotidesFoundInProximity[0]), true, true);
+                auto [ParticlePtrBack, NucleotidesCounterBack, NucleotidesSequenceToCompareStringBack, NucleotidesSequenceToCompareVectorBack] = GetNucleotidesSequence(&Particle::Prev, LengthOfTemplate, GetParticleFromIndex(RNANucleotidesFoundInProximity[0]), true, true);
 
-                //reverse(str.begin(), str.end()); //dla Backward string i
+                reverse(NucleotidesSequenceToCompareVectorBack.begin(), NucleotidesSequenceToCompareVectorBack.end());
+                TemplateSequence = NucleotidesSequenceToCompareVectorBack;
+                TemplateSequence.insert(end(TemplateSequence), begin(NucleotidesSequenceToCompareVectorBack), end(NucleotidesSequenceToCompareVectorBack));
+                for (auto& Nucleotide : TemplateSequence)
+                    Nucleotide = CellEngineUseful::GetPairedChainIdForDNAorRNA(Nucleotide);
 
-                //GDY POROWNUJE RNA Z DNA TO NIECH U BIERZE DO T
-                //if (ParticleKindForReactionObject.Sequence[NucleotideNum] != CellEngineUseful::GetPairedChainIdForDNAorRNA(NucleotidesSequenceToCompareVector[NucleotideNum]))
+                reverse(NucleotidesSequenceToCompareStringBack.begin(), NucleotidesSequenceToCompareStringBack.end());
+                TemplateSequenceStr = NucleotidesSequenceToCompareStringBack + NucleotidesSequenceToCompareStringNext;
+                for (auto& TemplateSequenceNucleotideChar : TemplateSequenceStr)
+                    TemplateSequenceNucleotideChar = CellEngineUseful::GetLetterChainIdForDNAorRNA(CellEngineUseful::GetPairedChainIdForDNAorRNA(CellEngineUseful::GetChainIdFromLetterForDNAorRNA(TemplateSequenceNucleotideChar)));
             }
-        }
 
-        LoggersManagerObject.Log(STREAM("DNA SEQUENCE COMPARE = #" << NucleotidesSequenceToCompareString << "#" << ParticleKindForReactionObject.SequenceStr << "#" << to_string(ParticleKindForReactionObject.EntityId)));
+        auto [ParticlePtr, NucleotidesCounter, NucleotidesSequenceToCompareString, NucleotidesSequenceToCompareVector] = GetNucleotidesSequence(&Particle::Next, LengthOfTemplate, ParticleObjectForReaction, true, true);
 
-        if (NucleotidesSequenceToCompareVector.size() >= ParticleKindForReactionObject.Sequence.size())
+        LoggersManagerObject.Log(STREAM("DNA SEQUENCE COMPARE = #" << NucleotidesSequenceToCompareString << "#" << TemplateSequenceStr << "#" << to_string(ParticleKindForReactionObject.EntityId)));
+
+        if (TypeOfComparison == ComparisonType::ByVectorLoop)
         {
-            for (UnsignedInt NucleotideNum = 0; NucleotideNum < ParticleKindForReactionObject.Sequence.size(); NucleotideNum++)
-                if (ParticleKindForReactionObject.Sequence[NucleotideNum] != NucleotidesSequenceToCompareVector[NucleotideNum])
-                {
-                    if (NucleotidesSequenceToCompareString == SequenceStrToCompare)
-                        LoggersManagerObject.Log(STREAM("SEQUENCE DIFF = " << to_string(NucleotideNum) << " " << NucleotidesSequenceToCompareVector[NucleotideNum] << " " << ParticleKindForReactionObject.Sequence[NucleotideNum]));
-
-                    FoundSequenceNotFit = true;
-                    break;
-                }
+            if (NucleotidesSequenceToCompareVector.size() >= TemplateSequence.size())
+            {
+                for (UnsignedInt NucleotideNum = 0; NucleotideNum < TemplateSequence.size(); NucleotideNum++)
+                    if (TemplateSequence[NucleotideNum] != NucleotidesSequenceToCompareVector[NucleotideNum])
+                    {
+                        FoundSequenceNotFit = true;
+                        break;
+                    }
+            }
+            else
+                FoundSequenceNotFit = true;
         }
         else
-            FoundSequenceNotFit = true;
+        if (TypeOfComparison == ComparisonType::ByString)
+            FoundSequenceNotFit = (NucleotidesSequenceToCompareString == TemplateSequenceStr);
 
         if (FoundSequenceNotFit == false)
             LoggersManagerObject.Log(STREAM("DNA SEQUENCE FOUND"));
@@ -615,7 +590,7 @@ tuple<vector<UniqueIdInt>, bool> CellEngineVoxelSimulationSpace::ChooseParticles
             if (CellEngineUseful::IsDNAorRNA(ParticleObjectTestedForReaction.EntityId) == false)
                 ReactantIterator = find_if(ReactionObject.Reactants.begin(), ReactionObject.Reactants.end(), [&ParticleObjectTestedForReaction](ParticleKindForReaction& ParticleKindObject){ return ParticleKindObject.EntityId == ParticleObjectTestedForReaction.EntityId; });
             else
-                ReactantIterator = find_if(ReactionObject.Reactants.begin(), ReactionObject.Reactants.end(), [&ParticleObjectTestedForReaction, this](ParticleKindForReaction& ParticleKindForReactionObjectParam){ return CellEngineUseful::IsSpecialDNA(ParticleKindForReactionObjectParam.EntityId) && CompareFitnessOfDNASequenceByNucleotidesLoop(ParticleKindForReactionObjectParam, ParticleObjectTestedForReaction) == true; });
+                ReactantIterator = find_if(ReactionObject.Reactants.begin(), ReactionObject.Reactants.end(), [&ParticleObjectTestedForReaction, this](ParticleKindForReaction& ParticleKindForReactionObjectParam){ return CellEngineUseful::IsSpecialDNA(ParticleKindForReactionObjectParam.EntityId) && CompareFitnessOfDNASequenceByNucleotidesLoop(ComparisonType::ByVectorLoop, ParticleKindForReactionObjectParam, ParticleObjectTestedForReaction) == true; });
 
             auto PositionInReactants = ReactantIterator - ReactionObject.Reactants.begin();
 
@@ -648,7 +623,6 @@ tuple<vector<UniqueIdInt>, bool> CellEngineVoxelSimulationSpace::ChooseParticles
             {
                 LoggersManagerObject.Log(STREAM("CUT 1 inside 1"));
 
-                //CutDNA(get<0>(GetNucleotidesSequenceForward(ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[0].second].SequenceStr.length() + ReactionObject.AdditionalParameter, GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first), false, false))->Prev);
                 CutDNA(get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[0].second].SequenceStr.length() + ReactionObject.AdditionalParameter, GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first), false, false))->Prev);
             }
             else
@@ -663,7 +637,6 @@ tuple<vector<UniqueIdInt>, bool> CellEngineVoxelSimulationSpace::ChooseParticles
 
                 Particle* NucleotideObjectForReactionPtr1 = &GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first);
                 Particle* NucleotideObjectForReactionPtr2 = &GetParticleFromIndex(NucleotidesIndexesChosenForReaction[1].first);
-//                Particle* NucleotideObjectForReactionPtr3 = get<0>(GetNucleotidesSequenceForward(ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[1].second].SequenceStr.length() - 1, GetParticleFromIndex(NucleotidesIndexesChosenForReaction[1].first), false, false));
                 Particle* NucleotideObjectForReactionPtr3 = get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[1].second].SequenceStr.length() - 1, GetParticleFromIndex(NucleotidesIndexesChosenForReaction[1].first), false, false));
 
                 LoggersManagerObject.Log(STREAM("NUCLEOTIDE 1 GENOME INDEX = " << NucleotideObjectForReactionPtr1->GenomeIndex));
@@ -1040,7 +1013,6 @@ void CellEngineVoxelSimulationSpace::GeneratePlanedParticlesInSelectedSpace(cons
         FillSquareParticle(StartXPosParam + 21, StartYPosParam + 5, StartZPosParam + 3, P9, 2);
 
         GenerateOneStrand(CellEngineConfigDataObject.RNAIdentifier, "UCGAGAA", StartXPosParam + 5, StartYPosParam + 5, StartZPosParam + 3, 2, 1, 2, 2, 0, 0);
-        //AGCTCTT
     }
     CATCH("generating planed particles in selected space")
 }
