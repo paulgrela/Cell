@@ -42,7 +42,7 @@ namespace CellEngineUseful
         return ChainName.substr(0, 2) == "NU" || ChainName.substr(0, 2) == "NV" ? stoi(std::string(ChainName).substr(2, 2)) : 0;
     }
 
-    inline char GetLetterChainIdForDNAorRNA(const ChainIdInt ChainId)
+    inline char GetLetterFromChainIdForDNAorRNA(const ChainIdInt ChainId)
     {
         switch (ChainId)
         {
