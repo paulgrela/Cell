@@ -672,18 +672,11 @@ tuple<vector<UniqueIdInt>, bool> CellEngineVoxelSimulationSpace::ChooseParticles
         else
         if (ReactionObject.Id == 7)
         {
-            LoggersManagerObject.Log(STREAM("CUT CRISPER"));
-
             if (NucleotidesIndexesChosenForReaction.size() == 1)
             {
                 LoggersManagerObject.Log(STREAM("CUT CRISPER 1 inside 1"));
 
-                //CutDNA(get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[0].second].SequenceStr.length() + ReactionObject.AdditionalParameter, GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first), false, false))->Prev);
-                //CutDNA(get<0>(GetNucleotidesSequence(&Particle::Next, DLUGOSC WCZESNIEJ ZNALEZIONA + ReactionObject.AdditionalParameter, GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first), false, false))->Prev);
                 CutDNA(GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first).Prev);
-                //MA ZNALEZC w DNA POCZATEK SEKWENCJI + 3, a ten poczatek to NucleotidesIndexesChosenForReaction[0].first bo tam
-                //142894/142895
-
             }
             else
                 return {};
