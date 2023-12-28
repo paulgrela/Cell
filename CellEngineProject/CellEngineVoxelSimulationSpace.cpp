@@ -296,7 +296,7 @@ void CellEngineVoxelSimulationSpace::AddBasicParticlesKindsAndReactions()
 
         AddChemicalReaction(Reaction(3, "LINK 1 ANY", "CH3CH2(OH) + DNA + DNA + ", { { 5, 1, "", false }, { 100021, 2, DNASequence1ForTestCutLink1Any, false } }, {}));
 
-        AddChemicalReaction(Reaction(7, "CUT CRISPER 2", "CH3CHCH2 + RNA + DNA + ", { { 5, 1, "", false }, { 10008, 1, DNASequenceForTestCutCrisper, false }, { 10009, 0, RNASequenceForTestCutCrisper, false } }, {}));
+        AddChemicalReaction(Reaction(7, "CUT CRISPER 2", "CH3CHCH2 + RNA + DNA + ", 3, { { 5, 1, "", false }, { 10008, 1, DNASequenceForTestCutCrisper, false }, { 10009, 0, RNASequenceForTestCutCrisper, false } }, {}));
 
 
 //        AddChemicalReaction(Reaction(3, "CUT 1", "CH3CHCH2 + RNA + ", { { 6, 1, "", false }, { 10004, 1, RNASequence1ForTestCutLink1, false } }, {}));
@@ -625,8 +625,6 @@ tuple<vector<UniqueIdInt>, bool> CellEngineVoxelSimulationSpace::ChooseParticles
 
         if (ReactionObject.Id == 1)
         {
-            LoggersManagerObject.Log(STREAM("CUT 1"));
-
             if (NucleotidesIndexesChosenForReaction.size() == 1)
             {
                 LoggersManagerObject.Log(STREAM("CUT 1 inside 1"));
@@ -676,7 +674,7 @@ tuple<vector<UniqueIdInt>, bool> CellEngineVoxelSimulationSpace::ChooseParticles
             {
                 LoggersManagerObject.Log(STREAM("CUT CRISPER 1 inside 1"));
 
-                CutDNA(GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first).Prev);
+                CutDNA(get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.AdditionalParameter, GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first), false, false))->Prev);
             }
             else
                 return {};
