@@ -262,71 +262,7 @@ void CellEngineVoxelSimulationSpace::AddBasicParticlesKindsAndReactions()
         ParticlesKindsManagerObject.AddParticleKind({ CellEngineConfigDataObject.DNAIdentifier, "DNA", "DNA", 0 });
 
 
-
-//        const string DNASequenceForTestFindingDNA = "TACAAAAAAAGAGGTGTTAGC";
-//        ParticlesKindsManagerObject.AddParticleKind({ 10001, "DNA", DNASequenceForTestFindingDNA, 0 });
-//
-//        const string DNASequence1ForTestCutLink1 = "TACAAAAAAAGAGGTGTT";
-//        ParticlesKindsManagerObject.AddParticleKind({ 10002, "DNA", DNASequence1ForTestCutLink1, 0 });
-//        const string DNASequence2ForTestCutLink1 = "AGCTCTTATTA";
-//        ParticlesKindsManagerObject.AddParticleKind({ 10003, "DNA", DNASequence2ForTestCutLink1, 0 });
-//
-//        const string DNASequence1ForTestCutLink1Any = "ANY";
-//        ParticlesKindsManagerObject.AddParticleKind({ 100021, "DNA", DNASequence1ForTestCutLink1Any, 0 });
-//
-//        const string RNASequence1ForTestCutLink1 = "TACAAAAAAAGAGGTGTT";
-//        ParticlesKindsManagerObject.AddParticleKind({ 10004, "RNA", RNASequence1ForTestCutLink1, 0 });
-//        const string RNASequence2ForTestCutLink1 = "AGCTCTTATTA";
-//        ParticlesKindsManagerObject.AddParticleKind({ 10005, "RNA", RNASequence2ForTestCutLink1, 0 });
-//
-//        const string DNASequence1ForTestCutLink2 = "TACAAAAAAAGAGGTGTT";
-//        ParticlesKindsManagerObject.AddParticleKind({ 10006, "DNA", DNASequence1ForTestCutLink2, 0 });
-//        const string DNASequence2ForTestCutLink2 = "AGC";
-//        ParticlesKindsManagerObject.AddParticleKind({ 10007, "DNA", DNASequence2ForTestCutLink2, 0 });
-//
-//        const string DNASequenceForTestCutCrisper = "RNA";
-//        ParticlesKindsManagerObject.AddParticleKind({ 10008, "RNA", DNASequenceForTestCutCrisper, 0 });
-//        const string RNASequenceForTestCutCrisper = "ANY";
-//        ParticlesKindsManagerObject.AddParticleKind({ 10009, "RNA", RNASequenceForTestCutCrisper, 0 });
-
-
-
-
-
-
-//        ParticlesKindsManagerObject.AddParticleKind({ 10001, "DNA", "?", 0 });
-//
-//        ParticlesKindsManagerObject.AddParticleKind({ 10002, "DNA", "?", 0 });
-//        ParticlesKindsManagerObject.AddParticleKind({ 10003, "DNA", "?", 0 });
-//
-//        ParticlesKindsManagerObject.AddParticleKind({ 100021, "DNA", "?", 0 });
-//
-//        ParticlesKindsManagerObject.AddParticleKind({ 10004, "RNA", "?", 0 });
-//        ParticlesKindsManagerObject.AddParticleKind({ 10005, "RNA", "?", 0 });
-//
-//        ParticlesKindsManagerObject.AddParticleKind({ 10006, "DNA", "?", 0 });
-//        ParticlesKindsManagerObject.AddParticleKind({ 10007, "DNA", "?", 0 });
-//
-//        ParticlesKindsManagerObject.AddParticleKind({ 10008, "RNA", "?", 0 });
-//        ParticlesKindsManagerObject.AddParticleKind({ 10009, "RNA", "?", 0 });
-
-
         ParticlesKindsManagerObject.AddParticleKind({ 10001, "DNA", "?", 0 });
-
-//        ParticlesKindsManagerObject.AddParticleKind({ 10002, "DNA", "?", 0 });
-//        ParticlesKindsManagerObject.AddParticleKind({ 10003, "DNA", "?", 0 });
-//
-//        ParticlesKindsManagerObject.AddParticleKind({ 100021, "DNA", "?", 0 });
-//
-//        ParticlesKindsManagerObject.AddParticleKind({ 10004, "RNA", "?", 0 });
-//        ParticlesKindsManagerObject.AddParticleKind({ 10005, "RNA", "?", 0 });
-//
-//        ParticlesKindsManagerObject.AddParticleKind({ 10006, "DNA", "?", 0 });
-//        ParticlesKindsManagerObject.AddParticleKind({ 10007, "DNA", "?", 0 });
-//
-//        ParticlesKindsManagerObject.AddParticleKind({ 10008, "RNA", "?", 0 });
-//        ParticlesKindsManagerObject.AddParticleKind({ 10009, "RNA", "?", 0 });
-
 
         const string DNASequenceForTestFindingDNA = "TACAAAAAAAGAGGTGTTAGC";
 
@@ -335,53 +271,47 @@ void CellEngineVoxelSimulationSpace::AddBasicParticlesKindsAndReactions()
 
         const string DNASequence1ForTestCutLink1Any = "ANY";
 
-        const string RNASequence1ForTestCutLink1 = "TACAAAAAAAGAGGTGTT";
-        const string RNASequence2ForTestCutLink1 = "AGCTCTTATTA";
-
         const string DNASequence1ForTestCutLink2 = "TACAAAAAAAGAGGTGTT";
-        const string DNASequence2ForTestCutLink2 = "AGC";
 
         const string DNASequenceForTestCutCrisper = "RNA";
         const string RNASequenceForTestCutCrisper = "ANY";
 
-//        AddChemicalReaction(Reaction(101, "", "CH3CH2(OH) + DNA + ", { { 5, 1, "", true }, { 10001, 1, DNASequenceForTestFindingDNA, false } }, { { 10, 1, "", true } }));
-//
-//        AddChemicalReaction(Reaction(1, "CUT 1", "CH3CH2(OH) + DNA + ", { { 5, 1, "", false }, { 10002, 1, DNASequence1ForTestCutLink1, false } }, {}));
-//        AddChemicalReaction(Reaction(2, "LINK 1", "CH3CH2(OH) + DNA + DNA + ", { { 5, 1, "", false }, { 10002, 1, DNASequence1ForTestCutLink1, false }, { 10003, 1, DNASequence2ForTestCutLink1, false } }, {}));
-//        AddChemicalReaction(Reaction(3, "LINK 1 ANY", "CH3CH2(OH) + DNA + DNA + ", { { 5, 1, "", false }, { 100021, 2, DNASequence1ForTestCutLink1Any, false } }, {}));
-//        AddChemicalReaction(Reaction(7, "CUT CRISPER 2", "CH3CHCH2 + RNA + DNA + ", 3, { { 5, 1, "", false }, { 10008, 1, DNASequenceForTestCutCrisper, false }, { 10009, 0, RNASequenceForTestCutCrisper, false } }, {}));
-//
-//
-////        AddChemicalReaction(Reaction(3, "CUT 1", "CH3CHCH2 + RNA + ", { { 6, 1, "", false }, { 10004, 1, RNASequence1ForTestCutLink1, false } }, {}));
-////        AddChemicalReaction(Reaction(4, "LINK 1", "CH3CHCH2 + RNA + RNA + ", { { 6, 1, "", false }, { 10004, 1, RNASequence1ForTestCutLink1, false }, { 10005, 1, DNASequence2ForTestCutLink1, false } }, {}));
-//
-//
-//        AddChemicalReaction(Reaction(5, "CUT 2", "CH3CHCH2 + DNA + ", 5, { { 5, 1, "", false }, { 10006, 1, DNASequence1ForTestCutLink2, false }, { 10007, 1, DNASequence2ForTestCutLink1, false } }, { { 86, 1, "", true } }));
-//        AddChemicalReaction(Reaction(6, "LINK 2", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10006, 1, DNASequence1ForTestCutLink2, false }, { 10007, 1, DNASequence2ForTestCutLink1, false } }, {}));
-//        AddChemicalReaction(Reaction(5, "CUT 2", "CH3CHCH2 + DNA + ", { { 5, 1, "", false }, { 10006, 1, DNASequence1ForTestCutLink2, false } }, { { 86, 1, "", true } }));
-//        AddChemicalReaction(Reaction(6, "LINK 2", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10006, 1, DNASequence1ForTestCutLink2, false }, { 10007, 1, DNASequence2ForTestCutLink1, false } }, {}));
-
-
         AddChemicalReaction(Reaction(101, "", "CH3CH2(OH) + DNA + ", { { 5, 1, "", true }, { 10001, 1, DNASequenceForTestFindingDNA, false } }, { { 10, 1, "", true } }));
 
         AddChemicalReaction(Reaction(1, "CUT 1", "CH3CH2(OH) + DNA + ", { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink1, false } }, {}));
-        AddChemicalReaction(Reaction(2, "LINK 1", "CH3CH2(OH) + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink1, false }, { 10003, 1, DNASequence2ForTestCutLink1, false } }, {}));
-        AddChemicalReaction(Reaction(3, "LINK 1 ANY", "CH3CH2(OH) + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 2, DNASequence1ForTestCutLink1Any, false } }, {}));
         AddChemicalReaction(Reaction(7, "CUT CRISPER 2", "CH3CHCH2 + RNA + DNA + ", 3, { { 5, 1, "", false }, { 10001, 1, DNASequenceForTestCutCrisper, false }, { 10009, 0, RNASequenceForTestCutCrisper, false } }, {}));
 
+        AddChemicalReaction(Reaction(2, "LINK 1", "CH3CH2(OH) + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink1, false }, { 10001, 1, DNASequence2ForTestCutLink1, false } }, {}));
+        AddChemicalReaction(Reaction(3, "LINK 1 ANY", "CH3CH2(OH) + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 2, DNASequence1ForTestCutLink1Any, false } }, {}));
+
+
+
+
+//        AddChemicalReaction(Reaction(5, "CUT 2", "CH3CHCH2 + DNA + ", 5, { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink2, false }, { 10001, 1, DNASequence2ForTestCutLink1, false } }, { { 86, 1, "", true } }));
+//        //rozcina obie nici dolna nic w pierwszej sekwencji a druga w drugiej - wiec to co mam podwojne
+//
+//        AddChemicalReaction(Reaction(6, "LINK 2", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink2, false }, { 10001, 1, DNASequence2ForTestCutLink1, false } }, {}));
+//        //laczy obie nici w pierwszej sekwencji jesli pierwsza nic ma pierwsza sekwencje a druga druga  a przeciwna podwojna nic jest komplementarna
+//
+//        AddChemicalReaction(Reaction(6, "LINK 2", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, "ANY", false }, { 10001, 1, "ANY", false } }, {}));
+//        //laczy obie nici jesli druga czyli przeciwna podwojna nic jest komplementarna
+//
+//        AddChemicalReaction(Reaction(5, "CUT 2", "CH3CHCH2 + DNA + ", 3, { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink2, false } }, { { 86, 1, "", true } }));
+//        //rozcina obie nici po sekwencji w jednym miejscu sekwencji plus dddatkowe przesuniecie
+
+
+
+
+
+
+//        const string RNASequence1ForTestCutLink1 = "TACAAAAAAAGAGGTGTT";
+//        const string RNASequence2ForTestCutLink1 = "AGCTCTTATTA";
+
+//        const string DNASequence2ForTestCutLink2 = "AGC";
 
 //        AddChemicalReaction(Reaction(3, "CUT 1", "CH3CHCH2 + RNA + ", { { 6, 1, "", false }, { 10004, 1, RNASequence1ForTestCutLink1, false } }, {}));
 //        AddChemicalReaction(Reaction(4, "LINK 1", "CH3CHCH2 + RNA + RNA + ", { { 6, 1, "", false }, { 10004, 1, RNASequence1ForTestCutLink1, false }, { 10005, 1, DNASequence2ForTestCutLink1, false } }, {}));
-
-
-        AddChemicalReaction(Reaction(5, "CUT 2", "CH3CHCH2 + DNA + ", 5, { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink2, false }, { 10007, 1, DNASequence2ForTestCutLink1, false } }, { { 86, 1, "", true } }));
-        AddChemicalReaction(Reaction(6, "LINK 2", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink2, false }, { 10007, 1, DNASequence2ForTestCutLink1, false } }, {}));
-        AddChemicalReaction(Reaction(5, "CUT 2", "CH3CHCH2 + DNA + ", { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink2, false } }, { { 86, 1, "", true } }));
-        AddChemicalReaction(Reaction(6, "LINK 2", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink2, false }, { 10007, 1, DNASequence2ForTestCutLink1, false } }, {}));
-
-
-
-
+//
 //        AddChemicalReaction(Reaction(8, "POLYMERASE DNA RUN", "POLYMERASE + DNA + NUCLEOTIDE_DNA + ", { { 100, 1, "", false }, { 10001, 1, DNASequenceForTestFindingDNA, false } }, {}));
 //        AddChemicalReaction(Reaction(9, "POLYMERASE DNA ADD", "POLYMERASE + DNA + NUCLEOTIDE_DNA + ", { { 100, 1, "", false }, { 10001, 1, DNASequenceForTestFindingDNA, false } }, {}));
 //        AddChemicalReaction(Reaction(10, "POLYMERASE DNA END", "POLYMERASE + DNA + NUCLEOTIDE_DNA + ", { { 100, 1, "", false }, { 10001, 1, DNASequenceForTestFindingDNA, false } }, {}));
