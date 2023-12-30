@@ -17,7 +17,8 @@ public:
 public:
     std::uint32_t Duration{};
 public:
-    UnsignedInt AdditionalParameter = 0;
+    UnsignedInt AdditionalParameter1 = 0;
+    UnsignedInt AdditionalParameter2 = 0;
 public:
     std::string ReactantsStr;
 public:
@@ -28,7 +29,7 @@ public:
     Reaction(UnsignedInt IdParam, std::string NameParam, std::string ReactantsStrParam, std::vector<ParticleKindForReaction> ReactantsParam, std::vector<ParticleKindForReaction> ProductsParam) : Id(IdParam), Name(std::move(NameParam)), ReactantsStr(std::move(ReactantsStrParam)), Reactants(std::move(ReactantsParam)), Products(std::move(ProductsParam))
     {
     }
-    Reaction(UnsignedInt IdParam, std::string NameParam, std::string ReactantsStrParam, UnsignedInt AdditionalParameterParam, std::vector<ParticleKindForReaction> ReactantsParam, std::vector<ParticleKindForReaction> ProductsParam) : Id(IdParam), Name(std::move(NameParam)), ReactantsStr(std::move(ReactantsStrParam)), Reactants(std::move(ReactantsParam)), Products(std::move(ProductsParam)), AdditionalParameter(AdditionalParameterParam)
+    Reaction(UnsignedInt IdParam, std::string NameParam, std::string ReactantsStrParam, UnsignedInt AdditionalParameterParam1, UnsignedInt AdditionalParameterParam2, std::vector<ParticleKindForReaction> ReactantsParam, std::vector<ParticleKindForReaction> ProductsParam) : Id(IdParam), Name(std::move(NameParam)), ReactantsStr(std::move(ReactantsStrParam)), Reactants(std::move(ReactantsParam)), Products(std::move(ProductsParam)), AdditionalParameter1(AdditionalParameterParam1), AdditionalParameter2(AdditionalParameterParam2)
     {
     }
 };

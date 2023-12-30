@@ -279,7 +279,6 @@ void CellEngineVoxelSimulationSpace::AddBasicParticlesKindsAndReactions()
         AddChemicalReaction(Reaction(101, "", "CH3CH2(OH) + DNA + ", { { 5, 1, "", true }, { 10001, 1, DNASequenceForTestFindingDNA, false } }, { { 10, 1, "", true } }));
 
         AddChemicalReaction(Reaction(1, "CUT 1", "CH3CH2(OH) + DNA + ", { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink1, false } }, {}));
-        AddChemicalReaction(Reaction(7, "CUT CRISPER 2", "CH3CHCH2 + RNA + DNA + ", 3, { { 5, 1, "", false }, { 10001, 1, DNASequenceForTestCutCrisper, false }, { 10009, 0, RNASequenceForTestCutCrisper, false } }, {}));
 
         AddChemicalReaction(Reaction(2, "LINK 1", "CH3CH2(OH) + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink1, false }, { 10001, 1, DNASequence2ForTestCutLink1, false } }, {}));
         AddChemicalReaction(Reaction(3, "LINK 1 ANY", "CH3CH2(OH) + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 2, DNASequence1ForTestCutLink1Any, false } }, {}));
@@ -287,18 +286,22 @@ void CellEngineVoxelSimulationSpace::AddBasicParticlesKindsAndReactions()
 
 
 
-//        AddChemicalReaction(Reaction(5, "CUT 2", "CH3CHCH2 + DNA + ", 5, { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink2, false }, { 10001, 1, DNASequence2ForTestCutLink1, false } }, { { 86, 1, "", true } }));
-//        //rozcina obie nici dolna nic w pierwszej sekwencji a druga w drugiej - wiec to co mam podwojne
-//
-//        AddChemicalReaction(Reaction(6, "LINK 2", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink2, false }, { 10001, 1, DNASequence2ForTestCutLink1, false } }, {}));
-//        //laczy obie nici w pierwszej sekwencji jesli pierwsza nic ma pierwsza sekwencje a druga druga  a przeciwna podwojna nic jest komplementarna
-//
-//        AddChemicalReaction(Reaction(6, "LINK 2", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, "ANY", false }, { 10001, 1, "ANY", false } }, {}));
-//        //laczy obie nici jesli druga czyli przeciwna podwojna nic jest komplementarna
-//
-//        AddChemicalReaction(Reaction(5, "CUT 2", "CH3CHCH2 + DNA + ", 3, { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink2, false } }, { { 86, 1, "", true } }));
-//        //rozcina obie nici po sekwencji w jednym miejscu sekwencji plus dddatkowe przesuniecie
+        AddChemicalReaction(Reaction(4, "CUT 2", "CH3CHCH2 + DNA + ", 3, 7, { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink2, false }, { 10001, 1, DNASequence2ForTestCutLink1, false } }, { { 86, 1, "", true } }));
+        //rozcina obie nici dolna nic w pierwszej sekwencji a druga w drugiej - wiec to co mam podwojne + dodatkowe przesuniecie obu nici - osobne parametry
 
+        AddChemicalReaction(Reaction(5, "CUT 2", "CH3CHCH2 + DNA + ", 3, 7, { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink2, false } }, { { 86, 1, "", true } }));
+        //rozcina obie nici po sekwencji w jednym miejscu sekwencji plus dddatkowe przesuniecie obu nici - osobne parametry
+
+        AddChemicalReaction(Reaction(6, "LINK 2", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink2, false }, { 10001, 1, DNASequence2ForTestCutLink1, false } }, {}));
+        //laczy obie nici w pierwszej sekwencji jesli pierwsza nic ma pierwsza sekwencje a druga druga  a przeciwna podwojna nic jest komplementarna
+
+        AddChemicalReaction(Reaction(7, "LINK 2", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, "ANY", false }, { 10001, 1, "ANY", false } }, {}));
+        //laczy obie nici jesli druga czyli przeciwna podwojna nic jest komplementarna
+
+
+        AddChemicalReaction(Reaction(8, "CUT CRISPER 1", "CH3CHCH2 + RNA + DNA + ", 3, 7, { { 5, 1, "", false }, { 10001, 1, DNASequenceForTestCutCrisper, false }, { 10009, 0, RNASequenceForTestCutCrisper, false } }, {}));
+
+        AddChemicalReaction(Reaction(9, "CUT CRISPER 2", "CH3CHCH2 + RNA + DNA + ", 3, 7, { { 5, 1, "", false }, { 10001, 1, DNASequenceForTestCutCrisper, false }, { 10009, 0, RNASequenceForTestCutCrisper, false } }, {}));
 
 
 
@@ -625,7 +628,7 @@ tuple<vector<UniqueIdInt>, bool> CellEngineVoxelSimulationSpace::ChooseParticles
             {
                 LoggersManagerObject.Log(STREAM("CUT 1 inside 1"));
 
-                CutDNA(get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[0].second].SequenceStr.length() + ReactionObject.AdditionalParameter, GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first), false, false))->Prev);
+                CutDNA(get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[0].second].SequenceStr.length() + ReactionObject.AdditionalParameter1, GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first), false, false))->Prev);
             }
             else
                 return {};
@@ -670,7 +673,7 @@ tuple<vector<UniqueIdInt>, bool> CellEngineVoxelSimulationSpace::ChooseParticles
             {
                 LoggersManagerObject.Log(STREAM("CUT CRISPER 1 inside 1"));
 
-                CutDNA(get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.AdditionalParameter, GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first), false, false))->Prev);
+                CutDNA(get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.AdditionalParameter1, GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first), false, false))->Prev);
             }
             else
                 return {};
