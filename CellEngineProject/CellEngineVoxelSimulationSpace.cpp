@@ -298,10 +298,12 @@ void CellEngineVoxelSimulationSpace::AddBasicParticlesKindsAndReactions()
         AddChemicalReaction(Reaction(7, "LINK 2", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, "ANY", false }, { 10001, 1, "ANY", false } }, {}));
         //laczy obie nici jesli druga czyli przeciwna podwojna nic jest komplementarna
 
+        AddChemicalReaction(Reaction(8, "LINK 2", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, "ANY", false }, { 10001, 1, "ANY", false } }, {}));
+        //laczy obie nici jesli rowno obciete
 
-        AddChemicalReaction(Reaction(8, "CUT CRISPER 1", "CH3CHCH2 + RNA + DNA + ", 3, 7, { { 5, 1, "", false }, { 10001, 1, DNASequenceForTestCutCrisper, false }, { 10009, 0, RNASequenceForTestCutCrisper, false } }, {}));
+        AddChemicalReaction(Reaction(10, "CUT CRISPER 1", "CH3CHCH2 + RNA + DNA + ", 3, 7, { { 5, 1, "", false }, { 10001, 1, DNASequenceForTestCutCrisper, false }, { 10009, 0, RNASequenceForTestCutCrisper, false } }, {}));
 
-        AddChemicalReaction(Reaction(9, "CUT CRISPER 2", "CH3CHCH2 + RNA + DNA + ", 3, 7, { { 5, 1, "", false }, { 10001, 1, DNASequenceForTestCutCrisper, false }, { 10009, 0, RNASequenceForTestCutCrisper, false } }, {}));
+        AddChemicalReaction(Reaction(11, "CUT CRISPER 2", "CH3CHCH2 + RNA + DNA + ", 3, 7, { { 5, 1, "", false }, { 10001, 1, DNASequenceForTestCutCrisper, false }, { 10009, 0, RNASequenceForTestCutCrisper, false } }, {}));
 
 
 
@@ -655,25 +657,31 @@ tuple<vector<UniqueIdInt>, bool> CellEngineVoxelSimulationSpace::ChooseParticles
                 return {};
         }
         else
-        if (ReactionObject.Id == 3)
+        if (ReactionObject.Id == 3 || ReactionObject.Id == 8)
         {
             if (NucleotidesWithFreePrevEndingsFoundInProximity.empty() == false && NucleotidesWithFreeNextEndingsFoundInProximity.empty() == false)
             {
                 LoggersManagerObject.Log(STREAM("LINK 1 ANY inside 1"));
 
                 LinkDNA(&GetParticleFromIndex(NucleotidesWithFreePrevEndingsFoundInProximity[0]), &GetParticleFromIndex(NucleotidesWithFreeNextEndingsFoundInProximity[0]));
+
+                if (ReactionObject.Id == 8)
+                    LinkDNA(GetParticleFromIndex(NucleotidesWithFreePrevEndingsFoundInProximity[0]).PairedNucleotide, GetParticleFromIndex(NucleotidesWithFreeNextEndingsFoundInProximity[0]).PairedNucleotide);
             }
             else
                 return {};
         }
         else
-        if (ReactionObject.Id == 7)
+        if (ReactionObject.Id == 10 || ReactionObject.Id == 11)
         {
             if (NucleotidesIndexesChosenForReaction.size() == 1)
             {
-                LoggersManagerObject.Log(STREAM("CUT CRISPER 1 inside 1"));
+                LoggersManagerObject.Log(STREAM("CUT CRISPER inside 1"));
 
-                CutDNA(get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.AdditionalParameter1, GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first), false, false))->Prev);
+                Particle* FirstStrand = get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.AdditionalParameter1, GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first), false, false))->Prev;
+                CutDNA(FirstStrand);
+                if (ReactionObject.Id == 11)
+                    CutDNA(FirstStrand->PairedNucleotide);
             }
             else
                 return {};
