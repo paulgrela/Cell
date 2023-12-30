@@ -283,14 +283,8 @@ void CellEngineVoxelSimulationSpace::AddBasicParticlesKindsAndReactions()
         AddChemicalReaction(Reaction(2, "LINK 1", "CH3CH2(OH) + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink1, false }, { 10001, 1, DNASequence2ForTestCutLink1, false } }, {}));
         AddChemicalReaction(Reaction(3, "LINK 1 ANY", "CH3CH2(OH) + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 2, DNASequence1ForTestCutLink1Any, false } }, {}));
 
+        AddChemicalReaction(Reaction(4, "CUT 2", "CH3CHCH2 + DNA + ", 3, 7, { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink2, false } }, { { 86, 1, "", true } })); //rozcina obie nici po sekwencji w jednym miejscu sekwencji plus dddatkowe przesuniecie obu nici - osobne parametry
 
-
-
-        AddChemicalReaction(Reaction(4, "CUT 2", "CH3CHCH2 + DNA + ", 3, 7, { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink2, false }, { 10001, 1, DNASequence2ForTestCutLink1, false } }, { { 86, 1, "", true } }));
-        //rozcina obie nici dolna nic w pierwszej sekwencji a druga w drugiej - wiec to co mam podwojne + dodatkowe przesuniecie obu nici - osobne parametry
-
-        AddChemicalReaction(Reaction(5, "CUT 2", "CH3CHCH2 + DNA + ", 3, 7, { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink2, false } }, { { 86, 1, "", true } }));
-        //rozcina obie nici po sekwencji w jednym miejscu sekwencji plus dddatkowe przesuniecie obu nici - osobne parametry
 
         AddChemicalReaction(Reaction(6, "LINK 2", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink2, false }, { 10001, 1, DNASequence2ForTestCutLink1, false } }, {}));
         //laczy obie nici w pierwszej sekwencji jesli pierwsza nic ma pierwsza sekwencje a druga druga  a przeciwna podwojna nic jest komplementarna
@@ -298,12 +292,12 @@ void CellEngineVoxelSimulationSpace::AddBasicParticlesKindsAndReactions()
         AddChemicalReaction(Reaction(7, "LINK 2", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, "ANY", false }, { 10001, 1, "ANY", false } }, {}));
         //laczy obie nici jesli druga czyli przeciwna podwojna nic jest komplementarna
 
-        AddChemicalReaction(Reaction(8, "LINK 2", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, "ANY", false }, { 10001, 1, "ANY", false } }, {}));
-        //laczy obie nici jesli rowno obciete
 
-        AddChemicalReaction(Reaction(10, "CUT CRISPER 1", "CH3CHCH2 + RNA + DNA + ", 3, 7, { { 5, 1, "", false }, { 10001, 1, DNASequenceForTestCutCrisper, false }, { 10009, 0, RNASequenceForTestCutCrisper, false } }, {}));
+        AddChemicalReaction(Reaction(8, "LINK 2", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, "ANY", false }, { 10001, 1, "ANY", false } }, {})); //laczy obie nici jesli rowno obciete
 
-        AddChemicalReaction(Reaction(11, "CUT CRISPER 2", "CH3CHCH2 + RNA + DNA + ", 3, 7, { { 5, 1, "", false }, { 10001, 1, DNASequenceForTestCutCrisper, false }, { 10009, 0, RNASequenceForTestCutCrisper, false } }, {}));
+        AddChemicalReaction(Reaction(10, "CUT CRISPER 1", "CH3CHCH2 + RNA + DNA + ", 3, 7, { { 5, 1, "", false }, { 10001, 1, DNASequenceForTestCutCrisper, false }, { 10001, 0, RNASequenceForTestCutCrisper, false } }, {}));
+
+        AddChemicalReaction(Reaction(11, "CUT CRISPER 2", "CH3CHCH2 + RNA + DNA + ", 3, 7, { { 5, 1, "", false }, { 10001, 1, DNASequenceForTestCutCrisper, false }, { 10001, 0, RNASequenceForTestCutCrisper, false } }, {}));
 
 
 
@@ -624,13 +618,16 @@ tuple<vector<UniqueIdInt>, bool> CellEngineVoxelSimulationSpace::ChooseParticles
             LoggersManagerObject.Log(STREAM(""));
         }
 
-        if (ReactionObject.Id == 1)
+        if (ReactionObject.Id == 1 || ReactionObject.Id == 4)
         {
             if (NucleotidesIndexesChosenForReaction.size() == 1)
             {
                 LoggersManagerObject.Log(STREAM("CUT 1 inside 1"));
 
                 CutDNA(get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[0].second].SequenceStr.length() + ReactionObject.AdditionalParameter1, GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first), false, false))->Prev);
+
+                if (ReactionObject.Id == 4)
+                    CutDNA(get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[0].second].SequenceStr.length() + ReactionObject.AdditionalParameter2, *GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first).PairedNucleotide, false, false))->Prev);
             }
             else
                 return {};
