@@ -643,17 +643,22 @@ public:
             if (ImGui::Button(" MAKE CHOSEN REACTION FOR SELECTED SPACE NR = 101 ") == true)
                 CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateChosenReactionForSelectedVoxelSpace(101, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
 
-            if (ImGui::Button(" MAKE CHOSEN REACTION FOR SELECTED SPACE NR = 1 CUT 1       ") == true)
+            if (ImGui::Button(" MAKE CHOSEN REACTION FOR SELECTED SPACE NR = 1 CUT 1        ") == true)
                 CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateChosenReactionForSelectedVoxelSpace(1, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-            if (ImGui::Button(" MAKE CHOSEN REACTION FOR SELECTED SPACE NR = 4 CUT 2       ") == true)
+            if (ImGui::Button(" MAKE CHOSEN REACTION FOR SELECTED SPACE NR = 4 CUT 2        ") == true)
                 CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateChosenReactionForSelectedVoxelSpace(4, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
 
-            if (ImGui::Button(" MAKE CHOSEN REACTION FOR SELECTED SPACE NR = 2 LINK 1      ") == true)
+            if (ImGui::Button(" MAKE CHOSEN REACTION FOR SELECTED SPACE NR = 2 LINK 1       ") == true)
                 CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateChosenReactionForSelectedVoxelSpace(2, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-            if (ImGui::Button(" MAKE CHOSEN REACTION FOR SELECTED SPACE NR = 3 LINK 1 ANY  ") == true)
+            if (ImGui::Button(" MAKE CHOSEN REACTION FOR SELECTED SPACE NR = 3 LINK 1 ANY   ") == true)
                 CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateChosenReactionForSelectedVoxelSpace(3, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-            if (ImGui::Button(" MAKE CHOSEN REACTION FOR SELECTED SPACE NR = 8 LINK 2 ANY  ") == true)
+            if (ImGui::Button(" MAKE CHOSEN REACTION FOR SELECTED SPACE NR = 8 LINK 2 ANY   ") == true)
                 CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateChosenReactionForSelectedVoxelSpace(8, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
+
+            if (ImGui::Button(" MAKE CHOSEN REACTION FOR SELECTED SPACE NR = 6 LINK 2       ") == true)
+                CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateChosenReactionForSelectedVoxelSpace(6, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
+            if (ImGui::Button(" MAKE CHOSEN REACTION FOR SELECTED SPACE NR = 7 LINK 2 ANY   ") == true)
+                CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateChosenReactionForSelectedVoxelSpace(7, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
 
             if (ImGui::Button(" MAKE CHOSEN REACTION FOR SELECTED SPACE NR = 10 CRISPER 1   ") == true)
                 CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateChosenReactionForSelectedVoxelSpace(10, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
