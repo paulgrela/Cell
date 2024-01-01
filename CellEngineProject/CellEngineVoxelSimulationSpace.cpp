@@ -443,6 +443,11 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfDiffusionForSelectedRangeO
     CATCH("generating one step of diffusion")
 }
 
+double DistanceOfParticles(Particle& Particle1, Particle& Particle2)
+{
+    return sqrt(pow(Particle1.XCenter - Particle2.XCenter, 2.0) + pow(Particle1.YCenter - Particle2.YCenter, 2.0) + pow(Particle1.ZCenter - Particle2.ZCenter, 2.0));
+}
+
 string GetPairedSequenceStr(string SequenceStr)
 {
     try
@@ -484,8 +489,11 @@ void CutDNA(Particle* NucleotideObjectForReactionPtr)
 {
     try
     {
-        NucleotideObjectForReactionPtr->Next->Prev = nullptr;
-        NucleotideObjectForReactionPtr->Next = nullptr;
+        if (NucleotideObjectForReactionPtr->Next != nullptr)
+        {
+            NucleotideObjectForReactionPtr->Next->Prev = nullptr;
+            NucleotideObjectForReactionPtr->Next = nullptr;
+        }
     }
     CATCH("cutting DNA")
 }
@@ -627,18 +635,33 @@ tuple<vector<UniqueIdInt>, bool> CellEngineVoxelSimulationSpace::ChooseParticles
             {
                 LoggersManagerObject.Log(STREAM("CUT 1 or 2 inside 1"));
 
-                CutDNA(get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[0].second].SequenceStr.length() + ReactionObject.AdditionalParameter1, GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first), false, false, [](const Particle*){ return true; }))->Prev);
+                auto NucleotidePtr1 = get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[0].second].SequenceStr.length() + ReactionObject.AdditionalParameter1, GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first), false, false, [](const Particle*){ return true; }));
 
-                if (ReactionObject.Id == 4)
+                if (NucleotidePtr1 != nullptr && NucleotidePtr1->Prev != nullptr)
                 {
-                    CutDNA(get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[0].second].SequenceStr.length() + ReactionObject.AdditionalParameter2, *GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first).PairedNucleotide, false, false, [](const Particle*){ return true; }))->Prev);
+                    CutDNA(NucleotidePtr1->Prev);
 
-                    if (ReactionObject.AdditionalParameter1 < ReactionObject.AdditionalParameter2)
-                        for (UnsignedInt DiffPos = 0; DiffPos < ReactionObject.AdditionalParameter2 - ReactionObject.AdditionalParameter1 - 1; DiffPos++)
+                    if (ReactionObject.Id == 4)
+                    {
+                        auto NucleotidePtr2 = get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[0].second].SequenceStr.length() + ReactionObject.AdditionalParameter2, *GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first).PairedNucleotide, false, false, [](const Particle*){ return true; }));
+                        if (NucleotidePtr2 != nullptr && NucleotidePtr2->Prev != nullptr)
                         {
-                            get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[0].second].SequenceStr.length() + ReactionObject.AdditionalParameter1 + DiffPos, *GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first).PairedNucleotide, false, false, [](const Particle*){ return true; }))->Prev->PairedNucleotide->PairedNucleotide = nullptr;
-                            get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[0].second].SequenceStr.length() + ReactionObject.AdditionalParameter1 + DiffPos, *GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first).PairedNucleotide, false, false, [](const Particle*){ return true; }))->Prev->PairedNucleotide = nullptr;
+                            CutDNA(NucleotidePtr2->Prev);
+
+                            if (ReactionObject.AdditionalParameter1 < ReactionObject.AdditionalParameter2)
+                                for (UnsignedInt DiffPos = 0; DiffPos < ReactionObject.AdditionalParameter2 - ReactionObject.AdditionalParameter1 - 1; DiffPos++)
+                                {
+                                    auto ParticleN = get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[0].second].SequenceStr.length() + ReactionObject.AdditionalParameter1 + DiffPos, *GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first).PairedNucleotide, false, false, [](const Particle*){ return true; }));
+                                    if (ParticleN->Prev != nullptr && ParticleN->Prev->PairedNucleotide != nullptr)
+                                    {
+                                        LoggersManagerObject.Log(STREAM("SEPARATE PAIRED"));
+
+                                        ParticleN->PairedNucleotide->PairedNucleotide = nullptr;
+                                        ParticleN->PairedNucleotide = nullptr;
+                                    }
+                                }
                         }
+                    }
                 }
             }
             else
@@ -676,10 +699,16 @@ tuple<vector<UniqueIdInt>, bool> CellEngineVoxelSimulationSpace::ChooseParticles
             {
                 LoggersManagerObject.Log(STREAM("LINK 1 or 2 ANY inside 1"));
 
-                LinkDNA(&GetParticleFromIndex(NucleotidesWithFreePrevEndingsFoundInProximity[0]), &GetParticleFromIndex(NucleotidesWithFreeNextEndingsFoundInProximity[0]));
+                if (DistanceOfParticles(GetParticleFromIndex(NucleotidesWithFreePrevEndingsFoundInProximity[0]), GetParticleFromIndex(NucleotidesWithFreeNextEndingsFoundInProximity[0])) <= 2.0)
+                {
+                    LoggersManagerObject.Log(STREAM("LINK 1 or 2 ANY CLOSE ENOUGH"));
 
-                if (ReactionObject.Id == 8)
-                    LinkDNA(GetParticleFromIndex(NucleotidesWithFreePrevEndingsFoundInProximity[0]).PairedNucleotide, GetParticleFromIndex(NucleotidesWithFreeNextEndingsFoundInProximity[0]).PairedNucleotide);
+                    LinkDNA(&GetParticleFromIndex(NucleotidesWithFreePrevEndingsFoundInProximity[0]), &GetParticleFromIndex(NucleotidesWithFreeNextEndingsFoundInProximity[0]));
+
+                    if (ReactionObject.Id == 8)
+                        if (GetParticleFromIndex(NucleotidesWithFreePrevEndingsFoundInProximity[0]).PairedNucleotide != nullptr && GetParticleFromIndex(NucleotidesWithFreeNextEndingsFoundInProximity[0]).PairedNucleotide != nullptr)
+                            LinkDNA(GetParticleFromIndex(NucleotidesWithFreePrevEndingsFoundInProximity[0]).PairedNucleotide, GetParticleFromIndex(NucleotidesWithFreeNextEndingsFoundInProximity[0]).PairedNucleotide);
+                }
             }
             else
                 return {};
@@ -719,11 +748,20 @@ tuple<vector<UniqueIdInt>, bool> CellEngineVoxelSimulationSpace::ChooseParticles
             {
                 if (NucleotideObjectForReactionPtr1Paired == nullptr && NucleotideObjectForReactionPtr2Paired != nullptr)
                     ;
+
                 if (NucleotideObjectForReactionPtr1Paired != nullptr && NucleotideObjectForReactionPtr2Paired == nullptr)
                 {
-                    string Seq1 = GetPairedSequenceStr(get<2>(GetNucleotidesSequence(&Particle::Prev, 32, *NucleotideObjectForReactionPtr2Paired, false, false, [](const Particle* P){ return P->PairedNucleotide == nullptr; })));
+                    LoggersManagerObject.Log(STREAM("CHECKING COMPLEMENTARY X2"));
 
-                    string Seq2 = GetPairedSequenceStr(get<2>(GetNucleotidesSequence(&Particle::Prev, 32, *NucleotideObjectForReactionPtr1, false, false, [](const Particle* P){ return P->PairedNucleotide == nullptr; })));
+                    string Sequence1 = get<2>(GetNucleotidesSequence(&Particle::Prev, 32, *NucleotideObjectForReactionPtr2Paired, false, false, [](const Particle* P){ return P->PairedNucleotide == nullptr; }));
+                    string Sequence2 = GetPairedSequenceStr(get<2>(GetNucleotidesSequence(&Particle::Prev, 32, *NucleotideObjectForReactionPtr1, false, false, [](const Particle* P){ return P->PairedNucleotide == nullptr; })));
+
+                    if (Sequence1 == Sequence2)
+                    {
+                        LinkDNA(NucleotideObjectForReactionPtr2, NucleotideObjectForReactionPtr1);
+                        LinkDNA(NucleotideObjectForReactionPtr2Paired, NucleotideObjectForReactionPtr1Paired);
+                        //ZSZYJ Paired Nucleotide
+                    }
                 }
 
 
