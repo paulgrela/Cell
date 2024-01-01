@@ -508,7 +508,7 @@ void LinkDNA(Particle* NucleotideObjectForReactionPtr1, Particle* NucleotideObje
 {
     try
     {
-        if (NucleotideObjectForReactionPtr1 != nullptr && NucleotideObjectForReactionPtr2 != nullptr)
+        //if (NucleotideObjectForReactionPtr1 != nullptr && NucleotideObjectForReactionPtr2 != nullptr)
         {
             NucleotideObjectForReactionPtr1->Prev = NucleotideObjectForReactionPtr2;
             NucleotideObjectForReactionPtr2->Next = NucleotideObjectForReactionPtr1;
@@ -519,15 +519,14 @@ void LinkDNA(Particle* NucleotideObjectForReactionPtr1, Particle* NucleotideObje
 
 void SeparateStrand(Particle* ParticleNucleotide)
 {
-    //if (ParticleNucleotide->Prev != nullptr && ParticleNucleotide->Prev->PairedNucleotide != nullptr)
+    try
     {
         LoggersManagerObject.Log(STREAM("SEPARATE PAIRED"));
 
         ParticleNucleotide->PairedNucleotide->PairedNucleotide = nullptr;
         ParticleNucleotide->PairedNucleotide = nullptr;
     }
-    //else
-    //    LoggersManagerObject.Log(STREAM("STRAND ALREADY SEPARATED"));
+    CATCH("separating nucleotide")
 }
 
 
@@ -671,21 +670,16 @@ tuple<vector<UniqueIdInt>, bool> CellEngineVoxelSimulationSpace::ChooseParticles
                         {
                             CutDNA(NucleotidePtr2->Prev);
 
-                            //TU BLAD BO CIAG POWINIEN BYC RAZ WYSZUKANY A NIE ZA KAZDYM RAZEM
                             if (ReactionObject.AdditionalParameter1 < ReactionObject.AdditionalParameter2)
                             {
-                                //Particle* Nucleotide = get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[0].second].SequenceStr.length() + ReactionObject.AdditionalParameter1, *GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first).PairedNucleotide, false, false, [](const Particle*){ return true; }));
                                 Particle* Nucleotide = NucleotidePtr1;
                                 for (UnsignedInt DiffPos = 0; DiffPos < ReactionObject.AdditionalParameter2 - ReactionObject.AdditionalParameter1; DiffPos++)
                                 {
                                     SeparateStrand(Nucleotide);
                                     Nucleotide = Nucleotide->Next;
                                 }
-
-                                //for (UnsignedInt DiffPos = 0; DiffPos < ReactionObject.AdditionalParameter2 - ReactionObject.AdditionalParameter1 - 1; DiffPos++)
-                                //    SeparateStrand(get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[0].second].SequenceStr.length() + ReactionObject.AdditionalParameter1 + DiffPos, *GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first).PairedNucleotide, false, false, [](const Particle*){ return true; })));
                             }
-//                            else
+//                          else
 //                            if (ReactionObject.AdditionalParameter1 > ReactionObject.AdditionalParameter2)
 //                                for (UnsignedInt DiffPos = 0; DiffPos < ReactionObject.AdditionalParameter1 - ReactionObject.AdditionalParameter2 - 1; DiffPos++)
 //                                    SeparateStrand(get<0>(GetNucleotidesSequence(&Particle::Prev, ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[0].second].SequenceStr.length() + ReactionObject.AdditionalParameter2 + DiffPos, *GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first).PairedNucleotide, false, false, [](const Particle*){ return true; })));
@@ -781,40 +775,52 @@ tuple<vector<UniqueIdInt>, bool> CellEngineVoxelSimulationSpace::ChooseParticles
                 {
                     LoggersManagerObject.Log(STREAM("CHECKING COMPLEMENTARY X1"));
 
-                    string Sequence1 = get<2>(GetNucleotidesSequence(&Particle::Next, 32, *NucleotideObjectForReactionPtr1, false, false, [](const Particle* P){ return P->PairedNucleotide == nullptr; }));
-                    string Sequence2 = GetPairedSequenceStr(get<2>(GetNucleotidesSequence(&Particle::Next, 32, *(NucleotideObjectForReactionPtr2Paired->Next), false, false, [](const Particle* P){ return P->PairedNucleotide == nullptr; })));
+                    //string Sequence1 = get<2>(GetNucleotidesSequence(&Particle::Next, 32, *NucleotideObjectForReactionPtr1, true, false, [](const Particle* P){ return P->PairedNucleotide == nullptr; }));
+                    auto [ParticlePtr1, NucleotidesCounter1, Sequence1, NucleotidesSequenceVector1] = GetNucleotidesSequence(&Particle::Next, 32, *NucleotideObjectForReactionPtr1, true, false, [](const Particle* P){ return P->PairedNucleotide == nullptr; });
+                    //string Sequence2 = GetPairedSequenceStr(get<2>(GetNucleotidesSequence(&Particle::Next, 32, *(NucleotideObjectForReactionPtr2Paired->Next), true, false, [](const Particle* P){ return P->PairedNucleotide == nullptr; })));
+                    auto [ParticlePtr2, NucleotidesCounter2, Sequence2, NucleotidesSequenceVector2] = GetNucleotidesSequence(&Particle::Next, 32, *(NucleotideObjectForReactionPtr2Paired->Next), true, false, [](const Particle* P){ return P->PairedNucleotide == nullptr; });
+                    Sequence2 = GetPairedSequenceStr(Sequence2);
 
-                    LoggersManagerObject.Log(STREAM("CHECKING COMPLEMENTARY Sequence1 = " << Sequence1 << " Sequence2 = " << Sequence2));
+
+                    LoggersManagerObject.Log(STREAM("CHECKING COMPLEMENTARY Sequence1 = [" << Sequence1 << "] Sequence2 = [" << Sequence2 << "]"));
 
                     if (Sequence1 == Sequence2)
                     {
-                        LinkDNA(NucleotideObjectForReactionPtr2, NucleotideObjectForReactionPtr1);
-                        LinkDNA(NucleotideObjectForReactionPtr2Paired, NucleotideObjectForReactionPtr1Paired);
+                        LoggersManagerObject.Log(STREAM("LINKING"));
+
+                        LinkDNA(NucleotideObjectForReactionPtr1, NucleotideObjectForReactionPtr2);
+
+                        //LinkDNA(NucleotideObjectForReactionPtr1Paired, NucleotideObjectForReactionPtr2Paired);
+                        //LinkDNA(ParticlePtr1->PairedNucleotide, ParticlePtr2);
+                        LoggersManagerObject.Log(STREAM("LINKING PAIRED " << ParticlePtr1->GenomeIndex));
+                        LoggersManagerObject.Log(STREAM("LINKING PAIRED " << ParticlePtr1->PairedNucleotide->GenomeIndex));
+                        LoggersManagerObject.Log(STREAM("LINKING PAIRED " << ParticlePtr2->GenomeIndex));
+
+
+                        //LinkDNA(ParticlePtr1->Next->PairedNucleotide, ParticlePtr2);
+
                         //ZSZYJ Paired Nucleotide
                     }
                 }
-
 
                 if (NucleotideObjectForReactionPtr1Paired != nullptr && NucleotideObjectForReactionPtr2Paired == nullptr)
                 {
                     LoggersManagerObject.Log(STREAM("CHECKING COMPLEMENTARY X2"));
 
-                    string Sequence1 = get<2>(GetNucleotidesSequence(&Particle::Prev, 32, *NucleotideObjectForReactionPtr1Paired->Prev, false, false, [](const Particle* P){ return P->PairedNucleotide == nullptr; }));
-                    string Sequence2 = GetPairedSequenceStr(get<2>(GetNucleotidesSequence(&Particle::Prev, 32, *NucleotideObjectForReactionPtr2, false, false, [](const Particle* P){ return P->PairedNucleotide == nullptr; })));
+                    string Sequence1 = get<2>(GetNucleotidesSequence(&Particle::Prev, 32, *NucleotideObjectForReactionPtr1Paired->Prev, true, false, [](const Particle* P){ return P->PairedNucleotide == nullptr; }));
+                    string Sequence2 = GetPairedSequenceStr(get<2>(GetNucleotidesSequence(&Particle::Prev, 32, *NucleotideObjectForReactionPtr2, true, false, [](const Particle* P){ return P->PairedNucleotide == nullptr; })));
 
-                    LoggersManagerObject.Log(STREAM("CHECKING COMPLEMENTARY Sequence1 = " << Sequence1 << " Sequence2 = " << Sequence2));
+                    LoggersManagerObject.Log(STREAM("CHECKING COMPLEMENTARY Sequence1 = [" << Sequence1 << "] Sequence2 = [" << Sequence2 << "]"));
 
                     if (Sequence1 == Sequence2)
                     {
+                        LoggersManagerObject.Log(STREAM("LINKING"));
+
                         LinkDNA(NucleotideObjectForReactionPtr2, NucleotideObjectForReactionPtr1);
                         LinkDNA(NucleotideObjectForReactionPtr2Paired, NucleotideObjectForReactionPtr1Paired);
                         //ZSZYJ Paired Nucleotide
                     }
                 }
-
-
-
-                LinkDNA(NucleotideObjectForReactionPtr1, NucleotideObjectForReactionPtr2);
             }
 
 //            else
