@@ -466,12 +466,13 @@ string GetPairedSequenceStr(string SequenceStr)
     return SequenceStr;
 }
 
-tuple<Particle*, UnsignedInt, string, vector<ChainIdInt>> GetNucleotidesSequence(Particle* Particle::*Direction, const UnsignedInt LengthOfSequence, Particle& ParticleObjectForReaction, const bool ToString, const bool ToVector, bool (*Predicate)(const Particle*))
+tuple<Particle*, Particle*, UnsignedInt, string, vector<ChainIdInt>> GetNucleotidesSequence(Particle* Particle::*Direction, const UnsignedInt LengthOfSequence, Particle& ParticleObjectForReaction, const bool ToString, const bool ToVector, bool (*Predicate)(const Particle*))
 {
     string NucleotidesSequenceToCompareString;
     vector<ChainIdInt> NucleotidesSequenceToCompareVector;
 
     Particle* ParticlePtr = &ParticleObjectForReaction;
+    Particle* ParticlePtrPrev = &ParticleObjectForReaction;
     UnsignedInt NucleotidesCounter = 1;
 
     try
@@ -482,13 +483,14 @@ tuple<Particle*, UnsignedInt, string, vector<ChainIdInt>> GetNucleotidesSequence
                 NucleotidesSequenceToCompareString += CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticlePtr->ChainId);
             if (ToVector == true)
                 NucleotidesSequenceToCompareVector.emplace_back(ParticlePtr->ChainId);
+            ParticlePtrPrev = ParticlePtr;
             ParticlePtr = ParticlePtr->*Direction;
             NucleotidesCounter++;
         }
     }
     CATCH("getting nucleotides sequence forward")
 
-    return { ParticlePtr, NucleotidesCounter, NucleotidesSequenceToCompareString, NucleotidesSequenceToCompareVector };
+    return { ParticlePtr, ParticlePtrPrev, NucleotidesCounter, NucleotidesSequenceToCompareString, NucleotidesSequenceToCompareVector };
 }
 
 void CutDNA(Particle* NucleotideObjectForReactionPtr)
@@ -553,8 +555,8 @@ bool CellEngineVoxelSimulationSpace::CompareFitnessOfDNASequenceByNucleotidesLoo
             {
                 UnsignedInt LengthOfTemplateForRNA =  32;
 
-                auto [ParticlePtrNext, NucleotidesCounterNext, NucleotidesSequenceToCompareStringNext, NucleotidesSequenceToCompareVectorNext] = GetNucleotidesSequence(&Particle::Next, LengthOfTemplateForRNA, GetParticleFromIndex(RNANucleotidesFoundInProximity[0]), true, true, [](const Particle*){ return true; });
-                auto [ParticlePtrBack, NucleotidesCounterBack, NucleotidesSequenceToCompareStringBack, NucleotidesSequenceToCompareVectorBack] = GetNucleotidesSequence(&Particle::Prev, LengthOfTemplateForRNA, GetParticleFromIndex(RNANucleotidesFoundInProximity[0]), true, true, [](const Particle*){ return true; });
+                auto [ParticlePtrNext, ParticlePtrPrevNext, NucleotidesCounterNext, NucleotidesSequenceToCompareStringNext, NucleotidesSequenceToCompareVectorNext] = GetNucleotidesSequence(&Particle::Next, LengthOfTemplateForRNA, GetParticleFromIndex(RNANucleotidesFoundInProximity[0]), true, true, [](const Particle*){ return true; });
+                auto [ParticlePtrBack, ParticlePtrBackNext, NucleotidesCounterBack, NucleotidesSequenceToCompareStringBack, NucleotidesSequenceToCompareVectorBack] = GetNucleotidesSequence(&Particle::Prev, LengthOfTemplateForRNA, GetParticleFromIndex(RNANucleotidesFoundInProximity[0]), true, true, [](const Particle*){ return true; });
 
                 reverse(NucleotidesSequenceToCompareVectorBack.begin(), NucleotidesSequenceToCompareVectorBack.end());
                 TemplateSequence = NucleotidesSequenceToCompareVectorBack;
@@ -569,7 +571,7 @@ bool CellEngineVoxelSimulationSpace::CompareFitnessOfDNASequenceByNucleotidesLoo
                     TemplateSequenceNucleotideChar = CellEngineUseful::GetLetterFromChainIdForDNAorRNA(CellEngineUseful::GetPairedChainIdForDNAorRNA(CellEngineUseful::GetChainIdFromLetterForDNAorRNA(TemplateSequenceNucleotideChar)));
             }
 
-        auto [ParticlePtr, NucleotidesCounter, NucleotidesSequenceToCompareString, NucleotidesSequenceToCompareVector] = GetNucleotidesSequence(&Particle::Next, TemplateSequenceStr.length(), ParticleObjectForReaction, true, true, [](const Particle*){ return true; });
+        auto [ParticlePtr, ParticlePtrPrev, NucleotidesCounter, NucleotidesSequenceToCompareString, NucleotidesSequenceToCompareVector] = GetNucleotidesSequence(&Particle::Next, TemplateSequenceStr.length(), ParticleObjectForReaction, true, true, [](const Particle*){ return true; });
 
         LoggersManagerObject.Log(STREAM("DNA SEQUENCE COMPARE = #" << NucleotidesSequenceToCompareString << "#" << TemplateSequenceStr << "#" << OriginalTemplateRNASequenceStr << "#" << to_string(ParticleKindForReactionObject.EntityId)));
 
@@ -679,8 +681,16 @@ tuple<vector<UniqueIdInt>, bool> CellEngineVoxelSimulationSpace::ChooseParticles
                                     Nucleotide = Nucleotide->Next;
                                 }
                             }
-//                          else
-//                            if (ReactionObject.AdditionalParameter1 > ReactionObject.AdditionalParameter2)
+                            else
+                            if (ReactionObject.AdditionalParameter1 > ReactionObject.AdditionalParameter2)
+                            {
+                                Particle* Nucleotide = NucleotidePtr1;
+                                for (UnsignedInt DiffPos = 0; DiffPos < ReactionObject.AdditionalParameter2 - ReactionObject.AdditionalParameter1; DiffPos++)
+                                {
+                                    SeparateStrand(Nucleotide);
+                                    Nucleotide = Nucleotide->Prev;
+                                }
+                            }
 //                                for (UnsignedInt DiffPos = 0; DiffPos < ReactionObject.AdditionalParameter1 - ReactionObject.AdditionalParameter2 - 1; DiffPos++)
 //                                    SeparateStrand(get<0>(GetNucleotidesSequence(&Particle::Prev, ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[0].second].SequenceStr.length() + ReactionObject.AdditionalParameter2 + DiffPos, *GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first).PairedNucleotide, false, false, [](const Particle*){ return true; })));
                         }
@@ -776,11 +786,12 @@ tuple<vector<UniqueIdInt>, bool> CellEngineVoxelSimulationSpace::ChooseParticles
                     LoggersManagerObject.Log(STREAM("CHECKING COMPLEMENTARY X1"));
 
                     //string Sequence1 = get<2>(GetNucleotidesSequence(&Particle::Next, 32, *NucleotideObjectForReactionPtr1, true, false, [](const Particle* P){ return P->PairedNucleotide == nullptr; }));
-                    auto [ParticlePtr1, NucleotidesCounter1, Sequence1, NucleotidesSequenceVector1] = GetNucleotidesSequence(&Particle::Next, 32, *NucleotideObjectForReactionPtr1, true, false, [](const Particle* P){ return P->PairedNucleotide == nullptr; });
+                    auto [ParticlePtr1, ParticlePtrPrev1, NucleotidesCounter1, Sequence1, NucleotidesSequenceVector1] = GetNucleotidesSequence(&Particle::Next, 32, *NucleotideObjectForReactionPtr1, true, false, [](const Particle* P){ return P->PairedNucleotide == nullptr; });
                     //string Sequence2 = GetPairedSequenceStr(get<2>(GetNucleotidesSequence(&Particle::Next, 32, *(NucleotideObjectForReactionPtr2Paired->Next), true, false, [](const Particle* P){ return P->PairedNucleotide == nullptr; })));
-                    auto [ParticlePtr2, NucleotidesCounter2, Sequence2, NucleotidesSequenceVector2] = GetNucleotidesSequence(&Particle::Next, 32, *(NucleotideObjectForReactionPtr2Paired->Next), true, false, [](const Particle* P){ return P->PairedNucleotide == nullptr; });
+                    auto [ParticlePtr2, ParticlePtrPrev2, NucleotidesCounter2, Sequence2, NucleotidesSequenceVector2] = GetNucleotidesSequence(&Particle::Next, 32, *(NucleotideObjectForReactionPtr2Paired->Next), true, false, [](const Particle* P){ return P->PairedNucleotide == nullptr; });
                     Sequence2 = GetPairedSequenceStr(Sequence2);
 
+                    //LoggersManagerObject.Log(STREAM("LINKING PAIRED " << ParticlePtr2->GenomeIndex));
 
                     LoggersManagerObject.Log(STREAM("CHECKING COMPLEMENTARY Sequence1 = [" << Sequence1 << "] Sequence2 = [" << Sequence2 << "]"));
 
@@ -788,13 +799,16 @@ tuple<vector<UniqueIdInt>, bool> CellEngineVoxelSimulationSpace::ChooseParticles
                     {
                         LoggersManagerObject.Log(STREAM("LINKING"));
 
-                        LinkDNA(NucleotideObjectForReactionPtr1, NucleotideObjectForReactionPtr2);
-
                         //LinkDNA(NucleotideObjectForReactionPtr1Paired, NucleotideObjectForReactionPtr2Paired);
                         //LinkDNA(ParticlePtr1->PairedNucleotide, ParticlePtr2);
                         LoggersManagerObject.Log(STREAM("LINKING PAIRED " << ParticlePtr1->GenomeIndex));
                         LoggersManagerObject.Log(STREAM("LINKING PAIRED " << ParticlePtr1->PairedNucleotide->GenomeIndex));
-                        LoggersManagerObject.Log(STREAM("LINKING PAIRED " << ParticlePtr2->GenomeIndex));
+                        LoggersManagerObject.Log(STREAM("LINKING PAIRED " << ParticlePtrPrev2->GenomeIndex));
+
+                        //LinkDNA(NucleotideObjectForReactionPtr1Paired, NucleotideObjectForReactionPtr2Paired);
+
+                        LinkDNA(NucleotideObjectForReactionPtr1, NucleotideObjectForReactionPtr2);
+                        LinkDNA(ParticlePtr1->PairedNucleotide, ParticlePtrPrev2);
 
 
                         //LinkDNA(ParticlePtr1->Next->PairedNucleotide, ParticlePtr2);
@@ -803,24 +817,24 @@ tuple<vector<UniqueIdInt>, bool> CellEngineVoxelSimulationSpace::ChooseParticles
                     }
                 }
 
-                if (NucleotideObjectForReactionPtr1Paired != nullptr && NucleotideObjectForReactionPtr2Paired == nullptr)
-                {
-                    LoggersManagerObject.Log(STREAM("CHECKING COMPLEMENTARY X2"));
-
-                    string Sequence1 = get<2>(GetNucleotidesSequence(&Particle::Prev, 32, *NucleotideObjectForReactionPtr1Paired->Prev, true, false, [](const Particle* P){ return P->PairedNucleotide == nullptr; }));
-                    string Sequence2 = GetPairedSequenceStr(get<2>(GetNucleotidesSequence(&Particle::Prev, 32, *NucleotideObjectForReactionPtr2, true, false, [](const Particle* P){ return P->PairedNucleotide == nullptr; })));
-
-                    LoggersManagerObject.Log(STREAM("CHECKING COMPLEMENTARY Sequence1 = [" << Sequence1 << "] Sequence2 = [" << Sequence2 << "]"));
-
-                    if (Sequence1 == Sequence2)
-                    {
-                        LoggersManagerObject.Log(STREAM("LINKING"));
-
-                        LinkDNA(NucleotideObjectForReactionPtr2, NucleotideObjectForReactionPtr1);
-                        LinkDNA(NucleotideObjectForReactionPtr2Paired, NucleotideObjectForReactionPtr1Paired);
-                        //ZSZYJ Paired Nucleotide
-                    }
-                }
+//                if (NucleotideObjectForReactionPtr1Paired != nullptr && NucleotideObjectForReactionPtr2Paired == nullptr)
+//                {
+//                    LoggersManagerObject.Log(STREAM("CHECKING COMPLEMENTARY X2"));
+//
+//                    string Sequence1 = get<2>(GetNucleotidesSequence(&Particle::Prev, 32, *NucleotideObjectForReactionPtr1Paired->Prev, true, false, [](const Particle* P){ return P->PairedNucleotide == nullptr; }));
+//                    string Sequence2 = GetPairedSequenceStr(get<2>(GetNucleotidesSequence(&Particle::Prev, 32, *NucleotideObjectForReactionPtr2, true, false, [](const Particle* P){ return P->PairedNucleotide == nullptr; })));
+//
+//                    LoggersManagerObject.Log(STREAM("CHECKING COMPLEMENTARY Sequence1 = [" << Sequence1 << "] Sequence2 = [" << Sequence2 << "]"));
+//
+//                    if (Sequence1 == Sequence2)
+//                    {
+//                        LoggersManagerObject.Log(STREAM("LINKING"));
+//
+//                        LinkDNA(NucleotideObjectForReactionPtr2, NucleotideObjectForReactionPtr1);
+//                        LinkDNA(NucleotideObjectForReactionPtr2Paired, NucleotideObjectForReactionPtr1Paired);
+//                        //ZSZYJ Paired Nucleotide
+//                    }
+//                }
             }
 
 //            else
