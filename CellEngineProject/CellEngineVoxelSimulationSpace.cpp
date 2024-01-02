@@ -510,7 +510,7 @@ void LinkDNA(Particle* NucleotideObjectForReactionPtr1, Particle* NucleotideObje
 {
     try
     {
-        //if (NucleotideObjectForReactionPtr1 != nullptr && NucleotideObjectForReactionPtr2 != nullptr)
+        if (NucleotideObjectForReactionPtr1 != nullptr && NucleotideObjectForReactionPtr2 != nullptr)
         {
             NucleotideObjectForReactionPtr1->Prev = NucleotideObjectForReactionPtr2;
             NucleotideObjectForReactionPtr2->Next = NucleotideObjectForReactionPtr1;
@@ -519,18 +519,45 @@ void LinkDNA(Particle* NucleotideObjectForReactionPtr1, Particle* NucleotideObje
     CATCH("linking DNA")
 }
 
-void SeparateStrand(Particle* ParticleNucleotide)
+void SeparateTwoPairedDNANucleotides(Particle* ParticleNucleotide)
 {
     try
     {
-        LoggersManagerObject.Log(STREAM("SEPARATE PAIRED"));
+        LoggersManagerObject.Log(STREAM("SEPARATE PAIRED NUCLEOTIDE"));
 
         ParticleNucleotide->PairedNucleotide->PairedNucleotide = nullptr;
         ParticleNucleotide->PairedNucleotide = nullptr;
     }
-    CATCH("separating nucleotide")
+    CATCH("separating dna strands")
 }
 
+void SeparateDNAStrands(Particle* Particle::*Direction, Particle* NucleotidePtr, const UnsignedInt LengthOfStrand)
+{
+    try
+    {
+        for (UnsignedInt DiffPos = 0; DiffPos < LengthOfStrand; DiffPos++)
+        {
+            SeparateTwoPairedDNANucleotides(NucleotidePtr);
+            NucleotidePtr = NucleotidePtr->*Direction;
+        }
+    }
+    CATCH("separating dna strands")
+}
+
+void JoinDNAStrands(Particle* Particle::*Direction, Particle* Strand1, Particle* Strand2)
+{
+    try
+    {
+        while (Strand1->PairedNucleotide == nullptr)
+        {
+            Strand1->PairedNucleotide = Strand2;
+            Strand2->PairedNucleotide = Strand1;
+            Strand1 = Strand1->*Direction;
+            Strand2 = Strand2->*Direction;
+        }
+    }
+    CATCH("joining dna strands")
+}
 
 bool CellEngineVoxelSimulationSpace::CompareFitnessOfDNASequenceByNucleotidesLoop(ComparisonType TypeOfComparison, const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction)
 {
@@ -673,26 +700,10 @@ tuple<vector<UniqueIdInt>, bool> CellEngineVoxelSimulationSpace::ChooseParticles
                             CutDNA(NucleotidePtr2->Prev);
 
                             if (ReactionObject.AdditionalParameter1 < ReactionObject.AdditionalParameter2)
-                            {
-                                Particle* Nucleotide = NucleotidePtr1;
-                                for (UnsignedInt DiffPos = 0; DiffPos < ReactionObject.AdditionalParameter2 - ReactionObject.AdditionalParameter1; DiffPos++)
-                                {
-                                    SeparateStrand(Nucleotide);
-                                    Nucleotide = Nucleotide->Next;
-                                }
-                            }
+                                SeparateDNAStrands(&Particle::Next, NucleotidePtr1, ReactionObject.AdditionalParameter2 - ReactionObject.AdditionalParameter1);
                             else
                             if (ReactionObject.AdditionalParameter1 > ReactionObject.AdditionalParameter2)
-                            {
-                                Particle* Nucleotide = NucleotidePtr1;
-                                for (UnsignedInt DiffPos = 0; DiffPos < ReactionObject.AdditionalParameter2 - ReactionObject.AdditionalParameter1; DiffPos++)
-                                {
-                                    SeparateStrand(Nucleotide);
-                                    Nucleotide = Nucleotide->Prev;
-                                }
-                            }
-//                                for (UnsignedInt DiffPos = 0; DiffPos < ReactionObject.AdditionalParameter1 - ReactionObject.AdditionalParameter2 - 1; DiffPos++)
-//                                    SeparateStrand(get<0>(GetNucleotidesSequence(&Particle::Prev, ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[0].second].SequenceStr.length() + ReactionObject.AdditionalParameter2 + DiffPos, *GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first).PairedNucleotide, false, false, [](const Particle*){ return true; })));
+                                SeparateDNAStrands(&Particle::Prev, NucleotidePtr1, ReactionObject.AdditionalParameter1 - ReactionObject.AdditionalParameter2);
                         }
                     }
                 }
@@ -768,8 +779,8 @@ tuple<vector<UniqueIdInt>, bool> CellEngineVoxelSimulationSpace::ChooseParticles
             Particle* NucleotideObjectForReactionPtr2 = get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[1].second].SequenceStr.length() - 1, GetParticleFromIndex(NucleotidesIndexesChosenForReaction[1].first), false, false, [](const Particle*){ return true; }));
             Particle* NucleotideObjectForReactionPtr2Paired = get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[1].second].SequenceStr.length() - 1, *GetParticleFromIndex(NucleotidesIndexesChosenForReaction[1].first).PairedNucleotide, false, false, [](const Particle*){ return true; }));
 
-//            Particle* NucleotideObjectForReactionPtr1Inv = &GetParticleFromIndex(NucleotidesIndexesChosenForReaction[1].first);
-//            Particle* NucleotideObjectForReactionPtr1InvPaired = GetParticleFromIndex(NucleotidesIndexesChosenForReaction[1].first).PairedNucleotide;
+            Particle* NucleotideObjectForReactionPtr1Inv = &GetParticleFromIndex(NucleotidesIndexesChosenForReaction[1].first);
+            Particle* NucleotideObjectForReactionPtr1InvPaired = GetParticleFromIndex(NucleotidesIndexesChosenForReaction[1].first).PairedNucleotide;
 //            Particle* NucleotideObjectForReactionPtr2Inv = get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[0].second].SequenceStr.length() - 1, GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first), false, false, [](const Particle*){ return true; }));
 //            Particle* NucleotideObjectForReactionPtr2InvPaired = get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[0].second].SequenceStr.length() - 1, *GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first).PairedNucleotide, false, false, [](const Particle*){ return true; }));
 
@@ -795,16 +806,7 @@ tuple<vector<UniqueIdInt>, bool> CellEngineVoxelSimulationSpace::ChooseParticles
 
                         LinkDNA(NucleotideObjectForReactionPtr1, NucleotideObjectForReactionPtr2);
                         LinkDNA(ParticlePtr1->PairedNucleotide, ParticlePtrPrev2);
-
-                        auto Strand1 = NucleotideObjectForReactionPtr1;
-                        auto Strand2 = NucleotideObjectForReactionPtr2Paired->Next;
-                        while (Strand1->PairedNucleotide == nullptr)
-                        {
-                            Strand1->PairedNucleotide = Strand2;
-                            Strand2->PairedNucleotide = Strand1;
-                            Strand1 = Strand1->Next;
-                            Strand2 = Strand2->Next;
-                        }
+                        JoinDNAStrands(&Particle::Next, NucleotideObjectForReactionPtr1, NucleotideObjectForReactionPtr2Paired->Next);
                     }
                 }
 
@@ -823,11 +825,9 @@ tuple<vector<UniqueIdInt>, bool> CellEngineVoxelSimulationSpace::ChooseParticles
 //
 //                        LinkDNA(NucleotideObjectForReactionPtr2, NucleotideObjectForReactionPtr1);
 //                        LinkDNA(NucleotideObjectForReactionPtr2Paired, NucleotideObjectForReactionPtr1Paired);
-//                        //ZSZYJ Paired Nucleotide
 //                    }
 //                }
             }
-
 //            else
 //            if (NucleotideObjectForReactionPtr2Inv->Prev == nullptr && NucleotideObjectForReactionPtr1Inv->Next == nullptr)
 //            {
@@ -835,7 +835,6 @@ tuple<vector<UniqueIdInt>, bool> CellEngineVoxelSimulationSpace::ChooseParticles
 //                    ;
 //                if (NucleotideObjectForReactionPtr1InvPaired != nullptr && NucleotideObjectForReactionPtr2InvPaired == nullptr)
 //                    ;
-//                LinkDNA(NucleotideObjectForReactionPtr2, NucleotideObjectForReactionPtr1);
 //            }
         }
     }
