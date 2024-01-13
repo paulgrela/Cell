@@ -797,8 +797,6 @@ tuple<vector<UniqueIdInt>, bool> CellEngineVoxelSimulationSpace::ChooseParticles
             LoggersManagerObject.Log(STREAM("NUCLEOTIDE 1 GENOME INDEX = " << NucleotideObjectForReactionPtr1->GenomeIndex));
             LoggersManagerObject.Log(STREAM("NUCLEOTIDE 2 GENOME INDEX = " << NucleotideObjectForReactionPtr2->GenomeIndex));
 
-            LoggersManagerObject.Log(STREAM("CHECKING COMPLEMENTARY C2"));
-
             if (NucleotideObjectForReactionPtr1Paired == nullptr && NucleotideObjectForReactionPtr2Paired != nullptr)
             {
                 LoggersManagerObject.Log(STREAM("CHECKING COMPLEMENTARY C2X1"));
@@ -836,6 +834,26 @@ tuple<vector<UniqueIdInt>, bool> CellEngineVoxelSimulationSpace::ChooseParticles
                     JoinDNAStrands(&Particle::Prev, NucleotideObjectForReactionPtr1Paired->Prev, NucleotideObjectForReactionPtr2);
                 }
             }
+        }
+        else
+        if (ReactionObject.Id == 70)
+        {
+            if (NucleotidesWithFreePrevEndingsFoundInProximity.empty() == false && NucleotidesWithFreeNextEndingsFoundInProximity.empty() == false)
+            {
+                LoggersManagerObject.Log(STREAM("LINK 2 ANY COMPATIBLE inside 1"));
+
+                if (DistanceOfParticles(GetParticleFromIndex(DNANucleotidesWithFreePrevEndingsFoundInProximity[0]), GetParticleFromIndex(DNANucleotidesWithFreeNextEndingsFoundInProximity[0])) <= 2.0 && (DistanceOfParticles(GetParticleFromIndex(DNANucleotidesWithFreePrevEndingsFoundInProximity[1]), GetParticleFromIndex(DNANucleotidesWithFreeNextEndingsFoundInProximity[1])) <= 2.0))
+                {
+                    LoggersManagerObject.Log(STREAM("LINK 2 ANY COMPATIBLE CLOSE ENOUGH - " << to_string(GetParticleFromIndex(DNANucleotidesWithFreePrevEndingsFoundInProximity[0]).GenomeIndex) << " " << to_string(GetParticleFromIndex(DNANucleotidesWithFreeNextEndingsFoundInProximity[0]).GenomeIndex) << " " << to_string(GetParticleFromIndex(DNANucleotidesWithFreePrevEndingsFoundInProximity[1]).GenomeIndex) << " " << to_string(GetParticleFromIndex(DNANucleotidesWithFreeNextEndingsFoundInProximity[1]).GenomeIndex) << " "));
+
+                    LinkDNA(&GetParticleFromIndex(DNANucleotidesWithFreePrevEndingsFoundInProximity[0]), &GetParticleFromIndex(DNANucleotidesWithFreeNextEndingsFoundInProximity[0]));
+                    LinkDNA(&GetParticleFromIndex(DNANucleotidesWithFreePrevEndingsFoundInProximity[1]), &GetParticleFromIndex(DNANucleotidesWithFreeNextEndingsFoundInProximity[1]));
+
+                    JoinDNAStrands(&Particle::Prev, GetParticleFromIndex(DNANucleotidesWithFreePrevEndingsFoundInProximity[1]).Prev, GetParticleFromIndex(DNANucleotidesWithFreePrevEndingsFoundInProximity[1]).PairedNucleotide->Prev);
+                }
+            }
+            else
+                return {};
         }
     }
     CATCH("choosing particles for reaction from all particles in proximity")
@@ -1013,6 +1031,10 @@ bool CellEngineVoxelSimulationSpace::FindParticlesInProximityOfVoxelSimulationSp
         ParticlesSortedByCapacityFoundInProximity.clear();
         NucleotidesWithFreeNextEndingsFoundInProximity.clear();
         NucleotidesWithFreePrevEndingsFoundInProximity.clear();
+        DNANucleotidesWithFreeNextEndingsFoundInProximity.clear();
+        DNANucleotidesWithFreePrevEndingsFoundInProximity.clear();
+        RNANucleotidesWithFreeNextEndingsFoundInProximity.clear();
+        RNANucleotidesWithFreePrevEndingsFoundInProximity.clear();
         NucleotidesFreeFoundInProximity.clear();
         RNANucleotidesFoundInProximity.clear();
 
@@ -1027,14 +1049,27 @@ bool CellEngineVoxelSimulationSpace::FindParticlesInProximityOfVoxelSimulationSp
                             {
                                 ParticlesSortedByCapacityFoundInProximity.emplace_back(ParticleIndex);
                                 Particle& ParticleFromIndex = GetParticleFromIndex(ParticleIndex);
+
                                 if (CellEngineUseful::IsDNAorRNA(ParticleFromIndex.EntityId) && ParticleFromIndex.Next == nullptr && ParticleFromIndex.Prev != nullptr)
                                     NucleotidesWithFreeNextEndingsFoundInProximity.emplace_back(ParticleIndex);
                                 if (CellEngineUseful::IsDNAorRNA(ParticleFromIndex.EntityId) && ParticleFromIndex.Prev == nullptr && ParticleFromIndex.Next != nullptr)
                                     NucleotidesWithFreePrevEndingsFoundInProximity.emplace_back(ParticleIndex);
+
+                                if (CellEngineUseful::IsDNA(ParticleFromIndex.EntityId) && ParticleFromIndex.Next == nullptr && ParticleFromIndex.Prev != nullptr)
+                                    DNANucleotidesWithFreeNextEndingsFoundInProximity.emplace_back(ParticleIndex);
+                                if (CellEngineUseful::IsDNA(ParticleFromIndex.EntityId) && ParticleFromIndex.Prev == nullptr && ParticleFromIndex.Next != nullptr)
+                                    DNANucleotidesWithFreePrevEndingsFoundInProximity.emplace_back(ParticleIndex);
+
+                                if (CellEngineUseful::IsRNA(ParticleFromIndex.EntityId) && ParticleFromIndex.Next == nullptr && ParticleFromIndex.Prev != nullptr)
+                                    RNANucleotidesWithFreeNextEndingsFoundInProximity.emplace_back(ParticleIndex);
+                                if (CellEngineUseful::IsRNA(ParticleFromIndex.EntityId) && ParticleFromIndex.Prev == nullptr && ParticleFromIndex.Next != nullptr)
+                                    RNANucleotidesWithFreePrevEndingsFoundInProximity.emplace_back(ParticleIndex);
+
                                 if (CellEngineUseful::IsDNAorRNA(ParticleFromIndex.EntityId) && ParticleFromIndex.Next == nullptr && ParticleFromIndex.Prev == nullptr)
                                     NucleotidesFreeFoundInProximity.emplace_back(ParticleIndex);
                                 if (CellEngineUseful::IsRNA(ParticleFromIndex.EntityId))
                                     RNANucleotidesFoundInProximity.emplace_back(ParticleIndex);
+
                                 ParticlesKindsFoundInProximity[ParticleFromIndex.EntityId]++;
                                 FoundParticleIndexes.insert(ParticleIndex);
                             }

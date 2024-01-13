@@ -39,6 +39,10 @@ private:
     std::vector<UniqueIdInt> ParticlesSortedByCapacityFoundInProximity;
     std::vector<UniqueIdInt> NucleotidesWithFreeNextEndingsFoundInProximity;
     std::vector<UniqueIdInt> NucleotidesWithFreePrevEndingsFoundInProximity;
+    std::vector<UniqueIdInt> DNANucleotidesWithFreeNextEndingsFoundInProximity;
+    std::vector<UniqueIdInt> DNANucleotidesWithFreePrevEndingsFoundInProximity;
+    std::vector<UniqueIdInt> RNANucleotidesWithFreeNextEndingsFoundInProximity;
+    std::vector<UniqueIdInt> RNANucleotidesWithFreePrevEndingsFoundInProximity;
     std::vector<UniqueIdInt> NucleotidesFreeFoundInProximity;
     std::vector<UniqueIdInt> RNANucleotidesFoundInProximity;
 private:
