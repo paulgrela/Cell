@@ -275,32 +275,32 @@ void CellEngineVoxelSimulationSpace::AddBasicParticlesKindsAndReactions()
         const string DNASequenceForTestCutCrisper = "RNA";
         const string RNASequenceForTestCutCrisper = "ANY";
 
-        AddChemicalReaction(Reaction(1101, "", "CH3CH2(OH) + DNA + ", { { 5, 1, "", true }, { 10001, 1, DNASequenceForTestFindingDNA, false } }, { { 10, 1, "", true } }));
+        AddChemicalReaction(Reaction(1101, "", "CH3CH2(OH) + DNA + ", { { 5, 1, "", true }, { 10001, 1, DNASequenceForTestFindingDNA, false } }, { { 10, 1, "", true } }, nullptr));
 
-        AddChemicalReaction(Reaction(10, "CUT 1", "CH3CH2(OH) + DNA + ", { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink1, false } }, {}));
+        AddChemicalReaction(Reaction(10, "CUT 1", "CH3CH2(OH) + DNA + ", { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink1, false } }, {}, &CellEngineVoxelSimulationSpace::CutDNAInChosenPlaceSpecialReactionFunction));
 
-        AddChemicalReaction(Reaction(20, "LINK 1", "CH3CH2(OH) + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink1, false }, { 10001, 1, DNASequence2ForTestCutLink1, false } }, {}));
-        AddChemicalReaction(Reaction(30, "LINK 1 ANY", "CH3CH2(OH) + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 2, DNASequence1ForTestCutLink1Any, false } }, {}));
-
-
-        AddChemicalReaction(Reaction(40, "CUT 2", "CH3CHCH2 + DNA + ", 3, 10, { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink2, false } }, { { 86, 1, "", true } })); //rozcina obie nici po sekwencji w jednym miejscu sekwencji plus dddatkowe przesuniecie obu nici - osobne parametry
-        AddChemicalReaction(Reaction(41, "CUT 2", "CH3CHCH2 + DNA + ", 7, 3, { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink2, false } }, { { 86, 1, "", true } })); //rozcina obie nici po sekwencji w jednym miejscu sekwencji plus dddatkowe przesuniecie obu nici - osobne parametry
-        AddChemicalReaction(Reaction(42, "CUT 2", "CH3CHCH2 + DNA + ", 10, 3, { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink2, false } }, { { 86, 1, "", true } })); //rozcina obie nici po sekwencji w jednym miejscu sekwencji plus dddatkowe przesuniecie obu nici - osobne parametry
+        AddChemicalReaction(Reaction(20, "LINK 1", "CH3CH2(OH) + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink1, false }, { 10001, 1, DNASequence2ForTestCutLink1, false } }, {}, &CellEngineVoxelSimulationSpace::LinkDNAInChosenPlaceSpecialReactionFunction));
+        AddChemicalReaction(Reaction(30, "LINK 1 ANY", "CH3CH2(OH) + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 2, DNASequence1ForTestCutLink1Any, false } }, {}, &CellEngineVoxelSimulationSpace::LinkDNAInAnyPlaceSpecialReactionFunction));
 
 
-        AddChemicalReaction(Reaction(60, "LINK 2", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, "TACAAAAAAAGAGGTGTTAGC", false }, { 10001, 1, "TCTTATT", false } }, {}));
-        AddChemicalReaction(Reaction(61, "LINK 2", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, "TACAAAAAAAGAGGTGTTAGCTCTT", false }, { 10001, 1, "ATTATGA", false } }, {}));
+        AddChemicalReaction(Reaction(40, "CUT 2", "CH3CHCH2 + DNA + ", 3, 10, { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink2, false } }, { { 86, 1, "", true } }, &CellEngineVoxelSimulationSpace::CutDNAInChosenPlaceSpecialReactionFunction)); //rozcina obie nici po sekwencji w jednym miejscu sekwencji plus dddatkowe przesuniecie obu nici - osobne parametry
+        AddChemicalReaction(Reaction(41, "CUT 2", "CH3CHCH2 + DNA + ", 7, 3, { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink2, false } }, { { 86, 1, "", true } }, &CellEngineVoxelSimulationSpace::CutDNAInChosenPlaceSpecialReactionFunction)); //rozcina obie nici po sekwencji w jednym miejscu sekwencji plus dddatkowe przesuniecie obu nici - osobne parametry
+        AddChemicalReaction(Reaction(42, "CUT 2", "CH3CHCH2 + DNA + ", 10, 3, { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink2, false } }, { { 86, 1, "", true } }, &CellEngineVoxelSimulationSpace::CutDNAInChosenPlaceSpecialReactionFunction)); //rozcina obie nici po sekwencji w jednym miejscu sekwencji plus dddatkowe przesuniecie obu nici - osobne parametry
+
+
+        AddChemicalReaction(Reaction(60, "LINK 2", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, "TACAAAAAAAGAGGTGTTAGC", false }, { 10001, 1, "TCTTATT", false } }, {}, &CellEngineVoxelSimulationSpace::LinkDNALigaseInChosenPlaceSpecialReactionFunction));
+        AddChemicalReaction(Reaction(61, "LINK 2", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, "TACAAAAAAAGAGGTGTTAGCTCTT", false }, { 10001, 1, "ATTATGA", false } }, {}, &CellEngineVoxelSimulationSpace::LinkDNALigaseInChosenPlaceSpecialReactionFunction));
         //laczy obie nici w pierwszej sekwencji jesli pierwsza nic ma pierwsza sekwencje a druga druga  a przeciwna podwojna nic jest komplementarna
 
-        AddChemicalReaction(Reaction(70, "LINK 2", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, "ANY", false }, { 10001, 1, "ANY", false } }, {}));
+        AddChemicalReaction(Reaction(70, "LINK 2", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, "ANY", false }, { 10001, 1, "ANY", false } }, {}, &CellEngineVoxelSimulationSpace::LinkDNALigaseInAnyPlaceSpecialReactionFunction));
         //laczy obie nici jesli druga czyli przeciwna podwojna nic jest komplementarna
 
 
-        AddChemicalReaction(Reaction(80, "LINK 2", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, "ANY", false }, { 10001, 1, "ANY", false } }, {})); //laczy obie nici jesli rowno obciete
+        AddChemicalReaction(Reaction(80, "LINK 2", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, "ANY", false }, { 10001, 1, "ANY", false } }, {}, &CellEngineVoxelSimulationSpace::LinkDNAInAnyPlaceSpecialReactionFunction)); //laczy obie nici jesli rowno obciete
 
-        AddChemicalReaction(Reaction(100, "CUT CRISPER 1", "CH3CHCH2 + RNA + DNA + ", 3, 7, { { 5, 1, "", false }, { 10001, 1, DNASequenceForTestCutCrisper, false }, { 10001, 0, RNASequenceForTestCutCrisper, false } }, {}));
+        AddChemicalReaction(Reaction(100, "CUT CRISPER 1", "CH3CHCH2 + RNA + DNA + ", 3, 7, { { 5, 1, "", false }, { 10001, 1, DNASequenceForTestCutCrisper, false }, { 10001, 0, RNASequenceForTestCutCrisper, false } }, {}, &CellEngineVoxelSimulationSpace::CutDNACrisperInChosenPlaceSpecialReactionFunction));
 
-        AddChemicalReaction(Reaction(110, "CUT CRISPER 2", "CH3CHCH2 + RNA + DNA + ", 3, 7, { { 5, 1, "", false }, { 10001, 1, DNASequenceForTestCutCrisper, false }, { 10001, 0, RNASequenceForTestCutCrisper, false } }, {}));
+        AddChemicalReaction(Reaction(110, "CUT CRISPER 2", "CH3CHCH2 + RNA + DNA + ", 3, 7, { { 5, 1, "", false }, { 10001, 1, DNASequenceForTestCutCrisper, false }, { 10001, 0, RNASequenceForTestCutCrisper, false } }, {}, &CellEngineVoxelSimulationSpace::CutDNACrisperInChosenPlaceSpecialReactionFunction));
 
 
 
@@ -694,23 +694,25 @@ bool CellEngineVoxelSimulationSpace::LinkDNALigaseInAnyPlaceSpecialReactionFunct
     return false;
 }
 
-bool CellEngineVoxelSimulationSpace::LinkDNALigaseInChosenPlaceSpecialReactionFunction(vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject)
+bool CellEngineVoxelSimulationSpace::LinkDNALigaseInChosenPlaceSpecialReactionFunction(const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject)
 {
     try
     {
         LoggersManagerObject.Log(STREAM("LINK 2 REACTION 60"));
 
-        Particle* NucleotideObjectForReactionPtr1 = &GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first);
-        Particle* NucleotideObjectForReactionPtr1Paired = GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first).PairedNucleotide;
-        Particle* NucleotideObjectForReactionPtr1Inv = &GetParticleFromIndex(NucleotidesIndexesChosenForReaction[1].first);
-        Particle* NucleotideObjectForReactionPtr1InvPaired = GetParticleFromIndex(NucleotidesIndexesChosenForReaction[1].first).PairedNucleotide;
+        auto NucleotidesIndexesChosenForReactionCopy(NucleotidesIndexesChosenForReaction);
+
+        Particle* NucleotideObjectForReactionPtr1 = &GetParticleFromIndex(NucleotidesIndexesChosenForReactionCopy[0].first);
+        Particle* NucleotideObjectForReactionPtr1Paired = GetParticleFromIndex(NucleotidesIndexesChosenForReactionCopy[0].first).PairedNucleotide;
+        Particle* NucleotideObjectForReactionPtr1Inv = &GetParticleFromIndex(NucleotidesIndexesChosenForReactionCopy[1].first);
+        Particle* NucleotideObjectForReactionPtr1InvPaired = GetParticleFromIndex(NucleotidesIndexesChosenForReactionCopy[1].first).PairedNucleotide;
 
         LoggersManagerObject.Log(STREAM("NUCLEOTIDE 1 GENOME INDEX = " << NucleotideObjectForReactionPtr1->GenomeIndex));
         LoggersManagerObject.Log(STREAM("NUCLEOTIDE 1INV GENOME INDEX = " << NucleotideObjectForReactionPtr1Inv->GenomeIndex));
 
         if ((NucleotideObjectForReactionPtr1 != nullptr && NucleotideObjectForReactionPtr1Inv != nullptr && (NucleotideObjectForReactionPtr1Inv->Next == nullptr || NucleotideObjectForReactionPtr1Inv->Prev == nullptr) && (NucleotideObjectForReactionPtr1->Next != nullptr && NucleotideObjectForReactionPtr1->Prev != nullptr)))
         {
-            swap(NucleotidesIndexesChosenForReaction[0], NucleotidesIndexesChosenForReaction[1]);
+            swap(NucleotidesIndexesChosenForReactionCopy[0], NucleotidesIndexesChosenForReactionCopy[1]);
 
             swap(NucleotideObjectForReactionPtr1, NucleotideObjectForReactionPtr1Inv);
             swap(NucleotideObjectForReactionPtr1Paired, NucleotideObjectForReactionPtr1InvPaired);
@@ -719,8 +721,8 @@ bool CellEngineVoxelSimulationSpace::LinkDNALigaseInChosenPlaceSpecialReactionFu
             LoggersManagerObject.Log(STREAM("NUCLEOTIDE 1INV AFTER SWAP GENOME INDEX = " << NucleotideObjectForReactionPtr1Inv->GenomeIndex));
         }
 
-        Particle* NucleotideObjectForReactionPtr2 = get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[1].second].SequenceStr.length() - 1, GetParticleFromIndex(NucleotidesIndexesChosenForReaction[1].first), false, false, [](const Particle*){ return true; }));
-        Particle* NucleotideObjectForReactionPtr2Paired = get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[1].second].SequenceStr.length() - 1, *GetParticleFromIndex(NucleotidesIndexesChosenForReaction[1].first).PairedNucleotide, false, false, [](const Particle*){ return true; }));
+        Particle* NucleotideObjectForReactionPtr2 = get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.Reactants[NucleotidesIndexesChosenForReactionCopy[1].second].SequenceStr.length() - 1, GetParticleFromIndex(NucleotidesIndexesChosenForReactionCopy[1].first), false, false, [](const Particle*){ return true; }));
+        Particle* NucleotideObjectForReactionPtr2Paired = get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.Reactants[NucleotidesIndexesChosenForReactionCopy[1].second].SequenceStr.length() - 1, *GetParticleFromIndex(NucleotidesIndexesChosenForReactionCopy[1].first).PairedNucleotide, false, false, [](const Particle*){ return true; }));
 
         LoggersManagerObject.Log(STREAM("NUCLEOTIDE 1 GENOME INDEX = " << NucleotideObjectForReactionPtr1->GenomeIndex));
         LoggersManagerObject.Log(STREAM("NUCLEOTIDE 2 GENOME INDEX = " << NucleotideObjectForReactionPtr2->GenomeIndex));
@@ -769,7 +771,6 @@ bool CellEngineVoxelSimulationSpace::LinkDNALigaseInChosenPlaceSpecialReactionFu
 
     return false;
 }
-
 
 bool CellEngineVoxelSimulationSpace::CompareFitnessOfDNASequenceByNucleotidesLoop(ComparisonType TypeOfComparison, const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction)
 {
@@ -895,42 +896,8 @@ tuple<vector<UniqueIdInt>, bool> CellEngineVoxelSimulationSpace::ChooseParticles
             LoggersManagerObject.Log(STREAM(""));
         }
 
-        if (AllAreZero == true && (ReactionObject.Id == 10 || ReactionObject.Id == 40 || ReactionObject.Id == 41 || ReactionObject.Id == 42))
-        {
-            if (CutDNAInChosenPlaceSpecialReactionFunction(NucleotidesIndexesChosenForReaction, ReactionObject) == false)
-                return {};
-        }
-        else
-        if (AllAreZero == true && ReactionObject.Id == 20)
-        {
-            if (LinkDNAInChosenPlaceSpecialReactionFunction(NucleotidesIndexesChosenForReaction, ReactionObject) == false)
-                return {};
-        }
-        else
-        if (ReactionObject.Id == 30 || ReactionObject.Id == 80)
-        {
-            if (LinkDNAInAnyPlaceSpecialReactionFunction(NucleotidesIndexesChosenForReaction, ReactionObject) == false)
-                return {};
-        }
-        else
-        if (AllAreZero == true && (ReactionObject.Id == 100 || ReactionObject.Id == 110))
-        {
-            if (CutDNACrisperInChosenPlaceSpecialReactionFunction(NucleotidesIndexesChosenForReaction, ReactionObject) == false)
-                return {};
-        }
-        else
-        if (AllAreZero == true && (ReactionObject.Id == 60 || ReactionObject.Id == 61))
-        {
-            if (LinkDNALigaseInChosenPlaceSpecialReactionFunction(NucleotidesIndexesChosenForReaction, ReactionObject) == false)
-                return {};
-
-        }
-        else
-        if (ReactionObject.Id == 70)
-        {
-            if (LinkDNALigaseInAnyPlaceSpecialReactionFunction(NucleotidesIndexesChosenForReaction, ReactionObject) == false)
-                return {};
-        }
+        if (AllAreZero == true || (AllAreZero == false && (ReactionObject.Id == 30 || ReactionObject.Id == 80 || ReactionObject.Id == 70)))
+            ReactionObject.SpecialReactionFunction(this, NucleotidesIndexesChosenForReaction, ReactionObject);
     }
     CATCH("choosing particles for reaction from all particles in proximity")
 
