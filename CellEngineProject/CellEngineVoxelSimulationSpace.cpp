@@ -710,7 +710,7 @@ bool CellEngineVoxelSimulationSpace::LinkDNALigaseInChosenPlaceSpecialReactionFu
         LoggersManagerObject.Log(STREAM("NUCLEOTIDE 1 GENOME INDEX = " << NucleotideObjectForReactionPtr1->GenomeIndex));
         LoggersManagerObject.Log(STREAM("NUCLEOTIDE 1INV GENOME INDEX = " << NucleotideObjectForReactionPtr1Inv->GenomeIndex));
 
-        if ((NucleotideObjectForReactionPtr1 != nullptr && NucleotideObjectForReactionPtr1Inv != nullptr && (NucleotideObjectForReactionPtr1Inv->Next == nullptr || NucleotideObjectForReactionPtr1Inv->Prev == nullptr) && (NucleotideObjectForReactionPtr1->Next != nullptr && NucleotideObjectForReactionPtr1->Prev != nullptr)))
+        if ((NucleotideObjectForReactionPtr1Inv->Next == nullptr || NucleotideObjectForReactionPtr1Inv->Prev == nullptr) && (NucleotideObjectForReactionPtr1->Next != nullptr && NucleotideObjectForReactionPtr1->Prev != nullptr))
         {
             swap(NucleotidesIndexesChosenForReactionCopy[0], NucleotidesIndexesChosenForReactionCopy[1]);
 
@@ -771,6 +771,35 @@ bool CellEngineVoxelSimulationSpace::LinkDNALigaseInChosenPlaceSpecialReactionFu
 
     return false;
 }
+
+bool CellEngineVoxelSimulationSpace::ElongationSpecialReactionFunction(const vector<pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const Reaction& ReactionObject)
+{
+    try
+    {
+        LoggersManagerObject.Log(STREAM("ELONGATION REACTION"));
+
+        //ANY DNA - istniejace,
+        //musze sprawdzac czy CZASTKA MA OKRESOLNY
+
+        //POBIERZ ODPOWIEDNI NUKLEOTYD "co pasuje" do nici i przesun go do pozycji next do konca ANY DNA
+        //"co pasuje" oznacza ze musi byc to nukleotyd oczytany przez bialko polimeraz czyli musi byc bialko polimeraz co przyklejone do DNA lub RNA tzn ona wykrywa DNA i sie przykleja do DNA, a reakcja Elongation przesuwa to bialko
+
+        //przelec pobliskie nukleotydy NucleotidesFreeFoundInProximity[0] w petli
+
+        if (GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]).ChainId == CellEngineUseful::GetPairedChainIdForDNAorRNA(GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).PairedNucleotide->ChainId))
+        {
+
+        }
+
+        //CZYLI mam w reakcji elongation bialko co odczytuje konkretny nukleotyd CZYLI czastka Paritcle musi posiadac parametr DODATKOWY oznaczajacy stan - niech to bedzie na razie char lub truojka przy translacji czyli String
+        //Niech czastka wskazuje na konkretny nukleotyd i idz w kierunku przodu trzy przy translacj
+
+    }
+    CATCH("linking dna in chosen place in special reaction function")
+
+    return false;
+}
+
 
 bool CellEngineVoxelSimulationSpace::CompareFitnessOfDNASequenceByNucleotidesLoop(ComparisonType TypeOfComparison, const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction)
 {
@@ -845,13 +874,21 @@ bool CellEngineVoxelSimulationSpace::CompareFitnessOfDNASequenceByNucleotidesLoo
     return !FoundSequenceNotFit;
 }
 
-tuple<vector<UniqueIdInt>, bool> CellEngineVoxelSimulationSpace::ChooseParticlesForReactionFromAllParticlesInProximity(const Reaction& ReactionObject)
+bool CellEngineVoxelSimulationSpace::CompareFitnessOfParticle(const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction)
+{
+    return (ParticleKindForReactionObject.LinkedToDNA == false || (ParticleKindForReactionObject.LinkedToDNA == true && ParticleObjectForReaction.PairedNucleotide != nullptr && CellEngineUseful::IsDNAorRNA(ParticleObjectForReaction.PairedNucleotide->EntityId)));
+}
+
+//tuple<vector<UniqueIdInt>, bool> CellEngineVoxelSimulationSpace::ChooseParticlesForReactionFromAllParticlesInProximity(const Reaction& ReactionObject)
+tuple<vector<pair<UniqueIdInt, UnsignedInt>>, bool> CellEngineVoxelSimulationSpace::ChooseParticlesForReactionFromAllParticlesInProximity(const Reaction& ReactionObject)
 {
     bool AllAreZero = false;
 
-    vector<pair<UniqueIdInt, UnsignedInt>> NucleotidesIndexesChosenForReaction;
+    //vector<pair<UniqueIdInt, UnsignedInt>> NucleotidesIndexesChosenForReaction;
 
-    vector<UniqueIdInt> ParticlesIndexesChosenForReaction;
+    vector<pair<UniqueIdInt, UnsignedInt>> NucleotidesIndexesChosenForReaction, ParticlesIndexesChosenForReaction;
+
+    //vector<UniqueIdInt> ParticlesIndexesChosenForReaction;
 
     vector<UnsignedInt> ReactantsCounters(ReactionObject.Reactants.size());
 
@@ -868,7 +905,7 @@ tuple<vector<UniqueIdInt>, bool> CellEngineVoxelSimulationSpace::ChooseParticles
 
             vector<ParticleKindForReaction>::const_iterator ReactantIterator;
             if (CellEngineUseful::IsDNAorRNA(ParticleObjectTestedForReaction.EntityId) == false)
-                ReactantIterator = find_if(ReactionObject.Reactants.cbegin(), ReactionObject.Reactants.cend(), [&ParticleObjectTestedForReaction](const ParticleKindForReaction& ParticleKindObject){ return ParticleKindObject.EntityId == ParticleObjectTestedForReaction.EntityId; });
+                ReactantIterator = find_if(ReactionObject.Reactants.cbegin(), ReactionObject.Reactants.cend(), [&ParticleObjectTestedForReaction](const ParticleKindForReaction& ParticleKindForReactionObjectParam){ return ParticleKindForReactionObjectParam.EntityId == ParticleObjectTestedForReaction.EntityId && CompareFitnessOfParticle(ParticleKindForReactionObjectParam, ParticleObjectTestedForReaction) == true; });
             else
                 ReactantIterator = find_if(ReactionObject.Reactants.cbegin(), ReactionObject.Reactants.cend(), [&ParticleObjectTestedForReaction, this](const ParticleKindForReaction& ParticleKindForReactionObjectParam){ return CellEngineUseful::IsSpecialDNA(ParticleKindForReactionObjectParam.EntityId) && CompareFitnessOfDNASequenceByNucleotidesLoop(ComparisonType::ByVectorLoop, ParticleKindForReactionObjectParam, ParticleObjectTestedForReaction) == true; });
 
@@ -879,7 +916,7 @@ tuple<vector<UniqueIdInt>, bool> CellEngineVoxelSimulationSpace::ChooseParticles
                     NucleotidesIndexesChosenForReaction.emplace_back(ParticleObjectIndex, PositionInReactants);
 
             if (ReactantIterator != ReactionObject.Reactants.end() && ReactantsCounters[PositionInReactants] > 0 && ReactantIterator->ToRemoveInReaction == true)
-                ParticlesIndexesChosenForReaction.emplace_back(ParticleObjectIndex);
+                ParticlesIndexesChosenForReaction.emplace_back(ParticleObjectIndex, PositionInReactants);
 
             if (ReactantIterator != ReactionObject.Reactants.end() && ReactantsCounters[PositionInReactants] > 0)
             {
@@ -907,7 +944,7 @@ tuple<vector<UniqueIdInt>, bool> CellEngineVoxelSimulationSpace::ChooseParticles
         return { ParticlesIndexesChosenForReaction, true };
     }
     else
-        return { vector<UniqueIdInt>(), false };
+        return { vector<pair<UniqueIdInt, UnsignedInt>>(), false };
 }
 
 void CellEngineVoxelSimulationSpace::EraseParticlesChosenForReactionAndGetCentersForNewProductsOfReaction(const UnsignedInt ParticleIndexChosenForReaction, vector<vector3_16>& Centers)
@@ -940,7 +977,7 @@ bool CellEngineVoxelSimulationSpace::MakeChemicalReaction(Reaction& ReactionObje
 
         vector<vector3_16> Centers;
         for (const auto& ParticleIndexChosenForReaction : ParticlesIndexesChosenForReaction)
-            EraseParticlesChosenForReactionAndGetCentersForNewProductsOfReaction(ParticleIndexChosenForReaction, Centers);
+            EraseParticlesChosenForReactionAndGetCentersForNewProductsOfReaction(ParticleIndexChosenForReaction.first, Centers);
 
         LoggersManagerObject.Log(STREAM("Reaction Step 2 - erasing particles chosen for reaction" << endl));
 

@@ -37,6 +37,7 @@ private:
 private:
     std::map<EntityIdInt, UnsignedInt> ParticlesKindsFoundInProximity;
     std::vector<UniqueIdInt> ParticlesSortedByCapacityFoundInProximity;
+private:
     std::vector<UniqueIdInt> NucleotidesWithFreeNextEndingsFoundInProximity;
     std::vector<UniqueIdInt> NucleotidesWithFreePrevEndingsFoundInProximity;
     std::vector<UniqueIdInt> DNANucleotidesWithFreeNextEndingsFoundInProximity;
@@ -111,8 +112,10 @@ public:
     bool CutDNACrisperInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject);
     bool LinkDNALigaseInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject);
     bool LinkDNALigaseInAnyPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject);
+    bool ElongationSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const Reaction& ReactionObject);
 public:
-    std::tuple<std::vector<UniqueIdInt>, bool> ChooseParticlesForReactionFromAllParticlesInProximity(const Reaction& ReactionObject);
+    std::tuple<std::vector<std::pair<UniqueIdInt, UnsignedInt>>, bool> ChooseParticlesForReactionFromAllParticlesInProximity(const Reaction& ReactionObject);
+    static bool CompareFitnessOfParticle(const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction);
     bool CompareFitnessOfDNASequenceByNucleotidesLoop(ComparisonType TypeOfComparison, const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction);
     void EraseParticlesChosenForReactionAndGetCentersForNewProductsOfReaction(UnsignedInt ParticleIndexChosenForReaction, std::vector<vector3_16>& Centers);
 public:

@@ -112,6 +112,7 @@ public:
     EntityIdInt EntityId{};
     UnsignedInt Counter{};
     bool ToRemoveInReaction;
+    bool LinkedToDNA = false;
 public:
     std::string SequenceStr;
     std::vector<ChainIdInt> Sequence;
@@ -120,6 +121,10 @@ public:
     {
         for (auto& NucleotideLetter : SequenceStr)
             Sequence.emplace_back(CellEngineUseful::GetChainIdFromLetterForDNAorRNA(NucleotideLetter));
+    }
+    ParticleKindForReaction(EntityIdInt EntityIdParam, UnsignedInt CounterParam, std::string SequenceStrParam, bool ToRemoveInReactionParam, bool LinkedToDNAParam) : ParticleKindForReaction(EntityIdParam, CounterParam, std::move(SequenceStrParam), ToRemoveInReactionParam)
+    {
+        LinkedToDNA = LinkedToDNAParam;
     }
 };
 
