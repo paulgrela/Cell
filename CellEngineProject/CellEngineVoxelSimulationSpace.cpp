@@ -304,6 +304,8 @@ void CellEngineVoxelSimulationSpace::AddBasicParticlesKindsAndReactions()
 
 
 
+        AddChemicalReaction(Reaction(150, "ELONGATION 1", "CH3CHCH2 + DNA + ", { { 5, 1, "", false, true }, { 10001, 1, "ANY", false } }, {}, &CellEngineVoxelSimulationSpace::LinkDNALigaseInAnyPlaceSpecialReactionFunction));
+        //Nukleotydy wolne w poblizu szukane zawsze
 
 
 
@@ -778,8 +780,10 @@ bool CellEngineVoxelSimulationSpace::ElongationSpecialReactionFunction(const vec
     {
         LoggersManagerObject.Log(STREAM("ELONGATION REACTION"));
 
+        //AddChemicalReaction(Reaction(150, "ELONGATION 1", "CH3CHCH2 + DNA + ", { { 5, 1, "", false, true }, { 10001, 1, "ANY", false } }, {}, &CellEngineVoxelSimulationSpace::LinkDNALigaseInAnyPlaceSpecialReactionFunction));
+
         //ANY DNA - istniejace,
-        //musze sprawdzac czy CZASTKA MA OKRESOLNY
+        //musze sprawdzac czy CZASTKA MA OKRESLONY
 
         //POBIERZ ODPOWIEDNI NUKLEOTYD "co pasuje" do nici i przesun go do pozycji next do konca ANY DNA
         //"co pasuje" oznacza ze musi byc to nukleotyd oczytany przez bialko polimeraz czyli musi byc bialko polimeraz co przyklejone do DNA lub RNA tzn ona wykrywa DNA i sie przykleja do DNA, a reakcja Elongation przesuwa to bialko
@@ -800,6 +804,10 @@ bool CellEngineVoxelSimulationSpace::ElongationSpecialReactionFunction(const vec
     return false;
 }
 
+bool CellEngineVoxelSimulationSpace::CompareFitnessOfParticle(const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction)
+{
+    return (ParticleKindForReactionObject.LinkedToDNA == false || (ParticleKindForReactionObject.LinkedToDNA == true && ParticleObjectForReaction.PairedNucleotide != nullptr && CellEngineUseful::IsDNAorRNA(ParticleObjectForReaction.PairedNucleotide->EntityId)));
+}
 
 bool CellEngineVoxelSimulationSpace::CompareFitnessOfDNASequenceByNucleotidesLoop(ComparisonType TypeOfComparison, const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction)
 {
@@ -874,21 +882,11 @@ bool CellEngineVoxelSimulationSpace::CompareFitnessOfDNASequenceByNucleotidesLoo
     return !FoundSequenceNotFit;
 }
 
-bool CellEngineVoxelSimulationSpace::CompareFitnessOfParticle(const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction)
-{
-    return (ParticleKindForReactionObject.LinkedToDNA == false || (ParticleKindForReactionObject.LinkedToDNA == true && ParticleObjectForReaction.PairedNucleotide != nullptr && CellEngineUseful::IsDNAorRNA(ParticleObjectForReaction.PairedNucleotide->EntityId)));
-}
-
-//tuple<vector<UniqueIdInt>, bool> CellEngineVoxelSimulationSpace::ChooseParticlesForReactionFromAllParticlesInProximity(const Reaction& ReactionObject)
 tuple<vector<pair<UniqueIdInt, UnsignedInt>>, bool> CellEngineVoxelSimulationSpace::ChooseParticlesForReactionFromAllParticlesInProximity(const Reaction& ReactionObject)
 {
     bool AllAreZero = false;
 
-    //vector<pair<UniqueIdInt, UnsignedInt>> NucleotidesIndexesChosenForReaction;
-
     vector<pair<UniqueIdInt, UnsignedInt>> NucleotidesIndexesChosenForReaction, ParticlesIndexesChosenForReaction;
-
-    //vector<UniqueIdInt> ParticlesIndexesChosenForReaction;
 
     vector<UnsignedInt> ReactantsCounters(ReactionObject.Reactants.size());
 
