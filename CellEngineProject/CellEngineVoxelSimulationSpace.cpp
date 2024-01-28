@@ -257,6 +257,7 @@ void CellEngineVoxelSimulationSpace::AddBasicParticlesKindsAndReactions()
         ParticlesKindsManagerObject.AddParticleKind({ 9, "Test", "TEST", 0 });
         ParticlesKindsManagerObject.AddParticleKind({ 10, "Ethylene", "CH2CH2O", 0 });
         ParticlesKindsManagerObject.AddParticleKind({ 11, "Oxygen", "0", 0 });
+        ParticlesKindsManagerObject.AddParticleKind({ 12, "Polymerase", "POL", 0 });
 
         ParticlesKindsManagerObject.AddParticleKind({ CellEngineConfigDataObject.DNAIdentifier, "DNA", "DNA", 0 });
 
@@ -304,7 +305,9 @@ void CellEngineVoxelSimulationSpace::AddBasicParticlesKindsAndReactions()
 
 
 
-        AddChemicalReaction(Reaction(150, "ELONGATION 1", "CH3CHCH2 + DNA + ", { { 5, 1, "", false, true }, { 10001, 1, "ANY", false } }, {}, &CellEngineVoxelSimulationSpace::LinkDNALigaseInAnyPlaceSpecialReactionFunction));
+        AddChemicalReaction(Reaction(150, "ELONGATION 1 START", "CH3CHCH2 + DNA + ", { { 12, 1, "", false }, { 10001, 1, "TACAAAAAAAGAGGTGTTAGC", false } }, {}, &CellEngineVoxelSimulationSpace::ElongationStartSpecialReactionFunction));
+        //PIERWSZA REAKCJA DODAJE PODLACZENIE DO DNA
+        AddChemicalReaction(Reaction(150, "ELONGATION 1 CONTINUE", "CH3CHCH2 + DNA + ", { { 12, 1, "", false, { CellEngineConfigDataObject.DNAIdentifier } } }, {}, &CellEngineVoxelSimulationSpace::ElongationContinueSpecialReactionFunction));
         //Nukleotydy wolne w poblizu szukane zawsze
 
 
@@ -558,7 +561,7 @@ void JoinDNAStrands(Particle* Particle::*Direction, Particle* Strand1, Particle*
     CATCH("joining dna strands")
 }
 
-bool CellEngineVoxelSimulationSpace::CutDNAInChosenPlaceSpecialReactionFunction(const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject)
+bool CellEngineVoxelSimulationSpace::CutDNAInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject)
 {
     try
     {
@@ -592,7 +595,7 @@ bool CellEngineVoxelSimulationSpace::CutDNAInChosenPlaceSpecialReactionFunction(
     return false;
 }
 
-bool CellEngineVoxelSimulationSpace::LinkDNAInChosenPlaceSpecialReactionFunction(const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject)
+bool CellEngineVoxelSimulationSpace::LinkDNAInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject)
 {
     try
     {
@@ -623,7 +626,7 @@ bool CellEngineVoxelSimulationSpace::LinkDNAInChosenPlaceSpecialReactionFunction
     return false;
 }
 
-bool CellEngineVoxelSimulationSpace::LinkDNAInAnyPlaceSpecialReactionFunction(const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject)
+bool CellEngineVoxelSimulationSpace::LinkDNAInAnyPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject)
 {
     try
     {
@@ -649,7 +652,7 @@ bool CellEngineVoxelSimulationSpace::LinkDNAInAnyPlaceSpecialReactionFunction(co
     return false;
 }
 
-bool CellEngineVoxelSimulationSpace::CutDNACrisperInChosenPlaceSpecialReactionFunction(const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject)
+bool CellEngineVoxelSimulationSpace::CutDNACrisperInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject)
 {
     try
     {
@@ -670,7 +673,7 @@ bool CellEngineVoxelSimulationSpace::CutDNACrisperInChosenPlaceSpecialReactionFu
     return false;
 }
 
-bool CellEngineVoxelSimulationSpace::LinkDNALigaseInAnyPlaceSpecialReactionFunction(const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject)
+bool CellEngineVoxelSimulationSpace::LinkDNALigaseInAnyPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject)
 {
     try
     {
@@ -696,7 +699,7 @@ bool CellEngineVoxelSimulationSpace::LinkDNALigaseInAnyPlaceSpecialReactionFunct
     return false;
 }
 
-bool CellEngineVoxelSimulationSpace::LinkDNALigaseInChosenPlaceSpecialReactionFunction(const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject)
+bool CellEngineVoxelSimulationSpace::LinkDNALigaseInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject)
 {
     try
     {
@@ -774,30 +777,34 @@ bool CellEngineVoxelSimulationSpace::LinkDNALigaseInChosenPlaceSpecialReactionFu
     return false;
 }
 
-bool CellEngineVoxelSimulationSpace::ElongationSpecialReactionFunction(const vector<pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const Reaction& ReactionObject)
+bool CellEngineVoxelSimulationSpace::ElongationStartSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject)
+{
+    try
+    {
+        LoggersManagerObject.Log(STREAM("ELONGATION START REACTION"));
+
+        if (NucleotidesFreeFoundInProximity.empty() == false)
+        {
+            GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).AddNewLinkToParticle(&GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]));
+            GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).AddNewLinkToParticle(&GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first));
+        }
+    }
+    CATCH("linking dna in chosen place in special reaction function")
+
+    return false;
+}
+
+bool CellEngineVoxelSimulationSpace::ElongationContinueSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject)
 {
     try
     {
         LoggersManagerObject.Log(STREAM("ELONGATION REACTION"));
 
-        //AddChemicalReaction(Reaction(150, "ELONGATION 1", "CH3CHCH2 + DNA + ", { { 5, 1, "", false, true }, { 10001, 1, "ANY", false } }, {}, &CellEngineVoxelSimulationSpace::LinkDNALigaseInAnyPlaceSpecialReactionFunction));
-
-        //ANY DNA - istniejace,
-        //musze sprawdzac czy CZASTKA MA OKRESLONY
-
-        //POBIERZ ODPOWIEDNI NUKLEOTYD "co pasuje" do nici i przesun go do pozycji next do konca ANY DNA
-        //"co pasuje" oznacza ze musi byc to nukleotyd oczytany przez bialko polimeraz czyli musi byc bialko polimeraz co przyklejone do DNA lub RNA tzn ona wykrywa DNA i sie przykleja do DNA, a reakcja Elongation przesuwa to bialko
-
-        //przelec pobliskie nukleotydy NucleotidesFreeFoundInProximity[0] w petli
-
-        if (GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]).ChainId == CellEngineUseful::GetPairedChainIdForDNAorRNA(GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).PairedNucleotide->ChainId))
+        if (GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]).ChainId == CellEngineUseful::GetPairedChainIdForDNAorRNA(GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).LinkedParticlesPointersList[0]->ChainId))
         {
-
+            GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).LinkedParticlesPointersList[0]->Next = &GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]);
+            GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).LinkedParticlesPointersList[1] = GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).LinkedParticlesPointersList[1]->Next;
         }
-
-        //CZYLI mam w reakcji elongation bialko co odczytuje konkretny nukleotyd CZYLI czastka Paritcle musi posiadac parametr DODATKOWY oznaczajacy stan - niech to bedzie na razie char lub truojka przy translacji czyli String
-        //Niech czastka wskazuje na konkretny nukleotyd i idz w kierunku przodu trzy przy translacj
-
     }
     CATCH("linking dna in chosen place in special reaction function")
 
@@ -806,7 +813,7 @@ bool CellEngineVoxelSimulationSpace::ElongationSpecialReactionFunction(const vec
 
 bool CellEngineVoxelSimulationSpace::CompareFitnessOfParticle(const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction)
 {
-    return (ParticleKindForReactionObject.LinkedToDNA == false || (ParticleKindForReactionObject.LinkedToDNA == true && ParticleObjectForReaction.PairedNucleotide != nullptr && CellEngineUseful::IsDNAorRNA(ParticleObjectForReaction.PairedNucleotide->EntityId)));
+    return (ParticleKindForReactionObject.LinkedParticleTypes.empty() == true || (ParticleKindForReactionObject.LinkedParticleTypes.empty() == false && ParticleObjectForReaction.LinkedParticlesPointersList.size() == ParticleKindForReactionObject.LinkedParticleTypes.size() && all_of(ParticleObjectForReaction.LinkedParticlesPointersList.begin(), ParticleObjectForReaction.LinkedParticlesPointersList.end(), [](const Particle* PointerToParticle){ return PointerToParticle != nullptr; }) && equal(ParticleObjectForReaction.LinkedParticlesPointersList.begin(), ParticleObjectForReaction.LinkedParticlesPointersList.end(), ParticleKindForReactionObject.LinkedParticleTypes.begin(), [](const Particle* PointerToParticle, UniqueIdInt ParticleType){ return PointerToParticle->EntityId == ParticleType; })));
 }
 
 bool CellEngineVoxelSimulationSpace::CompareFitnessOfDNASequenceByNucleotidesLoop(ComparisonType TypeOfComparison, const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction)
@@ -932,7 +939,7 @@ tuple<vector<pair<UniqueIdInt, UnsignedInt>>, bool> CellEngineVoxelSimulationSpa
         }
 
         if (AllAreZero == true || (AllAreZero == false && (ReactionObject.Id == 30 || ReactionObject.Id == 80 || ReactionObject.Id == 70)))
-            ReactionObject.SpecialReactionFunction(this, NucleotidesIndexesChosenForReaction, ReactionObject);
+            ReactionObject.SpecialReactionFunction(this, ParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject);
     }
     CATCH("choosing particles for reaction from all particles in proximity")
 

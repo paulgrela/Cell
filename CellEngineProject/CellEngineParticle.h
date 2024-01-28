@@ -2,6 +2,8 @@
 #ifndef CELL_ENGINE_PARTICLE_H
 #define CELL_ENGINE_PARTICLE_H
 
+#include <algorithm>
+
 #include <list>
 #include <utility>
 #include <vector>
@@ -27,7 +29,35 @@ public:
     }
 };
 
-class Particle : public DoublyLinkedListNode<Particle>, public PairedNucleotide<Particle>
+template <class T>
+class LinkedParticles
+{
+public:
+    std::vector<T*> LinkedParticlesPointersList;
+public:
+    void AddNewLinkToParticle(T* NewLinkToParticle)
+    {
+        LinkedParticlesPointersList.emplace_back(NewLinkToParticle);
+    }
+    void RemoveLastLinkToParticle()
+    {
+        LinkedParticlesPointersList.pop_back();
+    }
+    void SetLinkToParticle(const UnsignedInt Position, const T* NewLinkToParticle)
+    {
+        LinkedParticlesPointersList[Position] = NewLinkToParticle;
+    }
+    void SetNullToLinkToParticle(const UnsignedInt Position)
+    {
+        LinkedParticlesPointersList[Position] = nullptr;
+    }
+    void SetNullToAllLinksToParticles()
+    {
+        fill(begin(LinkedParticlesPointersList), end(LinkedParticlesPointersList), nullptr);
+    }
+};
+
+class Particle : public DoublyLinkedListNode<Particle>, public PairedNucleotide<Particle>, public LinkedParticles<Particle>
 {
 public:
     bool SelectedForReaction{};
@@ -112,7 +142,7 @@ public:
     EntityIdInt EntityId{};
     UnsignedInt Counter{};
     bool ToRemoveInReaction;
-    bool LinkedToDNA = false;
+    std::vector<UniqueIdInt> LinkedParticleTypes;
 public:
     std::string SequenceStr;
     std::vector<ChainIdInt> Sequence;
@@ -122,9 +152,9 @@ public:
         for (auto& NucleotideLetter : SequenceStr)
             Sequence.emplace_back(CellEngineUseful::GetChainIdFromLetterForDNAorRNA(NucleotideLetter));
     }
-    ParticleKindForReaction(EntityIdInt EntityIdParam, UnsignedInt CounterParam, std::string SequenceStrParam, bool ToRemoveInReactionParam, bool LinkedToDNAParam) : ParticleKindForReaction(EntityIdParam, CounterParam, std::move(SequenceStrParam), ToRemoveInReactionParam)
+    ParticleKindForReaction(EntityIdInt EntityIdParam, UnsignedInt CounterParam, std::string SequenceStrParam, bool ToRemoveInReactionParam, std::vector<UniqueIdInt> LinkedParticlesTypesParam) : ParticleKindForReaction(EntityIdParam, CounterParam, std::move(SequenceStrParam), ToRemoveInReactionParam)
     {
-        LinkedToDNA = LinkedToDNAParam;
+        LinkedParticleTypes = std::move(LinkedParticlesTypesParam);
     }
 };
 
