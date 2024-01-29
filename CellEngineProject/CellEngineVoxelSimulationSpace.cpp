@@ -299,10 +299,10 @@ void CellEngineVoxelSimulationSpace::AddBasicParticlesKindsAndReactions()
         AddChemicalReaction(Reaction(150, "POLYMERASE DNA START SEQ", "CH3CHCH2 + DNA + ", { { 5, 1, "", false }, { 10001, 1, "TACAAAAAAAGAGGTGTTAGC", false } }, {}, &CellEngineVoxelSimulationSpace::PolymeraseDNAStartSpecialReactionFunction, "links particle with DNA when found sequence and joins first nucleotide "));
         AddChemicalReaction(Reaction(160, "POLYMERASE DNA CONTINUE", "CH3CHCH2 + DNA + ", { { 5, 1, "", false, { CellEngineConfigDataObject.DNAIdentifier } } }, {}, &CellEngineVoxelSimulationSpace::PolymeraseDNAContinueSpecialReactionFunction, "links new nucleotide that fits nucleotide in DNA if free nucleotides are found in proximitt"));
 
-        AddChemicalReaction(Reaction(1001, "", "C6H12O6 + O2 + ", { { 1, 1, "", true }, { 2, 6, "", true } }, { { 3, 6, "", true }, { 0, 6, "", true } }, nullptr));
-        AddChemicalReaction(Reaction(1002, "", "CH2CH2 + H2O + ", { { 4, 1, "", true }, { 0, 1, "", true } }, { { 5, 1, "", true } }, nullptr));
-        AddChemicalReaction(Reaction(1003, "", "CH3CHCH2 + HX + ", { { 6, 1, "", true }, { 7, 1, "", true } }, { { 8, 1, "", true } }, nullptr));
-        AddChemicalReaction(Reaction(1004, "", "CH2CH2 + O + ", { { 4,  1, "", true }, { 11, 1, "", true } }, { { 10, 1, "", true } }, nullptr));
+        AddChemicalReaction(Reaction(1001, "STD", "C6H12O6 + O2 + ", { { 1, 1, "", true }, { 2, 6, "", true } }, { { 3, 6, "", true }, { 0, 6, "", true } }, nullptr));
+        AddChemicalReaction(Reaction(1002, "STD", "CH2CH2 + H2O + ", { { 4, 1, "", true }, { 0, 1, "", true } }, { { 5, 1, "", true } }, nullptr));
+        AddChemicalReaction(Reaction(1003, "STD", "CH3CHCH2 + HX + ", { { 6, 1, "", true }, { 7, 1, "", true } }, { { 8, 1, "", true } }, nullptr));
+        AddChemicalReaction(Reaction(1004, "STD", "CH2CH2 + O + ", { { 4,  1, "", true }, { 11, 1, "", true } }, { { 10, 1, "", true } }, nullptr));
 
         PreprocessChemicalReactions();
     }
@@ -411,6 +411,7 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfDiffusionForSelectedRangeO
             for (auto &VoxelForParticle: LocalParticleObject.ListOfVoxels)
                 if (GetSpaceVoxel(VoxelForParticle.X + ShiftX, VoxelForParticle.Y + ShiftY,VoxelForParticle.Z + ShiftZ) == 0 && VoxelForParticle.X + ShiftX >= StartXPosParam && VoxelForParticle.X + ShiftX < StartXPosParam + SizeXParam && VoxelForParticle.Y + ShiftY >= StartYPosParam && VoxelForParticle.Y + ShiftY < StartYPosParam + SizeYParam && VoxelForParticle.Z + ShiftZ >= StartZPosParam && VoxelForParticle.Z + ShiftZ < StartZPosParam + SizeZParam)
                 {
+                    //REDRAW
                     GetSpaceVoxel(VoxelForParticle.X + ShiftX, VoxelForParticle.Y + ShiftY, VoxelForParticle.Z + ShiftZ) = ParticleIndex;
                     NewVoxelsForParticle.emplace_back(VoxelForParticle.X + ShiftX, VoxelForParticle.Y + ShiftY, VoxelForParticle.Z + ShiftZ);
                 }
@@ -765,6 +766,16 @@ bool CellEngineVoxelSimulationSpace::PolymeraseDNAStartSpecialReactionFunction(c
         {
             GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).AddNewLinkToParticle(&GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]));
             GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).AddNewLinkToParticle(&GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first));
+
+            //REDRAW
+            SetAllVoxelsInListOfVoxelsToValue(GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]).ListOfVoxels, GetZeroSimulationSpaceVoxel());
+            for (auto &VoxelForParticle: GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]).ListOfVoxels)
+            {
+                VoxelForParticle.X = GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).ListOfVoxels[0].X + 2;
+                VoxelForParticle.Y = GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).ListOfVoxels[0].Y + 2;
+                VoxelForParticle.Z = GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).ListOfVoxels[0].Z + 2;
+            }
+            SetAllVoxelsInListOfVoxelsToValue(GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]).ListOfVoxels, NucleotidesFreeFoundInProximity[0]);
         }
     }
     CATCH("linking dna in chosen place in special reaction function")
@@ -782,6 +793,19 @@ bool CellEngineVoxelSimulationSpace::PolymeraseDNAContinueSpecialReactionFunctio
         {
             GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).LinkedParticlesPointersList[0]->Next = &GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]);
             GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).LinkedParticlesPointersList[1] = GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).LinkedParticlesPointersList[1]->Next;
+
+            //REDRAW
+            //PRZESUN WOLNY NUKLEOTYD
+            SetAllVoxelsInListOfVoxelsToValue(GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]).ListOfVoxels, GetZeroSimulationSpaceVoxel());
+            for (auto &VoxelForParticle: GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]).ListOfVoxels)
+                VoxelForParticle.X = GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).LinkedParticlesPointersList[0]->Next->ListOfVoxels[0].X + 2;
+            SetAllVoxelsInListOfVoxelsToValue(GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]).ListOfVoxels, NucleotidesFreeFoundInProximity[0]);
+
+            //PRZESUN BIALKO
+            SetAllVoxelsInListOfVoxelsToValue(GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).ListOfVoxels, GetZeroSimulationSpaceVoxel());
+            for (auto &VoxelForParticle: GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).ListOfVoxels)
+                VoxelForParticle.X = GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).LinkedParticlesPointersList[1]->ListOfVoxels[0].X + 2;
+            SetAllVoxelsInListOfVoxelsToValue(GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).ListOfVoxels, ParticlesIndexesChosenForReaction[0].first);
         }
     }
     CATCH("linking dna in chosen place in special reaction function")
@@ -974,6 +998,7 @@ bool CellEngineVoxelSimulationSpace::MakeChemicalReaction(Reaction& ReactionObje
 
             auto& ParticleKindObjectForProduct = ParticlesKindsManagerObject.GetParticleKind(ReactionProduct.EntityId);
 
+            //REDRAW
             if (CenterIndex < Centers.size())
                 for (const auto& ParticleKindVoxel : ParticleKindObjectForProduct.ListOfVoxels)
                 {
@@ -981,6 +1006,7 @@ bool CellEngineVoxelSimulationSpace::MakeChemicalReaction(Reaction& ReactionObje
                     GetSpaceVoxel(NewVoxel.X, NewVoxel.Y, NewVoxel.Z) = ParticleIndex;
                     GetParticleFromIndex(ParticleIndex).ListOfVoxels.emplace_back(NewVoxel.X, NewVoxel.Y, NewVoxel.Z);
                     GetMinMaxCoordinatesForParticle(GetParticleFromIndex(ParticleIndex));
+
                     LoggersManagerObject.Log(STREAM("New Centers From Product Added X = " << to_string(NewVoxel.X) << " Y = " << to_string(NewVoxel.Y) << " Z = " << to_string(NewVoxel.Z) << endl));
                 }
             else
@@ -1209,15 +1235,16 @@ void CellEngineVoxelSimulationSpace::GenerateRandomReactionForParticle(Particle&
     CATCH("generating random reaction for particle")
 }
 
-void CellEngineVoxelSimulationSpace::FillSquareParticle(UnsignedInt RPosX, UnsignedInt RPosY, UnsignedInt RPosZ, UniqueIdInt LocalNewParticleIndex, UniqueIdInt Size)
+void CellEngineVoxelSimulationSpace::FillSquareParticle(UnsignedInt RPosX, UnsignedInt RPosY, UnsignedInt RPosZ, UniqueIdInt LocalNewParticleIndex, UniqueIdInt SizeX, UniqueIdInt SizeY, UniqueIdInt SizeZ)
 {
     try
     {
         vector<vector3_16> FilledVoxelsForRandomParticle;
 
-        for (UnsignedInt PosX = RPosX; PosX < RPosX + Size; PosX++)
-            for (UnsignedInt PosY = RPosY; PosY < RPosY + Size; PosY++)
-                for (UnsignedInt PosZ = RPosZ; PosZ < RPosZ + Size; PosZ++)
+        //REDRAW
+        for (UnsignedInt PosX = RPosX; PosX < RPosX + SizeX; PosX++)
+            for (UnsignedInt PosY = RPosY; PosY < RPosY + SizeY; PosY++)
+                for (UnsignedInt PosZ = RPosZ; PosZ < RPosZ + SizeZ; PosZ++)
                 {
                     GetSpaceVoxel(PosX, PosY, PosZ) = LocalNewParticleIndex;
                     FilledVoxelsForRandomParticle.emplace_back(PosX, PosY, PosZ);
@@ -1239,34 +1266,43 @@ void CellEngineVoxelSimulationSpace::GeneratePlanedParticlesInSelectedSpace(cons
         MakeZeroVoxelsForSelectedSpace(StartXPosParam, StartYPosParam, StartZPosParam, StepXParam, StepYParam, StepZParam, SizeXParam, SizeYParam, SizeZParam);
 
         auto P0 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 0, 1, -1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
-        FillSquareParticle(StartXPosParam + 1, StartYPosParam + 3, StartZPosParam + 7, P0, 1);
+        FillSquareParticle(StartXPosParam + 1, StartYPosParam + 3, StartZPosParam + 7, P0, 1, 1, 1);
 
         auto P1 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 1, 1,  -1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
-        FillSquareParticle(StartXPosParam + 3, StartYPosParam + 13, StartZPosParam + 6, P1, 1);
+        FillSquareParticle(StartXPosParam + 3, StartYPosParam + 13, StartZPosParam + 6, P1, 1, 1, 1);
 
         auto P2 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 2, 1, -1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
-        FillSquareParticle(StartXPosParam + 6, StartYPosParam + 12, StartZPosParam + 5, P2, 1);
+        FillSquareParticle(StartXPosParam + 6, StartYPosParam + 12, StartZPosParam + 5, P2, 1, 1, 1);
 
         auto P3 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 3, 1, -1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
-        FillSquareParticle(StartXPosParam + 9, StartYPosParam + 9, StartZPosParam + 9, P3, 2);
+        FillSquareParticle(StartXPosParam + 9, StartYPosParam + 9, StartZPosParam + 9, P3, 2, 2, 2);
 
         auto P4 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 4, 1, -1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
-        FillSquareParticle(StartXPosParam + 17, StartYPosParam + 15, StartZPosParam + 15, P4, 2);
+        FillSquareParticle(StartXPosParam + 17, StartYPosParam + 15, StartZPosParam + 15, P4, 2, 2, 2);
 
         auto P5 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 5, 1, -1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
-        FillSquareParticle(StartXPosParam + 17, StartYPosParam + 19, StartZPosParam + 4, P5, 2);
+        FillSquareParticle(StartXPosParam + 17, StartYPosParam + 19, StartZPosParam + 4, P5, 2, 2, 2);
 
         auto P6 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 6, 1, -1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
-        FillSquareParticle(StartXPosParam + 21, StartYPosParam + 20, StartZPosParam + 19, P6, 2);
+        FillSquareParticle(StartXPosParam + 21, StartYPosParam + 20, StartZPosParam + 19, P6, 2, 2, 2);
 
         auto P7 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 6, 1, -1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
-        FillSquareParticle(StartXPosParam + 3, StartYPosParam + 20, StartZPosParam + 7, P7, 2);
+        FillSquareParticle(StartXPosParam + 3, StartYPosParam + 20, StartZPosParam + 7, P7, 2, 2, 2);
 
         auto P8 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 6, 1, -1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
-        FillSquareParticle(StartXPosParam + 5, StartYPosParam + 15, StartZPosParam + 20, P8, 2);
+        FillSquareParticle(StartXPosParam + 5, StartYPosParam + 15, StartZPosParam + 20, P8, 2, 2, 2);
 
         auto P9 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 10, 1, -1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
-        FillSquareParticle(StartXPosParam + 21, StartYPosParam + 5, StartZPosParam + 3, P9, 2);
+        FillSquareParticle(StartXPosParam + 21, StartYPosParam + 5, StartZPosParam + 3, P9, 2, 2, 2);
+
+                auto P10 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), CellEngineConfigDataObject.DNAIdentifier, CellEngineUseful::GetChainIdFromLetterForDNAorRNA('C'), -1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
+                FillSquareParticle(StartXPosParam + 9, StartYPosParam + 12, StartZPosParam + 3, P10, 2, 2, 1);
+
+                auto P11 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), CellEngineConfigDataObject.DNAIdentifier, CellEngineUseful::GetChainIdFromLetterForDNAorRNA('C'), -1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
+                FillSquareParticle(StartXPosParam + 9, StartYPosParam + 16, StartZPosParam + 3, P11, 2, 2, 1);
+
+                auto P12 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), CellEngineConfigDataObject.DNAIdentifier, CellEngineUseful::GetChainIdFromLetterForDNAorRNA('T'), -1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
+                FillSquareParticle(StartXPosParam + 9, StartYPosParam + 19, StartZPosParam + 3, P12, 2, 2, 1);
 
         GenerateOneStrand(CellEngineConfigDataObject.RNAIdentifier, "UCGAGAA", StartXPosParam + 5, StartYPosParam + 5, StartZPosParam + 3, 2, 1, 2, 2, 0, 0);
     }
@@ -1318,7 +1354,6 @@ void CellEngineVoxelSimulationSpace::EraseAllDNAParticles()
             if (ParticleObject.second.EntityId == CellEngineConfigDataObject.DNAIdentifier)
             {
                 SetAllVoxelsInListOfVoxelsToValue(ParticleObject.second.ListOfVoxels, GetZeroSimulationSpaceVoxel());
-
                 FreeIndexesOfParticles.push(ParticleObject.first);
             }
 
@@ -1378,6 +1413,7 @@ Particle* CellEngineVoxelSimulationSpace::GenerateNucleotideParticle(Particle* P
             for (UnsignedInt PosY = StartPosY; PosY < StartPosY + ParticleSizeY; PosY++)
                 for (UnsignedInt PosZ = StartPosZ; PosZ < StartPosZ + ParticleSizeZ; PosZ++)
                 {
+                    //REDRAW
                     GetSpaceVoxel(PosX, PosY, PosZ) = ParticleIndex;
                     GetParticleFromIndex(ParticleIndex).ListOfVoxels.emplace_back(PosX, PosY, PosZ);
                 }
