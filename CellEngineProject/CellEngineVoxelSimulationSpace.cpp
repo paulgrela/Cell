@@ -261,7 +261,6 @@ void CellEngineVoxelSimulationSpace::AddBasicParticlesKindsAndReactions()
 
         ParticlesKindsManagerObject.AddParticleKind({ CellEngineConfigDataObject.DNAIdentifier, "DNA", "DNA", 0 });
 
-
         ParticlesKindsManagerObject.AddParticleKind({ 10001, "DNA", "?", 0 });
 
         const string DNASequenceForTestFindingDNA = "TACAAAAAAAGAGGTGTTAGC";
@@ -276,55 +275,34 @@ void CellEngineVoxelSimulationSpace::AddBasicParticlesKindsAndReactions()
         const string DNASequenceForTestCutCrisper = "RNA";
         const string RNASequenceForTestCutCrisper = "ANY";
 
-        AddChemicalReaction(Reaction(1101, "", "CH3CH2(OH) + DNA + ", { { 5, 1, "", true }, { 10001, 1, DNASequenceForTestFindingDNA, false } }, { { 10, 1, "", true } }, nullptr));
+        AddChemicalReaction(Reaction(1101, "STD", "CH3CH2(OH) + DNA + ", { { 5, 1, "", true }, { 10001, 1, DNASequenceForTestFindingDNA, false } }, { { 10, 1, "", true } }, nullptr, "standard normal reaction example"));
 
-        AddChemicalReaction(Reaction(10, "CUT 1", "CH3CH2(OH) + DNA + ", { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink1, false } }, {}, &CellEngineVoxelSimulationSpace::CutDNAInChosenPlaceSpecialReactionFunction));
+        AddChemicalReaction(Reaction(10, "ONLY WITH SEQ", "CH3CH2(OH) + DNA + ", { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink1, false } }, {}, &CellEngineVoxelSimulationSpace::CutDNAInChosenPlaceSpecialReactionFunction, "only in presence of chosen sequence of DNA"));
 
-        AddChemicalReaction(Reaction(20, "LINK 1", "CH3CH2(OH) + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink1, false }, { 10001, 1, DNASequence2ForTestCutLink1, false } }, {}, &CellEngineVoxelSimulationSpace::LinkDNAInChosenPlaceSpecialReactionFunction));
-        AddChemicalReaction(Reaction(30, "LINK 1 ANY", "CH3CH2(OH) + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 2, DNASequence1ForTestCutLink1Any, false } }, {}, &CellEngineVoxelSimulationSpace::LinkDNAInAnyPlaceSpecialReactionFunction));
+        AddChemicalReaction(Reaction(20, "LINK 1 SEQ", "CH3CH2(OH) + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink1, false }, { 10001, 1, DNASequence2ForTestCutLink1, false } }, {}, &CellEngineVoxelSimulationSpace::LinkDNAInChosenPlaceSpecialReactionFunction, "links one strand of DNA with 2 endings with chosen sequences"));
+        AddChemicalReaction(Reaction(30, "LINK 1 ANY", "CH3CH2(OH) + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 2, DNASequence1ForTestCutLink1Any, false } }, {}, &CellEngineVoxelSimulationSpace::LinkDNAInAnyPlaceSpecialReactionFunction, "link one strand of DNA with 2 endings with any sequence"));
 
+        AddChemicalReaction(Reaction(40, "CUT 2 SEQ SHIFT", "CH3CHCH2 + DNA + ", 3, 10, { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink2, false } }, { { 86, 1, "", true } }, &CellEngineVoxelSimulationSpace::CutDNAInChosenPlaceSpecialReactionFunction, "cuts both strands when found first sequence plus additional shift in both strands defined by additional parameters shift1=3 shift=10"));
+        AddChemicalReaction(Reaction(41, "CUT 2 SEQ SHIFT", "CH3CHCH2 + DNA + ", 7, 3, { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink2, false } }, { { 86, 1, "", true } }, &CellEngineVoxelSimulationSpace::CutDNAInChosenPlaceSpecialReactionFunction, "cuts both strands when found first sequence plus additional shift in both strands defined by additional parameters shift1=7 shift2=3"));
+        AddChemicalReaction(Reaction(42, "CUT 2 SEQ SHIFT", "CH3CHCH2 + DNA + ", 10, 3, { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink2, false } }, { { 86, 1, "", true } }, &CellEngineVoxelSimulationSpace::CutDNAInChosenPlaceSpecialReactionFunction, "cuts both strands when found first sequence plus additional shift in both strands defined by additional parameters shift1=10 shift2=3"));
 
-        AddChemicalReaction(Reaction(40, "CUT 2", "CH3CHCH2 + DNA + ", 3, 10, { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink2, false } }, { { 86, 1, "", true } }, &CellEngineVoxelSimulationSpace::CutDNAInChosenPlaceSpecialReactionFunction)); //rozcina obie nici po sekwencji w jednym miejscu sekwencji plus dddatkowe przesuniecie obu nici - osobne parametry
-        AddChemicalReaction(Reaction(41, "CUT 2", "CH3CHCH2 + DNA + ", 7, 3, { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink2, false } }, { { 86, 1, "", true } }, &CellEngineVoxelSimulationSpace::CutDNAInChosenPlaceSpecialReactionFunction)); //rozcina obie nici po sekwencji w jednym miejscu sekwencji plus dddatkowe przesuniecie obu nici - osobne parametry
-        AddChemicalReaction(Reaction(42, "CUT 2", "CH3CHCH2 + DNA + ", 10, 3, { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink2, false } }, { { 86, 1, "", true } }, &CellEngineVoxelSimulationSpace::CutDNAInChosenPlaceSpecialReactionFunction)); //rozcina obie nici po sekwencji w jednym miejscu sekwencji plus dddatkowe przesuniecie obu nici - osobne parametry
+        AddChemicalReaction(Reaction(60, "LINK 2 SEQ COMPLEMENT", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, "TACAAAAAAAGAGGTGTTAGC", false }, { 10001, 1, "TCTTATT", false } }, {}, &CellEngineVoxelSimulationSpace::LinkDNALigaseInChosenPlaceSpecialReactionFunction, "Links both DNA strands if first strand has first sequence and second strand has second sequence and opposite joining strands and complementary"));
+        AddChemicalReaction(Reaction(61, "LINK 2 SEQ COMPLEMENT", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, "TACAAAAAAAGAGGTGTTAGCTCTT", false }, { 10001, 1, "ATTATGA", false } }, {}, &CellEngineVoxelSimulationSpace::LinkDNALigaseInChosenPlaceSpecialReactionFunction, "Links both DNA strands if first strand has first sequence and second strand has second sequence and opposite joining strands and complementary"));
 
+        AddChemicalReaction(Reaction(70, "LINK 2 ANY COMPLEMENT", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, "ANY", false }, { 10001, 1, "ANY", false } }, {}, &CellEngineVoxelSimulationSpace::LinkDNALigaseInAnyPlaceSpecialReactionFunction, "Links both DNA strands with any sequence if opposite joining strands when complementary"));
 
-        AddChemicalReaction(Reaction(60, "LINK 2", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, "TACAAAAAAAGAGGTGTTAGC", false }, { 10001, 1, "TCTTATT", false } }, {}, &CellEngineVoxelSimulationSpace::LinkDNALigaseInChosenPlaceSpecialReactionFunction));
-        AddChemicalReaction(Reaction(61, "LINK 2", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, "TACAAAAAAAGAGGTGTTAGCTCTT", false }, { 10001, 1, "ATTATGA", false } }, {}, &CellEngineVoxelSimulationSpace::LinkDNALigaseInChosenPlaceSpecialReactionFunction));
-        //laczy obie nici w pierwszej sekwencji jesli pierwsza nic ma pierwsza sekwencje a druga druga  a przeciwna podwojna nic jest komplementarna
+        AddChemicalReaction(Reaction(80, "LINK 2 ANY EQU SAME", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, "ANY", false }, { 10001, 1, "ANY", false } }, {}, &CellEngineVoxelSimulationSpace::LinkDNAInAnyPlaceSpecialReactionFunction, "links both strands of DNA if they are cut equally in the same place"));
 
-        AddChemicalReaction(Reaction(70, "LINK 2", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, "ANY", false }, { 10001, 1, "ANY", false } }, {}, &CellEngineVoxelSimulationSpace::LinkDNALigaseInAnyPlaceSpecialReactionFunction));
-        //laczy obie nici jesli druga czyli przeciwna podwojna nic jest komplementarna
+        AddChemicalReaction(Reaction(100, "CUT CRISPER 1", "CH3CHCH2 + RNA + DNA + ", 3, 7, { { 5, 1, "", false }, { 10001, 1, DNASequenceForTestCutCrisper, false }, { 10001, 0, RNASequenceForTestCutCrisper, false } }, {}, &CellEngineVoxelSimulationSpace::CutDNACrisperInChosenPlaceSpecialReactionFunction, "cut crisper of one strand of DNA with RNA as template"));
+        AddChemicalReaction(Reaction(110, "CUT CRISPER 2", "CH3CHCH2 + RNA + DNA + ", 3, 7, { { 5, 1, "", false }, { 10001, 1, DNASequenceForTestCutCrisper, false }, { 10001, 0, RNASequenceForTestCutCrisper, false } }, {}, &CellEngineVoxelSimulationSpace::CutDNACrisperInChosenPlaceSpecialReactionFunction, "cut crisper of two strands of DNA with RNA as template"));
 
+        AddChemicalReaction(Reaction(150, "POLYMERASE DNA START SEQ", "CH3CHCH2 + DNA + ", { { 5, 1, "", false }, { 10001, 1, "TACAAAAAAAGAGGTGTTAGC", false } }, {}, &CellEngineVoxelSimulationSpace::PolymeraseDNAStartSpecialReactionFunction, "links particle with DNA when found sequence and joins first nucleotide "));
+        AddChemicalReaction(Reaction(160, "POLYMERASE DNA CONTINUE", "CH3CHCH2 + DNA + ", { { 5, 1, "", false, { CellEngineConfigDataObject.DNAIdentifier } } }, {}, &CellEngineVoxelSimulationSpace::PolymeraseDNAContinueSpecialReactionFunction, "links new nucleotide that fits nucleotide in DNA if free nucleotides are found in proximitt"));
 
-        AddChemicalReaction(Reaction(80, "LINK 2", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, "ANY", false }, { 10001, 1, "ANY", false } }, {}, &CellEngineVoxelSimulationSpace::LinkDNAInAnyPlaceSpecialReactionFunction)); //laczy obie nici jesli rowno obciete
-
-        AddChemicalReaction(Reaction(100, "CUT CRISPER 1", "CH3CHCH2 + RNA + DNA + ", 3, 7, { { 5, 1, "", false }, { 10001, 1, DNASequenceForTestCutCrisper, false }, { 10001, 0, RNASequenceForTestCutCrisper, false } }, {}, &CellEngineVoxelSimulationSpace::CutDNACrisperInChosenPlaceSpecialReactionFunction));
-
-        AddChemicalReaction(Reaction(110, "CUT CRISPER 2", "CH3CHCH2 + RNA + DNA + ", 3, 7, { { 5, 1, "", false }, { 10001, 1, DNASequenceForTestCutCrisper, false }, { 10001, 0, RNASequenceForTestCutCrisper, false } }, {}, &CellEngineVoxelSimulationSpace::CutDNACrisperInChosenPlaceSpecialReactionFunction));
-
-
-
-        AddChemicalReaction(Reaction(150, "ELONGATION 1 START", "CH3CHCH2 + DNA + ", { { 12, 1, "", false }, { 10001, 1, "TACAAAAAAAGAGGTGTTAGC", false } }, {}, &CellEngineVoxelSimulationSpace::ElongationStartSpecialReactionFunction));
-        //PIERWSZA REAKCJA DODAJE PODLACZENIE DO DNA
-        AddChemicalReaction(Reaction(150, "ELONGATION 1 CONTINUE", "CH3CHCH2 + DNA + ", { { 12, 1, "", false, { CellEngineConfigDataObject.DNAIdentifier } } }, {}, &CellEngineVoxelSimulationSpace::ElongationContinueSpecialReactionFunction));
-        //Nukleotydy wolne w poblizu szukane zawsze
-
-
-
-
-//        AddChemicalReaction(Reaction(8, "POLYMERASE DNA RUN", "POLYMERASE + DNA + NUCLEOTIDE_DNA + ", { { 100, 1, "", false }, { 10001, 1, DNASequenceForTestFindingDNA, false } }, {}));
-//        AddChemicalReaction(Reaction(9, "POLYMERASE DNA ADD", "POLYMERASE + DNA + NUCLEOTIDE_DNA + ", { { 100, 1, "", false }, { 10001, 1, DNASequenceForTestFindingDNA, false } }, {}));
-//        AddChemicalReaction(Reaction(10, "POLYMERASE DNA END", "POLYMERASE + DNA + NUCLEOTIDE_DNA + ", { { 100, 1, "", false }, { 10001, 1, DNASequenceForTestFindingDNA, false } }, {}));
-
-//        AddChemicalReaction(Reaction(11, "POLYMERASE RNA RUN", "POLYMERASE + DNA + NUCLEOTIDE_RNA + ", { { 101, 1, "", true }, { 10001, 1, DNASequenceForTestFindingDNA, false } }, { { 101, 1, "", true } }));
-//        AddChemicalReaction(Reaction(12, "POLYMERASE RNA ADD", "POLYMERASE + DNA + NUCLEOTIDE_RNA + ", { { 101, 1, "", true }, { 10001, 1, DNASequenceForTestFindingDNA, false } }, { { 101, 1, "", true } }));
-//        AddChemicalReaction(Reaction(13, "POLYMERASE RNA END", "POLYMERASE + DNA + NUCLEOTIDE_RNA + ", { { 101, 1, "", true }, { 10001, 1, DNASequenceForTestFindingDNA, false } }, { { 101, 1, "", true } }));
-
-//        AddChemicalReaction(Reaction(1001, "", "C6H12O6 + O2 + ", { { 1, 1, "", true }, { 2, 6, "", true } }, { { 3, 6, "", true }, { 0, 6, "", true } }));
-//        AddChemicalReaction(Reaction(1002, "", "CH2CH2 + H2O + ", { { 4, 1, "", true }, { 0, 1, "", true } }, { { 5, 1, "", true } }));
-//        AddChemicalReaction(Reaction(1003, "", "CH3CHCH2 + HX + ", { { 6, 1, "", true }, { 7, 1, "", true } }, { { 8, 1, "", true } }));
-//        AddChemicalReaction(Reaction(1004, "", "CH2CH2 + O + ", { { 4,  1, "", true }, { 11, 1, "", true } }, { { 10, 1, "", true } }));
+        AddChemicalReaction(Reaction(1001, "", "C6H12O6 + O2 + ", { { 1, 1, "", true }, { 2, 6, "", true } }, { { 3, 6, "", true }, { 0, 6, "", true } }, nullptr));
+        AddChemicalReaction(Reaction(1002, "", "CH2CH2 + H2O + ", { { 4, 1, "", true }, { 0, 1, "", true } }, { { 5, 1, "", true } }, nullptr));
+        AddChemicalReaction(Reaction(1003, "", "CH3CHCH2 + HX + ", { { 6, 1, "", true }, { 7, 1, "", true } }, { { 8, 1, "", true } }, nullptr));
+        AddChemicalReaction(Reaction(1004, "", "CH2CH2 + O + ", { { 4,  1, "", true }, { 11, 1, "", true } }, { { 10, 1, "", true } }, nullptr));
 
         PreprocessChemicalReactions();
     }
@@ -777,11 +755,11 @@ bool CellEngineVoxelSimulationSpace::LinkDNALigaseInChosenPlaceSpecialReactionFu
     return false;
 }
 
-bool CellEngineVoxelSimulationSpace::ElongationStartSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject)
+bool CellEngineVoxelSimulationSpace::PolymeraseDNAStartSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject)
 {
     try
     {
-        LoggersManagerObject.Log(STREAM("ELONGATION START REACTION"));
+        LoggersManagerObject.Log(STREAM("POLYMERASE DNA START REACTION"));
 
         if (NucleotidesFreeFoundInProximity.empty() == false)
         {
@@ -794,11 +772,11 @@ bool CellEngineVoxelSimulationSpace::ElongationStartSpecialReactionFunction(cons
     return false;
 }
 
-bool CellEngineVoxelSimulationSpace::ElongationContinueSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject)
+bool CellEngineVoxelSimulationSpace::PolymeraseDNAContinueSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject)
 {
     try
     {
-        LoggersManagerObject.Log(STREAM("ELONGATION REACTION"));
+        LoggersManagerObject.Log(STREAM("POLYMERASE DNA CONTINUE REACTION"));
 
         if (GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]).ChainId == CellEngineUseful::GetPairedChainIdForDNAorRNA(GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).LinkedParticlesPointersList[0]->ChainId))
         {
