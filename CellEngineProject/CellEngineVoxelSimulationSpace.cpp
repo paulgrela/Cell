@@ -1295,14 +1295,14 @@ void CellEngineVoxelSimulationSpace::GeneratePlanedParticlesInSelectedSpace(cons
         auto P9 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 10, 1, -1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
         FillSquareParticle(StartXPosParam + 21, StartYPosParam + 5, StartZPosParam + 3, P9, 2, 2, 2);
 
-                auto P10 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), CellEngineConfigDataObject.DNAIdentifier, CellEngineUseful::GetChainIdFromLetterForDNAorRNA('C'), -1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
-                FillSquareParticle(StartXPosParam + 9, StartYPosParam + 12, StartZPosParam + 3, P10, 2, 2, 1);
+        auto P10 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), CellEngineConfigDataObject.RNAIdentifier, CellEngineUseful::GetChainIdFromLetterForDNAorRNA('C'), -1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
+        FillSquareParticle(StartXPosParam + 9, StartYPosParam + 12, StartZPosParam + 3, P10, 2, 2, 1);
 
-                auto P11 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), CellEngineConfigDataObject.DNAIdentifier, CellEngineUseful::GetChainIdFromLetterForDNAorRNA('C'), -1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
-                FillSquareParticle(StartXPosParam + 9, StartYPosParam + 16, StartZPosParam + 3, P11, 2, 2, 1);
+        auto P11 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), CellEngineConfigDataObject.RNAIdentifier, CellEngineUseful::GetChainIdFromLetterForDNAorRNA('C'), -1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
+        FillSquareParticle(StartXPosParam + 9, StartYPosParam + 16, StartZPosParam + 3, P11, 2, 2, 1);
 
-                auto P12 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), CellEngineConfigDataObject.DNAIdentifier, CellEngineUseful::GetChainIdFromLetterForDNAorRNA('T'), -1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
-                FillSquareParticle(StartXPosParam + 9, StartYPosParam + 19, StartZPosParam + 3, P12, 2, 2, 1);
+        auto P12 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), CellEngineConfigDataObject.RNAIdentifier, CellEngineUseful::GetChainIdFromLetterForDNAorRNA('T'), -1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
+        FillSquareParticle(StartXPosParam + 9, StartYPosParam + 19, StartZPosParam + 3, P12, 2, 2, 1);
 
         GenerateOneStrand(CellEngineConfigDataObject.RNAIdentifier, "UCGAGAA", StartXPosParam + 5, StartYPosParam + 5, StartZPosParam + 3, 2, 1, 2, 2, 0, 0);
     }
@@ -1350,6 +1350,7 @@ void CellEngineVoxelSimulationSpace::EraseAllDNAParticles()
 {
     try
     {
+        //REDRAW
         for (auto& ParticleObject : Particles)
             if (ParticleObject.second.EntityId == CellEngineConfigDataObject.DNAIdentifier)
             {
