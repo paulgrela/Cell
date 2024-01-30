@@ -14,6 +14,8 @@
 #include "CellEngineVoxelSimulationSpace.h"
 #include "CellEngineOpenGLVisualiserOfVoxelSimulationSpace.h"
 
+#include "TerminalColorsUtils.h"
+
 using namespace std;
 
 [[nodiscard]] float CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(UnsignedInt CoordinateParam)
@@ -275,16 +277,16 @@ void CellEngineVoxelSimulationSpace::AddBasicParticlesKindsAndReactions()
         const string DNASequenceForTestCutCrisper = "RNA";
         const string RNASequenceForTestCutCrisper = "ANY";
 
-        AddChemicalReaction(Reaction(1101, "STD", "CH3CH2(OH) + DNA + ", { { 5, 1, "", true }, { 10001, 1, DNASequenceForTestFindingDNA, false } }, { { 10, 1, "", true } }, nullptr, "standard normal reaction example"));
+        AddChemicalReaction(Reaction(1101, "STD ONLY WITH SEQ", "CH3CH2(OH) + DNA + ", { { 5, 1, "", true }, { 10001, 1, DNASequenceForTestFindingDNA, false } }, { { 10, 1, "", true } }, nullptr, "standard normal reaction example"));
 
-        AddChemicalReaction(Reaction(10, "ONLY WITH SEQ", "CH3CH2(OH) + DNA + ", { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink1, false } }, {}, &CellEngineVoxelSimulationSpace::CutDNAInChosenPlaceSpecialReactionFunction, "only in presence of chosen sequence of DNA"));
+        AddChemicalReaction(Reaction(10, "CUT 1 SEQ", "CH3CH2(OH) + DNA + ", { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink1, false } }, {}, &CellEngineVoxelSimulationSpace::CutDNAInChosenPlaceSpecialReactionFunction, "only in presence of chosen sequence of DNA"));
 
         AddChemicalReaction(Reaction(20, "LINK 1 SEQ", "CH3CH2(OH) + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink1, false }, { 10001, 1, DNASequence2ForTestCutLink1, false } }, {}, &CellEngineVoxelSimulationSpace::LinkDNAInChosenPlaceSpecialReactionFunction, "links one strand of DNA with 2 endings with chosen sequences"));
         AddChemicalReaction(Reaction(30, "LINK 1 ANY", "CH3CH2(OH) + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 2, DNASequence1ForTestCutLink1Any, false } }, {}, &CellEngineVoxelSimulationSpace::LinkDNAInAnyPlaceSpecialReactionFunction, "link one strand of DNA with 2 endings with any sequence"));
 
-        AddChemicalReaction(Reaction(40, "CUT 2 SEQ SHIFT", "CH3CHCH2 + DNA + ", 3, 10, { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink2, false } }, { { 86, 1, "", true } }, &CellEngineVoxelSimulationSpace::CutDNAInChosenPlaceSpecialReactionFunction, "cuts both strands when found first sequence plus additional shift in both strands defined by additional parameters shift1=3 shift=10"));
-        AddChemicalReaction(Reaction(41, "CUT 2 SEQ SHIFT", "CH3CHCH2 + DNA + ", 7, 3, { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink2, false } }, { { 86, 1, "", true } }, &CellEngineVoxelSimulationSpace::CutDNAInChosenPlaceSpecialReactionFunction, "cuts both strands when found first sequence plus additional shift in both strands defined by additional parameters shift1=7 shift2=3"));
-        AddChemicalReaction(Reaction(42, "CUT 2 SEQ SHIFT", "CH3CHCH2 + DNA + ", 10, 3, { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink2, false } }, { { 86, 1, "", true } }, &CellEngineVoxelSimulationSpace::CutDNAInChosenPlaceSpecialReactionFunction, "cuts both strands when found first sequence plus additional shift in both strands defined by additional parameters shift1=10 shift2=3"));
+        AddChemicalReaction(Reaction(40, "CUT 2 SEQ SHIFT 3 10", "CH3CHCH2 + DNA + ", 3, 10, { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink2, false } }, { { 86, 1, "", true } }, &CellEngineVoxelSimulationSpace::CutDNAInChosenPlaceSpecialReactionFunction, "cuts both strands when found first sequence plus additional shift in both strands defined by additional parameters shift1=3 shift=10"));
+        AddChemicalReaction(Reaction(41, "CUT 2 SEQ SHIFT 7 3", "CH3CHCH2 + DNA + ", 7, 3, { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink2, false } }, { { 86, 1, "", true } }, &CellEngineVoxelSimulationSpace::CutDNAInChosenPlaceSpecialReactionFunction, "cuts both strands when found first sequence plus additional shift in both strands defined by additional parameters shift1=7 shift2=3"));
+        AddChemicalReaction(Reaction(42, "CUT 2 SEQ SHIFT 10 3", "CH3CHCH2 + DNA + ", 10, 3, { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink2, false } }, { { 86, 1, "", true } }, &CellEngineVoxelSimulationSpace::CutDNAInChosenPlaceSpecialReactionFunction, "cuts both strands when found first sequence plus additional shift in both strands defined by additional parameters shift1=10 shift2=3"));
 
         AddChemicalReaction(Reaction(60, "LINK 2 SEQ COMPLEMENT", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, "TACAAAAAAAGAGGTGTTAGC", false }, { 10001, 1, "TCTTATT", false } }, {}, &CellEngineVoxelSimulationSpace::LinkDNALigaseInChosenPlaceSpecialReactionFunction, "Links both DNA strands if first strand has first sequence and second strand has second sequence and opposite joining strands and complementary"));
         AddChemicalReaction(Reaction(61, "LINK 2 SEQ COMPLEMENT", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, "TACAAAAAAAGAGGTGTTAGCTCTT", false }, { 10001, 1, "ATTATGA", false } }, {}, &CellEngineVoxelSimulationSpace::LinkDNALigaseInChosenPlaceSpecialReactionFunction, "Links both DNA strands if first strand has first sequence and second strand has second sequence and opposite joining strands and complementary"));
@@ -407,6 +409,8 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfDiffusionForSelectedRangeO
 
             NewVoxelsForParticle.clear();
             bool Collision = false;
+
+            //MOVE OBJECT - najpierw sprawdz czy wolny obiekt osobna funkcja!
 
             for (auto &VoxelForParticle: LocalParticleObject.ListOfVoxels)
                 if (GetSpaceVoxel(VoxelForParticle.X + ShiftX, VoxelForParticle.Y + ShiftY,VoxelForParticle.Z + ShiftZ) == 0 && VoxelForParticle.X + ShiftX >= StartXPosParam && VoxelForParticle.X + ShiftX < StartXPosParam + SizeXParam && VoxelForParticle.Y + ShiftY >= StartYPosParam && VoxelForParticle.Y + ShiftY < StartYPosParam + SizeYParam && VoxelForParticle.Z + ShiftZ >= StartZPosParam && VoxelForParticle.Z + ShiftZ < StartZPosParam + SizeZParam)
@@ -546,7 +550,7 @@ bool CellEngineVoxelSimulationSpace::CutDNAInChosenPlaceSpecialReactionFunction(
     {
         if (NucleotidesIndexesChosenForReaction.size() == 1)
         {
-            LoggersManagerObject.Log(STREAM("CUT 10 or 2 inside 1"));
+            LoggersManagerObject.Log(STREAM("CUT 10 or 40 inside 1"));
 
             auto NucleotidePtr1 = get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[0].second].SequenceStr.length() + ReactionObject.AdditionalParameter1, GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first), false, false, [](const Particle*){ return true; }));
 
@@ -590,12 +594,17 @@ bool CellEngineVoxelSimulationSpace::LinkDNAInChosenPlaceSpecialReactionFunction
 
             LoggersManagerObject.Log(STREAM("NUCLEOTIDE 1 GENOME INDEX = " << NucleotideObjectForReactionPtr1->GenomeIndex));
             LoggersManagerObject.Log(STREAM("NUCLEOTIDE 2 GENOME INDEX = " << NucleotideObjectForReactionPtr2->GenomeIndex));
+            LoggersManagerObject.Log(STREAM("NUCLEOTIDE 1INV GENOME INDEX = " << NucleotideObjectForReactionPtr1Inv->GenomeIndex));
+            LoggersManagerObject.Log(STREAM("NUCLEOTIDE 2INV GENOME INDEX = " << NucleotideObjectForReactionPtr2Inv->GenomeIndex));
 
             if (NucleotideObjectForReactionPtr1->Prev == nullptr && NucleotideObjectForReactionPtr2->Next == nullptr)
                 LinkDNA(NucleotideObjectForReactionPtr1, NucleotideObjectForReactionPtr2);
             else
             if (NucleotideObjectForReactionPtr2Inv->Prev == nullptr && NucleotideObjectForReactionPtr1Inv->Next == nullptr)
                 LinkDNA(NucleotideObjectForReactionPtr2, NucleotideObjectForReactionPtr1);
+            else
+            if (NucleotideObjectForReactionPtr2Inv->Next == nullptr && NucleotideObjectForReactionPtr1Inv->Prev == nullptr)
+                LinkDNA(NucleotideObjectForReactionPtr1Inv, NucleotideObjectForReactionPtr2Inv);
 
             return true;
         }
@@ -764,6 +773,8 @@ bool CellEngineVoxelSimulationSpace::PolymeraseDNAStartSpecialReactionFunction(c
 
         if (NucleotidesFreeFoundInProximity.empty() == false)
         {
+            LoggersManagerObject.Log(STREAM("ParticleIndex = " << to_string(ParticlesIndexesChosenForReaction[0].first)));
+
             GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).AddNewLinkToParticle(&GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]));
             GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).AddNewLinkToParticle(&GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first));
 
@@ -796,16 +807,16 @@ bool CellEngineVoxelSimulationSpace::PolymeraseDNAContinueSpecialReactionFunctio
 
             //REDRAW
             //PRZESUN WOLNY NUKLEOTYD
-            SetAllVoxelsInListOfVoxelsToValue(GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]).ListOfVoxels, GetZeroSimulationSpaceVoxel());
-            for (auto &VoxelForParticle: GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]).ListOfVoxels)
-                VoxelForParticle.X = GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).LinkedParticlesPointersList[0]->Next->ListOfVoxels[0].X + 2;
-            SetAllVoxelsInListOfVoxelsToValue(GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]).ListOfVoxels, NucleotidesFreeFoundInProximity[0]);
-
-            //PRZESUN BIALKO
-            SetAllVoxelsInListOfVoxelsToValue(GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).ListOfVoxels, GetZeroSimulationSpaceVoxel());
-            for (auto &VoxelForParticle: GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).ListOfVoxels)
-                VoxelForParticle.X = GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).LinkedParticlesPointersList[1]->ListOfVoxels[0].X + 2;
-            SetAllVoxelsInListOfVoxelsToValue(GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).ListOfVoxels, ParticlesIndexesChosenForReaction[0].first);
+//            SetAllVoxelsInListOfVoxelsToValue(GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]).ListOfVoxels, GetZeroSimulationSpaceVoxel());
+//            for (auto &VoxelForParticle: GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]).ListOfVoxels)
+//                VoxelForParticle.X = GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).LinkedParticlesPointersList[0]->Next->ListOfVoxels[0].X + 2;
+//            SetAllVoxelsInListOfVoxelsToValue(GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]).ListOfVoxels, NucleotidesFreeFoundInProximity[0]);
+//
+//            //PRZESUN BIALKO
+//            SetAllVoxelsInListOfVoxelsToValue(GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).ListOfVoxels, GetZeroSimulationSpaceVoxel());
+//            for (auto &VoxelForParticle: GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).ListOfVoxels)
+//                VoxelForParticle.X = GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).LinkedParticlesPointersList[1]->ListOfVoxels[0].X + 2;
+//            SetAllVoxelsInListOfVoxelsToValue(GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).ListOfVoxels, ParticlesIndexesChosenForReaction[0].first);
         }
     }
     CATCH("linking dna in chosen place in special reaction function")
@@ -884,7 +895,7 @@ bool CellEngineVoxelSimulationSpace::CompareFitnessOfDNASequenceByNucleotidesLoo
             FoundSequenceNotFit = !(NucleotidesSequenceToCompareString == TemplateSequenceStr);
 
         if (FoundSequenceNotFit == false)
-            LoggersManagerObject.Log(STREAM("DNA SEQUENCE FOUND FIT"));
+            LoggersManagerObject.Log(STREAM(terminal_colors_utils::green << "DNA SEQUENCE FOUND FIT" << terminal_colors_utils::white));
     }
     CATCH("comparing fitness of dna sequence by nucleotides loop")
 
@@ -895,7 +906,7 @@ tuple<vector<pair<UniqueIdInt, UnsignedInt>>, bool> CellEngineVoxelSimulationSpa
 {
     bool AllAreZero = false;
 
-    vector<pair<UniqueIdInt, UnsignedInt>> NucleotidesIndexesChosenForReaction, ParticlesIndexesChosenForReaction;
+    vector<pair<UniqueIdInt, UnsignedInt>> NucleotidesIndexesChosenForReaction, ParticlesIndexesChosenForReaction, AllParticlesIndexesChosenForReaction;
 
     vector<UnsignedInt> ReactantsCounters(ReactionObject.Reactants.size());
 
@@ -927,6 +938,7 @@ tuple<vector<pair<UniqueIdInt, UnsignedInt>>, bool> CellEngineVoxelSimulationSpa
 
             if (ReactantIterator != ReactionObject.Reactants.end() && ReactantsCounters[PositionInReactants] > 0)
             {
+                AllParticlesIndexesChosenForReaction.emplace_back(ParticleObjectIndex, PositionInReactants);
                 LoggersManagerObject.Log(STREAM("CHOSEN ParticleObjectIndex = " << to_string(ParticleObjectIndex) <<" EntityId = " << to_string(ParticleObjectTestedForReaction.EntityId) << " X = " << to_string(ParticleObjectTestedForReaction.XCenter) << " Y = " << to_string(ParticleObjectTestedForReaction.YCenter) << " Z = " << to_string(ParticleObjectTestedForReaction.ZCenter) << endl));
                 ReactantsCounters[PositionInReactants]--;
             }
@@ -941,7 +953,7 @@ tuple<vector<pair<UniqueIdInt, UnsignedInt>>, bool> CellEngineVoxelSimulationSpa
         }
 
         if (AllAreZero == true || (AllAreZero == false && (ReactionObject.Id == 30 || ReactionObject.Id == 80 || ReactionObject.Id == 70)))
-            ReactionObject.SpecialReactionFunction(this, ParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject);
+            ReactionObject.SpecialReactionFunction(this, AllParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject);
     }
     CATCH("choosing particles for reaction from all particles in proximity")
 
