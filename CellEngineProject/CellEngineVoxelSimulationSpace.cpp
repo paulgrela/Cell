@@ -138,6 +138,7 @@ void CellEngineVoxelSimulationSpace::GetMinMaxCoordinatesForParticle(Particle& P
         {
             for (auto& VoxelCoordinates : ParticleObject.ListOfVoxels)
                 ParticleKindObject.ListOfVoxels.emplace_back(VoxelCoordinates.X - ParticleXMin, VoxelCoordinates.Y - ParticleYMin, VoxelCoordinates.Z - ParticleZMin);
+
             ParticleKindObject.XSizeDiv2 = (ParticleXMax - ParticleXMin) / 2;
             ParticleKindObject.YSizeDiv2 = (ParticleYMax - ParticleYMin) / 2;
             ParticleKindObject.ZSizeDiv2 = (ParticleZMax - ParticleZMin) / 2;
@@ -765,6 +766,8 @@ bool CellEngineVoxelSimulationSpace::LinkDNALigaseInChosenPlaceSpecialReactionFu
     return false;
 }
 
+static UnsignedInt aaa = 2;
+
 bool CellEngineVoxelSimulationSpace::PolymeraseDNAStartSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject)
 {
     try
@@ -780,12 +783,20 @@ bool CellEngineVoxelSimulationSpace::PolymeraseDNAStartSpecialReactionFunction(c
 
             //REDRAW
             SetAllVoxelsInListOfVoxelsToValue(GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]).ListOfVoxels, GetZeroSimulationSpaceVoxel());
+
+            UnsignedInt VecX = GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).ListOfVoxels[0].X - GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]).ListOfVoxels[0].X;
+            UnsignedInt VecY = GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).ListOfVoxels[0].Y - GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]).ListOfVoxels[0].Y;
+            UnsignedInt VecZ = GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).ListOfVoxels[0].Z - GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]).ListOfVoxels[0].Z;
+
             for (auto &VoxelForParticle: GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]).ListOfVoxels)
             {
-                VoxelForParticle.X = GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).ListOfVoxels[0].X + 2;
-                VoxelForParticle.Y = GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).ListOfVoxels[0].Y + 2;
-                VoxelForParticle.Z = GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).ListOfVoxels[0].Z + 2;
+                VoxelForParticle.X += aaa + VecX;
+                VoxelForParticle.Y += VecY;
+                VoxelForParticle.Z += VecZ;
             }
+
+            aaa += 2;
+            
             SetAllVoxelsInListOfVoxelsToValue(GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]).ListOfVoxels, NucleotidesFreeFoundInProximity[0]);
         }
     }
