@@ -350,7 +350,8 @@ void CellEngineVoxelSimulationSpace::GenerateRandomParticlesInSelectedSpace(cons
                     for (UnsignedInt PosY = RandomPosY; PosY < RandomPosY + RandomSizeOfParticle; PosY++)
                         for (UnsignedInt PosZ = RandomPosZ; PosZ < RandomPosZ + RandomSizeOfParticle; PosZ++)
                         {
-                            if (GetSpaceVoxel(PosX, PosY, PosZ) == 0)
+                            //REDRAW MOVE
+                            if (GetSpaceVoxel(PosX, PosY, PosZ) == GetZeroSimulationSpaceVoxel())
                             {
                                 FilledVoxelsForRandomParticle.emplace_back(PosX, PosY, PosZ);
                                 GetSpaceVoxel(PosX, PosY, PosZ) = LocalNewParticleIndex;
@@ -412,7 +413,6 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfDiffusionForSelectedRangeO
             bool Collision = false;
 
             //MOVE OBJECT - najpierw sprawdz czy wolny obiekt osobna funkcja!
-
             for (auto &VoxelForParticle: LocalParticleObject.ListOfVoxels)
                 if (GetSpaceVoxel(VoxelForParticle.X + ShiftX, VoxelForParticle.Y + ShiftY,VoxelForParticle.Z + ShiftZ) == 0 && VoxelForParticle.X + ShiftX >= StartXPosParam && VoxelForParticle.X + ShiftX < StartXPosParam + SizeXParam && VoxelForParticle.Y + ShiftY >= StartYPosParam && VoxelForParticle.Y + ShiftY < StartYPosParam + SizeYParam && VoxelForParticle.Z + ShiftZ >= StartZPosParam && VoxelForParticle.Z + ShiftZ < StartZPosParam + SizeZParam)
                 {
@@ -766,7 +766,62 @@ bool CellEngineVoxelSimulationSpace::LinkDNALigaseInChosenPlaceSpecialReactionFu
     return false;
 }
 
-static UnsignedInt aaa = 2;
+void CellEngineVoxelSimulationSpace::MoveParticleByVector(Particle& ParticleObject, const UnsignedInt VectorX, const UnsignedInt VectorY, const UnsignedInt VectorZ)
+{
+    try
+    {
+        SetAllVoxelsInListOfVoxelsToValue(ParticleObject.ListOfVoxels, GetZeroSimulationSpaceVoxel());
+        for (auto &VoxelOfParticle: ParticleObject.ListOfVoxels)
+        {
+            VoxelOfParticle.X += VectorX;
+            VoxelOfParticle.Y += VectorY;
+            VoxelOfParticle.Z += VectorZ;
+        }
+        SetAllVoxelsInListOfVoxelsToValue(ParticleObject.ListOfVoxels, ParticleObject.Index);
+    }
+    CATCH("moving particle by vector")
+}
+
+void CellEngineVoxelSimulationSpace::MoveParticleNearOtherParticle(Particle& ParticleObject, const Particle& NewPositionParticleObject, const SignedInt AddX,  const SignedInt AddY,  const SignedInt AddZ)
+{
+    try
+    {
+        MoveParticleByVector(ParticleObject, NewPositionParticleObject.ListOfVoxels[0].X - ParticleObject.ListOfVoxels[0].X + AddX, NewPositionParticleObject.ListOfVoxels[0].Y - ParticleObject.ListOfVoxels[0].Y + AddY, NewPositionParticleObject.ListOfVoxels[0].Z - ParticleObject.ListOfVoxels[0].Z + AddZ);
+    }
+    CATCH("moving particle near other particles")
+}
+
+bool CellEngineVoxelSimulationSpace::CheckFreeSpaceForParticleMovedByVector(Particle& ParticleObject, const UnsignedInt VectorX, const UnsignedInt VectorY, const UnsignedInt VectorZ)
+{
+    try
+    {
+        for (auto &VoxelOfParticle: ParticleObject.ListOfVoxels)
+            if (GetSpaceVoxel(VoxelOfParticle.X + VectorX, VoxelOfParticle.Y + VectorY, VoxelOfParticle.Z + VectorZ) != GetZeroSimulationSpaceVoxel())
+                return false;
+
+        return true;
+    }
+    CATCH("checking free space for particle moved by vector")
+}
+
+void CellEngineVoxelSimulationSpace::MoveParticleNearOtherParticleIfVoxelSpaceIsEmpty(Particle& ParticleObject, const Particle& NewPositionParticleObject, const SignedInt AddX,  const SignedInt AddY,  const SignedInt AddZ)
+{
+    try
+    {
+        MoveParticleByVectorIfVoxelSpaceIsEmpty(ParticleObject, NewPositionParticleObject.ListOfVoxels[0].X - ParticleObject.ListOfVoxels[0].X + AddX, NewPositionParticleObject.ListOfVoxels[0].Y - ParticleObject.ListOfVoxels[0].Y + AddY, NewPositionParticleObject.ListOfVoxels[0].Z - ParticleObject.ListOfVoxels[0].Z + AddZ);
+    }
+    CATCH("moving particle near other particles")
+}
+
+void CellEngineVoxelSimulationSpace::MoveParticleByVectorIfVoxelSpaceIsEmpty(Particle& ParticleObject, const UnsignedInt VectorX, const UnsignedInt VectorY, const UnsignedInt VectorZ)
+{
+    try
+    {
+        if (CheckFreeSpaceForParticleMovedByVector(ParticleObject, VectorX, VectorY, VectorZ) == true)
+            MoveParticleByVector(ParticleObject, VectorX, VectorY, VectorZ);
+    }
+    CATCH("moving particle by vector if voxel space is empty")
+}
 
 bool CellEngineVoxelSimulationSpace::PolymeraseDNAStartSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject)
 {
@@ -774,30 +829,14 @@ bool CellEngineVoxelSimulationSpace::PolymeraseDNAStartSpecialReactionFunction(c
     {
         LoggersManagerObject.Log(STREAM("POLYMERASE DNA START REACTION"));
 
-        if (NucleotidesFreeFoundInProximity.empty() == false)
+        if (NucleotidesFreeFoundInProximity.empty() == false && GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).LinkedParticlesPointersList.empty() == true)
         {
-            LoggersManagerObject.Log(STREAM("ParticleIndex = " << to_string(ParticlesIndexesChosenForReaction[0].first)));
+            LoggersManagerObject.Log(STREAM("ParticleIndex = " << to_string(ParticlesIndexesChosenForReaction[0].first) << " Nucleotide = " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first).ChainId) << " Nucleotide Index = " << GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first).GenomeIndex));
 
             GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).AddNewLinkToParticle(&GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]));
             GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).AddNewLinkToParticle(&GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first));
 
-            //REDRAW
-            SetAllVoxelsInListOfVoxelsToValue(GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]).ListOfVoxels, GetZeroSimulationSpaceVoxel());
-
-            UnsignedInt VecX = GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).ListOfVoxels[0].X - GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]).ListOfVoxels[0].X;
-            UnsignedInt VecY = GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).ListOfVoxels[0].Y - GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]).ListOfVoxels[0].Y;
-            UnsignedInt VecZ = GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).ListOfVoxels[0].Z - GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]).ListOfVoxels[0].Z;
-
-            for (auto &VoxelForParticle: GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]).ListOfVoxels)
-            {
-                VoxelForParticle.X += aaa + VecX;
-                VoxelForParticle.Y += VecY;
-                VoxelForParticle.Z += VecZ;
-            }
-
-            aaa += 2;
-            
-            SetAllVoxelsInListOfVoxelsToValue(GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]).ListOfVoxels, NucleotidesFreeFoundInProximity[0]);
+            MoveParticleNearOtherParticleIfVoxelSpaceIsEmpty(GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]), GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first), 2, 0, 0);
         }
     }
     CATCH("linking dna in chosen place in special reaction function")
@@ -811,23 +850,15 @@ bool CellEngineVoxelSimulationSpace::PolymeraseDNAContinueSpecialReactionFunctio
     {
         LoggersManagerObject.Log(STREAM("POLYMERASE DNA CONTINUE REACTION"));
 
+        LoggersManagerObject.Log(STREAM("Letter = " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(CellEngineUseful::GetPairedChainIdForDNAorRNA(GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).LinkedParticlesPointersList[0]->ChainId))));
+
         if (GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]).ChainId == CellEngineUseful::GetPairedChainIdForDNAorRNA(GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).LinkedParticlesPointersList[0]->ChainId))
         {
             GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).LinkedParticlesPointersList[0]->Next = &GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]);
             GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).LinkedParticlesPointersList[1] = GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).LinkedParticlesPointersList[1]->Next;
 
-            //REDRAW
-            //PRZESUN WOLNY NUKLEOTYD
-//            SetAllVoxelsInListOfVoxelsToValue(GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]).ListOfVoxels, GetZeroSimulationSpaceVoxel());
-//            for (auto &VoxelForParticle: GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]).ListOfVoxels)
-//                VoxelForParticle.X = GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).LinkedParticlesPointersList[0]->Next->ListOfVoxels[0].X + 2;
-//            SetAllVoxelsInListOfVoxelsToValue(GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]).ListOfVoxels, NucleotidesFreeFoundInProximity[0]);
-//
-//            //PRZESUN BIALKO
-//            SetAllVoxelsInListOfVoxelsToValue(GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).ListOfVoxels, GetZeroSimulationSpaceVoxel());
-//            for (auto &VoxelForParticle: GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).ListOfVoxels)
-//                VoxelForParticle.X = GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).LinkedParticlesPointersList[1]->ListOfVoxels[0].X + 2;
-//            SetAllVoxelsInListOfVoxelsToValue(GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).ListOfVoxels, ParticlesIndexesChosenForReaction[0].first);
+            MoveParticleNearOtherParticleIfVoxelSpaceIsEmpty(GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]), GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first), 4, 0, 0);
+            MoveParticleNearOtherParticleIfVoxelSpaceIsEmpty(GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first), *GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).LinkedParticlesPointersList[1], 4, 0, 0);
         }
     }
     CATCH("linking dna in chosen place in special reaction function")
@@ -1318,13 +1349,13 @@ void CellEngineVoxelSimulationSpace::GeneratePlanedParticlesInSelectedSpace(cons
         auto P9 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 10, 1, -1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
         FillSquareParticle(StartXPosParam + 21, StartYPosParam + 5, StartZPosParam + 3, P9, 2, 2, 2);
 
-        auto P10 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), CellEngineConfigDataObject.RNAIdentifier, CellEngineUseful::GetChainIdFromLetterForDNAorRNA('C'), -1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
+        auto P10 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), CellEngineConfigDataObject.RNAIdentifier, CellEngineUseful::GetChainIdFromLetterForDNAorRNA('T'), -1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
         FillSquareParticle(StartXPosParam + 9, StartYPosParam + 12, StartZPosParam + 3, P10, 2, 2, 1);
 
-        auto P11 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), CellEngineConfigDataObject.RNAIdentifier, CellEngineUseful::GetChainIdFromLetterForDNAorRNA('C'), -1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
+        auto P11 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), CellEngineConfigDataObject.RNAIdentifier, CellEngineUseful::GetChainIdFromLetterForDNAorRNA('A'), -1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
         FillSquareParticle(StartXPosParam + 9, StartYPosParam + 16, StartZPosParam + 3, P11, 2, 2, 1);
 
-        auto P12 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), CellEngineConfigDataObject.RNAIdentifier, CellEngineUseful::GetChainIdFromLetterForDNAorRNA('T'), -1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
+        auto P12 = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), CellEngineConfigDataObject.RNAIdentifier, CellEngineUseful::GetChainIdFromLetterForDNAorRNA('C'), -1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
         FillSquareParticle(StartXPosParam + 9, StartYPosParam + 19, StartZPosParam + 3, P12, 2, 2, 1);
 
         GenerateOneStrand(CellEngineConfigDataObject.RNAIdentifier, "UCGAGAA", StartXPosParam + 5, StartYPosParam + 5, StartZPosParam + 3, 2, 1, 2, 2, 0, 0);

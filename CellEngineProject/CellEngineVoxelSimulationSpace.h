@@ -59,6 +59,12 @@ public:
 public:
     void SetStartValuesForSpaceMinMax();
 public:
+    void MoveParticleByVector(Particle& ParticleObject, UnsignedInt VectorX, UnsignedInt VectorY, UnsignedInt VectorZ);
+    void MoveParticleNearOtherParticle(Particle& ParticleObject, const Particle& NewPositionParticleObject, SignedInt AddX, SignedInt AddY, SignedInt AddZ);
+    bool CheckFreeSpaceForParticleMovedByVector(Particle& ParticleObject, UnsignedInt VectorX, UnsignedInt VectorY, UnsignedInt VectorZ);
+    void MoveParticleByVectorIfVoxelSpaceIsEmpty(Particle& ParticleObject, UnsignedInt VectorX, UnsignedInt VectorY, UnsignedInt VectorZ);
+    void MoveParticleNearOtherParticleIfVoxelSpaceIsEmpty(Particle& ParticleObject, const Particle& NewPositionParticleObject, SignedInt AddX, SignedInt AddY, SignedInt AddZ);
+
     void SetAllVoxelsInListOfVoxelsToValue(std::vector<vector3_16>& ListOfVoxels, SimulationSpaceVoxel SimulationSpaceVoxelValue);
     void MakeZeroVoxelsForSelectedSpace(UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt StepXParam, UnsignedInt StepYParam, UnsignedInt StepZParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
 public:
