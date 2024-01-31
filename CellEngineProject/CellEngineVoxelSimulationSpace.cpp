@@ -823,6 +823,16 @@ void CellEngineVoxelSimulationSpace::MoveParticleByVectorIfVoxelSpaceIsEmpty(Par
     CATCH("moving particle by vector if voxel space is empty")
 }
 
+//void CellEngineVoxelSimulationSpace::MoveParticleNearOtherParticleIfVoxelSpaceIsEmpty(Particle& ParticleObject, const Particle& NewPositionParticleObject, const SignedInt AddX,  const SignedInt AddY,  const SignedInt AddZ)
+//{
+//    try
+//    {
+//        MoveParticleByVectorIfVoxelSpaceIsEmpty(ParticleObject, NewPositionParticleObject.ListOfVoxels[0].X - ParticleObject.ListOfVoxels[0].X + AddX, NewPositionParticleObject.ListOfVoxels[0].Y - ParticleObject.ListOfVoxels[0].Y + AddY, NewPositionParticleObject.ListOfVoxels[0].Z - ParticleObject.ListOfVoxels[0].Z + AddZ);
+//          //jesli tu sie nie udalo to wyorobuj okoliczne pola
+//    }
+//    CATCH("moving particle near other particles")
+//}
+
 bool CellEngineVoxelSimulationSpace::PolymeraseDNAStartSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject)
 {
     try
@@ -834,7 +844,7 @@ bool CellEngineVoxelSimulationSpace::PolymeraseDNAStartSpecialReactionFunction(c
             LoggersManagerObject.Log(STREAM("ParticleIndex = " << to_string(ParticlesIndexesChosenForReaction[0].first) << " Nucleotide = " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first).ChainId) << " Nucleotide Index = " << GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first).GenomeIndex));
 
             GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).AddNewLinkToParticle(&GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]));
-            GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).AddNewLinkToParticle(&GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first));
+            GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).AddNewLinkToParticle(GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first).Next);
 
             MoveParticleNearOtherParticleIfVoxelSpaceIsEmpty(GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first), *GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).LinkedParticlesPointersList[1], 4, 0, 0);
             MoveParticleNearOtherParticleIfVoxelSpaceIsEmpty(GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]), GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first), 2, 0, 0);
@@ -851,16 +861,29 @@ bool CellEngineVoxelSimulationSpace::PolymeraseDNAContinueSpecialReactionFunctio
     {
         LoggersManagerObject.Log(STREAM("POLYMERASE DNA CONTINUE REACTION"));
 
-        LoggersManagerObject.Log(STREAM("Letter = " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]).ChainId) << " " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(CellEngineUseful::GetPairedChainIdForDNAorRNA(GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).LinkedParticlesPointersList[1]->ChainId))));
+        auto& ParticleObject = GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first);
 
-        if (GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]).ChainId == CellEngineUseful::GetPairedChainIdForDNAorRNA(GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).LinkedParticlesPointersList[1]->ChainId))
+        LoggersManagerObject.Log(STREAM("Particle Object Index = " << ParticlesIndexesChosenForReaction[0].first));
+
+        for (auto& NucleotideFree : NucleotidesFreeFoundInProximity)
+            LoggersManagerObject.Log(STREAM("FOUND FREE NUCLEOTIDES = " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(GetParticleFromIndex(NucleotideFree).ChainId)));
+
+        LoggersManagerObject.Log(STREAM("Letter to find = " <<  CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.LinkedParticlesPointersList[1]->ChainId) << " NEXT " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.LinkedParticlesPointersList[1]->Next->ChainId)));
+
+        auto ChosenNucleotideIterator = find_if(NucleotidesFreeFoundInProximity.cbegin(), NucleotidesFreeFoundInProximity.cend(), [this, ParticleObject](const UniqueIdInt& NucleotideParticleIndex){ return &GetParticleFromIndex(NucleotideParticleIndex) != ParticleObject.LinkedParticlesPointersList[0] && GetParticleFromIndex(NucleotideParticleIndex).ChainId == ParticleObject.LinkedParticlesPointersList[1]->ChainId; });
+        if (ChosenNucleotideIterator != NucleotidesFreeFoundInProximity.end())
         {
-            GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).LinkedParticlesPointersList[0]->Next = &GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]);
-            GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).LinkedParticlesPointersList[1] = GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).LinkedParticlesPointersList[1]->Next;
+            Particle* ChosenNucleotide = &GetParticleFromIndex(*ChosenNucleotideIterator);
 
-            //ZA DRUGIM CZYLI PIERWSZYM TUTAJ ZNAJDUJE TEN SAM NUKLEOTYD WIEC GO PRZESUWA A PRZECIEZ ON JUZ NIE WOLNY BO PRZYSPAWANY DO BIALKA
-            MoveParticleNearOtherParticleIfVoxelSpaceIsEmpty(GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]), GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first), 2, 0, 0);
-            MoveParticleNearOtherParticleIfVoxelSpaceIsEmpty(GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first), *GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).LinkedParticlesPointersList[1], 4, 0, 0);
+            LoggersManagerObject.Log(STREAM("Letter to compare = " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ChosenNucleotide->ChainId) << " " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.LinkedParticlesPointersList[1]->ChainId) << " NEXT " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.LinkedParticlesPointersList[1]->Next->ChainId)));
+
+            LinkDNA(ChosenNucleotide, ParticleObject.LinkedParticlesPointersList[0]);
+            ParticleObject.LinkedParticlesPointersList[1] = ParticleObject.LinkedParticlesPointersList[1]->Next;
+
+            MoveParticleNearOtherParticle(ParticleObject, *ParticleObject.LinkedParticlesPointersList[1], 4, 0, 0);
+            MoveParticleNearOtherParticle(*ChosenNucleotide, ParticleObject, 2, 0, 0);
+
+                LoggersManagerObject.Log(STREAM("Q NEXT Letter to find = " <<  CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.LinkedParticlesPointersList[1]->ChainId)));
         }
     }
     CATCH("linking dna in chosen place in special reaction function")
@@ -1190,6 +1213,7 @@ bool CellEngineVoxelSimulationSpace::FindParticlesInProximityOfVoxelSimulationSp
                         if (GetSpaceVoxel(PosX, PosY, PosZ) != 0)
                         {
                             UniqueIdInt ParticleIndex = GetSpaceVoxel(PosX, PosY, PosZ);
+
                             if (FoundParticleIndexes.find(ParticleIndex) == FoundParticleIndexes.end())
                             {
                                 ParticlesSortedByCapacityFoundInProximity.emplace_back(ParticleIndex);
@@ -1274,7 +1298,10 @@ void CellEngineVoxelSimulationSpace::GenerateChosenReactionForSelectedVoxelSpace
     try
     {
         if (FindParticlesInProximityOfVoxelSimulationSpaceForSelectedVoxelSpace(StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam) == true)
-            FindAndExecuteChosenReaction(ReactionId);
+        {
+            if (ReactionId != 0)
+                FindAndExecuteChosenReaction(ReactionId);
+        }
     }
     CATCH("generating random reaction for particle")
 }
