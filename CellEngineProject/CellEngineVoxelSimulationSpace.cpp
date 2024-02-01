@@ -400,37 +400,36 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfDiffusionForSelectedRangeO
         GetRangeOfParticlesForRandomParticles(StartParticleIndexParam, EndParticleIndexParam, MaxParticleIndex);
 
         for (UniqueIdInt ParticleIndex = StartParticleIndexParam; ParticleIndex <= EndParticleIndexParam; ParticleIndex++)
-        {
-            auto &LocalParticleObject = Particles[ParticleIndex];
-
-            SetAllVoxelsInListOfVoxelsToValue(LocalParticleObject.ListOfVoxels, GetZeroSimulationSpaceVoxel());
-
-            SignedInt ShiftX = UniformDistributionObjectSizeOfParticle_int64t(mt64R);
-            SignedInt ShiftY = UniformDistributionObjectSizeOfParticle_int64t(mt64R);
-            SignedInt ShiftZ = UniformDistributionObjectSizeOfParticle_int64t(mt64R);
-
-            NewVoxelsForParticle.clear();
-            bool Collision = false;
-
-            //MOVE OBJECT - najpierw sprawdz czy wolny obiekt osobna funkcja!
-            for (auto &VoxelForParticle: LocalParticleObject.ListOfVoxels)
-                if (GetSpaceVoxel(VoxelForParticle.X + ShiftX, VoxelForParticle.Y + ShiftY,VoxelForParticle.Z + ShiftZ) == 0 && VoxelForParticle.X + ShiftX >= StartXPosParam && VoxelForParticle.X + ShiftX < StartXPosParam + SizeXParam && VoxelForParticle.Y + ShiftY >= StartYPosParam && VoxelForParticle.Y + ShiftY < StartYPosParam + SizeYParam && VoxelForParticle.Z + ShiftZ >= StartZPosParam && VoxelForParticle.Z + ShiftZ < StartZPosParam + SizeZParam)
-                {
-                    //REDRAW
-                    GetSpaceVoxel(VoxelForParticle.X + ShiftX, VoxelForParticle.Y + ShiftY, VoxelForParticle.Z + ShiftZ) = ParticleIndex;
-                    NewVoxelsForParticle.emplace_back(VoxelForParticle.X + ShiftX, VoxelForParticle.Y + ShiftY, VoxelForParticle.Z + ShiftZ);
-                }
-                else
-                {
-                    SetAllVoxelsInListOfVoxelsToValue(NewVoxelsForParticle, GetZeroSimulationSpaceVoxel());
-                    SetAllVoxelsInListOfVoxelsToValue(LocalParticleObject.ListOfVoxels, ParticleIndex);
-                    Collision = true;
-                    break;
-                }
-
-            if (Collision == false)
-                LocalParticleObject.ListOfVoxels = NewVoxelsForParticle;
-        }
+            MoveParticleByVectorIfVoxelSpaceIsEmptyAndIsInBounds(Particles[ParticleIndex], UniformDistributionObjectSizeOfParticle_int64t(mt64R), UniformDistributionObjectSizeOfParticle_int64t(mt64R), UniformDistributionObjectSizeOfParticle_int64t(mt64R), StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
+//        {
+//            auto &LocalParticleObject = Particles[ParticleIndex];
+//
+//            SetAllVoxelsInListOfVoxelsToValue(LocalParticleObject.ListOfVoxels, GetZeroSimulationSpaceVoxel());
+//
+//            SignedInt ShiftX = UniformDistributionObjectSizeOfParticle_int64t(mt64R);
+//            SignedInt ShiftY = UniformDistributionObjectSizeOfParticle_int64t(mt64R);
+//            SignedInt ShiftZ = UniformDistributionObjectSizeOfParticle_int64t(mt64R);
+//
+//            NewVoxelsForParticle.clear();
+//            bool Collision = false;
+//
+//            for (auto &VoxelForParticle : LocalParticleObject.ListOfVoxels)
+//                if (GetSpaceVoxel(VoxelForParticle.X + ShiftX, VoxelForParticle.Y + ShiftY,VoxelForParticle.Z + ShiftZ) == 0 && VoxelForParticle.X + ShiftX >= StartXPosParam && VoxelForParticle.X + ShiftX < StartXPosParam + SizeXParam && VoxelForParticle.Y + ShiftY >= StartYPosParam && VoxelForParticle.Y + ShiftY < StartYPosParam + SizeYParam && VoxelForParticle.Z + ShiftZ >= StartZPosParam && VoxelForParticle.Z + ShiftZ < StartZPosParam + SizeZParam)
+//                {
+//                    GetSpaceVoxel(VoxelForParticle.X + ShiftX, VoxelForParticle.Y + ShiftY, VoxelForParticle.Z + ShiftZ) = ParticleIndex;
+//                    NewVoxelsForParticle.emplace_back(VoxelForParticle.X + ShiftX, VoxelForParticle.Y + ShiftY, VoxelForParticle.Z + ShiftZ);
+//                }
+//                else
+//                {
+//                    SetAllVoxelsInListOfVoxelsToValue(NewVoxelsForParticle, GetZeroSimulationSpaceVoxel());
+//                    SetAllVoxelsInListOfVoxelsToValue(LocalParticleObject.ListOfVoxels, ParticleIndex);
+//                    Collision = true;
+//                    break;
+//                }
+//
+//            if (Collision == false)
+//                LocalParticleObject.ListOfVoxels = NewVoxelsForParticle;
+//        }
     }
     CATCH("generating one step of diffusion")
 }
@@ -766,7 +765,7 @@ bool CellEngineVoxelSimulationSpace::LinkDNALigaseInChosenPlaceSpecialReactionFu
     return false;
 }
 
-void CellEngineVoxelSimulationSpace::MoveParticleByVector(Particle& ParticleObject, const UnsignedInt VectorX, const UnsignedInt VectorY, const UnsignedInt VectorZ)
+void CellEngineVoxelSimulationSpace::MoveParticleByVector(Particle& ParticleObject, const SignedInt VectorX, const SignedInt VectorY, const SignedInt VectorZ)
 {
     try
     {
@@ -791,7 +790,7 @@ void CellEngineVoxelSimulationSpace::MoveParticleNearOtherParticle(Particle& Par
     CATCH("moving particle near other particles")
 }
 
-bool CellEngineVoxelSimulationSpace::CheckFreeSpaceForParticleMovedByVector(Particle& ParticleObject, const UnsignedInt VectorX, const UnsignedInt VectorY, const UnsignedInt VectorZ)
+bool CellEngineVoxelSimulationSpace::CheckFreeSpaceForParticleMovedByVector(Particle& ParticleObject, const SignedInt VectorX, const SignedInt VectorY, const SignedInt VectorZ)
 {
     try
     {
@@ -804,16 +803,57 @@ bool CellEngineVoxelSimulationSpace::CheckFreeSpaceForParticleMovedByVector(Part
     return true;
 }
 
+bool CellEngineVoxelSimulationSpace::CheckBoundsForParticleMovedByVector(Particle& ParticleObject, const SignedInt VectorX, const SignedInt VectorY, const SignedInt VectorZ, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
+{
+    try
+    {
+        for (auto &VoxelOfParticle: ParticleObject.ListOfVoxels)
+                if (VoxelOfParticle.X + VectorX >= StartXPosParam && VoxelOfParticle.X + VectorX < StartXPosParam + SizeXParam && VoxelOfParticle.Y + VectorY >= StartYPosParam && VoxelOfParticle.Y + VectorY < StartYPosParam + SizeYParam && VoxelOfParticle.Z + VectorZ >= StartZPosParam && VoxelOfParticle.Z + VectorZ < StartZPosParam + SizeZParam)
+                    return false;
+    }
+    CATCH("checking bounds for particle moved by vector")
+
+    return true;
+}
+
+bool CellEngineVoxelSimulationSpace::CheckBoundsAndFreeSpaceForParticleMovedByVector(Particle& ParticleObject, const SignedInt VectorX, const SignedInt VectorY, const SignedInt VectorZ, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
+{
+    try
+    {
+        for (auto &VoxelOfParticle: ParticleObject.ListOfVoxels)
+            if (GetSpaceVoxel(VoxelOfParticle.X + VectorX, VoxelOfParticle.Y + VectorY, VoxelOfParticle.Z + VectorZ) != GetZeroSimulationSpaceVoxel())
+                if (!(VoxelOfParticle.X + VectorX >= StartXPosParam && VoxelOfParticle.X + VectorX < StartXPosParam + SizeXParam && VoxelOfParticle.Y + VectorY >= StartYPosParam && VoxelOfParticle.Y + VectorY < StartYPosParam + SizeYParam && VoxelOfParticle.Z + VectorZ >= StartZPosParam && VoxelOfParticle.Z + VectorZ < StartZPosParam + SizeZParam))
+                    return false;
+    }
+    CATCH("checking bounds and free space for particle moved by vector")
+
+    return true;
+}
+
 bool CellEngineVoxelSimulationSpace::MoveParticleNearOtherParticleIfVoxelSpaceIsEmpty(Particle& ParticleObject, const Particle& NewPositionParticleObject, const SignedInt AddX,  const SignedInt AddY,  const SignedInt AddZ)
 {
     return MoveParticleByVectorIfVoxelSpaceIsEmpty(ParticleObject, NewPositionParticleObject.ListOfVoxels[0].X - ParticleObject.ListOfVoxels[0].X + AddX, NewPositionParticleObject.ListOfVoxels[0].Y - ParticleObject.ListOfVoxels[0].Y + AddY, NewPositionParticleObject.ListOfVoxels[0].Z - ParticleObject.ListOfVoxels[0].Z + AddZ);
 }
 
-bool CellEngineVoxelSimulationSpace::MoveParticleByVectorIfVoxelSpaceIsEmpty(Particle& ParticleObject, const UnsignedInt VectorX, const UnsignedInt VectorY, const UnsignedInt VectorZ)
+bool CellEngineVoxelSimulationSpace::MoveParticleByVectorIfVoxelSpaceIsEmpty(Particle& ParticleObject, const SignedInt VectorX, const SignedInt VectorY, const SignedInt VectorZ)
 {
     try
     {
         if (CheckFreeSpaceForParticleMovedByVector(ParticleObject, VectorX, VectorY, VectorZ) == true)
+            MoveParticleByVector(ParticleObject, VectorX, VectorY, VectorZ);
+        else
+            return false;
+    }
+    CATCH("moving particle by vector if voxel space is empty")
+
+    return true;
+}
+
+bool CellEngineVoxelSimulationSpace::MoveParticleByVectorIfVoxelSpaceIsEmptyAndIsInBounds(Particle& ParticleObject, const SignedInt VectorX, const SignedInt VectorY, const SignedInt VectorZ, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
+{
+    try
+    {
+        if (CheckBoundsAndFreeSpaceForParticleMovedByVector(ParticleObject, VectorX, VectorY, VectorZ, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam) == true)
             MoveParticleByVector(ParticleObject, VectorX, VectorY, VectorZ);
         else
             return false;
