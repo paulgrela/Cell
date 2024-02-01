@@ -808,8 +808,8 @@ bool CellEngineVoxelSimulationSpace::CheckBoundsForParticleMovedByVector(Particl
     try
     {
         for (auto &VoxelOfParticle: ParticleObject.ListOfVoxels)
-                if (VoxelOfParticle.X + VectorX >= StartXPosParam && VoxelOfParticle.X + VectorX < StartXPosParam + SizeXParam && VoxelOfParticle.Y + VectorY >= StartYPosParam && VoxelOfParticle.Y + VectorY < StartYPosParam + SizeYParam && VoxelOfParticle.Z + VectorZ >= StartZPosParam && VoxelOfParticle.Z + VectorZ < StartZPosParam + SizeZParam)
-                    return false;
+            if (!(VoxelOfParticle.X + VectorX >= StartXPosParam && VoxelOfParticle.X + VectorX < StartXPosParam + SizeXParam && VoxelOfParticle.Y + VectorY >= StartYPosParam && VoxelOfParticle.Y + VectorY < StartYPosParam + SizeYParam && VoxelOfParticle.Z + VectorZ >= StartZPosParam && VoxelOfParticle.Z + VectorZ < StartZPosParam + SizeZParam))
+                return false;
     }
     CATCH("checking bounds for particle moved by vector")
 
@@ -821,9 +821,13 @@ bool CellEngineVoxelSimulationSpace::CheckBoundsAndFreeSpaceForParticleMovedByVe
     try
     {
         for (auto &VoxelOfParticle: ParticleObject.ListOfVoxels)
-            if (GetSpaceVoxel(VoxelOfParticle.X + VectorX, VoxelOfParticle.Y + VectorY, VoxelOfParticle.Z + VectorZ) != GetZeroSimulationSpaceVoxel())
-                if (!(VoxelOfParticle.X + VectorX >= StartXPosParam && VoxelOfParticle.X + VectorX < StartXPosParam + SizeXParam && VoxelOfParticle.Y + VectorY >= StartYPosParam && VoxelOfParticle.Y + VectorY < StartYPosParam + SizeYParam && VoxelOfParticle.Z + VectorZ >= StartZPosParam && VoxelOfParticle.Z + VectorZ < StartZPosParam + SizeZParam))
-                    return false;
+        {
+            UnsignedInt TestedPosX = VoxelOfParticle.X + VectorX;
+            UnsignedInt TestedPosY = VoxelOfParticle.Y + VectorY;
+            UnsignedInt TestedPosZ = VoxelOfParticle.Z + VectorZ;
+            if ((GetSpaceVoxel(TestedPosX, TestedPosY, TestedPosZ) != GetZeroSimulationSpaceVoxel() && GetSpaceVoxel(TestedPosX, TestedPosY, TestedPosZ) != ParticleObject.Index) || !(TestedPosX >= StartXPosParam && TestedPosX < StartXPosParam + SizeXParam && TestedPosY >= StartYPosParam && TestedPosY < StartYPosParam + SizeYParam && TestedPosZ >= StartZPosParam && TestedPosZ < StartZPosParam + SizeZParam))
+                return false;
+        }
     }
     CATCH("checking bounds and free space for particle moved by vector")
 
@@ -858,7 +862,7 @@ bool CellEngineVoxelSimulationSpace::MoveParticleByVectorIfVoxelSpaceIsEmptyAndI
         else
             return false;
     }
-    CATCH("moving particle by vector if voxel space is empty")
+    CATCH("moving particle by vector if voxel space is empty and is in bounds")
 
     return true;
 }
