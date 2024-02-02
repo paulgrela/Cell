@@ -53,14 +53,25 @@ Particle& CellEngineVoxelSimulationSpace::GetParticleFromIndexInSimulationSpaceV
     return GetParticleFromIndex(ParticleIndex);
 }
 
-inline void CellEngineVoxelSimulationSpace::MakeZeroVoxelsForSelectedSpace(const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt StepXParam, const UnsignedInt StepYParam, const UnsignedInt StepZParam, const UnsignedInt SizeXParam, UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
+inline void CellEngineVoxelSimulationSpace::SetValueToSpaceVoxelWithFillingListOfVoxelsOfParticle(vector<vector3_16>* FilledSpaceVoxels, const UniqueIdInt VoxelValue, const UnsignedInt PosX, const UnsignedInt PosY, const UnsignedInt PosZ)
 {
     try
     {
-        for (UnsignedInt PosX = StartXPosParam; PosX < StartXPosParam + SizeXParam; PosX += 1)
-            for (UnsignedInt PosY = StartYPosParam; PosY < StartYPosParam + SizeYParam; PosY += 1)
-                for (UnsignedInt PosZ = StartZPosParam; PosZ < StartZPosParam + SizeZParam; PosZ += 1)
-                    GetSpaceVoxel(PosX, PosY, PosZ) = GetZeroSimulationSpaceVoxel();
+        if (FilledSpaceVoxels != nullptr)
+            FilledSpaceVoxels->emplace_back(PosX, PosY, PosZ);
+        GetSpaceVoxel(PosX, PosY, PosZ) = VoxelValue;
+    }
+    CATCH("setting value to voxel")
+}
+
+inline void CellEngineVoxelSimulationSpace::SetValueToVoxelsForSelectedSpace(vector<vector3_16>* FilledSpaceVoxels, const UniqueIdInt VoxelValue, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt StepXParam, const UnsignedInt StepYParam, const UnsignedInt StepZParam, const UnsignedInt SizeXParam, UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
+{
+    try
+    {
+        for (UnsignedInt PosX = StartXPosParam; PosX < StartXPosParam + SizeXParam; PosX += StepXParam)
+            for (UnsignedInt PosY = StartYPosParam; PosY < StartYPosParam + SizeYParam; PosY += StepYParam)
+                for (UnsignedInt PosZ = StartZPosParam; PosZ < StartZPosParam + SizeZParam; PosZ += StepZParam)
+                    SetValueToSpaceVoxelWithFillingListOfVoxelsOfParticle(FilledSpaceVoxels, VoxelValue, PosX, PosY, PosZ);
     }
     CATCH("making zero voxels for selected space")
 }
@@ -83,7 +94,7 @@ CellEngineVoxelSimulationSpace::CellEngineVoxelSimulationSpace()
 
         SetStartValuesForSpaceMinMax();
 
-        MakeZeroVoxelsForSelectedSpace(0, 0, 0, 1, 1, 1, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension);
+        SetValueToVoxelsForSelectedSpace(nullptr, GetZeroSimulationSpaceVoxel(), 0, 0, 0, 1, 1, 1, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension);
 
         Genomes.resize(2);
         GenomesLines.resize(1);
@@ -210,10 +221,7 @@ void CellEngineVoxelSimulationSpace::SetAtomInVoxelSimulationSpace(const UniqueI
         GetMinMaxOfCoordinates(PosX, PosY, PosZ, XMin, XMax, YMin, YMax, ZMin, ZMax);
 
         if (GetSpaceVoxel(PosX, PosY, PosZ) == 0)
-        {
-            GetSpaceVoxel(PosX, PosY, PosZ) = ParticleIndex;
-            GetParticleFromIndex(ParticleIndex).ListOfVoxels.emplace_back(PosX, PosY, PosZ);
-        }
+            SetValueToSpaceVoxelWithFillingListOfVoxelsOfParticle(&GetParticleFromIndex(ParticleIndex).ListOfVoxels, ParticleIndex, PosX, PosY, PosZ);
     }
     CATCH("setting atom in voxel simulation space")
 }
@@ -327,7 +335,6 @@ inline bool CellEngineVoxelSimulationSpace::CheckFreeSpaceInSelectedSpace(const 
     return true;
 }
 
-//inline void CellEngineVoxelSimulationSpace::GenerateParticleVoxelsWhenSelectedSpaceIsFree(const UnsignedInt LocalNewParticleIndex, const UnsignedInt PosXStart, const UnsignedInt PosYStart, const UnsignedInt PosZStart, const UnsignedInt SizeOfParticleX, const UnsignedInt SizeOfParticleY, const UnsignedInt SizeOfParticleZ, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt StepXParam, const UnsignedInt StepYParam, const UnsignedInt StepZParam, const UnsignedInt SizeXParam, UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
 inline void CellEngineVoxelSimulationSpace::GenerateParticleVoxelsWhenSelectedSpaceIsFree(const UnsignedInt LocalNewParticleIndex, const UnsignedInt PosXStart, const UnsignedInt PosYStart, const UnsignedInt PosZStart, const UnsignedInt SizeOfParticleX, const UnsignedInt SizeOfParticleY, const UnsignedInt SizeOfParticleZ, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
 {
     try
@@ -336,13 +343,7 @@ inline void CellEngineVoxelSimulationSpace::GenerateParticleVoxelsWhenSelectedSp
 
         if (CheckFreeSpaceInSelectedSpace(PosXStart, PosYStart, PosZStart, SizeOfParticleX, SizeOfParticleY, SizeOfParticleZ, GetZeroSimulationSpaceVoxel()) == true)
             if (PosXStart + SizeOfParticleX < StartXPosParam + SizeXParam && PosYStart + SizeOfParticleY < StartYPosParam + SizeYParam && PosZStart + SizeOfParticleZ < StartZPosParam + SizeZParam)
-                for (UnsignedInt PosX = PosXStart; PosX < PosXStart + SizeOfParticleX; PosX++)
-                    for (UnsignedInt PosY = PosYStart; PosY < PosYStart + SizeOfParticleY; PosY++)
-                        for (UnsignedInt PosZ = PosZStart; PosZ < PosZStart + SizeOfParticleZ; PosZ++)
-                        {
-                            FilledVoxelsForRandomParticle.emplace_back(PosX, PosY, PosZ);
-                            GetSpaceVoxel(PosX, PosY, PosZ) = LocalNewParticleIndex;
-                        }
+                SetValueToVoxelsForSelectedSpace(&FilledVoxelsForRandomParticle, LocalNewParticleIndex, PosXStart, PosYStart, PosZStart, 1, 1, 1, SizeOfParticleX, SizeOfParticleY, SizeOfParticleZ);
 
         if (FilledVoxelsForRandomParticle.empty() == false)
             Particles[LocalNewParticleIndex].ListOfVoxels = FilledVoxelsForRandomParticle;
@@ -373,7 +374,7 @@ void CellEngineVoxelSimulationSpace::GenerateRandomParticlesInSelectedSpace(cons
 
         vector<vector3_16> FilledVoxelsForRandomParticle;
 
-        MakeZeroVoxelsForSelectedSpace(StartXPosParam, StartYPosParam, StartZPosParam, StepXParam, StepYParam, StepZParam, SizeXParam, SizeYParam, SizeZParam);
+        SetValueToVoxelsForSelectedSpace(nullptr, GetZeroSimulationSpaceVoxel(), StartXPosParam, StartYPosParam, StartZPosParam, StepXParam, StepYParam, StepZParam, SizeXParam, SizeYParam, SizeZParam);
 
         for (const auto& LocalNewParticleIndex : LocalNewParticlesIndexes)
         {
@@ -1113,17 +1114,18 @@ bool CellEngineVoxelSimulationSpace::MakeChemicalReaction(Reaction& ReactionObje
 
             auto& ParticleKindObjectForProduct = ParticlesKindsManagerObject.GetParticleKind(ReactionProduct.EntityId);
 
-            //REDRAW
             if (CenterIndex < Centers.size())
+            {
                 for (const auto& ParticleKindVoxel : ParticleKindObjectForProduct.ListOfVoxels)
                 {
                     vector3_64 NewVoxel(Centers[CenterIndex].X - ParticleKindObjectForProduct.XSizeDiv2 + ParticleKindVoxel.X, Centers[CenterIndex].Y - ParticleKindObjectForProduct.YSizeDiv2 + ParticleKindVoxel.Y, Centers[CenterIndex].Z - ParticleKindObjectForProduct.ZSizeDiv2 + ParticleKindVoxel.Z);
-                    GetSpaceVoxel(NewVoxel.X, NewVoxel.Y, NewVoxel.Z) = ParticleIndex;
-                    GetParticleFromIndex(ParticleIndex).ListOfVoxels.emplace_back(NewVoxel.X, NewVoxel.Y, NewVoxel.Z);
-                    GetMinMaxCoordinatesForParticle(GetParticleFromIndex(ParticleIndex));
+
+                    SetValueToSpaceVoxelWithFillingListOfVoxelsOfParticle(&GetParticleFromIndex(ParticleIndex).ListOfVoxels, ParticleIndex, NewVoxel.X, NewVoxel.Y, NewVoxel.Z);
 
                     LoggersManagerObject.Log(STREAM("New Centers From Product Added X = " << to_string(NewVoxel.X) << " Y = " << to_string(NewVoxel.Y) << " Z = " << to_string(NewVoxel.Z) << endl));
                 }
+                GetMinMaxCoordinatesForParticle(GetParticleFromIndex(ParticleIndex));
+            }
             else
             {
             }
@@ -1360,7 +1362,7 @@ void CellEngineVoxelSimulationSpace::GeneratePlanedParticlesInSelectedSpace(cons
     {
         AddBasicParticlesKindsAndReactions();
 
-        MakeZeroVoxelsForSelectedSpace(StartXPosParam, StartYPosParam, StartZPosParam, StepXParam, StepYParam, StepZParam, SizeXParam, SizeYParam, SizeZParam);
+        SetValueToVoxelsForSelectedSpace(nullptr, GetZeroSimulationSpaceVoxel(), StartXPosParam, StartYPosParam, StartZPosParam, StepXParam, StepYParam, StepZParam, SizeXParam, SizeYParam, SizeZParam);
 
         GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 0, 1, -1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), StartXPosParam + 1, StartYPosParam + 3, StartZPosParam + 7, 1, 1, 1, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
         GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 1, 1, -1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), StartXPosParam + 3, StartYPosParam + 13, StartZPosParam + 6, 1, 1, 1, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
@@ -1423,7 +1425,6 @@ void CellEngineVoxelSimulationSpace::EraseAllDNAParticles()
 {
     try
     {
-        //REDRAW
         for (auto& ParticleObject : Particles)
             if (ParticleObject.second.EntityId == CellEngineConfigDataObject.DNAIdentifier)
             {
