@@ -10,18 +10,18 @@ using ::testing::Return;
 
 void TestWellStirredChemicalReactionsSimulation(CellEngineWellStirredChemicalReactionsSimulation& CellEngineWellStirredChemicalReactionsSimulationObjectObject)
 {
-    ParticlesKindsManagerObject.AddParticleKind({ 0, "Water", "H2O", 100 });
-    ParticlesKindsManagerObject.AddParticleKind({ 1, "Glucose", "C6H12O6", 50 });
-    ParticlesKindsManagerObject.AddParticleKind({ 2, "Oxygen", "02", 10 });
-    ParticlesKindsManagerObject.AddParticleKind({ 3, "Carbon dioxide", "CO2", 5 });
-    ParticlesKindsManagerObject.AddParticleKind({ 4, "Eten", "CH2CH2", 15 });
-    ParticlesKindsManagerObject.AddParticleKind({ 5, "Ethanol", "CH3CH2(OH)", 25 });
-    ParticlesKindsManagerObject.AddParticleKind({ 6, "Propen", "CH3CHCH2", 5 });
-    ParticlesKindsManagerObject.AddParticleKind({ 7, "HX", "HX", 10 });
-    ParticlesKindsManagerObject.AddParticleKind({ 8, "2Halogenopropan", "CH3CHXCH3", 10 });
-    ParticlesKindsManagerObject.AddParticleKind({ 9, "Test", "TEST", 10 });
-    ParticlesKindsManagerObject.AddParticleKind({ 10, "Ethylene", "CH2CH2O", 10 });
-    ParticlesKindsManagerObject.AddParticleKind({ 11, "DNA", "CGATATTAAATAGGGCCT", 10 });
+    ParticlesKindsManagerObject.AddParticleKind({ 0, "Water", "H2O", 0, 100 });
+    ParticlesKindsManagerObject.AddParticleKind({ 1, "Glucose", "C6H12O6", 0, 50 });
+    ParticlesKindsManagerObject.AddParticleKind({ 2, "Oxygen", "02", 0, 10 });
+    ParticlesKindsManagerObject.AddParticleKind({ 3, "Carbon dioxide", "CO2", 0, 5 });
+    ParticlesKindsManagerObject.AddParticleKind({ 4, "Eten", "CH2CH2", 0, 15 });
+    ParticlesKindsManagerObject.AddParticleKind({ 5, "Ethanol", "CH3CH2(OH)", 0, 25 });
+    ParticlesKindsManagerObject.AddParticleKind({ 6, "Propen", "CH3CHCH2", 0, 5 });
+    ParticlesKindsManagerObject.AddParticleKind({ 7, "HX", "HX", 0, 10 });
+    ParticlesKindsManagerObject.AddParticleKind({ 8, "2Halogenopropan", "CH3CHXCH3", 0, 10 });
+    ParticlesKindsManagerObject.AddParticleKind({ 9, "Test", "TEST", 0, 10 });
+    ParticlesKindsManagerObject.AddParticleKind({ 10, "Ethylene", "CH2CH2O", 0, 10 });
+    ParticlesKindsManagerObject.AddParticleKind({ 11, "DNA", "CGATATTAAATAGGGCCT", 0, 10 });
 
     CellEngineWellStirredChemicalReactionsSimulationObjectObject.AddChemicalReaction(Reaction(1001, "", "C6H12O6 + O2 + ", { { 1, 1, "", true }, { 2, 6, "", true} }, { { 3, 6, "", true }, { 0, 6, "", true } }, nullptr));
     CellEngineWellStirredChemicalReactionsSimulationObjectObject.AddChemicalReaction(Reaction(1002, "", "CH2CH2 + H2O + ", { { 4, 1, "", true }, { 0, 1, "", true} }, { { 5, 1, "", true } }, nullptr));

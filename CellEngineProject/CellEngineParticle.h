@@ -68,7 +68,7 @@ public:
     UniqueIdInt GenomeThread{};
     UniqueIdInt GenomeIndex{};
     vector3_16 UniqueColor{};
-    ElectricChargeIdInt ElectricCharge{};
+    ElectricChargeType ElectricCharge{};
 public:
     std::vector<vector3_16> ListOfVoxels;
     UnsignedInt XCenter{}, YCenter{}, ZCenter{};
@@ -83,7 +83,7 @@ public:
     explicit Particle(std::vector<vector3_16>& ListOfVoxelsParam) : ListOfVoxels(std::move(ListOfVoxelsParam)), SelectedForReaction(false)
     {
     }
-    explicit Particle(UniqueIdInt IndexParam, EntityIdInt EntityIdParam, ChainIdInt ChainIdParam, UniqueIdInt GenomeThreadParam, UniqueIdInt GenomeIndexParam, vector3_16 UniqueColorParam) : Index(IndexParam), EntityId(EntityIdParam), ChainId(ChainIdParam), GenomeThread(GenomeThreadParam), GenomeIndex(GenomeIndexParam), UniqueColor(UniqueColorParam)
+    explicit Particle(UniqueIdInt IndexParam, EntityIdInt EntityIdParam, ChainIdInt ChainIdParam, UniqueIdInt GenomeThreadParam, UniqueIdInt GenomeIndexParam, ElectricChargeType ElectricChargeParam, vector3_16 UniqueColorParam) : Index(IndexParam), EntityId(EntityIdParam), ChainId(ChainIdParam), GenomeThread(GenomeThreadParam), GenomeIndex(GenomeIndexParam), ElectricCharge(ElectricChargeParam), UniqueColor(UniqueColorParam)
     {
     }
 public:
@@ -111,7 +111,7 @@ public:
     std::string Name;
     std::string Symbol;
     UnsignedInt Counter{};
-    ElectricChargeIdInt ElectricCharge{};
+    ElectricChargeType ElectricCharge{};
 public:
     std::vector<vector3_16> ListOfVoxels;
     UnsignedInt XSizeDiv2{}, YSizeDiv2{}, ZSizeDiv2{};
@@ -125,7 +125,7 @@ public:
         ReactionsIdByString = ReactionsIdByStringParam;
     }
 public:
-    ParticleKind(UnsignedInt EntityIdParam, std::string NameParam, std::string SymbolParam, UnsignedInt CounterParam) : EntityId(EntityIdParam), Name(std::move(NameParam)), Symbol(std::move(SymbolParam)), Counter(CounterParam)
+    ParticleKind(UnsignedInt EntityIdParam, std::string NameParam, std::string SymbolParam, ElectricChargeType ElectricChargeParam, UnsignedInt CounterParam) : EntityId(EntityIdParam), Name(std::move(NameParam)), Symbol(std::move(SymbolParam)), ElectricCharge(ElectricChargeParam), Counter(CounterParam)
     {
     }
     ParticleKind(UnsignedInt EntityIdParam, UnsignedInt CounterParam) : EntityId(EntityIdParam), Counter(CounterParam)
