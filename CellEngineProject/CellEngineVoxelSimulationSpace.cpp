@@ -421,6 +421,24 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfElectricDiffusionForSelect
 
         GetRangeOfParticlesForRandomParticles(StartParticleIndexParam, EndParticleIndexParam, MaxParticleIndex);
 
+        //TU ODDZIALYWANIA ELEKTRYCZNE
+
+        //TRZEBA UTOWRZC WEKTOR PRAWDOPODOBIENSTWA wokol punktu centralnego kazdej czastki XCenter, YCenter, ZCenter
+
+        //NAJPIERW DLA KAZDEJ CZASTKI - CZY TO ZNALEZIONEJ W PRZESTRZENI CZY TO JUZ NA LISCIE
+        //CZYLI DLA KAZDEJ CZASTKI o srodku XCenter{}, YCenter{}, ZCenter{}; o ROZNYM OD ZERA LADUNKU ELECTRIC_CHARGE
+        //czyli dla wszystkich punktow XA obok srodkia czyli 26 bo bez srodka
+        //sprawdz czy W ZASIEGU +/-DYSTANS W 3D jest inna czastka naladowana JESLI ZNALAZLES TO SPRAWDZ CZY
+        //X tej czastki < XCenter i XA < XCenter
+        //i Y tej czastki < YCenter i YA < YCenter
+        //i Z tej czastki < ZCenter i ZA < ZCenter
+        //i jesli powyzszy spelniony to updatuj ten jeden z 26 punktow wedlug:
+        //jesli XCenter jest rozny od zera i > 0 a czastka tamta < 0 czyli roznego znaku to ustaw to zwieksz wartosc tego punkt XA i juz nie bierz pod uwage tej innej czastki.
+        //jesli XCenter jest rozny od zera i > 0 a czastka tamta > 0 lub XCenter jest rozny od zera i < 0 a czastka tamta < 0 czyli tego samego znaku to ustaw to zmniejsz wartosc tego punkt XA i juz nie bierz pod uwage tej innej czastki.
+        //nastepnie LOSOWANIE z podanym rozkaldem czyli wieksza liczba oznacza wieksze prawdopodobienstwo trafienia
+        //czyli stworz tablice 1 wymiarowa 
+        //wylosuj liczbe 1 do tysiaca z rownym rozkladem i sprawdz ktora ktora wartosc z tablicy trafila i rusz sie w tym kierunku
+
         for (UniqueIdInt ParticleIndex = StartParticleIndexParam; ParticleIndex <= EndParticleIndexParam; ParticleIndex++)
             MoveParticleByVectorIfVoxelSpaceIsEmptyAndIsInBounds(Particles[ParticleIndex], UniformDistributionObjectSizeOfParticle_int64t(mt64R), UniformDistributionObjectSizeOfParticle_int64t(mt64R), UniformDistributionObjectSizeOfParticle_int64t(mt64R), StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
     }
@@ -1141,7 +1159,7 @@ bool CellEngineVoxelSimulationSpace::MakeChemicalReaction(Reaction& ReactionObje
 
                     LoggersManagerObject.Log(STREAM("New Centers From Product Added X = " << to_string(NewVoxel.X) << " Y = " << to_string(NewVoxel.Y) << " Z = " << to_string(NewVoxel.Z) << endl));
                 }
-                GetMinMaxCoordinatesForParticle(GetParticleFromIndex(ParticleIndex));
+                GetMinMaxCoordinatesForParticle(GetParticleFromIndex(ParticleIndex));// ZA DUZO KOSZTUJE BO ZAPISUJE DO PARTICLE KIND
             }
             else
             {
