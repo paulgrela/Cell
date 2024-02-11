@@ -346,9 +346,9 @@ inline void CellEngineVoxelSimulationSpace::GenerateParticleVoxelsWhenSelectedSp
                 SetValueToVoxelsForSelectedSpace(&FilledVoxelsForRandomParticle, LocalNewParticleIndex, PosXStart, PosYStart, PosZStart, 1, 1, 1, SizeOfParticleX, SizeOfParticleY, SizeOfParticleZ);
 
         if (FilledVoxelsForRandomParticle.empty() == false)
-            Particles[LocalNewParticleIndex].ListOfVoxels = FilledVoxelsForRandomParticle;
+            GetParticleFromIndex(LocalNewParticleIndex).ListOfVoxels = FilledVoxelsForRandomParticle;
 
-        GetMinMaxCoordinatesForParticle(Particles[LocalNewParticleIndex]);
+        GetMinMaxCoordinatesForParticle(GetParticleFromIndex(LocalNewParticleIndex));
     }
     CATCH("generate particle in selected space")
 }
@@ -399,14 +399,14 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfDiffusionForSelectedRangeO
 {
     try
     {
-        uniform_int_distribution<SignedInt> UniformDistributionObjectSizeOfParticle_int64t(-1, 1);
+        uniform_int_distribution<SignedInt> UniformDistributionObjectMoveParticleDirection_int64t(-1, 1);
 
         vector<vector3_16> NewVoxelsForParticle;
 
         GetRangeOfParticlesForRandomParticles(StartParticleIndexParam, EndParticleIndexParam, MaxParticleIndex);
 
         for (UniqueIdInt ParticleIndex = StartParticleIndexParam; ParticleIndex <= EndParticleIndexParam; ParticleIndex++)
-            MoveParticleByVectorIfVoxelSpaceIsEmptyAndIsInBounds(Particles[ParticleIndex], UniformDistributionObjectSizeOfParticle_int64t(mt64R), UniformDistributionObjectSizeOfParticle_int64t(mt64R), UniformDistributionObjectSizeOfParticle_int64t(mt64R), StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
+            MoveParticleByVectorIfVoxelSpaceIsEmptyAndIsInBounds(GetParticleFromIndex(ParticleIndex), UniformDistributionObjectMoveParticleDirection_int64t(mt64R), UniformDistributionObjectMoveParticleDirection_int64t(mt64R), UniformDistributionObjectMoveParticleDirection_int64t(mt64R), StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
     }
     CATCH("generating one step of diffusion")
 }
@@ -415,32 +415,68 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfElectricDiffusionForSelect
 {
     try
     {
-        uniform_int_distribution<SignedInt> UniformDistributionObjectSizeOfParticle_int64t(-1, 1);
-
         vector<vector3_16> NewVoxelsForParticle;
 
         GetRangeOfParticlesForRandomParticles(StartParticleIndexParam, EndParticleIndexParam, MaxParticleIndex);
 
-        //TU ODDZIALYWANIA ELEKTRYCZNE
-
-        //TRZEBA UTOWRZC WEKTOR PRAWDOPODOBIENSTWA wokol punktu centralnego kazdej czastki XCenter, YCenter, ZCenter
-
-        //NAJPIERW DLA KAZDEJ CZASTKI - CZY TO ZNALEZIONEJ W PRZESTRZENI CZY TO JUZ NA LISCIE
-        //CZYLI DLA KAZDEJ CZASTKI o srodku XCenter{}, YCenter{}, ZCenter{}; o ROZNYM OD ZERA LADUNKU ELECTRIC_CHARGE
-        //czyli dla wszystkich punktow XA obok srodkia czyli 26 bo bez srodka
-        //sprawdz czy W ZASIEGU +/-DYSTANS W 3D jest inna czastka naladowana JESLI ZNALAZLES TO SPRAWDZ CZY
-        //X tej czastki < XCenter i XA < XCenter
-        //i Y tej czastki < YCenter i YA < YCenter
-        //i Z tej czastki < ZCenter i ZA < ZCenter
-        //i jesli powyzszy spelniony to updatuj ten jeden z 26 punktow wedlug:
-        //jesli XCenter jest rozny od zera i > 0 a czastka tamta < 0 czyli roznego znaku to ustaw to zwieksz wartosc tego punkt XA i juz nie bierz pod uwage tej innej czastki.
-        //jesli XCenter jest rozny od zera i > 0 a czastka tamta > 0 lub XCenter jest rozny od zera i < 0 a czastka tamta < 0 czyli tego samego znaku to ustaw to zmniejsz wartosc tego punkt XA i juz nie bierz pod uwage tej innej czastki.
-        //nastepnie LOSOWANIE z podanym rozkaldem czyli wieksza liczba oznacza wieksze prawdopodobienstwo trafienia
-        //czyli stworz tablice 1 wymiarowa 
-        //wylosuj liczbe 1 do tysiaca z rownym rozkladem i sprawdz ktora ktora wartosc z tablicy trafila i rusz sie w tym kierunku
+        int NeighbourPoints[3][3][3];
+        for (UnsignedInt X = 0; X <= 2; X++)
+            for (UnsignedInt Y = 0; Y <= 2; Y++)
+                for (UnsignedInt Z = 0; Z <= 2; Z++)
+                    NeighbourPoints[X][Y][Z] = 0;
 
         for (UniqueIdInt ParticleIndex = StartParticleIndexParam; ParticleIndex <= EndParticleIndexParam; ParticleIndex++)
-            MoveParticleByVectorIfVoxelSpaceIsEmptyAndIsInBounds(Particles[ParticleIndex], UniformDistributionObjectSizeOfParticle_int64t(mt64R), UniformDistributionObjectSizeOfParticle_int64t(mt64R), UniformDistributionObjectSizeOfParticle_int64t(mt64R), StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
+            if (GetParticleFromIndex(ParticleIndex).ElectricCharge != 0)
+            {
+                Particle& ParticleObject = GetParticleFromIndex(ParticleIndex);
+
+                LoggersManagerObject.Log(STREAM("EntityId = " << to_string(ParticleObject.EntityId)));
+
+                auto ParticleKindObject = ParticlesKindsManagerObject.GetParticleKind(ParticleObject.EntityId);
+
+                const UnsignedInt AdditionalBoundFactor = 10; //MOZE ROSNAC DO 20 ALE TE DALSZE MAJA MNIEJSZY WPLYW
+
+                //NIE MUSI SZUKAC DNA WIEC PONIZSZA FUNKCJA MNIEJSZA JEJ WERSJA
+                FindParticlesInProximityOfVoxelSimulationSpaceForSelectedVoxelSpace(ParticleObject.XCenter - ParticleKindObject.XSizeDiv2 - AdditionalBoundFactor, ParticleObject.YCenter - ParticleKindObject.YSizeDiv2 - AdditionalBoundFactor, ParticleObject.ZCenter - ParticleKindObject.ZSizeDiv2 - AdditionalBoundFactor, 2 * ParticleKindObject.XSizeDiv2 + 2 * AdditionalBoundFactor, 2 * ParticleKindObject.YSizeDiv2 + 2 * AdditionalBoundFactor, 2 * ParticleKindObject.ZSizeDiv2 + 2 * AdditionalBoundFactor);
+
+                for (const auto& NeighbourParticleIndexObjectToWrite : ParticlesSortedByCapacityFoundInProximity)
+                {
+                    Particle& NeighbourParticleObject = GetParticleFromIndex(NeighbourParticleIndexObjectToWrite);
+                    if (NeighbourParticleObject.ElectricCharge != 0)
+                    {
+                        for (UnsignedInt X = 0; X <= 2; X++)
+                            for (UnsignedInt Y = 0; Y <= 2; Y++)
+                                for (UnsignedInt Z = 0; Z <= 2; Z++)
+                                    if (X != 1 && Y != 1 && Z != 1)
+                                    {
+                                        if (NeighbourParticleObject.XCenter < ParticleObject.XCenter && ParticleObject.XCenter + (X - 1) < ParticleObject.XCenter)
+                                            if (NeighbourParticleObject.YCenter < ParticleObject.YCenter && ParticleObject.YCenter + (Y - 1) < ParticleObject.YCenter)
+                                                if (NeighbourParticleObject.ZCenter < ParticleObject.ZCenter && ParticleObject.ZCenter + (Z - 1) < ParticleObject.ZCenter)
+                                                {
+                                                    if ((NeighbourParticleObject.ElectricCharge < 0 && ParticleObject.ElectricCharge > 0) || (NeighbourParticleObject.ElectricCharge > 0 && ParticleObject.ElectricCharge < 0))
+                                                        NeighbourPoints[X][Y][Z]++;
+                                                    else
+                                                    {
+                                                        if ((NeighbourParticleObject.ElectricCharge < 0 && ParticleObject.ElectricCharge < 0) || (NeighbourParticleObject.ElectricCharge > 0 && ParticleObject.ElectricCharge > 0))
+                                                            if (NeighbourPoints[X][Y][Z] > 0)
+                                                                NeighbourPoints[X][Y][Z]--;
+                                                    }
+                                                }
+                                    }
+
+                        LoggersManagerObject.Log(STREAM("ParticleIndex = " << to_string(NeighbourParticleIndexObjectToWrite) << " EntityId = " << to_string(GetParticleFromIndex(NeighbourParticleIndexObjectToWrite).EntityId) << " NUCLEOTIDE = " << ((CellEngineUseful::IsDNAorRNA(GetParticleFromIndex(NeighbourParticleIndexObjectToWrite).EntityId) == true) ? CellEngineUseful::GetLetterFromChainIdForDNAorRNA(GetParticleFromIndex(NeighbourParticleIndexObjectToWrite).ChainId) : '0') << " GENOME INDEX = " << GetParticleFromIndex(NeighbourParticleIndexObjectToWrite).GenomeIndex));
+                    }
+                }
+
+                vector<int> DiscreteDistribution;
+                DiscreteDistribution.reserve(9);
+                for (UnsignedInt X = 0; X <= 2; X++)
+                    for (UnsignedInt Y = 0; Y <= 2; Y++)
+                        for (UnsignedInt Z = 0; Z <= 2; Z++)
+                            DiscreteDistribution.emplace_back(NeighbourPoints[X][Y][Z]);
+                discrete_distribution<int> UniformDiscreteDistributionMoveParticleDirectionObject(DiscreteDistribution.begin(), DiscreteDistribution.end());
+                MoveParticleByVectorIfVoxelSpaceIsEmptyAndIsInBounds(ParticleObject, UniformDiscreteDistributionMoveParticleDirectionObject(mt64R), UniformDiscreteDistributionMoveParticleDirectionObject(mt64R), UniformDiscreteDistributionMoveParticleDirectionObject(mt64R), StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
+            }
     }
     CATCH("generating one step of electric diffusion")
 }
@@ -1290,6 +1326,7 @@ bool CellEngineVoxelSimulationSpace::FindParticlesInProximityOfVoxelSimulationSp
                             if (FoundParticleIndexes.find(ParticleIndex) == FoundParticleIndexes.end())
                             {
                                 ParticlesSortedByCapacityFoundInProximity.emplace_back(ParticleIndex);
+
                                 Particle& ParticleFromIndex = GetParticleFromIndex(ParticleIndex);
 
                                 if (CellEngineUseful::IsDNAorRNA(ParticleFromIndex.EntityId) && ParticleFromIndex.Next == nullptr && ParticleFromIndex.Prev != nullptr)
@@ -1371,10 +1408,8 @@ void CellEngineVoxelSimulationSpace::GenerateChosenReactionForSelectedVoxelSpace
     try
     {
         if (FindParticlesInProximityOfVoxelSimulationSpaceForSelectedVoxelSpace(StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam) == true)
-        {
             if (ReactionId != 0)
                 FindAndExecuteChosenReaction(ReactionId);
-        }
     }
     CATCH("generating random reaction for particle")
 }
@@ -1717,9 +1752,9 @@ void CellEngineVoxelSimulationSpace::GetMinMaxCoordinatesForDNA()
     try
     {
         for (auto& LocalNewParticleIndex : Genomes[0])
-            GetMinMaxCoordinatesForParticle(Particles[LocalNewParticleIndex]);
+            GetMinMaxCoordinatesForParticle(GetParticleFromIndex(LocalNewParticleIndex));
         for (auto& LocalNewParticleIndex : Genomes[1])
-            GetMinMaxCoordinatesForParticle(Particles[LocalNewParticleIndex]);
+            GetMinMaxCoordinatesForParticle(GetParticleFromIndex(LocalNewParticleIndex));
     }
     CATCH("getting min max of coordinates for DNA")
 }
