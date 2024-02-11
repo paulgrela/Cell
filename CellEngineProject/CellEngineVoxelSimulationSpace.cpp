@@ -126,12 +126,30 @@ void CellEngineVoxelSimulationSpace::GetMinMaxCoordinatesForAllParticles()
     try
     {
         for (auto& ParticleObject : Particles)
-            GetMinMaxCoordinatesForParticle(ParticleObject.second);
+            GetMinMaxCoordinatesForParticle(ParticleObject.second, true);
     }
     CATCH("getting min max coordinates for all particles")
 }
 
-void CellEngineVoxelSimulationSpace::GetMinMaxCoordinatesForParticle(Particle& ParticleObject)
+void CellEngineVoxelSimulationSpace::UpdateParticleKindListOfVoxels(Particle& ParticleObject, const UnsignedInt ParticleXMin, const UnsignedInt ParticleXMax, const UnsignedInt ParticleYMin, const UnsignedInt ParticleYMax, const UnsignedInt ParticleZMin, const UnsignedInt ParticleZMax)
+{
+    try
+    {
+        auto& ParticleKindObject = ParticlesKindsManagerObject.GetParticleKind(ParticleObject.EntityId);
+        if (ParticleKindObject.ListOfVoxels.empty() == true)
+        {
+            for (auto& VoxelCoordinates : ParticleObject.ListOfVoxels)
+                ParticleKindObject.ListOfVoxels.emplace_back(VoxelCoordinates.X - ParticleXMin, VoxelCoordinates.Y - ParticleYMin, VoxelCoordinates.Z - ParticleZMin);
+
+            ParticleKindObject.XSizeDiv2 = (ParticleXMax - ParticleXMin) / 2;
+            ParticleKindObject.YSizeDiv2 = (ParticleYMax - ParticleYMin) / 2;
+            ParticleKindObject.ZSizeDiv2 = (ParticleZMax - ParticleZMin) / 2;
+        }
+    }
+    CATCH("updating particle kind list of voxels")
+}
+
+void CellEngineVoxelSimulationSpace::GetMinMaxCoordinatesForParticle(Particle& ParticleObject, const bool UpdateParticleKindListOfVoxelsBool)
 {
     try
     {
@@ -144,16 +162,8 @@ void CellEngineVoxelSimulationSpace::GetMinMaxCoordinatesForParticle(Particle& P
 
         ParticleObject.SetCenterCoordinates(ParticleXMin + (ParticleXMax - ParticleXMin) / 2, ParticleYMin + (ParticleYMax - ParticleYMin) / 2, ParticleZMin + (ParticleZMax - ParticleZMin) / 2);
 
-        auto& ParticleKindObject = ParticlesKindsManagerObject.GetParticleKind(ParticleObject.EntityId);
-        if (ParticleKindObject.ListOfVoxels.empty() == true)
-        {
-            for (auto& VoxelCoordinates : ParticleObject.ListOfVoxels)
-                ParticleKindObject.ListOfVoxels.emplace_back(VoxelCoordinates.X - ParticleXMin, VoxelCoordinates.Y - ParticleYMin, VoxelCoordinates.Z - ParticleZMin);
-
-            ParticleKindObject.XSizeDiv2 = (ParticleXMax - ParticleXMin) / 2;
-            ParticleKindObject.YSizeDiv2 = (ParticleYMax - ParticleYMin) / 2;
-            ParticleKindObject.ZSizeDiv2 = (ParticleZMax - ParticleZMin) / 2;
-        }
+        if (UpdateParticleKindListOfVoxelsBool == true)
+            UpdateParticleKindListOfVoxels(ParticleObject, ParticleXMin, ParticleXMax, ParticleYMin, ParticleYMax, ParticleZMin, ParticleZMax);
     }
     CATCH("getting min max coordinates for one particle")
 }
@@ -348,7 +358,7 @@ inline void CellEngineVoxelSimulationSpace::GenerateParticleVoxelsWhenSelectedSp
         if (FilledVoxelsForRandomParticle.empty() == false)
             GetParticleFromIndex(LocalNewParticleIndex).ListOfVoxels = FilledVoxelsForRandomParticle;
 
-        GetMinMaxCoordinatesForParticle(GetParticleFromIndex(LocalNewParticleIndex));
+        GetMinMaxCoordinatesForParticle(GetParticleFromIndex(LocalNewParticleIndex), true);
     }
     CATCH("generate particle in selected space")
 }
@@ -436,8 +446,7 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfElectricDiffusionForSelect
 
                 const UnsignedInt AdditionalBoundFactor = 10; //MOZE ROSNAC DO 20 ALE TE DALSZE MAJA MNIEJSZY WPLYW
 
-                //NIE MUSI SZUKAC DNA WIEC PONIZSZA FUNKCJA MNIEJSZA JEJ WERSJA
-                FindParticlesInProximityOfVoxelSimulationSpaceForSelectedVoxelSpace(ParticleObject.XCenter - ParticleKindObject.XSizeDiv2 - AdditionalBoundFactor, ParticleObject.YCenter - ParticleKindObject.YSizeDiv2 - AdditionalBoundFactor, ParticleObject.ZCenter - ParticleKindObject.ZSizeDiv2 - AdditionalBoundFactor, 2 * ParticleKindObject.XSizeDiv2 + 2 * AdditionalBoundFactor, 2 * ParticleKindObject.YSizeDiv2 + 2 * AdditionalBoundFactor, 2 * ParticleKindObject.ZSizeDiv2 + 2 * AdditionalBoundFactor);
+                FindParticlesInProximityOfVoxelSimulationSpaceForSelectedVoxelSpace(false, ParticleObject.XCenter - ParticleKindObject.XSizeDiv2 - AdditionalBoundFactor, ParticleObject.YCenter - ParticleKindObject.YSizeDiv2 - AdditionalBoundFactor, ParticleObject.ZCenter - ParticleKindObject.ZSizeDiv2 - AdditionalBoundFactor, 2 * ParticleKindObject.XSizeDiv2 + 2 * AdditionalBoundFactor, 2 * ParticleKindObject.YSizeDiv2 + 2 * AdditionalBoundFactor, 2 * ParticleKindObject.ZSizeDiv2 + 2 * AdditionalBoundFactor);
 
                 for (const auto& NeighbourParticleIndexObjectToWrite : ParticlesSortedByCapacityFoundInProximity)
                 {
@@ -1195,7 +1204,8 @@ bool CellEngineVoxelSimulationSpace::MakeChemicalReaction(Reaction& ReactionObje
 
                     LoggersManagerObject.Log(STREAM("New Centers From Product Added X = " << to_string(NewVoxel.X) << " Y = " << to_string(NewVoxel.Y) << " Z = " << to_string(NewVoxel.Z) << endl));
                 }
-                GetMinMaxCoordinatesForParticle(GetParticleFromIndex(ParticleIndex));// ZA DUZO KOSZTUJE BO ZAPISUJE DO PARTICLE KIND
+
+                GetMinMaxCoordinatesForParticle(GetParticleFromIndex(ParticleIndex), false);
             }
             else
             {
@@ -1298,12 +1308,10 @@ void CellEngineVoxelSimulationSpace::FindAndExecuteChosenReaction(const Unsigned
     CATCH("finding and executing chosen reaction")
 }
 
-bool CellEngineVoxelSimulationSpace::FindParticlesInProximityOfVoxelSimulationSpaceForSelectedVoxelSpace(const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
+void CellEngineVoxelSimulationSpace::MakingZeroSizeForContainersForFoundParticlesInProximity()
 {
     try
     {
-        set<UnsignedInt> FoundParticleIndexes;
-
         ParticlesKindsFoundInProximity.clear();
         ParticlesSortedByCapacityFoundInProximity.clear();
         NucleotidesWithFreeNextEndingsFoundInProximity.clear();
@@ -1314,6 +1322,48 @@ bool CellEngineVoxelSimulationSpace::FindParticlesInProximityOfVoxelSimulationSp
         RNANucleotidesWithFreePrevEndingsFoundInProximity.clear();
         NucleotidesFreeFoundInProximity.clear();
         RNANucleotidesFoundInProximity.clear();
+    }
+    CATCH("making zero size for containers for found particles in proximity")
+}
+
+void CellEngineVoxelSimulationSpace::UpdateFoundNucleotidesForFoundParticlesInProximity(const UnsignedInt ParticleIndex)
+{
+    try
+    {
+        Particle& ParticleObject = GetParticleFromIndex(ParticleIndex);
+
+        if (CellEngineUseful::IsDNAorRNA(ParticleObject.EntityId) && ParticleObject.Next == nullptr && ParticleObject.Prev != nullptr)
+            NucleotidesWithFreeNextEndingsFoundInProximity.emplace_back(ParticleIndex);
+        if (CellEngineUseful::IsDNAorRNA(ParticleObject.EntityId) && ParticleObject.Prev == nullptr && ParticleObject.Next != nullptr)
+            NucleotidesWithFreePrevEndingsFoundInProximity.emplace_back(ParticleIndex);
+
+        if (CellEngineUseful::IsDNA(ParticleObject.EntityId) && ParticleObject.Next == nullptr && ParticleObject.Prev != nullptr)
+            DNANucleotidesWithFreeNextEndingsFoundInProximity.emplace_back(ParticleIndex);
+        if (CellEngineUseful::IsDNA(ParticleObject.EntityId) && ParticleObject.Prev == nullptr && ParticleObject.Next != nullptr)
+            DNANucleotidesWithFreePrevEndingsFoundInProximity.emplace_back(ParticleIndex);
+
+        if (CellEngineUseful::IsRNA(ParticleObject.EntityId) && ParticleObject.Next == nullptr && ParticleObject.Prev != nullptr)
+            RNANucleotidesWithFreeNextEndingsFoundInProximity.emplace_back(ParticleIndex);
+        if (CellEngineUseful::IsRNA(ParticleObject.EntityId) && ParticleObject.Prev == nullptr && ParticleObject.Next != nullptr)
+            RNANucleotidesWithFreePrevEndingsFoundInProximity.emplace_back(ParticleIndex);
+
+        if (CellEngineUseful::IsDNAorRNA(ParticleObject.EntityId) && ParticleObject.Next == nullptr && ParticleObject.Prev == nullptr)
+            NucleotidesFreeFoundInProximity.emplace_back(ParticleIndex);
+        if (CellEngineUseful::IsRNA(ParticleObject.EntityId))
+            RNANucleotidesFoundInProximity.emplace_back(ParticleIndex);
+
+        ParticlesKindsFoundInProximity[ParticleObject.EntityId]++;
+    }
+    CATCH("updating found nucleotides for found particles in proximity")
+}
+
+bool CellEngineVoxelSimulationSpace::FindParticlesInProximityOfVoxelSimulationSpaceForSelectedVoxelSpace(const bool UpdateNucleotides, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
+{
+    try
+    {
+        set<UnsignedInt> FoundParticleIndexes;
+
+        MakingZeroSizeForContainersForFoundParticlesInProximity();
 
         for (UnsignedInt PosX = StartXPosParam; PosX < StartXPosParam + SizeXParam; PosX++)
             for (UnsignedInt PosY = StartYPosParam; PosY < StartYPosParam + SizeYParam; PosY++)
@@ -1329,27 +1379,11 @@ bool CellEngineVoxelSimulationSpace::FindParticlesInProximityOfVoxelSimulationSp
 
                                 Particle& ParticleFromIndex = GetParticleFromIndex(ParticleIndex);
 
-                                if (CellEngineUseful::IsDNAorRNA(ParticleFromIndex.EntityId) && ParticleFromIndex.Next == nullptr && ParticleFromIndex.Prev != nullptr)
-                                    NucleotidesWithFreeNextEndingsFoundInProximity.emplace_back(ParticleIndex);
-                                if (CellEngineUseful::IsDNAorRNA(ParticleFromIndex.EntityId) && ParticleFromIndex.Prev == nullptr && ParticleFromIndex.Next != nullptr)
-                                    NucleotidesWithFreePrevEndingsFoundInProximity.emplace_back(ParticleIndex);
-
-                                if (CellEngineUseful::IsDNA(ParticleFromIndex.EntityId) && ParticleFromIndex.Next == nullptr && ParticleFromIndex.Prev != nullptr)
-                                    DNANucleotidesWithFreeNextEndingsFoundInProximity.emplace_back(ParticleIndex);
-                                if (CellEngineUseful::IsDNA(ParticleFromIndex.EntityId) && ParticleFromIndex.Prev == nullptr && ParticleFromIndex.Next != nullptr)
-                                    DNANucleotidesWithFreePrevEndingsFoundInProximity.emplace_back(ParticleIndex);
-
-                                if (CellEngineUseful::IsRNA(ParticleFromIndex.EntityId) && ParticleFromIndex.Next == nullptr && ParticleFromIndex.Prev != nullptr)
-                                    RNANucleotidesWithFreeNextEndingsFoundInProximity.emplace_back(ParticleIndex);
-                                if (CellEngineUseful::IsRNA(ParticleFromIndex.EntityId) && ParticleFromIndex.Prev == nullptr && ParticleFromIndex.Next != nullptr)
-                                    RNANucleotidesWithFreePrevEndingsFoundInProximity.emplace_back(ParticleIndex);
-
-                                if (CellEngineUseful::IsDNAorRNA(ParticleFromIndex.EntityId) && ParticleFromIndex.Next == nullptr && ParticleFromIndex.Prev == nullptr)
-                                    NucleotidesFreeFoundInProximity.emplace_back(ParticleIndex);
-                                if (CellEngineUseful::IsRNA(ParticleFromIndex.EntityId))
-                                    RNANucleotidesFoundInProximity.emplace_back(ParticleIndex);
+                                if (UpdateNucleotides == true)
+                                    UpdateFoundNucleotidesForFoundParticlesInProximity(ParticleIndex);
 
                                 ParticlesKindsFoundInProximity[ParticleFromIndex.EntityId]++;
+
                                 FoundParticleIndexes.insert(ParticleIndex);
                             }
                         }
@@ -1357,13 +1391,7 @@ bool CellEngineVoxelSimulationSpace::FindParticlesInProximityOfVoxelSimulationSp
         if (ParticlesSortedByCapacityFoundInProximity.empty() == false)
         {
             sort(ParticlesSortedByCapacityFoundInProximity.begin(), ParticlesSortedByCapacityFoundInProximity.end(), [this](UnsignedInt PK1, UnsignedInt PK2) { return GetParticleFromIndex(PK1).ListOfVoxels.size() > GetParticleFromIndex(PK2).ListOfVoxels.size(); });
-
-            LoggersManagerObject.Log(STREAM(endl << "ParticlesSortedByCapacityFoundInParticlesProximity List"));
-            for (const auto& LocalParticleIndexObjectToWrite : ParticlesSortedByCapacityFoundInProximity)
-                LoggersManagerObject.Log(STREAM("ParticleIndex = " << to_string(LocalParticleIndexObjectToWrite) << " EntityId = " << to_string(GetParticleFromIndex(LocalParticleIndexObjectToWrite).EntityId) << " NUCLEOTIDE = " << ((CellEngineUseful::IsDNAorRNA(GetParticleFromIndex(LocalParticleIndexObjectToWrite).EntityId) == true) ? CellEngineUseful::GetLetterFromChainIdForDNAorRNA(GetParticleFromIndex(LocalParticleIndexObjectToWrite).ChainId) : '0') << " GENOME INDEX = " << GetParticleFromIndex(LocalParticleIndexObjectToWrite).GenomeIndex));
-            LoggersManagerObject.Log(STREAM(endl << "ParticlesKindsFoundInProximity List"));
-            for (const auto& LocalParticleKindObjectToWrite : ParticlesKindsFoundInProximity)
-                LoggersManagerObject.Log(STREAM("ParticleKind EntityId = " << to_string(LocalParticleKindObjectToWrite.first) << " in quantity = " << to_string(LocalParticleKindObjectToWrite.second)));
+            PrintInformationAboutFoundParticlesInProximity();
         }
         else
         {
@@ -1376,6 +1404,20 @@ bool CellEngineVoxelSimulationSpace::FindParticlesInProximityOfVoxelSimulationSp
     return true;
 }
 
+void CellEngineVoxelSimulationSpace::PrintInformationAboutFoundParticlesInProximity()
+{
+    try
+    {
+        LoggersManagerObject.Log(STREAM(endl << "ParticlesSortedByCapacityFoundInParticlesProximity List"));
+        for (const auto& LocalParticleIndexObjectToWrite : ParticlesSortedByCapacityFoundInProximity)
+            LoggersManagerObject.Log(STREAM("ParticleIndex = " << to_string(LocalParticleIndexObjectToWrite) << " EntityId = " << to_string(GetParticleFromIndex(LocalParticleIndexObjectToWrite).EntityId) << " NUCLEOTIDE = " << ((CellEngineUseful::IsDNAorRNA(GetParticleFromIndex(LocalParticleIndexObjectToWrite).EntityId) == true) ? CellEngineUseful::GetLetterFromChainIdForDNAorRNA(GetParticleFromIndex(LocalParticleIndexObjectToWrite).ChainId) : '0') << " GENOME INDEX = " << GetParticleFromIndex(LocalParticleIndexObjectToWrite).GenomeIndex));
+        LoggersManagerObject.Log(STREAM(endl << "ParticlesKindsFoundInProximity List"));
+        for (const auto& LocalParticleKindObjectToWrite : ParticlesKindsFoundInProximity)
+            LoggersManagerObject.Log(STREAM("ParticleKind EntityId = " << to_string(LocalParticleKindObjectToWrite.first) << " in quantity = " << to_string(LocalParticleKindObjectToWrite.second)));
+    }
+    CATCH("printing information found particles in proximity")
+}
+
 bool CellEngineVoxelSimulationSpace::FindParticlesInProximityOfVoxelSimulationSpaceForChosenParticle(const Particle& ParticleObject, const UnsignedInt AdditionalBoundFactor)
 {
     try
@@ -1384,7 +1426,7 @@ bool CellEngineVoxelSimulationSpace::FindParticlesInProximityOfVoxelSimulationSp
 
         auto ParticleKindObject = ParticlesKindsManagerObject.GetParticleKind(ParticleObject.EntityId);
 
-        FindParticlesInProximityOfVoxelSimulationSpaceForSelectedVoxelSpace(ParticleObject.XCenter - ParticleKindObject.XSizeDiv2 - AdditionalBoundFactor, ParticleObject.YCenter - ParticleKindObject.YSizeDiv2 - AdditionalBoundFactor, ParticleObject.ZCenter - ParticleKindObject.ZSizeDiv2 - AdditionalBoundFactor, 2 * ParticleKindObject.XSizeDiv2 + 2 * AdditionalBoundFactor, 2 * ParticleKindObject.YSizeDiv2 + 2 * AdditionalBoundFactor, 2 * ParticleKindObject.ZSizeDiv2 + 2 * AdditionalBoundFactor);
+        FindParticlesInProximityOfVoxelSimulationSpaceForSelectedVoxelSpace(true, ParticleObject.XCenter - ParticleKindObject.XSizeDiv2 - AdditionalBoundFactor, ParticleObject.YCenter - ParticleKindObject.YSizeDiv2 - AdditionalBoundFactor, ParticleObject.ZCenter - ParticleKindObject.ZSizeDiv2 - AdditionalBoundFactor, 2 * ParticleKindObject.XSizeDiv2 + 2 * AdditionalBoundFactor, 2 * ParticleKindObject.YSizeDiv2 + 2 * AdditionalBoundFactor, 2 * ParticleKindObject.ZSizeDiv2 + 2 * AdditionalBoundFactor);
     }
     CATCH("finding particles in proximity of voxel simulation space for chosen particle")
 
@@ -1397,7 +1439,7 @@ void CellEngineVoxelSimulationSpace::GenerateRandomReactionForSelectedVoxelSpace
     {
         PrepareRandomReaction();
 
-        if (FindParticlesInProximityOfVoxelSimulationSpaceForSelectedVoxelSpace(StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam) == true)
+        if (FindParticlesInProximityOfVoxelSimulationSpaceForSelectedVoxelSpace(true, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam) == true)
             FindAndExecuteRandomReaction();
     }
     CATCH("generating random reaction for selected voxel space")
@@ -1407,7 +1449,7 @@ void CellEngineVoxelSimulationSpace::GenerateChosenReactionForSelectedVoxelSpace
 {
     try
     {
-        if (FindParticlesInProximityOfVoxelSimulationSpaceForSelectedVoxelSpace(StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam) == true)
+        if (FindParticlesInProximityOfVoxelSimulationSpaceForSelectedVoxelSpace(true, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam) == true)
             if (ReactionId != 0)
                 FindAndExecuteChosenReaction(ReactionId);
     }
@@ -1752,9 +1794,9 @@ void CellEngineVoxelSimulationSpace::GetMinMaxCoordinatesForDNA()
     try
     {
         for (auto& LocalNewParticleIndex : Genomes[0])
-            GetMinMaxCoordinatesForParticle(GetParticleFromIndex(LocalNewParticleIndex));
+            GetMinMaxCoordinatesForParticle(GetParticleFromIndex(LocalNewParticleIndex), true);
         for (auto& LocalNewParticleIndex : Genomes[1])
-            GetMinMaxCoordinatesForParticle(GetParticleFromIndex(LocalNewParticleIndex));
+            GetMinMaxCoordinatesForParticle(GetParticleFromIndex(LocalNewParticleIndex), true);
     }
     CATCH("getting min max of coordinates for DNA")
 }
