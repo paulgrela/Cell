@@ -446,7 +446,8 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfElectricDiffusionForSelect
 
                 const UnsignedInt AdditionalBoundFactor = 10; //MOZE ROSNAC DO 20 ALE TE DALSZE MAJA MNIEJSZY WPLYW
 
-                FindParticlesInProximityOfVoxelSimulationSpaceForSelectedVoxelSpace(false, ParticleObject.XCenter - ParticleKindObject.XSizeDiv2 - AdditionalBoundFactor, ParticleObject.YCenter - ParticleKindObject.YSizeDiv2 - AdditionalBoundFactor, ParticleObject.ZCenter - ParticleKindObject.ZSizeDiv2 - AdditionalBoundFactor, 2 * ParticleKindObject.XSizeDiv2 + 2 * AdditionalBoundFactor, 2 * ParticleKindObject.YSizeDiv2 + 2 * AdditionalBoundFactor, 2 * ParticleKindObject.ZSizeDiv2 + 2 * AdditionalBoundFactor);
+                //FindParticlesInProximityOfVoxelSimulationSpaceForSelectedVoxelSpace(false, ParticleObject.XCenter - ParticleKindObject.XSizeDiv2 - AdditionalBoundFactor, ParticleObject.YCenter - ParticleKindObject.YSizeDiv2 - AdditionalBoundFactor, ParticleObject.ZCenter - ParticleKindObject.ZSizeDiv2 - AdditionalBoundFactor, 2 * ParticleKindObject.XSizeDiv2 + 2 * AdditionalBoundFactor, 2 * ParticleKindObject.YSizeDiv2 + 2 * AdditionalBoundFactor, 2 * ParticleKindObject.ZSizeDiv2 + 2 * AdditionalBoundFactor);
+                FindParticlesInProximityOfVoxelSimulationSpaceForSelectedVoxelSpace(false, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
 
                 for (const auto& NeighbourParticleIndexObjectToWrite : ParticlesSortedByCapacityFoundInProximity)
                 {
@@ -457,34 +458,51 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfElectricDiffusionForSelect
                             for (UnsignedInt Y = 0; Y <= 2; Y++)
                                 for (UnsignedInt Z = 0; Z <= 2; Z++)
                                     if (X != 1 && Y != 1 && Z != 1)
-                                    {
-                                        if (NeighbourParticleObject.XCenter < ParticleObject.XCenter && ParticleObject.XCenter + (X - 1) < ParticleObject.XCenter)
-                                            if (NeighbourParticleObject.YCenter < ParticleObject.YCenter && ParticleObject.YCenter + (Y - 1) < ParticleObject.YCenter)
-                                                if (NeighbourParticleObject.ZCenter < ParticleObject.ZCenter && ParticleObject.ZCenter + (Z - 1) < ParticleObject.ZCenter)
-                                                {
-                                                    if ((NeighbourParticleObject.ElectricCharge < 0 && ParticleObject.ElectricCharge > 0) || (NeighbourParticleObject.ElectricCharge > 0 && ParticleObject.ElectricCharge < 0))
-                                                        NeighbourPoints[X][Y][Z]++;
-                                                    else
-                                                    {
-                                                        if ((NeighbourParticleObject.ElectricCharge < 0 && ParticleObject.ElectricCharge < 0) || (NeighbourParticleObject.ElectricCharge > 0 && ParticleObject.ElectricCharge > 0))
-                                                            if (NeighbourPoints[X][Y][Z] > 0)
-                                                                NeighbourPoints[X][Y][Z]--;
-                                                    }
-                                                }
-                                    }
+                                        if ((NeighbourParticleObject.XCenter < ParticleObject.XCenter && ParticleObject.XCenter + (X - 1) < ParticleObject.XCenter) ||
+                                            (NeighbourParticleObject.YCenter < ParticleObject.YCenter && ParticleObject.YCenter + (Y - 1) < ParticleObject.YCenter) ||
+                                            (NeighbourParticleObject.ZCenter < ParticleObject.ZCenter && ParticleObject.ZCenter + (Z - 1) < ParticleObject.ZCenter) ||
+                                            (NeighbourParticleObject.XCenter > ParticleObject.XCenter && ParticleObject.XCenter + (X - 1) > ParticleObject.XCenter) ||
+                                            (NeighbourParticleObject.YCenter > ParticleObject.YCenter && ParticleObject.YCenter + (Y - 1) > ParticleObject.YCenter) ||
+                                            (NeighbourParticleObject.ZCenter > ParticleObject.ZCenter && ParticleObject.ZCenter + (Z - 1) > ParticleObject.ZCenter)
+                                        )
+                                        {
+                                            if ((NeighbourParticleObject.ElectricCharge < 0 && ParticleObject.ElectricCharge > 0) || (NeighbourParticleObject.ElectricCharge > 0 && ParticleObject.ElectricCharge < 0))
+                                                NeighbourPoints[X][Y][Z]++;
+                                            else
+                                            {
+                                                if ((NeighbourParticleObject.ElectricCharge < 0 && ParticleObject.ElectricCharge < 0) || (NeighbourParticleObject.ElectricCharge > 0 && ParticleObject.ElectricCharge > 0))
+                                                    if (NeighbourPoints[X][Y][Z] > 0)
+                                                        NeighbourPoints[X][Y][Z]--;
+                                            }
+                                        }
 
-                        LoggersManagerObject.Log(STREAM("ParticleIndex = " << to_string(NeighbourParticleIndexObjectToWrite) << " EntityId = " << to_string(GetParticleFromIndex(NeighbourParticleIndexObjectToWrite).EntityId) << " NUCLEOTIDE = " << ((CellEngineUseful::IsDNAorRNA(GetParticleFromIndex(NeighbourParticleIndexObjectToWrite).EntityId) == true) ? CellEngineUseful::GetLetterFromChainIdForDNAorRNA(GetParticleFromIndex(NeighbourParticleIndexObjectToWrite).ChainId) : '0') << " GENOME INDEX = " << GetParticleFromIndex(NeighbourParticleIndexObjectToWrite).GenomeIndex));
+                        LoggersManagerObject.Log(STREAM("ParticleIndex of neighbour particle = " << to_string(NeighbourParticleIndexObjectToWrite) << " EntityId = " << to_string(GetParticleFromIndex(NeighbourParticleIndexObjectToWrite).EntityId) << " Electric Charge = " << to_string(NeighbourParticleObject.ElectricCharge) << " Electric Charge = " << to_string(ParticleObject.ElectricCharge) << " NUCLEOTIDE = " << ((CellEngineUseful::IsDNAorRNA(GetParticleFromIndex(NeighbourParticleIndexObjectToWrite).EntityId) == true) ? CellEngineUseful::GetLetterFromChainIdForDNAorRNA(NeighbourParticleObject.ChainId) : '0') << " GENOME INDEX = " << NeighbourParticleObject.GenomeIndex));
                     }
                 }
 
+                vector<vector3<SignedInt>> MoveVectors;
+                for (UnsignedInt Xi = 0; Xi <= 2; Xi++)
+                    for (UnsignedInt Yi = 0; Yi <= 2; Yi++)
+                        for (UnsignedInt Zi = 0; Zi <= 2; Zi++)
+                            MoveVectors.emplace_back(Xi - 1, Yi - 1, Zi - 1);
+
+                UnsignedInt NumberOfElement = 1;
                 vector<int> DiscreteDistribution;
                 DiscreteDistribution.reserve(9);
                 for (UnsignedInt X = 0; X <= 2; X++)
                     for (UnsignedInt Y = 0; Y <= 2; Y++)
                         for (UnsignedInt Z = 0; Z <= 2; Z++)
+                        {
                             DiscreteDistribution.emplace_back(NeighbourPoints[X][Y][Z]);
+                            LoggersManagerObject.Log(STREAM("Element[" << NumberOfElement++ << "] = " << to_string(NeighbourPoints[X][Y][Z]) + " for (X,Y,Z) = (" << MoveVectors[NumberOfElement].X << "," << MoveVectors[NumberOfElement].Y << "," << MoveVectors[NumberOfElement].Z << ")"));
+                        }
                 discrete_distribution<int> UniformDiscreteDistributionMoveParticleDirectionObject(DiscreteDistribution.begin(), DiscreteDistribution.end());
-                MoveParticleByVectorIfVoxelSpaceIsEmptyAndIsInBounds(ParticleObject, UniformDiscreteDistributionMoveParticleDirectionObject(mt64R), UniformDiscreteDistributionMoveParticleDirectionObject(mt64R), UniformDiscreteDistributionMoveParticleDirectionObject(mt64R), StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
+
+                UnsignedInt RandomMoveVectorIndex = UniformDiscreteDistributionMoveParticleDirectionObject(mt64R);
+                MoveParticleByVectorIfVoxelSpaceIsEmptyAndIsInBounds(ParticleObject, MoveVectors[RandomMoveVectorIndex].X, MoveVectors[RandomMoveVectorIndex].Y, MoveVectors[RandomMoveVectorIndex].Z, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
+
+                LoggersManagerObject.Log(STREAM("BREAK"));
+                break;
             }
     }
     CATCH("generating one step of electric diffusion")
