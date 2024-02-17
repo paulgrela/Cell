@@ -1,4 +1,5 @@
 
+
 #include <set>
 #include <map>
 #include <algorithm>
@@ -421,7 +422,7 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfDiffusionForSelectedRangeO
     CATCH("generating one step of diffusion")
 }
 
-void CellEngineVoxelSimulationSpace::GenerateOneStepOfElectricDiffusionForSelectedRangeOfParticles(const TypesOfLookingForParticlesInProximity TypeOfLookingForParticles, UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
+void CellEngineVoxelSimulationSpace::GenerateOneStepOfElectricDiffusionForSelectedRangeOfParticles(const TypesOfLookingForParticlesInProximity TypeOfLookingForParticles, const ElectricChargeType UpdateProbabilityOfMove, UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
 {
     try
     {
@@ -431,11 +432,14 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfElectricDiffusionForSelect
 
         GetRangeOfParticlesForRandomParticles(StartParticleIndexParam, EndParticleIndexParam, MaxParticleIndex);
 
-        int NeighbourPoints[3][3][3];
+        ElectricChargeType NeighbourPoints[3][3][3];
         for (UnsignedInt X = 0; X <= 2; X++)
             for (UnsignedInt Y = 0; Y <= 2; Y++)
                 for (UnsignedInt Z = 0; Z <= 2; Z++)
                     NeighbourPoints[X][Y][Z] = 0;
+
+        const UnsignedInt AdditionalSpaceBoundFactor = 20;
+        const double MultiplyElectricChargeFactor = 10;
 
         for (UniqueIdInt ParticleIndex = StartParticleIndexParam; ParticleIndex <= EndParticleIndexParam; ParticleIndex++)
             if (GetParticleFromIndex(ParticleIndex).ElectricCharge != 0)
@@ -448,11 +452,9 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfElectricDiffusionForSelect
 
                 auto ParticleKindObject = ParticlesKindsManagerObject.GetParticleKind(ParticleObject.EntityId);
 
-                const UnsignedInt AdditionalBoundFactor = 20;
-
                 switch (TypeOfLookingForParticles)
                 {
-                    case TypesOfLookingForParticlesInProximity::FromChosenParticleAsCenter : FindParticlesInProximityOfVoxelSimulationSpaceForSelectedVoxelSpace(false, ParticleObject.XCenter - ParticleKindObject.XSizeDiv2 - AdditionalBoundFactor, ParticleObject.YCenter - ParticleKindObject.YSizeDiv2 - AdditionalBoundFactor, ParticleObject.ZCenter - ParticleKindObject.ZSizeDiv2 - AdditionalBoundFactor, 2 * ParticleKindObject.XSizeDiv2 + 2 * AdditionalBoundFactor, 2 * ParticleKindObject.YSizeDiv2 + 2 * AdditionalBoundFactor, 2 * ParticleKindObject.ZSizeDiv2 + 2 * AdditionalBoundFactor); break;
+                    case TypesOfLookingForParticlesInProximity::FromChosenParticleAsCenter : FindParticlesInProximityOfVoxelSimulationSpaceForSelectedVoxelSpace(false, ParticleObject.XCenter - ParticleKindObject.XSizeDiv2 - AdditionalSpaceBoundFactor, ParticleObject.YCenter - ParticleKindObject.YSizeDiv2 - AdditionalSpaceBoundFactor, ParticleObject.ZCenter - ParticleKindObject.ZSizeDiv2 - AdditionalSpaceBoundFactor, 2 * ParticleKindObject.XSizeDiv2 + 2 * AdditionalSpaceBoundFactor, 2 * ParticleKindObject.YSizeDiv2 + 2 * AdditionalSpaceBoundFactor, 2 * ParticleKindObject.ZSizeDiv2 + 2 * AdditionalSpaceBoundFactor); break;
                     case TypesOfLookingForParticlesInProximity::InChosenVoxelSpace : FindParticlesInProximityOfVoxelSimulationSpaceForSelectedVoxelSpace(false, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam); break;
                     default: break;
                 }
@@ -476,17 +478,17 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfElectricDiffusionForSelect
                                         {
                                             if ((NeighbourParticleObject.ElectricCharge < 0 && ParticleObject.ElectricCharge > 0) || (NeighbourParticleObject.ElectricCharge > 0 && ParticleObject.ElectricCharge < 0))
                                             {
-                                                NeighbourPoints[X][Y][Z] += 2;
+                                                NeighbourPoints[X][Y][Z] += (UpdateProbabilityOfMove == 0) ? static_cast<ElectricChargeType>(abs(static_cast<double>(NeighbourParticleObject.ElectricCharge) - static_cast<double>(ParticleObject.ElectricCharge)) * MultiplyElectricChargeFactor / DistanceOfParticles(ParticleObject, NeighbourParticleObject)) : UpdateProbabilityOfMove;
                                                 #ifdef SIMULATION_DETAILED_LOG
-                                                LoggersManagerObject.Log(STREAM("Increase from neighbour = " << to_string(NeighbourPoints[X][Y][Z]) << " " << to_string(X) << " "<< to_string(Y) << " " << to_string(Z)));
+                                                LoggersManagerObject.Log(STREAM("Increase from neighbour = " << to_string(NeighbourPoints[X][Y][Z]) << " " << to_string(static_cast<ElectricChargeType>(X - 1)) << " "<< to_string(static_cast<ElectricChargeType>(Y - 1)) << " " << to_string(static_cast<ElectricChargeType>(Z - 1))));
                                                 #endif
                                             }
                                             else
-                                            if ((NeighbourParticleObject.ElectricCharge < 0 && ParticleObject.ElectricCharge < 0) || (NeighbourParticleObject.ElectricCharge > 0 && ParticleObject.ElectricCharge > 0) && NeighbourPoints[X][Y][Z] > 0)
+                                            if (((NeighbourParticleObject.ElectricCharge < 0 && ParticleObject.ElectricCharge < 0) || (NeighbourParticleObject.ElectricCharge > 0 && ParticleObject.ElectricCharge > 0)) && NeighbourPoints[X][Y][Z] > 0)
                                             {
                                                 NeighbourPoints[X][Y][Z]--;
                                                 #ifdef SIMULATION_DETAILED_LOG
-                                                LoggersManagerObject.Log(STREAM("Decrease from neighbour = " << to_string(NeighbourPoints[X][Y][Z]) << " " << to_string(X) << " "<< to_string(Y) << " " << to_string(Z)));
+                                                LoggersManagerObject.Log(STREAM("Decrease from neighbour = " << to_string(NeighbourPoints[X][Y][Z]) << " " << to_string(static_cast<ElectricChargeType>(X - 1)) << " "<< to_string(static_cast<ElectricChargeType>(Y - 1)) << " " << to_string(static_cast<ElectricChargeType>(Z - 1))));
                                                 #endif
                                             }
                                         }
@@ -512,7 +514,7 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfElectricDiffusionForSelect
                         {
                             DiscreteDistribution.emplace_back(NeighbourPoints[X][Y][Z]);
                             #ifdef SIMULATION_DETAILED_LOG
-                            LoggersManagerObject.Log(STREAM("Element[" << NumberOfElement << "] = " << to_string(NeighbourPoints[X][Y][Z]) + " for (X,Y,Z) = (" << MoveVectors[NumberOfElement].X << "," << MoveVectors[NumberOfElement].Y << "," << MoveVectors[NumberOfElement].Z << ")"));
+                            LoggersManagerObject.Log(STREAM("Element[" << NumberOfElement << "] = " << to_string(NeighbourPoints[X][Y][Z]) + " for (X,Y,Z) = (" << to_string(MoveVectors[NumberOfElement].X) << "," << to_string(MoveVectors[NumberOfElement].Y) << "," << to_string(MoveVectors[NumberOfElement].Z) << ")"));
                             #endif
                             NumberOfElement++;
                         }
@@ -529,11 +531,6 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfElectricDiffusionForSelect
         SwitchOnLogs();
     }
     CATCH("generating one step of electric diffusion")
-}
-
-double DistanceOfParticles(Particle& Particle1, Particle& Particle2)
-{
-    return sqrt(pow(Particle1.XCenter - Particle2.XCenter, 2.0) + pow(Particle1.YCenter - Particle2.YCenter, 2.0) + pow(Particle1.ZCenter - Particle2.ZCenter, 2.0));
 }
 
 string GetPairedSequenceStr(string SequenceStr)
@@ -662,7 +659,7 @@ bool CellEngineVoxelSimulationSpace::CutDNAInChosenPlaceSpecialReactionFunction(
                     {
                         CutDNA(NucleotidePtr2->Prev);
 
-                        SeparateDNAStrands(&Particle::Next, ReactionObject.AdditionalParameter1 < ReactionObject.AdditionalParameter2 ? NucleotidePtr1 : NucleotidePtr2, std::abs(static_cast<SignedInt>(ReactionObject.AdditionalParameter2) - static_cast<SignedInt>(ReactionObject.AdditionalParameter1)));
+                        SeparateDNAStrands(&Particle::Next, ReactionObject.AdditionalParameter1 < ReactionObject.AdditionalParameter2 ? NucleotidePtr1 : NucleotidePtr2, abs(static_cast<SignedInt>(ReactionObject.AdditionalParameter2) - static_cast<SignedInt>(ReactionObject.AdditionalParameter1)));
                     }
                 }
             }
