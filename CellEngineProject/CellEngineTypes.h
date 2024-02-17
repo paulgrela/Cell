@@ -24,4 +24,10 @@ struct vector3
 using vector3_16 = vector3<uint16_t>;
 using vector3_64 = vector3<uint64_t>;
 
+enum class TypesOfLookingForParticlesInProximity : UnsignedInt
+{
+    FromChosenParticleAsCenter = 1,
+    InChosenVoxelSpace = 2
+};
+
 #endif
