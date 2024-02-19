@@ -422,7 +422,67 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfDiffusionForSelectedRangeO
     CATCH("generating one step of diffusion")
 }
 
-void CellEngineVoxelSimulationSpace::GenerateOneStepOfElectricDiffusionForSelectedRangeOfParticles(const TypesOfLookingForParticlesInProximity TypeOfLookingForParticles, const ElectricChargeType UpdateProbabilityOfMove, UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
+void CellEngineVoxelSimulationSpace::UpdateProbabilityOfMoveFromElectricInteractionForSelectedParticle(const ElectricChargeType UpdateProbabilityOfMove, Particle& ParticleObject, ElectricChargeType (*NeighbourPoints)[3][3][3], const double MultiplyElectricChargeFactor)
+{
+    try
+    {
+        for (const auto& NeighbourParticleIndexObjectToWrite : ParticlesSortedByCapacityFoundInProximity)
+        {
+            Particle& NeighbourParticleObject = GetParticleFromIndex(NeighbourParticleIndexObjectToWrite);
+            if (NeighbourParticleObject.ElectricCharge != 0)
+            {
+                for (UnsignedInt X = 0; X <= 2; X++)
+                    for (UnsignedInt Y = 0; Y <= 2; Y++)
+                        for (UnsignedInt Z = 0; Z <= 2; Z++)
+                            if (X != 1 && Y != 1 && Z != 1)
+                                if ((NeighbourParticleObject.XCenter < ParticleObject.XCenter && ParticleObject.XCenter + (X - 1) < ParticleObject.XCenter) ||
+                                    (NeighbourParticleObject.YCenter < ParticleObject.YCenter && ParticleObject.YCenter + (Y - 1) < ParticleObject.YCenter) ||
+                                    (NeighbourParticleObject.ZCenter < ParticleObject.ZCenter && ParticleObject.ZCenter + (Z - 1) < ParticleObject.ZCenter) ||
+                                    (NeighbourParticleObject.XCenter > ParticleObject.XCenter && ParticleObject.XCenter + (X - 1) > ParticleObject.XCenter) ||
+                                    (NeighbourParticleObject.YCenter > ParticleObject.YCenter && ParticleObject.YCenter + (Y - 1) > ParticleObject.YCenter) ||
+                                    (NeighbourParticleObject.ZCenter > ParticleObject.ZCenter && ParticleObject.ZCenter + (Z - 1) > ParticleObject.ZCenter)
+                                )
+                                {
+                                    if ((NeighbourParticleObject.ElectricCharge < 0 && ParticleObject.ElectricCharge > 0) || (NeighbourParticleObject.ElectricCharge > 0 && ParticleObject.ElectricCharge < 0))
+                                    {
+                                        (*NeighbourPoints)[X][Y][Z] += (UpdateProbabilityOfMove == 0) ? static_cast<ElectricChargeType>(abs(static_cast<double>(NeighbourParticleObject.ElectricCharge) - static_cast<double>(ParticleObject.ElectricCharge)) * MultiplyElectricChargeFactor / DistanceOfParticles(ParticleObject, NeighbourParticleObject)) : UpdateProbabilityOfMove;
+                                        #ifdef SIMULATION_DETAILED_LOG
+                                        LoggersManagerObject.Log(STREAM("Increase from neighbour = " << to_string((*NeighbourPoints)[X][Y][Z]) << " " << to_string(static_cast<ElectricChargeType>(X - 1)) << " "<< to_string(static_cast<ElectricChargeType>(Y - 1)) << " " << to_string(static_cast<ElectricChargeType>(Z - 1))));
+                                        #endif
+                                    }
+                                    else
+                                    if (((NeighbourParticleObject.ElectricCharge < 0 && ParticleObject.ElectricCharge < 0) || (NeighbourParticleObject.ElectricCharge > 0 && ParticleObject.ElectricCharge > 0)) && (*NeighbourPoints)[X][Y][Z] > 0)
+                                    {
+                                        (*NeighbourPoints)[X][Y][Z]--;
+                                        #ifdef SIMULATION_DETAILED_LOG
+                                        LoggersManagerObject.Log(STREAM("Decrease from neighbour = " << to_string(*NeighbourPoints[X][Y][Z]) << " " << to_string(static_cast<ElectricChargeType>(X - 1)) << " "<< to_string(static_cast<ElectricChargeType>(Y - 1)) << " " << to_string(static_cast<ElectricChargeType>(Z - 1))));
+                                        #endif
+                                    }
+                                }
+
+                #ifdef SIMULATION_DETAILED_LOG
+                LoggersManagerObject.Log(STREAM("ParticleIndex of neighbour particle = " << to_string(NeighbourParticleIndexObjectToWrite) << " EntityId = " << to_string(GetParticleFromIndex(NeighbourParticleIndexObjectToWrite).EntityId) << " Electric Charge = " << to_string(NeighbourParticleObject.ElectricCharge) << " Electric Charge = " << to_string(ParticleObject.ElectricCharge) << " NUCLEOTIDE = " << ((CellEngineUseful::IsDNAorRNA(GetParticleFromIndex(NeighbourParticleIndexObjectToWrite).EntityId) == true) ? CellEngineUseful::GetLetterFromChainIdForDNAorRNA(NeighbourParticleObject.ChainId) : '0') << " GENOME INDEX = " << NeighbourParticleObject.GenomeIndex));
+                #endif
+            }
+        }
+    }
+    CATCH("updating probability of move from electric interaction for selected particle")
+}
+
+template <class T>
+inline void UpdateNeighbourPointsForChosenVoxel(T UpdateFunction)
+{
+    try
+    {
+        for (SignedInt XPos = 0; XPos <= 2; XPos++)
+            for (SignedInt YPos = 0; YPos <= 2; YPos++)
+                for (SignedInt ZPos = 0; ZPos <= 2; ZPos++)
+                    UpdateFunction(XPos, YPos, ZPos);
+    }
+    CATCH("updating probability of move from electric interaction for selected particle")
+}
+
+void CellEngineVoxelSimulationSpace::GenerateOneStepOfElectricDiffusionForSelectedRangeOfParticles(const TypesOfLookingForParticlesInProximity TypeOfLookingForParticles, const ElectricChargeType UpdateProbabilityOfMove, const UnsignedInt AdditionalSpaceBoundFactor, const double MultiplyElectricChargeFactor, UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
 {
     try
     {
@@ -433,13 +493,7 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfElectricDiffusionForSelect
         GetRangeOfParticlesForRandomParticles(StartParticleIndexParam, EndParticleIndexParam, MaxParticleIndex);
 
         ElectricChargeType NeighbourPoints[3][3][3];
-        for (UnsignedInt X = 0; X <= 2; X++)
-            for (UnsignedInt Y = 0; Y <= 2; Y++)
-                for (UnsignedInt Z = 0; Z <= 2; Z++)
-                    NeighbourPoints[X][Y][Z] = 0;
-
-        const UnsignedInt AdditionalSpaceBoundFactor = 20;
-        const double MultiplyElectricChargeFactor = 10;
+        UpdateNeighbourPointsForChosenVoxel([&NeighbourPoints](SignedInt X, SignedInt Y, SignedInt Z){ NeighbourPoints[X][Y][Z] = 0; });
 
         for (UniqueIdInt ParticleIndex = StartParticleIndexParam; ParticleIndex <= EndParticleIndexParam; ParticleIndex++)
             if (GetParticleFromIndex(ParticleIndex).ElectricCharge != 0)
@@ -459,65 +513,20 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfElectricDiffusionForSelect
                     default: break;
                 }
 
-                for (const auto& NeighbourParticleIndexObjectToWrite : ParticlesSortedByCapacityFoundInProximity)
-                {
-                    Particle& NeighbourParticleObject = GetParticleFromIndex(NeighbourParticleIndexObjectToWrite);
-                    if (NeighbourParticleObject.ElectricCharge != 0)
-                    {
-                        for (UnsignedInt X = 0; X <= 2; X++)
-                            for (UnsignedInt Y = 0; Y <= 2; Y++)
-                                for (UnsignedInt Z = 0; Z <= 2; Z++)
-                                    if (X != 1 && Y != 1 && Z != 1)
-                                        if ((NeighbourParticleObject.XCenter < ParticleObject.XCenter && ParticleObject.XCenter + (X - 1) < ParticleObject.XCenter) ||
-                                            (NeighbourParticleObject.YCenter < ParticleObject.YCenter && ParticleObject.YCenter + (Y - 1) < ParticleObject.YCenter) ||
-                                            (NeighbourParticleObject.ZCenter < ParticleObject.ZCenter && ParticleObject.ZCenter + (Z - 1) < ParticleObject.ZCenter) ||
-                                            (NeighbourParticleObject.XCenter > ParticleObject.XCenter && ParticleObject.XCenter + (X - 1) > ParticleObject.XCenter) ||
-                                            (NeighbourParticleObject.YCenter > ParticleObject.YCenter && ParticleObject.YCenter + (Y - 1) > ParticleObject.YCenter) ||
-                                            (NeighbourParticleObject.ZCenter > ParticleObject.ZCenter && ParticleObject.ZCenter + (Z - 1) > ParticleObject.ZCenter)
-                                        )
-                                        {
-                                            if ((NeighbourParticleObject.ElectricCharge < 0 && ParticleObject.ElectricCharge > 0) || (NeighbourParticleObject.ElectricCharge > 0 && ParticleObject.ElectricCharge < 0))
-                                            {
-                                                NeighbourPoints[X][Y][Z] += (UpdateProbabilityOfMove == 0) ? static_cast<ElectricChargeType>(abs(static_cast<double>(NeighbourParticleObject.ElectricCharge) - static_cast<double>(ParticleObject.ElectricCharge)) * MultiplyElectricChargeFactor / DistanceOfParticles(ParticleObject, NeighbourParticleObject)) : UpdateProbabilityOfMove;
-                                                #ifdef SIMULATION_DETAILED_LOG
-                                                LoggersManagerObject.Log(STREAM("Increase from neighbour = " << to_string(NeighbourPoints[X][Y][Z]) << " " << to_string(static_cast<ElectricChargeType>(X - 1)) << " "<< to_string(static_cast<ElectricChargeType>(Y - 1)) << " " << to_string(static_cast<ElectricChargeType>(Z - 1))));
-                                                #endif
-                                            }
-                                            else
-                                            if (((NeighbourParticleObject.ElectricCharge < 0 && ParticleObject.ElectricCharge < 0) || (NeighbourParticleObject.ElectricCharge > 0 && ParticleObject.ElectricCharge > 0)) && NeighbourPoints[X][Y][Z] > 0)
-                                            {
-                                                NeighbourPoints[X][Y][Z]--;
-                                                #ifdef SIMULATION_DETAILED_LOG
-                                                LoggersManagerObject.Log(STREAM("Decrease from neighbour = " << to_string(NeighbourPoints[X][Y][Z]) << " " << to_string(static_cast<ElectricChargeType>(X - 1)) << " "<< to_string(static_cast<ElectricChargeType>(Y - 1)) << " " << to_string(static_cast<ElectricChargeType>(Z - 1))));
-                                                #endif
-                                            }
-                                        }
-
-                        #ifdef SIMULATION_DETAILED_LOG
-                        LoggersManagerObject.Log(STREAM("ParticleIndex of neighbour particle = " << to_string(NeighbourParticleIndexObjectToWrite) << " EntityId = " << to_string(GetParticleFromIndex(NeighbourParticleIndexObjectToWrite).EntityId) << " Electric Charge = " << to_string(NeighbourParticleObject.ElectricCharge) << " Electric Charge = " << to_string(ParticleObject.ElectricCharge) << " NUCLEOTIDE = " << ((CellEngineUseful::IsDNAorRNA(GetParticleFromIndex(NeighbourParticleIndexObjectToWrite).EntityId) == true) ? CellEngineUseful::GetLetterFromChainIdForDNAorRNA(NeighbourParticleObject.ChainId) : '0') << " GENOME INDEX = " << NeighbourParticleObject.GenomeIndex));
-                        #endif
-                    }
-                }
+                UpdateProbabilityOfMoveFromElectricInteractionForSelectedParticle(UpdateProbabilityOfMove, ParticleObject, &NeighbourPoints, MultiplyElectricChargeFactor);
 
                 vector<vector3<SignedInt>> MoveVectors;
-                for (SignedInt Xi = 0; Xi <= 2; Xi++)
-                    for (SignedInt Yi = 0; Yi <= 2; Yi++)
-                        for (SignedInt Zi = 0; Zi <= 2; Zi++)
-                            MoveVectors.emplace_back(Xi - 1, Yi - 1, Zi - 1);
+                UpdateNeighbourPointsForChosenVoxel([&MoveVectors](SignedInt X, SignedInt Y, SignedInt Z){ MoveVectors.emplace_back(X - 1, Y - 1, Z - 1); });
 
-                UnsignedInt NumberOfElement = 0;
                 vector<int> DiscreteDistribution;
                 DiscreteDistribution.reserve(9);
-                for (UnsignedInt X = 0; X <= 2; X++)
-                    for (UnsignedInt Y = 0; Y <= 2; Y++)
-                        for (UnsignedInt Z = 0; Z <= 2; Z++)
-                        {
-                            DiscreteDistribution.emplace_back(NeighbourPoints[X][Y][Z]);
-                            #ifdef SIMULATION_DETAILED_LOG
-                            LoggersManagerObject.Log(STREAM("Element[" << NumberOfElement << "] = " << to_string(NeighbourPoints[X][Y][Z]) + " for (X,Y,Z) = (" << to_string(MoveVectors[NumberOfElement].X) << "," << to_string(MoveVectors[NumberOfElement].Y) << "," << to_string(MoveVectors[NumberOfElement].Z) << ")"));
-                            #endif
-                            NumberOfElement++;
-                        }
+
+                UpdateNeighbourPointsForChosenVoxel([&NeighbourPoints, &DiscreteDistribution](SignedInt X, SignedInt Y, SignedInt Z){ DiscreteDistribution.emplace_back(NeighbourPoints[X][Y][Z]); });
+                #ifdef SIMULATION_DETAILED_LOG
+                UnsignedInt NumberOfElement = 0;
+                UpdateNeighbourPointsForChosenVoxel([&NeighbourPoints, &MoveVectors, &NumberOfElement](SignedInt X, SignedInt Y, SignedInt Z){ LoggersManagerObject.Log(STREAM("Element[" << NumberOfElement << "] = " << to_string(NeighbourPoints[X][Y][Z]) + " for (X,Y,Z) = (" << to_string(MoveVectors[NumberOfElement].X) << "," << to_string(MoveVectors[NumberOfElement].Y) << "," << to_string(MoveVectors[NumberOfElement].Z) << ")")); NumberOfElement++; });
+                #endif
+
                 discrete_distribution<int> UniformDiscreteDistributionMoveParticleDirectionObject(DiscreteDistribution.begin(), DiscreteDistribution.end());
 
                 UnsignedInt RandomMoveVectorIndex = UniformDiscreteDistributionMoveParticleDirectionObject(mt64R);
