@@ -16,16 +16,27 @@
 #include "CellEngineUseful.h"
 #include "CellEngineColors.h"
 
+class Particle;
+
 template <class T>
 class PairedNucleotide
 {
 public:
-    T* PairedNucleotide = nullptr;
+    T PairedNucleotide = NoParticleIndex;
 public:
-    static void LinkPairedNucleotides(T* PairedNucleotide1, T* PairedNucleotide2)
+    static GetFromPointerType GetFromPointer;
+    static CellEngineVoxelSimulationSpace* ObjectForGettingPointer;
+public:
+    static void SetGetFromPointer(CellEngineVoxelSimulationSpace* ObjectForGettingPointerParam, GetFromPointerType GetFromPointerParam)
     {
-        PairedNucleotide1->PairedNucleotide = PairedNucleotide2;
-        PairedNucleotide2->PairedNucleotide = PairedNucleotide1;
+        ObjectForGettingPointer = ObjectForGettingPointerParam;
+        GetFromPointer = GetFromPointerParam;
+    }
+public:
+    static void LinkPairedNucleotides(T PairedNucleotide1, T PairedNucleotide2)
+    {
+        (ObjectForGettingPointer->*GetFromPointer)(PairedNucleotide1).PairedNucleotide = PairedNucleotide2;
+        (ObjectForGettingPointer->*GetFromPointer)(PairedNucleotide2).PairedNucleotide = PairedNucleotide1;
     }
 };
 
@@ -33,9 +44,9 @@ template <class T>
 class LinkedParticles
 {
 public:
-    std::vector<T*> LinkedParticlesPointersList;
+    std::vector<T> LinkedParticlesPointersList;
 public:
-    void AddNewLinkToParticle(T* NewLinkToParticle)
+    void AddNewLinkToParticle(T NewLinkToParticle)
     {
         LinkedParticlesPointersList.emplace_back(NewLinkToParticle);
     }
@@ -43,7 +54,7 @@ public:
     {
         LinkedParticlesPointersList.pop_back();
     }
-    void SetLinkToParticle(const UnsignedInt Position, const T* NewLinkToParticle)
+    void SetLinkToParticle(const UnsignedInt Position, const T NewLinkToParticle)
     {
         LinkedParticlesPointersList[Position] = NewLinkToParticle;
     }
@@ -57,7 +68,7 @@ public:
     }
 };
 
-class Particle : public DoublyLinkedListNode<Particle>, public PairedNucleotide<Particle>, public LinkedParticles<Particle>
+class Particle : public DoublyLinkedListNode<UniqueIdInt>, public PairedNucleotide<UniqueIdInt>, public LinkedParticles<UniqueIdInt>
 {
 public:
     bool SelectedForReaction{};
@@ -90,6 +101,8 @@ public:
     Particle() = default;
 };
 
+//template <class T, class GetFromPointer>
+//inline double DistanceOfParticles(const ParticleT<T, GetFromPointer>& Particle1, const ParticleT<T, GetFromPointer>& Particle2)
 inline double DistanceOfParticles(const Particle& Particle1, const Particle& Particle2)
 {
     return sqrt(pow(static_cast<double>(Particle1.XCenter) - static_cast<double>(Particle2.XCenter), 2.0) + pow(static_cast<double>(Particle1.YCenter) - static_cast<double>(Particle2.YCenter), 2.0) + pow(static_cast<double>(Particle1.ZCenter) - static_cast<double>(Particle2.ZCenter), 2.0));

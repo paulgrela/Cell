@@ -2,117 +2,135 @@
 #ifndef DOUBLY_LINKED_LIST
 #define DOUBLY_LINKED_LIST
 
+using UniqueIdInt = std::uint32_t;
+
+class Particle;
+class CellEngineVoxelSimulationSpace;
+
+const UniqueIdInt NoParticleIndex = 0;
+
+typedef Particle& (CellEngineVoxelSimulationSpace::*GetFromPointerType)(UniqueIdInt ParticleIndex);
+
 template <class T>
 struct DoublyLinkedListNode
 {
 public:
-    T* Prev = nullptr;
-    T* Next = nullptr;
+    T Prev = NoParticleIndex;
+    T Next = NoParticleIndex;
 public:
-    static void InsertAtFront(T* Front, T* InsertedParticle);
-    static void InsertAtEnd(T* End, T* InsertedParticle);
-    static void InsertBeforeGivenNode(T* ParticleInList, T* InsertedParticle);
-    static void InsertAfterGivenNode(T* ParticleInList, T* InsertedParticle);
-    static void DeleteNode(T* Front, T* DeletedParticle);
-    static T* Search(T* Front, int IndexToFind);
+    static GetFromPointerType GetFromPointer;
+    static CellEngineVoxelSimulationSpace* ObjectForGettingPointer;
+public:
+    static void SetGetFromPointer(CellEngineVoxelSimulationSpace* ObjectForGettingPointerParam, GetFromPointerType GetFromPointerParam)
+    {
+        ObjectForGettingPointer = ObjectForGettingPointerParam;
+        GetFromPointer = GetFromPointerParam;
+    }
+public:
+    static void InsertAtFront(T Front, T InsertedParticle);
+    static void InsertAtEnd(T End, T InsertedParticle);
+    static void InsertBeforeGivenNode(T ParticleInList, T InsertedParticle);
+    static void InsertAfterGivenNode(T ParticleInList, T InsertedParticle);
+    static void DeleteNode(T Front, T DeletedParticle);
+    static T Search(T Front, int IndexToFind);
 };
 
 template <class T>
-void DoublyLinkedListNode<T>::InsertAtFront(T* Front, T* InsertedParticle)
+void DoublyLinkedListNode<T>::InsertAtFront(T Front, T InsertedParticle)
 {
-    InsertedParticle->Prev = nullptr;
+    (ObjectForGettingPointer->*GetFromPointer)(InsertedParticle).Prev = NoParticleIndex;
 
-    InsertedParticle->next = Front;
+    (ObjectForGettingPointer->*GetFromPointer)(InsertedParticle).Next = Front;
 
-    if (Front != nullptr)
-        Front->Prev = InsertedParticle;
+    if (Front != NoParticleIndex)
+        (ObjectForGettingPointer->*GetFromPointer)(Front).Prev = InsertedParticle;
 
     Front = InsertedParticle;
 }
 
 template <class T>
-void DoublyLinkedListNode<T>::InsertAtEnd(T* End, T* InsertedParticle)
+void DoublyLinkedListNode<T>::InsertAtEnd(T End, T InsertedParticle)
 {
-    InsertedParticle->Next = nullptr;
+    (ObjectForGettingPointer->*GetFromPointer)(InsertedParticle).Next = NoParticleIndex;
 
-    if (End == nullptr)
-        InsertedParticle->Prev = nullptr;
+    if (End == NoParticleIndex)
+        (ObjectForGettingPointer->*GetFromPointer)(InsertedParticle).Prev = NoParticleIndex;
     else
-        End->Next = InsertedParticle;
+        (ObjectForGettingPointer->*GetFromPointer)(End).Next = InsertedParticle;
 
-    InsertedParticle->Prev = End;
+    (ObjectForGettingPointer->*GetFromPointer)(InsertedParticle).Prev = End;
 }
 
 template <class T>
-void DoublyLinkedListNode<T>::InsertAfterGivenNode(T* ParticleInList, T* InsertedParticle)
+void DoublyLinkedListNode<T>::InsertAfterGivenNode(T ParticleInList, T InsertedParticle)
 {
-    if (ParticleInList != nullptr)
+    if (ParticleInList != NoParticleIndex)
     {
-        InsertedParticle->Next = ParticleInList->Next;
+        (ObjectForGettingPointer->*GetFromPointer)(InsertedParticle).Next = (ObjectForGettingPointer->*GetFromPointer)(ParticleInList).Next;
 
-        ParticleInList->Next = InsertedParticle;
+        (ObjectForGettingPointer->*GetFromPointer)(ParticleInList).Next = InsertedParticle;
 
-        InsertedParticle->Prev = ParticleInList;
+        (ObjectForGettingPointer->*GetFromPointer)(InsertedParticle).Prev = ParticleInList;
 
-        if (InsertedParticle->Next != nullptr)
-            InsertedParticle->Next->Prev = InsertedParticle;
+        if ((ObjectForGettingPointer->*GetFromPointer)(InsertedParticle).Next != NoParticleIndex)
+            (ObjectForGettingPointer->*GetFromPointer)((ObjectForGettingPointer->*GetFromPointer)(InsertedParticle).Next).Prev = InsertedParticle;
     }
     else
-        InsertAtEnd(nullptr, InsertedParticle);
+        InsertAtEnd(NoParticleIndex, InsertedParticle);
 }
 
 template <class T>
-void DoublyLinkedListNode<T>::InsertBeforeGivenNode(T* ParticleInList, T* InsertedParticle)
+void DoublyLinkedListNode<T>::InsertBeforeGivenNode(T ParticleInList, T InsertedParticle)
 {
-    if (ParticleInList != nullptr)
+    if (ParticleInList != NoParticleIndex)
     {
-        InsertedParticle->Prev = ParticleInList->Prev;
+        (ObjectForGettingPointer->*GetFromPointer)(InsertedParticle).Prev = (ObjectForGettingPointer->*GetFromPointer)(ParticleInList).Prev;
 
-        ParticleInList->Prev = InsertedParticle;
+        (ObjectForGettingPointer->*GetFromPointer)(ParticleInList).Prev = InsertedParticle;
 
-        InsertedParticle->Next = ParticleInList;
+        (ObjectForGettingPointer->*GetFromPointer)(InsertedParticle).Next = ParticleInList;
 
-        if(InsertedParticle->Prev != nullptr)
-            InsertedParticle->Prev->Next = InsertedParticle;
+        if ((ObjectForGettingPointer->*GetFromPointer)(InsertedParticle).Prev != NoParticleIndex)
+            (ObjectForGettingPointer->*GetFromPointer)((ObjectForGettingPointer->*GetFromPointer)(InsertedParticle).Prev).Next = InsertedParticle;
         else
-            InsertedParticle->Prev = nullptr;
+            (ObjectForGettingPointer->*GetFromPointer)(InsertedParticle).Prev = NoParticleIndex;
     }
     else
-        InsertAtFront(nullptr, InsertedParticle);
+        InsertAtFront(NoParticleIndex, InsertedParticle);
 }
 
 template <class T>
-void DoublyLinkedListNode<T>::DeleteNode(T* Front, T* DeletedParticle)
+void DoublyLinkedListNode<T>::DeleteNode(T Front, T DeletedParticle)
 {
     if (DeletedParticle == Front)
-        Front = DeletedParticle->Next;
+        Front = (ObjectForGettingPointer->*GetFromPointer)(DeletedParticle).Next;
 
-    DeletedParticle->Prev->Next = DeletedParticle->Next;
+    (ObjectForGettingPointer->*GetFromPointer)((ObjectForGettingPointer->*GetFromPointer)(DeletedParticle).Prev).Next = (ObjectForGettingPointer->*GetFromPointer)(DeletedParticle).Next;
 
-    if (DeletedParticle->Next == nullptr)
+    if ((ObjectForGettingPointer->*GetFromPointer)(DeletedParticle).Next == NoParticleIndex)
         return;
 
-    DeletedParticle->Next->Prev = DeletedParticle->Prev;
+    (ObjectForGettingPointer->*GetFromPointer)((ObjectForGettingPointer->*GetFromPointer)(DeletedParticle).Next).Prev = (ObjectForGettingPointer->*GetFromPointer)(DeletedParticle).Prev;
 }
 
 template <class T>
-T* DoublyLinkedListNode<T>::Search(T* Front, int IndexToFind)
+T DoublyLinkedListNode<T>::Search(T Front, int IndexToFind)
 {
-    T* Temp = Front;
+    T Temp = Front;
 
     int Index = 0;
 
-    while (Temp != nullptr)
+    while (Temp != NoParticleIndex)
     {
         if (Index == IndexToFind)
             return Temp;
 
-        Temp = Temp->Next;
+        Temp = (ObjectForGettingPointer->*GetFromPointer)(Temp).Next;
 
         Index++;
     }
 
-    return nullptr;
+    return NoParticleIndex;
 }
 
 #endif
