@@ -101,8 +101,6 @@ public:
     Particle() = default;
 };
 
-//template <class T, class GetFromPointer>
-//inline double DistanceOfParticles(const ParticleT<T, GetFromPointer>& Particle1, const ParticleT<T, GetFromPointer>& Particle2)
 inline double DistanceOfParticles(const Particle& Particle1, const Particle& Particle2)
 {
     return sqrt(pow(static_cast<double>(Particle1.XCenter) - static_cast<double>(Particle2.XCenter), 2.0) + pow(static_cast<double>(Particle1.YCenter) - static_cast<double>(Particle2.YCenter), 2.0) + pow(static_cast<double>(Particle1.ZCenter) - static_cast<double>(Particle2.ZCenter), 2.0));

@@ -63,9 +63,12 @@ private:
     std::vector<UniqueIdInt> RNANucleotidesFoundInProximity;
 private:
     void* SpacePointer;
-private:
+public:
     inline SimulationSpaceVoxel& GetSpaceVoxel(UnsignedInt x, UnsignedInt y, UnsignedInt z);
-    inline Particle& GetParticleFromIndex(UniqueIdInt ParticleIndex);
+    inline Particle& GetParticleFromIndex(UniqueIdInt ParticleIndex)
+    {
+        return Particles[ParticleIndex];
+    }
 private:
     UnsignedInt XMin{}, XMax{}, YMin{}, YMax{}, ZMin{}, ZMax{};
 public:

@@ -1,5 +1,4 @@
 
-
 #include <set>
 #include <map>
 #include <algorithm>
@@ -32,11 +31,6 @@ using namespace std;
 inline SimulationSpaceVoxel& CellEngineVoxelSimulationSpace::GetSpaceVoxel(UnsignedInt x, UnsignedInt y, UnsignedInt z)
 {
     return CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension == 2048 ? (*static_cast<Space_2048_2048_2048*>(SpacePointer))[x][y][z] : (*static_cast<Space_1024_1024_1024*>(SpacePointer))[x][y][z];
-}
-
-inline Particle& CellEngineVoxelSimulationSpace::GetParticleFromIndex(const UniqueIdInt ParticleIndex)
-{
-    return Particles[ParticleIndex];
 }
 
 inline SimulationSpaceVoxel GetZeroSimulationSpaceVoxel()
@@ -262,7 +256,6 @@ void CellEngineVoxelSimulationSpace::SetAtomInVoxelSimulationSpace(const UniqueI
 //bo i tak problem bedzie rozwiazany
 
 //gdy wskazuje na jakas czastke to jak ona znika to moze leciec exception - weak_ptr by sie przydal
-//teraz zle rozwiazane bo to nie zawsze jest nullptr ustawiane gdy czastka znika a nie ma mozliowsci sprawdzenia
 
 UniqueIdInt CellEngineVoxelSimulationSpace::AddNewParticle(const Particle& ParticleParam)
 {
@@ -1666,7 +1659,6 @@ UniqueIdInt CellEngineVoxelSimulationSpace::GenerateNucleotideParticle(UniqueIdI
     {
         ParticleIndex = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), EntityId, ChainId, GenomeThread, GenomeIndex, 0, UniqueColorParam));
 
-        //Particle::InsertAfterGivenNode(ParticlePrev, &GetParticleFromIndex(ParticleIndex));
         Particle::InsertAfterGivenNode(ParticlePrev, ParticleIndex);
 
         GenerateParticleVoxelsWhenSelectedSpaceIsFree(ParticleIndex, StartPosX, StartPosY, StartPosZ, ParticleSizeX, ParticleSizeY, ParticleSizeZ, 0, 0, 0, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension);
@@ -1720,7 +1712,6 @@ tuple<UnsignedInt, UnsignedInt, UnsignedInt> CellEngineVoxelSimulationSpace::Era
 
         SetAllVoxelsInListOfVoxelsToValue(GetParticleFromIndex(PreviousParticleIndex).ListOfVoxels, GetZeroSimulationSpaceVoxel());
 
-        //Particle::DeleteNode(NoParticleIndex, &GetParticleFromIndex(PreviousParticleIndex));
         Particle::DeleteNode(NoParticleIndex, PreviousParticleIndex);
 
         Particles.erase(PreviousParticleIndex);

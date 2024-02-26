@@ -86,7 +86,6 @@ public:
         CATCH("reading of data file")
     }
 
-    //static void ColorButton(const char* Text, float& VariableToChange, const float Step, const float MinValue, const float MaxValue, const float ColorParam, int& IDButton, void (*FunctionToExecute)(float& VariableToChange, const float Step, const float MinValue, const float MaxValue))
     template <class T>
     static void ColorButton(const char* Text, float& VariableToChange, const float Step, const float MinValue, const float MaxValue, const float ColorParam, int& IDButton, T FunctionToExecute)
     {

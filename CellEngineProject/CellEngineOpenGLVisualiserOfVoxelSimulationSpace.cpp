@@ -83,10 +83,8 @@ inline void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::SetParticleParamet
             TempAtomObject.RandomParticleKindColor = TempAtomObject.UniqueParticleColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(vmath::FromVec4ToVec3(sb7::color::Blue));
         if (CellEngineUseful::IsDNAorRNA(TempAtomObject.EntityId) == true && (CellEngineConfigDataObject.GenomeReadFromFile == true))
         {
-//            TempAtomObject.GenomeIndexPrev = (ParticleObject.Prev != nullptr ? ParticleObject.Prev->GenomeIndex : 0);
-//            TempAtomObject.GenomeIndexNext = (ParticleObject.Next != nullptr ? ParticleObject.Next->GenomeIndex : 0);
-            //TempAtomObject.GenomeIndexPrev = (ParticleObject.Prev != NoParticleIndex ? ParticleObject.Prev->GenomeIndex : 0);
-            //TempAtomObject.GenomeIndexNext = (ParticleObject.Next != NoParticleIndex ? ParticleObject.Next->GenomeIndex : 0);
+            TempAtomObject.GenomeIndexPrev = (ParticleObject.Prev != NoParticleIndex ? CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GetParticleFromIndex(ParticleObject.Prev).GenomeIndex : 0);
+            TempAtomObject.GenomeIndexNext = (ParticleObject.Next != NoParticleIndex ? CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GetParticleFromIndex(ParticleObject.Next).GenomeIndex : 0);
         }
         TempAtomObject.GenomeIndex = ParticleObject.GenomeIndex;
         TempAtomObject.Nucleotide = ((CellEngineUseful::IsDNAorRNA(ParticleObject.EntityId) == true) ? CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.ChainId) : '0');
