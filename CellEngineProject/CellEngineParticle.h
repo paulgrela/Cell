@@ -21,6 +21,7 @@ class PairedNucleotide
 {
 public:
     T* PairedNucleotide = nullptr;
+    UniqueIdInt PairedNucleotideTemporary = 0;
 public:
     static void LinkPairedNucleotides(T* PairedNucleotide1, T* PairedNucleotide2)
     {
@@ -34,6 +35,8 @@ class LinkedParticles
 {
 public:
     std::vector<T*> LinkedParticlesPointersList;
+public:
+    std::vector<UniqueIdInt> LinkedParticlesPointersListTemporary;
 public:
     void AddNewLinkToParticle(T* NewLinkToParticle)
     {
@@ -57,7 +60,7 @@ public:
     }
 };
 
-class Particle : public DoublyLinkedListNode<Particle>, public PairedNucleotide<Particle>, public LinkedParticles<Particle>
+class Particle : public DoublyLinkedListNode<Particle, UniqueIdInt>, public PairedNucleotide<Particle>, public LinkedParticles<Particle>
 {
 public:
     bool SelectedForReaction{};
@@ -71,13 +74,13 @@ public:
     ElectricChargeType ElectricCharge{};
 public:
     std::vector<vector3_16> ListOfVoxels;
-    UnsignedInt XCenter{}, YCenter{}, ZCenter{};
+    vector3_16 Center{};
 public:
-    void SetCenterCoordinates(UnsignedInt XCenterParam, UnsignedInt YCenterParam, UnsignedInt ZCenterParam)
+    void SetCenterCoordinates(PositionInt XCenterParam, PositionInt YCenterParam, PositionInt ZCenterParam)
     {
-        XCenter = XCenterParam;
-        YCenter = YCenterParam;
-        ZCenter = ZCenterParam;
+        Center.X = XCenterParam;
+        Center.Y = YCenterParam;
+        Center.Z = ZCenterParam;
     }
 public:
     explicit Particle(std::vector<vector3_16>& ListOfVoxelsParam) : ListOfVoxels(std::move(ListOfVoxelsParam)), SelectedForReaction(false)
@@ -92,7 +95,7 @@ public:
 
 inline double DistanceOfParticles(const Particle& Particle1, const Particle& Particle2)
 {
-    return sqrt(pow(static_cast<double>(Particle1.XCenter) - static_cast<double>(Particle2.XCenter), 2.0) + pow(static_cast<double>(Particle1.YCenter) - static_cast<double>(Particle2.YCenter), 2.0) + pow(static_cast<double>(Particle1.ZCenter) - static_cast<double>(Particle2.ZCenter), 2.0));
+    return sqrt(pow(static_cast<double>(Particle1.Center.X) - static_cast<double>(Particle2.Center.X), 2.0) + pow(static_cast<double>(Particle1.Center.Y) - static_cast<double>(Particle2.Center.Y), 2.0) + pow(static_cast<double>(Particle1.Center.Z) - static_cast<double>(Particle2.Center.Z), 2.0));
 }
 
 struct ParticleKindGraphicData

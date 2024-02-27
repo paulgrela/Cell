@@ -2,12 +2,15 @@
 #ifndef DOUBLY_LINKED_LIST
 #define DOUBLY_LINKED_LIST
 
-template <class T>
+template <class T, class B>
 struct DoublyLinkedListNode
 {
 public:
     T* Prev = nullptr;
     T* Next = nullptr;
+public:
+    B PrevTemporary = 0;
+    B NextTemporary = 0;
 public:
     static void InsertAtFront(T* Front, T* InsertedParticle);
     static void InsertAtEnd(T* End, T* InsertedParticle);
@@ -17,8 +20,8 @@ public:
     static T* Search(T* Front, int IndexToFind);
 };
 
-template <class T>
-void DoublyLinkedListNode<T>::InsertAtFront(T* Front, T* InsertedParticle)
+template <class T, class B>
+void DoublyLinkedListNode<T, B>::InsertAtFront(T* Front, T* InsertedParticle)
 {
     InsertedParticle->Prev = nullptr;
 
@@ -30,8 +33,8 @@ void DoublyLinkedListNode<T>::InsertAtFront(T* Front, T* InsertedParticle)
     Front = InsertedParticle;
 }
 
-template <class T>
-void DoublyLinkedListNode<T>::InsertAtEnd(T* End, T* InsertedParticle)
+template <class T, class B>
+void DoublyLinkedListNode<T, B>::InsertAtEnd(T* End, T* InsertedParticle)
 {
     InsertedParticle->Next = nullptr;
 
@@ -43,8 +46,8 @@ void DoublyLinkedListNode<T>::InsertAtEnd(T* End, T* InsertedParticle)
     InsertedParticle->Prev = End;
 }
 
-template <class T>
-void DoublyLinkedListNode<T>::InsertAfterGivenNode(T* ParticleInList, T* InsertedParticle)
+template <class T, class B>
+void DoublyLinkedListNode<T, B>::InsertAfterGivenNode(T* ParticleInList, T* InsertedParticle)
 {
     if (ParticleInList != nullptr)
     {
@@ -61,8 +64,8 @@ void DoublyLinkedListNode<T>::InsertAfterGivenNode(T* ParticleInList, T* Inserte
         InsertAtEnd(nullptr, InsertedParticle);
 }
 
-template <class T>
-void DoublyLinkedListNode<T>::InsertBeforeGivenNode(T* ParticleInList, T* InsertedParticle)
+template <class T, class B>
+void DoublyLinkedListNode<T, B>::InsertBeforeGivenNode(T* ParticleInList, T* InsertedParticle)
 {
     if (ParticleInList != nullptr)
     {
@@ -81,8 +84,8 @@ void DoublyLinkedListNode<T>::InsertBeforeGivenNode(T* ParticleInList, T* Insert
         InsertAtFront(nullptr, InsertedParticle);
 }
 
-template <class T>
-void DoublyLinkedListNode<T>::DeleteNode(T* Front, T* DeletedParticle)
+template <class T, class B>
+void DoublyLinkedListNode<T, B>::DeleteNode(T* Front, T* DeletedParticle)
 {
     if (DeletedParticle == Front)
         Front = DeletedParticle->Next;
@@ -95,8 +98,8 @@ void DoublyLinkedListNode<T>::DeleteNode(T* Front, T* DeletedParticle)
     DeletedParticle->Next->Prev = DeletedParticle->Prev;
 }
 
-template <class T>
-T* DoublyLinkedListNode<T>::Search(T* Front, int IndexToFind)
+template <class T, class B>
+T* DoublyLinkedListNode<T, B>::Search(T* Front, int IndexToFind)
 {
     T* Temp = Front;
 

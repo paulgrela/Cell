@@ -263,6 +263,69 @@ UniqueIdInt CellEngineVoxelSimulationSpace::GetNewFreeIndexOfParticle()
     }
 }
 
+void SavePointerToBinaryFile(ofstream& ParticlesDataFile, const Particle* PointerToParticle)
+{
+    try
+    {
+        if (PointerToParticle != nullptr)
+            ParticlesDataFile.write((char*)&PointerToParticle->Index, sizeof(UniqueIdInt));
+        else
+        {
+            UniqueIdInt ValueToWrite = 0;
+            ParticlesDataFile.write((char*)&ValueToWrite, sizeof(UniqueIdInt));
+        }
+    }
+    CATCH("saving pointer to binary file")
+}
+
+void CellEngineVoxelSimulationSpace::SaveParticlesToFile()
+{
+    try
+    {
+        string ParticlesDataFileName = string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("particles") + OS_DIR_SEP + string("ParticlesDataFile.dat");
+        ofstream ParticlesDataFile(ParticlesDataFileName, ios_base::out | ios_base::trunc | ios_base::binary);
+
+        UnsignedInt ParticlesSize = Particles.size();
+        LoggersManagerObject.Log(STREAM("Number of Particles to be saved = " << ParticlesSize));
+        ParticlesDataFile.write((char*)&ParticlesSize, sizeof(ParticlesSize));
+
+        for (const auto& ParticleObject : Particles)
+        {
+            ParticlesDataFile.write((char*)&ParticleObject.second.EntityId, sizeof(ParticleObject.second.EntityId));
+            ParticlesDataFile.write((char*)&ParticleObject.second.ChainId, sizeof(ParticleObject.second.ChainId));
+            ParticlesDataFile.write((char*)&ParticleObject.second.Index, sizeof(ParticleObject.second.Index));
+            ParticlesDataFile.write((char*)&ParticleObject.second.GenomeIndex, sizeof(ParticleObject.second.GenomeIndex));
+            ParticlesDataFile.write((char*)&ParticleObject.second.ElectricCharge, sizeof(ParticleObject.second.ElectricCharge));
+
+            ParticlesDataFile.write((char*)&ParticleObject.second.Center, sizeof(ParticleObject.second.Center));
+
+            ParticlesDataFile.write((char*)&ParticleObject.second.UniqueColor, sizeof(ParticleObject.second.UniqueColor));
+
+            ParticlesDataFile.write((char*)&ParticleObject.second.SelectedForReaction, sizeof(ParticleObject.second.SelectedForReaction));
+
+            UnsignedInt ParticleListOfVoxelsSize = ParticleObject.second.ListOfVoxels.size();
+            ParticlesDataFile.write((char*)&ParticleListOfVoxelsSize, sizeof(ParticleListOfVoxelsSize));
+
+            for (const auto& VoxelObject : ParticleObject.second.ListOfVoxels)
+                ParticlesDataFile.write((char*)&VoxelObject, sizeof(VoxelObject));
+
+            SavePointerToBinaryFile(ParticlesDataFile, ParticleObject.second.Prev);
+            SavePointerToBinaryFile(ParticlesDataFile, ParticleObject.second.Next);
+            SavePointerToBinaryFile(ParticlesDataFile, ParticleObject.second.PairedNucleotide);
+
+            UnsignedInt LinkedParticlesPointersSize = ParticleObject.second.LinkedParticlesPointersList.size();
+            ParticlesDataFile.write((char*)&LinkedParticlesPointersSize, sizeof(LinkedParticlesPointersSize));
+            for (const auto& LinkedParticlePointerObject : ParticleObject.second.LinkedParticlesPointersList)
+                SavePointerToBinaryFile(ParticlesDataFile, LinkedParticlePointerObject);
+        }
+
+        ParticlesDataFile.close();
+
+        LoggersManagerObject.Log(STREAM("END OF SAVING PARTICLES TO BINARY FILE"));
+    }
+    CATCH("saving particles to file")
+};
+
 void CellEngineVoxelSimulationSpace::AddBasicParticlesKindsAndReactions()
 {
     try
@@ -456,12 +519,12 @@ void CellEngineVoxelSimulationSpace::UpdateProbabilityOfMoveFromElectricInteract
                     for (UnsignedInt Y = 0; Y <= 2; Y++)
                         for (UnsignedInt Z = 0; Z <= 2; Z++)
                             if (X != 1 && Y != 1 && Z != 1)
-                                if ((NeighbourParticleObject.XCenter < ParticleObject.XCenter && ParticleObject.XCenter + (X - 1) < ParticleObject.XCenter) ||
-                                    (NeighbourParticleObject.YCenter < ParticleObject.YCenter && ParticleObject.YCenter + (Y - 1) < ParticleObject.YCenter) ||
-                                    (NeighbourParticleObject.ZCenter < ParticleObject.ZCenter && ParticleObject.ZCenter + (Z - 1) < ParticleObject.ZCenter) ||
-                                    (NeighbourParticleObject.XCenter > ParticleObject.XCenter && ParticleObject.XCenter + (X - 1) > ParticleObject.XCenter) ||
-                                    (NeighbourParticleObject.YCenter > ParticleObject.YCenter && ParticleObject.YCenter + (Y - 1) > ParticleObject.YCenter) ||
-                                    (NeighbourParticleObject.ZCenter > ParticleObject.ZCenter && ParticleObject.ZCenter + (Z - 1) > ParticleObject.ZCenter)
+                                if ((NeighbourParticleObject.Center.X < ParticleObject.Center.X && ParticleObject.Center.X +(X - 1) < ParticleObject.Center.X) ||
+                                    (NeighbourParticleObject.Center.Y < ParticleObject.Center.Y && ParticleObject.Center.Y + (Y - 1) < ParticleObject.Center.Y) ||
+                                    (NeighbourParticleObject.Center.Z < ParticleObject.Center.Z && ParticleObject.Center.Z + (Z - 1) < ParticleObject.Center.Z) ||
+                                    (NeighbourParticleObject.Center.X > ParticleObject.Center.X && ParticleObject.Center.X + (X - 1) > ParticleObject.Center.X) ||
+                                    (NeighbourParticleObject.Center.Y > ParticleObject.Center.Y && ParticleObject.Center.Y + (Y - 1) > ParticleObject.Center.Y) ||
+                                    (NeighbourParticleObject.Center.Z > ParticleObject.Center.Z && ParticleObject.Center.Z + (Z - 1) > ParticleObject.Center.Z)
                                 )
                                 {
                                     (*NeighbourPoints)[X][Y][Z] += static_cast<ElectricChargeType>((-1.0 * NeighbourParticleObject.ElectricCharge * ParticleObject.ElectricCharge) * MultiplyElectricChargeFactor / sqr(DistanceOfParticles(ParticleObject, NeighbourParticleObject)));
@@ -505,7 +568,7 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfElectricDiffusionForSelect
 
                 switch (TypeOfLookingForParticles)
                 {
-                    case TypesOfLookingForParticlesInProximity::FromChosenParticleAsCenter : FindParticlesInProximityOfVoxelSimulationSpaceForSelectedVoxelSpace(false, ParticleObject.XCenter - ParticleKindObject.XSizeDiv2 - AdditionalSpaceBoundFactor, ParticleObject.YCenter - ParticleKindObject.YSizeDiv2 - AdditionalSpaceBoundFactor, ParticleObject.ZCenter - ParticleKindObject.ZSizeDiv2 - AdditionalSpaceBoundFactor, 2 * ParticleKindObject.XSizeDiv2 + 2 * AdditionalSpaceBoundFactor, 2 * ParticleKindObject.YSizeDiv2 + 2 * AdditionalSpaceBoundFactor, 2 * ParticleKindObject.ZSizeDiv2 + 2 * AdditionalSpaceBoundFactor); break;
+                    case TypesOfLookingForParticlesInProximity::FromChosenParticleAsCenter : FindParticlesInProximityOfVoxelSimulationSpaceForSelectedVoxelSpace(false, ParticleObject.Center.X - ParticleKindObject.XSizeDiv2 - AdditionalSpaceBoundFactor, ParticleObject.Center.Y - ParticleKindObject.YSizeDiv2 - AdditionalSpaceBoundFactor, ParticleObject.Center.Z - ParticleKindObject.ZSizeDiv2 - AdditionalSpaceBoundFactor, 2 * ParticleKindObject.XSizeDiv2 + 2 * AdditionalSpaceBoundFactor, 2 * ParticleKindObject.YSizeDiv2 + 2 * AdditionalSpaceBoundFactor, 2 * ParticleKindObject.ZSizeDiv2 + 2 * AdditionalSpaceBoundFactor); break;
                     case TypesOfLookingForParticlesInProximity::InChosenVoxelSpace : FindParticlesInProximityOfVoxelSimulationSpaceForSelectedVoxelSpace(false, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam); break;
                     default: break;
                 }
@@ -1147,7 +1210,7 @@ tuple<vector<pair<UniqueIdInt, UnsignedInt>>, bool> CellEngineVoxelSimulationSpa
         {
             auto& ParticleObjectTestedForReaction = GetParticleFromIndex(ParticleObjectIndex);
 
-            LoggersManagerObject.Log(STREAM("ParticleObjectIndex = " << to_string(ParticleObjectIndex) <<" EntityId = " << to_string(ParticleObjectTestedForReaction.EntityId) << " X = " << to_string(ParticleObjectTestedForReaction.XCenter) << " Y = " << to_string(ParticleObjectTestedForReaction.YCenter) << " Z = " << to_string(ParticleObjectTestedForReaction.ZCenter)));
+            LoggersManagerObject.Log(STREAM("ParticleObjectIndex = " << to_string(ParticleObjectIndex) <<" EntityId = " << to_string(ParticleObjectTestedForReaction.EntityId) << " X = " << to_string(ParticleObjectTestedForReaction.Center.X) << " Y = " << to_string(ParticleObjectTestedForReaction.Center.Y) << " Z = " << to_string(ParticleObjectTestedForReaction.Center.Z)));
 
             vector<ParticleKindForReaction>::const_iterator ReactantIterator;
             if (CellEngineUseful::IsDNAorRNA(ParticleObjectTestedForReaction.EntityId) == false)
@@ -1167,7 +1230,7 @@ tuple<vector<pair<UniqueIdInt, UnsignedInt>>, bool> CellEngineVoxelSimulationSpa
             if (ReactantIterator != ReactionObject.Reactants.end() && ReactantsCounters[PositionInReactants] > 0)
             {
                 AllParticlesIndexesChosenForReaction.emplace_back(ParticleObjectIndex, PositionInReactants);
-                LoggersManagerObject.Log(STREAM("CHOSEN ParticleObjectIndex = " << to_string(ParticleObjectIndex) <<" EntityId = " << to_string(ParticleObjectTestedForReaction.EntityId) << " X = " << to_string(ParticleObjectTestedForReaction.XCenter) << " Y = " << to_string(ParticleObjectTestedForReaction.YCenter) << " Z = " << to_string(ParticleObjectTestedForReaction.ZCenter) << endl));
+                LoggersManagerObject.Log(STREAM("CHOSEN ParticleObjectIndex = " << to_string(ParticleObjectIndex) <<" EntityId = " << to_string(ParticleObjectTestedForReaction.EntityId) << " X = " << to_string(ParticleObjectTestedForReaction.Center.X) << " Y = " << to_string(ParticleObjectTestedForReaction.Center.Y) << " Z = " << to_string(ParticleObjectTestedForReaction.Center.Z) << endl));
                 ReactantsCounters[PositionInReactants]--;
             }
 
@@ -1200,8 +1263,8 @@ void CellEngineVoxelSimulationSpace::EraseParticlesChosenForReactionAndGetCenter
     {
         auto& ParticleObjectToBeErased = GetParticleFromIndex(ParticleIndexChosenForReaction);
 
-        Centers.emplace_back(ParticleObjectToBeErased.XCenter, ParticleObjectToBeErased.YCenter, ParticleObjectToBeErased.ZCenter);
-        LoggersManagerObject.Log(STREAM("Centers - X = " << to_string(ParticleObjectToBeErased.XCenter) << " Y = " << to_string(ParticleObjectToBeErased.YCenter) << " Z = " << to_string(ParticleObjectToBeErased.ZCenter) << endl));
+        Centers.emplace_back(ParticleObjectToBeErased.Center.X, ParticleObjectToBeErased.Center.Y, ParticleObjectToBeErased.Center.Z);
+        LoggersManagerObject.Log(STREAM("Centers - X = " << to_string(ParticleObjectToBeErased.Center.X) << " Y = " << to_string(ParticleObjectToBeErased.Center.Y) << " Z = " << to_string(ParticleObjectToBeErased.Center.Z) << endl));
 
         SetAllVoxelsInListOfVoxelsToValue(ParticleObjectToBeErased.ListOfVoxels, GetZeroSimulationSpaceVoxel());
 
@@ -1470,7 +1533,7 @@ bool CellEngineVoxelSimulationSpace::FindParticlesInProximityOfVoxelSimulationSp
 
         auto ParticleKindObject = ParticlesKindsManagerObject.GetParticleKind(ParticleObject.EntityId);
 
-        FindParticlesInProximityOfVoxelSimulationSpaceForSelectedVoxelSpace(true, ParticleObject.XCenter - ParticleKindObject.XSizeDiv2 - AdditionalBoundFactor, ParticleObject.YCenter - ParticleKindObject.YSizeDiv2 - AdditionalBoundFactor, ParticleObject.ZCenter - ParticleKindObject.ZSizeDiv2 - AdditionalBoundFactor, 2 * ParticleKindObject.XSizeDiv2 + 2 * AdditionalBoundFactor, 2 * ParticleKindObject.YSizeDiv2 + 2 * AdditionalBoundFactor, 2 * ParticleKindObject.ZSizeDiv2 + 2 * AdditionalBoundFactor);
+        FindParticlesInProximityOfVoxelSimulationSpaceForSelectedVoxelSpace(true, ParticleObject.Center.X - ParticleKindObject.XSizeDiv2 - AdditionalBoundFactor, ParticleObject.Center.Y - ParticleKindObject.YSizeDiv2 - AdditionalBoundFactor, ParticleObject.Center.Z - ParticleKindObject.ZSizeDiv2 - AdditionalBoundFactor, 2 * ParticleKindObject.XSizeDiv2 + 2 * AdditionalBoundFactor, 2 * ParticleKindObject.YSizeDiv2 + 2 * AdditionalBoundFactor, 2 * ParticleKindObject.ZSizeDiv2 + 2 * AdditionalBoundFactor);
     }
     CATCH("finding particles in proximity of voxel simulation space for chosen particle")
 

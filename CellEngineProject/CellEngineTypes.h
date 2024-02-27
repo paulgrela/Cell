@@ -11,6 +11,7 @@ using UnsignedInt = std::uint64_t;
 
 using EntityIdInt = std::uint32_t;
 using ChainIdInt = std::uint16_t;
+using PositionInt = std::uint16_t;
 using UniqueIdInt = std::uint32_t;
 
 using ElectricChargeType = std::int32_t;

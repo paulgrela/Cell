@@ -86,7 +86,6 @@ public:
         CATCH("reading of data file")
     }
 
-    //static void ColorButton(const char* Text, float& VariableToChange, const float Step, const float MinValue, const float MaxValue, const float ColorParam, int& IDButton, void (*FunctionToExecute)(float& VariableToChange, const float Step, const float MinValue, const float MaxValue))
     template <class T>
     static void ColorButton(const char* Text, float& VariableToChange, const float Step, const float MinValue, const float MaxValue, const float ColorParam, int& IDButton, T FunctionToExecute)
     {
@@ -626,6 +625,12 @@ public:
                     }
                     if (ImGui::Button(" TEST GENOME DATA FROM FILE ") == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->TestGeneratedGenomeCorrectness(2);
+                }
+
+                if (ImGui::CollapsingHeader("SAVING STATE TO FILE", ImGuiTreeNodeFlags_DefaultOpen))
+                {
+                    if (ImGui::Button(" SAVE PARTICLES DATA TO BINARY FILE ") == true)
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->SaveParticlesToFile();
                 }
 
                 static int SelectedSpaceStartParametersDrawTypesIndex = static_cast<int>(CellEngineConfigDataObject.SelectedSpaceStartParametersDrawTypesObject);

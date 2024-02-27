@@ -109,6 +109,8 @@ public:
 public:
     UniqueIdInt AddNewParticle(const Particle& ParticleParam);
 public:
+    void SaveParticlesToFile();
+public:
     void AddBasicParticlesKindsAndReactions();
 public:
     void GeneratePlanedParticlesInSelectedSpace(UnsignedInt NumberOfRandomParticles, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt StepXParam, UnsignedInt StepYParam, UnsignedInt StepZParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
