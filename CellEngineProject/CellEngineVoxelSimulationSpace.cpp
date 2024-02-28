@@ -441,6 +441,8 @@ void CellEngineVoxelSimulationSpace::ReadParticlesFromFileAndPrepareData()
 
         InitiateFreeParticleIndexes();
 
+        CellEngineConfigDataObject.GenomeReadFromFile = true;
+
         LoggersManagerObject.Log(STREAM("END OF READING PARTICLES FROM FILE AND PREPARING DATA"));
     }
     CATCH("reading particles from file")
