@@ -631,6 +631,8 @@ public:
                 {
                     if (ImGui::Button(" SAVE PARTICLES DATA TO BINARY FILE ") == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->SaveParticlesToFile();
+                    if (ImGui::Button(" READ PARTICLES DATA FROM BINARY FILE ") == true)
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ReadParticlesFromFile();
                 }
 
                 static int SelectedSpaceStartParametersDrawTypesIndex = static_cast<int>(CellEngineConfigDataObject.SelectedSpaceStartParametersDrawTypesObject);

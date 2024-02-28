@@ -326,6 +326,67 @@ void CellEngineVoxelSimulationSpace::SaveParticlesToFile()
     CATCH("saving particles to file")
 };
 
+void CellEngineVoxelSimulationSpace::ReadParticlesFromFile()
+{
+    try
+    {
+        //Particles.clear();
+        //SetStartValuesForSpaceMinMax();
+        //SetValueToVoxelsForSelectedSpace(nullptr, GetZeroSimulationSpaceVoxel(), 0, 0, 0, 1, 1, 1, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension);
+
+        string ParticlesDataFileName = string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("particles") + OS_DIR_SEP + string("ParticlesDataFile.dat");
+        ifstream ParticlesDataFile(ParticlesDataFileName, ios_base::in | ios_base::binary);
+
+        UnsignedInt ParticlesSize;
+        ParticlesDataFile.read((char*)&ParticlesSize, sizeof(ParticlesSize));
+        LoggersManagerObject.Log(STREAM("Number of Particles to be read = " << ParticlesSize));
+
+        for (UnsignedInt ParticleObjectIndex = 1; ParticleObjectIndex <= ParticlesSize; ParticleObjectIndex++)
+        {
+            Particle ParticleObject;
+
+            ParticlesDataFile.read((char*)&ParticleObject.EntityId, sizeof(ParticleObject.EntityId));
+            ParticlesDataFile.read((char*)&ParticleObject.ChainId, sizeof(ParticleObject.ChainId));
+            ParticlesDataFile.read((char*)&ParticleObject.Index, sizeof(ParticleObject.Index));
+            ParticlesDataFile.read((char*)&ParticleObject.GenomeIndex, sizeof(ParticleObject.GenomeIndex));
+            ParticlesDataFile.read((char*)&ParticleObject.ElectricCharge, sizeof(ParticleObject.ElectricCharge));
+
+            ParticlesDataFile.read((char*)&ParticleObject.Center, sizeof(ParticleObject.Center));
+
+            ParticlesDataFile.read((char*)&ParticleObject.UniqueColor, sizeof(ParticleObject.UniqueColor));
+
+            ParticlesDataFile.read((char*)&ParticleObject.SelectedForReaction, sizeof(ParticleObject.SelectedForReaction));
+
+            UnsignedInt ParticleListOfVoxelsSize;
+            ParticlesDataFile.read((char*)&ParticleListOfVoxelsSize, sizeof(ParticleListOfVoxelsSize));
+            for (UnsignedInt VoxelObjectIndex = 1; VoxelObjectIndex <= ParticleListOfVoxelsSize; VoxelObjectIndex++)
+            {
+                vector3_16 VoxelObject;
+                ParticlesDataFile.read((char*)&VoxelObject, sizeof(VoxelObject));
+                ParticleObject.ListOfVoxels.push_back(VoxelObject);
+            }
+
+            ParticlesDataFile.read((char*)&ParticleObject.PrevTemporary, sizeof(ParticleObject.PrevTemporary));
+            ParticlesDataFile.read((char*)&ParticleObject.NextTemporary, sizeof(ParticleObject.NextTemporary));
+            ParticlesDataFile.read((char*)&ParticleObject.PairedNucleotideTemporary, sizeof(ParticleObject.PairedNucleotideTemporary));
+
+            UnsignedInt LinkedParticlesPointersSize;
+            ParticlesDataFile.read((char*)&LinkedParticlesPointersSize, sizeof(LinkedParticlesPointersSize));
+            for (UnsignedInt LinkedParticlesPointerIndex = 1; LinkedParticlesPointerIndex <= LinkedParticlesPointersSize; LinkedParticlesPointerIndex++)
+            {
+                UniqueIdInt LinkedParticlesPointerObject;
+                ParticlesDataFile.read((char*)&LinkedParticlesPointerObject, sizeof(LinkedParticlesPointerObject));
+                ParticleObject.LinkedParticlesPointersListTemporary.push_back(LinkedParticlesPointerObject);
+            }
+        }
+
+        ParticlesDataFile.close();
+
+        LoggersManagerObject.Log(STREAM("END OF READING PARTICLES FROM BINARY FILE"));
+    }
+    CATCH("saving particles to file")
+};
+
 void CellEngineVoxelSimulationSpace::AddBasicParticlesKindsAndReactions()
 {
     try

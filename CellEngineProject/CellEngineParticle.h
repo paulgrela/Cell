@@ -21,6 +21,7 @@ class PairedNucleotide
 {
 public:
     T* PairedNucleotide = nullptr;
+public:
     UniqueIdInt PairedNucleotideTemporary = 0;
 public:
     static void LinkPairedNucleotides(T* PairedNucleotide1, T* PairedNucleotide2)

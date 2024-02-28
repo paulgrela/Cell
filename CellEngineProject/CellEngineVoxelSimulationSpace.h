@@ -110,6 +110,7 @@ public:
     UniqueIdInt AddNewParticle(const Particle& ParticleParam);
 public:
     void SaveParticlesToFile();
+    void ReadParticlesFromFile();
 public:
     void AddBasicParticlesKindsAndReactions();
 public:
