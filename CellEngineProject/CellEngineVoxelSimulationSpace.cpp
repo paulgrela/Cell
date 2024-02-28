@@ -118,7 +118,7 @@ void CellEngineVoxelSimulationSpace::InitiateFreeParticleIndexes()
     {
                                                                                                                                 while (!FreeIndexesOfParticles.empty())
                                                                                                                                     FreeIndexesOfParticles.pop();
-            for (UnsignedInt FreeIndex = MaxParticleIndex + 100'000'000; FreeIndex >= MaxParticleIndex + 1; FreeIndex--)
+        for (UnsignedInt FreeIndex = MaxParticleIndex + 100'000'000; FreeIndex >= MaxParticleIndex + 1; FreeIndex--)
             FreeIndexesOfParticles.push(FreeIndex);
     }
     CATCH("initiating free particle indexes")
@@ -405,10 +405,6 @@ void CellEngineVoxelSimulationSpace::ReadParticlesFromFile()
             for (auto& LinkedParticlesPointerObjectTemporary : ParticleObject.second.LinkedParticlesPointersListTemporary)
                 ParticleObject.second.LinkedParticlesPointersList.emplace_back(&GetParticleFromIndex(LinkedParticlesPointerObjectTemporary));
         }
-
-        //PreprocessData();
-        //GetMinMaxCoordinatesForAllParticles();
-//        ReadGenomeDataFromFile(true);
 
         LoggersManagerObject.Log(STREAM("END OF PREPARING PARTICLES"));
     }
