@@ -116,10 +116,11 @@ void CellEngineVoxelSimulationSpace::InitiateFreeParticleIndexes()
 {
     try
     {
-                                                                                                                                while (!FreeIndexesOfParticles.empty())
-                                                                                                                                    FreeIndexesOfParticles.pop();
+        FreeIndexesOfParticles = {};
+
         for (UnsignedInt FreeIndex = MaxParticleIndex + 100'000'000; FreeIndex >= MaxParticleIndex + 1; FreeIndex--)
-            FreeIndexesOfParticles.push(FreeIndex);
+            if (Particles.find(FreeIndex) == Particles.end())
+                FreeIndexesOfParticles.push(FreeIndex);
     }
     CATCH("initiating free particle indexes")
 }
@@ -280,6 +281,15 @@ void SavePointerToBinaryFile(ofstream& ParticlesDataFile, const Particle* Pointe
     CATCH("saving pointer to binary file")
 }
 
+void CellEngineVoxelSimulationSpace::ClearSelectedSpace(const UnsignedInt NumberOfRandomParticles, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt StepXParam, const UnsignedInt StepYParam, const UnsignedInt StepZParam, const UnsignedInt SizeXParam, UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
+{
+    try
+    {
+        SetValueToVoxelsForSelectedSpace(nullptr, GetZeroSimulationSpaceVoxel(), StartXPosParam, StartYPosParam, StartZPosParam, StepXParam, StepYParam, StepZParam, SizeXParam, SizeYParam, SizeZParam);
+    }
+    CATCH("clearing selected space")
+}
+
 void CellEngineVoxelSimulationSpace::SaveParticlesToFile()
 {
     try
@@ -328,12 +338,35 @@ void CellEngineVoxelSimulationSpace::SaveParticlesToFile()
     CATCH("saving particles to file")
 };
 
+void CellEngineVoxelSimulationSpace::PrepareParticlesAfterReadingFromFile()
+{
+    try
+    {
+        LoggersManagerObject.Log(STREAM("START OF PREPARING PARTICLES"));
+
+        for (auto& ParticleObject : Particles)
+        {
+            for (const auto& VoxelObject : ParticleObject.second.ListOfVoxels)
+                GetSpaceVoxel(VoxelObject.X, VoxelObject.Y, VoxelObject.Z) = ParticleObject.second.Index;
+
+            ParticleObject.second.Prev = ParticleObject.second.PrevTemporary != 0 ? &GetParticleFromIndex(ParticleObject.second.PrevTemporary) : nullptr;
+            ParticleObject.second.Next = ParticleObject.second.NextTemporary != 0 ? &GetParticleFromIndex(ParticleObject.second.NextTemporary) : nullptr;
+            ParticleObject.second.PairedNucleotide = ParticleObject.second.PairedNucleotideTemporary != 0 ? &GetParticleFromIndex(ParticleObject.second.PairedNucleotideTemporary) : nullptr;
+
+            ParticleObject.second.LinkedParticlesPointersList.clear();
+            for (auto& LinkedParticlesPointerObjectTemporary : ParticleObject.second.LinkedParticlesPointersListTemporary)
+                ParticleObject.second.LinkedParticlesPointersList.emplace_back(&GetParticleFromIndex(LinkedParticlesPointerObjectTemporary));
+        }
+
+        LoggersManagerObject.Log(STREAM("END OF PREPARING PARTICLES"));
+    }
+    CATCH("preparing particles after reading from file")
+};
+
 void CellEngineVoxelSimulationSpace::ReadParticlesFromFile()
 {
     try
     {
-        Particles.clear();
-
         LoggersManagerObject.Log(STREAM("START OF READING PARTICLES FROM BINARY FILE"));
 
         string ParticlesDataFileName = string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("particles") + OS_DIR_SEP + string("ParticlesDataFile.dat");
@@ -388,31 +421,32 @@ void CellEngineVoxelSimulationSpace::ReadParticlesFromFile()
         ParticlesDataFile.close();
 
         LoggersManagerObject.Log(STREAM("END OF READING PARTICLES FROM BINARY FILE"));
+    }
+    CATCH("reading particles from file")
+};
+
+void CellEngineVoxelSimulationSpace::ReadParticlesFromFileAndPrepareData()
+{
+    try
+    {
+        LoggersManagerObject.Log(STREAM("START OF READING PARTICLES FROM FILE AND PREPARING DATA"));
+
+        Particles.clear();
+
+        ReadParticlesFromFile();
 
         SetValueToVoxelsForSelectedSpace(nullptr, GetZeroSimulationSpaceVoxel(), 0, 0, 0, 1, 1, 1, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension);
 
-        for (auto& ParticleObject : Particles)
-        {
-            for (const auto& VoxelObject : ParticleObject.second.ListOfVoxels)
-                GetSpaceVoxel(VoxelObject.X, VoxelObject.Y, VoxelObject.Z) = ParticleObject.second.Index;
+        PrepareParticlesAfterReadingFromFile();
 
-            ParticleObject.second.Prev = &GetParticleFromIndex(ParticleObject.second.PrevTemporary);
-            ParticleObject.second.Next = &GetParticleFromIndex(ParticleObject.second.NextTemporary);
-            ParticleObject.second.PairedNucleotide = &GetParticleFromIndex(ParticleObject.second.PairedNucleotideTemporary);
+        InitiateFreeParticleIndexes();
 
-            ParticleObject.second.LinkedParticlesPointersList.clear();
-            for (auto& LinkedParticlesPointerObjectTemporary : ParticleObject.second.LinkedParticlesPointersListTemporary)
-                ParticleObject.second.LinkedParticlesPointersList.emplace_back(&GetParticleFromIndex(LinkedParticlesPointerObjectTemporary));
-        }
-
-        AddBasicParticlesKindsAndReactions();
-
-        LoggersManagerObject.Log(STREAM("END OF PREPARING PARTICLES"));
+        LoggersManagerObject.Log(STREAM("END OF READING PARTICLES FROM FILE AND PREPARING DATA"));
     }
-    CATCH("saving particles to file")
+    CATCH("reading particles from file")
 };
 
-void CellEngineVoxelSimulationSpace::AddBasicParticlesKindsAndReactions()
+void CellEngineVoxelSimulationSpace::AddParticlesKinds()
 {
     try
     {
@@ -434,6 +468,15 @@ void CellEngineVoxelSimulationSpace::AddBasicParticlesKindsAndReactions()
 
         ParticlesKindsManagerObject.AddParticleKind({ 10001, "DNA", "?", 0, 0 });
 
+        LoggersManagerObject.Log(STREAM("ADDED PARTICLES KINDS"));
+    }
+    CATCH("adding particles kinds and reactions")
+};
+
+void CellEngineVoxelSimulationSpace::AddChemicalReactions()
+{
+    try
+    {
         const string DNASequenceForTestFindingDNA = "TACAAAAAAAGAGGTGTTAGC";
 
         const string DNASequence1ForTestCutLink1 = "TACAAAAAAAGAGGTGTT";
@@ -476,6 +519,8 @@ void CellEngineVoxelSimulationSpace::AddBasicParticlesKindsAndReactions()
         AddChemicalReaction(Reaction(1004, "STD", "CH2CH2 + O + ", { { 4,  1, "", true }, { 11, 1, "", true } }, { { 10, 1, "", true } }, nullptr));
 
         PreprocessChemicalReactions();
+
+        LoggersManagerObject.Log(STREAM("ADDED CHEMICAL REACTIONS"));
     }
     CATCH("adding particles kinds and reactions")
 };
@@ -526,16 +571,12 @@ void CellEngineVoxelSimulationSpace::GenerateRandomParticlesInSelectedSpace(cons
         uniform_int_distribution<UnsignedInt> UniformDistributionObjectZ_Uint64t(StartZPosParam, StartZPosParam + SizeZParam);
         uniform_int_distribution<ElectricChargeType> UniformDistributionObjectElectricChargeParticle_int64t(-5, 5);
 
-        AddBasicParticlesKindsAndReactions();
-
         vector<UnsignedInt> LocalNewParticlesIndexes;
 
         for (UniqueIdInt ParticleNumber = 1; ParticleNumber <= NumberOfRandomParticles; ParticleNumber++)
             LocalNewParticlesIndexes.emplace_back(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), UniformDistributionObjectObjectOfParticle_Uint64t(mt64R), 0, -1, 1, UniformDistributionObjectElectricChargeParticle_int64t(mt64R), CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))));
 
         vector<vector3_16> FilledVoxelsForRandomParticle;
-
-        SetValueToVoxelsForSelectedSpace(nullptr, GetZeroSimulationSpaceVoxel(), StartXPosParam, StartYPosParam, StartZPosParam, StepXParam, StepYParam, StepZParam, SizeXParam, SizeYParam, SizeZParam);
 
         for (const auto& LocalNewParticleIndex : LocalNewParticlesIndexes)
         {
@@ -1665,10 +1706,6 @@ void CellEngineVoxelSimulationSpace::GeneratePlanedParticlesInSelectedSpace(cons
 {
     try
     {
-        AddBasicParticlesKindsAndReactions();
-
-        SetValueToVoxelsForSelectedSpace(nullptr, GetZeroSimulationSpaceVoxel(), StartXPosParam, StartYPosParam, StartZPosParam, StepXParam, StepYParam, StepZParam, SizeXParam, SizeYParam, SizeZParam);
-
         GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 0, 1, -1, 1, -1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), StartXPosParam + 1, StartYPosParam + 3, StartZPosParam + 7, 1, 1, 1, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
         GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 1, 1, -1, 1, 2, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), StartXPosParam + 3, StartYPosParam + 13, StartZPosParam + 6, 1, 1, 1, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
         GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 2, 1, -1, 1, 3, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), StartXPosParam + 6, StartYPosParam + 12, StartZPosParam + 5, 1, 1, 1, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
