@@ -116,7 +116,9 @@ void CellEngineVoxelSimulationSpace::InitiateFreeParticleIndexes()
 {
     try
     {
-        for (UnsignedInt FreeIndex = MaxParticleIndex + 100'000'000; FreeIndex >= MaxParticleIndex + 1; FreeIndex--)
+                                                                                                                                while (!FreeIndexesOfParticles.empty())
+                                                                                                                                    FreeIndexesOfParticles.pop();
+            for (UnsignedInt FreeIndex = MaxParticleIndex + 100'000'000; FreeIndex >= MaxParticleIndex + 1; FreeIndex--)
             FreeIndexesOfParticles.push(FreeIndex);
     }
     CATCH("initiating free particle indexes")
@@ -330,9 +332,9 @@ void CellEngineVoxelSimulationSpace::ReadParticlesFromFile()
 {
     try
     {
-        //Particles.clear();
-        //SetStartValuesForSpaceMinMax();
-        //SetValueToVoxelsForSelectedSpace(nullptr, GetZeroSimulationSpaceVoxel(), 0, 0, 0, 1, 1, 1, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension);
+        Particles.clear();
+
+        LoggersManagerObject.Log(STREAM("START OF READING PARTICLES FROM BINARY FILE"));
 
         string ParticlesDataFileName = string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("particles") + OS_DIR_SEP + string("ParticlesDataFile.dat");
         ifstream ParticlesDataFile(ParticlesDataFileName, ios_base::in | ios_base::binary);
@@ -359,6 +361,7 @@ void CellEngineVoxelSimulationSpace::ReadParticlesFromFile()
 
             UnsignedInt ParticleListOfVoxelsSize;
             ParticlesDataFile.read((char*)&ParticleListOfVoxelsSize, sizeof(ParticleListOfVoxelsSize));
+            ParticleObject.ListOfVoxels.clear();
             for (UnsignedInt VoxelObjectIndex = 1; VoxelObjectIndex <= ParticleListOfVoxelsSize; VoxelObjectIndex++)
             {
                 vector3_16 VoxelObject;
@@ -378,11 +381,36 @@ void CellEngineVoxelSimulationSpace::ReadParticlesFromFile()
                 ParticlesDataFile.read((char*)&LinkedParticlesPointerObject, sizeof(LinkedParticlesPointerObject));
                 ParticleObject.LinkedParticlesPointersListTemporary.push_back(LinkedParticlesPointerObject);
             }
+
+            AddNewParticle(ParticleObject);
         }
 
         ParticlesDataFile.close();
 
         LoggersManagerObject.Log(STREAM("END OF READING PARTICLES FROM BINARY FILE"));
+
+        SetStartValuesForSpaceMinMax();
+        SetValueToVoxelsForSelectedSpace(nullptr, GetZeroSimulationSpaceVoxel(), 0, 0, 0, 1, 1, 1, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension);
+
+        for (auto& ParticleObject : Particles)
+        {
+            for (const auto& VoxelObject : ParticleObject.second.ListOfVoxels)
+                GetSpaceVoxel(VoxelObject.X, VoxelObject.Y, VoxelObject.Z) = ParticleObject.second.Index;
+
+            ParticleObject.second.Prev = &GetParticleFromIndex(ParticleObject.second.PrevTemporary);
+            ParticleObject.second.Next = &GetParticleFromIndex(ParticleObject.second.NextTemporary);
+            ParticleObject.second.PairedNucleotide = &GetParticleFromIndex(ParticleObject.second.PairedNucleotideTemporary);
+
+            ParticleObject.second.LinkedParticlesPointersList.clear();
+            for (auto& LinkedParticlesPointerObjectTemporary : ParticleObject.second.LinkedParticlesPointersListTemporary)
+                ParticleObject.second.LinkedParticlesPointersList.emplace_back(&GetParticleFromIndex(LinkedParticlesPointerObjectTemporary));
+        }
+
+        //PreprocessData();
+        //GetMinMaxCoordinatesForAllParticles();
+//        ReadGenomeDataFromFile(true);
+
+        LoggersManagerObject.Log(STREAM("END OF PREPARING PARTICLES"));
     }
     CATCH("saving particles to file")
 };

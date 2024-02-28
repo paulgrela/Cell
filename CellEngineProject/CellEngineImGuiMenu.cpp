@@ -629,7 +629,7 @@ public:
 
                 if (ImGui::CollapsingHeader("SAVING STATE TO FILE", ImGuiTreeNodeFlags_DefaultOpen))
                 {
-                    if (ImGui::Button(" SAVE PARTICLES DATA TO BINARY FILE ") == true)
+                    if (ImGui::Button("  SAVE PARTICLES DATA TO BINARY FILE  ") == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->SaveParticlesToFile();
                     if (ImGui::Button(" READ PARTICLES DATA FROM BINARY FILE ") == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ReadParticlesFromFile();
