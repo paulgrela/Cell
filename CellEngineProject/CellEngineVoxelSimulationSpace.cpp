@@ -389,7 +389,6 @@ void CellEngineVoxelSimulationSpace::ReadParticlesFromFile()
 
         LoggersManagerObject.Log(STREAM("END OF READING PARTICLES FROM BINARY FILE"));
 
-        SetStartValuesForSpaceMinMax();
         SetValueToVoxelsForSelectedSpace(nullptr, GetZeroSimulationSpaceVoxel(), 0, 0, 0, 1, 1, 1, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension);
 
         for (auto& ParticleObject : Particles)
@@ -405,6 +404,8 @@ void CellEngineVoxelSimulationSpace::ReadParticlesFromFile()
             for (auto& LinkedParticlesPointerObjectTemporary : ParticleObject.second.LinkedParticlesPointersListTemporary)
                 ParticleObject.second.LinkedParticlesPointersList.emplace_back(&GetParticleFromIndex(LinkedParticlesPointerObjectTemporary));
         }
+
+        AddBasicParticlesKindsAndReactions();
 
         LoggersManagerObject.Log(STREAM("END OF PREPARING PARTICLES"));
     }
