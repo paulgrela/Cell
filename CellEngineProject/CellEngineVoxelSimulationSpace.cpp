@@ -948,7 +948,7 @@ bool CellEngineVoxelSimulationSpace::CutDNACrisperInChosenPlaceSpecialReactionFu
         else
             return true;
     }
-    CATCH("linking dna in chosen place in special reaction function")
+    CATCH("cutting dna crisper in chosen place in special reaction function")
 
     return false;
 }
@@ -974,7 +974,7 @@ bool CellEngineVoxelSimulationSpace::LinkDNALigaseInAnyPlaceSpecialReactionFunct
         else
             return true;
     }
-    CATCH("linking dna in chosen place in special reaction function")
+    CATCH("linking dna ligase in any place in special reaction function")
 
     return false;
 }
@@ -1249,6 +1249,44 @@ bool CellEngineVoxelSimulationSpace::CompareFitnessOfParticle(const ParticleKind
     return (ParticleKindForReactionObject.LinkedParticleTypes.empty() == true || (ParticleKindForReactionObject.LinkedParticleTypes.empty() == false && ParticleObjectForReaction.LinkedParticlesPointersList.size() == ParticleKindForReactionObject.LinkedParticleTypes.size() && all_of(ParticleObjectForReaction.LinkedParticlesPointersList.begin(), ParticleObjectForReaction.LinkedParticlesPointersList.end(), [](const Particle* PointerToParticle){ return PointerToParticle != nullptr; }) && equal(ParticleObjectForReaction.LinkedParticlesPointersList.begin(), ParticleObjectForReaction.LinkedParticlesPointersList.end(), ParticleKindForReactionObject.LinkedParticleTypes.begin(), [](const Particle* PointerToParticle, UniqueIdInt ParticleType){ return PointerToParticle->EntityId == ParticleType; })));
 }
 
+tuple<vector<ChainIdInt>, string> CellEngineVoxelSimulationSpace::GetNucleotidesSequenceInBothDirections(const std::vector<UniqueIdInt>& NucleotidesFoundInProximity, const UnsignedInt SizeOfLoop)
+{
+    string TemplateSequenceStr;
+
+    vector<ChainIdInt> TemplateSequence;
+
+    try
+    {
+        UnsignedInt LengthOfTemplateForRNA =  32;
+
+        UnsignedInt NucleotidesFoundInProximityCounter = 0;
+
+        while (TemplateSequenceStr.empty() == true && NucleotidesFoundInProximityCounter < SizeOfLoop)
+        {
+            auto [ParticlePtrNext, ParticlePtrPrevNext, NucleotidesCounterNext, NucleotidesSequenceToCompareStringNext, NucleotidesSequenceToCompareVectorNext] = GetNucleotidesSequence(&Particle::Next, LengthOfTemplateForRNA, GetParticleFromIndex(NucleotidesFoundInProximity[NucleotidesFoundInProximityCounter]), true, true, [](const Particle *){ return true; });
+            auto [ParticlePtrBack, ParticlePtrBackNext, NucleotidesCounterBack, NucleotidesSequenceToCompareStringBack, NucleotidesSequenceToCompareVectorBack] = GetNucleotidesSequence(&Particle::Prev, LengthOfTemplateForRNA, GetParticleFromIndex(NucleotidesFoundInProximity[NucleotidesFoundInProximityCounter]), true, true, [](const Particle *){ return true; });
+
+            reverse(NucleotidesSequenceToCompareVectorBack.begin(), NucleotidesSequenceToCompareVectorBack.end());
+            TemplateSequence = NucleotidesSequenceToCompareVectorBack;
+            TemplateSequence.insert(end(TemplateSequence), begin(NucleotidesSequenceToCompareVectorNext), end(NucleotidesSequenceToCompareVectorNext));
+            for (auto &Nucleotide: TemplateSequence)
+                Nucleotide = CellEngineUseful::GetPairedChainIdForDNAorRNA(Nucleotide);
+
+            reverse(NucleotidesSequenceToCompareStringBack.begin(), NucleotidesSequenceToCompareStringBack.end());
+            TemplateSequenceStr = NucleotidesSequenceToCompareStringBack + NucleotidesSequenceToCompareStringNext;
+            string OriginalTemplateRNASequenceStr = TemplateSequenceStr;
+            for (auto &TemplateSequenceNucleotideChar: TemplateSequenceStr)
+                TemplateSequenceNucleotideChar = CellEngineUseful::GetLetterFromChainIdForDNAorRNA(CellEngineUseful::GetPairedChainIdForDNAorRNA(CellEngineUseful::GetChainIdFromLetterForDNAorRNA(TemplateSequenceNucleotideChar)));
+
+            NucleotidesFoundInProximityCounter++;
+        }
+    }
+    CATCH("getting nucleotides sequence in both directions")
+
+    return { TemplateSequence, TemplateSequenceStr };
+}
+
+
 bool CellEngineVoxelSimulationSpace::CompareFitnessOfDNASequenceByNucleotidesLoop(ComparisonType TypeOfComparison, const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction)
 {
     bool FoundSequenceNotFit = false;
@@ -1270,22 +1308,10 @@ bool CellEngineVoxelSimulationSpace::CompareFitnessOfDNASequenceByNucleotidesLoo
         if (TemplateSequenceStr == "RNA")
             if (RNANucleotidesFoundInProximity.empty() == false)
             {
-                UnsignedInt LengthOfTemplateForRNA =  32;
+                tie(TemplateSequence, TemplateSequenceStr) = GetNucleotidesSequenceInBothDirections(RNANucleotidesFoundInProximity, RNANucleotidesFoundInProximity.size());
 
-                auto [ParticlePtrNext, ParticlePtrPrevNext, NucleotidesCounterNext, NucleotidesSequenceToCompareStringNext, NucleotidesSequenceToCompareVectorNext] = GetNucleotidesSequence(&Particle::Next, LengthOfTemplateForRNA, GetParticleFromIndex(RNANucleotidesFoundInProximity[0]), true, true, [](const Particle*){ return true; });
-                auto [ParticlePtrBack, ParticlePtrBackNext, NucleotidesCounterBack, NucleotidesSequenceToCompareStringBack, NucleotidesSequenceToCompareVectorBack] = GetNucleotidesSequence(&Particle::Prev, LengthOfTemplateForRNA, GetParticleFromIndex(RNANucleotidesFoundInProximity[0]), true, true, [](const Particle*){ return true; });
-
-                reverse(NucleotidesSequenceToCompareVectorBack.begin(), NucleotidesSequenceToCompareVectorBack.end());
-                TemplateSequence = NucleotidesSequenceToCompareVectorBack;
-                TemplateSequence.insert(end(TemplateSequence), begin(NucleotidesSequenceToCompareVectorNext), end(NucleotidesSequenceToCompareVectorNext));
-                for (auto& Nucleotide : TemplateSequence)
-                    Nucleotide = CellEngineUseful::GetPairedChainIdForDNAorRNA(Nucleotide);
-
-                reverse(NucleotidesSequenceToCompareStringBack.begin(), NucleotidesSequenceToCompareStringBack.end());
-                TemplateSequenceStr = NucleotidesSequenceToCompareStringBack + NucleotidesSequenceToCompareStringNext;
-                OriginalTemplateRNASequenceStr = TemplateSequenceStr;
-                for (auto& TemplateSequenceNucleotideChar : TemplateSequenceStr)
-                    TemplateSequenceNucleotideChar = CellEngineUseful::GetLetterFromChainIdForDNAorRNA(CellEngineUseful::GetPairedChainIdForDNAorRNA(CellEngineUseful::GetChainIdFromLetterForDNAorRNA(TemplateSequenceNucleotideChar)));
+                if (TemplateSequenceStr.empty() == true)
+                    return false;
             }
 
         auto [ParticlePtr, ParticlePtrPrev, NucleotidesCounter, NucleotidesSequenceToCompareString, NucleotidesSequenceToCompareVector] = GetNucleotidesSequence(&Particle::Next, TemplateSequenceStr.length(), ParticleObjectForReaction, true, true, [](const Particle*){ return true; });
