@@ -774,7 +774,7 @@ void CutDNA(Particle* NucleotideObjectForReactionPtr)
 {
     try
     {
-        if (NucleotideObjectForReactionPtr->Next != nullptr)
+        if (NucleotideObjectForReactionPtr->Next != nullptr && NucleotideObjectForReactionPtr->Next->Prev != nullptr)
         {
             NucleotideObjectForReactionPtr->Next->Prev = nullptr;
             NucleotideObjectForReactionPtr->Next = nullptr;
@@ -941,9 +941,13 @@ bool CellEngineVoxelSimulationSpace::CutDNACrisperInChosenPlaceSpecialReactionFu
             LoggersManagerObject.Log(STREAM("CUT CRISPER inside 1"));
 
             Particle* FirstStrand = get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.AdditionalParameter1, GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first), false, false, [](const Particle*){ return true; }))->Prev;
-            CutDNA(FirstStrand);
-            if (ReactionObject.Id == 110)
-                CutDNA(FirstStrand->PairedNucleotide);
+            if (FirstStrand != nullptr && FirstStrand->Prev != nullptr)
+            {
+                FirstStrand = FirstStrand->Prev;
+                CutDNA(FirstStrand);
+                if (ReactionObject.Id == 110)
+                    CutDNA(FirstStrand->PairedNucleotide);
+            }
         }
         else
             return true;
