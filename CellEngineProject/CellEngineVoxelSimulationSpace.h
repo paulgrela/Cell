@@ -98,7 +98,7 @@ public:
 public:
     UnsignedInt SumOfNotEmptyVoxels{};
 public:
-    UniqueIdInt GetNewFreeIndexOfParticle();
+    inline UniqueIdInt GetNewFreeIndexOfParticle();
     UniqueIdInt GetFreeIndexesOfParticleSize();
 public:
     void CountStatisticsOfVoxelSimulationSpace();
@@ -108,6 +108,7 @@ public:
     Particle& GetParticleFromIndexInSimulationSpaceVoxel(UniqueIdInt ParticleIndex);
 public:
     UniqueIdInt AddNewParticle(const Particle& ParticleParam);
+    inline void RemoveParticle(UniqueIdInt ParticleIndex, bool ClearVoxels);
 public:
     void ClearSelectedSpace(UnsignedInt NumberOfRandomParticles, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt StepXParam, UnsignedInt StepYParam, UnsignedInt StepZParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
 public:
