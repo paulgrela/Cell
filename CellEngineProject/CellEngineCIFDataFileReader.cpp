@@ -326,6 +326,21 @@ void CellEngineParticlesDataFileReader::ReadParticlesFromFile()
 
                 ParticlesDataFile.read((char*)&ParticleObject.EntityId, sizeof(ParticleObject.EntityId));
                 ParticlesDataFile.read((char*)&ParticleObject.ChainId, sizeof(ParticleObject.ChainId));
+
+
+                auto ParticleKindObjectIterator = ParticlesKindsManagerObject.GraphicParticlesKindsFromConfigXML.find(ParticleObject.EntityId);
+                if (ParticleKindObjectIterator == ParticlesKindsManagerObject.GraphicParticlesKindsFromConfigXML.end())
+                {
+                    auto OthersParticleKindObjectIterator = ParticlesKindsManagerObject.GraphicParticlesKindsFromConfigXML.find(10000);
+                    ParticlesKindsManagerObject.ParticlesKinds.emplace_back(ParticleKindGraphicData{static_cast<EntityIdInt>(ParticleObject.EntityId), OthersParticleKindObjectIterator->second.Visible, OthersParticleKindObjectIterator->second.SizeX, OthersParticleKindObjectIterator->second.SizeY, OthersParticleKindObjectIterator->second.SizeZ, OthersParticleKindObjectIterator->second.ParticleColor, OthersParticleKindObjectIterator->second.ParticleColor, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), OthersParticleKindObjectIterator->second.NameFromXML, "NAME" });
+                }
+                else
+                    ParticlesKindsManagerObject.ParticlesKinds.emplace_back(ParticleKindGraphicData{static_cast<EntityIdInt>(ParticleObject.EntityId), ParticleKindObjectIterator->second.Visible, ParticleKindObjectIterator->second.SizeX, ParticleKindObjectIterator->second.SizeY, ParticleKindObjectIterator->second.SizeZ, ParticleKindObjectIterator->second.ParticleColor, ParticleKindObjectIterator->second.ParticleColor, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), ParticleKindObjectIterator->second.NameFromXML, "NAME" });
+
+                ParticlesKindsManagerObject.ParticlesKindsPos[ParticleObject.EntityId] = ParticlesKindsManagerObject.ParticlesKinds.size() - 1;
+
+
+
                 ParticlesDataFile.read((char*)&ParticleObject.Index, sizeof(ParticleObject.Index));
                 ParticlesDataFile.read((char*)&ParticleObject.GenomeIndex, sizeof(ParticleObject.GenomeIndex));
                 ParticlesDataFile.read((char*)&ParticleObject.ElectricCharge, sizeof(ParticleObject.ElectricCharge));
@@ -367,6 +382,8 @@ void CellEngineParticlesDataFileReader::ReadParticlesFromFile()
             LoggersManagerObject.Log(STREAM("END OF READING PARTICLES FROM BINARY FILE"));
 
             PreprocessData();
+
+            LoggersManagerObject.Log(STREAM("END OF PREPROCESSING DATA"));
         }
         CATCH("reading particles from file")
     }
@@ -400,34 +417,34 @@ void CellEngineParticlesDataFileReader::ReadParticlesFromFile()
 
 void CellEngineParticlesDataFileReader::ReadParticlesFromFileAndPrepareData()
 {
-//    try
-//    {
-//        LoggersManagerObject.Log(STREAM("START OF READING PARTICLES FROM FILE AND PREPARING DATA"));
-//
-//        AddParticlesKinds();
-//
-//        CellEngineVoxelSimulationSpaceObjectPointer->Particles.clear();
-//
-//        ReadParticlesFromFile();
-//
-//        CellEngineVoxelSimulationSpaceObjectPointer->SetValueToVoxelsForSelectedSpace(nullptr, 0, 0, 0, 0, 1, 1, 1, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension);
-//
-//        CellEngineVoxelSimulationSpaceObjectPointer->PrepareParticlesAfterReadingFromFile();
-//
-//        CellEngineVoxelSimulationSpaceObjectPointer->InitiateFreeParticleIndexes();
-//
-//        CellEngineConfigDataObject.GenomeReadFromFile = true;
-//
-//        LoggersManagerObject.Log(STREAM("END OF READING PARTICLES FROM FILE AND PREPARING DATA"));
-//    }
-//    CATCH("reading particles from file")
+    try
+    {
+        LoggersManagerObject.Log(STREAM("START OF READING PARTICLES FROM FILE AND PREPARING DATA"));
+
+        AddParticlesKinds();
+
+        CellEngineVoxelSimulationSpaceObjectPointer->Particles.clear();
+
+        ReadParticlesFromFile();
+
+        //CellEngineVoxelSimulationSpaceObjectPointer->SetValueToVoxelsForSelectedSpace(nullptr, 0, 0, 0, 0, 1, 1, 1, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension);
+
+        CellEngineVoxelSimulationSpaceObjectPointer->PrepareParticlesAfterReadingFromFile();
+
+        CellEngineVoxelSimulationSpaceObjectPointer->InitiateFreeParticleIndexes();
+
+        CellEngineConfigDataObject.GenomeReadFromFile = true;
+
+        LoggersManagerObject.Log(STREAM("END OF READING PARTICLES FROM FILE AND PREPARING DATA"));
+    }
+    CATCH("reading particles from file")
 };
 
 void CellEngineParticlesDataFileReader::ReadDataFromFile()
 {
     SetStartValues();
-    CellEngineVoxelSimulationSpaceObjectPointer->AddParticlesKinds();
+    AddParticlesKinds();
     CellEngineVoxelSimulationSpaceObjectPointer->AddChemicalReactions();
-    CellEngineVoxelSimulationSpaceObjectPointer->ReadParticlesFromFileAndPrepareData();
-    CellEngineVoxelSimulationSpaceObjectPointer->PreprocessData();
+
+    ReadParticlesFromFileAndPrepareData();
 }

@@ -33,7 +33,7 @@
 		<SetProcessPriorityHighest>true</SetProcessPriorityHighest>
 		<PrintAtomDescriptionOnScreen>false</PrintAtomDescriptionOnScreen>
 		<LogParametersOfRenderingToFile>false</LogParametersOfRenderingToFile>
-                <RandomColorEngineTypes>1</RandomColorEngineTypes>
+                <RandomColorEngineTypes>2</RandomColorEngineTypes>
 	</Algorithm>
 	<CellTextColors>
 		<Windows>
@@ -58,21 +58,21 @@
 		<PrintProcessIdToFile>false</PrintProcessIdToFile>
 		<PrintProcessPriorityLevelToFile>false</PrintProcessPriorityLevelToFile>
 		<PrintThreadIdToFile>true</PrintThreadIdToFile>
-		<MaximalNumberOfLinesInOneFile>200</MaximalNumberOfLinesInOneFile>
+		<MaximalNumberOfLinesInOneFile>100000</MaximalNumberOfLinesInOneFile>
 	</Logger>	
 	<CellsStates>
 		<CellState id="1">
-                        <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2, Both = 3-->
+                        <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
 
 			<CellStateFileName>../../WholeCellData/Mycoplasma Genitalium/cellpack_atom_instances_6973_curated.cif</CellStateFileName>
-			
+
 			<ChosenStructureIndex>0</ChosenStructureIndex>
 			<FilmOfStructuresActive>0</FilmOfStructuresActive>
 			
-			<NumberOfStencilBufferLoops>3</NumberOfStencilBufferLoops>
+			<NumberOfStencilBufferLoops>1</NumberOfStencilBufferLoops>
 			<StencilForDrawingObjectsTypes>2</StencilForDrawingObjectsTypes> <!--StencilForDrawingOnlyParticlesCenters = 1, StencilForDrawingOnlyInAtomScale = 2-->
 			
-			<MakeColorsType>2</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticle = 3-->
+			<MakeColorsType>2</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticleKind = 3-->
 			
 			<SizeOfAtomsDrawingTypes>3</SizeOfAtomsDrawingTypes> 
 			
@@ -100,7 +100,7 @@
 			<SizeOfAtomX>1</SizeOfAtomX>
 			<SizeOfAtomY>1</SizeOfAtomY>
 			<SizeOfAtomZ>1</SizeOfAtomZ>
-
+			
 			<RotationAngle1>0</RotationAngle1>
 			<RotationAngle2>0</RotationAngle2>
 			<RotationAngle3>0</RotationAngle3>
@@ -119,7 +119,7 @@
 			
 			<ViewPositionX>0</ViewPositionX>
 			<ViewPositionY>0</ViewPositionY>
-			<ViewPositionZ>50</ViewPositionZ>
+			<ViewPositionZ>50</ViewPositionZ>						
 			
 			<ViewXMoveShortStep>5</ViewXMoveShortStep>
 			<ViewYMoveShortStep>5</ViewYMoveShortStep>
@@ -199,7 +199,7 @@
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>					
-				</ParticleKind>			
+				</ParticleKind>
 				<ParticleKind id="688">
 					<Name>tRNA</Name>
 					<Color>Blue</Color>	
@@ -207,7 +207,7 @@
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>					
-				</ParticleKind>				
+				</ParticleKind>
 				<ParticleKind id="689">
 					<Name>tRNA_aminoacylated</Name>
 					<Color>Blue</Color>	
@@ -215,7 +215,7 @@
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>					
-				</ParticleKind>				
+				</ParticleKind>
 				<ParticleKind id="682">
 					<Name>RIBOSOME_70S</Name>
 					<Color>Lime</Color>					
@@ -223,7 +223,7 @@
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>					
-				</ParticleKind>				
+				</ParticleKind>
 				<ParticleKind id="681">
 					<Name>RIBOSOME_50S</Name>
 					<Color>Pink</Color>
@@ -231,7 +231,7 @@
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>					
-				</ParticleKind>				
+				</ParticleKind>
 				<ParticleKind id="679">
 					<Name>RIBOSOME_30S</Name>
 					<Color>Orange</Color>					
@@ -239,7 +239,7 @@
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>					
-				</ParticleKind>				
+				</ParticleKind>
 				<ParticleKind id="683">
 					<Name>RNA_POLYMERASE</Name>
 					<Color>Purple</Color>
@@ -247,7 +247,7 @@
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>					
-				</ParticleKind>								
+				</ParticleKind>
 				<ParticleKind id="516">
 					<Name>DNA_POLYMERASE_GAMMA_COMPLEX</Name>
 					<Color>Yellow</Color>					
@@ -255,7 +255,7 @@
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>					
-				</ParticleKind>				
+				</ParticleKind>
 				<ParticleKind id="513">
 					<Name>DNA_POLYMERASE_CORE</Name>
 					<Color>Cyan</Color>
@@ -263,7 +263,7 @@
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>					
-				</ParticleKind>				
+				</ParticleKind>
 				<ParticleKind id="10000">
 					<Name>OTHERS</Name>
 					<Color>Green</Color>
@@ -271,12 +271,12 @@
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>					
-				</ParticleKind>								
+				</ParticleKind>
 			</Particles>			
 		</CellState>
 
 		<CellState id="2">
-                        <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2, Both = 3-->
+                        <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
 
 			<CellStateFileName>../../PDBFiles/struct0/117E.pdb</CellStateFileName>
 			
@@ -286,12 +286,12 @@
 			<NumberOfStencilBufferLoops>3</NumberOfStencilBufferLoops>
 			<StencilForDrawingObjectsTypes>1</StencilForDrawingObjectsTypes> <!--StencilForDrawingOnlyParticlesCenters = 1, StencilForDrawingOnlyInAtomScale = 2-->
 			
-			<MakeColorsType>1</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticle = 3-->
+			<MakeColorsType>1</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticleKind = 3-->
 			
 			<SizeOfAtomsDrawingTypes>3</SizeOfAtomsDrawingTypes> 
 			
 			<SpecularPower>8.0</SpecularPower> <!--16 or 8-->
-			<SpecularAlbedo>0.4444</SpecularAlbedo> <!--0.4444 or 0.2222-->
+			<SpecularAlbedo>0.2222</SpecularAlbedo> <!--0.4444 or 0.2222-->
 			
 			<DrawBondsBetweenParticlesCenters>false</DrawBondsBetweenParticlesCenters>
 			<DrawBondsBetweenAtoms>false</DrawBondsBetweenAtoms>
@@ -314,7 +314,7 @@
 			<SizeOfAtomX>1</SizeOfAtomX>
 			<SizeOfAtomY>1</SizeOfAtomY>
 			<SizeOfAtomZ>1</SizeOfAtomZ>
-
+			
 			<RotationAngle1>0</RotationAngle1>
 			<RotationAngle2>0</RotationAngle2>
 			<RotationAngle3>0</RotationAngle3>
@@ -322,7 +322,7 @@
 			<CameraXPosition>0</CameraXPosition>
 			<CameraYPosition>0</CameraYPosition>
 			<CameraZPosition>0</CameraZPosition>
-			
+						
 			<CameraXMoveShortStep>1</CameraXMoveShortStep>
 			<CameraYMoveShortStep>1</CameraYMoveShortStep>
 			<CameraZMoveShortStep>1</CameraZMoveShortStep>
@@ -333,7 +333,7 @@
 			
 			<ViewPositionX>0</ViewPositionX>
 			<ViewPositionY>0</ViewPositionY>
-			<ViewPositionZ>50</ViewPositionZ>
+			<ViewPositionZ>50</ViewPositionZ>			
 			
 			<ViewXMoveShortStep>1</ViewXMoveShortStep>
 			<ViewYMoveShortStep>1</ViewYMoveShortStep>
@@ -395,10 +395,10 @@
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>
 				</Atom>				
-			</Atoms>										
-			
+			</Atoms>
+										
 			<Particles>				
-				<PartickleKind id="694">
+				<ParticleKind id="694">
 					<Name>DNA</Name>
 					<Color>Red</Color>
 					<Visible>true</Visible>
@@ -406,91 +406,92 @@
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>
 				</ParticleKind>
-				<PartickleKind id="695">
+				<ParticleKind id="695">
 					<Name>RNA</Name>
 					<Color>Blue</Color>	
 					<Visible>true</Visible>					
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>					
-				</ParticleKind>			
-				<PartickleKind id="688">
+				</ParticleKind>
+				<ParticleKind id="688">
 					<Name>tRNA</Name>
 					<Color>Blue</Color>	
 					<Visible>true</Visible>					
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>					
-				</ParticleKind>				
-				<PartickleKind id="689">
+				</ParticleKind>
+				<ParticleKind id="689">
 					<Name>tRNA_aminoacylated</Name>
 					<Color>Blue</Color>	
 					<Visible>true</Visible>					
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>					
-				</ParticleKind>				
-				<PartickleKind id="682">
+				</ParticleKind>
+				<ParticleKind id="682">
 					<Name>RIBOSOME_70S</Name>
 					<Color>Lime</Color>					
 					<Visible>true</Visible>
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>					
-				</ParticleKind>				
-				<PartickleKind id="681">
+				</ParticleKind>
+				<ParticleKind id="681">
 					<Name>RIBOSOME_50S</Name>
 					<Color>Pink</Color>
 					<Visible>true</Visible>					
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>					
-				</ParticleKind>				
-				<PartickleKind id="679">
+				</ParticleKind>
+				<ParticleKind id="679">
 					<Name>RIBOSOME_30S</Name>
 					<Color>Orange</Color>					
 					<Visible>true</Visible>
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>					
-				</ParticleKind>				
-				<PartickleKind id="683">
+				</ParticleKind>
+				<ParticleKind id="683">
 					<Name>RNA_POLYMERASE</Name>
 					<Color>Purple</Color>
 					<Visible>true</Visible>					
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>					
-				</ParticleKind>								
-				<PartickleKind id="516">
+				</ParticleKind>
+				<ParticleKind id="516">
 					<Name>DNA_POLYMERASE_GAMMA_COMPLEX</Name>
 					<Color>Yellow</Color>					
 					<Visible>true</Visible>
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>					
-				</ParticleKind>				
-				<PartickleKind id="513">
+				</ParticleKind>
+				<ParticleKind id="513">
 					<Name>DNA_POLYMERASE_CORE</Name>
 					<Color>Cyan</Color>
 					<Visible>true</Visible>
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>					
-				</ParticleKind>				
-				<PartickleKind id="10000">
+				</ParticleKind>
+				<ParticleKind id="10000">
 					<Name>OTHERS</Name>
 					<Color>Green</Color>
 					<Visible>true</Visible>					
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>					
-				</ParticleKind>								
+				</ParticleKind>
 			</Particles>			
+		
 		</CellState>
 		
 		<CellState id="3">
-                        <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2, Both = 3-->
+                        <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
 
 			<CellStateFileName>../../WholeCellData/Mycoplasma Genitalium/cellpack_atom_instances_small.cif</CellStateFileName>
 			
@@ -500,7 +501,7 @@
 			<NumberOfStencilBufferLoops>3</NumberOfStencilBufferLoops>
 			<StencilForDrawingObjectsTypes>2</StencilForDrawingObjectsTypes> <!--StencilForDrawingOnlyParticlesCenters = 1, StencilForDrawingOnlyInAtomScale = 2-->
 			
-			<MakeColorsType>2</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticle = 3-->
+			<MakeColorsType>2</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticleKind = 3-->
 			
 			<SizeOfAtomsDrawingTypes>3</SizeOfAtomsDrawingTypes> 
 			
@@ -533,9 +534,13 @@
 			<RotationAngle2>0</RotationAngle2>
 			<RotationAngle3>0</RotationAngle3>
 			
+			<ViewPositionX>0</ViewPositionX>
+			<ViewPositionY>0</ViewPositionY>
+			<ViewPositionZ>1000</ViewPositionZ>
+
 			<CameraXPosition>0</CameraXPosition>
 			<CameraYPosition>0</CameraYPosition>
-			<CameraZPosition>0</CameraZPosition>
+			<CameraZPosition>1000</CameraZPosition>
 			
 			<CameraXMoveShortStep>5</CameraXMoveShortStep>
 			<CameraYMoveShortStep>5</CameraYMoveShortStep>
@@ -544,7 +549,7 @@
 			<CameraXMoveLongStep>50</CameraXMoveLongStep>
 			<CameraYMoveLongStep>50</CameraYMoveLongStep>
 			<CameraZMoveLongStep>50</CameraZMoveLongStep>
-			
+
 			<ViewPositionX>0</ViewPositionX>
 			<ViewPositionY>0</ViewPositionY>
 			<ViewPositionZ>1000</ViewPositionZ>
@@ -597,7 +602,7 @@
 				</Atom>
 				<Atom id="5">
 					<Name>H</Name>
-					<Color>White</Color>
+					<Color>White	</Color>
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>
@@ -612,7 +617,7 @@
 			</Atoms>
 										
 			<Particles>				
-				<PartickleKind id="694">
+				<ParticleKind id="694">
 					<Name>DNA</Name>
 					<Color>Red</Color>
 					<Visible>true</Visible>
@@ -620,91 +625,92 @@
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>
 				</ParticleKind>
-				<PartickleKind id="695">
+				<ParticleKind id="695">
 					<Name>RNA</Name>
 					<Color>Blue</Color>	
 					<Visible>true</Visible>					
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>					
-				</ParticleKind>			
-				<PartickleKind id="688">
+				</ParticleKind>
+				<ParticleKind id="688">
 					<Name>tRNA</Name>
 					<Color>Blue</Color>	
 					<Visible>true</Visible>					
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>					
-				</ParticleKind>				
-				<PartickleKind id="689">
+				</ParticleKind>
+				<ParticleKind id="689">
 					<Name>tRNA_aminoacylated</Name>
 					<Color>Blue</Color>	
 					<Visible>true</Visible>					
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>					
-				</ParticleKind>				
-				<PartickleKind id="682">
+				</ParticleKind>
+				<ParticleKind id="682">
 					<Name>RIBOSOME_70S</Name>
 					<Color>Lime</Color>					
 					<Visible>true</Visible>
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>					
-				</ParticleKind>				
-				<PartickleKind id="681">
+				</ParticleKind>
+				<ParticleKind id="681">
 					<Name>RIBOSOME_50S</Name>
 					<Color>Pink</Color>
 					<Visible>true</Visible>					
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>					
-				</ParticleKind>				
-				<PartickleKind id="679">
+				</ParticleKind>
+				<ParticleKind id="679">
 					<Name>RIBOSOME_30S</Name>
 					<Color>Orange</Color>					
 					<Visible>true</Visible>
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>					
-				</ParticleKind>				
-				<PartickleKind id="683">
+				</ParticleKind>
+				<ParticleKind id="683">
 					<Name>RNA_POLYMERASE</Name>
 					<Color>Purple</Color>
 					<Visible>true</Visible>					
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>					
-				</ParticleKind>								
-				<PartickleKind id="516">
+				</ParticleKind>
+				<ParticleKind id="516">
 					<Name>DNA_POLYMERASE_GAMMA_COMPLEX</Name>
 					<Color>Yellow</Color>					
 					<Visible>true</Visible>
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>					
-				</ParticleKind>				
-				<PartickleKind id="513">
+				</ParticleKind>
+				<ParticleKind id="513">
 					<Name>DNA_POLYMERASE_CORE</Name>
 					<Color>Cyan</Color>
 					<Visible>true</Visible>
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>					
-				</ParticleKind>				
-				<PartickleKind id="10000">
+				</ParticleKind>
+				<ParticleKind id="10000">
 					<Name>OTHERS</Name>
 					<Color>Green</Color>
 					<Visible>true</Visible>					
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>					
-				</ParticleKind>								
-			</Particles>							
+				</ParticleKind>
+			</Particles>					
 		</CellState>		
 		
+		
 		<CellState id="4">
-                        <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2, Both = 3-->
+                        <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
 
 			<CellStateFileName>../../PDBFiles/struct1/1rjk_MD_MD000.pdb</CellStateFileName>
 			
@@ -714,7 +720,7 @@
 			<NumberOfStencilBufferLoops>3</NumberOfStencilBufferLoops>
 			<StencilForDrawingObjectsTypes>1</StencilForDrawingObjectsTypes> <!--StencilForDrawingOnlyParticlesCenters = 1, StencilForDrawingOnlyInAtomScale = 2-->
 			
-			<MakeColorsType>1</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticle = 3-->
+			<MakeColorsType>1</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticleKind = 3-->
 			
 			<SizeOfAtomsDrawingTypes>3</SizeOfAtomsDrawingTypes> 
 			
@@ -826,7 +832,7 @@
 			</Atoms>
 										
 			<Particles>				
-				<PartickleKind id="694">
+				<ParticleKind id="694">
 					<Name>DNA</Name>
 					<Color>Red</Color>
 					<Visible>true</Visible>
@@ -834,91 +840,91 @@
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>
 				</ParticleKind>
-				<PartickleKind id="695">
+				<ParticleKind id="695">
 					<Name>RNA</Name>
 					<Color>Blue</Color>	
 					<Visible>true</Visible>					
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>					
-				</ParticleKind>			
-				<PartickleKind id="688">
+				</ParticleKind>
+				<ParticleKind id="688">
 					<Name>tRNA</Name>
 					<Color>Blue</Color>	
 					<Visible>true</Visible>					
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>					
-				</ParticleKind>				
-				<PartickleKind id="689">
+				</ParticleKind>
+				<ParticleKind id="689">
 					<Name>tRNA_aminoacylated</Name>
 					<Color>Blue</Color>	
 					<Visible>true</Visible>					
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>					
-				</ParticleKind>				
-				<PartickleKind id="682">
+				</ParticleKind>
+				<ParticleKind id="682">
 					<Name>RIBOSOME_70S</Name>
 					<Color>Lime</Color>					
 					<Visible>true</Visible>
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>					
-				</ParticleKind>				
-				<PartickleKind id="681">
+				</ParticleKind>
+				<ParticleKind id="681">
 					<Name>RIBOSOME_50S</Name>
 					<Color>Pink</Color>
 					<Visible>true</Visible>					
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>					
-				</ParticleKind>				
-				<PartickleKind id="679">
+				</ParticleKind>
+				<ParticleKind id="679">
 					<Name>RIBOSOME_30S</Name>
 					<Color>Orange</Color>					
 					<Visible>true</Visible>
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>					
-				</ParticleKind>				
-				<PartickleKind id="683">
+				</ParticleKind>
+				<ParticleKind id="683">
 					<Name>RNA_POLYMERASE</Name>
 					<Color>Purple</Color>
 					<Visible>true</Visible>					
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>					
-				</ParticleKind>								
-				<PartickleKind id="516">
+				</ParticleKind>
+				<ParticleKind id="516">
 					<Name>DNA_POLYMERASE_GAMMA_COMPLEX</Name>
 					<Color>Yellow</Color>					
 					<Visible>true</Visible>
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>					
-				</ParticleKind>				
-				<PartickleKind id="513">
+				</ParticleKind>
+				<ParticleKind id="513">
 					<Name>DNA_POLYMERASE_CORE</Name>
 					<Color>Cyan</Color>
 					<Visible>true</Visible>
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>					
-				</ParticleKind>				
-				<PartickleKind id="10000">
+				</ParticleKind>
+				<ParticleKind id="10000">
 					<Name>OTHERS</Name>
 					<Color>Green</Color>
 					<Visible>true</Visible>					
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>					
-				</ParticleKind>								
-			</Particles>					
+				</ParticleKind>
+			</Particles>
 		</CellState>
 
 		<CellState id="5">
-                        <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2, Both = 3-->
+                        <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
 
 			<CellStateFileName>../../WholeCellData/Mycoplasma Genitalium/cellpack_atom_instances_149_curated.cif</CellStateFileName>
 
@@ -928,7 +934,7 @@
 			<NumberOfStencilBufferLoops>1</NumberOfStencilBufferLoops>
 			<StencilForDrawingObjectsTypes>2</StencilForDrawingObjectsTypes> <!--StencilForDrawingOnlyParticlesCenters = 1, StencilForDrawingOnlyInAtomScale = 2-->
 
-			<MakeColorsType>2</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticle = 3-->
+			<MakeColorsType>2</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticleKind = 3-->
 
 			<SizeOfAtomsDrawingTypes>3</SizeOfAtomsDrawingTypes>
 
@@ -1040,7 +1046,7 @@
 			</Atoms>
 
 			<Particles>
-				<PartickleKind id="694">
+				<ParticleKind id="694">
 					<Name>DNA</Name>
 					<Color>Red</Color>
 					<Visible>true</Visible>
@@ -1048,7 +1054,7 @@
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>
 				</ParticleKind>
-				<PartickleKind id="695">
+				<ParticleKind id="695">
 					<Name>RNA</Name>
 					<Color>Blue</Color>
 					<Visible>true</Visible>
@@ -1056,7 +1062,7 @@
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>
 				</ParticleKind>
-				<PartickleKind id="688">
+				<ParticleKind id="688">
 					<Name>tRNA</Name>
 					<Color>Blue</Color>
 					<Visible>true</Visible>
@@ -1064,7 +1070,7 @@
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>
 				</ParticleKind>
-				<PartickleKind id="689">
+				<ParticleKind id="689">
 					<Name>tRNA_aminoacylated</Name>
 					<Color>Blue</Color>
 					<Visible>true</Visible>
@@ -1072,7 +1078,7 @@
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>
 				</ParticleKind>
-				<PartickleKind id="682">
+				<ParticleKind id="682">
 					<Name>RIBOSOME_70S</Name>
 					<Color>Lime</Color>
 					<Visible>true</Visible>
@@ -1080,7 +1086,7 @@
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>
 				</ParticleKind>
-				<PartickleKind id="681">
+				<ParticleKind id="681">
 					<Name>RIBOSOME_50S</Name>
 					<Color>Pink</Color>
 					<Visible>true</Visible>
@@ -1088,7 +1094,7 @@
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>
 				</ParticleKind>
-				<PartickleKind id="679">
+				<ParticleKind id="679">
 					<Name>RIBOSOME_30S</Name>
 					<Color>Orange</Color>
 					<Visible>true</Visible>
@@ -1096,7 +1102,7 @@
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>
 				</ParticleKind>
-				<PartickleKind id="683">
+				<ParticleKind id="683">
 					<Name>RNA_POLYMERASE</Name>
 					<Color>Purple</Color>
 					<Visible>true</Visible>
@@ -1104,7 +1110,7 @@
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>
 				</ParticleKind>
-				<PartickleKind id="516">
+				<ParticleKind id="516">
 					<Name>DNA_POLYMERASE_GAMMA_COMPLEX</Name>
 					<Color>Yellow</Color>
 					<Visible>true</Visible>
@@ -1112,7 +1118,7 @@
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>
 				</ParticleKind>
-				<PartickleKind id="513">
+				<ParticleKind id="513">
 					<Name>DNA_POLYMERASE_CORE</Name>
 					<Color>Cyan</Color>
 					<Visible>true</Visible>
@@ -1120,7 +1126,7 @@
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>
 				</ParticleKind>
-				<PartickleKind id="10000">
+				<ParticleKind id="10000">
 					<Name>OTHERS</Name>
 					<Color>Green</Color>
 					<Visible>true</Visible>
@@ -1132,10 +1138,11 @@
 		</CellState>
 
 		<CellState id="6">
-                        <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2, Both = 3-->
+                        <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
 
-			<CellStateFileName>/home/pawel/Projects/Repos/CellExtensions/Fortran/Unres4/unres4/build/bin/Test2/1BL0_MD000.pdb</CellStateFileName>
+			<!--CellStateFileName>/home/pawel/Projects/Repos/CellExtensions/Fortran/Unres4/unres4/build/bin/Test2/1BL0_MD000.pdb</CellStateFileName-->
                         <!--CellStateFileName>/home/pawel/Projects/Repos/CellExtensions/Fortran/Unres4/unres4/build/bin/Test1/microProducePDB_MD000.pdb</CellStateFileName-->
+                        <CellStateFileName>/home/pawel/Projects/Repos/CellExtensions/cabsdock/test1/output_pdbs/replica_0.pdb</CellStateFileName>
 
 			<ChosenStructureIndex>0</ChosenStructureIndex>
 			<FilmOfStructuresActive>0</FilmOfStructuresActive>
@@ -1143,7 +1150,7 @@
 			<NumberOfStencilBufferLoops>3</NumberOfStencilBufferLoops>
 			<StencilForDrawingObjectsTypes>1</StencilForDrawingObjectsTypes> <!--StencilForDrawingOnlyParticlesCenters = 1, StencilForDrawingOnlyInAtomScale = 2-->
 
-			<MakeColorsType>1</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticle = 3-->
+			<MakeColorsType>1</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticleKind = 3-->
 
 			<SizeOfAtomsDrawingTypes>3</SizeOfAtomsDrawingTypes>
 
@@ -1255,7 +1262,7 @@
 			</Atoms>
 
 			<Particles>
-				<PartickleKind id="694">
+				<ParticleKind id="694">
 					<Name>DNA</Name>
 					<Color>Red</Color>
 					<Visible>true</Visible>
@@ -1263,7 +1270,7 @@
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>
 				</ParticleKind>
-				<PartickleKind id="695">
+				<ParticleKind id="695">
 					<Name>RNA</Name>
 					<Color>Blue</Color>
 					<Visible>true</Visible>
@@ -1271,7 +1278,7 @@
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>
 				</ParticleKind>
-				<PartickleKind id="688">
+				<ParticleKind id="688">
 					<Name>tRNA</Name>
 					<Color>Blue</Color>
 					<Visible>true</Visible>
@@ -1279,7 +1286,7 @@
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>
 				</ParticleKind>
-				<PartickleKind id="689">
+				<ParticleKind id="689">
 					<Name>tRNA_aminoacylated</Name>
 					<Color>Blue</Color>
 					<Visible>true</Visible>
@@ -1287,7 +1294,7 @@
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>
 				</ParticleKind>
-				<PartickleKind id="682">
+				<ParticleKind id="682">
 					<Name>RIBOSOME_70S</Name>
 					<Color>Lime</Color>
 					<Visible>true</Visible>
@@ -1295,7 +1302,7 @@
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>
 				</ParticleKind>
-				<PartickleKind id="681">
+				<ParticleKind id="681">
 					<Name>RIBOSOME_50S</Name>
 					<Color>Pink</Color>
 					<Visible>true</Visible>
@@ -1303,7 +1310,7 @@
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>
 				</ParticleKind>
-				<PartickleKind id="679">
+				<ParticleKind id="679">
 					<Name>RIBOSOME_30S</Name>
 					<Color>Orange</Color>
 					<Visible>true</Visible>
@@ -1311,7 +1318,7 @@
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>
 				</ParticleKind>
-				<PartickleKind id="683">
+				<ParticleKind id="683">
 					<Name>RNA_POLYMERASE</Name>
 					<Color>Purple</Color>
 					<Visible>true</Visible>
@@ -1319,7 +1326,7 @@
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>
 				</ParticleKind>
-				<PartickleKind id="516">
+				<ParticleKind id="516">
 					<Name>DNA_POLYMERASE_GAMMA_COMPLEX</Name>
 					<Color>Yellow</Color>
 					<Visible>true</Visible>
@@ -1327,7 +1334,7 @@
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>
 				</ParticleKind>
-				<PartickleKind id="513">
+				<ParticleKind id="513">
 					<Name>DNA_POLYMERASE_CORE</Name>
 					<Color>Cyan</Color>
 					<Visible>true</Visible>
@@ -1335,7 +1342,7 @@
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>
 				</ParticleKind>
-				<PartickleKind id="10000">
+				<ParticleKind id="10000">
 					<Name>OTHERS</Name>
 					<Color>Green</Color>
 					<Visible>true</Visible>
@@ -1347,5 +1354,2225 @@
 
 		</CellState>
 
+                <CellState id="7">
+                        <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
+
+			<CellStateFileName>/home/pawel/Projects/Repos/CellExtensions/Fortran/Unres4/unres4/build/bin/Test2/1BL0_MD000.pdb</CellStateFileName>
+                        <!--CellStateFileName>/home/pawel/Projects/Repos/CellExtensions/Fortran/Unres4/unres4/build/bin/Test1/microProducePDB_MD000.pdb</CellStateFileName-->
+
+			<ChosenStructureIndex>0</ChosenStructureIndex>
+			<FilmOfStructuresActive>0</FilmOfStructuresActive>
+
+			<NumberOfStencilBufferLoops>3</NumberOfStencilBufferLoops>
+			<StencilForDrawingObjectsTypes>1</StencilForDrawingObjectsTypes> <!--StencilForDrawingOnlyParticlesCenters = 1, StencilForDrawingOnlyInAtomScale = 2-->
+
+			<MakeColorsType>1</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticleKind = 3-->
+
+			<SizeOfAtomsDrawingTypes>3</SizeOfAtomsDrawingTypes>
+
+			<SpecularPower>8.0</SpecularPower> <!--16 or 8-->
+			<SpecularAlbedo>0.2222</SpecularAlbedo> <!--0.4444 or 0.2222-->
+
+			<DrawBondsBetweenParticlesCenters>false</DrawBondsBetweenParticlesCenters>
+			<DrawBondsBetweenAtoms>false</DrawBondsBetweenAtoms>
+
+			<ShowDetailsInAtomScale>false</ShowDetailsInAtomScale>
+			<CheckAtomVisibility>false</CheckAtomVisibility>
+			<CutZ>1000</CutZ>
+			<Distance>1000</Distance>
+			<LoadOfAtomsStep>1</LoadOfAtomsStep>
+
+			<XLowToDrawInAtomScale>0</XLowToDrawInAtomScale>
+			<XHighToDrawInAtomScale>0</XHighToDrawInAtomScale>
+			<YLowToDrawInAtomScale>0</YLowToDrawInAtomScale>
+			<YHighToDrawInAtomScale>0</YHighToDrawInAtomScale>
+			<ZLowToDrawInAtomScale>0</ZLowToDrawInAtomScale>
+			<ZHighToDrawInAtomScale>0</ZHighToDrawInAtomScale>
+
+			<SizeOfAtomChangeStep>0.01</SizeOfAtomChangeStep>
+
+			<SizeOfAtomX>1</SizeOfAtomX>
+			<SizeOfAtomY>1</SizeOfAtomY>
+			<SizeOfAtomZ>1</SizeOfAtomZ>
+
+			<RotationAngle1>0</RotationAngle1>
+			<RotationAngle2>0</RotationAngle2>
+			<RotationAngle3>0</RotationAngle3>
+
+			<CameraXPosition>0</CameraXPosition>
+			<CameraYPosition>0</CameraYPosition>
+			<CameraZPosition>0</CameraZPosition>
+
+			<CameraXMoveShortStep>1</CameraXMoveShortStep>
+			<CameraYMoveShortStep>1</CameraYMoveShortStep>
+			<CameraZMoveShortStep>1</CameraZMoveShortStep>
+
+			<CameraXMoveLongStep>10</CameraXMoveLongStep>
+			<CameraYMoveLongStep>10</CameraYMoveLongStep>
+			<CameraZMoveLongStep>10</CameraZMoveLongStep>
+
+			<ViewPositionX>0</ViewPositionX>
+			<ViewPositionY>0</ViewPositionY>
+			<ViewPositionZ>50</ViewPositionZ>
+
+			<ViewXMoveShortStep>1</ViewXMoveShortStep>
+			<ViewYMoveShortStep>1</ViewYMoveShortStep>
+			<ViewZMoveShortStep>1</ViewZMoveShortStep>
+
+			<ViewXMoveLongStep>10</ViewXMoveLongStep>
+			<ViewYMoveLongStep>10</ViewYMoveLongStep>
+			<ViewZMoveLongStep>10</ViewZMoveLongStep>
+
+			<ViewChangeUsingLongStep>false</ViewChangeUsingLongStep>
+			<AutomaticChangeOfSizeOfAtom>false</AutomaticChangeOfSizeOfAtom>
+			<AutomaticChangeOfLoadAtomsStep>false</AutomaticChangeOfLoadAtomsStep>
+
+			<BackgroundColor1>Cyan</BackgroundColor1>
+			<BackgroundColor2>White</BackgroundColor2>
+			<BackgroundColor3>Black</BackgroundColor3>
+			<ChosenBackgroundColor>3</ChosenBackgroundColor>
+
+			<Atoms>
+				<Atom id="1">
+					<Name>C</Name>
+					<Color>Turquoise</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="2">
+					<Name>O</Name>
+					<Color>Red</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="3">
+					<Name>H</Name>
+					<Color>White</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="4">
+					<Name>N</Name>
+					<Color>Blue</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="5">
+					<Name>P</Name>
+					<Color>Green</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="6">
+					<Name>E</Name>
+					<Color>Gray</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+			</Atoms>
+
+			<Particles>
+				<ParticleKind id="694">
+					<Name>DNA</Name>
+					<Color>Red</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="695">
+					<Name>RNA</Name>
+					<Color>Blue</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="688">
+					<Name>tRNA</Name>
+					<Color>Blue</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="689">
+					<Name>tRNA_aminoacylated</Name>
+					<Color>Blue</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="682">
+					<Name>RIBOSOME_70S</Name>
+					<Color>Lime</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="681">
+					<Name>RIBOSOME_50S</Name>
+					<Color>Pink</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="679">
+					<Name>RIBOSOME_30S</Name>
+					<Color>Orange</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="683">
+					<Name>RNA_POLYMERASE</Name>
+					<Color>Purple</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="516">
+					<Name>DNA_POLYMERASE_GAMMA_COMPLEX</Name>
+					<Color>Yellow</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="513">
+					<Name>DNA_POLYMERASE_CORE</Name>
+					<Color>Cyan</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="10000">
+					<Name>OTHERS</Name>
+					<Color>Green</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+			</Particles>
+
+		</CellState>
+
+                <CellState id="8">
+                        <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
+
+                        <CellStateFileName>/home/pawel/Projects/Repos/CellExtensions/Fortran/Unres4/unres4/build/bin/Test1/microProducePDB_MD000.pdb</CellStateFileName>
+
+			<ChosenStructureIndex>0</ChosenStructureIndex>
+			<FilmOfStructuresActive>0</FilmOfStructuresActive>
+
+			<NumberOfStencilBufferLoops>3</NumberOfStencilBufferLoops>
+			<StencilForDrawingObjectsTypes>1</StencilForDrawingObjectsTypes> <!--StencilForDrawingOnlyParticlesCenters = 1, StencilForDrawingOnlyInAtomScale = 2-->
+
+			<MakeColorsType>1</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticleKind = 3-->
+
+			<SizeOfAtomsDrawingTypes>3</SizeOfAtomsDrawingTypes>
+
+			<SpecularPower>8.0</SpecularPower> <!--16 or 8-->
+			<SpecularAlbedo>0.2222</SpecularAlbedo> <!--0.4444 or 0.2222-->
+
+			<DrawBondsBetweenParticlesCenters>false</DrawBondsBetweenParticlesCenters>
+			<DrawBondsBetweenAtoms>false</DrawBondsBetweenAtoms>
+
+			<ShowDetailsInAtomScale>false</ShowDetailsInAtomScale>
+			<CheckAtomVisibility>false</CheckAtomVisibility>
+			<CutZ>1000</CutZ>
+			<Distance>1000</Distance>
+			<LoadOfAtomsStep>1</LoadOfAtomsStep>
+
+			<XLowToDrawInAtomScale>0</XLowToDrawInAtomScale>
+			<XHighToDrawInAtomScale>0</XHighToDrawInAtomScale>
+			<YLowToDrawInAtomScale>0</YLowToDrawInAtomScale>
+			<YHighToDrawInAtomScale>0</YHighToDrawInAtomScale>
+			<ZLowToDrawInAtomScale>0</ZLowToDrawInAtomScale>
+			<ZHighToDrawInAtomScale>0</ZHighToDrawInAtomScale>
+
+			<SizeOfAtomChangeStep>0.01</SizeOfAtomChangeStep>
+
+			<SizeOfAtomX>1</SizeOfAtomX>
+			<SizeOfAtomY>1</SizeOfAtomY>
+			<SizeOfAtomZ>1</SizeOfAtomZ>
+
+			<RotationAngle1>0</RotationAngle1>
+			<RotationAngle2>0</RotationAngle2>
+			<RotationAngle3>0</RotationAngle3>
+
+			<CameraXPosition>0</CameraXPosition>
+			<CameraYPosition>0</CameraYPosition>
+			<CameraZPosition>0</CameraZPosition>
+
+			<CameraXMoveShortStep>1</CameraXMoveShortStep>
+			<CameraYMoveShortStep>1</CameraYMoveShortStep>
+			<CameraZMoveShortStep>1</CameraZMoveShortStep>
+
+			<CameraXMoveLongStep>10</CameraXMoveLongStep>
+			<CameraYMoveLongStep>10</CameraYMoveLongStep>
+			<CameraZMoveLongStep>10</CameraZMoveLongStep>
+
+			<ViewPositionX>0</ViewPositionX>
+			<ViewPositionY>0</ViewPositionY>
+			<ViewPositionZ>50</ViewPositionZ>
+
+			<ViewXMoveShortStep>1</ViewXMoveShortStep>
+			<ViewYMoveShortStep>1</ViewYMoveShortStep>
+			<ViewZMoveShortStep>1</ViewZMoveShortStep>
+
+			<ViewXMoveLongStep>10</ViewXMoveLongStep>
+			<ViewYMoveLongStep>10</ViewYMoveLongStep>
+			<ViewZMoveLongStep>10</ViewZMoveLongStep>
+
+			<ViewChangeUsingLongStep>false</ViewChangeUsingLongStep>
+			<AutomaticChangeOfSizeOfAtom>false</AutomaticChangeOfSizeOfAtom>
+			<AutomaticChangeOfLoadAtomsStep>false</AutomaticChangeOfLoadAtomsStep>
+
+			<BackgroundColor1>Cyan</BackgroundColor1>
+			<BackgroundColor2>White</BackgroundColor2>
+			<BackgroundColor3>Black</BackgroundColor3>
+			<ChosenBackgroundColor>3</ChosenBackgroundColor>
+
+			<Atoms>
+				<Atom id="1">
+					<Name>C</Name>
+					<Color>Turquoise</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="2">
+					<Name>O</Name>
+					<Color>Red</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="3">
+					<Name>H</Name>
+					<Color>White</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="4">
+					<Name>N</Name>
+					<Color>Blue</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="5">
+					<Name>P</Name>
+					<Color>Green</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="6">
+					<Name>E</Name>
+					<Color>Gray</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+			</Atoms>
+
+			<Particles>
+				<ParticleKind id="694">
+					<Name>DNA</Name>
+					<Color>Red</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="695">
+					<Name>RNA</Name>
+					<Color>Blue</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="688">
+					<Name>tRNA</Name>
+					<Color>Blue</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="689">
+					<Name>tRNA_aminoacylated</Name>
+					<Color>Blue</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="682">
+					<Name>RIBOSOME_70S</Name>
+					<Color>Lime</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="681">
+					<Name>RIBOSOME_50S</Name>
+					<Color>Pink</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="679">
+					<Name>RIBOSOME_30S</Name>
+					<Color>Orange</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="683">
+					<Name>RNA_POLYMERASE</Name>
+					<Color>Purple</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="516">
+					<Name>DNA_POLYMERASE_GAMMA_COMPLEX</Name>
+					<Color>Yellow</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="513">
+					<Name>DNA_POLYMERASE_CORE</Name>
+					<Color>Cyan</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="10000">
+					<Name>OTHERS</Name>
+					<Color>Green</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+			</Particles>
+
+		</CellState>
+
+		<CellState id="9">
+                        <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
+
+			<CellStateFileName>../../WholeCellData/JCVI-syn3A/extended_cellpack_atom_instances.cif</CellStateFileName>
+
+			<ChosenStructureIndex>0</ChosenStructureIndex>
+			<FilmOfStructuresActive>0</FilmOfStructuresActive>
+
+			<NumberOfStencilBufferLoops>1</NumberOfStencilBufferLoops>
+			<StencilForDrawingObjectsTypes>2</StencilForDrawingObjectsTypes> <!--StencilForDrawingOnlyParticlesCenters = 1, StencilForDrawingOnlyInAtomScale = 2-->
+
+			<MakeColorsType>2</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticleKind = 3-->
+
+			<SizeOfAtomsDrawingTypes>3</SizeOfAtomsDrawingTypes>
+
+			<SpecularPower>8.0</SpecularPower> <!--16 or 8-->
+			<SpecularAlbedo>0.2222</SpecularAlbedo> <!--0.4444 or 0.2222-->
+
+			<DrawBondsBetweenParticlesCenters>false</DrawBondsBetweenParticlesCenters>
+			<DrawBondsBetweenAtoms>false</DrawBondsBetweenAtoms>
+
+			<ShowDetailsInAtomScale>true</ShowDetailsInAtomScale>
+			<CheckAtomVisibility>true</CheckAtomVisibility>
+			<CutZ>200</CutZ>
+			<Distance>1500</Distance>
+			<LoadOfAtomsStep>1</LoadOfAtomsStep>
+
+			<XLowToDrawInAtomScale>-200</XLowToDrawInAtomScale>
+			<XHighToDrawInAtomScale>200</XHighToDrawInAtomScale>
+			<YLowToDrawInAtomScale>-200</YLowToDrawInAtomScale>
+			<YHighToDrawInAtomScale>200</YHighToDrawInAtomScale>
+			<ZLowToDrawInAtomScale>-650</ZLowToDrawInAtomScale>
+			<ZHighToDrawInAtomScale>-50</ZHighToDrawInAtomScale>
+
+			<SizeOfAtomChangeStep>0.1</SizeOfAtomChangeStep>
+
+			<SizeOfAtomX>1</SizeOfAtomX>
+			<SizeOfAtomY>1</SizeOfAtomY>
+			<SizeOfAtomZ>1</SizeOfAtomZ>
+
+			<RotationAngle1>0</RotationAngle1>
+			<RotationAngle2>0</RotationAngle2>
+			<RotationAngle3>0</RotationAngle3>
+
+			<CameraXPosition>0</CameraXPosition>
+			<CameraYPosition>0</CameraYPosition>
+			<CameraZPosition>0</CameraZPosition>
+
+			<CameraXMoveShortStep>5</CameraXMoveShortStep>
+			<CameraYMoveShortStep>5</CameraYMoveShortStep>
+			<CameraZMoveShortStep>5</CameraZMoveShortStep>
+
+			<CameraXMoveLongStep>50</CameraXMoveLongStep>
+			<CameraYMoveLongStep>50</CameraYMoveLongStep>
+			<CameraZMoveLongStep>50</CameraZMoveLongStep>
+
+			<ViewPositionX>0</ViewPositionX>
+			<ViewPositionY>0</ViewPositionY>
+			<ViewPositionZ>50</ViewPositionZ>
+
+			<ViewXMoveShortStep>5</ViewXMoveShortStep>
+			<ViewYMoveShortStep>5</ViewYMoveShortStep>
+			<ViewZMoveShortStep>5</ViewZMoveShortStep>
+
+			<ViewXMoveLongStep>50</ViewXMoveLongStep>
+			<ViewYMoveLongStep>50</ViewYMoveLongStep>
+			<ViewZMoveLongStep>50</ViewZMoveLongStep>
+
+			<ViewChangeUsingLongStep>true</ViewChangeUsingLongStep>
+			<AutomaticChangeOfSizeOfAtom>true</AutomaticChangeOfSizeOfAtom>
+			<AutomaticChangeOfLoadAtomsStep>true</AutomaticChangeOfLoadAtomsStep>
+
+			<BackgroundColor1>Cyan</BackgroundColor1>
+			<BackgroundColor2>White</BackgroundColor2>
+			<BackgroundColor3>Black</BackgroundColor3>
+			<ChosenBackgroundColor>1</ChosenBackgroundColor>
+
+			<Atoms>
+				<Atom id="1">
+					<Name>C</Name>
+					<Color>Turquoise</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="2">
+					<Name>O</Name>
+					<Color>Red</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="3">
+					<Name>N</Name>
+					<Color>Blue</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="4">
+					<Name>P</Name>
+					<Color>Green</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="5">
+					<Name>H</Name>
+					<Color>White</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="6">
+					<Name>E</Name>
+					<Color>Gray</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+			</Atoms>
+
+			<Particles>
+				<ParticleKind id="344">
+					<Name>DNA</Name>
+					<Color>Red</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="345">
+					<Name>RNA</Name>
+					<Color>Blue</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="340">
+					<Name>RIBOSOME_70S</Name>
+					<Color>Lime</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="238">
+					<Name>RNA_POL</Name>
+					<Color>Purple</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="82">
+					<Name>DNA_POL</Name>
+					<Color>Cyan</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="10000">
+					<Name>OTHERS</Name>
+					<Color>Green</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+			</Particles>
+		</CellState>
+
+
+                <CellState id="10">
+                        <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
+
+                        <CellStateFileName>/home/pawel/Projects/Repos/Cell/PDBFiles/struct2/rp_new10.pdb</CellStateFileName>
+
+			<ChosenStructureIndex>0</ChosenStructureIndex>
+			<FilmOfStructuresActive>0</FilmOfStructuresActive>
+
+			<NumberOfStencilBufferLoops>3</NumberOfStencilBufferLoops>
+			<StencilForDrawingObjectsTypes>1</StencilForDrawingObjectsTypes> <!--StencilForDrawingOnlyParticlesCenters = 1, StencilForDrawingOnlyInAtomScale = 2-->
+
+			<MakeColorsType>1</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticleKind = 3-->
+
+			<SizeOfAtomsDrawingTypes>3</SizeOfAtomsDrawingTypes>
+
+			<SpecularPower>8.0</SpecularPower> <!--16 or 8-->
+			<SpecularAlbedo>0.2222</SpecularAlbedo> <!--0.4444 or 0.2222-->
+
+			<DrawBondsBetweenParticlesCenters>false</DrawBondsBetweenParticlesCenters>
+			<DrawBondsBetweenAtoms>false</DrawBondsBetweenAtoms>
+
+			<ShowDetailsInAtomScale>false</ShowDetailsInAtomScale>
+			<CheckAtomVisibility>false</CheckAtomVisibility>
+			<CutZ>1000</CutZ>
+			<Distance>1000</Distance>
+			<LoadOfAtomsStep>1</LoadOfAtomsStep>
+
+			<XLowToDrawInAtomScale>0</XLowToDrawInAtomScale>
+			<XHighToDrawInAtomScale>0</XHighToDrawInAtomScale>
+			<YLowToDrawInAtomScale>0</YLowToDrawInAtomScale>
+			<YHighToDrawInAtomScale>0</YHighToDrawInAtomScale>
+			<ZLowToDrawInAtomScale>0</ZLowToDrawInAtomScale>
+			<ZHighToDrawInAtomScale>0</ZHighToDrawInAtomScale>
+
+			<SizeOfAtomChangeStep>0.01</SizeOfAtomChangeStep>
+
+			<SizeOfAtomX>1</SizeOfAtomX>
+			<SizeOfAtomY>1</SizeOfAtomY>
+			<SizeOfAtomZ>1</SizeOfAtomZ>
+
+			<RotationAngle1>0</RotationAngle1>
+			<RotationAngle2>0</RotationAngle2>
+			<RotationAngle3>0</RotationAngle3>
+
+			<CameraXPosition>0</CameraXPosition>
+			<CameraYPosition>0</CameraYPosition>
+			<CameraZPosition>0</CameraZPosition>
+
+			<CameraXMoveShortStep>1</CameraXMoveShortStep>
+			<CameraYMoveShortStep>1</CameraYMoveShortStep>
+			<CameraZMoveShortStep>1</CameraZMoveShortStep>
+
+			<CameraXMoveLongStep>10</CameraXMoveLongStep>
+			<CameraYMoveLongStep>10</CameraYMoveLongStep>
+			<CameraZMoveLongStep>10</CameraZMoveLongStep>
+
+			<ViewPositionX>0</ViewPositionX>
+			<ViewPositionY>0</ViewPositionY>
+			<ViewPositionZ>50</ViewPositionZ>
+
+			<ViewXMoveShortStep>1</ViewXMoveShortStep>
+			<ViewYMoveShortStep>1</ViewYMoveShortStep>
+			<ViewZMoveShortStep>1</ViewZMoveShortStep>
+
+			<ViewXMoveLongStep>10</ViewXMoveLongStep>
+			<ViewYMoveLongStep>10</ViewYMoveLongStep>
+			<ViewZMoveLongStep>10</ViewZMoveLongStep>
+
+			<ViewChangeUsingLongStep>false</ViewChangeUsingLongStep>
+			<AutomaticChangeOfSizeOfAtom>false</AutomaticChangeOfSizeOfAtom>
+			<AutomaticChangeOfLoadAtomsStep>false</AutomaticChangeOfLoadAtomsStep>
+
+			<BackgroundColor1>Cyan</BackgroundColor1>
+			<BackgroundColor2>White</BackgroundColor2>
+			<BackgroundColor3>Black</BackgroundColor3>
+			<ChosenBackgroundColor>3</ChosenBackgroundColor>
+
+			<Atoms>
+				<Atom id="1">
+					<Name>C</Name>
+					<Color>Turquoise</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="2">
+					<Name>O</Name>
+					<Color>Red</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="3">
+					<Name>H</Name>
+					<Color>White</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="4">
+					<Name>N</Name>
+					<Color>Blue</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="5">
+					<Name>P</Name>
+					<Color>Green</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="6">
+					<Name>E</Name>
+					<Color>Gray</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+			</Atoms>
+
+			<Particles>
+				<ParticleKind id="694">
+					<Name>DNA</Name>
+					<Color>Red</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="695">
+					<Name>RNA</Name>
+					<Color>Blue</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="688">
+					<Name>tRNA</Name>
+					<Color>Blue</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="689">
+					<Name>tRNA_aminoacylated</Name>
+					<Color>Blue</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="682">
+					<Name>RIBOSOME_70S</Name>
+					<Color>Lime</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="681">
+					<Name>RIBOSOME_50S</Name>
+					<Color>Pink</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="679">
+					<Name>RIBOSOME_30S</Name>
+					<Color>Orange</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="683">
+					<Name>RNA_POLYMERASE</Name>
+					<Color>Purple</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="516">
+					<Name>DNA_POLYMERASE_GAMMA_COMPLEX</Name>
+					<Color>Yellow</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="513">
+					<Name>DNA_POLYMERASE_CORE</Name>
+					<Color>Cyan</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="10000">
+					<Name>OTHERS</Name>
+					<Color>Green</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+			</Particles>
+
+		</CellState>
+
+                <CellState id="11">
+                        <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
+
+                        <CellStateFileName>/home/pawel/Projects/Repos/Cell/PDBFiles/struct2/RP_NEW_2_E2E3_2.pdb</CellStateFileName>
+
+			<ChosenStructureIndex>0</ChosenStructureIndex>
+			<FilmOfStructuresActive>0</FilmOfStructuresActive>
+
+			<NumberOfStencilBufferLoops>3</NumberOfStencilBufferLoops>
+			<StencilForDrawingObjectsTypes>1</StencilForDrawingObjectsTypes> <!--StencilForDrawingOnlyParticlesCenters = 1, StencilForDrawingOnlyInAtomScale = 2-->
+
+			<MakeColorsType>1</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticleKind = 3-->
+
+			<SizeOfAtomsDrawingTypes>3</SizeOfAtomsDrawingTypes>
+
+			<SpecularPower>8.0</SpecularPower> <!--16 or 8-->
+			<SpecularAlbedo>0.2222</SpecularAlbedo> <!--0.4444 or 0.2222-->
+
+			<DrawBondsBetweenParticlesCenters>false</DrawBondsBetweenParticlesCenters>
+			<DrawBondsBetweenAtoms>false</DrawBondsBetweenAtoms>
+
+			<ShowDetailsInAtomScale>false</ShowDetailsInAtomScale>
+			<CheckAtomVisibility>false</CheckAtomVisibility>
+			<CutZ>1000</CutZ>
+			<Distance>1000</Distance>
+			<LoadOfAtomsStep>1</LoadOfAtomsStep>
+
+			<XLowToDrawInAtomScale>0</XLowToDrawInAtomScale>
+			<XHighToDrawInAtomScale>0</XHighToDrawInAtomScale>
+			<YLowToDrawInAtomScale>0</YLowToDrawInAtomScale>
+			<YHighToDrawInAtomScale>0</YHighToDrawInAtomScale>
+			<ZLowToDrawInAtomScale>0</ZLowToDrawInAtomScale>
+			<ZHighToDrawInAtomScale>0</ZHighToDrawInAtomScale>
+
+			<SizeOfAtomChangeStep>0.01</SizeOfAtomChangeStep>
+
+			<SizeOfAtomX>1</SizeOfAtomX>
+			<SizeOfAtomY>1</SizeOfAtomY>
+			<SizeOfAtomZ>1</SizeOfAtomZ>
+
+			<RotationAngle1>0</RotationAngle1>
+			<RotationAngle2>0</RotationAngle2>
+			<RotationAngle3>0</RotationAngle3>
+
+			<CameraXPosition>0</CameraXPosition>
+			<CameraYPosition>0</CameraYPosition>
+			<CameraZPosition>0</CameraZPosition>
+
+			<CameraXMoveShortStep>1</CameraXMoveShortStep>
+			<CameraYMoveShortStep>1</CameraYMoveShortStep>
+			<CameraZMoveShortStep>1</CameraZMoveShortStep>
+
+			<CameraXMoveLongStep>10</CameraXMoveLongStep>
+			<CameraYMoveLongStep>10</CameraYMoveLongStep>
+			<CameraZMoveLongStep>10</CameraZMoveLongStep>
+
+			<ViewPositionX>0</ViewPositionX>
+			<ViewPositionY>0</ViewPositionY>
+			<ViewPositionZ>50</ViewPositionZ>
+
+			<ViewXMoveShortStep>1</ViewXMoveShortStep>
+			<ViewYMoveShortStep>1</ViewYMoveShortStep>
+			<ViewZMoveShortStep>1</ViewZMoveShortStep>
+
+			<ViewXMoveLongStep>10</ViewXMoveLongStep>
+			<ViewYMoveLongStep>10</ViewYMoveLongStep>
+			<ViewZMoveLongStep>10</ViewZMoveLongStep>
+
+			<ViewChangeUsingLongStep>false</ViewChangeUsingLongStep>
+			<AutomaticChangeOfSizeOfAtom>false</AutomaticChangeOfSizeOfAtom>
+			<AutomaticChangeOfLoadAtomsStep>false</AutomaticChangeOfLoadAtomsStep>
+
+			<BackgroundColor1>Cyan</BackgroundColor1>
+			<BackgroundColor2>White</BackgroundColor2>
+			<BackgroundColor3>Black</BackgroundColor3>
+			<ChosenBackgroundColor>3</ChosenBackgroundColor>
+
+			<Atoms>
+				<Atom id="1">
+					<Name>C</Name>
+					<Color>Turquoise</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="2">
+					<Name>O</Name>
+					<Color>Red</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="3">
+					<Name>H</Name>
+					<Color>White</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="4">
+					<Name>N</Name>
+					<Color>Blue</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="5">
+					<Name>P</Name>
+					<Color>Green</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="6">
+					<Name>E</Name>
+					<Color>Gray</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+			</Atoms>
+
+			<Particles>
+				<ParticleKind id="694">
+					<Name>DNA</Name>
+					<Color>Red</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="695">
+					<Name>RNA</Name>
+					<Color>Blue</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="688">
+					<Name>tRNA</Name>
+					<Color>Blue</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="689">
+					<Name>tRNA_aminoacylated</Name>
+					<Color>Blue</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="682">
+					<Name>RIBOSOME_70S</Name>
+					<Color>Lime</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="681">
+					<Name>RIBOSOME_50S</Name>
+					<Color>Pink</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="679">
+					<Name>RIBOSOME_30S</Name>
+					<Color>Orange</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="683">
+					<Name>RNA_POLYMERASE</Name>
+					<Color>Purple</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="516">
+					<Name>DNA_POLYMERASE_GAMMA_COMPLEX</Name>
+					<Color>Yellow</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="513">
+					<Name>DNA_POLYMERASE_CORE</Name>
+					<Color>Cyan</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="10000">
+					<Name>OTHERS</Name>
+					<Color>Green</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+			</Particles>
+
+		</CellState>
+
+                <CellState id="12">
+                        <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
+
+                        <CellStateFileName>/home/pawel/Projects/Repos/Cell/PDBFiles/struct2/RP_NEW_2_6rut.pdb</CellStateFileName>
+
+			<ChosenStructureIndex>0</ChosenStructureIndex>
+			<FilmOfStructuresActive>0</FilmOfStructuresActive>
+
+			<NumberOfStencilBufferLoops>3</NumberOfStencilBufferLoops>
+			<StencilForDrawingObjectsTypes>1</StencilForDrawingObjectsTypes> <!--StencilForDrawingOnlyParticlesCenters = 1, StencilForDrawingOnlyInAtomScale = 2-->
+
+			<MakeColorsType>1</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticleKind = 3-->
+
+			<SizeOfAtomsDrawingTypes>3</SizeOfAtomsDrawingTypes>
+
+			<SpecularPower>8.0</SpecularPower> <!--16 or 8-->
+			<SpecularAlbedo>0.2222</SpecularAlbedo> <!--0.4444 or 0.2222-->
+
+			<DrawBondsBetweenParticlesCenters>false</DrawBondsBetweenParticlesCenters>
+			<DrawBondsBetweenAtoms>false</DrawBondsBetweenAtoms>
+
+			<ShowDetailsInAtomScale>false</ShowDetailsInAtomScale>
+			<CheckAtomVisibility>false</CheckAtomVisibility>
+			<CutZ>1000</CutZ>
+			<Distance>1000</Distance>
+			<LoadOfAtomsStep>1</LoadOfAtomsStep>
+
+			<XLowToDrawInAtomScale>0</XLowToDrawInAtomScale>
+			<XHighToDrawInAtomScale>0</XHighToDrawInAtomScale>
+			<YLowToDrawInAtomScale>0</YLowToDrawInAtomScale>
+			<YHighToDrawInAtomScale>0</YHighToDrawInAtomScale>
+			<ZLowToDrawInAtomScale>0</ZLowToDrawInAtomScale>
+			<ZHighToDrawInAtomScale>0</ZHighToDrawInAtomScale>
+
+			<SizeOfAtomChangeStep>0.01</SizeOfAtomChangeStep>
+
+			<SizeOfAtomX>1</SizeOfAtomX>
+			<SizeOfAtomY>1</SizeOfAtomY>
+			<SizeOfAtomZ>1</SizeOfAtomZ>
+
+			<RotationAngle1>0</RotationAngle1>
+			<RotationAngle2>0</RotationAngle2>
+			<RotationAngle3>0</RotationAngle3>
+
+			<CameraXPosition>0</CameraXPosition>
+			<CameraYPosition>0</CameraYPosition>
+			<CameraZPosition>0</CameraZPosition>
+
+			<CameraXMoveShortStep>1</CameraXMoveShortStep>
+			<CameraYMoveShortStep>1</CameraYMoveShortStep>
+			<CameraZMoveShortStep>1</CameraZMoveShortStep>
+
+			<CameraXMoveLongStep>10</CameraXMoveLongStep>
+			<CameraYMoveLongStep>10</CameraYMoveLongStep>
+			<CameraZMoveLongStep>10</CameraZMoveLongStep>
+
+			<ViewPositionX>0</ViewPositionX>
+			<ViewPositionY>0</ViewPositionY>
+			<ViewPositionZ>50</ViewPositionZ>
+
+			<ViewXMoveShortStep>1</ViewXMoveShortStep>
+			<ViewYMoveShortStep>1</ViewYMoveShortStep>
+			<ViewZMoveShortStep>1</ViewZMoveShortStep>
+
+			<ViewXMoveLongStep>10</ViewXMoveLongStep>
+			<ViewYMoveLongStep>10</ViewYMoveLongStep>
+			<ViewZMoveLongStep>10</ViewZMoveLongStep>
+
+			<ViewChangeUsingLongStep>false</ViewChangeUsingLongStep>
+			<AutomaticChangeOfSizeOfAtom>false</AutomaticChangeOfSizeOfAtom>
+			<AutomaticChangeOfLoadAtomsStep>false</AutomaticChangeOfLoadAtomsStep>
+
+			<BackgroundColor1>Cyan</BackgroundColor1>
+			<BackgroundColor2>White</BackgroundColor2>
+			<BackgroundColor3>Black</BackgroundColor3>
+			<ChosenBackgroundColor>3</ChosenBackgroundColor>
+
+			<Atoms>
+				<Atom id="1">
+					<Name>C</Name>
+					<Color>Turquoise</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="2">
+					<Name>O</Name>
+					<Color>Red</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="3">
+					<Name>H</Name>
+					<Color>White</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="4">
+					<Name>N</Name>
+					<Color>Blue</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="5">
+					<Name>P</Name>
+					<Color>Green</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="6">
+					<Name>E</Name>
+					<Color>Gray</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+			</Atoms>
+
+			<Particles>
+				<ParticleKind id="694">
+					<Name>DNA</Name>
+					<Color>Red</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="695">
+					<Name>RNA</Name>
+					<Color>Blue</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="688">
+					<Name>tRNA</Name>
+					<Color>Blue</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="689">
+					<Name>tRNA_aminoacylated</Name>
+					<Color>Blue</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="682">
+					<Name>RIBOSOME_70S</Name>
+					<Color>Lime</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="681">
+					<Name>RIBOSOME_50S</Name>
+					<Color>Pink</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="679">
+					<Name>RIBOSOME_30S</Name>
+					<Color>Orange</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="683">
+					<Name>RNA_POLYMERASE</Name>
+					<Color>Purple</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="516">
+					<Name>DNA_POLYMERASE_GAMMA_COMPLEX</Name>
+					<Color>Yellow</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="513">
+					<Name>DNA_POLYMERASE_CORE</Name>
+					<Color>Cyan</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="10000">
+					<Name>OTHERS</Name>
+					<Color>Green</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+			</Particles>
+
+		</CellState>
+
+		<CellState id="13">
+                        <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
+
+			<CellStateFileName>../../WholeCellData/Mycoplasma Genitalium/MG_1184_cellpack_atom_instances_1.cif</CellStateFileName>
+
+			<ChosenStructureIndex>0</ChosenStructureIndex>
+			<FilmOfStructuresActive>0</FilmOfStructuresActive>
+
+			<NumberOfStencilBufferLoops>1</NumberOfStencilBufferLoops>
+			<StencilForDrawingObjectsTypes>2</StencilForDrawingObjectsTypes> <!--StencilForDrawingOnlyParticlesCenters = 1, StencilForDrawingOnlyInAtomScale = 2-->
+
+			<MakeColorsType>2</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticleKind = 3-->
+
+			<SizeOfAtomsDrawingTypes>3</SizeOfAtomsDrawingTypes>
+
+			<SpecularPower>8.0</SpecularPower> <!--16 or 8-->
+			<SpecularAlbedo>0.2222</SpecularAlbedo> <!--0.4444 or 0.2222-->
+
+			<DrawBondsBetweenParticlesCenters>false</DrawBondsBetweenParticlesCenters>
+			<DrawBondsBetweenAtoms>false</DrawBondsBetweenAtoms>
+
+			<ShowDetailsInAtomScale>true</ShowDetailsInAtomScale>
+			<CheckAtomVisibility>true</CheckAtomVisibility>
+			<CutZ>200</CutZ>
+			<Distance>1700</Distance>
+			<LoadOfAtomsStep>1</LoadOfAtomsStep>
+
+			<XLowToDrawInAtomScale>-200</XLowToDrawInAtomScale>
+			<XHighToDrawInAtomScale>200</XHighToDrawInAtomScale>
+			<YLowToDrawInAtomScale>-200</YLowToDrawInAtomScale>
+			<YHighToDrawInAtomScale>200</YHighToDrawInAtomScale>
+			<ZLowToDrawInAtomScale>-650</ZLowToDrawInAtomScale>
+			<ZHighToDrawInAtomScale>-50</ZHighToDrawInAtomScale>
+
+			<SizeOfAtomChangeStep>0.1</SizeOfAtomChangeStep>
+
+			<SizeOfAtomX>1</SizeOfAtomX>
+			<SizeOfAtomY>1</SizeOfAtomY>
+			<SizeOfAtomZ>1</SizeOfAtomZ>
+
+			<RotationAngle1>0</RotationAngle1>
+			<RotationAngle2>0</RotationAngle2>
+			<RotationAngle3>0</RotationAngle3>
+
+			<CameraXPosition>0</CameraXPosition>
+			<CameraYPosition>0</CameraYPosition>
+			<CameraZPosition>0</CameraZPosition>
+
+			<CameraXMoveShortStep>5</CameraXMoveShortStep>
+			<CameraYMoveShortStep>5</CameraYMoveShortStep>
+			<CameraZMoveShortStep>5</CameraZMoveShortStep>
+
+			<CameraXMoveLongStep>50</CameraXMoveLongStep>
+			<CameraYMoveLongStep>50</CameraYMoveLongStep>
+			<CameraZMoveLongStep>50</CameraZMoveLongStep>
+
+			<ViewPositionX>0</ViewPositionX>
+			<ViewPositionY>0</ViewPositionY>
+			<ViewPositionZ>50</ViewPositionZ>
+
+			<ViewXMoveShortStep>5</ViewXMoveShortStep>
+			<ViewYMoveShortStep>5</ViewYMoveShortStep>
+			<ViewZMoveShortStep>5</ViewZMoveShortStep>
+
+			<ViewXMoveLongStep>50</ViewXMoveLongStep>
+			<ViewYMoveLongStep>50</ViewYMoveLongStep>
+			<ViewZMoveLongStep>50</ViewZMoveLongStep>
+
+			<ViewChangeUsingLongStep>true</ViewChangeUsingLongStep>
+			<AutomaticChangeOfSizeOfAtom>true</AutomaticChangeOfSizeOfAtom>
+			<AutomaticChangeOfLoadAtomsStep>true</AutomaticChangeOfLoadAtomsStep>
+
+			<BackgroundColor1>Cyan</BackgroundColor1>
+			<BackgroundColor2>White</BackgroundColor2>
+			<BackgroundColor3>Black</BackgroundColor3>
+			<ChosenBackgroundColor>1</ChosenBackgroundColor>
+
+			<Atoms>
+				<Atom id="1">
+					<Name>C</Name>
+					<Color>Turquoise</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="2">
+					<Name>O</Name>
+					<Color>Red</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="3">
+					<Name>N</Name>
+					<Color>Blue</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="4">
+					<Name>P</Name>
+					<Color>Green</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="5">
+					<Name>H</Name>
+					<Color>White</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="6">
+					<Name>E</Name>
+					<Color>Gray</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+			</Atoms>
+
+			<Particles>
+                                <ParticleKind id="699">
+					<Name>DNA</Name>
+					<Color>Red</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="700">
+					<Name>RNA</Name>
+					<Color>Blue</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="688">
+					<Name>tRNA</Name>
+					<Color>Blue</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="689">
+					<Name>tRNA_aminoacylated</Name>
+					<Color>Blue</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="682">
+					<Name>RIBOSOME_70S</Name>
+					<Color>Lime</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="681">
+					<Name>RIBOSOME_50S</Name>
+					<Color>Pink</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="679">
+					<Name>RIBOSOME_30S</Name>
+					<Color>Orange</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="683">
+					<Name>RNA_POLYMERASE</Name>
+					<Color>Purple</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="516">
+					<Name>DNA_POLYMERASE_GAMMA_COMPLEX</Name>
+					<Color>Yellow</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="513">
+					<Name>DNA_POLYMERASE_CORE</Name>
+					<Color>Cyan</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="697">
+					<Name>MEMBRANE</Name>
+					<Color>Orange</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="698">
+					<Name>MEMBRANE</Name>
+					<Color>Pink</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="10000">
+					<Name>OTHERS</Name>
+					<Color>Green</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+			</Particles>
+		</CellState>
+
+                <CellState id="14">
+                        <TypeOfSpace>2</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
+                        <NumberOfVoxelsInVoxelSimulationSpaceInEachDimension>1024</NumberOfVoxelsInVoxelSimulationSpaceInEachDimension> <!--1024 or 2048 or other-->
+                        <DivisionFactorForVoxelSimulationSpace>4.0</DivisionFactorForVoxelSimulationSpace> <!--4 or 2 or other-->
+
+                        <VoxelSimulationSpaceSelectionStartXPos>539</VoxelSimulationSpaceSelectionStartXPos>
+                        <VoxelSimulationSpaceSelectionStartYPos>727</VoxelSimulationSpaceSelectionStartYPos>
+                        <VoxelSimulationSpaceSelectionStartZPos>587</VoxelSimulationSpaceSelectionStartZPos>
+
+                        <VoxelSimulationSpaceSelectionStepX>1</VoxelSimulationSpaceSelectionStepX>
+                        <VoxelSimulationSpaceSelectionStepY>1</VoxelSimulationSpaceSelectionStepY>
+                        <VoxelSimulationSpaceSelectionStepZ>1</VoxelSimulationSpaceSelectionStepZ>
+
+                        <VoxelSimulationSpaceSelectionSizeX>24</VoxelSimulationSpaceSelectionSizeX>
+                        <VoxelSimulationSpaceSelectionSizeY>24</VoxelSimulationSpaceSelectionSizeY>
+                        <VoxelSimulationSpaceSelectionSizeZ>24</VoxelSimulationSpaceSelectionSizeZ>
+
+                        <RadiusOfCellForDNA>380</RadiusOfCellForDNA>
+
+			<CellStateFileName>../../WholeCellData/Mycoplasma Genitalium/MG_1184_cellpack_atom_instances_1.cif</CellStateFileName>
+
+			<ChosenStructureIndex>0</ChosenStructureIndex>
+			<FilmOfStructuresActive>0</FilmOfStructuresActive>
+
+			<NumberOfStencilBufferLoops>1</NumberOfStencilBufferLoops>
+			<StencilForDrawingObjectsTypes>2</StencilForDrawingObjectsTypes> <!--StencilForDrawingOnlyParticlesCenters = 1, StencilForDrawingOnlyInAtomScale = 2-->
+
+			<MakeColorsType>2</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticleKind = 3-->
+
+			<SizeOfAtomsDrawingTypes>3</SizeOfAtomsDrawingTypes>
+
+			<SpecularPower>8.0</SpecularPower> <!--16 or 8-->
+			<SpecularAlbedo>0.2222</SpecularAlbedo> <!--0.4444 or 0.2222-->
+
+			<DrawBondsBetweenParticlesCenters>false</DrawBondsBetweenParticlesCenters>
+			<DrawBondsBetweenAtoms>false</DrawBondsBetweenAtoms>
+
+			<ShowDetailsInAtomScale>true</ShowDetailsInAtomScale>
+			<CheckAtomVisibility>true</CheckAtomVisibility>
+			<CutZ>200</CutZ>
+			<Distance>1700</Distance>
+			<LoadOfAtomsStep>1</LoadOfAtomsStep>
+
+			<XLowToDrawInAtomScale>-200</XLowToDrawInAtomScale>
+			<XHighToDrawInAtomScale>200</XHighToDrawInAtomScale>
+			<YLowToDrawInAtomScale>-200</YLowToDrawInAtomScale>
+			<YHighToDrawInAtomScale>200</YHighToDrawInAtomScale>
+			<ZLowToDrawInAtomScale>-650</ZLowToDrawInAtomScale>
+			<ZHighToDrawInAtomScale>-50</ZHighToDrawInAtomScale>
+
+			<SizeOfAtomChangeStep>0.1</SizeOfAtomChangeStep>
+
+			<SizeOfAtomX>1</SizeOfAtomX>
+			<SizeOfAtomY>1</SizeOfAtomY>
+			<SizeOfAtomZ>1</SizeOfAtomZ>
+
+			<RotationAngle1>0</RotationAngle1>
+			<RotationAngle2>0</RotationAngle2>
+			<RotationAngle3>0</RotationAngle3>
+
+			<CameraXPosition>0</CameraXPosition>
+			<CameraYPosition>0</CameraYPosition>
+			<CameraZPosition>0</CameraZPosition>
+
+			<CameraXMoveShortStep>5</CameraXMoveShortStep>
+			<CameraYMoveShortStep>5</CameraYMoveShortStep>
+			<CameraZMoveShortStep>5</CameraZMoveShortStep>
+
+			<CameraXMoveLongStep>50</CameraXMoveLongStep>
+			<CameraYMoveLongStep>50</CameraYMoveLongStep>
+			<CameraZMoveLongStep>50</CameraZMoveLongStep>
+
+			<ViewPositionX>0</ViewPositionX>
+			<ViewPositionY>0</ViewPositionY>
+			<ViewPositionZ>50</ViewPositionZ>
+
+			<ViewXMoveShortStep>5</ViewXMoveShortStep>
+			<ViewYMoveShortStep>5</ViewYMoveShortStep>
+			<ViewZMoveShortStep>5</ViewZMoveShortStep>
+
+			<ViewXMoveLongStep>50</ViewXMoveLongStep>
+			<ViewYMoveLongStep>50</ViewYMoveLongStep>
+			<ViewZMoveLongStep>50</ViewZMoveLongStep>
+
+			<ViewChangeUsingLongStep>true</ViewChangeUsingLongStep>
+			<AutomaticChangeOfSizeOfAtom>true</AutomaticChangeOfSizeOfAtom>
+			<AutomaticChangeOfLoadAtomsStep>true</AutomaticChangeOfLoadAtomsStep>
+
+			<BackgroundColor1>Cyan</BackgroundColor1>
+			<BackgroundColor2>White</BackgroundColor2>
+			<BackgroundColor3>Black</BackgroundColor3>
+			<ChosenBackgroundColor>1</ChosenBackgroundColor>
+
+			<Atoms>
+				<Atom id="1">
+					<Name>C</Name>
+					<Color>Turquoise</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="2">
+					<Name>O</Name>
+					<Color>Red</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="3">
+					<Name>N</Name>
+					<Color>Blue</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="4">
+					<Name>P</Name>
+					<Color>Green</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="5">
+					<Name>H</Name>
+					<Color>White</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="6">
+					<Name>E</Name>
+					<Color>Gray</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+			</Atoms>
+
+			<Particles>
+                                <ParticleKind id="699">
+					<Name>DNA</Name>
+					<Color>Red</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="700">
+					<Name>RNA</Name>
+					<Color>Blue</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="688">
+					<Name>tRNA</Name>
+					<Color>Blue</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="689">
+					<Name>tRNA_aminoacylated</Name>
+					<Color>Blue</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="682">
+					<Name>RIBOSOME_70S</Name>
+					<Color>Lime</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="681">
+					<Name>RIBOSOME_50S</Name>
+					<Color>Pink</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="679">
+					<Name>RIBOSOME_30S</Name>
+					<Color>Orange</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="683">
+					<Name>RNA_POLYMERASE</Name>
+					<Color>Purple</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="516">
+					<Name>DNA_POLYMERASE_GAMMA_COMPLEX</Name>
+					<Color>Yellow</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="513">
+					<Name>DNA_POLYMERASE_CORE</Name>
+					<Color>Cyan</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="697">
+					<Name>MEMBRANE</Name>
+					<Color>Orange</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="698">
+					<Name>MEMBRANE</Name>
+					<Color>Pink</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="10000">
+					<Name>OTHERS</Name>
+					<Color>Green</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+			</Particles>
+		</CellState>
+
+                <CellState id="15">
+                        <TypeOfSpace>2</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
+                        <NumberOfVoxelsInVoxelSimulationSpaceInEachDimension>1024</NumberOfVoxelsInVoxelSimulationSpaceInEachDimension> <!--1024 or 2048 or other-->
+                        <DivisionFactorForVoxelSimulationSpace>4.0</DivisionFactorForVoxelSimulationSpace> <!--4 or 2 or other-->
+
+                        <VoxelSimulationSpaceSelectionStartXPos>539</VoxelSimulationSpaceSelectionStartXPos>
+                        <VoxelSimulationSpaceSelectionStartYPos>727</VoxelSimulationSpaceSelectionStartYPos>
+                        <VoxelSimulationSpaceSelectionStartZPos>587</VoxelSimulationSpaceSelectionStartZPos>
+
+                        <VoxelSimulationSpaceSelectionStepX>1</VoxelSimulationSpaceSelectionStepX>
+                        <VoxelSimulationSpaceSelectionStepY>1</VoxelSimulationSpaceSelectionStepY>
+                        <VoxelSimulationSpaceSelectionStepZ>1</VoxelSimulationSpaceSelectionStepZ>
+
+                        <VoxelSimulationSpaceSelectionSizeX>24</VoxelSimulationSpaceSelectionSizeX>
+                        <VoxelSimulationSpaceSelectionSizeY>24</VoxelSimulationSpaceSelectionSizeY>
+                        <VoxelSimulationSpaceSelectionSizeZ>24</VoxelSimulationSpaceSelectionSizeZ>
+
+                        <RadiusOfCellForDNA>380</RadiusOfCellForDNA>
+
+			<CellStateFileName>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile8.dat</CellStateFileName>
+
+			<ChosenStructureIndex>0</ChosenStructureIndex>
+			<FilmOfStructuresActive>0</FilmOfStructuresActive>
+
+			<NumberOfStencilBufferLoops>1</NumberOfStencilBufferLoops>
+			<StencilForDrawingObjectsTypes>2</StencilForDrawingObjectsTypes> <!--StencilForDrawingOnlyParticlesCenters = 1, StencilForDrawingOnlyInAtomScale = 2-->
+
+			<MakeColorsType>2</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticleKind = 3-->
+
+			<SizeOfAtomsDrawingTypes>3</SizeOfAtomsDrawingTypes>
+
+			<SpecularPower>8.0</SpecularPower> <!--16 or 8-->
+			<SpecularAlbedo>0.2222</SpecularAlbedo> <!--0.4444 or 0.2222-->
+
+			<DrawBondsBetweenParticlesCenters>false</DrawBondsBetweenParticlesCenters>
+			<DrawBondsBetweenAtoms>false</DrawBondsBetweenAtoms>
+
+			<ShowDetailsInAtomScale>true</ShowDetailsInAtomScale>
+			<CheckAtomVisibility>true</CheckAtomVisibility>
+			<CutZ>200</CutZ>
+			<Distance>1700</Distance>
+			<LoadOfAtomsStep>1</LoadOfAtomsStep>
+
+			<XLowToDrawInAtomScale>-200</XLowToDrawInAtomScale>
+			<XHighToDrawInAtomScale>200</XHighToDrawInAtomScale>
+			<YLowToDrawInAtomScale>-200</YLowToDrawInAtomScale>
+			<YHighToDrawInAtomScale>200</YHighToDrawInAtomScale>
+			<ZLowToDrawInAtomScale>-650</ZLowToDrawInAtomScale>
+			<ZHighToDrawInAtomScale>-50</ZHighToDrawInAtomScale>
+
+			<SizeOfAtomChangeStep>0.1</SizeOfAtomChangeStep>
+
+			<SizeOfAtomX>1</SizeOfAtomX>
+			<SizeOfAtomY>1</SizeOfAtomY>
+			<SizeOfAtomZ>1</SizeOfAtomZ>
+
+			<RotationAngle1>0</RotationAngle1>
+			<RotationAngle2>0</RotationAngle2>
+			<RotationAngle3>0</RotationAngle3>
+
+			<CameraXPosition>0</CameraXPosition>
+			<CameraYPosition>0</CameraYPosition>
+			<CameraZPosition>0</CameraZPosition>
+
+			<CameraXMoveShortStep>5</CameraXMoveShortStep>
+			<CameraYMoveShortStep>5</CameraYMoveShortStep>
+			<CameraZMoveShortStep>5</CameraZMoveShortStep>
+
+			<CameraXMoveLongStep>50</CameraXMoveLongStep>
+			<CameraYMoveLongStep>50</CameraYMoveLongStep>
+			<CameraZMoveLongStep>50</CameraZMoveLongStep>
+
+			<ViewPositionX>0</ViewPositionX>
+			<ViewPositionY>0</ViewPositionY>
+			<ViewPositionZ>50</ViewPositionZ>
+
+			<ViewXMoveShortStep>5</ViewXMoveShortStep>
+			<ViewYMoveShortStep>5</ViewYMoveShortStep>
+			<ViewZMoveShortStep>5</ViewZMoveShortStep>
+
+			<ViewXMoveLongStep>50</ViewXMoveLongStep>
+			<ViewYMoveLongStep>50</ViewYMoveLongStep>
+			<ViewZMoveLongStep>50</ViewZMoveLongStep>
+
+			<ViewChangeUsingLongStep>true</ViewChangeUsingLongStep>
+			<AutomaticChangeOfSizeOfAtom>true</AutomaticChangeOfSizeOfAtom>
+			<AutomaticChangeOfLoadAtomsStep>true</AutomaticChangeOfLoadAtomsStep>
+
+			<BackgroundColor1>Cyan</BackgroundColor1>
+			<BackgroundColor2>White</BackgroundColor2>
+			<BackgroundColor3>Black</BackgroundColor3>
+			<ChosenBackgroundColor>1</ChosenBackgroundColor>
+
+			<Atoms>
+				<Atom id="1">
+					<Name>C</Name>
+					<Color>Turquoise</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="2">
+					<Name>O</Name>
+					<Color>Red</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="3">
+					<Name>N</Name>
+					<Color>Blue</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="4">
+					<Name>P</Name>
+					<Color>Green</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="5">
+					<Name>H</Name>
+					<Color>White</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="6">
+					<Name>E</Name>
+					<Color>Gray</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+			</Atoms>
+
+			<Particles>
+                                <ParticleKind id="699">
+					<Name>DNA</Name>
+					<Color>Red</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="700">
+					<Name>RNA</Name>
+					<Color>Blue</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="688">
+					<Name>tRNA</Name>
+					<Color>Blue</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="689">
+					<Name>tRNA_aminoacylated</Name>
+					<Color>Blue</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="682">
+					<Name>RIBOSOME_70S</Name>
+					<Color>Lime</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="681">
+					<Name>RIBOSOME_50S</Name>
+					<Color>Pink</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="679">
+					<Name>RIBOSOME_30S</Name>
+					<Color>Orange</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="683">
+					<Name>RNA_POLYMERASE</Name>
+					<Color>Purple</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="516">
+					<Name>DNA_POLYMERASE_GAMMA_COMPLEX</Name>
+					<Color>Yellow</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="513">
+					<Name>DNA_POLYMERASE_CORE</Name>
+					<Color>Cyan</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="697">
+					<Name>MEMBRANE</Name>
+					<Color>Orange</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="698">
+					<Name>MEMBRANE</Name>
+					<Color>Pink</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="10000">
+					<Name>OTHERS</Name>
+					<Color>Green</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+			</Particles>
+		</CellState>
+
+                <CellState id="16">
+                        <TypeOfSpace>2</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
+                        <NumberOfVoxelsInVoxelSimulationSpaceInEachDimension>2048</NumberOfVoxelsInVoxelSimulationSpaceInEachDimension> <!--1024 or 2048 or other-->
+                        <DivisionFactorForVoxelSimulationSpace>2.0</DivisionFactorForVoxelSimulationSpace> <!--4 or 2 or other-->
+
+                        <VoxelSimulationSpaceSelectionStartXPos>789</VoxelSimulationSpaceSelectionStartXPos>
+                        <VoxelSimulationSpaceSelectionStartYPos>898</VoxelSimulationSpaceSelectionStartYPos>
+                        <VoxelSimulationSpaceSelectionStartZPos>611</VoxelSimulationSpaceSelectionStartZPos>
+
+                        <VoxelSimulationSpaceSelectionStepX>1</VoxelSimulationSpaceSelectionStepX>
+                        <VoxelSimulationSpaceSelectionStepY>1</VoxelSimulationSpaceSelectionStepY>
+                        <VoxelSimulationSpaceSelectionStepZ>1</VoxelSimulationSpaceSelectionStepZ>
+
+                        <VoxelSimulationSpaceSelectionSizeX>32</VoxelSimulationSpaceSelectionSizeX>
+                        <VoxelSimulationSpaceSelectionSizeY>32</VoxelSimulationSpaceSelectionSizeY>
+                        <VoxelSimulationSpaceSelectionSizeZ>32</VoxelSimulationSpaceSelectionSizeZ>
+
+                        <RadiusOfCellForDNA>760</RadiusOfCellForDNA>
+
+			<CellStateFileName>../../WholeCellData/Mycoplasma Genitalium/MG_1184_cellpack_atom_instances_1.cif</CellStateFileName>
+
+			<ChosenStructureIndex>0</ChosenStructureIndex>
+			<FilmOfStructuresActive>0</FilmOfStructuresActive>
+
+			<NumberOfStencilBufferLoops>1</NumberOfStencilBufferLoops>
+			<StencilForDrawingObjectsTypes>2</StencilForDrawingObjectsTypes> <!--StencilForDrawingOnlyParticlesCenters = 1, StencilForDrawingOnlyInAtomScale = 2-->
+
+			<MakeColorsType>2</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticleKind = 3-->
+
+			<SizeOfAtomsDrawingTypes>3</SizeOfAtomsDrawingTypes>
+
+			<SpecularPower>8.0</SpecularPower> <!--16 or 8-->
+			<SpecularAlbedo>0.2222</SpecularAlbedo> <!--0.4444 or 0.2222-->
+
+			<DrawBondsBetweenParticlesCenters>false</DrawBondsBetweenParticlesCenters>
+			<DrawBondsBetweenAtoms>false</DrawBondsBetweenAtoms>
+
+			<ShowDetailsInAtomScale>true</ShowDetailsInAtomScale>
+			<CheckAtomVisibility>true</CheckAtomVisibility>
+			<CutZ>200</CutZ>
+			<Distance>1700</Distance>
+			<LoadOfAtomsStep>1</LoadOfAtomsStep>
+
+			<XLowToDrawInAtomScale>-200</XLowToDrawInAtomScale>
+			<XHighToDrawInAtomScale>200</XHighToDrawInAtomScale>
+			<YLowToDrawInAtomScale>-200</YLowToDrawInAtomScale>
+			<YHighToDrawInAtomScale>200</YHighToDrawInAtomScale>
+			<ZLowToDrawInAtomScale>-650</ZLowToDrawInAtomScale>
+			<ZHighToDrawInAtomScale>-50</ZHighToDrawInAtomScale>
+
+			<SizeOfAtomChangeStep>0.1</SizeOfAtomChangeStep>
+
+			<SizeOfAtomX>1</SizeOfAtomX>
+			<SizeOfAtomY>1</SizeOfAtomY>
+			<SizeOfAtomZ>1</SizeOfAtomZ>
+
+			<RotationAngle1>0</RotationAngle1>
+			<RotationAngle2>0</RotationAngle2>
+			<RotationAngle3>0</RotationAngle3>
+
+			<CameraXPosition>0</CameraXPosition>
+			<CameraYPosition>0</CameraYPosition>
+			<CameraZPosition>0</CameraZPosition>
+
+			<CameraXMoveShortStep>5</CameraXMoveShortStep>
+			<CameraYMoveShortStep>5</CameraYMoveShortStep>
+			<CameraZMoveShortStep>5</CameraZMoveShortStep>
+
+			<CameraXMoveLongStep>50</CameraXMoveLongStep>
+			<CameraYMoveLongStep>50</CameraYMoveLongStep>
+			<CameraZMoveLongStep>50</CameraZMoveLongStep>
+
+			<ViewPositionX>0</ViewPositionX>
+			<ViewPositionY>0</ViewPositionY>
+			<ViewPositionZ>50</ViewPositionZ>
+
+			<ViewXMoveShortStep>5</ViewXMoveShortStep>
+			<ViewYMoveShortStep>5</ViewYMoveShortStep>
+			<ViewZMoveShortStep>5</ViewZMoveShortStep>
+
+			<ViewXMoveLongStep>50</ViewXMoveLongStep>
+			<ViewYMoveLongStep>50</ViewYMoveLongStep>
+			<ViewZMoveLongStep>50</ViewZMoveLongStep>
+
+			<ViewChangeUsingLongStep>true</ViewChangeUsingLongStep>
+			<AutomaticChangeOfSizeOfAtom>true</AutomaticChangeOfSizeOfAtom>
+			<AutomaticChangeOfLoadAtomsStep>true</AutomaticChangeOfLoadAtomsStep>
+
+			<BackgroundColor1>Cyan</BackgroundColor1>
+			<BackgroundColor2>White</BackgroundColor2>
+			<BackgroundColor3>Black</BackgroundColor3>
+			<ChosenBackgroundColor>1</ChosenBackgroundColor>
+
+			<Atoms>
+				<Atom id="1">
+					<Name>C</Name>
+					<Color>Turquoise</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="2">
+					<Name>O</Name>
+					<Color>Red</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="3">
+					<Name>N</Name>
+					<Color>Blue</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="4">
+					<Name>P</Name>
+					<Color>Green</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="5">
+					<Name>H</Name>
+					<Color>White</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+				<Atom id="6">
+					<Name>E</Name>
+					<Color>Gray</Color>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</Atom>
+			</Atoms>
+
+			<Particles>
+                                <ParticleKind id="699">
+					<Name>DNA</Name>
+					<Color>Red</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="700">
+					<Name>RNA</Name>
+					<Color>Blue</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="688">
+					<Name>tRNA</Name>
+					<Color>Blue</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="689">
+					<Name>tRNA_aminoacylated</Name>
+					<Color>Blue</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="682">
+					<Name>RIBOSOME_70S</Name>
+					<Color>Lime</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="681">
+					<Name>RIBOSOME_50S</Name>
+					<Color>Pink</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="679">
+					<Name>RIBOSOME_30S</Name>
+					<Color>Orange</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="683">
+					<Name>RNA_POLYMERASE</Name>
+					<Color>Purple</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="516">
+					<Name>DNA_POLYMERASE_GAMMA_COMPLEX</Name>
+					<Color>Yellow</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="513">
+					<Name>DNA_POLYMERASE_CORE</Name>
+					<Color>Cyan</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="697">
+					<Name>MEMBRANE</Name>
+					<Color>Orange</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="698">
+					<Name>MEMBRANE</Name>
+					<Color>Pink</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="10000">
+					<Name>OTHERS</Name>
+					<Color>Green</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+			</Particles>
+		</CellState>
+
 	</CellsStates>
+
 </Settings>
