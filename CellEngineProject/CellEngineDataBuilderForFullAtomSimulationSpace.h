@@ -4,9 +4,9 @@
 #define CELL_ENGINE_FULL_ATOM_SIMULATION_SPACE_CIF_DATA_FILE_READER_H
 
 #include "CellEngineConfigData.h"
-#include "CellEngineCIFDataFile.h"
+#include "CellEngineCIFDataFileReader.h"
 
-class CellEngineCIFDataFileReaderOfFullAtomSimulationSpace : public CellEngineCIFDataFile
+class CellEngineDataBuilderForFullAtomSimulationSpace : public CellEngineCIFDataFileReader
 {
 protected:
     void SetStartValues() override

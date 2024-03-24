@@ -9,6 +9,29 @@ class CellEnginePDBDataFile: public CellEngineDataFile
 {
 private:
     void ReadDataFromFile() override;
+private:
+    void SetStartValues() override
+    {
+    }
+    UniqueIdInt AddNewParticle(const Particle& ParticleObjectParam) override
+    {
+        return 0;
+    }
+    void InsertAtom(std::vector<CellEngineAtom>& LocalCellEngineAllAtomsObject, const CellEngineAtom& AppliedAtom, const UniqueIdInt ParticleIndex) override
+    {
+    }
+    void InsertGroupOfAtoms(std::vector<CellEngineAtom>& LocalCellEngineParticlesCentersObject, std::vector<CellEngineAtom>& LocalCellEngineAllAtomsObject) override
+    {
+    }
+    void InsertParticlesCenters(std::vector<CellEngineAtom>& LocalCellEngineParticlesCentersObject) override
+    {
+    }
+    void PreprocessData() override
+    {
+    }
+    void PrintStatistics() override
+    {
+    }
 public:
     explicit CellEnginePDBDataFile() = default;
     ~CellEnginePDBDataFile() = default;

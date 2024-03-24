@@ -8,15 +8,17 @@
 
 #include "StringUtils.h"
 #include "DateTimeUtils.h"
+#include "DestinationPlatform.h"
+
 #include "CellEngineUseful.h"
 #include "CellEngineColors.h"
 #include "CellEngineConfigData.h"
-#include "CellEngineCIFDataFile.h"
+#include "CellEngineCIFDataFileReader.h"
 
 using namespace std;
 using namespace string_utils;
 
-CellEngineAtom CellEngineCIFDataFile::ParseRecord(const char* LocalCIFRecord)
+CellEngineAtom CellEngineCIFDataFileReader::ParseRecord(const char* LocalCIFRecord)
 {
     CellEngineAtom CellEngineAtomObject{};
 
@@ -105,7 +107,7 @@ glm::vec3 CountResultPositionsFromTransformationMatrix(std::unordered_map<Unsign
     return Result;
 }
 
-void CellEngineCIFDataFile::ReadDataFromFile()
+void CellEngineCIFDataFileReader::ReadDataFromFile()
 {
     try
     {
@@ -264,4 +266,168 @@ void CellEngineCIFDataFile::ReadDataFromFile()
         File.close();
     }
     CATCH("reading data from CIF file")
+}
+
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+void AddParticlesKinds()
+{
+    try
+    {
+        ParticlesKindsManagerObject.AddParticleKind({ 0, "Water", "H2O", 0, 0 });
+        ParticlesKindsManagerObject.AddParticleKind({ 1, "Glucose", "C6H12O6", 0, 0 });
+        ParticlesKindsManagerObject.AddParticleKind({ 2, "Oxygen2", "02", 0, 0 });
+        ParticlesKindsManagerObject.AddParticleKind({ 3, "Carbon dioxide", "CO2", 0, 0 });
+        ParticlesKindsManagerObject.AddParticleKind({ 4, "Eten", "CH2CH2", 0, 0 });
+        ParticlesKindsManagerObject.AddParticleKind({ 5, "Ethanol", "CH3CH2(OH)", 0, 0 });
+        ParticlesKindsManagerObject.AddParticleKind({ 6, "Propen", "CH3CHCH2", 0, 0 });
+        ParticlesKindsManagerObject.AddParticleKind({ 7, "HX", "HX", 0, 0 });
+        ParticlesKindsManagerObject.AddParticleKind({ 8, "2Halogenopropan", "CH3CHXCH3", 0, 0 });
+        ParticlesKindsManagerObject.AddParticleKind({ 9, "Test", "TEST", 0, 0 });
+        ParticlesKindsManagerObject.AddParticleKind({ 10, "Ethylene", "CH2CH2O", 0, 0 });
+        ParticlesKindsManagerObject.AddParticleKind({ 11, "Oxygen", "0", 0, 0 });
+        ParticlesKindsManagerObject.AddParticleKind({ 12, "Polymerase", "POL", 0, 0 });
+
+        ParticlesKindsManagerObject.AddParticleKind({ CellEngineConfigDataObject.DNAIdentifier, "DNA", "DNA", 0, 0 });
+
+        ParticlesKindsManagerObject.AddParticleKind({ 10001, "DNA", "?", 0, 0 });
+
+        LoggersManagerObject.Log(STREAM("ADDED PARTICLES KINDS"));
+    }
+    CATCH("adding particles kinds and reactions")
+};
+
+void CellEngineParticlesDataFileReader::ReadParticlesFromFile()
+{
+    try
+    {
+        try
+        {
+            SetStartValues();
+
+            LoggersManagerObject.Log(STREAM("START OF READING PARTICLES FROM BINARY FILE"));
+
+            string ParticlesDataFileName = string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("particles") + OS_DIR_SEP + string("ParticlesDataFile.dat");
+            ifstream ParticlesDataFile(ParticlesDataFileName, ios_base::in | ios_base::binary);
+            //ifstream ParticlesDataFile(CellEngineConfigDataObject.CellStateFileName, ios_base::in | ios_base::binary);
+
+            UnsignedInt ParticlesSize;
+            ParticlesDataFile.read((char*)&ParticlesSize, sizeof(ParticlesSize));
+            LoggersManagerObject.Log(STREAM("Number of Particles to be read = " << ParticlesSize));
+
+            for (UnsignedInt ParticleObjectIndex = 1; ParticleObjectIndex <= ParticlesSize; ParticleObjectIndex++)
+            {
+                Particle ParticleObject;
+
+                ParticlesDataFile.read((char*)&ParticleObject.EntityId, sizeof(ParticleObject.EntityId));
+                ParticlesDataFile.read((char*)&ParticleObject.ChainId, sizeof(ParticleObject.ChainId));
+                ParticlesDataFile.read((char*)&ParticleObject.Index, sizeof(ParticleObject.Index));
+                ParticlesDataFile.read((char*)&ParticleObject.GenomeIndex, sizeof(ParticleObject.GenomeIndex));
+                ParticlesDataFile.read((char*)&ParticleObject.ElectricCharge, sizeof(ParticleObject.ElectricCharge));
+
+                ParticlesDataFile.read((char*)&ParticleObject.Center, sizeof(ParticleObject.Center));
+
+                ParticlesDataFile.read((char*)&ParticleObject.UniqueColor, sizeof(ParticleObject.UniqueColor));
+
+                ParticlesDataFile.read((char*)&ParticleObject.SelectedForReaction, sizeof(ParticleObject.SelectedForReaction));
+
+                UnsignedInt ParticleListOfVoxelsSize;
+                ParticlesDataFile.read((char*)&ParticleListOfVoxelsSize, sizeof(ParticleListOfVoxelsSize));
+                ParticleObject.ListOfVoxels.clear();
+                for (UnsignedInt VoxelObjectIndex = 1; VoxelObjectIndex <= ParticleListOfVoxelsSize; VoxelObjectIndex++)
+                {
+                    vector3_16 VoxelObject;
+                    ParticlesDataFile.read((char*)&VoxelObject, sizeof(VoxelObject));
+                    ParticleObject.ListOfVoxels.push_back(VoxelObject);
+                }
+
+                ParticlesDataFile.read((char*)&ParticleObject.PrevTemporary, sizeof(ParticleObject.PrevTemporary));
+                ParticlesDataFile.read((char*)&ParticleObject.NextTemporary, sizeof(ParticleObject.NextTemporary));
+                ParticlesDataFile.read((char*)&ParticleObject.PairedNucleotideTemporary, sizeof(ParticleObject.PairedNucleotideTemporary));
+
+                UnsignedInt LinkedParticlesPointersSize;
+                ParticlesDataFile.read((char*)&LinkedParticlesPointersSize, sizeof(LinkedParticlesPointersSize));
+                for (UnsignedInt LinkedParticlesPointerIndex = 1; LinkedParticlesPointerIndex <= LinkedParticlesPointersSize; LinkedParticlesPointerIndex++)
+                {
+                    UniqueIdInt LinkedParticlesPointerObject;
+                    ParticlesDataFile.read((char*)&LinkedParticlesPointerObject, sizeof(LinkedParticlesPointerObject));
+                    ParticleObject.LinkedParticlesPointersListTemporary.push_back(LinkedParticlesPointerObject);
+                }
+
+                AddNewParticle(ParticleObject);
+            }
+
+            ParticlesDataFile.close();
+
+            LoggersManagerObject.Log(STREAM("END OF READING PARTICLES FROM BINARY FILE"));
+
+            PreprocessData();
+        }
+        CATCH("reading particles from file")
+    }
+    CATCH("reading data from particles file")
+}
+
+//void CellEngineParticlesDataFileReader::PrepareParticlesAfterReadingFromFile()
+//{
+//    try
+//    {
+//        LoggersManagerObject.Log(STREAM("START OF PREPARING PARTICLES"));
+//
+//        for (auto& ParticleObject : CellEngineVoxelSimulationSpaceObjectPointer->Particles)
+//        {
+//            for (const auto& VoxelObject : ParticleObject.second.ListOfVoxels)
+//                GetSpaceVoxel(VoxelObject.X, VoxelObject.Y, VoxelObject.Z) = ParticleObject.second.Index;
+//
+//            ParticleObject.second.Prev = ParticleObject.second.PrevTemporary != 0 ? &GetParticleFromIndex(ParticleObject.second.PrevTemporary) : nullptr;
+//            ParticleObject.second.Next = ParticleObject.second.NextTemporary != 0 ? &GetParticleFromIndex(ParticleObject.second.NextTemporary) : nullptr;
+//            ParticleObject.second.PairedNucleotide = ParticleObject.second.PairedNucleotideTemporary != 0 ? &GetParticleFromIndex(ParticleObject.second.PairedNucleotideTemporary) : nullptr;
+//
+//            ParticleObject.second.LinkedParticlesPointersList.clear();
+//            for (auto& LinkedParticlesPointerObjectTemporary : ParticleObject.second.LinkedParticlesPointersListTemporary)
+//                ParticleObject.second.LinkedParticlesPointersList.emplace_back(&GetParticleFromIndex(LinkedParticlesPointerObjectTemporary));
+//        }
+//
+//        LoggersManagerObject.Log(STREAM("END OF PREPARING PARTICLES"));
+//    }
+//    CATCH("preparing particles after reading from file")
+//};
+
+void CellEngineParticlesDataFileReader::ReadParticlesFromFileAndPrepareData()
+{
+//    try
+//    {
+//        LoggersManagerObject.Log(STREAM("START OF READING PARTICLES FROM FILE AND PREPARING DATA"));
+//
+//        AddParticlesKinds();
+//
+//        CellEngineVoxelSimulationSpaceObjectPointer->Particles.clear();
+//
+//        ReadParticlesFromFile();
+//
+//        CellEngineVoxelSimulationSpaceObjectPointer->SetValueToVoxelsForSelectedSpace(nullptr, 0, 0, 0, 0, 1, 1, 1, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension);
+//
+//        CellEngineVoxelSimulationSpaceObjectPointer->PrepareParticlesAfterReadingFromFile();
+//
+//        CellEngineVoxelSimulationSpaceObjectPointer->InitiateFreeParticleIndexes();
+//
+//        CellEngineConfigDataObject.GenomeReadFromFile = true;
+//
+//        LoggersManagerObject.Log(STREAM("END OF READING PARTICLES FROM FILE AND PREPARING DATA"));
+//    }
+//    CATCH("reading particles from file")
+};
+
+void CellEngineParticlesDataFileReader::ReadDataFromFile()
+{
+    SetStartValues();
+    CellEngineVoxelSimulationSpaceObjectPointer->AddParticlesKinds();
+    CellEngineVoxelSimulationSpaceObjectPointer->AddChemicalReactions();
+    CellEngineVoxelSimulationSpaceObjectPointer->ReadParticlesFromFileAndPrepareData();
+    CellEngineVoxelSimulationSpaceObjectPointer->PreprocessData();
 }

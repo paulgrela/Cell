@@ -3,9 +3,9 @@
 #define CELL_ENGINE_VOXEL_SIMULATION_SPACE_CIF_DATA_FILE_READER_H
 
 #include "CellEngineConfigData.h"
-#include "CellEngineCIFDataFile.h"
+#include "CellEngineCIFDataFileReader.h"
 
-class CellEngineCIFDataFileReaderOfVoxelSimulationSpace : public CellEngineCIFDataFile
+class CellEngineDataBuilderForVoxelSimulationSpace : virtual public CellEngineDataFile
 {
 protected:
     void SetStartValues() override
@@ -42,6 +42,14 @@ protected:
         CellEngineVoxelSimulationSpaceObjectPointer->CountStatisticsOfVoxelSimulationSpace();
         LoggersManagerObject.Log(STREAM("Sum Of Not Empty Voxels = " << CellEngineVoxelSimulationSpaceObjectPointer->SumOfNotEmptyVoxels));
     }
+};
+
+class CellEngineCIFDataFileReaderOfVoxelSimulationSpace : public CellEngineCIFDataFileReader, public CellEngineDataBuilderForVoxelSimulationSpace
+{
+};
+
+class CellEngineParticlesDataFileReaderForVoxelSimulationSpace : public CellEngineParticlesDataFileReader, public CellEngineDataBuilderForVoxelSimulationSpace
+{
 };
 
 #endif
