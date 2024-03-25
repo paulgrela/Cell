@@ -452,6 +452,43 @@ void CellEngineVoxelSimulationSpace::SaveParticlesToFile()
         string ParticlesDataFileName = string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("particles") + OS_DIR_SEP + string("ParticlesDataFile.dat");
         ofstream ParticlesDataFile(ParticlesDataFileName, ios_base::out | ios_base::trunc | ios_base::binary);
 
+        UnsignedInt ParticlesKindsSize = ParticlesKindsManagerObject.ParticlesKinds.size();
+        ParticlesDataFile.write((char*)&ParticlesKindsSize, sizeof(ParticlesKindsSize));
+        for (const auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
+        {
+            ParticlesDataFile.write((char*)&ParticleKindObject.EntityId, sizeof(ParticleKindObject.EntityId));
+            ParticlesDataFile.write((char*)&ParticleKindObject.GraphicData.SizeX, sizeof(ParticleKindObject.GraphicData.SizeX));
+            ParticlesDataFile.write((char*)&ParticleKindObject.GraphicData.SizeY, sizeof(ParticleKindObject.GraphicData.SizeY));
+            ParticlesDataFile.write((char*)&ParticleKindObject.GraphicData.SizeZ, sizeof(ParticleKindObject.GraphicData.SizeZ));
+            ParticlesDataFile.write((char*)&ParticleKindObject.GraphicData.AtomColor, sizeof(ParticleKindObject.GraphicData.AtomColor));
+            ParticlesDataFile.write((char*)&ParticleKindObject.GraphicData.ParticleColor, sizeof(ParticleKindObject.GraphicData.ParticleColor));
+            ParticlesDataFile.write((char*)&ParticleKindObject.GraphicData.RandomParticleColor, sizeof(ParticleKindObject.GraphicData.RandomParticleColor));
+            ParticlesDataFile.write((char*)&ParticleKindObject.XSizeDiv2, sizeof(ParticleKindObject.XSizeDiv2));
+            ParticlesDataFile.write((char*)&ParticleKindObject.YSizeDiv2, sizeof(ParticleKindObject.YSizeDiv2));
+            ParticlesDataFile.write((char*)&ParticleKindObject.ZSizeDiv2, sizeof(ParticleKindObject.ZSizeDiv2));
+
+            UniqueIdInt ParticleKindObjectNameLength = ParticleKindObject.Name.length();
+            ParticlesDataFile.write((char*)&ParticleKindObjectNameLength, sizeof(ParticleKindObjectNameLength));
+            ParticlesDataFile.write((char*)ParticleKindObject.Name.c_str(), ParticleKindObjectNameLength);
+
+            UniqueIdInt ParticleKindObjectSymbolLength = ParticleKindObject.Symbol.length();
+            ParticlesDataFile.write((char*)&ParticleKindObjectSymbolLength, sizeof(ParticleKindObjectSymbolLength));
+            ParticlesDataFile.write((char*)ParticleKindObject.Symbol.c_str(), ParticleKindObjectSymbolLength);
+
+            UniqueIdInt ParticleKindObjectNameFromXMLLength = ParticleKindObject.GraphicData.NameFromXML.length();
+            ParticlesDataFile.write((char*)&ParticleKindObjectNameFromXMLLength, sizeof(ParticleKindObjectNameFromXMLLength));
+            ParticlesDataFile.write((char*)ParticleKindObject.GraphicData.NameFromXML.c_str(), ParticleKindObjectNameFromXMLLength);
+
+            UniqueIdInt ParticleKindObjectNameFromDataFileLength = ParticleKindObject.GraphicData.NameFromDataFile.length();
+            ParticlesDataFile.write((char*)&ParticleKindObjectNameFromDataFileLength, sizeof(ParticleKindObjectNameFromDataFileLength));
+            ParticlesDataFile.write((char*)ParticleKindObject.GraphicData.NameFromDataFile.c_str(), ParticleKindObjectNameFromDataFileLength);
+
+            UnsignedInt ParticleKindListOfVoxelsSize = ParticleKindObject.ListOfVoxels.size();
+            ParticlesDataFile.write((char*)&ParticleKindListOfVoxelsSize, sizeof(ParticleKindListOfVoxelsSize));
+            for (const auto& VoxelObject : ParticleKindObject.ListOfVoxels)
+                ParticlesDataFile.write((char*)&VoxelObject, sizeof(VoxelObject));
+        }
+
         UnsignedInt ParticlesSize = Particles.size();
         LoggersManagerObject.Log(STREAM("Number of Particles to be saved = " << ParticlesSize));
         ParticlesDataFile.write((char*)&ParticlesSize, sizeof(ParticlesSize));
@@ -472,7 +509,6 @@ void CellEngineVoxelSimulationSpace::SaveParticlesToFile()
 
             UnsignedInt ParticleListOfVoxelsSize = ParticleObject.second.ListOfVoxels.size();
             ParticlesDataFile.write((char*)&ParticleListOfVoxelsSize, sizeof(ParticleListOfVoxelsSize));
-
             for (const auto& VoxelObject : ParticleObject.second.ListOfVoxels)
                 ParticlesDataFile.write((char*)&VoxelObject, sizeof(VoxelObject));
 
@@ -526,6 +562,59 @@ void CellEngineVoxelSimulationSpace::ReadParticlesFromFile()
 
         string ParticlesDataFileName = string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("particles") + OS_DIR_SEP + string("ParticlesDataFile.dat");
         ifstream ParticlesDataFile(ParticlesDataFileName, ios_base::in | ios_base::binary);
+
+        UnsignedInt ParticlesKindsSize;
+        ParticlesDataFile.read((char*)&ParticlesKindsSize, sizeof(ParticlesKindsSize));
+        LoggersManagerObject.Log(STREAM("Number of Particles Kinds to be read = " << ParticlesKindsSize));
+
+        for (UnsignedInt ParticleKindObjectIndex = 1; ParticleKindObjectIndex <= ParticlesKindsSize; ParticleKindObjectIndex++)
+        {
+            ParticleKind ParticleKindObject;
+
+            ParticlesDataFile.read((char*)&ParticleKindObject.EntityId, sizeof(ParticleKindObject.EntityId));
+            ParticlesDataFile.read((char*)&ParticleKindObject.GraphicData.SizeX, sizeof(ParticleKindObject.GraphicData.SizeX));
+            ParticlesDataFile.read((char*)&ParticleKindObject.GraphicData.SizeY, sizeof(ParticleKindObject.GraphicData.SizeY));
+            ParticlesDataFile.read((char*)&ParticleKindObject.GraphicData.SizeZ, sizeof(ParticleKindObject.GraphicData.SizeZ));
+            ParticlesDataFile.read((char*)&ParticleKindObject.GraphicData.AtomColor, sizeof(ParticleKindObject.GraphicData.AtomColor));
+            ParticlesDataFile.read((char*)&ParticleKindObject.GraphicData.ParticleColor, sizeof(ParticleKindObject.GraphicData.ParticleColor));
+            ParticlesDataFile.read((char*)&ParticleKindObject.GraphicData.RandomParticleColor, sizeof(ParticleKindObject.GraphicData.RandomParticleColor));
+            ParticlesDataFile.read((char*)&ParticleKindObject.XSizeDiv2, sizeof(ParticleKindObject.XSizeDiv2));
+            ParticlesDataFile.read((char*)&ParticleKindObject.YSizeDiv2, sizeof(ParticleKindObject.YSizeDiv2));
+            ParticlesDataFile.read((char*)&ParticleKindObject.ZSizeDiv2, sizeof(ParticleKindObject.ZSizeDiv2));
+
+            UniqueIdInt ParticleKindNameLength = 0;
+            ParticlesDataFile.read((char*)&ParticleKindNameLength, sizeof(ParticleKindNameLength));
+            ParticleKindObject.Name.resize(ParticleKindNameLength);
+            ParticlesDataFile.read((char*)ParticleKindObject.Name.c_str(), ParticleKindNameLength);
+
+            UniqueIdInt ParticleKindSymbolLength = 0;
+            ParticlesDataFile.read((char*)&ParticleKindSymbolLength, sizeof(ParticleKindSymbolLength));
+            ParticleKindObject.Symbol.resize(ParticleKindSymbolLength);
+            ParticlesDataFile.read((char*)ParticleKindObject.Symbol.c_str(), ParticleKindSymbolLength);
+
+            UniqueIdInt ParticleKindNameFromXMLLength = 0;
+            ParticlesDataFile.read((char*)&ParticleKindNameFromXMLLength, sizeof(ParticleKindNameFromXMLLength));
+            ParticleKindObject.GraphicData.NameFromXML.resize(ParticleKindNameFromXMLLength);
+            ParticlesDataFile.read((char*)ParticleKindObject.GraphicData.NameFromXML.c_str(), ParticleKindNameFromXMLLength);
+
+            UniqueIdInt ParticleKindNameFromDataFileLength = 0;
+            ParticlesDataFile.read((char*)&ParticleKindNameFromDataFileLength, sizeof(ParticleKindNameFromDataFileLength));
+            ParticleKindObject.GraphicData.NameFromDataFile.resize(ParticleKindNameFromDataFileLength);
+            ParticlesDataFile.read((char*)ParticleKindObject.GraphicData.NameFromDataFile.c_str(), ParticleKindNameFromDataFileLength);
+
+            UnsignedInt ParticleKindListOfVoxelsSize;
+            ParticlesDataFile.read((char*)&ParticleKindListOfVoxelsSize, sizeof(ParticleKindListOfVoxelsSize));
+            ParticleKindObject.ListOfVoxels.clear();
+            for (UnsignedInt VoxelObjectIndex = 1; VoxelObjectIndex <= ParticleKindListOfVoxelsSize; VoxelObjectIndex++)
+            {
+                vector3_16 VoxelObject;
+                ParticlesDataFile.read((char*)&VoxelObject, sizeof(VoxelObject));
+                ParticleKindObject.ListOfVoxels.push_back(VoxelObject);
+            }
+
+            ParticlesKindsManagerObject.ParticlesKinds.emplace_back(ParticleKindObject);
+            ParticlesKindsManagerObject.ParticlesKindsPos[ParticleKindObject.EntityId] = ParticlesKindsManagerObject.ParticlesKinds.size() - 1;
+        }
 
         UnsignedInt ParticlesSize;
         ParticlesDataFile.read((char*)&ParticlesSize, sizeof(ParticlesSize));
@@ -587,6 +676,8 @@ void CellEngineVoxelSimulationSpace::ReadParticlesFromFileAndPrepareData()
         LoggersManagerObject.Log(STREAM("START OF READING PARTICLES FROM FILE AND PREPARING DATA"));
 
         Particles.clear();
+        ParticlesKindsManagerObject.ParticlesKinds.clear();
+        ParticlesKindsManagerObject.ParticlesKindsPos.clear();
 
         ReadParticlesFromFile();
 

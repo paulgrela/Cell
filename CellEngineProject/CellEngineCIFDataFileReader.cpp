@@ -268,12 +268,47 @@ void CellEngineCIFDataFileReader::ReadDataFromFile()
     CATCH("reading data from CIF file")
 }
 
-//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 void AddParticlesKinds()
 {
@@ -308,6 +343,8 @@ void CellEngineParticlesDataFileReader::ReadParticlesFromFile()
     {
         try
         {
+            ParticlesKindsManagerObject.ParticlesKinds.clear();
+
             SetStartValues();
 
             LoggersManagerObject.Log(STREAM("START OF READING PARTICLES FROM BINARY FILE"));
@@ -390,31 +427,6 @@ void CellEngineParticlesDataFileReader::ReadParticlesFromFile()
     CATCH("reading data from particles file")
 }
 
-//void CellEngineParticlesDataFileReader::PrepareParticlesAfterReadingFromFile()
-//{
-//    try
-//    {
-//        LoggersManagerObject.Log(STREAM("START OF PREPARING PARTICLES"));
-//
-//        for (auto& ParticleObject : CellEngineVoxelSimulationSpaceObjectPointer->Particles)
-//        {
-//            for (const auto& VoxelObject : ParticleObject.second.ListOfVoxels)
-//                GetSpaceVoxel(VoxelObject.X, VoxelObject.Y, VoxelObject.Z) = ParticleObject.second.Index;
-//
-//            ParticleObject.second.Prev = ParticleObject.second.PrevTemporary != 0 ? &GetParticleFromIndex(ParticleObject.second.PrevTemporary) : nullptr;
-//            ParticleObject.second.Next = ParticleObject.second.NextTemporary != 0 ? &GetParticleFromIndex(ParticleObject.second.NextTemporary) : nullptr;
-//            ParticleObject.second.PairedNucleotide = ParticleObject.second.PairedNucleotideTemporary != 0 ? &GetParticleFromIndex(ParticleObject.second.PairedNucleotideTemporary) : nullptr;
-//
-//            ParticleObject.second.LinkedParticlesPointersList.clear();
-//            for (auto& LinkedParticlesPointerObjectTemporary : ParticleObject.second.LinkedParticlesPointersListTemporary)
-//                ParticleObject.second.LinkedParticlesPointersList.emplace_back(&GetParticleFromIndex(LinkedParticlesPointerObjectTemporary));
-//        }
-//
-//        LoggersManagerObject.Log(STREAM("END OF PREPARING PARTICLES"));
-//    }
-//    CATCH("preparing particles after reading from file")
-//};
-
 void CellEngineParticlesDataFileReader::ReadParticlesFromFileAndPrepareData()
 {
     try
@@ -426,8 +438,6 @@ void CellEngineParticlesDataFileReader::ReadParticlesFromFileAndPrepareData()
         CellEngineVoxelSimulationSpaceObjectPointer->Particles.clear();
 
         ReadParticlesFromFile();
-
-        //CellEngineVoxelSimulationSpaceObjectPointer->SetValueToVoxelsForSelectedSpace(nullptr, 0, 0, 0, 0, 1, 1, 1, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension);
 
         CellEngineVoxelSimulationSpaceObjectPointer->PrepareParticlesAfterReadingFromFile();
 

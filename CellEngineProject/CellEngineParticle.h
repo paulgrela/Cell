@@ -134,6 +134,8 @@ public:
         ReactionsIdByString = ReactionsIdByStringParam;
     }
 public:
+    ParticleKind() = default;
+public:
     ParticleKind(UnsignedInt EntityIdParam, std::string NameParam, std::string SymbolParam, ElectricChargeType ElectricChargeParam, UnsignedInt CounterParam) : EntityId(EntityIdParam), Name(std::move(NameParam)), Symbol(std::move(SymbolParam)), ElectricCharge(ElectricChargeParam), Counter(CounterParam)
     {
     }
