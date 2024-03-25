@@ -8,7 +8,7 @@
 class CellEnginePDBDataFile: public CellEngineDataFile
 {
 private:
-    void ReadDataFromFile() override;
+    void ReadDataFromFile(bool StartValuesBool) override;
 private:
     void SetStartValues() override
     {

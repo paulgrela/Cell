@@ -16,7 +16,7 @@ private:
     std::unordered_map<UnsignedInt, TransformationMatrix3x4> TransformationsMatrixes;
     std::unordered_map<std::string, std::vector<CellEngineAtom>> ChainsNames;
 protected:
-    void ReadDataFromFile() override;
+    void ReadDataFromFile(bool StartValuesBool) override;
 public:
     explicit CellEngineCIFDataFileReader() = default;
     ~CellEngineCIFDataFileReader() = default;
@@ -27,13 +27,19 @@ public:
 class CellEngineParticlesDataFileReader : virtual public CellEngineDataFile
 {
 protected:
-    void ReadDataFromFile() override;
+    void ReadDataFromFile(bool StartValuesBool) override;
 public:
     explicit CellEngineParticlesDataFileReader() = default;
     ~CellEngineParticlesDataFileReader() = default;
+private:
+    inline Particle& GetParticleFromIndex(const UniqueIdInt ParticleIndex)
+    {
+        return (*Particles)[ParticleIndex];
+    }
 public:
     void ReadParticlesFromFile();
-    void ReadParticlesFromFileAndPrepareData();
+    void PrepareParticlesAfterReadingFromFile();
+    void ReadParticlesFromFileAndPrepareData(bool StartValuesBool);
 };
 
 #endif

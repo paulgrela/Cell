@@ -28,7 +28,7 @@ void CellEngineOpenGLVisualiser::InitExternalData()
     {
         ReadChemicalReactionsFromFile();
 
-        CellEngineDataFileObjectPointer->ReadDataFromFile();
+        CellEngineDataFileObjectPointer->ReadDataFromFile(true);
 
         GetMemoryForBondsBetweenAtomsToDraw();
     }

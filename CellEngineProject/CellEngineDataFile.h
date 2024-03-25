@@ -4,6 +4,7 @@
 
 #include <memory>
 
+
 #include "CellEngineAtom.h"
 #include "CellEngineConfigData.h"
 #include "CellEngineVoxelSimulationSpace.h"
@@ -17,10 +18,12 @@ public:
 public:
     bool FilmOfStructuresActive = false;
 protected:
+    std::unordered_map<UniqueIdInt, Particle>* Particles = nullptr;
+protected:
     std::vector<std::vector<CellEngineAtom>> ParticlesCenters;
     std::vector<std::vector<CellEngineAtom>> AllAtoms;
 public:
-    virtual void ReadDataFromFile() = 0;
+    virtual void ReadDataFromFile(bool StartValuesBool) = 0;
 protected:
     virtual UniqueIdInt AddNewParticle(const Particle& ParticleObjectParam) = 0;
     virtual void SetStartValues() = 0;
@@ -29,6 +32,11 @@ protected:
     virtual void InsertParticlesCenters(std::vector<CellEngineAtom>& LocalCellEngineParticlesCentersObject) = 0;
     virtual void PreprocessData() = 0;
     virtual void PrintStatistics() = 0;
+public:
+    void SetMainDataPointers(std::unordered_map<UniqueIdInt, Particle>* ParticlesParam)
+    {
+        Particles = ParticlesParam;
+    }
 public:
     static vmath::vec3 GetCenter(const std::vector<CellEngineAtom>& AtomsParam)
     {

@@ -50,7 +50,7 @@ CellEngineAtom CellEnginePDBDataFile::ParseRecord(const char* LocalPDBRecord)
     return CellEngineAtomObject;
 }
 
-void CellEnginePDBDataFile::ReadDataFromFile()
+void CellEnginePDBDataFile::ReadDataFromFile(const bool StartValuesBool)
 {
     try
     {

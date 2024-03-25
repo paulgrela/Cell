@@ -107,7 +107,7 @@ glm::vec3 CountResultPositionsFromTransformationMatrix(std::unordered_map<Unsign
     return Result;
 }
 
-void CellEngineCIFDataFileReader::ReadDataFromFile()
+void CellEngineCIFDataFileReader::ReadDataFromFile(const bool StartValuesBool)
 {
     try
     {
@@ -307,9 +307,29 @@ void CellEngineCIFDataFileReader::ReadDataFromFile()
 
 
 
+void CellEngineParticlesDataFileReader::PrepareParticlesAfterReadingFromFile()
+{
+    try
+    {
+        LoggersManagerObject.Log(STREAM("START OF PREPARING PARTICLES"));
 
+        for (auto& ParticleObject : *Particles)
+        {
+            CellEngineVoxelSimulationSpaceObjectPointer->SetAllVoxelsInListOfVoxelsToValueOut(ParticleObject.second.ListOfVoxels, ParticleObject.second.Index);
 
+            ParticleObject.second.Prev = ParticleObject.second.PrevTemporary != 0 ? &GetParticleFromIndex(ParticleObject.second.PrevTemporary) : nullptr;
+            ParticleObject.second.Next = ParticleObject.second.NextTemporary != 0 ? &GetParticleFromIndex(ParticleObject.second.NextTemporary) : nullptr;
+            ParticleObject.second.PairedNucleotide = ParticleObject.second.PairedNucleotideTemporary != 0 ? &GetParticleFromIndex(ParticleObject.second.PairedNucleotideTemporary) : nullptr;
 
+            ParticleObject.second.LinkedParticlesPointersList.clear();
+            for (auto& LinkedParticlesPointerObjectTemporary : ParticleObject.second.LinkedParticlesPointersListTemporary)
+                ParticleObject.second.LinkedParticlesPointersList.emplace_back(&GetParticleFromIndex(LinkedParticlesPointerObjectTemporary));
+        }
+
+        LoggersManagerObject.Log(STREAM("END OF PREPARING PARTICLES"));
+    }
+    CATCH("preparing particles after reading from file")
+};
 
 void CellEngineParticlesDataFileReader::ReadParticlesFromFile()
 {
@@ -317,9 +337,9 @@ void CellEngineParticlesDataFileReader::ReadParticlesFromFile()
     {
         try
         {
+            Particles->clear();
             ParticlesKindsManagerObject.ParticlesKinds.clear();
             ParticlesKindsManagerObject.ParticlesKindsPos.clear();
-            CellEngineVoxelSimulationSpaceObjectPointer->Particles.clear();
 
             LoggersManagerObject.Log(STREAM("START OF READING PARTICLES FROM BINARY FILE"));
 
@@ -436,18 +456,21 @@ void CellEngineParticlesDataFileReader::ReadParticlesFromFile()
     CATCH("reading data from particles file")
 }
 
-void CellEngineParticlesDataFileReader::ReadParticlesFromFileAndPrepareData()
+void CellEngineParticlesDataFileReader::ReadParticlesFromFileAndPrepareData(const bool StartValuesBool)
 {
     try
     {
-        SetStartValues();
+        if (StartValuesBool == true)
+            SetStartValues();
 
         LoggersManagerObject.Log(STREAM("START OF READING PARTICLES FROM FILE AND PREPARING DATA"));
 
         ReadParticlesFromFile();
+        PrepareParticlesAfterReadingFromFile();
 
-        CellEngineVoxelSimulationSpaceObjectPointer->PrepareParticlesAfterReadingFromFile();
-        CellEngineVoxelSimulationSpaceObjectPointer->PreprocessData(false);
+        //CellEngineVoxelSimulationSpaceObjectPointer->PreprocessData(false);
+        PreprocessData();
+
         CellEngineConfigDataObject.GenomeReadFromFile = true;
 
         LoggersManagerObject.Log(STREAM("END OF PREPROCESSING DATA"));
@@ -457,7 +480,7 @@ void CellEngineParticlesDataFileReader::ReadParticlesFromFileAndPrepareData()
     CATCH("reading particles from file")
 };
 
-void CellEngineParticlesDataFileReader::ReadDataFromFile()
+void CellEngineParticlesDataFileReader::ReadDataFromFile(const bool StartValuesBool)
 {
-    ReadParticlesFromFileAndPrepareData();
+    ReadParticlesFromFileAndPrepareData(StartValuesBool);
 }

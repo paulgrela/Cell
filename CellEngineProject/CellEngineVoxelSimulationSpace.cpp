@@ -87,6 +87,11 @@ inline void CellEngineVoxelSimulationSpace::SetAllVoxelsInListOfVoxelsToValue(st
     CATCH("making all zero voxels in list of voxels")
 }
 
+void CellEngineVoxelSimulationSpace::SetAllVoxelsInListOfVoxelsToValueOut(std::vector<vector3_16>& ListOfVoxels, SimulationSpaceVoxel SimulationSpaceVoxelValue)
+{
+    SetAllVoxelsInListOfVoxelsToValue(ListOfVoxels, SimulationSpaceVoxelValue);
+}
+
 CellEngineVoxelSimulationSpace::CellEngineVoxelSimulationSpace()
 {
     try
@@ -99,6 +104,8 @@ CellEngineVoxelSimulationSpace::CellEngineVoxelSimulationSpace()
 
         Genomes.resize(2);
         GenomesLines.resize(1);
+
+        CellEngineDataFileObjectPointer->SetMainDataPointers(&Particles);
     }
     CATCH("execution of constructor of voxel simulation space")
 }
@@ -674,23 +681,30 @@ void CellEngineVoxelSimulationSpace::ReadParticlesFromFileAndPrepareData()
 {
     try
     {
-        LoggersManagerObject.Log(STREAM("START OF READING PARTICLES FROM FILE AND PREPARING DATA"));
-
-        Particles.clear();
-        ParticlesKindsManagerObject.ParticlesKinds.clear();
-        ParticlesKindsManagerObject.ParticlesKindsPos.clear();
-
-        ReadParticlesFromFile();
-
         SetValueToVoxelsForSelectedSpace(nullptr, GetZeroSimulationSpaceVoxel(), 0, 0, 0, 1, 1, 1, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension);
 
-        PrepareParticlesAfterReadingFromFile();
+        CellEngineDataFileObjectPointer->ReadDataFromFile(false);
 
-        InitiateFreeParticleIndexes();
 
-        CellEngineConfigDataObject.GenomeReadFromFile = true;
 
-        LoggersManagerObject.Log(STREAM("END OF READING PARTICLES FROM FILE AND PREPARING DATA"));
+
+//        LoggersManagerObject.Log(STREAM("START OF READING PARTICLES FROM FILE AND PREPARING DATA"));
+//
+//        Particles.clear();
+//        ParticlesKindsManagerObject.ParticlesKinds.clear();
+//        ParticlesKindsManagerObject.ParticlesKindsPos.clear();
+//
+//        ReadParticlesFromFile();
+//
+//        SetValueToVoxelsForSelectedSpace(nullptr, GetZeroSimulationSpaceVoxel(), 0, 0, 0, 1, 1, 1, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension);
+//
+//        PrepareParticlesAfterReadingFromFile();
+//
+//        InitiateFreeParticleIndexes();
+//
+//        CellEngineConfigDataObject.GenomeReadFromFile = true;
+//
+//        LoggersManagerObject.Log(STREAM("END OF READING PARTICLES FROM FILE AND PREPARING DATA"));
     }
     CATCH("reading particles from file")
 };
