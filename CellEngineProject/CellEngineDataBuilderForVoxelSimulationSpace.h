@@ -33,7 +33,7 @@ protected:
 protected:
     void PreprocessData() override
     {
-        CellEngineVoxelSimulationSpaceObjectPointer->PreprocessData();
+        CellEngineVoxelSimulationSpaceObjectPointer->PreprocessData(true);
     }
 protected:
     void PrintStatistics() override

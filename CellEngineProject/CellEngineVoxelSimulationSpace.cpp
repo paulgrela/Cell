@@ -125,12 +125,12 @@ void CellEngineVoxelSimulationSpace::InitiateFreeParticleIndexes()
     CATCH("initiating free particle indexes")
 }
 
-void CellEngineVoxelSimulationSpace::GetMinMaxCoordinatesForAllParticles()
+void CellEngineVoxelSimulationSpace::GetMinMaxCoordinatesForAllParticles(const bool UpdateParticleKindListOfVoxelsBool)
 {
     try
     {
         for (auto& ParticleObject : Particles)
-            GetMinMaxCoordinatesForParticle(ParticleObject.second, true);
+            GetMinMaxCoordinatesForParticle(ParticleObject.second, UpdateParticleKindListOfVoxelsBool);
     }
     CATCH("getting min max coordinates for all particles")
 }
@@ -172,12 +172,12 @@ void CellEngineVoxelSimulationSpace::GetMinMaxCoordinatesForParticle(Particle& P
     CATCH("getting min max coordinates for one particle")
 }
 
-void CellEngineVoxelSimulationSpace::PreprocessData()
+void CellEngineVoxelSimulationSpace::PreprocessData(const bool UpdateParticleKindListOfVoxelsBool)
 {
     try
     {
         InitiateFreeParticleIndexes();
-        GetMinMaxCoordinatesForAllParticles();
+        GetMinMaxCoordinatesForAllParticles(UpdateParticleKindListOfVoxelsBool);
     }
     CATCH("preprocessing data for voxel simulation space")
 }
@@ -611,6 +611,7 @@ void CellEngineVoxelSimulationSpace::ReadParticlesFromFile()
                 ParticlesDataFile.read((char*)&VoxelObject, sizeof(VoxelObject));
                 ParticleKindObject.ListOfVoxels.push_back(VoxelObject);
             }
+            ParticleKindObject.GraphicData.Visible = true;
 
             ParticlesKindsManagerObject.ParticlesKinds.emplace_back(ParticleKindObject);
             ParticlesKindsManagerObject.ParticlesKindsPos[ParticleKindObject.EntityId] = ParticlesKindsManagerObject.ParticlesKinds.size() - 1;
