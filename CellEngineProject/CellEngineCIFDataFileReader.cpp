@@ -120,8 +120,6 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile()
         std::vector<CellEngineAtom> LocalCellEngineAllAtomsObject;
         std::vector<CellEngineAtom> LocalCellEngineParticlesCentersObject;
 
-        const auto start_time = chrono::high_resolution_clock::now();
-
         std::ifstream File(string(CellEngineConfigDataObject.CellStateFileName).c_str(), std::ios_base::in);
 
         LoggersManagerObject.Log(STREAM("STARTED READING FROM CIF FILE"));
@@ -254,14 +252,11 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile()
 
         PreprocessData();
 
-        const auto stop_time = chrono::high_resolution_clock::now();
-
         PrintStatistics();
 
         LoggersManagerObject.Log(STREAM("NumberOfAtoms = " << NumberOfAtoms << " NumberOfParticles = " << NumberOfParticles << " | LocalCellEngineParticlesCentersObject.size() = " << LocalCellEngineParticlesCentersObject.size() << " | AllAtoms.size() = " << AllAtoms.size() << " | NumberOfAtomsDNA = " << NumberOfAtomsDNA << " | NumberOfNucleotidesInDNA = " << NumberOfNucleotidesInDNA <<" | AtomsPositionsMatrixes.size() = " << TransformationsMatrixes.size() << " | " << endl));
 
         LoggersManagerObject.Log(STREAM("FINISHED READING FROM CIF FILE"));
-        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Execution of reading data from CIF file has taken time: ", "executing printing duration_time")));
 
         File.close();
     }
@@ -568,9 +563,20 @@ void CellEngineParticlesBinaryDataFileReader::ReadParticlesFromBinaryFileAndPrep
 
 void CellEngineParticlesDataFileReader::ReadDataFromFile(const bool StartValuesBool, CellEngineConfigData::TypesOfFileToRead Type)
 {
-    if (Type == CellEngineConfigData::TypesOfFileToRead::BinaryFile)
-        ReadParticlesFromBinaryFileAndPrepareData(StartValuesBool);
-    else
-    if (Type == CellEngineConfigData::TypesOfFileToRead::CIFFile)
-        ReadDataFromCIFFile();
+    try
+    {
+        const auto start_time = chrono::high_resolution_clock::now();
+
+        switch (Type)
+        {
+            case CellEngineConfigData::TypesOfFileToRead::BinaryFile : ReadParticlesFromBinaryFileAndPrepareData(StartValuesBool); break;
+            case CellEngineConfigData::TypesOfFileToRead::CIFFile : ReadDataFromCIFFile(); break;
+            default : break;
+        }
+
+        const auto stop_time = chrono::high_resolution_clock::now();
+
+        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Execution of reading data from CIF file has taken time: ", "executing printing duration_time")));
+    }
+    CATCH("reading data from file")
 }
