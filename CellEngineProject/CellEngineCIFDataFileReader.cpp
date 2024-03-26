@@ -18,8 +18,8 @@
 using namespace std;
 using namespace string_utils;
 
-//CellEngineAtom CellEngineCIFDataFileReader::ParseRecord(const char* LocalCIFRecord)
-CellEngineAtom CellEngineParticlesDataFileReader::ParseRecord(const char* LocalCIFRecord)
+CellEngineAtom CellEngineCIFDataFileReader::ParseRecord(const char* LocalCIFRecord)
+//CellEngineAtom CellEngineParticlesDataFileReader::ParseRecord(const char* LocalCIFRecord)
 {
     CellEngineAtom CellEngineAtomObject{};
 
@@ -109,7 +109,8 @@ glm::vec3 CountResultPositionsFromTransformationMatrix(std::unordered_map<Unsign
 }
 
 //void CellEngineCIFDataFileReader::ReadDataFromFile(const bool StartValuesBool)
-void CellEngineParticlesDataFileReader::ReadDataFromCIFFile()
+//void CellEngineParticlesDataFileReader::ReadDataFromCIFFile()
+void CellEngineCIFDataFileReader::ReadDataFromCIFFile()
 {
     try
     {
@@ -309,7 +310,8 @@ void CellEngineParticlesDataFileReader::ReadDataFromCIFFile()
 
 
 
-void CellEngineParticlesDataFileReader::PrepareParticlesAfterReadingFromFile()
+//void CellEngineParticlesDataFileReader::PrepareParticlesAfterReadingFromFile()
+void CellEngineParticlesBinaryDataFileReader::PrepareParticlesAfterReadingFromFile()
 {
     try
     {
@@ -333,7 +335,8 @@ void CellEngineParticlesDataFileReader::PrepareParticlesAfterReadingFromFile()
     CATCH("preparing particles after reading from file")
 };
 
-void CellEngineParticlesDataFileReader::ReadParticlesFromFile()
+//void CellEngineParticlesDataFileReader::ReadParticlesFromFile()
+void CellEngineParticlesBinaryDataFileReader::ReadParticlesFromFile()
 {
     try
     {
@@ -458,7 +461,8 @@ void CellEngineParticlesDataFileReader::ReadParticlesFromFile()
     CATCH("reading data from particles file")
 }
 
-void CellEngineParticlesDataFileReader::ReadParticlesFromBinaryFileAndPrepareData(const bool StartValuesBool)
+//void CellEngineParticlesDataFileReader::ReadParticlesFromBinaryFileAndPrepareData(const bool StartValuesBool)
+void CellEngineParticlesBinaryDataFileReader::ReadParticlesFromBinaryFileAndPrepareData(const bool StartValuesBool)
 {
     try
     {
