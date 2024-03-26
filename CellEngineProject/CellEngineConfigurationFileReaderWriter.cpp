@@ -20,13 +20,13 @@
 
 using namespace std;
 
-std::unique_ptr<CellEngineDataFile> CreateProperDataBuilderObjectForVoxelSimulationSpace(const string_view& CellStateFileName)
-{
-    if (string_utils::check_end_str(CellStateFileName, ".cif") == true)
-        return make_unique<CellEngineCIFDataFileReaderOfVoxelSimulationSpace>();
-    else
-        return make_unique<CellEngineParticlesDataFileReaderForVoxelSimulationSpace>();
-}
+//std::unique_ptr<CellEngineDataFile> CreateProperDataBuilderObjectForVoxelSimulationSpace(const string_view& CellStateFileName)
+//{
+//    if (string_utils::check_end_str(CellStateFileName, ".cif") == true)
+//        return make_unique<CellEngineCIFDataFileReaderOfVoxelSimulationSpace>();
+//    else
+//        return make_unique<CellEngineParticlesDataFileReaderForVoxelSimulationSpace>();
+//}
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wreturn-type"
@@ -35,12 +35,18 @@ std::unique_ptr<CellEngineDataFile> CreateCellEngineDataFileObject(const string_
     if (string_utils::check_end_str(CellStateFileName, ".pdb") == true)
         return make_unique<CellEnginePDBDataFile>();
     else
+    {
+        CellEngineConfigDataObject.TypeOfFileToRead = (string_utils::check_end_str(CellStateFileName, ".cif") == false ? CellEngineConfigData::TypesOfFileToRead::BinaryFile : CellEngineConfigData::TypesOfFileToRead::CIFFile);
         switch (CellEngineConfigDataObject.TypeOfSpace)
         {
-            case CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace : return CreateProperDataBuilderObjectForVoxelSimulationSpace(CellStateFileName);
+            //TypeOfFileToRead
+//            case CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace : return CreateProperDataBuilderObjectForVoxelSimulationSpace(CellStateFileName);
+//            case CellEngineConfigData::TypesOfSpace::FullAtomSpace : return make_unique<CellEngineDataBuilderForFullAtomSimulationSpace>();
+            case CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace : return make_unique<CellEngineDataBuilderForVoxelSimulationSpace>();
             case CellEngineConfigData::TypesOfSpace::FullAtomSpace : return make_unique<CellEngineDataBuilderForFullAtomSimulationSpace>();
             default : break;
         }
+    }
 }
 #pragma GCC diagnostic pop
 

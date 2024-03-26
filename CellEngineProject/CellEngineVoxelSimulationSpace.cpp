@@ -17,6 +17,8 @@
 
 #include "TerminalColorsUtils.h"
 
+#include "CellEngineDataBuilderForVoxelSimulationSpace.h"
+
 using namespace std;
 
 [[nodiscard]] float CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(UnsignedInt CoordinateParam)
@@ -682,10 +684,15 @@ void CellEngineVoxelSimulationSpace::ReadParticlesFromFileAndPrepareData()
     try
     {
         SetValueToVoxelsForSelectedSpace(nullptr, GetZeroSimulationSpaceVoxel(), 0, 0, 0, 1, 1, 1, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension);
+        CellEngineDataFileObjectPointer->ReadDataFromFile(false, CellEngineConfigData::TypesOfFileToRead::BinaryFile);
 
-        CellEngineDataFileObjectPointer->ReadDataFromFile(false);
+//        unique_ptr<CellEngineParticlesDataFileReader> CellEngineParticlesDataFileReaderObject = make_unique<CellEngineParticlesDataFileReader>();
+//        CellEngineParticlesDataFileReaderObject->SetMainDataPointers(&Particles);
+//        CellEngineParticlesDataFileReaderObject->ReadDataFromFile(false);
 
-
+//        unique_ptr<CellEngineParticlesDataFileReaderForVoxelSimulationSpace> CellEngineParticlesDataFileReaderForVoxelSimulationSpaceObject = make_unique<CellEngineParticlesDataFileReaderForVoxelSimulationSpace>();
+//        CellEngineParticlesDataFileReaderForVoxelSimulationSpaceObject->SetMainDataPointers(&Particles);
+//        CellEngineParticlesDataFileReaderForVoxelSimulationSpaceObject->ReadDataFromFile(false);
 
 
 //        LoggersManagerObject.Log(STREAM("START OF READING PARTICLES FROM FILE AND PREPARING DATA"));

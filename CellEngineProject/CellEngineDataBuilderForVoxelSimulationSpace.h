@@ -5,7 +5,8 @@
 #include "CellEngineConfigData.h"
 #include "CellEngineCIFDataFileReader.h"
 
-class CellEngineDataBuilderForVoxelSimulationSpace : virtual public CellEngineDataFile
+//class CellEngineDataBuilderForVoxelSimulationSpace : virtual public CellEngineDataFile
+class CellEngineDataBuilderForVoxelSimulationSpace : public CellEngineParticlesDataFileReader
 {
 protected:
     void SetStartValues() override
@@ -44,12 +45,12 @@ protected:
     }
 };
 
-class CellEngineCIFDataFileReaderOfVoxelSimulationSpace : public CellEngineCIFDataFileReader, public CellEngineDataBuilderForVoxelSimulationSpace
-{
-};
-
-class CellEngineParticlesDataFileReaderForVoxelSimulationSpace : public CellEngineParticlesDataFileReader, public CellEngineDataBuilderForVoxelSimulationSpace
-{
-};
+//class CellEngineCIFDataFileReaderOfVoxelSimulationSpace : public CellEngineCIFDataFileReader, public CellEngineDataBuilderForVoxelSimulationSpace
+//{
+//};
+//
+//class CellEngineParticlesDataFileReaderForVoxelSimulationSpace : public CellEngineParticlesDataFileReader, public CellEngineDataBuilderForVoxelSimulationSpace
+//{
+//};
 
 #endif

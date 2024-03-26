@@ -6,7 +6,8 @@
 #include "CellEngineConfigData.h"
 #include "CellEngineCIFDataFileReader.h"
 
-class CellEngineDataBuilderForFullAtomSimulationSpace : public CellEngineCIFDataFileReader
+//class CellEngineDataBuilderForFullAtomSimulationSpace : public CellEngineCIFDataFileReader
+class CellEngineDataBuilderForFullAtomSimulationSpace : public CellEngineParticlesDataFileReader
 {
 protected:
     void SetStartValues() override

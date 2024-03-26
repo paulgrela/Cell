@@ -18,7 +18,8 @@
 using namespace std;
 using namespace string_utils;
 
-CellEngineAtom CellEngineCIFDataFileReader::ParseRecord(const char* LocalCIFRecord)
+//CellEngineAtom CellEngineCIFDataFileReader::ParseRecord(const char* LocalCIFRecord)
+CellEngineAtom CellEngineParticlesDataFileReader::ParseRecord(const char* LocalCIFRecord)
 {
     CellEngineAtom CellEngineAtomObject{};
 
@@ -107,7 +108,8 @@ glm::vec3 CountResultPositionsFromTransformationMatrix(std::unordered_map<Unsign
     return Result;
 }
 
-void CellEngineCIFDataFileReader::ReadDataFromFile(const bool StartValuesBool)
+//void CellEngineCIFDataFileReader::ReadDataFromFile(const bool StartValuesBool)
+void CellEngineParticlesDataFileReader::ReadDataFromCIFFile()
 {
     try
     {
@@ -456,7 +458,7 @@ void CellEngineParticlesDataFileReader::ReadParticlesFromFile()
     CATCH("reading data from particles file")
 }
 
-void CellEngineParticlesDataFileReader::ReadParticlesFromFileAndPrepareData(const bool StartValuesBool)
+void CellEngineParticlesDataFileReader::ReadParticlesFromBinaryFileAndPrepareData(const bool StartValuesBool)
 {
     try
     {
@@ -480,7 +482,15 @@ void CellEngineParticlesDataFileReader::ReadParticlesFromFileAndPrepareData(cons
     CATCH("reading particles from file")
 };
 
-void CellEngineParticlesDataFileReader::ReadDataFromFile(const bool StartValuesBool)
+
+
+
+
+void CellEngineParticlesDataFileReader::ReadDataFromFile(const bool StartValuesBool, CellEngineConfigData::TypesOfFileToRead Type)
 {
-    ReadParticlesFromFileAndPrepareData(StartValuesBool);
+    if (Type == CellEngineConfigData::TypesOfFileToRead::BinaryFile)
+        ReadParticlesFromBinaryFileAndPrepareData(StartValuesBool);
+    else
+    if (Type == CellEngineConfigData::TypesOfFileToRead::CIFFile)
+        ReadDataFromCIFFile();
 }

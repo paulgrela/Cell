@@ -54,7 +54,14 @@ public:
 public:
     bool MultiThreaded{};
     bool SetProcessPriorityHighest{};
-
+public:
+    enum class TypesOfFileToRead : UnsignedInt
+    {
+        BinaryFile = 0,
+        CIFFile = 1,
+        PDBFile = 2
+    };
+    TypesOfFileToRead TypeOfFileToRead = TypesOfFileToRead::BinaryFile;
 public:
     enum class TypesOfSpace : UnsignedInt
     {
