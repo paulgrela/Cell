@@ -5,11 +5,11 @@
 
 #include "CellEngineDataFile.h"
 
-class AAA
+class CellEngineBuildParticlesDataOperations
 {
 protected:
-    virtual UniqueIdInt AddNewParticle(const Particle& ParticleObjectParam) = 0;
     virtual void SetStartValues() = 0;
+    virtual UniqueIdInt AddNewParticle(const Particle& ParticleObjectParam) = 0;
     virtual void InsertAtom(std::vector<CellEngineAtom>& LocalCellEngineAllAtomsObject, const CellEngineAtom& AppliedAtom, UniqueIdInt ParticleIndex) = 0;
     virtual void InsertGroupOfAtoms(std::vector<CellEngineAtom>& LocalCellEngineParticlesCentersObject, std::vector<CellEngineAtom>& LocalCellEngineAllAtomsObject) = 0;
     virtual void InsertParticlesCenters(std::vector<CellEngineAtom>& LocalCellEngineParticlesCentersObject) = 0;
@@ -22,7 +22,7 @@ struct TransformationMatrix3x4
     float Matrix[3][4];
 };
 
-class CellEngineCIFDataFileReader : virtual public CellEngineDataFile, virtual public AAA
+class CellEngineCIFDataFileReader : virtual public CellEngineDataFile, virtual public CellEngineBuildParticlesDataOperations
 {
 private:
     std::unordered_map<UnsignedInt, TransformationMatrix3x4> TransformationsMatrixes;
@@ -35,11 +35,11 @@ public:
     static CellEngineAtom ParseRecord(const char* LocalPDBRecord);
 };
 
-class CellEngineParticlesBinaryDataFileReader : virtual public CellEngineDataFile, virtual public AAA
+class CellEngineParticlesBinaryDataFileReaderWriter : virtual public CellEngineDataFile, virtual public CellEngineBuildParticlesDataOperations
 {
 public:
-    explicit CellEngineParticlesBinaryDataFileReader() = default;
-    ~CellEngineParticlesBinaryDataFileReader() = default;
+    explicit CellEngineParticlesBinaryDataFileReaderWriter() = default;
+    ~CellEngineParticlesBinaryDataFileReaderWriter() = default;
 private:
     inline Particle& GetParticleFromIndex(const UniqueIdInt ParticleIndex)
     {
@@ -48,20 +48,24 @@ private:
 public:
     void SaveDataToFile() override;
 public:
-    void SaveParticlesToBinaryFile();
+    void SaveParticlesToBinaryFile(std::ofstream& ParticlesDataFile);
+    static void SaveParticlesKindsToBinaryFile(std::ofstream& ParticlesDataFile);
+    void SaveParticlesKindsAndParticlesToBinaryFile();
 public:
-    void ReadParticlesFromBinaryFile();
+    void ReadParticlesFromBinaryFile(std::ifstream& ParticlesDataFile);
+    static void ReadParticlesKindsFromBinaryFile(std::ifstream& ParticlesDataFile);
+    void ReadParticlesKindsAndParticlesFromBinaryFile();
     void PrepareParticlesAfterReadingFromBinaryFile();
     void ReadParticlesFromBinaryFileAndPrepareData(bool StartValuesBool);
 };
 
-class CellEngineParticlesDataFileReader : public CellEngineCIFDataFileReader, public CellEngineParticlesBinaryDataFileReader
+class CellEngineParticlesDataFile : public CellEngineCIFDataFileReader, public CellEngineParticlesBinaryDataFileReaderWriter
 {
 public:
     void ReadDataFromFile(bool StartValuesBool, CellEngineConfigData::TypesOfFileToRead Type) override;
 public:
-    explicit CellEngineParticlesDataFileReader() = default;
-    ~CellEngineParticlesDataFileReader() = default;
+    explicit CellEngineParticlesDataFile() = default;
+    ~CellEngineParticlesDataFile() = default;
 };
 
 #endif

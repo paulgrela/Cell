@@ -5,7 +5,7 @@
 #include "CellEngineConfigData.h"
 #include "CellEngineCIFDataFileReader.h"
 
-class CellEngineDataBuilderForVoxelSimulationSpace : public CellEngineParticlesDataFileReader
+class CellEngineDataBuilderForVoxelSimulationSpace : public CellEngineParticlesDataFile
 {
 protected:
     void SetStartValues() override

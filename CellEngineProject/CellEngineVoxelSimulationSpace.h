@@ -26,7 +26,7 @@ enum class ComparisonType { ByVectorLoop, ByString };
 
 class CellEngineVoxelSimulationSpace : public CellEngineChemicalReactions
 {
-    friend class CellEngineParticlesDataFileReader;
+    friend class CellEngineParticlesDataFile;
 public:
     static void SwitchOffLogs()
     {
