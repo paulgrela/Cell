@@ -12,7 +12,7 @@ void CellEngineParticlesDataFile::ReadDataFromFile(const bool StartValuesBool, C
 
         switch (Type)
         {
-            case CellEngineConfigData::TypesOfFileToRead::BinaryFile : ReadParticlesFromBinaryFileAndPrepareData(StartValuesBool); break;
+            case CellEngineConfigData::TypesOfFileToRead::BinaryFile : ReadParticlesFromBinaryFileAndPrepareData(StartValuesBool, Type); break;
             case CellEngineConfigData::TypesOfFileToRead::CIFFile : ReadDataFromCIFFile(); break;
             default : break;
         }

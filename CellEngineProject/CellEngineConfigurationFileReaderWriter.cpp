@@ -140,6 +140,7 @@ void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const ch
                         }
 
                         CellEngineConfigDataObject.CellStateFileName = CellStatePropertyTreeElement.second.get<string>("CellStateFileName");
+                        CellEngineConfigDataObject.CellStateFileNameBackup = CellStatePropertyTreeElement.second.get<string>("CellStateFileNameBackup");
 
                         CellEngineDataFileObjectPointer = CreateCellEngineDataFileObject(CellEngineConfigDataObject.CellStateFileName);
 

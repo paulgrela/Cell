@@ -95,6 +95,7 @@ public:
     RandomColorEngineTypes RandomColorEngineObject = RandomColorEngineTypes::Rand;
 public:
     std::string CellStateFileName;
+    std::string CellStateFileNameBackup;
 public:
     float SpecularPower = 8.0f;
     float SpecularAlbedo = 0.2222f;
