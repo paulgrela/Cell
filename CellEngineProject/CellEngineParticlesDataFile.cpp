@@ -4,7 +4,7 @@
 
 using namespace std;
 
-void CellEngineParticlesDataFile::ReadDataFromFile(const bool StartValuesBool, CellEngineConfigData::TypesOfFileToRead Type)
+void CellEngineParticlesDataFile::ReadDataFromFile(const bool StartValuesBool, const bool UpdateParticleKindListOfVoxelsBool, CellEngineConfigData::TypesOfFileToRead Type)
 {
     try
     {
@@ -12,7 +12,7 @@ void CellEngineParticlesDataFile::ReadDataFromFile(const bool StartValuesBool, C
 
         switch (Type)
         {
-            case CellEngineConfigData::TypesOfFileToRead::BinaryFile : ReadParticlesFromBinaryFileAndPrepareData(StartValuesBool, Type); break;
+            case CellEngineConfigData::TypesOfFileToRead::BinaryFile : ReadParticlesFromBinaryFileAndPrepareData(StartValuesBool, UpdateParticleKindListOfVoxelsBool, Type); break;
             case CellEngineConfigData::TypesOfFileToRead::CIFFile : ReadDataFromCIFFile(); break;
             default : break;
         }

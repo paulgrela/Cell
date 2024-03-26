@@ -31,9 +31,9 @@ protected:
     {
     }
 protected:
-    void PreprocessData() override
+    void PreprocessData(bool Update) override
     {
-        CellEngineVoxelSimulationSpaceObjectPointer->PreprocessData(true);
+        CellEngineVoxelSimulationSpaceObjectPointer->PreprocessData(Update);
     }
 protected:
     void PrintStatistics() override

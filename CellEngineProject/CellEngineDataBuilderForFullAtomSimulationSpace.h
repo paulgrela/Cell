@@ -34,7 +34,7 @@ protected:
         ParticlesCenters.emplace_back(LocalCellEngineParticlesCentersObject);
     }
 protected:
-    void PreprocessData() override
+    void PreprocessData(bool Update) override
     {
     }
 protected:

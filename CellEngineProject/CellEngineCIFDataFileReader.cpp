@@ -248,7 +248,7 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile()
 
         InsertParticlesCenters(LocalCellEngineParticlesCentersObject);
 
-        PreprocessData();
+        PreprocessData(true);
 
         PrintStatistics();
 

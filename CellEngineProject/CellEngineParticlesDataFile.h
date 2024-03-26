@@ -8,7 +8,7 @@
 class CellEngineParticlesDataFile : public CellEngineCIFDataFileReader, public CellEngineParticlesBinaryDataFileReaderWriter
 {
 public:
-    void ReadDataFromFile(bool StartValuesBool, CellEngineConfigData::TypesOfFileToRead Type) override;
+    void ReadDataFromFile(bool StartValuesBool, bool UpdateParticleKindListOfVoxelsBool, CellEngineConfigData::TypesOfFileToRead Type) override;
 public:
     explicit CellEngineParticlesDataFile() = default;
     ~CellEngineParticlesDataFile() = default;

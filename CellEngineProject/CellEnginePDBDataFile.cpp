@@ -50,7 +50,7 @@ CellEngineAtom CellEnginePDBDataFile::ParseRecord(const char* LocalPDBRecord)
     return CellEngineAtomObject;
 }
 
-void CellEnginePDBDataFile::ReadDataFromFile(const bool StartValuesBool, CellEngineConfigData::TypesOfFileToRead Type)
+void CellEnginePDBDataFile::ReadDataFromFile(const bool StartValuesBool, const bool UpdateParticleKindListOfVoxelsBool, CellEngineConfigData::TypesOfFileToRead Type)
 {
     try
     {

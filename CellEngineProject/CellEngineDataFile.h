@@ -23,7 +23,7 @@ protected:
     std::vector<std::vector<CellEngineAtom>> ParticlesCenters;
     std::vector<std::vector<CellEngineAtom>> AllAtoms;
 public:
-    virtual void ReadDataFromFile(bool StartValuesBool, CellEngineConfigData::TypesOfFileToRead Type) = 0;
+    virtual void ReadDataFromFile(bool StartValuesBool, bool UpdateParticleKindListOfVoxelsBool, CellEngineConfigData::TypesOfFileToRead Type) = 0;
 public:
     virtual void SaveDataToFile()
     {

@@ -316,7 +316,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesKindsAndParticl
     CATCH("reading particles from binary file")
 }
 
-void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFileAndPrepareData(const bool StartValuesBool, CellEngineConfigData::TypesOfFileToRead Type)
+void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFileAndPrepareData(const bool StartValuesBool, const bool UpdateParticleKindListOfVoxelsBool, CellEngineConfigData::TypesOfFileToRead Type)
 {
     try
     {
@@ -329,8 +329,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFileA
 
         PrepareParticlesAfterReadingFromBinaryFile();
 
-        //CellEngineVoxelSimulationSpaceObjectPointer->PreprocessData(false);
-        PreprocessData();
+        PreprocessData(UpdateParticleKindListOfVoxelsBool);
 
         CellEngineConfigDataObject.GenomeReadFromFile = true;
 

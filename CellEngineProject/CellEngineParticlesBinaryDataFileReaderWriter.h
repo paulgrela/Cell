@@ -26,7 +26,7 @@ public:
     static void ReadParticlesKindsFromBinaryFile(std::ifstream& ParticlesDataFile);
     void ReadParticlesKindsAndParticlesFromBinaryFile(CellEngineConfigData::TypesOfFileToRead Type);
     void PrepareParticlesAfterReadingFromBinaryFile();
-    void ReadParticlesFromBinaryFileAndPrepareData(bool StartValuesBool, CellEngineConfigData::TypesOfFileToRead Type);
+    void ReadParticlesFromBinaryFileAndPrepareData(bool StartValuesBool, bool UpdateParticleKindListOfVoxelsBool, CellEngineConfigData::TypesOfFileToRead Type);
 };
 
 

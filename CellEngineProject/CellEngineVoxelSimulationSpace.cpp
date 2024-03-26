@@ -454,7 +454,7 @@ void CellEngineVoxelSimulationSpace::ReadParticlesFromFileAndPrepareData()
     {
         SetValueToVoxelsForSelectedSpace(nullptr, GetZeroSimulationSpaceVoxel(), 0, 0, 0, 1, 1, 1, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension);
 
-        CellEngineDataFileObjectPointer->ReadDataFromFile(false, CellEngineConfigData::TypesOfFileToRead::BinaryFile);
+        CellEngineDataFileObjectPointer->ReadDataFromFile(false, false, CellEngineConfigData::TypesOfFileToRead::BinaryFile);
     }
     CATCH("reading particles from file")
 };
