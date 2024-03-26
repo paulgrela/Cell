@@ -20,14 +20,6 @@
 
 using namespace std;
 
-//std::unique_ptr<CellEngineDataFile> CreateProperDataBuilderObjectForVoxelSimulationSpace(const string_view& CellStateFileName)
-//{
-//    if (string_utils::check_end_str(CellStateFileName, ".cif") == true)
-//        return make_unique<CellEngineCIFDataFileReaderOfVoxelSimulationSpace>();
-//    else
-//        return make_unique<CellEngineParticlesDataFileReaderForVoxelSimulationSpace>();
-//}
-
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wreturn-type"
 std::unique_ptr<CellEngineDataFile> CreateCellEngineDataFileObject(const string_view& CellStateFileName)
@@ -39,9 +31,6 @@ std::unique_ptr<CellEngineDataFile> CreateCellEngineDataFileObject(const string_
         CellEngineConfigDataObject.TypeOfFileToRead = (string_utils::check_end_str(CellStateFileName, ".cif") == false ? CellEngineConfigData::TypesOfFileToRead::BinaryFile : CellEngineConfigData::TypesOfFileToRead::CIFFile);
         switch (CellEngineConfigDataObject.TypeOfSpace)
         {
-            //TypeOfFileToRead
-//            case CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace : return CreateProperDataBuilderObjectForVoxelSimulationSpace(CellStateFileName);
-//            case CellEngineConfigData::TypesOfSpace::FullAtomSpace : return make_unique<CellEngineDataBuilderForFullAtomSimulationSpace>();
             case CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace : return make_unique<CellEngineDataBuilderForVoxelSimulationSpace>();
             case CellEngineConfigData::TypesOfSpace::FullAtomSpace : return make_unique<CellEngineDataBuilderForFullAtomSimulationSpace>();
             default : break;
@@ -150,12 +139,9 @@ void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const ch
                             CellEngineConfigDataObject.RadiusOfCellForDNA = CellStatePropertyTreeElement.second.get<double>("RadiusOfCellForDNA");
                         }
 
-                        auto CellStateFileName = CellStatePropertyTreeElement.second.get<string>("CellStateFileName");
-                        CellEngineConfigDataObject.CellStateFileName = CellStateFileName;
+                        CellEngineConfigDataObject.CellStateFileName = CellStatePropertyTreeElement.second.get<string>("CellStateFileName");
 
-                        CellEngineDataFileObjectPointer = CreateCellEngineDataFileObject(CellStateFileName);
-
-                        //CellEngineConfigDataObject.CellStateFileName = CellStateFileName;
+                        CellEngineDataFileObjectPointer = CreateCellEngineDataFileObject(CellEngineConfigDataObject.CellStateFileName);
 
                         CellEngineConfigDataObject.ChosenStructureIndex = CellStatePropertyTreeElement.second.get<UnsignedInt>("ChosenStructureIndex");
 

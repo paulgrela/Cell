@@ -5,11 +5,6 @@
 
 #include "CellEngineDataFile.h"
 
-struct TransformationMatrix3x4
-{
-    float Matrix[3][4];
-};
-
 class AAA
 {
 protected:
@@ -20,6 +15,11 @@ protected:
     virtual void InsertParticlesCenters(std::vector<CellEngineAtom>& LocalCellEngineParticlesCentersObject) = 0;
     virtual void PreprocessData() = 0;
     virtual void PrintStatistics() = 0;
+};
+
+struct TransformationMatrix3x4
+{
+    float Matrix[3][4];
 };
 
 class CellEngineCIFDataFileReader : virtual public CellEngineDataFile, virtual public AAA
@@ -35,7 +35,6 @@ public:
     static CellEngineAtom ParseRecord(const char* LocalPDBRecord);
 };
 
-
 class CellEngineParticlesBinaryDataFileReader : virtual public CellEngineDataFile, virtual public AAA
 {
 public:
@@ -47,8 +46,12 @@ private:
         return (*Particles)[ParticleIndex];
     }
 public:
-    void ReadParticlesFromFile();
-    void PrepareParticlesAfterReadingFromFile();
+    void SaveDataToFile() override;
+public:
+    void SaveParticlesToBinaryFile();
+public:
+    void ReadParticlesFromBinaryFile();
+    void PrepareParticlesAfterReadingFromBinaryFile();
     void ReadParticlesFromBinaryFileAndPrepareData(bool StartValuesBool);
 };
 
@@ -60,41 +63,5 @@ public:
     explicit CellEngineParticlesDataFileReader() = default;
     ~CellEngineParticlesDataFileReader() = default;
 };
-
-
-//class CellEngineParticlesDataFileReader : virtual public CellEngineDataFile
-//class CellEngineParticlesDataFileReader : public CellEngineDataFile
-//{
-//public:
-//    void ReadDataFromFile(bool StartValuesBool, CellEngineConfigData::TypesOfFileToRead Type) override;
-//public:
-//    explicit CellEngineParticlesDataFileReader() = default;
-//    ~CellEngineParticlesDataFileReader() = default;
-//private:
-//    inline Particle& GetParticleFromIndex(const UniqueIdInt ParticleIndex)
-//    {
-//        return (*Particles)[ParticleIndex];
-//    }
-//public:
-//    void ReadDataFromCIFFile();
-//    void ReadParticlesFromFile();
-//    void PrepareParticlesAfterReadingFromFile();
-//    void ReadParticlesFromBinaryFileAndPrepareData(bool StartValuesBool);
-//
-//private:
-//    std::unordered_map<UnsignedInt, TransformationMatrix3x4> TransformationsMatrixes;
-//    std::unordered_map<std::string, std::vector<CellEngineAtom>> ChainsNames;
-//public:
-//    static CellEngineAtom ParseRecord(const char* LocalPDBRecord);
-//
-//protected:
-//    virtual UniqueIdInt AddNewParticle(const Particle& ParticleObjectParam) = 0;
-//    virtual void SetStartValues() = 0;
-//    virtual void InsertAtom(std::vector<CellEngineAtom>& LocalCellEngineAllAtomsObject, const CellEngineAtom& AppliedAtom, UniqueIdInt ParticleIndex) = 0;
-//    virtual void InsertGroupOfAtoms(std::vector<CellEngineAtom>& LocalCellEngineParticlesCentersObject, std::vector<CellEngineAtom>& LocalCellEngineAllAtomsObject) = 0;
-//    virtual void InsertParticlesCenters(std::vector<CellEngineAtom>& LocalCellEngineParticlesCentersObject) = 0;
-//    virtual void PreprocessData() = 0;
-//    virtual void PrintStatistics() = 0;
-//};
 
 #endif

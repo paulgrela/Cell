@@ -115,10 +115,8 @@ public:
 public:
     void ClearSelectedSpace(UnsignedInt NumberOfRandomParticles, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt StepXParam, UnsignedInt StepYParam, UnsignedInt StepZParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
 public:
-    void SaveParticlesToFile();
-    void ReadParticlesFromFile();
+    static void SaveParticlesToFile();
     void ReadParticlesFromFileAndPrepareData();
-    void PrepareParticlesAfterReadingFromFile();
 public:
     static void AddParticlesKinds();
     void AddChemicalReactions();

@@ -5,7 +5,6 @@
 #include "CellEngineConfigData.h"
 #include "CellEngineCIFDataFileReader.h"
 
-//class CellEngineDataBuilderForVoxelSimulationSpace : virtual public CellEngineDataFile
 class CellEngineDataBuilderForVoxelSimulationSpace : public CellEngineParticlesDataFileReader
 {
 protected:
@@ -44,13 +43,5 @@ protected:
         LoggersManagerObject.Log(STREAM("Sum Of Not Empty Voxels = " << CellEngineVoxelSimulationSpaceObjectPointer->SumOfNotEmptyVoxels));
     }
 };
-
-//class CellEngineCIFDataFileReaderOfVoxelSimulationSpace : public CellEngineCIFDataFileReader, public CellEngineDataBuilderForVoxelSimulationSpace
-//{
-//};
-//
-//class CellEngineParticlesDataFileReaderForVoxelSimulationSpace : public CellEngineParticlesDataFileReader, public CellEngineDataBuilderForVoxelSimulationSpace
-//{
-//};
 
 #endif

@@ -25,6 +25,10 @@ protected:
 public:
     virtual void ReadDataFromFile(bool StartValuesBool, CellEngineConfigData::TypesOfFileToRead Type) = 0;
 public:
+    virtual void SaveDataToFile()
+    {
+    }
+public:
     void SetMainDataPointers(std::unordered_map<UniqueIdInt, Particle>* ParticlesParam)
     {
         Particles = ParticlesParam;
