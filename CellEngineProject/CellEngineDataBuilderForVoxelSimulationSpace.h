@@ -3,7 +3,7 @@
 #define CELL_ENGINE_VOXEL_SIMULATION_SPACE_CIF_DATA_FILE_READER_H
 
 #include "CellEngineConfigData.h"
-#include "CellEngineCIFDataFileReader.h"
+#include "CellEngineParticlesDataFile.h"
 
 class CellEngineDataBuilderForVoxelSimulationSpace : public CellEngineParticlesDataFile
 {

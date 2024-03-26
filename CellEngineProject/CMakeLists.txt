@@ -94,6 +94,11 @@ add_executable(
 	CellEnginePDBDataFile.cpp
 	CellEngineCIFDataFileReader.h
 	CellEngineCIFDataFileReader.cpp
+	CellEngineParticlesDataFile.cpp
+	CellEngineParticlesDataFile.h
+	CellEngineBuildParticlesDataOperations.h
+	CellEngineParticlesBinaryDataFileReaderWriter.cpp
+	CellEngineParticlesBinaryDataFileReaderWriter.h
 	CellEngineDataBuilderForVoxelSimulationSpace.h
 	CellEngineDataBuilderForFullAtomSimulationSpace.h
 	CellEngineVoxelSimulationSpace.h
