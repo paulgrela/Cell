@@ -2609,6 +2609,7 @@
                         <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
 
 			<CellStateFileName>../../WholeCellData/Mycoplasma Genitalium/MG_1184_cellpack_atom_instances_1.cif</CellStateFileName>
+                        <CellStateFileNameBackup>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile1.dat</CellStateFileNameBackup>
 
 			<ChosenStructureIndex>0</ChosenStructureIndex>
 			<FilmOfStructuresActive>0</FilmOfStructuresActive>

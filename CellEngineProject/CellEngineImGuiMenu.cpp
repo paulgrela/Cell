@@ -578,16 +578,18 @@ public:
                     DrawSpaceStartXYZ[2] = static_cast<int>(get<2>(TempStartPos));
                 }
 
-                if (ImGui::Button("   ADD PARTICLE KINDS       ") == true)
+                if (ImGui::Button("   ADD PARTICLE KINDS                 ") == true)
                     CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->AddParticlesKinds();
-                if (ImGui::Button("   ADD CHEMICAL REACTIONS   ") == true)
+                if (ImGui::Button("   ADD CHEMICAL REACTIONS             ") == true)
                     CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->AddChemicalReactions();
-                if (ImGui::Button("   CLEAR SELECTED SPACE     ") == true)
+                if (ImGui::Button("   CLEAR SELECTED SPACE               ") == true)
                     CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ClearSelectedSpace(10, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceStepsXYZ[0], DrawSpaceStepsXYZ[1], DrawSpaceStepsXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-                if (ImGui::Button("   DRAW RANDOM PARTICLES    ") == true)
+                if (ImGui::Button("   DRAW RANDOM PARTICLES              ") == true)
                     CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateRandomParticlesInSelectedSpace(10, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceStepsXYZ[0], DrawSpaceStepsXYZ[1], DrawSpaceStepsXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-                if (ImGui::Button("   DRAW PLANED PARTICLES    ") == true)
-                    CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GeneratePlanedParticlesInSelectedSpace(10, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceStepsXYZ[0], DrawSpaceStepsXYZ[1], DrawSpaceStepsXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
+                if (ImGui::Button("   DRAW PLANED CUBOID PARTICLES       ") == true)
+                    CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GeneratePlanedCuboidParticlesInSelectedSpace(10, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceStepsXYZ[0], DrawSpaceStepsXYZ[1], DrawSpaceStepsXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
+                if (ImGui::Button("   DRAW PLANED ELLIPSOID PARTICLES    ") == true)
+                    CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GeneratePlanedEllipsoidParticlesInSelectedSpace(10, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceStepsXYZ[0], DrawSpaceStepsXYZ[1], DrawSpaceStepsXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
 
                 int IDButton = 1;
                 float Nothing;
@@ -613,7 +615,7 @@ public:
                 if (OpenMenuChemicalReactionsWindow == true)
                     MenuChemicalReactions(WindowFlags, ModifiableWindow, DrawSpaceStartXYZ, DrawSpaceSizesXYZ, &OpenMenuChemicalReactionsWindow);
 
-                if (ImGui::CollapsingHeader("Random DNA Generator", ImGuiTreeNodeFlags_DefaultOpen))
+                if (ImGui::CollapsingHeader("RANDOM DNA GENERATOR", ImGuiTreeNodeFlags_DefaultOpen))
                 {
                           ColorButton("  GENERATE RANDOM DNA        ", Nothing, 0, 0, 0, 3, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue){ CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateRandomDNAInWholeCell(579990, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartXPos + 3, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartYPos, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartZPos, 2, 2, 2, 2, 2, 2, 2, 2); });
 
@@ -632,7 +634,19 @@ public:
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->TestGeneratedGenomeCorrectness(2);
                 }
 
-                if (ImGui::CollapsingHeader("SAVING STATE TO FILE", ImGuiTreeNodeFlags_DefaultOpen))
+                if (ImGui::CollapsingHeader("  RANDOM PARTICLES GENERATOR  ", ImGuiTreeNodeFlags_DefaultOpen))
+                {
+                    if (ImGui::Button("  CLEAR VOXEL SPACE AND PARTICLES     ") == true)
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ClearVoxelSpaceAndParticles();
+                    if (ImGui::Button("  GENERATE ALL RANDOM PARTICLES       ") == true)
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateAllRandomParticles();
+                    if (ImGui::Button("  GENERATE RANDOM MEMBRANE PARTICLES  ") == true)
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateRandomMembraneParticles();
+                    if (ImGui::Button("  GENERATE RANDOM RIBOSOMES PARTICLES ") == true)
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateRandomMembraneParticles();
+                }
+
+                if (ImGui::CollapsingHeader("SAVING AND READING PARTICLES TO AND FROM FILE", ImGuiTreeNodeFlags_DefaultOpen))
                 {
                     if (ImGui::Button("  SAVE PARTICLES DATA TO BINARY FILE  ") == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->SaveParticlesToFile();
