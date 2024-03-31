@@ -2355,10 +2355,25 @@ bool CellEngineDNAChemicalReactionsInVoxelSpace::PolymeraseDNAContinueSpecialRea
 
 
 
-bool CellEngineDNAChemicalReactionsInVoxelSpace::CompareFitnessOfParticle(const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction)
+bool CellEngineChemicalReactionsInVoxelSpace::CompareFitnessOfParticle(const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction)
 {
     return (ParticleKindForReactionObject.LinkedParticleTypes.empty() == true || (ParticleKindForReactionObject.LinkedParticleTypes.empty() == false && ParticleObjectForReaction.LinkedParticlesPointersList.size() == ParticleKindForReactionObject.LinkedParticleTypes.size() && all_of(ParticleObjectForReaction.LinkedParticlesPointersList.begin(), ParticleObjectForReaction.LinkedParticlesPointersList.end(), [](const Particle* PointerToParticle){ return PointerToParticle != nullptr; }) && equal(ParticleObjectForReaction.LinkedParticlesPointersList.begin(), ParticleObjectForReaction.LinkedParticlesPointersList.end(), ParticleKindForReactionObject.LinkedParticleTypes.begin(), [](const Particle* PointerToParticle, UniqueIdInt ParticleType){ return PointerToParticle->EntityId == ParticleType; })));
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 tuple<vector<ChainIdInt>, string> CellEngineDNAChemicalReactionsInVoxelSpace::GetNucleotidesSequenceInBothDirections(const std::vector<UniqueIdInt>& NucleotidesFoundInProximity, const UnsignedInt SizeOfLoop)
 {
@@ -2522,7 +2537,7 @@ tuple<vector<pair<UniqueIdInt, UnsignedInt>>, bool> CellEngineDNAChemicalReactio
         return { vector<pair<UniqueIdInt, UnsignedInt>>(), false };
 }
 
-void CellEngineDNAChemicalReactionsInVoxelSpace::EraseParticleChosenForReactionAndGetCentersForNewProductsOfReaction(const UnsignedInt ParticleIndexChosenForReaction, vector<vector3_16>& Centers)
+void CellEngineChemicalReactionsInVoxelSpace::EraseParticleChosenForReactionAndGetCentersForNewProductsOfReaction(const UnsignedInt ParticleIndexChosenForReaction, vector<vector3_16>& Centers)
 {
     try
     {
@@ -2535,7 +2550,8 @@ void CellEngineDNAChemicalReactionsInVoxelSpace::EraseParticleChosenForReactionA
     CATCH("erasing particles chosen for reaction and get centers for new products of reaction")
 }
 
-inline void CellEngineDNAChemicalReactionsInVoxelSpace::RemoveParticle(const UniqueIdInt ParticleIndex, const bool ClearVoxels)
+//inline void CellEngineChemicalReactionsInVoxelSpace::RemoveParticle(const UniqueIdInt ParticleIndex, const bool ClearVoxels)
+inline void CellEngineBasicParticlesOperations::RemoveParticle(const UniqueIdInt ParticleIndex, const bool ClearVoxels)
 {
     try
     {

@@ -36,6 +36,9 @@ protected:
 class CellEngineParticlesVoxelsOperations : virtual public BasicVoxelsOperations
 {
 public:
+    //virtual void RemoveParticle(UniqueIdInt ParticleIndex, bool ClearVoxels) = 0;
+    //inline void RemoveParticle(UniqueIdInt ParticleIndex, bool ClearVoxels);
+public:
     inline void SetAllVoxelsInListOfVoxelsToValue(std::vector<vector3_16>& ListOfVoxels, SimulationSpaceVoxel SimulationSpaceVoxelValue);
     void SetAllVoxelsInListOfVoxelsToValueOut(std::vector<vector3_16>& ListOfVoxels, SimulationSpaceVoxel SimulationSpaceVoxelValue);
 public:
@@ -51,7 +54,7 @@ public:
     inline void MoveParticleNearOtherParticleIfVoxelSpaceIsEmptyOrNearSpace(Particle& ParticleObject, const Particle& NewPositionParticleObject, SignedInt AddX, SignedInt AddY, SignedInt AddZ);
 };
 
-class CellEngineBasicParticlesOperations
+class CellEngineBasicParticlesOperations : virtual public CellEngineParticlesVoxelsOperations
 {
 protected:
     UnsignedInt XMin{}, XMax{}, YMin{}, YMax{}, ZMin{}, ZMax{};
@@ -66,6 +69,7 @@ public:
         return Particles[ParticleIndex];
     }
 public:
+    inline void RemoveParticle(UniqueIdInt ParticleIndex, bool ClearVoxels);
 public:
     void SetStartValuesForSpaceMinMax();
     void GetMinMaxCoordinatesForAllParticles(bool UpdateParticleKindListOfVoxelsBool);
@@ -115,13 +119,10 @@ protected:
     std::vector<UniqueIdInt> RNANucleotidesWithFreePrevEndingsFoundInProximity;
     std::vector<UniqueIdInt> NucleotidesFreeFoundInProximity;
     std::vector<UniqueIdInt> RNANucleotidesFoundInProximity;
-//public:
-//    static bool CompareFitnessOfParticle(const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction);
-//    std::tuple<std::vector<ChainIdInt>, std::string> GetNucleotidesSequenceInBothDirections(const std::vector<UniqueIdInt>& NucleotidesFoundInProximity, UnsignedInt SizeOfLoop);
-//    bool CompareFitnessOfDNASequenceByNucleotidesLoop(ComparisonType TypeOfComparison, const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction);
-//public:
-//    std::tuple<std::vector<std::pair<UniqueIdInt, UnsignedInt>>, bool> ChooseParticlesForReactionFromAllParticlesInProximity(const Reaction& ReactionObject);
-//    void EraseParticleChosenForReactionAndGetCentersForNewProductsOfReaction(UnsignedInt ParticleIndexChosenForReaction, std::vector <vector3_16> &Centers);
+public:
+    static bool CompareFitnessOfParticle(const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction);
+    void EraseParticleChosenForReactionAndGetCentersForNewProductsOfReaction(UnsignedInt ParticleIndexChosenForReaction, std::vector <vector3_16> &Centers);
+    //void RemoveParticle(UniqueIdInt ParticleIndex, bool ClearVoxels) override;
 public:
     explicit CellEngineChemicalReactionsInVoxelSpace(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : CellEngineBasicParticlesOperations(ParticlesParam)
     {
@@ -131,14 +132,15 @@ public:
 class CellEngineDNAChemicalReactionsInVoxelSpace : public CellEngineChemicalReactionsInVoxelSpace
 {
 public:
-    inline void RemoveParticle(UniqueIdInt ParticleIndex, bool ClearVoxels);
+    //void RemoveParticle(UniqueIdInt ParticleIndex, bool ClearVoxels) override;
+    //inline void RemoveParticle(UniqueIdInt ParticleIndex, bool ClearVoxels) override;
 public:
-    static bool CompareFitnessOfParticle(const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction);
+    //static bool CompareFitnessOfParticle(const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction);
     std::tuple<std::vector<ChainIdInt>, std::string> GetNucleotidesSequenceInBothDirections(const std::vector<UniqueIdInt>& NucleotidesFoundInProximity, UnsignedInt SizeOfLoop);
     bool CompareFitnessOfDNASequenceByNucleotidesLoop(ComparisonType TypeOfComparison, const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction);
 public:
     std::tuple<std::vector<std::pair<UniqueIdInt, UnsignedInt>>, bool> ChooseParticlesForReactionFromAllParticlesInProximity(const Reaction& ReactionObject);
-    void EraseParticleChosenForReactionAndGetCentersForNewProductsOfReaction(UnsignedInt ParticleIndexChosenForReaction, std::vector <vector3_16> &Centers);
+    //void EraseParticleChosenForReactionAndGetCentersForNewProductsOfReaction(UnsignedInt ParticleIndexChosenForReaction, std::vector <vector3_16> &Centers);
 public:
     void MakingZeroSizeForContainersForFoundParticlesInProximity();
     void UpdateFoundNucleotidesForFoundParticlesInProximity(UnsignedInt ParticleIndex);
@@ -246,9 +248,6 @@ public:
     std::vector<UnsignedInt> GetRandomParticles(UnsignedInt NumberOfReactants) override;
     bool IsChemicalReactionPossible(const Reaction& ReactionObject) override;
     bool MakeChemicalReaction(Reaction& ReactionObject) override;
-public:
-//    std::tuple<std::vector<std::pair<UniqueIdInt, UnsignedInt>>, bool> ChooseParticlesForReactionFromAllParticlesInProximity(const Reaction& ReactionObject);
-//    void EraseParticleChosenForReactionAndGetCentersForNewProductsOfReaction(UnsignedInt ParticleIndexChosenForReaction, std::vector <vector3_16> &Centers);
 public:
     std::vector<UniqueIdInt> GetAllParticlesWithChosenEntityId(UniqueIdInt EntityId);
     UnsignedInt GetNumberOfParticlesWithChosenEntityId(UniqueIdInt EntityId);
