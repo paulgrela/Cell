@@ -19,7 +19,6 @@ public:
     bool FilmOfStructuresActive = false;
 protected:
     std::unordered_map<UniqueIdInt, Particle> Particles;
-    //std::unordered_map<UniqueIdInt, Particle>* Particles = nullptr;
     inline Particle& GetParticleFromIndex(const UniqueIdInt ParticleIndex)
     {
         return Particles[ParticleIndex];
@@ -33,11 +32,6 @@ public:
     virtual void SaveDataToFile()
     {
     }
-//public:
-//    void SetMainDataPointers(std::unordered_map<UniqueIdInt, Particle>* ParticlesParam)
-//    {
-//        //Particles = ParticlesParam;
-//    }
 public:
     static vmath::vec3 GetCenter(const std::vector<CellEngineAtom>& AtomsParam)
     {

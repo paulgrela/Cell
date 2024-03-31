@@ -90,12 +90,10 @@ void CellEngineParticlesBinaryDataFileReaderWriter::SaveParticlesToBinaryFile(of
     {
         LoggersManagerObject.Log(STREAM("START OF SAVING PARTICLES TO BINARY FILE"));
 
-        //UnsignedInt ParticlesSize = Particles->size();
         UnsignedInt ParticlesSize = Particles.size();
         LoggersManagerObject.Log(STREAM("Number of Particles to be saved = " << ParticlesSize));
         ParticlesDataFile.write((char*)&ParticlesSize, sizeof(ParticlesSize));
 
-        //for (const auto& ParticleObject : *Particles)
         for (const auto& ParticleObject : Particles)
         {
             ParticlesDataFile.write((char*)&ParticleObject.second.EntityId, sizeof(ParticleObject.second.EntityId));
@@ -161,7 +159,6 @@ void CellEngineParticlesBinaryDataFileReaderWriter::PrepareParticlesAfterReading
     {
         LoggersManagerObject.Log(STREAM("START OF PREPARING PARTICLES"));
 
-        //for (auto& ParticleObject : *Particles)
         for (auto& ParticleObject : Particles)
         {
             CellEngineVoxelSimulationSpaceObjectPointer->SetAllVoxelsInListOfVoxelsToValueOut(ParticleObject.second.ListOfVoxels, ParticleObject.second.Index);
@@ -299,7 +296,6 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesKindsAndParticl
 {
     try
     {
-        //Particles->clear();
         Particles.clear();
         ParticlesKindsManagerObject.ParticlesKinds.clear();
         ParticlesKindsManagerObject.ParticlesKindsPos.clear();

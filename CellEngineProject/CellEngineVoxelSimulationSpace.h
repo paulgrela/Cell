@@ -53,6 +53,8 @@ public:
 
 class CellEngineBasicParticlesOperations
 {
+protected:
+    UnsignedInt XMin{}, XMax{}, YMin{}, YMax{}, ZMin{}, ZMax{};
 public:
     std::unordered_map<UniqueIdInt, Particle>& Particles;
 public:
@@ -60,6 +62,13 @@ public:
     {
         return Particles[ParticleIndex];
     }
+public:
+public:
+    void SetStartValuesForSpaceMinMax();
+    void GetMinMaxCoordinatesForAllParticles(bool UpdateParticleKindListOfVoxelsBool);
+    static void GetMinMaxOfCoordinates(UnsignedInt PosX, UnsignedInt PosY, UnsignedInt PosZ, UnsignedInt& XMinParam, UnsignedInt& XMaxParam, UnsignedInt& YMinParam, UnsignedInt& YMaxParam, UnsignedInt& ZMinParam, UnsignedInt& ZMaxParam);
+    static void GetMinMaxCoordinatesForParticle(Particle& ParticleObject, bool UpdateParticleKindListOfVoxels);
+    static void UpdateParticleKindListOfVoxels(Particle& ParticleObject, UnsignedInt ParticleXMin, UnsignedInt ParticleXMax, UnsignedInt ParticleYMin, UnsignedInt ParticleYMax, UnsignedInt ParticleZMin, UnsignedInt ParticleZMax);
 public:
     explicit CellEngineBasicParticlesOperations(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : Particles(ParticlesParam)
     {
@@ -84,14 +93,50 @@ public:
     inline void SetValueToVoxelsForSphereSelectedSpace(std::vector<vector3_16>* FilledSpaceVoxels, UniqueIdInt VoxelValue, UnsignedInt PosXStart, UnsignedInt PosYStart, UnsignedInt PosZStart, UnsignedInt StepX, UnsignedInt StepY, UnsignedInt StepZ, UnsignedInt RadiusXParam, UnsignedInt RadiusYParam, UnsignedInt RadiusZParam);
     inline void SetValueToVoxelsForEllipsoidSelectedSpace(std::vector<vector3_16>* FilledSpaceVoxels, UniqueIdInt VoxelValue, UnsignedInt PosXStart, UnsignedInt PosYStart, UnsignedInt PosZStart, UnsignedInt StepX, UnsignedInt StepY, UnsignedInt StepZ, UnsignedInt RadiusXParam, UnsignedInt RadiusYParam, UnsignedInt RadiusZParam);
 public:
-    explicit CellEngineParticlesVoxelsShapesGenerator(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : CellEngineBasicParticlesOperations(ParticlesParam)
+    explicit CellEngineParticlesVoxelsShapesGenerator(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : CellEngineBasicParticlesOperations(ParticlesParam), BasicVoxelsOperations()
+    {
+    }
+};
+
+class CellEngineDNAChemicalReactionsInVoxelSpace : virtual public CellEngineBasicParticlesOperations, virtual public CellEngineParticlesVoxelsOperations
+{
+protected:
+    std::map<EntityIdInt, UnsignedInt> ParticlesKindsFoundInProximity;
+    std::vector<UniqueIdInt> ParticlesSortedByCapacityFoundInProximity;
+protected:
+    std::vector<UniqueIdInt> NucleotidesWithFreeNextEndingsFoundInProximity;
+    std::vector<UniqueIdInt> NucleotidesWithFreePrevEndingsFoundInProximity;
+    std::vector<UniqueIdInt> DNANucleotidesWithFreeNextEndingsFoundInProximity;
+    std::vector<UniqueIdInt> DNANucleotidesWithFreePrevEndingsFoundInProximity;
+    std::vector<UniqueIdInt> RNANucleotidesWithFreeNextEndingsFoundInProximity;
+    std::vector<UniqueIdInt> RNANucleotidesWithFreePrevEndingsFoundInProximity;
+    std::vector<UniqueIdInt> NucleotidesFreeFoundInProximity;
+    std::vector<UniqueIdInt> RNANucleotidesFoundInProximity;
+public:
+    void MakingZeroSizeForContainersForFoundParticlesInProximity();
+    void UpdateFoundNucleotidesForFoundParticlesInProximity(UnsignedInt ParticleIndex);
+    void PrintInformationAboutFoundParticlesInProximity();
+public:
+    bool FindParticlesInProximityOfVoxelSimulationSpaceForChosenParticle(const Particle& ParticleObject, UnsignedInt AdditionalBoundFactor);
+    bool FindParticlesInProximityOfVoxelSimulationSpaceForSelectedVoxelSpace(bool UpdateNucleotides, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
+public:
+    bool CutDNAInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject);
+    bool LinkDNAInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject);
+    bool LinkDNAInAnyPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject);
+    bool CutDNACrisperInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject);
+    bool LinkDNALigaseInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject);
+    bool LinkDNALigaseInAnyPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject);
+    bool PolymeraseDNAStartSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject);
+    bool PolymeraseDNAContinueSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject);
+public:
+    explicit CellEngineDNAChemicalReactionsInVoxelSpace(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : CellEngineBasicParticlesOperations(ParticlesParam)
     {
     }
 };
 
 #define SIMULATION_DETAILED_LOG
 
-class CellEngineVoxelSimulationSpace : public CellEngineChemicalReactions, public CellEngineParticlesVoxelsOperations, public CellEngineParticlesVoxelsShapesGenerator
+class CellEngineVoxelSimulationSpace : public CellEngineChemicalReactions, public CellEngineDNAChemicalReactionsInVoxelSpace, public CellEngineParticlesVoxelsShapesGenerator
 {
     friend class CellEngineParticlesDataFile;
 public:
@@ -114,67 +159,12 @@ private:
 private:
     std::vector<std::vector<UniqueIdInt>> Genomes;
 private:
-    UnsignedInt MaxParticleIndex{};
-//    std::unordered_map<UniqueIdInt, Particle> Particles;
     std::unordered_map<UniqueIdInt, Particle>& Particles;
+    UnsignedInt MaxParticleIndex{};
     std::stack<UniqueIdInt> FreeIndexesOfParticles;
-private:
-    std::map<EntityIdInt, UnsignedInt> ParticlesKindsFoundInProximity;
-    std::vector<UniqueIdInt> ParticlesSortedByCapacityFoundInProximity;
-private:
-    std::vector<UniqueIdInt> NucleotidesWithFreeNextEndingsFoundInProximity;
-    std::vector<UniqueIdInt> NucleotidesWithFreePrevEndingsFoundInProximity;
-    std::vector<UniqueIdInt> DNANucleotidesWithFreeNextEndingsFoundInProximity;
-    std::vector<UniqueIdInt> DNANucleotidesWithFreePrevEndingsFoundInProximity;
-    std::vector<UniqueIdInt> RNANucleotidesWithFreeNextEndingsFoundInProximity;
-    std::vector<UniqueIdInt> RNANucleotidesWithFreePrevEndingsFoundInProximity;
-    std::vector<UniqueIdInt> NucleotidesFreeFoundInProximity;
-    std::vector<UniqueIdInt> RNANucleotidesFoundInProximity;
-//private:
-//    void* SpacePointer;
-private:
-//    inline SimulationSpaceVoxel& GetSpaceVoxel(UnsignedInt x, UnsignedInt y, UnsignedInt z);
-//    inline Particle& GetParticleFromIndex(UniqueIdInt ParticleIndex);
-private:
-    UnsignedInt XMin{}, XMax{}, YMin{}, YMax{}, ZMin{}, ZMax{};
 public:
     [[nodiscard]] static float ConvertToGraphicsCoordinate(UnsignedInt CoordinateParam);
     [[nodiscard]] static UnsignedInt ConvertToSpaceCoordinate(double CoordinateParam);
-public:
-    void SetStartValuesForSpaceMinMax();
-//public:
-//    inline void MoveParticleByVector(Particle& ParticleObject, SignedInt VectorX, SignedInt VectorY, SignedInt VectorZ);
-//    inline void MoveParticleNearOtherParticle(Particle& ParticleObject, const Particle& NewPositionParticleObject, SignedInt AddX, SignedInt AddY, SignedInt AddZ);
-//    inline bool CheckFreeSpaceForParticleMovedByVector(Particle& ParticleObject, SignedInt VectorX, SignedInt VectorY, SignedInt VectorZ);
-//    inline static bool CheckBoundsForParticleMovedByVector(Particle& ParticleObject, SignedInt VectorX, SignedInt VectorY, SignedInt VectorZ, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
-//    inline bool CheckBoundsAndFreeSpaceForParticleMovedByVector(Particle& ParticleObject, SignedInt VectorX, SignedInt VectorY, SignedInt VectorZ, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
-//public:
-//    inline bool MoveParticleByVectorIfVoxelSpaceIsEmpty(Particle& ParticleObject, SignedInt VectorX, SignedInt VectorY, SignedInt VectorZ);
-//    inline bool MoveParticleByVectorIfVoxelSpaceIsEmptyAndIsInBounds(Particle& ParticleObject, SignedInt VectorX, SignedInt VectorY, SignedInt VectorZ, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
-//    inline bool MoveParticleNearOtherParticleIfVoxelSpaceIsEmpty(Particle& ParticleObject, const Particle& NewPositionParticleObject, SignedInt AddX, SignedInt AddY, SignedInt AddZ);
-//    inline void MoveParticleNearOtherParticleIfVoxelSpaceIsEmptyOrNearSpace(Particle& ParticleObject, const Particle& NewPositionParticleObject, SignedInt AddX, SignedInt AddY, SignedInt AddZ);
-
-//public:
-//    typedef bool (CellEngineVoxelSimulationSpace::*CheckFreeSpaceForSelectedSpaceType)(UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UniqueIdInt );
-//    typedef void (CellEngineVoxelSimulationSpace::*SetValueToVoxelsForSelectedSpaceType)(std::vector<vector3_16>*, UniqueIdInt, UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt);
-//public:
-//    inline void GenerateParticleVoxelsWhenSelectedSpaceIsFree(UnsignedInt LocalNewParticleIndex, UnsignedInt PosXStart, UnsignedInt PosYStart, UnsignedInt PosZStart, UnsignedInt SizeOfParticleX, UnsignedInt SizeOfParticleY, UnsignedInt SizeOfParticleZ, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam, CheckFreeSpaceForSelectedSpaceType CheckFreeSpaceForSelectedSpace, SetValueToVoxelsForSelectedSpaceType SetValueToVoxelsForSelectedSpace);
-//public:
-//    inline void SetValueToSpaceVoxelWithFillingListOfVoxelsOfParticle(std::vector <vector3_16> *FilledSpaceVoxels, UniqueIdInt VoxelValue, UnsignedInt PosX, UnsignedInt PosY, UnsignedInt PosZ);
-////    inline void SetAllVoxelsInListOfVoxelsToValue(std::vector<vector3_16>& ListOfVoxels, SimulationSpaceVoxel SimulationSpaceVoxelValue);
-//public:
-//    inline bool CheckFreeSpaceInCuboidSelectedSpace(UnsignedInt PosXStart, UnsignedInt PosYStart, UnsignedInt PosZStart, UnsignedInt StepX, UnsignedInt StepY, UnsignedInt StepZ, UnsignedInt SizeOfParticleX, UnsignedInt SizeOfParticleY, UnsignedInt SizeOfParticleZ, UniqueIdInt ValueToCheck);
-//    inline bool CheckFreeSpaceForSphereSelectedSpace(UnsignedInt PosXStart, UnsignedInt PosYStart, UnsignedInt PosZStart, UnsignedInt StepX, UnsignedInt StepY, UnsignedInt StepZ, UnsignedInt RadiusXParam, UnsignedInt RadiusYParam, UnsignedInt RadiusZParam, UniqueIdInt ValueToCheck);
-//    inline bool CheckFreeSpaceForEllipsoidSelectedSpace(UnsignedInt PosXStart, UnsignedInt PosYStart, UnsignedInt PosZStart, UnsignedInt StepX, UnsignedInt StepY, UnsignedInt StepZ, UnsignedInt RadiusXParam, UnsignedInt RadiusYParam, UnsignedInt RadiusZParam, UniqueIdInt ValueToCheck);
-//public:
-//    inline void SetValueToVoxelsForCuboidSelectedSpace(std::vector<vector3_16>* FilledSpaceVoxels, UniqueIdInt VoxelValue, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt StepXParam, UnsignedInt StepYParam, UnsignedInt StepZParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
-//    inline void SetValueToVoxelsForSphereSelectedSpace(std::vector<vector3_16>* FilledSpaceVoxels, UniqueIdInt VoxelValue, UnsignedInt PosXStart, UnsignedInt PosYStart, UnsignedInt PosZStart, UnsignedInt StepX, UnsignedInt StepY, UnsignedInt StepZ, UnsignedInt RadiusXParam, UnsignedInt RadiusYParam, UnsignedInt RadiusZParam);
-//    inline void SetValueToVoxelsForEllipsoidSelectedSpace(std::vector<vector3_16>* FilledSpaceVoxels, UniqueIdInt VoxelValue, UnsignedInt PosXStart, UnsignedInt PosYStart, UnsignedInt PosZStart, UnsignedInt StepX, UnsignedInt StepY, UnsignedInt StepZ, UnsignedInt RadiusXParam, UnsignedInt RadiusYParam, UnsignedInt RadiusZParam);
-
-    //public:
-//    void SetAllVoxelsInListOfVoxelsToValueOut(std::vector<vector3_16>& ListOfVoxels, SimulationSpaceVoxel SimulationSpaceVoxelValue);
-public:
-    static void GetMinMaxOfCoordinates(UnsignedInt PosX, UnsignedInt PosY, UnsignedInt PosZ, UnsignedInt& XMinParam, UnsignedInt& XMaxParam, UnsignedInt& YMinParam, UnsignedInt& YMaxParam, UnsignedInt& ZMinParam, UnsignedInt& ZMaxParam);
 public:
     [[nodiscard]] std::stringstream PrintSpaceMinMaxValues() const;
 public:
@@ -230,22 +220,6 @@ public:
     bool IsChemicalReactionPossible(const Reaction& ReactionObject) override;
     bool MakeChemicalReaction(Reaction& ReactionObject) override;
 public:
-    void MakingZeroSizeForContainersForFoundParticlesInProximity();
-    void UpdateFoundNucleotidesForFoundParticlesInProximity(UnsignedInt ParticleIndex);
-    void PrintInformationAboutFoundParticlesInProximity();
-public:
-    bool FindParticlesInProximityOfVoxelSimulationSpaceForChosenParticle(const Particle& ParticleObject, UnsignedInt AdditionalBoundFactor);
-    bool FindParticlesInProximityOfVoxelSimulationSpaceForSelectedVoxelSpace(bool UpdateNucleotides, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
-public:
-    bool CutDNAInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject);
-    bool LinkDNAInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject);
-    bool LinkDNAInAnyPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject);
-    bool CutDNACrisperInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject);
-    bool LinkDNALigaseInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject);
-    bool LinkDNALigaseInAnyPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject);
-    bool PolymeraseDNAStartSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject);
-    bool PolymeraseDNAContinueSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject);
-public:
     std::tuple<std::vector<std::pair<UniqueIdInt, UnsignedInt>>, bool> ChooseParticlesForReactionFromAllParticlesInProximity(const Reaction& ReactionObject);
     static bool CompareFitnessOfParticle(const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction);
     std::tuple<std::vector<ChainIdInt>, std::string> GetNucleotidesSequenceInBothDirections(const std::vector<UniqueIdInt>& NucleotidesFoundInProximity, UnsignedInt SizeOfLoop);
@@ -274,9 +248,6 @@ public:
 public:
     void PreprocessData(bool UpdateParticleKindListOfVoxelsBool);
     void InitiateFreeParticleIndexes();
-    void GetMinMaxCoordinatesForAllParticles(bool UpdateParticleKindListOfVoxelsBool);
-    static void GetMinMaxCoordinatesForParticle(Particle& ParticleObject, bool UpdateParticleKindListOfVoxels);
-    static void UpdateParticleKindListOfVoxels(Particle& ParticleObject, UnsignedInt ParticleXMin, UnsignedInt ParticleXMax, UnsignedInt ParticleYMin, UnsignedInt ParticleYMax, UnsignedInt ParticleZMin, UnsignedInt ParticleZMax);
 public:
     explicit CellEngineVoxelSimulationSpace(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam);
     ~CellEngineVoxelSimulationSpace();
