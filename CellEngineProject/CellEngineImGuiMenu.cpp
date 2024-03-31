@@ -643,7 +643,7 @@ public:
                     if (ImGui::Button("  GENERATE RANDOM MEMBRANE PARTICLES  ") == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateRandomMembraneParticles();
                     if (ImGui::Button("  GENERATE RANDOM RIBOSOMES PARTICLES ") == true)
-                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateRandomMembraneParticles();
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateRandomRibosomesParticles();
                 }
 
                 if (ImGui::CollapsingHeader("SAVING AND READING PARTICLES TO AND FROM FILE", ImGuiTreeNodeFlags_DefaultOpen))

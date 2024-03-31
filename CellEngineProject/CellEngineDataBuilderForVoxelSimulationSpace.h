@@ -10,7 +10,8 @@ class CellEngineDataBuilderForVoxelSimulationSpace : public CellEngineParticlesD
 protected:
     void SetStartValues() override
     {
-        CellEngineVoxelSimulationSpaceObjectPointer = std::make_unique<CellEngineVoxelSimulationSpace>();
+        //CellEngineVoxelSimulationSpaceObjectPointer = std::make_unique<CellEngineVoxelSimulationSpace>();
+        CellEngineVoxelSimulationSpaceObjectPointer = std::make_unique<CellEngineVoxelSimulationSpace>(Particles);
     }
 protected:
     UniqueIdInt AddNewParticle(const Particle& ParticleObjectParam) override

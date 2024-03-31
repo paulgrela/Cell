@@ -31,15 +31,15 @@ using namespace std;
     return static_cast<UnsignedInt>(round(CoordinateParam) / CellEngineConfigDataObject.DivisionFactorForVoxelSimulationSpace) + (CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension / 2);
 };
 
-inline SimulationSpaceVoxel& CellEngineVoxelSimulationSpace::GetSpaceVoxel(UnsignedInt x, UnsignedInt y, UnsignedInt z)
-{
-    return CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension == 2048 ? (*static_cast<Space_2048_2048_2048*>(SpacePointer))[x][y][z] : (*static_cast<Space_1024_1024_1024*>(SpacePointer))[x][y][z];
-}
+//inline SimulationSpaceVoxel& CellEngineVoxelSimulationSpace::GetSpaceVoxel(UnsignedInt x, UnsignedInt y, UnsignedInt z)
+//{
+//    return CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension == 2048 ? (*static_cast<Space_2048_2048_2048*>(SpacePointer))[x][y][z] : (*static_cast<Space_1024_1024_1024*>(SpacePointer))[x][y][z];
+//}
 
-inline Particle& CellEngineVoxelSimulationSpace::GetParticleFromIndex(const UniqueIdInt ParticleIndex)
-{
-    return Particles[ParticleIndex];
-}
+//inline Particle& CellEngineVoxelSimulationSpace::GetParticleFromIndex(const UniqueIdInt ParticleIndex)
+//{
+//    return Particles[ParticleIndex];
+//}
 
 inline SimulationSpaceVoxel GetZeroSimulationSpaceVoxel()
 {
@@ -56,142 +56,151 @@ Particle& CellEngineVoxelSimulationSpace::GetParticleFromIndexInSimulationSpaceV
     return GetParticleFromIndex(ParticleIndex);
 }
 
-inline void CellEngineVoxelSimulationSpace::SetValueToSpaceVoxelWithFillingListOfVoxelsOfParticle(vector<vector3_16>* FilledSpaceVoxels, const UniqueIdInt VoxelValue, const UnsignedInt PosX, const UnsignedInt PosY, const UnsignedInt PosZ)
-{
-    try
-    {
-        if (FilledSpaceVoxels != nullptr)
-            FilledSpaceVoxels->emplace_back(PosX, PosY, PosZ);
-        GetSpaceVoxel(PosX, PosY, PosZ) = VoxelValue;
-    }
-    CATCH("setting value to voxel")
-}
+//inline void CellEngineVoxelSimulationSpace::SetValueToSpaceVoxelWithFillingListOfVoxelsOfParticle(vector<vector3_16>* FilledSpaceVoxels, const UniqueIdInt VoxelValue, const UnsignedInt PosX, const UnsignedInt PosY, const UnsignedInt PosZ)
+//{
+//    try
+//    {
+//        if (FilledSpaceVoxels != nullptr)
+//            FilledSpaceVoxels->emplace_back(PosX, PosY, PosZ);
+//        GetSpaceVoxel(PosX, PosY, PosZ) = VoxelValue;
+//    }
+//    CATCH("setting value to voxel")
+//}
+//
+//inline bool CellEngineVoxelSimulationSpace::CheckFreeSpaceInCuboidSelectedSpace(const UnsignedInt PosXStart, const UnsignedInt PosYStart, const UnsignedInt PosZStart, const UnsignedInt StepX, const UnsignedInt StepY, const UnsignedInt StepZ, const UnsignedInt SizeOfParticleX, const UnsignedInt SizeOfParticleY, const UnsignedInt SizeOfParticleZ, const UniqueIdInt ValueToCheck)
+//{
+//    try
+//    {
+//        for (UnsignedInt PosX = PosXStart; PosX < PosXStart + SizeOfParticleX; PosX += StepX)
+//            for (UnsignedInt PosY = PosYStart; PosY < PosYStart + SizeOfParticleY; PosY += StepY)
+//                for (UnsignedInt PosZ = PosZStart; PosZ < PosZStart + SizeOfParticleZ; PosZ += StepZ)
+//                    if (GetSpaceVoxel(PosX, PosY, PosZ) != ValueToCheck)
+//                        return false;
+//    }
+//    CATCH("checking free space in cuboid selected space")
+//
+//    return true;
+//}
+//
+//inline void CellEngineVoxelSimulationSpace::SetValueToVoxelsForCuboidSelectedSpace(std::vector<vector3_16>* FilledSpaceVoxels, const UniqueIdInt VoxelValue, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt StepXParam, const UnsignedInt StepYParam, const UnsignedInt StepZParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
+//{
+//    try
+//    {
+//        for (UnsignedInt PosX = StartXPosParam; PosX < StartXPosParam + SizeXParam; PosX += StepXParam)
+//            for (UnsignedInt PosY = StartYPosParam; PosY < StartYPosParam + SizeYParam; PosY += StepYParam)
+//                for (UnsignedInt PosZ = StartZPosParam; PosZ < StartZPosParam + SizeZParam; PosZ += StepZParam)
+//                    SetValueToSpaceVoxelWithFillingListOfVoxelsOfParticle(FilledSpaceVoxels, VoxelValue, PosX, PosY, PosZ);
+//    }
+//    CATCH("setting value to voxels for cuboid selected space")
+//}
+//
+//bool CellEngineVoxelSimulationSpace::CheckFreeSpaceForSphereSelectedSpace(const UnsignedInt PosXStart, const UnsignedInt PosYStart, const UnsignedInt PosZStart, const UnsignedInt StepX, const UnsignedInt StepY, const UnsignedInt StepZ, const UnsignedInt RadiusXParam, const UnsignedInt RadiusYParam, const UnsignedInt RadiusZParam, const UniqueIdInt ValueToCheck)
+//{
+//    try
+//    {
+//        UnsignedInt RadiusParam = RadiusXParam;
+//
+//        for (SignedInt x = 0; x < RadiusParam * 2; x += static_cast<SignedInt>(StepX))
+//            for (SignedInt y = 0; y < RadiusParam * 2; y += static_cast<SignedInt>(StepY))
+//                for (SignedInt z = 0; z < RadiusParam * 2; z += static_cast<SignedInt>(StepZ))
+//                {
+//                    SignedInt dx = static_cast<SignedInt>(RadiusParam) - x;
+//                    SignedInt dy = static_cast<SignedInt>(RadiusParam) - y;
+//                    SignedInt dz = static_cast<SignedInt>(RadiusParam) - z;
+//                    if ((dx * dx + dy * dy + dz * dz) <= (RadiusParam * RadiusParam))
+//                        if (GetSpaceVoxel(PosXStart + dx, PosYStart + dy, PosZStart + dz) != ValueToCheck)
+//                            return false;
+//                }
+//    }
+//    CATCH("checking free space in sphere selected space")
+//
+//    return true;
+//};
+//
+//void CellEngineVoxelSimulationSpace::SetValueToVoxelsForSphereSelectedSpace(std::vector<vector3_16>* FilledSpaceVoxels, UniqueIdInt VoxelValue, const UnsignedInt PosXStart, const UnsignedInt PosYStart, const  UnsignedInt PosZStart, const UnsignedInt StepX, const UnsignedInt StepY, const UnsignedInt StepZ, const UnsignedInt RadiusXParam, const UnsignedInt RadiusYParam, const UnsignedInt RadiusZParam)
+//{
+//    try
+//    {
+//        UnsignedInt RadiusParam = RadiusXParam;
+//
+//        for (SignedInt x = 0; x < RadiusParam * 2; x += static_cast<SignedInt>(StepX))
+//            for (SignedInt y = 0; y < RadiusParam * 2; y += static_cast<SignedInt>(StepY))
+//                for (SignedInt z = 0; z < RadiusParam * 2; z += static_cast<SignedInt>(StepZ))
+//                {
+//                    SignedInt dx = static_cast<SignedInt>(RadiusParam) - x;
+//                    SignedInt dy = static_cast<SignedInt>(RadiusParam) - y;
+//                    SignedInt dz = static_cast<SignedInt>(RadiusParam) - z;
+//                    if ((dx * dx + dy * dy + dz * dz) <= (RadiusParam * RadiusParam))
+//                        SetValueToSpaceVoxelWithFillingListOfVoxelsOfParticle(FilledSpaceVoxels, VoxelValue, PosXStart + dx, PosYStart + dy, PosZStart + dz);
+//                }
+//    }
+//    CATCH("setting value to voxels for sphere selected space")
+//};
+//
+//bool CellEngineVoxelSimulationSpace::CheckFreeSpaceForEllipsoidSelectedSpace(const UnsignedInt PosXStart, const UnsignedInt PosYStart, const UnsignedInt PosZStart, const UnsignedInt StepX, const UnsignedInt StepY, const UnsignedInt StepZ, const UnsignedInt RadiusXParam, const UnsignedInt RadiusYParam, const UnsignedInt RadiusZParam, const UniqueIdInt ValueToCheck)
+//{
+//    try
+//    {
+//        for (SignedInt x = 0; x < RadiusXParam * 2; x += static_cast<SignedInt>(StepX))
+//            for (SignedInt y = 0; y < RadiusYParam * 2; y += static_cast<SignedInt>(StepY))
+//                for (SignedInt z = 0; z < RadiusZParam * 2; z+= static_cast<SignedInt>(StepZ))
+//                {
+//                    SignedInt dx = static_cast<SignedInt>(RadiusXParam) - x;
+//                    SignedInt dy = static_cast<SignedInt>(RadiusYParam) - y;
+//                    SignedInt dz = static_cast<SignedInt>(RadiusZParam) - z;
+//                    if ((dx * dx * RadiusYParam * RadiusYParam * RadiusZParam * RadiusZParam + dy * dy * RadiusXParam * RadiusXParam * RadiusZParam * RadiusZParam + dz * dz * RadiusXParam * RadiusXParam * RadiusYParam * RadiusYParam) <= (RadiusXParam * RadiusXParam * RadiusYParam * RadiusYParam * RadiusZParam * RadiusZParam))
+//                        if (GetSpaceVoxel(PosXStart + dx, PosYStart + dy, PosZStart + dz) != ValueToCheck)
+//                            return false;
+//                }
+//    }
+//    CATCH("checking free space in ellipsoid selected space")
+//
+//    return true;
+//};
+//
+//void CellEngineVoxelSimulationSpace::SetValueToVoxelsForEllipsoidSelectedSpace(std::vector<vector3_16>* FilledSpaceVoxels, UniqueIdInt VoxelValue, UnsignedInt PosXStart, UnsignedInt PosYStart, UnsignedInt PosZStart, const UnsignedInt StepX, const UnsignedInt StepY, const UnsignedInt StepZ, UnsignedInt RadiusXParam, UnsignedInt RadiusYParam, UnsignedInt RadiusZParam)
+//{
+//    try
+//    {
+//        for (SignedInt x = 0; x < RadiusXParam * 2; x += static_cast<SignedInt>(StepX))
+//            for (SignedInt y = 0; y < RadiusYParam * 2; y += static_cast<SignedInt>(StepY))
+//                for (SignedInt z = 0; z < RadiusZParam * 2; z += static_cast<SignedInt>(StepZ))
+//                {
+//                    SignedInt dx = static_cast<SignedInt>(RadiusXParam) - x;
+//                    SignedInt dy = static_cast<SignedInt>(RadiusYParam) - y;
+//                    SignedInt dz = static_cast<SignedInt>(RadiusZParam) - z;
+//                    if ((dx * dx * RadiusYParam * RadiusYParam * RadiusZParam * RadiusZParam + dy * dy * RadiusXParam * RadiusXParam * RadiusZParam * RadiusZParam + dz * dz * RadiusXParam * RadiusXParam * RadiusYParam * RadiusYParam) <= (RadiusXParam * RadiusXParam * RadiusYParam * RadiusYParam * RadiusZParam * RadiusZParam))
+//                        SetValueToSpaceVoxelWithFillingListOfVoxelsOfParticle(FilledSpaceVoxels, VoxelValue, PosXStart + dx, PosYStart + dy, PosZStart + dz);
+//                }
+//    }
+//    CATCH("setting value to voxels for ellipsoid selected space")
+//};
 
-inline bool CellEngineVoxelSimulationSpace::CheckFreeSpaceInCuboidSelectedSpace(const UnsignedInt PosXStart, const UnsignedInt PosYStart, const UnsignedInt PosZStart, const UnsignedInt StepX, const UnsignedInt StepY, const UnsignedInt StepZ, const UnsignedInt SizeOfParticleX, const UnsignedInt SizeOfParticleY, const UnsignedInt SizeOfParticleZ, const UniqueIdInt ValueToCheck)
-{
-    try
-    {
-        for (UnsignedInt PosX = PosXStart; PosX < PosXStart + SizeOfParticleX; PosX += StepX)
-            for (UnsignedInt PosY = PosYStart; PosY < PosYStart + SizeOfParticleY; PosY += StepY)
-                for (UnsignedInt PosZ = PosZStart; PosZ < PosZStart + SizeOfParticleZ; PosZ += StepZ)
-                    if (GetSpaceVoxel(PosX, PosY, PosZ) != ValueToCheck)
-                        return false;
-    }
-    CATCH("checking free space in cuboid selected space")
 
-    return true;
-}
 
-inline void CellEngineVoxelSimulationSpace::SetValueToVoxelsForCuboidSelectedSpace(std::vector<vector3_16>* FilledSpaceVoxels, const UniqueIdInt VoxelValue, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt StepXParam, const UnsignedInt StepYParam, const UnsignedInt StepZParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
-{
-    try
-    {
-        for (UnsignedInt PosX = StartXPosParam; PosX < StartXPosParam + SizeXParam; PosX += StepXParam)
-            for (UnsignedInt PosY = StartYPosParam; PosY < StartYPosParam + SizeYParam; PosY += StepYParam)
-                for (UnsignedInt PosZ = StartZPosParam; PosZ < StartZPosParam + SizeZParam; PosZ += StepZParam)
-                    SetValueToSpaceVoxelWithFillingListOfVoxelsOfParticle(FilledSpaceVoxels, VoxelValue, PosX, PosY, PosZ);
-    }
-    CATCH("setting value to voxels for cuboid selected space")
-}
 
-bool CellEngineVoxelSimulationSpace::CheckFreeSpaceForSphereSelectedSpace(const UnsignedInt PosXStart, const UnsignedInt PosYStart, const UnsignedInt PosZStart, const UnsignedInt StepX, const UnsignedInt StepY, const UnsignedInt StepZ, const UnsignedInt RadiusXParam, const UnsignedInt RadiusYParam, const UnsignedInt RadiusZParam, const UniqueIdInt ValueToCheck)
-{
-    try
-    {
-        UnsignedInt RadiusParam = RadiusXParam;
 
-        for (SignedInt x = 0; x < RadiusParam * 2; x += static_cast<SignedInt>(StepX))
-            for (SignedInt y = 0; y < RadiusParam * 2; y += static_cast<SignedInt>(StepY))
-                for (SignedInt z = 0; z < RadiusParam * 2; z += static_cast<SignedInt>(StepZ))
-                {
-                    SignedInt dx = static_cast<SignedInt>(RadiusParam) - x;
-                    SignedInt dy = static_cast<SignedInt>(RadiusParam) - y;
-                    SignedInt dz = static_cast<SignedInt>(RadiusParam) - z;
-                    if ((dx * dx + dy * dy + dz * dz) <= (RadiusParam * RadiusParam))
-                        if (GetSpaceVoxel(PosXStart + dx, PosYStart + dy, PosZStart + dz) != ValueToCheck)
-                            return false;
-                }
-    }
-    CATCH("checking free space in sphere selected space")
 
-    return true;
-};
 
-void CellEngineVoxelSimulationSpace::SetValueToVoxelsForSphereSelectedSpace(std::vector<vector3_16>* FilledSpaceVoxels, UniqueIdInt VoxelValue, const UnsignedInt PosXStart, const UnsignedInt PosYStart, const  UnsignedInt PosZStart, const UnsignedInt StepX, const UnsignedInt StepY, const UnsignedInt StepZ, const UnsignedInt RadiusXParam, const UnsignedInt RadiusYParam, const UnsignedInt RadiusZParam)
-{
-    try
-    {
-        UnsignedInt RadiusParam = RadiusXParam;
 
-        for (SignedInt x = 0; x < RadiusParam * 2; x += static_cast<SignedInt>(StepX))
-            for (SignedInt y = 0; y < RadiusParam * 2; y += static_cast<SignedInt>(StepY))
-                for (SignedInt z = 0; z < RadiusParam * 2; z += static_cast<SignedInt>(StepZ))
-                {
-                    SignedInt dx = static_cast<SignedInt>(RadiusParam) - x;
-                    SignedInt dy = static_cast<SignedInt>(RadiusParam) - y;
-                    SignedInt dz = static_cast<SignedInt>(RadiusParam) - z;
-                    if ((dx * dx + dy * dy + dz * dz) <= (RadiusParam * RadiusParam))
-                        SetValueToSpaceVoxelWithFillingListOfVoxelsOfParticle(FilledSpaceVoxels, VoxelValue, PosXStart + dx, PosYStart + dy, PosZStart + dz);
-                }
-    }
-    CATCH("setting value to voxels for sphere selected space")
-};
 
-bool CellEngineVoxelSimulationSpace::CheckFreeSpaceForEllipsoidSelectedSpace(const UnsignedInt PosXStart, const UnsignedInt PosYStart, const UnsignedInt PosZStart, const UnsignedInt StepX, const UnsignedInt StepY, const UnsignedInt StepZ, const UnsignedInt RadiusXParam, const UnsignedInt RadiusYParam, const UnsignedInt RadiusZParam, const UniqueIdInt ValueToCheck)
-{
-    try
-    {
-        for (SignedInt x = 0; x < RadiusXParam * 2; x += static_cast<SignedInt>(StepX))
-            for (SignedInt y = 0; y < RadiusYParam * 2; y += static_cast<SignedInt>(StepY))
-                for (SignedInt z = 0; z < RadiusZParam * 2; z+= static_cast<SignedInt>(StepZ))
-                {
-                    SignedInt dx = static_cast<SignedInt>(RadiusXParam) - x;
-                    SignedInt dy = static_cast<SignedInt>(RadiusYParam) - y;
-                    SignedInt dz = static_cast<SignedInt>(RadiusZParam) - z;
-                    if ((dx * dx * RadiusYParam * RadiusYParam * RadiusZParam * RadiusZParam + dy * dy * RadiusXParam * RadiusXParam * RadiusZParam * RadiusZParam + dz * dz * RadiusXParam * RadiusXParam * RadiusYParam * RadiusYParam) <= (RadiusXParam * RadiusXParam * RadiusYParam * RadiusYParam * RadiusZParam * RadiusZParam))
-                        if (GetSpaceVoxel(PosXStart + dx, PosYStart + dy, PosZStart + dz) != ValueToCheck)
-                            return false;
-                }
-    }
-    CATCH("checking free space in ellipsoid selected space")
 
-    return true;
-};
+//inline void CellEngineVoxelSimulationSpace::SetAllVoxelsInListOfVoxelsToValue(std::vector<vector3_16>& ListOfVoxels, SimulationSpaceVoxel SimulationSpaceVoxelValue)
+//{
+//    try
+//    {
+//        for (auto& Voxel : ListOfVoxels)
+//            GetSpaceVoxel(Voxel.X, Voxel.Y, Voxel.Z) = SimulationSpaceVoxelValue;
+//    }
+//    CATCH("making all zero voxels in list of voxels")
+//}
+//
+//void CellEngineVoxelSimulationSpace::SetAllVoxelsInListOfVoxelsToValueOut(std::vector<vector3_16>& ListOfVoxels, SimulationSpaceVoxel SimulationSpaceVoxelValue)
+//{
+//    SetAllVoxelsInListOfVoxelsToValue(ListOfVoxels, SimulationSpaceVoxelValue);
+//}
 
-void CellEngineVoxelSimulationSpace::SetValueToVoxelsForEllipsoidSelectedSpace(std::vector<vector3_16>* FilledSpaceVoxels, UniqueIdInt VoxelValue, UnsignedInt PosXStart, UnsignedInt PosYStart, UnsignedInt PosZStart, const UnsignedInt StepX, const UnsignedInt StepY, const UnsignedInt StepZ, UnsignedInt RadiusXParam, UnsignedInt RadiusYParam, UnsignedInt RadiusZParam)
-{
-    try
-    {
-        for (SignedInt x = 0; x < RadiusXParam * 2; x += static_cast<SignedInt>(StepX))
-            for (SignedInt y = 0; y < RadiusYParam * 2; y += static_cast<SignedInt>(StepY))
-                for (SignedInt z = 0; z < RadiusZParam * 2; z += static_cast<SignedInt>(StepZ))
-                {
-                    SignedInt dx = static_cast<SignedInt>(RadiusXParam) - x;
-                    SignedInt dy = static_cast<SignedInt>(RadiusYParam) - y;
-                    SignedInt dz = static_cast<SignedInt>(RadiusZParam) - z;
-                    if ((dx * dx * RadiusYParam * RadiusYParam * RadiusZParam * RadiusZParam + dy * dy * RadiusXParam * RadiusXParam * RadiusZParam * RadiusZParam + dz * dz * RadiusXParam * RadiusXParam * RadiusYParam * RadiusYParam) <= (RadiusXParam * RadiusXParam * RadiusYParam * RadiusYParam * RadiusZParam * RadiusZParam))
-                        SetValueToSpaceVoxelWithFillingListOfVoxelsOfParticle(FilledSpaceVoxels, VoxelValue, PosXStart + dx, PosYStart + dy, PosZStart + dz);
-                }
-    }
-    CATCH("setting value to voxels for ellipsoid selected space")
-};
-
-inline void CellEngineVoxelSimulationSpace::SetAllVoxelsInListOfVoxelsToValue(std::vector<vector3_16>& ListOfVoxels, SimulationSpaceVoxel SimulationSpaceVoxelValue)
-{
-    try
-    {
-        for (auto& Voxel : ListOfVoxels)
-            GetSpaceVoxel(Voxel.X, Voxel.Y, Voxel.Z) = SimulationSpaceVoxelValue;
-    }
-    CATCH("making all zero voxels in list of voxels")
-}
-
-void CellEngineVoxelSimulationSpace::SetAllVoxelsInListOfVoxelsToValueOut(std::vector<vector3_16>& ListOfVoxels, SimulationSpaceVoxel SimulationSpaceVoxelValue)
-{
-    SetAllVoxelsInListOfVoxelsToValue(ListOfVoxels, SimulationSpaceVoxelValue);
-}
-
-CellEngineVoxelSimulationSpace::CellEngineVoxelSimulationSpace()
+CellEngineVoxelSimulationSpace::CellEngineVoxelSimulationSpace(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : Particles(ParticlesParam), CellEngineParticlesVoxelsShapesGenerator(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam)
 {
     try
     {
@@ -204,7 +213,7 @@ CellEngineVoxelSimulationSpace::CellEngineVoxelSimulationSpace()
         Genomes.resize(2);
         GenomesLines.resize(1);
 
-        CellEngineDataFileObjectPointer->SetMainDataPointers(&Particles);
+        //CellEngineDataFileObjectPointer->SetMainDataPointers(&Particles);
     }
     CATCH("execution of constructor of voxel simulation space")
 }
@@ -658,8 +667,29 @@ void CellEngineVoxelSimulationSpace::GenerateAllRandomParticles()
 
 void CellEngineVoxelSimulationSpace::GenerateRandomMembraneParticles()
 {
+    UnsignedInt Radius = 400;
+    UnsignedInt RadiusSize = 30;
+    UnsignedInt PosXStart = 512;
+    UnsignedInt PosYStart = 512;
+    UnsignedInt PosZStart = 512;
+    UnsignedInt StepX = 10;
+    UnsignedInt StepY = 10;
+    UnsignedInt StepZ = 10;
+
     try
     {
+        for (SignedInt x = 0; x < Radius * 2; x += static_cast<SignedInt>(StepX))
+            for (SignedInt y = 0; y < Radius * 2; y += static_cast<SignedInt>(StepY))
+                for (SignedInt z = 0; z < Radius * 2; z += static_cast<SignedInt>(StepZ))
+                {
+                    SignedInt dx = static_cast<SignedInt>(Radius) - x;
+                    SignedInt dy = static_cast<SignedInt>(Radius) - y;
+                    SignedInt dz = static_cast<SignedInt>(Radius) - z;
+                    if ((dx * dx + dy * dy + dz * dz >= (Radius - RadiusSize) * (Radius - RadiusSize)) && (dx * dx + dy * dy + dz * dz) <= (Radius * Radius))
+                    {
+                        GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 4, 1, -1, 1, -1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), PosXStart + dx, PosYStart + dy, PosZStart + dz, 3, 3, 3, 0, 0, 0, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, &CellEngineVoxelSimulationSpace::CheckFreeSpaceForSphereSelectedSpace, &CellEngineVoxelSimulationSpace::SetValueToVoxelsForSphereSelectedSpace);
+                    }
+                }
     }
     CATCH("generating random membrane particles")
 }
@@ -673,77 +703,23 @@ void CellEngineVoxelSimulationSpace::GenerateRandomRibosomesParticles()
     CATCH("generating random ribosomes particles")
 }
 
-inline void CellEngineVoxelSimulationSpace::GenerateParticleVoxelsWhenSelectedSpaceIsFree(UnsignedInt LocalNewParticleIndex, UnsignedInt PosXStart, UnsignedInt PosYStart, UnsignedInt PosZStart, UnsignedInt SizeOfParticleX, UnsignedInt SizeOfParticleY, UnsignedInt SizeOfParticleZ, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam, CheckFreeSpaceForSelectedSpaceType CheckFreeSpaceForSelectedSpace, SetValueToVoxelsForSelectedSpaceType SetValueToVoxelsForSelectedSpace)
-{
-    try
-    {
-        vector<vector3_16> FilledVoxelsForRandomParticle;
-
-        if ((this->*CheckFreeSpaceForSelectedSpace)(PosXStart, PosYStart, PosZStart, 1, 1, 1, SizeOfParticleX, SizeOfParticleY, SizeOfParticleZ, GetZeroSimulationSpaceVoxel()) == true)
-            if (PosXStart + SizeOfParticleX < StartXPosParam + SizeXParam && PosYStart + SizeOfParticleY < StartYPosParam + SizeYParam && PosZStart + SizeOfParticleZ < StartZPosParam + SizeZParam)
-                (this->*SetValueToVoxelsForSelectedSpace)(&FilledVoxelsForRandomParticle, LocalNewParticleIndex, PosXStart, PosYStart, PosZStart, 1, 1, 1, SizeOfParticleX, SizeOfParticleY, SizeOfParticleZ);
-
-        if (FilledVoxelsForRandomParticle.empty() == false)
-            GetParticleFromIndex(LocalNewParticleIndex).ListOfVoxels = FilledVoxelsForRandomParticle;
-
-        GetMinMaxCoordinatesForParticle(GetParticleFromIndex(LocalNewParticleIndex), true);
-    }
-    CATCH("generate particle in selected space")
-}
-
-inline void CellEngineVoxelSimulationSpace::GenerateParticleVoxelsInEllipsoidWhenSelectedSpaceIsFree(const UnsignedInt LocalNewParticleIndex, const UnsignedInt PosXStart, const UnsignedInt PosYStart, const UnsignedInt PosZStart, const UnsignedInt RadiusXParam, const UnsignedInt RadiusYParam, const UnsignedInt RadiusZParam, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
-{
-    try
-    {
-        vector<vector3_16> FilledVoxelsForRandomParticle;
-
-        if (CheckFreeSpaceForEllipsoidSelectedSpace(PosXStart, PosYStart, PosZStart, 1, 1, 1, RadiusXParam, RadiusYParam, RadiusZParam, GetZeroSimulationSpaceVoxel()) == true)
-            if (PosXStart + RadiusXParam < StartXPosParam + SizeXParam && PosYStart + RadiusYParam < StartYPosParam + SizeYParam && PosZStart + RadiusZParam < StartZPosParam + SizeZParam)
-                SetValueToVoxelsForEllipsoidSelectedSpace(&FilledVoxelsForRandomParticle, LocalNewParticleIndex, PosXStart, PosYStart, PosZStart, 1, 1, 1, RadiusXParam, RadiusYParam, RadiusZParam);
-
-        if (FilledVoxelsForRandomParticle.empty() == false)
-            GetParticleFromIndex(LocalNewParticleIndex).ListOfVoxels = FilledVoxelsForRandomParticle;
-
-        GetMinMaxCoordinatesForParticle(GetParticleFromIndex(LocalNewParticleIndex), true);
-    }
-    CATCH("generate particle in selected space")
-}
-
-inline void CellEngineVoxelSimulationSpace::GenerateParticleVoxelsInSphereWhenSelectedSpaceIsFree(const UnsignedInt LocalNewParticleIndex, const UnsignedInt PosXStart, const UnsignedInt PosYStart, const UnsignedInt PosZStart, const UnsignedInt RadiusParam, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
-{
-    try
-    {
-        vector<vector3_16> FilledVoxelsForRandomParticle;
-
-        if (CheckFreeSpaceForSphereSelectedSpace(PosXStart, PosYStart, PosZStart, 1, 1, 1, RadiusParam, RadiusParam, RadiusParam, GetZeroSimulationSpaceVoxel()) == true)
-            if (PosXStart + RadiusParam < StartXPosParam + SizeXParam && PosYStart + RadiusParam < StartYPosParam + SizeYParam && PosZStart + RadiusParam < StartZPosParam + SizeZParam)
-                SetValueToVoxelsForSphereSelectedSpace(&FilledVoxelsForRandomParticle, LocalNewParticleIndex, PosXStart, PosYStart, PosZStart, 1, 1, 1, RadiusParam, RadiusParam, RadiusParam);
-
-        if (FilledVoxelsForRandomParticle.empty() == false)
-            GetParticleFromIndex(LocalNewParticleIndex).ListOfVoxels = FilledVoxelsForRandomParticle;
-
-        GetMinMaxCoordinatesForParticle(GetParticleFromIndex(LocalNewParticleIndex), true);
-    }
-    CATCH("generate particle in selected space")
-}
-
-inline void CellEngineVoxelSimulationSpace::GenerateParticleVoxelsInCuboidWhenSelectedSpaceIsFree(UnsignedInt LocalNewParticleIndex, UnsignedInt PosXStart, UnsignedInt PosYStart, UnsignedInt PosZStart, UnsignedInt SizeOfParticleX, UnsignedInt SizeOfParticleY, UnsignedInt SizeOfParticleZ, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam)
-{
-    try
-    {
-        vector<vector3_16> FilledVoxelsForRandomParticle;
-
-        if (CheckFreeSpaceInCuboidSelectedSpace(PosXStart, PosYStart, PosZStart, 1, 1, 1, SizeOfParticleX, SizeOfParticleY, SizeOfParticleZ, GetZeroSimulationSpaceVoxel()) == true)
-            if (PosXStart + SizeOfParticleX < StartXPosParam + SizeXParam && PosYStart + SizeOfParticleY < StartYPosParam + SizeYParam && PosZStart + SizeOfParticleZ < StartZPosParam + SizeZParam)
-                SetValueToVoxelsForCuboidSelectedSpace(&FilledVoxelsForRandomParticle, LocalNewParticleIndex, PosXStart, PosYStart, PosZStart, 1, 1, 1, SizeOfParticleX, SizeOfParticleY, SizeOfParticleZ);
-
-        if (FilledVoxelsForRandomParticle.empty() == false)
-            GetParticleFromIndex(LocalNewParticleIndex).ListOfVoxels = FilledVoxelsForRandomParticle;
-
-        GetMinMaxCoordinatesForParticle(GetParticleFromIndex(LocalNewParticleIndex), true);
-    }
-    CATCH("generate particle in selected space")
-}
+//inline void CellEngineVoxelSimulationSpace::GenerateParticleVoxelsWhenSelectedSpaceIsFree(UnsignedInt LocalNewParticleIndex, UnsignedInt PosXStart, UnsignedInt PosYStart, UnsignedInt PosZStart, UnsignedInt SizeOfParticleX, UnsignedInt SizeOfParticleY, UnsignedInt SizeOfParticleZ, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam, CheckFreeSpaceForSelectedSpaceType CheckFreeSpaceForSelectedSpace, SetValueToVoxelsForSelectedSpaceType SetValueToVoxelsForSelectedSpace)
+//{
+//    try
+//    {
+//        vector<vector3_16> FilledVoxelsForRandomParticle;
+//
+//        if ((this->*CheckFreeSpaceForSelectedSpace)(PosXStart, PosYStart, PosZStart, 1, 1, 1, SizeOfParticleX, SizeOfParticleY, SizeOfParticleZ, GetZeroSimulationSpaceVoxel()) == true)
+//            if (PosXStart + SizeOfParticleX < StartXPosParam + SizeXParam && PosYStart + SizeOfParticleY < StartYPosParam + SizeYParam && PosZStart + SizeOfParticleZ < StartZPosParam + SizeZParam)
+//                (this->*SetValueToVoxelsForSelectedSpace)(&FilledVoxelsForRandomParticle, LocalNewParticleIndex, PosXStart, PosYStart, PosZStart, 1, 1, 1, SizeOfParticleX, SizeOfParticleY, SizeOfParticleZ);
+//
+//        if (FilledVoxelsForRandomParticle.empty() == false)
+//            GetParticleFromIndex(LocalNewParticleIndex).ListOfVoxels = FilledVoxelsForRandomParticle;
+//
+//        GetMinMaxCoordinatesForParticle(GetParticleFromIndex(LocalNewParticleIndex), true);
+//    }
+//    CATCH("generate particle in selected space")
+//}
 
 void CellEngineVoxelSimulationSpace::GenerateRandomParticlesInSelectedSpace(const UnsignedInt NumberOfRandomParticles, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt StepXParam, const UnsignedInt StepYParam, const UnsignedInt StepZParam, const UnsignedInt SizeXParam, UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
 {
@@ -1141,135 +1117,135 @@ bool CellEngineVoxelSimulationSpace::LinkDNALigaseInChosenPlaceSpecialReactionFu
     return false;
 }
 
-inline void CellEngineVoxelSimulationSpace::MoveParticleByVector(Particle& ParticleObject, const SignedInt VectorX, const SignedInt VectorY, const SignedInt VectorZ)
-{
-    try
-    {
-        SetAllVoxelsInListOfVoxelsToValue(ParticleObject.ListOfVoxels, GetZeroSimulationSpaceVoxel());
-        for (auto &VoxelOfParticle: ParticleObject.ListOfVoxels)
-        {
-            VoxelOfParticle.X += VectorX;
-            VoxelOfParticle.Y += VectorY;
-            VoxelOfParticle.Z += VectorZ;
-        }
-        SetAllVoxelsInListOfVoxelsToValue(ParticleObject.ListOfVoxels, ParticleObject.Index);
-    }
-    CATCH("moving particle by vector")
-}
-
-inline void CellEngineVoxelSimulationSpace::MoveParticleNearOtherParticle(Particle& ParticleObject, const Particle& NewPositionParticleObject, const SignedInt AddX,  const SignedInt AddY,  const SignedInt AddZ)
-{
-    try
-    {
-        MoveParticleByVector(ParticleObject, NewPositionParticleObject.ListOfVoxels[0].X - ParticleObject.ListOfVoxels[0].X + AddX, NewPositionParticleObject.ListOfVoxels[0].Y - ParticleObject.ListOfVoxels[0].Y + AddY, NewPositionParticleObject.ListOfVoxels[0].Z - ParticleObject.ListOfVoxels[0].Z + AddZ);
-    }
-    CATCH("moving particle near other particles")
-}
-
-inline bool CellEngineVoxelSimulationSpace::CheckFreeSpaceForParticleMovedByVector(Particle& ParticleObject, const SignedInt VectorX, const SignedInt VectorY, const SignedInt VectorZ)
-{
-    try
-    {
-        for (auto &VoxelOfParticle: ParticleObject.ListOfVoxels)
-            if (GetSpaceVoxel(VoxelOfParticle.X + VectorX, VoxelOfParticle.Y + VectorY, VoxelOfParticle.Z + VectorZ) != GetZeroSimulationSpaceVoxel())
-                return false;
-    }
-    CATCH("checking free space for particle moved by vector")
-
-    return true;
-}
-
-inline bool CellEngineVoxelSimulationSpace::CheckBoundsForParticleMovedByVector(Particle& ParticleObject, const SignedInt VectorX, const SignedInt VectorY, const SignedInt VectorZ, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
-{
-    try
-    {
-        for (auto &VoxelOfParticle: ParticleObject.ListOfVoxels)
-            if (!(VoxelOfParticle.X + VectorX >= StartXPosParam && VoxelOfParticle.X + VectorX < StartXPosParam + SizeXParam && VoxelOfParticle.Y + VectorY >= StartYPosParam && VoxelOfParticle.Y + VectorY < StartYPosParam + SizeYParam && VoxelOfParticle.Z + VectorZ >= StartZPosParam && VoxelOfParticle.Z + VectorZ < StartZPosParam + SizeZParam))
-                return false;
-    }
-    CATCH("checking bounds for particle moved by vector")
-
-    return true;
-}
-
-inline bool CellEngineVoxelSimulationSpace::CheckBoundsAndFreeSpaceForParticleMovedByVector(Particle& ParticleObject, const SignedInt VectorX, const SignedInt VectorY, const SignedInt VectorZ, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
-{
-    try
-    {
-        for (auto &VoxelOfParticle: ParticleObject.ListOfVoxels)
-        {
-            UnsignedInt TestedPosX = VoxelOfParticle.X + VectorX;
-            UnsignedInt TestedPosY = VoxelOfParticle.Y + VectorY;
-            UnsignedInt TestedPosZ = VoxelOfParticle.Z + VectorZ;
-            if ((GetSpaceVoxel(TestedPosX, TestedPosY, TestedPosZ) != GetZeroSimulationSpaceVoxel() && GetSpaceVoxel(TestedPosX, TestedPosY, TestedPosZ) != ParticleObject.Index) || !(TestedPosX >= StartXPosParam && TestedPosX < StartXPosParam + SizeXParam && TestedPosY >= StartYPosParam && TestedPosY < StartYPosParam + SizeYParam && TestedPosZ >= StartZPosParam && TestedPosZ < StartZPosParam + SizeZParam))
-                return false;
-        }
-    }
-    CATCH("checking bounds and free space for particle moved by vector")
-
-    return true;
-}
-
-inline bool CellEngineVoxelSimulationSpace::MoveParticleNearOtherParticleIfVoxelSpaceIsEmpty(Particle& ParticleObject, const Particle& NewPositionParticleObject, const SignedInt AddX,  const SignedInt AddY,  const SignedInt AddZ)
-{
-    return MoveParticleByVectorIfVoxelSpaceIsEmpty(ParticleObject, NewPositionParticleObject.ListOfVoxels[0].X - ParticleObject.ListOfVoxels[0].X + AddX, NewPositionParticleObject.ListOfVoxels[0].Y - ParticleObject.ListOfVoxels[0].Y + AddY, NewPositionParticleObject.ListOfVoxels[0].Z - ParticleObject.ListOfVoxels[0].Z + AddZ);
-}
-
-inline bool CellEngineVoxelSimulationSpace::MoveParticleByVectorIfVoxelSpaceIsEmpty(Particle& ParticleObject, const SignedInt VectorX, const SignedInt VectorY, const SignedInt VectorZ)
-{
-    try
-    {
-        if (CheckFreeSpaceForParticleMovedByVector(ParticleObject, VectorX, VectorY, VectorZ) == true)
-            MoveParticleByVector(ParticleObject, VectorX, VectorY, VectorZ);
-        else
-            return false;
-    }
-    CATCH("moving particle by vector if voxel space is empty")
-
-    return true;
-}
-
-inline bool CellEngineVoxelSimulationSpace::MoveParticleByVectorIfVoxelSpaceIsEmptyAndIsInBounds(Particle& ParticleObject, const SignedInt VectorX, const SignedInt VectorY, const SignedInt VectorZ, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
-{
-    try
-    {
-        if (CheckBoundsAndFreeSpaceForParticleMovedByVector(ParticleObject, VectorX, VectorY, VectorZ, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam) == true)
-            MoveParticleByVector(ParticleObject, VectorX, VectorY, VectorZ);
-        else
-            return false;
-    }
-    CATCH("moving particle by vector if voxel space is empty and is in bounds")
-
-    return true;
-}
-
-inline void CellEngineVoxelSimulationSpace::MoveParticleNearOtherParticleIfVoxelSpaceIsEmptyOrNearSpace(Particle& ParticleObject, const Particle& NewPositionParticleObject, const SignedInt AddX,  const SignedInt AddY,  const SignedInt AddZ)
-{
-    try
-    {
-        bool FoundFreeSpace = false;
-
-        SignedInt VecX = NewPositionParticleObject.ListOfVoxels[0].X - ParticleObject.ListOfVoxels[0].X;
-        SignedInt VecY = NewPositionParticleObject.ListOfVoxels[0].Y - ParticleObject.ListOfVoxels[0].Y;
-        SignedInt VecZ = NewPositionParticleObject.ListOfVoxels[0].Z - ParticleObject.ListOfVoxels[0].Z;
-
-        for (SignedInt PosX = VecX - AddX; PosX < VecX + AddX; PosX++)
-            for (SignedInt PosY = VecY - AddY; PosY < VecY + AddY; PosY++)
-                for (SignedInt PosZ = VecZ - AddZ; PosZ < VecZ + AddZ; PosZ++)
-                    if (CheckFreeSpaceForParticleMovedByVector(ParticleObject, PosX, PosY, PosZ) == true)
-                    {
-                        LoggersManagerObject.Log(STREAM(terminal_colors_utils::green << "FREE SPACE FOUND " << VecX << " " << VecY << " " << VecZ << " " << PosX << " " << PosY << " " << PosZ << terminal_colors_utils::white));
-                        MoveParticleByVector(ParticleObject, PosX, PosY, PosZ);
-                        FoundFreeSpace = true;
-                        goto Outside;
-                    }
-        Outside:
-
-        if (FoundFreeSpace == false)
-            LoggersManagerObject.Log(STREAM(terminal_colors_utils::red << "FREE SPACE NOT FOUND " << VecX << " " << VecY << " " << VecZ << " " << terminal_colors_utils::white));
-    }
-    CATCH("moving particle near other particles")
-}
+//inline void CellEngineVoxelSimulationSpace::MoveParticleByVector(Particle& ParticleObject, const SignedInt VectorX, const SignedInt VectorY, const SignedInt VectorZ)
+//{
+//    try
+//    {
+//        SetAllVoxelsInListOfVoxelsToValue(ParticleObject.ListOfVoxels, GetZeroSimulationSpaceVoxel());
+//        for (auto &VoxelOfParticle: ParticleObject.ListOfVoxels)
+//        {
+//            VoxelOfParticle.X += VectorX;
+//            VoxelOfParticle.Y += VectorY;
+//            VoxelOfParticle.Z += VectorZ;
+//        }
+//        SetAllVoxelsInListOfVoxelsToValue(ParticleObject.ListOfVoxels, ParticleObject.Index);
+//    }
+//    CATCH("moving particle by vector")
+//}
+//
+//inline void CellEngineVoxelSimulationSpace::MoveParticleNearOtherParticle(Particle& ParticleObject, const Particle& NewPositionParticleObject, const SignedInt AddX,  const SignedInt AddY,  const SignedInt AddZ)
+//{
+//    try
+//    {
+//        MoveParticleByVector(ParticleObject, NewPositionParticleObject.ListOfVoxels[0].X - ParticleObject.ListOfVoxels[0].X + AddX, NewPositionParticleObject.ListOfVoxels[0].Y - ParticleObject.ListOfVoxels[0].Y + AddY, NewPositionParticleObject.ListOfVoxels[0].Z - ParticleObject.ListOfVoxels[0].Z + AddZ);
+//    }
+//    CATCH("moving particle near other particles")
+//}
+//
+//inline bool CellEngineVoxelSimulationSpace::CheckFreeSpaceForParticleMovedByVector(Particle& ParticleObject, const SignedInt VectorX, const SignedInt VectorY, const SignedInt VectorZ)
+//{
+//    try
+//    {
+//        for (auto &VoxelOfParticle: ParticleObject.ListOfVoxels)
+//            if (GetSpaceVoxel(VoxelOfParticle.X + VectorX, VoxelOfParticle.Y + VectorY, VoxelOfParticle.Z + VectorZ) != GetZeroSimulationSpaceVoxel())
+//                return false;
+//    }
+//    CATCH("checking free space for particle moved by vector")
+//
+//    return true;
+//}
+//
+//inline bool CellEngineVoxelSimulationSpace::CheckBoundsForParticleMovedByVector(Particle& ParticleObject, const SignedInt VectorX, const SignedInt VectorY, const SignedInt VectorZ, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
+//{
+//    try
+//    {
+//        for (auto &VoxelOfParticle: ParticleObject.ListOfVoxels)
+//            if (!(VoxelOfParticle.X + VectorX >= StartXPosParam && VoxelOfParticle.X + VectorX < StartXPosParam + SizeXParam && VoxelOfParticle.Y + VectorY >= StartYPosParam && VoxelOfParticle.Y + VectorY < StartYPosParam + SizeYParam && VoxelOfParticle.Z + VectorZ >= StartZPosParam && VoxelOfParticle.Z + VectorZ < StartZPosParam + SizeZParam))
+//                return false;
+//    }
+//    CATCH("checking bounds for particle moved by vector")
+//
+//    return true;
+//}
+//
+//inline bool CellEngineVoxelSimulationSpace::CheckBoundsAndFreeSpaceForParticleMovedByVector(Particle& ParticleObject, const SignedInt VectorX, const SignedInt VectorY, const SignedInt VectorZ, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
+//{
+//    try
+//    {
+//        for (auto &VoxelOfParticle: ParticleObject.ListOfVoxels)
+//        {
+//            UnsignedInt TestedPosX = VoxelOfParticle.X + VectorX;
+//            UnsignedInt TestedPosY = VoxelOfParticle.Y + VectorY;
+//            UnsignedInt TestedPosZ = VoxelOfParticle.Z + VectorZ;
+//            if ((GetSpaceVoxel(TestedPosX, TestedPosY, TestedPosZ) != GetZeroSimulationSpaceVoxel() && GetSpaceVoxel(TestedPosX, TestedPosY, TestedPosZ) != ParticleObject.Index) || !(TestedPosX >= StartXPosParam && TestedPosX < StartXPosParam + SizeXParam && TestedPosY >= StartYPosParam && TestedPosY < StartYPosParam + SizeYParam && TestedPosZ >= StartZPosParam && TestedPosZ < StartZPosParam + SizeZParam))
+//                return false;
+//        }
+//    }
+//    CATCH("checking bounds and free space for particle moved by vector")
+//
+//    return true;
+//}
+//
+//inline bool CellEngineVoxelSimulationSpace::MoveParticleNearOtherParticleIfVoxelSpaceIsEmpty(Particle& ParticleObject, const Particle& NewPositionParticleObject, const SignedInt AddX,  const SignedInt AddY,  const SignedInt AddZ)
+//{
+//    return MoveParticleByVectorIfVoxelSpaceIsEmpty(ParticleObject, NewPositionParticleObject.ListOfVoxels[0].X - ParticleObject.ListOfVoxels[0].X + AddX, NewPositionParticleObject.ListOfVoxels[0].Y - ParticleObject.ListOfVoxels[0].Y + AddY, NewPositionParticleObject.ListOfVoxels[0].Z - ParticleObject.ListOfVoxels[0].Z + AddZ);
+//}
+//
+//inline bool CellEngineVoxelSimulationSpace::MoveParticleByVectorIfVoxelSpaceIsEmpty(Particle& ParticleObject, const SignedInt VectorX, const SignedInt VectorY, const SignedInt VectorZ)
+//{
+//    try
+//    {
+//        if (CheckFreeSpaceForParticleMovedByVector(ParticleObject, VectorX, VectorY, VectorZ) == true)
+//            MoveParticleByVector(ParticleObject, VectorX, VectorY, VectorZ);
+//        else
+//            return false;
+//    }
+//    CATCH("moving particle by vector if voxel space is empty")
+//
+//    return true;
+//}
+//
+//inline bool CellEngineVoxelSimulationSpace::MoveParticleByVectorIfVoxelSpaceIsEmptyAndIsInBounds(Particle& ParticleObject, const SignedInt VectorX, const SignedInt VectorY, const SignedInt VectorZ, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
+//{
+//    try
+//    {
+//        if (CheckBoundsAndFreeSpaceForParticleMovedByVector(ParticleObject, VectorX, VectorY, VectorZ, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam) == true)
+//            MoveParticleByVector(ParticleObject, VectorX, VectorY, VectorZ);
+//        else
+//            return false;
+//    }
+//    CATCH("moving particle by vector if voxel space is empty and is in bounds")
+//
+//    return true;
+//}
+//
+//inline void CellEngineVoxelSimulationSpace::MoveParticleNearOtherParticleIfVoxelSpaceIsEmptyOrNearSpace(Particle& ParticleObject, const Particle& NewPositionParticleObject, const SignedInt AddX,  const SignedInt AddY,  const SignedInt AddZ)
+//{
+//    try
+//    {
+//        bool FoundFreeSpace = false;
+//
+//        SignedInt VecX = NewPositionParticleObject.ListOfVoxels[0].X - ParticleObject.ListOfVoxels[0].X;
+//        SignedInt VecY = NewPositionParticleObject.ListOfVoxels[0].Y - ParticleObject.ListOfVoxels[0].Y;
+//        SignedInt VecZ = NewPositionParticleObject.ListOfVoxels[0].Z - ParticleObject.ListOfVoxels[0].Z;
+//
+//        for (SignedInt PosX = VecX - AddX; PosX < VecX + AddX; PosX++)
+//            for (SignedInt PosY = VecY - AddY; PosY < VecY + AddY; PosY++)
+//                for (SignedInt PosZ = VecZ - AddZ; PosZ < VecZ + AddZ; PosZ++)
+//                    if (CheckFreeSpaceForParticleMovedByVector(ParticleObject, PosX, PosY, PosZ) == true)
+//                    {
+//                        LoggersManagerObject.Log(STREAM(terminal_colors_utils::green << "FREE SPACE FOUND " << VecX << " " << VecY << " " << VecZ << " " << PosX << " " << PosY << " " << PosZ << terminal_colors_utils::white));
+//                        MoveParticleByVector(ParticleObject, PosX, PosY, PosZ);
+//                        FoundFreeSpace = true;
+//                        goto Outside;
+//                    }
+//        Outside:
+//
+//        if (FoundFreeSpace == false)
+//            LoggersManagerObject.Log(STREAM(terminal_colors_utils::red << "FREE SPACE NOT FOUND " << VecX << " " << VecY << " " << VecZ << " " << terminal_colors_utils::white));
+//    }
+//    CATCH("moving particle near other particles")
+//}
 
 bool CellEngineVoxelSimulationSpace::PolymeraseDNAStartSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject)
 {
@@ -2297,4 +2273,336 @@ void CellEngineVoxelSimulationSpace::TestGeneratedGenomeCorrectness(const Unsign
             LoggersManagerObject.Log(STREAM("Genome is continuous and correctly generated - OK!"));
     }
     CATCH("testing generated genome correctness")
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+inline void CellEngineParticlesVoxelsOperations::SetAllVoxelsInListOfVoxelsToValue(std::vector<vector3_16>& ListOfVoxels, SimulationSpaceVoxel SimulationSpaceVoxelValue)
+{
+    try
+    {
+        for (auto& Voxel : ListOfVoxels)
+            GetSpaceVoxel(Voxel.X, Voxel.Y, Voxel.Z) = SimulationSpaceVoxelValue;
+    }
+    CATCH("making all zero voxels in list of voxels")
+}
+
+void CellEngineParticlesVoxelsOperations::SetAllVoxelsInListOfVoxelsToValueOut(std::vector<vector3_16>& ListOfVoxels, SimulationSpaceVoxel SimulationSpaceVoxelValue)
+{
+    SetAllVoxelsInListOfVoxelsToValue(ListOfVoxels, SimulationSpaceVoxelValue);
+}
+
+inline void CellEngineParticlesVoxelsOperations::MoveParticleByVector(Particle& ParticleObject, const SignedInt VectorX, const SignedInt VectorY, const SignedInt VectorZ)
+{
+    try
+    {
+        SetAllVoxelsInListOfVoxelsToValue(ParticleObject.ListOfVoxels, GetZeroSimulationSpaceVoxel());
+        for (auto &VoxelOfParticle: ParticleObject.ListOfVoxels)
+        {
+            VoxelOfParticle.X += VectorX;
+            VoxelOfParticle.Y += VectorY;
+            VoxelOfParticle.Z += VectorZ;
+        }
+        SetAllVoxelsInListOfVoxelsToValue(ParticleObject.ListOfVoxels, ParticleObject.Index);
+    }
+    CATCH("moving particle by vector")
+}
+
+inline void CellEngineParticlesVoxelsOperations::MoveParticleNearOtherParticle(Particle& ParticleObject, const Particle& NewPositionParticleObject, const SignedInt AddX, const SignedInt AddY, const SignedInt AddZ)
+{
+    try
+    {
+        MoveParticleByVector(ParticleObject, NewPositionParticleObject.ListOfVoxels[0].X - ParticleObject.ListOfVoxels[0].X + AddX, NewPositionParticleObject.ListOfVoxels[0].Y - ParticleObject.ListOfVoxels[0].Y + AddY, NewPositionParticleObject.ListOfVoxels[0].Z - ParticleObject.ListOfVoxels[0].Z + AddZ);
+    }
+    CATCH("moving particle near other particles")
+}
+
+inline bool CellEngineParticlesVoxelsOperations::CheckFreeSpaceForParticleMovedByVector(Particle& ParticleObject, const SignedInt VectorX, const SignedInt VectorY, const SignedInt VectorZ)
+{
+    try
+    {
+        for (auto &VoxelOfParticle: ParticleObject.ListOfVoxels)
+            if (GetSpaceVoxel(VoxelOfParticle.X + VectorX, VoxelOfParticle.Y + VectorY, VoxelOfParticle.Z + VectorZ) != GetZeroSimulationSpaceVoxel())
+                return false;
+    }
+    CATCH("checking free space for particle moved by vector")
+
+    return true;
+}
+
+inline bool CellEngineParticlesVoxelsOperations::CheckBoundsForParticleMovedByVector(Particle& ParticleObject, const SignedInt VectorX, const SignedInt VectorY, const SignedInt VectorZ, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
+{
+    try
+    {
+        for (auto &VoxelOfParticle: ParticleObject.ListOfVoxels)
+            if (!(VoxelOfParticle.X + VectorX >= StartXPosParam && VoxelOfParticle.X + VectorX < StartXPosParam + SizeXParam && VoxelOfParticle.Y + VectorY >= StartYPosParam && VoxelOfParticle.Y + VectorY < StartYPosParam + SizeYParam && VoxelOfParticle.Z + VectorZ >= StartZPosParam && VoxelOfParticle.Z + VectorZ < StartZPosParam + SizeZParam))
+                return false;
+    }
+    CATCH("checking bounds for particle moved by vector")
+
+    return true;
+}
+
+inline bool CellEngineParticlesVoxelsOperations::CheckBoundsAndFreeSpaceForParticleMovedByVector(Particle& ParticleObject, const SignedInt VectorX, const SignedInt VectorY, const SignedInt VectorZ, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
+{
+    try
+    {
+        for (auto &VoxelOfParticle: ParticleObject.ListOfVoxels)
+        {
+            UnsignedInt TestedPosX = VoxelOfParticle.X + VectorX;
+            UnsignedInt TestedPosY = VoxelOfParticle.Y + VectorY;
+            UnsignedInt TestedPosZ = VoxelOfParticle.Z + VectorZ;
+            if ((GetSpaceVoxel(TestedPosX, TestedPosY, TestedPosZ) != GetZeroSimulationSpaceVoxel() && GetSpaceVoxel(TestedPosX, TestedPosY, TestedPosZ) != ParticleObject.Index) || !(TestedPosX >= StartXPosParam && TestedPosX < StartXPosParam + SizeXParam && TestedPosY >= StartYPosParam && TestedPosY < StartYPosParam + SizeYParam && TestedPosZ >= StartZPosParam && TestedPosZ < StartZPosParam + SizeZParam))
+                return false;
+        }
+    }
+    CATCH("checking bounds and free space for particle moved by vector")
+
+    return true;
+}
+
+inline bool CellEngineParticlesVoxelsOperations::MoveParticleNearOtherParticleIfVoxelSpaceIsEmpty(Particle& ParticleObject, const Particle& NewPositionParticleObject, const SignedInt AddX, const SignedInt AddY, const SignedInt AddZ)
+{
+    return MoveParticleByVectorIfVoxelSpaceIsEmpty(ParticleObject, NewPositionParticleObject.ListOfVoxels[0].X - ParticleObject.ListOfVoxels[0].X + AddX, NewPositionParticleObject.ListOfVoxels[0].Y - ParticleObject.ListOfVoxels[0].Y + AddY, NewPositionParticleObject.ListOfVoxels[0].Z - ParticleObject.ListOfVoxels[0].Z + AddZ);
+}
+
+inline bool CellEngineParticlesVoxelsOperations::MoveParticleByVectorIfVoxelSpaceIsEmpty(Particle& ParticleObject, const SignedInt VectorX, const SignedInt VectorY, const SignedInt VectorZ)
+{
+    try
+    {
+        if (CheckFreeSpaceForParticleMovedByVector(ParticleObject, VectorX, VectorY, VectorZ) == true)
+            MoveParticleByVector(ParticleObject, VectorX, VectorY, VectorZ);
+        else
+            return false;
+    }
+    CATCH("moving particle by vector if voxel space is empty")
+
+    return true;
+}
+
+inline bool CellEngineParticlesVoxelsOperations::MoveParticleByVectorIfVoxelSpaceIsEmptyAndIsInBounds(Particle& ParticleObject, const SignedInt VectorX, const SignedInt VectorY, const SignedInt VectorZ, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
+{
+    try
+    {
+        if (CheckBoundsAndFreeSpaceForParticleMovedByVector(ParticleObject, VectorX, VectorY, VectorZ, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam) == true)
+            MoveParticleByVector(ParticleObject, VectorX, VectorY, VectorZ);
+        else
+            return false;
+    }
+    CATCH("moving particle by vector if voxel space is empty and is in bounds")
+
+    return true;
+}
+
+inline void CellEngineParticlesVoxelsOperations::MoveParticleNearOtherParticleIfVoxelSpaceIsEmptyOrNearSpace(Particle& ParticleObject, const Particle& NewPositionParticleObject, const SignedInt AddX, const SignedInt AddY, const SignedInt AddZ)
+{
+    try
+    {
+        bool FoundFreeSpace = false;
+
+        SignedInt VecX = NewPositionParticleObject.ListOfVoxels[0].X - ParticleObject.ListOfVoxels[0].X;
+        SignedInt VecY = NewPositionParticleObject.ListOfVoxels[0].Y - ParticleObject.ListOfVoxels[0].Y;
+        SignedInt VecZ = NewPositionParticleObject.ListOfVoxels[0].Z - ParticleObject.ListOfVoxels[0].Z;
+
+        for (SignedInt PosX = VecX - AddX; PosX < VecX + AddX; PosX++)
+            for (SignedInt PosY = VecY - AddY; PosY < VecY + AddY; PosY++)
+                for (SignedInt PosZ = VecZ - AddZ; PosZ < VecZ + AddZ; PosZ++)
+                    if (CheckFreeSpaceForParticleMovedByVector(ParticleObject, PosX, PosY, PosZ) == true)
+                    {
+                        LoggersManagerObject.Log(STREAM(terminal_colors_utils::green << "FREE SPACE FOUND " << VecX << " " << VecY << " " << VecZ << " " << PosX << " " << PosY << " " << PosZ << terminal_colors_utils::white));
+                        MoveParticleByVector(ParticleObject, PosX, PosY, PosZ);
+                        FoundFreeSpace = true;
+                        goto Outside;
+                    }
+        Outside:
+
+        if (FoundFreeSpace == false)
+            LoggersManagerObject.Log(STREAM(terminal_colors_utils::red << "FREE SPACE NOT FOUND " << VecX << " " << VecY << " " << VecZ << " " << terminal_colors_utils::white));
+    }
+    CATCH("moving particle near other particles")
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+inline void CellEngineParticlesVoxelsShapesGenerator::SetValueToSpaceVoxelWithFillingListOfVoxelsOfParticle(vector<vector3_16>* FilledSpaceVoxels, const UniqueIdInt VoxelValue, const UnsignedInt PosX, const UnsignedInt PosY, const UnsignedInt PosZ)
+{
+    try
+    {
+        if (FilledSpaceVoxels != nullptr)
+            FilledSpaceVoxels->emplace_back(PosX, PosY, PosZ);
+        GetSpaceVoxel(PosX, PosY, PosZ) = VoxelValue;
+    }
+    CATCH("setting value to voxel")
+}
+
+inline bool CellEngineParticlesVoxelsShapesGenerator::CheckFreeSpaceInCuboidSelectedSpace(const UnsignedInt PosXStart, const UnsignedInt PosYStart, const UnsignedInt PosZStart, const UnsignedInt StepX, const UnsignedInt StepY, const UnsignedInt StepZ, const UnsignedInt SizeOfParticleX, const UnsignedInt SizeOfParticleY, const UnsignedInt SizeOfParticleZ, const UniqueIdInt ValueToCheck)
+{
+    try
+    {
+        for (UnsignedInt PosX = PosXStart; PosX < PosXStart + SizeOfParticleX; PosX += StepX)
+            for (UnsignedInt PosY = PosYStart; PosY < PosYStart + SizeOfParticleY; PosY += StepY)
+                for (UnsignedInt PosZ = PosZStart; PosZ < PosZStart + SizeOfParticleZ; PosZ += StepZ)
+                    if (GetSpaceVoxel(PosX, PosY, PosZ) != ValueToCheck)
+                        return false;
+    }
+    CATCH("checking free space in cuboid selected space")
+
+    return true;
+}
+
+inline void CellEngineParticlesVoxelsShapesGenerator::SetValueToVoxelsForCuboidSelectedSpace(std::vector<vector3_16>* FilledSpaceVoxels, const UniqueIdInt VoxelValue, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt StepXParam, const UnsignedInt StepYParam, const UnsignedInt StepZParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
+{
+    try
+    {
+        for (UnsignedInt PosX = StartXPosParam; PosX < StartXPosParam + SizeXParam; PosX += StepXParam)
+            for (UnsignedInt PosY = StartYPosParam; PosY < StartYPosParam + SizeYParam; PosY += StepYParam)
+                for (UnsignedInt PosZ = StartZPosParam; PosZ < StartZPosParam + SizeZParam; PosZ += StepZParam)
+                    SetValueToSpaceVoxelWithFillingListOfVoxelsOfParticle(FilledSpaceVoxels, VoxelValue, PosX, PosY, PosZ);
+    }
+    CATCH("setting value to voxels for cuboid selected space")
+}
+
+bool CellEngineParticlesVoxelsShapesGenerator::CheckFreeSpaceForSphereSelectedSpace(const UnsignedInt PosXStart, const UnsignedInt PosYStart, const UnsignedInt PosZStart, const UnsignedInt StepX, const UnsignedInt StepY, const UnsignedInt StepZ, const UnsignedInt RadiusXParam, const UnsignedInt RadiusYParam, const UnsignedInt RadiusZParam, const UniqueIdInt ValueToCheck)
+{
+    try
+    {
+        UnsignedInt RadiusParam = RadiusXParam;
+
+        for (SignedInt x = 0; x < RadiusParam * 2; x += static_cast<SignedInt>(StepX))
+            for (SignedInt y = 0; y < RadiusParam * 2; y += static_cast<SignedInt>(StepY))
+                for (SignedInt z = 0; z < RadiusParam * 2; z += static_cast<SignedInt>(StepZ))
+                {
+                    SignedInt dx = static_cast<SignedInt>(RadiusParam) - x;
+                    SignedInt dy = static_cast<SignedInt>(RadiusParam) - y;
+                    SignedInt dz = static_cast<SignedInt>(RadiusParam) - z;
+                    if ((dx * dx + dy * dy + dz * dz) <= (RadiusParam * RadiusParam))
+                        if (GetSpaceVoxel(PosXStart + dx, PosYStart + dy, PosZStart + dz) != ValueToCheck)
+                            return false;
+                }
+    }
+    CATCH("checking free space in sphere selected space")
+
+    return true;
+};
+
+void CellEngineParticlesVoxelsShapesGenerator::SetValueToVoxelsForSphereSelectedSpace(std::vector<vector3_16>* FilledSpaceVoxels, UniqueIdInt VoxelValue, const UnsignedInt PosXStart, const UnsignedInt PosYStart, const  UnsignedInt PosZStart, const UnsignedInt StepX, const UnsignedInt StepY, const UnsignedInt StepZ, const UnsignedInt RadiusXParam, const UnsignedInt RadiusYParam, const UnsignedInt RadiusZParam)
+{
+    try
+    {
+        UnsignedInt RadiusParam = RadiusXParam;
+
+        for (SignedInt x = 0; x < RadiusParam * 2; x += static_cast<SignedInt>(StepX))
+            for (SignedInt y = 0; y < RadiusParam * 2; y += static_cast<SignedInt>(StepY))
+                for (SignedInt z = 0; z < RadiusParam * 2; z += static_cast<SignedInt>(StepZ))
+                {
+                    SignedInt dx = static_cast<SignedInt>(RadiusParam) - x;
+                    SignedInt dy = static_cast<SignedInt>(RadiusParam) - y;
+                    SignedInt dz = static_cast<SignedInt>(RadiusParam) - z;
+                    if ((dx * dx + dy * dy + dz * dz) <= (RadiusParam * RadiusParam))
+                        SetValueToSpaceVoxelWithFillingListOfVoxelsOfParticle(FilledSpaceVoxels, VoxelValue, PosXStart + dx, PosYStart + dy, PosZStart + dz);
+                }
+    }
+    CATCH("setting value to voxels for sphere selected space")
+};
+
+bool CellEngineParticlesVoxelsShapesGenerator::CheckFreeSpaceForEllipsoidSelectedSpace(const UnsignedInt PosXStart, const UnsignedInt PosYStart, const UnsignedInt PosZStart, const UnsignedInt StepX, const UnsignedInt StepY, const UnsignedInt StepZ, const UnsignedInt RadiusXParam, const UnsignedInt RadiusYParam, const UnsignedInt RadiusZParam, const UniqueIdInt ValueToCheck)
+{
+    try
+    {
+        for (SignedInt x = 0; x < RadiusXParam * 2; x += static_cast<SignedInt>(StepX))
+            for (SignedInt y = 0; y < RadiusYParam * 2; y += static_cast<SignedInt>(StepY))
+                for (SignedInt z = 0; z < RadiusZParam * 2; z+= static_cast<SignedInt>(StepZ))
+                {
+                    SignedInt dx = static_cast<SignedInt>(RadiusXParam) - x;
+                    SignedInt dy = static_cast<SignedInt>(RadiusYParam) - y;
+                    SignedInt dz = static_cast<SignedInt>(RadiusZParam) - z;
+                    if ((dx * dx * RadiusYParam * RadiusYParam * RadiusZParam * RadiusZParam + dy * dy * RadiusXParam * RadiusXParam * RadiusZParam * RadiusZParam + dz * dz * RadiusXParam * RadiusXParam * RadiusYParam * RadiusYParam) <= (RadiusXParam * RadiusXParam * RadiusYParam * RadiusYParam * RadiusZParam * RadiusZParam))
+                        if (GetSpaceVoxel(PosXStart + dx, PosYStart + dy, PosZStart + dz) != ValueToCheck)
+                            return false;
+                }
+    }
+    CATCH("checking free space in ellipsoid selected space")
+
+    return true;
+};
+
+void CellEngineParticlesVoxelsShapesGenerator::SetValueToVoxelsForEllipsoidSelectedSpace(std::vector<vector3_16>* FilledSpaceVoxels, UniqueIdInt VoxelValue, UnsignedInt PosXStart, UnsignedInt PosYStart, UnsignedInt PosZStart, const UnsignedInt StepX, const UnsignedInt StepY, const UnsignedInt StepZ, UnsignedInt RadiusXParam, UnsignedInt RadiusYParam, UnsignedInt RadiusZParam)
+{
+    try
+    {
+        for (SignedInt x = 0; x < RadiusXParam * 2; x += static_cast<SignedInt>(StepX))
+            for (SignedInt y = 0; y < RadiusYParam * 2; y += static_cast<SignedInt>(StepY))
+                for (SignedInt z = 0; z < RadiusZParam * 2; z += static_cast<SignedInt>(StepZ))
+                {
+                    SignedInt dx = static_cast<SignedInt>(RadiusXParam) - x;
+                    SignedInt dy = static_cast<SignedInt>(RadiusYParam) - y;
+                    SignedInt dz = static_cast<SignedInt>(RadiusZParam) - z;
+                    if ((dx * dx * RadiusYParam * RadiusYParam * RadiusZParam * RadiusZParam + dy * dy * RadiusXParam * RadiusXParam * RadiusZParam * RadiusZParam + dz * dz * RadiusXParam * RadiusXParam * RadiusYParam * RadiusYParam) <= (RadiusXParam * RadiusXParam * RadiusYParam * RadiusYParam * RadiusZParam * RadiusZParam))
+                        SetValueToSpaceVoxelWithFillingListOfVoxelsOfParticle(FilledSpaceVoxels, VoxelValue, PosXStart + dx, PosYStart + dy, PosZStart + dz);
+                }
+    }
+    CATCH("setting value to voxels for ellipsoid selected space")
+};
+
+inline void CellEngineParticlesVoxelsShapesGenerator::GenerateParticleVoxelsWhenSelectedSpaceIsFree(UnsignedInt LocalNewParticleIndex, UnsignedInt PosXStart, UnsignedInt PosYStart, UnsignedInt PosZStart, UnsignedInt SizeOfParticleX, UnsignedInt SizeOfParticleY, UnsignedInt SizeOfParticleZ, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam, CheckFreeSpaceForSelectedSpaceType CheckFreeSpaceForSelectedSpace, SetValueToVoxelsForSelectedSpaceType SetValueToVoxelsForSelectedSpace)
+{
+    try
+    {
+        vector<vector3_16> FilledVoxelsForRandomParticle;
+
+        if ((this->*CheckFreeSpaceForSelectedSpace)(PosXStart, PosYStart, PosZStart, 1, 1, 1, SizeOfParticleX, SizeOfParticleY, SizeOfParticleZ, GetZeroSimulationSpaceVoxel()) == true)
+            if (PosXStart + SizeOfParticleX < StartXPosParam + SizeXParam && PosYStart + SizeOfParticleY < StartYPosParam + SizeYParam && PosZStart + SizeOfParticleZ < StartZPosParam + SizeZParam)
+                (this->*SetValueToVoxelsForSelectedSpace)(&FilledVoxelsForRandomParticle, LocalNewParticleIndex, PosXStart, PosYStart, PosZStart, 1, 1, 1, SizeOfParticleX, SizeOfParticleY, SizeOfParticleZ);
+
+        if (FilledVoxelsForRandomParticle.empty() == false)
+            GetParticleFromIndex(LocalNewParticleIndex).ListOfVoxels = FilledVoxelsForRandomParticle;
+
+//        GetMinMaxCoordinatesForParticle(GetParticleFromIndex(LocalNewParticleIndex), true);
+    }
+    CATCH("generate particle in selected space")
 }

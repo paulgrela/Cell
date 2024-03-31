@@ -10,11 +10,12 @@ class CellEngineParticlesBinaryDataFileReaderWriter : virtual public CellEngineD
 public:
     explicit CellEngineParticlesBinaryDataFileReaderWriter() = default;
     ~CellEngineParticlesBinaryDataFileReaderWriter() = default;
-private:
-    inline Particle& GetParticleFromIndex(const UniqueIdInt ParticleIndex)
-    {
-        return (*Particles)[ParticleIndex];
-    }
+//private:
+//    inline Particle& GetParticleFromIndex(const UniqueIdInt ParticleIndex)
+//    {
+//        //return (*Particles)[ParticleIndex];
+//        return Particles[ParticleIndex];
+//    }
 public:
     void SaveDataToFile() override;
 public:
