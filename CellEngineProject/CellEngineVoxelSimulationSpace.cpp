@@ -1,5 +1,4 @@
 
-
 #include <set>
 #include <map>
 #include <algorithm>
@@ -20,6 +19,152 @@
 #include "CellEngineDataBuilderForVoxelSimulationSpace.h"
 
 using namespace std;
+
+
+
+inline string CellEngineNucleicAcidsBasicOperations::GetPairedSequenceStr(string SequenceStr)
+{
+    try
+    {
+        for (auto& SequenceNucleotideChar : SequenceStr)
+            SequenceNucleotideChar = CellEngineUseful::GetLetterFromChainIdForDNAorRNA(CellEngineUseful::GetPairedChainIdForDNAorRNA(CellEngineUseful::GetChainIdFromLetterForDNAorRNA(SequenceNucleotideChar)));
+    }
+    CATCH("getting paired sequence")
+
+    return SequenceStr;
+}
+
+inline tuple<Particle*, Particle*, UnsignedInt, string, vector<ChainIdInt>> CellEngineNucleicAcidsBasicOperations::GetNucleotidesSequence(Particle* Particle::*Direction, const UnsignedInt LengthOfSequence, Particle& ParticleObjectForReaction, const bool ToString, const bool ToVector, bool (*Predicate)(const Particle*))
+{
+    string NucleotidesSequenceToCompareString;
+    vector<ChainIdInt> NucleotidesSequenceToCompareVector;
+
+    Particle* ParticlePtr = &ParticleObjectForReaction;
+    Particle* ParticlePtrPrev = &ParticleObjectForReaction;
+    UnsignedInt NucleotidesCounter = 1;
+
+    try
+    {
+        while (NucleotidesCounter < LengthOfSequence + 1 && ParticleObjectForReaction.*Direction != nullptr && ParticlePtr != nullptr && Predicate(ParticlePtr) == true)
+        {
+            if (ToString == true)
+                NucleotidesSequenceToCompareString += CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticlePtr->ChainId);
+            if (ToVector == true)
+                NucleotidesSequenceToCompareVector.emplace_back(ParticlePtr->ChainId);
+            ParticlePtrPrev = ParticlePtr;
+            ParticlePtr = ParticlePtr->*Direction;
+            NucleotidesCounter++;
+        }
+    }
+    CATCH("getting nucleotides sequence forward")
+
+    return { ParticlePtr, ParticlePtrPrev, NucleotidesCounter, NucleotidesSequenceToCompareString, NucleotidesSequenceToCompareVector };
+}
+
+inline void CellEngineNucleicAcidsBasicOperations::CutDNAPrev(Particle* NucleotideObjectForReactionPtr)
+{
+    try
+    {
+        if (NucleotideObjectForReactionPtr->Prev != nullptr && NucleotideObjectForReactionPtr->Prev->Next != nullptr)
+        {
+            NucleotideObjectForReactionPtr->Prev->Next = nullptr;
+            NucleotideObjectForReactionPtr->Prev = nullptr;
+        }
+    }
+    CATCH("cutting DNA")
+}
+
+inline void CellEngineNucleicAcidsBasicOperations::CutDNANext(Particle* NucleotideObjectForReactionPtr)
+{
+    try
+    {
+        if (NucleotideObjectForReactionPtr->Next != nullptr && NucleotideObjectForReactionPtr->Next->Prev != nullptr)
+        {
+            NucleotideObjectForReactionPtr->Next->Prev = nullptr;
+            NucleotideObjectForReactionPtr->Next = nullptr;
+        }
+    }
+    CATCH("cutting DNA")
+}
+
+inline void CellEngineNucleicAcidsBasicOperations::LinkDNA(Particle* NucleotideObjectForReactionPtr1, Particle* NucleotideObjectForReactionPtr2)
+{
+    try
+    {
+        if (NucleotideObjectForReactionPtr1 != nullptr && NucleotideObjectForReactionPtr2 != nullptr)
+        {
+            NucleotideObjectForReactionPtr1->Prev = NucleotideObjectForReactionPtr2;
+            NucleotideObjectForReactionPtr2->Next = NucleotideObjectForReactionPtr1;
+        }
+    }
+    CATCH("linking DNA")
+}
+
+inline void CellEngineNucleicAcidsBasicOperations::SeparateTwoPairedDNANucleotides(Particle* ParticleNucleotide)
+{
+    try
+    {
+        if (ParticleNucleotide->PairedNucleotide != nullptr && ParticleNucleotide->PairedNucleotide->PairedNucleotide != nullptr)
+        {
+            ParticleNucleotide->PairedNucleotide->PairedNucleotide = nullptr;
+            ParticleNucleotide->PairedNucleotide = nullptr;
+        }
+    }
+    CATCH("separating dna strands")
+}
+
+inline void CellEngineNucleicAcidsBasicOperations::SeparateDNAStrands(Particle* Particle::*Direction, Particle* NucleotidePtr, const UnsignedInt LengthOfStrand)
+{
+    try
+    {
+        for (UnsignedInt DiffPos = 0; DiffPos < LengthOfStrand; DiffPos++)
+        {
+            SeparateTwoPairedDNANucleotides(NucleotidePtr);
+            NucleotidePtr = NucleotidePtr->*Direction;
+        }
+    }
+    CATCH("separating dna strands")
+}
+
+inline void CellEngineNucleicAcidsBasicOperations::JoinDNAStrands(Particle* Particle::*Direction, Particle* Strand1, Particle* Strand2)
+{
+    try
+    {
+        while (Strand1->PairedNucleotide == nullptr)
+        {
+            Strand1->PairedNucleotide = Strand2;
+            Strand2->PairedNucleotide = Strand1;
+            Strand1 = Strand1->*Direction;
+            Strand2 = Strand2->*Direction;
+        }
+    }
+    CATCH("joining dna strands")
+}
+
+inline void CellEngineNucleicAcidsBasicOperations::DeleteLinkedParticlesPointersList(Particle& ParticleObject)
+{
+    try
+    {
+        for (auto &LinkedParticlesPointersListObject: ParticleObject.LinkedParticlesPointersList)
+            if (LinkedParticlesPointersListObject != nullptr)
+            {
+                for (auto &LinkedParticlesPointersListObjectInternal: LinkedParticlesPointersListObject->LinkedParticlesPointersList)
+                    if (LinkedParticlesPointersListObjectInternal->Index == ParticleObject.Index)
+                        LinkedParticlesPointersListObjectInternal = nullptr;
+                erase_if(LinkedParticlesPointersListObject->LinkedParticlesPointersList, [](const Particle *item){ return (item == nullptr); });
+
+                LinkedParticlesPointersListObject = nullptr;
+            }
+        ParticleObject.LinkedParticlesPointersList.clear();
+    }
+    CATCH("delete linked particles pointers list");
+}
+
+
+
+
+
+
 
 [[nodiscard]] float CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(UnsignedInt CoordinateParam)
 {
@@ -46,7 +191,7 @@ Particle& CellEngineVoxelSimulationSpace::GetParticleFromIndexInSimulationSpaceV
     return GetParticleFromIndex(ParticleIndex);
 }
 
-CellEngineVoxelSimulationSpace::CellEngineVoxelSimulationSpace(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : Particles(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam), CellEngineDNAChemicalReactionsInVoxelSpace(ParticlesParam), CellEngineNucleicAcidsParticlesVoxelsGenerator(ParticlesParam)
+CellEngineVoxelSimulationSpace::CellEngineVoxelSimulationSpace(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : Particles(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam), CellEngineNucleicAcidsChemicalReactionsInVoxelSpace(ParticlesParam), CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator(ParticlesParam)
 {
     try
     {
@@ -69,29 +214,6 @@ CellEngineVoxelSimulationSpace::~CellEngineVoxelSimulationSpace()
         free(SpacePointer);
     }
     CATCH("execution of destructor of voxel simulation space")
-}
-
-void CellEngineVoxelSimulationSpace::InitiateFreeParticleIndexes()
-{
-    try
-    {
-        FreeIndexesOfParticles = {};
-
-        for (UnsignedInt FreeIndex = MaxParticleIndex + 100'000'000; FreeIndex >= MaxParticleIndex + 1; FreeIndex--)
-            if (Particles.find(FreeIndex) == Particles.end())
-                FreeIndexesOfParticles.push(FreeIndex);
-    }
-    CATCH("initiating free particle indexes")
-}
-
-void CellEngineVoxelSimulationSpace::PreprocessData(const bool UpdateParticleKindListOfVoxelsBool)
-{
-    try
-    {
-        InitiateFreeParticleIndexes();
-        GetMinMaxCoordinatesForAllParticles(UpdateParticleKindListOfVoxelsBool);
-    }
-    CATCH("preprocessing data for voxel simulation space")
 }
 
 [[nodiscard]] stringstream CellEngineVoxelSimulationSpace::PrintSpaceMinMaxValues() const
@@ -130,144 +252,6 @@ void CellEngineVoxelSimulationSpace::SetAtomInVoxelSimulationSpace(const UniqueI
             SetValueToSpaceVoxelWithFillingListOfVoxelsOfParticle(&GetParticleFromIndex(ParticleIndex).ListOfVoxels, ParticleIndex, PosX, PosY, PosZ);
     }
     CATCH("setting atom in voxel simulation space")
-}
-
-inline string GetPairedSequenceStr(string SequenceStr)
-{
-    try
-    {
-        for (auto& SequenceNucleotideChar : SequenceStr)
-            SequenceNucleotideChar = CellEngineUseful::GetLetterFromChainIdForDNAorRNA(CellEngineUseful::GetPairedChainIdForDNAorRNA(CellEngineUseful::GetChainIdFromLetterForDNAorRNA(SequenceNucleotideChar)));
-    }
-    CATCH("getting paired sequence")
-
-    return SequenceStr;
-}
-
-inline tuple<Particle*, Particle*, UnsignedInt, string, vector<ChainIdInt>> GetNucleotidesSequence(Particle* Particle::*Direction, const UnsignedInt LengthOfSequence, Particle& ParticleObjectForReaction, const bool ToString, const bool ToVector, bool (*Predicate)(const Particle*))
-{
-    string NucleotidesSequenceToCompareString;
-    vector<ChainIdInt> NucleotidesSequenceToCompareVector;
-
-    Particle* ParticlePtr = &ParticleObjectForReaction;
-    Particle* ParticlePtrPrev = &ParticleObjectForReaction;
-    UnsignedInt NucleotidesCounter = 1;
-
-    try
-    {
-        while (NucleotidesCounter < LengthOfSequence + 1 && ParticleObjectForReaction.*Direction != nullptr && ParticlePtr != nullptr && Predicate(ParticlePtr) == true)
-        {
-            if (ToString == true)
-                NucleotidesSequenceToCompareString += CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticlePtr->ChainId);
-            if (ToVector == true)
-                NucleotidesSequenceToCompareVector.emplace_back(ParticlePtr->ChainId);
-            ParticlePtrPrev = ParticlePtr;
-            ParticlePtr = ParticlePtr->*Direction;
-            NucleotidesCounter++;
-        }
-    }
-    CATCH("getting nucleotides sequence forward")
-
-    return { ParticlePtr, ParticlePtrPrev, NucleotidesCounter, NucleotidesSequenceToCompareString, NucleotidesSequenceToCompareVector };
-}
-
-inline void CutDNAPrev(Particle* NucleotideObjectForReactionPtr)
-{
-    try
-    {
-        if (NucleotideObjectForReactionPtr->Prev != nullptr && NucleotideObjectForReactionPtr->Prev->Next != nullptr)
-        {
-            NucleotideObjectForReactionPtr->Prev->Next = nullptr;
-            NucleotideObjectForReactionPtr->Prev = nullptr;
-        }
-    }
-    CATCH("cutting DNA")
-}
-
-inline void CutDNANext(Particle* NucleotideObjectForReactionPtr)
-{
-    try
-    {
-        if (NucleotideObjectForReactionPtr->Next != nullptr && NucleotideObjectForReactionPtr->Next->Prev != nullptr)
-        {
-            NucleotideObjectForReactionPtr->Next->Prev = nullptr;
-            NucleotideObjectForReactionPtr->Next = nullptr;
-        }
-    }
-    CATCH("cutting DNA")
-}
-
-inline void LinkDNA(Particle* NucleotideObjectForReactionPtr1, Particle* NucleotideObjectForReactionPtr2)
-{
-    try
-    {
-        if (NucleotideObjectForReactionPtr1 != nullptr && NucleotideObjectForReactionPtr2 != nullptr)
-        {
-            NucleotideObjectForReactionPtr1->Prev = NucleotideObjectForReactionPtr2;
-            NucleotideObjectForReactionPtr2->Next = NucleotideObjectForReactionPtr1;
-        }
-    }
-    CATCH("linking DNA")
-}
-
-inline void SeparateTwoPairedDNANucleotides(Particle* ParticleNucleotide)
-{
-    try
-    {
-        if (ParticleNucleotide->PairedNucleotide != nullptr && ParticleNucleotide->PairedNucleotide->PairedNucleotide != nullptr)
-        {
-            ParticleNucleotide->PairedNucleotide->PairedNucleotide = nullptr;
-            ParticleNucleotide->PairedNucleotide = nullptr;
-        }
-    }
-    CATCH("separating dna strands")
-}
-
-inline void SeparateDNAStrands(Particle* Particle::*Direction, Particle* NucleotidePtr, const UnsignedInt LengthOfStrand)
-{
-    try
-    {
-        for (UnsignedInt DiffPos = 0; DiffPos < LengthOfStrand; DiffPos++)
-        {
-            SeparateTwoPairedDNANucleotides(NucleotidePtr);
-            NucleotidePtr = NucleotidePtr->*Direction;
-        }
-    }
-    CATCH("separating dna strands")
-}
-
-inline void JoinDNAStrands(Particle* Particle::*Direction, Particle* Strand1, Particle* Strand2)
-{
-    try
-    {
-        while (Strand1->PairedNucleotide == nullptr)
-        {
-            Strand1->PairedNucleotide = Strand2;
-            Strand2->PairedNucleotide = Strand1;
-            Strand1 = Strand1->*Direction;
-            Strand2 = Strand2->*Direction;
-        }
-    }
-    CATCH("joining dna strands")
-}
-
-inline void DeleteLinkedParticlesPointersList(Particle& ParticleObject)
-{
-    try
-    {
-        for (auto &LinkedParticlesPointersListObject: ParticleObject.LinkedParticlesPointersList)
-            if (LinkedParticlesPointersListObject != nullptr)
-            {
-                for (auto &LinkedParticlesPointersListObjectInternal: LinkedParticlesPointersListObject->LinkedParticlesPointersList)
-                    if (LinkedParticlesPointersListObjectInternal->Index == ParticleObject.Index)
-                        LinkedParticlesPointersListObjectInternal = nullptr;
-                erase_if(LinkedParticlesPointersListObject->LinkedParticlesPointersList, [](const Particle *item){ return (item == nullptr); });
-
-                LinkedParticlesPointersListObject = nullptr;
-            }
-        ParticleObject.LinkedParticlesPointersList.clear();
-    }
-    CATCH("delete linked particles pointers list");
 }
 
 void CellEngineVoxelSimulationSpace::ClearSelectedSpace(const UnsignedInt NumberOfRandomParticles, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt StepXParam, const UnsignedInt StepYParam, const UnsignedInt StepZParam, const UnsignedInt SizeXParam, UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
@@ -344,27 +328,27 @@ void CellEngineVoxelSimulationSpace::AddChemicalReactions()
 
         AddChemicalReaction(Reaction(1101, "STD ONLY WITH SEQ", "CH3CH2(OH) + DNA + ", { { 5, 1, "", true }, { 10001, 1, DNASequenceForTestFindingDNA, false } }, { { 10, 1, "", true } }, nullptr, "standard normal reaction example"));
 
-        AddChemicalReaction(Reaction(10, "CUT 1 SEQ", "CH3CH2(OH) + DNA + ", { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink1, false } }, {}, &CellEngineDNAChemicalReactionsInVoxelSpace::CutDNAInChosenPlaceSpecialReactionFunction, "only in presence of chosen sequence of DNA"));
+        AddChemicalReaction(Reaction(10, "CUT 1 SEQ", "CH3CH2(OH) + DNA + ", { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink1, false } }, {}, &CellEngineNucleicAcidsChemicalReactionsInVoxelSpace::CutDNAInChosenPlaceSpecialReactionFunction, "only in presence of chosen sequence of DNA"));
 
-        AddChemicalReaction(Reaction(20, "LINK 1 SEQ", "CH3CH2(OH) + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink1, false }, { 10001, 1, DNASequence2ForTestCutLink1, false } }, {}, &CellEngineDNAChemicalReactionsInVoxelSpace::LinkDNAInChosenPlaceSpecialReactionFunction, "links one strand of DNA with 2 endings with chosen sequences"));
-        AddChemicalReaction(Reaction(30, "LINK 1 ANY", "CH3CH2(OH) + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 2, DNASequence1ForTestCutLink1Any, false } }, {}, &CellEngineDNAChemicalReactionsInVoxelSpace::LinkDNAInAnyPlaceSpecialReactionFunction, "link one strand of DNA with 2 endings with any sequence"));
+        AddChemicalReaction(Reaction(20, "LINK 1 SEQ", "CH3CH2(OH) + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink1, false }, { 10001, 1, DNASequence2ForTestCutLink1, false } }, {}, &CellEngineNucleicAcidsChemicalReactionsInVoxelSpace::LinkDNAInChosenPlaceSpecialReactionFunction, "links one strand of DNA with 2 endings with chosen sequences"));
+        AddChemicalReaction(Reaction(30, "LINK 1 ANY", "CH3CH2(OH) + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 2, DNASequence1ForTestCutLink1Any, false } }, {}, &CellEngineNucleicAcidsChemicalReactionsInVoxelSpace::LinkDNAInAnyPlaceSpecialReactionFunction, "link one strand of DNA with 2 endings with any sequence"));
 
-        AddChemicalReaction(Reaction(40, "CUT 2 SEQ SHIFT 3 10", "CH3CHCH2 + DNA + ", 3, 10, { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink2, false } }, { { 86, 1, "", true } }, &CellEngineDNAChemicalReactionsInVoxelSpace::CutDNAInChosenPlaceSpecialReactionFunction, "cuts both strands when found first sequence plus additional shift in both strands defined by additional parameters shift1=3 shift=10"));
-        AddChemicalReaction(Reaction(41, "CUT 2 SEQ SHIFT 7 3", "CH3CHCH2 + DNA + ", 7, 3, { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink2, false } }, { { 86, 1, "", true } }, &CellEngineDNAChemicalReactionsInVoxelSpace::CutDNAInChosenPlaceSpecialReactionFunction, "cuts both strands when found first sequence plus additional shift in both strands defined by additional parameters shift1=7 shift2=3"));
-        AddChemicalReaction(Reaction(42, "CUT 2 SEQ SHIFT 10 3", "CH3CHCH2 + DNA + ", 10, 3, { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink2, false } }, { { 86, 1, "", true } }, &CellEngineDNAChemicalReactionsInVoxelSpace::CutDNAInChosenPlaceSpecialReactionFunction, "cuts both strands when found first sequence plus additional shift in both strands defined by additional parameters shift1=10 shift2=3"));
+        AddChemicalReaction(Reaction(40, "CUT 2 SEQ SHIFT 3 10", "CH3CHCH2 + DNA + ", 3, 10, { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink2, false } }, { { 86, 1, "", true } }, &CellEngineNucleicAcidsChemicalReactionsInVoxelSpace::CutDNAInChosenPlaceSpecialReactionFunction, "cuts both strands when found first sequence plus additional shift in both strands defined by additional parameters shift1=3 shift=10"));
+        AddChemicalReaction(Reaction(41, "CUT 2 SEQ SHIFT 7 3", "CH3CHCH2 + DNA + ", 7, 3, { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink2, false } }, { { 86, 1, "", true } }, &CellEngineNucleicAcidsChemicalReactionsInVoxelSpace::CutDNAInChosenPlaceSpecialReactionFunction, "cuts both strands when found first sequence plus additional shift in both strands defined by additional parameters shift1=7 shift2=3"));
+        AddChemicalReaction(Reaction(42, "CUT 2 SEQ SHIFT 10 3", "CH3CHCH2 + DNA + ", 10, 3, { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink2, false } }, { { 86, 1, "", true } }, &CellEngineNucleicAcidsChemicalReactionsInVoxelSpace::CutDNAInChosenPlaceSpecialReactionFunction, "cuts both strands when found first sequence plus additional shift in both strands defined by additional parameters shift1=10 shift2=3"));
 
-        AddChemicalReaction(Reaction(60, "LINK 2 SEQ COMPLEMENT", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, "TACAAAAAAAGAGGTGTTAGC", false }, { 10001, 1, "TCTTATT", false } }, {}, &CellEngineDNAChemicalReactionsInVoxelSpace::LinkDNALigaseInChosenPlaceSpecialReactionFunction, "Links both DNA strands if first strand has first sequence and second strand has second sequence and opposite joining strands and complementary"));
-        AddChemicalReaction(Reaction(61, "LINK 2 SEQ COMPLEMENT", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, "TACAAAAAAAGAGGTGTTAGCTCTT", false }, { 10001, 1, "ATTATGA", false } }, {}, &CellEngineDNAChemicalReactionsInVoxelSpace::LinkDNALigaseInChosenPlaceSpecialReactionFunction, "Links both DNA strands if first strand has first sequence and second strand has second sequence and opposite joining strands and complementary"));
+        AddChemicalReaction(Reaction(60, "LINK 2 SEQ COMPLEMENT", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, "TACAAAAAAAGAGGTGTTAGC", false }, { 10001, 1, "TCTTATT", false } }, {}, &CellEngineNucleicAcidsChemicalReactionsInVoxelSpace::LinkDNALigaseInChosenPlaceSpecialReactionFunction, "Links both DNA strands if first strand has first sequence and second strand has second sequence and opposite joining strands and complementary"));
+        AddChemicalReaction(Reaction(61, "LINK 2 SEQ COMPLEMENT", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, "TACAAAAAAAGAGGTGTTAGCTCTT", false }, { 10001, 1, "ATTATGA", false } }, {}, &CellEngineNucleicAcidsChemicalReactionsInVoxelSpace::LinkDNALigaseInChosenPlaceSpecialReactionFunction, "Links both DNA strands if first strand has first sequence and second strand has second sequence and opposite joining strands and complementary"));
 
-        AddChemicalReaction(Reaction(70, "LINK 2 ANY COMPLEMENT", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, "ANY", false }, { 10001, 1, "ANY", false } }, {}, &CellEngineDNAChemicalReactionsInVoxelSpace::LinkDNALigaseInAnyPlaceSpecialReactionFunction, "Links both DNA strands with any sequence if opposite joining strands when complementary"));
+        AddChemicalReaction(Reaction(70, "LINK 2 ANY COMPLEMENT", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, "ANY", false }, { 10001, 1, "ANY", false } }, {}, &CellEngineNucleicAcidsChemicalReactionsInVoxelSpace::LinkDNALigaseInAnyPlaceSpecialReactionFunction, "Links both DNA strands with any sequence if opposite joining strands when complementary"));
 
-        AddChemicalReaction(Reaction(80, "LINK 2 ANY EQU SAME", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, "ANY", false }, { 10001, 1, "ANY", false } }, {}, &CellEngineDNAChemicalReactionsInVoxelSpace::LinkDNAInAnyPlaceSpecialReactionFunction, "links both strands of DNA if they are cut equally in the same place"));
+        AddChemicalReaction(Reaction(80, "LINK 2 ANY EQU SAME", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, "ANY", false }, { 10001, 1, "ANY", false } }, {}, &CellEngineNucleicAcidsChemicalReactionsInVoxelSpace::LinkDNAInAnyPlaceSpecialReactionFunction, "links both strands of DNA if they are cut equally in the same place"));
 
-        AddChemicalReaction(Reaction(100, "CUT CRISPER 1", "CH3CHCH2 + RNA + DNA + ", 3, 7, { { 5, 1, "", false }, { 10001, 1, DNASequenceForTestCutCrisper, false }, { 10001, 0, RNASequenceForTestCutCrisper, false } }, {}, &CellEngineDNAChemicalReactionsInVoxelSpace::CutDNACrisperInChosenPlaceSpecialReactionFunction, "cut crisper of one strand of DNA with RNA as template"));
-        AddChemicalReaction(Reaction(110, "CUT CRISPER 2", "CH3CHCH2 + RNA + DNA + ", 3, 7, { { 5, 1, "", false }, { 10001, 1, DNASequenceForTestCutCrisper, false }, { 10001, 0, RNASequenceForTestCutCrisper, false } }, {}, &CellEngineDNAChemicalReactionsInVoxelSpace::CutDNACrisperInChosenPlaceSpecialReactionFunction, "cut crisper of two strands of DNA with RNA as template"));
+        AddChemicalReaction(Reaction(100, "CUT CRISPER 1", "CH3CHCH2 + RNA + DNA + ", 3, 7, { { 5, 1, "", false }, { 10001, 1, DNASequenceForTestCutCrisper, false }, { 10001, 0, RNASequenceForTestCutCrisper, false } }, {}, &CellEngineNucleicAcidsChemicalReactionsInVoxelSpace::CutDNACrisperInChosenPlaceSpecialReactionFunction, "cut crisper of one strand of DNA with RNA as template"));
+        AddChemicalReaction(Reaction(110, "CUT CRISPER 2", "CH3CHCH2 + RNA + DNA + ", 3, 7, { { 5, 1, "", false }, { 10001, 1, DNASequenceForTestCutCrisper, false }, { 10001, 0, RNASequenceForTestCutCrisper, false } }, {}, &CellEngineNucleicAcidsChemicalReactionsInVoxelSpace::CutDNACrisperInChosenPlaceSpecialReactionFunction, "cut crisper of two strands of DNA with RNA as template"));
 
-        AddChemicalReaction(Reaction(150, "POLYMERASE DNA START SEQ", "CH3CHCH2 + DNA + ", { { 5, 1, "", false }, { 10001, 1, "TACAAAAAAAGAGGTGTTAGC", false } }, {}, &CellEngineDNAChemicalReactionsInVoxelSpace::PolymeraseDNAStartSpecialReactionFunction, "links particle with DNA when found sequence and joins first nucleotide "));
-        AddChemicalReaction(Reaction(160, "POLYMERASE DNA CONTINUE", "CH3CHCH2 + DNA + ", { { 5, 1, "", false, { CellEngineConfigDataObject.RNAIdentifier, CellEngineConfigDataObject.DNAIdentifier } } }, {}, &CellEngineDNAChemicalReactionsInVoxelSpace::PolymeraseDNAContinueSpecialReactionFunction, "links new nucleotide that fits nucleotide in DNA if free nucleotides are found in proximity"));
+        AddChemicalReaction(Reaction(150, "POLYMERASE DNA START SEQ", "CH3CHCH2 + DNA + ", { { 5, 1, "", false }, { 10001, 1, "TACAAAAAAAGAGGTGTTAGC", false } }, {}, &CellEngineNucleicAcidsChemicalReactionsInVoxelSpace::PolymeraseDNAStartSpecialReactionFunction, "links particle with DNA when found sequence and joins first nucleotide "));
+        AddChemicalReaction(Reaction(160, "POLYMERASE DNA CONTINUE", "CH3CHCH2 + DNA + ", { { 5, 1, "", false, { CellEngineConfigDataObject.RNAIdentifier, CellEngineConfigDataObject.DNAIdentifier } } }, {}, &CellEngineNucleicAcidsChemicalReactionsInVoxelSpace::PolymeraseDNAContinueSpecialReactionFunction, "links new nucleotide that fits nucleotide in DNA if free nucleotides are found in proximity"));
 
         AddChemicalReaction(Reaction(1001, "STD", "C6H12O6 + O2 + ", { { 1, 1, "", true }, { 2, 6, "", true } }, { { 3, 6, "", true }, { 0, 6, "", true } }, nullptr));
         AddChemicalReaction(Reaction(1002, "STD", "CH2CH2 + H2O + ", { { 4, 1, "", true }, { 0, 1, "", true } }, { { 5, 1, "", true } }, nullptr));
@@ -388,54 +372,7 @@ void CellEngineVoxelSimulationSpace::ClearVoxelSpaceAndParticles()
     CATCH("clearing voxel space and particles")
 }
 
-void CellEngineVoxelSimulationSpace::GenerateAllRandomParticles()
-{
-    try
-    {
-        ClearVoxelSpaceAndParticles();
-        GenerateRandomMembraneParticles();
-        GenerateRandomRibosomesParticles();
-    }
-    CATCH("generating all random particles")
-}
 
-void CellEngineVoxelSimulationSpace::GenerateRandomMembraneParticles()
-{
-    UnsignedInt Radius = 400;
-    UnsignedInt RadiusSize = 30;
-    UnsignedInt PosXStart = 512;
-    UnsignedInt PosYStart = 512;
-    UnsignedInt PosZStart = 512;
-    UnsignedInt StepX = 10;
-    UnsignedInt StepY = 10;
-    UnsignedInt StepZ = 10;
-
-    try
-    {
-        for (SignedInt x = 0; x < Radius * 2; x += static_cast<SignedInt>(StepX))
-            for (SignedInt y = 0; y < Radius * 2; y += static_cast<SignedInt>(StepY))
-                for (SignedInt z = 0; z < Radius * 2; z += static_cast<SignedInt>(StepZ))
-                {
-                    SignedInt dx = static_cast<SignedInt>(Radius) - x;
-                    SignedInt dy = static_cast<SignedInt>(Radius) - y;
-                    SignedInt dz = static_cast<SignedInt>(Radius) - z;
-                    if ((dx * dx + dy * dy + dz * dz >= (Radius - RadiusSize) * (Radius - RadiusSize)) && (dx * dx + dy * dy + dz * dz) <= (Radius * Radius))
-                    {
-                        GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 4, 1, -1, 1, -1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), PosXStart + dx, PosYStart + dy, PosZStart + dz, 3, 3, 3, 0, 0, 0, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, &CellEngineVoxelSimulationSpace::CheckFreeSpaceForSphereSelectedSpace, &CellEngineVoxelSimulationSpace::SetValueToVoxelsForSphereSelectedSpace);
-                    }
-                }
-    }
-    CATCH("generating random membrane particles")
-}
-
-void CellEngineVoxelSimulationSpace::GenerateRandomRibosomesParticles()
-{
-    try
-    {
-
-    }
-    CATCH("generating random ribosomes particles")
-}
 
 void CellEngineVoxelSimulationSpace::GenerateRandomParticlesInSelectedSpace(const UnsignedInt NumberOfRandomParticles, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt StepXParam, const UnsignedInt StepYParam, const UnsignedInt StepZParam, const UnsignedInt SizeXParam, UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
 {
@@ -880,6 +817,54 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfRandomReactionsForOneParti
 
 
 
+void CellEngineRealRandomParticlesGenerator::GenerateAllRealRandomParticles()
+{
+    try
+    {
+        ClearVoxelSpaceAndParticles();
+        GenerateRealRandomMembraneParticles();
+        GenerateRealRandomRibosomesParticles();
+    }
+    CATCH("generating all random particles")
+}
+
+void CellEngineRealRandomParticlesGenerator::GenerateRealRandomMembraneParticles()
+{
+    UnsignedInt Radius = 400;
+    UnsignedInt RadiusSize = 30;
+    UnsignedInt PosXStart = 512;
+    UnsignedInt PosYStart = 512;
+    UnsignedInt PosZStart = 512;
+    UnsignedInt StepX = 10;
+    UnsignedInt StepY = 10;
+    UnsignedInt StepZ = 10;
+
+    try
+    {
+        for (SignedInt x = 0; x < Radius * 2; x += static_cast<SignedInt>(StepX))
+            for (SignedInt y = 0; y < Radius * 2; y += static_cast<SignedInt>(StepY))
+                for (SignedInt z = 0; z < Radius * 2; z += static_cast<SignedInt>(StepZ))
+                {
+                    SignedInt dx = static_cast<SignedInt>(Radius) - x;
+                    SignedInt dy = static_cast<SignedInt>(Radius) - y;
+                    SignedInt dz = static_cast<SignedInt>(Radius) - z;
+                    if ((dx * dx + dy * dy + dz * dz >= (Radius - RadiusSize) * (Radius - RadiusSize)) && (dx * dx + dy * dy + dz * dz) <= (Radius * Radius))
+                    {
+                        GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 4, 1, -1, 1, -1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), PosXStart + dx, PosYStart + dy, PosZStart + dz, 3, 3, 3, 0, 0, 0, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, &CellEngineVoxelSimulationSpace::CheckFreeSpaceForSphereSelectedSpace, &CellEngineVoxelSimulationSpace::SetValueToVoxelsForSphereSelectedSpace);
+                    }
+                }
+    }
+    CATCH("generating random membrane particles")
+}
+
+void CellEngineRealRandomParticlesGenerator::GenerateRealRandomRibosomesParticles()
+{
+    try
+    {
+
+    }
+    CATCH("generating random ribosomes particles")
+}
 
 
 
@@ -1057,9 +1042,22 @@ UniqueIdInt CellEngineBasicParticlesOperations::AddNewParticle(const Particle& P
     return MaxParticleIndex = ParticleParam.Index;
 }
 
-UniqueIdInt CellEngineBasicParticlesOperations::GetFreeIndexesOfParticleSize()
+UniqueIdInt CellEngineBasicParticlesOperations::GetFreeIndexesOfParticleSize() const
 {
     return FreeIndexesOfParticles.size();
+}
+
+void  CellEngineBasicParticlesOperations::InitiateFreeParticleIndexes()
+{
+    try
+    {
+        FreeIndexesOfParticles = {};
+
+        for (UnsignedInt FreeIndex = MaxParticleIndex + 100'000'000; FreeIndex >= MaxParticleIndex + 1; FreeIndex--)
+            if (Particles.find(FreeIndex) == Particles.end())
+                FreeIndexesOfParticles.push(FreeIndex);
+    }
+    CATCH("initiating free particle indexes")
 }
 
 inline UniqueIdInt CellEngineBasicParticlesOperations::GetNewFreeIndexOfParticle()
@@ -1075,6 +1073,16 @@ inline UniqueIdInt CellEngineBasicParticlesOperations::GetNewFreeIndexOfParticle
         LoggersManagerObject.Log(STREAM("Lack of new free indexes of particles"));
         return MaxParticleIndex + 1;
     }
+}
+
+void CellEngineBasicParticlesOperations::PreprocessData(const bool UpdateParticleKindListOfVoxelsBool)
+{
+    try
+    {
+        InitiateFreeParticleIndexes();
+        GetMinMaxCoordinatesForAllParticles(UpdateParticleKindListOfVoxelsBool);
+    }
+    CATCH("preprocessing data for voxel simulation space")
 }
 
 void CellEngineBasicParticlesOperations::SetStartValuesForSpaceMinMax()
@@ -1358,9 +1366,24 @@ inline void CellEngineParticlesVoxelsShapesGenerator::GenerateParticleVoxelsWhen
 
 
 
+inline void CellEngineNucleicAcidsChemicalReactionsInVoxelSpace::RemoveParticle(const UniqueIdInt ParticleIndex, const bool ClearVoxels)
+{
+    try
+    {
+        Particle& ParticleObject = GetParticleFromIndex(ParticleIndex);
+        CutDNAPrev(&ParticleObject);
+        CutDNANext(&ParticleObject);
+        SeparateTwoPairedDNANucleotides(&ParticleObject);
+        DeleteLinkedParticlesPointersList(ParticleObject);
+        if (ClearVoxels == true)
+            SetAllVoxelsInListOfVoxelsToValue(ParticleObject.ListOfVoxels, GetZeroSimulationSpaceVoxel());
+        FreeIndexesOfParticles.push(ParticleIndex);
+        Particles.erase(ParticleIndex);
+    }
+    CATCH("removing particle")
+}
 
-
-void CellEngineDNAChemicalReactionsInVoxelSpace::MakingZeroSizeForContainersForFoundParticlesInProximity()
+void CellEngineNucleicAcidsChemicalReactionsInVoxelSpace::MakingZeroSizeForContainersForFoundParticlesInProximity()
 {
     try
     {
@@ -1378,7 +1401,7 @@ void CellEngineDNAChemicalReactionsInVoxelSpace::MakingZeroSizeForContainersForF
     CATCH("making zero size for containers for found particles in proximity")
 }
 
-void CellEngineDNAChemicalReactionsInVoxelSpace::UpdateFoundNucleotidesForFoundParticlesInProximity(const UnsignedInt ParticleIndex)
+void CellEngineNucleicAcidsChemicalReactionsInVoxelSpace::UpdateFoundNucleotidesForFoundParticlesInProximity(const UnsignedInt ParticleIndex)
 {
     try
     {
@@ -1409,7 +1432,7 @@ void CellEngineDNAChemicalReactionsInVoxelSpace::UpdateFoundNucleotidesForFoundP
     CATCH("updating found nucleotides for found particles in proximity")
 }
 
-bool CellEngineDNAChemicalReactionsInVoxelSpace::FindParticlesInProximityOfVoxelSimulationSpaceForSelectedVoxelSpace(const bool UpdateNucleotides, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
+bool CellEngineNucleicAcidsChemicalReactionsInVoxelSpace::FindParticlesInProximityOfVoxelSimulationSpaceForSelectedVoxelSpace(const bool UpdateNucleotides, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
 {
     try
     {
@@ -1456,7 +1479,7 @@ bool CellEngineDNAChemicalReactionsInVoxelSpace::FindParticlesInProximityOfVoxel
     return true;
 }
 
-void CellEngineDNAChemicalReactionsInVoxelSpace::PrintInformationAboutFoundParticlesInProximity()
+void CellEngineNucleicAcidsChemicalReactionsInVoxelSpace::PrintInformationAboutFoundParticlesInProximity()
 {
     try
     {
@@ -1470,7 +1493,7 @@ void CellEngineDNAChemicalReactionsInVoxelSpace::PrintInformationAboutFoundParti
     CATCH("printing information found particles in proximity")
 }
 
-bool CellEngineDNAChemicalReactionsInVoxelSpace::FindParticlesInProximityOfVoxelSimulationSpaceForChosenParticle(const Particle& ParticleObject, const UnsignedInt AdditionalBoundFactor)
+bool CellEngineNucleicAcidsChemicalReactionsInVoxelSpace::FindParticlesInProximityOfVoxelSimulationSpaceForChosenParticle(const Particle& ParticleObject, const UnsignedInt AdditionalBoundFactor)
 {
     try
     {
@@ -1485,8 +1508,7 @@ bool CellEngineDNAChemicalReactionsInVoxelSpace::FindParticlesInProximityOfVoxel
     return true;
 }
 
-
-bool CellEngineDNAChemicalReactionsInVoxelSpace::CutDNAInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject)
+bool CellEngineNucleicAcidsChemicalReactionsInVoxelSpace::CutDNAInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject)
 {
     try
     {
@@ -1520,7 +1542,7 @@ bool CellEngineDNAChemicalReactionsInVoxelSpace::CutDNAInChosenPlaceSpecialReact
     return false;
 }
 
-bool CellEngineDNAChemicalReactionsInVoxelSpace::LinkDNAInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject)
+bool CellEngineNucleicAcidsChemicalReactionsInVoxelSpace::LinkDNAInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject)
 {
     try
     {
@@ -1556,7 +1578,7 @@ bool CellEngineDNAChemicalReactionsInVoxelSpace::LinkDNAInChosenPlaceSpecialReac
     return false;
 }
 
-bool CellEngineDNAChemicalReactionsInVoxelSpace::LinkDNAInAnyPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject)
+bool CellEngineNucleicAcidsChemicalReactionsInVoxelSpace::LinkDNAInAnyPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject)
 {
     try
     {
@@ -1582,7 +1604,7 @@ bool CellEngineDNAChemicalReactionsInVoxelSpace::LinkDNAInAnyPlaceSpecialReactio
     return false;
 }
 
-bool CellEngineDNAChemicalReactionsInVoxelSpace::CutDNACrisperInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject)
+bool CellEngineNucleicAcidsChemicalReactionsInVoxelSpace::CutDNACrisperInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject)
 {
     try
     {
@@ -1607,7 +1629,7 @@ bool CellEngineDNAChemicalReactionsInVoxelSpace::CutDNACrisperInChosenPlaceSpeci
     return false;
 }
 
-bool CellEngineDNAChemicalReactionsInVoxelSpace::LinkDNALigaseInAnyPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject)
+bool CellEngineNucleicAcidsChemicalReactionsInVoxelSpace::LinkDNALigaseInAnyPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject)
 {
     try
     {
@@ -1633,7 +1655,7 @@ bool CellEngineDNAChemicalReactionsInVoxelSpace::LinkDNALigaseInAnyPlaceSpecialR
     return false;
 }
 
-bool CellEngineDNAChemicalReactionsInVoxelSpace::LinkDNALigaseInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject)
+bool CellEngineNucleicAcidsChemicalReactionsInVoxelSpace::LinkDNALigaseInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject)
 {
     try
     {
@@ -1711,7 +1733,7 @@ bool CellEngineDNAChemicalReactionsInVoxelSpace::LinkDNALigaseInChosenPlaceSpeci
     return false;
 }
 
-bool CellEngineDNAChemicalReactionsInVoxelSpace::PolymeraseDNAStartSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject)
+bool CellEngineNucleicAcidsChemicalReactionsInVoxelSpace::PolymeraseDNAStartSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject)
 {
     try
     {
@@ -1735,7 +1757,7 @@ bool CellEngineDNAChemicalReactionsInVoxelSpace::PolymeraseDNAStartSpecialReacti
     return false;
 }
 
-bool CellEngineDNAChemicalReactionsInVoxelSpace::PolymeraseDNAContinueSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject)
+bool CellEngineNucleicAcidsChemicalReactionsInVoxelSpace::PolymeraseDNAContinueSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject)
 {
     try
     {
@@ -1805,7 +1827,7 @@ bool CellEngineChemicalReactionsInVoxelSpace::CompareFitnessOfParticle(const Par
 
 
 
-tuple<vector<ChainIdInt>, string> CellEngineDNAChemicalReactionsInVoxelSpace::GetNucleotidesSequenceInBothDirections(const std::vector<UniqueIdInt>& NucleotidesFoundInProximity, const UnsignedInt SizeOfLoop)
+tuple<vector<ChainIdInt>, string> CellEngineNucleicAcidsChemicalReactionsInVoxelSpace::GetNucleotidesSequenceInBothDirections(const std::vector<UniqueIdInt>& NucleotidesFoundInProximity, const UnsignedInt SizeOfLoop)
 {
     string TemplateSequenceStr;
 
@@ -1842,7 +1864,7 @@ tuple<vector<ChainIdInt>, string> CellEngineDNAChemicalReactionsInVoxelSpace::Ge
     return { TemplateSequence, TemplateSequenceStr };
 }
 
-bool CellEngineDNAChemicalReactionsInVoxelSpace::CompareFitnessOfDNASequenceByNucleotidesLoop(ComparisonType TypeOfComparison, const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction)
+bool CellEngineNucleicAcidsChemicalReactionsInVoxelSpace::CompareFitnessOfDNASequenceByNucleotidesLoop(ComparisonType TypeOfComparison, const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction)
 {
     bool FoundSequenceNotFit = false;
 
@@ -1903,7 +1925,7 @@ bool CellEngineDNAChemicalReactionsInVoxelSpace::CompareFitnessOfDNASequenceByNu
     return !FoundSequenceNotFit;
 }
 
-tuple<vector<pair<UniqueIdInt, UnsignedInt>>, bool> CellEngineDNAChemicalReactionsInVoxelSpace::ChooseParticlesForReactionFromAllParticlesInProximity(const Reaction& ReactionObject)
+tuple<vector<pair<UniqueIdInt, UnsignedInt>>, bool> CellEngineNucleicAcidsChemicalReactionsInVoxelSpace::ChooseParticlesForReactionFromAllParticlesInProximity(const Reaction& ReactionObject)
 {
     bool AllAreZero = false;
 
@@ -1980,22 +2002,6 @@ void CellEngineChemicalReactionsInVoxelSpace::EraseParticleChosenForReactionAndG
     CATCH("erasing particles chosen for reaction and get centers for new products of reaction")
 }
 
-inline void CellEngineBasicParticlesOperations::RemoveParticle(const UniqueIdInt ParticleIndex, const bool ClearVoxels)
-{
-    try
-    {
-        Particle& ParticleObject = GetParticleFromIndex(ParticleIndex);
-        CutDNAPrev(&ParticleObject);
-        CutDNANext(&ParticleObject);
-        SeparateTwoPairedDNANucleotides(&ParticleObject);
-        DeleteLinkedParticlesPointersList(ParticleObject);
-        if (ClearVoxels == true)
-            SetAllVoxelsInListOfVoxelsToValue(ParticleObject.ListOfVoxels, GetZeroSimulationSpaceVoxel());
-        FreeIndexesOfParticles.push(ParticleIndex);
-        Particles.erase(ParticleIndex);
-    }
-    CATCH("removing particle")
-}
 
 
 
@@ -2046,9 +2052,7 @@ inline void CellEngineBasicParticlesOperations::RemoveParticle(const UniqueIdInt
 
 
 
-
-
-void CellEngineNucleicAcidsParticlesVoxelsGenerator::EraseAllDNAParticles()
+void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::EraseAllDNAParticles()
 {
     try
     {
@@ -2065,7 +2069,7 @@ void CellEngineNucleicAcidsParticlesVoxelsGenerator::EraseAllDNAParticles()
     CATCH("erasing all dna particles")
 }
 
-void CellEngineNucleicAcidsParticlesVoxelsGenerator::UpdateRandomPositions(const UnsignedInt RandomMoveDirection, UnsignedInt& RandomPosX, UnsignedInt& RandomPosY, UnsignedInt& RandomPosZ, const UnsignedInt Size)
+void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::UpdateRandomPositions(const UnsignedInt RandomMoveDirection, UnsignedInt& RandomPosX, UnsignedInt& RandomPosY, UnsignedInt& RandomPosZ, const UnsignedInt Size)
 {
     switch (RandomMoveDirection)
     {
@@ -2079,7 +2083,7 @@ void CellEngineNucleicAcidsParticlesVoxelsGenerator::UpdateRandomPositions(const
     }
 }
 
-void CellEngineNucleicAcidsParticlesVoxelsGenerator::GenerateOneStrand(const EntityIdInt EntityId, string_view Sequence, const UnsignedInt StartPosX, const UnsignedInt StartPosY, const UnsignedInt StartPosZ, const UnsignedInt ParticleSizeX, const UnsignedInt ParticleSizeY, const UnsignedInt ParticleSizeZ, const UnsignedInt ParticleStepX, const UnsignedInt ParticleStepY, const UnsignedInt ParticleStepZ)
+void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::GenerateOneStrand(const EntityIdInt EntityId, string_view Sequence, const UnsignedInt StartPosX, const UnsignedInt StartPosY, const UnsignedInt StartPosZ, const UnsignedInt ParticleSizeX, const UnsignedInt ParticleSizeY, const UnsignedInt ParticleSizeZ, const UnsignedInt ParticleStepX, const UnsignedInt ParticleStepY, const UnsignedInt ParticleStepZ)
 {
     try
     {
@@ -2092,7 +2096,7 @@ void CellEngineNucleicAcidsParticlesVoxelsGenerator::GenerateOneStrand(const Ent
     CATCH("generating one strand")
 }
 
-Particle* CellEngineNucleicAcidsParticlesVoxelsGenerator::GenerateNucleotideParticle(Particle* ParticlePrev, const EntityIdInt EntityId, const ChainIdInt ChainId, const UnsignedInt GenomeThread, const UnsignedInt GenomeIndex, const UnsignedInt StartPosX, const UnsignedInt StartPosY, const UnsignedInt StartPosZ, const UnsignedInt ParticleSizeX, const UnsignedInt ParticleSizeY, const UnsignedInt ParticleSizeZ, bool AddToGenome, vector<UniqueIdInt>& Genome, const vector3_16 UniqueColorParam, const bool LinkWithPreviousNucleotide)
+Particle* CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::GenerateNucleotideParticle(Particle* ParticlePrev, const EntityIdInt EntityId, const ChainIdInt ChainId, const UnsignedInt GenomeThread, const UnsignedInt GenomeIndex, const UnsignedInt StartPosX, const UnsignedInt StartPosY, const UnsignedInt StartPosZ, const UnsignedInt ParticleSizeX, const UnsignedInt ParticleSizeY, const UnsignedInt ParticleSizeZ, bool AddToGenome, vector<UniqueIdInt>& Genome, const vector3_16 UniqueColorParam, const bool LinkWithPreviousNucleotide)
 {
     UnsignedInt ParticleIndex;
 
@@ -2113,7 +2117,7 @@ Particle* CellEngineNucleicAcidsParticlesVoxelsGenerator::GenerateNucleotidePart
     return &GetParticleFromIndex(ParticleIndex);
 }
 
-tuple<Particle*, Particle*> CellEngineNucleicAcidsParticlesVoxelsGenerator::GenerateTwoPairedNucleotides(Particle* ParticlePrev1, Particle* ParticlePrev2, const EntityIdInt EntityId, const ChainIdInt ChainId, const UnsignedInt GenomeIndex, const UnsignedInt StartPosX, const UnsignedInt StartPosY, const UnsignedInt StartPosZ, const UnsignedInt ParticleSizeX, const UnsignedInt ParticleSizeY, const UnsignedInt ParticleSizeZ, const UnsignedInt AddSizeX, const UnsignedInt AddSizeY, const UnsignedInt AddSizeZ, const vector3_16 UniqueColorParam, const bool Linked, const bool LinkWithPreviousNucleotide)
+tuple<Particle*, Particle*> CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::GenerateTwoPairedNucleotides(Particle* ParticlePrev1, Particle* ParticlePrev2, const EntityIdInt EntityId, const ChainIdInt ChainId, const UnsignedInt GenomeIndex, const UnsignedInt StartPosX, const UnsignedInt StartPosY, const UnsignedInt StartPosZ, const UnsignedInt ParticleSizeX, const UnsignedInt ParticleSizeY, const UnsignedInt ParticleSizeZ, const UnsignedInt AddSizeX, const UnsignedInt AddSizeY, const UnsignedInt AddSizeZ, const vector3_16 UniqueColorParam, const bool Linked, const bool LinkWithPreviousNucleotide)
 {
     try
     {
@@ -2128,7 +2132,7 @@ tuple<Particle*, Particle*> CellEngineNucleicAcidsParticlesVoxelsGenerator::Gene
     return { ParticlePrev1, ParticlePrev2 };
 }
 
-bool CellEngineNucleicAcidsParticlesVoxelsGenerator::TestFormerForbiddenPositions(unordered_set<string>& TestedFormerForbiddenPositions, UnsignedInt RandomMoveDirection, UnsignedInt RandomPosX, UnsignedInt RandomPosY, UnsignedInt RandomPosZ, const UnsignedInt Size)
+bool CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::TestFormerForbiddenPositions(unordered_set<string>& TestedFormerForbiddenPositions, UnsignedInt RandomMoveDirection, UnsignedInt RandomPosX, UnsignedInt RandomPosY, UnsignedInt RandomPosZ, const UnsignedInt Size)
 {
     UnsignedInt PosX = RandomPosX;
     UnsignedInt PosY = RandomPosY;
@@ -2139,7 +2143,7 @@ bool CellEngineNucleicAcidsParticlesVoxelsGenerator::TestFormerForbiddenPosition
     return (TestedFormerForbiddenPositions.find(to_string(PosX) + "|" + to_string(PosY) + "|" + to_string(PosZ)) != TestedFormerForbiddenPositions.end());
 }
 
-tuple<UnsignedInt, UnsignedInt, UnsignedInt> CellEngineNucleicAcidsParticlesVoxelsGenerator::EraseLastRandomDNAParticle(vector<UniqueIdInt>& Genome)
+tuple<UnsignedInt, UnsignedInt, UnsignedInt> CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::EraseLastRandomDNAParticle(vector<UniqueIdInt>& Genome)
 {
     vector3_16 LastLocalRandomPos;
 
@@ -2164,7 +2168,7 @@ UnsignedInt Sqr(UnsignedInt Value)
     return Value * Value;
 }
 
-void CellEngineNucleicAcidsParticlesVoxelsGenerator::GenerateRandomDNAInWholeCell(UnsignedInt NumberOfNucleotidesToBeGenerated, UnsignedInt RandomPosX, UnsignedInt RandomPosY, UnsignedInt RandomPosZ, UnsignedInt ParticleSizeX, UnsignedInt ParticleSizeY, UnsignedInt ParticleSizeZ, UnsignedInt ParticleSize1, UnsignedInt ParticleSize2, UnsignedInt ParticleSize3, UnsignedInt ParticleSize4, UnsignedInt ParticleSize5)
+void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::GenerateRandomDNAInWholeCell(UnsignedInt NumberOfNucleotidesToBeGenerated, UnsignedInt RandomPosX, UnsignedInt RandomPosY, UnsignedInt RandomPosZ, UnsignedInt ParticleSizeX, UnsignedInt ParticleSizeY, UnsignedInt ParticleSizeZ, UnsignedInt ParticleSize1, UnsignedInt ParticleSize2, UnsignedInt ParticleSize3, UnsignedInt ParticleSize4, UnsignedInt ParticleSize5)
 {
     try
     {
@@ -2288,7 +2292,7 @@ void CellEngineNucleicAcidsParticlesVoxelsGenerator::GenerateRandomDNAInWholeCel
     CATCH("generating random dna in whole cell")
 }
 
-void CellEngineNucleicAcidsParticlesVoxelsGenerator::GetMinMaxCoordinatesForDNA()
+void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::GetMinMaxCoordinatesForDNA()
 {
     try
     {
@@ -2300,7 +2304,7 @@ void CellEngineNucleicAcidsParticlesVoxelsGenerator::GetMinMaxCoordinatesForDNA(
     CATCH("getting min max of coordinates for DNA")
 }
 
-void CellEngineNucleicAcidsParticlesVoxelsGenerator::SaveGenomeDataToFile(UnsignedInt ParticleSize)
+void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::SaveGenomeDataToFile(UnsignedInt ParticleSize)
 {
     try
     {
@@ -2324,7 +2328,7 @@ void CellEngineNucleicAcidsParticlesVoxelsGenerator::SaveGenomeDataToFile(Unsign
     CATCH("saving genome data to file")
 }
 
-void CellEngineNucleicAcidsParticlesVoxelsGenerator::ReadGenomeDataFromFile(bool Paired)
+void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::ReadGenomeDataFromFile(bool Paired)
 {
     try
     {
@@ -2387,7 +2391,7 @@ void CellEngineNucleicAcidsParticlesVoxelsGenerator::ReadGenomeDataFromFile(bool
     CATCH("reading genome data from file")
 }
 
-void CellEngineNucleicAcidsParticlesVoxelsGenerator::ReadGenomeSequenceFromFile()
+void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::ReadGenomeSequenceFromFile()
 {
     try
     {
@@ -2406,7 +2410,7 @@ void CellEngineNucleicAcidsParticlesVoxelsGenerator::ReadGenomeSequenceFromFile(
     CATCH("reading real genome data from file")
 }
 
-void CellEngineNucleicAcidsParticlesVoxelsGenerator::TestGeneratedGenomeCorrectness(const UnsignedInt ParticleSize)
+void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::TestGeneratedGenomeCorrectness(const UnsignedInt ParticleSize)
 {
     try
     {

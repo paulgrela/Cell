@@ -4,7 +4,6 @@
 
 #include <memory>
 
-
 #include "CellEngineAtom.h"
 #include "CellEngineConfigData.h"
 #include "CellEngineVoxelSimulationSpace.h"

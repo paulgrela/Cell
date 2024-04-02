@@ -639,11 +639,14 @@ public:
                     if (ImGui::Button("  CLEAR VOXEL SPACE AND PARTICLES     ") == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ClearVoxelSpaceAndParticles();
                     if (ImGui::Button("  GENERATE ALL RANDOM PARTICLES       ") == true)
-                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateAllRandomParticles();
+                        //dynamic_cast<CellEngineRealRandomParticlesGenerator*>(CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer.get())->GenerateAllRealRandomParticles();
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateAllRealRandomParticles();
                     if (ImGui::Button("  GENERATE RANDOM MEMBRANE PARTICLES  ") == true)
-                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateRandomMembraneParticles();
+                        //dynamic_cast<CellEngineRealRandomParticlesGenerator*>(CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer.get())->GenerateRealRandomMembraneParticles();
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateRealRandomMembraneParticles();
                     if (ImGui::Button("  GENERATE RANDOM RIBOSOMES PARTICLES ") == true)
-                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateRandomRibosomesParticles();
+                        //dynamic_cast<CellEngineRealRandomParticlesGenerator*>(CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer.get())->GenerateRealRandomRibosomesParticles();
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateRealRandomRibosomesParticles();
                 }
 
                 if (ImGui::CollapsingHeader("SAVING AND READING PARTICLES TO AND FROM FILE", ImGuiTreeNodeFlags_DefaultOpen))

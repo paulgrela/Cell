@@ -82,11 +82,15 @@ public:
         return Particles[ParticleIndex];
     }
 public:
+    void InitiateFreeParticleIndexes();
+public:
     inline UniqueIdInt GetNewFreeIndexOfParticle();
-    UniqueIdInt GetFreeIndexesOfParticleSize();
+    [[nodiscard]] UniqueIdInt GetFreeIndexesOfParticleSize() const;
 public:
     UniqueIdInt AddNewParticle(const Particle& ParticleParam);
-    inline void RemoveParticle(UniqueIdInt ParticleIndex, bool ClearVoxels);
+    virtual void RemoveParticle(UniqueIdInt ParticleIndex, bool ClearVoxels) = 0;
+public:
+    void PreprocessData(bool UpdateParticleKindListOfVoxelsBool);
 public:
     void SetStartValuesForSpaceMinMax();
     void GetMinMaxCoordinatesForAllParticles(bool UpdateParticleKindListOfVoxelsBool);
@@ -104,6 +108,8 @@ public:
 
 class CellEngineParticlesVoxelsShapesGenerator : virtual public CellEngineBasicParticlesOperations
 {
+public:
+    virtual void ClearVoxelSpaceAndParticles() = 0;
 public:
     typedef bool (CellEngineParticlesVoxelsShapesGenerator::*CheckFreeSpaceForSelectedSpaceType)(UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UniqueIdInt );
     typedef void (CellEngineParticlesVoxelsShapesGenerator::*SetValueToVoxelsForSelectedSpaceType)(std::vector<vector3_16>*, UniqueIdInt, UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt);
@@ -125,7 +131,49 @@ public:
     }
 };
 
+class CellEngineRealRandomParticlesGenerator : public CellEngineParticlesVoxelsShapesGenerator
+{
+public:
+    void GenerateAllRealRandomParticles();
+    void GenerateRealRandomMembraneParticles();
+    void GenerateRealRandomRibosomesParticles();
+public:
+    explicit CellEngineRealRandomParticlesGenerator(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : CellEngineParticlesVoxelsShapesGenerator(ParticlesParam)
+    {
+    }
+};
 
+class CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator : public CellEngineRealRandomParticlesGenerator
+{
+public:
+    std::mt19937_64 mt64R{ std::random_device{}() };
+protected:
+    std::vector<std::string> GenomesLines;
+    std::vector<std::vector<UniqueIdInt>> Genomes;
+public:
+    void GenerateOneStrand(EntityIdInt EntityId, std::string_view Sequence, UnsignedInt StartPosX, UnsignedInt StartPosY, UnsignedInt StartPosZ, UnsignedInt ParticleSizeX, UnsignedInt ParticleSizeY, UnsignedInt ParticleSizeZ, UnsignedInt ParticleStepX, UnsignedInt ParticleStepY, UnsignedInt ParticleStepZ);
+    Particle* GenerateNucleotideParticle(Particle* ParticlePrev, EntityIdInt EntityId, ChainIdInt ChainId, UnsignedInt GenomeThread, UnsignedInt GenomeIndex, UnsignedInt StartPosX, UnsignedInt StartPosY, UnsignedInt StartPosZ, UnsignedInt ParticleSizeX, UnsignedInt ParticleSizeY, UnsignedInt ParticleSizeZ, bool AddToGenome, std::vector<UniqueIdInt>& Genome, vector3_16 UniqueColorParam, bool LinkWithPreviousNucleotide);
+    std::tuple<Particle*, Particle*> GenerateTwoPairedNucleotides(Particle* ParticlePrev1, Particle* ParticlePrev2, EntityIdInt EntityId, ChainIdInt ChainId, UnsignedInt GenomeIndex, UnsignedInt StartPosX, UnsignedInt StartPosY, UnsignedInt StartPosZ, UnsignedInt ParticleSizeX, UnsignedInt ParticleSizeY, UnsignedInt ParticleSizeZ, UnsignedInt AddSizeX, UnsignedInt AddSizeY, UnsignedInt AddSizeZ, vector3_16 UniqueColorParam, bool Linked, bool LinkWithPreviousNucleotide);
+public:
+    void EraseAllDNAParticles();
+public:
+    void GenerateRandomDNAInWholeCell(UnsignedInt NumberOfNucleotidesToBeGenerated, UnsignedInt RandomPosX, UnsignedInt RandomPosY, UnsignedInt RandomPosZ, UnsignedInt ParticleSizeX, UnsignedInt ParticleSizeY, UnsignedInt ParticleSizeZ, UnsignedInt ParticleSize1, UnsignedInt ParticleSize2, UnsignedInt ParticleSize3, UnsignedInt ParticleSize4, UnsignedInt ParticleSize5);
+protected:
+    static void UpdateRandomPositions(UnsignedInt RandomMoveDirection, UnsignedInt& RandomPosX, UnsignedInt& RandomPosY, UnsignedInt& RandomPosZ, UnsignedInt Size);
+    static bool TestFormerForbiddenPositions(std::unordered_set<std::string>& TestedFormerForbiddenPositions, UnsignedInt RandomMoveDirection, UnsignedInt RandomPosX, UnsignedInt RandomPosY, UnsignedInt RandomPosZ, UnsignedInt Size);
+    std::tuple<UnsignedInt, UnsignedInt, UnsignedInt> EraseLastRandomDNAParticle(std::vector<UniqueIdInt>& Genome);
+protected:
+    void GetMinMaxCoordinatesForDNA();
+public:
+    void SaveGenomeDataToFile(UnsignedInt ParticleSize);
+    void ReadGenomeDataFromFile(bool Paired);
+    void ReadGenomeSequenceFromFile();
+    void TestGeneratedGenomeCorrectness(UnsignedInt ParticleSize);
+public:
+    explicit CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : CellEngineBasicParticlesOperations(ParticlesParam), CellEngineRealRandomParticlesGenerator(ParticlesParam)
+    {
+    }
+};
 
 
 
@@ -152,8 +200,24 @@ public:
     }
 };
 
-class CellEngineDNAChemicalReactionsInVoxelSpace : public CellEngineChemicalReactionsInVoxelSpace
+class CellEngineNucleicAcidsBasicOperations
 {
+public:
+    inline std::string GetPairedSequenceStr(std::string SequenceStr);
+    inline std::tuple<Particle*, Particle*, UnsignedInt, std::string, std::vector<ChainIdInt>> GetNucleotidesSequence(Particle* Particle::*Direction, UnsignedInt LengthOfSequence, Particle& ParticleObjectForReaction,bool ToString, bool ToVector, bool (*Predicate)(const Particle*));
+    inline void CutDNAPrev(Particle* NucleotideObjectForReactionPtr);
+    inline void CutDNANext(Particle* NucleotideObjectForReactionPtr);
+    inline void LinkDNA(Particle* NucleotideObjectForReactionPtr1, Particle* NucleotideObjectForReactionPtr2);
+    inline void SeparateTwoPairedDNANucleotides(Particle* ParticleNucleotide);
+    inline void SeparateDNAStrands(Particle* Particle::*Direction, Particle* NucleotidePtr, UnsignedInt LengthOfStrand);
+    inline void JoinDNAStrands(Particle* Particle::*Direction, Particle* Strand1, Particle* Strand2);
+    inline void DeleteLinkedParticlesPointersList(Particle& ParticleObject);
+};
+
+class CellEngineNucleicAcidsChemicalReactionsInVoxelSpace : public CellEngineChemicalReactionsInVoxelSpace, public CellEngineNucleicAcidsBasicOperations
+{
+public:
+    void RemoveParticle(UniqueIdInt ParticleIndex, bool ClearVoxels) override;
 public:
     std::tuple<std::vector<ChainIdInt>, std::string> GetNucleotidesSequenceInBothDirections(const std::vector<UniqueIdInt>& NucleotidesFoundInProximity, UnsignedInt SizeOfLoop);
     bool CompareFitnessOfDNASequenceByNucleotidesLoop(ComparisonType TypeOfComparison, const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction);
@@ -176,44 +240,15 @@ public:
     bool PolymeraseDNAStartSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject);
     bool PolymeraseDNAContinueSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject);
 public:
-    explicit CellEngineDNAChemicalReactionsInVoxelSpace(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : CellEngineChemicalReactionsInVoxelSpace(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam)
+    explicit CellEngineNucleicAcidsChemicalReactionsInVoxelSpace(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : CellEngineChemicalReactionsInVoxelSpace(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam)
     {
     }
 };
 
 
 
-class CellEngineNucleicAcidsParticlesVoxelsGenerator : public CellEngineParticlesVoxelsShapesGenerator
-{
-public:
-    std::mt19937_64 mt64R{ std::random_device{}() };
-protected:
-    std::vector<std::string> GenomesLines;
-    std::vector<std::vector<UniqueIdInt>> Genomes;
-public:
-    void GenerateOneStrand(EntityIdInt EntityId, std::string_view Sequence, UnsignedInt StartPosX, UnsignedInt StartPosY, UnsignedInt StartPosZ, UnsignedInt ParticleSizeX, UnsignedInt ParticleSizeY, UnsignedInt ParticleSizeZ, UnsignedInt ParticleStepX, UnsignedInt ParticleStepY, UnsignedInt ParticleStepZ);
-    Particle* GenerateNucleotideParticle(Particle* ParticlePrev, EntityIdInt EntityId, ChainIdInt ChainId, UnsignedInt GenomeThread, UnsignedInt GenomeIndex, UnsignedInt StartPosX, UnsignedInt StartPosY, UnsignedInt StartPosZ, UnsignedInt ParticleSizeX, UnsignedInt ParticleSizeY, UnsignedInt ParticleSizeZ, bool AddToGenome, std::vector<UniqueIdInt>& Genome, vector3_16 UniqueColorParam, bool LinkWithPreviousNucleotide);
-    std::tuple<Particle*, Particle*> GenerateTwoPairedNucleotides(Particle* ParticlePrev1, Particle* ParticlePrev2, EntityIdInt EntityId, ChainIdInt ChainId, UnsignedInt GenomeIndex, UnsignedInt StartPosX, UnsignedInt StartPosY, UnsignedInt StartPosZ, UnsignedInt ParticleSizeX, UnsignedInt ParticleSizeY, UnsignedInt ParticleSizeZ, UnsignedInt AddSizeX, UnsignedInt AddSizeY, UnsignedInt AddSizeZ, vector3_16 UniqueColorParam, bool Linked, bool LinkWithPreviousNucleotide);
-public:
-    void GenerateRandomDNAInWholeCell(UnsignedInt NumberOfNucleotidesToBeGenerated, UnsignedInt RandomPosX, UnsignedInt RandomPosY, UnsignedInt RandomPosZ, UnsignedInt ParticleSizeX, UnsignedInt ParticleSizeY, UnsignedInt ParticleSizeZ, UnsignedInt ParticleSize1, UnsignedInt ParticleSize2, UnsignedInt ParticleSize3, UnsignedInt ParticleSize4, UnsignedInt ParticleSize5);
-    void EraseAllDNAParticles();
-    static void UpdateRandomPositions(UnsignedInt RandomMoveDirection, UnsignedInt& RandomPosX, UnsignedInt& RandomPosY, UnsignedInt& RandomPosZ, UnsignedInt Size);
-    static bool TestFormerForbiddenPositions(std::unordered_set<std::string>& TestedFormerForbiddenPositions, UnsignedInt RandomMoveDirection, UnsignedInt RandomPosX, UnsignedInt RandomPosY, UnsignedInt RandomPosZ, UnsignedInt Size);
-    std::tuple<UnsignedInt, UnsignedInt, UnsignedInt> EraseLastRandomDNAParticle(std::vector<UniqueIdInt>& Genome);
-public:
-    void GetMinMaxCoordinatesForDNA();
-public:
-    void SaveGenomeDataToFile(UnsignedInt ParticleSize);
-    void ReadGenomeDataFromFile(bool Paired);
-    void ReadGenomeSequenceFromFile();
-    void TestGeneratedGenomeCorrectness(UnsignedInt ParticleSize);
-public:
-    explicit CellEngineNucleicAcidsParticlesVoxelsGenerator(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : CellEngineBasicParticlesOperations(ParticlesParam), CellEngineParticlesVoxelsShapesGenerator(ParticlesParam)
-    {
-    }
-};
 
-class CellEngineVoxelSimulationSpace : public CellEngineChemicalReactions, public CellEngineDNAChemicalReactionsInVoxelSpace, public CellEngineNucleicAcidsParticlesVoxelsGenerator
+class CellEngineVoxelSimulationSpace : public CellEngineChemicalReactions, public CellEngineNucleicAcidsChemicalReactionsInVoxelSpace, public CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator
 {
     friend class CellEngineParticlesDataFile;
 public:
@@ -242,10 +277,7 @@ public:
     static void AddParticlesKinds();
     void AddChemicalReactions();
 public:
-    void ClearVoxelSpaceAndParticles();
-    void GenerateAllRandomParticles();
-    void GenerateRandomMembraneParticles();
-    void GenerateRandomRibosomesParticles();
+    void ClearVoxelSpaceAndParticles() override;
 public:
     void GeneratePlanedEllipsoidParticlesInSelectedSpace(UnsignedInt NumberOfRandomParticles, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt StepXParam, UnsignedInt StepYParam, UnsignedInt StepZParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
     void GeneratePlanedCuboidParticlesInSelectedSpace(UnsignedInt NumberOfRandomParticles, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt StepXParam, UnsignedInt StepYParam, UnsignedInt StepZParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
@@ -271,9 +303,6 @@ public:
     std::vector<UnsignedInt> GetRandomParticles(UnsignedInt NumberOfReactants) override;
     bool IsChemicalReactionPossible(const Reaction& ReactionObject) override;
     bool MakeChemicalReaction(Reaction& ReactionObject) override;
-public:
-    void PreprocessData(bool UpdateParticleKindListOfVoxelsBool);
-    void InitiateFreeParticleIndexes();
 public:
     explicit CellEngineVoxelSimulationSpace(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam);
     ~CellEngineVoxelSimulationSpace();

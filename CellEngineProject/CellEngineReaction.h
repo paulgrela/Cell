@@ -11,11 +11,11 @@
 
 class ParticleKind;
 
-class CellEngineDNAChemicalReactionsInVoxelSpace;
+class CellEngineNucleicAcidsChemicalReactionsInVoxelSpace;
 
 class Reaction
 {
-    using SpecialReactionFunctionType = std::function<bool (CellEngineDNAChemicalReactionsInVoxelSpace*, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>&, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>&, const Reaction&)>;
+    using SpecialReactionFunctionType = std::function<bool (CellEngineNucleicAcidsChemicalReactionsInVoxelSpace*, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>&, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>&, const Reaction&)>;
 public:
     UnsignedInt Id{};
     std::string Name;
