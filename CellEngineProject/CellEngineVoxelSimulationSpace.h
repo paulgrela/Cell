@@ -175,6 +175,27 @@ public:
     }
 };
 
+class CellEngineTestParticlesGenerator : public CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator
+{
+public:
+    std::mt19937_64 mt64R{ std::random_device{}() };
+public:
+    void GeneratePlanedEllipsoidParticlesInSelectedSpace(UnsignedInt NumberOfRandomParticles, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt StepXParam, UnsignedInt StepYParam, UnsignedInt StepZParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
+    void GeneratePlanedCuboidParticlesInSelectedSpace(UnsignedInt NumberOfRandomParticles, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt StepXParam, UnsignedInt StepYParam, UnsignedInt StepZParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
+    void GenerateRandomParticlesInSelectedSpace(UnsignedInt NumberOfRandomParticles, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt StepXParam, UnsignedInt StepYParam, UnsignedInt StepZParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
+public:
+    explicit CellEngineTestParticlesGenerator(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator(ParticlesParam)
+    {
+    }
+};
+
+class CellEngineAllTypesOfParticlesGenerator : public CellEngineTestParticlesGenerator
+{
+public:
+    explicit CellEngineAllTypesOfParticlesGenerator(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : CellEngineTestParticlesGenerator(ParticlesParam)
+    {
+    }
+};
 
 
 class CellEngineChemicalReactionsInVoxelSpace : virtual public CellEngineBasicParticlesOperations
@@ -203,15 +224,15 @@ public:
 class CellEngineNucleicAcidsBasicOperations
 {
 public:
-    inline std::string GetPairedSequenceStr(std::string SequenceStr);
-    inline std::tuple<Particle*, Particle*, UnsignedInt, std::string, std::vector<ChainIdInt>> GetNucleotidesSequence(Particle* Particle::*Direction, UnsignedInt LengthOfSequence, Particle& ParticleObjectForReaction,bool ToString, bool ToVector, bool (*Predicate)(const Particle*));
-    inline void CutDNAPrev(Particle* NucleotideObjectForReactionPtr);
-    inline void CutDNANext(Particle* NucleotideObjectForReactionPtr);
-    inline void LinkDNA(Particle* NucleotideObjectForReactionPtr1, Particle* NucleotideObjectForReactionPtr2);
-    inline void SeparateTwoPairedDNANucleotides(Particle* ParticleNucleotide);
-    inline void SeparateDNAStrands(Particle* Particle::*Direction, Particle* NucleotidePtr, UnsignedInt LengthOfStrand);
-    inline void JoinDNAStrands(Particle* Particle::*Direction, Particle* Strand1, Particle* Strand2);
-    inline void DeleteLinkedParticlesPointersList(Particle& ParticleObject);
+    static inline std::string GetPairedSequenceStr(std::string SequenceStr);
+    static inline std::tuple<Particle*, Particle*, UnsignedInt, std::string, std::vector<ChainIdInt>> GetNucleotidesSequence(Particle* Particle::*Direction, UnsignedInt LengthOfSequence, Particle& ParticleObjectForReaction,bool ToString, bool ToVector, bool (*Predicate)(const Particle*));
+    static inline void CutDNAPrev(Particle* NucleotideObjectForReactionPtr);
+    static inline void CutDNANext(Particle* NucleotideObjectForReactionPtr);
+    static inline void LinkDNA(Particle* NucleotideObjectForReactionPtr1, Particle* NucleotideObjectForReactionPtr2);
+    static inline void SeparateTwoPairedDNANucleotides(Particle* ParticleNucleotide);
+    static inline void SeparateDNAStrands(Particle* Particle::*Direction, Particle* NucleotidePtr, UnsignedInt LengthOfStrand);
+    static inline void JoinDNAStrands(Particle* Particle::*Direction, Particle* Strand1, Particle* Strand2);
+    static inline void DeleteLinkedParticlesPointersList(Particle& ParticleObject);
 };
 
 class CellEngineNucleicAcidsChemicalReactionsInVoxelSpace : public CellEngineChemicalReactionsInVoxelSpace, public CellEngineNucleicAcidsBasicOperations
@@ -245,10 +266,17 @@ public:
     }
 };
 
+class CellEngineAllTypesOfChemicalReactionsInVoxelSpace : public CellEngineNucleicAcidsChemicalReactionsInVoxelSpace
+{
+public:
+    explicit CellEngineAllTypesOfChemicalReactionsInVoxelSpace(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : CellEngineNucleicAcidsChemicalReactionsInVoxelSpace(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam)
+    {
+    }
+};
 
 
 
-class CellEngineVoxelSimulationSpace : public CellEngineChemicalReactions, public CellEngineNucleicAcidsChemicalReactionsInVoxelSpace, public CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator
+class CellEngineVoxelSimulationSpace : public CellEngineChemicalReactions, public CellEngineAllTypesOfChemicalReactionsInVoxelSpace, public CellEngineAllTypesOfParticlesGenerator
 {
     friend class CellEngineParticlesDataFile;
 public:
@@ -278,10 +306,6 @@ public:
     void AddChemicalReactions();
 public:
     void ClearVoxelSpaceAndParticles() override;
-public:
-    void GeneratePlanedEllipsoidParticlesInSelectedSpace(UnsignedInt NumberOfRandomParticles, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt StepXParam, UnsignedInt StepYParam, UnsignedInt StepZParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
-    void GeneratePlanedCuboidParticlesInSelectedSpace(UnsignedInt NumberOfRandomParticles, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt StepXParam, UnsignedInt StepYParam, UnsignedInt StepZParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
-    void GenerateRandomParticlesInSelectedSpace(UnsignedInt NumberOfRandomParticles, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt StepXParam, UnsignedInt StepYParam, UnsignedInt StepZParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
 public:
     void GenerateOneStepOfDiffusionForSelectedRangeOfParticles(UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
     void GenerateOneStepOfElectricDiffusionForSelectedRangeOfParticles(TypesOfLookingForParticlesInProximity TypeOfLookingForParticles, UnsignedInt AdditionalSpaceBoundFactor, double MultiplyElectricChargeFactor, UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);

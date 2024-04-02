@@ -639,13 +639,10 @@ public:
                     if (ImGui::Button("  CLEAR VOXEL SPACE AND PARTICLES     ") == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ClearVoxelSpaceAndParticles();
                     if (ImGui::Button("  GENERATE ALL RANDOM PARTICLES       ") == true)
-                        //dynamic_cast<CellEngineRealRandomParticlesGenerator*>(CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer.get())->GenerateAllRealRandomParticles();
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateAllRealRandomParticles();
                     if (ImGui::Button("  GENERATE RANDOM MEMBRANE PARTICLES  ") == true)
-                        //dynamic_cast<CellEngineRealRandomParticlesGenerator*>(CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer.get())->GenerateRealRandomMembraneParticles();
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateRealRandomMembraneParticles();
                     if (ImGui::Button("  GENERATE RANDOM RIBOSOMES PARTICLES ") == true)
-                        //dynamic_cast<CellEngineRealRandomParticlesGenerator*>(CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer.get())->GenerateRealRandomRibosomesParticles();
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateRealRandomRibosomesParticles();
                 }
 
