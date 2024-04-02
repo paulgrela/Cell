@@ -65,6 +65,8 @@
                         <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
 
 			<CellStateFileName>../../WholeCellData/Mycoplasma Genitalium/cellpack_atom_instances_6973_curated.cif</CellStateFileName>
+                        <CellStateFileNameBackup>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile1.dat</CellStateFileNameBackup>
+
 
 			<ChosenStructureIndex>0</ChosenStructureIndex>
 			<FilmOfStructuresActive>0</FilmOfStructuresActive>
@@ -279,7 +281,8 @@
                         <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
 
 			<CellStateFileName>../../PDBFiles/struct0/117E.pdb</CellStateFileName>
-			
+                        <CellStateFileNameBackup>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile1.dat</CellStateFileNameBackup>
+
 			<ChosenStructureIndex>0</ChosenStructureIndex>
 			<FilmOfStructuresActive>0</FilmOfStructuresActive>
 			
@@ -494,7 +497,8 @@
                         <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
 
 			<CellStateFileName>../../WholeCellData/Mycoplasma Genitalium/cellpack_atom_instances_small.cif</CellStateFileName>
-			
+                        <CellStateFileNameBackup>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile1.dat</CellStateFileNameBackup>
+
 			<ChosenStructureIndex>0</ChosenStructureIndex>
 			<FilmOfStructuresActive>0</FilmOfStructuresActive>
 			
@@ -713,7 +717,8 @@
                         <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
 
 			<CellStateFileName>../../PDBFiles/struct1/1rjk_MD_MD000.pdb</CellStateFileName>
-			
+                        <CellStateFileNameBackup>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile1.dat</CellStateFileNameBackup>
+
 			<ChosenStructureIndex>0</ChosenStructureIndex>
 			<FilmOfStructuresActive>0</FilmOfStructuresActive>
 			
@@ -927,6 +932,7 @@
                         <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
 
 			<CellStateFileName>../../WholeCellData/Mycoplasma Genitalium/cellpack_atom_instances_149_curated.cif</CellStateFileName>
+                        <CellStateFileNameBackup>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile1.dat</CellStateFileNameBackup>
 
 			<ChosenStructureIndex>0</ChosenStructureIndex>
 			<FilmOfStructuresActive>0</FilmOfStructuresActive>
@@ -1143,6 +1149,7 @@
 			<!--CellStateFileName>/home/pawel/Projects/Repos/CellExtensions/Fortran/Unres4/unres4/build/bin/Test2/1BL0_MD000.pdb</CellStateFileName-->
                         <!--CellStateFileName>/home/pawel/Projects/Repos/CellExtensions/Fortran/Unres4/unres4/build/bin/Test1/microProducePDB_MD000.pdb</CellStateFileName-->
                         <CellStateFileName>/home/pawel/Projects/Repos/CellExtensions/cabsdock/test1/output_pdbs/replica_0.pdb</CellStateFileName>
+                        <CellStateFileNameBackup>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile1.dat</CellStateFileNameBackup>
 
 			<ChosenStructureIndex>0</ChosenStructureIndex>
 			<FilmOfStructuresActive>0</FilmOfStructuresActive>
@@ -1359,6 +1366,7 @@
 
 			<CellStateFileName>/home/pawel/Projects/Repos/CellExtensions/Fortran/Unres4/unres4/build/bin/Test2/1BL0_MD000.pdb</CellStateFileName>
                         <!--CellStateFileName>/home/pawel/Projects/Repos/CellExtensions/Fortran/Unres4/unres4/build/bin/Test1/microProducePDB_MD000.pdb</CellStateFileName-->
+                        <CellStateFileNameBackup>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile1.dat</CellStateFileNameBackup>
 
 			<ChosenStructureIndex>0</ChosenStructureIndex>
 			<FilmOfStructuresActive>0</FilmOfStructuresActive>
@@ -1574,6 +1582,7 @@
                         <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
 
                         <CellStateFileName>/home/pawel/Projects/Repos/CellExtensions/Fortran/Unres4/unres4/build/bin/Test1/microProducePDB_MD000.pdb</CellStateFileName>
+                        <CellStateFileNameBackup>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile1.dat</CellStateFileNameBackup>
 
 			<ChosenStructureIndex>0</ChosenStructureIndex>
 			<FilmOfStructuresActive>0</FilmOfStructuresActive>
@@ -1788,6 +1797,7 @@
 		<CellState id="9">
                         <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
 
+                        <CellStateFileNameBackup>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile1.dat</CellStateFileNameBackup>
 			<CellStateFileName>../../WholeCellData/JCVI-syn3A/extended_cellpack_atom_instances.cif</CellStateFileName>
 
 			<ChosenStructureIndex>0</ChosenStructureIndex>
@@ -1964,6 +1974,7 @@
                         <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
 
                         <CellStateFileName>/home/pawel/Projects/Repos/Cell/PDBFiles/struct2/rp_new10.pdb</CellStateFileName>
+                        <CellStateFileNameBackup>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile1.dat</CellStateFileNameBackup>
 
 			<ChosenStructureIndex>0</ChosenStructureIndex>
 			<FilmOfStructuresActive>0</FilmOfStructuresActive>
@@ -2179,6 +2190,7 @@
                         <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
 
                         <CellStateFileName>/home/pawel/Projects/Repos/Cell/PDBFiles/struct2/RP_NEW_2_E2E3_2.pdb</CellStateFileName>
+                        <CellStateFileNameBackup>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile1.dat</CellStateFileNameBackup>
 
 			<ChosenStructureIndex>0</ChosenStructureIndex>
 			<FilmOfStructuresActive>0</FilmOfStructuresActive>
@@ -2394,6 +2406,7 @@
                         <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
 
                         <CellStateFileName>/home/pawel/Projects/Repos/Cell/PDBFiles/struct2/RP_NEW_2_6rut.pdb</CellStateFileName>
+                        <CellStateFileNameBackup>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile1.dat</CellStateFileNameBackup>
 
 			<ChosenStructureIndex>0</ChosenStructureIndex>
 			<FilmOfStructuresActive>0</FilmOfStructuresActive>
@@ -3350,6 +3363,7 @@
                         <RadiusOfCellForDNA>760</RadiusOfCellForDNA>
 
 			<CellStateFileName>../../WholeCellData/Mycoplasma Genitalium/MG_1184_cellpack_atom_instances_1.cif</CellStateFileName>
+                        <CellStateFileNameBackup>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile1.dat</CellStateFileNameBackup>
 
 			<ChosenStructureIndex>0</ChosenStructureIndex>
 			<FilmOfStructuresActive>0</FilmOfStructuresActive>

@@ -46,7 +46,7 @@ Particle& CellEngineVoxelSimulationSpace::GetParticleFromIndexInSimulationSpaceV
     return GetParticleFromIndex(ParticleIndex);
 }
 
-CellEngineVoxelSimulationSpace::CellEngineVoxelSimulationSpace(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : Particles(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam), CellEngineParticlesVoxelsShapesGenerator(ParticlesParam), CellEngineChemicalReactionsInVoxelSpace(ParticlesParam), CellEngineDNAChemicalReactionsInVoxelSpace(ParticlesParam), CellEngineNucleicAcidsParticlesVoxelsGenerator(ParticlesParam)
+CellEngineVoxelSimulationSpace::CellEngineVoxelSimulationSpace(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : Particles(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam), CellEngineDNAChemicalReactionsInVoxelSpace(ParticlesParam), CellEngineNucleicAcidsParticlesVoxelsGenerator(ParticlesParam)
 {
     try
     {
@@ -131,12 +131,6 @@ void CellEngineVoxelSimulationSpace::SetAtomInVoxelSimulationSpace(const UniqueI
     }
     CATCH("setting atom in voxel simulation space")
 }
-
-//UniqueIdInt CellEngineVoxelSimulationSpace::AddNewParticle(const Particle& ParticleParam)
-//{
-//    Particles[ParticleParam.Index] = ParticleParam;
-//    return MaxParticleIndex = ParticleParam.Index;
-//}
 
 inline string GetPairedSequenceStr(string SequenceStr)
 {

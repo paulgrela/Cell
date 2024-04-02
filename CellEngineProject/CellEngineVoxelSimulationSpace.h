@@ -30,6 +30,7 @@ static void SwitchOffLogs()
     LoggersManagerObject.InitializePrintingParameters(false, false, false, false, false, false, false, false, false, false, false, false, CellEngineConfigDataObject.MaximalNumberOfLinesInOneFile);
 #endif
 }
+
 static void SwitchOnLogs()
 {
 #ifdef SIMULATION_DETAILED_LOG
@@ -48,7 +49,7 @@ protected:
     }
 };
 
-class CellEngineParticlesVoxelsOperations : virtual public BasicVoxelsOperations
+class CellEngineParticlesVoxelsOperations : public BasicVoxelsOperations
 {
 public:
     inline void SetAllVoxelsInListOfVoxelsToValue(std::vector<vector3_16>& ListOfVoxels, SimulationSpaceVoxel SimulationSpaceVoxelValue);
@@ -66,7 +67,7 @@ public:
     inline void MoveParticleNearOtherParticleIfVoxelSpaceIsEmptyOrNearSpace(Particle& ParticleObject, const Particle& NewPositionParticleObject, SignedInt AddX, SignedInt AddY, SignedInt AddZ);
 };
 
-class CellEngineBasicParticlesOperations : virtual public CellEngineParticlesVoxelsOperations
+class CellEngineBasicParticlesOperations : public CellEngineParticlesVoxelsOperations
 {
 protected:
     UnsignedInt XMin{}, XMax{}, YMin{}, YMax{}, ZMin{}, ZMax{};
@@ -151,7 +152,7 @@ public:
     }
 };
 
-class CellEngineDNAChemicalReactionsInVoxelSpace : virtual public CellEngineChemicalReactionsInVoxelSpace
+class CellEngineDNAChemicalReactionsInVoxelSpace : public CellEngineChemicalReactionsInVoxelSpace
 {
 public:
     std::tuple<std::vector<ChainIdInt>, std::string> GetNucleotidesSequenceInBothDirections(const std::vector<UniqueIdInt>& NucleotidesFoundInProximity, UnsignedInt SizeOfLoop);
@@ -182,7 +183,7 @@ public:
 
 
 
-class CellEngineNucleicAcidsParticlesVoxelsGenerator : virtual public CellEngineParticlesVoxelsShapesGenerator
+class CellEngineNucleicAcidsParticlesVoxelsGenerator : public CellEngineParticlesVoxelsShapesGenerator
 {
 public:
     std::mt19937_64 mt64R{ std::random_device{}() };
@@ -212,7 +213,7 @@ public:
     }
 };
 
-class CellEngineVoxelSimulationSpace : public CellEngineChemicalReactions, virtual public CellEngineDNAChemicalReactionsInVoxelSpace, virtual public CellEngineNucleicAcidsParticlesVoxelsGenerator
+class CellEngineVoxelSimulationSpace : public CellEngineChemicalReactions, public CellEngineDNAChemicalReactionsInVoxelSpace, public CellEngineNucleicAcidsParticlesVoxelsGenerator
 {
     friend class CellEngineParticlesDataFile;
 public:
