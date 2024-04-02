@@ -97,6 +97,8 @@ add_executable(
 	CellEngineParticlesDataFile.cpp
 	CellEngineParticlesDataFile.h
 	CellEngineBuildParticlesDataOperations.h
+	CellEngineChemicalReactionsCreator.cpp
+	CellEngineChemicalReactionsCreator.h
 	CellEngineParticlesBinaryDataFileReaderWriter.cpp
 	CellEngineParticlesBinaryDataFileReaderWriter.h
 	CellEngineDataBuilderForVoxelSimulationSpace.h

@@ -11,6 +11,7 @@
 #include "CellEngineReaction.h"
 #include "CellEngineConfigData.h"
 #include "CellEngineChemicalReactions.h"
+#include "CellEngineChemicalReactionsCreator.h"
 
 using SimulationSpaceVoxel = UniqueIdInt;
 
@@ -38,10 +39,10 @@ static void SwitchOnLogs()
 #endif
 }
 
-class BasicVoxelsOperations
+class CellEngineBasicVoxelsOperations
 {
 protected:
-    void* SpacePointer;
+    void* SpacePointer = nullptr;
 protected:
     inline SimulationSpaceVoxel& GetSpaceVoxel(UnsignedInt x, UnsignedInt y, UnsignedInt z)
     {
@@ -49,11 +50,11 @@ protected:
     }
 };
 
-class CellEngineParticlesVoxelsOperations : public BasicVoxelsOperations
+class CellEngineParticlesVoxelsOperations : public CellEngineBasicVoxelsOperations
 {
 public:
     inline void SetAllVoxelsInListOfVoxelsToValue(std::vector<vector3_16>& ListOfVoxels, SimulationSpaceVoxel SimulationSpaceVoxelValue);
-    void SetAllVoxelsInListOfVoxelsToValueOut(std::vector<vector3_16>& ListOfVoxels, SimulationSpaceVoxel SimulationSpaceVoxelValue);
+    void SetAllVoxelsInListOfVoxelsToValueForOuterClass(std::vector<vector3_16>& ListOfVoxels, SimulationSpaceVoxel SimulationSpaceVoxelValue);
 public:
     inline void MoveParticleByVector(Particle& ParticleObject, SignedInt VectorX, SignedInt VectorY, SignedInt VectorZ);
     inline void MoveParticleNearOtherParticle(Particle& ParticleObject, const Particle& NewPositionParticleObject, SignedInt AddX, SignedInt AddY, SignedInt AddZ);
@@ -143,10 +144,8 @@ public:
     }
 };
 
-class CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator : public CellEngineRealRandomParticlesGenerator
+class CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator : public CellEngineRealRandomParticlesGenerator,  virtual public CellEngineRandomDeviceEngine
 {
-public:
-    std::mt19937_64 mt64R{ std::random_device{}() };
 protected:
     std::vector<std::string> GenomesLines;
     std::vector<std::vector<UniqueIdInt>> Genomes;
@@ -177,8 +176,6 @@ public:
 
 class CellEngineTestParticlesGenerator : public CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator
 {
-public:
-    std::mt19937_64 mt64R{ std::random_device{}() };
 public:
     void GeneratePlanedEllipsoidParticlesInSelectedSpace(UnsignedInt NumberOfRandomParticles, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt StepXParam, UnsignedInt StepYParam, UnsignedInt StepZParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
     void GeneratePlanedCuboidParticlesInSelectedSpace(UnsignedInt NumberOfRandomParticles, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt StepXParam, UnsignedInt StepYParam, UnsignedInt StepZParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
@@ -274,13 +271,27 @@ public:
     }
 };
 
-
-
-class CellEngineVoxelSimulationSpace : public CellEngineChemicalReactions, public CellEngineAllTypesOfChemicalReactionsInVoxelSpace, public CellEngineAllTypesOfParticlesGenerator
+class CellEngineVoxelSimulationSpaceForOuterClass : virtual public CellEngineBasicParticlesOperations
 {
-    friend class CellEngineParticlesDataFile;
 public:
-    std::mt19937_64 mt64R{ std::random_device{}() };
+    SimulationSpaceVoxel GetSpaceVoxelForOuterClass(UnsignedInt X, UnsignedInt Y, UnsignedInt Z);
+    Particle& GetParticleFromIndexForOuterClass(UniqueIdInt ParticleIndex);
+};
+
+class CellEngineVoxelSimulationSpaceStatistics : virtual public CellEngineBasicParticlesOperations
+{
+protected:
+    UnsignedInt SumOfNotEmptyVoxels{};
+public:
+    void CountStatisticsOfVoxelSimulationSpace();
+    [[nodiscard]] UnsignedInt GetSumOfNotEmptyVoxels() const
+    {
+        return SumOfNotEmptyVoxels;
+    }
+};
+
+class CellEngineVoxelSimulationSpace : public CellEngineChemicalReactionsCreator, public CellEngineAllTypesOfChemicalReactionsInVoxelSpace, public CellEngineAllTypesOfParticlesGenerator, public CellEngineVoxelSimulationSpaceForOuterClass, public CellEngineVoxelSimulationSpaceStatistics
+{
 private:
     std::unordered_map<UniqueIdInt, Particle>& Particles;
 public:
@@ -289,21 +300,12 @@ public:
 public:
     [[nodiscard]] std::stringstream PrintSpaceMinMaxValues() const;
 public:
-    UnsignedInt SumOfNotEmptyVoxels{};
-public:
-    void CountStatisticsOfVoxelSimulationSpace();
     void SetAtomInVoxelSimulationSpace(UniqueIdInt ParticleIndex, const CellEngineAtom& AppliedAtom);
-public:
-    SimulationSpaceVoxel GetSpaceVoxelForOuterClass(UnsignedInt X, UnsignedInt Y, UnsignedInt Z);
-    Particle& GetParticleFromIndexForOuterClass(UniqueIdInt ParticleIndex);
 public:
     void ClearVoxelSpaceAndParticles() override;
 public:
     void ClearWholeVoxelSpace();
     void ClearSelectedSpace(UnsignedInt NumberOfRandomParticles, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt StepXParam, UnsignedInt StepYParam, UnsignedInt StepZParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
-public:
-    static void AddParticlesKinds();
-    void AddChemicalReactions();
 public:
     void GenerateOneStepOfDiffusionForSelectedRangeOfParticles(UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
     void GenerateOneStepOfElectricDiffusionForSelectedRangeOfParticles(TypesOfLookingForParticlesInProximity TypeOfLookingForParticles, UnsignedInt AdditionalSpaceBoundFactor, double MultiplyElectricChargeFactor, UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
