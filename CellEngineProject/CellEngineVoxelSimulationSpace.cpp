@@ -195,12 +195,12 @@ inline SimulationSpaceVoxel GetZeroSimulationSpaceVoxel()
     return 0;
 }
 
-SimulationSpaceVoxel CellEngineVoxelSimulationSpace::GetSimulationSpaceVoxel(UnsignedInt X, UnsignedInt Y, UnsignedInt Z)
+SimulationSpaceVoxel CellEngineVoxelSimulationSpace::GetSpaceVoxelForOuterClass(UnsignedInt X, UnsignedInt Y, UnsignedInt Z)
 {
     return GetSpaceVoxel(X, Y, Z);
 }
 
-Particle& CellEngineVoxelSimulationSpace::GetParticleFromIndexInSimulationSpaceVoxel(const UniqueIdInt ParticleIndex)
+Particle& CellEngineVoxelSimulationSpace::GetParticleFromIndexForOuterClass(UniqueIdInt ParticleIndex)
 {
     return GetParticleFromIndex(ParticleIndex);
 }
@@ -277,25 +277,43 @@ void CellEngineVoxelSimulationSpace::ClearSelectedSpace(const UnsignedInt Number
     CATCH("clearing selected space")
 }
 
-void CellEngineVoxelSimulationSpace::SaveParticlesToFile()
-{
-    try
-    {
-        CellEngineDataFileObjectPointer->SaveDataToFile();
-    }
-    CATCH("saving particles to file")
-};
+//void CellEngineVoxelSimulationSpace::SaveParticlesToFile()
+//{
+//    try
+//    {
+//        CellEngineDataFileObjectPointer->SaveDataToFile();
+//    }
+//    CATCH("saving particles to file")
+//};
 
-void CellEngineVoxelSimulationSpace::ReadParticlesFromFileAndPrepareData()
+//void CellEngineVoxelSimulationSpace::ReadParticlesFromFileAndPrepareData()
+//{
+//    try
+//    {
+//        SetValueToVoxelsForCuboidSelectedSpace(nullptr, GetZeroSimulationSpaceVoxel(), 0, 0, 0, 1, 1, 1, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension);
+//
+//        CellEngineDataFileObjectPointer->ReadDataFromFile(false, false, CellEngineConfigData::TypesOfFileToRead::BinaryFile);
+//    }
+//    CATCH("reading particles from file")
+//};
+void CellEngineVoxelSimulationSpace::ClearWholeVoxelSpace()
 {
     try
     {
         SetValueToVoxelsForCuboidSelectedSpace(nullptr, GetZeroSimulationSpaceVoxel(), 0, 0, 0, 1, 1, 1, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension);
-
-        CellEngineDataFileObjectPointer->ReadDataFromFile(false, false, CellEngineConfigData::TypesOfFileToRead::BinaryFile);
     }
-    CATCH("reading particles from file")
+    CATCH("clearing whole voxel space")
 };
+
+void CellEngineVoxelSimulationSpace::ClearVoxelSpaceAndParticles()
+{
+    try
+    {
+        Particles.clear();
+        ClearWholeVoxelSpace();
+    }
+    CATCH("clearing voxel space and particles")
+}
 
 void CellEngineVoxelSimulationSpace::AddParticlesKinds()
 {
@@ -375,16 +393,6 @@ void CellEngineVoxelSimulationSpace::AddChemicalReactions()
     }
     CATCH("adding particles kinds and reactions")
 };
-
-void CellEngineVoxelSimulationSpace::ClearVoxelSpaceAndParticles()
-{
-    try
-    {
-        Particles.clear();
-        SetValueToVoxelsForCuboidSelectedSpace(nullptr, GetZeroSimulationSpaceVoxel(), 0, 0, 0, 1, 1, 1, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension);
-    }
-    CATCH("clearing voxel space and particles")
-}
 
 
 

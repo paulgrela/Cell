@@ -649,9 +649,12 @@ public:
                 if (ImGui::CollapsingHeader("SAVING AND READING PARTICLES TO AND FROM FILE", ImGuiTreeNodeFlags_DefaultOpen))
                 {
                     if (ImGui::Button("  SAVE PARTICLES DATA TO BINARY FILE  ") == true)
-                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->SaveParticlesToFile();
+                        CellEngineDataFileObjectPointer->SaveDataToFile();
                     if (ImGui::Button(" READ PARTICLES DATA FROM BINARY FILE ") == true)
-                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ReadParticlesFromFileAndPrepareData();
+                    {
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ClearWholeVoxelSpace();
+                        CellEngineDataFileObjectPointer->ReadDataFromFile(false, false, CellEngineConfigData::TypesOfFileToRead::BinaryFile);
+                    }
                 }
 
                 static int SelectedSpaceStartParametersDrawTypesIndex = static_cast<int>(CellEngineConfigDataObject.SelectedSpaceStartParametersDrawTypesObject);
