@@ -258,6 +258,71 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfElectricDiffusionForSelect
     CATCH("generating one step of electric diffusion")
 }
 
+tuple<vector<pair<UniqueIdInt, UnsignedInt>>, bool> CellEngineVoxelSimulationSpace::ChooseParticlesForReactionFromAllParticlesInProximity(const Reaction& ReactionObject)
+{
+    bool AllAreZero = false;
+
+    vector<pair<UniqueIdInt, UnsignedInt>> NucleotidesIndexesChosenForReaction, ParticlesIndexesChosenForReaction, AllParticlesIndexesChosenForReaction;
+
+    vector<UnsignedInt> ReactantsCounters(ReactionObject.Reactants.size());
+
+    try
+    {
+        for (UnsignedInt ReactantIndex = 0; ReactantIndex < ReactionObject.Reactants.size(); ReactantIndex++)
+            ReactantsCounters[ReactantIndex] = ReactionObject.Reactants[ReactantIndex].Counter;
+
+        for (const auto& ParticleObjectIndex : ParticlesSortedByCapacityFoundInProximity)
+        {
+            auto& ParticleObjectTestedForReaction = GetParticleFromIndex(ParticleObjectIndex);
+
+            LoggersManagerObject.Log(STREAM("ParticleObjectIndex = " << to_string(ParticleObjectIndex) <<" EntityId = " << to_string(ParticleObjectTestedForReaction.EntityId) << " X = " << to_string(ParticleObjectTestedForReaction.Center.X) << " Y = " << to_string(ParticleObjectTestedForReaction.Center.Y) << " Z = " << to_string(ParticleObjectTestedForReaction.Center.Z)));
+
+            vector<ParticleKindForReaction>::const_iterator ReactantIterator;
+            if (CellEngineUseful::IsDNAorRNA(ParticleObjectTestedForReaction.EntityId) == false)
+                ReactantIterator = find_if(ReactionObject.Reactants.cbegin(), ReactionObject.Reactants.cend(), [&ParticleObjectTestedForReaction](const ParticleKindForReaction& ParticleKindForReactionObjectParam){ return ParticleKindForReactionObjectParam.EntityId == ParticleObjectTestedForReaction.EntityId && CompareFitnessOfParticle(ParticleKindForReactionObjectParam, ParticleObjectTestedForReaction) == true; });
+            else
+                ReactantIterator = find_if(ReactionObject.Reactants.cbegin(), ReactionObject.Reactants.cend(), [&ParticleObjectTestedForReaction, this](const ParticleKindForReaction& ParticleKindForReactionObjectParam){ return CellEngineUseful::IsSpecialDNA(ParticleKindForReactionObjectParam.EntityId) && CompareFitnessOfDNASequenceByNucleotidesLoop(ComparisonType::ByVectorLoop, ParticleKindForReactionObjectParam, ParticleObjectTestedForReaction) == true; });
+
+            auto PositionInReactants = ReactantIterator - ReactionObject.Reactants.begin();
+
+            if (CellEngineUseful::IsDNAorRNA(ParticleObjectTestedForReaction.EntityId) == true)
+                if (ReactantIterator != ReactionObject.Reactants.end() && ReactantsCounters[PositionInReactants] > 0 && ReactantIterator->ToRemoveInReaction == false)
+                    NucleotidesIndexesChosenForReaction.emplace_back(ParticleObjectIndex, PositionInReactants);
+
+            if (ReactantIterator != ReactionObject.Reactants.end() && ReactantsCounters[PositionInReactants] > 0 && ReactantIterator->ToRemoveInReaction == true)
+                ParticlesIndexesChosenForReaction.emplace_back(ParticleObjectIndex, PositionInReactants);
+
+            if (ReactantIterator != ReactionObject.Reactants.end() && ReactantsCounters[PositionInReactants] > 0)
+            {
+                AllParticlesIndexesChosenForReaction.emplace_back(ParticleObjectIndex, PositionInReactants);
+                LoggersManagerObject.Log(STREAM("CHOSEN ParticleObjectIndex = " << to_string(ParticleObjectIndex) <<" EntityId = " << to_string(ParticleObjectTestedForReaction.EntityId) << " X = " << to_string(ParticleObjectTestedForReaction.Center.X) << " Y = " << to_string(ParticleObjectTestedForReaction.Center.Y) << " Z = " << to_string(ParticleObjectTestedForReaction.Center.Z) << endl));
+                ReactantsCounters[PositionInReactants]--;
+            }
+
+            AllAreZero = all_of(ReactantsCounters.begin(), ReactantsCounters.end(), [this](const UnsignedInt& Counter){ return Counter == 0; });
+            if (AllAreZero == true)
+            {
+                LoggersManagerObject.Log(STREAM("ALL ARE ZERO"));
+                break;
+            }
+            LoggersManagerObject.Log(STREAM(""));
+        }
+
+        if (AllAreZero == true || (AllAreZero == false && (ReactionObject.Id == 30 || ReactionObject.Id == 80 || ReactionObject.Id == 70)))
+            if (ReactionObject.SpecialReactionFunction != nullptr)
+                ReactionObject.SpecialReactionFunction(this, AllParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject);
+    }
+    CATCH("choosing particles for reaction from all particles in proximity")
+
+    if (AllAreZero == true)
+    {
+        LoggersManagerObject.Log(STREAM("ALL ARE ZERO AT END = " << to_string(ParticlesIndexesChosenForReaction.size())));
+        return { ParticlesIndexesChosenForReaction, true };
+    }
+    else
+        return { vector<pair<UniqueIdInt, UnsignedInt>>(), false };
+}
+
 bool CellEngineVoxelSimulationSpace::MakeChemicalReaction(Reaction& ReactionObject)
 {
     try
