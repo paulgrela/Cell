@@ -6,21 +6,7 @@
 
 #include "ExceptionsMacro.h"
 #include "CellEngineReaction.h"
-
-class CellEngineRandomDeviceEngine
-{
-protected:
-    std::mt19937_64 mt64R{ std::random_device{}() };
-public:
-    void RandomGeneratorSetSeedByRandomDevice()
-    {
-        mt64R.seed(std::random_device{}());
-    }
-    void RandomGeneratorSetSeedByTime()
-    {
-        mt64R.seed(time(nullptr));
-    }
-};
+#include "CellEngineRandomDeviceEngine.h"
 
 class CellEngineChemicalReactions : virtual public CellEngineRandomDeviceEngine
 {

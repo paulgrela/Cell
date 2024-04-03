@@ -89,6 +89,8 @@ add_executable(
 	CellEngineReaction.h
 	CellEngineChemicalReactions.h
 	CellEngineChemicalReactions.cpp
+	CellEngineRandomDeviceEngine.cpp
+	CellEngineRandomDeviceEngine.h
 	CellEngineImGuiMenu.cpp
 	CellEnginePDBDataFile.h
 	CellEnginePDBDataFile.cpp
@@ -99,6 +101,8 @@ add_executable(
 	CellEngineBuildParticlesDataOperations.h
 	CellEngineChemicalReactionsCreator.cpp
 	CellEngineChemicalReactionsCreator.h
+	CellEngineBasicVoxelsOperations.h
+	CellEngineNucleicAcidsBasicOperations.h
 	CellEngineParticlesBinaryDataFileReaderWriter.cpp
 	CellEngineParticlesBinaryDataFileReaderWriter.h
 	CellEngineDataBuilderForVoxelSimulationSpace.h

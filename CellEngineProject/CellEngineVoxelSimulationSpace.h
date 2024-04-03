@@ -12,14 +12,8 @@
 #include "CellEngineConfigData.h"
 #include "CellEngineChemicalReactions.h"
 #include "CellEngineChemicalReactionsCreator.h"
-
-using SimulationSpaceVoxel = UniqueIdInt;
-
-constexpr UnsignedInt NumberOfVoxelSimulationSpaceInEachDimensionMaxConst1024 = 1024;
-constexpr UnsignedInt NumberOfVoxelSimulationSpaceInEachDimensionMaxConst2048 = 2048;
-
-using Space_1024_1024_1024 = SimulationSpaceVoxel[NumberOfVoxelSimulationSpaceInEachDimensionMaxConst1024][NumberOfVoxelSimulationSpaceInEachDimensionMaxConst1024][NumberOfVoxelSimulationSpaceInEachDimensionMaxConst1024];
-using Space_2048_2048_2048 = SimulationSpaceVoxel[NumberOfVoxelSimulationSpaceInEachDimensionMaxConst2048][NumberOfVoxelSimulationSpaceInEachDimensionMaxConst2048][NumberOfVoxelSimulationSpaceInEachDimensionMaxConst2048];
+#include "CellEngineBasicVoxelsOperations.h"
+#include "CellEngineNucleicAcidsBasicOperations.h"
 
 enum class ComparisonType { ByVectorLoop, ByString };
 
@@ -38,17 +32,6 @@ static void SwitchOnLogs()
     LoggersManagerObject.InitializePrintingParameters(CellEngineConfigDataObject.PrintLogToConsole, CellEngineConfigDataObject.PrintLogToFiles, CellEngineConfigDataObject.PrintLogLineNumberToConsole, CellEngineConfigDataObject.PrintLogDateTimeToConsole, CellEngineConfigDataObject.PrintLogProcessIdToConsole, CellEngineConfigDataObject.PrintLogProcessPriorityLevelToConsole, CellEngineConfigDataObject.PrintLogThreadIdToConsole, CellEngineConfigDataObject.PrintLogLineNumberToFile, CellEngineConfigDataObject.PrintLogDateTimeToFile, CellEngineConfigDataObject.PrintLogProcessIdToFile, CellEngineConfigDataObject.PrintLogProcessPriorityLevelToFile, CellEngineConfigDataObject.PrintLogThreadIdToFile, CellEngineConfigDataObject.MaximalNumberOfLinesInOneFile);
 #endif
 }
-
-class CellEngineBasicVoxelsOperations
-{
-protected:
-    void* SpacePointer = nullptr;
-protected:
-    inline SimulationSpaceVoxel& GetSpaceVoxel(UnsignedInt x, UnsignedInt y, UnsignedInt z)
-    {
-        return CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension == 2048 ? (*static_cast<Space_2048_2048_2048*>(SpacePointer))[x][y][z] : (*static_cast<Space_1024_1024_1024*>(SpacePointer))[x][y][z];
-    }
-};
 
 class CellEngineParticlesVoxelsOperations : public CellEngineBasicVoxelsOperations
 {
@@ -134,7 +117,7 @@ protected:
     }
 };
 
-class CellEngineRealRandomParticlesGenerator : public CellEngineParticlesVoxelsShapesGenerator
+class CellEngineRealRandomParticlesGenerator : public CellEngineParticlesVoxelsShapesGenerator,  virtual public CellEngineRandomDeviceEngine
 {
 public:
     void GenerateAllRealRandomParticles();
@@ -146,7 +129,7 @@ protected:
     }
 };
 
-class CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator : public CellEngineRealRandomParticlesGenerator,  virtual public CellEngineRandomDeviceEngine
+class CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator : public CellEngineRealRandomParticlesGenerator
 {
 protected:
     std::vector<std::string> GenomesLines;
@@ -218,20 +201,6 @@ protected:
     explicit CellEngineChemicalReactionsInVoxelSpace(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : CellEngineBasicParticlesOperations(ParticlesParam)
     {
     }
-};
-
-class CellEngineNucleicAcidsBasicOperations
-{
-protected:
-    static inline std::string GetPairedSequenceStr(std::string SequenceStr);
-    static inline std::tuple<Particle*, Particle*, UnsignedInt, std::string, std::vector<ChainIdInt>> GetNucleotidesSequence(Particle* Particle::*Direction, UnsignedInt LengthOfSequence, Particle& ParticleObjectForReaction,bool ToString, bool ToVector, bool (*Predicate)(const Particle*));
-    static inline void CutDNAPrev(Particle* NucleotideObjectForReactionPtr);
-    static inline void CutDNANext(Particle* NucleotideObjectForReactionPtr);
-    static inline void LinkDNA(Particle* NucleotideObjectForReactionPtr1, Particle* NucleotideObjectForReactionPtr2);
-    static inline void SeparateTwoPairedDNANucleotides(Particle* ParticleNucleotide);
-    static inline void SeparateDNAStrands(Particle* Particle::*Direction, Particle* NucleotidePtr, UnsignedInt LengthOfStrand);
-    static inline void JoinDNAStrands(Particle* Particle::*Direction, Particle* Strand1, Particle* Strand2);
-    static inline void DeleteLinkedParticlesPointersList(Particle& ParticleObject);
 };
 
 class CellEngineNucleicAcidsChemicalReactionsInVoxelSpace : public CellEngineChemicalReactionsInVoxelSpace, public CellEngineNucleicAcidsBasicOperations
