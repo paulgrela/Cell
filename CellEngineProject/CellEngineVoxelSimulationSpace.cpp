@@ -220,7 +220,7 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfElectricDiffusionForSelect
 {
     try
     {
-        SwitchOffLogs();
+        CellEngineUseful::SwitchOffLogs();
 
         vector<vector3_16> NewVoxelsForParticle;
 
@@ -270,7 +270,7 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfElectricDiffusionForSelect
                 #endif
             }
 
-        SwitchOnLogs();
+        CellEngineUseful::SwitchOnLogs();
     }
     CATCH("generating one step of electric diffusion")
 }
@@ -519,308 +519,69 @@ void CellEngineVoxelSimulationSpaceStatistics::CountStatisticsOfVoxelSimulationS
 
 
 
-void CellEngineTestParticlesGenerator::GenerateRandomParticlesInSelectedSpace(const UnsignedInt NumberOfRandomParticles, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt StepXParam, const UnsignedInt StepYParam, const UnsignedInt StepZParam, const UnsignedInt SizeXParam, UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
-{
-    try
-    {
-        LoggersManagerObject.Log(STREAM("PARTICLES RANGE = " << MaxParticleIndex << " " << (MaxParticleIndex + NumberOfRandomParticles) << " " << NumberOfRandomParticles));
-
-        uniform_int_distribution<UnsignedInt> UniformDistributionObjectSizeOfParticle_Uint64t(1, 2);
-        uniform_int_distribution<UnsignedInt> UniformDistributionObjectObjectOfParticle_Uint64t(0, NumberOfRandomParticles);
-        uniform_int_distribution<UnsignedInt> UniformDistributionObjectX_Uint64t(StartXPosParam, StartXPosParam + SizeXParam);
-        uniform_int_distribution<UnsignedInt> UniformDistributionObjectY_Uint64t(StartYPosParam, StartYPosParam + SizeYParam);
-        uniform_int_distribution<UnsignedInt> UniformDistributionObjectZ_Uint64t(StartZPosParam, StartZPosParam + SizeZParam);
-        uniform_int_distribution<ElectricChargeType> UniformDistributionObjectElectricChargeParticle_int64t(-5, 5);
-
-        vector<UnsignedInt> LocalNewParticlesIndexes;
-
-        for (UniqueIdInt ParticleNumber = 1; ParticleNumber <= NumberOfRandomParticles; ParticleNumber++)
-            LocalNewParticlesIndexes.emplace_back(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), UniformDistributionObjectObjectOfParticle_Uint64t(mt64R), 0, -1, 1, UniformDistributionObjectElectricChargeParticle_int64t(mt64R), CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))));
-
-        vector<vector3_16> FilledVoxelsForRandomParticle;
-
-        for (const auto& LocalNewParticleIndex : LocalNewParticlesIndexes)
-        {
-            UnsignedInt RandomSizeOfParticles = UniformDistributionObjectSizeOfParticle_Uint64t(mt64R);
-            GenerateParticleVoxelsWhenSelectedSpaceIsFree(LocalNewParticleIndex, UniformDistributionObjectX_Uint64t(mt64R), UniformDistributionObjectY_Uint64t(mt64R), UniformDistributionObjectZ_Uint64t(mt64R), RandomSizeOfParticles, RandomSizeOfParticles, RandomSizeOfParticles, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, &CellEngineVoxelSimulationSpace::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineVoxelSimulationSpace::SetValueToVoxelsForCuboidSelectedSpace);
-        }
-    }
-    CATCH("generating random particles in selected space")
-}
-
-void CellEngineTestParticlesGenerator::GeneratePlanedCuboidParticlesInSelectedSpace(UnsignedInt NumberOfRandomParticles, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt StepXParam, UnsignedInt StepYParam, UnsignedInt StepZParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam)
-{
-    try
-    {
-        GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 0, 1, -1, 1, -1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), StartXPosParam + 1, StartYPosParam + 3, StartZPosParam + 7, 1, 1, 1, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, &CellEngineVoxelSimulationSpace::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineVoxelSimulationSpace::SetValueToVoxelsForCuboidSelectedSpace);
-        GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 1, 1, -1, 1, 2, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), StartXPosParam + 3, StartYPosParam + 13, StartZPosParam + 6, 1, 1, 1, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, &CellEngineVoxelSimulationSpace::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineVoxelSimulationSpace::SetValueToVoxelsForCuboidSelectedSpace);
-        GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 2, 1, -1, 1, 3, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), StartXPosParam + 6, StartYPosParam + 12, StartZPosParam + 5, 1, 1, 1, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, &CellEngineVoxelSimulationSpace::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineVoxelSimulationSpace::SetValueToVoxelsForCuboidSelectedSpace);
-        GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 3, 1, -1, 1, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), StartXPosParam + 9, StartYPosParam + 9, StartZPosParam + 9, 2, 2, 2, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, &CellEngineVoxelSimulationSpace::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineVoxelSimulationSpace::SetValueToVoxelsForCuboidSelectedSpace);
-        GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 4, 1, -1, 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), StartXPosParam + 17, StartYPosParam + 15, StartZPosParam + 15, 2, 2, 2, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, &CellEngineVoxelSimulationSpace::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineVoxelSimulationSpace::SetValueToVoxelsForCuboidSelectedSpace);
-        GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 5, 1, -1, 1, -3, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), StartXPosParam + 17, StartYPosParam + 19, StartZPosParam + 4, 2, 2, 2, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, &CellEngineVoxelSimulationSpace::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineVoxelSimulationSpace::SetValueToVoxelsForCuboidSelectedSpace);
-        GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 6, 1, -1, 1, -2, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), StartXPosParam + 21, StartYPosParam + 20, StartZPosParam + 19, 2, 2, 2, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, &CellEngineVoxelSimulationSpace::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineVoxelSimulationSpace::SetValueToVoxelsForCuboidSelectedSpace);
-        GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 6, 1, -1, 1, 2, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), StartXPosParam + 3, StartYPosParam + 20, StartZPosParam + 7, 2, 2, 2, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, &CellEngineVoxelSimulationSpace::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineVoxelSimulationSpace::SetValueToVoxelsForCuboidSelectedSpace);
-        GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 6, 1, -1, 1, -2, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), StartXPosParam + 5, StartYPosParam + 15, StartZPosParam + 20, 2, 2, 2, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, &CellEngineVoxelSimulationSpace::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineVoxelSimulationSpace::SetValueToVoxelsForCuboidSelectedSpace);
-        GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 10, 1, -1, 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), StartXPosParam + 21, StartYPosParam + 5, StartZPosParam + 3, 2, 2, 2, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, &CellEngineVoxelSimulationSpace::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineVoxelSimulationSpace::SetValueToVoxelsForCuboidSelectedSpace);
-
-        GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), CellEngineConfigDataObject.RNAIdentifier, CellEngineUseful::GetChainIdFromLetterForDNAorRNA('T'), -1, 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), StartXPosParam + 9, StartYPosParam + 12, StartZPosParam + 3, 2, 2, 1, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, &CellEngineVoxelSimulationSpace::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineVoxelSimulationSpace::SetValueToVoxelsForCuboidSelectedSpace);
-        GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), CellEngineConfigDataObject.RNAIdentifier, CellEngineUseful::GetChainIdFromLetterForDNAorRNA('A'), -1, 1, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), StartXPosParam + 9, StartYPosParam + 16, StartZPosParam + 3, 2, 2, 1, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, &CellEngineVoxelSimulationSpace::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineVoxelSimulationSpace::SetValueToVoxelsForCuboidSelectedSpace);
-        GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), CellEngineConfigDataObject.RNAIdentifier, CellEngineUseful::GetChainIdFromLetterForDNAorRNA('C'), -1, 1, -1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), StartXPosParam + 9, StartYPosParam + 19, StartZPosParam + 3, 2, 2, 1, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, &CellEngineVoxelSimulationSpace::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineVoxelSimulationSpace::SetValueToVoxelsForCuboidSelectedSpace);
-
-        GenerateOneStrand(CellEngineConfigDataObject.RNAIdentifier, "UCGAGAA", StartXPosParam + 5, StartYPosParam + 5, StartZPosParam + 3, 2, 1, 2, 2, 0, 0);
-    }
-    CATCH("generating planed cuboid particles in selected space")
-}
-
-void CellEngineTestParticlesGenerator::GeneratePlanedEllipsoidParticlesInSelectedSpace(UnsignedInt NumberOfRandomParticles, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt StepXParam, UnsignedInt StepYParam, UnsignedInt StepZParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam)
-{
-    try
-    {
-        GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 2, 1, -1, 1, -1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), StartXPosParam + 9, StartYPosParam + 9, StartZPosParam + 10, 3, 4, 7, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, &CellEngineVoxelSimulationSpace::CheckFreeSpaceForEllipsoidSelectedSpace, &CellEngineVoxelSimulationSpace::SetValueToVoxelsForEllipsoidSelectedSpace);
-        GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 3, 1, -1, 1, -1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), StartXPosParam + 18, StartYPosParam + 18, StartZPosParam + 18, 3, 3, 3, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, &CellEngineVoxelSimulationSpace::CheckFreeSpaceForEllipsoidSelectedSpace, &CellEngineVoxelSimulationSpace::SetValueToVoxelsForEllipsoidSelectedSpace);
-        GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 4, 1, -1, 1, -1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), StartXPosParam + 13, StartYPosParam + 13, StartZPosParam + 18, 3, 3, 3, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, &CellEngineVoxelSimulationSpace::CheckFreeSpaceForSphereSelectedSpace, &CellEngineVoxelSimulationSpace::SetValueToVoxelsForSphereSelectedSpace);
-    }
-    CATCH("generating planed ellipsoid particles in selected space")
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-void CellEngineRealRandomParticlesGenerator::GenerateAllRealRandomParticles()
-{
-    try
-    {
-        ClearVoxelSpaceAndParticles();
-        GenerateRealRandomMembraneParticles();
-        GenerateRealRandomRibosomesParticles();
-    }
-    CATCH("generating all random particles")
-}
-
-void CellEngineRealRandomParticlesGenerator::GenerateRealRandomMembraneParticles()
-{
-    UnsignedInt Radius = 400;
-    UnsignedInt RadiusSize = 30;
-    UnsignedInt PosXStart = 512;
-    UnsignedInt PosYStart = 512;
-    UnsignedInt PosZStart = 512;
-    UnsignedInt StepX = 10;
-    UnsignedInt StepY = 10;
-    UnsignedInt StepZ = 10;
-
-    try
-    {
-        for (SignedInt x = 0; x < Radius * 2; x += static_cast<SignedInt>(StepX))
-            for (SignedInt y = 0; y < Radius * 2; y += static_cast<SignedInt>(StepY))
-                for (SignedInt z = 0; z < Radius * 2; z += static_cast<SignedInt>(StepZ))
-                {
-                    SignedInt dx = static_cast<SignedInt>(Radius) - x;
-                    SignedInt dy = static_cast<SignedInt>(Radius) - y;
-                    SignedInt dz = static_cast<SignedInt>(Radius) - z;
-                    if ((dx * dx + dy * dy + dz * dz >= (Radius - RadiusSize) * (Radius - RadiusSize)) && (dx * dx + dy * dy + dz * dz) <= (Radius * Radius))
-                    {
-                        GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 4, 1, -1, 1, -1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), PosXStart + dx, PosYStart + dy, PosZStart + dz, 3, 3, 3, 0, 0, 0, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, &CellEngineVoxelSimulationSpace::CheckFreeSpaceForSphereSelectedSpace, &CellEngineVoxelSimulationSpace::SetValueToVoxelsForSphereSelectedSpace);
-                    }
-                }
-    }
-    CATCH("generating random membrane particles")
-}
-
-void CellEngineRealRandomParticlesGenerator::GenerateRealRandomRibosomesParticles()
-{
-    try
-    {
-
-    }
-    CATCH("generating random ribosomes particles")
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//inline void CellEngineParticlesVoxelsShapesGenerator::SetValueToSpaceVoxelWithFillingListOfVoxelsOfParticle(vector<vector3_16>* FilledSpaceVoxels, const UniqueIdInt VoxelValue, const UnsignedInt PosX, const UnsignedInt PosY, const UnsignedInt PosZ)
+//void CellEngineTestParticlesGenerator::GenerateRandomParticlesInSelectedSpace(const UnsignedInt NumberOfRandomParticles, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt StepXParam, const UnsignedInt StepYParam, const UnsignedInt StepZParam, const UnsignedInt SizeXParam, UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
 //{
 //    try
 //    {
-//        if (FilledSpaceVoxels != nullptr)
-//            FilledSpaceVoxels->emplace_back(PosX, PosY, PosZ);
-//        GetSpaceVoxel(PosX, PosY, PosZ) = VoxelValue;
-//    }
-//    CATCH("setting value to voxel")
-//}
+//        LoggersManagerObject.Log(STREAM("PARTICLES RANGE = " << MaxParticleIndex << " " << (MaxParticleIndex + NumberOfRandomParticles) << " " << NumberOfRandomParticles));
 //
-//inline bool CellEngineParticlesVoxelsShapesGenerator::CheckFreeSpaceInCuboidSelectedSpace(const UnsignedInt PosXStart, const UnsignedInt PosYStart, const UnsignedInt PosZStart, const UnsignedInt StepX, const UnsignedInt StepY, const UnsignedInt StepZ, const UnsignedInt SizeOfParticleX, const UnsignedInt SizeOfParticleY, const UnsignedInt SizeOfParticleZ, const UniqueIdInt ValueToCheck)
-//{
-//    try
-//    {
-//        for (UnsignedInt PosX = PosXStart; PosX < PosXStart + SizeOfParticleX; PosX += StepX)
-//            for (UnsignedInt PosY = PosYStart; PosY < PosYStart + SizeOfParticleY; PosY += StepY)
-//                for (UnsignedInt PosZ = PosZStart; PosZ < PosZStart + SizeOfParticleZ; PosZ += StepZ)
-//                    if (GetSpaceVoxel(PosX, PosY, PosZ) != ValueToCheck)
-//                        return false;
-//    }
-//    CATCH("checking free space in cuboid selected space")
+//        uniform_int_distribution<UnsignedInt> UniformDistributionObjectSizeOfParticle_Uint64t(1, 2);
+//        uniform_int_distribution<UnsignedInt> UniformDistributionObjectObjectOfParticle_Uint64t(0, NumberOfRandomParticles);
+//        uniform_int_distribution<UnsignedInt> UniformDistributionObjectX_Uint64t(StartXPosParam, StartXPosParam + SizeXParam);
+//        uniform_int_distribution<UnsignedInt> UniformDistributionObjectY_Uint64t(StartYPosParam, StartYPosParam + SizeYParam);
+//        uniform_int_distribution<UnsignedInt> UniformDistributionObjectZ_Uint64t(StartZPosParam, StartZPosParam + SizeZParam);
+//        uniform_int_distribution<ElectricChargeType> UniformDistributionObjectElectricChargeParticle_int64t(-5, 5);
 //
-//    return true;
-//}
+//        vector<UnsignedInt> LocalNewParticlesIndexes;
 //
-//inline void CellEngineParticlesVoxelsShapesGenerator::SetValueToVoxelsForCuboidSelectedSpace(std::vector<vector3_16>* FilledSpaceVoxels, const UniqueIdInt VoxelValue, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt StepXParam, const UnsignedInt StepYParam, const UnsignedInt StepZParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
-//{
-//    try
-//    {
-//        for (UnsignedInt PosX = StartXPosParam; PosX < StartXPosParam + SizeXParam; PosX += StepXParam)
-//            for (UnsignedInt PosY = StartYPosParam; PosY < StartYPosParam + SizeYParam; PosY += StepYParam)
-//                for (UnsignedInt PosZ = StartZPosParam; PosZ < StartZPosParam + SizeZParam; PosZ += StepZParam)
-//                    SetValueToSpaceVoxelWithFillingListOfVoxelsOfParticle(FilledSpaceVoxels, VoxelValue, PosX, PosY, PosZ);
-//    }
-//    CATCH("setting value to voxels for cuboid selected space")
-//}
+//        for (UniqueIdInt ParticleNumber = 1; ParticleNumber <= NumberOfRandomParticles; ParticleNumber++)
+//            LocalNewParticlesIndexes.emplace_back(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), UniformDistributionObjectObjectOfParticle_Uint64t(mt64R), 0, -1, 1, UniformDistributionObjectElectricChargeParticle_int64t(mt64R), CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))));
 //
-//bool CellEngineParticlesVoxelsShapesGenerator::CheckFreeSpaceForSphereSelectedSpace(const UnsignedInt PosXStart, const UnsignedInt PosYStart, const UnsignedInt PosZStart, const UnsignedInt StepX, const UnsignedInt StepY, const UnsignedInt StepZ, const UnsignedInt RadiusXParam, const UnsignedInt RadiusYParam, const UnsignedInt RadiusZParam, const UniqueIdInt ValueToCheck)
-//{
-//    try
-//    {
-//        UnsignedInt RadiusParam = RadiusXParam;
-//
-//        for (SignedInt x = 0; x < RadiusParam * 2; x += static_cast<SignedInt>(StepX))
-//            for (SignedInt y = 0; y < RadiusParam * 2; y += static_cast<SignedInt>(StepY))
-//                for (SignedInt z = 0; z < RadiusParam * 2; z += static_cast<SignedInt>(StepZ))
-//                {
-//                    SignedInt dx = static_cast<SignedInt>(RadiusParam) - x;
-//                    SignedInt dy = static_cast<SignedInt>(RadiusParam) - y;
-//                    SignedInt dz = static_cast<SignedInt>(RadiusParam) - z;
-//                    if ((dx * dx + dy * dy + dz * dz) <= (RadiusParam * RadiusParam))
-//                        if (GetSpaceVoxel(PosXStart + dx, PosYStart + dy, PosZStart + dz) != ValueToCheck)
-//                            return false;
-//                }
-//    }
-//    CATCH("checking free space in sphere selected space")
-//
-//    return true;
-//};
-//
-//void CellEngineParticlesVoxelsShapesGenerator::SetValueToVoxelsForSphereSelectedSpace(std::vector<vector3_16>* FilledSpaceVoxels, UniqueIdInt VoxelValue, const UnsignedInt PosXStart, const UnsignedInt PosYStart, const  UnsignedInt PosZStart, const UnsignedInt StepX, const UnsignedInt StepY, const UnsignedInt StepZ, const UnsignedInt RadiusXParam, const UnsignedInt RadiusYParam, const UnsignedInt RadiusZParam)
-//{
-//    try
-//    {
-//        UnsignedInt RadiusParam = RadiusXParam;
-//
-//        for (SignedInt x = 0; x < RadiusParam * 2; x += static_cast<SignedInt>(StepX))
-//            for (SignedInt y = 0; y < RadiusParam * 2; y += static_cast<SignedInt>(StepY))
-//                for (SignedInt z = 0; z < RadiusParam * 2; z += static_cast<SignedInt>(StepZ))
-//                {
-//                    SignedInt dx = static_cast<SignedInt>(RadiusParam) - x;
-//                    SignedInt dy = static_cast<SignedInt>(RadiusParam) - y;
-//                    SignedInt dz = static_cast<SignedInt>(RadiusParam) - z;
-//                    if ((dx * dx + dy * dy + dz * dz) <= (RadiusParam * RadiusParam))
-//                        SetValueToSpaceVoxelWithFillingListOfVoxelsOfParticle(FilledSpaceVoxels, VoxelValue, PosXStart + dx, PosYStart + dy, PosZStart + dz);
-//                }
-//    }
-//    CATCH("setting value to voxels for sphere selected space")
-//};
-//
-//bool CellEngineParticlesVoxelsShapesGenerator::CheckFreeSpaceForEllipsoidSelectedSpace(const UnsignedInt PosXStart, const UnsignedInt PosYStart, const UnsignedInt PosZStart, const UnsignedInt StepX, const UnsignedInt StepY, const UnsignedInt StepZ, const UnsignedInt RadiusXParam, const UnsignedInt RadiusYParam, const UnsignedInt RadiusZParam, const UniqueIdInt ValueToCheck)
-//{
-//    try
-//    {
-//        for (SignedInt x = 0; x < RadiusXParam * 2; x += static_cast<SignedInt>(StepX))
-//            for (SignedInt y = 0; y < RadiusYParam * 2; y += static_cast<SignedInt>(StepY))
-//                for (SignedInt z = 0; z < RadiusZParam * 2; z+= static_cast<SignedInt>(StepZ))
-//                {
-//                    SignedInt dx = static_cast<SignedInt>(RadiusXParam) - x;
-//                    SignedInt dy = static_cast<SignedInt>(RadiusYParam) - y;
-//                    SignedInt dz = static_cast<SignedInt>(RadiusZParam) - z;
-//                    if ((dx * dx * RadiusYParam * RadiusYParam * RadiusZParam * RadiusZParam + dy * dy * RadiusXParam * RadiusXParam * RadiusZParam * RadiusZParam + dz * dz * RadiusXParam * RadiusXParam * RadiusYParam * RadiusYParam) <= (RadiusXParam * RadiusXParam * RadiusYParam * RadiusYParam * RadiusZParam * RadiusZParam))
-//                        if (GetSpaceVoxel(PosXStart + dx, PosYStart + dy, PosZStart + dz) != ValueToCheck)
-//                            return false;
-//                }
-//    }
-//    CATCH("checking free space in ellipsoid selected space")
-//
-//    return true;
-//};
-//
-//void CellEngineParticlesVoxelsShapesGenerator::SetValueToVoxelsForEllipsoidSelectedSpace(std::vector<vector3_16>* FilledSpaceVoxels, UniqueIdInt VoxelValue, UnsignedInt PosXStart, UnsignedInt PosYStart, UnsignedInt PosZStart, const UnsignedInt StepX, const UnsignedInt StepY, const UnsignedInt StepZ, UnsignedInt RadiusXParam, UnsignedInt RadiusYParam, UnsignedInt RadiusZParam)
-//{
-//    try
-//    {
-//        for (SignedInt x = 0; x < RadiusXParam * 2; x += static_cast<SignedInt>(StepX))
-//            for (SignedInt y = 0; y < RadiusYParam * 2; y += static_cast<SignedInt>(StepY))
-//                for (SignedInt z = 0; z < RadiusZParam * 2; z += static_cast<SignedInt>(StepZ))
-//                {
-//                    SignedInt dx = static_cast<SignedInt>(RadiusXParam) - x;
-//                    SignedInt dy = static_cast<SignedInt>(RadiusYParam) - y;
-//                    SignedInt dz = static_cast<SignedInt>(RadiusZParam) - z;
-//                    if ((dx * dx * RadiusYParam * RadiusYParam * RadiusZParam * RadiusZParam + dy * dy * RadiusXParam * RadiusXParam * RadiusZParam * RadiusZParam + dz * dz * RadiusXParam * RadiusXParam * RadiusYParam * RadiusYParam) <= (RadiusXParam * RadiusXParam * RadiusYParam * RadiusYParam * RadiusZParam * RadiusZParam))
-//                        SetValueToSpaceVoxelWithFillingListOfVoxelsOfParticle(FilledSpaceVoxels, VoxelValue, PosXStart + dx, PosYStart + dy, PosZStart + dz);
-//                }
-//    }
-//    CATCH("setting value to voxels for ellipsoid selected space")
-//};
-//
-//inline void CellEngineParticlesVoxelsShapesGenerator::GenerateParticleVoxelsWhenSelectedSpaceIsFree(UnsignedInt LocalNewParticleIndex, UnsignedInt PosXStart, UnsignedInt PosYStart, UnsignedInt PosZStart, UnsignedInt SizeOfParticleX, UnsignedInt SizeOfParticleY, UnsignedInt SizeOfParticleZ, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam, CheckFreeSpaceForSelectedSpaceType CheckFreeSpaceForSelectedSpace, SetValueToVoxelsForSelectedSpaceType SetValueToVoxelsForSelectedSpace)
-//{
-//    try
-//    {
 //        vector<vector3_16> FilledVoxelsForRandomParticle;
 //
-//        if ((this->*CheckFreeSpaceForSelectedSpace)(PosXStart, PosYStart, PosZStart, 1, 1, 1, SizeOfParticleX, SizeOfParticleY, SizeOfParticleZ, GetZeroSimulationSpaceVoxel()) == true)
-//            if (PosXStart + SizeOfParticleX < StartXPosParam + SizeXParam && PosYStart + SizeOfParticleY < StartYPosParam + SizeYParam && PosZStart + SizeOfParticleZ < StartZPosParam + SizeZParam)
-//                (this->*SetValueToVoxelsForSelectedSpace)(&FilledVoxelsForRandomParticle, LocalNewParticleIndex, PosXStart, PosYStart, PosZStart, 1, 1, 1, SizeOfParticleX, SizeOfParticleY, SizeOfParticleZ);
-//
-//        if (FilledVoxelsForRandomParticle.empty() == false)
-//            GetParticleFromIndex(LocalNewParticleIndex).ListOfVoxels = FilledVoxelsForRandomParticle;
-//
-//        GetMinMaxCoordinatesForParticle(GetParticleFromIndex(LocalNewParticleIndex), true);
+//        for (const auto& LocalNewParticleIndex : LocalNewParticlesIndexes)
+//        {
+//            UnsignedInt RandomSizeOfParticles = UniformDistributionObjectSizeOfParticle_Uint64t(mt64R);
+//            GenerateParticleVoxelsWhenSelectedSpaceIsFree(LocalNewParticleIndex, UniformDistributionObjectX_Uint64t(mt64R), UniformDistributionObjectY_Uint64t(mt64R), UniformDistributionObjectZ_Uint64t(mt64R), RandomSizeOfParticles, RandomSizeOfParticles, RandomSizeOfParticles, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, &CellEngineVoxelSimulationSpace::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineVoxelSimulationSpace::SetValueToVoxelsForCuboidSelectedSpace);
+//        }
 //    }
-//    CATCH("generate particle in selected space")
+//    CATCH("generating random particles in selected space")
 //}
-
-
-
-
-
-
-
-
-
+//
+//void CellEngineTestParticlesGenerator::GeneratePlanedCuboidParticlesInSelectedSpace(UnsignedInt NumberOfRandomParticles, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt StepXParam, UnsignedInt StepYParam, UnsignedInt StepZParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam)
+//{
+//    try
+//    {
+//        GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 0, 1, -1, 1, -1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), StartXPosParam + 1, StartYPosParam + 3, StartZPosParam + 7, 1, 1, 1, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, &CellEngineVoxelSimulationSpace::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineVoxelSimulationSpace::SetValueToVoxelsForCuboidSelectedSpace);
+//        GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 1, 1, -1, 1, 2, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), StartXPosParam + 3, StartYPosParam + 13, StartZPosParam + 6, 1, 1, 1, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, &CellEngineVoxelSimulationSpace::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineVoxelSimulationSpace::SetValueToVoxelsForCuboidSelectedSpace);
+//        GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 2, 1, -1, 1, 3, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), StartXPosParam + 6, StartYPosParam + 12, StartZPosParam + 5, 1, 1, 1, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, &CellEngineVoxelSimulationSpace::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineVoxelSimulationSpace::SetValueToVoxelsForCuboidSelectedSpace);
+//        GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 3, 1, -1, 1, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), StartXPosParam + 9, StartYPosParam + 9, StartZPosParam + 9, 2, 2, 2, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, &CellEngineVoxelSimulationSpace::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineVoxelSimulationSpace::SetValueToVoxelsForCuboidSelectedSpace);
+//        GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 4, 1, -1, 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), StartXPosParam + 17, StartYPosParam + 15, StartZPosParam + 15, 2, 2, 2, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, &CellEngineVoxelSimulationSpace::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineVoxelSimulationSpace::SetValueToVoxelsForCuboidSelectedSpace);
+//        GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 5, 1, -1, 1, -3, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), StartXPosParam + 17, StartYPosParam + 19, StartZPosParam + 4, 2, 2, 2, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, &CellEngineVoxelSimulationSpace::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineVoxelSimulationSpace::SetValueToVoxelsForCuboidSelectedSpace);
+//        GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 6, 1, -1, 1, -2, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), StartXPosParam + 21, StartYPosParam + 20, StartZPosParam + 19, 2, 2, 2, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, &CellEngineVoxelSimulationSpace::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineVoxelSimulationSpace::SetValueToVoxelsForCuboidSelectedSpace);
+//        GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 6, 1, -1, 1, 2, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), StartXPosParam + 3, StartYPosParam + 20, StartZPosParam + 7, 2, 2, 2, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, &CellEngineVoxelSimulationSpace::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineVoxelSimulationSpace::SetValueToVoxelsForCuboidSelectedSpace);
+//        GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 6, 1, -1, 1, -2, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), StartXPosParam + 5, StartYPosParam + 15, StartZPosParam + 20, 2, 2, 2, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, &CellEngineVoxelSimulationSpace::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineVoxelSimulationSpace::SetValueToVoxelsForCuboidSelectedSpace);
+//        GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 10, 1, -1, 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), StartXPosParam + 21, StartYPosParam + 5, StartZPosParam + 3, 2, 2, 2, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, &CellEngineVoxelSimulationSpace::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineVoxelSimulationSpace::SetValueToVoxelsForCuboidSelectedSpace);
+//
+//        GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), CellEngineConfigDataObject.RNAIdentifier, CellEngineUseful::GetChainIdFromLetterForDNAorRNA('T'), -1, 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), StartXPosParam + 9, StartYPosParam + 12, StartZPosParam + 3, 2, 2, 1, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, &CellEngineVoxelSimulationSpace::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineVoxelSimulationSpace::SetValueToVoxelsForCuboidSelectedSpace);
+//        GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), CellEngineConfigDataObject.RNAIdentifier, CellEngineUseful::GetChainIdFromLetterForDNAorRNA('A'), -1, 1, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), StartXPosParam + 9, StartYPosParam + 16, StartZPosParam + 3, 2, 2, 1, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, &CellEngineVoxelSimulationSpace::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineVoxelSimulationSpace::SetValueToVoxelsForCuboidSelectedSpace);
+//        GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), CellEngineConfigDataObject.RNAIdentifier, CellEngineUseful::GetChainIdFromLetterForDNAorRNA('C'), -1, 1, -1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), StartXPosParam + 9, StartYPosParam + 19, StartZPosParam + 3, 2, 2, 1, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, &CellEngineVoxelSimulationSpace::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineVoxelSimulationSpace::SetValueToVoxelsForCuboidSelectedSpace);
+//
+//        GenerateOneStrand(CellEngineConfigDataObject.RNAIdentifier, "UCGAGAA", StartXPosParam + 5, StartYPosParam + 5, StartZPosParam + 3, 2, 1, 2, 2, 0, 0);
+//    }
+//    CATCH("generating planed cuboid particles in selected space")
+//}
+//
+//void CellEngineTestParticlesGenerator::GeneratePlanedEllipsoidParticlesInSelectedSpace(UnsignedInt NumberOfRandomParticles, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt StepXParam, UnsignedInt StepYParam, UnsignedInt StepZParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam)
+//{
+//    try
+//    {
+//        GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 2, 1, -1, 1, -1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), StartXPosParam + 9, StartYPosParam + 9, StartZPosParam + 10, 3, 4, 7, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, &CellEngineVoxelSimulationSpace::CheckFreeSpaceForEllipsoidSelectedSpace, &CellEngineVoxelSimulationSpace::SetValueToVoxelsForEllipsoidSelectedSpace);
+//        GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 3, 1, -1, 1, -1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), StartXPosParam + 18, StartYPosParam + 18, StartZPosParam + 18, 3, 3, 3, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, &CellEngineVoxelSimulationSpace::CheckFreeSpaceForEllipsoidSelectedSpace, &CellEngineVoxelSimulationSpace::SetValueToVoxelsForEllipsoidSelectedSpace);
+//        GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 4, 1, -1, 1, -1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), StartXPosParam + 13, StartYPosParam + 13, StartZPosParam + 18, 3, 3, 3, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, &CellEngineVoxelSimulationSpace::CheckFreeSpaceForSphereSelectedSpace, &CellEngineVoxelSimulationSpace::SetValueToVoxelsForSphereSelectedSpace);
+//    }
+//    CATCH("generating planed ellipsoid particles in selected space")
+//}
 
 
 
@@ -1480,440 +1241,3 @@ void CellEngineChemicalReactionsInVoxelSpace::EraseParticleChosenForReactionAndG
     }
     CATCH("erasing particles chosen for reaction and get centers for new products of reaction")
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::EraseAllDNAParticles()
-{
-    try
-    {
-        LoggersManagerObject.Log(STREAM("Number of DNA particles to be removed = " << GetNumberOfParticlesWithChosenEntityId(CellEngineConfigDataObject.DNAIdentifier)));
-
-        for (const auto& ParticleIndex : GetAllParticlesWithChosenEntityId(CellEngineConfigDataObject.DNAIdentifier))
-            RemoveParticle(ParticleIndex, true);
-
-        LoggersManagerObject.Log(STREAM("Number of DNA particles after remove = " << GetNumberOfParticlesWithChosenEntityId(CellEngineConfigDataObject.DNAIdentifier)));
-
-        Genomes[0].clear();
-        Genomes[1].clear();
-    }
-    CATCH("erasing all dna particles")
-}
-
-void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::UpdateRandomPositions(const UnsignedInt RandomMoveDirection, UnsignedInt& RandomPosX, UnsignedInt& RandomPosY, UnsignedInt& RandomPosZ, const UnsignedInt Size)
-{
-    switch (RandomMoveDirection)
-    {
-        case 1 : RandomPosX += Size; break;
-        case 2 : RandomPosX -= Size; break;
-        case 3 : RandomPosY += Size; break;
-        case 4 : RandomPosY -= Size; break;
-        case 5 : RandomPosZ += Size; break;
-        case 6 : RandomPosZ -= Size; break;
-        default : break;
-    }
-}
-
-void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::GenerateOneStrand(const EntityIdInt EntityId, string_view Sequence, const UnsignedInt StartPosX, const UnsignedInt StartPosY, const UnsignedInt StartPosZ, const UnsignedInt ParticleSizeX, const UnsignedInt ParticleSizeY, const UnsignedInt ParticleSizeZ, const UnsignedInt ParticleStepX, const UnsignedInt ParticleStepY, const UnsignedInt ParticleStepZ)
-{
-    try
-    {
-        vector<UniqueIdInt> MockVector;
-        Particle* ParticlePrev1 = nullptr;
-
-        for (UnsignedInt SequenceIndex = 0; SequenceIndex < Sequence.size(); SequenceIndex++)
-            ParticlePrev1 = GenerateNucleotideParticle(ParticlePrev1, EntityId, CellEngineUseful::GetChainIdFromLetterForDNAorRNA(Sequence[SequenceIndex]), 0, 1, StartPosX + SequenceIndex * ParticleStepX, StartPosY + SequenceIndex * ParticleStepY, StartPosZ + SequenceIndex * ParticleStepZ, ParticleSizeX, ParticleSizeY, ParticleSizeZ, false, MockVector, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), true);
-    }
-    CATCH("generating one strand")
-}
-
-Particle* CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::GenerateNucleotideParticle(Particle* ParticlePrev, const EntityIdInt EntityId, const ChainIdInt ChainId, const UnsignedInt GenomeThread, const UnsignedInt GenomeIndex, const UnsignedInt StartPosX, const UnsignedInt StartPosY, const UnsignedInt StartPosZ, const UnsignedInt ParticleSizeX, const UnsignedInt ParticleSizeY, const UnsignedInt ParticleSizeZ, bool AddToGenome, vector<UniqueIdInt>& Genome, const vector3_16 UniqueColorParam, const bool LinkWithPreviousNucleotide)
-{
-    UnsignedInt ParticleIndex;
-
-    try
-    {
-        ParticleIndex = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), EntityId, ChainId, GenomeThread, GenomeIndex, 0, UniqueColorParam));
-
-        if (LinkWithPreviousNucleotide == true)
-            Particle::InsertAfterGivenNode(ParticlePrev, &GetParticleFromIndex(ParticleIndex));
-
-        GenerateParticleVoxelsWhenSelectedSpaceIsFree(ParticleIndex, StartPosX, StartPosY, StartPosZ, ParticleSizeX, ParticleSizeY, ParticleSizeZ, 0, 0, 0, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, &CellEngineVoxelSimulationSpace::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineVoxelSimulationSpace::SetValueToVoxelsForCuboidSelectedSpace);
-
-        if (AddToGenome == true)
-            Genome.emplace_back(ParticleIndex);
-    }
-    CATCH("generating particle")
-
-    return &GetParticleFromIndex(ParticleIndex);
-}
-
-tuple<Particle*, Particle*> CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::GenerateTwoPairedNucleotides(Particle* ParticlePrev1, Particle* ParticlePrev2, const EntityIdInt EntityId, const ChainIdInt ChainId, const UnsignedInt GenomeIndex, const UnsignedInt StartPosX, const UnsignedInt StartPosY, const UnsignedInt StartPosZ, const UnsignedInt ParticleSizeX, const UnsignedInt ParticleSizeY, const UnsignedInt ParticleSizeZ, const UnsignedInt AddSizeX, const UnsignedInt AddSizeY, const UnsignedInt AddSizeZ, const vector3_16 UniqueColorParam, const bool Linked, const bool LinkWithPreviousNucleotide)
-{
-    try
-    {
-        ParticlePrev1 = GenerateNucleotideParticle(ParticlePrev1, CellEngineConfigDataObject.DNAIdentifier, ChainId, 0, Genomes[0].size(), StartPosX, StartPosY, StartPosZ, ParticleSizeX, ParticleSizeY, ParticleSizeZ, true, Genomes[0], CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), LinkWithPreviousNucleotide);
-        ParticlePrev2 = GenerateNucleotideParticle(ParticlePrev2, CellEngineConfigDataObject.DNAIdentifier, CellEngineUseful::GetPairedChainIdForDNAorRNA(ChainId), 1, Genomes[1].size(), StartPosX + AddSizeX, StartPosY + AddSizeY, StartPosZ + AddSizeZ, ParticleSizeX, ParticleSizeY, ParticleSizeZ, true, Genomes[1], CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), LinkWithPreviousNucleotide);
-
-        if (Linked == true)
-            PairedNucleotide<Particle>::LinkPairedNucleotides(ParticlePrev1, ParticlePrev2);
-    }
-    CATCH("generating two paired nucleotides")
-
-    return { ParticlePrev1, ParticlePrev2 };
-}
-
-bool CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::TestFormerForbiddenPositions(unordered_set<string>& TestedFormerForbiddenPositions, UnsignedInt RandomMoveDirection, UnsignedInt RandomPosX, UnsignedInt RandomPosY, UnsignedInt RandomPosZ, const UnsignedInt Size)
-{
-    UnsignedInt PosX = RandomPosX;
-    UnsignedInt PosY = RandomPosY;
-    UnsignedInt PosZ = RandomPosZ;
-
-    UpdateRandomPositions(RandomMoveDirection, PosX, PosY, PosZ, Size);
-
-    return (TestedFormerForbiddenPositions.find(to_string(PosX) + "|" + to_string(PosY) + "|" + to_string(PosZ)) != TestedFormerForbiddenPositions.end());
-}
-
-tuple<UnsignedInt, UnsignedInt, UnsignedInt> CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::EraseLastRandomDNAParticle(vector<UniqueIdInt>& Genome)
-{
-    vector3_16 LastLocalRandomPos;
-
-    try
-    {
-        UnsignedInt PreviousParticleIndex = Genome.back();
-        Genome.pop_back();
-
-        LastLocalRandomPos = GetParticleFromIndex(PreviousParticleIndex).ListOfVoxels[0];
-
-        RemoveParticle(PreviousParticleIndex, true);
-
-        LoggersManagerObject.Log(STREAM("ERASED PARTICLE PreviousParticleIndex = " << PreviousParticleIndex << " RandomPosX = " << LastLocalRandomPos.X << " RandomPosY = " << LastLocalRandomPos.Y << " RandomPosZ = " << LastLocalRandomPos.Z));
-    }
-    CATCH("erasing last random particle")
-
-    return { LastLocalRandomPos.X, LastLocalRandomPos.Y, LastLocalRandomPos.Z };
-}
-
-UnsignedInt Sqr(UnsignedInt Value)
-{
-    return Value * Value;
-}
-
-void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::GenerateRandomDNAInWholeCell(UnsignedInt NumberOfNucleotidesToBeGenerated, UnsignedInt RandomPosX, UnsignedInt RandomPosY, UnsignedInt RandomPosZ, UnsignedInt ParticleSizeX, UnsignedInt ParticleSizeY, UnsignedInt ParticleSizeZ, UnsignedInt ParticleSize1, UnsignedInt ParticleSize2, UnsignedInt ParticleSize3, UnsignedInt ParticleSize4, UnsignedInt ParticleSize5)
-{
-    try
-    {
-        EraseAllDNAParticles();
-
-        UnsignedInt ParticlesSizeBeforeAddingRandomDNA = Particles.size();
-
-        SwitchOffLogs();
-
-        uniform_int_distribution<UnsignedInt> UniformDistributionObjectChainOfParticle_Uint64t(1, 4);
-        uniform_int_distribution<UnsignedInt> UniformDistributionObjectMoveOfParticle_Uint64t(1, 6);
-
-        UnsignedInt NumberOfGeneratedNucleotides = 0;
-
-        unordered_set<string> TestedFormerForbiddenPositions;
-
-        vector<UnsignedInt> RandomMovesDirections = { 0, 0, 0, 0, 0, 0 };
-
-        auto CheckIfAllRandomMovesDirectionsWereChecked = [](vector<UnsignedInt>& RandomMovesDirections) { return all_of(RandomMovesDirections.cbegin(), RandomMovesDirections.cend(), [] (const UnsignedInt Element) { return Element == 1; }); };
-
-        auto timeStart = clock();
-
-        Particle* ParticlePrev1 = nullptr;
-        Particle* ParticlePrev2 = nullptr;
-
-        while (NumberOfGeneratedNucleotides < NumberOfNucleotidesToBeGenerated)
-        {
-            if ((clock() - timeStart) / CLOCKS_PER_SEC >= 15)
-                break;
-
-            UnsignedInt RandomMoveDirection = 0;
-
-            do
-            {
-                RandomMoveDirection = UniformDistributionObjectMoveOfParticle_Uint64t(mt64R);
-
-                if (TestFormerForbiddenPositions(TestedFormerForbiddenPositions, RandomMoveDirection, RandomPosX, RandomPosY, RandomPosZ, ParticleSize1) == true)
-                    RandomMovesDirections[RandomMoveDirection - 1] = 1;
-
-                LoggersManagerObject.Log(STREAM("RandomMoveDirection = " << RandomMoveDirection << " " << RandomMovesDirections[RandomMoveDirection - 1] << " " << CheckIfAllRandomMovesDirectionsWereChecked(RandomMovesDirections)));
-            }
-            while (RandomMovesDirections[RandomMoveDirection - 1] == 1 && CheckIfAllRandomMovesDirectionsWereChecked(RandomMovesDirections) == false);
-
-            if (RandomMovesDirections[RandomMoveDirection - 1] == 0)
-            {
-                UpdateRandomPositions(RandomMoveDirection, RandomPosX, RandomPosY, RandomPosZ, ParticleSize2);
-
-                RandomMovesDirections[RandomMoveDirection - 1] = 1;
-            }
-
-            bool EmptyVoxelSpaceForNewNucleotideBool = true;
-            while (EmptyVoxelSpaceForNewNucleotideBool == true && NumberOfGeneratedNucleotides < NumberOfNucleotidesToBeGenerated)
-            {
-                for (UnsignedInt PosX = RandomPosX; PosX < RandomPosX + ParticleSizeX; PosX++)
-                    for (UnsignedInt PosY = RandomPosY; PosY < RandomPosY + ParticleSizeY; PosY++)
-                        for (UnsignedInt PosZ = RandomPosZ; PosZ < RandomPosZ + ParticleSizeZ; PosZ++)
-                            if (GetSpaceVoxel(PosX, PosY, PosZ) != 0)
-                            {
-                                LoggersManagerObject.Log(STREAM("NOT EMPTY A POS = " << PosX << " " << PosY << " " << PosZ << " " << GetSpaceVoxel(PosX, PosY, PosZ)));
-
-                                EmptyVoxelSpaceForNewNucleotideBool = false;
-
-                                goto BreakOutOfLoop;
-                            }
-
-                BreakOutOfLoop:;
-
-                if (EmptyVoxelSpaceForNewNucleotideBool == false)
-                    UpdateRandomPositions(RandomMoveDirection, RandomPosX, RandomPosY, RandomPosZ, -ParticleSize3);
-
-                if (EmptyVoxelSpaceForNewNucleotideBool == true && sqrt(Sqr(RandomPosX - (CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension / 2)) + Sqr(RandomPosY - (CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension / 2)) + Sqr(RandomPosZ - (CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension / 2))) >= CellEngineConfigDataObject.RadiusOfCellForDNA)
-                {
-                    EmptyVoxelSpaceForNewNucleotideBool = false;
-                    UpdateRandomPositions(RandomMoveDirection, RandomPosX, RandomPosY, RandomPosZ, -ParticleSize4);
-                }
-
-                LoggersManagerObject.Log(STREAM("EmptyVoxelSpaceForNewNucleotideBool = " << EmptyVoxelSpaceForNewNucleotideBool << " " << CheckIfAllRandomMovesDirectionsWereChecked(RandomMovesDirections)));
-
-                if (EmptyVoxelSpaceForNewNucleotideBool == true)
-                {
-                    NumberOfGeneratedNucleotides++;
-
-                    ChainIdInt ChainId = UniformDistributionObjectChainOfParticle_Uint64t(mt64R);
-
-                    if (RandomMoveDirection == 1 || RandomMoveDirection == 2)
-                        tie(ParticlePrev1, ParticlePrev2) = GenerateTwoPairedNucleotides(ParticlePrev1, ParticlePrev2, CellEngineConfigDataObject.DNAIdentifier, ChainId, Genomes[0].size(), RandomPosX, RandomPosY, RandomPosZ, ParticleSizeX, 1, ParticleSizeZ, 0, 1, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), false, false);
-                    else
-                    if (RandomMoveDirection == 3 || RandomMoveDirection == 4 || RandomMoveDirection == 5 || RandomMoveDirection == 6)
-                        tie(ParticlePrev1, ParticlePrev2) = GenerateTwoPairedNucleotides(ParticlePrev1, ParticlePrev2, CellEngineConfigDataObject.DNAIdentifier, ChainId, Genomes[0].size(), RandomPosX, RandomPosY, RandomPosZ, 1, ParticleSizeY, ParticleSizeZ, 1, 0, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), false, false);
-
-                    fill(RandomMovesDirections.begin(), RandomMovesDirections.end(), 0);
-
-                    UpdateRandomPositions(RandomMoveDirection, RandomPosX, RandomPosY, RandomPosZ, ParticleSize5);
-
-                    LoggersManagerObject.Log(STREAM("ADDED PARTICLE NumberOfGeneratedNucleotides = " << NumberOfGeneratedNucleotides << " RX = " << RandomPosX << " RY = " << RandomPosY << " RZ = " << RandomPosZ));
-                }
-            }
-
-            if (EmptyVoxelSpaceForNewNucleotideBool == false && CheckIfAllRandomMovesDirectionsWereChecked(RandomMovesDirections) == true)
-            {
-                NumberOfGeneratedNucleotides--;
-
-                tie(RandomPosX, RandomPosY, RandomPosZ) = EraseLastRandomDNAParticle(Genomes[0]);
-
-                TestedFormerForbiddenPositions.insert(to_string(RandomPosX) + "|" + to_string(RandomPosY) + "|" + to_string(RandomPosZ));
-
-                EraseLastRandomDNAParticle(Genomes[1]);
-
-                fill(RandomMovesDirections.begin(), RandomMovesDirections.end(), 0);
-            }
-
-            LoggersManagerObject.Log(STREAM("END OF GOING IN ONE DIRECTION"));
-        }
-
-        GetMinMaxCoordinatesForDNA();
-
-        SwitchOnLogs();
-
-        LoggersManagerObject.Log(STREAM("NUMBER OF ADDED PARTICLES = " << Particles.size() - ParticlesSizeBeforeAddingRandomDNA));
-    }
-    CATCH("generating random dna in whole cell")
-}
-
-void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::GetMinMaxCoordinatesForDNA()
-{
-    try
-    {
-        for (auto& LocalNewParticleIndex : Genomes[0])
-            GetMinMaxCoordinatesForParticle(GetParticleFromIndex(LocalNewParticleIndex), true);
-        for (auto& LocalNewParticleIndex : Genomes[1])
-            GetMinMaxCoordinatesForParticle(GetParticleFromIndex(LocalNewParticleIndex), true);
-    }
-    CATCH("getting min max of coordinates for DNA")
-}
-
-void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::SaveGenomeDataToFile(UnsignedInt ParticleSize)
-{
-    try
-    {
-        string FileName = string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("genome") + OS_DIR_SEP + string("GENOME_POSITIONS.DAT");
-        ofstream FileToWriteGenome;
-        FileToWriteGenome.open(FileName, ios_base::out | ios_base::trunc);
-        FileToWriteGenome << to_string(ParticleSize) << endl;
-        FileToWriteGenome << to_string(Genomes[0].size()) << endl;
-        for (const auto& Nucleotide : Genomes[0])
-        {
-            EntityIdInt EntityId = GetParticleFromIndex(Nucleotide).EntityId;
-            ChainIdInt ChainId = GetParticleFromIndex(Nucleotide).ChainId;
-            UniqueIdInt GenomeIndex = GetParticleFromIndex(Nucleotide).GenomeIndex;
-            UnsignedInt PosX = GetParticleFromIndex(Nucleotide).ListOfVoxels[0].X;
-            UnsignedInt PosY = GetParticleFromIndex(Nucleotide).ListOfVoxels[0].Y;
-            UnsignedInt PosZ = GetParticleFromIndex(Nucleotide).ListOfVoxels[0].Z;
-            FileToWriteGenome << to_string(EntityId) << "," << to_string(ChainId)  << "," << to_string(GenomeIndex) << "," << to_string(PosX) << "," << to_string(PosY) << "," << to_string(PosZ) << endl;
-        }
-        FileToWriteGenome.close();
-    }
-    CATCH("saving genome data to file")
-}
-
-void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::ReadGenomeDataFromFile(bool Paired)
-{
-    try
-    {
-        CellEngineConfigDataObject.GenomeReadFromFile = true;
-
-        EraseAllDNAParticles();
-
-        UnsignedInt ParticlesSizeBeforeAddingRandomDNA = Particles.size();
-
-        string Line, Word;
-        vector<string> Row;
-
-        string FileName = string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("genome") + OS_DIR_SEP + string("GENOME_POSITIONS.DAT");
-        fstream FileToReadGenome(FileName, ios::in);
-
-        getline(FileToReadGenome, Line);
-        UnsignedInt ParticleSize = stoi(Line);
-        getline(FileToReadGenome, Line);
-        UnsignedInt GenomeSize = stoi(Line);
-
-        UnsignedInt PrevStartPosX = 0;
-        UnsignedInt GenomeIndex = 0;
-
-        Particle* ParticlePrev1 = nullptr;
-        Particle* ParticlePrev2 = nullptr;
-
-        while(getline(FileToReadGenome, Line))
-        {
-            Row.clear();
-            stringstream Str(Line);
-
-            while(getline(Str, Word, ','))
-                Row.push_back(Word);
-
-            UnsignedInt StartPosX = stoi(Row[3]);
-            UnsignedInt StartPosY = stoi(Row[4]);
-            UnsignedInt StartPosZ = stoi(Row[5]);
-
-            if (Paired == true)
-            {
-                if (abs(static_cast<long>(PrevStartPosX - StartPosX)) > 0)
-                    tie(ParticlePrev1, ParticlePrev2) = GenerateTwoPairedNucleotides(ParticlePrev1, ParticlePrev2, stoi(Row[0]), stoi(Row[1]), GenomeIndex, StartPosX, StartPosY, StartPosZ, ParticleSize, 1, ParticleSize, 0, 1, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), true, true);
-                else
-                    tie(ParticlePrev1, ParticlePrev2) = GenerateTwoPairedNucleotides(ParticlePrev1, ParticlePrev2, stoi(Row[0]), stoi(Row[1]), GenomeIndex, StartPosX, StartPosY, StartPosZ, 1, ParticleSize, ParticleSize, 1, 0, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), true, true);
-            }
-            else
-                ParticlePrev1 = GenerateNucleotideParticle(ParticlePrev1, stoi(Row[0]), stoi(Row[1]), 0, stoi(Row[2]), stoi(Row[3]), stoi(Row[4]), stoi(Row[5]), ParticleSize, ParticleSize, ParticleSize, true, Genomes[0], CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), true);
-
-            PrevStartPosX = StartPosX;
-
-            GenomeIndex++;
-        }
-
-        FileToReadGenome.close();
-
-        GetMinMaxCoordinatesForDNA();
-
-        LoggersManagerObject.Log(STREAM("NUMBER OF ADDED PARTICLES = " << Particles.size() - ParticlesSizeBeforeAddingRandomDNA));
-    }
-    CATCH("reading genome data from file")
-}
-
-void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::ReadGenomeSequenceFromFile()
-{
-    try
-    {
-        string FileName = string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("genome") + OS_DIR_SEP + string("GENOME_SEQUENCE.DAT");
-
-        fstream FileToReadGenome(FileName, ios::in);
-
-        getline(FileToReadGenome, GenomesLines[0]);
-
-        for (UnsignedInt GenomeIndex = 0; GenomeIndex < Genomes[0].size(); GenomeIndex++)
-        {
-            GetParticleFromIndex(Genomes[0][GenomeIndex + 1]).ChainId = CellEngineUseful::GetChainIdFromLetterForDNAorRNA(GenomesLines[0][GenomeIndex]);
-            GetParticleFromIndex(Genomes[1][GenomeIndex + 1]).ChainId = CellEngineUseful::GetPairedChainIdForDNAorRNA(CellEngineUseful::GetChainIdFromLetterForDNAorRNA(GenomesLines[0][GenomeIndex]));
-        }
-    }
-    CATCH("reading real genome data from file")
-}
-
-void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::TestGeneratedGenomeCorrectness(const UnsignedInt ParticleSize)
-{
-    try
-    {
-        bool FoundBreak = false;
-
-        for (UnsignedInt GenomeIndex = 0; GenomeIndex < Genomes[0].size(); GenomeIndex++)
-            if (GenomeIndex > 3)
-            {
-                if ((abs(GetParticleFromIndex(Genomes[0][GenomeIndex]).ListOfVoxels[0].X - GetParticleFromIndex(Genomes[0][GenomeIndex - 1]).ListOfVoxels[0].X) != ParticleSize) &&
-                    (abs(GetParticleFromIndex(Genomes[0][GenomeIndex]).ListOfVoxels[0].Y - GetParticleFromIndex(Genomes[0][GenomeIndex - 1]).ListOfVoxels[0].Y) != ParticleSize) &&
-                    (abs(GetParticleFromIndex(Genomes[0][GenomeIndex]).ListOfVoxels[0].Z - GetParticleFromIndex(Genomes[0][GenomeIndex - 1]).ListOfVoxels[0].Z) != ParticleSize))
-                {
-                    LoggersManagerObject.Log(STREAM("GenomeIndex = " << GenomeIndex << " ChainId = " << GetParticleFromIndex(Genomes[0][GenomeIndex]).ChainId << " Letter = " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(GetParticleFromIndex(Genomes[0][GenomeIndex]).ChainId)));
-                    LoggersManagerObject.Log(STREAM("DIFF X = " << GetParticleFromIndex(Genomes[0][GenomeIndex]).ListOfVoxels[0].X << " " << GetParticleFromIndex(Genomes[0][GenomeIndex - ParticleSize]).ListOfVoxels[0].X));
-                    LoggersManagerObject.Log(STREAM("DIFF Y = " << GetParticleFromIndex(Genomes[0][GenomeIndex]).ListOfVoxels[0].Y << " " << GetParticleFromIndex(Genomes[0][GenomeIndex - ParticleSize]).ListOfVoxels[0].Y));
-                    LoggersManagerObject.Log(STREAM("DIFF Z = " << GetParticleFromIndex(Genomes[0][GenomeIndex]).ListOfVoxels[0].Z << " " << GetParticleFromIndex(Genomes[0][GenomeIndex - ParticleSize]).ListOfVoxels[0].Z));
-                    FoundBreak = true;
-                    break;
-                }
-            }
-
-        if (FoundBreak == false)
-            LoggersManagerObject.Log(STREAM("Genome is continuous and correctly generated - OK!"));
-    }
-    CATCH("testing generated genome correctness")
-}
-

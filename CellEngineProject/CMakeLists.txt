@@ -125,6 +125,12 @@ add_executable(
 		CellEngineBasicParticlesOperations.h
 		CellEngineParticlesVoxelsShapesGenerator.h
 		CellEngineParticlesVoxelsShapesGenerator.cpp
+		CellEngineRealRandomParticlesGenerator.cpp
+		CellEngineRealRandomParticlesGenerator.h
+		CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator.cpp
+		CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator.h
+		CellEngineTestParticlesGenerator.cpp
+		CellEngineTestParticlesGenerator.h
 )
 
 if(WIN32)

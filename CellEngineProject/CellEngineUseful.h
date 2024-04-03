@@ -7,6 +7,20 @@
 
 namespace CellEngineUseful
 {
+    static void SwitchOffLogs()
+    {
+        #ifdef SIMULATION_DETAILED_LOG
+        LoggersManagerObject.InitializePrintingParameters(false, false, false, false, false, false, false, false, false, false, false, false, CellEngineConfigDataObject.MaximalNumberOfLinesInOneFile);
+        #endif
+    }
+
+    static void SwitchOnLogs()
+    {
+        #ifdef SIMULATION_DETAILED_LOG
+        LoggersManagerObject.InitializePrintingParameters(CellEngineConfigDataObject.PrintLogToConsole, CellEngineConfigDataObject.PrintLogToFiles, CellEngineConfigDataObject.PrintLogLineNumberToConsole, CellEngineConfigDataObject.PrintLogDateTimeToConsole, CellEngineConfigDataObject.PrintLogProcessIdToConsole, CellEngineConfigDataObject.PrintLogProcessPriorityLevelToConsole, CellEngineConfigDataObject.PrintLogThreadIdToConsole, CellEngineConfigDataObject.PrintLogLineNumberToFile, CellEngineConfigDataObject.PrintLogDateTimeToFile, CellEngineConfigDataObject.PrintLogProcessIdToFile, CellEngineConfigDataObject.PrintLogProcessPriorityLevelToFile, CellEngineConfigDataObject.PrintLogThreadIdToFile, CellEngineConfigDataObject.MaximalNumberOfLinesInOneFile);
+        #endif
+    }
+
     inline EntityIdInt IfSpecialDNAThenReturnNormalDNACode(const EntityIdInt EntityId)
     {
         return EntityId > 10000 ? CellEngineConfigDataObject.DNAIdentifier : EntityId;
