@@ -13,6 +13,8 @@
 #include "CellEngineChemicalReactions.h"
 #include "CellEngineChemicalReactionsCreator.h"
 #include "CellEngineBasicVoxelsOperations.h"
+#include "CellEngineParticlesVoxelsOperations.h"
+#include "CellEngineBasicParticlesOperations.h"
 #include "CellEngineNucleicAcidsBasicOperations.h"
 
 enum class ComparisonType { ByVectorLoop, ByString };
@@ -33,64 +35,6 @@ static void SwitchOnLogs()
 #endif
 }
 
-class CellEngineParticlesVoxelsOperations : public CellEngineBasicVoxelsOperations
-{
-public:
-    void SetAllVoxelsInListOfVoxelsToValueForOuterClass(std::vector<vector3_16>& ListOfVoxels, SimulationSpaceVoxel SimulationSpaceVoxelValue);
-protected:
-    inline void SetAllVoxelsInListOfVoxelsToValue(std::vector<vector3_16>& ListOfVoxels, SimulationSpaceVoxel SimulationSpaceVoxelValue);
-protected:
-    inline void MoveParticleByVector(Particle& ParticleObject, SignedInt VectorX, SignedInt VectorY, SignedInt VectorZ);
-    inline void MoveParticleNearOtherParticle(Particle& ParticleObject, const Particle& NewPositionParticleObject, SignedInt AddX, SignedInt AddY, SignedInt AddZ);
-    inline bool CheckFreeSpaceForParticleMovedByVector(Particle& ParticleObject, SignedInt VectorX, SignedInt VectorY, SignedInt VectorZ);
-    inline static bool CheckBoundsForParticleMovedByVector(Particle& ParticleObject, SignedInt VectorX, SignedInt VectorY, SignedInt VectorZ, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
-    inline bool CheckBoundsAndFreeSpaceForParticleMovedByVector(Particle& ParticleObject, SignedInt VectorX, SignedInt VectorY, SignedInt VectorZ, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
-protected:
-    inline bool MoveParticleByVectorIfVoxelSpaceIsEmpty(Particle& ParticleObject, SignedInt VectorX, SignedInt VectorY, SignedInt VectorZ);
-    inline bool MoveParticleByVectorIfVoxelSpaceIsEmptyAndIsInBounds(Particle& ParticleObject, SignedInt VectorX, SignedInt VectorY, SignedInt VectorZ, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
-    inline bool MoveParticleNearOtherParticleIfVoxelSpaceIsEmpty(Particle& ParticleObject, const Particle& NewPositionParticleObject, SignedInt AddX, SignedInt AddY, SignedInt AddZ);
-    inline void MoveParticleNearOtherParticleIfVoxelSpaceIsEmptyOrNearSpace(Particle& ParticleObject, const Particle& NewPositionParticleObject, SignedInt AddX, SignedInt AddY, SignedInt AddZ);
-};
-
-class CellEngineBasicParticlesOperations : public CellEngineParticlesVoxelsOperations
-{
-protected:
-    UnsignedInt XMin{}, XMax{}, YMin{}, YMax{}, ZMin{}, ZMax{};
-protected:
-    UnsignedInt MaxParticleIndex{};
-    std::stack<UniqueIdInt> FreeIndexesOfParticles;
-protected:
-    std::unordered_map<UniqueIdInt, Particle>& Particles;
-protected:
-    inline Particle& GetParticleFromIndex(const UniqueIdInt ParticleIndex)
-    {
-        return Particles[ParticleIndex];
-    }
-public:
-    [[nodiscard]] UniqueIdInt GetFreeIndexesOfParticleSize() const;
-protected:
-    void InitiateFreeParticleIndexes();
-    inline UniqueIdInt GetNewFreeIndexOfParticle();
-public:
-    UniqueIdInt AddNewParticle(const Particle& ParticleParam);
-protected:
-    virtual void RemoveParticle(UniqueIdInt ParticleIndex, bool ClearVoxels) = 0;
-public:
-    void PreprocessData(bool UpdateParticleKindListOfVoxelsBool);
-protected:
-    void SetStartValuesForSpaceMinMax();
-    void GetMinMaxCoordinatesForAllParticles(bool UpdateParticleKindListOfVoxelsBool);
-    static void GetMinMaxOfCoordinates(UnsignedInt PosX, UnsignedInt PosY, UnsignedInt PosZ, UnsignedInt& XMinParam, UnsignedInt& XMaxParam, UnsignedInt& YMinParam, UnsignedInt& YMaxParam, UnsignedInt& ZMinParam, UnsignedInt& ZMaxParam);
-    static void GetMinMaxCoordinatesForParticle(Particle& ParticleObject, bool UpdateParticleKindListOfVoxels);
-    static void UpdateParticleKindListOfVoxels(Particle& ParticleObject, UnsignedInt ParticleXMin, UnsignedInt ParticleXMax, UnsignedInt ParticleYMin, UnsignedInt ParticleYMax, UnsignedInt ParticleZMin, UnsignedInt ParticleZMax);
-protected:
-    std::vector<UniqueIdInt> GetAllParticlesWithChosenEntityId(UniqueIdInt EntityId);
-    UnsignedInt GetNumberOfParticlesWithChosenEntityId(UniqueIdInt EntityId);
-protected:
-    explicit CellEngineBasicParticlesOperations(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : Particles(ParticlesParam)
-    {
-    }
-};
 
 class CellEngineParticlesVoxelsShapesGenerator : virtual public CellEngineBasicParticlesOperations
 {

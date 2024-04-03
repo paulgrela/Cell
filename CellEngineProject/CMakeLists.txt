@@ -119,7 +119,10 @@ add_executable(
 	CellEngineConfigurationFileReaderWriter.cpp
 	CellEngineWellStirredChemicalReactionsSimulation.h
 	CellEngineWellStirredChemicalReactionsSimulation.h
-	CellEngineWellStirredChemicalReactionsSimulation.cpp)
+	CellEngineWellStirredChemicalReactionsSimulation.cpp
+		CellEngineParticlesVoxelsOperations.h
+		CellEngineBasicParticlesOperations.cpp
+		CellEngineBasicParticlesOperations.h)
 
 if(WIN32)
 target_link_libraries(${PROJECT_NAME} -static-libgcc -static-libstdc++ -lpthread -lglew32 -lsb7 -lglfw3 -lopengl32 -lglu32 -limgui)
