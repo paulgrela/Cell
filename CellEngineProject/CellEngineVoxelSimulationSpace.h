@@ -20,82 +20,16 @@
 #include "CellEngineNucleicAcidsBasicOperations.h"
 #include "CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator.h"
 #include "CellEngineTestParticlesGenerator.h"
-
-enum class ComparisonType { ByVectorLoop, ByString };
+#include "CellEngineChemicalReactionsInVoxelSpace.h"
+#include "CellEngineNucleicAcidsChemicalReactionsInVoxelSpace.h"
+#include "CellEngineVoxelSimulationSpaceStatistics.h"
 
 #define SIMULATION_DETAILED_LOG
-
-//class CellEngineTestParticlesGenerator : public CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator
-//{
-//public:
-//    void GeneratePlanedEllipsoidParticlesInSelectedSpace(UnsignedInt NumberOfRandomParticles, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt StepXParam, UnsignedInt StepYParam, UnsignedInt StepZParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
-//    void GeneratePlanedCuboidParticlesInSelectedSpace(UnsignedInt NumberOfRandomParticles, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt StepXParam, UnsignedInt StepYParam, UnsignedInt StepZParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
-//    void GenerateRandomParticlesInSelectedSpace(UnsignedInt NumberOfRandomParticles, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt StepXParam, UnsignedInt StepYParam, UnsignedInt StepZParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
-//protected:
-//    explicit CellEngineTestParticlesGenerator(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator(ParticlesParam)
-//    {
-//    }
-//};
 
 class CellEngineAllTypesOfParticlesGenerator : public CellEngineTestParticlesGenerator
 {
 protected:
     explicit CellEngineAllTypesOfParticlesGenerator(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : CellEngineTestParticlesGenerator(ParticlesParam)
-    {
-    }
-};
-
-
-class CellEngineChemicalReactionsInVoxelSpace : virtual public CellEngineBasicParticlesOperations
-{
-protected:
-    std::map<EntityIdInt, UnsignedInt> ParticlesKindsFoundInProximity;
-    std::vector<UniqueIdInt> ParticlesSortedByCapacityFoundInProximity;
-protected:
-    std::vector<UniqueIdInt> NucleotidesWithFreeNextEndingsFoundInProximity;
-    std::vector<UniqueIdInt> NucleotidesWithFreePrevEndingsFoundInProximity;
-    std::vector<UniqueIdInt> DNANucleotidesWithFreeNextEndingsFoundInProximity;
-    std::vector<UniqueIdInt> DNANucleotidesWithFreePrevEndingsFoundInProximity;
-    std::vector<UniqueIdInt> RNANucleotidesWithFreeNextEndingsFoundInProximity;
-    std::vector<UniqueIdInt> RNANucleotidesWithFreePrevEndingsFoundInProximity;
-    std::vector<UniqueIdInt> NucleotidesFreeFoundInProximity;
-    std::vector<UniqueIdInt> RNANucleotidesFoundInProximity;
-protected:
-    static bool CompareFitnessOfParticle(const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction);
-    void EraseParticleChosenForReactionAndGetCentersForNewProductsOfReaction(UnsignedInt ParticleIndexChosenForReaction, std::vector <vector3_16> &Centers);
-protected:
-    explicit CellEngineChemicalReactionsInVoxelSpace(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : CellEngineBasicParticlesOperations(ParticlesParam)
-    {
-    }
-};
-
-class CellEngineNucleicAcidsChemicalReactionsInVoxelSpace : public CellEngineChemicalReactionsInVoxelSpace, public CellEngineNucleicAcidsBasicOperations
-{
-protected:
-    void RemoveParticle(UniqueIdInt ParticleIndex, bool ClearVoxels) override;
-protected:
-    std::tuple<std::vector<ChainIdInt>, std::string> GetNucleotidesSequenceInBothDirections(const std::vector<UniqueIdInt>& NucleotidesFoundInProximity, UnsignedInt SizeOfLoop);
-    bool CompareFitnessOfDNASequenceByNucleotidesLoop(ComparisonType TypeOfComparison, const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction);
-protected:
-    std::tuple<std::vector<std::pair<UniqueIdInt, UnsignedInt>>, bool> ChooseParticlesForReactionFromAllParticlesInProximity(const Reaction& ReactionObject);
-protected:
-    void MakingZeroSizeForContainersForFoundParticlesInProximity();
-    void UpdateFoundNucleotidesForFoundParticlesInProximity(UnsignedInt ParticleIndex);
-    void PrintInformationAboutFoundParticlesInProximity();
-protected:
-    bool FindParticlesInProximityOfVoxelSimulationSpaceForChosenParticle(const Particle& ParticleObject, UnsignedInt AdditionalBoundFactor);
-    bool FindParticlesInProximityOfVoxelSimulationSpaceForSelectedVoxelSpace(bool UpdateNucleotides, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
-public:
-    bool CutDNAInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject);
-    bool LinkDNAInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject);
-    bool LinkDNAInAnyPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject);
-    bool CutDNACrisperInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject);
-    bool LinkDNALigaseInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject);
-    bool LinkDNALigaseInAnyPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject);
-    bool PolymeraseDNAStartSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject);
-    bool PolymeraseDNAContinueSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject);
-protected:
-    explicit CellEngineNucleicAcidsChemicalReactionsInVoxelSpace(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : CellEngineChemicalReactionsInVoxelSpace(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam)
     {
     }
 };
@@ -113,18 +47,6 @@ class CellEngineVoxelSimulationSpaceForOuterClass : virtual public CellEngineBas
 public:
     SimulationSpaceVoxel GetSpaceVoxelForOuterClass(UnsignedInt X, UnsignedInt Y, UnsignedInt Z);
     Particle& GetParticleFromIndexForOuterClass(UniqueIdInt ParticleIndex);
-};
-
-class CellEngineVoxelSimulationSpaceStatistics : virtual public CellEngineBasicParticlesOperations
-{
-protected:
-    UnsignedInt SumOfNotEmptyVoxels{};
-public:
-    void CountStatisticsOfVoxelSimulationSpace();
-    [[nodiscard]] UnsignedInt GetSumOfNotEmptyVoxels() const
-    {
-        return SumOfNotEmptyVoxels;
-    }
 };
 
 class CellEngineVoxelSimulationSpace : public CellEngineChemicalReactionsCreator, public CellEngineAllTypesOfChemicalReactionsInVoxelSpace, public CellEngineAllTypesOfParticlesGenerator, public CellEngineVoxelSimulationSpaceForOuterClass, public CellEngineVoxelSimulationSpaceStatistics

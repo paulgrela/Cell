@@ -103,6 +103,23 @@ add_executable(
 	CellEngineChemicalReactionsCreator.h
 	CellEngineBasicVoxelsOperations.h
 	CellEngineNucleicAcidsBasicOperations.h
+	CellEngineParticlesVoxelsOperations.h
+	CellEngineBasicParticlesOperations.cpp
+	CellEngineBasicParticlesOperations.h
+	CellEngineParticlesVoxelsShapesGenerator.h
+	CellEngineParticlesVoxelsShapesGenerator.cpp
+	CellEngineRealRandomParticlesGenerator.cpp
+	CellEngineRealRandomParticlesGenerator.h
+	CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator.cpp
+	CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator.h
+	CellEngineTestParticlesGenerator.cpp
+	CellEngineTestParticlesGenerator.h
+	CellEngineChemicalReactionsInVoxelSpace.cpp
+	CellEngineChemicalReactionsInVoxelSpace.h
+	CellEngineNucleicAcidsChemicalReactionsInVoxelSpace.cpp
+	CellEngineNucleicAcidsChemicalReactionsInVoxelSpace.h
+	CellEngineVoxelSimulationSpaceStatistics.cpp
+	CellEngineVoxelSimulationSpaceStatistics.h
 	CellEngineParticlesBinaryDataFileReaderWriter.cpp
 	CellEngineParticlesBinaryDataFileReaderWriter.h
 	CellEngineDataBuilderForVoxelSimulationSpace.h
@@ -119,19 +136,7 @@ add_executable(
 	CellEngineConfigurationFileReaderWriter.cpp
 	CellEngineWellStirredChemicalReactionsSimulation.h
 	CellEngineWellStirredChemicalReactionsSimulation.h
-	CellEngineWellStirredChemicalReactionsSimulation.cpp
-		CellEngineParticlesVoxelsOperations.h
-		CellEngineBasicParticlesOperations.cpp
-		CellEngineBasicParticlesOperations.h
-		CellEngineParticlesVoxelsShapesGenerator.h
-		CellEngineParticlesVoxelsShapesGenerator.cpp
-		CellEngineRealRandomParticlesGenerator.cpp
-		CellEngineRealRandomParticlesGenerator.h
-		CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator.cpp
-		CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator.h
-		CellEngineTestParticlesGenerator.cpp
-		CellEngineTestParticlesGenerator.h
-)
+	CellEngineWellStirredChemicalReactionsSimulation.cpp)
 
 if(WIN32)
 target_link_libraries(${PROJECT_NAME} -static-libgcc -static-libstdc++ -lpthread -lglew32 -lsb7 -lglfw3 -lopengl32 -lglu32 -limgui)

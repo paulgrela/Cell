@@ -5,6 +5,8 @@
 #include "CellEngineTypes.h"
 #include "CellEngineConfigData.h"
 
+#define SIMULATION_DETAILED_LOG
+
 namespace CellEngineUseful
 {
     static void SwitchOffLogs()
