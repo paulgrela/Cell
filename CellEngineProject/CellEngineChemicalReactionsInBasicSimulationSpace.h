@@ -4,7 +4,7 @@
 
 #include "CellEngineBasicParticlesOperations.h"
 
-class CellEngineChemicalReactionsInVoxelSpace : virtual public CellEngineBasicParticlesOperations
+class CellEngineChemicalReactionsInBasicSimulationSpace : virtual public CellEngineBasicParticlesOperations
 {
 protected:
     std::map<EntityIdInt, UnsignedInt> ParticlesKindsFoundInProximity;
@@ -22,7 +22,7 @@ protected:
     static bool CompareFitnessOfParticle(const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction);
     void EraseParticleChosenForReactionAndGetCentersForNewProductsOfReaction(UnsignedInt ParticleIndexChosenForReaction, std::vector <vector3_16> &Centers);
 protected:
-    explicit CellEngineChemicalReactionsInVoxelSpace(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : CellEngineBasicParticlesOperations(ParticlesParam)
+    explicit CellEngineChemicalReactionsInBasicSimulationSpace(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : CellEngineBasicParticlesOperations(ParticlesParam)
     {
     }
 };

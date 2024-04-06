@@ -1,9 +1,9 @@
 
-#include "CellEngineChemicalReactionsInVoxelSpace.h"
+#include "CellEngineChemicalReactionsInBasicSimulationSpace.h"
 
 using namespace std;
 
-bool CellEngineChemicalReactionsInVoxelSpace::CompareFitnessOfParticle(const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction)
+bool CellEngineChemicalReactionsInBasicSimulationSpace::CompareFitnessOfParticle(const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction)
 {
     return
         (ParticleKindForReactionObject.LinkedParticleTypes.empty() == true ||
@@ -12,7 +12,7 @@ bool CellEngineChemicalReactionsInVoxelSpace::CompareFitnessOfParticle(const Par
          && equal(ParticleObjectForReaction.LinkedParticlesPointersList.begin(), ParticleObjectForReaction.LinkedParticlesPointersList.end(), ParticleKindForReactionObject.LinkedParticleTypes.begin(), [](const Particle* PointerToParticle, UniqueIdInt ParticleType){ return PointerToParticle->EntityId == ParticleType; })));
 }
 
-void CellEngineChemicalReactionsInVoxelSpace::EraseParticleChosenForReactionAndGetCentersForNewProductsOfReaction(const UnsignedInt ParticleIndexChosenForReaction, vector<vector3_16>& Centers)
+void CellEngineChemicalReactionsInBasicSimulationSpace::EraseParticleChosenForReactionAndGetCentersForNewProductsOfReaction(const UnsignedInt ParticleIndexChosenForReaction, vector<vector3_16>& Centers)
 {
     try
     {

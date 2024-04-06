@@ -39,12 +39,12 @@ Particle& CellEngineVoxelSimulationSpaceForOuterClass::GetParticleFromIndexForOu
     return GetParticleFromIndex(ParticleIndex);
 }
 
-[[nodiscard]] float CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(UnsignedInt CoordinateParam)
+[[nodiscard]] float CellEngineVoxelSimulationSpaceD1::ConvertToGraphicsCoordinate(UnsignedInt CoordinateParam)
 {
     return static_cast<float>(static_cast<SignedInt>(CoordinateParam) - (static_cast<SignedInt>(CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension / 2))) * CellEngineConfigDataObject.DivisionFactorForVoxelSimulationSpace;
 };
 
-[[nodiscard]] UnsignedInt CellEngineVoxelSimulationSpace::ConvertToSpaceCoordinate(double CoordinateParam)
+[[nodiscard]] UnsignedInt CellEngineVoxelSimulationSpaceD1::ConvertToSpaceCoordinate(double CoordinateParam)
 {
     return static_cast<UnsignedInt>(round(CoordinateParam) / CellEngineConfigDataObject.DivisionFactorForVoxelSimulationSpace) + (CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension / 2);
 };
@@ -74,14 +74,14 @@ CellEngineVoxelSimulationSpace::~CellEngineVoxelSimulationSpace()
     CATCH("execution of destructor of voxel simulation space")
 }
 
-[[nodiscard]] stringstream CellEngineVoxelSimulationSpace::PrintSpaceMinMaxValues() const
+[[nodiscard]] stringstream CellEngineVoxelSimulationSpaceD1::PrintSpaceMinMaxValues() const
 {
     stringstream ss;
     ss << "CELL SPACE LIMITS PARAMETERS [ Xmin = " << to_string(XMin) << " ][ Xmax = " << to_string(XMax) << " ][ Ymin = " << to_string(YMin) << " ][ Ymax = " << to_string(YMax) << " ][ Zmin = " << to_string(ZMin) << " ][ Zmax = " << to_string(XMax) << " ] " << endl;
     return ss;
 }
 
-void CellEngineVoxelSimulationSpace::SetAtomInVoxelSimulationSpace(const UniqueIdInt ParticleIndex, const CellEngineAtom& AppliedAtom)
+void CellEngineVoxelSimulationSpaceD1::SetAtomInVoxelSimulationSpace(const UniqueIdInt ParticleIndex, const CellEngineAtom& AppliedAtom)
 {
     try
     {
@@ -97,7 +97,7 @@ void CellEngineVoxelSimulationSpace::SetAtomInVoxelSimulationSpace(const UniqueI
     CATCH("setting atom in voxel simulation space")
 }
 
-void CellEngineVoxelSimulationSpace::ClearSelectedSpace(const UnsignedInt NumberOfRandomParticles, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt StepXParam, const UnsignedInt StepYParam, const UnsignedInt StepZParam, const UnsignedInt SizeXParam, UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
+void CellEngineVoxelSimulationSpaceD1::ClearSelectedSpace(const UnsignedInt NumberOfRandomParticles, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt StepXParam, const UnsignedInt StepYParam, const UnsignedInt StepZParam, const UnsignedInt SizeXParam, UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
 {
     try
     {
@@ -106,7 +106,7 @@ void CellEngineVoxelSimulationSpace::ClearSelectedSpace(const UnsignedInt Number
     CATCH("clearing selected space")
 }
 
-void CellEngineVoxelSimulationSpace::ClearWholeVoxelSpace()
+void CellEngineVoxelSimulationSpaceD1::ClearWholeVoxelSpace()
 {
     try
     {
@@ -115,7 +115,7 @@ void CellEngineVoxelSimulationSpace::ClearWholeVoxelSpace()
     CATCH("clearing whole voxel space")
 };
 
-void CellEngineVoxelSimulationSpace::ClearVoxelSpaceAndParticles()
+void CellEngineVoxelSimulationSpaceD1::ClearVoxelSpaceAndParticles()
 {
     try
     {

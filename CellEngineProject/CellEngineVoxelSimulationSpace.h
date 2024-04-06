@@ -20,8 +20,8 @@
 #include "CellEngineNucleicAcidsBasicOperations.h"
 #include "CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator.h"
 #include "CellEngineTestParticlesGenerator.h"
-#include "CellEngineChemicalReactionsInVoxelSpace.h"
-#include "CellEngineNucleicAcidsChemicalReactionsInVoxelSpace.h"
+#include "CellEngineChemicalReactionsInBasicSimulationSpace.h"
+#include "CellEngineChemicalReactionsInSimulationSpace.h"
 #include "CellEngineVoxelSimulationSpaceStatistics.h"
 
 #define SIMULATION_DETAILED_LOG
@@ -34,10 +34,10 @@ protected:
     }
 };
 
-class CellEngineAllTypesOfChemicalReactionsInVoxelSpace : public CellEngineNucleicAcidsChemicalReactionsInVoxelSpace
+class CellEngineAllTypesOfChemicalReactionsInVoxelSpace : public CellEngineNucleicAcidsChemicalReactionsInVoxelSimulationSpace
 {
 protected:
-    explicit CellEngineAllTypesOfChemicalReactionsInVoxelSpace(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : CellEngineNucleicAcidsChemicalReactionsInVoxelSpace(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam)
+    explicit CellEngineAllTypesOfChemicalReactionsInVoxelSpace(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : CellEngineNucleicAcidsChemicalReactionsInVoxelSimulationSpace(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam)
     {
     }
 };
@@ -53,18 +53,6 @@ class CellEngineVoxelSimulationSpace : public CellEngineChemicalReactionsCreator
 {
 private:
     std::unordered_map<UniqueIdInt, Particle>& Particles;
-public:
-    [[nodiscard]] static float ConvertToGraphicsCoordinate(UnsignedInt CoordinateParam);
-    [[nodiscard]] static UnsignedInt ConvertToSpaceCoordinate(double CoordinateParam);
-public:
-    [[nodiscard]] std::stringstream PrintSpaceMinMaxValues() const;
-public:
-    void SetAtomInVoxelSimulationSpace(UniqueIdInt ParticleIndex, const CellEngineAtom& AppliedAtom);
-public:
-    void ClearVoxelSpaceAndParticles() override;
-public:
-    void ClearWholeVoxelSpace();
-    void ClearSelectedSpace(UnsignedInt NumberOfRandomParticles, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt StepXParam, UnsignedInt StepYParam, UnsignedInt StepZParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
 public:
     void GenerateOneStepOfDiffusionForSelectedRangeOfParticles(UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
     void GenerateOneStepOfElectricDiffusionForSelectedRangeOfParticles(TypesOfLookingForParticlesInProximity TypeOfLookingForParticles, UnsignedInt AdditionalSpaceBoundFactor, double MultiplyElectricChargeFactor, UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
@@ -91,6 +79,28 @@ protected:
 public:
     explicit CellEngineVoxelSimulationSpace(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam);
     ~CellEngineVoxelSimulationSpace();
+};
+
+class CellEngineVoxelSimulationSpaceD1 : public CellEngineVoxelSimulationSpace
+{
+private:
+    std::unordered_map<UniqueIdInt, Particle>& Particles;
+public:
+    [[nodiscard]] static float ConvertToGraphicsCoordinate(UnsignedInt CoordinateParam);
+    [[nodiscard]] static UnsignedInt ConvertToSpaceCoordinate(double CoordinateParam);
+public:
+    [[nodiscard]] std::stringstream PrintSpaceMinMaxValues() const;
+public:
+    void SetAtomInVoxelSimulationSpace(UniqueIdInt ParticleIndex, const CellEngineAtom& AppliedAtom);
+public:
+    void ClearVoxelSpaceAndParticles() override;
+public:
+    void ClearWholeVoxelSpace();
+    void ClearSelectedSpace(UnsignedInt NumberOfRandomParticles, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt StepXParam, UnsignedInt StepYParam, UnsignedInt StepZParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
+public:
+    explicit CellEngineVoxelSimulationSpaceD1(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) :  Particles(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam), CellEngineVoxelSimulationSpace(ParticlesParam)
+    {
+    }
 };
 
 #endif
