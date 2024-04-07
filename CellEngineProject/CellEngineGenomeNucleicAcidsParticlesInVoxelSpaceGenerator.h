@@ -4,9 +4,9 @@
 
 #include <unordered_set>
 
-#include "CellEngineRealRandomParticlesGenerator.h"
+#include "CellEngineRealRandomParticlesInVoxelSpaceGenerator.h"
 
-class CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator : public CellEngineRealRandomParticlesGenerator
+class CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator : public CellEngineRealRandomParticlesInVoxelSpaceGenerator
 {
 protected:
     std::vector<std::string> GenomesLines;
@@ -31,7 +31,7 @@ public:
     void ReadGenomeSequenceFromFile();
     void TestGeneratedGenomeCorrectness(UnsignedInt ParticleSize);
 protected:
-    explicit CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : CellEngineRealRandomParticlesGenerator(ParticlesParam)
+    explicit CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : CellEngineRealRandomParticlesInVoxelSpaceGenerator(ParticlesParam)
     {
     }
 };

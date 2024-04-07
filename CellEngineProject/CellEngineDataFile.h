@@ -6,7 +6,7 @@
 
 #include "CellEngineAtom.h"
 #include "CellEngineConfigData.h"
-#include "CellEngineSimulationSpace.h"
+#include "CellEngineVoxelSimulationSpace.h"
 
 class CellEngineDataFile
 {

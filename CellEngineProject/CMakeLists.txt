@@ -108,12 +108,12 @@ add_executable(
 	CellEngineBasicParticlesOperations.h
 	CellEngineParticlesVoxelsShapesGenerator.h
 	CellEngineParticlesVoxelsShapesGenerator.cpp
-	CellEngineRealRandomParticlesGenerator.cpp
-	CellEngineRealRandomParticlesGenerator.h
+	CellEngineRealRandomParticlesInVoxelSpaceGenerator.cpp
+	CellEngineRealRandomParticlesInVoxelSpaceGenerator.h
 	CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator.cpp
 	CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator.h
-	CellEngineTestParticlesGenerator.cpp
-	CellEngineTestParticlesGenerator.h
+	CellEngineTestParticlesInVoxelSpaceGenerator.cpp
+	CellEngineTestParticlesInVoxelSpaceGenerator.h
 	CellEngineChemicalReactionsInBasicSimulationSpace.cpp
 	CellEngineChemicalReactionsInBasicSimulationSpace.h
 	CellEngineChemicalReactionsInSimulationSpace.cpp
@@ -136,7 +136,15 @@ add_executable(
 	CellEngineConfigurationFileReaderWriter.cpp
 	CellEngineWellStirredChemicalReactionsSimulation.h
 	CellEngineWellStirredChemicalReactionsSimulation.h
-	CellEngineWellStirredChemicalReactionsSimulation.cpp)
+	CellEngineWellStirredChemicalReactionsSimulation.cpp
+		CellEngineVoxelSimulationSpace.cpp
+		CellEngineVoxelSimulationSpace.h
+		CellEngineNucleicAcidsComplexOperations.cpp
+		CellEngineNucleicAcidsComplexOperations.h
+		CellEngineNucleicAcidsChemicalReactionsInSimulationSpace.cpp
+		CellEngineNucleicAcidsChemicalReactionsInSimulationSpace.h
+		CellEngineChemicalReactionsInVoxelSimulationSpace.cpp
+		CellEngineChemicalReactionsInVoxelSimulationSpace.h)
 
 if(WIN32)
 target_link_libraries(${PROJECT_NAME} -static-libgcc -static-libstdc++ -lpthread -lglew32 -lsb7 -lglfw3 -lopengl32 -lglu32 -limgui)

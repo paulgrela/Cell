@@ -1,7 +1,7 @@
 
-#include "CellEngineRealRandomParticlesGenerator.h"
+#include "CellEngineRealRandomParticlesInVoxelSpaceGenerator.h"
 
-void CellEngineRealRandomParticlesGenerator::GenerateAllRealRandomParticles()
+void CellEngineRealRandomParticlesInVoxelSpaceGenerator::GenerateAllRealRandomParticles()
 {
     try
     {
@@ -12,7 +12,7 @@ void CellEngineRealRandomParticlesGenerator::GenerateAllRealRandomParticles()
     CATCH("generating all random particles")
 }
 
-void CellEngineRealRandomParticlesGenerator::GenerateRealRandomMembraneParticles()
+void CellEngineRealRandomParticlesInVoxelSpaceGenerator::GenerateRealRandomMembraneParticles()
 {
     UnsignedInt Radius = 400;
     UnsignedInt RadiusSize = 30;
@@ -41,7 +41,7 @@ void CellEngineRealRandomParticlesGenerator::GenerateRealRandomMembraneParticles
     CATCH("generating random membrane particles")
 }
 
-void CellEngineRealRandomParticlesGenerator::GenerateRealRandomRibosomesParticles()
+void CellEngineRealRandomParticlesInVoxelSpaceGenerator::GenerateRealRandomRibosomesParticles()
 {
     try
     {
