@@ -6,9 +6,10 @@
 
 #include "CellEngineAtom.h"
 #include "CellEngineConfigData.h"
+#include "CellEngineFilmOfStructures.h"
 #include "CellEngineVoxelSimulationSpace.h"
 
-class CellEngineDataFile
+class CellEngineDataFile : public CellEngineFilmOfStructures
 {
 public:
     CellEngineDataFile() = default;
@@ -55,69 +56,10 @@ public:
     {
         return ParticlesCenters[CellEngineConfigDataObject.ChosenStructureIndex];
     }
-    [[nodiscard]] UnsignedInt GetNumberOfStructures()
+    [[nodiscard]] UnsignedInt GetNumberOfStructures() override
     {
         return ParticlesCenters.size();
     }
-public:
-    void ShowNextStructureFromActiveFilm()
-    {
-        try
-        {
-            if (FilmOfStructuresActive == true)
-                ShowNextStructure();
-        }
-        CATCH("showing next structure from film")
-    }
-public:
-    void StartFilmOfStructures()
-    {
-        try
-        {
-            std::lock_guard<std::mutex> LockGuardObject{ChosenStructureMutexObject};
-
-            CellEngineConfigDataObject.ChosenStructureIndex = 0;
-            FilmOfStructuresActive = true;
-        }
-        CATCH("starting film of structures")
-    }
-public:
-    void StopFilmOfStructures()
-    {
-        try
-        {
-            FilmOfStructuresActive = false;
-        }
-        CATCH("starting film of structures")
-    }
-public:
-    void ShowNextStructure()
-    {
-        try
-        {
-            std::lock_guard<std::mutex> LockGuardObject{ChosenStructureMutexObject};
-
-            if (CellEngineConfigDataObject.ChosenStructureIndex < GetNumberOfStructures() - 1)
-                CellEngineConfigDataObject.ChosenStructureIndex++;
-            else
-                FilmOfStructuresActive = false;
-        }
-        CATCH("showing next structure")
-    }
-public:
-    static void ShowPrevStructure()
-    {
-        try
-        {
-            std::lock_guard<std::mutex> LockGuardObject{ChosenStructureMutexObject};
-
-            if (CellEngineConfigDataObject.ChosenStructureIndex > 0)
-                CellEngineConfigDataObject.ChosenStructureIndex--;
-        }
-        CATCH("showing previous structure")
-    }
-public:
-    static inline std::mutex ChosenStructureMutexObject;
 };
 
 inline std::unique_ptr<CellEngineDataFile> CellEngineDataFileObjectPointer;

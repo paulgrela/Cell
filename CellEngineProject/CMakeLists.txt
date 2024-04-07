@@ -91,6 +91,8 @@ add_executable(
 	CellEngineChemicalReactions.cpp
 	CellEngineRandomDeviceEngine.cpp
 	CellEngineRandomDeviceEngine.h
+	CellEngineDataFile.h
+	CellEngineFilmOfStructures.h
 	CellEngineImGuiMenu.cpp
 	CellEnginePDBDataFile.h
 	CellEnginePDBDataFile.cpp
@@ -126,6 +128,14 @@ add_executable(
 	CellEngineDataBuilderForFullAtomSimulationSpace.h
 	CellEngineSimulationSpace.h
 	CellEngineSimulationSpace.cpp
+	CellEngineVoxelSimulationSpace.cpp
+	CellEngineVoxelSimulationSpace.h
+	CellEngineNucleicAcidsComplexOperations.cpp
+	CellEngineNucleicAcidsComplexOperations.h
+	CellEngineNucleicAcidsChemicalReactionsInSimulationSpace.cpp
+	CellEngineNucleicAcidsChemicalReactionsInSimulationSpace.h
+	CellEngineChemicalReactionsInVoxelSimulationSpace.cpp
+	CellEngineChemicalReactionsInVoxelSimulationSpace.h
 	CellEngineOpenGLVisualiser.h
 	CellEngineOpenGLVisualiser.cpp
 	CellEngineOpenGLVisualiserOfVoxelSimulationSpace.h
@@ -136,15 +146,7 @@ add_executable(
 	CellEngineConfigurationFileReaderWriter.cpp
 	CellEngineWellStirredChemicalReactionsSimulation.h
 	CellEngineWellStirredChemicalReactionsSimulation.h
-	CellEngineWellStirredChemicalReactionsSimulation.cpp
-		CellEngineVoxelSimulationSpace.cpp
-		CellEngineVoxelSimulationSpace.h
-		CellEngineNucleicAcidsComplexOperations.cpp
-		CellEngineNucleicAcidsComplexOperations.h
-		CellEngineNucleicAcidsChemicalReactionsInSimulationSpace.cpp
-		CellEngineNucleicAcidsChemicalReactionsInSimulationSpace.h
-		CellEngineChemicalReactionsInVoxelSimulationSpace.cpp
-		CellEngineChemicalReactionsInVoxelSimulationSpace.h)
+	CellEngineWellStirredChemicalReactionsSimulation.cpp)
 
 if(WIN32)
 target_link_libraries(${PROJECT_NAME} -static-libgcc -static-libstdc++ -lpthread -lglew32 -lsb7 -lglfw3 -lopengl32 -lglu32 -limgui)
