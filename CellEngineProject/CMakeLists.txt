@@ -116,16 +116,16 @@ add_executable(
 	CellEngineTestParticlesGenerator.h
 	CellEngineChemicalReactionsInBasicSimulationSpace.cpp
 	CellEngineChemicalReactionsInBasicSimulationSpace.h
-		CellEngineChemicalReactionsInSimulationSpace.cpp
-		CellEngineChemicalReactionsInSimulationSpace.h
+	CellEngineChemicalReactionsInSimulationSpace.cpp
+	CellEngineChemicalReactionsInSimulationSpace.h
 	CellEngineVoxelSimulationSpaceStatistics.cpp
 	CellEngineVoxelSimulationSpaceStatistics.h
 	CellEngineParticlesBinaryDataFileReaderWriter.cpp
 	CellEngineParticlesBinaryDataFileReaderWriter.h
 	CellEngineDataBuilderForVoxelSimulationSpace.h
 	CellEngineDataBuilderForFullAtomSimulationSpace.h
-	CellEngineVoxelSimulationSpace.h
-	CellEngineVoxelSimulationSpace.cpp
+	CellEngineSimulationSpace.h
+	CellEngineSimulationSpace.cpp
 	CellEngineOpenGLVisualiser.h
 	CellEngineOpenGLVisualiser.cpp
 	CellEngineOpenGLVisualiserOfVoxelSimulationSpace.h

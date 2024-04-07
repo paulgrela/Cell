@@ -8,7 +8,7 @@
 #include "CellEngineParticle.h"
 #include "CellEngineParticlesVoxelsOperations.h"
 
-class CellEngineBasicParticlesOperations : public CellEngineParticlesVoxelsOperations
+class CellEngineBasicParticlesOperations
 {
 protected:
     UnsignedInt XMin{}, XMax{}, YMin{}, YMax{}, ZMin{}, ZMax{};
@@ -57,8 +57,9 @@ protected:
     void SetStartValuesForSpaceMinMax();
     void GetMinMaxCoordinatesForAllParticles(bool UpdateParticleKindListOfVoxelsBool);
     static void GetMinMaxOfCoordinates(UnsignedInt PosX, UnsignedInt PosY, UnsignedInt PosZ, UnsignedInt& XMinParam, UnsignedInt& XMaxParam, UnsignedInt& YMinParam, UnsignedInt& YMaxParam, UnsignedInt& ZMinParam, UnsignedInt& ZMaxParam);
-    static void GetMinMaxCoordinatesForParticle(Particle& ParticleObject, bool UpdateParticleKindListOfVoxels);
     static void UpdateParticleKindListOfVoxels(Particle& ParticleObject, UnsignedInt ParticleXMin, UnsignedInt ParticleXMax, UnsignedInt ParticleYMin, UnsignedInt ParticleYMax, UnsignedInt ParticleZMin, UnsignedInt ParticleZMax);
+public:
+    static void GetMinMaxCoordinatesForParticle(Particle& ParticleObject, bool UpdateParticleKindListOfVoxels);
 protected:
     std::vector<UniqueIdInt> GetAllParticlesWithChosenEntityId(UniqueIdInt EntityId);
     UnsignedInt GetNumberOfParticlesWithChosenEntityId(UniqueIdInt EntityId);

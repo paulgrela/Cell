@@ -9,7 +9,7 @@
 #include "CellEngineUseful.h"
 #include "CellEngineConfigData.h"
 #include "CellEngineOpenGLVisualiser.h"
-#include "CellEngineVoxelSimulationSpace.h"
+#include "CellEngineSimulationSpace.h"
 #include "CellEngineOpenGLVisualiserOfVoxelSimulationSpace.h"
 
 std::tuple<UnsignedInt, UnsignedInt, UnsignedInt> CellEngineOpenGLVisualiserOfVoxelSimulationSpace::GetStartPositions()
@@ -64,7 +64,7 @@ inline void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::ConvertAtomPosToGr
         CellEngineAtomObjectParam.SetAtomPositionsData(CovertToGraphicsCoordinateSelected(StartXParam, SpaceXParam, SizeXParam), CovertToGraphicsCoordinateSelected(StartYParam, SpaceYParam, SizeYParam), CovertToGraphicsCoordinateSelected(StartZParam, SpaceZParam, SizeZParam));
     else
     if (SpaceDrawingType == VoxelSpaceDrawingTypes::DrawVoxelSpaceFull)
-        CellEngineAtomObjectParam.SetAtomPositionsData(CellEngineVoxelSimulationSpaceD1::ConvertToGraphicsCoordinate(SpaceXParam), CellEngineVoxelSimulationSpaceD1::ConvertToGraphicsCoordinate(SpaceYParam), CellEngineVoxelSimulationSpaceD1::ConvertToGraphicsCoordinate(SpaceZParam));
+        CellEngineAtomObjectParam.SetAtomPositionsData(CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(SpaceXParam), CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(SpaceYParam), CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(SpaceZParam));
 }
 
 inline void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::SetParticleParametersToDraw(CellEngineAtom& TempAtomObject, const Particle& ParticleObject)
@@ -155,7 +155,7 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSpace(UnsignedInt& 
                     for (UnsignedInt PosY = SelectionStartYPos; PosY < SelectionSizeY; PosY += SelectionStepY)
                         for (UnsignedInt PosZ = SelectionStartZPos; PosZ < SelectionSizeZ; PosZ += SelectionStepZ)
                         {
-                            TempAtomObject.SetAtomPositionsData(CellEngineVoxelSimulationSpaceD1::ConvertToGraphicsCoordinate(PosX), CellEngineVoxelSimulationSpaceD1::ConvertToGraphicsCoordinate(PosY), CellEngineVoxelSimulationSpaceD1::ConvertToGraphicsCoordinate(PosZ));
+                            TempAtomObject.SetAtomPositionsData(CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(PosX), CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(PosY), CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(PosZ));
 
                             if (RenderObject(TempAtomObject, ViewMatrix, true, false, true, NumberOfAllRenderedAtoms, false, !CellEngineConfigDataObject.ShowDetailsInAtomScale) == true)
                             {

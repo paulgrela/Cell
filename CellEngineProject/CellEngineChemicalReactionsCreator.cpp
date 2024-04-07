@@ -10,7 +10,7 @@
 #include "CellEngineAtom.h"
 #include "CellEngineTypes.h"
 #include "CellEngineParticle.h"
-#include "CellEngineVoxelSimulationSpace.h"
+#include "CellEngineSimulationSpace.h"
 #include "CellEngineChemicalReactionsCreator.h"
 
 using namespace std;

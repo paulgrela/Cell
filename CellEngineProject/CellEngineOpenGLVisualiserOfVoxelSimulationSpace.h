@@ -11,7 +11,7 @@
 #include "CellEngineDataFile.h"
 #include "CellEngineConfigData.h"
 #include "CellEngineOpenGLVisualiser.h"
-#include "CellEngineVoxelSimulationSpace.h"
+#include "CellEngineSimulationSpace.h"
 
 class CellEngineOpenGLVisualiserOfVoxelSimulationSpace : public CellEngineOpenGLVisualiser
 {

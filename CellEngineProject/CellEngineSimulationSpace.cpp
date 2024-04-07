@@ -12,7 +12,7 @@
 #include "CellEngineAtom.h"
 #include "CellEngineColors.h"
 #include "CellEngineUseful.h"
-#include "CellEngineVoxelSimulationSpace.h"
+#include "CellEngineSimulationSpace.h"
 
 #include "TerminalColorsUtils.h"
 
@@ -29,27 +29,27 @@ inline void GetRangeOfParticlesForRandomParticles(UniqueIdInt& StartParticleInde
     }
 }
 
-SimulationSpaceVoxel CellEngineVoxelSimulationSpaceForOuterClass::GetSpaceVoxelForOuterClass(UnsignedInt X, UnsignedInt Y, UnsignedInt Z)
+SimulationSpaceVoxel CellEngineVoxelSimulationSpace::GetSpaceVoxelForOuterClass(UnsignedInt X, UnsignedInt Y, UnsignedInt Z)
 {
     return GetSpaceVoxel(X, Y, Z);
 }
 
-Particle& CellEngineVoxelSimulationSpaceForOuterClass::GetParticleFromIndexForOuterClass(UniqueIdInt ParticleIndex)
+Particle& CellEngineVoxelSimulationSpace::GetParticleFromIndexForOuterClass(UniqueIdInt ParticleIndex)
 {
     return GetParticleFromIndex(ParticleIndex);
 }
 
-[[nodiscard]] float CellEngineVoxelSimulationSpaceD1::ConvertToGraphicsCoordinate(UnsignedInt CoordinateParam)
+[[nodiscard]] float CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(UnsignedInt CoordinateParam)
 {
     return static_cast<float>(static_cast<SignedInt>(CoordinateParam) - (static_cast<SignedInt>(CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension / 2))) * CellEngineConfigDataObject.DivisionFactorForVoxelSimulationSpace;
 };
 
-[[nodiscard]] UnsignedInt CellEngineVoxelSimulationSpaceD1::ConvertToSpaceCoordinate(double CoordinateParam)
+[[nodiscard]] UnsignedInt CellEngineVoxelSimulationSpace::ConvertToSpaceCoordinate(double CoordinateParam)
 {
     return static_cast<UnsignedInt>(round(CoordinateParam) / CellEngineConfigDataObject.DivisionFactorForVoxelSimulationSpace) + (CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension / 2);
 };
 
-CellEngineVoxelSimulationSpace::CellEngineVoxelSimulationSpace(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : Particles(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam), CellEngineAllTypesOfChemicalReactionsInVoxelSpace(ParticlesParam), CellEngineAllTypesOfParticlesGenerator(ParticlesParam)
+CellEngineVoxelSimulationSpace::CellEngineVoxelSimulationSpace(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : Particles(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam), CellEngineChemicalReactionsInSimulationSpace(ParticlesParam), CellEngineChemicalReactionsInVoxelSimulationSpace(ParticlesParam), CellEngineSimulationSpace(ParticlesParam), CellEngineTestParticlesGenerator(ParticlesParam)
 {
     try
     {
@@ -74,14 +74,19 @@ CellEngineVoxelSimulationSpace::~CellEngineVoxelSimulationSpace()
     CATCH("execution of destructor of voxel simulation space")
 }
 
-[[nodiscard]] stringstream CellEngineVoxelSimulationSpaceD1::PrintSpaceMinMaxValues() const
+[[nodiscard]] stringstream CellEngineVoxelSimulationSpace::PrintSpaceMinMaxValues() const
 {
     stringstream ss;
     ss << "CELL SPACE LIMITS PARAMETERS [ Xmin = " << to_string(XMin) << " ][ Xmax = " << to_string(XMax) << " ][ Ymin = " << to_string(YMin) << " ][ Ymax = " << to_string(YMax) << " ][ Zmin = " << to_string(ZMin) << " ][ Zmax = " << to_string(XMax) << " ] " << endl;
     return ss;
 }
 
-void CellEngineVoxelSimulationSpaceD1::SetAtomInVoxelSimulationSpace(const UniqueIdInt ParticleIndex, const CellEngineAtom& AppliedAtom)
+Particle& CellEngineVoxelSimulationSpace::GetParticleFromIndexForGenerator(UniqueIdInt ParticleIndex)
+{
+    return GetParticleFromIndex(ParticleIndex);
+}
+
+void CellEngineVoxelSimulationSpace::SetAtomInVoxelSimulationSpace(const UniqueIdInt ParticleIndex, const CellEngineAtom& AppliedAtom)
 {
     try
     {
@@ -97,7 +102,7 @@ void CellEngineVoxelSimulationSpaceD1::SetAtomInVoxelSimulationSpace(const Uniqu
     CATCH("setting atom in voxel simulation space")
 }
 
-void CellEngineVoxelSimulationSpaceD1::ClearSelectedSpace(const UnsignedInt NumberOfRandomParticles, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt StepXParam, const UnsignedInt StepYParam, const UnsignedInt StepZParam, const UnsignedInt SizeXParam, UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
+void CellEngineVoxelSimulationSpace::ClearSelectedSpace(const UnsignedInt NumberOfRandomParticles, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt StepXParam, const UnsignedInt StepYParam, const UnsignedInt StepZParam, const UnsignedInt SizeXParam, UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
 {
     try
     {
@@ -106,7 +111,7 @@ void CellEngineVoxelSimulationSpaceD1::ClearSelectedSpace(const UnsignedInt Numb
     CATCH("clearing selected space")
 }
 
-void CellEngineVoxelSimulationSpaceD1::ClearWholeVoxelSpace()
+void CellEngineVoxelSimulationSpace::ClearWholeVoxelSpace()
 {
     try
     {
@@ -115,7 +120,7 @@ void CellEngineVoxelSimulationSpaceD1::ClearWholeVoxelSpace()
     CATCH("clearing whole voxel space")
 };
 
-void CellEngineVoxelSimulationSpaceD1::ClearVoxelSpaceAndParticles()
+void CellEngineVoxelSimulationSpace::ClearVoxelSpaceAndParticles()
 {
     try
     {
@@ -125,7 +130,36 @@ void CellEngineVoxelSimulationSpaceD1::ClearVoxelSpaceAndParticles()
     CATCH("clearing voxel space and particles")
 }
 
-void CellEngineVoxelSimulationSpace::GenerateOneStepOfDiffusionForSelectedRangeOfParticles(UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
+void CellEngineVoxelSimulationSpace::FillParticleElementInSpace(const UniqueIdInt ParticleIndex, const vector3_64 NewVoxel)
+{
+    try
+    {
+        SetValueToSpaceVoxelWithFillingListOfVoxelsOfParticle(&GetParticleFromIndex(ParticleIndex).ListOfVoxels, ParticleIndex, NewVoxel.X, NewVoxel.Y, NewVoxel.Z);
+    }
+    CATCH("filling particle element in space")
+}
+
+bool CellEngineVoxelSimulationSpace::MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(Particle &ParticleObject, SignedInt VectorX, SignedInt VectorY, SignedInt VectorZ, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam)
+{
+    return MoveParticleByVectorIfVoxelSpaceIsEmptyAndIsInBounds(ParticleObject, VectorX, VectorY, VectorZ, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+void CellEngineSimulationSpace::GenerateOneStepOfDiffusionForSelectedRangeOfParticles(UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
 {
     try
     {
@@ -136,7 +170,7 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfDiffusionForSelectedRangeO
         GetRangeOfParticlesForRandomParticles(StartParticleIndexParam, EndParticleIndexParam, MaxParticleIndex);
 
         for (UniqueIdInt ParticleIndex = StartParticleIndexParam; ParticleIndex <= EndParticleIndexParam; ParticleIndex++)
-            MoveParticleByVectorIfVoxelSpaceIsEmptyAndIsInBounds(GetParticleFromIndex(ParticleIndex), UniformDistributionObjectMoveParticleDirection_int64t(mt64R), UniformDistributionObjectMoveParticleDirection_int64t(mt64R), UniformDistributionObjectMoveParticleDirection_int64t(mt64R), StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
+            MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(GetParticleFromIndex(ParticleIndex), UniformDistributionObjectMoveParticleDirection_int64t(mt64R), UniformDistributionObjectMoveParticleDirection_int64t(mt64R), UniformDistributionObjectMoveParticleDirection_int64t(mt64R), StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
     }
     CATCH("generating one step of diffusion")
 }
@@ -160,7 +194,7 @@ inline void UpdateNeighbourPointsForChosenVoxel(T UpdateFunction)
     CATCH("updating probability of move from electric interaction for selected particle")
 }
 
-void CellEngineVoxelSimulationSpace::UpdateProbabilityOfMoveFromElectricInteractionForSelectedParticle(Particle& ParticleObject, ElectricChargeType (*NeighbourPoints)[3][3][3], const double MultiplyElectricChargeFactor)
+void CellEngineSimulationSpace::UpdateProbabilityOfMoveFromElectricInteractionForSelectedParticle(Particle& ParticleObject, ElectricChargeType (*NeighbourPoints)[3][3][3], const double MultiplyElectricChargeFactor)
 {
     try
     {
@@ -199,7 +233,7 @@ void CellEngineVoxelSimulationSpace::UpdateProbabilityOfMoveFromElectricInteract
     CATCH("updating probability of move from electric interaction for selected particle")
 }
 
-void CellEngineVoxelSimulationSpace::GenerateOneStepOfElectricDiffusionForSelectedRangeOfParticles(const TypesOfLookingForParticlesInProximity TypeOfLookingForParticles, const UnsignedInt AdditionalSpaceBoundFactor, const double MultiplyElectricChargeFactor, UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
+void CellEngineSimulationSpace::GenerateOneStepOfElectricDiffusionForSelectedRangeOfParticles(const TypesOfLookingForParticlesInProximity TypeOfLookingForParticles, const UnsignedInt AdditionalSpaceBoundFactor, const double MultiplyElectricChargeFactor, UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
 {
     try
     {
@@ -224,8 +258,10 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfElectricDiffusionForSelect
 
                 switch (TypeOfLookingForParticles)
                 {
-                    case TypesOfLookingForParticlesInProximity::FromChosenParticleAsCenter : FindParticlesInProximityOfVoxelSimulationSpaceForSelectedVoxelSpace(false, ParticleObject.Center.X - ParticleKindObject.XSizeDiv2 - AdditionalSpaceBoundFactor, ParticleObject.Center.Y - ParticleKindObject.YSizeDiv2 - AdditionalSpaceBoundFactor, ParticleObject.Center.Z - ParticleKindObject.ZSizeDiv2 - AdditionalSpaceBoundFactor, 2 * ParticleKindObject.XSizeDiv2 + 2 * AdditionalSpaceBoundFactor, 2 * ParticleKindObject.YSizeDiv2 + 2 * AdditionalSpaceBoundFactor, 2 * ParticleKindObject.ZSizeDiv2 + 2 * AdditionalSpaceBoundFactor); break;
-                    case TypesOfLookingForParticlesInProximity::InChosenVoxelSpace : FindParticlesInProximityOfVoxelSimulationSpaceForSelectedVoxelSpace(false, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam); break;
+                    case TypesOfLookingForParticlesInProximity::FromChosenParticleAsCenter :
+                        FindParticlesInProximityOfSimulationSpaceForSelectedSpace(false, ParticleObject.Center.X - ParticleKindObject.XSizeDiv2 - AdditionalSpaceBoundFactor, ParticleObject.Center.Y - ParticleKindObject.YSizeDiv2 - AdditionalSpaceBoundFactor, ParticleObject.Center.Z - ParticleKindObject.ZSizeDiv2 - AdditionalSpaceBoundFactor, 2 * ParticleKindObject.XSizeDiv2 + 2 * AdditionalSpaceBoundFactor, 2 * ParticleKindObject.YSizeDiv2 + 2 * AdditionalSpaceBoundFactor, 2 * ParticleKindObject.ZSizeDiv2 + 2 * AdditionalSpaceBoundFactor); break;
+                    case TypesOfLookingForParticlesInProximity::InChosenVoxelSpace :
+                        FindParticlesInProximityOfSimulationSpaceForSelectedSpace(false, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam); break;
                     default: break;
                 }
 
@@ -246,7 +282,7 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfElectricDiffusionForSelect
                 discrete_distribution<int> UniformDiscreteDistributionMoveParticleDirectionObject(DiscreteDistribution.begin(), DiscreteDistribution.end());
 
                 UnsignedInt RandomMoveVectorIndex = UniformDiscreteDistributionMoveParticleDirectionObject(mt64R);
-                MoveParticleByVectorIfVoxelSpaceIsEmptyAndIsInBounds(ParticleObject, MoveVectors[RandomMoveVectorIndex].X, MoveVectors[RandomMoveVectorIndex].Y, MoveVectors[RandomMoveVectorIndex].Z, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
+                MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(ParticleObject, MoveVectors[RandomMoveVectorIndex].X, MoveVectors[RandomMoveVectorIndex].Y, MoveVectors[RandomMoveVectorIndex].Z, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
 
                 #ifdef SIMULATION_DETAILED_LOG
                 LoggersManagerObject.Log(STREAM("Random Index = " << to_string(RandomMoveVectorIndex) << " " << to_string(MoveVectors[RandomMoveVectorIndex].X) << " " << to_string(MoveVectors[RandomMoveVectorIndex].Y) << " " << to_string(MoveVectors[RandomMoveVectorIndex].Z) << endl));
@@ -258,7 +294,7 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfElectricDiffusionForSelect
     CATCH("generating one step of electric diffusion")
 }
 
-tuple<vector<pair<UniqueIdInt, UnsignedInt>>, bool> CellEngineVoxelSimulationSpace::ChooseParticlesForReactionFromAllParticlesInProximity(const Reaction& ReactionObject)
+tuple<vector<pair<UniqueIdInt, UnsignedInt>>, bool> CellEngineSimulationSpace::ChooseParticlesForReactionFromAllParticlesInProximity(const Reaction& ReactionObject)
 {
     bool AllAreZero = false;
 
@@ -323,7 +359,7 @@ tuple<vector<pair<UniqueIdInt, UnsignedInt>>, bool> CellEngineVoxelSimulationSpa
         return { vector<pair<UniqueIdInt, UnsignedInt>>(), false };
 }
 
-bool CellEngineVoxelSimulationSpace::MakeChemicalReaction(Reaction& ReactionObject)
+bool CellEngineSimulationSpace::MakeChemicalReaction(Reaction& ReactionObject)
 {
     try
     {
@@ -356,7 +392,7 @@ bool CellEngineVoxelSimulationSpace::MakeChemicalReaction(Reaction& ReactionObje
                 {
                     vector3_64 NewVoxel(Centers[CenterIndex].X - ParticleKindObjectForProduct.XSizeDiv2 + ParticleKindVoxel.X, Centers[CenterIndex].Y - ParticleKindObjectForProduct.YSizeDiv2 + ParticleKindVoxel.Y, Centers[CenterIndex].Z - ParticleKindObjectForProduct.ZSizeDiv2 + ParticleKindVoxel.Z);
 
-                    SetValueToSpaceVoxelWithFillingListOfVoxelsOfParticle(&GetParticleFromIndex(ParticleIndex).ListOfVoxels, ParticleIndex, NewVoxel.X, NewVoxel.Y, NewVoxel.Z);
+                    FillParticleElementInSpace(ParticleIndex, NewVoxel);
 
                     LoggersManagerObject.Log(STREAM("New Centers From Product Added X = " << to_string(NewVoxel.X) << " Y = " << to_string(NewVoxel.Y) << " Z = " << to_string(NewVoxel.Z) << endl));
                 }
@@ -377,7 +413,7 @@ bool CellEngineVoxelSimulationSpace::MakeChemicalReaction(Reaction& ReactionObje
     return true;
 };
 
-std::vector<UnsignedInt> CellEngineVoxelSimulationSpace::GetRandomParticles(const UnsignedInt NumberOfReactants)
+std::vector<UnsignedInt> CellEngineSimulationSpace::GetRandomParticles(const UnsignedInt NumberOfReactants)
 {
     vector<UnsignedInt> RandomParticlesTypes;
 
@@ -400,12 +436,12 @@ std::vector<UnsignedInt> CellEngineVoxelSimulationSpace::GetRandomParticles(cons
     return RandomParticlesTypes;
 }
 
-bool CellEngineVoxelSimulationSpace::IsChemicalReactionPossible(const Reaction& ReactionObject)
+bool CellEngineSimulationSpace::IsChemicalReactionPossible(const Reaction& ReactionObject)
 {
     return all_of(ReactionObject.Reactants.begin(), ReactionObject.Reactants.end(), [this](const ParticleKindForReaction& ReactionReactant){ return ReactionReactant.Counter <= ParticlesKindsFoundInProximity[CellEngineUseful::IfSpecialDNAThenReturnNormalDNACode(ReactionReactant.EntityId)]; });
 }
 
-void CellEngineVoxelSimulationSpace::PrepareRandomReaction()
+void CellEngineSimulationSpace::PrepareRandomReaction()
 {
     try
     {
@@ -418,7 +454,7 @@ void CellEngineVoxelSimulationSpace::PrepareRandomReaction()
     CATCH("preparing random reaction")
 }
 
-void CellEngineVoxelSimulationSpace::FindAndExecuteRandomReaction()
+void CellEngineSimulationSpace::FindAndExecuteRandomReaction()
 {
     try
     {
@@ -438,7 +474,7 @@ void CellEngineVoxelSimulationSpace::FindAndExecuteRandomReaction()
     CATCH("finding and executing random reaction")
 }
 
-void CellEngineVoxelSimulationSpace::FindAndExecuteChosenReaction(const UnsignedInt ReactionId)
+void CellEngineSimulationSpace::FindAndExecuteChosenReaction(const UnsignedInt ReactionId)
 {
     try
     {
@@ -464,30 +500,30 @@ void CellEngineVoxelSimulationSpace::FindAndExecuteChosenReaction(const Unsigned
     CATCH("finding and executing chosen reaction")
 }
 
-void CellEngineVoxelSimulationSpace::GenerateRandomReactionForSelectedVoxelSpace(const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
+void CellEngineSimulationSpace::GenerateRandomReactionForSelectedVoxelSpace(const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
 {
     try
     {
         PrepareRandomReaction();
 
-        if (FindParticlesInProximityOfVoxelSimulationSpaceForSelectedVoxelSpace(true, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam) == true)
+        if (FindParticlesInProximityOfSimulationSpaceForSelectedSpace(true, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam) == true)
             FindAndExecuteRandomReaction();
     }
     CATCH("generating random reaction for selected voxel space")
 }
 
-void CellEngineVoxelSimulationSpace::GenerateChosenReactionForSelectedVoxelSpace(const UnsignedInt ReactionId, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
+void CellEngineSimulationSpace::GenerateChosenReactionForSelectedVoxelSpace(const UnsignedInt ReactionId, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
 {
     try
     {
-        if (FindParticlesInProximityOfVoxelSimulationSpaceForSelectedVoxelSpace(true, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam) == true)
+        if (FindParticlesInProximityOfSimulationSpaceForSelectedSpace(true, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam) == true)
             if (ReactionId != 0)
                 FindAndExecuteChosenReaction(ReactionId);
     }
     CATCH("generating random reaction for particle")
 }
 
-void CellEngineVoxelSimulationSpace::GenerateRandomReactionForParticle(Particle& ParticleObject)
+void CellEngineSimulationSpace::GenerateRandomReactionForParticle(Particle& ParticleObject)
 {
     try
     {
@@ -499,7 +535,7 @@ void CellEngineVoxelSimulationSpace::GenerateRandomReactionForParticle(Particle&
     CATCH("generating random reaction for particle")
 }
 
-void CellEngineVoxelSimulationSpace::GenerateRandomReactionsForAllParticles()
+void CellEngineSimulationSpace::GenerateRandomReactionsForAllParticles()
 {
     try
     {
@@ -510,7 +546,7 @@ void CellEngineVoxelSimulationSpace::GenerateRandomReactionsForAllParticles()
     CATCH("generating random reactions for all particles")
 }
 
-void CellEngineVoxelSimulationSpace::GenerateOneStepOfRandomReactionsForSelectedRangeOfParticles(UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam)
+void CellEngineSimulationSpace::GenerateOneStepOfRandomReactionsForSelectedRangeOfParticles(UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam)
 {
     try
     {
@@ -526,7 +562,7 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfRandomReactionsForSelected
     CATCH("generating one step of random reactions for selected range of particles")
 }
 
-void CellEngineVoxelSimulationSpace::GenerateOneStepOfRandomReactionsForOneParticle(UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam)
+void CellEngineSimulationSpace::GenerateOneStepOfRandomReactionsForOneParticle(UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam)
 {
     try
     {

@@ -4,7 +4,7 @@
 
 #include "CellEngineBasicParticlesOperations.h"
 
-class CellEngineVoxelSimulationSpaceStatistics : virtual public CellEngineBasicParticlesOperations
+class CellEngineVoxelSimulationSpaceStatistics : virtual public CellEngineBasicParticlesOperations, virtual public CellEngineParticlesVoxelsOperations
 {
 protected:
     UnsignedInt SumOfNotEmptyVoxels{};

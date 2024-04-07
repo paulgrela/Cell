@@ -26,33 +26,14 @@
 
 #define SIMULATION_DETAILED_LOG
 
-class CellEngineAllTypesOfParticlesGenerator : public CellEngineTestParticlesGenerator
-{
-protected:
-    explicit CellEngineAllTypesOfParticlesGenerator(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : CellEngineTestParticlesGenerator(ParticlesParam)
-    {
-    }
-};
-
-class CellEngineAllTypesOfChemicalReactionsInVoxelSpace : public CellEngineNucleicAcidsChemicalReactionsInVoxelSimulationSpace
-{
-protected:
-    explicit CellEngineAllTypesOfChemicalReactionsInVoxelSpace(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : CellEngineNucleicAcidsChemicalReactionsInVoxelSimulationSpace(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam)
-    {
-    }
-};
-
-class CellEngineVoxelSimulationSpaceForOuterClass : virtual public CellEngineBasicParticlesOperations
-{
-public:
-    SimulationSpaceVoxel GetSpaceVoxelForOuterClass(UnsignedInt X, UnsignedInt Y, UnsignedInt Z);
-    Particle& GetParticleFromIndexForOuterClass(UniqueIdInt ParticleIndex);
-};
-
-class CellEngineVoxelSimulationSpace : public CellEngineChemicalReactionsCreator, public CellEngineAllTypesOfChemicalReactionsInVoxelSpace, public CellEngineAllTypesOfParticlesGenerator, public CellEngineVoxelSimulationSpaceForOuterClass, public CellEngineVoxelSimulationSpaceStatistics
+class CellEngineSimulationSpace : public CellEngineChemicalReactionsCreator, virtual public CellEngineChemicalReactionsInSimulationSpace
 {
 private:
     std::unordered_map<UniqueIdInt, Particle>& Particles;
+protected:
+    virtual bool MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(Particle &ParticleObject, SignedInt VectorX, SignedInt VectorY, SignedInt VectorZ, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam) = 0;
+protected:
+    virtual void FillParticleElementInSpace(UniqueIdInt ParticleIndex, vector3_64 NewVoxel) = 0;
 public:
     void GenerateOneStepOfDiffusionForSelectedRangeOfParticles(UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
     void GenerateOneStepOfElectricDiffusionForSelectedRangeOfParticles(TypesOfLookingForParticlesInProximity TypeOfLookingForParticles, UnsignedInt AdditionalSpaceBoundFactor, double MultiplyElectricChargeFactor, UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
@@ -77,12 +58,16 @@ protected:
     bool IsChemicalReactionPossible(const Reaction& ReactionObject) override;
     bool MakeChemicalReaction(Reaction& ReactionObject) override;
 public:
-    explicit CellEngineVoxelSimulationSpace(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam);
-    ~CellEngineVoxelSimulationSpace();
+    explicit CellEngineSimulationSpace(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : Particles(ParticlesParam)
+    {
+    }
 };
 
-class CellEngineVoxelSimulationSpaceD1 : public CellEngineVoxelSimulationSpace
+class CellEngineVoxelSimulationSpace : public CellEngineSimulationSpace, public CellEngineTestParticlesGenerator, public CellEngineChemicalReactionsInVoxelSimulationSpace, public CellEngineVoxelSimulationSpaceStatistics
 {
+public:
+    SimulationSpaceVoxel GetSpaceVoxelForOuterClass(UnsignedInt X, UnsignedInt Y, UnsignedInt Z);
+    Particle& GetParticleFromIndexForOuterClass(UniqueIdInt ParticleIndex);
 private:
     std::unordered_map<UniqueIdInt, Particle>& Particles;
 public:
@@ -92,15 +77,18 @@ public:
     [[nodiscard]] std::stringstream PrintSpaceMinMaxValues() const;
 public:
     void SetAtomInVoxelSimulationSpace(UniqueIdInt ParticleIndex, const CellEngineAtom& AppliedAtom);
+    Particle& GetParticleFromIndexForGenerator(UniqueIdInt ParticleIndex) override;
 public:
     void ClearVoxelSpaceAndParticles() override;
 public:
     void ClearWholeVoxelSpace();
     void ClearSelectedSpace(UnsignedInt NumberOfRandomParticles, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt StepXParam, UnsignedInt StepYParam, UnsignedInt StepZParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
+protected:
+    void FillParticleElementInSpace(UniqueIdInt ParticleIndex, vector3_64 NewVoxel) override;
+    bool MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(Particle &ParticleObject, SignedInt VectorX, SignedInt VectorY, SignedInt VectorZ, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam) override;
 public:
-    explicit CellEngineVoxelSimulationSpaceD1(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) :  Particles(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam), CellEngineVoxelSimulationSpace(ParticlesParam)
-    {
-    }
+    explicit CellEngineVoxelSimulationSpace(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam);
+    ~CellEngineVoxelSimulationSpace();
 };
 
 #endif

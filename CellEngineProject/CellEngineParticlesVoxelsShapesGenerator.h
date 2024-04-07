@@ -4,9 +4,10 @@
 
 #include "CellEngineBasicParticlesOperations.h"
 
-class CellEngineParticlesVoxelsShapesGenerator : virtual public CellEngineBasicParticlesOperations
+class CellEngineParticlesVoxelsShapesGenerator : virtual public CellEngineParticlesVoxelsOperations
 {
 protected:
+    virtual Particle& GetParticleFromIndexForGenerator(UniqueIdInt ParticleIndex) = 0;
     virtual void ClearVoxelSpaceAndParticles() = 0;
 protected:
     typedef bool (CellEngineParticlesVoxelsShapesGenerator::*CheckFreeSpaceForSelectedSpaceType)(UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UniqueIdInt );
@@ -24,7 +25,7 @@ public:
     void SetValueToVoxelsForSphereSelectedSpace(std::vector<vector3_16>* FilledSpaceVoxels, UniqueIdInt VoxelValue, UnsignedInt PosXStart, UnsignedInt PosYStart, UnsignedInt PosZStart, UnsignedInt StepX, UnsignedInt StepY, UnsignedInt StepZ, UnsignedInt RadiusXParam, UnsignedInt RadiusYParam, UnsignedInt RadiusZParam);
     void SetValueToVoxelsForEllipsoidSelectedSpace(std::vector<vector3_16>* FilledSpaceVoxels, UniqueIdInt VoxelValue, UnsignedInt PosXStart, UnsignedInt PosYStart, UnsignedInt PosZStart, UnsignedInt StepX, UnsignedInt StepY, UnsignedInt StepZ, UnsignedInt RadiusXParam, UnsignedInt RadiusYParam, UnsignedInt RadiusZParam);
 protected:
-    explicit CellEngineParticlesVoxelsShapesGenerator(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : CellEngineBasicParticlesOperations(ParticlesParam)
+    explicit CellEngineParticlesVoxelsShapesGenerator(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam)
     {
     }
 };

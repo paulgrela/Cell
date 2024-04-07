@@ -14,8 +14,7 @@ void CellEngineChemicalReactionsInSimulationSpace::RemoveParticle(const UniqueId
         CutDNANext(&ParticleObject);
         SeparateTwoPairedDNANucleotides(&ParticleObject);
         DeleteLinkedParticlesPointersList(ParticleObject);
-        if (ClearVoxels == true)
-            SetAllVoxelsInListOfVoxelsToValue(ParticleObject.ListOfVoxels, GetZeroSimulationSpaceVoxel());
+        ClearSpaceForParticle(ParticleObject, ClearVoxels);
         FreeIndexesOfParticles.push(ParticleIndex);
         Particles.erase(ParticleIndex);
     }
@@ -71,9 +70,7 @@ void CellEngineChemicalReactionsInSimulationSpace::UpdateFoundNucleotidesForFoun
     CATCH("updating found nucleotides for found particles in proximity")
 }
 
-
-//void CellEngineNucleicAcidsChemicalReactionsInSimulationSpace::aaa(set<UnsignedInt>& FoundParticleIndexes, const bool UpdateNucleotides, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
-void CellEngineNucleicAcidsChemicalReactionsInVoxelSimulationSpace::aaa(set<UnsignedInt>& FoundParticleIndexes, const bool UpdateNucleotides, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
+void CellEngineChemicalReactionsInVoxelSimulationSpace::FindParticlesInProximityInSimulationSpaceForSelectedLocalSpace(std::set<UnsignedInt> &FoundParticleIndexes, bool UpdateNucleotides, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam)
 {
     try
     {
@@ -82,12 +79,31 @@ void CellEngineNucleicAcidsChemicalReactionsInVoxelSimulationSpace::aaa(set<Unsi
                 for (UnsignedInt PosZ = StartZPosParam; PosZ < StartZPosParam + SizeZParam; PosZ++)
                     if (PosX >= 0 && PosY >= 0 && PosZ >= 0 && PosX < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension && PosY < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension && PosZ < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension)
                         if (GetSpaceVoxel(PosX, PosY, PosZ) != 0)
-                            ccc(GetSpaceVoxel(PosX, PosY, PosZ), FoundParticleIndexes, UpdateNucleotides);
+                            SaveParticleFoundInProximity(GetSpaceVoxel(PosX, PosY, PosZ), FoundParticleIndexes, UpdateNucleotides);
     }
-    CATCH("")
+    CATCH("finding particles in proximity of simulation space for selected local space")
 };
 
-void CellEngineChemicalReactionsInSimulationSpace::ccc(const UniqueIdInt ParticleIndex, set<UnsignedInt>& FoundParticleIndexes, const bool UpdateNucleotides)
+void CellEngineChemicalReactionsInVoxelSimulationSpace::MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(Particle &ParticleObject, const Particle &NewPositionParticleObject, const SignedInt AddX, const SignedInt AddY, const SignedInt AddZ)
+{
+    try
+    {
+        MoveParticleNearOtherParticleIfVoxelSpaceIsEmptyOrNearSpace(ParticleObject, NewPositionParticleObject, AddX, AddY, AddZ);
+    }
+    CATCH("moving particle near other particle if space is empty or to near space")
+}
+
+void CellEngineChemicalReactionsInVoxelSimulationSpace::ClearSpaceForParticle(Particle& ParticleObject, const bool ClearVoxels)
+{
+    try
+    {
+        if (ClearVoxels == true)
+            SetAllVoxelsInListOfVoxelsToValue(ParticleObject.ListOfVoxels, GetZeroSimulationSpaceVoxel());
+    }
+    CATCH("clearing space for voxel")
+}
+
+void CellEngineChemicalReactionsInSimulationSpace::SaveParticleFoundInProximity(const UniqueIdInt ParticleIndex, set<UnsignedInt>& FoundParticleIndexes, const bool UpdateNucleotides)
 {
     try
     {
@@ -105,10 +121,10 @@ void CellEngineChemicalReactionsInSimulationSpace::ccc(const UniqueIdInt Particl
             FoundParticleIndexes.insert(ParticleIndex);
         }
     }
-    CATCH("")
+    CATCH("saving particle found in proximity")
 }
 
-bool CellEngineChemicalReactionsInSimulationSpace::FindParticlesInProximityOfVoxelSimulationSpaceForSelectedVoxelSpace(const bool UpdateNucleotides, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
+bool CellEngineChemicalReactionsInSimulationSpace::FindParticlesInProximityOfSimulationSpaceForSelectedSpace(const bool UpdateNucleotides, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
 {
     try
     {
@@ -116,7 +132,7 @@ bool CellEngineChemicalReactionsInSimulationSpace::FindParticlesInProximityOfVox
 
         MakingZeroSizeForContainersForFoundParticlesInProximity();
 
-        aaa(FoundParticleIndexes, UpdateNucleotides, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
+        FindParticlesInProximityInSimulationSpaceForSelectedLocalSpace(FoundParticleIndexes, UpdateNucleotides, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
 
         if (ParticlesSortedByCapacityFoundInProximity.empty() == false)
         {
@@ -129,7 +145,7 @@ bool CellEngineChemicalReactionsInSimulationSpace::FindParticlesInProximityOfVox
             return false;
         }
     }
-    CATCH("finding particles in proximity of voxel simulation space for chosen particle")
+    CATCH("finding particles in proximity of simulation space for selected space")
 
     return true;
 }
@@ -156,7 +172,7 @@ bool CellEngineChemicalReactionsInSimulationSpace::FindParticlesInProximityOfVox
 
         auto ParticleKindObject = ParticlesKindsManagerObject.GetParticleKind(ParticleObject.EntityId);
 
-        FindParticlesInProximityOfVoxelSimulationSpaceForSelectedVoxelSpace(true, ParticleObject.Center.X - ParticleKindObject.XSizeDiv2 - AdditionalBoundFactor, ParticleObject.Center.Y - ParticleKindObject.YSizeDiv2 - AdditionalBoundFactor, ParticleObject.Center.Z - ParticleKindObject.ZSizeDiv2 - AdditionalBoundFactor, 2 * ParticleKindObject.XSizeDiv2 + 2 * AdditionalBoundFactor, 2 * ParticleKindObject.YSizeDiv2 + 2 * AdditionalBoundFactor, 2 * ParticleKindObject.ZSizeDiv2 + 2 * AdditionalBoundFactor);
+        FindParticlesInProximityOfSimulationSpaceForSelectedSpace(true, ParticleObject.Center.X - ParticleKindObject.XSizeDiv2 - AdditionalBoundFactor, ParticleObject.Center.Y - ParticleKindObject.YSizeDiv2 - AdditionalBoundFactor, ParticleObject.Center.Z - ParticleKindObject.ZSizeDiv2 - AdditionalBoundFactor, 2 * ParticleKindObject.XSizeDiv2 + 2 * AdditionalBoundFactor, 2 * ParticleKindObject.YSizeDiv2 + 2 * AdditionalBoundFactor, 2 * ParticleKindObject.ZSizeDiv2 + 2 * AdditionalBoundFactor);
     }
     CATCH("finding particles in proximity of voxel simulation space for chosen particle")
 
@@ -403,8 +419,8 @@ bool CellEngineNucleicAcidsComplexOperations::PolymeraseDNAStartSpecialReactionF
             ParticleObject.AddNewLinkToParticle(&GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]));
             ParticleObject.AddNewLinkToParticle(GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first).Next);
 
-            MoveParticleNearOtherParticleIfVoxelSpaceIsEmptyOrNearSpace(ParticleObject, *ParticleObject.LinkedParticlesPointersList[1], 2, 2, 2);
-            MoveParticleNearOtherParticleIfVoxelSpaceIsEmptyOrNearSpace(GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]), ParticleObject, 2, 2, 2);
+            MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(ParticleObject, *ParticleObject.LinkedParticlesPointersList[1], 2, 2, 2);
+            MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(GetParticleFromIndex(NucleotidesFreeFoundInProximity[0]), ParticleObject, 2, 2, 2);
         }
     }
     CATCH("executing polymerase start dna special reaction function")
@@ -436,8 +452,8 @@ bool CellEngineNucleicAcidsComplexOperations::PolymeraseDNAContinueSpecialReacti
             ParticleObject.LinkedParticlesPointersList[0] = ChosenNucleotide;
             ParticleObject.LinkedParticlesPointersList[1] = ParticleObject.LinkedParticlesPointersList[1]->Next;
 
-            MoveParticleNearOtherParticleIfVoxelSpaceIsEmptyOrNearSpace(ParticleObject, *ParticleObject.LinkedParticlesPointersList[1], 2, 2, 2);
-            MoveParticleNearOtherParticleIfVoxelSpaceIsEmptyOrNearSpace(*ChosenNucleotide, ParticleObject, 2, 2, 2);
+            MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(ParticleObject, *ParticleObject.LinkedParticlesPointersList[1], 2, 2, 2);
+            MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(*ChosenNucleotide, ParticleObject, 2, 2, 2);
         }
     }
     CATCH("executing polymerase continue dna special reaction function")

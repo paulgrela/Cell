@@ -8,70 +8,10 @@
 #include "CellEngineNucleicAcidsBasicOperations.h"
 #include "CellEngineChemicalReactionsInBasicSimulationSpace.h"
 
-//class CellEngineNucleicAcidsComplexOperations : public CellEngineChemicalReactionsInBasicSimulationSpace, public CellEngineNucleicAcidsBasicOperations
-//{
-//public:
-//    bool CutDNAInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject);
-//    bool LinkDNAInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject);
-//    bool LinkDNAInAnyPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject);
-//    bool CutDNACrisperInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject);
-//    bool LinkDNALigaseInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject);
-//    bool LinkDNALigaseInAnyPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject);
-//    bool PolymeraseDNAStartSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject);
-//    bool PolymeraseDNAContinueSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject);
-//protected:
-//    explicit CellEngineNucleicAcidsComplexOperations(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : CellEngineChemicalReactionsInBasicSimulationSpace(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam)
-//    {
-//    }
-//};
-//
-//class CellEngineChemicalReactionsInSimulationSpace : public CellEngineNucleicAcidsComplexOperations
-//{
-//protected:
-//    enum class ComparisonType { ByVectorLoop, ByString };
-//protected:
-//    void RemoveParticle(UniqueIdInt ParticleIndex, bool ClearVoxels) override;
-//protected:
-//    void MakingZeroSizeForContainersForFoundParticlesInProximity();
-//    void UpdateFoundNucleotidesForFoundParticlesInProximity(UnsignedInt ParticleIndex);
-//    void PrintInformationAboutFoundParticlesInProximity();
-//protected:
-//    bool FindParticlesInProximityOfVoxelSimulationSpaceForChosenParticle(const Particle& ParticleObject, UnsignedInt AdditionalBoundFactor);
-//
-//    bool FindParticlesInProximityOfVoxelSimulationSpaceForSelectedVoxelSpace(bool UpdateNucleotides, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
-//
-//    virtual void aaa(std::set<UnsignedInt>& FoundParticleIndexes, bool UpdateNucleotides, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam) = 0;
-//
-//    void ccc(UniqueIdInt ParticleIndex, std::set<UnsignedInt>& FoundParticleIndexes, bool UpdateNucleotides);
-//protected:
-//    explicit CellEngineChemicalReactionsInSimulationSpace(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : CellEngineNucleicAcidsComplexOperations(ParticlesParam)
-//    {
-//    }
-//};
-//
-//class CellEngineNucleicAcidsChemicalReactionsInSimulationSpace : public CellEngineChemicalReactionsInSimulationSpace
-//{
-//protected:
-//    std::tuple<std::vector<ChainIdInt>, std::string> GetNucleotidesSequenceInBothDirections(const std::vector<UniqueIdInt>& NucleotidesFoundInProximity, UnsignedInt SizeOfLoop);
-//    bool CompareFitnessOfDNASequenceByNucleotidesLoop(ComparisonType TypeOfComparison, const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction);
-//protected:
-//    explicit CellEngineNucleicAcidsChemicalReactionsInSimulationSpace(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : CellEngineChemicalReactionsInSimulationSpace(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam)
-//    {
-//    }
-//};
-//
-//class CellEngineNucleicAcidsChemicalReactionsInVoxelSimulationSpace : public CellEngineNucleicAcidsChemicalReactionsInSimulationSpace
-//{
-//protected:
-//    void aaa(set<UnsignedInt>& FoundParticleIndexes, bool UpdateNucleotides, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam) override;
-//protected:
-//    explicit CellEngineNucleicAcidsChemicalReactionsInVoxelSimulationSpace(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : CellEngineNucleicAcidsChemicalReactionsInSimulationSpace(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam)
-//    {
-//    }
-//};
-
 class CellEngineNucleicAcidsComplexOperations : public CellEngineChemicalReactionsInBasicSimulationSpace, public CellEngineNucleicAcidsBasicOperations
 {
+protected:
+    virtual void MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(Particle &ParticleObject, const Particle &NewPositionParticleObject, SignedInt AddX, SignedInt AddY, SignedInt AddZ) = 0;
 public:
     bool CutDNAInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject);
     bool LinkDNAInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject);
@@ -103,6 +43,8 @@ protected:
 class CellEngineChemicalReactionsInSimulationSpace : public CellEngineNucleicAcidsChemicalReactionsInSimulationSpace
 {
 protected:
+    virtual void ClearSpaceForParticle(Particle& ParticleObject, bool ClearVoxels) = 0;
+protected:
     void RemoveParticle(UniqueIdInt ParticleIndex, bool ClearVoxels) override;
 protected:
     void MakingZeroSizeForContainersForFoundParticlesInProximity();
@@ -111,23 +53,25 @@ protected:
 protected:
     bool FindParticlesInProximityOfVoxelSimulationSpaceForChosenParticle(const Particle& ParticleObject, UnsignedInt AdditionalBoundFactor);
 
-    bool FindParticlesInProximityOfVoxelSimulationSpaceForSelectedVoxelSpace(bool UpdateNucleotides, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
+    bool FindParticlesInProximityOfSimulationSpaceForSelectedSpace(bool UpdateNucleotides, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
 
-    virtual void aaa(std::set<UnsignedInt>& FoundParticleIndexes, bool UpdateNucleotides, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam) = 0;
+    virtual void FindParticlesInProximityInSimulationSpaceForSelectedLocalSpace(std::set<UnsignedInt>& FoundParticleIndexes, bool UpdateNucleotides, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam) = 0;
 
-    void ccc(UniqueIdInt ParticleIndex, std::set<UnsignedInt>& FoundParticleIndexes, bool UpdateNucleotides);
+    void SaveParticleFoundInProximity(UniqueIdInt ParticleIndex, set<UnsignedInt> &FoundParticleIndexes, bool UpdateNucleotides);
 protected:
     explicit CellEngineChemicalReactionsInSimulationSpace(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : CellEngineNucleicAcidsChemicalReactionsInSimulationSpace(ParticlesParam)
     {
     }
 };
 
-class CellEngineNucleicAcidsChemicalReactionsInVoxelSimulationSpace : public CellEngineChemicalReactionsInSimulationSpace
+class CellEngineChemicalReactionsInVoxelSimulationSpace : virtual public CellEngineChemicalReactionsInSimulationSpace, virtual public CellEngineParticlesVoxelsOperations
 {
 protected:
-    void aaa(set<UnsignedInt>& FoundParticleIndexes, bool UpdateNucleotides, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam) override;
+    void ClearSpaceForParticle(Particle& ParticleObject, bool ClearVoxels) override;
+    void MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(Particle &ParticleObject, const Particle &NewPositionParticleObject, SignedInt AddX, SignedInt AddY, SignedInt AddZ) override;
+    void FindParticlesInProximityInSimulationSpaceForSelectedLocalSpace(std::set<UnsignedInt> &FoundParticleIndexes, bool UpdateNucleotides, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam) override;
 protected:
-    explicit CellEngineNucleicAcidsChemicalReactionsInVoxelSimulationSpace(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : CellEngineChemicalReactionsInSimulationSpace(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam)
+    explicit CellEngineChemicalReactionsInVoxelSimulationSpace(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : CellEngineChemicalReactionsInSimulationSpace(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam)
     {
     }
 };
