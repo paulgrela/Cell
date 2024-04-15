@@ -1,8 +1,6 @@
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
-
-#include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
 #include "Logger.h"
@@ -10,7 +8,6 @@
 #include "ExceptionsMacro.h"
 #include "DestinationPlatform.h"
 
-#include "CellEngineAtom.h"
 #include "CellEngineTypes.h"
 #include "CellEngineParticle.h"
 #include "CellEngineSimulationSpace.h"
@@ -18,30 +15,14 @@
 
 using namespace std;
 
-void CellEngineChemicalReactionsCreator::ReadChemicalReactionsFromFile()
+void ReadReactionsFromJSONFile()
 {
     try
     {
-        boost::property_tree::ptree ReactionsPropertyTreeXML;
-        read_xml(string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("reactions") + OS_DIR_SEP + string("iMB155.xml"), ReactionsPropertyTreeXML, boost::property_tree::xml_parser::trim_whitespace);
-        for (const auto& ReactionsPropertyTreeXMLTreeElement : ReactionsPropertyTreeXML.get_child("sbml").get_child("model"))
-        {
-            if (ReactionsPropertyTreeXMLTreeElement.first == "listOfSpecies")
-            {
-                LoggersManagerObject.Log(STREAM("XML NUMBER OF TYPES OF PARTICLES = " << ReactionsPropertyTreeXMLTreeElement.second.size()));
-            }
-            else
-            if (ReactionsPropertyTreeXMLTreeElement.first == "fbc:listOfGeneProducts")
-                LoggersManagerObject.Log(STREAM("XML NUMBER OF GENE PRODUCTS PROTEINS = " << ReactionsPropertyTreeXMLTreeElement.second.size()));
-            else
-            if (ReactionsPropertyTreeXMLTreeElement.first == "listOfReactions")
-            {
-                LoggersManagerObject.Log(STREAM("XML NUMBER OF TYPES OF REACTIONS = " << ReactionsPropertyTreeXMLTreeElement.second.size()));
-            }
-        }
-
         boost::property_tree::ptree ReactionsPropertyTreeJSON;
+
         boost::property_tree::read_json(string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("reactions") + OS_DIR_SEP + string("iMB155.json"), ReactionsPropertyTreeJSON);
+
         LoggersManagerObject.Log(STREAM("JSON NUMBER OF TYPES OF PARTICLES = " << ReactionsPropertyTreeJSON.get_child("metabolites").size()));
         UnsignedInt ParticleNumber = 1;
         for (const auto& ReactionsPropertyTreeJSONTreeElementParticle : ReactionsPropertyTreeJSON.get_child("metabolites"))
@@ -73,6 +54,79 @@ void CellEngineChemicalReactionsCreator::ReadChemicalReactionsFromFile()
             LoggersManagerObject.Log(STREAM(""));
             ReactionNumber++;
         }
+    }
+    CATCH("reading reactions from json file")
+}
+
+void ReadReactionsFromXMLFile()
+{
+    try
+    {
+        boost::property_tree::ptree ReactionsPropertyTreeXML;
+
+        read_xml(string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("reactions") + OS_DIR_SEP + string("iMB155.xml"), ReactionsPropertyTreeXML, boost::property_tree::xml_parser::trim_whitespace);
+
+        for (const auto& ReactionsPropertyTreeXMLTreeElement : ReactionsPropertyTreeXML.get_child("sbml").get_child("model"))
+        {
+            if (ReactionsPropertyTreeXMLTreeElement.first == "listOfSpecies")
+            {
+                LoggersManagerObject.Log(STREAM("XML NUMBER OF TYPES OF PARTICLES = " << ReactionsPropertyTreeXMLTreeElement.second.size()));
+                for (const auto& ReactionsPropertyTreeXMLTreeElementParticle : ReactionsPropertyTreeXMLTreeElement.second)
+                {
+                    LoggersManagerObject.Log(STREAM("PARTICLE = " << ReactionsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.id") << " " << ReactionsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.name") << " " << ReactionsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.compartment") << " " << ReactionsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:charge") << " " << ReactionsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:chemicalFormula")));
+                }
+            }
+            else
+            if (ReactionsPropertyTreeXMLTreeElement.first == "fbc:listOfGeneProducts")
+                LoggersManagerObject.Log(STREAM("XML NUMBER OF GENE PRODUCTS PROTEINS = " << ReactionsPropertyTreeXMLTreeElement.second.size()));
+            else
+            if (ReactionsPropertyTreeXMLTreeElement.first == "listOfReactions")
+            {
+                LoggersManagerObject.Log(STREAM("XML NUMBER OF TYPES OF REACTIONS = " << ReactionsPropertyTreeXMLTreeElement.second.size()));
+                for (const auto& ReactionsPropertyTreeXMLTreeElementReaction : ReactionsPropertyTreeXMLTreeElement.second)
+                {
+                    LoggersManagerObject.Log(STREAM("REACTION = " << ReactionsPropertyTreeXMLTreeElementReaction.second.get<string>("<xmlattr>.id") << " " << ReactionsPropertyTreeXMLTreeElementReaction.second.get<string>("<xmlattr>.reversible") << " " << ReactionsPropertyTreeXMLTreeElementReaction.second.get<string>("<xmlattr>.name") << " " << ReactionsPropertyTreeXMLTreeElementReaction.second.get<string>("<xmlattr>.fbc:upperFluxBound") << " " << ReactionsPropertyTreeXMLTreeElementReaction.second.get<string>("<xmlattr>.fbc:lowerFluxBound")));
+
+                    if (ReactionsPropertyTreeXMLTreeElementReaction.second.get_child_optional("listOfReactants"))
+                        for (const auto& ReactionsPropertyTreeXMLTreeElementReactant : ReactionsPropertyTreeXMLTreeElementReaction.second.get_child("listOfReactants"))
+                            LoggersManagerObject.Log(STREAM("REACTANT = " << ReactionsPropertyTreeXMLTreeElementReactant.second.get<string>("<xmlattr>.constant") << " " << ReactionsPropertyTreeXMLTreeElementReactant.second.get<string>("<xmlattr>.species") << " " << ReactionsPropertyTreeXMLTreeElementReactant.second.get<string>("<xmlattr>.stoichiometry")));
+                    if (ReactionsPropertyTreeXMLTreeElementReaction.second.get_child_optional("listOfProducts"))
+                        for (const auto& ReactionsPropertyTreeXMLTreeElementProduct : ReactionsPropertyTreeXMLTreeElementReaction.second.get_child("listOfProducts"))
+                            LoggersManagerObject.Log(STREAM("REACTANT = " << ReactionsPropertyTreeXMLTreeElementProduct.second.get<string>("<xmlattr>.constant") << " " << ReactionsPropertyTreeXMLTreeElementProduct.second.get<string>("<xmlattr>.species") << " " << ReactionsPropertyTreeXMLTreeElementProduct.second.get<string>("<xmlattr>.stoichiometry")));
+
+                    if (ReactionsPropertyTreeXMLTreeElementReaction.second.get_child_optional("fbc:geneProductAssociation"))
+                    {
+                        auto& ReactionsPropertyTreeXMLTreeElementReactionGeneProduct = ReactionsPropertyTreeXMLTreeElementReaction.second.get_child("fbc:geneProductAssociation");
+                        if (ReactionsPropertyTreeXMLTreeElementReactionGeneProduct.get_child_optional("fbc:or"))
+                        {
+                            for (const auto& ReactionsPropertyTreeXMLTreeElementGeneProduct : ReactionsPropertyTreeXMLTreeElementReactionGeneProduct.get_child("fbc:or"))
+                                LoggersManagerObject.Log(STREAM("GENE PRODUCT OR = " << ReactionsPropertyTreeXMLTreeElementGeneProduct.second.get<string>("<xmlattr>.fbc:geneProduct")));
+                        }
+                        else
+                        if (ReactionsPropertyTreeXMLTreeElementReactionGeneProduct.get_child_optional("fbc:and"))
+                        {
+                            for (const auto& ReactionsPropertyTreeXMLTreeElementGeneProduct : ReactionsPropertyTreeXMLTreeElementReactionGeneProduct.get_child("fbc:and"))
+                                LoggersManagerObject.Log(STREAM("GENE PRODUCT AND = " << ReactionsPropertyTreeXMLTreeElementGeneProduct.second.get<string>("<xmlattr>.fbc:geneProduct")));
+                        }
+                        else
+                            for (const auto& ReactionsPropertyTreeXMLTreeElementGeneProduct : ReactionsPropertyTreeXMLTreeElementReaction.second.get_child("fbc:geneProductAssociation"))
+                                LoggersManagerObject.Log(STREAM("GENE PRODUCT ONE = " << ReactionsPropertyTreeXMLTreeElementGeneProduct.second.get<string>("<xmlattr>.fbc:geneProduct")));
+
+                    }
+                }
+                LoggersManagerObject.Log(STREAM(""));
+            }
+        }
+    }
+    CATCH("reading reactions from xml file")
+}
+
+void CellEngineChemicalReactionsCreator::ReadChemicalReactionsFromFile()
+{
+    try
+    {
+        ReadReactionsFromXMLFile();
+        //ReadReactionsFromJSONFile();
 
         LoggersManagerObject.Log(STREAM("REACTIONS READ FROM FILE"));
         getchar();
