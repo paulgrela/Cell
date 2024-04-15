@@ -147,10 +147,10 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile()
                 if (ParticleKindObjectIterator == ParticlesKindsManagerObject.GraphicParticlesKindsFromConfigXML.end())
                 {
                     auto OthersParticleKindObjectIterator = ParticlesKindsManagerObject.GraphicParticlesKindsFromConfigXML.find(10000);
-                    ParticlesKindsManagerObject.ParticlesKinds.emplace_back(ParticleKindGraphicData{static_cast<EntityIdInt>(stoi(AtomFields[2])), OthersParticleKindObjectIterator->second.Visible, OthersParticleKindObjectIterator->second.SizeX, OthersParticleKindObjectIterator->second.SizeY, OthersParticleKindObjectIterator->second.SizeZ, OthersParticleKindObjectIterator->second.ParticleColor, OthersParticleKindObjectIterator->second.ParticleColor, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), OthersParticleKindObjectIterator->second.NameFromXML, AtomFields[5].substr(1, AtomFields[5].length() - 2) });
+                    ParticlesKindsManagerObject.ParticlesKinds.emplace_back(ParticleKindGraphicData{ static_cast<EntityIdInt>(stoi(AtomFields[2])), OthersParticleKindObjectIterator->second.Visible, OthersParticleKindObjectIterator->second.SizeX, OthersParticleKindObjectIterator->second.SizeY, OthersParticleKindObjectIterator->second.SizeZ, OthersParticleKindObjectIterator->second.ParticleColor, OthersParticleKindObjectIterator->second.ParticleColor, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), OthersParticleKindObjectIterator->second.NameFromXML, AtomFields[5].substr(1, AtomFields[5].length() - 2) });
                 }
                 else
-                    ParticlesKindsManagerObject.ParticlesKinds.emplace_back(ParticleKindGraphicData{static_cast<EntityIdInt>(stoi(AtomFields[2])), ParticleKindObjectIterator->second.Visible, ParticleKindObjectIterator->second.SizeX, ParticleKindObjectIterator->second.SizeY, ParticleKindObjectIterator->second.SizeZ, ParticleKindObjectIterator->second.ParticleColor, ParticleKindObjectIterator->second.ParticleColor, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), ParticleKindObjectIterator->second.NameFromXML, AtomFields[5].substr(1, AtomFields[5].length() - 2) });
+                    ParticlesKindsManagerObject.ParticlesKinds.emplace_back(ParticleKindGraphicData{ static_cast<EntityIdInt>(stoi(AtomFields[2])), ParticleKindObjectIterator->second.Visible, ParticleKindObjectIterator->second.SizeX, ParticleKindObjectIterator->second.SizeY, ParticleKindObjectIterator->second.SizeZ, ParticleKindObjectIterator->second.ParticleColor, ParticleKindObjectIterator->second.ParticleColor, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), ParticleKindObjectIterator->second.NameFromXML, AtomFields[5].substr(1, AtomFields[5].length() - 2) });
 
                 ParticlesKindsManagerObject.ParticlesKindsPos[stoi(AtomFields[2])] = ParticlesKindsManagerObject.ParticlesKinds.size() - 1;
             }
@@ -206,7 +206,10 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile()
                     {
                         auto AtomsForChainNameIterator = ChainsNames.find(AppliedChainName);
                         if (AtomsForChainNameIterator == ChainsNames.end())
+                        {
                             LoggersManagerObject.Log(STREAM("ERROR IN CIF FILE LACKS AppliedChainName: " << AppliedChainName));
+                            continue;
+                        }
                         else
                         {
                             if (AtomsForChainNameIterator->second.empty() == true)

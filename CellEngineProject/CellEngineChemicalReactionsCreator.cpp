@@ -2,6 +2,9 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
+
 #include "Logger.h"
 #include "StringUtils.h"
 #include "ExceptionsMacro.h"
@@ -19,13 +22,32 @@ void CellEngineChemicalReactionsCreator::ReadChemicalReactionsFromFile()
 {
     try
     {
-        namespace pt = boost::property_tree;
+        boost::property_tree::ptree ReactionsPropertyTreeXML;
+        read_xml(string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("reactions") + OS_DIR_SEP + string("iMB155.xml"), ReactionsPropertyTreeXML, boost::property_tree::xml_parser::trim_whitespace);
+        for (const auto& ReactionsPropertyTreeXMLTreeElement : ReactionsPropertyTreeXML.get_child("sbml").get_child("model"))
+        {
+            if (ReactionsPropertyTreeXMLTreeElement.first == "listOfSpecies")
+                LoggersManagerObject.Log(STREAM("XML NUMBER OF TYPES OF PARTICLES = " << ReactionsPropertyTreeXMLTreeElement.second.size()));
+            else
+            if (ReactionsPropertyTreeXMLTreeElement.first == "fbc:listOfGeneProducts")
+                LoggersManagerObject.Log(STREAM("XML NUMBER OF GENE PRODUCTS PROTEINS = " << ReactionsPropertyTreeXMLTreeElement.second.size()));
+            else
+            if (ReactionsPropertyTreeXMLTreeElement.first == "listOfReactions")
+                LoggersManagerObject.Log(STREAM("XML NUMBER OF TYPES OF REACTIONS = " << ReactionsPropertyTreeXMLTreeElement.second.size()));
+        }
 
-        boost::property_tree::ptree root;
+        boost::property_tree::ptree ReactionsPropertyTreeJSON1;
+        boost::property_tree::read_json(string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("reactions") + OS_DIR_SEP + string("iMB155.json"), ReactionsPropertyTreeJSON1);
+        LoggersManagerObject.Log(STREAM("JSON NUMBER OF TYPES OF PARTICLES = " << ReactionsPropertyTreeJSON1.get_child("metabolites").size()));
+        LoggersManagerObject.Log(STREAM("JSON NUMBER OF TYPES OF REACTIONS = " << ReactionsPropertyTreeJSON1.get_child("reactions").size()));
 
-        boost::property_tree::read_json(string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("reactions") + OS_DIR_SEP + string("iMB155.json"), root);
+        boost::property_tree::ptree ReactionsPropertyTreeJSON2;
+        boost::property_tree::read_json(string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("reactions") + OS_DIR_SEP + string("elife-36842-supp10-v2.json"), ReactionsPropertyTreeJSON2);
+        LoggersManagerObject.Log(STREAM("JSON NUMBER OF TYPES OF PARTICLES = " << ReactionsPropertyTreeJSON2.get_child("metabolites").size()));
+        LoggersManagerObject.Log(STREAM("JSON NUMBER OF TYPES OF REACTIONS = " << ReactionsPropertyTreeJSON2.get_child("reactions").size()));
 
         LoggersManagerObject.Log(STREAM("REACTIONS READ FROM FILE"));
+        getchar();
     }
     CATCH("reading chemical reactions from file")
 }
