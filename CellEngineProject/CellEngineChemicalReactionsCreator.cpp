@@ -27,24 +27,52 @@ void CellEngineChemicalReactionsCreator::ReadChemicalReactionsFromFile()
         for (const auto& ReactionsPropertyTreeXMLTreeElement : ReactionsPropertyTreeXML.get_child("sbml").get_child("model"))
         {
             if (ReactionsPropertyTreeXMLTreeElement.first == "listOfSpecies")
+            {
                 LoggersManagerObject.Log(STREAM("XML NUMBER OF TYPES OF PARTICLES = " << ReactionsPropertyTreeXMLTreeElement.second.size()));
+            }
             else
             if (ReactionsPropertyTreeXMLTreeElement.first == "fbc:listOfGeneProducts")
                 LoggersManagerObject.Log(STREAM("XML NUMBER OF GENE PRODUCTS PROTEINS = " << ReactionsPropertyTreeXMLTreeElement.second.size()));
             else
             if (ReactionsPropertyTreeXMLTreeElement.first == "listOfReactions")
+            {
                 LoggersManagerObject.Log(STREAM("XML NUMBER OF TYPES OF REACTIONS = " << ReactionsPropertyTreeXMLTreeElement.second.size()));
+            }
         }
 
-        boost::property_tree::ptree ReactionsPropertyTreeJSON1;
-        boost::property_tree::read_json(string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("reactions") + OS_DIR_SEP + string("iMB155.json"), ReactionsPropertyTreeJSON1);
-        LoggersManagerObject.Log(STREAM("JSON NUMBER OF TYPES OF PARTICLES = " << ReactionsPropertyTreeJSON1.get_child("metabolites").size()));
-        LoggersManagerObject.Log(STREAM("JSON NUMBER OF TYPES OF REACTIONS = " << ReactionsPropertyTreeJSON1.get_child("reactions").size()));
+        boost::property_tree::ptree ReactionsPropertyTreeJSON;
+        boost::property_tree::read_json(string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("reactions") + OS_DIR_SEP + string("iMB155.json"), ReactionsPropertyTreeJSON);
+        LoggersManagerObject.Log(STREAM("JSON NUMBER OF TYPES OF PARTICLES = " << ReactionsPropertyTreeJSON.get_child("metabolites").size()));
+        UnsignedInt ParticleNumber = 1;
+        for (const auto& ReactionsPropertyTreeJSONTreeElementParticle : ReactionsPropertyTreeJSON.get_child("metabolites"))
+        {
+            LoggersManagerObject.Log(STREAM("PARTICLE ID = " << ParticleNumber << " " << ReactionsPropertyTreeJSONTreeElementParticle.second.get<string>("id")));
+            LoggersManagerObject.Log(STREAM("PARTICLE NAME = " << ParticleNumber << " " << ReactionsPropertyTreeJSONTreeElementParticle.second.get<string>("name")));
+            LoggersManagerObject.Log(STREAM("PARTICLE FORMULA = " << ParticleNumber << " " << ReactionsPropertyTreeJSONTreeElementParticle.second.get<string>("formula")));
+            LoggersManagerObject.Log(STREAM("PARTICLE CHARGE = " << ParticleNumber << " " << ReactionsPropertyTreeJSONTreeElementParticle.second.get<int>("charge")));
+            LoggersManagerObject.Log(STREAM("PARTICLE COMPARTMENT = " << ParticleNumber << " " << ReactionsPropertyTreeJSONTreeElementParticle.second.get<string>("compartment")));
+            LoggersManagerObject.Log(STREAM(""));
+            ParticleNumber++;
+        }
 
-        boost::property_tree::ptree ReactionsPropertyTreeJSON2;
-        boost::property_tree::read_json(string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("reactions") + OS_DIR_SEP + string("elife-36842-supp10-v2.json"), ReactionsPropertyTreeJSON2);
-        LoggersManagerObject.Log(STREAM("JSON NUMBER OF TYPES OF PARTICLES = " << ReactionsPropertyTreeJSON2.get_child("metabolites").size()));
-        LoggersManagerObject.Log(STREAM("JSON NUMBER OF TYPES OF REACTIONS = " << ReactionsPropertyTreeJSON2.get_child("reactions").size()));
+        LoggersManagerObject.Log(STREAM("JSON NUMBER OF TYPES OF REACTIONS = " << ReactionsPropertyTreeJSON.get_child("reactions").size()));
+        UnsignedInt ReactionNumber = 1;
+        for (const auto& ReactionsPropertyTreeJSONTreeElementReaction : ReactionsPropertyTreeJSON.get_child("reactions"))
+        {
+            LoggersManagerObject.Log(STREAM("REACTION ID = " << ReactionNumber << " " << ReactionsPropertyTreeJSONTreeElementReaction.second.get<string>("id")));
+            LoggersManagerObject.Log(STREAM("REACTION NAME = " << ReactionNumber << " " << ReactionsPropertyTreeJSONTreeElementReaction.second.get<string>("name")));
+            for (const auto& ReactionsPropertyTreeJSONTreeElementParticle : ReactionsPropertyTreeJSONTreeElementReaction.second.get_child("metabolites"))
+            {
+                LoggersManagerObject.Log(STREAM("PARTICLE = " << ReactionsPropertyTreeJSONTreeElementParticle.first << " " << ReactionsPropertyTreeJSONTreeElementParticle.second.get_value<string>()));
+                LoggersManagerObject.Log(STREAM("PARTICLE = " << ReactionsPropertyTreeJSONTreeElementParticle.first << " " << ReactionsPropertyTreeJSONTreeElementParticle.second.get_value<double>()));
+            }
+            LoggersManagerObject.Log(STREAM("LOWER BOUND = " << ReactionNumber << " " << ReactionsPropertyTreeJSONTreeElementReaction.second.get<string>("lower_bound")));
+            LoggersManagerObject.Log(STREAM("UPPER BOUND = " << ReactionNumber << " " << ReactionsPropertyTreeJSONTreeElementReaction.second.get<string>("upper_bound")));
+            LoggersManagerObject.Log(STREAM("GENE REACTION RULE = " << ReactionNumber << " " << ReactionsPropertyTreeJSONTreeElementReaction.second.get<string>("gene_reaction_rule")));
+
+            LoggersManagerObject.Log(STREAM(""));
+            ReactionNumber++;
+        }
 
         LoggersManagerObject.Log(STREAM("REACTIONS READ FROM FILE"));
         getchar();
