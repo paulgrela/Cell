@@ -15,13 +15,13 @@
 
 using namespace std;
 
-void ReadReactionsFromJSONFile()
+void ReadReactionsFromJSONFile(const string& FileName)
 {
     try
     {
         boost::property_tree::ptree ReactionsPropertyTreeJSON;
 
-        boost::property_tree::read_json(string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("reactions") + OS_DIR_SEP + string("iMB155.json"), ReactionsPropertyTreeJSON);
+        read_json(FileName, ReactionsPropertyTreeJSON);
 
         LoggersManagerObject.Log(STREAM("JSON NUMBER OF TYPES OF PARTICLES = " << ReactionsPropertyTreeJSON.get_child("metabolites").size()));
         UnsignedInt ParticleNumber = 1;
@@ -58,13 +58,13 @@ void ReadReactionsFromJSONFile()
     CATCH("reading reactions from json file")
 }
 
-void ReadReactionsFromXMLFile()
+void ReadReactionsFromXMLFile(const string& FileName)
 {
     try
     {
         boost::property_tree::ptree ReactionsPropertyTreeXML;
 
-        read_xml(string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("reactions") + OS_DIR_SEP + string("iMB155.xml"), ReactionsPropertyTreeXML, boost::property_tree::xml_parser::trim_whitespace);
+        read_xml(FileName, ReactionsPropertyTreeXML, boost::property_tree::xml_parser::trim_whitespace);
 
         for (const auto& ReactionsPropertyTreeXMLTreeElement : ReactionsPropertyTreeXML.get_child("sbml").get_child("model"))
         {
@@ -121,12 +121,74 @@ void ReadReactionsFromXMLFile()
     CATCH("reading reactions from xml file")
 }
 
+struct LocalParticle
+{
+    std::string Name;
+    UnsignedInt Counter;
+};
+
+std::multimap<std::string, UnsignedInt> Container;
+
+vector<vector<string>> ReadAndParseCSVFile(const string& FileName)
+{
+    vector<vector<string>> ParsedCSVFileStructure;
+
+    try
+    {
+        ifstream Data(FileName);
+        string Line;
+        while (std::getline(Data, Line))
+        {
+            stringstream LineStream(Line);
+            string Cell;
+            vector<std::string> ParsedRow;
+            while (std::getline(LineStream, Cell, ','))
+                ParsedRow.push_back(Cell);
+            ParsedCSVFileStructure.push_back(ParsedRow);
+        }
+    }
+    CATCH("reading and parsing csv file")
+
+    return ParsedCSVFileStructure;
+};
+
+void GetNumberOfParticlesFromParsedCSVStructure(const vector<vector<string>>& ParsedCSVFileStructure, const UnsignedInt StartRow, const UnsignedInt EndRow, const UnsignedInt NameCol, const UnsignedInt NumberCol)
+{
+    try
+    {
+        for (UnsignedInt Row = 0; Row <= ParsedCSVFileStructure.size(); Row++)
+            if (Row >= StartRow && Row <= EndRow)
+                Container.insert(make_pair(ParsedCSVFileStructure[Row][NameCol], stoi(ParsedCSVFileStructure[Row][NumberCol])));
+    }
+    CATCH("")
+}
+
+void PrintCountersForAllParticlesTypes()
+{
+    try
+    {
+        for (auto ParticleIterator = Container.begin(); ParticleIterator != Container.end(); ParticleIterator = Container.upper_bound(ParticleIterator->first))
+        {
+            string CounterStr;
+            auto Range = Container.equal_range(ParticleIterator->first);
+            for (auto& CounterIterator = Range.first; CounterIterator != Range.second; CounterIterator++)
+                CounterStr += (to_string(CounterIterator->second) + " ");
+            LoggersManagerObject.Log(STREAM(ParticleIterator->first << " " << CounterStr));
+        }
+    }
+    CATCH("printing counters for all particles")
+}
+
 void CellEngineChemicalReactionsCreator::ReadChemicalReactionsFromFile()
 {
     try
     {
-        ReadReactionsFromXMLFile();
-        //ReadReactionsFromJSONFile();
+        ReadReactionsFromXMLFile(string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("reactions") + OS_DIR_SEP + string("iMB155.xml"));
+        ReadReactionsFromJSONFile(string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("reactions") + OS_DIR_SEP + string("iMB155.json"));
+
+        GetNumberOfParticlesFromParsedCSVStructure(ReadAndParseCSVFile(string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("particles") + OS_DIR_SEP + string("proteomics.csv")), 2, 430, 0, 21);
+
+        PrintCountersForAllParticlesTypes();
 
         LoggersManagerObject.Log(STREAM("REACTIONS READ FROM FILE"));
         getchar();

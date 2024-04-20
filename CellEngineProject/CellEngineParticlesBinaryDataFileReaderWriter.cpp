@@ -125,7 +125,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::SaveParticlesKindsAndParticl
     {
         LoggersManagerObject.Log(STREAM("SAVING OF SAVING DATA TO BINARY FILE"));
 
-        string ParticlesDataFileName = string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("particles") + OS_DIR_SEP + string("ParticlesDataFile.dat");
+        string ParticlesDataFileName = string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("binary") + OS_DIR_SEP + string("ParticlesDataFile.dat");
         ofstream ParticlesDataFile(ParticlesDataFileName, ios_base::out | ios_base::trunc | ios_base::binary);
 
         SaveParticlesKindsToBinaryFile(ParticlesDataFile);
