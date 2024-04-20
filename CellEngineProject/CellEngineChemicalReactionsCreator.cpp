@@ -1,4 +1,6 @@
 
+#include <cmath>
+
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/xml_parser.hpp>
@@ -121,13 +123,28 @@ void ReadReactionsFromXMLFile(const string& FileName)
     CATCH("reading reactions from xml file")
 }
 
+
+
+
+
+
+
 struct LocalParticle
 {
     std::string Name;
     UnsignedInt Counter;
 };
 
-std::multimap<std::string, UnsignedInt> Container;
+constexpr long double constexpr_power(long double num, unsigned int pow)
+{
+    return (pow == 0 ? 1 : num * constexpr_power(num, pow - 1));
+}
+
+constexpr long double CapacityOfCell = (4.0 / 3.0) * M_PI * constexpr_power((200 * 1E-09), 3);
+
+constexpr long double AvogardoConstant = 6.022 * 1E+23;
+
+std::multimap<std::string, UnsignedInt> ParticleContainer;
 
 vector<vector<string>> ReadAndParseCSVFile(const string& FileName)
 {
@@ -152,13 +169,13 @@ vector<vector<string>> ReadAndParseCSVFile(const string& FileName)
     return ParsedCSVFileStructure;
 };
 
-void GetNumberOfParticlesFromParsedCSVStructure(const vector<vector<string>>& ParsedCSVFileStructure, const UnsignedInt StartRow, const UnsignedInt EndRow, const UnsignedInt NameCol, const UnsignedInt NumberCol)
+void GetNumberOfParticlesFromParsedCSVStructure(const vector<vector<string>>& ParsedCSVFileStructure, const UnsignedInt StartRow, const UnsignedInt EndRow, const UnsignedInt NameCol, const UnsignedInt NumberCol, const bool FromConcentration)
 {
     try
     {
         for (UnsignedInt Row = 0; Row <= ParsedCSVFileStructure.size(); Row++)
             if (Row >= StartRow && Row <= EndRow)
-                Container.insert(make_pair(ParsedCSVFileStructure[Row][NameCol], stoi(ParsedCSVFileStructure[Row][NumberCol])));
+                ParticleContainer.insert(make_pair(ParsedCSVFileStructure[Row][NameCol], (FromConcentration == false ? stoi(ParsedCSVFileStructure[Row][NumberCol]) : UnsignedInt(stold(ParsedCSVFileStructure[Row][NumberCol]) * AvogardoConstant * CapacityOfCell))));
     }
     CATCH("")
 }
@@ -167,12 +184,14 @@ void PrintCountersForAllParticlesTypes()
 {
     try
     {
-        for (auto ParticleIterator = Container.begin(); ParticleIterator != Container.end(); ParticleIterator = Container.upper_bound(ParticleIterator->first))
+        for (auto ParticleIterator = ParticleContainer.begin(); ParticleIterator != ParticleContainer.end(); ParticleIterator = ParticleContainer.upper_bound(ParticleIterator->first))
         {
             string CounterStr;
-            auto Range = Container.equal_range(ParticleIterator->first);
+
+            auto Range = ParticleContainer.equal_range(ParticleIterator->first);
             for (auto& CounterIterator = Range.first; CounterIterator != Range.second; CounterIterator++)
                 CounterStr += (to_string(CounterIterator->second) + " ");
+
             LoggersManagerObject.Log(STREAM(ParticleIterator->first << " " << CounterStr));
         }
     }
@@ -186,7 +205,9 @@ void CellEngineChemicalReactionsCreator::ReadChemicalReactionsFromFile()
         ReadReactionsFromXMLFile(string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("reactions") + OS_DIR_SEP + string("iMB155.xml"));
         ReadReactionsFromJSONFile(string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("reactions") + OS_DIR_SEP + string("iMB155.json"));
 
-        GetNumberOfParticlesFromParsedCSVStructure(ReadAndParseCSVFile(string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("particles") + OS_DIR_SEP + string("proteomics.csv")), 2, 430, 0, 21);
+        GetNumberOfParticlesFromParsedCSVStructure(ReadAndParseCSVFile(string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("particles") + OS_DIR_SEP + string("proteomics.csv")), 2, 430, 0, 21, false);
+        GetNumberOfParticlesFromParsedCSVStructure(ReadAndParseCSVFile(string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("particles") + OS_DIR_SEP + string("mRNA_Counts.csv")), 1, 456, 1, 2, true);
+        GetNumberOfParticlesFromParsedCSVStructure(ReadAndParseCSVFile(string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("particles") + OS_DIR_SEP + string("Escher_metData.csv")), 1, 240, 0, 1, true);
 
         PrintCountersForAllParticlesTypes();
 
