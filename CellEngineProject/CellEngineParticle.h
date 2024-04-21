@@ -120,6 +120,8 @@ public:
     std::string Name;
     std::string Symbol;
     UnsignedInt Counter{};
+    std::string Gene{};
+    UnsignedInt GeneLocation{};
     ElectricChargeType ElectricCharge{};
 public:
     std::vector<vector3_16> ListOfVoxels;
