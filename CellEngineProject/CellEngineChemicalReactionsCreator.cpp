@@ -17,6 +17,7 @@
 
 using namespace std;
 
+std::map<std::string, std::string> MappedNamesOfProteins;
 std::multimap<std::string, UnsignedInt> ParticleContainer;
 
 void ReadReactionsFromJSONFile(const string& FileName)
@@ -216,12 +217,42 @@ void ReadCSVFiles(bool Read, const string& ParticlesDirectory)
     {
         if (Read == true)
         {
-            GetNumberOfParticlesFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("proteomics.csv"), ','), 2, 430, 0, 21, false, "");
-            GetNumberOfParticlesFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("mRNA_Counts.csv"), ','), 1, 455, 1, 2, true, "");
-            GetNumberOfParticlesFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("Escher_metData.csv"), ','), 1, 240, 0, 1, true, "M_");
-            GetNumberOfParticlesFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("protein_metabolites_frac.csv"), ','), 1, 15, 1, 3, true, "");
-            SetNumberOfParticlesForParticlesTypesFromParsedStructure(ReadAndParseCSVFile(ParticlesDirectory + string("ribo_protein_metabolites.csv"), ','), 1, 48, 1, 10);
-            SetNumberOfParticlesForParticlesTypesFromParsedStructure(ReadAndParseCSVFile(ParticlesDirectory + string("membrane_protein_metabolites.csv"), ','), 1, 94, 1, 10);
+            GetNumberOfParticlesFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("proteomics.csv"), ','), 2, 430, 0, 21, false, ""); //bialka - jak mapowac
+
+            auto ParsedCSVFileStructure = ReadAndParseCSVFile(ParticlesDirectory + string("JCVI-syn3A quantitative proteomics.csv"), ','); //bialka - jak mapowac
+            for (UnsignedInt Row = 0; Row <= ParsedCSVFileStructure.size(); Row++)
+                if (Row >= 2 && Row <= 430)
+                //if (Row >= StartRow && Row <= EndRow)
+                {
+                    MappedNamesOfProteins.insert(make_pair(ParsedCSVFileStructure[Row][0], ParsedCSVFileStructure[Row][1]));
+
+                    LoggersManagerObject.Log(STREAM("MAP OLD PROTEIN GENE NAME TO NEW NAME = " << ParsedCSVFileStructure[Row][0] << " " << ParsedCSVFileStructure[Row][1]));
+                }
+            LoggersManagerObject.Log(STREAM("MP SIZE = " << MappedNamesOfProteins.size()));
+
+            vector<pair<string, UnsignedInt>> TempVectorForParticleContainerKeys;
+            copy(ParticleContainer.begin(), ParticleContainer.end(), back_inserter(TempVectorForParticleContainerKeys));
+
+            for (auto& ParticleObject : TempVectorForParticleContainerKeys)
+            {
+                auto ParticleObjectMapIterator = MappedNamesOfProteins.find(ParticleObject.first);
+                if (ParticleObjectMapIterator != MappedNamesOfProteins.end())
+                {
+                    auto ParticleContainerNode = ParticleContainer.extract(ParticleObject.first);
+                    ParticleContainerNode.key() = ParticleObjectMapIterator->second;
+                    ParticleContainer.insert(std::move(ParticleContainerNode));
+                }
+            }
+
+            GetNumberOfParticlesFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("mRNA_Counts.csv"), ','), 1, 455, 1, 2, true, "mrna_"); //mRNA generowac JCVISYN3A_0932 zamienic na MMSYN1_0932
+            GetNumberOfParticlesFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("Escher_metData.csv"), ','), 1, 240, 0, 1, true, "M_"); //male czastki
+
+            SetNumberOfParticlesForParticlesTypesFromParsedStructure(ReadAndParseCSVFile(ParticlesDirectory + string("ribo_protein_metabolites.csv"), ','), 1, 48, 1, 10); //pierwsza kolumna nazwa bialka nalezacego do rybosomow
+            SetNumberOfParticlesForParticlesTypesFromParsedStructure(ReadAndParseCSVFile(ParticlesDirectory + string("membrane_protein_metabolites.csv"), ','), 1, 94, 1, 10); //lista bialek blonowych
+            SetNumberOfParticlesForParticlesTypesFromParsedStructure(ReadAndParseCSVFile(ParticlesDirectory + string("trna_metabolites_synthase.csv"), ','), 1, 29, 1, 10); //lista trna z bialkami do ktorych sie wiaza w blonowych
+
+            GetNumberOfParticlesFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("protein_metabolites_frac.csv"), ','), 1, 15, 1, 3, true, ""); //lista bialek w formie aktywnej i nieaktywnej - ale u mnie to niewazne bo kazde jako osobna czastka
+            //wazna tylko informacja z jakiego genu pochodzi dana czastka
         }
     }
     CATCH("reading tsv files")
