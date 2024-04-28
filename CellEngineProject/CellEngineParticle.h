@@ -133,10 +133,7 @@ public:
     GeneIdInt NumId;
     std::string Sequence;
     std::string Name;
-    std::string StrId1;
-    std::string StrId2;
-    std::string StrId3;
-    std::string StrId4;
+    std::string ProteinId;
     std::string Description;
     UnsignedInt StartPosInGenome;
     UnsignedInt EndPosInGenome;

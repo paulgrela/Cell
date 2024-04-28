@@ -154,9 +154,7 @@ void ReadReactionsFromXMLFile(const string& FileName)
     CATCH("reading reactions from xml file")
 }
 
-
-
-vector<vector<string>> ReadAndParseGenesFile(const string& FileName, const char Separator)
+vector<vector<string>> ReadAndParseGenesFile(const string& FileName)
 {
     vector<vector<string>> ParsedCSVFileStructure;
 
@@ -164,14 +162,25 @@ vector<vector<string>> ReadAndParseGenesFile(const string& FileName, const char 
     {
         ifstream Data(FileName);
         string Line;
+        Gene GeneObject;
+        string SequenceStr;
         while (std::getline(Data, Line))
         {
-            stringstream LineStream(Line);
-            string Cell;
-            vector<std::string> ParsedRow;
-            while (std::getline(LineStream, Cell, Separator))
-                ParsedRow.push_back(Cell);
-            ParsedCSVFileStructure.push_back(ParsedRow);
+            if (Line.substr(0, 4) == ">lcl")
+            {
+                if (SequenceStr.empty() == false)
+                {
+                    GeneObject.Sequence = SequenceStr;
+                    ParticlesKindsManagerObject.Genes[GeneObject.NumId] = GeneObject;
+                    LoggersManagerObject.Log(STREAM("GENE FULL SEQ = " << SequenceStr));
+                    SequenceStr = "";
+                }
+                LoggersManagerObject.Log(STREAM("GENE LINE = " << Line));
+
+                getchar();
+            }
+            else
+                SequenceStr += Line.substr(0, Line.length() - 1);
         }
     }
     CATCH("reading and parsing csv file")
@@ -325,6 +334,9 @@ void CellEngineChemicalReactionsCreator::ReadChemicalReactionsFromFile()
 {
     try
     {
+        ReadAndParseGenesFile(string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("genome") + OS_DIR_SEP + string("GENES.txt"));
+        getchar();
+
         string ReactionsDirectory = string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("reactions") + OS_DIR_SEP;
 
         ReadReactionsFromXMLFile(ReactionsDirectory + string("iMB155.xml"));
