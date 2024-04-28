@@ -2,6 +2,7 @@
 #ifndef CELL_ENGINE_PARTICLE_H
 #define CELL_ENGINE_PARTICLE_H
 
+#include <optional>
 #include <algorithm>
 
 #include <list>
@@ -113,15 +114,47 @@ struct ParticleKindGraphicData
     std::string NameFromDataFile;
 };
 
+enum class ParticleDestinationTypes : UnsignedInt
+{
+    Empty = 0,
+    Basic = 1,
+    Lipid = 2,
+    tRNA = 3,
+    mRNA = 4,
+    PolymeraseProtein = 5,
+    RibosomesProtein = 6,
+    MembraneProtein = 7,
+    Other = 8
+};
+
+class Gene
+{
+public:
+    GeneIdInt NumId;
+    std::string Sequence;
+    std::string Name;
+    std::string StrId1;
+    std::string StrId2;
+    std::string StrId3;
+    std::string StrId4;
+    std::string Description;
+    UnsignedInt StartPosInGenome;
+    UnsignedInt EndPosInGenome;
+};
+
 class ParticleKind
 {
 public:
     EntityIdInt EntityId{};
+    std::string Id;
     std::string Name;
-    std::string Symbol;
+    std::string Formula;
+    GeneIdInt GeneId{};
     UnsignedInt Counter{};
-    UnsignedInt GeneId{};
     ElectricChargeType ElectricCharge{};
+    std::string Compartment{};
+public:
+    ParticleDestinationTypes ProteinDestinationType = ParticleDestinationTypes::Empty;
 public:
     std::vector<vector3_16> ListOfVoxels;
     UnsignedInt XSizeDiv2{}, YSizeDiv2{}, ZSizeDiv2{};
@@ -137,7 +170,7 @@ public:
 public:
     ParticleKind() = default;
 public:
-    ParticleKind(UnsignedInt EntityIdParam, std::string NameParam, std::string SymbolParam, ElectricChargeType ElectricChargeParam, UnsignedInt CounterParam) : EntityId(EntityIdParam), Name(std::move(NameParam)), Symbol(std::move(SymbolParam)), ElectricCharge(ElectricChargeParam), Counter(CounterParam)
+    ParticleKind(UnsignedInt EntityIdParam, std::string IdParam, std::string NameParam, std::string FormulaParam, GeneIdInt GeneIdParam, ElectricChargeType ElectricChargeParam, std::string CompartmentParam, UnsignedInt CounterParam) : EntityId(EntityIdParam), Id(std::move(IdParam)), Name(std::move(NameParam)), Formula(std::move(FormulaParam)), GeneId(GeneIdParam), ElectricCharge(ElectricChargeParam), Compartment(std::move(CompartmentParam)), Counter(CounterParam)
     {
     }
     ParticleKind(UnsignedInt EntityIdParam, UnsignedInt CounterParam) : EntityId(EntityIdParam), Counter(CounterParam)
@@ -188,25 +221,32 @@ inline bool operator==(const AtomKindGraphicData& AtomKindParameter, const std::
 class ParticlesKindsManager
 {
 public:
-    std::vector<ParticleKind> ParticlesKinds;
-    std::unordered_map<UnsignedInt, UnsignedInt> ParticlesKindsPos;
-    std::unordered_map<UnsignedInt, ParticleKindGraphicData> GraphicParticlesKindsFromConfigXML;
+    std::unordered_map<GeneIdInt, Gene> Genes;
+    std::unordered_map<EntityIdInt, ParticleKind> ParticlesKinds;
+    std::unordered_map<EntityIdInt, ParticleKindGraphicData> GraphicParticlesKindsFromConfigXML;
 public:
     std::vector<AtomKindGraphicData> AtomsKindsGraphicData;
 public:
     ParticleKind& GetParticleKind(const EntityIdInt EntityId)
     {
-        return ParticlesKinds[ParticlesKindsPos.find(EntityId)->second];
+        return ParticlesKinds.find(EntityId)->second;
+    }
+    std::optional<ParticleKind> GetParticleKindFromStrId(const std::string& StrId)
+    {
+        for (auto& ParticleKindObject : ParticlesKinds)
+            if (ParticleKindObject.second.Id == StrId)
+                return ParticleKindObject.second;
+
+        return {};
     }
     ParticleKindGraphicData& GetGraphicParticleKind(const EntityIdInt EntityId)
     {
-        return ParticlesKinds[ParticlesKindsPos.find(EntityId)->second].GraphicData;
+        return ParticlesKinds.find(EntityId)->second.GraphicData;
     }
     void AddParticleKind(const ParticleKind& ParticleParam)
     {
-        ParticlesKinds.emplace_back(ParticleParam);
-        ParticlesKinds.back().GraphicData = ParticleKindGraphicData{ ParticleParam.EntityId, true, 1, 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), ParticleParam.Name, ParticleParam.Symbol };
-        ParticlesKindsPos[ParticleParam.EntityId] = ParticlesKinds.size() - 1;
+        ParticlesKinds[ParticleParam.EntityId] = ParticleParam;
+        ParticlesKinds[ParticleParam.EntityId].GraphicData = ParticleKindGraphicData{ ParticleParam.EntityId, true, 1, 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), ParticleParam.Name, ParticleParam.Formula };
     }
 public:
     std::vector<AtomKindGraphicData>::iterator GetGraphicAtomKindDataFromAtomName(char Name)

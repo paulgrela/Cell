@@ -60,23 +60,23 @@ void CellEngineParticlesBinaryDataFileReaderWriter::SaveParticlesKindsToBinaryFi
         ParticlesDataFile.write((char*)&ParticlesKindsSize, sizeof(ParticlesKindsSize));
         for (const auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
         {
-            ParticlesDataFile.write((char*)&ParticleKindObject.EntityId, sizeof(ParticleKindObject.EntityId));
-            ParticlesDataFile.write((char*)&ParticleKindObject.GraphicData.SizeX, sizeof(ParticleKindObject.GraphicData.SizeX));
-            ParticlesDataFile.write((char*)&ParticleKindObject.GraphicData.SizeY, sizeof(ParticleKindObject.GraphicData.SizeY));
-            ParticlesDataFile.write((char*)&ParticleKindObject.GraphicData.SizeZ, sizeof(ParticleKindObject.GraphicData.SizeZ));
-            ParticlesDataFile.write((char*)&ParticleKindObject.GraphicData.AtomColor, sizeof(ParticleKindObject.GraphicData.AtomColor));
-            ParticlesDataFile.write((char*)&ParticleKindObject.GraphicData.ParticleColor, sizeof(ParticleKindObject.GraphicData.ParticleColor));
-            ParticlesDataFile.write((char*)&ParticleKindObject.GraphicData.RandomParticleColor, sizeof(ParticleKindObject.GraphicData.RandomParticleColor));
-            ParticlesDataFile.write((char*)&ParticleKindObject.XSizeDiv2, sizeof(ParticleKindObject.XSizeDiv2));
-            ParticlesDataFile.write((char*)&ParticleKindObject.YSizeDiv2, sizeof(ParticleKindObject.YSizeDiv2));
-            ParticlesDataFile.write((char*)&ParticleKindObject.ZSizeDiv2, sizeof(ParticleKindObject.ZSizeDiv2));
+            ParticlesDataFile.write((char*)&ParticleKindObject.second.EntityId, sizeof(ParticleKindObject.second.EntityId));
+            ParticlesDataFile.write((char*)&ParticleKindObject.second.GraphicData.SizeX, sizeof(ParticleKindObject.second.GraphicData.SizeX));
+            ParticlesDataFile.write((char*)&ParticleKindObject.second.GraphicData.SizeY, sizeof(ParticleKindObject.second.GraphicData.SizeY));
+            ParticlesDataFile.write((char*)&ParticleKindObject.second.GraphicData.SizeZ, sizeof(ParticleKindObject.second.GraphicData.SizeZ));
+            ParticlesDataFile.write((char*)&ParticleKindObject.second.GraphicData.AtomColor, sizeof(ParticleKindObject.second.GraphicData.AtomColor));
+            ParticlesDataFile.write((char*)&ParticleKindObject.second.GraphicData.ParticleColor, sizeof(ParticleKindObject.second.GraphicData.ParticleColor));
+            ParticlesDataFile.write((char*)&ParticleKindObject.second.GraphicData.RandomParticleColor, sizeof(ParticleKindObject.second.GraphicData.RandomParticleColor));
+            ParticlesDataFile.write((char*)&ParticleKindObject.second.XSizeDiv2, sizeof(ParticleKindObject.second.XSizeDiv2));
+            ParticlesDataFile.write((char*)&ParticleKindObject.second.YSizeDiv2, sizeof(ParticleKindObject.second.YSizeDiv2));
+            ParticlesDataFile.write((char*)&ParticleKindObject.second.ZSizeDiv2, sizeof(ParticleKindObject.second.ZSizeDiv2));
 
-            SaveStringToBinaryFile(ParticlesDataFile, ParticleKindObject.Name);
-            SaveStringToBinaryFile(ParticlesDataFile, ParticleKindObject.Symbol);
-            SaveStringToBinaryFile(ParticlesDataFile, ParticleKindObject.GraphicData.NameFromXML);
-            SaveStringToBinaryFile(ParticlesDataFile, ParticleKindObject.GraphicData.NameFromDataFile);
+            SaveStringToBinaryFile(ParticlesDataFile, ParticleKindObject.second.Name);
+            SaveStringToBinaryFile(ParticlesDataFile, ParticleKindObject.second.Formula);
+            SaveStringToBinaryFile(ParticlesDataFile, ParticleKindObject.second.GraphicData.NameFromXML);
+            SaveStringToBinaryFile(ParticlesDataFile, ParticleKindObject.second.GraphicData.NameFromDataFile);
 
-            SaveVectorToBinaryFile<vector3_16>(ParticlesDataFile, ParticleKindObject.ListOfVoxels);
+            SaveVectorToBinaryFile<vector3_16>(ParticlesDataFile, ParticleKindObject.second.ListOfVoxels);
         }
 
         LoggersManagerObject.Log(STREAM("END OF SAVING PARTICLES KINDS TO BINARY FILE"));
@@ -234,7 +234,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesKindsFromBinary
             ParticlesDataFile.read((char*)&ParticleKindObject.ZSizeDiv2, sizeof(ParticleKindObject.ZSizeDiv2));
 
             ReadStringFromBinaryFile(ParticlesDataFile, ParticleKindObject.Name);
-            ReadStringFromBinaryFile(ParticlesDataFile, ParticleKindObject.Symbol);
+            ReadStringFromBinaryFile(ParticlesDataFile, ParticleKindObject.Formula);
             ReadStringFromBinaryFile(ParticlesDataFile, ParticleKindObject.GraphicData.NameFromXML);
             ReadStringFromBinaryFile(ParticlesDataFile, ParticleKindObject.GraphicData.NameFromDataFile);
 
@@ -242,8 +242,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesKindsFromBinary
 
             ParticleKindObject.GraphicData.Visible = true;
 
-            ParticlesKindsManagerObject.ParticlesKinds.emplace_back(ParticleKindObject);
-            ParticlesKindsManagerObject.ParticlesKindsPos[ParticleKindObject.EntityId] = ParticlesKindsManagerObject.ParticlesKinds.size() - 1;
+            ParticlesKindsManagerObject.ParticlesKinds[ParticleKindObject.EntityId] = ParticleKindObject;
         }
 
         LoggersManagerObject.Log(STREAM("END OF READING PARTICLES KINDS FROM BINARY FILE"));
@@ -298,7 +297,6 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesKindsAndParticl
     {
         Particles.clear();
         ParticlesKindsManagerObject.ParticlesKinds.clear();
-        ParticlesKindsManagerObject.ParticlesKindsPos.clear();
 
         LoggersManagerObject.Log(STREAM("START OF READING DATA FROM BINARY FILE"));
 

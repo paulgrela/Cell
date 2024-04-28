@@ -32,9 +32,9 @@ bool CellEngineWellStirredChemicalReactionsSimulation::MakeChemicalReaction(Reac
     try
     {
         for (auto& ReactionReactant : ReactionObject.Reactants)
-            LoggersManagerObject.Log(STREAM("BEFORE REACTANT = " << ReactionReactant.EntityId << " " << ParticlesKindsManagerObject.ParticlesKinds[ReactionReactant.EntityId].Symbol << " " << ParticlesKindsManagerObject.ParticlesKinds[ReactionReactant.EntityId].Counter));
+            LoggersManagerObject.Log(STREAM("BEFORE REACTANT = " << ReactionReactant.EntityId << " " << ParticlesKindsManagerObject.ParticlesKinds[ReactionReactant.EntityId].Formula << " " << ParticlesKindsManagerObject.ParticlesKinds[ReactionReactant.EntityId].Counter));
         for (auto& ReactionProduct : ReactionObject.Products)
-            LoggersManagerObject.Log(STREAM("BEFORE PRODUCT = " << ReactionProduct.EntityId << " " << ParticlesKindsManagerObject.ParticlesKinds[ReactionProduct.EntityId].Symbol << " " << ParticlesKindsManagerObject.ParticlesKinds[ReactionProduct.EntityId].Counter));
+            LoggersManagerObject.Log(STREAM("BEFORE PRODUCT = " << ReactionProduct.EntityId << " " << ParticlesKindsManagerObject.ParticlesKinds[ReactionProduct.EntityId].Formula << " " << ParticlesKindsManagerObject.ParticlesKinds[ReactionProduct.EntityId].Counter));
         LoggersManagerObject.Log(STREAM(""));
 
         for (auto& ReactionReactant : ReactionObject.Reactants)
@@ -44,9 +44,9 @@ bool CellEngineWellStirredChemicalReactionsSimulation::MakeChemicalReaction(Reac
             ParticlesKindsManagerObject.ParticlesKinds[ReactionProduct.EntityId].Counter +=  ReactionProduct.Counter;
 
         for (auto& ReactionReactant : ReactionObject.Reactants)
-            LoggersManagerObject.Log(STREAM("AFTER REACTANT = " << ReactionReactant.EntityId << " " << ParticlesKindsManagerObject.ParticlesKinds[ReactionReactant.EntityId].Symbol << " " << ParticlesKindsManagerObject.ParticlesKinds[ReactionReactant.EntityId].Counter));
+            LoggersManagerObject.Log(STREAM("AFTER REACTANT = " << ReactionReactant.EntityId << " " << ParticlesKindsManagerObject.ParticlesKinds[ReactionReactant.EntityId].Formula << " " << ParticlesKindsManagerObject.ParticlesKinds[ReactionReactant.EntityId].Counter));
         for (auto& ReactionProduct : ReactionObject.Products)
-            LoggersManagerObject.Log(STREAM("AFTER PRODUCT = " << ReactionProduct.EntityId << " " << ParticlesKindsManagerObject.ParticlesKinds[ReactionProduct.EntityId].Symbol << " " << ParticlesKindsManagerObject.ParticlesKinds[ReactionProduct.EntityId].Counter));
+            LoggersManagerObject.Log(STREAM("AFTER PRODUCT = " << ReactionProduct.EntityId << " " << ParticlesKindsManagerObject.ParticlesKinds[ReactionProduct.EntityId].Formula << " " << ParticlesKindsManagerObject.ParticlesKinds[ReactionProduct.EntityId].Counter));
         LoggersManagerObject.Log(STREAM(""));
     }
     CATCH("making reaction")

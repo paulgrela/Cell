@@ -539,9 +539,9 @@ string CellEngineOpenGLVisualiser::GetEntityName(const UnsignedInt EntityId)
 
     try
     {
-        auto EntityIterator = ParticlesKindsManagerObject.ParticlesKindsPos.find(EntityId);
-        if (EntityIterator != ParticlesKindsManagerObject.ParticlesKindsPos.end())
-            EntityName = ParticlesKindsManagerObject.ParticlesKinds[EntityIterator->second].GraphicData.NameFromDataFile;
+        auto EntityIterator = ParticlesKindsManagerObject.ParticlesKinds.find(EntityId);
+        if (EntityIterator != ParticlesKindsManagerObject.ParticlesKinds.end())
+            EntityName = EntityIterator->second.GraphicData.NameFromDataFile;
         else
             EntityName = "";
     }
@@ -555,7 +555,7 @@ void CellEngineOpenGLVisualiser::SetVisibilityOfAllParticles(const bool VisibleP
     try
     {
         for (auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
-            ParticleKindObject.GraphicData.Visible = VisibleParam;
+            ParticleKindObject.second.GraphicData.Visible = VisibleParam;
     }
     CATCH("setting visibility of all particles")
 }

@@ -9,6 +9,7 @@
 using SignedInt = std::int64_t;
 using UnsignedInt = std::uint64_t;
 
+using GeneIdInt = std::uint64_t;
 using EntityIdInt = std::uint32_t;
 using ChainIdInt = std::uint16_t;
 using PositionInt = std::uint16_t;

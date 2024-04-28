@@ -18,7 +18,22 @@
 using namespace std;
 
 std::map<std::string, std::string> MappedNamesOfProteins;
-std::multimap<std::string, UnsignedInt> ParticleContainer;
+std::multimap<std::string, UnsignedInt> ParticleCountersContainer;
+
+EntityIdInt ParticleKindId = 100000;
+
+//wczytuje geny
+
+//potem wczytuje czastki wszystkie
+
+//potem trzeba je szukac po ID tekstowym - liniowo by dodac:
+// ilosc
+// identyfikator genu
+// oznaczenie JAKIEGO JEST TYPU
+
+// ksztalt - list of voxels
+
+
 
 void ReadReactionsFromJSONFile(const string& FileName)
 {
@@ -78,7 +93,9 @@ void ReadReactionsFromXMLFile(const string& FileName)
                 LoggersManagerObject.Log(STREAM("XML NUMBER OF TYPES OF PARTICLES = " << ReactionsPropertyTreeXMLTreeElement.second.size()));
                 for (const auto& ReactionsPropertyTreeXMLTreeElementParticle : ReactionsPropertyTreeXMLTreeElement.second)
                 {
-                    ParticleContainer.insert(make_pair(ReactionsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.id"), 10));
+                    ParticlesKindsManagerObject.AddParticleKind({ ParticleKindId, ReactionsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.id"), ReactionsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.name"), ReactionsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.formula"), 0, 0, ReactionsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.compartment"), 0 });
+                    ParticleKindId++;
+                    ParticleCountersContainer.insert(make_pair(ReactionsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.id"), 10));
                     LoggersManagerObject.Log(STREAM("PARTICLE = " << ReactionsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.id") << " " << ReactionsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.name") << " " << ReactionsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.compartment") << " " << ReactionsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:charge") << " " << ReactionsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:chemicalFormula")));
                 }
             }
@@ -88,7 +105,10 @@ void ReadReactionsFromXMLFile(const string& FileName)
                 LoggersManagerObject.Log(STREAM("XML NUMBER OF GENE PRODUCTS PROTEINS = " << ReactionsPropertyTreeXMLTreeElement.second.size()));
                 for (const auto& ProteinsPropertyTreeXMLTreeElementParticle : ReactionsPropertyTreeXMLTreeElement.second)
                 {
-                    ParticleContainer.insert(make_pair("JCVISYN3A_" + ProteinsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:id").substr(9, 4), 10));
+                    string ProteinName = "JCVISYN3A_" + ProteinsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:id").substr(9, 4);
+                    ParticlesKindsManagerObject.AddParticleKind({ ParticleKindId, ProteinName, ProteinName, ProteinName, 0, 0, "c", 0 });
+                    ParticleKindId++;
+                    ParticleCountersContainer.insert(make_pair(ProteinName, 10));
                     LoggersManagerObject.Log(STREAM("PARTICLE = " << ProteinsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:id") << " " << ProteinsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:name") << " " << ProteinsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:label")));
                 }
             }
@@ -136,15 +156,33 @@ void ReadReactionsFromXMLFile(const string& FileName)
 
 
 
-
-
-
-
-struct LocalParticle
+vector<vector<string>> ReadAndParseGenesFile(const string& FileName, const char Separator)
 {
-    std::string Name;
-    UnsignedInt Counter;
+    vector<vector<string>> ParsedCSVFileStructure;
+
+    try
+    {
+        ifstream Data(FileName);
+        string Line;
+        while (std::getline(Data, Line))
+        {
+            stringstream LineStream(Line);
+            string Cell;
+            vector<std::string> ParsedRow;
+            while (std::getline(LineStream, Cell, Separator))
+                ParsedRow.push_back(Cell);
+            ParsedCSVFileStructure.push_back(ParsedRow);
+        }
+    }
+    CATCH("reading and parsing csv file")
+
+    return ParsedCSVFileStructure;
 };
+
+
+
+
+
 
 constexpr long double constexpr_power(long double num, unsigned int pow)
 {
@@ -184,7 +222,7 @@ void GetNumberOfParticlesFromParsedCSVStructure(const vector<vector<string>>& Pa
     {
         for (UnsignedInt Row = 0; Row <= ParsedCSVFileStructure.size(); Row++)
             if (Row >= StartRow && Row <= EndRow)
-                ParticleContainer.insert(make_pair(NamePrefix + (s1 != 0 ? ParsedCSVFileStructure[Row][NameCol].substr(s1, s2) : ParsedCSVFileStructure[Row][NameCol]), (FromConcentration == false ? stoi(ParsedCSVFileStructure[Row][NumberCol]) : UnsignedInt(stold(ParsedCSVFileStructure[Row][NumberCol]) * AvogardoConstant * CapacityOfCell))));
+                ParticleCountersContainer.insert(make_pair(NamePrefix + (s1 != 0 ? ParsedCSVFileStructure[Row][NameCol].substr(s1, s2) : ParsedCSVFileStructure[Row][NameCol]), (FromConcentration == false ? stoi(ParsedCSVFileStructure[Row][NumberCol]) : UnsignedInt(stold(ParsedCSVFileStructure[Row][NumberCol]) * AvogardoConstant * CapacityOfCell))));
     }
     CATCH("getting number of particles from parsed csv structure")
 }
@@ -195,7 +233,7 @@ void SetNumberOfParticlesForParticlesTypesFromParsedStructure(const vector<vecto
     {
         for (UnsignedInt Row = 0; Row <= ParsedCSVFileStructure.size(); Row++)
             if (Row >= StartRow && Row <= EndRow)
-                ParticleContainer.insert(make_pair(NamePrefix + (s1 != 0 ? ParsedCSVFileStructure[Row][NameCol].substr(s1, s2) : ParsedCSVFileStructure[Row][NameCol]), NumberOfParticles));
+                ParticleCountersContainer.insert(make_pair(NamePrefix + (s1 != 0 ? ParsedCSVFileStructure[Row][NameCol].substr(s1, s2) : ParsedCSVFileStructure[Row][NameCol]), NumberOfParticles));
     }
     CATCH("setting number of particles for particles types from parsed structure")
 }
@@ -204,11 +242,11 @@ void PrintCountersForAllParticlesTypes()
 {
     try
     {
-        for (auto ParticleIterator = ParticleContainer.begin(); ParticleIterator != ParticleContainer.end(); ParticleIterator = ParticleContainer.upper_bound(ParticleIterator->first))
+        for (auto ParticleIterator = ParticleCountersContainer.begin(); ParticleIterator != ParticleCountersContainer.end(); ParticleIterator = ParticleCountersContainer.upper_bound(ParticleIterator->first))
         {
             string CounterStr;
 
-            auto Range = ParticleContainer.equal_range(ParticleIterator->first);
+            auto Range = ParticleCountersContainer.equal_range(ParticleIterator->first);
             for (auto& CounterIterator = Range.first; CounterIterator != Range.second; CounterIterator++)
                 CounterStr += (to_string(CounterIterator->second) + " ");
 
@@ -218,46 +256,49 @@ void PrintCountersForAllParticlesTypes()
     CATCH("printing counters for all particles")
 }
 
+void RemapProteinsNames(const string& ParticlesDirectory)
+{
+    try
+    {
+        auto ParsedCSVFileStructure = ReadAndParseCSVFile(ParticlesDirectory + string("JCVI-syn3A quantitative proteomics.csv"), ',');
+        for (UnsignedInt Row = 0; Row <= ParsedCSVFileStructure.size(); Row++)
+            if (Row >= 2 && Row <= 430)
+                MappedNamesOfProteins.insert(make_pair(ParsedCSVFileStructure[Row][0], ParsedCSVFileStructure[Row][1]));
+        LoggersManagerObject.Log(STREAM("MP SIZE = " << MappedNamesOfProteins.size()));
+
+        vector<pair<string, UnsignedInt>> TempVectorForParticleContainerKeys;
+        copy(ParticleCountersContainer.begin(), ParticleCountersContainer.end(), back_inserter(TempVectorForParticleContainerKeys));
+
+        for (auto& ParticleObject : TempVectorForParticleContainerKeys)
+        {
+            auto ParticleObjectMapIterator = MappedNamesOfProteins.find(ParticleObject.first);
+            if (ParticleObjectMapIterator != MappedNamesOfProteins.end())
+            {
+                auto ParticleContainerNode = ParticleCountersContainer.extract(ParticleObject.first);
+                ParticleContainerNode.key() = ParticleObjectMapIterator->second;
+                ParticleCountersContainer.insert(std::move(ParticleContainerNode));
+            }
+        }
+    }
+    CATCH("remapping protein names")
+}
+
 void ReadCSVFiles(bool Read, const string& ParticlesDirectory)
 {
     try
     {
         if (Read == true)
         {
-            GetNumberOfParticlesFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("proteomics.csv"), ','), 2, 429, 0, 21, false, "", 0, 0); //bialka - jak mapowac
+            GetNumberOfParticlesFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("proteomics.csv"), ','), 2, 429, 0, 21, false, "", 0, 0);
 
-            auto ParsedCSVFileStructure = ReadAndParseCSVFile(ParticlesDirectory + string("JCVI-syn3A quantitative proteomics.csv"), ','); //bialka - jak mapowac
-            for (UnsignedInt Row = 0; Row <= ParsedCSVFileStructure.size(); Row++)
-                if (Row >= 2 && Row <= 430)
-                    MappedNamesOfProteins.insert(make_pair(ParsedCSVFileStructure[Row][0], ParsedCSVFileStructure[Row][1]));
-                //if (Row >= StartRow && Row <= EndRow)
-                //{
-                //    MappedNamesOfProteins.insert(make_pair(ParsedCSVFileStructure[Row][0], ParsedCSVFileStructure[Row][1]));
-                    //LoggersManagerObject.Log(STREAM("MAP OLD PROTEIN GENE NAME TO NEW NAME = " << ParsedCSVFileStructure[Row][0] << " " << ParsedCSVFileStructure[Row][1]));
-                //}
-            LoggersManagerObject.Log(STREAM("MP SIZE = " << MappedNamesOfProteins.size()));
-
-            vector<pair<string, UnsignedInt>> TempVectorForParticleContainerKeys;
-            copy(ParticleContainer.begin(), ParticleContainer.end(), back_inserter(TempVectorForParticleContainerKeys));
-
-            for (auto& ParticleObject : TempVectorForParticleContainerKeys)
-            {
-                auto ParticleObjectMapIterator = MappedNamesOfProteins.find(ParticleObject.first);
-                if (ParticleObjectMapIterator != MappedNamesOfProteins.end())
-                {
-                    auto ParticleContainerNode = ParticleContainer.extract(ParticleObject.first);
-                    ParticleContainerNode.key() = ParticleObjectMapIterator->second;
-                    ParticleContainer.insert(std::move(ParticleContainerNode));
-                }
-            }
+            RemapProteinsNames(ParticlesDirectory);
 
             GetNumberOfParticlesFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("mRNA_Counts.csv"), ','), 1, 455, 1, 2, true, "mrna_", 0, 0); //mRNA generowac JCVISYN3A_0932 zamienic na MMSYN1_0932
             GetNumberOfParticlesFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("Escher_metData.csv"), ','), 1, 240, 0, 1, true, "M_", 0, 0); //male czastki - ile
 
-            SetNumberOfParticlesForParticlesTypesFromParsedStructure(ReadAndParseCSVFile(ParticlesDirectory + string("ribo_protein_metabolites.csv"), ','), 1, 48, 1, 10, "JCVISYN3A_", 7, 4); //pierwsza kolumna nazwa bialka nalezacego do rybosomow
-            SetNumberOfParticlesForParticlesTypesFromParsedStructure(ReadAndParseCSVFile(ParticlesDirectory + string("membrane_protein_metabolites.csv"), ','), 1, 94, 1, 10, "JCVISYN3A_", 7, 4); //lista bialek blonowych
-            SetNumberOfParticlesForParticlesTypesFromParsedStructure(ReadAndParseCSVFile(ParticlesDirectory + string("trna_metabolites_synthase.csv"), ','), 1, 29, 1, 10, "", 0, 0); //lista trna z bialkami do ktorych sie wiaza
-            SetNumberOfParticlesForParticlesTypesFromParsedStructure(ReadAndParseCSVFile(ParticlesDirectory + string("trna_metabolites_synthase.csv"), ','), 1, 29, 1, 10, "", 0, 0); //lista trna z bialkami do ktorych sie wiaza
+            ReadAndParseCSVFile(ParticlesDirectory + string("ribo_protein_metabolites.csv"), ','); //pierwsza kolumna nazwa bialka nalezacego do rybosomow = TYLKO DO LISTY GENERATORA RYOSOMOW
+            ReadAndParseCSVFile(ParticlesDirectory + string("membrane_protein_metabolites.csv"), ','); //lista bialek blonowych - TYLKO DO GENERATORA BIALEK RYBOSOMOW
+            ReadAndParseCSVFile(ParticlesDirectory + string("trna_metabolites_synthase.csv"), ','); //lista trna z bialkami do ktorych sie wiaza - Z NIEGO POBRAC GEN CO GO KODUJE DO GENERATORA
 
             GetNumberOfParticlesFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("protein_metabolites_frac.csv"), ','), 1, 15, 1, 3, true, "JCVISYN3A_", 7, 4); //lista bialek w formie aktywnej i nieaktywnej - ale u mnie to niewazne bo kazde jako osobna czastka
             //wazna tylko informacja z jakiego genu pochodzi dana czastka
@@ -306,23 +347,23 @@ void CellEngineChemicalReactionsCreator::AddParticlesKinds()
 {
     try
     {
-        ParticlesKindsManagerObject.AddParticleKind({ 0, "Water", "H2O", 0, 0 });
-        ParticlesKindsManagerObject.AddParticleKind({ 1, "Glucose", "C6H12O6", 0, 0 });
-        ParticlesKindsManagerObject.AddParticleKind({ 2, "Oxygen2", "02", 0, 0 });
-        ParticlesKindsManagerObject.AddParticleKind({ 3, "Carbon dioxide", "CO2", 0, 0 });
-        ParticlesKindsManagerObject.AddParticleKind({ 4, "Eten", "CH2CH2", 0, 0 });
-        ParticlesKindsManagerObject.AddParticleKind({ 5, "Ethanol", "CH3CH2(OH)", 0, 0 });
-        ParticlesKindsManagerObject.AddParticleKind({ 6, "Propen", "CH3CHCH2", 0, 0 });
-        ParticlesKindsManagerObject.AddParticleKind({ 7, "HX", "HX", 0, 0 });
-        ParticlesKindsManagerObject.AddParticleKind({ 8, "2Halogenopropan", "CH3CHXCH3", 0, 0 });
-        ParticlesKindsManagerObject.AddParticleKind({ 9, "Test", "TEST", 0, 0 });
-        ParticlesKindsManagerObject.AddParticleKind({ 10, "Ethylene", "CH2CH2O", 0, 0 });
-        ParticlesKindsManagerObject.AddParticleKind({ 11, "Oxygen", "0", 0, 0 });
-        ParticlesKindsManagerObject.AddParticleKind({ 12, "Polymerase", "POL", 0, 0 });
+        ParticlesKindsManagerObject.AddParticleKind({ 0, "Water", "H2O", "H2O", 0, 0, "c", 0 });
+        ParticlesKindsManagerObject.AddParticleKind({ 1, "Glucose", "C6H12O6", "C6H12O6", 0, 0, "c", 0  });
+        ParticlesKindsManagerObject.AddParticleKind({ 2, "Oxygen2", "02", "02", 0, 0, "c", 0  });
+        ParticlesKindsManagerObject.AddParticleKind({ 3, "Carbon dioxide", "CO2", "CO2", 0, 0, "c", 0   });
+        ParticlesKindsManagerObject.AddParticleKind({ 4, "Eten", "CH2CH2", "CH2CH2", 0, 0, "c", 0   });
+        ParticlesKindsManagerObject.AddParticleKind({ 5, "Ethanol", "CH3CH2(OH)", "CH3CH2(OH)", 0, 0, "c", 0 });
+        ParticlesKindsManagerObject.AddParticleKind({ 6, "Propen", "CH3CHCH2", "CH3CHCH2", 0, 0, "c", 0 });
+        ParticlesKindsManagerObject.AddParticleKind({ 7, "HX", "HX", "HX", 0, 0, "c", 0 });
+        ParticlesKindsManagerObject.AddParticleKind({ 8, "2Halogenopropan", "CH3CHXCH3", "CH3CHXCH3", 0, 0, "c", 0 });
+        ParticlesKindsManagerObject.AddParticleKind({ 9, "Test", "TEST", "TEST", 0, 0, "c", 0 });
+        ParticlesKindsManagerObject.AddParticleKind({ 10, "Ethylene", "CH2CH2O", "CH2CH2O", 0, 0, "c", 0 });
+        ParticlesKindsManagerObject.AddParticleKind({ 11, "Oxygen", "0", "0", 0, 0, "c", 0 });
+        ParticlesKindsManagerObject.AddParticleKind({ 12, "Polymerase", "POL", "POL", 0, 0, "c", 0 });
 
-        ParticlesKindsManagerObject.AddParticleKind({ CellEngineConfigDataObject.DNAIdentifier, "DNA", "DNA", 0, 0 });
+        ParticlesKindsManagerObject.AddParticleKind({ CellEngineConfigDataObject.DNAIdentifier, "DNA", "DNA", "DNA", 0, 0, "c", 0 });
 
-        ParticlesKindsManagerObject.AddParticleKind({ 10001, "DNA", "?", 0, 0 });
+        ParticlesKindsManagerObject.AddParticleKind({ 10001, "DNA", "?", "?", 0, 0, "c", 0 });
 
         LoggersManagerObject.Log(STREAM("ADDED PARTICLES KINDS"));
     }

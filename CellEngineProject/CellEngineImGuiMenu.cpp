@@ -476,7 +476,7 @@ public:
             if (TypesOfVisibilityComboBoxCurrentItemIndex == 3)
                 if (ImGui::CollapsingHeader("Particles Kinds", ImGuiTreeNodeFlags_DefaultOpen))
                     for (auto& ParticlesKind : ParticlesKindsManagerObject.ParticlesKinds)
-                        ImGui::Checkbox(string(to_string(ParticlesKind.EntityId) + " " + ParticlesKind.GraphicData.NameFromDataFile).c_str(), &ParticlesKind.GraphicData.Visible);
+                        ImGui::Checkbox(string(to_string(ParticlesKind.second.EntityId) + " " + ParticlesKind.second.GraphicData.NameFromDataFile).c_str(), &ParticlesKind.second.GraphicData.Visible);
 
             PrevTypesOfVisibilityComboBoxCurrentItemIndex = TypesOfVisibilityComboBoxCurrentItemIndex;
         }
