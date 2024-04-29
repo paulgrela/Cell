@@ -131,12 +131,12 @@ class Gene
 {
 public:
     GeneIdInt NumId;
-    std::string Sequence;
-    std::string Name;
-    std::string ProteinId;
+    std::string StrId;
     std::string Description;
+    std::string ProteinId;
     UnsignedInt StartPosInGenome;
     UnsignedInt EndPosInGenome;
+    std::string Sequence;
 };
 
 class ParticleKind

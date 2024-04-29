@@ -155,12 +155,10 @@ void ReadReactionsFromXMLFile(const string& FileName)
     CATCH("reading reactions from xml file")
 }
 
-vector<vector<string>> ReadAndParseGenesFile(const string& FileName)
+void ReadAndParseGenesFile(const string& FileName)
 {
-    vector<vector<string>> ParsedCSVFileStructure;
-
     smatch SMatchObject;
-    regex GeneRegexObject(R"(=[\w. ]+)");
+    regex GeneRegexObject(R"(=[\w. ()]+)");
 
     try
     {
@@ -168,18 +166,20 @@ vector<vector<string>> ReadAndParseGenesFile(const string& FileName)
         string Line;
         Gene GeneObject;
         string SequenceStr;
+        UnsignedInt MainLineNumber = 0;
+
         while (std::getline(Data, Line))
         {
             if (Line.substr(0, 4) == ">lcl")
             {
+                MainLineNumber++;
+
                 if (SequenceStr.empty() == false)
                 {
                     GeneObject.Sequence = SequenceStr;
                     ParticlesKindsManagerObject.Genes[GeneObject.NumId] = GeneObject;
-                    LoggersManagerObject.Log(STREAM("GENE FULL SEQ = " << SequenceStr));
                     SequenceStr = "";
                 }
-                LoggersManagerObject.Log(STREAM("GENE LINE = " << Line));
 
                 auto pos = Line.cbegin();
                 auto end = Line.cend();
@@ -187,12 +187,10 @@ vector<vector<string>> ReadAndParseGenesFile(const string& FileName)
                 for ( ; regex_search(pos, end, SMatchObject, GeneRegexObject); pos = SMatchObject.suffix().first)
                     MatchSave1.emplace_back(SMatchObject[0].str().substr(1, SMatchObject[0].length() - 1));
 
-                LoggersManagerObject.Log(STREAM("MATCH = " << MatchSave1[0]));
-                LoggersManagerObject.Log(STREAM("MATCH = " << MatchSave1[1]));
-                LoggersManagerObject.Log(STREAM("MATCH = " << MatchSave1[2]));
-                LoggersManagerObject.Log(STREAM("MATCH = " << MatchSave1[3]));
-                LoggersManagerObject.Log(STREAM("MATCH = " << MatchSave1[4]));
-                LoggersManagerObject.Log(STREAM("MATCH = " << MatchSave1[5]));
+                if (Line.find("gene=") == string::npos)
+                    MatchSave1.insert(MatchSave1.begin() + 0, "");
+                if (Line.find("pseudo=") != string::npos)
+                    MatchSave1.insert(MatchSave1.begin() + 3, "");
 
                 auto pos1 = MatchSave1[4].cbegin();
                 auto end1 = MatchSave1[4].cend();
@@ -200,21 +198,38 @@ vector<vector<string>> ReadAndParseGenesFile(const string& FileName)
                 for ( ; regex_search(pos1, end1, SMatchObject, GeneScopeRegexObject); pos1 = SMatchObject.suffix().first)
                     MatchSave2.emplace_back(SMatchObject[0]);
 
-                LoggersManagerObject.Log(STREAM("START = " << MatchSave2[0]));
-                LoggersManagerObject.Log(STREAM("END = " << MatchSave2[1]));
-
-                getchar();
+                GeneIdInt GeneId = stoi(MatchSave1[1].substr(10, 4));
+                UnsignedInt StartPos = stoi(MatchSave2[0]);
+                UnsignedInt EndPos = stoi(MatchSave2[1]);
+                GeneObject = { GeneId, MatchSave1[0], MatchSave1[1], MatchSave1[2], StartPos, EndPos, "" };
             }
             else
                 SequenceStr += Line.substr(0, Line.length() - 1);
         }
+
+        LoggersManagerObject.Log(STREAM("Num of genes = " << MainLineNumber));
     }
     CATCH("reading and parsing csv file")
-
-    return ParsedCSVFileStructure;
 };
 
-
+void PrintGenesFile()
+{
+    try
+    {
+        for (const auto& GeneObject : ParticlesKindsManagerObject.Genes)
+        {
+            LoggersManagerObject.Log(STREAM("Gene = " << GeneObject.second.NumId));
+            LoggersManagerObject.Log(STREAM("Gene = " << GeneObject.second.StrId));
+            LoggersManagerObject.Log(STREAM("Gene = " << GeneObject.second.Description));
+            LoggersManagerObject.Log(STREAM("Gene = " << GeneObject.second.ProteinId));
+            LoggersManagerObject.Log(STREAM("Gene = " << GeneObject.second.StartPosInGenome));
+            LoggersManagerObject.Log(STREAM("Gene = " << GeneObject.second.EndPosInGenome));
+            LoggersManagerObject.Log(STREAM("Gene = " << GeneObject.second.Sequence));
+        }
+        LoggersManagerObject.Log(STREAM("Gene Size = " << ParticlesKindsManagerObject.Genes.size()));
+    }
+    CATCH("printing gene file")
+}
 
 
 
@@ -361,7 +376,7 @@ void CellEngineChemicalReactionsCreator::ReadChemicalReactionsFromFile()
     try
     {
         ReadAndParseGenesFile(string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("genome") + OS_DIR_SEP + string("GENES.txt"));
-        getchar();
+        PrintGenesFile();
 
         string ReactionsDirectory = string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("reactions") + OS_DIR_SEP;
 
