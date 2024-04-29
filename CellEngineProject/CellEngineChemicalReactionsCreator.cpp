@@ -1,5 +1,6 @@
 
 #include <cmath>
+#include <regex>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
@@ -158,6 +159,9 @@ vector<vector<string>> ReadAndParseGenesFile(const string& FileName)
 {
     vector<vector<string>> ParsedCSVFileStructure;
 
+    smatch SMatchObject;
+    regex GeneRegexObject(R"(=[\w. ]+)");
+
     try
     {
         ifstream Data(FileName);
@@ -176,6 +180,28 @@ vector<vector<string>> ReadAndParseGenesFile(const string& FileName)
                     SequenceStr = "";
                 }
                 LoggersManagerObject.Log(STREAM("GENE LINE = " << Line));
+
+                auto pos = Line.cbegin();
+                auto end = Line.cend();
+                vector<string> MatchSave1, MatchSave2;
+                for ( ; regex_search(pos, end, SMatchObject, GeneRegexObject); pos = SMatchObject.suffix().first)
+                    MatchSave1.emplace_back(SMatchObject[0].str().substr(1, SMatchObject[0].length() - 1));
+
+                LoggersManagerObject.Log(STREAM("MATCH = " << MatchSave1[0]));
+                LoggersManagerObject.Log(STREAM("MATCH = " << MatchSave1[1]));
+                LoggersManagerObject.Log(STREAM("MATCH = " << MatchSave1[2]));
+                LoggersManagerObject.Log(STREAM("MATCH = " << MatchSave1[3]));
+                LoggersManagerObject.Log(STREAM("MATCH = " << MatchSave1[4]));
+                LoggersManagerObject.Log(STREAM("MATCH = " << MatchSave1[5]));
+
+                auto pos1 = MatchSave1[4].cbegin();
+                auto end1 = MatchSave1[4].cend();
+                regex GeneScopeRegexObject(R"((\d)+)");
+                for ( ; regex_search(pos1, end1, SMatchObject, GeneScopeRegexObject); pos1 = SMatchObject.suffix().first)
+                    MatchSave2.emplace_back(SMatchObject[0]);
+
+                LoggersManagerObject.Log(STREAM("START = " << MatchSave2[0]));
+                LoggersManagerObject.Log(STREAM("END = " << MatchSave2[1]));
 
                 getchar();
             }
