@@ -121,10 +121,11 @@ enum class ParticleDestinationTypes : UnsignedInt
     Lipid = 2,
     tRNA = 3,
     mRNA = 4,
-    PolymeraseProtein = 5,
-    RibosomesProtein = 6,
-    MembraneProtein = 7,
-    Other = 8
+    rRNA = 5,
+    PolymeraseProtein = 6,
+    RibosomesProtein = 7,
+    MembraneProtein = 8,
+    Other = 9
 };
 
 class Gene
@@ -240,10 +241,10 @@ public:
     {
         return ParticlesKinds.find(EntityId)->second.GraphicData;
     }
-    void AddParticleKind(const ParticleKind& ParticleParam)
+    void AddParticleKind(const ParticleKind& ParticleKindObjectParam)
     {
-        ParticlesKinds[ParticleParam.EntityId] = ParticleParam;
-        ParticlesKinds[ParticleParam.EntityId].GraphicData = ParticleKindGraphicData{ ParticleParam.EntityId, true, 1, 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), ParticleParam.Name, ParticleParam.Formula };
+        ParticlesKinds[ParticleKindObjectParam.EntityId] = ParticleKindObjectParam;
+        ParticlesKinds[ParticleKindObjectParam.EntityId].GraphicData = ParticleKindGraphicData{ParticleKindObjectParam.EntityId, true, 1, 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), ParticleKindObjectParam.Name, ParticleKindObjectParam.Formula };
     }
 public:
     std::vector<AtomKindGraphicData>::iterator GetGraphicAtomKindDataFromAtomName(char Name)
