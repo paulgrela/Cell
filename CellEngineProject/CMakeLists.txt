@@ -81,6 +81,7 @@ add_executable(
 	../Common/DoublyLinkedList/DoublyLinkedList.cpp
 	CellEngineTypes.h
 	CellEngineUseful.h
+	CellEngineConstants.h
 	CellEngineColors.h
 	CellEngineColors.cpp
 	CellEngineAtom.h

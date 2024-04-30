@@ -10,7 +10,7 @@
 #include "DestinationPlatform.h"
 
 #include "CellEngineAtom.h"
-#include "CellConstants.h"
+#include "CellEngineConstants.h"
 #include "CellEngineColors.h"
 #include "CellEngineUseful.h"
 #include "CellEngineSimulationSpace.h"

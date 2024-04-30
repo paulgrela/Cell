@@ -79,16 +79,6 @@ std::map<std::string, MetaboliteProteinForGenerator> MetaboliteProteinForGenerat
 
 EntityIdInt ParticleKindId = 100000;
 
-//potem wczytuje czastki wszystkie
-
-//potem trzeba je szukac po ID tekstowym - liniowo by dodac:
-// ilosc
-// identyfikator genu
-// oznaczenie JAKIEGO JEST TYPU
-
-// ksztalt - list of voxels
-
-
 
 void ReadReactionsFromJSONFile(const string& FileName)
 {

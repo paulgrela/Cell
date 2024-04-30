@@ -1,4 +1,5 @@
 
+#include "CellEngineConstants.h"
 #include "CellEngineParticle.h"
 
 #include "CellEngineChemicalReactionsInSimulationSpace.h"
@@ -55,10 +56,22 @@ void CellEngineChemicalReactionsInSimulationSpace::UpdateFoundNucleotidesForFoun
         if (CellEngineUseful::IsDNA(ParticleObject.EntityId) && ParticleObject.Prev == nullptr && ParticleObject.Next != nullptr)
             DNANucleotidesWithFreePrevEndingsFoundInProximity.emplace_back(ParticleIndex);
 
-        if (CellEngineUseful::IsRNA(ParticleObject.EntityId) && ParticleObject.Next == nullptr && ParticleObject.Prev != nullptr)
-            RNANucleotidesWithFreeNextEndingsFoundInProximity.emplace_back(ParticleIndex);
-        if (CellEngineUseful::IsRNA(ParticleObject.EntityId) && ParticleObject.Prev == nullptr && ParticleObject.Next != nullptr)
-            RNANucleotidesWithFreePrevEndingsFoundInProximity.emplace_back(ParticleIndex);
+        if (RNAInOneParticle == false)
+        {
+            if (CellEngineUseful::IsRNA(ParticleObject.EntityId) && ParticleObject.Next == nullptr && ParticleObject.Prev != nullptr)
+                RNANucleotidesWithFreeNextEndingsFoundInProximity.emplace_back(ParticleIndex);
+            if (CellEngineUseful::IsRNA(ParticleObject.EntityId) && ParticleObject.Prev == nullptr && ParticleObject.Next != nullptr)
+                RNANucleotidesWithFreePrevEndingsFoundInProximity.emplace_back(ParticleIndex);
+        }
+        else
+        {
+            if (CellEngineUseful::IsRNA(ParticleObject.EntityId) && ParticleObject.SequenceStr.length() == 1)
+            {
+                RNANucleotidesWithFreeNextEndingsFoundInProximity.emplace_back(ParticleIndex);
+                RNANucleotidesWithFreePrevEndingsFoundInProximity.emplace_back(ParticleIndex);
+                NucleotidesFreeFoundInProximity.emplace_back(ParticleIndex);
+            }
+        }
 
         if (CellEngineUseful::IsDNAorRNA(ParticleObject.EntityId) && ParticleObject.Next == nullptr && ParticleObject.Prev == nullptr)
             NucleotidesFreeFoundInProximity.emplace_back(ParticleIndex);
