@@ -227,11 +227,11 @@ bool CellEngineNucleicAcidsComplexOperations::LinkDNALigaseInChosenPlaceSpecialR
     return false;
 }
 
-bool CellEngineNucleicAcidsComplexOperations::PolymeraseDNAStartSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject)
+bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNAStartSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>> &NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject)
 {
     try
     {
-        LoggersManagerObject.Log(STREAM("POLYMERASE DNA START REACTION"));
+        LoggersManagerObject.Log(STREAM("POLYMERASE RNA START REACTION"));
 
         auto& ParticleObject = GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first);
 
@@ -251,11 +251,11 @@ bool CellEngineNucleicAcidsComplexOperations::PolymeraseDNAStartSpecialReactionF
     return false;
 }
 
-bool CellEngineNucleicAcidsComplexOperations::PolymeraseDNAContinueSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject)
+bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNAContinueSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>> &NucleotidesIndexesChosenForReaction, const Reaction& ReactionObject)
 {
     try
     {
-        LoggersManagerObject.Log(STREAM("POLYMERASE DNA CONTINUE REACTION"));
+        LoggersManagerObject.Log(STREAM("POLYMERASE RNA CONTINUE REACTION"));
 
         auto& ParticleObject = GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first);
 

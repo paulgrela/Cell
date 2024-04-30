@@ -77,6 +77,7 @@ public:
 public:
     std::vector<vector3_16> ListOfVoxels;
     vector3_16 Center{};
+                                                                                std::string SequenceStr;
 public:
     void SetCenterCoordinates(PositionInt XCenterParam, PositionInt YCenterParam, PositionInt ZCenterParam)
     {

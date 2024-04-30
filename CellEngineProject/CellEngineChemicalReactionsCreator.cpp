@@ -367,13 +367,20 @@ void GetDataFortRNAFromParsedCSVStructure(const vector<vector<string>>& ParsedCS
         for (UnsignedInt Row = 0; Row <= ParsedCSVFileStructure.size(); Row++)
             if (Row >= StartRow && Row <= EndRow)
             {
-                GeneIdInt GeneId = stoi(ParsedCSVFileStructure[Row][2].substr(8, 4));
+                GeneIdInt GeneId = stoi(ParsedCSVFileStructure[Row][2].substr(7, 4));
                 GeneIdInt SynthaseId = stoi(ParsedCSVFileStructure[Row][4].substr(10, 4));
-                tRNAForGeneratorContainer.insert(make_pair(NamePrefix + "JCVISYN3A" + ParsedCSVFileStructure[Row][2].substr(8, 4), tRNAForGenerator{ GeneId, ParsedCSVFileStructure[Row][3], ParsedCSVFileStructure[Row][0], ParsedCSVFileStructure[Row][1], SynthaseId }));
+                tRNAForGeneratorContainer.insert(make_pair(NamePrefix + "JCVISYN3A" + ParsedCSVFileStructure[Row][2].substr(7, 4), tRNAForGenerator{ GeneId, ParsedCSVFileStructure[Row][3], ParsedCSVFileStructure[Row][0], ParsedCSVFileStructure[Row][1], SynthaseId }));
             }
     }
     CATCH("getting number of trna particles from parsed csv structure")
 }
+
+//class rRNAForGenerator
+//{
+//public:
+//    GeneIdInt GeneId;
+//    std::string Name;
+//};
 
 void GetDataForrRNAFromParsedCSVStructure(const vector<vector<string>>& ParsedCSVFileStructure, const UnsignedInt StartRow, const UnsignedInt EndRow, const string& NamePrefix)
 {
@@ -534,6 +541,7 @@ void ReadCSVFiles(bool Read, const string& ParticlesDirectory)
             GetNumberOfParticlesFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("proteomics.csv"), ','), 2, 429, 0, 21, false, "", 0, 0);
             RemapProteinsNames(ParticlesDirectory);
             GetNumberOfParticlesFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("Escher_metData.csv"), ','), 1, 240, 0, 1, true, "M_", 0, 0);
+            PrintCountersForAllParticlesTypes();
 
             GetDataFormRNAFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("mrna_counts.csv"), ','), 1, 454, 1, 2, true, "mrna_", 0, 0);
             GetDataFortRNAFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("trna_metabolites_synthase.csv"), ','), 1, 29, "trna_");
@@ -587,9 +595,8 @@ void CellEngineChemicalReactionsCreator::ReadChemicalReactionsFromFile()
         string ParticlesDirectory = string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("particles") + OS_DIR_SEP;
 
         ReadCSVFiles(true, ParticlesDirectory);
-        ReadTSVFiles(false, ParticlesDirectory + string("tsv") + OS_DIR_SEP);
 
-        PrintCountersForAllParticlesTypes();
+        ReadTSVFiles(false, ParticlesDirectory + string("tsv") + OS_DIR_SEP);
 
         LoggersManagerObject.Log(STREAM("REACTIONS READ FROM FILE"));
         getchar();
@@ -673,8 +680,8 @@ void CellEngineChemicalReactionsCreator::AddChemicalReactions()
         AddChemicalReaction(Reaction(100, "CUT CRISPER 1", "CH3CHCH2 + RNA + DNA + ", 3, 7, { { 5, 1, "", false }, { 10001, 1, DNASequenceForTestCutCrisper, false }, { 10001, 0, RNASequenceForTestCutCrisper, false } }, {}, &CellEngineChemicalReactionsInSimulationSpace::CutDNACrisperInChosenPlaceSpecialReactionFunction, "cut crisper of one strand of DNA with RNA as template"));
         AddChemicalReaction(Reaction(110, "CUT CRISPER 2", "CH3CHCH2 + RNA + DNA + ", 3, 7, { { 5, 1, "", false }, { 10001, 1, DNASequenceForTestCutCrisper, false }, { 10001, 0, RNASequenceForTestCutCrisper, false } }, {}, &CellEngineChemicalReactionsInSimulationSpace::CutDNACrisperInChosenPlaceSpecialReactionFunction, "cut crisper of two strands of DNA with RNA as template"));
 
-        AddChemicalReaction(Reaction(150, "POLYMERASE DNA START SEQ", "CH3CHCH2 + DNA + ", { { 5, 1, "", false }, { 10001, 1, "TACAAAAAAAGAGGTGTTAGC", false } }, {}, &CellEngineChemicalReactionsInSimulationSpace::PolymeraseDNAStartSpecialReactionFunction, "links particle with DNA when found sequence and joins first nucleotide "));
-        AddChemicalReaction(Reaction(160, "POLYMERASE DNA CONTINUE", "CH3CHCH2 + DNA + ", { { 5, 1, "", false, { CellEngineConfigDataObject.RNAIdentifier, CellEngineConfigDataObject.DNAIdentifier } } }, {}, &CellEngineChemicalReactionsInSimulationSpace::PolymeraseDNAContinueSpecialReactionFunction, "links new nucleotide that fits nucleotide in DNA if free nucleotides are found in proximity"));
+        AddChemicalReaction(Reaction(150, "POLYMERASE DNA START SEQ", "CH3CHCH2 + DNA + ", { { 5, 1, "", false }, { 10001, 1, "TACAAAAAAAGAGGTGTTAGC", false } }, {}, &CellEngineChemicalReactionsInSimulationSpace::PolymeraseRNAStartSpecialReactionFunction, "links particle with DNA when found sequence and joins first nucleotide "));
+        AddChemicalReaction(Reaction(160, "POLYMERASE DNA CONTINUE", "CH3CHCH2 + DNA + ", { { 5, 1, "", false, { CellEngineConfigDataObject.RNAIdentifier, CellEngineConfigDataObject.DNAIdentifier } } }, {}, &CellEngineChemicalReactionsInSimulationSpace::PolymeraseRNAContinueSpecialReactionFunction, "links new nucleotide that fits nucleotide in DNA if free nucleotides are found in proximity"));
 
         AddChemicalReaction(Reaction(1001, "STD", "C6H12O6 + O2 + ", { { 1, 1, "", true }, { 2, 6, "", true } }, { { 3, 6, "", true }, { 0, 6, "", true } }, nullptr));
         AddChemicalReaction(Reaction(1002, "STD", "CH2CH2 + H2O + ", { { 4, 1, "", true }, { 0, 1, "", true } }, { { 5, 1, "", true } }, nullptr));
