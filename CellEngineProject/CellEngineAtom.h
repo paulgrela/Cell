@@ -5,6 +5,7 @@
 
 #include <utility>
 #include <cstring>
+#include <string>
 
 #include "vmath.h"
 #include "CellEngineTypes.h"
@@ -32,6 +33,7 @@ public:
     UniqueIdInt GenomeIndexPrev = 0;
     UniqueIdInt GenomeIndexNext = 0;
     char Nucleotide = '?';
+                    std::string SequenceStr;
     #ifdef EXTENDED_RAM_MEMORY
     float SizeXAtom{};
     float SizeYAtom{};

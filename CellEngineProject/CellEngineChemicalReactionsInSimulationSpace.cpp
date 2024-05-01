@@ -35,6 +35,7 @@ void CellEngineChemicalReactionsInSimulationSpace::MakingZeroSizeForContainersFo
         RNANucleotidesWithFreeNextEndingsFoundInProximity.clear();
         RNANucleotidesWithFreePrevEndingsFoundInProximity.clear();
         NucleotidesFreeFoundInProximity.clear();
+        RNANucleotidesFreeFoundInProximity.clear();
         RNANucleotidesFoundInProximity.clear();
     }
     CATCH("making zero size for containers for found particles in proximity")
@@ -62,6 +63,14 @@ void CellEngineChemicalReactionsInSimulationSpace::UpdateFoundNucleotidesForFoun
                 RNANucleotidesWithFreeNextEndingsFoundInProximity.emplace_back(ParticleIndex);
             if (CellEngineUseful::IsRNA(ParticleObject.EntityId) && ParticleObject.Prev == nullptr && ParticleObject.Next != nullptr)
                 RNANucleotidesWithFreePrevEndingsFoundInProximity.emplace_back(ParticleIndex);
+
+            if (CellEngineUseful::IsDNAorRNA(ParticleObject.EntityId) && ParticleObject.Next == nullptr && ParticleObject.Prev == nullptr)
+            {
+                NucleotidesFreeFoundInProximity.emplace_back(ParticleIndex);
+                RNANucleotidesFreeFoundInProximity.emplace_back(ParticleIndex);
+            }
+            if (CellEngineUseful::IsRNA(ParticleObject.EntityId))
+                RNANucleotidesFoundInProximity.emplace_back(ParticleIndex);
         }
         else
         {
@@ -69,14 +78,13 @@ void CellEngineChemicalReactionsInSimulationSpace::UpdateFoundNucleotidesForFoun
             {
                 RNANucleotidesWithFreeNextEndingsFoundInProximity.emplace_back(ParticleIndex);
                 RNANucleotidesWithFreePrevEndingsFoundInProximity.emplace_back(ParticleIndex);
-                NucleotidesFreeFoundInProximity.emplace_back(ParticleIndex);
+                RNANucleotidesFreeFoundInProximity.emplace_back(ParticleIndex);
             }
+            if (CellEngineUseful::IsDNA(ParticleObject.EntityId) && ParticleObject.Next == nullptr && ParticleObject.Prev == nullptr)
+                NucleotidesFreeFoundInProximity.emplace_back(ParticleIndex);
+            if (CellEngineUseful::IsRNA(ParticleObject.EntityId))
+                RNANucleotidesFoundInProximity.emplace_back(ParticleIndex);
         }
-
-        if (CellEngineUseful::IsDNAorRNA(ParticleObject.EntityId) && ParticleObject.Next == nullptr && ParticleObject.Prev == nullptr)
-            NucleotidesFreeFoundInProximity.emplace_back(ParticleIndex);
-        if (CellEngineUseful::IsRNA(ParticleObject.EntityId))
-            RNANucleotidesFoundInProximity.emplace_back(ParticleIndex);
 
         ParticlesKindsFoundInProximity[ParticleObject.EntityId]++;
     }

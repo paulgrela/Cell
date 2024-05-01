@@ -17,6 +17,7 @@ protected:
     std::vector<UniqueIdInt> RNANucleotidesWithFreeNextEndingsFoundInProximity;
     std::vector<UniqueIdInt> RNANucleotidesWithFreePrevEndingsFoundInProximity;
     std::vector<UniqueIdInt> NucleotidesFreeFoundInProximity;
+    std::vector<UniqueIdInt> RNANucleotidesFreeFoundInProximity;
     std::vector<UniqueIdInt> RNANucleotidesFoundInProximity;
 protected:
     static bool CompareFitnessOfParticle(const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction);
