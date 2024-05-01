@@ -14,8 +14,6 @@ protected:
     std::vector<UniqueIdInt> NucleotidesWithFreePrevEndingsFoundInProximity;
     std::vector<UniqueIdInt> DNANucleotidesWithFreeNextEndingsFoundInProximity;
     std::vector<UniqueIdInt> DNANucleotidesWithFreePrevEndingsFoundInProximity;
-    std::vector<UniqueIdInt> RNANucleotidesWithFreeNextEndingsFoundInProximity;
-    std::vector<UniqueIdInt> RNANucleotidesWithFreePrevEndingsFoundInProximity;
     std::vector<UniqueIdInt> NucleotidesFreeFoundInProximity;
     std::vector<UniqueIdInt> RNANucleotidesFreeFoundInProximity;
     std::vector<UniqueIdInt> RNANucleotidesFoundInProximity;
