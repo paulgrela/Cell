@@ -184,6 +184,8 @@ public:
     int ChosenShapeOfAtoms = 1;
     EntityIdInt DNAIdentifier{};
     EntityIdInt RNAIdentifier{};
+public:
+    bool RNAInOneParticle = true;
 };
 
 inline CellEngineConfigData CellEngineConfigDataObject;

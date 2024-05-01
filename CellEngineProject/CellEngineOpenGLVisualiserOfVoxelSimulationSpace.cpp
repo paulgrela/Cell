@@ -88,8 +88,9 @@ inline void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::SetParticleParamet
         }
         TempAtomObject.GenomeIndex = ParticleObject.GenomeIndex;
         TempAtomObject.Nucleotide = ((CellEngineUseful::IsDNAorRNA(ParticleObject.EntityId) == true) ? CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.ChainId) : '0');
-
+        #ifdef RNA_IN_ONE_PARTICLE
         TempAtomObject.SequenceStr = ParticleObject.SequenceStr;
+        #endif
     }
     CATCH("setting particle parameters to draw")
 };

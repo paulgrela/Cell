@@ -108,6 +108,7 @@ bool CellEngineNucleicAcidsComplexOperations::CutDNACrisperInChosenPlaceSpecialR
             LoggersManagerObject.Log(STREAM("CUT CRISPER inside 1"));
 
             Particle* FirstStrand = get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.AdditionalParameter1, GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first), false, false, [](const Particle*){ return true; }))->Prev;
+
             if (FirstStrand != nullptr && FirstStrand->Prev != nullptr)
             {
                 FirstStrand = FirstStrand->Prev;
@@ -265,7 +266,7 @@ bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNAContinueSpecialReacti
 
         LoggersManagerObject.Log(STREAM("Letter to find = " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.LinkedParticlesPointersList[1]->ChainId) << " NEXT " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.LinkedParticlesPointersList[1]->Next->ChainId) << " Particle Object Index = " << ParticleObject.Index << " " << ParticlesIndexesChosenForReaction[0].first));
 
-        if (RNAInOneParticle == false)
+        if (CellEngineConfigDataObject.RNAInOneParticle == false)
         {
             auto ChosenNucleotideIterator = find_if(RNANucleotidesFreeFoundInProximity.cbegin(), RNANucleotidesFreeFoundInProximity.cend(), [this, ParticleObject](const UniqueIdInt &NucleotideParticleIndex){ return &GetParticleFromIndex(NucleotideParticleIndex) != ParticleObject.LinkedParticlesPointersList[0] && GetParticleFromIndex(NucleotideParticleIndex).ChainId == ParticleObject.LinkedParticlesPointersList[1]->ChainId; });
             if (ChosenNucleotideIterator != RNANucleotidesFreeFoundInProximity.end())
@@ -291,15 +292,11 @@ bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNAContinueSpecialReacti
 
                 LoggersManagerObject.Log(STREAM("Letter to compare = " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ChosenNucleotide->ChainId) << " " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.LinkedParticlesPointersList[1]->ChainId) << " NEXT " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.LinkedParticlesPointersList[1]->Next->ChainId)));
 
-                ParticleObject.LinkedParticlesPointersList[0];//PIERWSZY
                 ParticleObject.LinkedParticlesPointersList[0]->SequenceStr += CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.LinkedParticlesPointersList[1]->ChainId);
                 LoggersManagerObject.Log(STREAM("SequenceStr = " << ParticleObject.LinkedParticlesPointersList[0]->SequenceStr));
-//                ParticleObject.SequenceStr += CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.LinkedParticlesPointersList[1]->ChainId);
-//                LoggersManagerObject.Log(STREAM("SequenceStr = " << ParticleObject.SequenceStr));
 
-//                ParticleObject.LinkedParticlesPointersList[0] = ChosenNucleotide;
                 ParticleObject.LinkedParticlesPointersList[1] = ParticleObject.LinkedParticlesPointersList[1]->Next;
-                MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(ParticleObject, *ParticleObject.LinkedParticlesPointersList[1], 2, 2, 2);
+                MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(*ParticleObject.LinkedParticlesPointersList[0], *ParticleObject.LinkedParticlesPointersList[1], 2, 2, 2);
                 vector<vector3_16> Centers;
                 EraseParticleChosenForReactionAndGetCentersForNewProductsOfReaction(*ChosenNucleotideIterator, Centers);
             }

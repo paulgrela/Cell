@@ -9,8 +9,7 @@
 
 #include "vmath.h"
 #include "CellEngineTypes.h"
-
-#define EXTENDED_RAM_MEMORY_
+#include "CellEngineConstants.h"
 
 class CellEngineAtom
 {
@@ -33,7 +32,9 @@ public:
     UniqueIdInt GenomeIndexPrev = 0;
     UniqueIdInt GenomeIndexNext = 0;
     char Nucleotide = '?';
-                    std::string SequenceStr;
+    #ifdef RNA_IN_ONE_PARTICLE
+    std::string SequenceStr;
+    #endif
     #ifdef EXTENDED_RAM_MEMORY
     float SizeXAtom{};
     float SizeYAtom{};

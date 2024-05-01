@@ -37,7 +37,7 @@ tuple<vector<ChainIdInt>, string> CellEngineNucleicAcidsChemicalReactionsInSimul
     return { TemplateSequence, TemplateSequenceStr };
 }
 
-bool CellEngineNucleicAcidsChemicalReactionsInSimulationSpace::CompareFitnessOfDNASequenceByNucleotidesLoop(ComparisonType TypeOfComparison, const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction, bool RNAInOneParticle)
+bool CellEngineNucleicAcidsChemicalReactionsInSimulationSpace::CompareFitnessOfDNASequenceByNucleotidesLoop(ComparisonType TypeOfComparison, const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction)
 {
     bool FoundSequenceNotFit = false;
 
@@ -58,12 +58,17 @@ bool CellEngineNucleicAcidsChemicalReactionsInSimulationSpace::CompareFitnessOfD
         if (TemplateSequenceStr == "RNA")
             if (RNANucleotidesFoundInProximity.empty() == false)
             {
-                if (RNAInOneParticle == false)
+                if (CellEngineConfigDataObject.RNAInOneParticle == false)
                     tie(TemplateSequence, TemplateSequenceStr) = GetNucleotidesSequenceInBothDirections(RNANucleotidesFoundInProximity, RNANucleotidesFoundInProximity.size());
                 else
                 {
                     TemplateSequenceStr = GetParticleFromIndex(*RNANucleotidesFoundInProximity.begin()).SequenceStr;
+                                                                                                                        LoggersManagerObject.Log(STREAM("AAA1" << " " << TemplateSequenceStr));
                     TemplateSequence.clear();
+
+                    for (auto &TemplateSequenceNucleotideChar: TemplateSequenceStr)
+                        TemplateSequenceNucleotideChar = CellEngineUseful::GetLetterFromChainIdForDNAorRNA(CellEngineUseful::GetPairedChainIdForDNAorRNA(CellEngineUseful::GetChainIdFromLetterForDNAorRNA(TemplateSequenceNucleotideChar)));
+
                     for (auto &TemplateSequenceNucleotideChar: TemplateSequenceStr)
                         TemplateSequence.emplace_back(CellEngineUseful::GetChainIdFromLetterForDNAorRNA(TemplateSequenceNucleotideChar));
                 }
@@ -106,7 +111,7 @@ bool CellEngineNucleicAcidsChemicalReactionsInSimulationSpace::CompareFitnessOfD
     return !FoundSequenceNotFit;
 }
 
-bool CellEngineNucleicAcidsChemicalReactionsInSimulationSpace::CompareFitnessOfRNASequenceByNucleotidesLoop(ComparisonType TypeOfComparison, const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction, bool RNAInOneParticle)
+bool CellEngineNucleicAcidsChemicalReactionsInSimulationSpace::CompareFitnessOfRNASequenceByNucleotidesLoop(ComparisonType TypeOfComparison, const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction)
 {
     bool FoundSequenceNotFit = false;
 
@@ -127,11 +132,12 @@ bool CellEngineNucleicAcidsChemicalReactionsInSimulationSpace::CompareFitnessOfR
         if (TemplateSequenceStr == "RNA")
             if (RNANucleotidesFoundInProximity.empty() == false)
             {
-                if (RNAInOneParticle == false)
+                if (CellEngineConfigDataObject.RNAInOneParticle == false)
                     tie(TemplateSequence, TemplateSequenceStr) = GetNucleotidesSequenceInBothDirections(RNANucleotidesFoundInProximity, RNANucleotidesFoundInProximity.size());
                 else
                 {
                     TemplateSequenceStr = GetParticleFromIndex(*RNANucleotidesFoundInProximity.begin()).SequenceStr;
+                    LoggersManagerObject.Log(STREAM("AAA2" << " " << TemplateSequenceStr));
                     TemplateSequence.clear();
                     for (auto &TemplateSequenceNucleotideChar: TemplateSequenceStr)
                         TemplateSequence.emplace_back(CellEngineUseful::GetChainIdFromLetterForDNAorRNA(TemplateSequenceNucleotideChar));
@@ -147,7 +153,7 @@ bool CellEngineNucleicAcidsChemicalReactionsInSimulationSpace::CompareFitnessOfR
         string NucleotidesSequenceToCompareString;
         vector<ChainIdInt> NucleotidesSequenceToCompareVector;
 
-        if (RNAInOneParticle == false)
+        if (CellEngineConfigDataObject.RNAInOneParticle == false)
             tie (ParticlePtr, ParticlePtrPrev, NucleotidesCounter, NucleotidesSequenceToCompareString, NucleotidesSequenceToCompareVector) = GetNucleotidesSequence(&Particle::Next, TemplateSequenceStr.length(), ParticleObjectForReaction, true, true, [](const Particle*){ return true; });
         else
         {

@@ -2,6 +2,7 @@
 #ifndef CELL_ENGINE_CONSTANTS_H
 #define CELL_ENGINE_CONSTANTS_H
 
-constexpr bool RNAInOneParticle = false;
+#define EXTENDED_RAM_MEMORY_
+#define RNA_IN_ONE_PARTICLE_
 
 #endif
