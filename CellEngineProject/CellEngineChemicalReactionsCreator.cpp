@@ -21,83 +21,17 @@ using namespace std;
 std::map<std::string, std::string> MappedNamesOfProteins;
 std::multimap<std::string, UnsignedInt> ParticleCountersContainerForGenerator;
 
-//class mRNAForGenerator
-//{
-//public:
-//    GeneIdInt GeneId;
-//    UnsignedInt Counter;
-//};
-//
-//class tRNAForGenerator
-//{
-//public:
-//    GeneIdInt GeneId;
-//    std::string AminoAcid;
-//    std::string NameOfUncharged;
-//    std::string NameOfCharged;
-//    GeneIdInt Synthase;
-//};
-//
-//class rRNAForGenerator
-//{
-//public:
-//    GeneIdInt GeneId;
-//    std::string Name;
-//};
-//
-//class RNApolForGenerator
-//{
-//public:
-//    GeneIdInt GeneId;
-//    std::string Name;
-//};
-//
-//std::map<std::string, mRNAForGenerator> mRNAForGeneratorContainer;
-//std::map<std::string, tRNAForGenerator> tRNAForGeneratorContainer;
-//std::map<std::string, rRNAForGenerator> rRNAForGeneratorContainer;
-//std::map<std::string, GeneIdInt> RNApolForGeneratorContainer;
-//
-//class RibosomeProteinForGenerator
-//{
-//public:
-//    GeneIdInt GeneId;
-//    std::string Name;
-//};
-//
-//class MetaboliteProteinForGenerator
-//{
-//public:
-//    GeneIdInt GeneId;
-//    std::string Name;
-//    bool CleanProductOfTranscription;
-//};
-//
-//std::map<std::string, RibosomeProteinForGenerator> RibosomeProteinForGeneratorContainer;
-//std::map<std::string, GeneIdInt> MembraneProteinForGeneratorContainer;
-//std::map<std::string, MetaboliteProteinForGenerator> MetaboliteProteinForGeneratorContainer;
-
-
-
-
-
-
-
-
-
-
-
-
-
 class ParticleData
 {
 public:
-    GeneIdInt GeneId;
+    SignedInt GeneId;
     std::string Description;
     std::string AddedParticle;
     SignedInt CleanProductOfTranscription;
+    ParticlesTypes ParticleType;
 };
 
-std::multimap<std::string, ParticleData> ParticleNameRelatedWithGene;
+std::multimap<std::string, ParticleData> ParticlesDataForGenerator;
 
 
 EntityIdInt ParticleKindId = 100000;
@@ -357,148 +291,6 @@ void SetNumberOfParticlesForParticlesTypesFromParsedStructure(const vector<vecto
 }
 
 
-//class mRNAForGenerator
-//{
-//public:
-//    GeneIdInt GeneId;
-//    UnsignedInt Counter;
-//};
-
-//void GetDataFormRNAFromParsedCSVStructure(const vector<vector<string>>& ParsedCSVFileStructure, const UnsignedInt StartRow, const UnsignedInt EndRow, const UnsignedInt NameCol, const UnsignedInt NumberCol, const bool FromConcentration, const string& NamePrefix, const UnsignedInt s1, const UnsignedInt s2)
-//{
-//    try
-//    {
-//        for (UnsignedInt Row = 0; Row <= ParsedCSVFileStructure.size(); Row++)
-//            if (Row >= StartRow && Row <= EndRow)
-//                mRNAForGeneratorContainer.insert(make_pair(NamePrefix + (s1 != 0 ? ParsedCSVFileStructure[Row][NameCol].substr(s1, s2) : ParsedCSVFileStructure[Row][NameCol]), (FromConcentration == false ? stoi(ParsedCSVFileStructure[Row][NumberCol]) : UnsignedInt(stold(ParsedCSVFileStructure[Row][NumberCol]) * AvogardoConstant * CapacityOfCell))));
-//    }
-//    CATCH("getting number of mrna particles from parsed csv structure")
-//}
-
-//class tRNAForGenerator
-//{
-//public:
-//    GeneIdInt GeneId;
-//    std::string AminoAcid;
-//    std::string NameOfUncharged;
-//    std::string NameOfCharged;
-//    GeneIdInt Synthase;
-//};
-
-//void GetDataFortRNAFromParsedCSVStructure(const vector<vector<string>>& ParsedCSVFileStructure, const UnsignedInt StartRow, const UnsignedInt EndRow, const string& NamePrefix)
-//{
-//    try
-//    {
-//        for (UnsignedInt Row = 0; Row <= ParsedCSVFileStructure.size(); Row++)
-//            if (Row >= StartRow && Row <= EndRow)
-//            {
-//                GeneIdInt GeneId = stoi(ParsedCSVFileStructure[Row][2].substr(7, 4));
-//                GeneIdInt SynthaseId = stoi(ParsedCSVFileStructure[Row][4].substr(10, 4));
-//                tRNAForGeneratorContainer.insert(make_pair(NamePrefix + "JCVISYN3A" + ParsedCSVFileStructure[Row][2].substr(7, 4), tRNAForGenerator{ GeneId, ParsedCSVFileStructure[Row][3], ParsedCSVFileStructure[Row][0], ParsedCSVFileStructure[Row][1], SynthaseId }));
-//            }
-//    }
-//    CATCH("getting number of trna particles from parsed csv structure")
-//}
-
-//class rRNAForGenerator
-//{
-//public:
-//    GeneIdInt GeneId;
-//    std::string Name;
-//};
-
-//void GetDataForrRNAFromParsedCSVStructure(const vector<vector<string>>& ParsedCSVFileStructure, const UnsignedInt StartRow, const UnsignedInt EndRow, const string& NamePrefix)
-//{
-//    try
-//    {
-//        for (UnsignedInt Row = 0; Row <= ParsedCSVFileStructure.size(); Row++)
-//            if (Row >= StartRow && Row <= EndRow)
-//            {
-//                GeneIdInt GeneId = stoi(ParsedCSVFileStructure[Row][1].substr(10, 4));
-//                rRNAForGeneratorContainer.insert(make_pair(NamePrefix + ParsedCSVFileStructure[Row][1], rRNAForGenerator{ GeneId, ParsedCSVFileStructure[Row][0] }));
-//            }
-//    }
-//    CATCH("getting number of rrna particles from parsed csv structure")
-//}
-
-//std::map<std::string, GeneIdInt> RNApolForGeneratorContainer;
-
-//void GetDataForRNApolFromParsedCSVStructure(const vector<vector<string>>& ParsedCSVFileStructure, const UnsignedInt StartRow, const UnsignedInt EndRow, const string& NamePrefix)
-//{
-//    try
-//    {
-//        for (UnsignedInt Row = 0; Row <= ParsedCSVFileStructure.size(); Row++)
-//            if (Row >= StartRow && Row <= EndRow)
-//            {
-//                GeneIdInt GeneId = stoi(ParsedCSVFileStructure[Row][1].substr(10, 4));
-//                RNApolForGeneratorContainer.insert(make_pair(NamePrefix + ParsedCSVFileStructure[Row][1], stoi(ParsedCSVFileStructure[Row][1].substr(8, 4))));
-//            }
-//    }
-//    CATCH("getting number of particles from parsed csv structure")
-//}
-
-
-
-
-//class RibosomeProteinForGenerator
-//{
-//public:
-//    GeneIdInt GeneId;
-//    std::string Name;
-//};
-
-//void SetNameOfRibosomeProteinsFromParsedStructure(const vector<vector<string>>& ParsedCSVFileStructure, const UnsignedInt StartRow, const UnsignedInt EndRow, const string& NamePrefix)
-//{
-//    try
-//    {
-//        for (UnsignedInt Row = 0; Row <= ParsedCSVFileStructure.size(); Row++)
-//            if (Row >= StartRow && Row <= EndRow)
-//            {
-//                GeneIdInt GeneId = stoi(ParsedCSVFileStructure[Row][1].substr(7, 4));
-//                RibosomeProteinForGeneratorContainer.insert(make_pair(NamePrefix + ParsedCSVFileStructure[Row][1].substr(7, 4), RibosomeProteinForGenerator{ GeneId, ParsedCSVFileStructure[Row][0] }));
-//            }
-//    }
-//    CATCH("setting number of particles for particles types from parsed structure")
-//}
-
-//std::map<std::string, GeneIdInt> MembraneProteinForGeneratorContainer;
-
-//void SetNameOfMembraneProteinsFromParsedStructure(const vector<vector<string>>& ParsedCSVFileStructure, const UnsignedInt StartRow, const UnsignedInt EndRow, const string& NamePrefix)
-//{
-//    try
-//    {
-//        for (UnsignedInt Row = 0; Row <= ParsedCSVFileStructure.size(); Row++)
-//            if (Row >= StartRow && Row <= EndRow)
-//                MembraneProteinForGeneratorContainer.insert(make_pair(NamePrefix + ParsedCSVFileStructure[Row][1].substr(7, 4), stoi(ParsedCSVFileStructure[Row][1].substr(7, 4))));
-//    }
-//    CATCH("setting number of particles for particles types from parsed structure")
-//}
-
-//class MetaboliteProteinForGenerator
-//{
-//public:
-//    GeneIdInt GeneId;
-//    std::string Name;
-//    bool CleanProductOfTranscription;
-//};
-//
-
-//std::map<std::string, MetaboliteProteinForGenerator> MetaboliteProteinForGeneratorContainer;
-
-//void SetNameOfMetaboliteProteinsFromParsedStructure(const vector<vector<string>>& ParsedCSVFileStructure, const UnsignedInt StartRow, const UnsignedInt EndRow, const string& NamePrefix)
-//{
-//    try
-//    {
-//        for (UnsignedInt Row = 0; Row <= ParsedCSVFileStructure.size(); Row++)
-//            if (Row >= StartRow && Row <= EndRow)
-//            {
-//                GeneIdInt GeneId = stoi(ParsedCSVFileStructure[Row][1].substr(7, 4));
-//                bool CleanProductOfTranscription = stoi(ParsedCSVFileStructure[Row][2]);
-//                MetaboliteProteinForGeneratorContainer.insert(make_pair(NamePrefix + ParsedCSVFileStructure[Row][1].substr(7, 4), MetaboliteProteinForGenerator{ GeneId, ParsedCSVFileStructure[Row][0], CleanProductOfTranscription }));
-//            }
-//    }
-//    CATCH("setting number of particles for particles types from parsed structure")
-//}
 
 void PrintCountersForAllParticlesTypes()
 {
@@ -507,11 +299,9 @@ void PrintCountersForAllParticlesTypes()
         for (auto ParticleIterator = ParticleCountersContainerForGenerator.begin(); ParticleIterator != ParticleCountersContainerForGenerator.end(); ParticleIterator = ParticleCountersContainerForGenerator.upper_bound(ParticleIterator->first))
         {
             string CounterStr;
-
             auto Range = ParticleCountersContainerForGenerator.equal_range(ParticleIterator->first);
             for (auto& CounterIterator = Range.first; CounterIterator != Range.second; CounterIterator++)
                 CounterStr += (to_string(CounterIterator->second) + " ");
-
             LoggersManagerObject.Log(STREAM(ParticleIterator->first << " " << CounterStr));
         }
     }
@@ -547,24 +337,61 @@ void RemapProteinsNames(const string& ParticlesDirectory)
 
 
 
-void ParticlesDataFromParsedCSVStructure(const vector<vector<string>>& ParsedCSVFileStructure, const UnsignedInt StartRow, const UnsignedInt EndRow, const UnsignedInt NameCol, const UnsignedInt GeneCol, const SignedInt AddedParticleCol, const SignedInt CleanTranscriptionProductCol, const string& NamePrefix, const string& Description, const UnsignedInt s1, const UnsignedInt s2)
+void ParticlesDataFromParsedCSVStructure(const vector<vector<string>>& ParsedCSVFileStructure, const UnsignedInt StartRow, const UnsignedInt EndRow, const UnsignedInt NameCol, const SignedInt GeneCol, const SignedInt AddedParticleCol, const SignedInt CleanTranscriptionProductCol, const string& NamePrefix, const string& Description, const UnsignedInt s1, const UnsignedInt s2, const ParticlesTypes ParticleType)
 {
     try
     {
         for (UnsignedInt Row = 0; Row <= ParsedCSVFileStructure.size(); Row++)
             if (Row >= StartRow && Row <= EndRow)
             {
-                GeneIdInt GeneId = stoi(ParsedCSVFileStructure[Row][GeneCol].substr(s1, s2));
+                SignedInt GeneId = -1;
                 string AddedParticleStr;
                 SignedInt CleanTranscriptionProduct = -1;
+                if (GeneCol != -1)
+                    GeneId = stoi(ParsedCSVFileStructure[Row][GeneCol].substr(s1, s2));
                 if (AddedParticleCol != -1)
                     AddedParticleStr = ParsedCSVFileStructure[Row][AddedParticleCol];
                 if (CleanTranscriptionProductCol != -1)
                     CleanTranscriptionProduct = stoi(ParsedCSVFileStructure[Row][CleanTranscriptionProductCol]);
-                ParticleNameRelatedWithGene.insert(make_pair(NamePrefix + ParsedCSVFileStructure[Row][NameCol], ParticleData{ GeneId, Description, AddedParticleStr, CleanTranscriptionProduct }));
+                ParticlesDataForGenerator.insert(make_pair(NamePrefix + ParsedCSVFileStructure[Row][NameCol], ParticleData{GeneId, Description, AddedParticleStr, CleanTranscriptionProduct, ParticleType }));
             }
     }
     CATCH("getting particles data from parsed csv structure")
+}
+
+std::string ConvertParticleTypeToString(ParticlesTypes ParticleType)
+{
+    switch (ParticleType)
+    {
+        case ParticlesTypes::Empty : return "Empty";
+        case ParticlesTypes::Basic : return "Basic";
+        case ParticlesTypes::Lipid : return "Lipid";
+        case ParticlesTypes::tRNA : return "tRNA";
+        case ParticlesTypes::mRNA : return "mRNA";
+        case ParticlesTypes::rRNA : return "rRNA";
+        case ParticlesTypes::RNAPolymeraseProtein : return "RNAPolymeraseProtein";
+        case ParticlesTypes::PolymeraseProtein : return "PolymeraseProtein";
+        case ParticlesTypes::RibosomesProtein : return "RibosomesProtein";
+        case ParticlesTypes::MembraneProtein : return "MembraneProtein";
+        case ParticlesTypes::OtherProtein : return "OtherProtein";
+        case ParticlesTypes::Other : return "Other";
+        default : return "NONE";
+    }
+};
+
+void PrintAllParticlesData()
+{
+    try
+    {
+        for (auto ParticleIterator = ParticlesDataForGenerator.begin(); ParticleIterator != ParticlesDataForGenerator.end(); ParticleIterator = ParticlesDataForGenerator.upper_bound(ParticleIterator->first))
+        {
+            LoggersManagerObject.Log(STREAM("P NAME = " << ParticleIterator->first));
+            auto Range = ParticlesDataForGenerator.equal_range(ParticleIterator->first);
+            for (auto& CounterIterator = Range.first; CounterIterator != Range.second; CounterIterator++)
+                LoggersManagerObject.Log(STREAM(string("P GENE = " + string(CounterIterator->second.GeneId != -1 ? "JCVISYN3A_" + to_string(CounterIterator->second.GeneId) : "NoGene") + " TYPE = " + ConvertParticleTypeToString(CounterIterator->second.ParticleType) + " D = #" + CounterIterator->second.Description + "# Added = #" + CounterIterator->second.AddedParticle + "# CLEAN PRODUCT = #" + to_string(CounterIterator->second.CleanProductOfTranscription) + "#")));
+        }
+    }
+    CATCH("printing all particles data")
 }
 
 void ReadCSVFiles(bool Read, const string& ParticlesDirectory)
@@ -575,19 +402,22 @@ void ReadCSVFiles(bool Read, const string& ParticlesDirectory)
         {
             GetNumberOfParticlesFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("proteomics.csv"), ','), 2, 429, 0, 21, false, "", 0, 0);
             RemapProteinsNames(ParticlesDirectory);
+
             GetNumberOfParticlesFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("Escher_metData.csv"), ','), 1, 240, 0, 1, true, "M_", 0, 0);
             GetNumberOfParticlesFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("mrna_counts.csv"), ','), 1, 454, 1, 2, true, "mrna_", 0, 0);
             PrintCountersForAllParticlesTypes();
 
-            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("trna_metabolites_synthase.csv"), ','), 1, 29, 0, 2, 3, -1, "", "_uncharged_trna_", 7, 4);
-            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("trna_metabolites_synthase.csv"), ','), 1, 29, 1, 2, 3, -1, "", "_charged_trna_", 7, 4);
-            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("mrna_counts.csv"), ','), 1, 454, 1, 1, -1, -1, "mrna_", "", 10, 4);
-            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("rrna_metabolites.csv"), ','), 1, 6, 0, 1, -1, -1, "polymerase_rna_", "", 10, 4);
+            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("Escher_metData.csv"), ','), 1, 240, 0, -1, -1, -1, "M_", "basic", 0, 0, ParticlesTypes::Basic);
 
-            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("polymerase_rna_proteins.csv"), ',' ), 1, 4, 0, 1, -1, -1, "", "", 7, 4);
-            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("ribosomes_proteins_metabolites.csv"), ','), 1, 48, 0, 1, -1, -1, "JCVISYN3A_", "", 7, 4);
-            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("membrane_proteins_metabolites.csv"), ','), 1, 94, 0, 1, -1, -1, "JCVISYN3A_", "", 7, 4);
-            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("proteins_metabolites_frac.csv"), ','), 1, 15, 0, 1, -1, 2, "JCVISYN3A_", "", 7, 4);
+            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("trna_metabolites_synthase.csv"), ','), 1, 29, 0, 2, 3, -1, "", "_uncharged_trna_", 7, 4, ParticlesTypes::tRNA);
+            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("trna_metabolites_synthase.csv"), ','), 1, 29, 1, 2, 3, -1, "", "_charged_trna_", 7, 4, ParticlesTypes::tRNA);
+            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("mrna_counts.csv"), ','), 1, 454, 1, 1, -1, -1, "mrna_", "", 10, 4, ParticlesTypes::mRNA);
+            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("rrna_metabolites.csv"), ','), 1, 6, 0, 1, -1, -1, "rrna_", "", 10, 4, ParticlesTypes::rRNA);
+            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("polymerase_rna_proteins.csv"), ','), 1, 4, 0, 1, -1, -1, "", "", 7, 4, ParticlesTypes::RNAPolymeraseProtein);
+
+            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("ribosomes_proteins_metabolites.csv"), ','), 1, 48, 0, 1, -1, -1, "JCVISYN3A_", "", 7, 4, ParticlesTypes::RibosomesProtein);
+            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("membrane_proteins_metabolites.csv"), ','), 1, 94, 0, 1, -1, -1, "JCVISYN3A_", "", 7, 4, ParticlesTypes::MembraneProtein);
+            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("proteins_metabolites_frac.csv"), ','), 1, 15, 0, 1, -1, 2, "JCVISYN3A_", "", 7, 4, ParticlesTypes::OtherProtein);
         }
     }
     CATCH("reading tsv files")
@@ -617,13 +447,15 @@ void CellEngineChemicalReactionsCreator::ReadChemicalReactionsFromFile()
         string ParticlesDirectory = string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("particles") + OS_DIR_SEP;
 
         ReadCSVFiles(true, ParticlesDirectory);
+        PrintAllParticlesData();
+        getchar();
 
-//        ReadTSVFiles(false, ParticlesDirectory + string("tsv") + OS_DIR_SEP);
+        ReadTSVFiles(false, ParticlesDirectory + string("tsv") + OS_DIR_SEP);
 
         string ReactionsDirectory = string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("reactions") + OS_DIR_SEP;
 
-//        ReadReactionsFromXMLFile(ReactionsDirectory + string("iMB155.xml"));
-//        ReadReactionsFromJSONFile(ReactionsDirectory + string("iMB155.json"));
+        ReadReactionsFromXMLFile(ReactionsDirectory + string("iMB155.xml"));
+        ReadReactionsFromJSONFile(ReactionsDirectory + string("iMB155.json"));
 
         LoggersManagerObject.Log(STREAM("REACTIONS READ FROM FILE"));
         getchar();

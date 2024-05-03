@@ -119,7 +119,7 @@ struct ParticleKindGraphicData
     std::string NameFromDataFile;
 };
 
-enum class ParticleDestinationTypes : UnsignedInt
+enum class ParticlesTypes : UnsignedInt
 {
     Empty = 0,
     Basic = 1,
@@ -127,10 +127,12 @@ enum class ParticleDestinationTypes : UnsignedInt
     tRNA = 3,
     mRNA = 4,
     rRNA = 5,
-    PolymeraseProtein = 6,
-    RibosomesProtein = 7,
-    MembraneProtein = 8,
-    Other = 9
+    RNAPolymeraseProtein = 6,
+    PolymeraseProtein = 7,
+    RibosomesProtein = 8,
+    MembraneProtein = 9,
+    OtherProtein = 10,
+    Other = 11
 };
 
 class Gene
@@ -157,7 +159,7 @@ public:
     ElectricChargeType ElectricCharge{};
     std::string Compartment{};
 public:
-    ParticleDestinationTypes ProteinDestinationType = ParticleDestinationTypes::Empty;
+    ParticlesTypes ProteinDestinationType = ParticlesTypes::Empty;
 public:
     std::vector<vector3_16> ListOfVoxels;
     UnsignedInt XSizeDiv2{}, YSizeDiv2{}, ZSizeDiv2{};
