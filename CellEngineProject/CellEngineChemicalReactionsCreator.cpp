@@ -219,13 +219,14 @@ void PrintGenesFile()
     {
         for (const auto& GeneObject : ParticlesKindsManagerObject.Genes)
         {
-            LoggersManagerObject.Log(STREAM("Gene = " << GeneObject.second.NumId));
-            LoggersManagerObject.Log(STREAM("Gene = " << GeneObject.second.StrId));
-            LoggersManagerObject.Log(STREAM("Gene = " << GeneObject.second.Description));
-            LoggersManagerObject.Log(STREAM("Gene = " << GeneObject.second.ProteinId));
-            LoggersManagerObject.Log(STREAM("Gene = " << GeneObject.second.StartPosInGenome));
-            LoggersManagerObject.Log(STREAM("Gene = " << GeneObject.second.EndPosInGenome));
-            LoggersManagerObject.Log(STREAM("Gene = " << GeneObject.second.Sequence));
+            LoggersManagerObject.Log(STREAM("Gene NumId = " << GeneObject.second.NumId));
+            LoggersManagerObject.Log(STREAM("Gene StrId = " << GeneObject.second.StrId));
+            LoggersManagerObject.Log(STREAM("Gene Description = " << GeneObject.second.Description));
+            LoggersManagerObject.Log(STREAM("Gene ProteinId = " << GeneObject.second.ProteinId));
+            LoggersManagerObject.Log(STREAM("Gene Start Position in Genome= " << GeneObject.second.StartPosInGenome));
+            LoggersManagerObject.Log(STREAM("Gene End Position in Genome = " << GeneObject.second.EndPosInGenome));
+            LoggersManagerObject.Log(STREAM("Gene Sequence = " << GeneObject.second.Sequence));
+            LoggersManagerObject.Log(STREAM("Gene END" << endl));
         }
         LoggersManagerObject.Log(STREAM("Gene Size = " << ParticlesKindsManagerObject.Genes.size()));
     }
@@ -267,7 +268,7 @@ vector<vector<string>> ReadAndParseCSVFile(const string& FileName, const char Se
     return ParsedCSVFileStructure;
 };
 
-void RemapProteinsNames1(const string& ParticlesDirectory)
+void RemapProteinsNames(const string& ParticlesDirectory)
 {
     try
     {
@@ -294,6 +295,18 @@ void RemapProteinsNames1(const string& ParticlesDirectory)
     CATCH("remapping protein names 1")
 }
 
+void GetRemappingNamesForProteins(const string& ParticlesDirectory)
+{
+    try
+    {
+        auto ParsedCSVFileStructure = ReadAndParseCSVFile(ParticlesDirectory + string("JCVI-syn3A quantitative proteomics.csv"), ',');
+        for (UnsignedInt Row = 0; Row <= ParsedCSVFileStructure.size(); Row++)
+            if (Row >= 2 && Row <= 430)
+                MappedNamesOfProteins.insert(make_pair(ParsedCSVFileStructure[Row][0], ParsedCSVFileStructure[Row][1]));
+        LoggersManagerObject.Log(STREAM("MP SIZE = " << MappedNamesOfProteins.size()));
+    }
+    CATCH("get remapping names for proteins")
+}
 
 
 
@@ -304,6 +317,7 @@ void ParticlesDataFromParsedCSVStructure(const vector<vector<string>>& ParsedCSV
         for (UnsignedInt Row = 0; Row <= ParsedCSVFileStructure.size(); Row++)
             if (Row >= StartRow && Row <= EndRow)
             {
+                string Name;
                 UnsignedInt Counter;
                 SignedInt GeneId = -1;
                 string AddedParticleStr;
@@ -318,7 +332,14 @@ void ParticlesDataFromParsedCSVStructure(const vector<vector<string>>& ParsedCSV
                     Counter = (FromConcentration == false ? stoi(ParsedCSVFileStructure[Row][CounterCol]) : UnsignedInt(stold(ParsedCSVFileStructure[Row][CounterCol]) * AvogardoConstant * CapacityOfCell));
                 else
                     Counter = CounterParam;
-                ParticlesDataForGenerator.insert(make_pair(NamePrefix + ParsedCSVFileStructure[Row][NameCol], ParticleData{ GeneId, Description, AddedParticleStr, CleanTranscriptionProduct, ParticleType, IsProtein, Counter }));
+                Name = ParsedCSVFileStructure[Row][NameCol];
+                auto NameIter = MappedNamesOfProteins.find(ParsedCSVFileStructure[Row][NameCol]);
+                if (NameIter != MappedNamesOfProteins.end())
+                {
+                    Name = NameIter->second;
+                    GeneId = stoi(Name.substr(10, 4));
+                }
+                ParticlesDataForGenerator.insert(make_pair(NamePrefix + Name, ParticleData{ GeneId, Description, AddedParticleStr, CleanTranscriptionProduct, ParticleType, IsProtein, Counter }));
             }
     }
     CATCH("getting particles data from parsed csv structure")
@@ -366,8 +387,10 @@ void ReadCSVFiles(bool Read, const string& ParticlesDirectory)
     {
         if (Read == true)
         {
+            GetRemappingNamesForProteins(ParticlesDirectory);
+
             ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("proteomics.csv"), ','), 2, 429, 0, -1, -1, -1, 21, false, true, 0,"", "Protein From Gene", 0, 0, ParticlesTypes::OtherProtein);
-            RemapProteinsNames1(ParticlesDirectory);
+
             ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("Escher_metData.csv"), ','), 1, 240, 0, -1, -1, -1, 1, true, false, 0,"M_", "basic", 0, 0, ParticlesTypes::Basic);
 
             ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("trna_metabolites_synthase.csv"), ','), 1, 29, 0, 2, 3, -1, -1, false, false, 10, "", "_uncharged_trna_", 7, 4, ParticlesTypes::tRNA);
@@ -376,9 +399,9 @@ void ReadCSVFiles(bool Read, const string& ParticlesDirectory)
             ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("rrna_metabolites.csv"), ','), 1, 6, 0, 1, -1, -1, -1, false, false, 10, "rrna_", "", 10, 4, ParticlesTypes::rRNA);
             ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("polymerase_rna_proteins.csv"), ','), 1, 4, 0, 1, -1, -1, -1, false, false, 10, "", "", 7, 4, ParticlesTypes::RNAPolymeraseProtein);
 
-            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("ribosomes_proteins_metabolites.csv"), ','), 1, 48, 0, 1, -1, -1, -1, false, true, 10, "JCVISYN3A_", "", 7, 4, ParticlesTypes::RibosomesProtein);
-            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("membrane_proteins_metabolites.csv"), ','), 1, 94, 0, 1, -1, -1, -1, false, true, 10, "JCVISYN3A_", "", 7, 4, ParticlesTypes::MembraneProtein);
-            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("proteins_metabolites_frac.csv"), ','), 1, 15, 0, 1, -1, 2, -1, false, true, 10, "JCVISYN3A_", "", 7, 4, ParticlesTypes::OtherProtein);
+            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("ribosomes_proteins_metabolites.csv"), ','), 1, 48, 0, 1, -1, -1, -1, false, true, 10, "", "", 7, 4, ParticlesTypes::RibosomesProtein);
+            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("membrane_proteins_metabolites.csv"), ','), 1, 94, 0, 1, -1, -1, -1, false, true, 10, "", "", 7, 4, ParticlesTypes::MembraneProtein);
+            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("proteins_metabolites_frac.csv"), ','), 1, 15, 0, 1, -1, 2, -1, false, true, 10, "", "", 7, 4, ParticlesTypes::OtherProtein);
         }
     }
     CATCH("reading tsv files")
