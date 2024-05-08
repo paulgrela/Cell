@@ -147,6 +147,18 @@ public:
     std::string Sequence;
 };
 
+class ParticleKindSpecialData
+{
+public:
+    SignedInt GeneId{ -1 };
+    std::string Description;
+    std::string AddedParticle;
+    SignedInt CleanProductOfTranscription{ false };
+    ParticlesTypes ParticleType = ParticlesTypes::Empty;
+    bool IsProtein{ false };
+    UnsignedInt CounterAtStartOfSimulation{ 0 };
+};
+
 class ParticleKind
 {
 public:
@@ -154,12 +166,13 @@ public:
     std::string Id;
     std::string Name;
     std::string Formula;
-    GeneIdInt GeneId{};
-    UnsignedInt Counter{};
     ElectricChargeType ElectricCharge{};
     std::string Compartment{};
 public:
-    ParticlesTypes ProteinDestinationType = ParticlesTypes::Empty;
+    std::vector<ParticleKindSpecialData> ParticleKindSpecialDataSector;
+    GeneIdInt GeneId{};
+public:
+    UnsignedInt Counter{};
 public:
     std::vector<vector3_16> ListOfVoxels;
     UnsignedInt XSizeDiv2{}, YSizeDiv2{}, ZSizeDiv2{};

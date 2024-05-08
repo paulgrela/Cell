@@ -20,23 +20,30 @@ using namespace std;
 
 std::map<std::string, std::string> MappedNamesOfProteins;
 
-class ParticleData
-{
-public:
-    SignedInt GeneId;
-    std::string Description;
-    std::string AddedParticle;
-    SignedInt CleanProductOfTranscription;
-    ParticlesTypes ParticleType;
-    bool IsProtein;
-    UnsignedInt Counter;
-};
-
-std::multimap<std::string, ParticleData> ParticlesDataForGenerator;
+std::multimap<std::string, ParticleKindSpecialData> ParticlesDataForGenerator;
 
 
 EntityIdInt ParticleKindId = 100000;
 
+std::string ConvertParticleTypeToString(ParticlesTypes ParticleType)
+{
+    switch (ParticleType)
+    {
+        case ParticlesTypes::Empty : return "Empty";
+        case ParticlesTypes::Basic : return "Basic";
+        case ParticlesTypes::Lipid : return "Lipid";
+        case ParticlesTypes::tRNA : return "tRNA";
+        case ParticlesTypes::mRNA : return "mRNA";
+        case ParticlesTypes::rRNA : return "rRNA";
+        case ParticlesTypes::RNAPolymeraseProtein : return "RNAPolymeraseProtein";
+        case ParticlesTypes::PolymeraseProtein : return "PolymeraseProtein";
+        case ParticlesTypes::RibosomesProtein : return "RibosomesProtein";
+        case ParticlesTypes::MembraneProtein : return "MembraneProtein";
+        case ParticlesTypes::OtherProtein : return "OtherProtein";
+        case ParticlesTypes::Other : return "Other";
+        default : return "NONE";
+    }
+};
 
 void ReadReactionsFromJSONFile(const string& FileName)
 {
@@ -96,7 +103,13 @@ void ReadReactionsFromXMLFile(const string& FileName)
                 LoggersManagerObject.Log(STREAM("XML NUMBER OF TYPES OF PARTICLES = " << ReactionsPropertyTreeXMLTreeElement.second.size()));
                 for (const auto& ReactionsPropertyTreeXMLTreeElementParticle : ReactionsPropertyTreeXMLTreeElement.second)
                 {
-                    ParticlesKindsManagerObject.AddParticleKind({ ParticleKindId, ReactionsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.id"), ReactionsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.name"), ReactionsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:chemicalFormula"), 0, 0, ReactionsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.compartment"), 0 });
+                    auto IdStr = ReactionsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.id");
+                    ParticlesKindsManagerObject.AddParticleKind({ ParticleKindId, IdStr, ReactionsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.name"), ReactionsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:chemicalFormula"), 0, 0, ReactionsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.compartment"), 0 });
+
+                    auto ParticlesDataForGeneratorRange = ParticlesDataForGenerator.equal_range(IdStr);
+                    for (auto& ParticleDataForGeneratorIterator = ParticlesDataForGeneratorRange.first; ParticleDataForGeneratorIterator != ParticlesDataForGeneratorRange.second; ParticleDataForGeneratorIterator++)
+                        ParticlesKindsManagerObject.GetParticleKind(ParticleKindId).ParticleKindSpecialDataSector.emplace_back(ParticleDataForGeneratorIterator->second);
+
                     ParticleKindId++;
                     LoggersManagerObject.Log(STREAM("PARTICLE = " << ReactionsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.id") << " " << ReactionsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.name") << " " << ReactionsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.compartment") << " " << ReactionsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:charge") << " " << ReactionsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:chemicalFormula")));
                 }
@@ -110,6 +123,11 @@ void ReadReactionsFromXMLFile(const string& FileName)
                     GeneIdInt GeneId = stoi(ProteinsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:id").substr(9, 4));
                     string ProteinName = "JCVISYN3A_" + ProteinsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:id").substr(9, 4);
                     ParticlesKindsManagerObject.AddParticleKind({ ParticleKindId, ProteinName, "", "", GeneId, 0, "c", 10 });
+
+                    auto ParticlesDataForGeneratorRange = ParticlesDataForGenerator.equal_range(ProteinName);
+                    for (auto& ParticleDataForGeneratorIterator = ParticlesDataForGeneratorRange.first; ParticleDataForGeneratorIterator != ParticlesDataForGeneratorRange.second; ParticleDataForGeneratorIterator++)
+                        ParticlesKindsManagerObject.GetParticleKind(ParticleKindId).ParticleKindSpecialDataSector.emplace_back(ParticleDataForGeneratorIterator->second);
+
                     ParticleKindId++;
                     LoggersManagerObject.Log(STREAM("PARTICLE = " << ProteinsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:id") << " " << ProteinsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:name") << " " << ProteinsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:label")));
                 }
@@ -155,6 +173,33 @@ void ReadReactionsFromXMLFile(const string& FileName)
     }
     CATCH("reading reactions from xml file")
 }
+
+void PrintAllParticleKinds()
+{
+    try
+    {
+        for (const auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
+        {
+            LoggersManagerObject.Log(STREAM("PARTICLE = " << ParticleKindObject.second.EntityId << " " << ParticleKindObject.second.Id << " " << ParticleKindObject.second.Name << " " << ParticleKindObject.second.Formula << " " << ParticleKindObject.second.ElectricCharge));
+            for (const auto& ParticleKindParticleKindSpecialDataSectorObject : ParticleKindObject.second.ParticleKindSpecialDataSector)
+                LoggersManagerObject.Log(STREAM(string("P GENE = " + string(ParticleKindParticleKindSpecialDataSectorObject.GeneId != -1 ? "JCVISYN3A_" + to_string(ParticleKindParticleKindSpecialDataSectorObject.GeneId) : "NoGene") + " TYPE = " + ConvertParticleTypeToString(ParticleKindParticleKindSpecialDataSectorObject.ParticleType) + " D = #" +ParticleKindParticleKindSpecialDataSectorObject.Description + "# Added = #" + ParticleKindParticleKindSpecialDataSectorObject.AddedParticle + "# CLEAN PRODUCT = #" + to_string(ParticleKindParticleKindSpecialDataSectorObject.CleanProductOfTranscription) + "# COUNTER = " + to_string(ParticleKindParticleKindSpecialDataSectorObject.CounterAtStartOfSimulation))));                ;
+        }
+    }
+    CATCH("printing all particle kinds")
+};
+
+void CheckHowManyParticleDataForGeneratorIsNotInParticleKinds()
+{
+    try
+    {
+        for (auto ParticleIterator = ParticlesDataForGenerator.begin(); ParticleIterator != ParticlesDataForGenerator.end(); ParticleIterator = ParticlesDataForGenerator.upper_bound(ParticleIterator->first))
+        {
+            if (ParticlesKindsManagerObject.GetParticleKindFromStrId(ParticleIterator->first).has_value() == false)
+                LoggersManagerObject.Log(STREAM("LACKING in ParticleKind is = " << ParticleIterator->first));
+        }
+    }
+    CATCH("checking how many particle data for generator in not in particle kinds")
+};
 
 void ReadAndParseGenesFile(const string& FileName)
 {
@@ -278,7 +323,7 @@ void RemapProteinsNames(const string& ParticlesDirectory)
                 MappedNamesOfProteins.insert(make_pair(ParsedCSVFileStructure[Row][0], ParsedCSVFileStructure[Row][1]));
         LoggersManagerObject.Log(STREAM("MP SIZE = " << MappedNamesOfProteins.size()));
 
-        vector<pair<string, ParticleData>> TempVectorForParticleContainerKeys;
+        vector<pair<string, ParticleKindSpecialData>> TempVectorForParticleContainerKeys;
         copy(ParticlesDataForGenerator.begin(), ParticlesDataForGenerator.end(), back_inserter(TempVectorForParticleContainerKeys));
 
         for (auto& ParticleObject : TempVectorForParticleContainerKeys)
@@ -318,7 +363,7 @@ void ParticlesDataFromParsedCSVStructure(const vector<vector<string>>& ParsedCSV
             if (Row >= StartRow && Row <= EndRow)
             {
                 string Name;
-                UnsignedInt Counter;
+                UnsignedInt CounterAtStartOfSimulation;
                 SignedInt GeneId = -1;
                 string AddedParticleStr;
                 SignedInt CleanTranscriptionProduct = -1;
@@ -329,9 +374,9 @@ void ParticlesDataFromParsedCSVStructure(const vector<vector<string>>& ParsedCSV
                 if (CleanTranscriptionProductCol != -1)
                     CleanTranscriptionProduct = stoi(ParsedCSVFileStructure[Row][CleanTranscriptionProductCol]);
                 if(CounterCol != -1)
-                    Counter = (FromConcentration == false ? stoi(ParsedCSVFileStructure[Row][CounterCol]) : UnsignedInt(stold(ParsedCSVFileStructure[Row][CounterCol]) * AvogardoConstant * CapacityOfCell));
+                    CounterAtStartOfSimulation = (FromConcentration == false ? stoi(ParsedCSVFileStructure[Row][CounterCol]) : UnsignedInt(stold(ParsedCSVFileStructure[Row][CounterCol]) * AvogardoConstant * CapacityOfCell));
                 else
-                    Counter = CounterParam;
+                    CounterAtStartOfSimulation = CounterParam;
                 Name = ParsedCSVFileStructure[Row][NameCol];
                 auto NameIter = MappedNamesOfProteins.find(ParsedCSVFileStructure[Row][NameCol]);
                 if (NameIter != MappedNamesOfProteins.end())
@@ -339,31 +384,11 @@ void ParticlesDataFromParsedCSVStructure(const vector<vector<string>>& ParsedCSV
                     Name = NameIter->second;
                     GeneId = stoi(Name.substr(10, 4));
                 }
-                ParticlesDataForGenerator.insert(make_pair(NamePrefix + Name, ParticleData{ GeneId, Description, AddedParticleStr, CleanTranscriptionProduct, ParticleType, IsProtein, Counter }));
+                ParticlesDataForGenerator.insert(make_pair(NamePrefix + Name, ParticleKindSpecialData{GeneId, Description, AddedParticleStr, CleanTranscriptionProduct, ParticleType, IsProtein, CounterAtStartOfSimulation }));
             }
     }
     CATCH("getting particles data from parsed csv structure")
 }
-
-std::string ConvertParticleTypeToString(ParticlesTypes ParticleType)
-{
-    switch (ParticleType)
-    {
-        case ParticlesTypes::Empty : return "Empty";
-        case ParticlesTypes::Basic : return "Basic";
-        case ParticlesTypes::Lipid : return "Lipid";
-        case ParticlesTypes::tRNA : return "tRNA";
-        case ParticlesTypes::mRNA : return "mRNA";
-        case ParticlesTypes::rRNA : return "rRNA";
-        case ParticlesTypes::RNAPolymeraseProtein : return "RNAPolymeraseProtein";
-        case ParticlesTypes::PolymeraseProtein : return "PolymeraseProtein";
-        case ParticlesTypes::RibosomesProtein : return "RibosomesProtein";
-        case ParticlesTypes::MembraneProtein : return "MembraneProtein";
-        case ParticlesTypes::OtherProtein : return "OtherProtein";
-        case ParticlesTypes::Other : return "Other";
-        default : return "NONE";
-    }
-};
 
 void PrintAllParticlesData()
 {
@@ -374,7 +399,7 @@ void PrintAllParticlesData()
             LoggersManagerObject.Log(STREAM("P NAME = " << ParticleIterator->first));
             auto Range = ParticlesDataForGenerator.equal_range(ParticleIterator->first);
             for (auto& ParticleDataIterator = Range.first; ParticleDataIterator != Range.second; ParticleDataIterator++)
-                LoggersManagerObject.Log(STREAM(string("P GENE = " + string(ParticleDataIterator->second.GeneId != -1 ? "JCVISYN3A_" + to_string(ParticleDataIterator->second.GeneId) : "NoGene") + " TYPE = " + ConvertParticleTypeToString(ParticleDataIterator->second.ParticleType) + " D = #" + ParticleDataIterator->second.Description + "# Added = #" + ParticleDataIterator->second.AddedParticle + "# CLEAN PRODUCT = #" + to_string(ParticleDataIterator->second.CleanProductOfTranscription) + "# COUNTER = " + to_string(ParticleDataIterator->second.Counter))));
+                LoggersManagerObject.Log(STREAM(string("P GENE = " + string(ParticleDataIterator->second.GeneId != -1 ? "JCVISYN3A_" + to_string(ParticleDataIterator->second.GeneId) : "NoGene") + " TYPE = " + ConvertParticleTypeToString(ParticleDataIterator->second.ParticleType) + " D = #" + ParticleDataIterator->second.Description + "# Added = #" + ParticleDataIterator->second.AddedParticle + "# CLEAN PRODUCT = #" + to_string(ParticleDataIterator->second.CleanProductOfTranscription) + "# COUNTER = " + to_string(ParticleDataIterator->second.CounterAtStartOfSimulation))));
             LoggersManagerObject.Log(STREAM(""));
         }
     }
@@ -413,12 +438,9 @@ void ReadTSVFiles(bool Read, const string& ParticlesDirectory)
     {
         if (Read == true)
         {
-//            SetNumberOfParticlesForParticlesTypesFromParsedStructure(ReadAndParseCSVFile(ParticlesDirectory + string("Central_AA_Zane_Balanced_direction_fixed_nounqATP.tsv"), ' '), 8, 310, 0, 10, "", 0, 0);
-//            SetNumberOfParticlesForParticlesTypesFromParsedStructure(ReadAndParseCSVFile(ParticlesDirectory + string("lipid_NoH2O_balanced_model.tsv"), ' '), 8, 42, 0, 10, "", 0, 0);
-//            SetNumberOfParticlesForParticlesTypesFromParsedStructure(ReadAndParseCSVFile(ParticlesDirectory + string("transport_NoH2O_Zane-TB-DB.tsv"), ' '), 8, 120, 0, 10, "", 0, 0);
-            (ReadAndParseCSVFile(ParticlesDirectory + string("Central_AA_Zane_Balanced_direction_fixed_nounqATP.tsv"), ' '));
-            (ReadAndParseCSVFile(ParticlesDirectory + string("lipid_NoH2O_balanced_model.tsv"), ' '));
-            (ReadAndParseCSVFile(ParticlesDirectory + string("transport_NoH2O_Zane-TB-DB.tsv"), ' '));
+            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("Central_AA_Zane_Balanced_direction_fixed_nounqATP.tsv"), ' '), 8, 310, 0, -1, -1, -1, 5, true, false, 0,"M_", "basic", 0, 0, ParticlesTypes::Basic);
+            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("lipid_NoH2O_balanced_model.tsv"), ' '), 8, 42, 0, -1, -1, -1, 5, true, false, 0,"M_", "basic", 0, 0, ParticlesTypes::Basic);
+            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("transport_NoH2O_Zane-TB-DB.tsv"), ' '), 8, 120, 0, -1, -1, -1, 5, true, false, 0,"M_", "basic", 0, 0, ParticlesTypes::Basic);
         }
     }
     CATCH("reading tsv files")
