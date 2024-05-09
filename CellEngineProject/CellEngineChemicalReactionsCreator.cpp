@@ -111,7 +111,7 @@ void ReadReactionsFromXMLFile(const string& FileName)
                         ParticlesKindsManagerObject.GetParticleKind(ParticleKindId).ParticleKindSpecialDataSector.emplace_back(ParticleDataForGeneratorIterator->second);
 
                     ParticleKindId++;
-                    LoggersManagerObject.Log(STREAM("PARTICLE = " << ReactionsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.id") << " " << ReactionsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.name") << " " << ReactionsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.compartment") << " " << ReactionsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:charge") << " " << ReactionsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:chemicalFormula")));
+                    LoggersManagerObject.Log(STREAM("PARTICLE = " << IdStr << " " << ReactionsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.name") << " " << ReactionsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.compartment") << " " << ReactionsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:charge") << " " << ReactionsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:chemicalFormula")));
                 }
             }
             else
@@ -128,8 +128,8 @@ void ReadReactionsFromXMLFile(const string& FileName)
                     for (auto& ParticleDataForGeneratorIterator = ParticlesDataForGeneratorRange.first; ParticleDataForGeneratorIterator != ParticlesDataForGeneratorRange.second; ParticleDataForGeneratorIterator++)
                         ParticlesKindsManagerObject.GetParticleKind(ParticleKindId).ParticleKindSpecialDataSector.emplace_back(ParticleDataForGeneratorIterator->second);
 
+                    LoggersManagerObject.Log(STREAM("PARTICLE PROTEIN = " << GeneId << " " << ProteinName << " " << ParticlesKindsManagerObject.GetParticleKind(ParticleKindId).GeneId << " " << ProteinsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:id") << " " << ProteinsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:name") << " " << ProteinsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:label")));
                     ParticleKindId++;
-                    LoggersManagerObject.Log(STREAM("PARTICLE = " << ProteinsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:id") << " " << ProteinsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:name") << " " << ProteinsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:label")));
                 }
             }
             else
@@ -180,23 +180,35 @@ void PrintAllParticleKinds()
     {
         for (const auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
         {
-            LoggersManagerObject.Log(STREAM("PARTICLE = " << ParticleKindObject.second.EntityId << " " << ParticleKindObject.second.Id << " " << ParticleKindObject.second.Name << " " << ParticleKindObject.second.Formula << " " << ParticleKindObject.second.ElectricCharge));
+            LoggersManagerObject.Log(STREAM("KIND PARTICLE = " << ParticleKindObject.second.EntityId << " " << ParticleKindObject.second.Id << " " << ParticleKindObject.second.Name << " " << ParticleKindObject.second.Formula << " " << ParticleKindObject.second.ElectricCharge));
             for (const auto& ParticleKindParticleKindSpecialDataSectorObject : ParticleKindObject.second.ParticleKindSpecialDataSector)
-                LoggersManagerObject.Log(STREAM(string("P GENE = " + string(ParticleKindParticleKindSpecialDataSectorObject.GeneId != -1 ? "JCVISYN3A_" + to_string(ParticleKindParticleKindSpecialDataSectorObject.GeneId) : "NoGene") + " TYPE = " + ConvertParticleTypeToString(ParticleKindParticleKindSpecialDataSectorObject.ParticleType) + " D = #" +ParticleKindParticleKindSpecialDataSectorObject.Description + "# Added = #" + ParticleKindParticleKindSpecialDataSectorObject.AddedParticle + "# CLEAN PRODUCT = #" + to_string(ParticleKindParticleKindSpecialDataSectorObject.CleanProductOfTranscription) + "# COUNTER = " + to_string(ParticleKindParticleKindSpecialDataSectorObject.CounterAtStartOfSimulation))));                ;
+                LoggersManagerObject.Log(STREAM(string("KIND GENE = " + string(ParticleKindParticleKindSpecialDataSectorObject.GeneId != -1 ? "JCVISYN3A_" + to_string(ParticleKindParticleKindSpecialDataSectorObject.GeneId) : "NoGene") + " TYPE = " + ConvertParticleTypeToString(ParticleKindParticleKindSpecialDataSectorObject.ParticleType) + " D = #" +ParticleKindParticleKindSpecialDataSectorObject.Description + "# Added = #" + ParticleKindParticleKindSpecialDataSectorObject.AddedParticle + "# CLEAN PRODUCT = #" + to_string(ParticleKindParticleKindSpecialDataSectorObject.CleanProductOfTranscription) + "# COUNTER = " + to_string(ParticleKindParticleKindSpecialDataSectorObject.CounterAtStartOfSimulation))));                ;
+
+            LoggersManagerObject.Log(STREAM(""));
         }
     }
     CATCH("printing all particle kinds")
 };
 
-void CheckHowManyParticleDataForGeneratorIsNotInParticleKinds()
+void CheckHowManyParticleDataForGeneratorIsNotInParticleKinds(const bool UpdateParticleKinds)
 {
     try
     {
         for (auto ParticleIterator = ParticlesDataForGenerator.begin(); ParticleIterator != ParticlesDataForGenerator.end(); ParticleIterator = ParticlesDataForGenerator.upper_bound(ParticleIterator->first))
-        {
             if (ParticlesKindsManagerObject.GetParticleKindFromStrId(ParticleIterator->first).has_value() == false)
-                LoggersManagerObject.Log(STREAM("LACKING in ParticleKind is = " << ParticleIterator->first));
-        }
+                if (ParticlesKindsManagerObject.GetParticleKindFromGeneId(ParticleIterator->second.GeneId).has_value() == false)
+                {
+                    LoggersManagerObject.Log(STREAM("LACKING " << ParticleIterator->first << " EVEN BY GENE " << ParticleIterator->second.GeneId << " in ParticlesKinds"));
+                    if (UpdateParticleKinds == true)
+                    {
+                        ParticlesKindsManagerObject.AddParticleKind({ ParticleKindId, ParticleIterator->first, "ADDED IN SECOND ROUND", "", static_cast<UnsignedInt>(ParticleIterator->second.GeneId), 0, "c", 10 });
+                        auto ParticlesDataForGeneratorRange = ParticlesDataForGenerator.equal_range(ParticleIterator->first);
+                        for (auto& ParticleDataForGeneratorIterator = ParticlesDataForGeneratorRange.first; ParticleDataForGeneratorIterator != ParticlesDataForGeneratorRange.second; ParticleDataForGeneratorIterator++)
+                            ParticlesKindsManagerObject.GetParticleKind(ParticleKindId).ParticleKindSpecialDataSector.emplace_back(ParticleDataForGeneratorIterator->second);
+
+                        ParticleKindId++;
+                    }
+                }
     }
     CATCH("checking how many particle data for generator in not in particle kinds")
 };
@@ -457,7 +469,6 @@ void CellEngineChemicalReactionsCreator::ReadChemicalReactionsFromFile()
 
         ReadCSVFiles(true, ParticlesDirectory);
         PrintAllParticlesData();
-        getchar();
 
         ReadTSVFiles(false, ParticlesDirectory + string("tsv") + OS_DIR_SEP);
 
@@ -465,6 +476,12 @@ void CellEngineChemicalReactionsCreator::ReadChemicalReactionsFromFile()
 
         ReadReactionsFromXMLFile(ReactionsDirectory + string("iMB155.xml"));
         ReadReactionsFromJSONFile(ReactionsDirectory + string("iMB155.json"));
+
+        CheckHowManyParticleDataForGeneratorIsNotInParticleKinds(true);
+
+        PrintAllParticleKinds();
+
+        CheckHowManyParticleDataForGeneratorIsNotInParticleKinds(false);
 
         LoggersManagerObject.Log(STREAM("REACTIONS READ FROM FILE"));
         getchar();

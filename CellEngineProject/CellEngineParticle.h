@@ -257,6 +257,17 @@ public:
 
         return {};
     }
+    std::optional<ParticleKind> GetParticleKindFromGeneId(const SignedInt GeneId)
+    {
+        for (auto& ParticleKindObject : ParticlesKinds)
+            if (ParticleKindObject.second.GeneId == GeneId)
+                return ParticleKindObject.second;
+        for (auto& ParticleKindObject : ParticlesKinds)
+            if (ParticleKindObject.second.ParticleKindSpecialDataSector.empty() == false)
+                if (ParticleKindObject.second.ParticleKindSpecialDataSector[0].GeneId == GeneId)
+                    return ParticleKindObject.second;
+        return {};
+    }
     ParticleKindGraphicData& GetGraphicParticleKind(const EntityIdInt EntityId)
     {
         return ParticlesKinds.find(EntityId)->second.GraphicData;
