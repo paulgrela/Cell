@@ -43,7 +43,39 @@ std::string ConvertParticleTypeToString(ParticlesTypes ParticleType)
     }
 };
 
-void ReadReactionsFromJSONFile(const string& FileName)
+constexpr long double constexpr_power(long double num, unsigned int pow)
+{
+    return (pow == 0 ? 1 : num * constexpr_power(num, pow - 1));
+}
+
+constexpr long double CapacityOfCell = (4.0 / 3.0) * M_PI * constexpr_power((200 * 1E-09), 3);
+
+constexpr long double AvogardoConstant = 6.022 * 1E+23;
+
+vector<vector<string>> ReadAndParseCSVFile(const string& FileName, const char Separator)
+{
+    vector<vector<string>> ParsedCSVFileStructure;
+
+    try
+    {
+        ifstream Data(FileName);
+        string Line;
+        while (std::getline(Data, Line))
+        {
+            stringstream LineStream(Line);
+            string Cell;
+            vector<std::string> ParsedRow;
+            while (std::getline(LineStream, Cell, Separator))
+                ParsedRow.push_back(Cell);
+            ParsedCSVFileStructure.push_back(ParsedRow);
+        }
+    }
+    CATCH("reading and parsing csv file")
+
+    return ParsedCSVFileStructure;
+};
+
+void CellEngineChemicalReactionsCreator::ReadReactionsFromJSONFile(const string& FileName)
 {
     try
     {
@@ -86,7 +118,7 @@ void ReadReactionsFromJSONFile(const string& FileName)
     CATCH("reading reactions from json file")
 }
 
-void ReadReactionsFromXMLFile(const string& FileName)
+void CellEngineChemicalReactionsCreator::ReadReactionsFromXMLFile(const string& FileName)
 {
     try
     {
@@ -150,7 +182,9 @@ void ReadReactionsFromXMLFile(const string& FileName)
                     ReactionObject.LowerFluxBound = ReactionsPropertyTreeXMLTreeElementReaction.second.get<string>("<xmlattr>.fbc:lowerFluxBound");
 
                     std::vector<ParticleKindForReaction> LocalReactants;
+                    std::vector<ParticleKindForReaction> LocalReactantsOr;
                     std::vector<ParticleKindForReaction> LocalProducts;
+
                     if (ReactionsPropertyTreeXMLTreeElementReaction.second.get_child_optional("listOfReactants"))
                         for (const auto& ReactionsPropertyTreeXMLTreeElementReactant : ReactionsPropertyTreeXMLTreeElementReaction.second.get_child("listOfReactants"))
                         {
@@ -187,8 +221,19 @@ void ReadReactionsFromXMLFile(const string& FileName)
                         if (ReactionsPropertyTreeXMLTreeElementReactionGeneProduct.get_child_optional("fbc:or"))
                         {
                             for (const auto &ReactionsPropertyTreeXMLTreeElementGeneProduct: ReactionsPropertyTreeXMLTreeElementReactionGeneProduct.get_child("fbc:or"))
+                            {
+                                SignedInt GeneId = stoi(ReactionsPropertyTreeXMLTreeElementGeneProduct.second.get<string>("<xmlattr>.fbc:geneProduct").substr(9, 4));
+                                auto ParticleKindResult = ParticlesKindsManagerObject.GetParticleKindFromGeneId(GeneId);
+                                if (ParticleKindResult.has_value() == true)
+                                {
+                                    LocalReactantsOr.emplace_back(ParticleKindResult->EntityId, 1, "", true);
+                                    LoggersManagerObject.Log(STREAM("GENE PRODUCT AND = " << "JCVISYN3A_" + to_string(GeneId) << " " << 1));
+                                }
+                                else
+                                    LoggersManagerObject.Log(STREAM("ERROR: GENE PRODUCT AND in REACTION NOT FOUND"));
+
                                 LoggersManagerObject.Log(STREAM("GENE PRODUCT OR = " << ReactionsPropertyTreeXMLTreeElementGeneProduct.second.get<string>("<xmlattr>.fbc:geneProduct")));
-                            //TRZEBA UTOWRZYC N NOWYCH REAKCJI
+                            }
                         }
                         else
                         if (ReactionsPropertyTreeXMLTreeElementReactionGeneProduct.get_child_optional("fbc:and"))
@@ -226,9 +271,25 @@ void ReadReactionsFromXMLFile(const string& FileName)
                     }
 
                     string KeyStringOfReaction;
+                    for (const auto& LocalReactant : LocalReactants)
+                        KeyStringOfReaction += ParticlesKindsManagerObject.GetParticleKind(LocalReactant.EntityId).IdStr + "+";
 
-                    //if reversible to dodaje tak ze reactants = products i products = rea ctantds
-                    //AddChemicalReaction(Reaction(1001, "STD", "C6H12O6 + O2 + ", { { 1, 1, "", true }, { 2, 6, "", true } }, { { 3, 6, "", true }, { 0, 6, "", true } }, nullptr));
+                    ReactionObject.Id = ReactionId;
+                    ReactionObject.ReactantsStr = KeyStringOfReaction;
+                    ReactionObject.Reactants = LocalReactants;
+                    ReactionObject.Products = LocalProducts;
+                    ReactionObject.SpecialReactionFunction = nullptr;
+
+                    //AddChemicalReaction(ReactionObject);
+                    //Reaction(ReactionId, "STD", KeyStringOfReaction, LocalReactants, LocalProducts, nullptr)
+                    //AddChemicalReaction(Reaction(ReactionId, "STD", KeyStringOfReaction, LocalReactants, LocalProducts, nullptr));
+//                    if (ReactionObject.Reversible == true)
+//                    {
+//                        KeyStringOfReaction = "";
+//                        for (const auto& LocalProduct : LocalProducts)
+//                            KeyStringOfReaction += ParticlesKindsManagerObject.GetParticleKind(LocalProduct.EntityId).IdStr + "+";
+//                        AddChemicalReaction(Reaction(ReactionId, "STD", KeyStringOfReaction, LocalProducts, LocalReactants, nullptr));
+//                    }
 
                     ReactionId++;
 
@@ -241,7 +302,7 @@ void ReadReactionsFromXMLFile(const string& FileName)
     CATCH("reading reactions from xml file")
 }
 
-void PrintAllParticleKinds()
+void CellEngineChemicalReactionsCreator::PrintAllParticleKinds()
 {
     try
     {
@@ -257,7 +318,7 @@ void PrintAllParticleKinds()
     CATCH("printing all particle kinds")
 };
 
-void CheckHowManyParticleDataForGeneratorIsNotInParticleKindsAndAddThem(const bool UpdateParticleKinds)
+void CellEngineChemicalReactionsCreator::CheckHowManyParticleDataForGeneratorIsNotInParticleKindsAndAddThem(const bool UpdateParticleKinds)
 {
     try
     {
@@ -280,7 +341,7 @@ void CheckHowManyParticleDataForGeneratorIsNotInParticleKindsAndAddThem(const bo
     CATCH("checking how many particle data for generator in not in particle kinds")
 };
 
-void ReadAndParseGenesFile(const string& FileName)
+void CellEngineChemicalReactionsCreator::ReadAndParseGenesFile(const string& FileName)
 {
     smatch SMatchObject;
     regex GeneRegexObject(R"(=[\w. ()]+)");
@@ -337,7 +398,7 @@ void ReadAndParseGenesFile(const string& FileName)
     CATCH("reading and parsing csv file")
 };
 
-void PrintGenesFile()
+void CellEngineChemicalReactionsCreator::PrintGenesFile()
 {
     try
     {
@@ -357,42 +418,7 @@ void PrintGenesFile()
     CATCH("printing gene file")
 }
 
-
-
-
-constexpr long double constexpr_power(long double num, unsigned int pow)
-{
-    return (pow == 0 ? 1 : num * constexpr_power(num, pow - 1));
-}
-
-constexpr long double CapacityOfCell = (4.0 / 3.0) * M_PI * constexpr_power((200 * 1E-09), 3);
-
-constexpr long double AvogardoConstant = 6.022 * 1E+23;
-
-vector<vector<string>> ReadAndParseCSVFile(const string& FileName, const char Separator)
-{
-    vector<vector<string>> ParsedCSVFileStructure;
-
-    try
-    {
-        ifstream Data(FileName);
-        string Line;
-        while (std::getline(Data, Line))
-        {
-            stringstream LineStream(Line);
-            string Cell;
-            vector<std::string> ParsedRow;
-            while (std::getline(LineStream, Cell, Separator))
-                ParsedRow.push_back(Cell);
-            ParsedCSVFileStructure.push_back(ParsedRow);
-        }
-    }
-    CATCH("reading and parsing csv file")
-
-    return ParsedCSVFileStructure;
-};
-
-void RemapProteinsNames(const string& ParticlesDirectory)
+void CellEngineChemicalReactionsCreator::RemapProteinsNames(const string& ParticlesDirectory)
 {
     try
     {
@@ -416,10 +442,10 @@ void RemapProteinsNames(const string& ParticlesDirectory)
             }
         }
     }
-    CATCH("remapping protein names 1")
+    CATCH("remapping protein names")
 }
 
-void GetRemappingNamesForProteins(const string& ParticlesDirectory)
+void CellEngineChemicalReactionsCreator::GetRemappingNamesForProteins(const string& ParticlesDirectory)
 {
     try
     {
@@ -427,14 +453,13 @@ void GetRemappingNamesForProteins(const string& ParticlesDirectory)
         for (UnsignedInt Row = 0; Row <= ParsedCSVFileStructure.size(); Row++)
             if (Row >= 2 && Row <= 430)
                 MappedNamesOfProteins.insert(make_pair(ParsedCSVFileStructure[Row][0], ParsedCSVFileStructure[Row][1]));
+
         LoggersManagerObject.Log(STREAM("MP SIZE = " << MappedNamesOfProteins.size()));
     }
     CATCH("get remapping names for proteins")
 }
 
-
-
-void ParticlesDataFromParsedCSVStructure(const vector<vector<string>>& ParsedCSVFileStructure, const UnsignedInt StartRow, const UnsignedInt EndRow, const UnsignedInt NameCol, const SignedInt GeneCol, const SignedInt AddedParticleCol, const SignedInt CleanTranscriptionProductCol, const SignedInt CounterCol, const bool FromConcentration, bool IsProtein, const UnsignedInt CounterParam, const string& NamePrefix, const string& Description, const UnsignedInt s1, const UnsignedInt s2, const ParticlesTypes ParticleType)
+void CellEngineChemicalReactionsCreator::ParticlesDataFromParsedCSVStructure(const vector<vector<string>>& ParsedCSVFileStructure, const UnsignedInt StartRow, const UnsignedInt EndRow, const UnsignedInt NameCol, const SignedInt GeneCol, const SignedInt AddedParticleCol, const SignedInt CleanTranscriptionProductCol, const SignedInt CounterCol, const bool FromConcentration, bool IsProtein, const UnsignedInt CounterParam, const string& NamePrefix, const string& Description, const UnsignedInt s1, const UnsignedInt s2, const ParticlesTypes ParticleType)
 {
     try
     {
@@ -469,7 +494,7 @@ void ParticlesDataFromParsedCSVStructure(const vector<vector<string>>& ParsedCSV
     CATCH("getting particles data from parsed csv structure")
 }
 
-void PrintAllParticlesData()
+void CellEngineChemicalReactionsCreator::PrintAllParticlesData()
 {
     try
     {
@@ -486,7 +511,7 @@ void PrintAllParticlesData()
     CATCH("printing all particles data")
 }
 
-void ReadCSVFiles(bool Read, const string& ParticlesDirectory)
+void CellEngineChemicalReactionsCreator::ReadCSVFiles(bool Read, const string& ParticlesDirectory)
 {
     try
     {
@@ -512,7 +537,7 @@ void ReadCSVFiles(bool Read, const string& ParticlesDirectory)
     CATCH("reading tsv files")
 }
 
-void ReadTSVFiles(bool Read, const string& ParticlesDirectory)
+void CellEngineChemicalReactionsCreator::ReadTSVFiles(bool Read, const string& ParticlesDirectory)
 {
     try
     {
@@ -556,30 +581,6 @@ void CellEngineChemicalReactionsCreator::ReadChemicalReactionsFromFile()
     }
     CATCH("reading chemical reactions from file")
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 void CellEngineChemicalReactionsCreator::AddParticlesKinds()
 {
