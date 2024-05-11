@@ -18,14 +18,19 @@ class Reaction
     using SpecialReactionFunctionType = std::function<bool (CellEngineChemicalReactionsInSimulationSpace*, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>&, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>&, const Reaction&)>;
 public:
     UnsignedInt Id{};
+    std::string IdStr;
     std::string Name;
+public:
+    std::string ReactantsStr;
 public:
     std::uint32_t Duration{};
 public:
+    bool Reversible{};
+    std::string UpperFluxBound;
+    std::string LowerFluxBound;
+public:
     UnsignedInt AdditionalParameter1 = 0;
     UnsignedInt AdditionalParameter2 = 0;
-public:
-    std::string ReactantsStr;
 public:
     SpecialReactionFunctionType SpecialReactionFunction;
 public:
@@ -34,7 +39,8 @@ public:
 public:
     std::string Comment;
 public:
-    Reaction() = delete;
+    Reaction() = default;
+public:
     Reaction(UnsignedInt IdParam, std::string NameParam, std::string ReactantsStrParam, std::vector<ParticleKindForReaction> ReactantsParam, std::vector<ParticleKindForReaction> ProductsParam, SpecialReactionFunctionType SpecialReactionFunctionParam, std::string CommentParam = "") : Id(IdParam), Name(std::move(NameParam)), ReactantsStr(std::move(ReactantsStrParam)), Reactants(std::move(ReactantsParam)), Products(std::move(ProductsParam)), SpecialReactionFunction(std::move(SpecialReactionFunctionParam)), Comment(std::move(CommentParam))
     {
     }

@@ -163,7 +163,7 @@ class ParticleKind
 {
 public:
     EntityIdInt EntityId{};
-    std::string Id;
+    std::string IdStr;
     std::string Name;
     std::string Formula;
     ElectricChargeType ElectricCharge{};
@@ -188,7 +188,7 @@ public:
 public:
     ParticleKind() = default;
 public:
-    ParticleKind(UnsignedInt EntityIdParam, std::string IdParam, std::string NameParam, std::string FormulaParam, GeneIdInt GeneIdParam, ElectricChargeType ElectricChargeParam, std::string CompartmentParam, UnsignedInt CounterParam) : EntityId(EntityIdParam), Id(std::move(IdParam)), Name(std::move(NameParam)), Formula(std::move(FormulaParam)), GeneId(GeneIdParam), ElectricCharge(ElectricChargeParam), Compartment(std::move(CompartmentParam)), Counter(CounterParam)
+    ParticleKind(UnsignedInt EntityIdParam, std::string IdStrParam, std::string NameParam, std::string FormulaParam, GeneIdInt GeneIdParam, ElectricChargeType ElectricChargeParam, std::string CompartmentParam, UnsignedInt CounterParam) : EntityId(EntityIdParam), IdStr(std::move(IdStrParam)), Name(std::move(NameParam)), Formula(std::move(FormulaParam)), GeneId(GeneIdParam), ElectricCharge(ElectricChargeParam), Compartment(std::move(CompartmentParam)), Counter(CounterParam)
     {
     }
     ParticleKind(UnsignedInt EntityIdParam, UnsignedInt CounterParam) : EntityId(EntityIdParam), Counter(CounterParam)
@@ -252,7 +252,7 @@ public:
     std::optional<ParticleKind> GetParticleKindFromStrId(const std::string& StrId)
     {
         for (auto& ParticleKindObject : ParticlesKinds)
-            if (ParticleKindObject.second.Id == StrId)
+            if (ParticleKindObject.second.IdStr == StrId)
                 return ParticleKindObject.second;
 
         return {};
@@ -262,10 +262,12 @@ public:
         for (auto& ParticleKindObject : ParticlesKinds)
             if (ParticleKindObject.second.GeneId == GeneId)
                 return ParticleKindObject.second;
+
         for (auto& ParticleKindObject : ParticlesKinds)
             if (ParticleKindObject.second.ParticleKindSpecialDataSector.empty() == false)
                 if (ParticleKindObject.second.ParticleKindSpecialDataSector[0].GeneId == GeneId)
                     return ParticleKindObject.second;
+
         return {};
     }
     ParticleKindGraphicData& GetGraphicParticleKind(const EntityIdInt EntityId)
