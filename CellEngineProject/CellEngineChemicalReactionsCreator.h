@@ -7,11 +7,11 @@
 class CellEngineChemicalReactionsCreator : virtual public CellEngineChemicalReactions
 {
 private:
-//    EntityIdInt ParticleKindId = 100000;
-//    EntityIdInt ReactionId = 10000;
+    EntityIdInt ParticleKindId = 100000;
+    EntityIdInt ReactionId = 10000;
 private:
-    //std::map<std::string, std::string> MappedNamesOfProteins;
-    //std::multimap<std::string, ParticleKindSpecialData> ParticlesDataForGenerator;
+    std::map<std::string, std::string> MappedNamesOfProteins;
+    std::multimap<std::string, ParticleKindSpecialData> ParticlesDataForGenerator;
 public:
     static void AddParticlesKinds();
     void ReadChemicalReactionsFromFile();

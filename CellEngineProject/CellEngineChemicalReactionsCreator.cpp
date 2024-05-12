@@ -18,11 +18,6 @@
 
 using namespace std;
 
-std::map<std::string, std::string> MappedNamesOfProteins;
-std::multimap<std::string, ParticleKindSpecialData> ParticlesDataForGenerator;
-EntityIdInt ParticleKindId = 100000;
-EntityIdInt ReactionId = 10000;
-
 std::string ConvertParticleTypeToString(ParticlesTypes ParticleType)
 {
     switch (ParticleType)
@@ -280,16 +275,15 @@ void CellEngineChemicalReactionsCreator::ReadReactionsFromXMLFile(const string& 
                     ReactionObject.Products = LocalProducts;
                     ReactionObject.SpecialReactionFunction = nullptr;
 
-                    //AddChemicalReaction(ReactionObject);
-                    //Reaction(ReactionId, "STD", KeyStringOfReaction, LocalReactants, LocalProducts, nullptr)
-                    //AddChemicalReaction(Reaction(ReactionId, "STD", KeyStringOfReaction, LocalReactants, LocalProducts, nullptr));
-//                    if (ReactionObject.Reversible == true)
-//                    {
-//                        KeyStringOfReaction = "";
-//                        for (const auto& LocalProduct : LocalProducts)
-//                            KeyStringOfReaction += ParticlesKindsManagerObject.GetParticleKind(LocalProduct.EntityId).IdStr + "+";
-//                        AddChemicalReaction(Reaction(ReactionId, "STD", KeyStringOfReaction, LocalProducts, LocalReactants, nullptr));
-//                    }
+                    AddChemicalReaction(ReactionObject);
+                    if (ReactionObject.Reversible == true)
+                    {
+                        KeyStringOfReaction = "";
+                        for (const auto& LocalProduct : LocalProducts)
+                            KeyStringOfReaction += ParticlesKindsManagerObject.GetParticleKind(LocalProduct.EntityId).IdStr + "+";
+                        ReactionObject.ReactantsStr = KeyStringOfReaction;
+                        AddChemicalReaction(ReactionObject);
+                    }
 
                     ReactionId++;
 
@@ -567,17 +561,16 @@ void CellEngineChemicalReactionsCreator::ReadChemicalReactionsFromFile()
 
         string ReactionsDirectory = string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("reactions") + OS_DIR_SEP;
 
+        CheckHowManyParticleDataForGeneratorIsNotInParticleKindsAndAddThem(true);
+
         ReadReactionsFromXMLFile(ReactionsDirectory + string("iMB155.xml"));
         ReadReactionsFromJSONFile(ReactionsDirectory + string("iMB155.json"));
-
-        CheckHowManyParticleDataForGeneratorIsNotInParticleKindsAndAddThem(true);
 
         PrintAllParticleKinds();
 
         CheckHowManyParticleDataForGeneratorIsNotInParticleKindsAndAddThem(false);
 
         LoggersManagerObject.Log(STREAM("REACTIONS READ FROM FILE"));
-        getchar();
     }
     CATCH("reading chemical reactions from file")
 }
@@ -613,6 +606,8 @@ void CellEngineChemicalReactionsCreator::AddChemicalReactions()
 {
     try
     {
+        ReadChemicalReactionsFromFile();
+
         const string DNASequenceForTestFindingDNA = "TACAAAAAAAGAGGTGTTAGC";
 
         const string DNASequence1ForTestCutLink1 = "TACAAAAAAAGAGGTGTT";
