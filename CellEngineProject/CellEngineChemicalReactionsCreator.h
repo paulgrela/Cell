@@ -2,6 +2,10 @@
 #ifndef CELL_ENGINE_CHEMICAL_REACTIONS_CREATOR_H
 #define CELL_ENGINE_CHEMICAL_REACTIONS_CREATOR_H
 
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+#include <boost/property_tree/xml_parser.hpp>
+
 #include "CellEngineChemicalReactions.h"
 
 class CellEngineChemicalReactionsCreator : virtual public CellEngineChemicalReactions
@@ -17,8 +21,11 @@ public:
     void ReadChemicalReactionsFromFile();
     void AddChemicalReactions();
 public:
-    static void ReadReactionsFromJSONFile(const std::string& FileName);
+    static void ReadReactionsFromJSONFile(const std::string& FileName, bool ReadFromFile);
     void ReadReactionsFromXMLFile(const std::string& FileName);
+    void GetParticlesFromXMLFile(const boost::property_tree::ptree& ReactionsPropertyTreeXMLTreeElement);
+    void GetProteinsFromXMLFile(const boost::property_tree::ptree& ReactionsPropertyTreeXMLTreeElement);
+    void GetProperReactionsListFromXMLFile(const boost::property_tree::ptree& ReactionsPropertyTreeXMLTreeElement);
 public:
     static void PrintGenesFile();
     void PrintAllParticlesData();

@@ -32,8 +32,6 @@ void CellEngineChemicalReactionsInSimulationSpace::MakingZeroSizeForContainersFo
         NucleotidesWithFreePrevEndingsFoundInProximity.clear();
         DNANucleotidesWithFreeNextEndingsFoundInProximity.clear();
         DNANucleotidesWithFreePrevEndingsFoundInProximity.clear();
-//        RNANucleotidesWithFreeNextEndingsFoundInProximity.clear();
-//        RNANucleotidesWithFreePrevEndingsFoundInProximity.clear();
         NucleotidesFreeFoundInProximity.clear();
         RNANucleotidesFreeFoundInProximity.clear();
         RNANucleotidesFoundInProximity.clear();
