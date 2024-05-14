@@ -144,7 +144,7 @@ void CellEngineChemicalReactionsCreator::GetProteinsFromXMLFile(const boost::pro
         {
             GeneIdInt GeneId = stoi(ProteinsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:id").substr(9, 4));
             string ProteinName = "JCVISYN3A_" + ProteinsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:id").substr(9, 4);
-            ParticlesKindsManagerObject.AddParticleKind({ ParticleKindId, ProteinName, "", "", GeneId, 0, "c", 10 });
+            ParticlesKindsManagerObject.AddParticleKind({ ParticleKindId, ProteinName, "", ProteinName, GeneId, 0, "c", 10 });
 
             auto ParticlesDataForGeneratorRange = ParticlesDataForGenerator.equal_range(ProteinName);
             for (auto& ParticleDataForGeneratorIterator = ParticlesDataForGeneratorRange.first; ParticleDataForGeneratorIterator != ParticlesDataForGeneratorRange.second; ParticleDataForGeneratorIterator++)
@@ -241,8 +241,9 @@ void CellEngineChemicalReactionsCreator::GetProperReactionsListFromXMLFile(const
             }
 
             string KeyStringOfReaction;
+            std::sort(LocalReactants.begin(), LocalReactants.end(), [](const ParticleKindForReaction& P1, const ParticleKindForReaction& P2){ return ParticlesKindsManagerObject.GetParticleKind(P1.EntityId).Formula > ParticlesKindsManagerObject.GetParticleKind(P2.EntityId).Formula; } );
             for (const auto& LocalReactant : LocalReactants)
-                KeyStringOfReaction += ParticlesKindsManagerObject.GetParticleKind(LocalReactant.EntityId).IdStr + "+";
+                KeyStringOfReaction += ParticlesKindsManagerObject.GetParticleKind(LocalReactant.EntityId).Formula + "+";
 
             ReactionObject.Id = ReactionId;
             ReactionObject.ReactantsStr = KeyStringOfReaction;
@@ -254,8 +255,9 @@ void CellEngineChemicalReactionsCreator::GetProperReactionsListFromXMLFile(const
             if (ReactionObject.Reversible == true)
             {
                 KeyStringOfReaction = "";
+                std::sort(LocalProducts.begin(), LocalProducts.end(), [](const ParticleKindForReaction& P1, const ParticleKindForReaction& P2){ return ParticlesKindsManagerObject.GetParticleKind(P1.EntityId).Formula > ParticlesKindsManagerObject.GetParticleKind(P2.EntityId).Formula; } );
                 for (const auto& LocalProduct : LocalProducts)
-                    KeyStringOfReaction += ParticlesKindsManagerObject.GetParticleKind(LocalProduct.EntityId).IdStr + "+";
+                    KeyStringOfReaction += ParticlesKindsManagerObject.GetParticleKind(LocalProduct.EntityId).Formula + "+";
                 ReactionObject.ReactantsStr = KeyStringOfReaction;
                 AddChemicalReaction(ReactionObject);
             }
@@ -319,7 +321,7 @@ void CellEngineChemicalReactionsCreator::CheckHowManyParticleDataForGeneratorIsN
                     LoggersManagerObject.Log(STREAM("LACKING " << ParticleIterator->first << " EVEN BY GENE " << ParticleIterator->second.GeneId << " in ParticlesKinds"));
                     if (UpdateParticleKinds == true)
                     {
-                        ParticlesKindsManagerObject.AddParticleKind({ ParticleKindId, ParticleIterator->first, "ADDED IN SECOND ROUND", "", static_cast<UnsignedInt>(ParticleIterator->second.GeneId), 0, "c", 10 });
+                        ParticlesKindsManagerObject.AddParticleKind({ ParticleKindId, ParticleIterator->first, "ADDED IN SECOND ROUND", ParticleIterator->first, static_cast<UnsignedInt>(ParticleIterator->second.GeneId), 0, "c", 10 });
                         auto ParticlesDataForGeneratorRange = ParticlesDataForGenerator.equal_range(ParticleIterator->first);
                         for (auto& ParticleDataForGeneratorIterator = ParticlesDataForGeneratorRange.first; ParticleDataForGeneratorIterator != ParticlesDataForGeneratorRange.second; ParticleDataForGeneratorIterator++)
                             ParticlesKindsManagerObject.GetParticleKind(ParticleKindId).ParticleKindSpecialDataSector.emplace_back(ParticleDataForGeneratorIterator->second);
