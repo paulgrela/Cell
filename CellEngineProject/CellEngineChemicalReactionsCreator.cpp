@@ -202,6 +202,20 @@ void GetDataForReactionFromXMLFile(const boost::property_tree::ptree& PropertyTr
     CATCH("getting data for reaction from xml file")
 }
 
+string GetStringOfSortedParticlesDataNames(std::vector<ParticleKindForReaction>& LocalData)
+{
+    string KeyStringOfReaction;
+    try
+    {
+        sort(LocalData.begin(), LocalData.end(), [](const ParticleKindForReaction& P1, const ParticleKindForReaction& P2){ return ParticlesKindsManagerObject.GetParticleKind(P1.EntityId).Formula > ParticlesKindsManagerObject.GetParticleKind(P2.EntityId).Formula; } );
+        for (const auto& LocalReactant : LocalData)
+            KeyStringOfReaction += ParticlesKindsManagerObject.GetParticleKind(LocalReactant.EntityId).Formula + "+";
+    }
+    CATCH("")
+
+    return KeyStringOfReaction;
+}
+
 void CellEngineChemicalReactionsCreator::GetProperReactionsListFromXMLFile(const boost::property_tree::ptree& ReactionsPropertyTreeXMLTreeElement)
 {
     try
@@ -218,9 +232,7 @@ void CellEngineChemicalReactionsCreator::GetProperReactionsListFromXMLFile(const
             ReactionObject.UpperFluxBound = ReactionsPropertyTreeXMLTreeElementReaction.second.get<string>("<xmlattr>.fbc:upperFluxBound");
             ReactionObject.LowerFluxBound = ReactionsPropertyTreeXMLTreeElementReaction.second.get<string>("<xmlattr>.fbc:lowerFluxBound");
 
-            std::vector<ParticleKindForReaction> LocalReactants;
-            std::vector<ParticleKindForReaction> LocalReactantsOr;
-            std::vector<ParticleKindForReaction> LocalProducts;
+            std::vector<ParticleKindForReaction> LocalReactants, LocalReactantsOr, LocalProducts;
 
             if (ReactionsPropertyTreeXMLTreeElementReaction.second.get_child_optional("listOfReactants"))
                 GetDataForReactionFromXMLFile(ReactionsPropertyTreeXMLTreeElementReaction.second, LocalProducts, "listOfReactants", "PRODUCT = ", "ERROR: PRODUCT in REACTION NOT FOUND");
@@ -240,13 +252,8 @@ void CellEngineChemicalReactionsCreator::GetProperReactionsListFromXMLFile(const
                     GetDataForGeneProductsForReactionFromXMLFile(ReactionsPropertyTreeXMLTreeElementReaction.second, LocalReactants, "fbc:geneProductAssociation", "GENE PRODUCT = ", "ERROR: GENE PRODUCT in REACTION NOT FOUND", "GENE PRODUCT ONE = ");
             }
 
-            string KeyStringOfReaction;
-            std::sort(LocalReactants.begin(), LocalReactants.end(), [](const ParticleKindForReaction& P1, const ParticleKindForReaction& P2){ return ParticlesKindsManagerObject.GetParticleKind(P1.EntityId).Formula > ParticlesKindsManagerObject.GetParticleKind(P2.EntityId).Formula; } );
-            for (const auto& LocalReactant : LocalReactants)
-                KeyStringOfReaction += ParticlesKindsManagerObject.GetParticleKind(LocalReactant.EntityId).Formula + "+";
-
             ReactionObject.Id = ReactionId;
-            ReactionObject.ReactantsStr = KeyStringOfReaction;
+            ReactionObject.ReactantsStr = GetStringOfSortedParticlesDataNames(LocalReactants);
             ReactionObject.Reactants = LocalReactants;
             ReactionObject.Products = LocalProducts;
             ReactionObject.SpecialReactionFunction = nullptr;
@@ -254,11 +261,8 @@ void CellEngineChemicalReactionsCreator::GetProperReactionsListFromXMLFile(const
             AddChemicalReaction(ReactionObject);
             if (ReactionObject.Reversible == true)
             {
-                KeyStringOfReaction = "";
-                std::sort(LocalProducts.begin(), LocalProducts.end(), [](const ParticleKindForReaction& P1, const ParticleKindForReaction& P2){ return ParticlesKindsManagerObject.GetParticleKind(P1.EntityId).Formula > ParticlesKindsManagerObject.GetParticleKind(P2.EntityId).Formula; } );
-                for (const auto& LocalProduct : LocalProducts)
-                    KeyStringOfReaction += ParticlesKindsManagerObject.GetParticleKind(LocalProduct.EntityId).Formula + "+";
-                ReactionObject.ReactantsStr = KeyStringOfReaction;
+                ReactionObject.ReactantsStr = GetStringOfSortedParticlesDataNames(LocalProducts);
+                swap(ReactionObject.Products, ReactionObject.Reactants);
                 AddChemicalReaction(ReactionObject);
             }
 
