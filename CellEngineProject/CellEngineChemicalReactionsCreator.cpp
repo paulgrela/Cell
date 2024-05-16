@@ -216,6 +216,27 @@ string GetStringOfSortedParticlesDataNames(std::vector<ParticleKindForReaction>&
     return KeyStringOfReaction;
 }
 
+void CellEngineChemicalReactionsCreator::AddXMLChemicalReaction(Reaction& ReactionObject)
+{
+    try
+    {
+        ReactionObject.Id = ReactionId;
+        ReactionObject.ReactantsStr = GetStringOfSortedParticlesDataNames(ReactionObject.Reactants);
+        ReactionObject.SpecialReactionFunction = nullptr;
+        AddChemicalReaction(ReactionObject);
+
+        if (ReactionObject.Reversible == true)
+        {
+            ReactionObject.ReactantsStr = GetStringOfSortedParticlesDataNames(ReactionObject.Products);
+            swap(ReactionObject.Products, ReactionObject.Reactants);
+            AddChemicalReaction(ReactionObject);
+        }
+
+        ReactionId++;
+    }
+    CATCH("adding xml chemical reaction")
+}
+
 void CellEngineChemicalReactionsCreator::GetProperReactionsListFromXMLFile(const boost::property_tree::ptree& ReactionsPropertyTreeXMLTreeElement)
 {
     try
@@ -252,21 +273,17 @@ void CellEngineChemicalReactionsCreator::GetProperReactionsListFromXMLFile(const
                     GetDataForGeneProductsForReactionFromXMLFile(ReactionsPropertyTreeXMLTreeElementReaction.second, ReactionObject.Reactants, "fbc:geneProductAssociation", "GENE PRODUCT = ", "ERROR: GENE PRODUCT in REACTION NOT FOUND", "GENE PRODUCT ONE = ");
             }
 
-            //if (LocalReactantsOr.empty() == false)
+            if (LocalReactantsOr.empty() == false)
+                for (const auto& LocalReactantsOrObject : LocalReactantsOr)
+                {
+                    ReactionObject.Reactants.push_back(LocalReactantsOrObject);
 
-            ReactionObject.Id = ReactionId;
-            ReactionObject.ReactantsStr = GetStringOfSortedParticlesDataNames(ReactionObject.Reactants);
-            ReactionObject.SpecialReactionFunction = nullptr;
-            AddChemicalReaction(ReactionObject);
+                    AddXMLChemicalReaction(ReactionObject);
 
-            if (ReactionObject.Reversible == true)
-            {
-                ReactionObject.ReactantsStr = GetStringOfSortedParticlesDataNames(ReactionObject.Products);
-                swap(ReactionObject.Products, ReactionObject.Reactants);
-                AddChemicalReaction(ReactionObject);
-            }
-
-            ReactionId++;
+                    ReactionObject.Reactants.pop_back();
+                }
+            else
+                AddXMLChemicalReaction(ReactionObject);
 
             LoggersManagerObject.Log(STREAM(""));
         }
