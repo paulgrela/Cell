@@ -232,13 +232,13 @@ void CellEngineChemicalReactionsCreator::GetProperReactionsListFromXMLFile(const
             ReactionObject.UpperFluxBound = ReactionsPropertyTreeXMLTreeElementReaction.second.get<string>("<xmlattr>.fbc:upperFluxBound");
             ReactionObject.LowerFluxBound = ReactionsPropertyTreeXMLTreeElementReaction.second.get<string>("<xmlattr>.fbc:lowerFluxBound");
 
-            std::vector<ParticleKindForReaction> LocalReactants, LocalReactantsOr, LocalProducts;
+            std::vector<ParticleKindForReaction> LocalReactantsOr;
 
             if (ReactionsPropertyTreeXMLTreeElementReaction.second.get_child_optional("listOfReactants"))
-                GetDataForReactionFromXMLFile(ReactionsPropertyTreeXMLTreeElementReaction.second, LocalProducts, "listOfReactants", "PRODUCT = ", "ERROR: PRODUCT in REACTION NOT FOUND");
+                GetDataForReactionFromXMLFile(ReactionsPropertyTreeXMLTreeElementReaction.second, ReactionObject.Products, "listOfReactants", "PRODUCT = ", "ERROR: PRODUCT in REACTION NOT FOUND");
 
             if (ReactionsPropertyTreeXMLTreeElementReaction.second.get_child_optional("listOfProducts"))
-                GetDataForReactionFromXMLFile(ReactionsPropertyTreeXMLTreeElementReaction.second, LocalReactants, "listOfProducts", "REACTANT = ", "ERROR: REACTANT in REACTION NOT FOUND");
+                GetDataForReactionFromXMLFile(ReactionsPropertyTreeXMLTreeElementReaction.second, ReactionObject.Reactants, "listOfProducts", "REACTANT = ", "ERROR: REACTANT in REACTION NOT FOUND");
 
             if (ReactionsPropertyTreeXMLTreeElementReaction.second.get_child_optional("fbc:geneProductAssociation"))
             {
@@ -247,21 +247,21 @@ void CellEngineChemicalReactionsCreator::GetProperReactionsListFromXMLFile(const
                     GetDataForGeneProductsForReactionFromXMLFile(ReactionsPropertyTreeXMLTreeElementReactionGeneProduct, LocalReactantsOr, "fbc:or", "GENE PRODUCT OR = ", "ERROR: GENE PRODUCT OR in REACTION NOT FOUND", "GENE PRODUCT OR = ");
                 else
                 if (ReactionsPropertyTreeXMLTreeElementReactionGeneProduct.get_child_optional("fbc:and"))
-                    GetDataForGeneProductsForReactionFromXMLFile(ReactionsPropertyTreeXMLTreeElementReactionGeneProduct, LocalReactants, "fbc:and", "GENE PRODUCT AND = ", "ERROR: GENE PRODUCT AND in REACTION NOT FOUND", "GENE PRODUCT AND = ");
+                    GetDataForGeneProductsForReactionFromXMLFile(ReactionsPropertyTreeXMLTreeElementReactionGeneProduct, ReactionObject.Reactants, "fbc:and", "GENE PRODUCT AND = ", "ERROR: GENE PRODUCT AND in REACTION NOT FOUND", "GENE PRODUCT AND = ");
                 else
-                    GetDataForGeneProductsForReactionFromXMLFile(ReactionsPropertyTreeXMLTreeElementReaction.second, LocalReactants, "fbc:geneProductAssociation", "GENE PRODUCT = ", "ERROR: GENE PRODUCT in REACTION NOT FOUND", "GENE PRODUCT ONE = ");
+                    GetDataForGeneProductsForReactionFromXMLFile(ReactionsPropertyTreeXMLTreeElementReaction.second, ReactionObject.Reactants, "fbc:geneProductAssociation", "GENE PRODUCT = ", "ERROR: GENE PRODUCT in REACTION NOT FOUND", "GENE PRODUCT ONE = ");
             }
 
-            ReactionObject.Id = ReactionId;
-            ReactionObject.ReactantsStr = GetStringOfSortedParticlesDataNames(LocalReactants);
-            ReactionObject.Reactants = LocalReactants;
-            ReactionObject.Products = LocalProducts;
-            ReactionObject.SpecialReactionFunction = nullptr;
+            //if (LocalReactantsOr.empty() == false)
 
+            ReactionObject.Id = ReactionId;
+            ReactionObject.ReactantsStr = GetStringOfSortedParticlesDataNames(ReactionObject.Reactants);
+            ReactionObject.SpecialReactionFunction = nullptr;
             AddChemicalReaction(ReactionObject);
+
             if (ReactionObject.Reversible == true)
             {
-                ReactionObject.ReactantsStr = GetStringOfSortedParticlesDataNames(LocalProducts);
+                ReactionObject.ReactantsStr = GetStringOfSortedParticlesDataNames(ReactionObject.Products);
                 swap(ReactionObject.Products, ReactionObject.Reactants);
                 AddChemicalReaction(ReactionObject);
             }
