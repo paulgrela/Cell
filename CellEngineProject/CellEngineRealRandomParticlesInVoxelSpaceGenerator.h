@@ -9,8 +9,17 @@ class CellEngineRealRandomParticlesInVoxelSpaceGenerator : public CellEnginePart
 {
 public:
     void GenerateAllRealRandomParticles();
+public:
+    void GenerateRealRandomOtherParticles();
+    void GenerateRealRandomBasicParticles();
+    void GenerateRealRandomLipidParticles();
+    void GenerateRealRandom_tRNAParticles();
+    void GenerateRealRandom_mRNAParticles();
+    void GenerateRealRandom_rRNAParticles();
     void GenerateRealRandomMembraneParticles();
     void GenerateRealRandomRibosomesParticles();
+    void GenerateRealRandomPolymeraseParticles();
+    void GenerateRealRandomRNAPolymeraseParticles();
 protected:
     explicit CellEngineRealRandomParticlesInVoxelSpaceGenerator(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : CellEngineParticlesVoxelsShapesGenerator(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam)
     {
