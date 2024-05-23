@@ -343,7 +343,23 @@ void CellEngineChemicalReactionsCreator::CheckHowManyParticleDataForGeneratorIsN
                     LoggersManagerObject.Log(STREAM("LACKING " << ParticleIterator->first << " EVEN BY GENE " << ParticleIterator->second.GeneId << " in ParticlesKinds"));
                     if (UpdateParticleKinds == true)
                     {
-                        ParticlesKindsManagerObject.AddParticleKind({ParticleKindId, ParticleIterator->first, "ADDED IN SECOND ROUND", ParticleIterator->first, static_cast<UnsignedInt>(ParticleIterator->second.GeneId), 0, "c", 10});
+                        ParticlesKindsManagerObject.AddParticleKind({ ParticleKindId, ParticleIterator->first, "ADDED IN SECOND ROUND", ParticleIterator->first, static_cast<UnsignedInt>(ParticleIterator->second.GeneId), 0, "c", 10 });
+                        auto ParticlesDataForGeneratorRange = ParticlesDataForGenerator.equal_range(ParticleIterator->first);
+                        for (auto &ParticleDataForGeneratorIterator = ParticlesDataForGeneratorRange.first; ParticleDataForGeneratorIterator != ParticlesDataForGeneratorRange.second; ParticleDataForGeneratorIterator++)
+                            ParticlesKindsManagerObject.GetParticleKind(ParticleKindId).ParticleKindSpecialDataSector.emplace_back(ParticleDataForGeneratorIterator->second);
+
+                        ParticleKindId++;
+                    }
+                }
+
+        for (auto ParticleIterator = ParticlesDataForGenerator.begin(); ParticleIterator != ParticlesDataForGenerator.end(); ParticleIterator = ParticlesDataForGenerator.upper_bound(ParticleIterator->first))
+            if (ParticleIterator->second.ParticleType == ParticlesTypes::mRNA)
+                if (ParticlesKindsManagerObject.GetParticleKindFromStrId(ParticleIterator->first).has_value() == false)
+                {
+                    LoggersManagerObject.Log(STREAM("LACKING mRNA " << ParticleIterator->first << " EVEN BY GENE " << ParticleIterator->second.GeneId << " in ParticlesKinds"));
+                    if (UpdateParticleKinds == true)
+                    {
+                        ParticlesKindsManagerObject.AddParticleKind({ ParticleKindId, ParticleIterator->first, "ADDED IN SECOND ROUND", ParticleIterator->first, static_cast<UnsignedInt>(ParticleIterator->second.GeneId), 0, "c", 10 });
                         auto ParticlesDataForGeneratorRange = ParticlesDataForGenerator.equal_range(ParticleIterator->first);
                         for (auto &ParticleDataForGeneratorIterator = ParticlesDataForGeneratorRange.first; ParticleDataForGeneratorIterator != ParticlesDataForGeneratorRange.second; ParticleDataForGeneratorIterator++)
                             ParticlesKindsManagerObject.GetParticleKind(ParticleKindId).ParticleKindSpecialDataSector.emplace_back(ParticleDataForGeneratorIterator->second);

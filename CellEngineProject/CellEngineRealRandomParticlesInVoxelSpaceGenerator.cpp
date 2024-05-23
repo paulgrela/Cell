@@ -1,6 +1,23 @@
 
 #include "CellEngineRealRandomParticlesInVoxelSpaceGenerator.h"
 
+UnsignedInt GetNumberOfParticlesOfType(ParticlesTypes ParticleTypeParam)
+{
+    UnsignedInt ParticleCounter = 0;
+
+    try
+    {
+        for (const auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
+            if (ParticleKindObject.second.ParticleKindSpecialDataSector.empty() == false)
+                for (const auto& ParticleKindSpecialDataObject: ParticleKindObject.second.ParticleKindSpecialDataSector)
+                    if (ParticleKindSpecialDataObject.ParticleType == ParticleTypeParam)
+                        ParticleCounter++;
+    }
+    CATCH("")
+
+    return ParticleCounter;
+}
+
 void CellEngineRealRandomParticlesInVoxelSpaceGenerator::GenerateAllRealRandomParticles()
 {
     try
@@ -82,73 +99,29 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::GenerateRealRandom_rRNA
 
 void CellEngineRealRandomParticlesInVoxelSpaceGenerator::GenerateRealRandomMembraneParticles()
 {
-    UnsignedInt Radius = 400;
-    UnsignedInt RadiusSize = 30;
-    UnsignedInt PosXStart = 512;
-    UnsignedInt PosYStart = 512;
-    UnsignedInt PosZStart = 512;
-    UnsignedInt StepX = 10;
-    UnsignedInt StepY = 10;
-    UnsignedInt StepZ = 10;
-
     try
     {
-        UnsignedInt MembraneProteinCounter = 0;
-        for (const auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
-        {
-            if (ParticleKindObject.second.ParticleKindSpecialDataSector.empty() == false)
-            {
-                for (const auto& ParticleKindSpecialDataObject:  ParticleKindObject.second.ParticleKindSpecialDataSector)
-                    if (ParticleKindSpecialDataObject.ParticleType == ParticlesTypes::MembraneProtein)
-                    {
-                        MembraneProteinCounter++;
-                    }
-            }
-        }
-        LoggersManagerObject.Log(STREAM("Number Of Membrane Proteins = " << MembraneProteinCounter));
+        LoggersManagerObject.Log(STREAM("Number Of Other Proteins = " << GetNumberOfParticlesOfType(ParticlesTypes::OtherProtein)));
+        LoggersManagerObject.Log(STREAM("Number Of Membrane Proteins = " << GetNumberOfParticlesOfType(ParticlesTypes::MembraneProtein)));
+        LoggersManagerObject.Log(STREAM("Number Of Ribosomes Proteins = " << GetNumberOfParticlesOfType(ParticlesTypes::RibosomesProtein)));
+        LoggersManagerObject.Log(STREAM("Number Of RNA Polymerase Proteins = " << GetNumberOfParticlesOfType(ParticlesTypes::RNAPolymeraseProtein)));
+        LoggersManagerObject.Log(STREAM("Number Of RNA Polymerase Proteins = " << GetNumberOfParticlesOfType(ParticlesTypes::PolymeraseProtein)));
+        LoggersManagerObject.Log(STREAM("Number Of Proteins Frac = " << GetNumberOfParticlesOfType(ParticlesTypes::ProteinFrac)));
 
+        LoggersManagerObject.Log(STREAM("Number Of TRNA = " << GetNumberOfParticlesOfType(ParticlesTypes::tRNA)));
+        LoggersManagerObject.Log(STREAM("Number Of MRNA = " << GetNumberOfParticlesOfType(ParticlesTypes::mRNA)));
+        LoggersManagerObject.Log(STREAM("Number Of RRNA = " << GetNumberOfParticlesOfType(ParticlesTypes::rRNA)));
 
-        UnsignedInt RibosomesProteinCounter = 0;
-        for (const auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
-        {
-            if (ParticleKindObject.second.ParticleKindSpecialDataSector.empty() == false)
-            {
-                for (const auto& ParticleKindSpecialDataObject:  ParticleKindObject.second.ParticleKindSpecialDataSector)
-                    if (ParticleKindSpecialDataObject.ParticleType == ParticlesTypes::RibosomesProtein)
-                    {
-                        RibosomesProteinCounter++;
-                    }
-            }
-        }
-        LoggersManagerObject.Log(STREAM("Number Of Ribosomes Proteins = " << RibosomesProteinCounter));
+        LoggersManagerObject.Log(STREAM("Number Of Basic = " << GetNumberOfParticlesOfType(ParticlesTypes::Basic)));
 
-        UnsignedInt RNAPolymeraseProteinCounter = 0;
-        for (const auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
-        {
-            if (ParticleKindObject.second.ParticleKindSpecialDataSector.empty() == false)
-            {
-                for (const auto& ParticleKindSpecialDataObject:  ParticleKindObject.second.ParticleKindSpecialDataSector)
-                    if (ParticleKindSpecialDataObject.ParticleType == ParticlesTypes::RNAPolymeraseProtein)
-                    {
-                        RNAPolymeraseProteinCounter++;
-                    }
-            }
-        }
-        LoggersManagerObject.Log(STREAM("Number Of RNA Polymerase Proteins = " << RNAPolymeraseProteinCounter));
-
-        UnsignedInt ProteinFracCounter = 0;
-        for (const auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
-        {
-            if (ParticleKindObject.second.ParticleKindSpecialDataSector.empty() == false)
-            {
-                for (const auto& ParticleKindSpecialDataObject:  ParticleKindObject.second.ParticleKindSpecialDataSector)
-                    if (ParticleKindSpecialDataObject.ParticleType == ParticlesTypes::ProteinFrac)
-                    {
-                        ProteinFracCounter++;
-                    }
-            }
-        }
-        LoggersManagerObject.Log(STREAM("Number Of Proteins Frac = " << ProteinFracCounter));
+        UnsignedInt Radius = 400;
+        UnsignedInt RadiusSize = 30;
+        UnsignedInt PosXStart = 512;
+        UnsignedInt PosYStart = 512;
+        UnsignedInt PosZStart = 512;
+        UnsignedInt StepX = 10;
+        UnsignedInt StepY = 10;
+        UnsignedInt StepZ = 10;
 
         for (SignedInt x = 0; x < Radius * 2; x += static_cast<SignedInt>(StepX))
             for (SignedInt y = 0; y < Radius * 2; y += static_cast<SignedInt>(StepY))
