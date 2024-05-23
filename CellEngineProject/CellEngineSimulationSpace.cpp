@@ -3,21 +3,14 @@
 #include <set>
 #include <map>
 #include <algorithm>
-#include <unordered_map>
 
 #include "FileUtils.h"
 #include "DoublyLinkedList.h"
-#include "DestinationPlatform.h"
 
-#include "CellEngineAtom.h"
 #include "CellEngineConstants.h"
 #include "CellEngineColors.h"
 #include "CellEngineUseful.h"
 #include "CellEngineSimulationSpace.h"
-
-#include "TerminalColorsUtils.h"
-
-#include "CellEngineDataBuilderForVoxelSimulationSpace.h"
 
 using namespace std;
 
@@ -129,10 +122,8 @@ void CellEngineSimulationSpace::GenerateOneStepOfElectricDiffusionForSelectedRan
 
                 switch (TypeOfLookingForParticles)
                 {
-                    case TypesOfLookingForParticlesInProximity::FromChosenParticleAsCenter :
-                        FindParticlesInProximityOfSimulationSpaceForSelectedSpace(false, ParticleObject.Center.X - ParticleKindObject.XSizeDiv2 - AdditionalSpaceBoundFactor, ParticleObject.Center.Y - ParticleKindObject.YSizeDiv2 - AdditionalSpaceBoundFactor, ParticleObject.Center.Z - ParticleKindObject.ZSizeDiv2 - AdditionalSpaceBoundFactor, 2 * ParticleKindObject.XSizeDiv2 + 2 * AdditionalSpaceBoundFactor, 2 * ParticleKindObject.YSizeDiv2 + 2 * AdditionalSpaceBoundFactor, 2 * ParticleKindObject.ZSizeDiv2 + 2 * AdditionalSpaceBoundFactor); break;
-                    case TypesOfLookingForParticlesInProximity::InChosenVoxelSpace :
-                        FindParticlesInProximityOfSimulationSpaceForSelectedSpace(false, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam); break;
+                    case TypesOfLookingForParticlesInProximity::FromChosenParticleAsCenter : FindParticlesInProximityOfSimulationSpaceForSelectedSpace(false, ParticleObject.Center.X - ParticleKindObject.XSizeDiv2 - AdditionalSpaceBoundFactor, ParticleObject.Center.Y - ParticleKindObject.YSizeDiv2 - AdditionalSpaceBoundFactor, ParticleObject.Center.Z - ParticleKindObject.ZSizeDiv2 - AdditionalSpaceBoundFactor, 2 * ParticleKindObject.XSizeDiv2 + 2 * AdditionalSpaceBoundFactor, 2 * ParticleKindObject.YSizeDiv2 + 2 * AdditionalSpaceBoundFactor, 2 * ParticleKindObject.ZSizeDiv2 + 2 * AdditionalSpaceBoundFactor); break;
+                    case TypesOfLookingForParticlesInProximity::InChosenVoxelSpace : FindParticlesInProximityOfSimulationSpaceForSelectedSpace(false, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam); break;
                     default: break;
                 }
 

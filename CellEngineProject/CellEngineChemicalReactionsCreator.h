@@ -6,13 +6,14 @@
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
+#include "CellEngineConstants.h"
 #include "CellEngineChemicalReactions.h"
 
 class CellEngineChemicalReactionsCreator : virtual public CellEngineChemicalReactions
 {
 private:
-    EntityIdInt ParticleKindId = 100000;
-    EntityIdInt ReactionId = 10000;
+    EntityIdInt ParticleKindId = StartParticleKindId;
+    EntityIdInt ReactionId = StartReactionId;
 private:
     std::map<std::string, std::string> MappedNamesOfProteins;
     std::multimap<std::string, ParticleKindSpecialData> ParticlesDataForGenerator;

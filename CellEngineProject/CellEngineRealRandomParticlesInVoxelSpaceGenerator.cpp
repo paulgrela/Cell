@@ -1,4 +1,8 @@
 
+#include <cmath>
+
+#include "CellEngineConstants.h"
+
 #include "CellEngineRealRandomParticlesInVoxelSpaceGenerator.h"
 
 using namespace std;
@@ -52,7 +56,6 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::GenerateRealRandomOther
         for (auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
             if (ParticleKindObject.second.ParticleKindSpecialDataSector.empty() == true)
             {
-                //DODAJ 10 CZASTEK
             }
     }
     CATCH("generating real random particles")
@@ -103,6 +106,43 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::GenerateRealRandom_rRNA
     CATCH("generating real random particles")
 }
 
+tuple<UnsignedInt, UnsignedInt, UnsignedInt> CellEngineRealRandomParticlesInVoxelSpaceGenerator::GetRandomPositionInsideSphere()
+{
+    UnsignedInt RandomX, RandomY, RandomZ;
+
+    try
+    {
+        UnsignedInt Radius = 400;
+        UnsignedInt RadiusSize = 30;
+        UnsignedInt PosXStart = 512;
+        UnsignedInt PosYStart = 512;
+        UnsignedInt PosZStart = 512;
+
+        uniform_int_distribution<SignedInt> UniformDistributionObjectMoveParticleDirection_int64t(0, 1024);
+
+        while (true)
+        {
+            SignedInt x = UniformDistributionObjectMoveParticleDirection_int64t(mt64R);
+            SignedInt y = UniformDistributionObjectMoveParticleDirection_int64t(mt64R);
+            SignedInt z = UniformDistributionObjectMoveParticleDirection_int64t(mt64R);
+
+            SignedInt dx = static_cast<SignedInt>(Radius) - x;
+            SignedInt dy = static_cast<SignedInt>(Radius) - y;
+            SignedInt dz = static_cast<SignedInt>(Radius) - z;
+            if ((dx * dx + dy * dy + dz * dz >= (Radius - RadiusSize) * (Radius - RadiusSize)) && (dx * dx + dy * dy + dz * dz) <= (Radius * Radius))
+            {
+                RandomX = PosXStart + dx;
+                RandomY = PosYStart + dy;
+                RandomZ = PosZStart + dz;
+
+                return { RandomX, RandomY, RandomZ };
+            }
+        }
+    }
+    CATCH("getting random position inside cell")
+
+    return { RandomX, RandomY, RandomZ };
+}
 
 void CellEngineRealRandomParticlesInVoxelSpaceGenerator::GenerateRealRandomMembraneParticles()
 {
@@ -143,6 +183,26 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::GenerateRealRandomMembr
                         GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 4, 1, -1, 1, -1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), PosXStart + dx, PosYStart + dy, PosZStart + dz, 3, 3, 3, 0, 0, 0, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, &CellEngineParticlesVoxelsShapesGenerator::CheckFreeSpaceForSphereSelectedSpace, &CellEngineParticlesVoxelsShapesGenerator::SetValueToVoxelsForSphereSelectedSpace);
                     }
                 }
+
+        for (const auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
+            if (ParticleKindObject.second.EntityId > StartParticleKindId)
+                if (ParticleKindObject.second.ParticleKindSpecialDataSector.empty() == false)
+                    for (const auto& ParticleKindSpecialDataObject: ParticleKindObject.second.ParticleKindSpecialDataSector)
+                        if (ParticleKindSpecialDataObject.ParticleType == ParticlesTypes::MembraneProtein)
+                            for (UnsignedInt Counter = 1; Counter <= ParticleKindSpecialDataObject.CounterAtStartOfSimulation; Counter++)
+                            {
+                                auto GeneIter = ParticlesKindsManagerObject.Genes.find(ParticleKindSpecialDataObject.GeneId);
+                                if (GeneIter != ParticlesKindsManagerObject.Genes.end())
+                                {
+                                    auto SizeOfParticle = static_cast<UnsignedInt>(pow(GeneIter->second.Sequence.length(), (1 / 3) ));
+
+                                    //WYZNACZ iles pozycji losowo z calej blony
+                                    //czyli by narysowac czastke przejrzuj cala blone i jej wolne miejsca
+                                    //LOSUJ TAK DLUGO AZ WYLOSUJE Z ZAKRESU BLONY
+                                    //GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 4, 1, -1, 1, -1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), PosXStart + dx, PosYStart + dy, PosZStart + dz, 3, 3, 3, 0, 0, 0, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, &CellEngineParticlesVoxelsShapesGenerator::CheckFreeSpaceForSphereSelectedSpace, &CellEngineParticlesVoxelsShapesGenerator::SetValueToVoxelsForSphereSelectedSpace);
+
+                                }
+                            }
     }
     CATCH("generating random membrane particles")
 }
