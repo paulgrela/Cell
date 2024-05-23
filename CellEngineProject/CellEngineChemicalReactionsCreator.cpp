@@ -29,6 +29,7 @@ std::string ConvertParticleTypeToString(ParticlesTypes ParticleType)
         case ParticlesTypes::RibosomesProtein : return "RibosomesProtein";
         case ParticlesTypes::MembraneProtein : return "MembraneProtein";
         case ParticlesTypes::OtherProtein : return "OtherProtein";
+        case ParticlesTypes::ProteinFrac : return "ProteinFrac";
         case ParticlesTypes::Other : return "Other";
         default : return "NONE";
     }
@@ -331,11 +332,6 @@ void CellEngineChemicalReactionsCreator::PrintAllParticleKinds()
     CATCH("printing all particle kinds")
 };
 
-//1) NAJPIERW CZYTAM PROTEINY Z MEMBRANE jest 836 - bez ParticlesKinds ale do ParticlesDataForGenerator
-//2) POTEM CZYTAM Z XML jest 836 - dodaje do ParticlesKinds
-//3) DODAJE do ParticleKinds TYLKO TE KTORE NIE ISTNIEJA W ParticleKinds czyli te co sa w ParticlesDataForGenerator i nie istnieja w ParticleKinds ale bialko 836 istnieje bo dodane w kroku 2)
-//wiec jesli istnieje w ParticleKind to trzeba dokopiowac dane
-
 void CellEngineChemicalReactionsCreator::CheckHowManyParticleDataForGeneratorIsNotInParticleKindsAndAddThem(const bool UpdateParticleKinds)
 {
     try
@@ -358,28 +354,18 @@ void CellEngineChemicalReactionsCreator::CheckHowManyParticleDataForGeneratorIsN
 
         if (UpdateParticleKinds == true)
             for (auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
-            {
                 if (ParticleKindObject.second.ParticleKindSpecialDataSector.empty() == false)
                     if (ParticleKindObject.second.ParticleKindSpecialDataSector[0].ParticleType == ParticlesTypes::OtherProtein)
-                    {
                         for (auto ParticleIterator = ParticlesDataForGenerator.begin(); ParticleIterator != ParticlesDataForGenerator.end(); ParticleIterator = ParticlesDataForGenerator.upper_bound(ParticleIterator->first))
                         {
                             auto ParticlesDataForGeneratorRange = ParticlesDataForGenerator.equal_range(ParticleIterator->first);
                             for (auto &ParticleDataForGeneratorIterator = ParticlesDataForGeneratorRange.first; ParticleDataForGeneratorIterator != ParticlesDataForGeneratorRange.second; ParticleDataForGeneratorIterator++)
-                            {
-//                                if (ParticleDataForGeneratorIterator->second.GeneId == ParticleKindObject.second.ParticleKindSpecialDataSector[0].GeneId)
-//                                    LoggersManagerObject.Log(STREAM("UPDATED 1 TYPE = " << ParticleIterator->second.GeneId << " " << ConvertParticleTypeToString(ParticleDataForGeneratorIterator->second.ParticleType)));
                                 if (ParticleDataForGeneratorIterator->second.GeneId == ParticleKindObject.second.GeneId && ParticleDataForGeneratorIterator->second.ParticleType != ParticlesTypes::OtherProtein && ParticleDataForGeneratorIterator->second.IsProtein == true)
                                 {
                                     ParticleKindObject.second.ParticleKindSpecialDataSector[0].ParticleType = ParticleDataForGeneratorIterator->second.ParticleType;
-                                    LoggersManagerObject.Log(STREAM("UPDATED TYPE = " << ParticleIterator->second.GeneId << " " << ConvertParticleTypeToString(ParticleDataForGeneratorIterator->second.ParticleType)));
+                                    LoggersManagerObject.Log(STREAM("UPDATED TYPE = " << ParticleDataForGeneratorIterator->second.GeneId << " " << ConvertParticleTypeToString(ParticleDataForGeneratorIterator->second.ParticleType)));
                                 }
-                            }
-
                         }
-
-                    }
-            }
     }
     CATCH("checking how many particle data for generator in not in particle kinds")
 };
@@ -570,11 +556,11 @@ void CellEngineChemicalReactionsCreator::ReadCSVFiles(bool Read, const string& P
             ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("trna_metabolites_synthase.csv"), ','), 1, 29, 1, 2, 3, -1, -1, false, false, 10, "", "_charged_trna_", 7, 4, ParticlesTypes::tRNA);
             ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("mrna_counts.csv"), ','), 1, 454, 1, 1, -1, -1, 2, true, false, 0, "mrna_", "", 10, 4, ParticlesTypes::mRNA);
             ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("rrna_metabolites.csv"), ','), 1, 6, 0, 1, -1, -1, -1, false, false, 10, "rrna_", "", 10, 4, ParticlesTypes::rRNA);
-            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("polymerase_rna_proteins.csv"), ','), 1, 4, 0, 1, -1, -1, -1, false, false, 10, "", "", 7, 4, ParticlesTypes::RNAPolymeraseProtein);
 
+            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("polymerase_rna_proteins.csv"), ','), 1, 4, 0, 1, -1, -1, -1, false, true, 10, "", "", 7, 4, ParticlesTypes::RNAPolymeraseProtein);
             ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("ribosomes_proteins_metabolites.csv"), ','), 1, 48, 0, 1, -1, -1, -1, false, true, 10, "", "", 7, 4, ParticlesTypes::RibosomesProtein);
             ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("membrane_proteins_metabolites.csv"), ','), 1, 94, 0, 1, -1, -1, -1, false, true, 10, "", "", 7, 4, ParticlesTypes::MembraneProtein);
-            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("proteins_metabolites_frac.csv"), ','), 1, 15, 0, 1, -1, 2, -1, false, true, 10, "", "", 7, 4, ParticlesTypes::OtherProtein);
+            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("proteins_metabolites_frac.csv"), ','), 1, 15, 0, 1, -1, 2, -1, false, true, 10, "", "", 7, 4, ParticlesTypes::ProteinFrac);
         }
     }
     CATCH("reading tsv files")

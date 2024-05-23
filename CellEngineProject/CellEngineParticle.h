@@ -132,7 +132,8 @@ enum class ParticlesTypes : UnsignedInt
     RibosomesProtein = 8,
     MembraneProtein = 9,
     OtherProtein = 10,
-    Other = 11
+    ProteinFrac = 11,
+    Other = 12
 };
 
 class Gene
