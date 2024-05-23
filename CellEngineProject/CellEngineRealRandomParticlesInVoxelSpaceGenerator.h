@@ -7,6 +7,8 @@
 
 class CellEngineRealRandomParticlesInVoxelSpaceGenerator : public CellEngineParticlesVoxelsShapesGenerator, virtual public CellEngineRandomDeviceEngine, virtual public CellEngineBasicParticlesOperations
 {
+private:
+    UnsignedInt TotalNumberOfAllParticles = 0;
 public:
     void GenerateAllRealRandomParticles();
 public:
@@ -20,6 +22,8 @@ public:
     void GenerateRealRandomRibosomesParticles();
     void GenerateRealRandomPolymeraseParticles();
     void GenerateRealRandomRNAPolymeraseParticles();
+public:
+    std::tuple<UnsignedInt, UnsignedInt> GetNumberOfParticlesKind(ParticlesTypes ParticleTypeParam);
 protected:
     explicit CellEngineRealRandomParticlesInVoxelSpaceGenerator(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : CellEngineParticlesVoxelsShapesGenerator(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam)
     {

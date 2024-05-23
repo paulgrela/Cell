@@ -1,9 +1,12 @@
 
 #include "CellEngineRealRandomParticlesInVoxelSpaceGenerator.h"
 
-UnsignedInt GetNumberOfParticlesOfType(ParticlesTypes ParticleTypeParam)
+using namespace std;
+
+tuple<UnsignedInt, UnsignedInt> CellEngineRealRandomParticlesInVoxelSpaceGenerator::GetNumberOfParticlesKind(ParticlesTypes ParticleTypeParam)
 {
-    UnsignedInt ParticleCounter = 0;
+    UnsignedInt ParticlesCounter = 0;
+    UnsignedInt ParticlesKindsCounter = 0;
 
     try
     {
@@ -11,11 +14,15 @@ UnsignedInt GetNumberOfParticlesOfType(ParticlesTypes ParticleTypeParam)
             if (ParticleKindObject.second.ParticleKindSpecialDataSector.empty() == false)
                 for (const auto& ParticleKindSpecialDataObject: ParticleKindObject.second.ParticleKindSpecialDataSector)
                     if (ParticleKindSpecialDataObject.ParticleType == ParticleTypeParam)
-                        ParticleCounter++;
+                    {
+                        TotalNumberOfAllParticles += ParticleKindSpecialDataObject.CounterAtStartOfSimulation;
+                        ParticlesCounter += ParticleKindSpecialDataObject.CounterAtStartOfSimulation;
+                        ParticlesKindsCounter++;
+                    }
     }
-    CATCH("")
+    CATCH("getting number of particles of type")
 
-    return ParticleCounter;
+    return { ParticlesKindsCounter, ParticlesCounter };
 }
 
 void CellEngineRealRandomParticlesInVoxelSpaceGenerator::GenerateAllRealRandomParticles()
@@ -101,18 +108,19 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::GenerateRealRandomMembr
 {
     try
     {
-        LoggersManagerObject.Log(STREAM("Number Of Other Proteins = " << GetNumberOfParticlesOfType(ParticlesTypes::OtherProtein)));
-        LoggersManagerObject.Log(STREAM("Number Of Membrane Proteins = " << GetNumberOfParticlesOfType(ParticlesTypes::MembraneProtein)));
-        LoggersManagerObject.Log(STREAM("Number Of Ribosomes Proteins = " << GetNumberOfParticlesOfType(ParticlesTypes::RibosomesProtein)));
-        LoggersManagerObject.Log(STREAM("Number Of RNA Polymerase Proteins = " << GetNumberOfParticlesOfType(ParticlesTypes::RNAPolymeraseProtein)));
-        LoggersManagerObject.Log(STREAM("Number Of RNA Polymerase Proteins = " << GetNumberOfParticlesOfType(ParticlesTypes::PolymeraseProtein)));
-        LoggersManagerObject.Log(STREAM("Number Of Proteins Frac = " << GetNumberOfParticlesOfType(ParticlesTypes::ProteinFrac)));
+        LoggersManagerObject.Log(STREAM("Number Of Other Proteins = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::OtherProtein)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::OtherProtein))));
+        LoggersManagerObject.Log(STREAM("Number Of Membrane Proteins = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::MembraneProtein)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::MembraneProtein))));
+        LoggersManagerObject.Log(STREAM("Number Of Ribosomes Proteins = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::RibosomesProtein)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::RibosomesProtein))));
+        LoggersManagerObject.Log(STREAM("Number Of RNA Polymerase Proteins = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::RNAPolymeraseProtein)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::RNAPolymeraseProtein))));
+        LoggersManagerObject.Log(STREAM("Number Of RNA Polymerase Proteins = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::PolymeraseProtein)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::PolymeraseProtein))));
+        LoggersManagerObject.Log(STREAM("Number Of Proteins Frac = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::ProteinFrac)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::ProteinFrac))));
 
-        LoggersManagerObject.Log(STREAM("Number Of TRNA = " << GetNumberOfParticlesOfType(ParticlesTypes::tRNA)));
-        LoggersManagerObject.Log(STREAM("Number Of MRNA = " << GetNumberOfParticlesOfType(ParticlesTypes::mRNA)));
-        LoggersManagerObject.Log(STREAM("Number Of RRNA = " << GetNumberOfParticlesOfType(ParticlesTypes::rRNA)));
+        LoggersManagerObject.Log(STREAM("Number Of TRNA = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::tRNA)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::tRNA))));
+        LoggersManagerObject.Log(STREAM("Number Of MRNA = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::mRNA)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::mRNA))));
+        LoggersManagerObject.Log(STREAM("Number Of RRNA = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::rRNA)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::rRNA))));
 
-        LoggersManagerObject.Log(STREAM("Number Of Basic = " << GetNumberOfParticlesOfType(ParticlesTypes::Basic)));
+        LoggersManagerObject.Log(STREAM("Number Of Basic = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::Basic)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::Basic))));
+        LoggersManagerObject.Log(STREAM("Total Number Of All Particles = " << TotalNumberOfAllParticles));
 
         UnsignedInt Radius = 400;
         UnsignedInt RadiusSize = 30;
