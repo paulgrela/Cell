@@ -8,6 +8,9 @@
 class CellEngineRealRandomParticlesInVoxelSpaceGenerator : public CellEngineParticlesVoxelsShapesGenerator, virtual public CellEngineRandomDeviceEngine, virtual public CellEngineBasicParticlesOperations
 {
 private:
+    const UnsignedInt MaxNumberOfTriesToInsertNewParticle = 100;
+    const UnsignedInt MaxNumberOfTriesToFindARandomPositionInCell = 1000;
+private:
     UnsignedInt TotalNumberOfAllParticles = 0;
 public:
     void GenerateAllRealRandomParticles();
@@ -22,9 +25,11 @@ public:
     void GenerateRealRandomRibosomesParticles();
     void GenerateRealRandomPolymeraseParticles();
     void GenerateRealRandomRNAPolymeraseParticles();
-public:
+protected:
     std::tuple<UnsignedInt, UnsignedInt> GetNumberOfParticlesKind(ParticlesTypes ParticleTypeParam);
     std::tuple<UnsignedInt, UnsignedInt, UnsignedInt> GetRandomPositionInsideSphere();
+protected:
+    void PrintNumberOfParticlesForAllMainTypesOfParticles();
 protected:
     explicit CellEngineRealRandomParticlesInVoxelSpaceGenerator(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : CellEngineParticlesVoxelsShapesGenerator(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam)
     {

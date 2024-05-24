@@ -29,11 +29,34 @@ tuple<UnsignedInt, UnsignedInt> CellEngineRealRandomParticlesInVoxelSpaceGenerat
     return { ParticlesKindsCounter, ParticlesCounter };
 }
 
+void CellEngineRealRandomParticlesInVoxelSpaceGenerator::PrintNumberOfParticlesForAllMainTypesOfParticles()
+{
+    try
+    {
+        LoggersManagerObject.Log(STREAM("Number Of Other Proteins = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::OtherProtein)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::OtherProtein))));
+        LoggersManagerObject.Log(STREAM("Number Of Membrane Proteins = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::MembraneProtein)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::MembraneProtein))));
+        LoggersManagerObject.Log(STREAM("Number Of Ribosomes Proteins = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::RibosomesProtein)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::RibosomesProtein))));
+        LoggersManagerObject.Log(STREAM("Number Of RNA Polymerase Proteins = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::RNAPolymeraseProtein)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::RNAPolymeraseProtein))));
+        LoggersManagerObject.Log(STREAM("Number Of RNA Polymerase Proteins = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::PolymeraseProtein)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::PolymeraseProtein))));
+        LoggersManagerObject.Log(STREAM("Number Of Proteins Frac = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::ProteinFrac)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::ProteinFrac))));
+
+        LoggersManagerObject.Log(STREAM("Number Of TRNA = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::tRNA)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::tRNA))));
+        LoggersManagerObject.Log(STREAM("Number Of MRNA = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::mRNA)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::mRNA))));
+        LoggersManagerObject.Log(STREAM("Number Of RRNA = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::rRNA)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::rRNA))));
+
+        LoggersManagerObject.Log(STREAM("Number Of Basic = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::Basic)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::Basic))));
+        LoggersManagerObject.Log(STREAM("Total Number Of All Particles = " << TotalNumberOfAllParticles));
+    }
+    CATCH("printing number of particles for all main types of particles")
+}
+
 void CellEngineRealRandomParticlesInVoxelSpaceGenerator::GenerateAllRealRandomParticles()
 {
     try
     {
         ClearVoxelSpaceAndParticles();
+
+        //CellEngineUseful::SwitchOffLogs();
 
         GenerateRealRandomOtherParticles();
         GenerateRealRandomBasicParticles();
@@ -45,6 +68,10 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::GenerateAllRealRandomPa
         GenerateRealRandomRibosomesParticles();
         GenerateRealRandomPolymeraseParticles();
         GenerateRealRandomRNAPolymeraseParticles();
+
+        CellEngineUseful::SwitchOnLogs();
+
+        PrintNumberOfParticlesForAllMainTypesOfParticles();
     }
     CATCH("generating all random particles")
 }
@@ -118,10 +145,11 @@ tuple<UnsignedInt, UnsignedInt, UnsignedInt> CellEngineRealRandomParticlesInVoxe
 
         uniform_int_distribution<SignedInt> UniformDistributionObjectMoveParticleDirection_int64t(0, 1024);
 
-        UnsignedInt TryFindNewPositionCounter = 0;
-        while (TryFindNewPositionCounter < 1000)
+        UnsignedInt TryFindNewRandomPositionCounter = 0;
+
+        while (TryFindNewRandomPositionCounter < MaxNumberOfTriesToFindARandomPositionInCell)
         {
-            TryFindNewPositionCounter++;
+            TryFindNewRandomPositionCounter++;
 
             SignedInt dx = static_cast<SignedInt>(Radius) - UniformDistributionObjectMoveParticleDirection_int64t(mt64R);
             SignedInt dy = static_cast<SignedInt>(Radius) - UniformDistributionObjectMoveParticleDirection_int64t(mt64R);
@@ -140,20 +168,6 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::GenerateRealRandomMembr
 {
     try
     {
-        LoggersManagerObject.Log(STREAM("Number Of Other Proteins = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::OtherProtein)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::OtherProtein))));
-        LoggersManagerObject.Log(STREAM("Number Of Membrane Proteins = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::MembraneProtein)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::MembraneProtein))));
-        LoggersManagerObject.Log(STREAM("Number Of Ribosomes Proteins = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::RibosomesProtein)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::RibosomesProtein))));
-        LoggersManagerObject.Log(STREAM("Number Of RNA Polymerase Proteins = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::RNAPolymeraseProtein)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::RNAPolymeraseProtein))));
-        LoggersManagerObject.Log(STREAM("Number Of RNA Polymerase Proteins = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::PolymeraseProtein)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::PolymeraseProtein))));
-        LoggersManagerObject.Log(STREAM("Number Of Proteins Frac = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::ProteinFrac)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::ProteinFrac))));
-
-        LoggersManagerObject.Log(STREAM("Number Of TRNA = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::tRNA)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::tRNA))));
-        LoggersManagerObject.Log(STREAM("Number Of MRNA = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::mRNA)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::mRNA))));
-        LoggersManagerObject.Log(STREAM("Number Of RRNA = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::rRNA)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::rRNA))));
-
-        LoggersManagerObject.Log(STREAM("Number Of Basic = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::Basic)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::Basic))));
-        LoggersManagerObject.Log(STREAM("Total Number Of All Particles = " << TotalNumberOfAllParticles));
-
         for (const auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
             if (ParticleKindObject.second.EntityId >= StartParticleKindId)
                 if (ParticleKindObject.second.ParticleKindSpecialDataSector.empty() == false)
@@ -174,18 +188,18 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::GenerateRealRandomMembr
 
                                     UnsignedInt TryInsertNewParticleCounter = 0;
 
-                                    while (TryInsertNewParticleCounter < 100 && TryResult == false)
+                                    while (TryInsertNewParticleCounter < MaxNumberOfTriesToInsertNewParticle && TryResult == false)
                                     {
-                                        //auto[ PosX, PosY, PosZ] = GetRandomPositionInsideSphere();
                                         tie(PosX, PosY, PosZ) = GetRandomPositionInsideSphere();
                                         TryResult = GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), ParticleKindObject.second.EntityId, 1, -1, 1, ParticleKindObject.second.ElectricCharge, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), PosX, PosY, PosZ, Size, Size, Size, 0, 0, 0, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, &CellEngineParticlesVoxelsShapesGenerator::CheckFreeSpaceForSphereSelectedSpace, &CellEngineParticlesVoxelsShapesGenerator::SetValueToVoxelsForSphereSelectedSpace);
                                         //If (TryResult == true) DODAJ Sequence z Genu
                                         TryInsertNewParticleCounter++;
-
-                                        //LoggersManagerObject.Log(STREAM("Try Insert = " << TryInsertNewParticleCounter << " Gene Length = " << GeneIter->second.Sequence.length() << " PosX = " << PosX << " PosY = " << PosY << " PosZ = " << PosZ << " Size " << Size));
                                     }
-                                    LoggersManagerObject.Log(STREAM("Try Insert = " << TryInsertNewParticleCounter << " Gene Length = " << GeneIter->second.Sequence.length() << " PosX = " << PosX << " PosY = " << PosY << " PosZ = " << PosZ << " Size " << Size));
-                                    LoggersManagerObject.Log(STREAM(""));
+
+                                    if (TryInsertNewParticleCounter == MaxNumberOfTriesToInsertNewParticle)
+                                        LoggersManagerObject.Log(STREAM("ERROR Tried insert too many times - Gene Length = " << GeneIter->second.Sequence.length() << " PosX = " << PosX << " PosY = " << PosY << " PosZ = " << PosZ << " Size " << Size << endl));
+                                    else
+                                        LoggersManagerObject.Log(STREAM("Try Insert = " << TryInsertNewParticleCounter << " Gene Length = " << GeneIter->second.Sequence.length() << " PosX = " << PosX << " PosY = " << PosY << " PosZ = " << PosZ << " Size " << Size << endl));
                                 }
                             }
     }
