@@ -108,8 +108,6 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::GenerateRealRandom_rRNA
 
 tuple<UnsignedInt, UnsignedInt, UnsignedInt> CellEngineRealRandomParticlesInVoxelSpaceGenerator::GetRandomPositionInsideSphere()
 {
-    UnsignedInt RandomX, RandomY, RandomZ;
-
     try
     {
         UnsignedInt Radius = 400;
@@ -120,28 +118,22 @@ tuple<UnsignedInt, UnsignedInt, UnsignedInt> CellEngineRealRandomParticlesInVoxe
 
         uniform_int_distribution<SignedInt> UniformDistributionObjectMoveParticleDirection_int64t(0, 1024);
 
-        while (true)
+        UnsignedInt TryFindNewPositionCounter = 0;
+        while (TryFindNewPositionCounter < 1000)
         {
-            SignedInt x = UniformDistributionObjectMoveParticleDirection_int64t(mt64R);
-            SignedInt y = UniformDistributionObjectMoveParticleDirection_int64t(mt64R);
-            SignedInt z = UniformDistributionObjectMoveParticleDirection_int64t(mt64R);
+            TryFindNewPositionCounter++;
 
-            SignedInt dx = static_cast<SignedInt>(Radius) - x;
-            SignedInt dy = static_cast<SignedInt>(Radius) - y;
-            SignedInt dz = static_cast<SignedInt>(Radius) - z;
+            SignedInt dx = static_cast<SignedInt>(Radius) - UniformDistributionObjectMoveParticleDirection_int64t(mt64R);
+            SignedInt dy = static_cast<SignedInt>(Radius) - UniformDistributionObjectMoveParticleDirection_int64t(mt64R);
+            SignedInt dz = static_cast<SignedInt>(Radius) - UniformDistributionObjectMoveParticleDirection_int64t(mt64R);
+
             if ((dx * dx + dy * dy + dz * dz >= (Radius - RadiusSize) * (Radius - RadiusSize)) && (dx * dx + dy * dy + dz * dz) <= (Radius * Radius))
-            {
-                RandomX = PosXStart + dx;
-                RandomY = PosYStart + dy;
-                RandomZ = PosZStart + dz;
-
-                return { RandomX, RandomY, RandomZ };
-            }
+                return { PosXStart + dx, PosYStart + dy, PosZStart + dz };
         }
     }
     CATCH("getting random position inside cell")
 
-    return { RandomX, RandomY, RandomZ };
+    return { 0, 0, 0 };
 }
 
 void CellEngineRealRandomParticlesInVoxelSpaceGenerator::GenerateRealRandomMembraneParticles()
@@ -162,45 +154,38 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::GenerateRealRandomMembr
         LoggersManagerObject.Log(STREAM("Number Of Basic = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::Basic)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::Basic))));
         LoggersManagerObject.Log(STREAM("Total Number Of All Particles = " << TotalNumberOfAllParticles));
 
-        UnsignedInt Radius = 400;
-        UnsignedInt RadiusSize = 30;
-        UnsignedInt PosXStart = 512;
-        UnsignedInt PosYStart = 512;
-        UnsignedInt PosZStart = 512;
-        UnsignedInt StepX = 10;
-        UnsignedInt StepY = 10;
-        UnsignedInt StepZ = 10;
-
-        for (SignedInt x = 0; x < Radius * 2; x += static_cast<SignedInt>(StepX))
-            for (SignedInt y = 0; y < Radius * 2; y += static_cast<SignedInt>(StepY))
-                for (SignedInt z = 0; z < Radius * 2; z += static_cast<SignedInt>(StepZ))
-                {
-                    SignedInt dx = static_cast<SignedInt>(Radius) - x;
-                    SignedInt dy = static_cast<SignedInt>(Radius) - y;
-                    SignedInt dz = static_cast<SignedInt>(Radius) - z;
-                    if ((dx * dx + dy * dy + dz * dz >= (Radius - RadiusSize) * (Radius - RadiusSize)) && (dx * dx + dy * dy + dz * dz) <= (Radius * Radius))
-                    {
-                        GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 4, 1, -1, 1, -1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), PosXStart + dx, PosYStart + dy, PosZStart + dz, 3, 3, 3, 0, 0, 0, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, &CellEngineParticlesVoxelsShapesGenerator::CheckFreeSpaceForSphereSelectedSpace, &CellEngineParticlesVoxelsShapesGenerator::SetValueToVoxelsForSphereSelectedSpace);
-                    }
-                }
-
         for (const auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
-            if (ParticleKindObject.second.EntityId > StartParticleKindId)
+            if (ParticleKindObject.second.EntityId >= StartParticleKindId)
                 if (ParticleKindObject.second.ParticleKindSpecialDataSector.empty() == false)
-                    for (const auto& ParticleKindSpecialDataObject: ParticleKindObject.second.ParticleKindSpecialDataSector)
-                        if (ParticleKindSpecialDataObject.ParticleType == ParticlesTypes::MembraneProtein)
-                            for (UnsignedInt Counter = 1; Counter <= ParticleKindSpecialDataObject.CounterAtStartOfSimulation; Counter++)
+                    if (ParticleKindObject.second.ParticleKindSpecialDataSector[0].ParticleType == ParticlesTypes::MembraneProtein)
+                        for (const auto& ParticleKindSpecialDataObject: ParticleKindObject.second.ParticleKindSpecialDataSector)
+                            for (UnsignedInt ParticleCounter = 1; ParticleCounter <= ParticleKindSpecialDataObject.CounterAtStartOfSimulation; ParticleCounter++)
                             {
+                                LoggersManagerObject.Log(STREAM("Particle Counter = " << ParticleCounter));
+
                                 auto GeneIter = ParticlesKindsManagerObject.Genes.find(ParticleKindSpecialDataObject.GeneId);
                                 if (GeneIter != ParticlesKindsManagerObject.Genes.end())
                                 {
-                                    auto SizeOfParticle = static_cast<UnsignedInt>(pow(GeneIter->second.Sequence.length(), (1 / 3) ));
+                                    LoggersManagerObject.Log(STREAM("Gene Number = " << GeneIter->second.NumId));
 
-                                    //WYZNACZ iles pozycji losowo z calej blony
-                                    //czyli by narysowac czastke przejrzuj cala blone i jej wolne miejsca
-                                    //LOSUJ TAK DLUGO AZ WYLOSUJE Z ZAKRESU BLONY
-                                    //GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), 4, 1, -1, 1, -1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), PosXStart + dx, PosYStart + dy, PosZStart + dz, 3, 3, 3, 0, 0, 0, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, &CellEngineParticlesVoxelsShapesGenerator::CheckFreeSpaceForSphereSelectedSpace, &CellEngineParticlesVoxelsShapesGenerator::SetValueToVoxelsForSphereSelectedSpace);
+                                    auto Size = static_cast<UnsignedInt>(pow(GeneIter->second.Sequence.length(), (1.0 / 3.0)));
+                                    UnsignedInt PosX, PosY, PosZ;
+                                    bool TryResult = false;
 
+                                    UnsignedInt TryInsertNewParticleCounter = 0;
+
+                                    while (TryInsertNewParticleCounter < 100 && TryResult == false)
+                                    {
+                                        //auto[ PosX, PosY, PosZ] = GetRandomPositionInsideSphere();
+                                        tie(PosX, PosY, PosZ) = GetRandomPositionInsideSphere();
+                                        TryResult = GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), ParticleKindObject.second.EntityId, 1, -1, 1, ParticleKindObject.second.ElectricCharge, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), PosX, PosY, PosZ, Size, Size, Size, 0, 0, 0, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, &CellEngineParticlesVoxelsShapesGenerator::CheckFreeSpaceForSphereSelectedSpace, &CellEngineParticlesVoxelsShapesGenerator::SetValueToVoxelsForSphereSelectedSpace);
+                                        //If (TryResult == true) DODAJ Sequence z Genu
+                                        TryInsertNewParticleCounter++;
+
+                                        //LoggersManagerObject.Log(STREAM("Try Insert = " << TryInsertNewParticleCounter << " Gene Length = " << GeneIter->second.Sequence.length() << " PosX = " << PosX << " PosY = " << PosY << " PosZ = " << PosZ << " Size " << Size));
+                                    }
+                                    LoggersManagerObject.Log(STREAM("Try Insert = " << TryInsertNewParticleCounter << " Gene Length = " << GeneIter->second.Sequence.length() << " PosX = " << PosX << " PosY = " << PosY << " PosZ = " << PosZ << " Size " << Size));
+                                    LoggersManagerObject.Log(STREAM(""));
                                 }
                             }
     }
