@@ -14,27 +14,6 @@
 
 using namespace std;
 
-std::string ConvertParticleTypeToString(ParticlesTypes ParticleType)
-{
-    switch (ParticleType)
-    {
-        case ParticlesTypes::Empty : return "Empty";
-        case ParticlesTypes::Basic : return "Basic";
-        case ParticlesTypes::Lipid : return "Lipid";
-        case ParticlesTypes::tRNA : return "tRNA";
-        case ParticlesTypes::mRNA : return "mRNA";
-        case ParticlesTypes::rRNA : return "rRNA";
-        case ParticlesTypes::RNAPolymeraseProtein : return "RNAPolymeraseProtein";
-        case ParticlesTypes::PolymeraseProtein : return "PolymeraseProtein";
-        case ParticlesTypes::RibosomesProtein : return "RibosomesProtein";
-        case ParticlesTypes::MembraneProtein : return "MembraneProtein";
-        case ParticlesTypes::OtherProtein : return "OtherProtein";
-        case ParticlesTypes::ProteinFrac : return "ProteinFrac";
-        case ParticlesTypes::Other : return "Other";
-        default : return "NONE";
-    }
-};
-
 constexpr long double constexpr_power(long double num, unsigned int pow)
 {
     return (pow == 0 ? 1 : num * constexpr_power(num, pow - 1));
@@ -324,7 +303,7 @@ void CellEngineChemicalReactionsCreator::PrintAllParticleKinds()
         {
             LoggersManagerObject.Log(STREAM("KIND PARTICLE = " << ParticleKindObject.second.EntityId << " " << ParticleKindObject.second.IdStr << " " << ParticleKindObject.second.Name << " " << ParticleKindObject.second.Formula << " " << ParticleKindObject.second.ElectricCharge << " GeneId = " << ParticleKindObject.second.GeneId));
             for (const auto& ParticleKindParticleKindSpecialDataSectorObject : ParticleKindObject.second.ParticleKindSpecialDataSector)
-                LoggersManagerObject.Log(STREAM(string("KIND GENE = " + string(ParticleKindParticleKindSpecialDataSectorObject.GeneId != -1 ? "JCVISYN3A_" + to_string(ParticleKindParticleKindSpecialDataSectorObject.GeneId) : "NoGene") + " TYPE = " + ConvertParticleTypeToString(ParticleKindParticleKindSpecialDataSectorObject.ParticleType) + " D = #" + ParticleKindParticleKindSpecialDataSectorObject.Description + "# Added = #" + ParticleKindParticleKindSpecialDataSectorObject.AddedParticle + "# CLEAN PRODUCT = #" + to_string(ParticleKindParticleKindSpecialDataSectorObject.CleanProductOfTranscription) + "# COUNTER = " + to_string(ParticleKindParticleKindSpecialDataSectorObject.CounterAtStartOfSimulation))));                ;
+                LoggersManagerObject.Log(STREAM(string("KIND GENE = " + string(ParticleKindParticleKindSpecialDataSectorObject.GeneId != -1 ? "JCVISYN3A_" + to_string(ParticleKindParticleKindSpecialDataSectorObject.GeneId) : "NoGene") + " TYPE = " + ParticlesKindsManagerObject.ConvertParticleTypeToString(ParticleKindParticleKindSpecialDataSectorObject.ParticleType) + " D = #" + ParticleKindParticleKindSpecialDataSectorObject.Description + "# Added = #" + ParticleKindParticleKindSpecialDataSectorObject.AddedParticle + "# CLEAN PRODUCT = #" + to_string(ParticleKindParticleKindSpecialDataSectorObject.CleanProductOfTranscription) + "# COUNTER = " + to_string(ParticleKindParticleKindSpecialDataSectorObject.CounterAtStartOfSimulation))));                ;
 
             LoggersManagerObject.Log(STREAM(""));
         }
@@ -379,7 +358,7 @@ void CellEngineChemicalReactionsCreator::CheckHowManyParticleDataForGeneratorIsN
                                 if (ParticleDataForGeneratorIterator->second.GeneId == ParticleKindObject.second.GeneId && ParticleDataForGeneratorIterator->second.ParticleType != ParticlesTypes::OtherProtein && ParticleDataForGeneratorIterator->second.IsProtein == true)
                                 {
                                     ParticleKindObject.second.ParticleKindSpecialDataSector[0].ParticleType = ParticleDataForGeneratorIterator->second.ParticleType;
-                                    LoggersManagerObject.Log(STREAM("UPDATED TYPE = " << ParticleDataForGeneratorIterator->second.GeneId << " " << ConvertParticleTypeToString(ParticleDataForGeneratorIterator->second.ParticleType)));
+                                    LoggersManagerObject.Log(STREAM("UPDATED TYPE = " << ParticleDataForGeneratorIterator->second.GeneId << " " << ParticlesKindsManagerObject.ConvertParticleTypeToString(ParticleDataForGeneratorIterator->second.ParticleType)));
                                 }
                         }
     }
@@ -548,7 +527,7 @@ void CellEngineChemicalReactionsCreator::PrintAllParticlesData()
             LoggersManagerObject.Log(STREAM("P NAME = " << ParticleIterator->first));
             auto Range = ParticlesDataForGenerator.equal_range(ParticleIterator->first);
             for (auto& ParticleDataIterator = Range.first; ParticleDataIterator != Range.second; ParticleDataIterator++)
-                LoggersManagerObject.Log(STREAM(string("P GENE = " + string(ParticleDataIterator->second.GeneId != -1 ? "JCVISYN3A_" + to_string(ParticleDataIterator->second.GeneId) : "NoGene") + " TYPE = " + ConvertParticleTypeToString(ParticleDataIterator->second.ParticleType) + " D = #" + ParticleDataIterator->second.Description + "# Added = #" + ParticleDataIterator->second.AddedParticle + "# CLEAN PRODUCT = #" + to_string(ParticleDataIterator->second.CleanProductOfTranscription) + "# COUNTER = " + to_string(ParticleDataIterator->second.CounterAtStartOfSimulation))));
+                LoggersManagerObject.Log(STREAM(string("P GENE = " + string(ParticleDataIterator->second.GeneId != -1 ? "JCVISYN3A_" + to_string(ParticleDataIterator->second.GeneId) : "NoGene") + " TYPE = " + ParticlesKindsManagerObject.ConvertParticleTypeToString(ParticleDataIterator->second.ParticleType) + " D = #" + ParticleDataIterator->second.Description + "# Added = #" + ParticleDataIterator->second.AddedParticle + "# CLEAN PRODUCT = #" + to_string(ParticleDataIterator->second.CleanProductOfTranscription) + "# COUNTER = " + to_string(ParticleDataIterator->second.CounterAtStartOfSimulation))));
 
             LoggersManagerObject.Log(STREAM(""));
         }

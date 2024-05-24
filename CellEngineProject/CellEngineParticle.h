@@ -295,6 +295,27 @@ public:
 
         return AtomKindObjectIterator;
     }
+public:
+    static std::string ConvertParticleTypeToString(ParticlesTypes ParticleType)
+    {
+        switch (ParticleType)
+        {
+            case ParticlesTypes::Empty : return "Empty";
+            case ParticlesTypes::Basic : return "Basic";
+            case ParticlesTypes::Lipid : return "Lipid";
+            case ParticlesTypes::tRNA : return "tRNA";
+            case ParticlesTypes::mRNA : return "mRNA";
+            case ParticlesTypes::rRNA : return "rRNA";
+            case ParticlesTypes::RNAPolymeraseProtein : return "RNAPolymeraseProtein";
+            case ParticlesTypes::PolymeraseProtein : return "PolymeraseProtein";
+            case ParticlesTypes::RibosomesProtein : return "RibosomesProtein";
+            case ParticlesTypes::MembraneProtein : return "MembraneProtein";
+            case ParticlesTypes::OtherProtein : return "OtherProtein";
+            case ParticlesTypes::ProteinFrac : return "ProteinFrac";
+            case ParticlesTypes::Other : return "Other";
+            default : return "NONE";
+        }
+    };
 };
 
 inline ParticlesKindsManager ParticlesKindsManagerObject;

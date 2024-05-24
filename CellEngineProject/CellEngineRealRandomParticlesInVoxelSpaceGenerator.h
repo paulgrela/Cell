@@ -8,26 +8,17 @@
 class CellEngineRealRandomParticlesInVoxelSpaceGenerator : public CellEngineParticlesVoxelsShapesGenerator, virtual public CellEngineRandomDeviceEngine, virtual public CellEngineBasicParticlesOperations
 {
 private:
-    const UnsignedInt MaxNumberOfTriesToInsertNewParticle = 100;
+    const UnsignedInt MaxNumberOfTriesToInsertNewParticle = 1000;
     const UnsignedInt MaxNumberOfTriesToFindARandomPositionInCell = 1000;
 private:
     UnsignedInt TotalNumberOfAllParticles = 0;
 public:
     void GenerateAllRealRandomParticles();
-public:
-    void GenerateRealRandomOtherParticles();
-    void GenerateRealRandomBasicParticles();
-    void GenerateRealRandomLipidParticles();
-    void GenerateRealRandom_tRNAParticles();
-    void GenerateRealRandom_mRNAParticles();
-    void GenerateRealRandom_rRNAParticles();
-    void GenerateRealRandomMembraneParticles();
-    void GenerateRealRandomRibosomesParticles();
-    void GenerateRealRandomPolymeraseParticles();
-    void GenerateRealRandomRNAPolymeraseParticles();
 protected:
     std::tuple<UnsignedInt, UnsignedInt> GetNumberOfParticlesKind(ParticlesTypes ParticleTypeParam);
-    std::tuple<UnsignedInt, UnsignedInt, UnsignedInt> GetRandomPositionInsideSphere();
+    std::tuple<UnsignedInt, UnsignedInt, UnsignedInt> GetRandomPositionInsideSphere(UnsignedInt Radius, UnsignedInt RadiusSize);
+public:
+    void InsertNewRandomParticlesForType(ParticlesTypes ParticleTypeParam, UnsignedInt Radius, UnsignedInt RadiusSize);
 protected:
     void PrintNumberOfParticlesForAllMainTypesOfParticles();
 protected:
