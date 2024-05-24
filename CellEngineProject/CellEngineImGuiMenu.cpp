@@ -617,7 +617,7 @@ public:
 
                 if (ImGui::CollapsingHeader("RANDOM DNA GENERATOR", ImGuiTreeNodeFlags_DefaultOpen))
                 {
-                    ColorButton("  GENERATE RANDOM DNA                ", Nothing, 0, 0, 0, 3, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue){ CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateRandomDNAInWholeCell(579990, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartXPos + 3, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartYPos, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartZPos, 2, 2, 2, 2, 2, 2, 2, 2); });
+                    ColorButton("  GENERATE RANDOM DNA               ", Nothing, 0, 0, 0, 3, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue){ CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateRandomDNAInWholeCell(579990, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartXPos + 3, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartYPos, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartZPos, 2, 2, 2, 2, 2, 2, 2, 2); });
 
                     if (ImGui::Button("  TRUE RANDOM GENERATOR SEED DEVICE ") == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->RandomGeneratorSetSeedByRandomDevice();
@@ -636,14 +636,38 @@ public:
 
                 if (ImGui::CollapsingHeader("  RANDOM PARTICLES GENERATOR  ", ImGuiTreeNodeFlags_DefaultOpen))
                 {
-                    if (ImGui::Button("  CLEAR VOXEL SPACE AND PARTICLES     ") == true)
+                    if (ImGui::Button("  CLEAR VOXEL SPACE AND PARTICLES           ") == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ClearVoxelSpaceAndParticles();
-                    if (ImGui::Button("  GENERATE ALL RANDOM PARTICLES       ") == true)
+                    if (ImGui::Button("  GENERATE ALL RANDOM PARTICLES             ") == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateAllRealRandomParticles();
-                    if (ImGui::Button("  GENERATE RANDOM MEMBRANE PARTICLES  ") == true)
+                    if (ImGui::Button("  GENERATE RANDOM MEMBRANE PARTICLES        ") == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::MembraneProtein, 420, 45);
-                    if (ImGui::Button("  GENERATE RANDOM RIBOSOMES PARTICLES ") == true)
+                    if (ImGui::Button("  GENERATE RANDOM RIBOSOMES PARTICLES       ") == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::RibosomesProtein, 400, 400);
+                    if (ImGui::Button("  GENERATE RANDOM POLYMERASE PARTICLES      ") == true)
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::PolymeraseProtein, 400, 400);
+                    if (ImGui::Button("  GENERATE RANDOM RNA POLYMERASE PARTICLES  ") == true)
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::RNAPolymeraseProtein, 400, 400);
+                    if (ImGui::Button("  GENERATE RANDOM PROTEIN FRAC PARTICLES    ") == true)
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::ProteinFrac, 400, 400);
+                    if (ImGui::Button("  GENERATE RANDOM OTHER PROTEIN PARTICLES   ") == true)
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::OtherProtein, 400, 400);
+
+                    ImGui::Button("  GENERATE DNA                              ");
+
+                    if (ImGui::Button("  GENERATE RANDOM tRNA PARTICLES            ") == true)
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::tRNA, 400, 400);
+                    if (ImGui::Button("  GENERATE RANDOM mRNA PARTICLES            ") == true)
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::mRNA, 400, 400);
+                    if (ImGui::Button("  GENERATE RANDOM rRNA PARTICLES            ") == true)
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::rRNA, 400, 400);
+
+                    if (ImGui::Button("  GENERATE RANDOM BASIC PARTICLES           ") == true)
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::Basic, 400, 400);
+                    if (ImGui::Button("  GENERATE RANDOM LIPID PARTICLES           ") == true)
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::Lipid, 420, 45);
+                    if (ImGui::Button("  GENERATE RANDOM OTHER PARTICLES           ") == true)
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::Basic, 400, 400);
                 }
 
                 if (ImGui::CollapsingHeader("SAVING AND READING PARTICLES TO AND FROM FILE", ImGuiTreeNodeFlags_DefaultOpen))

@@ -4,7 +4,7 @@
 #include "DateTimeUtils.h"
 
 #include "CellEngineConstants.h"
-
+#include "CellEngineDataFile.h"
 #include "CellEngineRealRandomParticlesInVoxelSpaceGenerator.h"
 
 using namespace std;
@@ -41,6 +41,7 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::PrintNumberOfParticlesF
         LoggersManagerObject.Log(STREAM("Number Of RNA Polymerase Proteins = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::RNAPolymeraseProtein)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::RNAPolymeraseProtein))));
         LoggersManagerObject.Log(STREAM("Number Of RNA Polymerase Proteins = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::PolymeraseProtein)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::PolymeraseProtein))));
         LoggersManagerObject.Log(STREAM("Number Of Proteins Frac = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::ProteinFrac)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::ProteinFrac))));
+        LoggersManagerObject.Log(STREAM("Number Of Other Proteins = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::OtherProtein)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::OtherProtein))));
 
         LoggersManagerObject.Log(STREAM("Number Of TRNA = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::tRNA)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::tRNA))));
         LoggersManagerObject.Log(STREAM("Number Of MRNA = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::mRNA)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::mRNA))));
@@ -153,20 +154,22 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::GenerateAllRealRandomPa
 
         const auto start_time = chrono::high_resolution_clock::now();
 
-        InsertNewRandomParticlesForType(ParticlesTypes::MembraneProtein, 400, 30);
-        InsertNewRandomParticlesForType(ParticlesTypes::RibosomesProtein, 400, 30);
-        InsertNewRandomParticlesForType(ParticlesTypes::PolymeraseProtein, 400, 30);
-        InsertNewRandomParticlesForType(ParticlesTypes::RNAPolymeraseProtein, 400, 30);
-        InsertNewRandomParticlesForType(ParticlesTypes::OtherProtein, 400, 30);
-        InsertNewRandomParticlesForType(ParticlesTypes::ProteinFrac, 400, 30);
+        InsertNewRandomParticlesForType(ParticlesTypes::MembraneProtein, 420, 45);
+        InsertNewRandomParticlesForType(ParticlesTypes::RibosomesProtein, 400, 400);
+        InsertNewRandomParticlesForType(ParticlesTypes::PolymeraseProtein, 400, 400);
+        InsertNewRandomParticlesForType(ParticlesTypes::RNAPolymeraseProtein, 400, 400);
+        InsertNewRandomParticlesForType(ParticlesTypes::ProteinFrac, 400, 400);
+        InsertNewRandomParticlesForType(ParticlesTypes::OtherProtein, 400, 400);
 
-        InsertNewRandomParticlesForType(ParticlesTypes::tRNA, 400, 30);
-        InsertNewRandomParticlesForType(ParticlesTypes::mRNA, 400, 30);
-        InsertNewRandomParticlesForType(ParticlesTypes::rRNA, 400, 30);
+        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateRandomDNAInWholeCell(579990, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartXPos + 3, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartYPos, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartZPos, 2, 2, 2, 2, 2, 2, 2, 2);
 
-        InsertNewRandomParticlesForType(ParticlesTypes::Basic, 400, 30);
-        InsertNewRandomParticlesForType(ParticlesTypes::Lipid, 400, 30);
-        InsertNewRandomParticlesForType(ParticlesTypes::Other, 400, 30);
+        InsertNewRandomParticlesForType(ParticlesTypes::tRNA, 400, 400);
+        InsertNewRandomParticlesForType(ParticlesTypes::mRNA, 400, 400);
+        InsertNewRandomParticlesForType(ParticlesTypes::rRNA, 400, 400);
+
+        InsertNewRandomParticlesForType(ParticlesTypes::Basic, 400, 400);
+        InsertNewRandomParticlesForType(ParticlesTypes::Lipid, 400, 400);
+        InsertNewRandomParticlesForType(ParticlesTypes::Other, 400, 400);
 
         const auto stop_time = chrono::high_resolution_clock::now();
 
