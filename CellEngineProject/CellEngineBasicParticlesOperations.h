@@ -29,6 +29,7 @@ public:
     }
 protected:
     void InitiateFreeParticleIndexes();
+protected:
     inline UniqueIdInt GetNewFreeIndexOfParticle()
     {
         if (FreeIndexesOfParticles.empty() == false)

@@ -19,6 +19,7 @@ public:
     bool FilmOfStructuresActive = false;
 protected:
     std::unordered_map<UniqueIdInt, Particle> Particles;
+protected:
     inline Particle& GetParticleFromIndex(const UniqueIdInt ParticleIndex)
     {
         return Particles[ParticleIndex];

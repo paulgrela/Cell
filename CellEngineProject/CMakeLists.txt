@@ -95,8 +95,8 @@ add_executable(
 	CellEngineDataFile.h
 	CellEngineFilmOfStructures.h
 	CellEngineImGuiMenu.cpp
-	CellEnginePDBDataFile.h
-	CellEnginePDBDataFile.cpp
+	CellEnginePDBDataFileReader.h
+	CellEnginePDBDataFileReader.cpp
 	CellEngineCIFDataFileReader.h
 	CellEngineCIFDataFileReader.cpp
 	CellEngineParticlesDataFile.cpp
@@ -123,6 +123,8 @@ add_executable(
 	CellEngineChemicalReactionsInSimulationSpace.h
 	CellEngineVoxelSimulationSpaceStatistics.cpp
 	CellEngineVoxelSimulationSpaceStatistics.h
+	CellEngineSimulationSpaceStatistics.cpp
+	CellEngineSimulationSpaceStatistics.h
 	CellEngineParticlesBinaryDataFileReaderWriter.cpp
 	CellEngineParticlesBinaryDataFileReaderWriter.h
 	CellEngineDataBuilderForVoxelSimulationSpace.h

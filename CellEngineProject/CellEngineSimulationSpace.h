@@ -23,10 +23,11 @@
 #include "CellEngineChemicalReactionsInBasicSimulationSpace.h"
 #include "CellEngineChemicalReactionsInSimulationSpace.h"
 #include "CellEngineVoxelSimulationSpaceStatistics.h"
+#include "CellEngineSimulationSpaceStatistics.h"
 
 #define SIMULATION_DETAILED_LOG
 
-class CellEngineSimulationSpace : public CellEngineChemicalReactionsCreator, virtual public CellEngineChemicalReactionsInSimulationSpace
+class CellEngineSimulationSpace : public CellEngineChemicalReactionsCreator, virtual public CellEngineChemicalReactionsInSimulationSpace, public CellEngineSimulationSpaceStatistics
 {
 private:
     std::unordered_map<UniqueIdInt, Particle>& Particles;

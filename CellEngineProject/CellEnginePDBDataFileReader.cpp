@@ -6,12 +6,12 @@
 #include "StringUtils.h"
 #include "DateTimeUtils.h"
 #include "CellEngineConfigData.h"
-#include "CellEnginePDBDataFile.h"
+#include "CellEnginePDBDataFileReader.h"
 
 using namespace std;
 using namespace string_utils;
 
-CellEngineAtom CellEnginePDBDataFile::ParseRecord(const char* LocalPDBRecord)
+CellEngineAtom CellEnginePDBDataFileReader::ParseRecord(const char* LocalPDBRecord)
 {
     CellEngineAtom CellEngineAtomObject{};
 
@@ -50,7 +50,7 @@ CellEngineAtom CellEnginePDBDataFile::ParseRecord(const char* LocalPDBRecord)
     return CellEngineAtomObject;
 }
 
-void CellEnginePDBDataFile::ReadDataFromFile(const bool StartValuesBool, const bool UpdateParticleKindListOfVoxelsBool, CellEngineConfigData::TypesOfFileToRead Type)
+void CellEnginePDBDataFileReader::ReadDataFromFile(const bool StartValuesBool, const bool UpdateParticleKindListOfVoxelsBool, CellEngineConfigData::TypesOfFileToRead Type)
 {
     try
     {

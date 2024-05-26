@@ -5,13 +5,13 @@
 
 #include "CellEngineDataFile.h"
 
-class CellEnginePDBDataFile: public CellEngineDataFile
+class CellEnginePDBDataFileReader: public CellEngineDataFile
 {
 private:
     void ReadDataFromFile(bool StartValuesBool, bool UpdateParticleKindListOfVoxelsBool, CellEngineConfigData::TypesOfFileToRead Type) override;
 public:
-    explicit CellEnginePDBDataFile() = default;
-    ~CellEnginePDBDataFile() = default;
+    explicit CellEnginePDBDataFileReader() = default;
+    ~CellEnginePDBDataFileReader() = default;
 public:
     static CellEngineAtom ParseRecord(const char* LocalPDBRecord);
 };

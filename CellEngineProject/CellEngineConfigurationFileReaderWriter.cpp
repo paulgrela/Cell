@@ -13,7 +13,7 @@
 #include "CellEngineUseful.h"
 #include "CellEngineDataFile.h"
 #include "CellEngineConfigData.h"
-#include "CellEnginePDBDataFile.h"
+#include "CellEnginePDBDataFileReader.h"
 #include "CellEngineConfigurationFileReaderWriter.h"
 #include "CellEngineDataBuilderForVoxelSimulationSpace.h"
 #include "CellEngineDataBuilderForFullAtomSimulationSpace.h"
@@ -25,7 +25,7 @@ using namespace std;
 std::unique_ptr<CellEngineDataFile> CreateCellEngineDataFileObject(const string_view& CellStateFileName)
 {
     if (string_utils::check_end_str(CellStateFileName, ".pdb") == true)
-        return make_unique<CellEnginePDBDataFile>();
+        return make_unique<CellEnginePDBDataFileReader>();
     else
     {
         CellEngineConfigDataObject.TypeOfFileToRead = (string_utils::check_end_str(CellStateFileName, ".cif") == false ? CellEngineConfigData::TypesOfFileToRead::BinaryFile : CellEngineConfigData::TypesOfFileToRead::CIFFile);
