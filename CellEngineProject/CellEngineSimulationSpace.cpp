@@ -269,6 +269,8 @@ bool CellEngineSimulationSpace::MakeChemicalReaction(Reaction& ReactionObject)
         }
 
         LoggersManagerObject.Log(STREAM("Reaction Step 3 - Reaction finished" << endl));
+
+        SaveReactionForStatistics(ReactionObject);
     }
     CATCH("making reaction")
 
