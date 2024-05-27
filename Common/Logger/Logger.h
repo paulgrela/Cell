@@ -31,10 +31,12 @@ private:
 	std::string TaskName;
 private:
 	std::vector<std::ofstream> Files;
+	std::vector<std::ofstream> SpecialFiles;
+	std::vector<std::string> SpecialFilesNames = { "Warnings", "Errors", "Exceptions", "ErrorsAndExceptions", "Critical", "Information", "Important", "Statistics", "Debug" };
 private:
 	static inline std::mutex LogMessageCoutMutexObject;
 public:
-	Logger(const char* LogDirectoryParameter, const char* MainDirectoryNameParameter, const char* LoggerNameParameter, const char* TaskNameParameter, const std::uint64_t ThisThreadIdParameter);
+	Logger(const char* LogDirectoryParameter, const char* MainDirectoryNameParameter, const char* LoggerNameParameter, const char* TaskNameParameter, std::uint64_t ThisThreadIdParameter);
 	~Logger();
 private:
 	void AllocResourcesForFiles();
@@ -43,14 +45,14 @@ private:
 	void CloseLogFiles();
 private:
 	void CloseOldLogFilesAndOpenNewLogFiles();
-	void LimitLogSizeByClosingOldLogFilesAndOpeningNewLogFilesAfterMaximalLimitOfLinesInOldFileIsExceeded(const ThreadIdType CurrentThreadId);
+	void LimitLogSizeByClosingOldLogFilesAndOpeningNewLogFilesAfterMaximalLimitOfLinesInOldFileIsExceeded(ThreadIdType CurrentThreadId);
 private:
-	std::string CreateLogString(const std::string& MessageStr, const bool LogLineInfo, const ThreadIdType CurrentThreadId, std::uint64_t LineNumberInCommonLog, const bool PrintLogLineNumber, const bool PrintLogDateTime, const bool PrintLogProcessId, const bool PrintLogProcessPriorityLevel, const bool PrintLogThreadId) const;
+	[[nodiscard]] std::string CreateLogString(const std::string& MessageStr, bool LogLineInfo, ThreadIdType CurrentThreadId, std::uint64_t LineNumberInCommonLog, bool PrintLogLineNumber, bool PrintLogDateTime, bool PrintLogProcessId, bool PrintLogProcessPriorityLevel, bool PrintLogThreadId) const;
 private:
-	static void WriteToCommonLogFromThread(const bool Condition, const std::string& MessageStr, std::ostream& StreamObject, const ThreadIdType CurrentThreadId, const std::uint64_t FileNumber);
-	void WriteToLogsFromThread(const std::string& MessageStrToFile, const ThreadIdType CurrentThreadId);
+	static void WriteToCommonLogFromThread(bool Condition, const std::string& MessageStr, std::ostream& StreamObject, ThreadIdType CurrentThreadId, std::uint64_t FileNumber);
+	void WriteToLogsFromThread(const std::string& MessageStrToFile, ThreadIdType CurrentThreadId);
 public:
-	void LogMessageBool(const std::string& MessageStr, const bool LogLineInfo, const ThreadIdType CurrentThreadId, const bool PrintToConsole);
+	void LogMessageBool(const std::string& MessageStr, bool LogLineInfo, ThreadIdType CurrentThreadId, bool PrintToConsole);
 };
 
 class LoggersManager
@@ -73,12 +75,24 @@ private:
 	bool PrintLogThreadIdToFile = false;
 
 	uint64_t MaximalNumberOfLinesInOneFile = 100000;
+
+    std::vector<bool> CreateLogSpecialFiles = { false, false, false, false, false, false, false, false, false };
+
+    int LogWarningsFileIndex = 0;
+    int LogErrorsFileIndex = 1;
+    int LogExceptionsFileIndex = 2;
+    int LogErrorsAndExceptionsFileIndex = 3;
+    int LogCriticalFileIndex = 4;
+    int LogInformationFileIndex = 5;
+    int LogImportantFileIndex = 6;
+    int LogStatisticsFileIndex = 7;
+    int LogDebugFileIndex = 8;
 private:
 	std::string TaskName;
     std::string LogDirectory;
 	std::string ActualDateTimeStr;
-    bool LogThreadsToSeparatedFiles;
-	std::uint64_t FileNumberToIncreaseLineNumber;
+    bool LogThreadsToSeparatedFiles{};
+	std::uint64_t FileNumberToIncreaseLineNumber{};
 private:
 	std::function<void(const ThreadIdType CurrentThreadId, const std::uint64_t FileNumber, const std::string& MessageStr)> DrawMessageFunctionObject;
 private:
@@ -87,7 +101,7 @@ private:
 private:
 	static inline std::mutex CreateNewLoggerForThreadMutexObject;
 private:
-	void LogMessageBool(const std::string& MessageStr, const bool LogLineInfo, const bool PrintToConsole);
+	void LogMessageBool(const std::string& MessageStr, bool LogLineInfo, bool PrintToConsole);
 public:
 	void Log(const std::stringstream& Message);
 	void LogOnlyToFiles(const std::stringstream& Message);
@@ -95,14 +109,16 @@ public:
 	void LogWithoutLineInfoOnlyToFiles(const std::stringstream& Message);
     void LogInColorTerminal(std::ostream& color(std::ostream& s), const std::stringstream& Message);
 private:
+    std::vector<std::string> SpecialFilesNames = { "Warnings", "Errors", "Exceptions", "ErrorsAndExceptions", "Critical", "Information", "Important", "Statistics", "Debug" };
 	std::vector<std::string> FilesNames;
 	std::vector<std::string> SelectiveWords;
 	std::vector<std::function<const bool(const std::string&)>> SelectiveWordsFunctions;
 public:	
-	void InitializeFilesNames(const std::initializer_list<const std::string> InitialFilesNames);
-	void InitializeSelectiveWordsFunctions(const std::initializer_list<std::function<bool(const std::string&)>> InitialSelectiveWordsFunctions);
+	void InitializeFilesNames(std::initializer_list<const std::string> InitialFilesNames);
+	void InitializeSelectiveWordsFunctions(std::initializer_list<std::function<bool(const std::string&)>> InitialSelectiveWordsFunctions);
 	void InitializePrintingParameters(bool PrintLogToConsoleParam, bool PrintLogToFilesParam, bool PrintLogLineNumberToConsoleParam, bool PrintLogDateTimeToConsoleParam, bool PrintLogProcessIdToConsoleParam, bool PrintLogProcessPriorityLevelToConsoleParam, bool PrintLogThreadIdToConsoleParam, bool PrintLogLineNumberToFileParam, bool PrintLogDateTimeToFileParam, bool PrintLogProcessIdToFileParam, bool PrintLogProcessPriorityLevelToFileParam, bool PrintLogThreadIdToFileParam, uint64_t MaximalNumberOfLinesInOneFileParam);
-	void InitializeLoggerManagerDataForTask(const std::string& TaskNameParameter, const std::string& LogDirectoryParameter, const std::string& ActualDateTimeStrParameter, const bool LogThreadsToSeparatedFilesParameter, const std::uint64_t FileNumberToIncreaseLineNumberParameter, std::function<void(const ThreadIdType CurrentThreadId, const std::uint64_t FileNumber, const std::string& MessageStr)> DrawMessageFunctionObjectParameter);
+	void InitializeSpecialLogFiles(bool CreateLogWarningsFileParam, bool CreateLogErrorsFileParam, bool CreateLogExceptionsFileParam, bool CreateLogErrorsAndExceptionsFileParam, bool CreateLogCriticalFileParam, bool CreateLogInformationFileParam, bool CreateLogImportantFileParam, bool CreateLogStatisticsFileParam, bool CreateLogDebugFileParam);
+	void InitializeLoggerManagerDataForTask(const std::string& TaskNameParameter, const std::string& LogDirectoryParameter, const std::string& ActualDateTimeStrParameter, bool LogThreadsToSeparatedFilesParameter, std::uint64_t FileNumberToIncreaseLineNumberParameter, std::function<void(const ThreadIdType CurrentThreadId, const std::uint64_t FileNumber, const std::string& MessageStr)> DrawMessageFunctionObjectParameter);
 };
 
 inline LoggersManager LoggersManagerObject;

@@ -67,6 +67,8 @@ void Logger::CreateDirectories()
 
 			for (const string& FileName : LoggersManagerObject.FilesNames)
 				mkdir(string(string(LogDirectory) + string("logs") + OS_DIR_SEP + MainDirectoryName + OS_DIR_SEP + TaskName + OS_DIR_SEP + LoggerName + OS_DIR_SEP + FileName).c_str());
+			for (const string& FileName : LoggersManagerObject.SpecialFilesNames)
+				mkdir(string(string(LogDirectory) + string("logs") + OS_DIR_SEP + MainDirectoryName + OS_DIR_SEP + TaskName + OS_DIR_SEP + LoggerName + OS_DIR_SEP + FileName).c_str());
             #endif
             #ifdef UNIX_PLATFORM
             filesystem::create_directory(string(LogDirectory) + string("logs"));
@@ -76,6 +78,10 @@ void Logger::CreateDirectories()
 
             for (const string& FileName : LoggersManagerObject.FilesNames)
                 filesystem::create_directory(string(LogDirectory) + string("logs") + OS_DIR_SEP + MainDirectoryName + OS_DIR_SEP + TaskName + OS_DIR_SEP + LoggerName + OS_DIR_SEP + FileName);
+
+            for (uint64_t FileNumber = 0; FileNumber < LoggersManagerObject.FilesNames.size(); FileNumber++)
+                if (LoggersManagerObject.CreateLogSpecialFiles[FileNumber] == true)
+                    filesystem::create_directory(string(LogDirectory) + string("logs") + OS_DIR_SEP + MainDirectoryName + OS_DIR_SEP + TaskName + OS_DIR_SEP + LoggerName + OS_DIR_SEP + LoggersManagerObject.SpecialFilesNames[FileNumber]);
             #endif
         }
 	}
@@ -100,8 +106,14 @@ void Logger::OpenLogFiles()
 	try
 	{
 		if (LoggersManagerObject.PrintLogToFiles == true)
+        {
             for (uint64_t FileNumber = 0; FileNumber < LoggersManagerObject.FilesNames.size(); FileNumber++)
                 Files[FileNumber].open(string(LogDirectory) + OS_DIR_SEP + string("logs") + OS_DIR_SEP + MainDirectoryName + OS_DIR_SEP + TaskName + OS_DIR_SEP + LoggerName + OS_DIR_SEP + LoggersManagerObject.FilesNames[FileNumber] + OS_DIR_SEP + LoggersManagerObject.FilesNames[FileNumber] + string_utils::align_str(to_string(FileNumberInLog), '0', 5) + ".log.txt");
+
+            for (uint64_t FileNumber = 0; FileNumber < LoggersManagerObject.FilesNames.size(); FileNumber++)
+                if (LoggersManagerObject.CreateLogSpecialFiles[FileNumber] == true)
+                    SpecialFiles[FileNumber].open(string(LogDirectory) + OS_DIR_SEP + string("logs") + OS_DIR_SEP + MainDirectoryName + OS_DIR_SEP + TaskName + OS_DIR_SEP + LoggerName + OS_DIR_SEP + LoggersManagerObject.SpecialFilesNames[FileNumber] + OS_DIR_SEP + LoggersManagerObject.SpecialFilesNames[FileNumber] + string_utils::align_str(to_string(FileNumberInLog), '0', 5) + ".log.txt");
+        }
 	}
 	CATCH_AND_THROW_COUT("opening log files in logger")
 }
@@ -111,8 +123,14 @@ void Logger::CloseLogFiles()
 	try
 	{
 		if (LoggersManagerObject.PrintLogToFiles == true)
+        {
 			for (auto& FileNumber : Files)
 				FileNumber.close();
+
+            for (uint64_t FileNumber = 0; FileNumber < LoggersManagerObject.FilesNames.size(); FileNumber++)
+                if (LoggersManagerObject.CreateLogSpecialFiles[FileNumber] == true)
+                    SpecialFiles[FileNumber].close();
+        }
 	}
 	CATCH_AND_THROW_COUT("closing log files in logger")
 }
@@ -310,6 +328,23 @@ void LoggersManager::InitializePrintingParameters(bool PrintLogToConsoleParam, b
 	}
 	CATCH_AND_THROW_COUT("initializing loggers manager printing conditions")
 };
+
+void LoggersManager::InitializeSpecialLogFiles(bool CreateLogWarningsFileParam, bool CreateLogErrorsFileParam, bool CreateLogExceptionsFileParam, bool CreateLogErrorsAndExceptionsFileParam, bool CreateLogCriticalFileParam, bool CreateLogInformationFileParam, bool CreateLogImportantFileParam, bool CreateLogStatisticsFileParam, bool CreateLogDebugFileParam)
+{
+    try
+    {
+        CreateLogSpecialFiles[LogWarningsFileIndex] = CreateLogWarningsFileParam;
+        CreateLogSpecialFiles[LogErrorsFileIndex] = CreateLogErrorsFileParam;
+        CreateLogSpecialFiles[LogExceptionsFileIndex] = CreateLogExceptionsFileParam;
+        CreateLogSpecialFiles[LogErrorsAndExceptionsFileIndex] = CreateLogErrorsAndExceptionsFileParam;
+        CreateLogSpecialFiles[LogCriticalFileIndex] = CreateLogCriticalFileParam;
+        CreateLogSpecialFiles[LogInformationFileIndex] = CreateLogInformationFileParam;
+        CreateLogSpecialFiles[LogImportantFileIndex] = CreateLogImportantFileParam;
+        CreateLogSpecialFiles[LogStatisticsFileIndex] = CreateLogStatisticsFileParam;
+        CreateLogSpecialFiles[LogDebugFileIndex] = CreateLogDebugFileParam;
+    }
+    CATCH("initializing special log files")
+}
 
 void LoggersManager::InitializeLoggerManagerDataForTask(const string& TaskNameParameter, const std::string& LogDirectoryParameter, const string& ActualDateTimeStrParameter, const bool LogThreadsToSeparatedFilesParameter, const uint64_t FileNumberToIncreaseLineNumberParameter, function<void(const ThreadIdType CurrentThreadId, const uint64_t FileNumber, const string& MessageStr)> DrawMessageFunctionObjectParameter)
 {
