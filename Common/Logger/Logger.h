@@ -30,9 +30,8 @@ private:
 	std::string LoggerName;
 	std::string TaskName;
 private:
-	std::vector<std::ofstream> Files;
-	std::vector<std::ofstream> SpecialFiles;
-	std::vector<std::string> SpecialFilesNames = { "Warnings", "Errors", "Exceptions", "ErrorsAndExceptions", "Critical", "Information", "Important", "Statistics", "Debug" };
+	std::vector<std::ofstream> UserLogFiles;
+	std::vector<std::ofstream> SpecialLogFiles;
 private:
 	static inline std::mutex LogMessageCoutMutexObject;
 public:
@@ -76,17 +75,17 @@ private:
 
 	std::uint64_t MaximalNumberOfLinesInOneFile = 100000;
 
-    std::vector<bool> CreateLogSpecialFiles = { false, false, false, false, false, false, false, false, false };
+    std::vector<bool> UseSpecialLogFiles = {false, false, false, false, false, false, false, false, false };
 
-    std::int64_t LogWarningsFileIndex = 0;
-    std::int64_t LogErrorsFileIndex = 1;
-    std::int64_t LogExceptionsFileIndex = 2;
-    std::int64_t LogErrorsAndExceptionsFileIndex = 3;
-    std::int64_t LogCriticalFileIndex = 4;
-    std::int64_t LogInformationFileIndex = 5;
-    std::int64_t LogImportantFileIndex = 6;
-    std::int64_t LogStatisticsFileIndex = 7;
-    std::int64_t LogDebugFileIndex = 8;
+    const std::int64_t LogWarningsFileIndex = 0;
+    const std::int64_t LogErrorsFileIndex = 1;
+    const std::int64_t LogExceptionsFileIndex = 2;
+    const std::int64_t LogErrorsAndExceptionsFileIndex = 3;
+    const std::int64_t LogCriticalFileIndex = 4;
+    const std::int64_t LogInformationFileIndex = 5;
+    const std::int64_t LogImportantFileIndex = 6;
+    const std::int64_t LogStatisticsFileIndex = 7;
+    const std::int64_t LogDebugFileIndex = 8;
 private:
 	std::string TaskName;
     std::string LogDirectory;
@@ -129,9 +128,9 @@ public:
     [[maybe_unused]] void LogStat(const std::stringstream& Message);
     [[maybe_unused]] void LogDeb(const std::stringstream& Message);
 private:
-    std::vector<std::string> SpecialFilesNames = { "Warnings", "Errors", "Exceptions", "ErrorsAndExceptions", "Critical", "Information", "Important", "Statistics", "Debug" };
-	std::vector<std::string> FilesNames;
-	std::vector<std::string> SelectiveWords;
+    std::vector<std::string> SpecialLogFilesNames = {"Warnings", "Errors", "Exceptions", "ErrorsAndExceptions", "Critical", "Information", "Important", "Statistics", "Debug" };
+	std::vector<std::string> UserLogFilesNames;
+	std::vector<std::string> SelectiveWordsForUserLogFiles;
 	std::vector<std::function<const bool(const std::string&)>> SelectiveWordsFunctions;
 public:	
 	void InitializeFilesNames(std::initializer_list<const std::string> InitialFilesNames);

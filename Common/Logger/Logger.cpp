@@ -65,9 +65,9 @@ void Logger::CreateDirectories()
 			mkdir(string(string(LogDirectory) + string("logs") + OS_DIR_SEP + MainDirectoryName + OS_DIR_SEP + TaskName).c_str());
 			mkdir(string(string(LogDirectory) + string("logs") + OS_DIR_SEP + MainDirectoryName + OS_DIR_SEP + TaskName + OS_DIR_SEP + LoggerName).c_str());
 
-			for (const string& FileName : LoggersManagerObject.FilesNames)
+			for (const string& FileName : LoggersManagerObject.UserLogFilesNames)
 				mkdir(string(string(LogDirectory) + string("logs") + OS_DIR_SEP + MainDirectoryName + OS_DIR_SEP + TaskName + OS_DIR_SEP + LoggerName + OS_DIR_SEP + FileName).c_str());
-			for (const string& FileName : LoggersManagerObject.SpecialFilesNames)
+			for (const string& FileName : LoggersManagerObject.SpecialLogFilesNames)
 				mkdir(string(string(LogDirectory) + string("logs") + OS_DIR_SEP + MainDirectoryName + OS_DIR_SEP + TaskName + OS_DIR_SEP + LoggerName + OS_DIR_SEP + FileName).c_str());
             #endif
             #ifdef UNIX_PLATFORM
@@ -76,12 +76,12 @@ void Logger::CreateDirectories()
             filesystem::create_directory(string(LogDirectory) + string("logs") + OS_DIR_SEP + MainDirectoryName + OS_DIR_SEP + TaskName);
             filesystem::create_directory(string(LogDirectory) + string("logs") + OS_DIR_SEP + MainDirectoryName + OS_DIR_SEP + TaskName + OS_DIR_SEP + LoggerName);
 
-            for (const string& FileName : LoggersManagerObject.FilesNames)
+            for (const string& FileName : LoggersManagerObject.UserLogFilesNames)
                 filesystem::create_directory(string(LogDirectory) + string("logs") + OS_DIR_SEP + MainDirectoryName + OS_DIR_SEP + TaskName + OS_DIR_SEP + LoggerName + OS_DIR_SEP + FileName);
 
-            for (uint64_t FileNumber = 0; FileNumber < LoggersManagerObject.FilesNames.size(); FileNumber++)
-                if (LoggersManagerObject.CreateLogSpecialFiles[FileNumber] == true)
-                    filesystem::create_directory(string(LogDirectory) + string("logs") + OS_DIR_SEP + MainDirectoryName + OS_DIR_SEP + TaskName + OS_DIR_SEP + LoggerName + OS_DIR_SEP + LoggersManagerObject.SpecialFilesNames[FileNumber]);
+            for (uint64_t FileNumber = 0; FileNumber < LoggersManagerObject.UserLogFilesNames.size(); FileNumber++)
+                if (LoggersManagerObject.UseSpecialLogFiles[FileNumber] == true)
+                    filesystem::create_directory(string(LogDirectory) + string("logs") + OS_DIR_SEP + MainDirectoryName + OS_DIR_SEP + TaskName + OS_DIR_SEP + LoggerName + OS_DIR_SEP + LoggersManagerObject.SpecialLogFilesNames[FileNumber]);
             #endif
         }
 	}
@@ -94,8 +94,8 @@ void Logger::AllocResourcesForFiles()
 	{
 		if (LoggersManagerObject.PrintLogToFiles == true)
 		{
-			Files.clear();
-			Files.resize(LoggersManagerObject.FilesNames.size());
+			UserLogFiles.clear();
+			UserLogFiles.resize(LoggersManagerObject.UserLogFilesNames.size());
 		}
 	}
 	CATCH_AND_THROW_COUT("allocation of  resources for file in logger")
@@ -107,12 +107,12 @@ void Logger::OpenLogFiles()
 	{
 		if (LoggersManagerObject.PrintLogToFiles == true)
         {
-            for (uint64_t FileNumber = 0; FileNumber < LoggersManagerObject.FilesNames.size(); FileNumber++)
-                Files[FileNumber].open(string(LogDirectory) + OS_DIR_SEP + string("logs") + OS_DIR_SEP + MainDirectoryName + OS_DIR_SEP + TaskName + OS_DIR_SEP + LoggerName + OS_DIR_SEP + LoggersManagerObject.FilesNames[FileNumber] + OS_DIR_SEP + LoggersManagerObject.FilesNames[FileNumber] + string_utils::align_str(to_string(FileNumberInLog), '0', 5) + ".log.txt");
+            for (uint64_t FileNumber = 0; FileNumber < LoggersManagerObject.UserLogFilesNames.size(); FileNumber++)
+                UserLogFiles[FileNumber].open(string(LogDirectory) + OS_DIR_SEP + string("logs") + OS_DIR_SEP + MainDirectoryName + OS_DIR_SEP + TaskName + OS_DIR_SEP + LoggerName + OS_DIR_SEP + LoggersManagerObject.UserLogFilesNames[FileNumber] + OS_DIR_SEP + LoggersManagerObject.UserLogFilesNames[FileNumber] + string_utils::align_str(to_string(FileNumberInLog), '0', 5) + ".log.txt");
 
-            for (uint64_t FileNumber = 0; FileNumber < LoggersManagerObject.FilesNames.size(); FileNumber++)
-                if (LoggersManagerObject.CreateLogSpecialFiles[FileNumber] == true)
-                    SpecialFiles[FileNumber].open(string(LogDirectory) + OS_DIR_SEP + string("logs") + OS_DIR_SEP + MainDirectoryName + OS_DIR_SEP + TaskName + OS_DIR_SEP + LoggerName + OS_DIR_SEP + LoggersManagerObject.SpecialFilesNames[FileNumber] + OS_DIR_SEP + LoggersManagerObject.SpecialFilesNames[FileNumber] + string_utils::align_str(to_string(FileNumberInLog), '0', 5) + ".log.txt");
+            for (uint64_t FileNumber = 0; FileNumber < LoggersManagerObject.UserLogFilesNames.size(); FileNumber++)
+                if (LoggersManagerObject.UseSpecialLogFiles[FileNumber] == true)
+                    SpecialLogFiles[FileNumber].open(string(LogDirectory) + OS_DIR_SEP + string("logs") + OS_DIR_SEP + MainDirectoryName + OS_DIR_SEP + TaskName + OS_DIR_SEP + LoggerName + OS_DIR_SEP + LoggersManagerObject.SpecialLogFilesNames[FileNumber] + OS_DIR_SEP + LoggersManagerObject.SpecialLogFilesNames[FileNumber] + string_utils::align_str(to_string(FileNumberInLog), '0', 5) + ".log.txt");
         }
 	}
 	CATCH_AND_THROW_COUT("opening log files in logger")
@@ -124,12 +124,12 @@ void Logger::CloseLogFiles()
 	{
 		if (LoggersManagerObject.PrintLogToFiles == true)
         {
-			for (auto& FileNumber : Files)
+			for (auto& FileNumber : UserLogFiles)
 				FileNumber.close();
 
-            for (uint64_t FileNumber = 0; FileNumber < LoggersManagerObject.FilesNames.size(); FileNumber++)
-                if (LoggersManagerObject.CreateLogSpecialFiles[FileNumber] == true)
-                    SpecialFiles[FileNumber].close();
+            for (uint64_t FileNumber = 0; FileNumber < LoggersManagerObject.UserLogFilesNames.size(); FileNumber++)
+                if (LoggersManagerObject.UseSpecialLogFiles[FileNumber] == true)
+                    SpecialLogFiles[FileNumber].close();
         }
 	}
 	CATCH_AND_THROW_COUT("closing log files in logger")
@@ -234,10 +234,11 @@ void Logger::WriteToLogsFromThread(const string& MessageStrToFile, const ThreadI
 	try
 	{
         if (SpecialLogFileIndex == -1)
-            for (uint64_t FileNumber = 0; FileNumber < LoggersManagerObject.FilesNames.size(); FileNumber++)
-                WriteToCommonLogFromThread(Files[FileNumber].is_open() == true && LoggersManagerObject.SelectiveWordsFunctions[FileNumber](MessageStrToFile), MessageStrToFile, Files[FileNumber], CurrentThreadId, FileNumber);
+            for (uint64_t FileNumber = 0; FileNumber < LoggersManagerObject.UserLogFilesNames.size(); FileNumber++)
+                WriteToCommonLogFromThread(UserLogFiles[FileNumber].is_open() == true && LoggersManagerObject.SelectiveWordsFunctions[FileNumber](MessageStrToFile), MessageStrToFile, UserLogFiles[FileNumber], CurrentThreadId, FileNumber);
         else
-            WriteToCommonLogFromThread(SpecialFiles[SpecialLogFileIndex].is_open() == true, MessageStrToFile, SpecialFiles[SpecialLogFileIndex], CurrentThreadId, SpecialLogFileIndex);
+        if (LoggersManagerObject.UseSpecialLogFiles[SpecialLogFileIndex] == true)
+            WriteToCommonLogFromThread(SpecialLogFiles[SpecialLogFileIndex].is_open() == true, MessageStrToFile, SpecialLogFiles[SpecialLogFileIndex], CurrentThreadId, SpecialLogFileIndex);
 	}
 	CATCH_AND_THROW_COUT("writing to logs from thread in logger")
 }
@@ -293,7 +294,7 @@ void  LoggersManager::InitializeFilesNames(const initializer_list<const string> 
 	try
 	{
 		for (const string& InitialFileName : InitialFilesNames)
-			FilesNames.push_back(InitialFileName);
+			UserLogFilesNames.push_back(InitialFileName);
 	}
 	CATCH_AND_THROW_COUT("initializing loggers manager files names")
 }
@@ -336,15 +337,15 @@ void LoggersManager::InitializeSpecialLogFiles(bool CreateLogWarningsFileParam, 
 {
     try
     {
-        CreateLogSpecialFiles[LogWarningsFileIndex] = CreateLogWarningsFileParam;
-        CreateLogSpecialFiles[LogErrorsFileIndex] = CreateLogErrorsFileParam;
-        CreateLogSpecialFiles[LogExceptionsFileIndex] = CreateLogExceptionsFileParam;
-        CreateLogSpecialFiles[LogErrorsAndExceptionsFileIndex] = CreateLogErrorsAndExceptionsFileParam;
-        CreateLogSpecialFiles[LogCriticalFileIndex] = CreateLogCriticalFileParam;
-        CreateLogSpecialFiles[LogInformationFileIndex] = CreateLogInformationFileParam;
-        CreateLogSpecialFiles[LogImportantFileIndex] = CreateLogImportantFileParam;
-        CreateLogSpecialFiles[LogStatisticsFileIndex] = CreateLogStatisticsFileParam;
-        CreateLogSpecialFiles[LogDebugFileIndex] = CreateLogDebugFileParam;
+        UseSpecialLogFiles[LogWarningsFileIndex] = CreateLogWarningsFileParam;
+        UseSpecialLogFiles[LogErrorsFileIndex] = CreateLogErrorsFileParam;
+        UseSpecialLogFiles[LogExceptionsFileIndex] = CreateLogExceptionsFileParam;
+        UseSpecialLogFiles[LogErrorsAndExceptionsFileIndex] = CreateLogErrorsAndExceptionsFileParam;
+        UseSpecialLogFiles[LogCriticalFileIndex] = CreateLogCriticalFileParam;
+        UseSpecialLogFiles[LogInformationFileIndex] = CreateLogInformationFileParam;
+        UseSpecialLogFiles[LogImportantFileIndex] = CreateLogImportantFileParam;
+        UseSpecialLogFiles[LogStatisticsFileIndex] = CreateLogStatisticsFileParam;
+        UseSpecialLogFiles[LogDebugFileIndex] = CreateLogDebugFileParam;
     }
     CATCH("initializing special log files")
 }
@@ -362,7 +363,7 @@ void LoggersManager::InitializeLoggerManagerDataForTask(const string& TaskNamePa
         LogThreadsToSeparatedFiles = LogThreadsToSeparatedFilesParameter;
 		FileNumberToIncreaseLineNumber = FileNumberToIncreaseLineNumberParameter;
 
-		if (LoggersManagerObject.FileNumberToIncreaseLineNumber >= LoggersManagerObject.FilesNames.size())
+		if (LoggersManagerObject.FileNumberToIncreaseLineNumber >= LoggersManagerObject.UserLogFilesNames.size())
 			throw runtime_error("FileNumberToIncreaseLineNumber is out of range of user defined files.");
 
 		DrawMessageFunctionObject = std::move(DrawMessageFunctionObjectParameter);
