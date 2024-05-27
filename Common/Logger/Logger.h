@@ -50,9 +50,9 @@ private:
 	[[nodiscard]] std::string CreateLogString(const std::string& MessageStr, bool LogLineInfo, ThreadIdType CurrentThreadId, std::uint64_t LineNumberInCommonLog, bool PrintLogLineNumber, bool PrintLogDateTime, bool PrintLogProcessId, bool PrintLogProcessPriorityLevel, bool PrintLogThreadId) const;
 private:
 	static void WriteToCommonLogFromThread(bool Condition, const std::string& MessageStr, std::ostream& StreamObject, ThreadIdType CurrentThreadId, std::uint64_t FileNumber);
-	void WriteToLogsFromThread(const std::string& MessageStrToFile, ThreadIdType CurrentThreadId);
+	void WriteToLogsFromThread(const std::string& MessageStrToFile, ThreadIdType CurrentThreadId, std::int64_t SpecialLogFileIndex);
 public:
-	void LogMessageBool(const std::string& MessageStr, bool LogLineInfo, ThreadIdType CurrentThreadId, bool PrintToConsole);
+	void LogMessageBool(const std::string& MessageStr, bool LogLineInfo, ThreadIdType CurrentThreadId, bool PrintToConsole, std::int64_t SpecialLogFileIndex);
 };
 
 class LoggersManager
@@ -74,19 +74,19 @@ private:
 	bool PrintLogProcessPriorityLevelToFile = false;
 	bool PrintLogThreadIdToFile = false;
 
-	uint64_t MaximalNumberOfLinesInOneFile = 100000;
+	std::uint64_t MaximalNumberOfLinesInOneFile = 100000;
 
     std::vector<bool> CreateLogSpecialFiles = { false, false, false, false, false, false, false, false, false };
 
-    int LogWarningsFileIndex = 0;
-    int LogErrorsFileIndex = 1;
-    int LogExceptionsFileIndex = 2;
-    int LogErrorsAndExceptionsFileIndex = 3;
-    int LogCriticalFileIndex = 4;
-    int LogInformationFileIndex = 5;
-    int LogImportantFileIndex = 6;
-    int LogStatisticsFileIndex = 7;
-    int LogDebugFileIndex = 8;
+    std::int64_t LogWarningsFileIndex = 0;
+    std::int64_t LogErrorsFileIndex = 1;
+    std::int64_t LogExceptionsFileIndex = 2;
+    std::int64_t LogErrorsAndExceptionsFileIndex = 3;
+    std::int64_t LogCriticalFileIndex = 4;
+    std::int64_t LogInformationFileIndex = 5;
+    std::int64_t LogImportantFileIndex = 6;
+    std::int64_t LogStatisticsFileIndex = 7;
+    std::int64_t LogDebugFileIndex = 8;
 private:
 	std::string TaskName;
     std::string LogDirectory;
@@ -101,13 +101,33 @@ private:
 private:
 	static inline std::mutex CreateNewLoggerForThreadMutexObject;
 private:
-	void LogMessageBool(const std::string& MessageStr, bool LogLineInfo, bool PrintToConsole);
+	void LogMessageBool(const std::string& MessageStr, bool LogLineInfo, bool PrintToConsole, std::int64_t SpecialLogFileIndex);
 public:
 	void Log(const std::stringstream& Message);
 	void LogOnlyToFiles(const std::stringstream& Message);
 	void LogWithoutLineInfo(const std::stringstream& Message);
 	void LogWithoutLineInfoOnlyToFiles(const std::stringstream& Message);
     void LogInColorTerminal(std::ostream& color(std::ostream& s), const std::stringstream& Message);
+public:
+    [[maybe_unused]] void LogWarning(const std::stringstream& Message);
+    [[maybe_unused]] void LogError(const std::stringstream& Message);
+    [[maybe_unused]] void LogException(const std::stringstream& Message);
+    [[maybe_unused]] void LogErrorAndException(const std::stringstream& Message);
+    [[maybe_unused]] void LogCritical(const std::stringstream& Message);
+    [[maybe_unused]] void LogInformation(const std::stringstream& Message);
+    [[maybe_unused]] void LogImportant(const std::stringstream& Message);
+    [[maybe_unused]] void LogStatistics(const std::stringstream& Message);
+    [[maybe_unused]] void LogDebug(const std::stringstream& Message);
+public:
+    [[maybe_unused]] void LogWarn(const std::stringstream& Message);
+    [[maybe_unused]] void LogErr(const std::stringstream& Message);
+    [[maybe_unused]] void LogExc(const std::stringstream& Message);
+    [[maybe_unused]] void LogErrAndExc(const std::stringstream& Message);
+    [[maybe_unused]] void LogCrit(const std::stringstream& Message);
+    [[maybe_unused]] void LogInfo(const std::stringstream& Message);
+    [[maybe_unused]] void LogImp(const std::stringstream& Message);
+    [[maybe_unused]] void LogStat(const std::stringstream& Message);
+    [[maybe_unused]] void LogDeb(const std::stringstream& Message);
 private:
     std::vector<std::string> SpecialFilesNames = { "Warnings", "Errors", "Exceptions", "ErrorsAndExceptions", "Critical", "Information", "Important", "Statistics", "Debug" };
 	std::vector<std::string> FilesNames;

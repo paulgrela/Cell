@@ -229,17 +229,20 @@ void Logger::WriteToCommonLogFromThread(const bool Condition, const string& Mess
 	CATCH_AND_THROW_COUT("writing to common log from thread in logger")
 }
 
-void Logger::WriteToLogsFromThread(const string& MessageStrToFile, const ThreadIdType CurrentThreadId)
+void Logger::WriteToLogsFromThread(const string& MessageStrToFile, const ThreadIdType CurrentThreadId, const std::int64_t SpecialLogFileIndex)
 {
 	try
 	{
-		for (uint64_t FileNumber = 0; FileNumber < LoggersManagerObject.FilesNames.size(); FileNumber++)
-			WriteToCommonLogFromThread(Files[FileNumber].is_open() == true && LoggersManagerObject.SelectiveWordsFunctions[FileNumber](MessageStrToFile), MessageStrToFile, Files[FileNumber], CurrentThreadId, FileNumber);
+        if (SpecialLogFileIndex == -1)
+            for (uint64_t FileNumber = 0; FileNumber < LoggersManagerObject.FilesNames.size(); FileNumber++)
+                WriteToCommonLogFromThread(Files[FileNumber].is_open() == true && LoggersManagerObject.SelectiveWordsFunctions[FileNumber](MessageStrToFile), MessageStrToFile, Files[FileNumber], CurrentThreadId, FileNumber);
+        else
+            WriteToCommonLogFromThread(SpecialFiles[SpecialLogFileIndex].is_open() == true, MessageStrToFile, SpecialFiles[SpecialLogFileIndex], CurrentThreadId, SpecialLogFileIndex);
 	}
 	CATCH_AND_THROW_COUT("writing to logs from thread in logger")
 }
 
-void Logger::LogMessageBool(const string& MessageStr, const bool LogLineInfo, const ThreadIdType CurrentThreadId, const bool PrintToConsole)
+void Logger::LogMessageBool(const string& MessageStr, const bool LogLineInfo, const ThreadIdType CurrentThreadId, const bool PrintToConsole, const std::int64_t SpecialLogFileIndex)
 {
 	try
 	{
@@ -265,20 +268,20 @@ void Logger::LogMessageBool(const string& MessageStr, const bool LogLineInfo, co
 					LoggersManagerObject.LoggerMainObjectPointer->LimitLogSizeByClosingOldLogFilesAndOpeningNewLogFilesAfterMaximalLimitOfLinesInOldFileIsExceeded(LoggersManagerObject.LoggerMainObjectPointer->ThisThreadId);
 
 					LocalMessageStr = LoggersManagerObject.LoggerMainObjectPointer->CreateLogString(MessageStr, LogLineInfo, CurrentThreadId, LineNumberInCommonLog, LoggersManagerObject.PrintLogLineNumberToFile, LoggersManagerObject.PrintLogDateTimeToFile, LoggersManagerObject.PrintLogProcessIdToFile, LoggersManagerObject.PrintLogProcessPriorityLevelToFile, LoggersManagerObject.PrintLogThreadIdToFile);
-					LoggersManagerObject.LoggerMainObjectPointer->WriteToLogsFromThread(LocalMessageStr, LoggersManagerObject.LoggerMainObjectPointer->ThisThreadId);
+					LoggersManagerObject.LoggerMainObjectPointer->WriteToLogsFromThread(LocalMessageStr, LoggersManagerObject.LoggerMainObjectPointer->ThisThreadId, SpecialLogFileIndex);
 
 					LimitLogSizeByClosingOldLogFilesAndOpeningNewLogFilesAfterMaximalLimitOfLinesInOldFileIsExceeded(CurrentThreadId);
 
 					LineNumberInLog++;
 					LocalMessageStr = CreateLogString(MessageStr, LogLineInfo, CurrentThreadId, LineNumberInCommonLog, LoggersManagerObject.PrintLogLineNumberToFile, LoggersManagerObject.PrintLogDateTimeToFile, LoggersManagerObject.PrintLogProcessIdToFile, LoggersManagerObject.PrintLogProcessPriorityLevelToFile, LoggersManagerObject.PrintLogThreadIdToFile);
-					WriteToLogsFromThread(LocalMessageStr, CurrentThreadId);
+					WriteToLogsFromThread(LocalMessageStr, CurrentThreadId, SpecialLogFileIndex);
 				}
 				else
 				{
 					LoggersManagerObject.LoggerMainObjectPointer->LimitLogSizeByClosingOldLogFilesAndOpeningNewLogFilesAfterMaximalLimitOfLinesInOldFileIsExceeded(LoggersManagerObject.LoggerMainObjectPointer->ThisThreadId);
 
 					LocalMessageStr = CreateLogString(MessageStr, LogLineInfo, CurrentThreadId, LineNumberInCommonLog, LoggersManagerObject.PrintLogLineNumberToFile, LoggersManagerObject.PrintLogDateTimeToFile, LoggersManagerObject.PrintLogProcessIdToFile, LoggersManagerObject.PrintLogProcessPriorityLevelToFile, LoggersManagerObject.PrintLogThreadIdToFile);
-					WriteToLogsFromThread(LocalMessageStr, CurrentThreadId);
+					WriteToLogsFromThread(LocalMessageStr, CurrentThreadId, SpecialLogFileIndex);
 				}
 			}
 	}
@@ -366,29 +369,29 @@ void LoggersManager::InitializeLoggerManagerDataForTask(const string& TaskNamePa
 
         ThreadIdType CurrentThreadId = stoll((stringstream() << this_thread::get_id()).str());
 		LoggerMainObjectPointer = make_unique<Logger>(LogDirectory.c_str(), ActualDateTimeStr.c_str(), string("LOGGER_COMMON").c_str(), TaskName.c_str(), CurrentThreadId);
-		LoggerMainObjectPointer->LogMessageBool("START MAIN LOGGER_COMMON\n", true, CurrentThreadId, true);
+		LoggerMainObjectPointer->LogMessageBool("START MAIN LOGGER_COMMON\n", true, CurrentThreadId, true, -1);
 	}
 	CATCH_AND_THROW_COUT("initializing loggers manager data for task")
 }
 
 void LoggersManager::Log(const stringstream& Message)
 {
-	LogMessageBool(Message.str(), true, true);
+	LogMessageBool(Message.str(), true, true, -1);
 };
 
 void LoggersManager::LogWithoutLineInfo(const stringstream& Message)
 {
-	LogMessageBool(Message.str(), false, true);
+	LogMessageBool(Message.str(), false, true, -1);
 }
 
 void LoggersManager::LogOnlyToFiles(const stringstream& Message)
 {
-	LogMessageBool(Message.str(), true, false);
+	LogMessageBool(Message.str(), true, false, -1);
 };
 
 void LoggersManager::LogWithoutLineInfoOnlyToFiles(const stringstream& Message)
 {
-	LogMessageBool(Message.str(), false, false);
+	LogMessageBool(Message.str(), false, false, -1);
 }
 
 void LoggersManager::LogInColorTerminal(ostream& color(ostream& s), const stringstream& Message)
@@ -397,7 +400,7 @@ void LoggersManager::LogInColorTerminal(ostream& color(ostream& s), const string
     cout << color << Message.str() << white << endl;
 }
 
-void LoggersManager::LogMessageBool(const string& MessageStr, const bool LogLineInfo, const bool PrintToConsole)
+void LoggersManager::LogMessageBool(const string& MessageStr, const bool LogLineInfo, const bool PrintToConsole, const std::int64_t SpecialLogFileIndex)
 {
 	try
 	{
@@ -408,7 +411,7 @@ void LoggersManager::LogMessageBool(const string& MessageStr, const bool LogLine
             if (LogThreadsToSeparatedFiles == true)
             {
                 if (CurrentThreadId == LoggerMainObjectPointer->ThisThreadId)
-                    LoggerMainObjectPointer->LogMessageBool(MessageStr, LogLineInfo, CurrentThreadId, PrintToConsole);
+                    LoggerMainObjectPointer->LogMessageBool(MessageStr, LogLineInfo, CurrentThreadId, PrintToConsole, SpecialLogFileIndex);
                 else
                 {
                     {
@@ -420,12 +423,103 @@ void LoggersManager::LogMessageBool(const string& MessageStr, const bool LogLine
                             LoggersThreadsObjectsPointersMap[CurrentThreadId] = make_unique<Logger>(LogDirectory.c_str(), ActualDateTimeStr.c_str(), string("THREAD_" + to_string(LoggersThreadsObjectsPointersMap.size() + 1) + "_" + (stringstream() << CurrentThreadId).str()).c_str(), TaskName.c_str(), CurrentThreadId);
                     }
 
-                    LoggersThreadsObjectsPointersMap[CurrentThreadId]->LogMessageBool(MessageStr, LogLineInfo, CurrentThreadId, PrintToConsole);
+                    LoggersThreadsObjectsPointersMap[CurrentThreadId]->LogMessageBool(MessageStr, LogLineInfo, CurrentThreadId, PrintToConsole, SpecialLogFileIndex);
                 }
             }
             else
-                LoggerMainObjectPointer->LogMessageBool(MessageStr, LogLineInfo, CurrentThreadId, PrintToConsole);
+                LoggerMainObjectPointer->LogMessageBool(MessageStr, LogLineInfo, CurrentThreadId, PrintToConsole, SpecialLogFileIndex);
         }
 	}
 	CATCH_COUT("logging message in loggers manager")
 }
+
+[[maybe_unused]] void LoggersManager::LogWarning(const stringstream& Message)
+{
+    LogMessageBool(Message.str(), false, false, LogWarningsFileIndex);
+}
+
+[[maybe_unused]] void LoggersManager::LogError(const stringstream& Message)
+{
+    LogMessageBool(Message.str(), false, false, LogErrorsFileIndex);
+}
+
+[[maybe_unused]] void LoggersManager::LogException(const stringstream& Message)
+{
+    LogMessageBool(Message.str(), false, false, LogExceptionsFileIndex);
+}
+
+[[maybe_unused]] void LoggersManager::LogErrorAndException(const stringstream& Message)
+{
+    LogMessageBool(Message.str(), false, false, LogErrorsAndExceptionsFileIndex);
+}
+
+[[maybe_unused]] void LoggersManager::LogCritical(const stringstream& Message)
+{
+    LogMessageBool(Message.str(), false, false, LogCriticalFileIndex);
+}
+
+[[maybe_unused]] void LoggersManager::LogInformation(const stringstream& Message)
+{
+    LogMessageBool(Message.str(), false, false, LogInformationFileIndex);
+}
+
+[[maybe_unused]] void LoggersManager::LogImportant(const stringstream& Message)
+{
+    LogMessageBool(Message.str(), false, false, LogImportantFileIndex);
+}
+
+[[maybe_unused]] void LoggersManager::LogStatistics(const stringstream& Message)
+{
+    LogMessageBool(Message.str(), false, false, LogStatisticsFileIndex);
+}
+
+[[maybe_unused]] void LoggersManager::LogDebug(const stringstream& Message)
+{
+    LogMessageBool(Message.str(), false, false, LogDebugFileIndex);
+}
+
+[[maybe_unused]] void LoggersManager::LogWarn(const stringstream& Message)
+{
+    LogWarning(Message);
+}
+
+[[maybe_unused]] void LoggersManager::LogErr(const stringstream& Message)
+{
+    LogError(Message);
+}
+
+[[maybe_unused]] void LoggersManager::LogExc(const stringstream& Message)
+{
+    LogException(Message);
+}
+
+[[maybe_unused]] void LoggersManager::LogErrAndExc(const stringstream& Message)
+{
+    LogErrorAndException(Message);
+}
+
+[[maybe_unused]] void LoggersManager::LogCrit(const stringstream& Message)
+{
+    LogCritical(Message);
+}
+
+[[maybe_unused]] void LoggersManager::LogInfo(const stringstream& Message)
+{
+    LogInformation(Message);
+}
+
+[[maybe_unused]] void LoggersManager::LogImp(const stringstream& Message)
+{
+    LogImportant(Message);
+}
+
+[[maybe_unused]] void LoggersManager::LogStat(const stringstream& Message)
+{
+    LogStatistics(Message);
+}
+
+[[maybe_unused]] void LoggersManager::LogDeb(const stringstream& Message)
+{
+    LogDebug(Message);
+}
+
