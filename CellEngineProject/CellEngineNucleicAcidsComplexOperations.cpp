@@ -17,7 +17,7 @@ bool CellEngineNucleicAcidsComplexOperations::CutDNAInChosenPlaceSpecialReaction
             {
                 CutDNANext(NucleotidePtr1->Prev);
 
-                if (ReactionObject.Id == 40 || ReactionObject.Id == 41 || ReactionObject.Id == 42)
+                if (ReactionObject.ReactionIdNum == 40 || ReactionObject.ReactionIdNum == 41 || ReactionObject.ReactionIdNum == 42)
                 {
                     auto NucleotidePtr2 = get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[0].second].SequenceStr.length() + ReactionObject.AdditionalParameter2, *GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first).PairedNucleotide, false, false, [](const Particle*){ return true; }));
                     if (NucleotidePtr2 != nullptr && NucleotidePtr2->Prev != nullptr)
@@ -87,7 +87,7 @@ bool CellEngineNucleicAcidsComplexOperations::LinkDNAInAnyPlaceSpecialReactionFu
 
                 LinkDNA(&GetParticleFromIndex(NucleotidesWithFreePrevEndingsFoundInProximity[0]), &GetParticleFromIndex(NucleotidesWithFreeNextEndingsFoundInProximity[0]));
 
-                if (ReactionObject.Id == 80)
+                if (ReactionObject.ReactionIdNum == 80)
                     LinkDNA(GetParticleFromIndex(NucleotidesWithFreePrevEndingsFoundInProximity[0]).PairedNucleotide, GetParticleFromIndex(NucleotidesWithFreeNextEndingsFoundInProximity[0]).PairedNucleotide);
             }
         }
@@ -113,7 +113,7 @@ bool CellEngineNucleicAcidsComplexOperations::CutDNACrisperInChosenPlaceSpecialR
             {
                 FirstStrand = FirstStrand->Prev;
                 CutDNANext(FirstStrand);
-                if (ReactionObject.Id == 110)
+                if (ReactionObject.ReactionIdNum == 110)
                     CutDNANext(FirstStrand->PairedNucleotide);
             }
         }

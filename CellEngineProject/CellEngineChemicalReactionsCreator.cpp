@@ -200,7 +200,7 @@ void CellEngineChemicalReactionsCreator::AddXMLChemicalReaction(Reaction& Reacti
 {
     try
     {
-        ReactionObject.Id = ReactionId;
+        ReactionObject.ReactionIdNum = ReactionId;
         ReactionObject.ReactantsStr = GetStringOfSortedParticlesDataNames(ReactionObject.Reactants);
         ReactionObject.SpecialReactionFunction = nullptr;
         AddChemicalReaction(ReactionObject);
@@ -227,8 +227,8 @@ void CellEngineChemicalReactionsCreator::GetProperReactionsListFromXMLFile(const
             LoggersManagerObject.Log(STREAM("REACTION = " << ReactionsPropertyTreeXMLTreeElementReaction.second.get<string>("<xmlattr>.id") << " " << ReactionsPropertyTreeXMLTreeElementReaction.second.get<string>("<xmlattr>.reversible") << " " << ReactionsPropertyTreeXMLTreeElementReaction.second.get<string>("<xmlattr>.name") << " " << ReactionsPropertyTreeXMLTreeElementReaction.second.get<string>("<xmlattr>.fbc:upperFluxBound") << " " << ReactionsPropertyTreeXMLTreeElementReaction.second.get<string>("<xmlattr>.fbc:lowerFluxBound")));
 
             Reaction ReactionObject;
-            ReactionObject.IdStr = ReactionsPropertyTreeXMLTreeElementReaction.second.get<string>("<xmlattr>.id");
-            ReactionObject.Name = ReactionsPropertyTreeXMLTreeElementReaction.second.get<string>("<xmlattr>.name");
+            ReactionObject.ReactionIdStr = ReactionsPropertyTreeXMLTreeElementReaction.second.get<string>("<xmlattr>.id");
+            ReactionObject.ReactionName = ReactionsPropertyTreeXMLTreeElementReaction.second.get<string>("<xmlattr>.name");
             ReactionObject.Reversible = ReactionsPropertyTreeXMLTreeElementReaction.second.get<bool>("<xmlattr>.reversible");
             ReactionObject.UpperFluxBound = ReactionsPropertyTreeXMLTreeElementReaction.second.get<string>("<xmlattr>.fbc:upperFluxBound");
             ReactionObject.LowerFluxBound = ReactionsPropertyTreeXMLTreeElementReaction.second.get<string>("<xmlattr>.fbc:lowerFluxBound");

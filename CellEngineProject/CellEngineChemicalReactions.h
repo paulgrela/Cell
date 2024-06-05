@@ -14,13 +14,18 @@ protected:
     std::vector<Reaction> Reactions;
     std::unordered_map<UnsignedInt, UnsignedInt> ReactionsPosFromId;
     std::unordered_multimap<std::string, UnsignedInt> ReactionsPosFromString;
+protected:
+    Reaction& GetReactionFromNumId(UnsignedInt ReactionId)
+    {
+        return Reactions[ReactionsPosFromId.find(ReactionId)->second];
+    }
 public:
     void PreprocessChemicalReactions();
 public:
     void AddChemicalReaction(const Reaction& ReactionParam)
     {
         Reactions.emplace_back(ReactionParam);
-        ReactionsPosFromId.insert(std::make_pair(ReactionParam.Id, Reactions.size() - 1));
+        ReactionsPosFromId.insert(std::make_pair(ReactionParam.ReactionIdNum, Reactions.size() - 1));
         ReactionsPosFromString.insert(std::make_pair(ReactionParam.ReactantsStr, Reactions.size() - 1));
     }
 public:

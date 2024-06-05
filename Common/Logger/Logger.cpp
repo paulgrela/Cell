@@ -523,4 +523,3 @@ void LoggersManager::LogMessageBool(const string& MessageStr, const bool LogLine
 {
     LogDebug(Message);
 }
-

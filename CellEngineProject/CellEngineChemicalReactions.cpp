@@ -59,7 +59,7 @@ bool CellEngineChemicalReactions::TryToMakeRandomChemicalReaction(UnsignedInt Nu
                 auto& ReactionObject = Reactions[ReactionIter->second];
 
                 LoggersManagerObject.Log(STREAM("Reaction Position In Array = [" << to_string(ReactionIter->second) << "]" << endl));
-                LoggersManagerObject.Log(STREAM("Reaction Id = [" << to_string(ReactionObject.Id) << "]" << endl));
+                LoggersManagerObject.Log(STREAM("Reaction Id Num = [" << to_string(ReactionObject.ReactionIdNum) << "]" << endl));
 
                 bool IsPossible = IsChemicalReactionPossible(ReactionObject);
                 if (IsPossible == true)

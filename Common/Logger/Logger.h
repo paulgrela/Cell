@@ -74,8 +74,8 @@ private:
 	bool PrintLogThreadIdToFile = false;
 
 	std::uint64_t MaximalNumberOfLinesInOneFile = 100000;
-
-    std::vector<bool> UseSpecialLogFiles = {false, false, false, false, false, false, false, false, false };
+private:
+    std::vector<bool> UseSpecialLogFiles = { false, false, false, false, false, false, false, false, false };
 
     const std::int64_t LogWarningsFileIndex = 0;
     const std::int64_t LogErrorsFileIndex = 1;

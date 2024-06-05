@@ -41,6 +41,9 @@ public:
 protected:
     void UpdateProbabilityOfMoveFromElectricInteractionForSelectedParticle(Particle& ParticleObject, ElectricChargeType (*NeighbourPoints)[3][3][3], double MultiplyElectricChargeFactor);
 public:
+    void SaveReactionsStatisticsToFile();
+    void SaveParticlesStatistics(bool a1, bool a2, bool a3);
+public:
     void GenerateRandomReactionsForAllParticles();
     void GenerateOneStepOfRandomReactionsForSelectedRangeOfParticles(UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam);
     void GenerateOneStepOfRandomReactionsForOneParticle(UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam);

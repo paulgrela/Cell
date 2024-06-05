@@ -1,32 +1,49 @@
 
+#include "ExceptionsMacro.h"
+
 #include "CellEngineSimulationSpaceStatistics.h"
 
 void CellEngineSimulationSpaceStatistics::SaveParticlesAsCopiedMad()
 {
-    ParticlesSnapshotsCopiedUnorderedMap.emplace_back(Particles);
+    try
+    {
+        ParticlesSnapshotsCopiedUnorderedMap.emplace_back(Particles);
+    }
+    CATCH("saving particles as copied map")
 }
 
 void CellEngineSimulationSpaceStatistics::SaveParticlesAsVectorElements()
 {
-    ParticlesSnapshots[SimulationStepNumber].reserve(Particles.size());
-    transform(Particles.begin(), Particles.end(), std::back_inserter(ParticlesSnapshots[SimulationStepNumber]), [](const auto& ParticlesMapElement){ return ParticlesMapElement.second; } );
+    try
+    {
+        ParticlesSnapshots[SimulationStepNumber].reserve(Particles.size());
+
+        transform(Particles.begin(), Particles.end(), std::back_inserter(ParticlesSnapshots[SimulationStepNumber]), [](const auto& ParticlesMapElement){ return ParticlesMapElement.second; } );
+    }
+    CATCH("saving particles as vector elements")
 }
 
 void CellEngineSimulationSpaceStatistics::SaveParticlesAsSortedVectorElements()
 {
-    ParticlesSnapshotsCopiedMap.clear();
+    try
+    {
+        ParticlesSnapshotsCopiedMap.clear();
 
-    for (const auto& ParticlesSnapshotsCopiedUnorderedMapElement : ParticlesSnapshotsCopiedUnorderedMap[SimulationStepNumber])
-        ParticlesSnapshotsCopiedMap[SimulationStepNumber][ParticlesSnapshotsCopiedUnorderedMapElement.first].Counter++;
+        for (const auto& ParticlesSnapshotsCopiedUnorderedMapElement : ParticlesSnapshotsCopiedUnorderedMap[SimulationStepNumber])
+            ParticlesSnapshotsCopiedMap[SimulationStepNumber][ParticlesSnapshotsCopiedUnorderedMapElement.first].Counter++;
 
-    transform(ParticlesSnapshotsCopiedMap[SimulationStepNumber].begin(), ParticlesSnapshotsCopiedMap[SimulationStepNumber].end(), back_inserter(ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber]), [](const auto& ParticlesMapElement){ return ParticlesMapElement.second; } );
+        transform(ParticlesSnapshotsCopiedMap[SimulationStepNumber].begin(), ParticlesSnapshotsCopiedMap[SimulationStepNumber].end(), back_inserter(ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber]), [](const auto& ParticlesMapElement){ return ParticlesMapElement.second; } );
 
-    sort(ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber].begin(), ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber].end(), [](const auto& P1, const auto& P2){ return P1.Counter > P2.Counter; } );
+        sort(ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber].begin(), ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber].end(), [](const auto& P1, const auto& P2){ return P1.Counter > P2.Counter; } );
+    }
+    CATCH("saving particles as sorted vector elements")
 }
 
 void CellEngineSimulationSpaceStatistics::SaveReactionForStatistics(const Reaction& ReactionParam)
 {
-    SavedReactionsMap[SimulationStepNumber][ReactionParam.Id].Counter++;
+    try
+    {
+        SavedReactionsMap[SimulationStepNumber][ReactionParam.ReactionIdNum].Counter++;
+    }
+    CATCH("saving reaction for statistics")
 }
-
-//zapis statistics do pliku

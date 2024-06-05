@@ -40,6 +40,10 @@ protected:
     {
         SimulationStepNumber = 0;
     }
+    void IncSimulationStep()
+    {
+        SimulationStepNumber++;
+    }
 protected:
     void SaveParticlesAsCopiedMad();
     void SaveParticlesAsVectorElements();

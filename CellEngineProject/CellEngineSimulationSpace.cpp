@@ -206,7 +206,7 @@ tuple<vector<pair<UniqueIdInt, UnsignedInt>>, bool> CellEngineSimulationSpace::C
             LoggersManagerObject.Log(STREAM(""));
         }
 
-        if (AllAreZero == true || (AllAreZero == false && (ReactionObject.Id == 30 || ReactionObject.Id == 80 || ReactionObject.Id == 70)))
+        if (AllAreZero == true || (AllAreZero == false && (ReactionObject.ReactionIdNum == 30 || ReactionObject.ReactionIdNum == 80 || ReactionObject.ReactionIdNum == 70)))
             if (ReactionObject.SpecialReactionFunction != nullptr)
                 ReactionObject.SpecialReactionFunction(this, AllParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject);
     }
@@ -383,6 +383,8 @@ void CellEngineSimulationSpace::GenerateChosenReactionForSelectedVoxelSpace(cons
         if (FindParticlesInProximityOfSimulationSpaceForSelectedSpace(true, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam) == true)
             if (ReactionId != 0)
                 FindAndExecuteChosenReaction(ReactionId);
+
+        //JESLI CO ILES KROKOW TO SAVE STATISTIC DLA CZASTEK
     }
     CATCH("generating random reaction for particle")
 }
@@ -434,4 +436,30 @@ void CellEngineSimulationSpace::GenerateOneStepOfRandomReactionsForOneParticle(U
         GenerateRandomReactionForParticle(GetParticleFromIndex(StartParticleIndexParam + 4));
     }
     CATCH("generating one step of random reactions for selected range of particles")
+}
+
+void CellEngineSimulationSpace::SaveReactionsStatisticsToFile()
+{
+    try
+    {
+        for (const auto& ReactionData : SavedReactionsMap[SimulationStepNumber])
+        {
+            LoggersManagerObject.LogStatistics(STREAM("REACTION ID = " << ReactionData.second.ReactionId << "REACTION ID_STR = #" << GetReactionFromNumId(ReactionData.second.ReactionId).ReactionIdStr << "# REACTION COUNTER = " << ReactionData.second.ReactionId));
+        }
+    }
+    CATCH("saving reactions statistics to file")
+}
+
+void CellEngineSimulationSpace::SaveParticlesStatistics(const bool a1, const bool a2, const bool a3)
+{
+    try
+    {
+        if (a1 == true)
+            SaveParticlesAsCopiedMad();
+        if (a2 == true)
+            SaveParticlesAsVectorElements();
+        if (a3 == true)
+            SaveParticlesAsSortedVectorElements();
+    }
+    CATCH("saving particles statistics")
 }
