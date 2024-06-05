@@ -3,6 +3,36 @@
 
 #include "CellEngineSimulationSpaceStatistics.h"
 
+void CellEngineSimulationSpaceStatistics::MakeSimulationStepNumberZeroForStatistics()
+{
+    try
+    {
+        SimulationStepNumber = 0;
+
+        ParticlesSnapshots.clear();
+        ParticlesSnapshotsCopiedUnorderedMap.clear();
+        ParticlesKindsSnapshotsVectorSortedByCounter.clear();
+        ParticlesSnapshotsCopiedMap.clear();
+        SavedReactionsMap.clear();
+    }
+    CATCH("making simulation step number zero for statistics")
+}
+void CellEngineSimulationSpaceStatistics::IncSimulationStepNumberForStatistics()
+{
+    try
+    {
+        SimulationStepNumber++;
+
+        ParticlesSnapshots.emplace_back();
+        ParticlesSnapshotsCopiedUnorderedMap.emplace_back();
+        ParticlesKindsSnapshotsVectorSortedByCounter.emplace_back();
+        ParticlesSnapshotsCopiedMap.emplace_back();
+
+        SavedReactionsMap.emplace_back();
+    }
+    CATCH("incrementing simulation step number for statistics")
+}
+
 void CellEngineSimulationSpaceStatistics::SaveParticlesAsCopiedMad()
 {
     try
@@ -16,7 +46,7 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesAsVectorElements()
 {
     try
     {
-        ParticlesSnapshots[SimulationStepNumber].reserve(Particles.size());
+        ParticlesSnapshots[SimulationStepNumber - 1].reserve(Particles.size());
 
         transform(Particles.begin(), Particles.end(), std::back_inserter(ParticlesSnapshots[SimulationStepNumber]), [](const auto& ParticlesMapElement){ return ParticlesMapElement.second; } );
     }
@@ -30,11 +60,11 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesAsSortedVectorElements()
         ParticlesSnapshotsCopiedMap.clear();
 
         for (const auto& ParticlesSnapshotsCopiedUnorderedMapElement : ParticlesSnapshotsCopiedUnorderedMap[SimulationStepNumber])
-            ParticlesSnapshotsCopiedMap[SimulationStepNumber][ParticlesSnapshotsCopiedUnorderedMapElement.first].Counter++;
+            ParticlesSnapshotsCopiedMap[SimulationStepNumber - 1][ParticlesSnapshotsCopiedUnorderedMapElement.first].Counter++;
 
-        transform(ParticlesSnapshotsCopiedMap[SimulationStepNumber].begin(), ParticlesSnapshotsCopiedMap[SimulationStepNumber].end(), back_inserter(ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber]), [](const auto& ParticlesMapElement){ return ParticlesMapElement.second; } );
+        transform(ParticlesSnapshotsCopiedMap[SimulationStepNumber - 1].begin(), ParticlesSnapshotsCopiedMap[SimulationStepNumber - 1].end(), back_inserter(ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber - 1]), [](const auto& ParticlesMapElement){ return ParticlesMapElement.second; } );
 
-        sort(ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber].begin(), ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber].end(), [](const auto& P1, const auto& P2){ return P1.Counter > P2.Counter; } );
+        sort(ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber - 1].begin(), ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber - 1].end(), [](const auto& P1, const auto& P2){ return P1.Counter > P2.Counter; } );
     }
     CATCH("saving particles as sorted vector elements")
 }
@@ -43,7 +73,12 @@ void CellEngineSimulationSpaceStatistics::SaveReactionForStatistics(const Reacti
 {
     try
     {
-        SavedReactionsMap[SimulationStepNumber][ReactionParam.ReactionIdNum].Counter++;
+        auto ReactionIter = SavedReactionsMap[SimulationStepNumber - 1].find(ReactionParam.ReactionIdNum);
+
+        if (ReactionIter != SavedReactionsMap[SimulationStepNumber - 1].end())
+            ReactionIter->second.Counter++;
+        else
+            SavedReactionsMap[SimulationStepNumber - 1][ReactionParam.ReactionIdNum] = ReactionStatistics{ ReactionParam.ReactionIdNum, 0 };
     }
     CATCH("saving reaction for statistics")
 }

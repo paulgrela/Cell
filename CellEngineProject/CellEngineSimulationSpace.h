@@ -42,7 +42,9 @@ protected:
     void UpdateProbabilityOfMoveFromElectricInteractionForSelectedParticle(Particle& ParticleObject, ElectricChargeType (*NeighbourPoints)[3][3][3], double MultiplyElectricChargeFactor);
 public:
     void SaveReactionsStatisticsToFile();
-    void SaveParticlesStatistics(bool a1, bool a2, bool a3);
+    void SaveParticlesStatistics(bool SaveParticlesAsCopiedMapBool, bool SaveParticlesAsVectorElementsBool, bool SortParticlesAsSortedVectorElementsBool);
+    void SetMakeSimulationStepNumberZero();
+    void SetIncSimulationStepNumber();
 public:
     void GenerateRandomReactionsForAllParticles();
     void GenerateOneStepOfRandomReactionsForSelectedRangeOfParticles(UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam);

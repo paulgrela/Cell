@@ -685,6 +685,11 @@ public:
 
                 if (ImGui::CollapsingHeader("STATISTICS OF SIMULATION", ImGuiTreeNodeFlags_DefaultOpen))
                 {
+                    if (ImGui::Button("  ZERO STATISTICS                   ") == true)
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->SetMakeSimulationStepNumberZero();
+                    if (ImGui::Button("  INCR STATISTICS                   ") == true)
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->SetIncSimulationStepNumber();
+
                     if (ImGui::Button("  SAVE REACTIONS STATISTICS TO FILE  ") == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->SaveReactionsStatisticsToFile();
                     if (ImGui::Button("  SAVE PARTICLES STATISTICS TO FILE  ") == true)

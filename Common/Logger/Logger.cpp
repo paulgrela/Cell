@@ -96,6 +96,9 @@ void Logger::AllocResourcesForFiles()
 		{
 			UserLogFiles.clear();
 			UserLogFiles.resize(LoggersManagerObject.UserLogFilesNames.size());
+
+            SpecialLogFiles.clear();
+            SpecialLogFiles.resize(LoggersManagerObject.UseSpecialLogFiles.size());
 		}
 	}
 	CATCH_AND_THROW_COUT("allocation of  resources for file in logger")

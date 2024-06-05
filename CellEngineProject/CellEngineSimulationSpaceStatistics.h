@@ -36,14 +36,8 @@ protected:
 protected:
     std::vector<std::map<UnsignedInt, ReactionStatistics>> SavedReactionsMap;
 protected:
-    void MakeStepNumberZero()
-    {
-        SimulationStepNumber = 0;
-    }
-    void IncSimulationStep()
-    {
-        SimulationStepNumber++;
-    }
+    void MakeSimulationStepNumberZeroForStatistics();
+    void IncSimulationStepNumberForStatistics();
 protected:
     void SaveParticlesAsCopiedMad();
     void SaveParticlesAsVectorElements();

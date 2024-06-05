@@ -442,24 +442,36 @@ void CellEngineSimulationSpace::SaveReactionsStatisticsToFile()
 {
     try
     {
-        for (const auto& ReactionData : SavedReactionsMap[SimulationStepNumber])
-        {
-            LoggersManagerObject.LogStatistics(STREAM("REACTION ID = " << ReactionData.second.ReactionId << "REACTION ID_STR = #" << GetReactionFromNumId(ReactionData.second.ReactionId).ReactionIdStr << "# REACTION COUNTER = " << ReactionData.second.ReactionId));
-        }
+        LoggersManagerObject.LogStatistics(STREAM("AAA"));
+
+//        for (const auto& ReactionData : SavedReactionsMap[SimulationStepNumber - 1])
+//        {
+//            LoggersManagerObject.LogStatistics(STREAM("REACTION ID = " << ReactionData.second.ReactionId << " REACTION ID_STR = #" << GetReactionFromNumId(ReactionData.second.ReactionId).ReactionIdStr << "# REACTION COUNTER = " << ReactionData.second.ReactionId));
+//        }
     }
     CATCH("saving reactions statistics to file")
 }
 
-void CellEngineSimulationSpace::SaveParticlesStatistics(const bool a1, const bool a2, const bool a3)
+void CellEngineSimulationSpace::SaveParticlesStatistics(const bool SaveParticlesAsCopiedMapBool, const bool SaveParticlesAsVectorElementsBool, const bool SortParticlesAsSortedVectorElementsBool)
 {
     try
     {
-        if (a1 == true)
+        if (SaveParticlesAsCopiedMapBool == true)
             SaveParticlesAsCopiedMad();
-        if (a2 == true)
+        if (SaveParticlesAsVectorElementsBool == true)
             SaveParticlesAsVectorElements();
-        if (a3 == true)
+        if (SortParticlesAsSortedVectorElementsBool == true)
             SaveParticlesAsSortedVectorElements();
     }
     CATCH("saving particles statistics")
+}
+
+void CellEngineSimulationSpace::SetMakeSimulationStepNumberZero()
+{
+    MakeSimulationStepNumberZeroForStatistics();
+}
+
+void CellEngineSimulationSpace::SetIncSimulationStepNumber()
+{
+    IncSimulationStepNumberForStatistics();
 }
