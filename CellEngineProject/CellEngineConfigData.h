@@ -43,6 +43,8 @@ public:
     bool PrintLogThreadIdToFile = false;
 
     UnsignedInt MaximalNumberOfLinesInOneFile = 100000;
+
+    bool PrintLogToCommonFileWhenPrintLogToSpecialFile = true;
 public:
     bool PrintAtomDescriptionOnScreen{};
     bool LogParametersOfRenderingToFile{};

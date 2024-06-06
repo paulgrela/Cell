@@ -115,6 +115,8 @@ void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const ch
                 CellEngineConfigDataObject.PrintLogThreadIdToFile = MainConfigPropertyTreeElement.second.get<bool>("PrintThreadIdToFile");
 
                 CellEngineConfigDataObject.MaximalNumberOfLinesInOneFile = MainConfigPropertyTreeElement.second.get<UnsignedInt>("MaximalNumberOfLinesInOneFile");
+
+                CellEngineConfigDataObject.PrintLogToCommonFileWhenPrintLogToSpecialFile = MainConfigPropertyTreeElement.second.get<bool>("PrintLogToCommonFileWhenPrintLogToSpecialFile");
             }
             else
             if (MainConfigPropertyTreeElement.first == "CellsStates")

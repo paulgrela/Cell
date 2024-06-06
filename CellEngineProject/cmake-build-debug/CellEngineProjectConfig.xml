@@ -59,7 +59,8 @@
 		<PrintProcessPriorityLevelToFile>false</PrintProcessPriorityLevelToFile>
 		<PrintThreadIdToFile>true</PrintThreadIdToFile>
 		<MaximalNumberOfLinesInOneFile>100000</MaximalNumberOfLinesInOneFile>
-	</Logger>	
+                <PrintLogToCommonFileWhenPrintLogToSpecialFile>true</PrintLogToCommonFileWhenPrintLogToSpecialFile>
+	</Logger>
 	<CellsStates>
 		<CellState id="1">
                         <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->

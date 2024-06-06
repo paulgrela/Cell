@@ -67,8 +67,10 @@ void Logger::CreateDirectories()
 
 			for (const string& FileName : LoggersManagerObject.UserLogFilesNames)
 				mkdir(string(string(LogDirectory) + string("logs") + OS_DIR_SEP + MainDirectoryName + OS_DIR_SEP + TaskName + OS_DIR_SEP + LoggerName + OS_DIR_SEP + FileName).c_str());
+
 			for (const string& FileName : LoggersManagerObject.SpecialLogFilesNames)
-				mkdir(string(string(LogDirectory) + string("logs") + OS_DIR_SEP + MainDirectoryName + OS_DIR_SEP + TaskName + OS_DIR_SEP + LoggerName + OS_DIR_SEP + FileName).c_str());
+                if (LoggersManagerObject.UseSpecialLogFiles[FileNumber] == true)
+				    mkdir(string(string(LogDirectory) + string("logs") + OS_DIR_SEP + MainDirectoryName + OS_DIR_SEP + TaskName + OS_DIR_SEP + LoggerName + OS_DIR_SEP + FileName).c_str());
             #endif
             #ifdef UNIX_PLATFORM
             filesystem::create_directory(string(LogDirectory) + string("logs"));
@@ -79,7 +81,7 @@ void Logger::CreateDirectories()
             for (const string& FileName : LoggersManagerObject.UserLogFilesNames)
                 filesystem::create_directory(string(LogDirectory) + string("logs") + OS_DIR_SEP + MainDirectoryName + OS_DIR_SEP + TaskName + OS_DIR_SEP + LoggerName + OS_DIR_SEP + FileName);
 
-            for (uint64_t FileNumber = 0; FileNumber < LoggersManagerObject.UserLogFilesNames.size(); FileNumber++)
+            for (uint64_t FileNumber = 0; FileNumber < LoggersManagerObject.SpecialLogFilesNames.size(); FileNumber++)
                 if (LoggersManagerObject.UseSpecialLogFiles[FileNumber] == true)
                     filesystem::create_directory(string(LogDirectory) + string("logs") + OS_DIR_SEP + MainDirectoryName + OS_DIR_SEP + TaskName + OS_DIR_SEP + LoggerName + OS_DIR_SEP + LoggersManagerObject.SpecialLogFilesNames[FileNumber]);
             #endif
@@ -113,7 +115,7 @@ void Logger::OpenLogFiles()
             for (uint64_t FileNumber = 0; FileNumber < LoggersManagerObject.UserLogFilesNames.size(); FileNumber++)
                 UserLogFiles[FileNumber].open(string(LogDirectory) + OS_DIR_SEP + string("logs") + OS_DIR_SEP + MainDirectoryName + OS_DIR_SEP + TaskName + OS_DIR_SEP + LoggerName + OS_DIR_SEP + LoggersManagerObject.UserLogFilesNames[FileNumber] + OS_DIR_SEP + LoggersManagerObject.UserLogFilesNames[FileNumber] + string_utils::align_str(to_string(FileNumberInLog), '0', 5) + ".log.txt");
 
-            for (uint64_t FileNumber = 0; FileNumber < LoggersManagerObject.UserLogFilesNames.size(); FileNumber++)
+            for (uint64_t FileNumber = 0; FileNumber < LoggersManagerObject.SpecialLogFilesNames.size(); FileNumber++)
                 if (LoggersManagerObject.UseSpecialLogFiles[FileNumber] == true)
                     SpecialLogFiles[FileNumber].open(string(LogDirectory) + OS_DIR_SEP + string("logs") + OS_DIR_SEP + MainDirectoryName + OS_DIR_SEP + TaskName + OS_DIR_SEP + LoggerName + OS_DIR_SEP + LoggersManagerObject.SpecialLogFilesNames[FileNumber] + OS_DIR_SEP + LoggersManagerObject.SpecialLogFilesNames[FileNumber] + string_utils::align_str(to_string(FileNumberInLog), '0', 5) + ".log.txt");
         }
@@ -130,7 +132,7 @@ void Logger::CloseLogFiles()
 			for (auto& FileNumber : UserLogFiles)
 				FileNumber.close();
 
-            for (uint64_t FileNumber = 0; FileNumber < LoggersManagerObject.UserLogFilesNames.size(); FileNumber++)
+            for (uint64_t FileNumber = 0; FileNumber < LoggersManagerObject.SpecialLogFilesNames.size(); FileNumber++)
                 if (LoggersManagerObject.UseSpecialLogFiles[FileNumber] == true)
                     SpecialLogFiles[FileNumber].close();
         }
@@ -241,7 +243,11 @@ void Logger::WriteToLogsFromThread(const string& MessageStrToFile, const ThreadI
                 WriteToCommonLogFromThread(UserLogFiles[FileNumber].is_open() == true && LoggersManagerObject.SelectiveWordsFunctions[FileNumber](MessageStrToFile), MessageStrToFile, UserLogFiles[FileNumber], CurrentThreadId, FileNumber);
         else
         if (LoggersManagerObject.UseSpecialLogFiles[SpecialLogFileIndex] == true)
+        {
+            if (LoggersManagerObject.PrintLogToCommonFileWhenPrintLogToSpecialFile == true)
+                WriteToCommonLogFromThread(UserLogFiles[0].is_open() == true && LoggersManagerObject.SelectiveWordsFunctions[0](MessageStrToFile), MessageStrToFile, UserLogFiles[0], CurrentThreadId, 0);
             WriteToCommonLogFromThread(SpecialLogFiles[SpecialLogFileIndex].is_open() == true, MessageStrToFile, SpecialLogFiles[SpecialLogFileIndex], CurrentThreadId, SpecialLogFileIndex);
+        }
 	}
 	CATCH_AND_THROW_COUT("writing to logs from thread in logger")
 }
@@ -312,7 +318,7 @@ void  LoggersManager::InitializeSelectiveWordsFunctions(const initializer_list<f
 	CATCH_AND_THROW_COUT("initializing loggers manager selective words functions")
 }
 
-void LoggersManager::InitializePrintingParameters(bool PrintLogToConsoleParam, bool PrintLogToFilesParam, bool PrintLogLineNumberToConsoleParam, bool PrintLogDateTimeToConsoleParam, bool PrintLogProcessIdToConsoleParam, bool PrintLogProcessPriorityLevelToConsoleParam, bool PrintLogThreadIdToConsoleParam, bool PrintLogLineNumberToFileParam, bool PrintLogDateTimeToFileParam, bool PrintLogProcessIdToFileParam, bool PrintLogProcessPriorityLevelToFileParam, bool PrintLogThreadIdToFileParam, uint64_t MaximalNumberOfLinesInOneFileParam)
+void LoggersManager::InitializePrintingParameters(bool PrintLogToConsoleParam, bool PrintLogToFilesParam, bool PrintLogLineNumberToConsoleParam, bool PrintLogDateTimeToConsoleParam, bool PrintLogProcessIdToConsoleParam, bool PrintLogProcessPriorityLevelToConsoleParam, bool PrintLogThreadIdToConsoleParam, bool PrintLogLineNumberToFileParam, bool PrintLogDateTimeToFileParam, bool PrintLogProcessIdToFileParam, bool PrintLogProcessPriorityLevelToFileParam, bool PrintLogThreadIdToFileParam, uint64_t MaximalNumberOfLinesInOneFileParam, bool PrintLogToCommonFileWhenPrintLogToSpecialFile)
 {
 	try
 	{
@@ -332,6 +338,8 @@ void LoggersManager::InitializePrintingParameters(bool PrintLogToConsoleParam, b
 		this->PrintLogThreadIdToFile = PrintLogThreadIdToFileParam;
 
 		this->MaximalNumberOfLinesInOneFile = MaximalNumberOfLinesInOneFileParam;
+
+        this->PrintLogToCommonFileWhenPrintLogToSpecialFile = PrintLogToCommonFileWhenPrintLogToSpecialFile;
 	}
 	CATCH_AND_THROW_COUT("initializing loggers manager printing conditions")
 };
@@ -439,47 +447,47 @@ void LoggersManager::LogMessageBool(const string& MessageStr, const bool LogLine
 
 [[maybe_unused]] void LoggersManager::LogWarning(const stringstream& Message)
 {
-    LogMessageBool(Message.str(), false, false, LogWarningsFileIndex);
+    LogMessageBool(Message.str(), true, true, LogWarningsFileIndex);
 }
 
 [[maybe_unused]] void LoggersManager::LogError(const stringstream& Message)
 {
-    LogMessageBool(Message.str(), false, false, LogErrorsFileIndex);
+    LogMessageBool(Message.str(), true, true, LogErrorsFileIndex);
 }
 
 [[maybe_unused]] void LoggersManager::LogException(const stringstream& Message)
 {
-    LogMessageBool(Message.str(), false, false, LogExceptionsFileIndex);
+    LogMessageBool(Message.str(), true, true, LogExceptionsFileIndex);
 }
 
 [[maybe_unused]] void LoggersManager::LogErrorAndException(const stringstream& Message)
 {
-    LogMessageBool(Message.str(), false, false, LogErrorsAndExceptionsFileIndex);
+    LogMessageBool(Message.str(), true, true, LogErrorsAndExceptionsFileIndex);
 }
 
 [[maybe_unused]] void LoggersManager::LogCritical(const stringstream& Message)
 {
-    LogMessageBool(Message.str(), false, false, LogCriticalFileIndex);
+    LogMessageBool(Message.str(), true, true, LogCriticalFileIndex);
 }
 
 [[maybe_unused]] void LoggersManager::LogInformation(const stringstream& Message)
 {
-    LogMessageBool(Message.str(), false, false, LogInformationFileIndex);
+    LogMessageBool(Message.str(), true, true, LogInformationFileIndex);
 }
 
 [[maybe_unused]] void LoggersManager::LogImportant(const stringstream& Message)
 {
-    LogMessageBool(Message.str(), false, false, LogImportantFileIndex);
+    LogMessageBool(Message.str(), true, true, LogImportantFileIndex);
 }
 
 [[maybe_unused]] void LoggersManager::LogStatistics(const stringstream& Message)
 {
-    LogMessageBool(Message.str(), false, false, LogStatisticsFileIndex);
+    LogMessageBool(Message.str(), true, true, LogStatisticsFileIndex);
 }
 
 [[maybe_unused]] void LoggersManager::LogDebug(const stringstream& Message)
 {
-    LogMessageBool(Message.str(), false, false, LogDebugFileIndex);
+    LogMessageBool(Message.str(), true, true, LogDebugFileIndex);
 }
 
 [[maybe_unused]] void LoggersManager::LogWarn(const stringstream& Message)
