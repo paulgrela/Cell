@@ -472,6 +472,8 @@ void CellEngineSimulationSpace::GenerateChosenReactionsForWholeCellSpace(const U
             for (UnsignedInt PosY = YStartParam; PosY < YSizeParam; PosY += YStepParam)
                 for (UnsignedInt PosZ = ZStartParam; PosZ < ZSizeParam; PosZ += ZStepParam)
                     GenerateChosenReactionForSelectedSpace(ReactionId, PosX, PosY, PosZ, XStepParam, YStepParam, ZStepParam);
+
+        CheckConditionsToIncSimulationStepNumberForStatistics();
     }
     CATCH("generating random reactions for whole cell space")
 }
@@ -484,10 +486,8 @@ void CellEngineSimulationSpace::GenerateRandomReactionsForWholeCellSpace(const U
             for (UnsignedInt PosY = YStartParam; PosY < YSizeParam; PosY += YStepParam)
                 for (UnsignedInt PosZ = ZStartParam; PosZ < ZSizeParam; PosZ += ZStepParam)
                     GenerateRandomReactionForSelectedSpace(PosX, PosY, PosZ, XStepParam, YStepParam, ZStepParam);
+
+        CheckConditionsToIncSimulationStepNumberForStatistics();
     }
     CATCH("generating random reactions for whole cell space")
 }
-
-
-
-//CheckConditionsToIncSimulationStepNumberForStatistics();
