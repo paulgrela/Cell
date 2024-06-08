@@ -46,8 +46,8 @@ public:
     void SaveParticlesStatisticsOnce();
     void SaveReactionsStatisticsToFile();
 public:
-    void GenerateChosenReactionsForWholeCellSpace();
-    void GenerateRandomReactionsForWholeCellSpace();
+    void GenerateChosenReactionsForWholeCellSpace(UnsignedInt ReactionId, UnsignedInt XStartParam, UnsignedInt YStartParam, UnsignedInt ZStartParam, UnsignedInt XStepParam, UnsignedInt YStepParam, UnsignedInt ZStepParam, UnsignedInt XSizeParam, UnsignedInt YSizeParam, UnsignedInt ZSizeParam);
+    void GenerateRandomReactionsForWholeCellSpace(UnsignedInt XStartParam, UnsignedInt YStartParam, UnsignedInt ZStartParam, UnsignedInt XStepParam, UnsignedInt YStepParam, UnsignedInt ZStepParam, UnsignedInt XSizeParam, UnsignedInt YSizeParam, UnsignedInt ZSizeParam);
     void GenerateRandomReactionsForAllParticles();
 public:
     void GenerateOneStepOfRandomReactionsForSelectedRangeOfParticles(UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam);

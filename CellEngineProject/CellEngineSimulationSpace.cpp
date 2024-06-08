@@ -464,27 +464,30 @@ void CellEngineSimulationSpace::SaveParticlesStatisticsOnce()
     SaveParticlesStatistics();
 }
 
-void CellEngineSimulationSpace::GenerateChosenReactionsForWholeCellSpace()
+void CellEngineSimulationSpace::GenerateChosenReactionsForWholeCellSpace(const UnsignedInt ReactionId, const UnsignedInt XStartParam, const UnsignedInt YStartParam, const UnsignedInt ZStartParam, const UnsignedInt XStepParam, const UnsignedInt YStepParam, const UnsignedInt ZStepParam, const UnsignedInt XSizeParam, UnsignedInt YSizeParam, const UnsignedInt ZSizeParam)
 {
     try
     {
-
+        for (UnsignedInt PosX = XStartParam; PosX < XSizeParam; PosX += XStepParam)
+            for (UnsignedInt PosY = YStartParam; PosY < YSizeParam; PosY += YStepParam)
+                for (UnsignedInt PosZ = ZStartParam; PosZ < ZSizeParam; PosZ += ZStepParam)
+                    GenerateChosenReactionForSelectedSpace(ReactionId, PosX, PosY, PosZ, XStepParam, YStepParam, ZStepParam);
     }
     CATCH("generating random reactions for whole cell space")
 }
 
-void CellEngineSimulationSpace::GenerateRandomReactionsForWholeCellSpace()
+void CellEngineSimulationSpace::GenerateRandomReactionsForWholeCellSpace(const UnsignedInt XStartParam, const UnsignedInt YStartParam, const UnsignedInt ZStartParam, const UnsignedInt XStepParam, const UnsignedInt YStepParam, const UnsignedInt ZStepParam, const UnsignedInt XSizeParam, UnsignedInt YSizeParam, const UnsignedInt ZSizeParam)
 {
     try
     {
-
+        for (UnsignedInt PosX = XStartParam; PosX < XSizeParam; PosX += XStepParam)
+            for (UnsignedInt PosY = YStartParam; PosY < YSizeParam; PosY += YStepParam)
+                for (UnsignedInt PosZ = ZStartParam; PosZ < ZSizeParam; PosZ += ZStepParam)
+                    GenerateRandomReactionForSelectedSpace(PosX, PosY, PosZ, XStepParam, YStepParam, ZStepParam);
     }
     CATCH("generating random reactions for whole cell space")
 }
 
-
-//GenerateChosenReactionForSelectedSpace(const UnsignedInt ReactionId, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
-//GenerateRandomReactionForParticle(Particle& ParticleObject)
 
 
 //CheckConditionsToIncSimulationStepNumberForStatistics();
