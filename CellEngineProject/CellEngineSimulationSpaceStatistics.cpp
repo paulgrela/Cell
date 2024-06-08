@@ -17,12 +17,20 @@ void CellEngineSimulationSpaceStatistics::MakeSimulationStepNumberZeroForStatist
     }
     CATCH("making simulation step number zero for statistics")
 }
+
 void CellEngineSimulationSpaceStatistics::IncSimulationStepNumberForStatistics()
 {
     try
     {
         SimulationStepNumber++;
+    }
+    CATCH("incrementing simulation step number for statistics")
+}
 
+void CellEngineSimulationSpaceStatistics::GenerateNewEmptyElementsForContainersForStatistics()
+{
+    try
+    {
         ParticlesSnapshots.emplace_back();
         ParticlesSnapshotsCopiedUnorderedMap.emplace_back();
         ParticlesKindsSnapshotsVectorSortedByCounter.emplace_back();
@@ -31,6 +39,33 @@ void CellEngineSimulationSpaceStatistics::IncSimulationStepNumberForStatistics()
         SavedReactionsMap.emplace_back();
     }
     CATCH("incrementing simulation step number for statistics")
+}
+
+void CellEngineSimulationSpaceStatistics::SaveParticlesStatistics()
+{
+    try
+    {
+        if (SaveParticlesAsCopiedMapBool == true)
+            SaveParticlesAsCopiedMad();
+        if (SaveParticlesAsVectorElementsBool == true)
+            SaveParticlesAsVectorElements();
+        if (SortParticlesAsSortedVectorElementsBool == true)
+            SaveParticlesAsSortedVectorElements();
+    }
+    CATCH("saving particles statistics")
+}
+
+void CellEngineSimulationSpaceStatistics::CheckConditionsToIncSimulationStepNumberForStatistics()
+{
+    try
+    {
+        if (SimulationStepNumber % ModuloStepToSaveStatistics == 0)
+        {
+            GenerateNewEmptyElementsForContainersForStatistics();
+            SaveParticlesStatistics();
+        }
+    }
+    CATCH("checking conditions to increment simulation step number for statistics")
 }
 
 void CellEngineSimulationSpaceStatistics::SaveParticlesAsCopiedMad()

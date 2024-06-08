@@ -270,7 +270,8 @@ bool CellEngineSimulationSpace::MakeChemicalReaction(Reaction& ReactionObject)
 
         LoggersManagerObject.Log(STREAM("Reaction Step 3 - Reaction finished" << endl));
 
-        SaveReactionForStatistics(ReactionObject);
+        if (SaveReactionsStatisticsBool == true)
+            SaveReactionForStatistics(ReactionObject);
     }
     CATCH("making reaction")
 
@@ -364,7 +365,7 @@ void CellEngineSimulationSpace::FindAndExecuteChosenReaction(const UnsignedInt R
     CATCH("finding and executing chosen reaction")
 }
 
-void CellEngineSimulationSpace::GenerateRandomReactionForSelectedVoxelSpace(const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
+void CellEngineSimulationSpace::GenerateRandomReactionForSelectedSpace(UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam)
 {
     try
     {
@@ -376,15 +377,13 @@ void CellEngineSimulationSpace::GenerateRandomReactionForSelectedVoxelSpace(cons
     CATCH("generating random reaction for selected voxel space")
 }
 
-void CellEngineSimulationSpace::GenerateChosenReactionForSelectedVoxelSpace(const UnsignedInt ReactionId, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
+void CellEngineSimulationSpace::GenerateChosenReactionForSelectedSpace(UnsignedInt ReactionId, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam)
 {
     try
     {
         if (FindParticlesInProximityOfSimulationSpaceForSelectedSpace(true, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam) == true)
             if (ReactionId != 0)
                 FindAndExecuteChosenReaction(ReactionId);
-
-        //JESLI CO ILES KROKOW TO SAVE STATISTIC DLA CZASTEK
     }
     CATCH("generating random reaction for particle")
 }
@@ -442,36 +441,50 @@ void CellEngineSimulationSpace::SaveReactionsStatisticsToFile()
 {
     try
     {
-        LoggersManagerObject.LogStatistics(STREAM("AAA"));
-
-//        for (const auto& ReactionData : SavedReactionsMap[SimulationStepNumber - 1])
-//        {
-//            LoggersManagerObject.LogStatistics(STREAM("REACTION ID = " << ReactionData.second.ReactionId << " REACTION ID_STR = #" << GetReactionFromNumId(ReactionData.second.ReactionId).ReactionIdStr << "# REACTION COUNTER = " << ReactionData.second.ReactionId));
-//        }
+        for (const auto& ReactionData : SavedReactionsMap[SimulationStepNumber - 1])
+            LoggersManagerObject.LogStatistics(STREAM("REACTION ID = " << ReactionData.second.ReactionId << " REACTION NAME = " << GetReactionFromNumId(ReactionData.second.ReactionId).ReactionName << " REACTION ID_STR = #" << GetReactionFromNumId(ReactionData.second.ReactionId).ReactionIdStr << "# REACTION COUNTER = " << ReactionData.second.Counter));
     }
     CATCH("saving reactions statistics to file")
-}
-
-void CellEngineSimulationSpace::SaveParticlesStatistics(const bool SaveParticlesAsCopiedMapBool, const bool SaveParticlesAsVectorElementsBool, const bool SortParticlesAsSortedVectorElementsBool)
-{
-    try
-    {
-        if (SaveParticlesAsCopiedMapBool == true)
-            SaveParticlesAsCopiedMad();
-        if (SaveParticlesAsVectorElementsBool == true)
-            SaveParticlesAsVectorElements();
-        if (SortParticlesAsSortedVectorElementsBool == true)
-            SaveParticlesAsSortedVectorElements();
-    }
-    CATCH("saving particles statistics")
 }
 
 void CellEngineSimulationSpace::SetMakeSimulationStepNumberZero()
 {
     MakeSimulationStepNumberZeroForStatistics();
+    GenerateNewEmptyElementsForContainersForStatistics();
 }
 
 void CellEngineSimulationSpace::SetIncSimulationStepNumber()
 {
     IncSimulationStepNumberForStatistics();
+    GenerateNewEmptyElementsForContainersForStatistics();
 }
+
+void CellEngineSimulationSpace::SaveParticlesStatisticsOnce()
+{
+    SaveParticlesStatistics();
+}
+
+void CellEngineSimulationSpace::GenerateChosenReactionsForWholeCellSpace()
+{
+    try
+    {
+
+    }
+    CATCH("generating random reactions for whole cell space")
+}
+
+void CellEngineSimulationSpace::GenerateRandomReactionsForWholeCellSpace()
+{
+    try
+    {
+
+    }
+    CATCH("generating random reactions for whole cell space")
+}
+
+
+//GenerateChosenReactionForSelectedSpace(const UnsignedInt ReactionId, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
+//GenerateRandomReactionForParticle(Particle& ParticleObject)
+
+
+//CheckConditionsToIncSimulationStepNumberForStatistics();

@@ -27,6 +27,12 @@ class CellEngineSimulationSpaceStatistics : virtual public CellEngineBasicPartic
 {
 protected:
     UnsignedInt SimulationStepNumber = 0;
+    UnsignedInt ModuloStepToSaveStatistics = 10;
+protected:
+    bool SaveReactionsStatisticsBool = true;
+    bool SaveParticlesAsCopiedMapBool = true;
+    bool SaveParticlesAsVectorElementsBool = true;
+    bool SortParticlesAsSortedVectorElementsBool = true;
 protected:
     std::vector<std::vector<Particle>> ParticlesSnapshots;
     std::vector<std::unordered_map<UniqueIdInt, Particle>> ParticlesSnapshotsCopiedUnorderedMap;
@@ -38,6 +44,9 @@ protected:
 protected:
     void MakeSimulationStepNumberZeroForStatistics();
     void IncSimulationStepNumberForStatistics();
+    void GenerateNewEmptyElementsForContainersForStatistics();
+    void SaveParticlesStatistics();
+    void CheckConditionsToIncSimulationStepNumberForStatistics();
 protected:
     void SaveParticlesAsCopiedMad();
     void SaveParticlesAsVectorElements();
