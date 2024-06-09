@@ -5,7 +5,7 @@
 #include "CellEngineTypes.h"
 
 #define EXTENDED_RAM_MEMORY_
-#define RNA_IN_ONE_PARTICLE_
+#define RNA_IN_ONE_PARTICLE
 
 constexpr EntityIdInt StartParticleKindId = 100000;
 constexpr EntityIdInt StartReactionId = 10000;

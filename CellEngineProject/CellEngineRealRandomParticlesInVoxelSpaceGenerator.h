@@ -19,6 +19,7 @@ protected:
     std::tuple<UnsignedInt, UnsignedInt, UnsignedInt> GetRandomPositionInsideSphere(UnsignedInt Radius, UnsignedInt RadiusSize);
 public:
     void InsertNewRandomParticlesForType(ParticlesTypes ParticleTypeParam, UnsignedInt Radius, UnsignedInt RadiusSize);
+    void TryToGenerateRandomParticlesForType(const std::pair<const EntityIdInt, ParticleKind>& ParticleKindObject, UnsignedInt Radius, UnsignedInt RadiusSize, UnsignedInt& NumberOfErrors, GeneIdInt GeneNumId, const std::string& GeneSequence, UnsignedInt GeneSequenceLength);
 protected:
     void PrintNumberOfParticlesForAllMainTypesOfParticles();
 protected:

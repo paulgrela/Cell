@@ -244,6 +244,9 @@ public:
     std::unordered_map<EntityIdInt, ParticleKind> ParticlesKinds;
     std::unordered_map<EntityIdInt, ParticleKindGraphicData> GraphicParticlesKindsFromConfigXML;
 public:
+    std::vector<GeneIdInt> Ribosomes30SProteinsList;
+    std::vector<GeneIdInt> Ribosomes50SProteinsList;
+public:
     std::vector<AtomKindGraphicData> AtomsKindsGraphicData;
 public:
     ParticleKind& GetParticleKind(const EntityIdInt EntityId)

@@ -412,6 +412,12 @@ void CellEngineChemicalReactionsCreator::ReadAndParseGenesFile(const string& Fil
                 UnsignedInt StartPos = stoi(MatchSave2[0]);
                 UnsignedInt EndPos = stoi(MatchSave2[1]);
                 GeneObject = { GeneId, MatchSave1[0], MatchSave1[1], MatchSave1[2], StartPos, EndPos, "" };
+
+                if (MatchSave1[2] == "30S")
+                    ParticlesKindsManagerObject.Ribosomes30SProteinsList.emplace_back(GeneId);
+                else
+                if (MatchSave1[2] == "50S")
+                    ParticlesKindsManagerObject.Ribosomes50SProteinsList.emplace_back(GeneId);
             }
             else
                 SequenceStr += Line.substr(0, Line.length() - 1);
