@@ -166,7 +166,7 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::InsertNewRandomParticle
                                 if (GeneIter != ParticlesKindsManagerObject.Genes.end())
                                     TryToGenerateRandomParticlesForType(ParticleKindObject, Radius, RadiusSize, NumberOfErrors, GeneIter->second.NumId, GeneIter->second.Sequence, GeneIter->second.Sequence.length());
                                 else
-                                    TryToGenerateRandomParticlesForType(ParticleKindObject, Radius, RadiusSize, NumberOfErrors, 0, "NO GENE", 8);
+                                    TryToGenerateRandomParticlesForType(ParticleKindObject, Radius, RadiusSize, NumberOfErrors, 0, "NO GENE", ParticleKindSpecialDataObject.ParticleType == ParticlesTypes::Ribosome ? static_cast<UnsignedInt>(pow(40, 3)) : 8);
                             }
 
         const auto stop_time = chrono::high_resolution_clock::now();
@@ -191,7 +191,7 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::GenerateAllRealRandomPa
         const auto start_time = chrono::high_resolution_clock::now();
 
         InsertNewRandomParticlesForType(ParticlesTypes::Ribosome, 400, 400);
-        
+
         InsertNewRandomParticlesForType(ParticlesTypes::MembraneProtein, 420, 45);
         InsertNewRandomParticlesForType(ParticlesTypes::RibosomeProtein, 400, 400);
         InsertNewRandomParticlesForType(ParticlesTypes::PolymeraseProtein, 400, 400);

@@ -375,7 +375,7 @@ void CellEngineChemicalReactionsCreator::CheckHowManyParticlesKindsHasCounterAtS
                 if (ParticleKindObject.second.EntityId >= StartParticleKindId)
                     if (ParticleKindObject.second.ParticleKindSpecialDataSector.empty() == true)
                     {
-                        ParticleKindObject.second.ParticleKindSpecialDataSector.emplace_back(ParticleKindSpecialData{ 0, "", "", false, ParticlesTypes::Basic, false, 100 });
+                        ParticleKindObject.second.ParticleKindSpecialDataSector.emplace_back(ParticleKindSpecialData{ -1, "", "", false, ParticlesTypes::Basic, false, 100 });
                         LoggersManagerObject.Log(STREAM("UPDATED COUNTER FOR PARTICLE = " << ParticleKindObject.second.EntityId << " " << ParticleKindObject.second.IdStr << " " << ParticleKindObject.second.Name << " " << ParticleKindObject.second.Formula << ParticlesKindsManagerObject.ConvertParticleTypeToString(ParticleKindObject.second.ParticleKindSpecialDataSector[0].ParticleType)));
                     }
     }
@@ -603,7 +603,7 @@ void CellEngineChemicalReactionsCreator::AddRibosomes()
     try
     {
         ParticlesKindsManagerObject.AddParticleKind({ ParticleKindId, "RIBOSOME", "Ribosome70S", "70S", 0, 0, "c", 100 });
-        ParticlesKindsManagerObject.GetParticleKind(ParticleKindId).ParticleKindSpecialDataSector.emplace_back(ParticleKindSpecialData{ 0, "", "", false, ParticlesTypes::Ribosome, false, 100 });
+        ParticlesKindsManagerObject.GetParticleKind(ParticleKindId).ParticleKindSpecialDataSector.emplace_back(ParticleKindSpecialData{ -1, "", "", false, ParticlesTypes::Ribosome, false, 100 });
 
         ParticleKindId++;
 
