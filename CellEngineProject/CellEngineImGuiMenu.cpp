@@ -648,10 +648,12 @@ public:
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ClearVoxelSpaceAndParticles();
                     if (ImGui::Button("  GENERATE ALL RANDOM PARTICLES             ") == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateAllRealRandomParticles();
+                    if (ImGui::Button("  GENERATE RANDOM RIBOSOMES                 ") == true)
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::Ribosome, 400, 400);
                     if (ImGui::Button("  GENERATE RANDOM MEMBRANE PARTICLES        ") == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::MembraneProtein, 420, 45);
                     if (ImGui::Button("  GENERATE RANDOM RIBOSOMES PARTICLES       ") == true)
-                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::RibosomesProtein, 400, 400);
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::RibosomeProtein, 400, 400);
                     if (ImGui::Button("  GENERATE RANDOM POLYMERASE PARTICLES      ") == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::PolymeraseProtein, 400, 400);
                     if (ImGui::Button("  GENERATE RANDOM RNA POLYMERASE PARTICLES  ") == true)

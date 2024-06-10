@@ -129,7 +129,7 @@ enum class ParticlesTypes : UnsignedInt
     rRNA = 5,
     RNAPolymeraseProtein = 6,
     PolymeraseProtein = 7,
-    RibosomesProtein = 8,
+    RibosomeProtein = 8,
     MembraneProtein = 9,
     OtherProtein = 10,
     ProteinFrac = 11,
@@ -316,7 +316,7 @@ public:
             case ParticlesTypes::rRNA : return "rRNA";
             case ParticlesTypes::RNAPolymeraseProtein : return "RNAPolymeraseProtein";
             case ParticlesTypes::PolymeraseProtein : return "PolymeraseProtein";
-            case ParticlesTypes::RibosomesProtein : return "RibosomesProtein";
+            case ParticlesTypes::RibosomeProtein : return "RibosomeProtein";
             case ParticlesTypes::MembraneProtein : return "MembraneProtein";
             case ParticlesTypes::OtherProtein : return "OtherProtein";
             case ParticlesTypes::ProteinFrac : return "ProteinFrac";
