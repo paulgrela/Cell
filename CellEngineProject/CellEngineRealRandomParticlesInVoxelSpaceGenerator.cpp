@@ -52,8 +52,30 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::PrintNumberOfParticlesF
         LoggersManagerObject.Log(STREAM("Number Of Other = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::Other)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::Other))));
 
         LoggersManagerObject.Log(STREAM("Total Number Of All Particles = " << TotalNumberOfAllParticles));
+
+        PrintInformationAboutRibosomesProteins();
     }
     CATCH("printing number of particles for all main types of particles")
+}
+
+void CellEngineRealRandomParticlesInVoxelSpaceGenerator::PrintInformationAboutRibosomesProteins()
+{
+    try
+    {
+        double Average30SLength = 0;
+        for (const auto& GeneId : ParticlesKindsManagerObject.Ribosomes30SProteinsList)
+            Average30SLength += (double) ParticlesKindsManagerObject.Genes[GeneId].Sequence.length();
+        Average30SLength /= (double)ParticlesKindsManagerObject.Ribosomes30SProteinsList.size();
+
+        double Average50SLength = 0;
+        for (const auto& GeneId : ParticlesKindsManagerObject.Ribosomes50SProteinsList)
+            Average50SLength += (double) ParticlesKindsManagerObject.Genes[GeneId].Sequence.length();
+        Average50SLength /= (double)ParticlesKindsManagerObject.Ribosomes50SProteinsList.size();
+
+        LoggersManagerObject.Log(STREAM("Number of 30S proteins = " << ParticlesKindsManagerObject.Ribosomes30SProteinsList.size() << " AVERAGE SIZE = " << (UnsignedInt)Average30SLength << " " << static_cast<UnsignedInt>(pow(Average30SLength, (1.0 / 3.0)))));
+        LoggersManagerObject.Log(STREAM("Number of 50S proteins = " << ParticlesKindsManagerObject.Ribosomes50SProteinsList.size() << " AVERAGE SIZE = " << (UnsignedInt)Average50SLength << " " << static_cast<UnsignedInt>(pow(Average50SLength, (1.0 / 3.0)))));
+    }
+    CATCH("printing information about ribosomes proteins")
 }
 
 tuple<UnsignedInt, UnsignedInt, UnsignedInt> CellEngineRealRandomParticlesInVoxelSpaceGenerator::GetRandomPositionInsideSphere(const UnsignedInt Radius, const UnsignedInt RadiusSize)
@@ -99,10 +121,13 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::TryToGenerateRandomPart
 
         UnsignedInt TryInsertNewParticleCounter = 0;
 
+        AddNewParticle(Particle(GetNewFreeIndexOfParticle(), ParticleKindObject.second.EntityId, 1, -1, 1, ParticleKindObject.second.ElectricCharge, GeneSequence, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
         while (TryInsertNewParticleCounter < MaxNumberOfTriesToInsertNewParticle && TryResult == false)
         {
             tie(PosX, PosY, PosZ) = GetRandomPositionInsideSphere(Radius, RadiusSize);
             TryResult = GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), ParticleKindObject.second.EntityId, 1, -1, 1, ParticleKindObject.second.ElectricCharge, GeneSequence, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), PosX, PosY, PosZ, Size, Size, Size, 0, 0, 0, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, &CellEngineParticlesVoxelsShapesGenerator::CheckFreeSpaceForSphereSelectedSpace, &CellEngineParticlesVoxelsShapesGenerator::SetValueToVoxelsForSphereSelectedSpace);
+            if (TryResult == false)
+                RemoveParticle(MaxParticleIndex, true);
             TryInsertNewParticleCounter++;
         }
 
@@ -130,7 +155,6 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::InsertNewRandomParticle
         for (const auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
             if (ParticleKindObject.second.EntityId >= StartParticleKindId)
                 if (ParticleKindObject.second.ParticleKindSpecialDataSector.empty() == false)
-                    //if (ParticleKindObject.second.ParticleKindSpecialDataSector[0].ParticleType == ParticleTypeParam)
                     for (const auto& ParticleKindSpecialDataObject: ParticleKindObject.second.ParticleKindSpecialDataSector)
                         if (ParticleKindSpecialDataObject.ParticleType == ParticleTypeParam)
                             for (UnsignedInt ParticleCounter = 1; ParticleCounter <= ParticleKindSpecialDataObject.CounterAtStartOfSimulation; ParticleCounter++)
@@ -166,6 +190,7 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::GenerateAllRealRandomPa
 
         const auto start_time = chrono::high_resolution_clock::now();
 
+        InsertNewRandomParticlesForType(ParticlesTypes::Ribosome, 400, 400);
         InsertNewRandomParticlesForType(ParticlesTypes::MembraneProtein, 420, 45);
         InsertNewRandomParticlesForType(ParticlesTypes::RibosomesProtein, 400, 400);
         InsertNewRandomParticlesForType(ParticlesTypes::PolymeraseProtein, 400, 400);

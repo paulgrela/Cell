@@ -133,7 +133,8 @@ enum class ParticlesTypes : UnsignedInt
     MembraneProtein = 9,
     OtherProtein = 10,
     ProteinFrac = 11,
-    Other = 12
+    Ribosome = 12,
+    Other = 13
 };
 
 class Gene
@@ -253,6 +254,7 @@ public:
     {
         return ParticlesKinds.find(EntityId)->second;
     }
+public:
     std::optional<ParticleKind> GetParticleKindFromStrId(const std::string& StrId)
     {
         for (auto& ParticleKindObject : ParticlesKinds)
@@ -261,6 +263,7 @@ public:
 
         return {};
     }
+public:
     std::optional<ParticleKind> GetParticleKindFromGeneId(const SignedInt GeneId)
     {
         for (auto& ParticleKindObject : ParticlesKinds)
@@ -274,10 +277,12 @@ public:
 
         return {};
     }
+public:
     ParticleKindGraphicData& GetGraphicParticleKind(const EntityIdInt EntityId)
     {
         return ParticlesKinds.find(EntityId)->second.GraphicData;
     }
+public:
     void AddParticleKind(const ParticleKind& ParticleKindObjectParam)
     {
         ParticlesKinds[ParticleKindObjectParam.EntityId] = ParticleKindObjectParam;

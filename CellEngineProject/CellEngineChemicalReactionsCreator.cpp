@@ -300,13 +300,14 @@ void CellEngineChemicalReactionsCreator::PrintAllParticleKinds()
     try
     {
         for (const auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
-        {
-            LoggersManagerObject.Log(STREAM("KIND PARTICLE = " << ParticleKindObject.second.EntityId << " " << ParticleKindObject.second.IdStr << " " << ParticleKindObject.second.Name << " " << ParticleKindObject.second.Formula << " " << ParticleKindObject.second.ElectricCharge << " GeneId = " << ParticleKindObject.second.GeneId));
-            for (const auto& ParticleKindParticleKindSpecialDataSectorObject : ParticleKindObject.second.ParticleKindSpecialDataSector)
-                LoggersManagerObject.Log(STREAM(string("KIND GENE = " + string(ParticleKindParticleKindSpecialDataSectorObject.GeneId != -1 ? "JCVISYN3A_" + to_string(ParticleKindParticleKindSpecialDataSectorObject.GeneId) : "NoGene") + " TYPE = " + ParticlesKindsManagerObject.ConvertParticleTypeToString(ParticleKindParticleKindSpecialDataSectorObject.ParticleType) + " D = #" + ParticleKindParticleKindSpecialDataSectorObject.Description + "# Added = #" + ParticleKindParticleKindSpecialDataSectorObject.AddedParticle + "# CLEAN PRODUCT = #" + to_string(ParticleKindParticleKindSpecialDataSectorObject.CleanProductOfTranscription) + "# COUNTER = " + to_string(ParticleKindParticleKindSpecialDataSectorObject.CounterAtStartOfSimulation))));                ;
+            if (ParticleKindObject.second.EntityId >= StartParticleKindId)
+            {
+                LoggersManagerObject.Log(STREAM("KIND PARTICLE = " << ParticleKindObject.second.EntityId << " " << ParticleKindObject.second.IdStr << " " << ParticleKindObject.second.Name << " " << ParticleKindObject.second.Formula << " " << ParticleKindObject.second.ElectricCharge << " GeneId = " << ParticleKindObject.second.GeneId));
+                for (const auto& ParticleKindParticleKindSpecialDataSectorObject : ParticleKindObject.second.ParticleKindSpecialDataSector)
+                    LoggersManagerObject.Log(STREAM(string("KIND GENE = " + string(ParticleKindParticleKindSpecialDataSectorObject.GeneId != -1 ? "JCVISYN3A_" + to_string(ParticleKindParticleKindSpecialDataSectorObject.GeneId) : "NoGene") + " TYPE = " + ParticlesKindsManagerObject.ConvertParticleTypeToString(ParticleKindParticleKindSpecialDataSectorObject.ParticleType) + " D = #" + ParticleKindParticleKindSpecialDataSectorObject.Description + "# Added = #" + ParticleKindParticleKindSpecialDataSectorObject.AddedParticle + "# CLEAN PRODUCT = #" + to_string(ParticleKindParticleKindSpecialDataSectorObject.CleanProductOfTranscription) + "# COUNTER = " + to_string(ParticleKindParticleKindSpecialDataSectorObject.CounterAtStartOfSimulation))));                ;
 
-            LoggersManagerObject.Log(STREAM(""));
-        }
+                LoggersManagerObject.Log(STREAM(""));
+            }
     }
     CATCH("printing all particle kinds")
 };
@@ -365,6 +366,22 @@ void CellEngineChemicalReactionsCreator::CheckHowManyParticleDataForGeneratorIsN
     CATCH("checking how many particle data for generator in not in particle kinds")
 };
 
+void CellEngineChemicalReactionsCreator::CheckHowManyParticlesKindsHasCounterAtStartOfSimulationEquZeroAndAddThem(const bool UpdateParticleKinds)
+{
+    try
+    {
+        if (UpdateParticleKinds == true)
+            for (auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
+                if (ParticleKindObject.second.EntityId >= StartParticleKindId)
+                    if (ParticleKindObject.second.ParticleKindSpecialDataSector.empty() == true)
+                    {
+                        ParticleKindObject.second.ParticleKindSpecialDataSector.emplace_back(ParticleKindSpecialData{ 0, "", "", false, ParticlesTypes::Basic, false, 100 });
+                        LoggersManagerObject.Log(STREAM("UPDATED COUNTER FOR PARTICLE = " << ParticleKindObject.second.EntityId << " " << ParticleKindObject.second.IdStr << " " << ParticleKindObject.second.Name << " " << ParticleKindObject.second.Formula << ParticlesKindsManagerObject.ConvertParticleTypeToString(ParticleKindObject.second.ParticleKindSpecialDataSector[0].ParticleType)));
+                    }
+    }
+    CATCH("checking how many particles kinds has counter at start of simulation")
+};
+
 void CellEngineChemicalReactionsCreator::ReadAndParseGenesFile(const string& FileName)
 {
     smatch SMatchObject;
@@ -413,10 +430,10 @@ void CellEngineChemicalReactionsCreator::ReadAndParseGenesFile(const string& Fil
                 UnsignedInt EndPos = stoi(MatchSave2[1]);
                 GeneObject = { GeneId, MatchSave1[0], MatchSave1[1], MatchSave1[2], StartPos, EndPos, "" };
 
-                if (MatchSave1[2] == "30S")
+                if (MatchSave1[2].starts_with("30S"))
                     ParticlesKindsManagerObject.Ribosomes30SProteinsList.emplace_back(GeneId);
                 else
-                if (MatchSave1[2] == "50S")
+                if (MatchSave1[2].starts_with("50S"))
                     ParticlesKindsManagerObject.Ribosomes50SProteinsList.emplace_back(GeneId);
             }
             else
@@ -581,6 +598,21 @@ void CellEngineChemicalReactionsCreator::ReadTSVFiles(bool Read, const string& P
     CATCH("reading tsv files")
 }
 
+void CellEngineChemicalReactionsCreator::AddRibosomes()
+{
+    try
+    {
+        ParticlesKindsManagerObject.AddParticleKind({ ParticleKindId, "RIBOSOME", "Ribosome70S", "70S", 0, 0, "c", 100 });
+        ParticlesKindsManagerObject.GetParticleKind(ParticleKindId).ParticleKindSpecialDataSector.emplace_back(ParticleKindSpecialData{ 0, "", "", false, ParticlesTypes::Ribosome, false, 100 });
+
+        ParticleKindId++;
+
+        LoggersManagerObject.Log(STREAM("PARTICLE RIBOSOME ADDED"));
+
+    }
+    CATCH("adding ribosomes")
+}
+
 void CellEngineChemicalReactionsCreator::ReadChemicalReactionsFromFile()
 {
     try
@@ -601,6 +633,10 @@ void CellEngineChemicalReactionsCreator::ReadChemicalReactionsFromFile()
         ReadReactionsFromJSONFile(ReactionsDirectory + string("iMB155.json"), false);
 
         CheckHowManyParticleDataForGeneratorIsNotInParticleKindsAndAddThem(true);
+
+        CheckHowManyParticlesKindsHasCounterAtStartOfSimulationEquZeroAndAddThem(true);
+
+        AddRibosomes();
 
         PrintAllParticleKinds();
 

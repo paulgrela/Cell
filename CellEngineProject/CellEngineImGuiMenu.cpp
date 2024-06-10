@@ -642,6 +642,8 @@ public:
 
                 if (ImGui::CollapsingHeader("  RANDOM PARTICLES GENERATOR  ", ImGuiTreeNodeFlags_DefaultOpen))
                 {
+                    if (ImGui::Button("  SHOW NUMBER OF PARTICLES TYPES            ") == true)
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->PrintNumberOfParticlesForAllMainTypesOfParticles();
                     if (ImGui::Button("  CLEAR VOXEL SPACE AND PARTICLES           ") == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ClearVoxelSpaceAndParticles();
                     if (ImGui::Button("  GENERATE ALL RANDOM PARTICLES             ") == true)

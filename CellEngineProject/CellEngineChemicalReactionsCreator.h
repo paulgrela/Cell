@@ -29,11 +29,14 @@ public:
     void GetProperReactionsListFromXMLFile(const boost::property_tree::ptree& ReactionsPropertyTreeXMLTreeElement);
     void AddXMLChemicalReaction(Reaction& ReactionObject);
 public:
+    void AddRibosomes();
+public:
     static void PrintGenesFile();
     void PrintAllParticlesData();
     static void PrintAllParticleKinds();
 public:
     void CheckHowManyParticleDataForGeneratorIsNotInParticleKindsAndAddThem(bool UpdateParticleKinds);
+    static void CheckHowManyParticlesKindsHasCounterAtStartOfSimulationEquZeroAndAddThem(bool UpdateParticleKinds);
     static void ReadAndParseGenesFile(const std::string& FileName);
     void RemapProteinsNames(const std::string& ParticlesDirectory);
     void GetRemappingNamesForProteins(const std::string& ParticlesDirectory);
