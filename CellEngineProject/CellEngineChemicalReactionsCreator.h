@@ -30,6 +30,8 @@ public:
     void AddXMLChemicalReaction(Reaction& ReactionObject);
 public:
     void AddRibosomes();
+    void AddRNAPolymerase();
+    void AddDNAPolymerase();
 public:
     static void PrintGenesFile();
     void PrintAllParticlesData();

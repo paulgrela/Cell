@@ -572,7 +572,8 @@ void CellEngineChemicalReactionsCreator::ReadCSVFiles(bool Read, const string& P
 
             ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("trna_metabolites_synthase.csv"), ','), 1, 29, 0, 2, 3, -1, -1, false, false, 10, "", "_uncharged_trna_", 7, 4, ParticlesTypes::tRNA);
             ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("trna_metabolites_synthase.csv"), ','), 1, 29, 1, 2, 3, -1, -1, false, false, 10, "", "_charged_trna_", 7, 4, ParticlesTypes::tRNA);
-            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("mrna_counts.csv"), ','), 1, 454, 1, 1, -1, -1, 2, true, false, 0, "mrna_", "", 10, 4, ParticlesTypes::mRNA);
+            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("mrna_counts.csv"), ','), 1, 454, 1, 1, -1, -1, -1, true, false, 10, "mrna_", "", 10, 4, ParticlesTypes::mRNA);
+
             ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("rrna_metabolites.csv"), ','), 1, 6, 0, 1, -1, -1, -1, false, false, 10, "rrna_", "", 10, 4, ParticlesTypes::rRNA);
 
             ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("polymerase_rna_proteins.csv"), ','), 1, 4, 0, 1, -1, -1, -1, false, true, 10, "", "", 7, 4, ParticlesTypes::RNAPolymeraseProtein);
@@ -602,7 +603,7 @@ void CellEngineChemicalReactionsCreator::AddRibosomes()
 {
     try
     {
-        ParticlesKindsManagerObject.AddParticleKind({ ParticleKindId, "RIBOSOME", "Ribosome70S", "70S", 0, 0, "c", 100 });
+        ParticlesKindsManagerObject.AddParticleKind({ ParticleKindId, "RIBOSOME", "Ribosome70S", "R70S", 0, 0, "c", 100 });
         ParticlesKindsManagerObject.GetParticleKind(ParticleKindId).ParticleKindSpecialDataSector.emplace_back(ParticleKindSpecialData{ -1, "", "", false, ParticlesTypes::Ribosome, false, 100 });
 
         ParticleKindId++;
@@ -611,6 +612,34 @@ void CellEngineChemicalReactionsCreator::AddRibosomes()
 
     }
     CATCH("adding ribosomes")
+}
+
+void CellEngineChemicalReactionsCreator::AddRNAPolymerase()
+{
+    try
+    {
+        ParticlesKindsManagerObject.AddParticleKind({ ParticleKindId, "RNAPolymerase", "RNAPolymerase", "rnapol", 0, 0, "c", 100 });
+        ParticlesKindsManagerObject.GetParticleKind(ParticleKindId).ParticleKindSpecialDataSector.emplace_back(ParticleKindSpecialData{ -1, "", "", false, ParticlesTypes::RNAPolymerase, false, 700 });
+
+        ParticleKindId++;
+
+        LoggersManagerObject.Log(STREAM("PARTICLE RNA POLYMERASE ADDED"));
+    }
+    CATCH("adding rna polymerase")
+}
+
+void CellEngineChemicalReactionsCreator::AddDNAPolymerase()
+{
+    try
+    {
+        ParticlesKindsManagerObject.AddParticleKind({ ParticleKindId, "DNAPolymerase", "DNAPolymerase", "dnapol", 0, 0, "c", 100 });
+        ParticlesKindsManagerObject.GetParticleKind(ParticleKindId).ParticleKindSpecialDataSector.emplace_back(ParticleKindSpecialData{ -1, "", "", false, ParticlesTypes::DNAPolymerase, false, 10 });
+
+        ParticleKindId++;
+
+        LoggersManagerObject.Log(STREAM("PARTICLE DNA POLYMERASE ADDED"));
+    }
+    CATCH("adding dna polymerase")
 }
 
 void CellEngineChemicalReactionsCreator::ReadChemicalReactionsFromFile()

@@ -133,8 +133,10 @@ enum class ParticlesTypes : UnsignedInt
     MembraneProtein = 9,
     OtherProtein = 10,
     ProteinFrac = 11,
-    Ribosome = 12,
-    Other = 13
+    RNAPolymerase = 12,
+    DNAPolymerase = 13,
+    Ribosome = 14,
+    Other = 15
 };
 
 class Gene
@@ -321,6 +323,9 @@ public:
             case ParticlesTypes::OtherProtein : return "OtherProtein";
             case ParticlesTypes::ProteinFrac : return "ProteinFrac";
             case ParticlesTypes::Other : return "Other";
+            case ParticlesTypes::RNAPolymerase : return "RNAPolymerase";
+            case ParticlesTypes::DNAPolymerase : return "DNAPolymerase";
+            case ParticlesTypes::Ribosome : return "Ribosomes";
             default : return "NONE";
         }
     };
