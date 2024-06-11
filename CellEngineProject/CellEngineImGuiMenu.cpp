@@ -477,8 +477,15 @@ public:
                 }
             if (TypesOfVisibilityComboBoxCurrentItemIndex == 3)
                 if (ImGui::CollapsingHeader("Particles Kinds", ImGuiTreeNodeFlags_DefaultOpen))
-                    for (auto& ParticlesKind : ParticlesKindsManagerObject.ParticlesKinds)
-                        ImGui::Checkbox(string(to_string(ParticlesKind.second.EntityId) + " " + ParticlesKind.second.GraphicData.NameFromDataFile).c_str(), &ParticlesKind.second.GraphicData.Visible);
+                {
+                    vector<ParticleKind> LocalParticlesKindsForImGuiSelection;
+                    transform(ParticlesKindsManagerObject.ParticlesKinds.begin(), ParticlesKindsManagerObject.ParticlesKinds.end(), std::back_inserter(LocalParticlesKindsForImGuiSelection), [](const auto& ParticlesKindsMapElement){ return ParticlesKindsMapElement.second; } );
+                    sort(LocalParticlesKindsForImGuiSelection.begin(), LocalParticlesKindsForImGuiSelection.end(), [](const auto& P1, const auto& P2){ return P1.GraphicData.NameFromDataFile < P2.GraphicData.NameFromDataFile; } );
+                    for (auto &ParticlesKindForImGuiSelectionObject: LocalParticlesKindsForImGuiSelection)
+                        ImGui::Checkbox(string(to_string(ParticlesKindForImGuiSelectionObject.EntityId) + " " + ParticlesKindForImGuiSelectionObject.GraphicData.NameFromDataFile).c_str(), &ParticlesKindForImGuiSelectionObject.GraphicData.Visible);
+                    for (const auto& ParticleKindForImGuiSelectionObject : LocalParticlesKindsForImGuiSelection)
+                        ParticlesKindsManagerObject.GetParticleKind(ParticleKindForImGuiSelectionObject.EntityId).GraphicData.Visible = ParticleKindForImGuiSelectionObject.GraphicData.Visible;
+                }
 
             PrevTypesOfVisibilityComboBoxCurrentItemIndex = TypesOfVisibilityComboBoxCurrentItemIndex;
         }
