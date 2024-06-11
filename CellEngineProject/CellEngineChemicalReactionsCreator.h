@@ -29,9 +29,7 @@ public:
     void GetProperReactionsListFromXMLFile(const boost::property_tree::ptree& ReactionsPropertyTreeXMLTreeElement);
     void AddXMLChemicalReaction(Reaction& ReactionObject);
 public:
-    void AddRibosomes();
-    void AddRNAPolymerase();
-    void AddDNAPolymerase();
+    void AddSingleParticleKind(ParticlesTypes ParticlesTypesObject, UnsignedInt EntityIdParam, const std::string& IdStrParam, const std::string& NameParam, const std::string& FormulaParam, SignedInt GeneIdParam, ElectricChargeType ElectricChargeParam, const std::string& CompartmentParam, UnsignedInt CounterParam);
 public:
     static void PrintGenesFile();
     void PrintAllParticlesData();
