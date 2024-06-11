@@ -457,6 +457,20 @@ public:
         CATCH("executing of density of drawn atoms menu");
     }
 
+    static bool ComparisonOfParticle(const ParticleKind& P1, const ParticleKind& P2)
+    {
+//        if (ParticlesKindsManager::ConvertParticleTypeToString(P1.ParticleKindSpecialDataSector[0].ParticleType) < ParticlesKindsManager::ConvertParticleTypeToString(P2.ParticleKindSpecialDataSector[0].ParticleType))
+//            return true;
+//        if (ParticlesKindsManager::ConvertParticleTypeToString(P1.ParticleKindSpecialDataSector[0].ParticleType) == ParticlesKindsManager::ConvertParticleTypeToString(P2.ParticleKindSpecialDataSector[0].ParticleType))
+//            return P1.IdStr < P2.IdStr;
+
+        if (ParticlesKindsManager::ConvertParticleTypeToString(P1.ParticleKindSpecialDataSector.back().ParticleType) < ParticlesKindsManager::ConvertParticleTypeToString(P2.ParticleKindSpecialDataSector.back().ParticleType))
+            return true;
+        if (ParticlesKindsManager::ConvertParticleTypeToString(P1.ParticleKindSpecialDataSector.back().ParticleType) == ParticlesKindsManager::ConvertParticleTypeToString(P2.ParticleKindSpecialDataSector.back().ParticleType))
+            return P1.IdStr < P2.IdStr;
+        return false;
+    }
+
     void TypesOfVisibilityMenu() const
     {
         try
@@ -475,14 +489,32 @@ public:
                     case 2 : CellEngineOpenGLVisualiserPointer->SetVisibilityOfParticlesExcept(CellEngineConfigDataObject.RNAIdentifier, false); break;
                     default : break;
                 }
+//            if (TypesOfVisibilityComboBoxCurrentItemIndex == 3)
+//                if (ImGui::CollapsingHeader("Particles Kinds", ImGuiTreeNodeFlags_DefaultOpen))
+//                    for (auto& ParticlesKind : ParticlesKindsManagerObject.ParticlesKinds)
+//                        ImGui::Checkbox(string(to_string(ParticlesKind.second.EntityId) + " " + ParticlesKind.second.GraphicData.NameFromDataFile).c_str(), &ParticlesKind.second.GraphicData.Visible);
             if (TypesOfVisibilityComboBoxCurrentItemIndex == 3)
                 if (ImGui::CollapsingHeader("Particles Kinds", ImGuiTreeNodeFlags_DefaultOpen))
                 {
                     vector<ParticleKind> LocalParticlesKindsForImGuiSelection;
-                    transform(ParticlesKindsManagerObject.ParticlesKinds.begin(), ParticlesKindsManagerObject.ParticlesKinds.end(), std::back_inserter(LocalParticlesKindsForImGuiSelection), [](const auto& ParticlesKindsMapElement){ return ParticlesKindsMapElement.second; } );
-                    sort(LocalParticlesKindsForImGuiSelection.begin(), LocalParticlesKindsForImGuiSelection.end(), [](const auto& P1, const auto& P2){ return P1.GraphicData.NameFromDataFile < P2.GraphicData.NameFromDataFile; } );
+                    for (const auto& ParticlesKindsMapElement : ParticlesKindsManagerObject.ParticlesKinds)
+                        //if (ParticlesKindsMapElement.second.IdStr.starts_with("protein_") || ParticlesKindsMapElement.second.IdStr.starts_with("particle_") || ParticlesKindsMapElement.second.IdStr.starts_with("trna_") || ParticlesKindsMapElement.second.IdStr.starts_with("mrna_") || ParticlesKindsMapElement.second.IdStr.starts_with("rrna_") || ParticlesKindsMapElement.second.IdStr.starts_with("M_"))
+                        if (ParticlesKindsMapElement.second.IdStr.starts_with("JCVISYN3A_") || ParticlesKindsMapElement.second.IdStr.starts_with("particle_") || ParticlesKindsMapElement.second.IdStr.starts_with("trna_") || ParticlesKindsMapElement.second.IdStr.starts_with("mrna_") || ParticlesKindsMapElement.second.IdStr.starts_with("rrna_") || ParticlesKindsMapElement.second.IdStr.starts_with("M_"))
+                            LocalParticlesKindsForImGuiSelection.emplace_back(ParticlesKindsMapElement.second);
+                    //sort(LocalParticlesKindsForImGuiSelection.begin(), LocalParticlesKindsForImGuiSelection.end(), [](const auto& P1, const auto& P2){ return P1.IdStr < P2.IdStr; } );
+                    sort(LocalParticlesKindsForImGuiSelection.begin(), LocalParticlesKindsForImGuiSelection.end(), ComparisonOfParticle);
+
                     for (auto &ParticlesKindForImGuiSelectionObject: LocalParticlesKindsForImGuiSelection)
-                        ImGui::Checkbox(string(to_string(ParticlesKindForImGuiSelectionObject.EntityId) + " " + ParticlesKindForImGuiSelectionObject.GraphicData.NameFromDataFile).c_str(), &ParticlesKindForImGuiSelectionObject.GraphicData.Visible);
+                        //ImGui::Checkbox(string(to_string(ParticlesKindForImGuiSelectionObject.EntityId) + " " + ParticlesKindForImGuiSelectionObject.GraphicData.NameFromDataFile).c_str(), &ParticlesKindForImGuiSelectionObject.GraphicData.Visible);
+                        //ImGui::Checkbox(string(to_string(ParticlesKindForImGuiSelectionObject.EntityId) + " " + ParticlesKindForImGuiSelectionObject.IdStr + " " + ParticlesKindForImGuiSelectionObject.ParticleKindSpecialDataSector[0].Description).c_str(), &ParticlesKindForImGuiSelectionObject.GraphicData.Visible);
+                        //ImGui::Checkbox(string(to_string(ParticlesKindForImGuiSelectionObject.EntityId) + " " + ParticlesKindForImGuiSelectionObject.IdStr + " T = " + ParticlesKindsManager::ConvertParticleTypeToString(ParticlesKindForImGuiSelectionObject.ParticleKindSpecialDataSector[0].ParticleType) + " D = " + ParticlesKindForImGuiSelectionObject.ParticleKindSpecialDataSector[0].Description).c_str(), &ParticlesKindForImGuiSelectionObject.GraphicData.Visible);
+                    {
+//                        UnsignedInt ParticleKindSpecialDataSectorIndex = 0;
+//                        if (ParticlesKindForImGuiSelectionObject.ParticleKindSpecialDataSector.size() > 1)
+//                            ParticleKindSpecialDataSectorIndex = 1;
+                        //ImGui::Checkbox(string(to_string(ParticlesKindForImGuiSelectionObject.EntityId) + " " + ParticlesKindForImGuiSelectionObject.IdStr + " T = " + ParticlesKindsManager::ConvertParticleTypeToString(ParticlesKindForImGuiSelectionObject.ParticleKindSpecialDataSector[ParticlesKindForImGuiSelectionObject.ParticleKindSpecialDataSector.size() - 1].ParticleType)).c_str(), &ParticlesKindForImGuiSelectionObject.GraphicData.Visible);
+                        ImGui::Checkbox(string(to_string(ParticlesKindForImGuiSelectionObject.EntityId) + " " + ParticlesKindForImGuiSelectionObject.IdStr + " T = " + ParticlesKindsManager::ConvertParticleTypeToString(ParticlesKindForImGuiSelectionObject.ParticleKindSpecialDataSector.back().ParticleType)).c_str(), &ParticlesKindForImGuiSelectionObject.GraphicData.Visible);
+                    }
                     for (const auto& ParticleKindForImGuiSelectionObject : LocalParticlesKindsForImGuiSelection)
                         ParticlesKindsManagerObject.GetParticleKind(ParticleKindForImGuiSelectionObject.EntityId).GraphicData.Visible = ParticleKindForImGuiSelectionObject.GraphicData.Visible;
                 }

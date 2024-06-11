@@ -37,6 +37,9 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::PrintNumberOfParticlesF
     try
     {
         LoggersManagerObject.Log(STREAM("Number Of Ribosomes = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::Ribosome, true)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::Ribosome, false))));
+        LoggersManagerObject.Log(STREAM("Number Of RNAPolymerases = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::RNAPolymerase, true)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::RNAPolymerase, false))));
+        LoggersManagerObject.Log(STREAM("Number Of DNAPolymerases = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::DNAPolymerase, true)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::DNAPolymerase, false))));
+
         LoggersManagerObject.Log(STREAM("Number Of Membrane Proteins = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::MembraneProtein, true)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::MembraneProtein, false))));
         LoggersManagerObject.Log(STREAM("Number Of Ribosomes Proteins = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::RibosomeProtein, true)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::RibosomeProtein, false))));
         LoggersManagerObject.Log(STREAM("Number Of RNA Polymerase Proteins = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::RNAPolymeraseProtein, true)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::RNAPolymeraseProtein, false))));
@@ -143,7 +146,7 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::TryToGenerateRandomPart
     CATCH("trying to generate random particle for type")
 }
 
-bool CheckSizeOfGeneratedParticle(const ParticlesTypes ParticlesTypesObject)
+bool GetSizeOfGeneratedParticle(const ParticlesTypes ParticlesTypesObject)
 {
     return (ParticlesTypesObject == ParticlesTypes::Ribosome || ParticlesTypesObject == ParticlesTypes::RNAPolymerase || ParticlesTypesObject == ParticlesTypes::DNAPolymerase ? static_cast<UnsignedInt>(pow(40, 3)) : 8);
 }
@@ -172,7 +175,7 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::InsertNewRandomParticle
                                 if (GeneIter != ParticlesKindsManagerObject.Genes.end())
                                     TryToGenerateRandomParticlesForType(ParticleKindObject, Radius, RadiusSize, NumberOfErrors, GeneIter->second.NumId, GeneIter->second.Sequence, GeneIter->second.Sequence.length());
                                 else
-                                    TryToGenerateRandomParticlesForType(ParticleKindObject, Radius, RadiusSize, NumberOfErrors, 0, "NO GENE", CheckSizeOfGeneratedParticle(ParticleKindSpecialDataObject.ParticleType));
+                                    TryToGenerateRandomParticlesForType(ParticleKindObject, Radius, RadiusSize, NumberOfErrors, 0, "NO GENE", GetSizeOfGeneratedParticle(ParticleKindSpecialDataObject.ParticleType));
                             }
 
         const auto stop_time = chrono::high_resolution_clock::now();
