@@ -359,6 +359,7 @@ void CellEngineChemicalReactionsCreator::CheckHowManyParticleDataForGeneratorIsN
                                 if (ParticleDataForGeneratorIterator->second.GeneId == ParticleKindObject.second.GeneId && ParticleDataForGeneratorIterator->second.ParticleType != ParticlesTypes::OtherProtein && ParticleDataForGeneratorIterator->second.IsProtein == true)
                                 {
                                     ParticleKindObject.second.ParticleKindSpecialDataSector[0].ParticleType = ParticleDataForGeneratorIterator->second.ParticleType;
+                                    ParticleKindObject.second.Name = ParticleDataForGeneratorIterator->first;
                                     LoggersManagerObject.Log(STREAM("UPDATED TYPE = " << ParticleDataForGeneratorIterator->second.GeneId << " " << ParticlesKindsManagerObject.ConvertParticleTypeToString(ParticleDataForGeneratorIterator->second.ParticleType)));
                                 }
                         }
@@ -379,7 +380,7 @@ void CellEngineChemicalReactionsCreator::CheckHowManyParticlesKindsHasCounterAtS
                         LoggersManagerObject.Log(STREAM("UPDATED COUNTER FOR PARTICLE = " << ParticleKindObject.second.EntityId << " " << ParticleKindObject.second.IdStr << " " << ParticleKindObject.second.Name << " " << ParticleKindObject.second.Formula << ParticlesKindsManagerObject.ConvertParticleTypeToString(ParticleKindObject.second.ParticleKindSpecialDataSector[0].ParticleType)));
                     }
     }
-    CATCH("checking how many particles kinds has counter at start of simulation")
+    CATCH("checking how many particles kinds has counter at start of simulation equ zero")
 };
 
 void CellEngineChemicalReactionsCreator::ReadAndParseGenesFile(const string& FileName)
@@ -529,7 +530,7 @@ void CellEngineChemicalReactionsCreator::ParticlesDataFromParsedCSVStructure(con
                 else
                     CounterAtStartOfSimulation = CounterParam;
                 Name = ParsedCSVFileStructure[Row][NameCol];
-                auto NameIter = MappedNamesOfProteins.find(ParsedCSVFileStructure[Row][NameCol]);
+                auto NameIter = MappedNamesOfProteins.find(Name);
                 if (NameIter != MappedNamesOfProteins.end())
                 {
                     Name = NameIter->second;
@@ -566,36 +567,21 @@ void CellEngineChemicalReactionsCreator::ReadCSVFiles(bool Read, const string& P
         {
             GetRemappingNamesForProteins(ParticlesDirectory);
 
+            //ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("proteomics.csv"), ','), 2, 429, 0, -1, -1, -1, 21, false, true, 0,"", "Protein From Gene", 0, 0, ParticlesTypes::OtherProtein);
             ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("proteomics.csv"), ','), 2, 429, 0, -1, -1, -1, 21, false, true, 0,"", "Protein From Gene", 0, 0, ParticlesTypes::OtherProtein);
+            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("proteomics_additional.csv"), ','), 0, 29, 0, -1, -1, -1, 1, false, true, 0,"", "Protein From Gene", 0, 0, ParticlesTypes::OtherProtein);
 
             ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("Escher_metData.csv"), ','), 1, 240, 0, -1, -1, -1, 1, true, false, 0,"M_", "basic", 0, 0, ParticlesTypes::Basic);
 
-            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("trna_metabolites_synthase.csv"), ','), 1, 29, 0, 2, 3, -1, -1, false, false, 10, "trna_uncharged_", "_uncharged_trna_", 7, 4, ParticlesTypes::tRNA);
-            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("trna_metabolites_synthase.csv"), ','), 1, 29, 1, 2, 3, -1, -1, false, false, 10, "trna_charged_", "_charged_trna_", 7, 4, ParticlesTypes::tRNA);
+            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("trna_metabolites_synthase.csv"), ','), 1, 29, 0, 2, 3, -1, -1, false, false, 10, "", "_uncharged_trna_", 7, 4, ParticlesTypes::tRNA_uncharged);
+            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("trna_metabolites_synthase.csv"), ','), 1, 29, 1, 2, 3, -1, -1, false, false, 10, "", "_charged_trna_", 7, 4, ParticlesTypes::tRNA_charged);
             ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("mrna_counts.csv"), ','), 1, 454, 1, 1, -1, -1, -1, true, false, 10, "mrna_", "", 10, 4, ParticlesTypes::mRNA);
-
             ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("rrna_metabolites.csv"), ','), 1, 6, 0, 1, -1, -1, -1, false, false, 10, "rrna_", "", 10, 4, ParticlesTypes::rRNA);
 
             ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("polymerase_rna_proteins.csv"), ','), 1, 4, 0, 1, -1, -1, -1, false, true, 10, "", "", 7, 4, ParticlesTypes::RNAPolymeraseProtein);
             ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("ribosomes_proteins_metabolites.csv"), ','), 1, 48, 0, 1, -1, -1, -1, false, true, 10, "", "", 7, 4, ParticlesTypes::RibosomeProtein);
             ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("membrane_proteins_metabolites.csv"), ','), 1, 94, 0, 1, -1, -1, -1, false, true, 10, "", "", 7, 4, ParticlesTypes::MembraneProtein);
             ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("proteins_metabolites_frac.csv"), ','), 1, 15, 0, 1, -1, 2, -1, false, true, 10, "", "", 7, 4, ParticlesTypes::ProteinFrac);
-
-
-//            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("proteomics.csv"), ','), 2, 429, 0, -1, -1, -1, 21, false, true, 0,"protein_", "Protein From Gene", 0, 0, ParticlesTypes::OtherProtein);
-//
-//            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("Escher_metData.csv"), ','), 1, 240, 0, -1, -1, -1, 1, true, false, 0,"M_", "basic", 0, 0, ParticlesTypes::Basic);
-//
-//            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("trna_metabolites_synthase.csv"), ','), 1, 29, 0, 2, 3, -1, -1, false, false, 10, "", "_uncharged_trna_", 7, 4, ParticlesTypes::tRNA);
-//            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("trna_metabolites_synthase.csv"), ','), 1, 29, 1, 2, 3, -1, -1, false, false, 10, "", "_charged_trna_", 7, 4, ParticlesTypes::tRNA);
-//            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("mrna_counts.csv"), ','), 1, 454, 1, 1, -1, -1, -1, true, false, 10, "mrna_", "", 10, 4, ParticlesTypes::mRNA);
-//
-//            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("rrna_metabolites.csv"), ','), 1, 6, 0, 1, -1, -1, -1, false, false, 10, "rrna_", "", 10, 4, ParticlesTypes::rRNA);
-//
-//            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("polymerase_rna_proteins.csv"), ','), 1, 4, 0, 1, -1, -1, -1, false, true, 10, "protein_", "", 7, 4, ParticlesTypes::RNAPolymeraseProtein);
-//            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("ribosomes_proteins_metabolites.csv"), ','), 1, 48, 0, 1, -1, -1, -1, false, true, 10, "protein_", "", 7, 4, ParticlesTypes::RibosomeProtein);
-//            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("membrane_proteins_metabolites.csv"), ','), 1, 94, 0, 1, -1, -1, -1, false, true, 10, "protein_", "", 7, 4, ParticlesTypes::MembraneProtein);
-//            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("proteins_metabolites_frac.csv"), ','), 1, 15, 0, 1, -1, 2, -1, false, true, 10, "protein_", "", 7, 4, ParticlesTypes::ProteinFrac);
         }
     }
     CATCH("reading tsv files")

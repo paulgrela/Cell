@@ -47,7 +47,8 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::PrintNumberOfParticlesF
         LoggersManagerObject.Log(STREAM("Number Of Proteins Frac = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::ProteinFrac, true)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::ProteinFrac, false))));
         LoggersManagerObject.Log(STREAM("Number Of Other Proteins = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::OtherProtein, true)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::OtherProtein, false))));
 
-        LoggersManagerObject.Log(STREAM("Number Of TRNA = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::tRNA, true)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::tRNA, false))));
+        LoggersManagerObject.Log(STREAM("Number Of TRNA_uncharged = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::tRNA_uncharged, true)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::tRNA_uncharged, false))));
+        LoggersManagerObject.Log(STREAM("Number Of TRNA_charged = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::tRNA_charged, true)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::tRNA_charged, false))));
         LoggersManagerObject.Log(STREAM("Number Of MRNA = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::mRNA, true)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::mRNA, false))));
         LoggersManagerObject.Log(STREAM("Number Of RRNA = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::rRNA, true)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::rRNA, false))));
 
@@ -210,7 +211,8 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::GenerateAllRealRandomPa
 
         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateRandomDNAInWholeCell(579990, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartXPos + 3, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartYPos, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartZPos, 2, 2, 2, 2, 2, 2, 2, 2);
 
-        InsertNewRandomParticlesForType(ParticlesTypes::tRNA, 400, 400);
+        InsertNewRandomParticlesForType(ParticlesTypes::tRNA_uncharged, 400, 400);
+        InsertNewRandomParticlesForType(ParticlesTypes::tRNA_charged, 400, 400);
         InsertNewRandomParticlesForType(ParticlesTypes::mRNA, 400, 400);
         InsertNewRandomParticlesForType(ParticlesTypes::rRNA, 400, 400);
 

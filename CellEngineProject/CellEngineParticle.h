@@ -124,19 +124,20 @@ enum class ParticlesTypes : UnsignedInt
     Empty = 0,
     Basic = 1,
     Lipid = 2,
-    tRNA = 3,
-    mRNA = 4,
-    rRNA = 5,
-    RNAPolymeraseProtein = 6,
-    PolymeraseProtein = 7,
-    RibosomeProtein = 8,
-    MembraneProtein = 9,
-    OtherProtein = 10,
-    ProteinFrac = 11,
-    RNAPolymerase = 12,
-    DNAPolymerase = 13,
-    Ribosome = 14,
-    Other = 15
+    mRNA = 3,
+    rRNA = 4,
+    tRNA_uncharged = 5,
+    tRNA_charged = 6,
+    RNAPolymeraseProtein = 7,
+    PolymeraseProtein = 8,
+    RibosomeProtein = 9,
+    MembraneProtein = 10,
+    OtherProtein = 11,
+    ProteinFrac = 12,
+    RNAPolymerase = 13,
+    DNAPolymerase = 14,
+    Ribosome = 15,
+    Other = 16
 };
 
 class Gene
@@ -313,9 +314,10 @@ public:
             case ParticlesTypes::Empty : return "Empty";
             case ParticlesTypes::Basic : return "Basic";
             case ParticlesTypes::Lipid : return "Lipid";
-            case ParticlesTypes::tRNA : return "tRNA";
             case ParticlesTypes::mRNA : return "mRNA";
             case ParticlesTypes::rRNA : return "rRNA";
+            case ParticlesTypes::tRNA_charged : return "tRNA_charged";
+            case ParticlesTypes::tRNA_uncharged : return "tRNA_uncharged";
             case ParticlesTypes::RNAPolymeraseProtein : return "RNAPolymeraseProtein";
             case ParticlesTypes::PolymeraseProtein : return "PolymeraseProtein";
             case ParticlesTypes::RibosomeProtein : return "RibosomeProtein";

@@ -513,7 +513,8 @@ public:
 //                        if (ParticlesKindForImGuiSelectionObject.ParticleKindSpecialDataSector.size() > 1)
 //                            ParticleKindSpecialDataSectorIndex = 1;
                         //ImGui::Checkbox(string(to_string(ParticlesKindForImGuiSelectionObject.EntityId) + " " + ParticlesKindForImGuiSelectionObject.IdStr + " T = " + ParticlesKindsManager::ConvertParticleTypeToString(ParticlesKindForImGuiSelectionObject.ParticleKindSpecialDataSector[ParticlesKindForImGuiSelectionObject.ParticleKindSpecialDataSector.size() - 1].ParticleType)).c_str(), &ParticlesKindForImGuiSelectionObject.GraphicData.Visible);
-                        ImGui::Checkbox(string(to_string(ParticlesKindForImGuiSelectionObject.EntityId) + " " + ParticlesKindForImGuiSelectionObject.IdStr + " T = " + ParticlesKindsManager::ConvertParticleTypeToString(ParticlesKindForImGuiSelectionObject.ParticleKindSpecialDataSector.back().ParticleType)).c_str(), &ParticlesKindForImGuiSelectionObject.GraphicData.Visible);
+                        ImGui::Checkbox(string(to_string(ParticlesKindForImGuiSelectionObject.EntityId) + " " + ParticlesKindForImGuiSelectionObject.IdStr + " " + ParticlesKindForImGuiSelectionObject.Name + " T = " + ParticlesKindsManager::ConvertParticleTypeToString(ParticlesKindForImGuiSelectionObject.ParticleKindSpecialDataSector.back().ParticleType)).c_str(), &ParticlesKindForImGuiSelectionObject.GraphicData.Visible);
+                        //ImGui::Checkbox(string(to_string(ParticlesKindForImGuiSelectionObject.EntityId) + " " + ParticlesKindForImGuiSelectionObject.IdStr + " " + ParticlesKindForImGuiSelectionObject.GraphicData.NameFromDataFile + " T = " + ParticlesKindsManager::ConvertParticleTypeToString(ParticlesKindForImGuiSelectionObject.ParticleKindSpecialDataSector.back().ParticleType)).c_str(), &ParticlesKindForImGuiSelectionObject.GraphicData.Visible);
                     }
                     for (const auto& ParticleKindForImGuiSelectionObject : LocalParticlesKindsForImGuiSelection)
                         ParticlesKindsManagerObject.GetParticleKind(ParticleKindForImGuiSelectionObject.EntityId).GraphicData.Visible = ParticleKindForImGuiSelectionObject.GraphicData.Visible;
@@ -704,8 +705,10 @@ public:
 
                     ImGui::Button("  GENERATE DNA                              ");
 
-                    if (ImGui::Button("  GENERATE RANDOM tRNA PARTICLES            ") == true)
-                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::tRNA, 400, 400);
+                    if (ImGui::Button("  GENERATE RANDOM tRNA PARTICLES_uncharged  ") == true)
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::tRNA_uncharged, 400, 400);
+                    if (ImGui::Button("  GENERATE RANDOM tRNA PARTICLES_charged    ") == true)
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::tRNA_charged, 400, 400);
                     if (ImGui::Button("  GENERATE RANDOM mRNA PARTICLES            ") == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::mRNA, 400, 400);
                     if (ImGui::Button("  GENERATE RANDOM rRNA PARTICLES            ") == true)
