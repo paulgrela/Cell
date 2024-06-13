@@ -56,7 +56,8 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::PrintNumberOfParticlesF
         LoggersManagerObject.Log(STREAM("Number Of Lipids = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::Lipid, true)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::Lipid, false))));
         LoggersManagerObject.Log(STREAM("Number Of Other = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::Other, true)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::Other, false))));
 
-        LoggersManagerObject.Log(STREAM("Total Number Of All Particles = " << TotalNumberOfAllParticles));
+        LoggersManagerObject.Log(STREAM("Total Number Of All Particles Kinds = " << TotalNumberOfAllParticles));
+        LoggersManagerObject.Log(STREAM("Total Number Of All Particles = " << Particles.size()));
 
         PrintInformationAboutRibosomesProteins();
     }
@@ -147,9 +148,15 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::TryToGenerateRandomPart
     CATCH("trying to generate random particle for type")
 }
 
-bool GetSizeOfGeneratedParticle(const ParticlesTypes ParticlesTypesObject)
+UnsignedInt GetSizeOfGeneratedParticle(const ParticlesTypes ParticlesTypesObject)
 {
-    return (ParticlesTypesObject == ParticlesTypes::Ribosome || ParticlesTypesObject == ParticlesTypes::RNAPolymerase || ParticlesTypesObject == ParticlesTypes::DNAPolymerase ? static_cast<UnsignedInt>(pow(40, 3)) : 8);
+    switch (ParticlesTypesObject)
+    {
+        case ParticlesTypes::Ribosome : return static_cast<UnsignedInt>(pow(40, 3));
+        case ParticlesTypes::RNAPolymerase : return static_cast<UnsignedInt>(pow(13, 3));
+        case ParticlesTypes::DNAPolymerase : return static_cast<UnsignedInt>(pow(15, 3));
+        default : return 8;
+    }
 }
 
 void CellEngineRealRandomParticlesInVoxelSpaceGenerator::InsertNewRandomParticlesForType(ParticlesTypes ParticleTypeParam, const UnsignedInt Radius, const UnsignedInt RadiusSize)
