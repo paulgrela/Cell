@@ -470,10 +470,8 @@ void CellEngineChemicalReactionsCreator::RemapProteinsNames(const string& Partic
 {
     try
     {
-        //auto ParsedCSVFileStructure = ReadAndParseCSVFile(ParticlesDirectory + string("JCVI-syn3A quantitative proteomics.csv"), ',');
         auto ParsedCSVFileStructure = ReadAndParseCSVFile(ParticlesDirectory + string("JCVI-syn3A quantitative proteomics_corected.csv"), ',');
         for (UnsignedInt Row = 0; Row <= ParsedCSVFileStructure.size(); Row++)
-            //if (Row >= 2 && Row <= 430)
             if (Row >= 2 && Row <= 460)
                 MappedNamesOfProteins.insert(make_pair(ParsedCSVFileStructure[Row][0], ParsedCSVFileStructure[Row][1]));
         LoggersManagerObject.Log(STREAM("MP SIZE = " << MappedNamesOfProteins.size()));
@@ -499,10 +497,8 @@ void CellEngineChemicalReactionsCreator::GetRemappingNamesForProteins(const stri
 {
     try
     {
-        //auto ParsedCSVFileStructure = ReadAndParseCSVFile(ParticlesDirectory + string("JCVI-syn3A quantitative proteomics.csv"), ',');
         auto ParsedCSVFileStructure = ReadAndParseCSVFile(ParticlesDirectory + string("JCVI-syn3A quantitative proteomics_corrected.csv"), ',');
         for (UnsignedInt Row = 0; Row <= ParsedCSVFileStructure.size(); Row++)
-            //if (Row >= 2 && Row <= 430)
             if (Row >= 2 && Row <= 460)
                 MappedNamesOfProteins.insert(make_pair(ParsedCSVFileStructure[Row][0], ParsedCSVFileStructure[Row][1]));
 
@@ -540,8 +536,6 @@ void CellEngineChemicalReactionsCreator::ParticlesDataFromParsedCSVStructure(con
                     Name = NameIter->second;
                     GeneId = stoi(Name.substr(10, 4));
                 }
-                //if (GeneId == 920 || GeneId == 910)
-                //    LoggersManagerObject.Log(STREAM("XXX=" << NamePrefix << "#" <<  Name));
                 ParticlesDataForGenerator.insert(make_pair(NamePrefix + Name, ParticleKindSpecialData{ GeneId, Description, AddedParticleStr, CleanTranscriptionProduct, ParticleType, IsProtein, CounterAtStartOfSimulation }));
             }
     }
@@ -573,7 +567,6 @@ void CellEngineChemicalReactionsCreator::ReadCSVFiles(bool Read, const string& P
         {
             GetRemappingNamesForProteins(ParticlesDirectory);
 
-            //ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("proteomics.csv"), ','), 2, 429, 0, -1, -1, -1, 21, false, true, 0,"", "Protein From Gene", 0, 0, ParticlesTypes::OtherProtein);
             ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("proteomics.csv"), ','), 2, 429, 0, -1, -1, -1, 21, false, true, 0,"", "protein_from_gene", 0, 0, ParticlesTypes::OtherProtein);
             ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("proteomics_additional.csv"), ','), 0, 29, 0, -1, -1, -1, 2, false, true, 0,"", "protein_from_gene", 0, 0, ParticlesTypes::OtherProtein);
 
