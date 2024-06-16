@@ -29,7 +29,7 @@ using vector3_64 = vector3<uint64_t>;
 enum class TypesOfLookingForParticlesInProximity : UnsignedInt
 {
     FromChosenParticleAsCenter = 1,
-    InChosenVoxelSpace = 2
+    InChosenPointSpace = 2
 };
 
 #endif
