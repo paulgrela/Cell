@@ -252,11 +252,11 @@ bool CellEngineSimulationSpace::MakeChemicalReaction(Reaction& ReactionObject)
             {
                 for (const auto& ParticleKindVoxel : ParticleKindObjectForProduct.ListOfVoxels)
                 {
-                    vector3_64 NewVoxel(Centers[CenterIndex].X - ParticleKindObjectForProduct.XSizeDiv2 + ParticleKindVoxel.X, Centers[CenterIndex].Y - ParticleKindObjectForProduct.YSizeDiv2 + ParticleKindVoxel.Y, Centers[CenterIndex].Z - ParticleKindObjectForProduct.ZSizeDiv2 + ParticleKindVoxel.Z);
+                    vector3_64 NewPoint(Centers[CenterIndex].X - ParticleKindObjectForProduct.XSizeDiv2 + ParticleKindVoxel.X, Centers[CenterIndex].Y - ParticleKindObjectForProduct.YSizeDiv2 + ParticleKindVoxel.Y, Centers[CenterIndex].Z - ParticleKindObjectForProduct.ZSizeDiv2 + ParticleKindVoxel.Z);
 
-                    FillParticleElementInSpace(ParticleIndex, NewVoxel);
+                    FillParticleElementInSpace(ParticleIndex, NewPoint);
 
-                    LoggersManagerObject.Log(STREAM("New Centers From Product Added X = " << to_string(NewVoxel.X) << " Y = " << to_string(NewVoxel.Y) << " Z = " << to_string(NewVoxel.Z) << endl));
+                    LoggersManagerObject.Log(STREAM("New Centers From Product Added X = " << to_string(NewPoint.X) << " Y = " << to_string(NewPoint.Y) << " Z = " << to_string(NewPoint.Z) << endl));
                 }
 
                 GetMinMaxCoordinatesForParticle(GetParticleFromIndex(ParticleIndex), false);
@@ -374,7 +374,7 @@ void CellEngineSimulationSpace::GenerateRandomReactionForSelectedSpace(UnsignedI
         if (FindParticlesInProximityOfSimulationSpaceForSelectedSpace(true, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam) == true)
             FindAndExecuteRandomReaction();
     }
-    CATCH("generating random reaction for selected voxel space")
+    CATCH("generating random reaction for selected space")
 }
 
 void CellEngineSimulationSpace::GenerateChosenReactionForSelectedSpace(UnsignedInt ReactionId, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam)
@@ -394,7 +394,7 @@ void CellEngineSimulationSpace::GenerateRandomReactionForParticle(Particle& Part
     {
         PrepareRandomReaction();
 
-        if (FindParticlesInProximityOfVoxelSimulationSpaceForChosenParticle(ParticleObject, 20) == true)
+        if (FindParticlesInProximityOfSimulationSpaceForChosenParticle(ParticleObject, 20) == true)
             FindAndExecuteRandomReaction();
     }
     CATCH("generating random reaction for particle")

@@ -131,6 +131,8 @@ add_executable(
 	CellEngineDataBuilderForFullAtomSimulationSpace.h
 	CellEngineSimulationSpace.h
 	CellEngineSimulationSpace.cpp
+	CellEngineFullAtomSimulationSpace.cpp
+	CellEngineFullAtomSimulationSpace.h
 	CellEngineVoxelSimulationSpace.cpp
 	CellEngineVoxelSimulationSpace.h
 	CellEngineNucleicAcidsComplexOperations.cpp

@@ -21,7 +21,7 @@ protected:
     void UpdateFoundNucleotidesForFoundParticlesInProximity(UnsignedInt ParticleIndex);
     void PrintInformationAboutFoundParticlesInProximity();
 protected:
-    bool FindParticlesInProximityOfVoxelSimulationSpaceForChosenParticle(const Particle& ParticleObject, UnsignedInt AdditionalBoundFactor);
+    bool FindParticlesInProximityOfSimulationSpaceForChosenParticle(const Particle& ParticleObject, const UnsignedInt AdditionalBoundFactor);
 
     bool FindParticlesInProximityOfSimulationSpaceForSelectedSpace(bool UpdateNucleotides, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
 

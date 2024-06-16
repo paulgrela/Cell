@@ -141,7 +141,7 @@ void CellEngineChemicalReactionsInSimulationSpace::PrintInformationAboutFoundPar
     CATCH("printing information found particles in proximity")
 }
 
-bool CellEngineChemicalReactionsInSimulationSpace::FindParticlesInProximityOfVoxelSimulationSpaceForChosenParticle(const Particle& ParticleObject, const UnsignedInt AdditionalBoundFactor)
+bool CellEngineChemicalReactionsInSimulationSpace::FindParticlesInProximityOfSimulationSpaceForChosenParticle(const Particle& ParticleObject, const UnsignedInt AdditionalBoundFactor)
 {
     try
     {
@@ -151,7 +151,7 @@ bool CellEngineChemicalReactionsInSimulationSpace::FindParticlesInProximityOfVox
 
         FindParticlesInProximityOfSimulationSpaceForSelectedSpace(true, ParticleObject.Center.X - ParticleKindObject.XSizeDiv2 - AdditionalBoundFactor, ParticleObject.Center.Y - ParticleKindObject.YSizeDiv2 - AdditionalBoundFactor, ParticleObject.Center.Z - ParticleKindObject.ZSizeDiv2 - AdditionalBoundFactor, 2 * ParticleKindObject.XSizeDiv2 + 2 * AdditionalBoundFactor, 2 * ParticleKindObject.YSizeDiv2 + 2 * AdditionalBoundFactor, 2 * ParticleKindObject.ZSizeDiv2 + 2 * AdditionalBoundFactor);
     }
-    CATCH("finding particles in proximity of voxel simulation space for chosen particle")
+    CATCH("finding particles in proximity of simulation space for chosen particle")
 
     return true;
 }
