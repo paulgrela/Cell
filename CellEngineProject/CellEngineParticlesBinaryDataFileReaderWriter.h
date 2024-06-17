@@ -5,7 +5,7 @@
 #include "CellEngineDataFile.h"
 #include "CellEngineBuildParticlesDataOperations.h"
 
-class CellEngineParticlesBinaryDataFileReaderWriter : virtual public CellEngineDataFile, virtual public CellEngineBuildParticlesDataOperations
+class CellEngineParticlesBinaryDataFileReaderWriter : virtual public CellEngineDataFile, virtual public CellEngineBuildParticlesDataOperations//, virtual public CellEngineChemicalReactions
 {
 public:
     explicit CellEngineParticlesBinaryDataFileReaderWriter() = default;
@@ -15,11 +15,15 @@ public:
 public:
     void SaveParticlesToBinaryFile(std::ofstream& ParticlesDataFile);
     static void SaveParticlesKindsToBinaryFile(std::ofstream& ParticlesDataFile);
-    void SaveParticlesKindsAndParticlesToBinaryFile();
+    static void SaveGenesToBinaryFile(std::ofstream& ParticlesDataFile);
+    static void SaveChemicalReactionsToBinaryFile(std::ofstream& ParticlesDataFile);
+    void SaveParticlesKindsAndParticlesAndChemicalReactionsAndGenesToBinaryFile();
 public:
     void ReadParticlesFromBinaryFile(std::ifstream& ParticlesDataFile);
     static void ReadParticlesKindsFromBinaryFile(std::ifstream& ParticlesDataFile);
-    void ReadParticlesKindsAndParticlesFromBinaryFile(CellEngineConfigData::TypesOfFileToRead Type);
+    static void ReadGenesFromBinaryFile(std::ifstream& ParticlesDataFile);
+    static void ReadChemicalReactionsFromBinaryFile(std::ifstream& ParticlesDataFile);
+    void ReadParticlesKindsAndParticlesAndChemicalReactionsAndGenesFromBinaryFile(CellEngineConfigData::TypesOfFileToRead Type);
     void PrepareParticlesAfterReadingFromBinaryFile();
     void ReadParticlesFromBinaryFileAndPrepareData(bool StartValuesBool, bool UpdateParticleKindListOfVoxelsBool, CellEngineConfigData::TypesOfFileToRead Type);
 };

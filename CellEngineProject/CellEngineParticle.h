@@ -171,8 +171,8 @@ public:
     std::string IdStr;
     std::string Name;
     std::string Formula;
-    ElectricChargeType ElectricCharge{};
     std::string Compartment{};
+    ElectricChargeType ElectricCharge{};
 public:
     std::vector<ParticleKindSpecialData> ParticleKindSpecialDataSector;
     GeneIdInt GeneId{};

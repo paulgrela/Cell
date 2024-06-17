@@ -29,8 +29,6 @@ void CellEngineSimulationSpace::GenerateOneStepOfDiffusionForSelectedRangeOfPart
     {
         uniform_int_distribution<SignedInt> UniformDistributionObjectMoveParticleDirection_int64t(-1, 1);
 
-        vector<vector3_16> NewVoxelsForParticle;
-
         GetRangeOfParticlesForRandomParticles(StartParticleIndexParam, EndParticleIndexParam, MaxParticleIndex);
 
         for (UniqueIdInt ParticleIndex = StartParticleIndexParam; ParticleIndex <= EndParticleIndexParam; ParticleIndex++)
@@ -102,8 +100,6 @@ void CellEngineSimulationSpace::GenerateOneStepOfElectricDiffusionForSelectedRan
     try
     {
         CellEngineUseful::SwitchOffLogs();
-
-        vector<vector3_16> NewVoxelsForParticle;
 
         GetRangeOfParticlesForRandomParticles(StartParticleIndexParam, EndParticleIndexParam, MaxParticleIndex);
 

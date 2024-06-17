@@ -56,10 +56,18 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::PrintNumberOfParticlesF
         LoggersManagerObject.Log(STREAM("Number Of Lipids = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::Lipid, true)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::Lipid, false))));
         LoggersManagerObject.Log(STREAM("Number Of Other = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::Other, true)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::Other, false))));
 
+        PrintInformationAboutRibosomesProteins();
+
         LoggersManagerObject.Log(STREAM("Total Number Of All Particles Kinds = " << TotalNumberOfAllParticles));
         LoggersManagerObject.Log(STREAM("Total Number Of All Particles = " << Particles.size()));
 
-        PrintInformationAboutRibosomesProteins();
+        UnsignedInt OldParticlesKindsCounter = 0;
+
+        for (const auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
+            if (ParticleKindObject.second.EntityId < StartParticleKindId)
+                OldParticlesKindsCounter++;
+
+        LoggersManagerObject.Log(STREAM("Old Particles Kinds Counter = " << OldParticlesKindsCounter));
     }
     CATCH("printing number of particles for all main types of particles")
 }
