@@ -339,10 +339,10 @@ void CellEngineSimulationSpace::FindAndExecuteChosenReaction(const UnsignedInt R
 {
     try
     {
-        auto ReactionIter = CellEngineChemicalReactionsManagerObject.ReactionsPosFromId.find(ReactionId);
-        if (ReactionIter != CellEngineChemicalReactionsManagerObject.ReactionsPosFromId.end())
+        auto ReactionIter = CellEngineChemicalReactionsManagerObject.ChemicalReactionsPosFromId.find(ReactionId);
+        if (ReactionIter != CellEngineChemicalReactionsManagerObject.ChemicalReactionsPosFromId.end())
         {
-            auto& ReactionObject = CellEngineChemicalReactionsManagerObject.Reactions[ReactionIter->second];
+            auto& ReactionObject = CellEngineChemicalReactionsManagerObject.ChemicalReactions[ReactionIter->second];
 
             bool IsPossible = IsChemicalReactionPossible(ReactionObject);
             if (IsPossible == true)

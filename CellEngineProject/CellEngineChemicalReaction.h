@@ -19,7 +19,7 @@ class ParticleKindForChemicalReaction
 public:
     EntityIdInt EntityId{};
     UnsignedInt Counter{};
-    bool ToRemoveInReaction;
+    bool ToRemoveInReaction{};
     std::vector<UniqueIdInt> LinkedParticleTypes;
 public:
     std::string SequenceStr;
@@ -34,6 +34,7 @@ public:
     {
         LinkedParticleTypes = std::move(LinkedParticlesTypesParam);
     }
+    ParticleKindForChemicalReaction() = default;
 };
 
 class ChemicalReaction

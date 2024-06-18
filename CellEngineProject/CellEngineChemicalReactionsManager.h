@@ -10,26 +10,26 @@
 class CellEngineChemicalReactionsManager : virtual public CellEngineRandomDeviceEngine
 {
 public:
-    std::vector<ChemicalReaction> Reactions;
-    std::unordered_map<UnsignedInt, UnsignedInt> ReactionsPosFromId;
-    std::unordered_multimap<std::string, UnsignedInt> ReactionsPosFromString;
+    std::vector<ChemicalReaction> ChemicalReactions;
+    std::unordered_map<UnsignedInt, UnsignedInt> ChemicalReactionsPosFromId;
+    std::unordered_multimap<std::string, UnsignedInt> ChemicalReactionsPosFromString;
 public:
     ChemicalReaction& GetReactionFromNumId(UnsignedInt ReactionId)
     {
-        return Reactions[ReactionsPosFromId.find(ReactionId)->second];
+        return ChemicalReactions[ChemicalReactionsPosFromId.find(ReactionId)->second];
     }
 public:
     void PreprocessChemicalReactions()
     {
-        for (auto& ReactionObject : Reactions)
+        for (auto& ReactionObject : ChemicalReactions)
             sort(ReactionObject.Products.begin(), ReactionObject.Products.end(), [](ParticleKindForChemicalReaction& PK1, ParticleKindForChemicalReaction& PK2){ return ParticlesKindsManagerObject.GetParticleKind(PK1.EntityId).ListOfVoxels.size() > ParticlesKindsManagerObject.GetParticleKind(PK2.EntityId).ListOfVoxels.size(); } );
     }
 public:
     void AddChemicalReaction(const ChemicalReaction& ReactionParam)
     {
-        Reactions.emplace_back(ReactionParam);
-        ReactionsPosFromId.insert(std::make_pair(ReactionParam.ReactionIdNum, Reactions.size() - 1));
-        ReactionsPosFromString.insert(std::make_pair(ReactionParam.ReactantsStr, Reactions.size() - 1));
+        ChemicalReactions.emplace_back(ReactionParam);
+        ChemicalReactionsPosFromId.insert(std::make_pair(ReactionParam.ReactionIdNum, ChemicalReactions.size() - 1));
+        ChemicalReactionsPosFromString.insert(std::make_pair(ReactionParam.ReactantsStr, ChemicalReactions.size() - 1));
     }
 };
 

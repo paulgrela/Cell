@@ -33,10 +33,10 @@ bool CellEngineChemicalReactionsEngine::TryToMakeRandomChemicalReaction(Unsigned
 
             LoggersManagerObject.Log(STREAM("Reaction Symbols = [" << ReactionSymbolsStr << "]" << endl));
 
-            auto NumberOfElementsForKey = CellEngineChemicalReactionsManagerObject.ReactionsPosFromString.count(ReactionSymbolsStr);
+            auto NumberOfElementsForKey = CellEngineChemicalReactionsManagerObject.ChemicalReactionsPosFromString.count(ReactionSymbolsStr);
             if (NumberOfElementsForKey > 0)
             {
-                auto ReactionIter = CellEngineChemicalReactionsManagerObject.ReactionsPosFromString.equal_range(ReactionSymbolsStr).first;
+                auto ReactionIter = CellEngineChemicalReactionsManagerObject.ChemicalReactionsPosFromString.equal_range(ReactionSymbolsStr).first;
                 if (NumberOfElementsForKey > 1)
                 {
                     uniform_int_distribution<UnsignedInt> UniformDistributionObjectSizeOfParticle_Uint64t(0, NumberOfElementsForKey - 1);
@@ -47,7 +47,7 @@ bool CellEngineChemicalReactionsEngine::TryToMakeRandomChemicalReaction(Unsigned
                     for (UnsignedInt Step = 1; Step <= RandomShift; Step++)
                         ++ReactionIter;
                 }
-                auto& ReactionObject = CellEngineChemicalReactionsManagerObject.Reactions[ReactionIter->second];
+                auto& ReactionObject = CellEngineChemicalReactionsManagerObject.ChemicalReactions[ReactionIter->second];
 
                 LoggersManagerObject.Log(STREAM("Reaction Position In Array = [" << to_string(ReactionIter->second) << "]" << endl));
                 LoggersManagerObject.Log(STREAM("Reaction Id Num = [" << to_string(ReactionObject.ReactionIdNum) << "]" << endl));

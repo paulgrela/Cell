@@ -145,30 +145,49 @@ void CellEngineParticlesBinaryDataFileReaderWriter::SaveChemicalReactionsToBinar
     {
         LoggersManagerObject.Log(STREAM("START OF SAVING CHEMICAL REACTIONS TO BINARY FILE"));
 
-        UnsignedInt ChemicalReactionsSize = CellEngineChemicalReactionsManagerObject.Reactions.size();
+        UnsignedInt ChemicalReactionsSize = CellEngineChemicalReactionsManagerObject.ChemicalReactions.size();
         LoggersManagerObject.Log(STREAM("Number of chemical reactions to be saved = " << ChemicalReactionsSize));
         ParticlesDataFile.write((char*)&ChemicalReactionsSize, sizeof(ChemicalReactionsSize));
 
-        for (const auto& ParticleObject : CellEngineChemicalReactionsManagerObject.Reactions)
-        {
-            //sawuje te co nie maja funkcji specjalnej
-//            ParticlesDataFile.write((char*)&ParticleObject.second.EntityId, sizeof(ParticleObject.second.EntityId));
-//            ParticlesDataFile.write((char*)&ParticleObject.second.ChainId, sizeof(ParticleObject.second.ChainId));
-//            ParticlesDataFile.write((char*)&ParticleObject.second.Index, sizeof(ParticleObject.second.Index));
-//            ParticlesDataFile.write((char*)&ParticleObject.second.GenomeIndex, sizeof(ParticleObject.second.GenomeIndex));
-//            ParticlesDataFile.write((char*)&ParticleObject.second.ElectricCharge, sizeof(ParticleObject.second.ElectricCharge));
-//            ParticlesDataFile.write((char*)&ParticleObject.second.Center, sizeof(ParticleObject.second.Center));
-//            ParticlesDataFile.write((char*)&ParticleObject.second.UniqueColor, sizeof(ParticleObject.second.UniqueColor));
-//            ParticlesDataFile.write((char*)&ParticleObject.second.SelectedForReaction, sizeof(ParticleObject.second.SelectedForReaction));
-//
-//            SaveVectorToBinaryFile<vector3_16>(ParticlesDataFile, ParticleObject.second.ListOfVoxels);
-//
-//            SavePointerToBinaryFile(ParticlesDataFile, ParticleObject.second.Prev);
-//            SavePointerToBinaryFile(ParticlesDataFile, ParticleObject.second.Next);
-//            SavePointerToBinaryFile(ParticlesDataFile, ParticleObject.second.PairedNucleotide);
-//
-//            SaveVectorToBinaryFile<Particle*>(ParticlesDataFile, ParticleObject.second.LinkedParticlesPointersList);
-        }
+        for (const auto& ChemicalReactionObject : CellEngineChemicalReactionsManagerObject.ChemicalReactions)
+            if (ChemicalReactionObject.SpecialReactionFunction == nullptr)
+            {
+                ParticlesDataFile.write((char*)&ChemicalReactionObject.ReactionIdNum, sizeof(ChemicalReactionObject.ReactionIdNum));
+                SaveStringToBinaryFile(ParticlesDataFile, ChemicalReactionObject.ReactionIdStr);
+                SaveStringToBinaryFile(ParticlesDataFile, ChemicalReactionObject.ReactionName);
+                SaveStringToBinaryFile(ParticlesDataFile, ChemicalReactionObject.ReactantsStr);
+                ParticlesDataFile.write((char*)&ChemicalReactionObject.Duration, sizeof(ChemicalReactionObject.Duration));
+                ParticlesDataFile.write((char*)&ChemicalReactionObject.Reversible, sizeof(ChemicalReactionObject.Reversible));
+                SaveStringToBinaryFile(ParticlesDataFile, ChemicalReactionObject.UpperFluxBound);
+                SaveStringToBinaryFile(ParticlesDataFile, ChemicalReactionObject.LowerFluxBound);
+                ParticlesDataFile.write((char*)&ChemicalReactionObject.AdditionalParameter1, sizeof(ChemicalReactionObject.AdditionalParameter1));
+                ParticlesDataFile.write((char*)&ChemicalReactionObject.AdditionalParameter2, sizeof(ChemicalReactionObject.AdditionalParameter2));
+                SaveStringToBinaryFile(ParticlesDataFile, ChemicalReactionObject.Comment);
+
+                UnsignedInt ChemicalReactionReactantsSize = ChemicalReactionObject.Reactants.size();
+                ParticlesDataFile.write((char*)&ChemicalReactionReactantsSize, sizeof(ChemicalReactionReactantsSize));
+                for (const auto& ChemicalReactionReactantObject : ChemicalReactionObject.Reactants)
+                {
+                    ParticlesDataFile.write((char*)&ChemicalReactionReactantObject.EntityId, sizeof(ChemicalReactionReactantObject.EntityId));
+                    ParticlesDataFile.write((char*)&ChemicalReactionReactantObject.Counter, sizeof(ChemicalReactionReactantObject.Counter));
+                    ParticlesDataFile.write((char*)&ChemicalReactionReactantObject.ToRemoveInReaction, sizeof(ChemicalReactionReactantObject.ToRemoveInReaction));
+                    SaveStringToBinaryFile(ParticlesDataFile, ChemicalReactionReactantObject.SequenceStr);
+                    SaveVectorToBinaryFile<ChainIdInt>(ParticlesDataFile, ChemicalReactionReactantObject.Sequence);
+                    SaveVectorToBinaryFile<UniqueIdInt>(ParticlesDataFile, ChemicalReactionReactantObject.LinkedParticleTypes);
+                }
+
+                UnsignedInt ChemicalReactionProductsSize = ChemicalReactionObject.Products.size();
+                ParticlesDataFile.write((char*)&ChemicalReactionProductsSize, sizeof(ChemicalReactionProductsSize));
+                for (const auto& ChemicalReactionProductObject : ChemicalReactionObject.Products)
+                {
+                    ParticlesDataFile.write((char*)&ChemicalReactionProductObject.EntityId, sizeof(ChemicalReactionProductObject.EntityId));
+                    ParticlesDataFile.write((char*)&ChemicalReactionProductObject.Counter, sizeof(ChemicalReactionProductObject.Counter));
+                    ParticlesDataFile.write((char*)&ChemicalReactionProductObject.ToRemoveInReaction, sizeof(ChemicalReactionProductObject.ToRemoveInReaction));
+                    SaveStringToBinaryFile(ParticlesDataFile, ChemicalReactionProductObject.SequenceStr);
+                    SaveVectorToBinaryFile<ChainIdInt>(ParticlesDataFile, ChemicalReactionProductObject.Sequence);
+                    SaveVectorToBinaryFile<UniqueIdInt>(ParticlesDataFile, ChemicalReactionProductObject.LinkedParticleTypes);
+                }
+            }
 
         LoggersManagerObject.Log(STREAM("END OF SAVING CHEMICAL REACTIONS TO BINARY FILE"));
     }
@@ -278,7 +297,6 @@ void ReadVectorFromBinaryFile(ifstream& ParticlesDataFile, vector<TElement>& Vec
 {
     try
     {
-        //ParticlesDataFile.clear(); //????
         VectorToBeRead.clear();
 
         UnsignedInt Size;
@@ -428,35 +446,60 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadChemicalReactionsFromBin
     {
         LoggersManagerObject.Log(STREAM("START OF READING CHEMICAL REACTIONS FROM BINARY FILE"));
 
-//        UnsignedInt ParticlesSize;
-//        ParticlesDataFile.read((char*)&ParticlesSize, sizeof(ParticlesSize));
-//        LoggersManagerObject.Log(STREAM("Number of chemical reactions to be read = " << ParticlesSize));
-//
-//        for (UnsignedInt ParticleObjectIndex = 1; ParticleObjectIndex <= ParticlesSize; ParticleObjectIndex++)
-//        {
-//            Particle ParticleObject;
-//
-//            ParticlesDataFile.read((char*)&ParticleObject.EntityId, sizeof(ParticleObject.EntityId));
-//            ParticlesDataFile.read((char*)&ParticleObject.ChainId, sizeof(ParticleObject.ChainId));
-//            ParticlesDataFile.read((char*)&ParticleObject.Index, sizeof(ParticleObject.Index));
-//            ParticlesDataFile.read((char*)&ParticleObject.GenomeIndex, sizeof(ParticleObject.GenomeIndex));
-//            ParticlesDataFile.read((char*)&ParticleObject.ElectricCharge, sizeof(ParticleObject.ElectricCharge));
-//            ParticlesDataFile.read((char*)&ParticleObject.Center, sizeof(ParticleObject.Center));
-//            ParticlesDataFile.read((char*)&ParticleObject.UniqueColor, sizeof(ParticleObject.UniqueColor));
-//            ParticlesDataFile.read((char*)&ParticleObject.SelectedForReaction, sizeof(ParticleObject.SelectedForReaction));
-//
-//            ReadVectorFromBinaryFile<vector3_16>(ParticlesDataFile, ParticleObject.ListOfVoxels);
-//
-//            ParticlesDataFile.read((char*)&ParticleObject.PrevTemporary, sizeof(ParticleObject.PrevTemporary));
-//            ParticlesDataFile.read((char*)&ParticleObject.NextTemporary, sizeof(ParticleObject.NextTemporary));
-//            ParticlesDataFile.read((char*)&ParticleObject.PairedNucleotideTemporary, sizeof(ParticleObject.PairedNucleotideTemporary));
-//
-//            ReadVectorFromBinaryFile<UniqueIdInt>(ParticlesDataFile, ParticleObject.LinkedParticlesPointersListTemporary);
-//
-//            AddNewParticle(ParticleObject);
-//        }
+        UnsignedInt ChemicalReactionsSize;
+        ParticlesDataFile.read((char*)&ChemicalReactionsSize, sizeof(ChemicalReactionsSize));
+        LoggersManagerObject.Log(STREAM("Number of chemical reactions to be read = " << ChemicalReactionsSize));
 
-        //ParticlesDataFile.close();
+        for (UnsignedInt ChemicalReactionObjectIndex = 1; ChemicalReactionObjectIndex <= ChemicalReactionsSize; ChemicalReactionObjectIndex++)
+        {
+            ChemicalReaction ChemicalReactionObject;
+
+            ParticlesDataFile.read((char*)&ChemicalReactionObject.ReactionIdNum, sizeof(ChemicalReactionObject.ReactionIdNum));
+            ReadStringFromBinaryFile(ParticlesDataFile, ChemicalReactionObject.ReactionIdStr);
+            ReadStringFromBinaryFile(ParticlesDataFile, ChemicalReactionObject.ReactionName);
+            ReadStringFromBinaryFile(ParticlesDataFile, ChemicalReactionObject.ReactantsStr);
+            ParticlesDataFile.read((char*)&ChemicalReactionObject.Duration, sizeof(ChemicalReactionObject.Duration));
+            ParticlesDataFile.read((char*)&ChemicalReactionObject.Reversible, sizeof(ChemicalReactionObject.Reversible));
+            ReadStringFromBinaryFile(ParticlesDataFile, ChemicalReactionObject.UpperFluxBound);
+            ReadStringFromBinaryFile(ParticlesDataFile, ChemicalReactionObject.LowerFluxBound);
+            ParticlesDataFile.read((char*)&ChemicalReactionObject.AdditionalParameter1, sizeof(ChemicalReactionObject.AdditionalParameter1));
+            ParticlesDataFile.read((char*)&ChemicalReactionObject.AdditionalParameter2, sizeof(ChemicalReactionObject.AdditionalParameter2));
+            ReadStringFromBinaryFile(ParticlesDataFile, ChemicalReactionObject.Comment);
+
+            UnsignedInt ChemicalReactionReactantsSize;
+            ParticlesDataFile.read((char*)&ChemicalReactionReactantsSize, sizeof(ChemicalReactionReactantsSize));
+            for (UnsignedInt ChemicalReactionReactantIndex = 0; ChemicalReactionReactantIndex < ChemicalReactionReactantsSize; ChemicalReactionReactantIndex++)
+            {
+                ParticleKindForChemicalReaction ParticleKindForChemicalReactionObject;
+
+                ParticlesDataFile.read((char*)&ParticleKindForChemicalReactionObject.EntityId, sizeof(ParticleKindForChemicalReactionObject.EntityId));
+                ParticlesDataFile.read((char*)&ParticleKindForChemicalReactionObject.Counter, sizeof(ParticleKindForChemicalReactionObject.Counter));
+                ParticlesDataFile.read((char*)&ParticleKindForChemicalReactionObject.ToRemoveInReaction, sizeof(ParticleKindForChemicalReactionObject.ToRemoveInReaction));
+                ReadStringFromBinaryFile(ParticlesDataFile, ParticleKindForChemicalReactionObject.SequenceStr);
+                ReadVectorFromBinaryFile<ChainIdInt>(ParticlesDataFile, ParticleKindForChemicalReactionObject.Sequence);
+                ReadVectorFromBinaryFile<UniqueIdInt>(ParticlesDataFile, ParticleKindForChemicalReactionObject.LinkedParticleTypes);
+
+                ChemicalReactionObject.Reactants.emplace_back(ParticleKindForChemicalReactionObject);
+            }
+
+            UnsignedInt ChemicalReactionProductsSize;
+            ParticlesDataFile.read((char*)&ChemicalReactionProductsSize, sizeof(ChemicalReactionProductsSize));
+            for (UnsignedInt ChemicalReactionProductIndex = 0; ChemicalReactionProductIndex < ChemicalReactionProductsSize; ChemicalReactionProductIndex++)
+            {
+                ParticleKindForChemicalReaction ParticleKindForChemicalReactionObject;
+
+                ParticlesDataFile.read((char*)&ParticleKindForChemicalReactionObject.EntityId, sizeof(ParticleKindForChemicalReactionObject.EntityId));
+                ParticlesDataFile.read((char*)&ParticleKindForChemicalReactionObject.Counter, sizeof(ParticleKindForChemicalReactionObject.Counter));
+                ParticlesDataFile.read((char*)&ParticleKindForChemicalReactionObject.ToRemoveInReaction, sizeof(ParticleKindForChemicalReactionObject.ToRemoveInReaction));
+                ReadStringFromBinaryFile(ParticlesDataFile, ParticleKindForChemicalReactionObject.SequenceStr);
+                ReadVectorFromBinaryFile<ChainIdInt>(ParticlesDataFile, ParticleKindForChemicalReactionObject.Sequence);
+                ReadVectorFromBinaryFile<UniqueIdInt>(ParticlesDataFile, ParticleKindForChemicalReactionObject.LinkedParticleTypes);
+
+                ChemicalReactionObject.Products.emplace_back(ParticleKindForChemicalReactionObject);
+            }
+
+            CellEngineChemicalReactionsManagerObject.AddChemicalReaction(ChemicalReactionObject);
+        }
 
         LoggersManagerObject.Log(STREAM("END OF READING CHEMICAL REACTIONS FROM BINARY FILE"));
     }

@@ -755,9 +755,9 @@ public:
         try
         {
             if (ModifiableWindow == false)
-                ImGui::Begin("Chemical Reactions Menu", nullptr, WindowFlags);
+                ImGui::Begin("Chemical ChemicalReactions Menu", nullptr, WindowFlags);
             else
-                ImGui::Begin("Chemical Reactions Menu");
+                ImGui::Begin("Chemical ChemicalReactions Menu");
 
             ImGui::Text("CHOOSE REACTION");
 
