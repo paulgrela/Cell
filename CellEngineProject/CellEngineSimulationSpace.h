@@ -11,7 +11,7 @@
 #include "CellEngineReaction.h"
 #include "CellEngineConfigData.h"
 #include "CellEngineChemicalReactions.h"
-#include "CellEngineChemicalReactionsCreator.h"
+#include "CellEngineIllinoisDataCreator.h"
 #include "CellEngineBasicVoxelsOperations.h"
 #include "CellEngineParticlesVoxelsOperations.h"
 #include "CellEngineBasicParticlesOperations.h"
@@ -27,7 +27,7 @@
 
 #define SIMULATION_DETAILED_LOG
 
-class CellEngineSimulationSpace : public CellEngineChemicalReactionsCreator, virtual public CellEngineChemicalReactionsInSimulationSpace, public CellEngineSimulationSpaceStatistics
+class CellEngineSimulationSpace : public CellEngineChemicalReactions, public CellEngineIllinoisDataCreator, public CellEngineCompiledDataCreator, virtual public CellEngineChemicalReactionsInSimulationSpace, public CellEngineSimulationSpaceStatistics
 {
 private:
     std::unordered_map<UniqueIdInt, Particle>& Particles;

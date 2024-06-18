@@ -10,7 +10,7 @@
 #include "CellEngineTypes.h"
 #include "CellEngineParticle.h"
 #include "CellEngineSimulationSpace.h"
-#include "CellEngineChemicalReactionsCreator.h"
+#include "CellEngineIllinoisDataCreator.h"
 
 using namespace std;
 
@@ -46,7 +46,7 @@ vector<vector<string>> ReadAndParseCSVFile(const string& FileName, const char Se
     return ParsedCSVFileStructure;
 };
 
-void CellEngineChemicalReactionsCreator::ReadReactionsFromJSONFile(const string& FileName, const bool ReadFromFile)
+void CellEngineIllinoisDataCreator::ReadReactionsFromJSONFile(const string& FileName, const bool ReadFromFile)
 {
     try
     {
@@ -92,7 +92,7 @@ void CellEngineChemicalReactionsCreator::ReadReactionsFromJSONFile(const string&
     CATCH("reading reactions from json file")
 }
 
-void CellEngineChemicalReactionsCreator::GetParticlesFromXMLFile(const boost::property_tree::ptree& ReactionsPropertyTreeXMLTreeElement)
+void CellEngineIllinoisDataCreator::GetParticlesFromXMLFile(const boost::property_tree::ptree& ReactionsPropertyTreeXMLTreeElement)
 {
     try
     {
@@ -115,7 +115,7 @@ void CellEngineChemicalReactionsCreator::GetParticlesFromXMLFile(const boost::pr
     CATCH("get particles from xml file")
 }
 
-void CellEngineChemicalReactionsCreator::GetProteinsFromXMLFile(const boost::property_tree::ptree& ReactionsPropertyTreeXMLTreeElement)
+void CellEngineIllinoisDataCreator::GetProteinsFromXMLFile(const boost::property_tree::ptree& ReactionsPropertyTreeXMLTreeElement)
 {
     try
     {
@@ -196,20 +196,20 @@ string GetStringOfSortedParticlesDataNames(std::vector<ParticleKindForReaction>&
     return KeyStringOfReaction;
 }
 
-void CellEngineChemicalReactionsCreator::AddXMLChemicalReaction(Reaction& ReactionObject)
+void CellEngineIllinoisDataCreator::AddXMLChemicalReaction(Reaction& ReactionObject)
 {
     try
     {
         ReactionObject.ReactionIdNum = ReactionId;
         ReactionObject.ReactantsStr = GetStringOfSortedParticlesDataNames(ReactionObject.Reactants);
         ReactionObject.SpecialReactionFunction = nullptr;
-        AddChemicalReaction(ReactionObject);
+        CellEngineChemicalReactionsManagerObject.AddChemicalReaction(ReactionObject);
 
         if (ReactionObject.Reversible == true)
         {
             ReactionObject.ReactantsStr = GetStringOfSortedParticlesDataNames(ReactionObject.Products);
             swap(ReactionObject.Products, ReactionObject.Reactants);
-            AddChemicalReaction(ReactionObject);
+            CellEngineChemicalReactionsManagerObject.AddChemicalReaction(ReactionObject);
         }
 
         ReactionId++;
@@ -217,7 +217,7 @@ void CellEngineChemicalReactionsCreator::AddXMLChemicalReaction(Reaction& Reacti
     CATCH("adding xml chemical reaction")
 }
 
-void CellEngineChemicalReactionsCreator::GetProperReactionsListFromXMLFile(const boost::property_tree::ptree& ReactionsPropertyTreeXMLTreeElement)
+void CellEngineIllinoisDataCreator::GetProperReactionsListFromXMLFile(const boost::property_tree::ptree& ReactionsPropertyTreeXMLTreeElement)
 {
     try
     {
@@ -272,7 +272,7 @@ void CellEngineChemicalReactionsCreator::GetProperReactionsListFromXMLFile(const
     CATCH("get proper reactions list from xml file")
 }
 
-void CellEngineChemicalReactionsCreator::ReadReactionsFromXMLFile(const string& FileName)
+void CellEngineIllinoisDataCreator::ReadReactionsFromXMLFile(const string& FileName)
 {
     try
     {
@@ -295,7 +295,7 @@ void CellEngineChemicalReactionsCreator::ReadReactionsFromXMLFile(const string& 
     CATCH("reading reactions from xml file")
 }
 
-void CellEngineChemicalReactionsCreator::PrintAllParticleKinds()
+void CellEngineIllinoisDataCreator::PrintAllParticleKinds()
 {
     try
     {
@@ -312,7 +312,7 @@ void CellEngineChemicalReactionsCreator::PrintAllParticleKinds()
     CATCH("printing all particle kinds")
 };
 
-void CellEngineChemicalReactionsCreator::CheckHowManyParticleDataForGeneratorIsNotInParticleKindsAndAddThem(const bool UpdateParticleKinds)
+void CellEngineIllinoisDataCreator::CheckHowManyParticleDataForGeneratorIsNotInParticleKindsAndAddThem(const bool UpdateParticleKinds)
 {
     try
     {
@@ -367,7 +367,7 @@ void CellEngineChemicalReactionsCreator::CheckHowManyParticleDataForGeneratorIsN
     CATCH("checking how many particle data for generator in not in particle kinds")
 };
 
-void CellEngineChemicalReactionsCreator::CheckHowManyParticlesKindsHasCounterAtStartOfSimulationEquZeroAndAddThem(const bool UpdateParticleKinds)
+void CellEngineIllinoisDataCreator::CheckHowManyParticlesKindsHasCounterAtStartOfSimulationEquZeroAndAddThem(const bool UpdateParticleKinds)
 {
     try
     {
@@ -383,7 +383,7 @@ void CellEngineChemicalReactionsCreator::CheckHowManyParticlesKindsHasCounterAtS
     CATCH("checking how many particles kinds has counter at start of simulation equ zero")
 };
 
-void CellEngineChemicalReactionsCreator::ReadAndParseGenesFile(const string& FileName)
+void CellEngineIllinoisDataCreator::ReadAndParseGenesFile(const string& FileName)
 {
     smatch SMatchObject;
     regex GeneRegexObject(R"(=[\w. ()]+)");
@@ -446,7 +446,7 @@ void CellEngineChemicalReactionsCreator::ReadAndParseGenesFile(const string& Fil
     CATCH("reading and parsing csv file")
 };
 
-void CellEngineChemicalReactionsCreator::PrintGenesFile()
+void CellEngineIllinoisDataCreator::PrintGenesFile()
 {
     try
     {
@@ -466,7 +466,7 @@ void CellEngineChemicalReactionsCreator::PrintGenesFile()
     CATCH("printing gene file")
 }
 
-void CellEngineChemicalReactionsCreator::RemapProteinsNames(const string& ParticlesDirectory)
+void CellEngineIllinoisDataCreator::RemapProteinsNames(const string& ParticlesDirectory)
 {
     try
     {
@@ -493,7 +493,7 @@ void CellEngineChemicalReactionsCreator::RemapProteinsNames(const string& Partic
     CATCH("remapping protein names")
 }
 
-void CellEngineChemicalReactionsCreator::GetRemappingNamesForProteins(const string& ParticlesDirectory)
+void CellEngineIllinoisDataCreator::GetRemappingNamesForProteins(const string& ParticlesDirectory)
 {
     try
     {
@@ -507,7 +507,7 @@ void CellEngineChemicalReactionsCreator::GetRemappingNamesForProteins(const stri
     CATCH("get remapping names for proteins")
 }
 
-void CellEngineChemicalReactionsCreator::ParticlesDataFromParsedCSVStructure(const vector<vector<string>>& ParsedCSVFileStructure, const UnsignedInt StartRow, const UnsignedInt EndRow, const UnsignedInt NameCol, const SignedInt GeneCol, const SignedInt AddedParticleCol, const SignedInt CleanTranscriptionProductCol, const SignedInt CounterCol, const bool FromConcentration, bool IsProtein, const UnsignedInt CounterParam, const string& NamePrefix, const string& Description, const UnsignedInt s1, const UnsignedInt s2, const ParticlesTypes ParticleType)
+void CellEngineIllinoisDataCreator::ParticlesDataFromParsedCSVStructure(const vector<vector<string>>& ParsedCSVFileStructure, const UnsignedInt StartRow, const UnsignedInt EndRow, const UnsignedInt NameCol, const SignedInt GeneCol, const SignedInt AddedParticleCol, const SignedInt CleanTranscriptionProductCol, const SignedInt CounterCol, const bool FromConcentration, bool IsProtein, const UnsignedInt CounterParam, const string& NamePrefix, const string& Description, const UnsignedInt s1, const UnsignedInt s2, const ParticlesTypes ParticleType)
 {
     try
     {
@@ -542,7 +542,7 @@ void CellEngineChemicalReactionsCreator::ParticlesDataFromParsedCSVStructure(con
     CATCH("getting particles data from parsed csv structure")
 }
 
-void CellEngineChemicalReactionsCreator::PrintAllParticlesData()
+void CellEngineIllinoisDataCreator::PrintAllParticlesData()
 {
     try
     {
@@ -559,7 +559,7 @@ void CellEngineChemicalReactionsCreator::PrintAllParticlesData()
     CATCH("printing all particles data")
 }
 
-void CellEngineChemicalReactionsCreator::ReadCSVFiles(bool Read, const string& ParticlesDirectory)
+void CellEngineIllinoisDataCreator::ReadCSVFiles(bool Read, const string& ParticlesDirectory)
 {
     try
     {
@@ -586,7 +586,7 @@ void CellEngineChemicalReactionsCreator::ReadCSVFiles(bool Read, const string& P
     CATCH("reading tsv files")
 }
 
-void CellEngineChemicalReactionsCreator::ReadTSVFiles(bool Read, const string& ParticlesDirectory)
+void CellEngineIllinoisDataCreator::ReadTSVFiles(bool Read, const string& ParticlesDirectory)
 {
     try
     {
@@ -600,7 +600,7 @@ void CellEngineChemicalReactionsCreator::ReadTSVFiles(bool Read, const string& P
     CATCH("reading tsv files")
 }
 
-void CellEngineChemicalReactionsCreator::AddSingleParticleKind(const ParticlesTypes ParticlesTypesObject, const UnsignedInt ParticleKindIdParam, const string& IdStrParam, const string& NameParam, const string& FormulaParam, const SignedInt GeneIdParam, const ElectricChargeType ElectricChargeParam, const string& CompartmentParam, const UnsignedInt CounterParam)
+void CellEngineIllinoisDataCreator::AddSingleParticleKind(const ParticlesTypes ParticlesTypesObject, const UnsignedInt ParticleKindIdParam, const string& IdStrParam, const string& NameParam, const string& FormulaParam, const SignedInt GeneIdParam, const ElectricChargeType ElectricChargeParam, const string& CompartmentParam, const UnsignedInt CounterParam)
 {
     try
     {
@@ -615,7 +615,7 @@ void CellEngineChemicalReactionsCreator::AddSingleParticleKind(const ParticlesTy
     CATCH("adding ribosomes")
 }
 
-void CellEngineChemicalReactionsCreator::ReadChemicalReactionsFromFile()
+void CellEngineIllinoisDataCreator::ReadAllIllinoisDataFromFiles()
 {
     try
     {
@@ -651,7 +651,7 @@ void CellEngineChemicalReactionsCreator::ReadChemicalReactionsFromFile()
     CATCH("reading chemical reactions from file")
 }
 
-void CellEngineChemicalReactionsCreator::AddParticlesKinds()
+void CellEngineCompiledDataCreator::AddParticlesKinds()
 {
     try
     {
@@ -678,12 +678,10 @@ void CellEngineChemicalReactionsCreator::AddParticlesKinds()
     CATCH("adding particles kinds and reactions")
 };
 
-void CellEngineChemicalReactionsCreator::AddChemicalReactions()
+void CellEngineCompiledDataCreator::AddChemicalReactions()
 {
     try
     {
-        ReadChemicalReactionsFromFile();
-
         const string DNASequenceForTestFindingDNA = "TACAAAAAAAGAGGTGTTAGC";
 
         const string DNASequence1ForTestCutLink1 = "TACAAAAAAAGAGGTGTT";
@@ -696,36 +694,36 @@ void CellEngineChemicalReactionsCreator::AddChemicalReactions()
         const string DNASequenceForTestCutCrisper = "RNA";
         const string RNASequenceForTestCutCrisper = "ANY";
 
-        AddChemicalReaction(Reaction(1101, "STD ONLY WITH SEQ", "CH3CH2(OH) + DNA + ", { { 5, 1, "", true }, { 10001, 1, DNASequenceForTestFindingDNA, false } }, { { 10, 1, "", true } }, nullptr, "standard normal reaction example"));
+        CellEngineChemicalReactionsManagerObject.AddChemicalReaction(Reaction(1101, "STD ONLY WITH SEQ", "CH3CH2(OH) + DNA + ", { { 5, 1, "", true }, { 10001, 1, DNASequenceForTestFindingDNA, false } }, { { 10, 1, "", true } }, nullptr, "standard normal reaction example"));
 
-        AddChemicalReaction(Reaction(10, "CUT 1 SEQ", "CH3CH2(OH) + DNA + ", { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink1, false } }, {}, &CellEngineChemicalReactionsInSimulationSpace::CutDNAInChosenPlaceSpecialReactionFunction, "only in presence of chosen sequence of DNA"));
+        CellEngineChemicalReactionsManagerObject.AddChemicalReaction(Reaction(10, "CUT 1 SEQ", "CH3CH2(OH) + DNA + ", { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink1, false } }, {}, &CellEngineChemicalReactionsInSimulationSpace::CutDNAInChosenPlaceSpecialReactionFunction, "only in presence of chosen sequence of DNA"));
 
-        AddChemicalReaction(Reaction(20, "LINK 1 SEQ", "CH3CH2(OH) + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink1, false }, { 10001, 1, DNASequence2ForTestCutLink1, false } }, {}, &CellEngineChemicalReactionsInSimulationSpace::LinkDNAInChosenPlaceSpecialReactionFunction, "links one strand of DNA with 2 endings with chosen sequences"));
-        AddChemicalReaction(Reaction(30, "LINK 1 ANY", "CH3CH2(OH) + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 2, DNASequence1ForTestCutLink1Any, false } }, {}, &CellEngineChemicalReactionsInSimulationSpace::LinkDNAInAnyPlaceSpecialReactionFunction, "link one strand of DNA with 2 endings with any sequence"));
+        CellEngineChemicalReactionsManagerObject.AddChemicalReaction(Reaction(20, "LINK 1 SEQ", "CH3CH2(OH) + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink1, false }, { 10001, 1, DNASequence2ForTestCutLink1, false } }, {}, &CellEngineChemicalReactionsInSimulationSpace::LinkDNAInChosenPlaceSpecialReactionFunction, "links one strand of DNA with 2 endings with chosen sequences"));
+        CellEngineChemicalReactionsManagerObject.AddChemicalReaction(Reaction(30, "LINK 1 ANY", "CH3CH2(OH) + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 2, DNASequence1ForTestCutLink1Any, false } }, {}, &CellEngineChemicalReactionsInSimulationSpace::LinkDNAInAnyPlaceSpecialReactionFunction, "link one strand of DNA with 2 endings with any sequence"));
 
-        AddChemicalReaction(Reaction(40, "CUT 2 SEQ SHIFT 3 10", "CH3CHCH2 + DNA + ", 3, 10, { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink2, false } }, { { 86, 1, "", true } }, &CellEngineChemicalReactionsInSimulationSpace::CutDNAInChosenPlaceSpecialReactionFunction, "cuts both strands when found first sequence plus additional shift in both strands defined by additional parameters shift1=3 shift=10"));
-        AddChemicalReaction(Reaction(41, "CUT 2 SEQ SHIFT 7 3", "CH3CHCH2 + DNA + ", 7, 3, { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink2, false } }, { { 86, 1, "", true } }, &CellEngineChemicalReactionsInSimulationSpace::CutDNAInChosenPlaceSpecialReactionFunction, "cuts both strands when found first sequence plus additional shift in both strands defined by additional parameters shift1=7 shift2=3"));
-        AddChemicalReaction(Reaction(42, "CUT 2 SEQ SHIFT 10 3", "CH3CHCH2 + DNA + ", 10, 3, { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink2, false } }, { { 86, 1, "", true } }, &CellEngineChemicalReactionsInSimulationSpace::CutDNAInChosenPlaceSpecialReactionFunction, "cuts both strands when found first sequence plus additional shift in both strands defined by additional parameters shift1=10 shift2=3"));
+        CellEngineChemicalReactionsManagerObject.AddChemicalReaction(Reaction(40, "CUT 2 SEQ SHIFT 3 10", "CH3CHCH2 + DNA + ", 3, 10, { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink2, false } }, { { 86, 1, "", true } }, &CellEngineChemicalReactionsInSimulationSpace::CutDNAInChosenPlaceSpecialReactionFunction, "cuts both strands when found first sequence plus additional shift in both strands defined by additional parameters shift1=3 shift=10"));
+        CellEngineChemicalReactionsManagerObject.AddChemicalReaction(Reaction(41, "CUT 2 SEQ SHIFT 7 3", "CH3CHCH2 + DNA + ", 7, 3, { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink2, false } }, { { 86, 1, "", true } }, &CellEngineChemicalReactionsInSimulationSpace::CutDNAInChosenPlaceSpecialReactionFunction, "cuts both strands when found first sequence plus additional shift in both strands defined by additional parameters shift1=7 shift2=3"));
+        CellEngineChemicalReactionsManagerObject.AddChemicalReaction(Reaction(42, "CUT 2 SEQ SHIFT 10 3", "CH3CHCH2 + DNA + ", 10, 3, { { 5, 1, "", false }, { 10001, 1, DNASequence1ForTestCutLink2, false } }, { { 86, 1, "", true } }, &CellEngineChemicalReactionsInSimulationSpace::CutDNAInChosenPlaceSpecialReactionFunction, "cuts both strands when found first sequence plus additional shift in both strands defined by additional parameters shift1=10 shift2=3"));
 
-        AddChemicalReaction(Reaction(60, "LINK 2 SEQ COMPLEMENT", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, "TACAAAAAAAGAGGTGTTAGC", false }, { 10001, 1, "TCTTATT", false } }, {}, &CellEngineChemicalReactionsInSimulationSpace::LinkDNALigaseInChosenPlaceSpecialReactionFunction, "Links both DNA strands if first strand has first sequence and second strand has second sequence and opposite joining strands and complementary"));
-        AddChemicalReaction(Reaction(61, "LINK 2 SEQ COMPLEMENT", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, "TACAAAAAAAGAGGTGTTAGCTCTT", false }, { 10001, 1, "ATTATGA", false } }, {}, &CellEngineChemicalReactionsInSimulationSpace::LinkDNALigaseInChosenPlaceSpecialReactionFunction, "Links both DNA strands if first strand has first sequence and second strand has second sequence and opposite joining strands and complementary"));
+        CellEngineChemicalReactionsManagerObject.AddChemicalReaction(Reaction(60, "LINK 2 SEQ COMPLEMENT", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, "TACAAAAAAAGAGGTGTTAGC", false }, { 10001, 1, "TCTTATT", false } }, {}, &CellEngineChemicalReactionsInSimulationSpace::LinkDNALigaseInChosenPlaceSpecialReactionFunction, "Links both DNA strands if first strand has first sequence and second strand has second sequence and opposite joining strands and complementary"));
+        CellEngineChemicalReactionsManagerObject.AddChemicalReaction(Reaction(61, "LINK 2 SEQ COMPLEMENT", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, "TACAAAAAAAGAGGTGTTAGCTCTT", false }, { 10001, 1, "ATTATGA", false } }, {}, &CellEngineChemicalReactionsInSimulationSpace::LinkDNALigaseInChosenPlaceSpecialReactionFunction, "Links both DNA strands if first strand has first sequence and second strand has second sequence and opposite joining strands and complementary"));
 
-        AddChemicalReaction(Reaction(70, "LINK 2 ANY COMPLEMENT", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, "ANY", false }, { 10001, 1, "ANY", false } }, {}, &CellEngineChemicalReactionsInSimulationSpace::LinkDNALigaseInAnyPlaceSpecialReactionFunction, "Links both DNA strands with any sequence if opposite joining strands when complementary"));
+        CellEngineChemicalReactionsManagerObject.AddChemicalReaction(Reaction(70, "LINK 2 ANY COMPLEMENT", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, "ANY", false }, { 10001, 1, "ANY", false } }, {}, &CellEngineChemicalReactionsInSimulationSpace::LinkDNALigaseInAnyPlaceSpecialReactionFunction, "Links both DNA strands with any sequence if opposite joining strands when complementary"));
 
-        AddChemicalReaction(Reaction(80, "LINK 2 ANY EQU SAME", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, "ANY", false }, { 10001, 1, "ANY", false } }, {}, &CellEngineChemicalReactionsInSimulationSpace::LinkDNAInAnyPlaceSpecialReactionFunction, "links both strands of DNA if they are cut equally in the same place"));
+        CellEngineChemicalReactionsManagerObject.AddChemicalReaction(Reaction(80, "LINK 2 ANY EQU SAME", "CH3CHCH2 + DNA + DNA + ", { { 5, 1, "", false }, { 10001, 1, "ANY", false }, { 10001, 1, "ANY", false } }, {}, &CellEngineChemicalReactionsInSimulationSpace::LinkDNAInAnyPlaceSpecialReactionFunction, "links both strands of DNA if they are cut equally in the same place"));
 
-        AddChemicalReaction(Reaction(100, "CUT CRISPER 1", "CH3CHCH2 + RNA + DNA + ", 3, 7, { { 5, 1, "", false }, { 10001, 1, DNASequenceForTestCutCrisper, false }, { 10001, 0, RNASequenceForTestCutCrisper, false } }, {}, &CellEngineChemicalReactionsInSimulationSpace::CutDNACrisperInChosenPlaceSpecialReactionFunction, "cut crisper of one strand of DNA with RNA as template"));
-        AddChemicalReaction(Reaction(110, "CUT CRISPER 2", "CH3CHCH2 + RNA + DNA + ", 3, 7, { { 5, 1, "", false }, { 10001, 1, DNASequenceForTestCutCrisper, false }, { 10001, 0, RNASequenceForTestCutCrisper, false } }, {}, &CellEngineChemicalReactionsInSimulationSpace::CutDNACrisperInChosenPlaceSpecialReactionFunction, "cut crisper of two strands of DNA with RNA as template"));
+        CellEngineChemicalReactionsManagerObject.AddChemicalReaction(Reaction(100, "CUT CRISPER 1", "CH3CHCH2 + RNA + DNA + ", 3, 7, { { 5, 1, "", false }, { 10001, 1, DNASequenceForTestCutCrisper, false }, { 10001, 0, RNASequenceForTestCutCrisper, false } }, {}, &CellEngineChemicalReactionsInSimulationSpace::CutDNACrisperInChosenPlaceSpecialReactionFunction, "cut crisper of one strand of DNA with RNA as template"));
+        CellEngineChemicalReactionsManagerObject.AddChemicalReaction(Reaction(110, "CUT CRISPER 2", "CH3CHCH2 + RNA + DNA + ", 3, 7, { { 5, 1, "", false }, { 10001, 1, DNASequenceForTestCutCrisper, false }, { 10001, 0, RNASequenceForTestCutCrisper, false } }, {}, &CellEngineChemicalReactionsInSimulationSpace::CutDNACrisperInChosenPlaceSpecialReactionFunction, "cut crisper of two strands of DNA with RNA as template"));
 
-        AddChemicalReaction(Reaction(150, "POLYMERASE DNA START SEQ", "CH3CHCH2 + DNA + ", { { 5, 1, "", false }, { 10001, 1, "TACAAAAAAAGAGGTGTTAGC", false } }, {}, &CellEngineChemicalReactionsInSimulationSpace::PolymeraseRNAStartSpecialReactionFunction, "links particle with DNA when found sequence and joins first nucleotide "));
-        AddChemicalReaction(Reaction(160, "POLYMERASE DNA CONTINUE", "CH3CHCH2 + DNA + ", { { 5, 1, "", false, { CellEngineConfigDataObject.RNAIdentifier, CellEngineConfigDataObject.DNAIdentifier } } }, {}, &CellEngineChemicalReactionsInSimulationSpace::PolymeraseRNAContinueSpecialReactionFunction, "links new nucleotide that fits nucleotide in DNA if free nucleotides are found in proximity"));
+        CellEngineChemicalReactionsManagerObject.AddChemicalReaction(Reaction(150, "POLYMERASE DNA START SEQ", "CH3CHCH2 + DNA + ", { { 5, 1, "", false }, { 10001, 1, "TACAAAAAAAGAGGTGTTAGC", false } }, {}, &CellEngineChemicalReactionsInSimulationSpace::PolymeraseRNAStartSpecialReactionFunction, "links particle with DNA when found sequence and joins first nucleotide "));
+        CellEngineChemicalReactionsManagerObject.AddChemicalReaction(Reaction(160, "POLYMERASE DNA CONTINUE", "CH3CHCH2 + DNA + ", { { 5, 1, "", false, { CellEngineConfigDataObject.RNAIdentifier, CellEngineConfigDataObject.DNAIdentifier } } }, {}, &CellEngineChemicalReactionsInSimulationSpace::PolymeraseRNAContinueSpecialReactionFunction, "links new nucleotide that fits nucleotide in DNA if free nucleotides are found in proximity"));
 
-        AddChemicalReaction(Reaction(1001, "STD", "C6H12O6 + O2 + ", { { 1, 1, "", true }, { 2, 6, "", true } }, { { 3, 6, "", true }, { 0, 6, "", true } }, nullptr));
-        AddChemicalReaction(Reaction(1002, "STD", "CH2CH2 + H2O + ", { { 4, 1, "", true }, { 0, 1, "", true } }, { { 5, 1, "", true } }, nullptr));
-        AddChemicalReaction(Reaction(1003, "STD", "CH3CHCH2 + HX + ", { { 6, 1, "", true }, { 7, 1, "", true } }, { { 8, 1, "", true } }, nullptr));
-        AddChemicalReaction(Reaction(1004, "STD", "CH2CH2 + O + ", { { 4,  1, "", true }, { 11, 1, "", true } }, { { 10, 1, "", true } }, nullptr));
+        CellEngineChemicalReactionsManagerObject.AddChemicalReaction(Reaction(1001, "STD", "C6H12O6 + O2 + ", { { 1, 1, "", true }, { 2, 6, "", true } }, { { 3, 6, "", true }, { 0, 6, "", true } }, nullptr));
+        CellEngineChemicalReactionsManagerObject.AddChemicalReaction(Reaction(1002, "STD", "CH2CH2 + H2O + ", { { 4, 1, "", true }, { 0, 1, "", true } }, { { 5, 1, "", true } }, nullptr));
+        CellEngineChemicalReactionsManagerObject.AddChemicalReaction(Reaction(1003, "STD", "CH3CHCH2 + HX + ", { { 6, 1, "", true }, { 7, 1, "", true } }, { { 8, 1, "", true } }, nullptr));
+        CellEngineChemicalReactionsManagerObject.AddChemicalReaction(Reaction(1004, "STD", "CH2CH2 + O + ", { { 4,  1, "", true }, { 11, 1, "", true } }, { { 10, 1, "", true } }, nullptr));
 
-        PreprocessChemicalReactions();
+        CellEngineChemicalReactionsManagerObject.PreprocessChemicalReactions();
 
         LoggersManagerObject.Log(STREAM("ADDED CHEMICAL REACTIONS"));
     }

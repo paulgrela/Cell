@@ -12,7 +12,7 @@
 #include "CellEngineReaction.h"
 #include "CellEngineConfigData.h"
 #include "CellEngineChemicalReactions.h"
-#include "CellEngineChemicalReactionsCreator.h"
+#include "CellEngineIllinoisDataCreator.h"
 #include "CellEngineBasicVoxelsOperations.h"
 #include "CellEngineParticlesVoxelsOperations.h"
 #include "CellEngineBasicParticlesOperations.h"

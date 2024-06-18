@@ -9,7 +9,14 @@
 #include "CellEngineConstants.h"
 #include "CellEngineChemicalReactions.h"
 
-class CellEngineChemicalReactionsCreator : virtual public CellEngineChemicalReactions
+class CellEngineCompiledDataCreator
+{
+public:
+    static void AddParticlesKinds();
+    static void AddChemicalReactions();
+};
+
+class CellEngineIllinoisDataCreator
 {
 private:
     EntityIdInt ParticleKindId = StartParticleKindId;
@@ -18,9 +25,9 @@ private:
     std::map<std::string, std::string> MappedNamesOfProteins;
     std::multimap<std::string, ParticleKindSpecialData> ParticlesDataForGenerator;
 public:
-    static void AddParticlesKinds();
-    void ReadChemicalReactionsFromFile();
-    void AddChemicalReactions();
+    //static void AddParticlesKinds();
+    //void AddChemicalReactions();
+    void ReadAllIllinoisDataFromFiles();
 public:
     static void ReadReactionsFromJSONFile(const std::string& FileName, bool ReadFromFile);
     void ReadReactionsFromXMLFile(const std::string& FileName);

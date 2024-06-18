@@ -1,5 +1,4 @@
 
-
 #include <set>
 #include <map>
 #include <algorithm>
@@ -339,10 +338,10 @@ void CellEngineSimulationSpace::FindAndExecuteChosenReaction(const UnsignedInt R
 {
     try
     {
-        auto ReactionIter = ReactionsPosFromId.find(ReactionId);
-        if (ReactionIter != ReactionsPosFromId.end())
+        auto ReactionIter = CellEngineChemicalReactionsManagerObject.ReactionsPosFromId.find(ReactionId);
+        if (ReactionIter != CellEngineChemicalReactionsManagerObject.ReactionsPosFromId.end())
         {
-            auto& ReactionObject = Reactions[ReactionIter->second];
+            auto& ReactionObject = CellEngineChemicalReactionsManagerObject.Reactions[ReactionIter->second];
 
             bool IsPossible = IsChemicalReactionPossible(ReactionObject);
             if (IsPossible == true)
@@ -438,7 +437,7 @@ void CellEngineSimulationSpace::SaveReactionsStatisticsToFile()
     try
     {
         for (const auto& ReactionData : SavedReactionsMap[SimulationStepNumber - 1])
-            LoggersManagerObject.LogStatistics(STREAM("REACTION ID = " << ReactionData.second.ReactionId << " REACTION NAME = " << GetReactionFromNumId(ReactionData.second.ReactionId).ReactionName << " REACTION ID_STR = #" << GetReactionFromNumId(ReactionData.second.ReactionId).ReactionIdStr << "# REACTION COUNTER = " << ReactionData.second.Counter));
+            LoggersManagerObject.LogStatistics(STREAM("REACTION ID = " << ReactionData.second.ReactionId << " REACTION NAME = " << CellEngineChemicalReactionsManagerObject.GetReactionFromNumId(ReactionData.second.ReactionId).ReactionName << " REACTION ID_STR = #" << CellEngineChemicalReactionsManagerObject.GetReactionFromNumId(ReactionData.second.ReactionId).ReactionIdStr << "# REACTION COUNTER = " << ReactionData.second.Counter));
     }
     CATCH("saving reactions statistics to file")
 }

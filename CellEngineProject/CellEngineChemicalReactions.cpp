@@ -8,16 +8,6 @@
 
 using namespace std;
 
-void CellEngineChemicalReactions::PreprocessChemicalReactions()
-{
-    try
-    {
-        for (auto& ReactionObject : Reactions)
-            sort(ReactionObject.Products.begin(), ReactionObject.Products.end(), [](ParticleKindForReaction& PK1, ParticleKindForReaction& PK2){ return ParticlesKindsManagerObject.GetParticleKind(PK1.EntityId).ListOfVoxels.size() > ParticlesKindsManagerObject.GetParticleKind(PK2.EntityId).ListOfVoxels.size(); } );
-    }
-    CATCH("executing constructor CellEngineChemicalReactions")
-}
-
 bool CellEngineChemicalReactions::TryToMakeRandomChemicalReaction(UnsignedInt NumberOfReactants)
 {
     try
@@ -42,10 +32,10 @@ bool CellEngineChemicalReactions::TryToMakeRandomChemicalReaction(UnsignedInt Nu
 
             LoggersManagerObject.Log(STREAM("Reaction Symbols = [" << ReactionSymbolsStr << "]" << endl));
 
-            auto NumberOfElementsForKey = ReactionsPosFromString.count(ReactionSymbolsStr);
+            auto NumberOfElementsForKey = CellEngineChemicalReactionsManagerObject.ReactionsPosFromString.count(ReactionSymbolsStr);
             if (NumberOfElementsForKey > 0)
             {
-                auto ReactionIter = ReactionsPosFromString.equal_range(ReactionSymbolsStr).first;
+                auto ReactionIter = CellEngineChemicalReactionsManagerObject.ReactionsPosFromString.equal_range(ReactionSymbolsStr).first;
                 if (NumberOfElementsForKey > 1)
                 {
                     uniform_int_distribution<UnsignedInt> UniformDistributionObjectSizeOfParticle_Uint64t(0, NumberOfElementsForKey - 1);
@@ -56,7 +46,7 @@ bool CellEngineChemicalReactions::TryToMakeRandomChemicalReaction(UnsignedInt Nu
                     for (UnsignedInt Step = 1; Step <= RandomShift; Step++)
                         ++ReactionIter;
                 }
-                auto& ReactionObject = Reactions[ReactionIter->second];
+                auto& ReactionObject = CellEngineChemicalReactionsManagerObject.Reactions[ReactionIter->second];
 
                 LoggersManagerObject.Log(STREAM("Reaction Position In Array = [" << to_string(ReactionIter->second) << "]" << endl));
                 LoggersManagerObject.Log(STREAM("Reaction Id Num = [" << to_string(ReactionObject.ReactionIdNum) << "]" << endl));

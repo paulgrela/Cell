@@ -102,8 +102,8 @@ add_executable(
 	CellEngineParticlesDataFile.cpp
 	CellEngineParticlesDataFile.h
 	CellEngineBuildParticlesDataOperations.h
-	CellEngineChemicalReactionsCreator.cpp
-	CellEngineChemicalReactionsCreator.h
+	CellEngineIllinoisDataCreator.cpp
+	CellEngineIllinoisDataCreator.h
 	CellEngineBasicVoxelsOperations.h
 	CellEngineNucleicAcidsBasicOperations.h
 	CellEngineParticlesVoxelsOperations.h

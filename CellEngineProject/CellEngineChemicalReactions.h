@@ -8,19 +8,51 @@
 #include "CellEngineReaction.h"
 #include "CellEngineRandomDeviceEngine.h"
 
-class CellEngineChemicalReactions : virtual public CellEngineRandomDeviceEngine
+//class CellEngineChemicalReactions : virtual public CellEngineRandomDeviceEngine
+//{
+//protected:
+//    std::vector<Reaction> Reactions;
+//    std::unordered_map<UnsignedInt, UnsignedInt> ReactionsPosFromId;
+//    std::unordered_multimap<std::string, UnsignedInt> ReactionsPosFromString;
+//protected:
+//    Reaction& GetReactionFromNumId(UnsignedInt ReactionId)
+//    {
+//        return Reactions[ReactionsPosFromId.find(ReactionId)->second];
+//    }
+//public:
+//    void PreprocessChemicalReactions();
+//public:
+//    void AddChemicalReaction(const Reaction& ReactionParam)
+//    {
+//        Reactions.emplace_back(ReactionParam);
+//        ReactionsPosFromId.insert(std::make_pair(ReactionParam.ReactionIdNum, Reactions.size() - 1));
+//        ReactionsPosFromString.insert(std::make_pair(ReactionParam.ReactantsStr, Reactions.size() - 1));
+//    }
+//public:
+//    virtual std::vector<UnsignedInt> GetRandomParticles(UnsignedInt NumberOfReactants) = 0;
+//    virtual bool IsChemicalReactionPossible(const Reaction& ReactionObject) = 0;
+//    virtual bool MakeChemicalReaction(Reaction& ReactionObject) = 0;
+//public:
+//    bool TryToMakeRandomChemicalReaction(UnsignedInt NumberOfReactants);
+//};
+
+class CellEngineChemicalReactionsManager : virtual public CellEngineRandomDeviceEngine
 {
-protected:
+public:
     std::vector<Reaction> Reactions;
     std::unordered_map<UnsignedInt, UnsignedInt> ReactionsPosFromId;
     std::unordered_multimap<std::string, UnsignedInt> ReactionsPosFromString;
-protected:
+public:
     Reaction& GetReactionFromNumId(UnsignedInt ReactionId)
     {
         return Reactions[ReactionsPosFromId.find(ReactionId)->second];
     }
 public:
-    void PreprocessChemicalReactions();
+    void PreprocessChemicalReactions()
+    {
+        for (auto& ReactionObject : Reactions)
+            sort(ReactionObject.Products.begin(), ReactionObject.Products.end(), [](ParticleKindForReaction& PK1, ParticleKindForReaction& PK2){ return ParticlesKindsManagerObject.GetParticleKind(PK1.EntityId).ListOfVoxels.size() > ParticlesKindsManagerObject.GetParticleKind(PK2.EntityId).ListOfVoxels.size(); } );
+    }
 public:
     void AddChemicalReaction(const Reaction& ReactionParam)
     {
@@ -28,6 +60,12 @@ public:
         ReactionsPosFromId.insert(std::make_pair(ReactionParam.ReactionIdNum, Reactions.size() - 1));
         ReactionsPosFromString.insert(std::make_pair(ReactionParam.ReactantsStr, Reactions.size() - 1));
     }
+};
+
+inline CellEngineChemicalReactionsManager CellEngineChemicalReactionsManagerObject;
+
+class CellEngineChemicalReactions : virtual public CellEngineRandomDeviceEngine
+{
 public:
     virtual std::vector<UnsignedInt> GetRandomParticles(UnsignedInt NumberOfReactants) = 0;
     virtual bool IsChemicalReactionPossible(const Reaction& ReactionObject) = 0;

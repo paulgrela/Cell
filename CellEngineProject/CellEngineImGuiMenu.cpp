@@ -613,6 +613,8 @@ public:
                     DrawSpaceStartXYZ[2] = static_cast<int>(get<2>(TempStartPos));
                 }
 
+                if (ImGui::Button("   ADD ILLINOIS DATA                  ") == true)
+                    CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ReadAllIllinoisDataFromFiles();
                 if (ImGui::Button("   ADD PARTICLE KINDS                 ") == true)
                     CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->AddParticlesKinds();
                 if (ImGui::Button("   ADD CHEMICAL REACTIONS             ") == true)
