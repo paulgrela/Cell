@@ -18,7 +18,8 @@
 #include "CellEngineDataFile.h"
 #include "CellEngineConfigData.h"
 #include "CellEngineOpenGLVisualiser.h"
-#include "CellEngineChemicalReactions.h"
+#include "CellEngineParticlesKindsManager.h"
+#include "CellEngineChemicalReactionsEngine.h"
 
 using namespace std;
 

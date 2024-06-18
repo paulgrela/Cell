@@ -18,6 +18,7 @@
 #include "CellEngineOpenGLVisualiser.h"
 #include "CellEngineOpenGLVisualiserOfVoxelSimulationSpace.h"
 #include "CellEngineOpenGLVisualiserOfFullAtomSimulationSpace.h"
+#include "CellEngineParticlesKindsManager.h"
 #include "CellEngineConfigurationFileReaderWriter.h"
 
 #include "CellEngineWellStirredChemicalReactionsSimulation.h"

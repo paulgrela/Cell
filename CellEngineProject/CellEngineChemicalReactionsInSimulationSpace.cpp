@@ -2,6 +2,7 @@
 #include "CellEngineConstants.h"
 #include "CellEngineParticle.h"
 
+#include "CellEngineParticlesKindsManager.h"
 #include "CellEngineChemicalReactionsInSimulationSpace.h"
 
 using namespace std;

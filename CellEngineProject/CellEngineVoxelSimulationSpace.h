@@ -11,7 +11,7 @@
 #include "CellEngineParticle.h"
 #include "CellEngineReaction.h"
 #include "CellEngineConfigData.h"
-#include "CellEngineChemicalReactions.h"
+#include "CellEngineChemicalReactionsEngine.h"
 #include "CellEngineIllinoisDataCreator.h"
 #include "CellEngineBasicVoxelsOperations.h"
 #include "CellEngineParticlesVoxelsOperations.h"

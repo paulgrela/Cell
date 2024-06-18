@@ -13,11 +13,11 @@
 #include "CellEngineTypes.h"
 #include "CellEngineParticle.h"
 #include "CellEngineReaction.h"
-#include "CellEngineChemicalReactions.h"
+#include "CellEngineChemicalReactionsEngine.h"
 
 using namespace std;
 
-class CellEngineWellStirredChemicalReactionsSimulation : public CellEngineChemicalReactions
+class CellEngineWellStirredChemicalReactionsSimulation : public CellEngineChemicalReactionsEngine
 {
 public:
     std::mt19937_64 mt64X{ std::random_device{}() };

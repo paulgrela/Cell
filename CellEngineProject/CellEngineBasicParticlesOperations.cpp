@@ -1,6 +1,7 @@
 
 #include <vector>
 
+#include "CellEngineParticlesKindsManager.h"
 #include "CellEngineBasicParticlesOperations.h"
 
 using namespace std;

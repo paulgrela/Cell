@@ -5,6 +5,7 @@
 
 #include "CellEngineConstants.h"
 #include "CellEngineDataFile.h"
+#include "CellEngineParticlesKindsManager.h"
 #include "CellEngineRealRandomParticlesInVoxelSpaceGenerator.h"
 
 using namespace std;

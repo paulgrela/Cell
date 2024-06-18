@@ -14,6 +14,7 @@
 #include "CellEngineDataFile.h"
 #include "CellEngineConfigData.h"
 #include "CellEnginePDBDataFileReader.h"
+#include "CellEngineParticlesKindsManager.h"
 #include "CellEngineConfigurationFileReaderWriter.h"
 #include "CellEngineDataBuilderForVoxelSimulationSpace.h"
 #include "CellEngineDataBuilderForFullAtomSimulationSpace.h"

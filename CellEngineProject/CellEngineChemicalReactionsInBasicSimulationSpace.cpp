@@ -1,4 +1,5 @@
 
+#include "CellEngineReaction.h"
 #include "CellEngineChemicalReactionsInBasicSimulationSpace.h"
 
 using namespace std;

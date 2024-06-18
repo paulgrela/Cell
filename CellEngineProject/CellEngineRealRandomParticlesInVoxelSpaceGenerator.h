@@ -2,6 +2,7 @@
 #ifndef CELL_ENGINE_REAL_RANDOM_PARTICLES_GENERATOR_H
 #define CELL_ENGINE_REAL_RANDOM_PARTICLES_GENERATOR_H
 
+#include "CellEngineParticleKind.h"
 #include "CellEngineRandomDeviceEngine.h"
 #include "CellEngineParticlesVoxelsShapesGenerator.h"
 

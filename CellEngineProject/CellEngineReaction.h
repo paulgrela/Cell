@@ -8,10 +8,33 @@
 #include <functional>
 
 #include "CellEngineTypes.h"
+#include "CellEngineUseful.h"
 
 class ParticleKind;
 
 class CellEngineChemicalReactionsInSimulationSpace;
+
+class ParticleKindForReaction
+{
+public:
+    EntityIdInt EntityId{};
+    UnsignedInt Counter{};
+    bool ToRemoveInReaction;
+    std::vector<UniqueIdInt> LinkedParticleTypes;
+public:
+    std::string SequenceStr;
+    std::vector<ChainIdInt> Sequence;
+public:
+    ParticleKindForReaction(EntityIdInt EntityIdParam, UnsignedInt CounterParam, std::string SequenceStrParam, bool ToRemoveInReactionParam) : EntityId(EntityIdParam), Counter(CounterParam), SequenceStr(std::move(SequenceStrParam)), ToRemoveInReaction(ToRemoveInReactionParam)
+    {
+        for (auto& NucleotideLetter : SequenceStr)
+            Sequence.emplace_back(CellEngineUseful::GetChainIdFromLetterForDNAorRNA(NucleotideLetter));
+    }
+    ParticleKindForReaction(EntityIdInt EntityIdParam, UnsignedInt CounterParam, std::string SequenceStrParam, bool ToRemoveInReactionParam, std::vector<UniqueIdInt> LinkedParticlesTypesParam) : ParticleKindForReaction(EntityIdParam, CounterParam, std::move(SequenceStrParam), ToRemoveInReactionParam)
+    {
+        LinkedParticleTypes = std::move(LinkedParticlesTypesParam);
+    }
+};
 
 class Reaction
 {

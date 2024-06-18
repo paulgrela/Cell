@@ -4,11 +4,12 @@
 #include "CellEngineTypes.h"
 
 #include "CellEngineParticle.h"
-#include "CellEngineChemicalReactions.h"
+#include "CellEngineChemicalReactionsEngine.h"
+#include "CellEngineChemicalReactionsManager.h"
 
 using namespace std;
 
-bool CellEngineChemicalReactions::TryToMakeRandomChemicalReaction(UnsignedInt NumberOfReactants)
+bool CellEngineChemicalReactionsEngine::TryToMakeRandomChemicalReaction(UnsignedInt NumberOfReactants)
 {
     try
     {

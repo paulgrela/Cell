@@ -4,6 +4,7 @@
 #include <gmock/gmock.h>
 
 #include "ExceptionsMacro.h"
+#include "../CellEngineChemicalReactionsManager.h"
 #include "../CellEngineWellStirredChemicalReactionsSimulation.h"
 
 using ::testing::Return;

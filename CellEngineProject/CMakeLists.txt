@@ -88,8 +88,8 @@ add_executable(
 	CellEngineAtom.cpp
 	CellEngineParticle.h
 	CellEngineReaction.h
-	CellEngineChemicalReactions.h
-	CellEngineChemicalReactions.cpp
+		CellEngineChemicalReactionsEngine.h
+		CellEngineChemicalReactionsEngine.cpp
 	CellEngineRandomDeviceEngine.cpp
 	CellEngineRandomDeviceEngine.h
 	CellEngineDataFile.h
@@ -149,7 +149,12 @@ add_executable(
 	CellEngineConfigurationFileReaderWriter.cpp
 	CellEngineWellStirredChemicalReactionsSimulation.h
 	CellEngineWellStirredChemicalReactionsSimulation.h
-	CellEngineWellStirredChemicalReactionsSimulation.cpp)
+	CellEngineWellStirredChemicalReactionsSimulation.cpp
+		CellEngineCompiledDataCreator.cpp
+		CellEngineCompiledDataCreator.h
+		CellEngineChemicalReactionsManager.h
+		CellEngineParticleKind.h
+		CellEngineParticlesKindsManager.h)
 
 if(WIN32)
 target_link_libraries(${PROJECT_NAME} -static-libgcc -static-libstdc++ -lpthread -lglew32 -lsb7 -lglfw3 -lopengl32 -lglu32 -limgui)
@@ -189,8 +194,8 @@ add_executable(
 	CellEngineAtom.cpp
 	CellEngineParticle.h
 	CellEngineReaction.h
-	CellEngineChemicalReactions.h
-	CellEngineChemicalReactions.cpp
+		CellEngineChemicalReactionsEngine.h
+		CellEngineChemicalReactionsEngine.cpp
 	CellEngineWellStirredChemicalReactionsSimulation.h
 	CellEngineWellStirredChemicalReactionsSimulation.cpp
 	tests/CellEngineRunTests.cpp)

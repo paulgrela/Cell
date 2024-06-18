@@ -7,6 +7,7 @@
 #include "DateTimeUtils.h"
 #include "CellEngineConfigData.h"
 #include "CellEnginePDBDataFileReader.h"
+#include "CellEngineParticlesKindsManager.h"
 
 using namespace std;
 using namespace string_utils;

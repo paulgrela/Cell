@@ -10,6 +10,7 @@
 #include "CellEngineConfigData.h"
 #include "CellEngineOpenGLVisualiser.h"
 #include "CellEngineSimulationSpace.h"
+#include "CellEngineParticlesKindsManager.h"
 #include "CellEngineOpenGLVisualiserOfVoxelSimulationSpace.h"
 
 std::tuple<UnsignedInt, UnsignedInt, UnsignedInt> CellEngineOpenGLVisualiserOfVoxelSimulationSpace::GetStartPositions()

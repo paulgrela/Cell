@@ -1,5 +1,6 @@
 
 #include "ExceptionsMacro.h"
+#include "CellEngineParticlesKindsManager.h"
 #include "CellEngineWellStirredChemicalReactionsSimulation.h"
 
 std::vector<UnsignedInt> CellEngineWellStirredChemicalReactionsSimulation::GetRandomParticles(const UnsignedInt NumberOfReactants)

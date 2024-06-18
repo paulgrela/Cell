@@ -10,6 +10,7 @@
 #include "CellEngineColors.h"
 #include "CellEngineUseful.h"
 #include "CellEngineSimulationSpace.h"
+#include "CellEngineChemicalReactionsManager.h"
 
 using namespace std;
 

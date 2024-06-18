@@ -11,6 +11,8 @@
 #include "CellEngineUseful.h"
 #include "CellEngineColors.h"
 #include "CellEngineConfigData.h"
+#include "CellEngineParticlesKindsManager.h"
+
 #include "CellEngineCIFDataFileReader.h"
 
 using namespace std;

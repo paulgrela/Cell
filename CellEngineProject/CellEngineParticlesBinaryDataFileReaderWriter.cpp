@@ -4,6 +4,7 @@
 #include "StringUtils.h"
 #include "DateTimeUtils.h"
 #include "DestinationPlatform.h"
+#include "CellEngineChemicalReactionsManager.h"
 #include "CellEngineParticlesBinaryDataFileReaderWriter.h"
 
 using namespace std;
@@ -144,12 +145,13 @@ void CellEngineParticlesBinaryDataFileReaderWriter::SaveChemicalReactionsToBinar
     {
         LoggersManagerObject.Log(STREAM("START OF SAVING CHEMICAL REACTIONS TO BINARY FILE"));
 
-//        UnsignedInt ParticlesSize = Reactions.size();
-//        LoggersManagerObject.Log(STREAM("Number of chemical reactions to be saved = " << ParticlesSize));
-//        ParticlesDataFile.write((char*)&ParticlesSize, sizeof(ParticlesSize));
-//
-//        for (const auto& ParticleObject : Particles)
-//        {
+        UnsignedInt ChemicalReactionsSize = CellEngineChemicalReactionsManagerObject.Reactions.size();
+        LoggersManagerObject.Log(STREAM("Number of chemical reactions to be saved = " << ChemicalReactionsSize));
+        ParticlesDataFile.write((char*)&ChemicalReactionsSize, sizeof(ChemicalReactionsSize));
+
+        for (const auto& ParticleObject : CellEngineChemicalReactionsManagerObject.Reactions)
+        {
+            //sawuje te co nie maja funkcji specjalnej
 //            ParticlesDataFile.write((char*)&ParticleObject.second.EntityId, sizeof(ParticleObject.second.EntityId));
 //            ParticlesDataFile.write((char*)&ParticleObject.second.ChainId, sizeof(ParticleObject.second.ChainId));
 //            ParticlesDataFile.write((char*)&ParticleObject.second.Index, sizeof(ParticleObject.second.Index));
@@ -166,7 +168,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::SaveChemicalReactionsToBinar
 //            SavePointerToBinaryFile(ParticlesDataFile, ParticleObject.second.PairedNucleotide);
 //
 //            SaveVectorToBinaryFile<Particle*>(ParticlesDataFile, ParticleObject.second.LinkedParticlesPointersList);
-//        }
+        }
 
         LoggersManagerObject.Log(STREAM("END OF SAVING CHEMICAL REACTIONS TO BINARY FILE"));
     }

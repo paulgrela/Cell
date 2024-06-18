@@ -1,20 +1,14 @@
 
-#ifndef CELL_ENGINE_CHEMICAL_REACTIONS_CREATOR_H
-#define CELL_ENGINE_CHEMICAL_REACTIONS_CREATOR_H
+#ifndef CELL_ENGINE_ILLINOIS_DATA_CREATOR_H
+#define CELL_ENGINE_ILLINOIS_DATA_CREATOR_H
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
 #include "CellEngineConstants.h"
-#include "CellEngineChemicalReactions.h"
-
-class CellEngineCompiledDataCreator
-{
-public:
-    static void AddParticlesKinds();
-    static void AddChemicalReactions();
-};
+#include "CellEngineParticleKind.h"
+#include "CellEngineChemicalReactionsEngine.h"
 
 class CellEngineIllinoisDataCreator
 {
@@ -25,8 +19,6 @@ private:
     std::map<std::string, std::string> MappedNamesOfProteins;
     std::multimap<std::string, ParticleKindSpecialData> ParticlesDataForGenerator;
 public:
-    //static void AddParticlesKinds();
-    //void AddChemicalReactions();
     void ReadAllIllinoisDataFromFiles();
 public:
     static void ReadReactionsFromJSONFile(const std::string& FileName, bool ReadFromFile);
