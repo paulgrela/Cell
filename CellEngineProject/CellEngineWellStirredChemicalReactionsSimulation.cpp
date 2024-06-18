@@ -28,7 +28,7 @@ std::vector<UnsignedInt> CellEngineWellStirredChemicalReactionsSimulation::GetRa
     return RandomParticlesTypes;
 }
 
-bool CellEngineWellStirredChemicalReactionsSimulation::MakeChemicalReaction(Reaction& ReactionObject)
+bool CellEngineWellStirredChemicalReactionsSimulation::MakeChemicalReaction(ChemicalReaction& ReactionObject)
 {
     try
     {
@@ -55,9 +55,9 @@ bool CellEngineWellStirredChemicalReactionsSimulation::MakeChemicalReaction(Reac
     return true;
 }
 
-bool CellEngineWellStirredChemicalReactionsSimulation::IsChemicalReactionPossible(const Reaction& ReactionObject)
+bool CellEngineWellStirredChemicalReactionsSimulation::IsChemicalReactionPossible(const ChemicalReaction& ReactionObject)
 {
-    return all_of(ReactionObject.Reactants.begin(), ReactionObject.Reactants.end(), [this](const ParticleKindForReaction& ReactionReactant){ return ReactionReactant.Counter <= ParticlesKindsManagerObject.ParticlesKinds[ReactionReactant.EntityId].Counter; });
+    return all_of(ReactionObject.Reactants.begin(), ReactionObject.Reactants.end(), [this](const ParticleKindForChemicalReaction& ReactionReactant){ return ReactionReactant.Counter <= ParticlesKindsManagerObject.ParticlesKinds[ReactionReactant.EntityId].Counter; });
 };
 
 void CellEngineWellStirredChemicalReactionsSimulation::Run(UnsignedInt NumberOfSteps)

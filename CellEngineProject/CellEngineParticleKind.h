@@ -107,5 +107,4 @@ public:
     }
 };
 
-
 #endif

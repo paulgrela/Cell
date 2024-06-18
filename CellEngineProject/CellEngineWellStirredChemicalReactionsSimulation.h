@@ -12,7 +12,7 @@
 #include "Logger.h"
 #include "CellEngineTypes.h"
 #include "CellEngineParticle.h"
-#include "CellEngineReaction.h"
+#include "CellEngineChemicalReaction.h"
 #include "CellEngineChemicalReactionsEngine.h"
 
 using namespace std;
@@ -23,8 +23,8 @@ public:
     std::mt19937_64 mt64X{ std::random_device{}() };
 public:
     std::vector<UnsignedInt> GetRandomParticles(UnsignedInt NumberOfReactants) override;
-    bool IsChemicalReactionPossible(const Reaction& ReactionObject)override;
-    bool MakeChemicalReaction(Reaction& ReactionObject) override;
+    bool IsChemicalReactionPossible(const ChemicalReaction& ReactionObject)override;
+    bool MakeChemicalReaction(ChemicalReaction& ReactionObject) override;
 public:
     void Run(UnsignedInt NumberOfSteps);
 };

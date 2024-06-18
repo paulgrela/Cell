@@ -8,7 +8,7 @@
 
 #include "CellEngineTypes.h"
 #include "CellEngineParticle.h"
-#include "CellEngineReaction.h"
+#include "CellEngineChemicalReaction.h"
 #include "CellEngineConfigData.h"
 #include "CellEngineChemicalReactionsEngine.h"
 #include "CellEngineCompiledDataCreator.h"
@@ -59,15 +59,15 @@ public:
     void GenerateChosenReactionForSelectedSpace(UnsignedInt ReactionId, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
 public:
 protected:
-    std::tuple<std::vector<std::pair<UniqueIdInt, UnsignedInt>>, bool> ChooseParticlesForReactionFromAllParticlesInProximity(const Reaction& ReactionObject);
+    std::tuple<std::vector<std::pair<UniqueIdInt, UnsignedInt>>, bool> ChooseParticlesForReactionFromAllParticlesInProximity(const ChemicalReaction& ReactionObject);
 protected:
     void PrepareRandomReaction();
     void FindAndExecuteRandomReaction();
     void FindAndExecuteChosenReaction(UnsignedInt ReactionId);
 protected:
     std::vector<UnsignedInt> GetRandomParticles(UnsignedInt NumberOfReactants) override;
-    bool IsChemicalReactionPossible(const Reaction& ReactionObject) override;
-    bool MakeChemicalReaction(Reaction& ReactionObject) override;
+    bool IsChemicalReactionPossible(const ChemicalReaction& ReactionObject) override;
+    bool MakeChemicalReaction(ChemicalReaction& ReactionObject) override;
 public:
     explicit CellEngineSimulationSpace(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : Particles(ParticlesParam)
     {

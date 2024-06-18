@@ -9,7 +9,7 @@
 #include "CellEngineTypes.h"
 #include "CellEngineAtom.h"
 #include "CellEngineParticle.h"
-#include "CellEngineReaction.h"
+#include "CellEngineChemicalReaction.h"
 #include "CellEngineConfigData.h"
 #include "CellEngineChemicalReactionsEngine.h"
 #include "CellEngineIllinoisDataCreator.h"

@@ -140,7 +140,7 @@ void CellEngineIllinoisDataCreator::GetProteinsFromXMLFile(const boost::property
     CATCH("getting proteins")
 }
 
-void GetDataForGeneProductsForReactionFromXMLFile(const boost::property_tree::ptree& PropertyTreeXMLTreeElementReactionGeneProduct, vector<ParticleKindForReaction>& LocalVectorOfElements, const string& Str0, const string& Str1, const string& Str2, const string& Str3)
+void GetDataForGeneProductsForReactionFromXMLFile(const boost::property_tree::ptree& PropertyTreeXMLTreeElementReactionGeneProduct, vector<ParticleKindForChemicalReaction>& LocalVectorOfElements, const string& Str0, const string& Str1, const string& Str2, const string& Str3)
 {
     try
     {
@@ -162,7 +162,7 @@ void GetDataForGeneProductsForReactionFromXMLFile(const boost::property_tree::pt
     CATCH("getting data for gene products from xml file")
 }
 
-void GetDataForReactionFromXMLFile(const boost::property_tree::ptree& PropertyTreeXMLTreeElementReaction, vector<ParticleKindForReaction>& LocalVectorOfElements, const string& Str0, const string& Str1, const string& Str2)
+void GetDataForReactionFromXMLFile(const boost::property_tree::ptree& PropertyTreeXMLTreeElementReaction, vector<ParticleKindForChemicalReaction>& LocalVectorOfElements, const string& Str0, const string& Str1, const string& Str2)
 {
     try
     {
@@ -183,12 +183,12 @@ void GetDataForReactionFromXMLFile(const boost::property_tree::ptree& PropertyTr
     CATCH("getting data for reaction from xml file")
 }
 
-string GetStringOfSortedParticlesDataNames(std::vector<ParticleKindForReaction>& LocalData)
+string GetStringOfSortedParticlesDataNames(std::vector<ParticleKindForChemicalReaction>& LocalData)
 {
     string KeyStringOfReaction;
     try
     {
-        sort(LocalData.begin(), LocalData.end(), [](const ParticleKindForReaction& P1, const ParticleKindForReaction& P2){ return ParticlesKindsManagerObject.GetParticleKind(P1.EntityId).Formula > ParticlesKindsManagerObject.GetParticleKind(P2.EntityId).Formula; } );
+        sort(LocalData.begin(), LocalData.end(), [](const ParticleKindForChemicalReaction& P1, const ParticleKindForChemicalReaction& P2){ return ParticlesKindsManagerObject.GetParticleKind(P1.EntityId).Formula > ParticlesKindsManagerObject.GetParticleKind(P2.EntityId).Formula; } );
         for (const auto& LocalReactant : LocalData)
             KeyStringOfReaction += ParticlesKindsManagerObject.GetParticleKind(LocalReactant.EntityId).Formula + "+";
     }
@@ -197,7 +197,7 @@ string GetStringOfSortedParticlesDataNames(std::vector<ParticleKindForReaction>&
     return KeyStringOfReaction;
 }
 
-void CellEngineIllinoisDataCreator::AddXMLChemicalReaction(Reaction& ReactionObject)
+void CellEngineIllinoisDataCreator::AddXMLChemicalReaction(ChemicalReaction& ReactionObject)
 {
     try
     {
@@ -227,14 +227,14 @@ void CellEngineIllinoisDataCreator::GetProperReactionsListFromXMLFile(const boos
         {
             LoggersManagerObject.Log(STREAM("REACTION = " << ReactionsPropertyTreeXMLTreeElementReaction.second.get<string>("<xmlattr>.id") << " " << ReactionsPropertyTreeXMLTreeElementReaction.second.get<string>("<xmlattr>.reversible") << " " << ReactionsPropertyTreeXMLTreeElementReaction.second.get<string>("<xmlattr>.name") << " " << ReactionsPropertyTreeXMLTreeElementReaction.second.get<string>("<xmlattr>.fbc:upperFluxBound") << " " << ReactionsPropertyTreeXMLTreeElementReaction.second.get<string>("<xmlattr>.fbc:lowerFluxBound")));
 
-            Reaction ReactionObject;
+            ChemicalReaction ReactionObject;
             ReactionObject.ReactionIdStr = ReactionsPropertyTreeXMLTreeElementReaction.second.get<string>("<xmlattr>.id");
             ReactionObject.ReactionName = ReactionsPropertyTreeXMLTreeElementReaction.second.get<string>("<xmlattr>.name");
             ReactionObject.Reversible = ReactionsPropertyTreeXMLTreeElementReaction.second.get<bool>("<xmlattr>.reversible");
             ReactionObject.UpperFluxBound = ReactionsPropertyTreeXMLTreeElementReaction.second.get<string>("<xmlattr>.fbc:upperFluxBound");
             ReactionObject.LowerFluxBound = ReactionsPropertyTreeXMLTreeElementReaction.second.get<string>("<xmlattr>.fbc:lowerFluxBound");
 
-            std::vector<ParticleKindForReaction> LocalReactantsOr;
+            std::vector<ParticleKindForChemicalReaction> LocalReactantsOr;
 
             if (ReactionsPropertyTreeXMLTreeElementReaction.second.get_child_optional("listOfReactants"))
                 GetDataForReactionFromXMLFile(ReactionsPropertyTreeXMLTreeElementReaction.second, ReactionObject.Products, "listOfReactants", "PRODUCT = ", "ERROR: PRODUCT in REACTION NOT FOUND");

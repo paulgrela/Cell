@@ -104,7 +104,7 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesAsSortedVectorElements()
     CATCH("saving particles as sorted vector elements")
 }
 
-void CellEngineSimulationSpaceStatistics::SaveReactionForStatistics(const Reaction& ReactionParam)
+void CellEngineSimulationSpaceStatistics::SaveReactionForStatistics(const ChemicalReaction& ReactionParam)
 {
     try
     {

@@ -1,10 +1,10 @@
 
-#include "CellEngineReaction.h"
+#include "CellEngineChemicalReaction.h"
 #include "CellEngineChemicalReactionsInBasicSimulationSpace.h"
 
 using namespace std;
 
-bool CellEngineChemicalReactionsInBasicSimulationSpace::CompareFitnessOfParticle(const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction)
+bool CellEngineChemicalReactionsInBasicSimulationSpace::CompareFitnessOfParticle(const ParticleKindForChemicalReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction)
 {
     return
         (ParticleKindForReactionObject.LinkedParticleTypes.empty() == true ||

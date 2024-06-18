@@ -18,7 +18,7 @@ protected:
     std::vector<UniqueIdInt> RNANucleotidesFreeFoundInProximity;
     std::vector<UniqueIdInt> RNANucleotidesFoundInProximity;
 protected:
-    static bool CompareFitnessOfParticle(const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction);
+    static bool CompareFitnessOfParticle(const ParticleKindForChemicalReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction);
     void EraseParticleChosenForReactionAndGetCentersForNewProductsOfReaction(UnsignedInt ParticleIndexChosenForReaction, std::vector <vector3_16> &Centers);
 protected:
     explicit CellEngineChemicalReactionsInBasicSimulationSpace(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : CellEngineBasicParticlesOperations(ParticlesParam)

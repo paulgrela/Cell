@@ -4,7 +4,7 @@
 
 #include <set>
 
-#include "CellEngineReaction.h"
+#include "CellEngineChemicalReaction.h"
 #include "CellEngineNucleicAcidsBasicOperations.h"
 #include "CellEngineNucleicAcidsComplexOperations.h"
 #include "CellEngineChemicalReactionsInBasicSimulationSpace.h"

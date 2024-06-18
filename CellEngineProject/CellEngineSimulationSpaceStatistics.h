@@ -4,7 +4,7 @@
 
 #include "ExceptionsMacro.h"
 #include "CellEngineParticle.h"
-#include "CellEngineReaction.h"
+#include "CellEngineChemicalReaction.h"
 #include "CellEngineBasicParticlesOperations.h"
 
 class ReactionStatistics
@@ -51,7 +51,7 @@ protected:
     void SaveParticlesAsCopiedMad();
     void SaveParticlesAsVectorElements();
     void SaveParticlesAsSortedVectorElements();
-    void SaveReactionForStatistics(const Reaction& ReactionParam);
+    void SaveReactionForStatistics(const ChemicalReaction& ReactionParam);
 };
 
 #endif

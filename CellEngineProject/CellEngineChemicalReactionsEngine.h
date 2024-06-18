@@ -5,15 +5,15 @@
 #include <string>
 
 #include "ExceptionsMacro.h"
-#include "CellEngineReaction.h"
+#include "CellEngineChemicalReaction.h"
 #include "CellEngineRandomDeviceEngine.h"
 
 class CellEngineChemicalReactionsEngine : virtual public CellEngineRandomDeviceEngine
 {
 public:
     virtual std::vector<UnsignedInt> GetRandomParticles(UnsignedInt NumberOfReactants) = 0;
-    virtual bool IsChemicalReactionPossible(const Reaction& ReactionObject) = 0;
-    virtual bool MakeChemicalReaction(Reaction& ReactionObject) = 0;
+    virtual bool IsChemicalReactionPossible(const ChemicalReaction& ReactionObject) = 0;
+    virtual bool MakeChemicalReaction(ChemicalReaction& ReactionObject) = 0;
 public:
     bool TryToMakeRandomChemicalReaction(UnsignedInt NumberOfReactants);
 };

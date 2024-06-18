@@ -58,7 +58,7 @@ tuple<vector<ChainIdInt>, string> CellEngineNucleicAcidsChemicalReactionsInSimul
     return { TemplateSequence, TemplateSequenceStr };
 }
 
-bool CellEngineNucleicAcidsChemicalReactionsInSimulationSpace::CompareFitnessOfDNASequenceByNucleotidesLoop(ComparisonType TypeOfComparison, const ParticleKindForReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction)
+bool CellEngineNucleicAcidsChemicalReactionsInSimulationSpace::CompareFitnessOfDNASequenceByNucleotidesLoop(ComparisonType TypeOfComparison, const ParticleKindForChemicalReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction)
 {
     bool FoundSequenceNotFit = false;
 
