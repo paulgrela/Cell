@@ -60,13 +60,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::SaveParticlesKindsToBinaryFi
         UnsignedInt ParticlesKindsSize = ParticlesKindsManagerObject.ParticlesKinds.size();
         ParticlesDataFile.write((char*)&ParticlesKindsSize, sizeof(ParticlesKindsSize));
         for (auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
-                                                                                                            //if  (ParticleKindObject.second.EntityId > StartParticleKindId || ParticleKindObject.second.EntityId == CellEngineConfigDataObject.DNAIdentifier)
         {
-
-//            if (ParticleKindObject.second.EntityId == 699)
-//                ParticleKindObject.second.EntityId = CellEngineConfigDataObject.NewDNAIdentifier;
-
-
             ParticlesDataFile.write((char*)&ParticleKindObject.second.EntityId, sizeof(ParticleKindObject.second.EntityId));
             ParticlesDataFile.write((char*)&ParticleKindObject.second.GeneId, sizeof(ParticleKindObject.second.GeneId));
             ParticlesDataFile.write((char*)&ParticleKindObject.second.ElectricCharge, sizeof(ParticleKindObject.second.ElectricCharge));
@@ -121,10 +115,6 @@ void CellEngineParticlesBinaryDataFileReaderWriter::SaveParticlesToBinaryFile(of
 
         for (auto& ParticleObject : Particles)
         {
-//                                if (ParticleObject.second.EntityId == 699)
-//                                    ParticleObject.second.EntityId = CellEngineConfigDataObject.NewDNAIdentifier;
-
-
             ParticlesDataFile.write((char*)&ParticleObject.second.EntityId, sizeof(ParticleObject.second.EntityId));
             ParticlesDataFile.write((char*)&ParticleObject.second.ChainId, sizeof(ParticleObject.second.ChainId));
             ParticlesDataFile.write((char*)&ParticleObject.second.Index, sizeof(ParticleObject.second.Index));
@@ -378,33 +368,6 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesKindsFromBinary
 
             ParticlesKindsManagerObject.ParticlesKinds[ParticleKindObject.EntityId] = ParticleKindObject;
         }
-
-//        for (UnsignedInt ParticleKindObjectIndex = 1; ParticleKindObjectIndex <= ParticlesKindsSize; ParticleKindObjectIndex++)
-//        {
-//            ParticleKind ParticleKindObject;
-//
-//            ParticlesDataFile.read((char*)&ParticleKindObject.EntityId, sizeof(ParticleKindObject.EntityId));
-//            ParticlesDataFile.read((char*)&ParticleKindObject.GraphicData.SizeX, sizeof(ParticleKindObject.GraphicData.SizeX));
-//            ParticlesDataFile.read((char*)&ParticleKindObject.GraphicData.SizeY, sizeof(ParticleKindObject.GraphicData.SizeY));
-//            ParticlesDataFile.read((char*)&ParticleKindObject.GraphicData.SizeZ, sizeof(ParticleKindObject.GraphicData.SizeZ));
-//            ParticlesDataFile.read((char*)&ParticleKindObject.GraphicData.AtomColor, sizeof(ParticleKindObject.GraphicData.AtomColor));
-//            ParticlesDataFile.read((char*)&ParticleKindObject.GraphicData.ParticleColor, sizeof(ParticleKindObject.GraphicData.ParticleColor));
-//            ParticlesDataFile.read((char*)&ParticleKindObject.GraphicData.RandomParticleColor, sizeof(ParticleKindObject.GraphicData.RandomParticleColor));
-//            ParticlesDataFile.read((char*)&ParticleKindObject.XSizeDiv2, sizeof(ParticleKindObject.XSizeDiv2));
-//            ParticlesDataFile.read((char*)&ParticleKindObject.YSizeDiv2, sizeof(ParticleKindObject.YSizeDiv2));
-//            ParticlesDataFile.read((char*)&ParticleKindObject.ZSizeDiv2, sizeof(ParticleKindObject.ZSizeDiv2));
-//
-//            ReadStringFromBinaryFile(ParticlesDataFile, ParticleKindObject.Name);
-//            ReadStringFromBinaryFile(ParticlesDataFile, ParticleKindObject.Formula);
-//            ReadStringFromBinaryFile(ParticlesDataFile, ParticleKindObject.GraphicData.NameFromXML);
-//            ReadStringFromBinaryFile(ParticlesDataFile, ParticleKindObject.GraphicData.NameFromDataFile);
-//
-//            ReadVectorFromBinaryFile<vector3_16>(ParticlesDataFile, ParticleKindObject.ListOfVoxels);
-//
-//            ParticleKindObject.GraphicData.Visible = true;
-//
-//            ParticlesKindsManagerObject.ParticlesKinds[ParticleKindObject.EntityId] = ParticleKindObject;
-//        }
 
         LoggersManagerObject.Log(STREAM("END OF READING PARTICLES KINDS FROM BINARY FILE"));
     }

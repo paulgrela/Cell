@@ -601,21 +601,6 @@ void CellEngineIllinoisDataCreator::ReadTSVFiles(bool Read, const string& Partic
     CATCH("reading tsv files")
 }
 
-//void CellEngineIllinoisDataCreator::AddSingleParticleKind(const ParticlesTypes ParticlesTypesObject, const UnsignedInt ParticleKindIdParam, const string& IdStrParam, const string& NameParam, const string& FormulaParam, const SignedInt GeneIdParam, const ElectricChargeType ElectricChargeParam, const string& CompartmentParam, const UnsignedInt CounterParam)
-//{
-//    try
-//    {
-//        ParticlesKindsManagerObject.AddParticleKind({ ParticleKindId, IdStrParam, NameParam, FormulaParam, static_cast<UnsignedInt>(GeneIdParam == -1 ? 0 : GeneIdParam), ElectricChargeParam, CompartmentParam, CounterParam });
-//        ParticlesKindsManagerObject.GetParticleKind(ParticleKindId).ParticleKindSpecialDataSector.emplace_back(ParticleKindSpecialData{ GeneIdParam, "", "", false, ParticlesTypesObject, false, CounterParam });
-//
-//        ParticleKindId++;
-//
-//        LoggersManagerObject.Log(STREAM("PARTICLE ADDED"));
-//
-//    }
-//    CATCH("adding ribosomes")
-//}
-
 void CellEngineIllinoisDataCreator::AddSingleParticleKind(const ParticlesTypes ParticlesTypesObject, EntityIdInt& ParticleKindIdParam, const string& IdStrParam, const string& NameParam, const string& FormulaParam, const SignedInt GeneIdParam, const ElectricChargeType ElectricChargeParam, const string& CompartmentParam, const UnsignedInt CounterParam)
 {
     try

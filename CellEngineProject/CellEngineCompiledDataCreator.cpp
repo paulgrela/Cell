@@ -28,8 +28,9 @@ void CellEngineCompiledDataCreator::AddParticlesKinds()
         ParticlesKindsManagerObject.AddParticleKind({ 11, "Oxygen", "0", "0", 0, 0, "c", 0 });
         ParticlesKindsManagerObject.AddParticleKind({ 12, "Polymerase", "POL", "POL", 0, 0, "c", 0 });
 
-        ParticlesKindsManagerObject.AddParticleKind({ CellEngineConfigDataObject.DNAIdentifier, "DNA", "DNA", "DNA", 0, 0, "c", 0 });
 
+        //MOZE DEFINICJE PONIZSZE JUZ NIEPOTRZEBNE
+        ParticlesKindsManagerObject.AddParticleKind({ CellEngineConfigDataObject.DNAIdentifier, "DNA", "DNA", "DNA", 0, 0, "c", 0 });
         ParticlesKindsManagerObject.AddParticleKind({ 10001, "DNA", "?", "?", 0, 0, "c", 0 });
 
         LoggersManagerObject.Log(STREAM("ADDED PARTICLES KINDS"));
