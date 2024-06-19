@@ -23,7 +23,8 @@ UnsignedInt CellEngineRealRandomParticlesInVoxelSpaceGenerator::GetNumberOfRealP
                 if (ParticleKindObject.ParticleKindSpecialDataSector.empty() == false)
                     for (const auto& ParticleKindSpecialDataObject : ParticleKindObject.ParticleKindSpecialDataSector)
                         if (ParticleKindSpecialDataObject.ParticleType == ParticleTypeParam)
-                            ParticlesCounter++;
+//                    if (ParticleKindObject.ParticleKindSpecialDataSector[0].ParticleType == ParticleTypeParam)
+                        ParticlesCounter++;
             }
     }
     CATCH("getting number of particles of type")
@@ -190,7 +191,6 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::TryToGenerateRandomPart
 
         UnsignedInt TryInsertNewParticleCounter = 0;
 
-        AddNewParticle(Particle(GetNewFreeIndexOfParticle(), ParticleKindObject.second.EntityId, 1, -1, 1, ParticleKindObject.second.ElectricCharge, GeneSequence, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
         while (TryInsertNewParticleCounter < MaxNumberOfTriesToInsertNewParticle && TryResult == false)
         {
             tie(PosX, PosY, PosZ) = GetRandomPositionInsideSphere(Radius, RadiusSize);
@@ -233,21 +233,20 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::InsertNewRandomParticle
         const auto start_time = chrono::high_resolution_clock::now();
 
         for (const auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
-            if (ParticleKindObject.second.EntityId >= StartParticleKindId)
-                if (ParticleKindObject.second.ParticleKindSpecialDataSector.empty() == false)
-                    for (const auto& ParticleKindSpecialDataObject: ParticleKindObject.second.ParticleKindSpecialDataSector)
-                        if (ParticleKindSpecialDataObject.ParticleType == ParticleTypeParam)
-                            for (UnsignedInt ParticleCounter = 1; ParticleCounter <= ParticleKindSpecialDataObject.CounterAtStartOfSimulation; ParticleCounter++)
-                            {
-                                LoggersManagerObject.Log(STREAM("Particle Type = " << ParticlesKindsManagerObject.ConvertParticleTypeToString(ParticleTypeParam) << " Counter = " << ParticleCounter));
+            if (ParticleKindObject.second.ParticleKindSpecialDataSector.empty() == false)
+                for (const auto& ParticleKindSpecialDataObject: ParticleKindObject.second.ParticleKindSpecialDataSector)
+                    if (ParticleKindSpecialDataObject.ParticleType == ParticleTypeParam)
+                        for (UnsignedInt ParticleCounter = 1; ParticleCounter <= ParticleKindSpecialDataObject.CounterAtStartOfSimulation; ParticleCounter++)
+                        {
+                            LoggersManagerObject.Log(STREAM("Particle Type = " << ParticlesKindsManagerObject.ConvertParticleTypeToString(ParticleTypeParam) << " Counter = " << ParticleCounter));
 
-                                auto GeneIter = ParticlesKindsManagerObject.Genes.find(ParticleKindSpecialDataObject.GeneId);
+                            auto GeneIter = ParticlesKindsManagerObject.Genes.find(ParticleKindSpecialDataObject.GeneId);
 
-                                if (GeneIter != ParticlesKindsManagerObject.Genes.end())
-                                    TryToGenerateRandomParticlesForType(ParticleKindObject, Radius, RadiusSize, NumberOfErrors, GeneIter->second.NumId, GeneIter->second.Sequence, GeneIter->second.Sequence.length());
-                                else
-                                    TryToGenerateRandomParticlesForType(ParticleKindObject, Radius, RadiusSize, NumberOfErrors, 0, "NO GENE", GetSizeOfGeneratedParticle(ParticleKindSpecialDataObject.ParticleType));
-                            }
+                            if (GeneIter != ParticlesKindsManagerObject.Genes.end())
+                                TryToGenerateRandomParticlesForType(ParticleKindObject, Radius, RadiusSize, NumberOfErrors, GeneIter->second.NumId, GeneIter->second.Sequence, GeneIter->second.Sequence.length());
+                            else
+                                TryToGenerateRandomParticlesForType(ParticleKindObject, Radius, RadiusSize, NumberOfErrors, 0, "NO GENE", GetSizeOfGeneratedParticle(ParticleKindSpecialDataObject.ParticleType));
+                        }
 
         const auto stop_time = chrono::high_resolution_clock::now();
 
