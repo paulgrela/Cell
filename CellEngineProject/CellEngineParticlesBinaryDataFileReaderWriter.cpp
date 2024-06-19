@@ -63,8 +63,8 @@ void CellEngineParticlesBinaryDataFileReaderWriter::SaveParticlesKindsToBinaryFi
                                                                                                             //if  (ParticleKindObject.second.EntityId > StartParticleKindId || ParticleKindObject.second.EntityId == CellEngineConfigDataObject.DNAIdentifier)
         {
 
-            if (ParticleKindObject.second.EntityId == CellEngineConfigDataObject.DNAIdentifier)
-                ParticleKindObject.second.EntityId = CellEngineConfigDataObject.NewDNAIdentifier;
+//            if (ParticleKindObject.second.EntityId == 699)
+//                ParticleKindObject.second.EntityId = CellEngineConfigDataObject.NewDNAIdentifier;
 
 
             ParticlesDataFile.write((char*)&ParticleKindObject.second.EntityId, sizeof(ParticleKindObject.second.EntityId));
@@ -121,8 +121,8 @@ void CellEngineParticlesBinaryDataFileReaderWriter::SaveParticlesToBinaryFile(of
 
         for (auto& ParticleObject : Particles)
         {
-                                if (ParticleObject.second.EntityId == CellEngineConfigDataObject.DNAIdentifier)
-                                    ParticleObject.second.EntityId = CellEngineConfigDataObject.NewDNAIdentifier;
+//                                if (ParticleObject.second.EntityId == 699)
+//                                    ParticleObject.second.EntityId = CellEngineConfigDataObject.NewDNAIdentifier;
 
 
             ParticlesDataFile.write((char*)&ParticleObject.second.EntityId, sizeof(ParticleObject.second.EntityId));
