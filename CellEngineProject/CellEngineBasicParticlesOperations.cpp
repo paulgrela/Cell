@@ -54,6 +54,7 @@ void CellEngineBasicParticlesOperations::GetMinMaxCoordinatesForAllParticles(con
     try
     {
         for (auto& ParticleObject : Particles)
+                                                        if (ParticleObject.second.EntityId != 0)
             GetMinMaxCoordinatesForParticle(ParticleObject.second, UpdateParticleKindListOfVoxelsBool);
     }
     CATCH("getting min max coordinates for all particles")

@@ -28,7 +28,7 @@ public:
     void GetProperReactionsListFromXMLFile(const boost::property_tree::ptree& ReactionsPropertyTreeXMLTreeElement);
     void AddXMLChemicalReaction(ChemicalReaction& ReactionObject);
 public:
-    void AddSingleParticleKind(ParticlesTypes ParticlesTypesObject, UnsignedInt EntityIdParam, const std::string& IdStrParam, const std::string& NameParam, const std::string& FormulaParam, SignedInt GeneIdParam, ElectricChargeType ElectricChargeParam, const std::string& CompartmentParam, UnsignedInt CounterParam);
+    static void AddSingleParticleKind(ParticlesTypes ParticlesTypesObject, EntityIdInt& ParticleKindIdParam, const std::string& IdStrParam, const std::string& NameParam, const std::string& FormulaParam, SignedInt GeneIdParam, ElectricChargeType ElectricChargeParam, const std::string& CompartmentParam, UnsignedInt CounterParam);
 public:
     static void PrintGenesFile();
     void PrintAllParticlesData();

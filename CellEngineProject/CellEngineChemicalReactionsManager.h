@@ -7,7 +7,7 @@
 #include "CellEngineRandomDeviceEngine.h"
 #include "CellEngineParticlesKindsManager.h"
 
-class CellEngineChemicalReactionsManager : virtual public CellEngineRandomDeviceEngine
+class ChemicalReactionsManager : virtual public CellEngineRandomDeviceEngine
 {
 public:
     std::vector<ChemicalReaction> ChemicalReactions;
@@ -33,6 +33,6 @@ public:
     }
 };
 
-inline CellEngineChemicalReactionsManager CellEngineChemicalReactionsManagerObject;
+inline ChemicalReactionsManager ChemicalReactionsManagerObject;
 
 #endif

@@ -204,13 +204,13 @@ void CellEngineIllinoisDataCreator::AddXMLChemicalReaction(ChemicalReaction& Rea
         ReactionObject.ReactionIdNum = ReactionId;
         ReactionObject.ReactantsStr = GetStringOfSortedParticlesDataNames(ReactionObject.Reactants);
         ReactionObject.SpecialReactionFunction = nullptr;
-        CellEngineChemicalReactionsManagerObject.AddChemicalReaction(ReactionObject);
+        ChemicalReactionsManagerObject.AddChemicalReaction(ReactionObject);
 
         if (ReactionObject.Reversible == true)
         {
             ReactionObject.ReactantsStr = GetStringOfSortedParticlesDataNames(ReactionObject.Products);
             swap(ReactionObject.Products, ReactionObject.Reactants);
-            CellEngineChemicalReactionsManagerObject.AddChemicalReaction(ReactionObject);
+            ChemicalReactionsManagerObject.AddChemicalReaction(ReactionObject);
         }
 
         ReactionId++;
@@ -601,14 +601,29 @@ void CellEngineIllinoisDataCreator::ReadTSVFiles(bool Read, const string& Partic
     CATCH("reading tsv files")
 }
 
-void CellEngineIllinoisDataCreator::AddSingleParticleKind(const ParticlesTypes ParticlesTypesObject, const UnsignedInt ParticleKindIdParam, const string& IdStrParam, const string& NameParam, const string& FormulaParam, const SignedInt GeneIdParam, const ElectricChargeType ElectricChargeParam, const string& CompartmentParam, const UnsignedInt CounterParam)
+//void CellEngineIllinoisDataCreator::AddSingleParticleKind(const ParticlesTypes ParticlesTypesObject, const UnsignedInt ParticleKindIdParam, const string& IdStrParam, const string& NameParam, const string& FormulaParam, const SignedInt GeneIdParam, const ElectricChargeType ElectricChargeParam, const string& CompartmentParam, const UnsignedInt CounterParam)
+//{
+//    try
+//    {
+//        ParticlesKindsManagerObject.AddParticleKind({ ParticleKindId, IdStrParam, NameParam, FormulaParam, static_cast<UnsignedInt>(GeneIdParam == -1 ? 0 : GeneIdParam), ElectricChargeParam, CompartmentParam, CounterParam });
+//        ParticlesKindsManagerObject.GetParticleKind(ParticleKindId).ParticleKindSpecialDataSector.emplace_back(ParticleKindSpecialData{ GeneIdParam, "", "", false, ParticlesTypesObject, false, CounterParam });
+//
+//        ParticleKindId++;
+//
+//        LoggersManagerObject.Log(STREAM("PARTICLE ADDED"));
+//
+//    }
+//    CATCH("adding ribosomes")
+//}
+
+void CellEngineIllinoisDataCreator::AddSingleParticleKind(const ParticlesTypes ParticlesTypesObject, EntityIdInt& ParticleKindIdParam, const string& IdStrParam, const string& NameParam, const string& FormulaParam, const SignedInt GeneIdParam, const ElectricChargeType ElectricChargeParam, const string& CompartmentParam, const UnsignedInt CounterParam)
 {
     try
     {
-        ParticlesKindsManagerObject.AddParticleKind({ ParticleKindId, IdStrParam, NameParam, FormulaParam, static_cast<UnsignedInt>(GeneIdParam == -1 ? 0 : GeneIdParam), ElectricChargeParam, CompartmentParam, CounterParam });
-        ParticlesKindsManagerObject.GetParticleKind(ParticleKindId).ParticleKindSpecialDataSector.emplace_back(ParticleKindSpecialData{ GeneIdParam, "", "", false, ParticlesTypesObject, false, CounterParam });
+        ParticlesKindsManagerObject.AddParticleKind({ ParticleKindIdParam, IdStrParam, NameParam, FormulaParam, static_cast<UnsignedInt>(GeneIdParam == -1 ? 0 : GeneIdParam), ElectricChargeParam, CompartmentParam, CounterParam });
+        ParticlesKindsManagerObject.GetParticleKind(ParticleKindIdParam).ParticleKindSpecialDataSector.emplace_back(ParticleKindSpecialData{ GeneIdParam, "", "", false, ParticlesTypesObject, false, CounterParam });
 
-        ParticleKindId++;
+        ParticleKindIdParam++;
 
         LoggersManagerObject.Log(STREAM("PARTICLE ADDED"));
 
@@ -620,6 +635,12 @@ void CellEngineIllinoisDataCreator::ReadAllIllinoisDataFromFiles()
 {
     try
     {
+        ParticlesKindsManagerObject.Genes.clear();
+        ParticlesKindsManagerObject.ParticlesKinds.clear();
+        ChemicalReactionsManagerObject.ChemicalReactions.clear();
+
+        AddSingleParticleKind(ParticlesTypes::DNANucleotide, CellEngineConfigDataObject.DNAIdentifier, "DNANucleotide", "DNANucleotide", "dna", -1, 0, "c", 10);
+
         ReadAndParseGenesFile(string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("genome") + OS_DIR_SEP + string("GENES.txt"));
         PrintGenesFile();
 
@@ -647,7 +668,7 @@ void CellEngineIllinoisDataCreator::ReadAllIllinoisDataFromFiles()
 
         CheckHowManyParticleDataForGeneratorIsNotInParticleKindsAndAddThem(false);
 
-        LoggersManagerObject.Log(STREAM("REACTIONS READ FROM FILE"));
+        LoggersManagerObject.Log(STREAM("ALL DATA READ FROM FILE"));
     }
     CATCH("reading chemical reactions from file")
 }

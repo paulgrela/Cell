@@ -12,7 +12,8 @@ void CellEngineParticlesDataFile::ReadDataFromFile(const bool StartValuesBool, c
 
         switch (Type)
         {
-            case CellEngineConfigData::TypesOfFileToRead::BinaryFile : ReadParticlesFromBinaryFileAndPrepareData(StartValuesBool, UpdateParticleKindListOfVoxelsBool, Type); break;
+            case CellEngineConfigData::TypesOfFileToRead::BinaryFile :
+                ReadAllDataFromBinaryFileAndPrepareData(StartValuesBool, UpdateParticleKindListOfVoxelsBool, Type); break;
             case CellEngineConfigData::TypesOfFileToRead::CIFFile : ReadDataFromCIFFile(); break;
             default : break;
         }

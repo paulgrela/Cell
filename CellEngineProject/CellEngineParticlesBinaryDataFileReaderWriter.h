@@ -25,7 +25,7 @@ public:
     static void ReadChemicalReactionsFromBinaryFile(std::ifstream& ParticlesDataFile);
     void ReadParticlesKindsAndParticlesAndChemicalReactionsAndGenesFromBinaryFile(CellEngineConfigData::TypesOfFileToRead Type);
     void PrepareParticlesAfterReadingFromBinaryFile();
-    void ReadParticlesFromBinaryFileAndPrepareData(bool StartValuesBool, bool UpdateParticleKindListOfVoxelsBool, CellEngineConfigData::TypesOfFileToRead Type);
+    void ReadAllDataFromBinaryFileAndPrepareData(const bool StartValuesBool, const bool UpdateParticleKindListOfVoxelsBool, CellEngineConfigData::TypesOfFileToRead Type);
 };
 
 

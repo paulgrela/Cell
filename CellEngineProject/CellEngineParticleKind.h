@@ -24,7 +24,7 @@ struct ParticleKindGraphicData
 
 enum class ParticlesTypes : UnsignedInt
 {
-    Empty = 0,
+    DNANucleotide = 0,
     Basic = 1,
     Lipid = 2,
     mRNA = 3,
@@ -40,7 +40,8 @@ enum class ParticlesTypes : UnsignedInt
     RNAPolymerase = 13,
     DNAPolymerase = 14,
     Ribosome = 15,
-    Other = 16
+    Other = 16,
+    Empty = 17
 };
 
 class Gene

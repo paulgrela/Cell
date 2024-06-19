@@ -63,12 +63,27 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::PrintNumberOfParticlesF
         LoggersManagerObject.Log(STREAM("Total Number Of All Particles = " << Particles.size()));
 
         UnsignedInt OldParticlesKindsCounter = 0;
-
         for (const auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
             if (ParticleKindObject.second.EntityId < StartParticleKindId)
                 OldParticlesKindsCounter++;
-
         LoggersManagerObject.Log(STREAM("Old Particles Kinds Counter = " << OldParticlesKindsCounter));
+
+        UniqueIdInt OldParticlesCounter = 0;
+        set<UniqueIdInt> TestSet;
+        for (const auto& ParticleObject : Particles)
+        {
+            if (ParticleObject.second.EntityId < StartParticleKindId)
+            {
+                TestSet.insert(ParticleObject.second.EntityId);
+                OldParticlesCounter++;
+            }
+            //if (ParticleObject.second.EntityId == 0)
+            //    LoggersManagerObject.Log(STREAM("Element id 0 = " << ParticlesKindsManagerObject.GetParticleKind(ParticleObject.second.EntityId).IdStr << " " << ParticlesKindsManagerObject.GetParticleKind(ParticleObject.second.EntityId).Name << " " << ParticlesKindsManagerObject.GetParticleKind(ParticleObject.second.EntityId).Name));
+        }
+        LoggersManagerObject.Log(STREAM("Old Particles Counter = " << OldParticlesCounter));
+
+        for (const auto& TestSetElementObject : TestSet)
+            LoggersManagerObject.Log(STREAM("Test set element id = " << TestSetElementObject));
     }
     CATCH("printing number of particles for all main types of particles")
 }
