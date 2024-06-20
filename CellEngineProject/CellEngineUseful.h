@@ -23,16 +23,6 @@ namespace CellEngineUseful
         #endif
     }
 
-    inline EntityIdInt IfSpecialDNAThenReturnNormalDNACode(const EntityIdInt EntityId)
-    {
-        return EntityId > 10000 ? CellEngineConfigDataObject.DNAIdentifier : EntityId;
-    }
-
-    inline bool IsSpecialDNA(const EntityIdInt EntityId)
-    {
-        return EntityId > 10000;
-    }
-
     inline bool IsDNAorRNA(const EntityIdInt EntityId)
     {
         return EntityId == CellEngineConfigDataObject.DNAIdentifier || EntityId == CellEngineConfigDataObject.RNAIdentifier;

@@ -113,9 +113,6 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::PrintNumberOfParticlesF
                     ParticleKindObject.second.ParticleKindSpecialDataSector.erase(ParticleKindObject.second.ParticleKindSpecialDataSector.begin());
                 }
 
-        //for (const auto& ParticleIndex : GetAllParticlesWithChosenEntityId(CellEngineConfigDataObject.DNAIdentifier))
-        //    RemoveParticle(ParticleIndex, true);
-
         LoggersManagerObject.Log(STREAM("CountMultiParticleKind = " << CountMultiParticleKind));
 
         LoggersManagerObject.Log(STREAM("Number Of Ribosomes P = " << GetNumberOfRealParticlesOfKind(ParticlesTypes::Ribosome)));

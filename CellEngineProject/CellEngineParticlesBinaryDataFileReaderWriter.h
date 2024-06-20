@@ -5,7 +5,7 @@
 #include "CellEngineDataFile.h"
 #include "CellEngineBuildParticlesDataOperations.h"
 
-class CellEngineParticlesBinaryDataFileReaderWriter : virtual public CellEngineDataFile, virtual public CellEngineBuildParticlesDataOperations//, virtual public CellEngineChemicalReactions
+class CellEngineParticlesBinaryDataFileReaderWriter : virtual public CellEngineDataFile, virtual public CellEngineBuildParticlesDataOperations
 {
 public:
     explicit CellEngineParticlesBinaryDataFileReaderWriter() = default;
@@ -25,7 +25,7 @@ public:
     static void ReadChemicalReactionsFromBinaryFile(std::ifstream& ParticlesDataFile);
     void ReadParticlesKindsAndParticlesAndChemicalReactionsAndGenesFromBinaryFile(CellEngineConfigData::TypesOfFileToRead Type);
     void PrepareParticlesAfterReadingFromBinaryFile();
-    void ReadAllDataFromBinaryFileAndPrepareData(const bool StartValuesBool, const bool UpdateParticleKindListOfVoxelsBool, CellEngineConfigData::TypesOfFileToRead Type);
+    void ReadAllDataFromBinaryFileAndPrepareData(bool StartValuesBool, bool UpdateParticleKindListOfVoxelsBool, CellEngineConfigData::TypesOfFileToRead Type);
 };
 
 
