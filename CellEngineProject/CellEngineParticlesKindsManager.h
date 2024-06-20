@@ -2,11 +2,13 @@
 #ifndef CELL_ENGINE_PARTICLES_KINDS_MANAGER_H
 #define CELL_ENGINE_PARTICLES_KINDS_MANAGER_H
 
+#include <string>
 #include <optional>
 
 #include "ExceptionsMacro.h"
 #include "CellEngineUseful.h"
 #include "CellEngineColors.h"
+#include "CellEngineConstants.h"
 #include "CellEngineParticleKind.h"
 
 struct AtomKindGraphicData
@@ -89,6 +91,22 @@ public:
 
         return AtomKindObjectIterator;
     }
+public:
+    void PrintAllParticleKinds()
+    {
+        try
+        {
+            for (const auto& ParticleKindObject : ParticlesKinds)
+            {
+                LoggersManagerObject.Log(STREAM("KIND PARTICLE = " << ParticleKindObject.second.EntityId << " " << ParticleKindObject.second.IdStr << " " << ParticleKindObject.second.Name << " " << ParticleKindObject.second.Formula << " " << ParticleKindObject.second.ElectricCharge << " GeneId = " << ParticleKindObject.second.GeneId));
+                for (const auto& ParticleKindParticleKindSpecialDataSectorObject : ParticleKindObject.second.ParticleKindSpecialDataSector)
+                    LoggersManagerObject.Log(STREAM(std::string("KIND GENE = " + std::string(ParticleKindParticleKindSpecialDataSectorObject.GeneId != -1 ? "JCVISYN3A_" + std::to_string(ParticleKindParticleKindSpecialDataSectorObject.GeneId) : "NoGene") + " TYPE = " + ParticlesKindsManager::ConvertParticleTypeToString(ParticleKindParticleKindSpecialDataSectorObject.ParticleType) + " D = #" + ParticleKindParticleKindSpecialDataSectorObject.Description + "# Added = #" + ParticleKindParticleKindSpecialDataSectorObject.AddedParticle + "# CLEAN PRODUCT = #" + std::to_string(ParticleKindParticleKindSpecialDataSectorObject.CleanProductOfTranscription) + "# COUNTER = " + std::to_string(ParticleKindParticleKindSpecialDataSectorObject.CounterAtStartOfSimulation))));                ;
+
+                LoggersManagerObject.Log(STREAM(""));
+            }
+        }
+        CATCH("printing all particle kinds")
+    };
 public:
     static std::string ConvertParticleTypeToString(ParticlesTypes ParticleType)
     {

@@ -184,7 +184,6 @@ public:
     bool ImGuiLightVersion = false;
 public:
     int ChosenShapeOfAtoms = 1;
-                EntityIdInt NewDNAIdentifier = 10001;
     EntityIdInt DNAIdentifier{};
     EntityIdInt RNAIdentifier{};
 public:

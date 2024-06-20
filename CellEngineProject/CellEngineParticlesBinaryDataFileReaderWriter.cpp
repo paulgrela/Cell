@@ -236,8 +236,6 @@ void CellEngineParticlesBinaryDataFileReaderWriter::SaveParticlesKindsAndParticl
         ParticlesDataFile.close();
 
         LoggersManagerObject.Log(STREAM("END OF SAVING DATA TO BINARY FILE"));
-
-        CellEngineConfigDataObject.DNAIdentifier = CellEngineConfigDataObject.NewDNAIdentifier;
     }
     CATCH("saving particles to file")
 };

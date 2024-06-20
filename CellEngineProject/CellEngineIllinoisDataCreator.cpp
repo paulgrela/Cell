@@ -296,23 +296,6 @@ void CellEngineIllinoisDataCreator::ReadReactionsFromXMLFile(const string& FileN
     CATCH("reading reactions from xml file")
 }
 
-void CellEngineIllinoisDataCreator::PrintAllParticleKinds()
-{
-    try
-    {
-        for (const auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
-            if (ParticleKindObject.second.EntityId >= StartParticleKindId)
-            {
-                LoggersManagerObject.Log(STREAM("KIND PARTICLE = " << ParticleKindObject.second.EntityId << " " << ParticleKindObject.second.IdStr << " " << ParticleKindObject.second.Name << " " << ParticleKindObject.second.Formula << " " << ParticleKindObject.second.ElectricCharge << " GeneId = " << ParticleKindObject.second.GeneId));
-                for (const auto& ParticleKindParticleKindSpecialDataSectorObject : ParticleKindObject.second.ParticleKindSpecialDataSector)
-                    LoggersManagerObject.Log(STREAM(string("KIND GENE = " + string(ParticleKindParticleKindSpecialDataSectorObject.GeneId != -1 ? "JCVISYN3A_" + to_string(ParticleKindParticleKindSpecialDataSectorObject.GeneId) : "NoGene") + " TYPE = " + ParticlesKindsManager::ConvertParticleTypeToString(ParticleKindParticleKindSpecialDataSectorObject.ParticleType) + " D = #" + ParticleKindParticleKindSpecialDataSectorObject.Description + "# Added = #" + ParticleKindParticleKindSpecialDataSectorObject.AddedParticle + "# CLEAN PRODUCT = #" + to_string(ParticleKindParticleKindSpecialDataSectorObject.CleanProductOfTranscription) + "# COUNTER = " + to_string(ParticleKindParticleKindSpecialDataSectorObject.CounterAtStartOfSimulation))));                ;
-
-                LoggersManagerObject.Log(STREAM(""));
-            }
-    }
-    CATCH("printing all particle kinds")
-};
-
 void CellEngineIllinoisDataCreator::CheckHowManyParticleDataForGeneratorIsNotInParticleKindsAndAddThem(const bool UpdateParticleKinds)
 {
     try
@@ -573,9 +556,9 @@ void CellEngineIllinoisDataCreator::ReadCSVFiles(bool Read, const string& Partic
 
             ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("Escher_metData.csv"), ','), 1, 240, 0, -1, -1, -1, 1, true, false, 0,"M_", "basic", 0, 0, ParticlesTypes::Basic);
 
-            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("trna_metabolites_synthase.csv"), ','), 1, 29, 0, 2, 3, -1, -1, false, false, 10, "", "_uncharged_trna_", 7, 4, ParticlesTypes::tRNA_uncharged);
-            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("trna_metabolites_synthase.csv"), ','), 1, 29, 1, 2, 3, -1, -1, false, false, 10, "", "_charged_trna_", 7, 4, ParticlesTypes::tRNA_charged);
-            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("mrna_counts.csv"), ','), 1, 454, 1, 1, -1, -1, -1, true, false, 10, "mrna_", "", 10, 4, ParticlesTypes::mRNA);
+            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("trna_metabolites_synthase.csv"), ','), 1, 29, 0, 2, 3, -1, -1, false, false, 100, "", "_uncharged_trna_", 7, 4, ParticlesTypes::tRNA_uncharged);
+            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("trna_metabolites_synthase.csv"), ','), 1, 29, 1, 2, 3, -1, -1, false, false, 100, "", "_charged_trna_", 7, 4, ParticlesTypes::tRNA_charged);
+            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("mrna_counts.csv"), ','), 1, 454, 1, 1, -1, -1, -1, true, false, 1, "mrna_", "", 10, 4, ParticlesTypes::mRNA);
             ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("rrna_metabolites.csv"), ','), 1, 6, 0, 1, -1, -1, -1, false, false, 10, "rrna_", "", 10, 4, ParticlesTypes::rRNA);
 
             ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("polymerase_rna_proteins.csv"), ','), 1, 4, 0, 1, -1, -1, -1, false, true, 10, "", "", 7, 4, ParticlesTypes::RNAPolymeraseProtein);
@@ -624,7 +607,8 @@ void CellEngineIllinoisDataCreator::ReadAllIllinoisDataFromFiles()
         ParticlesKindsManagerObject.ParticlesKinds.clear();
         ChemicalReactionsManagerObject.ChemicalReactions.clear();
 
-        AddSingleParticleKind(ParticlesTypes::DNANucleotide, CellEngineConfigDataObject.DNAIdentifier, "DNANucleotide", "DNANucleotide", "dna", -1, 0, "c", 10);
+        EntityIdInt LocalDNAIdentifier = CellEngineConfigDataObject.DNAIdentifier;
+        AddSingleParticleKind(ParticlesTypes::DNANucleotide, LocalDNAIdentifier, "DNANucleotide", "DNANucleotide", "dna", -1, 0, "c", 1);
 
         ReadAndParseGenesFile(string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("genome") + OS_DIR_SEP + string("GENES.txt"));
         PrintGenesFile();
@@ -646,10 +630,10 @@ void CellEngineIllinoisDataCreator::ReadAllIllinoisDataFromFiles()
         CheckHowManyParticlesKindsHasCounterAtStartOfSimulationEquZeroAndAddThem(true);
 
         AddSingleParticleKind(ParticlesTypes::Ribosome, ParticleKindId, "particle_RIBOSOME", "Ribosome70S", "R70S", -1, 0, "c", 100);
-        AddSingleParticleKind(ParticlesTypes::RNAPolymerase, ParticleKindId, "particle_RNAPolymerase", "RNAPolymerase", "rnapol", -1, 0, "c", 700);
         AddSingleParticleKind(ParticlesTypes::DNAPolymerase, ParticleKindId, "particle_DNAPolymerase", "DNAPolymerase", "dnapol", -1, 0, "c", 10);
+        AddSingleParticleKind(ParticlesTypes::RNAPolymerase, ParticleKindId, "particle_RNAPolymerase", "RNAPolymerase", "rnapol", -1, 0, "c", 400);
 
-        PrintAllParticleKinds();
+        ParticlesKindsManagerObject.PrintAllParticleKinds();
 
         CheckHowManyParticleDataForGeneratorIsNotInParticleKindsAndAddThem(false);
 

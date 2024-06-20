@@ -615,7 +615,10 @@ public:
                 }
 
                 if (ImGui::Button("   ADD ILLINOIS DATA                  ") == true)
+                {
                     CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ReadAllIllinoisDataFromFiles();
+                    CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ReadGenomeSequenceFromFile();
+                }
                 if (ImGui::Button("   ADD PARTICLE KINDS                 ") == true)
                     CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->AddParticlesKinds();
                 if (ImGui::Button("   ADD CHEMICAL REACTIONS             ") == true)
@@ -678,21 +681,30 @@ public:
 
                 if (ImGui::CollapsingHeader("  RANDOM PARTICLES GENERATOR  ", ImGuiTreeNodeFlags_DefaultOpen))
                 {
+                    if (ImGui::Button("  SHOW ALL PARTICLES KINDS            ") == true)
+                        ParticlesKindsManagerObject.PrintAllParticleKinds();
                     if (ImGui::Button("  SHOW NUMBER OF PARTICLES TYPES            ") == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->PrintNumberOfParticlesForAllMainTypesOfParticles();
                     if (ImGui::Button("  CLEAR VOXEL SPACE AND PARTICLES           ") == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ClearVoxelSpaceAndParticles();
+                    if (ImGui::Button("  CLEAR DNA PARTICLES                       ") == true)
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->EraseAllDNAParticles();
                     if (ImGui::Button("  GENERATE ALL RANDOM PARTICLES             ") == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateAllRealRandomParticles();
                     if (ImGui::Button("  GENERATE RANDOM RIBOSOMES                 ") == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::Ribosome, 400, 400);
+                    if (ImGui::Button("  GENERATE RANDOM RNA POLYMERASE            ") == true)
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::RNAPolymerase, 400, 400);
+                    if (ImGui::Button("  GENERATE RANDOM DNA POLYMERASE            ") == true)
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::DNAPolymerase, 400, 400);
+
                     if (ImGui::Button("  GENERATE RANDOM MEMBRANE PARTICLES        ") == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::MembraneProtein, 420, 45);
                     if (ImGui::Button("  GENERATE RANDOM RIBOSOMES PARTICLES       ") == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::RibosomeProtein, 400, 400);
-                    if (ImGui::Button("  GENERATE RANDOM POLYMERASE PARTICLES      ") == true)
+                    if (ImGui::Button("  GENERATE RANDOM DNA POLYMERASE P PARTICLES      ") == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::PolymeraseProtein, 400, 400);
-                    if (ImGui::Button("  GENERATE RANDOM RNA POLYMERASE PARTICLES  ") == true)
+                    if (ImGui::Button("  GENERATE RANDOM RNA POLYMERASE P PARTICLES  ") == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::RNAPolymeraseProtein, 400, 400);
                     if (ImGui::Button("  GENERATE RANDOM PROTEIN FRAC PARTICLES    ") == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::ProteinFrac, 400, 400);

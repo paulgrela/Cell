@@ -32,7 +32,6 @@ public:
 public:
     static void PrintGenesFile();
     void PrintAllParticlesData();
-    static void PrintAllParticleKinds();
 public:
     void CheckHowManyParticleDataForGeneratorIsNotInParticleKindsAndAddThem(bool UpdateParticleKinds);
     static void CheckHowManyParticlesKindsHasCounterAtStartOfSimulationEquZeroAndAddThem(bool UpdateParticleKinds);

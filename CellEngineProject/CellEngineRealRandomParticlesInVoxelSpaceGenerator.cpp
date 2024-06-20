@@ -23,8 +23,7 @@ UnsignedInt CellEngineRealRandomParticlesInVoxelSpaceGenerator::GetNumberOfRealP
                 if (ParticleKindObject.ParticleKindSpecialDataSector.empty() == false)
                     for (const auto& ParticleKindSpecialDataObject : ParticleKindObject.ParticleKindSpecialDataSector)
                         if (ParticleKindSpecialDataObject.ParticleType == ParticleTypeParam)
-//                    if (ParticleKindObject.ParticleKindSpecialDataSector[0].ParticleType == ParticleTypeParam)
-                        ParticlesCounter++;
+                            ParticlesCounter++;
             }
     }
     CATCH("getting number of particles of type")
@@ -104,6 +103,20 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::PrintNumberOfParticlesF
 
         for (const auto& TestSetElementObject : TestSet)
             LoggersManagerObject.Log(STREAM("Test set element id = " << TestSetElementObject));
+
+        UnsignedInt CountMultiParticleKind = 0;
+        for (auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
+            if (ParticleKindObject.second.ParticleKindSpecialDataSector.size() > 1)
+                if (ParticleKindObject.second.ParticleKindSpecialDataSector[0].ParticleType == ParticlesTypes::Basic && ParticleKindObject.second.ParticleKindSpecialDataSector[1].ParticleType != ParticlesTypes::Basic)
+                {
+                    CountMultiParticleKind++;
+                    ParticleKindObject.second.ParticleKindSpecialDataSector.erase(ParticleKindObject.second.ParticleKindSpecialDataSector.begin());
+                }
+
+        //for (const auto& ParticleIndex : GetAllParticlesWithChosenEntityId(CellEngineConfigDataObject.DNAIdentifier))
+        //    RemoveParticle(ParticleIndex, true);
+
+        LoggersManagerObject.Log(STREAM("CountMultiParticleKind = " << CountMultiParticleKind));
 
         LoggersManagerObject.Log(STREAM("Number Of Ribosomes P = " << GetNumberOfRealParticlesOfKind(ParticlesTypes::Ribosome)));
         LoggersManagerObject.Log(STREAM("Number Of RNAPolymerases P = " << GetNumberOfRealParticlesOfKind(ParticlesTypes::RNAPolymerase)));
@@ -238,10 +251,9 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::InsertNewRandomParticle
                     if (ParticleKindSpecialDataObject.ParticleType == ParticleTypeParam)
                         for (UnsignedInt ParticleCounter = 1; ParticleCounter <= ParticleKindSpecialDataObject.CounterAtStartOfSimulation; ParticleCounter++)
                         {
-                            LoggersManagerObject.Log(STREAM("Particle Type = " << ParticlesKindsManagerObject.ConvertParticleTypeToString(ParticleTypeParam) << " Counter = " << ParticleCounter));
+                            LoggersManagerObject.Log(STREAM("Particle Type = " << ParticlesKindsManagerObject.ConvertParticleTypeToString(ParticleKindSpecialDataObject.ParticleType) << " Counter = " << ParticleCounter));
 
                             auto GeneIter = ParticlesKindsManagerObject.Genes.find(ParticleKindSpecialDataObject.GeneId);
-
                             if (GeneIter != ParticlesKindsManagerObject.Genes.end())
                                 TryToGenerateRandomParticlesForType(ParticleKindObject, Radius, RadiusSize, NumberOfErrors, GeneIter->second.NumId, GeneIter->second.Sequence, GeneIter->second.Sequence.length());
                             else
