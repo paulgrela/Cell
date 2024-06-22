@@ -12,6 +12,7 @@ struct ParticleKindGraphicData
 {
     EntityIdInt EntityId{};
     bool Visible{};
+    bool Selected{};
     float SizeX{};
     float SizeY{};
     float SizeZ{};

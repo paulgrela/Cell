@@ -6,6 +6,7 @@
 
 #include "CellEngineTypes.h"
 #include "CellEngineParticle.h"
+#include "CellEngineParticleKind.h"
 #include "CellEngineParticlesVoxelsOperations.h"
 
 class CellEngineBasicParticlesOperations
@@ -62,6 +63,7 @@ protected:
 public:
     static void GetMinMaxCoordinatesForParticle(Particle& ParticleObject, bool UpdateParticleKindListOfVoxels);
 protected:
+    std::vector<UniqueIdInt> GetAllParticlesWithChosenParticleType(ParticlesTypes ParticleTypeParam);
     std::vector<UniqueIdInt> GetAllParticlesWithChosenEntityId(UniqueIdInt EntityId);
     UnsignedInt GetNumberOfParticlesWithChosenEntityId(UniqueIdInt EntityId);
 protected:

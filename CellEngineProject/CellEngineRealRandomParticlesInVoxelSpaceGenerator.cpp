@@ -308,3 +308,38 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::GenerateAllRealRandomPa
     }
     CATCH("generating all random particles")
 }
+
+void CellEngineRealRandomParticlesInVoxelSpaceGenerator::RemoveParticlesWithChosenEntityId(const EntityIdInt EntityId, const UnsignedInt NumberOfParticlesToBeRemoved)
+{
+    try
+    {
+        UnsignedInt ParticleIndexCounter = 0;
+        for (const auto& ParticleIndex : GetAllParticlesWithChosenEntityId(EntityId))
+        {
+            RemoveParticle(ParticleIndex, true);
+            ParticleIndexCounter++;
+
+            if (ParticleIndexCounter > NumberOfParticlesToBeRemoved)
+                break;
+        }
+    }
+    CATCH("removing number of particles with chosen entity id")
+}
+
+void CellEngineRealRandomParticlesInVoxelSpaceGenerator::RemoveParticlesWithChosenParticleType(const ParticlesTypes ParticleTypeParam, const UnsignedInt NumberOfParticlesToBeRemoved)
+{
+    try
+    {
+        UnsignedInt ParticleIndexCounter = 0;
+
+        for (const auto& ParticleIndex : GetAllParticlesWithChosenParticleType(ParticleTypeParam))
+        {
+            RemoveParticle(ParticleIndex, true);
+            ParticleIndexCounter++;
+
+            if (ParticleIndexCounter > NumberOfParticlesToBeRemoved)
+                break;
+        }
+    }
+    CATCH("removing number of particles with chosen entity id")
+}

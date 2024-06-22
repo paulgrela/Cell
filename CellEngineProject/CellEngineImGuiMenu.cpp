@@ -476,7 +476,7 @@ public:
             static int TypesOfVisibilityComboBoxCurrentItemIndex = 0;
             static int PrevTypesOfVisibilityComboBoxCurrentItemIndex = 0;
 
-            ImGui::Combo( " Types of Visibility", &TypesOfVisibilityComboBoxCurrentItemIndex, TypesOfVisibilityComboBoxItems, IM_ARRAYSIZE(TypesOfVisibilityComboBoxItems));
+            ImGui::Combo(" Types of Visibility", &TypesOfVisibilityComboBoxCurrentItemIndex, TypesOfVisibilityComboBoxItems, IM_ARRAYSIZE(TypesOfVisibilityComboBoxItems));
             if (PrevTypesOfVisibilityComboBoxCurrentItemIndex != TypesOfVisibilityComboBoxCurrentItemIndex)
                 switch (TypesOfVisibilityComboBoxCurrentItemIndex)
                 {
@@ -485,6 +485,7 @@ public:
                     case 2 : CellEngineOpenGLVisualiserPointer->SetVisibilityOfParticlesExcept(CellEngineConfigDataObject.RNAIdentifier, false); break;
                     default : break;
                 }
+
             vector<ParticleKind> LocalParticlesKindsForImGuiSelection;
 
             if (TypesOfVisibilityComboBoxCurrentItemIndex == 3)
@@ -518,6 +519,102 @@ public:
         }
         CATCH("executing types of visibility menu");
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    static void ChangeNumberOfParticlesMenu()
+    {
+        try
+        {
+            vector<ParticleKind> LocalParticlesKindsForImGuiSelection;
+            if (ImGui::CollapsingHeader("Particles Kinds Add / Remove", ImGuiTreeNodeFlags_None))
+            {
+                if (CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer != nullptr)
+                {
+                    for (const auto &ParticlesKindsMapElement: ParticlesKindsManagerObject.ParticlesKinds)
+                        if (ParticlesKindsMapElement.second.IdStr.starts_with("JCVISYN3A_") || ParticlesKindsMapElement.second.IdStr.starts_with("particle_") || ParticlesKindsMapElement.second.IdStr.starts_with("trna_") || ParticlesKindsMapElement.second.IdStr.starts_with("mrna_") || ParticlesKindsMapElement.second.IdStr.starts_with("rrna_") || ParticlesKindsMapElement.second.IdStr.starts_with("M_"))
+                            LocalParticlesKindsForImGuiSelection.emplace_back(ParticlesKindsMapElement.second);
+
+                    sort(LocalParticlesKindsForImGuiSelection.begin(), LocalParticlesKindsForImGuiSelection.end(), ComparisonOfParticle);
+
+//                    using CharArrayType = char[256];
+//                    CharArrayType ParticleKindsComboBoxVector[4096];
+//                    UnsignedInt Index = 0;
+//                    for (auto &ParticlesKindForImGuiSelectionObject: LocalParticlesKindsForImGuiSelection)
+//                    {
+//                        strcpy(ParticleKindsComboBoxVector[Index], string(to_string(ParticlesKindForImGuiSelectionObject.EntityId) + " " + "T = " + ParticlesKindsManager::ConvertParticleTypeToString(ParticlesKindForImGuiSelectionObject.ParticleKindSpecialDataSector.back().ParticleType) + " " + ParticlesKindForImGuiSelectionObject.IdStr + " " + (ParticlesKindForImGuiSelectionObject.Name.starts_with("M_") ? ParticlesKindForImGuiSelectionObject.Name : "") + (ParticlesKindForImGuiSelectionObject.Formula != ParticlesKindForImGuiSelectionObject.IdStr && ParticlesKindForImGuiSelectionObject.Formula.empty() == false ? ("F = " + ParticlesKindForImGuiSelectionObject.Formula + " ") : "")).c_str());
+//                        Index++;
+//                    }
+//                    static int ChosenEntityIdItemIndex = 0;
+//                    ImGui::Combo("Choose Particle Kind", &ChosenEntityIdItemIndex, *ParticleKindsComboBoxVector, IM_ARRAYSIZE(*ParticleKindsComboBoxVector));
+
+                    vector<bool> LocalParticleKindSelection;
+                    for (auto &ParticlesKindForImGuiSelectionObject: LocalParticlesKindsForImGuiSelection)
+                        ImGui::Checkbox(string(to_string(ParticlesKindForImGuiSelectionObject.EntityId) + " " + "T = " + ParticlesKindsManager::ConvertParticleTypeToString(ParticlesKindForImGuiSelectionObject.ParticleKindSpecialDataSector.back().ParticleType) + " " + ParticlesKindForImGuiSelectionObject.IdStr + " " + (ParticlesKindForImGuiSelectionObject.Name.starts_with("M_") ? ParticlesKindForImGuiSelectionObject.Name : "") + (ParticlesKindForImGuiSelectionObject.Formula != ParticlesKindForImGuiSelectionObject.IdStr && ParticlesKindForImGuiSelectionObject.Formula.empty() == false ? ("F = " + ParticlesKindForImGuiSelectionObject.Formula + " ") : "")).c_str(), &ParticlesKindForImGuiSelectionObject.GraphicData.Selected);
+
+                    for (const auto &ParticleKindForImGuiSelectionObject: LocalParticlesKindsForImGuiSelection)
+                        ParticlesKindsManagerObject.GetParticleKind(ParticleKindForImGuiSelectionObject.EntityId).GraphicData.Selected = ParticleKindForImGuiSelectionObject.GraphicData.Selected;
+
+
+//                    static int NumberOfParticlesToAdd[1] = { 100 };
+//                    ImGui::DragInt3("ADD", NumberOfParticlesToAdd, 1, 0, 1000, "%d", ImGuiSliderFlags_AlwaysClamp);
+//                    if (ImGui::Button("ADD PARTICLES") == true);//CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->AddParticlesKinds();
+
+                    static int NumberOfParticlesToSub[1] = { 100 };
+                    ImGui::DragInt("SUB", NumberOfParticlesToSub, 1, 0, 1000, "%d", ImGuiSliderFlags_AlwaysClamp);
+                    if (ImGui::Button("SUB PARTICLES") == true)
+                        for (const auto &ParticleKindForImGuiSelectionObject: LocalParticlesKindsForImGuiSelection)
+                            if (ParticleKindForImGuiSelectionObject.GraphicData.Selected == true)
+                                CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->RemoveParticlesWithChosenEntityId(ParticleKindForImGuiSelectionObject.EntityId, NumberOfParticlesToSub[0]);
+                }
+            }
+        }
+        CATCH("executing types of visibility menu");
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     static void AtomKindsMenu()
     {
@@ -571,7 +668,7 @@ public:
         {
             if (CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer != nullptr)
             {
-                std::lock_guard<std::mutex> LockGuardObject{CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderMenuAndVoxelSimulationSpaceMutexObject};
+                std::lock_guard<std::mutex> LockGuardObject{ CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderMenuAndVoxelSimulationSpaceMutexObject };
 
                 auto  CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer = dynamic_cast<CellEngineOpenGLVisualiserOfVoxelSimulationSpace*>(CellEngineOpenGLVisualiserPointer.get());
 
@@ -845,6 +942,8 @@ public:
                 AtomKindsMenu();
 
                 TypeOfGeneratedColorsMenu();
+
+                ChangeNumberOfParticlesMenu();
             }
 
             if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)

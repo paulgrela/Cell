@@ -97,6 +97,28 @@ void CellEngineBasicParticlesOperations::GetMinMaxCoordinatesForParticle(Particl
     CATCH("getting min max coordinates for one particle")
 }
 
+vector<UniqueIdInt> CellEngineBasicParticlesOperations::GetAllParticlesWithChosenParticleType(const ParticlesTypes ParticleTypeParam)
+{
+    vector<UniqueIdInt> ListOfParticlesIndexes;
+
+    try
+    {
+        ListOfParticlesIndexes.reserve(1024 * 1024);
+        for (const auto& ParticleObject : Particles)
+            if (ParticleObject.second.EntityId != 0)
+            {
+                auto ParticleKindObject = ParticlesKindsManagerObject.GetParticleKind(ParticleObject.second.EntityId);
+                if (ParticleKindObject.ParticleKindSpecialDataSector.empty() == false)
+                    for (const auto& ParticleKindSpecialDataObject : ParticleKindObject.ParticleKindSpecialDataSector)
+                        if (ParticleKindSpecialDataObject.ParticleType == ParticleTypeParam)
+                            ListOfParticlesIndexes.emplace_back(ParticleObject.first);
+            }
+    }
+    CATCH("getting all particles with chosen entity id")
+
+    return ListOfParticlesIndexes;
+}
+
 vector<UniqueIdInt> CellEngineBasicParticlesOperations::GetAllParticlesWithChosenEntityId(const UniqueIdInt EntityId)
 {
     vector<UniqueIdInt> ListOfParticlesIndexes;

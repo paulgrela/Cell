@@ -23,6 +23,9 @@ public:
     void InsertNewRandomParticlesForType(ParticlesTypes ParticleTypeParam, UnsignedInt Radius, UnsignedInt RadiusSize);
     void TryToGenerateRandomParticlesForType(const std::pair<const EntityIdInt, ParticleKind>& ParticleKindObject, UnsignedInt Radius, UnsignedInt RadiusSize, UnsignedInt& NumberOfErrors, GeneIdInt GeneNumId, const std::string& GeneSequence, UnsignedInt GeneSequenceLength);
 public:
+    void RemoveParticlesWithChosenEntityId(EntityIdInt EntityId, UnsignedInt NumberOfParticlesToBeRemoved);
+    void RemoveParticlesWithChosenParticleType(ParticlesTypes ParticleTypeParam, UnsignedInt NumberOfParticlesToBeRemoved);
+public:
     void PrintNumberOfParticlesForAllMainTypesOfParticles();
     static void PrintInformationAboutRibosomesProteins();
 protected:
