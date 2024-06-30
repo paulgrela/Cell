@@ -520,23 +520,6 @@ public:
         CATCH("executing types of visibility menu");
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     static void ChangeNumberOfParticlesMenu()
     {
         try
@@ -552,17 +535,6 @@ public:
 
                     sort(LocalParticlesKindsForImGuiSelection.begin(), LocalParticlesKindsForImGuiSelection.end(), ComparisonOfParticle);
 
-//                    using CharArrayType = char[256];
-//                    CharArrayType ParticleKindsComboBoxVector[4096];
-//                    UnsignedInt Index = 0;
-//                    for (auto &ParticlesKindForImGuiSelectionObject: LocalParticlesKindsForImGuiSelection)
-//                    {
-//                        strcpy(ParticleKindsComboBoxVector[Index], string(to_string(ParticlesKindForImGuiSelectionObject.EntityId) + " " + "T = " + ParticlesKindsManager::ConvertParticleTypeToString(ParticlesKindForImGuiSelectionObject.ParticleKindSpecialDataSector.back().ParticleType) + " " + ParticlesKindForImGuiSelectionObject.IdStr + " " + (ParticlesKindForImGuiSelectionObject.Name.starts_with("M_") ? ParticlesKindForImGuiSelectionObject.Name : "") + (ParticlesKindForImGuiSelectionObject.Formula != ParticlesKindForImGuiSelectionObject.IdStr && ParticlesKindForImGuiSelectionObject.Formula.empty() == false ? ("F = " + ParticlesKindForImGuiSelectionObject.Formula + " ") : "")).c_str());
-//                        Index++;
-//                    }
-//                    static int ChosenEntityIdItemIndex = 0;
-//                    ImGui::Combo("Choose Particle Kind", &ChosenEntityIdItemIndex, *ParticleKindsComboBoxVector, IM_ARRAYSIZE(*ParticleKindsComboBoxVector));
-
                     vector<bool> LocalParticleKindSelection;
                     for (auto &ParticlesKindForImGuiSelectionObject: LocalParticlesKindsForImGuiSelection)
                         ImGui::Checkbox(string(to_string(ParticlesKindForImGuiSelectionObject.EntityId) + " " + "T = " + ParticlesKindsManager::ConvertParticleTypeToString(ParticlesKindForImGuiSelectionObject.ParticleKindSpecialDataSector.back().ParticleType) + " " + ParticlesKindForImGuiSelectionObject.IdStr + " " + (ParticlesKindForImGuiSelectionObject.Name.starts_with("M_") ? ParticlesKindForImGuiSelectionObject.Name : "") + (ParticlesKindForImGuiSelectionObject.Formula != ParticlesKindForImGuiSelectionObject.IdStr && ParticlesKindForImGuiSelectionObject.Formula.empty() == false ? ("F = " + ParticlesKindForImGuiSelectionObject.Formula + " ") : "")).c_str(), &ParticlesKindForImGuiSelectionObject.GraphicData.Selected);
@@ -570,51 +542,22 @@ public:
                     for (const auto &ParticleKindForImGuiSelectionObject: LocalParticlesKindsForImGuiSelection)
                         ParticlesKindsManagerObject.GetParticleKind(ParticleKindForImGuiSelectionObject.EntityId).GraphicData.Selected = ParticleKindForImGuiSelectionObject.GraphicData.Selected;
 
-
-//                    static int NumberOfParticlesToAdd[1] = { 100 };
-//                    ImGui::DragInt3("ADD", NumberOfParticlesToAdd, 1, 0, 1000, "%d", ImGuiSliderFlags_AlwaysClamp);
-//                    if (ImGui::Button("ADD PARTICLES") == true);//CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->AddParticlesKinds();
-
                     static int NumberOfParticlesToSub[1] = { 100 };
                     ImGui::DragInt("SUB", NumberOfParticlesToSub, 1, 0, 1000, "%d", ImGuiSliderFlags_AlwaysClamp);
                     if (ImGui::Button("SUB PARTICLES") == true)
                         for (const auto &ParticleKindForImGuiSelectionObject: LocalParticlesKindsForImGuiSelection)
                             if (ParticleKindForImGuiSelectionObject.GraphicData.Selected == true)
                                 CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->RemoveParticlesWithChosenEntityId(ParticleKindForImGuiSelectionObject.EntityId, NumberOfParticlesToSub[0]);
+
+                    if (ImGui::Button("REMOVE ALL PARTICLES") == true)
+                        for (const auto &ParticleKindForImGuiSelectionObject: LocalParticlesKindsForImGuiSelection)
+                            if (ParticleKindForImGuiSelectionObject.GraphicData.Selected == true)
+                                CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->RemoveAllParticlesWithChosenEntityId(ParticleKindForImGuiSelectionObject.EntityId);
                 }
             }
         }
         CATCH("executing types of visibility menu");
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     static void AtomKindsMenu()
     {

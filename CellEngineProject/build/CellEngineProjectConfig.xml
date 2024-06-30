@@ -3102,9 +3102,9 @@
                         <NumberOfVoxelsInVoxelSimulationSpaceInEachDimension>1024</NumberOfVoxelsInVoxelSimulationSpaceInEachDimension> <!--1024 or 2048 or other-->
                         <DivisionFactorForVoxelSimulationSpace>4.0</DivisionFactorForVoxelSimulationSpace> <!--4 or 2 or other-->
 
-                        <VoxelSimulationSpaceSelectionStartXPos>539</VoxelSimulationSpaceSelectionStartXPos>
-                        <VoxelSimulationSpaceSelectionStartYPos>727</VoxelSimulationSpaceSelectionStartYPos>
-                        <VoxelSimulationSpaceSelectionStartZPos>587</VoxelSimulationSpaceSelectionStartZPos>
+                        <VoxelSimulationSpaceSelectionStartXPos>536</VoxelSimulationSpaceSelectionStartXPos>
+                        <VoxelSimulationSpaceSelectionStartYPos>720</VoxelSimulationSpaceSelectionStartYPos>
+                        <VoxelSimulationSpaceSelectionStartZPos>581</VoxelSimulationSpaceSelectionStartZPos>
 
                         <VoxelSimulationSpaceSelectionStepX>1</VoxelSimulationSpaceSelectionStepX>
                         <VoxelSimulationSpaceSelectionStepY>1</VoxelSimulationSpaceSelectionStepY>
@@ -3116,8 +3116,8 @@
 
                         <RadiusOfCellForDNA>380</RadiusOfCellForDNA>
 
-			<CellStateFileName>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile25.dat</CellStateFileName>
-                        <CellStateFileNameBackup>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile25.dat</CellStateFileNameBackup>
+			<CellStateFileName>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile26.dat</CellStateFileName>
+                        <CellStateFileNameBackup>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile26.dat</CellStateFileNameBackup>
 
 			<ChosenStructureIndex>0</ChosenStructureIndex>
 			<FilmOfStructuresActive>0</FilmOfStructuresActive>
@@ -3245,7 +3245,7 @@
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>
 				</ParticleKind>
-				<ParticleKind id="700">
+				<ParticleKind id="10002">
 					<Name>RNA</Name>
 					<Color>Blue</Color>
 					<Visible>true</Visible>

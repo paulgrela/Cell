@@ -187,7 +187,7 @@ tuple<UnsignedInt, UnsignedInt, UnsignedInt> CellEngineRealRandomParticlesInVoxe
     return { 0, 0, 0 };
 }
 
-void CellEngineRealRandomParticlesInVoxelSpaceGenerator::TryToGenerateRandomParticlesForType(const pair<const EntityIdInt, ParticleKind>& ParticleKindObject, const UnsignedInt Radius, const UnsignedInt RadiusSize, UnsignedInt& NumberOfErrors, const GeneIdInt GeneNumId, const string& GeneSequence, const UnsignedInt GeneSequenceLength)
+void CellEngineRealRandomParticlesInVoxelSpaceGenerator::TryToGenerateRandomParticlesForType(const pair<const EntityIdInt, ParticleKind>& ParticleKindObject, const EntityIdInt EntityId, const UnsignedInt Radius, const UnsignedInt RadiusSize, UnsignedInt& NumberOfErrors, const GeneIdInt GeneNumId, const string& GeneSequence, const UnsignedInt GeneSequenceLength)
 {
     try
     {
@@ -204,7 +204,8 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::TryToGenerateRandomPart
         while (TryInsertNewParticleCounter < MaxNumberOfTriesToInsertNewParticle && TryResult == false)
         {
             tie(PosX, PosY, PosZ) = GetRandomPositionInsideSphere(Radius, RadiusSize);
-            TryResult = GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), ParticleKindObject.second.EntityId, 1, -1, 1, ParticleKindObject.second.ElectricCharge, GeneSequence, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), PosX, PosY, PosZ, Size, Size, Size, 0, 0, 0, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, &CellEngineParticlesVoxelsShapesGenerator::CheckFreeSpaceForSphereSelectedSpace, &CellEngineParticlesVoxelsShapesGenerator::SetValueToVoxelsForSphereSelectedSpace);
+            //TryResult = GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), ParticleKindObject.second.EntityId, 1, -1, 1, ParticleKindObject.second.ElectricCharge, GeneSequence, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), PosX, PosY, PosZ, Size, Size, Size, 0, 0, 0, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, &CellEngineParticlesVoxelsShapesGenerator::CheckFreeSpaceForSphereSelectedSpace, &CellEngineParticlesVoxelsShapesGenerator::SetValueToVoxelsForSphereSelectedSpace);
+            TryResult = GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), EntityId, 1, -1, 1, ParticleKindObject.second.ElectricCharge, GeneSequence, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), PosX, PosY, PosZ, Size, Size, Size, 0, 0, 0, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, &CellEngineParticlesVoxelsShapesGenerator::CheckFreeSpaceForSphereSelectedSpace, &CellEngineParticlesVoxelsShapesGenerator::SetValueToVoxelsForSphereSelectedSpace);
             if (TryResult == false)
                 RemoveParticle(MaxParticleIndex, true);
             TryInsertNewParticleCounter++;
@@ -250,11 +251,15 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::InsertNewRandomParticle
                         {
                             LoggersManagerObject.Log(STREAM("Particle Type = " << ParticlesKindsManagerObject.ConvertParticleTypeToString(ParticleKindSpecialDataObject.ParticleType) << " Counter = " << ParticleCounter));
 
+                            EntityIdInt EntityId = ParticleKindObject.second.EntityId;
+                            if (ParticleKindSpecialDataObject.ParticleType == ParticlesTypes::mRNA || ParticleKindSpecialDataObject.ParticleType == ParticlesTypes::rRNA || ParticleKindSpecialDataObject.ParticleType == ParticlesTypes::tRNA_uncharged || ParticleKindSpecialDataObject.ParticleType == ParticlesTypes::tRNA_charged)
+                                EntityId = CellEngineConfigDataObject.RNAIdentifier;
+
                             auto GeneIter = ParticlesKindsManagerObject.Genes.find(ParticleKindSpecialDataObject.GeneId);
                             if (GeneIter != ParticlesKindsManagerObject.Genes.end())
-                                TryToGenerateRandomParticlesForType(ParticleKindObject, Radius, RadiusSize, NumberOfErrors, GeneIter->second.NumId, GeneIter->second.Sequence, GeneIter->second.Sequence.length());
+                                TryToGenerateRandomParticlesForType(ParticleKindObject, EntityId, Radius, RadiusSize, NumberOfErrors, GeneIter->second.NumId, GeneIter->second.Sequence, GeneIter->second.Sequence.length());
                             else
-                                TryToGenerateRandomParticlesForType(ParticleKindObject, Radius, RadiusSize, NumberOfErrors, 0, "NO GENE", GetSizeOfGeneratedParticle(ParticleKindSpecialDataObject.ParticleType));
+                                TryToGenerateRandomParticlesForType(ParticleKindObject, EntityId, Radius, RadiusSize, NumberOfErrors, 0, "NO GENE", GetSizeOfGeneratedParticle(ParticleKindSpecialDataObject.ParticleType));
                         }
 
         const auto stop_time = chrono::high_resolution_clock::now();
@@ -316,14 +321,24 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::RemoveParticlesWithChos
         UnsignedInt ParticleIndexCounter = 0;
         for (const auto& ParticleIndex : GetAllParticlesWithChosenEntityId(EntityId))
         {
+            if (ParticleIndexCounter + 1 > NumberOfParticlesToBeRemoved)
+                break;
+
             RemoveParticle(ParticleIndex, true);
             ParticleIndexCounter++;
-
-            if (ParticleIndexCounter > NumberOfParticlesToBeRemoved)
-                break;
         }
     }
     CATCH("removing number of particles with chosen entity id")
+}
+
+void CellEngineRealRandomParticlesInVoxelSpaceGenerator::RemoveAllParticlesWithChosenEntityId(const EntityIdInt EntityId)
+{
+    try
+    {
+        for (const auto& ParticleIndex : GetAllParticlesWithChosenEntityId(EntityId))
+            RemoveParticle(ParticleIndex, true);
+    }
+    CATCH("removing all of particles with chosen entity id")
 }
 
 void CellEngineRealRandomParticlesInVoxelSpaceGenerator::RemoveParticlesWithChosenParticleType(const ParticlesTypes ParticleTypeParam, const UnsignedInt NumberOfParticlesToBeRemoved)
@@ -334,12 +349,34 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::RemoveParticlesWithChos
 
         for (const auto& ParticleIndex : GetAllParticlesWithChosenParticleType(ParticleTypeParam))
         {
+            if (ParticleIndexCounter + 1 > NumberOfParticlesToBeRemoved)
+                break;
+
             RemoveParticle(ParticleIndex, true);
             ParticleIndexCounter++;
-
-            if (ParticleIndexCounter > NumberOfParticlesToBeRemoved)
-                break;
         }
     }
     CATCH("removing number of particles with chosen entity id")
+}
+
+void CellEngineRealRandomParticlesInVoxelSpaceGenerator::RemoveAllParticlesWithChosenParticleType(const ParticlesTypes ParticleTypeParam)
+{
+    try
+    {
+        for (const auto& ParticleIndex : GetAllParticlesWithChosenParticleType(ParticleTypeParam))
+            RemoveParticle(ParticleIndex, true);
+    }
+    CATCH("removing all of particles with chosen particle type")
+}
+
+void CellEngineRealRandomParticlesInVoxelSpaceGenerator::RemoveAllRNAParticles()
+{
+    try
+    {
+        RemoveAllParticlesWithChosenParticleType(ParticlesTypes::tRNA_uncharged);
+        RemoveAllParticlesWithChosenParticleType(ParticlesTypes::tRNA_charged);
+        RemoveAllParticlesWithChosenParticleType(ParticlesTypes::mRNA);
+        RemoveAllParticlesWithChosenParticleType(ParticlesTypes::rRNA);
+    }
+    CATCH("removing all rna particles")
 }

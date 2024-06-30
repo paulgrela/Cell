@@ -288,6 +288,7 @@ std::vector<UnsignedInt> CellEngineSimulationSpace::GetRandomParticles(const Uns
             RandomParticlesTypes.emplace_back(std::next(std::begin(ParticlesKindsFoundInProximity), static_cast<int>(UniformDistributionObjectUint64t(mt64R)))->first);
 
             //if (CellEngineUseful::IsSpecialDNA(RandomParticlesTypes.back()) == true)
+            //if (CellEngineUseful::IsSpecialDNA(RandomParticlesTypes.back()) == true)
             //    RandomParticlesTypes.back() = CellEngineConfigDataObject.DNAIdentifier;
 
             LoggersManagerObject.Log(STREAM("ParticleKind Reactant " << to_string(ReactantNumber) << " (" << to_string(RandomParticlesTypes.back()) << ")"));
