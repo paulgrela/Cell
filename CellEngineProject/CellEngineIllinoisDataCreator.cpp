@@ -609,6 +609,8 @@ void CellEngineIllinoisDataCreator::ReadAllIllinoisDataFromFiles()
 
         EntityIdInt LocalDNAIdentifier = CellEngineConfigDataObject.DNAIdentifier;
         AddSingleParticleKind(ParticlesTypes::DNANucleotide, LocalDNAIdentifier, "DNANucleotide", "DNANucleotide", "dna", -1, 0, "c", 1);
+        EntityIdInt LocalRNAIdentifier = CellEngineConfigDataObject.RNAIdentifier;
+        AddSingleParticleKind(ParticlesTypes::DNANucleotide, LocalRNAIdentifier, "RNANucleotide", "RNANucleotide", "rna", -1, 0, "c", 1);
 
         ReadAndParseGenesFile(string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("genome") + OS_DIR_SEP + string("GENES.txt"));
         PrintGenesFile();

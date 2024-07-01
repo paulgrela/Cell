@@ -233,7 +233,20 @@ UnsignedInt GetSizeOfGeneratedParticle(const ParticlesTypes ParticlesTypesObject
     }
 }
 
-void CellEngineRealRandomParticlesInVoxelSpaceGenerator::InsertNewRandomParticlesForType(ParticlesTypes ParticleTypeParam, const UnsignedInt Radius, const UnsignedInt RadiusSize)
+EntityIdInt GetParticleKindIdForRNA(const EntityIdInt EntityId, const ParticlesTypes ParticleTypeParam, const bool ModifyRNAParticleKindId)
+{
+    if (ModifyRNAParticleKindId == true)
+    {
+        if (ParticleTypeParam == ParticlesTypes::mRNA || ParticleTypeParam == ParticlesTypes::rRNA || ParticleTypeParam == ParticlesTypes::tRNA_uncharged || ParticleTypeParam == ParticlesTypes::tRNA_charged)
+            return CellEngineConfigDataObject.RNAIdentifier;
+        else
+            return EntityId;
+    }
+    else
+        return EntityId;
+}
+
+void CellEngineRealRandomParticlesInVoxelSpaceGenerator::InsertNewRandomParticlesForType(const ParticlesTypes ParticleTypeParam, bool ModifyParticleKindIdForRNA, const UnsignedInt Radius, const UnsignedInt RadiusSize)
 {
     try
     {
@@ -251,9 +264,7 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::InsertNewRandomParticle
                         {
                             LoggersManagerObject.Log(STREAM("Particle Type = " << ParticlesKindsManagerObject.ConvertParticleTypeToString(ParticleKindSpecialDataObject.ParticleType) << " Counter = " << ParticleCounter));
 
-                            EntityIdInt EntityId = ParticleKindObject.second.EntityId;
-                            if (ParticleKindSpecialDataObject.ParticleType == ParticlesTypes::mRNA || ParticleKindSpecialDataObject.ParticleType == ParticlesTypes::rRNA || ParticleKindSpecialDataObject.ParticleType == ParticlesTypes::tRNA_uncharged || ParticleKindSpecialDataObject.ParticleType == ParticlesTypes::tRNA_charged)
-                                EntityId = CellEngineConfigDataObject.RNAIdentifier;
+                            EntityIdInt EntityId = GetParticleKindIdForRNA(ParticleKindObject.second.EntityId, ParticleKindSpecialDataObject.ParticleType, ModifyParticleKindIdForRNA);
 
                             auto GeneIter = ParticlesKindsManagerObject.Genes.find(ParticleKindSpecialDataObject.GeneId);
                             if (GeneIter != ParticlesKindsManagerObject.Genes.end())
@@ -283,25 +294,32 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::GenerateAllRealRandomPa
 
         const auto start_time = chrono::high_resolution_clock::now();
 
-        InsertNewRandomParticlesForType(ParticlesTypes::Ribosome, 400, 400);
+        InsertNewRandomParticlesForType(ParticlesTypes::Ribosome, false, 400, 400);
+        InsertNewRandomParticlesForType(ParticlesTypes::RNAPolymerase, false, 400, 400);
+        InsertNewRandomParticlesForType(ParticlesTypes::DNAPolymerase, false, 400, 400);
 
-        InsertNewRandomParticlesForType(ParticlesTypes::MembraneProtein, 420, 45);
-        InsertNewRandomParticlesForType(ParticlesTypes::RibosomeProtein, 400, 400);
-        InsertNewRandomParticlesForType(ParticlesTypes::PolymeraseProtein, 400, 400);
-        InsertNewRandomParticlesForType(ParticlesTypes::RNAPolymeraseProtein, 400, 400);
-        InsertNewRandomParticlesForType(ParticlesTypes::ProteinFrac, 400, 400);
-        InsertNewRandomParticlesForType(ParticlesTypes::OtherProtein, 400, 400);
+        InsertNewRandomParticlesForType(ParticlesTypes::MembraneProtein, false, 420, 45);
+        InsertNewRandomParticlesForType(ParticlesTypes::RibosomeProtein, false, 400, 400);
+        InsertNewRandomParticlesForType(ParticlesTypes::PolymeraseProtein, false, 400, 400);
+        InsertNewRandomParticlesForType(ParticlesTypes::RNAPolymeraseProtein, false, 400, 400);
+        InsertNewRandomParticlesForType(ParticlesTypes::ProteinFrac, false, 400, 400);
+        InsertNewRandomParticlesForType(ParticlesTypes::OtherProtein, false, 400, 400);
 
         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateRandomDNAInWholeCell(579990, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartXPos + 3, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartYPos, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartZPos, 2, 2, 2, 2, 2, 2, 2, 2);
 
-        InsertNewRandomParticlesForType(ParticlesTypes::tRNA_uncharged, 400, 400);
-        InsertNewRandomParticlesForType(ParticlesTypes::tRNA_charged, 400, 400);
-        InsertNewRandomParticlesForType(ParticlesTypes::mRNA, 400, 400);
-        InsertNewRandomParticlesForType(ParticlesTypes::rRNA, 400, 400);
+        InsertNewRandomParticlesForType(ParticlesTypes::tRNA_uncharged, false, 400, 400);
+        InsertNewRandomParticlesForType(ParticlesTypes::tRNA_charged, false, 400, 400);
+        InsertNewRandomParticlesForType(ParticlesTypes::mRNA, false, 400, 400);
+        InsertNewRandomParticlesForType(ParticlesTypes::rRNA, false, 400, 400);
 
-        InsertNewRandomParticlesForType(ParticlesTypes::Basic, 400, 400);
-        InsertNewRandomParticlesForType(ParticlesTypes::Lipid, 400, 400);
-        InsertNewRandomParticlesForType(ParticlesTypes::Other, 400, 400);
+        InsertNewRandomParticlesForType(ParticlesTypes::tRNA_uncharged, false, true, 400);
+        InsertNewRandomParticlesForType(ParticlesTypes::tRNA_charged, false, true, 400);
+        InsertNewRandomParticlesForType(ParticlesTypes::mRNA, false, true, 400);
+        InsertNewRandomParticlesForType(ParticlesTypes::rRNA, false, true, 400);
+
+        InsertNewRandomParticlesForType(ParticlesTypes::Basic, false, 400, 400);
+        InsertNewRandomParticlesForType(ParticlesTypes::Lipid, false, 400, 400);
+        InsertNewRandomParticlesForType(ParticlesTypes::Other, false, 400, 400);
 
         const auto stop_time = chrono::high_resolution_clock::now();
 
@@ -373,10 +391,36 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::RemoveAllRNAParticles()
 {
     try
     {
-        RemoveAllParticlesWithChosenParticleType(ParticlesTypes::tRNA_uncharged);
-        RemoveAllParticlesWithChosenParticleType(ParticlesTypes::tRNA_charged);
-        RemoveAllParticlesWithChosenParticleType(ParticlesTypes::mRNA);
-        RemoveAllParticlesWithChosenParticleType(ParticlesTypes::rRNA);
+        RemoveAllmRNAParticles();
+        RemoveAlltRNAParticles();
+        RemoveAllrRNAParticles();
     }
     CATCH("removing all rna particles")
+}
+
+void CellEngineRealRandomParticlesInVoxelSpaceGenerator::RemoveAllmRNAParticles()
+{
+    try
+    {
+        RemoveAllParticlesWithChosenParticleType(ParticlesTypes::mRNA);
+    }
+    CATCH("removing all mrna particles")
+}
+void CellEngineRealRandomParticlesInVoxelSpaceGenerator::RemoveAlltRNAParticles()
+{
+    try
+    {
+        RemoveAllParticlesWithChosenParticleType(ParticlesTypes::tRNA_uncharged);
+        RemoveAllParticlesWithChosenParticleType(ParticlesTypes::tRNA_charged);
+    }
+    CATCH("removing all trna particles")
+}
+
+void CellEngineRealRandomParticlesInVoxelSpaceGenerator::RemoveAllrRNAParticles()
+{
+    try
+    {
+        RemoveAllParticlesWithChosenParticleType(ParticlesTypes::rRNA);
+    }
+    CATCH("removing all trna particles")
 }

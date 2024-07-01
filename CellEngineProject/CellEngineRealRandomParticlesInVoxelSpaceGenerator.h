@@ -20,7 +20,7 @@ protected:
     std::tuple<UnsignedInt, UnsignedInt> GetNumberOfParticlesKind(ParticlesTypes ParticleTypeParam, bool AddToTotalNumberOfAllParticles);
     std::tuple<UnsignedInt, UnsignedInt, UnsignedInt> GetRandomPositionInsideSphere(UnsignedInt Radius, UnsignedInt RadiusSize);
 public:
-    void InsertNewRandomParticlesForType(ParticlesTypes ParticleTypeParam, UnsignedInt Radius, UnsignedInt RadiusSize);
+    void InsertNewRandomParticlesForType(ParticlesTypes ParticleTypeParam, bool ModifyParticleKindIdForRNA, UnsignedInt Radius, UnsignedInt RadiusSize);
     void TryToGenerateRandomParticlesForType(const std::pair<const EntityIdInt, ParticleKind>& ParticleKindObject, EntityIdInt EntityId, UnsignedInt Radius, UnsignedInt RadiusSize, UnsignedInt& NumberOfErrors, GeneIdInt GeneNumId, const std::string& GeneSequence, UnsignedInt GeneSequenceLength);
 public:
     void RemoveParticlesWithChosenEntityId(EntityIdInt EntityId, UnsignedInt NumberOfParticlesToBeRemoved);
@@ -29,6 +29,9 @@ public:
     void RemoveAllParticlesWithChosenParticleType(ParticlesTypes ParticleTypeParam);
 public:
     void RemoveAllRNAParticles();
+    void RemoveAllmRNAParticles();
+    void RemoveAlltRNAParticles();
+    void RemoveAllrRNAParticles();
 public:
     void PrintNumberOfParticlesForAllMainTypesOfParticles();
     static void PrintInformationAboutRibosomesProteins();
