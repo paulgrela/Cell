@@ -46,7 +46,7 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesStatistics()
     try
     {
         if (SaveParticlesAsCopiedMapBool == true)
-            SaveParticlesAsCopiedMad();
+            SaveParticlesAsCopiedMap();
         if (SaveParticlesAsVectorElementsBool == true)
             SaveParticlesAsVectorElements();
         if (SortParticlesAsSortedVectorElementsBool == true)
@@ -68,7 +68,7 @@ void CellEngineSimulationSpaceStatistics::CheckConditionsToIncSimulationStepNumb
     CATCH("checking conditions to increment simulation step number for statistics")
 }
 
-void CellEngineSimulationSpaceStatistics::SaveParticlesAsCopiedMad()
+void CellEngineSimulationSpaceStatistics::SaveParticlesAsCopiedMap()
 {
     try
     {
@@ -83,7 +83,7 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesAsVectorElements()
     {
         ParticlesSnapshots[SimulationStepNumber - 1].reserve(Particles.size());
 
-        transform(Particles.begin(), Particles.end(), std::back_inserter(ParticlesSnapshots[SimulationStepNumber]), [](const auto& ParticlesMapElement){ return ParticlesMapElement.second; } );
+        transform(Particles.begin(), Particles.end(), std::back_inserter(ParticlesSnapshots[SimulationStepNumber - 1]), [](const auto& ParticlesMapElement){ return ParticlesMapElement.second; } );
     }
     CATCH("saving particles as vector elements")
 }
@@ -94,7 +94,7 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesAsSortedVectorElements()
     {
         ParticlesSnapshotsCopiedMap.clear();
 
-        for (const auto& ParticlesSnapshotsCopiedUnorderedMapElement : ParticlesSnapshotsCopiedUnorderedMap[SimulationStepNumber])
+        for (const auto& ParticlesSnapshotsCopiedUnorderedMapElement : ParticlesSnapshotsCopiedUnorderedMap[SimulationStepNumber - 1])
             ParticlesSnapshotsCopiedMap[SimulationStepNumber - 1][ParticlesSnapshotsCopiedUnorderedMapElement.first].Counter++;
 
         transform(ParticlesSnapshotsCopiedMap[SimulationStepNumber - 1].begin(), ParticlesSnapshotsCopiedMap[SimulationStepNumber - 1].end(), back_inserter(ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber - 1]), [](const auto& ParticlesMapElement){ return ParticlesMapElement.second; } );

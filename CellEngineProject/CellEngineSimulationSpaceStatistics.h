@@ -48,7 +48,7 @@ protected:
     void SaveParticlesStatistics();
     void CheckConditionsToIncSimulationStepNumberForStatistics();
 protected:
-    void SaveParticlesAsCopiedMad();
+    void SaveParticlesAsCopiedMap();
     void SaveParticlesAsVectorElements();
     void SaveParticlesAsSortedVectorElements();
     void SaveReactionForStatistics(const ChemicalReaction& ReactionParam);

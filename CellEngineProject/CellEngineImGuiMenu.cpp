@@ -803,9 +803,9 @@ public:
 
                 if (ImGui::CollapsingHeader("STATISTICS OF SIMULATION", ImGuiTreeNodeFlags_DefaultOpen))
                 {
-                    if (ImGui::Button("  ZERO STATISTICS                   ") == true)
+                    if (ImGui::Button("  ZERO STATISTICS CONTAINERS        ") == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->SetMakeSimulationStepNumberZero();
-                    if (ImGui::Button("  INCR STATISTICS                   ") == true)
+                    if (ImGui::Button("  INCREMENT STATISTICS LEVEL        ") == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->SetIncSimulationStepNumber();
                     if (ImGui::Button("  SAVE PARTICLES STATISTICS          ") == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->SaveParticlesStatisticsOnce();
