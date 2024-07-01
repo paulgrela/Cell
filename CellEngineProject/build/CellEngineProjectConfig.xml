@@ -3102,9 +3102,9 @@
                         <NumberOfVoxelsInVoxelSimulationSpaceInEachDimension>1024</NumberOfVoxelsInVoxelSimulationSpaceInEachDimension> <!--1024 or 2048 or other-->
                         <DivisionFactorForVoxelSimulationSpace>4.0</DivisionFactorForVoxelSimulationSpace> <!--4 or 2 or other-->
 
-                        <VoxelSimulationSpaceSelectionStartXPos>536</VoxelSimulationSpaceSelectionStartXPos>
-                        <VoxelSimulationSpaceSelectionStartYPos>720</VoxelSimulationSpaceSelectionStartYPos>
-                        <VoxelSimulationSpaceSelectionStartZPos>581</VoxelSimulationSpaceSelectionStartZPos>
+                        <VoxelSimulationSpaceSelectionStartXPos>527</VoxelSimulationSpaceSelectionStartXPos>
+                        <VoxelSimulationSpaceSelectionStartYPos>715</VoxelSimulationSpaceSelectionStartYPos>
+                        <VoxelSimulationSpaceSelectionStartZPos>575</VoxelSimulationSpaceSelectionStartZPos>
 
                         <VoxelSimulationSpaceSelectionStepX>1</VoxelSimulationSpaceSelectionStepX>
                         <VoxelSimulationSpaceSelectionStepY>1</VoxelSimulationSpaceSelectionStepY>

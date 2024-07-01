@@ -555,6 +555,8 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadAllDataFromBinaryFileAnd
 
         PreprocessData(UpdateParticleKindListOfVoxelsBool);
 
+        CellEngineVoxelSimulationSpaceObjectPointer->AddSpecialParticlesKinds();
+
         CellEngineConfigDataObject.GenomeReadFromFile = true;
 
         LoggersManagerObject.Log(STREAM("END OF PREPROCESSING DATA"));

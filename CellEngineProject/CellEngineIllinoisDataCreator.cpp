@@ -584,20 +584,19 @@ void CellEngineIllinoisDataCreator::ReadTSVFiles(bool Read, const string& Partic
     CATCH("reading tsv files")
 }
 
-void CellEngineIllinoisDataCreator::AddSingleParticleKind(const ParticlesTypes ParticlesTypesObject, EntityIdInt& ParticleKindIdParam, const string& IdStrParam, const string& NameParam, const string& FormulaParam, const SignedInt GeneIdParam, const ElectricChargeType ElectricChargeParam, const string& CompartmentParam, const UnsignedInt CounterParam)
-{
-    try
-    {
-        ParticlesKindsManagerObject.AddParticleKind({ ParticleKindIdParam, IdStrParam, NameParam, FormulaParam, static_cast<UnsignedInt>(GeneIdParam == -1 ? 0 : GeneIdParam), ElectricChargeParam, CompartmentParam, CounterParam });
-        ParticlesKindsManagerObject.GetParticleKind(ParticleKindIdParam).ParticleKindSpecialDataSector.emplace_back(ParticleKindSpecialData{ GeneIdParam, "", "", false, ParticlesTypesObject, false, CounterParam });
-
-        ParticleKindIdParam++;
-
-        LoggersManagerObject.Log(STREAM("PARTICLE ADDED"));
-
-    }
-    CATCH("adding ribosomes")
-}
+//void CellEngineIllinoisDataCreator::AddSingleParticleKind(const ParticlesTypes ParticlesTypesObject, EntityIdInt& ParticleKindIdParam, const string& IdStrParam, const string& NameParam, const string& FormulaParam, const SignedInt GeneIdParam, const ElectricChargeType ElectricChargeParam, const string& CompartmentParam, const UnsignedInt CounterParam)
+//{
+//    try
+//    {
+//        ParticlesKindsManagerObject.AddParticleKind({ ParticleKindIdParam, IdStrParam, NameParam, FormulaParam, static_cast<UnsignedInt>(GeneIdParam == -1 ? 0 : GeneIdParam), ElectricChargeParam, CompartmentParam, CounterParam });
+//        ParticlesKindsManagerObject.GetParticleKind(ParticleKindIdParam).ParticleKindSpecialDataSector.emplace_back(ParticleKindSpecialData{ GeneIdParam, "", "", false, ParticlesTypesObject, false, CounterParam });
+//
+//        ParticleKindIdParam++;
+//
+//        LoggersManagerObject.Log(STREAM("PARTICLE ADDED"));
+//    }
+//    CATCH("adding single particle kind")
+//}
 
 void CellEngineIllinoisDataCreator::ReadAllIllinoisDataFromFiles()
 {
@@ -608,9 +607,9 @@ void CellEngineIllinoisDataCreator::ReadAllIllinoisDataFromFiles()
         ChemicalReactionsManagerObject.ChemicalReactions.clear();
 
         EntityIdInt LocalDNAIdentifier = CellEngineConfigDataObject.DNAIdentifier;
-        AddSingleParticleKind(ParticlesTypes::DNANucleotide, LocalDNAIdentifier, "DNANucleotide", "DNANucleotide", "dna", -1, 0, "c", 1);
+        ParticlesKindsManagerObject.AddSingleParticleKind(ParticlesTypes::DNANucleotide, LocalDNAIdentifier, "DNANucleotide", "DNANucleotide", "dna", -1, 0, "c", 1);
         EntityIdInt LocalRNAIdentifier = CellEngineConfigDataObject.RNAIdentifier;
-        AddSingleParticleKind(ParticlesTypes::DNANucleotide, LocalRNAIdentifier, "RNANucleotide", "RNANucleotide", "rna", -1, 0, "c", 1);
+        ParticlesKindsManagerObject.AddSingleParticleKind(ParticlesTypes::DNANucleotide, LocalRNAIdentifier, "RNANucleotide", "RNANucleotide", "rna", -1, 0, "c", 1);
 
         ReadAndParseGenesFile(string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("genome") + OS_DIR_SEP + string("GENES.txt"));
         PrintGenesFile();
@@ -631,9 +630,9 @@ void CellEngineIllinoisDataCreator::ReadAllIllinoisDataFromFiles()
 
         CheckHowManyParticlesKindsHasCounterAtStartOfSimulationEquZeroAndAddThem(true);
 
-        AddSingleParticleKind(ParticlesTypes::Ribosome, ParticleKindId, "particle_RIBOSOME", "Ribosome70S", "R70S", -1, 0, "c", 100);
-        AddSingleParticleKind(ParticlesTypes::DNAPolymerase, ParticleKindId, "particle_DNAPolymerase", "DNAPolymerase", "dnapol", -1, 0, "c", 10);
-        AddSingleParticleKind(ParticlesTypes::RNAPolymerase, ParticleKindId, "particle_RNAPolymerase", "RNAPolymerase", "rnapol", -1, 0, "c", 400);
+        ParticlesKindsManagerObject.AddSingleParticleKind(ParticlesTypes::Ribosome, ParticleKindId, "particle_RIBOSOME", "Ribosome70S", "R70S", -1, 0, "c", 100);
+        ParticlesKindsManagerObject.AddSingleParticleKind(ParticlesTypes::DNAPolymerase, ParticleKindId, "particle_DNAPolymerase", "DNAPolymerase", "dnapol", -1, 0, "c", 10);
+        ParticlesKindsManagerObject.AddSingleParticleKind(ParticlesTypes::RNAPolymerase, ParticleKindId, "particle_RNAPolymerase", "RNAPolymerase", "rnapol", -1, 0, "c", 400);
 
         ParticlesKindsManagerObject.PrintAllParticleKinds();
 

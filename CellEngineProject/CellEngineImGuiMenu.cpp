@@ -668,6 +668,8 @@ public:
                     CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ReadAllIllinoisDataFromFiles();
                     CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ReadGenomeSequenceFromFile();
                 }
+                if (ImGui::Button("   ADD SPECIAL PARTICLE KINDS         ") == true)
+                    CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->AddSpecialParticlesKinds();
                 if (ImGui::Button("   ADD PARTICLE KINDS                 ") == true)
                     CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->AddParticlesKinds();
                 if (ImGui::Button("   ADD CHEMICAL REACTIONS             ") == true)
@@ -779,7 +781,6 @@ public:
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::mRNA, true, 400, 400);
                     if (ImGui::Button("  GENERATE RANDOM rRNA PARTICLES M          ") == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::rRNA, true, 400, 400);
-
 
                     if (ImGui::Button("  GENERATE RANDOM BASIC PARTICLES           ") == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::Basic, false, 400, 400);

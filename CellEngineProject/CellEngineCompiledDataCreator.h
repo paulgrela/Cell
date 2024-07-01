@@ -5,6 +5,7 @@
 class CellEngineCompiledDataCreator
 {
 public:
+    static void AddSpecialParticlesKinds();
     static void AddParticlesKinds();
     static void AddChemicalReactions();
 };

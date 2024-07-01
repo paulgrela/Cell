@@ -92,6 +92,20 @@ public:
         return AtomKindObjectIterator;
     }
 public:
+    void AddSingleParticleKind(const ParticlesTypes ParticlesTypesObject, EntityIdInt& ParticleKindIdParam, const std::string& IdStrParam, const std::string& NameParam, const std::string& FormulaParam, const SignedInt GeneIdParam, const ElectricChargeType ElectricChargeParam, const std::string& CompartmentParam, const UnsignedInt CounterParam)
+    {
+        try
+        {
+            AddParticleKind({ ParticleKindIdParam, IdStrParam, NameParam, FormulaParam, static_cast<UnsignedInt>(GeneIdParam == -1 ? 0 : GeneIdParam), ElectricChargeParam, CompartmentParam, CounterParam });
+            GetParticleKind(ParticleKindIdParam).ParticleKindSpecialDataSector.emplace_back(ParticleKindSpecialData{ GeneIdParam, "", "", false, ParticlesTypesObject, false, CounterParam });
+
+            ParticleKindIdParam++;
+
+            LoggersManagerObject.Log(STREAM("PARTICLE ADDED"));
+        }
+        CATCH("adding single particle kind")
+    }
+public:
     void PrintAllParticleKinds()
     {
         try
