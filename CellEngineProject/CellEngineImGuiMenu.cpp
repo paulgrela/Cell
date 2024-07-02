@@ -730,7 +730,7 @@ public:
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->TestGeneratedGenomeCorrectness(2);
                 }
 
-                if (ImGui::CollapsingHeader("  RANDOM PARTICLES GENERATOR  ", ImGuiTreeNodeFlags_DefaultOpen))
+                if (ImGui::CollapsingHeader("  RANDOM PARTICLES GENERATOR  "))
                 {
                     if (ImGui::Button("  SHOW ALL PARTICLES KINDS            ") == true)
                         ParticlesKindsManagerObject.PrintAllParticleKinds();

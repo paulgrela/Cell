@@ -3103,7 +3103,7 @@
                         <DivisionFactorForVoxelSimulationSpace>4.0</DivisionFactorForVoxelSimulationSpace> <!--4 or 2 or other-->
 
                         <VoxelSimulationSpaceSelectionStartXPos>527</VoxelSimulationSpaceSelectionStartXPos>
-                        <VoxelSimulationSpaceSelectionStartYPos>715</VoxelSimulationSpaceSelectionStartYPos>
+                        <VoxelSimulationSpaceSelectionStartYPos>713</VoxelSimulationSpaceSelectionStartYPos>
                         <VoxelSimulationSpaceSelectionStartZPos>575</VoxelSimulationSpaceSelectionStartZPos>
 
                         <VoxelSimulationSpaceSelectionStepX>1</VoxelSimulationSpaceSelectionStepX>

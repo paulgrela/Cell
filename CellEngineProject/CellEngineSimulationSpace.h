@@ -71,6 +71,7 @@ protected:
 public:
     explicit CellEngineSimulationSpace(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : Particles(ParticlesParam)
     {
+        SetMakeSimulationStepNumberZero();
     }
 };
 
