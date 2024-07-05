@@ -18,6 +18,7 @@
 #include "CellEngineOpenGLVisualiser.h"
 #include "CellEngineOpenGLVisualiserOfVoxelSimulationSpace.h"
 #include "CellEngineOpenGLVisualiserOfFullAtomSimulationSpace.h"
+#include "CellEngineChemicalReactionsManager.h"
 #include "CellEngineParticlesKindsManager.h"
 #include "CellEngineConfigurationFileReaderWriter.h"
 
@@ -704,8 +705,11 @@ public:
                 ColorButton("   MAKE ONE STEP OF RANDOM REACTIONS FOR WHOLE CELL SPACE              ", Nothing, 0, 0, 0, 0, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue){ CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateRandomReactionsForWholeCellSpace(0, 0, 0, 32, 32, 32, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension); });
                 ColorButton("   MAKE ONE STEP OF CHOSEN REACTIONS FOR WHOLE CELL SPACE              ", Nothing, 0, 0, 0, 0, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue){ CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateChosenReactionsForWholeCellSpace(10, 0, 0, 0, 32, 32, 32, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension); });
 
+                if (ImGui::Button("  PRINT CHEMICAL REACTIONS   ") == true)
+                    ChemicalReactionsManagerObject.PrintChemicalReactions();
+
                 static bool OpenMenuChemicalReactionsWindow = false;
-                if (ImGui::Button("   CHOOSE CHEMICAL REACTION  ") == true)
+                if (ImGui::Button("  CHOOSE CHEMICAL REACTION   ") == true)
                     OpenMenuChemicalReactionsWindow = true;
 
                 if (OpenMenuChemicalReactionsWindow == true)

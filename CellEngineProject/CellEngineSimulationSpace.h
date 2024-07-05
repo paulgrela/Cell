@@ -62,7 +62,7 @@ protected:
     std::tuple<std::vector<std::pair<UniqueIdInt, UnsignedInt>>, bool> ChooseParticlesForReactionFromAllParticlesInProximity(const ChemicalReaction& ReactionObject);
 protected:
     void PrepareRandomReaction();
-    void FindAndExecuteRandomReaction();
+    void FindAndExecuteRandomReaction(UnsignedInt MaxNumberOfReactantsParam);
     void FindAndExecuteChosenReaction(UnsignedInt ReactionId);
 protected:
     std::vector<UnsignedInt> GetRandomParticles(UnsignedInt NumberOfReactants) override;

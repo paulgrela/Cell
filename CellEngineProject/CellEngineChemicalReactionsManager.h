@@ -31,6 +31,14 @@ public:
         ChemicalReactionsPosFromId.insert(std::make_pair(ReactionParam.ReactionIdNum, ChemicalReactions.size() - 1));
         ChemicalReactionsPosFromString.insert(std::make_pair(ReactionParam.ReactantsStr, ChemicalReactions.size() - 1));
     }
+public:
+    void PrintChemicalReactions()
+    {
+        LoggersManagerObject.Log(STREAM("Number of chemical reactions = " << ChemicalReactions.size()));
+
+        for (auto& ChemicalReactionObject : ChemicalReactions)
+            LoggersManagerObject.Log(STREAM("ReactionId = " << ChemicalReactionObject.ReactionIdNum << " ReactantsStr = |" << ChemicalReactionObject.ReactantsStr << "| ReactionIdStr = " << ChemicalReactionObject.ReactionIdStr));
+    }
 };
 
 inline ChemicalReactionsManager ChemicalReactionsManagerObject;

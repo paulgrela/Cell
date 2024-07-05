@@ -306,17 +306,15 @@ void CellEngineSimulationSpace::PrepareRandomReaction()
         uniform_int_distribution<UnsignedInt> UniformDistributionObjectMainRandomCondition_Uint64t(0, 1);
         if (UniformDistributionObjectMainRandomCondition_Uint64t(mt64R) == 0)
             return;
-
-        LoggersManagerObject.Log(STREAM("Looking for particles in proximity"));
     }
     CATCH("preparing random reaction")
 }
 
-void CellEngineSimulationSpace::FindAndExecuteRandomReaction()
+void CellEngineSimulationSpace::FindAndExecuteRandomReaction(const UnsignedInt MaxNumberOfReactants)
 {
     try
     {
-        uniform_int_distribution<UnsignedInt> UniformDistributionObjectNumberOfReactants_Uint64t(2, 2);
+        uniform_int_distribution<UnsignedInt> UniformDistributionObjectNumberOfReactants_Uint64t(1, MaxNumberOfReactants);
 
         UnsignedInt NumberOfTries = 0;
         while (NumberOfTries <= 100)
@@ -365,7 +363,7 @@ void CellEngineSimulationSpace::GenerateRandomReactionForSelectedSpace(UnsignedI
         PrepareRandomReaction();
 
         if (FindParticlesInProximityOfSimulationSpaceForSelectedSpace(true, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam) == true)
-            FindAndExecuteRandomReaction();
+            FindAndExecuteRandomReaction(ParticlesKindsFoundInProximity.size());
     }
     CATCH("generating random reaction for selected voxel space")
 }
@@ -388,7 +386,7 @@ void CellEngineSimulationSpace::GenerateRandomReactionForParticle(Particle& Part
         PrepareRandomReaction();
 
         if (FindParticlesInProximityOfVoxelSimulationSpaceForChosenParticle(ParticleObject, 20) == true)
-            FindAndExecuteRandomReaction();
+            FindAndExecuteRandomReaction(ParticlesKindsFoundInProximity.size());
     }
     CATCH("generating random reaction for particle")
 }

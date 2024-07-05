@@ -112,6 +112,8 @@ bool CellEngineChemicalReactionsInSimulationSpace::FindParticlesInProximityOfSim
 
         FindParticlesInProximityInSimulationSpaceForSelectedLocalSpace(FoundParticleIndexes, UpdateNucleotides, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
 
+        LoggersManagerObject.Log(STREAM(endl << "Number of Particles Kinds found = " << ParticlesKindsFoundInProximity.size()));
+
         if (ParticlesSortedByCapacityFoundInProximity.empty() == false)
         {
             sort(ParticlesSortedByCapacityFoundInProximity.begin(), ParticlesSortedByCapacityFoundInProximity.end(), [this](UnsignedInt PK1, UnsignedInt PK2) { return GetParticleFromIndex(PK1).ListOfVoxels.size() > GetParticleFromIndex(PK2).ListOfVoxels.size(); });
@@ -119,9 +121,11 @@ bool CellEngineChemicalReactionsInSimulationSpace::FindParticlesInProximityOfSim
         }
         else
         {
-            LoggersManagerObject.Log(STREAM(endl << "No particle found in proximity "));
+            LoggersManagerObject.Log(STREAM(endl << "No particle found in proximity"));
             return false;
         }
+
+        LoggersManagerObject.Log(STREAM("Looking for particles in proximity done"));
     }
     CATCH("finding particles in proximity of simulation space for selected space")
 
