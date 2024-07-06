@@ -555,6 +555,8 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadAllDataFromBinaryFileAnd
 
         PreprocessData(UpdateParticleKindListOfVoxelsBool);
 
+        ChemicalReactionsManagerObject.PreprocessChemicalReactions();
+
         CellEngineVoxelSimulationSpaceObjectPointer->AddSpecialParticlesKinds();
 
         CellEngineConfigDataObject.GenomeReadFromFile = true;

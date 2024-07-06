@@ -29,7 +29,7 @@ bool CellEngineChemicalReactionsEngine::TryToMakeRandomChemicalReaction(Unsigned
 
             string ReactionSymbolsStr;
             for (auto& ParticleSymbolForReaction : ParticlesSymbolsForReactionToSort)
-                ReactionSymbolsStr += (ParticleSymbolForReaction + " + ");
+                ReactionSymbolsStr += (ParticleSymbolForReaction + "+");
 
             LoggersManagerObject.Log(STREAM("Reaction Symbols = [" << ReactionSymbolsStr << "]" << endl));
 

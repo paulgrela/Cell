@@ -314,6 +314,8 @@ void CellEngineSimulationSpace::FindAndExecuteRandomReaction(const UnsignedInt M
 {
     try
     {
+        LoggersManagerObject.Log(STREAM("MAX NUMBER OF REACTANTS = " << MaxNumberOfReactants));
+
         uniform_int_distribution<UnsignedInt> UniformDistributionObjectNumberOfReactants_Uint64t(1, MaxNumberOfReactants);
 
         UnsignedInt NumberOfTries = 0;
@@ -363,7 +365,7 @@ void CellEngineSimulationSpace::GenerateRandomReactionForSelectedSpace(UnsignedI
         PrepareRandomReaction();
 
         if (FindParticlesInProximityOfSimulationSpaceForSelectedSpace(true, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam) == true)
-            FindAndExecuteRandomReaction(ParticlesKindsFoundInProximity.size());
+            FindAndExecuteRandomReaction(min(ParticlesKindsFoundInProximity.size(), ChemicalReactionsManagerObject.MaxNumberOfReactants));
     }
     CATCH("generating random reaction for selected voxel space")
 }
@@ -386,7 +388,7 @@ void CellEngineSimulationSpace::GenerateRandomReactionForParticle(Particle& Part
         PrepareRandomReaction();
 
         if (FindParticlesInProximityOfVoxelSimulationSpaceForChosenParticle(ParticleObject, 20) == true)
-            FindAndExecuteRandomReaction(ParticlesKindsFoundInProximity.size());
+            FindAndExecuteRandomReaction(min(ParticlesKindsFoundInProximity.size(), ChemicalReactionsManagerObject.MaxNumberOfReactants));
     }
     CATCH("generating random reaction for particle")
 }

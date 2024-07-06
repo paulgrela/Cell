@@ -21,6 +21,7 @@ private:
 public:
     void ReadAllIllinoisDataFromFiles();
 public:
+    void ReadChemicalReactionsFromFiles();
     static void ReadReactionsFromJSONFile(const std::string& FileName, bool ReadFromFile);
     void ReadReactionsFromXMLFile(const std::string& FileName);
     void GetParticlesFromXMLFile(const boost::property_tree::ptree& ReactionsPropertyTreeXMLTreeElement);

@@ -112,7 +112,7 @@ bool CellEngineChemicalReactionsInSimulationSpace::FindParticlesInProximityOfSim
 
         FindParticlesInProximityInSimulationSpaceForSelectedLocalSpace(FoundParticleIndexes, UpdateNucleotides, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
 
-        LoggersManagerObject.Log(STREAM(endl << "Number of Particles Kinds found = " << ParticlesKindsFoundInProximity.size()));
+        LoggersManagerObject.Log(STREAM(endl << "Number of Particles Kinds Found In Proximity = " << ParticlesKindsFoundInProximity.size()));
 
         if (ParticlesSortedByCapacityFoundInProximity.empty() == false)
         {

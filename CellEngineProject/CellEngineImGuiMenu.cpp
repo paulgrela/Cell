@@ -669,6 +669,9 @@ public:
                     CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ReadAllIllinoisDataFromFiles();
                     CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ReadGenomeSequenceFromFile();
                 }
+                if (ImGui::Button("   READ ILLINOIS REACTIONS            ") == true)
+                    CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ReadChemicalReactionsFromFiles();
+
                 if (ImGui::Button("   ADD SPECIAL PARTICLE KINDS         ") == true)
                     CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->AddSpecialParticlesKinds();
                 if (ImGui::Button("   ADD PARTICLE KINDS                 ") == true)

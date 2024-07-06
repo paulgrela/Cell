@@ -183,32 +183,32 @@ void GetDataForReactionFromXMLFile(const boost::property_tree::ptree& PropertyTr
     CATCH("getting data for reaction from xml file")
 }
 
-string GetStringOfSortedParticlesDataNames(std::vector<ParticleKindForChemicalReaction>& LocalData)
-{
-    string KeyStringOfReaction;
-    try
-    {
-        sort(LocalData.begin(), LocalData.end(), [](const ParticleKindForChemicalReaction& P1, const ParticleKindForChemicalReaction& P2){ return ParticlesKindsManagerObject.GetParticleKind(P1.EntityId).Formula > ParticlesKindsManagerObject.GetParticleKind(P2.EntityId).Formula; } );
-        for (const auto& LocalReactant : LocalData)
-            KeyStringOfReaction += ParticlesKindsManagerObject.GetParticleKind(LocalReactant.EntityId).Formula + "+";
-    }
-    CATCH("")
-
-    return KeyStringOfReaction;
-}
+//string GetStringOfSortedParticlesDataNames(std::vector<ParticleKindForChemicalReaction>& LocalData)
+//{
+//    string KeyStringOfReaction;
+//    try
+//    {
+//        sort(LocalData.begin(), LocalData.end(), [](const ParticleKindForChemicalReaction& P1, const ParticleKindForChemicalReaction& P2){ return ParticlesKindsManagerObject.GetParticleKind(P1.EntityId).Formula < ParticlesKindsManagerObject.GetParticleKind(P2.EntityId).Formula; } );
+//        for (const auto& LocalReactant : LocalData)
+//            KeyStringOfReaction += ParticlesKindsManagerObject.GetParticleKind(LocalReactant.EntityId).Formula + "+";
+//    }
+//    CATCH("getting string of sorted particles data names")
+//
+//    return KeyStringOfReaction;
+//}
 
 void CellEngineIllinoisDataCreator::AddXMLChemicalReaction(ChemicalReaction& ReactionObject)
 {
     try
     {
         ReactionObject.ReactionIdNum = ReactionId;
-        ReactionObject.ReactantsStr = GetStringOfSortedParticlesDataNames(ReactionObject.Reactants);
+        ReactionObject.ReactantsStr = ChemicalReactionsManager::GetStringOfSortedParticlesDataNames(ReactionObject.Reactants);
         ReactionObject.SpecialReactionFunction = nullptr;
         ChemicalReactionsManagerObject.AddChemicalReaction(ReactionObject);
 
         if (ReactionObject.Reversible == true)
         {
-            ReactionObject.ReactantsStr = GetStringOfSortedParticlesDataNames(ReactionObject.Products);
+            ReactionObject.ReactantsStr = ChemicalReactionsManager::GetStringOfSortedParticlesDataNames(ReactionObject.Products);
             swap(ReactionObject.Products, ReactionObject.Reactants);
             ChemicalReactionsManagerObject.AddChemicalReaction(ReactionObject);
         }
@@ -584,6 +584,18 @@ void CellEngineIllinoisDataCreator::ReadTSVFiles(bool Read, const string& Partic
     CATCH("reading tsv files")
 }
 
+void CellEngineIllinoisDataCreator::ReadChemicalReactionsFromFiles()
+{
+    try
+    {
+        string ReactionsDirectory = string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("reactions") + OS_DIR_SEP;
+
+        ReadReactionsFromXMLFile(ReactionsDirectory + string("iMB155.xml"));
+        ReadReactionsFromJSONFile(ReactionsDirectory + string("iMB155.json"), false);
+    }
+    CATCH("reading chemical reactions from file")
+}
+
 void CellEngineIllinoisDataCreator::ReadAllIllinoisDataFromFiles()
 {
     try
@@ -593,9 +605,9 @@ void CellEngineIllinoisDataCreator::ReadAllIllinoisDataFromFiles()
         ChemicalReactionsManagerObject.ChemicalReactions.clear();
 
         EntityIdInt LocalDNAIdentifier = CellEngineConfigDataObject.DNAIdentifier;
-        ParticlesKindsManagerObject.AddSingleParticleKind(ParticlesTypes::DNANucleotide, LocalDNAIdentifier, "DNANucleotide", "DNANucleotide", "dna", -1, 0, "c", 1);
+        ParticlesKindsManagerObject.AddSingleParticleKind(ParticlesTypes::DNANucleotide, LocalDNAIdentifier, "DNANucleotide", "DNANucleotide", "DNA", -1, 0, "c", 1);
         EntityIdInt LocalRNAIdentifier = CellEngineConfigDataObject.RNAIdentifier;
-        ParticlesKindsManagerObject.AddSingleParticleKind(ParticlesTypes::DNANucleotide, LocalRNAIdentifier, "RNANucleotide", "RNANucleotide", "rna", -1, 0, "c", 1);
+        ParticlesKindsManagerObject.AddSingleParticleKind(ParticlesTypes::DNANucleotide, LocalRNAIdentifier, "RNANucleotide", "RNANucleotide", "RNA", -1, 0, "c", 1);
 
         ReadAndParseGenesFile(string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("genome") + OS_DIR_SEP + string("GENES.txt"));
         PrintGenesFile();
@@ -607,10 +619,7 @@ void CellEngineIllinoisDataCreator::ReadAllIllinoisDataFromFiles()
 
         ReadTSVFiles(false, ParticlesDirectory + string("tsv") + OS_DIR_SEP);
 
-        string ReactionsDirectory = string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("reactions") + OS_DIR_SEP;
-
-        ReadReactionsFromXMLFile(ReactionsDirectory + string("iMB155.xml"));
-        ReadReactionsFromJSONFile(ReactionsDirectory + string("iMB155.json"), false);
+        ReadChemicalReactionsFromFiles();
 
         CheckHowManyParticleDataForGeneratorIsNotInParticleKindsAndAddThem(true);
 
@@ -626,5 +635,5 @@ void CellEngineIllinoisDataCreator::ReadAllIllinoisDataFromFiles()
 
         LoggersManagerObject.Log(STREAM("ALL DATA READ FROM FILE"));
     }
-    CATCH("reading chemical reactions from file")
+    CATCH("reading all illinois data from file")
 }
