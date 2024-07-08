@@ -826,7 +826,7 @@ public:
                 ImGui::RadioButton("Draw Selected Space From Corner", &SelectedSpaceStartParametersDrawTypesIndex, 2);
                 CellEngineConfigDataObject.SelectedSpaceStartParametersDrawTypesObject = static_cast<CellEngineConfigData::SelectedSpaceStartParametersDrawTypes>(SelectedSpaceStartParametersDrawTypesIndex);
 
-                if (ImGui::CollapsingHeader("  DEMO COMBINATORICS          "))
+                if (ImGui::CollapsingHeader("  DEMO COMBINATORICS          ", ImGuiTreeNodeFlags_DefaultOpen))
                 {
                     if (ImGui::Button("  DEMO1  ") == true)
                         ShowDemoTest();

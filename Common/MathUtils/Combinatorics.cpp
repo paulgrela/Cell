@@ -3,84 +3,28 @@
 #include <string>
 #include <vector>
 
-#include "../CellEngineTypes.h"
-
 #include "Logger.h"
 #include "Combinatorics.h"
 
+using SignedInt = int64_t;
+using UnsignedInt = uint64_t;
 
 using namespace std;
 
-void ShowArray(int* Array, int Start, int Counter, string LineStr)
+const UnsignedInt MaxArr = 8;
+
+void ShowArray(UnsignedInt* Array, UnsignedInt Start, UnsignedInt Counter, string_view LineStr)
 {
     string s;
-    for(int p = Start; p < Counter; p++)
+    for (UnsignedInt p = Start; p < Counter; p++)
         s += to_string(Array[p]);
     LoggersManagerObject.Log(STREAM(s << LineStr));
 }
 
-const int MaxArr = 8;
-
-/*
-void AddTwoBitArrays(int MainArray[max], int ArrayToAdd[max], int ResultArray[max])
+void AddTwoBitArrays(const UnsignedInt* MainArray, const UnsignedInt* ArrayToAdd, UnsignedInt* ResultArray)
 {
-    int Remember = 0;
-    for(int Pos = max - 1; Pos >= 0; Pos--)
-    {
-        if(Remember == 1 && MainArray[Pos] == 0)
-        {
-            MainArray[Pos] = 1;
-            Remember = 0;
-        }
-        else
-        if(Remember == 1 && MainArray[Pos] == 1 && ArrayToAdd[Pos] == 1)
-        {
-            ResultArray[Pos] = 1;
-            continue;
-        }
-
-        if(MainArray[Pos] == 0 && ArrayToAdd[Pos] == 0)
-        {
-            ResultArray[Pos] = Remember;
-            Remember = 0;
-        }
-        else
-        if(MainArray[Pos] == 0 && ArrayToAdd[Pos] == 1 && Remember == 0)
-        {
-            ResultArray[Pos] = 1;
-            Remember = 0;
-        }
-        else
-        if(MainArray[Pos] == 0 && ArrayToAdd[Pos] == 1 && Remember == 1)
-        {
-            ResultArray[Pos] = 0;
-            Remember = 1;
-        }
-        else
-        if(MainArray[Pos] == 1 && ArrayToAdd[Pos] == 0 && Remember == 0)
-        {
-            ResultArray[Pos] = 1;
-            Remember = 0;
-        }
-        else
-        if(MainArray[Pos] == 1 && ArrayToAdd[Pos] == 0 && Remember == 1)
-        {
-            ResultArray[Pos] = 0;
-            Remember = 1;
-        }
-        else
-        if(MainArray[Pos] == 1 && ArrayToAdd[Pos] == 1 && Remember == 0)
-        {
-            ResultArray[Pos] = 0;
-            Remember = 1;
-        }
-    }
-}
-*/
-void AddTwoBitArrays(int MainArray[MaxArr], int ArrayToAdd[MaxArr], int ResultArray[MaxArr])
-{
-    int Remember = 0;
-    for(int Pos = MaxArr - 1; Pos >= 0; Pos--)
+    UnsignedInt Remember = 0;
+    for(SignedInt Pos = MaxArr - 1; Pos >= 0; Pos--)
     {
         if(MainArray[Pos] == 0 && ArrayToAdd[Pos] == 0)
         {
@@ -126,9 +70,9 @@ void AddTwoBitArrays(int MainArray[MaxArr], int ArrayToAdd[MaxArr], int ResultAr
     }
 }
 
-void Add1ToMainArray(int MainArray[MaxArr], int ArrayToAdd[MaxArr], int ResultArray[MaxArr])
+void Add1ToMainArray(const UnsignedInt* MainArray, const UnsignedInt* ArrayToAdd, UnsignedInt* ResultArray)
 {
-    int Remember = 0;
+    UnsignedInt Remember = 0;
     if(MainArray[MaxArr - 1] == 0 && ArrayToAdd[MaxArr - 1] == 0)
         ResultArray[MaxArr - 1] = 0;
     else
@@ -144,7 +88,7 @@ void Add1ToMainArray(int MainArray[MaxArr], int ArrayToAdd[MaxArr], int ResultAr
         Remember = 1;
     }
 
-    for(int Pos = MaxArr - 2; Pos >= 0; Pos--)
+    for (SignedInt Pos = MaxArr - 2; Pos >= 0; Pos--)
     {
         if(MainArray[Pos] == 0)
         {
@@ -168,67 +112,67 @@ void Add1ToMainArray(int MainArray[MaxArr], int ArrayToAdd[MaxArr], int ResultAr
 
 void Add1ToMainArrayByAddTwoBitsArraysButtonClick()
 {
-    int MainArrayCopy[MaxArr];
-    int ArrayToAddCopy[MaxArr];
+    UnsignedInt MainArrayCopy[MaxArr];
+    UnsignedInt ArrayToAddCopy[MaxArr];
 
-    int MainArray[MaxArr] =  {0,0,0,0, 0, 0, 0, 0};
-    int ArrayToAdd[MaxArr] = {0,0,0,0, 0, 0, 0, 1};
+    UnsignedInt MainArray[MaxArr] =  { 0,0,0,0, 0, 0, 0, 0 };
+    UnsignedInt ArrayToAdd[MaxArr] = { 0,0,0,0, 0, 0, 0, 1 };
 
-    int ResultArray[MaxArr];
+    UnsignedInt ResultArray[MaxArr];
 
-    for(int p = 0; p < MaxArr; p++)
+    for (UnsignedInt p = 0; p < MaxArr; p++)
     {
         MainArrayCopy[p] = MainArray[p];
         ArrayToAddCopy[p] = ArrayToAdd[p];
     }
-    for(int m = 1; m <= 16; m++)
+    for (UnsignedInt m = 1; m <= 16; m++)
     {
-        for(int p = 0; p < MaxArr; p++)
+        for(UnsignedInt p = 0; p < MaxArr; p++)
             ArrayToAdd[p] = ArrayToAddCopy[p];
         AddTwoBitArrays(MainArray, ArrayToAdd, ResultArray);
         ShowArray(ResultArray, 0, MaxArr, "");
-        for(int p = 0; p < MaxArr; p++)
+        for(UnsignedInt p = 0; p < MaxArr; p++)
             MainArray[p] = ResultArray[p];
     }
 }
 
 void Add1ToMainArrayButtonClick()
 {
-    int MainArrayCopy[MaxArr];
-    int ArrayToAddCopy[MaxArr];
+    UnsignedInt MainArrayCopy[MaxArr];
+    UnsignedInt ArrayToAddCopy[MaxArr];
 
-    int MainArray[MaxArr] =  {0,0,0,0, 0, 0, 0, 0};
-    int ArrayToAdd[MaxArr] = {0,0,0,0, 0, 0, 0, 1};
+    UnsignedInt MainArray[MaxArr] =  { 0,0,0,0, 0, 0, 0, 0 };
+    UnsignedInt ArrayToAdd[MaxArr] = { 0,0,0,0, 0, 0, 0, 1 };
 
-    int ResultArray[MaxArr];
+    UnsignedInt ResultArray[MaxArr];
 
-    for(int p = 0; p < MaxArr; p++)
+    for (UnsignedInt p = 0; p < MaxArr; p++)
     {
         MainArrayCopy[p] = MainArray[p];
         ArrayToAddCopy[p] = ArrayToAdd[p];
     }
-    for(int m = 1; m <= 16; m++)
+    for(UnsignedInt m = 1; m <= 16; m++)
     {
-        for(int p = 0; p < MaxArr; p++)
+        for (UnsignedInt p = 0; p < MaxArr; p++)
             ArrayToAdd[p] = ArrayToAddCopy[p];
         Add1ToMainArray(MainArray, ArrayToAdd, ResultArray);
         ShowArray(ResultArray, 0, MaxArr, "");
-        for(int p = 0; p < MaxArr; p++)
+        for (UnsignedInt p = 0; p < MaxArr; p++)
             MainArray[p] = ResultArray[p];
     }
 }
 
 void AddTwoDifferentBitsArraysButtonClick()
 {
-    int MainArrayCopy[MaxArr];
-    int ArrayToAddCopy[MaxArr];
+    UnsignedInt MainArrayCopy[MaxArr];
+    UnsignedInt ArrayToAddCopy[MaxArr];
 
-    int MainArray[MaxArr] =  {0,0,0,0, 1, 1, 0, 1};
-    int ArrayToAdd[MaxArr] = {0,0,0,0, 0, 1, 1, 1};
+    UnsignedInt MainArray[MaxArr] =  {0,0,0,0, 1, 1, 0, 1};
+    UnsignedInt ArrayToAdd[MaxArr] = {0,0,0,0, 0, 1, 1, 1};
 
-    int ResultArray[MaxArr];
+    UnsignedInt ResultArray[MaxArr];
 
-    for(int p = 0; p < MaxArr; p++)
+    for(UnsignedInt p = 0; p < MaxArr; p++)
     {
         MainArrayCopy[p] = MainArray[p];
         ArrayToAddCopy[p] = ArrayToAdd[p];
@@ -252,26 +196,26 @@ void AddTwoDifferentBitsArraysButtonClick()
 
 //PONI�SZE DWIE FUNKCJE TO TO SAMO CO DWIE JESZCZE NAST�PNE TYLKO Z WYPISYWANIEM STANU ALGORYTMU przez ShowArray
 
-void  Rotate(int R)
+void  Rotate(UnsignedInt R)
 {
-    int Pam = ArraySet[R];
-    for(int i = R; i > 1; i--)
+    UnsignedInt Pam = ArraySet[R];
+    for(UnsignedInt i = R; i > 1; i--)
     {
-        ShowArray(ArraySet, 1, N + 1, " IN TRAIN PREV, R = " + IntToStr(R) + " i = " + IntToStr(i));
+        ShowArray(ArraySet, 1, N + 1, " IN TRAIN PREV, R = " + UnsignedIntToStr(R) + " i = " + UnsignedIntToStr(i));
         ArraySet[i] = ArraySet[i - 1];
-        ShowArray(ArraySet, 1, N + 1, " IN TRAIN AFTER, R = " + IntToStr(R) + " i = " + IntToStr(i));
+        ShowArray(ArraySet, 1, N + 1, " IN TRAIN AFTER, R = " + UnsignedIntToStr(R) + " i = " + UnsignedIntToStr(i));
     }
     ArraySet[1] = Pam;
-    ShowArray(ArraySet, 1, N + 1, " AFTER TOTAL, R = " + IntToStr(R));
+    ShowArray(ArraySet, 1, N + 1, " AFTER TOTAL, R = " + UnsignedIntToStr(R));
 }
 
 void AllKElementsCombinationsFromNElementsFirstWayButtonClick()
 {
-    int Line = 1;
+    UnsignedInt Line = 1;
     CombinationsMemo->Clear();
-    for(int i = 1; i <= N; i++)
+    for(UnsignedInt i = 1; i <= N; i++)
         ArraySet[i] = i <= K;
-    int j = N - 1;
+    UnsignedInt j = N - 1;
     bool LoopCondition = true;
     while(LoopCondition)
     {
@@ -284,7 +228,7 @@ void AllKElementsCombinationsFromNElementsFirstWayButtonClick()
         ShowArray(ArraySet, 1, N + 1, " PREV, j + 1 = " + to_string(j + 1));
         Rotate(j + 1);
         ShowArray(ArraySet, 1, N + 1, " AFTER");
-        int i;
+        UnsignedInt i;
         for(i = 1; i < N; i++)
             if(ArraySet[i] == 0 && ArraySet[i + 1] == 1)
             {
@@ -296,25 +240,25 @@ void AllKElementsCombinationsFromNElementsFirstWayButtonClick()
 }
 */
 
-const int N = 6;
-const int K = 4;
+const UnsignedInt N = 6;
+const UnsignedInt K = 4;
 
-int ArraySet[N + 1];
+UnsignedInt ArraySet[N + 1];
 
-void  Rotate(int R)
+void  Rotate(UnsignedInt R)
 {
-    int Pam = ArraySet[R];
-    for(int i = R; i > 1; i--)
+    UnsignedInt Pam = ArraySet[R];
+    for(UnsignedInt i = R; i > 1; i--)
         ArraySet[i] = ArraySet[i - 1];
     ArraySet[1] = Pam;
 }
 
 void AllKElementsCombinationsFromNElementsFirstWayButtonClick()
 {
-    int Line = 1;
-    for(int i = 1; i <= N; i++)
+    UnsignedInt Line = 1;
+    for(UnsignedInt i = 1; i <= N; i++)
         ArraySet[i] = i <= K;
-    int j = N - 1;
+    UnsignedInt j = N - 1;
     bool LoopCondition = true;
     while(LoopCondition)
     {
@@ -325,7 +269,7 @@ void AllKElementsCombinationsFromNElementsFirstWayButtonClick()
             goto EndLabel;
         }
         Rotate(j + 1);
-        int i;
+        UnsignedInt i;
         for(i = 1; i < N; i++)
             if(ArraySet[i] == 0 && ArraySet[i + 1] == 1)
             {
@@ -338,17 +282,17 @@ void AllKElementsCombinationsFromNElementsFirstWayButtonClick()
 
 void AllKElementsCombinationsFromNElementsFirstWayAndHalfButtonClick()
 {
-    int Line = 1;
-    for(int i = 1; i <= N; i++)
+    UnsignedInt Line = 1;
+    for(UnsignedInt i = 1; i <= N; i++)
         ArraySet[i] = i <= K;
-    int j = N - 1;
+    UnsignedInt j = N - 1;
     while(true)
     {
         ShowArray(ArraySet, 1, N + 1, " " + to_string(Line++));
         if(j >= N || N == K)
             break;
         Rotate(j + 1);
-        int i;
+        UnsignedInt i;
         for(i = 1; i < N; i++)
             if(ArraySet[i] == 0 && ArraySet[i + 1] == 1)
             {
@@ -360,33 +304,33 @@ void AllKElementsCombinationsFromNElementsFirstWayAndHalfButtonClick()
 
 
 
-UnsignedInt NumberOfCombinations(UnsignedInt N, UnsignedInt K)
+UnsignedInt NumberOfCombinations(UnsignedInt NP, UnsignedInt KP)
 {
     UnsignedInt NSilnia = 1;
-    for(int Number = 1; Number <= N; Number++)
+    for(UnsignedInt Number = 1; Number <= NP; Number++)
         NSilnia *= Number;
     UnsignedInt KSilnia = 1;
-    for(int Number = 1; Number <= K; Number++)
+    for(UnsignedInt Number = 1; Number <= KP; Number++)
         KSilnia *= Number;
     UnsignedInt NMinusKSilnia = 1;
-    for(int Number = 1; Number <= (N - K); Number++)
+    for(UnsignedInt Number = 1; Number <= (NP - KP); Number++)
         NMinusKSilnia *= Number;
     return NSilnia / (KSilnia * NMinusKSilnia);
 }
 
 string CreateBoolStringFromInt64BitState(UnsignedInt Number)
 {
-    string NumberString = "";
-    unsigned int LenOfInt = sizeof(UnsignedInt) * 8;
-    for(unsigned int i = LenOfInt - 1; i >= 1; i--)
+    string NumberString;
+    UnsignedInt LenOfInt = sizeof(UnsignedInt) * 8;
+    for(UnsignedInt i = LenOfInt - 1; i >= 1; i--)
         (Number >> (LenOfInt - i - 1)) << (LenOfInt - 1) ? NumberString += "1" : NumberString += "0";
     return NumberString;
 }
 
 #pragma warn -ngu
-unsigned int NextNumberWithTheSameNumberOf1Bits(unsigned int Number)
+UnsignedInt NextNumberWithTheSameNumberOf1Bits(UnsignedInt Number)
 {
-    unsigned int Smallest, Ripple, Ones;
+    UnsignedInt Smallest, Ripple, Ones;
     Smallest = Number & -Number;
     Ripple = Number + Smallest;
     Ones = Number ^ Ripple;
@@ -396,27 +340,27 @@ unsigned int NextNumberWithTheSameNumberOf1Bits(unsigned int Number)
 
 void AllKElementsCombinationsFromNElementsSecondWayButtonClick()
 {
-    int Line = 1;
-    for(int i = 1; i <= N; i++)
+    UnsignedInt Line = 1;
+    for(UnsignedInt i = 1; i <= N; i++)
         ArraySet[i] = (i <= K);
 
-    unsigned int AimNumber = 0;
-    for(int i = 1; i <= N; i++)
+    UnsignedInt AimNumber = 0;
+    for(UnsignedInt i = 1; i <= N; i++)
         AimNumber |= (UnsignedInt)pow(2, i - 1);
     ShowArray(ArraySet, 1, N + 1, "");
     LoggersManagerObject.Log(STREAM(CreateBoolStringFromInt64BitState(AimNumber)));
     LoggersManagerObject.Log(STREAM(""));
 
-    unsigned int Number = 0;
-    for(int i = 1; i <= N; i++)
+    UnsignedInt Number = 0;
+    for(UnsignedInt i = 1; i <= N; i++)
         if(ArraySet[i] == 1)
             Number |= (UnsignedInt)pow(2, i - 1);
-    LoggersManagerObject.Log(STREAM(CreateBoolStringFromInt64BitState(Number) + "    " + to_string(Line++)));
+    LoggersManagerObject.Log(STREAM(CreateBoolStringFromInt64BitState(Number) << "    " << to_string(Line++)));
     while(Number < AimNumber)
     {
         Number = NextNumberWithTheSameNumberOf1Bits(Number);
         if(Number < AimNumber)
-            LoggersManagerObject.Log(STREAM(CreateBoolStringFromInt64BitState(Number) + "    " + to_string(Line++)));
+            LoggersManagerObject.Log(STREAM(CreateBoolStringFromInt64BitState(Number) << "    " << to_string(Line++)));
     }
 
     LoggersManagerObject.Log(STREAM(""));
@@ -446,25 +390,25 @@ void AllKElementsCombinationsFromNElementsSecondWayButtonClick()
     Potem rotacja 1234 na 4123 i od pocz¹tku podzia³ na string krótsdzy gdzie znów ta rotacja
 */
 
-void Rotate1(int Number, string& PermutationStringLocal)
+void Rotate1(UnsignedInt Number, string& PermutationStringLocal)
 {
-    int PermutationStringLength = PermutationStringLocal.length();
+    UnsignedInt PermutationStringLength = PermutationStringLocal.length();
 
     char TempChar = PermutationStringLocal[PermutationStringLength];
-    for(int i = PermutationStringLength - 1; i >= Number; i--)
+    for(UnsignedInt i = PermutationStringLength - 1; i >= Number; i--)
         PermutationStringLocal[i + 1] = PermutationStringLocal[i];
     PermutationStringLocal[Number] = TempChar;
 }
 
-void PermutationFunction(int Number, string& PermutationStringLocal, int& Line)
+void PermutationFunction(UnsignedInt Number, string& PermutationStringLocal, UnsignedInt& Line)
 {
     if(Number == 1)
         LoggersManagerObject.Log(STREAM(PermutationStringLocal + " LINE = " + to_string(Line++)));
     else
     {
-        int PermutationStringLength = PermutationStringLocal.length();
+        UnsignedInt PermutationStringLength = PermutationStringLocal.length();
 
-        for(int i = 1; i < Number; i++)
+        for(UnsignedInt i = 1; i < Number; i++)
         {
             PermutationFunction(Number - 1, PermutationStringLocal, Line);
             Rotate1(PermutationStringLength - Number + 1 + 1, PermutationStringLocal);
@@ -474,13 +418,11 @@ void PermutationFunction(int Number, string& PermutationStringLocal, int& Line)
 
 void Permutations1ButtonClick()
 {
-    LoggersManagerObject.Log(STREAM(""));
-    LoggersManagerObject.Log(STREAM("PERMUTACJE:"));
-    LoggersManagerObject.Log(STREAM(""));
+    LoggersManagerObject.Log(STREAM("PERMUTATIONS:"));
 
-    int Line = 1;
+    UnsignedInt Line = 1;
     string PermutationString = "ABCDE";
-    int PermutationStringLength = PermutationString.length();
+    UnsignedInt PermutationStringLength = PermutationString.length();
     PermutationFunction(PermutationStringLength + 1, PermutationString, Line);
 }
 
@@ -514,10 +456,10 @@ void VariationsButtonClick1()
     LoggersManagerObject.Log(STREAM("WARIACJE Z POWTÓRZENIAMI W KILKU PÊTLACH:"));
     LoggersManagerObject.Log(STREAM(""));
 
-    int Line = 1;
-    for(int i1 = 1; i1 <= 4; i1++)
-        for(int i2 = 1; i2 <= 4; i2++)
-            for(int i3 = 1; i3 <= 4; i3++)
+    UnsignedInt Line = 1;
+    for(UnsignedInt i1 = 1; i1 <= 4; i1++)
+        for(UnsignedInt i2 = 1; i2 <= 4; i2++)
+            for(UnsignedInt i3 = 1; i3 <= 4; i3++)
                 LoggersManagerObject.Log(STREAM(to_string(i1) << to_string(i2) << to_string(i3) << " LINE = " +to_string(Line++)));
 
     /* To samo poni¿ej - jedna pêtla zastêpuje 3 gdy jest n^k razy d³u¿sza */
@@ -527,18 +469,18 @@ void VariationsButtonClick1()
     LoggersManagerObject.Log(STREAM(""));
 
     Line = 1;
-    int SizeOfSetN = 4;
-    int KWords = 3;
-    int TotalNumberOfVariations = pow(SizeOfSetN, KWords);
-    std::vector<int> Repeat(KWords + 1);
-    for(int ki = 1; ki <= KWords; ki++)
+    UnsignedInt SizeOfSetN = 4;
+    UnsignedInt KWords = 3;
+    UnsignedInt TotalNumberOfVariations = pow(SizeOfSetN, KWords);
+    vector<UnsignedInt> Repeat(KWords + 1);
+    for(UnsignedInt ki = 1; ki <= KWords; ki++)
         Repeat[ki] = 1;
-    for(int Variation = 1; Variation <= TotalNumberOfVariations; Variation++)
+    for(UnsignedInt Variation = 1; Variation <= TotalNumberOfVariations; Variation++)
     {
         /* Poni¿sze linijki to jedynie wyœwietlenie rezultatu */
 
         string SKWord = "";
-        for(int ki = 1; ki <= KWords; ki++)
+        for(UnsignedInt ki = 1; ki <= KWords; ki++)
             SKWord += to_string(Repeat[ki]);
         LoggersManagerObject.Log(STREAM(SKWord << " LINE = " << to_string(Line++)));
 
@@ -546,7 +488,7 @@ void VariationsButtonClick1()
         /* pozosta³e zwiêkszane jedynie gdy poprzednia cyfra jest przewijana */
 
         Repeat[KWords]++;
-        for(int ki = KWords; ki >= 1; ki--)
+        for(UnsignedInt ki = KWords; ki >= 1; ki--)
             if(Repeat[ki] % (SizeOfSetN + 1) == 0)
             {
                 Repeat[ki] = 1;
@@ -563,12 +505,12 @@ void LoopsFrom1ToMInOneLoopButtonClick()
     LoggersManagerObject.Log(STREAM("W KILKU PÊTLACH RO¯NEJ D£UGOŒCI OD 1:"));
     LoggersManagerObject.Log(STREAM(""));
 
-    int Line = 1;
-    int Length[4] = {0, 4, 5, 7};
+    UnsignedInt Line = 1;
+    UnsignedInt Length[4] = {0, 4, 5, 7};
 
-    for(int i1 = 1; i1 <= Length[1]; i1++)
-        for(int i2 = 1; i2 <= Length[2]; i2++)
-            for(int i3 = 1; i3 <= Length[3]; i3++)
+    for(UnsignedInt i1 = 1; i1 <= Length[1]; i1++)
+        for(UnsignedInt i2 = 1; i2 <= Length[2]; i2++)
+            for(UnsignedInt i3 = 1; i3 <= Length[3]; i3++)
                 LoggersManagerObject.Log(STREAM(to_string(i1) << to_string(i2) << to_string(i3) << " LINE = " +to_string(Line++)));
 
     /* To samo poni¿ej - jedna pêtla zastêpuje 3 gdy jest (Length[1] * Length[2] * Length[3]) razy d³u¿sza */
@@ -578,17 +520,17 @@ void LoopsFrom1ToMInOneLoopButtonClick()
     LoggersManagerObject.Log(STREAM(""));
 
     Line = 1;
-    int KWords = 3;
-    int TotalNumberOfVariations = Length[1] * Length[2] * Length[3];
-    std::vector<int> Repeat(KWords + 1);
-    for(int ki = 1; ki <= KWords; ki++)
+    UnsignedInt KWords = 3;
+    UnsignedInt TotalNumberOfVariations = Length[1] * Length[2] * Length[3];
+    vector<UnsignedInt> Repeat(KWords + 1);
+    for(UnsignedInt ki = 1; ki <= KWords; ki++)
         Repeat[ki] = 1;
-    for(int Variation = 1; Variation <= TotalNumberOfVariations; Variation++)
+    for(UnsignedInt Variation = 1; Variation <= TotalNumberOfVariations; Variation++)
     {
         /* Poni¿sze linijki to jedynie wyœwietlenie rezultatu */
 
         string SKWord = "";
-        for(int ki = 1; ki <= KWords; ki++)
+        for(UnsignedInt ki = 1; ki <= KWords; ki++)
             SKWord += to_string(Repeat[ki]);
         LoggersManagerObject.Log(STREAM(SKWord + " LINE = " + to_string(Line++)));
 
@@ -596,7 +538,7 @@ void LoopsFrom1ToMInOneLoopButtonClick()
         /* pozosta³e zwiêkszane jedynie gdy poprzednia cyfra jest przewijana */
 
         Repeat[KWords]++;
-        for(int ki = KWords; ki >= 1; --ki)
+        for(UnsignedInt ki = KWords; ki >= 1; --ki)
             if(Repeat[ki] % (Length[ki] + 1) == 0)
             {
                 Repeat[ki] = 1;
@@ -613,13 +555,13 @@ void LoopsFromNtoMInOneLoopButtonClick()
     LoggersManagerObject.Log(STREAM("W KILKU PÊTLACH RO¯NEJ D£UGOŒCI OD 1:"));
     LoggersManagerObject.Log(STREAM(""));
 
-    int Line = 1;
-    int Length[4] = {0, 4, 5, 7};
-    int Start[4] = {0, 2, 3, 5};
+    UnsignedInt Line = 1;
+    UnsignedInt Length[4] = {0, 4, 5, 7};
+    UnsignedInt Start[4] = {0, 2, 3, 5};
 
-    for(int i1 = Start[1]; i1 <= Length[1]; i1++)
-        for(int i2 = Start[2]; i2 <= Length[2]; i2++)
-            for(int i3 = Start[3]; i3 <= Length[3]; i3++)
+    for(UnsignedInt i1 = Start[1]; i1 <= Length[1]; i1++)
+        for(UnsignedInt i2 = Start[2]; i2 <= Length[2]; i2++)
+            for(UnsignedInt i3 = Start[3]; i3 <= Length[3]; i3++)
                 LoggersManagerObject.Log(STREAM(to_string(i1) << to_string(i2) << to_string(i3) << " LINE = " +to_string(Line++)));
 
     /* To samo poni¿ej - jedna pêtla zastêpuje 3 gdy jest (Length[1] * Length[2] * Length[3]) razy d³u¿sza */
@@ -629,22 +571,22 @@ void LoopsFromNtoMInOneLoopButtonClick()
     LoggersManagerObject.Log(STREAM(""));
 
     Line = 1;
-    int KWords = 3;
+    UnsignedInt KWords = 3;
 
-    /* int TotalNumberOfVariations = (Length[1] - Start[1] + 1) * (Length[2] - Start[2] + 1) * (Length[3] - Start[3] + 1); */
-    int TotalNumberOfVariations = 1;
-    for(int ki = 1; ki <= KWords; ki++)
+    /* UnsignedInt TotalNumberOfVariations = (Length[1] - Start[1] + 1) * (Length[2] - Start[2] + 1) * (Length[3] - Start[3] + 1); */
+    UnsignedInt TotalNumberOfVariations = 1;
+    for(UnsignedInt ki = 1; ki <= KWords; ki++)
         TotalNumberOfVariations *= (Length[ki] - Start[ki] + 1);
 
-    std::vector<int> Repeat(KWords + 1);
-    for(int ki = 1; ki <= KWords; ki++)
+    vector<UnsignedInt> Repeat(KWords + 1);
+    for(UnsignedInt ki = 1; ki <= KWords; ki++)
         Repeat[ki] = Start[ki];
-    for(int Variation = 1; Variation <= TotalNumberOfVariations; Variation++)
+    for(UnsignedInt Variation = 1; Variation <= TotalNumberOfVariations; Variation++)
     {
         /* Poni¿sze linijki to jedynie wyœwietlenie rezultatu */
 
-        string SKWord = "";
-        for(int ki = 1; ki <= KWords; ki++)
+        string SKWord;
+        for(UnsignedInt ki = 1; ki <= KWords; ki++)
             SKWord += to_string(Repeat[ki]);
         LoggersManagerObject.Log(STREAM(SKWord << " LINE = " << to_string(Line++)));
 
@@ -652,7 +594,7 @@ void LoopsFromNtoMInOneLoopButtonClick()
         /* pozosta³e zwiêkszane jedynie gdy poprzednia cyfra jest przewijana */
 
         Repeat[KWords]++;
-        for(int ki = KWords; ki >= 1; --ki)
+        for(UnsignedInt ki = KWords; ki >= 1; --ki)
             if(Repeat[ki] % (Length[ki] + 1) == 0)
             {
                 Repeat[ki] = Start[ki];
