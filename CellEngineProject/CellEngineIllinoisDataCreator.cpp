@@ -183,20 +183,6 @@ void GetDataForReactionFromXMLFile(const boost::property_tree::ptree& PropertyTr
     CATCH("getting data for reaction from xml file")
 }
 
-//string GetStringOfSortedParticlesDataNames(std::vector<ParticleKindForChemicalReaction>& LocalData)
-//{
-//    string KeyStringOfReaction;
-//    try
-//    {
-//        sort(LocalData.begin(), LocalData.end(), [](const ParticleKindForChemicalReaction& P1, const ParticleKindForChemicalReaction& P2){ return ParticlesKindsManagerObject.GetParticleKind(P1.EntityId).Formula < ParticlesKindsManagerObject.GetParticleKind(P2.EntityId).Formula; } );
-//        for (const auto& LocalReactant : LocalData)
-//            KeyStringOfReaction += ParticlesKindsManagerObject.GetParticleKind(LocalReactant.EntityId).Formula + "+";
-//    }
-//    CATCH("getting string of sorted particles data names")
-//
-//    return KeyStringOfReaction;
-//}
-
 void CellEngineIllinoisDataCreator::AddXMLChemicalReaction(ChemicalReaction& ReactionObject)
 {
     try

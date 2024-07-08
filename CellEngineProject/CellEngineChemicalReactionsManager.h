@@ -16,6 +16,13 @@ public:
     std::unordered_map<UnsignedInt, UnsignedInt> ChemicalReactionsPosFromId;
     std::unordered_multimap<std::string, UnsignedInt> ChemicalReactionsPosFromString;
 public:
+    void AddChemicalReaction(const ChemicalReaction& ReactionParam)
+    {
+        ChemicalReactions.emplace_back(ReactionParam);
+        ChemicalReactionsPosFromId.insert(std::make_pair(ReactionParam.ReactionIdNum, ChemicalReactions.size() - 1));
+        ChemicalReactionsPosFromString.insert(std::make_pair(ReactionParam.ReactantsStr, ChemicalReactions.size() - 1));
+    }
+public:
     ChemicalReaction& GetReactionFromNumId(UnsignedInt ReactionId)
     {
         return ChemicalReactions[ChemicalReactionsPosFromId.find(ReactionId)->second];
@@ -31,23 +38,6 @@ public:
         MaxNumberOfReactants = std::max_element(ChemicalReactions.begin(), ChemicalReactions.end(), [](const ChemicalReaction& R1, const ChemicalReaction& R2){ return R1.Reactants.size() < R2.Reactants.size(); })->Reactants.size();
     }
 public:
-    void AddChemicalReaction(const ChemicalReaction& ReactionParam)
-    {
-        ChemicalReactions.emplace_back(ReactionParam);
-        ChemicalReactionsPosFromId.insert(std::make_pair(ReactionParam.ReactionIdNum, ChemicalReactions.size() - 1));
-        ChemicalReactionsPosFromString.insert(std::make_pair(ReactionParam.ReactantsStr, ChemicalReactions.size() - 1));
-    }
-public:
-    void PrintChemicalReactions()
-    {
-        LoggersManagerObject.Log(STREAM("Number of chemical reactions = " << ChemicalReactions.size()));
-
-        LoggersManagerObject.Log(STREAM("Maximal number of reactants = " << MaxNumberOfReactants));
-
-        for (auto& ChemicalReactionObject : ChemicalReactions)
-            LoggersManagerObject.Log(STREAM("ReactionId = " << ChemicalReactionObject.ReactionIdNum << " ReactantsStr = |" << ChemicalReactionObject.ReactantsStr << "| ReactionIdStr = " << ChemicalReactionObject.ReactionIdStr << " Reactants Size " << ChemicalReactionObject.Reactants.size() << " Products Size " << ChemicalReactionObject.Products.size()));
-    }
-public:
     static std::string GetStringOfSortedParticlesDataNames(std::vector<ParticleKindForChemicalReaction>& LocalData)
     {
         std::string KeyStringOfReaction;
@@ -60,6 +50,16 @@ public:
         CATCH("getting string of sorted particles data names")
 
         return KeyStringOfReaction;
+    }
+public:
+    void PrintChemicalReactions()
+    {
+        LoggersManagerObject.Log(STREAM("Number of chemical reactions = " << ChemicalReactions.size()));
+
+        LoggersManagerObject.Log(STREAM("Maximal number of reactants = " << MaxNumberOfReactants));
+
+        for (auto& ChemicalReactionObject : ChemicalReactions)
+            LoggersManagerObject.Log(STREAM("ReactionId = " << ChemicalReactionObject.ReactionIdNum << " ReactantsStr = |" << ChemicalReactionObject.ReactantsStr << "| ReactionIdStr = " << ChemicalReactionObject.ReactionIdStr << " Reactants Size " << ChemicalReactionObject.Reactants.size() << " Products Size " << ChemicalReactionObject.Products.size()));
     }
 };
 

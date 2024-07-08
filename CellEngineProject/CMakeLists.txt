@@ -71,6 +71,8 @@ add_executable(
 	../Common/Logger/Logger.cpp
 	../Common/MathUtils/ArcBall.h
 	../Common/MathUtils/ArcBall.cpp
+	../Common/MathUtils/Combinatorics.cpp
+	../Common/MathUtils/Combinatorics.h
 	../Common/FileUtils/FileUtils.h
 	../Common/FileUtils/FileUtils.cpp
 	../Common/StringUtils/StringUtils.h
@@ -193,9 +195,9 @@ add_executable(
 	CellEngineAtom.h
 	CellEngineAtom.cpp
 	CellEngineParticle.h
-		CellEngineChemicalReaction.h
-		CellEngineChemicalReactionsEngine.h
-		CellEngineChemicalReactionsEngine.cpp
+	CellEngineChemicalReaction.h
+	CellEngineChemicalReactionsEngine.h
+	CellEngineChemicalReactionsEngine.cpp
 	CellEngineWellStirredChemicalReactionsSimulation.h
 	CellEngineWellStirredChemicalReactionsSimulation.cpp
 	tests/CellEngineRunTests.cpp)
