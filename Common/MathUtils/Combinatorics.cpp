@@ -1,6 +1,7 @@
 
 #include <cmath>
 #include <string>
+#include <vector>
 
 #include "../CellEngineTypes.h"
 
@@ -12,10 +13,10 @@ using namespace std;
 
 void ShowArray(int* Array, int Start, int Counter, string LineStr)
 {
-    string s = "";
+    string s;
     for(int p = Start; p < Counter; p++)
-        s += Array[p];
-    LoggersManagerObject.Log(STREAM(s + LineStr));
+        s += to_string(Array[p]);
+    LoggersManagerObject.Log(STREAM(s << LineStr));
 }
 
 const int MaxArr = 8;
@@ -167,8 +168,6 @@ void Add1ToMainArray(int MainArray[MaxArr], int ArrayToAdd[MaxArr], int ResultAr
 
 void Add1ToMainArrayByAddTwoBitsArraysButtonClick()
 {
-    //CombinationsMemo->Font->Color = clBlue;
-
     int MainArrayCopy[MaxArr];
     int ArrayToAddCopy[MaxArr];
 
@@ -177,7 +176,6 @@ void Add1ToMainArrayByAddTwoBitsArraysButtonClick()
 
     int ResultArray[MaxArr];
 
-    //CombinationsMemo->Clear();
     for(int p = 0; p < MaxArr; p++)
     {
         MainArrayCopy[p] = MainArray[p];
@@ -196,8 +194,6 @@ void Add1ToMainArrayByAddTwoBitsArraysButtonClick()
 
 void Add1ToMainArrayButtonClick()
 {
-    //CombinationsMemo->Font->Color = clPurple;
-
     int MainArrayCopy[MaxArr];
     int ArrayToAddCopy[MaxArr];
 
@@ -206,7 +202,6 @@ void Add1ToMainArrayButtonClick()
 
     int ResultArray[MaxArr];
 
-    //CombinationsMemo->Clear();
     for(int p = 0; p < MaxArr; p++)
     {
         MainArrayCopy[p] = MainArray[p];
@@ -225,8 +220,6 @@ void Add1ToMainArrayButtonClick()
 
 void AddTwoDifferentBitsArraysButtonClick()
 {
-    //CombinationsMemo->Font->Color = clBlack;
-
     int MainArrayCopy[MaxArr];
     int ArrayToAddCopy[MaxArr];
 
@@ -235,29 +228,16 @@ void AddTwoDifferentBitsArraysButtonClick()
 
     int ResultArray[MaxArr];
 
-    //CombinationsMemo->Clear();
     for(int p = 0; p < MaxArr; p++)
     {
         MainArrayCopy[p] = MainArray[p];
         ArrayToAddCopy[p] = ArrayToAdd[p];
     }
     AddTwoBitArrays(MainArray, ArrayToAdd, ResultArray);
-    for(int i = 1; i <= 3; i++)
-    {
-        string s = "";
-        for(int p = 0; p < MaxArr; p++)
-        {
-            if(i == 1)
-                s += MainArrayCopy[p];
-            else
-            if(i == 2)
-                s += ArrayToAddCopy[p];
-            else
-            if(i == 3)
-                s += ResultArray[p];
-        }
-        LoggersManagerObject.Log(STREAM(s));
-    }
+
+    ShowArray(MainArray, 0, MaxArr, "");
+    ShowArray(ArrayToAdd, 0, MaxArr, "");
+    ShowArray(ResultArray, 0, MaxArr, "");
 }
 
 /*
@@ -332,7 +312,6 @@ void  Rotate(int R)
 void AllKElementsCombinationsFromNElementsFirstWayButtonClick()
 {
     int Line = 1;
-    //CombinationsMemo->Clear();
     for(int i = 1; i <= N; i++)
         ArraySet[i] = i <= K;
     int j = N - 1;
@@ -355,13 +334,11 @@ void AllKElementsCombinationsFromNElementsFirstWayButtonClick()
             }
         EndLabel:;
     }
-    //EndLabel:;
 }
 
 void AllKElementsCombinationsFromNElementsFirstWayAndHalfButtonClick()
 {
     int Line = 1;
-    //CombinationsMemo->Clear();
     for(int i = 1; i <= N; i++)
         ArraySet[i] = i <= K;
     int j = N - 1;
@@ -380,6 +357,8 @@ void AllKElementsCombinationsFromNElementsFirstWayAndHalfButtonClick()
             }
     }
 }
+
+
 
 UnsignedInt NumberOfCombinations(UnsignedInt N, UnsignedInt K)
 {
@@ -418,9 +397,8 @@ unsigned int NextNumberWithTheSameNumberOf1Bits(unsigned int Number)
 void AllKElementsCombinationsFromNElementsSecondWayButtonClick()
 {
     int Line = 1;
-    //CombinationsMemo->Clear();
     for(int i = 1; i <= N; i++)
-        ArraySet[i] = i <= K;
+        ArraySet[i] = (i <= K);
 
     unsigned int AimNumber = 0;
     for(int i = 1; i <= N; i++)
@@ -445,154 +423,9 @@ void AllKElementsCombinationsFromNElementsSecondWayButtonClick()
     LoggersManagerObject.Log(STREAM(to_string(NumberOfCombinations(N,K))));
 }
 
-//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-//PERMUTATIONS
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* Algorytm polega na rotowaniu */
-/*
-    1234 -> 1 234 ->
-            rotacja 4 na pocz¹tek 34 czyli dostajê 43
-                    1 2 34
-                    1 2 43
-           rotacja 4 na pocz¹tek potrójnego
-           1 423 ->
-           rotacja 3 na pocz¹tek 23 czyli dostajê 32
-                    1 4 23
-                    1 4 32
-           rotacja 3 na pocz¹tek potrójnego
-           1 342 ->
-           rotacja 2 na pocz¹tek 42 czyli dostajê 24
-                    1 3 42
-                    1 3 24
-    Potem rotacja 1234 na 4123 i od pocz¹tku podzia³ na string krótsdzy gdzie znów ta rotacja
-*/
-
-void Rotate(int Number, string& PermutationStringLocal)
-{
-    int PermutationStringLength = PermutationStringLocal.length();
-
-    char TempChar = PermutationStringLocal[PermutationStringLength];
-    for(int i = PermutationStringLength - 1; i >= Number; i--)
-        PermutationStringLocal[i + 1] = PermutationStringLocal[i];
-    PermutationStringLocal[Number] = TempChar;
-}
-
-void PermutationFunction(int Number, string& PermutationStringLocal, int& Line)
-{
-    if(Number == 1)
-        LoggersManagerObject.Log(STREAM(PermutationStringLocal + " LINE = " + to_string(Line++)));
-    else
-    {
-        int PermutationStringLength = PermutationStringLocal.length();
-
-        for(int i = 1; i < Number; i++)
-        {
-            PermutationFunction(Number - 1, PermutationStringLocal, Line);
-            Rotate(PermutationStringLength - Number + 1 + 1, PermutationStringLocal);
-        }
-    }
-}
-
-void Permut1ButtonClick()
-{
-    //PermutationsTForm->PermutationsMemo->Lines->Clear();
-    int Line = 1;
-    string PermutationString = "ABCDE";
-    int PermutationStringLength = PermutationString.length();
-    PermutationFunction(PermutationStringLength + 1, PermutationString, Line);
-}
-
-
-void VariationsButtonClick()
-{
-    /* To s¹ wariacje z powtórzeniami - ka¿dy k wyrazowy ci¹g ze zbioru n elementowego czyli n do k-tej */
-    /* czyli tu 4 do 3 czyli k = 3 a n = 4 - mam 4 cyfry - to zbiór n = 4 i mam wyrazy 3 elementowe czyli k = 3 */
-
-    LoggersManagerObject.Log(STREAM(""));
-    LoggersManagerObject.Log(STREAM("W KILKU PÊTLACH:"));
-    LoggersManagerObject.Log(STREAM(""));
-
-    int Line = 1;
-    for(int i1 = 1; i1 <= 4; i1++)
-        for(int i2 = 1; i2 <= 4; i2++)
-            for(int i3 = 1; i3 <= 4; i3++)
-                LoggersManagerObject.Log(STREAM(to_string(i1) + to_string(i2) + to_string(i3) + " LINE = " +to_string(Line++)));
-
-    /* To samo poni¿ej - jedna pêtla zastêpuje 3 gdy jest n^k razy d³u¿sza */
-
-    LoggersManagerObject.Log(STREAM(""));
-    LoggersManagerObject.Log(STREAM("W JEDNEJ PÊTLI:"));
-    LoggersManagerObject.Log(STREAM(""));
-
-    Line = 1;
-    int SizeOfSetN = 4;
-    int KWords = 3;
-    int TotalNumberOfVariations = pow(SizeOfSetN, KWords);
-    std::vector<int> Repeat(KWords + 1);
-    for(int ki = 1; ki <= KWords; ki++)
-        Repeat[ki] = 1;
-    for(int Variation = 1; Variation <= TotalNumberOfVariations; Variation++)
-    {
-        string SKWord = "";
-        for(int ki = 1; ki <= KWords; ki++)
-            SKWord += Repeat[ki];
-        LoggersManagerObject.Log(STREAM(SKWord + " LINE = " + to_string(Line++)));
-
-        /* to jest zwiêkszane zawsze bo ostatni jest zawsze, ale co pewien czas zerowane */
-        /* pozosta³e zwiêkszane jedynie gdy poprzedni jest przewijany */
-
-        Repeat[KWords]++;
-        for(int ki = KWords; ki >= 1; ki--)
-            if(Repeat[ki] % (SizeOfSetN + 1) == 0)
-            {
-                Repeat[ki] = 1;
-                Repeat[ki - 1]++;
-            }
-    }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //PERMUTATIONS - VARIATIONS
-
-#include <cmath>
-#include <string>
-#include <vector>
-//#include "PermutationsVariationsLoopsForm.h"
 
 /* Algorytm polega na rotowaniu */
 /*
@@ -623,7 +456,7 @@ void Rotate1(int Number, string& PermutationStringLocal)
     PermutationStringLocal[Number] = TempChar;
 }
 
-void PermutationFunction1(int Number, string& PermutationStringLocal, int& Line)
+void PermutationFunction(int Number, string& PermutationStringLocal, int& Line)
 {
     if(Number == 1)
         LoggersManagerObject.Log(STREAM(PermutationStringLocal + " LINE = " + to_string(Line++)));
@@ -633,7 +466,7 @@ void PermutationFunction1(int Number, string& PermutationStringLocal, int& Line)
 
         for(int i = 1; i < Number; i++)
         {
-            PermutationFunction1(Number - 1, PermutationStringLocal, Line);
+            PermutationFunction(Number - 1, PermutationStringLocal, Line);
             Rotate1(PermutationStringLength - Number + 1 + 1, PermutationStringLocal);
         }
     }
@@ -648,13 +481,33 @@ void Permutations1ButtonClick()
     int Line = 1;
     string PermutationString = "ABCDE";
     int PermutationStringLength = PermutationString.length();
-    PermutationFunction1(PermutationStringLength + 1, PermutationString, Line);
+    PermutationFunction(PermutationStringLength + 1, PermutationString, Line);
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//VARIATIONS
+
 void VariationsButtonClick1()
 {
-    /* To s¹ wariacje z powtórzeniami - ka¿dy k wyrazowy ci¹g ze zbioru n elementowego czyli n do k-tej */
+    /* To s wariacje z powtórzeniami - ka¿dy k wyrazowy ci¹g ze zbioru n elementowego czyli n do k-tej */
     /* czyli tu 4 do 3 czyli k = 3 a n = 4 - mam 4 cyfry - to zbiór n = 4 i mam wyrazy 3 elementowe czyli k = 3 */
 
     LoggersManagerObject.Log(STREAM(""));
@@ -665,7 +518,7 @@ void VariationsButtonClick1()
     for(int i1 = 1; i1 <= 4; i1++)
         for(int i2 = 1; i2 <= 4; i2++)
             for(int i3 = 1; i3 <= 4; i3++)
-                LoggersManagerObject.Log(STREAM(to_string(i1) + to_string(i2) + to_string(i3) + " LINE = " +to_string(Line++)));
+                LoggersManagerObject.Log(STREAM(to_string(i1) << to_string(i2) << to_string(i3) << " LINE = " +to_string(Line++)));
 
     /* To samo poni¿ej - jedna pêtla zastêpuje 3 gdy jest n^k razy d³u¿sza */
 
@@ -686,8 +539,8 @@ void VariationsButtonClick1()
 
         string SKWord = "";
         for(int ki = 1; ki <= KWords; ki++)
-            SKWord += Repeat[ki];
-        LoggersManagerObject.Log(STREAM(SKWord + " LINE = " + to_string(Line++)));
+            SKWord += to_string(Repeat[ki]);
+        LoggersManagerObject.Log(STREAM(SKWord << " LINE = " << to_string(Line++)));
 
         /* to jest zwiêkszane zawsze bo ostatni jest zawsze, ale co pewien czas zerowane */
         /* pozosta³e zwiêkszane jedynie gdy poprzednia cyfra jest przewijana */
@@ -716,7 +569,7 @@ void LoopsFrom1ToMInOneLoopButtonClick()
     for(int i1 = 1; i1 <= Length[1]; i1++)
         for(int i2 = 1; i2 <= Length[2]; i2++)
             for(int i3 = 1; i3 <= Length[3]; i3++)
-                LoggersManagerObject.Log(STREAM(to_string(i1) + to_string(i2) + to_string(i3) + " LINE = " +to_string(Line++)));
+                LoggersManagerObject.Log(STREAM(to_string(i1) << to_string(i2) << to_string(i3) << " LINE = " +to_string(Line++)));
 
     /* To samo poni¿ej - jedna pêtla zastêpuje 3 gdy jest (Length[1] * Length[2] * Length[3]) razy d³u¿sza */
 
@@ -736,7 +589,7 @@ void LoopsFrom1ToMInOneLoopButtonClick()
 
         string SKWord = "";
         for(int ki = 1; ki <= KWords; ki++)
-            SKWord += Repeat[ki];
+            SKWord += to_string(Repeat[ki]);
         LoggersManagerObject.Log(STREAM(SKWord + " LINE = " + to_string(Line++)));
 
         /* to jest zwiêkszane zawsze bo ostatni jest zawsze, ale co pewien czas zerowane */
@@ -767,7 +620,7 @@ void LoopsFromNtoMInOneLoopButtonClick()
     for(int i1 = Start[1]; i1 <= Length[1]; i1++)
         for(int i2 = Start[2]; i2 <= Length[2]; i2++)
             for(int i3 = Start[3]; i3 <= Length[3]; i3++)
-                LoggersManagerObject.Log(STREAM(to_string(i1) + to_string(i2) + to_string(i3) + " LINE = " +to_string(Line++)));
+                LoggersManagerObject.Log(STREAM(to_string(i1) << to_string(i2) << to_string(i3) << " LINE = " +to_string(Line++)));
 
     /* To samo poni¿ej - jedna pêtla zastêpuje 3 gdy jest (Length[1] * Length[2] * Length[3]) razy d³u¿sza */
 
@@ -792,8 +645,8 @@ void LoopsFromNtoMInOneLoopButtonClick()
 
         string SKWord = "";
         for(int ki = 1; ki <= KWords; ki++)
-            SKWord += Repeat[ki];
-        LoggersManagerObject.Log(STREAM(SKWord + " LINE = " + to_string(Line++)));
+            SKWord += to_string(Repeat[ki]);
+        LoggersManagerObject.Log(STREAM(SKWord << " LINE = " << to_string(Line++)));
 
         /* to jest zwiêkszane zawsze bo ostatni jest zawsze, ale co pewien czas zerowane */
         /* pozosta³e zwiêkszane jedynie gdy poprzednia cyfra jest przewijana */
@@ -808,3 +661,29 @@ void LoopsFromNtoMInOneLoopButtonClick()
     }
 }
 
+void ShowDemoTest()
+{
+    LoggersManagerObject.Log(STREAM("T1"));
+    Add1ToMainArrayByAddTwoBitsArraysButtonClick();
+    LoggersManagerObject.Log(STREAM("T2"));
+    Add1ToMainArrayButtonClick();
+    LoggersManagerObject.Log(STREAM("T3"));
+    AddTwoDifferentBitsArraysButtonClick();
+
+    LoggersManagerObject.Log(STREAM("T4"));
+    AllKElementsCombinationsFromNElementsFirstWayButtonClick();
+    LoggersManagerObject.Log(STREAM("T5"));
+    AllKElementsCombinationsFromNElementsFirstWayAndHalfButtonClick();
+    LoggersManagerObject.Log(STREAM("T6"));
+    AllKElementsCombinationsFromNElementsSecondWayButtonClick();
+
+    LoggersManagerObject.Log(STREAM("T7"));
+    Permutations1ButtonClick();
+
+    LoggersManagerObject.Log(STREAM("T8"));
+    VariationsButtonClick1();
+    LoggersManagerObject.Log(STREAM("T9"));
+    LoopsFrom1ToMInOneLoopButtonClick();
+    LoggersManagerObject.Log(STREAM("T10"));
+    LoopsFromNtoMInOneLoopButtonClick();
+}

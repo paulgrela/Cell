@@ -9,6 +9,7 @@
 #include <memory>
 
 #include "Logger.h"
+#include "Combinatorics.h"
 #include "DateTimeUtils.h"
 #include "ExceptionsMacro.h"
 
@@ -824,6 +825,12 @@ public:
                 ImGui::RadioButton("Draw Selected Space From Center", &SelectedSpaceStartParametersDrawTypesIndex, 1);
                 ImGui::RadioButton("Draw Selected Space From Corner", &SelectedSpaceStartParametersDrawTypesIndex, 2);
                 CellEngineConfigDataObject.SelectedSpaceStartParametersDrawTypesObject = static_cast<CellEngineConfigData::SelectedSpaceStartParametersDrawTypes>(SelectedSpaceStartParametersDrawTypesIndex);
+
+                if (ImGui::CollapsingHeader("  DEMO COMBINATORICS          "))
+                {
+                    if (ImGui::Button("  DEMO1  ") == true)
+                        ShowDemoTest();
+                }
             }
         }
         CATCH("executing voxel simulation space visibility menu")
