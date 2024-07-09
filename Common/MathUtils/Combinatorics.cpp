@@ -13,27 +13,15 @@ using namespace std;
 using SignedInt = int64_t;
 using UnsignedInt = uint64_t;
 
-//const UnsignedInt MaxSizeOfArray = 8;
-//
-//const UnsignedInt MaxSizeOfCombinationArray = 16;
-//
-//UnsignedInt CombinationsArray[MaxSizeOfCombinationArray + 1];
-
 class Combinations
 {
-//    static constexpr UnsignedInt MaxSizeOfArray = 8;
-//
-//    static constexpr UnsignedInt MaxSizeOfCombinationArray = 32;
-//
-//    static UnsignedInt CombinationsArray[MaxSizeOfCombinationArray + 1];
     const UnsignedInt MaxSizeOfArray = 8;
 
-    const UnsignedInt MaxSizeOfCombinationArray = 32;
+    const UnsignedInt MaxSizeOfCombinationsArray = 32;
 
-    //vector<UnsignedInt> CombinationsArray[MaxSizeOfCombinationArray + 1];
     vector<UnsignedInt> CombinationsArray;
 public:
-    Combinations() : CombinationsArray(MaxSizeOfCombinationArray)
+    Combinations() : CombinationsArray(MaxSizeOfCombinationsArray)
     {
     }
 public:
@@ -48,7 +36,6 @@ public:
         LoggersManagerObject.Log(STREAM(ArrayStr << AdditionalText));
     }
 
-    //void AddTwoBitArrays(const UnsignedInt *MainArray, const UnsignedInt *ArrayToAdd, UnsignedInt *ResultArray) const
     void AddTwoBitArrays(const vector<UnsignedInt>& MainArray, const vector<UnsignedInt>& ArrayToAdd, vector<UnsignedInt>& ResultArray) const
     {
         UnsignedInt Remember = 0;
@@ -99,7 +86,6 @@ public:
         }
     }
 
-    //void Add1ToMainArray(const UnsignedInt *MainArray, const UnsignedInt *ArrayToAdd, UnsignedInt *ResultArray) const
     void Add1ToMainArray(const vector<UnsignedInt>& MainArray, const vector<UnsignedInt>& ArrayToAdd, vector<UnsignedInt>& ResultArray) const
     {
         UnsignedInt Remember = 0;
@@ -142,14 +128,11 @@ public:
 
     void Add1ToMainArrayByAddTwoBitsArraysTestDemo(const UnsignedInt NumberOfBits) const
     {
-        //UnsignedInt ArrayToAddCopy[MaxSizeOfArray];
         vector<UnsignedInt> ArrayToAddCopy(MaxSizeOfArray);
 
-        //array<UnsignedInt> MainArray[MaxSizeOfArray] = {0, 0, 0, 0, 0, 0, 0, 0};
         vector<UnsignedInt> MainArray = { 0, 0, 0, 0, 0, 0, 0, 0 };
         vector<UnsignedInt> ArrayToAdd = { 0, 0, 0, 0, 0, 0, 0, 1 };
 
-        //UnsignedInt ResultArray[MaxSizeOfArray];
         vector<UnsignedInt> ResultArray(MaxSizeOfArray);
 
         for (UnsignedInt Pos = 0; Pos < MaxSizeOfArray; Pos++)
@@ -209,7 +192,6 @@ public:
         ShowArray(ResultArray, 0, MaxSizeOfArray, "");
     }
 
-    /* COMBINATIONS */
     /*
     011101 6
     011101 PREV, j + 1 = 3
@@ -220,7 +202,7 @@ public:
     101101 AFTER TOTAL, R = 3, WSTAWIENIE PAM NA MIEJSCE
     101101 AFTER
     */
-    /* PONIZSZE DWIE FUNKCJE TO TO SAMO CO DWIE JESZCZE NASTEPNE TYLKO Z WYPISYWANIEM STANU ALGORYTMU przez ShowArray */
+    /* PONIZSZE DWIE FUNKCJE TO TO SAMO CO DWIE JESZCZE NASTEPNE TYLKO Z WYPISYWANIEM STANU ALGORYTMU PRZEZ ShowArray */
 
     void RotateWithPrint(UnsignedInt R, const UnsignedInt N, const UnsignedInt K)
     {
@@ -419,256 +401,198 @@ public:
     }
 };
 
-
-
-
-
-
-
-/* PERMUTATIONS */
-/* Algorytm polega na rotowaniu */
-/*
-    1234 -> 1 234 ->
-            rotacja 4 na pocz¹tek 34 czyli dostajê 43
-                    1 2 34
-                    1 2 43
-           rotacja 4 na pocz¹tek potrójnego
-           1 423 ->
-           rotacja 3 na pocz¹tek 23 czyli dostajê 32
-                    1 4 23
-                    1 4 32
-           rotacja 3 na pocz¹tek potrójnego
-           1 342 ->
-           rotacja 2 na pocz¹tek 42 czyli dostajê 24
-                    1 3 42
-                    1 3 24
-    Potem rotacja 1234 na 4123 i od pocz¹tku podzia³ na string krótsdzy gdzie znów ta rotacja
-*/
-
-void RotateForPermutation(UnsignedInt Number, string& PermutationStringLocal)
+class Permutations
 {
-    UnsignedInt PermutationStringLength = PermutationStringLocal.length();
-
-    char TempChar = PermutationStringLocal[PermutationStringLength];
-
-    for (UnsignedInt i = PermutationStringLength - 1; i >= Number; i--)
-        PermutationStringLocal[i + 1] = PermutationStringLocal[i];
-
-    PermutationStringLocal[Number] = TempChar;
-}
-
-void PermutationFunction(UnsignedInt Number, string& PermutationStringLocal, UnsignedInt& Line)
-{
-    if (Number == 1)
-        LoggersManagerObject.Log(STREAM(PermutationStringLocal + " LINE = " + to_string(Line++)));
-    else
+public:
+    /* Glowny algorytm polega na rotowaniu */
+    /*
+        1234 -> 1 234 ->
+                rotacja 4 na pocz¹tek 34 czyli dostajê 43
+                        1 2 34
+                        1 2 43
+               rotacja 4 na pocz¹tek potrójnego
+               1 423 ->
+               rotacja 3 na pocz¹tek 23 czyli dostajê 32
+                        1 4 23
+                        1 4 32
+               rotacja 3 na pocz¹tek potrójnego
+               1 342 ->
+               rotacja 2 na pocz¹tek 42 czyli dostajê 24
+                        1 3 42
+                        1 3 24
+        Potem rotacja 1234 na 4123 i od poczatku podzial na string krótszy gdzie znów ta rotacja
+    */
+public:
+    static void RotateForPermutation(UnsignedInt Number, string& PermutationStringLocal)
     {
         UnsignedInt PermutationStringLength = PermutationStringLocal.length();
 
-        for (UnsignedInt i = 1; i < Number; i++)
+        char TempChar = PermutationStringLocal[PermutationStringLength];
+
+        for (UnsignedInt i = PermutationStringLength - 1; i >= Number; i--)
+            PermutationStringLocal[i + 1] = PermutationStringLocal[i];
+
+        PermutationStringLocal[Number] = TempChar;
+    }
+public:
+    void Permute(UnsignedInt Number, string& PermutationStringLocal, UnsignedInt& Line)
+    {
+        if (Number == 1)
+            LoggersManagerObject.Log(STREAM(PermutationStringLocal + " LINE = " + to_string(Line++)));
+        else
+            for (UnsignedInt i = 1; i < Number; i++)
+            {
+                Permute(Number - 1, PermutationStringLocal, Line);
+                RotateForPermutation(PermutationStringLocal.length() - Number + 1 + 1, PermutationStringLocal);
+            }
+    }
+public:
+    void PermutationsTestDemo(string& PermutationString)
+    {
+        UnsignedInt Line = 1;
+        Permute(PermutationString.length() + 1, PermutationString, Line);
+    }
+};
+
+class Variations
+{
+    /* To sa wariacje z powtorzeniami - kazdy k wyrazowy ciag ze zbioru n elementowego czyli n do k-tej */
+    /* czyli tu 4 do 3 czyli k = 3 a n = 4 - mam 4 cyfry - to zbior n = 4 i mam wyrazy 3 elementowe czyli k = 3 */
+public:
+    static void VariationsFrom1ToEndIn3LoopsTestDemo()
+    {
+        LoggersManagerObject.Log(STREAM("VARIATIONS WITH REPETITIONS IN SEVERAL LOOPS WITH STEP = 1:"));
+
+        UnsignedInt Line = 1;
+        for (UnsignedInt i1 = 1; i1 <= 4; i1++)
+            for (UnsignedInt i2 = 1; i2 <= 4; i2++)
+                for (UnsignedInt i3 = 1; i3 <= 4; i3++)
+                    LoggersManagerObject.Log(STREAM(to_string(i1) << to_string(i2) << to_string(i3) << " LINE = " + to_string(Line++)));
+    }
+public:
+    static void VariationsFrom1ToEndIn1LoopTestDemo()
+    {
+        LoggersManagerObject.Log(STREAM("Variations with repetitions - one loop replaces N loops when this 1 loop is n^k times longer:"));
+        LoggersManagerObject.Log(STREAM("VARIATIONS WITH REPETITIONS IN SEVERAL LOOP REPLACING SEVERAL LOOPS:"));
+
+        UnsignedInt Line = 1;
+        UnsignedInt SizeOfSetN = 4;
+        UnsignedInt KWords = 3;
+        UnsignedInt TotalNumberOfVariations = pow(SizeOfSetN, KWords);
+        vector<UnsignedInt> Repeat(KWords + 1);
+        for (UnsignedInt ki = 1; ki <= KWords; ki++)
+            Repeat[ki] = 1;
+        for (UnsignedInt Variation = 1; Variation <= TotalNumberOfVariations; Variation++)
         {
-            PermutationFunction(Number - 1, PermutationStringLocal, Line);
-            RotateForPermutation(PermutationStringLength - Number + 1 + 1, PermutationStringLocal);
+            /* Ponizsze linijki to jedynie wyœwietlenie rezultatu */
+            string SKWord = "";
+            for (UnsignedInt ki = 1; ki <= KWords; ki++)
+                SKWord += to_string(Repeat[ki]);
+            LoggersManagerObject.Log(STREAM(SKWord << " LINE = " << to_string(Line++)));
+
+            /* to jest zwiekszane zawsze bo ostatni jest zawsze, ale co pewien czas zerowane */
+            /* pozostale zwiêkszane jedynie gdy poprzednia cyfra jest przewijana */
+            Repeat[KWords]++;
+            for (UnsignedInt ki = KWords; ki >= 1; ki--)
+                if (Repeat[ki] % (SizeOfSetN + 1) == 0)
+                {
+                    Repeat[ki] = 1;
+                    Repeat[ki - 1]++;
+                }
         }
     }
-}
-
-void Permutations1TestDemo()
-{
-    LoggersManagerObject.Log(STREAM("PERMUTATIONS:"));
-
-    UnsignedInt Line = 1;
-    string PermutationString = "ABCDE";
-    UnsignedInt PermutationStringLength = PermutationString.length();
-    PermutationFunction(PermutationStringLength + 1, PermutationString, Line);
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-//VARIATIONS
-
-void VariationsTestDemo()
-{
-    /* To s wariacje z powtórzeniami - ka¿dy k wyrazowy ci¹g ze zbioru n elementowego czyli n do k-tej */
-    /* czyli tu 4 do 3 czyli k = 3 a n = 4 - mam 4 cyfry - to zbiór n = 4 i mam wyrazy 3 elementowe czyli k = 3 */
-
-    LoggersManagerObject.Log(STREAM(""));
-    LoggersManagerObject.Log(STREAM("WARIACJE Z POWTÓRZENIAMI W KILKU PÊTLACH:"));
-    LoggersManagerObject.Log(STREAM(""));
-
-    UnsignedInt Line = 1;
-    for(UnsignedInt i1 = 1; i1 <= 4; i1++)
-        for(UnsignedInt i2 = 1; i2 <= 4; i2++)
-            for(UnsignedInt i3 = 1; i3 <= 4; i3++)
-                LoggersManagerObject.Log(STREAM(to_string(i1) << to_string(i2) << to_string(i3) << " LINE = " +to_string(Line++)));
-
-    /* To samo poni¿ej - jedna pêtla zastêpuje 3 gdy jest n^k razy d³u¿sza */
-
-    LoggersManagerObject.Log(STREAM(""));
-    LoggersManagerObject.Log(STREAM("WARIACJE Z POWTÓRZENIAMI W JEDNEJ PÊTLI ZAMIAST KILKU PÊTLI:"));
-    LoggersManagerObject.Log(STREAM(""));
-
-    Line = 1;
-    UnsignedInt SizeOfSetN = 4;
-    UnsignedInt KWords = 3;
-    UnsignedInt TotalNumberOfVariations = pow(SizeOfSetN, KWords);
-    vector<UnsignedInt> Repeat(KWords + 1);
-    for(UnsignedInt ki = 1; ki <= KWords; ki++)
-        Repeat[ki] = 1;
-    for(UnsignedInt Variation = 1; Variation <= TotalNumberOfVariations; Variation++)
+public:
+    static void VariationsFrom1ToMIn3LoopsTestDemo(const vector<UnsignedInt>& Lengths)
     {
-        /* Poni¿sze linijki to jedynie wyœwietlenie rezultatu */
+        LoggersManagerObject.Log(STREAM("VARIATIONS WITH REPETITIONS IN SEVERAL DIFFERENT LOOPS FROM 1 TO LENGTHS [i] WITH STEP = 1"));
 
-        string SKWord = "";
-        for(UnsignedInt ki = 1; ki <= KWords; ki++)
-            SKWord += to_string(Repeat[ki]);
-        LoggersManagerObject.Log(STREAM(SKWord << " LINE = " << to_string(Line++)));
-
-        /* to jest zwiêkszane zawsze bo ostatni jest zawsze, ale co pewien czas zerowane */
-        /* pozosta³e zwiêkszane jedynie gdy poprzednia cyfra jest przewijana */
-
-        Repeat[KWords]++;
-        for(UnsignedInt ki = KWords; ki >= 1; ki--)
-            if(Repeat[ki] % (SizeOfSetN + 1) == 0)
-            {
-                Repeat[ki] = 1;
-                Repeat[ki - 1]++;
-            }
+        UnsignedInt Line = 1;
+        for (UnsignedInt i1 = 1; i1 <= Lengths[1]; i1++)
+            for (UnsignedInt i2 = 1; i2 <= Lengths[2]; i2++)
+                for (UnsignedInt i3 = 1; i3 <= Lengths[3]; i3++)
+                    LoggersManagerObject.Log(STREAM(to_string(i1) << to_string(i2) << to_string(i3) << " LINE = " + to_string(Line++)));
     }
-}
-
-void LoopsFrom1ToMInOneLoopTestDemo()
-{
-    /* Zamiana kilku pêtli ró¿nej d³ugoœci zaczynanych od 1 o kroku 1 na jedn¹ pêtlê */
-
-    LoggersManagerObject.Log(STREAM(""));
-    LoggersManagerObject.Log(STREAM("W KILKU PÊTLACH RO¯NEJ D£UGOŒCI OD 1:"));
-    LoggersManagerObject.Log(STREAM(""));
-
-    UnsignedInt Line = 1;
-    UnsignedInt Length[4] = {0, 4, 5, 7};
-
-    for(UnsignedInt i1 = 1; i1 <= Length[1]; i1++)
-        for(UnsignedInt i2 = 1; i2 <= Length[2]; i2++)
-            for(UnsignedInt i3 = 1; i3 <= Length[3]; i3++)
-                LoggersManagerObject.Log(STREAM(to_string(i1) << to_string(i2) << to_string(i3) << " LINE = " +to_string(Line++)));
-
-    /* To samo poni¿ej - jedna pêtla zastêpuje 3 gdy jest (Length[1] * Length[2] * Length[3]) razy d³u¿sza */
-
-    LoggersManagerObject.Log(STREAM(""));
-    LoggersManagerObject.Log(STREAM("POPRZEDNIE PÊTLE W JEDNEJ PÊTLI ZAMIAST KILKU:"));
-    LoggersManagerObject.Log(STREAM(""));
-
-    Line = 1;
-    UnsignedInt KWords = 3;
-    UnsignedInt TotalNumberOfVariations = Length[1] * Length[2] * Length[3];
-    vector<UnsignedInt> Repeat(KWords + 1);
-    for(UnsignedInt ki = 1; ki <= KWords; ki++)
-        Repeat[ki] = 1;
-    for(UnsignedInt Variation = 1; Variation <= TotalNumberOfVariations; Variation++)
+public:
+    static void VariationsFrom1ToMIn1LoopTestDemo(const vector<UnsignedInt>& Lengths)
     {
-        /* Poni¿sze linijki to jedynie wyœwietlenie rezultatu */
+        LoggersManagerObject.Log(STREAM("Variations with repetitions - one loop replaces N loops when this 1 loop is (Length[1] * Length[2] * Length[3] * ... * Length[N]) times longer"));
+        LoggersManagerObject.Log(STREAM("VARIATIONS WITH REPETITIONS IN ONE LOOP REPLACING SEVERAL LOOPS:"));
 
-        string SKWord = "";
-        for(UnsignedInt ki = 1; ki <= KWords; ki++)
-            SKWord += to_string(Repeat[ki]);
-        LoggersManagerObject.Log(STREAM(SKWord + " LINE = " + to_string(Line++)));
+        UnsignedInt Line = 1;
+        UnsignedInt KWords = 3;
+        UnsignedInt TotalNumberOfVariations = Lengths[1] * Lengths[2] * Lengths[3];
+        vector<UnsignedInt> Repeat(KWords + 1);
+        for (UnsignedInt ki = 1; ki <= KWords; ki++)
+            Repeat[ki] = 1;
+        for (UnsignedInt Variation = 1; Variation <= TotalNumberOfVariations; Variation++)
+        {
+            /* Ponizsze linijki to jedynie wyœwietlenie rezultatu */
+            string SKWord;
+            for (UnsignedInt ki = 1; ki <= KWords; ki++)
+                SKWord += to_string(Repeat[ki]);
+            LoggersManagerObject.Log(STREAM(SKWord + " LINE = " + to_string(Line++)));
 
-        /* to jest zwiêkszane zawsze bo ostatni jest zawsze, ale co pewien czas zerowane */
-        /* pozosta³e zwiêkszane jedynie gdy poprzednia cyfra jest przewijana */
+            /* to jest zwiêkszane zawsze bo ostatni jest zawsze, ale co pewien czas zerowane */
+            /* pozosta³e zwiêkszane jedynie gdy poprzednia cyfra jest przewijana */
 
-        Repeat[KWords]++;
-        for(UnsignedInt ki = KWords; ki >= 1; --ki)
-            if(Repeat[ki] % (Length[ki] + 1) == 0)
-            {
-                Repeat[ki] = 1;
-                Repeat[ki - 1]++;
-            }
+            Repeat[KWords]++;
+            for (UnsignedInt ki = KWords; ki >= 1; --ki)
+                if (Repeat[ki] % (Lengths[ki] + 1) == 0)
+                {
+                    Repeat[ki] = 1;
+                    Repeat[ki - 1]++;
+                }
+        }
     }
-}
-
-void LoopsFromNtoMInOneLoopTestDemo()
-{
-    /* Zamiana kilku pêtli ró¿nej d³ugoœci zaczynanych od Start[i] o kroku 1 na jedn¹ pêtlê */
-
-    LoggersManagerObject.Log(STREAM(""));
-    LoggersManagerObject.Log(STREAM("W KILKU PÊTLACH RO¯NEJ D£UGOŒCI OD 1:"));
-    LoggersManagerObject.Log(STREAM(""));
-
-    UnsignedInt Line = 1;
-    UnsignedInt Length[4] = {0, 4, 5, 7};
-    UnsignedInt Start[4] = {0, 2, 3, 5};
-
-    for(UnsignedInt i1 = Start[1]; i1 <= Length[1]; i1++)
-        for(UnsignedInt i2 = Start[2]; i2 <= Length[2]; i2++)
-            for(UnsignedInt i3 = Start[3]; i3 <= Length[3]; i3++)
-                LoggersManagerObject.Log(STREAM(to_string(i1) << to_string(i2) << to_string(i3) << " LINE = " +to_string(Line++)));
-
-    /* To samo poni¿ej - jedna pêtla zastêpuje 3 gdy jest (Length[1] * Length[2] * Length[3]) razy d³u¿sza */
-
-    LoggersManagerObject.Log(STREAM(""));
-    LoggersManagerObject.Log(STREAM("POPRZEDNIE PÊTLE W JEDNEJ PÊTLI ZAMIAST KILKU:"));
-    LoggersManagerObject.Log(STREAM(""));
-
-    Line = 1;
-    UnsignedInt KWords = 3;
-
-    /* UnsignedInt TotalNumberOfVariations = (Length[1] - Start[1] + 1) * (Length[2] - Start[2] + 1) * (Length[3] - Start[3] + 1); */
-    UnsignedInt TotalNumberOfVariations = 1;
-    for(UnsignedInt ki = 1; ki <= KWords; ki++)
-        TotalNumberOfVariations *= (Length[ki] - Start[ki] + 1);
-
-    vector<UnsignedInt> Repeat(KWords + 1);
-    for(UnsignedInt ki = 1; ki <= KWords; ki++)
-        Repeat[ki] = Start[ki];
-    for(UnsignedInt Variation = 1; Variation <= TotalNumberOfVariations; Variation++)
+public:
+    static void VariationsFromNtoMIn3LoopsTestDemo(const vector<UnsignedInt>& Starts, const vector<UnsignedInt>& Lengths)
     {
-        /* Poni¿sze linijki to jedynie wyœwietlenie rezultatu */
+        LoggersManagerObject.Log(STREAM("VARIATIONS WITH REPETITIONS IN SEVERAL DIFFERENT LOOPS FROM START[i] TO LENGTHS [i] WITH STEP = 1"));
 
-        string SKWord;
-        for(UnsignedInt ki = 1; ki <= KWords; ki++)
-            SKWord += to_string(Repeat[ki]);
-        LoggersManagerObject.Log(STREAM(SKWord << " LINE = " << to_string(Line++)));
-
-        /* to jest zwiêkszane zawsze bo ostatni jest zawsze, ale co pewien czas zerowane */
-        /* pozosta³e zwiêkszane jedynie gdy poprzednia cyfra jest przewijana */
-
-        Repeat[KWords]++;
-        for(UnsignedInt ki = KWords; ki >= 1; --ki)
-            if(Repeat[ki] % (Length[ki] + 1) == 0)
-            {
-                Repeat[ki] = Start[ki];
-                Repeat[ki - 1]++;
-            }
+        UnsignedInt Line = 1;
+        for (UnsignedInt i1 = Starts[1]; i1 <= Lengths[1]; i1++)
+            for (UnsignedInt i2 = Starts[2]; i2 <= Lengths[2]; i2++)
+                for (UnsignedInt i3 = Starts[3]; i3 <= Lengths[3]; i3++)
+                    LoggersManagerObject.Log(STREAM(to_string(i1) << to_string(i2) << to_string(i3) << " LINE = " + to_string(Line++)));
     }
-}
+public:
+    static void VariationsFromNtoMInOneLoopTestDemo(const vector<UnsignedInt>& Starts, const vector<UnsignedInt>& Lengths)
+    {
+        LoggersManagerObject.Log(STREAM("Variations with repetitions - one loop replaces N loops when this 1 loop is ((Length[1] - Start[1]) * (Length[2] - Start[2]) * (Length[3] - Start[3]) * ... * (Length[N] - Start[N])) times longer:"));
+        LoggersManagerObject.Log(STREAM("VARIATIONS WITH REPETITIONS IN SEVERAL LOOP REPLACING SEVERAL LOOPS:"));
 
+        UnsignedInt Line = 1;
+        UnsignedInt KWords = 3;
 
+        /* UnsignedInt TotalNumberOfVariations = (Length[1] - Start[1] + 1) * (Length[2] - Start[2] + 1) * (Length[3] - Start[3] + 1); */
+        UnsignedInt TotalNumberOfVariations = 1;
+        for (UnsignedInt ki = 1; ki <= KWords; ki++)
+            TotalNumberOfVariations *= (Lengths[ki] - Starts[ki] + 1);
 
+        vector<UnsignedInt> Repeat(KWords + 1);
+        for (UnsignedInt ki = 1; ki <= KWords; ki++)
+            Repeat[ki] = Starts[ki];
+        for (UnsignedInt Variation = 1; Variation <= TotalNumberOfVariations; Variation++)
+        {
+            /* Ponizsze linijki to jedynie wyœwietlenie rezultatu */
+            string SKWord;
+            for (UnsignedInt ki = 1; ki <= KWords; ki++)
+                SKWord += to_string(Repeat[ki]);
+            LoggersManagerObject.Log(STREAM(SKWord << " LINE = " << to_string(Line++)));
 
+            /* to jest zwiêkszane zawsze bo ostatni jest zawsze, ale co pewien czas zerowane */
+            /* pozostale zwiêkszane jedynie gdy poprzednia cyfra jest przewijana */
 
-
-
-
-
-
+            Repeat[KWords]++;
+            for (UnsignedInt ki = KWords; ki >= 1; --ki)
+                if (Repeat[ki] % (Lengths[ki] + 1) == 0)
+                {
+                    Repeat[ki] = Starts[ki];
+                    Repeat[ki - 1]++;
+                }
+        }
+    }
+};
 
 void ShowDemoTest()
 {
@@ -688,13 +612,18 @@ void ShowDemoTest()
     LoggersManagerObject.Log(STREAM("T6"));
     CombinationsObject.AllKElementsCombinationsFromNElementsSecondWayTestDemo(6, 4);
 
+    Permutations PermutationsObject;
     LoggersManagerObject.Log(STREAM("T7"));
-    Permutations1TestDemo();
+    string PermutationString = "ABCDE";
+    PermutationsObject.PermutationsTestDemo(PermutationString);
 
     LoggersManagerObject.Log(STREAM("T8"));
-    VariationsTestDemo();
+    Variations::VariationsFrom1ToEndIn3LoopsTestDemo();
+    Variations::VariationsFrom1ToEndIn1LoopTestDemo();
     LoggersManagerObject.Log(STREAM("T9"));
-    LoopsFrom1ToMInOneLoopTestDemo();
+    Variations::VariationsFrom1ToMIn3LoopsTestDemo({ 0, 4, 5, 7 });
+    Variations::VariationsFrom1ToMIn1LoopTestDemo({ 0, 4, 5, 7 });
     LoggersManagerObject.Log(STREAM("T10"));
-    LoopsFromNtoMInOneLoopTestDemo();
+    Variations::VariationsFromNtoMIn3LoopsTestDemo({ 0, 2, 3, 5 }, { 0, 4, 5, 7 });
+    Variations::VariationsFromNtoMInOneLoopTestDemo({ 0, 2, 3, 5 },{ 0, 4, 5, 7 });
 }
