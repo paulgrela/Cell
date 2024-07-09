@@ -459,6 +459,16 @@ class Variations
     /* To sa wariacje z powtorzeniami - kazdy k wyrazowy ciag ze zbioru n elementowego czyli n do k-tej */
     /* czyli tu 4 do 3 czyli k = 3 a n = 4 - mam 4 cyfry - to zbior n = 4 i mam wyrazy 3 elementowe czyli k = 3 */
 public:
+    static string GetResultAsString(const UnsignedInt KWords, const vector<UnsignedInt>& Repeat)
+    {
+        string SKWord;
+
+        for (UnsignedInt ki = 1; ki <= KWords; ki++)
+            SKWord += to_string(Repeat[ki]);
+
+        return SKWord;
+    }
+public:
     static void VariationsFrom1ToEndIn3LoopsTestDemo()
     {
         LoggersManagerObject.Log(STREAM("VARIATIONS WITH REPETITIONS IN SEVERAL LOOPS WITH STEP = 1:"));
@@ -484,14 +494,11 @@ public:
             Repeat[ki] = 1;
         for (UnsignedInt Variation = 1; Variation <= TotalNumberOfVariations; Variation++)
         {
-            /* Ponizsze linijki to jedynie wyœwietlenie rezultatu */
-            string SKWord = "";
-            for (UnsignedInt ki = 1; ki <= KWords; ki++)
-                SKWord += to_string(Repeat[ki]);
-            LoggersManagerObject.Log(STREAM(SKWord << " LINE = " << to_string(Line++)));
+            LoggersManagerObject.Log(STREAM(GetResultAsString(KWords, Repeat)  << " LINE = " << to_string(Line++)));
 
             /* to jest zwiekszane zawsze bo ostatni jest zawsze, ale co pewien czas zerowane */
-            /* pozostale zwiêkszane jedynie gdy poprzednia cyfra jest przewijana */
+            /* pozostale zwiekszane jedynie gdy poprzednia cyfra jest przewijana */
+
             Repeat[KWords]++;
             for (UnsignedInt ki = KWords; ki >= 1; ki--)
                 if (Repeat[ki] % (SizeOfSetN + 1) == 0)
@@ -526,14 +533,10 @@ public:
             Repeat[ki] = 1;
         for (UnsignedInt Variation = 1; Variation <= TotalNumberOfVariations; Variation++)
         {
-            /* Ponizsze linijki to jedynie wyœwietlenie rezultatu */
-            string SKWord;
-            for (UnsignedInt ki = 1; ki <= KWords; ki++)
-                SKWord += to_string(Repeat[ki]);
-            LoggersManagerObject.Log(STREAM(SKWord + " LINE = " + to_string(Line++)));
+            LoggersManagerObject.Log(STREAM(GetResultAsString(KWords, Repeat)  << " LINE = " << to_string(Line++)));
 
-            /* to jest zwiêkszane zawsze bo ostatni jest zawsze, ale co pewien czas zerowane */
-            /* pozosta³e zwiêkszane jedynie gdy poprzednia cyfra jest przewijana */
+            /* to jest zwiekszane zawsze bo ostatni jest zawsze, ale co pewien czas zerowane */
+            /* pozostale zwiekszane jedynie gdy poprzednia cyfra jest przewijana */
 
             Repeat[KWords]++;
             for (UnsignedInt ki = KWords; ki >= 1; --ki)
@@ -574,14 +577,10 @@ public:
             Repeat[ki] = Starts[ki];
         for (UnsignedInt Variation = 1; Variation <= TotalNumberOfVariations; Variation++)
         {
-            /* Ponizsze linijki to jedynie wyœwietlenie rezultatu */
-            string SKWord;
-            for (UnsignedInt ki = 1; ki <= KWords; ki++)
-                SKWord += to_string(Repeat[ki]);
-            LoggersManagerObject.Log(STREAM(SKWord << " LINE = " << to_string(Line++)));
+            LoggersManagerObject.Log(STREAM(GetResultAsString(KWords, Repeat)  << " LINE = " << to_string(Line++)));
 
-            /* to jest zwiêkszane zawsze bo ostatni jest zawsze, ale co pewien czas zerowane */
-            /* pozostale zwiêkszane jedynie gdy poprzednia cyfra jest przewijana */
+            /* to jest zwiekszane zawsze bo ostatni jest zawsze, ale co pewien czas zerowane */
+            /* pozostale zwiekszane jedynie gdy poprzednia cyfra jest przewijana */
 
             Repeat[KWords]++;
             for (UnsignedInt ki = KWords; ki >= 1; --ki)
