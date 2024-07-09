@@ -36,18 +36,6 @@ public:
 public:
     void AddTwoDifferentBitsArraysTestDemo() const;
 public:
-    /*
-    011101 6
-    011101 PREV, j + 1 = 3
-    011101 IN TRAIN PREV, R = 3 i = 3
-    011101 IN TRAIN AFTER, R = 3 i = 3
-    011101 IN TRAIN PREV, R = 3 i = 2
-    001101 IN TRAIN AFTER, R = 3 i = 2
-    101101 AFTER TOTAL, R = 3, WSTAWIENIE PAM NA MIEJSCE
-    101101 AFTER
-    */
-    /* PONIZSZE DWIE FUNKCJE TO TO SAMO CO DWIE JESZCZE NASTEPNE TYLKO Z WYPISYWANIEM STANU ALGORYTMU PRZEZ ShowArray */
-public:
     void RotateWithPrint(UnsignedInt R, UnsignedInt N, UnsignedInt K);
 public:
     void AllKElementsCombinationsFromNElementsFirstWayWithPrintTestDemo(UnsignedInt N, UnsignedInt K);
