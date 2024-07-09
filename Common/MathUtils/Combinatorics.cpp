@@ -623,7 +623,7 @@ void Variations::VariationsFromNtoMIn3LoopsTestDemo(const vector<UnsignedInt>& S
     CATCH("generating variations from n to m in 3 loops")
 }
 
-void Variations::VariationsFromNtoMInOneLoopTestDemo(const vector<UnsignedInt>& Starts, const vector<UnsignedInt>& Lengths)
+void Variations::VariationsFromNtoMIn1LoopTestDemo(const vector<UnsignedInt>& Starts, const vector<UnsignedInt>& Lengths)
 {
     try
     {
@@ -708,7 +708,7 @@ void ShowVariationsDemoTest()
         Variations::VariationsFrom1ToMIn1LoopTestDemo({ 0, 4, 5, 7 });
         LoggersManagerObject.Log(STREAM("T10"));
         Variations::VariationsFromNtoMIn3LoopsTestDemo({ 0, 2, 3, 5 }, { 0, 4, 5, 7 });
-        Variations::VariationsFromNtoMInOneLoopTestDemo({ 0, 2, 3, 5 },{ 0, 4, 5, 7 });
+        Variations::VariationsFromNtoMIn1LoopTestDemo({ 0, 2, 3, 5 },{ 0, 4, 5, 7 });
     }
     CATCH("showing variations demo test")
 }

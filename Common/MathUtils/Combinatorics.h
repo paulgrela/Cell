@@ -14,6 +14,7 @@ using UnsignedInt = uint64_t;
 
 class Combinations
 {
+private:
     const UnsignedInt MaxSizeOfArray = 8;
 
     const UnsignedInt MaxSizeOfCombinationsArray = 32;
@@ -27,15 +28,12 @@ private:
     static void ShowArray(std::span<UnsignedInt> Array, UnsignedInt StartPos, UnsignedInt Counter, std::string_view AdditionalText);
 public:
     void AddTwoBitArrays(const std::vector<UnsignedInt>& MainArray, const std::vector<UnsignedInt>& ArrayToAdd, std::vector<UnsignedInt>& ResultArray) const;
-public:
     void Add1ToMainArray(const std::vector<UnsignedInt>& MainArray, const std::vector<UnsignedInt>& ArrayToAdd, std::vector<UnsignedInt>& ResultArray) const;
 public:
     void Add1ToMainArrayByAddTwoBitsArraysTestDemo(UnsignedInt NumberOfBits) const;
-public:
     void Add1ToMainArrayTestDemo(UnsignedInt NumberOfBits) const;
-public:
     void AddTwoDifferentBitsArraysTestDemo() const;
-public:
+private:
     void RotateWithPrint(UnsignedInt R, UnsignedInt N, UnsignedInt K);
 public:
     void AllKElementsCombinationsFromNElementsFirstWayWithPrintTestDemo(UnsignedInt N, UnsignedInt K);
@@ -43,13 +41,10 @@ private:
     void Rotate(UnsignedInt R);
 public:
     void AllKElementsCombinationsFromNElementsFirstWayTestDemo(UnsignedInt N, UnsignedInt K);
-public:
     void AllKElementsCombinationsFromNElementsFirstWayAndHalfTestDemo(UnsignedInt N, UnsignedInt K);
 private:
     static UnsignedInt NumberOfCombinations(UnsignedInt NP, UnsignedInt KP);
-private:
     static std::string CreateBoolStringFromInt64BitState(UnsignedInt Number);
-private:
     static UnsignedInt NextNumberWithTheSameNumberOf1Bits(UnsignedInt Number);
 public:
     void AllKElementsCombinationsFromNElementsSecondWayTestDemo(UnsignedInt N, UnsignedInt K);
@@ -92,16 +87,11 @@ private:
     static std::string GetResultAsString(UnsignedInt KWords, std::vector<UnsignedInt>& Repeat);
 public:
     static void VariationsFrom1ToEndIn3LoopsTestDemo();
-public:
     static void VariationsFrom1ToEndIn1LoopTestDemo();
-public:
     static void VariationsFrom1ToMIn3LoopsTestDemo(const std::vector<UnsignedInt>& Lengths);
-public:
     static void VariationsFrom1ToMIn1LoopTestDemo(const std::vector<UnsignedInt>& Lengths);
-public:
     static void VariationsFromNtoMIn3LoopsTestDemo(const std::vector<UnsignedInt>& Starts, const std::vector<UnsignedInt>& Lengths);
-public:
-    static void VariationsFromNtoMInOneLoopTestDemo(const std::vector<UnsignedInt>& Starts, const std::vector<UnsignedInt>& Lengths);
+    static void VariationsFromNtoMIn1LoopTestDemo(const std::vector<UnsignedInt>& Starts, const std::vector<UnsignedInt>& Lengths);
 };
 
 void ShowDemoTest();
