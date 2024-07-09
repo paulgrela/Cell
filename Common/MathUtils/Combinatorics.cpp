@@ -13,6 +13,8 @@ using namespace std;
 using SignedInt = int64_t;
 using UnsignedInt = uint64_t;
 
+#define SHOW_EVERY_STEP_OF_GENERATION_COMBINATIONS_
+
 class Combinations
 {
     const UnsignedInt MaxSizeOfArray = 8;
@@ -25,7 +27,6 @@ public:
     {
     }
 public:
-
     static void ShowArray(span<UnsignedInt> Array, UnsignedInt StartPos, UnsignedInt Counter, string_view AdditionalText)
     {
         string ArrayStr;
@@ -35,7 +36,7 @@ public:
 
         LoggersManagerObject.Log(STREAM(ArrayStr << AdditionalText));
     }
-
+public:
     void AddTwoBitArrays(const vector<UnsignedInt>& MainArray, const vector<UnsignedInt>& ArrayToAdd, vector<UnsignedInt>& ResultArray) const
     {
         UnsignedInt Remember = 0;
@@ -85,7 +86,7 @@ public:
             }
         }
     }
-
+public:
     void Add1ToMainArray(const vector<UnsignedInt>& MainArray, const vector<UnsignedInt>& ArrayToAdd, vector<UnsignedInt>& ResultArray) const
     {
         UnsignedInt Remember = 0;
@@ -125,7 +126,7 @@ public:
             }
         }
     }
-
+public:
     void Add1ToMainArrayByAddTwoBitsArraysTestDemo(const UnsignedInt NumberOfBits) const
     {
         vector<UnsignedInt> ArrayToAddCopy(MaxSizeOfArray);
@@ -151,7 +152,7 @@ public:
                 MainArray[Pos] = ResultArray[Pos];
         }
     }
-
+public:
     void Add1ToMainArrayTestDemo(const UnsignedInt NumberOfBits) const
     {
         vector<UnsignedInt> ArrayToAddCopy(MaxSizeOfArray);
@@ -177,11 +178,11 @@ public:
                 MainArray[Pos] = ResultArray[Pos];
         }
     }
-
+public:
     void AddTwoDifferentBitsArraysTestDemo() const
     {
         vector<UnsignedInt> MainArray = { 0, 0, 0, 0, 1, 1, 0, 1 };
-        vector<UnsignedInt> ArrayToAdd = { 0, 0, 0, 0, 0, 1, 1,  1 };
+        vector<UnsignedInt> ArrayToAdd = { 0, 0, 0, 0, 0, 1, 1, 1 };
 
         vector<UnsignedInt> ResultArray(MaxSizeOfArray);
 
@@ -191,7 +192,7 @@ public:
         ShowArray(ArrayToAdd, 0, MaxSizeOfArray, "");
         ShowArray(ResultArray, 0, MaxSizeOfArray, "");
     }
-
+public:
     /*
     011101 6
     011101 PREV, j + 1 = 3
@@ -203,23 +204,31 @@ public:
     101101 AFTER
     */
     /* PONIZSZE DWIE FUNKCJE TO TO SAMO CO DWIE JESZCZE NASTEPNE TYLKO Z WYPISYWANIEM STANU ALGORYTMU PRZEZ ShowArray */
-
+public:
     void RotateWithPrint(UnsignedInt R, const UnsignedInt N, const UnsignedInt K)
     {
         UnsignedInt Pam = CombinationsArray[R];
 
         for (UnsignedInt i = R; i > 1; i--)
         {
+            #ifdef SHOW_EVERY_STEP_OF_GENERATION_COMBINATIONS
             ShowArray(CombinationsArray, 1, N + 1, " IN TRAIN PREV, R = " + to_string(R) + " i = " + to_string(i));
+            #endif
+
             CombinationsArray[i] = CombinationsArray[i - 1];
+
+            #ifdef SHOW_EVERY_STEP_OF_GENERATION_COMBINATIONS
             ShowArray(CombinationsArray, 1, N + 1, " IN TRAIN AFTER, R = " + to_string(R) + " i = " + to_string(i));
+            #endif
         }
 
         CombinationsArray[1] = Pam;
 
+        #ifdef SHOW_EVERY_STEP_OF_GENERATION_COMBINATIONS
         ShowArray(CombinationsArray, 1, N + 1, " AFTER TOTAL, R = " + to_string(R));
+        #endif
     }
-
+public:
     void AllKElementsCombinationsFromNElementsFirstWayWithPrintTestDemo(const UnsignedInt N, const UnsignedInt K)
     {
         UnsignedInt Line = 1;
@@ -240,11 +249,16 @@ public:
                 LoopCondition = false;
                 goto EndLabel;
             }
+
+            #ifdef SHOW_EVERY_STEP_OF_GENERATION_COMBINATIONS
             ShowArray(CombinationsArray, 1, N + 1, " PREV, j + 1 = " + to_string(j + 1));
+            #endif
 
             RotateWithPrint(j + 1, N, K);
 
+            #ifdef SHOW_EVERY_STEP_OF_GENERATION_COMBINATIONS
             ShowArray(CombinationsArray, 1, N + 1, " AFTER");
+            #endif
 
             for (UnsignedInt i = 1; i < N; i++)
                 if (CombinationsArray[i] == 0 && CombinationsArray[i + 1] == 1)
@@ -255,7 +269,7 @@ public:
             EndLabel:;
         }
     }
-
+public:
     void Rotate(UnsignedInt R)
     {
         UnsignedInt Pam = CombinationsArray[R];
@@ -265,13 +279,13 @@ public:
 
         CombinationsArray[1] = Pam;
     }
-
+public:
     void AllKElementsCombinationsFromNElementsFirstWayTestDemo(const UnsignedInt N, const UnsignedInt K)
     {
         UnsignedInt Line = 1;
 
         for (UnsignedInt i = 1; i <= N; i++)
-            CombinationsArray[i] = i <= K;
+            CombinationsArray[i] = (i <= K);
 
         UnsignedInt j = N - 1;
 
@@ -298,7 +312,7 @@ public:
             EndLabel:;
         }
     }
-
+public:
     void AllKElementsCombinationsFromNElementsFirstWayAndHalfTestDemo(const UnsignedInt N, const UnsignedInt K)
     {
         UnsignedInt Line = 1;
@@ -325,7 +339,7 @@ public:
                 }
         }
     }
-
+public:
     static UnsignedInt NumberOfCombinations(UnsignedInt NP, UnsignedInt KP)
     {
         UnsignedInt NFactorial = 1;
@@ -353,7 +367,7 @@ public:
 
         return NumberString;
     }
-
+public:
     #pragma warn -ngu
     static UnsignedInt NextNumberWithTheSameNumberOf1Bits(UnsignedInt Number)
     {
@@ -366,7 +380,7 @@ public:
 
         return Ripple | Ones;
     }
-
+public:
     void AllKElementsCombinationsFromNElementsSecondWayTestDemo(const UnsignedInt N, const UnsignedInt K)
     {
         UnsignedInt Line = 1;
@@ -396,7 +410,6 @@ public:
                 LoggersManagerObject.Log(STREAM(CreateBoolStringFromInt64BitState(Number) << "    " << to_string(Line++)));
         }
 
-        LoggersManagerObject.Log(STREAM(""));
         LoggersManagerObject.Log(STREAM(to_string(NumberOfCombinations(N, K))));
     }
 };
@@ -593,7 +606,7 @@ public:
     }
 };
 
-void ShowDemoTest()
+void ShowCombinationsDemoTest()
 {
     Combinations CombinationsObject;
 
@@ -610,12 +623,18 @@ void ShowDemoTest()
     CombinationsObject.AllKElementsCombinationsFromNElementsFirstWayAndHalfTestDemo(6, 4);
     LoggersManagerObject.Log(STREAM("T6"));
     CombinationsObject.AllKElementsCombinationsFromNElementsSecondWayTestDemo(6, 4);
+}
 
+void ShowPermutationsDemoTest()
+{
     Permutations PermutationsObject;
     LoggersManagerObject.Log(STREAM("T7"));
     string PermutationString = "ABCDE";
     PermutationsObject.PermutationsTestDemo(PermutationString);
+}
 
+void ShowVariationsDemoTest()
+{
     LoggersManagerObject.Log(STREAM("T8"));
     Variations::VariationsFrom1ToEndIn3LoopsTestDemo();
     Variations::VariationsFrom1ToEndIn1LoopTestDemo();
@@ -625,4 +644,11 @@ void ShowDemoTest()
     LoggersManagerObject.Log(STREAM("T10"));
     Variations::VariationsFromNtoMIn3LoopsTestDemo({ 0, 2, 3, 5 }, { 0, 4, 5, 7 });
     Variations::VariationsFromNtoMInOneLoopTestDemo({ 0, 2, 3, 5 },{ 0, 4, 5, 7 });
+}
+
+void ShowDemoTest()
+{
+    ShowCombinationsDemoTest();
+    ShowPermutationsDemoTest();
+    ShowVariationsDemoTest();
 }
