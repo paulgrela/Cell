@@ -65,7 +65,7 @@ protected:
     void FindAndExecuteRandomReaction(UnsignedInt MaxNumberOfReactantsParam);
     void FindAndExecuteChosenReaction(UnsignedInt ReactionId);
 protected:
-    std::vector<UnsignedInt> GetRandomParticles(UnsignedInt NumberOfReactants) override;
+    std::vector<UnsignedInt> GetRandomParticles(UnsignedInt NumberOfReactants, UnsignedInt MaxNumberOfReactants) override;
     bool IsChemicalReactionPossible(const ChemicalReaction& ReactionObject) override;
     bool MakeChemicalReaction(ChemicalReaction& ReactionObject) override;
 public:

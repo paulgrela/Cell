@@ -295,37 +295,26 @@ bool CellEngineSimulationSpace::MakeChemicalReaction(ChemicalReaction& ReactionO
 //    return RandomParticlesTypes;
 //}
 
-std::vector<UnsignedInt> CellEngineSimulationSpace::GetRandomParticles(const UnsignedInt NumberOfReactants)
+std::vector<UnsignedInt> CellEngineSimulationSpace::GetRandomParticles(const UnsignedInt NumberOfReactants, const UnsignedInt MaxNumberOfReactants)
 {
     vector<UnsignedInt> RandomParticlesTypes;
 
     try
     {
-        std::uniform_int_distribution<UnsignedInt> UniformDistributionObjectUint64t(0, ParticlesKindsFoundInProximity.size() - 1);
+        //std::uniform_int_distribution<UnsignedInt> UniformDistributionObjectUint64t(0, ParticlesKindsFoundInProximity.size() - 1);
 
-        //U MNIE N to na razie 43 a NumberOfReactants to K i musze wyliczyc ile takich kombinacji
-        //ILOSC MOZLIWYCH DO WYGENEROWANIA KOMBINACJI WYGENEROWANYCH to N po K
-        //WYGENERUJ PIERWSZA KOBINACJE SAMYCH 11111 O DLUGOSCI k NUMBER_OF_REACTANTS + N-K zer na rotacje
-        //GENERUJ KOLEJNE KOMBINACJE jesli reakcja nie mozliwa
-
-        //ZMNIEJSZYC N CZYLI ROZMIAR KUBIKA
-
-        //PIERWSZA GENERACJA Z OKRESLONA LICZBA OZNACZA NUMER KOBINACJI i pamietanie stanu w Obiekcie CombinationsGenerator a funkcja zwraca kolejna wersje kombinacji
-        //W wersji generowanej przez sztuczke z bitami musze pamietac liczbe i niech zwraca mi kolejna z funkcja NextNumberWithTheSameNumberOf1Bits(Number);
-        //czyli CellEngineChemicalReactionsEngine musi pamietac ta liczbe -
-        //czyli trzeba zmienic algorytm TryToMakeRandomChemicalReaction do 100 lub jak nie ukoczyl kombinacji
-
-
-        GenerateCombinationsStateNumber = Combinations::NextNumberWithTheSameNumberOf1Bits(GenerateCombinationsStateNumber);
         auto BitsValuesString = Combinations::CreateBoolStringFromInt64BitState(GenerateCombinationsStateNumber);
+        LoggersManagerObject.Log(STREAM("GenerateCombinationsStateNumber NEXT = " << BitsValuesString));
 
-        for (UnsignedInt ReactantNumberBitValuePos = 0; ReactantNumberBitValuePos < NumberOfReactants; ReactantNumberBitValuePos++)
+        for (UnsignedInt ReactantNumberBitValuePos = 0; ReactantNumberBitValuePos < MaxNumberOfReactants; ReactantNumberBitValuePos++)
             if (BitsValuesString[ReactantNumberBitValuePos] == '1')
             {
                 RandomParticlesTypes.emplace_back(std::next(std::begin(ParticlesKindsFoundInProximity), static_cast<int>(ReactantNumberBitValuePos))->first);
 
                 LoggersManagerObject.Log(STREAM("ParticleKind Reactant " << to_string(ReactantNumberBitValuePos) << " (" << to_string(RandomParticlesTypes.back()) << ")"));
             }
+
+        GenerateCombinationsStateNumber = Combinations::NextNumberWithTheSameNumberOf1Bits(GenerateCombinationsStateNumber);
 
 
         //for (UnsignedInt BitValue = 0; BitValue < BitsValuesString.size(); BitValue++)
@@ -373,18 +362,31 @@ void CellEngineSimulationSpace::FindAndExecuteRandomReaction(const UnsignedInt M
 
         uniform_int_distribution<UnsignedInt> UniformDistributionObjectNumberOfReactants_Uint64t(1, MaxNumberOfReactants);
 
-        UnsignedInt NumberOfReactants = UniformDistributionObjectNumberOfReactants_Uint64t(mt64R);
-        GenerateCombinationsStateNumber = 0;//TU WSTAW tyle jedynek ile jest NumberOfReactants
+        //UnsignedInt NumberOfReactants = UniformDistributionObjectNumberOfReactants_Uint64t(mt64R);
+        UnsignedInt NumberOfReactants = 2;
+
+        LoggersManagerObject.Log(STREAM("NumberOfReactants = " << NumberOfReactants));
+        LoggersManagerObject.Log(STREAM("MaxNumberOfReactants = " << MaxNumberOfReactants));
+        UnsignedInt NumberOfCombinations = Combinations::NumberOfCombinations(MaxNumberOfReactants, NumberOfReactants);
+        LoggersManagerObject.Log(STREAM("NumberOfCombinations = " << NumberOfCombinations));
+        GenerateCombinationsStateNumber = Combinations::SetKBitsInNumber(MaxNumberOfReactants, NumberOfReactants); //TU WSTAW tyle jedynek ile jest NumberOfReactants
+        LoggersManagerObject.Log(STREAM("GenerateCombinationsStateNumber START = " << Combinations::CreateBoolStringFromInt64BitState(GenerateCombinationsStateNumber)));
 
         UnsignedInt NumberOfTries = 0;
-        while (NumberOfTries <= 100)
+        UnsignedInt NumberOfAllPossibleTries = min(UnsignedInt(100), NumberOfCombinations);
+        //while (NumberOfTries <= 100 && NumberOfTries < NumberOfReactants)
+        while (NumberOfTries < NumberOfAllPossibleTries)
         {
             NumberOfTries++;
+            LoggersManagerObject.Log(STREAM("Number Of Tries = " << NumberOfTries));
 
             //UnsignedInt NumberOfReactants = UniformDistributionObjectNumberOfReactants_Uint64t(mt64R);
 
-            if (TryToMakeRandomChemicalReaction(NumberOfReactants) == true)
-                break;
+
+
+            TryToMakeRandomChemicalReaction(NumberOfReactants, MaxNumberOfReactants);
+            //if (TryToMakeRandomChemicalReaction(NumberOfReactants) == true)
+            //    break;
         }
     }
     CATCH("finding and executing random reaction")

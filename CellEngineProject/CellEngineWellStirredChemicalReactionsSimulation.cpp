@@ -3,7 +3,7 @@
 #include "CellEngineParticlesKindsManager.h"
 #include "CellEngineWellStirredChemicalReactionsSimulation.h"
 
-std::vector<UnsignedInt> CellEngineWellStirredChemicalReactionsSimulation::GetRandomParticles(const UnsignedInt NumberOfReactants)
+std::vector<UnsignedInt> CellEngineWellStirredChemicalReactionsSimulation::GetRandomParticles(const UnsignedInt NumberOfReactants, UnsignedInt MaxNumberOfReactants)
 {
     vector<UnsignedInt> RandomParticlesTypes;
 
@@ -63,5 +63,5 @@ bool CellEngineWellStirredChemicalReactionsSimulation::IsChemicalReactionPossibl
 void CellEngineWellStirredChemicalReactionsSimulation::Run(UnsignedInt NumberOfSteps)
 {
     for (UnsignedInt Steps = 1; Steps <= NumberOfSteps; Steps++)
-        TryToMakeRandomChemicalReaction(2);
+        TryToMakeRandomChemicalReaction(2, 2);
 }

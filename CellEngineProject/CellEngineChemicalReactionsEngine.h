@@ -11,11 +11,11 @@
 class CellEngineChemicalReactionsEngine : virtual public CellEngineRandomDeviceEngine
 {
 public:
-    virtual std::vector<UnsignedInt> GetRandomParticles(UnsignedInt NumberOfReactants) = 0;
+    virtual std::vector<UnsignedInt> GetRandomParticles(UnsignedInt NumberOfReactants, UnsignedInt MaxNumberOfReactants) = 0;
     virtual bool IsChemicalReactionPossible(const ChemicalReaction& ReactionObject) = 0;
     virtual bool MakeChemicalReaction(ChemicalReaction& ReactionObject) = 0;
 public:
-    bool TryToMakeRandomChemicalReaction(UnsignedInt NumberOfReactants);
+    bool TryToMakeRandomChemicalReaction(UnsignedInt NumberOfReactants, UnsignedInt MaxNumberOfReactants);
 };
 
 #endif

@@ -9,13 +9,13 @@
 
 using namespace std;
 
-bool CellEngineChemicalReactionsEngine::TryToMakeRandomChemicalReaction(UnsignedInt NumberOfReactants)
+bool CellEngineChemicalReactionsEngine::TryToMakeRandomChemicalReaction(UnsignedInt NumberOfReactants, UnsignedInt MaxNumberOfReactants)
 {
     try
     {
         LoggersManagerObject.Log(STREAM(endl << "REACTION" << endl));
 
-        vector<UnsignedInt> RandomParticlesTypes = GetRandomParticles(NumberOfReactants);
+        vector<UnsignedInt> RandomParticlesTypes = GetRandomParticles(NumberOfReactants, MaxNumberOfReactants);
 
         sort(begin(RandomParticlesTypes), end(RandomParticlesTypes));
         auto IteratorUnique = unique(begin(RandomParticlesTypes), end(RandomParticlesTypes));

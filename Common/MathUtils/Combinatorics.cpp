@@ -453,19 +453,10 @@ void Combinations::GenerateAllKElementsCombinationsFromNElementsSecondWayTestDem
     try
     {
         UnsignedInt Line = 1;
-
-//        UnsignedInt AimNumber = 0;
-//        for (UnsignedInt i = 1; i <= N; i++)
-//            AimNumber |= (UnsignedInt) pow(2, i - 1);
         UnsignedInt AimNumber = SetAllBitsInNumber(N, K);
 
         LoggersManagerObject.Log(STREAM(CreateBoolStringFromInt64BitState(AimNumber)));
         LoggersManagerObject.Log(STREAM(""));
-
-//        UnsignedInt Number = 0;
-//        for (UnsignedInt i = 1; i <= N; i++)
-//            if (i <= K)
-//                Number |= (UnsignedInt) pow(2, i - 1);
 
         UnsignedInt Number = SetKBitsInNumber(N, K);
 
