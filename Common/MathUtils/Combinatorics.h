@@ -36,18 +36,20 @@ public:
 private:
     void RotateWithPrint(UnsignedInt R, UnsignedInt N, UnsignedInt K);
 public:
-    void AllKElementsCombinationsFromNElementsFirstWayWithPrintTestDemo(UnsignedInt N, UnsignedInt K);
+    void GenerateAllKElementsCombinationsFromNElementsFirstWayWithPrintTestDemo(UnsignedInt N, UnsignedInt K);
 private:
     void Rotate(UnsignedInt R);
 public:
-    void AllKElementsCombinationsFromNElementsFirstWayTestDemo(UnsignedInt N, UnsignedInt K);
-    void AllKElementsCombinationsFromNElementsFirstWayAndHalfTestDemo(UnsignedInt N, UnsignedInt K);
-private:
+    void GenerateAllKElementsCombinationsFromNElementsFirstWayTestDemo(UnsignedInt N, UnsignedInt K);
+    void GenerateAllKElementsCombinationsFromNElementsFirstWayAndHalfTestDemo(UnsignedInt N, UnsignedInt K);
+public:
+    static UnsignedInt SetKBitsInNumber(UnsignedInt N, UnsignedInt K);
+    static UnsignedInt SetAllBitsInNumber(UnsignedInt N, UnsignedInt K);
     static UnsignedInt NumberOfCombinations(UnsignedInt NP, UnsignedInt KP);
     static std::string CreateBoolStringFromInt64BitState(UnsignedInt Number);
     static UnsignedInt NextNumberWithTheSameNumberOf1Bits(UnsignedInt Number);
 public:
-    void AllKElementsCombinationsFromNElementsSecondWayTestDemo(UnsignedInt N, UnsignedInt K);
+    static void GenerateAllKElementsCombinationsFromNElementsSecondWayTestDemo(UnsignedInt N, UnsignedInt K);
 };
 
 class Permutations

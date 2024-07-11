@@ -4,6 +4,7 @@
 #include <algorithm>
 
 #include "FileUtils.h"
+#include "Combinatorics.h"
 #include "DoublyLinkedList.h"
 
 #include "CellEngineConstants.h"
@@ -274,6 +275,26 @@ bool CellEngineSimulationSpace::MakeChemicalReaction(ChemicalReaction& ReactionO
     return true;
 };
 
+//std::vector<UnsignedInt> CellEngineSimulationSpace::GetRandomParticles(const UnsignedInt NumberOfReactants)
+//{
+//    vector<UnsignedInt> RandomParticlesTypes;
+//
+//    try
+//    {
+//        std::uniform_int_distribution<UnsignedInt> UniformDistributionObjectUint64t(0, ParticlesKindsFoundInProximity.size() - 1);
+//
+//        for (UnsignedInt ReactantNumber = 1; ReactantNumber <= NumberOfReactants; ReactantNumber++)
+//        {
+//            RandomParticlesTypes.emplace_back(std::next(std::begin(ParticlesKindsFoundInProximity), static_cast<int>(UniformDistributionObjectUint64t(mt64R)))->first);
+//
+//            LoggersManagerObject.Log(STREAM("ParticleKind Reactant " << to_string(ReactantNumber) << " (" << to_string(RandomParticlesTypes.back()) << ")"));
+//        }
+//    }
+//    CATCH("getting random particles kind")
+//
+//    return RandomParticlesTypes;
+//}
+
 std::vector<UnsignedInt> CellEngineSimulationSpace::GetRandomParticles(const UnsignedInt NumberOfReactants)
 {
     vector<UnsignedInt> RandomParticlesTypes;
@@ -282,12 +303,46 @@ std::vector<UnsignedInt> CellEngineSimulationSpace::GetRandomParticles(const Uns
     {
         std::uniform_int_distribution<UnsignedInt> UniformDistributionObjectUint64t(0, ParticlesKindsFoundInProximity.size() - 1);
 
-        for (UnsignedInt ReactantNumber = 1; ReactantNumber <= NumberOfReactants; ReactantNumber++)
-        {
-            RandomParticlesTypes.emplace_back(std::next(std::begin(ParticlesKindsFoundInProximity), static_cast<int>(UniformDistributionObjectUint64t(mt64R)))->first);
+        //U MNIE N to na razie 43 a NumberOfReactants to K i musze wyliczyc ile takich kombinacji
+        //ILOSC MOZLIWYCH DO WYGENEROWANIA KOMBINACJI WYGENEROWANYCH to N po K
+        //WYGENERUJ PIERWSZA KOBINACJE SAMYCH 11111 O DLUGOSCI k NUMBER_OF_REACTANTS + N-K zer na rotacje
+        //GENERUJ KOLEJNE KOMBINACJE jesli reakcja nie mozliwa
 
-            LoggersManagerObject.Log(STREAM("ParticleKind Reactant " << to_string(ReactantNumber) << " (" << to_string(RandomParticlesTypes.back()) << ")"));
-        }
+        //ZMNIEJSZYC N CZYLI ROZMIAR KUBIKA
+
+        //PIERWSZA GENERACJA Z OKRESLONA LICZBA OZNACZA NUMER KOBINACJI i pamietanie stanu w Obiekcie CombinationsGenerator a funkcja zwraca kolejna wersje kombinacji
+        //W wersji generowanej przez sztuczke z bitami musze pamietac liczbe i niech zwraca mi kolejna z funkcja NextNumberWithTheSameNumberOf1Bits(Number);
+        //czyli CellEngineChemicalReactionsEngine musi pamietac ta liczbe -
+        //czyli trzeba zmienic algorytm TryToMakeRandomChemicalReaction do 100 lub jak nie ukoczyl kombinacji
+
+
+        GenerateCombinationsStateNumber = Combinations::NextNumberWithTheSameNumberOf1Bits(GenerateCombinationsStateNumber);
+        auto BitsValuesString = Combinations::CreateBoolStringFromInt64BitState(GenerateCombinationsStateNumber);
+
+        for (UnsignedInt ReactantNumberBitValuePos = 0; ReactantNumberBitValuePos < NumberOfReactants; ReactantNumberBitValuePos++)
+            if (BitsValuesString[ReactantNumberBitValuePos] == '1')
+            {
+                RandomParticlesTypes.emplace_back(std::next(std::begin(ParticlesKindsFoundInProximity), static_cast<int>(ReactantNumberBitValuePos))->first);
+
+                LoggersManagerObject.Log(STREAM("ParticleKind Reactant " << to_string(ReactantNumberBitValuePos) << " (" << to_string(RandomParticlesTypes.back()) << ")"));
+            }
+
+
+        //for (UnsignedInt BitValue = 0; BitValue < BitsValuesString.size(); BitValue++)
+//        for (UnsignedInt BitValuePos = 0; BitValuePos < NumberOfReactants; BitValuePos++)
+//            if (BitsValuesString[BitValuePos] == '1')
+//            {
+//                RandomParticlesTypes.emplace_back(std::next(std::begin(ParticlesKindsFoundInProximity), static_cast<int>(BitValuePos))->first);
+//
+//                LoggersManagerObject.Log(STREAM("ParticleKind Reactant " << to_string(BitValuePos) << " (" << to_string(RandomParticlesTypes.back()) << ")"));
+//            }
+
+//        for (UnsignedInt ReactantNumber = 1; ReactantNumber <= NumberOfReactants; ReactantNumber++)
+//        {
+//            RandomParticlesTypes.emplace_back(std::next(std::begin(ParticlesKindsFoundInProximity), static_cast<int>(UniformDistributionObjectUint64t(mt64R)))->first);
+//
+//            LoggersManagerObject.Log(STREAM("ParticleKind Reactant " << to_string(ReactantNumber) << " (" << to_string(RandomParticlesTypes.back()) << ")"));
+//        }
     }
     CATCH("getting random particles kind")
 
@@ -318,12 +373,15 @@ void CellEngineSimulationSpace::FindAndExecuteRandomReaction(const UnsignedInt M
 
         uniform_int_distribution<UnsignedInt> UniformDistributionObjectNumberOfReactants_Uint64t(1, MaxNumberOfReactants);
 
+        UnsignedInt NumberOfReactants = UniformDistributionObjectNumberOfReactants_Uint64t(mt64R);
+        GenerateCombinationsStateNumber = 0;//TU WSTAW tyle jedynek ile jest NumberOfReactants
+
         UnsignedInt NumberOfTries = 0;
         while (NumberOfTries <= 100)
         {
             NumberOfTries++;
 
-            UnsignedInt NumberOfReactants = UniformDistributionObjectNumberOfReactants_Uint64t(mt64R);
+            //UnsignedInt NumberOfReactants = UniformDistributionObjectNumberOfReactants_Uint64t(mt64R);
 
             if (TryToMakeRandomChemicalReaction(NumberOfReactants) == true)
                 break;
@@ -331,6 +389,28 @@ void CellEngineSimulationSpace::FindAndExecuteRandomReaction(const UnsignedInt M
     }
     CATCH("finding and executing random reaction")
 }
+
+//void CellEngineSimulationSpace::FindAndExecuteRandomReaction(const UnsignedInt MaxNumberOfReactants)
+//{
+//    try
+//    {
+//        LoggersManagerObject.Log(STREAM("MAX NUMBER OF REACTANTS = " << MaxNumberOfReactants));
+//
+//        uniform_int_distribution<UnsignedInt> UniformDistributionObjectNumberOfReactants_Uint64t(1, MaxNumberOfReactants);
+//
+//        UnsignedInt NumberOfTries = 0;
+//        while (NumberOfTries <= 100)
+//        {
+//            NumberOfTries++;
+//
+//            UnsignedInt NumberOfReactants = UniformDistributionObjectNumberOfReactants_Uint64t(mt64R);
+//
+//            if (TryToMakeRandomChemicalReaction(NumberOfReactants) == true)
+//                break;
+//        }
+//    }
+//    CATCH("finding and executing random reaction")
+//}
 
 void CellEngineSimulationSpace::FindAndExecuteChosenReaction(const UnsignedInt ReactionId)
 {

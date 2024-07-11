@@ -13,6 +13,8 @@
 class CellEngineChemicalReactionsInSimulationSpace : public CellEngineNucleicAcidsChemicalReactionsInSimulationSpace
 {
 protected:
+    UnsignedInt GenerateCombinationsStateNumber{};
+protected:
     virtual void ClearSpaceForParticle(Particle& ParticleObject, bool ClearVoxels) = 0;
 protected:
     void RemoveParticle(UniqueIdInt ParticleIndex, bool ClearVoxels) override;

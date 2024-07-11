@@ -238,7 +238,7 @@ void Combinations::RotateWithPrint(UnsignedInt R, const UnsignedInt N, const Uns
     CATCH("rotating for combinations with printing")
 }
 
-void Combinations::AllKElementsCombinationsFromNElementsFirstWayWithPrintTestDemo(const UnsignedInt N, const UnsignedInt K)
+void Combinations::GenerateAllKElementsCombinationsFromNElementsFirstWayWithPrintTestDemo(UnsignedInt N, UnsignedInt K)
 {
     try
     {
@@ -297,7 +297,7 @@ void Combinations::Rotate(UnsignedInt R)
     CATCH("rotating for combinations")
 }
 
-void Combinations::AllKElementsCombinationsFromNElementsFirstWayTestDemo(const UnsignedInt N, const UnsignedInt K)
+void Combinations::GenerateAllKElementsCombinationsFromNElementsFirstWayTestDemo(UnsignedInt N, UnsignedInt K)
 {
     try
     {
@@ -334,7 +334,7 @@ void Combinations::AllKElementsCombinationsFromNElementsFirstWayTestDemo(const U
     CATCH("generating all k elements combinations from n elements first way")
 }
 
-void Combinations::AllKElementsCombinationsFromNElementsFirstWayAndHalfTestDemo(const UnsignedInt N, const UnsignedInt K)
+void Combinations::GenerateAllKElementsCombinationsFromNElementsFirstWayAndHalfTestDemo(UnsignedInt N, UnsignedInt K)
 {
     try
     {
@@ -419,27 +419,55 @@ UnsignedInt Combinations::NextNumberWithTheSameNumberOf1Bits(UnsignedInt Number)
     return Ripple | Ones;
 }
 
-void Combinations::AllKElementsCombinationsFromNElementsSecondWayTestDemo(const UnsignedInt N, const UnsignedInt K)
+UnsignedInt Combinations::SetAllBitsInNumber(UnsignedInt N, UnsignedInt K)
+{
+    UnsignedInt Number = 0;
+
+    try
+    {
+        for (UnsignedInt i = 1; i <= N; i++)
+            Number |= (UnsignedInt) pow(2, i - 1);
+    }
+    CATCH("setting k bits in number")
+
+    return Number;
+}
+
+UnsignedInt Combinations::SetKBitsInNumber(UnsignedInt N, UnsignedInt K)
+{
+    UnsignedInt Number = 0;
+
+    try
+    {
+        for (UnsignedInt i = 1; i <= N; i++)
+            if (i <= K)
+                Number |= (UnsignedInt) pow(2, i - 1);
+    }
+    CATCH("setting k bits in number")
+
+    return Number;
+}
+
+void Combinations::GenerateAllKElementsCombinationsFromNElementsSecondWayTestDemo(UnsignedInt N, UnsignedInt K)
 {
     try
     {
         UnsignedInt Line = 1;
-        for (UnsignedInt i = 1; i <= N; i++)
-            CombinationsArray[i] = (i <= K);
 
-        UnsignedInt AimNumber = 0;
-        for (UnsignedInt i = 1; i <= N; i++)
-            AimNumber |= (UnsignedInt) pow(2, i - 1);
-
-        ShowArray(CombinationsArray, 1, N + 1, "");
+//        UnsignedInt AimNumber = 0;
+//        for (UnsignedInt i = 1; i <= N; i++)
+//            AimNumber |= (UnsignedInt) pow(2, i - 1);
+        UnsignedInt AimNumber = SetAllBitsInNumber(N, K);
 
         LoggersManagerObject.Log(STREAM(CreateBoolStringFromInt64BitState(AimNumber)));
         LoggersManagerObject.Log(STREAM(""));
 
-        UnsignedInt Number = 0;
-        for (UnsignedInt i = 1; i <= N; i++)
-            if (CombinationsArray[i] == 1)
-                Number |= (UnsignedInt) pow(2, i - 1);
+//        UnsignedInt Number = 0;
+//        for (UnsignedInt i = 1; i <= N; i++)
+//            if (i <= K)
+//                Number |= (UnsignedInt) pow(2, i - 1);
+
+        UnsignedInt Number = SetKBitsInNumber(N, K);
 
         LoggersManagerObject.Log(STREAM(CreateBoolStringFromInt64BitState(Number) << "    " << to_string(Line++)));
 
@@ -454,6 +482,42 @@ void Combinations::AllKElementsCombinationsFromNElementsSecondWayTestDemo(const 
     }
     CATCH("generating all k elements combinations from n elements second way")
 }
+
+//void Combinations::GenerateAllKElementsCombinationsFromNElementsSecondWayTestDemo(UnsignedInt N, UnsignedInt K)
+//{
+//    try
+//    {
+//        UnsignedInt Line = 1;
+//        for (UnsignedInt i = 1; i <= N; i++)
+//            CombinationsArray[i] = (i <= K);
+//
+//        UnsignedInt AimNumber = 0;
+//        for (UnsignedInt i = 1; i <= N; i++)
+//            AimNumber |= (UnsignedInt) pow(2, i - 1);
+//
+//        ShowArray(CombinationsArray, 1, N + 1, "");
+//
+//        LoggersManagerObject.Log(STREAM(CreateBoolStringFromInt64BitState(AimNumber)));
+//        LoggersManagerObject.Log(STREAM(""));
+//
+//        UnsignedInt Number = 0;
+//        for (UnsignedInt i = 1; i <= N; i++)
+//            if (CombinationsArray[i] == 1)
+//                Number |= (UnsignedInt) pow(2, i - 1);
+//
+//        LoggersManagerObject.Log(STREAM(CreateBoolStringFromInt64BitState(Number) << "    " << to_string(Line++)));
+//
+//        while (Number < AimNumber)
+//        {
+//            Number = NextNumberWithTheSameNumberOf1Bits(Number);
+//            if (Number < AimNumber)
+//                LoggersManagerObject.Log(STREAM(CreateBoolStringFromInt64BitState(Number) << "    " << to_string(Line++)));
+//        }
+//
+//        LoggersManagerObject.Log(STREAM(to_string(NumberOfCombinations(N, K))));
+//    }
+//    CATCH("generating all k elements combinations from n elements second way")
+//}
 
 void Permutations::RotateForPermutation(UnsignedInt Number, string& PermutationStringLocal)
 {
@@ -675,11 +739,11 @@ void ShowCombinationsDemoTest()
         CombinationsObject.AddTwoDifferentBitsArraysTestDemo();
 
         LoggersManagerObject.Log(STREAM("T4"));
-        CombinationsObject.AllKElementsCombinationsFromNElementsFirstWayTestDemo(6, 4);
+        CombinationsObject.GenerateAllKElementsCombinationsFromNElementsFirstWayTestDemo(6, 4);
         LoggersManagerObject.Log(STREAM("T5"));
-        CombinationsObject.AllKElementsCombinationsFromNElementsFirstWayAndHalfTestDemo(6, 4);
+        CombinationsObject.GenerateAllKElementsCombinationsFromNElementsFirstWayAndHalfTestDemo(6, 4);
         LoggersManagerObject.Log(STREAM("T6"));
-        CombinationsObject.AllKElementsCombinationsFromNElementsSecondWayTestDemo(6, 4);
+        CombinationsObject.GenerateAllKElementsCombinationsFromNElementsSecondWayTestDemo(6, 4);
     }
     CATCH("showing combinations demo test")
 }
