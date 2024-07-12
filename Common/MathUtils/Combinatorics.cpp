@@ -474,42 +474,6 @@ void Combinations::GenerateAllKElementsCombinationsFromNElementsSecondWayTestDem
     CATCH("generating all k elements combinations from n elements second way")
 }
 
-//void Combinations::GenerateAllKElementsCombinationsFromNElementsSecondWayTestDemo(UnsignedInt N, UnsignedInt K)
-//{
-//    try
-//    {
-//        UnsignedInt Line = 1;
-//        for (UnsignedInt i = 1; i <= N; i++)
-//            CombinationsArray[i] = (i <= K);
-//
-//        UnsignedInt AimNumber = 0;
-//        for (UnsignedInt i = 1; i <= N; i++)
-//            AimNumber |= (UnsignedInt) pow(2, i - 1);
-//
-//        ShowArray(CombinationsArray, 1, N + 1, "");
-//
-//        LoggersManagerObject.Log(STREAM(CreateBoolStringFromInt64BitState(AimNumber)));
-//        LoggersManagerObject.Log(STREAM(""));
-//
-//        UnsignedInt Number = 0;
-//        for (UnsignedInt i = 1; i <= N; i++)
-//            if (CombinationsArray[i] == 1)
-//                Number |= (UnsignedInt) pow(2, i - 1);
-//
-//        LoggersManagerObject.Log(STREAM(CreateBoolStringFromInt64BitState(Number) << "    " << to_string(Line++)));
-//
-//        while (Number < AimNumber)
-//        {
-//            Number = NextNumberWithTheSameNumberOf1Bits(Number);
-//            if (Number < AimNumber)
-//                LoggersManagerObject.Log(STREAM(CreateBoolStringFromInt64BitState(Number) << "    " << to_string(Line++)));
-//        }
-//
-//        LoggersManagerObject.Log(STREAM(to_string(NumberOfCombinations(N, K))));
-//    }
-//    CATCH("generating all k elements combinations from n elements second way")
-//}
-
 void Permutations::RotateForPermutation(UnsignedInt Number, string& PermutationStringLocal)
 {
     try

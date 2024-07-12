@@ -61,8 +61,13 @@ protected:
         try
         {
             for (auto &VoxelOfParticle: ParticleObject.ListOfVoxels)
-                if (GetSpaceVoxel(VoxelOfParticle.X + VectorX, VoxelOfParticle.Y + VectorY, VoxelOfParticle.Z + VectorZ) != GetZeroSimulationSpaceVoxel())
+            {
+                UnsignedInt TestedPosX = VoxelOfParticle.X + VectorX;
+                UnsignedInt TestedPosY = VoxelOfParticle.Y + VectorY;
+                UnsignedInt TestedPosZ = VoxelOfParticle.Z + VectorZ;
+                if (GetSpaceVoxel(TestedPosX, TestedPosY, TestedPosZ + VectorZ) != GetZeroSimulationSpaceVoxel() && GetSpaceVoxel(TestedPosX, TestedPosY, TestedPosZ) != ParticleObject.Index)
                     return false;
+            }
         }
         CATCH("checking free space for particle moved by vector")
 
