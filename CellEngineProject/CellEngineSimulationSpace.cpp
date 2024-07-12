@@ -320,27 +320,42 @@ bool CellEngineSimulationSpace::MakeChemicalReaction(ChemicalReaction& ReactionO
     return true;
 };
 
-//std::vector<UnsignedInt> CellEngineSimulationSpace::GetRandomParticles(const UnsignedInt NumberOfReactants)
-//{
-//    vector<UnsignedInt> RandomParticlesTypes;
-//
-//    try
-//    {
-//        std::uniform_int_distribution<UnsignedInt> UniformDistributionObjectUint64t(0, ParticlesKindsFoundInProximity.size() - 1);
-//
-//        for (UnsignedInt ReactantNumber = 1; ReactantNumber <= NumberOfReactants; ReactantNumber++)
-//        {
-//            RandomParticlesTypes.emplace_back(std::next(std::begin(ParticlesKindsFoundInProximity), static_cast<int>(UniformDistributionObjectUint64t(mt64R)))->first);
-//
-//            LoggersManagerObject.Log(STREAM("ParticleKind Reactant " << to_string(ReactantNumber) << " (" << to_string(RandomParticlesTypes.back()) << ")"));
-//        }
-//    }
-//    CATCH("getting random particles kind")
-//
-//    return RandomParticlesTypes;
-//}
+std::vector<UnsignedInt> CellEngineSimulationSpace::GetRandomParticlesVersion3(const UnsignedInt NumberOfReactants, const UnsignedInt MaxNumberOfReactants)
+{
+    vector<UnsignedInt> RandomParticlesTypes;
 
-std::vector<UnsignedInt> CellEngineSimulationSpace::GetRandomParticles(const UnsignedInt NumberOfReactants, const UnsignedInt MaxNumberOfReactants)
+    try
+    {
+        std::uniform_int_distribution<UnsignedInt> UniformDistributionObjectUint64t(0, ParticlesKindsFoundInProximity.size() - 1);
+
+        //dla kazdej czastki z ParticlesKindsFoundInProximity przejrzyj wszystkie reakcje z nia skojarzone czy moga byc wykonane
+    }
+    CATCH("getting random particles kind")
+
+    return RandomParticlesTypes;
+}
+
+std::vector<UnsignedInt> CellEngineSimulationSpace::GetRandomParticlesVersion2(const UnsignedInt NumberOfReactants, const UnsignedInt MaxNumberOfReactants)
+{
+    vector<UnsignedInt> RandomParticlesTypes;
+
+    try
+    {
+        std::uniform_int_distribution<UnsignedInt> UniformDistributionObjectUint64t(0, ParticlesKindsFoundInProximity.size() - 1);
+
+        for (UnsignedInt ReactantNumber = 1; ReactantNumber <= NumberOfReactants; ReactantNumber++)
+        {
+            RandomParticlesTypes.emplace_back(std::next(std::begin(ParticlesKindsFoundInProximity), static_cast<int>(UniformDistributionObjectUint64t(mt64R)))->first);
+
+            LoggersManagerObject.Log(STREAM("ParticleKind Reactant " << to_string(ReactantNumber) << " (" << to_string(RandomParticlesTypes.back()) << ")"));
+        }
+    }
+    CATCH("getting random particles kind")
+
+    return RandomParticlesTypes;
+}
+
+std::vector<UnsignedInt> CellEngineSimulationSpace::GetRandomParticlesVersion1(const UnsignedInt NumberOfReactants, const UnsignedInt MaxNumberOfReactants)
 {
     vector<UnsignedInt> RandomParticlesTypes;
 
@@ -364,6 +379,11 @@ std::vector<UnsignedInt> CellEngineSimulationSpace::GetRandomParticles(const Uns
     return RandomParticlesTypes;
 }
 
+std::vector<UnsignedInt> CellEngineSimulationSpace::GetRandomParticles(const UnsignedInt NumberOfReactants, const UnsignedInt MaxNumberOfReactants)
+{
+    return GetRandomParticlesVersion3(NumberOfReactants, MaxNumberOfReactants);
+}
+
 bool CellEngineSimulationSpace::IsChemicalReactionPossible(const ChemicalReaction& ReactionObject)
 {
     return all_of(ReactionObject.Reactants.begin(), ReactionObject.Reactants.end(), [this](const ParticleKindForChemicalReaction& ReactionReactant){ return ReactionReactant.Counter <= ParticlesKindsFoundInProximity[ReactionReactant.EntityId]; });
@@ -380,7 +400,15 @@ void CellEngineSimulationSpace::PrepareRandomReaction()
     CATCH("preparing random reaction")
 }
 
-void CellEngineSimulationSpace::FindAndExecuteRandomReaction(const UnsignedInt MaxNumberOfReactants)
+void CellEngineSimulationSpace::FindAndExecuteRandomReactionVersion3(const UnsignedInt MaxNumberOfReactants)
+{
+    try
+    {
+    }
+    CATCH("finding and executing random reaction v3")
+}
+
+void CellEngineSimulationSpace::FindAndExecuteRandomReactionVersion2(const UnsignedInt MaxNumberOfReactants)
 {
     try
     {
@@ -415,30 +443,39 @@ void CellEngineSimulationSpace::FindAndExecuteRandomReaction(const UnsignedInt M
         }
         BreakLoop:;
     }
-    CATCH("finding and executing random reaction")
+    CATCH("finding and executing random reaction v2")
 }
 
-//void CellEngineSimulationSpace::FindAndExecuteRandomReaction(const UnsignedInt MaxNumberOfReactants)
-//{
-//    try
-//    {
-//        LoggersManagerObject.Log(STREAM("MAX NUMBER OF REACTANTS = " << MaxNumberOfReactants));
-//
-//        uniform_int_distribution<UnsignedInt> UniformDistributionObjectNumberOfReactants_Uint64t(1, MaxNumberOfReactants);
-//
-//        UnsignedInt NumberOfTries = 0;
-//        while (NumberOfTries <= 100)
-//        {
-//            NumberOfTries++;
-//
-//            UnsignedInt NumberOfReactants = UniformDistributionObjectNumberOfReactants_Uint64t(mt64R);
-//
-//            if (TryToMakeRandomChemicalReaction(NumberOfReactants) == true)
-//                break;
-//        }
-//    }
-//    CATCH("finding and executing random reaction")
-//}
+void CellEngineSimulationSpace::FindAndExecuteRandomReactionVersion1(const UnsignedInt MaxNumberOfReactants)
+{
+    try
+    {
+        LoggersManagerObject.Log(STREAM("MAX NUMBER OF REACTANTS = " << MaxNumberOfReactants));
+
+        uniform_int_distribution<UnsignedInt> UniformDistributionObjectNumberOfReactants_Uint64t(1, MaxNumberOfReactants);
+
+        UnsignedInt NumberOfTries = 0;
+        while (NumberOfTries <= 100)
+        {
+            NumberOfTries++;
+
+            UnsignedInt NumberOfReactants = UniformDistributionObjectNumberOfReactants_Uint64t(mt64R);
+
+            if (TryToMakeRandomChemicalReaction(NumberOfReactants, MaxNumberOfReactants) == true)
+                break;
+        }
+    }
+    CATCH("finding and executing random reaction v1")
+}
+
+void CellEngineSimulationSpace::FindAndExecuteRandomReaction(const UnsignedInt MaxNumberOfReactants)
+{
+    try
+    {
+        FindAndExecuteRandomReactionVersion3(MaxNumberOfReactants);
+    }
+    CATCH("finding and executing random reaction")
+}
 
 void CellEngineSimulationSpace::FindAndExecuteChosenReaction(const UnsignedInt ReactionId)
 {

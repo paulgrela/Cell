@@ -79,6 +79,7 @@ public:
     std::string Compartment{};
     ElectricChargeType ElectricCharge{};
 public:
+    std::vector<UnsignedInt> AssociatedChemicalReactions;
     std::vector<ParticleKindSpecialData> ParticleKindSpecialDataSector;
     GeneIdInt GeneId{};
 public:

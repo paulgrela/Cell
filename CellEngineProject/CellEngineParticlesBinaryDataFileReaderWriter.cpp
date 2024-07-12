@@ -540,6 +540,25 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesKindsAndParticl
     CATCH("reading particles from binary file")
 }
 
+void CellEngineParticlesBinaryDataFileReaderWriter::PreprocessLinkAndAssociateEveryParticleKindWithProperChemicalReaction()
+{
+    try
+    {
+        for (auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
+            for (const auto &ChemicalReactionObject: ChemicalReactionsManagerObject.ChemicalReactions)
+                for (const auto& ReactantObject : ChemicalReactionObject.Reactants)
+                    if (ReactantObject.EntityId == ParticleKindObject.second.EntityId)
+                    {
+                        ParticleKindObject.second.AssociatedChemicalReactions.emplace_back(ChemicalReactionObject.ReactionIdNum);
+                        break;
+                    }
+
+        for (auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
+            sort(ParticleKindObject.second.AssociatedChemicalReactions.begin(), ParticleKindObject.second.AssociatedChemicalReactions.end(), [](const auto& R1, const auto& R2){ return ChemicalReactionsManagerObject.GetReactionFromNumId(R1).Reactants.size() < ChemicalReactionsManagerObject.GetReactionFromNumId(R2).Reactants.size(); });
+    }
+    CATCH("preprocessing linking and associating every particle kind with proper chemical reaction")
+}
+
 void CellEngineParticlesBinaryDataFileReaderWriter::ReadAllDataFromBinaryFileAndPrepareData(const bool StartValuesBool, const bool UpdateParticleKindListOfVoxelsBool, CellEngineConfigData::TypesOfFileToRead Type)
 {
     try
@@ -556,6 +575,8 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadAllDataFromBinaryFileAnd
         PreprocessData(UpdateParticleKindListOfVoxelsBool);
 
         ChemicalReactionsManagerObject.PreprocessChemicalReactions();
+
+        PreprocessLinkAndAssociateEveryParticleKindWithProperChemicalReaction();
 
         CellEngineVoxelSimulationSpaceObjectPointer->AddSpecialParticlesKinds();
 

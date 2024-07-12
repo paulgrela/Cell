@@ -51,7 +51,6 @@ public:
     void SetIncSimulationStepNumber();
     void SaveParticlesStatisticsOnce();
     void SaveReactionsStatisticsToFile();
-
 public:
     void GenerateDiffusionForBigPartOfCellSpace(UnsignedInt SizeNMultiplyFactor, UnsignedInt XStartParam, UnsignedInt YStartParam, UnsignedInt ZStartParam, UnsignedInt XStepParam, UnsignedInt YStepParam, UnsignedInt ZStepParam, UnsignedInt XSizeParam, UnsignedInt YSizeParam, UnsignedInt ZSizeParam);
 public:
@@ -69,6 +68,14 @@ protected:
     std::tuple<std::vector<std::pair<UniqueIdInt, UnsignedInt>>, bool> ChooseParticlesForReactionFromAllParticlesInProximity(const ChemicalReaction& ReactionObject);
 protected:
     void PrepareRandomReaction();
+    void FindAndExecuteRandomReactionVersion1(UnsignedInt MaxNumberOfReactantsParam);
+    void FindAndExecuteRandomReactionVersion2(UnsignedInt MaxNumberOfReactantsParam);
+    void FindAndExecuteRandomReactionVersion3(UnsignedInt MaxNumberOfReactantsParam);
+protected:
+    std::vector<UnsignedInt> GetRandomParticlesVersion1(UnsignedInt NumberOfReactants, UnsignedInt MaxNumberOfReactants);
+    std::vector<UnsignedInt> GetRandomParticlesVersion2(UnsignedInt NumberOfReactants, UnsignedInt MaxNumberOfReactants);
+    std::vector<UnsignedInt> GetRandomParticlesVersion3(UnsignedInt NumberOfReactants, UnsignedInt MaxNumberOfReactants);
+public:
     void FindAndExecuteRandomReaction(UnsignedInt MaxNumberOfReactantsParam);
     void FindAndExecuteChosenReaction(UnsignedInt ReactionId);
 protected:
