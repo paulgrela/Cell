@@ -601,3 +601,21 @@ void CellEngineSimulationSpace::GenerateRandomReactionsForWholeCellSpace(const U
     }
     CATCH("generating random reactions for whole cell space")
 }
+
+void CellEngineSimulationSpace::GenerateDiffusionForBigPartOfCellSpace(const UnsignedInt SizeNMultiplyFactor, const UnsignedInt XStartParam, const UnsignedInt YStartParam, const UnsignedInt ZStartParam, const UnsignedInt XStepParam, const UnsignedInt YStepParam, const UnsignedInt ZStepParam, const UnsignedInt XSizeParam, const UnsignedInt YSizeParam, const UnsignedInt ZSizeParam)
+{
+    try
+    {
+        CellEngineUseful::SwitchOffLogs();
+
+        for (UnsignedInt PosX = XStartParam - SizeNMultiplyFactor * XStepParam; PosX <= XStartParam + SizeNMultiplyFactor * XStepParam; PosX += XStepParam)
+            for (UnsignedInt PosY = YStartParam - SizeNMultiplyFactor * YStepParam; PosY <= YStartParam + SizeNMultiplyFactor * YStepParam; PosY += YStepParam)
+                for (UnsignedInt PosZ = ZStartParam - SizeNMultiplyFactor * ZStepParam; PosZ <= ZStartParam + SizeNMultiplyFactor * ZStepParam; PosZ += ZStepParam)
+                    GenerateOneStepOfDiffusionForSelectedSpace(PosX, PosY, PosZ, XStepParam, YStepParam, ZStepParam);
+
+        CheckConditionsToIncSimulationStepNumberForStatistics();
+
+        CellEngineUseful::SwitchOnLogs();
+    }
+    CATCH("generating random reactions for whole cell space")
+}
