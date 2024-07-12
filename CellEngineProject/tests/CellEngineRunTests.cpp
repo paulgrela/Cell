@@ -33,14 +33,14 @@ void TestWellStirredChemicalReactionsSimulation(CellEngineWellStirredChemicalRea
 class MockCellEngineWellStirredChemicalReactionsSimulation : public CellEngineWellStirredChemicalReactionsSimulation
 {
 public:
-    MOCK_METHOD(std::vector<UnsignedInt>, GetRandomParticles, (UnsignedInt));
+    MOCK_METHOD(std::vector<UnsignedInt>, GetRandomParticles, (UnsignedInt, UnsignedInt));
 };
 
 TEST(CellEngineWellStirredChemicalReactionsSimulationTest, TryToDoRandomReactionTest1)
 {
     MockCellEngineWellStirredChemicalReactionsSimulation MockCellEngineWellStirredChemicalReactionsSimulationObject;
 
-    EXPECT_CALL(MockCellEngineWellStirredChemicalReactionsSimulationObject, GetRandomParticles(2)).Times(2).WillRepeatedly(Return(vector<UnsignedInt>{ 4, 0 }));
+    EXPECT_CALL(MockCellEngineWellStirredChemicalReactionsSimulationObject, GetRandomParticles(2, 2)).Times(2).WillRepeatedly(Return(vector<UnsignedInt>{ 4, 0 }));
 
     TestWellStirredChemicalReactionsSimulation(MockCellEngineWellStirredChemicalReactionsSimulationObject);
 

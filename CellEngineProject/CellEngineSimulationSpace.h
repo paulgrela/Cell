@@ -71,13 +71,15 @@ protected:
     void FindAndExecuteRandomReactionVersion1(UnsignedInt MaxNumberOfReactantsParam);
     void FindAndExecuteRandomReactionVersion2(UnsignedInt MaxNumberOfReactantsParam);
     void FindAndExecuteRandomReactionVersion3(UnsignedInt MaxNumberOfReactantsParam);
+    void FindAndExecuteRandomReactionVersion4(UnsignedInt MaxNumberOfReactantsParam);
 protected:
     std::vector<UnsignedInt> GetRandomParticlesVersion1(UnsignedInt NumberOfReactants, UnsignedInt MaxNumberOfReactants);
     std::vector<UnsignedInt> GetRandomParticlesVersion2(UnsignedInt NumberOfReactants, UnsignedInt MaxNumberOfReactants);
     std::vector<UnsignedInt> GetRandomParticlesVersion3(UnsignedInt NumberOfReactants, UnsignedInt MaxNumberOfReactants);
 public:
     void FindAndExecuteRandomReaction(UnsignedInt MaxNumberOfReactantsParam);
-    void FindAndExecuteChosenReaction(UnsignedInt ReactionId);
+    //void FindAndExecuteChosenReaction(UnsignedInt ReactionId);
+    bool FindAndExecuteChosenReaction(UnsignedInt ReactionId);
 protected:
     std::vector<UnsignedInt> GetRandomParticles(UnsignedInt NumberOfReactants, UnsignedInt MaxNumberOfReactants) override;
     bool IsChemicalReactionPossible(const ChemicalReaction& ReactionObject) override;
