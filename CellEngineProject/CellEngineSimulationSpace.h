@@ -78,7 +78,6 @@ protected:
     std::vector<UnsignedInt> GetRandomParticlesVersion3(UnsignedInt NumberOfReactants, UnsignedInt MaxNumberOfReactants);
 public:
     void FindAndExecuteRandomReaction(UnsignedInt MaxNumberOfReactantsParam);
-    //void FindAndExecuteChosenReaction(UnsignedInt ReactionId);
     bool FindAndExecuteChosenReaction(UnsignedInt ReactionId);
 protected:
     std::vector<UnsignedInt> GetRandomParticles(UnsignedInt NumberOfReactants, UnsignedInt MaxNumberOfReactants) override;

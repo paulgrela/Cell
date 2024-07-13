@@ -2,6 +2,7 @@
 #ifndef CELL_ENGINE_PARTICLE_KIND_H
 #define CELL_ENGINE_PARTICLE_KIND_H
 
+#include <set>
 #include <string>
 #include <vector>
 #include <unordered_map>
@@ -79,7 +80,8 @@ public:
     std::string Compartment{};
     ElectricChargeType ElectricCharge{};
 public:
-    std::vector<UnsignedInt> AssociatedChemicalReactions;
+    //std::vector<UnsignedInt> AssociatedChemicalReactions;
+    std::set<UnsignedInt> AssociatedChemicalReactions;
     std::vector<ParticleKindSpecialData> ParticleKindSpecialDataSector;
     GeneIdInt GeneId{};
 public:

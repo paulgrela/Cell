@@ -416,16 +416,30 @@ void CellEngineSimulationSpace::FindAndExecuteRandomReactionVersion3(const Unsig
 {
     try
     {
-        vector<UnsignedInt> PossibleReactionsIdNums;
+        //vector<UnsignedInt> PossibleReactionsIdNums;
+        set<UnsignedInt> PossibleReactionsIdNums;
 
         for (const auto& ParticleKindFoundInProximityObject : ParticlesKindsFoundInProximity)
             for (const auto& ReactionIdNum : ParticlesKindsManagerObject.GetParticleKind(ParticleKindFoundInProximityObject.first).AssociatedChemicalReactions)
                 if (auto ReactionIter = ChemicalReactionsManagerObject.ChemicalReactionsPosFromId.find(ReactionIdNum); ReactionIter != ChemicalReactionsManagerObject.ChemicalReactionsPosFromId.end())
                     if (IsChemicalReactionPossible(ChemicalReactionsManagerObject.ChemicalReactions[ReactionIter->second]) == true)
-                        PossibleReactionsIdNums.emplace_back(ReactionIdNum);
+                        //PossibleReactionsIdNums.emplace_back(ReactionIdNum);
+                        PossibleReactionsIdNums.insert(ReactionIdNum);
 
-        std::uniform_int_distribution<UnsignedInt> UniformDistributionObjectUint64t(0, PossibleReactionsIdNums.size() - 1);
-        FindAndExecuteChosenReaction(*std::next(std::begin(PossibleReactionsIdNums), static_cast<int>(UniformDistributionObjectUint64t(mt64R))));
+        if (PossibleReactionsIdNums.empty() == false)
+        {
+            string ListOfPossibleReactions;
+            for (const auto& PossibleReactionsIdNum : PossibleReactionsIdNums)
+                ListOfPossibleReactions += to_string(PossibleReactionsIdNum) + ",";
+            LoggersManagerObject.Log(STREAM("ListOfPossibleReactions = " << ListOfPossibleReactions));
+
+            std::uniform_int_distribution<UnsignedInt> UniformDistributionObjectUint64t(0, PossibleReactionsIdNums.size() - 1);
+            auto ReactionIdNum = *std::next(std::begin(PossibleReactionsIdNums), static_cast<int>(UniformDistributionObjectUint64t(mt64R)));
+            LoggersManagerObject.Log(STREAM("Random ReactionIdNum = " << ReactionIdNum));
+            FindAndExecuteChosenReaction(ReactionIdNum);
+        }
+        else
+            LoggersManagerObject.Log(STREAM("NONE REACTION FOUND for particles kinds in proximity "));
     }
     CATCH("finding and executing random reaction v3")
 }
