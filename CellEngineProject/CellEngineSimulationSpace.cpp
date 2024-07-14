@@ -515,8 +515,6 @@ bool CellEngineSimulationSpace::FindAndExecuteChosenReaction(const UnsignedInt R
 {
     try
     {
-        //auto ReactionIter = ChemicalReactionsManagerObject.ChemicalReactionsPosFromId.find(ReactionId);
-        //if (ReactionIter != ChemicalReactionsManagerObject.ChemicalReactionsPosFromId.end())
         if (auto ReactionIter = ChemicalReactionsManagerObject.ChemicalReactionsPosFromId.find(ReactionId); ReactionIter != ChemicalReactionsManagerObject.ChemicalReactionsPosFromId.end())
         {
             auto& ReactionObject = ChemicalReactionsManagerObject.ChemicalReactions[ReactionIter->second];
@@ -544,32 +542,6 @@ bool CellEngineSimulationSpace::FindAndExecuteChosenReaction(const UnsignedInt R
 
     return false;
 }
-
-//void CellEngineSimulationSpace::FindAndExecuteChosenReaction(const UnsignedInt ReactionId)
-//{
-//    try
-//    {
-//        auto ReactionIter = ChemicalReactionsManagerObject.ChemicalReactionsPosFromId.find(ReactionId);
-//        if (ReactionIter != ChemicalReactionsManagerObject.ChemicalReactionsPosFromId.end())
-//        {
-//            auto& ReactionObject = ChemicalReactionsManagerObject.ChemicalReactions[ReactionIter->second];
-//
-//            bool IsPossible = IsChemicalReactionPossible(ReactionObject);
-//            if (IsPossible == true)
-//            {
-//                LoggersManagerObject.Log(STREAM("CHOSEN REACTION POSSIBLE" << endl));
-//
-//                if (MakeChemicalReaction(ReactionObject) == false)
-//                    LoggersManagerObject.Log(STREAM("Chosen reaction not executed!"));
-//            }
-//            else
-//                LoggersManagerObject.Log(STREAM("Chosen reaction impossible!"));
-//        }
-//        else
-//            LoggersManagerObject.Log(STREAM("Chosen reaction Id not found!"));
-//    }
-//    CATCH("finding and executing chosen reaction")
-//}
 
 void CellEngineSimulationSpace::GenerateRandomReactionForSelectedSpace(UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam)
 {
@@ -625,8 +597,6 @@ void CellEngineSimulationSpace::GenerateOneStepOfRandomReactionsForSelectedRange
 
         for (UniqueIdInt ParticleIndex = StartParticleIndexParam; ParticleIndex <= EndParticleIndexParam; ParticleIndex++)
         {
-            //auto ParticlesIterator = Particles.find(ParticleIndex);
-            //if (ParticlesIterator != Particles.end())
             if (auto ParticlesIterator = Particles.find(ParticleIndex); ParticlesIterator != Particles.end())
                 GenerateRandomReactionForParticle(ParticlesIterator->second);
         }
