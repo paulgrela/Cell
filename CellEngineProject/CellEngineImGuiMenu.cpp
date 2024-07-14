@@ -42,16 +42,16 @@ public:
         {
             struct
             {
-                unsigned int FullScreen : 1;
-                unsigned int VSync : 1;
-                unsigned int Cursor : 1;
-                unsigned int Stereo : 1;
-                unsigned int Debug : 1;
-                unsigned int Robust : 1;
+                unsigned int FullScreen: 1;
+                unsigned int VSync: 1;
+                unsigned int Cursor: 1;
+                unsigned int Stereo: 1;
+                unsigned int Debug: 1;
+                unsigned int Robust: 1;
             };
             unsigned int All;
         }
-        Flags;
+                Flags;
     };
     APPINFO Info{};
 
@@ -60,18 +60,19 @@ public:
     {
         try
         {
-            const char* LogDirectory = "." OS_DIR_SEP;
+            const char *LogDirectory = "." OS_DIR_SEP;
 
             LoggersManagerObject.InitializeSpecialLogFiles(false, false, false, false, false, false, false, true, false);
-            LoggersManagerObject.InitializeFilesNames({ "AllMessages" });
-            LoggersManagerObject.InitializeSelectiveWordsFunctions({ [](const string& s) { return true; } });
-            LoggersManagerObject.InitializeLoggerManagerDataForTask("CELL_RESULTS", LogDirectory, string("Logs." + GetActualDateTimeStandardCPP(".", ".", ".", ".", ".")), true, 0, function<void(const UnsignedInt& CurrentThreadId, const UnsignedInt FileNumber, const string& MessageStr)>());
+            LoggersManagerObject.InitializeFilesNames({"AllMessages"});
+            LoggersManagerObject.InitializeSelectiveWordsFunctions({[](const string &s)
+                                                                    { return true; }});
+            LoggersManagerObject.InitializeLoggerManagerDataForTask("CELL_RESULTS", LogDirectory, string("Logs." + GetActualDateTimeStandardCPP(".", ".", ".", ".", ".")), true, 0, function<void(const UnsignedInt &CurrentThreadId, const UnsignedInt FileNumber, const string &MessageStr)>());
             LoggersManagerObject.InitializePrintingParameters(CellEngineConfigDataObject.PrintLogToConsole, CellEngineConfigDataObject.PrintLogToFiles, CellEngineConfigDataObject.PrintLogLineNumberToConsole, CellEngineConfigDataObject.PrintLogDateTimeToConsole, CellEngineConfigDataObject.PrintLogProcessIdToConsole, CellEngineConfigDataObject.PrintLogProcessPriorityLevelToConsole, CellEngineConfigDataObject.PrintLogThreadIdToConsole, CellEngineConfigDataObject.PrintLogLineNumberToFile, CellEngineConfigDataObject.PrintLogDateTimeToFile, CellEngineConfigDataObject.PrintLogProcessIdToFile, CellEngineConfigDataObject.PrintLogProcessPriorityLevelToFile, CellEngineConfigDataObject.PrintLogThreadIdToFile, CellEngineConfigDataObject.MaximalNumberOfLinesInOneFile, CellEngineConfigDataObject.PrintLogToCommonFileWhenPrintLogToSpecialFile);
         }
         CATCH("initializing logger manager parameters")
     }
 
-    static void ReadInitConfiguration(int argc, const char** argv)
+    static void ReadInitConfiguration(int argc, const char **argv)
     {
         try
         {
@@ -91,15 +92,15 @@ public:
         CATCH("reading of data file")
     }
 
-    template <class T>
-    static void ColorButton(const char* Text, float& VariableToChange, const float Step, const float MinValue, const float MaxValue, const float ColorParam, int& IDButton, T FunctionToExecute)
+    template<class T>
+    static void ColorButton(const char *Text, float &VariableToChange, const float Step, const float MinValue, const float MaxValue, const float ColorParam, int &IDButton, T FunctionToExecute)
     {
         try
         {
             ImGui::PushID(IDButton);
-            ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(ColorParam / 7.0f, 0.6f, 0.6f));
-            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(ColorParam / 7.0f, 0.7f, 0.7f));
-            ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(ColorParam / 7.0f, 0.8f, 0.8f));
+            ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4) ImColor::HSV(ColorParam / 7.0f, 0.6f, 0.6f));
+            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4) ImColor::HSV(ColorParam / 7.0f, 0.7f, 0.7f));
+            ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4) ImColor::HSV(ColorParam / 7.0f, 0.8f, 0.8f));
             if (ImGui::Button(Text))
                 FunctionToExecute(VariableToChange, Step, MinValue, MaxValue);
             ImGui::PopStyleColor(3);
@@ -109,38 +110,40 @@ public:
         CATCH("drawing color button");
     }
 
-    static void DrawPlusMinusScalarButton(float& VariableToChange, const float Step, const float MinValue, const float MaxValue, const string& Description, int& IDButton)
+    static void DrawPlusMinusScalarButton(float &VariableToChange, const float Step, const float MinValue, const float MaxValue, const string &Description, int &IDButton)
     {
         try
         {
-            ColorButton(" - ", VariableToChange, Step, MinValue, MaxValue, 0, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue){ if (VariableToChange - Step >= MinValue) VariableToChange -= Step; });
+            ColorButton(" - ", VariableToChange, Step, MinValue, MaxValue, 0, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
+            { if (VariableToChange - Step >= MinValue) VariableToChange -= Step; });
             ImGui::SameLine();
-            ColorButton(" + ", VariableToChange, Step, MinValue, MaxValue, 3, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue){ if (VariableToChange + Step <= MaxValue) VariableToChange += Step; });
+            ColorButton(" + ", VariableToChange, Step, MinValue, MaxValue, 3, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
+            { if (VariableToChange + Step <= MaxValue) VariableToChange += Step; });
             ImGui::SameLine();
             ImGui::Text("%s", string(to_string(VariableToChange) + " [" + Description + "]").c_str());
         }
         CATCH("drawing plus minus scalar button");
     }
 
-    static void glfw_error_callback(int Error, const char* Description)
+    static void glfw_error_callback(int Error, const char *Description)
     {
         LoggersManagerObject.Log(STREAM("Glfw Error nr " << Error << " : " << Description << endl));
     }
 
-    GLFWwindow* PrepareImGuiMenuGLFWData()
+    GLFWwindow *PrepareImGuiMenuGLFWData()
     {
-        GLFWwindow* ImGuiMenuWindow;
+        GLFWwindow *ImGuiMenuWindow;
 
         try
         {
             glfwSetErrorCallback(glfw_error_callback);
             if (!glfwInit())
-                #ifdef WINDOWS_PLATFORM
+#ifdef WINDOWS_PLATFORM
                 ExitProcess(1);
-                #endif
-                #ifdef UNIX_PLATFORM
+#endif
+#ifdef UNIX_PLATFORM
                 exit(1);
-                #endif
+#endif
 
             Info.WindowWidth = 1600;
             Info.WindowHeight = 1200;
@@ -164,12 +167,12 @@ public:
 
             ImGuiMenuWindow = glfwCreateWindow(CellEngineConfigDataObject.WidthMenuWindow, CellEngineConfigDataObject.HeightMenuWindow, "Dear ImGui GLFW+OpenGL3 example", NULL, NULL);
             if (ImGuiMenuWindow == nullptr)
-                #ifdef WINDOWS_PLATFORM
+#ifdef WINDOWS_PLATFORM
                 ExitProcess(1);
-                #endif
-                #ifdef UNIX_PLATFORM
+#endif
+#ifdef UNIX_PLATFORM
                 exit(1);
-                #endif
+#endif
 
             glfwSetWindowPos(ImGuiMenuWindow, CellEngineConfigDataObject.XTopMenuWindow, CellEngineConfigDataObject.YTopMenuWindow);
 
@@ -184,10 +187,10 @@ public:
 
             IMGUI_CHECKVERSION();
             ImGui::CreateContext();
-            ImGuiIO& io = ImGui::GetIO();
+            ImGuiIO &io = ImGui::GetIO();
 
             ImGui_ImplGlfw_InitForOpenGL(ImGuiMenuWindow, true);
-            const char* glsl_version = "#version 130";
+            const char *glsl_version = "#version 130";
             ImGui_ImplOpenGL3_Init(glsl_version);
         }
         CATCH("preparing imgui menu glfw data");
@@ -196,7 +199,7 @@ public:
     };
 
 public:
-    static void MenuParametersMenu(bool& ModifiableWindow)
+    static void MenuParametersMenu(bool &ModifiableWindow)
     {
         try
         {
@@ -209,7 +212,7 @@ public:
         CATCH("executing menu parameters menu");
     }
 
-    static void ViewMoveMenu(int& IDButton)
+    static void ViewMoveMenu(int &IDButton)
     {
         try
         {
@@ -237,7 +240,7 @@ public:
         CATCH("executing view move menu");
     }
 
-    static void CameraMoveMenu(int& IDButton)
+    static void CameraMoveMenu(int &IDButton)
     {
         try
         {
@@ -263,7 +266,7 @@ public:
         CATCH("executing camera move menu");
     }
 
-    static void RotationAngleMenu(int& IDButton)
+    static void RotationAngleMenu(int &IDButton)
     {
         try
         {
@@ -277,7 +280,7 @@ public:
         CATCH("executing rotation angle menu");
     }
 
-    static void SizeOfAtomsMenu(int& IDButton)
+    static void SizeOfAtomsMenu(int &IDButton)
     {
         try
         {
@@ -295,14 +298,15 @@ public:
         CATCH("executing size of atoms menu");
     }
 
-    static void FilmMenu(int& IDButton)
+    static void FilmMenu(int &IDButton)
     {
         try
         {
             if (ImGui::CollapsingHeader("Film"))
             {
                 float Nothing;
-                ColorButton(" START ", Nothing, 0, 0, 0, 3, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue){ CellEngineDataFileObjectPointer->StartFilmOfStructures(); });
+                ColorButton(" START ", Nothing, 0, 0, 0, 3, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
+                { CellEngineDataFileObjectPointer->StartFilmOfStructures(); });
 
                 ImGui::SameLine();
                 if (ImGui::Button(" NEXT "))
@@ -314,7 +318,8 @@ public:
 
                 ImGui::SameLine();
 
-                ColorButton(" STOP ", Nothing, 0, 0, 0, 0, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue){ CellEngineDataFileObjectPointer->StopFilmOfStructures(); });
+                ColorButton(" STOP ", Nothing, 0, 0, 0, 0, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
+                { CellEngineDataFileObjectPointer->StopFilmOfStructures(); });
             }
         }
         CATCH("executing film menu");
@@ -381,19 +386,19 @@ public:
                 for (UnsignedInt BackgroundColorIndex = 1; BackgroundColorIndex <= 3; BackgroundColorIndex++)
                 {
                     ImVec4 BackgroundColor = ImVec4(CellEngineConfigDataObject.BackgroundColors[BackgroundColorIndex].X(), CellEngineConfigDataObject.BackgroundColors[BackgroundColorIndex].Y(), CellEngineConfigDataObject.BackgroundColors[BackgroundColorIndex].Z(), 1.00f);
-                    ImGui::ColorEdit3(string("Background Color " + to_string(BackgroundColorIndex)).c_str(), (float*)&BackgroundColor);
+                    ImGui::ColorEdit3(string("Background Color " + to_string(BackgroundColorIndex)).c_str(), (float *) &BackgroundColor);
                     CellEngineConfigDataObject.BackgroundColors[BackgroundColorIndex] = vmath::vec3(BackgroundColor.x, BackgroundColor.y, BackgroundColor.z);
                 }
-                const char* BackgroundColorComboBoxItems[] = { "Background Color 1", "Background Color 2", "Background Color 3" };
+                const char *BackgroundColorComboBoxItems[] = {"Background Color 1", "Background Color 2", "Background Color 3"};
                 static int BackgroundColorComboBoxItemsIndex = static_cast<int>(CellEngineConfigDataObject.ChosenBackgroundColor - 1);
-                ImGui::Combo( " Chosen Background Color", &BackgroundColorComboBoxItemsIndex, BackgroundColorComboBoxItems, IM_ARRAYSIZE(BackgroundColorComboBoxItems));
+                ImGui::Combo(" Chosen Background Color", &BackgroundColorComboBoxItemsIndex, BackgroundColorComboBoxItems, IM_ARRAYSIZE(BackgroundColorComboBoxItems));
                 CellEngineConfigDataObject.ChosenBackgroundColor = BackgroundColorComboBoxItemsIndex + 1;
             }
         }
         CATCH("executing background menu");
     }
 
-    static void MenuWindow1(ImGuiWindowFlags WindowFlags, bool& ModifiableWindow)
+    static void MenuWindow1(ImGuiWindowFlags WindowFlags, bool &ModifiableWindow)
     {
         try
         {
@@ -436,31 +441,50 @@ public:
     {
         try
         {
-            const char* DensityOfDrawnAtomsComboBoxItems[] = { "1", "10", "100", "AUTOMATIC" };
+            const char *DensityOfDrawnAtomsComboBoxItems[] = {"1", "10", "100", "AUTOMATIC"};
             int DensityOfDrawnAtomsItemIndex;
             switch (CellEngineConfigDataObject.LoadOfAtomsStep)
             {
-                case 1 : DensityOfDrawnAtomsItemIndex = 0; break;
-                case 10 : DensityOfDrawnAtomsItemIndex = 1; break;
-                case 100 : DensityOfDrawnAtomsItemIndex = 2; break;
-                default : break;
+                case 1 :
+                    DensityOfDrawnAtomsItemIndex = 0;
+                    break;
+                case 10 :
+                    DensityOfDrawnAtomsItemIndex = 1;
+                    break;
+                case 100 :
+                    DensityOfDrawnAtomsItemIndex = 2;
+                    break;
+                default :
+                    break;
             }
             if (CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep == true)
                 DensityOfDrawnAtomsItemIndex = 3;
             ImGui::Combo(" Density Of Drawn Atoms", &DensityOfDrawnAtomsItemIndex, DensityOfDrawnAtomsComboBoxItems, IM_ARRAYSIZE(DensityOfDrawnAtomsComboBoxItems));
             switch (DensityOfDrawnAtomsItemIndex)
             {
-                case 0 : CellEngineConfigDataObject.LoadOfAtomsStep = 1; CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep = false; break;
-                case 1 : CellEngineConfigDataObject.LoadOfAtomsStep = 10; CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep = false; break;
-                case 2 : CellEngineConfigDataObject.LoadOfAtomsStep = 100; CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep = false; break;
-                case 3 : CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep = true; break;
-                default : break;
+                case 0 :
+                    CellEngineConfigDataObject.LoadOfAtomsStep = 1;
+                    CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep = false;
+                    break;
+                case 1 :
+                    CellEngineConfigDataObject.LoadOfAtomsStep = 10;
+                    CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep = false;
+                    break;
+                case 2 :
+                    CellEngineConfigDataObject.LoadOfAtomsStep = 100;
+                    CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep = false;
+                    break;
+                case 3 :
+                    CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep = true;
+                    break;
+                default :
+                    break;
             }
         }
         CATCH("executing of density of drawn atoms menu");
     }
 
-    static bool ComparisonOfParticle(const ParticleKind& P1, const ParticleKind& P2)
+    static bool ComparisonOfParticle(const ParticleKind &P1, const ParticleKind &P2)
     {
         if (ParticlesKindsManager::ConvertParticleTypeToString(P1.ParticleKindSpecialDataSector.back().ParticleType) < ParticlesKindsManager::ConvertParticleTypeToString(P2.ParticleKindSpecialDataSector.back().ParticleType))
             return true;
@@ -473,7 +497,7 @@ public:
     {
         try
         {
-            const char* TypesOfVisibilityComboBoxItems[] = { "ALL", "ONLY DNA", "ONLY RNA", "SELECTED" };
+            const char *TypesOfVisibilityComboBoxItems[] = {"ALL", "ONLY DNA", "ONLY RNA", "SELECTED"};
 
             static int TypesOfVisibilityComboBoxCurrentItemIndex = 0;
             static int PrevTypesOfVisibilityComboBoxCurrentItemIndex = 0;
@@ -482,10 +506,17 @@ public:
             if (PrevTypesOfVisibilityComboBoxCurrentItemIndex != TypesOfVisibilityComboBoxCurrentItemIndex)
                 switch (TypesOfVisibilityComboBoxCurrentItemIndex)
                 {
-                    case 0 : CellEngineOpenGLVisualiserPointer->SetVisibilityOfAllParticles(true); break;
-                    case 1 : CellEngineOpenGLVisualiserPointer->SetVisibilityOfParticlesExcept(CellEngineConfigDataObject.DNAIdentifier, false); break;
-                    case 2 : CellEngineOpenGLVisualiserPointer->SetVisibilityOfParticlesExcept(CellEngineConfigDataObject.RNAIdentifier, false); break;
-                    default : break;
+                    case 0 :
+                        CellEngineOpenGLVisualiserPointer->SetVisibilityOfAllParticles(true);
+                        break;
+                    case 1 :
+                        CellEngineOpenGLVisualiserPointer->SetVisibilityOfParticlesExcept(CellEngineConfigDataObject.DNAIdentifier, false);
+                        break;
+                    case 2 :
+                        CellEngineOpenGLVisualiserPointer->SetVisibilityOfParticlesExcept(CellEngineConfigDataObject.RNAIdentifier, false);
+                        break;
+                    default :
+                        break;
                 }
 
             vector<ParticleKind> LocalParticlesKindsForImGuiSelection;
@@ -495,14 +526,15 @@ public:
                 {
                     if (CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer == nullptr)
                     {
-                        transform(ParticlesKindsManagerObject.ParticlesKinds.begin(), ParticlesKindsManagerObject.ParticlesKinds.end(), std::back_inserter(LocalParticlesKindsForImGuiSelection), [](const auto& ParticlesKindsMapElement){ return ParticlesKindsMapElement.second; } );
+                        transform(ParticlesKindsManagerObject.ParticlesKinds.begin(), ParticlesKindsManagerObject.ParticlesKinds.end(), std::back_inserter(LocalParticlesKindsForImGuiSelection), [](const auto &ParticlesKindsMapElement)
+                        { return ParticlesKindsMapElement.second; });
 
-                        sort(LocalParticlesKindsForImGuiSelection.begin(), LocalParticlesKindsForImGuiSelection.end(), [](const auto& P1, const auto& P2){ return P1.GraphicData.NameFromDataFile < P2.GraphicData.NameFromDataFile; });
+                        sort(LocalParticlesKindsForImGuiSelection.begin(), LocalParticlesKindsForImGuiSelection.end(), [](const auto &P1, const auto &P2)
+                        { return P1.GraphicData.NameFromDataFile < P2.GraphicData.NameFromDataFile; });
 
                         for (auto &ParticlesKindForImGuiSelectionObject: LocalParticlesKindsForImGuiSelection)
                             ImGui::Checkbox(string(to_string(ParticlesKindForImGuiSelectionObject.EntityId) + " " + ParticlesKindForImGuiSelectionObject.GraphicData.NameFromDataFile).c_str(), &ParticlesKindForImGuiSelectionObject.GraphicData.Visible);
-                    }
-                    else
+                    } else
                     {
                         for (const auto &ParticlesKindsMapElement: ParticlesKindsManagerObject.ParticlesKinds)
                             if (ParticlesKindsMapElement.second.IdStr.starts_with("JCVISYN3A_") || ParticlesKindsMapElement.second.IdStr.starts_with("particle_") || ParticlesKindsMapElement.second.IdStr.starts_with("trna_") || ParticlesKindsMapElement.second.IdStr.starts_with("mrna_") || ParticlesKindsMapElement.second.IdStr.starts_with("rrna_") || ParticlesKindsMapElement.second.IdStr.starts_with("M_"))
@@ -544,7 +576,7 @@ public:
                     for (const auto &ParticleKindForImGuiSelectionObject: LocalParticlesKindsForImGuiSelection)
                         ParticlesKindsManagerObject.GetParticleKind(ParticleKindForImGuiSelectionObject.EntityId).GraphicData.Selected = ParticleKindForImGuiSelectionObject.GraphicData.Selected;
 
-                    static int NumberOfParticlesToSub[1] = { 100 };
+                    static int NumberOfParticlesToSub[1] = {100};
                     ImGui::DragInt("SUB", NumberOfParticlesToSub, 1, 0, 1000, "%d", ImGuiSliderFlags_AlwaysClamp);
                     if (ImGui::Button("SUB PARTICLES") == true)
                         for (const auto &ParticleKindForImGuiSelectionObject: LocalParticlesKindsForImGuiSelection)
@@ -577,9 +609,9 @@ public:
             if (ImGui::CollapsingHeader("Atoms Kinds", ImGuiTreeNodeFlags_DefaultOpen))
             {
                 bool ChangeColor = false;
-                for (auto& AtomsKind : ParticlesKindsManagerObject.AtomsKindsGraphicData)
+                for (auto &AtomsKind: ParticlesKindsManagerObject.AtomsKindsGraphicData)
                 {
-                    if (ImGui::ColorEdit3(string(AtomsKind.Name + " Atom Color").c_str(), (float*)&AtomsKind.ColorVmathVec3) == true)
+                    if (ImGui::ColorEdit3(string(AtomsKind.Name + " Atom Color").c_str(), (float *) &AtomsKind.ColorVmathVec3) == true)
                     {
                         AtomsKind.Color = CellEngineUseful::GetVector3FormVMathVec3ForColor(AtomsKind.ColorVmathVec3);
                         ChangeColor = true;
@@ -587,11 +619,11 @@ public:
                 }
 
                 if (ChangeColor == true)
-                    for (auto& ParticleCenter : CellEngineDataFileObjectPointer->GetParticlesCenters())
+                    for (auto &ParticleCenter: CellEngineDataFileObjectPointer->GetParticlesCenters())
                     {
                         ParticleCenter.AtomColor = ParticlesKindsManagerObject.GetGraphicAtomKindDataFromAtomName(ParticleCenter.Name[0])->Color;
                         if (CellEngineConfigDataObject.ShowDetailsInAtomScale == true)
-                            for (auto& AtomObject : CellEngineDataFileObjectPointer->GetAllAtoms()[ParticleCenter.AtomIndex])
+                            for (auto &AtomObject: CellEngineDataFileObjectPointer->GetAllAtoms()[ParticleCenter.AtomIndex])
                                 AtomObject.AtomColor = ParticlesKindsManagerObject.GetGraphicAtomKindDataFromAtomName(AtomObject.Name[0])->Color;
                     }
             }
@@ -614,6 +646,11 @@ public:
             }
         }
         CATCH("executing types of generated colors menu");
+    }
+
+    static string AlignString(const string& InputStr, const UnsignedInt Size)
+    {
+        return "   " + InputStr + string(Size - InputStr.length(), ' ');
     }
 
     void VoxelSimulationSpaceVisibility(ImGuiWindowFlags WindowFlags, const bool ModifiableWindow) const
@@ -655,7 +692,9 @@ public:
 
                 ImGui::Text("%s", string("Number of free indexes for particles = " + to_string(CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GetFreeIndexesOfParticleSize())).c_str());
 
-                if (ImGui::Button("   SAVE MOUSE POSITION      ") == true)
+                UnsignedInt StringLength = 70;
+
+                if (ImGui::Button(AlignString("SAVE MOUSE POSITION", StringLength).c_str()) == true)
                 {
                     CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->SaveVoxelPositionChosenByMouse();
 
@@ -665,181 +704,201 @@ public:
                     DrawSpaceStartXYZ[2] = static_cast<int>(get<2>(TempStartPos));
                 }
 
-                if (ImGui::Button("   ADD ILLINOIS DATA                  ") == true)
+                if (ImGui::Button(AlignString("ADD ILLINOIS DATA", StringLength).c_str()) == true)
                 {
                     CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ReadAllIllinoisDataFromFiles();
                     CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ReadGenomeSequenceFromFile();
                 }
-                if (ImGui::Button("   READ ILLINOIS REACTIONS            ") == true)
+                if (ImGui::Button(AlignString("READ ILLINOIS REACTIONS", StringLength).c_str()) == true)
                     CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ReadChemicalReactionsFromFiles();
 
-                if (ImGui::Button("   ADD SPECIAL PARTICLE KINDS         ") == true)
+                if (ImGui::Button(AlignString("ADD SPECIAL PARTICLE KINDS", StringLength).c_str()) == true)
                     CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->AddSpecialParticlesKinds();
-                if (ImGui::Button("   ADD PARTICLE KINDS                 ") == true)
+                if (ImGui::Button(AlignString("ADD PARTICLE KINDS", StringLength).c_str()) == true)
                     CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->AddParticlesKinds();
-                if (ImGui::Button("   ADD CHEMICAL REACTIONS             ") == true)
+                if (ImGui::Button(AlignString("ADD CHEMICAL REACTIONS", StringLength).c_str()) == true)
                     CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->AddChemicalReactions();
-                if (ImGui::Button("   CLEAR SELECTED SPACE               ") == true)
+                if (ImGui::Button(AlignString("CLEAR SELECTED SPACE", StringLength).c_str()) == true)
                     CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ClearSelectedSpace(10, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceStepsXYZ[0], DrawSpaceStepsXYZ[1], DrawSpaceStepsXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-                if (ImGui::Button("   DRAW RANDOM PARTICLES              ") == true)
+                if (ImGui::Button(AlignString("ADD RANDOM PARTICLES", StringLength).c_str()) == true)
                     CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateRandomParticlesInSelectedSpace(10, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceStepsXYZ[0], DrawSpaceStepsXYZ[1], DrawSpaceStepsXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-                if (ImGui::Button("   DRAW PLANED CUBOID PARTICLES       ") == true)
+                if (ImGui::Button(AlignString("ADD PLANED CUBOID PARTICLES", StringLength).c_str()) == true)
                     CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GeneratePlanedCuboidParticlesInSelectedSpace(10, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceStepsXYZ[0], DrawSpaceStepsXYZ[1], DrawSpaceStepsXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-                if (ImGui::Button("   DRAW PLANED ELLIPSOID PARTICLES    ") == true)
+                if (ImGui::Button(AlignString("ADD PLANED ELLIPSOID PARTICLES", StringLength).c_str()) == true)
                     CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GeneratePlanedEllipsoidParticlesInSelectedSpace(10, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceStepsXYZ[0], DrawSpaceStepsXYZ[1], DrawSpaceStepsXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
 
                 int IDButton = 1;
                 float Nothing;
-                ColorButton("   START DIFFUSION                                                     ", Nothing, 0, 0, 0, 3, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue){ });
-                ColorButton("   STOP DIFFUSION                                                      ", Nothing, 0, 0, 0, 0, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue){ });
 
-                ColorButton("   MAKE ONE STEP OF DIFFUSION FOR RANGE OF PARTICLES                   ", Nothing, 0, 0, 0, 3, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue)
+                if (ImGui::CollapsingHeader("WORK", ImGuiTreeNodeFlags_DefaultOpen))
                 {
-                    CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateOneStepOfDiffusionForSelectedRangeOfParticles(10, 0, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-                });
+                    ColorButton(AlignString("START WORK", StringLength).c_str(), Nothing, 0, 0, 0, 3, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue){});
+                    ColorButton(AlignString("STOP WORK", StringLength).c_str(), Nothing, 0, 0, 0, 0, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue){});
+                }
 
-                const UnsignedInt AdditionalSpaceBoundFactor = 20;
-                const double MultiplyElectricChargeFactor = 100;
+                if (ImGui::CollapsingHeader("DIFFUSION", ImGuiTreeNodeFlags_DefaultOpen))
+                {
+                    ColorButton(AlignString("START DIFFUSION", StringLength).c_str(), Nothing, 0, 0, 0, 3, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue){});
+                    ColorButton(AlignString("STOP DIFFUSION", StringLength).c_str(), Nothing, 0, 0, 0, 0, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue){});
 
-                ColorButton("   MAKE ONE STEP OF ELECTRIC DIFFUSION FOR RANGE OF PARTICLES - FCP    ", Nothing, 0, 0, 0, 3, IDButton, [MultiplyElectricChargeFactor](float& VariableToChange, const float Step, const float MinValue, const float MaxValue)
-                {
-                    CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateOneStepOfElectricDiffusionForSelectedRangeOfParticles(TypesOfLookingForParticlesInProximity::FromChosenParticleAsCenter, AdditionalSpaceBoundFactor, MultiplyElectricChargeFactor, 19, 0, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-                });
-                ColorButton("   MAKE ONE STEP OF ELECTRIC DIFFUSION FOR RANGE OF PARTICLES - ISS    ", Nothing, 0, 0, 0, 3, IDButton, [MultiplyElectricChargeFactor](float& VariableToChange, const float Step, const float MinValue, const float MaxValue)
-                {
-                    CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateOneStepOfElectricDiffusionForSelectedRangeOfParticles(TypesOfLookingForParticlesInProximity::InChosenVoxelSpace, AdditionalSpaceBoundFactor, MultiplyElectricChargeFactor, 19, 0, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-                });
+                    ColorButton(AlignString("MAKE ONE STEP OF DIFFUSION FOR RANGE OF PARTICLES", StringLength).c_str(), Nothing, 0, 0, 0, 8, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
+                    {
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateOneStepOfDiffusionForSelectedRangeOfParticles(10, 0, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
+                    });
 
-                ColorButton("   MAKE ONE STEP OF ELECTRIC DIFFUSION FOR SELECTED SPACE              ", Nothing, 0, 0, 0, 3, IDButton, [MultiplyElectricChargeFactor](float& VariableToChange, const float Step, const float MinValue, const float MaxValue)
-                {
-                    CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateOneStepOfElectricDiffusionForSelectedSpace(TypesOfLookingForParticlesInProximity::InChosenVoxelSpace, AdditionalSpaceBoundFactor, MultiplyElectricChargeFactor, 19, 0, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-                });
-                ColorButton("   MAKE ONE STEP OF DIFFUSION FOR SELECTED SPACE                       ", Nothing, 0, 0, 0, 3, IDButton, [MultiplyElectricChargeFactor](float& VariableToChange, const float Step, const float MinValue, const float MaxValue)
-                {
-                    CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateOneStepOfDiffusionForSelectedSpace(DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-                });
+                    const UnsignedInt AdditionalSpaceBoundFactor = 20;
+                    const double MultiplyElectricChargeFactor = 100;
 
-                ColorButton("   MAKE ONE STEP OF RANDOM REACTIONS FOR RANGE OF PARTICLES            ", Nothing, 0, 0, 0, 0, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue)
-                {
-                    CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateOneStepOfRandomReactionsForSelectedRangeOfParticles(10, 0);
-                });
-                ColorButton("   MAKE ONE RANDOM REACTION FOR ONE CHOSEN PARTICLE                    ", Nothing, 0, 0, 0, 0, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue)
-                {
-                    CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateOneStepOfRandomReactionsForOneParticle(10, 0);
-                });
-                ColorButton("   MAKE ONE RANDOM REACTION FOR SELECTED SPACE                         ", Nothing, 0, 0, 0, 0, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue)
-                {
-                    CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateRandomReactionForSelectedSpace(DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-                });
+                    ColorButton(AlignString("MAKE ONE STEP OF DIFFUSION FOR SELECTED SPACE", StringLength).c_str(), Nothing, 0, 0, 0, 8, IDButton, [MultiplyElectricChargeFactor](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
+                    {
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateOneStepOfDiffusionForSelectedSpace(DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
+                    });
 
-                ColorButton("   MAKE ONE STEP OF RANDOM REACTIONS FOR WHOLE CELL SPACE              ", Nothing, 0, 0, 0, 0, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue)
+                    ColorButton(AlignString("MAKE ONE STEP OF ELECTRIC DIFFUSION FOR RANGE OF PARTICLES - FCP", StringLength).c_str(), Nothing, 0, 0, 0, 9, IDButton, [MultiplyElectricChargeFactor](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
+                    {
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateOneStepOfElectricDiffusionForSelectedRangeOfParticles(TypesOfLookingForParticlesInProximity::FromChosenParticleAsCenter, AdditionalSpaceBoundFactor, MultiplyElectricChargeFactor, 19, 0, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
+                    });
+                    ColorButton(AlignString("MAKE ONE STEP OF ELECTRIC DIFFUSION FOR RANGE OF PARTICLES - ISS", StringLength).c_str(), Nothing, 0, 0, 0, 9, IDButton, [MultiplyElectricChargeFactor](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
+                    {
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateOneStepOfElectricDiffusionForSelectedRangeOfParticles(TypesOfLookingForParticlesInProximity::InChosenVoxelSpace, AdditionalSpaceBoundFactor, MultiplyElectricChargeFactor, 19, 0, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
+                    });
+
+                    ColorButton(AlignString("MAKE ONE STEP OF ELECTRIC DIFFUSION FOR SELECTED SPACE", StringLength).c_str(), Nothing, 0, 0, 0, 9, IDButton, [MultiplyElectricChargeFactor](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
+                    {
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateOneStepOfElectricDiffusionForSelectedSpace(TypesOfLookingForParticlesInProximity::InChosenVoxelSpace, AdditionalSpaceBoundFactor, MultiplyElectricChargeFactor, 19, 0, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
+                    });
+
+                    ColorButton(AlignString("MAKE ONE STEP OF DIFFUSION FOR SELECTED BIG PART OF CELL", StringLength).c_str(), Nothing, 0, 0, 0, 3, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
+                    {
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateDiffusionForBigPartOfCellSpace(4, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
+                    });
+                }
+
+                if (ImGui::CollapsingHeader("REACTIONS", ImGuiTreeNodeFlags_DefaultOpen))
                 {
-                    CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateRandomReactionsForWholeCellSpace(0, 0, 0, 32, 32, 32, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension);
-                });
-                ColorButton("   MAKE ONE STEP OF CHOSEN REACTIONS FOR WHOLE CELL SPACE              ", Nothing, 0, 0, 0, 0, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue)
-                {
-                    CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateChosenReactionsForWholeCellSpace(10, 0, 0, 0, 32, 32, 32, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension);
-                });
+                    ColorButton(AlignString("MAKE ONE STEP OF RANDOM REACTIONS FOR RANGE OF PARTICLES", StringLength).c_str(), Nothing, 0, 0, 0, 5, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
+                    {
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateOneStepOfRandomReactionsForSelectedRangeOfParticles(10, 0);
+                    });
+                    ColorButton(AlignString("MAKE ONE RANDOM REACTION FOR ONE CHOSEN PARTICLE", StringLength).c_str(), Nothing, 0, 0, 0, 5, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
+                    {
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateOneStepOfRandomReactionsForOneParticle(10, 0);
+                    });
 
-                ColorButton("   MAKE ONE STEP OF DIFFUSION FOR SELECTED BIG PART OF CELL            ", Nothing, 0, 0, 0, 3, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue)
-                {
-                    CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateDiffusionForBigPartOfCellSpace(4, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-                });
+                    ColorButton(AlignString("MAKE ONE RANDOM REACTION FOR SELECTED SPACE", StringLength).c_str(), Nothing, 0, 0, 0, 3, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
+                    {
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateRandomReactionForSelectedSpace(DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
+                    });
 
-                if (ImGui::Button("  PRINT CHEMICAL REACTIONS   ") == true)
-                    ChemicalReactionsManagerObject.PrintChemicalReactions();
+                    ColorButton(AlignString("MAKE ONE STEP OF RANDOM REACTIONS FOR SELECTED BIG PART OF CELL", StringLength).c_str(), Nothing, 0, 0, 0, 3, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
+                    {
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateRandomReactionsForBigPartOfCellSpace(4, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
+                    });
 
-                static bool OpenMenuChemicalReactionsWindow = false;
-                if (ImGui::Button("  CHOOSE CHEMICAL REACTION   ") == true)
-                    OpenMenuChemicalReactionsWindow = true;
+                    ColorButton(AlignString("MAKE ONE STEP OF RANDOM REACTIONS FOR WHOLE CELL SPACE", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
+                    {
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateRandomReactionsForWholeCellSpace(0, 0, 0, 32, 32, 32, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension);
+                    });
+                    ColorButton(AlignString("MAKE ONE STEP OF CHOSEN REACTIONS FOR WHOLE CELL SPACE", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
+                    {
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateChosenReactionsForWholeCellSpace(10, 0, 0, 0, 32, 32, 32, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension);
+                    });
 
-                if (OpenMenuChemicalReactionsWindow == true)
-                    MenuChemicalReactions(WindowFlags, ModifiableWindow, DrawSpaceStartXYZ, DrawSpaceSizesXYZ, &OpenMenuChemicalReactionsWindow);
+                    if (ImGui::Button(AlignString("PRINT CHEMICAL REACTIONS", StringLength).c_str()) == true)
+                        ChemicalReactionsManagerObject.PrintChemicalReactions();
+
+                    static bool OpenMenuChemicalReactionsWindow = false;
+                    if (ImGui::Button(AlignString("CHOOSE CHEMICAL REACTION", StringLength).c_str()) == true)
+                        OpenMenuChemicalReactionsWindow = true;
+
+                    if (OpenMenuChemicalReactionsWindow == true)
+                        MenuChemicalReactions(WindowFlags, ModifiableWindow, DrawSpaceStartXYZ, DrawSpaceSizesXYZ, &OpenMenuChemicalReactionsWindow);
+                }
 
                 if (ImGui::CollapsingHeader("RANDOM DNA GENERATOR", ImGuiTreeNodeFlags_DefaultOpen))
                 {
-                    ColorButton("  GENERATE RANDOM DNA               ", Nothing, 0, 0, 0, 3, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue){ CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateRandomDNAInWholeCell(579990, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartXPos + 3, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartYPos, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartZPos, 2, 2, 2, 2, 2, 2, 2, 2); });
+                    ColorButton(AlignString("GENERATE RANDOM DNA", StringLength).c_str(), Nothing, 0, 0, 0, 3, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue){ CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateRandomDNAInWholeCell(579990, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartXPos + 3, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartYPos, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartZPos, 2, 2, 2, 2, 2, 2, 2, 2); });
 
-                    if (ImGui::Button("  TRUE RANDOM GENERATOR SEED DEVICE ") == true)
+                    if (ImGui::Button(AlignString("TRUE RANDOM GENERATOR SEED DEVICE", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->RandomGeneratorSetSeedByRandomDevice();
-                    if (ImGui::Button("  TRUE RANDOM GENERATOR SEED TIME   ") == true)
+                    if (ImGui::Button(AlignString("TRUE RANDOM GENERATOR SEED TIME", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->RandomGeneratorSetSeedByTime();
-                    if (ImGui::Button("  SAVE GENOME TO FILE               ") == true)
+                    if (ImGui::Button(AlignString("SAVE GENOME TO FILE", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->SaveGenomeDataToFile(2);
-                    if (ImGui::Button("  READ GENOME DATA FROM FILE        ") == true)
+                    if (ImGui::Button(AlignString("READ GENOME DATA FROM FILE", StringLength).c_str()) == true)
                     {
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ReadGenomeDataFromFile(true);
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ReadGenomeSequenceFromFile();
                     }
-                    if (ImGui::Button("  TEST GENOME DATA FROM FILE        ") == true)
+                    if (ImGui::Button(AlignString("TEST GENOME DATA FROM FILE", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->TestGeneratedGenomeCorrectness(2);
                 }
 
-                if (ImGui::CollapsingHeader("  RANDOM PARTICLES GENERATOR  "))
+                if (ImGui::CollapsingHeader("RANDOM PARTICLES GENERATOR"))
                 {
-                    if (ImGui::Button("  SHOW ALL PARTICLES KINDS            ") == true)
+                    if (ImGui::Button(AlignString("SHOW ALL PARTICLES KINDS", StringLength).c_str()) == true)
                         ParticlesKindsManagerObject.PrintAllParticleKinds();
-                    if (ImGui::Button("  SHOW NUMBER OF PARTICLES TYPES            ") == true)
+                    if (ImGui::Button(AlignString("SHOW NUMBER OF PARTICLES TYPES", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->PrintNumberOfParticlesForAllMainTypesOfParticles();
-                    if (ImGui::Button("  CLEAR VOXEL SPACE AND PARTICLES           ") == true)
+                    if (ImGui::Button(AlignString("CLEAR VOXEL SPACE AND PARTICLES", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ClearVoxelSpaceAndParticles();
-                    if (ImGui::Button("  CLEAR DNA PARTICLES                       ") == true)
+                    if (ImGui::Button(AlignString("CLEAR DNA PARTICLES", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->EraseAllDNAParticles();
-                    if (ImGui::Button("  GENERATE ALL RANDOM PARTICLES             ") == true)
+                    if (ImGui::Button(AlignString("GENERATE ALL RANDOM PARTICLES", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateAllRealRandomParticles();
-                    if (ImGui::Button("  GENERATE RANDOM RIBOSOMES                 ") == true)
+                    if (ImGui::Button(AlignString("GENERATE RANDOM RIBOSOMES", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::Ribosome, false, 400, 400);
-                    if (ImGui::Button("  GENERATE RANDOM RNA POLYMERASE            ") == true)
+                    if (ImGui::Button(AlignString("GENERATE RANDOM RNA POLYMERASE", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::RNAPolymerase, false, 400, 400);
-                    if (ImGui::Button("  GENERATE RANDOM DNA POLYMERASE            ") == true)
+                    if (ImGui::Button(AlignString("GENERATE RANDOM DNA POLYMERASE", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::DNAPolymerase, false, 400, 400);
 
-                    if (ImGui::Button("  GENERATE RANDOM MEMBRANE PARTICLES        ") == true)
+                    if (ImGui::Button(AlignString("GENERATE RANDOM MEMBRANE PARTICLES", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::MembraneProtein, false, 420, 45);
-                    if (ImGui::Button("  GENERATE RANDOM RIBOSOMES PARTICLES       ") == true)
+                    if (ImGui::Button(AlignString("GENERATE RANDOM RIBOSOMES PARTICLES", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::RibosomeProtein, false, 400, 400);
-                    if (ImGui::Button("  GENERATE RANDOM DNA POLYMERASE P PARTICLES      ") == true)
+                    if (ImGui::Button(AlignString("GENERATE RANDOM DNA POLYMERASE P PARTICLES", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::PolymeraseProtein, false, 400, 400);
-                    if (ImGui::Button("  GENERATE RANDOM RNA POLYMERASE P PARTICLES  ") == true)
+                    if (ImGui::Button(AlignString("GENERATE RANDOM RNA POLYMERASE P PARTICLES", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::RNAPolymeraseProtein, false, 400, 400);
-                    if (ImGui::Button("  GENERATE RANDOM PROTEIN FRAC PARTICLES    ") == true)
+                    if (ImGui::Button(AlignString("GENERATE RANDOM PROTEIN FRAC PARTICLES", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::ProteinFrac, false, 400, 400);
-                    if (ImGui::Button("  GENERATE RANDOM OTHER PROTEIN PARTICLES   ") == true)
+                    if (ImGui::Button(AlignString("GENERATE RANDOM OTHER PROTEIN PARTICLES", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::OtherProtein, false, 400, 400);
 
-                    ImGui::Button("  GENERATE DNA                              ");
+                    ImGui::Button(AlignString("GENERATE DNA", StringLength).c_str());
 
-                    if (ImGui::Button("  GENERATE RANDOM tRNA PARTICLES_uncharged  ") == true)
+                    if (ImGui::Button(AlignString("GENERATE RANDOM tRNA PARTICLES_uncharged", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::tRNA_uncharged, false, 400, 400);
-                    if (ImGui::Button("  GENERATE RANDOM tRNA PARTICLES_charged    ") == true)
+                    if (ImGui::Button(AlignString("GENERATE RANDOM tRNA PARTICLES_charged", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::tRNA_charged, false, 400, 400);
-                    if (ImGui::Button("  GENERATE RANDOM mRNA PARTICLES            ") == true)
+                    if (ImGui::Button(AlignString("GENERATE RANDOM mRNA PARTICLES", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::mRNA, false, 400, 400);
-                    if (ImGui::Button("  GENERATE RANDOM rRNA PARTICLES            ") == true)
+                    if (ImGui::Button(AlignString("GENERATE RANDOM rRNA PARTICLES", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::rRNA, false, 400, 400);
 
-                    if (ImGui::Button("  GENERATE RANDOM tRNA PARTICLES_uncharged M") == true)
+                    if (ImGui::Button(AlignString("GENERATE RANDOM tRNA PARTICLES_uncharged M", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::tRNA_uncharged, true, 400, 400);
-                    if (ImGui::Button("  GENERATE RANDOM tRNA PARTICLES_charged M  ") == true)
+                    if (ImGui::Button(AlignString("GENERATE RANDOM tRNA PARTICLES_charged M", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::tRNA_charged, true, 400, 400);
-                    if (ImGui::Button("  GENERATE RANDOM mRNA PARTICLES M          ") == true)
+                    if (ImGui::Button(AlignString("GENERATE RANDOM mRNA PARTICLES M", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::mRNA, true, 400, 400);
-                    if (ImGui::Button("  GENERATE RANDOM rRNA PARTICLES M          ") == true)
+                    if (ImGui::Button(AlignString("GENERATE RANDOM rRNA PARTICLES M", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::rRNA, true, 400, 400);
 
-                    if (ImGui::Button("  GENERATE RANDOM BASIC PARTICLES           ") == true)
+                    if (ImGui::Button(AlignString("GENERATE RANDOM BASIC PARTICLES", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::Basic, false, 400, 400);
-                    if (ImGui::Button("  GENERATE RANDOM LIPID PARTICLES           ") == true)
+                    if (ImGui::Button(AlignString("GENERATE RANDOM LIPID PARTICLES", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::Lipid, false, 420, 45);
-                    if (ImGui::Button("  GENERATE RANDOM OTHER PARTICLES           ") == true)
+                    if (ImGui::Button(AlignString("GENERATE RANDOM OTHER PARTICLES", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::Other, false, 400, 400);
                 }
 
                 if (ImGui::CollapsingHeader("SAVING AND READING PARTICLES TO AND FROM FILE", ImGuiTreeNodeFlags_DefaultOpen))
                 {
-                    if (ImGui::Button("  SAVE PARTICLES DATA TO BINARY FILE  ") == true)
+                    if (ImGui::Button(AlignString("SAVE PARTICLES DATA TO BINARY FILE", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->SaveDataToFile();
-                    if (ImGui::Button(" READ PARTICLES DATA FROM BINARY FILE ") == true)
+                    if (ImGui::Button(AlignString("READ PARTICLES DATA FROM BINARY FILE", StringLength).c_str()) == true)
                     {
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ClearWholeVoxelSpace();
                         CellEngineDataFileObjectPointer->ReadDataFromFile(false, false, CellEngineConfigData::TypesOfFileToRead::BinaryFile);
@@ -848,13 +907,13 @@ public:
 
                 if (ImGui::CollapsingHeader("STATISTICS OF SIMULATION", ImGuiTreeNodeFlags_DefaultOpen))
                 {
-                    if (ImGui::Button("  ZERO STATISTICS CONTAINERS        ") == true)
+                    if (ImGui::Button(AlignString("ZERO STATISTICS CONTAINERS", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->SetMakeSimulationStepNumberZero();
-                    if (ImGui::Button("  INCREMENT STATISTICS LEVEL        ") == true)
+                    if (ImGui::Button(AlignString("INCREMENT STATISTICS LEVEL", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->SetIncSimulationStepNumber();
-                    if (ImGui::Button("  SAVE PARTICLES STATISTICS          ") == true)
+                    if (ImGui::Button(AlignString("SAVE PARTICLES STATISTICS", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->SaveParticlesStatisticsOnce();
-                    if (ImGui::Button("  SAVE REACTIONS STATISTICS TO FILE  ") == true)
+                    if (ImGui::Button(AlignString("SAVE REACTIONS STATISTICS TO FILE", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->SaveReactionsStatisticsToFile();
                 }
 
@@ -863,9 +922,9 @@ public:
                 ImGui::RadioButton("Draw Selected Space From Corner", &SelectedSpaceStartParametersDrawTypesIndex, 2);
                 CellEngineConfigDataObject.SelectedSpaceStartParametersDrawTypesObject = static_cast<CellEngineConfigData::SelectedSpaceStartParametersDrawTypes>(SelectedSpaceStartParametersDrawTypesIndex);
 
-                if (ImGui::CollapsingHeader("  DEMO COMBINATORICS          ", ImGuiTreeNodeFlags_DefaultOpen))
+                if (ImGui::CollapsingHeader("COMBINATORICS", ImGuiTreeNodeFlags_DefaultOpen))
                 {
-                    if (ImGui::Button("  DEMO1  ") == true)
+                    if (ImGui::Button("DEMONSTRATION") == true)
                         ShowDemoTest();
                 }
             }
@@ -877,6 +936,7 @@ public:
     {
         try
         {
+            UnsignedInt StringLength = 70;
             if (ModifiableWindow == false)
                 ImGui::Begin("Chemical ChemicalReactions Menu", nullptr, WindowFlags);
             else
@@ -884,46 +944,46 @@ public:
 
             ImGui::Text("CHOOSE REACTION");
 
-            if (ImGui::Button(" ONLY FIND PARTICLES NR = 0                                                        ") == true)
+            if (ImGui::Button(AlignString("ONLY FIND PARTICLES NR = 0", StringLength).c_str()) == true)
                 CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateChosenReactionForSelectedSpace(0, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
 
-            if (ImGui::Button(" MAKE CHOSEN REACTION FOR SELECTED SPACE - STD ONLY WITH SEQ NR = 1101             ") == true)
+            if (ImGui::Button(AlignString("MAKE CHOSEN REACTION FOR SELECTED SPACE - STD ONLY WITH SEQ NR = 1101", StringLength).c_str()) == true)
                 CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateChosenReactionForSelectedSpace(1101, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
 
-            if (ImGui::Button(" MAKE CHOSEN REACTION FOR SELECTED SPACE - CUT 1 SEQ NR = 10                       ") == true)
+            if (ImGui::Button(AlignString("MAKE CHOSEN REACTION FOR SELECTED SPACE - CUT 1 SEQ NR = 10", StringLength).c_str()) == true)
                 CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateChosenReactionForSelectedSpace(10, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-            if (ImGui::Button(" MAKE CHOSEN REACTION FOR SELECTED SPACE - CUT 2 SEQ SHIFT 3 10 NR = 40            ") == true)
+            if (ImGui::Button(AlignString("MAKE CHOSEN REACTION FOR SELECTED SPACE - CUT 2 SEQ SHIFT 3 10 NR = 40", StringLength).c_str()) == true)
                 CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateChosenReactionForSelectedSpace(40, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-            if (ImGui::Button(" MAKE CHOSEN REACTION FOR SELECTED SPACE - CUT 2 SEQ SHIFT 7 3 NR = 41             ") == true)
+            if (ImGui::Button(AlignString("MAKE CHOSEN REACTION FOR SELECTED SPACE - CUT 2 SEQ SHIFT 7 3 NR = 41", StringLength).c_str()) == true)
                 CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateChosenReactionForSelectedSpace(41, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-            if (ImGui::Button(" MAKE CHOSEN REACTION FOR SELECTED SPACE - CUT 2 SEQ SHIFT 3 10 NR = 42            ") == true)
+            if (ImGui::Button(AlignString("MAKE CHOSEN REACTION FOR SELECTED SPACE - CUT 2 SEQ SHIFT 3 10 NR = 42", StringLength).c_str()) == true)
                 CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateChosenReactionForSelectedSpace(42, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
 
-            if (ImGui::Button(" MAKE CHOSEN REACTION FOR SELECTED SPACE - LINK 1 SEQ NR = 20                      ") == true)
+            if (ImGui::Button(AlignString("MAKE CHOSEN REACTION FOR SELECTED SPACE - LINK 1 SEQ NR = 20", StringLength).c_str()) == true)
                 CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateChosenReactionForSelectedSpace(20, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-            if (ImGui::Button(" MAKE CHOSEN REACTION FOR SELECTED SPACE - LINK 1 ANY NR = 30                      ") == true)
+            if (ImGui::Button(AlignString("MAKE CHOSEN REACTION FOR SELECTED SPACE - LINK 1 ANY NR = 30", StringLength).c_str()) == true)
                 CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateChosenReactionForSelectedSpace(30, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-            if (ImGui::Button(" MAKE CHOSEN REACTION FOR SELECTED SPACE - LINK 2 ANY EQU SAME NR = 80             ") == true)
+            if (ImGui::Button(AlignString("MAKE CHOSEN REACTION FOR SELECTED SPACE - LINK 2 ANY EQU SAME NR = 80", StringLength).c_str()) == true)
                 CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateChosenReactionForSelectedSpace(80, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
 
-            if (ImGui::Button(" MAKE CHOSEN REACTION FOR SELECTED SPACE - LINK 2 SEQ COMPLEMENT NR = 60           ") == true)
+            if (ImGui::Button(AlignString("MAKE CHOSEN REACTION FOR SELECTED SPACE - LINK 2 SEQ COMPLEMENT NR = 60", StringLength).c_str()) == true)
                 CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateChosenReactionForSelectedSpace(60, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-            if (ImGui::Button(" MAKE CHOSEN REACTION FOR SELECTED SPACE - LINK 2 SEQ COMPLEMENT NR = 61           ") == true)
+            if (ImGui::Button(AlignString("MAKE CHOSEN REACTION FOR SELECTED SPACE - LINK 2 SEQ COMPLEMENT NR = 61", StringLength).c_str()) == true)
                 CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateChosenReactionForSelectedSpace(61, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-            if (ImGui::Button(" MAKE CHOSEN REACTION FOR SELECTED SPACE - LINK 2 ANY COMPLEMENT NR = 70           ") == true)
+            if (ImGui::Button(AlignString("MAKE CHOSEN REACTION FOR SELECTED SPACE - LINK 2 ANY COMPLEMENT NR = 70", StringLength).c_str()) == true)
                 CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateChosenReactionForSelectedSpace(70, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
 
-            if (ImGui::Button(" MAKE CHOSEN REACTION FOR SELECTED SPACE - CUT CRISPER 1 NR = 100                  ") == true)
+            if (ImGui::Button(AlignString("MAKE CHOSEN REACTION FOR SELECTED SPACE - CUT CRISPER 1 NR = 100", StringLength).c_str()) == true)
                 CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateChosenReactionForSelectedSpace(100, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-            if (ImGui::Button(" MAKE CHOSEN REACTION FOR SELECTED SPACE - CUT CRISPER 2 NR = 110                  ") == true)
+            if (ImGui::Button(AlignString("MAKE CHOSEN REACTION FOR SELECTED SPACE - CUT CRISPER 2 NR = 110", StringLength).c_str()) == true)
                 CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateChosenReactionForSelectedSpace(110, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
 
-            if (ImGui::Button(" MAKE CHOSEN REACTION FOR SELECTED SPACE - POLYMERASE DNA START SEQ SPACE NR = 150 ") == true)
+            if (ImGui::Button(AlignString("MAKE CHOSEN REACTION FOR SELECTED SPACE - POLYMERASE DNA START SEQ SPACE NR = 150", StringLength).c_str()) == true)
                 CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateChosenReactionForSelectedSpace(150, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-            if (ImGui::Button(" MAKE CHOSEN REACTION FOR SELECTED SPACE - POLYMERASE DNA CONTINUE SPACE NR = 160  ") == true)
+            if (ImGui::Button(AlignString("MAKE CHOSEN REACTION FOR SELECTED SPACE - POLYMERASE DNA CONTINUE SPACE NR = 160", StringLength).c_str()) == true)
                 CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateChosenReactionForSelectedSpace(160, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
 
-            if (ImGui::Button(" CLOSE ") == true)
+            if (ImGui::Button("CLOSE") == true)
                 *OpenMenuChemicalReactionsWindow = false;
 
             ImGui::End();

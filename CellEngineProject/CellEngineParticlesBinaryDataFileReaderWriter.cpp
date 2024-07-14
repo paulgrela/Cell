@@ -549,13 +549,9 @@ void CellEngineParticlesBinaryDataFileReaderWriter::PreprocessLinkAndAssociateEv
                 for (const auto& ReactantObject : ChemicalReactionObject.Reactants)
                     if (ReactantObject.EntityId == ParticleKindObject.second.EntityId)
                     {
-                        //ParticleKindObject.second.AssociatedChemicalReactions.emplace_back(ChemicalReactionObject.ReactionIdNum);
                         ParticleKindObject.second.AssociatedChemicalReactions.insert(ChemicalReactionObject.ReactionIdNum);
                         break;
                     }
-
-//        for (auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
-//            sort(ParticleKindObject.second.AssociatedChemicalReactions.begin(), ParticleKindObject.second.AssociatedChemicalReactions.end(), [](const auto& R1, const auto& R2){ return ChemicalReactionsManagerObject.GetReactionFromNumId(R1).Reactants.size() < ChemicalReactionsManagerObject.GetReactionFromNumId(R2).Reactants.size(); });
 
         for (auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
         {

@@ -416,14 +416,12 @@ void CellEngineSimulationSpace::FindAndExecuteRandomReactionVersion3(const Unsig
 {
     try
     {
-        //vector<UnsignedInt> PossibleReactionsIdNums;
         set<UnsignedInt> PossibleReactionsIdNums;
 
         for (const auto& ParticleKindFoundInProximityObject : ParticlesKindsFoundInProximity)
             for (const auto& ReactionIdNum : ParticlesKindsManagerObject.GetParticleKind(ParticleKindFoundInProximityObject.first).AssociatedChemicalReactions)
                 if (auto ReactionIter = ChemicalReactionsManagerObject.ChemicalReactionsPosFromId.find(ReactionIdNum); ReactionIter != ChemicalReactionsManagerObject.ChemicalReactionsPosFromId.end())
                     if (IsChemicalReactionPossible(ChemicalReactionsManagerObject.ChemicalReactions[ReactionIter->second]) == true)
-                        //PossibleReactionsIdNums.emplace_back(ReactionIdNum);
                         PossibleReactionsIdNums.insert(ReactionIdNum);
 
         if (PossibleReactionsIdNums.empty() == false)
@@ -651,7 +649,10 @@ void CellEngineSimulationSpace::SaveReactionsStatisticsToFile()
     try
     {
         for (const auto& ReactionData : SavedReactionsMap[SimulationStepNumber - 1])
+        {
             LoggersManagerObject.LogStatistics(STREAM("REACTION ID = " << ReactionData.second.ReactionId << " REACTION NAME = " << ChemicalReactionsManagerObject.GetReactionFromNumId(ReactionData.second.ReactionId).ReactionName << " REACTION ID_STR = #" << ChemicalReactionsManagerObject.GetReactionFromNumId(ReactionData.second.ReactionId).ReactionIdStr << "# REACTION COUNTER = " << ReactionData.second.Counter));
+            LoggersManagerObject.LogStatistics(STREAM("REACTANTS_STR = " << ChemicalReactionsManagerObject.GetReactionFromNumId(ReactionData.second.ReactionId).ReactantsStr << endl));
+        }
     }
     CATCH("saving reactions statistics to file")
 }
@@ -725,5 +726,23 @@ void CellEngineSimulationSpace::GenerateDiffusionForBigPartOfCellSpace(const Uns
 
         CellEngineUseful::SwitchOnLogs();
     }
-    CATCH("generating random reactions for whole cell space")
+    CATCH("generating diffusion for big part of cell")
+}
+
+void CellEngineSimulationSpace::GenerateRandomReactionsForBigPartOfCellSpace(const UnsignedInt SizeNMultiplyFactor, const UnsignedInt XStartParam, const UnsignedInt YStartParam, const UnsignedInt ZStartParam, const UnsignedInt XStepParam, const UnsignedInt YStepParam, const UnsignedInt ZStepParam, const UnsignedInt XSizeParam, const UnsignedInt YSizeParam, const UnsignedInt ZSizeParam)
+{
+    try
+    {
+        CellEngineUseful::SwitchOffLogs();
+
+        for (UnsignedInt PosX = XStartParam - SizeNMultiplyFactor * XStepParam; PosX <= XStartParam + SizeNMultiplyFactor * XStepParam; PosX += XStepParam)
+            for (UnsignedInt PosY = YStartParam - SizeNMultiplyFactor * YStepParam; PosY <= YStartParam + SizeNMultiplyFactor * YStepParam; PosY += YStepParam)
+                for (UnsignedInt PosZ = ZStartParam - SizeNMultiplyFactor * ZStepParam; PosZ <= ZStartParam + SizeNMultiplyFactor * ZStepParam; PosZ += ZStepParam)
+                    GenerateRandomReactionForSelectedSpace(PosX, PosY, PosZ, XStepParam, YStepParam, ZStepParam);
+
+        CheckConditionsToIncSimulationStepNumberForStatistics();
+
+        CellEngineUseful::SwitchOnLogs();
+    }
+    CATCH("generating random reactions for big part of cell")
 }
