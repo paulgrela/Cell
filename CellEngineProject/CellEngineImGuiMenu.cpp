@@ -64,8 +64,7 @@ public:
 
             LoggersManagerObject.InitializeSpecialLogFiles(false, false, false, false, false, false, false, true, false);
             LoggersManagerObject.InitializeFilesNames({"AllMessages"});
-            LoggersManagerObject.InitializeSelectiveWordsFunctions({[](const string &s)
-                                                                    { return true; }});
+            LoggersManagerObject.InitializeSelectiveWordsFunctions({[](const string &s){ return true; }});
             LoggersManagerObject.InitializeLoggerManagerDataForTask("CELL_RESULTS", LogDirectory, string("Logs." + GetActualDateTimeStandardCPP(".", ".", ".", ".", ".")), true, 0, function<void(const UnsignedInt &CurrentThreadId, const UnsignedInt FileNumber, const string &MessageStr)>());
             LoggersManagerObject.InitializePrintingParameters(CellEngineConfigDataObject.PrintLogToConsole, CellEngineConfigDataObject.PrintLogToFiles, CellEngineConfigDataObject.PrintLogLineNumberToConsole, CellEngineConfigDataObject.PrintLogDateTimeToConsole, CellEngineConfigDataObject.PrintLogProcessIdToConsole, CellEngineConfigDataObject.PrintLogProcessPriorityLevelToConsole, CellEngineConfigDataObject.PrintLogThreadIdToConsole, CellEngineConfigDataObject.PrintLogLineNumberToFile, CellEngineConfigDataObject.PrintLogDateTimeToFile, CellEngineConfigDataObject.PrintLogProcessIdToFile, CellEngineConfigDataObject.PrintLogProcessPriorityLevelToFile, CellEngineConfigDataObject.PrintLogThreadIdToFile, CellEngineConfigDataObject.MaximalNumberOfLinesInOneFile, CellEngineConfigDataObject.PrintLogToCommonFileWhenPrintLogToSpecialFile);
         }
@@ -114,11 +113,9 @@ public:
     {
         try
         {
-            ColorButton(" - ", VariableToChange, Step, MinValue, MaxValue, 0, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
-            { if (VariableToChange - Step >= MinValue) VariableToChange -= Step; });
+            ColorButton(" - ", VariableToChange, Step, MinValue, MaxValue, 0, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue){ if (VariableToChange - Step >= MinValue) VariableToChange -= Step; });
             ImGui::SameLine();
-            ColorButton(" + ", VariableToChange, Step, MinValue, MaxValue, 3, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
-            { if (VariableToChange + Step <= MaxValue) VariableToChange += Step; });
+            ColorButton(" + ", VariableToChange, Step, MinValue, MaxValue, 3, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue){ if (VariableToChange + Step <= MaxValue) VariableToChange += Step; });
             ImGui::SameLine();
             ImGui::Text("%s", string(to_string(VariableToChange) + " [" + Description + "]").c_str());
         }
@@ -138,12 +135,12 @@ public:
         {
             glfwSetErrorCallback(glfw_error_callback);
             if (!glfwInit())
-#ifdef WINDOWS_PLATFORM
+            #ifdef WINDOWS_PLATFORM
                 ExitProcess(1);
-#endif
-#ifdef UNIX_PLATFORM
+            #endif
+            #ifdef UNIX_PLATFORM
                 exit(1);
-#endif
+            #endif
 
             Info.WindowWidth = 1600;
             Info.WindowHeight = 1200;
@@ -167,12 +164,12 @@ public:
 
             ImGuiMenuWindow = glfwCreateWindow(CellEngineConfigDataObject.WidthMenuWindow, CellEngineConfigDataObject.HeightMenuWindow, "Dear ImGui GLFW+OpenGL3 example", NULL, NULL);
             if (ImGuiMenuWindow == nullptr)
-#ifdef WINDOWS_PLATFORM
+            #ifdef WINDOWS_PLATFORM
                 ExitProcess(1);
-#endif
-#ifdef UNIX_PLATFORM
+            #endif
+            #ifdef UNIX_PLATFORM
                 exit(1);
-#endif
+            #endif
 
             glfwSetWindowPos(ImGuiMenuWindow, CellEngineConfigDataObject.XTopMenuWindow, CellEngineConfigDataObject.YTopMenuWindow);
 
@@ -305,8 +302,7 @@ public:
             if (ImGui::CollapsingHeader("Film"))
             {
                 float Nothing;
-                ColorButton(" START ", Nothing, 0, 0, 0, 3, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
-                { CellEngineDataFileObjectPointer->StartFilmOfStructures(); });
+                ColorButton(" START ", Nothing, 0, 0, 0, 3, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue){ CellEngineDataFileObjectPointer->StartFilmOfStructures(); });
 
                 ImGui::SameLine();
                 if (ImGui::Button(" NEXT "))
@@ -318,8 +314,7 @@ public:
 
                 ImGui::SameLine();
 
-                ColorButton(" STOP ", Nothing, 0, 0, 0, 0, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
-                { CellEngineDataFileObjectPointer->StopFilmOfStructures(); });
+                ColorButton(" STOP ", Nothing, 0, 0, 0, 0, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue){ CellEngineDataFileObjectPointer->StopFilmOfStructures(); });
             }
         }
         CATCH("executing film menu");
@@ -445,40 +440,21 @@ public:
             int DensityOfDrawnAtomsItemIndex;
             switch (CellEngineConfigDataObject.LoadOfAtomsStep)
             {
-                case 1 :
-                    DensityOfDrawnAtomsItemIndex = 0;
-                    break;
-                case 10 :
-                    DensityOfDrawnAtomsItemIndex = 1;
-                    break;
-                case 100 :
-                    DensityOfDrawnAtomsItemIndex = 2;
-                    break;
-                default :
-                    break;
+                case 1 : DensityOfDrawnAtomsItemIndex = 0; break;
+                case 10 : DensityOfDrawnAtomsItemIndex = 1; break;
+                case 100 : DensityOfDrawnAtomsItemIndex = 2; break;
+                default : break;
             }
             if (CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep == true)
                 DensityOfDrawnAtomsItemIndex = 3;
             ImGui::Combo(" Density Of Drawn Atoms", &DensityOfDrawnAtomsItemIndex, DensityOfDrawnAtomsComboBoxItems, IM_ARRAYSIZE(DensityOfDrawnAtomsComboBoxItems));
             switch (DensityOfDrawnAtomsItemIndex)
             {
-                case 0 :
-                    CellEngineConfigDataObject.LoadOfAtomsStep = 1;
-                    CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep = false;
-                    break;
-                case 1 :
-                    CellEngineConfigDataObject.LoadOfAtomsStep = 10;
-                    CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep = false;
-                    break;
-                case 2 :
-                    CellEngineConfigDataObject.LoadOfAtomsStep = 100;
-                    CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep = false;
-                    break;
-                case 3 :
-                    CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep = true;
-                    break;
-                default :
-                    break;
+                case 0 : CellEngineConfigDataObject.LoadOfAtomsStep = 1; CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep = false; break;
+                case 1 : CellEngineConfigDataObject.LoadOfAtomsStep = 10; CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep = false; break;
+                case 2 : CellEngineConfigDataObject.LoadOfAtomsStep = 100; CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep = false; break;
+                case 3 : CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep = true; break;
+                default : break;
             }
         }
         CATCH("executing of density of drawn atoms menu");
@@ -506,17 +482,10 @@ public:
             if (PrevTypesOfVisibilityComboBoxCurrentItemIndex != TypesOfVisibilityComboBoxCurrentItemIndex)
                 switch (TypesOfVisibilityComboBoxCurrentItemIndex)
                 {
-                    case 0 :
-                        CellEngineOpenGLVisualiserPointer->SetVisibilityOfAllParticles(true);
-                        break;
-                    case 1 :
-                        CellEngineOpenGLVisualiserPointer->SetVisibilityOfParticlesExcept(CellEngineConfigDataObject.DNAIdentifier, false);
-                        break;
-                    case 2 :
-                        CellEngineOpenGLVisualiserPointer->SetVisibilityOfParticlesExcept(CellEngineConfigDataObject.RNAIdentifier, false);
-                        break;
-                    default :
-                        break;
+                    case 0 : CellEngineOpenGLVisualiserPointer->SetVisibilityOfAllParticles(true); break;
+                    case 1 : CellEngineOpenGLVisualiserPointer->SetVisibilityOfParticlesExcept(CellEngineConfigDataObject.DNAIdentifier, false); break;
+                    case 2 : CellEngineOpenGLVisualiserPointer->SetVisibilityOfParticlesExcept(CellEngineConfigDataObject.RNAIdentifier, false); break;
+                    default : break;
                 }
 
             vector<ParticleKind> LocalParticlesKindsForImGuiSelection;
@@ -526,17 +495,16 @@ public:
                 {
                     if (CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer == nullptr)
                     {
-                        transform(ParticlesKindsManagerObject.ParticlesKinds.begin(), ParticlesKindsManagerObject.ParticlesKinds.end(), std::back_inserter(LocalParticlesKindsForImGuiSelection), [](const auto &ParticlesKindsMapElement)
-                        { return ParticlesKindsMapElement.second; });
+                        transform(ParticlesKindsManagerObject.ParticlesKinds.begin(), ParticlesKindsManagerObject.ParticlesKinds.end(), std::back_inserter(LocalParticlesKindsForImGuiSelection), [](const auto &ParticlesKindsMapElement){ return ParticlesKindsMapElement.second; });
 
-                        sort(LocalParticlesKindsForImGuiSelection.begin(), LocalParticlesKindsForImGuiSelection.end(), [](const auto &P1, const auto &P2)
-                        { return P1.GraphicData.NameFromDataFile < P2.GraphicData.NameFromDataFile; });
+                        sort(LocalParticlesKindsForImGuiSelection.begin(), LocalParticlesKindsForImGuiSelection.end(), [](const auto &P1, const auto &P2){ return P1.GraphicData.NameFromDataFile < P2.GraphicData.NameFromDataFile; });
 
                         for (auto &ParticlesKindForImGuiSelectionObject: LocalParticlesKindsForImGuiSelection)
                             ImGui::Checkbox(string(to_string(ParticlesKindForImGuiSelectionObject.EntityId) + " " + ParticlesKindForImGuiSelectionObject.GraphicData.NameFromDataFile).c_str(), &ParticlesKindForImGuiSelectionObject.GraphicData.Visible);
-                    } else
+                    }
+                    else
                     {
-                        for (const auto &ParticlesKindsMapElement: ParticlesKindsManagerObject.ParticlesKinds)
+                        for (const auto &ParticlesKindsMapElement : ParticlesKindsManagerObject.ParticlesKinds)
                             if (ParticlesKindsMapElement.second.IdStr.starts_with("JCVISYN3A_") || ParticlesKindsMapElement.second.IdStr.starts_with("particle_") || ParticlesKindsMapElement.second.IdStr.starts_with("trna_") || ParticlesKindsMapElement.second.IdStr.starts_with("mrna_") || ParticlesKindsMapElement.second.IdStr.starts_with("rrna_") || ParticlesKindsMapElement.second.IdStr.starts_with("M_"))
                                 LocalParticlesKindsForImGuiSelection.emplace_back(ParticlesKindsMapElement.second);
 

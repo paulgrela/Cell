@@ -1,4 +1,5 @@
 
+#include <ctime>
 #include "CellEngineRandomDeviceEngine.h"
 
 void CellEngineRandomDeviceEngine::RandomGeneratorSetSeedByRandomDevice()
