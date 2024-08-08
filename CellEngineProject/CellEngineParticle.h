@@ -21,14 +21,14 @@ template <class T>
 class PairedNucleotide
 {
 public:
-    T* PairedNucleotide = nullptr;
+    T* PairedNucleotidePtr = nullptr;
 public:
     UniqueIdInt PairedNucleotideTemporary = 0;
 public:
     static void LinkPairedNucleotides(T* PairedNucleotide1, T* PairedNucleotide2)
     {
-        PairedNucleotide1->PairedNucleotide = PairedNucleotide2;
-        PairedNucleotide2->PairedNucleotide = PairedNucleotide1;
+        PairedNucleotide1->PairedNucleotidePtr = PairedNucleotide2;
+        PairedNucleotide2->PairedNucleotidePtr = PairedNucleotide1;
     }
 };
 

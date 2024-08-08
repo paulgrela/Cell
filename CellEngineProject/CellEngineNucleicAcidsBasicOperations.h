@@ -91,10 +91,10 @@ protected:
     {
         try
         {
-            if (ParticleNucleotide->PairedNucleotide != nullptr && ParticleNucleotide->PairedNucleotide->PairedNucleotide != nullptr)
+            if (ParticleNucleotide->PairedNucleotidePtr != nullptr && ParticleNucleotide->PairedNucleotidePtr->PairedNucleotidePtr != nullptr)
             {
-                ParticleNucleotide->PairedNucleotide->PairedNucleotide = nullptr;
-                ParticleNucleotide->PairedNucleotide = nullptr;
+                ParticleNucleotide->PairedNucleotidePtr->PairedNucleotidePtr = nullptr;
+                ParticleNucleotide->PairedNucleotidePtr = nullptr;
             }
         }
         CATCH("separating dna strands")
@@ -117,10 +117,10 @@ protected:
     {
         try
         {
-            while (Strand1->PairedNucleotide == nullptr)
+            while (Strand1->PairedNucleotidePtr == nullptr)
             {
-                Strand1->PairedNucleotide = Strand2;
-                Strand2->PairedNucleotide = Strand1;
+                Strand1->PairedNucleotidePtr = Strand2;
+                Strand2->PairedNucleotidePtr = Strand1;
                 Strand1 = Strand1->*Direction;
                 Strand2 = Strand2->*Direction;
             }

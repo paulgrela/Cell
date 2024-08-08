@@ -128,7 +128,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::SaveParticlesToBinaryFile(of
 
             SavePointerToBinaryFile(ParticlesDataFile, ParticleObject.second.Prev);
             SavePointerToBinaryFile(ParticlesDataFile, ParticleObject.second.Next);
-            SavePointerToBinaryFile(ParticlesDataFile, ParticleObject.second.PairedNucleotide);
+            SavePointerToBinaryFile(ParticlesDataFile, ParticleObject.second.PairedNucleotidePtr);
 
             SaveVectorToBinaryFile<Particle*>(ParticlesDataFile, ParticleObject.second.LinkedParticlesPointersList);
         }
@@ -267,7 +267,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::PrepareParticlesAfterReading
 
             ParticleObject.second.Prev = ParticleObject.second.PrevTemporary != 0 ? &GetParticleFromIndex(ParticleObject.second.PrevTemporary) : nullptr;
             ParticleObject.second.Next = ParticleObject.second.NextTemporary != 0 ? &GetParticleFromIndex(ParticleObject.second.NextTemporary) : nullptr;
-            ParticleObject.second.PairedNucleotide = ParticleObject.second.PairedNucleotideTemporary != 0 ? &GetParticleFromIndex(ParticleObject.second.PairedNucleotideTemporary) : nullptr;
+            ParticleObject.second.PairedNucleotidePtr = ParticleObject.second.PairedNucleotideTemporary != 0 ? &GetParticleFromIndex(ParticleObject.second.PairedNucleotideTemporary) : nullptr;
 
             ParticleObject.second.LinkedParticlesPointersList.clear();
             for (auto& LinkedParticlesPointerObjectTemporary : ParticleObject.second.LinkedParticlesPointersListTemporary)
