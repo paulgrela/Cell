@@ -1,4 +1,5 @@
 
+#include "CellEngineConstants.h"
 #include "CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator.h"
 
 #ifdef USING_MODULES

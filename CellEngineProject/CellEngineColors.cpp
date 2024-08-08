@@ -1,4 +1,4 @@
-#define USING_MODULES
+#define USING_MODULES_
 
 #ifdef USING_MODULES
 module;

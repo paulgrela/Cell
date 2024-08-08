@@ -7,7 +7,7 @@
 #define EXTENDED_RAM_MEMORY_
 #define RNA_IN_ONE_PARTICLE
 
-#define USING_MODULES
+#define USING_MODULES_
 
 constexpr EntityIdInt StartParticleKindId = 100000;
 constexpr EntityIdInt StartReactionId = 10000;

@@ -7,9 +7,8 @@
 #include "Combinatorics.h"
 #include "DoublyLinkedList.h"
 
-#include "CellEngineConstants.h"
-
 #include "CellEngineUseful.h"
+#include "CellEngineConstants.h"
 #include "CellEngineSimulationSpace.h"
 #include "CellEngineChemicalReactionsManager.h"
 

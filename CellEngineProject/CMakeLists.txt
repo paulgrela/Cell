@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0.0)
 
-set(USING_MODULES "TRUE")
+set(USING_MODULES "FALSE")
 
 project(CellEngineProject)
 
