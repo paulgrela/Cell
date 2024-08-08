@@ -2,6 +2,12 @@
 #include "CellEngineConstants.h"
 #include "CellEngineTestParticlesInVoxelSpaceGenerator.h"
 
+#ifdef USING_MODULES
+import CellEngineColors;
+#else
+#include "CellEngineColors.h"
+#endif
+
 using namespace std;
 
 void CellEngineTestParticlesInVoxelSpaceGenerator::GenerateRandomParticlesInSelectedSpace(const UnsignedInt NumberOfRandomParticles, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt StepXParam, const UnsignedInt StepYParam, const UnsignedInt StepZParam, const UnsignedInt SizeXParam, UnsignedInt SizeYParam, const UnsignedInt SizeZParam)

@@ -1,6 +1,12 @@
 
 #include "CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator.h"
 
+#ifdef USING_MODULES
+import CellEngineColors;
+#else
+#include "CellEngineColors.h"
+#endif
+
 using namespace std;
 
 void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::EraseAllDNAParticles()

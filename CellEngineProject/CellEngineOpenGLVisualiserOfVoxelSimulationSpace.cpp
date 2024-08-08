@@ -5,13 +5,21 @@
 #include <tuple>
 
 #include "CellEngineDataFile.h"
-#include "CellEngineColors.h"
+
 #include "CellEngineUseful.h"
+#include "CellEngineConstants.h"
 #include "CellEngineConfigData.h"
 #include "CellEngineOpenGLVisualiser.h"
 #include "CellEngineSimulationSpace.h"
 #include "CellEngineParticlesKindsManager.h"
 #include "CellEngineOpenGLVisualiserOfVoxelSimulationSpace.h"
+
+#ifdef USING_MODULES
+import CellEngineColors;
+#else
+#include "CellEngineColors.h"
+#endif
+
 
 std::tuple<UnsignedInt, UnsignedInt, UnsignedInt> CellEngineOpenGLVisualiserOfVoxelSimulationSpace::GetStartPositions()
 {

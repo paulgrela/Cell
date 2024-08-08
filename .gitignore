@@ -4,6 +4,7 @@ CellEngineProject/CMakeListsExample.txt
 CellEngineProject/Release/
 CellEngineProject/build/
 CellEngineProject/cmake-build-debug/
+CellEngineProject/cmake-build-release/
 CellEngineProject/extern/glfw-3.0.4/CMake/
 CellEngineProject/extern/glfw-3.0.4/cmake_uninstall.cmake.in
 CellEngineProject/extern/glfw-3.0.4/tests/
@@ -20,6 +21,8 @@ CellEngineProject/glm/readme.md
 CellEngineProject/glm/test/
 CellEngineProject/glm/util/
 CellEngineProject/lib/
+CellEngineProject/gmock/
+CellEngineProject/googletest/
 PDBFiles/struct0/test0.pdb
 PDBFiles/struct0/test1.pdb
 PDBFiles/struct1/

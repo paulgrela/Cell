@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.0.0)
 
+set(USING_MODULES "TRUE")
+
 project(CellEngineProject)
 
 set(CMAKE_BUILD_TYPE "Release")
@@ -8,16 +10,19 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 set(CMAKE_CXX_FLAGS "-Ofast")
+set(CMAKE_CXX_FLAGS "-fmodules-ts")
 
 LINK_DIRECTORIES(${CMAKE_SOURCE_DIR}/lib)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
 
+set(OpenGL_GL_PREFERENCE LEGACY)
 find_package(OpenGL)
 
 find_package(OpenMP)
 if (OPENMP_FOUND)
+	link_directories("${OPENMP_LIBRARIES}")
 	set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
 	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 endif()
@@ -158,12 +163,27 @@ add_executable(
 	CellEngineWellStirredChemicalReactionsSimulation.h
 	CellEngineWellStirredChemicalReactionsSimulation.cpp)
 
+if(USING_MODULES STREQUAL "TRUE")
+target_sources(CellEngineProject
+		PUBLIC
+		FILE_SET all_my_modules TYPE CXX_MODULES FILES
+		CellEngineColors.cpp
+)
+endif()
+
 if(WIN32)
 target_link_libraries(${PROJECT_NAME} -static-libgcc -static-libstdc++ -lpthread -lglew32 -lsb7 -lglfw3 -lopengl32 -lglu32 -limgui)
 else()
-target_link_libraries(${PROJECT_NAME} -static-libgcc -static-libstdc++ -lpthread sb7 ${OPENGL_LIBRARIES} glfw3 X11 Xrandr Xinerama Xi Xxf86vm Xcursor GL rt dl imgui)
+target_link_libraries(${PROJECT_NAME} -static-libgcc -static-libstdc++ -lpthread sb7 -fopenmp ${OPENGL_LIBRARIES} glfw3 X11 Xrandr Xinerama Xi Xxf86vm Xcursor GL rt dl imgui)
 endif()
 
+set(CMAKE_THREAD_LIBS_INIT "-lpthread")
+set(CMAKE_HAVE_THREADS_LIBRARY 1)
+set(CMAKE_USE_WIN32_THREADS_INIT 0)
+set(CMAKE_USE_PTHREADS_INIT 1)
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+
+find_package(Threads REQUIRED)
 find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})
 

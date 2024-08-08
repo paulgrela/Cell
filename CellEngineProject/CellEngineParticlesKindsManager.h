@@ -7,9 +7,12 @@
 
 #include "ExceptionsMacro.h"
 #include "CellEngineUseful.h"
-#include "CellEngineColors.h"
 #include "CellEngineConstants.h"
 #include "CellEngineParticleKind.h"
+
+#ifndef USING_MODULES
+#include "CellEngineColors.h"
+#endif
 
 struct AtomKindGraphicData
 {
@@ -74,7 +77,9 @@ public:
     void AddParticleKind(const ParticleKind& ParticleKindObjectParam)
     {
         ParticlesKinds[ParticleKindObjectParam.EntityId] = ParticleKindObjectParam;
+        #ifndef USING_MODULES
         ParticlesKinds[ParticleKindObjectParam.EntityId].GraphicData = ParticleKindGraphicData{ParticleKindObjectParam.EntityId, true, false, 1, 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), ParticleKindObjectParam.Name, ParticleKindObjectParam.Formula };
+        #endif
     }
 public:
     std::vector<AtomKindGraphicData>::iterator GetGraphicAtomKindDataFromAtomName(char Name)

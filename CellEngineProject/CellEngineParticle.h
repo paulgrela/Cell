@@ -15,7 +15,7 @@
 
 #include "CellEngineTypes.h"
 #include "CellEngineUseful.h"
-#include "CellEngineColors.h"
+#include "CellEngineConstants.h"
 
 template <class T>
 class PairedNucleotide

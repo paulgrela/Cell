@@ -384,7 +384,7 @@ public:
                     ImGui::ColorEdit3(string("Background Color " + to_string(BackgroundColorIndex)).c_str(), (float *) &BackgroundColor);
                     CellEngineConfigDataObject.BackgroundColors[BackgroundColorIndex] = vmath::vec3(BackgroundColor.x, BackgroundColor.y, BackgroundColor.z);
                 }
-                const char *BackgroundColorComboBoxItems[] = {"Background Color 1", "Background Color 2", "Background Color 3"};
+                const char *BackgroundColorComboBoxItems[] = { "Background Color 1", "Background Color 2", "Background Color 3" };
                 static int BackgroundColorComboBoxItemsIndex = static_cast<int>(CellEngineConfigDataObject.ChosenBackgroundColor - 1);
                 ImGui::Combo(" Chosen Background Color", &BackgroundColorComboBoxItemsIndex, BackgroundColorComboBoxItems, IM_ARRAYSIZE(BackgroundColorComboBoxItems));
                 CellEngineConfigDataObject.ChosenBackgroundColor = BackgroundColorComboBoxItemsIndex + 1;
@@ -436,7 +436,7 @@ public:
     {
         try
         {
-            const char *DensityOfDrawnAtomsComboBoxItems[] = {"1", "10", "100", "AUTOMATIC"};
+            const char *DensityOfDrawnAtomsComboBoxItems[] = { "1", "10", "100", "AUTOMATIC" };
             int DensityOfDrawnAtomsItemIndex;
             switch (CellEngineConfigDataObject.LoadOfAtomsStep)
             {
@@ -473,7 +473,7 @@ public:
     {
         try
         {
-            const char *TypesOfVisibilityComboBoxItems[] = {"ALL", "ONLY DNA", "ONLY RNA", "SELECTED"};
+            const char *TypesOfVisibilityComboBoxItems[] = { "ALL", "ONLY DNA", "ONLY RNA", "SELECTED" };
 
             static int TypesOfVisibilityComboBoxCurrentItemIndex = 0;
             static int PrevTypesOfVisibilityComboBoxCurrentItemIndex = 0;
@@ -544,7 +544,7 @@ public:
                     for (const auto &ParticleKindForImGuiSelectionObject: LocalParticlesKindsForImGuiSelection)
                         ParticlesKindsManagerObject.GetParticleKind(ParticleKindForImGuiSelectionObject.EntityId).GraphicData.Selected = ParticleKindForImGuiSelectionObject.GraphicData.Selected;
 
-                    static int NumberOfParticlesToSub[1] = {100};
+                    static int NumberOfParticlesToSub[1] = { 100 };
                     ImGui::DragInt("SUB", NumberOfParticlesToSub, 1, 0, 1000, "%d", ImGuiSliderFlags_AlwaysClamp);
                     if (ImGui::Button("SUB PARTICLES") == true)
                         for (const auto &ParticleKindForImGuiSelectionObject: LocalParticlesKindsForImGuiSelection)

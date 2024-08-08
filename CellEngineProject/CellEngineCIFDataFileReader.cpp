@@ -9,11 +9,19 @@
 #include "StringUtils.h"
 
 #include "CellEngineUseful.h"
-#include "CellEngineColors.h"
+
+#include "CellEngineConstants.h"
 #include "CellEngineConfigData.h"
 #include "CellEngineParticlesKindsManager.h"
 
 #include "CellEngineCIFDataFileReader.h"
+
+#ifdef USING_MODULES
+import CellEngineColors;
+#else
+#include "CellEngineColors.h"
+#endif
+
 
 using namespace std;
 using namespace string_utils;

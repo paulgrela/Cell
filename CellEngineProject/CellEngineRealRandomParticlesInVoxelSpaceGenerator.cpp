@@ -8,6 +8,12 @@
 #include "CellEngineParticlesKindsManager.h"
 #include "CellEngineRealRandomParticlesInVoxelSpaceGenerator.h"
 
+#ifdef USING_MODULES
+import CellEngineColors;
+#else
+#include "CellEngineColors.h"
+#endif
+
 using namespace std;
 
 UnsignedInt CellEngineRealRandomParticlesInVoxelSpaceGenerator::GetNumberOfRealParticlesOfKind(ParticlesTypes ParticleTypeParam)

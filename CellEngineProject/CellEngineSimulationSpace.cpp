@@ -8,10 +8,16 @@
 #include "DoublyLinkedList.h"
 
 #include "CellEngineConstants.h"
-#include "CellEngineColors.h"
+
 #include "CellEngineUseful.h"
 #include "CellEngineSimulationSpace.h"
 #include "CellEngineChemicalReactionsManager.h"
+
+#ifdef USING_MODULES
+import CellEngineColors;
+#else
+#include "CellEngineColors.h"
+#endif
 
 using namespace std;
 
