@@ -57,6 +57,42 @@ void CellEngineSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpace(const
     CATCH("generating one step of diffusion for selected space")
 }
 
+void CellEngineSimulationSpace::GenerateDiffusionForBigPartOfCellSpace(const UnsignedInt SizeNMultiplyFactor, const UnsignedInt XStartParam, const UnsignedInt YStartParam, const UnsignedInt ZStartParam, const UnsignedInt XStepParam, const UnsignedInt YStepParam, const UnsignedInt ZStepParam, const UnsignedInt XSizeParam, const UnsignedInt YSizeParam, const UnsignedInt ZSizeParam)
+{
+    try
+    {
+        CellEngineUseful::SwitchOffLogs();
+
+        for (UnsignedInt PosX = XStartParam - SizeNMultiplyFactor * XStepParam; PosX <= XStartParam + SizeNMultiplyFactor * XStepParam; PosX += XStepParam)
+            for (UnsignedInt PosY = YStartParam - SizeNMultiplyFactor * YStepParam; PosY <= YStartParam + SizeNMultiplyFactor * YStepParam; PosY += YStepParam)
+                for (UnsignedInt PosZ = ZStartParam - SizeNMultiplyFactor * ZStepParam; PosZ <= ZStartParam + SizeNMultiplyFactor * ZStepParam; PosZ += ZStepParam)
+                    GenerateOneStepOfDiffusionForSelectedSpace(PosX, PosY, PosZ, XStepParam, YStepParam, ZStepParam);
+
+        CheckConditionsToIncSimulationStepNumberForStatistics();
+
+        CellEngineUseful::SwitchOnLogs();
+    }
+    CATCH("generating diffusion for big part of cell")
+}
+
+void CellEngineSimulationSpace::GenerateDiffusionForWholeCellSpace(const UnsignedInt XStartParam, const UnsignedInt YStartParam, const UnsignedInt ZStartParam, const UnsignedInt XStepParam, const UnsignedInt YStepParam, const UnsignedInt ZStepParam, const UnsignedInt XSizeParam, UnsignedInt YSizeParam, const UnsignedInt ZSizeParam)
+{
+    try
+    {
+        CellEngineUseful::SwitchOffLogs();
+
+        for (UnsignedInt PosX = XStartParam; PosX < XSizeParam; PosX += XStepParam)
+            for (UnsignedInt PosY = YStartParam; PosY < YSizeParam; PosY += YStepParam)
+                for (UnsignedInt PosZ = ZStartParam; PosZ < ZSizeParam; PosZ += ZStepParam)
+                    GenerateOneStepOfDiffusionForSelectedSpace(PosX, PosY, PosZ, XStepParam, YStepParam, ZStepParam);
+
+        CheckConditionsToIncSimulationStepNumberForStatistics();
+
+        CellEngineUseful::SwitchOnLogs();
+    }
+    CATCH("generating diffusion for whole cell space")
+}
+
 template <class T>
 T sqr(T A)
 {
@@ -684,24 +720,6 @@ void CellEngineSimulationSpace::GenerateRandomReactionsForWholeCellSpace(const U
         CellEngineUseful::SwitchOnLogs();
     }
     CATCH("generating random reactions for whole cell space")
-}
-
-void CellEngineSimulationSpace::GenerateDiffusionForBigPartOfCellSpace(const UnsignedInt SizeNMultiplyFactor, const UnsignedInt XStartParam, const UnsignedInt YStartParam, const UnsignedInt ZStartParam, const UnsignedInt XStepParam, const UnsignedInt YStepParam, const UnsignedInt ZStepParam, const UnsignedInt XSizeParam, const UnsignedInt YSizeParam, const UnsignedInt ZSizeParam)
-{
-    try
-    {
-        CellEngineUseful::SwitchOffLogs();
-
-        for (UnsignedInt PosX = XStartParam - SizeNMultiplyFactor * XStepParam; PosX <= XStartParam + SizeNMultiplyFactor * XStepParam; PosX += XStepParam)
-            for (UnsignedInt PosY = YStartParam - SizeNMultiplyFactor * YStepParam; PosY <= YStartParam + SizeNMultiplyFactor * YStepParam; PosY += YStepParam)
-                for (UnsignedInt PosZ = ZStartParam - SizeNMultiplyFactor * ZStepParam; PosZ <= ZStartParam + SizeNMultiplyFactor * ZStepParam; PosZ += ZStepParam)
-                    GenerateOneStepOfDiffusionForSelectedSpace(PosX, PosY, PosZ, XStepParam, YStepParam, ZStepParam);
-
-        CheckConditionsToIncSimulationStepNumberForStatistics();
-
-        CellEngineUseful::SwitchOnLogs();
-    }
-    CATCH("generating diffusion for big part of cell")
 }
 
 void CellEngineSimulationSpace::GenerateRandomReactionsForBigPartOfCellSpace(const UnsignedInt SizeNMultiplyFactor, const UnsignedInt XStartParam, const UnsignedInt YStartParam, const UnsignedInt ZStartParam, const UnsignedInt XStepParam, const UnsignedInt YStepParam, const UnsignedInt ZStepParam, const UnsignedInt XSizeParam, const UnsignedInt YSizeParam, const UnsignedInt ZSizeParam)

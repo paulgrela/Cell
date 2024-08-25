@@ -52,6 +52,11 @@ protected:
     void SaveParticlesAsVectorElements();
     void SaveParticlesAsSortedVectorElements();
     void SaveReactionForStatistics(const ChemicalReaction& ReactionParam);
+public:
+    CellEngineSimulationSpaceStatistics() noexcept
+    {
+    }
+    virtual ~CellEngineSimulationSpaceStatistics() = default;
 };
 
 #endif
