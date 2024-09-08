@@ -51,6 +51,8 @@ public:
     void SaveParticlesStatisticsOnce();
     void SaveReactionsStatisticsToFile();
 public:
+    void SaveNumberOfParticlesStatisticsToFile();
+public:
     void GenerateOneStepOfDiffusionForSelectedSpace(UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
 public:
     void GenerateDiffusionForBigPartOfCellSpace(UnsignedInt SizeNMultiplyFactor, UnsignedInt XStartParam, UnsignedInt YStartParam, UnsignedInt ZStartParam, UnsignedInt XStepParam, UnsignedInt YStepParam, UnsignedInt ZStepParam, UnsignedInt XSizeParam, UnsignedInt YSizeParam, UnsignedInt ZSizeParam);

@@ -28,6 +28,7 @@ public:
     void GetProteinsFromXMLFile(const boost::property_tree::ptree& ReactionsPropertyTreeXMLTreeElement);
     void GetProperReactionsListFromXMLFile(const boost::property_tree::ptree& ReactionsPropertyTreeXMLTreeElement);
     void AddXMLChemicalReaction(ChemicalReaction& ReactionObject);
+    void UpdateChemicalReactionsFromXMLChemicalReactionsFile();
 public:
     static void PrintGenesFile();
     void PrintAllParticlesData();

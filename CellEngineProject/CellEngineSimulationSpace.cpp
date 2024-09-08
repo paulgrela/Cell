@@ -655,6 +655,25 @@ void CellEngineSimulationSpace::GenerateOneStepOfRandomReactionsForOneParticle(U
     CATCH("generating one step of random reactions for selected range of particles")
 }
 
+void CellEngineSimulationSpace::SaveNumberOfParticlesStatisticsToFile()
+{
+    try
+    {
+        GetNumberOfParticlesFromParticleKind(ParticlesKindsManagerObject.GetParticleKindFromStrId("M_glc__D_e")->EntityId);
+
+        int CounterOfParticles = 0;
+        for (const auto& ParticleData : Particles)
+            if (ParticleData.first != 0)
+            {
+                if (ParticlesKindsManagerObject.GetParticleKind(GetParticleFromIndex(ParticleData.first).EntityId).IdStr == "M_glc__D_e")
+                    CounterOfParticles++;
+            }
+
+        LoggersManagerObject.LogStatistics(STREAM("Particle Name = " << "D-Glucose" << " Number of Particles = " << CounterOfParticles));
+    }
+    CATCH("saving number of particles statistics to file")
+}
+
 void CellEngineSimulationSpace::SaveReactionsStatisticsToFile()
 {
     try

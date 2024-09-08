@@ -3,6 +3,10 @@
 
 #include "CellEngineSimulationSpaceStatistics.h"
 
+#include "CellEngineParticlesKindsManager.h"
+
+#define LONGER_CODE_
+
 void CellEngineSimulationSpaceStatistics::MakeSimulationStepNumberZeroForStatistics()
 {
     try
@@ -12,7 +16,7 @@ void CellEngineSimulationSpaceStatistics::MakeSimulationStepNumberZeroForStatist
         ParticlesSnapshots.clear();
         ParticlesSnapshotsCopiedUnorderedMap.clear();
         ParticlesKindsSnapshotsVectorSortedByCounter.clear();
-        ParticlesSnapshotsCopiedMap.clear();
+        ParticlesKindsSnapshotsCopiedMap.clear();
         SavedReactionsMap.clear();
     }
     CATCH("making simulation step number zero for statistics")
@@ -32,9 +36,9 @@ void CellEngineSimulationSpaceStatistics::GenerateNewEmptyElementsForContainersF
     try
     {
         ParticlesSnapshots.emplace_back();
-        ParticlesSnapshotsCopiedUnorderedMap.emplace_back();
+
         ParticlesKindsSnapshotsVectorSortedByCounter.emplace_back();
-        ParticlesSnapshotsCopiedMap.emplace_back();
+        ParticlesKindsSnapshotsCopiedMap.emplace_back();
 
         SavedReactionsMap.emplace_back();
     }
@@ -92,12 +96,30 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesAsSortedVectorElements()
 {
     try
     {
-        ParticlesSnapshotsCopiedMap.clear();
+        ParticlesKindsSnapshotsCopiedMap[SimulationStepNumber - 1].clear();
 
+        LoggersManagerObject.LogStatistics(STREAM("Size of all particles copied for statistics = " << ParticlesSnapshotsCopiedUnorderedMap[SimulationStepNumber - 1].size()));
+
+        #ifdef LONGER_CODE
         for (const auto& ParticlesSnapshotsCopiedUnorderedMapElement : ParticlesSnapshotsCopiedUnorderedMap[SimulationStepNumber - 1])
-            ParticlesSnapshotsCopiedMap[SimulationStepNumber - 1][ParticlesSnapshotsCopiedUnorderedMapElement.first].Counter++;
+        {
+            UniqueIdInt ParticleKind = GetParticleFromIndex(ParticlesSnapshotsCopiedUnorderedMapElement.first).EntityId;
+            ParticlesKindsSnapshotsCopiedMap[SimulationStepNumber - 1][ParticleKind] = { ParticleKind, ParticlesKindsSnapshotsCopiedMap[SimulationStepNumber - 1][ParticleKind].Counter++ };
+        }
+        #else
+        for (const auto& ParticlesSnapshotsCopiedUnorderedMapElement : ParticlesSnapshotsCopiedUnorderedMap[SimulationStepNumber - 1])
+        {
+            auto FoundResult = ParticlesKindsSnapshotsCopiedMap[SimulationStepNumber - 1].find(GetParticleFromIndex(ParticlesSnapshotsCopiedUnorderedMapElement.first).EntityId);
+            if (FoundResult != ParticlesKindsSnapshotsCopiedMap[SimulationStepNumber - 1].end())
+                FoundResult->second.Counter++;
+            else
+                ParticlesKindsSnapshotsCopiedMap[SimulationStepNumber - 1][GetParticleFromIndex(ParticlesSnapshotsCopiedUnorderedMapElement.first).EntityId] = { GetParticleFromIndex(ParticlesSnapshotsCopiedUnorderedMapElement.first).EntityId, 0 };
+        }
+        #endif
 
-        transform(ParticlesSnapshotsCopiedMap[SimulationStepNumber - 1].begin(), ParticlesSnapshotsCopiedMap[SimulationStepNumber - 1].end(), back_inserter(ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber - 1]), [](const auto& ParticlesMapElement){ return ParticlesMapElement.second; } );
+        LoggersManagerObject.LogStatistics(STREAM("Size of all particle kinds with number of particles for particle kind = " << ParticlesKindsSnapshotsCopiedMap[SimulationStepNumber - 1].size()));
+
+        transform(ParticlesKindsSnapshotsCopiedMap[SimulationStepNumber - 1].begin(), ParticlesKindsSnapshotsCopiedMap[SimulationStepNumber - 1].end(), back_inserter(ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber - 1]), [](const auto& ParticlesMapElement){ return ParticlesMapElement.second; } );
 
         sort(ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber - 1].begin(), ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber - 1].end(), [](const auto& P1, const auto& P2){ return P1.Counter > P2.Counter; } );
     }
@@ -116,4 +138,15 @@ void CellEngineSimulationSpaceStatistics::SaveReactionForStatistics(const Chemic
             SavedReactionsMap[SimulationStepNumber - 1][ReactionParam.ReactionIdNum] = ReactionStatistics{ ReactionParam.ReactionIdNum, 0 };
     }
     CATCH("saving reaction for statistics")
+}
+
+void CellEngineSimulationSpaceStatistics::GetNumberOfParticlesFromParticleKind(const EntityIdInt ParticleKindId)
+{
+    try
+    {
+        auto FoundResult = find_if(ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber - 1].begin(), ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber - 1].end(), [ParticleKindId](const auto& P){ return P.EntityId == ParticleKindId; });
+        if (FoundResult != ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber - 1].end())
+            LoggersManagerObject.LogStatistics(STREAM("Particle Kind Name = " << ParticlesKindsManagerObject.GetParticleKind(FoundResult->EntityId).IdStr << " Particle Kind Id = " << FoundResult->EntityId << " Number of Particles = " << FoundResult->Counter));
+    }
+    CATCH("")
 }

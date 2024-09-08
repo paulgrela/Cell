@@ -38,7 +38,7 @@ protected:
     std::vector<std::unordered_map<UniqueIdInt, Particle>> ParticlesSnapshotsCopiedUnorderedMap;
     std::vector<std::vector<ParticleKindStatistics>> ParticlesKindsSnapshotsVectorSortedByCounter;
 protected:
-    std::vector<std::map<EntityIdInt, ParticleKindStatistics>> ParticlesSnapshotsCopiedMap;
+    std::vector<std::map<EntityIdInt, ParticleKindStatistics>> ParticlesKindsSnapshotsCopiedMap;
 protected:
     std::vector<std::map<UnsignedInt, ReactionStatistics>> SavedReactionsMap;
 protected:
@@ -52,6 +52,8 @@ protected:
     void SaveParticlesAsVectorElements();
     void SaveParticlesAsSortedVectorElements();
     void SaveReactionForStatistics(const ChemicalReaction& ReactionParam);
+protected:
+    void GetNumberOfParticlesFromParticleKind(EntityIdInt ParticleKindId);
 public:
     CellEngineSimulationSpaceStatistics() noexcept
     {

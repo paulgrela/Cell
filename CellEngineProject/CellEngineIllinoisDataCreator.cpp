@@ -113,7 +113,7 @@ void CellEngineIllinoisDataCreator::GetParticlesFromXMLFile(const boost::propert
             ParticleKindId++;
         }
     }
-    CATCH("get particles from xml file")
+    CATCH("getting particles from reactions xml file")
 }
 
 void CellEngineIllinoisDataCreator::GetProteinsFromXMLFile(const boost::property_tree::ptree& ReactionsPropertyTreeXMLTreeElement)
@@ -137,7 +137,7 @@ void CellEngineIllinoisDataCreator::GetProteinsFromXMLFile(const boost::property
             ParticleKindId++;
         }
     }
-    CATCH("getting proteins")
+    CATCH("getting proteins from reactions xml")
 }
 
 void GetDataForGeneProductsForReactionFromXMLFile(const boost::property_tree::ptree& PropertyTreeXMLTreeElementReactionGeneProduct, vector<ParticleKindForChemicalReaction>& LocalVectorOfElements, const string& Str0, const string& Str1, const string& Str2, const string& Str3)
@@ -280,6 +280,21 @@ void CellEngineIllinoisDataCreator::ReadReactionsFromXMLFile(const string& FileN
         }
     }
     CATCH("reading reactions from xml file")
+}
+
+void CellEngineIllinoisDataCreator::UpdateChemicalReactionsFromXMLChemicalReactionsFile()
+{
+    try
+    {
+        //wczytaj czastki i sprawdz w ParticleKinds czy sa jakies czastki nowe po IdStr
+        //wczytaj bialka i sprawdz w ParticleKinds czy sa jakies czastki nowe po IdStr
+        //Jesli znajdziesz nowe czastki to dodaj do w ParticlesKinds
+
+        //wczytaj reakcje wyswietl ile ich
+        //wczytaj reakcje id sprawdz po Id czy istnieja i dodaj jesli nie
+        //PreprocessLinkAndAssociateEveryParticleKindWithProperChemicalReaction()
+    }
+    CATCH("updating chemical reactions from xml chemical reactions file")
 }
 
 void CellEngineIllinoisDataCreator::CheckHowManyParticleDataForGeneratorIsNotInParticleKindsAndAddThem(const bool UpdateParticleKinds)

@@ -887,6 +887,8 @@ public:
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->SaveParticlesStatisticsOnce();
                     if (ImGui::Button(AlignString("SAVE REACTIONS STATISTICS TO FILE", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->SaveReactionsStatisticsToFile();
+                    if (ImGui::Button(AlignString("SAVE NUMBER OF PARTICLES TO FILE", StringLength).c_str()) == true)
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->SaveNumberOfParticlesStatisticsToFile();
                 }
 
                 static int SelectedSpaceStartParametersDrawTypesIndex = static_cast<int>(CellEngineConfigDataObject.SelectedSpaceStartParametersDrawTypesObject);
