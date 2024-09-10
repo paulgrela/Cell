@@ -3,6 +3,7 @@
 #define CELL_ENGINE_USEFUL_H
 
 #include "CellEngineTypes.h"
+#include "CellEngineConstants.h"
 #include "CellEngineConfigData.h"
 
 #define SIMULATION_DETAILED_LOG
@@ -52,17 +53,17 @@ namespace CellEngineUseful
     {
         switch (ChainId)
         {
-            case 1 : return 'A';
-            case 2 : return 'C';
-            case 3 : return 'G';
-            case 4 : return 'T';
-            case 5 : return 'U';
+            case ACode : return 'A';
+            case CCode : return 'C';
+            case GCode : return 'G';
+            case TCode : return 'T';
+            case UCode : return 'U';
 
-            case 11 : return 'T';
-            case 12 : return 'G';
-            case 13 : return 'C';
-            case 14 : return 'A';
-            case 15 : return 'U';
+            case TCodeAdd : return 'T';
+            case GCodeAdd : return 'G';
+            case CCodeAdd : return 'C';
+            case ACodeAdd : return 'A';
+            case UCodeAdd : return 'U';
 
             default : break;
         }
@@ -74,11 +75,24 @@ namespace CellEngineUseful
     {
         switch (Letter)
         {
-            case 'A' : return 1;
-            case 'C' : return 2;
-            case 'G' : return 3;
-            case 'T' : return 4;
-            case 'U' : return 5;
+            case 'A' : return ACode;
+            case 'C' : return CCode;
+            case 'G' : return GCode;
+            case 'T' : return TCode;
+            case 'U' : return UCode;
+
+            case 'R' : return RCode;
+            case 'Y' : return YCode;
+            case 'S' : return SCode;
+            case 'W' : return WCode;
+            case 'K' : return KCode;
+            case 'M' : return MCode;
+            case 'B' : return BCode;
+            case 'D' : return DCode;
+            case 'H' : return HCode;
+            case 'V' : return VCode;
+
+            case 'N' : return NCode;
 
             default : break;
         }
@@ -86,7 +100,7 @@ namespace CellEngineUseful
         return 0;
     }
 
-    inline ChainIdInt GetPairedChainIdForDNAorRNA(ChainIdInt ChainId)
+    inline ChainIdInt GetPairedChainIdForDNAorRNA(const ChainIdInt ChainId)
     {
         switch (ChainId)
         {
@@ -95,10 +109,111 @@ namespace CellEngineUseful
             case 3 : return 2;
             case 4 : return 1;
             case 5 : return 1;
+
             default : break;
         }
 
         return 0;
+    }
+
+    bool inline CompareIUPACNucleotideCode(const ChainIdInt LetterIUPAC, const ChainIdInt LetterToCheck)
+    {
+        if (LetterIUPAC == NCode)
+            return true;
+
+        if (LetterIUPAC == ACode && LetterToCheck == ACode)
+            return true;
+
+        if (LetterIUPAC == CCode && LetterToCheck == CCode)
+            return true;
+
+        if (LetterIUPAC == GCode && LetterToCheck == GCode)
+            return true;
+
+        if (LetterIUPAC == TCode && LetterToCheck == TCode)
+            return true;
+
+        if (LetterIUPAC == RCode && (LetterToCheck == ACode || LetterToCheck == GCode))
+            return true;
+
+        if (LetterIUPAC == YCode && (LetterToCheck == CCode || LetterToCheck == TCode))
+            return true;
+
+        if (LetterIUPAC == SCode && (LetterToCheck == GCode || LetterToCheck == CCode))
+            return true;
+
+        if (LetterIUPAC == WCode && (LetterToCheck == ACode || LetterToCheck == TCode))
+            return true;
+
+        if (LetterIUPAC == KCode && (LetterToCheck == GCode || LetterToCheck == TCode))
+            return true;
+
+        if (LetterIUPAC == MCode && (LetterToCheck == ACode || LetterToCheck == CCode))
+            return true;
+
+        if (LetterIUPAC == BCode && (LetterToCheck == CCode || LetterToCheck == GCode || LetterToCheck == TCode))
+            return true;
+
+        if (LetterIUPAC == DCode && (LetterToCheck == ACode || LetterToCheck == GCode || LetterToCheck == TCode))
+            return true;
+
+        if (LetterIUPAC == HCode && (LetterToCheck == ACode || LetterToCheck == CCode || LetterToCheck == TCode))
+            return true;
+
+        if (LetterIUPAC == VCode && (LetterToCheck == ACode || LetterToCheck == CCode || LetterToCheck == GCode))
+            return true;
+
+        return false;
+    }
+
+    bool inline CompareIUPACNucleotideLetterCode(const char LetterIUPAC, const char LetterToCheck)
+    {
+        if (LetterIUPAC == 'N')
+            return true;
+
+        if (LetterIUPAC == 'A' && LetterToCheck == 'A')
+            return true;
+
+        if (LetterIUPAC == 'C' && LetterToCheck == 'C')
+            return true;
+
+        if (LetterIUPAC == 'G' && LetterToCheck == 'G')
+            return true;
+
+        if (LetterIUPAC == 'T' && LetterToCheck == 'T')
+            return true;
+
+        if (LetterIUPAC == 'R' && (LetterToCheck == 'A' || LetterToCheck == 'G'))
+            return true;
+
+        if (LetterIUPAC == 'Y' && (LetterToCheck == 'C' || LetterToCheck == 'T'))
+            return true;
+
+        if (LetterIUPAC == 'S' && (LetterToCheck ==	'G' || LetterToCheck == 'C'))
+            return true;
+
+        if (LetterIUPAC == 'W' && (LetterToCheck ==	'A' || LetterToCheck == 'T'))
+            return true;
+
+        if (LetterIUPAC == 'K' && (LetterToCheck ==	'G' || LetterToCheck == 'T'))
+            return true;
+
+        if (LetterIUPAC == 'M' && (LetterToCheck ==	'A' || LetterToCheck == 'C'))
+            return true;
+
+        if (LetterIUPAC == 'B' && (LetterToCheck ==	'C' || LetterToCheck == 'G' || LetterToCheck == 'T'))
+            return true;
+
+        if (LetterIUPAC == 'D' && (LetterToCheck ==	'A' || LetterToCheck == 'G' || LetterToCheck == 'T'))
+            return true;
+
+        if (LetterIUPAC == 'H' && (LetterToCheck ==	'A' || LetterToCheck == 'C' || LetterToCheck == 'T'))
+            return true;
+
+        if (LetterIUPAC == 'V' && (LetterToCheck ==	'A' || LetterToCheck == 'C' || LetterToCheck == 'G'))
+            return true;
+
+        return false;
     }
 
     inline vector3_16 GetVector3FormVMathVec3ForColor(const vmath::vec3& Color)
