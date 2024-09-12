@@ -1,4 +1,5 @@
 
+
 #include <cmath>
 
 #include "DateTimeUtils.h"
@@ -16,7 +17,39 @@ import CellEngineColors;
 
 using namespace std;
 
-UnsignedInt CellEngineRealRandomParticlesInVoxelSpaceGenerator::GetNumberOfRealParticlesOfKind(ParticlesTypes ParticleTypeParam)
+void CellEngineRealRandomParticlesInVoxelSpaceGenerator::UpdateSequence(ParticlesTypes ParticleTypeParam) const
+{
+    try
+    {
+        for (auto& ParticleObject : Particles)
+            if (ParticleObject.second.EntityId != 0)
+            {
+                auto ParticleKindObject = ParticlesKindsManagerObject.GetParticleKind(ParticleObject.second.EntityId);
+                if (ParticleKindObject.ParticleKindSpecialDataSector.empty() == false)
+                    for (const auto& ParticleKindSpecialDataObject : ParticleKindObject.ParticleKindSpecialDataSector)
+                        //if (ParticleKindSpecialDataObject.ParticleType == ParticleTypeParam)
+                        {
+                            auto GeneIter = ParticlesKindsManagerObject.Genes.find(ParticleKindSpecialDataObject.GeneId);
+                            if (GeneIter != ParticlesKindsManagerObject.Genes.end())
+                            {
+                                // LoggersManagerObject.Log(STREAM("Gene " << ParticleKindSpecialDataObject.GeneId << " " << GeneIter->second.Sequence));
+                                //if (ParticleObject.second.SequenceStr == "")
+                                //{
+                                    ParticleObject.second.SequenceStr = GeneIter->second.Sequence;
+                                    // LoggersManagerObject.Log(STREAM("UPDATE SEQUENCE = " << ParticleObject.second.SequenceStr << "#"));
+                                //}
+                            }
+                        else
+                            ParticleObject.second.SequenceStr = "";
+                            // else
+                            //     LoggersManagerObject.Log(STREAM("No Gene"));
+                        }
+            }
+    }
+    CATCH("updating sequence")
+}
+
+UnsignedInt CellEngineRealRandomParticlesInVoxelSpaceGenerator::GetNumberOfRealParticlesOfKind(const ParticlesTypes ParticleTypeParam) const
 {
     UnsignedInt ParticlesCounter = 0;
 

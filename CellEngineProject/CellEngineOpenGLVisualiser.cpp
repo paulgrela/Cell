@@ -514,7 +514,7 @@ void CellEngineOpenGLVisualiser::PrintAtomDescriptionOnScreen(CellEngineAtom& Ch
         {
             CellEngineUseful::AtomDescriptionTextsObject.Texts[1] = "Chain [" + string(ChosenParticleObject.Chain) + "]" + "(" + ChosenParticleObject.Nucleotide + ")";
             #ifdef RNA_IN_ONE_PARTICLE
-            CellEngineUseful::AtomDescriptionTextsObject.Texts[1] += " CODE = [" + ChosenParticleObject.SequenceStr + "]";
+            CellEngineUseful::AtomDescriptionTextsObject.Texts[1] += " SEQ = [" + ChosenParticleObject.SequenceStr + "]";
             #endif
             CellEngineUseful::AtomDescriptionTextsObject.Texts[2] = "EntityId = " + to_string(ChosenParticleObject.EntityId);
             CellEngineUseful::AtomDescriptionTextsObject.Texts[3] = "Entity Name = [" + GetEntityName(ChosenParticleObject.EntityId) + "]";

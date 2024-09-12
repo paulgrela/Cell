@@ -812,6 +812,8 @@ public:
                         ParticlesKindsManagerObject.PrintAllParticleKinds();
                     if (ImGui::Button(AlignString("SHOW NUMBER OF PARTICLES TYPES", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->PrintNumberOfParticlesForAllMainTypesOfParticles();
+                    if (ImGui::Button(AlignString("UPDATE SEQUENCE", StringLength).c_str()) == true)
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->UpdateSequence(ParticlesTypes::mRNA);
                     if (ImGui::Button(AlignString("CLEAR VOXEL SPACE AND PARTICLES", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ClearVoxelSpaceAndParticles();
                     if (ImGui::Button(AlignString("CLEAR DNA PARTICLES", StringLength).c_str()) == true)
