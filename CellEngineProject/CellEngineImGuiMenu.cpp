@@ -686,6 +686,8 @@ public:
                     CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->AddParticlesKinds();
                 if (ImGui::Button(AlignString("ADD CHEMICAL REACTIONS", StringLength).c_str()) == true)
                     CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->AddChemicalReactions();
+                if (ImGui::Button(AlignString("ADD TEST CHEMICAL REACTIONS", StringLength).c_str()) == true)
+                    CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->AddTestChemicalReactions();
                 if (ImGui::Button(AlignString("CLEAR SELECTED SPACE", StringLength).c_str()) == true)
                     CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ClearSelectedSpace(10, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceStepsXYZ[0], DrawSpaceStepsXYZ[1], DrawSpaceStepsXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
                 if (ImGui::Button(AlignString("ADD RANDOM PARTICLES", StringLength).c_str()) == true)
@@ -866,6 +868,9 @@ public:
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::Lipid, false, 420, 45);
                     if (ImGui::Button(AlignString("GENERATE RANDOM OTHER PARTICLES", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::Other, false, 400, 400);
+
+                    if (ImGui::Button(AlignString("SHOW POLYMERASE PARTICLES TYPES DATA", StringLength).c_str()) == true)
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ShowParticlesKindsData(ParticlesTypes::RNAPolymerase);
                 }
 
                 if (ImGui::CollapsingHeader("SAVING AND READING PARTICLES TO AND FROM FILE", ImGuiTreeNodeFlags_DefaultOpen))

@@ -17,8 +17,9 @@ public:
     void GenerateAllRealRandomParticles();
 public:
     void UpdateSequence(ParticlesTypes ParticleTypeParam) const;
+    static void ShowParticlesKindsData(const ParticlesTypes ParticleTypeParam);
 protected:
-    UnsignedInt GetNumberOfRealParticlesOfKind(const ParticlesTypes ParticleTypeParam) const;
+    [[nodiscard]] UnsignedInt GetNumberOfRealParticlesOfKind(ParticlesTypes ParticleTypeParam) const;
     std::tuple<UnsignedInt, UnsignedInt> GetNumberOfParticlesKind(ParticlesTypes ParticleTypeParam, bool AddToTotalNumberOfAllParticles);
     std::tuple<UnsignedInt, UnsignedInt, UnsignedInt> GetRandomPositionInsideSphere(UnsignedInt Radius, UnsignedInt RadiusSize);
 public:

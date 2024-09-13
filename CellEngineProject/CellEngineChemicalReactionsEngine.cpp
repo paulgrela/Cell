@@ -24,7 +24,8 @@ bool CellEngineChemicalReactionsEngine::TryToMakeRandomChemicalReaction(Unsigned
             vector<string> ParticlesSymbolsForReactionToSort;
             ParticlesSymbolsForReactionToSort.reserve(10);
             for (auto& RandomParticleType : RandomParticlesTypes)
-                ParticlesSymbolsForReactionToSort.emplace_back(ParticlesKindsManagerObject.GetParticleKind(RandomParticleType).Formula);
+                //ParticlesSymbolsForReactionToSort.emplace_back(ParticlesKindsManagerObject.GetParticleKind(RandomParticleType).Formula);
+                ParticlesSymbolsForReactionToSort.emplace_back(ParticlesKindsManagerObject.GetParticleKind(RandomParticleType).IdStr);
             std::sort(ParticlesSymbolsForReactionToSort.begin(), ParticlesSymbolsForReactionToSort.end());
 
             string ReactionSymbolsStr;

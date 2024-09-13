@@ -124,7 +124,6 @@ void CellEngineParticlesBinaryDataFileReaderWriter::SaveParticlesToBinaryFile(of
             ParticlesDataFile.write((char*)&ParticleObject.second.UniqueColor, sizeof(ParticleObject.second.UniqueColor));
             ParticlesDataFile.write((char*)&ParticleObject.second.SelectedForReaction, sizeof(ParticleObject.second.SelectedForReaction));
 
-            //SaveStringToBinaryFile(ParticlesDataFile, (char*)&ParticleObject.second.SequenceStr);
             SaveStringToBinaryFile(ParticlesDataFile, ParticleObject.second.SequenceStr);
 
             SaveVectorToBinaryFile<vector3_16>(ParticlesDataFile, ParticleObject.second.ListOfVoxels);

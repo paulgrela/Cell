@@ -27,23 +27,10 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::UpdateSequence(Particle
                 auto ParticleKindObject = ParticlesKindsManagerObject.GetParticleKind(ParticleObject.second.EntityId);
                 if (ParticleKindObject.ParticleKindSpecialDataSector.empty() == false)
                     for (const auto& ParticleKindSpecialDataObject : ParticleKindObject.ParticleKindSpecialDataSector)
-                        //if (ParticleKindSpecialDataObject.ParticleType == ParticleTypeParam)
-                        {
-                            auto GeneIter = ParticlesKindsManagerObject.Genes.find(ParticleKindSpecialDataObject.GeneId);
-                            if (GeneIter != ParticlesKindsManagerObject.Genes.end())
-                            {
-                                // LoggersManagerObject.Log(STREAM("Gene " << ParticleKindSpecialDataObject.GeneId << " " << GeneIter->second.Sequence));
-                                //if (ParticleObject.second.SequenceStr == "")
-                                //{
-                                    ParticleObject.second.SequenceStr = GeneIter->second.Sequence;
-                                    // LoggersManagerObject.Log(STREAM("UPDATE SEQUENCE = " << ParticleObject.second.SequenceStr << "#"));
-                                //}
-                            }
+                        if (auto GeneIter = ParticlesKindsManagerObject.Genes.find(ParticleKindSpecialDataObject.GeneId); GeneIter != ParticlesKindsManagerObject.Genes.end())
+                            ParticleObject.second.SequenceStr = GeneIter->second.Sequence;
                         else
                             ParticleObject.second.SequenceStr = "";
-                            // else
-                            //     LoggersManagerObject.Log(STREAM("No Gene"));
-                        }
             }
     }
     CATCH("updating sequence")
@@ -68,6 +55,21 @@ UnsignedInt CellEngineRealRandomParticlesInVoxelSpaceGenerator::GetNumberOfRealP
     CATCH("getting number of particles of type")
 
     return ParticlesCounter;
+}
+
+void CellEngineRealRandomParticlesInVoxelSpaceGenerator::ShowParticlesKindsData(const ParticlesTypes ParticleTypeParam)
+{
+    try
+    {
+        for (const auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
+            if (ParticleKindObject.second.ParticleKindSpecialDataSector.empty() == false)
+                for (const auto& ParticleKindSpecialDataObject: ParticleKindObject.second.ParticleKindSpecialDataSector)
+                    if (ParticleKindSpecialDataObject.ParticleType == ParticleTypeParam)
+                    {
+                        LoggersManagerObject.Log(STREAM("ParticleKind IdStr = " << ParticleKindObject.second.IdStr << " Formula = " << ParticleKindObject.second.Formula));
+                    }
+    }
+    CATCH("show particles kinds data")
 }
 
 tuple<UnsignedInt, UnsignedInt> CellEngineRealRandomParticlesInVoxelSpaceGenerator::GetNumberOfParticlesKind(ParticlesTypes ParticleTypeParam, const bool AddToTotalNumberOfAllParticles)

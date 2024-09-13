@@ -553,7 +553,7 @@ void CellEngineIllinoisDataCreator::ReadCSVFiles(bool Read, const string& Partic
             GetRemappingNamesForProteins(ParticlesDirectory);
 
             ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("proteomics.csv"), ','), 2, 429, 0, -1, -1, -1, 21, false, true, 0,"", "protein_from_gene", 0, 0, ParticlesTypes::OtherProtein);
-            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("proteomics_additional.csv"), ','), 0, 29, 0, -1, -1, -1, 2, false, true, 0,"", "protein_from_gene", 0, 0, ParticlesTypes::OtherProtein);
+            ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("proteomics_additional.csv"), ','), 0, 29, 0, -1, -1, -1, 2, false, true, 0, "", "protein_from_gene", 0, 0, ParticlesTypes::OtherProtein);
 
             ParticlesDataFromParsedCSVStructure(ReadAndParseCSVFile(ParticlesDirectory + string("Escher_metData.csv"), ','), 1, 240, 0, -1, -1, -1, 1, true, false, 0,"M_", "basic", 0, 0, ParticlesTypes::Basic);
 
