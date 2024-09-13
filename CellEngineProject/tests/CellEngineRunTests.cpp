@@ -24,10 +24,10 @@ void TestWellStirredChemicalReactionsSimulation(CellEngineWellStirredChemicalRea
     ParticlesKindsManagerObject.AddParticleKind({ 10, "Ethylene", "CH2CH2O", "CH2CH2O", 0, 0, "c", 10 });
     ParticlesKindsManagerObject.AddParticleKind({ 11, "DNA", "CGATATTAAATAGGGCCT", "CGATATTAAATAGGGCCT", 0, 0, "c", 10 });
 
-    ChemicalReactionsManagerObject.AddChemicalReaction(ChemicalReaction(1001, "", "C6H12O6+O2+", {{1, 1, "", true }, {2, 6, "", true} }, {{3, 6, "", true }, {0, 6, "", true } }, nullptr));
-    ChemicalReactionsManagerObject.AddChemicalReaction(ChemicalReaction(1002, "", "CH2CH2+H2O+", {{4, 1, "", true }, {0, 1, "", true} }, {{5, 1, "", true } }, nullptr));
-    ChemicalReactionsManagerObject.AddChemicalReaction(ChemicalReaction(1003, "", "CH3CHCH2+HX+", {{6, 1, "", true }, {7, 1, "", true} }, {{8, 1, "", true } }, nullptr));
-    ChemicalReactionsManagerObject.AddChemicalReaction(ChemicalReaction(1004, "", "CH2CH2+O+", {{4, 1, "", true }, {2, 1, "", true} }, {{10, 1, "", true } }, nullptr));
+    ChemicalReactionsManagerObject.AddChemicalReaction(ChemicalReaction(1001, "STD", "Glucose+Oxygen2+", { { ParticlesKindsManagerObject.GetParticleKindFromStrId("Glucose")->EntityId, 1, "", true }, { ParticlesKindsManagerObject.GetParticleKindFromStrId("Oxygen2")->EntityId, 6, "", true } }, { { ParticlesKindsManagerObject.GetParticleKindFromStrId("CarbonDioxide")->EntityId, 6, "", true }, { ParticlesKindsManagerObject.GetParticleKindFromStrId("Water")->EntityId, 6, "", true } }, nullptr));
+    ChemicalReactionsManagerObject.AddChemicalReaction(ChemicalReaction(1002, "STD", "Eten+Water+", { { ParticlesKindsManagerObject.GetParticleKindFromStrId("Eten")->EntityId, 1, "", true }, { ParticlesKindsManagerObject.GetParticleKindFromStrId("Water")->EntityId, 1, "", true } }, { { ParticlesKindsManagerObject.GetParticleKindFromStrId("Ethanol")->EntityId, 1, "", true } }, nullptr));
+    ChemicalReactionsManagerObject.AddChemicalReaction(ChemicalReaction(1003, "STD", "Propen+HX+", { { ParticlesKindsManagerObject.GetParticleKindFromStrId("Propen")->EntityId, 1, "", true }, { ParticlesKindsManagerObject.GetParticleKindFromStrId("2HalogenPropan")->EntityId, 1, "", true } }, { { ParticlesKindsManagerObject.GetParticleKindFromStrId("2HalogenPropan")->EntityId, 1, "", true } }, nullptr));
+    ChemicalReactionsManagerObject.AddChemicalReaction(ChemicalReaction(1004, "STD", "Eten+Oxygen+", { { ParticlesKindsManagerObject.GetParticleKindFromStrId("Eten")->EntityId, 1, "", true }, { ParticlesKindsManagerObject.GetParticleKindFromStrId("Oxygen")->EntityId, 1, "", true } }, { { ParticlesKindsManagerObject.GetParticleKindFromStrId("Ethylene")->EntityId, 1, "", true } }, nullptr));
 }
 
 class MockCellEngineWellStirredChemicalReactionsSimulation : public CellEngineWellStirredChemicalReactionsSimulation

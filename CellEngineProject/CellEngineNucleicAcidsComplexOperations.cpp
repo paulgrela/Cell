@@ -269,6 +269,10 @@ bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNAContinueSpecialReacti
 
         LoggersManagerObject.Log(STREAM("Letter to find = " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.LinkedParticlesPointersList[1]->ChainId) << " NEXT " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.LinkedParticlesPointersList[1]->Next->ChainId) << " Particle Object Index = " << ParticleObject.Index << " " << ParticlesIndexesChosenForReaction[0].first));
 
+        // JESLI 3 OSTATNIE STANOWIA KODON STOP TO DODAJ KODON I PRZERWIJ
+        // "TAG" 	"TAA" 	"TGA";
+        // "UAG" 	"UAA" 	"UGA";
+
         if (CellEngineConfigDataObject.RNAInOneParticle == false)
         {
             auto ChosenNucleotideIterator = find_if(RNANucleotidesFreeFoundInProximity.cbegin(), RNANucleotidesFreeFoundInProximity.cend(), [this, ParticleObject](const UniqueIdInt &NucleotideParticleIndex){ return &GetParticleFromIndex(NucleotideParticleIndex) != ParticleObject.LinkedParticlesPointersList[0] && GetParticleFromIndex(NucleotideParticleIndex).ChainId == ParticleObject.LinkedParticlesPointersList[1]->ChainId; });
@@ -304,6 +308,16 @@ bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNAContinueSpecialReacti
                 MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(*ParticleObject.LinkedParticlesPointersList[0], *ParticleObject.LinkedParticlesPointersList[1], 2, 2, 2);
                 vector<vector3_16> Centers;
                 EraseParticleChosenForReactionAndGetCentersForNewProductsOfReaction(*ChosenNucleotideIterator, Centers);
+
+                string SequenceOfLetters = ParticleObject.LinkedParticlesPointersList[0]->SequenceStr;
+                if (SequenceOfLetters.size() % 3 == 0)
+                {
+                    string LastCodon = SequenceOfLetters.substr(SequenceOfLetters.length() - 3, 3);
+                    if (LastCodon == "UAG" || LastCodon == "UAA" || LastCodon == "UGA")
+                    {
+                        ParticleObject.LinkedParticlesPointersList[1] = nullptr;
+                    }
+                }
             }
             else
                 LoggersManagerObject.Log(STREAM("Nucleotide not found - " << NucleotidesFreeFoundInProximity.size()));
