@@ -260,6 +260,8 @@ bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNAContinueSpecialReacti
 {
     try
     {
+        string SequenceOfLettersToCheckFinishSequence;
+
         LoggersManagerObject.Log(STREAM("POLYMERASE RNA CONTINUE REACTION"));
 
         auto& ParticleObject = GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first);
@@ -285,16 +287,7 @@ bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNAContinueSpecialReacti
                 MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(ParticleObject, *ParticleObject.LinkedParticlesPointersList[1], 2, 2, 2);
                 MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(*ChosenNucleotide, ParticleObject, 2, 2, 2);
 
-                string SequenceOfLetters = ParticleObject.LinkedParticlesPointersList[0]->SequenceStr;
-                if (SequenceOfLetters.size() % 3 == 0)
-                {
-                    string LastCodon = get<3>(GetNucleotidesSequence(&Particle::Prev, 3, *(ParticleObject.LinkedParticlesPointersList[1]), true, false, [](const Particle* P){ return true; }));
-                    if (CellEngineUseful::IsIn(LastCodon, { "UAG", "UAA", "UGA" }))
-                    {
-                        ParticleObject.LinkedParticlesPointersList[0] = nullptr;
-                        ParticleObject.LinkedParticlesPointersList[1] = nullptr;
-                    }
-                }
+                SequenceOfLettersToCheckFinishSequence = get<3>(GetNucleotidesSequence(&Particle::Prev, MaxLengthOfGene, *(ParticleObject.LinkedParticlesPointersList[1]), true, false, [](const Particle* P){ return true; }));
             }
         }
         else
@@ -316,19 +309,20 @@ bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNAContinueSpecialReacti
                 vector<vector3_16> Centers;
                 EraseParticleChosenForReactionAndGetCentersForNewProductsOfReaction(*ChosenNucleotideIterator, Centers);
 
-                string SequenceOfLetters = ParticleObject.LinkedParticlesPointersList[0]->SequenceStr;
-                if (SequenceOfLetters.size() % 3 == 0)
-                {
-                    string LastCodon = SequenceOfLetters.substr(SequenceOfLetters.length() - 3, 3);
-                    if (CellEngineUseful::IsIn(LastCodon, { "UAG", "UAA", "UGA" }))
-                    {
-                        ParticleObject.LinkedParticlesPointersList[0] = nullptr;
-                        ParticleObject.LinkedParticlesPointersList[1] = nullptr;
-                    }
-                }
+                SequenceOfLettersToCheckFinishSequence = ParticleObject.LinkedParticlesPointersList[0]->SequenceStr;
             }
             else
                 LoggersManagerObject.Log(STREAM("Nucleotide not found - " << NucleotidesFreeFoundInProximity.size()));
+        }
+
+        if (SequenceOfLettersToCheckFinishSequence.size() % 3 == 0)
+        {
+            string LastCodon = SequenceOfLettersToCheckFinishSequence.substr(SequenceOfLettersToCheckFinishSequence.length() - 3, 3);
+            if (CellEngineUseful::IsIn(LastCodon, { "UAG", "UAA", "UGA" }))
+            {
+                ParticleObject.LinkedParticlesPointersList[0] = nullptr;
+                ParticleObject.LinkedParticlesPointersList[1] = nullptr;
+            }
         }
     }
     CATCH("executing polymerase continue dna special reaction function")

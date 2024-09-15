@@ -186,6 +186,7 @@ public:
     int ChosenShapeOfAtoms = 1;
     EntityIdInt DNAIdentifier{};
     EntityIdInt RNAIdentifier{};
+    EntityIdInt ProteinInBuildingProcessIdentifier{};
 public:
     bool RNAInOneParticle = true;
 };

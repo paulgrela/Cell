@@ -43,7 +43,8 @@ enum class ParticlesTypes : UnsignedInt
     DNAPolymerase = 14,
     Ribosome = 15,
     Other = 16,
-    Empty = 17
+    Empty = 17,
+    ProteinInBuildingProcess = 18
 };
 
 class Gene
