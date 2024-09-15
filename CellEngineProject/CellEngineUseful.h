@@ -10,6 +10,12 @@
 
 namespace CellEngineUseful
 {
+    template<typename T>
+    bool IsIn(T first, std::vector<T> values)
+    {
+        return find(values.begin(), values.end(), first) != values.end();
+    }
+
     static void SwitchOffLogs()
     {
         #ifdef SIMULATION_DETAILED_LOG

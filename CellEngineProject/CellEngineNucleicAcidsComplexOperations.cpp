@@ -269,10 +269,6 @@ bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNAContinueSpecialReacti
 
         LoggersManagerObject.Log(STREAM("Letter to find = " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.LinkedParticlesPointersList[1]->ChainId) << " NEXT " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.LinkedParticlesPointersList[1]->Next->ChainId) << " Particle Object Index = " << ParticleObject.Index << " " << ParticlesIndexesChosenForReaction[0].first));
 
-        // JESLI 3 OSTATNIE STANOWIA KODON STOP TO DODAJ KODON I PRZERWIJ
-        // "TAG" 	"TAA" 	"TGA";
-        // "UAG" 	"UAA" 	"UGA";
-
         if (CellEngineConfigDataObject.RNAInOneParticle == false)
         {
             auto ChosenNucleotideIterator = find_if(RNANucleotidesFreeFoundInProximity.cbegin(), RNANucleotidesFreeFoundInProximity.cend(), [this, ParticleObject](const UniqueIdInt &NucleotideParticleIndex){ return &GetParticleFromIndex(NucleotideParticleIndex) != ParticleObject.LinkedParticlesPointersList[0] && GetParticleFromIndex(NucleotideParticleIndex).ChainId == ParticleObject.LinkedParticlesPointersList[1]->ChainId; });
@@ -288,6 +284,17 @@ bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNAContinueSpecialReacti
 
                 MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(ParticleObject, *ParticleObject.LinkedParticlesPointersList[1], 2, 2, 2);
                 MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(*ChosenNucleotide, ParticleObject, 2, 2, 2);
+
+                string SequenceOfLetters = ParticleObject.LinkedParticlesPointersList[0]->SequenceStr;
+                if (SequenceOfLetters.size() % 3 == 0)
+                {
+                    string LastCodon = get<3>(GetNucleotidesSequence(&Particle::Prev, 3, *(ParticleObject.LinkedParticlesPointersList[1]), true, false, [](const Particle* P){ return true; }));
+                    if (CellEngineUseful::IsIn(LastCodon, { "UAG", "UAA", "UGA" }))
+                    {
+                        ParticleObject.LinkedParticlesPointersList[0] = nullptr;
+                        ParticleObject.LinkedParticlesPointersList[1] = nullptr;
+                    }
+                }
             }
         }
         else
@@ -313,8 +320,9 @@ bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNAContinueSpecialReacti
                 if (SequenceOfLetters.size() % 3 == 0)
                 {
                     string LastCodon = SequenceOfLetters.substr(SequenceOfLetters.length() - 3, 3);
-                    if (LastCodon == "UAG" || LastCodon == "UAA" || LastCodon == "UGA")
+                    if (CellEngineUseful::IsIn(LastCodon, { "UAG", "UAA", "UGA" }))
                     {
+                        ParticleObject.LinkedParticlesPointersList[0] = nullptr;
                         ParticleObject.LinkedParticlesPointersList[1] = nullptr;
                     }
                 }
