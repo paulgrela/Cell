@@ -10,6 +10,30 @@
 
 namespace CellEngineUseful
 {
+    template <typename T, typename U>
+    bool all_equal_and(const T &t, const U &u)
+    {
+        return t == u;
+    }
+
+    template <typename T, typename U, typename... Others>
+    bool all_equal_and(const T &t, const U &u, Others const &... args)
+    {
+        return (t == u) && all_equal_and(u, args...);
+    }
+
+    template <typename T, typename U>
+    bool all_equal_or(const T &t, const U &u)
+    {
+        return t == u;
+    }
+
+    template <typename T, typename U, typename... Others>
+    bool all_equal_or(const T &t, const U &u, Others const &... args)
+    {
+        return (t == u) || all_equal_or(u, args...);
+    }
+
     template<typename T>
     bool IsIn(T first, std::vector<T> values)
     {
