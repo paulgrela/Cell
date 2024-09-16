@@ -79,6 +79,7 @@ public:
     vector3_16 Center{};
 public:
     std::string SequenceStr;
+    UnsignedInt PositionInSequence{};
 public:
     void SetCenterCoordinates(PositionInt XCenterParam, PositionInt YCenterParam, PositionInt ZCenterParam)
     {
