@@ -1,6 +1,7 @@
 
 #include "CellEngineConstants.h"
 #include "CellEngineParticle.h"
+#include "CellEngineAminoAcids.h"
 #include "CellEngineNucleicAcidsComplexOperations.h"
 
 bool CellEngineNucleicAcidsComplexOperations::CutDNAInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)

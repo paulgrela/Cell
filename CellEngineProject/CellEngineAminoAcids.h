@@ -14,10 +14,11 @@ public:
     std::string OneLetterCode{};
     std::string Abbreviation{};
     std::string FullName{};
-    std::vector<std::string> Codons{};
     std::string tRNAUncharged{};
     std::string tRNACharged{};
     std::string Name{};
+    std::vector<std::string> CodonsDNA{};
+    std::vector<std::string> CodonsRNA{};
     std::vector<GeneIdInt> GeneID{};
     std::vector<GeneIdInt> SynthaseGeneID{};
     EntityIdInt EntityId;
@@ -25,7 +26,7 @@ public:
     EntityIdInt tRNAChargedNumId{};
 };
 
-constexpr CellEngineAminoAcid Alanine = { "A",	"Ala", 	"Alanine", 	{ "GCA", "GCC", "GCG", "GCT" }, "M_trnaala_c","M_alatrna_c","M_ala__L_c",{ 719 }, { 163 }, 0, 0, 0 };
+const CellEngineAminoAcid Alanine = { "A",	"Ala", 	"Alanine", 	 "M_trnaala_c","M_alatrna_c","M_ala__L_c",{ "GCA", "GCC", "GCG", "GCT" }, { "GCA", "GCC", "GCG", "GCU" }, { 719 }, { 163 }, 0, 0, 0 };
 
 class Asparagine
 {
@@ -43,9 +44,10 @@ class AsparticAcid
 };
 
 // A 	Ala 	Alanine 	GCA, GCC, GCG, GCT
-// B 	Asx 	Asparagine or Aspartic acid 	AAC, AAT, GAC, GAT
+// B 	Asx 	Asparagine  AAC, AAT
 // C 	Cys 	Cysteine 	TGC, TGT
 // D 	Asp 	Aspartic acid 	GAC, GAT
+
 // E 	Glu 	Glutamic acid 	GAA, GAG
 // F 	Phe 	Phenylalanine 	TTC, TTT
 // G 	Gly 	Glycine 	GGA, GGC, GGG, GGT
@@ -67,7 +69,7 @@ class AsparticAcid
 // Z 	Glx 	Glutamine or Glutamic acid 	CAA, CAG, GAA, GAG
 
 
-inline std::unordered_map<std::string, &CellEngineAminoAcid> CellEngineAminoAcids;
+inline std::unordered_map<std::string, const CellEngineAminoAcid*> CellEngineAminoAcids;
 
 void a()
 {
