@@ -388,6 +388,9 @@ bool CellEngineNucleicAcidsComplexOperations::RibosomeTranslationContinueSpecial
             //auto ChosenNucleotideIterator = find_if(tRNAChargedFoundInProximity.cbegin(), tRNAChargedFoundInProximity.cend(), [this, ParticleObject](const UniqueIdInt &tRNAParticleIndex){ return GetParticleFromIndex(tRNAParticleIndex).SequenceStr.c_str()[0] == CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.LinkedParticlesPointersList[1]->SequenceStr[ParticleObject.LinkedParticlesPointersList[1]->PositionInSequence]); });
             //auto ChosenNucleotideIterator = find_if(tRNAChargedFoundInProximity.cbegin(), tRNAChargedFoundInProximity.cend(), [this, ParticleObject](const UniqueIdInt &tRNAParticleIndex){ return GetParticleFromIndex(tRNAParticleIndex).SequenceStr == ParticleObject.LinkedParticlesPointersList[1]->SequenceStr.substr(ParticleObject.LinkedParticlesPointersList[1]->PositionInSequence, 3); });
             //if (ChosenNucleotideIterator != tRNAChargedFoundInProximity.end())
+            auto Codon = ParticleObject.LinkedParticlesPointersList[1]->SequenceStr.substr(ParticleObject.LinkedParticlesPointersList[1]->PositionInSequence, 3);
+            auto ChosenNucleotideIterator = find_if(tRNAChargedFoundInProximity.begin(), tRNAChargedFoundInProximity.end(), [this, Codon](const UniqueIdInt &tRNAParticleIndex){ return CellEngineAminoAcidsManagerObject.IstRNAWithAminoAcidForCodon(GetParticleFromIndex(tRNAParticleIndex).EntityId, Codon); });
+            if (ChosenNucleotideIterator != tRNAChargedFoundInProximity.end())
             {
                 //Particle *ChosenNucleotide = &GetParticleFromIndex(*ChosenNucleotideIterator);
 
@@ -395,10 +398,13 @@ bool CellEngineNucleicAcidsComplexOperations::RibosomeTranslationContinueSpecial
 
                 //DODAJE DO PEPTYDU KOLEJNY AMINOKWAS
                 //ParticleObject.LinkedParticlesPointersList[0]->SequenceStr += CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.LinkedParticlesPointersList[1]->ChainId); //ProteinInBuildingProcess rosnie
-                ParticleObject.LinkedParticlesPointersList[0]->SequenceStr += CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.LinkedParticlesPointersList[1]->SequenceStr[ParticleObject.LinkedParticlesPointersList[1]->PositionInSequence]); //ProteinInBuildingProcess rosnie
+                //ParticleObject.LinkedParticlesPointersList[0]->SequenceStr += CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.LinkedParticlesPointersList[1]->SequenceStr[ParticleObject.LinkedParticlesPointersList[1]->PositionInSequence]); //ProteinInBuildingProcess rosnie
+
+                //ParticleObject.LinkedParticlesPointersList[0]->SequenceStr += CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.LinkedParticlesPointersList[1]->SequenceStr[ParticleObject.LinkedParticlesPointersList[1]->PositionInSequence]); //ProteinInBuildingProcess rosnie
+                ParticleObject.LinkedParticlesPointersList[0]->SequenceStr += Codon; //ProteinInBuildingProcess rosnie
                 LoggersManagerObject.Log(STREAM("SequenceStr = " << ParticleObject.LinkedParticlesPointersList[0]->SequenceStr));
 
-                ParticleObject.LinkedParticlesPointersList[0]->PositionInSequence += 3;
+                ParticleObject.LinkedParticlesPointersList[1]->PositionInSequence += 3;
                 //ParticleObject.LinkedParticlesPointersList[1] = ParticleObject.LinkedParticlesPointersList[1]->Next;
                 //TU USTAWIENIE NA KOLEJNY WSKAZNIK w mRNA
 

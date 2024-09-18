@@ -1,6 +1,7 @@
 
 #include "CellEngineConstants.h"
 #include "CellEngineParticle.h"
+#include "CellEngineAminoAcids.h"
 
 #include "CellEngineParticlesKindsManager.h"
 #include "CellEngineChemicalReactionsInSimulationSpace.h"
@@ -86,7 +87,10 @@ void CellEngineChemicalReactionsInSimulationSpace::UpdateFoundNucleotidesForFoun
         if (CellEngineUseful::IsFreeRNANucleotide(ParticleObject.EntityId) == true)
             RNANucleotidesFullFreeFoundInProximity.emplace_back(ParticleIndex);
 
-
+        if (CellEngineAminoAcidsManagerObject.IstRNAUncharged(ParticleObject.EntityId) == true)
+            tRNAUnchargedFoundInProximity.emplace_back(ParticleIndex);
+        if (CellEngineAminoAcidsManagerObject.IstRNACharged(ParticleObject.EntityId) == true)
+            tRNAChargedFoundInProximity.emplace_back(ParticleIndex);
 
         ParticlesKindsFoundInProximity[ParticleObject.EntityId]++;
     }

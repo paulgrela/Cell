@@ -54,11 +54,6 @@ namespace CellEngineUseful
         #endif
     }
 
-    inline bool IsAminoAcid(const EntityIdInt EntityId)
-    {
-        return true;
-    }
-
     inline bool IsRNANucleotideEqual(const EntityIdInt EntityId,  const ChainIdInt ChainId)
     {
         return ((EntityId == CellEngineConfigDataObject.ATP_ID && ChainId == ACode) || (EntityId == CellEngineConfigDataObject.CTP_ID && ChainId == CCode) || (EntityId == CellEngineConfigDataObject.GTP_ID && ChainId == GCode) || (EntityId == CellEngineConfigDataObject.UTP_ID && ChainId == TCode));

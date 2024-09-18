@@ -22,6 +22,7 @@ protected:
     std::vector<UniqueIdInt> DNANucleotidesFullFreeFoundInProximity;
     std::vector<UniqueIdInt> RNANucleotidesFullFreeFoundInProximity;
     std::vector<UniqueIdInt> tRNAChargedFoundInProximity;
+    std::vector<UniqueIdInt> tRNAUnchargedFoundInProximity;
 protected:
     static bool CompareFitnessOfParticle(const ParticleKindForChemicalReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction);
     void EraseParticleChosenForReactionAndGetCentersForNewProductsOfReaction(UnsignedInt ParticleIndexChosenForReaction, std::vector <vector3_16> &Centers);
