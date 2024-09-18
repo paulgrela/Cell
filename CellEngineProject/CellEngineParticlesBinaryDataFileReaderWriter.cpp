@@ -570,6 +570,19 @@ void CellEngineParticlesBinaryDataFileReaderWriter::PreprocessLinkAndAssociateEv
     CATCH("preprocessing linking and associating every particle kind with proper chemical reaction")
 }
 
+inline void FindNucleotidesIdentifiers()
+{
+    try
+    {
+        CellEngineConfigDataObject.ATP_ID = ParticlesKindsManagerObject.GetParticleKindFromStrId("M_atp_c")->EntityId;
+        CellEngineConfigDataObject.CTP_ID = ParticlesKindsManagerObject.GetParticleKindFromStrId("M_ctp_c")->EntityId;
+        CellEngineConfigDataObject.GTP_ID = ParticlesKindsManagerObject.GetParticleKindFromStrId("M_gtp_c")->EntityId;
+        CellEngineConfigDataObject.TTP_ID = ParticlesKindsManagerObject.GetParticleKindFromStrId("M_ttp_c")->EntityId;
+        CellEngineConfigDataObject.UTP_ID = ParticlesKindsManagerObject.GetParticleKindFromStrId("M_utp_c")->EntityId;
+    }
+    CATCH("finding nucleotides identifiers")
+}
+
 void CellEngineParticlesBinaryDataFileReaderWriter::ReadAllDataFromBinaryFileAndPrepareData(const bool StartValuesBool, const bool UpdateParticleKindListOfVoxelsBool, CellEngineConfigData::TypesOfFileToRead Type)
 {
     try
@@ -590,6 +603,8 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadAllDataFromBinaryFileAnd
         PreprocessLinkAndAssociateEveryParticleKindWithProperChemicalReaction();
 
         CellEngineVoxelSimulationSpaceObjectPointer->AddSpecialParticlesKinds();
+
+        FindNucleotidesIdentifiers();
 
         CellEngineConfigDataObject.GenomeReadFromFile = true;
 

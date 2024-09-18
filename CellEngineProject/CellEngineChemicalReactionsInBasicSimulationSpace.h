@@ -14,9 +14,13 @@ protected:
     std::vector<UniqueIdInt> NucleotidesWithFreePrevEndingsFoundInProximity;
     std::vector<UniqueIdInt> DNANucleotidesWithFreeNextEndingsFoundInProximity;
     std::vector<UniqueIdInt> DNANucleotidesWithFreePrevEndingsFoundInProximity;
+protected:
     std::vector<UniqueIdInt> NucleotidesFreeFoundInProximity;
     std::vector<UniqueIdInt> RNANucleotidesFreeFoundInProximity;
     std::vector<UniqueIdInt> RNANucleotidesFoundInProximity;
+protected:
+    std::vector<UniqueIdInt> DNANucleotidesFullFreeFoundInProximity;
+    std::vector<UniqueIdInt> RNANucleotidesFullFreeFoundInProximity;
     std::vector<UniqueIdInt> tRNAChargedFoundInProximity;
 protected:
     static bool CompareFitnessOfParticle(const ParticleKindForChemicalReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction);
@@ -25,6 +29,7 @@ protected:
     explicit CellEngineChemicalReactionsInBasicSimulationSpace(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : CellEngineBasicParticlesOperations(ParticlesParam)
     {
     }
+    virtual ~CellEngineChemicalReactionsInBasicSimulationSpace() = default;
 };
 
 #endif

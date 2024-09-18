@@ -187,6 +187,11 @@ public:
     EntityIdInt DNAIdentifier{};
     EntityIdInt RNAIdentifier{};
     EntityIdInt ProteinInBuildingProcessIdentifier{};
+    EntityIdInt ATP_ID;
+    EntityIdInt CTP_ID;
+    EntityIdInt GTP_ID;
+    EntityIdInt TTP_ID;
+    EntityIdInt UTP_ID;
 public:
     bool RNAInOneParticle = true;
 };

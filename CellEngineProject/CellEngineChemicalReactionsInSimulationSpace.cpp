@@ -29,13 +29,18 @@ void CellEngineChemicalReactionsInSimulationSpace::MakingZeroSizeForContainersFo
     {
         ParticlesKindsFoundInProximity.clear();
         ParticlesSortedByCapacityFoundInProximity.clear();
+
         NucleotidesWithFreeNextEndingsFoundInProximity.clear();
         NucleotidesWithFreePrevEndingsFoundInProximity.clear();
         DNANucleotidesWithFreeNextEndingsFoundInProximity.clear();
         DNANucleotidesWithFreePrevEndingsFoundInProximity.clear();
+
         NucleotidesFreeFoundInProximity.clear();
         RNANucleotidesFreeFoundInProximity.clear();
         RNANucleotidesFoundInProximity.clear();
+
+        DNANucleotidesFullFreeFoundInProximity.clear();
+        RNANucleotidesFullFreeFoundInProximity.clear();
     }
     CATCH("making zero size for containers for found particles in proximity")
 }
@@ -75,6 +80,13 @@ void CellEngineChemicalReactionsInSimulationSpace::UpdateFoundNucleotidesForFoun
             if (CellEngineUseful::IsRNA(ParticleObject.EntityId))
                 RNANucleotidesFoundInProximity.emplace_back(ParticleIndex);
         }
+
+        if (CellEngineUseful::IsFreeDNANucleotide(ParticleObject.EntityId) == true)
+            DNANucleotidesFullFreeFoundInProximity.emplace_back(ParticleIndex);
+        if (CellEngineUseful::IsFreeRNANucleotide(ParticleObject.EntityId) == true)
+            RNANucleotidesFullFreeFoundInProximity.emplace_back(ParticleIndex);
+
+
 
         ParticlesKindsFoundInProximity[ParticleObject.EntityId]++;
     }
