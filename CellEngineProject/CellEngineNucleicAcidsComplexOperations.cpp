@@ -239,12 +239,13 @@ bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNATranscriptionStartSpe
     {
         LoggersManagerObject.Log(STREAM("POLYMERASE RNA TRANSCRIPTION START REACTION"));
 
-        if (auto& ParticleObject = GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first); RNANucleotidesFreeFoundInProximity.empty() == false && GetParticleFromIndex(RNANucleotidesFreeFoundInProximity[0]).SequenceStr == "" && ParticleObject.LinkedParticlesPointersList.empty() == true)
+        //if (auto& ParticleObject = GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first); RNANucleotidesFreeFoundInProximity.empty() == false && GetParticleFromIndex(RNANucleotidesFreeFoundInProximity[0]).SequenceStr == "" && ParticleObject.LinkedParticlesPointersList.empty() == true)
+        if (auto& ParticleObject = GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first); RNANucleotidesFreeFoundInProximity.empty() == false && ParticleObject.LinkedParticlesPointersList.empty() == true)
         {
             LoggersManagerObject.Log(STREAM("ParticleIndex = " << to_string(ParticlesIndexesChosenForReaction[0].first) << " Nucleotide = " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.ChainId) << " Nucleotide Index = " << ParticleObject.GenomeIndex));
 
             ParticleObject.AddNewLinkToParticle(&GetParticleFromIndex(RNANucleotidesFreeFoundInProximity[0]));
-            ParticleObject.LinkedParticlesPointersList[0]->SequenceStr = RNAStartSequence;
+            //ParticleObject.LinkedParticlesPointersList[0]->SequenceStr = RNAStartSequence;
             ParticleObject.AddNewLinkToParticle(GoSomeNucleotides(&Particle::Next, ReactionObject.Reactants[1].SequenceStr.length(), *GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first).Next));
 
             MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(ParticleObject, *ParticleObject.LinkedParticlesPointersList[1], 2, 2, 2);
@@ -332,8 +333,8 @@ bool CellEngineNucleicAcidsComplexOperations::RibosomeTranslationStartSpecialRea
         {
             LoggersManagerObject.Log(STREAM("ParticleIndex = " << to_string(ParticlesIndexesChosenForReaction[0].first) << " Nucleotide = " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.ChainId) << " Nucleotide Index = " << ParticleObject.GenomeIndex));
 
-            ParticleObject.AddNewLinkToParticle(&GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first));
             ParticleObject.AddNewLinkToParticle(&GetParticleFromIndex(ParticlesIndexesChosenForReaction[1].first));
+            ParticleObject.AddNewLinkToParticle(&GetParticleFromIndex(ParticlesIndexesChosenForReaction[2].first));
 
             MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(ParticleObject, *ParticleObject.LinkedParticlesPointersList[1], 2, 2, 2);
             MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(GetParticleFromIndex(RNANucleotidesFreeFoundInProximity[0]), ParticleObject, 2, 2, 2);

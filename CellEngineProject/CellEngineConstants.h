@@ -40,6 +40,6 @@ constexpr ChainIdInt VCode = 30;
 
 constexpr ChainIdInt NCode = 31;
 
-constexpr std::string RNAStartSequence = "ACGTAGCTA";
+constexpr std::string RNAStartSequence = "ACGUACGU";
 
 #endif

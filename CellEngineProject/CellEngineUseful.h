@@ -215,6 +215,9 @@ namespace CellEngineUseful
         if (LetterIUPAC == TCode && LetterToCheck == TCode)
             return true;
 
+        if (LetterIUPAC == UCode && LetterToCheck == UCode)
+            return true;
+
         if (LetterIUPAC == RCode && (LetterToCheck == ACode || LetterToCheck == GCode))
             return true;
 

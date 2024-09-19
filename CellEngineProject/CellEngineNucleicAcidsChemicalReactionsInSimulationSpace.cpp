@@ -47,11 +47,14 @@ tuple<vector<ChainIdInt>, string> CellEngineNucleicAcidsChemicalReactionsInSimul
     {
         TemplateSequenceStr = GetParticleFromIndex(*RNANucleotidesFoundInProximity.begin()).SequenceStr;
 
+                    LoggersManagerObject.Log(STREAM("RNA SEQUENCE1 = " << TemplateSequenceStr));
         for (auto &TemplateSequenceNucleotideChar: TemplateSequenceStr)
             TemplateSequenceNucleotideChar = CellEngineUseful::GetLetterFromChainIdForDNAorRNA(CellEngineUseful::GetPairedChainIdForDNAorRNA(CellEngineUseful::GetChainIdFromLetterForDNAorRNA(TemplateSequenceNucleotideChar)));
 
         for (auto &TemplateSequenceNucleotideChar: TemplateSequenceStr)
             TemplateSequence.emplace_back(CellEngineUseful::GetChainIdFromLetterForDNAorRNA(TemplateSequenceNucleotideChar));
+
+                    LoggersManagerObject.Log(STREAM("RNA SEQUENCE2 = " << TemplateSequenceStr));
     }
     CATCH("getting nucleotides sequence in both directions")
 
