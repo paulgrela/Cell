@@ -2,6 +2,7 @@
 #ifndef CELL_ENGINE_CONSTANTS_H
 #define CELL_ENGINE_CONSTANTS_H
 
+#include <string>
 #include "CellEngineTypes.h"
 
 #define EXTENDED_RAM_MEMORY_
@@ -38,5 +39,7 @@ constexpr ChainIdInt HCode = 29;
 constexpr ChainIdInt VCode = 30;
 
 constexpr ChainIdInt NCode = 31;
+
+constexpr std::string RNAStartSequence = "ACGTAGCTA";
 
 #endif

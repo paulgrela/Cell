@@ -74,7 +74,7 @@ void CellEngineChemicalReactionsInSimulationSpace::UpdateFoundNucleotidesForFoun
         }
         else
         {
-            if (CellEngineUseful::IsRNA(ParticleObject.EntityId) && ParticleObject.SequenceStr.length() == 1)
+            if (CellEngineUseful::IsRNA(ParticleObject.EntityId) && ParticleObject.SequenceStr.length() == 0)
                 RNANucleotidesFreeFoundInProximity.emplace_back(ParticleIndex);
             if (CellEngineUseful::IsDNA(ParticleObject.EntityId) && ParticleObject.Next == nullptr && ParticleObject.Prev == nullptr)
                 NucleotidesFreeFoundInProximity.emplace_back(ParticleIndex);

@@ -59,6 +59,11 @@ namespace CellEngineUseful
         return ((EntityId == CellEngineConfigDataObject.ATP_ID && ChainId == ACode) || (EntityId == CellEngineConfigDataObject.CTP_ID && ChainId == CCode) || (EntityId == CellEngineConfigDataObject.GTP_ID && ChainId == GCode) || (EntityId == CellEngineConfigDataObject.UTP_ID && ChainId == TCode));
     }
 
+    inline bool IsRNANucleotidePairedForRNAEqual(const EntityIdInt EntityId,  const ChainIdInt ChainId)
+    {
+        return ((EntityId == CellEngineConfigDataObject.ATP_ID && ChainId == TCode) || (EntityId == CellEngineConfigDataObject.CTP_ID && ChainId == GCode) || (EntityId == CellEngineConfigDataObject.GTP_ID && ChainId == CCode) || (EntityId == CellEngineConfigDataObject.UTP_ID && ChainId == ACode));
+    }
+
     inline bool IsFreeDNANucleotide(const EntityIdInt EntityId)
     {
         return (EntityId == CellEngineConfigDataObject.ATP_ID || EntityId == CellEngineConfigDataObject.CTP_ID || EntityId == CellEngineConfigDataObject.GTP_ID || EntityId == CellEngineConfigDataObject.TTP_ID);
@@ -67,6 +72,22 @@ namespace CellEngineUseful
     inline bool IsFreeRNANucleotide(const EntityIdInt EntityId)
     {
         return (EntityId == CellEngineConfigDataObject.ATP_ID || EntityId == CellEngineConfigDataObject.CTP_ID || EntityId == CellEngineConfigDataObject.GTP_ID || EntityId == CellEngineConfigDataObject.UTP_ID);
+    }
+
+    inline char GetLetterFromNucleotidePairedForRNA(const EntityIdInt EntityId)
+    {
+        if (EntityId == CellEngineConfigDataObject.ATP_ID)
+            return 'U';
+        if (EntityId == CellEngineConfigDataObject.CTP_ID)
+            return 'G';
+        if (EntityId == CellEngineConfigDataObject.GTP_ID)
+            return 'C';
+        if (EntityId == CellEngineConfigDataObject.TTP_ID)
+            return 'A';
+        if (EntityId == CellEngineConfigDataObject.UTP_ID)
+            return 'U';
+
+        return 'I';
     }
 
     inline char GetLetterFromNucleotideForDNAorRNA(const EntityIdInt EntityId)
