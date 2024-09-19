@@ -27,7 +27,7 @@ protected:
     explicit CellEngineNucleicAcidsComplexOperations(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : CellEngineChemicalReactionsInBasicSimulationSpace(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam)
     {
     }
-    virtual ~CellEngineNucleicAcidsComplexOperations() = default;
+    ~CellEngineNucleicAcidsComplexOperations() override = default;
 };
 
 

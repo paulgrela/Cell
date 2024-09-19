@@ -65,7 +65,7 @@ protected:
                 UnsignedInt TestedPosX = VoxelOfParticle.X + VectorX;
                 UnsignedInt TestedPosY = VoxelOfParticle.Y + VectorY;
                 UnsignedInt TestedPosZ = VoxelOfParticle.Z + VectorZ;
-                if (GetSpaceVoxel(TestedPosX, TestedPosY, TestedPosZ + VectorZ) != GetZeroSimulationSpaceVoxel() && GetSpaceVoxel(TestedPosX, TestedPosY, TestedPosZ) != ParticleObject.Index)
+                if (GetSpaceVoxel(TestedPosX, TestedPosY, TestedPosZ) != GetZeroSimulationSpaceVoxel() && GetSpaceVoxel(TestedPosX, TestedPosY, TestedPosZ) != ParticleObject.Index)
                     return false;
             }
         }

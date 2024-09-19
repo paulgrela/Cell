@@ -965,6 +965,11 @@ public:
             if (ImGui::Button(AlignString("DO CHOSEN REACTION IN SELECTED SPACE-POLYMERASE DNA CONTINUE SPACE NR = 160", StringLength, PrefixStringLength).c_str()) == true)
                 CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateChosenReactionForSelectedSpace(160, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
 
+            if (ImGui::Button(AlignString("DO CHOSEN REACTION IN SELECTED SPACE-POLYMERASE DNA START SEQ SPACE NR = 170", StringLength, PrefixStringLength).c_str()) == true)
+                CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateChosenReactionForSelectedSpace(170, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
+            if (ImGui::Button(AlignString("DO CHOSEN REACTION IN SELECTED SPACE-POLYMERASE DNA CONTINUE SPACE NR = 180", StringLength, PrefixStringLength).c_str()) == true)
+                CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateChosenReactionForSelectedSpace(180, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
+
             if (ImGui::Button(AlignString("CLOSE", StringLength, PrefixStringLength).c_str()) == true)
                 *OpenMenuChemicalReactionsWindow = false;
 

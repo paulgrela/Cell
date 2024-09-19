@@ -382,9 +382,6 @@ bool CellEngineNucleicAcidsComplexOperations::RibosomeTranslationContinueSpecial
         {
             //findif - musi byc znalezione tRNA czyli tablia co spisuje czastki zaladowanego trna i pasuje do mRNA
             //wenatrz porownania musi byc dopsowanie do kodonow 3kowych czyli to w osobnej funkcji
-            //auto ChosenNucleotideIterator = find_if(tRNAChargedFoundInProximity.cbegin(), tRNAChargedFoundInProximity.cend(), [this, ParticleObject](const UniqueIdInt &tRNAParticleIndex){ return GetParticleFromIndex(tRNAParticleIndex).SequenceStr.c_str()[0] == CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.LinkedParticlesPointersList[1]->SequenceStr[ParticleObject.LinkedParticlesPointersList[1]->PositionInSequence]); });
-            //auto ChosenNucleotideIterator = find_if(tRNAChargedFoundInProximity.cbegin(), tRNAChargedFoundInProximity.cend(), [this, ParticleObject](const UniqueIdInt &tRNAParticleIndex){ return GetParticleFromIndex(tRNAParticleIndex).SequenceStr == ParticleObject.LinkedParticlesPointersList[1]->SequenceStr.substr(ParticleObject.LinkedParticlesPointersList[1]->PositionInSequence, 3); });
-            //if (ChosenNucleotideIterator != tRNAChargedFoundInProximity.end())
             auto Codon = ParticleObject.LinkedParticlesPointersList[1]->SequenceStr.substr(ParticleObject.LinkedParticlesPointersList[1]->PositionInSequence, 3);
             auto ChosenNucleotideIterator = find_if(tRNAChargedFoundInProximity.begin(), tRNAChargedFoundInProximity.end(), [this, Codon](const UniqueIdInt &tRNAParticleIndex){ return CellEngineAminoAcidsManagerObject.IstRNAWithAminoAcidForCodon(GetParticleFromIndex(tRNAParticleIndex).EntityId, Codon); });
             if (ChosenNucleotideIterator != tRNAChargedFoundInProximity.end())
