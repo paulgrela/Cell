@@ -544,7 +544,7 @@ string CellEngineOpenGLVisualiser::GetEntityName(const UnsignedInt EntityId)
     {
         auto EntityIterator = ParticlesKindsManagerObject.ParticlesKinds.find(EntityId);
         if (EntityIterator != ParticlesKindsManagerObject.ParticlesKinds.end())
-            EntityName = EntityIterator->second.GraphicData.NameFromDataFile;
+            EntityName = EntityIterator->second.IdStr + " " + EntityIterator->second.GraphicData.NameFromDataFile;
         else
             EntityName = "";
     }

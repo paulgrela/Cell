@@ -327,7 +327,10 @@ bool CellEngineNucleicAcidsComplexOperations::RibosomeTranslationStartSpecialRea
 
         if (auto& ParticleObject = GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first); ParticleObject.LinkedParticlesPointersList.empty() == true)
         {
-            LoggersManagerObject.Log(STREAM("ParticleIndex = " << to_string(ParticlesIndexesChosenForReaction[0].first) << " Nucleotide = " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.ChainId) << " Nucleotide Index = " << ParticleObject.GenomeIndex));
+            LoggersManagerObject.Log(STREAM("ParticleIndex1 = " << to_string(ParticlesIndexesChosenForReaction[0].first) << " Particle Type = " << ParticlesKindsManagerObject.GetParticleKind(GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first).EntityId).IdStr));
+            LoggersManagerObject.Log(STREAM("ParticleIndex1 = " << to_string(ParticlesIndexesChosenForReaction[1].first) << " Particle Type = " << ParticlesKindsManagerObject.GetParticleKind(GetParticleFromIndex(ParticlesIndexesChosenForReaction[1].first).EntityId).IdStr));
+            LoggersManagerObject.Log(STREAM("ParticleIndex2 = " << to_string(ParticlesIndexesChosenForReaction[2].first) << " Particle Type = " << ParticlesKindsManagerObject.GetParticleKind(GetParticleFromIndex(ParticlesIndexesChosenForReaction[2].first).EntityId).IdStr));
+            LoggersManagerObject.Log(STREAM("ParticleIndex2 = " << to_string(ParticlesIndexesChosenForReaction[3].first) << " Particle Type = " << ParticlesKindsManagerObject.GetParticleKind(GetParticleFromIndex(ParticlesIndexesChosenForReaction[3].first).EntityId).IdStr));
 
             ParticleObject.AddNewLinkToParticle(&GetParticleFromIndex(ParticlesIndexesChosenForReaction[1].first));
             ParticleObject.AddNewLinkToParticle(&GetParticleFromIndex(ParticlesIndexesChosenForReaction[2].first));
@@ -351,8 +354,8 @@ bool CellEngineNucleicAcidsComplexOperations::RibosomeTranslationContinueSpecial
 
         auto& ParticleObject = GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first);
 
-        // for (const auto &NucleotideFree: NucleotidesFreeFoundInProximity)
-        //     LoggersManagerObject.Log(STREAM("FOUND FREE NUCLEOTIDES = " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(GetParticleFromIndex(NucleotideFree).ChainId)));
+        for (const auto &tRNAChargedFree: tRNAChargedFoundInProximity)
+            LoggersManagerObject.Log(STREAM("FOUND FREE CHARGED TRNA = " << ParticlesKindsManagerObject.GetParticleKind(GetParticleFromIndex(tRNAChargedFree).EntityId).IdStr));
 
         LoggersManagerObject.Log(STREAM("Letter to find = " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.LinkedParticlesPointersList[1]->ChainId) << " NEXT " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.LinkedParticlesPointersList[1]->Next->ChainId) << " Particle Object Index = " << ParticleObject.Index << " " << ParticlesIndexesChosenForReaction[0].first));
 
@@ -377,48 +380,33 @@ bool CellEngineNucleicAcidsComplexOperations::RibosomeTranslationContinueSpecial
         }
         else
         {
-            //findif - musi byc znalezione tRNA czyli tablia co spisuje czastki zaladowanego trna i pasuje do mRNA
-            //wenatrz porownania musi byc dopsowanie do kodonow 3kowych czyli to w osobnej funkcji
-            auto Codon = ParticleObject.LinkedParticlesPointersList[1]->SequenceStr.substr(ParticleObject.LinkedParticlesPointersList[1]->PositionInSequence, 3);
-            auto ChosenNucleotideIterator = find_if(tRNAChargedFoundInProximity.begin(), tRNAChargedFoundInProximity.end(), [this, Codon](const UniqueIdInt &tRNAParticleIndex){ return CellEngineAminoAcidsManagerObject.IstRNAWithAminoAcidForCodon(GetParticleFromIndex(tRNAParticleIndex).EntityId, Codon); });
-            if (ChosenNucleotideIterator != tRNAChargedFoundInProximity.end())
+            auto Codon = ParticleObject.LinkedParticlesPointersList[2]->SequenceStr.substr(RNAStartSequence.length() + ParticleObject.LinkedParticlesPointersList[2]->PositionInSequence, 3);
+            auto ChosentRNAChargedIterator = find_if(tRNAChargedFoundInProximity.begin(), tRNAChargedFoundInProximity.end(), [this, Codon](const UniqueIdInt &tRNAParticleIndex){ return CellEngineAminoAcidsManagerObject.IstRNAWithAminoAcidForCodon(GetParticleFromIndex(tRNAParticleIndex).EntityId, Codon); });
+            if (ChosentRNAChargedIterator != tRNAChargedFoundInProximity.end())
             {
-                //Particle *ChosenNucleotide = &GetParticleFromIndex(*ChosenNucleotideIterator);
-
-                //LoggersManagerObject.Log(STREAM("Letter to compare = " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ChosenNucleotide->ChainId) << " " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.LinkedParticlesPointersList[1]->ChainId) << " NEXT " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.LinkedParticlesPointersList[1]->Next->ChainId)));
-
-                //DODAJE DO PEPTYDU KOLEJNY AMINOKWAS
-                //ParticleObject.LinkedParticlesPointersList[0]->SequenceStr += CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.LinkedParticlesPointersList[1]->ChainId); //ProteinInBuildingProcess rosnie
-                //ParticleObject.LinkedParticlesPointersList[0]->SequenceStr += CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.LinkedParticlesPointersList[1]->SequenceStr[ParticleObject.LinkedParticlesPointersList[1]->PositionInSequence]); //ProteinInBuildingProcess rosnie
-
-                //ParticleObject.LinkedParticlesPointersList[0]->SequenceStr += CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.LinkedParticlesPointersList[1]->SequenceStr[ParticleObject.LinkedParticlesPointersList[1]->PositionInSequence]); //ProteinInBuildingProcess rosnie
-                ParticleObject.LinkedParticlesPointersList[0]->SequenceStr += Codon; //ProteinInBuildingProcess rosnie
-                LoggersManagerObject.Log(STREAM("SequenceStr = " << ParticleObject.LinkedParticlesPointersList[0]->SequenceStr));
-
+                //ParticleObject.LinkedParticlesPointersList[1]->SequenceStr += Codon + "(" + ParticlesKindsManagerObject.GetParticleKind(GetParticleFromIndex(*ChosentRNAChargedIterator).EntityId).IdStr + ")";
+                ParticleObject.LinkedParticlesPointersList[1]->SequenceStr += Codon;
                 ParticleObject.LinkedParticlesPointersList[1]->PositionInSequence += 3;
-                //ParticleObject.LinkedParticlesPointersList[1] = ParticleObject.LinkedParticlesPointersList[1]->Next;
-                //TU USTAWIENIE NA KOLEJNY WSKAZNIK w mRNA
+                LoggersManagerObject.Log(STREAM("SequenceStr = " << ParticleObject.LinkedParticlesPointersList[1]->SequenceStr));
 
                 MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(ParticleObject, *ParticleObject.LinkedParticlesPointersList[1], 2, 2, 2);
                 MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(*ParticleObject.LinkedParticlesPointersList[0], *ParticleObject.LinkedParticlesPointersList[1], 2, 2, 2);
                 vector<vector3_16> Centers;
-                //EraseParticleChosenForReactionAndGetCentersForNewProductsOfReaction(*ChosenNucleotideIterator, Centers);
+                EraseParticleChosenForReactionAndGetCentersForNewProductsOfReaction(*ChosentRNAChargedIterator, Centers);
 
                 SequenceOfLettersToCheckFinishSequence = ParticleObject.LinkedParticlesPointersList[0]->SequenceStr;
             }
-            //else
-            //    LoggersManagerObject.Log(STREAM("Nucleotide not found - " << NucleotidesFreeFoundInProximity.size()));
+            else
+                LoggersManagerObject.Log(STREAM("trna not found - " << NucleotidesFreeFoundInProximity.size()));
         }
 
-        if (SequenceOfLettersToCheckFinishSequence.size() % 3 == 0)
-        {
-            string LastCodon = SequenceOfLettersToCheckFinishSequence.substr(SequenceOfLettersToCheckFinishSequence.length() - 3, 3);
-            if (CellEngineUseful::IsIn(LastCodon, { "UAG", "UAA", "UGA" }))
+        if (SequenceOfLettersToCheckFinishSequence.length() > 0 && SequenceOfLettersToCheckFinishSequence.size() % 3 == 0)
+            if (CellEngineUseful::IsIn(SequenceOfLettersToCheckFinishSequence.substr(SequenceOfLettersToCheckFinishSequence.length() - 3, 3), { "UAG", "UAA", "UGA" }))
             {
-                ParticleObject.LinkedParticlesPointersList[0] = nullptr;
-                ParticleObject.LinkedParticlesPointersList[1] = nullptr;
+                ParticleObject.LinkedParticlesPointersList.clear();
+
+                LoggersManagerObject.Log(STREAM("DETACHED FROM RNA AND PROTEIN AFTER PROCESS OF TRANSLATION"));
             }
-        }
     }
     CATCH("executing ribosome continue dna translation special reaction function")
 

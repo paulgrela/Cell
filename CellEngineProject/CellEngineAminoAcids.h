@@ -29,7 +29,7 @@ public:
 
 class CellEngineAminoAcidsManager
 {
-    const CellEngineAminoAcid Alanine = { "A", "Ala", 	"Alanine", 	 "M_trnaala_c","M_alatrna_c","M_ala__L_c",{ "GCA", "GCC", "GCG", "GCT" }, { "GCA", "GCC", "GCG", "GCU" }, { 719 }, { 163 }, 0, 0, 0 };
+    const CellEngineAminoAcid Alanine = { "A", "Ala", "Alanine", "M_trnaala_c","M_alatrna_c","M_ala__L_c",{ "GCA", "GCC", "GCG", "GCT" }, { "GCA", "GCC", "GCG", "GCU" }, { 719 }, { 163 }, 0, 0, 0 };
     const CellEngineAminoAcid Arginine = { "R", "Arg", "Arginine", "M_trnaarg_c", "M_argtrna_c",	"M_arg__L_c", { "AGA", "AGG", "CGA", "CGC", "CGG", "CGT" }, { "AGA", "AGG", "CGA", "CGC", "CGG", "CGU" }, {374, 717 }, { 535 }, 0, 0, 0 };
     const CellEngineAminoAcid Asparagine = { "N", "Asn", "Asparagine", "M_trnaasn_c", "M_asntrna_c", "M_asn__L_c",{ "AAC", "AAT" }, { "AAC", "AAU" }, { 681 }, { 76 }, 0, 0, 0 };
     const CellEngineAminoAcid AsparticAcid = { "D", "Asp", "AsparticAcid", "M_trnaasp_c" ,"M_asptrna_c", "M_asp__L_c", { "GAC", "GAT" }, { "GAC", "GAU" }, { 724 }, { 287 }, 0, 0, 0 };
