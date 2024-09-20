@@ -239,13 +239,11 @@ bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNATranscriptionStartSpe
     {
         LoggersManagerObject.Log(STREAM("POLYMERASE RNA TRANSCRIPTION START REACTION"));
 
-        //if (auto& ParticleObject = GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first); RNANucleotidesFreeFoundInProximity.empty() == false && GetParticleFromIndex(RNANucleotidesFreeFoundInProximity[0]).SequenceStr == "" && ParticleObject.LinkedParticlesPointersList.empty() == true)
         if (auto& ParticleObject = GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first); RNANucleotidesFreeFoundInProximity.empty() == false && ParticleObject.LinkedParticlesPointersList.empty() == true)
         {
             LoggersManagerObject.Log(STREAM("ParticleIndex = " << to_string(ParticlesIndexesChosenForReaction[0].first) << " Nucleotide = " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.ChainId) << " Nucleotide Index = " << ParticleObject.GenomeIndex));
 
             ParticleObject.AddNewLinkToParticle(&GetParticleFromIndex(RNANucleotidesFreeFoundInProximity[0]));
-            //ParticleObject.LinkedParticlesPointersList[0]->SequenceStr = RNAStartSequence;
             ParticleObject.AddNewLinkToParticle(GoSomeNucleotides(&Particle::Next, ReactionObject.Reactants[1].SequenceStr.length(), *GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first).Next));
 
             MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(ParticleObject, *ParticleObject.LinkedParticlesPointersList[1], 2, 2, 2);
@@ -309,14 +307,12 @@ bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNATranscriptionContinue
             LoggersManagerObject.Log(STREAM("Nucleotide not found - " << NucleotidesFreeFoundInProximity.size()));
 
         if (SequenceOfLettersToCheckFinishSequence.length() > 0 && SequenceOfLettersToCheckFinishSequence.length() % 3 == 0)
-        {
-            string LastCodon = SequenceOfLettersToCheckFinishSequence.substr(SequenceOfLettersToCheckFinishSequence.length() - 3, 3);
-            if (CellEngineUseful::IsIn(LastCodon, { "UAG", "UAA", "UGA" }))
+            if (CellEngineUseful::IsIn(SequenceOfLettersToCheckFinishSequence.substr(SequenceOfLettersToCheckFinishSequence.length() - 3, 3), { "UAG", "UAA", "UGA" }))
             {
-                ParticleObject.LinkedParticlesPointersList[0] = nullptr;
-                ParticleObject.LinkedParticlesPointersList[1] = nullptr;
+                ParticleObject.LinkedParticlesPointersList.clear();
+
+                LoggersManagerObject.Log(STREAM("DETACHED FROM DNA AND RNA AFTER PROCESS OF TRANSCRIPTION"));
             }
-        }
     }
     CATCH("executing polymerase continue dna transcription special reaction function")
 
@@ -329,15 +325,15 @@ bool CellEngineNucleicAcidsComplexOperations::RibosomeTranslationStartSpecialRea
     {
         LoggersManagerObject.Log(STREAM("RIBOSOME TRANSLATION START REACTION"));
 
-        if (auto &ParticleObject = GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first); RNANucleotidesFreeFoundInProximity.empty() == false && ParticleObject.LinkedParticlesPointersList.empty() == true)
+        if (auto& ParticleObject = GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first); ParticleObject.LinkedParticlesPointersList.empty() == true)
         {
             LoggersManagerObject.Log(STREAM("ParticleIndex = " << to_string(ParticlesIndexesChosenForReaction[0].first) << " Nucleotide = " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.ChainId) << " Nucleotide Index = " << ParticleObject.GenomeIndex));
 
             ParticleObject.AddNewLinkToParticle(&GetParticleFromIndex(ParticlesIndexesChosenForReaction[1].first));
             ParticleObject.AddNewLinkToParticle(&GetParticleFromIndex(ParticlesIndexesChosenForReaction[2].first));
 
-            MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(ParticleObject, *ParticleObject.LinkedParticlesPointersList[1], 2, 2, 2);
-            MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(GetParticleFromIndex(RNANucleotidesFreeFoundInProximity[0]), ParticleObject, 2, 2, 2);
+            MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(GetParticleFromIndex(ParticlesIndexesChosenForReaction[2].first), ParticleObject, 2, 2, 2);
+            MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(ParticleObject, GetParticleFromIndex(ParticlesIndexesChosenForReaction[1].first), 2, 2, 2);
         }
     }
     CATCH("executing ribosome start dna translation special reaction function")
