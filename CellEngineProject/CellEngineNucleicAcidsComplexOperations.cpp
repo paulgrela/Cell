@@ -254,7 +254,6 @@ bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNATranscriptionStartSpe
 
             ParticleObject.AddNewLinkToParticle(&GetParticleFromIndex(RNANucleotidesFreeFoundInProximity[0]));
             ParticleObject.AddNewLinkToParticle(GoSomeNucleotides(&Particle::Next, ReactionObject.Reactants[1].SequenceStr.length(), *GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first).Next));
-            //ParticleObject.AddNewLinkToParticle(GoSomeNucleotides(&Particle::Next, ReactionObject.Reactants[1].SequenceStr.length(), *GetParticleFromIndex(LocalParticlesIndexesChosenForReaction[1].first).Next));
 
             MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(ParticleObject, *ParticleObject.LinkedParticlesPointersList[1], 2, 2, 2);
             MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(*ParticleObject.LinkedParticlesPointersList[0], ParticleObject, 2, 2, 2);
@@ -335,31 +334,23 @@ bool CellEngineNucleicAcidsComplexOperations::RibosomeTranslationStartSpecialRea
     {
         LoggersManagerObject.Log(STREAM("RIBOSOME TRANSLATION START REACTION"));
 
-        //if (auto& ParticleObject = GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first); ParticleObject.LinkedParticlesPointersList.empty() == true)
-        //UniqueIdInt ParticleIndexForRibosome = ParticlesIndexesChosenForReaction.;
-
         auto LocalParticlesIndexesChosenForReaction(ParticlesIndexesChosenForReaction);
 
-        //for (UnsignedInt ParticleChosenForReactionIndex = 0; ParticleChosenForReactionIndex < 4; ParticleChosenForReactionIndex++)
-        //    LoggersManagerObject.Log(STREAM("ParticleIndexA" << (ParticleChosenForReactionIndex + 1) << " = " << to_string(LocalParticlesIndexesChosenForReaction[ParticleChosenForReactionIndex].first) << " " << to_string(LocalParticlesIndexesChosenForReaction[ParticleChosenForReactionIndex].second) << " Particle Type = " << ParticlesKindsManagerObject.GetParticleKind(GetParticleFromIndex(LocalParticlesIndexesChosenForReaction[ParticleChosenForReactionIndex].first).EntityId).IdStr));
         for (const auto& ParticleChosenForReactionObject : LocalParticlesIndexesChosenForReaction)
-            LoggersManagerObject.Log(STREAM("ParticleIndex = " << to_string(ParticleChosenForReactionObject.first) << " " << to_string(ParticleChosenForReactionObject.second) << " Particle Type = " << ParticlesKindsManagerObject.GetParticleKind(GetParticleFromIndex(ParticleChosenForReactionObject.first).EntityId).IdStr));
+            LoggersManagerObject.Log(STREAM("ParticleIndexA = " << to_string(ParticleChosenForReactionObject.first) << " " << to_string(ParticleChosenForReactionObject.second) << " Particle Type = " << ParticlesKindsManagerObject.GetParticleKind(GetParticleFromIndex(ParticleChosenForReactionObject.first).EntityId).IdStr));
 
         sort(LocalParticlesIndexesChosenForReaction.begin(), LocalParticlesIndexesChosenForReaction.end(), [](const auto& PK1, const auto& PK2) { return PK1.second < PK2.second; });
 
         if (auto& ParticleObject = GetParticleFromIndex(LocalParticlesIndexesChosenForReaction[0].first); ParticleObject.LinkedParticlesPointersList.empty() == true)
         {
-            //for (UnsignedInt ParticleChosenForReactionIndex = 0; ParticleChosenForReactionIndex < 4; ParticleChosenForReactionIndex++)
             for (const auto& ParticleChosenForReactionObject : LocalParticlesIndexesChosenForReaction)
-                LoggersManagerObject.Log(STREAM("ParticleIndex = " << to_string(ParticleChosenForReactionObject.first) << " " << to_string(ParticleChosenForReactionObject.second) << " Particle Type = " << ParticlesKindsManagerObject.GetParticleKind(GetParticleFromIndex(ParticleChosenForReactionObject.first).EntityId).IdStr));
+                LoggersManagerObject.Log(STREAM("ParticleIndexB = " << to_string(ParticleChosenForReactionObject.first) << " " << to_string(ParticleChosenForReactionObject.second) << " Particle Type = " << ParticlesKindsManagerObject.GetParticleKind(GetParticleFromIndex(ParticleChosenForReactionObject.first).EntityId).IdStr));
 
-            //ParticleObject.AddNewLinkToParticle(&GetParticleFromIndex(ParticlesIndexesChosenForReaction[1].first));
-            //ParticleObject.AddNewLinkToParticle(&GetParticleFromIndex(ParticlesIndexesChosenForReaction[2].first));
             ParticleObject.AddNewLinkToParticle(&GetParticleFromIndex(LocalParticlesIndexesChosenForReaction[1].first));
-            ParticleObject.AddNewLinkToParticle(&GetParticleFromIndex(LocalParticlesIndexesChosenForReaction[2].first));
+            ParticleObject.AddNewLinkToParticle(&GetParticleFromIndex(RNANucleotidesFreeFoundInProximity[0]));
 
-            MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(GetParticleFromIndex(LocalParticlesIndexesChosenForReaction[2].first), ParticleObject, 2, 2, 2);
-            MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(ParticleObject, GetParticleFromIndex(LocalParticlesIndexesChosenForReaction[1].first), 2, 2, 2);
+            MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(*ParticleObject.LinkedParticlesPointersList[0], ParticleObject, 2, 2, 2);
+            MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(*ParticleObject.LinkedParticlesPointersList[1], ParticleObject, 2, 2, 2);
         }
     }
     CATCH("executing ribosome start dna translation special reaction function")

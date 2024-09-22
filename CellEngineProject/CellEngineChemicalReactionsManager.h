@@ -39,16 +39,11 @@ public:
     }
 public:
     static std::string GetStringOfSortedParticlesDataNames(const std::vector<ParticleKindForChemicalReaction>& ReactionArguments)
-    // static std::string GetStringOfSortedParticlesDataNames(std::vector<ParticleKindForChemicalReaction>& LocalData)
     {
         std::string KeyStringOfReaction;
 
         try
         {
-            // sort(LocalData.begin(), LocalData.end(), [](const ParticleKindForChemicalReaction& P1, const ParticleKindForChemicalReaction& P2){ return ParticlesKindsManagerObject.GetParticleKind(P1.EntityId).Formula < ParticlesKindsManagerObject.GetParticleKind(P2.EntityId).Formula; } );
-            //  for (const auto& LocalReactant : LocalData)
-            //      KeyStringOfReaction += ParticlesKindsManagerObject.GetParticleKind(LocalReactant.EntityId).Formula + "+";
-
             auto LocalReactionArguments(ReactionArguments);
             sort(LocalReactionArguments.begin(), LocalReactionArguments.end(), [](const ParticleKindForChemicalReaction& P1, const ParticleKindForChemicalReaction& P2){ return ParticlesKindsManagerObject.GetParticleKind(P1.EntityId).IdStr < ParticlesKindsManagerObject.GetParticleKind(P2.EntityId).IdStr; } );
             for (const auto& LocalReactant : LocalReactionArguments)

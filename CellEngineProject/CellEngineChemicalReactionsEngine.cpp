@@ -18,8 +18,8 @@ bool CellEngineChemicalReactionsEngine::TryToMakeRandomChemicalReaction(Unsigned
         vector<UnsignedInt> RandomParticlesTypes = GetRandomParticles(NumberOfReactants, MaxNumberOfReactants);
 
         sort(begin(RandomParticlesTypes), end(RandomParticlesTypes));
-        auto IteratorUnique = unique(begin(RandomParticlesTypes), end(RandomParticlesTypes));
-        if (IteratorUnique == RandomParticlesTypes.end())
+
+        if (auto IteratorUnique = unique(begin(RandomParticlesTypes), end(RandomParticlesTypes)); IteratorUnique == RandomParticlesTypes.end())
         {
             vector<string> ParticlesSymbolsForReactionToSort;
             ParticlesSymbolsForReactionToSort.reserve(10);
