@@ -116,5 +116,5 @@ void CellEngineCompiledDataCreator::AddTestChemicalReactions()
 
         LoggersManagerObject.Log(STREAM("ADDED TEST CHEMICAL REACTIONS"));
     }
-    CATCH("adding chemical reactions")
+    CATCH("adding test chemical reactions")
 };

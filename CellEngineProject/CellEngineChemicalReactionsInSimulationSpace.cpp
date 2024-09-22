@@ -42,6 +42,9 @@ void CellEngineChemicalReactionsInSimulationSpace::MakingZeroSizeForContainersFo
 
         DNANucleotidesFullFreeFoundInProximity.clear();
         RNANucleotidesFullFreeFoundInProximity.clear();
+
+        tRNAUnchargedFoundInProximity.clear();
+        tRNAChargedFoundInProximity.clear();
     }
     CATCH("making zero size for containers for found particles in proximity")
 }
@@ -132,7 +135,7 @@ bool CellEngineChemicalReactionsInSimulationSpace::FindParticlesInProximityOfSim
 
         if (ParticlesSortedByCapacityFoundInProximity.empty() == false)
         {
-            sort(ParticlesSortedByCapacityFoundInProximity.begin(), ParticlesSortedByCapacityFoundInProximity.end(), [this](UnsignedInt PK1, UnsignedInt PK2) { return GetParticleFromIndex(PK1).ListOfVoxels.size() > GetParticleFromIndex(PK2).ListOfVoxels.size(); });
+            //sort(ParticlesSortedByCapacityFoundInProximity.begin(), ParticlesSortedByCapacityFoundInProximity.end(), [this](const UnsignedInt PK1, const UnsignedInt PK2) { return GetParticleFromIndex(PK1).ListOfVoxels.size() > GetParticleFromIndex(PK2).ListOfVoxels.size(); });
             PrintInformationAboutFoundParticlesInProximity();
         }
         else
