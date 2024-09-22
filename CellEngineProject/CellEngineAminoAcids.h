@@ -95,7 +95,7 @@ public:
 
             CellEngineAminoAcidsIdMap[AminoAcidObject.second->EntityId] = AminoAcidObject.second;
             CellEnginetRNAChargedIdMap[AminoAcidObject.second->tRNAChargedNumId] = AminoAcidObject.second;
-            CellEnginetRNAChargedIdMap[AminoAcidObject.second->tRNAUnchargedNumId] = AminoAcidObject.second;
+            CellEnginetRNAUnchargedIdMap[AminoAcidObject.second->tRNAUnchargedNumId] = AminoAcidObject.second;
         }
     }
 
@@ -217,26 +217,29 @@ public:
         CellEngineCodonsForAminoAcidsMap["GUU"] = &Valine;
     }
 
-    bool IsAminoAcid(const EntityIdInt EntityId)
+    bool IsAminoAcid(const EntityIdInt EntityId) const
     {
-        return CellEngineAminoAcidsIdMap.find(EntityId) != CellEngineAminoAcidsIdMap.end();
+        return CellEngineAminoAcidsIdMap.contains(EntityId);
     }
 
-    bool IstRNAUncharged(const EntityIdInt EntityId)
+    bool IstRNAUncharged(const EntityIdInt EntityId) const
     {
-        return CellEnginetRNAUnchargedIdMap.find(EntityId) != CellEnginetRNAUnchargedIdMap.end();
+        return CellEnginetRNAUnchargedIdMap.contains(EntityId);
     }
 
-    bool IstRNACharged(const EntityIdInt EntityId)
+    bool IstRNACharged(const EntityIdInt EntityId) const
     {
-        return CellEnginetRNAChargedIdMap.find(EntityId) != CellEnginetRNAChargedIdMap.end();
+        return CellEnginetRNAChargedIdMap.contains(EntityId);
     }
 
-    bool IstRNAWithAminoAcidForCodon(const EntityIdInt ParticleEntityId, const std::string& Codon)
+    bool IstRNAChargedWithAminoAcidForCodon(const EntityIdInt ParticleEntityId, const std::string& Codon) const
     {
-        const auto AminoAcidIter = CellEngineCodonsForAminoAcidsMap.find(Codon);
-        if (AminoAcidIter != CellEngineCodonsForAminoAcidsMap.end())
-            return (AminoAcidIter->second->EntityId == ParticleEntityId);
+        if (const auto AminoAcidIter = CellEngineCodonsForAminoAcidsMap.find(Codon); AminoAcidIter != CellEngineCodonsForAminoAcidsMap.end())
+        {
+            LoggersManagerObject.Log(STREAM("Codon Amino Acid = " << AminoAcidIter->second->tRNAChargedName << " to compare with " << ParticlesKindsManagerObject.GetParticleKind(ParticleEntityId).IdStr));
+
+            return (AminoAcidIter->second->tRNAChargedNumId == ParticleEntityId);
+        }
 
         return false;
     }

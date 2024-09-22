@@ -4,6 +4,7 @@
 #include "StringUtils.h"
 #include "DateTimeUtils.h"
 #include "DestinationPlatform.h"
+#include "CellEngineAminoAcids.h"
 #include "CellEngineChemicalReactionsManager.h"
 #include "CellEngineParticlesBinaryDataFileReaderWriter.h"
 
@@ -605,6 +606,10 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadAllDataFromBinaryFileAnd
         CellEngineVoxelSimulationSpaceObjectPointer->AddSpecialParticlesKinds();
 
         FindNucleotidesIdentifiers();
+
+        CellEngineAminoAcidsManagerObject.MapAminoAcidsForProperCodons();
+
+        CellEngineAminoAcidsManagerObject.MapAminoAcidsIdToAminoAcidsObject();
 
         CellEngineConfigDataObject.GenomeReadFromFile = true;
 
