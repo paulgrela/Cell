@@ -50,14 +50,14 @@ void CellEngineCompiledDataCreator::AddChemicalReactions()
 {
     try
     {
-        const string AttachPloymeraseToDNAStartSeq1 = "AAAWWTWTTTNNNAAANNNNNTTGACANNNNNNNNNNNNTGTGNTATAATNNNNNNANNNNNNNNNNN";
-        ChemicalReactionsManagerObject.AddChemicalReaction(ChemicalReaction(151, "POLYMERASE RNA START SEQ", "DNA+RNA+rnapol+", { { ParticlesKindsManagerObject.GetParticleKindFromStrId("particle_RNAPolymerase")->EntityId, 1, "", false }, { CellEngineConfigDataObject.DNAIdentifier, 1, AttachPloymeraseToDNAStartSeq1, false }, { CellEngineConfigDataObject.DNAIdentifier, 0, RNAStartSequence, false } }, {}, &CellEngineChemicalReactionsInSimulationSpace::PolymeraseRNATranscriptionStartSpecialReactionFunction, "links rna polymerase particle with DNA when found sequence and joins first nucleotide "));
+        const string AttachPolymeraseToDNAStartSeq1 = "AAAWWTWTTTNNNAAANNNNNTTGACANNNNNNNNNNNNTGTGNTATAATNNNNNNANNNNNNNNNNN";
+        ChemicalReactionsManagerObject.AddChemicalReaction(ChemicalReaction(151, "POLYMERASE RNA START SEQ", "DNA+RNA+rnapol+", { { ParticlesKindsManagerObject.GetParticleKindFromStrId("particle_RNAPolymerase")->EntityId, 1, "", false }, { CellEngineConfigDataObject.DNAIdentifier, 1, AttachPolymeraseToDNAStartSeq1, false }, { CellEngineConfigDataObject.DNAIdentifier, 0, RNAStartSequence, false } }, {}, &CellEngineChemicalReactionsInSimulationSpace::PolymeraseRNATranscriptionStartSpecialReactionFunction, "links rna polymerase particle with DNA when found sequence and joins first nucleotide "));
         ChemicalReactionsManagerObject.AddChemicalReaction(ChemicalReaction(152, "POLYMERASE RNA CONTINUE", "DNA+rnapol+", { { ParticlesKindsManagerObject.GetParticleKindFromStrId("particle_RNAPolymerase")->EntityId, 1, "", false, { CellEngineConfigDataObject.RNAIdentifier, CellEngineConfigDataObject.DNAIdentifier } } }, { { ParticlesKindsManagerObject.GetParticleKindFromStrId("m_ppi_c")->EntityId, 1, "", false } }, &CellEngineChemicalReactionsInSimulationSpace::PolymeraseRNATranscriptionContinueSpecialReactionFunction, "links new nucleotide that fits nucleotide in DNA if free nucleotides are found in proximity"));
 
         ChemicalReactionsManagerObject.AddChemicalReaction(ChemicalReaction(171, "RIBOSOME RNA START SEQ", "GTP+R70S+RNA+", { { ParticlesKindsManagerObject.GetParticleKindFromStrId("particle_RIBOSOME")->EntityId, 1, "", false },  { ParticlesKindsManagerObject.GetParticleKindFromStrId("ProteinInBuildingProcess")->EntityId, 1, "", false }, { CellEngineConfigDataObject.DNAIdentifier, 0, RNAStartSequence, false }, { ParticlesKindsManagerObject.GetParticleKindFromStrId("M_gtp_c")->EntityId, 1, "", true } }, { }, &CellEngineChemicalReactionsInSimulationSpace::RibosomeTranslationStartSpecialReactionFunction, "links ribosome particle with RNA when found sequence and joins first nucleotide "));
         ChemicalReactionsManagerObject.AddChemicalReaction(ChemicalReaction(172, "RIBOSOME RNA CONTINUE", "R70S+RNA+", { { ParticlesKindsManagerObject.GetParticleKindFromStrId("particle_RIBOSOME")->EntityId, 1, "", false, { CellEngineConfigDataObject.ProteinInBuildingProcessIdentifier, CellEngineConfigDataObject.RNAIdentifier } } }, { { ParticlesKindsManagerObject.GetParticleKindFromStrId("M_trnaleu_c")->EntityId, 1, "", false } }, &CellEngineChemicalReactionsInSimulationSpace::RibosomeTranslationContinueSpecialReactionFunction, "links new nucleotide that fits nucleotide in DNA if free nucleotides are found in proximity"));
 
-        ChemicalReactionsManagerObject.PreprocessChemicalReactions();
+        ChemicalReactionsManagerObject.PreprocessAllChemicalReactions();
 
         LoggersManagerObject.Log(STREAM("ADDED CHEMICAL REACTIONS"));
     }
@@ -111,7 +111,7 @@ void CellEngineCompiledDataCreator::AddTestChemicalReactions()
         ChemicalReactionsManagerObject.AddChemicalReaction(ChemicalReaction(1003, "STD", "Propen+HX+", { { ParticlesKindsManagerObject.GetParticleKindFromStrId("Propen")->EntityId, 1, "", true }, { ParticlesKindsManagerObject.GetParticleKindFromStrId("2HalogenPropan")->EntityId, 1, "", true } }, { { ParticlesKindsManagerObject.GetParticleKindFromStrId("2HalogenPropan")->EntityId, 1, "", true } }, nullptr));
         ChemicalReactionsManagerObject.AddChemicalReaction(ChemicalReaction(1004, "STD", "Eten+Oxygen+", { { ParticlesKindsManagerObject.GetParticleKindFromStrId("Eten")->EntityId, 1, "", true }, { ParticlesKindsManagerObject.GetParticleKindFromStrId("Oxygen")->EntityId, 1, "", true } }, { { ParticlesKindsManagerObject.GetParticleKindFromStrId("Ethylene")->EntityId, 1, "", true } }, nullptr));
 
-        ChemicalReactionsManagerObject.PreprocessChemicalReactions();
+        ChemicalReactionsManagerObject.PreprocessAllChemicalReactions();
 
         LoggersManagerObject.Log(STREAM("ADDED TEST CHEMICAL REACTIONS"));
     }

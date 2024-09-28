@@ -14,21 +14,31 @@ public:
 public:
     std::vector<ChemicalReaction> ChemicalReactions;
     std::unordered_map<UnsignedInt, UnsignedInt> ChemicalReactionsPosFromId;
+    std::unordered_map<std::string, UnsignedInt> ChemicalReactionsPosFromIdStr;
     std::unordered_multimap<std::string, UnsignedInt> ChemicalReactionsPosFromString;
+public:
+    void ClearAllChemicalReactions()
+    {
+        ChemicalReactions.clear();
+        ChemicalReactionsPosFromId.clear();
+        ChemicalReactionsPosFromIdStr.clear();
+        ChemicalReactionsPosFromString.clear();
+    }
 public:
     void AddChemicalReaction(const ChemicalReaction& ReactionParam)
     {
         ChemicalReactions.emplace_back(ReactionParam);
         ChemicalReactionsPosFromId.insert(std::make_pair(ReactionParam.ReactionIdNum, ChemicalReactions.size() - 1));
+        ChemicalReactionsPosFromIdStr.insert(std::make_pair(ReactionParam.ReactionIdStr, ChemicalReactions.size() - 1));
         ChemicalReactionsPosFromString.insert(std::make_pair(ReactionParam.ReactantsStr, ChemicalReactions.size() - 1));
     }
 public:
-    ChemicalReaction& GetReactionFromNumId(UnsignedInt ReactionId)
+    ChemicalReaction& GetReactionFromNumId(const UnsignedInt ReactionId)
     {
         return ChemicalReactions[ChemicalReactionsPosFromId.find(ReactionId)->second];
     }
 public:
-    void PreprocessChemicalReactions()
+    void PreprocessAllChemicalReactions()
     {
         for (auto& ReactionObject : ChemicalReactions)
         {

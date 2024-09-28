@@ -677,8 +677,10 @@ public:
                     CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ReadAllIllinoisDataFromFiles();
                     CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ReadGenomeSequenceFromFile();
                 }
-                if (ImGui::Button(AlignString("READ ILLINOIS REACTIONS", StringLength).c_str()) == true)
+                if (ImGui::Button(AlignString("READ ILLINOIS CHEMICAL REACTIONS", StringLength).c_str()) == true)
                     CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ReadChemicalReactionsFromFiles();
+                if (ImGui::Button(AlignString("READ UPDATED ILLINOIS CHEMICAL REACTIONS", StringLength).c_str()) == true)
+                    CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ReadNewChemicalReactionsFromFiles();
 
                 if (ImGui::Button(AlignString("ADD SPECIAL PARTICLE KINDS", StringLength).c_str()) == true)
                     CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->AddSpecialParticlesKinds();

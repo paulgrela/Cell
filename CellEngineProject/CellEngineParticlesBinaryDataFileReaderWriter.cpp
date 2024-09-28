@@ -525,7 +525,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesKindsAndParticl
         Particles.clear();
         ParticlesKindsManagerObject.Genes.clear();
         ParticlesKindsManagerObject.ParticlesKinds.clear();
-        ChemicalReactionsManagerObject.ChemicalReactions.clear();
+        ChemicalReactionsManagerObject.ClearAllChemicalReactions();
 
         LoggersManagerObject.Log(STREAM("START OF READING DATA FROM BINARY FILE"));
 
@@ -550,13 +550,17 @@ void CellEngineParticlesBinaryDataFileReaderWriter::PreprocessLinkAndAssociateEv
     try
     {
         for (auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
-            for (const auto &ChemicalReactionObject: ChemicalReactionsManagerObject.ChemicalReactions)
+        {
+            ParticleKindObject.second.AssociatedChemicalReactions.clear();
+
+            for (const auto &ChemicalReactionObject : ChemicalReactionsManagerObject.ChemicalReactions)
                 for (const auto& ReactantObject : ChemicalReactionObject.Reactants)
                     if (ReactantObject.EntityId == ParticleKindObject.second.EntityId)
                     {
                         ParticleKindObject.second.AssociatedChemicalReactions.insert(ChemicalReactionObject.ReactionIdNum);
                         break;
                     }
+        }
 
         for (auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
         {
@@ -599,7 +603,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadAllDataFromBinaryFileAnd
 
         PreprocessData(UpdateParticleKindListOfVoxelsBool);
 
-        ChemicalReactionsManagerObject.PreprocessChemicalReactions();
+        ChemicalReactionsManagerObject.PreprocessAllChemicalReactions();
 
         PreprocessLinkAndAssociateEveryParticleKindWithProperChemicalReaction();
 

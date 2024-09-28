@@ -148,5 +148,5 @@ void CellEngineSimulationSpaceStatistics::GetNumberOfParticlesFromParticleKind(c
         if (FoundResult != ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber - 1].end())
             LoggersManagerObject.LogStatistics(STREAM("Particle Kind Name = " << ParticlesKindsManagerObject.GetParticleKind(FoundResult->EntityId).IdStr << " Particle Kind Id = " << FoundResult->EntityId << " Number of Particles = " << FoundResult->Counter));
     }
-    CATCH("")
+    CATCH("getting number of particles from particle kind")
 }

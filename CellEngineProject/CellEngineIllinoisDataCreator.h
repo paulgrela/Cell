@@ -22,13 +22,16 @@ public:
     void ReadAllIllinoisDataFromFiles();
 public:
     void ReadChemicalReactionsFromFiles();
+    void ReadNewChemicalReactionsFromFiles();
     static void ReadReactionsFromJSONFile(const std::string& FileName, bool ReadFromFile);
     void ReadReactionsFromXMLFile(const std::string& FileName);
+    void ReadNewReactionsFromXMLFile(const std::string& FileName);
     void GetParticlesFromXMLFile(const boost::property_tree::ptree& ReactionsPropertyTreeXMLTreeElement);
+    void GetNewParticlesFromXMLFile(const boost::property_tree::ptree& ReactionsPropertyTreeXMLTreeElement);
     void GetProteinsFromXMLFile(const boost::property_tree::ptree& ReactionsPropertyTreeXMLTreeElement);
+    void GetNewProteinsFromXMLFile(const boost::property_tree::ptree& ReactionsPropertyTreeXMLTreeElement);
     void GetProperReactionsListFromXMLFile(const boost::property_tree::ptree& ReactionsPropertyTreeXMLTreeElement);
     void AddXMLChemicalReaction(ChemicalReaction& ReactionObject);
-    void UpdateChemicalReactionsFromXMLChemicalReactionsFile();
 public:
     static void PrintGenesFile();
     void PrintAllParticlesData();
