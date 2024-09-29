@@ -18,7 +18,7 @@ protected:
 public:
     void EraseAllDNAParticles();
 public:
-    void CheckGenomePromoters();
+    void CheckGenomePromoters() const;
 public:
     void GenerateRandomDNAInWholeCell(UnsignedInt NumberOfNucleotidesToBeGenerated, UnsignedInt RandomPosX, UnsignedInt RandomPosY, UnsignedInt RandomPosZ, UnsignedInt ParticleSizeX, UnsignedInt ParticleSizeY, UnsignedInt ParticleSizeZ, UnsignedInt ParticleSize1, UnsignedInt ParticleSize2, UnsignedInt ParticleSize3, UnsignedInt ParticleSize4, UnsignedInt ParticleSize5);
 protected:
@@ -36,6 +36,7 @@ protected:
     explicit CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : CellEngineRealRandomParticlesInVoxelSpaceGenerator(ParticlesParam)
     {
     }
+    ~CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator() = default;
 };
 
 #endif

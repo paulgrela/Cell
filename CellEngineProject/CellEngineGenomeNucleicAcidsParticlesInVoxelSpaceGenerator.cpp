@@ -396,11 +396,48 @@ void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::TestGeneratedGe
     CATCH("testing generated genome correctness")
 }
 
-void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::CheckGenomePromoters()
+
+inline void CompareSequences1(const std::vector<ChainIdInt>& TemplateSequence, const std::vector<ChainIdInt>& NucleotidesSequenceToCompareVector, bool& FoundSequenceNotFit)
+{
+    if (NucleotidesSequenceToCompareVector.size() >= TemplateSequence.size())
+    {
+        //LoggersManagerObject.Log(STREAM("LOOP COMPARISON SIZE = " << std::to_string(NucleotidesSequenceToCompareVector.size()) << " " << std::to_string(TemplateSequence.size())));
+
+        for (UnsignedInt NucleotideNum = 0; NucleotideNum < TemplateSequence.size(); NucleotideNum++)
+            if (CellEngineUseful::CompareIUPACNucleotideCode(TemplateSequence[NucleotideNum], NucleotidesSequenceToCompareVector[NucleotideNum]) == false)
+            {
+                //LoggersManagerObject.Log(STREAM("LOOP COMPARISON BREAK = " << std::to_string(NucleotideNum) << "#"));
+
+                FoundSequenceNotFit = true;
+                break;
+            }
+    }
+    else
+        FoundSequenceNotFit = true;
+}
+
+void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::CheckGenomePromoters() const
 {
     try
     {
+        UnsignedInt NumberOfFoundPromoterSequences = 0;
+        string AttachPolymeraseToDNAStartSequenceStr = "AAAWWTWTTTNNNAAANNNNNTTGACANNNNNNNNNNNNTGTGNTATAATNNNNNNANNNNNNNNNNN";
+        auto AttachPolymeraseToDNAStartSequence = CellEngineUseful::ConvertStringSequenceToChainIdSequence(AttachPolymeraseToDNAStartSequenceStr);
 
+        for (UnsignedInt StartGenomeIndex = 0; StartGenomeIndex < Genomes[0].size() - AttachPolymeraseToDNAStartSequenceStr.size(); StartGenomeIndex++)
+        {
+            auto NucleotidesSequenceToCompareVector = CellEngineUseful::ConvertStringSequenceToChainIdSequence(GenomesLines[0].substr(StartGenomeIndex, AttachPolymeraseToDNAStartSequenceStr.size()));
+
+            bool FoundSequenceNotFit = false;
+            CompareSequences1(AttachPolymeraseToDNAStartSequence, NucleotidesSequenceToCompareVector, FoundSequenceNotFit);
+            if (FoundSequenceNotFit == false)
+            {
+                LoggersManagerObject.Log(STREAM("Promoter sequence found = " << GenomesLines[0].substr(StartGenomeIndex, AttachPolymeraseToDNAStartSequenceStr.size()) << " StartGenomeIndex = " << StartGenomeIndex));
+                NumberOfFoundPromoterSequences++;
+            }
+        }
+
+        LoggersManagerObject.Log(STREAM("NumberOfFoundPromoterSequences = " << NumberOfFoundPromoterSequences));
     }
     CATCH("check genome promoters")
 }
