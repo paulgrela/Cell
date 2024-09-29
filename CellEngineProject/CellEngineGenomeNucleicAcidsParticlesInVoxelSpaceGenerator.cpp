@@ -395,3 +395,12 @@ void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::TestGeneratedGe
     }
     CATCH("testing generated genome correctness")
 }
+
+void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::CheckGenomePromoters()
+{
+    try
+    {
+
+    }
+    CATCH("check genome promoters")
+}

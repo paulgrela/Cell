@@ -27,8 +27,7 @@ public:
 public:
     ParticleKindForChemicalReaction(const EntityIdInt EntityIdParam, const UnsignedInt CounterParam, std::string SequenceStrParam, const bool ToRemoveInReactionParam) : EntityId(EntityIdParam), Counter(CounterParam), SequenceStr(std::move(SequenceStrParam)), ToRemoveInReaction(ToRemoveInReactionParam)
     {
-        for (const auto& NucleotideLetter : SequenceStr)
-            Sequence.emplace_back(CellEngineUseful::GetChainIdFromLetterForDNAorRNA(NucleotideLetter));
+        Sequence = CellEngineUseful::ConvertStringSequenceToChainIdSequence(SequenceStr);
     }
     ParticleKindForChemicalReaction(const EntityIdInt EntityIdParam, const UnsignedInt CounterParam, std::string SequenceStrParam, const bool ToRemoveInReactionParam, std::vector<UniqueIdInt> LinkedParticlesTypesParam) : ParticleKindForChemicalReaction(EntityIdParam, CounterParam, std::move(SequenceStrParam), ToRemoveInReactionParam)
     {

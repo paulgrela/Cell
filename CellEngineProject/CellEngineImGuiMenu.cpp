@@ -808,6 +808,9 @@ public:
                     }
                     if (ImGui::Button(AlignString("TEST GENOME DATA FROM FILE", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->TestGeneratedGenomeCorrectness(2);
+
+                    if (ImGui::Button(AlignString("CHECK GENOME PROMOTERS", StringLength).c_str()) == true)
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->CheckGenomePromoters();
                 }
 
                 if (ImGui::CollapsingHeader("RANDOM PARTICLES GENERATOR"))

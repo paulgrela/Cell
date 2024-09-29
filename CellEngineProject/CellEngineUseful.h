@@ -301,6 +301,35 @@ namespace CellEngineUseful
         return false;
     }
 
+    inline void CompareSequences(const std::vector<ChainIdInt>& TemplateSequence, const std::vector<ChainIdInt>& NucleotidesSequenceToCompareVector, bool& FoundSequenceNotFit)
+    {
+        if (NucleotidesSequenceToCompareVector.size() >= TemplateSequence.size())
+        {
+            LoggersManagerObject.Log(STREAM("LOOP COMPARISON SIZE = " << std::to_string(NucleotidesSequenceToCompareVector.size()) << " " << std::to_string(TemplateSequence.size())));
+
+            for (UnsignedInt NucleotideNum = 0; NucleotideNum < TemplateSequence.size(); NucleotideNum++)
+                if (CompareIUPACNucleotideCode(TemplateSequence[NucleotideNum], NucleotidesSequenceToCompareVector[NucleotideNum]) == false)
+                {
+                    LoggersManagerObject.Log(STREAM("LOOP COMPARISON BREAK = " << std::to_string(NucleotideNum) << "#"));
+
+                    FoundSequenceNotFit = true;
+                    break;
+                }
+        }
+        else
+            FoundSequenceNotFit = true;
+    }
+
+    inline std::vector<ChainIdInt> ConvertStringSequenceToChainIdSequence(const std::string& SequenceStr)
+    {
+        std::vector<ChainIdInt> ChainIdSequence;
+
+        for (const auto& NucleotideLetter : SequenceStr)
+            ChainIdSequence.emplace_back(CellEngineUseful::GetChainIdFromLetterForDNAorRNA(NucleotideLetter));
+
+        return ChainIdSequence;
+    }
+
     inline vector3_16 GetVector3FormVMathVec3ForColor(const vmath::vec3& Color)
     {
         return { static_cast<uint16_t>(Color.X() * 100.00f), static_cast<uint16_t>(Color.Y() * 100.00f), static_cast<uint16_t>(Color.Z() * 100.00f) };

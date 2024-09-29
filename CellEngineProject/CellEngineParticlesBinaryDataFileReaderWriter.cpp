@@ -615,6 +615,9 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadAllDataFromBinaryFileAnd
 
         CellEngineAminoAcidsManagerObject.MapAminoAcidsIdToAminoAcidsObject();
 
+        CellEngineVoxelSimulationSpaceObjectPointer->ReadGenomeDataFromFile(true);
+        CellEngineVoxelSimulationSpaceObjectPointer->ReadGenomeSequenceFromFile();
+
         CellEngineConfigDataObject.GenomeReadFromFile = true;
 
         LoggersManagerObject.Log(STREAM("END OF PREPROCESSING DATA"));

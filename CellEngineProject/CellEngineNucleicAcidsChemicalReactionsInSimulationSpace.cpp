@@ -47,14 +47,11 @@ tuple<vector<ChainIdInt>, string> CellEngineNucleicAcidsChemicalReactionsInSimul
     {
         TemplateSequenceStr = GetParticleFromIndex(*RNANucleotidesFoundInProximity.begin()).SequenceStr;
 
-                    LoggersManagerObject.Log(STREAM("RNA SEQUENCE1 = " << TemplateSequenceStr));
         for (auto &TemplateSequenceNucleotideChar: TemplateSequenceStr)
             TemplateSequenceNucleotideChar = CellEngineUseful::GetLetterFromChainIdForDNAorRNA(CellEngineUseful::GetPairedChainIdForDNAorRNA(CellEngineUseful::GetChainIdFromLetterForDNAorRNA(TemplateSequenceNucleotideChar)));
 
         for (auto &TemplateSequenceNucleotideChar: TemplateSequenceStr)
             TemplateSequence.emplace_back(CellEngineUseful::GetChainIdFromLetterForDNAorRNA(TemplateSequenceNucleotideChar));
-
-                    LoggersManagerObject.Log(STREAM("RNA SEQUENCE2 = " << TemplateSequenceStr));
     }
     CATCH("getting nucleotides sequence in both directions")
 
@@ -96,23 +93,7 @@ bool CellEngineNucleicAcidsChemicalReactionsInSimulationSpace::CompareFitnessOfD
         LoggersManagerObject.Log(STREAM("DNA SEQUENCE COMPARE = #" << NucleotidesSequenceToCompareString << "#" << TemplateSequenceStr << "#" << OriginalTemplateRNASequenceStr << "#" << to_string(ParticleKindForReactionObject.EntityId)));
 
         if (TypeOfComparison == ComparisonType::ByVectorLoop)
-        {
-            if (NucleotidesSequenceToCompareVector.size() >= TemplateSequence.size())
-            {
-                LoggersManagerObject.Log(STREAM("LOOP COMPARISON SIZE = " << to_string(NucleotidesSequenceToCompareVector.size()) << " " << to_string(TemplateSequence.size())));
-
-                for (UnsignedInt NucleotideNum = 0; NucleotideNum < TemplateSequence.size(); NucleotideNum++)
-                    if (CellEngineUseful::CompareIUPACNucleotideCode(TemplateSequence[NucleotideNum], NucleotidesSequenceToCompareVector[NucleotideNum]) == false)
-                    {
-                        LoggersManagerObject.Log(STREAM("LOOP COMPARISON BREAK = " << to_string(NucleotideNum) << "#"));
-
-                        FoundSequenceNotFit = true;
-                        break;
-                    }
-            }
-            else
-                FoundSequenceNotFit = true;
-        }
+            CellEngineUseful::CompareSequences(TemplateSequence, NucleotidesSequenceToCompareVector, FoundSequenceNotFit);
         else
         if (TypeOfComparison == ComparisonType::ByString)
             FoundSequenceNotFit = !(NucleotidesSequenceToCompareString == TemplateSequenceStr);
