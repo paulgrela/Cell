@@ -345,7 +345,7 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::GenerateAllRealRandomPa
         InsertNewRandomParticlesForType(ParticlesTypes::ProteinFrac, false, 400, 400);
         InsertNewRandomParticlesForType(ParticlesTypes::OtherProtein, false, 400, 400);
 
-        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateRandomDNAInWholeCell(579990, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartXPos + 3, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartYPos, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartZPos, 2, 2, 2, 2, 2, 2, 2, 2);
+        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateRandomDNAInWholeCell(GenomeLength, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartXPos + 3, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartYPos, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartZPos, 2, 2, 2, 2, 2, 2, 2, 2);
 
         InsertNewRandomParticlesForType(ParticlesTypes::tRNA_uncharged, false, 400, 400);
         InsertNewRandomParticlesForType(ParticlesTypes::tRNA_charged, false, 400, 400);

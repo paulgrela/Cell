@@ -36,6 +36,8 @@ public:
     std::unordered_map<EntityIdInt, ParticleKind> ParticlesKinds;
     std::unordered_map<EntityIdInt, ParticleKindGraphicData> GraphicParticlesKindsFromConfigXML;
 public:
+    std::vector<InterGeneSequence> InterGenesSequences;
+public:
     std::vector<GeneIdInt> Ribosomes30SProteinsList;
     std::vector<GeneIdInt> Ribosomes50SProteinsList;
 public:
@@ -147,7 +149,7 @@ public:
             case ParticlesTypes::Other : return "Other";
             case ParticlesTypes::RNAPolymerase : return "RNAPolymerase";
             case ParticlesTypes::DNAPolymerase : return "DNAPolymerase";
-            case ParticlesTypes::Ribosome : return "Ribosomes";
+            case ParticlesTypes::Ribosome : return "Ribosome";
             default : return "NONE";
         }
     };

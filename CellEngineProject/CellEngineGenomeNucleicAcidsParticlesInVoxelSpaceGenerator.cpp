@@ -2,6 +2,8 @@
 #include "CellEngineConstants.h"
 #include "CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator.h"
 
+#include "CellEngineParticlesKindsManager.h"
+
 #ifdef USING_MODULES
 import CellEngineColors;
 #else
@@ -145,7 +147,7 @@ void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::GenerateRandomD
 
         vector<UnsignedInt> RandomMovesDirections = { 0, 0, 0, 0, 0, 0 };
 
-        auto CheckIfAllRandomMovesDirectionsWereChecked = [](vector<UnsignedInt>& RandomMovesDirections) { return all_of(RandomMovesDirections.cbegin(), RandomMovesDirections.cend(), [] (const UnsignedInt Element) { return Element == 1; }); };
+        auto CheckIfAllRandomMovesDirectionsWereChecked = [](const vector<UnsignedInt>& RandomMovesDirections) { return all_of(RandomMovesDirections.cbegin(), RandomMovesDirections.cend(), [] (const UnsignedInt Element) { return Element == 1; }); };
 
         auto timeStart = clock();
 
@@ -368,6 +370,26 @@ void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::ReadGenomeSeque
     CATCH("reading real genome data from file")
 }
 
+void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::ReadGenomeSequenceFromFastaFile()
+{
+    try
+    {
+        string FileNameIn = string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("genome") + OS_DIR_SEP + string("sequence.fasta");
+
+        fstream FileToReadGenome(FileNameIn, ios::in);
+
+        string Line;
+        while(getline(FileToReadGenome, Line))
+            GenomesLines[0] += Line.substr(0, Line.size() - 1);
+
+        string FileNameOut = string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("genome") + OS_DIR_SEP + string("sequence.fasta.one");
+        ofstream FileToSaveGenome(FileNameOut, ios::out);
+        FileToSaveGenome << GenomesLines[0];
+        FileToSaveGenome.close();
+    }
+    CATCH("reading real genome data from file")
+}
+
 void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::TestGeneratedGenomeCorrectness(const UnsignedInt ParticleSize)
 {
     try
@@ -416,12 +438,40 @@ inline void CompareSequences1(const std::vector<ChainIdInt>& TemplateSequence, c
         FoundSequenceNotFit = true;
 }
 
+void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::FindInterGenesSequences() const
+{
+    try
+    {
+        vector<Gene> LocalGenesVector;
+        transform(ParticlesKindsManagerObject.Genes.begin(), ParticlesKindsManagerObject.Genes.end(), back_inserter(LocalGenesVector), [](const auto& Gene){ return Gene.second; });
+        sort(LocalGenesVector.begin(), LocalGenesVector.end(), [](const Gene& G1, const Gene& G2){ return G1.StartPosInGenome < G2.StartPosInGenome; });
+
+        for (const auto& Gene : LocalGenesVector)
+        {
+            UnsignedInt StartPos = Gene.StartPosInGenome;
+            UnsignedInt EndPos = Gene.EndPosInGenome;
+            LoggersManagerObject.Log(STREAM("Gene = " << Gene.NumId << " " << StartPos << " " << EndPos));
+        }
+
+        for (UnsignedInt GeneIndex = 0; GeneIndex < LocalGenesVector.size() - 1; GeneIndex++)
+        {
+            UnsignedInt StartPos = LocalGenesVector[GeneIndex].EndPosInGenome;
+            UnsignedInt EndPos = LocalGenesVector[GeneIndex + 1].StartPosInGenome - 1;
+            ParticlesKindsManagerObject.InterGenesSequences.emplace_back(StartPos, EndPos, GenomesLines[0].substr(StartPos, EndPos - StartPos));
+
+            LoggersManagerObject.Log(STREAM("Inter genome sequence found = " << StartPos << " " << EndPos << " " << ParticlesKindsManagerObject.InterGenesSequences.back().Sequence));
+        }
+    }
+    CATCH("finding inter genes sequences")
+}
+
 void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::CheckGenomePromoters() const
 {
     try
     {
         UnsignedInt NumberOfFoundPromoterSequences = 0;
-        string AttachPolymeraseToDNAStartSequenceStr = "AAAWWTWTTTNNNAAANNNNNTTGACANNNNNNNNNNNNTGTGNTATAATNNNNNNANNNNNNNNNNN";
+        string AttachPolymeraseToDNAStartSequenceStr = "TATAAT";
+
         auto AttachPolymeraseToDNAStartSequence = CellEngineUseful::ConvertStringSequenceToChainIdSequence(AttachPolymeraseToDNAStartSequenceStr);
 
         for (UnsignedInt StartGenomeIndex = 0; StartGenomeIndex < Genomes[0].size() - AttachPolymeraseToDNAStartSequenceStr.size(); StartGenomeIndex++)
@@ -433,11 +483,14 @@ void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::CheckGenomeProm
             if (FoundSequenceNotFit == false)
             {
                 LoggersManagerObject.Log(STREAM("Promoter sequence found = " << GenomesLines[0].substr(StartGenomeIndex, AttachPolymeraseToDNAStartSequenceStr.size()) << " StartGenomeIndex = " << StartGenomeIndex));
+
+                //sprawdz geny
+
                 NumberOfFoundPromoterSequences++;
             }
         }
 
         LoggersManagerObject.Log(STREAM("NumberOfFoundPromoterSequences = " << NumberOfFoundPromoterSequences));
     }
-    CATCH("check genome promoters")
+    CATCH("checking genome promoters")
 }

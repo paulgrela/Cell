@@ -672,6 +672,11 @@ public:
                     DrawSpaceStartXYZ[2] = static_cast<int>(get<2>(TempStartPos));
                 }
 
+                if (ImGui::Button(AlignString("READ GENES", StringLength).c_str()) == true)
+                    CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ReadGenes();
+                if (ImGui::Button(AlignString("FIND INTER GENES", StringLength).c_str()) == true)
+                    CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->FindInterGenesSequences();
+
                 if (ImGui::Button(AlignString("ADD ILLINOIS DATA", StringLength).c_str()) == true)
                 {
                     CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ReadAllIllinoisDataFromFiles();
@@ -793,7 +798,7 @@ public:
 
                 if (ImGui::CollapsingHeader("RANDOM DNA GENERATOR", ImGuiTreeNodeFlags_DefaultOpen))
                 {
-                    ColorButton(AlignString("GENERATE RANDOM DNA", StringLength).c_str(), Nothing, 0, 0, 0, 3, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue){ CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateRandomDNAInWholeCell(579990, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartXPos + 3, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartYPos, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartZPos, 2, 2, 2, 2, 2, 2, 2, 2); });
+                    ColorButton(AlignString("GENERATE RANDOM DNA", StringLength).c_str(), Nothing, 0, 0, 0, 3, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue){ CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateRandomDNAInWholeCell(GenomeLength, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartXPos + 3, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartYPos, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartZPos, 2, 2, 2, 2, 2, 2, 2, 2); });
 
                     if (ImGui::Button(AlignString("TRUE RANDOM GENERATOR SEED DEVICE", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->RandomGeneratorSetSeedByRandomDevice();

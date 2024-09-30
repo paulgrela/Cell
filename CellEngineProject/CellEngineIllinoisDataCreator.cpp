@@ -723,3 +723,14 @@ void CellEngineIllinoisDataCreator::ReadAllIllinoisDataFromFiles()
     }
     CATCH("reading all illinois data from file")
 }
+
+void CellEngineIllinoisDataCreator::ReadGenes()
+{
+    try
+    {
+        ParticlesKindsManagerObject.Genes.clear();
+        ReadAndParseGenesFile(string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("genome") + OS_DIR_SEP + string("GENES.txt"));
+        PrintGenesFile();
+    }
+    CATCH("reading all illinois data from file")
+}

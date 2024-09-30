@@ -213,8 +213,8 @@ void CellEngineParticlesBinaryDataFileReaderWriter::SaveGenesToBinaryFile(ofstre
             SaveStringToBinaryFile(ParticlesDataFile, GeneObject.second.Description);
             SaveStringToBinaryFile(ParticlesDataFile, GeneObject.second.ProteinId);
             SaveStringToBinaryFile(ParticlesDataFile, GeneObject.second.Sequence);
-            ParticlesDataFile.write((char*)&GeneObject.second.NumId, sizeof(GeneObject.second.StartPosInGenome));
-            ParticlesDataFile.write((char*)&GeneObject.second.NumId, sizeof(GeneObject.second.EndPosInGenome));
+            ParticlesDataFile.write((char*)&GeneObject.second.StartPosInGenome, sizeof(GeneObject.second.StartPosInGenome));
+            ParticlesDataFile.write((char*)&GeneObject.second.EndPosInGenome, sizeof(GeneObject.second.EndPosInGenome));
         }
 
         LoggersManagerObject.Log(STREAM("END OF SAVING GENES TO BINARY FILE"));
@@ -615,8 +615,10 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadAllDataFromBinaryFileAnd
 
         CellEngineAminoAcidsManagerObject.MapAminoAcidsIdToAminoAcidsObject();
 
-        CellEngineVoxelSimulationSpaceObjectPointer->ReadGenomeDataFromFile(true);
-        CellEngineVoxelSimulationSpaceObjectPointer->ReadGenomeSequenceFromFile();
+                                                                                                                        CellEngineVoxelSimulationSpaceObjectPointer->ReadGenomeDataFromFile(true);
+                                                                                                                        CellEngineVoxelSimulationSpaceObjectPointer->ReadGenomeSequenceFromFile();
+                                                                                                                        // CellEngineVoxelSimulationSpaceObjectPointer->CheckGenomePromoters();
+                                                                                                                        // CellEngineVoxelSimulationSpaceObjectPointer->FindInterGenesSequences();
 
         CellEngineConfigDataObject.GenomeReadFromFile = true;
 

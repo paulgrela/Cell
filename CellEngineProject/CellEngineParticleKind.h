@@ -47,6 +47,18 @@ enum class ParticlesTypes : UnsignedInt
     ProteinInBuildingProcess = 18
 };
 
+class InterGeneSequence
+{
+public:
+    UnsignedInt StartPosInGenome;
+    UnsignedInt EndPosInGenome;
+    std::string Sequence;
+public:
+    InterGeneSequence(const UnsignedInt StartPosInGenomeParam, const UnsignedInt EndPosInGenomeParam, std::string SequenceParam) : StartPosInGenome(StartPosInGenomeParam), EndPosInGenome(EndPosInGenomeParam), Sequence(std::move(SequenceParam))
+    {
+    }
+};
+
 class Gene
 {
 public:
@@ -94,17 +106,17 @@ public:
 public:
     std::unordered_map<std::string, UnsignedInt> ReactionsIdByString;
 public:
-    void SetReactionsIdByString(std::unordered_map<std::string, UnsignedInt>& ReactionsIdByStringParam)
+    void SetReactionsIdByString(const std::unordered_map<std::string, UnsignedInt>& ReactionsIdByStringParam)
     {
         ReactionsIdByString = ReactionsIdByStringParam;
     }
 public:
     ParticleKind() = default;
 public:
-    ParticleKind(UnsignedInt EntityIdParam, std::string IdStrParam, std::string NameParam, std::string FormulaParam, GeneIdInt GeneIdParam, ElectricChargeType ElectricChargeParam, std::string CompartmentParam, UnsignedInt CounterParam) : EntityId(EntityIdParam), IdStr(std::move(IdStrParam)), Name(std::move(NameParam)), Formula(std::move(FormulaParam)), GeneId(GeneIdParam), ElectricCharge(ElectricChargeParam), Compartment(std::move(CompartmentParam)), Counter(CounterParam)
+    ParticleKind(const UnsignedInt EntityIdParam, std::string IdStrParam, std::string NameParam, std::string FormulaParam, const GeneIdInt GeneIdParam, ElectricChargeType const ElectricChargeParam, std::string CompartmentParam, const UnsignedInt CounterParam) : EntityId(EntityIdParam), IdStr(std::move(IdStrParam)), Name(std::move(NameParam)), Formula(std::move(FormulaParam)), GeneId(GeneIdParam), ElectricCharge(ElectricChargeParam), Compartment(std::move(CompartmentParam)), Counter(CounterParam)
     {
     }
-    ParticleKind(UnsignedInt EntityIdParam, UnsignedInt CounterParam) : EntityId(EntityIdParam), Counter(CounterParam)
+    ParticleKind(const UnsignedInt EntityIdParam, const UnsignedInt CounterParam) : EntityId(EntityIdParam), Counter(CounterParam)
     {
     }
     explicit ParticleKind(const ParticleKindGraphicData& ParticleKindGraphicDataObjectParam) : EntityId(ParticleKindGraphicDataObjectParam.EntityId), GraphicData(ParticleKindGraphicDataObjectParam)

@@ -33,6 +33,7 @@ public:
     void GetProperReactionsListFromXMLFile(const boost::property_tree::ptree& ReactionsPropertyTreeXMLTreeElement);
     void AddXMLChemicalReaction(ChemicalReaction& ReactionObject);
 public:
+    static void ReadGenes();
     static void PrintGenesFile();
     void PrintAllParticlesData();
 public:

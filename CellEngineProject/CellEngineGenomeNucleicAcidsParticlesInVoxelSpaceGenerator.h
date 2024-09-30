@@ -19,6 +19,7 @@ public:
     void EraseAllDNAParticles();
 public:
     void CheckGenomePromoters() const;
+    void FindInterGenesSequences() const;
 public:
     void GenerateRandomDNAInWholeCell(UnsignedInt NumberOfNucleotidesToBeGenerated, UnsignedInt RandomPosX, UnsignedInt RandomPosY, UnsignedInt RandomPosZ, UnsignedInt ParticleSizeX, UnsignedInt ParticleSizeY, UnsignedInt ParticleSizeZ, UnsignedInt ParticleSize1, UnsignedInt ParticleSize2, UnsignedInt ParticleSize3, UnsignedInt ParticleSize4, UnsignedInt ParticleSize5);
 protected:
@@ -31,6 +32,7 @@ public:
     void SaveGenomeDataToFile(UnsignedInt ParticleSize);
     void ReadGenomeDataFromFile(bool Paired);
     void ReadGenomeSequenceFromFile();
+    void ReadGenomeSequenceFromFastaFile();
     void TestGeneratedGenomeCorrectness(UnsignedInt ParticleSize);
 protected:
     explicit CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : CellEngineRealRandomParticlesInVoxelSpaceGenerator(ParticlesParam)
