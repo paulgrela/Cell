@@ -44,7 +44,7 @@ CellEngineVoxelSimulationSpace::CellEngineVoxelSimulationSpace(std::unordered_ma
         SetValueToVoxelsForCuboidSelectedSpace(nullptr, GetZeroSimulationSpaceVoxel(), 0, 0, 0, 1, 1, 1, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension);
 
         Genomes.resize(2);
-        GenomesLines.resize(1);
+        GenomesLines.resize(2);
     }
     CATCH("execution of constructor of voxel simulation space")
 }

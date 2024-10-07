@@ -617,8 +617,8 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadAllDataFromBinaryFileAnd
 
                                                                                                                         CellEngineVoxelSimulationSpaceObjectPointer->ReadGenomeDataFromFile(true);
                                                                                                                         CellEngineVoxelSimulationSpaceObjectPointer->ReadGenomeSequenceFromFile();
-                                                                                                                        // CellEngineVoxelSimulationSpaceObjectPointer->CheckGenomePromoters();
-                                                                                                                        // CellEngineVoxelSimulationSpaceObjectPointer->FindInterGenesSequences();
+                                                                                                                        CellEngineVoxelSimulationSpaceObjectPointer->CheckGenomePromoters();
+                                                                                                                        //CellEngineVoxelSimulationSpaceObjectPointer->FindInterGenesSequences();
 
         CellEngineConfigDataObject.GenomeReadFromFile = true;
 

@@ -69,6 +69,7 @@ public:
     UnsignedInt StartPosInGenome;
     UnsignedInt EndPosInGenome;
     std::string Sequence;
+    SignedInt PromoterSequencePos = -1;
 };
 
 class ParticleKindSpecialData
