@@ -160,6 +160,8 @@ add_executable(
 	CellEngineOpenGLVisualiserOfFullAtomSimulationSpace.cpp
 	CellEngineConfigurationFileReaderWriter.h
 	CellEngineConfigurationFileReaderWriter.cpp
+	CellEngineGenesPromotersAndStartCodonsFinder.cpp
+	CellEngineGenesPromotersAndGenesStartCodonsFinder.h
 	CellEngineWellStirredChemicalReactionsSimulation.h
 	CellEngineWellStirredChemicalReactionsSimulation.h
 	CellEngineWellStirredChemicalReactionsSimulation.cpp)
