@@ -423,10 +423,10 @@ void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::TestGeneratedGe
 
 void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::TestDifferentKindsOfPromotersFindingAlgorithms() const
 {
-    TestSeveralDifferentKindsOfPromotersFindingAlgorithms(GenomesLines);
+    TestSeveralDifferentKindsOfPromotersFindingAlgorithms(GenomesLines, Genomes);
 }
 
 void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::FindInterGenesSequences()
 {
-    FindInterGenesSequencesFromGenes();
+    FindInterGenesSequencesFromGenesData();
 }

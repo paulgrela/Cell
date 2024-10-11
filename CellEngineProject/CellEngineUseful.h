@@ -301,8 +301,11 @@ namespace CellEngineUseful
         return false;
     }
 
-    inline void CompareSequences(const std::vector<ChainIdInt>& TemplateSequence, const std::vector<ChainIdInt>& NucleotidesSequenceToCompareVector, bool& FoundSequenceNotFit)
+    inline void CompareSequences(const std::vector<ChainIdInt>& TemplateSequence, const std::vector<ChainIdInt>& NucleotidesSequenceToCompareVector, bool& FoundSequenceNotFit, const bool SwitchLogsBool)
     {
+        if (SwitchLogsBool == true)
+            CellEngineUseful::SwitchOffLogs();
+
         if (NucleotidesSequenceToCompareVector.size() >= TemplateSequence.size())
         {
             LoggersManagerObject.Log(STREAM("LOOP COMPARISON SIZE = " << std::to_string(NucleotidesSequenceToCompareVector.size()) << " " << std::to_string(TemplateSequence.size())));
@@ -318,6 +321,9 @@ namespace CellEngineUseful
         }
         else
             FoundSequenceNotFit = true;
+
+        if (SwitchLogsBool == true)
+            CellEngineUseful::SwitchOnLogs();
     }
 
     inline std::vector<ChainIdInt> ConvertStringSequenceToChainIdSequence(const std::string& SequenceStr)

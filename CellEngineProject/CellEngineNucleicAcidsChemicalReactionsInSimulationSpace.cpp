@@ -93,7 +93,7 @@ bool CellEngineNucleicAcidsChemicalReactionsInSimulationSpace::CompareFitnessOfD
         LoggersManagerObject.Log(STREAM("DNA SEQUENCE COMPARE = #" << NucleotidesSequenceToCompareString << "#" << TemplateSequenceStr << "#" << OriginalTemplateRNASequenceStr << "#" << to_string(ParticleKindForReactionObject.EntityId)));
 
         if (TypeOfComparison == ComparisonType::ByVectorLoop)
-            CellEngineUseful::CompareSequences(TemplateSequence, NucleotidesSequenceToCompareVector, FoundSequenceNotFit);
+            CellEngineUseful::CompareSequences(TemplateSequence, NucleotidesSequenceToCompareVector, FoundSequenceNotFit, false);
         else
         if (TypeOfComparison == ComparisonType::ByString)
             FoundSequenceNotFit = !(NucleotidesSequenceToCompareString == TemplateSequenceStr);
