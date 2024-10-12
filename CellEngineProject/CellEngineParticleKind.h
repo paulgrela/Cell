@@ -59,6 +59,15 @@ public:
     }
 };
 
+class Promoter
+{
+public:
+    GeneIdInt GeneId;
+    UnsignedInt Box10Position;
+    UnsignedInt Box35Position;
+    UnsignedInt StartCodonPosition;
+};
+
 class Gene
 {
 public:

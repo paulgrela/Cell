@@ -33,6 +33,7 @@ class ParticlesKindsManager
 {
 public:
     std::unordered_map<GeneIdInt, Gene> Genes;
+    std::unordered_map<UnsignedInt, Promoter> Promoters;
     std::unordered_map<EntityIdInt, ParticleKind> ParticlesKinds;
     std::unordered_map<EntityIdInt, ParticleKindGraphicData> GraphicParticlesKindsFromConfigXML;
 public:
@@ -42,6 +43,11 @@ public:
     std::vector<GeneIdInt> Ribosomes50SProteinsList;
 public:
     std::vector<AtomKindGraphicData> AtomsKindsGraphicData;
+public:
+    Promoter& GetPromoterFromBox10Position(const UnsignedInt Box10Position)
+    {
+        return Promoters.find(Box10Position)->second;
+    }
 public:
     ParticleKind& GetParticleKind(const EntityIdInt EntityId)
     {
