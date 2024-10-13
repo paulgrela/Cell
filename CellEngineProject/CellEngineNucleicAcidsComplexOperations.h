@@ -8,6 +8,8 @@
 #include "CellEngineNucleicAcidsBasicOperations.h"
 #include "CellEngineChemicalReactionsInBasicSimulationSpace.h"
 
+bool CheckIfThisIsPromoter(UnsignedInt Box10Position);
+
 class CellEngineNucleicAcidsComplexOperations : public CellEngineChemicalReactionsInBasicSimulationSpace, public CellEngineNucleicAcidsBasicOperations
 {
 protected:

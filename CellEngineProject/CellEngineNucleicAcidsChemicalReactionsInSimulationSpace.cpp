@@ -61,6 +61,7 @@ tuple<vector<ChainIdInt>, string> CellEngineNucleicAcidsChemicalReactionsInSimul
 bool CellEngineNucleicAcidsChemicalReactionsInSimulationSpace::CompareFitnessOfDNASequenceByNucleotidesLoop(ComparisonType TypeOfComparison, const ParticleKindForChemicalReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction)
 {
     bool FoundSequenceNotFit = false;
+    bool SpecialCompareFunctionResult = true;
 
     try
     {
@@ -100,8 +101,12 @@ bool CellEngineNucleicAcidsChemicalReactionsInSimulationSpace::CompareFitnessOfD
 
         if (FoundSequenceNotFit == false)
             LoggersManagerObject.Log(STREAM(terminal_colors_utils::green << "DNA SEQUENCE FOUND FIT" << terminal_colors_utils::white));
+
+        if (FoundSequenceNotFit == false)
+            if (ParticleKindForReactionObject.SpecialCompareFunction != nullptr)
+                SpecialCompareFunctionResult = ParticleKindForReactionObject.SpecialCompareFunction(ParticleObjectForReaction.GenomeIndex);
     }
     CATCH("comparing fitness of dna sequence by nucleotides loop")
 
-    return !FoundSequenceNotFit;
+    return !FoundSequenceNotFit && SpecialCompareFunctionResult;
 }

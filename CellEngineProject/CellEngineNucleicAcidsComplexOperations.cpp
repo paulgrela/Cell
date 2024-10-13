@@ -4,6 +4,11 @@
 #include "CellEngineAminoAcids.h"
 #include "CellEngineNucleicAcidsComplexOperations.h"
 
+bool CheckIfThisIsPromoter(UnsignedInt Box10Position)
+{
+    return ParticlesKindsManagerObject.Promoters.contains(Box10Position);
+}
+
 bool CellEngineNucleicAcidsComplexOperations::CutDNAInChosenPlaceSpecialReactionFunction(const bool BothStrandsBool, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
 {
     try
