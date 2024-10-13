@@ -4,13 +4,13 @@
 #include "CellEngineAminoAcids.h"
 #include "CellEngineNucleicAcidsComplexOperations.h"
 
-bool CellEngineNucleicAcidsComplexOperations::CutDNAInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
+bool CellEngineNucleicAcidsComplexOperations::CutDNAInChosenPlaceSpecialReactionFunction(const bool BothStrandsBool, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
 {
     try
     {
         if (NucleotidesIndexesChosenForReaction.size() == 1)
         {
-            LoggersManagerObject.Log(STREAM("CUT 10 or 40 inside 1"));
+            LoggersManagerObject.Log(STREAM("CUT inside 1"));
 
             auto NucleotidePtr1 = get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[0].second].SequenceStr.length() + ReactionObject.AdditionalParameter1, GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first), false, false, [](const Particle*){ return true; }));
 
@@ -18,7 +18,7 @@ bool CellEngineNucleicAcidsComplexOperations::CutDNAInChosenPlaceSpecialReaction
             {
                 CutDNANext(NucleotidePtr1->Prev);
 
-                if (ReactionObject.ReactionIdNum == 40 || ReactionObject.ReactionIdNum == 41 || ReactionObject.ReactionIdNum == 42)
+                if (BothStrandsBool == true)
                 {
                     auto NucleotidePtr2 = get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[0].second].SequenceStr.length() + ReactionObject.AdditionalParameter2, *GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first).PairedNucleotidePtr, false, false, [](const Particle*){ return true; }));
                     if (NucleotidePtr2 != nullptr && NucleotidePtr2->Prev != nullptr)
@@ -36,6 +36,16 @@ bool CellEngineNucleicAcidsComplexOperations::CutDNAInChosenPlaceSpecialReaction
     CATCH("cutting dna in chosen place in special reaction function")
 
     return false;
+}
+
+bool CellEngineNucleicAcidsComplexOperations::CutDNASingleStrandInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
+{
+    return CutDNAInChosenPlaceSpecialReactionFunction(false, ParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject);
+}
+
+bool CellEngineNucleicAcidsComplexOperations::CutDNABothStrandsInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
+{
+    return CutDNAInChosenPlaceSpecialReactionFunction(true, ParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject);
 }
 
 bool CellEngineNucleicAcidsComplexOperations::LinkDNAInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
@@ -74,7 +84,8 @@ bool CellEngineNucleicAcidsComplexOperations::LinkDNAInChosenPlaceSpecialReactio
     return false;
 }
 
-bool CellEngineNucleicAcidsComplexOperations::LinkDNAInAnyPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
+
+bool CellEngineNucleicAcidsComplexOperations::LinkDNAInAnyPlaceSpecialReactionFunction(const bool BothStrandsBool, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
 {
     try
     {
@@ -88,7 +99,7 @@ bool CellEngineNucleicAcidsComplexOperations::LinkDNAInAnyPlaceSpecialReactionFu
 
                 LinkDNA(&GetParticleFromIndex(NucleotidesWithFreePrevEndingsFoundInProximity[0]), &GetParticleFromIndex(NucleotidesWithFreeNextEndingsFoundInProximity[0]));
 
-                if (ReactionObject.ReactionIdNum == 80)
+                if (BothStrandsBool == true)
                     LinkDNA(GetParticleFromIndex(NucleotidesWithFreePrevEndingsFoundInProximity[0]).PairedNucleotidePtr, GetParticleFromIndex(NucleotidesWithFreeNextEndingsFoundInProximity[0]).PairedNucleotidePtr);
             }
         }
@@ -100,7 +111,17 @@ bool CellEngineNucleicAcidsComplexOperations::LinkDNAInAnyPlaceSpecialReactionFu
     return false;
 }
 
-bool CellEngineNucleicAcidsComplexOperations::CutDNACrisperInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
+bool CellEngineNucleicAcidsComplexOperations::LinkDNASingleStrandInAnyPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
+{
+    return LinkDNAInAnyPlaceSpecialReactionFunction(false, ParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject);
+}
+
+bool CellEngineNucleicAcidsComplexOperations::LinkDNABothStrandsInAnyPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
+{
+    return LinkDNAInAnyPlaceSpecialReactionFunction(true, ParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject);
+}
+
+bool CellEngineNucleicAcidsComplexOperations::CutDNACrisperInChosenPlaceSpecialReactionFunction(const bool BothStrandsBool, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
 {
     try
     {
@@ -114,7 +135,7 @@ bool CellEngineNucleicAcidsComplexOperations::CutDNACrisperInChosenPlaceSpecialR
             {
                 FirstStrand = FirstStrand->Prev;
                 CutDNANext(FirstStrand);
-                if (ReactionObject.ReactionIdNum == 110)
+                if (BothStrandsBool == true)
                     CutDNANext(FirstStrand->PairedNucleotidePtr);
             }
         }
@@ -124,6 +145,16 @@ bool CellEngineNucleicAcidsComplexOperations::CutDNACrisperInChosenPlaceSpecialR
     CATCH("cutting dna crisper in chosen place in special reaction function")
 
     return false;
+}
+
+bool CellEngineNucleicAcidsComplexOperations::CutDNASingleStrandCrisperInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
+{
+    return CutDNACrisperInChosenPlaceSpecialReactionFunction(false, ParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject);
+}
+
+bool CellEngineNucleicAcidsComplexOperations::CutDNABothStrandsCrisperInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
+{
+    return CutDNACrisperInChosenPlaceSpecialReactionFunction(true, ParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject);
 }
 
 bool CellEngineNucleicAcidsComplexOperations::LinkDNALigaseInAnyPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
