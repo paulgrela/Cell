@@ -58,7 +58,7 @@ tuple<vector<ChainIdInt>, string> CellEngineNucleicAcidsChemicalReactionsInSimul
     return { TemplateSequence, TemplateSequenceStr };
 }
 
-bool CellEngineNucleicAcidsChemicalReactionsInSimulationSpace::CompareFitnessOfDNASequenceByNucleotidesLoop(ComparisonType TypeOfComparison, const ParticleKindForChemicalReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction)
+bool CellEngineNucleicAcidsChemicalReactionsInSimulationSpace::CompareFitnessOfDNASequenceByNucleotidesLoop(ComparisonType TypeOfComparison, const ParticleKindForChemicalReaction& ParticleKindForReactionObject, Particle& ParticleObjectTestedForReaction)
 {
     bool FoundSequenceNotFit = false;
     bool SpecialCompareFunctionResult = true;
@@ -89,7 +89,7 @@ bool CellEngineNucleicAcidsChemicalReactionsInSimulationSpace::CompareFitnessOfD
                     return false;
             }
 
-        auto [ParticlePtr, ParticlePtrPrev, NucleotidesCounter, NucleotidesSequenceToCompareString, NucleotidesSequenceToCompareVector] = GetNucleotidesSequence(&Particle::Next, TemplateSequenceStr.length(), ParticleObjectForReaction, true, true, [](const Particle*){ return true; });
+        auto [ParticlePtr, ParticlePtrPrev, NucleotidesCounter, NucleotidesSequenceToCompareString, NucleotidesSequenceToCompareVector] = GetNucleotidesSequence(&Particle::Next, TemplateSequenceStr.length(), ParticleObjectTestedForReaction, true, true, [](const Particle*){ return true; });
 
         LoggersManagerObject.Log(STREAM("DNA SEQUENCE COMPARE = #" << NucleotidesSequenceToCompareString << "#" << TemplateSequenceStr << "#" << OriginalTemplateRNASequenceStr << "#" << to_string(ParticleKindForReactionObject.EntityId)));
 
@@ -104,7 +104,7 @@ bool CellEngineNucleicAcidsChemicalReactionsInSimulationSpace::CompareFitnessOfD
 
         if (FoundSequenceNotFit == false)
             if (ParticleKindForReactionObject.SpecialCompareFunction != nullptr)
-                SpecialCompareFunctionResult = ParticleKindForReactionObject.SpecialCompareFunction(ParticleObjectForReaction.GenomeIndex);
+                SpecialCompareFunctionResult = ParticleKindForReactionObject.SpecialCompareFunction(ParticleObjectTestedForReaction.GenomeIndex);
     }
     CATCH("comparing fitness of dna sequence by nucleotides loop")
 

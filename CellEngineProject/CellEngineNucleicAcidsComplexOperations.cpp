@@ -9,7 +9,7 @@ bool CheckIfThisIsPromoter(UnsignedInt Box10Position)
     return ParticlesKindsManagerObject.Promoters.contains(Box10Position);
 }
 
-bool CellEngineNucleicAcidsComplexOperations::CutDNAInChosenPlaceSpecialReactionFunction(const bool BothStrandsBool, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
+bool CellEngineNucleicAcidsComplexOperations::CutDNAInChosenPlace(const bool BothStrandsBool, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
 {
     try
     {
@@ -45,12 +45,12 @@ bool CellEngineNucleicAcidsComplexOperations::CutDNAInChosenPlaceSpecialReaction
 
 bool CellEngineNucleicAcidsComplexOperations::CutDNASingleStrandInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
 {
-    return CutDNAInChosenPlaceSpecialReactionFunction(false, ParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject);
+    return CutDNAInChosenPlace(false, ParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject);
 }
 
 bool CellEngineNucleicAcidsComplexOperations::CutDNABothStrandsInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
 {
-    return CutDNAInChosenPlaceSpecialReactionFunction(true, ParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject);
+    return CutDNAInChosenPlace(true, ParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject);
 }
 
 bool CellEngineNucleicAcidsComplexOperations::LinkDNAInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
@@ -90,7 +90,7 @@ bool CellEngineNucleicAcidsComplexOperations::LinkDNAInChosenPlaceSpecialReactio
 }
 
 
-bool CellEngineNucleicAcidsComplexOperations::LinkDNAInAnyPlaceSpecialReactionFunction(const bool BothStrandsBool, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
+bool CellEngineNucleicAcidsComplexOperations::LinkDNAInAnyPlace(const bool BothStrandsBool, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
 {
     try
     {
@@ -118,15 +118,15 @@ bool CellEngineNucleicAcidsComplexOperations::LinkDNAInAnyPlaceSpecialReactionFu
 
 bool CellEngineNucleicAcidsComplexOperations::LinkDNASingleStrandInAnyPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
 {
-    return LinkDNAInAnyPlaceSpecialReactionFunction(false, ParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject);
+    return LinkDNAInAnyPlace(false, ParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject);
 }
 
 bool CellEngineNucleicAcidsComplexOperations::LinkDNABothStrandsInAnyPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
 {
-    return LinkDNAInAnyPlaceSpecialReactionFunction(true, ParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject);
+    return LinkDNAInAnyPlace(true, ParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject);
 }
 
-bool CellEngineNucleicAcidsComplexOperations::CutDNACrisperInChosenPlaceSpecialReactionFunction(const bool BothStrandsBool, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
+bool CellEngineNucleicAcidsComplexOperations::CutDNACrisperInChosenPlace(const bool BothStrandsBool, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
 {
     try
     {
@@ -154,12 +154,12 @@ bool CellEngineNucleicAcidsComplexOperations::CutDNACrisperInChosenPlaceSpecialR
 
 bool CellEngineNucleicAcidsComplexOperations::CutDNASingleStrandCrisperInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
 {
-    return CutDNACrisperInChosenPlaceSpecialReactionFunction(false, ParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject);
+    return CutDNACrisperInChosenPlace(false, ParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject);
 }
 
 bool CellEngineNucleicAcidsComplexOperations::CutDNABothStrandsCrisperInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
 {
-    return CutDNACrisperInChosenPlaceSpecialReactionFunction(true, ParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject);
+    return CutDNACrisperInChosenPlace(true, ParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject);
 }
 
 bool CellEngineNucleicAcidsComplexOperations::LinkDNALigaseInAnyPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
@@ -269,7 +269,7 @@ bool CellEngineNucleicAcidsComplexOperations::LinkDNALigaseInChosenPlaceSpecialR
     return false;
 }
 
-bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNATranscriptionStartSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>> &NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
+bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNATranscriptionStart(const bool FullPromoter, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>> &NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
 {
     try
     {
@@ -289,15 +289,31 @@ bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNATranscriptionStartSpe
             LoggersManagerObject.Log(STREAM("ParticleIndex = " << to_string(LocalParticlesIndexesChosenForReaction[0].first) << " Nucleotide = " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.ChainId) << " Nucleotide Index = " << ParticleObject.GenomeIndex));
 
             ParticleObject.AddNewLinkToParticle(&GetParticleFromIndex(RNANucleotidesFreeFoundInProximity[0]));
-            ParticleObject.AddNewLinkToParticle(GoSomeNucleotides(&Particle::Next, ReactionObject.Reactants[1].SequenceStr.length(), *GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first).Next));
+            if (FullPromoter == false)
+                ParticleObject.AddNewLinkToParticle(GoSomeNucleotides(&Particle::Next, ReactionObject.Reactants[1].SequenceStr.length(), *GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first).Next));
+            else
+                if (auto PromoterIter = ParticlesKindsManagerObject.Promoters.find(GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first).GenomeIndex); PromoterIter != ParticlesKindsManagerObject.Promoters.end())
+                    ParticleObject.AddNewLinkToParticle(GoToGenomeIndex(&Particle::Next, PromoterIter->second.StartCodonPosition, 16384, *GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first).Next));
 
             MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(ParticleObject, *ParticleObject.LinkedParticlesPointersList[1], 2, 2, 2);
             MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(*ParticleObject.LinkedParticlesPointersList[0], ParticleObject, 2, 2, 2);
+
+            return true;
         }
     }
     CATCH("executing polymerase start dna transcription special reaction function")
 
     return false;
+}
+
+bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNATranscriptionStartSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>> &NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
+{
+    return PolymeraseRNATranscriptionStart(false, ParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject);
+}
+
+bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNATranscriptionFullStartSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>> &NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
+{
+    return PolymeraseRNATranscriptionStart(true, ParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject);
 }
 
 bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNATranscriptionContinueSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>> &NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)

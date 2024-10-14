@@ -40,6 +40,25 @@ protected:
         return ParticlePtr;
     }
 protected:
+    static inline Particle* GoToGenomeIndex(Particle* Particle::*Direction, const UnsignedInt TargetGenomeIndex, const UnsignedInt MaximalLengthOfSequence, Particle& ParticleObjectForReaction)
+    {
+        Particle* ParticlePtr = &ParticleObjectForReaction;
+
+        try
+        {
+            UnsignedInt NucleotidesCounter = 1;
+
+            while (NucleotidesCounter < MaximalLengthOfSequence + 1 && ParticleObjectForReaction.*Direction != nullptr && ParticlePtr != nullptr && ParticlePtr->GenomeIndex != TargetGenomeIndex)
+            {
+                ParticlePtr = ParticlePtr->*Direction;
+                NucleotidesCounter++;
+            }
+        }
+        CATCH("going some nucleotides")
+
+        return ParticlePtr;
+    }
+protected:
     static inline tuple<Particle*, Particle*, UnsignedInt, string, vector<ChainIdInt>> GetNucleotidesSequence(Particle* Particle::*Direction, const UnsignedInt LengthOfSequence, Particle& ParticleObjectForReaction, const bool ToString, const bool ToVector, bool (*Predicate)(const Particle*))
     {
         string NucleotidesSequenceToCompareString;
