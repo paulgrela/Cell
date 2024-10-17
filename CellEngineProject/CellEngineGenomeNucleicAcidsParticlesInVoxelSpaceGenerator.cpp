@@ -421,9 +421,9 @@ void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::TestGeneratedGe
     CATCH("testing generated genome correctness")
 }
 
-void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::TestDifferentKindsOfPromotersFindingAlgorithms() const
+void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::TestDifferentKindsOfPromotersFindingsAndTerminatorsFindingsAlgorithms() const
 {
-    TestSeveralDifferentKindsOfPromotersFindingAlgorithms(GenomesLines, Genomes);
+    TestSeveralDifferentKindsOfPromotersFindingsAndTerminatorFindingsAlgorithms(GenomesLines, Genomes);
 }
 
 void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::FindInterGenesSequences()

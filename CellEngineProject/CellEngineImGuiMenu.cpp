@@ -815,7 +815,7 @@ public:
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->TestGeneratedGenomeCorrectness(2);
 
                     if (ImGui::Button(AlignString("TEST GENOME PROMOTERS FINDER ALGORITHMS", StringLength).c_str()) == true)
-                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->TestDifferentKindsOfPromotersFindingAlgorithms();
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->TestDifferentKindsOfPromotersFindingsAndTerminatorsFindingsAlgorithms();
                 }
 
                 if (ImGui::CollapsingHeader("RANDOM PARTICLES GENERATOR"))

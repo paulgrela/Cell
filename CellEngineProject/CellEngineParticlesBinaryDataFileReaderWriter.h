@@ -9,7 +9,7 @@ class CellEngineParticlesBinaryDataFileReaderWriter : virtual public CellEngineD
 {
 public:
     explicit CellEngineParticlesBinaryDataFileReaderWriter() = default;
-    ~CellEngineParticlesBinaryDataFileReaderWriter() = default;
+    virtual ~CellEngineParticlesBinaryDataFileReaderWriter() = default;
 public:
     void SaveDataToFile() override;
 public:
@@ -27,6 +27,9 @@ public:
     static void PreprocessLinkAndAssociateEveryParticleKindWithProperChemicalReaction();
     void ReadParticlesKindsAndParticlesAndChemicalReactionsAndGenesFromBinaryFile(CellEngineConfigData::TypesOfFileToRead Type);
     void ReadAllDataFromBinaryFileAndPrepareData(bool StartValuesBool, bool UpdateParticleKindListOfVoxelsBool, CellEngineConfigData::TypesOfFileToRead Type);
+public:
+    static void FindNucleotidesIdentifiers();
+    void FindGenomeParameters() const;
 };
 
 

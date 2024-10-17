@@ -575,7 +575,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::PreprocessLinkAndAssociateEv
     CATCH("preprocessing linking and associating every particle kind with proper chemical reaction")
 }
 
-inline void FindNucleotidesIdentifiers()
+void CellEngineParticlesBinaryDataFileReaderWriter::FindNucleotidesIdentifiers()
 {
     try
     {
@@ -586,6 +586,18 @@ inline void FindNucleotidesIdentifiers()
         CellEngineConfigDataObject.UTP_ID = ParticlesKindsManagerObject.GetParticleKindFromStrId("M_utp_c")->EntityId;
     }
     CATCH("finding nucleotides identifiers")
+}
+
+void CellEngineParticlesBinaryDataFileReaderWriter::FindGenomeParameters() const
+{
+    try
+    {
+        CellEngineVoxelSimulationSpaceObjectPointer->ReadGenomeDataFromFile(true);
+        CellEngineVoxelSimulationSpaceObjectPointer->ReadGenomeSequenceFromFile();
+        CellEngineVoxelSimulationSpaceObjectPointer->FindInterGenesSequences();
+        CellEngineVoxelSimulationSpaceObjectPointer->TestDifferentKindsOfPromotersFindingsAndTerminatorsFindingsAlgorithms();
+    }
+    CATCH("finding genome parameters")
 }
 
 void CellEngineParticlesBinaryDataFileReaderWriter::ReadAllDataFromBinaryFileAndPrepareData(const bool StartValuesBool, const bool UpdateParticleKindListOfVoxelsBool, CellEngineConfigData::TypesOfFileToRead Type)
@@ -615,11 +627,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadAllDataFromBinaryFileAnd
 
         CellEngineAminoAcidsManagerObject.MapAminoAcidsIdToAminoAcidsObject();
 
-                                                                                                                        CellEngineVoxelSimulationSpaceObjectPointer->ReadGenomeDataFromFile(true);
-                                                                                                                        CellEngineVoxelSimulationSpaceObjectPointer->ReadGenomeSequenceFromFile();
-                                                                                                                        CellEngineVoxelSimulationSpaceObjectPointer->FindInterGenesSequences();
-                                                                                                                        CellEngineVoxelSimulationSpaceObjectPointer->TestDifferentKindsOfPromotersFindingAlgorithms();
-
+        FindGenomeParameters();
 
         CellEngineConfigDataObject.GenomeReadFromFile = true;
 

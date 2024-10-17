@@ -28,7 +28,7 @@ void FindInterGenesSequencesFromGenesData()
     CATCH("finding inter genes sequences from genes")
 }
 
-inline void FindCodons(const string& GenomeStr, const vector<string>& StartCodonsList, map<GeneIdInt, UnsignedInt>& FoundGenesCounter, UniqueIdInt& NumberOfFoundPromoters, UniqueIdInt& NumberOfFoundPromotersConfirmed, const UnsignedInt ScopeForStartGeneIndex, const size_t PosInGenomeToFindCodonStart, const size_t PosInGenomeToFind35Box, const size_t PosInGenomeToFind10Box, const bool SwitchLogsBool)
+inline void FindCodons(const string& GenomeStr, const vector<string>& StartCodonsList, map<GeneIdInt, UnsignedInt>& FoundGenesCounter, UnsignedInt& NumberOfFoundPromoters, UnsignedInt& NumberOfFoundPromotersConfirmed, const UnsignedInt ScopeForStartGeneIndex, const UnsignedInt PosInGenomeToFindCodonStart, const UnsignedInt PosInGenomeToFind35Box, const UnsignedInt PosInGenomeToFind10Box, const bool SwitchLogsBool)
 {
     try
     {
@@ -68,20 +68,20 @@ void FindPromotersAndStartCodons1(const string& GenomeStr, const bool SwitchLogs
         const string Promoter10BoxesList = "TATAA";
         const vector<string> StartCodonsList = { "ATG", "GTG", "TTG" };
 
-        const int MaxDistanceBetween35and10Boxes = 50;
-        const int MaxDistanceFrom10BoxToStartCodon = 50;
+        const SignedInt MaxDistanceBetween35and10Boxes = 50;
+        const SignedInt MaxDistanceFrom10BoxToStartCodon = 50;
 
-        UniqueIdInt NumberOfFoundPromoters = 0;
-        UniqueIdInt NumberOfFoundPromotersConfirmed = 0;
+        UnsignedInt NumberOfFoundPromoters = 0;
+        UnsignedInt NumberOfFoundPromotersConfirmed = 0;
         map<GeneIdInt, UnsignedInt> FoundGenesCounter;
         UnsignedInt ScopeForStartGeneIndex = 5;
 
-        for (size_t PosInGenomeToFind35Box = 0; PosInGenomeToFind35Box < GenomeStr.size() - Promoter35BoxesList.size(); ++PosInGenomeToFind35Box)
+        for (UnsignedInt PosInGenomeToFind35Box = 0; PosInGenomeToFind35Box < GenomeStr.size() - Promoter35BoxesList.size(); ++PosInGenomeToFind35Box)
             if (GenomeStr.substr(PosInGenomeToFind35Box, Promoter35BoxesList.size()) == Promoter35BoxesList)
-                for (size_t PosInGenomeToFind10Box = PosInGenomeToFind35Box + Promoter35BoxesList.size(); PosInGenomeToFind10Box < PosInGenomeToFind35Box + MaxDistanceBetween35and10Boxes && PosInGenomeToFind10Box < GenomeStr.size(); ++PosInGenomeToFind10Box)
+                for (UnsignedInt PosInGenomeToFind10Box = PosInGenomeToFind35Box + Promoter35BoxesList.size(); PosInGenomeToFind10Box < PosInGenomeToFind35Box + MaxDistanceBetween35and10Boxes && PosInGenomeToFind10Box < GenomeStr.size(); ++PosInGenomeToFind10Box)
                     if (GenomeStr.substr(PosInGenomeToFind10Box, Promoter10BoxesList.size()) == Promoter10BoxesList)
                     {
-                        for (size_t PosInGenomeToFindCodonStart = PosInGenomeToFind10Box + Promoter10BoxesList.size(); PosInGenomeToFindCodonStart < PosInGenomeToFind10Box + Promoter10BoxesList.size() + MaxDistanceFrom10BoxToStartCodon && PosInGenomeToFindCodonStart < GenomeStr.size(); ++PosInGenomeToFindCodonStart)
+                        for (UnsignedInt PosInGenomeToFindCodonStart = PosInGenomeToFind10Box + Promoter10BoxesList.size(); PosInGenomeToFindCodonStart < PosInGenomeToFind10Box + Promoter10BoxesList.size() + MaxDistanceFrom10BoxToStartCodon && PosInGenomeToFindCodonStart < GenomeStr.size(); ++PosInGenomeToFindCodonStart)
                             FindCodons(GenomeStr, StartCodonsList, FoundGenesCounter, NumberOfFoundPromoters, NumberOfFoundPromotersConfirmed, ScopeForStartGeneIndex, PosInGenomeToFindCodonStart, PosInGenomeToFind35Box, PosInGenomeToFind10Box, SwitchLogsBool);
                         break;
                     }
@@ -92,16 +92,14 @@ void FindPromotersAndStartCodons1(const string& GenomeStr, const bool SwitchLogs
     CATCH("finding promoters and start codons 1")
 }
 
-inline int CalculateDifference(const std::string& Sequence1, const std::string& Sequence2)
+inline SignedInt CalculateDifference(const std::string& Sequence1, const std::string& Sequence2)
 {
-    int Mismatches = 0;
-    for (size_t i = 0; i < Sequence1.size(); ++i)
-    {
-        if (Sequence1[i] != Sequence2[i])
-        {
+    SignedInt Mismatches = 0;
+
+    for (UnsignedInt Pos = 0; Pos < Sequence1.size(); ++Pos)
+        if (Sequence1[Pos] != Sequence2[Pos])
             Mismatches++;
-        }
-    }
+
     return Mismatches;
 }
 
@@ -113,24 +111,24 @@ void FindPromotersAndStartCodons2(const std::string& GenomeStr, const bool Switc
         const vector<string> Promoter10BoxesList = { "TATAAT", "TATAAA", "TATGAT", "TATATT" };
         const vector<string> StartCodonsList = { "ATG", "GTG", "TTG" };
 
-        const int MaxDistanceBetween35and10Boxes = 50;
-        const int MaxDistanceFrom10BoxToStartCodon = 100;
-        const int MaxNumberOfMismatchesForBox35 = 1;
-        const int MaxNumberOfMismatchesForBox10 = 1;
+        const SignedInt MaxDistanceBetween35and10Boxes = 50;
+        const SignedInt MaxDistanceFrom10BoxToStartCodon = 100;
+        const SignedInt MaxNumberOfMismatchesForBox35 = 1;
+        const SignedInt MaxNumberOfMismatchesForBox10 = 1;
 
-        UniqueIdInt NumberOfFoundPromoters = 0;
-        UniqueIdInt NumberOfFoundPromotersConfirmed = 0;
+        UnsignedInt NumberOfFoundPromoters = 0;
+        UnsignedInt NumberOfFoundPromotersConfirmed = 0;
         map<GeneIdInt, UnsignedInt> FoundGenesCounter;
         UnsignedInt ScopeForStartGeneIndex = 5;
 
-        for (size_t PosInGenomeToFind35Box = 0; PosInGenomeToFind35Box < GenomeStr.size() - 6; ++PosInGenomeToFind35Box)
+        for (UnsignedInt PosInGenomeToFind35Box = 0; PosInGenomeToFind35Box < GenomeStr.size() - 6; ++PosInGenomeToFind35Box)
             for (const string& Promoter35Box : Promoter35BoxesList)
                 if (CalculateDifference(GenomeStr.substr(PosInGenomeToFind35Box, 6), Promoter35Box) <= MaxNumberOfMismatchesForBox35)
-                    for (size_t PosInGenomeToFind10Box = PosInGenomeToFind35Box + 6; PosInGenomeToFind10Box < PosInGenomeToFind35Box + MaxDistanceBetween35and10Boxes && PosInGenomeToFind10Box < GenomeStr.size() - 6; ++PosInGenomeToFind10Box)
+                    for (UnsignedInt PosInGenomeToFind10Box = PosInGenomeToFind35Box + 6; PosInGenomeToFind10Box < PosInGenomeToFind35Box + MaxDistanceBetween35and10Boxes && PosInGenomeToFind10Box < GenomeStr.size() - 6; ++PosInGenomeToFind10Box)
                         for (const string& Promoter10Box : Promoter10BoxesList)
                             if (CalculateDifference(GenomeStr.substr(PosInGenomeToFind10Box, 6), Promoter10Box) <= MaxNumberOfMismatchesForBox10)
                             {
-                                for (size_t PosInGenomeToFindCodonStart = PosInGenomeToFind10Box + 6; PosInGenomeToFindCodonStart < PosInGenomeToFind10Box + 6 + MaxDistanceFrom10BoxToStartCodon && PosInGenomeToFindCodonStart < GenomeStr.size() - 3; ++PosInGenomeToFindCodonStart)
+                                for (UnsignedInt PosInGenomeToFindCodonStart = PosInGenomeToFind10Box + 6; PosInGenomeToFindCodonStart < PosInGenomeToFind10Box + 6 + MaxDistanceFrom10BoxToStartCodon && PosInGenomeToFindCodonStart < GenomeStr.size() - 3; ++PosInGenomeToFindCodonStart)
                                     FindCodons(GenomeStr, StartCodonsList, FoundGenesCounter, NumberOfFoundPromoters, NumberOfFoundPromotersConfirmed, ScopeForStartGeneIndex, PosInGenomeToFindCodonStart, PosInGenomeToFind35Box, PosInGenomeToFind10Box, SwitchLogsBool);
                                 break;
                             }
@@ -142,16 +140,14 @@ void FindPromotersAndStartCodons2(const std::string& GenomeStr, const bool Switc
     CATCH("finding promoters and start codons 2")
 }
 
-inline int CalculateSimilarity(const string& Sequence1, const string& Sequence2)
+inline SignedInt CalculateSimilarity(const string& Sequence1, const string& Sequence2)
 {
-    int Matches = 0;
-    for (size_t i = 0; i < Sequence1.size(); ++i)
-    {
-        if (Sequence1[i] == Sequence2[i])
-        {
+    SignedInt Matches = 0;
+
+    for (UnsignedInt Pos = 0; Pos < Sequence1.size(); ++Pos)
+        if (Sequence1[Pos] == Sequence2[Pos])
             Matches++;
-        }
-    }
+
     return Matches;
 }
 
@@ -163,25 +159,25 @@ void FindPromotersAndStartCodons3(const string& GenomeStr, const bool SwitchLogs
         const vector<string> Promoter10BoxesList = { "TATAAT", "TATAAA", "TATGAT", "TATATT" };
         const vector<string> StartCodonsList = { "ATG", "GTG", "TTG" };
 
-        const int MaxDistanceBetween35and10Boxes = 19;
-        const int MaxDistanceFrom10BoxToStartCodon = 50;
-        const int MinDistanceFrom10BoxToStartCodon = 10;
-        const int MinimumSimilarityScoreFor35Box = 5;
-        const int MinimumSimilarityScoreFor10Box = 5;
+        const SignedInt MaxDistanceBetween35and10Boxes = 19;
+        const SignedInt MaxDistanceFrom10BoxToStartCodon = 50;
+        const SignedInt MinDistanceFrom10BoxToStartCodon = 10;
+        const SignedInt MinimumSimilarityScoreFor35Box = 5;
+        const SignedInt MinimumSimilarityScoreFor10Box = 5;
 
-        UniqueIdInt NumberOfFoundPromoters = 0;
-        UniqueIdInt NumberOfFoundPromotersConfirmed = 0;
+        UnsignedInt NumberOfFoundPromoters = 0;
+        UnsignedInt NumberOfFoundPromotersConfirmed = 0;
         map<GeneIdInt, UnsignedInt> FoundGenesCounter;
         UnsignedInt ScopeForStartGeneIndex = 3;
 
-        for (size_t PosInGenomeToFind35Box = 0; PosInGenomeToFind35Box < GenomeStr.size() - 6; ++PosInGenomeToFind35Box)
+        for (UnsignedInt PosInGenomeToFind35Box = 0; PosInGenomeToFind35Box < GenomeStr.size() - 6; ++PosInGenomeToFind35Box)
             for (const string& Promoter35Box : Promoter35BoxesList)
                 if (CalculateSimilarity(GenomeStr.substr(PosInGenomeToFind35Box, 6), Promoter35Box) >= MinimumSimilarityScoreFor35Box)
-                    for (size_t PosInGenomeToFind10Box = PosInGenomeToFind35Box + 16; PosInGenomeToFind10Box <= PosInGenomeToFind35Box + MaxDistanceBetween35and10Boxes && PosInGenomeToFind10Box < GenomeStr.size() - 6; ++PosInGenomeToFind10Box)
+                    for (UnsignedInt PosInGenomeToFind10Box = PosInGenomeToFind35Box + 16; PosInGenomeToFind10Box <= PosInGenomeToFind35Box + MaxDistanceBetween35and10Boxes && PosInGenomeToFind10Box < GenomeStr.size() - 6; ++PosInGenomeToFind10Box)
                         for (const string& Promoter10Box : Promoter10BoxesList)
                             if (CalculateSimilarity(GenomeStr.substr(PosInGenomeToFind10Box, 6), Promoter10Box) >= MinimumSimilarityScoreFor10Box)
                             {
-                                for (size_t PosInGenomeToFindCodonStart = PosInGenomeToFind10Box + MinDistanceFrom10BoxToStartCodon; PosInGenomeToFindCodonStart < PosInGenomeToFind10Box + MaxDistanceFrom10BoxToStartCodon && PosInGenomeToFindCodonStart < GenomeStr.size() - 3; ++PosInGenomeToFindCodonStart)
+                                for (UnsignedInt PosInGenomeToFindCodonStart = PosInGenomeToFind10Box + MinDistanceFrom10BoxToStartCodon; PosInGenomeToFindCodonStart < PosInGenomeToFind10Box + MaxDistanceFrom10BoxToStartCodon && PosInGenomeToFindCodonStart < GenomeStr.size() - 3; ++PosInGenomeToFindCodonStart)
                                     FindCodons(GenomeStr, StartCodonsList, FoundGenesCounter, NumberOfFoundPromoters, NumberOfFoundPromotersConfirmed, ScopeForStartGeneIndex, PosInGenomeToFindCodonStart, PosInGenomeToFind35Box, PosInGenomeToFind10Box, SwitchLogsBool);
                                 break;
                             }
@@ -213,7 +209,7 @@ void FindPromotersForGenesFromGeneStartPos(const std::string& GenomeStr, const b
         const UnsignedInt MinimumSimilarityScoreFor35Box = 5;
         const UnsignedInt MinimumSimilarityScoreFor10Box = 5;
 
-        UniqueIdInt NumberOfFoundPromoters = 0;
+        UnsignedInt NumberOfFoundPromoters = 0;
         map<GeneIdInt, UnsignedInt> FoundPromotersCounter;
 
         for (const auto& GeneStartPos : GenesStarts)
@@ -271,12 +267,12 @@ void FindPromoters(const std::vector<std::string>& GenomesLines, const std::vect
         UnsignedInt NumberOfFoundPromoterSequences = 0;
         string AttachPolymeraseToDNAStartSequenceStr = "TATAAT";
 
-        UniqueIdInt NumberOfFoundPromoters = 0;
-        UniqueIdInt NumberOfFoundPromotersConfirmed = 0;
+        UnsignedInt NumberOfFoundPromoters = 0;
+        UnsignedInt NumberOfFoundPromotersConfirmed = 0;
         map<GeneIdInt, UnsignedInt> FoundGenesCounter;
         UnsignedInt ScopeForStartGeneIndex = 5;
         const vector<string> StartCodonsList = { "ATG", "GTG", "TTG" };
-        const int MaxDistanceToStart = 100;
+        const SignedInt MaxDistanceToStart = 100;
 
         auto AttachPolymeraseToDNAStartSequence = CellEngineUseful::ConvertStringSequenceToChainIdSequence(AttachPolymeraseToDNAStartSequenceStr);
 
@@ -303,7 +299,7 @@ void FindPromoters(const std::vector<std::string>& GenomesLines, const std::vect
                 if (SwitchLogsBool == true)
                     CellEngineUseful::SwitchOnLogs();
 
-                for (size_t PosInGenomeToFindCodonStart = StartGenomeIndex + 6; PosInGenomeToFindCodonStart < StartGenomeIndex + 6 + MaxDistanceToStart && PosInGenomeToFindCodonStart < Genomes[0].size() - 3; ++PosInGenomeToFindCodonStart)
+                for (UnsignedInt PosInGenomeToFindCodonStart = StartGenomeIndex + 6; PosInGenomeToFindCodonStart < StartGenomeIndex + 6 + MaxDistanceToStart && PosInGenomeToFindCodonStart < Genomes[0].size() - 3; ++PosInGenomeToFindCodonStart)
                     FindCodons(GenomesLines[0], StartCodonsList, FoundGenesCounter, NumberOfFoundPromoters, NumberOfFoundPromotersConfirmed, ScopeForStartGeneIndex, PosInGenomeToFindCodonStart, 1, 1, SwitchLogsBool);
 
                 NumberOfFoundPromoterSequences++;
@@ -319,7 +315,285 @@ void FindPromoters(const std::vector<std::string>& GenomesLines, const std::vect
     CATCH("checking genome promoters")
 }
 
-void TestSeveralDifferentKindsOfPromotersFindingAlgorithms(const std::vector<std::string>& GenomesLines, const std::vector<std::vector<UniqueIdInt>>& Genomes)
+bool IsPotentialHairpin(const std::string& SequenceStr)
+{
+    const UnsignedInt Length = SequenceStr.size();
+    SignedInt Matches = 0;
+
+    for (SignedInt Pos = 0; Pos < Length / 2; ++Pos)
+    {
+        const char Left = SequenceStr[Pos];
+        const char Right = SequenceStr[Length - 1 - Pos];
+
+        if ((Left == 'G' && Right == 'C') || (Left == 'C' && Right == 'G') || (Left == 'A' && Right == 'T') || (Left == 'T' && Right == 'A'))
+            Matches++;
+    }
+
+    return Matches >= Length / 2;
+}
+
+void FindTranscriptionTerminators1(const std::string& GenomeStr, const bool SwitchLogsBool)
+{
+    try
+    {
+        if (SwitchLogsBool == true)
+            CellEngineUseful::SwitchOffLogs();
+
+        const SignedInt HairpinLength = 8;
+        const SignedInt MinimumLengthOfADownstreamOfHairpin = 4;
+        const SignedInt MaximumLengthOfADownstreamOfHairpin = 8;
+
+        UnsignedInt NumberOfFoundTerminators = 0;
+        map<GeneIdInt, UnsignedInt> FoundTerminatorsCounter;
+
+        for (UnsignedInt PosInGenome = 0; PosInGenome < GenomeStr.size() - HairpinLength - MaximumLengthOfADownstreamOfHairpin; ++PosInGenome)
+        {
+            std::string HairpinCandidate = GenomeStr.substr(PosInGenome, HairpinLength);
+
+            if (IsPotentialHairpin(HairpinCandidate))
+            {
+                bool FoundAs = false;
+                for (UnsignedInt PosInGenomeHairpin = PosInGenome + HairpinLength; PosInGenomeHairpin < PosInGenome + HairpinLength + MaximumLengthOfADownstreamOfHairpin; ++PosInGenomeHairpin)
+                {
+                    SignedInt LengthOfRunning = 0;
+                    while (GenomeStr[PosInGenomeHairpin + LengthOfRunning] == 'A' && LengthOfRunning < MaximumLengthOfADownstreamOfHairpin)
+                        LengthOfRunning++;
+
+                    if (LengthOfRunning >= MinimumLengthOfADownstreamOfHairpin)
+                    {
+                        LoggersManagerObject.Log(STREAM("Potential terminator found at position: " << PosInGenome << endl));
+                        LoggersManagerObject.Log(STREAM("Hairpin sequence: " << HairpinCandidate << endl));
+                        LoggersManagerObject.Log(STREAM("Run of A's at position: " << PosInGenomeHairpin << " (length: " << LengthOfRunning << ")" << endl));
+
+                        FoundTerminatorsCounter[PosInGenome]++;
+                        NumberOfFoundTerminators++;
+                        FoundAs = true;
+
+                        break;
+                    }
+                }
+
+                if (FoundAs)
+                    PosInGenome += HairpinLength + MaximumLengthOfADownstreamOfHairpin;
+            }
+        }
+
+        if (SwitchLogsBool == true)
+            CellEngineUseful::SwitchOnLogs();
+
+        LoggersManagerObject.Log(STREAM("Number Of Found Terminators = " << NumberOfFoundTerminators));
+        LoggersManagerObject.Log(STREAM("Number Of Found Different Terminators = " << FoundTerminatorsCounter.size()));
+    }
+    CATCH("finding transcription terminators 1")
+}
+
+SignedInt CalculateHairpinScore1(const std::string& LeftStem, const std::string& RightStem)
+{
+    SignedInt Score = 0;
+    const UnsignedInt Length = LeftStem.size();
+
+    for (SignedInt Pos = 0; Pos < Length; ++Pos)
+    {
+        const char Left = LeftStem[Pos];
+        const char Right = RightStem[Length - 1 - Pos];
+
+        if ((Left == 'G' && Right == 'C') || (Left == 'C' && Right == 'G'))
+            Score += 3;
+        else
+        if ((Left == 'A' && Right == 'T') || (Left == 'T' && Right == 'A'))
+            Score += 1;
+        else
+            Score -= 2;
+    }
+
+    return Score;
+}
+
+void FindTerminatorsForGenes1(const std::string& GenomeStr, const bool SwitchLogsBool)
+{
+    try
+    {
+        if (SwitchLogsBool == true)
+            CellEngineUseful::SwitchOffLogs();
+
+        std::vector<pair<GeneIdInt, pair<UnsignedInt, UnsignedInt>>> GenesStartsAndEnds;
+        for (const auto& Gene : ParticlesKindsManagerObject.Genes)
+            GenesStartsAndEnds.emplace_back(Gene.second.NumId, make_pair(Gene.second.StartPosInGenome, Gene.second.EndPosInGenome));
+
+        const SignedInt MinHairpinLength = 8;
+        const SignedInt MaxHairpinLength = 15;
+        const SignedInt MinimumLengthOfADownstreamOfHairpin = 4;
+        const SignedInt MaximumLengthOfADownstreamOfHairpin = 10;
+        const SignedInt MaxDistanceFromGeneEnd = 150;
+        const SignedInt MaxDistanceBetweenHairpinAndAs = 40;
+        const SignedInt MinHairpinScore = 5;
+
+        SignedInt NumberOfFoundTerminators = 0;
+        map<GeneIdInt, UnsignedInt> FoundTerminatorsCounter;
+
+        for (UnsignedInt GeneIndex = 0; GeneIndex < GenesStartsAndEnds.size(); ++GeneIndex)
+        {
+            UnsignedInt GeneEnd = GenesStartsAndEnds[GeneIndex].second.second;
+            UnsignedInt NextGeneStart = (GeneIndex < GenesStartsAndEnds.size() - 1) ? GenesStartsAndEnds[GeneIndex + 1].second.first : GenomeStr.size();
+
+            bool TerminatorFound = false;
+
+            UnsignedInt SearchRegionStart = GeneEnd + 1;
+            UnsignedInt SearchRegionEnd = std::min(GeneEnd + MaxDistanceFromGeneEnd, NextGeneStart - 1);
+
+            for (UnsignedInt PosInGenome = SearchRegionStart; PosInGenome < SearchRegionEnd; ++PosInGenome)
+            {
+                for (SignedInt HairpinLength = MinHairpinLength; HairpinLength <= MaxHairpinLength; ++HairpinLength)
+                {
+                    if (PosInGenome + HairpinLength * 2 >= GenomeStr.size())
+                        continue;
+
+                    std::string LeftStem = GenomeStr.substr(PosInGenome, HairpinLength);
+                    std::string RightStem = GenomeStr.substr(PosInGenome + HairpinLength, HairpinLength);
+
+                    SignedInt HairpinScore = CalculateHairpinScore1(LeftStem, RightStem);
+
+                    if (HairpinScore >= MinHairpinScore)
+                    {
+                        for (UnsignedInt PosInGenomeHairpin = PosInGenome + HairpinLength * 2; PosInGenomeHairpin < PosInGenome + HairpinLength * 2 + MaxDistanceBetweenHairpinAndAs; ++PosInGenomeHairpin)
+                        {
+                            SignedInt LengthOfRunning = 0;
+                            while (GenomeStr[PosInGenomeHairpin + LengthOfRunning] == 'A' && LengthOfRunning < MaximumLengthOfADownstreamOfHairpin)
+                                LengthOfRunning++;
+
+                            if (LengthOfRunning >= MinimumLengthOfADownstreamOfHairpin)
+                            {
+                                if (PosInGenomeHairpin + LengthOfRunning < NextGeneStart)
+                                {
+                                    LoggersManagerObject.Log(STREAM("Terminator found downstream of gene ending at position: " << GeneEnd << endl));
+                                    LoggersManagerObject.Log(STREAM("Hairpin left stem: " << LeftStem << " right stem: " << RightStem << " (Score: " << HairpinScore << ")" << endl));
+                                    LoggersManagerObject.Log(STREAM("Run of A's at position: " << PosInGenomeHairpin << " (length: " << LengthOfRunning << ")" << endl));
+
+                                    FoundTerminatorsCounter[PosInGenome]++;
+                                    NumberOfFoundTerminators++;
+                                    TerminatorFound = true;
+                                }
+                                break;
+                            }
+                        }
+                    }
+                    if (TerminatorFound)
+                        break;
+                }
+                if (TerminatorFound)
+                    break;
+            }
+        }
+
+        if (SwitchLogsBool == true)
+            CellEngineUseful::SwitchOnLogs();
+
+        LoggersManagerObject.Log(STREAM("Number Of Found Terminators = " << NumberOfFoundTerminators));
+        LoggersManagerObject.Log(STREAM("Number Of Found Different Terminators = " << FoundTerminatorsCounter.size()));
+    }
+    CATCH("finding termantors for genes 1")
+}
+
+SignedInt CalculateHairpinScore2(const std::string& LeftStem, const std::string& RightStem)
+{
+    SignedInt Score = 0;
+    const SignedInt Length = LeftStem.size();
+
+    for (SignedInt Index = 0; Index < Length; ++Index)
+    {
+        char Left = LeftStem[Index];
+        char Right = RightStem[Length - 1 - Index];
+
+        if ((Left == 'G' && Right == 'C') || (Left == 'C' && Right == 'G'))
+            Score += 3;
+        else
+        if ((Left == 'A' && Right == 'T') || (Left == 'T' && Right == 'A'))
+            Score += 1;
+        else
+            Score -= 1;
+    }
+
+    return Score;
+}
+
+void FindTerminatorsForGenes2(const std::string& GenomeStr, const bool SwitchLogsBool)
+{
+    try
+    {
+        if (SwitchLogsBool == true)
+            CellEngineUseful::SwitchOffLogs();
+
+        std::vector<pair<GeneIdInt, UnsignedInt>> GenesEnds;
+        for (const auto& Gene : ParticlesKindsManagerObject.Genes)
+            GenesEnds.emplace_back(Gene.second.NumId, Gene.second.EndPosInGenome);
+
+        const SignedInt MinHairpinLength = 8;
+        const SignedInt MaxHairpinLength = 15;
+        const SignedInt MinimumLengthOfADownstreamOfHairpin = 4;
+        const SignedInt MaximumLengthOfADownstreamOfHairpin = 10;
+        const SignedInt MaxDistanceFromGeneEnd = 150;
+        const SignedInt MaxDistanceBetweenHairpinAndAs = 40;
+        const SignedInt MinHairpinScore = 5;
+
+        SignedInt NumberOfFoundTerminators = 0;
+        map<GeneIdInt, UnsignedInt> FoundTerminatorsCounter;
+
+        for (auto GeneEnd : GenesEnds)
+        {
+            bool TerminatorFound = false;
+
+            UnsignedInt SearchRegionStart = GeneEnd.second + 1;
+            UnsignedInt SearchRegionEnd = std::min(GeneEnd.second + MaxDistanceFromGeneEnd, GenomeStr.size() - 1);
+
+            for (UnsignedInt PosInGenome = SearchRegionStart; PosInGenome < SearchRegionEnd; ++PosInGenome)
+            {
+                for (SignedInt HairpinLength = MinHairpinLength; HairpinLength <= MaxHairpinLength; ++HairpinLength)
+                {
+                    if (PosInGenome + HairpinLength * 2 >= GenomeStr.size())
+                        continue;
+
+                    std::string LeftStem = GenomeStr.substr(PosInGenome, HairpinLength);
+                    std::string RightStem = GenomeStr.substr(PosInGenome + HairpinLength, HairpinLength);
+
+                    SignedInt HairpinScore = CalculateHairpinScore2(LeftStem, RightStem);
+
+                    if (HairpinScore >= MinHairpinScore)
+                        for (UnsignedInt PosInGenomeHairpin = PosInGenome + HairpinLength * 2; PosInGenomeHairpin < PosInGenome + HairpinLength * 2 + MaxDistanceBetweenHairpinAndAs; ++PosInGenomeHairpin)
+                        {
+                            SignedInt LengthOfRunning = 0;
+                            while (GenomeStr[PosInGenomeHairpin + LengthOfRunning] == 'A' && LengthOfRunning < MaximumLengthOfADownstreamOfHairpin)
+                                LengthOfRunning++;
+
+                            if (LengthOfRunning >= MinimumLengthOfADownstreamOfHairpin)
+                            {
+                                LoggersManagerObject.Log(STREAM("Terminator found downstream of gene ending at position: " << GeneEnd.second << endl));
+                                LoggersManagerObject.Log(STREAM("Hairpin left stem: " << LeftStem << " right stem: " << RightStem << " (Score: " << HairpinScore << ")" << endl));
+                                LoggersManagerObject.Log(STREAM("Run of A's at position: " << PosInGenomeHairpin << " (length: " << LengthOfRunning << ")" << endl));
+
+                                FoundTerminatorsCounter[PosInGenome]++;
+                                NumberOfFoundTerminators++;
+                                TerminatorFound = true;
+                                break;
+                            }
+                        }
+                    if (TerminatorFound)
+                        break;
+                }
+                if (TerminatorFound)
+                    break;
+            }
+        }
+
+        if (SwitchLogsBool == true)
+            CellEngineUseful::SwitchOnLogs();
+
+        LoggersManagerObject.Log(STREAM("Number Of Found Terminators = " << NumberOfFoundTerminators));
+        LoggersManagerObject.Log(STREAM("Number Of Found Different Terminators = " << FoundTerminatorsCounter.size()));
+    }
+    CATCH("finding terminators for genes 2")
+}
+
+void TestSeveralDifferentKindsOfPromotersFindingsAndTerminatorFindingsAlgorithms(const std::vector<std::string>& GenomesLines, const std::vector<std::vector<UniqueIdInt>>& Genomes)
 {
     try
     {
@@ -330,6 +604,10 @@ void TestSeveralDifferentKindsOfPromotersFindingAlgorithms(const std::vector<std
         FindPromotersAndStartCodons3(GenomesLines[0], true);
 
         FindPromotersForGenesFromGeneStartPos(GenomesLines[0], true);
+
+        FindTranscriptionTerminators1(GenomesLines[0], true);
+        FindTerminatorsForGenes1(GenomesLines[0], true);
+        FindTerminatorsForGenes2(GenomesLines[0], true);
     }
     CATCH("testing several different kinds of promoters finding algorithms")
 }

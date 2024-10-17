@@ -18,7 +18,7 @@ protected:
 public:
     void EraseAllDNAParticles();
 public:
-    void TestDifferentKindsOfPromotersFindingAlgorithms() const;
+    void TestDifferentKindsOfPromotersFindingsAndTerminatorsFindingsAlgorithms() const;
     static void FindInterGenesSequences();
 public:
     void GenerateRandomDNAInWholeCell(UnsignedInt NumberOfNucleotidesToBeGenerated, UnsignedInt RandomPosX, UnsignedInt RandomPosY, UnsignedInt RandomPosZ, UnsignedInt ParticleSizeX, UnsignedInt ParticleSizeY, UnsignedInt ParticleSizeZ, UnsignedInt ParticleSize1, UnsignedInt ParticleSize2, UnsignedInt ParticleSize3, UnsignedInt ParticleSize4, UnsignedInt ParticleSize5);

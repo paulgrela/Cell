@@ -11,6 +11,6 @@ void FindPromotersForGenesFromGeneStartPos(const std::string& GenomeStr, bool Sw
 
 void FindInterGenesSequencesFromGenesData();
 
-void TestSeveralDifferentKindsOfPromotersFindingAlgorithms(const std::vector<std::string>& GenomesLines, const std::vector<std::vector<UniqueIdInt>>& Genomes);
+void TestSeveralDifferentKindsOfPromotersFindingsAndTerminatorFindingsAlgorithms(const std::vector<std::string>& GenomesLines, const std::vector<std::vector<UniqueIdInt>>& Genomes);
 
 #endif
