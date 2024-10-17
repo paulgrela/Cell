@@ -316,12 +316,40 @@ bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNATranscriptionFullStar
     return PolymeraseRNATranscriptionStart(true, ParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject);
 }
 
-bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNATranscriptionContinueSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>> &NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
+void CellEngineNucleicAcidsComplexOperations::CheckEndingByHairpin(Particle& ParticleObject)
 {
     try
     {
-        string SequenceOfLettersToCheckFinishSequence;
+        string SequenceToCheckEnd = get<3>(GetNucleotidesSequence(&Particle::Next, pow(2, 5), *ParticleObject.LinkedParticlesPointersList[1], true, false, [](const Particle*){ return true; }));
+        for (UnsignedInt Length = 5; Length <= SequenceToCheckEnd.length(); Length++)
+            if (ParticlesKindsManagerObject.Terminators.contains(SequenceToCheckEnd.substr(0, Length)))
+            {
+                ParticleObject.LinkedParticlesPointersList.clear();
+                LoggersManagerObject.Log(STREAM("DETACHED (BY HAIRPIN) FROM DNA AND RNA AFTER PROCESS OF TRANSCRIPTION"));
+                break;
+            }
+    }
+    CATCH("checking ending by hairpin")
+}
 
+void CellEngineNucleicAcidsComplexOperations::CheckEndingByCodonStop(Particle& ParticleObject, const string& SequenceOfLettersToCheckFinishSequence)
+{
+    try
+    {
+        if (SequenceOfLettersToCheckFinishSequence.length() > 0 && SequenceOfLettersToCheckFinishSequence.length() % 3 == 0)
+            if (CellEngineUseful::IsIn(SequenceOfLettersToCheckFinishSequence.substr(SequenceOfLettersToCheckFinishSequence.length() - 3, 3), { "UAG", "UAA", "UGA" }))
+            {
+                ParticleObject.LinkedParticlesPointersList.clear();
+                LoggersManagerObject.Log(STREAM("DETACHED (BY CODON STOP) FROM DNA AND RNA AFTER PROCESS OF TRANSCRIPTION"));
+            }
+    }
+    CATCH("checking ending by codon stop")
+}
+
+bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNATranscriptionContinue(const bool EndingByHairpin, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>> &NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
+{
+    try
+    {
         LoggersManagerObject.Log(STREAM("POLYMERASE RNA TRANSCRIPTION CONTINUE REACTION"));
 
         auto& ParticleObject = GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first);
@@ -334,6 +362,8 @@ bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNATranscriptionContinue
         auto ChosenNucleotideIterator = find_if(RNANucleotidesFullFreeFoundInProximity.cbegin(), RNANucleotidesFullFreeFoundInProximity.cend(), [this, ParticleObject](const UniqueIdInt &NucleotideParticleIndex){ return &GetParticleFromIndex(NucleotideParticleIndex) != ParticleObject.LinkedParticlesPointersList[0] && CellEngineUseful::IsRNANucleotidePairedForRNAEqual(GetParticleFromIndex(NucleotideParticleIndex).EntityId, ParticleObject.LinkedParticlesPointersList[1]->ChainId) == true; });
         if (ChosenNucleotideIterator != RNANucleotidesFullFreeFoundInProximity.end())
         {
+            string SequenceOfLettersToCheckFinishSequence;
+
             Particle *ChosenNucleotide = &GetParticleFromIndex(*ChosenNucleotideIterator);
 
             LoggersManagerObject.Log(STREAM("Letter to compare = " << CellEngineUseful::GetLetterFromNucleotideForDNAorRNA(ChosenNucleotide->EntityId) << " " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.LinkedParticlesPointersList[1]->ChainId) << " NEXT " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.LinkedParticlesPointersList[1]->Next->ChainId)));
@@ -363,21 +393,30 @@ bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNATranscriptionContinue
 
                 SequenceOfLettersToCheckFinishSequence = ParticleObject.LinkedParticlesPointersList[0]->SequenceStr;
             }
+
+            if (EndingByHairpin == false)
+                CheckEndingByCodonStop(ParticleObject, SequenceOfLettersToCheckFinishSequence);
+            else
+                CheckEndingByHairpin(ParticleObject);
+
+            return true;
         }
         else
             LoggersManagerObject.Log(STREAM("Nucleotide not found - " << NucleotidesFreeFoundInProximity.size()));
-
-        if (SequenceOfLettersToCheckFinishSequence.length() > 0 && SequenceOfLettersToCheckFinishSequence.length() % 3 == 0)
-            if (CellEngineUseful::IsIn(SequenceOfLettersToCheckFinishSequence.substr(SequenceOfLettersToCheckFinishSequence.length() - 3, 3), { "UAG", "UAA", "UGA" }))
-            {
-                ParticleObject.LinkedParticlesPointersList.clear();
-
-                LoggersManagerObject.Log(STREAM("DETACHED FROM DNA AND RNA AFTER PROCESS OF TRANSCRIPTION"));
-            }
     }
     CATCH("executing polymerase continue dna transcription special reaction function")
 
     return false;
+}
+
+bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNATranscriptionContinueEndedByHairpinSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>> &NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
+{
+    return PolymeraseRNATranscriptionContinue(true, ParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject);
+}
+
+bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNATranscriptionContinueEndedByCodonStopSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>> &NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
+{
+    return PolymeraseRNATranscriptionContinue(false, ParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject);
 }
 
 bool CellEngineNucleicAcidsComplexOperations::RibosomeTranslationStartSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>> &NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)

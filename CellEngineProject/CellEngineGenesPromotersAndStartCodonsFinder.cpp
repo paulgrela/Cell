@@ -454,7 +454,6 @@ void FindTerminatorsForGenes1(const std::string& GenomeStr, const bool SwitchLog
                     SignedInt HairpinScore = CalculateHairpinScore1(LeftStem, RightStem);
 
                     if (HairpinScore >= MinHairpinScore)
-                    {
                         for (UnsignedInt PosInGenomeHairpin = PosInGenome + HairpinLength * 2; PosInGenomeHairpin < PosInGenome + HairpinLength * 2 + MaxDistanceBetweenHairpinAndAs; ++PosInGenomeHairpin)
                         {
                             SignedInt LengthOfRunning = 0;
@@ -465,10 +464,11 @@ void FindTerminatorsForGenes1(const std::string& GenomeStr, const bool SwitchLog
                             {
                                 if (PosInGenomeHairpin + LengthOfRunning < NextGeneStart)
                                 {
-                                    LoggersManagerObject.Log(STREAM("Terminator found downstream of gene ending at position: " << GeneEnd << endl));
-                                    LoggersManagerObject.Log(STREAM("Hairpin left stem: " << LeftStem << " right stem: " << RightStem << " (Score: " << HairpinScore << ")" << endl));
+                                    LoggersManagerObject.Log(STREAM("Terminator found downstream of gene ending at position: " << GeneEnd));
+                                    LoggersManagerObject.Log(STREAM("Hairpin left stem: " << LeftStem << " right stem: " << RightStem << " (Score: " << HairpinScore << ")"));
                                     LoggersManagerObject.Log(STREAM("Run of A's at position: " << PosInGenomeHairpin << " (length: " << LengthOfRunning << ")" << endl));
 
+                                    ParticlesKindsManagerObject.Terminators.emplace(LeftStem, Terminator{ LeftStem, RightStem, GeneEnd, PosInGenomeHairpin, LengthOfRunning });
                                     FoundTerminatorsCounter[PosInGenome]++;
                                     NumberOfFoundTerminators++;
                                     TerminatorFound = true;
@@ -476,7 +476,6 @@ void FindTerminatorsForGenes1(const std::string& GenomeStr, const bool SwitchLog
                                 break;
                             }
                         }
-                    }
                     if (TerminatorFound)
                         break;
                 }
@@ -606,7 +605,7 @@ void TestSeveralDifferentKindsOfPromotersFindingsAndTerminatorFindingsAlgorithms
         FindPromotersForGenesFromGeneStartPos(GenomesLines[0], true);
 
         FindTranscriptionTerminators1(GenomesLines[0], true);
-        FindTerminatorsForGenes1(GenomesLines[0], true);
+        FindTerminatorsForGenes1(GenomesLines[0], false);
         FindTerminatorsForGenes2(GenomesLines[0], true);
     }
     CATCH("testing several different kinds of promoters finding algorithms")

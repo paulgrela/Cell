@@ -68,6 +68,16 @@ public:
     UnsignedInt StartCodonPosition;
 };
 
+class Terminator
+{
+public:
+    std::string LeftStem;
+    std::string RightStem;
+    UnsignedInt GeneEnd;
+    UnsignedInt PosInGenomeHairpin;
+    SignedInt LengthOfRunning;
+};
+
 class Gene
 {
 public:

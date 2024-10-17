@@ -34,6 +34,7 @@ class ParticlesKindsManager
 public:
     std::unordered_map<GeneIdInt, Gene> Genes;
     std::unordered_map<UnsignedInt, Promoter> Promoters;
+    std::unordered_map<std::string, Terminator> Terminators;
     std::unordered_map<EntityIdInt, ParticleKind> ParticlesKinds;
     std::unordered_map<EntityIdInt, ParticleKindGraphicData> GraphicParticlesKindsFromConfigXML;
 public:
