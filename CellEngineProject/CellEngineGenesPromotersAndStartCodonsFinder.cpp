@@ -10,15 +10,25 @@
 
 using namespace std;
 
-void FindInterGenesSequencesFromGenesData()
+vector<Gene> GetGenesVectorSortedByStartPosInGenome()
+{
+    vector<Gene> LocalGenesVector;
+
+    try
+    {
+        transform(ParticlesKindsManagerObject.Genes.begin(), ParticlesKindsManagerObject.Genes.end(), back_inserter(LocalGenesVector), [](const auto& Gene){ return Gene.second; });
+        sort(LocalGenesVector.begin(), LocalGenesVector.end(), [](const Gene& G1, const Gene& G2){ return G1.StartPosInGenome < G2.StartPosInGenome; });
+    }
+    CATCH("finding inter genes sequences from genes")
+
+    return LocalGenesVector;
+}
+
+void PrintInterGenesSequencesFromGenesData()
 {
     try
     {
-        vector<Gene> LocalGenesVector;
-        transform(ParticlesKindsManagerObject.Genes.begin(), ParticlesKindsManagerObject.Genes.end(), back_inserter(LocalGenesVector), [](const auto& Gene){ return Gene.second; });
-        sort(LocalGenesVector.begin(), LocalGenesVector.end(), [](const Gene& G1, const Gene& G2){ return G1.StartPosInGenome < G2.StartPosInGenome; });
-
-        for (const auto& Gene : LocalGenesVector)
+        for (const auto& Gene : GetGenesVectorSortedByStartPosInGenome())
         {
             UnsignedInt StartPos = Gene.StartPosInGenome;
             UnsignedInt EndPos = Gene.EndPosInGenome;
@@ -253,16 +263,7 @@ void FindPromoters(const std::vector<std::string>& GenomesLines, const std::vect
 {
     try
     {
-        vector<Gene> LocalGenesVector;
-        transform(ParticlesKindsManagerObject.Genes.begin(), ParticlesKindsManagerObject.Genes.end(), back_inserter(LocalGenesVector), [](const auto& Gene){ return Gene.second; });
-        sort(LocalGenesVector.begin(), LocalGenesVector.end(), [](const Gene& G1, const Gene& G2){ return G1.StartPosInGenome < G2.StartPosInGenome; });
-
-        for (const auto& Gene : LocalGenesVector)
-        {
-            UnsignedInt StartPos = Gene.StartPosInGenome;
-            UnsignedInt EndPos = Gene.EndPosInGenome;
-            LoggersManagerObject.Log(STREAM("Gene = " << Gene.NumId << " " << StartPos << " " << EndPos));
-        }
+        auto LocalGenesVector = GetGenesVectorSortedByStartPosInGenome();
 
         UnsignedInt NumberOfFoundPromoterSequences = 0;
         string AttachPolymeraseToDNAStartSequenceStr = "TATAAT";
@@ -417,8 +418,8 @@ void FindTerminatorsForGenes1(const std::string& GenomeStr, const bool SwitchLog
             CellEngineUseful::SwitchOffLogs();
 
         std::vector<pair<GeneIdInt, pair<UnsignedInt, UnsignedInt>>> GenesStartsAndEnds;
-        for (const auto& Gene : ParticlesKindsManagerObject.Genes)
-            GenesStartsAndEnds.emplace_back(Gene.second.NumId, make_pair(Gene.second.StartPosInGenome, Gene.second.EndPosInGenome));
+        for (const auto& Gene : GetGenesVectorSortedByStartPosInGenome())
+            GenesStartsAndEnds.emplace_back(Gene.NumId, make_pair(Gene.StartPosInGenome, Gene.EndPosInGenome));
 
         const SignedInt MinHairpinLength = 8;
         const SignedInt MaxHairpinLength = 15;
@@ -490,7 +491,7 @@ void FindTerminatorsForGenes1(const std::string& GenomeStr, const bool SwitchLog
         LoggersManagerObject.Log(STREAM("Number Of Found Terminators = " << NumberOfFoundTerminators));
         LoggersManagerObject.Log(STREAM("Number Of Found Different Terminators = " << FoundTerminatorsCounter.size()));
     }
-    CATCH("finding termantors for genes 1")
+    CATCH("finding terminators for genes 1")
 }
 
 SignedInt CalculateHairpinScore2(const std::string& LeftStem, const std::string& RightStem)
@@ -537,7 +538,7 @@ void FindTerminatorsForGenes2(const std::string& GenomeStr, const bool SwitchLog
         SignedInt NumberOfFoundTerminators = 0;
         map<GeneIdInt, UnsignedInt> FoundTerminatorsCounter;
 
-        for (auto GeneEnd : GenesEnds)
+        for (const auto& GeneEnd : GenesEnds)
         {
             bool TerminatorFound = false;
 
@@ -596,6 +597,8 @@ void TestSeveralDifferentKindsOfPromotersFindingsAndTerminatorFindingsAlgorithms
 {
     try
     {
+        PrintInterGenesSequencesFromGenesData();
+
         FindPromoters(GenomesLines, Genomes, true);
 
         FindPromotersAndStartCodons1(GenomesLines[0], true);
@@ -605,7 +608,7 @@ void TestSeveralDifferentKindsOfPromotersFindingsAndTerminatorFindingsAlgorithms
         FindPromotersForGenesFromGeneStartPos(GenomesLines[0], true);
 
         FindTranscriptionTerminators1(GenomesLines[0], true);
-        FindTerminatorsForGenes1(GenomesLines[0], false);
+        FindTerminatorsForGenes1(GenomesLines[0], true);
         FindTerminatorsForGenes2(GenomesLines[0], true);
     }
     CATCH("testing several different kinds of promoters finding algorithms")

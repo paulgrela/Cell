@@ -15,8 +15,6 @@ constexpr UnsignedInt MaxLengthOfGene = 16384;
 constexpr EntityIdInt StartParticleKindId = 100000;
 constexpr EntityIdInt StartReactionId = 10000;
 
-constexpr UnsignedInt GenomeLength = 543380;
-
 constexpr ChainIdInt ACode = 1;
 constexpr ChainIdInt CCode = 2;
 constexpr ChainIdInt GCode = 3;

@@ -490,7 +490,7 @@ void CellEngineIllinoisDataCreator::ReadAndParseGenesFile(const string& FileName
                 GeneIdInt GeneId = stoi(MatchSave1[1].substr(10, 4));
                 UnsignedInt StartPos = stoi(MatchSave2[0]);
                 UnsignedInt EndPos = stoi(MatchSave2[1]);
-                GeneObject = { GeneId, MatchSave1[0], MatchSave1[1], MatchSave1[2], StartPos, EndPos, "" };
+                GeneObject = { GeneId, MatchSave1[0], MatchSave1[1], MatchSave1[2], "", StartPos, EndPos };
 
                 if (MatchSave1[2].starts_with("30S"))
                     ParticlesKindsManagerObject.Ribosomes30SProteinsList.emplace_back(GeneId);

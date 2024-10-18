@@ -132,6 +132,8 @@ void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::GenerateRandomD
 {
     try
     {
+        NumberOfNucleotidesToBeGenerated = (NumberOfNucleotidesToBeGenerated == 0 ? Genomes[0].size() : NumberOfNucleotidesToBeGenerated);
+
         EraseAllDNAParticles();
 
         UnsignedInt ParticlesSizeBeforeAddingRandomDNA = Particles.size();
@@ -428,5 +430,5 @@ void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::TestDifferentKi
 
 void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::FindInterGenesSequences()
 {
-    FindInterGenesSequencesFromGenesData();
+    PrintInterGenesSequencesFromGenesData();
 }

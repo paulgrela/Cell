@@ -85,10 +85,9 @@ public:
     std::string StrId;
     std::string Description;
     std::string ProteinId;
+    std::string Sequence;
     UnsignedInt StartPosInGenome;
     UnsignedInt EndPosInGenome;
-    std::string Sequence;
-    SignedInt PromoterSequencePos = -1;
 };
 
 class ParticleKindSpecialData

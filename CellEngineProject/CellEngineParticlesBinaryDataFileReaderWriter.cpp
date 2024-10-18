@@ -594,7 +594,6 @@ void CellEngineParticlesBinaryDataFileReaderWriter::FindGenomeParameters() const
     {
         CellEngineVoxelSimulationSpaceObjectPointer->ReadGenomeDataFromFile(true);
         CellEngineVoxelSimulationSpaceObjectPointer->ReadGenomeSequenceFromFile();
-        CellEngineVoxelSimulationSpaceObjectPointer->FindInterGenesSequences();
         CellEngineVoxelSimulationSpaceObjectPointer->TestDifferentKindsOfPromotersFindingsAndTerminatorsFindingsAlgorithms();
     }
     CATCH("finding genome parameters")
