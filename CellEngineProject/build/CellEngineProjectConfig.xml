@@ -3114,10 +3114,17 @@
                         <VoxelSimulationSpaceSelectionSizeY>24</VoxelSimulationSpaceSelectionSizeY>
                         <VoxelSimulationSpaceSelectionSizeZ>24</VoxelSimulationSpaceSelectionSizeZ>
 
+                        <NumberOfThreadsX>2</NumberOfThreadsX>
+                        <NumberOfThreadsY>2</NumberOfThreadsY>
+                        <NumberOfThreadsZ>2</NumberOfThreadsZ>
+                        <SizeOfVoxelSpaceX>512</SizeOfVoxelSpaceX>
+                        <SizeOfVoxelSpaceY>512</SizeOfVoxelSpaceY>
+                        <SizeOfVoxelSpaceZ>512</SizeOfVoxelSpaceZ>
+
                         <RadiusOfCellForDNA>380</RadiusOfCellForDNA>
 
-			<CellStateFileName>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile32.dat</CellStateFileName>
-                        <CellStateFileNameBackup>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile32.dat</CellStateFileNameBackup>
+			<CellStateFileName>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile33.dat</CellStateFileName>
+                        <CellStateFileNameBackup>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile33.dat</CellStateFileNameBackup>
 
 			<ChosenStructureIndex>0</ChosenStructureIndex>
 			<FilmOfStructuresActive>0</FilmOfStructuresActive>

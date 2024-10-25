@@ -21,8 +21,6 @@
 
 using namespace std;
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wreturn-type"
 std::unique_ptr<CellEngineDataFile> CreateCellEngineDataFileObject(const string_view& CellStateFileName)
 {
     if (string_utils::check_end_str(CellStateFileName, ".pdb") == true)
@@ -37,8 +35,8 @@ std::unique_ptr<CellEngineDataFile> CreateCellEngineDataFileObject(const string_
             default : break;
         }
     }
+    return nullptr;
 }
-#pragma GCC diagnostic pop
 
 void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const char* ConfigFileNameParameter, const UnsignedInt ExecuteCellStateId)
 {
@@ -139,6 +137,21 @@ void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const ch
                             CellEngineConfigDataObject.VoxelSimulationSpaceSelectionSizeX = CellStatePropertyTreeElement.second.get<UnsignedInt>("VoxelSimulationSpaceSelectionSizeX");
                             CellEngineConfigDataObject.VoxelSimulationSpaceSelectionSizeY = CellStatePropertyTreeElement.second.get<UnsignedInt>("VoxelSimulationSpaceSelectionSizeY");
                             CellEngineConfigDataObject.VoxelSimulationSpaceSelectionSizeZ = CellStatePropertyTreeElement.second.get<UnsignedInt>("VoxelSimulationSpaceSelectionSizeZ");
+
+                            if (CellStatePropertyTreeElement.second.get_child_optional("NumberOfThreadsX"))
+                                CellEngineConfigDataObject.NumberOfThreadsX = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfThreadsX");
+                            if (CellStatePropertyTreeElement.second.get_child_optional("NumberOfThreadsY"))
+                                CellEngineConfigDataObject.NumberOfThreadsY = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfThreadsY");
+                            if (CellStatePropertyTreeElement.second.get_child_optional("NumberOfThreadsZ"))
+                                CellEngineConfigDataObject.NumberOfThreadsZ = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfThreadsZ");
+
+                            if (CellStatePropertyTreeElement.second.get_child_optional("SizeOfVoxelSpaceX"))
+                                CellEngineConfigDataObject.SizeOfVoxelSpaceX = CellStatePropertyTreeElement.second.get<UnsignedInt>("SizeOfVoxelSpaceX");
+                            if (CellStatePropertyTreeElement.second.get_child_optional("SizeOfVoxelSpaceY"))
+                                CellEngineConfigDataObject.SizeOfVoxelSpaceY = CellStatePropertyTreeElement.second.get<UnsignedInt>("SizeOfVoxelSpaceY");
+                            if (CellStatePropertyTreeElement.second.get_child_optional("SizeOfVoxelSpaceZ"))
+                                CellEngineConfigDataObject.SizeOfVoxelSpaceZ = CellStatePropertyTreeElement.second.get<UnsignedInt>("SizeOfVoxelSpaceZ");
+
                             CellEngineConfigDataObject.RadiusOfCellForDNA = CellStatePropertyTreeElement.second.get<double>("RadiusOfCellForDNA");
                         }
 

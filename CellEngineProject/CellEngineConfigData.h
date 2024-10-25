@@ -79,6 +79,13 @@ public:
     UnsignedInt VoxelSimulationSpaceSelectionStepX{}, VoxelSimulationSpaceSelectionStepY{}, VoxelSimulationSpaceSelectionStepZ{};
     UnsignedInt VoxelSimulationSpaceSelectionSizeX{}, VoxelSimulationSpaceSelectionSizeY{}, VoxelSimulationSpaceSelectionSizeZ{};
 public:
+    UnsignedInt NumberOfThreadsX = 1;
+    UnsignedInt NumberOfThreadsY = 1;
+    UnsignedInt NumberOfThreadsZ = 1;
+    UnsignedInt SizeOfVoxelSpaceX = 1024;
+    UnsignedInt SizeOfVoxelSpaceY = 1024;
+    UnsignedInt SizeOfVoxelSpaceZ = 1024;
+public:
     double RadiusOfCellForDNA{};
 public:
     enum class SelectedSpaceStartParametersDrawTypes : UnsignedInt
