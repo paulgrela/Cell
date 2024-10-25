@@ -3117,9 +3117,9 @@
                         <NumberOfXThreads>2</NumberOfXThreads>
                         <NumberOfXThreads>2</NumberOfYThreads>
                         <NumberOfXThreads>2</NumberOfZThreads>
-                        <NumberOfXVoxelsInVoxelSimulationSpaceInOneThread>512</NumberOfXVoxelsInVoxelSimulationSpaceInOneThread>
-                        <NumberOfYVoxelsInVoxelSimulationSpaceInOneThread>512</NumberOfYVoxelsInVoxelSimulationSpaceInOneThread>
-                        <NumberOfZVoxelsInVoxelSimulationSpaceInOneThread>512</NumberOfXVoxelsInVoxelSimulationSpaceInOneThread>
+                        <NumberOfXVoxelsInOneThreadInVoxelSimulationSpace>512</NumberOfXVoxelsInOneThreadInVoxelSimulationSpace>
+                        <NumberOfYVoxelsInOneThreadInVoxelSimulationSpace>512</NumberOfYVoxelsInOneThreadInVoxelSimulationSpace>
+                        <NumberOfZVoxelsInOneThreadInVoxelSimulationSpace>512</NumberOfXVoxelsInOneThreadInVoxelSimulationSpace>
                         <NumberOfXVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>32</NumberOfXVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>
                         <NumberOfYVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>32</NumberOfYVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>
                         <NumberOfZVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>32</NumberOfZVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>

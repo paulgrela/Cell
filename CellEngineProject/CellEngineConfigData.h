@@ -82,9 +82,9 @@ public:
     UnsignedInt NumberOfXThreads = 1;
     UnsignedInt NumberOfYThreads = 1;
     UnsignedInt NumberOfZThreads = 1;
-    UnsignedInt NumberOfXVoxelsInVoxelSimulationSpaceInOneThread = 1024;
-    UnsignedInt NumberOfYVoxelsInVoxelSimulationSpaceInOneThread = 1024;
-    UnsignedInt NumberOfZVoxelsInVoxelSimulationSpaceInOneThread = 1024;
+    UnsignedInt NumberOfXVoxelsInOneThreadInVoxelSimulationSpace = 1024;
+    UnsignedInt NumberOfYVoxelsInOneThreadInVoxelSimulationSpace = 1024;
+    UnsignedInt NumberOfZVoxelsInOneThreadInVoxelSimulationSpace = 1024;
     UnsignedInt NumberOfXVoxelsInOneSectorInOneThreadInVoxelSimulationSpace = 32;
     UnsignedInt NumberOfYVoxelsInOneSectorInOneThreadInVoxelSimulationSpace = 32;
     UnsignedInt NumberOfZVoxelsInOneSectorInOneThreadInVoxelSimulationSpace = 32;
