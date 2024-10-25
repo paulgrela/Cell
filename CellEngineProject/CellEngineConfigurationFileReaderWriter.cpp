@@ -138,19 +138,26 @@ void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const ch
                             CellEngineConfigDataObject.VoxelSimulationSpaceSelectionSizeY = CellStatePropertyTreeElement.second.get<UnsignedInt>("VoxelSimulationSpaceSelectionSizeY");
                             CellEngineConfigDataObject.VoxelSimulationSpaceSelectionSizeZ = CellStatePropertyTreeElement.second.get<UnsignedInt>("VoxelSimulationSpaceSelectionSizeZ");
 
-                            if (CellStatePropertyTreeElement.second.get_child_optional("NumberOfThreadsX"))
-                                CellEngineConfigDataObject.NumberOfThreadsX = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfThreadsX");
-                            if (CellStatePropertyTreeElement.second.get_child_optional("NumberOfThreadsY"))
-                                CellEngineConfigDataObject.NumberOfThreadsY = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfThreadsY");
-                            if (CellStatePropertyTreeElement.second.get_child_optional("NumberOfThreadsZ"))
-                                CellEngineConfigDataObject.NumberOfThreadsZ = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfThreadsZ");
+                            if (CellStatePropertyTreeElement.second.get_child_optional("NumberOfXThreads"))
+                                CellEngineConfigDataObject.NumberOfXThreads = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfXThreads");
+                            if (CellStatePropertyTreeElement.second.get_child_optional("NumberOfYThreads"))
+                                CellEngineConfigDataObject.NumberOfYThreads = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfYThreads");
+                            if (CellStatePropertyTreeElement.second.get_child_optional("NumberOfZThreads"))
+                                CellEngineConfigDataObject.NumberOfZThreads = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfZThreads");
 
-                            if (CellStatePropertyTreeElement.second.get_child_optional("SizeOfVoxelSpaceX"))
-                                CellEngineConfigDataObject.SizeOfVoxelSpaceX = CellStatePropertyTreeElement.second.get<UnsignedInt>("SizeOfVoxelSpaceX");
-                            if (CellStatePropertyTreeElement.second.get_child_optional("SizeOfVoxelSpaceY"))
-                                CellEngineConfigDataObject.SizeOfVoxelSpaceY = CellStatePropertyTreeElement.second.get<UnsignedInt>("SizeOfVoxelSpaceY");
-                            if (CellStatePropertyTreeElement.second.get_child_optional("SizeOfVoxelSpaceZ"))
-                                CellEngineConfigDataObject.SizeOfVoxelSpaceZ = CellStatePropertyTreeElement.second.get<UnsignedInt>("SizeOfVoxelSpaceZ");
+                            if (CellStatePropertyTreeElement.second.get_child_optional("NumberOfXVoxelsInVoxelSimulationSpaceInOneThread"))
+                                CellEngineConfigDataObject.NumberOfXVoxelsInVoxelSimulationSpaceInOneThread = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfXVoxelsInVoxelSimulationSpaceInOneThread");
+                            if (CellStatePropertyTreeElement.second.get_child_optional("NumberOfYVoxelsInVoxelSimulationSpaceInOneThread"))
+                                CellEngineConfigDataObject.NumberOfYVoxelsInVoxelSimulationSpaceInOneThread = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfYVoxelsInVoxelSimulationSpaceInOneThread");
+                            if (CellStatePropertyTreeElement.second.get_child_optional("NumberOfZVoxelsInVoxelSimulationSpaceInOneThread"))
+                                CellEngineConfigDataObject.NumberOfZVoxelsInVoxelSimulationSpaceInOneThread = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfZVoxelsInVoxelSimulationSpaceInOneThread");
+
+                            if (CellStatePropertyTreeElement.second.get_child_optional("NumberOfXVoxelsInOneSectorInOneThreadInVoxelSimulationSpace"))
+                                CellEngineConfigDataObject.NumberOfXVoxelsInOneSectorInOneThreadInVoxelSimulationSpace = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfXVoxelsInOneSectorInOneThreadInVoxelSimulationSpace");
+                            if (CellStatePropertyTreeElement.second.get_child_optional("NumberOfYVoxelsInOneSectorInOneThreadInVoxelSimulationSpace"))
+                                CellEngineConfigDataObject.NumberOfYVoxelsInOneSectorInOneThreadInVoxelSimulationSpace = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfYVoxelsInOneSectorInOneThreadInVoxelSimulationSpace");
+                            if (CellStatePropertyTreeElement.second.get_child_optional("NumberOfZVoxelsInOneSectorInOneThreadInVoxelSimulationSpace"))
+                                CellEngineConfigDataObject.NumberOfZVoxelsInOneSectorInOneThreadInVoxelSimulationSpace = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfZVoxelsInOneSectorInOneThreadInVoxelSimulationSpace");
 
                             CellEngineConfigDataObject.RadiusOfCellForDNA = CellStatePropertyTreeElement.second.get<double>("RadiusOfCellForDNA");
                         }

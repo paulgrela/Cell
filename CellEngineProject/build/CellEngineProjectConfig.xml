@@ -3114,12 +3114,15 @@
                         <VoxelSimulationSpaceSelectionSizeY>24</VoxelSimulationSpaceSelectionSizeY>
                         <VoxelSimulationSpaceSelectionSizeZ>24</VoxelSimulationSpaceSelectionSizeZ>
 
-                        <NumberOfThreadsX>2</NumberOfThreadsX>
-                        <NumberOfThreadsY>2</NumberOfThreadsY>
-                        <NumberOfThreadsZ>2</NumberOfThreadsZ>
-                        <SizeOfVoxelSpaceX>512</SizeOfVoxelSpaceX>
-                        <SizeOfVoxelSpaceY>512</SizeOfVoxelSpaceY>
-                        <SizeOfVoxelSpaceZ>512</SizeOfVoxelSpaceZ>
+                        <NumberOfXThreads>2</NumberOfXThreads>
+                        <NumberOfXThreads>2</NumberOfYThreads>
+                        <NumberOfXThreads>2</NumberOfZThreads>
+                        <NumberOfXVoxelsInVoxelSimulationSpaceInOneThread>512</NumberOfXVoxelsInVoxelSimulationSpaceInOneThread>
+                        <NumberOfYVoxelsInVoxelSimulationSpaceInOneThread>512</NumberOfYVoxelsInVoxelSimulationSpaceInOneThread>
+                        <NumberOfZVoxelsInVoxelSimulationSpaceInOneThread>512</NumberOfXVoxelsInVoxelSimulationSpaceInOneThread>
+                        <NumberOfXVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>32</NumberOfXVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>
+                        <NumberOfYVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>32</NumberOfYVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>
+                        <NumberOfZVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>32</NumberOfZVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>
 
                         <RadiusOfCellForDNA>380</RadiusOfCellForDNA>
 

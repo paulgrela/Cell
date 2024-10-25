@@ -79,12 +79,15 @@ public:
     UnsignedInt VoxelSimulationSpaceSelectionStepX{}, VoxelSimulationSpaceSelectionStepY{}, VoxelSimulationSpaceSelectionStepZ{};
     UnsignedInt VoxelSimulationSpaceSelectionSizeX{}, VoxelSimulationSpaceSelectionSizeY{}, VoxelSimulationSpaceSelectionSizeZ{};
 public:
-    UnsignedInt NumberOfThreadsX = 1;
-    UnsignedInt NumberOfThreadsY = 1;
-    UnsignedInt NumberOfThreadsZ = 1;
-    UnsignedInt SizeOfVoxelSpaceX = 1024;
-    UnsignedInt SizeOfVoxelSpaceY = 1024;
-    UnsignedInt SizeOfVoxelSpaceZ = 1024;
+    UnsignedInt NumberOfXThreads = 1;
+    UnsignedInt NumberOfYThreads = 1;
+    UnsignedInt NumberOfZThreads = 1;
+    UnsignedInt NumberOfXVoxelsInVoxelSimulationSpaceInOneThread = 1024;
+    UnsignedInt NumberOfYVoxelsInVoxelSimulationSpaceInOneThread = 1024;
+    UnsignedInt NumberOfZVoxelsInVoxelSimulationSpaceInOneThread = 1024;
+    UnsignedInt NumberOfXVoxelsInOneSectorInOneThreadInVoxelSimulationSpace = 32;
+    UnsignedInt NumberOfYVoxelsInOneSectorInOneThreadInVoxelSimulationSpace = 32;
+    UnsignedInt NumberOfZVoxelsInOneSectorInOneThreadInVoxelSimulationSpace = 32;
 public:
     double RadiusOfCellForDNA{};
 public:

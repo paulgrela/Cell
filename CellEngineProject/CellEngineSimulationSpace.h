@@ -63,6 +63,9 @@ public:
     void GenerateOneRandomReactionForWholeCellSpace(UnsignedInt XStartParam, UnsignedInt YStartParam, UnsignedInt ZStartParam, UnsignedInt XStepParam, UnsignedInt YStepParam, UnsignedInt ZStepParam, UnsignedInt XSizeParam, UnsignedInt YSizeParam, UnsignedInt ZSizeParam);
     void GenerateOneStepOfRandomReactionsForAllParticles();
 public:
+    void GenerateOneStepOfSimulationForWholeCellSpaceInThreads(UnsignedInt NumberOfSteps1, UnsignedInt NumberOfSteps2, UnsignedInt ThreadXIndex, UnsignedInt ThreadYIndex, UnsignedInt ThreadZIndex);
+    void GenerateNStepsOfSimulationForWholeCellSpaceInThreads(UnsignedInt NumberOfSteps);
+public:
     void GenerateOneStepOfRandomReactionsForSelectedRangeOfParticles(UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam);
     void GenerateOneStepOfRandomReactionsForOneParticleFromRangeOfParticles(UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam, UnsignedInt ShiftIndexOfChosenParticle);
     void GenerateOneRandomReactionForChosenParticle(Particle& ParticleObject);
