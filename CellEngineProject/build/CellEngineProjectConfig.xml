@@ -3804,7 +3804,7 @@
                         <NumberOfYVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>16</NumberOfYVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>
                         <NumberOfZVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>16</NumberOfZVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>
 
-                        <RadiusOfCellForDNA>380</RadiusOfCellForDNA>
+                        <RadiusOfCellForDNA>95</RadiusOfCellForDNA>
 
 			<CellStateFileName>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile33.dat</CellStateFileName>
                         <CellStateFileNameBackup>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile33.dat</CellStateFileNameBackup>
@@ -3828,7 +3828,7 @@
 			<ShowDetailsInAtomScale>true</ShowDetailsInAtomScale>
 			<CheckAtomVisibility>true</CheckAtomVisibility>
 			<CutZ>200</CutZ>
-			<Distance>1700</Distance>
+			<Distance>800</Distance>
 			<LoadOfAtomsStep>1</LoadOfAtomsStep>
 
 			<XLowToDrawInAtomScale>-200</XLowToDrawInAtomScale>

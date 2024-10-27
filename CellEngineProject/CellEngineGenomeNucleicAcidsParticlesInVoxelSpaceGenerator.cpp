@@ -123,7 +123,7 @@ tuple<UnsignedInt, UnsignedInt, UnsignedInt> CellEngineGenomeNucleicAcidsParticl
     return { LastLocalRandomPos.X, LastLocalRandomPos.Y, LastLocalRandomPos.Z };
 }
 
-UnsignedInt Sqr(UnsignedInt Value)
+UnsignedInt Sqr(const UnsignedInt Value)
 {
     return Value * Value;
 }
@@ -185,20 +185,6 @@ void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::GenerateRandomD
             while (EmptyVoxelSpaceForNewNucleotideBool == true && NumberOfGeneratedNucleotides < NumberOfNucleotidesToBeGenerated)
             {
                 EmptyVoxelSpaceForNewNucleotideBool = CheckFreeSpaceInCuboidSelectedSpace(RandomPosX, RandomPosY, RandomPosZ, 1, 1, 1, ParticleSizeX, ParticleSizeY, ParticleSizeZ, GetZeroSimulationSpaceVoxel());
-
-                // for (UnsignedInt PosX = RandomPosX; PosX < RandomPosX + ParticleSizeX; PosX++)
-                //     for (UnsignedInt PosY = RandomPosY; PosY < RandomPosY + ParticleSizeY; PosY++)
-                //         for (UnsignedInt PosZ = RandomPosZ; PosZ < RandomPosZ + ParticleSizeZ; PosZ++)
-                //             if (GetSpaceVoxel(PosX, PosY, PosZ) != GetZeroSimulationSpaceVoxel())
-                //             {
-                //                 LoggersManagerObject.Log(STREAM("NOT EMPTY A POS = " << PosX << " " << PosY << " " << PosZ << " " << GetSpaceVoxel(PosX, PosY, PosZ)));
-                //
-                //                 EmptyVoxelSpaceForNewNucleotideBool = false;
-                //
-                //                 goto BreakOutOfLoop;
-                //             }
-                //
-                // BreakOutOfLoop:;
 
                 if (EmptyVoxelSpaceForNewNucleotideBool == false)
                     UpdateRandomPositions(RandomMoveDirection, RandomPosX, RandomPosY, RandomPosZ, -ParticleSize3);
