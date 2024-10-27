@@ -265,18 +265,18 @@ void CellEngineParticlesBinaryDataFileReaderWriter::PrepareParticlesAfterReading
         LoggersManagerObject.Log(STREAM("START OF PREPARING PARTICLES"));
 
         for (auto& ParticleObject : Particles)
-                                                                                                                        if (CellEngineUseful::IsDNA(ParticleObject.second.EntityId) == false)
-        {
-            CellEngineVoxelSimulationSpaceObjectPointer->SetAllVoxelsInListOfVoxelsToValueForOuterClass(ParticleObject.second.ListOfVoxels, ParticleObject.second.Index);
+            if (CellEngineUseful::IsDNA(ParticleObject.second.EntityId) == false)
+            {
+                CellEngineVoxelSimulationSpaceObjectPointer->SetAllVoxelsInListOfVoxelsToValueForOuterClass(ParticleObject.second.ListOfVoxels, ParticleObject.second.Index);
 
-            ParticleObject.second.Prev = ParticleObject.second.PrevTemporary != 0 ? &GetParticleFromIndex(ParticleObject.second.PrevTemporary) : nullptr;
-            ParticleObject.second.Next = ParticleObject.second.NextTemporary != 0 ? &GetParticleFromIndex(ParticleObject.second.NextTemporary) : nullptr;
-            ParticleObject.second.PairedNucleotidePtr = ParticleObject.second.PairedNucleotideTemporary != 0 ? &GetParticleFromIndex(ParticleObject.second.PairedNucleotideTemporary) : nullptr;
+                ParticleObject.second.Prev = ParticleObject.second.PrevTemporary != 0 ? &GetParticleFromIndex(ParticleObject.second.PrevTemporary) : nullptr;
+                ParticleObject.second.Next = ParticleObject.second.NextTemporary != 0 ? &GetParticleFromIndex(ParticleObject.second.NextTemporary) : nullptr;
+                ParticleObject.second.PairedNucleotidePtr = ParticleObject.second.PairedNucleotideTemporary != 0 ? &GetParticleFromIndex(ParticleObject.second.PairedNucleotideTemporary) : nullptr;
 
-            ParticleObject.second.LinkedParticlesPointersList.clear();
-            for (auto& LinkedParticlesPointerObjectTemporary : ParticleObject.second.LinkedParticlesPointersListTemporary)
-                ParticleObject.second.LinkedParticlesPointersList.emplace_back(&GetParticleFromIndex(LinkedParticlesPointerObjectTemporary));
-        }
+                ParticleObject.second.LinkedParticlesPointersList.clear();
+                for (auto& LinkedParticlesPointerObjectTemporary : ParticleObject.second.LinkedParticlesPointersListTemporary)
+                    ParticleObject.second.LinkedParticlesPointersList.emplace_back(&GetParticleFromIndex(LinkedParticlesPointerObjectTemporary));
+            }
 
         LoggersManagerObject.Log(STREAM("END OF PREPARING PARTICLES"));
     }
@@ -309,6 +309,27 @@ void ReadVectorFromBinaryFile(ifstream& ParticlesDataFile, vector<TElement>& Vec
             TElement Object{};
             ParticlesDataFile.read((char*)&Object, sizeof(Object));
             VectorToBeRead.emplace_back(Object);
+        }
+    }
+    CATCH("reading vector from binary file")
+}
+
+void ReadVoxelsVectorDividedByStepsFromBinaryFile(ifstream& ParticlesDataFile, vector<vector3_16>& VectorToBeRead, const float DivideFactor)
+{
+    try
+    {
+        const uint16_t Step = DivideFactor * DivideFactor * DivideFactor;
+
+        VectorToBeRead.clear();
+
+        UnsignedInt Size;
+        ParticlesDataFile.read((char*)&Size, sizeof(Size));
+        for (UnsignedInt Index = 0; Index < Size; Index++)
+        {
+            vector3_16 Object{};
+            ParticlesDataFile.read((char*)&Object, sizeof(Object));
+            if (Index % Step == 0)
+                VectorToBeRead.emplace_back(vector3_16{ static_cast<uint16_t>(static_cast<float>(Object.X) / DivideFactor), static_cast<uint16_t>(static_cast<float>(Object.Y) / DivideFactor), static_cast<uint16_t>(static_cast<float>(Object.Z) / DivideFactor) });
         }
     }
     CATCH("reading vector from binary file")
@@ -386,9 +407,6 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
         ParticlesDataFile.read((char*)&ParticlesSize, sizeof(ParticlesSize));
         LoggersManagerObject.Log(STREAM("Number of Particles to be read = " << ParticlesSize));
 
-        //DZIELENIE PRZEZ DivisionFactorForReadingPositionsOfParticles Pozycji - CO JESLI ZAJETY - GDZIE WSTAWIAM DO VOXELA
-        //POBRANA LISTE VOXELI TEZ BRAC CO CZWARTY LOSOWO
-
         for (UnsignedInt ParticleObjectIndex = 1; ParticleObjectIndex <= ParticlesSize; ParticleObjectIndex++)
         {
             Particle ParticleObject;
@@ -404,8 +422,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
 
             ReadStringFromBinaryFile(ParticlesDataFile, ParticleObject.SequenceStr);
 
-            //POBRANA LISTE VOXELI TEZ BRAC CO CZWARTY LOSOWO
-            ReadVectorFromBinaryFile<vector3_16>(ParticlesDataFile, ParticleObject.ListOfVoxels);
+            ReadVoxelsVectorDividedByStepsFromBinaryFile(ParticlesDataFile, ParticleObject.ListOfVoxels, CellEngineConfigDataObject.DivisionFactorForReadingPositionsOfParticles);
 
             ParticlesDataFile.read((char*)&ParticleObject.PrevTemporary, sizeof(ParticleObject.PrevTemporary));
             ParticlesDataFile.read((char*)&ParticleObject.NextTemporary, sizeof(ParticleObject.NextTemporary));

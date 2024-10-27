@@ -132,7 +132,7 @@ void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::GenerateRandomD
 {
     try
     {
-        NumberOfNucleotidesToBeGenerated = (NumberOfNucleotidesToBeGenerated == 0 ? Genomes[0].size() : NumberOfNucleotidesToBeGenerated);
+        NumberOfNucleotidesToBeGenerated = (NumberOfNucleotidesToBeGenerated == 0 ? GenomeLength : NumberOfNucleotidesToBeGenerated);
 
         EraseAllDNAParticles();
 
