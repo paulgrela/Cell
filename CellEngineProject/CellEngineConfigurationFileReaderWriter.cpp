@@ -128,6 +128,8 @@ void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const ch
                         {
                             CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfVoxelsInVoxelSimulationSpaceInEachDimension");
                             CellEngineConfigDataObject.DivisionFactorForVoxelSimulationSpace = CellStatePropertyTreeElement.second.get<float>("DivisionFactorForVoxelSimulationSpace");
+                            if (CellStatePropertyTreeElement.second.get_child_optional("DivisionFactorForReadingPositionsOfParticles"))
+                                CellEngineConfigDataObject.DivisionFactorForReadingPositionsOfParticles = CellStatePropertyTreeElement.second.get<float>("DivisionFactorForReadingPositionsOfParticles");
                             CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartXPos = CellStatePropertyTreeElement.second.get<UnsignedInt>("VoxelSimulationSpaceSelectionStartXPos");
                             CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartYPos = CellStatePropertyTreeElement.second.get<UnsignedInt>("VoxelSimulationSpaceSelectionStartYPos");
                             CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartZPos = CellStatePropertyTreeElement.second.get<UnsignedInt>("VoxelSimulationSpaceSelectionStartZPos");

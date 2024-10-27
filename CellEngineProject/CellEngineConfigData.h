@@ -74,6 +74,7 @@ public:
 public:
     UnsignedInt NumberOfVoxelsInVoxelSimulationSpaceInEachDimension{};
     float DivisionFactorForVoxelSimulationSpace{};
+    float DivisionFactorForReadingPositionsOfParticles{1.0};
 public:
     UnsignedInt VoxelSimulationSpaceSelectionStartXPos{}, VoxelSimulationSpaceSelectionStartYPos{}, VoxelSimulationSpaceSelectionStartZPos{};
     UnsignedInt VoxelSimulationSpaceSelectionStepX{}, VoxelSimulationSpaceSelectionStepY{}, VoxelSimulationSpaceSelectionStepZ{};

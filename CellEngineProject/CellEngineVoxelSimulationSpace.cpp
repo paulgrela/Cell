@@ -80,7 +80,7 @@ void CellEngineVoxelSimulationSpace::SetAtomInVoxelSimulationSpace(const UniqueI
 
         GetMinMaxOfCoordinates(PosX, PosY, PosZ, XMin, XMax, YMin, YMax, ZMin, ZMax);
 
-        if (GetSpaceVoxel(PosX, PosY, PosZ) == 0)
+        if (GetSpaceVoxel(PosX, PosY, PosZ) == GetZeroSimulationSpaceVoxel())
             SetValueToSpaceVoxelWithFillingListOfVoxelsOfParticle(&GetParticleFromIndex(ParticleIndex).ListOfVoxels, ParticleIndex, PosX, PosY, PosZ);
     }
     CATCH("setting atom in voxel simulation space")

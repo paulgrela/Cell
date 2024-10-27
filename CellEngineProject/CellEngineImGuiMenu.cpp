@@ -807,7 +807,13 @@ public:
 
                 if (ImGui::CollapsingHeader("RANDOM DNA GENERATOR", ImGuiTreeNodeFlags_DefaultOpen))
                 {
-                    ColorButton(AlignString("GENERATE RANDOM DNA", StringLength).c_str(), Nothing, 0, 0, 0, 3, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue){ CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateRandomDNAInWholeCell(0, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartXPos + 3, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartYPos, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartZPos, 2, 2, 2, 2, 2, 2, 2, 2); });
+                    ColorButton(AlignString("GENERATE RANDOM DNA", StringLength).c_str(), Nothing, 0, 0, 0, 3, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue)
+                    {
+                        UniqueIdInt SizeOfParticle = CellEngineConfigDataObject.DivisionFactorForReadingPositionsOfParticles == 4 ? 1 : 2;
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateRandomDNAInWholeCell(0, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartXPos + 3, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartYPos, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartZPos, SizeOfParticle, SizeOfParticle, SizeOfParticle, SizeOfParticle, SizeOfParticle, SizeOfParticle, SizeOfParticle, SizeOfParticle);
+                        //CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateRandomDNAInWholeCell(0, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartXPos + 3, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartYPos, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartZPos, 2, 2, 2, 2, 2, 2, 2, 2);
+                        //CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateRandomDNAInWholeCell(0, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartXPos + 3, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartYPos, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartZPos, 1, 1, 1, 1, 1, 1, 1, 1);
+                    });
 
                     if (ImGui::Button(AlignString("TRUE RANDOM GENERATOR SEED DEVICE", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->RandomGeneratorSetSeedByRandomDevice();
@@ -839,54 +845,61 @@ public:
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ClearVoxelSpaceAndParticles();
                     if (ImGui::Button(AlignString("CLEAR DNA PARTICLES", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->EraseAllDNAParticles();
+
                     if (ImGui::Button(AlignString("GENERATE ALL RANDOM PARTICLES", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateAllRealRandomParticles();
+
+                    const UnsignedInt Radius1 = 400 / CellEngineConfigDataObject.DivisionFactorForReadingPositionsOfParticles;
+                    const UnsignedInt Radius1Size = 400 / CellEngineConfigDataObject.DivisionFactorForReadingPositionsOfParticles;
+                    const UnsignedInt Radius2 = 420 / CellEngineConfigDataObject.DivisionFactorForReadingPositionsOfParticles;
+                    const UnsignedInt Radius2Size = 45 / CellEngineConfigDataObject.DivisionFactorForReadingPositionsOfParticles;
+
                     if (ImGui::Button(AlignString("GENERATE RANDOM RIBOSOMES", StringLength).c_str()) == true)
-                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::Ribosome, false, 400, 400);
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::Ribosome, false, Radius1, Radius1Size);
                     if (ImGui::Button(AlignString("GENERATE RANDOM RNA POLYMERASE", StringLength).c_str()) == true)
-                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::RNAPolymerase, false, 400, 400);
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::RNAPolymerase, false, Radius1, Radius1Size);
                     if (ImGui::Button(AlignString("GENERATE RANDOM DNA POLYMERASE", StringLength).c_str()) == true)
-                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::DNAPolymerase, false, 400, 400);
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::DNAPolymerase, false, Radius1, Radius1Size);
 
                     if (ImGui::Button(AlignString("GENERATE RANDOM MEMBRANE PARTICLES", StringLength).c_str()) == true)
-                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::MembraneProtein, false, 420, 45);
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::MembraneProtein, false, Radius2, Radius2Size);
                     if (ImGui::Button(AlignString("GENERATE RANDOM RIBOSOMES PARTICLES", StringLength).c_str()) == true)
-                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::RibosomeProtein, false, 400, 400);
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::RibosomeProtein, false, Radius1, Radius1Size);
                     if (ImGui::Button(AlignString("GENERATE RANDOM DNA POLYMERASE P PARTICLES", StringLength).c_str()) == true)
-                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::PolymeraseProtein, false, 400, 400);
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::PolymeraseProtein, false, Radius1, Radius1Size);
                     if (ImGui::Button(AlignString("GENERATE RANDOM RNA POLYMERASE P PARTICLES", StringLength).c_str()) == true)
-                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::RNAPolymeraseProtein, false, 400, 400);
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::RNAPolymeraseProtein, false, Radius1, Radius1Size);
                     if (ImGui::Button(AlignString("GENERATE RANDOM PROTEIN FRAC PARTICLES", StringLength).c_str()) == true)
-                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::ProteinFrac, false, 400, 400);
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::ProteinFrac, false, Radius1, Radius1Size);
                     if (ImGui::Button(AlignString("GENERATE RANDOM OTHER PROTEIN PARTICLES", StringLength).c_str()) == true)
-                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::OtherProtein, false, 400, 400);
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::OtherProtein, false, Radius1, Radius1Size);
 
                     ImGui::Button(AlignString("GENERATE DNA", StringLength).c_str());
 
                     if (ImGui::Button(AlignString("GENERATE RANDOM tRNA PARTICLES_uncharged", StringLength).c_str()) == true)
-                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::tRNA_uncharged, false, 400, 400);
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::tRNA_uncharged, false, Radius1, Radius1Size);
                     if (ImGui::Button(AlignString("GENERATE RANDOM tRNA PARTICLES_charged", StringLength).c_str()) == true)
-                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::tRNA_charged, false, 400, 400);
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::tRNA_charged, false, Radius1, Radius1Size);
                     if (ImGui::Button(AlignString("GENERATE RANDOM mRNA PARTICLES", StringLength).c_str()) == true)
-                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::mRNA, false, 400, 400);
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::mRNA, false, Radius1, Radius1Size);
                     if (ImGui::Button(AlignString("GENERATE RANDOM rRNA PARTICLES", StringLength).c_str()) == true)
-                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::rRNA, false, 400, 400);
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::rRNA, false, Radius1, Radius1Size);
 
                     if (ImGui::Button(AlignString("GENERATE RANDOM tRNA PARTICLES_uncharged M", StringLength).c_str()) == true)
-                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::tRNA_uncharged, true, 400, 400);
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::tRNA_uncharged, true, Radius1, Radius1Size);
                     if (ImGui::Button(AlignString("GENERATE RANDOM tRNA PARTICLES_charged M", StringLength).c_str()) == true)
-                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::tRNA_charged, true, 400, 400);
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::tRNA_charged, true, Radius1, Radius1Size);
                     if (ImGui::Button(AlignString("GENERATE RANDOM mRNA PARTICLES M", StringLength).c_str()) == true)
-                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::mRNA, true, 400, 400);
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::mRNA, true, Radius1, Radius1Size);
                     if (ImGui::Button(AlignString("GENERATE RANDOM rRNA PARTICLES M", StringLength).c_str()) == true)
-                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::rRNA, true, 400, 400);
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::rRNA, true, Radius1, Radius1Size);
 
                     if (ImGui::Button(AlignString("GENERATE RANDOM BASIC PARTICLES", StringLength).c_str()) == true)
-                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::Basic, false, 400, 400);
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::Basic, false, Radius1, Radius1Size);
                     if (ImGui::Button(AlignString("GENERATE RANDOM LIPID PARTICLES", StringLength).c_str()) == true)
-                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::Lipid, false, 420, 45);
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::Lipid, false, Radius2, Radius2Size);
                     if (ImGui::Button(AlignString("GENERATE RANDOM OTHER PARTICLES", StringLength).c_str()) == true)
-                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::Other, false, 400, 400);
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::Other, false, Radius1, Radius1Size);
 
                     if (ImGui::Button(AlignString("SHOW POLYMERASE PARTICLES TYPES DATA", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ShowParticlesKindsData(ParticlesTypes::RNAPolymerase);

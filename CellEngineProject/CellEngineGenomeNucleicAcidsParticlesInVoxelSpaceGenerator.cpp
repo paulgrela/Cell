@@ -184,19 +184,21 @@ void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::GenerateRandomD
             bool EmptyVoxelSpaceForNewNucleotideBool = true;
             while (EmptyVoxelSpaceForNewNucleotideBool == true && NumberOfGeneratedNucleotides < NumberOfNucleotidesToBeGenerated)
             {
-                for (UnsignedInt PosX = RandomPosX; PosX < RandomPosX + ParticleSizeX; PosX++)
-                    for (UnsignedInt PosY = RandomPosY; PosY < RandomPosY + ParticleSizeY; PosY++)
-                        for (UnsignedInt PosZ = RandomPosZ; PosZ < RandomPosZ + ParticleSizeZ; PosZ++)
-                            if (GetSpaceVoxel(PosX, PosY, PosZ) != 0)
-                            {
-                                LoggersManagerObject.Log(STREAM("NOT EMPTY A POS = " << PosX << " " << PosY << " " << PosZ << " " << GetSpaceVoxel(PosX, PosY, PosZ)));
+                EmptyVoxelSpaceForNewNucleotideBool = CheckFreeSpaceInCuboidSelectedSpace(RandomPosX, RandomPosY, RandomPosZ, 1, 1, 1, ParticleSizeX, ParticleSizeY, ParticleSizeZ, GetZeroSimulationSpaceVoxel());
 
-                                EmptyVoxelSpaceForNewNucleotideBool = false;
-
-                                goto BreakOutOfLoop;
-                            }
-
-                BreakOutOfLoop:;
+                // for (UnsignedInt PosX = RandomPosX; PosX < RandomPosX + ParticleSizeX; PosX++)
+                //     for (UnsignedInt PosY = RandomPosY; PosY < RandomPosY + ParticleSizeY; PosY++)
+                //         for (UnsignedInt PosZ = RandomPosZ; PosZ < RandomPosZ + ParticleSizeZ; PosZ++)
+                //             if (GetSpaceVoxel(PosX, PosY, PosZ) != GetZeroSimulationSpaceVoxel())
+                //             {
+                //                 LoggersManagerObject.Log(STREAM("NOT EMPTY A POS = " << PosX << " " << PosY << " " << PosZ << " " << GetSpaceVoxel(PosX, PosY, PosZ)));
+                //
+                //                 EmptyVoxelSpaceForNewNucleotideBool = false;
+                //
+                //                 goto BreakOutOfLoop;
+                //             }
+                //
+                // BreakOutOfLoop:;
 
                 if (EmptyVoxelSpaceForNewNucleotideBool == false)
                     UpdateRandomPositions(RandomMoveDirection, RandomPosX, RandomPosY, RandomPosZ, -ParticleSize3);

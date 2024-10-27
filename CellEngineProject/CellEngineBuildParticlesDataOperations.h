@@ -15,6 +15,8 @@ protected:
     virtual void InsertParticlesCenters(std::vector<CellEngineAtom>& LocalCellEngineParticlesCentersObject) = 0;
     virtual void PreprocessData(bool Update) = 0;
     virtual void PrintStatistics() = 0;
+public:
+    virtual ~CellEngineBuildParticlesDataOperations() = default;
 };
 
 #endif

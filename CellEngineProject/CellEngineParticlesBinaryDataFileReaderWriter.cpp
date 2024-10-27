@@ -265,6 +265,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::PrepareParticlesAfterReading
         LoggersManagerObject.Log(STREAM("START OF PREPARING PARTICLES"));
 
         for (auto& ParticleObject : Particles)
+                                                                                                                        if (CellEngineUseful::IsDNA(ParticleObject.second.EntityId) == false)
         {
             CellEngineVoxelSimulationSpaceObjectPointer->SetAllVoxelsInListOfVoxelsToValueForOuterClass(ParticleObject.second.ListOfVoxels, ParticleObject.second.Index);
 
@@ -345,12 +346,12 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesKindsFromBinary
             ReadStringFromBinaryFile(ParticlesDataFile, ParticleKindObject.Name);
             ReadStringFromBinaryFile(ParticlesDataFile, ParticleKindObject.Formula);
             ReadStringFromBinaryFile(ParticlesDataFile, ParticleKindObject.Compartment);
-            ReadStringFromBinaryFile(ParticlesDataFile, ParticleKindObject.GraphicData.NameFromXML);
-            ReadStringFromBinaryFile(ParticlesDataFile, ParticleKindObject.GraphicData.NameFromDataFile);
+	        ReadStringFromBinaryFile(ParticlesDataFile, ParticleKindObject.GraphicData.NameFromXML);
+	        ReadStringFromBinaryFile(ParticlesDataFile, ParticleKindObject.GraphicData.NameFromDataFile);
 
-            UnsignedInt ParticleKindSpecialDataSectorSize;
-            ParticlesDataFile.read((char*)&ParticleKindSpecialDataSectorSize, sizeof(ParticleKindSpecialDataSectorSize));
-            for (UnsignedInt ParticleKindSpecialDataSectorIndex = 0; ParticleKindSpecialDataSectorIndex < ParticleKindSpecialDataSectorSize; ParticleKindSpecialDataSectorIndex++)
+	        UnsignedInt ParticleKindSpecialDataSectorSize;
+	        ParticlesDataFile.read((char*)&ParticleKindSpecialDataSectorSize, sizeof(ParticleKindSpecialDataSectorSize));
+	        for (UnsignedInt ParticleKindSpecialDataSectorIndex = 0; ParticleKindSpecialDataSectorIndex < ParticleKindSpecialDataSectorSize; ParticleKindSpecialDataSectorIndex++)
             {
                 ParticleKindSpecialData ParticleKindSpecialDataSectorObject;
                 ReadStringFromBinaryFile(ParticlesDataFile, ParticleKindSpecialDataSectorObject.Description);
@@ -385,6 +386,9 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
         ParticlesDataFile.read((char*)&ParticlesSize, sizeof(ParticlesSize));
         LoggersManagerObject.Log(STREAM("Number of Particles to be read = " << ParticlesSize));
 
+        //DZIELENIE PRZEZ DivisionFactorForReadingPositionsOfParticles Pozycji - CO JESLI ZAJETY - GDZIE WSTAWIAM DO VOXELA
+        //POBRANA LISTE VOXELI TEZ BRAC CO CZWARTY LOSOWO
+
         for (UnsignedInt ParticleObjectIndex = 1; ParticleObjectIndex <= ParticlesSize; ParticleObjectIndex++)
         {
             Particle ParticleObject;
@@ -400,6 +404,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
 
             ReadStringFromBinaryFile(ParticlesDataFile, ParticleObject.SequenceStr);
 
+            //POBRANA LISTE VOXELI TEZ BRAC CO CZWARTY LOSOWO
             ReadVectorFromBinaryFile<vector3_16>(ParticlesDataFile, ParticleObject.ListOfVoxels);
 
             ParticlesDataFile.read((char*)&ParticleObject.PrevTemporary, sizeof(ParticleObject.PrevTemporary));

@@ -9,7 +9,7 @@ void CellEngineChemicalReactionsInVoxelSimulationSpace::FindParticlesInProximity
             for (UnsignedInt PosY = StartYPosParam; PosY < StartYPosParam + SizeYParam; PosY++)
                 for (UnsignedInt PosZ = StartZPosParam; PosZ < StartZPosParam + SizeZParam; PosZ++)
                     if (PosX >= 0 && PosY >= 0 && PosZ >= 0 && PosX < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension && PosY < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension && PosZ < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension)
-                        if (GetSpaceVoxel(PosX, PosY, PosZ) != 0)
+                        if (GetSpaceVoxel(PosX, PosY, PosZ) != GetZeroSimulationSpaceVoxel())
                             SaveParticleFoundInProximity(GetSpaceVoxel(PosX, PosY, PosZ), FoundParticleIndexes, UpdateNucleotides);
     }
     CATCH("finding particles in proximity of simulation space for selected local space")
