@@ -100,7 +100,7 @@ bool CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::TestFormerForbi
 
     UpdateRandomPositions(RandomMoveDirection, PosX, PosY, PosZ, Size);
 
-    return (TestedFormerForbiddenPositions.find(to_string(PosX) + "|" + to_string(PosY) + "|" + to_string(PosZ)) != TestedFormerForbiddenPositions.end());
+    return TestedFormerForbiddenPositions.contains(to_string(PosX) + "|" + to_string(PosY) + "|" + to_string(PosZ));
 }
 
 tuple<UnsignedInt, UnsignedInt, UnsignedInt> CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::EraseLastRandomDNAParticle(vector<UniqueIdInt>& Genome)
@@ -128,7 +128,148 @@ UnsignedInt Sqr(const UnsignedInt Value)
     return Value * Value;
 }
 
-void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::GenerateRandomDNAInWholeCell(UnsignedInt NumberOfNucleotidesToBeGenerated, UnsignedInt RandomPosX, UnsignedInt RandomPosY, UnsignedInt RandomPosZ, UnsignedInt ParticleSizeX, UnsignedInt ParticleSizeY, UnsignedInt ParticleSizeZ, UnsignedInt ParticleSize1, UnsignedInt ParticleSize2, UnsignedInt ParticleSize3, UnsignedInt ParticleSize4, UnsignedInt ParticleSize5)
+void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::GenerateRandomDNAInWholeCell1(UnsignedInt NumberOfNucleotidesToBeGenerated, UnsignedInt RandomPosX, UnsignedInt RandomPosY, UnsignedInt RandomPosZ, UnsignedInt ParticleSizeX, UnsignedInt ParticleSizeY, UnsignedInt ParticleSizeZ, UnsignedInt ParticleSize1, UnsignedInt ParticleSize2, UnsignedInt ParticleSize3, UnsignedInt ParticleSize4, UnsignedInt ParticleSize5)
+{
+    try
+    {
+        NumberOfNucleotidesToBeGenerated = (NumberOfNucleotidesToBeGenerated == 0 ? GenomeLength : NumberOfNucleotidesToBeGenerated);
+
+        EraseAllDNAParticles();
+
+        UnsignedInt ParticlesSizeBeforeAddingRandomDNA = Particles.size();
+
+        CellEngineUseful::SwitchOffLogs();
+
+        uniform_int_distribution<UnsignedInt> UniformDistributionObjectChainOfParticle_Uint64t(1, 4);
+        uniform_int_distribution<UnsignedInt> UniformDistributionObjectMoveOfParticle_Uint64t(1, 6);
+        uniform_int_distribution<UnsignedInt> UniformDistributionObjectMoveAdvanceOfParticle_Uint64t(1, 50);
+
+        UnsignedInt NumberOfGeneratedNucleotides = 0;
+
+        unordered_set<string> TestedFormerForbiddenPositions;
+
+        vector<UnsignedInt> RandomMovesDirections = { 0, 0, 0, 0, 0, 0 };
+
+        auto CheckIfAllRandomMovesDirectionsWereChecked = [](const vector<UnsignedInt>& RandomMovesDirections) { return all_of(RandomMovesDirections.cbegin(), RandomMovesDirections.cend(), [] (const UnsignedInt Element) { return Element == 1; }); };
+
+        auto timeStart = clock();
+
+        Particle* ParticlePrev1 = nullptr;
+
+        while (NumberOfGeneratedNucleotides < NumberOfNucleotidesToBeGenerated)
+        {
+            if ((clock() - timeStart) / CLOCKS_PER_SEC >= 15)
+                break;
+
+            UnsignedInt RandomMoveDirection = 0;
+
+            do
+            {
+                RandomMoveDirection = UniformDistributionObjectMoveOfParticle_Uint64t(mt64R);
+
+                if (TestFormerForbiddenPositions(TestedFormerForbiddenPositions, RandomMoveDirection, RandomPosX, RandomPosY, RandomPosZ, ParticleSize1) == true)
+                    RandomMovesDirections[RandomMoveDirection - 1] = 1;
+
+                LoggersManagerObject.Log(STREAM("RandomMoveDirection = " << RandomMoveDirection << " " << RandomMovesDirections[RandomMoveDirection - 1] << " " << CheckIfAllRandomMovesDirectionsWereChecked(RandomMovesDirections)));
+            }
+            while (RandomMovesDirections[RandomMoveDirection - 1] == 1 && CheckIfAllRandomMovesDirectionsWereChecked(RandomMovesDirections) == false);
+
+            if (RandomMovesDirections[RandomMoveDirection - 1] == 0)
+            {
+                UpdateRandomPositions(RandomMoveDirection, RandomPosX, RandomPosY, RandomPosZ, ParticleSize2);
+
+                RandomMovesDirections[RandomMoveDirection - 1] = 1;
+            }
+
+            UnsignedInt MaxNumberOfMoveAdvanceSteps = UniformDistributionObjectMoveAdvanceOfParticle_Uint64t(mt64R);
+            UnsignedInt NumberOfMoveAdvanceSteps = 0;
+
+            bool EmptyVoxelSpaceForNewNucleotideBool = true;
+
+            while (EmptyVoxelSpaceForNewNucleotideBool == true && NumberOfMoveAdvanceSteps < MaxNumberOfMoveAdvanceSteps && NumberOfGeneratedNucleotides < NumberOfNucleotidesToBeGenerated)
+            {
+                bool EmptyVoxelSpaceForNewNucleotideBoolX = CheckFreeSpaceInCuboidSelectedSpace(RandomPosX, RandomPosY, RandomPosZ, 1, 1, 1, 2 * ParticleSizeX, ParticleSizeY, ParticleSizeZ, GetZeroSimulationSpaceVoxel());
+                bool EmptyVoxelSpaceForNewNucleotideBoolY = CheckFreeSpaceInCuboidSelectedSpace(RandomPosX, RandomPosY, RandomPosZ, 1, 1, 1, ParticleSizeX, 2 * ParticleSizeY, ParticleSizeZ, GetZeroSimulationSpaceVoxel());
+                bool EmptyVoxelSpaceForNewNucleotideBoolZ = CheckFreeSpaceInCuboidSelectedSpace(RandomPosX, RandomPosY, RandomPosZ, 1, 1, 1, ParticleSizeX, ParticleSizeY, 2 * ParticleSizeZ, GetZeroSimulationSpaceVoxel());
+                EmptyVoxelSpaceForNewNucleotideBool = EmptyVoxelSpaceForNewNucleotideBoolX || EmptyVoxelSpaceForNewNucleotideBoolY || EmptyVoxelSpaceForNewNucleotideBoolZ;
+
+                if (EmptyVoxelSpaceForNewNucleotideBool == false)
+                    UpdateRandomPositions(RandomMoveDirection, RandomPosX, RandomPosY, RandomPosZ, -ParticleSize3);
+
+                if (EmptyVoxelSpaceForNewNucleotideBool == true && sqrt(Sqr(RandomPosX - (CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension / 2)) + Sqr(RandomPosY - (CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension / 2)) + Sqr(RandomPosZ - (CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension / 2))) >= CellEngineConfigDataObject.RadiusOfCellForDNA)
+                {
+                    EmptyVoxelSpaceForNewNucleotideBool = false;
+                    UpdateRandomPositions(RandomMoveDirection, RandomPosX, RandomPosY, RandomPosZ, -ParticleSize4);
+                }
+
+                LoggersManagerObject.Log(STREAM("EmptyVoxelSpaceForNewNucleotideBool = " << EmptyVoxelSpaceForNewNucleotideBool << " " << CheckIfAllRandomMovesDirectionsWereChecked(RandomMovesDirections)));
+
+                if (EmptyVoxelSpaceForNewNucleotideBool == true)
+                {
+                    NumberOfGeneratedNucleotides++;
+                    NumberOfMoveAdvanceSteps++;
+
+                    ChainIdInt ChainId = UniformDistributionObjectChainOfParticle_Uint64t(mt64R);
+
+                    ParticlePrev1 = GenerateNucleotideParticle(ParticlePrev1, CellEngineConfigDataObject.DNAIdentifier, ChainId, 0, Genomes[0].size(), RandomPosX, RandomPosY, RandomPosZ, ParticleSizeX, ParticleSizeY, ParticleSizeZ, true, Genomes[0], CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), false);
+
+                    fill(RandomMovesDirections.begin(), RandomMovesDirections.end(), 0);
+
+                    UpdateRandomPositions(RandomMoveDirection, RandomPosX, RandomPosY, RandomPosZ, ParticleSize5);
+
+                    LoggersManagerObject.Log(STREAM("ADDED PARTICLE NumberOfGeneratedNucleotides = " << NumberOfGeneratedNucleotides << " RX = " << RandomPosX << " RY = " << RandomPosY << " RZ = " << RandomPosZ));
+                }
+            }
+
+            if (EmptyVoxelSpaceForNewNucleotideBool == false && CheckIfAllRandomMovesDirectionsWereChecked(RandomMovesDirections) == true)
+            {
+                NumberOfGeneratedNucleotides--;
+
+                tie(RandomPosX, RandomPosY, RandomPosZ) = EraseLastRandomDNAParticle(Genomes[0]);
+
+                TestedFormerForbiddenPositions.insert(to_string(RandomPosX) + "|" + to_string(RandomPosY) + "|" + to_string(RandomPosZ));
+
+                fill(RandomMovesDirections.begin(), RandomMovesDirections.end(), 0);
+            }
+
+            LoggersManagerObject.Log(STREAM("END OF GOING IN ONE DIRECTION"));
+        }
+
+        cout << "END OF FINDING SINGLE STRAND DNA" << endl;
+
+        Particle* ParticlePrev2 = nullptr;
+        UnsignedInt NotFreeSpaceFoundCounter = 0;
+        for (UnsignedInt GenomeIndex = 0; GenomeIndex < Genomes[0].size(); GenomeIndex++)
+        {
+            bool FoundFreeSpace = false;
+            auto ParticleObject = GetParticleFromIndex(Genomes[0][GenomeIndex]);
+            for (SignedInt PosX = static_cast<SignedInt>(ParticleObject.ListOfVoxels[0].X) - ParticleSizeX; PosX <= ParticleObject.ListOfVoxels[0].X + ParticleSizeX; PosX++)
+                for (SignedInt PosY = static_cast<SignedInt>(ParticleObject.ListOfVoxels[0].Y) - ParticleSizeY; PosY <= ParticleObject.ListOfVoxels[0].Y + ParticleSizeY; PosY++)
+                    for (SignedInt PosZ = static_cast<SignedInt>(ParticleObject.ListOfVoxels[0].Z) - ParticleSizeZ; PosZ <= ParticleObject.ListOfVoxels[0].Z + ParticleSizeZ; PosZ++)
+                        if (GetSpaceVoxel(PosX, PosY, PosZ) == GetZeroSimulationSpaceVoxel())
+                        {
+                            ParticlePrev2 = GenerateNucleotideParticle(ParticlePrev2, CellEngineConfigDataObject.DNAIdentifier, CellEngineUseful::GetPairedChainIdForDNAorRNA(ParticleObject.ChainId), 1, GenomeIndex, PosX, PosY, PosZ, ParticleSizeX, ParticleSizeY, ParticleSizeZ, true, Genomes[1], CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), true);
+                            FoundFreeSpace = true;
+                            goto Outside;
+                        }
+            Outside:
+            if (FoundFreeSpace == false)
+                NotFreeSpaceFoundCounter++;
+
+        }
+        cout << "NUMBER OF NO FREE SPACE = " << NotFreeSpaceFoundCounter << endl;
+
+
+        GetMinMaxCoordinatesForDNA();
+
+        CellEngineUseful::SwitchOnLogs();
+
+        LoggersManagerObject.Log(STREAM("NUMBER OF ADDED PARTICLES = " << Particles.size() - ParticlesSizeBeforeAddingRandomDNA));
+    }
+    CATCH("generating random dna in whole cell")
+}
+
+void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::GenerateRandomDNAInWholeCell2(UnsignedInt NumberOfNucleotidesToBeGenerated, UnsignedInt RandomPosX, UnsignedInt RandomPosY, UnsignedInt RandomPosZ, UnsignedInt ParticleSizeX, UnsignedInt ParticleSizeY, UnsignedInt ParticleSizeZ, UnsignedInt ParticleSize1, UnsignedInt ParticleSize2, UnsignedInt ParticleSize3, UnsignedInt ParticleSize4, UnsignedInt ParticleSize5)
 {
     try
     {
@@ -241,6 +382,7 @@ void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::GenerateRandomD
     }
     CATCH("generating random dna in whole cell")
 }
+
 
 void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::GetMinMaxCoordinatesForDNA()
 {

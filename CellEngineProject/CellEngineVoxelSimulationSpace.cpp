@@ -37,7 +37,7 @@ CellEngineVoxelSimulationSpace::CellEngineVoxelSimulationSpace(std::unordered_ma
 {
     try
     {
-        SpacePointer = (CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension == 2048 ? malloc(sizeof(Space_2048_2048_2048)) : malloc(sizeof(Space_1024_1024_1024)));
+        SpacePointer = malloc(sizeof(Space_2048_2048_2048));
 
         SetStartValuesForSpaceMinMax();
 
