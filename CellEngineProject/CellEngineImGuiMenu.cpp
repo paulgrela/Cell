@@ -785,6 +785,10 @@ public:
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateOneRandomReactionForBigPartOfCellSpace(4, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
                     });
 
+                    ColorButton(AlignString("MAKE ONE STEP OF RANDOM REACTIONS FOR WHOLE CELL SPACE IN THREADS", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
+                    {
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateNStepsOfSimulationForWholeCellSpaceInThreads(2, 2);
+                    });
                     ColorButton(AlignString("MAKE ONE STEP OF RANDOM REACTIONS FOR WHOLE CELL SPACE", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
                     {
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateOneRandomReactionForWholeCellSpace(0, 0, 0, 32, 32, 32, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension);
@@ -793,6 +797,7 @@ public:
                     {
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateOneChosenReactionForWholeCellSpace(10, 0, 0, 0, 32, 32, 32, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension);
                     });
+
 
                     if (ImGui::Button(AlignString("PRINT CHEMICAL REACTIONS", StringLength).c_str()) == true)
                         ChemicalReactionsManagerObject.PrintChemicalReactions();
@@ -875,8 +880,6 @@ public:
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::ProteinFrac, false, Radius1, Radius1Size);
                     if (ImGui::Button(AlignString("GENERATE RANDOM OTHER PROTEIN PARTICLES", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::OtherProtein, false, Radius1, Radius1Size);
-
-                    ImGui::Button(AlignString("GENERATE DNA", StringLength).c_str());
 
                     if (ImGui::Button(AlignString("GENERATE RANDOM tRNA PARTICLES_uncharged", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::tRNA_uncharged, false, Radius1, Radius1Size);
