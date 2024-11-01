@@ -143,7 +143,7 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSpace(UnsignedInt& 
 {
     try
     {
-        std::lock_guard<std::mutex> LockGuardObject{RenderMenuAndVoxelSimulationSpaceMutexObject};
+        std::lock_guard<std::mutex> LockGuardObject{ RenderMenuAndVoxelSimulationSpaceMutexObject };
 
         GLuint PartOfStencilBufferIndex[3];
 

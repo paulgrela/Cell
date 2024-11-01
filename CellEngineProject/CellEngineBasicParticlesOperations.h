@@ -3,6 +3,7 @@
 #define CELL_ENGINE_BASIC_PARTICLES_OPERATIONS_H
 
 #include <stack>
+#include <shared_mutex>
 
 #include "CellEngineTypes.h"
 #include "CellEngineParticle.h"
@@ -11,6 +12,10 @@
 
 class CellEngineBasicParticlesOperations
 {
+protected:
+    static inline std::shared_mutex MainParticlesSharedMutexObject;
+    static inline std::mutex MainParticlesMutexObject;
+    static inline std::mutex MainParticlesIndexesMutexObject;
 protected:
     UnsignedInt XMin{}, XMax{}, YMin{}, YMax{}, ZMin{}, ZMax{};
 protected:
@@ -21,6 +26,8 @@ protected:
 protected:
     inline Particle& GetParticleFromIndex(const UniqueIdInt ParticleIndex)
     {
+        std::shared_lock<std::shared_mutex> LockGuardObject{ MainParticlesSharedMutexObject };
+
         return Particles[ParticleIndex];
     }
 public:
@@ -33,6 +40,8 @@ protected:
 protected:
     inline UniqueIdInt GetNewFreeIndexOfParticle()
     {
+        std::lock_guard<std::mutex> LockGuardObject{ MainParticlesIndexesMutexObject };
+
         if (FreeIndexesOfParticles.empty() == false)
         {
             UniqueIdInt FreeIndexOfParticle = FreeIndexesOfParticles.top();
@@ -48,6 +57,8 @@ protected:
 public:
     UniqueIdInt AddNewParticle(const Particle& ParticleParam)
     {
+        std::lock_guard<std::mutex> LockGuardObject{ MainParticlesMutexObject };
+
         Particles[ParticleParam.Index] = ParticleParam;
         return MaxParticleIndex = ParticleParam.Index;
     }
@@ -70,6 +81,8 @@ protected:
     explicit CellEngineBasicParticlesOperations(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : Particles(ParticlesParam)
     {
     }
+public:
+    virtual ~CellEngineBasicParticlesOperations() = default;
 };
 
 #endif

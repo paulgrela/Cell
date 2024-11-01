@@ -13,6 +13,9 @@ void CellEngineChemicalReactionsInSimulationSpace::RemoveParticle(const UniqueId
     try
     {
         Particle& ParticleObject = GetParticleFromIndex(ParticleIndex);
+
+        std::lock_guard<std::mutex> LockGuardObject{ MainParticlesMutexObject };
+
         CutDNAPrev(&ParticleObject);
         CutDNANext(&ParticleObject);
         SeparateTwoPairedDNANucleotides(&ParticleObject);
