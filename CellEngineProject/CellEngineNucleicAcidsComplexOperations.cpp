@@ -9,7 +9,7 @@ bool CheckIfThisIsPromoter(UnsignedInt Box10Position)
     return ParticlesKindsManagerObject.Promoters.contains(Box10Position);
 }
 
-bool CellEngineNucleicAcidsComplexOperations::CutDNAInChosenPlace(const bool BothStrandsBool, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
+bool CellEngineNucleicAcidsComplexOperations::CutDNAInChosenPlace(const bool BothStrandsBool, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject, const CurrentThreadPosType& CurrentThreadPos)
 {
     try
     {
@@ -43,17 +43,17 @@ bool CellEngineNucleicAcidsComplexOperations::CutDNAInChosenPlace(const bool Bot
     return false;
 }
 
-bool CellEngineNucleicAcidsComplexOperations::CutDNASingleStrandInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
+bool CellEngineNucleicAcidsComplexOperations::CutDNASingleStrandInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject, const CurrentThreadPosType& CurrentThreadPos)
 {
-    return CutDNAInChosenPlace(false, ParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject);
+    return CutDNAInChosenPlace(false, ParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject, CurrentThreadPos);
 }
 
-bool CellEngineNucleicAcidsComplexOperations::CutDNABothStrandsInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
+bool CellEngineNucleicAcidsComplexOperations::CutDNABothStrandsInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject, const CurrentThreadPosType& CurrentThreadPos)
 {
-    return CutDNAInChosenPlace(true, ParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject);
+    return CutDNAInChosenPlace(true, ParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject, CurrentThreadPos);
 }
 
-bool CellEngineNucleicAcidsComplexOperations::LinkDNAInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
+bool CellEngineNucleicAcidsComplexOperations::LinkDNAInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject, const CurrentThreadPosType& CurrentThreadPos)
 {
     try
     {
@@ -89,23 +89,22 @@ bool CellEngineNucleicAcidsComplexOperations::LinkDNAInChosenPlaceSpecialReactio
     return false;
 }
 
-
-bool CellEngineNucleicAcidsComplexOperations::LinkDNAInAnyPlace(const bool BothStrandsBool, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
+bool CellEngineNucleicAcidsComplexOperations::LinkDNAInAnyPlace(const bool BothStrandsBool, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject, const CurrentThreadPosType& CurrentThreadPos)
 {
     try
     {
-        if (NucleotidesWithFreePrevEndingsFoundInProximity.empty() == false && NucleotidesWithFreeNextEndingsFoundInProximity.empty() == false)
+        if (GetThreadsLocalParticlesInProximity(CurrentThreadPos).NucleotidesWithFreePrevEndingsFoundInProximity.empty() == false && GetThreadsLocalParticlesInProximity(CurrentThreadPos).NucleotidesWithFreeNextEndingsFoundInProximity.empty() == false)
         {
             LoggersManagerObject.Log(STREAM("LINK 1 or 2 ANY inside 1"));
 
-            if (DistanceOfParticles(GetParticleFromIndex(NucleotidesWithFreePrevEndingsFoundInProximity[0]), GetParticleFromIndex(NucleotidesWithFreeNextEndingsFoundInProximity[0])) <= 2.0)
+            if (DistanceOfParticles(GetParticleFromIndex(GetThreadsLocalParticlesInProximity(CurrentThreadPos).NucleotidesWithFreePrevEndingsFoundInProximity[0]), GetParticleFromIndex(GetThreadsLocalParticlesInProximity(CurrentThreadPos).NucleotidesWithFreeNextEndingsFoundInProximity[0])) <= 2.0)
             {
                 LoggersManagerObject.Log(STREAM("LINK 1 or 2 ANY CLOSE ENOUGH"));
 
-                LinkDNA(&GetParticleFromIndex(NucleotidesWithFreePrevEndingsFoundInProximity[0]), &GetParticleFromIndex(NucleotidesWithFreeNextEndingsFoundInProximity[0]));
+                LinkDNA(&GetParticleFromIndex(GetThreadsLocalParticlesInProximity(CurrentThreadPos).NucleotidesWithFreePrevEndingsFoundInProximity[0]), &GetParticleFromIndex(GetThreadsLocalParticlesInProximity(CurrentThreadPos).NucleotidesWithFreeNextEndingsFoundInProximity[0]));
 
                 if (BothStrandsBool == true)
-                    LinkDNA(GetParticleFromIndex(NucleotidesWithFreePrevEndingsFoundInProximity[0]).PairedNucleotidePtr, GetParticleFromIndex(NucleotidesWithFreeNextEndingsFoundInProximity[0]).PairedNucleotidePtr);
+                    LinkDNA(GetParticleFromIndex(GetThreadsLocalParticlesInProximity(CurrentThreadPos).NucleotidesWithFreePrevEndingsFoundInProximity[0]).PairedNucleotidePtr, GetParticleFromIndex(GetThreadsLocalParticlesInProximity(CurrentThreadPos).NucleotidesWithFreeNextEndingsFoundInProximity[0]).PairedNucleotidePtr);
             }
         }
         else
@@ -116,17 +115,17 @@ bool CellEngineNucleicAcidsComplexOperations::LinkDNAInAnyPlace(const bool BothS
     return false;
 }
 
-bool CellEngineNucleicAcidsComplexOperations::LinkDNASingleStrandInAnyPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
+bool CellEngineNucleicAcidsComplexOperations::LinkDNASingleStrandInAnyPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject, const CurrentThreadPosType& CurrentThreadPos)
 {
-    return LinkDNAInAnyPlace(false, ParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject);
+    return LinkDNAInAnyPlace(false, ParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject, CurrentThreadPos);
 }
 
-bool CellEngineNucleicAcidsComplexOperations::LinkDNABothStrandsInAnyPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
+bool CellEngineNucleicAcidsComplexOperations::LinkDNABothStrandsInAnyPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject, const CurrentThreadPosType& CurrentThreadPos)
 {
-    return LinkDNAInAnyPlace(true, ParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject);
+    return LinkDNAInAnyPlace(true, ParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject, CurrentThreadPos);
 }
 
-bool CellEngineNucleicAcidsComplexOperations::CutDNACrisperInChosenPlace(const bool BothStrandsBool, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
+bool CellEngineNucleicAcidsComplexOperations::CutDNACrisperInChosenPlace(const bool BothStrandsBool, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject, const CurrentThreadPosType& CurrentThreadPos)
 {
     try
     {
@@ -152,35 +151,35 @@ bool CellEngineNucleicAcidsComplexOperations::CutDNACrisperInChosenPlace(const b
     return false;
 }
 
-bool CellEngineNucleicAcidsComplexOperations::CutDNASingleStrandCrisperInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
+bool CellEngineNucleicAcidsComplexOperations::CutDNASingleStrandCrisperInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject, const CurrentThreadPosType& CurrentThreadPos)
 {
-    return CutDNACrisperInChosenPlace(false, ParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject);
+    return CutDNACrisperInChosenPlace(false, ParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject, CurrentThreadPos);
 }
 
-bool CellEngineNucleicAcidsComplexOperations::CutDNABothStrandsCrisperInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
+bool CellEngineNucleicAcidsComplexOperations::CutDNABothStrandsCrisperInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject, const CurrentThreadPosType& CurrentThreadPos)
 {
-    return CutDNACrisperInChosenPlace(true, ParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject);
+    return CutDNACrisperInChosenPlace(true, ParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject, CurrentThreadPos);
 }
 
-bool CellEngineNucleicAcidsComplexOperations::LinkDNALigaseInAnyPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
+bool CellEngineNucleicAcidsComplexOperations::LinkDNALigaseInAnyPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject, const CurrentThreadPosType& CurrentThreadPos)
 {
     try
     {
-        if (NucleotidesWithFreePrevEndingsFoundInProximity.empty() == false && NucleotidesWithFreeNextEndingsFoundInProximity.empty() == false)
+        if (GetThreadsLocalParticlesInProximity(CurrentThreadPos).NucleotidesWithFreePrevEndingsFoundInProximity.empty() == false && GetThreadsLocalParticlesInProximity(CurrentThreadPos).NucleotidesWithFreeNextEndingsFoundInProximity.empty() == false)
         {
             LoggersManagerObject.Log(STREAM("LINK 2 ANY COMPATIBLE inside 1"));
 
-            if (DistanceOfParticles(GetParticleFromIndex(DNANucleotidesWithFreePrevEndingsFoundInProximity[0]), GetParticleFromIndex(DNANucleotidesWithFreeNextEndingsFoundInProximity[0])) <= 2.0 && (DistanceOfParticles(GetParticleFromIndex(DNANucleotidesWithFreePrevEndingsFoundInProximity[1]), GetParticleFromIndex(DNANucleotidesWithFreeNextEndingsFoundInProximity[1])) <= 2.0))
+            if (DistanceOfParticles(GetParticleFromIndex(GetThreadsLocalParticlesInProximity(CurrentThreadPos).DNANucleotidesWithFreePrevEndingsFoundInProximity[0]), GetParticleFromIndex(GetThreadsLocalParticlesInProximity(CurrentThreadPos).DNANucleotidesWithFreeNextEndingsFoundInProximity[0])) <= 2.0 && (DistanceOfParticles(GetParticleFromIndex(GetThreadsLocalParticlesInProximity(CurrentThreadPos).DNANucleotidesWithFreePrevEndingsFoundInProximity[1]), GetParticleFromIndex(GetThreadsLocalParticlesInProximity(CurrentThreadPos).DNANucleotidesWithFreeNextEndingsFoundInProximity[1])) <= 2.0))
             {
-                LoggersManagerObject.Log(STREAM("LINK 2 ANY COMPATIBLE CLOSE ENOUGH - " << to_string(GetParticleFromIndex(DNANucleotidesWithFreePrevEndingsFoundInProximity[0]).GenomeIndex) << " " << to_string(GetParticleFromIndex(DNANucleotidesWithFreeNextEndingsFoundInProximity[0]).GenomeIndex) << " " << to_string(GetParticleFromIndex(DNANucleotidesWithFreePrevEndingsFoundInProximity[1]).GenomeIndex) << " " << to_string(GetParticleFromIndex(DNANucleotidesWithFreeNextEndingsFoundInProximity[1]).GenomeIndex) << " "));
+                LoggersManagerObject.Log(STREAM("LINK 2 ANY COMPATIBLE CLOSE ENOUGH - " << to_string(GetParticleFromIndex(GetThreadsLocalParticlesInProximity(CurrentThreadPos).DNANucleotidesWithFreePrevEndingsFoundInProximity[0]).GenomeIndex) << " " << to_string(GetParticleFromIndex(GetThreadsLocalParticlesInProximity(CurrentThreadPos).DNANucleotidesWithFreeNextEndingsFoundInProximity[0]).GenomeIndex) << " " << to_string(GetParticleFromIndex(GetThreadsLocalParticlesInProximity(CurrentThreadPos).DNANucleotidesWithFreePrevEndingsFoundInProximity[1]).GenomeIndex) << " " << to_string(GetParticleFromIndex(GetThreadsLocalParticlesInProximity(CurrentThreadPos).DNANucleotidesWithFreeNextEndingsFoundInProximity[1]).GenomeIndex) << " "));
 
-                LinkDNA(&GetParticleFromIndex(DNANucleotidesWithFreePrevEndingsFoundInProximity[0]), &GetParticleFromIndex(DNANucleotidesWithFreeNextEndingsFoundInProximity[0]));
-                LinkDNA(&GetParticleFromIndex(DNANucleotidesWithFreePrevEndingsFoundInProximity[1]), &GetParticleFromIndex(DNANucleotidesWithFreeNextEndingsFoundInProximity[1]));
+                LinkDNA(&GetParticleFromIndex(GetThreadsLocalParticlesInProximity(CurrentThreadPos).DNANucleotidesWithFreePrevEndingsFoundInProximity[0]), &GetParticleFromIndex(GetThreadsLocalParticlesInProximity(CurrentThreadPos).DNANucleotidesWithFreeNextEndingsFoundInProximity[0]));
+                LinkDNA(&GetParticleFromIndex(GetThreadsLocalParticlesInProximity(CurrentThreadPos).DNANucleotidesWithFreePrevEndingsFoundInProximity[1]), &GetParticleFromIndex(GetThreadsLocalParticlesInProximity(CurrentThreadPos).DNANucleotidesWithFreeNextEndingsFoundInProximity[1]));
 
-                if (GetParticleFromIndex(DNANucleotidesWithFreePrevEndingsFoundInProximity[0]).GenomeIndex < GetParticleFromIndex(DNANucleotidesWithFreePrevEndingsFoundInProximity[1]).GenomeIndex)
-                    JoinDNAStrands(&Particle::Prev, GetParticleFromIndex(DNANucleotidesWithFreePrevEndingsFoundInProximity[1]).Prev, GetParticleFromIndex(DNANucleotidesWithFreePrevEndingsFoundInProximity[1]).PairedNucleotidePtr->Prev);
+                if (GetParticleFromIndex(GetThreadsLocalParticlesInProximity(CurrentThreadPos).DNANucleotidesWithFreePrevEndingsFoundInProximity[0]).GenomeIndex < GetParticleFromIndex(GetThreadsLocalParticlesInProximity(CurrentThreadPos).DNANucleotidesWithFreePrevEndingsFoundInProximity[1]).GenomeIndex)
+                    JoinDNAStrands(&Particle::Prev, GetParticleFromIndex(GetThreadsLocalParticlesInProximity(CurrentThreadPos).DNANucleotidesWithFreePrevEndingsFoundInProximity[1]).Prev, GetParticleFromIndex(GetThreadsLocalParticlesInProximity(CurrentThreadPos).DNANucleotidesWithFreePrevEndingsFoundInProximity[1]).PairedNucleotidePtr->Prev);
                 else
-                    JoinDNAStrands(&Particle::Next, GetParticleFromIndex(DNANucleotidesWithFreeNextEndingsFoundInProximity[1]).Next, GetParticleFromIndex(DNANucleotidesWithFreeNextEndingsFoundInProximity[1]).PairedNucleotidePtr->Next);
+                    JoinDNAStrands(&Particle::Next, GetParticleFromIndex(GetThreadsLocalParticlesInProximity(CurrentThreadPos).DNANucleotidesWithFreeNextEndingsFoundInProximity[1]).Next, GetParticleFromIndex(GetThreadsLocalParticlesInProximity(CurrentThreadPos).DNANucleotidesWithFreeNextEndingsFoundInProximity[1]).PairedNucleotidePtr->Next);
             }
         }
         else
@@ -191,7 +190,7 @@ bool CellEngineNucleicAcidsComplexOperations::LinkDNALigaseInAnyPlaceSpecialReac
     return false;
 }
 
-bool CellEngineNucleicAcidsComplexOperations::LinkDNALigaseInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
+bool CellEngineNucleicAcidsComplexOperations::LinkDNALigaseInChosenPlaceSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>>& NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject, const CurrentThreadPosType& CurrentThreadPos)
 {
     try
     {
@@ -269,7 +268,7 @@ bool CellEngineNucleicAcidsComplexOperations::LinkDNALigaseInChosenPlaceSpecialR
     return false;
 }
 
-bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNATranscriptionStart(const bool FullPromoter, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>> &NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
+bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNATranscriptionStart(const bool FullPromoter, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>> &NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject, const CurrentThreadPosType& CurrentThreadPos)
 {
     try
     {
@@ -281,14 +280,14 @@ bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNATranscriptionStart(co
 
         sort(LocalParticlesIndexesChosenForReaction.begin(), LocalParticlesIndexesChosenForReaction.end(), [](const auto& PK1, const auto& PK2) { return PK1.second < PK2.second; });
 
-        if (auto& ParticleObject = GetParticleFromIndex(LocalParticlesIndexesChosenForReaction[0].first); RNANucleotidesFreeFoundInProximity.empty() == false && ParticleObject.LinkedParticlesPointersList.empty() == true)
+        if (auto& ParticleObject = GetParticleFromIndex(LocalParticlesIndexesChosenForReaction[0].first); GetThreadsLocalParticlesInProximity(CurrentThreadPos).RNANucleotidesFreeFoundInProximity.empty() == false && ParticleObject.LinkedParticlesPointersList.empty() == true)
         {
             for (const auto& ParticleChosenForReactionObject : LocalParticlesIndexesChosenForReaction)
                 LoggersManagerObject.Log(STREAM("ParticleIndexB = " << to_string(ParticleChosenForReactionObject.first) << " " << to_string(ParticleChosenForReactionObject.second) << " Particle Type = " << ParticlesKindsManagerObject.GetParticleKind(GetParticleFromIndex(ParticleChosenForReactionObject.first).EntityId).IdStr));
 
             LoggersManagerObject.Log(STREAM("ParticleIndex = " << to_string(LocalParticlesIndexesChosenForReaction[0].first) << " Nucleotide = " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.ChainId) << " Nucleotide Index = " << ParticleObject.GenomeIndex));
 
-            ParticleObject.AddNewLinkToParticle(&GetParticleFromIndex(RNANucleotidesFreeFoundInProximity[0]));
+            ParticleObject.AddNewLinkToParticle(&GetParticleFromIndex(GetThreadsLocalParticlesInProximity(CurrentThreadPos).RNANucleotidesFreeFoundInProximity[0]));
             if (FullPromoter == false)
                 ParticleObject.AddNewLinkToParticle(GoSomeNucleotides(&Particle::Next, ReactionObject.Reactants[1].SequenceStr.length(), *GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first).Next));
             else
@@ -306,14 +305,14 @@ bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNATranscriptionStart(co
     return false;
 }
 
-bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNATranscriptionStartSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>> &NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
+bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNATranscriptionStartSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>> &NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject, const CurrentThreadPosType& CurrentThreadPos)
 {
-    return PolymeraseRNATranscriptionStart(false, ParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject);
+    return PolymeraseRNATranscriptionStart(false, ParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject, CurrentThreadPos);
 }
 
-bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNATranscriptionFullStartSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>> &NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
+bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNATranscriptionFullStartSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>> &NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject, const CurrentThreadPosType& CurrentThreadPos)
 {
-    return PolymeraseRNATranscriptionStart(true, ParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject);
+    return PolymeraseRNATranscriptionStart(true, ParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject, CurrentThreadPos);
 }
 
 void CellEngineNucleicAcidsComplexOperations::CheckEndingByHairpin(Particle& ParticleObject)
@@ -346,7 +345,7 @@ void CellEngineNucleicAcidsComplexOperations::CheckEndingByCodonStop(Particle& P
     CATCH("checking ending by codon stop")
 }
 
-bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNATranscriptionContinue(const bool EndingByHairpin, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>> &NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
+bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNATranscriptionContinue(const bool EndingByHairpin, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>> &NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject, const CurrentThreadPosType& CurrentThreadPos)
 {
     try
     {
@@ -354,13 +353,13 @@ bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNATranscriptionContinue
 
         auto& ParticleObject = GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first);
 
-        for (const auto &NucleotideFree: RNANucleotidesFullFreeFoundInProximity)
+        for (const auto &NucleotideFree : GetThreadsLocalParticlesInProximity(CurrentThreadPos).RNANucleotidesFullFreeFoundInProximity)
             LoggersManagerObject.Log(STREAM("FOUND FREE NUCLEOTIDES = " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(GetParticleFromIndex(NucleotideFree).ChainId)));
 
         LoggersManagerObject.Log(STREAM("Letter to find = " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.LinkedParticlesPointersList[1]->ChainId) << " NEXT " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.LinkedParticlesPointersList[1]->Next->ChainId) << " Particle Object Index = " << ParticleObject.Index << " " << ParticlesIndexesChosenForReaction[0].first));
 
-        auto ChosenNucleotideIterator = find_if(RNANucleotidesFullFreeFoundInProximity.cbegin(), RNANucleotidesFullFreeFoundInProximity.cend(), [this, ParticleObject](const UniqueIdInt &NucleotideParticleIndex){ return &GetParticleFromIndex(NucleotideParticleIndex) != ParticleObject.LinkedParticlesPointersList[0] && CellEngineUseful::IsRNANucleotidePairedForRNAEqual(GetParticleFromIndex(NucleotideParticleIndex).EntityId, ParticleObject.LinkedParticlesPointersList[1]->ChainId) == true; });
-        if (ChosenNucleotideIterator != RNANucleotidesFullFreeFoundInProximity.end())
+        auto ChosenNucleotideIterator = find_if(GetThreadsLocalParticlesInProximity(CurrentThreadPos).RNANucleotidesFullFreeFoundInProximity.cbegin(), GetThreadsLocalParticlesInProximity(CurrentThreadPos).RNANucleotidesFullFreeFoundInProximity.cend(), [this, ParticleObject](const UniqueIdInt &NucleotideParticleIndex){ return &GetParticleFromIndex(NucleotideParticleIndex) != ParticleObject.LinkedParticlesPointersList[0] && CellEngineUseful::IsRNANucleotidePairedForRNAEqual(GetParticleFromIndex(NucleotideParticleIndex).EntityId, ParticleObject.LinkedParticlesPointersList[1]->ChainId) == true; });
+        if (ChosenNucleotideIterator != GetThreadsLocalParticlesInProximity(CurrentThreadPos).RNANucleotidesFullFreeFoundInProximity.end())
         {
             string SequenceOfLettersToCheckFinishSequence;
 
@@ -402,24 +401,24 @@ bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNATranscriptionContinue
             return true;
         }
         else
-            LoggersManagerObject.Log(STREAM("Nucleotide not found - " << NucleotidesFreeFoundInProximity.size()));
+            LoggersManagerObject.Log(STREAM("Nucleotide not found - " << GetThreadsLocalParticlesInProximity(CurrentThreadPos).NucleotidesFreeFoundInProximity.size()));
     }
     CATCH("executing polymerase continue dna transcription special reaction function")
 
     return false;
 }
 
-bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNATranscriptionContinueEndedByHairpinSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>> &NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
+bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNATranscriptionContinueEndedByHairpinSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>> &NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject, const CurrentThreadPosType& CurrentThreadPos)
 {
-    return PolymeraseRNATranscriptionContinue(true, ParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject);
+    return PolymeraseRNATranscriptionContinue(true, ParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject, CurrentThreadPos);
 }
 
-bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNATranscriptionContinueEndedByCodonStopSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>> &NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
+bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNATranscriptionContinueEndedByCodonStopSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>> &NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject, const CurrentThreadPosType& CurrentThreadPos)
 {
-    return PolymeraseRNATranscriptionContinue(false, ParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject);
+    return PolymeraseRNATranscriptionContinue(false, ParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject, CurrentThreadPos);
 }
 
-bool CellEngineNucleicAcidsComplexOperations::RibosomeTranslationStartSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>> &NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
+bool CellEngineNucleicAcidsComplexOperations::RibosomeTranslationStartSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>> &NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject, const CurrentThreadPosType& CurrentThreadPos)
 {
     try
     {
@@ -438,7 +437,7 @@ bool CellEngineNucleicAcidsComplexOperations::RibosomeTranslationStartSpecialRea
                 LoggersManagerObject.Log(STREAM("ParticleIndex after sort = " << to_string(ParticleChosenForReactionObject.first) << " " << to_string(ParticleChosenForReactionObject.second) << " Particle Type = " << ParticlesKindsManagerObject.GetParticleKind(GetParticleFromIndex(ParticleChosenForReactionObject.first).EntityId).IdStr));
 
             ParticleObject.AddNewLinkToParticle(&GetParticleFromIndex(LocalParticlesIndexesChosenForReaction[1].first));
-            ParticleObject.AddNewLinkToParticle(&GetParticleFromIndex(RNANucleotidesFreeFoundInProximity[0]));
+            ParticleObject.AddNewLinkToParticle(&GetParticleFromIndex(GetThreadsLocalParticlesInProximity(CurrentThreadPos).RNANucleotidesFreeFoundInProximity[0]));
 
             MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(*ParticleObject.LinkedParticlesPointersList[0], ParticleObject, 2, 2, 2);
             MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(*ParticleObject.LinkedParticlesPointersList[1], ParticleObject, 2, 2, 2);
@@ -449,7 +448,7 @@ bool CellEngineNucleicAcidsComplexOperations::RibosomeTranslationStartSpecialRea
     return false;
 }
 
-bool CellEngineNucleicAcidsComplexOperations::RibosomeTranslationContinueSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>> &NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject)
+bool CellEngineNucleicAcidsComplexOperations::RibosomeTranslationContinueSpecialReactionFunction(const std::vector<std::pair<UniqueIdInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdInt, UnsignedInt>> &NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject, const CurrentThreadPosType& CurrentThreadPos)
 {
     try
     {
@@ -457,9 +456,9 @@ bool CellEngineNucleicAcidsComplexOperations::RibosomeTranslationContinueSpecial
 
         LoggersManagerObject.Log(STREAM("RIBOSOME TRANSLATION CONTINUE REACTION"));
 
-        LoggersManagerObject.Log(STREAM("SIZE OF tRNA charged found = " << tRNAChargedFoundInProximity.size()));
+        LoggersManagerObject.Log(STREAM("SIZE OF tRNA charged found = " << GetThreadsLocalParticlesInProximity(CurrentThreadPos).tRNAChargedFoundInProximity.size()));
 
-        for (const auto &tRNAChargedFree: tRNAChargedFoundInProximity)
+        for (const auto &tRNAChargedFree : GetThreadsLocalParticlesInProximity(CurrentThreadPos).tRNAChargedFoundInProximity)
             LoggersManagerObject.Log(STREAM("FOUND FREE CHARGED TRNA = " << ParticlesKindsManagerObject.GetParticleKind(GetParticleFromIndex(tRNAChargedFree).EntityId).IdStr));
 
         auto& ParticleObject = GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first);
@@ -473,9 +472,9 @@ bool CellEngineNucleicAcidsComplexOperations::RibosomeTranslationContinueSpecial
 
             LoggersManagerObject.Log(STREAM("Codon = " << Codon << " " << ParticleObject.LinkedParticlesPointersList[1]->PositionInSequence));
 
-            auto ChosentRNAChargedIterator = find_if(tRNAChargedFoundInProximity.begin(), tRNAChargedFoundInProximity.end(), [this, Codon](const UniqueIdInt &tRNAParticleIndex){ return CellEngineAminoAcidsManagerObject.IstRNAChargedWithAminoAcidForCodon(GetParticleFromIndex(tRNAParticleIndex).EntityId, Codon); });
+            auto ChosentRNAChargedIterator = find_if(GetThreadsLocalParticlesInProximity(CurrentThreadPos).tRNAChargedFoundInProximity.begin(), GetThreadsLocalParticlesInProximity(CurrentThreadPos).tRNAChargedFoundInProximity.end(), [this, Codon](const UniqueIdInt &tRNAParticleIndex){ return CellEngineAminoAcidsManagerObject.IstRNAChargedWithAminoAcidForCodon(GetParticleFromIndex(tRNAParticleIndex).EntityId, Codon); });
 
-            if (ChosentRNAChargedIterator != tRNAChargedFoundInProximity.end())
+            if (ChosentRNAChargedIterator != GetThreadsLocalParticlesInProximity(CurrentThreadPos).tRNAChargedFoundInProximity.end())
             {
                 ParticleObject.LinkedParticlesPointersList[0]->SequenceStr += Codon;
                 ParticleObject.LinkedParticlesPointersList[1]->PositionInSequence += 3;
@@ -489,7 +488,7 @@ bool CellEngineNucleicAcidsComplexOperations::RibosomeTranslationContinueSpecial
                 SequenceOfLettersToCheckFinishSequence = ParticleObject.LinkedParticlesPointersList[0]->SequenceStr;
             }
             else
-                LoggersManagerObject.Log(STREAM("trna not found - " << NucleotidesFreeFoundInProximity.size()));
+                LoggersManagerObject.Log(STREAM("trna not found - " << GetThreadsLocalParticlesInProximity(CurrentThreadPos).NucleotidesFreeFoundInProximity.size()));
         }
 
         if (SequenceOfLettersToCheckFinishSequence.length() > 0 && SequenceOfLettersToCheckFinishSequence.size() % 3 == 0)

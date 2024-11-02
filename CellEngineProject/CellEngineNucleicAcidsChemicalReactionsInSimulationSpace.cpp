@@ -1,7 +1,7 @@
 
 #include "CellEngineNucleicAcidsChemicalReactionsInSimulationSpace.h"
 
-tuple<vector<ChainIdInt>, string> CellEngineNucleicAcidsChemicalReactionsInSimulationSpace::GetNucleotidesSequenceInBothDirections(const std::vector<UniqueIdInt>& NucleotidesFoundInProximity, const UnsignedInt SizeOfLoop)
+tuple<vector<ChainIdInt>, string> CellEngineNucleicAcidsChemicalReactionsInSimulationSpace::GetNucleotidesSequenceInBothDirections(const std::vector<UniqueIdInt>& NucleotidesFoundInProximity, const UnsignedInt SizeOfLoop, const CurrentThreadPosType& CurrentThreadPos)
 {
     string TemplateSequenceStr;
 
@@ -37,7 +37,7 @@ tuple<vector<ChainIdInt>, string> CellEngineNucleicAcidsChemicalReactionsInSimul
     return { TemplateSequence, TemplateSequenceStr };
 }
 
-tuple<vector<ChainIdInt>, string> CellEngineNucleicAcidsChemicalReactionsInSimulationSpace::GetNucleotidesSequenceFromRNAInOneParticle(const std::vector<UniqueIdInt>& NucleotidesFoundInProximity, const UnsignedInt SizeOfLoop)
+tuple<vector<ChainIdInt>, string> CellEngineNucleicAcidsChemicalReactionsInSimulationSpace::GetNucleotidesSequenceFromRNAInOneParticle(const std::vector<UniqueIdInt>& NucleotidesFoundInProximity, const UnsignedInt SizeOfLoop, const CurrentThreadPosType& CurrentThreadPos)
 {
     string TemplateSequenceStr;
 
@@ -45,7 +45,7 @@ tuple<vector<ChainIdInt>, string> CellEngineNucleicAcidsChemicalReactionsInSimul
 
     try
     {
-        TemplateSequenceStr = GetParticleFromIndex(*RNANucleotidesFoundInProximity.begin()).SequenceStr;
+        TemplateSequenceStr = GetParticleFromIndex(*GetThreadsLocalParticlesInProximity(CurrentThreadPos).RNANucleotidesFoundInProximity.begin()).SequenceStr;
 
         for (auto &TemplateSequenceNucleotideChar: TemplateSequenceStr)
             TemplateSequenceNucleotideChar = CellEngineUseful::GetLetterFromChainIdForDNAorRNA(CellEngineUseful::GetPairedChainIdForDNAorRNA(CellEngineUseful::GetChainIdFromLetterForDNAorRNA(TemplateSequenceNucleotideChar)));
@@ -58,7 +58,7 @@ tuple<vector<ChainIdInt>, string> CellEngineNucleicAcidsChemicalReactionsInSimul
     return { TemplateSequence, TemplateSequenceStr };
 }
 
-bool CellEngineNucleicAcidsChemicalReactionsInSimulationSpace::CompareFitnessOfDNASequenceByNucleotidesLoop(ComparisonType TypeOfComparison, const ParticleKindForChemicalReaction& ParticleKindForReactionObject, Particle& ParticleObjectTestedForReaction)
+bool CellEngineNucleicAcidsChemicalReactionsInSimulationSpace::CompareFitnessOfDNASequenceByNucleotidesLoop(ComparisonType TypeOfComparison, const ParticleKindForChemicalReaction& ParticleKindForReactionObject, Particle& ParticleObjectTestedForReaction, const CurrentThreadPosType& CurrentThreadPos)
 {
     bool FoundSequenceNotFit = false;
     bool SpecialCompareFunctionResult = true;
@@ -78,12 +78,12 @@ bool CellEngineNucleicAcidsChemicalReactionsInSimulationSpace::CompareFitnessOfD
         string OriginalTemplateRNASequenceStr;
 
         if (TemplateSequenceStr == "RNA")
-            if (RNANucleotidesFoundInProximity.empty() == false)
+            if (GetThreadsLocalParticlesInProximity(CurrentThreadPos).RNANucleotidesFoundInProximity.empty() == false)
             {
                 if (CellEngineConfigDataObject.RNAInOneParticle == false)
-                    tie(TemplateSequence, TemplateSequenceStr) = GetNucleotidesSequenceInBothDirections(RNANucleotidesFoundInProximity, RNANucleotidesFoundInProximity.size());
+                    tie(TemplateSequence, TemplateSequenceStr) = GetNucleotidesSequenceInBothDirections(GetThreadsLocalParticlesInProximity(CurrentThreadPos).RNANucleotidesFoundInProximity, GetThreadsLocalParticlesInProximity(CurrentThreadPos).RNANucleotidesFoundInProximity.size(), CurrentThreadPos);
                 else
-                    tie(TemplateSequence, TemplateSequenceStr) = GetNucleotidesSequenceFromRNAInOneParticle(RNANucleotidesFoundInProximity, RNANucleotidesFoundInProximity.size());
+                    tie(TemplateSequence, TemplateSequenceStr) = GetNucleotidesSequenceFromRNAInOneParticle(GetThreadsLocalParticlesInProximity(CurrentThreadPos).RNANucleotidesFoundInProximity, GetThreadsLocalParticlesInProximity(CurrentThreadPos).RNANucleotidesFoundInProximity.size(), CurrentThreadPos);
 
                 if (TemplateSequenceStr.empty() == true)
                     return false;

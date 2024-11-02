@@ -49,7 +49,7 @@ public:
 
 class ChemicalReaction
 {
-    using SpecialReactionFunctionType = std::function<bool (CellEngineChemicalReactionsInSimulationSpace*, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>&, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>&, const ChemicalReaction&)>;
+    using SpecialReactionFunctionType = std::function<bool (CellEngineChemicalReactionsInSimulationSpace*, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>&, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>&, const ChemicalReaction&, const CurrentThreadPosType& CurrentThreadPos)>;
 public:
     UnsignedInt ReactionIdNum{};
     std::string ReactionIdStr;

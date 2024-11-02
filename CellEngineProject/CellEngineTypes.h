@@ -26,6 +26,11 @@ struct vector3
 using vector3_16 = vector3<uint16_t>;
 using vector3_64 = vector3<uint64_t>;
 
+struct CurrentThreadPosType
+{
+    UnsignedInt	ThreadPosX, ThreadPosY, ThreadPozZ;
+};
+
 enum class TypesOfLookingForParticlesInProximity : UnsignedInt
 {
     FromChosenParticleAsCenter = 1,
