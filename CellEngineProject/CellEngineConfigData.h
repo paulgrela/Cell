@@ -80,9 +80,18 @@ public:
     UnsignedInt VoxelSimulationSpaceSelectionStepX{}, VoxelSimulationSpaceSelectionStepY{}, VoxelSimulationSpaceSelectionStepZ{};
     UnsignedInt VoxelSimulationSpaceSelectionSizeX{}, VoxelSimulationSpaceSelectionSizeY{}, VoxelSimulationSpaceSelectionSizeZ{};
 public:
-    UnsignedInt NumberOfXThreads = 1;
-    UnsignedInt NumberOfYThreads = 1;
-    UnsignedInt NumberOfZThreads = 1;
+    int NumberOfStepsInSimulationOutside = 1;
+    int NumberOfStepsInSimulationInside = 1;
+    enum class TypesOfSimulation : UnsignedInt
+    {
+        BothReactionsAndDiffusion = 1,
+        OnlyReactions = 2,
+        OnlyDiffusion = 3
+    };
+    TypesOfSimulation TypeOfSimulation = TypesOfSimulation::BothReactionsAndDiffusion;
+    UnsignedInt NumberOfXThreadsInSimulation = 1;
+    UnsignedInt NumberOfYThreadsInSimulation = 1;
+    UnsignedInt NumberOfZThreadsInSimulation = 1;
     UnsignedInt NumberOfXVoxelsInOneThreadInVoxelSimulationSpace = 1024;
     UnsignedInt NumberOfYVoxelsInOneThreadInVoxelSimulationSpace = 1024;
     UnsignedInt NumberOfZVoxelsInOneThreadInVoxelSimulationSpace = 1024;

@@ -3114,9 +3114,13 @@
                         <VoxelSimulationSpaceSelectionSizeY>24</VoxelSimulationSpaceSelectionSizeY>
                         <VoxelSimulationSpaceSelectionSizeZ>24</VoxelSimulationSpaceSelectionSizeZ>
 
-                        <NumberOfXThreads>2</NumberOfXThreads>
-                        <NumberOfYThreads>2</NumberOfYThreads>
-                        <NumberOfZThreads>2</NumberOfZThreads>
+                        <NumberOfStepsOfSimulationOutside>1</NumberOfStepsOfSimulationOutside>
+                        <NumberOfStepsOfSimulationInside>1</NumberOfStepsOfSimulationInside>
+                        <TypeOfSimulation>1</TypeOfSimulation>
+
+                        <NumberOfXThreadsInSimulation>2</NumberOfXThreadsInSimulation>
+                        <NumberOfYThreadsInSimulation>2</NumberOfYThreadsInSimulation>
+                        <NumberOfZThreadsInSimulation>2</NumberOfZThreadsInSimulation>
                         <NumberOfXVoxelsInOneThreadInVoxelSimulationSpace>512</NumberOfXVoxelsInOneThreadInVoxelSimulationSpace>
                         <NumberOfYVoxelsInOneThreadInVoxelSimulationSpace>512</NumberOfYVoxelsInOneThreadInVoxelSimulationSpace>
                         <NumberOfZVoxelsInOneThreadInVoxelSimulationSpace>512</NumberOfXVoxelsInOneThreadInVoxelSimulationSpace>
@@ -3794,9 +3798,13 @@
                         <VoxelSimulationSpaceSelectionSizeY>24</VoxelSimulationSpaceSelectionSizeY>
                         <VoxelSimulationSpaceSelectionSizeZ>24</VoxelSimulationSpaceSelectionSizeZ>
 
-                        <NumberOfXThreads>2</NumberOfXThreads>
-                        <NumberOfYThreads>2</NumberOfYThreads>
-                        <NumberOfZThreads>2</NumberOfZThreads>
+                        <NumberOfStepsOfSimulationOutside>1</NumberOfStepsOfSimulationOutside>
+                        <NumberOfStepsOfSimulationInside>1</NumberOfStepsOfSimulationInside>
+                        <TypeOfSimulation>1</TypeOfSimulation>
+
+                        <NumberOfXThreadsInSimulation>2</NumberOfXThreadsInSimulation>
+                        <NumberOfYThreadsInSimulation>2</NumberOfYThreadsInSimulation>
+                        <NumberOfZThreadsInSimulation>2</NumberOfZThreadsInSimulation>
                         <NumberOfXVoxelsInOneThreadInVoxelSimulationSpace>128</NumberOfXVoxelsInOneThreadInVoxelSimulationSpace>
                         <NumberOfYVoxelsInOneThreadInVoxelSimulationSpace>128</NumberOfYVoxelsInOneThreadInVoxelSimulationSpace>
                         <NumberOfZVoxelsInOneThreadInVoxelSimulationSpace>128</NumberOfXVoxelsInOneThreadInVoxelSimulationSpace>
@@ -4051,9 +4059,9 @@
                         <VoxelSimulationSpaceSelectionSizeY>24</VoxelSimulationSpaceSelectionSizeY>
                         <VoxelSimulationSpaceSelectionSizeZ>24</VoxelSimulationSpaceSelectionSizeZ>
 
-                        <NumberOfXThreads>7</NumberOfXThreads>
-                        <NumberOfYThreads>1</NumberOfYThreads>
-                        <NumberOfZThreads>1</NumberOfZThreads>
+                        <NumberOfXThreadsInSimulation>7</NumberOfXThreadsInSimulation>
+                        <NumberOfYThreadsInSimulation>1</NumberOfYThreadsInSimulation>
+                        <NumberOfZThreadsInSimulation>1</NumberOfZThreadsInSimulation>
                         <NumberOfXVoxelsInOneThreadInVoxelSimulationSpace>146</NumberOfXVoxelsInOneThreadInVoxelSimulationSpace>
                         <NumberOfYVoxelsInOneThreadInVoxelSimulationSpace>1024</NumberOfYVoxelsInOneThreadInVoxelSimulationSpace>
                         <NumberOfZVoxelsInOneThreadInVoxelSimulationSpace>1024</NumberOfXVoxelsInOneThreadInVoxelSimulationSpace>
@@ -4308,9 +4316,9 @@
                         <VoxelSimulationSpaceSelectionSizeY>24</VoxelSimulationSpaceSelectionSizeY>
                         <VoxelSimulationSpaceSelectionSizeZ>24</VoxelSimulationSpaceSelectionSizeZ>
 
-                        <NumberOfXThreads>3</NumberOfXThreads>
-                        <NumberOfYThreads>2</NumberOfYThreads>
-                        <NumberOfZThreads>1</NumberOfZThreads>
+                        <NumberOfXThreadsInSimulation>3</NumberOfXThreadsInSimulation>
+                        <NumberOfYThreadsInSimulation>2</NumberOfYThreadsInSimulation>
+                        <NumberOfZThreadsInSimulation>1</NumberOfZThreadsInSimulation>
                         <NumberOfXVoxelsInOneThreadInVoxelSimulationSpace>341</NumberOfXVoxelsInOneThreadInVoxelSimulationSpace>
                         <NumberOfYVoxelsInOneThreadInVoxelSimulationSpace>512</NumberOfYVoxelsInOneThreadInVoxelSimulationSpace>
                         <NumberOfZVoxelsInOneThreadInVoxelSimulationSpace>1024</NumberOfXVoxelsInOneThreadInVoxelSimulationSpace>

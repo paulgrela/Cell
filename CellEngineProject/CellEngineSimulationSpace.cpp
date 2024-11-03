@@ -64,16 +64,17 @@ void CellEngineSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpace(const
     CATCH("generating one step of diffusion for selected space")
 }
 
-void CellEngineSimulationSpace::GenerateOneStepOfDiffusionForBigPartOfCellSpace(const bool InBounds, const UnsignedInt SizeNMultiplyFactor, const UnsignedInt XStartParam, const UnsignedInt YStartParam, const UnsignedInt ZStartParam, const UnsignedInt XStepParam, const UnsignedInt YStepParam, const UnsignedInt ZStepParam, const UnsignedInt XSizeParam, const UnsignedInt YSizeParam, const UnsignedInt ZSizeParam, const CurrentThreadPosType& CurrentThreadPos)
+void CellEngineSimulationSpace::GenerateNStepsOfDiffusionForBigPartOfCellSpace(const bool InBounds, const UnsignedInt SizeNMultiplyFactor, const UnsignedInt XStartParam, const UnsignedInt YStartParam, const UnsignedInt ZStartParam, const UnsignedInt XStepParam, const UnsignedInt YStepParam, const UnsignedInt ZStepParam, const UnsignedInt XSizeParam, const UnsignedInt YSizeParam, const UnsignedInt ZSizeParam, const CurrentThreadPosType& CurrentThreadPos, const UnsignedInt NumberOfSimulationSteps)
 {
     try
     {
         CellEngineUseful::SwitchOffLogs();
 
-        for (UnsignedInt PosX = XStartParam - SizeNMultiplyFactor * XStepParam; PosX <= XStartParam + SizeNMultiplyFactor * XStepParam; PosX += XStepParam)
-            for (UnsignedInt PosY = YStartParam - SizeNMultiplyFactor * YStepParam; PosY <= YStartParam + SizeNMultiplyFactor * YStepParam; PosY += YStepParam)
-                for (UnsignedInt PosZ = ZStartParam - SizeNMultiplyFactor * ZStepParam; PosZ <= ZStartParam + SizeNMultiplyFactor * ZStepParam; PosZ += ZStepParam)
-                    GenerateOneStepOfDiffusionForSelectedSpace(InBounds, PosX, PosY, PosZ, XStepParam, YStepParam, ZStepParam, CurrentThreadPos);
+        for (UnsignedInt Step = 1; Step <= NumberOfSimulationSteps; Step++)
+            for (UnsignedInt PosX = XStartParam - SizeNMultiplyFactor * XStepParam; PosX <= XStartParam + SizeNMultiplyFactor * XStepParam; PosX += XStepParam)
+                for (UnsignedInt PosY = YStartParam - SizeNMultiplyFactor * YStepParam; PosY <= YStartParam + SizeNMultiplyFactor * YStepParam; PosY += YStepParam)
+                    for (UnsignedInt PosZ = ZStartParam - SizeNMultiplyFactor * ZStepParam; PosZ <= ZStartParam + SizeNMultiplyFactor * ZStepParam; PosZ += ZStepParam)
+                        GenerateOneStepOfDiffusionForSelectedSpace(InBounds, PosX, PosY, PosZ, XStepParam, YStepParam, ZStepParam, CurrentThreadPos);
 
         CheckConditionsToIncSimulationStepNumberForStatistics();
 
@@ -82,16 +83,17 @@ void CellEngineSimulationSpace::GenerateOneStepOfDiffusionForBigPartOfCellSpace(
     CATCH("generating diffusion for big part of cell")
 }
 
-void CellEngineSimulationSpace::GenerateOneStepOfDiffusionForWholeCellSpace(const bool InBounds, const UnsignedInt XStartParam, const UnsignedInt YStartParam, const UnsignedInt ZStartParam, const UnsignedInt XStepParam, const UnsignedInt YStepParam, const UnsignedInt ZStepParam, const UnsignedInt XSizeParam, UnsignedInt YSizeParam, const UnsignedInt ZSizeParam, const CurrentThreadPosType& CurrentThreadPos)
+void CellEngineSimulationSpace::GenerateNStepsOfDiffusionForWholeCellSpace(const bool InBounds, const UnsignedInt XStartParam, const UnsignedInt YStartParam, const UnsignedInt ZStartParam, const UnsignedInt XStepParam, const UnsignedInt YStepParam, const UnsignedInt ZStepParam, const UnsignedInt XSizeParam, UnsignedInt YSizeParam, const UnsignedInt ZSizeParam, const CurrentThreadPosType& CurrentThreadPos, const UnsignedInt NumberOfSimulationSteps)
 {
     try
     {
         CellEngineUseful::SwitchOffLogs();
 
-        for (UnsignedInt PosX = XStartParam; PosX < XSizeParam; PosX += XStepParam)
-            for (UnsignedInt PosY = YStartParam; PosY < YSizeParam; PosY += YStepParam)
-                for (UnsignedInt PosZ = ZStartParam; PosZ < ZSizeParam; PosZ += ZStepParam)
-                    GenerateOneStepOfDiffusionForSelectedSpace(InBounds, PosX, PosY, PosZ, XStepParam, YStepParam, ZStepParam, CurrentThreadPos);
+        for (UnsignedInt Step = 1; Step <= NumberOfSimulationSteps; Step++)
+            for (UnsignedInt PosX = XStartParam; PosX < XSizeParam; PosX += XStepParam)
+                for (UnsignedInt PosY = YStartParam; PosY < YSizeParam; PosY += YStepParam)
+                    for (UnsignedInt PosZ = ZStartParam; PosZ < ZSizeParam; PosZ += ZStepParam)
+                        GenerateOneStepOfDiffusionForSelectedSpace(InBounds, PosX, PosY, PosZ, XStepParam, YStepParam, ZStepParam, CurrentThreadPos);
 
         CheckConditionsToIncSimulationStepNumberForStatistics();
 
@@ -650,8 +652,7 @@ void CellEngineSimulationSpace::GenerateOneStepOfRandomReactionsForSelectedRange
     CATCH("generating one step of random reactions for selected range of particles")
 }
 
-void CellEngineSimulationSpace::GenerateOneStepOfRandomReactionsForOneParticleFromRangeOfParticles(UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam, const UnsignedInt ShiftIndexOfChosenParticle, const
-    CurrentThreadPosType& CurrentThreadPos)
+void CellEngineSimulationSpace::GenerateOneStepOfRandomReactionsForOneParticleFromRangeOfParticles(UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam, const UnsignedInt ShiftIndexOfChosenParticle, const CurrentThreadPosType& CurrentThreadPos)
 {
     try
     {
@@ -711,16 +712,17 @@ void CellEngineSimulationSpace::SaveParticlesStatisticsOnce()
     SaveParticlesStatistics();
 }
 
-void CellEngineSimulationSpace::GenerateOneChosenReactionForWholeCellSpace(const UnsignedInt ReactionId, const UnsignedInt XStartParam, const UnsignedInt YStartParam, const UnsignedInt ZStartParam, const UnsignedInt XStepParam, const UnsignedInt YStepParam, const UnsignedInt ZStepParam, const UnsignedInt XSizeParam, UnsignedInt YSizeParam, const UnsignedInt ZSizeParam, const CurrentThreadPosType& CurrentThreadPos)
+void CellEngineSimulationSpace::GenerateNStepsOfOneChosenReactionForWholeCellSpace(const UnsignedInt ReactionId, const UnsignedInt XStartParam, const UnsignedInt YStartParam, const UnsignedInt ZStartParam, const UnsignedInt XStepParam, const UnsignedInt YStepParam, const UnsignedInt ZStepParam, const UnsignedInt XSizeParam, UnsignedInt YSizeParam, const UnsignedInt ZSizeParam, const CurrentThreadPosType& CurrentThreadPos, const UnsignedInt NumberOfSimulationSteps)
 {
     try
     {
         CellEngineUseful::SwitchOffLogs();
 
-        for (UnsignedInt PosX = XStartParam; PosX < XSizeParam; PosX += XStepParam)
-            for (UnsignedInt PosY = YStartParam; PosY < YSizeParam; PosY += YStepParam)
-                for (UnsignedInt PosZ = ZStartParam; PosZ < ZSizeParam; PosZ += ZStepParam)
-                    GenerateOneChosenReactionForSelectedSpace(ReactionId, PosX, PosY, PosZ, XStepParam, YStepParam, ZStepParam, CurrentThreadPos);
+        for (UnsignedInt Step = 1; Step <= NumberOfSimulationSteps; Step++)
+            for (UnsignedInt PosX = XStartParam; PosX < XSizeParam; PosX += XStepParam)
+                for (UnsignedInt PosY = YStartParam; PosY < YSizeParam; PosY += YStepParam)
+                    for (UnsignedInt PosZ = ZStartParam; PosZ < ZSizeParam; PosZ += ZStepParam)
+                        GenerateOneChosenReactionForSelectedSpace(ReactionId, PosX, PosY, PosZ, XStepParam, YStepParam, ZStepParam, CurrentThreadPos);
 
         CheckConditionsToIncSimulationStepNumberForStatistics();
 
@@ -729,7 +731,7 @@ void CellEngineSimulationSpace::GenerateOneChosenReactionForWholeCellSpace(const
     CATCH("generating random reactions for whole cell space")
 }
 
-void CellEngineSimulationSpace::GenerateOneRandomReactionForWholeCellSpace(const UnsignedInt XStartParam, const UnsignedInt YStartParam, const UnsignedInt ZStartParam, const UnsignedInt XStepParam, const UnsignedInt YStepParam, const UnsignedInt ZStepParam, const UnsignedInt XSizeParam, UnsignedInt YSizeParam, const UnsignedInt ZSizeParam, const CurrentThreadPosType& CurrentThreadPos)
+void CellEngineSimulationSpace::GenerateNStepsOfOneRandomReactionForWholeCellSpace(const UnsignedInt XStartParam, const UnsignedInt YStartParam, const UnsignedInt ZStartParam, const UnsignedInt XStepParam, const UnsignedInt YStepParam, const UnsignedInt ZStepParam, const UnsignedInt XSizeParam, UnsignedInt YSizeParam, const UnsignedInt ZSizeParam, const CurrentThreadPosType& CurrentThreadPos, const UnsignedInt NumberOfSimulationSteps)
 {
     try
     {
@@ -737,10 +739,11 @@ void CellEngineSimulationSpace::GenerateOneRandomReactionForWholeCellSpace(const
 
         CellEngineUseful::SwitchOffLogs();
 
-        for (UnsignedInt PosX = XStartParam; PosX < XSizeParam; PosX += XStepParam)
-            for (UnsignedInt PosY = YStartParam; PosY < YSizeParam; PosY += YStepParam)
-                for (UnsignedInt PosZ = ZStartParam; PosZ < ZSizeParam; PosZ += ZStepParam)
-                    GenerateOneRandomReactionForSelectedSpace(PosX, PosY, PosZ, XStepParam, YStepParam, ZStepParam, CurrentThreadPos);
+        for (UnsignedInt Step = 1; Step <= NumberOfSimulationSteps; Step++)
+            for (UnsignedInt PosX = XStartParam; PosX < XSizeParam; PosX += XStepParam)
+                for (UnsignedInt PosY = YStartParam; PosY < YSizeParam; PosY += YStepParam)
+                    for (UnsignedInt PosZ = ZStartParam; PosZ < ZSizeParam; PosZ += ZStepParam)
+                        GenerateOneRandomReactionForSelectedSpace(PosX, PosY, PosZ, XStepParam, YStepParam, ZStepParam, CurrentThreadPos);
 
         CheckConditionsToIncSimulationStepNumberForStatistics();
 
@@ -752,16 +755,17 @@ void CellEngineSimulationSpace::GenerateOneRandomReactionForWholeCellSpace(const
     CATCH("generating random reactions for whole cell space")
 }
 
-void CellEngineSimulationSpace::GenerateOneRandomReactionForBigPartOfCellSpace(const UnsignedInt SizeNMultiplyFactor, const UnsignedInt XStartParam, const UnsignedInt YStartParam, const UnsignedInt ZStartParam, const UnsignedInt XStepParam, const UnsignedInt YStepParam, const UnsignedInt ZStepParam, const UnsignedInt XSizeParam, const UnsignedInt YSizeParam, const UnsignedInt ZSizeParam, const CurrentThreadPosType& CurrentThreadPos)
+void CellEngineSimulationSpace::GenerateNStepsOfOneRandomReactionForBigPartOfCellSpace(const UnsignedInt SizeNMultiplyFactor, const UnsignedInt XStartParam, const UnsignedInt YStartParam, const UnsignedInt ZStartParam, const UnsignedInt XStepParam, const UnsignedInt YStepParam, const UnsignedInt ZStepParam, const UnsignedInt XSizeParam, const UnsignedInt YSizeParam, const UnsignedInt ZSizeParam, const CurrentThreadPosType& CurrentThreadPos, const UnsignedInt NumberOfSimulationSteps)
 {
     try
     {
         CellEngineUseful::SwitchOffLogs();
 
-        for (UnsignedInt PosX = XStartParam - SizeNMultiplyFactor * XStepParam; PosX <= XStartParam + SizeNMultiplyFactor * XStepParam; PosX += XStepParam)
-            for (UnsignedInt PosY = YStartParam - SizeNMultiplyFactor * YStepParam; PosY <= YStartParam + SizeNMultiplyFactor * YStepParam; PosY += YStepParam)
-                for (UnsignedInt PosZ = ZStartParam - SizeNMultiplyFactor * ZStepParam; PosZ <= ZStartParam + SizeNMultiplyFactor * ZStepParam; PosZ += ZStepParam)
-                    GenerateOneRandomReactionForSelectedSpace(PosX, PosY, PosZ, XStepParam, YStepParam, ZStepParam, CurrentThreadPos);
+        for (UnsignedInt Step = 1; Step <= NumberOfSimulationSteps; Step++)
+            for (UnsignedInt PosX = XStartParam - SizeNMultiplyFactor * XStepParam; PosX <= XStartParam + SizeNMultiplyFactor * XStepParam; PosX += XStepParam)
+                for (UnsignedInt PosY = YStartParam - SizeNMultiplyFactor * YStepParam; PosY <= YStartParam + SizeNMultiplyFactor * YStepParam; PosY += YStepParam)
+                    for (UnsignedInt PosZ = ZStartParam - SizeNMultiplyFactor * ZStepParam; PosZ <= ZStartParam + SizeNMultiplyFactor * ZStepParam; PosZ += ZStepParam)
+                        GenerateOneRandomReactionForSelectedSpace(PosX, PosY, PosZ, XStepParam, YStepParam, ZStepParam, CurrentThreadPos);
 
         CheckConditionsToIncSimulationStepNumberForStatistics();
 
@@ -785,12 +789,12 @@ void CellEngineSimulationSpace::GenerateOneStepOfSimulationForWholeCellSpaceInOn
             UnsignedInt ZStartParam = (ThreadZIndex - 1) * CellEngineConfigDataObject.NumberOfZVoxelsInOneThreadInVoxelSimulationSpace;
             UnsignedInt ZEndParam = (ThreadZIndex - 1) * CellEngineConfigDataObject.NumberOfZVoxelsInOneThreadInVoxelSimulationSpace + CellEngineConfigDataObject.NumberOfZVoxelsInOneThreadInVoxelSimulationSpace;
 
-            // if (StepOutside % 2 == 1)
-            // {
-            //     XStartParam += CellEngineConfigDataObject.NumberOfXVoxelsInOneThreadInVoxelSimulationSpace / 2;
-            //     YStartParam += CellEngineConfigDataObject.NumberOfYVoxelsInOneThreadInVoxelSimulationSpace / 2;
-            //     ZStartParam += CellEngineConfigDataObject.NumberOfZVoxelsInOneThreadInVoxelSimulationSpace / 2;
-            // }
+            if (StepOutside % 2 == 0)
+            {
+                XStartParam += CellEngineConfigDataObject.NumberOfXVoxelsInOneThreadInVoxelSimulationSpace / 2;
+                YStartParam += CellEngineConfigDataObject.NumberOfYVoxelsInOneThreadInVoxelSimulationSpace / 2;
+                ZStartParam += CellEngineConfigDataObject.NumberOfZVoxelsInOneThreadInVoxelSimulationSpace / 2;
+            }
 
             for (UnsignedInt PosX = XStartParam; PosX < XEndParam; PosX += CellEngineConfigDataObject.NumberOfXVoxelsInOneSectorInOneThreadInVoxelSimulationSpace)
                 for (UnsignedInt PosY = YStartParam; PosY < YEndParam; PosY += CellEngineConfigDataObject.NumberOfYVoxelsInOneSectorInOneThreadInVoxelSimulationSpace)
@@ -798,8 +802,10 @@ void CellEngineSimulationSpace::GenerateOneStepOfSimulationForWholeCellSpaceInOn
                     {
                         LoggersManagerObject.Log(STREAM("XStart = " << XStartParam << " YStart = " << YStartParam << " ZStart = " << ZStartParam << " XEnd = " << XEndParam << " YEnd = " << YEndParam << " ZEnd = " << ZEndParam << " PosX = " << PosX << " PosY = " << PosY << " PosZ = " << PosZ));
 
-                        //GenerateOneStepOfDiffusionForSelectedSpace(true, PosX, PosY, PosZ, CellEngineConfigDataObject.NumberOfXVoxelsInOneSectorInOneThreadInVoxelSimulationSpace, CellEngineConfigDataObject.NumberOfYVoxelsInOneSectorInOneThreadInVoxelSimulationSpace, CellEngineConfigDataObject.NumberOfZVoxelsInOneSectorInOneThreadInVoxelSimulationSpace);
-                        GenerateOneRandomReactionForSelectedSpace(PosX, PosY, PosZ, CellEngineConfigDataObject.NumberOfXVoxelsInOneSectorInOneThreadInVoxelSimulationSpace, CellEngineConfigDataObject.NumberOfYVoxelsInOneSectorInOneThreadInVoxelSimulationSpace, CellEngineConfigDataObject.NumberOfZVoxelsInOneSectorInOneThreadInVoxelSimulationSpace, { ThreadXIndex - 1, ThreadYIndex - 1, ThreadZIndex - 1 });
+                        if (CellEngineUseful::IsIn(CellEngineConfigDataObject.TypeOfSimulation, { CellEngineConfigData::TypesOfSimulation::BothReactionsAndDiffusion, CellEngineConfigData::TypesOfSimulation::OnlyDiffusion }))
+                            GenerateOneStepOfDiffusionForSelectedSpace(true, PosX, PosY, PosZ, CellEngineConfigDataObject.NumberOfXVoxelsInOneSectorInOneThreadInVoxelSimulationSpace, CellEngineConfigDataObject.NumberOfYVoxelsInOneSectorInOneThreadInVoxelSimulationSpace, CellEngineConfigDataObject.NumberOfZVoxelsInOneSectorInOneThreadInVoxelSimulationSpace, { ThreadXIndex - 1, ThreadYIndex - 1, ThreadZIndex - 1 });
+                        if (CellEngineUseful::IsIn(CellEngineConfigDataObject.TypeOfSimulation, { CellEngineConfigData::TypesOfSimulation::BothReactionsAndDiffusion, CellEngineConfigData::TypesOfSimulation::OnlyReactions }))
+                            GenerateOneRandomReactionForSelectedSpace(PosX, PosY, PosZ, CellEngineConfigDataObject.NumberOfXVoxelsInOneSectorInOneThreadInVoxelSimulationSpace, CellEngineConfigDataObject.NumberOfYVoxelsInOneSectorInOneThreadInVoxelSimulationSpace, CellEngineConfigDataObject.NumberOfZVoxelsInOneSectorInOneThreadInVoxelSimulationSpace, { ThreadXIndex - 1, ThreadYIndex - 1, ThreadZIndex - 1 });
                     }
         }
     }
@@ -810,9 +816,9 @@ void CellEngineSimulationSpace::GenerateNStepsOfSimulationForWholeCellSpaceInThr
 {
     try
     {
-        std::barrier SyncPoint(CellEngineConfigDataObject.NumberOfXThreads * CellEngineConfigDataObject.NumberOfYThreads * CellEngineConfigDataObject.NumberOfZThreads);
+        std::barrier SyncPoint(CellEngineConfigDataObject.NumberOfXThreadsInSimulation * CellEngineConfigDataObject.NumberOfYThreadsInSimulation * CellEngineConfigDataObject.NumberOfZThreadsInSimulation);
 
-        vector<vector<vector<thread*>>> Threads(CellEngineConfigDataObject.NumberOfXThreads, vector<vector<thread*>>(CellEngineConfigDataObject.NumberOfYThreads, vector<thread*>(CellEngineConfigDataObject.NumberOfZThreads)));
+        vector<vector<vector<thread*>>> Threads(CellEngineConfigDataObject.NumberOfXThreadsInSimulation, vector<vector<thread*>>(CellEngineConfigDataObject.NumberOfYThreadsInSimulation, vector<thread*>(CellEngineConfigDataObject.NumberOfZThreadsInSimulation)));
 
         auto GenerateNStepsOfSimulationForWholeCellSpaceInThreads = [NumberOfStepsOutside, &SyncPoint, this](const UnsignedInt NumberOfStepsInside, const UnsignedInt ThreadXIndex, const UnsignedInt ThreadYIndex, const UnsignedInt ThreadZIndex)
         {
@@ -828,9 +834,9 @@ void CellEngineSimulationSpace::GenerateNStepsOfSimulationForWholeCellSpaceInThr
 
         CellEngineUseful::SwitchOffLogs();
 
-        for (UnsignedInt ThreadXIndex = 1; ThreadXIndex <= CellEngineConfigDataObject.NumberOfXThreads; ThreadXIndex++)
-            for (UnsignedInt ThreadYIndex = 1; ThreadYIndex <= CellEngineConfigDataObject.NumberOfYThreads; ThreadYIndex++)
-                for (UnsignedInt ThreadZIndex = 1; ThreadZIndex <= CellEngineConfigDataObject.NumberOfZThreads; ThreadZIndex++)
+        for (UnsignedInt ThreadXIndex = 1; ThreadXIndex <= CellEngineConfigDataObject.NumberOfXThreadsInSimulation; ThreadXIndex++)
+            for (UnsignedInt ThreadYIndex = 1; ThreadYIndex <= CellEngineConfigDataObject.NumberOfYThreadsInSimulation; ThreadYIndex++)
+                for (UnsignedInt ThreadZIndex = 1; ThreadZIndex <= CellEngineConfigDataObject.NumberOfZThreadsInSimulation; ThreadZIndex++)
                     Threads[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1] = new thread(GenerateNStepsOfSimulationForWholeCellSpaceInThreads, NumberOfStepsInside, ThreadXIndex, ThreadYIndex, ThreadZIndex);
 
         for (auto& ThreadX : Threads)

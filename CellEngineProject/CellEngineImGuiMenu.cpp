@@ -27,7 +27,7 @@
 
 using namespace std;
 
-const CurrentThreadPosType MainThreadPos = MainThreadPos;
+constexpr CurrentThreadPosType MainThreadPos = { 0, 0, 0 };
 
 class CellEngineImGuiMenu
 {
@@ -533,18 +533,18 @@ public:
             {
                 if (CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer != nullptr)
                 {
-                    for (const auto &ParticlesKindsMapElement: ParticlesKindsManagerObject.ParticlesKinds)
-                        if (ParticlesKindsMapElement.second.IdStr.starts_with("JCVISYN3A_") || ParticlesKindsMapElement.second.IdStr.starts_with("particle_") || ParticlesKindsMapElement.second.IdStr.starts_with("trna_") || ParticlesKindsMapElement.second.IdStr.starts_with("mrna_") || ParticlesKindsMapElement.second.IdStr.starts_with("rrna_") || ParticlesKindsMapElement.second.IdStr.starts_with("M_"))
-                            LocalParticlesKindsForImGuiSelection.emplace_back(ParticlesKindsMapElement.second);
-
-                    sort(LocalParticlesKindsForImGuiSelection.begin(), LocalParticlesKindsForImGuiSelection.end(), ComparisonOfParticle);
-
-                    vector<bool> LocalParticleKindSelection;
-                    for (auto &ParticlesKindForImGuiSelectionObject: LocalParticlesKindsForImGuiSelection)
-                        ImGui::Checkbox(string(to_string(ParticlesKindForImGuiSelectionObject.EntityId) + " " + "T = " + ParticlesKindsManager::ConvertParticleTypeToString(ParticlesKindForImGuiSelectionObject.ParticleKindSpecialDataSector.back().ParticleType) + " " + ParticlesKindForImGuiSelectionObject.IdStr + " " + (ParticlesKindForImGuiSelectionObject.Name.starts_with("M_") ? ParticlesKindForImGuiSelectionObject.Name : "") + (ParticlesKindForImGuiSelectionObject.Formula != ParticlesKindForImGuiSelectionObject.IdStr && ParticlesKindForImGuiSelectionObject.Formula.empty() == false ? ("F = " + ParticlesKindForImGuiSelectionObject.Formula + " ") : "")).c_str(), &ParticlesKindForImGuiSelectionObject.GraphicData.Selected);
-
-                    for (const auto &ParticleKindForImGuiSelectionObject: LocalParticlesKindsForImGuiSelection)
-                        ParticlesKindsManagerObject.GetParticleKind(ParticleKindForImGuiSelectionObject.EntityId).GraphicData.Selected = ParticleKindForImGuiSelectionObject.GraphicData.Selected;
+                    // for (const auto &ParticlesKindsMapElement: ParticlesKindsManagerObject.ParticlesKinds)
+                    //     if (ParticlesKindsMapElement.second.IdStr.starts_with("JCVISYN3A_") || ParticlesKindsMapElement.second.IdStr.starts_with("particle_") || ParticlesKindsMapElement.second.IdStr.starts_with("trna_") || ParticlesKindsMapElement.second.IdStr.starts_with("mrna_") || ParticlesKindsMapElement.second.IdStr.starts_with("rrna_") || ParticlesKindsMapElement.second.IdStr.starts_with("M_"))
+                    //         LocalParticlesKindsForImGuiSelection.emplace_back(ParticlesKindsMapElement.second);
+                    //
+                    // sort(LocalParticlesKindsForImGuiSelection.begin(), LocalParticlesKindsForImGuiSelection.end(), ComparisonOfParticle);
+                    //
+                    // vector<bool> LocalParticleKindSelection;
+                    // for (auto &ParticlesKindForImGuiSelectionObject: LocalParticlesKindsForImGuiSelection)
+                    //     ImGui::Checkbox(string(to_string(ParticlesKindForImGuiSelectionObject.EntityId) + " " + "T = " + ParticlesKindsManager::ConvertParticleTypeToString(ParticlesKindForImGuiSelectionObject.ParticleKindSpecialDataSector.back().ParticleType) + " " + ParticlesKindForImGuiSelectionObject.IdStr + " " + (ParticlesKindForImGuiSelectionObject.Name.starts_with("M_") ? ParticlesKindForImGuiSelectionObject.Name : "") + (ParticlesKindForImGuiSelectionObject.Formula != ParticlesKindForImGuiSelectionObject.IdStr && ParticlesKindForImGuiSelectionObject.Formula.empty() == false ? ("F = " + ParticlesKindForImGuiSelectionObject.Formula + " ") : "")).c_str(), &ParticlesKindForImGuiSelectionObject.GraphicData.Selected);
+                    //
+                    // for (const auto &ParticleKindForImGuiSelectionObject: LocalParticlesKindsForImGuiSelection)
+                    //     ParticlesKindsManagerObject.GetParticleKind(ParticleKindForImGuiSelectionObject.EntityId).GraphicData.Selected = ParticleKindForImGuiSelectionObject.GraphicData.Selected;
 
                     static int NumberOfParticlesToSub[1] = { 100 };
                     ImGui::DragInt("SUB", NumberOfParticlesToSub, 1, 0, 1000, "%d", ImGuiSliderFlags_AlwaysClamp);
@@ -749,20 +749,20 @@ public:
 
                     ColorButton(AlignString("MAKE ONE STEP OF DIFFUSION NOT IN BOUNDS FOR SELECTED BIG PART OF CELL", StringLength).c_str(), Nothing, 0, 0, 0, 3, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
                     {
-                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateOneStepOfDiffusionForBigPartOfCellSpace(false, 4, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2], MainThreadPos);
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateNStepsOfDiffusionForBigPartOfCellSpace(false, 4, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2], MainThreadPos, CellEngineConfigDataObject.NumberOfStepsInSimulationOutside);
                     });
                     ColorButton(AlignString("MAKE ONE STEP OF DIFFUSION NOT IN BOUNDS FOR WHOLE CELL SPACE", StringLength).c_str(), Nothing, 0, 0, 0, 3, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
                     {
-                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateOneStepOfDiffusionForWholeCellSpace(false, 0, 0, 0, 32, 32, 32, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, MainThreadPos);
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateNStepsOfDiffusionForWholeCellSpace(false, 0, 0, 0, 32, 32, 32, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, MainThreadPos, CellEngineConfigDataObject.NumberOfStepsInSimulationOutside);
                     });
 
                     ColorButton(AlignString("MAKE ONE STEP OF DIFFUSION IN BOUNDS FOR SELECTED BIG PART OF CELL", StringLength).c_str(), Nothing, 0, 0, 0, 3, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
                     {
-                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateOneStepOfDiffusionForBigPartOfCellSpace(true, 4, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2], MainThreadPos);
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateNStepsOfDiffusionForBigPartOfCellSpace(true, 4, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2], MainThreadPos, CellEngineConfigDataObject.NumberOfStepsInSimulationOutside);
                     });
                     ColorButton(AlignString("MAKE ONE STEP OF DIFFUSION IN BOUNDS FOR WHOLE CELL SPACE", StringLength).c_str(), Nothing, 0, 0, 0, 3, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
                     {
-                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateOneStepOfDiffusionForWholeCellSpace(true, 0, 0, 0, 32, 32, 32, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, MainThreadPos);
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateNStepsOfDiffusionForWholeCellSpace(true, 0, 0, 0, 32, 32, 32, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, MainThreadPos, CellEngineConfigDataObject.NumberOfStepsInSimulationOutside);
                     });
                 }
 
@@ -784,22 +784,36 @@ public:
 
                     ColorButton(AlignString("MAKE ONE STEP OF RANDOM REACTIONS FOR SELECTED BIG PART OF CELL", StringLength).c_str(), Nothing, 0, 0, 0, 3, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
                     {
-                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateOneRandomReactionForBigPartOfCellSpace(4, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2], MainThreadPos);
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateNStepsOfOneRandomReactionForBigPartOfCellSpace(4, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2], MainThreadPos, CellEngineConfigDataObject.NumberOfStepsInSimulationOutside);
                     });
 
-                    ColorButton(AlignString("MAKE ONE STEP OF RANDOM REACTIONS FOR WHOLE CELL SPACE IN THREADS", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
-                    {
-                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateNStepsOfSimulationForWholeCellSpaceInThreads(1, 1);
-                    });
                     ColorButton(AlignString("MAKE ONE STEP OF RANDOM REACTIONS FOR WHOLE CELL SPACE", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
                     {
-                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateOneRandomReactionForWholeCellSpace(0, 0, 0, 32, 32, 32, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, MainThreadPos);
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateNStepsOfOneRandomReactionForWholeCellSpace(0, 0, 0, 32, 32, 32, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, MainThreadPos, CellEngineConfigDataObject.NumberOfStepsInSimulationOutside);
                     });
                     ColorButton(AlignString("MAKE ONE STEP OF CHOSEN REACTIONS FOR WHOLE CELL SPACE", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
                     {
-                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateOneChosenReactionForWholeCellSpace(10, 0, 0, 0, 32, 32, 32, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, MainThreadPos);
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateNStepsOfOneChosenReactionForWholeCellSpace(10, 0, 0, 0, 32, 32, 32, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, MainThreadPos, CellEngineConfigDataObject.NumberOfStepsInSimulationOutside);
                     });
 
+                    ImGui::Text("");
+                    ImGui::Text("Number Of Simulation Steps Outside");
+                    ImGui::DragInt("Num Of Steps Outside", &CellEngineConfigDataObject.NumberOfStepsInSimulationOutside, 1, 1, 1000, "%d", ImGuiSliderFlags_AlwaysClamp);
+                    ImGui::Text("");
+                    ImGui::Text("Number Of Simulation Steps Inside");
+                    ImGui::DragInt("Num Of Steps Inside", &CellEngineConfigDataObject.NumberOfStepsInSimulationInside, 1, 1, 1000, "%d", ImGuiSliderFlags_AlwaysClamp);
+                    ImGui::Text("");
+                    ImGui::Text("Type Of Simulation");
+                    int TypeOfSimulation = static_cast<int>(CellEngineConfigDataObject.TypeOfSimulation);
+                    ImGui::RadioButton("BothReactionsAndDiffusion", &TypeOfSimulation, 1);
+                    ImGui::RadioButton("Only Reactions ", &TypeOfSimulation, 2);
+                    ImGui::RadioButton("Only Diffusion", &TypeOfSimulation, 3);
+                    CellEngineConfigDataObject.TypeOfSimulation = static_cast<CellEngineConfigData::TypesOfSimulation>(TypeOfSimulation);
+                    ImGui::Text("");
+                    ColorButton(AlignString("MAKE N STEPS OF SIMULATION FOR WHOLE CELL SPACE IN THREADS", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
+                    {
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateNStepsOfSimulationForWholeCellSpaceInThreads(CellEngineConfigDataObject.NumberOfStepsInSimulationOutside, CellEngineConfigDataObject.NumberOfStepsInSimulationInside);
+                    });
 
                     if (ImGui::Button(AlignString("PRINT CHEMICAL REACTIONS", StringLength).c_str()) == true)
                         ChemicalReactionsManagerObject.PrintChemicalReactions();

@@ -140,12 +140,19 @@ void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const ch
                             CellEngineConfigDataObject.VoxelSimulationSpaceSelectionSizeY = CellStatePropertyTreeElement.second.get<UnsignedInt>("VoxelSimulationSpaceSelectionSizeY");
                             CellEngineConfigDataObject.VoxelSimulationSpaceSelectionSizeZ = CellStatePropertyTreeElement.second.get<UnsignedInt>("VoxelSimulationSpaceSelectionSizeZ");
 
-                            if (CellStatePropertyTreeElement.second.get_child_optional("NumberOfXThreads"))
-                                CellEngineConfigDataObject.NumberOfXThreads = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfXThreads");
-                            if (CellStatePropertyTreeElement.second.get_child_optional("NumberOfYThreads"))
-                                CellEngineConfigDataObject.NumberOfYThreads = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfYThreads");
-                            if (CellStatePropertyTreeElement.second.get_child_optional("NumberOfZThreads"))
-                                CellEngineConfigDataObject.NumberOfZThreads = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfZThreads");
+                            if (CellStatePropertyTreeElement.second.get_child_optional("NumberOfStepsInSimulationOutside"))
+                                CellEngineConfigDataObject.NumberOfStepsInSimulationOutside = CellStatePropertyTreeElement.second.get<int>("NumberOfStepsInSimulationOutside");
+                            if (CellStatePropertyTreeElement.second.get_child_optional("NumberOfStepsInSimulationInside"))
+                                CellEngineConfigDataObject.NumberOfStepsInSimulationInside = CellStatePropertyTreeElement.second.get<int>("NumberOfStepsInSimulationInside");
+                            if (CellStatePropertyTreeElement.second.get_child_optional("TypeOfSimulation"))
+                                CellEngineConfigDataObject.TypeOfSimulation = static_cast<CellEngineConfigData::TypesOfSimulation>(CellStatePropertyTreeElement.second.get<UnsignedInt>("TypeOfSimulation"));
+
+                            if (CellStatePropertyTreeElement.second.get_child_optional("NumberOfXThreadsInSimulation"))
+                                CellEngineConfigDataObject.NumberOfXThreadsInSimulation = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfXThreadsInSimulation");
+                            if (CellStatePropertyTreeElement.second.get_child_optional("NumberOfYThreadsInSimulation"))
+                                CellEngineConfigDataObject.NumberOfYThreadsInSimulation = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfYThreadsInSimulation");
+                            if (CellStatePropertyTreeElement.second.get_child_optional("NumberOfZThreadsInSimulation"))
+                                CellEngineConfigDataObject.NumberOfZThreadsInSimulation = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfZThreadsInSimulation");
 
                             if (CellStatePropertyTreeElement.second.get_child_optional("NumberOfXVoxelsInOneThreadInVoxelSimulationSpace"))
                                 CellEngineConfigDataObject.NumberOfXVoxelsInOneThreadInVoxelSimulationSpace = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfXVoxelsInOneThreadInVoxelSimulationSpace");

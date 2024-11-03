@@ -40,12 +40,12 @@ protected:
     void ConstructDataForMultiThreadedExecution()
     {
         ThreadsLocalParticlesInProximity.clear();
-        ThreadsLocalParticlesInProximity.resize(CellEngineConfigDataObject.NumberOfXThreads);
+        ThreadsLocalParticlesInProximity.resize(CellEngineConfigDataObject.NumberOfXThreadsInSimulation);
         for (auto& ThreadLocalParticlesInProximityXPos : ThreadsLocalParticlesInProximity)
         {
-            ThreadLocalParticlesInProximityXPos.resize(CellEngineConfigDataObject.NumberOfYThreads);
+            ThreadLocalParticlesInProximityXPos.resize(CellEngineConfigDataObject.NumberOfYThreadsInSimulation);
             for (auto& ThreadLocalParticlesInProximityYPos : ThreadLocalParticlesInProximityXPos)
-                ThreadLocalParticlesInProximityYPos.resize(CellEngineConfigDataObject.NumberOfZThreads);
+                ThreadLocalParticlesInProximityYPos.resize(CellEngineConfigDataObject.NumberOfZThreadsInSimulation);
         }
     }
 protected:
