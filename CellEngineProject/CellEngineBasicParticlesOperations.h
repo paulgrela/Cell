@@ -26,7 +26,7 @@ protected:
 protected:
     inline Particle& GetParticleFromIndex(const UniqueIdInt ParticleIndex)
     {
-        std::shared_lock<std::shared_mutex> LockGuardObject{ MainParticlesSharedMutexObject };
+        //std::shared_lock<std::shared_mutex> LockGuardObject{ MainParticlesSharedMutexObject };
 
         return Particles[ParticleIndex];
     }

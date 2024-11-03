@@ -1,11 +1,13 @@
 
+#include <shared_mutex>
+
 #include "ExceptionsMacro.h"
-
 #include "CellEngineSimulationSpaceStatistics.h"
-
 #include "CellEngineParticlesKindsManager.h"
 
 #define LONGER_CODE_
+
+using namespace std;
 
 void CellEngineSimulationSpaceStatistics::MakeSimulationStepNumberZeroForStatistics()
 {
@@ -153,7 +155,7 @@ void CellEngineSimulationSpaceStatistics::GetNumberOfParticlesFromParticleKind(c
 {
     try
     {
-        std::shared_lock<std::shared_mutex> LockGuardObject{ MainStatisticsSharedMutexObject };
+        shared_lock<shared_mutex> LockGuardObject{ MainStatisticsSharedMutexObject };
 
         auto FoundResult = find_if(ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber - 1].begin(), ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber - 1].end(), [ParticleKindId](const auto& P){ return P.EntityId == ParticleKindId; });
         if (FoundResult != ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber - 1].end())

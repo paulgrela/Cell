@@ -9,7 +9,7 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
         auto ParticlesCenters = CellEngineDataFileObjectPointer->GetParticlesCenters();
 
         GLuint PartOfStencilBufferIndex[3];
-        std::vector<std::pair<UnsignedInt, UnsignedInt>> TemporaryRenderedAtomsList;
+        vector<pair<UnsignedInt, UnsignedInt>> TemporaryRenderedAtomsList;
 
         for (UnsignedInt StencilBufferLoopCounter = 0; StencilBufferLoopCounter < CellEngineConfigDataObject.NumberOfStencilBufferLoops; StencilBufferLoopCounter++)
         {
@@ -18,7 +18,7 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
 
             TemporaryRenderedAtomsList.clear();
 
-            std::lock_guard<std::mutex> LockGuardObject{ CellEngineDataFileObjectPointer->ChosenStructureMutexObject };
+            lock_guard<mutex> LockGuardObject{ CellEngineDataFileObjectPointer->ChosenStructureMutexObject };
 
             for (auto ParticlesCenterIterator = ParticlesCenters.begin(); ParticlesCenterIterator != ParticlesCenters.end(); ++ParticlesCenterIterator)
             {

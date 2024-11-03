@@ -32,7 +32,7 @@ class CellEngineChemicalReactionsInBasicSimulationSpace : virtual public CellEng
 protected:
     std::vector<std::vector<std::vector<ThreadLocalParticlesInProximity>>> ThreadsLocalParticlesInProximity;
 protected:
-    ThreadLocalParticlesInProximity& GetThreadsLocalParticlesInProximity(const CurrentThreadPosType& CurrentThreadPos)
+    inline ThreadLocalParticlesInProximity& GetThreadsLocalParticlesInProximity(const CurrentThreadPosType& CurrentThreadPos)
     {
         return ThreadsLocalParticlesInProximity[CurrentThreadPos.ThreadPosX][CurrentThreadPos.ThreadPosY][CurrentThreadPos.ThreadPozZ];
     }

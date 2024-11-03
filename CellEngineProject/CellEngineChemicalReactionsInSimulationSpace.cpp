@@ -14,7 +14,7 @@ void CellEngineChemicalReactionsInSimulationSpace::RemoveParticle(const UniqueId
     {
         Particle& ParticleObject = GetParticleFromIndex(ParticleIndex);
 
-        std::lock_guard<std::mutex> LockGuardObject{ MainParticlesMutexObject };
+        lock_guard<mutex> LockGuardObject{ MainParticlesMutexObject };
 
         CutDNAPrev(&ParticleObject);
         CutDNANext(&ParticleObject);

@@ -6,6 +6,7 @@
 #include <algorithm>
 
 #include "FileUtils.h"
+#include "DateTimeUtils.h"
 #include "Combinatorics.h"
 #include "DoublyLinkedList.h"
 
@@ -732,6 +733,8 @@ void CellEngineSimulationSpace::GenerateOneRandomReactionForWholeCellSpace(const
 {
     try
     {
+        const auto start_time = chrono::high_resolution_clock::now();
+
         CellEngineUseful::SwitchOffLogs();
 
         for (UnsignedInt PosX = XStartParam; PosX < XSizeParam; PosX += XStepParam)
@@ -742,6 +745,9 @@ void CellEngineSimulationSpace::GenerateOneRandomReactionForWholeCellSpace(const
         CheckConditionsToIncSimulationStepNumberForStatistics();
 
         CellEngineUseful::SwitchOnLogs();
+
+        const auto stop_time = chrono::high_resolution_clock::now();
+        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Execution of generating random reactions in whole cell space has taken time: ","Execution in threads")));
     }
     CATCH("generating random reactions for whole cell space")
 }
@@ -768,6 +774,8 @@ void CellEngineSimulationSpace::GenerateOneStepOfSimulationForWholeCellSpaceInOn
 {
     try
     {
+        //CellEngineUseful::SwitchOffLogs();
+
         for (UnsignedInt Step2 = 1; Step2 <= NumberOfStepsInside; Step2++)
         {
             LoggersManagerObject.Log(STREAM("STEP INSIDE = " << Step2 << " ThreadX = " << ThreadXIndex << " ThreadX = " << ThreadYIndex << " ThreadX = " << ThreadZIndex));
@@ -792,11 +800,11 @@ void CellEngineSimulationSpace::GenerateOneStepOfSimulationForWholeCellSpaceInOn
                     {
                         LoggersManagerObject.Log(STREAM("XStart = " << XStartParam << " YStart = " << YStartParam << " ZStart = " << ZStartParam << " XEnd = " << XEndParam << " YEnd = " << YEndParam << " ZEnd = " << ZEndParam << " PosX = " << PosX << " PosY = " << PosY << " PosZ = " << PosZ));
 
-                        // GenerateOneStepOfDiffusionForSelectedSpace(true, PosX, PosY, PosZ, XEndParam, YEndParam, ZEndParam);
-                        // GenerateOneRandomReactionForSelectedSpace(PosX, PosY, PosZ, XEndParam, YEndParam, ZEndParam);
                         //GenerateOneStepOfDiffusionForSelectedSpace(true, PosX, PosY, PosZ, CellEngineConfigDataObject.NumberOfXVoxelsInOneSectorInOneThreadInVoxelSimulationSpace, CellEngineConfigDataObject.NumberOfYVoxelsInOneSectorInOneThreadInVoxelSimulationSpace, CellEngineConfigDataObject.NumberOfZVoxelsInOneSectorInOneThreadInVoxelSimulationSpace);
                         GenerateOneRandomReactionForSelectedSpace(PosX, PosY, PosZ, CellEngineConfigDataObject.NumberOfXVoxelsInOneSectorInOneThreadInVoxelSimulationSpace, CellEngineConfigDataObject.NumberOfYVoxelsInOneSectorInOneThreadInVoxelSimulationSpace, CellEngineConfigDataObject.NumberOfZVoxelsInOneSectorInOneThreadInVoxelSimulationSpace, { ThreadXIndex - 1, ThreadYIndex - 1, ThreadZIndex - 1 });
                     }
+
+            //CellEngineUseful::SwitchOnLogs();
         }
     }
     CATCH("generating n steps simulation for whole cell space in threads")
@@ -810,19 +818,19 @@ void CellEngineSimulationSpace::GenerateNStepsOfSimulationForWholeCellSpaceInThr
 
         vector<vector<vector<thread*>>> Threads(CellEngineConfigDataObject.NumberOfXThreads, vector<vector<thread*>>(CellEngineConfigDataObject.NumberOfYThreads, vector<thread*>(CellEngineConfigDataObject.NumberOfZThreads)));
 
-        //std::vector<std::vector<std::vector<ThreadLocalParticlesInProximity>>> ThreadLocalParticlesInProximity;
-        //vector<vector<vector<thread*>>> Threads(CellEngineConfigDataObject.NumberOfXThreads, vector<vector<thread*>>(CellEngineConfigDataObject.NumberOfYThreads, vector<thread*>(CellEngineConfigDataObject.NumberOfZThreads)));
-        //TU TWORZE TABELE LOKALNE ALE MUSZE PRZEKAZAC PARAMETR DO WATKU do funkcji GenerateOneRandomReactionForSelectedSpace() A ONE MUSZA BYC DALEJ PRZEKAZANE - ale moze jako wektor 3 trojek - czyli krotka by jeden argument
-        //ThreadsLocalParticlesInProximity.resize(CellEngineConfigDataObject.NumberOfXThreads, std::vector<std::vector<ThreadLocalParticlesInProximity>>().resize(CellEngineConfigDataObject.NumberOfYThreads, std::vector<ThreadLocalParticlesInProximity>().resize(CellEngineConfigDataObject.NumberOfZThreads)));
-
         auto GenerateNStepsOfSimulationForWholeCellSpaceInThreads = [NumberOfStepsOutside, &SyncPoint, this](const UnsignedInt NumberOfStepsInside, const UnsignedInt ThreadXIndex, const UnsignedInt ThreadYIndex, const UnsignedInt ThreadZIndex)
         {
             for (UnsignedInt StepOutside = 1; StepOutside <= NumberOfStepsOutside; StepOutside++)
             {
                 this->GenerateOneStepOfSimulationForWholeCellSpaceInOneThread(NumberOfStepsInside, StepOutside, ThreadXIndex, ThreadYIndex, ThreadZIndex);
-                SyncPoint.arrive_and_wait();
+                //SyncPoint.arrive_and_wait();
             }
         };
+
+        LoggersManagerObject.Log(STREAM("START THREADS"));
+        const auto start_time = chrono::high_resolution_clock::now();
+
+        CellEngineUseful::SwitchOffLogs();
 
         for (UnsignedInt ThreadXIndex = 1; ThreadXIndex <= CellEngineConfigDataObject.NumberOfXThreads; ThreadXIndex++)
             for (UnsignedInt ThreadYIndex = 1; ThreadYIndex <= CellEngineConfigDataObject.NumberOfYThreads; ThreadYIndex++)
@@ -836,6 +844,12 @@ void CellEngineSimulationSpace::GenerateNStepsOfSimulationForWholeCellSpaceInThr
                     ThreadZ->join();
                     delete ThreadZ;
                 }
+
+        CellEngineUseful::SwitchOnLogs();
+        const auto stop_time = chrono::high_resolution_clock::now();
+        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Execution in threads has taken time: ","Execution in threads")));
+
+        LoggersManagerObject.Log(STREAM("END THREADS"));
     }
     CATCH("generating n steps simulation for whole cell space in threads")
 }
