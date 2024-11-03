@@ -774,8 +774,6 @@ void CellEngineSimulationSpace::GenerateOneStepOfSimulationForWholeCellSpaceInOn
 {
     try
     {
-        //CellEngineUseful::SwitchOffLogs();
-
         for (UnsignedInt Step2 = 1; Step2 <= NumberOfStepsInside; Step2++)
         {
             LoggersManagerObject.Log(STREAM("STEP INSIDE = " << Step2 << " ThreadX = " << ThreadXIndex << " ThreadX = " << ThreadYIndex << " ThreadX = " << ThreadZIndex));
@@ -803,8 +801,6 @@ void CellEngineSimulationSpace::GenerateOneStepOfSimulationForWholeCellSpaceInOn
                         //GenerateOneStepOfDiffusionForSelectedSpace(true, PosX, PosY, PosZ, CellEngineConfigDataObject.NumberOfXVoxelsInOneSectorInOneThreadInVoxelSimulationSpace, CellEngineConfigDataObject.NumberOfYVoxelsInOneSectorInOneThreadInVoxelSimulationSpace, CellEngineConfigDataObject.NumberOfZVoxelsInOneSectorInOneThreadInVoxelSimulationSpace);
                         GenerateOneRandomReactionForSelectedSpace(PosX, PosY, PosZ, CellEngineConfigDataObject.NumberOfXVoxelsInOneSectorInOneThreadInVoxelSimulationSpace, CellEngineConfigDataObject.NumberOfYVoxelsInOneSectorInOneThreadInVoxelSimulationSpace, CellEngineConfigDataObject.NumberOfZVoxelsInOneSectorInOneThreadInVoxelSimulationSpace, { ThreadXIndex - 1, ThreadYIndex - 1, ThreadZIndex - 1 });
                     }
-
-            //CellEngineUseful::SwitchOnLogs();
         }
     }
     CATCH("generating n steps simulation for whole cell space in threads")
@@ -823,7 +819,7 @@ void CellEngineSimulationSpace::GenerateNStepsOfSimulationForWholeCellSpaceInThr
             for (UnsignedInt StepOutside = 1; StepOutside <= NumberOfStepsOutside; StepOutside++)
             {
                 this->GenerateOneStepOfSimulationForWholeCellSpaceInOneThread(NumberOfStepsInside, StepOutside, ThreadXIndex, ThreadYIndex, ThreadZIndex);
-                //SyncPoint.arrive_and_wait();
+                SyncPoint.arrive_and_wait();
             }
         };
 
