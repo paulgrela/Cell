@@ -26,11 +26,19 @@ protected:
 protected:
     inline Particle& GetParticleFromIndex(const UniqueIdInt ParticleIndex)
     {
+        std::shared_lock<std::shared_mutex> LockGuardObject{ MainParticlesSharedMutexObject };
+
+        return Particles[ParticleIndex];
+    }
+    inline Particle& GetParticleFromIndexW(const UniqueIdInt ParticleIndex)
+    {
         return Particles[ParticleIndex];
     }
 public:
     [[nodiscard]] UniqueIdInt GetFreeIndexesOfParticleSize() const
     {
+        std::lock_guard<std::mutex> LockGuardObject{ MainParticlesIndexesMutexObject };
+
         return FreeIndexesOfParticles.size();
     }
 protected:
@@ -55,7 +63,8 @@ protected:
 public:
     UniqueIdInt AddNewParticle(const Particle& ParticleParam)
     {
-        std::lock_guard<std::mutex> LockGuardObject{ MainParticlesMutexObject };
+        //std::lock_guard<std::mutex> LockGuardObject{ MainParticlesMutexObject };
+        std::lock_guard<std::shared_mutex> LockGuardObject{ MainParticlesSharedMutexObject };
 
         Particles[ParticleParam.Index] = ParticleParam;
         return MaxParticleIndex = ParticleParam.Index;

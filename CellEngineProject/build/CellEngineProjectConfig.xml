@@ -2867,6 +2867,8 @@
                         <VoxelSimulationSpaceSelectionSizeY>24</VoxelSimulationSpaceSelectionSizeY>
                         <VoxelSimulationSpaceSelectionSizeZ>24</VoxelSimulationSpaceSelectionSizeZ>
 
+                        <SizeOfBigPartOfTheCellMultiplyFactor>4</SizeOfBigPartOfTheCellMultiplyFactor>
+
                         <RadiusOfCellForDNA>380</RadiusOfCellForDNA>
 
 			<CellStateFileName>../../WholeCellData/Mycoplasma Genitalium/MG_1184_cellpack_atom_instances_1.cif</CellStateFileName>
@@ -3114,8 +3116,10 @@
                         <VoxelSimulationSpaceSelectionSizeY>24</VoxelSimulationSpaceSelectionSizeY>
                         <VoxelSimulationSpaceSelectionSizeZ>24</VoxelSimulationSpaceSelectionSizeZ>
 
-                        <NumberOfStepsOfSimulationOutside>1</NumberOfStepsOfSimulationOutside>
-                        <NumberOfStepsOfSimulationInside>1</NumberOfStepsOfSimulationInside>
+                        <SizeOfBigPartOfTheCellMultiplyFactor>4</SizeOfBigPartOfTheCellMultiplyFactor>
+
+                        <NumberOfStepsInSimulationOutside>1</NumberOfStepsInSimulationOutside>
+                        <NumberOfStepsInSimulationInside>1</NumberOfStepsInSimulationInside>
                         <TypeOfSimulation>1</TypeOfSimulation>
 
                         <NumberOfXThreadsInSimulation>2</NumberOfXThreadsInSimulation>
@@ -3374,6 +3378,8 @@
                         <VoxelSimulationSpaceSelectionSizeX>32</VoxelSimulationSpaceSelectionSizeX>
                         <VoxelSimulationSpaceSelectionSizeY>32</VoxelSimulationSpaceSelectionSizeY>
                         <VoxelSimulationSpaceSelectionSizeZ>32</VoxelSimulationSpaceSelectionSizeZ>
+
+                        <SizeOfBigPartOfTheCellMultiplyFactor>4</SizeOfBigPartOfTheCellMultiplyFactor>
 
                         <RadiusOfCellForDNA>760</RadiusOfCellForDNA>
 
@@ -3798,8 +3804,10 @@
                         <VoxelSimulationSpaceSelectionSizeY>24</VoxelSimulationSpaceSelectionSizeY>
                         <VoxelSimulationSpaceSelectionSizeZ>24</VoxelSimulationSpaceSelectionSizeZ>
 
-                        <NumberOfStepsOfSimulationOutside>1</NumberOfStepsOfSimulationOutside>
-                        <NumberOfStepsOfSimulationInside>1</NumberOfStepsOfSimulationInside>
+                        <SizeOfBigPartOfTheCellMultiplyFactor>4</SizeOfBigPartOfTheCellMultiplyFactor>
+
+                        <NumberOfStepsInSimulationOutside>1</NumberOfStepsInSimulationOutside>
+                        <NumberOfStepsInSimulationInside>1</NumberOfStepsInSimulationInside>
                         <TypeOfSimulation>1</TypeOfSimulation>
 
                         <NumberOfXThreadsInSimulation>2</NumberOfXThreadsInSimulation>
@@ -4059,6 +4067,8 @@
                         <VoxelSimulationSpaceSelectionSizeY>24</VoxelSimulationSpaceSelectionSizeY>
                         <VoxelSimulationSpaceSelectionSizeZ>24</VoxelSimulationSpaceSelectionSizeZ>
 
+                        <SizeOfBigPartOfTheCellMultiplyFactor>4</SizeOfBigPartOfTheCellMultiplyFactor>
+
                         <NumberOfXThreadsInSimulation>7</NumberOfXThreadsInSimulation>
                         <NumberOfYThreadsInSimulation>1</NumberOfYThreadsInSimulation>
                         <NumberOfZThreadsInSimulation>1</NumberOfZThreadsInSimulation>
@@ -4315,6 +4325,8 @@
                         <VoxelSimulationSpaceSelectionSizeX>24</VoxelSimulationSpaceSelectionSizeX>
                         <VoxelSimulationSpaceSelectionSizeY>24</VoxelSimulationSpaceSelectionSizeY>
                         <VoxelSimulationSpaceSelectionSizeZ>24</VoxelSimulationSpaceSelectionSizeZ>
+
+                        <SizeOfBigPartOfTheCellMultiplyFactor>4</SizeOfBigPartOfTheCellMultiplyFactor>
 
                         <NumberOfXThreadsInSimulation>3</NumberOfXThreadsInSimulation>
                         <NumberOfYThreadsInSimulation>2</NumberOfYThreadsInSimulation>

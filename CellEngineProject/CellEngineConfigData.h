@@ -80,6 +80,8 @@ public:
     UnsignedInt VoxelSimulationSpaceSelectionStepX{}, VoxelSimulationSpaceSelectionStepY{}, VoxelSimulationSpaceSelectionStepZ{};
     UnsignedInt VoxelSimulationSpaceSelectionSizeX{}, VoxelSimulationSpaceSelectionSizeY{}, VoxelSimulationSpaceSelectionSizeZ{};
 public:
+    UnsignedInt SizeOfBigPartOfTheCellMultiplyFactor = 1;
+public:
     int NumberOfStepsInSimulationOutside = 1;
     int NumberOfStepsInSimulationInside = 1;
     enum class TypesOfSimulation : UnsignedInt
