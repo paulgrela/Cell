@@ -1,16 +1,23 @@
 
+#include "CellEngineExecutionTimeStatistics.h"
 #include "CellEngineChemicalReactionsInVoxelSimulationSpace.h"
 
 void CellEngineChemicalReactionsInVoxelSimulationSpace::FindParticlesInProximityInSimulationSpaceForSelectedLocalSpace(std::set<UnsignedInt> &FoundParticleIndexes, bool UpdateNucleotides, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam, const CurrentThreadPosType& CurrentThreadPos)
 {
     try
     {
+        const auto start_time = chrono::high_resolution_clock::now();
+
         for (UnsignedInt PosX = StartXPosParam; PosX < StartXPosParam + SizeXParam; PosX++)
             for (UnsignedInt PosY = StartYPosParam; PosY < StartYPosParam + SizeYParam; PosY++)
                 for (UnsignedInt PosZ = StartZPosParam; PosZ < StartZPosParam + SizeZParam; PosZ++)
                     if (PosX >= 0 && PosY >= 0 && PosZ >= 0 && PosX < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension && PosY < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension && PosZ < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension)
                         if (GetSpaceVoxel(PosX, PosY, PosZ) != GetZeroSimulationSpaceVoxel())
                             SaveParticleFoundInProximity(GetSpaceVoxel(PosX, PosY, PosZ), FoundParticleIndexes, UpdateNucleotides, CurrentThreadPos);
+
+        const auto stop_time = chrono::high_resolution_clock::now();
+
+        CellEngineExecutionTimeStatisticsObject.ExecutionDurationTimeForFindingParticles += chrono::duration(stop_time - start_time);
     }
     CATCH("finding particles in proximity of simulation space for selected local space")
 };

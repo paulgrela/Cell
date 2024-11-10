@@ -14,7 +14,7 @@ class CellEngineBasicParticlesOperations
 {
 protected:
     static inline std::shared_mutex MainParticlesSharedMutexObject;
-    static inline std::mutex MainParticlesMutexObject;
+    //static inline std::mutex MainParticlesMutexObject;
     static inline std::mutex MainParticlesIndexesMutexObject;
 protected:
     UnsignedInt XMin{}, XMax{}, YMin{}, YMax{}, ZMin{}, ZMax{};

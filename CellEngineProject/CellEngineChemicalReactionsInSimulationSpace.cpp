@@ -3,6 +3,8 @@
 #include "CellEngineParticle.h"
 #include "CellEngineAminoAcids.h"
 
+#include "CellEngineExecutionTimeStatistics.h"
+
 #include "CellEngineParticlesKindsManager.h"
 #include "CellEngineChemicalReactionsInSimulationSpace.h"
 
@@ -110,6 +112,8 @@ void CellEngineChemicalReactionsInSimulationSpace::SaveParticleFoundInProximity(
     {
         if (FoundParticleIndexes.find(ParticleIndex) == FoundParticleIndexes.end())
         {
+            const auto start_time = chrono::high_resolution_clock::now();
+
             GetThreadsLocalParticlesInProximity(CurrentThreadPos).ParticlesSortedByCapacityFoundInProximity.emplace_back(ParticleIndex);
 
             Particle& ParticleFromIndex = GetParticleFromIndex(ParticleIndex);
@@ -120,6 +124,10 @@ void CellEngineChemicalReactionsInSimulationSpace::SaveParticleFoundInProximity(
             GetThreadsLocalParticlesInProximity(CurrentThreadPos).ParticlesKindsFoundInProximity[ParticleFromIndex.EntityId]++;
 
             FoundParticleIndexes.insert(ParticleIndex);
+
+            const auto stop_time = chrono::high_resolution_clock::now();
+
+            CellEngineExecutionTimeStatisticsObject.ExecutionDurationTimeForSavingFoundParticles += chrono::duration(stop_time - start_time);
         }
     }
     CATCH("saving particle found in proximity")

@@ -15,6 +15,7 @@
 #include "CellEngineConstants.h"
 #include "CellEngineSimulationSpace.h"
 #include "CellEngineChemicalReactionsManager.h"
+#include "CellEngineExecutionTimeStatistics.h"
 
 #ifdef USING_MODULES
 import CellEngineColors;
@@ -250,6 +251,8 @@ void CellEngineSimulationSpace::GenerateOneStepOfElectricDiffusionForSelectedSpa
 
 tuple<vector<pair<UniqueIdInt, UnsignedInt>>, bool> CellEngineSimulationSpace::ChooseParticlesForReactionFromAllParticlesInProximity(const ChemicalReaction& ReactionObject, const CurrentThreadPosType& CurrentThreadPos)
 {
+    const auto start_time1 = chrono::high_resolution_clock::now();
+
     bool AllAreZero = false;
 
     vector<pair<UniqueIdInt, UnsignedInt>> NucleotidesIndexesChosenForReaction, ParticlesIndexesChosenForReaction, AllParticlesIndexesChosenForReaction;
@@ -298,6 +301,8 @@ tuple<vector<pair<UniqueIdInt, UnsignedInt>>, bool> CellEngineSimulationSpace::C
             LoggersManagerObject.Log(STREAM(""));
         }
 
+        const auto start_time2 = chrono::high_resolution_clock::now();
+
         if (AllAreZero == true || (AllAreZero == false && (ReactionObject.ReactionIdNum == 30 || ReactionObject.ReactionIdNum == 80 || ReactionObject.ReactionIdNum == 70)))
             if (ReactionObject.SpecialReactionFunction != nullptr)
             {
@@ -305,8 +310,16 @@ tuple<vector<pair<UniqueIdInt, UnsignedInt>>, bool> CellEngineSimulationSpace::C
 
                 ReactionObject.SpecialReactionFunction(this, AllParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject, CurrentThreadPos);
             }
+
+        const auto stop_time2 = chrono::high_resolution_clock::now();
+
+        CellEngineExecutionTimeStatisticsObject.ExecutionDurationTimeForMakingChemicalReactionsSpecialFunctions += chrono::duration(stop_time2 - start_time2);
     }
     CATCH("choosing particles for reaction from all particles in proximity")
+
+    const auto stop_time1 = chrono::high_resolution_clock::now();
+
+    CellEngineExecutionTimeStatisticsObject.ExecutionDurationTimeForChoosingParticlesForMakingChemicalReactions += chrono::duration(stop_time1 - start_time1);
 
     if (AllAreZero == true)
     {
@@ -319,6 +332,8 @@ tuple<vector<pair<UniqueIdInt, UnsignedInt>>, bool> CellEngineSimulationSpace::C
 
 bool CellEngineSimulationSpace::MakeChemicalReaction(ChemicalReaction& ReactionObject, const CurrentThreadPosType& CurrentThreadPos)
 {
+    const auto start_time = chrono::high_resolution_clock::now();
+
     try
     {
         auto [ParticlesIndexesChosenForReaction, FoundInProximity] = ChooseParticlesForReactionFromAllParticlesInProximity(ReactionObject, CurrentThreadPos);
@@ -370,6 +385,10 @@ bool CellEngineSimulationSpace::MakeChemicalReaction(ChemicalReaction& ReactionO
             SaveReactionForStatistics(ReactionObject);
     }
     CATCH("making reaction")
+
+    const auto stop_time = chrono::high_resolution_clock::now();
+
+    CellEngineExecutionTimeStatisticsObject.ExecutionDurationTimeForMakingChemicalReactions += chrono::duration(stop_time - start_time);
 
     return true;
 };
@@ -739,6 +758,12 @@ void CellEngineSimulationSpace::GenerateNStepsOfOneRandomReactionForWholeCellSpa
 {
     try
     {
+        CellEngineExecutionTimeStatisticsObject.ExecutionDurationTimeForFindingParticles = std::chrono::seconds::zero();
+        CellEngineExecutionTimeStatisticsObject.ExecutionDurationTimeForSavingFoundParticles = std::chrono::seconds::zero();
+        CellEngineExecutionTimeStatisticsObject.ExecutionDurationTimeForMakingChemicalReactions = std::chrono::seconds::zero();
+        CellEngineExecutionTimeStatisticsObject.ExecutionDurationTimeForMakingChemicalReactionsSpecialFunctions = std::chrono::seconds::zero();
+        CellEngineExecutionTimeStatisticsObject.ExecutionDurationTimeForChoosingParticlesForMakingChemicalReactions = std::chrono::seconds::zero();
+
         const auto start_time = chrono::high_resolution_clock::now();
 
         CellEngineUseful::SwitchOffLogs();
@@ -755,6 +780,12 @@ void CellEngineSimulationSpace::GenerateNStepsOfOneRandomReactionForWholeCellSpa
 
         const auto stop_time = chrono::high_resolution_clock::now();
         LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Execution of generating random reactions in whole cell space has taken time: ","Execution in threads")));
+
+        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLine(CellEngineExecutionTimeStatisticsObject.ExecutionDurationTimeForFindingParticles, "Execution of finding particles has taken time: ","Execution in threads")));
+        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLine(CellEngineExecutionTimeStatisticsObject.ExecutionDurationTimeForSavingFoundParticles, "Execution of saving found particles has taken time: ","Execution in threads")));
+        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLine(CellEngineExecutionTimeStatisticsObject.ExecutionDurationTimeForMakingChemicalReactions, "Execution of making chemical reactions has taken time: ","Execution in threads")));
+        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLine(CellEngineExecutionTimeStatisticsObject.ExecutionDurationTimeForMakingChemicalReactionsSpecialFunctions, "Execution of making chemical reactions special functions has taken time: ","Execution in threads")));
+        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLine(CellEngineExecutionTimeStatisticsObject.ExecutionDurationTimeForChoosingParticlesForMakingChemicalReactions, "Execution of saving choosing particles for making chemical reactions has taken time: ","Execution in threads")));
     }
     CATCH("generating random reactions for whole cell space")
 }
@@ -834,6 +865,7 @@ void CellEngineSimulationSpace::GenerateNStepsOfSimulationForWholeCellSpaceInThr
         };
 
         LoggersManagerObject.Log(STREAM("START THREADS"));
+
         const auto start_time = chrono::high_resolution_clock::now();
 
         CellEngineUseful::SwitchOffLogs();
@@ -852,8 +884,11 @@ void CellEngineSimulationSpace::GenerateNStepsOfSimulationForWholeCellSpaceInThr
                 }
 
         CellEngineUseful::SwitchOnLogs();
+
         const auto stop_time = chrono::high_resolution_clock::now();
-        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Execution in threads has taken time: ","Execution in threads")));
+
+        string ResultText = "Execution in threads for steps outside = " + to_string(NumberOfStepsOutside) + " and steps inside = " + to_string(NumberOfStepsInside) + " has taken time: ";
+        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, ResultText.c_str(),"Execution in threads")));
 
         LoggersManagerObject.Log(STREAM("END THREADS"));
     }

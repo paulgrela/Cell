@@ -117,6 +117,7 @@ add_executable(
 	CellEngineIllinoisDataCreator.h
 	CellEngineCompiledDataCreator.cpp
 	CellEngineCompiledDataCreator.h
+	CellEngineExecutionTimeStatistics.h
 	CellEngineBasicVoxelsOperations.h
 	CellEngineNucleicAcidsBasicOperations.h
 	CellEngineParticlesVoxelsOperations.h

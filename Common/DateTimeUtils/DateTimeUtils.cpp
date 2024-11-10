@@ -36,20 +36,18 @@ string GetActualDateTimeWindows(const char* sep1, const char* sep2, const char* 
 }
 #endif
 
-string GetDurationTimeInOneLineStr(const chrono::high_resolution_clock::time_point start_time, const chrono::high_resolution_clock::time_point stop_time, const char* TextToPrint, const char* ExceptionTextToPrint)
+string GetDurationTimeInOneLine(const common_type<chrono::duration<long, ratio<1, 1000000000>>, chrono::duration<long, ratio<1, 1000000000>>>::type duration_time, const char* TextToPrint, const char* ExceptionTextToPrint)
 {
 	stringstream TempDurationTimeStr;
-	
+
 	try
 	{
-		const auto duration_time = stop_time - start_time;
-
 		const auto duration_time_form_nano = chrono::duration_cast<chrono::nanoseconds>(duration_time).count();
 
 		TempDurationTimeStr << TextToPrint;
 
 		TempDurationTimeStr << setfill('0');
-		
+
 		TempDurationTimeStr << (duration_time_form_nano % 3600'000'000'000'000) / 3600'000'000'000 << " hours ";
 		TempDurationTimeStr << (duration_time_form_nano % 3600'000'000'000) / 60'000'000'000 << " minutes ";
 		TempDurationTimeStr << (duration_time_form_nano % 60'000'000'000) / 1000'000'000 << " seconds ";
@@ -63,4 +61,11 @@ string GetDurationTimeInOneLineStr(const chrono::high_resolution_clock::time_poi
 	CATCH(ExceptionTextToPrint)
 
 	return TempDurationTimeStr.str();
+}
+
+string GetDurationTimeInOneLineStr(const chrono::high_resolution_clock::time_point start_time, const chrono::high_resolution_clock::time_point stop_time, const char* TextToPrint, const char* ExceptionTextToPrint)
+{
+	const auto duration_time = stop_time - start_time;
+
+	return GetDurationTimeInOneLine(duration_time, TextToPrint, ExceptionTextToPrint);
 }

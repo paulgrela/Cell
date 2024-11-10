@@ -5,7 +5,7 @@
 		<XTopMainWindows>0</XTopMainWindows>
 		<YTopMainWindows>30</YTopMainWindows>
 		<WidthMainWindows>2000</WidthMainWindows>
-		<HeightMainWindows>1530</HeightMainWindows>
+		<HeightMainWindows>1370</HeightMainWindows>
 		<XTopMenuWindows>2002</XTopMenuWindows>
 		<YTopMenuWindows>30</YTopMenuWindows>
 		<WidthMenuWindows>560</WidthMenuWindows>
@@ -18,11 +18,11 @@
 		<XTopMainLinux>65</XTopMainLinux> <!--65, 3905-->
 		<YTopMainLinux>30</YTopMainLinux>
 		<WidthMainLinux>1930</WidthMainLinux>
-		<HeightMainLinux>1535</HeightMainLinux>
+		<HeightMainLinux>1375</HeightMainLinux>
 		<XTopMenuLinux>2002</XTopMenuLinux> <!--2002, 5842 -->
 		<YTopMenuLinux>30</YTopMenuLinux>
 		<WidthMenuLinux>560</WidthMenuLinux>
-		<HeightMenuLinux>1535</HeightMenuLinux>
+		<HeightMenuLinux>1375</HeightMenuLinux>
 		<XTopSecondLinux>0</XTopSecondLinux>
 		<YTopSecondLinux>0</YTopSecondLinux>
 		<WidthSecondLinux>1280</WidthSecondLinux>
