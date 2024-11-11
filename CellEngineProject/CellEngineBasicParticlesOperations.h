@@ -2,6 +2,7 @@
 #ifndef CELL_ENGINE_BASIC_PARTICLES_OPERATIONS_H
 #define CELL_ENGINE_BASIC_PARTICLES_OPERATIONS_H
 
+#include <imgui.h>
 #include <stack>
 #include <shared_mutex>
 
@@ -22,6 +23,8 @@ protected:
     std::stack<UniqueIdInt> FreeIndexesOfParticles;
 protected:
     std::unordered_map<UniqueIdInt, Particle>& Particles;
+                        protected:
+                            std::vector<std::vector<std::vector<std::unordered_map<UniqueIdInt, Particle>>>> ParticlesForThreads;
 protected:
     inline Particle& GetParticleFromIndex(const UniqueIdInt ParticleIndex)
     {
@@ -83,9 +86,28 @@ protected:
     std::vector<UniqueIdInt> GetAllParticlesWithChosenParticleType(ParticlesTypes ParticleTypeParam);
     std::vector<UniqueIdInt> GetAllParticlesWithChosenEntityId(UniqueIdInt EntityId);
     UnsignedInt GetNumberOfParticlesWithChosenEntityId(UniqueIdInt EntityId);
+
+                protected:
+                    void ConstructParticlesForMultiThreadedExecution()
+                    {
+                        ParticlesForThreads.clear();
+                        ParticlesForThreads.resize(CellEngineConfigDataObject.NumberOfXThreadsInSimulation);
+                        for (auto& ThreadLocalParticlesInProximityXPos : ParticlesForThreads)
+                        {
+                            ThreadLocalParticlesInProximityXPos.resize(CellEngineConfigDataObject.NumberOfYThreadsInSimulation);
+                            for (auto& ThreadLocalParticlesInProximityYPos : ThreadLocalParticlesInProximityXPos)
+                                ThreadLocalParticlesInProximityYPos.resize(CellEngineConfigDataObject.NumberOfZThreadsInSimulation);
+                        }
+                    }
+                protected:
+                    inline std::unordered_map<UniqueIdInt, Particle>& GetParticlesForThreads(const CurrentThreadPosType& CurrentThreadPos)
+                    {
+                        return ParticlesForThreads[CurrentThreadPos.ThreadPosX][CurrentThreadPos.ThreadPosY][CurrentThreadPos.ThreadPozZ];
+                    }
 protected:
     explicit CellEngineBasicParticlesOperations(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : Particles(ParticlesParam)
     {
+        ConstructParticlesForMultiThreadedExecution();
     }
 public:
     virtual ~CellEngineBasicParticlesOperations() = default;

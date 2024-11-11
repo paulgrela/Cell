@@ -43,6 +43,7 @@ protected:
                 VoxelOfParticle.Z += VectorZ;
             }
             SetAllVoxelsInListOfVoxelsToValue(ParticleObject.ListOfVoxels, ParticleObject.Index);
+                                                            ParticleObject.SetCenterCoordinates(ParticleObject.Center.X + VectorX, ParticleObject.Center.Y + VectorY, ParticleObject.Center.Z + VectorZ);
         }
         CATCH("moving particle by vector")
     }

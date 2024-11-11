@@ -809,6 +809,24 @@ void CellEngineSimulationSpace::GenerateNStepsOfOneRandomReactionForBigPartOfCel
     CATCH("generating random reactions for big part of cell")
 }
 
+void CellEngineSimulationSpace::SendParticlesForThreads()
+{
+    try
+    {
+
+    }
+    CATCH("sending particles for threads")
+}
+
+void CellEngineSimulationSpace::FirstSendParticlesForThreads()
+{
+    try
+    {
+
+    }
+    CATCH("first sending particles for threads")
+}
+
 void CellEngineSimulationSpace::GenerateOneStepOfSimulationForWholeCellSpaceInOneThread(const UnsignedInt NumberOfStepsInside, const UnsignedInt StepOutside, const UnsignedInt ThreadXIndex, const UnsignedInt ThreadYIndex, const UnsignedInt ThreadZIndex)
 {
     try
@@ -861,6 +879,8 @@ void CellEngineSimulationSpace::GenerateNStepsOfSimulationForWholeCellSpaceInThr
             {
                 this->GenerateOneStepOfSimulationForWholeCellSpaceInOneThread(NumberOfStepsInside, StepOutside, ThreadXIndex, ThreadYIndex, ThreadZIndex);
                 SyncPoint.arrive_and_wait();
+
+                SendParticlesForThreads();
             }
         };
 
