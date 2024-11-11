@@ -1820,7 +1820,7 @@
 			<ShowDetailsInAtomScale>true</ShowDetailsInAtomScale>
 			<CheckAtomVisibility>true</CheckAtomVisibility>
 			<CutZ>200</CutZ>
-			<Distance>1500</Distance>
+			<Distance>2300</Distance>
 			<LoadOfAtomsStep>1</LoadOfAtomsStep>
 
 			<XLowToDrawInAtomScale>-200</XLowToDrawInAtomScale>
@@ -1959,6 +1959,23 @@
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>
 				</ParticleKind>
+                                <ParticleKind id="342">
+					<Name>MEMBRANE</Name>
+					<Color>Orange</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="343">
+					<Name>MEMBRANE</Name>
+					<Color>Pink</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+
 				<ParticleKind id="10000">
 					<Name>OTHERS</Name>
 					<Color>Green</Color>
@@ -3636,7 +3653,7 @@
 			<ShowDetailsInAtomScale>true</ShowDetailsInAtomScale>
 			<CheckAtomVisibility>true</CheckAtomVisibility>
 			<CutZ>200</CutZ>
-			<Distance>1500</Distance>
+			<Distance>2400</Distance>
 			<LoadOfAtomsStep>1</LoadOfAtomsStep>
 
 			<XLowToDrawInAtomScale>-200</XLowToDrawInAtomScale>
@@ -3770,6 +3787,22 @@
 				<ParticleKind id="82">
 					<Name>DNA_POL</Name>
 					<Color>Cyan</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+                                <ParticleKind id="531">
+					<Name>MEMBRANE</Name>
+					<Color>Orange</Color>
+					<Visible>true</Visible>
+					<SizeX>1</SizeX>
+					<SizeY>1</SizeY>
+					<SizeZ>1</SizeZ>
+				</ParticleKind>
+				<ParticleKind id="532">
+					<Name>MEMBRANE</Name>
+					<Color>Pink</Color>
 					<Visible>true</Visible>
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>

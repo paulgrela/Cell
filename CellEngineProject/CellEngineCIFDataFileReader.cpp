@@ -22,6 +22,7 @@ import CellEngineColors;
 #include "CellEngineColors.h"
 #endif
 
+constexpr bool WriteErrorsInCIFFileToScreen = false;
 
 using namespace std;
 using namespace string_utils;
@@ -211,20 +212,23 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile()
                     LocalCellEngineAllAtomsObject.clear();
 
                     if (AppliedChainsNames.empty() == true)
-                        LoggersManagerObject.Log(STREAM("ERROR IN CIF FILE AppliedChainsNames EMPTY = " << to_string(AppliedMatrixId)));
+                        if (WriteErrorsInCIFFileToScreen == true)
+                            LoggersManagerObject.Log(STREAM("ERROR IN CIF FILE AppliedChainsNames EMPTY = " << to_string(AppliedMatrixId)));
 
                     for (const auto& AppliedChainName : AppliedChainsNames)
                     {
                         auto AtomsForChainNameIterator = ChainsNames.find(AppliedChainName);
                         if (AtomsForChainNameIterator == ChainsNames.end())
                         {
-                            LoggersManagerObject.Log(STREAM("ERROR IN CIF FILE LACKS AppliedChainName: " << AppliedChainName));
+                            if (WriteErrorsInCIFFileToScreen == true)
+                                LoggersManagerObject.Log(STREAM("ERROR IN CIF FILE LACKS AppliedChainName: " << AppliedChainName));
                             continue;
                         }
                         else
                         {
                             if (AtomsForChainNameIterator->second.empty() == true)
-                                LoggersManagerObject.Log(STREAM("ERROR IN CIF FILE - ChainsNames.find(AppliedChainName)->second.size() == 0 " << AppliedChainName));
+                                if (WriteErrorsInCIFFileToScreen == true)
+                                    LoggersManagerObject.Log(STREAM("ERROR IN CIF FILE - ChainsNames.find(AppliedChainName)->second.size() == 0 " << AppliedChainName));
 
                             vmath::vec3 UniqueParticleColor = CellEngineColorsObject.GetRandomColor();
 

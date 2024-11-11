@@ -65,9 +65,7 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::ShowParticlesKindsData(
             if (ParticleKindObject.second.ParticleKindSpecialDataSector.empty() == false)
                 for (const auto& ParticleKindSpecialDataObject: ParticleKindObject.second.ParticleKindSpecialDataSector)
                     if (ParticleKindSpecialDataObject.ParticleType == ParticleTypeParam)
-                    {
                         LoggersManagerObject.Log(STREAM("ParticleKind IdStr = " << ParticleKindObject.second.IdStr << " Formula = " << ParticleKindObject.second.Formula));
-                    }
     }
     CATCH("show particles kinds data")
 }
@@ -121,8 +119,8 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::PrintNumberOfParticlesF
 
         PrintInformationAboutRibosomesProteins();
 
-        LoggersManagerObject.Log(STREAM("Total Number Of All Particles Kinds = " << TotalNumberOfAllParticles));
-        LoggersManagerObject.Log(STREAM("Total Number Of All Particles = " << Particles.size()));
+        LoggersManagerObject.Log(STREAM("Total Number Of All Particles At Start = " << TotalNumberOfAllParticles));
+        LoggersManagerObject.Log(STREAM("Particles.size() = " << Particles.size()));
 
         UnsignedInt OldParticlesKindsCounter = 0;
         for (const auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)

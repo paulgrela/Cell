@@ -1,4 +1,6 @@
 
+#include <unordered_set>
+
 #include "CellEngineConstants.h"
 #include "CellEngineParticle.h"
 #include "CellEngineAminoAcids.h"
@@ -106,11 +108,11 @@ void CellEngineChemicalReactionsInSimulationSpace::UpdateFoundNucleotidesForFoun
     CATCH("updating found nucleotides for found particles in proximity")
 }
 
-void CellEngineChemicalReactionsInSimulationSpace::SaveParticleFoundInProximity(const UniqueIdInt ParticleIndex, set<UnsignedInt>& FoundParticleIndexes, const bool UpdateNucleotides, const CurrentThreadPosType& CurrentThreadPos)
+void CellEngineChemicalReactionsInSimulationSpace::SaveParticleFoundInProximity(const UniqueIdInt ParticleIndex, unordered_set<UnsignedInt>& FoundParticleIndexes, const bool UpdateNucleotides, const CurrentThreadPosType& CurrentThreadPos)
 {
     try
     {
-        if (FoundParticleIndexes.find(ParticleIndex) == FoundParticleIndexes.end())
+        if (FoundParticleIndexes.contains(ParticleIndex) == false)
         {
             const auto start_time = chrono::high_resolution_clock::now();
 
@@ -137,7 +139,7 @@ bool CellEngineChemicalReactionsInSimulationSpace::FindParticlesInProximityOfSim
 {
     try
     {
-        set<UnsignedInt> FoundParticleIndexes;
+        unordered_set<UnsignedInt> FoundParticleIndexes;
 
         MakingZeroSizeForContainersForFoundParticlesInProximity(CurrentThreadPos);
 
