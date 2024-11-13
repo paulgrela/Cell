@@ -32,6 +32,8 @@
 class CellEngineSimulationSpace : public CellEngineChemicalReactionsEngine, public CellEngineIllinoisDataCreator, public CellEngineCompiledDataCreator, virtual public CellEngineChemicalReactionsInSimulationSpace, public CellEngineSimulationSpaceStatistics
 {
 private:
+    static inline std::mutex MainParticlesExchangeMutexObject;
+private:
     std::unordered_map<UniqueIdInt, Particle>& Particles;
 protected:
     virtual bool MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(Particle &ParticleObject, SignedInt VectorX, SignedInt VectorY, SignedInt VectorZ, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam) = 0;
@@ -77,6 +79,8 @@ public:
     void SendParticlesForThreadsVersion1() const;
     void GatherParticlesForThreadsInMainParticles() const;
     void FirstSendParticlesForThreads(bool PrintTime) const;
+public:
+    void CheckParticlesCenters() const;
 protected:
     std::tuple<std::vector<std::pair<UniqueIdInt, UnsignedInt>>, bool> ChooseParticlesForReactionFromAllParticlesInProximity(const ChemicalReaction& ReactionObject, const CurrentThreadPosType& CurrentThreadPos);
 protected:

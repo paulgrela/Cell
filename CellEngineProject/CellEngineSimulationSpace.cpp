@@ -17,6 +17,7 @@
 #include "CellEngineDataFile.h"
 #include "CellEngineSimulationSpace.h"
 
+#include <condition_variable>
 #include <X11/X.h>
 
 #include "CellEngineChemicalReactionsManager.h"
@@ -369,8 +370,18 @@ bool CellEngineSimulationSpace::MakeChemicalReaction(ChemicalReaction& ReactionO
                 for (const auto& ParticleKindVoxel : ParticleKindObjectForProduct.ListOfVoxels)
                 {
                     vector3_64 NewVoxel(Centers[CenterIndex].X - ParticleKindObjectForProduct.XSizeDiv2 + ParticleKindVoxel.X, Centers[CenterIndex].Y - ParticleKindObjectForProduct.YSizeDiv2 + ParticleKindVoxel.Y, Centers[CenterIndex].Z - ParticleKindObjectForProduct.ZSizeDiv2 + ParticleKindVoxel.Z);
+                    if (NewVoxel.X > 1024 || NewVoxel.Y > 1024 || NewVoxel.Z > 1024)
+                    {
+                        cout << endl;
+                        cout << "C " << Centers.size() << " " << CenterIndex << " " << Centers[CenterIndex].X << " " << Centers[CenterIndex].Y << " " << Centers[CenterIndex].Z << endl;
+                        cout << "P " << ParticleKindObjectForProduct.XSizeDiv2 << " " << ParticleKindObjectForProduct.YSizeDiv2 << " " << ParticleKindObjectForProduct.ZSizeDiv2 << endl;
+                        cout << "K " << ParticleKindVoxel.X << " " << ParticleKindVoxel.Y << " " << ParticleKindVoxel.Z << endl;
+                    }
 
-                    //FillParticleElementInSpace(ParticleIndex, NewVoxel);
+                    if (Particles.contains(ParticleIndex))
+                        FillParticleElementInSpace(ParticleIndex, NewVoxel);
+                    else
+                        cout << "WRONG PARTICLE INDEX" << endl;
 
                     LoggersManagerObject.Log(STREAM("New Centers From Product Added X = " << to_string(NewVoxel.X) << " Y = " << to_string(NewVoxel.Y) << " Z = " << to_string(NewVoxel.Z) << endl));
                 }
@@ -861,7 +872,11 @@ void CellEngineSimulationSpace::SendParticlesForThreadsVersion1() const
                         UnsignedInt ThreadZIndexNew = floor(ParticleIter->second.Center.Z / CellEngineConfigDataObject.NumberOfZVoxelsInOneThreadInVoxelSimulationSpace);
 
                         if (ThreadXIndex != ThreadXIndexNew || ThreadYIndex != ThreadYIndexNew || ThreadZIndex != ThreadZIndexNew)
+                        {
+                            std::lock_guard<std::mutex> LockGuardObject{ MainParticlesExchangeMutexObject };
+
                             CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceForThreadsObjectsPointer[ThreadXIndex][ThreadYIndex][ThreadZIndex]->ParticlesForThreads.insert(CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceForThreadsObjectsPointer[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->ParticlesForThreads.extract(ParticleIter++));
+                        }
                         else
                             ++ParticleIter;
                     }
@@ -942,9 +957,11 @@ void CellEngineSimulationSpace::GenerateOneStepOfSimulationForWholeCellSpaceInOn
 
 void CellEngineSimulationSpace::GenerateNStepsOfSimulationForWholeCellSpaceInThreads(const UnsignedInt NumberOfStepsOutside, const UnsignedInt NumberOfStepsInside) const
 {
+    CheckParticlesCenters();exit(0);
+
     try
     {
-        FirstSendParticlesForThreads(true);
+        //FirstSendParticlesForThreads(true);
 
         std::barrier SyncPoint(CellEngineConfigDataObject.NumberOfXThreadsInSimulation * CellEngineConfigDataObject.NumberOfYThreadsInSimulation * CellEngineConfigDataObject.NumberOfZThreadsInSimulation);
 
@@ -968,8 +985,6 @@ void CellEngineSimulationSpace::GenerateNStepsOfSimulationForWholeCellSpaceInThr
 
         CellEngineUseful::SwitchOffLogs();
 
-        CellEngineParticlesVoxelsOperations::SetMutexBool = true;
-
         for (UnsignedInt ThreadXIndex = 1; ThreadXIndex <= CellEngineConfigDataObject.NumberOfXThreadsInSimulation; ThreadXIndex++)
             for (UnsignedInt ThreadYIndex = 1; ThreadYIndex <= CellEngineConfigDataObject.NumberOfYThreadsInSimulation; ThreadYIndex++)
                 for (UnsignedInt ThreadZIndex = 1; ThreadZIndex <= CellEngineConfigDataObject.NumberOfZThreadsInSimulation; ThreadZIndex++)
@@ -983,8 +998,6 @@ void CellEngineSimulationSpace::GenerateNStepsOfSimulationForWholeCellSpaceInThr
                     delete ThreadZ;
                 }
 
-        CellEngineParticlesVoxelsOperations::SetMutexBool = false;
-
         CellEngineUseful::SwitchOnLogs();
 
         const auto stop_time = chrono::high_resolution_clock::now();
@@ -994,7 +1007,27 @@ void CellEngineSimulationSpace::GenerateNStepsOfSimulationForWholeCellSpaceInThr
 
         LoggersManagerObject.Log(STREAM("END THREADS"));
 
-        GatherParticlesForThreadsInMainParticles();
+        //GatherParticlesForThreadsInMainParticles();
+    }
+    CATCH("generating n steps simulation for whole cell space in threads")
+}
+
+void CellEngineSimulationSpace::CheckParticlesCenters() const
+{
+    try
+    {
+        UnsignedInt NumberOfZeroCenterParticles = 0;
+        for (const auto& ParticleObject : Particles)
+        {
+            if (ParticleObject.second.Center.X > 1024 || ParticleObject.second.Center.Y > 1024 || ParticleObject.second.Center.Z > 1024)
+                LoggersManagerObject.Log(STREAM("Wrong Particle Center -> ParticleIndex = " << ParticleObject.second.Index << " " << ParticleObject.second.Center.X << " " << ParticleObject.second.Center.Y << " " << ParticleObject.second.Center.Z));
+            if (ParticleObject.second.Center.X == 0 || ParticleObject.second.Center.Y == 0 || ParticleObject.second.Center.Z == 0)
+            {
+                LoggersManagerObject.Log(STREAM("Wrong Particle Center ZERO -> ParticleIndex = " << ParticleObject.second.Index << " " << ParticleObject.second.Center.X << " " << ParticleObject.second.Center.Y << " " << ParticleObject.second.Center.Z));
+                NumberOfZeroCenterParticles++;
+            }
+        }
+        LoggersManagerObject.Log(STREAM("All Particle Centers Checked. Number Of Zero Particles = " << NumberOfZeroCenterParticles));
     }
     CATCH("generating n steps simulation for whole cell space in threads")
 }

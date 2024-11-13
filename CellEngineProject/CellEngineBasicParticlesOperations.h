@@ -14,13 +14,6 @@
 
 class CellEngineBasicParticlesOperations
 {
-// protected:
-//     std::unordered_map<UniqueIdInt, Particle> Particles1;
-// protected:
-//     inline Particle& GetParticleFromIndex(const UniqueIdInt ParticleIndex)
-//     {
-//         return Particles1[ParticleIndex];
-//     }
 protected:
     static inline std::shared_mutex MainParticlesSharedMutexObject;
     static inline std::mutex MainParticlesIndexesMutexObject;

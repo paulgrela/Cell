@@ -431,6 +431,9 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
             ReadVectorFromBinaryFile<UniqueIdInt>(ParticlesDataFile, ParticleObject.LinkedParticlesPointersListTemporary);
 
             AddNewParticle(ParticleObject);
+
+            if (ParticleObject.Index == 0)
+                LoggersManagerObject.Log(STREAM("Particle with Index 0 = " << ParticleObject.Index << " " << ParticleObject.Center.X << " " << ParticleObject.Center.Y << " " << ParticleObject.Center.Z));
         }
 
         LoggersManagerObject.Log(STREAM("END OF READING PARTICLES FROM BINARY FILE"));
