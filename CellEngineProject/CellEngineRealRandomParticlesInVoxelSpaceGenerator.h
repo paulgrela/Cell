@@ -17,7 +17,7 @@ public:
     void GenerateAllRealRandomParticles();
 public:
     void UpdateSequence(ParticlesTypes ParticleTypeParam) const;
-    static void ShowParticlesKindsData(const ParticlesTypes ParticleTypeParam);
+    static void ShowParticlesKindsData(ParticlesTypes ParticleTypeParam);
 protected:
     [[nodiscard]] UnsignedInt GetNumberOfRealParticlesOfKind(ParticlesTypes ParticleTypeParam) const;
     std::tuple<UnsignedInt, UnsignedInt> GetNumberOfParticlesKind(ParticlesTypes ParticleTypeParam, bool AddToTotalNumberOfAllParticles);

@@ -9,10 +9,18 @@
 #include "CellEngineTypes.h"
 #include "CellEngineParticle.h"
 #include "CellEngineParticleKind.h"
+
 #include "CellEngineParticlesVoxelsOperations.h"
 
 class CellEngineBasicParticlesOperations
 {
+// protected:
+//     std::unordered_map<UniqueIdInt, Particle> Particles1;
+// protected:
+//     inline Particle& GetParticleFromIndex(const UniqueIdInt ParticleIndex)
+//     {
+//         return Particles1[ParticleIndex];
+//     }
 protected:
     static inline std::shared_mutex MainParticlesSharedMutexObject;
     static inline std::mutex MainParticlesIndexesMutexObject;
@@ -23,18 +31,28 @@ protected:
     std::stack<UniqueIdInt> FreeIndexesOfParticles;
 protected:
     std::unordered_map<UniqueIdInt, Particle>& Particles;
-                        protected:
-                            std::vector<std::vector<std::vector<std::unordered_map<UniqueIdInt, Particle>>>> ParticlesForThreads;
+    std::unordered_map<UniqueIdInt, Particle> ParticlesForThreads;
 protected:
     inline Particle& GetParticleFromIndex(const UniqueIdInt ParticleIndex)
     {
         std::shared_lock<std::shared_mutex> LockGuardObject{ MainParticlesSharedMutexObject };
-
         return Particles[ParticleIndex];
+        // CZY TU WYSTARCZY BEZ BLOKADY GDY ParticlesForThreads - RAZ POWINIEN ZROBIC DOBRZE BEZ SYNCHORNIZACJI
+
+
+        // if (CellEngineParticlesVoxelsOperations::SetMutexBool == false)
+        //     return Particles[ParticleIndex];
+        // else
+        //     return ParticlesForThreads[ParticleIndex];
     }
-    inline Particle& GetParticleFromIndexW(const UniqueIdInt ParticleIndex)
+    [[nodiscard]] inline Particle& GetParticleFromIndexW(const UniqueIdInt ParticleIndex)
     {
         return Particles[ParticleIndex];
+
+        // if (CellEngineParticlesVoxelsOperations::SetMutexBool == false)
+        //     return Particles[ParticleIndex];
+        // else
+        //     return ParticlesForThreads[ParticleIndex];
     }
 public:
     [[nodiscard]] UniqueIdInt GetFreeIndexesOfParticleSize() const
@@ -65,10 +83,14 @@ protected:
 public:
     UniqueIdInt AddNewParticle(const Particle& ParticleParam)
     {
-        //std::lock_guard<std::mutex> LockGuardObject{ MainParticlesMutexObject };
         std::lock_guard<std::shared_mutex> LockGuardObject{ MainParticlesSharedMutexObject };
-
         Particles[ParticleParam.Index] = ParticleParam;
+
+        // if (CellEngineParticlesVoxelsOperations::SetMutexBool == false)
+        //     Particles[ParticleParam.Index] = ParticleParam;
+        // else
+        //     ParticlesForThreads[ParticleParam.Index] = ParticleParam;
+
         return MaxParticleIndex = ParticleParam.Index;
     }
 protected:
@@ -86,28 +108,10 @@ protected:
     std::vector<UniqueIdInt> GetAllParticlesWithChosenParticleType(ParticlesTypes ParticleTypeParam);
     std::vector<UniqueIdInt> GetAllParticlesWithChosenEntityId(UniqueIdInt EntityId);
     UnsignedInt GetNumberOfParticlesWithChosenEntityId(UniqueIdInt EntityId);
-
-                protected:
-                    void ConstructParticlesForMultiThreadedExecution()
-                    {
-                        ParticlesForThreads.clear();
-                        ParticlesForThreads.resize(CellEngineConfigDataObject.NumberOfXThreadsInSimulation);
-                        for (auto& ThreadLocalParticlesInProximityXPos : ParticlesForThreads)
-                        {
-                            ThreadLocalParticlesInProximityXPos.resize(CellEngineConfigDataObject.NumberOfYThreadsInSimulation);
-                            for (auto& ThreadLocalParticlesInProximityYPos : ThreadLocalParticlesInProximityXPos)
-                                ThreadLocalParticlesInProximityYPos.resize(CellEngineConfigDataObject.NumberOfZThreadsInSimulation);
-                        }
-                    }
-                protected:
-                    inline std::unordered_map<UniqueIdInt, Particle>& GetParticlesForThreads(const CurrentThreadPosType& CurrentThreadPos)
-                    {
-                        return ParticlesForThreads[CurrentThreadPos.ThreadPosX][CurrentThreadPos.ThreadPosY][CurrentThreadPos.ThreadPozZ];
-                    }
 protected:
     explicit CellEngineBasicParticlesOperations(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : Particles(ParticlesParam)
     {
-        ConstructParticlesForMultiThreadedExecution();
+        //ConstructParticlesForMultiThreadedExecution();
     }
 public:
     virtual ~CellEngineBasicParticlesOperations() = default;

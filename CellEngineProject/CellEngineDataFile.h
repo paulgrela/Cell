@@ -16,24 +16,12 @@ public:
 public:
     virtual ~CellEngineDataFile() = default;
 public:
+    std::vector<std::vector<std::vector<std::unique_ptr<CellEngineVoxelSimulationSpace>>>> CellEngineVoxelSimulationSpaceForThreadsObjectsPointer;
     std::unique_ptr<CellEngineVoxelSimulationSpace> CellEngineVoxelSimulationSpaceObjectPointer;
 public:
     bool FilmOfStructuresActive = false;
 protected:
     std::unordered_map<UniqueIdInt, Particle> Particles;
-//    std::vector<std::vector<std::vector<std::unordered_map<UniqueIdInt, Particle>>>> ParticlesForThreads;
-protected:
-    // void ConstructParticlesForMultiThreadedExecution()
-    // {
-    //     ParticlesForThreads.clear();
-    //     ParticlesForThreads.resize(CellEngineConfigDataObject.NumberOfXThreadsInSimulation);
-    //     for (auto& ThreadLocalParticlesInProximityXPos : ParticlesForThreads)
-    //     {
-    //         ThreadLocalParticlesInProximityXPos.resize(CellEngineConfigDataObject.NumberOfYThreadsInSimulation);
-    //         for (auto& ThreadLocalParticlesInProximityYPos : ThreadLocalParticlesInProximityXPos)
-    //             ThreadLocalParticlesInProximityYPos.resize(CellEngineConfigDataObject.NumberOfZThreadsInSimulation);
-    //     }
-    // }
 protected:
     inline Particle& GetParticleFromIndex(const UniqueIdInt ParticleIndex)
     {

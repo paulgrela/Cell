@@ -11,6 +11,9 @@
 class CellEngineParticlesVoxelsOperations : public CellEngineBasicVoxelsOperations
 {
 public:
+                                                                                                                        static inline bool SetMutexBool = false;
+                                                                                                                        static inline std::mutex MainParticlesDrawVoxelMutexObject;
+public:
     void SetAllVoxelsInListOfVoxelsToValueForOuterClass(std::vector<vector3_16> &ListOfVoxels, SimulationSpaceVoxel SimulationSpaceVoxelValue)
     {
         SetAllVoxelsInListOfVoxelsToValue(ListOfVoxels, SimulationSpaceVoxelValue);
@@ -25,8 +28,17 @@ protected:
     {
         try
         {
+                                                                                                                        if (SetMutexBool)
+                                                                                                                        {
+                                                                                                                            std::lock_guard<std::mutex> LockGuardObject{ MainParticlesDrawVoxelMutexObject };
+
+                                                                                                                            for (auto &Voxel: ListOfVoxels)
+                                                                                                                                GetSpaceVoxel(Voxel.X, Voxel.Y, Voxel.Z) = SimulationSpaceVoxelValue;
+                                                                                                                        }
+                                                                                                                        else
             for (auto &Voxel: ListOfVoxels)
                 GetSpaceVoxel(Voxel.X, Voxel.Y, Voxel.Z) = SimulationSpaceVoxelValue;
+
         }
         CATCH("making all zero voxels in list of voxels")
     }
@@ -43,7 +55,8 @@ protected:
                 VoxelOfParticle.Z += VectorZ;
             }
             SetAllVoxelsInListOfVoxelsToValue(ParticleObject.ListOfVoxels, ParticleObject.Index);
-                                                            ParticleObject.SetCenterCoordinates(ParticleObject.Center.X + VectorX, ParticleObject.Center.Y + VectorY, ParticleObject.Center.Z + VectorZ);
+
+                                                                                                                        ParticleObject.SetCenterCoordinates(ParticleObject.Center.X + VectorX, ParticleObject.Center.Y + VectorY, ParticleObject.Center.Z + VectorZ);
         }
         CATCH("moving particle by vector")
     }

@@ -1146,6 +1146,7 @@ public:
             case CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace : return make_unique<CellEngineOpenGLVisualiserOfVoxelSimulationSpace>();
             default : break;
         }
+        return nullptr;
     }
     #pragma GCC diagnostic pop
 

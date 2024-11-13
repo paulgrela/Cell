@@ -10,7 +10,20 @@ class CellEngineDataBuilderForVoxelSimulationSpace : public CellEngineParticlesD
 protected:
     void SetStartValues() override
     {
-        CellEngineVoxelSimulationSpaceObjectPointer = std::make_unique<CellEngineVoxelSimulationSpace>(Particles);
+        CellEngineVoxelSimulationSpaceObjectPointer = std::make_unique<CellEngineVoxelSimulationSpace>(Particles, true);
+
+        CellEngineVoxelSimulationSpaceForThreadsObjectsPointer.clear();
+        CellEngineVoxelSimulationSpaceForThreadsObjectsPointer.resize(CellEngineConfigDataObject.NumberOfXThreadsInSimulation);
+        for (auto& ThreadLocalParticlesInProximityXPos : CellEngineVoxelSimulationSpaceForThreadsObjectsPointer)
+        {
+            ThreadLocalParticlesInProximityXPos.resize(CellEngineConfigDataObject.NumberOfYThreadsInSimulation);
+            for (auto& ThreadLocalParticlesInProximityYPos : ThreadLocalParticlesInProximityXPos)
+            {
+                ThreadLocalParticlesInProximityYPos.resize(CellEngineConfigDataObject.NumberOfZThreadsInSimulation);
+                for (auto& ThreadLocalParticlesInProximityZPos : ThreadLocalParticlesInProximityYPos)
+                    ThreadLocalParticlesInProximityZPos = std::make_unique<CellEngineVoxelSimulationSpace>(Particles, false);
+            }
+        }
     }
 protected:
     UniqueIdInt AddNewParticle(const Particle& ParticleObjectParam) override

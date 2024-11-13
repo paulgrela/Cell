@@ -9,6 +9,13 @@ void CellEngineParticlesVoxelsShapesGenerator::SetValueToSpaceVoxelWithFillingLi
     {
         if (FilledSpaceVoxels != nullptr)
             FilledSpaceVoxels->emplace_back(PosX, PosY, PosZ);
+
+                                                                                                                        if (SetMutexBool)
+                                                                                                                        {
+                                                                                                                            std::lock_guard<std::mutex> LockGuardObject{ MainParticlesDrawVoxelMutexObject };
+                                                                                                                            GetSpaceVoxel(PosX, PosY, PosZ) = VoxelValue;
+                                                                                                                        }
+                                                                                                                        else
         GetSpaceVoxel(PosX, PosY, PosZ) = VoxelValue;
     }
     CATCH("setting value to voxel")

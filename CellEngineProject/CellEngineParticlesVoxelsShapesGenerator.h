@@ -28,6 +28,7 @@ protected:
     explicit CellEngineParticlesVoxelsShapesGenerator(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam)
     {
     }
+    ~CellEngineParticlesVoxelsShapesGenerator() = default;
 };
 
 #endif
