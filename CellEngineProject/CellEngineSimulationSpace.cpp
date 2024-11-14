@@ -312,7 +312,8 @@ tuple<vector<pair<UniqueIdInt, UnsignedInt>>, bool> CellEngineSimulationSpace::C
         if (AllAreZero == true || (AllAreZero == false && (ReactionObject.ReactionIdNum == 30 || ReactionObject.ReactionIdNum == 80 || ReactionObject.ReactionIdNum == 70)))
             if (ReactionObject.SpecialReactionFunction != nullptr)
             {
-                std::lock_guard<std::shared_mutex> LockGuardObject{ MainParticlesSharedMutexObject };
+                //std::lock_guard<std::shared_mutex> LockGuardObject{ MainParticlesSharedMutexObject };
+                //std::lock_guard<std::mutex> LockGuardObject{ MainParticlesMutexObject };
 
                 ReactionObject.SpecialReactionFunction(this, AllParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject, CurrentThreadPos);
             }
@@ -342,6 +343,9 @@ bool CellEngineSimulationSpace::MakeChemicalReaction(ChemicalReaction& ReactionO
 
     try
     {
+        //std::lock_guard<std::shared_mutex> LockGuardObject{ MainParticlesSharedMutexObject };
+        //std::lock_guard<std::mutex> LockGuardObject{ MainParticlesMutexObject };
+
         auto [ParticlesIndexesChosenForReaction, FoundInProximity] = ChooseParticlesForReactionFromAllParticlesInProximity(ReactionObject, CurrentThreadPos);
 
         if (FoundInProximity == false)
@@ -360,7 +364,13 @@ bool CellEngineSimulationSpace::MakeChemicalReaction(ChemicalReaction& ReactionO
         UnsignedInt CenterIndex = 0;
         for (const auto& ReactionProduct : ReactionObject.Products)
         {
+            //std::lock_guard<std::shared_mutex> LockGuardObject{ MainParticlesSharedMutexObject };
+
             UnsignedInt ParticleIndex = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), ReactionProduct.EntityId, 1, -1, 1, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
+
+            if (Particles.contains(ParticleIndex) == false)
+                cout << "PARTICLE INDEX ERROR = " << ParticleIndex << endl;
+
             GetParticleFromIndex(ParticleIndex).ListOfVoxels.clear();
 
             auto& ParticleKindObjectForProduct = ParticlesKindsManagerObject.GetParticleKind(ReactionProduct.EntityId);
@@ -372,16 +382,21 @@ bool CellEngineSimulationSpace::MakeChemicalReaction(ChemicalReaction& ReactionO
                     vector3_64 NewVoxel(Centers[CenterIndex].X - ParticleKindObjectForProduct.XSizeDiv2 + ParticleKindVoxel.X, Centers[CenterIndex].Y - ParticleKindObjectForProduct.YSizeDiv2 + ParticleKindVoxel.Y, Centers[CenterIndex].Z - ParticleKindObjectForProduct.ZSizeDiv2 + ParticleKindVoxel.Z);
                     if (NewVoxel.X > 1024 || NewVoxel.Y > 1024 || NewVoxel.Z > 1024)
                     {
-                        cout << endl;
-                        cout << "C " << Centers.size() << " " << CenterIndex << " " << Centers[CenterIndex].X << " " << Centers[CenterIndex].Y << " " << Centers[CenterIndex].Z << endl;
-                        cout << "P " << ParticleKindObjectForProduct.XSizeDiv2 << " " << ParticleKindObjectForProduct.YSizeDiv2 << " " << ParticleKindObjectForProduct.ZSizeDiv2 << endl;
-                        cout << "K " << ParticleKindVoxel.X << " " << ParticleKindVoxel.Y << " " << ParticleKindVoxel.Z << endl;
+                        LoggersManagerObject.Log(STREAM(endl));
+                        LoggersManagerObject.Log(STREAM("C " << Centers.size() << " " << CenterIndex << " " << Centers[CenterIndex].X << " " << Centers[CenterIndex].Y << " " << Centers[CenterIndex].Z << endl));
+                        LoggersManagerObject.Log(STREAM("P " << ParticleKindObjectForProduct.XSizeDiv2 << " " << ParticleKindObjectForProduct.YSizeDiv2 << " " << ParticleKindObjectForProduct.ZSizeDiv2 << endl));
+                        LoggersManagerObject.Log(STREAM("K " << ParticleKindVoxel.X << " " << ParticleKindVoxel.Y << " " << ParticleKindVoxel.Z << endl));
+                        // cout << endl;
+                        // cout << "C " << Centers.size() << " " << CenterIndex << " " << Centers[CenterIndex].X << " " << Centers[CenterIndex].Y << " " << Centers[CenterIndex].Z << endl;
+                        // cout << "P " << ParticleKindObjectForProduct.XSizeDiv2 << " " << ParticleKindObjectForProduct.YSizeDiv2 << " " << ParticleKindObjectForProduct.ZSizeDiv2 << endl;
+                        // cout << "K " << ParticleKindVoxel.X << " " << ParticleKindVoxel.Y << " " << ParticleKindVoxel.Z << endl;
                     }
 
                     if (Particles.contains(ParticleIndex))
                         FillParticleElementInSpace(ParticleIndex, NewVoxel);
                     else
-                        cout << "WRONG PARTICLE INDEX" << endl;
+                        LoggersManagerObject.Log(STREAM("WRONG PARTICLE INDEX" << endl));
+                     //cout << "WRONG PARTICLE INDEX" << endl;
 
                     LoggersManagerObject.Log(STREAM("New Centers From Product Added X = " << to_string(NewVoxel.X) << " Y = " << to_string(NewVoxel.Y) << " Z = " << to_string(NewVoxel.Z) << endl));
                 }
@@ -397,8 +412,8 @@ bool CellEngineSimulationSpace::MakeChemicalReaction(ChemicalReaction& ReactionO
 
         LoggersManagerObject.Log(STREAM("Reaction Step 3 - Reaction finished" << endl));
 
-        if (SaveReactionsStatisticsBool == true)
-            SaveReactionForStatistics(ReactionObject);
+        //if (SaveReactionsStatisticsBool == true)
+        //    SaveReactionForStatistics(ReactionObject);
     }
     CATCH("making reaction")
 
@@ -853,7 +868,7 @@ void CellEngineSimulationSpace::FirstSendParticlesForThreads(const bool PrintTim
     CATCH("first sending particles for threads")
 }
 
-void CellEngineSimulationSpace::SendParticlesForThreadsVersion1() const
+void CellEngineSimulationSpace::ExchangeParticlesBetweenThreads() const
 {
     try
     {
@@ -910,11 +925,6 @@ void CellEngineSimulationSpace::GatherParticlesForThreadsInMainParticles() const
     CATCH("sending particles for threads")
 }
 
-void CellEngineSimulationSpace::SendParticlesForThreads() const
-{
-    SendParticlesForThreadsVersion1();
-}
-
 void CellEngineSimulationSpace::GenerateOneStepOfSimulationForWholeCellSpaceInOneThread(const UnsignedInt NumberOfStepsInside, const UnsignedInt StepOutside, const UnsignedInt ThreadXIndex, const UnsignedInt ThreadYIndex, const UnsignedInt ThreadZIndex)
 {
     try
@@ -957,11 +967,9 @@ void CellEngineSimulationSpace::GenerateOneStepOfSimulationForWholeCellSpaceInOn
 
 void CellEngineSimulationSpace::GenerateNStepsOfSimulationForWholeCellSpaceInThreads(const UnsignedInt NumberOfStepsOutside, const UnsignedInt NumberOfStepsInside) const
 {
-    CheckParticlesCenters();exit(0);
-
     try
     {
-        //FirstSendParticlesForThreads(true);
+        FirstSendParticlesForThreads(true);
 
         std::barrier SyncPoint(CellEngineConfigDataObject.NumberOfXThreadsInSimulation * CellEngineConfigDataObject.NumberOfYThreadsInSimulation * CellEngineConfigDataObject.NumberOfZThreadsInSimulation);
 
@@ -975,7 +983,10 @@ void CellEngineSimulationSpace::GenerateNStepsOfSimulationForWholeCellSpaceInThr
 
                 SyncPoint.arrive_and_wait();
 
-                //SendParticlesForThreads();
+                if (CurrentThreadIndex == 1)
+                    ExchangeParticlesBetweenThreads();
+
+                SyncPoint.arrive_and_wait();
             }
         };
 
@@ -1007,7 +1018,7 @@ void CellEngineSimulationSpace::GenerateNStepsOfSimulationForWholeCellSpaceInThr
 
         LoggersManagerObject.Log(STREAM("END THREADS"));
 
-        //GatherParticlesForThreadsInMainParticles();
+        GatherParticlesForThreadsInMainParticles();
     }
     CATCH("generating n steps simulation for whole cell space in threads")
 }

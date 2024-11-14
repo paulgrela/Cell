@@ -32,7 +32,7 @@ class CellEngineChemicalReactionsInBasicSimulationSpace : virtual public CellEng
 protected:
     ThreadLocalParticlesInProximity LocalParticlesInProximityObject;
 protected:
-    std::vector<std::vector<std::vector<ThreadLocalParticlesInProximity>>> ThreadsLocalParticlesInProximity;
+    //std::vector<std::vector<std::vector<ThreadLocalParticlesInProximity>>> ThreadsLocalParticlesInProximity;
 protected:
     inline ThreadLocalParticlesInProximity& GetThreadsLocalParticlesInProximity(const CurrentThreadPosType& CurrentThreadPos)
     {
@@ -42,14 +42,14 @@ protected:
 protected:
     void ConstructDataForMultiThreadedExecution()
     {
-        ThreadsLocalParticlesInProximity.clear();
-        ThreadsLocalParticlesInProximity.resize(CellEngineConfigDataObject.NumberOfXThreadsInSimulation);
-        for (auto& ThreadLocalParticlesInProximityXPos : ThreadsLocalParticlesInProximity)
-        {
-            ThreadLocalParticlesInProximityXPos.resize(CellEngineConfigDataObject.NumberOfYThreadsInSimulation);
-            for (auto& ThreadLocalParticlesInProximityYPos : ThreadLocalParticlesInProximityXPos)
-                ThreadLocalParticlesInProximityYPos.resize(CellEngineConfigDataObject.NumberOfZThreadsInSimulation);
-        }
+    //     ThreadsLocalParticlesInProximity.clear();
+    //     ThreadsLocalParticlesInProximity.resize(CellEngineConfigDataObject.NumberOfXThreadsInSimulation);
+    //     for (auto& ThreadLocalParticlesInProximityXPos : ThreadsLocalParticlesInProximity)
+    //     {
+    //         ThreadLocalParticlesInProximityXPos.resize(CellEngineConfigDataObject.NumberOfYThreadsInSimulation);
+    //         for (auto& ThreadLocalParticlesInProximityYPos : ThreadLocalParticlesInProximityXPos)
+    //             ThreadLocalParticlesInProximityYPos.resize(CellEngineConfigDataObject.NumberOfZThreadsInSimulation);
+    //     }
     }
 protected:
     static bool CompareFitnessOfParticle(const ParticleKindForChemicalReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction);

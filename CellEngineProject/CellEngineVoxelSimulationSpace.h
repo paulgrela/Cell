@@ -53,7 +53,7 @@ protected:
     bool MoveParticleByVectorIfSpaceIsEmpty(Particle &ParticleObject, SignedInt VectorX, SignedInt VectorY, SignedInt VectorZ) override;
 
 public:
-    explicit CellEngineVoxelSimulationSpace(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam, bool GetMemoryForVoxelSpace);
+    explicit CellEngineVoxelSimulationSpace(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam, bool GetMemoryForVoxelSpace, ThreadIdType ThreadIndex, CurrentThreadPosType CurrentThreadPos);
     ~CellEngineVoxelSimulationSpace() override;
 };
 

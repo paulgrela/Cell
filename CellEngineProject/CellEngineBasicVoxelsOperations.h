@@ -3,7 +3,6 @@
 #define CELL_ENGINE_BASIC_VOXELS_OPERATIONS_H
 
 #include "CellEngineTypes.h"
-#include "CellEngineConfigData.h"
 
 using SimulationSpaceVoxel = UniqueIdInt;
 

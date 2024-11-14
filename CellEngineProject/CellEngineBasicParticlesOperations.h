@@ -15,8 +15,12 @@
 class CellEngineBasicParticlesOperations
 {
 protected:
+    static inline std::mutex MainParticlesMutexObject;
     static inline std::shared_mutex MainParticlesSharedMutexObject;
     static inline std::mutex MainParticlesIndexesMutexObject;
+public:
+    ThreadIdType CurrentThreadIndex{ 0 };
+    CurrentThreadPosType CurrentThreadPos{ 1, 1, 1 };
 protected:
     UnsignedInt XMin{}, XMax{}, YMin{}, YMax{}, ZMin{}, ZMax{};
 protected:
@@ -28,24 +32,31 @@ protected:
 protected:
     inline Particle& GetParticleFromIndex(const UniqueIdInt ParticleIndex)
     {
-        std::shared_lock<std::shared_mutex> LockGuardObject{ MainParticlesSharedMutexObject };
-        return Particles[ParticleIndex];
+        //std::shared_lock<std::shared_mutex> LockGuardObject{ MainParticlesSharedMutexObject };
+        //std::lock_guard<std::mutex> LockGuardObject{ MainParticlesMutexObject };
+
+        //return Particles[ParticleIndex];
+
+        // auto Particle = Particles[ParticleIndex];
+        // return Particle;
         // CZY TU WYSTARCZY BEZ BLOKADY GDY ParticlesForThreads - RAZ POWINIEN ZROBIC DOBRZE BEZ SYNCHORNIZACJI
 
 
         // if (CellEngineParticlesVoxelsOperations::SetMutexBool == false)
-        //     return Particles[ParticleIndex];
-        // else
-        //     return ParticlesForThreads[ParticleIndex];
+        if (CurrentThreadIndex == 0)
+            return Particles[ParticleIndex];
+        else
+            return ParticlesForThreads[ParticleIndex];
     }
     [[nodiscard]] inline Particle& GetParticleFromIndexW(const UniqueIdInt ParticleIndex)
     {
         return Particles[ParticleIndex];
 
         // if (CellEngineParticlesVoxelsOperations::SetMutexBool == false)
-        //     return Particles[ParticleIndex];
-        // else
-        //     return ParticlesForThreads[ParticleIndex];
+        if (CurrentThreadIndex == 0)
+            return Particles[ParticleIndex];
+        else
+            return ParticlesForThreads[ParticleIndex];
     }
 public:
     [[nodiscard]] UniqueIdInt GetFreeIndexesOfParticleSize() const
@@ -74,17 +85,34 @@ protected:
         }
     }
 public:
+    // UniqueIdInt AddNewParticleInCurrentThread(const Particle& ParticleParam)
+    // {
+    //     ParticlesForThreads[ParticleParam.Index] = ParticleParam;
+    //     return MaxParticleIndex = ParticleParam.Index;
+    // }
+
     UniqueIdInt AddNewParticle(const Particle& ParticleParam)
     {
-        std::lock_guard<std::shared_mutex> LockGuardObject{ MainParticlesSharedMutexObject };
-        Particles[ParticleParam.Index] = ParticleParam;
+        //std::lock_guard<std::mutex> LockGuardObject{ MainParticlesMutexObject };
+        //std::lock_guard<std::shared_mutex> LockGuardObject{ MainParticlesSharedMutexObject };
+        // Particles[ParticleParam.Index] = ParticleParam;
+        // MaxParticleIndex = ParticleParam.Index;
+        // return MaxParticleIndex;
 
         // if (CellEngineParticlesVoxelsOperations::SetMutexBool == false)
         //     Particles[ParticleParam.Index] = ParticleParam;
         // else
         //     ParticlesForThreads[ParticleParam.Index] = ParticleParam;
-
-        return MaxParticleIndex = ParticleParam.Index;
+        if (CurrentThreadIndex == 0)
+        {
+            Particles[ParticleParam.Index] = ParticleParam;
+            return MaxParticleIndex = ParticleParam.Index;
+        }
+        else
+        {
+            ParticlesForThreads[ParticleParam.Index] = ParticleParam;
+            return MaxParticleIndex = ParticleParam.Index;
+        }
     }
 protected:
     virtual void RemoveParticle(UniqueIdInt ParticleIndex, bool ClearVoxels) = 0;

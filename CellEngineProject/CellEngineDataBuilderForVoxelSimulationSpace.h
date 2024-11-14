@@ -10,8 +10,12 @@ class CellEngineDataBuilderForVoxelSimulationSpace : public CellEngineParticlesD
 protected:
     void SetStartValues() override
     {
-        CellEngineVoxelSimulationSpaceObjectPointer = std::make_unique<CellEngineVoxelSimulationSpace>(Particles, true);
+        CellEngineVoxelSimulationSpaceObjectPointer = std::make_unique<CellEngineVoxelSimulationSpace>(Particles, true, 0, CurrentThreadPosType{ 0, 0, 0 });
 
+        UnsignedInt ThreadIndexPos = 1;
+        UnsignedInt ThreadXPos = 0;
+        UnsignedInt ThreadYPos = 0;
+        UnsignedInt ThreadZPos = 0;
         CellEngineVoxelSimulationSpaceForThreadsObjectsPointer.clear();
         CellEngineVoxelSimulationSpaceForThreadsObjectsPointer.resize(CellEngineConfigDataObject.NumberOfXThreadsInSimulation);
         for (auto& ThreadLocalParticlesInProximityXPos : CellEngineVoxelSimulationSpaceForThreadsObjectsPointer)
@@ -21,8 +25,14 @@ protected:
             {
                 ThreadLocalParticlesInProximityYPos.resize(CellEngineConfigDataObject.NumberOfZThreadsInSimulation);
                 for (auto& ThreadLocalParticlesInProximityZPos : ThreadLocalParticlesInProximityYPos)
-                    ThreadLocalParticlesInProximityZPos = std::make_unique<CellEngineVoxelSimulationSpace>(Particles, false);
+                {
+                    ThreadLocalParticlesInProximityZPos = std::make_unique<CellEngineVoxelSimulationSpace>(Particles, false, ThreadIndexPos, CurrentThreadPosType{ ThreadXPos, ThreadYPos, ThreadZPos });
+                    ThreadIndexPos++;
+                    ThreadZPos++;
+                }
+                ThreadYPos++;
             }
+            ThreadXPos++;
         }
     }
 protected:

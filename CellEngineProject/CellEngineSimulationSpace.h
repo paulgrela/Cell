@@ -75,8 +75,7 @@ public:
     void GenerateOneRandomReactionForSelectedSpace(UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam, bool FindParticlesInProximityBool, const CurrentThreadPosType& CurrentThreadPos);
     void GenerateOneChosenReactionForSelectedSpace(UnsignedInt ReactionId, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam, const CurrentThreadPosType& CurrentThreadPos);
 public:
-    void SendParticlesForThreads() const;
-    void SendParticlesForThreadsVersion1() const;
+    void ExchangeParticlesBetweenThreads() const;
     void GatherParticlesForThreadsInMainParticles() const;
     void FirstSendParticlesForThreads(bool PrintTime) const;
 public:
