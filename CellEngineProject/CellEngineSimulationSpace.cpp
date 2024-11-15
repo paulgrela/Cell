@@ -337,15 +337,15 @@ tuple<vector<pair<UniqueIdInt, UnsignedInt>>, bool> CellEngineSimulationSpace::C
         return { vector<pair<UniqueIdInt, UnsignedInt>>(), false };
 }
 
+static UnsignedInt ErrorCounter = 0;
+static UnsignedInt AddedParticlesInReactions = 0;
+
 bool CellEngineSimulationSpace::MakeChemicalReaction(ChemicalReaction& ReactionObject, const CurrentThreadPosType& CurrentThreadPos)
 {
     const auto start_time = chrono::high_resolution_clock::now();
 
     try
     {
-        //std::lock_guard<std::shared_mutex> LockGuardObject{ MainParticlesSharedMutexObject };
-        //std::lock_guard<std::mutex> LockGuardObject{ MainParticlesMutexObject };
-
         auto [ParticlesIndexesChosenForReaction, FoundInProximity] = ChooseParticlesForReactionFromAllParticlesInProximity(ReactionObject, CurrentThreadPos);
 
         if (FoundInProximity == false)
@@ -364,12 +364,13 @@ bool CellEngineSimulationSpace::MakeChemicalReaction(ChemicalReaction& ReactionO
         UnsignedInt CenterIndex = 0;
         for (const auto& ReactionProduct : ReactionObject.Products)
         {
-            //std::lock_guard<std::shared_mutex> LockGuardObject{ MainParticlesSharedMutexObject };
-
             UnsignedInt ParticleIndex = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), ReactionProduct.EntityId, 1, -1, 1, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
 
-            if (Particles.contains(ParticleIndex) == false)
+            if (CurrentThreadIndex == 0 && Particles.contains(ParticleIndex) == false)
                 cout << "PARTICLE INDEX ERROR = " << ParticleIndex << endl;
+            else
+            if (CurrentThreadIndex != 0 && ParticlesForThreads.contains(ParticleIndex) == false)
+                cout << "PARTICLE INDEX ERROR IN THREADS = " << ParticleIndex << endl;
 
             GetParticleFromIndex(ParticleIndex).ListOfVoxels.clear();
 
@@ -377,28 +378,45 @@ bool CellEngineSimulationSpace::MakeChemicalReaction(ChemicalReaction& ReactionO
 
             if (CenterIndex < Centers.size())
             {
+                bool ErrorInVoxels = false;
+
                 for (const auto& ParticleKindVoxel : ParticleKindObjectForProduct.ListOfVoxels)
                 {
                     vector3_64 NewVoxel(Centers[CenterIndex].X - ParticleKindObjectForProduct.XSizeDiv2 + ParticleKindVoxel.X, Centers[CenterIndex].Y - ParticleKindObjectForProduct.YSizeDiv2 + ParticleKindVoxel.Y, Centers[CenterIndex].Z - ParticleKindObjectForProduct.ZSizeDiv2 + ParticleKindVoxel.Z);
-                    if (NewVoxel.X > 1024 || NewVoxel.Y > 1024 || NewVoxel.Z > 1024)
+                    if (NewVoxel.X > CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension || NewVoxel.Y > CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension || NewVoxel.Z > CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension)
                     {
                         LoggersManagerObject.Log(STREAM(endl));
                         LoggersManagerObject.Log(STREAM("C " << Centers.size() << " " << CenterIndex << " " << Centers[CenterIndex].X << " " << Centers[CenterIndex].Y << " " << Centers[CenterIndex].Z << endl));
                         LoggersManagerObject.Log(STREAM("P " << ParticleKindObjectForProduct.XSizeDiv2 << " " << ParticleKindObjectForProduct.YSizeDiv2 << " " << ParticleKindObjectForProduct.ZSizeDiv2 << endl));
                         LoggersManagerObject.Log(STREAM("K " << ParticleKindVoxel.X << " " << ParticleKindVoxel.Y << " " << ParticleKindVoxel.Z << endl));
                         // cout << endl;
-                        // cout << "C " << Centers.size() << " " << CenterIndex << " " << Centers[CenterIndex].X << " " << Centers[CenterIndex].Y << " " << Centers[CenterIndex].Z << endl;
+                        // cout << "I " << ParticleIndex << " " << Centers.size() << " " << CenterIndex << endl;
+                        // cout << "C " << Centers[CenterIndex].X << " " << Centers[CenterIndex].Y << " " << Centers[CenterIndex].Z << endl;
                         // cout << "P " << ParticleKindObjectForProduct.XSizeDiv2 << " " << ParticleKindObjectForProduct.YSizeDiv2 << " " << ParticleKindObjectForProduct.ZSizeDiv2 << endl;
                         // cout << "K " << ParticleKindVoxel.X << " " << ParticleKindVoxel.Y << " " << ParticleKindVoxel.Z << endl;
+
+                        ErrorInVoxels = true;
+                    }
+                    else
+                    {
+                        if (CurrentThreadIndex == 0 && Particles.contains(ParticleIndex) == false)
+                            cout << "PARTICLE INDEX WRONG = " << ParticleIndex << endl;
+                        if (CurrentThreadIndex == 0 && Particles.contains(ParticleIndex) == true)
+                            FillParticleElementInSpace(ParticleIndex, NewVoxel);
+                        if (CurrentThreadIndex != 0 && ParticlesForThreads.contains(ParticleIndex) == false)
+                            cout << "PARTICLE INDEX WRONG IN THREADS = " << ParticleIndex << endl;
+                        if (CurrentThreadIndex != 0 && ParticlesForThreads.contains(ParticleIndex) == true)
+                            FillParticleElementInSpace(ParticleIndex, NewVoxel);
                     }
 
-                    if (Particles.contains(ParticleIndex))
-                        FillParticleElementInSpace(ParticleIndex, NewVoxel);
-                    else
-                        LoggersManagerObject.Log(STREAM("WRONG PARTICLE INDEX" << endl));
-                     //cout << "WRONG PARTICLE INDEX" << endl;
-
                     LoggersManagerObject.Log(STREAM("New Centers From Product Added X = " << to_string(NewVoxel.X) << " Y = " << to_string(NewVoxel.Y) << " Z = " << to_string(NewVoxel.Z) << endl));
+                }
+
+                {
+                    std::lock_guard<std::mutex> LockGuardObject{ MainCountingErrorMutexObject };
+                    if (ErrorInVoxels == true)
+                        ErrorCounter++;
+                    AddedParticlesInReactions++;
                 }
 
                 GetMinMaxCoordinatesForParticle(GetParticleFromIndex(ParticleIndex), false);
@@ -412,8 +430,8 @@ bool CellEngineSimulationSpace::MakeChemicalReaction(ChemicalReaction& ReactionO
 
         LoggersManagerObject.Log(STREAM("Reaction Step 3 - Reaction finished" << endl));
 
-        //if (SaveReactionsStatisticsBool == true)
-        //    SaveReactionForStatistics(ReactionObject);
+        if (SaveReactionsStatisticsBool == true)
+            SaveReactionForStatistics(ReactionObject);
     }
     CATCH("making reaction")
 
@@ -844,6 +862,8 @@ void CellEngineSimulationSpace::FirstSendParticlesForThreads(const bool PrintTim
 {
     try
     {
+        //CheckParticlesCenters(); return;
+
         const auto start_time = chrono::high_resolution_clock::now();
 
         for (auto& ThreadLocalParticlesInProximityXPos : CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceForThreadsObjectsPointer)
@@ -857,6 +877,11 @@ void CellEngineSimulationSpace::FirstSendParticlesForThreads(const bool PrintTim
             UnsignedInt ThreadYIndex = floor(ParticleObject.second.Center.Y / CellEngineConfigDataObject.NumberOfYVoxelsInOneThreadInVoxelSimulationSpace);
             UnsignedInt ThreadZIndex = floor(ParticleObject.second.Center.Z / CellEngineConfigDataObject.NumberOfZVoxelsInOneThreadInVoxelSimulationSpace);
 
+                                                                                                                        // cout << "Center: " << ParticleObject.second.Center.X << ParticleObject.second.Center.Y << ParticleObject.second.Center.Z << endl;
+                                                                                                                        // cout << "THREAD POS = " << ThreadXIndex << ", " << ThreadYIndex << ", " << ThreadZIndex << endl;
+                                                                                                                        // cout << endl;
+                                                                                                                        // getchar();
+
             CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceForThreadsObjectsPointer[ThreadXIndex][ThreadYIndex][ThreadZIndex]->ParticlesForThreads.insert({ ParticleObject.first, ParticleObject.second });
         }
 
@@ -864,6 +889,11 @@ void CellEngineSimulationSpace::FirstSendParticlesForThreads(const bool PrintTim
 
         if (PrintTime == true)
             LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "First sending particles to threads has taken time = ","Execution in threads")));
+
+        for (UnsignedInt ThreadXIndex = 1; ThreadXIndex <= CellEngineConfigDataObject.NumberOfXThreadsInSimulation; ThreadXIndex++)
+            for (UnsignedInt ThreadYIndex = 1; ThreadYIndex <= CellEngineConfigDataObject.NumberOfYThreadsInSimulation; ThreadYIndex++)
+                for (UnsignedInt ThreadZIndex = 1; ThreadZIndex <= CellEngineConfigDataObject.NumberOfZThreadsInSimulation; ThreadZIndex++)
+                    LoggersManagerObject.Log(STREAM("THREAD[" << ThreadXIndex << "," << ThreadYIndex << "," << ThreadZIndex << "] SIZE = " << CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceForThreadsObjectsPointer[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->ParticlesForThreads.size()));
     }
     CATCH("first sending particles for threads")
 }
@@ -878,20 +908,22 @@ void CellEngineSimulationSpace::ExchangeParticlesBetweenThreads() const
             for (UnsignedInt ThreadYIndex = 1; ThreadYIndex <= CellEngineConfigDataObject.NumberOfYThreadsInSimulation; ThreadYIndex++)
                 for (UnsignedInt ThreadZIndex = 1; ThreadZIndex <= CellEngineConfigDataObject.NumberOfZThreadsInSimulation; ThreadZIndex++)
                 {
-                    auto ParticleIter = Particles.begin();
+                    auto ParticleIter = CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceForThreadsObjectsPointer[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->ParticlesForThreads.begin();
 
-                    while (ParticleIter != Particles.end())
+                    while (ParticleIter != CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceForThreadsObjectsPointer[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->ParticlesForThreads.end())
                     {
                         UnsignedInt ThreadXIndexNew = floor(ParticleIter->second.Center.X / CellEngineConfigDataObject.NumberOfXVoxelsInOneThreadInVoxelSimulationSpace);
                         UnsignedInt ThreadYIndexNew = floor(ParticleIter->second.Center.Y / CellEngineConfigDataObject.NumberOfYVoxelsInOneThreadInVoxelSimulationSpace);
                         UnsignedInt ThreadZIndexNew = floor(ParticleIter->second.Center.Z / CellEngineConfigDataObject.NumberOfZVoxelsInOneThreadInVoxelSimulationSpace);
 
-                        if (ThreadXIndex != ThreadXIndexNew || ThreadYIndex != ThreadYIndexNew || ThreadZIndex != ThreadZIndexNew)
-                        {
-                            std::lock_guard<std::mutex> LockGuardObject{ MainParticlesExchangeMutexObject };
+                                        cout << "Current Thread: " << CurrentThreadIndex << endl;
+                                        cout << "Center: " << ThreadXIndexNew << ThreadYIndexNew << ThreadZIndexNew << endl;
+                                        cout << "THREAD POS = " << ThreadXIndex << ", " << ThreadYIndex << ", " << ThreadZIndex << endl;
+                                        cout << endl;
+                                        getchar();
 
-                            CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceForThreadsObjectsPointer[ThreadXIndex][ThreadYIndex][ThreadZIndex]->ParticlesForThreads.insert(CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceForThreadsObjectsPointer[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->ParticlesForThreads.extract(ParticleIter++));
-                        }
+                        if ((ThreadXIndex - 1 != ThreadXIndexNew) || (ThreadYIndex - 1 != ThreadYIndexNew) || (ThreadZIndex - 1 != ThreadZIndexNew))
+                            CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceForThreadsObjectsPointer[ThreadXIndexNew][ThreadYIndexNew][ThreadZIndexNew]->ParticlesForThreads.insert(CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceForThreadsObjectsPointer[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->ParticlesForThreads.extract(ParticleIter++));
                         else
                             ++ParticleIter;
                     }
@@ -910,12 +942,12 @@ void CellEngineSimulationSpace::GatherParticlesForThreadsInMainParticles() const
     {
         const auto start_time = chrono::high_resolution_clock::now();
 
-        Particles.clear();
+        Particles.clear();//NIE CZYSCIC ALE USUWAC Z Particles JESLI JEST W INNYM i DODAWAC
 
         for (UnsignedInt ThreadXIndex = 1; ThreadXIndex <= CellEngineConfigDataObject.NumberOfXThreadsInSimulation; ThreadXIndex++)
             for (UnsignedInt ThreadYIndex = 1; ThreadYIndex <= CellEngineConfigDataObject.NumberOfYThreadsInSimulation; ThreadYIndex++)
                 for (UnsignedInt ThreadZIndex = 1; ThreadZIndex <= CellEngineConfigDataObject.NumberOfZThreadsInSimulation; ThreadZIndex++)
-                    for (auto& ParticleObject : CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceForThreadsObjectsPointer[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->ParticlesForThreads)
+                    for (const auto& ParticleObject : CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceForThreadsObjectsPointer[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->ParticlesForThreads)
                         Particles.insert(ParticleObject);
 
         const auto stop_time = chrono::high_resolution_clock::now();
@@ -969,7 +1001,7 @@ void CellEngineSimulationSpace::GenerateNStepsOfSimulationForWholeCellSpaceInThr
 {
     try
     {
-        FirstSendParticlesForThreads(true);
+        //FirstSendParticlesForThreads(true);
 
         std::barrier SyncPoint(CellEngineConfigDataObject.NumberOfXThreadsInSimulation * CellEngineConfigDataObject.NumberOfYThreadsInSimulation * CellEngineConfigDataObject.NumberOfZThreadsInSimulation);
 
@@ -1018,7 +1050,10 @@ void CellEngineSimulationSpace::GenerateNStepsOfSimulationForWholeCellSpaceInThr
 
         LoggersManagerObject.Log(STREAM("END THREADS"));
 
-        GatherParticlesForThreadsInMainParticles();
+        LoggersManagerObject.Log(STREAM("AddedParticlesInReactions =  " + to_string(AddedParticlesInReactions)));
+        LoggersManagerObject.Log(STREAM("ErrorCounter = " + to_string(ErrorCounter)));
+
+        //GatherParticlesForThreadsInMainParticles();
     }
     CATCH("generating n steps simulation for whole cell space in threads")
 }
@@ -1030,7 +1065,10 @@ void CellEngineSimulationSpace::CheckParticlesCenters() const
         UnsignedInt NumberOfZeroCenterParticles = 0;
         for (const auto& ParticleObject : Particles)
         {
-            if (ParticleObject.second.Center.X > 1024 || ParticleObject.second.Center.Y > 1024 || ParticleObject.second.Center.Z > 1024)
+            cout << "ParticleIndex = " << ParticleObject.second.Index << " " << ParticleObject.second.Center.X << " " << ParticleObject.second.Center.Y << " " << ParticleObject.second.Center.Z << endl;
+            getchar();
+
+            if (ParticleObject.second.Center.X > CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension || ParticleObject.second.Center.Y > CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension || ParticleObject.second.Center.Z > CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension)
                 LoggersManagerObject.Log(STREAM("Wrong Particle Center -> ParticleIndex = " << ParticleObject.second.Index << " " << ParticleObject.second.Center.X << " " << ParticleObject.second.Center.Y << " " << ParticleObject.second.Center.Z));
             if (ParticleObject.second.Center.X == 0 || ParticleObject.second.Center.Y == 0 || ParticleObject.second.Center.Z == 0)
             {

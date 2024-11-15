@@ -33,6 +33,7 @@ class CellEngineSimulationSpace : public CellEngineChemicalReactionsEngine, publ
 {
 private:
     static inline std::mutex MainParticlesExchangeMutexObject;
+    static inline std::mutex MainCountingErrorMutexObject;
 private:
     std::unordered_map<UniqueIdInt, Particle>& Particles;
 protected:

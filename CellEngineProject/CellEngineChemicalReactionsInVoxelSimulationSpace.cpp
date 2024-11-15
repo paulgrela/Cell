@@ -15,7 +15,17 @@ void CellEngineChemicalReactionsInVoxelSimulationSpace::FindParticlesInProximity
                 for (UnsignedInt PosZ = StartZPosParam; PosZ < StartZPosParam + SizeZParam; PosZ++)
                     if (PosX >= 0 && PosY >= 0 && PosZ >= 0 && PosX < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension && PosY < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension && PosZ < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension)
                         if (GetSpaceVoxel(PosX, PosY, PosZ) != GetZeroSimulationSpaceVoxel())
-                            SaveParticleFoundInProximity(GetSpaceVoxel(PosX, PosY, PosZ), FoundParticleIndexes, UpdateNucleotides, CurrentThreadPos);
+                        {
+                            if (CurrentThreadIndex == 0)
+                            {
+                                SaveParticleFoundInProximity(GetSpaceVoxel(PosX, PosY, PosZ), FoundParticleIndexes, UpdateNucleotides, CurrentThreadPos);
+                            }
+                            else
+                            {
+                                if (ParticlesForThreads.contains(GetSpaceVoxel(PosX, PosY, PosZ)))
+                                    SaveParticleFoundInProximity(GetSpaceVoxel(PosX, PosY, PosZ), FoundParticleIndexes, UpdateNucleotides, CurrentThreadPos);
+                            }
+                        }
 
         const auto stop_time = chrono::high_resolution_clock::now();
 

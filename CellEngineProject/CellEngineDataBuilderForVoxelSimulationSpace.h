@@ -13,17 +13,18 @@ protected:
         CellEngineVoxelSimulationSpaceObjectPointer = std::make_unique<CellEngineVoxelSimulationSpace>(Particles, true, 0, CurrentThreadPosType{ 0, 0, 0 });
 
         UnsignedInt ThreadIndexPos = 1;
-        UnsignedInt ThreadXPos = 0;
-        UnsignedInt ThreadYPos = 0;
-        UnsignedInt ThreadZPos = 0;
+
         CellEngineVoxelSimulationSpaceForThreadsObjectsPointer.clear();
         CellEngineVoxelSimulationSpaceForThreadsObjectsPointer.resize(CellEngineConfigDataObject.NumberOfXThreadsInSimulation);
+        UnsignedInt ThreadXPos = 1;
         for (auto& ThreadLocalParticlesInProximityXPos : CellEngineVoxelSimulationSpaceForThreadsObjectsPointer)
         {
             ThreadLocalParticlesInProximityXPos.resize(CellEngineConfigDataObject.NumberOfYThreadsInSimulation);
+            UnsignedInt ThreadYPos = 1;
             for (auto& ThreadLocalParticlesInProximityYPos : ThreadLocalParticlesInProximityXPos)
             {
                 ThreadLocalParticlesInProximityYPos.resize(CellEngineConfigDataObject.NumberOfZThreadsInSimulation);
+                UnsignedInt ThreadZPos = 1;
                 for (auto& ThreadLocalParticlesInProximityZPos : ThreadLocalParticlesInProximityYPos)
                 {
                     ThreadLocalParticlesInProximityZPos = std::make_unique<CellEngineVoxelSimulationSpace>(Particles, false, ThreadIndexPos, CurrentThreadPosType{ ThreadXPos, ThreadYPos, ThreadZPos });

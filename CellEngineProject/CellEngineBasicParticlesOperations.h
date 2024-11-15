@@ -35,28 +35,33 @@ protected:
         //std::shared_lock<std::shared_mutex> LockGuardObject{ MainParticlesSharedMutexObject };
         //std::lock_guard<std::mutex> LockGuardObject{ MainParticlesMutexObject };
 
-        //return Particles[ParticleIndex];
-
-        // auto Particle = Particles[ParticleIndex];
-        // return Particle;
-        // CZY TU WYSTARCZY BEZ BLOKADY GDY ParticlesForThreads - RAZ POWINIEN ZROBIC DOBRZE BEZ SYNCHORNIZACJI
-
-
-        // if (CellEngineParticlesVoxelsOperations::SetMutexBool == false)
         if (CurrentThreadIndex == 0)
             return Particles[ParticleIndex];
         else
-            return ParticlesForThreads[ParticleIndex];
+        {
+            if (ParticlesForThreads.contains(ParticleIndex))
+                return ParticlesForThreads[ParticleIndex];
+            else
+            {
+                std::cout << "NO PARTICLE INDEX 1 = " << ParticleIndex << std::endl;
+                return ParticlesForThreads[1];
+            }
+        }
     }
     [[nodiscard]] inline Particle& GetParticleFromIndexW(const UniqueIdInt ParticleIndex)
     {
-        return Particles[ParticleIndex];
-
-        // if (CellEngineParticlesVoxelsOperations::SetMutexBool == false)
         if (CurrentThreadIndex == 0)
             return Particles[ParticleIndex];
         else
-            return ParticlesForThreads[ParticleIndex];
+        {
+            if (ParticlesForThreads.contains(ParticleIndex))
+                return ParticlesForThreads[ParticleIndex];
+            else
+            {
+                std::cout << "NO PARTICLE INDEX 2 = " << ParticleIndex << std::endl;
+                return ParticlesForThreads[ParticleIndex];
+            }
+        }
     }
 public:
     [[nodiscard]] UniqueIdInt GetFreeIndexesOfParticleSize() const

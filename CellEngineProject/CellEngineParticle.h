@@ -83,9 +83,12 @@ public:
 public:
     void SetCenterCoordinates(const PositionInt XCenterParam, const PositionInt YCenterParam, const PositionInt ZCenterParam)
     {
-        Center.X = XCenterParam;
-        Center.Y = YCenterParam;
-        Center.Z = ZCenterParam;
+        if (XCenterParam < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension)
+            Center.X = XCenterParam;
+        if (YCenterParam < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension)
+            Center.Y = YCenterParam;
+        if (ZCenterParam < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension)
+            Center.Z = ZCenterParam;
     }
 public:
     explicit Particle(std::vector<vector3_16>& ListOfVoxelsParam) : ListOfVoxels(std::move(ListOfVoxelsParam)), SelectedForReaction(false)
