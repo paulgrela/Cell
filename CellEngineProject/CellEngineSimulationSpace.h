@@ -32,8 +32,8 @@
 class CellEngineSimulationSpace : public CellEngineChemicalReactionsEngine, public CellEngineIllinoisDataCreator, public CellEngineCompiledDataCreator, virtual public CellEngineChemicalReactionsInSimulationSpace, public CellEngineSimulationSpaceStatistics
 {
 private:
-    UnsignedInt ErrorCounter;
-    UnsignedInt AddedParticlesInReactions;
+    static inline UnsignedInt ErrorCounter;
+    static inline UnsignedInt AddedParticlesInReactions;
 private:
     static inline std::mutex MainParticlesExchangeMutexObject;
     static inline std::mutex MainCountingErrorMutexObject;
@@ -107,7 +107,6 @@ public:
     explicit CellEngineSimulationSpace(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : CellEngineSimulationSpaceStatistics(), Particles(ParticlesParam)
     {
         SetMakeSimulationStepNumberZero();
-        ConstructDataForMultiThreadedExecution();
     }
     ~CellEngineSimulationSpace() override = default;
 };

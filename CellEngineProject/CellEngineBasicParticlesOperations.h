@@ -44,22 +44,6 @@ protected:
             }
         }
     }
-    [[nodiscard]] inline Particle& GetParticleFromIndexW(const UniqueIdInt ParticleIndex)
-    {
-        if (CurrentThreadIndex == 0)
-            return Particles[ParticleIndex];
-        else
-        {
-            if (ParticlesForThreads.contains(ParticleIndex))
-                return ParticlesForThreads[ParticleIndex];
-            else
-            {
-                std::cout << "NO PARTICLE INDEX 2 = " << ParticleIndex << std::endl;
-                LoggersManagerObject.Log(STREAM("NO PARTICLE INDEX 2 = " << ParticleIndex << std::endl));
-                return ParticlesForThreads[1];
-            }
-        }
-    }
 public:
     [[nodiscard]] UniqueIdInt GetFreeIndexesOfParticleSize() const
     {

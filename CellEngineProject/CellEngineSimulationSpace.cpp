@@ -61,7 +61,7 @@ void CellEngineSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpace(const
         uniform_int_distribution<SignedInt> UniformDistributionObjectMoveParticleDirection_int64t(-1, 1);
 
         FindParticlesInProximityOfSimulationSpaceForSelectedSpace(false, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, CurrentThreadPos);
-        for (auto& ParticleInProximityIndex : GetThreadsLocalParticlesInProximity(CurrentThreadPos).ParticlesSortedByCapacityFoundInProximity)
+        for (auto& ParticleInProximityIndex : LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity)
             if (CellEngineUseful::IsDNA(GetParticleFromIndex(ParticleInProximityIndex).EntityId) == false)
                 if (InBounds == false)
                     MoveParticleByVectorIfSpaceIsEmpty(GetParticleFromIndex(ParticleInProximityIndex), UniformDistributionObjectMoveParticleDirection_int64t(mt64R), UniformDistributionObjectMoveParticleDirection_int64t(mt64R), UniformDistributionObjectMoveParticleDirection_int64t(mt64R));
@@ -134,7 +134,7 @@ void CellEngineSimulationSpace::UpdateProbabilityOfMoveFromElectricInteractionFo
     {
         UpdateNeighbourPointsForChosenVoxel([&NeighbourPoints](SignedInt X, SignedInt Y, SignedInt Z){ (*NeighbourPoints)[X][Y][Z] = 0; });
 
-        for (const auto& NeighbourParticleIndexObjectToWrite : GetThreadsLocalParticlesInProximity(CurrentThreadPos).ParticlesSortedByCapacityFoundInProximity)
+        for (const auto& NeighbourParticleIndexObjectToWrite : LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity)
         {
             Particle& NeighbourParticleObject = GetParticleFromIndex(NeighbourParticleIndexObjectToWrite);
             if (NeighbourParticleObject.ElectricCharge != 0)
@@ -244,7 +244,7 @@ void CellEngineSimulationSpace::GenerateOneStepOfElectricDiffusionForSelectedSpa
 
         FindParticlesInProximityOfSimulationSpaceForSelectedSpace(false, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, CurrentThreadPos);
 
-        auto ParticlesSortedByCapacityFoundInProximityCopy(GetThreadsLocalParticlesInProximity(CurrentThreadPos).ParticlesSortedByCapacityFoundInProximity);
+        auto ParticlesSortedByCapacityFoundInProximityCopy(LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity);
 
         for (auto& ParticleInProximityIndex : ParticlesSortedByCapacityFoundInProximityCopy)
             if (CellEngineUseful::IsDNA(GetParticleFromIndex(ParticleInProximityIndex).EntityId) == false)
@@ -270,7 +270,7 @@ tuple<vector<pair<UniqueIdInt, UnsignedInt>>, bool> CellEngineSimulationSpace::C
         for (UnsignedInt ReactantIndex = 0; ReactantIndex < ReactionObject.Reactants.size(); ReactantIndex++)
             ReactantsCounters[ReactantIndex] = ReactionObject.Reactants[ReactantIndex].Counter;
 
-        for (const auto& ParticleObjectIndex : GetThreadsLocalParticlesInProximity(CurrentThreadPos).ParticlesSortedByCapacityFoundInProximity)
+        for (const auto& ParticleObjectIndex : LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity)
         {
             auto& ParticleObjectTestedForReaction = GetParticleFromIndex(ParticleObjectIndex);
 
@@ -311,7 +311,7 @@ tuple<vector<pair<UniqueIdInt, UnsignedInt>>, bool> CellEngineSimulationSpace::C
 
         if (AllAreZero == true || (AllAreZero == false && (ReactionObject.ReactionIdNum == 30 || ReactionObject.ReactionIdNum == 80 || ReactionObject.ReactionIdNum == 70)))
             if (ReactionObject.SpecialReactionFunction != nullptr)
-                ReactionObject.SpecialReactionFunction(this, AllParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject, CurrentThreadPos);
+                ReactionObject.SpecialReactionFunction(this, AllParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject);
 
         const auto stop_time2 = chrono::high_resolution_clock::now();
 
@@ -446,7 +446,7 @@ std::vector<UnsignedInt> CellEngineSimulationSpace::GetRandomParticlesVersion3(c
 
     try
     {
-        std::uniform_int_distribution<UnsignedInt> UniformDistributionObjectUint64t(0, GetThreadsLocalParticlesInProximity(CurrentThreadPos).ParticlesKindsFoundInProximity.size() - 1);
+        std::uniform_int_distribution<UnsignedInt> UniformDistributionObjectUint64t(0, LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity.size() - 1);
     }
     CATCH("getting random particles kind")
 
@@ -465,7 +465,7 @@ std::vector<UnsignedInt> CellEngineSimulationSpace::GetRandomParticlesVersion2(c
         for (UnsignedInt ReactantNumberBitValuePos = 0; ReactantNumberBitValuePos < MaxNumberOfReactants; ReactantNumberBitValuePos++)
             if (BitsValuesString[ReactantNumberBitValuePos] == '1')
             {
-                RandomParticlesTypes.emplace_back(std::next(std::begin(GetThreadsLocalParticlesInProximity(CurrentThreadPos).ParticlesKindsFoundInProximity), static_cast<int>(ReactantNumberBitValuePos))->first);
+                RandomParticlesTypes.emplace_back(std::next(std::begin(LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity), static_cast<int>(ReactantNumberBitValuePos))->first);
 
                 LoggersManagerObject.Log(STREAM("ParticleKind Reactant " << to_string(ReactantNumberBitValuePos) << " (" << to_string(RandomParticlesTypes.back()) << ")"));
             }
@@ -483,11 +483,11 @@ std::vector<UnsignedInt> CellEngineSimulationSpace::GetRandomParticlesVersion1(c
 
     try
     {
-        std::uniform_int_distribution<UnsignedInt> UniformDistributionObjectUint64t(0, GetThreadsLocalParticlesInProximity(CurrentThreadPos).ParticlesKindsFoundInProximity.size() - 1);
+        std::uniform_int_distribution<UnsignedInt> UniformDistributionObjectUint64t(0, LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity.size() - 1);
 
         for (UnsignedInt ReactantNumber = 1; ReactantNumber <= NumberOfReactants; ReactantNumber++)
         {
-            RandomParticlesTypes.emplace_back(std::next(std::begin(GetThreadsLocalParticlesInProximity(CurrentThreadPos).ParticlesKindsFoundInProximity), static_cast<int>(UniformDistributionObjectUint64t(mt64R)))->first);
+            RandomParticlesTypes.emplace_back(std::next(std::begin(LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity), static_cast<int>(UniformDistributionObjectUint64t(mt64R)))->first);
 
             LoggersManagerObject.Log(STREAM("ParticleKind Reactant " << to_string(ReactantNumber) << " (" << to_string(RandomParticlesTypes.back()) << ")"));
         }
@@ -504,7 +504,7 @@ std::vector<UnsignedInt> CellEngineSimulationSpace::GetRandomParticles(const Uns
 
 bool CellEngineSimulationSpace::IsChemicalReactionPossible(const ChemicalReaction& ReactionObject, const CurrentThreadPosType& CurrentThreadPos)
 {
-    return all_of(ReactionObject.Reactants.begin(), ReactionObject.Reactants.end(), [this, CurrentThreadPos](const ParticleKindForChemicalReaction& ReactionReactant){ return ReactionReactant.Counter <= GetThreadsLocalParticlesInProximity(CurrentThreadPos).ParticlesKindsFoundInProximity[ReactionReactant.EntityId]; });
+    return all_of(ReactionObject.Reactants.begin(), ReactionObject.Reactants.end(), [this, CurrentThreadPos](const ParticleKindForChemicalReaction& ReactionReactant){ return ReactionReactant.Counter <= LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity[ReactionReactant.EntityId]; });
 }
 
 void CellEngineSimulationSpace::PrepareRandomReaction()
@@ -522,7 +522,7 @@ void CellEngineSimulationSpace::FindAndExecuteRandomReactionVersion4(const Unsig
 {
     try
     {
-        for (const auto& ParticleKindFoundInProximityObject : GetThreadsLocalParticlesInProximity(CurrentThreadPos).ParticlesKindsFoundInProximity)
+        for (const auto& ParticleKindFoundInProximityObject : LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity)
             for (const auto& ReactionIdNum : ParticlesKindsManagerObject.GetParticleKind(ParticleKindFoundInProximityObject.first).AssociatedChemicalReactions)
                 if (FindAndExecuteChosenReaction(ReactionIdNum, CurrentThreadPos) == true)
                     goto EndLoops;
@@ -538,7 +538,7 @@ void CellEngineSimulationSpace::FindAndExecuteRandomReactionVersion3(const Unsig
     {
         set<UnsignedInt> PossibleReactionsIdNums;
 
-        for (const auto& ParticleKindFoundInProximityObject : GetThreadsLocalParticlesInProximity(CurrentThreadPos).ParticlesKindsFoundInProximity)
+        for (const auto& ParticleKindFoundInProximityObject : LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity)
             for (const auto& ReactionIdNum : ParticlesKindsManagerObject.GetParticleKind(ParticleKindFoundInProximityObject.first).AssociatedChemicalReactions)
                 if (auto ReactionIter = ChemicalReactionsManagerObject.ChemicalReactionsPosFromId.find(ReactionIdNum); ReactionIter != ChemicalReactionsManagerObject.ChemicalReactionsPosFromId.end())
                     if (IsChemicalReactionPossible(ChemicalReactionsManagerObject.ChemicalReactions[ReactionIter->second], CurrentThreadPos) == true)
@@ -670,7 +670,7 @@ void CellEngineSimulationSpace::GenerateOneRandomReactionForSelectedSpace(Unsign
         PrepareRandomReaction();
 
         if (FindParticlesInProximityBool == false || (FindParticlesInProximityBool == true && FindParticlesInProximityOfSimulationSpaceForSelectedSpace(true, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, CurrentThreadPos) == true))
-            FindAndExecuteRandomReaction(min(GetThreadsLocalParticlesInProximity(CurrentThreadPos).ParticlesKindsFoundInProximity.size(), ChemicalReactionsManagerObject.MaxNumberOfReactants), CurrentThreadPos);
+            FindAndExecuteRandomReaction(min(LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity.size(), ChemicalReactionsManagerObject.MaxNumberOfReactants), CurrentThreadPos);
     }
     CATCH("generating random reaction for selected voxel space")
 }
@@ -682,7 +682,7 @@ void CellEngineSimulationSpace::GenerateOneRandomReactionForChosenParticle(const
         PrepareRandomReaction();
 
         if (FindParticlesInProximityOfVoxelSimulationSpaceForChosenParticle(ParticleObject, 20, CurrentThreadPos) == true)
-            FindAndExecuteRandomReaction(min(GetThreadsLocalParticlesInProximity(CurrentThreadPos).ParticlesKindsFoundInProximity.size(), ChemicalReactionsManagerObject.MaxNumberOfReactants), CurrentThreadPos);
+            FindAndExecuteRandomReaction(min(LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity.size(), ChemicalReactionsManagerObject.MaxNumberOfReactants), CurrentThreadPos);
     }
     CATCH("generating random reaction for particle")
 }
