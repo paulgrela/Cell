@@ -9,13 +9,13 @@
 
 using namespace std;
 
-bool CellEngineChemicalReactionsEngine::TryToMakeRandomChemicalReaction(UnsignedInt NumberOfReactants, UnsignedInt MaxNumberOfReactants, const CurrentThreadPosType& CurrentThreadPos)
+bool CellEngineChemicalReactionsEngine::TryToMakeRandomChemicalReaction(UnsignedInt NumberOfReactants, UnsignedInt MaxNumberOfReactants)
 {
     try
     {
         LoggersManagerObject.Log(STREAM(endl << "REACTION" << endl));
 
-        vector<UnsignedInt> RandomParticlesTypes = GetRandomParticles(NumberOfReactants, MaxNumberOfReactants, CurrentThreadPos);
+        vector<UnsignedInt> RandomParticlesTypes = GetRandomParticles(NumberOfReactants, MaxNumberOfReactants);
 
         sort(begin(RandomParticlesTypes), end(RandomParticlesTypes));
 
@@ -52,12 +52,12 @@ bool CellEngineChemicalReactionsEngine::TryToMakeRandomChemicalReaction(Unsigned
                 LoggersManagerObject.Log(STREAM("Reaction Position In Array = [" << to_string(ReactionIter->second) << "]" << endl));
                 LoggersManagerObject.Log(STREAM("Reaction Id Num = [" << to_string(ReactionObject.ReactionIdNum) << "]" << endl));
 
-                bool IsPossible = IsChemicalReactionPossible(ReactionObject, CurrentThreadPos);
+                bool IsPossible = IsChemicalReactionPossible(ReactionObject);
                 if (IsPossible == true)
                 {
                     LoggersManagerObject.Log(STREAM("REACTION POSSIBLE" << endl));
 
-                    return MakeChemicalReaction(ReactionObject, CurrentThreadPos);
+                    return MakeChemicalReaction(ReactionObject);
                 }
                 else
                     LoggersManagerObject.Log(STREAM("Reaction impossible!"));

@@ -60,7 +60,7 @@ void CellEngineChemicalReactionsInSimulationSpace::MakingZeroSizeForContainersFo
     CATCH("making zero size for containers for found particles in proximity")
 }
 
-void CellEngineChemicalReactionsInSimulationSpace::UpdateFoundNucleotidesForFoundParticlesInProximity(const UnsignedInt ParticleIndex, const CurrentThreadPosType& CurrentThreadPos)
+void CellEngineChemicalReactionsInSimulationSpace::UpdateFoundNucleotidesForFoundParticlesInProximity(const UnsignedInt ParticleIndex)
 {
     try
     {
@@ -111,7 +111,7 @@ void CellEngineChemicalReactionsInSimulationSpace::UpdateFoundNucleotidesForFoun
     CATCH("updating found nucleotides for found particles in proximity")
 }
 
-void CellEngineChemicalReactionsInSimulationSpace::SaveParticleFoundInProximity(const UniqueIdInt ParticleIndex, unordered_set<UnsignedInt>& FoundParticleIndexes, const bool UpdateNucleotides, const CurrentThreadPosType& CurrentThreadPos)
+void CellEngineChemicalReactionsInSimulationSpace::SaveParticleFoundInProximity(const UniqueIdInt ParticleIndex, unordered_set<UnsignedInt>& FoundParticleIndexes, const bool UpdateNucleotides)
 {
     try
     {
@@ -124,7 +124,7 @@ void CellEngineChemicalReactionsInSimulationSpace::SaveParticleFoundInProximity(
             Particle& ParticleFromIndex = GetParticleFromIndex(ParticleIndex);
 
             if (UpdateNucleotides == true)
-                UpdateFoundNucleotidesForFoundParticlesInProximity(ParticleIndex, CurrentThreadPos);
+                UpdateFoundNucleotidesForFoundParticlesInProximity(ParticleIndex);
 
             LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity[ParticleFromIndex.EntityId]++;
 
@@ -138,7 +138,7 @@ void CellEngineChemicalReactionsInSimulationSpace::SaveParticleFoundInProximity(
     CATCH("saving particle found in proximity")
 }
 
-bool CellEngineChemicalReactionsInSimulationSpace::FindParticlesInProximityOfSimulationSpaceForSelectedSpace(const bool UpdateNucleotides, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam, const CurrentThreadPosType& CurrentThreadPos)
+bool CellEngineChemicalReactionsInSimulationSpace::FindParticlesInProximityOfSimulationSpaceForSelectedSpace(const bool UpdateNucleotides, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
 {
     try
     {
@@ -146,7 +146,7 @@ bool CellEngineChemicalReactionsInSimulationSpace::FindParticlesInProximityOfSim
 
         MakingZeroSizeForContainersForFoundParticlesInProximity(CurrentThreadPos);
 
-        FindParticlesInProximityInSimulationSpaceForSelectedLocalSpace(FoundParticleIndexes, UpdateNucleotides, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, CurrentThreadPos);
+        FindParticlesInProximityInSimulationSpaceForSelectedLocalSpace(FoundParticleIndexes, UpdateNucleotides, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
 
         LoggersManagerObject.Log(STREAM(endl << "Number of Particles Kinds Found In Proximity = " << LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity.size()));
 
@@ -182,7 +182,7 @@ void CellEngineChemicalReactionsInSimulationSpace::PrintInformationAboutFoundPar
     CATCH("printing information found particles in proximity")
 }
 
-bool CellEngineChemicalReactionsInSimulationSpace::FindParticlesInProximityOfVoxelSimulationSpaceForChosenParticle(const Particle& ParticleObject, const UnsignedInt AdditionalBoundFactor, const CurrentThreadPosType& CurrentThreadPos)
+bool CellEngineChemicalReactionsInSimulationSpace::FindParticlesInProximityOfVoxelSimulationSpaceForChosenParticle(const Particle& ParticleObject, const UnsignedInt AdditionalBoundFactor)
 {
     try
     {
@@ -190,7 +190,7 @@ bool CellEngineChemicalReactionsInSimulationSpace::FindParticlesInProximityOfVox
 
         auto ParticleKindObject = ParticlesKindsManagerObject.GetParticleKind(ParticleObject.EntityId);
 
-        FindParticlesInProximityOfSimulationSpaceForSelectedSpace(true, ParticleObject.Center.X - ParticleKindObject.XSizeDiv2 - AdditionalBoundFactor, ParticleObject.Center.Y - ParticleKindObject.YSizeDiv2 - AdditionalBoundFactor, ParticleObject.Center.Z - ParticleKindObject.ZSizeDiv2 - AdditionalBoundFactor, 2 * ParticleKindObject.XSizeDiv2 + 2 * AdditionalBoundFactor, 2 * ParticleKindObject.YSizeDiv2 + 2 * AdditionalBoundFactor, 2 * ParticleKindObject.ZSizeDiv2 + 2 * AdditionalBoundFactor, CurrentThreadPos);
+        FindParticlesInProximityOfSimulationSpaceForSelectedSpace(true, ParticleObject.Center.X - ParticleKindObject.XSizeDiv2 - AdditionalBoundFactor, ParticleObject.Center.Y - ParticleKindObject.YSizeDiv2 - AdditionalBoundFactor, ParticleObject.Center.Z - ParticleKindObject.ZSizeDiv2 - AdditionalBoundFactor, 2 * ParticleKindObject.XSizeDiv2 + 2 * AdditionalBoundFactor, 2 * ParticleKindObject.YSizeDiv2 + 2 * AdditionalBoundFactor, 2 * ParticleKindObject.ZSizeDiv2 + 2 * AdditionalBoundFactor);
     }
     CATCH("finding particles in proximity of voxel simulation space for chosen particle")
 

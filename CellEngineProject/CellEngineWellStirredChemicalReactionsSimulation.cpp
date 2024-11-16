@@ -3,7 +3,7 @@
 #include "CellEngineParticlesKindsManager.h"
 #include "CellEngineWellStirredChemicalReactionsSimulation.h"
 
-std::vector<UnsignedInt> CellEngineWellStirredChemicalReactionsSimulation::GetRandomParticles(const UnsignedInt NumberOfReactants, UnsignedInt MaxNumberOfReactants, const CurrentThreadPosType& CurrentThreadPos)
+std::vector<UnsignedInt> CellEngineWellStirredChemicalReactionsSimulation::GetRandomParticles(const UnsignedInt NumberOfReactants, UnsignedInt MaxNumberOfReactants)
 {
     vector<UnsignedInt> RandomParticlesTypes;
 
@@ -28,7 +28,7 @@ std::vector<UnsignedInt> CellEngineWellStirredChemicalReactionsSimulation::GetRa
     return RandomParticlesTypes;
 }
 
-bool CellEngineWellStirredChemicalReactionsSimulation::MakeChemicalReaction(ChemicalReaction& ReactionObject, const CurrentThreadPosType& CurrentThreadPos)
+bool CellEngineWellStirredChemicalReactionsSimulation::MakeChemicalReaction(ChemicalReaction& ReactionObject)
 {
     try
     {
@@ -55,7 +55,7 @@ bool CellEngineWellStirredChemicalReactionsSimulation::MakeChemicalReaction(Chem
     return true;
 }
 
-bool CellEngineWellStirredChemicalReactionsSimulation::IsChemicalReactionPossible(const ChemicalReaction& ReactionObject, const CurrentThreadPosType& CurrentThreadPos)
+bool CellEngineWellStirredChemicalReactionsSimulation::IsChemicalReactionPossible(const ChemicalReaction& ReactionObject)
 {
     return all_of(ReactionObject.Reactants.cbegin(), ReactionObject.Reactants.cend(), [this](const ParticleKindForChemicalReaction& ReactionReactant){ return ReactionReactant.Counter <= ParticlesKindsManagerObject.ParticlesKinds[ReactionReactant.EntityId].Counter; });
 };
@@ -63,5 +63,5 @@ bool CellEngineWellStirredChemicalReactionsSimulation::IsChemicalReactionPossibl
 void CellEngineWellStirredChemicalReactionsSimulation::Run(UnsignedInt NumberOfSteps)
 {
     for (UnsignedInt Steps = 1; Steps <= NumberOfSteps; Steps++)
-        TryToMakeRandomChemicalReaction(2, 2, { 0, 0, 0 });
+        TryToMakeRandomChemicalReaction(2, 2);
 }

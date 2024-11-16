@@ -1,7 +1,7 @@
 
 #include "CellEngineNucleicAcidsChemicalReactionsInSimulationSpace.h"
 
-tuple<vector<ChainIdInt>, string> CellEngineNucleicAcidsChemicalReactionsInSimulationSpace::GetNucleotidesSequenceInBothDirections(const std::vector<UniqueIdInt>& NucleotidesFoundInProximity, const UnsignedInt SizeOfLoop, const CurrentThreadPosType& CurrentThreadPos)
+tuple<vector<ChainIdInt>, string> CellEngineNucleicAcidsChemicalReactionsInSimulationSpace::GetNucleotidesSequenceInBothDirections(const std::vector<UniqueIdInt>& NucleotidesFoundInProximity, const UnsignedInt SizeOfLoop)
 {
     string TemplateSequenceStr;
 
@@ -37,7 +37,7 @@ tuple<vector<ChainIdInt>, string> CellEngineNucleicAcidsChemicalReactionsInSimul
     return { TemplateSequence, TemplateSequenceStr };
 }
 
-tuple<vector<ChainIdInt>, string> CellEngineNucleicAcidsChemicalReactionsInSimulationSpace::GetNucleotidesSequenceFromRNAInOneParticle(const std::vector<UniqueIdInt>& NucleotidesFoundInProximity, const UnsignedInt SizeOfLoop, const CurrentThreadPosType& CurrentThreadPos)
+tuple<vector<ChainIdInt>, string> CellEngineNucleicAcidsChemicalReactionsInSimulationSpace::GetNucleotidesSequenceFromRNAInOneParticle(const std::vector<UniqueIdInt>& NucleotidesFoundInProximity, const UnsignedInt SizeOfLoop)
 {
     string TemplateSequenceStr;
 
@@ -58,7 +58,7 @@ tuple<vector<ChainIdInt>, string> CellEngineNucleicAcidsChemicalReactionsInSimul
     return { TemplateSequence, TemplateSequenceStr };
 }
 
-bool CellEngineNucleicAcidsChemicalReactionsInSimulationSpace::CompareFitnessOfDNASequenceByNucleotidesLoop(ComparisonType TypeOfComparison, const ParticleKindForChemicalReaction& ParticleKindForReactionObject, Particle& ParticleObjectTestedForReaction, const CurrentThreadPosType& CurrentThreadPos)
+bool CellEngineNucleicAcidsChemicalReactionsInSimulationSpace::CompareFitnessOfDNASequenceByNucleotidesLoop(ComparisonType TypeOfComparison, const ParticleKindForChemicalReaction& ParticleKindForReactionObject, Particle& ParticleObjectTestedForReaction)
 {
     bool FoundSequenceNotFit = false;
     bool SpecialCompareFunctionResult = true;
@@ -81,9 +81,9 @@ bool CellEngineNucleicAcidsChemicalReactionsInSimulationSpace::CompareFitnessOfD
             if (LocalThreadParticlesInProximityObject.RNANucleotidesFoundInProximity.empty() == false)
             {
                 if (CellEngineConfigDataObject.RNAInOneParticle == false)
-                    tie(TemplateSequence, TemplateSequenceStr) = GetNucleotidesSequenceInBothDirections(LocalThreadParticlesInProximityObject.RNANucleotidesFoundInProximity, LocalThreadParticlesInProximityObject.RNANucleotidesFoundInProximity.size(), CurrentThreadPos);
+                    tie(TemplateSequence, TemplateSequenceStr) = GetNucleotidesSequenceInBothDirections(LocalThreadParticlesInProximityObject.RNANucleotidesFoundInProximity, LocalThreadParticlesInProximityObject.RNANucleotidesFoundInProximity.size());
                 else
-                    tie(TemplateSequence, TemplateSequenceStr) = GetNucleotidesSequenceFromRNAInOneParticle(LocalThreadParticlesInProximityObject.RNANucleotidesFoundInProximity, LocalThreadParticlesInProximityObject.RNANucleotidesFoundInProximity.size(), CurrentThreadPos);
+                    tie(TemplateSequence, TemplateSequenceStr) = GetNucleotidesSequenceFromRNAInOneParticle(LocalThreadParticlesInProximityObject.RNANucleotidesFoundInProximity, LocalThreadParticlesInProximityObject.RNANucleotidesFoundInProximity.size());
 
                 if (TemplateSequenceStr.empty() == true)
                     return false;

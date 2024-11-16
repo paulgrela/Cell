@@ -4,7 +4,7 @@
 #include "CellEngineExecutionTimeStatistics.h"
 #include "CellEngineChemicalReactionsInVoxelSimulationSpace.h"
 
-void CellEngineChemicalReactionsInVoxelSimulationSpace::FindParticlesInProximityInSimulationSpaceForSelectedLocalSpace(std::unordered_set<UnsignedInt>& FoundParticleIndexes, bool UpdateNucleotides, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam, const CurrentThreadPosType& CurrentThreadPos)
+void CellEngineChemicalReactionsInVoxelSimulationSpace::FindParticlesInProximityInSimulationSpaceForSelectedLocalSpace(std::unordered_set<UnsignedInt>& FoundParticleIndexes, bool UpdateNucleotides, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam)
 {
     try
     {
@@ -18,12 +18,12 @@ void CellEngineChemicalReactionsInVoxelSimulationSpace::FindParticlesInProximity
                         {
                             if (CurrentThreadIndex == 0)
                             {
-                                SaveParticleFoundInProximity(GetSpaceVoxel(PosX, PosY, PosZ), FoundParticleIndexes, UpdateNucleotides, CurrentThreadPos);
+                                SaveParticleFoundInProximity(GetSpaceVoxel(PosX, PosY, PosZ), FoundParticleIndexes, UpdateNucleotides);
                             }
                             else
                             {
                                 if (ParticlesForThreads.contains(GetSpaceVoxel(PosX, PosY, PosZ)))
-                                    SaveParticleFoundInProximity(GetSpaceVoxel(PosX, PosY, PosZ), FoundParticleIndexes, UpdateNucleotides, CurrentThreadPos);
+                                    SaveParticleFoundInProximity(GetSpaceVoxel(PosX, PosY, PosZ), FoundParticleIndexes, UpdateNucleotides);
                             }
                         }
 
