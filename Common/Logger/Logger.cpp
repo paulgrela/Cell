@@ -259,7 +259,7 @@ void Logger::LogMessageBool(const string& MessageStr, const bool LogLineInfo, co
 		string LocalMessageStr;
 		uint64_t LineNumberInCommonLog;
 
-		lock_guard<mutex> LockGuardObject{ LogMessageCoutMutexObject };
+		lock_guard LockGuardObject{ LogMessageCoutMutexObject };
 
 		LineNumberInCommonLog = LoggersManagerObject.LoggerMainObjectPointer->LineNumberInLog;
 		LoggersManagerObject.LoggerMainObjectPointer->LineNumberInLog++;
@@ -427,7 +427,7 @@ void LoggersManager::LogMessageBool(const string& MessageStr, const bool LogLine
                 else
                 {
                     {
-                        lock_guard<mutex> CreateNewLoggerForThreadLockGuardMutexObject{ CreateNewLoggerForThreadMutexObject };
+                        lock_guard CreateNewLoggerForThreadLockGuardMutexObject{ CreateNewLoggerForThreadMutexObject };
 
                         auto FoundLoggerIterator = LoggersThreadsObjectsPointersMap.find(CurrentThreadId);
 

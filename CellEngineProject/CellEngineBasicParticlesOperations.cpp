@@ -10,7 +10,6 @@ void  CellEngineBasicParticlesOperations::InitiateFreeParticleIndexes()
 {
     try
     {
-                                                                                                                        //std::lock_guard<std::shared_mutex> LockGuardObject{ MainParticlesSharedMutexObject };
         FreeIndexesOfParticles = {};
 
         for (UnsignedInt FreeIndex = MaxParticleIndex + 100'000'000; FreeIndex >= MaxParticleIndex + 1; FreeIndex--)
@@ -54,8 +53,6 @@ void CellEngineBasicParticlesOperations::GetMinMaxCoordinatesForAllParticles(con
 {
     try
     {
-                                                                                                                        //std::lock_guard<std::shared_mutex> LockGuardObject{ MainParticlesSharedMutexObject };
-
         for (auto& ParticleObject : Particles)
             if (ParticleObject.second.EntityId != 0)
                 GetMinMaxCoordinatesForParticle(ParticleObject.second, UpdateParticleKindListOfVoxelsBool);
@@ -106,7 +103,6 @@ vector<UniqueIdInt> CellEngineBasicParticlesOperations::GetAllParticlesWithChose
 
     try
     {
-                                                                                                                        //std::lock_guard<std::shared_mutex> LockGuardObject{ MainParticlesSharedMutexObject };
         ListOfParticlesIndexes.reserve(1024 * 1024);
         for (const auto& ParticleObject : Particles)
             if (ParticleObject.second.EntityId != 0)
@@ -129,7 +125,6 @@ vector<UniqueIdInt> CellEngineBasicParticlesOperations::GetAllParticlesWithChose
 
     try
     {
-                                                                                                                        //std::lock_guard<std::shared_mutex> LockGuardObject{ MainParticlesSharedMutexObject };
         ListOfParticlesIndexes.reserve(1024 * 1024);
         for (auto& ParticleObject : Particles)
             if (ParticleObject.second.EntityId == EntityId)
@@ -146,7 +141,6 @@ UnsignedInt CellEngineBasicParticlesOperations::GetNumberOfParticlesWithChosenEn
 
     try
     {
-                                                                                                                        //std::lock_guard<std::shared_mutex> LockGuardObject{ MainParticlesSharedMutexObject };
         for (auto& ParticleObject : Particles)
             if (ParticleObject.second.EntityId == EntityId)
                 ParticleCounter++;

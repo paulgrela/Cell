@@ -13,8 +13,7 @@ void CellEngineSimulationSpaceStatistics::MakeSimulationStepNumberZeroForStatist
 {
     try
     {
-        //std::lock_guard<std::mutex> LockGuardObject{ MainStatisticsMutexObject };
-        std::lock_guard<std::shared_mutex> LockGuardObject{ MainStatisticsSharedMutexObject };
+        std::lock_guard LockGuardObject{ MainStatisticsSharedMutexObject };
 
         SimulationStepNumber = 0;
 
@@ -40,8 +39,7 @@ void CellEngineSimulationSpaceStatistics::GenerateNewEmptyElementsForContainersF
 {
     try
     {
-        //std::lock_guard<std::mutex> LockGuardObject{ MainStatisticsMutexObject };
-        std::lock_guard<std::shared_mutex> LockGuardObject{ MainStatisticsSharedMutexObject };
+        std::lock_guard LockGuardObject{ MainStatisticsSharedMutexObject };
 
         ParticlesSnapshots.emplace_back();
 
@@ -84,8 +82,7 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesAsCopiedMap()
 {
     try
     {
-        //std::lock_guard<std::mutex> LockGuardObject{ MainStatisticsMutexObject };
-        std::lock_guard<std::shared_mutex> LockGuardObject{ MainStatisticsSharedMutexObject };
+        std::lock_guard LockGuardObject{ MainStatisticsSharedMutexObject };
 
         ParticlesSnapshotsCopiedUnorderedMap.emplace_back(Particles);
     }
@@ -96,8 +93,7 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesAsVectorElements()
 {
     try
     {
-        //std::lock_guard<std::mutex> LockGuardObject{ MainStatisticsMutexObject };
-        std::lock_guard<std::shared_mutex> LockGuardObject{ MainStatisticsSharedMutexObject };
+        std::lock_guard LockGuardObject{ MainStatisticsSharedMutexObject };
 
         ParticlesSnapshots[SimulationStepNumber - 1].reserve(Particles.size());
 
@@ -110,8 +106,7 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesAsSortedVectorElements()
 {
     try
     {
-        //std::lock_guard<std::mutex> LockGuardObject{ MainStatisticsMutexObject };
-        std::lock_guard<std::shared_mutex> LockGuardObject{ MainStatisticsSharedMutexObject };
+        std::lock_guard LockGuardObject{ MainStatisticsSharedMutexObject };
 
         ParticlesKindsSnapshotsCopiedMap[SimulationStepNumber - 1].clear();
 
@@ -144,8 +139,7 @@ void CellEngineSimulationSpaceStatistics::SaveReactionForStatistics(const Chemic
 {
     try
     {
-        //std::lock_guard<std::mutex> LockGuardObject{ MainStatisticsMutexObject };
-        std::lock_guard<std::shared_mutex> LockGuardObject{ MainStatisticsSharedMutexObject };
+        std::lock_guard LockGuardObject{ MainStatisticsSharedMutexObject };
 
         auto ReactionIter = SavedReactionsMap[SimulationStepNumber - 1].find(ReactionParam.ReactionIdNum);
 
@@ -161,7 +155,7 @@ void CellEngineSimulationSpaceStatistics::GetNumberOfParticlesFromParticleKind(c
 {
     try
     {
-        shared_lock<shared_mutex> LockGuardObject{ MainStatisticsSharedMutexObject };
+        shared_lock LockGuardObject{ MainStatisticsSharedMutexObject };
 
         auto FoundResult = find_if(ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber - 1].begin(), ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber - 1].end(), [ParticleKindId](const auto& P){ return P.EntityId == ParticleKindId; });
         if (FoundResult != ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber - 1].end())

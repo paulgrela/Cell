@@ -18,7 +18,7 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
 
             TemporaryRenderedAtomsList.clear();
 
-            lock_guard<mutex> LockGuardObject{ CellEngineDataFileObjectPointer->ChosenStructureMutexObject };
+            lock_guard LockGuardObject{ CellEngineDataFileObjectPointer->ChosenStructureMutexObject };
 
             for (auto ParticlesCenterIterator = ParticlesCenters.begin(); ParticlesCenterIterator != ParticlesCenters.end(); ++ParticlesCenterIterator)
             {

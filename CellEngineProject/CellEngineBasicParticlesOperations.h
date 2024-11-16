@@ -15,8 +15,6 @@
 class CellEngineBasicParticlesOperations
 {
 protected:
-    static inline std::mutex MainParticlesMutexObject;
-    static inline std::shared_mutex MainParticlesSharedMutexObject;
     static inline std::mutex MainParticlesIndexesMutexObject;
 public:
     ThreadIdType CurrentThreadIndex{ 0 };
@@ -32,9 +30,6 @@ protected:
 protected:
     inline Particle& GetParticleFromIndex(const UniqueIdInt ParticleIndex)
     {
-        //std::shared_lock<std::shared_mutex> LockGuardObject{ MainParticlesSharedMutexObject };
-        //std::lock_guard<std::mutex> LockGuardObject{ MainParticlesMutexObject };
-
         if (CurrentThreadIndex == 0)
             return Particles[ParticleIndex];
         else
@@ -44,6 +39,7 @@ protected:
             else
             {
                 std::cout << "NO PARTICLE INDEX 1 = " << ParticleIndex << std::endl;
+                LoggersManagerObject.Log(STREAM("NO PARTICLE INDEX 1 = " << ParticleIndex << std::endl));
                 return ParticlesForThreads[1];
             }
         }
@@ -59,7 +55,8 @@ protected:
             else
             {
                 std::cout << "NO PARTICLE INDEX 2 = " << ParticleIndex << std::endl;
-                return ParticlesForThreads[ParticleIndex];
+                LoggersManagerObject.Log(STREAM("NO PARTICLE INDEX 2 = " << ParticleIndex << std::endl));
+                return ParticlesForThreads[1];
             }
         }
     }
@@ -90,24 +87,8 @@ protected:
         }
     }
 public:
-    // UniqueIdInt AddNewParticleInCurrentThread(const Particle& ParticleParam)
-    // {
-    //     ParticlesForThreads[ParticleParam.Index] = ParticleParam;
-    //     return MaxParticleIndex = ParticleParam.Index;
-    // }
-
     UniqueIdInt AddNewParticle(const Particle& ParticleParam)
     {
-        //std::lock_guard<std::mutex> LockGuardObject{ MainParticlesMutexObject };
-        //std::lock_guard<std::shared_mutex> LockGuardObject{ MainParticlesSharedMutexObject };
-        // Particles[ParticleParam.Index] = ParticleParam;
-        // MaxParticleIndex = ParticleParam.Index;
-        // return MaxParticleIndex;
-
-        // if (CellEngineParticlesVoxelsOperations::SetMutexBool == false)
-        //     Particles[ParticleParam.Index] = ParticleParam;
-        // else
-        //     ParticlesForThreads[ParticleParam.Index] = ParticleParam;
         if (CurrentThreadIndex == 0)
         {
             Particles[ParticleParam.Index] = ParticleParam;
@@ -137,7 +118,6 @@ protected:
 protected:
     explicit CellEngineBasicParticlesOperations(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : Particles(ParticlesParam)
     {
-        //ConstructParticlesForMultiThreadedExecution();
     }
 public:
     virtual ~CellEngineBasicParticlesOperations() = default;

@@ -18,19 +18,14 @@ void CellEngineChemicalReactionsInSimulationSpace::RemoveParticle(const UniqueId
     {
         Particle& ParticleObject = GetParticleFromIndex(ParticleIndex);
 
-        //lock_guard<shared_mutex> LockGuardObject{ MainParticlesSharedMutexObject };
-        //lock_guard<mutex> LockGuardObject{ MainParticlesMutexObject };
-
         CutDNAPrev(&ParticleObject);
         CutDNANext(&ParticleObject);
         SeparateTwoPairedDNANucleotides(&ParticleObject);
         DeleteLinkedParticlesPointersList(ParticleObject);
         ClearSpaceForParticle(ParticleObject, ClearVoxels);
 
-        std::lock_guard<std::mutex> LockGuardObject{ MainParticlesIndexesMutexObject };
+        lock_guard LockGuardObject{ MainParticlesIndexesMutexObject };
         FreeIndexesOfParticles.push(ParticleIndex);
-
-        //Particles.erase(ParticleIndex);
 
         if (CurrentThreadIndex == 0)
             Particles.erase(ParticleIndex);

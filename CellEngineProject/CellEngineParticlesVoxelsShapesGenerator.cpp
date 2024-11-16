@@ -9,10 +9,6 @@ void CellEngineParticlesVoxelsShapesGenerator::SetValueToSpaceVoxelWithFillingLi
     {
         if (FilledSpaceVoxels != nullptr)
             FilledSpaceVoxels->emplace_back(PosX, PosY, PosZ);
-
-        // if (PosX > CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension || PosY > CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension || PosZ > CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension)
-        //     cout << "Wrong value in SetValueToSpaceVoxelWithFillingListOfVoxels" << " " << PosX << " " << PosY << " " << PosZ << endl;
-        // else
         if (PosX < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension && PosY < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension && PosZ < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension)
             GetSpaceVoxel(PosX, PosY, PosZ) = VoxelValue;
     }

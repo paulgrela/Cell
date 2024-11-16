@@ -32,6 +32,9 @@
 class CellEngineSimulationSpace : public CellEngineChemicalReactionsEngine, public CellEngineIllinoisDataCreator, public CellEngineCompiledDataCreator, virtual public CellEngineChemicalReactionsInSimulationSpace, public CellEngineSimulationSpaceStatistics
 {
 private:
+    UnsignedInt ErrorCounter;
+    UnsignedInt AddedParticlesInReactions;
+private:
     static inline std::mutex MainParticlesExchangeMutexObject;
     static inline std::mutex MainCountingErrorMutexObject;
 private:
@@ -68,7 +71,7 @@ public:
     void GenerateOneStepOfRandomReactionsForAllParticles(const CurrentThreadPosType& CurrentThreadPos);
 public:
     void GenerateOneStepOfSimulationForWholeCellSpaceInOneThread(UnsignedInt NumberOfStepsInside, UnsignedInt StepOutside, UnsignedInt ThreadXIndex, UnsignedInt ThreadYIndex, UnsignedInt ThreadZIndex);
-    void GenerateNStepsOfSimulationForWholeCellSpaceInThreads(UnsignedInt NumberOfStepsOutside, UnsignedInt NumberOfStepsInside) const;
+    void GenerateNStepsOfSimulationForWholeCellSpaceInThreads(UnsignedInt NumberOfStepsOutside, UnsignedInt NumberOfStepsInside);
 public:
     void GenerateOneStepOfRandomReactionsForSelectedRangeOfParticles(UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam, const CurrentThreadPosType& CurrentThreadPos);
     void GenerateOneStepOfRandomReactionsForOneParticleFromRangeOfParticles(UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam, UnsignedInt ShiftIndexOfChosenParticle, const CurrentThreadPosType& CurrentThreadPos);
