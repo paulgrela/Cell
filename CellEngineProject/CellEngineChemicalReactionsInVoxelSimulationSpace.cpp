@@ -17,14 +17,10 @@ void CellEngineChemicalReactionsInVoxelSimulationSpace::FindParticlesInProximity
                         if (GetSpaceVoxel(PosX, PosY, PosZ) != GetZeroSimulationSpaceVoxel())
                         {
                             if (CurrentThreadIndex == 0)
-                            {
                                 SaveParticleFoundInProximity(GetSpaceVoxel(PosX, PosY, PosZ), FoundParticleIndexes, UpdateNucleotides);
-                            }
                             else
-                            {
-                                if (ParticlesForThreads.contains(GetSpaceVoxel(PosX, PosY, PosZ)))
-                                    SaveParticleFoundInProximity(GetSpaceVoxel(PosX, PosY, PosZ), FoundParticleIndexes, UpdateNucleotides);
-                            }
+                            if (ParticlesForThreads.contains(GetSpaceVoxel(PosX, PosY, PosZ)))
+                                SaveParticleFoundInProximity(GetSpaceVoxel(PosX, PosY, PosZ), FoundParticleIndexes, UpdateNucleotides);
                         }
 
         const auto stop_time = chrono::high_resolution_clock::now();

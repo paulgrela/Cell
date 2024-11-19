@@ -27,8 +27,6 @@
 
 using namespace std;
 
-//constexpr CurrentThreadPosType MainThreadPos = { 0, 0, 0 };
-
 class CellEngineImGuiMenu
 {
 public:
@@ -814,9 +812,10 @@ public:
                     ImGui::RadioButton("Only Diffusion", &TypeOfSimulation, 3);
                     CellEngineConfigDataObject.TypeOfSimulation = static_cast<CellEngineConfigData::TypesOfSimulation>(TypeOfSimulation);
                     ImGui::Text("");
+
                     ColorButton(AlignString("START N STEPS OF SIMULATION FOR WHOLE CELL SPACE IN THREADS", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
                     {
-                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->FirstSendParticlesForThreads(true);
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->FirstSendParticlesForThreads(false, true);
                     });
                     ColorButton(AlignString("MAKE N STEPS OF SIMULATION FOR WHOLE CELL SPACE IN THREADS", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
                     {
@@ -826,6 +825,15 @@ public:
                     {
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GatherParticlesForThreadsInMainParticles();;
                     });
+
+                    ImGui::Text("");
+
+                    ColorButton(AlignString("MAKE FULL N STEPS OF SIMULATION FOR WHOLE CELL SPACE IN THREADS", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
+                    {
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateNStepsOfSimulationWithSendingParticlesToThreadsAndGatheringParticlesToMainThreadForWholeCellSpace(CellEngineConfigDataObject.NumberOfStepsInSimulationOutside, CellEngineConfigDataObject.NumberOfStepsInSimulationInside, true);
+                    });
+
+                    ImGui::Text("");
 
                     if (ImGui::Button(AlignString("PRINT CHEMICAL REACTIONS", StringLength).c_str()) == true)
                         ChemicalReactionsManagerObject.PrintChemicalReactions();

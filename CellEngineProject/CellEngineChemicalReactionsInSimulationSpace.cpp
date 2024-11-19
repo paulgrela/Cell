@@ -23,8 +23,6 @@ void CellEngineChemicalReactionsInSimulationSpace::RemoveParticle(const UniqueId
         SeparateTwoPairedDNANucleotides(&ParticleObject);
         DeleteLinkedParticlesPointersList(ParticleObject);
         ClearSpaceForParticle(ParticleObject, ClearVoxels);
-
-        lock_guard LockGuardObject{ MainParticlesIndexesMutexObject };
         FreeIndexesOfParticles.push(ParticleIndex);
 
         if (CurrentThreadIndex == 0)

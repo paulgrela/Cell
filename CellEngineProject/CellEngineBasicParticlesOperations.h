@@ -14,8 +14,6 @@
 
 class CellEngineBasicParticlesOperations
 {
-protected:
-    static inline std::mutex MainParticlesIndexesMutexObject;
 public:
     ThreadIdType CurrentThreadIndex{ 0 };
     CurrentThreadPosType CurrentThreadPos{ 1, 1, 1 };
@@ -47,17 +45,13 @@ protected:
 public:
     [[nodiscard]] UniqueIdInt GetFreeIndexesOfParticleSize() const
     {
-        std::lock_guard<std::mutex> LockGuardObject{ MainParticlesIndexesMutexObject };
-
         return FreeIndexesOfParticles.size();
     }
 protected:
-    void InitiateFreeParticleIndexes();
+    void InitiateFreeParticleIndexes(const std::unordered_map<UniqueIdInt, Particle>& LocalParticles);
 protected:
     inline UniqueIdInt GetNewFreeIndexOfParticle()
     {
-        std::lock_guard<std::mutex> LockGuardObject{ MainParticlesIndexesMutexObject };
-
         if (FreeIndexesOfParticles.empty() == false)
         {
             UniqueIdInt FreeIndexOfParticle = FreeIndexesOfParticles.top();

@@ -6,15 +6,19 @@
 
 using namespace std;
 
-void  CellEngineBasicParticlesOperations::InitiateFreeParticleIndexes()
+void  CellEngineBasicParticlesOperations::InitiateFreeParticleIndexes(const std::unordered_map<UniqueIdInt, Particle>& LocalParticles)
 {
     try
     {
+        LoggersManagerObject.Log(STREAM("Scope of particle indexes for current thread = (" << to_string((CurrentThreadIndex + 1) * ParticleIndexesCreatorFactor - 1) << " , " << to_string(CurrentThreadIndex * ParticleIndexesCreatorFactor) << ") LocalParticles.size() = " << LocalParticles.size()));
+
         FreeIndexesOfParticles = {};
 
-        for (UnsignedInt FreeIndex = MaxParticleIndex + 100'000'000; FreeIndex >= MaxParticleIndex + 1; FreeIndex--)
-            if (Particles.find(FreeIndex) == Particles.end())
+        for (UniqueIdInt FreeIndex = (CurrentThreadIndex + 1) * ParticleIndexesCreatorFactor - 1; FreeIndex > CurrentThreadIndex * ParticleIndexesCreatorFactor; FreeIndex--)
+            if (!LocalParticles.contains(FreeIndex))
                 FreeIndexesOfParticles.push(FreeIndex);
+
+        LoggersManagerObject.Log(STREAM("FreeIndexesOfParticles.size() = " << FreeIndexesOfParticles.size()));
     }
     CATCH("initiating free particle indexes")
 }
@@ -23,7 +27,7 @@ void CellEngineBasicParticlesOperations::PreprocessData(const bool UpdateParticl
 {
     try
     {
-        InitiateFreeParticleIndexes();
+        InitiateFreeParticleIndexes(Particles);
         GetMinMaxCoordinatesForAllParticles(UpdateParticleKindListOfVoxelsBool);
     }
     CATCH("preprocessing data for voxel simulation space")
