@@ -25,10 +25,7 @@ void CellEngineChemicalReactionsInSimulationSpace::RemoveParticle(const UniqueId
         ClearSpaceForParticle(ParticleObject, ClearVoxels);
         FreeIndexesOfParticles.push(ParticleIndex);
 
-        if (CurrentThreadIndex == 0)
-            Particles.erase(ParticleIndex);
-        else
-            ParticlesForThreads.erase(ParticleIndex);
+        GetParticles().erase(ParticleIndex);
     }
     CATCH("removing particle")
 }
@@ -150,7 +147,8 @@ bool CellEngineChemicalReactionsInSimulationSpace::FindParticlesInProximityOfSim
 
         if (LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity.empty() == false)
         {
-            //sort(ParticlesSortedByCapacityFoundInProximity.begin(), ParticlesSortedByCapacityFoundInProximity.end(), [this](const UnsignedInt PK1, const UnsignedInt PK2) { return GetParticleFromIndex(PK1).ListOfVoxels.size() > GetParticleFromIndex(PK2).ListOfVoxels.size(); });
+            if (AdditionalSortPartcilesInProximityByCapacity == true)
+                sort(LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity.begin(), LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity.end(), [this](const UnsignedInt PK1, const UnsignedInt PK2) { return GetParticleFromIndex(PK1).ListOfVoxels.size() > GetParticleFromIndex(PK2).ListOfVoxels.size(); });
             PrintInformationAboutFoundParticlesInProximity(CurrentThreadPos);
         }
         else

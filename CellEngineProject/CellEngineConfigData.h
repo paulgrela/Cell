@@ -101,6 +101,8 @@ public:
     UnsignedInt NumberOfYVoxelsInOneSectorInOneThreadInVoxelSimulationSpace = 32;
     UnsignedInt NumberOfZVoxelsInOneSectorInOneThreadInVoxelSimulationSpace = 32;
 public:
+    UnsignedInt StepToChangeVoxelSpaceDivisionForThreads = 2;
+public:
     double RadiusOfCellForDNA{};
 public:
     enum class SelectedSpaceStartParametersDrawTypes : UnsignedInt

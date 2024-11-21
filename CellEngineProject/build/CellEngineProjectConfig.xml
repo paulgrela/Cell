@@ -3149,6 +3149,8 @@
                         <NumberOfYVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>32</NumberOfYVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>
                         <NumberOfZVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>32</NumberOfZVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>
 
+                        <StepToChangeVoxelSpaceDivisionForThreads>5</StepToChangeVoxelSpaceDivisionForThreads>
+
                         <RadiusOfCellForDNA>380</RadiusOfCellForDNA>
 
 			<CellStateFileName>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile33.dat</CellStateFileName>
@@ -3852,6 +3854,8 @@
                         <NumberOfXVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>16</NumberOfXVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>
                         <NumberOfYVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>16</NumberOfYVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>
                         <NumberOfZVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>16</NumberOfZVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>
+
+                        <StepToChangeVoxelSpaceDivisionForThreads>2</StepToChangeVoxelSpaceDivisionForThreads>
 
                         <RadiusOfCellForDNA>95</RadiusOfCellForDNA>
 

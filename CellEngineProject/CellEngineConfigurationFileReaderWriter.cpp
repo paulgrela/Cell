@@ -170,6 +170,9 @@ void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const ch
                             if (CellStatePropertyTreeElement.second.get_child_optional("NumberOfZVoxelsInOneSectorInOneThreadInVoxelSimulationSpace"))
                                 CellEngineConfigDataObject.NumberOfZVoxelsInOneSectorInOneThreadInVoxelSimulationSpace = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfZVoxelsInOneSectorInOneThreadInVoxelSimulationSpace");
 
+                            if (CellStatePropertyTreeElement.second.get_child_optional("StepToChangeVoxelSpaceDivisionForThreads"))
+                                CellEngineConfigDataObject.StepToChangeVoxelSpaceDivisionForThreads = CellStatePropertyTreeElement.second.get<UnsignedInt>("StepToChangeVoxelSpaceDivisionForThreads");
+
                             CellEngineConfigDataObject.RadiusOfCellForDNA = CellStatePropertyTreeElement.second.get<double>("RadiusOfCellForDNA");
                         }
 

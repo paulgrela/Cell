@@ -17,6 +17,9 @@ constexpr EntityIdInt StartReactionId = 10000;
 
 constexpr UniqueIdInt ParticleIndexesCreatorFactor = 10'000'000;
 
+constexpr bool AdditionalSortPartcilesInProximityByCapacity = false;
+
+
 constexpr UnsignedInt GenomeLength = 543380;
 
 constexpr ChainIdInt ACode = 1;

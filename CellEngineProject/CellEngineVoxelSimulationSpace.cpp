@@ -40,6 +40,8 @@ CellEngineVoxelSimulationSpace::CellEngineVoxelSimulationSpace(std::unordered_ma
         CurrentThreadIndex = ThreadIndexParam;
         CurrentThreadPos = CurrentThreadPosParam;
 
+        LoggersManagerObject.Log(STREAM("CurrentThreadIndexes = " << CurrentThreadIndex << " (" << CurrentThreadPos.ThreadPosX << "," << CurrentThreadPos.ThreadPosY << "," << CurrentThreadPos.ThreadPosZ << ")" << std::endl));
+
         if (GetMemoryForVoxelSpace == true)
         {
             SpacePointer = malloc(sizeof(Space_2048_2048_2048));

@@ -862,11 +862,11 @@ void CellEngineSimulationSpace::GenerateNStepsOfOneRandomReactionForBigPartOfCel
 
 void LogCenterOfParticleWithThreadIndex(const Particle& ParticleObject, const ThreadIdType ThreadXIndex, const ThreadIdType ThreadYIndex, const ThreadIdType ThreadZIndex)
 {
-    LoggersManagerObject.Log(STREAM("Center: " << ParticleObject.Center.X << ParticleObject.Center.Y << ParticleObject.Center.Z << endl));
+    LoggersManagerObject.Log(STREAM("Center: " << ParticleObject.Center.X << " " << ParticleObject.Center.Y << " " << ParticleObject.Center.Z << endl));
     LoggersManagerObject.Log(STREAM("THREAD POS = " << ThreadXIndex << ", " << ThreadYIndex << ", " << ThreadZIndex << endl));
     LoggersManagerObject.Log(STREAM(endl));
 
-    cout << "Center: " << ParticleObject.Center.X << ParticleObject.Center.Y << ParticleObject.Center.Z << endl;
+    cout << "Center: " << ParticleObject.Center.X << " " << ParticleObject.Center.Y << " " << ParticleObject.Center.Z << endl;
     cout << "THREAD POS = " << ThreadXIndex << ", " << ThreadYIndex << ", " << ThreadZIndex << endl;
     cout << endl;
 }
@@ -894,41 +894,49 @@ void CellEngineSimulationSpace::FirstSendParticlesForThreads(const bool PrintCen
             CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceForThreadsObjectsPointer[ThreadXIndex][ThreadYIndex][ThreadZIndex]->ParticlesForThreads.insert({ ParticleObject.first, ParticleObject.second });
         }
 
-        const auto stop_time = chrono::high_resolution_clock::now();
-
-        if (PrintTime == true)
-            LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "First sending particles to threads has taken time = ","Execution in threads")));
-
         for (UnsignedInt ThreadXIndex = 1; ThreadXIndex <= CellEngineConfigDataObject.NumberOfXThreadsInSimulation; ThreadXIndex++)
             for (UnsignedInt ThreadYIndex = 1; ThreadYIndex <= CellEngineConfigDataObject.NumberOfYThreadsInSimulation; ThreadYIndex++)
                 for (UnsignedInt ThreadZIndex = 1; ThreadZIndex <= CellEngineConfigDataObject.NumberOfZThreadsInSimulation; ThreadZIndex++)
                 {
-                    InitiateFreeParticleIndexes(CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceForThreadsObjectsPointer[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->ParticlesForThreads);
+                    InitiateFreeParticleIndexes(CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceForThreadsObjectsPointer[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->ParticlesForThreads, false);
 
-                    LoggersManagerObject.Log(STREAM("THREAD[" << ThreadXIndex << "," << ThreadYIndex << "," << ThreadZIndex << "] SIZE = " << CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceForThreadsObjectsPointer[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->ParticlesForThreads.size()));
+                    if (PrintCenterOfParticleWithThreadIndex == true)
+                        LoggersManagerObject.Log(STREAM("THREAD[" << ThreadXIndex << "," << ThreadYIndex << "," << ThreadZIndex << "] SIZE = " << CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceForThreadsObjectsPointer[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->ParticlesForThreads.size()));
                 }
+
+        const auto stop_time = chrono::high_resolution_clock::now();
+
+        if (PrintTime == true)
+            LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "First sending particles to threads has taken time = ","Execution in threads")));
     }
     CATCH("first sending particles for threads")
 }
 
-void PrintThreadIndexes(const ThreadIdType CurrentThreadIndex, const UnsignedInt ThreadXIndex, const UnsignedInt ThreadYIndex, const UnsignedInt ThreadZIndex, const UnsignedInt ThreadXIndexNew, const UnsignedInt ThreadYIndexNew, const UnsignedInt ThreadZIndexNew)
+void PrintThreadIndexes(const Particle& ParticleObject, const ThreadIdType CurrentThreadIndex, const UnsignedInt ThreadXIndex, const UnsignedInt ThreadYIndex, const UnsignedInt ThreadZIndex, const UnsignedInt ThreadXIndexNew, const UnsignedInt ThreadYIndexNew, const UnsignedInt ThreadZIndexNew)
 {
-    LoggersManagerObject.Log(STREAM("Current Thread: " << CurrentThreadIndex << endl));
-    LoggersManagerObject.Log(STREAM("Center: " << ThreadXIndexNew << ThreadYIndexNew << ThreadZIndexNew << endl));
+    LoggersManagerObject.Log(STREAM("Particle Center: " << ParticleObject.Index << " " << ParticleObject.Center.X << ParticleObject.Center.Y << ParticleObject.Center.Z << endl));
+    LoggersManagerObject.Log(STREAM("THREAD POS NEW = " << ThreadXIndexNew << ThreadYIndexNew << ThreadZIndexNew << endl));
     LoggersManagerObject.Log(STREAM("THREAD POS = " << ThreadXIndex << ", " << ThreadYIndex << ", " << ThreadZIndex << endl));
     LoggersManagerObject.Log(STREAM(endl));
 
-    cout << "Current Thread: " << CurrentThreadIndex << endl;
-    cout << "Center: " << ThreadXIndexNew << ThreadYIndexNew << ThreadZIndexNew << endl;
+    cout << "Particle Center: " << ParticleObject.Index << " " << ParticleObject.Center.X << " " << ParticleObject.Center.Y << " " << ParticleObject.Center.Z << " " << ParticlesKindsManagerObject.ConvertParticleTypeToString(ParticlesKindsManagerObject.GetParticleKind(ParticleObject.EntityId).ParticleKindSpecialDataSector[0].ParticleType) << endl;
+    cout << "THREAD POS NEW = " << ThreadXIndexNew << " " << ThreadYIndexNew << " " << ThreadZIndexNew << endl;
     cout << "THREAD POS = " << ThreadXIndex << ", " << ThreadYIndex << ", " << ThreadZIndex << endl;
     cout << endl;
 }
 
-void CellEngineSimulationSpace::ExchangeParticlesBetweenThreads(const UnsignedInt StepOutside) const
+inline UnsignedInt StepToChangeVoxelSpaceDivisionForThreads(const UnsignedInt StepOutside)
+{
+    return !(StepOutside % CellEngineConfigDataObject.StepToChangeVoxelSpaceDivisionForThreads);
+}
+
+void CellEngineSimulationSpace::ExchangeParticlesBetweenThreads(const UnsignedInt StepOutside, const bool PrintInfo) const
 {
     try
     {
         const auto start_time = chrono::high_resolution_clock::now();
+
+        UnsignedInt ExchangedParticleCount = 0;
 
         for (UnsignedInt ThreadXIndex = 1; ThreadXIndex <= CellEngineConfigDataObject.NumberOfXThreadsInSimulation; ThreadXIndex++)
             for (UnsignedInt ThreadYIndex = 1; ThreadYIndex <= CellEngineConfigDataObject.NumberOfYThreadsInSimulation; ThreadYIndex++)
@@ -938,13 +946,15 @@ void CellEngineSimulationSpace::ExchangeParticlesBetweenThreads(const UnsignedIn
 
                     while (ParticleIter != CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceForThreadsObjectsPointer[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->ParticlesForThreads.end())
                     {
-                        const UnsignedInt NumberOfXVoxelsInOneThreadInVoxelSimulationSpaceDiv2 = (StepOutside % 2 == 0 ? 0 : (CellEngineConfigDataObject.NumberOfXVoxelsInOneThreadInVoxelSimulationSpace / 2));
-                        const UnsignedInt NumberOfYVoxelsInOneThreadInVoxelSimulationSpaceDiv2 = (StepOutside % 2 == 0 ? 0 : (CellEngineConfigDataObject.NumberOfYVoxelsInOneThreadInVoxelSimulationSpace / 2));
-                        const UnsignedInt NumberOfZVoxelsInOneThreadInVoxelSimulationSpaceDiv2 = (StepOutside % 2 == 0 ? 0 : (CellEngineConfigDataObject.NumberOfZVoxelsInOneThreadInVoxelSimulationSpace / 2));
+                        const UnsignedInt NumberOfXVoxelsInOneThreadInVoxelSimulationSpaceDiv2 = (StepToChangeVoxelSpaceDivisionForThreads(StepOutside) == false ? 0 : (CellEngineConfigDataObject.NumberOfXVoxelsInOneThreadInVoxelSimulationSpace / 2));
+                        const UnsignedInt NumberOfYVoxelsInOneThreadInVoxelSimulationSpaceDiv2 = (StepToChangeVoxelSpaceDivisionForThreads(StepOutside) == false ? 0 : (CellEngineConfigDataObject.NumberOfYVoxelsInOneThreadInVoxelSimulationSpace / 2));
+                        const UnsignedInt NumberOfZVoxelsInOneThreadInVoxelSimulationSpaceDiv2 = (StepToChangeVoxelSpaceDivisionForThreads(StepOutside) == false ? 0 : (CellEngineConfigDataObject.NumberOfZVoxelsInOneThreadInVoxelSimulationSpace / 2));
 
-                        if (StepOutside % 2 != 0)
+                        if (StepToChangeVoxelSpaceDivisionForThreads(StepOutside) == true)
                             if (ParticleIter->second.Center.X < NumberOfXVoxelsInOneThreadInVoxelSimulationSpaceDiv2 || ParticleIter->second.Center.Y < NumberOfYVoxelsInOneThreadInVoxelSimulationSpaceDiv2 || ParticleIter->second.Center.Z < NumberOfZVoxelsInOneThreadInVoxelSimulationSpaceDiv2)
                             {
+                                if (PrintInfo == true)
+                                    LogCenterOfParticleWithThreadIndex(ParticleIter->second, ThreadXIndex, ThreadYIndex, ThreadZIndex);
                                 ++ParticleIter;
                                 continue;
                             }
@@ -953,10 +963,14 @@ void CellEngineSimulationSpace::ExchangeParticlesBetweenThreads(const UnsignedIn
                         UnsignedInt ThreadYIndexNew = floor((ParticleIter->second.Center.Y - NumberOfYVoxelsInOneThreadInVoxelSimulationSpaceDiv2) / CellEngineConfigDataObject.NumberOfYVoxelsInOneThreadInVoxelSimulationSpace);
                         UnsignedInt ThreadZIndexNew = floor((ParticleIter->second.Center.Z - NumberOfZVoxelsInOneThreadInVoxelSimulationSpaceDiv2) / CellEngineConfigDataObject.NumberOfZVoxelsInOneThreadInVoxelSimulationSpace);
 
-                        PrintThreadIndexes(CurrentThreadIndex, ThreadXIndex, ThreadYIndex, ThreadZIndex, ThreadXIndexNew, ThreadYIndexNew, ThreadZIndexNew);
+                        if (PrintInfo == true)
+                            PrintThreadIndexes(ParticleIter->second, CurrentThreadIndex, ThreadXIndex, ThreadYIndex, ThreadZIndex, ThreadXIndexNew, ThreadYIndexNew, ThreadZIndexNew);
 
                         if ((ThreadXIndex - 1 != ThreadXIndexNew) || (ThreadYIndex - 1 != ThreadYIndexNew) || (ThreadZIndex - 1 != ThreadZIndexNew))
+                        {
                             CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceForThreadsObjectsPointer[ThreadXIndexNew][ThreadYIndexNew][ThreadZIndexNew]->ParticlesForThreads.insert(CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceForThreadsObjectsPointer[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->ParticlesForThreads.extract(ParticleIter++));
+                            ExchangedParticleCount++;
+                        }
                         else
                             ++ParticleIter;
                     }
@@ -964,7 +978,10 @@ void CellEngineSimulationSpace::ExchangeParticlesBetweenThreads(const UnsignedIn
 
         const auto stop_time = chrono::high_resolution_clock::now();
 
-        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Next sending particles to threads v1 has taken time = ","Execution in threads")));
+        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Exchanging particles between threads has taken time = ","Execution in threads")));
+
+        cout << GetDurationTimeInOneLine(stop_time - start_time, "Exchanging particles between threads has taken time = ","Execution in threads") << endl;
+        cout << "Number of exchanged particles: " << ExchangedParticleCount << endl;
     }
     CATCH("sending particles for threads")
 }
@@ -973,8 +990,6 @@ void CellEngineSimulationSpace::GatherParticlesForThreadsInMainParticles()
 {
     try
     {
-        std::lock_guard LockGuardObject{ CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderMenuAndVoxelSimulationSpaceMutexObject };
-
         const auto start_time = chrono::high_resolution_clock::now();
 
         Particles.clear();
@@ -985,11 +1000,11 @@ void CellEngineSimulationSpace::GatherParticlesForThreadsInMainParticles()
                     for (const auto& ParticleObject : CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceForThreadsObjectsPointer[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->ParticlesForThreads)
                         Particles.insert(ParticleObject);
 
-        InitiateFreeParticleIndexes(Particles);
+        InitiateFreeParticleIndexes(Particles, false);
 
         const auto stop_time = chrono::high_resolution_clock::now();
 
-        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Next sending particles to threads v2 has taken time = ","Execution in threads")));
+        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Gathering particles from threads to main thread has taken time = ","Execution in threads")));
     }
     CATCH("sending particles for threads")
 }
@@ -1009,7 +1024,7 @@ void CellEngineSimulationSpace::GenerateOneStepOfSimulationForWholeCellSpaceInOn
             UnsignedInt ZStartParam = (ThreadZIndex - 1) * CellEngineConfigDataObject.NumberOfZVoxelsInOneThreadInVoxelSimulationSpace;
             UnsignedInt ZEndParam = (ThreadZIndex - 1) * CellEngineConfigDataObject.NumberOfZVoxelsInOneThreadInVoxelSimulationSpace + CellEngineConfigDataObject.NumberOfZVoxelsInOneThreadInVoxelSimulationSpace;
 
-            if (StepOutside % 2 == 0)
+            if (StepToChangeVoxelSpaceDivisionForThreads(StepOutside) == true)
             {
                 XStartParam += CellEngineConfigDataObject.NumberOfXVoxelsInOneThreadInVoxelSimulationSpace / 2;
                 YStartParam += CellEngineConfigDataObject.NumberOfYVoxelsInOneThreadInVoxelSimulationSpace / 2;
@@ -1047,16 +1062,20 @@ void CellEngineSimulationSpace::GenerateNStepsOfSimulationForWholeCellSpaceInThr
 
         vector<vector<vector<thread*>>> Threads(CellEngineConfigDataObject.NumberOfXThreadsInSimulation, vector<vector<thread*>>(CellEngineConfigDataObject.NumberOfYThreadsInSimulation, vector<thread*>(CellEngineConfigDataObject.NumberOfZThreadsInSimulation)));
 
-        auto GenerateNStepsOfSimulationForWholeCellSpaceInThreads = [NumberOfStepsOutside, &SyncPoint, this](const UnsignedInt NumberOfStepsInside, const UnsignedInt ThreadXIndex, const UnsignedInt ThreadYIndex, const UnsignedInt ThreadZIndex)
+        auto GenerateNStepsOfSimulationForWholeCellSpaceInThreadsLambda = [NumberOfStepsOutside, &SyncPoint, this](const UnsignedInt NumberOfStepsInside, const ThreadIdType CurrentThreadIndexParam, const UnsignedInt ThreadXIndexParam, const UnsignedInt ThreadYIndexParam, const UnsignedInt ThreadZIndexParam)
         {
             for (UnsignedInt StepOutside = 1; StepOutside <= NumberOfStepsOutside; StepOutside++)
             {
-                CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceForThreadsObjectsPointer[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->GenerateOneStepOfSimulationForWholeCellSpaceInOneThread(NumberOfStepsInside, StepOutside, ThreadXIndex, ThreadYIndex, ThreadZIndex);
+                CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceForThreadsObjectsPointer[ThreadXIndexParam - 1][ThreadYIndexParam - 1][ThreadZIndexParam - 1]->GenerateOneStepOfSimulationForWholeCellSpaceInOneThread(NumberOfStepsInside, StepOutside, ThreadXIndexParam, ThreadYIndexParam, ThreadZIndexParam);
 
                 SyncPoint.arrive_and_wait();
 
-                if (CurrentThreadIndex == 1)
-                    ExchangeParticlesBetweenThreads(StepOutside);
+                if (CurrentThreadIndexParam == 1)
+                {
+                    cout << "EXCHANGE PARTICLES IN CURRENT_THREAD_INDEX = (" << CurrentThreadIndexParam << ") (" << ThreadXIndexParam << " "  << ThreadYIndexParam << " " << ThreadZIndexParam << ")" << endl;
+
+                    ExchangeParticlesBetweenThreads(StepOutside, false);
+                }
 
                 SyncPoint.arrive_and_wait();
             }
@@ -1068,10 +1087,14 @@ void CellEngineSimulationSpace::GenerateNStepsOfSimulationForWholeCellSpaceInThr
 
         CellEngineUseful::SwitchOffLogs();
 
+        ThreadIdType ThreadIndex = 1;
         for (UnsignedInt ThreadXIndex = 1; ThreadXIndex <= CellEngineConfigDataObject.NumberOfXThreadsInSimulation; ThreadXIndex++)
             for (UnsignedInt ThreadYIndex = 1; ThreadYIndex <= CellEngineConfigDataObject.NumberOfYThreadsInSimulation; ThreadYIndex++)
                 for (UnsignedInt ThreadZIndex = 1; ThreadZIndex <= CellEngineConfigDataObject.NumberOfZThreadsInSimulation; ThreadZIndex++)
-                    Threads[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1] = new thread(GenerateNStepsOfSimulationForWholeCellSpaceInThreads, NumberOfStepsInside, ThreadXIndex, ThreadYIndex, ThreadZIndex);
+                {
+                    Threads[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1] = new thread(GenerateNStepsOfSimulationForWholeCellSpaceInThreadsLambda, NumberOfStepsInside, ThreadIndex, ThreadXIndex, ThreadYIndex, ThreadZIndex);
+                    ThreadIndex++;
+                }
 
         for (auto& ThreadX : Threads)
             for (auto& ThreadY : ThreadX)

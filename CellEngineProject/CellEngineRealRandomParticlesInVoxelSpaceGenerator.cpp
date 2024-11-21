@@ -70,7 +70,7 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::ShowParticlesKindsData(
     CATCH("show particles kinds data")
 }
 
-tuple<UnsignedInt, UnsignedInt> CellEngineRealRandomParticlesInVoxelSpaceGenerator::GetNumberOfParticlesKind(ParticlesTypes ParticleTypeParam, const bool AddToTotalNumberOfAllParticles)
+tuple<UnsignedInt, UnsignedInt> CellEngineRealRandomParticlesInVoxelSpaceGenerator::GetNumberOfParticlesKind(const ParticlesTypes ParticleTypeParam, const bool AddToTotalNumberOfAllParticles)
 {
     UnsignedInt ParticlesCounter = 0;
     UnsignedInt ParticlesKindsCounter = 0;

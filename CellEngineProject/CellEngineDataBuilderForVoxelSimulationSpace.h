@@ -27,6 +27,8 @@ protected:
                 UnsignedInt ThreadZPos = 1;
                 for (auto& ThreadLocalParticlesInProximityZPos : ThreadLocalParticlesInProximityYPos)
                 {
+                    LoggersManagerObject.Log(STREAM("THREAD INDEXES = " << ThreadIndexPos << " (" << ThreadXPos << ", " << ThreadYPos << ", " << ThreadZPos << ")"));
+
                     ThreadLocalParticlesInProximityZPos = std::make_unique<CellEngineVoxelSimulationSpace>(Particles, false, ThreadIndexPos, CurrentThreadPosType{ ThreadXPos, ThreadYPos, ThreadZPos });
                     ThreadIndexPos++;
                     ThreadZPos++;

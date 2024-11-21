@@ -81,7 +81,7 @@ public:
 public:
     void GenerateNStepsOfSimulationWithSendingParticlesToThreadsAndGatheringParticlesToMainThreadForWholeCellSpace(const UnsignedInt NumberOfStepsOutside, const UnsignedInt NumberOfStepsInside, bool PrintTime);
 public:
-    void ExchangeParticlesBetweenThreads(UnsignedInt StepOutside) const;
+    void ExchangeParticlesBetweenThreads(UnsignedInt StepOutside, bool PrintInfo) const;
     void GatherParticlesForThreadsInMainParticles();
     void FirstSendParticlesForThreads(bool PrintCenterOfParticleWithThreadIndex, bool PrintTime);
 public:

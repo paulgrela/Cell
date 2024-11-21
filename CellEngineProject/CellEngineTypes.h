@@ -28,7 +28,12 @@ using vector3_64 = vector3<uint64_t>;
 
 struct CurrentThreadPosType
 {
-    UnsignedInt	ThreadPosX, ThreadPosY, ThreadPozZ;
+    UnsignedInt	ThreadPosX, ThreadPosY, ThreadPosZ;
+
+    bool operator==(const CurrentThreadPosType& CTP) const
+    {
+        return (CTP.ThreadPosX == ThreadPosX && CTP.ThreadPosY == ThreadPosY && CTP.ThreadPosZ == ThreadPosZ);
+    }
 };
 
 enum class TypesOfLookingForParticlesInProximity : UnsignedInt

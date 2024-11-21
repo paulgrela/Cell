@@ -26,21 +26,17 @@ protected:
     std::unordered_map<UniqueIdInt, Particle>& Particles;
     std::unordered_map<UniqueIdInt, Particle> ParticlesForThreads;
 protected:
-    inline Particle& GetParticleFromIndex(const UniqueIdInt ParticleIndex)
+    inline std::unordered_map<UniqueIdInt, Particle>& GetParticles()
     {
         if (CurrentThreadIndex == 0)
-            return Particles[ParticleIndex];
+            return Particles;
         else
-        {
-            if (ParticlesForThreads.contains(ParticleIndex))
-                return ParticlesForThreads[ParticleIndex];
-            else
-            {
-                std::cout << "NO PARTICLE INDEX 1 = " << ParticleIndex << std::endl;
-                LoggersManagerObject.Log(STREAM("NO PARTICLE INDEX 1 = " << ParticleIndex << std::endl));
-                return ParticlesForThreads[1];
-            }
-        }
+            return ParticlesForThreads;
+    }
+protected:
+    inline Particle& GetParticleFromIndex(const UniqueIdInt ParticleIndex)
+    {
+        return GetParticles()[ParticleIndex];
     }
 public:
     [[nodiscard]] UniqueIdInt GetFreeIndexesOfParticleSize() const
@@ -48,7 +44,7 @@ public:
         return FreeIndexesOfParticles.size();
     }
 protected:
-    void InitiateFreeParticleIndexes(const std::unordered_map<UniqueIdInt, Particle>& LocalParticles);
+    void InitiateFreeParticleIndexes(const std::unordered_map<UniqueIdInt, Particle>& LocalParticles, bool PrintInfo);
 protected:
     inline UniqueIdInt GetNewFreeIndexOfParticle()
     {
@@ -67,16 +63,8 @@ protected:
 public:
     UniqueIdInt AddNewParticle(const Particle& ParticleParam)
     {
-        if (CurrentThreadIndex == 0)
-        {
-            Particles[ParticleParam.Index] = ParticleParam;
-            return MaxParticleIndex = ParticleParam.Index;
-        }
-        else
-        {
-            ParticlesForThreads[ParticleParam.Index] = ParticleParam;
-            return MaxParticleIndex = ParticleParam.Index;
-        }
+        GetParticles()[ParticleParam.Index] = ParticleParam;
+        return MaxParticleIndex = ParticleParam.Index;
     }
 protected:
     virtual void RemoveParticle(UniqueIdInt ParticleIndex, bool ClearVoxels) = 0;
