@@ -925,12 +925,7 @@ void PrintThreadIndexes(const Particle& ParticleObject, const ThreadIdType Curre
     cout << endl;
 }
 
-inline UnsignedInt StepToChangeVoxelSpaceDivisionForThreads(const UnsignedInt StepOutside)
-{
-    return !(StepOutside % CellEngineConfigDataObject.StepToChangeVoxelSpaceDivisionForThreads);
-}
-
-void CellEngineSimulationSpace::ExchangeParticlesBetweenThreads(const UnsignedInt StepOutside, const bool PrintInfo) const
+void CellEngineSimulationSpace::ExchangeParticlesBetweenThreads(const UnsignedInt StepOutside, const bool PrintInfo, bool StateOfVoxelSpaceDivisionForThreads) const
 {
     try
     {
@@ -946,11 +941,11 @@ void CellEngineSimulationSpace::ExchangeParticlesBetweenThreads(const UnsignedIn
 
                     while (ParticleIter != CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceForThreadsObjectsPointer[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->ParticlesForThreads.end())
                     {
-                        const UnsignedInt NumberOfXVoxelsInOneThreadInVoxelSimulationSpaceDiv2 = (StepToChangeVoxelSpaceDivisionForThreads(StepOutside) == false ? 0 : (CellEngineConfigDataObject.NumberOfXVoxelsInOneThreadInVoxelSimulationSpace / 2));
-                        const UnsignedInt NumberOfYVoxelsInOneThreadInVoxelSimulationSpaceDiv2 = (StepToChangeVoxelSpaceDivisionForThreads(StepOutside) == false ? 0 : (CellEngineConfigDataObject.NumberOfYVoxelsInOneThreadInVoxelSimulationSpace / 2));
-                        const UnsignedInt NumberOfZVoxelsInOneThreadInVoxelSimulationSpaceDiv2 = (StepToChangeVoxelSpaceDivisionForThreads(StepOutside) == false ? 0 : (CellEngineConfigDataObject.NumberOfZVoxelsInOneThreadInVoxelSimulationSpace / 2));
+                        const UnsignedInt NumberOfXVoxelsInOneThreadInVoxelSimulationSpaceDiv2 = (StateOfVoxelSpaceDivisionForThreads == false ? 0 : (CellEngineConfigDataObject.NumberOfXVoxelsInOneThreadInVoxelSimulationSpace / 2));
+                        const UnsignedInt NumberOfYVoxelsInOneThreadInVoxelSimulationSpaceDiv2 = (StateOfVoxelSpaceDivisionForThreads == false ? 0 : (CellEngineConfigDataObject.NumberOfYVoxelsInOneThreadInVoxelSimulationSpace / 2));
+                        const UnsignedInt NumberOfZVoxelsInOneThreadInVoxelSimulationSpaceDiv2 = (StateOfVoxelSpaceDivisionForThreads == false ? 0 : (CellEngineConfigDataObject.NumberOfZVoxelsInOneThreadInVoxelSimulationSpace / 2));
 
-                        if (StepToChangeVoxelSpaceDivisionForThreads(StepOutside) == true)
+                        if (StateOfVoxelSpaceDivisionForThreads == true)
                             if (ParticleIter->second.Center.X < NumberOfXVoxelsInOneThreadInVoxelSimulationSpaceDiv2 || ParticleIter->second.Center.Y < NumberOfYVoxelsInOneThreadInVoxelSimulationSpaceDiv2 || ParticleIter->second.Center.Z < NumberOfZVoxelsInOneThreadInVoxelSimulationSpaceDiv2)
                             {
                                 if (PrintInfo == true)
@@ -1009,7 +1004,7 @@ void CellEngineSimulationSpace::GatherParticlesForThreadsInMainParticles()
     CATCH("sending particles for threads")
 }
 
-void CellEngineSimulationSpace::GenerateOneStepOfSimulationForWholeCellSpaceInOneThread(const UnsignedInt NumberOfStepsInside, const UnsignedInt StepOutside, const UnsignedInt ThreadXIndex, const UnsignedInt ThreadYIndex, const UnsignedInt ThreadZIndex)
+void CellEngineSimulationSpace::GenerateOneStepOfSimulationForWholeCellSpaceInOneThread(const UnsignedInt NumberOfStepsInside, const UnsignedInt StepOutside, const UnsignedInt ThreadXIndex, const UnsignedInt ThreadYIndex, const UnsignedInt ThreadZIndex, bool StateOfVoxelSpaceDivisionForThreads)
 {
     try
     {
@@ -1024,7 +1019,7 @@ void CellEngineSimulationSpace::GenerateOneStepOfSimulationForWholeCellSpaceInOn
             UnsignedInt ZStartParam = (ThreadZIndex - 1) * CellEngineConfigDataObject.NumberOfZVoxelsInOneThreadInVoxelSimulationSpace;
             UnsignedInt ZEndParam = (ThreadZIndex - 1) * CellEngineConfigDataObject.NumberOfZVoxelsInOneThreadInVoxelSimulationSpace + CellEngineConfigDataObject.NumberOfZVoxelsInOneThreadInVoxelSimulationSpace;
 
-            if (StepToChangeVoxelSpaceDivisionForThreads(StepOutside) == true)
+            if (StateOfVoxelSpaceDivisionForThreads == true)
             {
                 XStartParam += CellEngineConfigDataObject.NumberOfXVoxelsInOneThreadInVoxelSimulationSpace / 2;
                 YStartParam += CellEngineConfigDataObject.NumberOfYVoxelsInOneThreadInVoxelSimulationSpace / 2;
@@ -1049,6 +1044,11 @@ void CellEngineSimulationSpace::GenerateOneStepOfSimulationForWholeCellSpaceInOn
     CATCH("generating n steps simulation for whole cell space in threads")
 }
 
+inline UnsignedInt StepToChangeVoxelSpaceDivisionForThreads(const UnsignedInt StepOutside, bool StateOfVoxelSpaceDivisionForThreads)
+{
+    return ((StepOutside % CellEngineConfigDataObject.StepToChangeVoxelSpaceDivisionForThreads == 0) ? !StateOfVoxelSpaceDivisionForThreads : StateOfVoxelSpaceDivisionForThreads);
+}
+
 void CellEngineSimulationSpace::GenerateNStepsOfSimulationForWholeCellSpaceInThreads(const UnsignedInt NumberOfStepsOutside, const UnsignedInt NumberOfStepsInside)
 {
     try
@@ -1058,23 +1058,27 @@ void CellEngineSimulationSpace::GenerateNStepsOfSimulationForWholeCellSpaceInThr
         ErrorCounter = 0;
         AddedParticlesInReactions = 0;
 
+        bool StateOfVoxelSpaceDivisionForThreads = false;
+
         std::barrier SyncPoint(CellEngineConfigDataObject.NumberOfXThreadsInSimulation * CellEngineConfigDataObject.NumberOfYThreadsInSimulation * CellEngineConfigDataObject.NumberOfZThreadsInSimulation);
 
         vector<vector<vector<thread*>>> Threads(CellEngineConfigDataObject.NumberOfXThreadsInSimulation, vector<vector<thread*>>(CellEngineConfigDataObject.NumberOfYThreadsInSimulation, vector<thread*>(CellEngineConfigDataObject.NumberOfZThreadsInSimulation)));
 
-        auto GenerateNStepsOfSimulationForWholeCellSpaceInThreadsLambda = [NumberOfStepsOutside, &SyncPoint, this](const UnsignedInt NumberOfStepsInside, const ThreadIdType CurrentThreadIndexParam, const UnsignedInt ThreadXIndexParam, const UnsignedInt ThreadYIndexParam, const UnsignedInt ThreadZIndexParam)
+        auto GenerateNStepsOfSimulationForWholeCellSpaceInThreadsLambda = [NumberOfStepsOutside, &StateOfVoxelSpaceDivisionForThreads, &SyncPoint, this](const UnsignedInt NumberOfStepsInside, const ThreadIdType CurrentThreadIndexParam, const UnsignedInt ThreadXIndexParam, const UnsignedInt ThreadYIndexParam, const UnsignedInt ThreadZIndexParam)
         {
             for (UnsignedInt StepOutside = 1; StepOutside <= NumberOfStepsOutside; StepOutside++)
             {
-                CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceForThreadsObjectsPointer[ThreadXIndexParam - 1][ThreadYIndexParam - 1][ThreadZIndexParam - 1]->GenerateOneStepOfSimulationForWholeCellSpaceInOneThread(NumberOfStepsInside, StepOutside, ThreadXIndexParam, ThreadYIndexParam, ThreadZIndexParam);
+                CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceForThreadsObjectsPointer[ThreadXIndexParam - 1][ThreadYIndexParam - 1][ThreadZIndexParam - 1]->GenerateOneStepOfSimulationForWholeCellSpaceInOneThread(NumberOfStepsInside, StepOutside, ThreadXIndexParam, ThreadYIndexParam, ThreadZIndexParam, StateOfVoxelSpaceDivisionForThreads);
 
                 SyncPoint.arrive_and_wait();
 
                 if (CurrentThreadIndexParam == 1)
                 {
-                    cout << "EXCHANGE PARTICLES IN CURRENT_THREAD_INDEX = (" << CurrentThreadIndexParam << ") (" << ThreadXIndexParam << " "  << ThreadYIndexParam << " " << ThreadZIndexParam << ")" << endl;
+                    cout << "EXCHANGE PARTICLES IN CURRENT_THREAD_INDEX = (" << CurrentThreadIndexParam << ") (" << ThreadXIndexParam << " "  << ThreadYIndexParam << " " << ThreadZIndexParam << ") " << StateOfVoxelSpaceDivisionForThreads << endl;
 
-                    ExchangeParticlesBetweenThreads(StepOutside, false);
+                    ExchangeParticlesBetweenThreads(StepOutside, false, StateOfVoxelSpaceDivisionForThreads);
+
+                    StateOfVoxelSpaceDivisionForThreads = StepToChangeVoxelSpaceDivisionForThreads(StepOutside, StateOfVoxelSpaceDivisionForThreads);
                 }
 
                 SyncPoint.arrive_and_wait();
