@@ -56,7 +56,7 @@ public:
     void SetMakeSimulationStepNumberZero();
     void SetIncSimulationStepNumber();
     void SaveParticlesStatisticsOnce();
-    void SaveReactionsStatisticsToFile();
+    void SaveReactionsStatisticsToFile() const;
 public:
     void SaveNumberOfParticlesStatisticsToFile();
 public:
@@ -82,8 +82,12 @@ public:
     void GenerateNStepsOfSimulationWithSendingParticlesToThreadsAndGatheringParticlesToMainThreadForWholeCellSpace(UnsignedInt NumberOfStepsOutside, UnsignedInt NumberOfStepsInside, bool PrintTime);
 public:
     void ExchangeParticlesBetweenThreads(UnsignedInt StepOutside, bool PrintInfo, bool StateOfVoxelSpaceDivisionForThreads) const;
-    void GatherParticlesForThreadsInMainParticles();
+    void ExchangeParticlesBetweenThreadsParallel1(UnsignedInt StepOutside, bool PrintInfo, bool StateOfVoxelSpaceDivisionForThreads) const;
+    void ExchangeParticlesBetweenThreadsParallel2(UnsignedInt StepOutside, bool PrintInfo, bool StateOfVoxelSpaceDivisionForThreads) const;
+    void ExchangeParticlesBetweenThreadsParallel3(UnsignedInt StepOutside, bool PrintInfo, bool StateOfVoxelSpaceDivisionForThreads) const;
+    void GatherParticlesFromThreadsToParticlesInMainThread();
     void FirstSendParticlesForThreads(bool PrintCenterOfParticleWithThreadIndex, bool PrintTime);
+    void JoinStatisticsFromThreads() const;
 public:
     void CheckParticlesCenters() const;
 protected:

@@ -13,15 +13,15 @@ void CellEngineChemicalReactionsInVoxelSimulationSpace::FindParticlesInProximity
         for (UnsignedInt PosX = StartXPosParam; PosX < StartXPosParam + SizeXParam; PosX++)
             for (UnsignedInt PosY = StartYPosParam; PosY < StartYPosParam + SizeYParam; PosY++)
                 for (UnsignedInt PosZ = StartZPosParam; PosZ < StartZPosParam + SizeZParam; PosZ++)
-                    if (PosX >= 0 && PosY >= 0 && PosZ >= 0 && PosX < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension && PosY < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension && PosZ < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension)
-                        if (GetSpaceVoxel(PosX, PosY, PosZ) != GetZeroSimulationSpaceVoxel())
-                        {
-                            if (CurrentThreadIndex == 0)
-                                SaveParticleFoundInProximity(GetSpaceVoxel(PosX, PosY, PosZ), FoundParticleIndexes, UpdateNucleotides);
-                            else
-                            if (ParticlesForThreads.contains(GetSpaceVoxel(PosX, PosY, PosZ)))
-                                SaveParticleFoundInProximity(GetSpaceVoxel(PosX, PosY, PosZ), FoundParticleIndexes, UpdateNucleotides);
-                        }
+                    if (PosX < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension && PosY < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension && PosZ < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension)
+                    {
+                        UniqueIdInt ParticleIndex = GetSpaceVoxel(PosX, PosY, PosZ);
+                        if (ParticleIndex != GetZeroSimulationSpaceVoxel())
+                            if (!FoundParticleIndexes.contains(ParticleIndex))
+                                if (GetParticles().contains(ParticleIndex))
+                                    SaveParticleFoundInProximity(ParticleIndex, FoundParticleIndexes, UpdateNucleotides);
+                    }
+
 
         const auto stop_time = chrono::high_resolution_clock::now();
 
