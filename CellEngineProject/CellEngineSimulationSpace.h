@@ -32,11 +32,8 @@
 class CellEngineSimulationSpace : public CellEngineChemicalReactionsEngine, public CellEngineIllinoisDataCreator, public CellEngineCompiledDataCreator, virtual public CellEngineChemicalReactionsInSimulationSpace, public CellEngineSimulationSpaceStatistics
 {
 private:
-    static inline UnsignedInt ErrorCounter;
-    static inline UnsignedInt AddedParticlesInReactions;
-private:
-    static inline std::mutex MainParticlesExchangeMutexObject;
-    static inline std::mutex MainCountingErrorMutexObject;
+    UnsignedInt ErrorCounter = 0;
+    UnsignedInt AddedParticlesInReactions = 0;
 private:
     std::unordered_map<UniqueIdInt, Particle>& Particles;
 protected:
@@ -81,10 +78,9 @@ public:
 public:
     void GenerateNStepsOfSimulationWithSendingParticlesToThreadsAndGatheringParticlesToMainThreadForWholeCellSpace(UnsignedInt NumberOfStepsOutside, UnsignedInt NumberOfStepsInside, bool PrintTime);
 public:
-    void ExchangeParticlesBetweenThreads(UnsignedInt StepOutside, bool PrintInfo, bool StateOfVoxelSpaceDivisionForThreads) const;
-    void ExchangeParticlesBetweenThreadsParallel1(UnsignedInt StepOutside, bool PrintInfo, bool StateOfVoxelSpaceDivisionForThreads) const;
-    void ExchangeParticlesBetweenThreadsParallel2(UnsignedInt StepOutside, bool PrintInfo, bool StateOfVoxelSpaceDivisionForThreads) const;
-    void ExchangeParticlesBetweenThreadsParallel3(UnsignedInt StepOutside, bool PrintInfo, bool StateOfVoxelSpaceDivisionForThreads) const;
+    void ExchangeParticlesBetweenThreads(UnsignedInt StepOutside, bool StateOfVoxelSpaceDivisionForThreads, bool PrintInfo) const;
+    void ExchangeParticlesBetweenThreadsParallelInsert(UnsignedInt StepOutside, bool StateOfVoxelSpaceDivisionForThreads, bool PrintInfo) const;
+    void ExchangeParticlesBetweenThreadsParallelExtract(UnsignedInt StepOutside, bool StateOfVoxelSpaceDivisionForThreads, bool PrintInfo) const;
     void GatherParticlesFromThreadsToParticlesInMainThread();
     void FirstSendParticlesForThreads(bool PrintCenterOfParticleWithThreadIndex, bool PrintTime);
     void JoinStatisticsFromThreads() const;

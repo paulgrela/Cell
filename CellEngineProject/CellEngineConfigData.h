@@ -5,6 +5,7 @@
 #include "vmath.h"
 #include <map>
 #include <random>
+#include <boost/property_tree/ptree.hpp>
 
 #include "sb7color.h"
 
@@ -103,6 +104,14 @@ public:
 public:
     UnsignedInt StepToChangeVoxelSpaceDivisionForThreads = 2;
 public:
+    enum class TypesOfExchangeOfParticlesBetweenThreads : UnsignedInt
+    {
+        InMainThread = 0,
+        ParallelInsert = 1,
+        ParallelExtract = 2
+    };
+    TypesOfExchangeOfParticlesBetweenThreads TypeOfExchangeOfParticlesBetweenThreads = TypesOfExchangeOfParticlesBetweenThreads::ParallelInsert;
+public:
     double RadiusOfCellForDNA{};
 public:
     enum class SelectedSpaceStartParametersDrawTypes : UnsignedInt
@@ -110,7 +119,7 @@ public:
         DrawFromCenter = 1,
         DrawFromCorner = 2
     };
-    SelectedSpaceStartParametersDrawTypes SelectedSpaceStartParametersDrawTypesObject =  SelectedSpaceStartParametersDrawTypes::DrawFromCenter;
+    SelectedSpaceStartParametersDrawTypes SelectedSpaceStartParametersDrawTypesObject = SelectedSpaceStartParametersDrawTypes::DrawFromCenter;
 public:
     enum class RandomColorEngineTypes : UnsignedInt
     {

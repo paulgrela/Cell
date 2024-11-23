@@ -13,8 +13,6 @@ void CellEngineSimulationSpaceStatistics::MakeSimulationStepNumberZeroForStatist
 {
     try
     {
-        std::lock_guard LockGuardObject{ MainStatisticsSharedMutexObject };
-
         SimulationStepNumber = 0;
 
         ParticlesSnapshots.clear();
@@ -39,8 +37,6 @@ void CellEngineSimulationSpaceStatistics::GenerateNewEmptyElementsForContainersF
 {
     try
     {
-        std::lock_guard LockGuardObject{ MainStatisticsSharedMutexObject };
-
         ParticlesSnapshots.emplace_back();
 
         ParticlesKindsSnapshotsVectorSortedByCounter.emplace_back();
@@ -82,8 +78,6 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesAsCopiedMap()
 {
     try
     {
-        std::lock_guard LockGuardObject{ MainStatisticsSharedMutexObject };
-
         ParticlesSnapshotsCopiedUnorderedMap.emplace_back(Particles);
     }
     CATCH("saving particles as copied map")
@@ -93,8 +87,6 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesAsVectorElements()
 {
     try
     {
-        std::lock_guard LockGuardObject{ MainStatisticsSharedMutexObject };
-
         ParticlesSnapshots[SimulationStepNumber - 1].reserve(Particles.size());
 
         transform(Particles.begin(), Particles.end(), std::back_inserter(ParticlesSnapshots[SimulationStepNumber - 1]), [](const auto& ParticlesMapElement){ return ParticlesMapElement.second; } );
@@ -106,8 +98,6 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesAsSortedVectorElements()
 {
     try
     {
-        std::lock_guard LockGuardObject{ MainStatisticsSharedMutexObject };
-
         ParticlesKindsSnapshotsCopiedMap[SimulationStepNumber - 1].clear();
 
         LoggersManagerObject.LogStatistics(STREAM("Size of all particles copied for statistics = " << ParticlesSnapshotsCopiedUnorderedMap[SimulationStepNumber - 1].size()));
@@ -139,8 +129,6 @@ void CellEngineSimulationSpaceStatistics::SaveReactionForStatistics(const Chemic
 {
     try
     {
-        std::lock_guard LockGuardObject{ MainStatisticsSharedMutexObject };
-
         auto ReactionIter = SavedReactionsMap[SimulationStepNumber - 1].find(ReactionParam.ReactionIdNum);
 
         if (ReactionIter != SavedReactionsMap[SimulationStepNumber - 1].end())
@@ -155,8 +143,6 @@ void CellEngineSimulationSpaceStatistics::GetNumberOfParticlesFromParticleKind(c
 {
     try
     {
-        shared_lock LockGuardObject{ MainStatisticsSharedMutexObject };
-
         auto FoundResult = find_if(ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber - 1].begin(), ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber - 1].end(), [ParticleKindId](const auto& P){ return P.EntityId == ParticleKindId; });
         if (FoundResult != ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber - 1].end())
             LoggersManagerObject.LogStatistics(STREAM("Particle Kind Name = " << ParticlesKindsManagerObject.GetParticleKind(FoundResult->EntityId).IdStr << " Particle Kind Id = " << FoundResult->EntityId << " Number of Particles = " << FoundResult->Counter));

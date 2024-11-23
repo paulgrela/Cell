@@ -27,7 +27,6 @@ protected:
     std::unordered_map<UniqueIdInt, Particle> ParticlesForThreads;
 protected:
     std::mutex MainExchangeParticlesMutexObject;
-    //static inline std::shared_mutex MainStatisticsSharedMutexObject;
 protected:
     inline std::unordered_map<UniqueIdInt, Particle>& GetParticles()
     {

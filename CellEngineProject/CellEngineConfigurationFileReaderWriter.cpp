@@ -173,6 +173,9 @@ void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const ch
                             if (CellStatePropertyTreeElement.second.get_child_optional("StepToChangeVoxelSpaceDivisionForThreads"))
                                 CellEngineConfigDataObject.StepToChangeVoxelSpaceDivisionForThreads = CellStatePropertyTreeElement.second.get<UnsignedInt>("StepToChangeVoxelSpaceDivisionForThreads");
 
+                            if (CellStatePropertyTreeElement.second.get_child_optional("TypeOfExchangeOfParticlesBetweenThreads"))
+                                CellEngineConfigDataObject.TypeOfExchangeOfParticlesBetweenThreads = static_cast<CellEngineConfigData::TypesOfExchangeOfParticlesBetweenThreads>(CellStatePropertyTreeElement.second.get<UnsignedInt>("TypeOfExchangeOfParticlesBetweenThreads"));
+
                             CellEngineConfigDataObject.RadiusOfCellForDNA = CellStatePropertyTreeElement.second.get<double>("RadiusOfCellForDNA");
                         }
 

@@ -29,9 +29,6 @@ protected:
     UnsignedInt SimulationStepNumber = 0;
     UnsignedInt ModuloStepToSaveStatistics = 10;
 protected:
-    static inline std::mutex MainStatisticsMutexObject;
-    static inline std::shared_mutex MainStatisticsSharedMutexObject;
-protected:
     bool SaveReactionsStatisticsBool = true;
     bool SaveParticlesAsCopiedMapBool = true;
     bool SaveParticlesAsVectorElementsBool = true;

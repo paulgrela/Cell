@@ -3150,6 +3150,7 @@
                         <NumberOfZVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>32</NumberOfZVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>
 
                         <StepToChangeVoxelSpaceDivisionForThreads>4</StepToChangeVoxelSpaceDivisionForThreads>
+                        <TypeOfExchangeOfParticlesBetweenThreads>1</TypeOfExchangeOfParticlesBetweenThreads>
 
                         <RadiusOfCellForDNA>380</RadiusOfCellForDNA>
 
@@ -3856,6 +3857,7 @@
                         <NumberOfZVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>16</NumberOfZVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>
 
                         <StepToChangeVoxelSpaceDivisionForThreads>4</StepToChangeVoxelSpaceDivisionForThreads>
+                        <TypeOfExchangeOfParticlesBetweenThreads>1</TypeOfExchangeOfParticlesBetweenThreads>
 
                         <RadiusOfCellForDNA>95</RadiusOfCellForDNA>
 
