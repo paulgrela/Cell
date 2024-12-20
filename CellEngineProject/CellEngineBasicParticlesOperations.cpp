@@ -94,8 +94,6 @@ void CellEngineBasicParticlesOperations::GetMinMaxCoordinatesForParticle(Particl
         ParticleXMin = ParticleYMin = ParticleZMin = 10000;
         ParticleXMax = ParticleYMax = ParticleZMax = 0;
 
-                                                                                                                        if (ParticleObject.ListOfVoxels.empty())
-                                                                                                                        { cout << "ZERO AT INDEX = " << ParticleObject.Index << " " << ParticleObject.EntityId << endl; getchar(); }
         for (auto& VoxelCoordinates : ParticleObject.ListOfVoxels)
             GetMinMaxOfCoordinates(VoxelCoordinates.X, VoxelCoordinates.Y, VoxelCoordinates.Z, ParticleXMin, ParticleXMax, ParticleYMin, ParticleYMax, ParticleZMin, ParticleZMax);
 

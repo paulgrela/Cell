@@ -33,28 +33,29 @@ protected:
         CATCH("making all zero voxels in list of voxels")
     }
 protected:
+    static inline void MoveAllVoxelsInParticleVoxelListByVector(Particle &ParticleObject, const SignedInt VectorX, const SignedInt VectorY, const SignedInt VectorZ)
+    {
+        try
+        {
+            for (auto& VoxelOfParticle: ParticleObject.ListOfVoxels)
+            {
+                VoxelOfParticle.X += VectorX;
+                VoxelOfParticle.Y += VectorY;
+                VoxelOfParticle.Z += VectorZ;
+            }
+        }
+        CATCH_AND_THROW("moving all voxels in particle voxel list by vector")
+    }
+protected:
     inline void MoveParticleByVector(Particle &ParticleObject, const SignedInt VectorX, const SignedInt VectorY, const SignedInt VectorZ)
     {
         try
         {
             SetAllVoxelsInListOfVoxelsToValue(ParticleObject.ListOfVoxels, GetZeroSimulationSpaceVoxel());
-            //PRZESUWANIE WSZYSTKICH VOXELI DO JEDNEJ FUNKCJI
-                    if (ParticleObject.Center.X == 0 || ParticleObject.Center.Y == 0 || ParticleObject.Center.Z == 0)
-                        std::cout << "BEFORE 1 Particle outside cell Index = " << ParticleObject.Index << " " << ParticleObject.Center.X << " " << ParticleObject.Center.Y << " " << ParticleObject.Center.Z << " " << VectorX  << " " << VectorY << " " << VectorZ << " " << ParticleObject.ListOfVoxels.size() << std::endl;
 
-            for (auto& VoxelOfParticle: ParticleObject.ListOfVoxels)
-            {
-                // VoxelOfParticle.X += static_cast<int16_t>(VectorX);
-                // VoxelOfParticle.Y += static_cast<int16_t>(VectorY);
-                // VoxelOfParticle.Z += static_cast<int16_t>(VectorZ);
-                VoxelOfParticle.X += VectorX;
-                VoxelOfParticle.Y += VectorY;
-                VoxelOfParticle.Z += VectorZ;
-            }
+            MoveAllVoxelsInParticleVoxelListByVector(ParticleObject, VectorX, VectorY, VectorZ);
+
             SetAllVoxelsInListOfVoxelsToValue(ParticleObject.ListOfVoxels, ParticleObject.Index);
-
-                    if (ParticleObject.Center.X == 0 || ParticleObject.Center.Y == 0 || ParticleObject.Center.Z == 0)
-                        std::cout << "AFTER 1 Particle outside cell Index = " << ParticleObject.Index << " " << ParticleObject.Center.X << " " << ParticleObject.Center.Y << " " << ParticleObject.Center.Z << " " << VectorX  << " " << VectorY << " " << VectorZ << " " << ParticleObject.ListOfVoxels.size() << std::endl;
 
             ParticleObject.SetCenterCoordinates(ParticleObject.Center.X + VectorX, ParticleObject.Center.Y + VectorY, ParticleObject.Center.Z + VectorZ);
         }

@@ -9,8 +9,6 @@ void CellEngineParticlesVoxelsShapesGenerator::SetValueToSpaceVoxelWithFillingLi
     {
         if (FilledSpaceVoxels != nullptr)
             FilledSpaceVoxels->emplace_back(PosX, PosY, PosZ);
-        // PONIZSZY WARUNEK TEZ DODAC
-        // if (PosX < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension && PosY < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension && PosZ < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension)
         GetSpaceVoxel(PosX, PosY, PosZ) = VoxelValue;
     }
     CATCH("setting value to voxel")
