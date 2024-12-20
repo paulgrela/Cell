@@ -318,7 +318,7 @@ void ReadVoxelsVectorDividedByStepsFromBinaryFile(ifstream& ParticlesDataFile, v
 {
     try
     {
-        const uint16_t Step = DivideFactor * DivideFactor * DivideFactor;
+        const PositionInt Step = DivideFactor * DivideFactor * DivideFactor;
 
         VectorToBeRead.clear();
 
@@ -329,7 +329,7 @@ void ReadVoxelsVectorDividedByStepsFromBinaryFile(ifstream& ParticlesDataFile, v
             vector3_16 Object{};
             ParticlesDataFile.read((char*)&Object, sizeof(Object));
             if (Index % Step == 0)
-                VectorToBeRead.emplace_back(vector3_16{ static_cast<uint16_t>(static_cast<float>(Object.X) / DivideFactor), static_cast<uint16_t>(static_cast<float>(Object.Y) / DivideFactor), static_cast<uint16_t>(static_cast<float>(Object.Z) / DivideFactor) });
+                VectorToBeRead.emplace_back(vector3_16{ static_cast<PositionInt>(static_cast<float>(Object.X) / DivideFactor), static_cast<PositionInt>(static_cast<float>(Object.Y) / DivideFactor), static_cast<PositionInt>(static_cast<float>(Object.Z) / DivideFactor) });
         }
     }
     CATCH("reading vector from binary file")
@@ -416,7 +416,12 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
             ParticlesDataFile.read((char*)&ParticleObject.Index, sizeof(ParticleObject.Index));
             ParticlesDataFile.read((char*)&ParticleObject.GenomeIndex, sizeof(ParticleObject.GenomeIndex));
             ParticlesDataFile.read((char*)&ParticleObject.ElectricCharge, sizeof(ParticleObject.ElectricCharge));
+
             ParticlesDataFile.read((char*)&ParticleObject.Center, sizeof(ParticleObject.Center));
+            ParticleObject.Center.X /= CellEngineConfigDataObject.DivisionFactorForReadingPositionsOfParticles;
+            ParticleObject.Center.Y /= CellEngineConfigDataObject.DivisionFactorForReadingPositionsOfParticles;
+            ParticleObject.Center.Z /= CellEngineConfigDataObject.DivisionFactorForReadingPositionsOfParticles;
+
             ParticlesDataFile.read((char*)&ParticleObject.UniqueColor, sizeof(ParticleObject.UniqueColor));
             ParticlesDataFile.read((char*)&ParticleObject.SelectedForReaction, sizeof(ParticleObject.SelectedForReaction));
 

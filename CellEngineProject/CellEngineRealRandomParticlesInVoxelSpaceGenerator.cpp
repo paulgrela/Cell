@@ -205,7 +205,7 @@ tuple<UnsignedInt, UnsignedInt, UnsignedInt> CellEngineRealRandomParticlesInVoxe
         UnsignedInt PosYStart = 512;
         UnsignedInt PosZStart = 512;
 
-        uniform_int_distribution<SignedInt> UniformDistributionObjectMoveParticleDirection_int64t(0, 1024);
+        uniform_int_distribution<SignedInt> UniformDistributionObjectMoveParticleDirection_int64t(0, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension);
 
         UnsignedInt TryFindNewRandomPositionCounter = 0;
 

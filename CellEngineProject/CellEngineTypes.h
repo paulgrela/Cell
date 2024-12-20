@@ -23,7 +23,7 @@ struct vector3
     T X, Y, Z;
 };
 
-using vector3_16 = vector3<uint16_t>;
+using vector3_16 = vector3<PositionInt>;
 using vector3_64 = vector3<uint64_t>;
 
 struct CurrentThreadPosType
@@ -34,6 +34,19 @@ struct CurrentThreadPosType
     {
         return (CTP.ThreadPosX == ThreadPosX && CTP.ThreadPosY == ThreadPosY && CTP.ThreadPosZ == ThreadPosZ);
     }
+};
+
+struct SimulationSpaceSectorBounds
+{
+    UnsignedInt StartXPos;
+    UnsignedInt StartYPos;
+    UnsignedInt StartZPos;
+    UnsignedInt SizeX;
+    UnsignedInt SizeY;
+    UnsignedInt SizeZ;
+    UnsignedInt EndXPos;
+    UnsignedInt EndYPos;
+    UnsignedInt EndZPos;
 };
 
 enum class TypesOfLookingForParticlesInProximity : UnsignedInt

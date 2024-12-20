@@ -17,7 +17,7 @@
 		catch (...) \
 		{ \
 			LoggersManagerObject.Log(STREAM("Unknown exception caught in " << str));  \
-		} 
+		}
 
 #define CATCH_AND_THROW(str) \
 		catch (const std::exception& ExceptionObject) \

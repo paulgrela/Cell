@@ -59,6 +59,8 @@ void CellEngineBasicParticlesOperations::GetMinMaxCoordinatesForAllParticles(con
 {
     try
     {
+        LoggersManagerObject.Log(STREAM("GET MIN MAX FOR ALL PARTICLES"));
+
         for (auto& ParticleObject : Particles)
             if (ParticleObject.second.EntityId != 0)
                 GetMinMaxCoordinatesForParticle(ParticleObject.second, UpdateParticleKindListOfVoxelsBool);
@@ -66,7 +68,7 @@ void CellEngineBasicParticlesOperations::GetMinMaxCoordinatesForAllParticles(con
     CATCH("getting min max coordinates for all particles")
 }
 
-void CellEngineBasicParticlesOperations::UpdateParticleKindListOfVoxels(Particle& ParticleObject, const UnsignedInt ParticleXMin, const UnsignedInt ParticleXMax, const UnsignedInt ParticleYMin, const UnsignedInt ParticleYMax, const UnsignedInt ParticleZMin, const UnsignedInt ParticleZMax)
+void CellEngineBasicParticlesOperations::UpdateParticleKindListOfVoxels(const Particle& ParticleObject, const UnsignedInt ParticleXMin, const UnsignedInt ParticleXMax, const UnsignedInt ParticleYMin, const UnsignedInt ParticleYMax, const UnsignedInt ParticleZMin, const UnsignedInt ParticleZMax)
 {
     try
     {
@@ -92,6 +94,8 @@ void CellEngineBasicParticlesOperations::GetMinMaxCoordinatesForParticle(Particl
         ParticleXMin = ParticleYMin = ParticleZMin = 10000;
         ParticleXMax = ParticleYMax = ParticleZMax = 0;
 
+                                                                                                                        if (ParticleObject.ListOfVoxels.empty())
+                                                                                                                        { cout << "ZERO AT INDEX = " << ParticleObject.Index << " " << ParticleObject.EntityId << endl; getchar(); }
         for (auto& VoxelCoordinates : ParticleObject.ListOfVoxels)
             GetMinMaxOfCoordinates(VoxelCoordinates.X, VoxelCoordinates.Y, VoxelCoordinates.Z, ParticleXMin, ParticleXMax, ParticleYMin, ParticleYMax, ParticleZMin, ParticleZMax);
 

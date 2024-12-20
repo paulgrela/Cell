@@ -17,6 +17,7 @@ class CellEngineBasicParticlesOperations
 public:
     ThreadIdType CurrentThreadIndex{ 0 };
     CurrentThreadPosType CurrentThreadPos{ 1, 1, 1 };
+    SimulationSpaceSectorBounds ActualSimulationSpaceSectorBoundsObject{ 0,0,0, 0, 0, 0, 0 ,0, 0 };
 protected:
     UnsignedInt XMin{}, XMax{}, YMin{}, YMax{}, ZMin{}, ZMax{};
 protected:
@@ -76,7 +77,7 @@ protected:
     void SetStartValuesForSpaceMinMax();
     void GetMinMaxCoordinatesForAllParticles(bool UpdateParticleKindListOfVoxelsBool);
     static void GetMinMaxOfCoordinates(UnsignedInt PosX, UnsignedInt PosY, UnsignedInt PosZ, UnsignedInt& XMinParam, UnsignedInt& XMaxParam, UnsignedInt& YMinParam, UnsignedInt& YMaxParam, UnsignedInt& ZMinParam, UnsignedInt& ZMaxParam);
-    static void UpdateParticleKindListOfVoxels(Particle& ParticleObject, UnsignedInt ParticleXMin, UnsignedInt ParticleXMax, UnsignedInt ParticleYMin, UnsignedInt ParticleYMax, UnsignedInt ParticleZMin, UnsignedInt ParticleZMax);
+    static void UpdateParticleKindListOfVoxels(const Particle& ParticleObject, UnsignedInt ParticleXMin, UnsignedInt ParticleXMax, UnsignedInt ParticleYMin, UnsignedInt ParticleYMax, UnsignedInt ParticleZMin, UnsignedInt ParticleZMax);
 public:
     static void GetMinMaxCoordinatesForParticle(Particle& ParticleObject, bool UpdateParticleKindListOfVoxels);
 protected:

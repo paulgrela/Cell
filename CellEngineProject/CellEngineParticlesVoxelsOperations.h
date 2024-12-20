@@ -38,17 +38,27 @@ protected:
         try
         {
             SetAllVoxelsInListOfVoxelsToValue(ParticleObject.ListOfVoxels, GetZeroSimulationSpaceVoxel());
-            for (auto &VoxelOfParticle: ParticleObject.ListOfVoxels)
+            //PRZESUWANIE WSZYSTKICH VOXELI DO JEDNEJ FUNKCJI
+                    if (ParticleObject.Center.X == 0 || ParticleObject.Center.Y == 0 || ParticleObject.Center.Z == 0)
+                        std::cout << "BEFORE 1 Particle outside cell Index = " << ParticleObject.Index << " " << ParticleObject.Center.X << " " << ParticleObject.Center.Y << " " << ParticleObject.Center.Z << " " << VectorX  << " " << VectorY << " " << VectorZ << " " << ParticleObject.ListOfVoxels.size() << std::endl;
+
+            for (auto& VoxelOfParticle: ParticleObject.ListOfVoxels)
             {
+                // VoxelOfParticle.X += static_cast<int16_t>(VectorX);
+                // VoxelOfParticle.Y += static_cast<int16_t>(VectorY);
+                // VoxelOfParticle.Z += static_cast<int16_t>(VectorZ);
                 VoxelOfParticle.X += VectorX;
                 VoxelOfParticle.Y += VectorY;
                 VoxelOfParticle.Z += VectorZ;
             }
             SetAllVoxelsInListOfVoxelsToValue(ParticleObject.ListOfVoxels, ParticleObject.Index);
 
+                    if (ParticleObject.Center.X == 0 || ParticleObject.Center.Y == 0 || ParticleObject.Center.Z == 0)
+                        std::cout << "AFTER 1 Particle outside cell Index = " << ParticleObject.Index << " " << ParticleObject.Center.X << " " << ParticleObject.Center.Y << " " << ParticleObject.Center.Z << " " << VectorX  << " " << VectorY << " " << VectorZ << " " << ParticleObject.ListOfVoxels.size() << std::endl;
+
             ParticleObject.SetCenterCoordinates(ParticleObject.Center.X + VectorX, ParticleObject.Center.Y + VectorY, ParticleObject.Center.Z + VectorZ);
         }
-        CATCH("moving particle by vector")
+        CATCH_AND_THROW("moving particle by vector")
     }
 protected:
     inline void MoveParticleNearOtherParticle(Particle &ParticleObject, const Particle &NewPositionParticleObject, const SignedInt AddX, const SignedInt AddY, const SignedInt AddZ)
@@ -74,6 +84,32 @@ protected:
             }
         }
         CATCH("checking free space for particle moved by vector")
+
+        return true;
+    }
+protected:
+    inline bool CheckFreeSpaceForListOfVoxels(const std::vector<vector3_16>& ListOfVoxels, const UnsignedInt VectorX, const UnsignedInt VectorY, const UnsignedInt VectorZ)
+    {
+        try
+        {
+            for (auto &VoxelOfParticle: ListOfVoxels)
+                if (GetSpaceVoxel(VoxelOfParticle.X + VectorX, VoxelOfParticle.Y + VectorY, VoxelOfParticle.Z + VectorZ) != GetZeroSimulationSpaceVoxel())
+                    return false;
+        }
+        CATCH("checking free space for list of voxels")
+
+        return true;
+    }
+protected:
+    inline bool CheckFreeSpaceAndBoundsForListOfVoxels(const std::vector<vector3_16>& ListOfVoxels, const UnsignedInt VectorX, const UnsignedInt VectorY, const UnsignedInt VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam)
+    {
+        try
+        {
+            for (auto &VoxelOfParticle: ListOfVoxels)
+                if (GetSpaceVoxel(VoxelOfParticle.X + VectorX, VoxelOfParticle.Y + VectorY, VoxelOfParticle.Z + VectorZ) != GetZeroSimulationSpaceVoxel() || !(VoxelOfParticle.X + VectorX >= SimulationSpaceSectorBoundsObjectParam.StartXPos && VoxelOfParticle.X + VectorX < SimulationSpaceSectorBoundsObjectParam.StartXPos + SimulationSpaceSectorBoundsObjectParam.SizeX && VoxelOfParticle.Y + VectorY >= SimulationSpaceSectorBoundsObjectParam.StartYPos && VoxelOfParticle.Y + VectorY < SimulationSpaceSectorBoundsObjectParam.StartYPos + SimulationSpaceSectorBoundsObjectParam.SizeY && VoxelOfParticle.Z + VectorZ >= SimulationSpaceSectorBoundsObjectParam.StartZPos && VoxelOfParticle.Z + VectorZ < SimulationSpaceSectorBoundsObjectParam.StartZPos + SimulationSpaceSectorBoundsObjectParam.SizeZ))
+                    return false;
+        }
+        CATCH("checking free space for list of voxels")
 
         return true;
     }
@@ -137,7 +173,7 @@ protected:
             else
                 return false;
         }
-        CATCH("moving particle by vector if voxel space is empty and is in bounds")
+        CATCH_AND_THROW("moving particle by vector if voxel space is empty and is in bounds")
 
         return true;
     }

@@ -9,8 +9,9 @@ void CellEngineParticlesVoxelsShapesGenerator::SetValueToSpaceVoxelWithFillingLi
     {
         if (FilledSpaceVoxels != nullptr)
             FilledSpaceVoxels->emplace_back(PosX, PosY, PosZ);
-        if (PosX < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension && PosY < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension && PosZ < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension)
-            GetSpaceVoxel(PosX, PosY, PosZ) = VoxelValue;
+        // PONIZSZY WARUNEK TEZ DODAC
+        // if (PosX < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension && PosY < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension && PosZ < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension)
+        GetSpaceVoxel(PosX, PosY, PosZ) = VoxelValue;
     }
     CATCH("setting value to voxel")
 }
@@ -143,7 +144,7 @@ bool CellEngineParticlesVoxelsShapesGenerator::GenerateParticleVoxelsWhenSelecte
             return true;
         }
     }
-    CATCH("generate particle in selected space")
+    CATCH_AND_THROW("generate particle in selected space")
 
     return false;
 }

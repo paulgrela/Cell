@@ -72,7 +72,7 @@ Particle* CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::GenerateNu
         if (AddToGenome == true)
             Genome.emplace_back(ParticleIndex);
     }
-    CATCH("generating particle")
+    CATCH_AND_THROW("generating nucleotide particle")
 
     return &GetParticleFromIndex(ParticleIndex);
 }
@@ -235,7 +235,7 @@ void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::GenerateRandomD
             LoggersManagerObject.Log(STREAM("END OF GOING IN ONE DIRECTION"));
         }
 
-        cout << "END OF FINDING SINGLE STRAND DNA" << endl;
+        LoggersManagerObject.Log(STREAM("END OF FINDING SINGLE STRAND DNA"));
 
         Particle* ParticlePrev2 = nullptr;
         UnsignedInt NotFreeSpaceFoundCounter = 0;
@@ -257,8 +257,8 @@ void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::GenerateRandomD
                 NotFreeSpaceFoundCounter++;
 
         }
-        cout << "NUMBER OF NO FREE SPACE = " << NotFreeSpaceFoundCounter << endl;
 
+        LoggersManagerObject.Log(STREAM("NUMBER OF NO FREE SPACE = " << NotFreeSpaceFoundCounter));
 
         GetMinMaxCoordinatesForDNA();
 
@@ -455,9 +455,9 @@ void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::ReadGenomeDataF
             while(getline(Str, Word, ','))
                 Row.push_back(Word);
 
-            UnsignedInt StartPosX = stoi(Row[3]);
-            UnsignedInt StartPosY = stoi(Row[4]);
-            UnsignedInt StartPosZ = stoi(Row[5]);
+            auto StartPosX = static_cast<UnsignedInt>(static_cast<float>(stoi(Row[3])) / CellEngineConfigDataObject.DivisionFactorForReadingPositionsOfParticles);
+            auto StartPosY = static_cast<UnsignedInt>(static_cast<float>(stoi(Row[4])) / CellEngineConfigDataObject.DivisionFactorForReadingPositionsOfParticles);
+            auto StartPosZ = static_cast<UnsignedInt>(static_cast<float>(stoi(Row[5])) / CellEngineConfigDataObject.DivisionFactorForReadingPositionsOfParticles);
 
             if (Paired == true)
             {
@@ -476,7 +476,7 @@ void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::ReadGenomeDataF
 
         FileToReadGenome.close();
 
-        GetMinMaxCoordinatesForDNA();
+        //GetMinMaxCoordinatesForDNA();
 
         LoggersManagerObject.Log(STREAM("NUMBER OF ADDED PARTICLES = " << Particles.size() - ParticlesSizeBeforeAddingRandomDNA));
     }
