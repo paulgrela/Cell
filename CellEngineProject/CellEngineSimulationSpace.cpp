@@ -380,11 +380,11 @@ bool CellEngineSimulationSpace::MakeChemicalReaction(ChemicalReaction& ReactionO
 
             CreatedParticlesIndexes.emplace_back(ParticleIndex);
 
-            if (CurrentThreadIndex == 0 && Particles.contains(ParticleIndex) == false)
-                cout << "PARTICLE INDEX ERROR = " << ParticleIndex << endl;
-            else
-            if (CurrentThreadIndex != 0 && ParticlesForThreads.contains(ParticleIndex) == false)
-                cout << "PARTICLE INDEX ERROR IN THREADS = " << ParticleIndex << endl;
+                                                                    if (CurrentThreadIndex == 0 && Particles.contains(ParticleIndex) == false)
+                                                                        cout << "PARTICLE INDEX ERROR = " << ParticleIndex << endl;
+                                                                    else
+                                                                    if (CurrentThreadIndex != 0 && ParticlesForThreads.contains(ParticleIndex) == false)
+                                                                        cout << "PARTICLE INDEX ERROR IN THREADS = " << ParticleIndex << endl;
 
             GetParticleFromIndex(ParticleIndex).ListOfVoxels.clear();
 
@@ -474,6 +474,32 @@ bool CellEngineSimulationSpace::MakeChemicalReaction(ChemicalReaction& ReactionO
                 uniform_int_distribution<UnsignedInt> UniformDistributionObjectMoveParticleDirectionY_uint64t(ActualSimulationSpaceSectorBoundsObject.StartYPos, ActualSimulationSpaceSectorBoundsObject.EndYPos);
                 uniform_int_distribution<UnsignedInt> UniformDistributionObjectMoveParticleDirectionZ_uint64t(ActualSimulationSpaceSectorBoundsObject.StartZPos, ActualSimulationSpaceSectorBoundsObject.EndZPos);
 
+                UnsignedInt XStartParam;
+                UnsignedInt XEndParam;
+                UnsignedInt YStartParam;
+                UnsignedInt YEndParam;
+                UnsignedInt ZStartParam;
+                UnsignedInt ZEndParam;
+
+                if (CurrentThreadIndex == 0)
+                {
+                    XStartParam = 0;
+                    XEndParam = CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension;
+                    YStartParam = 0;
+                    YEndParam = CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension;
+                    ZStartParam = 0;
+                    ZEndParam = CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension;
+                }
+                else
+                {
+                    XStartParam = (CurrentThreadPos.ThreadPosX - 1) * CellEngineConfigDataObject.NumberOfXVoxelsInOneThreadInVoxelSimulationSpace;
+                    XEndParam = (CurrentThreadPos.ThreadPosX - 1) * CellEngineConfigDataObject.NumberOfXVoxelsInOneThreadInVoxelSimulationSpace + CellEngineConfigDataObject.NumberOfXVoxelsInOneThreadInVoxelSimulationSpace;
+                    YStartParam = (CurrentThreadPos.ThreadPosY - 1) * CellEngineConfigDataObject.NumberOfYVoxelsInOneThreadInVoxelSimulationSpace;
+                    YEndParam = (CurrentThreadPos.ThreadPosY - 1) * CellEngineConfigDataObject.NumberOfYVoxelsInOneThreadInVoxelSimulationSpace + CellEngineConfigDataObject.NumberOfYVoxelsInOneThreadInVoxelSimulationSpace;
+                    ZStartParam = (CurrentThreadPos.ThreadPosZ - 1) * CellEngineConfigDataObject.NumberOfZVoxelsInOneThreadInVoxelSimulationSpace;
+                    ZEndParam = (CurrentThreadPos.ThreadPosZ - 1) * CellEngineConfigDataObject.NumberOfZVoxelsInOneThreadInVoxelSimulationSpace + CellEngineConfigDataObject.NumberOfZVoxelsInOneThreadInVoxelSimulationSpace;
+                }
+
                 UnsignedInt NumberOfTries = 0;
                 while (NumberOfTries < 1000)
                 {
@@ -483,12 +509,7 @@ bool CellEngineSimulationSpace::MakeChemicalReaction(ChemicalReaction& ReactionO
                     auto RandomVectorY = UniformDistributionObjectMoveParticleDirectionY_uint64t(mt64R);
                     auto RandomVectorZ = UniformDistributionObjectMoveParticleDirectionZ_uint64t(mt64R);
 
-                    UnsignedInt XStartParam = (CurrentThreadPos.ThreadPosX - 1) * CellEngineConfigDataObject.NumberOfXVoxelsInOneThreadInVoxelSimulationSpace;
-                    UnsignedInt XEndParam = (CurrentThreadPos.ThreadPosX - 1) * CellEngineConfigDataObject.NumberOfXVoxelsInOneThreadInVoxelSimulationSpace + CellEngineConfigDataObject.NumberOfXVoxelsInOneThreadInVoxelSimulationSpace;
-                    UnsignedInt YStartParam = (CurrentThreadPos.ThreadPosY - 1) * CellEngineConfigDataObject.NumberOfYVoxelsInOneThreadInVoxelSimulationSpace;
-                    UnsignedInt YEndParam = (CurrentThreadPos.ThreadPosY - 1) * CellEngineConfigDataObject.NumberOfYVoxelsInOneThreadInVoxelSimulationSpace + CellEngineConfigDataObject.NumberOfYVoxelsInOneThreadInVoxelSimulationSpace;
-                    UnsignedInt ZStartParam = (CurrentThreadPos.ThreadPosZ - 1) * CellEngineConfigDataObject.NumberOfZVoxelsInOneThreadInVoxelSimulationSpace;
-                    UnsignedInt ZEndParam = (CurrentThreadPos.ThreadPosZ - 1) * CellEngineConfigDataObject.NumberOfZVoxelsInOneThreadInVoxelSimulationSpace + CellEngineConfigDataObject.NumberOfZVoxelsInOneThreadInVoxelSimulationSpace;
+                    LoggersManagerObject.Log(STREAM("R = " << RandomVectorX << " " << RandomVectorY << " " << RandomVectorZ << " " << XStartParam << " " << XEndParam << " " << YStartParam << " " << YEndParam << " " << ZStartParam << " " << ZEndParam));
 
                     if (CheckIfSpaceIsEmptyAndIsInBoundsForListOfVoxels(ParticleKindObjectForProduct.ListOfVoxels, RandomVectorX, RandomVectorY, RandomVectorZ, SimulationSpaceSectorBounds{ XStartParam, YStartParam, ZStartParam, XEndParam - XStartParam, YEndParam - YStartParam, ZEndParam - ZStartParam, XEndParam, YEndParam, ZEndParam }) == true)
                     {
@@ -497,6 +518,7 @@ bool CellEngineSimulationSpace::MakeChemicalReaction(ChemicalReaction& ReactionO
                             FillParticleElementInSpace(ParticleIndex, { NewVoxel.X + RandomVectorX, NewVoxel.Y + RandomVectorY, NewVoxel.Z + RandomVectorZ });
                         GetMinMaxCoordinatesForParticle(GetParticleFromIndex(ParticleIndex), false);
 
+                        LoggersManagerObject.Log(STREAM("RF = " << RandomVectorX << " " << RandomVectorY << " " << RandomVectorZ << " " << XStartParam << " " << XEndParam << " " << YStartParam << " " << YEndParam << " " << ZStartParam << " " << ZEndParam));
                         // if (ParticleKindObjectForProduct.ListOfVoxels.empty() == true)
                         //     cout << "PARTICLE INDEX LIST OF VOXELS ZERO A2 = " << ParticleIndex << endl;
                         //
@@ -520,7 +542,7 @@ bool CellEngineSimulationSpace::MakeChemicalReaction(ChemicalReaction& ReactionO
                     return false;
                 }
             }
-
+                                                                                                                        ela1:
                                                                                                                         // if (GetParticleFromIndex(ParticleIndex).ListOfVoxels.empty() == true)
                                                                                                                         //     cout << "PARTICLE INDEX LIST OF VOXELS ZERO A3 CENTER I " << ParticleIndex << " " << Was << " " << Centers.size() << " " << CenterIndex << " " << GetParticleFromIndex(ParticleIndex).Center.X << " " << GetParticleFromIndex(ParticleIndex).Center.Y << " " << GetParticleFromIndex(ParticleIndex).Center.Z << endl;
 
@@ -801,7 +823,10 @@ void CellEngineSimulationSpace::GenerateOneChosenReactionForSelectedSpace(const 
     {
         if (FindParticlesInProximityOfSimulationSpaceForSelectedSpace(true, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam) == true)
             if (ReactionId != 0)
+            {
+                ActualSimulationSpaceSectorBoundsObject = { StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, StartXPosParam + SizeXParam - 1, StartYPosParam + SizeYParam - 1, StartZPosParam + SizeZParam - 1 };
                 FindAndExecuteChosenReaction(ReactionId);
+            }
     }
     CATCH("generating random reaction for particle")
 }

@@ -147,7 +147,7 @@ bool CellEngineChemicalReactionsInSimulationSpace::FindParticlesInProximityOfSim
 
         if (LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity.empty() == false)
         {
-            if (AdditionalSortPartcilesInProximityByCapacity == true)
+            if (AdditionalSortParticlesInProximityByCapacity == true)
                 sort(LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity.begin(), LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity.end(), [this](const UnsignedInt PK1, const UnsignedInt PK2) { return GetParticleFromIndex(PK1).ListOfVoxels.size() > GetParticleFromIndex(PK2).ListOfVoxels.size(); });
             PrintInformationAboutFoundParticlesInProximity(CurrentThreadPos);
         }

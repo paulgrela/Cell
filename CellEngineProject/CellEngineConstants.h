@@ -6,7 +6,7 @@
 #include "CellEngineTypes.h"
 
 #define EXTENDED_RAM_MEMORY_
-#define RNA_IN_ONE_PARTICLE_
+#define RNA_IN_ONE_PARTICLE
 
 #define USING_MODULES_
 
@@ -17,7 +17,7 @@ constexpr EntityIdInt StartReactionId = 10000;
 
 constexpr UniqueIdInt ParticleIndexesCreatorFactor = 10'000'000;
 
-constexpr bool AdditionalSortPartcilesInProximityByCapacity = false;
+constexpr bool AdditionalSortParticlesInProximityByCapacity = false;
 
 
 constexpr UnsignedInt GenomeLength = 543380;
