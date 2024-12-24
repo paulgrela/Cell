@@ -75,7 +75,11 @@ public:
 public:
     UnsignedInt NumberOfVoxelsInVoxelSimulationSpaceInEachDimension{};
     float DivisionFactorForVoxelSimulationSpace{};
-    float DivisionFactorForReadingPositionsOfParticles{1.0};
+    float DivisionFactorForReadingPositionsOfParticles{ 1.0 };
+    float DivisionFactorForGeneratingPositionsOfParticles{ 1.0 };
+public:
+    bool DNAPaired = true;
+    UnsignedInt NumberOfAdvanceVoxelsDuringGenerationOfRandomDNA = 50;
 public:
     UnsignedInt VoxelSimulationSpaceSelectionStartXPos{}, VoxelSimulationSpaceSelectionStartYPos{}, VoxelSimulationSpaceSelectionStartZPos{};
     UnsignedInt VoxelSimulationSpaceSelectionStepX{}, VoxelSimulationSpaceSelectionStepY{}, VoxelSimulationSpaceSelectionStepZ{};

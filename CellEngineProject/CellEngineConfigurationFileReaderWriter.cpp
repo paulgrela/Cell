@@ -128,8 +128,17 @@ void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const ch
                         {
                             CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfVoxelsInVoxelSimulationSpaceInEachDimension");
                             CellEngineConfigDataObject.DivisionFactorForVoxelSimulationSpace = CellStatePropertyTreeElement.second.get<float>("DivisionFactorForVoxelSimulationSpace");
+
                             if (CellStatePropertyTreeElement.second.get_child_optional("DivisionFactorForReadingPositionsOfParticles"))
                                 CellEngineConfigDataObject.DivisionFactorForReadingPositionsOfParticles = CellStatePropertyTreeElement.second.get<float>("DivisionFactorForReadingPositionsOfParticles");
+                            if (CellStatePropertyTreeElement.second.get_child_optional("DivisionFactorForGeneratingPositionsOfParticles"))
+                                CellEngineConfigDataObject.DivisionFactorForGeneratingPositionsOfParticles = CellStatePropertyTreeElement.second.get<float>("DivisionFactorForGeneratingPositionsOfParticles");
+
+                            if (CellStatePropertyTreeElement.second.get_child_optional("DNAPaired"))
+                                CellEngineConfigDataObject.DNAPaired = CellStatePropertyTreeElement.second.get<bool>("DNAPaired");
+                            if (CellStatePropertyTreeElement.second.get_child_optional("NumberOfAdvanceVoxelsDuringGenerationOfRandomDNA"))
+                                CellEngineConfigDataObject.NumberOfAdvanceVoxelsDuringGenerationOfRandomDNA = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfAdvanceVoxelsDuringGenerationOfRandomDNA");
+
                             CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartXPos = CellStatePropertyTreeElement.second.get<UnsignedInt>("VoxelSimulationSpaceSelectionStartXPos");
                             CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartYPos = CellStatePropertyTreeElement.second.get<UnsignedInt>("VoxelSimulationSpaceSelectionStartYPos");
                             CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartZPos = CellStatePropertyTreeElement.second.get<UnsignedInt>("VoxelSimulationSpaceSelectionStartZPos");

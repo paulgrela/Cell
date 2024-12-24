@@ -312,9 +312,8 @@ tuple<vector<pair<UniqueIdInt, UnsignedInt>>, bool> CellEngineSimulationSpace::C
 
         const auto start_time2 = chrono::high_resolution_clock::now();
 
-        if (AllAreZero == true || (AllAreZero == false && (ReactionObject.ReactionIdNum == 30 || ReactionObject.ReactionIdNum == 80 || ReactionObject.ReactionIdNum == 70)))
-            if (ReactionObject.SpecialReactionFunction != nullptr)
-                ReactionObject.SpecialReactionFunction(this, AllParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject);
+        if (ReactionObject.SpecialReactionFunction != nullptr)
+            ReactionObject.SpecialReactionFunction(this, AllParticlesIndexesChosenForReaction, NucleotidesIndexesChosenForReaction, ReactionObject);
 
         const auto stop_time2 = chrono::high_resolution_clock::now();
 
@@ -380,12 +379,6 @@ bool CellEngineSimulationSpace::MakeChemicalReaction(ChemicalReaction& ReactionO
 
             CreatedParticlesIndexes.emplace_back(ParticleIndex);
 
-                                                                    if (CurrentThreadIndex == 0 && Particles.contains(ParticleIndex) == false)
-                                                                        cout << "PARTICLE INDEX ERROR = " << ParticleIndex << endl;
-                                                                    else
-                                                                    if (CurrentThreadIndex != 0 && ParticlesForThreads.contains(ParticleIndex) == false)
-                                                                        cout << "PARTICLE INDEX ERROR IN THREADS = " << ParticleIndex << endl;
-
             GetParticleFromIndex(ParticleIndex).ListOfVoxels.clear();
 
             auto& ParticleKindObjectForProduct = ParticlesKindsManagerObject.GetParticleKind(ReactionProduct.EntityId);
@@ -397,40 +390,6 @@ bool CellEngineSimulationSpace::MakeChemicalReaction(ChemicalReaction& ReactionO
                 Was = 1;
                 bool ErrorInVoxels = false;
 
-                if (ParticleKindObjectForProduct.ListOfVoxels.empty() == true)
-                    cout << "PARTICLE INDEX LIST OF VOXELS ZERO A1 = " << ParticleIndex << endl;
-
-                // for (const auto& ParticleKindVoxel : ParticleKindObjectForProduct.ListOfVoxels)
-                // {
-                //     vector3_64 NewVoxel(Centers[CenterIndex].X - ParticleKindObjectForProduct.XSizeDiv2 + ParticleKindVoxel.X, Centers[CenterIndex].Y - ParticleKindObjectForProduct.YSizeDiv2 + ParticleKindVoxel.Y, Centers[CenterIndex].Z - ParticleKindObjectForProduct.ZSizeDiv2 + ParticleKindVoxel.Z);
-                //     if (NewVoxel.X > CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension || NewVoxel.Y > CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension || NewVoxel.Z > CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension)
-                //     {
-                //         if (PrintDetailsOfMakingReaction == true)
-                //             LogParticleData(ParticleIndex, CenterIndex, Centers, ParticleKindObjectForProduct, ParticleKindVoxel);
-                //         ErrorInVoxels = true;
-                //     }
-                //     else
-                //     {
-                //         if (CurrentThreadIndex == 0 && Particles.contains(ParticleIndex) == false)
-                //             cout << "PARTICLE INDEX WRONG = " << ParticleIndex << endl;
-                //         if (CurrentThreadIndex == 0 && Particles.contains(ParticleIndex) == true)
-                //             FillParticleElementInSpace(ParticleIndex, NewVoxel);
-                //         if (CurrentThreadIndex != 0 && ParticlesForThreads.contains(ParticleIndex) == false)
-                //             cout << "PARTICLE INDEX WRONG IN THREADS = " << ParticleIndex << endl;
-                //         if (CurrentThreadIndex != 0 && ParticlesForThreads.contains(ParticleIndex) == true)
-                //             FillParticleElementInSpace(ParticleIndex, NewVoxel);
-                //     }
-                //
-                //     LoggersManagerObject.Log(STREAM("New Centers From Product Added X = " << to_string(NewVoxel.X) << " Y = " << to_string(NewVoxel.Y) << " Z = " << to_string(NewVoxel.Z) << endl));
-                // }
-                //
-                // GetMinMaxCoordinatesForParticle(GetParticleFromIndex(ParticleIndex), false);
-                //
-                //         if (GetParticleFromIndex(ParticleIndex).Center.X == 0 || GetParticleFromIndex(ParticleIndex).Center.Y == 0 || GetParticleFromIndex(ParticleIndex).Center.Z == 0)
-                //             cout << "CENTER A " << ParticleIndex << " " << Centers.size() << " " << CenterIndex << " " << GetParticleFromIndex(ParticleIndex).Center.X << " " << GetParticleFromIndex(ParticleIndex).Center.Y << " " << GetParticleFromIndex(ParticleIndex).Center.Z << endl;
-                //
-                // if (ErrorInVoxels == true)
-                //     ErrorCounter++;
                 vector3_64 NewCenter(Centers[CenterIndex].X - ParticleKindObjectForProduct.XSizeDiv2, Centers[CenterIndex].Y - ParticleKindObjectForProduct.YSizeDiv2, Centers[CenterIndex].Z - ParticleKindObjectForProduct.ZSizeDiv2);
 
                 UnsignedInt XStartParam = (CurrentThreadPos.ThreadPosX - 1) * CellEngineConfigDataObject.NumberOfXVoxelsInOneThreadInVoxelSimulationSpace;
@@ -446,16 +405,10 @@ bool CellEngineSimulationSpace::MakeChemicalReaction(ChemicalReaction& ReactionO
                     for (const auto& NewVoxel : ParticleKindObjectForProduct.ListOfVoxels)
                         FillParticleElementInSpace(ParticleIndex, { NewVoxel.X + NewCenter.X, NewVoxel.Y + NewCenter.Y, NewVoxel.Z + NewCenter.Z });
                     GetMinMaxCoordinatesForParticle(GetParticleFromIndex(ParticleIndex), false);
-
-                    // if (ParticleKindObjectForProduct.ListOfVoxels.empty() == true)
-                    //     cout << "PARTICLE INDEX LIST OF VOXELS ZERO A3 = " << ParticleIndex << endl;
-                    //
-                    // if (GetParticleFromIndex(ParticleIndex).Center.X == 0 || GetParticleFromIndex(ParticleIndex).Center.Y == 0 || GetParticleFromIndex(ParticleIndex).Center.Z == 0)
-                    //     cout<< "CENTER A " << ParticleIndex << " " << GetParticleFromIndex(ParticleIndex).EntityId << " " << Centers.size() << " " << CenterIndex << " " << GetParticleFromIndex(ParticleIndex).Center.X << " " << GetParticleFromIndex(ParticleIndex).Center.Y << " " << GetParticleFromIndex(ParticleIndex).Center.Z << " " << GetParticleFromIndex(ParticleIndex).ListOfVoxels[0].X << " " << GetParticleFromIndex(ParticleIndex).ListOfVoxels[0].Y << " " << GetParticleFromIndex(ParticleIndex).ListOfVoxels[0].Z << " " << GetParticleFromIndex(ParticleIndex).ListOfVoxels.size() << endl;
                 }
                 if (Was == 1)
                 {
-                    // cout << "CANCELLED PARTICLE IN BOUNDS A = " << ActualSimulationSpaceSectorBoundsObject.StartXPos << " " << ActualSimulationSpaceSectorBoundsObject.StartYPos << " "  << ActualSimulationSpaceSectorBoundsObject.StartZPos << " " << ActualSimulationSpaceSectorBoundsObject.EndXPos << " " << ActualSimulationSpaceSectorBoundsObject.EndYPos << " " << ActualSimulationSpaceSectorBoundsObject.EndZPos << " " << ParticleKindObjectForProduct.ListOfVoxels.size() << " " << ParticleKindObjectForProduct.EntityId << endl;
+                    LoggersManagerObject.Log(STREAM("CANCELLED PARTICLE IN BOUNDS A = " << ActualSimulationSpaceSectorBoundsObject.StartXPos << " " << ActualSimulationSpaceSectorBoundsObject.StartYPos << " "  << ActualSimulationSpaceSectorBoundsObject.StartZPos << " " << ActualSimulationSpaceSectorBoundsObject.EndXPos << " " << ActualSimulationSpaceSectorBoundsObject.EndYPos << " " << ActualSimulationSpaceSectorBoundsObject.EndZPos << " " << ParticleKindObjectForProduct.ListOfVoxels.size() << " " << ParticleKindObjectForProduct.EntityId));
 
                     for (const auto& CreatedParticleIndex : CreatedParticlesIndexes)
                         RemoveParticle(CreatedParticleIndex, true);
@@ -519,18 +472,13 @@ bool CellEngineSimulationSpace::MakeChemicalReaction(ChemicalReaction& ReactionO
                         GetMinMaxCoordinatesForParticle(GetParticleFromIndex(ParticleIndex), false);
 
                         LoggersManagerObject.Log(STREAM("RF = " << RandomVectorX << " " << RandomVectorY << " " << RandomVectorZ << " " << XStartParam << " " << XEndParam << " " << YStartParam << " " << YEndParam << " " << ZStartParam << " " << ZEndParam));
-                        // if (ParticleKindObjectForProduct.ListOfVoxels.empty() == true)
-                        //     cout << "PARTICLE INDEX LIST OF VOXELS ZERO A2 = " << ParticleIndex << endl;
-                        //
-                        // if (GetParticleFromIndex(ParticleIndex).Center.X == 0 || GetParticleFromIndex(ParticleIndex).Center.Y == 0 || GetParticleFromIndex(ParticleIndex).Center.Z == 0)
-                        //     cout << "CENTER I " << ParticleIndex << " " << GetParticleFromIndex(ParticleIndex).EntityId << " " << RandomVectorX << " " << RandomVectorY << " "  << RandomVectorZ << " B = " << ActualSimulationSpaceSectorBoundsObject.StartXPos << " " << ActualSimulationSpaceSectorBoundsObject.EndXPos << " " << ActualSimulationSpaceSectorBoundsObject.StartYPos << " " << ActualSimulationSpaceSectorBoundsObject.EndYPos << " " << ActualSimulationSpaceSectorBoundsObject.StartZPos << " " << ActualSimulationSpaceSectorBoundsObject.EndZPos << " C = " << Centers.size() << " " << CenterIndex << " " << GetParticleFromIndex(ParticleIndex).Center.X << " " << GetParticleFromIndex(ParticleIndex).Center.Y << " " << GetParticleFromIndex(ParticleIndex).Center.Z << " L = " << GetParticleFromIndex(ParticleIndex).ListOfVoxels[0].X << " " << GetParticleFromIndex(ParticleIndex).ListOfVoxels[0].Y << " " << GetParticleFromIndex(ParticleIndex).ListOfVoxels[0].Z << " " << GetParticleFromIndex(ParticleIndex).ListOfVoxels.size() << endl;
 
                         break;
                     }
                 }
                 if (Was == 2)
                 {
-                    // cout << "CANCELLED PARTICLE IN BOUNDS B = " << ActualSimulationSpaceSectorBoundsObject.StartXPos << " " << ActualSimulationSpaceSectorBoundsObject.StartYPos << " "  << ActualSimulationSpaceSectorBoundsObject.StartZPos << " " << ActualSimulationSpaceSectorBoundsObject.EndXPos << " " << ActualSimulationSpaceSectorBoundsObject.EndYPos << " " << ActualSimulationSpaceSectorBoundsObject.EndZPos << " " << ParticleKindObjectForProduct.ListOfVoxels.size() << " " << ParticleKindObjectForProduct.EntityId << endl;
+                    LoggersManagerObject.Log(STREAM("CANCELLED PARTICLE IN BOUNDS B = " << ActualSimulationSpaceSectorBoundsObject.StartXPos << " " << ActualSimulationSpaceSectorBoundsObject.StartYPos << " "  << ActualSimulationSpaceSectorBoundsObject.StartZPos << " " << ActualSimulationSpaceSectorBoundsObject.EndXPos << " " << ActualSimulationSpaceSectorBoundsObject.EndYPos << " " << ActualSimulationSpaceSectorBoundsObject.EndZPos << " " << ParticleKindObjectForProduct.ListOfVoxels.size() << " " << ParticleKindObjectForProduct.EntityId));
 
                     for (const auto& CreatedParticleIndex : CreatedParticlesIndexes)
                         RemoveParticle(CreatedParticleIndex, true);
@@ -542,9 +490,6 @@ bool CellEngineSimulationSpace::MakeChemicalReaction(ChemicalReaction& ReactionO
                     return false;
                 }
             }
-                                                                                                                        ela1:
-                                                                                                                        // if (GetParticleFromIndex(ParticleIndex).ListOfVoxels.empty() == true)
-                                                                                                                        //     cout << "PARTICLE INDEX LIST OF VOXELS ZERO A3 CENTER I " << ParticleIndex << " " << Was << " " << Centers.size() << " " << CenterIndex << " " << GetParticleFromIndex(ParticleIndex).Center.X << " " << GetParticleFromIndex(ParticleIndex).Center.Y << " " << GetParticleFromIndex(ParticleIndex).Center.Z << endl;
 
             AddedParticlesInReactions++;
 

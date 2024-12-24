@@ -24,7 +24,7 @@ protected:
     std::tuple<UnsignedInt, UnsignedInt, UnsignedInt> GetRandomPositionInsideSphere(UnsignedInt Radius, UnsignedInt RadiusSize);
 public:
     void InsertNewRandomParticlesForType(ParticlesTypes ParticleTypeParam, bool ModifyParticleKindIdForRNA, UnsignedInt Radius, UnsignedInt RadiusSize);
-    void TryToGenerateRandomParticlesForType(const std::pair<const EntityIdInt, ParticleKind>& ParticleKindObject, EntityIdInt EntityId, UnsignedInt Radius, UnsignedInt RadiusSize, UnsignedInt& NumberOfErrors, GeneIdInt GeneNumId, const std::string& GeneSequence, UnsignedInt GeneSequenceLength);
+    bool TryToGenerateRandomParticlesForType(const std::pair<const EntityIdInt, ParticleKind>& ParticleKindObject, EntityIdInt EntityId, UnsignedInt Radius, UnsignedInt RadiusSize, UnsignedInt& NumberOfErrors, GeneIdInt GeneNumId, const std::string& GeneSequence, UnsignedInt GeneSequenceLength);
 public:
     void RemoveParticlesWithChosenEntityId(EntityIdInt EntityId, UnsignedInt NumberOfParticlesToBeRemoved);
     void RemoveAllParticlesWithChosenEntityId(EntityIdInt EntityId);

@@ -700,7 +700,7 @@ public:
                 if (ImGui::Button(AlignString("ADD TEST CHEMICAL REACTIONS", StringLength).c_str()) == true)
                     CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->AddTestChemicalReactions();
                 if (ImGui::Button(AlignString("CLEAR SELECTED SPACE", StringLength).c_str()) == true)
-                    CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ClearSelectedSpace(10, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceStepsXYZ[0], DrawSpaceStepsXYZ[1], DrawSpaceStepsXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
+                    CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ClearSelectedSpace(DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceStepsXYZ[0], DrawSpaceStepsXYZ[1], DrawSpaceStepsXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
                 if (ImGui::Button(AlignString("ADD RANDOM PARTICLES", StringLength).c_str()) == true)
                     CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateRandomParticlesInSelectedSpace(10, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceStepsXYZ[0], DrawSpaceStepsXYZ[1], DrawSpaceStepsXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
                 if (ImGui::Button(AlignString("ADD PLANED CUBOID PARTICLES", StringLength).c_str()) == true)
@@ -712,9 +712,9 @@ public:
                 {
                     CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->AddParticlesKinds();
                     CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->AddTestChemicalReactions();
-                    CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ClearSelectedSpace(10, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceStepsXYZ[0], DrawSpaceStepsXYZ[1], DrawSpaceStepsXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
+                    CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ClearSelectedSpace(DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceStepsXYZ[0], DrawSpaceStepsXYZ[1], DrawSpaceStepsXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
                     CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GeneratePlanedCuboidParticlesInSelectedSpace(10, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceStepsXYZ[0], DrawSpaceStepsXYZ[1], DrawSpaceStepsXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-                    CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ReadGenomeDataFromFile(true);
+                    CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ReadGenomeDataFromFile(CellEngineConfigDataObject.DNAPaired);
                     CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ReadGenomeSequenceFromFile();
                 }
 
@@ -858,15 +858,19 @@ public:
 
                 if (ImGui::CollapsingHeader("RANDOM DNA GENERATOR", ImGuiTreeNodeFlags_DefaultOpen))
                 {
-                    ColorButton(AlignString("GENERATE RANDOM DNA 1", StringLength).c_str(), Nothing, 0, 0, 0, 3, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue)
+                    ColorButton(AlignString("GENERATE RANDOM DNA 1 RANDOM TURN", StringLength).c_str(), Nothing, 0, 0, 0, 3, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue)
                     {
-                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateRandomDNAInWholeCell1(0, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartXPos + 3, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartYPos, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartZPos, 1, 1, 1, 1, 1, 1, 1, 1);
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateRandomDNAInWholeCell1RandomTurn(0, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartXPos + 3, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartYPos, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartZPos, 1, 1, 1, 1, 1, 1, 1, 1);
+                    });
+                    ColorButton(AlignString("GENERATE RANDOM DNA 1 VERTICAL", StringLength).c_str(), Nothing, 0, 0, 0, 3, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue)
+                    {
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateRandomDNAInWholeCell1Vertical(0, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartXPos + 3, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartYPos, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartZPos, 1, 1, 1, 1, 1, 1, 1, 1);
+                    });
+                    ColorButton(AlignString("GENERATE RANDOM DNA 2 VERTICAL", StringLength).c_str(), Nothing, 0, 0, 0, 3, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue)
+                    {
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateRandomDNAInWholeCell2Vertical(0, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartXPos + 3, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartYPos, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartZPos, 2, 2, 2, 2, 2, 2, 2, 2);
                     });
 
-                    ColorButton(AlignString("GENERATE RANDOM DNA 2", StringLength).c_str(), Nothing, 0, 0, 0, 3, IDButton, [](float& VariableToChange, const float Step, const float MinValue, const float MaxValue)
-                    {
-                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateRandomDNAInWholeCell2(0, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartXPos + 3, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartYPos, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartZPos, 2, 2, 2, 2, 2, 2, 2, 2);
-                    });
 
                     if (ImGui::Button(AlignString("TRUE RANDOM GENERATOR SEED DEVICE", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->RandomGeneratorSetSeedByRandomDevice();
@@ -876,7 +880,8 @@ public:
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->SaveGenomeDataToFile(2);
                     if (ImGui::Button(AlignString("READ GENOME DATA FROM FILE", StringLength).c_str()) == true)
                     {
-                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ReadGenomeDataFromFile(true);
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ReadGenomeDataFromFile(CellEngineConfigDataObject.DNAPaired);
+                                                                                                                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GetMinMaxCoordinatesForDNA();
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ReadGenomeSequenceFromFile();
                     }
                     if (ImGui::Button(AlignString("TEST GENOME DATA FROM FILE", StringLength).c_str()) == true)
@@ -902,10 +907,13 @@ public:
                     if (ImGui::Button(AlignString("GENERATE ALL RANDOM PARTICLES", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateAllRealRandomParticles();
 
-                    const UnsignedInt Radius1 = 400 / CellEngineConfigDataObject.DivisionFactorForReadingPositionsOfParticles;
-                    const UnsignedInt Radius1Size = 400 / CellEngineConfigDataObject.DivisionFactorForReadingPositionsOfParticles;
-                    const UnsignedInt Radius2 = 420 / CellEngineConfigDataObject.DivisionFactorForReadingPositionsOfParticles;
-                    const UnsignedInt Radius2Size = 45 / CellEngineConfigDataObject.DivisionFactorForReadingPositionsOfParticles;
+                    const UnsignedInt Radius1 = 400 / CellEngineConfigDataObject.DivisionFactorForGeneratingPositionsOfParticles;
+                    const UnsignedInt Radius1Size = 400 / CellEngineConfigDataObject.DivisionFactorForGeneratingPositionsOfParticles;
+                    const UnsignedInt Radius2 = 420 / CellEngineConfigDataObject.DivisionFactorForGeneratingPositionsOfParticles;
+                    const UnsignedInt Radius2Size = 45 / CellEngineConfigDataObject.DivisionFactorForGeneratingPositionsOfParticles;
+
+                    if (ImGui::Button(AlignString("SHOW DATA PARAMETERS", StringLength).c_str()) == true)
+                        LoggersManagerObject.Log(STREAM("R = " << Radius1 << " " << Radius1Size << " " << Radius2 << " " << Radius2Size));
 
                     if (ImGui::Button(AlignString("GENERATE RANDOM RIBOSOMES", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->InsertNewRandomParticlesForType(ParticlesTypes::Ribosome, false, Radius1, Radius1Size);

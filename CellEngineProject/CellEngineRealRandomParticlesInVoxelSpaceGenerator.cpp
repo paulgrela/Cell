@@ -201,9 +201,12 @@ tuple<UnsignedInt, UnsignedInt, UnsignedInt> CellEngineRealRandomParticlesInVoxe
 {
     try
     {
-        UnsignedInt PosXStart = 512;
-        UnsignedInt PosYStart = 512;
-        UnsignedInt PosZStart = 512;
+        // UnsignedInt PosXStart = 512;
+        // UnsignedInt PosYStart = 512;
+        // UnsignedInt PosZStart = 512;
+        UnsignedInt PosXStart = CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension / 2;
+        UnsignedInt PosYStart = CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension / 2;
+        UnsignedInt PosZStart = CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension / 2;
 
         uniform_int_distribution<SignedInt> UniformDistributionObjectMoveParticleDirection_int64t(0, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension);
 
@@ -226,14 +229,39 @@ tuple<UnsignedInt, UnsignedInt, UnsignedInt> CellEngineRealRandomParticlesInVoxe
     return { 0, 0, 0 };
 }
 
-void CellEngineRealRandomParticlesInVoxelSpaceGenerator::TryToGenerateRandomParticlesForType(const pair<const EntityIdInt, ParticleKind>& ParticleKindObject, const EntityIdInt EntityId, const UnsignedInt Radius, const UnsignedInt RadiusSize, UnsignedInt& NumberOfErrors, const GeneIdInt GeneNumId, const string& GeneSequence, const UnsignedInt GeneSequenceLength)
+bool CellEngineRealRandomParticlesInVoxelSpaceGenerator::TryToGenerateRandomParticlesForType(const pair<const EntityIdInt, ParticleKind>& ParticleKindObject, const EntityIdInt EntityId, const UnsignedInt Radius, const UnsignedInt RadiusSize, UnsignedInt& NumberOfErrors, const GeneIdInt GeneNumId, const string& GeneSequence, const UnsignedInt GeneSequenceLength)
 {
     try
     {
         LoggersManagerObject.Log(STREAM("Gene Number = " << GeneNumId));
 
-        auto GeneralSize = static_cast<UnsignedInt>(pow(GeneSequenceLength, (1.0 / 3.0)));
-        UnsignedInt Size = GeneralSize > 10 ? GeneralSize - 3 : GeneralSize;
+        // auto GeneralSize = static_cast<UnsignedInt>(pow(GeneSequenceLength, (1.0 / 3.0)));
+        // UnsignedInt Size = GeneralSize > 10 ? GeneralSize - 3 : GeneralSize;
+
+        //auto GeneralSize = static_cast<UnsignedInt>(pow((GeneSequenceLength / pow(CellEngineConfigDataObject.DivisionFactorForReadingPositionsOfParticles, 3.0)), (1.0 / 3.0)));
+        // auto GeneralSize = static_cast<UnsignedInt>(pow((GeneSequenceLength / CellEngineConfigDataObject.DivisionFactorForReadingPositionsOfParticles), (1.0 / 3.0)));
+        // UnsignedInt Size = GeneralSize;
+
+        // UnsignedInt GeneralSize, Size;
+        // if (GeneNumId != 0)
+        // {
+        //     GeneralSize = static_cast<UnsignedInt>(pow((GeneSequenceLength / pow(CellEngineConfigDataObject.DivisionFactorForReadingPositionsOfParticles, 3.0)), (1.0 / 3.0)));
+        //     Size = GeneralSize;
+        // }
+        // else
+        //     Size = GeneralSize = GeneSequenceLength;
+
+        UnsignedInt SizeX, SizeY, SizeZ;
+        if (GeneNumId != 0)
+            SizeX = SizeY = SizeZ = static_cast<UnsignedInt>(pow((GeneSequenceLength / pow(CellEngineConfigDataObject.DivisionFactorForGeneratingPositionsOfParticles, 3.0)), (1.0 / 3.0)));
+        else
+            SizeX = SizeY = SizeZ = GeneSequenceLength;
+
+        cout << "SIZE = " << SizeX << ", " << SizeY << ", " << SizeZ << " Id = " << EntityId << endl;
+
+        //if (ParticleTypeParam == ParticlesTypes::mRNA || ParticleTypeParam == ParticlesTypes::rRNA || ParticleTypeParam == ParticlesTypes::tRNA_uncharged || ParticleTypeParam == ParticlesTypes::tRNA_charged
+        if (EntityId == CellEngineConfigDataObject.RNAIdentifier)
+            SizeY = SizeZ = 1;
 
         UnsignedInt PosX, PosY, PosZ;
         bool TryResult = false;
@@ -243,7 +271,8 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::TryToGenerateRandomPart
         while (TryInsertNewParticleCounter < MaxNumberOfTriesToInsertNewParticle && TryResult == false)
         {
             tie(PosX, PosY, PosZ) = GetRandomPositionInsideSphere(Radius, RadiusSize);
-            TryResult = GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), EntityId, 1, -1, 1, ParticleKindObject.second.ElectricCharge, GeneSequence, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), PosX, PosY, PosZ, Size, Size, Size, 0, 0, 0, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, &CellEngineParticlesVoxelsShapesGenerator::CheckFreeSpaceForSphereSelectedSpace, &CellEngineParticlesVoxelsShapesGenerator::SetValueToVoxelsForSphereSelectedSpace);
+            //TryResult = GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), EntityId, 1, -1, 1, ParticleKindObject.second.ElectricCharge, GeneSequence, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), PosX, PosY, PosZ, SizeX, SizeY, SizeZ, 0, 0, 0, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, &CellEngineParticlesVoxelsShapesGenerator::CheckFreeSpaceForSphereSelectedSpace, &CellEngineParticlesVoxelsShapesGenerator::SetValueToVoxelsForSphereSelectedSpace);
+            TryResult = GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), EntityId, 1, -1, 1, ParticleKindObject.second.ElectricCharge, GeneSequence, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), PosX, PosY, PosZ, SizeX, SizeY, SizeZ, 0, 0, 0, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension, &CellEngineParticlesVoxelsShapesGenerator::CheckFreeSpaceForEllipsoidSelectedSpace, &CellEngineParticlesVoxelsShapesGenerator::SetValueToVoxelsForEllipsoidSelectedSpace);
             if (TryResult == false)
                 RemoveParticle(MaxParticleIndex, true);
             TryInsertNewParticleCounter++;
@@ -252,22 +281,32 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::TryToGenerateRandomPart
         if (TryInsertNewParticleCounter == MaxNumberOfTriesToInsertNewParticle)
         {
             NumberOfErrors++;
-            LoggersManagerObject.Log(STREAM("ERROR Tried insert too many times - Gene Length = " << GeneSequenceLength << " PosX = " << PosX << " PosY = " << PosY << " PosZ = " << PosZ << " Size " << Size << endl));
+            LoggersManagerObject.Log(STREAM("ERROR Tried insert too many times - Gene Length = " << GeneSequenceLength << " PosX = " << PosX << " PosY = " << PosY << " PosZ = " << PosZ << " Size " << SizeX << " " << SizeY << " " << SizeZ << endl));
+
+            return false;
         }
         else
-            LoggersManagerObject.Log(STREAM("Try Insert = " << TryInsertNewParticleCounter << " Gene Length = " << GeneSequenceLength << " PosX = " << PosX << " PosY = " << PosY << " PosZ = " << PosZ << " Size " << Size << endl));
+            LoggersManagerObject.Log(STREAM("Try Insert = " << TryInsertNewParticleCounter << " Gene Length = " << GeneSequenceLength << " PosX = " << PosX << " PosY = " << PosY << " PosZ = " << PosZ << " Size " << SizeX << " " << SizeY << " " << SizeZ << endl));
     }
     CATCH("trying to generate random particle for type")
+
+    return true;
 }
 
 UnsignedInt GetSizeOfGeneratedParticle(const ParticlesTypes ParticlesTypesObject)
 {
     switch (ParticlesTypesObject)
     {
-        case ParticlesTypes::Ribosome : return static_cast<UnsignedInt>(pow(40, 3));
-        case ParticlesTypes::RNAPolymerase : return static_cast<UnsignedInt>(pow(13, 3));
-        case ParticlesTypes::DNAPolymerase : return static_cast<UnsignedInt>(pow(15, 3));
-        default : return 8;
+        //  case ParticlesTypes::Ribosome : return static_cast<UnsignedInt>(pow(40, 3));
+        //  case ParticlesTypes::RNAPolymerase : return static_cast<UnsignedInt>(pow(13, 3));
+        //  case ParticlesTypes::DNAPolymerase : return static_cast<UnsignedInt>(pow(15, 3));
+        //  default : return 8;
+
+        case ParticlesTypes::Ribosome : return static_cast<UnsignedInt>(pow(40 / (5 * CellEngineConfigDataObject.DivisionFactorForGeneratingPositionsOfParticles), 3));
+        case ParticlesTypes::RNAPolymerase : return static_cast<UnsignedInt>(pow(32 / ( 5 * CellEngineConfigDataObject.DivisionFactorForGeneratingPositionsOfParticles), 3));
+        case ParticlesTypes::DNAPolymerase : return static_cast<UnsignedInt>(pow(32 / (5 * CellEngineConfigDataObject.DivisionFactorForGeneratingPositionsOfParticles), 3));
+        case ParticlesTypes::Basic : return 1;
+        default : return 3;
     }
 }
 
@@ -288,6 +327,7 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::InsertNewRandomParticle
 {
     try
     {
+        UnsignedInt NumberOfGeneratedParticles = 0;
         UnsignedInt NumberOfErrors = 0;
 
         CellEngineUseful::SwitchOffLogs();
@@ -302,13 +342,18 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::InsertNewRandomParticle
                         {
                             LoggersManagerObject.Log(STREAM("Particle Type = " << ParticlesKindsManagerObject.ConvertParticleTypeToString(ParticleKindSpecialDataObject.ParticleType) << " Counter = " << ParticleCounter));
 
-                            EntityIdInt EntityId = GetParticleKindIdForRNA(ParticleKindObject.second.EntityId, ParticleKindSpecialDataObject.ParticleType, ModifyParticleKindIdForRNA);
+                            const EntityIdInt EntityId = GetParticleKindIdForRNA(ParticleKindObject.second.EntityId, ParticleKindSpecialDataObject.ParticleType, ModifyParticleKindIdForRNA);
+
+                            bool Success = false;
 
                             auto GeneIter = ParticlesKindsManagerObject.Genes.find(ParticleKindSpecialDataObject.GeneId);
                             if (GeneIter != ParticlesKindsManagerObject.Genes.end())
-                                TryToGenerateRandomParticlesForType(ParticleKindObject, EntityId, Radius, RadiusSize, NumberOfErrors, GeneIter->second.NumId, GeneIter->second.Sequence, GeneIter->second.Sequence.length());
+                                Success = TryToGenerateRandomParticlesForType(ParticleKindObject, EntityId, Radius, RadiusSize, NumberOfErrors, GeneIter->second.NumId, GeneIter->second.Sequence, GeneIter->second.Sequence.length());
                             else
-                                TryToGenerateRandomParticlesForType(ParticleKindObject, EntityId, Radius, RadiusSize, NumberOfErrors, 0, "NO GENE", GetSizeOfGeneratedParticle(ParticleKindSpecialDataObject.ParticleType));
+                                Success = TryToGenerateRandomParticlesForType(ParticleKindObject, EntityId, Radius, RadiusSize, NumberOfErrors, 0, "NO GENE", GetSizeOfGeneratedParticle(ParticleKindSpecialDataObject.ParticleType));
+
+                            if (Success == true)
+                                NumberOfGeneratedParticles++;
                         }
 
         const auto stop_time = chrono::high_resolution_clock::now();
@@ -317,6 +362,7 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::InsertNewRandomParticle
 
         LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, string("Execution of generating all " + ParticlesKindsManagerObject.ConvertParticleTypeToString(ParticleTypeParam) + " particles from file has taken time: ").c_str(), "executing printing duration_time")));
 
+        LoggersManagerObject.Log(STREAM("NUMBER OF GENERATED AND ADDED PARTICLES = " << NumberOfGeneratedParticles));
         LoggersManagerObject.Log(STREAM("NUMBER OF ERRORS = " << NumberOfErrors));
     }
     CATCH("inserting new random particle for type")
@@ -332,32 +378,37 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::GenerateAllRealRandomPa
 
         const auto start_time = chrono::high_resolution_clock::now();
 
-        InsertNewRandomParticlesForType(ParticlesTypes::Ribosome, false, 400, 400);
-        InsertNewRandomParticlesForType(ParticlesTypes::RNAPolymerase, false, 400, 400);
-        InsertNewRandomParticlesForType(ParticlesTypes::DNAPolymerase, false, 400, 400);
+        const UnsignedInt Radius1 = 400 / CellEngineConfigDataObject.DivisionFactorForGeneratingPositionsOfParticles;
+        const UnsignedInt Radius1Size = 400 / CellEngineConfigDataObject.DivisionFactorForGeneratingPositionsOfParticles;
+        const UnsignedInt Radius2 = 420 / CellEngineConfigDataObject.DivisionFactorForGeneratingPositionsOfParticles;
+        const UnsignedInt Radius2Size = 45 / CellEngineConfigDataObject.DivisionFactorForGeneratingPositionsOfParticles;
 
-        InsertNewRandomParticlesForType(ParticlesTypes::MembraneProtein, false, 420, 45);
-        InsertNewRandomParticlesForType(ParticlesTypes::RibosomeProtein, false, 400, 400);
-        InsertNewRandomParticlesForType(ParticlesTypes::PolymeraseProtein, false, 400, 400);
-        InsertNewRandomParticlesForType(ParticlesTypes::RNAPolymeraseProtein, false, 400, 400);
-        InsertNewRandomParticlesForType(ParticlesTypes::ProteinFrac, false, 400, 400);
-        InsertNewRandomParticlesForType(ParticlesTypes::OtherProtein, false, 400, 400);
+        InsertNewRandomParticlesForType(ParticlesTypes::Ribosome, false, Radius1, Radius1Size);
+        InsertNewRandomParticlesForType(ParticlesTypes::RNAPolymerase, false, Radius1, Radius1Size);
+        InsertNewRandomParticlesForType(ParticlesTypes::DNAPolymerase, false, Radius1, Radius1Size);
 
-        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateRandomDNAInWholeCell2(0, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartXPos + 3, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartYPos, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartZPos, 2, 2, 2, 2, 2, 2, 2, 2);
+        InsertNewRandomParticlesForType(ParticlesTypes::MembraneProtein, false, Radius2, Radius2Size);
+        InsertNewRandomParticlesForType(ParticlesTypes::RibosomeProtein, false, Radius1, Radius1Size);
+        InsertNewRandomParticlesForType(ParticlesTypes::PolymeraseProtein, false, Radius1, Radius1Size);
+        InsertNewRandomParticlesForType(ParticlesTypes::RNAPolymeraseProtein, false, Radius1, Radius1Size);
+        InsertNewRandomParticlesForType(ParticlesTypes::ProteinFrac, false, Radius1, Radius1Size);
+        InsertNewRandomParticlesForType(ParticlesTypes::OtherProtein, false, Radius1, Radius1Size);
 
-        InsertNewRandomParticlesForType(ParticlesTypes::tRNA_uncharged, false, 400, 400);
-        InsertNewRandomParticlesForType(ParticlesTypes::tRNA_charged, false, 400, 400);
-        InsertNewRandomParticlesForType(ParticlesTypes::mRNA, false, 400, 400);
-        InsertNewRandomParticlesForType(ParticlesTypes::rRNA, false, 400, 400);
+        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateRandomDNAInWholeCell2Vertical(0, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartXPos + 3, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartYPos, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartZPos, 2, 2, 2, 2, 2, 2, 2, 2);
 
-        InsertNewRandomParticlesForType(ParticlesTypes::tRNA_uncharged, false, true, 400);
-        InsertNewRandomParticlesForType(ParticlesTypes::tRNA_charged, false, true, 400);
-        InsertNewRandomParticlesForType(ParticlesTypes::mRNA, false, true, 400);
-        InsertNewRandomParticlesForType(ParticlesTypes::rRNA, false, true, 400);
+        InsertNewRandomParticlesForType(ParticlesTypes::tRNA_uncharged, false, Radius1, Radius1Size);
+        InsertNewRandomParticlesForType(ParticlesTypes::tRNA_charged, false, Radius1, Radius1Size);
+        InsertNewRandomParticlesForType(ParticlesTypes::mRNA, false, Radius1, Radius1Size);
+        InsertNewRandomParticlesForType(ParticlesTypes::rRNA, false, Radius1, Radius1Size);
 
-        InsertNewRandomParticlesForType(ParticlesTypes::Basic, false, 400, 400);
-        InsertNewRandomParticlesForType(ParticlesTypes::Lipid, false, 400, 400);
-        InsertNewRandomParticlesForType(ParticlesTypes::Other, false, 400, 400);
+        InsertNewRandomParticlesForType(ParticlesTypes::tRNA_uncharged, false, true, Radius1Size);
+        InsertNewRandomParticlesForType(ParticlesTypes::tRNA_charged, false, true, Radius1Size);
+        InsertNewRandomParticlesForType(ParticlesTypes::mRNA, false, true, Radius1Size);
+        InsertNewRandomParticlesForType(ParticlesTypes::rRNA, false, true, Radius1Size);
+
+        InsertNewRandomParticlesForType(ParticlesTypes::Basic, false, Radius1, Radius1Size);
+        InsertNewRandomParticlesForType(ParticlesTypes::Lipid, false, Radius1, Radius1Size);
+        InsertNewRandomParticlesForType(ParticlesTypes::Other, false, Radius1, Radius1Size);
 
         const auto stop_time = chrono::high_resolution_clock::now();
 

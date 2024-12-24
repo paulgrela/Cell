@@ -31,7 +31,7 @@ protected:
 
     virtual void FindParticlesInProximityInSimulationSpaceForSelectedLocalSpace(std::unordered_set<UnsignedInt>& FoundParticleIndexes, bool UpdateNucleotides, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam) = 0;
 
-    void SaveParticleFoundInProximity(const UniqueIdInt ParticleIndex, unordered_set<UnsignedInt>& FoundParticleIndexes, const bool UpdateNucleotides);
+    void SaveParticleFoundInProximity(UniqueIdInt ParticleIndex, unordered_set<UnsignedInt>& FoundParticleIndexes, bool UpdateNucleotides);
 protected:
     explicit CellEngineChemicalReactionsInSimulationSpace(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : CellEngineNucleicAcidsChemicalReactionsInSimulationSpace(ParticlesParam)
     {
