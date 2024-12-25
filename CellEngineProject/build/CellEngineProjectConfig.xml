@@ -4183,8 +4183,8 @@
 
                         <RadiusOfCellForDNA>95</RadiusOfCellForDNA>
 
-			<CellStateFileName>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile35.dat</CellStateFileName>
-                        <CellStateFileNameBackup>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile35.dat</CellStateFileNameBackup>
+			<CellStateFileName>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile37.dat</CellStateFileName>
+                        <CellStateFileNameBackup>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile37.dat</CellStateFileNameBackup>
                         <CellGenomePositionsFileName>./data/genomes/genome_256_single_1/GENOME_POSITIONS.DAT</CellGenomePositionsFileName>
                         <CellGenomeSequenceFileName>./data/genomes/genome_256_single_1/GENOME_SEQUENCE.DAT</CellGenomeSequenceFileName>
                         <CellGenomeSequenceFastaFileName>./data/genomes/genome_256_single_1/sequence.fasta</CellGenomeSequenceFastaFileName>

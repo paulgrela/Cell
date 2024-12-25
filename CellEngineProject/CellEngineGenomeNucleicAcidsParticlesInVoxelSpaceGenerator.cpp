@@ -507,9 +507,8 @@ void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::SaveGenomeDataT
 {
     try
     {
-        string FileName = string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("genome") + OS_DIR_SEP + string("GENOME_POSITIONS.DAT");
         ofstream FileToWriteGenome;
-        FileToWriteGenome.open(FileName, ios_base::out | ios_base::trunc);
+        FileToWriteGenome.open(CellEngineConfigDataObject.CellGenomePositionsFileName, ios_base::out | ios_base::trunc);
         FileToWriteGenome << to_string(ParticleSize) << endl;
         FileToWriteGenome << to_string(Genomes[0].size()) << endl;
         for (const auto& Nucleotide : Genomes[0])
