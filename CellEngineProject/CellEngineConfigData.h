@@ -78,6 +78,11 @@ public:
     float DivisionFactorForReadingPositionsOfParticles{ 1.0 };
     float DivisionFactorForGeneratingPositionsOfParticles{ 1.0 };
 public:
+    UnsignedInt Radius1ForGenerationOfParticles{ 400 };
+    UnsignedInt Radius1SizeForGenerationOfParticles{ 400 };
+    UnsignedInt Radius2ForGenerationOfParticles{ 420 };
+    UnsignedInt Radius2SizeForGenerationOfParticles{ 45 };
+public:
     bool DNAPaired = true;
     UnsignedInt NumberOfAdvanceVoxelsDuringGenerationOfRandomDNA = 50;
 public:

@@ -134,6 +134,15 @@ void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const ch
                             if (CellStatePropertyTreeElement.second.get_child_optional("DivisionFactorForGeneratingPositionsOfParticles"))
                                 CellEngineConfigDataObject.DivisionFactorForGeneratingPositionsOfParticles = CellStatePropertyTreeElement.second.get<float>("DivisionFactorForGeneratingPositionsOfParticles");
 
+                            if (CellStatePropertyTreeElement.second.get_child_optional("Radius1ForGenerationOfParticles"))
+                                CellEngineConfigDataObject.Radius1ForGenerationOfParticles = CellStatePropertyTreeElement.second.get<UnsignedInt>("Radius1ForGenerationOfParticles");
+                            if (CellStatePropertyTreeElement.second.get_child_optional("Radius1SizeForGenerationOfParticles"))
+                                CellEngineConfigDataObject.Radius1SizeForGenerationOfParticles = CellStatePropertyTreeElement.second.get<UnsignedInt>("Radius1SizeForGenerationOfParticles");
+                            if (CellStatePropertyTreeElement.second.get_child_optional("Radius2ForGenerationOfParticles"))
+                                CellEngineConfigDataObject.Radius2ForGenerationOfParticles = CellStatePropertyTreeElement.second.get<UnsignedInt>("Radius2ForGenerationOfParticles");
+                            if (CellStatePropertyTreeElement.second.get_child_optional("Radius2SizeForGenerationOfParticles"))
+                                CellEngineConfigDataObject.Radius2SizeForGenerationOfParticles = CellStatePropertyTreeElement.second.get<UnsignedInt>("Radius2SizeForGenerationOfParticles");
+
                             if (CellStatePropertyTreeElement.second.get_child_optional("DNAPaired"))
                                 CellEngineConfigDataObject.DNAPaired = CellStatePropertyTreeElement.second.get<bool>("DNAPaired");
                             if (CellStatePropertyTreeElement.second.get_child_optional("NumberOfAdvanceVoxelsDuringGenerationOfRandomDNA"))

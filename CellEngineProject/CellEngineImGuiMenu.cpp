@@ -906,10 +906,10 @@ public:
                     if (ImGui::Button(AlignString("GENERATE ALL RANDOM PARTICLES", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateAllRealRandomParticles();
 
-                    const UnsignedInt Radius1 = 400 / CellEngineConfigDataObject.DivisionFactorForGeneratingPositionsOfParticles;
-                    const UnsignedInt Radius1Size = 400 / CellEngineConfigDataObject.DivisionFactorForGeneratingPositionsOfParticles;
-                    const UnsignedInt Radius2 = 420 / CellEngineConfigDataObject.DivisionFactorForGeneratingPositionsOfParticles;
-                    const UnsignedInt Radius2Size = 45 / CellEngineConfigDataObject.DivisionFactorForGeneratingPositionsOfParticles;
+                    const UnsignedInt Radius1 = CellEngineConfigDataObject.Radius1ForGenerationOfParticles;
+                    const UnsignedInt Radius1Size = CellEngineConfigDataObject.Radius1SizeForGenerationOfParticles;
+                    const UnsignedInt Radius2 = CellEngineConfigDataObject.Radius2ForGenerationOfParticles;
+                    const UnsignedInt Radius2Size = CellEngineConfigDataObject.Radius2SizeForGenerationOfParticles;
 
                     if (ImGui::Button(AlignString("SHOW DATA PARAMETERS", StringLength).c_str()) == true)
                         LoggersManagerObject.Log(STREAM("R = " << Radius1 << " " << Radius1Size << " " << Radius2 << " " << Radius2Size));

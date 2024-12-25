@@ -2874,6 +2874,11 @@
                         <DivisionFactorForReadingPositionsOfParticles>1.0</DivisionFactorForReadingPositionsOfParticles>
                         <DivisionFactorForGeneratingPositionsOfParticles>1.0</DivisionFactorForGeneratingPositionsOfParticles>
 
+                        <Radius1ForGenerationOfParticles>400</Radius1ForGenerationOfParticles>
+                        <Radius1SizeForGenerationOfParticles>400</Radius1SizeForGenerationOfParticles>
+                        <Radius2ForGenerationOfParticles>420</Radius1ForGenerationOfParticles>
+                        <Radius2SizeForGenerationOfParticles>45</Radius1SizeForGenerationOfParticles>
+
                         <NumberOfAdvanceVoxelsDuringGenerationOfRandomDNA>50</NumberOfAdvanceVoxelsDuringGenerationOfRandomDNA>
                         <DNAPaired>true</DNAPaired>
 
@@ -3131,6 +3136,11 @@
                         <DivisionFactorForVoxelSimulationSpace>4.0</DivisionFactorForVoxelSimulationSpace> <!--4 or 2 or other-->
                         <DivisionFactorForReadingPositionsOfParticles>1.0</DivisionFactorForReadingPositionsOfParticles>
                         <DivisionFactorForGeneratingPositionsOfParticles>1.0</DivisionFactorForGeneratingPositionsOfParticles>
+
+                        <Radius1ForGenerationOfParticles>400</Radius1ForGenerationOfParticles>
+                        <Radius1SizeForGenerationOfParticles>400</Radius1SizeForGenerationOfParticles>
+                        <Radius2ForGenerationOfParticles>420</Radius1ForGenerationOfParticles>
+                        <Radius2SizeForGenerationOfParticles>45</Radius1SizeForGenerationOfParticles>
 
                         <NumberOfAdvanceVoxelsDuringGenerationOfRandomDNA>50</NumberOfAdvanceVoxelsDuringGenerationOfRandomDNA>
                         <DNAPaired>true</DNAPaired>
@@ -3404,6 +3414,13 @@
                         <TypeOfSpace>2</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
                         <NumberOfVoxelsInVoxelSimulationSpaceInEachDimension>2048</NumberOfVoxelsInVoxelSimulationSpaceInEachDimension> <!--1024 or 2048 or other-->
                         <DivisionFactorForVoxelSimulationSpace>2.0</DivisionFactorForVoxelSimulationSpace> <!--4 or 2 or other-->
+                        <DivisionFactorForReadingPositionsOfParticles>1.0</DivisionFactorForReadingPositionsOfParticles>
+                        <DivisionFactorForGeneratingPositionsOfParticles>1.0</DivisionFactorForGeneratingPositionsOfParticles>
+
+                        <Radius1ForGenerationOfParticles>800</Radius1ForGenerationOfParticles>
+                        <Radius1SizeForGenerationOfParticles>800</Radius1SizeForGenerationOfParticles>
+                        <Radius2ForGenerationOfParticles>840</Radius1ForGenerationOfParticles>
+                        <Radius2SizeForGenerationOfParticles>90</Radius1SizeForGenerationOfParticles>
 
                         <VoxelSimulationSpaceSelectionStartXPos>789</VoxelSimulationSpaceSelectionStartXPos>
                         <VoxelSimulationSpaceSelectionStartYPos>898</VoxelSimulationSpaceSelectionStartYPos>
@@ -3846,6 +3863,10 @@
                         <DivisionFactorForVoxelSimulationSpace>4.0</DivisionFactorForVoxelSimulationSpace> <!--4 or 2 or other-->
                         <DivisionFactorForReadingPositionsOfParticles>4.0</DivisionFactorForReadingPositionsOfParticles>
                         <DivisionFactorForGeneratingPositionsOfParticles>4.0</DivisionFactorForGeneratingPositionsOfParticles>
+                        <Radius1ForGenerationOfParticles>100</Radius1ForGenerationOfParticles>
+                        <Radius1SizeForGenerationOfParticles>100</Radius1SizeForGenerationOfParticles>
+                        <Radius2ForGenerationOfParticles>105</Radius1ForGenerationOfParticles>
+                        <Radius2SizeForGenerationOfParticles>12</Radius1SizeForGenerationOfParticles>
 
                         <NumberOfAdvanceVoxelsDuringGenerationOfRandomDNA>12</NumberOfAdvanceVoxelsDuringGenerationOfRandomDNA>
                         <DNAPaired>false</DNAPaired>
@@ -4121,6 +4142,10 @@
                         <DivisionFactorForVoxelSimulationSpace>4.0</DivisionFactorForVoxelSimulationSpace> <!--4 or 2 or other-->
                         <DivisionFactorForReadingPositionsOfParticles>1.0</DivisionFactorForReadingPositionsOfParticles>
                         <DivisionFactorForGeneratingPositionsOfParticles>4.0</DivisionFactorForGeneratingPositionsOfParticles>
+                        <Radius1ForGenerationOfParticles>100</Radius1ForGenerationOfParticles>
+                        <Radius1SizeForGenerationOfParticles>100</Radius1SizeForGenerationOfParticles>
+                        <Radius2ForGenerationOfParticles>105</Radius1ForGenerationOfParticles>
+                        <Radius2SizeForGenerationOfParticles>12</Radius1SizeForGenerationOfParticles>
 
                         <NumberOfAdvanceVoxelsDuringGenerationOfRandomDNA>12</NumberOfAdvanceVoxelsDuringGenerationOfRandomDNA>
                         <DNAPaired>false</DNAPaired>
