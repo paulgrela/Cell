@@ -297,10 +297,10 @@ UnsignedInt GetSizeOfGeneratedParticle(const ParticlesTypes ParticlesTypesObject
 {
     switch (ParticlesTypesObject)
     {
-        //  case ParticlesTypes::Ribosome : return static_cast<UnsignedInt>(pow(40, 3));
-        //  case ParticlesTypes::RNAPolymerase : return static_cast<UnsignedInt>(pow(13, 3));
-        //  case ParticlesTypes::DNAPolymerase : return static_cast<UnsignedInt>(pow(15, 3));
-        //  default : return 8;
+        // case ParticlesTypes::Ribosome : return static_cast<UnsignedInt>(pow(40, 3));
+        // case ParticlesTypes::RNAPolymerase : return static_cast<UnsignedInt>(pow(13, 3));
+        // case ParticlesTypes::DNAPolymerase : return static_cast<UnsignedInt>(pow(15, 3));
+        // default : return 8;
 
         case ParticlesTypes::Ribosome : return static_cast<UnsignedInt>(pow(40 / (5 * CellEngineConfigDataObject.DivisionFactorForGeneratingPositionsOfParticles), 3));
         case ParticlesTypes::RNAPolymerase : return static_cast<UnsignedInt>(pow(32 / ( 5 * CellEngineConfigDataObject.DivisionFactorForGeneratingPositionsOfParticles), 3));

@@ -684,7 +684,7 @@ public:
                 if (ImGui::Button(AlignString("ADD ILLINOIS DATA", StringLength).c_str()) == true)
                 {
                     CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ReadAllIllinoisDataFromFiles();
-                    CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ReadGenomeSequenceFromFile();
+                    CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ReadGenomeSequenceFromFile(CellEngineConfigDataObject.DNAPaired);
                 }
                 if (ImGui::Button(AlignString("READ ILLINOIS CHEMICAL REACTIONS", StringLength).c_str()) == true)
                     CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ReadChemicalReactionsFromFiles();
@@ -715,7 +715,7 @@ public:
                     CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ClearSelectedSpace(DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceStepsXYZ[0], DrawSpaceStepsXYZ[1], DrawSpaceStepsXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
                     CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GeneratePlanedCuboidParticlesInSelectedSpace(10, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceStepsXYZ[0], DrawSpaceStepsXYZ[1], DrawSpaceStepsXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
                     CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ReadGenomeDataFromFile(CellEngineConfigDataObject.DNAPaired);
-                    CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ReadGenomeSequenceFromFile();
+                    CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ReadGenomeSequenceFromFile(CellEngineConfigDataObject.DNAPaired);
                 }
 
                 int IDButton = 1;
@@ -881,8 +881,7 @@ public:
                     if (ImGui::Button(AlignString("READ GENOME DATA FROM FILE", StringLength).c_str()) == true)
                     {
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ReadGenomeDataFromFile(CellEngineConfigDataObject.DNAPaired);
-                                                                                                                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GetMinMaxCoordinatesForDNA();
-                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ReadGenomeSequenceFromFile();
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->ReadGenomeSequenceFromFile(CellEngineConfigDataObject.DNAPaired);
                     }
                     if (ImGui::Button(AlignString("TEST GENOME DATA FROM FILE", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->TestGeneratedGenomeCorrectness(2);

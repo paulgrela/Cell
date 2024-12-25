@@ -190,6 +190,14 @@ void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const ch
 
                         CellEngineConfigDataObject.CellStateFileName = CellStatePropertyTreeElement.second.get<string>("CellStateFileName");
                         CellEngineConfigDataObject.CellStateFileNameBackup = CellStatePropertyTreeElement.second.get<string>("CellStateFileNameBackup");
+                        if (CellStatePropertyTreeElement.second.get_child_optional("CellGenomePositionsFileName"))
+                            CellEngineConfigDataObject.CellGenomePositionsFileName = CellStatePropertyTreeElement.second.get<string>("CellGenomePositionsFileName");
+                        if (CellStatePropertyTreeElement.second.get_child_optional("CellGenomeSequenceFileName"))
+                            CellEngineConfigDataObject.CellGenomeSequenceFileName = CellStatePropertyTreeElement.second.get<string>("CellGenomeSequenceFileName");
+                        if (CellStatePropertyTreeElement.second.get_child_optional("CellGenomeSequenceFastaFileName"))
+                            CellEngineConfigDataObject.CellGenomeSequenceFastaFileName = CellStatePropertyTreeElement.second.get<string>("CellGenomeSequenceFastaFileName");
+                        if (CellStatePropertyTreeElement.second.get_child_optional("CellGenomeSequenceFastaOneFileName"))
+                            CellEngineConfigDataObject.CellGenomeSequenceFastaOneFileName = CellStatePropertyTreeElement.second.get<string>("CellGenomeSequenceFastaOneFileName");
 
                         CellEngineDataFileObjectPointer = CreateCellEngineDataFileObject(CellEngineConfigDataObject.CellStateFileName);
 

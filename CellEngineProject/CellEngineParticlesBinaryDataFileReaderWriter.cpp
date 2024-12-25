@@ -623,7 +623,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::FindGenomeParameters() const
     try
     {
         CellEngineVoxelSimulationSpaceObjectPointer->ReadGenomeDataFromFile(CellEngineConfigDataObject.DNAPaired);
-        CellEngineVoxelSimulationSpaceObjectPointer->ReadGenomeSequenceFromFile();
+        CellEngineVoxelSimulationSpaceObjectPointer->ReadGenomeSequenceFromFile(CellEngineConfigDataObject.DNAPaired);
         CellEngineVoxelSimulationSpaceObjectPointer->TestDifferentKindsOfPromotersFindingsAndTerminatorsFindingsAlgorithms();
     }
     CATCH("finding genome parameters")

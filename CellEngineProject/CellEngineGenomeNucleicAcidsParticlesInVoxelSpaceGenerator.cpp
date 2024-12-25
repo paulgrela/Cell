@@ -540,8 +540,7 @@ void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::ReadGenomeDataF
         string Line, Word;
         vector<string> Row;
 
-        string FileName = string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("genome") + OS_DIR_SEP + string("GENOME_POSITIONS.DAT");
-        fstream FileToReadGenome(FileName, ios::in);
+        fstream FileToReadGenome(CellEngineConfigDataObject.CellGenomePositionsFileName, ios::in);
 
         getline(FileToReadGenome, Line);
         UnsignedInt ParticleSize = stoi(Line);
@@ -583,28 +582,32 @@ void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::ReadGenomeDataF
 
         FileToReadGenome.close();
 
+        //GetMinMaxCoordinatesForDNA();
+
         LoggersManagerObject.Log(STREAM("NUMBER OF ADDED PARTICLES = " << Particles.size() - ParticlesSizeBeforeAddingRandomDNA));
     }
     CATCH("reading genome data from file")
 }
 
-void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::ReadGenomeSequenceFromFile()
+void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::ReadGenomeSequenceFromFile(const bool Paired)
 {
     try
     {
-        string FileName = string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("genome") + OS_DIR_SEP + string("GENOME_SEQUENCE.DAT");
-
-        fstream FileToReadGenome(FileName, ios::in);
+        fstream FileToReadGenome(CellEngineConfigDataObject.CellGenomeSequenceFileName, ios::in);
 
         getline(FileToReadGenome, GenomesLines[0]);
-        // GenomesLines[1] = "";
-        // for (const auto& GenomeLetter : GenomesLines[0])
-        //     GenomesLines[1] += CellEngineUseful::GetLetterFromChainIdForDNAorRNA(CellEngineUseful::GetPairedChainIdForDNAorRNA(CellEngineUseful::GetChainIdFromLetterForDNAorRNA(GenomeLetter)));
+        if (Paired == true)
+        {
+            GenomesLines[1] = "";
+            for (const auto& GenomeLetter : GenomesLines[0])
+                GenomesLines[1] += CellEngineUseful::GetLetterFromChainIdForDNAorRNA(CellEngineUseful::GetPairedChainIdForDNAorRNA(CellEngineUseful::GetChainIdFromLetterForDNAorRNA(GenomeLetter)));
+        }
 
         for (UnsignedInt GenomeIndex = 0; GenomeIndex < Genomes[0].size(); GenomeIndex++)
         {
             GetParticleFromIndex(Genomes[0][GenomeIndex + 1]).ChainId = CellEngineUseful::GetChainIdFromLetterForDNAorRNA(GenomesLines[0][GenomeIndex]);
-            // GetParticleFromIndex(Genomes[1][GenomeIndex + 1]).ChainId = CellEngineUseful::GetPairedChainIdForDNAorRNA(CellEngineUseful::GetChainIdFromLetterForDNAorRNA(GenomesLines[0][GenomeIndex]));
+            if (Paired == true)
+                GetParticleFromIndex(Genomes[1][GenomeIndex + 1]).ChainId = CellEngineUseful::GetPairedChainIdForDNAorRNA(CellEngineUseful::GetChainIdFromLetterForDNAorRNA(GenomesLines[0][GenomeIndex]));
         }
     }
     CATCH("reading real genome data from file")
@@ -614,16 +617,13 @@ void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::ReadGenomeSeque
 {
     try
     {
-        string FileNameIn = string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("genome") + OS_DIR_SEP + string("sequence.fasta");
-
-        fstream FileToReadGenome(FileNameIn, ios::in);
+        fstream FileToReadGenome(CellEngineConfigDataObject.CellGenomeSequenceFastaFileName, ios::in);
 
         string Line;
         while(getline(FileToReadGenome, Line))
             GenomesLines[0] += Line.substr(0, Line.size() - 1);
 
-        string FileNameOut = string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("genome") + OS_DIR_SEP + string("sequence.fasta.one");
-        ofstream FileToSaveGenome(FileNameOut, ios::out);
+        ofstream FileToSaveGenome(CellEngineConfigDataObject.CellGenomeSequenceFastaOneFileName, ios::out);
         FileToSaveGenome << GenomesLines[0];
         FileToSaveGenome.close();
     }

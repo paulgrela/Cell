@@ -33,7 +33,7 @@ public:
 public:
     void SaveGenomeDataToFile(UnsignedInt ParticleSize);
     void ReadGenomeDataFromFile(bool Paired);
-    void ReadGenomeSequenceFromFile();
+    void ReadGenomeSequenceFromFile(bool Paired);
     void ReadGenomeSequenceFromFastaFile();
     void TestGeneratedGenomeCorrectness(UnsignedInt ParticleSize);
 protected:

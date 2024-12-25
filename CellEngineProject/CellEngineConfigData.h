@@ -135,6 +135,10 @@ public:
 public:
     std::string CellStateFileName;
     std::string CellStateFileNameBackup;
+    std::string CellGenomePositionsFileName;
+    std::string CellGenomeSequenceFileName;
+    std::string CellGenomeSequenceFastaFileName;
+    std::string CellGenomeSequenceFastaOneFileName;
 public:
     float SpecularPower = 8.0f;
     float SpecularAlbedo = 0.2222f;
@@ -224,11 +228,11 @@ public:
     EntityIdInt DNAIdentifier{};
     EntityIdInt RNAIdentifier{};
     EntityIdInt ProteinInBuildingProcessIdentifier{};
-    EntityIdInt ATP_ID;
-    EntityIdInt CTP_ID;
-    EntityIdInt GTP_ID;
-    EntityIdInt TTP_ID;
-    EntityIdInt UTP_ID;
+    EntityIdInt ATP_ID{};
+    EntityIdInt CTP_ID{};
+    EntityIdInt GTP_ID{};
+    EntityIdInt TTP_ID{};
+    EntityIdInt UTP_ID{};
 public:
     bool RNAInOneParticle = true;
 };
