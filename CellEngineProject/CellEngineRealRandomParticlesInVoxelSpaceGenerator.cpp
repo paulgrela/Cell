@@ -300,7 +300,7 @@ EntityIdInt GetParticleKindIdForRNA(const EntityIdInt EntityId, const ParticlesT
         return EntityId;
 }
 
-void CellEngineRealRandomParticlesInVoxelSpaceGenerator::InsertNewRandomParticlesForType(const ParticlesTypes ParticleTypeParam, bool ModifyParticleKindIdForRNA, const UnsignedInt Radius, const UnsignedInt RadiusSize)
+void CellEngineRealRandomParticlesInVoxelSpaceGenerator::InsertNewRandomParticlesForType(const ParticlesTypes ParticleTypeParam, const bool ModifyParticleKindIdForRNA, const UnsignedInt Radius, const UnsignedInt RadiusSize)
 {
     try
     {
@@ -371,17 +371,15 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::GenerateAllRealRandomPa
         InsertNewRandomParticlesForType(ParticlesTypes::ProteinFrac, false, Radius1, Radius1Size);
         InsertNewRandomParticlesForType(ParticlesTypes::OtherProtein, false, Radius1, Radius1Size);
 
-        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateRandomDNAInWholeCell2Vertical(0, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartXPos + 3, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartYPos, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartZPos, 2, 2, 2, 2, 2, 2, 2, 2);
-
         InsertNewRandomParticlesForType(ParticlesTypes::tRNA_uncharged, false, Radius1, Radius1Size);
         InsertNewRandomParticlesForType(ParticlesTypes::tRNA_charged, false, Radius1, Radius1Size);
         InsertNewRandomParticlesForType(ParticlesTypes::mRNA, false, Radius1, Radius1Size);
         InsertNewRandomParticlesForType(ParticlesTypes::rRNA, false, Radius1, Radius1Size);
 
-        InsertNewRandomParticlesForType(ParticlesTypes::tRNA_uncharged, false, true, Radius1Size);
-        InsertNewRandomParticlesForType(ParticlesTypes::tRNA_charged, false, true, Radius1Size);
-        InsertNewRandomParticlesForType(ParticlesTypes::mRNA, false, true, Radius1Size);
-        InsertNewRandomParticlesForType(ParticlesTypes::rRNA, false, true, Radius1Size);
+        InsertNewRandomParticlesForType(ParticlesTypes::tRNA_uncharged, true, Radius1, Radius1Size);
+        InsertNewRandomParticlesForType(ParticlesTypes::tRNA_charged, true, Radius1, Radius1Size);
+        InsertNewRandomParticlesForType(ParticlesTypes::mRNA, true, Radius1, Radius1Size);
+        InsertNewRandomParticlesForType(ParticlesTypes::rRNA, true, Radius1, Radius1Size);
 
         InsertNewRandomParticlesForType(ParticlesTypes::Basic, false, Radius1, Radius1Size);
         InsertNewRandomParticlesForType(ParticlesTypes::Lipid, false, Radius1, Radius1Size);
