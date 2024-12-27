@@ -90,6 +90,7 @@ public:
     void CheckParticlesCenters(bool PrintAllParticles) const;
 protected:
     std::tuple<std::vector<std::pair<UniqueIdInt, UnsignedInt>>, bool> ChooseParticlesForReactionFromAllParticlesInProximity(const ChemicalReaction& ReactionObject);
+    SimulationSpaceSectorBounds GetBoundsForThreadSector() const;
 protected:
     void PrepareRandomReaction();
     void FindAndExecuteRandomReactionVersion1(UnsignedInt MaxNumberOfReactantsParam);

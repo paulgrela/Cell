@@ -349,6 +349,40 @@ void LogParticleData(const UniqueIdInt ParticleIndex, const UnsignedInt CenterIn
     cout << "K " << ParticleKindVoxel.X << " " << ParticleKindVoxel.Y << " " << ParticleKindVoxel.Z << endl;
 }
 
+SimulationSpaceSectorBounds CellEngineSimulationSpace::GetBoundsForThreadSector() const
+{
+    SimulationSpaceSectorBounds SimulationSpaceSectorBoundsObject{};
+
+    try
+    {
+        if (CurrentThreadIndex == 0)
+        {
+            SimulationSpaceSectorBoundsObject.StartXPos = 0;
+            SimulationSpaceSectorBoundsObject.EndXPos = CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension;
+            SimulationSpaceSectorBoundsObject.StartYPos = 0;
+            SimulationSpaceSectorBoundsObject.EndYPos = CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension;
+            SimulationSpaceSectorBoundsObject.StartZPos = 0;
+            SimulationSpaceSectorBoundsObject.EndZPos = CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension;
+        }
+        else
+        {
+            SimulationSpaceSectorBoundsObject.StartXPos = (CurrentThreadPos.ThreadPosX - 1) * CellEngineConfigDataObject.NumberOfXVoxelsInOneThreadInVoxelSimulationSpace;
+            SimulationSpaceSectorBoundsObject.EndXPos = (CurrentThreadPos.ThreadPosX - 1) * CellEngineConfigDataObject.NumberOfXVoxelsInOneThreadInVoxelSimulationSpace + CellEngineConfigDataObject.NumberOfXVoxelsInOneThreadInVoxelSimulationSpace;
+            SimulationSpaceSectorBoundsObject.StartYPos = (CurrentThreadPos.ThreadPosY - 1) * CellEngineConfigDataObject.NumberOfYVoxelsInOneThreadInVoxelSimulationSpace;
+            SimulationSpaceSectorBoundsObject.EndYPos = (CurrentThreadPos.ThreadPosY - 1) * CellEngineConfigDataObject.NumberOfYVoxelsInOneThreadInVoxelSimulationSpace + CellEngineConfigDataObject.NumberOfYVoxelsInOneThreadInVoxelSimulationSpace;
+            SimulationSpaceSectorBoundsObject.StartZPos = (CurrentThreadPos.ThreadPosZ - 1) * CellEngineConfigDataObject.NumberOfZVoxelsInOneThreadInVoxelSimulationSpace;
+            SimulationSpaceSectorBoundsObject.EndZPos = (CurrentThreadPos.ThreadPosZ - 1) * CellEngineConfigDataObject.NumberOfZVoxelsInOneThreadInVoxelSimulationSpace + CellEngineConfigDataObject.NumberOfZVoxelsInOneThreadInVoxelSimulationSpace;
+        }
+
+        SimulationSpaceSectorBoundsObject.SizeX = SimulationSpaceSectorBoundsObject.EndXPos - SimulationSpaceSectorBoundsObject.StartXPos;
+        SimulationSpaceSectorBoundsObject.SizeY = SimulationSpaceSectorBoundsObject.EndYPos - SimulationSpaceSectorBoundsObject.StartYPos;
+        SimulationSpaceSectorBoundsObject.SizeZ = SimulationSpaceSectorBoundsObject.EndZPos - SimulationSpaceSectorBoundsObject.StartZPos;
+    }
+    CATCH("getting bounds for thread sector")
+
+    return SimulationSpaceSectorBoundsObject;
+}
+
 bool CellEngineSimulationSpace::MakeChemicalReaction(ChemicalReaction& ReactionObject)
 {
     const auto start_time = chrono::high_resolution_clock::now();
@@ -383,30 +417,17 @@ bool CellEngineSimulationSpace::MakeChemicalReaction(ChemicalReaction& ReactionO
 
             auto& ParticleKindObjectForProduct = ParticlesKindsManagerObject.GetParticleKind(ReactionProduct.EntityId);
 
-            int Was = 0;
-
             if (CenterIndex < Centers.size())
             {
-                Was = 1;
-                bool ErrorInVoxels = false;
-
                 vector3_64 NewCenter(Centers[CenterIndex].X - ParticleKindObjectForProduct.XSizeDiv2, Centers[CenterIndex].Y - ParticleKindObjectForProduct.YSizeDiv2, Centers[CenterIndex].Z - ParticleKindObjectForProduct.ZSizeDiv2);
 
-                UnsignedInt XStartParam = (CurrentThreadPos.ThreadPosX - 1) * CellEngineConfigDataObject.NumberOfXVoxelsInOneThreadInVoxelSimulationSpace;
-                UnsignedInt XEndParam = (CurrentThreadPos.ThreadPosX - 1) * CellEngineConfigDataObject.NumberOfXVoxelsInOneThreadInVoxelSimulationSpace + CellEngineConfigDataObject.NumberOfXVoxelsInOneThreadInVoxelSimulationSpace;
-                UnsignedInt YStartParam = (CurrentThreadPos.ThreadPosY - 1) * CellEngineConfigDataObject.NumberOfYVoxelsInOneThreadInVoxelSimulationSpace;
-                UnsignedInt YEndParam = (CurrentThreadPos.ThreadPosY - 1) * CellEngineConfigDataObject.NumberOfYVoxelsInOneThreadInVoxelSimulationSpace + CellEngineConfigDataObject.NumberOfYVoxelsInOneThreadInVoxelSimulationSpace;
-                UnsignedInt ZStartParam = (CurrentThreadPos.ThreadPosZ - 1) * CellEngineConfigDataObject.NumberOfZVoxelsInOneThreadInVoxelSimulationSpace;
-                UnsignedInt ZEndParam = (CurrentThreadPos.ThreadPosZ - 1) * CellEngineConfigDataObject.NumberOfZVoxelsInOneThreadInVoxelSimulationSpace + CellEngineConfigDataObject.NumberOfZVoxelsInOneThreadInVoxelSimulationSpace;
-
-                if (CheckIfSpaceIsEmptyAndIsInBoundsForListOfVoxels(ParticleKindObjectForProduct.ListOfVoxels, NewCenter.X, NewCenter.Y, NewCenter.Z, SimulationSpaceSectorBounds{ XStartParam, YStartParam, ZStartParam, XEndParam - XStartParam, YEndParam - YStartParam, ZEndParam - ZStartParam, XEndParam, YEndParam, ZEndParam }) == true)
+                if (CheckIfSpaceIsEmptyAndIsInBoundsForListOfVoxels(ParticleKindObjectForProduct.ListOfVoxels, NewCenter.X, NewCenter.Y, NewCenter.Z, GetBoundsForThreadSector()) == true)
                 {
-                    Was = 3;
                     for (const auto& NewVoxel : ParticleKindObjectForProduct.ListOfVoxels)
                         FillParticleElementInSpace(ParticleIndex, { NewVoxel.X + NewCenter.X, NewVoxel.Y + NewCenter.Y, NewVoxel.Z + NewCenter.Z });
                     GetMinMaxCoordinatesForParticle(GetParticleFromIndex(ParticleIndex), false);
                 }
-                if (Was == 1)
+                else
                 {
                     LoggersManagerObject.Log(STREAM("CANCELLED PARTICLE IN BOUNDS A = " << ActualSimulationSpaceSectorBoundsObject.StartXPos << " " << ActualSimulationSpaceSectorBoundsObject.StartYPos << " "  << ActualSimulationSpaceSectorBoundsObject.StartZPos << " " << ActualSimulationSpaceSectorBoundsObject.EndXPos << " " << ActualSimulationSpaceSectorBoundsObject.EndYPos << " " << ActualSimulationSpaceSectorBoundsObject.EndZPos << " " << ParticleKindObjectForProduct.ListOfVoxels.size() << " " << ParticleKindObjectForProduct.EntityId));
 
@@ -422,36 +443,13 @@ bool CellEngineSimulationSpace::MakeChemicalReaction(ChemicalReaction& ReactionO
             }
             else
             {
-                Was = 2;
                 uniform_int_distribution<UnsignedInt> UniformDistributionObjectMoveParticleDirectionX_uint64t(ActualSimulationSpaceSectorBoundsObject.StartXPos, ActualSimulationSpaceSectorBoundsObject.EndXPos);
                 uniform_int_distribution<UnsignedInt> UniformDistributionObjectMoveParticleDirectionY_uint64t(ActualSimulationSpaceSectorBoundsObject.StartYPos, ActualSimulationSpaceSectorBoundsObject.EndYPos);
                 uniform_int_distribution<UnsignedInt> UniformDistributionObjectMoveParticleDirectionZ_uint64t(ActualSimulationSpaceSectorBoundsObject.StartZPos, ActualSimulationSpaceSectorBoundsObject.EndZPos);
 
-                UnsignedInt XStartParam;
-                UnsignedInt XEndParam;
-                UnsignedInt YStartParam;
-                UnsignedInt YEndParam;
-                UnsignedInt ZStartParam;
-                UnsignedInt ZEndParam;
+                auto SimulationSpaceSectorBoundsObject = GetBoundsForThreadSector();
 
-                if (CurrentThreadIndex == 0)
-                {
-                    XStartParam = 0;
-                    XEndParam = CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension;
-                    YStartParam = 0;
-                    YEndParam = CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension;
-                    ZStartParam = 0;
-                    ZEndParam = CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension;
-                }
-                else
-                {
-                    XStartParam = (CurrentThreadPos.ThreadPosX - 1) * CellEngineConfigDataObject.NumberOfXVoxelsInOneThreadInVoxelSimulationSpace;
-                    XEndParam = (CurrentThreadPos.ThreadPosX - 1) * CellEngineConfigDataObject.NumberOfXVoxelsInOneThreadInVoxelSimulationSpace + CellEngineConfigDataObject.NumberOfXVoxelsInOneThreadInVoxelSimulationSpace;
-                    YStartParam = (CurrentThreadPos.ThreadPosY - 1) * CellEngineConfigDataObject.NumberOfYVoxelsInOneThreadInVoxelSimulationSpace;
-                    YEndParam = (CurrentThreadPos.ThreadPosY - 1) * CellEngineConfigDataObject.NumberOfYVoxelsInOneThreadInVoxelSimulationSpace + CellEngineConfigDataObject.NumberOfYVoxelsInOneThreadInVoxelSimulationSpace;
-                    ZStartParam = (CurrentThreadPos.ThreadPosZ - 1) * CellEngineConfigDataObject.NumberOfZVoxelsInOneThreadInVoxelSimulationSpace;
-                    ZEndParam = (CurrentThreadPos.ThreadPosZ - 1) * CellEngineConfigDataObject.NumberOfZVoxelsInOneThreadInVoxelSimulationSpace + CellEngineConfigDataObject.NumberOfZVoxelsInOneThreadInVoxelSimulationSpace;
-                }
+                bool FoundFreePlace = false;
 
                 UnsignedInt NumberOfTries = 0;
                 while (NumberOfTries < 1000)
@@ -462,21 +460,22 @@ bool CellEngineSimulationSpace::MakeChemicalReaction(ChemicalReaction& ReactionO
                     auto RandomVectorY = UniformDistributionObjectMoveParticleDirectionY_uint64t(mt64R);
                     auto RandomVectorZ = UniformDistributionObjectMoveParticleDirectionZ_uint64t(mt64R);
 
-                    LoggersManagerObject.Log(STREAM("R = " << RandomVectorX << " " << RandomVectorY << " " << RandomVectorZ << " " << XStartParam << " " << XEndParam << " " << YStartParam << " " << YEndParam << " " << ZStartParam << " " << ZEndParam));
+                    LoggersManagerObject.Log(STREAM("R = " << RandomVectorX << " " << RandomVectorY << " " << RandomVectorZ << " " << SimulationSpaceSectorBoundsObject.StartXPos << " " << SimulationSpaceSectorBoundsObject.EndXPos << " " << SimulationSpaceSectorBoundsObject.StartYPos << " " << SimulationSpaceSectorBoundsObject.EndYPos << " " << SimulationSpaceSectorBoundsObject.StartZPos << " " << SimulationSpaceSectorBoundsObject.EndZPos));
 
-                    if (CheckIfSpaceIsEmptyAndIsInBoundsForListOfVoxels(ParticleKindObjectForProduct.ListOfVoxels, RandomVectorX, RandomVectorY, RandomVectorZ, SimulationSpaceSectorBounds{ XStartParam, YStartParam, ZStartParam, XEndParam - XStartParam, YEndParam - YStartParam, ZEndParam - ZStartParam, XEndParam, YEndParam, ZEndParam }) == true)
+                    if (CheckIfSpaceIsEmptyAndIsInBoundsForListOfVoxels(ParticleKindObjectForProduct.ListOfVoxels, RandomVectorX, RandomVectorY, RandomVectorZ, SimulationSpaceSectorBoundsObject) == true)
                     {
-                        Was = 3;
+                        FoundFreePlace = true;
+
                         for (const auto& NewVoxel : ParticleKindObjectForProduct.ListOfVoxels)
                             FillParticleElementInSpace(ParticleIndex, { NewVoxel.X + RandomVectorX, NewVoxel.Y + RandomVectorY, NewVoxel.Z + RandomVectorZ });
                         GetMinMaxCoordinatesForParticle(GetParticleFromIndex(ParticleIndex), false);
 
-                        LoggersManagerObject.Log(STREAM("RF = " << RandomVectorX << " " << RandomVectorY << " " << RandomVectorZ << " " << XStartParam << " " << XEndParam << " " << YStartParam << " " << YEndParam << " " << ZStartParam << " " << ZEndParam));
+                        LoggersManagerObject.Log(STREAM("R = " << RandomVectorX << " " << RandomVectorY << " " << RandomVectorZ << " " << SimulationSpaceSectorBoundsObject.StartXPos << " " << SimulationSpaceSectorBoundsObject.EndXPos << " " << SimulationSpaceSectorBoundsObject.StartYPos << " " << SimulationSpaceSectorBoundsObject.EndYPos << " " << SimulationSpaceSectorBoundsObject.StartZPos << " " << SimulationSpaceSectorBoundsObject.EndZPos));
 
                         break;
                     }
                 }
-                if (Was == 2)
+                if (FoundFreePlace == false)
                 {
                     LoggersManagerObject.Log(STREAM("CANCELLED PARTICLE IN BOUNDS B = " << ActualSimulationSpaceSectorBoundsObject.StartXPos << " " << ActualSimulationSpaceSectorBoundsObject.StartYPos << " "  << ActualSimulationSpaceSectorBoundsObject.StartZPos << " " << ActualSimulationSpaceSectorBoundsObject.EndXPos << " " << ActualSimulationSpaceSectorBoundsObject.EndYPos << " " << ActualSimulationSpaceSectorBoundsObject.EndZPos << " " << ParticleKindObjectForProduct.ListOfVoxels.size() << " " << ParticleKindObjectForProduct.EntityId));
 
@@ -747,7 +746,7 @@ void CellEngineSimulationSpace::GenerateOneRandomReactionForSelectedSpace(Unsign
             FindAndExecuteRandomReaction(min(LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity.size(), ChemicalReactionsManagerObject.MaxNumberOfReactants));
         }
     }
-    CATCH("generating random reaction for selected voxel space")
+    CATCH("generating random reaction for selected space")
 }
 
 void CellEngineSimulationSpace::GenerateOneRandomReactionForChosenParticle(const Particle& ParticleObject)

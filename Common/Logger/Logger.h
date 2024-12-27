@@ -51,7 +51,7 @@ private:
 	static void WriteToCommonLogFromThread(bool Condition, const std::string& MessageStr, std::ostream& StreamObject, ThreadIdType CurrentThreadId, std::uint64_t FileNumber);
 	void WriteToLogsFromThread(const std::string& MessageStrToFile, ThreadIdType CurrentThreadId, std::int64_t SpecialLogFileIndex);
 public:
-	void LogMessageBool(const std::string& MessageStr, bool LogLineInfo, ThreadIdType CurrentThreadId, bool PrintToConsole, std::int64_t SpecialLogFileIndex);
+	void LogMessageBool(const std::string& MessageStr, bool LogLineInfo, ThreadIdType CurrentThreadId, bool PrintLogToConsoleUnconditional, bool PrintLogToFilesUnconditional, bool PrintLogToConsole, bool PrintLogToFiles, std::int64_t SpecialLogFileIndex);
 };
 
 class LoggersManager
@@ -102,12 +102,17 @@ private:
 private:
 	static inline std::mutex CreateNewLoggerForThreadMutexObject;
 private:
-	void LogMessageBool(const std::string& MessageStr, bool LogLineInfo, bool PrintToConsole, std::int64_t SpecialLogFileIndex);
+	void LogMessageBool(const std::string& MessageStr, bool LogLineInfo, bool PrintLogToConsoleUnconditional, bool PrintLogToFilesUnconditional, bool PrintToConsole, bool PrintLogToFiles, std::int64_t SpecialLogFileIndex);
 public:
 	void Log(const std::stringstream& Message);
+
 	void LogOnlyToFiles(const std::stringstream& Message);
+	void LogOnlyToConsole(const std::stringstream& Message);
 	void LogWithoutLineInfo(const std::stringstream& Message);
 	void LogWithoutLineInfoOnlyToFiles(const std::stringstream& Message);
+
+	void LogOnlyToConsoleUnconditional(const std::stringstream& Message);
+
     void LogInColorTerminal(std::ostream& color(std::ostream& s), const std::stringstream& Message);
 public:
     [[maybe_unused]] void LogWarning(const std::stringstream& Message);

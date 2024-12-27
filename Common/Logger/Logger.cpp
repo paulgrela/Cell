@@ -252,25 +252,24 @@ void Logger::WriteToLogsFromThread(const string& MessageStrToFile, const ThreadI
 	CATCH_AND_THROW_COUT("writing to logs from thread in logger")
 }
 
-void Logger::LogMessageBool(const string& MessageStr, const bool LogLineInfo, const ThreadIdType CurrentThreadId, const bool PrintToConsole, const std::int64_t SpecialLogFileIndex)
+void Logger::LogMessageBool(const string& MessageStr, const bool LogLineInfo, const ThreadIdType CurrentThreadId, const bool PrintLogToConsoleUnconditional, const bool PrintLogToFilesUnconditional, const bool PrintLogToConsole, const bool PrintLogToFiles, const std::int64_t SpecialLogFileIndex)
 {
 	try
 	{
 		string LocalMessageStr;
-		uint64_t LineNumberInCommonLog;
 
 		lock_guard LockGuardObject{ LogMessageCoutMutexObject };
 
-		LineNumberInCommonLog = LoggersManagerObject.LoggerMainObjectPointer->LineNumberInLog;
+		uint64_t LineNumberInCommonLog = LoggersManagerObject.LoggerMainObjectPointer->LineNumberInLog;
 		LoggersManagerObject.LoggerMainObjectPointer->LineNumberInLog++;
 
-		if (LoggersManagerObject.PrintLogToConsole == true && PrintToConsole == true)
+		if ((LoggersManagerObject.PrintLogToConsole == true && PrintLogToConsole == true) || PrintLogToConsoleUnconditional == true)
 		{
 			LocalMessageStr = LoggersManagerObject.LoggerMainObjectPointer->CreateLogString(MessageStr, LogLineInfo, CurrentThreadId, LineNumberInCommonLog, LoggersManagerObject.PrintLogLineNumberToConsole, LoggersManagerObject.PrintLogDateTimeToConsole, LoggersManagerObject.PrintLogProcessIdToConsole, LoggersManagerObject.PrintLogProcessPriorityLevelToConsole, LoggersManagerObject.PrintLogThreadIdToConsole);
 			WriteToCommonLogFromThread(true, LocalMessageStr, cout, CurrentThreadId, numeric_limits<uint64_t>::max());
 		}
 
-		if (LoggersManagerObject.PrintLogToFiles == true)
+		if ((LoggersManagerObject.PrintLogToFiles == true && PrintLogToFiles == true) || PrintLogToFilesUnconditional == true)
 			if (LoggersManagerObject.LoggerMainObjectPointer)
 			{
 				if (LoggersManagerObject.LoggerMainObjectPointer->ThisThreadId != CurrentThreadId)
@@ -381,30 +380,50 @@ void LoggersManager::InitializeLoggerManagerDataForTask(const string& TaskNamePa
 
         ThreadIdType CurrentThreadId = stoll((stringstream() << this_thread::get_id()).str());
 		LoggerMainObjectPointer = make_unique<Logger>(LogDirectory.c_str(), ActualDateTimeStr.c_str(), string("LOGGER_COMMON").c_str(), TaskName.c_str(), CurrentThreadId);
-		LoggerMainObjectPointer->LogMessageBool("START MAIN LOGGER_COMMON\n", true, CurrentThreadId, true, -1);
+		LoggerMainObjectPointer->LogMessageBool("START MAIN LOGGER_COMMON\n", true, CurrentThreadId, false, false, true, true, -1);
 	}
 	CATCH_AND_THROW_COUT("initializing loggers manager data for task")
 }
 
 void LoggersManager::Log(const stringstream& Message)
 {
-	LogMessageBool(Message.str(), true, true, -1);
+	LogMessageBool(Message.str(), true, false, false, true, true, -1);
 };
 
 void LoggersManager::LogWithoutLineInfo(const stringstream& Message)
 {
-	LogMessageBool(Message.str(), false, true, -1);
+	LogMessageBool(Message.str(), false, false, false, true, true, -1);
 }
 
 void LoggersManager::LogOnlyToFiles(const stringstream& Message)
 {
-	LogMessageBool(Message.str(), true, false, -1);
+	LogMessageBool(Message.str(), true, false, false, false, true, -1);
+};
+
+void LoggersManager::LogOnlyToConsole(const stringstream& Message)
+{
+	LogMessageBool(Message.str(), true, false, false, true, false, -1);
 };
 
 void LoggersManager::LogWithoutLineInfoOnlyToFiles(const stringstream& Message)
 {
-	LogMessageBool(Message.str(), false, false, -1);
+	LogMessageBool(Message.str(), false, false, false, false, true, -1);
 }
+
+// void LoggersManager::LogUnconditional(const stringstream& Message)
+// {
+// 	LogMessageBool(Message.str(), true, true, true, false, false, -1);
+// };
+
+void LoggersManager::LogOnlyToConsoleUnconditional(const stringstream& Message)
+{
+	LogMessageBool(Message.str(), true, true, false, false, false, -1);
+};
+
+// void LoggersManager::LogOnlyToFilesUnconditional(const stringstream& Message)
+// {
+// 	LogMessageBool(Message.str(), true, false, true, false, false, -1);
+// };
 
 void LoggersManager::LogInColorTerminal(ostream& color(ostream& s), const stringstream& Message)
 {
@@ -412,7 +431,7 @@ void LoggersManager::LogInColorTerminal(ostream& color(ostream& s), const string
     cout << color << Message.str() << white << endl;
 }
 
-void LoggersManager::LogMessageBool(const string& MessageStr, const bool LogLineInfo, const bool PrintToConsole, const std::int64_t SpecialLogFileIndex)
+void LoggersManager::LogMessageBool(const string& MessageStr, const bool LogLineInfo, const bool PrintLogToConsoleUnconditional, const bool PrintLogToFilesUnconditional, const bool PrintToConsole, const bool PrintLogToFiles, const std::int64_t SpecialLogFileIndex)
 {
 	try
 	{
@@ -423,7 +442,7 @@ void LoggersManager::LogMessageBool(const string& MessageStr, const bool LogLine
             if (LogThreadsToSeparatedFiles == true)
             {
                 if (CurrentThreadId == LoggerMainObjectPointer->ThisThreadId)
-                    LoggerMainObjectPointer->LogMessageBool(MessageStr, LogLineInfo, CurrentThreadId, PrintToConsole, SpecialLogFileIndex);
+                    LoggerMainObjectPointer->LogMessageBool(MessageStr, LogLineInfo, CurrentThreadId, PrintLogToConsoleUnconditional, PrintLogToFilesUnconditional, PrintToConsole, PrintLogToFiles, SpecialLogFileIndex);
                 else
                 {
                     {
@@ -435,11 +454,11 @@ void LoggersManager::LogMessageBool(const string& MessageStr, const bool LogLine
                             LoggersThreadsObjectsPointersMap[CurrentThreadId] = make_unique<Logger>(LogDirectory.c_str(), ActualDateTimeStr.c_str(), string("THREAD_" + to_string(LoggersThreadsObjectsPointersMap.size() + 1) + "_" + (stringstream() << CurrentThreadId).str()).c_str(), TaskName.c_str(), CurrentThreadId);
                     }
 
-                    LoggersThreadsObjectsPointersMap[CurrentThreadId]->LogMessageBool(MessageStr, LogLineInfo, CurrentThreadId, PrintToConsole, SpecialLogFileIndex);
+                    LoggersThreadsObjectsPointersMap[CurrentThreadId]->LogMessageBool(MessageStr, LogLineInfo, CurrentThreadId, PrintLogToConsoleUnconditional, PrintLogToFilesUnconditional, PrintToConsole, PrintLogToFiles, SpecialLogFileIndex);
                 }
             }
             else
-                LoggerMainObjectPointer->LogMessageBool(MessageStr, LogLineInfo, CurrentThreadId, PrintToConsole, SpecialLogFileIndex);
+                LoggerMainObjectPointer->LogMessageBool(MessageStr, LogLineInfo, CurrentThreadId, PrintLogToConsoleUnconditional, PrintLogToFilesUnconditional, PrintToConsole, PrintLogToFiles, SpecialLogFileIndex);
         }
 	}
 	CATCH_COUT("logging message in loggers manager")
@@ -447,47 +466,47 @@ void LoggersManager::LogMessageBool(const string& MessageStr, const bool LogLine
 
 [[maybe_unused]] void LoggersManager::LogWarning(const stringstream& Message)
 {
-    LogMessageBool(Message.str(), true, true, LogWarningsFileIndex);
+    LogMessageBool(Message.str(), true, false, false, true, true, LogWarningsFileIndex);
 }
 
 [[maybe_unused]] void LoggersManager::LogError(const stringstream& Message)
 {
-    LogMessageBool(Message.str(), true, true, LogErrorsFileIndex);
+    LogMessageBool(Message.str(), true, false, false, true, true, LogErrorsFileIndex);
 }
 
 [[maybe_unused]] void LoggersManager::LogException(const stringstream& Message)
 {
-    LogMessageBool(Message.str(), true, true, LogExceptionsFileIndex);
+    LogMessageBool(Message.str(), true, false, false, true, true, LogExceptionsFileIndex);
 }
 
 [[maybe_unused]] void LoggersManager::LogErrorAndException(const stringstream& Message)
 {
-    LogMessageBool(Message.str(), true, true, LogErrorsAndExceptionsFileIndex);
+    LogMessageBool(Message.str(), true, false, false, true, true, LogErrorsAndExceptionsFileIndex);
 }
 
 [[maybe_unused]] void LoggersManager::LogCritical(const stringstream& Message)
 {
-    LogMessageBool(Message.str(), true, true, LogCriticalFileIndex);
+    LogMessageBool(Message.str(), true, false, false, true, true, LogCriticalFileIndex);
 }
 
 [[maybe_unused]] void LoggersManager::LogInformation(const stringstream& Message)
 {
-    LogMessageBool(Message.str(), true, true, LogInformationFileIndex);
+    LogMessageBool(Message.str(), true, false, false, true, true, LogInformationFileIndex);
 }
 
 [[maybe_unused]] void LoggersManager::LogImportant(const stringstream& Message)
 {
-    LogMessageBool(Message.str(), true, true, LogImportantFileIndex);
+    LogMessageBool(Message.str(), true, false, false, true, true, LogImportantFileIndex);
 }
 
 [[maybe_unused]] void LoggersManager::LogStatistics(const stringstream& Message)
 {
-    LogMessageBool(Message.str(), true, true, LogStatisticsFileIndex);
+    LogMessageBool(Message.str(), true, false, false, true, true, LogStatisticsFileIndex);
 }
 
 [[maybe_unused]] void LoggersManager::LogDebug(const stringstream& Message)
 {
-    LogMessageBool(Message.str(), true, true, LogDebugFileIndex);
+    LogMessageBool(Message.str(), true, false, false, true, true, LogDebugFileIndex);
 }
 
 [[maybe_unused]] void LoggersManager::LogWarn(const stringstream& Message)
