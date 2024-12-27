@@ -410,20 +410,20 @@ void LoggersManager::LogWithoutLineInfoOnlyToFiles(const stringstream& Message)
 	LogMessageBool(Message.str(), false, false, false, false, true, -1);
 }
 
-// void LoggersManager::LogUnconditional(const stringstream& Message)
-// {
-// 	LogMessageBool(Message.str(), true, true, true, false, false, -1);
-// };
+void LoggersManager::LogUnconditional(const stringstream& Message)
+{
+	LogMessageBool(Message.str(), true, true, true, false, false, -1);
+};
 
 void LoggersManager::LogOnlyToConsoleUnconditional(const stringstream& Message)
 {
 	LogMessageBool(Message.str(), true, true, false, false, false, -1);
 };
 
-// void LoggersManager::LogOnlyToFilesUnconditional(const stringstream& Message)
-// {
-// 	LogMessageBool(Message.str(), true, false, true, false, false, -1);
-// };
+void LoggersManager::LogOnlyToFilesUnconditional(const stringstream& Message)
+{
+	LogMessageBool(Message.str(), true, false, true, false, false, -1);
+};
 
 void LoggersManager::LogInColorTerminal(ostream& color(ostream& s), const stringstream& Message)
 {

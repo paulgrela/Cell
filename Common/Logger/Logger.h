@@ -111,7 +111,9 @@ public:
 	void LogWithoutLineInfo(const std::stringstream& Message);
 	void LogWithoutLineInfoOnlyToFiles(const std::stringstream& Message);
 
+	void LogUnconditional(const std::stringstream& Message);
 	void LogOnlyToConsoleUnconditional(const std::stringstream& Message);
+	void LogOnlyToFilesUnconditional(const std::stringstream& Message);
 
     void LogInColorTerminal(std::ostream& color(std::ostream& s), const std::stringstream& Message);
 public:

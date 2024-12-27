@@ -126,11 +126,11 @@ void CellEngineVoxelSimulationSpace::ClearVoxelSpaceAndParticles()
     CATCH("clearing voxel space and particles")
 }
 
-void CellEngineVoxelSimulationSpace::FillParticleElementInSpace(const UniqueIdInt ParticleIndex, const vector3_64 NewVoxel)
+void CellEngineVoxelSimulationSpace::FillParticleElementInSpace(const UniqueIdInt ParticleIndex, const vector3_64 NewPointElement)
 {
     try
     {
-        SetValueToSpaceVoxelWithFillingListOfVoxelsOfParticle(&GetParticleFromIndex(ParticleIndex).ListOfVoxels, ParticleIndex, NewVoxel.X, NewVoxel.Y, NewVoxel.Z);
+        SetValueToSpaceVoxelWithFillingListOfVoxelsOfParticle(&GetParticleFromIndex(ParticleIndex).ListOfVoxels, ParticleIndex, NewPointElement.X, NewPointElement.Y, NewPointElement.Z);
     }
     CATCH("filling particle element in space")
 }
@@ -145,12 +145,7 @@ bool CellEngineVoxelSimulationSpace::MoveParticleByVectorIfSpaceIsEmpty(Particle
     return MoveParticleByVectorIfVoxelSpaceIsEmpty(ParticleObject, VectorX, VectorY, VectorZ);
 }
 
-bool CellEngineVoxelSimulationSpace::CheckIfSpaceIsEmptyForListOfVoxels(const std::vector<vector3_16>& ListOfVoxels, UnsignedInt VectorX, UnsignedInt VectorY, UnsignedInt VectorZ)
+bool CellEngineVoxelSimulationSpace::CheckIfSpaceIsEmptyAndIsInBoundsForParticleElements(const ParticleKind& ParticleKindObjectForProduct, const UnsignedInt VectorX, const UnsignedInt VectorY, const UnsignedInt VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam)
 {
-    return CheckFreeSpaceForListOfVoxels(ListOfVoxels, VectorX, VectorY, VectorZ);
-}
-
-bool CellEngineVoxelSimulationSpace::CheckIfSpaceIsEmptyAndIsInBoundsForListOfVoxels(const std::vector<vector3_16>& ListOfVoxels, const UnsignedInt VectorX, const UnsignedInt VectorY, const UnsignedInt VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam)
-{
-    return CheckFreeSpaceAndBoundsForListOfVoxels(ListOfVoxels, VectorX, VectorY, VectorZ, SimulationSpaceSectorBoundsObjectParam);
+    return CheckFreeSpaceAndBoundsForListOfVoxels(ParticleKindObjectForProduct.ListOfVoxels, VectorX, VectorY, VectorZ, SimulationSpaceSectorBoundsObjectParam);
 }

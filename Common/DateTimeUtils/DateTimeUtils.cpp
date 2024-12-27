@@ -19,7 +19,7 @@ string GetActualDateTimeStandardCPP(const char* sep1, const char* sep2, const ch
 	using namespace string_utils;
 
 	time_t current_time;
-	struct tm local_time;
+	struct tm local_time{};
 	time(&current_time);
 	local_time = *localtime(&current_time);
 	return string(to_string(local_time.tm_year + 1900) + sep1 + align_str(to_string(local_time.tm_mon + 1), '0', 2) + sep2 + align_str(to_string(local_time.tm_mday), '0', 2) + sep3 + align_str(to_string(local_time.tm_hour), '0', 2) + sep4 + align_str(to_string(local_time.tm_min), '0', 2) + sep5 + align_str(to_string(local_time.tm_sec), '0', 2));

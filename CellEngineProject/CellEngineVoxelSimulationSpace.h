@@ -48,11 +48,10 @@ public:
     void ClearWholeVoxelSpace();
     void ClearSelectedSpace(UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt StepXParam, UnsignedInt StepYParam, UnsignedInt StepZParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
 protected:
-    void FillParticleElementInSpace(UniqueIdInt ParticleIndex, vector3_64 NewVoxel) override;
+    void FillParticleElementInSpace(UniqueIdInt ParticleIndex, vector3_64 NewPointElement) override;
     bool MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(Particle &ParticleObject, SignedInt VectorX, SignedInt VectorY, SignedInt VectorZ, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam) override;
     bool MoveParticleByVectorIfSpaceIsEmpty(Particle &ParticleObject, SignedInt VectorX, SignedInt VectorY, SignedInt VectorZ) override;
-    bool CheckIfSpaceIsEmptyForListOfVoxels(const std::vector<vector3_16>& ListOfVoxels, UnsignedInt VectorX, UnsignedInt VectorY, UnsignedInt VectorZ) override;
-    bool CheckIfSpaceIsEmptyAndIsInBoundsForListOfVoxels(const std::vector<vector3_16>& ListOfVoxels, UnsignedInt VectorX, UnsignedInt VectorY, UnsignedInt VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam) override;
+    bool CheckIfSpaceIsEmptyAndIsInBoundsForParticleElements(const ParticleKind& ParticleKindObjectForProduct, UnsignedInt VectorX, UnsignedInt VectorY, UnsignedInt VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam) override;
 public:
     explicit CellEngineVoxelSimulationSpace(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam, bool GetMemoryForVoxelSpace, ThreadIdType ThreadIndex, CurrentThreadPosType CurrentThreadPos);
     ~CellEngineVoxelSimulationSpace() override;

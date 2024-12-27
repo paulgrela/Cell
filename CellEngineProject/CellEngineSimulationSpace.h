@@ -39,10 +39,9 @@ private:
 protected:
     virtual bool MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(Particle &ParticleObject, SignedInt VectorX, SignedInt VectorY, SignedInt VectorZ, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam) = 0;
     virtual bool MoveParticleByVectorIfSpaceIsEmpty(Particle &ParticleObject, SignedInt VectorX, SignedInt VectorY, SignedInt VectorZ) = 0;
-    virtual bool CheckIfSpaceIsEmptyForListOfVoxels(const std::vector<vector3_16>& ListOfVoxels, UnsignedInt VectorX, UnsignedInt VectorY, UnsignedInt VectorZ) = 0;
-    virtual bool CheckIfSpaceIsEmptyAndIsInBoundsForListOfVoxels(const std::vector<vector3_16>& ListOfVoxels, UnsignedInt VectorX, UnsignedInt VectorY, UnsignedInt VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam) = 0;
+    virtual bool CheckIfSpaceIsEmptyAndIsInBoundsForParticleElements(const ParticleKind& ParticleKindObjectForProduct, UnsignedInt VectorX, UnsignedInt VectorY, UnsignedInt VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam) = 0;
 protected:
-    virtual void FillParticleElementInSpace(UniqueIdInt ParticleIndex, vector3_64 NewVoxel) = 0;
+    virtual void FillParticleElementInSpace(UniqueIdInt ParticleIndex, vector3_64 NewPointElement) = 0;
 public:
     void GenerateOneStepOfDiffusionForSelectedRangeOfParticles(UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
 public:
@@ -104,6 +103,9 @@ protected:
 public:
     void FindAndExecuteRandomReaction(UnsignedInt MaxNumberOfReactantsParam);
     bool FindAndExecuteChosenReaction(UnsignedInt ReactionId);
+protected:
+    bool CancelChemicalReaction(const vector<UniqueIdInt>& CreatedParticlesIndexes, chrono::high_resolution_clock::time_point start_time, const ParticleKind& ParticleKindObjectForProduct, char PlaceStr);
+    void FillParticleElementsInSpace(UniqueIdInt ParticleIndex, const ParticleKind& ParticleKindObjectForProduct, UnsignedInt VectorX, UnsignedInt VectorY, UnsignedInt VectorZ);
 protected:
     std::vector<UnsignedInt> GetRandomParticles(UnsignedInt NumberOfReactants, UnsignedInt MaxNumberOfReactants) override;
     bool IsChemicalReactionPossible(const ChemicalReaction& ReactionObject) override;
