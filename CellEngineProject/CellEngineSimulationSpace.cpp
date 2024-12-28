@@ -409,6 +409,64 @@ void CellEngineSimulationSpace::FillParticleElementsInSpace(const UniqueIdInt Pa
     CATCH("filling particle elements in space")
 }
 
+bool CellEngineSimulationSpace::PlaceProductParticleInSpaceInDeterminedPositionOrCancelReaction(const UniqueIdInt ParticleIndex, const vector<UniqueIdInt>& CreatedParticlesIndexes, const UnsignedInt CenterIndex, const vector<vector3_16>& Centers, const ParticleKind& ParticleKindObjectForProduct, const chrono::high_resolution_clock::time_point start_time)
+{
+    try
+    {
+        vector3_64 NewCenter(Centers[CenterIndex].X - ParticleKindObjectForProduct.XSizeDiv2, Centers[CenterIndex].Y - ParticleKindObjectForProduct.YSizeDiv2, Centers[CenterIndex].Z - ParticleKindObjectForProduct.ZSizeDiv2);
+
+        if (CheckIfSpaceIsEmptyAndIsInBoundsForParticleElements(ParticleKindObjectForProduct, NewCenter.X, NewCenter.Y, NewCenter.Z, GetBoundsForThreadSector()) == true)
+            FillParticleElementsInSpace(ParticleIndex, ParticleKindObjectForProduct, NewCenter.X, NewCenter.Y, NewCenter.Z);
+        else
+            return CancelChemicalReaction(CreatedParticlesIndexes, start_time, ParticleKindObjectForProduct, 'A');
+    }
+    CATCH("placing product particle in space in determined position or cancel reaction")
+
+    return true;
+}
+
+bool CellEngineSimulationSpace::PlaceProductParticleInSpaceInRandomPositionOrCancelReaction(const UniqueIdInt ParticleIndex, const vector<UniqueIdInt>& CreatedParticlesIndexes, const UnsignedInt CenterIndex, const vector<vector3_16>& Centers, const ParticleKind& ParticleKindObjectForProduct, const chrono::high_resolution_clock::time_point start_time)
+{
+    try
+    {
+        uniform_int_distribution<UnsignedInt> UniformDistributionObjectMoveParticleDirectionX_uint64t(ActualSimulationSpaceSectorBoundsObject.StartXPos, ActualSimulationSpaceSectorBoundsObject.EndXPos);
+        uniform_int_distribution<UnsignedInt> UniformDistributionObjectMoveParticleDirectionY_uint64t(ActualSimulationSpaceSectorBoundsObject.StartYPos, ActualSimulationSpaceSectorBoundsObject.EndYPos);
+        uniform_int_distribution<UnsignedInt> UniformDistributionObjectMoveParticleDirectionZ_uint64t(ActualSimulationSpaceSectorBoundsObject.StartZPos, ActualSimulationSpaceSectorBoundsObject.EndZPos);
+
+        auto SimulationSpaceSectorBoundsObject = GetBoundsForThreadSector();
+
+        bool FoundFreePlace = false;
+
+        UnsignedInt NumberOfTries = 0;
+        while (NumberOfTries < 1000)
+        {
+            NumberOfTries++;
+
+            auto RandomVectorX = UniformDistributionObjectMoveParticleDirectionX_uint64t(mt64R);
+            auto RandomVectorY = UniformDistributionObjectMoveParticleDirectionY_uint64t(mt64R);
+            auto RandomVectorZ = UniformDistributionObjectMoveParticleDirectionZ_uint64t(mt64R);
+
+            LoggersManagerObject.Log(STREAM("R = " << RandomVectorX << " " << RandomVectorY << " " << RandomVectorZ << " " << SimulationSpaceSectorBoundsObject.StartXPos << " " << SimulationSpaceSectorBoundsObject.EndXPos << " " << SimulationSpaceSectorBoundsObject.StartYPos << " " << SimulationSpaceSectorBoundsObject.EndYPos << " " << SimulationSpaceSectorBoundsObject.StartZPos << " " << SimulationSpaceSectorBoundsObject.EndZPos));
+
+            if (CheckIfSpaceIsEmptyAndIsInBoundsForParticleElements(ParticleKindObjectForProduct, RandomVectorX, RandomVectorY, RandomVectorZ, SimulationSpaceSectorBoundsObject) == true)
+            {
+                FoundFreePlace = true;
+
+                FillParticleElementsInSpace(ParticleIndex, ParticleKindObjectForProduct, RandomVectorX, RandomVectorY, RandomVectorZ);
+
+                LoggersManagerObject.Log(STREAM("R = " << RandomVectorX << " " << RandomVectorY << " " << RandomVectorZ << " " << SimulationSpaceSectorBoundsObject.StartXPos << " " << SimulationSpaceSectorBoundsObject.EndXPos << " " << SimulationSpaceSectorBoundsObject.StartYPos << " " << SimulationSpaceSectorBoundsObject.EndYPos << " " << SimulationSpaceSectorBoundsObject.StartZPos << " " << SimulationSpaceSectorBoundsObject.EndZPos));
+
+                break;
+            }
+        }
+        if (FoundFreePlace == false)
+            return CancelChemicalReaction(CreatedParticlesIndexes, start_time, ParticleKindObjectForProduct, 'B');
+    }
+    CATCH("placing product particle in space in random position or cancel reaction")
+
+    return true;
+}
+
 bool CellEngineSimulationSpace::MakeChemicalReaction(ChemicalReaction& ReactionObject)
 {
     const auto start_time = chrono::high_resolution_clock::now();
@@ -439,54 +497,16 @@ bool CellEngineSimulationSpace::MakeChemicalReaction(ChemicalReaction& ReactionO
 
             CreatedParticlesIndexes.emplace_back(ParticleIndex);
 
-            //GetParticleFromIndex(ParticleIndex).ListOfVoxels.clear();
-
             auto& ParticleKindObjectForProduct = ParticlesKindsManagerObject.GetParticleKind(ReactionProduct.EntityId);
 
+            bool ResultOfPlacingParticle;
             if (CenterIndex < Centers.size())
-            {
-                vector3_64 NewCenter(Centers[CenterIndex].X - ParticleKindObjectForProduct.XSizeDiv2, Centers[CenterIndex].Y - ParticleKindObjectForProduct.YSizeDiv2, Centers[CenterIndex].Z - ParticleKindObjectForProduct.ZSizeDiv2);
-
-                if (CheckIfSpaceIsEmptyAndIsInBoundsForParticleElements(ParticleKindObjectForProduct, NewCenter.X, NewCenter.Y, NewCenter.Z, GetBoundsForThreadSector()) == true)
-                    FillParticleElementsInSpace(ParticleIndex, ParticleKindObjectForProduct, NewCenter.X, NewCenter.Y, NewCenter.Z);
-                else
-                    return CancelChemicalReaction(CreatedParticlesIndexes, start_time, ParticleKindObjectForProduct, 'A');
-            }
+                ResultOfPlacingParticle = PlaceProductParticleInSpaceInDeterminedPositionOrCancelReaction(ParticleIndex, CreatedParticlesIndexes, CenterIndex, Centers, ParticleKindObjectForProduct, start_time);
             else
-            {
-                uniform_int_distribution<UnsignedInt> UniformDistributionObjectMoveParticleDirectionX_uint64t(ActualSimulationSpaceSectorBoundsObject.StartXPos, ActualSimulationSpaceSectorBoundsObject.EndXPos);
-                uniform_int_distribution<UnsignedInt> UniformDistributionObjectMoveParticleDirectionY_uint64t(ActualSimulationSpaceSectorBoundsObject.StartYPos, ActualSimulationSpaceSectorBoundsObject.EndYPos);
-                uniform_int_distribution<UnsignedInt> UniformDistributionObjectMoveParticleDirectionZ_uint64t(ActualSimulationSpaceSectorBoundsObject.StartZPos, ActualSimulationSpaceSectorBoundsObject.EndZPos);
+                ResultOfPlacingParticle = PlaceProductParticleInSpaceInRandomPositionOrCancelReaction(ParticleIndex, CreatedParticlesIndexes, CenterIndex, Centers, ParticleKindObjectForProduct, start_time);
 
-                auto SimulationSpaceSectorBoundsObject = GetBoundsForThreadSector();
-
-                bool FoundFreePlace = false;
-
-                UnsignedInt NumberOfTries = 0;
-                while (NumberOfTries < 1000)
-                {
-                    NumberOfTries++;
-
-                    auto RandomVectorX = UniformDistributionObjectMoveParticleDirectionX_uint64t(mt64R);
-                    auto RandomVectorY = UniformDistributionObjectMoveParticleDirectionY_uint64t(mt64R);
-                    auto RandomVectorZ = UniformDistributionObjectMoveParticleDirectionZ_uint64t(mt64R);
-
-                    LoggersManagerObject.Log(STREAM("R = " << RandomVectorX << " " << RandomVectorY << " " << RandomVectorZ << " " << SimulationSpaceSectorBoundsObject.StartXPos << " " << SimulationSpaceSectorBoundsObject.EndXPos << " " << SimulationSpaceSectorBoundsObject.StartYPos << " " << SimulationSpaceSectorBoundsObject.EndYPos << " " << SimulationSpaceSectorBoundsObject.StartZPos << " " << SimulationSpaceSectorBoundsObject.EndZPos));
-
-                    if (CheckIfSpaceIsEmptyAndIsInBoundsForParticleElements(ParticleKindObjectForProduct, RandomVectorX, RandomVectorY, RandomVectorZ, SimulationSpaceSectorBoundsObject) == true)
-                    {
-                        FoundFreePlace = true;
-
-                        FillParticleElementsInSpace(ParticleIndex, ParticleKindObjectForProduct, RandomVectorX, RandomVectorY, RandomVectorZ);
-
-                        LoggersManagerObject.Log(STREAM("R = " << RandomVectorX << " " << RandomVectorY << " " << RandomVectorZ << " " << SimulationSpaceSectorBoundsObject.StartXPos << " " << SimulationSpaceSectorBoundsObject.EndXPos << " " << SimulationSpaceSectorBoundsObject.StartYPos << " " << SimulationSpaceSectorBoundsObject.EndYPos << " " << SimulationSpaceSectorBoundsObject.StartZPos << " " << SimulationSpaceSectorBoundsObject.EndZPos));
-
-                        break;
-                    }
-                }
-                if (FoundFreePlace == false)
-                    return CancelChemicalReaction(CreatedParticlesIndexes, start_time, ParticleKindObjectForProduct, 'B');
-            }
+            if (ResultOfPlacingParticle == false)
+                return false;
 
             AddedParticlesInReactions++;
 
@@ -498,7 +518,7 @@ bool CellEngineSimulationSpace::MakeChemicalReaction(ChemicalReaction& ReactionO
         if (SaveReactionsStatisticsBool == true)
             SaveReactionForStatistics(ReactionObject);
     }
-    CATCH("making reaction")
+    CATCH("making chemical reaction")
 
     const auto stop_time = chrono::high_resolution_clock::now();
 
@@ -1057,9 +1077,9 @@ void CellEngineSimulationSpace::ExchangeParticlesBetweenThreads(const UnsignedIn
 
         if (PrintInfo == true)
         {
-            cout << GetDurationTimeInOneLine(stop_time - start_time, "Exchanging particles between threads has taken time = ","Execution in threads") << endl;
-            cout << "Number of exchanged particles: " << ExchangedParticleCount << endl;
-            cout << "StateOfVoxelSpaceDivisionForThreads: " << StateOfVoxelSpaceDivisionForThreads << endl;
+            LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLine(stop_time - start_time, "Exchanging particles between threads has taken time = ","Execution in threads")));
+            LoggersManagerObject.Log(STREAM("Number of exchanged particles: " << ExchangedParticleCount));
+            LoggersManagerObject.Log(STREAM("StateOfVoxelSpaceDivisionForThreads: " << StateOfVoxelSpaceDivisionForThreads));
         }
     }
     CATCH("exchanging particles between threads")
@@ -1124,9 +1144,9 @@ void CellEngineSimulationSpace::ExchangeParticlesBetweenThreadsParallelInsert(co
 
         if (PrintInfo == true)
         {
-            cout << GetDurationTimeInOneLine(stop_time - start_time, "Exchanging particles between threads has taken time = ","Execution in threads") << endl;
-            cout << "Number of exchanged particles: " << ExchangedParticleCount << endl;
-            cout << "StateOfVoxelSpaceDivisionForThreads: " << StateOfVoxelSpaceDivisionForThreads << endl;
+            LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLine(stop_time - start_time, "Exchanging particles between threads has taken time = ","Execution in threads")));
+            LoggersManagerObject.Log(STREAM("Number of exchanged particles: " << ExchangedParticleCount));
+            LoggersManagerObject.Log(STREAM("StateOfVoxelSpaceDivisionForThreads: " << StateOfVoxelSpaceDivisionForThreads));
         }
     }
     CATCH("exchanging particles between threads")
@@ -1192,9 +1212,9 @@ void CellEngineSimulationSpace::ExchangeParticlesBetweenThreadsParallelExtract(c
 
         if (PrintInfo == true)
         {
-            cout << GetDurationTimeInOneLine(stop_time - start_time, "Exchanging particles between threads has taken time = ","Execution in threads") << endl;
-            cout << "Number of exchanged particles: " << ExchangedParticleCount << endl;
-            cout << "StateOfVoxelSpaceDivisionForThreads: " << StateOfVoxelSpaceDivisionForThreads << endl;
+            LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLine(stop_time - start_time, "Exchanging particles between threads has taken time = ","Execution in threads")));
+            LoggersManagerObject.Log(STREAM("Number of exchanged particles: " << ExchangedParticleCount));
+            LoggersManagerObject.Log(STREAM("StateOfVoxelSpaceDivisionForThreads: " << StateOfVoxelSpaceDivisionForThreads));
         }
     }
     CATCH("exchanging particles between threads")
