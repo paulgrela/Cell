@@ -14,6 +14,7 @@
 
 class BasicParallelExecutionData
 {
+    friend class CellEngineSimulationParallelExecutionManager;
 protected:
     ThreadIdType CurrentThreadIndex{ 0 };
     CurrentThreadPosType CurrentThreadPos{ 1, 1, 1 };

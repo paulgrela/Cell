@@ -1,6 +1,6 @@
 
-#ifndef CELL_ENGINE_PROJECT_DATA_FILE_H
-#define CELL_ENGINE_PROJECT_DATA_FILE_H
+#ifndef CELL_ENGINE_DATA_FILE_H
+#define CELL_ENGINE_DATA_FILE_H
 
 #include <memory>
 
@@ -16,7 +16,7 @@ public:
 public:
     virtual ~CellEngineDataFile() = default;
 public:
-    std::vector<std::vector<std::vector<std::unique_ptr<CellEngineSimulationSpace>>>> CellEngineSimulationSpaceForThreadsObjectsPointer;
+    std::vector<std::vector<std::vector<std::shared_ptr<CellEngineSimulationSpace>>>> CellEngineSimulationSpaceForThreadsObjectsPointer;
     std::unique_ptr<CellEngineVoxelSimulationSpace> CellEngineVoxelSimulationSpaceObjectPointer;
 public:
     bool FilmOfStructuresActive = false;

@@ -4,6 +4,8 @@
 #include "CellEngineTypes.h"
 #include "CellEngineBasicParticlesOperations.h"
 
+class CellEngineSimulationSpace;
+
 class CellEngineSimulationParallelExecutionManager : virtual public CellEngineBasicParticlesOperations
 {
 public:
@@ -11,17 +13,21 @@ public:
     virtual void GenerateOneRandomReactionForSelectedSpace(UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam, bool FindParticlesInProximityBool) = 0;
 public:
     void GenerateOneStepOfSimulationForWholeCellSpaceInOneThread(UnsignedInt NumberOfStepsInside, UnsignedInt StepOutside, UnsignedInt ThreadXIndex, UnsignedInt ThreadYIndex, UnsignedInt ThreadZIndex, bool StateOfSimulationSpaceDivisionForThreads);
-
+public:
     void ExchangeParticlesBetweenThreads(UnsignedInt StepOutside, bool StateOfSimulationSpaceDivisionForThreads, bool PrintInfo) const;
     void ExchangeParticlesBetweenThreadsParallelInsert(UnsignedInt StepOutside, bool StateOfSimulationSpaceDivisionForThreads, bool PrintInfo) const;
     void ExchangeParticlesBetweenThreadsParallelExtract(UnsignedInt StepOutside, bool StateOfSimulationSpaceDivisionForThreads, bool PrintInfo) const;
+public:
+    void CheckParticlesCenters(bool PrintAllParticles) const;
     void GatherParticlesFromThreadsToParticlesInMainThread();
     void FirstSendParticlesForThreads(bool PrintCenterOfParticleWithThreadIndex, bool PrintTime);
-    void CheckParticlesCenters(bool PrintAllParticles) const;
-
+public:
     void GenerateNStepsOfSimulationForWholeCellSpaceInThreads(UnsignedInt NumberOfStepsOutside, UnsignedInt NumberOfStepsInside);
-
     void GenerateNStepsOfSimulationWithSendingParticlesToThreadsAndGatheringParticlesToMainThreadForWholeCellSpace(UnsignedInt NumberOfStepsOutside, UnsignedInt NumberOfStepsInside, bool PrintTime);
+private:
+    std::vector<std::vector<std::vector<std::shared_ptr<CellEngineSimulationSpace>>>>& SimulationSpaceDataForThreads;
+public:
+    CellEngineSimulationParallelExecutionManager();
 };
 
 #endif

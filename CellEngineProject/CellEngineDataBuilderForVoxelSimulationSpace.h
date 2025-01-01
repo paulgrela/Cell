@@ -29,7 +29,7 @@ protected:
                 {
                     LoggersManagerObject.Log(STREAM("THREAD INDEXES = " << ThreadIndexPos << " (" << ThreadXPos << ", " << ThreadYPos << ", " << ThreadZPos << ")"));
 
-                    ThreadLocalParticlesInProximityZPos = std::make_unique<CellEngineVoxelSimulationSpace>(Particles, false, ThreadIndexPos, CurrentThreadPosType{ ThreadXPos, ThreadYPos, ThreadZPos });
+                    ThreadLocalParticlesInProximityZPos = std::make_shared<CellEngineVoxelSimulationSpace>(Particles, false, ThreadIndexPos, CurrentThreadPosType{ ThreadXPos, ThreadYPos, ThreadZPos });
                     ThreadIndexPos++;
                     ThreadZPos++;
                 }
