@@ -25,6 +25,8 @@ public:
 
 class CellEngineSimulationSpaceStatistics : virtual public CellEngineBasicParticlesOperations
 {
+    friend class CellEngineImGuiMenu;
+    friend class CellEngineSimulationParallelExecutionManager;
 protected:
     UnsignedInt SimulationStepNumber = 0;
     UnsignedInt ModuloStepToSaveStatistics = 10;
@@ -55,12 +57,8 @@ protected:
 protected:
     void GetNumberOfParticlesFromParticleKind(EntityIdInt ParticleKindId);
 public:
-    //void JoinStatisticsFromThreads(std::map<UnsignedInt, ReactionStatistics>& SavedReactionsMap) const;
-public:
-    CellEngineSimulationSpaceStatistics() noexcept
-    {
-    }
-    virtual ~CellEngineSimulationSpaceStatistics() = default;
+    CellEngineSimulationSpaceStatistics();
+    ~CellEngineSimulationSpaceStatistics() override = default;
 };
 
 #endif

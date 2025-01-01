@@ -855,22 +855,6 @@ void CellEngineSimulationSpace::SaveReactionsStatisticsToFile() const
     CATCH("saving reactions statistics to file")
 }
 
-void CellEngineSimulationSpace::JoinStatisticsFromThreads() const
-{
-    try
-    {
-        for (UnsignedInt ThreadXIndex = 1; ThreadXIndex <= CellEngineConfigDataObject.NumberOfXThreadsInSimulation; ThreadXIndex++)
-            for (UnsignedInt ThreadYIndex = 1; ThreadYIndex <= CellEngineConfigDataObject.NumberOfYThreadsInSimulation; ThreadYIndex++)
-                for (UnsignedInt ThreadZIndex = 1; ThreadZIndex <= CellEngineConfigDataObject.NumberOfZThreadsInSimulation; ThreadZIndex++)
-                    for (const auto& ReactionData : CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->SavedReactionsMap[SimulationStepNumber - 1])
-                        if (CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->SavedReactionsMap[SimulationStepNumber - 1].contains(ReactionData.second.ReactionId))
-                            CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->SavedReactionsMap[SimulationStepNumber - 1].find(ReactionData.second.ReactionId)->second.Counter += ReactionData.second.Counter;
-                        else
-                            CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->SavedReactionsMap[SimulationStepNumber - 1].insert(ReactionData);
-    }
-    CATCH("joining statistics from threads")
-}
-
 void CellEngineSimulationSpace::SetMakeSimulationStepNumberZero()
 {
     MakeSimulationStepNumberZeroForStatistics();

@@ -4,6 +4,7 @@
 #include "CellEngineTypes.h"
 #include "CellEngineBasicParticlesOperations.h"
 
+class ReactionStatistics;
 class CellEngineSimulationSpace;
 
 class CellEngineSimulationParallelExecutionManager : virtual public CellEngineBasicParticlesOperations
@@ -21,6 +22,8 @@ public:
     void CheckParticlesCenters(bool PrintAllParticles) const;
     void GatherParticlesFromThreadsToParticlesInMainThread();
     void FirstSendParticlesForThreads(bool PrintCenterOfParticleWithThreadIndex, bool PrintTime);
+public:
+    void JoinStatisticsFromThreads(std::vector<std::map<UnsignedInt, ReactionStatistics>>& SavedReactionsMap, UnsignedInt SimulationStepNumber) const;
 public:
     void GenerateNStepsOfSimulationForWholeCellSpaceInThreads(UnsignedInt NumberOfStepsOutside, UnsignedInt NumberOfStepsInside);
     void GenerateNStepsOfSimulationWithSendingParticlesToThreadsAndGatheringParticlesToMainThreadForWholeCellSpace(UnsignedInt NumberOfStepsOutside, UnsignedInt NumberOfStepsInside, bool PrintTime);

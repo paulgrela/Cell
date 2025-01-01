@@ -987,7 +987,7 @@ public:
                     if (ImGui::Button(AlignString("SAVE PARTICLES STATISTICS", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->SaveParticlesStatisticsOnce();
                     if (ImGui::Button(AlignString("JOIN REACTIONS STATISTICS FROM THREADS", StringLength).c_str()) == true)
-                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->JoinStatisticsFromThreads();
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->JoinStatisticsFromThreads(CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->SavedReactionsMap, CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->SimulationStepNumber);
                     if (ImGui::Button(AlignString("SAVE REACTIONS STATISTICS TO FILE", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->SaveReactionsStatisticsToFile();
                     if (ImGui::Button(AlignString("SAVE NUMBER OF PARTICLES TO FILE", StringLength).c_str()) == true)

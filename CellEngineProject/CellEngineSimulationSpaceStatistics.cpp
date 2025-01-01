@@ -10,6 +10,10 @@
 
 using namespace std;
 
+CellEngineSimulationSpaceStatistics::CellEngineSimulationSpaceStatistics()
+{
+}
+
 void CellEngineSimulationSpaceStatistics::MakeSimulationStepNumberZeroForStatistics()
 {
     try
@@ -150,19 +154,3 @@ void CellEngineSimulationSpaceStatistics::GetNumberOfParticlesFromParticleKind(c
     }
     CATCH("getting number of particles from particle kind")
 }
-
-// void CellEngineSimulationSpaceStatistics::JoinStatisticsFromThreads(std::map<UnsignedInt, ReactionStatistics>& SavedReactionsMap) const
-// {
-//     try
-//     {
-//         for (UnsignedInt ThreadXIndex = 1; ThreadXIndex <= CellEngineConfigDataObject.NumberOfXThreadsInSimulation; ThreadXIndex++)
-//             for (UnsignedInt ThreadYIndex = 1; ThreadYIndex <= CellEngineConfigDataObject.NumberOfYThreadsInSimulation; ThreadYIndex++)
-//                 for (UnsignedInt ThreadZIndex = 1; ThreadZIndex <= CellEngineConfigDataObject.NumberOfZThreadsInSimulation; ThreadZIndex++)
-//                     for (const auto& ReactionData : CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->SavedReactionsMap[SimulationStepNumber - 1])
-//                         if (SavedReactionsMap.contains(ReactionData.second.ReactionId))
-//                             SavedReactionsMap.find(ReactionData.second.ReactionId)->second.Counter += ReactionData.second.Counter;
-//                         else
-//                             SavedReactionsMap.insert(ReactionData);
-//     }
-//     CATCH("joining statistics from threads")
-// }
