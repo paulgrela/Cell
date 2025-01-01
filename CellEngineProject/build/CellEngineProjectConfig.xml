@@ -33,7 +33,7 @@
 		<SetProcessPriorityHighest>true</SetProcessPriorityHighest>
 		<PrintAtomDescriptionOnScreen>false</PrintAtomDescriptionOnScreen>
 		<LogParametersOfRenderingToFile>false</LogParametersOfRenderingToFile>
-                <RandomColorEngineTypes>2</RandomColorEngineTypes>
+		<RandomColorEngineTypes>2</RandomColorEngineTypes>
 	</Algorithm>
 	<CellTextColors>
 		<Windows>
@@ -2869,8 +2869,8 @@
 
                 <CellState id="14">
                         <TypeOfSpace>2</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
-                        <NumberOfVoxelsInVoxelSimulationSpaceInEachDimension>1024</NumberOfVoxelsInVoxelSimulationSpaceInEachDimension> <!--1024 or 2048 or other-->
-                        <DivisionFactorForVoxelSimulationSpace>4.0</DivisionFactorForVoxelSimulationSpace> <!--4 or 2 or other-->
+                        <SizeOfSimulationSpaceInEachDimension>1024</SizeOfSimulationSpaceInEachDimension> <!--1024 or 2048 or other-->
+                        <DivisionFactorForSimulationSpace>4.0</DivisionFactorForSimulationSpace> <!--4 or 2 or other-->
                         <DivisionFactorForReadingPositionsOfParticles>1.0</DivisionFactorForReadingPositionsOfParticles>
                         <DivisionFactorForGeneratingPositionsOfParticles>1.0</DivisionFactorForGeneratingPositionsOfParticles>
 
@@ -2879,20 +2879,20 @@
                         <Radius2ForGenerationOfParticles>420</Radius1ForGenerationOfParticles>
                         <Radius2SizeForGenerationOfParticles>45</Radius1SizeForGenerationOfParticles>
 
-                        <NumberOfAdvanceVoxelsDuringGenerationOfRandomDNA>50</NumberOfAdvanceVoxelsDuringGenerationOfRandomDNA>
+                        <SizeOfAdvanceDuringGenerationOfRandomDNA>50</SizeOfAdvanceDuringGenerationOfRandomDNA>
                         <DNAPaired>true</DNAPaired>
 
-                        <VoxelSimulationSpaceSelectionStartXPos>539</VoxelSimulationSpaceSelectionStartXPos>
-                        <VoxelSimulationSpaceSelectionStartYPos>727</VoxelSimulationSpaceSelectionStartYPos>
-                        <VoxelSimulationSpaceSelectionStartZPos>587</VoxelSimulationSpaceSelectionStartZPos>
+                        <SimulationSpaceSelectionStartXPos>539</SimulationSpaceSelectionStartXPos>
+                        <SimulationSpaceSelectionStartYPos>727</SimulationSpaceSelectionStartYPos>
+                        <SimulationSpaceSelectionStartZPos>587</SimulationSpaceSelectionStartZPos>
 
-                        <VoxelSimulationSpaceSelectionStepX>1</VoxelSimulationSpaceSelectionStepX>
-                        <VoxelSimulationSpaceSelectionStepY>1</VoxelSimulationSpaceSelectionStepY>
-                        <VoxelSimulationSpaceSelectionStepZ>1</VoxelSimulationSpaceSelectionStepZ>
+                        <SimulationSpaceSelectionStepX>1</SimulationSpaceSelectionStepX>
+                        <SimulationSpaceSelectionStepY>1</SimulationSpaceSelectionStepY>
+                        <SimulationSpaceSelectionStepZ>1</SimulationSpaceSelectionStepZ>
 
-                        <VoxelSimulationSpaceSelectionSizeX>24</VoxelSimulationSpaceSelectionSizeX>
-                        <VoxelSimulationSpaceSelectionSizeY>24</VoxelSimulationSpaceSelectionSizeY>
-                        <VoxelSimulationSpaceSelectionSizeZ>24</VoxelSimulationSpaceSelectionSizeZ>
+                        <SimulationSpaceSelectionSizeX>24</SimulationSpaceSelectionSizeX>
+                        <SimulationSpaceSelectionSizeY>24</SimulationSpaceSelectionSizeY>
+                        <SimulationSpaceSelectionSizeZ>24</SimulationSpaceSelectionSizeZ>
 
                         <SizeOfBigPartOfTheCellMultiplyFactor>4</SizeOfBigPartOfTheCellMultiplyFactor>
 
@@ -3132,8 +3132,8 @@
 
                 <CellState id="15">
                         <TypeOfSpace>2</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
-                        <NumberOfVoxelsInVoxelSimulationSpaceInEachDimension>1024</NumberOfVoxelsInVoxelSimulationSpaceInEachDimension> <!--1024 or 2048 or other-->
-                        <DivisionFactorForVoxelSimulationSpace>4.0</DivisionFactorForVoxelSimulationSpace> <!--4 or 2 or other-->
+                        <SizeOfSimulationSpaceInEachDimension>1024</SizeOfSimulationSpaceInEachDimension> <!--1024 or 2048 or other-->
+                        <DivisionFactorForSimulationSpace>4.0</DivisionFactorForSimulationSpace> <!--4 or 2 or other-->
                         <DivisionFactorForReadingPositionsOfParticles>1.0</DivisionFactorForReadingPositionsOfParticles>
                         <DivisionFactorForGeneratingPositionsOfParticles>1.0</DivisionFactorForGeneratingPositionsOfParticles>
 
@@ -3142,20 +3142,20 @@
                         <Radius2ForGenerationOfParticles>420</Radius1ForGenerationOfParticles>
                         <Radius2SizeForGenerationOfParticles>45</Radius1SizeForGenerationOfParticles>
 
-                        <NumberOfAdvanceVoxelsDuringGenerationOfRandomDNA>50</NumberOfAdvanceVoxelsDuringGenerationOfRandomDNA>
+                        <SizeOfAdvanceDuringGenerationOfRandomDNA>50</SizeOfAdvanceDuringGenerationOfRandomDNA>
                         <DNAPaired>true</DNAPaired>
 
-                        <VoxelSimulationSpaceSelectionStartXPos>527</VoxelSimulationSpaceSelectionStartXPos>
-                        <VoxelSimulationSpaceSelectionStartYPos>713</VoxelSimulationSpaceSelectionStartYPos>
-                        <VoxelSimulationSpaceSelectionStartZPos>575</VoxelSimulationSpaceSelectionStartZPos>
+                        <SimulationSpaceSelectionStartXPos>527</SimulationSpaceSelectionStartXPos>
+                        <SimulationSpaceSelectionStartYPos>713</SimulationSpaceSelectionStartYPos>
+                        <SimulationSpaceSelectionStartZPos>575</SimulationSpaceSelectionStartZPos>
 
-                        <VoxelSimulationSpaceSelectionStepX>1</VoxelSimulationSpaceSelectionStepX>
-                        <VoxelSimulationSpaceSelectionStepY>1</VoxelSimulationSpaceSelectionStepY>
-                        <VoxelSimulationSpaceSelectionStepZ>1</VoxelSimulationSpaceSelectionStepZ>
+                        <SimulationSpaceSelectionStepX>1</SimulationSpaceSelectionStepX>
+                        <SimulationSpaceSelectionStepY>1</SimulationSpaceSelectionStepY>
+                        <SimulationSpaceSelectionStepZ>1</SimulationSpaceSelectionStepZ>
 
-                        <VoxelSimulationSpaceSelectionSizeX>24</VoxelSimulationSpaceSelectionSizeX>
-                        <VoxelSimulationSpaceSelectionSizeY>24</VoxelSimulationSpaceSelectionSizeY>
-                        <VoxelSimulationSpaceSelectionSizeZ>24</VoxelSimulationSpaceSelectionSizeZ>
+                        <SimulationSpaceSelectionSizeX>24</SimulationSpaceSelectionSizeX>
+                        <SimulationSpaceSelectionSizeY>24</SimulationSpaceSelectionSizeY>
+                        <SimulationSpaceSelectionSizeZ>24</SimulationSpaceSelectionSizeZ>
 
                         <SizeOfBigPartOfTheCellMultiplyFactor>4</SizeOfBigPartOfTheCellMultiplyFactor>
 
@@ -3166,14 +3166,14 @@
                         <NumberOfXThreadsInSimulation>2</NumberOfXThreadsInSimulation>
                         <NumberOfYThreadsInSimulation>2</NumberOfYThreadsInSimulation>
                         <NumberOfZThreadsInSimulation>2</NumberOfZThreadsInSimulation>
-                        <NumberOfXVoxelsInOneThreadInVoxelSimulationSpace>512</NumberOfXVoxelsInOneThreadInVoxelSimulationSpace>
-                        <NumberOfYVoxelsInOneThreadInVoxelSimulationSpace>512</NumberOfYVoxelsInOneThreadInVoxelSimulationSpace>
-                        <NumberOfZVoxelsInOneThreadInVoxelSimulationSpace>512</NumberOfXVoxelsInOneThreadInVoxelSimulationSpace>
-                        <NumberOfXVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>32</NumberOfXVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>
-                        <NumberOfYVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>32</NumberOfYVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>
-                        <NumberOfZVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>32</NumberOfZVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>
+                        <SizeOfXInOneThreadInSimulationSpace>512</SizeOfXInOneThreadInSimulationSpace>
+                        <SizeOfYInOneThreadInSimulationSpace>512</SizeOfYInOneThreadInSimulationSpace>
+                        <SizeOfZInOneThreadInSimulationSpace>512</SizeOfXInOneThreadInSimulationSpace>
+                        <SizeOfXInOneSectorInOneThreadInSimulationSpace>32</SizeOfXInOneSectorInOneThreadInSimulationSpace>
+                        <SizeOfYInOneSectorInOneThreadInSimulationSpace>32</SizeOfYInOneSectorInOneThreadInSimulationSpace>
+                        <SizeOfZInOneSectorInOneThreadInSimulationSpace>32</SizeOfZInOneSectorInOneThreadInSimulationSpace>
 
-                        <StepToChangeVoxelSpaceDivisionForThreads>4</StepToChangeVoxelSpaceDivisionForThreads>
+                        <StepToChangeSpaceDivisionForThreads>4</StepToChangeSpaceDivisionForThreads>
                         <TypeOfExchangeOfParticlesBetweenThreads>1</TypeOfExchangeOfParticlesBetweenThreads>
 
                         <RadiusOfCellForDNA>380</RadiusOfCellForDNA>
@@ -3412,8 +3412,8 @@
 
                 <CellState id="16">
                         <TypeOfSpace>2</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
-                        <NumberOfVoxelsInVoxelSimulationSpaceInEachDimension>2048</NumberOfVoxelsInVoxelSimulationSpaceInEachDimension> <!--1024 or 2048 or other-->
-                        <DivisionFactorForVoxelSimulationSpace>2.0</DivisionFactorForVoxelSimulationSpace> <!--4 or 2 or other-->
+                        <SizeOfSimulationSpaceInEachDimension>2048</SizeOfSimulationSpaceInEachDimension> <!--1024 or 2048 or other-->
+                        <DivisionFactorForSimulationSpace>2.0</DivisionFactorForSimulationSpace> <!--4 or 2 or other-->
                         <DivisionFactorForReadingPositionsOfParticles>1.0</DivisionFactorForReadingPositionsOfParticles>
                         <DivisionFactorForGeneratingPositionsOfParticles>1.0</DivisionFactorForGeneratingPositionsOfParticles>
 
@@ -3422,17 +3422,17 @@
                         <Radius2ForGenerationOfParticles>840</Radius1ForGenerationOfParticles>
                         <Radius2SizeForGenerationOfParticles>90</Radius1SizeForGenerationOfParticles>
 
-                        <VoxelSimulationSpaceSelectionStartXPos>789</VoxelSimulationSpaceSelectionStartXPos>
-                        <VoxelSimulationSpaceSelectionStartYPos>898</VoxelSimulationSpaceSelectionStartYPos>
-                        <VoxelSimulationSpaceSelectionStartZPos>611</VoxelSimulationSpaceSelectionStartZPos>
+                        <SimulationSpaceSelectionStartXPos>789</SimulationSpaceSelectionStartXPos>
+                        <SimulationSpaceSelectionStartYPos>898</SimulationSpaceSelectionStartYPos>
+                        <SimulationSpaceSelectionStartZPos>611</SimulationSpaceSelectionStartZPos>
 
-                        <VoxelSimulationSpaceSelectionStepX>1</VoxelSimulationSpaceSelectionStepX>
-                        <VoxelSimulationSpaceSelectionStepY>1</VoxelSimulationSpaceSelectionStepY>
-                        <VoxelSimulationSpaceSelectionStepZ>1</VoxelSimulationSpaceSelectionStepZ>
+                        <SimulationSpaceSelectionStepX>1</SimulationSpaceSelectionStepX>
+                        <SimulationSpaceSelectionStepY>1</SimulationSpaceSelectionStepY>
+                        <SimulationSpaceSelectionStepZ>1</SimulationSpaceSelectionStepZ>
 
-                        <VoxelSimulationSpaceSelectionSizeX>32</VoxelSimulationSpaceSelectionSizeX>
-                        <VoxelSimulationSpaceSelectionSizeY>32</VoxelSimulationSpaceSelectionSizeY>
-                        <VoxelSimulationSpaceSelectionSizeZ>32</VoxelSimulationSpaceSelectionSizeZ>
+                        <SimulationSpaceSelectionSizeX>32</SimulationSpaceSelectionSizeX>
+                        <SimulationSpaceSelectionSizeY>32</SimulationSpaceSelectionSizeY>
+                        <SimulationSpaceSelectionSizeZ>32</SimulationSpaceSelectionSizeZ>
 
                         <SizeOfBigPartOfTheCellMultiplyFactor>4</SizeOfBigPartOfTheCellMultiplyFactor>
 
@@ -3858,9 +3858,9 @@
 		</CellState>
 
                 <CellState id="18">
-                        <TypeOfSpace>2</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
-                        <NumberOfVoxelsInVoxelSimulationSpaceInEachDimension>256</NumberOfVoxelsInVoxelSimulationSpaceInEachDimension> <!--1024 or 2048 or other-->
-                        <DivisionFactorForVoxelSimulationSpace>4.0</DivisionFactorForVoxelSimulationSpace> <!--4 or 2 or other-->
+                        <TypeOfSpace>2</TypeOfSpace> <!--FullAtomSpace = 1, SimulationSpace = 2-->
+                        <SizeOfSimulationSpaceInEachDimension>256</SizeOfSimulationSpaceInEachDimension> <!--1024 or 2048 or other-->
+                        <DivisionFactorForSimulationSpace>4.0</DivisionFactorForSimulationSpace> <!--4 or 2 or other-->
                         <DivisionFactorForReadingPositionsOfParticles>4.0</DivisionFactorForReadingPositionsOfParticles>
                         <DivisionFactorForGeneratingPositionsOfParticles>4.0</DivisionFactorForGeneratingPositionsOfParticles>
                         <Radius1ForGenerationOfParticles>100</Radius1ForGenerationOfParticles>
@@ -3868,20 +3868,20 @@
                         <Radius2ForGenerationOfParticles>105</Radius1ForGenerationOfParticles>
                         <Radius2SizeForGenerationOfParticles>12</Radius1SizeForGenerationOfParticles>
 
-                        <NumberOfAdvanceVoxelsDuringGenerationOfRandomDNA>12</NumberOfAdvanceVoxelsDuringGenerationOfRandomDNA>
+                        <SizeOfAdvanceDuringGenerationOfRandomDNA>12</SizeOfAdvanceDuringGenerationOfRandomDNA>
                         <DNAPaired>false</DNAPaired>
 
-                        <VoxelSimulationSpaceSelectionStartXPos>131</VoxelSimulationSpaceSelectionStartXPos>
-                        <VoxelSimulationSpaceSelectionStartYPos>178</VoxelSimulationSpaceSelectionStartYPos>
-                        <VoxelSimulationSpaceSelectionStartZPos>143</VoxelSimulationSpaceSelectionStartZPos>
+                        <SimulationSpaceSelectionStartXPos>131</SimulationSpaceSelectionStartXPos>
+                        <SimulationSpaceSelectionStartYPos>178</SimulationSpaceSelectionStartYPos>
+                        <SimulationSpaceSelectionStartZPos>143</SimulationSpaceSelectionStartZPos>
 
-                        <VoxelSimulationSpaceSelectionStepX>1</VoxelSimulationSpaceSelectionStepX>
-                        <VoxelSimulationSpaceSelectionStepY>1</VoxelSimulationSpaceSelectionStepY>
-                        <VoxelSimulationSpaceSelectionStepZ>1</VoxelSimulationSpaceSelectionStepZ>
+                        <SimulationSpaceSelectionStepX>1</SimulationSpaceSelectionStepX>
+                        <SimulationSpaceSelectionStepY>1</SimulationSpaceSelectionStepY>
+                        <SimulationSpaceSelectionStepZ>1</SimulationSpaceSelectionStepZ>
 
-                        <VoxelSimulationSpaceSelectionSizeX>24</VoxelSimulationSpaceSelectionSizeX>
-                        <VoxelSimulationSpaceSelectionSizeY>24</VoxelSimulationSpaceSelectionSizeY>
-                        <VoxelSimulationSpaceSelectionSizeZ>24</VoxelSimulationSpaceSelectionSizeZ>
+                        <SimulationSpaceSelectionSizeX>24</SimulationSpaceSelectionSizeX>
+                        <SimulationSpaceSelectionSizeY>24</SimulationSpaceSelectionSizeY>
+                        <SimulationSpaceSelectionSizeZ>24</SimulationSpaceSelectionSizeZ>
 
                         <SizeOfBigPartOfTheCellMultiplyFactor>4</SizeOfBigPartOfTheCellMultiplyFactor>
 
@@ -3892,14 +3892,14 @@
                         <NumberOfXThreadsInSimulation>2</NumberOfXThreadsInSimulation>
                         <NumberOfYThreadsInSimulation>2</NumberOfYThreadsInSimulation>
                         <NumberOfZThreadsInSimulation>2</NumberOfZThreadsInSimulation>
-                        <NumberOfXVoxelsInOneThreadInVoxelSimulationSpace>128</NumberOfXVoxelsInOneThreadInVoxelSimulationSpace>
-                        <NumberOfYVoxelsInOneThreadInVoxelSimulationSpace>128</NumberOfYVoxelsInOneThreadInVoxelSimulationSpace>
-                        <NumberOfZVoxelsInOneThreadInVoxelSimulationSpace>128</NumberOfXVoxelsInOneThreadInVoxelSimulationSpace>
-                        <NumberOfXVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>16</NumberOfXVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>
-                        <NumberOfYVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>16</NumberOfYVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>
-                        <NumberOfZVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>16</NumberOfZVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>
+                        <SizeOfXInOneThreadInSimulationSpace>128</SizeOfXInOneThreadInSimulationSpace>
+                        <SizeOfYInOneThreadInSimulationSpace>128</SizeOfYInOneThreadInSimulationSpace>
+                        <SizeOfZInOneThreadInSimulationSpace>128</SizeOfXInOneThreadInSimulationSpace>
+                        <SizeOfXInOneSectorInOneThreadInSimulationSpace>16</SizeOfXInOneSectorInOneThreadInSimulationSpace>
+                        <SizeOfYInOneSectorInOneThreadInSimulationSpace>16</SizeOfYInOneSectorInOneThreadInSimulationSpace>
+                        <SizeOfZInOneSectorInOneThreadInSimulationSpace>16</SizeOfZInOneSectorInOneThreadInSimulationSpace>
 
-                        <StepToChangeVoxelSpaceDivisionForThreads>4</StepToChangeVoxelSpaceDivisionForThreads>
+                        <StepToChangeSpaceDivisionForThreads>4</StepToChangeSpaceDivisionForThreads>
                         <TypeOfExchangeOfParticlesBetweenThreads>1</TypeOfExchangeOfParticlesBetweenThreads>
 
                         <RadiusOfCellForDNA>95</RadiusOfCellForDNA>
@@ -4138,8 +4138,8 @@
 
                 <CellState id="19">
                         <TypeOfSpace>2</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
-                        <NumberOfVoxelsInVoxelSimulationSpaceInEachDimension>256</NumberOfVoxelsInVoxelSimulationSpaceInEachDimension> <!--1024 or 2048 or other-->
-                        <DivisionFactorForVoxelSimulationSpace>4.0</DivisionFactorForVoxelSimulationSpace> <!--4 or 2 or other-->
+                        <SizeOfSimulationSpaceInEachDimension>256</SizeOfSimulationSpaceInEachDimension> <!--1024 or 2048 or other-->
+                        <DivisionFactorForSimulationSpace>4.0</DivisionFactorForSimulationSpace> <!--4 or 2 or other-->
                         <DivisionFactorForReadingPositionsOfParticles>1.0</DivisionFactorForReadingPositionsOfParticles>
                         <DivisionFactorForGeneratingPositionsOfParticles>4.0</DivisionFactorForGeneratingPositionsOfParticles>
                         <Radius1ForGenerationOfParticles>100</Radius1ForGenerationOfParticles>
@@ -4147,20 +4147,20 @@
                         <Radius2ForGenerationOfParticles>105</Radius1ForGenerationOfParticles>
                         <Radius2SizeForGenerationOfParticles>12</Radius1SizeForGenerationOfParticles>
 
-                        <NumberOfAdvanceVoxelsDuringGenerationOfRandomDNA>12</NumberOfAdvanceVoxelsDuringGenerationOfRandomDNA>
+                        <SizeOfAdvanceDuringGenerationOfRandomDNA>12</SizeOfAdvanceDuringGenerationOfRandomDNA>
                         <DNAPaired>false</DNAPaired>
 
-                        <VoxelSimulationSpaceSelectionStartXPos>131</VoxelSimulationSpaceSelectionStartXPos>
-                        <VoxelSimulationSpaceSelectionStartYPos>178</VoxelSimulationSpaceSelectionStartYPos>
-                        <VoxelSimulationSpaceSelectionStartZPos>143</VoxelSimulationSpaceSelectionStartZPos>
+                        <SimulationSpaceSelectionStartXPos>131</SimulationSpaceSelectionStartXPos>
+                        <SimulationSpaceSelectionStartYPos>178</SimulationSpaceSelectionStartYPos>
+                        <SimulationSpaceSelectionStartZPos>143</SimulationSpaceSelectionStartZPos>
 
-                        <VoxelSimulationSpaceSelectionStepX>1</VoxelSimulationSpaceSelectionStepX>
-                        <VoxelSimulationSpaceSelectionStepY>1</VoxelSimulationSpaceSelectionStepY>
-                        <VoxelSimulationSpaceSelectionStepZ>1</VoxelSimulationSpaceSelectionStepZ>
+                        <SimulationSpaceSelectionStepX>1</SimulationSpaceSelectionStepX>
+                        <SimulationSpaceSelectionStepY>1</SimulationSpaceSelectionStepY>
+                        <SimulationSpaceSelectionStepZ>1</SimulationSpaceSelectionStepZ>
 
-                        <VoxelSimulationSpaceSelectionSizeX>24</VoxelSimulationSpaceSelectionSizeX>
-                        <VoxelSimulationSpaceSelectionSizeY>24</VoxelSimulationSpaceSelectionSizeY>
-                        <VoxelSimulationSpaceSelectionSizeZ>24</VoxelSimulationSpaceSelectionSizeZ>
+                        <SimulationSpaceSelectionSizeX>24</SimulationSpaceSelectionSizeX>
+                        <SimulationSpaceSelectionSizeY>24</SimulationSpaceSelectionSizeY>
+                        <SimulationSpaceSelectionSizeZ>24</SimulationSpaceSelectionSizeZ>
 
                         <SizeOfBigPartOfTheCellMultiplyFactor>4</SizeOfBigPartOfTheCellMultiplyFactor>
 
@@ -4171,14 +4171,14 @@
                         <NumberOfXThreadsInSimulation>2</NumberOfXThreadsInSimulation>
                         <NumberOfYThreadsInSimulation>2</NumberOfYThreadsInSimulation>
                         <NumberOfZThreadsInSimulation>2</NumberOfZThreadsInSimulation>
-                        <NumberOfXVoxelsInOneThreadInVoxelSimulationSpace>128</NumberOfXVoxelsInOneThreadInVoxelSimulationSpace>
-                        <NumberOfYVoxelsInOneThreadInVoxelSimulationSpace>128</NumberOfYVoxelsInOneThreadInVoxelSimulationSpace>
-                        <NumberOfZVoxelsInOneThreadInVoxelSimulationSpace>128</NumberOfXVoxelsInOneThreadInVoxelSimulationSpace>
-                        <NumberOfXVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>16</NumberOfXVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>
-                        <NumberOfYVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>16</NumberOfYVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>
-                        <NumberOfZVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>16</NumberOfZVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>
+                        <SizeOfXInOneThreadInSimulationSpace>128</SizeOfXInOneThreadInSimulationSpace>
+                        <SizeOfYInOneThreadInSimulationSpace>128</SizeOfYInOneThreadInSimulationSpace>
+                        <SizeOfZInOneThreadInSimulationSpace>128</SizeOfXInOneThreadInSimulationSpace>
+                        <SizeOfXInOneSectorInOneThreadInSimulationSpace>16</SizeOfXInOneSectorInOneThreadInSimulationSpace>
+                        <SizeOfYInOneSectorInOneThreadInSimulationSpace>16</SizeOfYInOneSectorInOneThreadInSimulationSpace>
+                        <SizeOfZInOneSectorInOneThreadInSimulationSpace>16</SizeOfZInOneSectorInOneThreadInSimulationSpace>
 
-                        <StepToChangeVoxelSpaceDivisionForThreads>4</StepToChangeVoxelSpaceDivisionForThreads>
+                        <StepToChangeSpaceDivisionForThreads>4</StepToChangeSpaceDivisionForThreads>
                         <TypeOfExchangeOfParticlesBetweenThreads>1</TypeOfExchangeOfParticlesBetweenThreads>
 
                         <RadiusOfCellForDNA>95</RadiusOfCellForDNA>
@@ -4417,8 +4417,8 @@
 
                 <CellState id="20">
                         <TypeOfSpace>2</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
-                        <NumberOfVoxelsInVoxelSimulationSpaceInEachDimension>1024</NumberOfVoxelsInVoxelSimulationSpaceInEachDimension> <!--1024 or 2048 or other-->
-                        <DivisionFactorForVoxelSimulationSpace>4.0</DivisionFactorForVoxelSimulationSpace> <!--4 or 2 or other-->
+                        <SizeOfSimulationSpaceInEachDimension>1024</SizeOfSimulationSpaceInEachDimension> <!--1024 or 2048 or other-->
+                        <DivisionFactorForSimulationSpace>4.0</DivisionFactorForSimulationSpace> <!--4 or 2 or other-->
                         <DivisionFactorForReadingPositionsOfParticles>1.0</DivisionFactorForReadingPositionsOfParticles>
                         <DivisionFactorForGeneratingPositionsOfParticles>1.0</DivisionFactorForGeneratingPositionsOfParticles>
 
@@ -4427,20 +4427,20 @@
                         <Radius2ForGenerationOfParticles>420</Radius1ForGenerationOfParticles>
                         <Radius2SizeForGenerationOfParticles>45</Radius1SizeForGenerationOfParticles>
 
-                        <NumberOfAdvanceVoxelsDuringGenerationOfRandomDNA>50</NumberOfAdvanceVoxelsDuringGenerationOfRandomDNA>
+                        <SizeOfAdvanceDuringGenerationOfRandomDNA>50</SizeOfAdvanceDuringGenerationOfRandomDNA>
                         <DNAPaired>true</DNAPaired>
 
-                        <VoxelSimulationSpaceSelectionStartXPos>527</VoxelSimulationSpaceSelectionStartXPos>
-                        <VoxelSimulationSpaceSelectionStartYPos>713</VoxelSimulationSpaceSelectionStartYPos>
-                        <VoxelSimulationSpaceSelectionStartZPos>575</VoxelSimulationSpaceSelectionStartZPos>
+                        <SimulationSpaceSelectionStartXPos>527</SimulationSpaceSelectionStartXPos>
+                        <SimulationSpaceSelectionStartYPos>713</SimulationSpaceSelectionStartYPos>
+                        <SimulationSpaceSelectionStartZPos>575</SimulationSpaceSelectionStartZPos>
 
-                        <VoxelSimulationSpaceSelectionStepX>1</VoxelSimulationSpaceSelectionStepX>
-                        <VoxelSimulationSpaceSelectionStepY>1</VoxelSimulationSpaceSelectionStepY>
-                        <VoxelSimulationSpaceSelectionStepZ>1</VoxelSimulationSpaceSelectionStepZ>
+                        <SimulationSpaceSelectionStepX>1</SimulationSpaceSelectionStepX>
+                        <SimulationSpaceSelectionStepY>1</SimulationSpaceSelectionStepY>
+                        <SimulationSpaceSelectionStepZ>1</SimulationSpaceSelectionStepZ>
 
-                        <VoxelSimulationSpaceSelectionSizeX>24</VoxelSimulationSpaceSelectionSizeX>
-                        <VoxelSimulationSpaceSelectionSizeY>24</VoxelSimulationSpaceSelectionSizeY>
-                        <VoxelSimulationSpaceSelectionSizeZ>24</VoxelSimulationSpaceSelectionSizeZ>
+                        <SimulationSpaceSelectionSizeX>24</SimulationSpaceSelectionSizeX>
+                        <SimulationSpaceSelectionSizeY>24</SimulationSpaceSelectionSizeY>
+                        <SimulationSpaceSelectionSizeZ>24</SimulationSpaceSelectionSizeZ>
 
                         <SizeOfBigPartOfTheCellMultiplyFactor>4</SizeOfBigPartOfTheCellMultiplyFactor>
 
@@ -4451,14 +4451,14 @@
                         <NumberOfXThreadsInSimulation>2</NumberOfXThreadsInSimulation>
                         <NumberOfYThreadsInSimulation>2</NumberOfYThreadsInSimulation>
                         <NumberOfZThreadsInSimulation>2</NumberOfZThreadsInSimulation>
-                        <NumberOfXVoxelsInOneThreadInVoxelSimulationSpace>512</NumberOfXVoxelsInOneThreadInVoxelSimulationSpace>
-                        <NumberOfYVoxelsInOneThreadInVoxelSimulationSpace>512</NumberOfYVoxelsInOneThreadInVoxelSimulationSpace>
-                        <NumberOfZVoxelsInOneThreadInVoxelSimulationSpace>512</NumberOfXVoxelsInOneThreadInVoxelSimulationSpace>
-                        <NumberOfXVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>32</NumberOfXVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>
-                        <NumberOfYVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>32</NumberOfYVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>
-                        <NumberOfZVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>32</NumberOfZVoxelsInOneSectorInOneThreadInVoxelSimulationSpace>
+                        <SizeOfXInOneThreadInSimulationSpace>512</SizeOfXInOneThreadInSimulationSpace>
+                        <SizeOfYInOneThreadInSimulationSpace>512</SizeOfYInOneThreadInSimulationSpace>
+                        <SizeOfZInOneThreadInSimulationSpace>512</SizeOfXInOneThreadInSimulationSpace>
+                        <SizeOfXInOneSectorInOneThreadInSimulationSpace>32</SizeOfXInOneSectorInOneThreadInSimulationSpace>
+                        <SizeOfYInOneSectorInOneThreadInSimulationSpace>32</SizeOfYInOneSectorInOneThreadInSimulationSpace>
+                        <SizeOfZInOneSectorInOneThreadInSimulationSpace>32</SizeOfZInOneSectorInOneThreadInSimulationSpace>
 
-                        <StepToChangeVoxelSpaceDivisionForThreads>4</StepToChangeVoxelSpaceDivisionForThreads>
+                        <StepToChangeSpaceDivisionForThreads>4</StepToChangeSpaceDivisionForThreads>
                         <TypeOfExchangeOfParticlesBetweenThreads>1</TypeOfExchangeOfParticlesBetweenThreads>
 
                         <RadiusOfCellForDNA>380</RadiusOfCellForDNA>

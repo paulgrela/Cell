@@ -163,6 +163,8 @@ add_executable(
 	CellEngineConfigurationFileReaderWriter.cpp
 	CellEngineGenesPromotersAndStartCodonsFinder.cpp
 	CellEngineGenesPromotersAndGenesStartCodonsFinder.h
+	CellEngineSimulationParallelExecutionManager.cpp
+	CellEngineSimulationParallelExecutionManager.h
 	CellEngineWellStirredChemicalReactionsSimulation.h
 	CellEngineWellStirredChemicalReactionsSimulation.h
 	CellEngineWellStirredChemicalReactionsSimulation.cpp)

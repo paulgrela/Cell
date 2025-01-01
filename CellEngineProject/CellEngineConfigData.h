@@ -73,8 +73,8 @@ public:
     };
     TypesOfSpace TypeOfSpace = TypesOfSpace::FullAtomSpace;
 public:
-    UnsignedInt NumberOfVoxelsInVoxelSimulationSpaceInEachDimension{};
-    float DivisionFactorForVoxelSimulationSpace{};
+    UnsignedInt SizeOfSimulationSpaceInEachDimension{};
+    float DivisionFactorForSimulationSpace{};
     float DivisionFactorForReadingPositionsOfParticles{ 1.0 };
     float DivisionFactorForGeneratingPositionsOfParticles{ 1.0 };
 public:
@@ -84,11 +84,11 @@ public:
     UnsignedInt Radius2SizeForGenerationOfParticles{ 45 };
 public:
     bool DNAPaired = true;
-    UnsignedInt NumberOfAdvanceVoxelsDuringGenerationOfRandomDNA = 50;
+    UnsignedInt SizeOfAdvanceDuringGenerationOfRandomDNA = 50;
 public:
-    UnsignedInt VoxelSimulationSpaceSelectionStartXPos{}, VoxelSimulationSpaceSelectionStartYPos{}, VoxelSimulationSpaceSelectionStartZPos{};
-    UnsignedInt VoxelSimulationSpaceSelectionStepX{}, VoxelSimulationSpaceSelectionStepY{}, VoxelSimulationSpaceSelectionStepZ{};
-    UnsignedInt VoxelSimulationSpaceSelectionSizeX{}, VoxelSimulationSpaceSelectionSizeY{}, VoxelSimulationSpaceSelectionSizeZ{};
+    UnsignedInt SimulationSpaceSelectionStartXPos{}, SimulationSpaceSelectionStartYPos{}, SimulationSpaceSelectionStartZPos{};
+    UnsignedInt SimulationSpaceSelectionStepX{}, SimulationSpaceSelectionStepY{}, SimulationSpaceSelectionStepZ{};
+    UnsignedInt SimulationSpaceSelectionSizeX{}, SimulationSpaceSelectionSizeY{}, SimulationSpaceSelectionSizeZ{};
 public:
     UnsignedInt SizeOfBigPartOfTheCellMultiplyFactor = 1;
 public:
@@ -104,14 +104,14 @@ public:
     UnsignedInt NumberOfXThreadsInSimulation = 1;
     UnsignedInt NumberOfYThreadsInSimulation = 1;
     UnsignedInt NumberOfZThreadsInSimulation = 1;
-    UnsignedInt NumberOfXVoxelsInOneThreadInVoxelSimulationSpace = 1024;
-    UnsignedInt NumberOfYVoxelsInOneThreadInVoxelSimulationSpace = 1024;
-    UnsignedInt NumberOfZVoxelsInOneThreadInVoxelSimulationSpace = 1024;
-    UnsignedInt NumberOfXVoxelsInOneSectorInOneThreadInVoxelSimulationSpace = 32;
-    UnsignedInt NumberOfYVoxelsInOneSectorInOneThreadInVoxelSimulationSpace = 32;
-    UnsignedInt NumberOfZVoxelsInOneSectorInOneThreadInVoxelSimulationSpace = 32;
+    UnsignedInt SizeOfXInOneThreadInSimulationSpace = 1024;
+    UnsignedInt SizeOfYInOneThreadInSimulationSpace = 1024;
+    UnsignedInt SizeOfZInOneThreadInSimulationSpace = 1024;
+    UnsignedInt SizeOfXInOneSectorInOneThreadInSimulationSpace = 32;
+    UnsignedInt SizeOfYInOneSectorInOneThreadInSimulationSpace = 32;
+    UnsignedInt SizeOfZInOneSectorInOneThreadInSimulationSpace = 32;
 public:
-    UnsignedInt StepToChangeVoxelSpaceDivisionForThreads = 2;
+    UnsignedInt StepToChangeSpaceDivisionForThreads = 2;
 public:
     enum class TypesOfExchangeOfParticlesBetweenThreads : UnsignedInt
     {

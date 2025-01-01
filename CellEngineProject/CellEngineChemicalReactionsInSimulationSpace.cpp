@@ -178,7 +178,7 @@ void CellEngineChemicalReactionsInSimulationSpace::PrintInformationAboutFoundPar
     CATCH("printing information found particles in proximity")
 }
 
-bool CellEngineChemicalReactionsInSimulationSpace::FindParticlesInProximityOfVoxelSimulationSpaceForChosenParticle(const Particle& ParticleObject, const UnsignedInt AdditionalBoundFactor)
+bool CellEngineChemicalReactionsInSimulationSpace::FindParticlesInProximityOfSimulationSpaceForChosenParticle(const Particle& ParticleObject, const UnsignedInt AdditionalBoundFactor)
 {
     try
     {

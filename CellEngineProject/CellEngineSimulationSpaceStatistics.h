@@ -55,6 +55,8 @@ protected:
 protected:
     void GetNumberOfParticlesFromParticleKind(EntityIdInt ParticleKindId);
 public:
+    //void JoinStatisticsFromThreads(std::map<UnsignedInt, ReactionStatistics>& SavedReactionsMap) const;
+public:
     CellEngineSimulationSpaceStatistics() noexcept
     {
     }

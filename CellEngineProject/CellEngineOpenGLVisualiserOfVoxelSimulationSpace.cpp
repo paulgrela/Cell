@@ -45,7 +45,7 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::SetVoxelSpaceSelection(co
 
 CellEngineOpenGLVisualiserOfVoxelSimulationSpace::CellEngineOpenGLVisualiserOfVoxelSimulationSpace()
 {
-    SetVoxelSpaceSelection(CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartXPos, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartYPos, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStartZPos, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStepX, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStepY, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionStepZ, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionSizeX, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionSizeY, CellEngineConfigDataObject.VoxelSimulationSpaceSelectionSizeZ);
+    SetVoxelSpaceSelection(CellEngineConfigDataObject.SimulationSpaceSelectionStartXPos, CellEngineConfigDataObject.SimulationSpaceSelectionStartYPos, CellEngineConfigDataObject.SimulationSpaceSelectionStartZPos, CellEngineConfigDataObject.SimulationSpaceSelectionStepX, CellEngineConfigDataObject.SimulationSpaceSelectionStepY, CellEngineConfigDataObject.SimulationSpaceSelectionStepZ, CellEngineConfigDataObject.SimulationSpaceSelectionSizeX, CellEngineConfigDataObject.SimulationSpaceSelectionSizeY, CellEngineConfigDataObject.SimulationSpaceSelectionSizeZ);
 }
 
 void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::SaveVoxelPositionChosenByMouse()
@@ -115,7 +115,7 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSelectedSpace(const
         for (UnsignedInt PosX = XStartParam; PosX < XStartParam + XSizeParam; PosX += XStepParam)
             for (UnsignedInt PosY = YStartParam; PosY < YStartParam + YSizeParam; PosY += YStepParam)
                 for (UnsignedInt PosZ = ZStartParam; PosZ < ZStartParam + ZSizeParam; PosZ += ZStepParam)
-                    if (PosX < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension && PosY < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension && PosZ < CellEngineConfigDataObject.NumberOfVoxelsInVoxelSimulationSpaceInEachDimension)
+                    if (PosX < CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension && PosY < CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension && PosZ < CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension)
                     {
                         SimulationSpaceVoxel SimulationSpaceVoxelObject = CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GetSpaceVoxelForOuterClass(PosX, PosY, PosZ);
                         auto& ParticleObject = CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GetParticleFromIndexForOuterClass(SimulationSpaceVoxelObject);

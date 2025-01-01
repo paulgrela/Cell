@@ -16,7 +16,7 @@ public:
 public:
     virtual ~CellEngineDataFile() = default;
 public:
-    std::vector<std::vector<std::vector<std::unique_ptr<CellEngineVoxelSimulationSpace>>>> CellEngineVoxelSimulationSpaceForThreadsObjectsPointer;
+    std::vector<std::vector<std::vector<std::unique_ptr<CellEngineSimulationSpace>>>> CellEngineSimulationSpaceForThreadsObjectsPointer;
     std::unique_ptr<CellEngineVoxelSimulationSpace> CellEngineVoxelSimulationSpaceObjectPointer;
 public:
     bool FilmOfStructuresActive = false;

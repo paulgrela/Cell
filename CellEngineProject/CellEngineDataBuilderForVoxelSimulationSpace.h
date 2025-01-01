@@ -14,10 +14,10 @@ protected:
 
         UnsignedInt ThreadIndexPos = 1;
 
-        CellEngineVoxelSimulationSpaceForThreadsObjectsPointer.clear();
-        CellEngineVoxelSimulationSpaceForThreadsObjectsPointer.resize(CellEngineConfigDataObject.NumberOfXThreadsInSimulation);
+        CellEngineSimulationSpaceForThreadsObjectsPointer.clear();
+        CellEngineSimulationSpaceForThreadsObjectsPointer.resize(CellEngineConfigDataObject.NumberOfXThreadsInSimulation);
         UnsignedInt ThreadXPos = 1;
-        for (auto& ThreadLocalParticlesInProximityXPos : CellEngineVoxelSimulationSpaceForThreadsObjectsPointer)
+        for (auto& ThreadLocalParticlesInProximityXPos : CellEngineSimulationSpaceForThreadsObjectsPointer)
         {
             ThreadLocalParticlesInProximityXPos.resize(CellEngineConfigDataObject.NumberOfYThreadsInSimulation);
             UnsignedInt ThreadYPos = 1;

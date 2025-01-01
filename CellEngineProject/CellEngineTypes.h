@@ -52,7 +52,7 @@ struct SimulationSpaceSectorBounds
 enum class TypesOfLookingForParticlesInProximity : UnsignedInt
 {
     FromChosenParticleAsCenter = 1,
-    InChosenVoxelSpace = 2
+    InChosenSectorOfSimulationSpace = 2
 };
 
 #endif

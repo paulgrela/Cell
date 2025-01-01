@@ -12,12 +12,24 @@
 
 #include "CellEngineParticlesVoxelsOperations.h"
 
-class CellEngineBasicParticlesOperations
+class BasicParallelExecutionData
 {
-public:
+protected:
     ThreadIdType CurrentThreadIndex{ 0 };
     CurrentThreadPosType CurrentThreadPos{ 1, 1, 1 };
-    SimulationSpaceSectorBounds ActualSimulationSpaceSectorBoundsObject{ 0,0,0, 0, 0, 0, 0 ,0, 0 };
+protected:
+    SimulationSpaceSectorBounds ActualSimulationSpaceSectorBoundsObject{ 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+protected:
+    std::mutex MainExchangeParticlesMutexObject;
+protected:
+    std::unordered_map<UniqueIdInt, Particle> ParticlesForThreads;
+protected:
+    UnsignedInt ErrorCounter = 0;
+    UnsignedInt AddedParticlesInReactions = 0;
+};
+
+class CellEngineBasicParticlesOperations : public BasicParallelExecutionData
+{
 protected:
     UnsignedInt XMin{}, XMax{}, YMin{}, YMax{}, ZMin{}, ZMax{};
 protected:
@@ -25,9 +37,6 @@ protected:
     std::stack<UniqueIdInt> FreeIndexesOfParticles;
 protected:
     std::unordered_map<UniqueIdInt, Particle>& Particles;
-    std::unordered_map<UniqueIdInt, Particle> ParticlesForThreads;
-protected:
-    std::mutex MainExchangeParticlesMutexObject;
 protected:
     inline std::unordered_map<UniqueIdInt, Particle>& GetParticles()
     {
