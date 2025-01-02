@@ -80,6 +80,8 @@ protected:
     void FindAndExecuteRandomReactionVersion2(UnsignedInt MaxNumberOfReactantsParam);
     void FindAndExecuteRandomReactionVersion3(UnsignedInt MaxNumberOfReactantsParam);
     void FindAndExecuteRandomReactionVersion4(UnsignedInt MaxNumberOfReactantsParam);
+private:
+    set<UnsignedInt> GetAllPossibleReactionsFromParticlesInProximity();
 protected:
     std::vector<UnsignedInt> GetRandomParticlesVersion1(UnsignedInt NumberOfReactants, UnsignedInt MaxNumberOfReactants);
     std::vector<UnsignedInt> GetRandomParticlesVersion2(UnsignedInt NumberOfReactants, UnsignedInt MaxNumberOfReactants);

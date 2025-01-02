@@ -10,6 +10,9 @@ class CellEngineSimulationSpace;
 class CellEngineSimulationParallelExecutionManager : virtual public CellEngineBasicParticlesOperations
 {
 public:
+    template <class SimulationSpaceType>
+    static void CreateSimulationSpaceForParallelExecution(std::vector<std::vector<std::vector<std::shared_ptr<CellEngineSimulationSpace>>>>& CellEngineSimulationSpaceForThreadsObjectsPointer, std::unordered_map<UniqueIdInt, Particle>& Particles);
+public:
     virtual void GenerateOneStepOfDiffusionForSelectedSpace(bool InBounds, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam) = 0;
     virtual void GenerateOneRandomReactionForSelectedSpace(UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam, bool FindParticlesInProximityBool) = 0;
 public:
@@ -27,6 +30,11 @@ public:
 public:
     void GenerateNStepsOfSimulationForWholeCellSpaceInThreads(UnsignedInt NumberOfStepsOutside, UnsignedInt NumberOfStepsInside);
     void GenerateNStepsOfSimulationWithSendingParticlesToThreadsAndGatheringParticlesToMainThreadForWholeCellSpace(UnsignedInt NumberOfStepsOutside, UnsignedInt NumberOfStepsInside, bool PrintTime);
+private:
+    void SetZeroForAllParallelExecutionVariables();
+    void GatherAllParallelExecutionVariables();
+private:
+    void GenerateNStepsOfSimulationForWholeCellSpaceInOneThread(barrier<>* SyncPoint, bool* StateOfSimulationSpaceDivisionForThreads, UnsignedInt NumberOfStepsOutside, UnsignedInt NumberOfStepsInside, ThreadIdType CurrentThreadIndexParam, UnsignedInt ThreadXIndexParam, UnsignedInt ThreadYIndexParam, UnsignedInt ThreadZIndexParam) const;
 private:
     std::vector<std::vector<std::vector<std::shared_ptr<CellEngineSimulationSpace>>>>& SimulationSpaceDataForThreads;
 public:

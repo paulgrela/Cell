@@ -9,27 +9,10 @@
 #include "CellEngineTypes.h"
 #include "CellEngineParticle.h"
 #include "CellEngineParticleKind.h"
-
 #include "CellEngineParticlesVoxelsOperations.h"
+#include "CellEngineBasicParallelExecutionData.h"
 
-class BasicParallelExecutionData
-{
-    friend class CellEngineSimulationParallelExecutionManager;
-protected:
-    ThreadIdType CurrentThreadIndex{ 0 };
-    CurrentThreadPosType CurrentThreadPos{ 1, 1, 1 };
-protected:
-    SimulationSpaceSectorBounds ActualSimulationSpaceSectorBoundsObject{ 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-protected:
-    std::mutex MainExchangeParticlesMutexObject;
-protected:
-    std::unordered_map<UniqueIdInt, Particle> ParticlesForThreads;
-protected:
-    UnsignedInt ErrorCounter = 0;
-    UnsignedInt AddedParticlesInReactions = 0;
-};
-
-class CellEngineBasicParticlesOperations : public BasicParallelExecutionData
+class CellEngineBasicParticlesOperations : public CellEngineBasicParallelExecutionData
 {
 protected:
     UnsignedInt XMin{}, XMax{}, YMin{}, YMax{}, ZMin{}, ZMax{};

@@ -121,6 +121,7 @@ add_executable(
 	CellEngineBasicVoxelsOperations.h
 	CellEngineNucleicAcidsBasicOperations.h
 	CellEngineParticlesVoxelsOperations.h
+	CellEngineBasicParallelExecutionData.h
 	CellEngineBasicParticlesOperations.cpp
 	CellEngineBasicParticlesOperations.h
 	CellEngineParticlesVoxelsShapesGenerator.h
@@ -173,8 +174,7 @@ if(USING_MODULES STREQUAL "TRUE")
 target_sources(CellEngineProject
 		PUBLIC
 		FILE_SET all_my_modules TYPE CXX_MODULES FILES
-		CellEngineColors.cpp
-)
+		CellEngineColors.cpp)
 endif()
 
 if(WIN32)

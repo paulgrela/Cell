@@ -348,27 +348,9 @@ SimulationSpaceSectorBounds CellEngineSimulationSpace::GetBoundsForThreadSector(
     try
     {
         if (CurrentThreadIndex == 0)
-        {
-            SimulationSpaceSectorBoundsObject.StartXPos = 0;
-            SimulationSpaceSectorBoundsObject.EndXPos = CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension;
-            SimulationSpaceSectorBoundsObject.StartYPos = 0;
-            SimulationSpaceSectorBoundsObject.EndYPos = CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension;
-            SimulationSpaceSectorBoundsObject.StartZPos = 0;
-            SimulationSpaceSectorBoundsObject.EndZPos = CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension;
-        }
+            SimulationSpaceSectorBoundsObject.SetParameters(0, 0, 0, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension);
         else
-        {
-            SimulationSpaceSectorBoundsObject.StartXPos = (CurrentThreadPos.ThreadPosX - 1) * CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace;
-            SimulationSpaceSectorBoundsObject.EndXPos = (CurrentThreadPos.ThreadPosX - 1) * CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace + CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace;
-            SimulationSpaceSectorBoundsObject.StartYPos = (CurrentThreadPos.ThreadPosY - 1) * CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace;
-            SimulationSpaceSectorBoundsObject.EndYPos = (CurrentThreadPos.ThreadPosY - 1) * CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace + CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace;
-            SimulationSpaceSectorBoundsObject.StartZPos = (CurrentThreadPos.ThreadPosZ - 1) * CellEngineConfigDataObject.SizeOfZInOneThreadInSimulationSpace;
-            SimulationSpaceSectorBoundsObject.EndZPos = (CurrentThreadPos.ThreadPosZ - 1) * CellEngineConfigDataObject.SizeOfZInOneThreadInSimulationSpace + CellEngineConfigDataObject.SizeOfZInOneThreadInSimulationSpace;
-        }
-
-        SimulationSpaceSectorBoundsObject.SizeX = SimulationSpaceSectorBoundsObject.EndXPos - SimulationSpaceSectorBoundsObject.StartXPos;
-        SimulationSpaceSectorBoundsObject.SizeY = SimulationSpaceSectorBoundsObject.EndYPos - SimulationSpaceSectorBoundsObject.StartYPos;
-        SimulationSpaceSectorBoundsObject.SizeZ = SimulationSpaceSectorBoundsObject.EndZPos - SimulationSpaceSectorBoundsObject.StartZPos;
+            SimulationSpaceSectorBoundsObject.SetParametersForParallelExecutionSectors(CurrentThreadPos, CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfZInOneThreadInSimulationSpace);
     }
     CATCH("getting bounds for thread sector")
 
@@ -617,17 +599,28 @@ void CellEngineSimulationSpace::FindAndExecuteRandomReactionVersion4(const Unsig
     CATCH("finding and executing random reaction v4")
 }
 
-void CellEngineSimulationSpace::FindAndExecuteRandomReactionVersion3(const UnsignedInt MaxNumberOfReactants)
+set<UnsignedInt> CellEngineSimulationSpace::GetAllPossibleReactionsFromParticlesInProximity()
 {
+    set<UnsignedInt> PossibleReactionsIdNums;
+
     try
     {
-        set<UnsignedInt> PossibleReactionsIdNums;
-
         for (const auto& ParticleKindFoundInProximityObject : LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity)
             for (const auto& ReactionIdNum : ParticlesKindsManagerObject.GetParticleKind(ParticleKindFoundInProximityObject.first).AssociatedChemicalReactions)
                 if (auto ReactionIter = ChemicalReactionsManagerObject.ChemicalReactionsPosFromId.find(ReactionIdNum); ReactionIter != ChemicalReactionsManagerObject.ChemicalReactionsPosFromId.end())
                     if (IsChemicalReactionPossible(ChemicalReactionsManagerObject.ChemicalReactions[ReactionIter->second]) == true)
                         PossibleReactionsIdNums.insert(ReactionIdNum);
+    }
+    CATCH("finding and executing random reaction v3")
+
+    return PossibleReactionsIdNums;
+}
+
+void CellEngineSimulationSpace::FindAndExecuteRandomReactionVersion3(const UnsignedInt MaxNumberOfReactants)
+{
+    try
+    {
+        set<UnsignedInt> PossibleReactionsIdNums = GetAllPossibleReactionsFromParticlesInProximity();
 
         if (PossibleReactionsIdNums.empty() == false)
         {

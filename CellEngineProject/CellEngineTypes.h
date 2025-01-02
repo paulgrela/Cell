@@ -4,6 +4,7 @@
 #define CELL_ENGINE_TYPES_H
 
 #include <cstdint>
+
 #include "vmath.h"
 
 using SignedInt = std::int64_t;
@@ -38,6 +39,7 @@ struct CurrentThreadPosType
 
 struct SimulationSpaceSectorBounds
 {
+public:
     UnsignedInt StartXPos;
     UnsignedInt StartYPos;
     UnsignedInt StartZPos;
@@ -47,6 +49,41 @@ struct SimulationSpaceSectorBounds
     UnsignedInt EndXPos;
     UnsignedInt EndYPos;
     UnsignedInt EndZPos;
+public:
+    void SetParameters(const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam, const UnsignedInt EndXPosParam, const UnsignedInt EndYPosParam, const UnsignedInt EndZPosParam)
+    {
+        StartXPos = StartXPosParam;
+        StartYPos = StartYPosParam;
+        StartZPos = StartZPosParam;
+        SizeX = SizeXParam;
+        SizeY = SizeYParam;
+        SizeZ = SizeZParam;
+        EndXPos = EndXPosParam;
+        EndYPos = EndYPosParam;
+        EndZPos = EndZPosParam;
+    }
+public:
+    void AddToStartParameters(const UnsignedInt AddToStartXPosParam, const UnsignedInt AddToStartYPosParam, const UnsignedInt AddToStartZPosParam)
+    {
+        StartXPos += AddToStartXPosParam;
+        StartYPos += AddToStartYPosParam;
+        StartZPos += AddToStartZPosParam;
+    }
+public:
+    SimulationSpaceSectorBounds SetParametersForParallelExecutionSectors(const CurrentThreadPosType& CurrentThreadPos, const UnsignedInt SizeOfXInOneThreadInSimulationSpace, const UnsignedInt SizeOfYInOneThreadInSimulationSpace, const UnsignedInt SizeOfZInOneThreadInSimulationSpace)
+    {
+        StartXPos = (CurrentThreadPos.ThreadPosX - 1) * SizeOfXInOneThreadInSimulationSpace;
+        EndXPos = (CurrentThreadPos.ThreadPosX - 1) * SizeOfXInOneThreadInSimulationSpace + SizeOfXInOneThreadInSimulationSpace;
+        StartYPos = (CurrentThreadPos.ThreadPosY - 1) * SizeOfYInOneThreadInSimulationSpace;
+        EndYPos = (CurrentThreadPos.ThreadPosY - 1) * SizeOfYInOneThreadInSimulationSpace + SizeOfYInOneThreadInSimulationSpace;
+        StartZPos = (CurrentThreadPos.ThreadPosZ - 1) * SizeOfZInOneThreadInSimulationSpace;
+        EndZPos = (CurrentThreadPos.ThreadPosZ - 1) * SizeOfZInOneThreadInSimulationSpace + SizeOfZInOneThreadInSimulationSpace;
+        SizeX = EndXPos - StartXPos;
+        SizeY = EndYPos - StartYPos;
+        SizeZ = EndZPos - StartZPos;
+
+        return *this;
+    }
 };
 
 enum class TypesOfLookingForParticlesInProximity : UnsignedInt
