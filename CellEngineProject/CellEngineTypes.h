@@ -3,7 +3,10 @@
 #ifndef CELL_ENGINE_TYPES_H
 #define CELL_ENGINE_TYPES_H
 
+#include <memory>
+#include <vector>
 #include <cstdint>
+#include <unordered_map>
 
 #include "vmath.h"
 
@@ -36,6 +39,12 @@ struct CurrentThreadPosType
         return (CTP.ThreadPosX == ThreadPosX && CTP.ThreadPosY == ThreadPosY && CTP.ThreadPosZ == ThreadPosZ);
     }
 };
+
+template<class Particle>
+using ParticlesContainer = std::unordered_map<UniqueIdInt, Particle>;
+
+template <class SimulationSpace>
+using SimulationSpaceForParallelExecutionContainer = std::vector<std::vector<std::vector<std::shared_ptr<SimulationSpace>>>>;
 
 struct SimulationSpaceSectorBounds
 {

@@ -6,7 +6,7 @@
 
 using namespace std;
 
-void  CellEngineBasicParticlesOperations::InitiateFreeParticleIndexes(const std::unordered_map<UniqueIdInt, Particle>& LocalParticles, const bool PrintInfo)
+void  CellEngineBasicParticlesOperations::InitiateFreeParticleIndexes(const ParticlesContainer<Particle>& LocalParticles, const bool PrintInfo)
 {
     try
     {

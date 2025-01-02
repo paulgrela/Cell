@@ -20,7 +20,7 @@ protected:
 public:
     bool CompareFitnessOfDNASequenceByNucleotidesLoop(ComparisonType TypeOfComparison, const ParticleKindForChemicalReaction& ParticleKindForReactionObject, Particle& ParticleObjectTestedForReaction);
 protected:
-    explicit CellEngineNucleicAcidsChemicalReactionsInSimulationSpace(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : CellEngineNucleicAcidsComplexOperations(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam)
+    explicit CellEngineNucleicAcidsChemicalReactionsInSimulationSpace(ParticlesContainer<Particle>& ParticlesParam) : CellEngineNucleicAcidsComplexOperations(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam)
     {
     }
 };

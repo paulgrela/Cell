@@ -33,7 +33,7 @@ public:
     SimulationSpaceVoxel GetSpaceVoxelForOuterClass(UnsignedInt X, UnsignedInt Y, UnsignedInt Z);
     Particle& GetParticleFromIndexForOuterClass(UniqueIdInt ParticleIndex);
 private:
-    std::unordered_map<UniqueIdInt, Particle>& Particles;
+    ParticlesContainer<Particle>& Particles;
 public:
     [[nodiscard]] static float ConvertToGraphicsCoordinate(UnsignedInt CoordinateParam);
     [[nodiscard]] static UnsignedInt ConvertToSpaceCoordinate(double CoordinateParam);
@@ -53,7 +53,7 @@ protected:
     bool MoveParticleByVectorIfSpaceIsEmpty(Particle &ParticleObject, SignedInt VectorX, SignedInt VectorY, SignedInt VectorZ) override;
     bool CheckIfSpaceIsEmptyAndIsInBoundsForParticleElements(const ParticleKind& ParticleKindObjectForProduct, UnsignedInt VectorX, UnsignedInt VectorY, UnsignedInt VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam) override;
 public:
-    explicit CellEngineVoxelSimulationSpace(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam, bool GetMemoryForVoxelSpace, ThreadIdType ThreadIndex, CurrentThreadPosType CurrentThreadPos);
+    explicit CellEngineVoxelSimulationSpace(ParticlesContainer<Particle>& ParticlesParam, bool GetMemoryForVoxelSpace, ThreadIdType ThreadIndex, CurrentThreadPosType CurrentThreadPos);
     ~CellEngineVoxelSimulationSpace() override;
 };
 

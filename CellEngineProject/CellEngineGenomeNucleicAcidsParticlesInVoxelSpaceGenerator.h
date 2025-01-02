@@ -38,7 +38,7 @@ public:
     void ReadGenomeSequenceFromFastaFile();
     void TestGeneratedGenomeCorrectness(UnsignedInt ParticleSize);
 protected:
-    explicit CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : CellEngineRealRandomParticlesInVoxelSpaceGenerator(ParticlesParam)
+    explicit CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator(ParticlesContainer<Particle>& ParticlesParam) : CellEngineRealRandomParticlesInVoxelSpaceGenerator(ParticlesParam)
     {
     }
     ~CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator() override = default;

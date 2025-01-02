@@ -33,7 +33,7 @@ protected:
 
     void SaveParticleFoundInProximity(UniqueIdInt ParticleIndex, unordered_set<UnsignedInt>& FoundParticleIndexes, bool UpdateNucleotides);
 protected:
-    explicit CellEngineChemicalReactionsInSimulationSpace(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : CellEngineNucleicAcidsChemicalReactionsInSimulationSpace(ParticlesParam)
+    explicit CellEngineChemicalReactionsInSimulationSpace(ParticlesContainer<Particle>& ParticlesParam) : CellEngineNucleicAcidsChemicalReactionsInSimulationSpace(ParticlesParam)
     {
     }
 };

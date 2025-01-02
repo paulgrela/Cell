@@ -20,9 +20,9 @@ protected:
     UnsignedInt MaxParticleIndex{};
     std::stack<UniqueIdInt> FreeIndexesOfParticles;
 protected:
-    std::unordered_map<UniqueIdInt, Particle>& Particles;
+   ParticlesContainer<Particle>& Particles;
 protected:
-    inline std::unordered_map<UniqueIdInt, Particle>& GetParticles()
+    inline ParticlesContainer<Particle>& GetParticles()
     {
         if (CurrentThreadIndex == 0)
             return Particles;
@@ -40,7 +40,7 @@ public:
         return FreeIndexesOfParticles.size();
     }
 protected:
-    void InitiateFreeParticleIndexes(const std::unordered_map<UniqueIdInt, Particle>& LocalParticles, bool PrintInfo);
+    void InitiateFreeParticleIndexes(const ParticlesContainer<Particle>& LocalParticles, bool PrintInfo);
 protected:
     inline UniqueIdInt GetNewFreeIndexOfParticle()
     {
@@ -78,7 +78,7 @@ protected:
     std::vector<UniqueIdInt> GetAllParticlesWithChosenEntityId(UniqueIdInt EntityId);
     UnsignedInt GetNumberOfParticlesWithChosenEntityId(UniqueIdInt EntityId);
 protected:
-    explicit CellEngineBasicParticlesOperations(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : Particles(ParticlesParam)
+    explicit CellEngineBasicParticlesOperations(ParticlesContainer<Particle>& ParticlesParam) : Particles(ParticlesParam)
     {
     }
 public:

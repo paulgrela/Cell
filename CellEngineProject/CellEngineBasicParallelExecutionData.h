@@ -16,7 +16,7 @@ protected:
 protected:
     std::mutex MainExchangeParticlesMutexObject;
 protected:
-    std::unordered_map<UniqueIdInt, Particle> ParticlesForThreads;
+    ParticlesContainer<Particle> ParticlesForThreads;
 protected:
     UnsignedInt ErrorCounter = 0;
     UnsignedInt AddedParticlesInReactions = 0;

@@ -14,10 +14,10 @@ CellEngineSimulationParallelExecutionManager::CellEngineSimulationParallelExecut
 {
 }
 
-template void CellEngineSimulationParallelExecutionManager::CreateSimulationSpaceForParallelExecution<CellEngineVoxelSimulationSpace>(std::vector<std::vector<std::vector<std::shared_ptr<CellEngineSimulationSpace>>>>& CellEngineSimulationSpaceForThreadsObjectsPointer, std::unordered_map<UniqueIdInt, Particle>& Particles);
+template void CellEngineSimulationParallelExecutionManager::CreateSimulationSpaceForParallelExecution<CellEngineVoxelSimulationSpace>(SimulationSpaceForParallelExecutionContainer<CellEngineSimulationSpace>& CellEngineSimulationSpaceForThreadsObjectsPointer, ParticlesContainer<Particle>& Particles);
 
 template <class SimulationSpaceType>
-void CellEngineSimulationParallelExecutionManager::CreateSimulationSpaceForParallelExecution(std::vector<std::vector<std::vector<std::shared_ptr<CellEngineSimulationSpace>>>>& CellEngineSimulationSpaceForThreadsObjectsPointer, std::unordered_map<UniqueIdInt, Particle>& Particles)
+void CellEngineSimulationParallelExecutionManager::CreateSimulationSpaceForParallelExecution(SimulationSpaceForParallelExecutionContainer<CellEngineSimulationSpace>& CellEngineSimulationSpaceForThreadsObjectsPointer, ParticlesContainer<Particle>& Particles)
 {
     try
     {
@@ -190,7 +190,7 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
 
         const auto start_time = chrono::high_resolution_clock::now();
 
-        vector<vector<vector<unordered_map<UniqueIdInt, Particle>>>> ParticlesToExchange(CellEngineConfigDataObject.NumberOfXThreadsInSimulation, vector<vector<unordered_map<UniqueIdInt, Particle>>>(CellEngineConfigDataObject.NumberOfYThreadsInSimulation, vector<unordered_map<UniqueIdInt, Particle>>(CellEngineConfigDataObject.NumberOfZThreadsInSimulation)));
+        vector<vector<vector<ParticlesContainer<Particle>>>> ParticlesToExchange(CellEngineConfigDataObject.NumberOfXThreadsInSimulation, vector<vector<ParticlesContainer<Particle>>>(CellEngineConfigDataObject.NumberOfYThreadsInSimulation, vector<ParticlesContainer<Particle>>(CellEngineConfigDataObject.NumberOfZThreadsInSimulation)));
 
         {
             lock_guard LockGuardObject1{ SimulationSpaceDataForThreads[CurrentThreadPos.ThreadPosX - 1][CurrentThreadPos.ThreadPosY - 1][CurrentThreadPos.ThreadPosZ - 1]->MainExchangeParticlesMutexObject };
@@ -257,7 +257,7 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
 
         const auto start_time = chrono::high_resolution_clock::now();
 
-        vector<vector<vector<unordered_map<UniqueIdInt, Particle>>>> ParticlesToExchangeMap(CellEngineConfigDataObject.NumberOfXThreadsInSimulation, vector<vector<unordered_map<UniqueIdInt, Particle>>>(CellEngineConfigDataObject.NumberOfYThreadsInSimulation, vector<unordered_map<UniqueIdInt, Particle>>(CellEngineConfigDataObject.NumberOfZThreadsInSimulation)));
+        vector<vector<vector<ParticlesContainer<Particle>>>> ParticlesToExchangeMap(CellEngineConfigDataObject.NumberOfXThreadsInSimulation, vector<vector<ParticlesContainer<Particle>>>(CellEngineConfigDataObject.NumberOfYThreadsInSimulation, vector<ParticlesContainer<Particle>>(CellEngineConfigDataObject.NumberOfZThreadsInSimulation)));
 
         {
             lock_guard LockGuardObject1{ SimulationSpaceDataForThreads[CurrentThreadPos.ThreadPosX - 1][CurrentThreadPos.ThreadPosY - 1][CurrentThreadPos.ThreadPosZ - 1]->MainExchangeParticlesMutexObject };

@@ -39,7 +39,7 @@ public:
     void PrintNumberOfParticlesForAllMainTypesOfParticles();
     static void PrintInformationAboutRibosomesProteins();
 protected:
-    explicit CellEngineRealRandomParticlesInVoxelSpaceGenerator(std::unordered_map<UniqueIdInt, Particle>& ParticlesParam) : CellEngineParticlesVoxelsShapesGenerator(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam)
+    explicit CellEngineRealRandomParticlesInVoxelSpaceGenerator(ParticlesContainer<Particle>& ParticlesParam) : CellEngineParticlesVoxelsShapesGenerator(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam)
     {
     }
 };

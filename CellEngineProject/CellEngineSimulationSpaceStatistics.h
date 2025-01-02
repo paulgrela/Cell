@@ -37,7 +37,7 @@ protected:
     bool SortParticlesAsSortedVectorElementsBool = true;
 protected:
     std::vector<std::vector<Particle>> ParticlesSnapshots;
-    std::vector<std::unordered_map<UniqueIdInt, Particle>> ParticlesSnapshotsCopiedUnorderedMap;
+    std::vector<ParticlesContainer<Particle>> ParticlesSnapshotsCopiedUnorderedMap;
     std::vector<std::vector<ParticleKindStatistics>> ParticlesKindsSnapshotsVectorSortedByCounter;
 protected:
     std::vector<std::map<EntityIdInt, ParticleKindStatistics>> ParticlesKindsSnapshotsCopiedMap;

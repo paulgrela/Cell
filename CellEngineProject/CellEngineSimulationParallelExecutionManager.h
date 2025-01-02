@@ -11,7 +11,7 @@ class CellEngineSimulationParallelExecutionManager : virtual public CellEngineBa
 {
 public:
     template <class SimulationSpaceType>
-    static void CreateSimulationSpaceForParallelExecution(std::vector<std::vector<std::vector<std::shared_ptr<CellEngineSimulationSpace>>>>& CellEngineSimulationSpaceForThreadsObjectsPointer, std::unordered_map<UniqueIdInt, Particle>& Particles);
+    static void CreateSimulationSpaceForParallelExecution(SimulationSpaceForParallelExecutionContainer<CellEngineSimulationSpace>& CellEngineSimulationSpaceForThreadsObjectsPointer, ParticlesContainer<Particle>& Particles);
 public:
     virtual void GenerateOneStepOfDiffusionForSelectedSpace(bool InBounds, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam) = 0;
     virtual void GenerateOneRandomReactionForSelectedSpace(UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam, bool FindParticlesInProximityBool) = 0;
