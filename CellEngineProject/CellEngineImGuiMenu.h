@@ -51,7 +51,7 @@ public:
             };
             unsigned int All;
         }
-                Flags;
+        Flags;
     };
     APPINFO Info{};
 
@@ -625,13 +625,13 @@ public:
         return string(PrefixSize, ' ') + InputStr + string(Size - InputStr.length(), ' ');
     }
 
-    void VoxelSimulationSpaceVisibility(ImGuiWindowFlags WindowFlags, const bool ModifiableWindow) const
+    static void VoxelSimulationSpaceVisibility(ImGuiWindowFlags WindowFlags, const bool ModifiableWindow)
     {
         try
         {
             if (CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer != nullptr)
             {
-                std::lock_guard LockGuardObject{ CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderMenuAndVoxelSimulationSpaceMutexObject };
+                conditional_lock_guard<recursive_mutex> LockGuardCond(CellEngineConfigDataObject.UseMutexBetweenMainScreenThreadAndMenuThreads, &CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderMenuAndVoxelSimulationSpaceMutexObject);
 
                 auto CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer = dynamic_cast<CellEngineOpenGLVisualiserOfVoxelSimulationSpace*>(CellEngineOpenGLVisualiserPointer.get());
 
@@ -821,6 +821,8 @@ public:
                     ImGui::RadioButton("Only Reactions ", &TypeOfSimulation, 2);
                     ImGui::RadioButton("Only Diffusion", &TypeOfSimulation, 3);
                     CellEngineConfigDataObject.TypeOfSimulation = static_cast<CellEngineConfigData::TypesOfSimulation>(TypeOfSimulation);
+                    ImGui::Text("");
+                    ImGui::Checkbox("Use Mutex Between Main Screen Thread and Menu Threads", &CellEngineConfigDataObject.UseMutexBetweenMainScreenThreadAndMenuThreads);
                     ImGui::Text("");
 
                     ColorButton(AlignString("START N STEPS OF SIMULATION FOR WHOLE CELL SPACE IN THREADS", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
@@ -1173,7 +1175,7 @@ public:
     }
 
 public:
-    unique_ptr<CellEngineOpenGLVisualiser> CellEngineOpenGLVisualiserPointer;
+    static inline unique_ptr<CellEngineOpenGLVisualiser> CellEngineOpenGLVisualiserPointer;
 
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wreturn-type"
@@ -1219,9 +1221,3 @@ public:
         CATCH("starting imgui menu and whole cell opengl visualization")
     }
 };
-
-int main(int argc, const char ** argv)
-{
-    CellEngineImGuiMenu CellEngineImGuiMenuObject(argc, argv);
-    return 0;
-}

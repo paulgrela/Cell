@@ -38,7 +38,7 @@ private:
 private:
     Matrix3fT ArcBallPrevRotationMatrix{};
     Matrix3fT ArcBallActualRotationMatrix{};
-    std::unique_ptr<ArcBallT> ArcBall;
+    std::unique_ptr<ArcBallT> ArcBall{};
 protected:
     Point2fT MousePosition{};
     Point2fT MousePositionLocal{};
@@ -52,7 +52,7 @@ protected:
     UnsignedInt PressedRightMouseButton = 0;
     bool PressedRightMouseButtonBool = false;
 private:
-    std::vector<std::pair<UnsignedInt, UnsignedInt>> BondsBetweenParticlesCentersToDraw;
+    std::vector<std::pair<UnsignedInt, UnsignedInt>> BondsBetweenParticlesCentersToDraw{};
 protected:
     std::vector<std::vector<std::pair<UnsignedInt, UnsignedInt>>> BondsBetweenAtomsToDraw;
 public:
@@ -89,6 +89,7 @@ protected:
 protected:
     void StartUp() override;
     void ShutDown() override;
+public:
     void Render(double CurrentTime) override;
 public:
     void OnKey(int Key, int Action) override;

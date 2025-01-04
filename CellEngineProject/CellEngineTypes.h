@@ -101,4 +101,46 @@ enum class TypesOfLookingForParticlesInProximity : UnsignedInt
     InChosenSectorOfSimulationSpace = 2
 };
 
+template <typename MutexT>
+class conditional_lock_guard
+{
+private:
+    bool condition;
+    MutexT* const mtx;
+public:
+    explicit conditional_lock_guard(const bool condition_param, MutexT* mtx_param) : condition(condition_param), mtx{ mtx_param }
+    {
+        if (condition == true)
+        {
+            mtx->lock();
+        }
+    }
+public:
+    ~conditional_lock_guard() noexcept
+    {
+        if (condition == true)
+        {
+            mtx->unlock();
+        }
+    }
+public:
+    conditional_lock_guard(const conditional_lock_guard&) = delete;
+    conditional_lock_guard& operator=(const conditional_lock_guard&) = delete;
+public:
+    [[nodiscard]] bool owns_lock() const noexcept
+    {
+        return condition;
+    }
+public:
+    explicit operator bool() const noexcept
+    {
+        return owns_lock();
+    }
+public:
+    MutexT* mutex() const noexcept
+    {
+        return mtx;
+    }
+};
+
 #endif

@@ -3176,6 +3176,8 @@
                         <StepToChangeSpaceDivisionForThreads>4</StepToChangeSpaceDivisionForThreads>
                         <TypeOfExchangeOfParticlesBetweenThreads>1</TypeOfExchangeOfParticlesBetweenThreads>
 
+                        <UseMutexBetweenMainScreenThreadAndMenuThreads>true</UseMutexBetweenMainScreenThreadAndMenuThreads>
+
                         <RadiusOfCellForDNA>380</RadiusOfCellForDNA>
 
 			<CellStateFileName>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile33.dat</CellStateFileName>
@@ -4180,6 +4182,8 @@
 
                         <StepToChangeSpaceDivisionForThreads>4</StepToChangeSpaceDivisionForThreads>
                         <TypeOfExchangeOfParticlesBetweenThreads>1</TypeOfExchangeOfParticlesBetweenThreads>
+
+                        <UseMutexBetweenMainScreenThreadAndMenuThreads>true</UseMutexBetweenMainScreenThreadAndMenuThreads>
 
                         <RadiusOfCellForDNA>95</RadiusOfCellForDNA>
 

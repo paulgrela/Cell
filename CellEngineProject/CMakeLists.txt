@@ -105,7 +105,8 @@ add_executable(
 	CellEngineRandomDeviceEngine.h
 	CellEngineDataFile.h
 	CellEngineFilmOfStructures.h
-	CellEngineImGuiMenu.cpp
+	CellEngineMain.cpp
+	CellEngineImGuiMenu.h
 	CellEnginePDBDataFileReader.h
 	CellEnginePDBDataFileReader.cpp
 	CellEngineCIFDataFileReader.h

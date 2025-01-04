@@ -147,7 +147,7 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSpace(UnsignedInt& 
 {
     try
     {
-        std::lock_guard LockGuardObject{ RenderMenuAndVoxelSimulationSpaceMutexObject };
+        conditional_lock_guard<recursive_mutex> LockGuardCond(CellEngineConfigDataObject.UseMutexBetweenMainScreenThreadAndMenuThreads, &CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderMenuAndVoxelSimulationSpaceMutexObject);
 
         GLuint PartOfStencilBufferIndex[3];
 

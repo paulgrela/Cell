@@ -61,7 +61,7 @@ public:
 public:
     void DrawBondsForParticlesCenters(std::vector<std::pair<UnsignedInt, UnsignedInt>>& BondsToDraw, bool DrawBonds, const vmath::mat4& ViewMatrix) override;
 public:
-    static inline std::mutex RenderMenuAndVoxelSimulationSpaceMutexObject;
+    static inline std::recursive_mutex RenderMenuAndVoxelSimulationSpaceMutexObject;
 };
 
 #endif

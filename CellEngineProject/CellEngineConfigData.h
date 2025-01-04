@@ -121,6 +121,8 @@ public:
     };
     TypesOfExchangeOfParticlesBetweenThreads TypeOfExchangeOfParticlesBetweenThreads = TypesOfExchangeOfParticlesBetweenThreads::ParallelInsert;
 public:
+    bool UseMutexBetweenMainScreenThreadAndMenuThreads = true;
+public:
     double RadiusOfCellForDNA{};
 public:
     enum class SelectedSpaceStartParametersDrawTypes : UnsignedInt

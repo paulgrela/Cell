@@ -8,6 +8,8 @@
 #include "CellEngineParticlesKindsManager.h"
 #include "CellEngineSimulationParallelExecutionManager.h"
 
+#include "CellEngineOpenGLVisualiserOfVoxelSimulationSpace.h"
+
 using namespace std;
 
 CellEngineSimulationParallelExecutionManager::CellEngineSimulationParallelExecutionManager() : SimulationSpaceDataForThreads(CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer)
@@ -270,13 +272,21 @@ void CellEngineSimulationParallelExecutionManager::GatherParticlesFromThreadsToP
     {
         const auto start_time = chrono::high_resolution_clock::now();
 
-        Particles.clear();
+        auto RememberStateOfUseMutexBetweenMainScreenThreadAndMenuThreads = CellEngineConfigDataObject.UseMutexBetweenMainScreenThreadAndMenuThreads;
+        CellEngineConfigDataObject.UseMutexBetweenMainScreenThreadAndMenuThreads = true;
+        sleep(1);
+        {
+            lock_guard<recursive_mutex> LockGuard{ CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderMenuAndVoxelSimulationSpaceMutexObject };
 
-        FOR_EACH_THREAD_IN_XYZ
-            for (const auto& ParticleObject : SimulationSpaceDataForThreads[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->ParticlesForThreads)
-                Particles.insert(ParticleObject);
+            Particles.clear();
 
-        InitiateFreeParticleIndexes(Particles, false);
+            FOR_EACH_THREAD_IN_XYZ
+                for (const auto& ParticleObject : SimulationSpaceDataForThreads[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->ParticlesForThreads)
+                    Particles.insert(ParticleObject);
+
+            InitiateFreeParticleIndexes(Particles, false);
+        }
+        CellEngineConfigDataObject.UseMutexBetweenMainScreenThreadAndMenuThreads = RememberStateOfUseMutexBetweenMainScreenThreadAndMenuThreads;
 
         const auto stop_time = chrono::high_resolution_clock::now();
 
