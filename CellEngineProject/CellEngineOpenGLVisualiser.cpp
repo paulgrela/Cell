@@ -105,7 +105,7 @@ void CellEngineOpenGLVisualiser::ShutDown()
     CATCH("deleting of data for cell visualization")
 }
 
-void CellEngineOpenGLVisualiser::DeleteLineVertexes()
+void CellEngineOpenGLVisualiser::DeleteLineVertexes() const
 {
     try
     {
@@ -121,8 +121,8 @@ void CellEngineOpenGLVisualiser::InitLineVertexes()
     {
         DeleteLineVertexes();
 
-        const float LineVertexes[] = { 0.0, 0.0, 0.0,   1.0, 0.0, 0.0 };
-        const float LineNormals[] = { 1.0, 1.0 };
+        constexpr float LineVertexes[] = { 0.0, 0.0, 0.0,   1.0, 0.0, 0.0 };
+        constexpr float LineNormals[] = { 1.0, 1.0 };
 
         glGenVertexArrays(1, &LineVAO);
         glBindVertexArray(LineVAO);
@@ -145,7 +145,7 @@ void CellEngineOpenGLVisualiser::InitLineVertexes()
     CATCH("initiation of line vertexes")
 }
 
-void CellEngineOpenGLVisualiser::DrawBond(const float x1, const float y1, const float z1, const float x2, const float y2, const float z2)
+void CellEngineOpenGLVisualiser::DrawBond(const float x1, const float y1, const float z1, const float x2, const float y2, const float z2) const
 {
     try
     {
@@ -175,10 +175,10 @@ void CellEngineOpenGLVisualiser::FindBondsToDraw(const vector<CellEngineAtom>& A
                     const auto& ParticlesCenterObject1 = Atoms[AtomObjectIndex1];
                     const auto& ParticlesCenterObject2 = Atoms[AtomObjectIndex2];
 
-                    float DiffX = ParticlesCenterObject2.X - ParticlesCenterObject1.X;
-                    float DiffY = ParticlesCenterObject2.Y - ParticlesCenterObject1.Y;
-                    float DiffZ = ParticlesCenterObject2.Z - ParticlesCenterObject1.Z;
-                    float VectorLength = sqrt(DiffX * DiffX + DiffY * DiffY + DiffZ * DiffZ);
+                    const float DiffX = ParticlesCenterObject2.X - ParticlesCenterObject1.X;
+                    const float DiffY = ParticlesCenterObject2.Y - ParticlesCenterObject1.Y;
+                    const float DiffZ = ParticlesCenterObject2.Z - ParticlesCenterObject1.Z;
+                    const float VectorLength = sqrt(DiffX * DiffX + DiffY * DiffY + DiffZ * DiffZ);
                     if (VectorLength < 1.5)
                         BondsToDrawLocal[omp_get_thread_num()].emplace_back(make_pair(AtomObjectIndex1, AtomObjectIndex2));
                 }
@@ -190,7 +190,7 @@ void CellEngineOpenGLVisualiser::FindBondsToDraw(const vector<CellEngineAtom>& A
     CATCH("finding bonds")
 }
 
-void CellEngineOpenGLVisualiser::DrawBonds(const vector<CellEngineAtom>& Atoms, vector<pair<UnsignedInt, UnsignedInt>>& BondsToDraw, const bool DrawBonds, const vmath::mat4& ViewMatrix)
+void CellEngineOpenGLVisualiser::DrawBonds(const vector<CellEngineAtom>& Atoms, vector<pair<UnsignedInt, UnsignedInt>>& BondsToDraw, const bool DrawBonds, const vmath::mat4& ViewMatrix) const
 {
     try
     {
@@ -247,9 +247,9 @@ inline bool CellEngineOpenGLVisualiser::GetFinalVisibilityInModelWorld(const vma
     {
         if (CountNewPosition == true)
         {
-            float XNew = MatrixUniformBlockForVertexShaderPointer->MoveMatrix[0][0] * (AtomPosition.X() + CellEngineConfigDataObject.CameraXPosition - Center.X()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[1][0] * (AtomPosition.Y() + CellEngineConfigDataObject.CameraYPosition - Center.Y()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[2][0] * (AtomPosition.Z() + CellEngineConfigDataObject.CameraZPosition - Center.Z());
-            float YNew = MatrixUniformBlockForVertexShaderPointer->MoveMatrix[0][1] * (AtomPosition.X() + CellEngineConfigDataObject.CameraXPosition - Center.X()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[1][1] * (AtomPosition.Y() + CellEngineConfigDataObject.CameraYPosition - Center.Y()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[2][1] * (AtomPosition.Z() + CellEngineConfigDataObject.CameraZPosition - Center.Z());
-            float ZNew = MatrixUniformBlockForVertexShaderPointer->MoveMatrix[0][2] * (AtomPosition.X() + CellEngineConfigDataObject.CameraXPosition - Center.X()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[1][2] * (AtomPosition.Y() + CellEngineConfigDataObject.CameraYPosition - Center.Y()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[2][2] * (AtomPosition.Z() + CellEngineConfigDataObject.CameraZPosition - Center.Z());
+            const float XNew = MatrixUniformBlockForVertexShaderPointer->MoveMatrix[0][0] * (AtomPosition.X() + CellEngineConfigDataObject.CameraXPosition - Center.X()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[1][0] * (AtomPosition.Y() + CellEngineConfigDataObject.CameraYPosition - Center.Y()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[2][0] * (AtomPosition.Z() + CellEngineConfigDataObject.CameraZPosition - Center.Z());
+            const float YNew = MatrixUniformBlockForVertexShaderPointer->MoveMatrix[0][1] * (AtomPosition.X() + CellEngineConfigDataObject.CameraXPosition - Center.X()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[1][1] * (AtomPosition.Y() + CellEngineConfigDataObject.CameraYPosition - Center.Y()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[2][1] * (AtomPosition.Z() + CellEngineConfigDataObject.CameraZPosition - Center.Z());
+            const float ZNew = MatrixUniformBlockForVertexShaderPointer->MoveMatrix[0][2] * (AtomPosition.X() + CellEngineConfigDataObject.CameraXPosition - Center.X()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[1][2] * (AtomPosition.Y() + CellEngineConfigDataObject.CameraYPosition - Center.Y()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[2][2] * (AtomPosition.Z() + CellEngineConfigDataObject.CameraZPosition - Center.Z());
 
             if (DrawOutsideBorder == true)
                 if (CheckDistanceToDrawDetailsInAtomScale(XNew, YNew, ZNew) == true)
@@ -266,7 +266,7 @@ inline bool CellEngineOpenGLVisualiser::GetFinalVisibilityInModelWorld(const vma
     return false;
 }
 
-inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4 ModelMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, bool DrawAdditional)
+inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4 ModelMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, bool DrawAdditional) const
 {
     bool FinalVisibilityInModelWorld = false;
 
@@ -341,16 +341,16 @@ inline vmath::vec3 CellEngineOpenGLVisualiser::GetSize(const CellEngineAtom& Ato
 
 bool CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom& AtomObject, const vmath::mat4& ViewMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, UnsignedInt& NumberOfAllRenderedAtoms, const bool Chosen, const bool RenderObjectParameter)
 {
-    bool FinalVisibilityInModelWorld;
+    bool FinalVisibilityInModelWorld{};
 
     try
     {
         if (RenderObjectParameter == true)
             NumberOfAllRenderedAtoms++;
 
-        vmath::vec3 AtomPosition = LengthUnit * AtomObject.Position();
-        vmath::vec3 SizeLocal = GetSize(AtomObject);
-        vmath::mat4 ModelMatrix = vmath::translate(AtomPosition.X() - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomPosition.Y() + CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomPosition.Z() + CellEngineConfigDataObject.CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(SizeLocal.X(), SizeLocal.Y(), SizeLocal.Z()));
+        const vmath::vec3 AtomPosition = LengthUnit * AtomObject.Position();
+        const vmath::vec3 SizeLocal = GetSize(AtomObject);
+        const vmath::mat4 ModelMatrix = vmath::translate(AtomPosition.X() - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomPosition.Y() + CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomPosition.Z() + CellEngineConfigDataObject.CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(SizeLocal.X(), SizeLocal.Y(), SizeLocal.Z()));
 
         FinalVisibilityInModelWorld = CreateUniformBlockForVertexShader(AtomPosition, CellEngineUseful::GetVMathVec3FromVector3ForColor(GetColor<CellEngineAtom>(AtomObject, Chosen)), ViewMatrix, ModelMatrix, CountNewPosition, DrawCenter, DrawOutsideBorder, true);
 
@@ -387,7 +387,7 @@ inline void CellEngineOpenGLVisualiser::SetAutomaticParametersForRendering()
     CATCH("setting automatic parameters for rendering")
 }
 
-inline void CellEngineOpenGLVisualiser::PrepareOpenGLToRenderObjectsOnScene()
+inline void CellEngineOpenGLVisualiser::PrepareOpenGLToRenderObjectsOnScene() const
 {
     try
     {
@@ -506,8 +506,6 @@ void CellEngineOpenGLVisualiser::PrintAtomDescriptionOnScreen(CellEngineAtom& Ch
         glDisable(GL_CULL_FACE);
 
         TextOverlayObject.Clear();
-
-        CellEngineUseful::AtomDescriptionTextsObject.Texts[0];
 
         string LocalTextStr = CellEngineUseful::AtomDescriptionTextsObject.Texts[0] = "Serial = " + to_string(ChosenParticleObject.Serial) + " Name = " + ChosenParticleObject.Name + " ResName = " + ChosenParticleObject.ResName;
         if (CellEngineConfigDataObject.StencilForDrawingObjectsTypesObject == CellEngineConfigData::StencilForDrawingObjectsTypes::StencilForDrawingOnlyInAtomScale)
