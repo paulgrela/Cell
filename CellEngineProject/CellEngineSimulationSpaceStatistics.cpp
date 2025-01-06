@@ -6,8 +6,6 @@
 #include "CellEngineSimulationSpaceStatistics.h"
 #include "CellEngineParticlesKindsManager.h"
 
-#define LONGER_CODE_
-
 using namespace std;
 
 CellEngineSimulationSpaceStatistics::CellEngineSimulationSpaceStatistics()
@@ -24,6 +22,8 @@ void CellEngineSimulationSpaceStatistics::MakeSimulationStepNumberZeroForStatist
         ParticlesSnapshotsCopiedUnorderedMap.clear();
         ParticlesKindsSnapshotsVectorSortedByCounter.clear();
         ParticlesKindsSnapshotsCopiedMap.clear();
+        ParticlesKindsHistogramComparisons.clear();
+
         SavedReactionsMap.clear();
     }
     CATCH("making simulation step number zero for statistics")
@@ -46,8 +46,11 @@ void CellEngineSimulationSpaceStatistics::GenerateNewEmptyElementsForContainersF
 
         ParticlesKindsSnapshotsVectorSortedByCounter.emplace_back();
         ParticlesKindsSnapshotsCopiedMap.emplace_back();
+        ParticlesKindsHistogramComparisons.emplace_back();
 
         SavedReactionsMap.emplace_back();
+
+        LoggersManagerObject.LogStatistics(STREAM("Size of arrays to statistics = " << ParticlesSnapshots.size() << " " << ParticlesKindsSnapshotsVectorSortedByCounter.size() << " " << ParticlesKindsSnapshotsCopiedMap.size() << " " << ParticlesKindsHistogramComparisons.size() << " " << SavedReactionsMap.size()));
     }
     CATCH("incrementing simulation step number for statistics")
 }
@@ -56,12 +59,16 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesStatistics()
 {
     try
     {
+        LoggersManagerObject.LogStatistics(STREAM("SAVE PARTICLES ARRAYS"));
+
         if (SaveParticlesAsCopiedMapBool == true)
             SaveParticlesAsCopiedMap();
         if (SaveParticlesAsVectorElementsBool == true)
             SaveParticlesAsVectorElements();
         if (SortParticlesAsSortedVectorElementsBool == true)
             SaveParticlesAsSortedVectorElements();
+        if (SortHistogramOfParticlesAsSortedVectorElementsBool == true)
+            CompareHistogramsOfParticles(SimulationStepNumber - 1, SimulationStepNumber);
     }
     CATCH("saving particles statistics")
 }
@@ -107,19 +114,19 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesAsSortedVectorElements()
 
         LoggersManagerObject.LogStatistics(STREAM("Size of all particles copied for statistics = " << ParticlesSnapshotsCopiedUnorderedMap[SimulationStepNumber - 1].size()));
 
-        #ifdef LONGER_CODE
-        for (const auto& ParticlesSnapshotsCopiedUnorderedMapElement : ParticlesSnapshotsCopiedUnorderedMap[SimulationStepNumber - 1])
-        {
-            UniqueIdInt ParticleKind = GetParticleFromIndex(ParticlesSnapshotsCopiedUnorderedMapElement.first).EntityId;
-            ParticlesKindsSnapshotsCopiedMap[SimulationStepNumber - 1][ParticleKind] = { ParticleKind, ParticlesKindsSnapshotsCopiedMap[SimulationStepNumber - 1][ParticleKind].Counter++ };
-        }
-        #else
+        // #ifdef SHORTER_CODE
+        // for (const auto& ParticlesSnapshotsCopiedUnorderedMapElement : ParticlesSnapshotsCopiedUnorderedMap[SimulationStepNumber - 1])
+        // {
+        //     UniqueIdInt ParticleKindId = GetParticleFromIndex(ParticlesSnapshotsCopiedUnorderedMapElement.first).EntityId;
+        //     ParticlesKindsSnapshotsCopiedMap[SimulationStepNumber - 1][ParticleKindId] = { ParticleKindId, ParticlesKindsSnapshotsCopiedMap[SimulationStepNumber - 1][ParticleKindId].Counter++ };
+        // }
+        // #else
         for (const auto& ParticlesSnapshotsCopiedUnorderedMapElement : ParticlesSnapshotsCopiedUnorderedMap[SimulationStepNumber - 1])
             if (auto FoundResult = ParticlesKindsSnapshotsCopiedMap[SimulationStepNumber - 1].find(GetParticleFromIndex(ParticlesSnapshotsCopiedUnorderedMapElement.first).EntityId); FoundResult != ParticlesKindsSnapshotsCopiedMap[SimulationStepNumber - 1].end())
                 FoundResult->second.Counter++;
             else
-                ParticlesKindsSnapshotsCopiedMap[SimulationStepNumber - 1][GetParticleFromIndex(ParticlesSnapshotsCopiedUnorderedMapElement.first).EntityId] = { GetParticleFromIndex(ParticlesSnapshotsCopiedUnorderedMapElement.first).EntityId, 0 };
-        #endif
+                ParticlesKindsSnapshotsCopiedMap[SimulationStepNumber - 1][GetParticleFromIndex(ParticlesSnapshotsCopiedUnorderedMapElement.first).EntityId] = { GetParticleFromIndex(ParticlesSnapshotsCopiedUnorderedMapElement.first).EntityId, 1 };
+        // #endif
 
         LoggersManagerObject.LogStatistics(STREAM("Size of all particle kinds with number of particles for particle kind = " << ParticlesKindsSnapshotsCopiedMap[SimulationStepNumber - 1].size()));
 
@@ -130,19 +137,52 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesAsSortedVectorElements()
     CATCH("saving particles as sorted vector elements")
 }
 
+void CellEngineSimulationSpaceStatistics::CompareHistogramsOfParticles(const UnsignedInt SimulationStepNumber1, const UnsignedInt SimulationStepNumber2)
+{
+    try
+    {
+        LoggersManagerObject.LogStatistics(STREAM("Size of particles vector sorted by number = " << ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber1 - 1].size() << " " << ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber2 - 1].size() << " " << SimulationStepNumber1 << " " << SimulationStepNumber2));
+
+        for (const auto& ParticleKindStatisticsObject1 : ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber1 - 1])
+        {
+            bool Found = false;
+            for (const auto& ParticleKindStatisticsObject2 : ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber2 - 1])
+                if (ParticleKindStatisticsObject2.EntityId == ParticleKindStatisticsObject1.EntityId)
+                {
+                    ParticlesKindsHistogramComparisons[SimulationStepNumber - 1].emplace_back(ParticleKindHistogramComparison{ ParticleKindStatisticsObject1.EntityId, ParticleKindStatisticsObject1.Counter, ParticleKindStatisticsObject2.Counter, static_cast<SignedInt>(ParticleKindStatisticsObject2.Counter - ParticleKindStatisticsObject1.Counter) });
+                    Found = true;
+                    break;
+                }
+            if (Found == false)
+                ParticlesKindsHistogramComparisons[SimulationStepNumber - 1].emplace_back(ParticleKindHistogramComparison{ ParticleKindStatisticsObject1.EntityId, ParticleKindStatisticsObject1.Counter, 0, static_cast<SignedInt>(0 - ParticleKindStatisticsObject1.Counter) });
+        }
+    }
+    CATCH("comparing histograms of particles")
+}
+
+#ifdef SHORTER_CODE
 void CellEngineSimulationSpaceStatistics::SaveReactionForStatistics(const ChemicalReaction& ReactionParam)
 {
     try
     {
-        auto ReactionIter = SavedReactionsMap[SimulationStepNumber - 1].find(ReactionParam.ReactionIdNum);
-
-        if (ReactionIter != SavedReactionsMap[SimulationStepNumber - 1].end())
-            ReactionIter->second.Counter++;
-        else
-            SavedReactionsMap[SimulationStepNumber - 1][ReactionParam.ReactionIdNum] = ReactionStatistics{ ReactionParam.ReactionIdNum, 0 };
+        SavedReactionsMap[SimulationStepNumber - 1][ReactionParam.ReactionIdNum].Counter++;
     }
     CATCH("saving reaction for statistics")
 }
+#else
+void CellEngineSimulationSpaceStatistics::SaveReactionForStatisticsExtended(const ChemicalReaction& ReactionParam)
+{
+    try
+    {
+        auto ReactionIter = SavedReactionsMap[SimulationStepNumber - 1].find(ReactionParam.ReactionIdNum);
+        if (ReactionIter != SavedReactionsMap[SimulationStepNumber - 1].end())
+            ReactionIter->second.Counter++;
+        else
+            SavedReactionsMap[SimulationStepNumber - 1][ReactionParam.ReactionIdNum] = ReactionStatistics{ ReactionParam.ReactionIdNum, 1 };
+    }
+    CATCH("saving reaction for statistics extended")
+}
+#endif
 
 void CellEngineSimulationSpaceStatistics::GetNumberOfParticlesFromParticleKind(const EntityIdInt ParticleKindId)
 {

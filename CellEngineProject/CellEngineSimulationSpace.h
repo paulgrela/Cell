@@ -54,6 +54,7 @@ public:
     void SaveParticlesStatisticsOnce();
     void SaveReactionsStatisticsToFile() const;
 public:
+    void SaveHistogramOfParticlesStatisticsToFile();
     void SaveNumberOfParticlesStatisticsToFile();
 public:
     void GenerateOneStepOfDiffusionForSelectedSpace(bool InBounds, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam) override;

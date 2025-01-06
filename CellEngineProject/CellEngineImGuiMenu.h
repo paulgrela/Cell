@@ -992,6 +992,8 @@ public:
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->JoinStatisticsFromThreads(CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->SavedReactionsMap, CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->SimulationStepNumber);
                     if (ImGui::Button(AlignString("SAVE REACTIONS STATISTICS TO FILE", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->SaveReactionsStatisticsToFile();
+                    if (ImGui::Button(AlignString("SAVE HISTOGRAM OF PARTICLES TO FILE", StringLength).c_str()) == true)
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->SaveHistogramOfParticlesStatisticsToFile();
                     if (ImGui::Button(AlignString("SAVE NUMBER OF PARTICLES TO FILE", StringLength).c_str()) == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->SaveNumberOfParticlesStatisticsToFile();
                 }

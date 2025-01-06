@@ -10,6 +10,8 @@
 
 #define USING_MODULES_
 
+#define SHORTER_CODE
+
 constexpr UnsignedInt MaxLengthOfGene = 16384;
 
 constexpr EntityIdInt StartParticleKindId = 100000;

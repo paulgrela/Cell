@@ -57,6 +57,18 @@ void CellEngineSimulationParallelExecutionManager::CreateSimulationSpaceForParal
         for (UnsignedInt ThreadYIndex = 1; ThreadYIndex <= CellEngineConfigDataObject.NumberOfYThreadsInSimulation; ThreadYIndex++) \
             for (UnsignedInt ThreadZIndex = 1; ThreadZIndex <= CellEngineConfigDataObject.NumberOfZThreadsInSimulation; ThreadZIndex++) \
 
+#ifdef SHORTER_CODE
+void CellEngineSimulationParallelExecutionManager::JoinStatisticsFromThreads(vector<map<UnsignedInt, ReactionStatistics>>& SavedReactionsMap, const UnsignedInt SimulationStepNumber) const
+{
+    try
+    {
+        FOR_EACH_THREAD_IN_XYZ
+            for (const auto& ReactionData : SimulationSpaceDataForThreads[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->SavedReactionsMap[SimulationStepNumber - 1])
+                SavedReactionsMap[SimulationStepNumber - 1][ReactionData.first].Counter += ReactionData.second.Counter;
+    }
+    CATCH("joining statistics from threads")
+}
+#else
 void CellEngineSimulationParallelExecutionManager::JoinStatisticsFromThreads(vector<map<UnsignedInt, ReactionStatistics>>& SavedReactionsMap, const UnsignedInt SimulationStepNumber) const
 {
     try
@@ -68,8 +80,9 @@ void CellEngineSimulationParallelExecutionManager::JoinStatisticsFromThreads(vec
                 else
                     SavedReactionsMap[SimulationStepNumber - 1].insert(ReactionData);
     }
-    CATCH("joining statistics from threads")
+    CATCH("joining statistics from threads extended")
 }
+#endif
 
 void LogCenterOfParticleWithThreadIndex(const Particle& ParticleObject, const ThreadIdType ThreadXIndex, const ThreadIdType ThreadYIndex, const ThreadIdType ThreadZIndex)
 {
