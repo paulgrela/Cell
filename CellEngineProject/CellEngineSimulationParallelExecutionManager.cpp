@@ -63,7 +63,7 @@ void CellEngineSimulationParallelExecutionManager::JoinStatisticsFromThreads(vec
     try
     {
         FOR_EACH_THREAD_IN_XYZ
-            for (const auto& ReactionData : SimulationSpaceDataForThreads[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->SavedReactionsMap[SimulationStepNumber - 1])
+            for (const auto& ReactionData : SimulationSpaceDataForThreads[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->SavedReactionsMap.back())
                 SavedReactionsMap[SimulationStepNumber - 1][ReactionData.first].Counter += ReactionData.second.Counter;
     }
     CATCH("joining statistics from threads")
