@@ -202,6 +202,9 @@ void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const ch
 
                         CellEngineConfigDataObject.CellStateFileName = CellStatePropertyTreeElement.second.get<string>("CellStateFileName");
                         CellEngineConfigDataObject.CellStateFileNameBackup = CellStatePropertyTreeElement.second.get<string>("CellStateFileNameBackup");
+                        if (CellStatePropertyTreeElement.second.get_child_optional("CellStateFileNameBinary"))
+                            CellEngineConfigDataObject.CellStateFileNameBinary = CellStatePropertyTreeElement.second.get<string>("CellStateFileNameBinary");
+
                         if (CellStatePropertyTreeElement.second.get_child_optional("CellGenomePositionsFileName"))
                             CellEngineConfigDataObject.CellGenomePositionsFileName = CellStatePropertyTreeElement.second.get<string>("CellGenomePositionsFileName");
                         if (CellStatePropertyTreeElement.second.get_child_optional("CellGenomeSequenceFileName"))

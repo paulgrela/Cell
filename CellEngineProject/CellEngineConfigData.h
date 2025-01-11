@@ -142,6 +142,7 @@ public:
 public:
     std::string CellStateFileName;
     std::string CellStateFileNameBackup;
+    std::string CellStateFileNameBinary;
     std::string CellGenomePositionsFileName;
     std::string CellGenomeSequenceFileName;
     std::string CellGenomeSequenceFastaFileName;

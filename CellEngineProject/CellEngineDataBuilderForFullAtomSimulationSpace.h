@@ -3,14 +3,17 @@
 #ifndef CELL_ENGINE_FULL_ATOM_SIMULATION_SPACE_CIF_DATA_FILE_READER_H
 #define CELL_ENGINE_FULL_ATOM_SIMULATION_SPACE_CIF_DATA_FILE_READER_H
 
-#include "CellEngineConfigData.h"
-#include "CellEngineCIFDataFileReader.h"
+#include "CellEngineParticlesDataFile.h"
+#include "CellEngineSimulationParallelExecutionManager.h"
 
 class CellEngineDataBuilderForFullAtomSimulationSpace : public CellEngineParticlesDataFile
 {
 protected:
     void SetStartValues() override
     {
+        CellEngineFullAtomSimulationSpaceObjectPointer = std::make_unique<CellEngineFullAtomSimulationSpace>(Particles, true, 0, CurrentThreadPosType{ 0, 0, 0 });
+
+        CellEngineSimulationParallelExecutionManager::CreateSimulationSpaceForParallelExecution<CellEngineFullAtomSimulationSpace>(CellEngineSimulationSpaceForThreadsObjectsPointer, Particles);
     }
 protected:
     UniqueIdInt AddNewParticle(const Particle& ParticleObjectParam) override

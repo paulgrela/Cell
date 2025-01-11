@@ -8,6 +8,7 @@
 #include "CellEngineConfigData.h"
 #include "CellEngineFilmOfStructures.h"
 #include "CellEngineVoxelSimulationSpace.h"
+#include "CellEngineFullAtomSimulationSpace.h"
 
 class CellEngineDataFile : public CellEngineFilmOfStructures
 {
@@ -17,6 +18,7 @@ public:
     virtual ~CellEngineDataFile() = default;
 public:
     SimulationSpaceForParallelExecutionContainer<CellEngineSimulationSpace> CellEngineSimulationSpaceForThreadsObjectsPointer;
+    std::unique_ptr<CellEngineFullAtomSimulationSpace> CellEngineFullAtomSimulationSpaceObjectPointer;
     std::unique_ptr<CellEngineVoxelSimulationSpace> CellEngineVoxelSimulationSpaceObjectPointer;
 public:
     bool FilmOfStructuresActive = false;
