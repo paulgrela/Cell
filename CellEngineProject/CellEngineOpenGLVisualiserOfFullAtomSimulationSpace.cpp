@@ -18,7 +18,7 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
 
             TemporaryRenderedAtomsList.clear();
 
-            lock_guard LockGuardObject{ CellEngineDataFileObjectPointer->ChosenStructureMutexObject };
+            lock_guard LockGuardObject{ CellEngineDataFile::ChosenStructureMutexObject };
 
             for (auto ParticlesCenterIterator = ParticlesCenters.begin(); ParticlesCenterIterator != ParticlesCenters.end(); ++ParticlesCenterIterator)
             {
@@ -104,7 +104,7 @@ inline void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::DrawChosenAtomU
 
 void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::GetStartCenterPoint()
 {
-    Center = CellEngineDataFileObjectPointer->GetCenter(CellEngineDataFileObjectPointer->GetParticlesCenters());
+    Center = CellEngineDataFile::GetCenter(CellEngineDataFileObjectPointer->GetParticlesCenters());
 }
 
 void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::GetMemoryForBondsBetweenAtomsToDraw()
