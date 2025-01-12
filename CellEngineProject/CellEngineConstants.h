@@ -6,7 +6,7 @@
 #include "CellEngineTypes.h"
 
 #define EXTENDED_RAM_MEMORY_
-#define RNA_IN_ONE_PARTICLE
+#define RNA_IN_ONE_PARTICLE_
 
 #define USING_MODULES_
 

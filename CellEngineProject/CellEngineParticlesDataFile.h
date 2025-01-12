@@ -9,9 +9,10 @@ class CellEngineParticlesDataFile : public CellEngineCIFDataFileReader, public C
 {
 public:
     void ReadDataFromFile(bool StartValuesBool, bool UpdateParticleKindListOfVoxelsBool, CellEngineConfigData::TypesOfFileToRead Type) override;
+    void ReadCIFFileWithBinaryData(bool StartValuesBool, bool UpdateParticleKindListOfVoxelsBool, CellEngineConfigData::TypesOfFileToRead Type);
 public:
     explicit CellEngineParticlesDataFile() = default;
-    ~CellEngineParticlesDataFile() = default;
+    ~CellEngineParticlesDataFile() override = default;
 };
 
 #endif

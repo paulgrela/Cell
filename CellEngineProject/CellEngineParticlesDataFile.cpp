@@ -4,7 +4,7 @@
 
 using namespace std;
 
-void CellEngineParticlesDataFile::ReadDataFromFile(const bool StartValuesBool, const bool UpdateParticleKindListOfVoxelsBool, CellEngineConfigData::TypesOfFileToRead Type)
+void CellEngineParticlesDataFile::ReadDataFromFile(const bool StartValuesBool, const bool UpdateParticleKindListOfVoxelsBool, const CellEngineConfigData::TypesOfFileToRead Type)
 {
     try
     {
@@ -13,7 +13,7 @@ void CellEngineParticlesDataFile::ReadDataFromFile(const bool StartValuesBool, c
         switch (Type)
         {
             case CellEngineConfigData::TypesOfFileToRead::BinaryFile : ReadAllDataFromBinaryFileAndPrepareData(StartValuesBool, UpdateParticleKindListOfVoxelsBool, Type); break;
-            case CellEngineConfigData::TypesOfFileToRead::CIFFile : ReadDataFromCIFFile(); break;
+            case CellEngineConfigData::TypesOfFileToRead::CIFFile : ReadCIFFileWithBinaryData(StartValuesBool, UpdateParticleKindListOfVoxelsBool, Type); break;
             default : break;
         }
 
@@ -22,4 +22,19 @@ void CellEngineParticlesDataFile::ReadDataFromFile(const bool StartValuesBool, c
         LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Execution of reading data from file has taken time: ", "executing printing duration_time")));
     }
     CATCH("reading data from file")
+}
+
+void CellEngineParticlesDataFile::ReadCIFFileWithBinaryData(const bool StartValuesBool, const bool UpdateParticleKindListOfVoxelsBool, const CellEngineConfigData::TypesOfFileToRead Type)
+{
+    try
+    {
+        if (CellEngineConfigDataObject.MixedFullAtomWithVoxelSpace == false)
+            ReadDataFromCIFFile();
+        else
+        {
+            ReadAllDataFromBinaryFileAndPrepareData(StartValuesBool, UpdateParticleKindListOfVoxelsBool, Type);
+            ReadDataFromCIFFile();
+        }
+    }
+    CATCH("reading cif file with binary data")
 }

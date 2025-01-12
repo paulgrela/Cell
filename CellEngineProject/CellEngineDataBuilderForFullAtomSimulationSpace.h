@@ -18,7 +18,10 @@ protected:
 protected:
     UniqueIdInt AddNewParticle(const Particle& ParticleObjectParam) override
     {
-        return 0;
+        if (CellEngineConfigDataObject.MixedFullAtomWithVoxelSpace == false)
+            return 0;
+        else
+            return CellEngineVoxelSimulationSpaceObjectPointer->AddNewParticle(ParticleObjectParam);
     }
 protected:
     void InsertAtom(std::vector<CellEngineAtom>& LocalCellEngineAllAtomsObject, const CellEngineAtom& AppliedAtom, const UniqueIdInt ParticleIndex) override

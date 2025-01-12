@@ -129,6 +129,8 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile()
         std::vector<CellEngineAtom> LocalCellEngineAllAtomsObject;
         std::vector<CellEngineAtom> LocalCellEngineParticlesCentersObject;
 
+        std::unordered_map<EntityIdInt, UniqueIdInt> ProteinsIdTranslator;
+
         std::ifstream File(string(CellEngineConfigDataObject.CellStateFileName).c_str(), std::ios_base::in);
 
         LoggersManagerObject.Log(STREAM("STARTED READING FROM CIF FILE"));
@@ -156,6 +158,14 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile()
 
                 EntityIdInt EntityId = stoi(AtomFields[2]);
                 ParticlesKindsManagerObject.ParticlesKinds[EntityId].EntityId = EntityId;
+
+                if (CellEngineConfigDataObject.MixedFullAtomWithVoxelSpace == true)
+                {
+                    const string StrToFind = "SYN3A_0";
+                    auto Pos = AtomFields[5].find(StrToFind);
+                    if (Pos != string::npos)
+                        ProteinsIdTranslator[EntityId] = stoi(AtomFields[5].substr(Pos + StrToFind.length(), 3));
+                }
 
                 auto ParticleKindObjectIterator = ParticlesKindsManagerObject.GraphicParticlesKindsFromConfigXML.find(EntityId);
                 if (ParticleKindObjectIterator == ParticlesKindsManagerObject.GraphicParticlesKindsFromConfigXML.end())
@@ -232,8 +242,14 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile()
 
                             vmath::vec3 UniqueParticleColor = CellEngineColorsObject.GetRandomColor();
 
+                            EntityIdInt LocalEntityId = AtomsForChainNameIterator->second[0].EntityId;
+
+                            if (CellEngineConfigDataObject.MixedFullAtomWithVoxelSpace == true)
+                                if (auto ParticleKindId = ParticlesKindsManagerObject.GetParticleKindFromGeneId(ProteinsIdTranslator.find(LocalEntityId)->second); ParticleKindId.has_value() == true)
+                                    LocalEntityId = ParticleKindId->EntityId;
+
                             NumberOfParticles++;
-                            UniqueIdInt ParticleIndex = AddNewParticle(Particle(NumberOfParticles, AtomsForChainNameIterator->second[0].EntityId, CellEngineUseful::GetChainIdFromChainName(AppliedChainName), -1, 1, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(UniqueParticleColor)));
+                            UniqueIdInt ParticleIndex = AddNewParticle(Particle(NumberOfParticles, LocalEntityId, CellEngineUseful::GetChainIdFromChainName(AppliedChainName), -1, 1, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(UniqueParticleColor)));
 
                             if (CellEngineUseful::IsNucleotide(AppliedChainName))
                                 NumberOfNucleotidesInDNA++;

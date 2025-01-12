@@ -200,10 +200,12 @@ void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const ch
                             CellEngineConfigDataObject.RadiusOfCellForDNA = CellStatePropertyTreeElement.second.get<double>("RadiusOfCellForDNA");
                         }
 
+
                         CellEngineConfigDataObject.CellStateFileName = CellStatePropertyTreeElement.second.get<string>("CellStateFileName");
                         CellEngineConfigDataObject.CellStateFileNameBackup = CellStatePropertyTreeElement.second.get<string>("CellStateFileNameBackup");
-                        if (CellStatePropertyTreeElement.second.get_child_optional("CellStateFileNameBinary"))
-                            CellEngineConfigDataObject.CellStateFileNameBinary = CellStatePropertyTreeElement.second.get<string>("CellStateFileNameBinary");
+
+                        if (CellStatePropertyTreeElement.second.get_child_optional("MixedFullAtomWithVoxelSpace"))
+                            CellEngineConfigDataObject.MixedFullAtomWithVoxelSpace = CellStatePropertyTreeElement.second.get<bool>("MixedFullAtomWithVoxelSpace");
 
                         if (CellStatePropertyTreeElement.second.get_child_optional("CellGenomePositionsFileName"))
                             CellEngineConfigDataObject.CellGenomePositionsFileName = CellStatePropertyTreeElement.second.get<string>("CellGenomePositionsFileName");

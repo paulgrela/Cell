@@ -1799,8 +1799,14 @@
                         <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
 
                         <CellStateFileName>../../WholeCellData/JCVI-syn3A/extended_cellpack_atom_instances.cif</CellStateFileName>
-                        <CellStateFileNameBackup>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile1.dat</CellStateFileNameBackup>
-                        <CellStateFileNameBinary>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile33.dat</CellStateFileNameBinary>
+                        <CellStateFileNameBackup>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile33.dat</CellStateFleNameBackup>
+
+                        <MixedFullAtomWithVoxelSpace>true</MixedFullAtomWithVoxelSpace>
+
+                        <CellGenomePositionsFileName>./data/genomes/genome_1024_double_1/GENOME_POSITIONS.DAT</CellGenomePositionsFileName>
+                        <CellGenomeSequenceFileName>./data/genomes/genome_1024_double_1/GENOME_SEQUENCE.DAT</CellGenomeSequenceFileName>
+                        <CellGenomeSequenceFastaFileName>./data/genomes/genome_1024_double_1/sequence.fasta</CellGenomeSequenceFastaFileName>
+                        <CellGenomeSequenceFastaOneFileName>./data/genomes/genome_1024_double_1/sequence.fasta.one</CellGenomeSequenceFastaOneFileName>
 
 			<ChosenStructureIndex>0</ChosenStructureIndex>
 			<FilmOfStructuresActive>0</FilmOfStructuresActive>
@@ -2641,7 +2647,6 @@
                         <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
 
 			<CellStateFileName>../../WholeCellData/Mycoplasma Genitalium/MG_1184_cellpack_atom_instances_1.cif</CellStateFileName>
-			<CellStateFileNameBinary>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile33.dat</CellStateFileNameBinary>
                         <CellStateFileNameBackup>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile1.dat</CellStateFileNameBackup>
 
 			<ChosenStructureIndex>0</ChosenStructureIndex>
@@ -2901,7 +2906,7 @@
                         <RadiusOfCellForDNA>380</RadiusOfCellForDNA>
 
 			<CellStateFileName>../../WholeCellData/Mycoplasma Genitalium/MG_1184_cellpack_atom_instances_1.cif</CellStateFileName>
-                        <CellStateFileNameBackup>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile3.dat</CellStateFileNameBackup>
+                        <CellStateFileNameBackup>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile33.dat</CellStateFileNameBackup>
                         <CellGenomePositionsFileName>./data/genomes/genome_1024_double_1/GENOME_POSITIONS.DAT</CellGenomePositionsFileName>
                         <CellGenomeSequenceFileName>./data/genomes/genome_1024_double_1/GENOME_SEQUENCE.DAT</CellGenomeSequenceFileName>
                         <CellGenomeSequenceFileName>./data/genomes/genome_1024_double_1/sequence.fasta</CellGenomeSequenceFileName>

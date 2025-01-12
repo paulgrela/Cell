@@ -43,21 +43,8 @@ CellEngineFullAtomSimulationSpace::CellEngineFullAtomSimulationSpace(ParticlesCo
 
         LoggersManagerObject.Log(STREAM("CurrentThreadIndexes = " << CurrentThreadIndex << " (" << CurrentThreadPos.ThreadPosX << "," << CurrentThreadPos.ThreadPosY << "," << CurrentThreadPos.ThreadPosZ << ")" << std::endl));
 
-        // if (GetMemoryForVoxelSpace == true)
-        // {
-        //     SpacePointer = malloc(sizeof(Space_2048_2048_2048));
-        //
-        //     SetStartValuesForSpaceMinMax();
-        //
-        //     SetValueToVoxelsForCuboidSelectedSpace(nullptr, GetZeroSimulationSpaceVoxel(), 0, 0, 0, 1, 1, 1, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension);
-        //
-        //     Genomes.resize(2);
-        //     GenomesLines.resize(2);
-        // }
-        // else
-        // {
-        //     SpacePointer = CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SpacePointer;
-        // }
+        Genomes.resize(2);
+        GenomesLines.resize(2);
     }
     CATCH("execution of constructor of voxel simulation space")
 }

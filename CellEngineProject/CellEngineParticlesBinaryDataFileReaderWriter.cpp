@@ -560,11 +560,14 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesKindsAndParticl
         LoggersManagerObject.Log(STREAM("START OF READING DATA FROM BINARY FILE"));
 
         string OpenFileName = (Type == CellEngineConfigData::TypesOfFileToRead::CIFFile ? CellEngineConfigDataObject.CellStateFileName : CellEngineConfigDataObject.CellStateFileNameBackup);
+        if (CellEngineConfigDataObject.MixedFullAtomWithVoxelSpace == true)
+            OpenFileName = CellEngineConfigDataObject.CellStateFileNameBackup;
 
         ifstream ParticlesDataFile(OpenFileName, ios_base::in | ios_base::binary);
 
         ReadChemicalReactionsFromBinaryFile(ParticlesDataFile);
         ReadParticlesKindsFromBinaryFile(ParticlesDataFile);
+        if (CellEngineConfigDataObject.MixedFullAtomWithVoxelSpace == false)
         ReadParticlesFromBinaryFile(ParticlesDataFile);
         ReadGenesFromBinaryFile(ParticlesDataFile);
 
@@ -629,7 +632,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::FindGenomeParameters() const
     CATCH("finding genome parameters")
 }
 
-void CellEngineParticlesBinaryDataFileReaderWriter::ReadAllDataFromBinaryFileAndPrepareData(const bool StartValuesBool, const bool UpdateParticleKindListOfVoxelsBool, CellEngineConfigData::TypesOfFileToRead Type)
+void CellEngineParticlesBinaryDataFileReaderWriter::ReadAllDataFromBinaryFileAndPrepareData(const bool StartValuesBool, const bool UpdateParticleKindListOfVoxelsBool, const CellEngineConfigData::TypesOfFileToRead Type)
 {
     try
     {
@@ -640,6 +643,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadAllDataFromBinaryFileAnd
 
         ReadParticlesKindsAndParticlesAndChemicalReactionsAndGenesFromBinaryFile(Type);
 
+        if (CellEngineConfigDataObject.MixedFullAtomWithVoxelSpace == false)
         PrepareParticlesAfterReadingFromBinaryFile();
 
         PreprocessData(UpdateParticleKindListOfVoxelsBool);
@@ -656,6 +660,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadAllDataFromBinaryFileAnd
 
         CellEngineAminoAcidsManagerObject.MapAminoAcidsIdToAminoAcidsObject();
 
+        if (CellEngineConfigDataObject.MixedFullAtomWithVoxelSpace == false)
         FindGenomeParameters();
 
         CellEngineConfigDataObject.GenomeReadFromFile = true;

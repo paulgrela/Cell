@@ -58,6 +58,8 @@ public:
     bool MultiThreaded{};
     bool SetProcessPriorityHighest{};
 public:
+    bool MixedFullAtomWithVoxelSpace = false;
+public:
     enum class TypesOfFileToRead : UnsignedInt
     {
         BinaryFile = 0,
@@ -69,7 +71,7 @@ public:
     enum class TypesOfSpace : UnsignedInt
     {
         FullAtomSpace = 1,
-        VoxelSimulationSpace = 2
+        VoxelSimulationSpace = 2,
     };
     TypesOfSpace TypeOfSpace = TypesOfSpace::FullAtomSpace;
 public:
@@ -142,7 +144,6 @@ public:
 public:
     std::string CellStateFileName;
     std::string CellStateFileNameBackup;
-    std::string CellStateFileNameBinary;
     std::string CellGenomePositionsFileName;
     std::string CellGenomeSequenceFileName;
     std::string CellGenomeSequenceFastaFileName;

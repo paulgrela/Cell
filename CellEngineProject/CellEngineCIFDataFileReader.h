@@ -19,7 +19,7 @@ private:
     std::unordered_map<std::string, std::vector<CellEngineAtom>> ChainsNames;
 public:
     explicit CellEngineCIFDataFileReader() = default;
-    ~CellEngineCIFDataFileReader() = default;
+    ~CellEngineCIFDataFileReader() override = default;
 public:
     void ReadDataFromCIFFile();
     static CellEngineAtom ParseRecord(const char* LocalPDBRecord);
