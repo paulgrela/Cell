@@ -3679,7 +3679,14 @@
                         <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
 
                         <CellStateFileName>../../WholeCellData/JCVI-syn3A/syn3a_atom_instances.cif</CellStateFileName>
-                        <CellStateFileNameBackup>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile1.dat</CellStateFileNameBackup>
+                        <CellStateFileNameBackup>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile33.dat</CellStateFileNameBackup>
+
+                        <MixedFullAtomWithVoxelSpace>false</MixedFullAtomWithVoxelSpace>
+
+                        <CellGenomePositionsFileName>./data/genomes/genome_1024_double_1/GENOME_POSITIONS.DAT</CellGenomePositionsFileName>
+                        <CellGenomeSequenceFileName>./data/genomes/genome_1024_double_1/GENOME_SEQUENCE.DAT</CellGenomeSequenceFileName>
+                        <CellGenomeSequenceFastaFileName>./data/genomes/genome_1024_double_1/sequence.fasta</CellGenomeSequenceFastaFileName>
+                        <CellGenomeSequenceFastaOneFileName>./data/genomes/genome_1024_double_1/sequence.fasta.one</CellGenomeSequenceFastaOneFileName>
 
 			<ChosenStructureIndex>0</ChosenStructureIndex>
 			<FilmOfStructuresActive>0</FilmOfStructuresActive>

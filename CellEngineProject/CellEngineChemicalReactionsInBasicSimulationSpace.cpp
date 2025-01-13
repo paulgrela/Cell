@@ -14,7 +14,7 @@ bool CellEngineChemicalReactionsInBasicSimulationSpace::CompareFitnessOfParticle
 
 }
 
-void CellEngineChemicalReactionsInBasicSimulationSpace::EraseParticleChosenForReactionAndGetCentersForNewProductsOfReaction(const UnsignedInt ParticleIndexChosenForReaction, vector<vector3_16>& Centers)
+void CellEngineChemicalReactionsInBasicSimulationSpace::EraseParticleChosenForReactionAndGetCentersForNewProductsOfReaction(const UnsignedInt ParticleIndexChosenForReaction, ListOfElements& Centers)
 {
     try
     {

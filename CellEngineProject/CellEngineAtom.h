@@ -11,6 +11,14 @@
 #include "CellEngineTypes.h"
 #include "CellEngineConstants.h"
 
+struct CellEngineAtomSmall
+{
+    char Name{};
+    float X{};
+    float Y{};
+    float Z{};
+};
+
 class CellEngineAtom
 {
 public:

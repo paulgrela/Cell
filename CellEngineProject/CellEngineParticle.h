@@ -62,6 +62,8 @@ public:
     }
 };
 
+using ListOfElements = std::vector<vector3_32>;
+
 class Particle : public DoublyLinkedListNode<Particle, UniqueIdInt>, public PairedNucleotide<Particle>, public LinkedParticles<Particle>
 {
 public:
@@ -75,8 +77,10 @@ public:
     vector3_16 UniqueColor{};
     ElectricChargeType ElectricCharge{};
 public:
-    std::vector<vector3_16> ListOfVoxels;
-    vector3_16 Center{};
+    //std::vector<vector3_16> ListOfVoxels;
+    //vector3_16 Center{};
+    ListOfElements ListOfVoxels;
+    vector3_32 Center{};
 public:
     std::string SequenceStr;
     UnsignedInt PositionInSequence{};
@@ -88,7 +92,7 @@ public:
         Center.Z = ZCenterParam;
     }
 public:
-    explicit Particle(std::vector<vector3_16>& ListOfVoxelsParam) : ListOfVoxels(std::move(ListOfVoxelsParam)), SelectedForReaction(false)
+    explicit Particle(ListOfElements& ListOfVoxelsParam) : ListOfVoxels(std::move(ListOfVoxelsParam)), SelectedForReaction(false)
     {
     }
     explicit Particle(const UniqueIdInt IndexParam, const EntityIdInt EntityIdParam, const ChainIdInt ChainIdParam, const UniqueIdInt GenomeThreadParam, const UniqueIdInt GenomeIndexParam, const ElectricChargeType ElectricChargeParam, const vector3_16 UniqueColorParam) : Index(IndexParam), EntityId(EntityIdParam), ChainId(ChainIdParam), GenomeThread(GenomeThreadParam), GenomeIndex(GenomeIndexParam), ElectricCharge(ElectricChargeParam), UniqueColor(UniqueColorParam)
