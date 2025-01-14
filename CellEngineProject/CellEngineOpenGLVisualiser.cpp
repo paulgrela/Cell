@@ -29,7 +29,7 @@ void CellEngineOpenGLVisualiser::InitExternalData()
     {
         CellEngineDataFileObjectPointer->ReadDataFromFile(true, true, CellEngineConfigDataObject.TypeOfFileToRead);
 
-        GetMemoryForBondsBetweenAtomsToDraw();
+        //GetMemoryForBondsBetweenAtomsToDraw();
     }
     CATCH("reading of data file")
 }
@@ -54,9 +54,9 @@ void CellEngineOpenGLVisualiser::StartUp()
         glDepthFunc(GL_LEQUAL);
 
         InitArcBall();
-
-        GetStartCenterPoint();
-
+                                                                                                                        //std::cout << "HHH" << std::endl; getchar();
+        //GetStartCenterPoint();
+                                                                                                                        //std::cout << "III" << std::endl; getchar();
         glUseProgram(ShaderProgramPhong);
     }
     CATCH("initiation of data for cell visualization")

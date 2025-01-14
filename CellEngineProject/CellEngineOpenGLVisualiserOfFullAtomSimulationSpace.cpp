@@ -7,6 +7,7 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
     try
     {
         //auto ParticlesCenters = CellEngineDataFileObjectPointer->GetParticlesCenters();
+                                                                                                                        //cout << "AAA" << endl; getchar();
 
         GLuint PartOfStencilBufferIndex[3];
         vector<pair<UnsignedInt, UnsignedInt>> TemporaryRenderedAtomsList;
