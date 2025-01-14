@@ -97,7 +97,9 @@ void CellEngineParticlesBinaryDataFileReaderWriter::SaveParticlesKindsToBinaryFi
             }
 
             //SaveVectorToBinaryFile<vector3_16>(ParticlesDataFile, ParticleKindObject.second.ListOfVoxels);
-            SaveVectorToBinaryFile<vector3_32>(ParticlesDataFile, ParticleKindObject.second.ListOfVoxels);
+            //SaveVectorToBinaryFile<vector3_32>(ParticlesDataFile, ParticleKindObject.second.ListOfVoxels);
+            //SaveVectorToBinaryFile<CellEngineAtomSmall>(ParticlesDataFile, ParticleKindObject.second.ListOfVoxels);
+            SaveVectorToBinaryFile<CellEngineAtom>(ParticlesDataFile, ParticleKindObject.second.ListOfVoxels);
         }
 
         LoggersManagerObject.Log(STREAM("END OF SAVING PARTICLES KINDS TO BINARY FILE"));
@@ -129,7 +131,9 @@ void CellEngineParticlesBinaryDataFileReaderWriter::SaveParticlesToBinaryFile(of
             SaveStringToBinaryFile(ParticlesDataFile, ParticleObject.second.SequenceStr);
 
             //SaveVectorToBinaryFile<vector3_16>(ParticlesDataFile, ParticleObject.second.ListOfVoxels);
-            SaveVectorToBinaryFile<vector3_32>(ParticlesDataFile, ParticleObject.second.ListOfVoxels);
+            //SaveVectorToBinaryFile<vector3_32>(ParticlesDataFile, ParticleObject.second.ListOfVoxels);
+            //SaveVectorToBinaryFile<CellEngineAtomSmall>(ParticlesDataFile, ParticleObject.second.ListOfVoxels);
+            SaveVectorToBinaryFile<CellEngineAtom>(ParticlesDataFile, ParticleObject.second.ListOfVoxels);
 
             SavePointerToBinaryFile(ParticlesDataFile, ParticleObject.second.Prev);
             SavePointerToBinaryFile(ParticlesDataFile, ParticleObject.second.Next);
@@ -316,8 +320,8 @@ void ReadVectorFromBinaryFile(ifstream& ParticlesDataFile, vector<TElement>& Vec
     CATCH("reading vector from binary file")
 }
 
-//
-void ReadVectorFromBinaryFile3_16(ifstream& ParticlesDataFile, vector<vector3_32>& VectorToBeRead)
+///void ReadVectorFromBinaryFile3_16(ifstream& ParticlesDataFile, vector<vector3_32>& VectorToBeRead)
+void ReadVectorFromBinaryFile3_16(ifstream& ParticlesDataFile, ListOfElementsType& VectorToBeRead)
 {
     try
     {
@@ -329,7 +333,9 @@ void ReadVectorFromBinaryFile3_16(ifstream& ParticlesDataFile, vector<vector3_32
         {
             vector3_16 Object{};
             ParticlesDataFile.read((char*)&Object, sizeof(Object));
-            VectorToBeRead.emplace_back(vector3_32{ static_cast<float>(Object.X), static_cast<float>(Object.Y), static_cast<float>(Object.Z) });
+            //VectorToBeRead.emplace_back(vector3_32{ static_cast<float>(Object.X), static_cast<float>(Object.Y), static_cast<float>(Object.Z) });
+            //VectorToBeRead.emplace_back(CellEngineAtomSmall{ 'C', static_cast<float>(Object.X), static_cast<float>(Object.Y), static_cast<float>(Object.Z) });
+            VectorToBeRead.emplace_back(CellEngineAtom(static_cast<float>(Object.X), static_cast<float>(Object.Y), static_cast<float>(Object.Z)));
         }
     }
     CATCH("reading vector from binary file")
@@ -398,7 +404,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesKindsFromBinary
     CATCH("reading particles from binary file")
 }
 
-void ReadVoxelsVectorDividedByStepsFromBinaryFile(ifstream& ParticlesDataFile, ListOfElements& VectorToBeRead, const float DivideFactor)
+void ReadVoxelsVectorDividedByStepsFromBinaryFile(ifstream& ParticlesDataFile, ListOfElementsType& VectorToBeRead, const float DivideFactor)
 {
     try
     {
@@ -414,7 +420,9 @@ void ReadVoxelsVectorDividedByStepsFromBinaryFile(ifstream& ParticlesDataFile, L
             ParticlesDataFile.read((char*)&Object, sizeof(Object));
             if (Index % Step == 0)
                 //VectorToBeRead.emplace_back(vector3_16{ static_cast<PositionInt>(static_cast<float>(Object.X) / DivideFactor), static_cast<PositionInt>(static_cast<float>(Object.Y) / DivideFactor), static_cast<PositionInt>(static_cast<float>(Object.Z) / DivideFactor) });
-                VectorToBeRead.emplace_back(vector3_32{ static_cast<float>(Object.X) / DivideFactor, static_cast<float>(Object.Y) / DivideFactor, static_cast<float>(Object.Z) / DivideFactor });
+                //VectorToBeRead.emplace_back(vector3_32{ static_cast<float>(Object.X) / DivideFactor, static_cast<float>(Object.Y) / DivideFactor, static_cast<float>(Object.Z) / DivideFactor });
+                //VectorToBeRead.emplace_back(CellEngineAtomSmall{ 'C', static_cast<float>(Object.X) / DivideFactor, static_cast<float>(Object.Y) / DivideFactor, static_cast<float>(Object.Z) / DivideFactor });
+                VectorToBeRead.emplace_back(CellEngineAtom(static_cast<float>(Object.X) / DivideFactor, static_cast<float>(Object.Y) / DivideFactor, static_cast<float>(Object.Z) / DivideFactor));
         }
     }
     CATCH("reading vector from binary file")

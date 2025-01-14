@@ -394,7 +394,7 @@ bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNATranscriptionContinue
 
                     MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(ParticleObject, *ParticleObject.LinkedParticlesPointersList[1], 2, 2, 2);
                     MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(*ParticleObject.LinkedParticlesPointersList[0], *ParticleObject.LinkedParticlesPointersList[1], 2, 2, 2);
-                    ListOfElements Centers;
+                    ListOfElementsType Centers;
                     EraseParticleChosenForReactionAndGetCentersForNewProductsOfReaction(*ChosenNucleotideIterator, Centers);
 
                     SequenceOfLettersToCheckFinishSequence = ParticleObject.LinkedParticlesPointersList[0]->SequenceStr;
@@ -492,7 +492,7 @@ bool CellEngineNucleicAcidsComplexOperations::RibosomeTranslationContinueSpecial
 
                 MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(ParticleObject, *ParticleObject.LinkedParticlesPointersList[1], 2, 2, 2);
                 MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(*ParticleObject.LinkedParticlesPointersList[0], *ParticleObject.LinkedParticlesPointersList[1], 2, 2, 2);
-                ListOfElements Centers;
+                ListOfElementsType Centers;
                 EraseParticleChosenForReactionAndGetCentersForNewProductsOfReaction(*ChosentRNAChargedIterator, Centers);
 
                 SequenceOfLettersToCheckFinishSequence = ParticleObject.LinkedParticlesPointersList[0]->SequenceStr;

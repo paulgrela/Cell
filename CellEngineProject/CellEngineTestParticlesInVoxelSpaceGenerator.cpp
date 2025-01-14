@@ -29,7 +29,7 @@ void CellEngineTestParticlesInVoxelSpaceGenerator::GenerateRandomParticlesInSele
         for (UniqueIdInt ParticleNumber = 1; ParticleNumber <= NumberOfRandomParticles; ParticleNumber++)
             LocalNewParticlesIndexes.emplace_back(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), UniformDistributionObjectObjectOfParticle_Uint64t(mt64R), 0, -1, 1, UniformDistributionObjectElectricChargeParticle_int64t(mt64R), CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))));
 
-        ListOfElements FilledVoxelsForRandomParticle;
+        ListOfElementsType FilledVoxelsForRandomParticle;
 
         for (const auto& LocalNewParticleIndex : LocalNewParticlesIndexes)
         {

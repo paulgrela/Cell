@@ -54,6 +54,10 @@ public:
         return Center;
     }
 public:
+    [[nodiscard]] ParticlesContainer<Particle>& GetParticles()
+    {
+        return Particles;
+    }
     [[nodiscard]] std::vector<std::vector<CellEngineAtom>>& GetAllAtoms()
     {
         return AllAtoms;

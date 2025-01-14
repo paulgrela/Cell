@@ -305,10 +305,14 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile()
                                 LocalEntityId = GetParticleKindIdFromGeneIdOrName(ParticleAutinKindIdToIllinoisNameTranslator.find(LocalEntityId)->second, LocalEntityId, ProteinIdFromGeneIdTranslator, AutinIllinoisNameMap);
 
                             NumberOfParticles++;
+                            //moze GetNewFreeIndexOfParticle()
                             UniqueIdInt ParticleIndex = AddNewParticle(Particle(NumberOfParticles, LocalEntityId, CellEngineUseful::GetChainIdFromChainName(AppliedChainName), -1, 1, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(UniqueParticleColor)));
 
                             if (CellEngineUseful::IsNucleotide(AppliedChainName))
                                 NumberOfNucleotidesInDNA++;
+
+
+                                                                                                                        ListOfElementsType ListOfElements;
 
                             for (auto AppliedAtom : AtomsForChainNameIterator->second)
                             {
@@ -326,17 +330,21 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile()
                                 AppliedAtom.UniqueParticleColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(UniqueParticleColor);
                                 AppliedAtom.RandomParticleKindColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(ChainColor);
 
-                                InsertAtom(LocalCellEngineAllAtomsObject, AppliedAtom, ParticleIndex);
+                                                                                                                        ListOfElements.emplace_back(AppliedAtom);
+                                                                                                                        //ListOfElements.emplace_back(CellEngineAtomSmall{ AppliedAtom.Name[0], AppliedAtom.X, AppliedAtom.Y, AppliedAtom.Z, AppliedAtom.AtomColor, AppliedAtom.ParticleColor, AppliedAtom.UniqueParticleColor, AppliedAtom.RandomParticleKindColor, AppliedAtom.Visible });
+                                //InsertAtom(LocalCellEngineAllAtomsObject, AppliedAtom, ParticleIndex);
                             }
+
+                                                                                                                        GetParticleFromIndex(ParticleIndex).ListOfVoxels = ListOfElements;
                         }
                     }
 
-                    InsertGroupOfAtoms(LocalCellEngineParticlesCentersObject, LocalCellEngineAllAtomsObject);
+                    //InsertGroupOfAtoms(LocalCellEngineParticlesCentersObject, LocalCellEngineAllAtomsObject);
                 }
             }
         }
 
-        InsertParticlesCenters(LocalCellEngineParticlesCentersObject);
+        //InsertParticlesCenters(LocalCellEngineParticlesCentersObject);
 
         PreprocessData(true);
 

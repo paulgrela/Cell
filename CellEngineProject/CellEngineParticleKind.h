@@ -120,7 +120,7 @@ public:
     UnsignedInt Counter{};
 public:
     //std::vector<vector3_16> ListOfVoxels;
-    ListOfElements ListOfVoxels;
+    ListOfElementsType ListOfVoxels;
     UnsignedInt XSizeDiv2{}, YSizeDiv2{}, ZSizeDiv2{};
 public:
     ParticleKindGraphicData GraphicData;

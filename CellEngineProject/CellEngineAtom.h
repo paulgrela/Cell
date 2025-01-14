@@ -11,13 +11,29 @@
 #include "CellEngineTypes.h"
 #include "CellEngineConstants.h"
 
-struct CellEngineAtomSmall
-{
-    char Name{};
-    float X{};
-    float Y{};
-    float Z{};
-};
+// struct CellEngineAtomSmall
+// {
+//     char Name{};
+//     float X{};
+//     float Y{};
+//     float Z{};
+//     vector3_16 AtomColor{};
+//     vector3_16 ParticleColor{};
+//     vector3_16 UniqueParticleColor{};
+//     vector3_16 RandomParticleKindColor{};
+//     bool Visible{};
+//     UniqueIdInt GenomeIndex = 0;
+//     UniqueIdInt GenomeIndexPrev = 0;
+//     UniqueIdInt GenomeIndexNext = 0;
+//     UnsignedInt AtomIndex{};
+//     UnsignedInt Serial{};
+//     EntityIdInt EntityId{};
+// public:
+//     [[nodiscard]] vmath::vec3 Position() const
+//     {
+//         return { X, Y, Z };
+//     }
+// };
 
 class CellEngineAtom
 {
@@ -52,11 +68,14 @@ public:
     float SizeZParticle{};
     #endif
 public:
-    CellEngineAtom(float XParam, float YParam, float ZParam, UnsignedInt AtomIndexParam, UnsignedInt SerialParam, UnsignedInt EntityIdParam, char NameParam[2], char ResNameParam[4], char ChainParam[6], vector3_16 ColorParam) : X(XParam), Y(YParam), Z(ZParam), AtomIndex(AtomIndexParam), Serial(SerialParam), EntityId(EntityIdParam), ParticleColor(ColorParam)
+    CellEngineAtom(const float XParam, const float YParam, const float ZParam, const UnsignedInt AtomIndexParam, const UnsignedInt SerialParam, const UnsignedInt EntityIdParam, char NameParam[2], char ResNameParam[4], char ChainParam[6], const vector3_16 ColorParam) : X(XParam), Y(YParam), Z(ZParam), AtomIndex(AtomIndexParam), Serial(SerialParam), EntityId(EntityIdParam), ParticleColor(ColorParam)
     {
         strncpy(Name, NameParam, 2);
         strncpy(ResName, ResNameParam, 4);
         strncpy(Chain, ChainParam, 6);
+    }
+    CellEngineAtom(const float XParam, const float YParam, const float ZParam) : X(XParam), Y(YParam), Z(ZParam)
+    {
     }
     CellEngineAtom() = default;
     ~CellEngineAtom() = default;

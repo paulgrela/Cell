@@ -106,7 +106,8 @@ bool CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::TestFormerForbi
 tuple<UnsignedInt, UnsignedInt, UnsignedInt> CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::EraseLastRandomDNAParticle(vector<UniqueIdInt>& Genome)
 {
     //vector3_16 LastLocalRandomPos;
-    vector3_32 LastLocalRandomPos;
+    //vector3_32 LastLocalRandomPos;
+    CellEngineAtom LastLocalRandomPos;
 
     try
     {
