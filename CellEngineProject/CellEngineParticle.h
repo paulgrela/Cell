@@ -64,6 +64,8 @@ public:
 };
 
 //using ListOfElementsType = std::vector<vector3_32>;
+
+//using ListOfElementsType = std::vector<vector3_16>;
 using ListOfElementsType = std::vector<CellEngineAtom>;
 
 class Particle : public DoublyLinkedListNode<Particle, UniqueIdInt>, public PairedNucleotide<Particle>, public LinkedParticles<Particle>
@@ -80,9 +82,9 @@ public:
     ElectricChargeType ElectricCharge{};
 public:
     //std::vector<vector3_16> ListOfVoxels;
-    //vector3_16 Center{};
+    vector3_16 Center{};
     ListOfElementsType ListOfVoxels;
-    vector3_32 Center{};
+    //vector3_32 Center{};
 public:
     std::string SequenceStr;
     UnsignedInt PositionInSequence{};

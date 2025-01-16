@@ -375,21 +375,7 @@ bool CellEngineSimulationSpace::CancelChemicalReaction(const vector<UniqueIdInt>
     return false;
 }
 
-void CellEngineSimulationSpace::FillParticleElementsInSpace(const UniqueIdInt ParticleIndex, const ParticleKind& ParticleKindObjectForProduct, const UnsignedInt VectorX, const UnsignedInt VectorY, const UnsignedInt VectorZ)
-{
-    try
-    {
-        GetParticleFromIndex(ParticleIndex).ListOfVoxels.clear();
-
-        for (const auto& NewPointElement : ParticleKindObjectForProduct.ListOfVoxels)
-            FillParticleElementInSpace(ParticleIndex, { static_cast<UnsignedInt>(NewPointElement.X) + VectorX, static_cast<UnsignedInt>(NewPointElement.Y) + VectorY, static_cast<UnsignedInt>(NewPointElement.Z) + VectorZ });
-
-        GetMinMaxCoordinatesForParticle(GetParticleFromIndex(ParticleIndex), false);
-    }
-    CATCH("filling particle elements in space")
-}
-
-bool CellEngineSimulationSpace::PlaceProductParticleInSpaceInDeterminedPositionOrCancelReaction(const UniqueIdInt ParticleIndex, const vector<UniqueIdInt>& CreatedParticlesIndexes, const UnsignedInt CenterIndex, const ListOfElementsType& Centers, const ParticleKind& ParticleKindObjectForProduct, const chrono::high_resolution_clock::time_point start_time)
+bool CellEngineSimulationSpace::PlaceProductParticleInSpaceInDeterminedPositionOrCancelReaction(const UniqueIdInt ParticleIndex, const vector<UniqueIdInt>& CreatedParticlesIndexes, const UnsignedInt CenterIndex, const ListOfElementsType& Centers, ParticleKind& ParticleKindObjectForProduct, const chrono::high_resolution_clock::time_point start_time)
 {
     try
     {
@@ -405,7 +391,7 @@ bool CellEngineSimulationSpace::PlaceProductParticleInSpaceInDeterminedPositionO
     return true;
 }
 
-bool CellEngineSimulationSpace::PlaceProductParticleInSpaceInRandomPositionOrCancelReaction(const UniqueIdInt ParticleIndex, const vector<UniqueIdInt>& CreatedParticlesIndexes, const UnsignedInt CenterIndex, const ListOfElementsType& Centers, const ParticleKind& ParticleKindObjectForProduct, const chrono::high_resolution_clock::time_point start_time)
+bool CellEngineSimulationSpace::PlaceProductParticleInSpaceInRandomPositionOrCancelReaction(const UniqueIdInt ParticleIndex, const vector<UniqueIdInt>& CreatedParticlesIndexes, const UnsignedInt CenterIndex, const ListOfElementsType& Centers, ParticleKind& ParticleKindObjectForProduct, const chrono::high_resolution_clock::time_point start_time)
 {
     try
     {

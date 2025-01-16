@@ -15,7 +15,8 @@
 class CellEngineBasicParticlesOperations : public CellEngineBasicParallelExecutionData
 {
 protected:
-    UnsignedInt XMin{}, XMax{}, YMin{}, YMax{}, ZMin{}, ZMax{};
+    //UnsignedInt XMin{}, XMax{}, YMin{}, YMax{}, ZMin{}, ZMax{};
+    //float XMinGlobal{}, XMaxGlobal{}, YMinGlobal{}, YMaxGlobal{}, ZMinGlobal{}, ZMaxGlobal{};
 protected:
     UnsignedInt MaxParticleIndex{};
     std::stack<UniqueIdInt> FreeIndexesOfParticles;
@@ -65,18 +66,32 @@ public:
 protected:
     virtual void RemoveParticle(UniqueIdInt ParticleIndex, bool ClearVoxels) = 0;
 public:
+    template <class T>
     void PreprocessData(bool UpdateParticleKindListOfVoxelsBool);
 protected:
-    void SetStartValuesForSpaceMinMax();
-    void GetMinMaxCoordinatesForAllParticles(bool UpdateParticleKindListOfVoxelsBool);
-    static void GetMinMaxOfCoordinates(UnsignedInt PosX, UnsignedInt PosY, UnsignedInt PosZ, UnsignedInt& XMinParam, UnsignedInt& XMaxParam, UnsignedInt& YMinParam, UnsignedInt& YMaxParam, UnsignedInt& ZMinParam, UnsignedInt& ZMaxParam);
-    static void UpdateParticleKindListOfVoxels(const Particle& ParticleObject, UnsignedInt ParticleXMin, UnsignedInt ParticleXMax, UnsignedInt ParticleYMin, UnsignedInt ParticleYMax, UnsignedInt ParticleZMin, UnsignedInt ParticleZMax);
+    //void SetStartValuesForSpaceMinMax();
+
+    template <class T>
+    void GetMinMaxCoordinatesForAllParticles(bool UpdateParticleKindListOfVoxelsBool) const;
+
+    //static void GetMinMaxOfCoordinates(UnsignedInt PosX, UnsignedInt PosY, UnsignedInt PosZ, UnsignedInt& XMinParam, UnsignedInt& XMaxParam, UnsignedInt& YMinParam, UnsignedInt& YMaxParam, UnsignedInt& ZMinParam, UnsignedInt& ZMaxParam);
+    //static void GetMinMaxOfCoordinates(float PosX, float PosY, float PosZ, float& XMinParam, float& XMaxParam, float& YMinParam, float& YMaxParam, float& ZMinParam, float& ZMaxParam);
+    template <class T>
+    //static void GetMinMaxOfCoordinates(T PosX, T PosY, T PosZ, T& XMinParam, T& XMaxParam, T& YMinParam, T& YMaxParam, T& ZMinParam, T& ZMaxParam);
+    static void GetMinMaxOfCoordinates(T PosX, T PosY, T PosZ, T& XMinParam, T& XMaxParam, T& YMinParam, T& YMaxParam, T& ZMinParam, T& ZMaxParam);
+
+    //static void UpdateParticleKindListOfVoxels(const Particle& ParticleObject, UnsignedInt ParticleXMin, UnsignedInt ParticleXMax, UnsignedInt ParticleYMin, UnsignedInt ParticleYMax, UnsignedInt ParticleZMin, UnsignedInt ParticleZMax);
+    //static void UpdateParticleKindListOfVoxels(const Particle& ParticleObject, float ParticleXMin, float ParticleXMax, float ParticleYMin, float ParticleYMax, float ParticleZMin, float ParticleZMax);
+    template <class T>
+    static void UpdateParticleKindListOfVoxels(const Particle& ParticleObject, T ParticleXMin, T ParticleXMax, T ParticleYMin, T ParticleYMax, T ParticleZMin, T ParticleZMax);
 public:
+    //static void GetMinMaxCoordinatesForParticle(Particle& ParticleObject, bool UpdateParticleKindListOfVoxels);
+    template <class T>
     static void GetMinMaxCoordinatesForParticle(Particle& ParticleObject, bool UpdateParticleKindListOfVoxels);
 protected:
-    std::vector<UniqueIdInt> GetAllParticlesWithChosenParticleType(ParticlesTypes ParticleTypeParam);
-    std::vector<UniqueIdInt> GetAllParticlesWithChosenEntityId(UniqueIdInt EntityId);
-    UnsignedInt GetNumberOfParticlesWithChosenEntityId(UniqueIdInt EntityId);
+    std::vector<UniqueIdInt> GetAllParticlesWithChosenParticleType(ParticlesTypes ParticleTypeParam) const;
+    std::vector<UniqueIdInt> GetAllParticlesWithChosenEntityId(UniqueIdInt EntityId) const;
+    UnsignedInt GetNumberOfParticlesWithChosenEntityId(UniqueIdInt EntityId) const;
 protected:
     explicit CellEngineBasicParticlesOperations(ParticlesContainer<Particle>& ParticlesParam) : Particles(ParticlesParam)
     {

@@ -54,6 +54,26 @@ public:
         return Center;
     }
 public:
+    vmath::vec3 GetCenterForAllParticles() const
+    {
+        vmath::vec3 Center(0.0, 0.0, 0.0);
+
+        try
+        {
+            float NumberOfParticles = 0;
+            for (const auto& ParticleObject : Particles)
+                for (const CellEngineAtom& AtomObject : ParticleObject.second.ListOfVoxels)
+                {
+                    Center += AtomObject.Position();
+                    NumberOfParticles++;
+                }
+            Center /= NumberOfParticles;
+        }
+        CATCH_AND_THROW("counting mass center")
+
+        return Center;
+    }
+public:
     [[nodiscard]] ParticlesContainer<Particle>& GetParticles()
     {
         return Particles;

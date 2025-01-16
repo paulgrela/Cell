@@ -305,6 +305,8 @@ void CellEngineSimulationParallelExecutionManager::GatherParticlesFromThreadsToP
         const auto stop_time = chrono::high_resolution_clock::now();
 
         LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Gathering particles from threads to main thread has taken time = ","Execution in threads")));
+
+        CheckParticlesCenters(false);
     }
     CATCH("sending particles for threads")
 }
@@ -480,8 +482,6 @@ void CellEngineSimulationParallelExecutionManager::CheckParticlesCenters(const b
         UnsignedInt NumberOfZeroSizedParticles = 0;
         UnsignedInt NumberOfZeroCenterParticles = 0;
 
-        LoggersManagerObject.Log(STREAM("Number of erased particles with bad center = " << erase_if(Particles, [](auto& P){ return P.second.Center.X == 0 || P.second.Center.Y == 0 || P.second.Center.Z == 0; })));
-
         for (const auto& ParticleObject : Particles)
         {
             if (PrintAllParticles ==  true)
@@ -502,6 +502,7 @@ void CellEngineSimulationParallelExecutionManager::CheckParticlesCenters(const b
             if (ParticleObject.second.ListOfVoxels.empty() == true)
                 NumberOfZeroSizedParticles++;
         }
+        LoggersManagerObject.Log(STREAM("Number of erased particles with bad center = " << erase_if(Particles, [](auto& P){ return P.second.Center.X == 0 || P.second.Center.Y == 0 || P.second.Center.Z == 0; })));
         LoggersManagerObject.Log(STREAM("All Particles Centers Checked. Number Of Zero Center Particles = " << NumberOfZeroCenterParticles));
         LoggersManagerObject.Log(STREAM("All Particles Size Checked. Number Of Zero Sized Particles = " << NumberOfZeroSizedParticles));
     }

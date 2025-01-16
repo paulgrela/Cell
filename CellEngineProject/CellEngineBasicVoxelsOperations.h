@@ -16,7 +16,9 @@ protected:
     void* SpacePointer = nullptr;
 protected:
     inline SimulationSpaceVoxel& GetSpaceVoxel(UnsignedInt x, UnsignedInt y, UnsignedInt z)
+    //inline SimulationSpaceVoxel& GetSpaceVoxel(float x, float y, float z)
     {
+        //return (*static_cast<Space_2048_2048_2048*>(SpacePointer))[static_cast<UnsignedInt>(floor(x))][floor(y)][floor(z)];
         return (*static_cast<Space_2048_2048_2048*>(SpacePointer))[x][y][z];
     }
 };

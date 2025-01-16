@@ -61,7 +61,7 @@ CellEngineFullAtomSimulationSpace::~CellEngineFullAtomSimulationSpace()
 [[nodiscard]] stringstream CellEngineFullAtomSimulationSpace::PrintSpaceMinMaxValues() const
 {
     stringstream ss;
-    ss << "CELL SPACE LIMITS PARAMETERS [ Xmin = " << to_string(XMin) << " ][ Xmax = " << to_string(XMax) << " ][ Ymin = " << to_string(YMin) << " ][ Ymax = " << to_string(YMax) << " ][ Zmin = " << to_string(ZMin) << " ][ Zmax = " << to_string(XMax) << " ] " << endl;
+    ss << "CELL SPACE LIMITS PARAMETERS [ Xmin = " << to_string(XMinGlobal) << " ][ Xmax = " << to_string(XMaxGlobal) << " ][ Ymin = " << to_string(YMinGlobal) << " ][ Ymax = " << to_string(YMaxGlobal) << " ][ Zmin = " << to_string(ZMinGlobal) << " ][ Zmax = " << to_string(XMaxGlobal) << " ] " << endl;
     return ss;
 }
 
@@ -70,21 +70,36 @@ Particle& CellEngineFullAtomSimulationSpace::GetParticleFromIndexForGenerator(Un
     return GetParticleFromIndex(ParticleIndex);
 }
 
-void CellEngineFullAtomSimulationSpace::SetAtomInFullAtomSimulationSpace(const UniqueIdInt ParticleIndex, const CellEngineAtom& AppliedAtom)
+void CellEngineFullAtomSimulationSpace::FillParticleElementsInSpace(const UniqueIdInt ParticleIndex, ParticleKind& ParticleKindObjectForProduct, const UnsignedInt VectorX, const UnsignedInt VectorY, const UnsignedInt VectorZ)
 {
     try
     {
-        UnsignedInt PosX = ConvertToSpaceCoordinate(AppliedAtom.X);
-        UnsignedInt PosY = ConvertToSpaceCoordinate(AppliedAtom.Y);
-        UnsignedInt PosZ = ConvertToSpaceCoordinate(AppliedAtom.Z);
+        GetParticleFromIndex(ParticleIndex).ListOfVoxels.clear();
 
-        GetMinMaxOfCoordinates(PosX, PosY, PosZ, XMin, XMax, YMin, YMax, ZMin, ZMax);
+        for (const auto& NewPointElement : ParticleKindObjectForProduct.ListOfVoxels)
+            //FillParticleElementInSpace(ParticleIndex, { static_cast<UnsignedInt>(NewPointElement.X) + VectorX, static_cast<UnsignedInt>(NewPointElement.Y) + VectorY, static_cast<UnsignedInt>(NewPointElement.Z) + VectorZ });
+            FillParticleElementInSpace(ParticleIndex, { NewPointElement.X + VectorX, NewPointElement.Y + VectorY, NewPointElement.Z + VectorZ });
 
-        if (GetSpaceVoxel(PosX, PosY, PosZ) == GetZeroSimulationSpaceVoxel())
-            SetValueToSpaceVoxelWithFillingListOfVoxelsOfParticle(&GetParticleFromIndex(ParticleIndex).ListOfVoxels, ParticleIndex, PosX, PosY, PosZ);
+        GetMinMaxCoordinatesForParticle<float>(GetParticleFromIndex(ParticleIndex), false);
     }
-    CATCH("setting atom in voxel simulation space")
+    CATCH("filling particle elements in space")
 }
+
+// void CellEngineFullAtomSimulationSpace::SetAtomInFullAtomSimulationSpace(const UniqueIdInt ParticleIndex, const CellEngineAtom& AppliedAtom)
+// {
+//     try
+//     {
+//         UnsignedInt PosX = ConvertToSpaceCoordinate(AppliedAtom.X);
+//         UnsignedInt PosY = ConvertToSpaceCoordinate(AppliedAtom.Y);
+//         UnsignedInt PosZ = ConvertToSpaceCoordinate(AppliedAtom.Z);
+//
+//         GetMinMaxOfCoordinates(PosX, PosY, PosZ, XMin, XMax, YMin, YMax, ZMin, ZMax);
+//
+//         if (GetSpaceVoxel(PosX, PosY, PosZ) == GetZeroSimulationSpaceVoxel())
+//             SetValueToSpaceVoxelWithFillingListOfVoxelsOfParticle(&GetParticleFromIndex(ParticleIndex).ListOfVoxels, ParticleIndex, PosX, PosY, PosZ);
+//     }
+//     CATCH("setting atom in voxel simulation space")
+// }
 
 void CellEngineFullAtomSimulationSpace::ClearSelectedSpace(const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt StepXParam, const UnsignedInt StepYParam, const UnsignedInt StepZParam, const UnsignedInt SizeXParam, UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
 {

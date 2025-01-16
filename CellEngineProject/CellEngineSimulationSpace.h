@@ -35,6 +35,8 @@ class CellEngineSimulationSpace : public CellEngineChemicalReactionsEngine, publ
 private:
     ParticlesContainer<Particle>& Particles;
 protected:
+    virtual void FillParticleElementsInSpace(UniqueIdInt ParticleIndex, ParticleKind& ParticleKindObjectForProduct, UnsignedInt VectorX, UnsignedInt VectorY, UnsignedInt VectorZ) = 0;
+protected:
     virtual bool MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(Particle &ParticleObject, SignedInt VectorX, SignedInt VectorY, SignedInt VectorZ, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam) = 0;
     virtual bool MoveParticleByVectorIfSpaceIsEmpty(Particle &ParticleObject, SignedInt VectorX, SignedInt VectorY, SignedInt VectorZ) = 0;
     virtual bool CheckIfSpaceIsEmptyAndIsInBoundsForParticleElements(const ParticleKind& ParticleKindObjectForProduct, UnsignedInt VectorX, UnsignedInt VectorY, UnsignedInt VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam) = 0;
@@ -92,9 +94,8 @@ public:
     bool FindAndExecuteChosenReaction(UnsignedInt ReactionId);
 protected:
     bool CancelChemicalReaction(const vector<UniqueIdInt>& CreatedParticlesIndexes, chrono::high_resolution_clock::time_point start_time, const ParticleKind& ParticleKindObjectForProduct, char PlaceStr);
-    void FillParticleElementsInSpace(UniqueIdInt ParticleIndex, const ParticleKind& ParticleKindObjectForProduct, UnsignedInt VectorX, UnsignedInt VectorY, UnsignedInt VectorZ);
-    bool PlaceProductParticleInSpaceInDeterminedPositionOrCancelReaction(UniqueIdInt ParticleIndex, const vector<UniqueIdInt>& CreatedParticlesIndexes, UnsignedInt CenterIndex, const ListOfElementsType& Centers, const ParticleKind& ParticleKindObjectForProduct, chrono::high_resolution_clock::time_point start_time);
-    bool PlaceProductParticleInSpaceInRandomPositionOrCancelReaction(UniqueIdInt ParticleIndex, const vector<UniqueIdInt>& CreatedParticlesIndexes, UnsignedInt CenterIndex, const ListOfElementsType& Centers, const ParticleKind& ParticleKindObjectForProduct, chrono::high_resolution_clock::time_point start_time);
+    bool PlaceProductParticleInSpaceInDeterminedPositionOrCancelReaction(UniqueIdInt ParticleIndex, const vector<UniqueIdInt>& CreatedParticlesIndexes, UnsignedInt CenterIndex, const ListOfElementsType& Centers, ParticleKind& ParticleKindObjectForProduct, chrono::high_resolution_clock::time_point start_time);
+    bool PlaceProductParticleInSpaceInRandomPositionOrCancelReaction(UniqueIdInt ParticleIndex, const vector<UniqueIdInt>& CreatedParticlesIndexes, UnsignedInt CenterIndex, const ListOfElementsType& Centers, ParticleKind& ParticleKindObjectForProduct, chrono::high_resolution_clock::time_point start_time);
 protected:
     std::vector<UnsignedInt> GetRandomParticles(UnsignedInt NumberOfReactants, UnsignedInt MaxNumberOfReactants) override;
     bool IsChemicalReactionPossible(const ChemicalReaction& ReactionObject) override;

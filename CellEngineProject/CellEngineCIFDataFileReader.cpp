@@ -91,7 +91,7 @@ void CopyFieldsToMatrix(TransformationMatrix3x4& TransformationMatrix3x4Object, 
 
 glm::vec3 CountResultPositionsFromTransformationMatrix(std::unordered_map<UnsignedInt, TransformationMatrix3x4>::iterator& TransformationMatrixIterator, CellEngineAtom& AppliedAtom)
 {
-    glm::vec3 Result;
+    glm::vec3 Result{};
 
     try
     {
@@ -109,7 +109,7 @@ glm::vec3 CountResultPositionsFromTransformationMatrix(std::unordered_map<Unsign
         TransformationMatrix[2][1] = TransformationMatrixIterator->second.Matrix[1][2];
         TransformationMatrix[2][2] = TransformationMatrixIterator->second.Matrix[2][2];
 
-        Result = TransformationMatrix * glm::vec3(AppliedAtom.X, AppliedAtom.Y, AppliedAtom.Z) + glm::vec3(TransformationMatrixIterator->second.Matrix[0][3], TransformationMatrixIterator->second.Matrix[1][3], TransformationMatrixIterator->second.Matrix[2][3]);
+        Result = TransformationMatrix * glm::vec3(AppliedAtom.XR, AppliedAtom.YR, AppliedAtom.ZR) + glm::vec3(TransformationMatrixIterator->second.Matrix[0][3], TransformationMatrixIterator->second.Matrix[1][3], TransformationMatrixIterator->second.Matrix[2][3]);
     }
     CATCH("copying from matrix to matrix")
 
@@ -171,8 +171,8 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile()
         TransformationsMatrixes.clear();
 
         string Line;
-        std::vector<CellEngineAtom> LocalCellEngineAllAtomsObject;
-        std::vector<CellEngineAtom> LocalCellEngineParticlesCentersObject;
+        vector<CellEngineAtom> LocalCellEngineAllAtomsObject;
+        vector<CellEngineAtom> LocalCellEngineParticlesCentersObject;
 
         unordered_map<string, string> AutinIllinoisNameMap;
         AssociateAutinNameWithIllinoisName(AutinIllinoisNameMap);
@@ -331,20 +331,20 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile()
                                 AppliedAtom.RandomParticleKindColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(ChainColor);
 
                                                                                                                         ListOfElements.emplace_back(AppliedAtom);
-                                                                                                                        //ListOfElements.emplace_back(CellEngineAtomSmall{ AppliedAtom.Name[0], AppliedAtom.X, AppliedAtom.Y, AppliedAtom.Z, AppliedAtom.AtomColor, AppliedAtom.ParticleColor, AppliedAtom.UniqueParticleColor, AppliedAtom.RandomParticleKindColor, AppliedAtom.Visible });
-                                //InsertAtom(LocalCellEngineAllAtomsObject, AppliedAtom, ParticleIndex);
+
+                                    //InsertAtom(LocalCellEngineAllAtomsObject, AppliedAtom, ParticleIndex);
                             }
 
                                                                                                                         GetParticleFromIndex(ParticleIndex).ListOfVoxels = ListOfElements;
                         }
                     }
 
-                    //InsertGroupOfAtoms(LocalCellEngineParticlesCentersObject, LocalCellEngineAllAtomsObject);
+                        //InsertGroupOfAtoms(LocalCellEngineParticlesCentersObject, LocalCellEngineAllAtomsObject);
                 }
             }
         }
 
-        //InsertParticlesCenters(LocalCellEngineParticlesCentersObject);
+            //InsertParticlesCenters(LocalCellEngineParticlesCentersObject);
 
         PreprocessData(true);
 

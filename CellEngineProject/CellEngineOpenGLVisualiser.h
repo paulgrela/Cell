@@ -102,6 +102,9 @@ protected:
     template <class T> static vector3_16 GetColor(const T& Object, bool Chosen);
     static inline void DrawCenterPoint(UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, vmath::mat4& ModelMatrix);
     inline bool GetFinalVisibilityInModelWorld(const vmath::vec3& AtomPosition, UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, bool CountNewPosition, bool DrawOutsideBorder) const;
+
+    bool GetFinalVisibilityInModelWorldOnly(const vmath::vec3& AtomPosition, vmath::mat4& MoveMatrix, bool CountNewPosition, bool DrawOutsideBorder) const;
+
     inline bool CreateUniformBlockForVertexShader(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4 ModelMatrix, bool CountNewPosition, bool DrawCenter, bool DrawOutsideBorder, bool DrawAdditional) const;
     bool RenderObject(const CellEngineAtom& AtomObject, const vmath::mat4& ViewMatrix, bool CountNewPosition, bool DrawCenter, bool DrawOutsideBorder, UnsignedInt& NumberOfAllRenderedAtoms, bool Chosen, bool RenderObjectParameter);
     static inline void SetAutomaticParametersForRendering();
@@ -109,7 +112,7 @@ protected:
     inline void LoadShapeOfAtomsWhenChanged();
     void PrintAtomDescriptionOnScreen(CellEngineAtom& ChosenParticleObject);
 protected:
-    virtual void RenderSpace(UnsignedInt& NumberOfAllRenderedAtoms, UnsignedInt& NumberOfFoundParticlesCenterToBeRenderedInAtomDetails, const vmath::mat4& ViewMatrix) = 0;
+    virtual void RenderSpace(UnsignedInt& NumberOfAllRenderedAtoms, UnsignedInt& NumberOfFoundParticlesCenterToBeRenderedInAtomDetails, vmath::mat4& ViewMatrix) = 0;
 protected:
     virtual void GetStartCenterPoint() = 0;
     virtual void GetMemoryForBondsBetweenAtomsToDraw() = 0;
