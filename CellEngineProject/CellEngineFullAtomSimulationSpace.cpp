@@ -65,11 +65,6 @@ CellEngineFullAtomSimulationSpace::~CellEngineFullAtomSimulationSpace()
     return ss;
 }
 
-Particle& CellEngineFullAtomSimulationSpace::GetParticleFromIndexForGenerator(UniqueIdInt ParticleIndex)
-{
-    return GetParticleFromIndex(ParticleIndex);
-}
-
 void CellEngineFullAtomSimulationSpace::FillParticleElementsInSpace(const UniqueIdInt ParticleIndex, ParticleKind& ParticleKindObjectForProduct, const UnsignedInt VectorX, const UnsignedInt VectorY, const UnsignedInt VectorZ)
 {
     try
@@ -83,6 +78,11 @@ void CellEngineFullAtomSimulationSpace::FillParticleElementsInSpace(const Unique
         GetMinMaxCoordinatesForParticle<float>(GetParticleFromIndex(ParticleIndex), false);
     }
     CATCH("filling particle elements in space")
+}
+
+Particle& CellEngineFullAtomSimulationSpace::GetParticleFromIndexForGenerator(const UniqueIdInt ParticleIndex)
+{
+    return GetParticleFromIndex(ParticleIndex);
 }
 
 // void CellEngineFullAtomSimulationSpace::SetAtomInFullAtomSimulationSpace(const UniqueIdInt ParticleIndex, const CellEngineAtom& AppliedAtom)

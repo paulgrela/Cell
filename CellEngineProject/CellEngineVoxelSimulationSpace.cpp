@@ -94,7 +94,7 @@ void CellEngineVoxelSimulationSpace::FillParticleElementsInSpace(const UniqueIdI
     CATCH("filling particle elements in space")
 }
 
-Particle& CellEngineVoxelSimulationSpace::GetParticleFromIndexForGenerator(UniqueIdInt ParticleIndex)
+Particle& CellEngineVoxelSimulationSpace::GetParticleFromIndexForGenerator(const UniqueIdInt ParticleIndex)
 {
     return GetParticleFromIndex(ParticleIndex);
 }

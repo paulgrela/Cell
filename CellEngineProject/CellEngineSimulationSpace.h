@@ -3,29 +3,14 @@
 #ifndef CELL_ENGINE_SIMULATION_SPACE_H
 #define CELL_ENGINE_SIMULATION_SPACE_H
 
-#include <stack>
-#include <barrier>
-#include <unordered_set>
-
 #include "CellEngineTypes.h"
 #include "CellEngineParticle.h"
 #include "CellEngineChemicalReaction.h"
-#include "CellEngineConfigData.h"
 #include "CellEngineChemicalReactionsEngine.h"
 #include "CellEngineCompiledDataCreator.h"
 #include "CellEngineIllinoisDataCreator.h"
-#include "CellEngineBasicVoxelsOperations.h"
-#include "CellEngineParticlesVoxelsOperations.h"
-#include "CellEngineBasicParticlesOperations.h"
-#include "CellEngineParticlesVoxelsShapesGenerator.h"
-#include "CellEngineRealRandomParticlesInVoxelSpaceGenerator.h"
-#include "CellEngineNucleicAcidsBasicOperations.h"
-#include "CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator.h"
-#include "CellEngineTestParticlesInVoxelSpaceGenerator.h"
-#include "CellEngineChemicalReactionsInBasicSimulationSpace.h"
 #include "CellEngineChemicalReactionsInSimulationSpace.h"
 #include "CellEngineSimulationParallelExecutionManager.h"
-#include "CellEngineVoxelSimulationSpaceStatistics.h"
 #include "CellEngineSimulationSpaceStatistics.h"
 
 #define SIMULATION_DETAILED_LOG

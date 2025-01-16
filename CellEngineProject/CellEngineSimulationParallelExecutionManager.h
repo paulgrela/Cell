@@ -1,6 +1,8 @@
 #ifndef CELL_ENGINE_SIMULATION_PARALLEL_EXECUTION_MANAGER_H
 #define CELL_ENGINE_SIMULATION_PARALLEL_EXECUTION_MANAGER_H
 
+#include <barrier>
+
 #include "CellEngineTypes.h"
 #include "CellEngineBasicParticlesOperations.h"
 
