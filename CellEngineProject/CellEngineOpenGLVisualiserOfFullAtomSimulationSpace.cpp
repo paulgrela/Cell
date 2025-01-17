@@ -80,7 +80,7 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
                 // vmath::mat4 ModelMatrix = vmath::translate(AtomPosition.X() - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomPosition.Y() + CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomPosition.Z() + CellEngineConfigDataObject.CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(1, 1, 1));
                 // bool FinalVisibilityInModelWorld = GetFinalVisibilityInModelWorldOnly(AtomPosition, ModelMatrix, true, true);
 
-                bool FinalVisibilityInModelWorld = GetFinalVisibilityInModelWorldOnly(ParticleObject.second.ListOfVoxels.back().Position(), ViewMatrix, true, true);
+                bool FinalVisibilityInModelWorld = GetFinalVisibilityInModelWorldOnly(ParticleObject.second.ListOfAtoms.back().Position(), ViewMatrix, true, true);
 
                 if (CellEngineConfigDataObject.ShowDetailsInAtomScale == true)
                     if (FinalVisibilityInModelWorld == true)
@@ -90,7 +90,7 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
 
                             //DrawBonds(CellEngineDataFileObjectPointer->GetAllAtoms()[ParticlesCenterObject.AtomIndex], BondsBetweenAtomsToDraw[ParticlesCenterObject.AtomIndex], CellEngineConfigDataObject.DrawBondsBetweenAtoms, ViewMatrix);
 
-                            for (UnsignedInt AtomObjectIndex = 0; AtomObjectIndex < ParticleObject.second.ListOfVoxels.size(); AtomObjectIndex += CellEngineConfigDataObject.LoadOfAtomsStep)
+                            for (UnsignedInt AtomObjectIndex = 0; AtomObjectIndex < ParticleObject.second.ListOfAtoms.size(); AtomObjectIndex += CellEngineConfigDataObject.LoadOfAtomsStep)
                             //for (const auto AtomObject : ParticleObject.second.ListOfVoxels)
                             {
                                 if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
@@ -100,7 +100,7 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
                                         TemporaryRenderedAtomsList.emplace_back(ParticleObject.first, AtomObjectIndex);
                                     }
 
-                                RenderObject(ParticleObject.second.ListOfVoxels[AtomObjectIndex], ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, false, RenderObjectsBool);
+                                RenderObject(ParticleObject.second.ListOfAtoms[AtomObjectIndex], ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, false, RenderObjectsBool);
 
                                 //RenderObject(AtomObject, ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, false, RenderObjectsBool);
                             }
@@ -152,7 +152,7 @@ inline void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::DrawChosenAtomU
                         else
                             //ChosenParticleObject = CellEngineDataFileObjectPointer->GetAllAtoms()[TemporaryRenderedAtomsList[ChosenParticleCenterIndex].first][TemporaryRenderedAtomsList[ChosenParticleCenterIndex].second];
                             //ChosenParticleObject = CellEngineDataFileObjectPointer->GetParticles()[TemporaryRenderedAtomsList[ChosenParticleCenterIndex].first].ListOfVoxels[TemporaryRenderedAtomsList[ChosenParticleCenterIndex].second];
-                            ChosenParticleObject = CellEngineDataFileObjectPointer->GetParticles()[TemporaryRenderedAtomsList[ChosenParticleCenterIndex].first].ListOfVoxels[TemporaryRenderedAtomsList[ChosenParticleCenterIndex].second];
+                            ChosenParticleObject = CellEngineDataFileObjectPointer->GetParticles()[TemporaryRenderedAtomsList[ChosenParticleCenterIndex].first].ListOfAtoms[TemporaryRenderedAtomsList[ChosenParticleCenterIndex].second];
                     }
                 }
 

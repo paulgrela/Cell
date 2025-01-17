@@ -63,10 +63,8 @@ public:
     }
 };
 
-//using ListOfElementsType = std::vector<vector3_32>;
-
-//using ListOfElementsType = std::vector<vector3_16>;
-using ListOfElementsType = std::vector<CellEngineAtom>;
+using ListOfVoxelsType = std::vector<vector3_16>;
+using ListOfAtomsType = std::vector<CellEngineAtom>;
 
 class Particle : public DoublyLinkedListNode<Particle, UniqueIdInt>, public PairedNucleotide<Particle>, public LinkedParticles<Particle>
 {
@@ -81,20 +79,35 @@ public:
     vector3_16 UniqueColor{};
     ElectricChargeType ElectricCharge{};
 public:
-    //std::vector<vector3_16> ListOfVoxels;
-    vector3_16 Center{};
-    ListOfElementsType ListOfVoxels;
-    //vector3_32 Center{};
+    vector3_float32 Center{};
+
+    //vector3_16 CenterInt{};
+    ListOfVoxelsType ListOfVoxels;
+
+    //vector3_float32 CenterFloat{};
+    ListOfAtomsType ListOfAtoms;
 public:
     std::string SequenceStr;
     UnsignedInt PositionInSequence{};
 public:
-    void SetCenterCoordinates(const PositionInt XCenterParam, const PositionInt YCenterParam, const PositionInt ZCenterParam)
+    void SetCenterCoordinates(const float XCenterParam, const float YCenterParam, const float ZCenterParam)
     {
         Center.X = XCenterParam;
         Center.Y = YCenterParam;
         Center.Z = ZCenterParam;
     }
+    // void SetCenterCoordinatesInt(const PositionInt XCenterParam, const PositionInt YCenterParam, const PositionInt ZCenterParam)
+    // {
+    //     CenterInt.X = XCenterParam;
+    //     CenterInt.Y = YCenterParam;
+    //     CenterInt.Z = ZCenterParam;
+    // }
+    // void SetCenterCoordinatesFloat(const float XCenterParam, const float YCenterParam, const float ZCenterParam)
+    // {
+    //     CenterFloat.X = XCenterParam;
+    //     CenterFloat.Y = YCenterParam;
+    //     CenterFloat.Z = ZCenterParam;
+    // }
 public:
     explicit Particle(const UniqueIdInt IndexParam, const EntityIdInt EntityIdParam, const ChainIdInt ChainIdParam, const UniqueIdInt GenomeThreadParam, const UniqueIdInt GenomeIndexParam, const ElectricChargeType ElectricChargeParam, const vector3_16 UniqueColorParam) : Index(IndexParam), EntityId(EntityIdParam), ChainId(ChainIdParam), GenomeThread(GenomeThreadParam), GenomeIndex(GenomeIndexParam), ElectricCharge(ElectricChargeParam), UniqueColor(UniqueColorParam)
     {
@@ -110,5 +123,15 @@ inline double DistanceOfParticles(const Particle& Particle1, const Particle& Par
 {
     return sqrt(pow(static_cast<double>(Particle1.Center.X) - static_cast<double>(Particle2.Center.X), 2.0) + pow(static_cast<double>(Particle1.Center.Y) - static_cast<double>(Particle2.Center.Y), 2.0) + pow(static_cast<double>(Particle1.Center.Z) - static_cast<double>(Particle2.Center.Z), 2.0));
 }
+
+// inline double DistanceOfParticlesInt(const Particle& Particle1, const Particle& Particle2)
+// {
+//     return sqrt(pow(static_cast<double>(Particle1.CenterInt.X) - static_cast<double>(Particle2.CenterInt.X), 2.0) + pow(static_cast<double>(Particle1.CenterInt.Y) - static_cast<double>(Particle2.CenterInt.Y), 2.0) + pow(static_cast<double>(Particle1.CenterInt.Z) - static_cast<double>(Particle2.CenterInt.Z), 2.0));
+// }
+//
+// inline double DistanceOfParticlesFloat(const Particle& Particle1, const Particle& Particle2)
+// {
+//     return sqrt(pow(static_cast<double>(Particle1.CenterFloat.X) - static_cast<double>(Particle2.CenterFloat.X), 2.0) + pow(static_cast<double>(Particle1.CenterFloat.Y) - static_cast<double>(Particle2.CenterFloat.Y), 2.0) + pow(static_cast<double>(Particle1.CenterFloat.Z) - static_cast<double>(Particle2.CenterFloat.Z), 2.0));
+// }
 
 #endif

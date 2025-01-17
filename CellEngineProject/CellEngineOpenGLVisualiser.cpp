@@ -174,10 +174,9 @@ void CellEngineOpenGLVisualiser::FindBondsToDraw(const vector<CellEngineAtom>& A
                 {
                     const auto& ParticlesCenterObject1 = Atoms[AtomObjectIndex1];
                     const auto& ParticlesCenterObject2 = Atoms[AtomObjectIndex2];
-
-                    const float DiffX = ParticlesCenterObject2.XR - ParticlesCenterObject1.XR;
-                    const float DiffY = ParticlesCenterObject2.YR - ParticlesCenterObject1.YR;
-                    const float DiffZ = ParticlesCenterObject2.ZR - ParticlesCenterObject1.ZR;
+                    const float DiffX = ParticlesCenterObject2.X - ParticlesCenterObject1.X;
+                    const float DiffY = ParticlesCenterObject2.Y - ParticlesCenterObject1.Y;
+                    const float DiffZ = ParticlesCenterObject2.Z - ParticlesCenterObject1.Z;
                     const float VectorLength = sqrt(DiffX * DiffX + DiffY * DiffY + DiffZ * DiffZ);
                     if (VectorLength < 1.5)
                         BondsToDrawLocal[omp_get_thread_num()].emplace_back(make_pair(AtomObjectIndex1, AtomObjectIndex2));
@@ -206,7 +205,7 @@ void CellEngineOpenGLVisualiser::DrawBonds(const vector<CellEngineAtom>& Atoms, 
 
                 CreateUniformBlockForVertexShader(vmath::vec3(0.0, 0.0, 0.0), vmath::vec3(-1.0, -1.0, -1.0), ViewMatrix, vmath::translate(0.0f, 0.0f, 0.0f), false, false, false, false);
 
-                DrawBond(AtomObject1.XR - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomObject1.YR - CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomObject1.ZR - CellEngineConfigDataObject.CameraZPosition - Center.Z(), AtomObject2.XR - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomObject2.YR - CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomObject2.ZR - CellEngineConfigDataObject.CameraZPosition - Center.Z());
+                DrawBond(AtomObject1.X - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomObject1.Y - CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomObject1.Z - CellEngineConfigDataObject.CameraZPosition - Center.Z(), AtomObject2.X - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomObject2.Y - CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomObject2.Z - CellEngineConfigDataObject.CameraZPosition - Center.Z());
             }
         }
     }

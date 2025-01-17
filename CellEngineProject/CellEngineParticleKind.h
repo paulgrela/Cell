@@ -119,8 +119,7 @@ public:
 public:
     UnsignedInt Counter{};
 public:
-    //std::vector<vector3_16> ListOfVoxels;
-    ListOfElementsType ListOfVoxels;
+    ListOfVoxelsType ListOfVoxels;
     UnsignedInt XSizeDiv2{}, YSizeDiv2{}, ZSizeDiv2{};
     //float XSizeDiv2{}, YSizeDiv2{}, ZSizeDiv2{};
 public:

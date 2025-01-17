@@ -15,9 +15,6 @@
 class CellEngineBasicParticlesOperations : public CellEngineBasicParallelExecutionData
 {
 protected:
-    //UnsignedInt XMin{}, XMax{}, YMin{}, YMax{}, ZMin{}, ZMax{};
-    //float XMinGlobal{}, XMaxGlobal{}, YMinGlobal{}, YMaxGlobal{}, ZMinGlobal{}, ZMaxGlobal{};
-protected:
     UnsignedInt MaxParticleIndex{};
     std::stack<UniqueIdInt> FreeIndexesOfParticles;
 protected:

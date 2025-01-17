@@ -109,7 +109,8 @@ glm::vec3 CountResultPositionsFromTransformationMatrix(std::unordered_map<Unsign
         TransformationMatrix[2][1] = TransformationMatrixIterator->second.Matrix[1][2];
         TransformationMatrix[2][2] = TransformationMatrixIterator->second.Matrix[2][2];
 
-        Result = TransformationMatrix * glm::vec3(AppliedAtom.XR, AppliedAtom.YR, AppliedAtom.ZR) + glm::vec3(TransformationMatrixIterator->second.Matrix[0][3], TransformationMatrixIterator->second.Matrix[1][3], TransformationMatrixIterator->second.Matrix[2][3]);
+        //Result = TransformationMatrix * glm::vec3(AppliedAtom.XR, AppliedAtom.YR, AppliedAtom.ZR) + glm::vec3(TransformationMatrixIterator->second.Matrix[0][3], TransformationMatrixIterator->second.Matrix[1][3], TransformationMatrixIterator->second.Matrix[2][3]);
+        Result = TransformationMatrix * glm::vec3(AppliedAtom.X, AppliedAtom.Y, AppliedAtom.Z) + glm::vec3(TransformationMatrixIterator->second.Matrix[0][3], TransformationMatrixIterator->second.Matrix[1][3], TransformationMatrixIterator->second.Matrix[2][3]);
     }
     CATCH("copying from matrix to matrix")
 
@@ -312,7 +313,7 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile()
                                 NumberOfNucleotidesInDNA++;
 
 
-                                                                                                                        ListOfElementsType ListOfElements;
+                                                                                                                        ListOfAtomsType ListOfAtoms;
 
                             for (auto AppliedAtom : AtomsForChainNameIterator->second)
                             {
@@ -330,12 +331,12 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile()
                                 AppliedAtom.UniqueParticleColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(UniqueParticleColor);
                                 AppliedAtom.RandomParticleKindColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(ChainColor);
 
-                                                                                                                        ListOfElements.emplace_back(AppliedAtom);
+                                                                                                                        ListOfAtoms.emplace_back(AppliedAtom);
 
                                     //InsertAtom(LocalCellEngineAllAtomsObject, AppliedAtom, ParticleIndex);
                             }
 
-                                                                                                                        GetParticleFromIndex(ParticleIndex).ListOfVoxels = ListOfElements;
+                                                                                                                        GetParticleFromIndex(ParticleIndex).ListOfAtoms = ListOfAtoms;
                         }
                     }
 

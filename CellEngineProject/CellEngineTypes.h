@@ -29,7 +29,7 @@ struct vector3
 
 using vector3_16 = vector3<PositionInt>;
 using vector3_64 = vector3<uint64_t>;
-//using vector3_float32 = vector3<float>;
+using vector3_float32 = vector3<float>;
 
 struct CurrentThreadPosType
 {

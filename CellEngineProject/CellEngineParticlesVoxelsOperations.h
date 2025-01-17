@@ -13,7 +13,7 @@
 class CellEngineParticlesVoxelsOperations : public CellEngineBasicVoxelsOperations
 {
 public:
-    void SetAllVoxelsInListOfVoxelsToValueForOuterClass(ListOfElementsType& ListOfVoxels, SimulationSpaceVoxel SimulationSpaceVoxelValue)
+    void SetAllVoxelsInListOfVoxelsToValueForOuterClass(ListOfVoxelsType& ListOfVoxels, SimulationSpaceVoxel SimulationSpaceVoxelValue)
     {
         SetAllVoxelsInListOfVoxelsToValue(ListOfVoxels, SimulationSpaceVoxelValue);
     }
@@ -23,7 +23,7 @@ protected:
         return 0;
     }
 protected:
-    inline void SetAllVoxelsInListOfVoxelsToValue(ListOfElementsType& ListOfVoxels, SimulationSpaceVoxel SimulationSpaceVoxelValue)
+    inline void SetAllVoxelsInListOfVoxelsToValue(ListOfVoxelsType& ListOfVoxels, SimulationSpaceVoxel SimulationSpaceVoxelValue)
     {
         try
         {
@@ -89,7 +89,7 @@ protected:
         return true;
     }
 protected:
-    inline bool CheckFreeSpaceForListOfVoxels(const ListOfElementsType& ListOfVoxels, const UnsignedInt VectorX, const UnsignedInt VectorY, const UnsignedInt VectorZ)
+    inline bool CheckFreeSpaceForListOfVoxels(const ListOfVoxelsType& ListOfVoxels, const UnsignedInt VectorX, const UnsignedInt VectorY, const UnsignedInt VectorZ)
     {
         try
         {
@@ -102,7 +102,7 @@ protected:
         return true;
     }
 protected:
-    inline bool CheckFreeSpaceAndBoundsForListOfVoxels(const ListOfElementsType& ListOfVoxels, const UnsignedInt VectorX, const UnsignedInt VectorY, const UnsignedInt VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam)
+    inline bool CheckFreeSpaceAndBoundsForListOfVoxels(const ListOfVoxelsType& ListOfVoxels, const UnsignedInt VectorX, const UnsignedInt VectorY, const UnsignedInt VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam)
     {
         try
         {
