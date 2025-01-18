@@ -468,6 +468,13 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
             //ParticlesDataFile.read((char*)&ParticleObject.Center, sizeof(ParticleObject.Center));
 
             //ParticlesDataFile.read((char*)&ParticleObject.Center, sizeof(ParticleObject.Center));
+            // if (ParticleObject.Center.X == 0 || ParticleObject.Center.Y == 0 || ParticleObject.Center.Z == 0)
+            // {
+            //     LoggersManagerObject.Log(STREAM("ParticleIndex = " << ParticleObject.Index << " " << ParticleObject.Center.X << " " << ParticleObject.Center.Y << " " << ParticleObject.Center.Z));
+            //     LoggersManagerObject.Log(STREAM("Wrong Particle Center -> ParticleIndex = " << ParticleObject.Index << " " << ParticleObject.Center.X << " " << ParticleObject.Center.Y << " " << ParticleObject.Center.Z));
+            //     getchar();
+            // }
+
 
             ParticleObject.Center.X /= CellEngineConfigDataObject.DivisionFactorForReadingPositionsOfParticles;
             ParticleObject.Center.Y /= CellEngineConfigDataObject.DivisionFactorForReadingPositionsOfParticles;
@@ -496,6 +503,22 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
         LoggersManagerObject.Log(STREAM("END OF READING PARTICLES FROM BINARY FILE"));
     }
     CATCH("reading particles from binary file")
+                                                                        //
+                                                                        // for (const auto& ParticleObject : Particles)
+                                                                        // {
+                                                                        //     if (ParticleObject.second.Center.X > CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension || ParticleObject.second.Center.Y > CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension || ParticleObject.second.Center.Z > CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension)
+                                                                        //     {
+                                                                        //         LoggersManagerObject.Log(STREAM("ParticleIndex = " << ParticleObject.second.Index << " " << ParticleObject.second.Center.X << " " << ParticleObject.second.Center.Y << " " << ParticleObject.second.Center.Z));
+                                                                        //         LoggersManagerObject.Log(STREAM("Wrong Particle Center -> ParticleIndex = " << ParticleObject.second.Index << " " << ParticleObject.second.Center.X << " " << ParticleObject.second.Center.Y << " " << ParticleObject.second.Center.Z));
+                                                                        //         getchar();
+                                                                        //     }
+                                                                        //     if (ParticleObject.second.Center.X == 0 || ParticleObject.second.Center.Y == 0 || ParticleObject.second.Center.Z == 0)
+                                                                        //     {
+                                                                        //         LoggersManagerObject.Log(STREAM("ParticleIndex = " << ParticleObject.second.Index << " " << ParticleObject.second.Center.X << " " << ParticleObject.second.Center.Y << " " << ParticleObject.second.Center.Z));
+                                                                        //         LoggersManagerObject.Log(STREAM("Wrong Particle Center ZERO -> ParticleIndex = " << ParticleObject.second.Index << " " << ParticleObject.second.Center.X << " " << ParticleObject.second.Center.Y << " " << ParticleObject.second.Center.Z));
+                                                                        //         getchar();
+                                                                        //     }
+                                                                        // }
 }
 
 void CellEngineParticlesBinaryDataFileReaderWriter::ReadChemicalReactionsFromBinaryFile(ifstream& ParticlesDataFile)

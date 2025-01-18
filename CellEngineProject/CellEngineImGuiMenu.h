@@ -847,6 +847,13 @@ public:
 
                     ImGui::Text("");
 
+                    ColorButton(AlignString("CHECK PARTCILES CENTERS", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
+                    {
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->CheckParticlesCenters(false);
+                    });
+
+                    ImGui::Text("");
+
                     if (ImGui::Button(AlignString("PRINT CHEMICAL REACTIONS", StringLength).c_str()) == true)
                         ChemicalReactionsManagerObject.PrintChemicalReactions();
 

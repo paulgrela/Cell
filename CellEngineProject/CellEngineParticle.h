@@ -80,11 +80,7 @@ public:
     ElectricChargeType ElectricCharge{};
 public:
     vector3_float32 Center{};
-
-    //vector3_16 CenterInt{};
     ListOfVoxelsType ListOfVoxels;
-
-    //vector3_float32 CenterFloat{};
     ListOfAtomsType ListOfAtoms;
 public:
     std::string SequenceStr;
@@ -92,22 +88,20 @@ public:
 public:
     void SetCenterCoordinates(const float XCenterParam, const float YCenterParam, const float ZCenterParam)
     {
+        //if (Center.X == 0 || Center.Y == 0 || Center.Z == 0)
+        //    std::cout << "AAAXXX" << std::endl;
+
         Center.X = XCenterParam;
         Center.Y = YCenterParam;
         Center.Z = ZCenterParam;
+
+                                                                                                                        if (Center.X == 0 || Center.Y == 0 || Center.Z == 0)
+                                                                                                                        {
+                                                                                                                            std::cout << "AAAYYY" << std::endl;
+                                                                                                                            getchar();
+                                                                                                                            throw std::runtime_error("DDDD");
+                                                                                                                        }
     }
-    // void SetCenterCoordinatesInt(const PositionInt XCenterParam, const PositionInt YCenterParam, const PositionInt ZCenterParam)
-    // {
-    //     CenterInt.X = XCenterParam;
-    //     CenterInt.Y = YCenterParam;
-    //     CenterInt.Z = ZCenterParam;
-    // }
-    // void SetCenterCoordinatesFloat(const float XCenterParam, const float YCenterParam, const float ZCenterParam)
-    // {
-    //     CenterFloat.X = XCenterParam;
-    //     CenterFloat.Y = YCenterParam;
-    //     CenterFloat.Z = ZCenterParam;
-    // }
 public:
     explicit Particle(const UniqueIdInt IndexParam, const EntityIdInt EntityIdParam, const ChainIdInt ChainIdParam, const UniqueIdInt GenomeThreadParam, const UniqueIdInt GenomeIndexParam, const ElectricChargeType ElectricChargeParam, const vector3_16 UniqueColorParam) : Index(IndexParam), EntityId(EntityIdParam), ChainId(ChainIdParam), GenomeThread(GenomeThreadParam), GenomeIndex(GenomeIndexParam), ElectricCharge(ElectricChargeParam), UniqueColor(UniqueColorParam)
     {
@@ -123,15 +117,5 @@ inline double DistanceOfParticles(const Particle& Particle1, const Particle& Par
 {
     return sqrt(pow(static_cast<double>(Particle1.Center.X) - static_cast<double>(Particle2.Center.X), 2.0) + pow(static_cast<double>(Particle1.Center.Y) - static_cast<double>(Particle2.Center.Y), 2.0) + pow(static_cast<double>(Particle1.Center.Z) - static_cast<double>(Particle2.Center.Z), 2.0));
 }
-
-// inline double DistanceOfParticlesInt(const Particle& Particle1, const Particle& Particle2)
-// {
-//     return sqrt(pow(static_cast<double>(Particle1.CenterInt.X) - static_cast<double>(Particle2.CenterInt.X), 2.0) + pow(static_cast<double>(Particle1.CenterInt.Y) - static_cast<double>(Particle2.CenterInt.Y), 2.0) + pow(static_cast<double>(Particle1.CenterInt.Z) - static_cast<double>(Particle2.CenterInt.Z), 2.0));
-// }
-//
-// inline double DistanceOfParticlesFloat(const Particle& Particle1, const Particle& Particle2)
-// {
-//     return sqrt(pow(static_cast<double>(Particle1.CenterFloat.X) - static_cast<double>(Particle2.CenterFloat.X), 2.0) + pow(static_cast<double>(Particle1.CenterFloat.Y) - static_cast<double>(Particle2.CenterFloat.Y), 2.0) + pow(static_cast<double>(Particle1.CenterFloat.Z) - static_cast<double>(Particle2.CenterFloat.Z), 2.0));
-// }
 
 #endif

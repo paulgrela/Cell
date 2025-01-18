@@ -57,6 +57,13 @@ protected:
 public:
     UniqueIdInt AddNewParticle(const Particle& ParticleParam)
     {
+                                                                                                                        //if (ParticleParam.Center.X == 0 || ParticleParam.Center.Y == 0 || ParticleParam.Center.Z == 0)
+                                                                                                                        if (ParticleParam.Index == 0)
+                                                                                                                        {
+                                                                                                                            std::cout << "AAAYYY" << std::endl;
+                                                                                                                            //getchar();
+                                                                                                                            //throw std::runtime_error("TTT");
+                                                                                                                        }
         GetParticles()[ParticleParam.Index] = ParticleParam;
         return MaxParticleIndex = ParticleParam.Index;
     }
@@ -66,23 +73,13 @@ public:
     template <class T>
     void PreprocessData(bool UpdateParticleKindListOfVoxelsBool);
 protected:
-    //void SetStartValuesForSpaceMinMax();
-
     template <class T>
     void GetMinMaxCoordinatesForAllParticles(bool UpdateParticleKindListOfVoxelsBool) const;
-
-    //static void GetMinMaxOfCoordinates(UnsignedInt PosX, UnsignedInt PosY, UnsignedInt PosZ, UnsignedInt& XMinParam, UnsignedInt& XMaxParam, UnsignedInt& YMinParam, UnsignedInt& YMaxParam, UnsignedInt& ZMinParam, UnsignedInt& ZMaxParam);
-    //static void GetMinMaxOfCoordinates(float PosX, float PosY, float PosZ, float& XMinParam, float& XMaxParam, float& YMinParam, float& YMaxParam, float& ZMinParam, float& ZMaxParam);
     template <class T>
-    //static void GetMinMaxOfCoordinates(T PosX, T PosY, T PosZ, T& XMinParam, T& XMaxParam, T& YMinParam, T& YMaxParam, T& ZMinParam, T& ZMaxParam);
     static void GetMinMaxOfCoordinates(T PosX, T PosY, T PosZ, T& XMinParam, T& XMaxParam, T& YMinParam, T& YMaxParam, T& ZMinParam, T& ZMaxParam);
-
-    //static void UpdateParticleKindListOfVoxels(const Particle& ParticleObject, UnsignedInt ParticleXMin, UnsignedInt ParticleXMax, UnsignedInt ParticleYMin, UnsignedInt ParticleYMax, UnsignedInt ParticleZMin, UnsignedInt ParticleZMax);
-    //static void UpdateParticleKindListOfVoxels(const Particle& ParticleObject, float ParticleXMin, float ParticleXMax, float ParticleYMin, float ParticleYMax, float ParticleZMin, float ParticleZMax);
     template <class T>
     static void UpdateParticleKindListOfVoxels(const Particle& ParticleObject, T ParticleXMin, T ParticleXMax, T ParticleYMin, T ParticleYMax, T ParticleZMin, T ParticleZMax);
 public:
-    //static void GetMinMaxCoordinatesForParticle(Particle& ParticleObject, bool UpdateParticleKindListOfVoxels);
     template <class T>
     static void GetMinMaxCoordinatesForParticle(Particle& ParticleObject, bool UpdateParticleKindListOfVoxels);
 protected:

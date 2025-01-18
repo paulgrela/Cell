@@ -29,6 +29,15 @@ protected:
     {
         return Particles[ParticleIndex];
     }
+public:
+    ParticlesContainer<Particle>::iterator GetParticleIteratorFromIndex(const UniqueIdInt ParticleIndex)
+    {
+        return Particles.find(ParticleIndex);
+    }
+    auto GetParticleEnd() const
+    {
+        return Particles.end();
+    }
 protected:
     std::vector<std::vector<CellEngineAtom>> ParticlesCenters;
     std::vector<std::vector<CellEngineAtom>> AllAtoms;
@@ -64,14 +73,12 @@ public:
             for (auto& ParticleObject : Particles)
             {
                 vmath::vec3 CenterOfParticle(0.0, 0.0, 0.0);
-                //for (const CellEngineAtom& AtomObject : ParticleObject.second.ListOfVoxels)
                 for (const CellEngineAtom& AtomObject : ParticleObject.second.ListOfAtoms)
                 {
                     Center += AtomObject.Position();
                     CenterOfParticle += AtomObject.Position();
                     NumberOfParticles++;
                 }
-                //ParticleObject.second.Center = { static_cast<uint16_t>(CenterOfParticle.X() / static_cast<float>(ParticleObject.second.ListOfVoxels.size())), static_cast<uint16_t>(CenterOfParticle.Y() / static_cast<float>(ParticleObject.second.ListOfVoxels.size())), static_cast<uint16_t>(CenterOfParticle.Z() / static_cast<float>(ParticleObject.second.ListOfVoxels.size())) };
                 ParticleObject.second.Center = { CenterOfParticle.X() / static_cast<float>(ParticleObject.second.ListOfAtoms.size()), CenterOfParticle.Y() / static_cast<float>(ParticleObject.second.ListOfAtoms.size()), CenterOfParticle.Z() / static_cast<float>(ParticleObject.second.ListOfAtoms.size()) };
             }
             Center /= NumberOfParticles;

@@ -151,6 +151,8 @@ void CellEngineBasicParticlesOperations::GetMinMaxCoordinatesForParticle(Particl
 {
     try
     {
+        //cout << "CIPEK" << endl;  //getchar();
+
         T ParticleXMin{}, ParticleXMax{}, ParticleYMin{}, ParticleYMax{}, ParticleZMin{}, ParticleZMax{};
         ParticleXMin = ParticleYMin = ParticleZMin = 10000;
         if constexpr(std::is_same_v<T, UnsignedInt>)
