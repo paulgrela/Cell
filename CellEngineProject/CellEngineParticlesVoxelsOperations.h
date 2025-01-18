@@ -17,7 +17,7 @@ public:
     {
         SetAllVoxelsInListOfVoxelsToValue(ListOfVoxels, SimulationSpaceVoxelValue);
     }
-protected:
+public:
     static inline SimulationSpaceVoxel GetZeroSimulationSpaceVoxel()
     {
         return 0;

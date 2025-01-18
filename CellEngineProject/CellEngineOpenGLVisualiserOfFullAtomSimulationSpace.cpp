@@ -102,8 +102,6 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
                                     }
 
                                 RenderObject(ParticleObject.second.ListOfAtoms[AtomObjectIndex], ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, false, RenderObjectsBool);
-
-                                //RenderObject(AtomObject, ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, false, RenderObjectsBool);
                             }
                         }
             }
@@ -152,7 +150,6 @@ inline void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::DrawChosenAtomU
                             throw std::runtime_error("ERROR STENCIL INDEX TOO BIG IN INNER 2 = " + std::to_string(TemporaryRenderedAtomsList[ChosenParticleCenterIndex].second) + " MAXIMAL NUMBER OF OBJECTS = " + std::to_string(CellEngineDataFileObjectPointer->GetAllAtoms()[TemporaryRenderedAtomsList[ChosenParticleCenterIndex].first].size()));
                         else
                             //ChosenParticleObject = CellEngineDataFileObjectPointer->GetAllAtoms()[TemporaryRenderedAtomsList[ChosenParticleCenterIndex].first][TemporaryRenderedAtomsList[ChosenParticleCenterIndex].second];
-                            //ChosenParticleObject = CellEngineDataFileObjectPointer->GetParticles()[TemporaryRenderedAtomsList[ChosenParticleCenterIndex].first].ListOfVoxels[TemporaryRenderedAtomsList[ChosenParticleCenterIndex].second];
                             ChosenParticleObject = CellEngineDataFileObjectPointer->GetParticles()[TemporaryRenderedAtomsList[ChosenParticleCenterIndex].first].ListOfAtoms[TemporaryRenderedAtomsList[ChosenParticleCenterIndex].second];
                     }
                 }

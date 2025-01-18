@@ -61,10 +61,9 @@ public:
         try
         {
             const char *LogDirectory = "." OS_DIR_SEP;
-
-            LoggersManagerObject.InitializeSpecialLogFiles(false, false, false, false, false, false, false, true, false);
-            LoggersManagerObject.InitializeFilesNames({"AllMessages"});
-            LoggersManagerObject.InitializeSelectiveWordsFunctions({[](const string &s){ return true; }});
+            LoggersManagerObject.InitializeSpecialLogFiles(false, true, false, false, false, false, false, true, false);
+            LoggersManagerObject.InitializeFilesNames({"AllMessages" });
+            LoggersManagerObject.InitializeSelectiveWordsFunctions({[](const string &s){ return true; } });
             LoggersManagerObject.InitializeLoggerManagerDataForTask("CELL_RESULTS", LogDirectory, string("Logs." + GetActualDateTimeStandardCPP(".", ".", ".", ".", ".")), true, 0, function<void(const UnsignedInt &CurrentThreadId, const UnsignedInt FileNumber, const string &MessageStr)>());
             LoggersManagerObject.InitializePrintingParameters(CellEngineConfigDataObject.PrintLogToConsole, CellEngineConfigDataObject.PrintLogToFiles, CellEngineConfigDataObject.PrintLogLineNumberToConsole, CellEngineConfigDataObject.PrintLogDateTimeToConsole, CellEngineConfigDataObject.PrintLogProcessIdToConsole, CellEngineConfigDataObject.PrintLogProcessPriorityLevelToConsole, CellEngineConfigDataObject.PrintLogThreadIdToConsole, CellEngineConfigDataObject.PrintLogLineNumberToFile, CellEngineConfigDataObject.PrintLogDateTimeToFile, CellEngineConfigDataObject.PrintLogProcessIdToFile, CellEngineConfigDataObject.PrintLogProcessPriorityLevelToFile, CellEngineConfigDataObject.PrintLogThreadIdToFile, CellEngineConfigDataObject.MaximalNumberOfLinesInOneFile, CellEngineConfigDataObject.PrintLogToCommonFileWhenPrintLogToSpecialFile);
         }

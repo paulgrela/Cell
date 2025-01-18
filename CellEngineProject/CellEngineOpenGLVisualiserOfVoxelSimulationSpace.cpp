@@ -12,6 +12,7 @@
 #include "CellEngineOpenGLVisualiser.h"
 #include "CellEngineSimulationSpace.h"
 #include "CellEngineParticlesKindsManager.h"
+#include "CellEngineParticlesVoxelsOperations.h"
 #include "CellEngineOpenGLVisualiserOfVoxelSimulationSpace.h"
 
 #ifdef USING_MODULES
@@ -118,29 +119,35 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSelectedSpace(const
                     if (PosX < CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension && PosY < CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension && PosZ < CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension)
                     {
                         SimulationSpaceVoxel SimulationSpaceVoxelObject = CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GetSpaceVoxelForOuterClass(PosX, PosY, PosZ);
-                        if (auto FoundParticleIter = CellEngineDataFileObjectPointer->GetParticleIteratorFromIndex(SimulationSpaceVoxelObject); FoundParticleIter != CellEngineDataFileObjectPointer->GetParticleEnd())
-                        {
-                            Particle& ParticleObject = FoundParticleIter->second;
-
-                            if (DrawEmptyVoxels == true || (DrawEmptyVoxels == false && SimulationSpaceVoxelObject != 0 && ParticlesKindsManagerObject.GetGraphicParticleKind(ParticleObject.EntityId).Visible == true))
+                        if (SimulationSpaceVoxelObject != CellEngineParticlesVoxelsOperations::GetZeroSimulationSpaceVoxel())
+                            if (auto FoundParticleIter = CellEngineDataFileObjectPointer->GetParticleIteratorFromIndex(SimulationSpaceVoxelObject); FoundParticleIter != CellEngineDataFileObjectPointer->GetParticleEnd())
                             {
-                                ConvertAtomPosToGraphicCoordinate(TempAtomObject, XStartParam, YStartParam, ZStartParam, PosX, PosY, PosZ, XSizeParam, YSizeParam, ZSizeParam);
+                                Particle& ParticleObject = FoundParticleIter->second;
 
-                                if (DrawEmptyVoxels == false || (DrawEmptyVoxels == true && SimulationSpaceVoxelObject != 0))
-                                    SetParticleParametersToDraw(TempAtomObject, ParticleObject);
-                                else
-                                    if (DrawEmptyVoxels == true)
-                                        TempAtomObject.AtomColor = TempAtomObject.ParticleColor = TempAtomObject.RandomParticleKindColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(vmath::FromVec4ToVec3(sb7::color::DeepSkyBlue));
-
-                                if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
+                                if (DrawEmptyVoxels == true || (DrawEmptyVoxels == false && SimulationSpaceVoxelObject != 0 && ParticlesKindsManagerObject.GetGraphicParticleKind(ParticleObject.EntityId).Visible == true))
                                 {
-                                    glStencilFunc(GL_ALWAYS, uint8_t((TemporaryRenderedVoxelsList.size()) >> (8 * StencilBufferLoopCounter)), -1);
-                                    TemporaryRenderedVoxelsList.emplace_back(TemporaryRenderedVoxel{TempAtomObject, PosX, PosY, PosZ });
-                                }
+                                    ConvertAtomPosToGraphicCoordinate(TempAtomObject, XStartParam, YStartParam, ZStartParam, PosX, PosY, PosZ, XSizeParam, YSizeParam, ZSizeParam);
 
-                                RenderObject(TempAtomObject, ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, false, RenderObjectsBool);
+                                    if (DrawEmptyVoxels == false || (DrawEmptyVoxels == true && SimulationSpaceVoxelObject != 0))
+                                        SetParticleParametersToDraw(TempAtomObject, ParticleObject);
+                                    else
+                                        if (DrawEmptyVoxels == true)
+                                            TempAtomObject.AtomColor = TempAtomObject.ParticleColor = TempAtomObject.RandomParticleKindColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(vmath::FromVec4ToVec3(sb7::color::DeepSkyBlue));
+
+                                    if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
+                                    {
+                                        glStencilFunc(GL_ALWAYS, uint8_t((TemporaryRenderedVoxelsList.size()) >> (8 * StencilBufferLoopCounter)), -1);
+                                        TemporaryRenderedVoxelsList.emplace_back(TemporaryRenderedVoxel{TempAtomObject, PosX, PosY, PosZ });
+                                    }
+
+                                    RenderObject(TempAtomObject, ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, false, RenderObjectsBool);
+                                }
                             }
-                        }
+                            else
+                            {
+                                LoggersManagerObject.LogError(STREAM("Try to draw the particle from not existing index = " << SimulationSpaceVoxelObject));
+                                throw runtime_error("Try to draw the particle from not existing index");
+                            }
                     }
     }
     CATCH("rendering selected voxel simulation space")

@@ -480,7 +480,7 @@ void CellEngineSimulationParallelExecutionManager::CheckParticlesCenters(const b
     try
     {
         UnsignedInt NumberOfZeroSizedParticles = 0;
-        UnsignedInt NumberOfZeroCenterParticles = 0;
+        UnsignedInt NumberOfBadCenterParticles = 0;
 
         for (const auto& ParticleObject : Particles)
         {
@@ -492,12 +492,12 @@ void CellEngineSimulationParallelExecutionManager::CheckParticlesCenters(const b
             if (ParticleObject.second.Center.X == 0 || ParticleObject.second.Center.Y == 0 || ParticleObject.second.Center.Z == 0)
             {
                 LoggersManagerObject.Log(STREAM("Wrong Particle Center ZERO -> ParticleIndex = " << ParticleObject.first << " " << ParticleObject.second.Index << " " << ParticleObject.second.Center.X << " " << ParticleObject.second.Center.Y << " " << ParticleObject.second.Center.Z << " EntityId = " << ParticleObject.second.EntityId));
-                NumberOfZeroCenterParticles++;
+                NumberOfBadCenterParticles++;
             }
             if (ParticleObject.second.Center.X == 1 || ParticleObject.second.Center.Y == 1 || ParticleObject.second.Center.Z == 1)
             {
                 LoggersManagerObject.Log(STREAM("Wrong Particle Center ONE -> ParticleIndex = " << ParticleObject.first << " " << ParticleObject.second.Index << " " << ParticleObject.second.Center.X << " " << ParticleObject.second.Center.Y << " " << ParticleObject.second.Center.Z << " EntityId = " << ParticleObject.second.EntityId));
-                NumberOfZeroCenterParticles++;
+                NumberOfBadCenterParticles++;
             }
             if (ParticleObject.second.ListOfVoxels.empty() == true)
                 NumberOfZeroSizedParticles++;
@@ -506,11 +506,11 @@ void CellEngineSimulationParallelExecutionManager::CheckParticlesCenters(const b
         LoggersManagerObject.Log(STREAM("Number of erased particles with list of voxels sized zero = " << erase_if(Particles, [](auto& P){ return P.second.ListOfVoxels.empty() == true; })));
         LoggersManagerObject.Log(STREAM("Number of erased particles with bad center = " << erase_if(Particles, [](auto& P){ return P.second.Center.X == 0 || P.second.Center.Y == 0 || P.second.Center.Z == 0; })));
 
-        LoggersManagerObject.Log(STREAM("All Particles Centers Checked. Number Of Zero Center Particles = " << NumberOfZeroCenterParticles));
+        LoggersManagerObject.Log(STREAM("All Particles Centers Checked. Number Of Bad Center Particles = " << NumberOfBadCenterParticles));
         LoggersManagerObject.Log(STREAM("All Particles Size Checked. Number Of Zero Sized Particles = " << NumberOfZeroSizedParticles));
 
-        LoggersManagerObject.Log(STREAM("Number of erased particles with bad center = " << erase_if(Particles, [](auto& P){ return P.second.Center.X == 0 || P.second.Center.Y == 0 || P.second.Center.Z == 0; })));
-        LoggersManagerObject.Log(STREAM("Number of erased particles with list of voxels sized zero = " << erase_if(Particles, [](auto& P){ return P.second.ListOfVoxels.empty() == true; })));
+        LoggersManagerObject.LogError(STREAM("Number of erased particles with bad center = " << erase_if(Particles, [](auto& P){ return P.second.Center.X == 0 || P.second.Center.Y == 0 || P.second.Center.Z == 0; })));
+        LoggersManagerObject.LogError(STREAM("Number of erased particles with list of voxels sized zero = " << erase_if(Particles, [](auto& P){ return P.second.ListOfVoxels.empty() == true; })));
 
         LoggersManagerObject.Log(STREAM(""));
     }
