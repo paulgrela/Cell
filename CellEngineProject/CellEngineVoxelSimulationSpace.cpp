@@ -46,7 +46,6 @@ CellEngineVoxelSimulationSpace::CellEngineVoxelSimulationSpace(ParticlesContaine
         {
             SpacePointer = malloc(sizeof(Space_2048_2048_2048));
 
-            //SetStartValuesForSpaceMinMax();
             XMinGlobal = YMinGlobal = ZMinGlobal = 10000;
             XMaxGlobal = YMaxGlobal = ZMaxGlobal = 0;
 
@@ -137,7 +136,7 @@ void CellEngineVoxelSimulationSpace::ClearVoxelSpaceAndParticles()
 {
     try
     {
-        Particles.clear();
+        GetParticles().clear();
         ClearWholeVoxelSpace();
     }
     CATCH("clearing voxel space and particles")

@@ -341,6 +341,37 @@ void LogParticleData(const UniqueIdInt ParticleIndex, const UnsignedInt CenterIn
     LoggersManagerObject.Log(STREAM("K " << ParticleKindElement.X << " " << ParticleKindElement.Y << " " << ParticleKindElement.Z << endl));
 }
 
+//TO POWINNO BYC W INNYM PLIKU BO TO TYLKO DO VOXELSPACE
+template <class T>
+void CellEngineSimulationSpace::CheckParticlesIndexes(ParticlesContainerInternal<T>& FormerParticlesIndexes, const string& FormerState)
+{
+    try
+    {
+        for (UnsignedInt PosX = 0; PosX < CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension; PosX++)
+            for (UnsignedInt PosY = 0; PosY < CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension; PosY++)
+                for (UnsignedInt PosZ = 0; PosZ < CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension; PosZ++)
+                {
+                    SimulationSpaceVoxel SimulationSpaceVoxelObject = CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GetSpaceVoxelForOuterClass(PosX, PosY, PosZ);
+                    if (SimulationSpaceVoxelObject != CellEngineParticlesVoxelsOperations::GetZeroSimulationSpaceVoxel())
+                        if (auto FoundParticleIter = CellEngineDataFileObjectPointer->GetParticleIteratorFromIndex(SimulationSpaceVoxelObject); FoundParticleIter == CellEngineDataFileObjectPointer->GetParticleEnd())
+                            if (auto FormerParticleIter = FormerParticlesIndexes.find(SimulationSpaceVoxelObject); FormerParticleIter != FormerParticlesIndexes.end())
+                                LoggersManagerObject.LogInformation(STREAM("Try to draw the particle from not existing index but formerly " << FormerState << " = " << SimulationSpaceVoxelObject));
+                            else
+                                LoggersManagerObject.LogInformation(STREAM("Try to draw the particle from not existing index but formerly not " << FormerState <<  " = " << SimulationSpaceVoxelObject));
+                }
+
+    }
+    CATCH("checking particles indexes")
+}
+
+template void CellEngineSimulationSpace::CheckParticlesIndexes(ParticlesContainerInternal<UniqueIdInt>& FormerParticlesIndexes, const string& FormerState);
+template void CellEngineSimulationSpace::CheckParticlesIndexes(ParticlesContainerInternal<Particle>& FormerParticlesIndexes, const string& FormerState);
+
+void CellEngineSimulationSpace::CheckCancelledParticlesIndexes()
+{
+    CheckParticlesIndexes<UniqueIdInt>(CancelledParticlesIndexes, "cancelled");
+}
+
 SimulationSpaceSectorBounds CellEngineSimulationSpace::GetBoundsForThreadSector() const
 {
     SimulationSpaceSectorBounds SimulationSpaceSectorBoundsObject{};
@@ -364,7 +395,11 @@ bool CellEngineSimulationSpace::CancelChemicalReaction(const vector<UniqueIdInt>
         LoggersManagerObject.Log(STREAM("CANCELLED PARTICLE IN BOUNDS " << PlaceStr << " = " << ActualSimulationSpaceSectorBoundsObject.StartXPos << " " << ActualSimulationSpaceSectorBoundsObject.StartYPos << " "  << ActualSimulationSpaceSectorBoundsObject.StartZPos << " " << ActualSimulationSpaceSectorBoundsObject.EndXPos << " " << ActualSimulationSpaceSectorBoundsObject.EndYPos << " " << ActualSimulationSpaceSectorBoundsObject.EndZPos << " " << ParticleKindObjectForProduct.ListOfVoxels.size() << " " << ParticleKindObjectForProduct.EntityId));
 
         for (const auto& CreatedParticleIndex : CreatedParticlesIndexes)
+        {
             RemoveParticle(CreatedParticleIndex, true);
+
+            CancelledParticlesIndexes.insert(pair(CreatedParticleIndex, CreatedParticleIndex));
+        }
 
         const auto stop_time = chrono::high_resolution_clock::now();
 
@@ -493,7 +528,7 @@ bool CellEngineSimulationSpace::MakeChemicalReaction(ChemicalReaction& ReactionO
     return true;
 };
 
-std::vector<UnsignedInt> CellEngineSimulationSpace::GetRandomParticlesVersion3(const UnsignedInt NumberOfReactants, const UnsignedInt MaxNumberOfReactants)
+std::vector<UnsignedInt> CellEngineSimulationSpace::GetRandomParticlesVersion3(const UnsignedInt NumberOfReactants, const UnsignedInt MaxNumberOfReactants) const
 {
     vector<UnsignedInt> RandomParticlesTypes;
 
@@ -772,7 +807,9 @@ void CellEngineSimulationSpace::GenerateOneStepOfRandomReactionsForAllParticles(
 {
     try
     {
-        for (auto& ParticleObject : Particles)
+        FOR_EACH_PARTICLE_IN_XYZ_CONST
+        //    for (const auto& ParticleObject : CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex])
+        //for (auto& ParticleObject : Particles)
             if (ParticleObject.second.SelectedForReaction == false)
                 GenerateOneRandomReactionForChosenParticle(ParticleObject.second);
     }
@@ -786,7 +823,7 @@ void CellEngineSimulationSpace::GenerateOneStepOfRandomReactionsForSelectedRange
         GetRangeOfParticlesForRandomParticles(StartParticleIndexParam, EndParticleIndexParam, MaxParticleIndex);
 
         for (UniqueIdInt ParticleIndex = StartParticleIndexParam; ParticleIndex <= EndParticleIndexParam; ParticleIndex++)
-            if (auto ParticlesIterator = Particles.find(ParticleIndex); ParticlesIterator != Particles.end())
+            if (auto ParticlesIterator = GetParticles().find(ParticleIndex); ParticlesIterator != GetParticles().end())
                 GenerateOneRandomReactionForChosenParticle(ParticlesIterator->second);
     }
     CATCH("generating one step of random reactions for selected range of particles")
@@ -822,10 +859,12 @@ void CellEngineSimulationSpace::SaveNumberOfParticlesStatisticsToFile()
         GetNumberOfParticlesFromParticleKind(ParticlesKindsManagerObject.GetParticleKindFromStrId("M_glc__D_e")->EntityId);
 
         int CounterOfParticles = 0;
-        for (const auto& ParticleData : Particles)
-            if (ParticleData.first != 0)
+        FOR_EACH_PARTICLE_IN_XYZ_CONST
+        //    for (const auto& ParticleObject : CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex])
+        //for (const auto& ParticleData : Particles)
+            if (ParticleObject.first != 0)
             {
-                if (ParticlesKindsManagerObject.GetParticleKind(GetParticleFromIndex(ParticleData.first).EntityId).IdStr == "M_glc__D_e")
+                if (ParticlesKindsManagerObject.GetParticleKind(GetParticleFromIndex(ParticleObject.first).EntityId).IdStr == "M_glc__D_e")
                     CounterOfParticles++;
             }
 
@@ -926,7 +965,7 @@ void CellEngineSimulationSpace::GenerateNStepsOfOneRandomReactionForWholeCellSpa
 
         const auto stop_time = chrono::high_resolution_clock::now();
         LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Execution of generating random reactions in whole cell space has taken time: ","Execution in threads")));
-
+        LoggersManagerObject.Log(STREAM(""));
         LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLine(CellEngineExecutionTimeStatisticsObject.ExecutionDurationTimeForFindingParticles, "Execution of finding particles has taken time: ","Execution in threads")));
         LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLine(CellEngineExecutionTimeStatisticsObject.ExecutionDurationTimeForSavingFoundParticles, "Execution of saving found particles has taken time: ","Execution in threads")));
         LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLine(CellEngineExecutionTimeStatisticsObject.ExecutionDurationTimeForMakingChemicalReactions, "Execution of making chemical reactions has taken time: ","Execution in threads")));

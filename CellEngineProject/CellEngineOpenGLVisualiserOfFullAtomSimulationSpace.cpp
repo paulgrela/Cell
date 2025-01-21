@@ -65,7 +65,10 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
 
 
             //NIECH PRZEGLADA CALA SIATKE/GRID DLA WSZYTSKICH SEKTOROW
-            for (const auto& ParticleObject : CellEngineDataFileObjectPointer->GetParticles())
+            FOR_EACH_PARTICLE_IN_XYZ_ONLY
+                for (const auto& ParticleObject : CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex])
+
+            //for (const auto& ParticleObject : CellEngineDataFileObjectPointer->GetParticles())
             {
                 if (CellEngineConfigDataObject.StencilForDrawingObjectsTypesObject == CellEngineConfigData::StencilForDrawingObjectsTypes::StencilForDrawingOnlyParticlesCenters)
                     glStencilFunc(GL_ALWAYS, uint8_t((NumberOfAllRenderedAtoms >> (8 * StencilBufferLoopCounter))), -1);
@@ -146,11 +149,13 @@ inline void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::DrawChosenAtomU
                     else
                     {
                         //if (TemporaryRenderedAtomsList[ChosenParticleCenterIndex].second > CellEngineDataFileObjectPointer->GetAllAtoms()[TemporaryRenderedAtomsList[ChosenParticleCenterIndex].first].size())
+                        /*
                         if (TemporaryRenderedAtomsList[ChosenParticleCenterIndex].second > CellEngineDataFileObjectPointer->GetParticles()[TemporaryRenderedAtomsList[ChosenParticleCenterIndex].first].ListOfAtoms.size())
                             throw std::runtime_error("ERROR STENCIL INDEX TOO BIG IN INNER 2 = " + std::to_string(TemporaryRenderedAtomsList[ChosenParticleCenterIndex].second) + " MAXIMAL NUMBER OF OBJECTS = " + std::to_string(CellEngineDataFileObjectPointer->GetAllAtoms()[TemporaryRenderedAtomsList[ChosenParticleCenterIndex].first].size()));
                         else
                             //ChosenParticleObject = CellEngineDataFileObjectPointer->GetAllAtoms()[TemporaryRenderedAtomsList[ChosenParticleCenterIndex].first][TemporaryRenderedAtomsList[ChosenParticleCenterIndex].second];
                             ChosenParticleObject = CellEngineDataFileObjectPointer->GetParticles()[TemporaryRenderedAtomsList[ChosenParticleCenterIndex].first].ListOfAtoms[TemporaryRenderedAtomsList[ChosenParticleCenterIndex].second];
+                        */
                     }
                 }
 

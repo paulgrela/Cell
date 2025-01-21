@@ -96,12 +96,16 @@ void CellEngineSimulationParallelExecutionManager::FirstSendParticlesForThreads(
 {
     try
     {
+        SaveFormerParticlesAsVectorElements();
+
         const auto start_time = chrono::high_resolution_clock::now();
 
         FOR_EACH_THREAD_IN_XYZ
             SimulationSpaceDataForThreads[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->ParticlesForThreads.clear();
 
-        for (const auto& ParticleObject : Particles)
+        FOR_EACH_PARTICLE_IN_XYZ_CONST
+            //for (const auto& ParticleObject : CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex])
+        //for (const auto& ParticleObject : Particles)
         {
             UnsignedInt ThreadXIndex = floor(ParticleObject.second.Center.X / CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace);
             UnsignedInt ThreadYIndex = floor(ParticleObject.second.Center.Y / CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace);
@@ -147,9 +151,9 @@ void PrintDataAboutParticlesExchange(const bool PrintInfo, const chrono::time_po
     }
 }
 
-vector<vector<vector<ParticlesContainer<Particle>>>> CellEngineSimulationParallelExecutionManager::GatherParticlesToExchangeBetweenThreads(const UnsignedInt TypeOfGet, const UnsignedInt ThreadXIndex, const UnsignedInt ThreadYIndex, const UnsignedInt ThreadZIndex, UnsignedInt& ExchangedParticleCounter, const bool StateOfSimulationSpaceDivisionForThreads, const bool PrintInfo) const
+vector<vector<vector<ParticlesContainerInternal<Particle>>>> CellEngineSimulationParallelExecutionManager::GatherParticlesToExchangeBetweenThreads(const UnsignedInt TypeOfGet, const UnsignedInt ThreadXIndex, const UnsignedInt ThreadYIndex, const UnsignedInt ThreadZIndex, UnsignedInt& ExchangedParticleCounter, const bool StateOfSimulationSpaceDivisionForThreads, const bool PrintInfo) const
 {
-    vector<vector<vector<ParticlesContainer<Particle>>>> ParticlesToExchange(CellEngineConfigDataObject.NumberOfXThreadsInSimulation, vector<vector<ParticlesContainer<Particle>>>(CellEngineConfigDataObject.NumberOfYThreadsInSimulation, vector<ParticlesContainer<Particle>>(CellEngineConfigDataObject.NumberOfZThreadsInSimulation)));
+    vector<vector<vector<ParticlesContainerInternal<Particle>>>> ParticlesToExchange(CellEngineConfigDataObject.NumberOfXThreadsInSimulation, vector<vector<ParticlesContainerInternal<Particle>>>(CellEngineConfigDataObject.NumberOfYThreadsInSimulation, vector<ParticlesContainerInternal<Particle>>(CellEngineConfigDataObject.NumberOfZThreadsInSimulation)));
 
     try
     {
@@ -223,7 +227,7 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
 
         const auto start_time = chrono::high_resolution_clock::now();
 
-        vector<vector<vector<ParticlesContainer<Particle>>>> ParticlesToExchange;
+        vector<vector<vector<ParticlesContainerInternal<Particle>>>> ParticlesToExchange;
 
         {
             lock_guard LockGuardObject1{ SimulationSpaceDataForThreads[CurrentThreadPos.ThreadPosX - 1][CurrentThreadPos.ThreadPosY - 1][CurrentThreadPos.ThreadPosZ - 1]->MainExchangeParticlesMutexObject };
@@ -255,7 +259,7 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
 
         const auto start_time = chrono::high_resolution_clock::now();
 
-        vector<vector<vector<ParticlesContainer<Particle>>>> ParticlesToExchange;
+        vector<vector<vector<ParticlesContainerInternal<Particle>>>> ParticlesToExchange;
 
         {
             lock_guard LockGuardObject1{ SimulationSpaceDataForThreads[CurrentThreadPos.ThreadPosX - 1][CurrentThreadPos.ThreadPosY - 1][CurrentThreadPos.ThreadPosZ - 1]->MainExchangeParticlesMutexObject };
@@ -280,6 +284,31 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
     CATCH("exchanging particles between threads")
 }
 
+void CellEngineSimulationParallelExecutionManager::GatherParticlesFromThreads()
+{
+    try
+    {
+        GetParticles().clear();
+        FOR_EACH_THREAD_IN_XYZ
+            for (const auto& ParticleObject : SimulationSpaceDataForThreads[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->ParticlesForThreads)
+                //Particles[0][0][0].insert(ParticleObject);
+                GetParticles().insert(ParticleObject);
+    }
+    CATCH("gathering cancelled from threads")
+}
+
+void CellEngineSimulationParallelExecutionManager::GatherCancelledParticlesIndexesFromThreads()
+{
+    try
+    {
+        CancelledParticlesIndexes.clear();
+        FOR_EACH_THREAD_IN_XYZ
+            for (const auto& CancelledParticleIndex : SimulationSpaceDataForThreads[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->CancelledParticlesIndexes)
+                CancelledParticlesIndexes.insert(CancelledParticleIndex);
+    }
+    CATCH("gathering particles from threads")
+}
+
 void CellEngineSimulationParallelExecutionManager::GatherParticlesFromThreadsToParticlesInMainThread()
 {
     try
@@ -292,13 +321,12 @@ void CellEngineSimulationParallelExecutionManager::GatherParticlesFromThreadsToP
         {
             lock_guard<recursive_mutex> LockGuard{ CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderMenuAndVoxelSimulationSpaceMutexObject };
 
-            Particles.clear();
+            GatherParticlesFromThreads();
 
-            FOR_EACH_THREAD_IN_XYZ
-                for (const auto& ParticleObject : SimulationSpaceDataForThreads[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->ParticlesForThreads)
-                    Particles.insert(ParticleObject);
+            //ZMIANA
+            InitiateFreeParticleIndexes(GetParticles(), false);
 
-            InitiateFreeParticleIndexes(Particles, false);
+            GatherCancelledParticlesIndexesFromThreads();
         }
         CellEngineConfigDataObject.UseMutexBetweenMainScreenThreadAndMenuThreads = RememberStateOfUseMutexBetweenMainScreenThreadAndMenuThreads;
 
@@ -308,7 +336,7 @@ void CellEngineSimulationParallelExecutionManager::GatherParticlesFromThreadsToP
 
         CheckParticlesCenters(false);
     }
-    CATCH("sending particles for threads")
+    CATCH("gathering particles from threads to particles in main thread")
 }
 
 void CellEngineSimulationParallelExecutionManager::GenerateOneStepOfSimulationForWholeCellSpaceInOneThread(const UnsignedInt NumberOfStepsInside, const UnsignedInt StepOutside, const UnsignedInt ThreadXIndex, const UnsignedInt ThreadYIndex, const UnsignedInt ThreadZIndex, bool StateOfSimulationSpaceDivisionForThreads)
@@ -475,14 +503,25 @@ void CellEngineSimulationParallelExecutionManager::GenerateNStepsOfSimulationWit
     CATCH("generate n steps of simulation with sending particles to threads and gathering particles to main threads for whole cell space")
 }
 
-void CellEngineSimulationParallelExecutionManager::CheckParticlesCenters(const bool PrintAllParticles) const
+void CellEngineSimulationParallelExecutionManager::SaveFormerParticlesAsVectorElements()
+{
+    try
+    {
+        FormerParticlesIndexes = GetParticles();
+    }
+    CATCH("saving former particles as vector elements")
+}
+
+void CellEngineSimulationParallelExecutionManager::CheckParticlesCenters(const bool PrintAllParticles)
 {
     try
     {
         UnsignedInt NumberOfZeroSizedParticles = 0;
         UnsignedInt NumberOfBadCenterParticles = 0;
 
-        for (const auto& ParticleObject : Particles)
+        FOR_EACH_PARTICLE_IN_XYZ_CONST
+        //    for (const auto& ParticleObject : CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex])
+        //for (const auto& ParticleObject : Particles)
         {
             if (PrintAllParticles ==  true)
                 LoggersManagerObject.Log(STREAM("ParticleIndex = " << ParticleObject.second.Index << " " << ParticleObject.second.Center.X << " " << ParticleObject.second.Center.Y << " " << ParticleObject.second.Center.Z));
@@ -503,16 +542,19 @@ void CellEngineSimulationParallelExecutionManager::CheckParticlesCenters(const b
                 NumberOfZeroSizedParticles++;
         }
 
-        LoggersManagerObject.Log(STREAM("Number of erased particles with list of voxels sized zero = " << erase_if(Particles, [](auto& P){ return P.second.ListOfVoxels.empty() == true; })));
-        LoggersManagerObject.Log(STREAM("Number of erased particles with bad center = " << erase_if(Particles, [](auto& P){ return P.second.Center.X == 0 || P.second.Center.Y == 0 || P.second.Center.Z == 0; })));
+        LoggersManagerObject.Log(STREAM("Number of erased particles with list of voxels sized zero = " << erase_if(GetParticles(), [](auto& P){ return P.second.ListOfVoxels.empty() == true; })));
+        LoggersManagerObject.Log(STREAM("Number of erased particles with bad center = " << erase_if(GetParticles(), [](auto& P){ return P.second.Center.X == 0 || P.second.Center.Y == 0 || P.second.Center.Z == 0; })));
 
         LoggersManagerObject.Log(STREAM("All Particles Centers Checked. Number Of Bad Center Particles = " << NumberOfBadCenterParticles));
         LoggersManagerObject.Log(STREAM("All Particles Size Checked. Number Of Zero Sized Particles = " << NumberOfZeroSizedParticles));
 
-        LoggersManagerObject.LogError(STREAM("Number of erased particles with bad center = " << erase_if(Particles, [](auto& P){ return P.second.Center.X == 0 || P.second.Center.Y == 0 || P.second.Center.Z == 0; })));
-        LoggersManagerObject.LogError(STREAM("Number of erased particles with list of voxels sized zero = " << erase_if(Particles, [](auto& P){ return P.second.ListOfVoxels.empty() == true; })));
+        LoggersManagerObject.LogError(STREAM("Number of erased particles with bad center = " << erase_if(GetParticles(), [](auto& P){ return P.second.Center.X == 0 || P.second.Center.Y == 0 || P.second.Center.Z == 0; })));
+        LoggersManagerObject.LogError(STREAM("Number of erased particles with list of voxels sized zero = " << erase_if(GetParticles(), [](auto& P){ return P.second.ListOfVoxels.empty() == true; })));
 
         LoggersManagerObject.Log(STREAM(""));
+
+        CellEngineSimulationSpace::CheckParticlesIndexes<Particle>(FormerParticlesIndexes, "existed");
     }
     CATCH("generating n steps simulation for whole cell space in threads")
 }
+

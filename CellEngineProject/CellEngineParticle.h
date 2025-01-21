@@ -80,12 +80,21 @@ public:
     ElectricChargeType ElectricCharge{};
 public:
     vector3_float32 Center{};
+    //vector3_16 Center{};
     ListOfVoxelsType ListOfVoxels;
     ListOfAtomsType ListOfAtoms;
 public:
     std::string SequenceStr;
     UnsignedInt PositionInSequence{};
 public:
+    // void SetCenterCoordinates(const PositionInt XCenterParam, const PositionInt YCenterParam, const PositionInt ZCenterParam)
+    // {
+    //     Center.X = XCenterParam;
+    //     Center.Y = YCenterParam;
+    //     Center.Z = ZCenterParam;
+    // }
+
+
     void SetCenterCoordinates(const float XCenterParam, const float YCenterParam, const float ZCenterParam)
     {
         //if (Center.X == 0 || Center.Y == 0 || Center.Z == 0)

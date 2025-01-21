@@ -41,8 +41,24 @@ struct CurrentThreadPosType
     }
 };
 
-template<class Particle>
-using ParticlesContainer = std::unordered_map<UniqueIdInt, Particle>;
+struct CurrentSectorPosType
+{
+    UnsignedInt	SectorPosX, SectorPosY, SectorPosZ;
+
+    bool operator==(const CurrentSectorPosType& CTP) const
+    {
+        return (CTP.SectorPosX == SectorPosX && CTP.SectorPosY == SectorPosY && CTP.SectorPosZ == SectorPosZ);
+    }
+};
+
+template <class Particle>
+using ParticlesContainerInternal = std::unordered_map<UniqueIdInt, Particle>;
+//
+// template <class Particle>
+// using ParticlesInSectorsContainer = std::vector<std::vector<std::vector<ParticlesContainer<Particle>>>>;
+
+template <class Particle>
+using ParticlesContainer = std::vector<std::vector<std::vector<ParticlesContainerInternal<Particle>>>>;
 
 template <class SimulationSpace>
 using SimulationSpaceForParallelExecutionContainer = std::vector<std::vector<std::vector<std::shared_ptr<SimulationSpace>>>>;

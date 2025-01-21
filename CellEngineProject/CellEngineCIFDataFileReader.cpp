@@ -336,6 +336,7 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile()
                                     //InsertAtom(LocalCellEngineAllAtomsObject, AppliedAtom, ParticleIndex);
                             }
 
+                                                                                                                        //PONIZSZA LINIJKA DO ZMIANY - MA WYLICZAC DO SEKTOR DO KTOREGO MAJA TRAFIC CZASTKi
                                                                                                                         GetParticleFromIndex(ParticleIndex).ListOfAtoms = ListOfAtoms;
                         }
                     }

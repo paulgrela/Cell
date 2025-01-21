@@ -10,6 +10,8 @@ class CellEngineDataBuilderForVoxelSimulationSpace : public CellEngineParticlesD
 protected:
     void SetStartValues() override
     {
+        GetMemoryForParticlesInSectors();
+
         CellEngineVoxelSimulationSpaceObjectPointer = std::make_unique<CellEngineVoxelSimulationSpace>(Particles, true, 0, CurrentThreadPosType{ 0, 0, 0 });
 
         CellEngineSimulationParallelExecutionManager::CreateSimulationSpaceForParallelExecution<CellEngineVoxelSimulationSpace>(CellEngineSimulationSpaceForThreadsObjectsPointer, Particles);

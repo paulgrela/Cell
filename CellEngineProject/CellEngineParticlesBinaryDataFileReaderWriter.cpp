@@ -117,7 +117,9 @@ void CellEngineParticlesBinaryDataFileReaderWriter::SaveParticlesToBinaryFile(of
         LoggersManagerObject.Log(STREAM("Number of Particles to be saved = " << ParticlesSize));
         ParticlesDataFile.write((char*)&ParticlesSize, sizeof(ParticlesSize));
 
-        for (auto& ParticleObject : Particles)
+        FOR_EACH_PARTICLE_IN_XYZ_CONST
+        //    for (const auto& ParticleObject : Particles[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex])
+        //for (auto& ParticleObject : Particles)
         {
             ParticlesDataFile.write((char*)&ParticleObject.second.EntityId, sizeof(ParticleObject.second.EntityId));
             ParticlesDataFile.write((char*)&ParticleObject.second.ChainId, sizeof(ParticleObject.second.ChainId));
@@ -270,7 +272,9 @@ void CellEngineParticlesBinaryDataFileReaderWriter::PrepareParticlesAfterReading
     {
         LoggersManagerObject.Log(STREAM("START OF PREPARING PARTICLES"));
 
-        for (auto& ParticleObject : Particles)
+        FOR_EACH_PARTICLE_IN_XYZ
+        //    for (auto& ParticleObject : Particles[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex])
+        //for (auto& ParticleObject : Particles)
             if (CellEngineUseful::IsDNA(ParticleObject.second.EntityId) == false)
             {
                 CellEngineVoxelSimulationSpaceObjectPointer->SetAllVoxelsInListOfVoxelsToValueForOuterClass(ParticleObject.second.ListOfVoxels, ParticleObject.second.Index);
@@ -627,12 +631,12 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesKindsAndParticl
 {
     try
     {
-        Particles.clear();
+        LoggersManagerObject.Log(STREAM("START OF READING DATA FROM BINARY FILE"));
+
+        Particles[0][0][0].clear();
         ParticlesKindsManagerObject.Genes.clear();
         ParticlesKindsManagerObject.ParticlesKinds.clear();
         ChemicalReactionsManagerObject.ClearAllChemicalReactions();
-
-        LoggersManagerObject.Log(STREAM("START OF READING DATA FROM BINARY FILE"));
 
         string OpenFileName = (Type == CellEngineConfigData::TypesOfFileToRead::CIFFile ? CellEngineConfigDataObject.CellStateFileName : CellEngineConfigDataObject.CellStateFileNameBackup);
         if (CellEngineConfigDataObject.MixedFullAtomWithVoxelSpace == true)

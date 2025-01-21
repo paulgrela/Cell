@@ -12,20 +12,27 @@
 #include "CellEngineParticlesVoxelsOperations.h"
 #include "CellEngineBasicParallelExecutionData.h"
 
+//#include "CellEngineDataFile.h"
+
 class CellEngineBasicParticlesOperations : public CellEngineBasicParallelExecutionData
 {
 protected:
     UnsignedInt MaxParticleIndex{};
     std::stack<UniqueIdInt> FreeIndexesOfParticles;
 protected:
-   ParticlesContainer<Particle>& Particles;
+    ParticlesContainer<Particle>& Particles;
 protected:
-    inline ParticlesContainer<Particle>& GetParticles()
+    inline ParticlesContainerInternal<Particle>& GetParticles()
     {
-        if (CurrentThreadIndex == 0)
-            return Particles;
+        if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSpace)
+            return Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ];
         else
-            return ParticlesForThreads;
+        {
+            if (CurrentThreadIndex == 0)
+                return Particles[0][0][0];
+            else
+                return ParticlesForThreads;
+        }
     }
 protected:
     inline Particle& GetParticleFromIndex(const UniqueIdInt ParticleIndex)
@@ -38,7 +45,7 @@ public:
         return FreeIndexesOfParticles.size();
     }
 protected:
-    void InitiateFreeParticleIndexes(const ParticlesContainer<Particle>& LocalParticles, bool PrintInfo);
+    void InitiateFreeParticleIndexes(const ParticlesContainerInternal<Particle>& LocalParticles, bool PrintInfo);
 protected:
     inline UniqueIdInt GetNewFreeIndexOfParticle()
     {

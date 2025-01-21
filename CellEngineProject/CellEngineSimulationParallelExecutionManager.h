@@ -24,9 +24,14 @@ public:
     void ExchangeParticlesBetweenThreadsParallelInsert(UnsignedInt StepOutside, bool StateOfSimulationSpaceDivisionForThreads, bool PrintInfo) const;
     void ExchangeParticlesBetweenThreadsParallelExtract(UnsignedInt StepOutside, bool StateOfSimulationSpaceDivisionForThreads, bool PrintInfo) const;
 public:
-    void CheckParticlesCenters(bool PrintAllParticles) const;
+    void CheckParticlesCenters(bool PrintAllParticles);
     void GatherParticlesFromThreadsToParticlesInMainThread();
     void FirstSendParticlesForThreads(bool PrintCenterOfParticleWithThreadIndex, bool PrintTime);
+public:
+    void GatherCancelledParticlesIndexesFromThreads();
+    void GatherParticlesFromThreads();
+public:
+    void SaveFormerParticlesAsVectorElements();
 public:
     void JoinStatisticsFromThreads(std::vector<std::map<UnsignedInt, ReactionStatistics>>& SavedReactionsMap, UnsignedInt SimulationStepNumber) const;
 public:
@@ -38,7 +43,7 @@ private:
 private:
     void GenerateNStepsOfSimulationForWholeCellSpaceInOneThread(barrier<>* SyncPoint, bool* StateOfSimulationSpaceDivisionForThreads, UnsignedInt NumberOfStepsOutside, UnsignedInt NumberOfStepsInside, ThreadIdType CurrentThreadIndexParam, UnsignedInt ThreadXIndexParam, UnsignedInt ThreadYIndexParam, UnsignedInt ThreadZIndexParam) const;
 private:
-    vector<vector<vector<ParticlesContainer<Particle>>>> GatherParticlesToExchangeBetweenThreads(UnsignedInt TypeOfGet, UnsignedInt ThreadXIndex, UnsignedInt ThreadYIndex, UnsignedInt ThreadZIndex, UnsignedInt& ExchangedParticleCounter, bool StateOfSimulationSpaceDivisionForThreads, bool PrintInfo) const;
+    vector<vector<vector<ParticlesContainerInternal<Particle>>>> GatherParticlesToExchangeBetweenThreads(UnsignedInt TypeOfGet, UnsignedInt ThreadXIndex, UnsignedInt ThreadYIndex, UnsignedInt ThreadZIndex, UnsignedInt& ExchangedParticleCounter, bool StateOfSimulationSpaceDivisionForThreads, bool PrintInfo) const;
 private:
     std::vector<std::vector<std::vector<std::shared_ptr<CellEngineSimulationSpace>>>>& SimulationSpaceDataForThreads;
 public:

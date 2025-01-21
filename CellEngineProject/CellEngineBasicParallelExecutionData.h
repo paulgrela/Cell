@@ -12,14 +12,18 @@ protected:
     ThreadIdType CurrentThreadIndex{ 0 };
     CurrentThreadPosType CurrentThreadPos{ 1, 1, 1 };
 protected:
+    CurrentSectorPosType CurrentSectorPos{ 0, 0, 0 };
     SimulationSpaceSectorBounds ActualSimulationSpaceSectorBoundsObject{ 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 protected:
     std::mutex MainExchangeParticlesMutexObject;
 protected:
-    ParticlesContainer<Particle> ParticlesForThreads;
+    ParticlesContainerInternal<Particle> ParticlesForThreads;
 protected:
     UnsignedInt ErrorCounter = 0;
     UnsignedInt AddedParticlesInReactions = 0;
+protected:
+    ParticlesContainerInternal<Particle> FormerParticlesIndexes;
+    ParticlesContainerInternal<UniqueIdInt> CancelledParticlesIndexes;
 };
 
 #endif

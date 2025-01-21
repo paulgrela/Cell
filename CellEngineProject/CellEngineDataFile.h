@@ -4,6 +4,8 @@
 
 #include <memory>
 
+#include "CellEngineMacros.h"
+
 #include "CellEngineAtom.h"
 #include "CellEngineConfigData.h"
 #include "CellEngineFilmOfStructures.h"
@@ -27,16 +29,39 @@ protected:
 protected:
     inline Particle& GetParticleFromIndex(const UniqueIdInt ParticleIndex)
     {
-        return Particles[ParticleIndex];
+        //return Particles[ParticleIndex];
+        return Particles[0][0][0][ParticleIndex];
     }
 public:
-    ParticlesContainer<Particle>::iterator GetParticleIteratorFromIndex(const UniqueIdInt ParticleIndex)
+    //ParticlesContainer<Particle>::iterator GetParticleIteratorFromIndex(const UniqueIdInt ParticleIndex)
+    ParticlesContainerInternal<Particle>::iterator GetParticleIteratorFromIndex(const UniqueIdInt ParticleIndex)
     {
-        return Particles.find(ParticleIndex);
+        //return Particles.find(ParticleIndex);
+        return Particles[0][0][0].find(ParticleIndex);
     }
-    auto GetParticleEnd() const
+    [[nodiscard]] auto GetParticleEnd() const
     {
-        return Particles.end();
+        return Particles[0][0][0].end();
+    }
+public:
+    void GetMemoryForParticlesInSectors()
+    {
+        try
+        {
+            Particles.clear();
+            Particles.resize(CellEngineConfigDataObject.NumberOfParticlesSectorsInX);
+            for (auto& ParticlesInSectorsXPos : Particles)
+            {
+                ParticlesInSectorsXPos.resize(CellEngineConfigDataObject.NumberOfParticlesSectorsInY);
+                for (auto& ParticlesInSectorsYPos : ParticlesInSectorsXPos)
+                {
+                    ParticlesInSectorsYPos.resize(CellEngineConfigDataObject.NumberOfParticlesSectorsInZ);
+                    for (auto& ParticlesInSectorsZPos : ParticlesInSectorsYPos)
+                        ParticlesInSectorsZPos.clear();
+                }
+            }
+        }
+        CATCH("getting memory for particles in sectors")
     }
 protected:
     std::vector<std::vector<CellEngineAtom>> ParticlesCenters;
@@ -70,17 +95,19 @@ public:
         try
         {
             float NumberOfParticles = 0;
-            for (auto& ParticleObject : Particles)
-            {
-                vmath::vec3 CenterOfParticle(0.0, 0.0, 0.0);
-                for (const CellEngineAtom& AtomObject : ParticleObject.second.ListOfAtoms)
+
+            FOR_EACH_PARTICLE_IN_XYZ
+                //for (auto& ParticleObject : Particles[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex])
                 {
-                    Center += AtomObject.Position();
-                    CenterOfParticle += AtomObject.Position();
-                    NumberOfParticles++;
+                    vmath::vec3 CenterOfParticle(0.0, 0.0, 0.0);
+                    for (const CellEngineAtom& AtomObject : ParticleObject.second.ListOfAtoms)
+                    {
+                        Center += AtomObject.Position();
+                        CenterOfParticle += AtomObject.Position();
+                        NumberOfParticles++;
+                    }
+                    ParticleObject.second.Center = { CenterOfParticle.X() / static_cast<float>(ParticleObject.second.ListOfAtoms.size()), CenterOfParticle.Y() / static_cast<float>(ParticleObject.second.ListOfAtoms.size()), CenterOfParticle.Z() / static_cast<float>(ParticleObject.second.ListOfAtoms.size()) };
                 }
-                ParticleObject.second.Center = { CenterOfParticle.X() / static_cast<float>(ParticleObject.second.ListOfAtoms.size()), CenterOfParticle.Y() / static_cast<float>(ParticleObject.second.ListOfAtoms.size()), CenterOfParticle.Z() / static_cast<float>(ParticleObject.second.ListOfAtoms.size()) };
-            }
             Center /= NumberOfParticles;
         }
         CATCH_AND_THROW("counting mass center")

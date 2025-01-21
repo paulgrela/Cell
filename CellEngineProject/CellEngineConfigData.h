@@ -75,6 +75,10 @@ public:
     };
     TypesOfSpace TypeOfSpace = TypesOfSpace::FullAtomSpace;
 public:
+    UnsignedInt NumberOfParticlesSectorsInX = 1;
+    UnsignedInt NumberOfParticlesSectorsInY = 1;
+    UnsignedInt NumberOfParticlesSectorsInZ = 1;
+public:
     UnsignedInt SizeOfSimulationSpaceInEachDimension{};
     float DivisionFactorForSimulationSpace{};
     float DivisionFactorForReadingPositionsOfParticles{ 1.0 };

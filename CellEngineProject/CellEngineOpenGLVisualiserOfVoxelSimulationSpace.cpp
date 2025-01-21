@@ -21,6 +21,7 @@ import CellEngineColors;
 #include "CellEngineColors.h"
 #endif
 
+constexpr bool DrawError = false;
 
 std::tuple<UnsignedInt, UnsignedInt, UnsignedInt> CellEngineOpenGLVisualiserOfVoxelSimulationSpace::GetStartPositions()
 {
@@ -144,10 +145,8 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSelectedSpace(const
                                 }
                             }
                             else
-                            {
+                            if (DrawError ==  true)
                                 LoggersManagerObject.LogError(STREAM("Try to draw the particle from not existing index = " << SimulationSpaceVoxelObject));
-                                throw runtime_error("Try to draw the particle from not existing index");
-                            }
                     }
     }
     CATCH("rendering selected voxel simulation space")

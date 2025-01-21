@@ -41,6 +41,11 @@ CellEngineFullAtomSimulationSpace::CellEngineFullAtomSimulationSpace(ParticlesCo
         CurrentThreadIndex = ThreadIndexParam;
         CurrentThreadPos = CurrentThreadPosParam;
 
+        if (CurrentThreadIndex == 0)
+        {
+            //przydziel pamiec dla
+        }
+
         LoggersManagerObject.Log(STREAM("CurrentThreadIndexes = " << CurrentThreadIndex << " (" << CurrentThreadPos.ThreadPosX << "," << CurrentThreadPos.ThreadPosY << "," << CurrentThreadPos.ThreadPosZ << ")" << std::endl));
 
         Genomes.resize(2);
@@ -123,7 +128,7 @@ void CellEngineFullAtomSimulationSpace::ClearVoxelSpaceAndParticles()
 {
     try
     {
-        Particles.clear();
+        GetParticles().clear();
         ClearWholeVoxelSpace();
     }
     CATCH("clearing voxel space and particles")

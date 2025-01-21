@@ -90,7 +90,8 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesAsCopiedMap()
 {
     try
     {
-        ParticlesSnapshotsCopiedUnorderedMap.emplace_back(Particles);
+        //DO POPRAWY
+        ParticlesSnapshotsCopiedUnorderedMap.emplace_back(GetParticles());
     }
     CATCH("saving particles as copied map")
 }
@@ -101,7 +102,7 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesAsVectorElements()
     {
         ParticlesSnapshots[SimulationStepNumber - 1].reserve(Particles.size());
 
-        transform(Particles.begin(), Particles.end(), std::back_inserter(ParticlesSnapshots[SimulationStepNumber - 1]), [](const auto& ParticlesMapElement){ return ParticlesMapElement.second; } );
+        transform(GetParticles().begin(), GetParticles().end(), std::back_inserter(ParticlesSnapshots[SimulationStepNumber - 1]), [](const auto& ParticlesMapElement){ return ParticlesMapElement.second; } );
     }
     CATCH("saving particles as vector elements")
 }

@@ -21,7 +21,9 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::UpdateSequence(Particle
 {
     try
     {
-        for (auto& ParticleObject : Particles)
+        FOR_EACH_PARTICLE_IN_XYZ
+        //    for (auto& ParticleObject : Particles[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex])
+        //for (auto& ParticleObject : Particles)
             if (ParticleObject.second.EntityId != 0)
             {
                 auto ParticleKindObject = ParticlesKindsManagerObject.GetParticleKind(ParticleObject.second.EntityId);
@@ -42,7 +44,9 @@ UnsignedInt CellEngineRealRandomParticlesInVoxelSpaceGenerator::GetNumberOfRealP
 
     try
     {
-        for (const auto& ParticleObject : Particles)
+        FOR_EACH_PARTICLE_IN_XYZ_CONST
+        //    for (const auto& ParticleObject : Particles[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex])
+        //for (const auto& ParticleObject : Particles)
             if (ParticleObject.second.EntityId != 0)
             {
                 auto ParticleKindObject = ParticlesKindsManagerObject.GetParticleKind(ParticleObject.second.EntityId);
@@ -130,7 +134,9 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::PrintNumberOfParticlesF
 
         UniqueIdInt OldParticlesCounter = 0;
         set<UniqueIdInt> TestSet;
-        for (const auto& ParticleObject : Particles)
+        FOR_EACH_PARTICLE_IN_XYZ_CONST
+            //for (const auto& ParticleObject : Particles[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex])
+        //for (const auto& ParticleObject : Particles)
         {
             if (ParticleObject.second.EntityId < StartParticleKindId)
             {

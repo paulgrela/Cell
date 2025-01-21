@@ -61,7 +61,7 @@ public:
         try
         {
             const char *LogDirectory = "." OS_DIR_SEP;
-            LoggersManagerObject.InitializeSpecialLogFiles(false, true, false, false, false, false, false, true, false);
+            LoggersManagerObject.InitializeSpecialLogFiles(false, true, false, false, false, true, false, true, false);
             LoggersManagerObject.InitializeFilesNames({"AllMessages" });
             LoggersManagerObject.InitializeSelectiveWordsFunctions({[](const string &s){ return true; } });
             LoggersManagerObject.InitializeLoggerManagerDataForTask("CELL_RESULTS", LogDirectory, string("Logs." + GetActualDateTimeStandardCPP(".", ".", ".", ".", ".")), true, 0, function<void(const UnsignedInt &CurrentThreadId, const UnsignedInt FileNumber, const string &MessageStr)>());
@@ -846,9 +846,13 @@ public:
 
                     ImGui::Text("");
 
-                    ColorButton(AlignString("CHECK PARTCILES CENTERS", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
+                    ColorButton(AlignString("CHECK PARTICLES CENTERS", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
                     {
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->CheckParticlesCenters(false);
+                    });
+                    ColorButton(AlignString("CHECK PARTICLES CANCELLED", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
+                    {
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->CheckCancelledParticlesIndexes();
                     });
 
                     ImGui::Text("");

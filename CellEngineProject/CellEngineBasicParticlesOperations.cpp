@@ -1,12 +1,14 @@
 
 #include <vector>
 
+#include "CellEngineMacros.h"
+
 #include "CellEngineParticlesKindsManager.h"
 #include "CellEngineBasicParticlesOperations.h"
 
 using namespace std;
 
-void  CellEngineBasicParticlesOperations::InitiateFreeParticleIndexes(const ParticlesContainer<Particle>& LocalParticles, const bool PrintInfo)
+void  CellEngineBasicParticlesOperations::InitiateFreeParticleIndexes(const ParticlesContainerInternal<Particle>& LocalParticles, const bool PrintInfo)
 {
     try
     {
@@ -30,7 +32,8 @@ void CellEngineBasicParticlesOperations::PreprocessData(const bool UpdateParticl
 {
     try
     {
-        InitiateFreeParticleIndexes(Particles, true);
+        //InitiateFreeParticleIndexes(Particles, true);
+        InitiateFreeParticleIndexes(Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ], true);
         GetMinMaxCoordinatesForAllParticles<T>(UpdateParticleKindListOfVoxelsBool);
     }
     CATCH("preprocessing data for voxel simulation space")
@@ -81,9 +84,11 @@ void CellEngineBasicParticlesOperations::GetMinMaxCoordinatesForAllParticles(con
     {
         LoggersManagerObject.Log(STREAM("GET MIN MAX FOR ALL PARTICLES"));
 
-        for (auto& ParticleObject : Particles)
-            if (ParticleObject.second.EntityId != 0)
-                GetMinMaxCoordinatesForParticle<T>(ParticleObject.second, UpdateParticleKindListOfVoxelsBool);
+        FOR_EACH_PARTICLE_IN_XYZ
+            //for (auto& ParticleObject : Particles[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex])
+        //for (auto& ParticleObject : Particles)
+                if (ParticleObject.second.EntityId != 0)
+                    GetMinMaxCoordinatesForParticle<T>(ParticleObject.second, UpdateParticleKindListOfVoxelsBool);
     }
     CATCH("getting min max coordinates for all particles")
 }
@@ -178,7 +183,9 @@ vector<UniqueIdInt> CellEngineBasicParticlesOperations::GetAllParticlesWithChose
     try
     {
         ListOfParticlesIndexes.reserve(1024 * 1024);
-        for (const auto& ParticleObject : Particles)
+        FOR_EACH_PARTICLE_IN_XYZ_CONST
+        //    for (const auto& ParticleObject : Particles[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex])
+        //for (const auto& ParticleObject : Particles)
             if (ParticleObject.second.EntityId != 0)
             {
                 auto ParticleKindObject = ParticlesKindsManagerObject.GetParticleKind(ParticleObject.second.EntityId);
@@ -200,7 +207,9 @@ vector<UniqueIdInt> CellEngineBasicParticlesOperations::GetAllParticlesWithChose
     try
     {
         ListOfParticlesIndexes.reserve(1024 * 1024);
-        for (auto& ParticleObject : Particles)
+        FOR_EACH_PARTICLE_IN_XYZ_CONST
+        //    for (const auto& ParticleObject : Particles[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex])
+        //for (auto& ParticleObject : Particles)
             if (ParticleObject.second.EntityId == EntityId)
                 ListOfParticlesIndexes.emplace_back(ParticleObject.first);
     }
@@ -215,7 +224,9 @@ UnsignedInt CellEngineBasicParticlesOperations::GetNumberOfParticlesWithChosenEn
 
     try
     {
-        for (auto& ParticleObject : Particles)
+        FOR_EACH_PARTICLE_IN_XYZ_CONST
+        //    for (const auto& ParticleObject : Particles[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex])
+        //for (auto& ParticleObject : Particles)
             if (ParticleObject.second.EntityId == EntityId)
                 ParticleCounter++;
     }
