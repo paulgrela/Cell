@@ -104,8 +104,6 @@ void CellEngineSimulationParallelExecutionManager::FirstSendParticlesForThreads(
             SimulationSpaceDataForThreads[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->ParticlesForThreads.clear();
 
         FOR_EACH_PARTICLE_IN_XYZ_CONST
-            //for (const auto& ParticleObject : CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex])
-        //for (const auto& ParticleObject : Particles)
         {
             UnsignedInt ThreadXIndex = floor(ParticleObject.second.Center.X / CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace);
             UnsignedInt ThreadYIndex = floor(ParticleObject.second.Center.Y / CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace);
@@ -291,7 +289,6 @@ void CellEngineSimulationParallelExecutionManager::GatherParticlesFromThreads()
         GetParticles().clear();
         FOR_EACH_THREAD_IN_XYZ
             for (const auto& ParticleObject : SimulationSpaceDataForThreads[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->ParticlesForThreads)
-                //Particles[0][0][0].insert(ParticleObject);
                 GetParticles().insert(ParticleObject);
     }
     CATCH("gathering cancelled from threads")
@@ -323,7 +320,6 @@ void CellEngineSimulationParallelExecutionManager::GatherParticlesFromThreadsToP
 
             GatherParticlesFromThreads();
 
-            //ZMIANA
             InitiateFreeParticleIndexes(GetParticles(), false);
 
             GatherCancelledParticlesIndexesFromThreads();
@@ -520,8 +516,6 @@ void CellEngineSimulationParallelExecutionManager::CheckParticlesCenters(const b
         UnsignedInt NumberOfBadCenterParticles = 0;
 
         FOR_EACH_PARTICLE_IN_XYZ_CONST
-        //    for (const auto& ParticleObject : CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex])
-        //for (const auto& ParticleObject : Particles)
         {
             if (PrintAllParticles ==  true)
                 LoggersManagerObject.Log(STREAM("ParticleIndex = " << ParticleObject.second.Index << " " << ParticleObject.second.Center.X << " " << ParticleObject.second.Center.Y << " " << ParticleObject.second.Center.Z));

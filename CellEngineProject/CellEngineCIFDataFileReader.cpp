@@ -305,13 +305,8 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile()
                             if (CellEngineConfigDataObject.MixedFullAtomWithVoxelSpace == true)
                                 LocalEntityId = GetParticleKindIdFromGeneIdOrName(ParticleAutinKindIdToIllinoisNameTranslator.find(LocalEntityId)->second, LocalEntityId, ProteinIdFromGeneIdTranslator, AutinIllinoisNameMap);
 
-                            NumberOfParticles++;
-                            //moze GetNewFreeIndexOfParticle()
-                            UniqueIdInt ParticleIndex = AddNewParticle(Particle(NumberOfParticles, LocalEntityId, CellEngineUseful::GetChainIdFromChainName(AppliedChainName), -1, 1, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(UniqueParticleColor)));
-
                             if (CellEngineUseful::IsNucleotide(AppliedChainName))
                                 NumberOfNucleotidesInDNA++;
-
 
                                                                                                                         ListOfAtomsType ListOfAtoms;
 
@@ -333,20 +328,54 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile()
 
                                                                                                                         ListOfAtoms.emplace_back(AppliedAtom);
 
-                                    //InsertAtom(LocalCellEngineAllAtomsObject, AppliedAtom, ParticleIndex);
+                                //InsertAtom(LocalCellEngineAllAtomsObject, AppliedAtom, ParticleIndex);
                             }
 
-                                                                                                                        //PONIZSZA LINIJKA DO ZMIANY - MA WYLICZAC DO SEKTOR DO KTOREGO MAJA TRAFIC CZASTKi
-                                                                                                                        GetParticleFromIndex(ParticleIndex).ListOfAtoms = ListOfAtoms;
+
+
+                            vmath::vec3 CenterOfParticle(0.0, 0.0, 0.0);
+                            for (const CellEngineAtom& AtomObject : ListOfAtoms)
+                                CenterOfParticle += AtomObject.Position();
+                            vector3_float32 Center = { CenterOfParticle.X() / static_cast<float>(ListOfAtoms.size()), CenterOfParticle.Y() / static_cast<float>(ListOfAtoms.size()), CenterOfParticle.Z() / static_cast<float>(ListOfAtoms.size()) };
+
+                            constexpr float ShiftCenter = 2500;
+                            constexpr float SizeOfParticlesSector = 128;
+                            if (ListOfAtoms.empty() == false)
+                            {
+                                auto SectorX = static_cast<UnsignedInt>((Center.X + ShiftCenter) / SizeOfParticlesSector);
+                                auto SectorY = static_cast<UnsignedInt>((Center.Y + ShiftCenter) / SizeOfParticlesSector);
+                                auto SectorZ = static_cast<UnsignedInt>((Center.Z + ShiftCenter) / SizeOfParticlesSector);
+
+                                NumberOfParticles++;
+                                //moze GetNewFreeIndexOfParticle()
+                                SetCurrentSectorPos({ SectorX, SectorY, SectorZ });
+                                Particle ParticleToInsert(NumberOfParticles, LocalEntityId, CellEngineUseful::GetChainIdFromChainName(AppliedChainName), -1, 1, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(UniqueParticleColor));
+                                //UniqueIdInt ParticleIndex = AddNewParticle(Particle(NumberOfParticles, LocalEntityId, CellEngineUseful::GetChainIdFromChainName(AppliedChainName), -1, 1, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(UniqueParticleColor)));
+                                ParticleToInsert.ListOfAtoms = ListOfAtoms;
+                                ParticleToInsert.Center = Center;
+                                AddNewParticle(ParticleToInsert);
+                                //UniqueIdInt ParticleIndex = AddNewParticle(ParticleToInsert);
+
+                                // cout << CellEngineDataFileObjectPointer->GetParticles()[SectorX][SectorY][SectorZ][ParticleIndex].Center.X << " " << CellEngineDataFileObjectPointer->GetParticles()[SectorX][SectorY][SectorZ][ParticleIndex].Center.Y << " " << CellEngineDataFileObjectPointer->GetParticles()[SectorX][SectorY][SectorZ][ParticleIndex].Center.X << endl;
+                                // getchar();
+                            }
                         }
                     }
 
-                        //InsertGroupOfAtoms(LocalCellEngineParticlesCentersObject, LocalCellEngineAllAtomsObject);
+                    //InsertGroupOfAtoms(LocalCellEngineParticlesCentersObject, LocalCellEngineAllAtomsObject);
                 }
             }
         }
 
-            //InsertParticlesCenters(LocalCellEngineParticlesCentersObject);
+        //InsertParticlesCenters(LocalCellEngineParticlesCentersObject);
+
+        // FOR_EACH_PARTICLE_IN_XYZ_ONLY
+        //     if (CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].empty() == false)
+        //     {
+        //         auto ParticleZero = CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].begin()->second;
+        //         if (ParticleZero.ListOfAtoms.empty() == false)
+        //             cout << "SECTOR = " << ParticleSectorXIndex << ", " << ParticleSectorYIndex << ", " << ParticleSectorZIndex << " " << CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].size() << " " << ParticleZero.Center.X  << " " << ParticleZero.Center.Y << " " << ParticleZero.Center.Z << " " << ParticleZero.ListOfAtoms[0].X  << " " << ParticleZero.ListOfAtoms[0].Y << " " << ParticleZero.ListOfAtoms[0].Z << endl;
+        //     }
 
         PreprocessData(true);
 

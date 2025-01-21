@@ -207,6 +207,13 @@ void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const ch
                         if (CellStatePropertyTreeElement.second.get_child_optional("MixedFullAtomWithVoxelSpace"))
                             CellEngineConfigDataObject.MixedFullAtomWithVoxelSpace = CellStatePropertyTreeElement.second.get<bool>("MixedFullAtomWithVoxelSpace");
 
+                        if (CellStatePropertyTreeElement.second.get_child_optional("NumberOfParticlesSectorsInX"))
+                            CellEngineConfigDataObject.NumberOfParticlesSectorsInX = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfParticlesSectorsInX");
+                        if (CellStatePropertyTreeElement.second.get_child_optional("NumberOfParticlesSectorsInY"))
+                            CellEngineConfigDataObject.NumberOfParticlesSectorsInY = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfParticlesSectorsInY");
+                        if (CellStatePropertyTreeElement.second.get_child_optional("NumberOfParticlesSectorsInZ"))
+                            CellEngineConfigDataObject.NumberOfParticlesSectorsInZ = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfParticlesSectorsInZ");
+
                         if (CellStatePropertyTreeElement.second.get_child_optional("CellGenomePositionsFileName"))
                             CellEngineConfigDataObject.CellGenomePositionsFileName = CellStatePropertyTreeElement.second.get<string>("CellGenomePositionsFileName");
                         if (CellStatePropertyTreeElement.second.get_child_optional("CellGenomeSequenceFileName"))

@@ -12,8 +12,6 @@
 #include "CellEngineParticlesVoxelsOperations.h"
 #include "CellEngineBasicParallelExecutionData.h"
 
-//#include "CellEngineDataFile.h"
-
 class CellEngineBasicParticlesOperations : public CellEngineBasicParallelExecutionData
 {
 protected:
@@ -60,6 +58,11 @@ protected:
             LoggersManagerObject.Log(STREAM("Lack of new free indexes of particles"));
             return MaxParticleIndex + 1;
         }
+    }
+public:
+    void SetCurrentSectorPos(const CurrentSectorPosType& CurrentSectorPosParam)
+    {
+        CurrentSectorPos = CurrentSectorPosParam;
     }
 public:
     UniqueIdInt AddNewParticle(const Particle& ParticleParam)

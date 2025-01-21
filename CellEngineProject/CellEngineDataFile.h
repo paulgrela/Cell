@@ -97,22 +97,23 @@ public:
             float NumberOfParticles = 0;
 
             FOR_EACH_PARTICLE_IN_XYZ
-                //for (auto& ParticleObject : Particles[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex])
+            //for (auto& ParticleObject : Particles[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex])
+            {
+                vmath::vec3 CenterOfParticle(0.0, 0.0, 0.0);
+                for (const CellEngineAtom& AtomObject : ParticleObject.second.ListOfAtoms)
                 {
-                    vmath::vec3 CenterOfParticle(0.0, 0.0, 0.0);
-                    for (const CellEngineAtom& AtomObject : ParticleObject.second.ListOfAtoms)
-                    {
-                        Center += AtomObject.Position();
-                        CenterOfParticle += AtomObject.Position();
-                        NumberOfParticles++;
-                    }
-                    ParticleObject.second.Center = { CenterOfParticle.X() / static_cast<float>(ParticleObject.second.ListOfAtoms.size()), CenterOfParticle.Y() / static_cast<float>(ParticleObject.second.ListOfAtoms.size()), CenterOfParticle.Z() / static_cast<float>(ParticleObject.second.ListOfAtoms.size()) };
+                    Center += AtomObject.Position();
+                    CenterOfParticle += AtomObject.Position();
+                    NumberOfParticles++;
                 }
+                ParticleObject.second.Center = { CenterOfParticle.X() / static_cast<float>(ParticleObject.second.ListOfAtoms.size()), CenterOfParticle.Y() / static_cast<float>(ParticleObject.second.ListOfAtoms.size()), CenterOfParticle.Z() / static_cast<float>(ParticleObject.second.ListOfAtoms.size()) };
+            }
             Center /= NumberOfParticles;
         }
         CATCH_AND_THROW("counting mass center")
 
-        return Center;
+        //return Center;
+        return vmath::vec3(0.0, 0.0, 0.0);
     }
 public:
     [[nodiscard]] ParticlesContainer<Particle>& GetParticles()

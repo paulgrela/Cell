@@ -53,9 +53,6 @@ struct CurrentSectorPosType
 
 template <class Particle>
 using ParticlesContainerInternal = std::unordered_map<UniqueIdInt, Particle>;
-//
-// template <class Particle>
-// using ParticlesInSectorsContainer = std::vector<std::vector<std::vector<ParticlesContainer<Particle>>>>;
 
 template <class Particle>
 using ParticlesContainer = std::vector<std::vector<std::vector<ParticlesContainerInternal<Particle>>>>;

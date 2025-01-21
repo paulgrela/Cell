@@ -18,6 +18,11 @@ protected:
         CellEngineSimulationParallelExecutionManager::CreateSimulationSpaceForParallelExecution<CellEngineFullAtomSimulationSpace>(CellEngineSimulationSpaceForThreadsObjectsPointer, Particles);
     }
 protected:
+    void SetCurrentSectorPos(const CurrentSectorPosType& CurrentSectorPos) override
+    {
+        CellEngineFullAtomSimulationSpaceObjectPointer->SetCurrentSectorPos(CurrentSectorPos);
+    }
+protected:
     UniqueIdInt AddNewParticle(const Particle& ParticleObjectParam) override
     {
         if (CellEngineConfigDataObject.MixedFullAtomWithVoxelSpace == false)

@@ -17,6 +17,11 @@ protected:
         CellEngineSimulationParallelExecutionManager::CreateSimulationSpaceForParallelExecution<CellEngineVoxelSimulationSpace>(CellEngineSimulationSpaceForThreadsObjectsPointer, Particles);
     }
 protected:
+    void SetCurrentSectorPos(const CurrentSectorPosType& CurrentSectorPos) override
+    {
+        CellEngineFullAtomSimulationSpaceObjectPointer->SetCurrentSectorPos(CurrentSectorPos);
+    }
+protected:
     UniqueIdInt AddNewParticle(const Particle& ParticleObjectParam) override
     {
         return CellEngineVoxelSimulationSpaceObjectPointer->AddNewParticle(ParticleObjectParam);

@@ -23,12 +23,6 @@ public:
     float X{};
     float Y{};
     float Z{};
-    // std::uint16_t X{};
-    // std::uint16_t Y{};
-    // std::uint16_t Z{};
-    // float XR{};
-    // float YR{};
-    // float ZR{};
     vector3_16 AtomColor{};
     vector3_16 ParticleColor{};
     vector3_16 UniqueParticleColor{};
@@ -66,7 +60,6 @@ public:
 public:
     [[nodiscard]] vmath::vec3 Position() const
     {
-        //return { XR, YR, ZR };
         return { X, Y, Z };
     }
 };
