@@ -118,8 +118,6 @@ void CellEngineParticlesBinaryDataFileReaderWriter::SaveParticlesToBinaryFile(of
         ParticlesDataFile.write((char*)&ParticlesSize, sizeof(ParticlesSize));
 
         FOR_EACH_PARTICLE_IN_XYZ_CONST
-        //    for (const auto& ParticleObject : Particles[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex])
-        //for (auto& ParticleObject : Particles)
         {
             ParticlesDataFile.write((char*)&ParticleObject.second.EntityId, sizeof(ParticleObject.second.EntityId));
             ParticlesDataFile.write((char*)&ParticleObject.second.ChainId, sizeof(ParticleObject.second.ChainId));
@@ -273,8 +271,6 @@ void CellEngineParticlesBinaryDataFileReaderWriter::PrepareParticlesAfterReading
         LoggersManagerObject.Log(STREAM("START OF PREPARING PARTICLES"));
 
         FOR_EACH_PARTICLE_IN_XYZ
-        //    for (auto& ParticleObject : Particles[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex])
-        //for (auto& ParticleObject : Particles)
             if (CellEngineUseful::IsDNA(ParticleObject.second.EntityId) == false)
             {
                 CellEngineVoxelSimulationSpaceObjectPointer->SetAllVoxelsInListOfVoxelsToValueForOuterClass(ParticleObject.second.ListOfVoxels, ParticleObject.second.Index);
@@ -324,7 +320,6 @@ void ReadVectorFromBinaryFile(ifstream& ParticlesDataFile, vector<TElement>& Vec
     CATCH("reading vector from binary file")
 }
 
-///void ReadVectorFromBinaryFile3_16(ifstream& ParticlesDataFile, vector<vector3_32>& VectorToBeRead)
 void ReadVectorFromBinaryFile3_16(ifstream& ParticlesDataFile, ListOfVoxelsType& VectorToBeRead)
 {
     try
@@ -483,7 +478,6 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
             ParticleObject.Center.X /= CellEngineConfigDataObject.DivisionFactorForReadingPositionsOfParticles;
             ParticleObject.Center.Y /= CellEngineConfigDataObject.DivisionFactorForReadingPositionsOfParticles;
             ParticleObject.Center.Z /= CellEngineConfigDataObject.DivisionFactorForReadingPositionsOfParticles;
-                                                        //LoggersManagerObject.Log(STREAM("Center2: " << ParticleObject.Center.X << " " << ParticleObject.Center.Y << " " << ParticleObject.Center.Z << endl));getchar();
 
             ParticlesDataFile.read((char*)&ParticleObject.UniqueColor, sizeof(ParticleObject.UniqueColor));
             ParticlesDataFile.read((char*)&ParticleObject.SelectedForReaction, sizeof(ParticleObject.SelectedForReaction));
@@ -507,22 +501,6 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
         LoggersManagerObject.Log(STREAM("END OF READING PARTICLES FROM BINARY FILE"));
     }
     CATCH("reading particles from binary file")
-                                                                        //
-                                                                        // for (const auto& ParticleObject : Particles)
-                                                                        // {
-                                                                        //     if (ParticleObject.second.Center.X > CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension || ParticleObject.second.Center.Y > CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension || ParticleObject.second.Center.Z > CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension)
-                                                                        //     {
-                                                                        //         LoggersManagerObject.Log(STREAM("ParticleIndex = " << ParticleObject.second.Index << " " << ParticleObject.second.Center.X << " " << ParticleObject.second.Center.Y << " " << ParticleObject.second.Center.Z));
-                                                                        //         LoggersManagerObject.Log(STREAM("Wrong Particle Center -> ParticleIndex = " << ParticleObject.second.Index << " " << ParticleObject.second.Center.X << " " << ParticleObject.second.Center.Y << " " << ParticleObject.second.Center.Z));
-                                                                        //         getchar();
-                                                                        //     }
-                                                                        //     if (ParticleObject.second.Center.X == 0 || ParticleObject.second.Center.Y == 0 || ParticleObject.second.Center.Z == 0)
-                                                                        //     {
-                                                                        //         LoggersManagerObject.Log(STREAM("ParticleIndex = " << ParticleObject.second.Index << " " << ParticleObject.second.Center.X << " " << ParticleObject.second.Center.Y << " " << ParticleObject.second.Center.Z));
-                                                                        //         LoggersManagerObject.Log(STREAM("Wrong Particle Center ZERO -> ParticleIndex = " << ParticleObject.second.Index << " " << ParticleObject.second.Center.X << " " << ParticleObject.second.Center.Y << " " << ParticleObject.second.Center.Z));
-                                                                        //         getchar();
-                                                                        //     }
-                                                                        // }
 }
 
 void CellEngineParticlesBinaryDataFileReaderWriter::ReadChemicalReactionsFromBinaryFile(ifstream& ParticlesDataFile)
@@ -726,12 +704,6 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadAllDataFromBinaryFileAnd
         PrepareParticlesAfterReadingFromBinaryFile();
 
         PreprocessData(UpdateParticleKindListOfVoxelsBool);
-                                                                                                                        // for (const auto& ParticleObject : Particles)
-                                                                                                                        //     if (ParticleObject.second.Center.X > CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension || ParticleObject.second.Center.Y > CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension || ParticleObject.second.Center.Z > CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension)
-                                                                                                                        //     {
-                                                                                                                        //         LoggersManagerObject.Log(STREAM("Wrong Particle Center -> ParticleIndex 2 = " << ParticleObject.second.Index << " " << ParticleObject.second.Center.X << " " << ParticleObject.second.Center.Y << " " << ParticleObject.second.Center.Z));
-                                                                                                                        //         getchar();
-                                                                                                                        //     }
 
         ChemicalReactionsManagerObject.PreprocessAllChemicalReactions();
 

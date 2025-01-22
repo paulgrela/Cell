@@ -808,8 +808,6 @@ void CellEngineSimulationSpace::GenerateOneStepOfRandomReactionsForAllParticles(
     try
     {
         FOR_EACH_PARTICLE_IN_XYZ_CONST
-        //    for (const auto& ParticleObject : CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex])
-        //for (auto& ParticleObject : Particles)
             if (ParticleObject.second.SelectedForReaction == false)
                 GenerateOneRandomReactionForChosenParticle(ParticleObject.second);
     }
@@ -860,8 +858,6 @@ void CellEngineSimulationSpace::SaveNumberOfParticlesStatisticsToFile()
 
         int CounterOfParticles = 0;
         FOR_EACH_PARTICLE_IN_XYZ_CONST
-        //    for (const auto& ParticleObject : CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex])
-        //for (const auto& ParticleData : Particles)
             if (ParticleObject.first != 0)
             {
                 if (ParticlesKindsManagerObject.GetParticleKind(GetParticleFromIndex(ParticleObject.first).EntityId).IdStr == "M_glc__D_e")

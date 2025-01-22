@@ -80,46 +80,22 @@ public:
     ElectricChargeType ElectricCharge{};
 public:
     vector3_float32 Center{};
-    //vector3_16 Center{};
     ListOfVoxelsType ListOfVoxels;
     ListOfAtomsType ListOfAtoms;
 public:
     std::string SequenceStr;
     UnsignedInt PositionInSequence{};
-// public:
-//     CurrentSectorPosType CurrentSectorPos{ 0, 0, 0 };
 public:
-    // void SetCenterCoordinates(const PositionInt XCenterParam, const PositionInt YCenterParam, const PositionInt ZCenterParam)
-    // {
-    //     Center.X = XCenterParam;
-    //     Center.Y = YCenterParam;
-    //     Center.Z = ZCenterParam;
-    // }
-
-
     void SetCenterCoordinates(const float XCenterParam, const float YCenterParam, const float ZCenterParam)
     {
-        //if (Center.X == 0 || Center.Y == 0 || Center.Z == 0)
-        //    std::cout << "AAAXXX" << std::endl;
-
         Center.X = XCenterParam;
         Center.Y = YCenterParam;
         Center.Z = ZCenterParam;
-
-                                                                                                                        if (Center.X == 0 || Center.Y == 0 || Center.Z == 0)
-                                                                                                                        {
-                                                                                                                            std::cout << "AAAYYY" << std::endl;
-                                                                                                                            getchar();
-                                                                                                                            throw std::runtime_error("DDDD");
-                                                                                                                        }
     }
 public:
     explicit Particle(const UniqueIdInt IndexParam, const EntityIdInt EntityIdParam, const ChainIdInt ChainIdParam, const UniqueIdInt GenomeThreadParam, const UniqueIdInt GenomeIndexParam, const ElectricChargeType ElectricChargeParam, const vector3_16 UniqueColorParam) : Index(IndexParam), EntityId(EntityIdParam), ChainId(ChainIdParam), GenomeThread(GenomeThreadParam), GenomeIndex(GenomeIndexParam), ElectricCharge(ElectricChargeParam), UniqueColor(UniqueColorParam)
     {
     }
-    // explicit Particle(const CurrentSectorPosType& CurrentSectorPosParam, const UniqueIdInt IndexParam, const EntityIdInt EntityIdParam, const ChainIdInt ChainIdParam, const UniqueIdInt GenomeThreadParam, const UniqueIdInt GenomeIndexParam, const ElectricChargeType ElectricChargeParam, const vector3_16 UniqueColorParam) : CurrentSectorPos(CurrentSectorPosParam), Index(IndexParam), EntityId(EntityIdParam), ChainId(ChainIdParam), GenomeThread(GenomeThreadParam), GenomeIndex(GenomeIndexParam), ElectricCharge(ElectricChargeParam), UniqueColor(UniqueColorParam)
-    // {
-    // }
     explicit Particle(const UniqueIdInt IndexParam, const EntityIdInt EntityIdParam, const ChainIdInt ChainIdParam, const UniqueIdInt GenomeThreadParam, const UniqueIdInt GenomeIndexParam, const ElectricChargeType ElectricChargeParam, std::string SequenceStrParam, const vector3_16 UniqueColorParam) : Index(IndexParam), EntityId(EntityIdParam), ChainId(ChainIdParam), GenomeThread(GenomeThreadParam), GenomeIndex(GenomeIndexParam), ElectricCharge(ElectricChargeParam), SequenceStr(std::move(SequenceStrParam)), UniqueColor(UniqueColorParam)
     {
     }

@@ -589,14 +589,14 @@ public:
                     }
                 }
 
-                if (ChangeColor == true)
-                    for (auto &ParticleCenter: CellEngineDataFileObjectPointer->GetParticlesCenters())
-                    {
-                        ParticleCenter.AtomColor = ParticlesKindsManagerObject.GetGraphicAtomKindDataFromAtomName(ParticleCenter.Name[0])->Color;
-                        if (CellEngineConfigDataObject.ShowDetailsInAtomScale == true)
-                            for (auto &AtomObject: CellEngineDataFileObjectPointer->GetAllAtoms()[ParticleCenter.AtomIndex])
-                                AtomObject.AtomColor = ParticlesKindsManagerObject.GetGraphicAtomKindDataFromAtomName(AtomObject.Name[0])->Color;
-                    }
+                // if (ChangeColor == true)
+                //     for (auto &ParticleCenter: CellEngineDataFileObjectPointer->GetParticlesCenters())
+                //     {
+                //         ParticleCenter.AtomColor = ParticlesKindsManagerObject.GetGraphicAtomKindDataFromAtomName(ParticleCenter.Name[0])->Color;
+                //         if (CellEngineConfigDataObject.ShowDetailsInAtomScale == true)
+                //             for (auto &AtomObject: CellEngineDataFileObjectPointer->GetAllAtoms()[ParticleCenter.AtomIndex])
+                //                 AtomObject.AtomColor = ParticlesKindsManagerObject.GetGraphicAtomKindDataFromAtomName(AtomObject.Name[0])->Color;
+                //     }
             }
         }
         CATCH("executing atoms kinds menu");

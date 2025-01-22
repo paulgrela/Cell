@@ -13,7 +13,7 @@ class CellEngineOpenGLVisualiserOfFullAtomSimulationSpace : public CellEngineOpe
 {
 private:
     void RenderSpace(UnsignedInt& NumberOfAllRenderedAtoms, UnsignedInt& NumberOfFoundParticlesCenterToBeRenderedInAtomDetails, vmath::mat4& ViewMatrix) override;
-    inline void DrawChosenAtomUsingStencilBuffer(const vmath::mat4& ViewMatrix, const GLuint* PartOfStencilBufferIndex, UnsignedInt& NumberOfAllRenderedAtoms, const std::vector<std::pair<UnsignedInt, UnsignedInt>>& TemporaryRenderedAtomsList);
+    inline void DrawChosenAtomUsingStencilBuffer(const vmath::mat4& ViewMatrix, const GLuint* PartOfStencilBufferIndex, UnsignedInt& NumberOfAllRenderedAtoms, const std::vector<std::tuple<UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt>>& TemporaryRenderedAtomsList);
 public:
     void GetStartCenterPoint() override;
     void GetMemoryForBondsBetweenAtomsToDraw() override;

@@ -67,13 +67,6 @@ public:
 public:
     UniqueIdInt AddNewParticle(const Particle& ParticleParam)
     {
-                                                                                                                        //if (ParticleParam.Center.X == 0 || ParticleParam.Center.Y == 0 || ParticleParam.Center.Z == 0)
-                                                                                                                        if (ParticleParam.Index == 0)
-                                                                                                                        {
-                                                                                                                            std::cout << "AAAYYY" << std::endl;
-                                                                                                                            //getchar();
-                                                                                                                            //throw std::runtime_error("TTT");
-                                                                                                                        }
         GetParticles()[ParticleParam.Index] = ParticleParam;
         return MaxParticleIndex = ParticleParam.Index;
     }

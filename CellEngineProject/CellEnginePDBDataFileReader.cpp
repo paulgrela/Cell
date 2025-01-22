@@ -72,7 +72,7 @@ void CellEnginePDBDataFileReader::ReadDataFromFile(const bool StartValuesBool, c
             if (Line.substr(0, 3) == "END" )
             {
                 StructureObject.emplace_back();
-                ParticlesCenters.push_back(StructureObject);
+                //ParticlesCenters.push_back(StructureObject);
                 StructureObject.clear();
             }
         }

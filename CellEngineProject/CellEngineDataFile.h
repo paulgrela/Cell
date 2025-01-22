@@ -29,14 +29,11 @@ protected:
 protected:
     inline Particle& GetParticleFromIndex(const UniqueIdInt ParticleIndex)
     {
-        //return Particles[ParticleIndex];
         return Particles[0][0][0][ParticleIndex];
     }
 public:
-    //ParticlesContainer<Particle>::iterator GetParticleIteratorFromIndex(const UniqueIdInt ParticleIndex)
     ParticlesContainerInternal<Particle>::iterator GetParticleIteratorFromIndex(const UniqueIdInt ParticleIndex)
     {
-        //return Particles.find(ParticleIndex);
         return Particles[0][0][0].find(ParticleIndex);
     }
     [[nodiscard]] auto GetParticleEnd() const
@@ -63,9 +60,6 @@ public:
         }
         CATCH("getting memory for particles in sectors")
     }
-protected:
-    std::vector<std::vector<CellEngineAtom>> ParticlesCenters;
-    std::vector<std::vector<CellEngineAtom>> AllAtoms;
 public:
     virtual void ReadDataFromFile(bool StartValuesBool, bool UpdateParticleKindListOfVoxelsBool, CellEngineConfigData::TypesOfFileToRead Type) = 0;
 public:
@@ -97,7 +91,6 @@ public:
             float NumberOfParticles = 0;
 
             FOR_EACH_PARTICLE_IN_XYZ
-            //for (auto& ParticleObject : Particles[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex])
             {
                 vmath::vec3 CenterOfParticle(0.0, 0.0, 0.0);
                 for (const CellEngineAtom& AtomObject : ParticleObject.second.ListOfAtoms)
@@ -113,24 +106,16 @@ public:
         CATCH_AND_THROW("counting mass center")
 
         //return Center;
-        return vmath::vec3(0.0, 0.0, 0.0);
+        return { 0.0, 0.0, 0.0 };
     }
 public:
     [[nodiscard]] ParticlesContainer<Particle>& GetParticles()
     {
         return Particles;
     }
-    [[nodiscard]] std::vector<std::vector<CellEngineAtom>>& GetAllAtoms()
-    {
-        return AllAtoms;
-    }
-    [[nodiscard]] std::vector<CellEngineAtom>& GetParticlesCenters()
-    {
-        return ParticlesCenters[CellEngineConfigDataObject.ChosenStructureIndex];
-    }
     [[nodiscard]] UnsignedInt GetNumberOfStructures() override
     {
-        return ParticlesCenters.size();
+        return 0;
     }
 };
 

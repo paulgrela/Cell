@@ -11,6 +11,9 @@
 class CellEngineFilmOfStructures
 {
 public:
+    CellEngineFilmOfStructures() = default;
+    virtual ~CellEngineFilmOfStructures() = default;
+public:
     bool FilmOfStructuresActive = false;
 public:
     virtual UnsignedInt GetNumberOfStructures() = 0;

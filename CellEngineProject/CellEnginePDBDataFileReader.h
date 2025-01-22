@@ -11,7 +11,7 @@ private:
     void ReadDataFromFile(bool StartValuesBool, bool UpdateParticleKindListOfVoxelsBool, CellEngineConfigData::TypesOfFileToRead Type) override;
 public:
     explicit CellEnginePDBDataFileReader() = default;
-    ~CellEnginePDBDataFileReader() = default;
+    ~CellEnginePDBDataFileReader() override = default;
 public:
     static CellEngineAtom ParseRecord(const char* LocalPDBRecord);
 };

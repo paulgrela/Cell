@@ -38,13 +38,10 @@ protected:
 protected:
     void InsertGroupOfAtoms(std::vector<CellEngineAtom>& LocalCellEngineParticlesCentersObject, std::vector<CellEngineAtom>& LocalCellEngineAllAtomsObject) override
     {
-        LocalCellEngineParticlesCentersObject.emplace_back(LocalCellEngineAllAtomsObject.front().X, LocalCellEngineAllAtomsObject.front().Y, LocalCellEngineAllAtomsObject.front().Z, AllAtoms.size(), LocalCellEngineParticlesCentersObject.size(), LocalCellEngineAllAtomsObject.front().EntityId, LocalCellEngineAllAtomsObject.front().Name, LocalCellEngineAllAtomsObject.front().ResName, LocalCellEngineAllAtomsObject.front().Chain, LocalCellEngineAllAtomsObject.front().ParticleColor);
-        AllAtoms.emplace_back(LocalCellEngineAllAtomsObject);
     }
 protected:
     void InsertParticlesCenters(std::vector<CellEngineAtom>& LocalCellEngineParticlesCentersObject) override
     {
-        ParticlesCenters.emplace_back(LocalCellEngineParticlesCentersObject);
     }
 protected:
     void PreprocessData(bool Update) override

@@ -109,7 +109,6 @@ glm::vec3 CountResultPositionsFromTransformationMatrix(std::unordered_map<Unsign
         TransformationMatrix[2][1] = TransformationMatrixIterator->second.Matrix[1][2];
         TransformationMatrix[2][2] = TransformationMatrixIterator->second.Matrix[2][2];
 
-        //Result = TransformationMatrix * glm::vec3(AppliedAtom.XR, AppliedAtom.YR, AppliedAtom.ZR) + glm::vec3(TransformationMatrixIterator->second.Matrix[0][3], TransformationMatrixIterator->second.Matrix[1][3], TransformationMatrixIterator->second.Matrix[2][3]);
         Result = TransformationMatrix * glm::vec3(AppliedAtom.X, AppliedAtom.Y, AppliedAtom.Z) + glm::vec3(TransformationMatrixIterator->second.Matrix[0][3], TransformationMatrixIterator->second.Matrix[1][3], TransformationMatrixIterator->second.Matrix[2][3]);
     }
     CATCH("copying from matrix to matrix")
@@ -308,7 +307,7 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile()
                             if (CellEngineUseful::IsNucleotide(AppliedChainName))
                                 NumberOfNucleotidesInDNA++;
 
-                                                                                                                        ListOfAtomsType ListOfAtoms;
+                            ListOfAtomsType ListOfAtoms;
 
                             for (auto AppliedAtom : AtomsForChainNameIterator->second)
                             {
@@ -326,12 +325,10 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile()
                                 AppliedAtom.UniqueParticleColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(UniqueParticleColor);
                                 AppliedAtom.RandomParticleKindColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(ChainColor);
 
-                                                                                                                        ListOfAtoms.emplace_back(AppliedAtom);
+                                ListOfAtoms.emplace_back(AppliedAtom);
 
                                 //InsertAtom(LocalCellEngineAllAtomsObject, AppliedAtom, ParticleIndex);
                             }
-
-
 
                             vmath::vec3 CenterOfParticle(0.0, 0.0, 0.0);
                             for (const CellEngineAtom& AtomObject : ListOfAtoms)
@@ -350,14 +347,9 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile()
                                 //moze GetNewFreeIndexOfParticle()
                                 SetCurrentSectorPos({ SectorX, SectorY, SectorZ });
                                 Particle ParticleToInsert(NumberOfParticles, LocalEntityId, CellEngineUseful::GetChainIdFromChainName(AppliedChainName), -1, 1, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(UniqueParticleColor));
-                                //UniqueIdInt ParticleIndex = AddNewParticle(Particle(NumberOfParticles, LocalEntityId, CellEngineUseful::GetChainIdFromChainName(AppliedChainName), -1, 1, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(UniqueParticleColor)));
                                 ParticleToInsert.ListOfAtoms = ListOfAtoms;
                                 ParticleToInsert.Center = Center;
                                 AddNewParticle(ParticleToInsert);
-                                //UniqueIdInt ParticleIndex = AddNewParticle(ParticleToInsert);
-
-                                // cout << CellEngineDataFileObjectPointer->GetParticles()[SectorX][SectorY][SectorZ][ParticleIndex].Center.X << " " << CellEngineDataFileObjectPointer->GetParticles()[SectorX][SectorY][SectorZ][ParticleIndex].Center.Y << " " << CellEngineDataFileObjectPointer->GetParticles()[SectorX][SectorY][SectorZ][ParticleIndex].Center.X << endl;
-                                // getchar();
                             }
                         }
                     }
@@ -369,19 +361,11 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile()
 
         //InsertParticlesCenters(LocalCellEngineParticlesCentersObject);
 
-        // FOR_EACH_PARTICLE_IN_XYZ_ONLY
-        //     if (CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].empty() == false)
-        //     {
-        //         auto ParticleZero = CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].begin()->second;
-        //         if (ParticleZero.ListOfAtoms.empty() == false)
-        //             cout << "SECTOR = " << ParticleSectorXIndex << ", " << ParticleSectorYIndex << ", " << ParticleSectorZIndex << " " << CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].size() << " " << ParticleZero.Center.X  << " " << ParticleZero.Center.Y << " " << ParticleZero.Center.Z << " " << ParticleZero.ListOfAtoms[0].X  << " " << ParticleZero.ListOfAtoms[0].Y << " " << ParticleZero.ListOfAtoms[0].Z << endl;
-        //     }
-
         PreprocessData(true);
 
         PrintStatistics();
 
-        LoggersManagerObject.Log(STREAM("NumberOfAtoms = " << NumberOfAtoms << " NumberOfParticles = " << NumberOfParticles << " | LocalCellEngineParticlesCentersObject.size() = " << LocalCellEngineParticlesCentersObject.size() << " | AllAtoms.size() = " << AllAtoms.size() << " | NumberOfAtomsDNA = " << NumberOfAtomsDNA << " | NumberOfNucleotidesInDNA = " << NumberOfNucleotidesInDNA <<" | AtomsPositionsMatrixes.size() = " << TransformationsMatrixes.size() << " | " << endl));
+        LoggersManagerObject.Log(STREAM("NumberOfAtoms = " << NumberOfAtoms << " NumberOfParticles = " << NumberOfParticles << " | LocalCellEngineParticlesCentersObject.size() = " << LocalCellEngineParticlesCentersObject.size() << " | NumberOfAtomsDNA = " << NumberOfAtomsDNA << " | NumberOfNucleotidesInDNA = " << NumberOfNucleotidesInDNA <<" | AtomsPositionsMatrixes.size() = " << TransformationsMatrixes.size() << " | " << endl));
 
         LoggersManagerObject.Log(STREAM("FINISHED READING FROM CIF FILE"));
 
