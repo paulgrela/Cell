@@ -57,7 +57,7 @@ public:
 public:
     std::optional<ParticleKind> GetParticleKindFromStrId(const std::string& StrId)
     {
-        for (auto& ParticleKindObject : ParticlesKinds)
+        for (const auto& ParticleKindObject : ParticlesKinds)
             if (ParticleKindObject.second.IdStr == StrId)
                 return ParticleKindObject.second;
 
@@ -66,11 +66,11 @@ public:
 public:
     std::optional<ParticleKind> GetParticleKindFromGeneId(const SignedInt GeneId)
     {
-        for (auto& ParticleKindObject : ParticlesKinds)
+        for (const auto& ParticleKindObject : ParticlesKinds)
             if (ParticleKindObject.second.GeneId == GeneId)
                 return ParticleKindObject.second;
 
-        for (auto& ParticleKindObject : ParticlesKinds)
+        for (const auto& ParticleKindObject : ParticlesKinds)
             if (ParticleKindObject.second.ParticleKindSpecialDataSector.empty() == false)
                 if (ParticleKindObject.second.ParticleKindSpecialDataSector[0].GeneId == GeneId)
                     return ParticleKindObject.second;
@@ -120,7 +120,7 @@ public:
         CATCH("adding single particle kind")
     }
 public:
-    void PrintAllParticleKinds()
+    void PrintAllParticleKinds() const
     {
         try
         {

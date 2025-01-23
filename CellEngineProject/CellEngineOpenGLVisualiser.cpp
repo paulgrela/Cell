@@ -265,30 +265,6 @@ inline bool CellEngineOpenGLVisualiser::GetFinalVisibilityInModelWorld(const vma
     return false;
 }
 
-                bool CellEngineOpenGLVisualiser::GetFinalVisibilityInModelWorldOnly(const vmath::vec3& AtomPosition, vmath::mat4& MoveMatrix, const bool CountNewPosition, const bool DrawOutsideBorder) const
-                {
-                    try
-                    {
-                        if (CountNewPosition == true)
-                        {
-                            const float XNew = MoveMatrix[0][0] * (AtomPosition.X() + CellEngineConfigDataObject.CameraXPosition - Center.X()) + MoveMatrix[1][0] * (AtomPosition.Y() + CellEngineConfigDataObject.CameraYPosition - Center.Y()) + MoveMatrix[2][0] * (AtomPosition.Z() + CellEngineConfigDataObject.CameraZPosition - Center.Z());
-                            const float YNew = MoveMatrix[0][1] * (AtomPosition.X() + CellEngineConfigDataObject.CameraXPosition - Center.X()) + MoveMatrix[1][1] * (AtomPosition.Y() + CellEngineConfigDataObject.CameraYPosition - Center.Y()) + MoveMatrix[2][1] * (AtomPosition.Z() + CellEngineConfigDataObject.CameraZPosition - Center.Z());
-                            const float ZNew = MoveMatrix[0][2] * (AtomPosition.X() + CellEngineConfigDataObject.CameraXPosition - Center.X()) + MoveMatrix[1][2] * (AtomPosition.Y() + CellEngineConfigDataObject.CameraYPosition - Center.Y()) + MoveMatrix[2][2] * (AtomPosition.Z() + CellEngineConfigDataObject.CameraZPosition - Center.Z());
-
-                            if (DrawOutsideBorder == true)
-                                if (CheckDistanceToDrawDetailsInAtomScale(XNew, YNew, ZNew) == true)
-                                {
-                                    return true;
-                                }
-
-                            return false;
-                        }
-                    }
-                    CATCH("getting final model position for data for cell visualization")
-
-                    return false;
-                }
-
 inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4 ModelMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, bool DrawAdditional) const
 {
     bool FinalVisibilityInModelWorld = false;
@@ -318,7 +294,7 @@ inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader(const 
 }
 
 template <class T>
-vector3_16 CellEngineOpenGLVisualiser::GetColor(const T& Object, bool Chosen)
+vector3_16 CellEngineOpenGLVisualiser::GetColor(const T& Object, const Particle& ParticleObject, const bool Chosen)
 {
     vector3_16 FinalColor{};
 
@@ -330,9 +306,9 @@ vector3_16 CellEngineOpenGLVisualiser::GetColor(const T& Object, bool Chosen)
             switch (CellEngineConfigDataObject.MakeColorsTypeObject)
             {
                 case CellEngineConfigData::MakeColorsType::DrawColorForEveryAtom : FinalColor = Object.AtomColor; break;
-                case CellEngineConfigData::MakeColorsType::DrawColorForEveryParticle : FinalColor = Object.ParticleColor; break;
-                case CellEngineConfigData::MakeColorsType::DrawRandomColorForEveryParticleKind : FinalColor = Object.RandomParticleKindColor; break;
-                case CellEngineConfigData::MakeColorsType::DrawRandomColorForEveryUniqueParticle : FinalColor = Object.UniqueParticleColor; break;
+                case CellEngineConfigData::MakeColorsType::DrawColorForEveryParticle : FinalColor = ParticleObject.ParticleColor; break;
+                case CellEngineConfigData::MakeColorsType::DrawRandomColorForEveryParticleKind : FinalColor = ParticleObject.RandomParticleKindColor; break;
+                case CellEngineConfigData::MakeColorsType::DrawRandomColorForEveryUniqueParticle : FinalColor = ParticleObject.UniqueParticleColor; break;
                 default : break;
             }
     }
@@ -362,7 +338,7 @@ inline vmath::vec3 CellEngineOpenGLVisualiser::GetSize(const CellEngineAtom& Ato
     return Size;
 }
 
-bool CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom& AtomObject, const vmath::mat4& ViewMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, UnsignedInt& NumberOfAllRenderedAtoms, const bool Chosen, const bool RenderObjectParameter)
+bool CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom& AtomObject, const Particle& ParticleObject, const vmath::mat4& ViewMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, UnsignedInt& NumberOfAllRenderedAtoms, const bool Chosen, const bool RenderObjectParameter)
 {
     bool FinalVisibilityInModelWorld{};
 
@@ -375,7 +351,7 @@ bool CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom& AtomObject, 
         const vmath::vec3 SizeLocal = GetSize(AtomObject);
         const vmath::mat4 ModelMatrix = vmath::translate(AtomPosition.X() - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomPosition.Y() + CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomPosition.Z() + CellEngineConfigDataObject.CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(SizeLocal.X(), SizeLocal.Y(), SizeLocal.Z()));
 
-        FinalVisibilityInModelWorld = CreateUniformBlockForVertexShader(AtomPosition, CellEngineUseful::GetVMathVec3FromVector3ForColor(GetColor<CellEngineAtom>(AtomObject, Chosen)), ViewMatrix, ModelMatrix, CountNewPosition, DrawCenter, DrawOutsideBorder, true);
+        FinalVisibilityInModelWorld = CreateUniformBlockForVertexShader(AtomPosition, CellEngineUseful::GetVMathVec3FromVector3ForColor(GetColor<CellEngineAtom>(AtomObject, ParticleObject, Chosen)), ViewMatrix, ModelMatrix, CountNewPosition, DrawCenter, DrawOutsideBorder, true);
 
         if (RenderObjectParameter == true)
             AtomGraphicsObject.Render();
@@ -522,7 +498,7 @@ inline void ClearRectangleOnScreen(const GLint XStart, const GLint YStart, const
     CATCH("filling rectangle on screen")
 }
 
-void CellEngineOpenGLVisualiser::PrintAtomDescriptionOnScreen(CellEngineAtom& ChosenParticleObject)
+void CellEngineOpenGLVisualiser::PrintAtomDescriptionOnScreen(CellEngineAtom& ChosenAtomObject, Particle& ChosenParticleObject)
 {
     try
     {
@@ -530,15 +506,16 @@ void CellEngineOpenGLVisualiser::PrintAtomDescriptionOnScreen(CellEngineAtom& Ch
 
         TextOverlayObject.Clear();
 
-        string LocalTextStr = CellEngineUseful::AtomDescriptionTextsObject.Texts[0] = "Serial = " + to_string(ChosenParticleObject.Serial) + " Name = " + ChosenParticleObject.Name + " ResName = " + ChosenParticleObject.ResName;
+        //string LocalTextStr = CellEngineUseful::AtomDescriptionTextsObject.Texts[0] = "Serial = " + to_string(ChosenParticleObject.Serial) + " Name = " + ChosenParticleObject.Name + " ResName = " + ChosenParticleObject.ResName;
+        string LocalTextStr = CellEngineUseful::AtomDescriptionTextsObject.Texts[0] = string(" Name = ") + ChosenAtomObject.Name + " ResName = " + ChosenAtomObject.ResName;
         if (CellEngineConfigDataObject.StencilForDrawingObjectsTypesObject == CellEngineConfigData::StencilForDrawingObjectsTypes::StencilForDrawingOnlyInAtomScale)
         {
-            CellEngineUseful::AtomDescriptionTextsObject.Texts[1] = "Chain [" + string(ChosenParticleObject.Chain) + "]" + "(" + ChosenParticleObject.Nucleotide + ")";
+            CellEngineUseful::AtomDescriptionTextsObject.Texts[1] = "Chain [" + string(ChosenAtomObject.Chain) + "]" + "(" + ChosenAtomObject.Nucleotide + ")";
             #ifdef RNA_IN_ONE_PARTICLE
             CellEngineUseful::AtomDescriptionTextsObject.Texts[1] += " SEQ = [" + ChosenParticleObject.SequenceStr + "]";
             #endif
-            CellEngineUseful::AtomDescriptionTextsObject.Texts[2] = "EntityId = " + to_string(ChosenParticleObject.EntityId);
-            CellEngineUseful::AtomDescriptionTextsObject.Texts[3] = "Entity Name = [" + GetEntityName(ChosenParticleObject.EntityId) + "]";
+            CellEngineUseful::AtomDescriptionTextsObject.Texts[2] = "EntityId = " + to_string(ChosenAtomObject.EntityId);
+            CellEngineUseful::AtomDescriptionTextsObject.Texts[3] = "Entity Name = [" + GetEntityName(ChosenAtomObject.EntityId) + "]";
             CellEngineUseful::AtomDescriptionTextsObject.Texts[4] = "Gen Index = [" + to_string(ChosenParticleObject.GenomeIndex) + "]";
             CellEngineUseful::AtomDescriptionTextsObject.Texts[5] = "Gen Index Prev = [" + to_string(ChosenParticleObject.GenomeIndexPrev) + "] Gen Index Next = [" + to_string(ChosenParticleObject.GenomeIndexNext) + "]";
             LocalTextStr += " " + CellEngineUseful::AtomDescriptionTextsObject.Texts[1] + " " + CellEngineUseful::AtomDescriptionTextsObject.Texts[2] + " " + CellEngineUseful::AtomDescriptionTextsObject.Texts[3];

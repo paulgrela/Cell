@@ -99,18 +99,15 @@ public:
     void OnResize(int Width, int Height) override;
 protected:
     static inline vmath::vec3 GetSize(const CellEngineAtom& AtomObject);
-    template <class T> static vector3_16 GetColor(const T& Object, bool Chosen);
+    template <class T> static vector3_16 GetColor(const T& Object, const Particle& ParticleObject, bool Chosen);
     static inline void DrawCenterPoint(UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, vmath::mat4& ModelMatrix);
     inline bool GetFinalVisibilityInModelWorld(const vmath::vec3& AtomPosition, UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, bool CountNewPosition, bool DrawOutsideBorder) const;
-
-    bool GetFinalVisibilityInModelWorldOnly(const vmath::vec3& AtomPosition, vmath::mat4& MoveMatrix, bool CountNewPosition, bool DrawOutsideBorder) const;
-
     inline bool CreateUniformBlockForVertexShader(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4 ModelMatrix, bool CountNewPosition, bool DrawCenter, bool DrawOutsideBorder, bool DrawAdditional) const;
-    bool RenderObject(const CellEngineAtom& AtomObject, const vmath::mat4& ViewMatrix, bool CountNewPosition, bool DrawCenter, bool DrawOutsideBorder, UnsignedInt& NumberOfAllRenderedAtoms, bool Chosen, bool RenderObjectParameter);
+    bool RenderObject(const CellEngineAtom& AtomObject, const Particle& ParticleObject, const vmath::mat4& ViewMatrix, bool CountNewPosition, bool DrawCenter, bool DrawOutsideBorder, UnsignedInt& NumberOfAllRenderedAtoms, bool Chosen, bool RenderObjectParameter);
     static inline void SetAutomaticParametersForRendering();
     inline void PrepareOpenGLToRenderObjectsOnScene() const;
     inline void LoadShapeOfAtomsWhenChanged();
-    void PrintAtomDescriptionOnScreen(CellEngineAtom& ChosenParticleObject);
+    void PrintAtomDescriptionOnScreen(CellEngineAtom& ChosenAtomObject, Particle& ChosenParticleObject);
 protected:
     virtual void RenderSpace(UnsignedInt& NumberOfAllRenderedAtoms, UnsignedInt& NumberOfFoundParticlesCenterToBeRenderedInAtomDetails, vmath::mat4& ViewMatrix) = 0;
 protected:

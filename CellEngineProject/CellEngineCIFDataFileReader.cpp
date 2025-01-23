@@ -37,7 +37,7 @@ CellEngineAtom CellEngineCIFDataFileReader::ParseRecord(const char* LocalCIFReco
 
         vector<string> AtomFields = split(RecordStr, " ");
 
-        CellEngineAtomObject.Serial = stoi(AtomFields[1]);
+        //CellEngineAtomObject.Serial = stoi(AtomFields[1]);
 
         strncpy(CellEngineAtomObject.Name, AtomFields[3].c_str(), AtomFields[3].length() + 1);
         strncpy(CellEngineAtomObject.ResName, AtomFields[5].c_str(), AtomFields[5].length() + 1);
@@ -56,7 +56,7 @@ CellEngineAtom CellEngineCIFDataFileReader::ParseRecord(const char* LocalCIFReco
 
         auto ParticleKindObject = ParticlesKindsManagerObject.GetGraphicParticleKind(CellEngineAtomObject.EntityId);
         CellEngineAtomObject.Visible = ParticleKindObject.Visible;
-        CellEngineAtomObject.ParticleColor = ParticleKindObject.AtomColor;
+        //CellEngineAtomObject.ParticleColor = ParticleKindObject.AtomColor;
         #ifdef EXTENDED_RAM_MEMORY
         CellEngineAtomObject.SizeXParticle = ParticleKindObject.SizeX;
         CellEngineAtomObject.SizeYParticle = ParticleKindObject.SizeY;
@@ -322,8 +322,8 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile()
 
                                 AppliedAtom.SetAtomPositionsData(Result[0], Result[1], Result[2]);
 
-                                AppliedAtom.UniqueParticleColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(UniqueParticleColor);
-                                AppliedAtom.RandomParticleKindColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(ChainColor);
+                                // AppliedAtom.UniqueParticleColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(UniqueParticleColor);
+                                // AppliedAtom.RandomParticleKindColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(ChainColor);
 
                                 ListOfAtoms.emplace_back(AppliedAtom);
 
@@ -349,6 +349,9 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile()
                                 Particle ParticleToInsert(NumberOfParticles, LocalEntityId, CellEngineUseful::GetChainIdFromChainName(AppliedChainName), -1, 1, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(UniqueParticleColor));
                                 ParticleToInsert.ListOfAtoms = ListOfAtoms;
                                 ParticleToInsert.Center = Center;
+                                ParticleToInsert.ParticleColor = ParticlesKindsManagerObject.GetParticleKind(ParticleToInsert.EntityId).GraphicData.ParticleColor;
+                                ParticleToInsert.UniqueParticleColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(UniqueParticleColor);
+                                ParticleToInsert.RandomParticleKindColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(ChainColor);
                                 AddNewParticle(ParticleToInsert);
                             }
                         }

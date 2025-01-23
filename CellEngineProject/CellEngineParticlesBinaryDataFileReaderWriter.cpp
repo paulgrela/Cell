@@ -125,7 +125,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::SaveParticlesToBinaryFile(of
             ParticlesDataFile.write((char*)&ParticleObject.second.GenomeIndex, sizeof(ParticleObject.second.GenomeIndex));
             ParticlesDataFile.write((char*)&ParticleObject.second.ElectricCharge, sizeof(ParticleObject.second.ElectricCharge));
             ParticlesDataFile.write((char*)&ParticleObject.second.Center, sizeof(ParticleObject.second.Center));
-            ParticlesDataFile.write((char*)&ParticleObject.second.UniqueColor, sizeof(ParticleObject.second.UniqueColor));
+            ParticlesDataFile.write((char*)&ParticleObject.second.UniqueParticleColor, sizeof(ParticleObject.second.UniqueParticleColor));
             ParticlesDataFile.write((char*)&ParticleObject.second.SelectedForReaction, sizeof(ParticleObject.second.SelectedForReaction));
 
             SaveStringToBinaryFile(ParticlesDataFile, ParticleObject.second.SequenceStr);
@@ -462,24 +462,14 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
             vector3_16 CenterReadObject{};
             ParticlesDataFile.read((char*)&CenterReadObject, sizeof(CenterReadObject));
             ParticleObject.Center = { static_cast<float>(CenterReadObject.X), static_cast<float>(CenterReadObject.Y), static_cast<float>(CenterReadObject.Z) };
-                                                        //LoggersManagerObject.Log(STREAM("Center1: " << ParticleObject.Center.X << " " << ParticleObject.Center.Y << " " << ParticleObject.Center.Z << endl));
             //ParticleObject.Center = { CenterReadObject.X, CenterReadObject.Y, CenterReadObject.Z };
             //ParticlesDataFile.read((char*)&ParticleObject.Center, sizeof(ParticleObject.Center));
-
-            //ParticlesDataFile.read((char*)&ParticleObject.Center, sizeof(ParticleObject.Center));
-            // if (ParticleObject.Center.X == 0 || ParticleObject.Center.Y == 0 || ParticleObject.Center.Z == 0)
-            // {
-            //     LoggersManagerObject.Log(STREAM("ParticleIndex = " << ParticleObject.Index << " " << ParticleObject.Center.X << " " << ParticleObject.Center.Y << " " << ParticleObject.Center.Z));
-            //     LoggersManagerObject.Log(STREAM("Wrong Particle Center -> ParticleIndex = " << ParticleObject.Index << " " << ParticleObject.Center.X << " " << ParticleObject.Center.Y << " " << ParticleObject.Center.Z));
-            //     getchar();
-            // }
-
 
             ParticleObject.Center.X /= CellEngineConfigDataObject.DivisionFactorForReadingPositionsOfParticles;
             ParticleObject.Center.Y /= CellEngineConfigDataObject.DivisionFactorForReadingPositionsOfParticles;
             ParticleObject.Center.Z /= CellEngineConfigDataObject.DivisionFactorForReadingPositionsOfParticles;
 
-            ParticlesDataFile.read((char*)&ParticleObject.UniqueColor, sizeof(ParticleObject.UniqueColor));
+            ParticlesDataFile.read((char*)&ParticleObject.UniqueParticleColor, sizeof(ParticleObject.UniqueParticleColor));
             ParticlesDataFile.read((char*)&ParticleObject.SelectedForReaction, sizeof(ParticleObject.SelectedForReaction));
 
             ReadStringFromBinaryFile(ParticlesDataFile, ParticleObject.SequenceStr);
@@ -491,6 +481,12 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
             ParticlesDataFile.read((char*)&ParticleObject.PairedNucleotideTemporary, sizeof(ParticleObject.PairedNucleotideTemporary));
 
             ReadVectorFromBinaryFile<UniqueIdInt>(ParticlesDataFile, ParticleObject.LinkedParticlesPointersListTemporary);
+
+            if (ParticleObject.Index != 0)
+            {
+                ParticleObject.ParticleColor = ParticlesKindsManagerObject.GetGraphicParticleKind(ParticleObject.EntityId).ParticleColor;
+                ParticleObject.RandomParticleKindColor = ParticlesKindsManagerObject.GetGraphicParticleKind(ParticleObject.EntityId).RandomParticleColor;
+            }
 
             AddNewParticle(ParticleObject);
 

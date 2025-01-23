@@ -471,7 +471,7 @@ public:
         return false;
     }
 
-    void TypesOfVisibilityMenu() const
+    static void TypesOfVisibilityMenu()
     {
         try
         {
