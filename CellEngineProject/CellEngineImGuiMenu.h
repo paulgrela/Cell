@@ -850,9 +850,13 @@ public:
                     {
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->CheckParticlesCenters(false);
                     });
-                    ColorButton(AlignString("CHECK PARTICLES CANCELLED", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
+                    ColorButton(AlignString("CHECK PARTICLES CANCELLED STILL IN VOXEL SPACE", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
                     {
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->CheckCancelledParticlesIndexes();
+                    });
+                    ColorButton(AlignString("CHECK IF PARTICLES FORMER EXISTED STILL IN VOXEL SPACE", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
+                    {
+                        CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->CheckFormerExistedParticlesIndexes();
                     });
 
                     ImGui::Text("");

@@ -165,3 +165,37 @@ bool CellEngineVoxelSimulationSpace::CheckIfSpaceIsEmptyAndIsInBoundsForParticle
 {
     return CheckFreeSpaceAndBoundsForListOfVoxels(ParticleKindObjectForProduct.ListOfVoxels, VectorX, VectorY, VectorZ, SimulationSpaceSectorBoundsObjectParam);
 }
+
+template <class T>
+void CellEngineVoxelSimulationSpace::CheckParticlesIndexes(ParticlesContainerInternal<T>& FormerParticlesIndexes, const string& FormerState)
+{
+    try
+    {
+        for (UnsignedInt PosX = 0; PosX < CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension; PosX++)
+            for (UnsignedInt PosY = 0; PosY < CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension; PosY++)
+                for (UnsignedInt PosZ = 0; PosZ < CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension; PosZ++)
+                {
+                    SimulationSpaceVoxel SimulationSpaceVoxelObject = CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GetSpaceVoxelForOuterClass(PosX, PosY, PosZ);
+                    if (SimulationSpaceVoxelObject != CellEngineParticlesVoxelsOperations::GetZeroSimulationSpaceVoxel())
+                        if (auto FoundParticleIter = CellEngineDataFileObjectPointer->GetParticleIteratorFromIndex(SimulationSpaceVoxelObject); FoundParticleIter == CellEngineDataFileObjectPointer->GetParticleEnd())
+                            if (auto FormerParticleIter = FormerParticlesIndexes.find(SimulationSpaceVoxelObject); FormerParticleIter != FormerParticlesIndexes.end())
+                                LoggersManagerObject.LogInformation(STREAM("Try to draw the particle from not existing index but formerly " << FormerState << " = " << SimulationSpaceVoxelObject));
+                            else
+                                LoggersManagerObject.LogInformation(STREAM("Try to draw the particle from not existing index but formerly not " << FormerState <<  " = " << SimulationSpaceVoxelObject));
+                }
+    }
+    CATCH("checking particles indexes")
+}
+
+template void CellEngineVoxelSimulationSpace::CheckParticlesIndexes(ParticlesContainerInternal<UniqueIdInt>& FormerParticlesIndexes, const string& FormerState);
+template void CellEngineVoxelSimulationSpace::CheckParticlesIndexes(ParticlesContainerInternal<Particle>& FormerParticlesIndexes, const string& FormerState);
+
+void CellEngineVoxelSimulationSpace::CheckCancelledParticlesIndexes()
+{
+    CheckParticlesIndexes<UniqueIdInt>(CancelledParticlesIndexes, "cancelled");
+}
+
+void CellEngineVoxelSimulationSpace::CheckFormerExistedParticlesIndexes()
+{
+    CheckParticlesIndexes<Particle>(FormerParticlesIndexes, "existed");
+}

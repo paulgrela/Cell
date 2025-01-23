@@ -14,8 +14,6 @@
 class CellEngineAtom
 {
 public:
-    //UnsignedInt AtomIndex{};
-    //UnsignedInt Serial{};
     EntityIdInt EntityId{};
     char Name[5 + 1]{};
     char ResName[4 + 1]{};
@@ -24,14 +22,7 @@ public:
     float Y{};
     float Z{};
     vector3_16 AtomColor{};
-    // bool Visible{};
-    // UniqueIdInt GenomeIndex = 0;
-    // UniqueIdInt GenomeIndexPrev = 0;
-    // UniqueIdInt GenomeIndexNext = 0;
-    //char Nucleotide = '?';
-    // #ifdef RNA_IN_ONE_PARTICLE
-    // std::string SequenceStr;
-    // #endif
+public:
     #ifdef EXTENDED_RAM_MEMORY
     float SizeXAtom{};
     float SizeYAtom{};
@@ -41,18 +32,6 @@ public:
     float SizeZParticle{};
     #endif
 public:
-    //CellEngineAtom(const float XParam, const float YParam, const float ZParam, const UnsignedInt AtomIndexParam, const UnsignedInt SerialParam, const UnsignedInt EntityIdParam, char NameParam[2], char ResNameParam[4], char ChainParam[6], const vector3_16 ColorParam) : X(XParam), Y(YParam), Z(ZParam), AtomIndex(AtomIndexParam), Serial(SerialParam), EntityId(EntityIdParam), ParticleColor(ColorParam)
-    //CellEngineAtom(const float XParam, const float YParam, const float ZParam, const UnsignedInt AtomIndexParam, const UnsignedInt SerialParam, const UnsignedInt EntityIdParam, char NameParam[2], char ResNameParam[4], char ChainParam[6], const vector3_16 ColorParam) : X(XParam), Y(YParam), Z(ZParam), AtomIndex(AtomIndexParam), Serial(SerialParam), EntityId(EntityIdParam)
-    //CellEngineAtom(const float XParam, const float YParam, const float ZParam, const UnsignedInt SerialParam, const UnsignedInt EntityIdParam, char NameParam[2], char ResNameParam[4], char ChainParam[6], const vector3_16 ColorParam) : X(XParam), Y(YParam), Z(ZParam), Serial(SerialParam), EntityId(EntityIdParam)
-    // CellEngineAtom(const float XParam, const float YParam, const float ZParam, const UnsignedInt EntityIdParam, char NameParam[2], char ResNameParam[4], char ChainParam[6], const vector3_16 ColorParam) : X(XParam), Y(YParam), Z(ZParam), EntityId(EntityIdParam)
-    // {
-    //     strncpy(Name, NameParam, 2);
-    //     strncpy(ResName, ResNameParam, 4);
-    //     strncpy(Chain, ChainParam, 6);
-    // }
-    // CellEngineAtom(const std::uint16_t XParam, const std::uint16_t YParam, const std::uint16_t ZParam) : X(XParam), Y(YParam), Z(ZParam)
-    // {
-    // }
     CellEngineAtom() = default;
     ~CellEngineAtom() = default;
 public:

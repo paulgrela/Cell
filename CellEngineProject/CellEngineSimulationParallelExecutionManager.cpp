@@ -329,8 +329,6 @@ void CellEngineSimulationParallelExecutionManager::GatherParticlesFromThreadsToP
         const auto stop_time = chrono::high_resolution_clock::now();
 
         LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Gathering particles from threads to main thread has taken time = ","Execution in threads")));
-
-        CheckParticlesCenters(false);
     }
     CATCH("gathering particles from threads to particles in main thread")
 }
@@ -411,8 +409,6 @@ void CellEngineSimulationParallelExecutionManager::GenerateNStepsOfSimulationFor
 {
     try
     {
-        CheckParticlesCenters(false);
-
         LoggersManagerObject.Log(STREAM("MaxParticleIndex = " << MaxParticleIndex));
 
         SetZeroForAllParallelExecutionVariables();
@@ -546,8 +542,6 @@ void CellEngineSimulationParallelExecutionManager::CheckParticlesCenters(const b
         LoggersManagerObject.LogError(STREAM("Number of erased particles with list of voxels sized zero = " << erase_if(GetParticles(), [](auto& P){ return P.second.ListOfVoxels.empty() == true; })));
 
         LoggersManagerObject.Log(STREAM(""));
-
-        CellEngineSimulationSpace::CheckParticlesIndexes<Particle>(FormerParticlesIndexes, "existed");
     }
     CATCH("generating n steps simulation for whole cell space in threads")
 }

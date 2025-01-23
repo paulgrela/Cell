@@ -107,7 +107,7 @@ inline void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::SetParticleParamet
             ParticleObject.GenomeIndexNext = (ParticleObject.Next != nullptr ? ParticleObject.Next->GenomeIndex : 0);
         }
         //TempAtomObject.GenomeIndex = ParticleObject.GenomeIndex;
-        ParticleObject.GenomeIndex = ParticleObject.GenomeIndex;
+        //ParticleObject.GenomeIndex = ParticleObject.GenomeIndex;
         ParticleObject.Nucleotide = ((CellEngineUseful::IsDNAorRNA(ParticleObject.EntityId) == true) ? CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.ChainId) : '0');
         // #ifdef RNA_IN_ONE_PARTICLE
         // TempAtomObject.SequenceStr = ParticleObject.SequenceStr;

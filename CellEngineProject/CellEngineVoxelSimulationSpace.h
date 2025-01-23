@@ -57,6 +57,11 @@ protected:
 protected:
     void FillParticleElementsInSpace(UniqueIdInt ParticleIndex, ParticleKind& ParticleKindObjectForProduct, UnsignedInt VectorX, UnsignedInt VectorY, UnsignedInt VectorZ) override;
 public:
+    template <class T>
+    static void CheckParticlesIndexes(ParticlesContainerInternal<T>& FormerParticlesIndexes, const string& FormerState);
+    void CheckCancelledParticlesIndexes();
+    void CheckFormerExistedParticlesIndexes();
+public:
     explicit CellEngineVoxelSimulationSpace(ParticlesContainer<Particle>& ParticlesParam, bool GetMemoryForVoxelSpace, ThreadIdType ThreadIndexParam, CurrentThreadPosType CurrentThreadPos);
     ~CellEngineVoxelSimulationSpace() override;
 };
