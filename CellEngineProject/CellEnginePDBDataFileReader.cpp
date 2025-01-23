@@ -21,7 +21,6 @@ CellEngineAtom CellEnginePDBDataFileReader::ParseRecord(const char* LocalPDBReco
         string RecordStr = LocalPDBRecord;
 
         CellEngineAtomObject.EntityId = 0;
-        //CellEngineAtomObject.Serial = stoi(RecordStr.substr(6, 5));
 
         string NameStr = trim_whitespace_surrounding(RecordStr.substr(12, 4));
         string ResNameStr = trim_whitespace_surrounding(RecordStr.substr(17, 3));
@@ -32,8 +31,7 @@ CellEngineAtom CellEnginePDBDataFileReader::ParseRecord(const char* LocalPDBReco
         CellEngineAtomObject.Y = stof(RecordStr.substr(38, 8));
         CellEngineAtomObject.Z = stof(RecordStr.substr(46, 8));
         
-        auto AtomKindObjectIterator = ParticlesKindsManagerObject.GetGraphicAtomKindDataFromAtomName(
-                CellEngineAtomObject.Name[0]);
+        auto AtomKindObjectIterator = ParticlesKindsManagerObject.GetGraphicAtomKindDataFromAtomName(CellEngineAtomObject.Name[0]);
         CellEngineAtomObject.AtomColor = AtomKindObjectIterator->Color;
 
         #ifdef EXTENDED_RAM_MEMORY

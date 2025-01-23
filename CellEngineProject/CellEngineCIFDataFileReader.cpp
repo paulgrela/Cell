@@ -37,8 +37,6 @@ CellEngineAtom CellEngineCIFDataFileReader::ParseRecord(const char* LocalCIFReco
 
         vector<string> AtomFields = split(RecordStr, " ");
 
-        //CellEngineAtomObject.Serial = stoi(AtomFields[1]);
-
         strncpy(CellEngineAtomObject.Name, AtomFields[3].c_str(), AtomFields[3].length() + 1);
         strncpy(CellEngineAtomObject.ResName, AtomFields[5].c_str(), AtomFields[5].length() + 1);
         strncpy(CellEngineAtomObject.Chain, AtomFields[6].c_str(), AtomFields[6].length() + 1);
@@ -55,8 +53,7 @@ CellEngineAtom CellEngineCIFDataFileReader::ParseRecord(const char* LocalCIFReco
         #endif
 
         auto ParticleKindObject = ParticlesKindsManagerObject.GetGraphicParticleKind(CellEngineAtomObject.EntityId);
-        CellEngineAtomObject.Visible = ParticleKindObject.Visible;
-        //CellEngineAtomObject.ParticleColor = ParticleKindObject.AtomColor;
+
         #ifdef EXTENDED_RAM_MEMORY
         CellEngineAtomObject.SizeXParticle = ParticleKindObject.SizeX;
         CellEngineAtomObject.SizeYParticle = ParticleKindObject.SizeY;

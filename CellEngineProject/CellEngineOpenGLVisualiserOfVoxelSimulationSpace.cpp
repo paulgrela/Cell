@@ -108,10 +108,10 @@ inline void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::SetParticleParamet
         }
         //TempAtomObject.GenomeIndex = ParticleObject.GenomeIndex;
         ParticleObject.GenomeIndex = ParticleObject.GenomeIndex;
-        TempAtomObject.Nucleotide = ((CellEngineUseful::IsDNAorRNA(ParticleObject.EntityId) == true) ? CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.ChainId) : '0');
-        #ifdef RNA_IN_ONE_PARTICLE
-        TempAtomObject.SequenceStr = ParticleObject.SequenceStr;
-        #endif
+        ParticleObject.Nucleotide = ((CellEngineUseful::IsDNAorRNA(ParticleObject.EntityId) == true) ? CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.ChainId) : '0');
+        // #ifdef RNA_IN_ONE_PARTICLE
+        // TempAtomObject.SequenceStr = ParticleObject.SequenceStr;
+        // #endif
     }
     CATCH("setting particle parameters to draw")
 };
@@ -180,7 +180,7 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSpace(UnsignedInt& 
         GLuint PartOfStencilBufferIndex[3];
 
         CellEngineAtom TempAtomObject;
-        TempAtomObject.Visible = true;
+        //TempAtomObject.Visible = true;
 
         NumberOfAllRenderedAtoms = 0;
 

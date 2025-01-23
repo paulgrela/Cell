@@ -7,7 +7,6 @@
 
 #include "ExceptionsMacro.h"
 #include "CellEngineUseful.h"
-#include "CellEngineConstants.h"
 #include "CellEngineParticleKind.h"
 
 #ifndef USING_MODULES
@@ -55,7 +54,7 @@ public:
         return ParticlesKinds.find(EntityId)->second;
     }
 public:
-    std::optional<ParticleKind> GetParticleKindFromStrId(const std::string& StrId)
+    std::optional<ParticleKind> GetParticleKindFromStrId(const std::string& StrId) const
     {
         for (const auto& ParticleKindObject : ParticlesKinds)
             if (ParticleKindObject.second.IdStr == StrId)
@@ -64,7 +63,7 @@ public:
         return {};
     }
 public:
-    std::optional<ParticleKind> GetParticleKindFromGeneId(const SignedInt GeneId)
+    std::optional<ParticleKind> GetParticleKindFromGeneId(const SignedInt GeneId) const
     {
         for (const auto& ParticleKindObject : ParticlesKinds)
             if (ParticleKindObject.second.GeneId == GeneId)

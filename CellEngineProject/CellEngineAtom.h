@@ -24,14 +24,14 @@ public:
     float Y{};
     float Z{};
     vector3_16 AtomColor{};
-    bool Visible{};
+    // bool Visible{};
     // UniqueIdInt GenomeIndex = 0;
     // UniqueIdInt GenomeIndexPrev = 0;
     // UniqueIdInt GenomeIndexNext = 0;
-    char Nucleotide = '?';
-    #ifdef RNA_IN_ONE_PARTICLE
-    std::string SequenceStr;
-    #endif
+    //char Nucleotide = '?';
+    // #ifdef RNA_IN_ONE_PARTICLE
+    // std::string SequenceStr;
+    // #endif
     #ifdef EXTENDED_RAM_MEMORY
     float SizeXAtom{};
     float SizeYAtom{};

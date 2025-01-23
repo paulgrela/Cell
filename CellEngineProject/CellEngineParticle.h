@@ -87,6 +87,8 @@ public:
     std::string SequenceStr;
     UnsignedInt PositionInSequence{};
 public:
+    char Nucleotide = '?';
+public:
     vector3_16 ParticleColor{};
     vector3_16 UniqueParticleColor{};
     vector3_16 RandomParticleKindColor{};
