@@ -121,6 +121,7 @@ public:
 public:
     ListOfVoxelsType ListOfVoxels;
     ListOfAtomsType ListOfAtoms;
+public:
     float XSizeDiv2{}, YSizeDiv2{}, ZSizeDiv2{};
 public:
     ParticleKindGraphicData GraphicData;

@@ -52,9 +52,8 @@ CellEngineAtom CellEngineCIFDataFileReader::ParseRecord(const char* LocalCIFReco
         CellEngineAtomObject.SizeZAtom = AtomKindObjectIterator->SizeZ;
         #endif
 
-        auto ParticleKindObject = ParticlesKindsManagerObject.GetGraphicParticleKind(CellEngineAtomObject.EntityId);
-
         #ifdef EXTENDED_RAM_MEMORY
+        auto ParticleKindObject = ParticlesKindsManagerObject.GetGraphicParticleKind(CellEngineAtomObject.EntityId);
         CellEngineAtomObject.SizeXParticle = ParticleKindObject.SizeX;
         CellEngineAtomObject.SizeYParticle = ParticleKindObject.SizeY;
         CellEngineAtomObject.SizeZParticle = ParticleKindObject.SizeZ;
@@ -158,6 +157,22 @@ EntityIdInt GetParticleKindIdFromGeneIdOrName(const string& ParticleKindName, co
     return ParticlesKindsManagerObject.GetParticleKindFromStrId("M_coa_c")->EntityId;
 }
 
+void AddParticleKindGraphicDataFromConfigXMLData(const EntityIdInt EntityId)
+{
+    try
+    {
+        auto ParticleKindObjectIterator = ParticlesKindsManagerObject.GraphicParticlesKindsFromConfigXML.find(EntityId);
+        if (ParticleKindObjectIterator == ParticlesKindsManagerObject.GraphicParticlesKindsFromConfigXML.end())
+        {
+            auto OthersParticleKindObjectIterator = ParticlesKindsManagerObject.GraphicParticlesKindsFromConfigXML.find(10000);
+            ParticlesKindsManagerObject.ParticlesKinds[EntityId].GraphicData = ParticleKindGraphicData{ EntityId, OthersParticleKindObjectIterator->second.Visible, false, OthersParticleKindObjectIterator->second.SizeX, OthersParticleKindObjectIterator->second.SizeY, OthersParticleKindObjectIterator->second.SizeZ, OthersParticleKindObjectIterator->second.ParticleColor, OthersParticleKindObjectIterator->second.ParticleColor, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), OthersParticleKindObjectIterator->second.NameFromXML, "NAME_FROM_DATA_FILE" };
+        }
+        else
+            ParticlesKindsManagerObject.ParticlesKinds[EntityId].GraphicData = ParticleKindGraphicData{ EntityId, ParticleKindObjectIterator->second.Visible, false, ParticleKindObjectIterator->second.SizeX, ParticleKindObjectIterator->second.SizeY, ParticleKindObjectIterator->second.SizeZ, ParticleKindObjectIterator->second.ParticleColor, ParticleKindObjectIterator->second.ParticleColor, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), ParticleKindObjectIterator->second.NameFromXML, "NAME_FROM_DATA_FILE"};
+    }
+    CATCH("adding particle kind graphic data from xml config data")
+}
+
 void CellEngineCIFDataFileReader::ReadDataFromCIFFile()
 {
     try
@@ -219,15 +234,6 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile()
                         ProteinIdFromGeneIdTranslator[EntityId] = stoi(AtomFields[5].substr(Pos + StrToFind.length(), 3));
                     ParticleAutinKindIdToAutinNameTranslator[EntityId] = AtomFields[5];
                 }
-
-                auto ParticleKindObjectIterator = ParticlesKindsManagerObject.GraphicParticlesKindsFromConfigXML.find(EntityId);
-                if (ParticleKindObjectIterator == ParticlesKindsManagerObject.GraphicParticlesKindsFromConfigXML.end())
-                {
-                    auto OthersParticleKindObjectIterator = ParticlesKindsManagerObject.GraphicParticlesKindsFromConfigXML.find(10000);
-                    ParticlesKindsManagerObject.ParticlesKinds[EntityId].GraphicData = ParticleKindGraphicData{ EntityId, OthersParticleKindObjectIterator->second.Visible, false, OthersParticleKindObjectIterator->second.SizeX, OthersParticleKindObjectIterator->second.SizeY, OthersParticleKindObjectIterator->second.SizeZ, OthersParticleKindObjectIterator->second.ParticleColor, OthersParticleKindObjectIterator->second.ParticleColor, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), OthersParticleKindObjectIterator->second.NameFromXML, AtomFields[5].substr(1, AtomFields[5].length() - 2) };
-                }
-                else
-                    ParticlesKindsManagerObject.ParticlesKinds[EntityId].GraphicData = ParticleKindGraphicData{ EntityId, ParticleKindObjectIterator->second.Visible, false, ParticleKindObjectIterator->second.SizeX, ParticleKindObjectIterator->second.SizeY, ParticleKindObjectIterator->second.SizeZ, ParticleKindObjectIterator->second.ParticleColor, ParticleKindObjectIterator->second.ParticleColor, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), ParticleKindObjectIterator->second.NameFromXML, AtomFields[5].substr(1, AtomFields[5].length() - 2)};
             }
             else
             if (Line.substr(0, 4) == "ATOM")
@@ -298,7 +304,10 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile()
                             EntityIdInt LocalEntityId = AtomsForChainNameIterator->second[0].EntityId;
 
                             if (CellEngineConfigDataObject.MixedFullAtomWithVoxelSpace == true)
+                            {
                                 LocalEntityId = GetParticleKindIdFromGeneIdOrName(ParticleAutinKindIdToAutinNameTranslator.find(LocalEntityId)->second, LocalEntityId, ProteinIdFromGeneIdTranslator, AutinIllinoisNameMap);
+                                AddParticleKindGraphicDataFromConfigXMLData(LocalEntityId);
+                            }
 
                             if (CellEngineUseful::IsNucleotide(AppliedChainName))
                                 NumberOfNucleotidesInDNA++;
@@ -334,6 +343,8 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile()
                                 auto SectorY = static_cast<UnsignedInt>((Center.Y + ShiftCenter) / SizeOfParticlesSector);
                                 auto SectorZ = static_cast<UnsignedInt>((Center.Z + ShiftCenter) / SizeOfParticlesSector);
 
+                                if (LocalEntityId == 344) {cout<<"AAA"<<endl; getchar();}
+
                                 NumberOfParticles++;
                                 //moze GetNewFreeIndexOfParticle()
                                 SetCurrentSectorPos({ SectorX, SectorY, SectorZ });
@@ -350,6 +361,8 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile()
                 }
             }
         }
+
+        LoggersManagerObject.Log(STREAM("Number of erased particles from particle kinds = " << erase_if(ParticlesKindsManagerObject.ParticlesKinds, [](auto& P){ return P.first < CellEngineConfigDataObject.DNAIdentifier; })));
 
         PreprocessData(true);
 

@@ -495,26 +495,19 @@ public:
                 {
                     vector<ParticleKind> LocalParticlesKindsForImGuiSelection;
 
-                    if (CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer == nullptr)
-                    {
-                        transform(ParticlesKindsManagerObject.ParticlesKinds.begin(), ParticlesKindsManagerObject.ParticlesKinds.end(), std::back_inserter(LocalParticlesKindsForImGuiSelection), [](const auto &ParticlesKindsMapElement){ return ParticlesKindsMapElement.second; });
-
-                        sort(LocalParticlesKindsForImGuiSelection.begin(), LocalParticlesKindsForImGuiSelection.end(), [](const auto &P1, const auto &P2){ return P1.GraphicData.NameFromDataFile < P2.GraphicData.NameFromDataFile; });
-
-                        for (auto &ParticlesKindForImGuiSelectionObject: LocalParticlesKindsForImGuiSelection)
-                            ImGui::Checkbox(string(to_string(ParticlesKindForImGuiSelectionObject.EntityId) + " " + ParticlesKindForImGuiSelectionObject.GraphicData.NameFromDataFile).c_str(), &ParticlesKindForImGuiSelectionObject.GraphicData.Visible);
-                    }
-                    else
-                    {
-                        for (const auto &ParticlesKindsMapElement : ParticlesKindsManagerObject.ParticlesKinds)
+                        for (const auto& ParticlesKindsMapElement : ParticlesKindsManagerObject.ParticlesKinds)
                             if (ParticlesKindsMapElement.second.IdStr.starts_with("JCVISYN3A_") || ParticlesKindsMapElement.second.IdStr.starts_with("particle_") || ParticlesKindsMapElement.second.IdStr.starts_with("trna_") || ParticlesKindsMapElement.second.IdStr.starts_with("mrna_") || ParticlesKindsMapElement.second.IdStr.starts_with("rrna_") || ParticlesKindsMapElement.second.IdStr.starts_with("M_"))
                                 LocalParticlesKindsForImGuiSelection.emplace_back(ParticlesKindsMapElement.second);
 
                         sort(LocalParticlesKindsForImGuiSelection.begin(), LocalParticlesKindsForImGuiSelection.end(), ComparisonOfParticle);
 
-                        for (auto &ParticlesKindForImGuiSelectionObject: LocalParticlesKindsForImGuiSelection)
-                            ImGui::Checkbox(string(to_string(ParticlesKindForImGuiSelectionObject.EntityId) + " " + "T = " + ParticlesKindsManager::ConvertParticleTypeToString(ParticlesKindForImGuiSelectionObject.ParticleKindSpecialDataSector.back().ParticleType) + " " + ParticlesKindForImGuiSelectionObject.IdStr + " " + (ParticlesKindForImGuiSelectionObject.Name.starts_with("M_") ? ParticlesKindForImGuiSelectionObject.Name : "") + (ParticlesKindForImGuiSelectionObject.Formula != ParticlesKindForImGuiSelectionObject.IdStr && ParticlesKindForImGuiSelectionObject.Formula.empty() == false ? ("F = " + ParticlesKindForImGuiSelectionObject.Formula + " ") : "")).c_str(), &ParticlesKindForImGuiSelectionObject.GraphicData.Visible);
-                    }
+                        for (auto &ParticlesKindForImGuiSelectionObject : LocalParticlesKindsForImGuiSelection)
+                        {
+                            string TypeStr = "Unknown Type ";
+                            if (ParticlesKindForImGuiSelectionObject.ParticleKindSpecialDataSector.empty() == false)
+                                TypeStr = ParticlesKindsManager::ConvertParticleTypeToString(ParticlesKindForImGuiSelectionObject.ParticleKindSpecialDataSector.back().ParticleType);
+                            ImGui::Checkbox(string(to_string(ParticlesKindForImGuiSelectionObject.EntityId) + " " + "T = " + TypeStr + " " + ParticlesKindForImGuiSelectionObject.IdStr + " " + (ParticlesKindForImGuiSelectionObject.Name.starts_with("M_") ? ParticlesKindForImGuiSelectionObject.Name : "") + (ParticlesKindForImGuiSelectionObject.Formula != ParticlesKindForImGuiSelectionObject.IdStr && ParticlesKindForImGuiSelectionObject.Formula.empty() == false ? ("F = " + ParticlesKindForImGuiSelectionObject.Formula + " ") : "")).c_str(), &ParticlesKindForImGuiSelectionObject.GraphicData.Visible);
+                        }
 
                     for (const auto &ParticleKindForImGuiSelectionObject: LocalParticlesKindsForImGuiSelection)
                         ParticlesKindsManagerObject.GetParticleKind(ParticleKindForImGuiSelectionObject.EntityId).GraphicData.Visible = ParticleKindForImGuiSelectionObject.GraphicData.Visible;
@@ -588,15 +581,11 @@ public:
                         ChangeColor = true;
                     }
                 }
-
-                // if (ChangeColor == true)
-                //     for (auto &ParticleCenter: CellEngineDataFileObjectPointer->GetParticlesCenters())
-                //     {
-                //         ParticleCenter.AtomColor = ParticlesKindsManagerObject.GetGraphicAtomKindDataFromAtomName(ParticleCenter.Name[0])->Color;
-                //         if (CellEngineConfigDataObject.ShowDetailsInAtomScale == true)
-                //             for (auto &AtomObject: CellEngineDataFileObjectPointer->GetAllAtoms()[ParticleCenter.AtomIndex])
-                //                 AtomObject.AtomColor = ParticlesKindsManagerObject.GetGraphicAtomKindDataFromAtomName(AtomObject.Name[0])->Color;
-                //     }
+                if (ChangeColor == true)
+                    FOR_EACH_PARTICLE_IN_XYZ_ONLY
+                        for (auto& ParticleObject: CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex])
+                            for (auto& AtomObject : ParticleObject.second.ListOfAtoms)
+                                AtomObject.AtomColor = ParticlesKindsManagerObject.GetGraphicAtomKindDataFromAtomName(AtomObject.Name[0])->Color;
             }
         }
         CATCH("executing atoms kinds menu");

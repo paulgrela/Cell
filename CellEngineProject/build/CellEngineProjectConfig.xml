@@ -1945,7 +1945,7 @@
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>
 				</ParticleKind>
-				<ParticleKind id="340">
+				<ParticleKind id="101219">
 					<Name>RIBOSOME_70S</Name>
 					<Color>Lime</Color>
 					<Visible>true</Visible>
@@ -1953,7 +1953,7 @@
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>
 				</ParticleKind>
-				<ParticleKind id="238">
+				<ParticleKind id="101221">
 					<Name>RNA_POL</Name>
 					<Color>Purple</Color>
 					<Visible>true</Visible>
@@ -1961,7 +1961,7 @@
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>
 				</ParticleKind>
-				<ParticleKind id="82">
+				<ParticleKind id="101220">
 					<Name>DNA_POL</Name>
 					<Color>Cyan</Color>
 					<Visible>true</Visible>
