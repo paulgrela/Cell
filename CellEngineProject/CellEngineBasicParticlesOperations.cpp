@@ -78,9 +78,9 @@ void CellEngineBasicParticlesOperations::UpdateParticleKindListOfVoxels(const Pa
             for (auto& VoxelCoordinates : ParticleObject.ListOfVoxels)
                 ParticleKindObject.ListOfVoxels.emplace_back(VoxelCoordinates.X - ParticleXMin, VoxelCoordinates.Y - ParticleYMin, VoxelCoordinates.Z - ParticleZMin);
 
-            ParticleKindObject.XSizeDiv2 = (ParticleXMax - ParticleXMin) / 2;
-            ParticleKindObject.YSizeDiv2 = (ParticleYMax - ParticleYMin) / 2;
-            ParticleKindObject.ZSizeDiv2 = (ParticleZMax - ParticleZMin) / 2;
+            ParticleKindObject.XSizeDiv2 = static_cast<float>(ParticleXMax - ParticleXMin) / 2;
+            ParticleKindObject.YSizeDiv2 = static_cast<float>(ParticleYMax - ParticleYMin) / 2;
+            ParticleKindObject.ZSizeDiv2 = static_cast<float>(ParticleZMax - ParticleZMin) / 2;
         }
     }
     CATCH("updating particle kind list of voxels")
@@ -101,7 +101,7 @@ void CellEngineBasicParticlesOperations::GetMinMaxCoordinatesForParticle(Particl
         for (auto& VoxelCoordinates : ParticleObject.ListOfVoxels)
             GetMinMaxOfCoordinates<T>(VoxelCoordinates.X, VoxelCoordinates.Y, VoxelCoordinates.Z, ParticleXMin, ParticleXMax, ParticleYMin, ParticleYMax, ParticleZMin, ParticleZMax);
 
-        ParticleObject.SetCenterCoordinates(ParticleXMin + (ParticleXMax - ParticleXMin) / 2, ParticleYMin + (ParticleYMax - ParticleYMin) / 2, ParticleZMin + (ParticleZMax - ParticleZMin) / 2);
+        ParticleObject.SetCenterCoordinates(ParticleXMin + static_cast<float>(ParticleXMax - ParticleXMin) / 2, ParticleYMin + static_cast<float>(ParticleYMax - ParticleYMin) / 2, ParticleZMin + static_cast<float>(ParticleZMax - ParticleZMin) / 2);
 
         if (UpdateParticleKindListOfVoxelsBool == true)
             UpdateParticleKindListOfVoxels<T>(ParticleObject, ParticleXMin, ParticleXMax, ParticleYMin, ParticleYMax, ParticleZMin, ParticleZMax);

@@ -506,13 +506,11 @@ void CellEngineOpenGLVisualiser::PrintAtomDescriptionOnScreen(CellEngineAtom& Ch
 
         TextOverlayObject.Clear();
 
-        string LocalTextStr = CellEngineUseful::AtomDescriptionTextsObject.Texts[0] = string(" Name = ") + ChosenAtomObject.Name + " ResName = " + ChosenAtomObject.ResName;
+        string LocalTextStr = CellEngineUseful::AtomDescriptionTextsObject.Texts[0] = string("Name = ") + ChosenAtomObject.Name + " ResName = " + ChosenAtomObject.ResName;
         if (CellEngineConfigDataObject.StencilForDrawingObjectsTypesObject == CellEngineConfigData::StencilForDrawingObjectsTypes::StencilForDrawingOnlyInAtomScale)
         {
             CellEngineUseful::AtomDescriptionTextsObject.Texts[1] = "Chain [" + string(ChosenAtomObject.Chain) + "]" + "(" + ChosenParticleObject.Nucleotide + ")";
-            //#ifdef RNA_IN_ONE_PARTICLE
             CellEngineUseful::AtomDescriptionTextsObject.Texts[1] += " SEQ = [" + ChosenParticleObject.SequenceStr + "]";
-            //#endif
             CellEngineUseful::AtomDescriptionTextsObject.Texts[2] = "EntityId = " + to_string(ChosenAtomObject.EntityId);
             CellEngineUseful::AtomDescriptionTextsObject.Texts[3] = "Entity Name = [" + GetEntityName(ChosenAtomObject.EntityId) + "]";
             CellEngineUseful::AtomDescriptionTextsObject.Texts[4] = "Gen Index = [" + to_string(ChosenParticleObject.GenomeIndex) + "]";
@@ -539,9 +537,8 @@ string CellEngineOpenGLVisualiser::GetEntityName(const UnsignedInt EntityId)
 
     try
     {
-        auto EntityIterator = ParticlesKindsManagerObject.ParticlesKinds.find(EntityId);
-        if (EntityIterator != ParticlesKindsManagerObject.ParticlesKinds.end())
-            EntityName = EntityIterator->second.IdStr + " " + EntityIterator->second.GraphicData.NameFromDataFile;
+        if (auto EntityIterator = ParticlesKindsManagerObject.ParticlesKinds.find(EntityId); EntityIterator != ParticlesKindsManagerObject.ParticlesKinds.end())
+            EntityName = (EntityIterator->second.IdStr.empty() == false ? EntityIterator->second.IdStr + " " + EntityIterator->second.GraphicData.NameFromDataFile : EntityIterator->second.GraphicData.NameFromDataFile);
         else
             EntityName = "";
     }

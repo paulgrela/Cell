@@ -9,15 +9,15 @@ class CellEngineParticlesBinaryDataFileReaderWriter : virtual public CellEngineD
 {
 public:
     explicit CellEngineParticlesBinaryDataFileReaderWriter() = default;
-    virtual ~CellEngineParticlesBinaryDataFileReaderWriter() = default;
+    ~CellEngineParticlesBinaryDataFileReaderWriter() override = default;
 public:
     void SaveDataToFile() override;
 public:
-    void SaveParticlesToBinaryFile(std::ofstream& ParticlesDataFile);
+    void SaveParticlesToBinaryFile(std::ofstream& ParticlesDataFile) const;
     static void SaveParticlesKindsToBinaryFile(std::ofstream& ParticlesDataFile);
     static void SaveGenesToBinaryFile(std::ofstream& ParticlesDataFile);
     static void SaveChemicalReactionsToBinaryFile(std::ofstream& ParticlesDataFile);
-    void SaveParticlesKindsAndParticlesAndChemicalReactionsAndGenesToBinaryFile();
+    void SaveParticlesKindsAndParticlesAndChemicalReactionsAndGenesToBinaryFile() const;
 public:
     void ReadParticlesFromBinaryFile(std::ifstream& ParticlesDataFile);
     static void ReadParticlesKindsFromBinaryFile(std::ifstream& ParticlesDataFile);

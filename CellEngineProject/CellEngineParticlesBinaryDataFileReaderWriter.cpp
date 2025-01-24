@@ -1,4 +1,5 @@
 
+
 #include <fstream>
 
 #include "StringUtils.h"
@@ -97,9 +98,6 @@ void CellEngineParticlesBinaryDataFileReaderWriter::SaveParticlesKindsToBinaryFi
             }
 
             SaveVectorToBinaryFile<vector3_16>(ParticlesDataFile, ParticleKindObject.second.ListOfVoxels);
-            //SaveVectorToBinaryFile<vector3_32>(ParticlesDataFile, ParticleKindObject.second.ListOfVoxels);
-            //SaveVectorToBinaryFile<CellEngineAtomSmall>(ParticlesDataFile, ParticleKindObject.second.ListOfVoxels);
-            //SaveVectorToBinaryFile<CellEngineAtom>(ParticlesDataFile, ParticleKindObject.second.ListOfVoxels);
         }
 
         LoggersManagerObject.Log(STREAM("END OF SAVING PARTICLES KINDS TO BINARY FILE"));
@@ -107,7 +105,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::SaveParticlesKindsToBinaryFi
     CATCH("saving particles to file")
 };
 
-void CellEngineParticlesBinaryDataFileReaderWriter::SaveParticlesToBinaryFile(ofstream& ParticlesDataFile)
+void CellEngineParticlesBinaryDataFileReaderWriter::SaveParticlesToBinaryFile(ofstream& ParticlesDataFile) const
 {
     try
     {
@@ -131,9 +129,6 @@ void CellEngineParticlesBinaryDataFileReaderWriter::SaveParticlesToBinaryFile(of
             SaveStringToBinaryFile(ParticlesDataFile, ParticleObject.second.SequenceStr);
 
             SaveVectorToBinaryFile<vector3_16>(ParticlesDataFile, ParticleObject.second.ListOfVoxels);
-            //SaveVectorToBinaryFile<vector3_32>(ParticlesDataFile, ParticleObject.second.ListOfVoxels);
-            //SaveVectorToBinaryFile<CellEngineAtomSmall>(ParticlesDataFile, ParticleObject.second.ListOfVoxels);
-            //SaveVectorToBinaryFile<CellEngineAtom>(ParticlesDataFile, ParticleObject.second.ListOfVoxels);
 
             SavePointerToBinaryFile(ParticlesDataFile, ParticleObject.second.Prev);
             SavePointerToBinaryFile(ParticlesDataFile, ParticleObject.second.Next);
@@ -228,7 +223,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::SaveGenesToBinaryFile(ofstre
     CATCH("saving chemical genes to file")
 };
 
-void CellEngineParticlesBinaryDataFileReaderWriter::SaveParticlesKindsAndParticlesAndChemicalReactionsAndGenesToBinaryFile()
+void CellEngineParticlesBinaryDataFileReaderWriter::SaveParticlesKindsAndParticlesAndChemicalReactionsAndGenesToBinaryFile() const
 {
     try
     {
@@ -320,28 +315,6 @@ void ReadVectorFromBinaryFile(ifstream& ParticlesDataFile, vector<TElement>& Vec
     CATCH("reading vector from binary file")
 }
 
-void ReadVectorFromBinaryFile3_16(ifstream& ParticlesDataFile, ListOfVoxelsType& VectorToBeRead)
-{
-    try
-    {
-        VectorToBeRead.clear();
-
-        UnsignedInt Size;
-        ParticlesDataFile.read((char*)&Size, sizeof(Size));
-        for (UnsignedInt Index = 1; Index <= Size; Index++)
-        {
-            vector3_16 Object{};
-            ParticlesDataFile.read((char*)&Object, sizeof(Object));
-            //VectorToBeRead.emplace_back(vector3_32{ static_cast<float>(Object.X), static_cast<float>(Object.Y), static_cast<float>(Object.Z) });
-            //VectorToBeRead.emplace_back(CellEngineAtomSmall{ 'C', static_cast<float>(Object.X), static_cast<float>(Object.Y), static_cast<float>(Object.Z) });
-            //VectorToBeRead.emplace_back(CellEngineAtom(static_cast<float>(Object.X), static_cast<float>(Object.Y), static_cast<float>(Object.Z)));
-            //VectorToBeRead.emplace_back(CellEngineAtom(Object.X, Object.Y, Object.Z));
-            VectorToBeRead.emplace_back(Object.X, Object.Y, Object.Z);
-        }
-    }
-    CATCH("reading vector from binary file")
-}
-
 void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesKindsFromBinaryFile(ifstream& ParticlesDataFile)
 {
     try
@@ -367,16 +340,13 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesKindsFromBinary
             ParticlesDataFile.read((char*)&ParticleKindObject.GraphicData.ParticleColor, sizeof(ParticleKindObject.GraphicData.ParticleColor));
             ParticlesDataFile.read((char*)&ParticleKindObject.GraphicData.RandomParticleColor, sizeof(ParticleKindObject.GraphicData.RandomParticleColor));
 
-            ParticlesDataFile.read((char*)&ParticleKindObject.XSizeDiv2, sizeof(ParticleKindObject.XSizeDiv2));
-            ParticlesDataFile.read((char*)&ParticleKindObject.YSizeDiv2, sizeof(ParticleKindObject.YSizeDiv2));
-            ParticlesDataFile.read((char*)&ParticleKindObject.ZSizeDiv2, sizeof(ParticleKindObject.ZSizeDiv2));
-            // UnsignedInt XSizeDiv2, YSizeDiv2, ZSizeDiv2;
-            // ParticlesDataFile.read((char*)&XSizeDiv2, sizeof(XSizeDiv2));
-            // ParticlesDataFile.read((char*)&YSizeDiv2, sizeof(YSizeDiv2));
-            // ParticlesDataFile.read((char*)&ZSizeDiv2, sizeof(ZSizeDiv2));
-            // ParticleKindObject.XSizeDiv2 = XSizeDiv2;
-            // ParticleKindObject.YSizeDiv2 = YSizeDiv2;
-            // ParticleKindObject.ZSizeDiv2 = ZSizeDiv2;
+            UnsignedInt XSizeDiv2, YSizeDiv2, ZSizeDiv2;
+            ParticlesDataFile.read((char*)&XSizeDiv2, sizeof(XSizeDiv2));
+            ParticlesDataFile.read((char*)&YSizeDiv2, sizeof(YSizeDiv2));
+            ParticlesDataFile.read((char*)&ZSizeDiv2, sizeof(ZSizeDiv2));
+            ParticleKindObject.XSizeDiv2 = XSizeDiv2;
+            ParticleKindObject.YSizeDiv2 = YSizeDiv2;
+            ParticleKindObject.ZSizeDiv2 = ZSizeDiv2;
 
             ReadStringFromBinaryFile(ParticlesDataFile, ParticleKindObject.IdStr);
             ReadStringFromBinaryFile(ParticlesDataFile, ParticleKindObject.Name);
@@ -400,8 +370,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesKindsFromBinary
                 ParticleKindObject.ParticleKindSpecialDataSector.emplace_back(ParticleKindSpecialDataSectorObject);
             }
 
-            //ReadVectorFromBinaryFile<vector3_16>(ParticlesDataFile, ParticleKindObject.ListOfVoxels);
-            ReadVectorFromBinaryFile3_16(ParticlesDataFile, ParticleKindObject.ListOfVoxels);
+            ReadVectorFromBinaryFile<vector3_16>(ParticlesDataFile, ParticleKindObject.ListOfVoxels);
 
             ParticleKindObject.GraphicData.Visible = true;
 
@@ -429,11 +398,6 @@ void ReadVoxelsVectorDividedByStepsFromBinaryFile(ifstream& ParticlesDataFile, L
             ParticlesDataFile.read((char*)&Object, sizeof(Object));
             if (Index % Step == 0)
                 VectorToBeRead.emplace_back(vector3_16{ static_cast<PositionInt>(static_cast<float>(Object.X) / DivideFactor), static_cast<PositionInt>(static_cast<float>(Object.Y) / DivideFactor), static_cast<PositionInt>(static_cast<float>(Object.Z) / DivideFactor) });
-                //VectorToBeRead.emplace_back(vector3_32{ static_cast<float>(Object.X) / DivideFactor, static_cast<float>(Object.Y) / DivideFactor, static_cast<float>(Object.Z) / DivideFactor });
-                //VectorToBeRead.emplace_back(CellEngineAtomSmall{ 'C', static_cast<float>(Object.X) / DivideFactor, static_cast<float>(Object.Y) / DivideFactor, static_cast<float>(Object.Z) / DivideFactor });
-                //VectorToBeRead.emplace_back(CellEngineAtom(static_cast<float>(Object.X) / DivideFactor, static_cast<float>(Object.Y) / DivideFactor, static_cast<float>(Object.Z) / DivideFactor));
-
-                //VectorToBeRead.emplace_back(CellEngineAtom(Object.X / DivideFactor, Object.Y / DivideFactor, Object.Z / DivideFactor));
         }
     }
     CATCH("reading vector from binary file")
@@ -462,8 +426,6 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
             vector3_16 CenterReadObject{};
             ParticlesDataFile.read((char*)&CenterReadObject, sizeof(CenterReadObject));
             ParticleObject.Center = { static_cast<float>(CenterReadObject.X), static_cast<float>(CenterReadObject.Y), static_cast<float>(CenterReadObject.Z) };
-            //ParticleObject.Center = { CenterReadObject.X, CenterReadObject.Y, CenterReadObject.Z };
-            //ParticlesDataFile.read((char*)&ParticleObject.Center, sizeof(ParticleObject.Center));
 
             ParticleObject.Center.X /= CellEngineConfigDataObject.DivisionFactorForReadingPositionsOfParticles;
             ParticleObject.Center.Y /= CellEngineConfigDataObject.DivisionFactorForReadingPositionsOfParticles;

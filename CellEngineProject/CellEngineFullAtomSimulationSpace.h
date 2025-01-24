@@ -30,7 +30,6 @@ public:
 public:
     [[nodiscard]] std::stringstream PrintSpaceMinMaxValues() const;
 public:
-    // void SetAtomInFullAtomSimulationSpace(UniqueIdInt ParticleIndex, const CellEngineAtom& AppliedAtom);
     Particle& GetParticleFromIndexForGenerator(UniqueIdInt ParticleIndex) override;
 public:
     void ClearVoxelSpaceAndParticles() override;

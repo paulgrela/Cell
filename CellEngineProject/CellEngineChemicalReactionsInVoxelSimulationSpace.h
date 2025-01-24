@@ -13,7 +13,6 @@ protected:
     void MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(Particle &ParticleObject, const Particle &NewPositionParticleObject, SignedInt AddX, SignedInt AddY, SignedInt AddZ) override;
     void FindParticlesInProximityInSimulationSpaceForSelectedLocalSpace(std::unordered_set<UnsignedInt>& FoundParticleIndexes, bool UpdateNucleotides, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam) override;
 protected:
-    //explicit CellEngineChemicalReactionsInVoxelSimulationSpace(ParticlesContainer<Particle>& ParticlesParam, ParticlesInSectorsContainer<Particle>& ParticlesInSectorsParam) : CellEngineChemicalReactionsInSimulationSpace(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam, ParticlesInSectorsParam)
     explicit CellEngineChemicalReactionsInVoxelSimulationSpace(ParticlesContainer<Particle>& ParticlesParam) : CellEngineChemicalReactionsInSimulationSpace(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam)
     {
     }

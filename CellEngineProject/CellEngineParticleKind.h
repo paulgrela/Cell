@@ -120,8 +120,8 @@ public:
     UnsignedInt Counter{};
 public:
     ListOfVoxelsType ListOfVoxels;
-    UnsignedInt XSizeDiv2{}, YSizeDiv2{}, ZSizeDiv2{};
-    //float XSizeDiv2{}, YSizeDiv2{}, ZSizeDiv2{};
+    ListOfAtomsType ListOfAtoms;
+    float XSizeDiv2{}, YSizeDiv2{}, ZSizeDiv2{};
 public:
     ParticleKindGraphicData GraphicData;
 public:

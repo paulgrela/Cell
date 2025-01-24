@@ -1929,7 +1929,7 @@
 			</Atoms>
 
 			<Particles>
-				<ParticleKind id="344">
+				<ParticleKind id="10001">
 					<Name>DNA</Name>
 					<Color>Red</Color>
 					<Visible>true</Visible>
@@ -1937,7 +1937,7 @@
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>
 				</ParticleKind>
-				<ParticleKind id="345">
+				<ParticleKind id="10002">
 					<Name>RNA</Name>
 					<Color>Blue</Color>
 					<Visible>true</Visible>
