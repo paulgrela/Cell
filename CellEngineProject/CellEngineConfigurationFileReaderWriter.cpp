@@ -310,20 +310,20 @@ void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const ch
                         ParticlesKindsManagerObject.GraphicParticlesKindsFromConfigXML.clear();
                         for (const ptree::value_type& ParticleKindPropertyTreeElement : CellStatePropertyTreeElement.second.get_child("Particles"))
                         {
-                            ParticleKindGraphicData ParticleKindObject;
+                            ParticleKindGraphicData ParticleKindGraphicObject;
 
                             LoggersManagerObject.Log(STREAM("ParticleKind Name = " << ParticleKindPropertyTreeElement.second.get<string>("Name") << " ID = " << ParticleKindPropertyTreeElement.second.get<UnsignedInt>("<xmlattr>.id") << " COLOR = " << ParticleKindPropertyTreeElement.second.get<string>("Color")));
 
-                            ParticleKindObject.NameFromXML = ParticleKindPropertyTreeElement.second.get<string>("Name");
-                            ParticleKindObject.NameFromXML == "DNA" ? CellEngineConfigDataObject.DNAIdentifier = ParticleKindPropertyTreeElement.second.get<UnsignedInt>("<xmlattr>.id") : 0;
-                            ParticleKindObject.NameFromXML == "RNA" ? CellEngineConfigDataObject.RNAIdentifier = ParticleKindPropertyTreeElement.second.get<UnsignedInt>("<xmlattr>.id") : 0;
+                            ParticleKindGraphicObject.NameFromXML = ParticleKindPropertyTreeElement.second.get<string>("Name");
+                            ParticleKindGraphicObject.NameFromXML == "DNA" ? CellEngineConfigDataObject.DNAIdentifier = ParticleKindPropertyTreeElement.second.get<UnsignedInt>("<xmlattr>.id") : 0;
+                            ParticleKindGraphicObject.NameFromXML == "RNA" ? CellEngineConfigDataObject.RNAIdentifier = ParticleKindPropertyTreeElement.second.get<UnsignedInt>("<xmlattr>.id") : 0;
                             CellEngineConfigDataObject.ProteinInBuildingProcessIdentifier = CellEngineConfigDataObject.RNAIdentifier + 1;
-                            ParticleKindObject.ParticleColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(vmath::FromVec4ToVec3(sb7::GetColorVec4FromColorName(ParticleKindPropertyTreeElement.second.get<string>("Color"))));
-                            ParticleKindObject.Visible = ParticleKindPropertyTreeElement.second.get<bool>("Visible");
-                            ParticleKindObject.SizeX = ParticleKindPropertyTreeElement.second.get<float>("SizeX");
-                            ParticleKindObject.SizeY = ParticleKindPropertyTreeElement.second.get<float>("SizeY");
-                            ParticleKindObject.SizeZ = ParticleKindPropertyTreeElement.second.get<float>("SizeZ");
-                            ParticlesKindsManagerObject.GraphicParticlesKindsFromConfigXML[ParticleKindPropertyTreeElement.second.get<UnsignedInt>("<xmlattr>.id")] = ParticleKindObject;
+                            ParticleKindGraphicObject.ParticleColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(vmath::FromVec4ToVec3(sb7::GetColorVec4FromColorName(ParticleKindPropertyTreeElement.second.get<string>("Color"))));
+                            ParticleKindGraphicObject.Visible = ParticleKindPropertyTreeElement.second.get<bool>("Visible");
+                            ParticleKindGraphicObject.SizeX = ParticleKindPropertyTreeElement.second.get<float>("SizeX");
+                            ParticleKindGraphicObject.SizeY = ParticleKindPropertyTreeElement.second.get<float>("SizeY");
+                            ParticleKindGraphicObject.SizeZ = ParticleKindPropertyTreeElement.second.get<float>("SizeZ");
+                            ParticlesKindsManagerObject.GraphicParticlesKindsFromConfigXML[ParticleKindPropertyTreeElement.second.get<UnsignedInt>("<xmlattr>.id")] = ParticleKindGraphicObject;
                         }
                     }
         }

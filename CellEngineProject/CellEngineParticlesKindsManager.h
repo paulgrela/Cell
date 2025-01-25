@@ -82,14 +82,6 @@ public:
         return ParticlesKinds.find(EntityId)->second.GraphicData;
     }
 public:
-    void AddParticleKind(const ParticleKind& ParticleKindObjectParam)
-    {
-        ParticlesKinds[ParticleKindObjectParam.EntityId] = ParticleKindObjectParam;
-        #ifndef USING_MODULES
-        ParticlesKinds[ParticleKindObjectParam.EntityId].GraphicData = ParticleKindGraphicData{ParticleKindObjectParam.EntityId, true, false, 1, 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), ParticleKindObjectParam.Name, ParticleKindObjectParam.Formula };
-        #endif
-    }
-public:
     std::vector<AtomKindGraphicData>::iterator GetGraphicAtomKindDataFromAtomName(char Name)
     {
         std::vector<AtomKindGraphicData>::iterator AtomKindObjectIterator;
@@ -103,6 +95,22 @@ public:
         CATCH("getting atom kind data for atom")
 
         return AtomKindObjectIterator;
+    }
+public:
+    vector3_16 GetParticleKindGraphicDataFromConfigXMLData(const EntityIdInt EntityId)
+    {
+        if (auto ParticleKindObjectIterator = GraphicParticlesKindsFromConfigXML.find(EntityId); ParticleKindObjectIterator == GraphicParticlesKindsFromConfigXML.end())
+            return GraphicParticlesKindsFromConfigXML.find(10000)->second.ParticleColor;
+        else
+            return ParticleKindObjectIterator->second.ParticleColor;
+    }
+public:
+    void AddParticleKind(const ParticleKind& ParticleKindObjectParam)
+    {
+        ParticlesKinds[ParticleKindObjectParam.EntityId] = ParticleKindObjectParam;
+        #ifndef USING_MODULES
+        ParticlesKinds[ParticleKindObjectParam.EntityId].GraphicData = ParticleKindGraphicData{ParticleKindObjectParam.EntityId, true, false, 1, 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), ParticleKindObjectParam.Name, ParticleKindObjectParam.Formula };
+        #endif
     }
 public:
     void AddSingleParticleKind(const ParticlesTypes ParticlesTypesObject, EntityIdInt& ParticleKindIdParam, const std::string& IdStrParam, const std::string& NameParam, const std::string& FormulaParam, const SignedInt GeneIdParam, const ElectricChargeType ElectricChargeParam, const std::string& CompartmentParam, const UnsignedInt CounterParam)

@@ -3352,7 +3352,7 @@
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>
 				</ParticleKind>
-				<ParticleKind id="682">
+				<ParticleKind id="101219">
 					<Name>RIBOSOME_70S</Name>
 					<Color>Lime</Color>
 					<Visible>true</Visible>
@@ -3376,7 +3376,7 @@
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>
 				</ParticleKind>
-				<ParticleKind id="683">
+				<ParticleKind id="101221">
 					<Name>RNA_POLYMERASE</Name>
 					<Color>Purple</Color>
 					<Visible>true</Visible>
@@ -3392,7 +3392,7 @@
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>
 				</ParticleKind>
-				<ParticleKind id="513">
+				<ParticleKind id="101220">
 					<Name>DNA_POLYMERASE_CORE</Name>
 					<Color>Cyan</Color>
 					<Visible>true</Visible>
@@ -3817,7 +3817,7 @@
 			</Atoms>
 
 			<Particles>
-				<ParticleKind id="533">
+				<ParticleKind id="10001">
 					<Name>DNA</Name>
 					<Color>Red</Color>
 					<Visible>true</Visible>
@@ -3825,7 +3825,7 @@
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>
 				</ParticleKind>
-				<ParticleKind id="534">
+				<ParticleKind id="10002">
 					<Name>RNA</Name>
 					<Color>Blue</Color>
 					<Visible>true</Visible>
@@ -3833,7 +3833,7 @@
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>
 				</ParticleKind>
-				<ParticleKind id="342">
+				<ParticleKind id="101219">
 					<Name>RIBOSOME_70S</Name>
 					<Color>Lime</Color>
 					<Visible>true</Visible>
@@ -3841,7 +3841,7 @@
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>
 				</ParticleKind>
-				<ParticleKind id="238">
+				<ParticleKind id="101221">
 					<Name>RNA_POL</Name>
 					<Color>Purple</Color>
 					<Visible>true</Visible>
@@ -3849,7 +3849,7 @@
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>
 				</ParticleKind>
-				<ParticleKind id="82">
+				<ParticleKind id="101220">
 					<Name>DNA_POL</Name>
 					<Color>Cyan</Color>
 					<Visible>true</Visible>
@@ -3857,6 +3857,7 @@
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>
 				</ParticleKind>
+
                                 <ParticleKind id="531">
 					<Name>MEMBRANE</Name>
 					<Color>Orange</Color>

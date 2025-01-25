@@ -161,8 +161,7 @@ void AddParticleKindGraphicDataFromConfigXMLData(const EntityIdInt EntityId)
 {
     try
     {
-        auto ParticleKindObjectIterator = ParticlesKindsManagerObject.GraphicParticlesKindsFromConfigXML.find(EntityId);
-        if (ParticleKindObjectIterator == ParticlesKindsManagerObject.GraphicParticlesKindsFromConfigXML.end())
+        if (auto ParticleKindObjectIterator = ParticlesKindsManagerObject.GraphicParticlesKindsFromConfigXML.find(EntityId); ParticleKindObjectIterator == ParticlesKindsManagerObject.GraphicParticlesKindsFromConfigXML.end())
         {
             auto OthersParticleKindObjectIterator = ParticlesKindsManagerObject.GraphicParticlesKindsFromConfigXML.find(10000);
             ParticlesKindsManagerObject.ParticlesKinds[EntityId].GraphicData = ParticleKindGraphicData{ EntityId, OthersParticleKindObjectIterator->second.Visible, false, OthersParticleKindObjectIterator->second.SizeX, OthersParticleKindObjectIterator->second.SizeY, OthersParticleKindObjectIterator->second.SizeZ, OthersParticleKindObjectIterator->second.ParticleColor, OthersParticleKindObjectIterator->second.ParticleColor, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), OthersParticleKindObjectIterator->second.NameFromXML, "NAME_FROM_DATA_FILE" };
@@ -343,10 +342,7 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile()
                                 auto SectorY = static_cast<UnsignedInt>((Center.Y + ShiftCenter) / SizeOfParticlesSector);
                                 auto SectorZ = static_cast<UnsignedInt>((Center.Z + ShiftCenter) / SizeOfParticlesSector);
 
-                                if (LocalEntityId == 344) {cout<<"AAA"<<endl; getchar();}
-
                                 NumberOfParticles++;
-                                //moze GetNewFreeIndexOfParticle()
                                 SetCurrentSectorPos({ SectorX, SectorY, SectorZ });
                                 Particle ParticleToInsert(NumberOfParticles, LocalEntityId, CellEngineUseful::GetChainIdFromChainName(AppliedChainName), -1, 1, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(UniqueParticleColor));
                                 ParticleToInsert.ListOfAtoms = ListOfAtoms;

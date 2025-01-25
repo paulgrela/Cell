@@ -339,6 +339,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesKindsFromBinary
             ParticlesDataFile.read((char*)&ParticleKindObject.GraphicData.AtomColor, sizeof(ParticleKindObject.GraphicData.AtomColor));
             ParticlesDataFile.read((char*)&ParticleKindObject.GraphicData.ParticleColor, sizeof(ParticleKindObject.GraphicData.ParticleColor));
             ParticlesDataFile.read((char*)&ParticleKindObject.GraphicData.RandomParticleColor, sizeof(ParticleKindObject.GraphicData.RandomParticleColor));
+            ParticleKindObject.GraphicData.ParticleColor = ParticlesKindsManagerObject.GetParticleKindGraphicDataFromConfigXMLData(ParticleKindObject.EntityId);
 
             UnsignedInt XSizeDiv2, YSizeDiv2, ZSizeDiv2;
             ParticlesDataFile.read((char*)&XSizeDiv2, sizeof(XSizeDiv2));
