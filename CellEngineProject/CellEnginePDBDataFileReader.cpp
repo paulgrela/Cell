@@ -20,7 +20,7 @@ CellEngineAtom CellEnginePDBDataFileReader::ParseRecord(const char* LocalPDBReco
     {
         string RecordStr = LocalPDBRecord;
 
-        CellEngineAtomObject.EntityId = 0;
+        CellEngineAtomObject.EntityId = 1;
 
         string NameStr = trim_whitespace_surrounding(RecordStr.substr(12, 4));
         string ResNameStr = trim_whitespace_surrounding(RecordStr.substr(17, 3));
@@ -53,8 +53,10 @@ void CellEnginePDBDataFileReader::ReadDataFromFile(const bool StartValuesBool, c
 {
     try
     {
+        GetMemoryForParticlesInSectors();
+
         string Line;
-        std::vector<CellEngineAtom> StructureObject;
+        vector<CellEngineAtom> ListOfAtoms;
 
         const auto start_time = chrono::high_resolution_clock::now();
 
@@ -65,13 +67,27 @@ void CellEnginePDBDataFileReader::ReadDataFromFile(const bool StartValuesBool, c
         while (getline(File, Line, '\n'))
         {
             if (Line.substr(0, 4) == "ATOM" || Line.substr(0, 6) == "HETATM")
-                StructureObject.emplace_back(ParseRecord(Line.c_str()));
+                ListOfAtoms.emplace_back(ParseRecord(Line.c_str()));
             else
             if (Line.substr(0, 3) == "END" )
             {
-                StructureObject.emplace_back();
-                //ParticlesCenters.push_back(StructureObject);
-                StructureObject.clear();
+                vmath::vec3 CenterOfParticle(0.0, 0.0, 0.0);
+                for (const CellEngineAtom& AtomObject : ListOfAtoms)
+                    CenterOfParticle += AtomObject.Position();
+                vector3_float32 Center = { CenterOfParticle.X() / static_cast<float>(ListOfAtoms.size()), CenterOfParticle.Y() / static_cast<float>(ListOfAtoms.size()), CenterOfParticle.Z() / static_cast<float>(ListOfAtoms.size()) };
+
+                Particle ParticleToInsert(1, 1, 1, -1, 1, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
+                ParticleToInsert.ListOfAtoms = ListOfAtoms;
+                ParticleToInsert.Center = Center;
+                ParticleToInsert.ParticleColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor());
+                ParticleToInsert.UniqueParticleColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor());
+                ParticleToInsert.RandomParticleKindColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor());
+
+                GetParticleFromIndex(1) = ParticleToInsert;
+
+                EntityIdInt P = 1;
+                ParticlesKindsManagerObject.AddSingleParticleKind(ParticlesTypes::Lipid, P, "LipidOuterMembrane", "LipidOuterMembrane", "LipidOuterMembrane", -1, 0, "m", 1);
+                ParticlesKindsManagerObject.GetParticleKind(1).GraphicData.Visible = true;
             }
         }
 

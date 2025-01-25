@@ -282,7 +282,11 @@
                         <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
 
 			<CellStateFileName>../../PDBFiles/struct0/117E.pdb</CellStateFileName>
-                        <CellStateFileNameBackup>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile1.dat</CellStateFileNameBackup>
+                        <CellStateFileNameBackup>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile33.dat</CellStateFileNameBackup>
+
+                        <NumberOfParticlesSectorsInX>1</NumberOfParticlesSectorsInX>
+                        <NumberOfParticlesSectorsInY>1</NumberOfParticlesSectorsInY>
+                        <NumberOfParticlesSectorsInZ>1</NumberOfParticlesSectorsInZ>
 
 			<ChosenStructureIndex>0</ChosenStructureIndex>
 			<FilmOfStructuresActive>0</FilmOfStructuresActive>
@@ -300,7 +304,7 @@
 			<DrawBondsBetweenParticlesCenters>false</DrawBondsBetweenParticlesCenters>
 			<DrawBondsBetweenAtoms>false</DrawBondsBetweenAtoms>
 			
-			<ShowDetailsInAtomScale>false</ShowDetailsInAtomScale>
+			<ShowDetailsInAtomScale>true</ShowDetailsInAtomScale>
 			<CheckAtomVisibility>false</CheckAtomVisibility>
 			<CutZ>1000</CutZ>
 			<Distance>1000</Distance>

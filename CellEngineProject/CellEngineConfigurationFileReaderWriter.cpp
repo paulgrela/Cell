@@ -24,10 +24,14 @@ using namespace std;
 std::unique_ptr<CellEngineDataFile> CreateCellEngineDataFileObject(const string_view& CellStateFileName)
 {
     if (string_utils::check_end_str(CellStateFileName, ".pdb") == true)
+    {
+        CellEngineConfigDataObject.TypeOfFileToRead = CellEngineConfigData::TypesOfFileToRead::PDBFile;
         return make_unique<CellEnginePDBDataFileReader>();
+    }
     else
     {
         CellEngineConfigDataObject.TypeOfFileToRead = (string_utils::check_end_str(CellStateFileName, ".cif") == false ? CellEngineConfigData::TypesOfFileToRead::BinaryFile : CellEngineConfigData::TypesOfFileToRead::CIFFile);
+
         switch (CellEngineConfigDataObject.TypeOfSpace)
         {
             case CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace : return make_unique<CellEngineDataBuilderForVoxelSimulationSpace>();

@@ -67,46 +67,46 @@ public:
     {
     }
 public:
-    static vmath::vec3 GetCenter(const std::vector<CellEngineAtom>& AtomsParam)
-    {
-        vmath::vec3 Center(0.0, 0.0, 0.0);
-
-        try
-        {
-            for (const CellEngineAtom& AtomObject : AtomsParam)
-                Center += AtomObject.Position();
-            Center /= static_cast<float>(AtomsParam.size());
-        }
-        CATCH_AND_THROW("counting mass center")
-
-        return Center;
-    }
-public:
     vmath::vec3 GetCenterForAllParticles()
     {
         vmath::vec3 Center(0.0, 0.0, 0.0);
 
         try
         {
-            float NumberOfParticles = 0;
-
             FOR_EACH_PARTICLE_IN_XYZ
             {
                 vmath::vec3 CenterOfParticle(0.0, 0.0, 0.0);
+
                 for (const CellEngineAtom& AtomObject : ParticleObject.second.ListOfAtoms)
-                {
-                    Center += AtomObject.Position();
                     CenterOfParticle += AtomObject.Position();
-                    NumberOfParticles++;
-                }
+
                 ParticleObject.second.Center = { CenterOfParticle.X() / static_cast<float>(ParticleObject.second.ListOfAtoms.size()), CenterOfParticle.Y() / static_cast<float>(ParticleObject.second.ListOfAtoms.size()), CenterOfParticle.Z() / static_cast<float>(ParticleObject.second.ListOfAtoms.size()) };
+            }
+
+            float NumberOfParticles = 0;
+            FOR_EACH_PARTICLE_IN_XYZ
+            {
+                Center += vmath::vec3{ ParticleObject.second.Center.X, ParticleObject.second.Center.Y, ParticleObject.second.Center.Z };
+                NumberOfParticles++;
             }
             Center /= NumberOfParticles;
         }
         CATCH_AND_THROW("counting mass center")
 
-        //return Center;
-        return { 0.0, 0.0, 0.0 };
+        return Center;
+    }
+    [[nodiscard]] UnsignedInt GetNumberOfAllParticles() const
+    {
+        UnsignedInt NumberOfParticles = 0;
+
+        try
+        {
+            FOR_EACH_PARTICLE_IN_XYZ
+                NumberOfParticles++;
+        }
+        CATCH_AND_THROW("getting number of particles")
+
+        return NumberOfParticles;
     }
 public:
     [[nodiscard]] ParticlesContainer<Particle>& GetParticles()

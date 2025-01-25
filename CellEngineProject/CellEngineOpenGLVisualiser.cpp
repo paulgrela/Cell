@@ -29,7 +29,7 @@ void CellEngineOpenGLVisualiser::InitExternalData()
     {
         CellEngineDataFileObjectPointer->ReadDataFromFile(true, true, CellEngineConfigDataObject.TypeOfFileToRead);
 
-        //GetMemoryForBondsBetweenAtomsToDraw();
+        GetMemoryForBondsBetweenAtomsToDraw();
     }
     CATCH("reading of data file")
 }
