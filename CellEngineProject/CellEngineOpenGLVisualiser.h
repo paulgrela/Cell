@@ -77,7 +77,7 @@ protected:
     void InitLineVertexes();
     void DeleteLineVertexes() const;
     static void FindBondsToDraw(const std::vector<CellEngineAtom>& Atoms, std::vector<std::pair<UnsignedInt, UnsignedInt>>& BondsToDraw);
-    void DrawBonds(const std::vector<CellEngineAtom>& Atoms, std::vector<std::pair<UnsignedInt, UnsignedInt>>& BondsToDraw, bool DrawBonds, const vmath::mat4& ViewMatrix) const;
+    void DrawBonds(const Particle& ParticleObject, std::vector<std::pair<UnsignedInt, UnsignedInt>>& BondsToDraw, bool DrawBonds, const vmath::mat4& ViewMatrix) const;
     void DrawBond(float x1, float y1, float z1, float x2, float y2, float z2) const;
 public:
     static std::string GetEntityName(UnsignedInt EntityId);

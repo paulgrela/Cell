@@ -20,12 +20,9 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
 set(OpenGL_GL_PREFERENCE LEGACY)
 find_package(OpenGL)
 
-find_package(OpenMP)
-if (OPENMP_FOUND)
-	link_directories("${OPENMP_LIBRARIES}")
-	set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-endif()
+link_directories("${OPENMP_LIBRARIES}")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fopenmp")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
 
 set(COMMON_LIBS ${COMMON_LIBS} ${EXTRA_LIBS})
 

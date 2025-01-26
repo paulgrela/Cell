@@ -93,6 +93,8 @@ public:
     vector3_16 UniqueParticleColor{};
     vector3_16 RandomParticleKindColor{};
 public:
+    UnsignedInt OrderInParticleIndex{};
+public:
     void SetCenterCoordinates(const float XCenterParam, const float YCenterParam, const float ZCenterParam)
     {
         Center.X = XCenterParam;

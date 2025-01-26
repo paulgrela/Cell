@@ -164,6 +164,7 @@ void CellEngineOpenGLVisualiser::FindBondsToDraw(const vector<CellEngineAtom>& A
     {
         vector<vector<pair<UnsignedInt, UnsignedInt>>> BondsToDrawLocal;
         BondsToDrawLocal.resize(std::thread::hardware_concurrency());
+
         UnsignedInt AtomObjectIndex1 = 0;
         UnsignedInt AtomObjectIndex2 = 0;
 
@@ -189,19 +190,20 @@ void CellEngineOpenGLVisualiser::FindBondsToDraw(const vector<CellEngineAtom>& A
     CATCH("finding bonds")
 }
 
-void CellEngineOpenGLVisualiser::DrawBonds(const vector<CellEngineAtom>& Atoms, vector<pair<UnsignedInt, UnsignedInt>>& BondsToDraw, const bool DrawBonds, const vmath::mat4& ViewMatrix) const
+void CellEngineOpenGLVisualiser::DrawBonds(const Particle& ParticleObject, vector<pair<UnsignedInt, UnsignedInt>>& BondsToDraw, const bool DrawBonds, const vmath::mat4& ViewMatrix) const
 {
     try
     {
         if (DrawBonds == true)
         {
             if (BondsToDraw.empty() == true)
-                FindBondsToDraw(Atoms, BondsToDraw);
+                if (ParticleObject.ListOfAtoms.empty() == false)
+                    FindBondsToDraw(ParticleObject.ListOfAtoms, BondsToDraw);
 
             for (const auto& BondToDrawObject : BondsToDraw)
             {
-                const auto& AtomObject1 = Atoms[BondToDrawObject.first];
-                const auto& AtomObject2 = Atoms[BondToDrawObject.second];
+                const auto& AtomObject1 = ParticleObject.ListOfAtoms[BondToDrawObject.first];
+                const auto& AtomObject2 = ParticleObject.ListOfAtoms[BondToDrawObject.second];
 
                 CreateUniformBlockForVertexShader(vmath::vec3(0.0, 0.0, 0.0), vmath::vec3(-1.0, -1.0, -1.0), ViewMatrix, vmath::translate(0.0f, 0.0f, 0.0f), false, false, false, false);
 

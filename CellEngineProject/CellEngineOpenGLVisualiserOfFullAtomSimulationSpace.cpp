@@ -25,8 +25,6 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
 
             lock_guard LockGuardObject{ CellEngineDataFile::ChosenStructureMutexObject };
 
-            UnsignedInt ParticleIndex = 0;
-
             FOR_EACH_PARTICLE_IN_XYZ_ONLY
             {
                 if (CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].empty() == false)
@@ -38,10 +36,9 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
                     if (FinalVisibilityInModelWorld == true)
                         if (CellEngineConfigDataObject.ShowDetailsInAtomScale == true)
                             for (const auto& ParticleObject : CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex])
-                            {
                                 if (ParticlesKindsManagerObject.GetGraphicParticleKind(ParticleObject.second.EntityId).Visible == true)
                                 {
-                                    DrawBonds(ParticleObject.second.ListOfAtoms, BondsBetweenAtomsToDraw[ParticleIndex], CellEngineConfigDataObject.DrawBondsBetweenAtoms, ViewMatrix);
+                                    DrawBonds(ParticleObject.second, BondsBetweenAtomsToDraw[ParticleObject.second.OrderInParticleIndex], CellEngineConfigDataObject.DrawBondsBetweenAtoms, ViewMatrix);
 
                                     for (UnsignedInt AtomObjectIndex = 0; AtomObjectIndex < ParticleObject.second.ListOfAtoms.size(); AtomObjectIndex += CellEngineConfigDataObject.LoadOfAtomsStep)
                                     {
@@ -55,9 +52,6 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
                                         RenderObject(ParticleObject.second.ListOfAtoms[AtomObjectIndex], ParticleObject.second, ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, false, RenderObjectsBool);
                                     }
                                 }
-
-                                ParticleIndex++;//blad bo nie rowno zwieksza
-                            }
                 }
             }
 
@@ -121,10 +115,14 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::GetStartCenterPoint()
 
 void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::GetMemoryForBondsBetweenAtomsToDraw()
 {
-    BondsBetweenAtomsToDraw.resize(CellEngineDataFileObjectPointer->GetNumberOfAllParticles());
+    auto NumberOfParticles = CellEngineDataFileObjectPointer->GetNumberOfAllParticles();
+
+    BondsBetweenAtomsToDraw.resize(NumberOfParticles);
+
+    LoggersManagerObject.Log(STREAM("NUMBER OF PARTICLES = " << NumberOfParticles));
 }
 
 void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::DrawBondsForParticlesCenters(std::vector<std::pair<UnsignedInt, UnsignedInt>>& BondsToDraw, const bool DrawBonds, const vmath::mat4& ViewMatrix)
 {
-    CellEngineOpenGLVisualiser::DrawBonds(CellEngineDataFileObjectPointer->GetParticles()[0][0][0].begin()->second.ListOfAtoms, BondsToDraw, CellEngineConfigDataObject.DrawBondsBetweenParticlesCenters, ViewMatrix);
+    CellEngineOpenGLVisualiser::DrawBonds(CellEngineDataFileObjectPointer->GetParticles()[0][0][0].begin()->second, BondsToDraw, CellEngineConfigDataObject.DrawBondsBetweenParticlesCenters, ViewMatrix);
 }

@@ -86,22 +86,27 @@ public:
             float NumberOfParticles = 0;
             FOR_EACH_PARTICLE_IN_XYZ
             {
+                ParticleObject.second.OrderInParticleIndex = static_cast<UnsignedInt>(NumberOfParticles);
+
                 Center += vmath::vec3{ ParticleObject.second.Center.X, ParticleObject.second.Center.Y, ParticleObject.second.Center.Z };
+
                 NumberOfParticles++;
             }
+
             Center /= NumberOfParticles;
         }
         CATCH_AND_THROW("counting mass center")
 
         return Center;
     }
+public:
     [[nodiscard]] UnsignedInt GetNumberOfAllParticles() const
     {
         UnsignedInt NumberOfParticles = 0;
 
         try
         {
-            FOR_EACH_PARTICLE_IN_XYZ
+            FOR_EACH_PARTICLE_IN_XYZ_CONST
                 NumberOfParticles++;
         }
         CATCH_AND_THROW("getting number of particles")
