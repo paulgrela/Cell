@@ -12,10 +12,10 @@
 #include "CellEngineTestParticlesInVoxelSpaceGenerator.h"
 #include "CellEngineChemicalReactionsInSimulationSpace.h"
 #include "CellEngineVoxelSimulationSpaceStatistics.h"
-#include "CellEngineChemicalReactionsInVoxelSimulationSpace.h"
+#include "CellEngineChemicalReactionsInFullAtomSimulationSpace.h"
 #include "CellEngineSimulationSpace.h"
 
-class CellEngineFullAtomSimulationSpace : public CellEngineSimulationSpace, public CellEngineTestParticlesInVoxelSpaceGenerator, public CellEngineChemicalReactionsInVoxelSimulationSpace, public CellEngineVoxelSimulationSpaceStatistics
+class CellEngineFullAtomSimulationSpace : public CellEngineSimulationSpace, public CellEngineTestParticlesInVoxelSpaceGenerator, public CellEngineChemicalReactionsInFullAtomSimulationSpace, public CellEngineVoxelSimulationSpaceStatistics
 {
 protected:
     float XMinGlobal{}, XMaxGlobal{}, YMinGlobal{}, YMaxGlobal{}, ZMinGlobal{}, ZMaxGlobal{};

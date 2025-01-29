@@ -119,6 +119,7 @@ add_executable(
 	CellEngineExecutionTimeStatistics.h
 	CellEngineBasicVoxelsOperations.h
 	CellEngineNucleicAcidsBasicOperations.h
+	CellEngineParticlesFullAtomOperations.h
 	CellEngineParticlesVoxelsOperations.h
 	CellEngineBasicParallelExecutionData.h
 	CellEngineBasicParticlesOperations.cpp
@@ -155,6 +156,8 @@ add_executable(
 	CellEngineNucleicAcidsChemicalReactionsInSimulationSpace.h
 	CellEngineChemicalReactionsInVoxelSimulationSpace.cpp
 	CellEngineChemicalReactionsInVoxelSimulationSpace.h
+	CellEngineChemicalReactionsInFullAtomSimulationSpace.cpp
+	CellEngineChemicalReactionsInFullAtomSimulationSpace.h
 	CellEngineOpenGLVisualiser.h
 	CellEngineOpenGLVisualiser.cpp
 	CellEngineOpenGLVisualiserOfVoxelSimulationSpace.h

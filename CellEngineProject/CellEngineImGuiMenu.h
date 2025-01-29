@@ -943,7 +943,7 @@ public:
     {
         try
         {
-            if (ImGui::CollapsingHeader("SIMULATIONS", ImGuiTreeNodeFlags_DefaultOpen))
+            if (ImGui::CollapsingHeader("SIMULATIONS VOXEL SPACE", ImGuiTreeNodeFlags_DefaultOpen))
             {
                 int IDButton = 1;
                 float Nothing;
@@ -1003,6 +1003,119 @@ public:
         }
         CATCH("modification of simulations operations voxel simulation space parameters menu")
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    static void SimulationsFullAtomSimulationSpaceParametersMenu(const UnsignedInt StringLength)
+    {
+        try
+        {
+            if (ImGui::CollapsingHeader("SIMULATIONS FULL ATOM", ImGuiTreeNodeFlags_DefaultOpen))
+            {
+                int IDButton = 1;
+                float Nothing;
+
+                ImGui::Text("");
+                ImGui::Text("Number Of Simulation Steps Outside");
+                ImGui::DragInt("Num Of Steps Outside", &CellEngineConfigDataObject.NumberOfStepsInSimulationOutside, 1, 1, 1000, "%d", ImGuiSliderFlags_AlwaysClamp);
+                ImGui::Text("");
+                ImGui::Text("Number Of Simulation Steps Inside");
+                ImGui::DragInt("Num Of Steps Inside", &CellEngineConfigDataObject.NumberOfStepsInSimulationInside, 1, 1, 1000, "%d", ImGuiSliderFlags_AlwaysClamp);
+                ImGui::Text("");
+                ImGui::Text("Type Of Simulation");
+                int TypeOfSimulation = static_cast<int>(CellEngineConfigDataObject.TypeOfSimulation);
+                ImGui::RadioButton("BothReactionsAndDiffusion", &TypeOfSimulation, 1);
+                ImGui::RadioButton("Only Reactions ", &TypeOfSimulation, 2);
+                ImGui::RadioButton("Only Diffusion", &TypeOfSimulation, 3);
+                CellEngineConfigDataObject.TypeOfSimulation = static_cast<CellEngineConfigData::TypesOfSimulation>(TypeOfSimulation);
+                ImGui::Text("");
+                ImGui::Checkbox("Use Mutex Between Main Screen Thread and Menu Threads", &CellEngineConfigDataObject.UseMutexBetweenMainScreenThreadAndMenuThreads);
+                ImGui::Text("");
+
+                ColorButton(AlignString("START N STEPS OF SIMULATION FOR WHOLE CELL SPACE IN THREADS", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
+                {
+                    CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->FirstSendParticlesForThreads(false, true);
+                });
+                ColorButton(AlignString("MAKE N STEPS OF SIMULATION FOR WHOLE CELL SPACE IN THREADS", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
+                {
+                    CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfSimulationForWholeCellSpaceInThreads(CellEngineConfigDataObject.NumberOfStepsInSimulationOutside, CellEngineConfigDataObject.NumberOfStepsInSimulationInside);
+                });
+                ColorButton(AlignString("GATHER PARTICLES FROM THREADS AFTER SIMULATION", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
+                {
+                    CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GatherParticlesFromThreadsToParticlesInMainThread();
+                });
+
+                ImGui::Text("");
+
+                ColorButton(AlignString("MAKE FULL N STEPS OF SIMULATION FOR WHOLE CELL SPACE IN THREADS", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
+                {
+                    CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfSimulationWithSendingParticlesToThreadsAndGatheringParticlesToMainThreadForWholeCellSpace(CellEngineConfigDataObject.NumberOfStepsInSimulationOutside, CellEngineConfigDataObject.NumberOfStepsInSimulationInside, true);
+                });
+
+                ImGui::Text("");
+
+                ColorButton(AlignString("CHECK PARTICLES CENTERS", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
+                {
+                    CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->CheckParticlesCenters(false);
+                });
+                // ColorButton(AlignString("CHECK PARTICLES CANCELLED STILL IN VOXEL SPACE", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
+                // {
+                //     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->CheckCancelledParticlesIndexes();
+                // });
+                // ColorButton(AlignString("CHECK IF PARTICLES FORMER EXISTED STILL IN VOXEL SPACE", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
+                // {
+                //     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->CheckFormerExistedParticlesIndexes();
+                // });
+            }
+        }
+        CATCH("modification of simulations operations voxel simulation space parameters menu")
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     static void DNARandomGeneratorVoxelSimulationSpaceParametersMenu(const UnsignedInt StringLength)
     {

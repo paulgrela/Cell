@@ -3,7 +3,7 @@
 
 using namespace std;
 
-void CellEngineParticlesVoxelsShapesGenerator::SetValueToSpaceVoxelWithFillingListOfVoxelsOfParticle(ListOfVoxelsType* FilledSpaceVoxels, const UniqueIdInt VoxelValue, const UnsignedInt PosX, const UnsignedInt PosY, const UnsignedInt PosZ)
+void CellEngineParticlesVoxelsShapesGenerator::SetValueToSpaceVoxelWithFillingListOfVoxelsOfParticle(ListOfVoxelsType* FilledSpaceVoxels, const UniqueIdInt VoxelValue, const UnsignedInt PosX, const UnsignedInt PosY, const UnsignedInt PosZ) const
 {
     try
     {

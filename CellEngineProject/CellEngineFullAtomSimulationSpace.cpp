@@ -15,7 +15,8 @@ using namespace std;
 
 SimulationSpaceVoxel CellEngineFullAtomSimulationSpace::GetSpaceVoxelForOuterClass(UnsignedInt X, UnsignedInt Y, UnsignedInt Z)
 {
-    return GetSpaceVoxel(X, Y, Z);
+    //return GetSpaceVoxel(X, Y, Z);
+    return 1;
 }
 
 Particle& CellEngineFullAtomSimulationSpace::GetParticleFromIndexForOuterClass(UniqueIdInt ParticleIndex)
@@ -34,7 +35,7 @@ Particle& CellEngineFullAtomSimulationSpace::GetParticleFromIndexForOuterClass(U
 };
 
 // ZAMIENIC PONIZEJ NA CellEngineChemicalReactionsInFullAtomSimulationSpace(ParticlesParam)
-CellEngineFullAtomSimulationSpace::CellEngineFullAtomSimulationSpace(ParticlesContainer<Particle>& ParticlesParam, const bool GetMemoryForVoxelSpace, const ThreadIdType ThreadIndexParam, CurrentThreadPosType CurrentThreadPosParam) : Particles(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam), CellEngineChemicalReactionsInSimulationSpace(ParticlesParam), CellEngineChemicalReactionsInVoxelSimulationSpace(ParticlesParam), CellEngineSimulationSpace(ParticlesParam), CellEngineTestParticlesInVoxelSpaceGenerator(ParticlesParam)
+CellEngineFullAtomSimulationSpace::CellEngineFullAtomSimulationSpace(ParticlesContainer<Particle>& ParticlesParam, const bool GetMemoryForVoxelSpace, const ThreadIdType ThreadIndexParam, CurrentThreadPosType CurrentThreadPosParam) : Particles(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam), CellEngineChemicalReactionsInSimulationSpace(ParticlesParam), CellEngineChemicalReactionsInFullAtomSimulationSpace(ParticlesParam), CellEngineSimulationSpace(ParticlesParam), CellEngineTestParticlesInVoxelSpaceGenerator(ParticlesParam)
 {
     try
     {
@@ -53,7 +54,7 @@ CellEngineFullAtomSimulationSpace::~CellEngineFullAtomSimulationSpace()
 {
     try
     {
-        free(SpacePointer);
+        //free(SpacePointer);
     }
     CATCH("execution of destructor of voxel simulation space")
 }
@@ -105,7 +106,7 @@ void CellEngineFullAtomSimulationSpace::ClearSelectedSpace(const UnsignedInt Sta
 {
     try
     {
-        SetValueToVoxelsForCuboidSelectedSpace(nullptr, GetZeroSimulationSpaceVoxel(), StartXPosParam, StartYPosParam, StartZPosParam, StepXParam, StepYParam, StepZParam, SizeXParam, SizeYParam, SizeZParam);
+        SetValueToVoxelsForCuboidSelectedSpace(nullptr, 0, StartXPosParam, StartYPosParam, StartZPosParam, StepXParam, StepYParam, StepZParam, SizeXParam, SizeYParam, SizeZParam);
     }
     CATCH("clearing selected space")
 }
@@ -114,7 +115,7 @@ void CellEngineFullAtomSimulationSpace::ClearWholeVoxelSpace()
 {
     try
     {
-        SetValueToVoxelsForCuboidSelectedSpace(nullptr, GetZeroSimulationSpaceVoxel(), 0, 0, 0, 1, 1, 1, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension);
+        SetValueToVoxelsForCuboidSelectedSpace(nullptr, 0, 0, 0, 0, 1, 1, 1, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension);
     }
     CATCH("clearing whole voxel space")
 };
@@ -145,10 +146,10 @@ bool CellEngineFullAtomSimulationSpace::MoveParticleByVectorIfSpaceIsEmptyAndIsI
 
 bool CellEngineFullAtomSimulationSpace::MoveParticleByVectorIfSpaceIsEmpty(Particle &ParticleObject, SignedInt VectorX, SignedInt VectorY, SignedInt VectorZ)
 {
-    return MoveParticleByVectorIfVoxelSpaceIsEmpty(ParticleObject, VectorX, VectorY, VectorZ);
+    return MoveParticleByVectorIfFullAtomSpaceIsEmpty(ParticleObject, VectorX, VectorY, VectorZ);
 }
 
 bool CellEngineFullAtomSimulationSpace::CheckIfSpaceIsEmptyAndIsInBoundsForParticleElements(const ParticleKind& ParticleKindObjectForProduct, const UnsignedInt VectorX, const UnsignedInt VectorY, const UnsignedInt VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam)
 {
-    return CheckFreeSpaceAndBoundsForListOfVoxels(ParticleKindObjectForProduct.ListOfVoxels, VectorX, VectorY, VectorZ, SimulationSpaceSectorBoundsObjectParam);
+    return CheckFreeSpaceAndBoundsForListOfAtoms(ParticleKindObjectForProduct.ListOfVoxels, VectorX, VectorY, VectorZ, SimulationSpaceSectorBoundsObjectParam);
 }
