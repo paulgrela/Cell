@@ -51,10 +51,6 @@ private:
 protected:
     UnsignedInt PressedRightMouseButton = 0;
     bool PressedRightMouseButtonBool = false;
-private:
-    std::vector<std::pair<UnsignedInt, UnsignedInt>> BondsBetweenParticlesCentersToDraw{};
-protected:
-    std::vector<std::vector<std::pair<UnsignedInt, UnsignedInt>>> BondsBetweenAtomsToDraw;
 public:
     bool RenderObjectsBool = true;
 public:
@@ -112,8 +108,6 @@ protected:
     virtual void RenderSpace(UnsignedInt& NumberOfAllRenderedAtoms, UnsignedInt& NumberOfFoundParticlesCenterToBeRenderedInAtomDetails, vmath::mat4& ViewMatrix) = 0;
 protected:
     virtual void GetStartCenterPoint() = 0;
-    virtual void GetMemoryForBondsBetweenAtomsToDraw() = 0;
-    virtual void DrawBondsForParticlesCenters(std::vector<std::pair<UnsignedInt, UnsignedInt>>& BondsToDraw, bool DrawBonds, const vmath::mat4& ViewMatrix) = 0;
 protected:
     [[nodiscard]] static inline bool CheckDistanceToDrawDetailsInAtomScale(float XNew, float YNew, float ZNew);
 };

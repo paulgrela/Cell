@@ -242,11 +242,3 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::GetStartCenterPoint()
 {
     Center = { 0.0f, 0.0f, 0.0f };
 }
-
-void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::CellEngineOpenGLVisualiserOfVoxelSimulationSpace::GetMemoryForBondsBetweenAtomsToDraw()
-{
-}
-
-void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::DrawBondsForParticlesCenters(std::vector<std::pair<UnsignedInt, UnsignedInt>>& BondsToDraw, const bool DrawBonds, const vmath::mat4& ViewMatrix)
-{
-}

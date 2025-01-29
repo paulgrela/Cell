@@ -35,19 +35,18 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
 
                     if (FinalVisibilityInModelWorld == true)
                         if (CellEngineConfigDataObject.ShowDetailsInAtomScale == true)
-                            for (const auto& ParticleObject : CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex])
+                            for (auto& ParticleObject : CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex])
                                 if (ParticlesKindsManagerObject.GetGraphicParticleKind(ParticleObject.second.EntityId).Visible == true)
                                 {
-                                    DrawBonds(ParticleObject.second, BondsBetweenAtomsToDraw[ParticleObject.second.OrderInParticleIndex], CellEngineConfigDataObject.DrawBondsBetweenAtoms, ViewMatrix);
+                                    DrawBonds(ParticleObject.second, ParticleObject.second.BondsBetweenAtomsToDraw, CellEngineConfigDataObject.DrawBondsBetweenAtoms, ViewMatrix);
 
                                     for (UnsignedInt AtomObjectIndex = 0; AtomObjectIndex < ParticleObject.second.ListOfAtoms.size(); AtomObjectIndex += CellEngineConfigDataObject.LoadOfAtomsStep)
                                     {
                                         if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
-                                            if (CellEngineConfigDataObject.StencilForDrawingObjectsTypesObject == CellEngineConfigData::StencilForDrawingObjectsTypes::StencilForDrawingOnlyInAtomScale)
-                                            {
-                                                glStencilFunc(GL_ALWAYS, uint8_t((TemporaryRenderedAtomsList.size()) >> (8 * StencilBufferLoopCounter)), -1);
-                                                TemporaryRenderedAtomsList.emplace_back(ParticleSectorXIndex, ParticleSectorYIndex, ParticleSectorZIndex, ParticleObject.first, AtomObjectIndex);
-                                            }
+                                        {
+                                            glStencilFunc(GL_ALWAYS, uint8_t((TemporaryRenderedAtomsList.size()) >> (8 * StencilBufferLoopCounter)), -1);
+                                            TemporaryRenderedAtomsList.emplace_back(ParticleSectorXIndex, ParticleSectorYIndex, ParticleSectorZIndex, ParticleObject.first, AtomObjectIndex);
+                                        }
 
                                         RenderObject(ParticleObject.second.ListOfAtoms[AtomObjectIndex], ParticleObject.second, ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, false, RenderObjectsBool);
                                     }
@@ -111,18 +110,4 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::GetStartCenterPoint()
     Center = CellEngineDataFileObjectPointer->GetCenterForAllParticles();
 
     LoggersManagerObject.Log(STREAM("CENTER OF CELL = " << Center.X() << " " << Center.Y() << " " << Center.Z()));
-}
-
-void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::GetMemoryForBondsBetweenAtomsToDraw()
-{
-    auto NumberOfParticles = CellEngineDataFileObjectPointer->GetNumberOfAllParticles();
-
-    BondsBetweenAtomsToDraw.resize(NumberOfParticles);
-
-    LoggersManagerObject.Log(STREAM("NUMBER OF PARTICLES = " << NumberOfParticles));
-}
-
-void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::DrawBondsForParticlesCenters(std::vector<std::pair<UnsignedInt, UnsignedInt>>& BondsToDraw, const bool DrawBonds, const vmath::mat4& ViewMatrix)
-{
-    CellEngineOpenGLVisualiser::DrawBonds(CellEngineDataFileObjectPointer->GetParticles()[0][0][0].begin()->second, BondsToDraw, CellEngineConfigDataObject.DrawBondsBetweenParticlesCenters, ViewMatrix);
 }

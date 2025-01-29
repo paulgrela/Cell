@@ -58,10 +58,6 @@ private:
 public:
     void GetStartCenterPoint() override;
 public:
-    void GetMemoryForBondsBetweenAtomsToDraw() override;
-public:
-    void DrawBondsForParticlesCenters(std::vector<std::pair<UnsignedInt, UnsignedInt>>& BondsToDraw, bool DrawBonds, const vmath::mat4& ViewMatrix) override;
-public:
     static inline std::recursive_mutex RenderMenuAndVoxelSimulationSpaceMutexObject;
 };
 

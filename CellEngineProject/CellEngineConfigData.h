@@ -165,16 +165,9 @@ public:
     };
     MakeColorsType MakeColorsTypeObject = MakeColorsType::DrawColorForEveryParticle;
 public:
-    enum class StencilForDrawingObjectsTypes : UnsignedInt
-    {
-        StencilForDrawingOnlyParticlesCenters = 1,
-        StencilForDrawingOnlyInAtomScale = 2
-    };
-    StencilForDrawingObjectsTypes StencilForDrawingObjectsTypesObject = StencilForDrawingObjectsTypes::StencilForDrawingOnlyInAtomScale;
     UnsignedInt NumberOfStencilBufferLoops{};
     bool UseStencilBuffer = false;
 public:
-    bool DrawBondsBetweenParticlesCenters{};
     bool DrawBondsBetweenAtoms{};
 public:
     bool ShowDetailsInAtomScale = false;

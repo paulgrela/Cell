@@ -24,15 +24,15 @@ Particle& CellEngineFullAtomSimulationSpace::GetParticleFromIndexForOuterClass(U
     return GetParticleFromIndex(ParticleIndex);
 }
 
-[[nodiscard]] float CellEngineFullAtomSimulationSpace::ConvertToGraphicsCoordinate(UnsignedInt CoordinateParam)
-{
-    return static_cast<float>(static_cast<SignedInt>(CoordinateParam) - (static_cast<SignedInt>(CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension / 2))) * CellEngineConfigDataObject.DivisionFactorForSimulationSpace;
-};
-
-[[nodiscard]] UnsignedInt CellEngineFullAtomSimulationSpace::ConvertToSpaceCoordinate(double CoordinateParam)
-{
-    return static_cast<UnsignedInt>(round(CoordinateParam) / CellEngineConfigDataObject.DivisionFactorForSimulationSpace) + (CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension / 2);
-};
+// [[nodiscard]] float CellEngineFullAtomSimulationSpace::ConvertToGraphicsCoordinate(UnsignedInt CoordinateParam)
+// {
+//     return static_cast<float>(static_cast<SignedInt>(CoordinateParam) - (static_cast<SignedInt>(CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension / 2))) * CellEngineConfigDataObject.DivisionFactorForSimulationSpace;
+// };
+//
+// [[nodiscard]] UnsignedInt CellEngineFullAtomSimulationSpace::ConvertToSpaceCoordinate(double CoordinateParam)
+// {
+//     return static_cast<UnsignedInt>(round(CoordinateParam) / CellEngineConfigDataObject.DivisionFactorForSimulationSpace) + (CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension / 2);
+// };
 
 // ZAMIENIC PONIZEJ NA CellEngineChemicalReactionsInFullAtomSimulationSpace(ParticlesParam)
 CellEngineFullAtomSimulationSpace::CellEngineFullAtomSimulationSpace(ParticlesContainer<Particle>& ParticlesParam, const bool GetMemoryForVoxelSpace, const ThreadIdType ThreadIndexParam, CurrentThreadPosType CurrentThreadPosParam) : Particles(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam), CellEngineChemicalReactionsInSimulationSpace(ParticlesParam), CellEngineChemicalReactionsInFullAtomSimulationSpace(ParticlesParam), CellEngineSimulationSpace(ParticlesParam), CellEngineTestParticlesInVoxelSpaceGenerator(ParticlesParam)

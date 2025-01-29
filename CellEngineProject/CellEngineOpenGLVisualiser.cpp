@@ -29,7 +29,7 @@ void CellEngineOpenGLVisualiser::InitExternalData()
     {
         CellEngineDataFileObjectPointer->ReadDataFromFile(true, true, CellEngineConfigDataObject.TypeOfFileToRead);
 
-        GetMemoryForBondsBetweenAtomsToDraw();
+        //GetMemoryForBondsBetweenAtomsToDraw();
     }
     CATCH("reading of data file")
 }
@@ -466,8 +466,6 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
         vmath::vec3 ViewPositionVector = vmath::vec3(CellEngineConfigDataObject.ViewPositionX, CellEngineConfigDataObject.ViewPositionY, CellEngineConfigDataObject.ViewPositionZ);
         vmath::mat4 ViewMatrix = vmath::lookat(ViewPositionVector, vmath::vec3(0.0f, 0.0f, 0.0f), vmath::vec3(0.0f, 1.0f, 0.0f)) * vmath::rotate(CellEngineConfigDataObject.RotationAngle1, CellEngineConfigDataObject.RotationAngle2, CellEngineConfigDataObject.RotationAngle3) * RotationMatrix;
 
-        DrawBondsForParticlesCenters(BondsBetweenParticlesCentersToDraw, CellEngineConfigDataObject.DrawBondsBetweenParticlesCenters, ViewMatrix);
-
         UnsignedInt NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = 0;
         UnsignedInt NumberOfAllRenderedAtoms = 0;
 
@@ -509,16 +507,13 @@ void CellEngineOpenGLVisualiser::PrintAtomDescriptionOnScreen(CellEngineAtom& Ch
         TextOverlayObject.Clear();
 
         string LocalTextStr = CellEngineUseful::AtomDescriptionTextsObject.Texts[0] = string("Name = ") + ChosenAtomObject.Name + " ResName = " + ChosenAtomObject.ResName;
-        if (CellEngineConfigDataObject.StencilForDrawingObjectsTypesObject == CellEngineConfigData::StencilForDrawingObjectsTypes::StencilForDrawingOnlyInAtomScale)
-        {
-            CellEngineUseful::AtomDescriptionTextsObject.Texts[1] = "Chain [" + string(ChosenAtomObject.Chain) + "]" + "(" + ChosenParticleObject.Nucleotide + ")";
-            CellEngineUseful::AtomDescriptionTextsObject.Texts[1] += " SEQ = [" + ChosenParticleObject.SequenceStr + "]";
-            CellEngineUseful::AtomDescriptionTextsObject.Texts[2] = "EntityId = " + to_string(ChosenParticleObject.EntityId);
-            CellEngineUseful::AtomDescriptionTextsObject.Texts[3] = "Entity Name = [" + GetEntityName(ChosenParticleObject.EntityId) + "]";
-            CellEngineUseful::AtomDescriptionTextsObject.Texts[4] = "Gen Index = [" + to_string(ChosenParticleObject.GenomeIndex) + "]";
-            CellEngineUseful::AtomDescriptionTextsObject.Texts[5] = "Gen Index Prev = [" + to_string(ChosenParticleObject.GenomeIndexPrev) + "] Gen Index Next = [" + to_string(ChosenParticleObject.GenomeIndexNext) + "]";
-            LocalTextStr += " " + CellEngineUseful::AtomDescriptionTextsObject.Texts[1] + " " + CellEngineUseful::AtomDescriptionTextsObject.Texts[2] + " " + CellEngineUseful::AtomDescriptionTextsObject.Texts[3];
-        }
+        CellEngineUseful::AtomDescriptionTextsObject.Texts[1] = "Chain [" + string(ChosenAtomObject.Chain) + "]" + "(" + ChosenParticleObject.Nucleotide + ")";
+        CellEngineUseful::AtomDescriptionTextsObject.Texts[1] += " SEQ = [" + ChosenParticleObject.SequenceStr + "]";
+        CellEngineUseful::AtomDescriptionTextsObject.Texts[2] = "EntityId = " + to_string(ChosenParticleObject.EntityId);
+        CellEngineUseful::AtomDescriptionTextsObject.Texts[3] = "Entity Name = [" + GetEntityName(ChosenParticleObject.EntityId) + "]";
+        CellEngineUseful::AtomDescriptionTextsObject.Texts[4] = "Gen Index = [" + to_string(ChosenParticleObject.GenomeIndex) + "]";
+        CellEngineUseful::AtomDescriptionTextsObject.Texts[5] = "Gen Index Prev = [" + to_string(ChosenParticleObject.GenomeIndexPrev) + "] Gen Index Next = [" + to_string(ChosenParticleObject.GenomeIndexNext) + "]";
+        LocalTextStr += " " + CellEngineUseful::AtomDescriptionTextsObject.Texts[1] + " " + CellEngineUseful::AtomDescriptionTextsObject.Texts[2] + " " + CellEngineUseful::AtomDescriptionTextsObject.Texts[3];
 
         if (CellEngineConfigDataObject.PrintAtomDescriptionOnScreen == true)
         {

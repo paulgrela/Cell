@@ -235,10 +235,8 @@ void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const ch
                         CellEngineConfigDataObject.SpecularAlbedo = CellStatePropertyTreeElement.second.get<float>("SpecularAlbedo");
                         CellEngineConfigDataObject.MakeColorsTypeObject = static_cast<CellEngineConfigData::MakeColorsType>(CellStatePropertyTreeElement.second.get<UnsignedInt>("MakeColorsType"));
 
-                        CellEngineConfigDataObject.StencilForDrawingObjectsTypesObject = static_cast<CellEngineConfigData::StencilForDrawingObjectsTypes>(CellStatePropertyTreeElement.second.get<UnsignedInt>("StencilForDrawingObjectsTypes"));
                         CellEngineConfigDataObject.NumberOfStencilBufferLoops = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfStencilBufferLoops");
 
-                        CellEngineConfigDataObject.DrawBondsBetweenParticlesCenters = CellStatePropertyTreeElement.second.get<bool>("DrawBondsBetweenParticlesCenters");
                         CellEngineConfigDataObject.DrawBondsBetweenAtoms = CellStatePropertyTreeElement.second.get<bool>("DrawBondsBetweenAtoms");
 
                         CellEngineConfigDataObject.ShowDetailsInAtomScale = CellStatePropertyTreeElement.second.get<bool>("ShowDetailsInAtomScale");

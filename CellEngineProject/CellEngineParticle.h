@@ -83,6 +83,7 @@ public:
     vector3_float32 Center{};
     ListOfVoxelsType ListOfVoxels;
     ListOfAtomsType ListOfAtoms;
+    std::vector<std::pair<UnsignedInt, UnsignedInt>> BondsBetweenAtomsToDraw;
 public:
     std::string SequenceStr;
     UnsignedInt PositionInSequence{};
