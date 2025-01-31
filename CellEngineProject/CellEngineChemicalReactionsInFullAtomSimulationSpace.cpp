@@ -32,17 +32,18 @@ void CellEngineChemicalReactionsInFullAtomSimulationSpace::MoveParticleNearOther
 {
     try
     {
-        MoveParticleNearOtherParticleIfFullAtomSpaceIsEmptyOrNearSpace(ParticleObject, NewPositionParticleObject, AddX, AddY, AddZ);
+        //DODAC POPRAWNIE
+        //MoveParticleNearOtherParticleIfFullAtomSpaceIsEmptyOrNearSpace(ParticleObject, NewPositionParticleObject, AddX, AddY, AddZ);
     }
     CATCH("moving particle near other particle if space is empty or to near space")
 }
 
 void CellEngineChemicalReactionsInFullAtomSimulationSpace::ClearSpaceForParticle(Particle& ParticleObject, const bool ClearFullAtoms)
 {
-    try
-    {
-        if (ClearFullAtoms == true)
-            SetAllAtomsInListOfAtomsToValue(ParticleObject.ListOfVoxels, GetZeroSimulationSpaceVoxel());
-    }
-    CATCH("clearing space for voxel")
+    // try
+    // {
+    //     if (ClearFullAtoms == true)
+    //         SetAllAtomsInListOfAtomsToValue(ParticleObject.ListOfVoxels, GetZeroSimulationSpaceVoxel());
+    // }
+    // CATCH("clearing space for voxel")
 }

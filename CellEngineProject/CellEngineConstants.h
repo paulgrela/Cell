@@ -49,4 +49,6 @@ constexpr ChainIdInt NCode = 31;
 
 constexpr std::string RNAStartSequence = "ACGUACGU";
 
+constexpr float AtomRadius = 1.0;
+
 #endif

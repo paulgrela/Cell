@@ -123,6 +123,7 @@ public:
     ListOfAtomsType ListOfAtoms;
 public:
     float XSizeDiv2{}, YSizeDiv2{}, ZSizeDiv2{};
+    float Radius{};
 public:
     ParticleKindGraphicData GraphicData;
 public:
