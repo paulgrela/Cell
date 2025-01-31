@@ -30,7 +30,7 @@ void CellEngineChemicalReactionsInVoxelSimulationSpace::FindParticlesInProximity
     CATCH("finding particles in proximity of simulation space for selected local space")
 };
 
-void CellEngineChemicalReactionsInVoxelSimulationSpace::MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(Particle &ParticleObject, const Particle &NewPositionParticleObject, const SignedInt AddX, const SignedInt AddY, const SignedInt AddZ)
+void CellEngineChemicalReactionsInVoxelSimulationSpace::MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(Particle &ParticleObject, const Particle &NewPositionParticleObject, const float AddX, const float AddY, const float AddZ)
 {
     try
     {

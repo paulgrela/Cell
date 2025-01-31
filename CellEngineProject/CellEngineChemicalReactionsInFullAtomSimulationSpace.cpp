@@ -8,17 +8,17 @@ void CellEngineChemicalReactionsInFullAtomSimulationSpace::FindParticlesInProxim
     {
         const auto start_time = chrono::high_resolution_clock::now();
 
-        for (UnsignedInt PosX = StartXPosParam; PosX < StartXPosParam + SizeXParam; PosX++)
-            for (UnsignedInt PosY = StartYPosParam; PosY < StartYPosParam + SizeYParam; PosY++)
-                for (UnsignedInt PosZ = StartZPosParam; PosZ < StartZPosParam + SizeZParam; PosZ++)
-                    if (PosX < CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension && PosY < CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension && PosZ < CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension)
-                    {
-                        // UniqueIdInt ParticleIndex = GetSpaceVoxel(PosX, PosY, PosZ);
-                        // if (ParticleIndex != GetZeroSimulationSpaceVoxel())
-                        //     if (!FoundParticleIndexes.contains(ParticleIndex))
-                        //         if (GetParticles().contains(ParticleIndex))
-                        //             SaveParticleFoundInProximity(ParticleIndex, FoundParticleIndexes, UpdateNucleotides);
-                    }
+        // for (UnsignedInt PosX = StartXPosParam; PosX < StartXPosParam + SizeXParam; PosX++)
+        //     for (UnsignedInt PosY = StartYPosParam; PosY < StartYPosParam + SizeYParam; PosY++)
+        //         for (UnsignedInt PosZ = StartZPosParam; PosZ < StartZPosParam + SizeZParam; PosZ++)
+        //             if (PosX < CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension && PosY < CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension && PosZ < CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension)
+        //             {
+        //                 UniqueIdInt ParticleIndex = GetSpaceVoxel(PosX, PosY, PosZ);
+        //                 if (ParticleIndex != GetZeroSimulationSpaceVoxel())
+        //                     if (!FoundParticleIndexes.contains(ParticleIndex))
+        //                         if (GetParticles().contains(ParticleIndex))
+        //                             SaveParticleFoundInProximity(ParticleIndex, FoundParticleIndexes, UpdateNucleotides);
+        //             }
 
 
         const auto stop_time = chrono::high_resolution_clock::now();
@@ -28,12 +28,11 @@ void CellEngineChemicalReactionsInFullAtomSimulationSpace::FindParticlesInProxim
     CATCH("finding particles in proximity of simulation space for selected local space")
 };
 
-void CellEngineChemicalReactionsInFullAtomSimulationSpace::MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(Particle &ParticleObject, const Particle &NewPositionParticleObject, const SignedInt AddX, const SignedInt AddY, const SignedInt AddZ)
+void CellEngineChemicalReactionsInFullAtomSimulationSpace::MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(Particle &ParticleObject, const Particle &NewPositionParticleObject, const float AddX, const float AddY, const float AddZ)
 {
     try
     {
-        //DODAC POPRAWNIE
-        //MoveParticleNearOtherParticleIfFullAtomSpaceIsEmptyOrNearSpace(ParticleObject, NewPositionParticleObject, AddX, AddY, AddZ);
+        MoveParticleNearOtherParticleIfFullAtomSpaceIsEmptyOrNearSpace(ParticleObject, Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ], NewPositionParticleObject, AddX, AddY, AddZ);
     }
     CATCH("moving particle near other particle if space is empty or to near space")
 }

@@ -75,11 +75,11 @@ protected:
     }
 protected:
 
-    inline bool CheckFreeSpaceForParticleMovedByVector(const Particle &ParticleObject, const ParticlesContainerInternal<Particle>& ParticlesInSector, const float VectorX, const float VectorY, const float VectorZ, const bool CheckOnlyCenter)
+    inline bool CheckFreeSpaceForParticleMovedByVector(const Particle &ParticleObject, const ParticlesContainerInternal<Particle>& ParticlesInSector, const float VectorX, const float VectorY, const float VectorZ, const bool CheckOnlyParticlesCenters)
     {
         try
         {
-            if (CheckOnlyCenter == true)
+            if (CheckOnlyParticlesCenters == true)
             {
                 const float TestedPosX = ParticleObject.Center.X + VectorX;
                 const float TestedPosY = ParticleObject.Center.Y + VectorY;
@@ -158,11 +158,11 @@ protected:
 
 
 
-    inline bool CheckFreeSpaceAndBoundsForParticleMovedByVector(const Particle &ParticleObject, const ParticlesContainerInternal<Particle>& ParticlesInSector, const float VectorX, const float VectorY, const float VectorZ, const float StartXPosParam, const float StartYPosParam, const float StartZPosParam, const float SizeXParam, const float SizeYParam, const float SizeZParam, const bool CheckOnlyCenter)
+    inline bool CheckFreeSpaceAndBoundsForParticleMovedByVector(const Particle &ParticleObject, const ParticlesContainerInternal<Particle>& ParticlesInSector, const float VectorX, const float VectorY, const float VectorZ, const float StartXPosParam, const float StartYPosParam, const float StartZPosParam, const float SizeXParam, const float SizeYParam, const float SizeZParam, const bool CheckOnlyParticlesCenters)
     {
         try
         {
-            if (CheckOnlyCenter == true)
+            if (CheckOnlyParticlesCenters == true)
             {
                 const float TestedPosX = ParticleObject.Center.X + VectorX;
                 const float TestedPosY = ParticleObject.Center.Y + VectorY;
@@ -224,15 +224,10 @@ protected:
 
 
 protected:
-    //inline bool CheckFreeSpaceAndBoundsForListOfAtoms(const ListOfAtomsType& ListOfAtoms, const ParticlesContainerInternal<Particle>& ParticlesInSector, const float VectorX, const float VectorY, const float VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CheckOnlyCenter)
-    inline bool CheckFreeSpaceAndBoundsForListOfAtoms(const ListOfAtomsType& ListOfAtoms, const ParticlesContainerInternal<Particle>& ParticlesInSector, const float Radius, const float VectorX, const float VectorY, const float VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CheckOnlyCenter)
+    inline bool CheckFreeSpaceAndBoundsForListOfAtoms(const ListOfAtomsType& ListOfAtoms, const ParticlesContainerInternal<Particle>& ParticlesInSector, const float Radius, const float VectorX, const float VectorY, const float VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CheckOnlyParticlesCenters)
     {
         try
         {
-            // for (auto &VoxelOfParticle: ListOfAtoms)
-            //     if (GetSpaceVoxel(VoxelOfParticle.X + VectorX, VoxelOfParticle.Y + VectorY, VoxelOfParticle.Z + VectorZ) != GetZeroSimulationSpaceVoxel() || !(VoxelOfParticle.X + VectorX >= SimulationSpaceSectorBoundsObjectParam.StartXPos && VoxelOfParticle.X + VectorX < SimulationSpaceSectorBoundsObjectParam.StartXPos + SimulationSpaceSectorBoundsObjectParam.SizeX && VoxelOfParticle.Y + VectorY >= SimulationSpaceSectorBoundsObjectParam.StartYPos && VoxelOfParticle.Y + VectorY < SimulationSpaceSectorBoundsObjectParam.StartYPos + SimulationSpaceSectorBoundsObjectParam.SizeY && VoxelOfParticle.Z + VectorZ >= SimulationSpaceSectorBoundsObjectParam.StartZPos && VoxelOfParticle.Z + VectorZ < SimulationSpaceSectorBoundsObjectParam.StartZPos + SimulationSpaceSectorBoundsObjectParam.SizeZ))
-            //         return false;
-
             const float StartXPosParam = SimulationSpaceSectorBoundsObjectParam.StartXPos;
             const float StartYPosParam = SimulationSpaceSectorBoundsObjectParam.StartYPos;
             const float StartZPosParam = SimulationSpaceSectorBoundsObjectParam.StartZPos;
@@ -240,7 +235,7 @@ protected:
             const float SizeYParam = SimulationSpaceSectorBoundsObjectParam.SizeY;
             const float SizeZParam = SimulationSpaceSectorBoundsObjectParam.SizeZ;
 
-            if (CheckOnlyCenter == true)
+            if (CheckOnlyParticlesCenters == true)
             {
                 const float TestedPosX = VectorX;
                 const float TestedPosY = VectorY;
@@ -270,15 +265,24 @@ protected:
                                 return false;
                         }
                 }
-
         }
         CATCH("checking free space for list of voxels")
 
         return true;
     }
 
-
-
+    // inline bool CheckFreeSpaceAndBoundsForListOfAtoms(const ListOfAtomsType& ListOfAtoms, const ParticlesContainerInternal<Particle>& ParticlesInSector, const float VectorX, const float VectorY, const float VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CheckOnlyParticlesCenters)
+    // {
+    //     try
+    //     {
+    //         for (auto &VoxelOfParticle: ListOfAtoms)
+    //             if (GetSpaceVoxel(VoxelOfParticle.X + VectorX, VoxelOfParticle.Y + VectorY, VoxelOfParticle.Z + VectorZ) != GetZeroSimulationSpaceVoxel() || !(VoxelOfParticle.X + VectorX >= SimulationSpaceSectorBoundsObjectParam.StartXPos && VoxelOfParticle.X + VectorX < SimulationSpaceSectorBoundsObjectParam.StartXPos + SimulationSpaceSectorBoundsObjectParam.SizeX && VoxelOfParticle.Y + VectorY >= SimulationSpaceSectorBoundsObjectParam.StartYPos && VoxelOfParticle.Y + VectorY < SimulationSpaceSectorBoundsObjectParam.StartYPos + SimulationSpaceSectorBoundsObjectParam.SizeY && VoxelOfParticle.Z + VectorZ >= SimulationSpaceSectorBoundsObjectParam.StartZPos && VoxelOfParticle.Z + VectorZ < SimulationSpaceSectorBoundsObjectParam.StartZPos + SimulationSpaceSectorBoundsObjectParam.SizeZ))
+    //                 return false;
+    //     }
+    //     CATCH("checking free space for list of voxels")
+    //
+    //     return true;
+    // }
 
 
 
@@ -316,7 +320,7 @@ protected:
     {
         try
         {
-            if (CheckFreeSpaceForParticleMovedByVector(ParticleObject, ParticlesInSector, VectorX, VectorY, VectorZ, true) == true)
+            if (CheckFreeSpaceForParticleMovedByVector(ParticleObject, ParticlesInSector, VectorX, VectorY, VectorZ, CellEngineConfigDataObject.CheckOnlyParticlesCenters) == true)
                 MoveParticleByVector(ParticleObject, VectorX, VectorY, VectorZ);
             else
                 return false;
@@ -330,7 +334,7 @@ protected:
     {
         try
         {
-            if (CheckFreeSpaceAndBoundsForParticleMovedByVector(ParticleObject, ParticlesInSector, VectorX, VectorY, VectorZ, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, true) == true)
+            if (CheckFreeSpaceAndBoundsForParticleMovedByVector(ParticleObject, ParticlesInSector, VectorX, VectorY, VectorZ, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, CellEngineConfigDataObject.CheckOnlyParticlesCenters) == true)
                 MoveParticleByVector(ParticleObject, VectorX, VectorY, VectorZ);
             else
                 return false;
@@ -340,7 +344,7 @@ protected:
         return true;
     }
 protected:
-    inline void MoveParticleNearOtherParticleIfFullAtomSpaceIsEmptyOrNearSpace(Particle &ParticleObject, const Particle &NewPositionParticleObject, const ParticlesContainerInternal<Particle>& ParticlesInSector, const float AddX, const float AddY, const float AddZ)
+    inline void MoveParticleNearOtherParticleIfFullAtomSpaceIsEmptyOrNearSpace(Particle &ParticleObject, const ParticlesContainerInternal<Particle>& ParticlesInSector, const Particle &NewPositionParticleObject, const float AddX, const float AddY, const float AddZ)
     {
         try
         {
@@ -353,7 +357,7 @@ protected:
             for (float PosX = VecX - AddX; PosX < VecX + AddX; PosX += 1.0)
                 for (float PosY = VecY - AddY; PosY < VecY + AddY; PosY += 1.0)
                     for (float PosZ = VecZ - AddZ; PosZ < VecZ + AddZ; PosZ += 1.0)
-                        if (CheckFreeSpaceForParticleMovedByVector(ParticleObject, ParticlesInSector, PosX, PosY, PosZ, true) == true)
+                        if (CheckFreeSpaceForParticleMovedByVector(ParticleObject, ParticlesInSector, PosX, PosY, PosZ, CellEngineConfigDataObject.CheckOnlyParticlesCenters) == true)
                         {
                             LoggersManagerObject.Log(STREAM(terminal_colors_utils::green << "FREE SPACE FOUND " << VecX << " " << VecY << " " << VecZ << " " << PosX << " " << PosY << " " << PosZ << terminal_colors_utils::white));
                             MoveParticleByVector(ParticleObject, PosX, PosY, PosZ);

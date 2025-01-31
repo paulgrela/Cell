@@ -107,6 +107,7 @@ public:
         OnlyDiffusion = 3
     };
     TypesOfSimulation TypeOfSimulation = TypesOfSimulation::BothReactionsAndDiffusion;
+public:
     UnsignedInt NumberOfXThreadsInSimulation = 1;
     UnsignedInt NumberOfYThreadsInSimulation = 1;
     UnsignedInt NumberOfZThreadsInSimulation = 1;
@@ -126,6 +127,8 @@ public:
         ParallelExtract = 2
     };
     TypesOfExchangeOfParticlesBetweenThreads TypeOfExchangeOfParticlesBetweenThreads = TypesOfExchangeOfParticlesBetweenThreads::ParallelInsert;
+public:
+    bool CheckOnlyParticlesCenters = true;
 public:
     bool UseMutexBetweenMainScreenThreadAndMenuThreads = true;
 public:

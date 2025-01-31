@@ -60,6 +60,59 @@ using ParticlesContainer = std::vector<std::vector<std::vector<ParticlesContaine
 template <class SimulationSpace>
 using SimulationSpaceForParallelExecutionContainer = std::vector<std::vector<std::vector<std::shared_ptr<SimulationSpace>>>>;
 
+
+
+
+struct SimulationSpaceSectorBounds
+{
+public:
+    float StartXPos;
+    float StartYPos;
+    float StartZPos;
+    float SizeX;
+    float SizeY;
+    float SizeZ;
+    float EndXPos;
+    float EndYPos;
+    float EndZPos;
+public:
+    void SetParameters(const float StartXPosParam, const float StartYPosParam, const float StartZPosParam, const float SizeXParam, const float SizeYParam, const float SizeZParam, const float EndXPosParam, const float EndYPosParam, const float EndZPosParam)
+    {
+        StartXPos = StartXPosParam;
+        StartYPos = StartYPosParam;
+        StartZPos = StartZPosParam;
+        SizeX = SizeXParam;
+        SizeY = SizeYParam;
+        SizeZ = SizeZParam;
+        EndXPos = EndXPosParam;
+        EndYPos = EndYPosParam;
+        EndZPos = EndZPosParam;
+    }
+public:
+    void AddToStartParameters(const float AddToStartXPosParam, const float AddToStartYPosParam, const float AddToStartZPosParam)
+    {
+        StartXPos += AddToStartXPosParam;
+        StartYPos += AddToStartYPosParam;
+        StartZPos += AddToStartZPosParam;
+    }
+public:
+    SimulationSpaceSectorBounds SetParametersForParallelExecutionSectors(const CurrentThreadPosType& CurrentThreadPos, const UnsignedInt SizeOfXInOneThreadInSimulationSpace, const UnsignedInt SizeOfYInOneThreadInSimulationSpace, const UnsignedInt SizeOfZInOneThreadInSimulationSpace)
+    {
+        StartXPos = static_cast<float>((CurrentThreadPos.ThreadPosX - 1) * SizeOfXInOneThreadInSimulationSpace);
+        EndXPos = static_cast<float>((CurrentThreadPos.ThreadPosX - 1) * SizeOfXInOneThreadInSimulationSpace + SizeOfXInOneThreadInSimulationSpace);
+        StartYPos = static_cast<float>((CurrentThreadPos.ThreadPosY - 1) * SizeOfYInOneThreadInSimulationSpace);
+        EndYPos = static_cast<float>((CurrentThreadPos.ThreadPosY - 1) * SizeOfYInOneThreadInSimulationSpace + SizeOfYInOneThreadInSimulationSpace);
+        StartZPos = static_cast<float>((CurrentThreadPos.ThreadPosZ - 1) * SizeOfZInOneThreadInSimulationSpace);
+        EndZPos = static_cast<float>((CurrentThreadPos.ThreadPosZ - 1) * SizeOfZInOneThreadInSimulationSpace + SizeOfZInOneThreadInSimulationSpace);
+        SizeX = EndXPos - StartXPos;
+        SizeY = EndYPos - StartYPos;
+        SizeZ = EndZPos - StartZPos;
+
+        return *this;
+    }
+};
+
+/*
 struct SimulationSpaceSectorBounds
 {
 public:
@@ -93,7 +146,7 @@ public:
         StartZPos += AddToStartZPosParam;
     }
 public:
-    SimulationSpaceSectorBounds SetParametersForParallelExecutionSectors(const CurrentThreadPosType& CurrentThreadPos, const UnsignedInt SizeOfXInOneThreadInSimulationSpace, const UnsignedInt SizeOfYInOneThreadInSimulationSpace, const UnsignedInt SizeOfZInOneThreadInSimulationSpace)
+    SimulationSpaceSectorBounds1 SetParametersForParallelExecutionSectors(const CurrentThreadPosType& CurrentThreadPos, const UnsignedInt SizeOfXInOneThreadInSimulationSpace, const UnsignedInt SizeOfYInOneThreadInSimulationSpace, const UnsignedInt SizeOfZInOneThreadInSimulationSpace)
     {
         StartXPos = (CurrentThreadPos.ThreadPosX - 1) * SizeOfXInOneThreadInSimulationSpace;
         EndXPos = (CurrentThreadPos.ThreadPosX - 1) * SizeOfXInOneThreadInSimulationSpace + SizeOfXInOneThreadInSimulationSpace;
@@ -108,6 +161,7 @@ public:
         return *this;
     }
 };
+*/
 
 enum class TypesOfLookingForParticlesInProximity : UnsignedInt
 {

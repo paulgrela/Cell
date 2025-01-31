@@ -139,20 +139,17 @@ void CellEngineFullAtomSimulationSpace::FillParticleElementInSpace(const UniqueI
     // CATCH("filling particle element in space")
 }
 
-bool CellEngineFullAtomSimulationSpace::MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(Particle &ParticleObject, SignedInt VectorX, SignedInt VectorY, SignedInt VectorZ, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam)
+bool CellEngineFullAtomSimulationSpace::MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(Particle &ParticleObject, const ParticlesContainerInternal<Particle>& ParticlesInSector, float VectorX, float VectorY, float VectorZ, float StartXPosParam, float StartYPosParam, float StartZPosParam, float SizeXParam, float SizeYParam, float SizeZParam)
 {
-    //return MoveParticleByVectorIfFullAtomSpaceIsEmptyAndIsInBounds(ParticleObject, VectorX, VectorY, VectorZ, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
-    return true;
+    return MoveParticleByVectorIfFullAtomSpaceIsEmptyAndIsInBounds(ParticleObject, ParticlesInSector, VectorX, VectorY, VectorZ, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
 }
 
-bool CellEngineFullAtomSimulationSpace::MoveParticleByVectorIfSpaceIsEmpty(Particle &ParticleObject, SignedInt VectorX, SignedInt VectorY, SignedInt VectorZ)
+bool CellEngineFullAtomSimulationSpace::MoveParticleByVectorIfSpaceIsEmpty(Particle &ParticleObject, const ParticlesContainerInternal<Particle>& ParticlesInSector, float VectorX, float VectorY, float VectorZ)
 {
-    //return MoveParticleByVectorIfFullAtomSpaceIsEmpty(ParticleObject, VectorX, VectorY, VectorZ);
-    return true;
+    return MoveParticleByVectorIfFullAtomSpaceIsEmpty(ParticleObject, ParticlesInSector, VectorX, VectorY, VectorZ);
 }
 
-bool CellEngineFullAtomSimulationSpace::CheckIfSpaceIsEmptyAndIsInBoundsForParticleElements(const ParticleKind& ParticleKindObjectForProduct, const UnsignedInt VectorX, const UnsignedInt VectorY, const UnsignedInt VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam)
+bool CellEngineFullAtomSimulationSpace::CheckIfSpaceIsEmptyAndIsInBoundsForParticleElements(const ParticleKind& ParticleKindObjectForProduct, const ParticlesContainerInternal<Particle>& ParticlesInSector, const float VectorX, const float VectorY, const float VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam)
 {
-    //return CheckFreeSpaceAndBoundsForListOfAtoms(ParticleKindObjectForProduct.ListOfVoxels, VectorX, VectorY, VectorZ, SimulationSpaceSectorBoundsObjectParam);
-    return true;
+    return CheckFreeSpaceAndBoundsForListOfAtoms(ParticleKindObjectForProduct.ListOfAtoms, ParticlesInSector, ParticleKindObjectForProduct.Radius, VectorX, VectorY, VectorZ, SimulationSpaceSectorBoundsObjectParam, CellEngineConfigDataObject.CheckOnlyParticlesCenters);
 }
