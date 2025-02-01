@@ -334,13 +334,11 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile()
                                 CenterOfParticle += AtomObject.Position();
                             vector3_float32 Center = { CenterOfParticle.X() / static_cast<float>(ListOfAtoms.size()), CenterOfParticle.Y() / static_cast<float>(ListOfAtoms.size()), CenterOfParticle.Z() / static_cast<float>(ListOfAtoms.size()) };
 
-                            constexpr float ShiftCenter = 2500;
-                            constexpr float SizeOfParticlesSector = 128;
                             if (ListOfAtoms.empty() == false)
                             {
-                                auto SectorX = static_cast<UnsignedInt>((Center.X + ShiftCenter) / SizeOfParticlesSector);
-                                auto SectorY = static_cast<UnsignedInt>((Center.Y + ShiftCenter) / SizeOfParticlesSector);
-                                auto SectorZ = static_cast<UnsignedInt>((Center.Z + ShiftCenter) / SizeOfParticlesSector);
+                                auto SectorX = static_cast<UnsignedInt>((Center.X + CellEngineConfigDataObject.ShiftCenterX) / CellEngineConfigDataObject.SizeOfParticlesSectorX);
+                                auto SectorY = static_cast<UnsignedInt>((Center.Y + CellEngineConfigDataObject.ShiftCenterY) / CellEngineConfigDataObject.SizeOfParticlesSectorY);
+                                auto SectorZ = static_cast<UnsignedInt>((Center.Z + CellEngineConfigDataObject.ShiftCenterZ) / CellEngineConfigDataObject.SizeOfParticlesSectorZ);
 
                                 NumberOfParticles++;
                                 SetCurrentSectorPos({ SectorX, SectorY, SectorZ });

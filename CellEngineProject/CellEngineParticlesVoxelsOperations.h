@@ -71,7 +71,7 @@ protected:
         CATCH("moving particle near other particles")
     }
 protected:
-    inline bool CheckFreeSpaceForParticleMovedByVector(Particle &ParticleObject, const SignedInt VectorX, const SignedInt VectorY, const SignedInt VectorZ) const
+    inline bool CheckFreeSpaceForParticleMovedByVector(const Particle &ParticleObject, const SignedInt VectorX, const SignedInt VectorY, const SignedInt VectorZ) const
     {
         try
         {
@@ -128,7 +128,7 @@ protected:
 //         return true;
 //     }
 protected:
-    inline bool CheckFreeSpaceAndBoundsForParticleMovedByVector(Particle &ParticleObject, const SignedInt VectorX, const SignedInt VectorY, const SignedInt VectorZ, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam) const
+    inline bool CheckFreeSpaceAndBoundsForParticleMovedByVector(const Particle &ParticleObject, const SignedInt VectorX, const SignedInt VectorY, const SignedInt VectorZ, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam) const
     {
         try
         {
