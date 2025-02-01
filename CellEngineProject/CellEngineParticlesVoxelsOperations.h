@@ -146,24 +146,24 @@ protected:
         return true;
     }
 protected:
-    inline bool MoveParticleNearOtherParticleIfVoxelSpaceIsEmpty(Particle &ParticleObject, const Particle &NewPositionParticleObject, const SignedInt AddX, const SignedInt AddY, const SignedInt AddZ)
-    {
-        return MoveParticleByVectorIfVoxelSpaceIsEmpty(ParticleObject, NewPositionParticleObject.ListOfVoxels[0].X - ParticleObject.ListOfVoxels[0].X + AddX, NewPositionParticleObject.ListOfVoxels[0].Y - ParticleObject.ListOfVoxels[0].Y + AddY, NewPositionParticleObject.ListOfVoxels[0].Z - ParticleObject.ListOfVoxels[0].Z + AddZ);
-    }
-protected:
-    inline bool MoveParticleByVectorIfVoxelSpaceIsEmpty(Particle &ParticleObject, const SignedInt VectorX, const SignedInt VectorY, const SignedInt VectorZ)
-    {
-        try
-        {
-            if (CheckFreeSpaceForParticleMovedByVector(ParticleObject, VectorX, VectorY, VectorZ) == true)
-                MoveParticleByVector(ParticleObject, VectorX, VectorY, VectorZ);
-            else
-                return false;
-        }
-        CATCH("moving particle by vector if voxel space is empty")
-
-        return true;
-    }
+//     inline bool MoveParticleNearOtherParticleIfVoxelSpaceIsEmpty(Particle &ParticleObject, const Particle &NewPositionParticleObject, const SignedInt AddX, const SignedInt AddY, const SignedInt AddZ)
+//     {
+//         return MoveParticleByVectorIfVoxelSpaceIsEmpty(ParticleObject, NewPositionParticleObject.ListOfVoxels[0].X - ParticleObject.ListOfVoxels[0].X + AddX, NewPositionParticleObject.ListOfVoxels[0].Y - ParticleObject.ListOfVoxels[0].Y + AddY, NewPositionParticleObject.ListOfVoxels[0].Z - ParticleObject.ListOfVoxels[0].Z + AddZ);
+//     }
+// protected:
+//     inline bool MoveParticleByVectorIfVoxelSpaceIsEmpty(Particle &ParticleObject, const SignedInt VectorX, const SignedInt VectorY, const SignedInt VectorZ)
+//     {
+//         try
+//         {
+//             if (CheckFreeSpaceForParticleMovedByVector(ParticleObject, VectorX, VectorY, VectorZ) == true)
+//                 MoveParticleByVector(ParticleObject, VectorX, VectorY, VectorZ);
+//             else
+//                 return false;
+//         }
+//         CATCH("moving particle by vector if voxel space is empty")
+//
+//         return true;
+//     }
 protected:
     inline bool MoveParticleByVectorIfVoxelSpaceIsEmptyAndIsInBounds(Particle &ParticleObject, const SignedInt VectorX, const SignedInt VectorY, const SignedInt VectorZ, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
     {
