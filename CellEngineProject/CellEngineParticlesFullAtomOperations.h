@@ -75,7 +75,7 @@ protected:
     }
 protected:
 
-    inline bool CheckFreeSpaceForParticleMovedByVector(const Particle &ParticleObject, const ParticlesContainerInternal<Particle>& ParticlesInSector, const float VectorX, const float VectorY, const float VectorZ, const bool CheckOnlyParticlesCenters)
+    inline bool CheckFreeSpaceForParticleMovedByVector(const Particle &ParticleObject, const ParticlesContainer<Particle>& ParticlesInSector, const CurrentSectorPosType& CurrentSectorPos, const float VectorX, const float VectorY, const float VectorZ, const bool CheckOnlyParticlesCenters)
     {
         try
         {
@@ -85,7 +85,7 @@ protected:
                 const float TestedPosY = ParticleObject.Center.Y + VectorY;
                 const float TestedPosZ = ParticleObject.Center.Z + VectorZ;
 
-                for (const auto& ParticleInSectorObject : ParticlesInSector)
+                for (const auto& ParticleInSectorObject : ParticlesInSector[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ])
                     if (ParticleInSectorObject.second.Index != ParticleObject.Index)
                         if (DistanceOfParticleFromPoint(ParticleInSectorObject.second, { TestedPosX, TestedPosY, TestedPosZ }) < ParticleInSectorObject.second.Radius + ParticleObject.Radius)
                             return false;
@@ -97,7 +97,7 @@ protected:
                     const float TestedPosY = AtomParticleObject.Y + VectorY;
                     const float TestedPosZ = AtomParticleObject.Z + VectorZ;
 
-                    for (const auto& ParticleInSectorObject : ParticlesInSector)
+                    for (const auto& ParticleInSectorObject : ParticlesInSector[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ])
                         if (ParticleInSectorObject.second.Index != ParticleObject.Index)
                             for (const auto &AtomParticleInSectorObject : ParticleInSectorObject.second.ListOfAtoms)
                                 if (DistanceOfPoints({ AtomParticleInSectorObject.X, AtomParticleInSectorObject.Y, AtomParticleInSectorObject.Z }, { TestedPosX, TestedPosY, TestedPosZ }) < 2 * AtomRadius)
@@ -158,7 +158,7 @@ protected:
 
 
 
-    inline bool CheckFreeSpaceAndBoundsForParticleMovedByVector(const Particle &ParticleObject, const ParticlesContainerInternal<Particle>& ParticlesInSector, const float VectorX, const float VectorY, const float VectorZ, const float StartXPosParam, const float StartYPosParam, const float StartZPosParam, const float SizeXParam, const float SizeYParam, const float SizeZParam, const bool CheckOnlyParticlesCenters)
+    inline bool CheckFreeSpaceAndBoundsForParticleMovedByVector(const Particle &ParticleObject, const ParticlesContainer<Particle>& ParticlesInSector, const CurrentSectorPosType& CurrentSectorPos, const float VectorX, const float VectorY, const float VectorZ, const float StartXPosParam, const float StartYPosParam, const float StartZPosParam, const float SizeXParam, const float SizeYParam, const float SizeZParam, const bool CheckOnlyParticlesCenters)
     {
         try
         {
@@ -171,7 +171,7 @@ protected:
                 if (!(TestedPosX >= StartXPosParam && TestedPosX < StartXPosParam + SizeXParam && TestedPosY >= StartYPosParam && TestedPosY < StartYPosParam + SizeYParam && TestedPosZ >= StartZPosParam && TestedPosZ < StartZPosParam + SizeZParam))
                     return false;
 
-                for (const auto& ParticleInSectorObject : ParticlesInSector)
+                for (const auto& ParticleInSectorObject : ParticlesInSector[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ])
                     if (ParticleInSectorObject.second.Index != ParticleObject.Index)
                         if (DistanceOfParticleFromPoint(ParticleInSectorObject.second, { TestedPosX, TestedPosY, TestedPosZ }) < ParticleInSectorObject.second.Radius + ParticleObject.Radius)
                             return false;
@@ -186,7 +186,7 @@ protected:
                     if (!(TestedPosX >= StartXPosParam && TestedPosX < StartXPosParam + SizeXParam && TestedPosY >= StartYPosParam && TestedPosY < StartYPosParam + SizeYParam && TestedPosZ >= StartZPosParam && TestedPosZ < StartZPosParam + SizeZParam))
                         return false;
 
-                    for (const auto& ParticleInSectorObject : ParticlesInSector)
+                    for (const auto& ParticleInSectorObject : ParticlesInSector[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ])
                         if (ParticleInSectorObject.second.Index != ParticleObject.Index)
                             for (const auto &AtomParticleInSectorObject : ParticleInSectorObject.second.ListOfAtoms)
                             {
@@ -224,7 +224,7 @@ protected:
 
 
 protected:
-    inline bool CheckFreeSpaceAndBoundsForListOfAtoms(const ListOfAtomsType& ListOfAtoms, const ParticlesContainerInternal<Particle>& ParticlesInSector, const float Radius, const float VectorX, const float VectorY, const float VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CheckOnlyParticlesCenters)
+    inline bool CheckFreeSpaceAndBoundsForListOfAtoms(const ListOfAtomsType& ListOfAtoms, const ParticlesContainer<Particle>& ParticlesInSector, const CurrentSectorPosType& CurrentSectorPos, const float Radius, const float VectorX, const float VectorY, const float VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CheckOnlyParticlesCenters)
     {
         try
         {
@@ -244,7 +244,7 @@ protected:
                 if (!(TestedPosX >= StartXPosParam && TestedPosX < StartXPosParam + SizeXParam && TestedPosY >= StartYPosParam && TestedPosY < StartYPosParam + SizeYParam && TestedPosZ >= StartZPosParam && TestedPosZ < StartZPosParam + SizeZParam))
                     return false;
 
-                for (const auto& ParticleInSectorObject : ParticlesInSector)
+                for (const auto& ParticleInSectorObject : ParticlesInSector[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ])
                     if (DistanceOfParticleFromPoint(ParticleInSectorObject.second, { TestedPosX, TestedPosY, TestedPosZ }) < ParticleInSectorObject.second.Radius + Radius)
                         return false;
             }
@@ -258,7 +258,7 @@ protected:
                     if (!(TestedPosX >= StartXPosParam && TestedPosX < StartXPosParam + SizeXParam && TestedPosY >= StartYPosParam && TestedPosY < StartYPosParam + SizeYParam && TestedPosZ >= StartZPosParam && TestedPosZ < StartZPosParam + SizeZParam))
                         return false;
 
-                    for (const auto& ParticleInSectorObject : ParticlesInSector)
+                    for (const auto& ParticleInSectorObject : ParticlesInSector[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ])
                         for (const auto &AtomParticleInSectorObject : ParticleInSectorObject.second.ListOfAtoms)
                         {
                             if (DistanceOfPoints({ AtomParticleInSectorObject.X, AtomParticleInSectorObject.Y, AtomParticleInSectorObject.Z }, { TestedPosX, TestedPosY, TestedPosZ }) < 2 * AtomRadius)
@@ -311,16 +311,16 @@ protected:
 
 
 protected:
-    inline bool MoveParticleNearOtherParticleIfFullAtomSpaceIsEmpty(Particle &ParticleObject, const Particle &NewPositionParticleObject, const ParticlesContainerInternal<Particle>& ParticlesInSector, const float AddX, const float AddY, const float AddZ)
+    inline bool MoveParticleNearOtherParticleIfFullAtomSpaceIsEmpty(Particle &ParticleObject, const Particle &NewPositionParticleObject, const ParticlesContainer<Particle>& ParticlesInSector, const CurrentSectorPosType& CurrentSectorPos, const float AddX, const float AddY, const float AddZ)
     {
-        return MoveParticleByVectorIfFullAtomSpaceIsEmpty(ParticleObject, ParticlesInSector, NewPositionParticleObject.ListOfAtoms[0].X - ParticleObject.ListOfAtoms[0].X + AddX, NewPositionParticleObject.ListOfAtoms[0].Y - ParticleObject.ListOfAtoms[0].Y + AddY, NewPositionParticleObject.ListOfAtoms[0].Z - ParticleObject.ListOfAtoms[0].Z + AddZ);
+        return MoveParticleByVectorIfFullAtomSpaceIsEmpty(ParticleObject, ParticlesInSector, CurrentSectorPos, NewPositionParticleObject.ListOfAtoms[0].X - ParticleObject.ListOfAtoms[0].X + AddX, NewPositionParticleObject.ListOfAtoms[0].Y - ParticleObject.ListOfAtoms[0].Y + AddY, NewPositionParticleObject.ListOfAtoms[0].Z - ParticleObject.ListOfAtoms[0].Z + AddZ);
     }
 protected:
-    inline bool MoveParticleByVectorIfFullAtomSpaceIsEmpty(Particle &ParticleObject, const ParticlesContainerInternal<Particle>& ParticlesInSector, const float VectorX, const float VectorY, const float VectorZ)
+    inline bool MoveParticleByVectorIfFullAtomSpaceIsEmpty(Particle &ParticleObject, const ParticlesContainer<Particle>& ParticlesInSector, const CurrentSectorPosType& CurrentSectorPos, const float VectorX, const float VectorY, const float VectorZ)
     {
         try
         {
-            if (CheckFreeSpaceForParticleMovedByVector(ParticleObject, ParticlesInSector, VectorX, VectorY, VectorZ, CellEngineConfigDataObject.CheckOnlyParticlesCenters) == true)
+            if (CheckFreeSpaceForParticleMovedByVector(ParticleObject, ParticlesInSector, CurrentSectorPos, VectorX, VectorY, VectorZ, CellEngineConfigDataObject.CheckOnlyParticlesCenters) == true)
                 MoveParticleByVector(ParticleObject, VectorX, VectorY, VectorZ);
             else
                 return false;
@@ -330,11 +330,11 @@ protected:
         return true;
     }
 protected:
-    inline bool MoveParticleByVectorIfFullAtomSpaceIsEmptyAndIsInBounds(Particle &ParticleObject, const ParticlesContainerInternal<Particle>& ParticlesInSector, const float VectorX, const float VectorY, const float VectorZ, const float StartXPosParam, const float StartYPosParam, const float StartZPosParam, const float SizeXParam, const float SizeYParam, const float SizeZParam)
+    inline bool MoveParticleByVectorIfFullAtomSpaceIsEmptyAndIsInBounds(Particle &ParticleObject, const ParticlesContainer<Particle>& ParticlesInSector, const CurrentSectorPosType& CurrentSectorPos, const float VectorX, const float VectorY, const float VectorZ, const float StartXPosParam, const float StartYPosParam, const float StartZPosParam, const float SizeXParam, const float SizeYParam, const float SizeZParam)
     {
         try
         {
-            if (CheckFreeSpaceAndBoundsForParticleMovedByVector(ParticleObject, ParticlesInSector, VectorX, VectorY, VectorZ, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, CellEngineConfigDataObject.CheckOnlyParticlesCenters) == true)
+            if (CheckFreeSpaceAndBoundsForParticleMovedByVector(ParticleObject, ParticlesInSector, CurrentSectorPos, VectorX, VectorY, VectorZ, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, CellEngineConfigDataObject.CheckOnlyParticlesCenters) == true)
                 MoveParticleByVector(ParticleObject, VectorX, VectorY, VectorZ);
             else
                 return false;
@@ -344,7 +344,7 @@ protected:
         return true;
     }
 protected:
-    inline void MoveParticleNearOtherParticleIfFullAtomSpaceIsEmptyOrNearSpace(Particle &ParticleObject, const ParticlesContainerInternal<Particle>& ParticlesInSector, const Particle &NewPositionParticleObject, const float AddX, const float AddY, const float AddZ)
+    inline void MoveParticleNearOtherParticleIfFullAtomSpaceIsEmptyOrNearSpace(Particle &ParticleObject, const ParticlesContainer<Particle>& ParticlesInSector, const CurrentSectorPosType& CurrentSectorPos, const Particle &NewPositionParticleObject, const float AddX, const float AddY, const float AddZ)
     {
         try
         {
@@ -357,7 +357,7 @@ protected:
             for (float PosX = VecX - AddX; PosX < VecX + AddX; PosX += 1.0)
                 for (float PosY = VecY - AddY; PosY < VecY + AddY; PosY += 1.0)
                     for (float PosZ = VecZ - AddZ; PosZ < VecZ + AddZ; PosZ += 1.0)
-                        if (CheckFreeSpaceForParticleMovedByVector(ParticleObject, ParticlesInSector, PosX, PosY, PosZ, CellEngineConfigDataObject.CheckOnlyParticlesCenters) == true)
+                        if (CheckFreeSpaceForParticleMovedByVector(ParticleObject, ParticlesInSector, CurrentSectorPos, PosX, PosY, PosZ, CellEngineConfigDataObject.CheckOnlyParticlesCenters) == true)
                         {
                             LoggersManagerObject.Log(STREAM(terminal_colors_utils::green << "FREE SPACE FOUND " << VecX << " " << VecY << " " << VecZ << " " << PosX << " " << PosY << " " << PosZ << terminal_colors_utils::white));
                             MoveParticleByVector(ParticleObject, PosX, PosY, PosZ);

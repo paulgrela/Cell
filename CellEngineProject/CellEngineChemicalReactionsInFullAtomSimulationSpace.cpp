@@ -32,7 +32,7 @@ void CellEngineChemicalReactionsInFullAtomSimulationSpace::MoveParticleNearOther
 {
     try
     {
-        MoveParticleNearOtherParticleIfFullAtomSpaceIsEmptyOrNearSpace(ParticleObject, Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ], NewPositionParticleObject, AddX, AddY, AddZ);
+        MoveParticleNearOtherParticleIfFullAtomSpaceIsEmptyOrNearSpace(ParticleObject, Particles, CurrentSectorPos, NewPositionParticleObject, AddX, AddY, AddZ);
     }
     CATCH("moving particle near other particle if space is empty or to near space")
 }
