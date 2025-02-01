@@ -11,39 +11,6 @@
 
 class CellEngineParticlesFullAtomOperations
 {
-public:
-
-//     using SimulationSpaceVoxel = UniqueIdInt;
-//
-//     // void SetAllVoxelsInListOfVoxelsToValueForOuterClass(ListOfVoxelsType& ListOfVoxels, SimulationSpaceVoxel SimulationSpaceVoxelValue)
-//     // {
-//     //     SetAllAtomsInListOfAtomsToValue(ListOfVoxels, SimulationSpaceVoxelValue);
-//     // }
-// public:
-//     static inline SimulationSpaceVoxel GetZeroSimulationSpaceVoxel()
-//     {
-//         return 0;
-//     }
-// protected:
-//
-//     using Space_2048_2048_2048 = SimulationSpaceVoxel[2048][2048][2048];
-//     void* SpacePointer = nullptr;
-//     [[nodiscard]] inline SimulationSpaceVoxel& GetSpaceVoxel(const float x, const float y, const float z) const
-//     {
-//         return (*static_cast<Space_2048_2048_2048*>(SpacePointer))[1][1][1];
-//     }
-
-
-
-    // inline void SetAllAtomsInListOfAtomsToValue(ListOfVoxelsType& ListOfVoxels, SimulationSpaceVoxel SimulationSpaceVoxelValue)
-    // {
-    //     try
-    //     {
-    //         for (auto &Voxel: ListOfVoxels)
-    //             GetSpaceVoxel(Voxel.X, Voxel.Y, Voxel.Z) = SimulationSpaceVoxelValue;
-    //     }
-    //     CATCH("making all zero voxels in list of voxels")
-    // }
 protected:
     static inline void MoveAllAtomsInParticleAtomsListByVector(Particle &ParticleObject, const float VectorX, const float VectorY, const float VectorZ)
     {
@@ -70,8 +37,6 @@ protected:
             //SetAllAtomsInListOfAtomsToValue(ParticleObject.ListOfVoxels, ParticleObject.Index);
 
             ParticleObject.SetCenterCoordinates(ParticleObject.Center.X + VectorX, ParticleObject.Center.Y + VectorY, ParticleObject.Center.Z + VectorZ);
-
-            //PRZENIES DO INNEGO SEKTORA - I TU KLOPS BO NIE MAM DOSTEPU DO CALEJ
 
             const UnsignedInt SectorPosX1 = std::floor((ParticleObject.Center.X + CellEngineConfigDataObject.ShiftCenterX) / CellEngineConfigDataObject.SizeOfParticlesSectorX);
             const UnsignedInt SectorPosY1 = std::floor((ParticleObject.Center.X + CellEngineConfigDataObject.ShiftCenterY) / CellEngineConfigDataObject.SizeOfParticlesSectorY);
@@ -131,56 +96,7 @@ protected:
 
         return true;
     }
-
-
-
-
-
-
-
-
-
-
-
-// protected:
-//     inline bool CheckFreeSpaceForListOfVoxels(const ListOfAtomsType& ListOfAtoms, const float VectorX, const float VectorY, const float VectorZ)
-//     {
-//         try
-//         {
-//             for (auto &VoxelOfParticle: ListOfAtoms)
-//                 if (GetSpaceVoxel(VoxelOfParticle.X + VectorX, VoxelOfParticle.Y + VectorY, VoxelOfParticle.Z + VectorZ) != GetZeroSimulationSpaceVoxel())
-//                     return false;
-//         }
-//         CATCH("checking free space for list of voxels")
-//
-//         return true;
-//     }
-
-// protected:
-//     static inline bool CheckBoundsForParticleMovedByVector(Particle &ParticleObject, const float VectorX, const float VectorY, const float VectorZ, const float StartXPosParam, const float StartYPosParam, const float StartZPosParam, const float SizeXParam, const float SizeYParam, const float SizeZParam)
-//     {
-//         try
-//         {
-//             for (auto &VoxelOfParticle: ParticleObject.ListOfAtoms)
-//                 if (!(VoxelOfParticle.X + VectorX >= StartXPosParam && VoxelOfParticle.X + VectorX < StartXPosParam + SizeXParam && VoxelOfParticle.Y + VectorY >= StartYPosParam && VoxelOfParticle.Y + VectorY < StartYPosParam + SizeYParam && VoxelOfParticle.Z + VectorZ >= StartZPosParam && VoxelOfParticle.Z + VectorZ < StartZPosParam + SizeZParam))
-//                     return false;
-//         }
-//         CATCH("checking bounds for particle moved by vector")
-//
-//         return true;
-//     }
-
-
-
-
-
-
-
-
-
-
-
-
+protected:
     static inline bool CheckFreeSpaceAndBoundsForParticleMovedByVector(const Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, const CurrentSectorPosType& CurrentSectorPos, const float VectorX, const float VectorY, const float VectorZ, const float StartXPosParam, const float StartYPosParam, const float StartZPosParam, const float SizeXParam, const float SizeYParam, const float SizeZParam, const bool CheckOnlyParticlesCenters)
     {
         try
@@ -232,30 +148,6 @@ protected:
 
         return true;
     }
-
-
-// protected:
-//     inline bool CheckFreeSpaceAndBoundsForParticleMovedByVector(Particle &ParticleObject, const float VectorX, const float VectorY, const float VectorZ, const float StartXPosParam, const float StartYPosParam, const float StartZPosParam, const float SizeXParam, const float SizeYParam, const float SizeZParam)
-//     {
-//         try
-//         {
-//             for (auto &VoxelOfParticle: ParticleObject.ListOfAtoms)
-//             {
-//                 float TestedPosX = VoxelOfParticle.X + VectorX;
-//                 float TestedPosY = VoxelOfParticle.Y + VectorY;
-//                 float TestedPosZ = VoxelOfParticle.Z + VectorZ;
-//                 if ((GetSpaceVoxel(TestedPosX, TestedPosY, TestedPosZ) != GetZeroSimulationSpaceVoxel() && GetSpaceVoxel(TestedPosX, TestedPosY, TestedPosZ) != ParticleObject.Index) || !(TestedPosX >= StartXPosParam && TestedPosX < StartXPosParam + SizeXParam && TestedPosY >= StartYPosParam && TestedPosY < StartYPosParam + SizeYParam && TestedPosZ >= StartZPosParam && TestedPosZ < StartZPosParam + SizeZParam))
-//                     return false;
-//             }
-//         }
-//         CATCH("checking bounds and free space for particle moved by vector")
-//
-//         return true;
-//     }
-
-
-
-
 protected:
     static inline bool CheckFreeSpaceAndBoundsForListOfAtoms(const ListOfAtomsType& ListOfAtoms, ParticlesContainer<Particle>& ParticlesInSector, const CurrentSectorPosType& CurrentSectorPos, const float Radius, const float VectorX, const float VectorY, const float VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CheckOnlyParticlesCenters)
     {
@@ -312,64 +204,6 @@ protected:
         return true;
     }
 
-    // inline bool CheckFreeSpaceAndBoundsForListOfAtoms(const ListOfAtomsType& ListOfAtoms, const ParticlesContainerInternal<Particle>& ParticlesInSector, const float VectorX, const float VectorY, const float VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CheckOnlyParticlesCenters)
-    // {
-    //     try
-    //     {
-    //         for (auto &VoxelOfParticle: ListOfAtoms)
-    //             if (GetSpaceVoxel(VoxelOfParticle.X + VectorX, VoxelOfParticle.Y + VectorY, VoxelOfParticle.Z + VectorZ) != GetZeroSimulationSpaceVoxel() || !(VoxelOfParticle.X + VectorX >= SimulationSpaceSectorBoundsObjectParam.StartXPos && VoxelOfParticle.X + VectorX < SimulationSpaceSectorBoundsObjectParam.StartXPos + SimulationSpaceSectorBoundsObjectParam.SizeX && VoxelOfParticle.Y + VectorY >= SimulationSpaceSectorBoundsObjectParam.StartYPos && VoxelOfParticle.Y + VectorY < SimulationSpaceSectorBoundsObjectParam.StartYPos + SimulationSpaceSectorBoundsObjectParam.SizeY && VoxelOfParticle.Z + VectorZ >= SimulationSpaceSectorBoundsObjectParam.StartZPos && VoxelOfParticle.Z + VectorZ < SimulationSpaceSectorBoundsObjectParam.StartZPos + SimulationSpaceSectorBoundsObjectParam.SizeZ))
-    //                 return false;
-    //     }
-    //     CATCH("checking free space for list of voxels")
-    //
-    //     return true;
-    // }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-protected:
-//     static inline bool MoveParticleNearOtherParticleIfFullAtomSpaceIsEmpty(Particle &ParticleObject, const Particle &NewPositionParticleObject, ParticlesContainer<Particle>& ParticlesInSector, const CurrentSectorPosType& CurrentSectorPos, const float AddX, const float AddY, const float AddZ)
-//     {
-//         return MoveParticleByVectorIfFullAtomSpaceIsEmpty(ParticleObject, ParticlesInSector, CurrentSectorPos, NewPositionParticleObject.ListOfAtoms[0].X - ParticleObject.ListOfAtoms[0].X + AddX, NewPositionParticleObject.ListOfAtoms[0].Y - ParticleObject.ListOfAtoms[0].Y + AddY, NewPositionParticleObject.ListOfAtoms[0].Z - ParticleObject.ListOfAtoms[0].Z + AddZ);
-//     }
-// protected:
-//     static inline bool MoveParticleByVectorIfFullAtomSpaceIsEmpty(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, const CurrentSectorPosType& CurrentSectorPos, const float VectorX, const float VectorY, const float VectorZ)
-//     {
-//         try
-//         {
-//             if (CheckFreeSpaceForParticleMovedByVector(ParticleObject, ParticlesInSector, CurrentSectorPos, VectorX, VectorY, VectorZ, CellEngineConfigDataObject.CheckOnlyParticlesCenters) == true)
-//                 MoveParticleByVector(ParticleObject, VectorX, VectorY, VectorZ);
-//             else
-//                 return false;
-//         }
-//         CATCH("moving particle by vector if voxel space is empty")
-//
-//         return true;
-//     }
 protected:
     static inline bool MoveParticleByVectorIfFullAtomSpaceIsEmptyAndIsInBounds(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, const CurrentSectorPosType& CurrentSectorPos, const float VectorX, const float VectorY, const float VectorZ, const float StartXPosParam, const float StartYPosParam, const float StartZPosParam, const float SizeXParam, const float SizeYParam, const float SizeZParam)
     {
@@ -412,15 +246,6 @@ protected:
         }
         CATCH("moving particle near other particles")
     }
-// protected:
-//     static inline void MoveParticleNearOtherParticle(Particle &ParticleObject, const Particle &NewPositionParticleObject, const float AddX, const float AddY, const float AddZ)
-//     {
-//         try
-//         {
-//             MoveParticleByVector(ParticleObject, NewPositionParticleObject.ListOfAtoms[0].X - ParticleObject.ListOfAtoms[0].X + AddX, NewPositionParticleObject.ListOfAtoms[0].Y - ParticleObject.ListOfAtoms[0].Y + AddY, NewPositionParticleObject.ListOfAtoms[0].Z - ParticleObject.ListOfAtoms[0].Z + AddZ);
-//         }
-//         CATCH("moving particle near other particles")
-//     }
 };
 
 #endif

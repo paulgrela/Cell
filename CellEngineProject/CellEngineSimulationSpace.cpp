@@ -733,7 +733,6 @@ bool CellEngineSimulationSpace::FindAndExecuteChosenReaction(const UnsignedInt R
 }
 
 //XXX
-//void CellEngineSimulationSpace::GenerateOneRandomReactionForSelectedSpace(UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam, const bool FindParticlesInProximityBool)
 void CellEngineSimulationSpace::GenerateOneRandomReactionForSelectedSpace(const float StartXPosParam, const float StartYPosParam, const float StartZPosParam, const float SizeXParam, const float SizeYParam, const float SizeZParam, const bool FindParticlesInProximityBool)
 {
     try
@@ -761,7 +760,7 @@ void CellEngineSimulationSpace::GenerateOneRandomReactionForChosenParticle(const
     CATCH("generating random reaction for particle")
 }
 
-//void CellEngineSimulationSpace::GenerateOneChosenReactionForSelectedSpace(const UnsignedInt ReactionId, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
+//XXX
 void CellEngineSimulationSpace::GenerateOneChosenReactionForSelectedSpace(const float ReactionId, const float StartXPosParam, const float StartYPosParam, const float StartZPosParam, const float SizeXParam, const float SizeYParam, const float SizeZParam)
 {
     try
