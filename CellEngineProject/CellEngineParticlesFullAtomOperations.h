@@ -2,6 +2,8 @@
 #ifndef CELL_ENGINE_PARTICLES_FULL_ATOM_OPERATIONS_H
 #define CELL_ENGINE_PARTICLES_FULL_ATOM_OPERATIONS_H
 
+#include <cmath>
+
 #include "DestinationPlatform.h"
 #include "TerminalColorsUtils.h"
 
@@ -81,14 +83,23 @@ protected:
         {
             if (CheckOnlyParticlesCenters == true)
             {
+                //WYLICZ NOWE WSPOLRZEDNE I DO KTOREGO SectorPos one naleza i zrob porownania dla nowego SectorPos - to tyle
                 const float TestedPosX = ParticleObject.Center.X + VectorX;
                 const float TestedPosY = ParticleObject.Center.Y + VectorY;
                 const float TestedPosZ = ParticleObject.Center.Z + VectorZ;
 
-                for (const auto& ParticleInSectorObject : ParticlesInSector[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ])
-                    if (ParticleInSectorObject.second.Index != ParticleObject.Index)
-                        if (DistanceOfParticleFromPoint(ParticleInSectorObject.second, { TestedPosX, TestedPosY, TestedPosZ }) < ParticleInSectorObject.second.Radius + ParticleObject.Radius)
-                            return false;
+                const float SizeOfSectorX = 5120 / CellEngineConfigDataObject.NumberOfParticlesSectorsInX;
+                const float SizeOfSectorY = 5120 / CellEngineConfigDataObject.NumberOfParticlesSectorsInY;
+                const float SizeOfSectorZ = 5120 / CellEngineConfigDataObject.NumberOfParticlesSectorsInZ;
+                const UnsignedInt SectorPosX = std::floor((TestedPosX + CellEngineConfigDataObject.Distance) / SizeOfSectorX);
+                const UnsignedInt SectorPosY = std::floor((TestedPosY + CellEngineConfigDataObject.Distance) / SizeOfSectorY);
+                const UnsignedInt SectorPosZ = std::floor((TestedPosZ + CellEngineConfigDataObject.Distance) / SizeOfSectorZ);
+
+                if (SectorPosX < CellEngineConfigDataObject.NumberOfParticlesSectorsInX && SectorPosY < CellEngineConfigDataObject.NumberOfParticlesSectorsInY && SectorPosZ < CellEngineConfigDataObject.NumberOfParticlesSectorsInZ)
+                    for (const auto& ParticleInSectorObject : ParticlesInSector[SectorPosX][SectorPosY][SectorPosZ])
+                        if (ParticleInSectorObject.second.Index != ParticleObject.Index)
+                            if (DistanceOfParticleFromPoint(ParticleInSectorObject.second, { TestedPosX, TestedPosY, TestedPosZ }) < ParticleInSectorObject.second.Radius + ParticleObject.Radius)
+                                return false;
             }
             else
                 for (auto &AtomParticleObject : ParticleObject.ListOfAtoms)
