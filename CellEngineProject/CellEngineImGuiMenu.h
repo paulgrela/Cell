@@ -70,7 +70,7 @@ public:
         CATCH("initializing logger manager parameters")
     }
 
-    static void ReadInitConfiguration(int argc, const char **argv)
+    static void ReadInitConfiguration(const int argc, const char **argv)
     {
         try
         {
@@ -392,7 +392,7 @@ public:
         CATCH("executing background menu");
     }
 
-    static void MenuWindow1(ImGuiWindowFlags WindowFlags, bool &ModifiableWindow)
+    static void MenuWindow1(const ImGuiWindowFlags WindowFlags, bool& ModifiableWindow)
     {
         try
         {
@@ -1300,7 +1300,7 @@ public:
         CATCH("modification of combinatorics operations voxel simulation space parameters menu")
     }
 
-    static void VoxelSimulationSpaceVisibility(ImGuiWindowFlags WindowFlags, const bool ModifiableWindow)
+    static void VoxelSimulationSpaceVisibility(const ImGuiWindowFlags WindowFlags, const bool ModifiableWindow)
     {
         try
         {
@@ -1421,7 +1421,7 @@ public:
         CATCH("drawing visibility parameters of particles")
     }
 
-    static void MenuWindow2(ImGuiWindowFlags WindowFlags, const bool ModifiableWindow)
+    static void MenuWindow2(const ImGuiWindowFlags WindowFlags, const bool ModifiableWindow)
     {
         try
         {
@@ -1530,7 +1530,7 @@ public:
     }
 
 public:
-    CellEngineImGuiMenu(int argc, const char** argv)
+    CellEngineImGuiMenu(const int argc, const char** argv)
     {
         try
         {

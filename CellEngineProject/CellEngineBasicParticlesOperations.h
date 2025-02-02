@@ -71,20 +71,20 @@ public:
         return MaxParticleIndex = ParticleParam.Index;
     }
 protected:
-    virtual void RemoveParticle(UniqueIdInt ParticleIndex, bool ClearVoxels) = 0;
+    virtual void RemoveParticle(UniqueIdInt ParticleIndex, bool ClearElements) = 0;
 public:
-    template <class T>
-    void PreprocessData(bool UpdateParticleKindListOfVoxelsBool);
+    template <class T, class A>
+    void PreprocessData(std::vector<A> Particle::*ListOfElements, std::vector<A> ParticleKind::*ListOfElementsOfParticleKind, bool UpdateParticleKindListOfElementsBool);
 protected:
-    template <class T>
-    void GetMinMaxCoordinatesForAllParticles(bool UpdateParticleKindListOfVoxelsBool) const;
+    template <class T, class A>
+    void GetMinMaxCoordinatesForAllParticles(std::vector<A> Particle::*ListOfElements, std::vector<A> ParticleKind::*ListOfElementsOfParticleKind, bool UpdateParticleKindListOfElementsBool) const;
     template <class T>
     static void GetMinMaxOfCoordinates(T PosX, T PosY, T PosZ, T& XMinParam, T& XMaxParam, T& YMinParam, T& YMaxParam, T& ZMinParam, T& ZMaxParam);
-    template <class T>
-    static void UpdateParticleKindListOfVoxels(const Particle& ParticleObject, T ParticleXMin, T ParticleXMax, T ParticleYMin, T ParticleYMax, T ParticleZMin, T ParticleZMax);
+    template <class T, class A>
+    static void UpdateParticleKindListOfElements(const Particle& ParticleObject, std::vector<A> Particle::*ListOfElements, std::vector<A> ParticleKind::*ListOfElementsOfParticleKind, T ParticleXMin, T ParticleXMax, T ParticleYMin, T ParticleYMax, T ParticleZMin, T ParticleZMax);
 public:
-    template <class T>
-    static void GetMinMaxCoordinatesForParticle(Particle& ParticleObject, bool UpdateParticleKindListOfVoxels);
+    template <class T, class A>
+    static void GetMinMaxCoordinatesForParticle(Particle& ParticleObject, std::vector<A> Particle::*ListOfElements, std::vector<A> ParticleKind::*ListOfElementsOfParticleKind, bool UpdateParticleKindListOfElements);
 protected:
     std::vector<UniqueIdInt> GetAllParticlesWithChosenParticleType(ParticlesTypes ParticleTypeParam) const;
     std::vector<UniqueIdInt> GetAllParticlesWithChosenEntityId(UniqueIdInt EntityId) const;

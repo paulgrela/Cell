@@ -138,10 +138,8 @@ protected:
                         for (const auto& ParticleInSectorObject : ParticlesInSector[SectorPosX][SectorPosY][SectorPosZ])
                             if (ParticleInSectorObject.second.Index != ParticleObject.Index)
                                 for (const auto &AtomParticleInSectorObject : ParticleInSectorObject.second.ListOfAtoms)
-                                {
                                     if (DistanceOfPoints({ AtomParticleInSectorObject.X, AtomParticleInSectorObject.Y, AtomParticleInSectorObject.Z }, { TestedPosX, TestedPosY, TestedPosZ }) < 2 * AtomRadius)
                                         return false;
-                                }
                 }
         }
         CATCH("checking free space for particle moved by vector")

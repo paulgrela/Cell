@@ -35,6 +35,10 @@ public:
     CellEngineAtom() = default;
     ~CellEngineAtom() = default;
 public:
+    CellEngineAtom(const float XParam, const float YParam, const float ZParam) : X { XParam }, Y { YParam }, Z { ZParam }
+    {
+    }
+public:
     void SetAtomPositionsData(float XParam, float YParam, float ZParam);
 public:
     [[nodiscard]] vmath::vec3 Position() const

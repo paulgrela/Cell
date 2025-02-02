@@ -34,6 +34,7 @@ void CellEngineParticlesDataFile::ReadCIFFileWithBinaryData(const bool StartValu
         {
             ReadAllDataFromBinaryFileAndPrepareData(StartValuesBool, UpdateParticleKindListOfVoxelsBool, Type);
             ReadDataFromCIFFile();
+            //CellEngineVoxelSimulationSpaceObjectPointer->PreprocessData<float, CellEngineAtom>(&Particle::ListOfAtoms, true);
         }
     }
     CATCH("reading cif file with binary data")

@@ -87,7 +87,7 @@ void CellEngineVoxelSimulationSpace::FillParticleElementsInSpace(const UniqueIdI
         for (const auto& NewPointElement : ParticleKindObjectForProduct.ListOfVoxels)
             FillParticleElementInSpace(ParticleIndex, { NewPointElement.X + VectorX, NewPointElement.Y + VectorY, NewPointElement.Z + VectorZ });
 
-        GetMinMaxCoordinatesForParticle<UnsignedInt>(GetParticleFromIndex(ParticleIndex), false);
+        GetMinMaxCoordinatesForParticle<UnsignedInt, vector3_16>(GetParticleFromIndex(ParticleIndex), &Particle::ListOfVoxels, &ParticleKind::ListOfVoxels, false);
     }
     CATCH("filling particle elements in space")
 }

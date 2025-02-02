@@ -64,11 +64,11 @@ CellEngineAtom CellEngineCIFDataFileReader::ParseRecord(const char* LocalCIFReco
     return CellEngineAtomObject;
 }
 
-void CopyFieldsToMatrix(TransformationMatrix3x4& TransformationMatrix3x4Object, vector<string>& MatrixFields)
+void CopyFieldsToMatrix(TransformationMatrix3x4& TransformationMatrix3x4Object, const vector<string>& MatrixFields)
 {
     try
     {
-        UnsignedInt Shift = 6;
+        constexpr UnsignedInt Shift = 6;
         TransformationMatrix3x4Object.Matrix[0][0] = stof(MatrixFields[Shift + 0]);
         TransformationMatrix3x4Object.Matrix[0][1] = stof(MatrixFields[Shift + 1]);
         TransformationMatrix3x4Object.Matrix[0][2] = stof(MatrixFields[Shift + 2]);
@@ -85,7 +85,7 @@ void CopyFieldsToMatrix(TransformationMatrix3x4& TransformationMatrix3x4Object, 
     CATCH("copying fields to matrix")
 }
 
-glm::vec3 CountResultPositionsFromTransformationMatrix(std::unordered_map<UnsignedInt, TransformationMatrix3x4>::iterator& TransformationMatrixIterator, CellEngineAtom& AppliedAtom)
+glm::vec3 CountResultPositionsFromTransformationMatrix(const std::unordered_map<UnsignedInt, TransformationMatrix3x4>::iterator& TransformationMatrixIterator, const CellEngineAtom& AppliedAtom)
 {
     glm::vec3 Result{};
 

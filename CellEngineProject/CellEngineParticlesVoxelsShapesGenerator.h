@@ -2,6 +2,7 @@
 #ifndef CELL_ENGINE_PARTICLES_VOXELS_SHAPES_GENERATOR_H
 #define CELL_ENGINE_PARTICLES_VOXELS_SHAPES_GENERATOR_H
 
+#include "CellEngineParticlesVoxelsOperations.h"
 #include "CellEngineBasicParticlesOperations.h"
 
 class CellEngineParticlesVoxelsShapesGenerator : virtual public CellEngineParticlesVoxelsOperations

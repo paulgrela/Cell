@@ -82,6 +82,7 @@ public:
 public:
     vector3_float32 Center{};
     float Radius{};
+public:
     ListOfVoxelsType ListOfVoxels;
     ListOfAtomsType ListOfAtoms;
     std::vector<std::pair<UnsignedInt, UnsignedInt>> BondsBetweenAtomsToDraw;

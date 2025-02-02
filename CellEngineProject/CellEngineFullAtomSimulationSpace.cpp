@@ -52,13 +52,13 @@ void CellEngineFullAtomSimulationSpace::FillParticleElementsInSpace(const Unique
 {
     try
     {
-        GetParticleFromIndex(ParticleIndex).ListOfVoxels.clear();
+        GetParticleFromIndex(ParticleIndex).ListOfAtoms.clear();
 
-        for (const auto& NewPointElement : ParticleKindObjectForProduct.ListOfVoxels)
-            //FillParticleElementInSpace(ParticleIndex, { static_cast<UnsignedInt>(NewPointElement.X) + VectorX, static_cast<UnsignedInt>(NewPointElement.Y) + VectorY, static_cast<UnsignedInt>(NewPointElement.Z) + VectorZ });
-            FillParticleElementInSpace(ParticleIndex, { NewPointElement.X + VectorX, NewPointElement.Y + VectorY, NewPointElement.Z + VectorZ });
+        // for (const auto& NewPointElement : ParticleKindObjectForProduct.ListOfVoxels)
+        //     //FillParticleElementInSpace(ParticleIndex, { static_cast<UnsignedInt>(NewPointElement.X) + VectorX, static_cast<UnsignedInt>(NewPointElement.Y) + VectorY, static_cast<UnsignedInt>(NewPointElement.Z) + VectorZ });
+        //     FillParticleElementInSpace(ParticleIndex, { NewPointElement.X + VectorX, NewPointElement.Y + VectorY, NewPointElement.Z + VectorZ });
 
-        GetMinMaxCoordinatesForParticle<float>(GetParticleFromIndex(ParticleIndex), false);
+        GetMinMaxCoordinatesForParticle<float, CellEngineAtom>(GetParticleFromIndex(ParticleIndex), &Particle::ListOfAtoms, &ParticleKind::ListOfAtoms, false);
     }
     CATCH("filling particle elements in space")
 }
@@ -72,10 +72,6 @@ Particle& CellEngineFullAtomSimulationSpace::GetParticleFromIndexForGenerator(co
 // {
 //     try
 //     {
-//         UnsignedInt PosX = ConvertToSpaceCoordinate(AppliedAtom.X);
-//         UnsignedInt PosY = ConvertToSpaceCoordinate(AppliedAtom.Y);
-//         UnsignedInt PosZ = ConvertToSpaceCoordinate(AppliedAtom.Z);
-//
 //         GetMinMaxOfCoordinates(PosX, PosY, PosZ, XMin, XMax, YMin, YMax, ZMin, ZMax);
 //
 //         if (GetSpaceVoxel(PosX, PosY, PosZ) == GetZeroSimulationSpaceVoxel())

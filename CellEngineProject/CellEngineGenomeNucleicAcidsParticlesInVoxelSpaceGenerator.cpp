@@ -405,9 +405,9 @@ void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::GetMinMaxCoordi
     try
     {
         for (auto& LocalNewParticleIndex : Genomes[0])
-            GetMinMaxCoordinatesForParticle<UnsignedInt>(GetParticleFromIndex(LocalNewParticleIndex), true);
+            GetMinMaxCoordinatesForParticle<UnsignedInt, vector3_16>(GetParticleFromIndex(LocalNewParticleIndex), &Particle::ListOfVoxels, &ParticleKind::ListOfVoxels, true);
         for (auto& LocalNewParticleIndex : Genomes[1])
-            GetMinMaxCoordinatesForParticle<UnsignedInt>(GetParticleFromIndex(LocalNewParticleIndex), true);
+            GetMinMaxCoordinatesForParticle<UnsignedInt, vector3_16>(GetParticleFromIndex(LocalNewParticleIndex), &Particle::ListOfVoxels, &ParticleKind::ListOfVoxels, true);
     }
     CATCH("getting min max of coordinates for DNA")
 }
