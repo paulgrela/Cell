@@ -74,17 +74,17 @@ protected:
     virtual void RemoveParticle(UniqueIdInt ParticleIndex, bool ClearElements) = 0;
 public:
     template <class T, class A>
-    void PreprocessData(std::vector<A> Particle::*ListOfElements, std::vector<A> ParticleKind::*ListOfElementsOfParticleKind, bool UpdateParticleKindListOfElementsBool);
+    void PreprocessData(const std::vector<A> Particle::*ListOfElements, const std::vector<A> ParticleKind::*ListOfElementsOfParticleKind, bool UpdateParticleKindListOfElementsBool);
 protected:
     template <class T, class A>
-    void GetMinMaxCoordinatesForAllParticles(std::vector<A> Particle::*ListOfElements, std::vector<A> ParticleKind::*ListOfElementsOfParticleKind, bool UpdateParticleKindListOfElementsBool) const;
+    void GetMinMaxCoordinatesForAllParticles(const std::vector<A> Particle::*ListOfElements, const std::vector<A> ParticleKind::*ListOfElementsOfParticleKind, bool UpdateParticleKindListOfElementsBool) const;
     template <class T>
     static void GetMinMaxOfCoordinates(T PosX, T PosY, T PosZ, T& XMinParam, T& XMaxParam, T& YMinParam, T& YMaxParam, T& ZMinParam, T& ZMaxParam);
     template <class T, class A>
-    static void UpdateParticleKindListOfElements(const Particle& ParticleObject, std::vector<A> Particle::*ListOfElements, std::vector<A> ParticleKind::*ListOfElementsOfParticleKind, T ParticleXMin, T ParticleXMax, T ParticleYMin, T ParticleYMax, T ParticleZMin, T ParticleZMax);
+    static void UpdateParticleKindListOfElements(const Particle& ParticleObject, const std::vector<A> Particle::*ListOfElements, const std::vector<A> ParticleKind::*ListOfElementsOfParticleKind, T ParticleXMin, T ParticleXMax, T ParticleYMin, T ParticleYMax, T ParticleZMin, T ParticleZMax, T XSizeDiv2, T YSizeDiv2, T ZSizeDiv2);
 public:
     template <class T, class A>
-    static void GetMinMaxCoordinatesForParticle(Particle& ParticleObject, std::vector<A> Particle::*ListOfElements, std::vector<A> ParticleKind::*ListOfElementsOfParticleKind, bool UpdateParticleKindListOfElements);
+    static void GetMinMaxCoordinatesForParticle(Particle& ParticleObject, const std::vector<A> Particle::*ListOfElements, const std::vector<A> ParticleKind::*ListOfElementsOfParticleKind, bool UpdateParticleKindListOfElements);
 protected:
     std::vector<UniqueIdInt> GetAllParticlesWithChosenParticleType(ParticlesTypes ParticleTypeParam) const;
     std::vector<UniqueIdInt> GetAllParticlesWithChosenEntityId(UniqueIdInt EntityId) const;

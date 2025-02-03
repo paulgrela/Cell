@@ -54,10 +54,6 @@ void CellEngineFullAtomSimulationSpace::FillParticleElementsInSpace(const Unique
     {
         GetParticleFromIndex(ParticleIndex).ListOfAtoms.clear();
 
-        // for (const auto& NewPointElement : ParticleKindObjectForProduct.ListOfVoxels)
-        //     //FillParticleElementInSpace(ParticleIndex, { static_cast<UnsignedInt>(NewPointElement.X) + VectorX, static_cast<UnsignedInt>(NewPointElement.Y) + VectorY, static_cast<UnsignedInt>(NewPointElement.Z) + VectorZ });
-        //     FillParticleElementInSpace(ParticleIndex, { NewPointElement.X + VectorX, NewPointElement.Y + VectorY, NewPointElement.Z + VectorZ });
-
         GetMinMaxCoordinatesForParticle<float, CellEngineAtom>(GetParticleFromIndex(ParticleIndex), &Particle::ListOfAtoms, &ParticleKind::ListOfAtoms, false);
     }
     CATCH("filling particle elements in space")
@@ -68,25 +64,8 @@ Particle& CellEngineFullAtomSimulationSpace::GetParticleFromIndexForGenerator(co
     return GetParticleFromIndex(ParticleIndex);
 }
 
-// void CellEngineFullAtomSimulationSpace::SetAtomInFullAtomSimulationSpace(const UniqueIdInt ParticleIndex, const CellEngineAtom& AppliedAtom)
-// {
-//     try
-//     {
-//         GetMinMaxOfCoordinates(PosX, PosY, PosZ, XMin, XMax, YMin, YMax, ZMin, ZMax);
-//
-//         if (GetSpaceVoxel(PosX, PosY, PosZ) == GetZeroSimulationSpaceVoxel())
-//             SetValueToSpaceVoxelWithFillingListOfVoxelsOfParticle(&GetParticleFromIndex(ParticleIndex).ListOfVoxels, ParticleIndex, PosX, PosY, PosZ);
-//     }
-//     CATCH("setting atom in voxel simulation space")
-// }
-
 void CellEngineFullAtomSimulationSpace::ClearSelectedSpace(const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt StepXParam, const UnsignedInt StepYParam, const UnsignedInt StepZParam, const UnsignedInt SizeXParam, UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
 {
-    // try
-    // {
-    //     SetValueToVoxelsForCuboidSelectedSpace(nullptr, 0, StartXPosParam, StartYPosParam, StartZPosParam, StepXParam, StepYParam, StepZParam, SizeXParam, SizeYParam, SizeZParam);
-    // }
-    // CATCH("clearing selected space")
 }
 
 void CellEngineFullAtomSimulationSpace::ClearWholeVoxelSpace()

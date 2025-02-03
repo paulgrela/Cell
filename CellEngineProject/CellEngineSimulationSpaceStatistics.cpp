@@ -90,7 +90,6 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesAsCopiedMap()
 {
     try
     {
-        //DO POPRAWY
         ParticlesSnapshotsCopiedUnorderedMap.emplace_back(GetParticles());
     }
     CATCH("saving particles as copied map")

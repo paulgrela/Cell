@@ -30,11 +30,7 @@ protected:
     {
         try
         {
-            //SetAllAtomsInListOfAtomsToValue(ParticleObject.ListOfVoxels, GetZeroSimulationSpaceVoxel());
-
             MoveAllAtomsInParticleAtomsListByVector(ParticleObject, VectorX, VectorY, VectorZ);
-
-            //SetAllAtomsInListOfAtomsToValue(ParticleObject.ListOfVoxels, ParticleObject.Index);
 
             ParticleObject.SetCenterCoordinates(ParticleObject.Center.X + VectorX, ParticleObject.Center.Y + VectorY, ParticleObject.Center.Z + VectorZ);
 

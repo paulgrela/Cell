@@ -28,7 +28,7 @@ void  CellEngineBasicParticlesOperations::InitiateFreeParticleIndexes(const Part
 }
 
 template <class T, class A>
-void CellEngineBasicParticlesOperations::PreprocessData(vector<A> Particle::*ListOfElements, std::vector<A> ParticleKind::*ListOfElementsOfParticleKind, const bool UpdateParticleKindListOfElementsBool)
+void CellEngineBasicParticlesOperations::PreprocessData(const vector<A> Particle::*ListOfElements, const std::vector<A> ParticleKind::*ListOfElementsOfParticleKind, const bool UpdateParticleKindListOfElementsBool)
 {
     try
     {
@@ -56,7 +56,7 @@ void CellEngineBasicParticlesOperations::GetMinMaxOfCoordinates(const T PosX, co
 }
 
 template <class T, class A>
-void CellEngineBasicParticlesOperations::GetMinMaxCoordinatesForAllParticles(vector<A> Particle::*ListOfElements, std::vector<A> ParticleKind::*ListOfElementsOfParticleKind, const bool UpdateParticleKindListOfElementsBool) const
+void CellEngineBasicParticlesOperations::GetMinMaxCoordinatesForAllParticles(const vector<A> Particle::*ListOfElements, const std::vector<A> ParticleKind::*ListOfElementsOfParticleKind, const bool UpdateParticleKindListOfElementsBool) const
 {
     try
     {
@@ -70,26 +70,28 @@ void CellEngineBasicParticlesOperations::GetMinMaxCoordinatesForAllParticles(vec
 }
 
 template <class T, class A>
-void CellEngineBasicParticlesOperations::UpdateParticleKindListOfElements(const Particle& ParticleObject, vector<A> Particle::*ListOfElements, vector<A> ParticleKind::*ListOfElementsOfParticleKind, const T ParticleXMin, const T ParticleXMax, const T ParticleYMin, const T ParticleYMax, const T ParticleZMin, const T ParticleZMax)
+void CellEngineBasicParticlesOperations::UpdateParticleKindListOfElements(const Particle& ParticleObject, const vector<A> Particle::*ListOfElements, const vector<A> ParticleKind::*ListOfElementsOfParticleKind, const T ParticleXMin, const T ParticleXMax, const T ParticleYMin, const T ParticleYMax, const T ParticleZMin, const T ParticleZMax, const T XSizeDiv2, const T YSizeDiv2, const T ZSizeDiv2)
 {
     try
     {
         auto& ParticleKindObject = ParticlesKindsManagerObject.GetParticleKind(ParticleObject.EntityId);
         if (static_cast<vector<A>>(ParticleKindObject.*ListOfElementsOfParticleKind).empty() == true)
         {
-            for (const auto& VoxelCoordinates : ParticleObject.*ListOfElements)
-                static_cast<vector<A>>(ParticleKindObject.*ListOfElementsOfParticleKind).emplace_back(VoxelCoordinates.X - ParticleXMin, VoxelCoordinates.Y - ParticleYMin, VoxelCoordinates.Z - ParticleZMin);
+            for (const auto& ElementCoordinates : ParticleObject.*ListOfElements)
+                static_cast<vector<A>>(ParticleKindObject.*ListOfElementsOfParticleKind).emplace_back(ElementCoordinates.X - ParticleXMin, ElementCoordinates.Y - ParticleYMin, ElementCoordinates.Z - ParticleZMin);
 
-            ParticleKindObject.XSizeDiv2 = static_cast<float>(ParticleXMax - ParticleXMin) / 2;
-            ParticleKindObject.YSizeDiv2 = static_cast<float>(ParticleYMax - ParticleYMin) / 2;
-            ParticleKindObject.ZSizeDiv2 = static_cast<float>(ParticleZMax - ParticleZMin) / 2;
+            ParticleKindObject.XSizeDiv2 = XSizeDiv2;
+            ParticleKindObject.YSizeDiv2 = YSizeDiv2;
+            ParticleKindObject.ZSizeDiv2 = ZSizeDiv2;
+
+            ParticleKindObject.Radius = ParticleObject.Radius;
         }
     }
     CATCH("updating particle kind list of Elements")
 }
 
 template <class T, class A>
-void CellEngineBasicParticlesOperations::GetMinMaxCoordinatesForParticle(Particle& ParticleObject, vector<A> Particle::*ListOfElements, vector<A> ParticleKind::*ListOfElementsOfParticleKind, const bool UpdateParticleKindListOfElementsBool)
+void CellEngineBasicParticlesOperations::GetMinMaxCoordinatesForParticle(Particle& ParticleObject, const vector<A> Particle::*ListOfElements, const vector<A> ParticleKind::*ListOfElementsOfParticleKind, const bool UpdateParticleKindListOfElementsBool)
 {
     try
     {
@@ -100,17 +102,22 @@ void CellEngineBasicParticlesOperations::GetMinMaxCoordinatesForParticle(Particl
         else
             ParticleXMax = ParticleYMax = ParticleZMax = -10000;
 
-        for (const auto& VoxelCoordinates : ParticleObject.*ListOfElements)
-            GetMinMaxOfCoordinates<T>(VoxelCoordinates.X, VoxelCoordinates.Y, VoxelCoordinates.Z, ParticleXMin, ParticleXMax, ParticleYMin, ParticleYMax, ParticleZMin, ParticleZMax);
+        for (const auto& ElementCoordinates : ParticleObject.*ListOfElements)
+            GetMinMaxOfCoordinates<T>(ElementCoordinates.X, ElementCoordinates.Y, ElementCoordinates.Z, ParticleXMin, ParticleXMax, ParticleYMin, ParticleYMax, ParticleZMin, ParticleZMax);
 
-        ParticleObject.SetCenterCoordinates(ParticleXMin + static_cast<float>(ParticleXMax - ParticleXMin) / 2, ParticleYMin + static_cast<float>(ParticleYMax - ParticleYMin) / 2, ParticleZMin + static_cast<float>(ParticleZMax - ParticleZMin) / 2);
+        T XSizeDiv2 = (ParticleXMax - ParticleXMin) / 2;
+        T YSizeDiv2 = (ParticleYMax - ParticleYMin) / 2;
+        T ZSizeDiv2 = (ParticleZMax - ParticleZMin) / 2;
+
+        ParticleObject.Radius = max({ XSizeDiv2, YSizeDiv2, ZSizeDiv2 });
+
+        ParticleObject.SetCenterCoordinates(ParticleXMin + XSizeDiv2, ParticleYMin + YSizeDiv2, ParticleZMin + ZSizeDiv2);
 
         if (UpdateParticleKindListOfElementsBool == true)
-            UpdateParticleKindListOfElements<T, A>(ParticleObject, ListOfElements, ListOfElementsOfParticleKind, ParticleXMin, ParticleXMax, ParticleYMin, ParticleYMax, ParticleZMin, ParticleZMax);
+            UpdateParticleKindListOfElements<T, A>(ParticleObject, ListOfElements, ListOfElementsOfParticleKind, ParticleXMin, ParticleXMax, ParticleYMin, ParticleYMax, ParticleZMin, ParticleZMax, XSizeDiv2, YSizeDiv2, ZSizeDiv2);
     }
     CATCH("getting min max coordinates for one particle")
 }
-
 
 vector<UniqueIdInt> CellEngineBasicParticlesOperations::GetAllParticlesWithChosenParticleType(const ParticlesTypes ParticleTypeParam) const
 {
@@ -165,9 +172,8 @@ UnsignedInt CellEngineBasicParticlesOperations::GetNumberOfParticlesWithChosenEn
     return ParticleCounter;
 }
 
-template void CellEngineBasicParticlesOperations::PreprocessData<float, CellEngineAtom>(std::vector<CellEngineAtom> Particle::*ListOfElements, std::vector<CellEngineAtom> ParticleKind::*ListOfElementsOfParticleKind, bool UpdateParticleKindListOfElementsBool);
-template void CellEngineBasicParticlesOperations::PreprocessData<UnsignedInt, vector3_16>(std::vector<vector3_16> Particle::*ListOfElements, std::vector<vector3_16> ParticleKind::*ListOfElementsOfParticleKind, bool UpdateParticleKindListOfElementsBool);
+template void CellEngineBasicParticlesOperations::PreprocessData<float, CellEngineAtom>(const std::vector<CellEngineAtom> Particle::*ListOfElements, const std::vector<CellEngineAtom> ParticleKind::*ListOfElementsOfParticleKind, bool UpdateParticleKindListOfElementsBool);
+template void CellEngineBasicParticlesOperations::PreprocessData<UnsignedInt, vector3_16>(const std::vector<vector3_16> Particle::*ListOfElements, const std::vector<vector3_16> ParticleKind::*ListOfElementsOfParticleKind, bool UpdateParticleKindListOfElementsBool);
 template void CellEngineBasicParticlesOperations::GetMinMaxOfCoordinates<UnsignedInt>(UnsignedInt PosX, UnsignedInt PosY, UnsignedInt PosZ, UnsignedInt& XMinParam, UnsignedInt& XMaxParam, UnsignedInt& YMinParam, UnsignedInt& YMaxParam, UnsignedInt& ZMinParam, UnsignedInt& ZMaxParam);
-template void CellEngineBasicParticlesOperations::UpdateParticleKindListOfElements<UnsignedInt, vector3_16>(const Particle& ParticleObject, vector<vector3_16> Particle::*ListOfElements, vector<vector3_16> ParticleKind::*ListOfElementsOfParticleKind, const UnsignedInt ParticleXMin, const UnsignedInt ParticleXMax, const UnsignedInt ParticleYMin, const UnsignedInt ParticleYMax, const UnsignedInt ParticleZMin, const UnsignedInt ParticleZMax);
-template void CellEngineBasicParticlesOperations::GetMinMaxCoordinatesForParticle<UnsignedInt, vector3_16>(Particle& ParticleObject, vector<vector3_16> Particle::*ListOfElements, vector<vector3_16> ParticleKind::*ListOfElementsOfParticleKind, const bool UpdateParticleKindListOfElementsBool);
-template void CellEngineBasicParticlesOperations::GetMinMaxCoordinatesForParticle<float, CellEngineAtom>(Particle& ParticleObject, vector<CellEngineAtom> Particle::*ListOfElements, vector<CellEngineAtom> ParticleKind::*ListOfElementsOfParticleKind, const bool UpdateParticleKindListOfElementsBool);
+template void CellEngineBasicParticlesOperations::GetMinMaxCoordinatesForParticle<UnsignedInt, vector3_16>(Particle& ParticleObject, const vector<vector3_16> Particle::*ListOfElements, const vector<vector3_16> ParticleKind::*ListOfElementsOfParticleKind, const bool UpdateParticleKindListOfElementsBool);
+template void CellEngineBasicParticlesOperations::GetMinMaxCoordinatesForParticle<float, CellEngineAtom>(Particle& ParticleObject, const vector<CellEngineAtom> Particle::*ListOfElements, const vector<CellEngineAtom> ParticleKind::*ListOfElementsOfParticleKind, const bool UpdateParticleKindListOfElementsBool);

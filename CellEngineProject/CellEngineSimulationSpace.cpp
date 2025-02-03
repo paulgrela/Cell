@@ -61,13 +61,9 @@ void CellEngineSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpace(const
     {
         uniform_int_distribution<SignedInt> UniformDistributionObjectMoveParticleDirection_int64t(-1, 1);
 
-        //XXX
         FindParticlesInProximityOfSimulationSpaceForSelectedSpace(false, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
         for (auto& ParticleInProximityIndex : LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity)
             if (CellEngineUseful::IsDNA(GetParticleFromIndex(ParticleInProximityIndex).EntityId) == false)
-                // if (InBounds == false)
-                //     MoveParticleByVectorIfSpaceIsEmpty(GetParticleFromIndex(ParticleInProximityIndex), Particles, CurrentSectorPos, UniformDistributionObjectMoveParticleDirection_int64t(mt64R), UniformDistributionObjectMoveParticleDirection_int64t(mt64R), UniformDistributionObjectMoveParticleDirection_int64t(mt64R));
-                // else
                 MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(GetParticleFromIndex(ParticleInProximityIndex), Particles, CurrentSectorPos, UniformDistributionObjectMoveParticleDirection_int64t(mt64R), UniformDistributionObjectMoveParticleDirection_int64t(mt64R), UniformDistributionObjectMoveParticleDirection_int64t(mt64R), StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
     }
     CATCH("generating one step of diffusion for selected space")
@@ -732,7 +728,6 @@ bool CellEngineSimulationSpace::FindAndExecuteChosenReaction(const UnsignedInt R
     return false;
 }
 
-//XXX
 void CellEngineSimulationSpace::GenerateOneRandomReactionForSelectedSpace(const float StartXPosParam, const float StartYPosParam, const float StartZPosParam, const float SizeXParam, const float SizeYParam, const float SizeZParam, const bool FindParticlesInProximityBool)
 {
     try
@@ -760,7 +755,6 @@ void CellEngineSimulationSpace::GenerateOneRandomReactionForChosenParticle(const
     CATCH("generating random reaction for particle")
 }
 
-//XXX
 void CellEngineSimulationSpace::GenerateOneChosenReactionForSelectedSpace(const float ReactionId, const float StartXPosParam, const float StartYPosParam, const float StartZPosParam, const float SizeXParam, const float SizeYParam, const float SizeZParam)
 {
     try

@@ -172,6 +172,20 @@ void AddParticleKindGraphicDataFromConfigXMLData(const EntityIdInt EntityId)
     CATCH("adding particle kind graphic data from xml config data")
 }
 
+vector3_float32 CountCenterForListOfAtoms(const vector<CellEngineAtom>& ListOfAtoms)
+{
+    vmath::vec3 CenterOfParticle(0.0, 0.0, 0.0);
+
+    try
+    {
+        for (const CellEngineAtom& AtomObject : ListOfAtoms)
+            CenterOfParticle += AtomObject.Position();
+    }
+    CATCH("counting center for list of atoms")
+
+    return { CenterOfParticle.X() / static_cast<float>(ListOfAtoms.size()), CenterOfParticle.Y() / static_cast<float>(ListOfAtoms.size()), CenterOfParticle.Z() / static_cast<float>(ListOfAtoms.size()) };
+}
+
 void CellEngineCIFDataFileReader::ReadDataFromCIFFile()
 {
     try
@@ -329,10 +343,7 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile()
                                 ListOfAtoms.emplace_back(AppliedAtom);
                             }
 
-                            vmath::vec3 CenterOfParticle(0.0, 0.0, 0.0);
-                            for (const CellEngineAtom& AtomObject : ListOfAtoms)
-                                CenterOfParticle += AtomObject.Position();
-                            vector3_float32 Center = { CenterOfParticle.X() / static_cast<float>(ListOfAtoms.size()), CenterOfParticle.Y() / static_cast<float>(ListOfAtoms.size()), CenterOfParticle.Z() / static_cast<float>(ListOfAtoms.size()) };
+                            vector3_float32 Center = CountCenterForListOfAtoms(ListOfAtoms);
 
                             if (ListOfAtoms.empty() == false)
                             {

@@ -71,7 +71,7 @@ protected:
         CATCH("moving particle near other particles")
     }
 protected:
-    inline bool CheckFreeSpaceForParticleMovedByVector(const Particle &ParticleObject, const SignedInt VectorX, const SignedInt VectorY, const SignedInt VectorZ) const
+    [[nodiscard]] inline bool CheckFreeSpaceForParticleMovedByVector(const Particle &ParticleObject, const SignedInt VectorX, const SignedInt VectorY, const SignedInt VectorZ) const
     {
         try
         {
@@ -88,19 +88,6 @@ protected:
 
         return true;
     }
-// protected:
-//     inline bool CheckFreeSpaceForListOfVoxels(const ListOfVoxelsType& ListOfVoxels, const UnsignedInt VectorX, const UnsignedInt VectorY, const UnsignedInt VectorZ)
-//     {
-//         try
-//         {
-//             for (auto &VoxelOfParticle: ListOfVoxels)
-//                 if (GetSpaceVoxel(VoxelOfParticle.X + VectorX, VoxelOfParticle.Y + VectorY, VoxelOfParticle.Z + VectorZ) != GetZeroSimulationSpaceVoxel())
-//                     return false;
-//         }
-//         CATCH("checking free space for list of voxels")
-//
-//         return true;
-//     }
 protected:
     inline bool CheckFreeSpaceAndBoundsForListOfVoxels(const ListOfVoxelsType& ListOfVoxels, const UnsignedInt VectorX, const UnsignedInt VectorY, const UnsignedInt VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam) const
     {
@@ -114,19 +101,6 @@ protected:
 
         return true;
     }
-// protected:
-//     static inline bool CheckBoundsForParticleMovedByVector(Particle &ParticleObject, const SignedInt VectorX, const SignedInt VectorY, const SignedInt VectorZ, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
-//     {
-//         try
-//         {
-//             for (auto &VoxelOfParticle: ParticleObject.ListOfVoxels)
-//                 if (!(VoxelOfParticle.X + VectorX >= StartXPosParam && VoxelOfParticle.X + VectorX < StartXPosParam + SizeXParam && VoxelOfParticle.Y + VectorY >= StartYPosParam && VoxelOfParticle.Y + VectorY < StartYPosParam + SizeYParam && VoxelOfParticle.Z + VectorZ >= StartZPosParam && VoxelOfParticle.Z + VectorZ < StartZPosParam + SizeZParam))
-//                     return false;
-//         }
-//         CATCH("checking bounds for particle moved by vector")
-//
-//         return true;
-//     }
 protected:
     inline bool CheckFreeSpaceAndBoundsForParticleMovedByVector(const Particle &ParticleObject, const SignedInt VectorX, const SignedInt VectorY, const SignedInt VectorZ, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam) const
     {
@@ -145,25 +119,6 @@ protected:
 
         return true;
     }
-protected:
-//     inline bool MoveParticleNearOtherParticleIfVoxelSpaceIsEmpty(Particle &ParticleObject, const Particle &NewPositionParticleObject, const SignedInt AddX, const SignedInt AddY, const SignedInt AddZ)
-//     {
-//         return MoveParticleByVectorIfVoxelSpaceIsEmpty(ParticleObject, NewPositionParticleObject.ListOfVoxels[0].X - ParticleObject.ListOfVoxels[0].X + AddX, NewPositionParticleObject.ListOfVoxels[0].Y - ParticleObject.ListOfVoxels[0].Y + AddY, NewPositionParticleObject.ListOfVoxels[0].Z - ParticleObject.ListOfVoxels[0].Z + AddZ);
-//     }
-// protected:
-//     inline bool MoveParticleByVectorIfVoxelSpaceIsEmpty(Particle &ParticleObject, const SignedInt VectorX, const SignedInt VectorY, const SignedInt VectorZ)
-//     {
-//         try
-//         {
-//             if (CheckFreeSpaceForParticleMovedByVector(ParticleObject, VectorX, VectorY, VectorZ) == true)
-//                 MoveParticleByVector(ParticleObject, VectorX, VectorY, VectorZ);
-//             else
-//                 return false;
-//         }
-//         CATCH("moving particle by vector if voxel space is empty")
-//
-//         return true;
-//     }
 protected:
     inline bool MoveParticleByVectorIfVoxelSpaceIsEmptyAndIsInBounds(Particle &ParticleObject, const SignedInt VectorX, const SignedInt VectorY, const SignedInt VectorZ, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam) const
     {

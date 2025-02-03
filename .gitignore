@@ -23,6 +23,7 @@ CellEngineProject/glm/util/
 CellEngineProject/lib/
 CellEngineProject/gmock/
 CellEngineProject/googletest/
+OldUsefulFiles/
 PDBFiles/struct0/test0.pdb
 PDBFiles/struct0/test1.pdb
 PDBFiles/struct1/
