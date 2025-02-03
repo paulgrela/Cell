@@ -126,6 +126,8 @@ add_executable(
 	CellEngineBasicParticlesOperations.h
 	CellEngineParticlesVoxelsShapesGenerator.h
 	CellEngineParticlesVoxelsShapesGenerator.cpp
+	CellEngineParticlesFullAtomShapesGenerator.cpp
+	CellEngineParticlesFullAtomShapesGenerator.h
 	CellEngineRealRandomParticlesInVoxelSpaceGenerator.cpp
 	CellEngineRealRandomParticlesInVoxelSpaceGenerator.h
 	CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator.cpp

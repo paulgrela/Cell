@@ -112,33 +112,33 @@ glm::vec3 CountResultPositionsFromTransformationMatrix(const std::unordered_map<
     return Result;
 }
 
-void AssociateAutinNameWithIllinoisName(unordered_map<string, string>& AutinIllinoisNameMap)
+void AssociateAutinNameWithIllinoisName(unordered_map<string, string>& AutinIllinoisNamesMap)
 {
-    AutinIllinoisNameMap["'root.syn3A.interior.proteins.DNA'"] = "DNANucleotide";
-    AutinIllinoisNameMap["'root.syn3A.interior.proteins.RNA'"] = "RNANucleotide";
-    AutinIllinoisNameMap["'root.syn3A.interior.proteins.DNA_POL'"] = "particle_DNAPolymerase";
-    AutinIllinoisNameMap["'root.syn3A.interior.proteins.RNA_POL'"] = "particle_RNAPolymerase";
-    AutinIllinoisNameMap["'root.syn3A.membrane.inner_membrane'"] = "LipidInnerMembrane";
-    AutinIllinoisNameMap["'root.syn3A.membrane.outer_membrane'"] = "LipidOuterMembrane";
-    AutinIllinoisNameMap["'root.syn3A.interior.proteins.RIBOSOME_70S'"] = "particle_RIBOSOME";
+    AutinIllinoisNamesMap["'root.syn3A.interior.proteins.DNA'"] = "DNANucleotide";
+    AutinIllinoisNamesMap["'root.syn3A.interior.proteins.RNA'"] = "RNANucleotide";
+    AutinIllinoisNamesMap["'root.syn3A.interior.proteins.DNA_POL'"] = "particle_DNAPolymerase";
+    AutinIllinoisNamesMap["'root.syn3A.interior.proteins.RNA_POL'"] = "particle_RNAPolymerase";
+    AutinIllinoisNamesMap["'root.syn3A.membrane.inner_membrane'"] = "LipidInnerMembrane";
+    AutinIllinoisNamesMap["'root.syn3A.membrane.outer_membrane'"] = "LipidOuterMembrane";
+    AutinIllinoisNamesMap["'root.syn3A.interior.proteins.RIBOSOME_70S'"] = "particle_RIBOSOME";
 
-    AutinIllinoisNameMap["'root.syn3A.interior.proteins.GLY_tRNASYNTH'"] = "JCVISYN3A_0405";
-    AutinIllinoisNameMap["'root.syn3A.interior.proteins.THR_tRNASYNTH'"] = "JCVISYN3A_0222";
-    AutinIllinoisNameMap["'root.syn3A.interior.proteins.SER_tRNASYNTH'"] = "JCVISYN3A_0061";
-    AutinIllinoisNameMap["'root.syn3A.interior.proteins.HIS_tRNASYNTH'"] = "JCVISYN3A_0288";
-    AutinIllinoisNameMap["'root.syn3A.interior.proteins.ALA_tRNASYNTH'"] = "JCVISYN3A_0163";
-    AutinIllinoisNameMap["'root.syn3A.interior.proteins.TRP_tRNASYNTH'"] = "JCVISYN3A_0308";
-    AutinIllinoisNameMap["'root.syn3A.interior.proteins.MET_tRNASYNTH'"] = "JCVISYN3A_0012";
-    AutinIllinoisNameMap["'root.syn3A.interior.proteins.LEU_tRNASYNTH'"] = "JCVISYN3A_0634";
-    AutinIllinoisNameMap["'root.syn3A.interior.proteins.CYS_tRNASYNTH'"] = "JCVISYN3A_0637";
-    AutinIllinoisNameMap["'root.syn3A.interior.proteins.GLU_tRNASYNTH'"] = "JCVISYN3A_0126";
-    AutinIllinoisNameMap["'root.syn3A.interior.proteins.TYR_tRNASYNTH'"] = "JCVISYN3A_0613";
-    AutinIllinoisNameMap["'root.syn3A.interior.proteins.VAL_tRNASYNTH'"] = "JCVISYN3A_0260";
-    AutinIllinoisNameMap["'root.syn3A.interior.proteins.PRO_tRNASYNTH'"] = "JCVISYN3A_0282";
-    AutinIllinoisNameMap["'root.syn3A.interior.proteins.ILE_tRNASYNTH'"] = "JCVISYN3A_0519";
-    AutinIllinoisNameMap["'root.syn3A.interior.proteins.ARG_tRNASYNTH'"] = "JCVISYN3A_0535";
-    AutinIllinoisNameMap["'root.syn3A.interior.proteins.PHE_tRNASYNTH'"] = "JCVISYN3A_0529";
-    AutinIllinoisNameMap["'root.syn3A.interior.proteins.ASP_tRNASYNTH'"] = "JCVISYN3A_0287";
+    AutinIllinoisNamesMap["'root.syn3A.interior.proteins.GLY_tRNASYNTH'"] = "JCVISYN3A_0405";
+    AutinIllinoisNamesMap["'root.syn3A.interior.proteins.THR_tRNASYNTH'"] = "JCVISYN3A_0222";
+    AutinIllinoisNamesMap["'root.syn3A.interior.proteins.SER_tRNASYNTH'"] = "JCVISYN3A_0061";
+    AutinIllinoisNamesMap["'root.syn3A.interior.proteins.HIS_tRNASYNTH'"] = "JCVISYN3A_0288";
+    AutinIllinoisNamesMap["'root.syn3A.interior.proteins.ALA_tRNASYNTH'"] = "JCVISYN3A_0163";
+    AutinIllinoisNamesMap["'root.syn3A.interior.proteins.TRP_tRNASYNTH'"] = "JCVISYN3A_0308";
+    AutinIllinoisNamesMap["'root.syn3A.interior.proteins.MET_tRNASYNTH'"] = "JCVISYN3A_0012";
+    AutinIllinoisNamesMap["'root.syn3A.interior.proteins.LEU_tRNASYNTH'"] = "JCVISYN3A_0634";
+    AutinIllinoisNamesMap["'root.syn3A.interior.proteins.CYS_tRNASYNTH'"] = "JCVISYN3A_0637";
+    AutinIllinoisNamesMap["'root.syn3A.interior.proteins.GLU_tRNASYNTH'"] = "JCVISYN3A_0126";
+    AutinIllinoisNamesMap["'root.syn3A.interior.proteins.TYR_tRNASYNTH'"] = "JCVISYN3A_0613";
+    AutinIllinoisNamesMap["'root.syn3A.interior.proteins.VAL_tRNASYNTH'"] = "JCVISYN3A_0260";
+    AutinIllinoisNamesMap["'root.syn3A.interior.proteins.PRO_tRNASYNTH'"] = "JCVISYN3A_0282";
+    AutinIllinoisNamesMap["'root.syn3A.interior.proteins.ILE_tRNASYNTH'"] = "JCVISYN3A_0519";
+    AutinIllinoisNamesMap["'root.syn3A.interior.proteins.ARG_tRNASYNTH'"] = "JCVISYN3A_0535";
+    AutinIllinoisNamesMap["'root.syn3A.interior.proteins.PHE_tRNASYNTH'"] = "JCVISYN3A_0529";
+    AutinIllinoisNamesMap["'root.syn3A.interior.proteins.ASP_tRNASYNTH'"] = "JCVISYN3A_0287";
 }
 
 EntityIdInt GetParticleKindIdFromGeneIdOrName(const string& ParticleKindName, const EntityIdInt ParticleKindIdParam, const std::unordered_map<EntityIdInt, UniqueIdInt>& ProteinIdFromGeneIdTranslator, const unordered_map<string, string>& AutinIllinoisNameMap)
@@ -199,8 +199,8 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile()
         vector<CellEngineAtom> LocalCellEngineAllAtomsObject;
         vector<CellEngineAtom> LocalCellEngineParticlesCentersObject;
 
-        unordered_map<string, string> AutinIllinoisNameMap;
-        AssociateAutinNameWithIllinoisName(AutinIllinoisNameMap);
+        unordered_map<string, string> AutinIllinoisNamesMap;
+        AssociateAutinNameWithIllinoisName(AutinIllinoisNamesMap);
         std::unordered_map<EntityIdInt, UniqueIdInt> ProteinIdFromGeneIdTranslator;
         std::unordered_map<EntityIdInt, string> ParticleAutinKindIdToAutinNameTranslator;
 
@@ -318,7 +318,7 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile()
 
                             if (CellEngineConfigDataObject.MixedFullAtomWithVoxelSpace == true)
                             {
-                                LocalEntityId = GetParticleKindIdFromGeneIdOrName(ParticleAutinKindIdToAutinNameTranslator.find(LocalEntityId)->second, LocalEntityId, ProteinIdFromGeneIdTranslator, AutinIllinoisNameMap);
+                                LocalEntityId = GetParticleKindIdFromGeneIdOrName(ParticleAutinKindIdToAutinNameTranslator.find(LocalEntityId)->second, LocalEntityId, ProteinIdFromGeneIdTranslator, AutinIllinoisNamesMap);
                                 AddParticleKindGraphicDataFromConfigXMLData(LocalEntityId);
                             }
 
