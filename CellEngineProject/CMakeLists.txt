@@ -69,6 +69,8 @@ include_directories(
 
 add_executable(
 	CellEngineProject
+	../Common/Include/ExceptionsMacro.h
+	../Common/Platform/DestinationPlatform.h
 	../Common/Logger/Logger.h
 	../Common/Logger/Logger.cpp
 	../Common/MathUtils/ArcBall.h
@@ -83,6 +85,7 @@ add_executable(
 	../Common/DateTimeUtils/DateTimeUtils.cpp
 	../Common/DoublyLinkedList/DoublyLinkedList.h
 	../Common/DoublyLinkedList/DoublyLinkedList.cpp
+	../Common/TerminalColorsUtils/TerminalColorsUtils.h
 	CellEngineTypes.h
 	CellEngineMacros.h
 	CellEngineUseful.h

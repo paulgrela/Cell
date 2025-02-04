@@ -8,15 +8,12 @@
 #include "CellEngineChemicalReaction.h"
 #include "CellEngineChemicalReactionsEngine.h"
 #include "CellEngineIllinoisDataCreator.h"
-#include "CellEngineBasicVoxelsOperations.h"
-#include "CellEngineTestParticlesInVoxelSpaceGenerator.h"
 #include "CellEngineChemicalReactionsInSimulationSpace.h"
 #include "CellEngineVoxelSimulationSpaceStatistics.h"
 #include "CellEngineChemicalReactionsInFullAtomSimulationSpace.h"
 #include "CellEngineRealRandomParticlesInFullAtomSpaceGenerator.h"
 #include "CellEngineSimulationSpace.h"
 
-//class CellEngineFullAtomSimulationSpace : public CellEngineSimulationSpace, public CellEngineTestParticlesInVoxelSpaceGenerator, public CellEngineChemicalReactionsInFullAtomSimulationSpace, public CellEngineVoxelSimulationSpaceStatistics
 class CellEngineFullAtomSimulationSpace : public CellEngineSimulationSpace, public CellEngineRealRandomParticlesInFullAtomSpaceGenerator, public CellEngineChemicalReactionsInFullAtomSimulationSpace, public CellEngineVoxelSimulationSpaceStatistics
 {
 protected:
@@ -30,9 +27,9 @@ public:
 public:
     Particle& GetParticleFromIndexForGenerator(UniqueIdInt ParticleIndex) override;
 public:
-    void ClearVoxelSpaceAndParticles() override;
+    void ClearFullAtomSpaceAndParticles() override;
 public:
-    void ClearWholeVoxelSpace();
+    void ClearWholeFullAtomSpace();
     void ClearSelectedSpace(UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt StepXParam, UnsignedInt StepYParam, UnsignedInt StepZParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
 protected:
     void FillParticleElementInSpace(UniqueIdInt ParticleIndex, vector3_64 NewPointElement) override;
@@ -41,7 +38,7 @@ protected:
 protected:
     void FillParticleElementsInSpace(UniqueIdInt ParticleIndex, ParticleKind& ParticleKindObjectForProduct, UnsignedInt VectorX, UnsignedInt VectorY, UnsignedInt VectorZ) override;
 public:
-    explicit CellEngineFullAtomSimulationSpace(ParticlesContainer<Particle>& ParticlesParam, bool GetMemoryForVoxelSpace, ThreadIdType ThreadIndexParam, CurrentThreadPosType CurrentThreadPos);
+    explicit CellEngineFullAtomSimulationSpace(ParticlesContainer<Particle>& ParticlesParam, bool GetMemoryForFullAtomSpace, ThreadIdType ThreadIndexParam, CurrentThreadPosType CurrentThreadPos);
     ~CellEngineFullAtomSimulationSpace() override;
 };
 

@@ -18,7 +18,7 @@ Particle& CellEngineFullAtomSimulationSpace::GetParticleFromIndexForOuterClass(U
     return GetParticleFromIndex(ParticleIndex);
 }
 
-CellEngineFullAtomSimulationSpace::CellEngineFullAtomSimulationSpace(ParticlesContainer<Particle>& ParticlesParam, const bool GetMemoryForVoxelSpace, const ThreadIdType ThreadIndexParam, CurrentThreadPosType CurrentThreadPosParam) : Particles(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam), CellEngineChemicalReactionsInSimulationSpace(ParticlesParam), CellEngineChemicalReactionsInFullAtomSimulationSpace(ParticlesParam), CellEngineSimulationSpace(ParticlesParam), CellEngineRealRandomParticlesInFullAtomSpaceGenerator(ParticlesParam)
+CellEngineFullAtomSimulationSpace::CellEngineFullAtomSimulationSpace(ParticlesContainer<Particle>& ParticlesParam, const bool GetMemoryForFullAtomSpace, const ThreadIdType ThreadIndexParam, CurrentThreadPosType CurrentThreadPosParam) : Particles(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam), CellEngineChemicalReactionsInSimulationSpace(ParticlesParam), CellEngineChemicalReactionsInFullAtomSimulationSpace(ParticlesParam), CellEngineSimulationSpace(ParticlesParam), CellEngineRealRandomParticlesInFullAtomSpaceGenerator(ParticlesParam)
 {
     try
     {
@@ -30,7 +30,7 @@ CellEngineFullAtomSimulationSpace::CellEngineFullAtomSimulationSpace(ParticlesCo
         // Genomes.resize(2);
         // GenomesLines.resize(2);
     }
-    CATCH("execution of constructor of voxel simulation space")
+    CATCH("execution of constructor of full atom simulation space")
 }
 
 CellEngineFullAtomSimulationSpace::~CellEngineFullAtomSimulationSpace()
@@ -38,7 +38,7 @@ CellEngineFullAtomSimulationSpace::~CellEngineFullAtomSimulationSpace()
     try
     {
     }
-    CATCH("execution of destructor of voxel simulation space")
+    CATCH("execution of destructor of full atom simulation space")
 }
 
 [[nodiscard]] stringstream CellEngineFullAtomSimulationSpace::PrintSpaceMinMaxValues() const
@@ -68,22 +68,22 @@ void CellEngineFullAtomSimulationSpace::ClearSelectedSpace(const UnsignedInt Sta
 {
 }
 
-void CellEngineFullAtomSimulationSpace::ClearWholeVoxelSpace()
+void CellEngineFullAtomSimulationSpace::ClearWholeFullAtomSpace()
 {
     try
     {
         //SetValueToVoxelsForCuboidSelectedSpace(nullptr, 0, 0, 0, 0, 1, 1, 1, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension);
     }
-    CATCH("clearing whole voxel space")
+    CATCH("clearing whole full atom space")
 };
 
-void CellEngineFullAtomSimulationSpace::ClearVoxelSpaceAndParticles()
+void CellEngineFullAtomSimulationSpace::ClearFullAtomSpaceAndParticles()
 {
     try
     {
         GetParticles().clear();
     }
-    CATCH("clearing voxel space and particles")
+    CATCH("clearing full atom space and particles")
 }
 
 void CellEngineFullAtomSimulationSpace::FillParticleElementInSpace(const UniqueIdInt ParticleIndex, const vector3_64 NewPointElement)
