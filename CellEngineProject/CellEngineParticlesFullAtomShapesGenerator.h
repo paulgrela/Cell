@@ -9,6 +9,7 @@ class CellEngineParticlesFullAtomShapesGenerator : virtual public CellEnginePart
 {
 protected:
     virtual Particle& GetParticleFromIndexForGenerator(UniqueIdInt ParticleIndex) = 0;
+    virtual void ClearVoxelSpaceAndParticles() = 0;
 protected:
     typedef bool (CellEngineParticlesFullAtomShapesGenerator::*CheckFreeSpaceForSelectedSpaceType)(float, float, float, float, float, float, float, float, float, UniqueIdInt );
     typedef void (CellEngineParticlesFullAtomShapesGenerator::*SetValueToAtomsForSelectedSpaceType)(ListOfAtomsType*, UniqueIdInt, float, float, float, float, float, float, float, float, float);
