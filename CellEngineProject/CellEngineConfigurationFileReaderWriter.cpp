@@ -35,7 +35,7 @@ std::unique_ptr<CellEngineDataFile> CreateCellEngineDataFileObject(const string_
         switch (CellEngineConfigDataObject.TypeOfSpace)
         {
             case CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace : return make_unique<CellEngineDataBuilderForVoxelSimulationSpace>();
-            case CellEngineConfigData::TypesOfSpace::FullAtomSpace : return make_unique<CellEngineDataBuilderForFullAtomSimulationSpace>();
+            case CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace : return make_unique<CellEngineDataBuilderForFullAtomSimulationSpace>();
             default : break;
         }
     }

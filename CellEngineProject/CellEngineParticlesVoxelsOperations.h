@@ -89,7 +89,7 @@ protected:
         return true;
     }
 protected:
-    inline bool CheckFreeSpaceAndBoundsForListOfVoxels(const ListOfVoxelsType& ListOfVoxels, const UnsignedInt VectorX, const UnsignedInt VectorY, const UnsignedInt VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam) const
+    [[nodiscard]] inline bool CheckFreeSpaceAndBoundsForListOfVoxels(const ListOfVoxelsType& ListOfVoxels, const UnsignedInt VectorX, const UnsignedInt VectorY, const UnsignedInt VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam) const
     {
         try
         {
@@ -102,7 +102,7 @@ protected:
         return true;
     }
 protected:
-    inline bool CheckFreeSpaceAndBoundsForParticleMovedByVector(const Particle &ParticleObject, const SignedInt VectorX, const SignedInt VectorY, const SignedInt VectorZ, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam) const
+    [[nodiscard]] inline bool CheckFreeSpaceAndBoundsForParticleMovedByVector(const Particle &ParticleObject, const SignedInt VectorX, const SignedInt VectorY, const SignedInt VectorZ, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam) const
     {
         try
         {

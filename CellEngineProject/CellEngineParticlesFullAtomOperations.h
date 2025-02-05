@@ -16,7 +16,7 @@ protected:
     {
         try
         {
-            for (auto& AtomObject: ParticleObject.ListOfAtoms)
+            for (auto& AtomObject : ParticleObject.ListOfAtoms)
             {
                 AtomObject.X += VectorX;
                 AtomObject.Y += VectorY;
@@ -30,6 +30,8 @@ protected:
     {
         try
         {
+            //std::cout << "ParticleDrawn " << ParticleObject.Index << " " << ParticleObject.EntityId << " " << VectorX << " " << VectorY << " " << VectorZ << " " << std::endl;
+
             MoveAllAtomsInParticleAtomsListByVector(ParticleObject, VectorX, VectorY, VectorZ);
 
             ParticleObject.SetCenterCoordinates(ParticleObject.Center.X + VectorX, ParticleObject.Center.Y + VectorY, ParticleObject.Center.Z + VectorZ);
@@ -107,13 +109,14 @@ protected:
                 const UnsignedInt SectorPosY = std::floor((TestedPosY + CellEngineConfigDataObject.ShiftCenterY) / CellEngineConfigDataObject.SizeOfParticlesSectorY);
                 const UnsignedInt SectorPosZ = std::floor((TestedPosZ + CellEngineConfigDataObject.ShiftCenterZ) / CellEngineConfigDataObject.SizeOfParticlesSectorZ);
 
-                if (!(TestedPosX >= StartXPosParam && TestedPosX < StartXPosParam + SizeXParam && TestedPosY >= StartYPosParam && TestedPosY < StartYPosParam + SizeYParam && TestedPosZ >= StartZPosParam && TestedPosZ < StartZPosParam + SizeZParam))
-                    return false;
+                // if (!(TestedPosX >= StartXPosParam && TestedPosX < StartXPosParam + SizeXParam && TestedPosY >= StartYPosParam && TestedPosY < StartYPosParam + SizeYParam && TestedPosZ >= StartZPosParam && TestedPosZ < StartZPosParam + SizeZParam))
+                //     return false;
 
                 if (SectorPosX < CellEngineConfigDataObject.NumberOfParticlesSectorsInX && SectorPosY < CellEngineConfigDataObject.NumberOfParticlesSectorsInY && SectorPosZ < CellEngineConfigDataObject.NumberOfParticlesSectorsInZ)
                     for (const auto& ParticleInSectorObject : ParticlesInSector[SectorPosX][SectorPosY][SectorPosZ])
                         if (ParticleInSectorObject.second.Index != ParticleObject.Index)
-                            if (DistanceOfParticleFromPoint(ParticleInSectorObject.second, { TestedPosX, TestedPosY, TestedPosZ }) < ParticleInSectorObject.second.Radius + ParticleObject.Radius)
+                            //if (DistanceOfParticleFromPoint(ParticleInSectorObject.second, { TestedPosX, TestedPosY, TestedPosZ }) < ParticleInSectorObject.second.Radius + ParticleObject.Radius)
+                            if (DistanceOfParticleFromPoint(ParticleInSectorObject.second, { TestedPosX, TestedPosY, TestedPosZ }) < 1.0f)
                                 return false;
             }
             else
@@ -207,6 +210,8 @@ protected:
                 MoveParticleByVector(ParticleObject, ParticlesInSector, VectorX, VectorY, VectorZ);
             else
                 return false;
+
+            //MoveParticleByVector(ParticleObject, ParticlesInSector, VectorX, VectorY, VectorZ);
         }
         CATCH_AND_THROW("moving particle by vector if voxel space is empty and is in bounds")
 

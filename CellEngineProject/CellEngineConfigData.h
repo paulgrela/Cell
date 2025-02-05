@@ -70,10 +70,10 @@ public:
 public:
     enum class TypesOfSpace : UnsignedInt
     {
-        FullAtomSpace = 1,
+        FullAtomSimulationSpace = 1,
         VoxelSimulationSpace = 2,
     };
-    TypesOfSpace TypeOfSpace = TypesOfSpace::FullAtomSpace;
+    TypesOfSpace TypeOfSpace = TypesOfSpace::FullAtomSimulationSpace;
 public:
     UnsignedInt NumberOfParticlesSectorsInX = 1;
     UnsignedInt NumberOfParticlesSectorsInY = 1;
