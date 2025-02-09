@@ -60,9 +60,6 @@ using ParticlesContainer = std::vector<std::vector<std::vector<ParticlesContaine
 template <class SimulationSpace>
 using SimulationSpaceForParallelExecutionContainer = std::vector<std::vector<std::vector<std::shared_ptr<SimulationSpace>>>>;
 
-
-
-
 struct SimulationSpaceSectorBounds
 {
 public:
@@ -111,57 +108,6 @@ public:
         return *this;
     }
 };
-
-/*
-struct SimulationSpaceSectorBounds
-{
-public:
-    UnsignedInt StartXPos;
-    UnsignedInt StartYPos;
-    UnsignedInt StartZPos;
-    UnsignedInt SizeX;
-    UnsignedInt SizeY;
-    UnsignedInt SizeZ;
-    UnsignedInt EndXPos;
-    UnsignedInt EndYPos;
-    UnsignedInt EndZPos;
-public:
-    void SetParameters(const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam, const UnsignedInt EndXPosParam, const UnsignedInt EndYPosParam, const UnsignedInt EndZPosParam)
-    {
-        StartXPos = StartXPosParam;
-        StartYPos = StartYPosParam;
-        StartZPos = StartZPosParam;
-        SizeX = SizeXParam;
-        SizeY = SizeYParam;
-        SizeZ = SizeZParam;
-        EndXPos = EndXPosParam;
-        EndYPos = EndYPosParam;
-        EndZPos = EndZPosParam;
-    }
-public:
-    void AddToStartParameters(const UnsignedInt AddToStartXPosParam, const UnsignedInt AddToStartYPosParam, const UnsignedInt AddToStartZPosParam)
-    {
-        StartXPos += AddToStartXPosParam;
-        StartYPos += AddToStartYPosParam;
-        StartZPos += AddToStartZPosParam;
-    }
-public:
-    SimulationSpaceSectorBounds1 SetParametersForParallelExecutionSectors(const CurrentThreadPosType& CurrentThreadPos, const UnsignedInt SizeOfXInOneThreadInSimulationSpace, const UnsignedInt SizeOfYInOneThreadInSimulationSpace, const UnsignedInt SizeOfZInOneThreadInSimulationSpace)
-    {
-        StartXPos = (CurrentThreadPos.ThreadPosX - 1) * SizeOfXInOneThreadInSimulationSpace;
-        EndXPos = (CurrentThreadPos.ThreadPosX - 1) * SizeOfXInOneThreadInSimulationSpace + SizeOfXInOneThreadInSimulationSpace;
-        StartYPos = (CurrentThreadPos.ThreadPosY - 1) * SizeOfYInOneThreadInSimulationSpace;
-        EndYPos = (CurrentThreadPos.ThreadPosY - 1) * SizeOfYInOneThreadInSimulationSpace + SizeOfYInOneThreadInSimulationSpace;
-        StartZPos = (CurrentThreadPos.ThreadPosZ - 1) * SizeOfZInOneThreadInSimulationSpace;
-        EndZPos = (CurrentThreadPos.ThreadPosZ - 1) * SizeOfZInOneThreadInSimulationSpace + SizeOfZInOneThreadInSimulationSpace;
-        SizeX = EndXPos - StartXPos;
-        SizeY = EndYPos - StartYPos;
-        SizeZ = EndZPos - StartZPos;
-
-        return *this;
-    }
-};
-*/
 
 enum class TypesOfLookingForParticlesInProximity : UnsignedInt
 {

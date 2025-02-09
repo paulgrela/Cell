@@ -89,7 +89,7 @@ void CellEngineSimulationSpace::GenerateNStepsOfDiffusionForBigPartOfCellSpace(c
     CATCH("generating diffusion for big part of cell")
 }
 
-void CellEngineSimulationSpace::GenerateNStepsOfDiffusionForWholeCellSpace(const bool InBounds, const UnsignedInt XStartParam, const UnsignedInt YStartParam, const UnsignedInt ZStartParam, const UnsignedInt XStepParam, const UnsignedInt YStepParam, const UnsignedInt ZStepParam, const UnsignedInt XSizeParam, UnsignedInt YSizeParam, const UnsignedInt ZSizeParam, const UnsignedInt NumberOfSimulationSteps)
+void CellEngineSimulationSpace::GenerateNStepsOfDiffusionForWholeCellSpace(const bool InBounds, const UnsignedInt XStartParam, const UnsignedInt YStartParam, const UnsignedInt ZStartParam, const UnsignedInt XStepParam, const UnsignedInt YStepParam, const UnsignedInt ZStepParam, const UnsignedInt XSizeParam, const UnsignedInt YSizeParam, const UnsignedInt ZSizeParam, const UnsignedInt NumberOfSimulationSteps)
 {
     try
     {
@@ -119,7 +119,8 @@ void CellEngineSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpaceFullAt
         {
             CurrentSectorPos = CurrentSectorPosType{ static_cast<UnsignedInt>(StartXPosParam), static_cast<UnsignedInt>(StartYPosParam), static_cast<UnsignedInt>(StartZPosParam) };
             if (CellEngineUseful::IsDNA(ParticleInProximityObject.second.EntityId) == false)
-                MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(ParticleInProximityObject.second, Particles, CurrentSectorPos, UniformDistributionObjectMoveParticleDirection_int64t(mt64R), UniformDistributionObjectMoveParticleDirection_int64t(mt64R), UniformDistributionObjectMoveParticleDirection_int64t(mt64R), StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
+                MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(ParticleInProximityObject.second, Particles, CurrentSectorPos, UniformDistributionObjectMoveParticleDirection_int64t(mt64R), UniformDistributionObjectMoveParticleDirection_int64t(mt64R), UniformDistributionObjectMoveParticleDirection_int64t(mt64R), 0, 0, 0, SizeXParam, SizeYParam, SizeZParam);
+                //MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(ParticleInProximityObject.second, Particles, CurrentSectorPos, UniformDistributionObjectMoveParticleDirection_int64t(mt64R), UniformDistributionObjectMoveParticleDirection_int64t(mt64R), UniformDistributionObjectMoveParticleDirection_int64t(mt64R), StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
                 //MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(GetParticleFromIndex(ParticleInProximityObject.second.Index), Particles, CurrentSectorPos, UniformDistributionObjectMoveParticleDirection_int64t(mt64R), UniformDistributionObjectMoveParticleDirection_int64t(mt64R), UniformDistributionObjectMoveParticleDirection_int64t(mt64R), StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
         }
     }
@@ -143,8 +144,7 @@ void CellEngineSimulationSpace::GenerateNStepsOfDiffusionForWholeCellSpaceFullAt
 
         for (UnsignedInt Step = 1; Step <= NumberOfSimulationSteps; Step++)
             FOR_EACH_PARTICLE_IN_XYZ_ONLY
-                //if (CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].empty() == false)
-                GenerateOneStepOfDiffusionForSelectedSpaceFullAtom(InBounds, ParticleSectorXIndex, ParticleSectorYIndex, ParticleSectorZIndex, XStepParam, YStepParam, ZStepParam);
+                GenerateOneStepOfDiffusionForSelectedSpaceFullAtom(InBounds, ParticleSectorXIndex, ParticleSectorYIndex, ParticleSectorZIndex, XSizeParam, YSizeParam, ZSizeParam);
 
         CheckConditionsToIncSimulationStepNumberForStatistics();
 
@@ -399,6 +399,12 @@ SimulationSpaceSectorBounds CellEngineSimulationSpace::GetBoundsForThreadSector(
 
     try
     {
+        //JESLI TO MODEL INNY TO FUNKCJA VIRTUALNA
+        // if (CurrentThreadIndex == 0)
+        //     SimulationSpaceSectorBoundsObject.SetParameters(-1 * CellEngineConfigDataObject.ShiftCenterX, -1 * CellEngineConfigDataObject.ShiftCenterY, -1 * CellEngineConfigDataObject.ShiftCenterZ, CellEngineConfigDataObject.ShiftCenterX, CellEngineConfigDataObject.ShiftCenterY, CellEngineConfigDataObject.ShiftCenterZ, CellEngineConfigDataObject.ShiftCenterX, CellEngineConfigDataObject.ShiftCenterY, CellEngineConfigDataObject.ShiftCenterZ);
+        // else
+        //     SimulationSpaceSectorBoundsObject.SetParametersForParallelExecutionSectors(CurrentThreadPos, CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfZInOneThreadInSimulationSpace);
+
         if (CurrentThreadIndex == 0)
             SimulationSpaceSectorBoundsObject.SetParameters(0, 0, 0, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension);
         else
