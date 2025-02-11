@@ -101,9 +101,9 @@ void CellEngineVoxelSimulationSpace::SetAtomInVoxelSimulationSpace(const UniqueI
 {
     try
     {
-        UnsignedInt PosX = ConvertToSpaceCoordinate(AppliedAtom.X);
-        UnsignedInt PosY = ConvertToSpaceCoordinate(AppliedAtom.Y);
-        UnsignedInt PosZ = ConvertToSpaceCoordinate(AppliedAtom.Z);
+        const UnsignedInt PosX = ConvertToSpaceCoordinate(AppliedAtom.X);
+        const UnsignedInt PosY = ConvertToSpaceCoordinate(AppliedAtom.Y);
+        const UnsignedInt PosZ = ConvertToSpaceCoordinate(AppliedAtom.Z);
 
         GetMinMaxOfCoordinates<UnsignedInt>(PosX, PosY, PosZ, XMinGlobal, XMaxGlobal, YMinGlobal, YMaxGlobal, ZMinGlobal, ZMaxGlobal);
 

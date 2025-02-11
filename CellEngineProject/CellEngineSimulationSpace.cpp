@@ -461,7 +461,7 @@ bool CellEngineSimulationSpace::PlaceProductParticleInSpaceInRandomPositionOrCan
         uniform_int_distribution<UnsignedInt> UniformDistributionObjectMoveParticleDirectionY_uint64t(ActualSimulationSpaceSectorBoundsObject.StartYPos, ActualSimulationSpaceSectorBoundsObject.EndYPos);
         uniform_int_distribution<UnsignedInt> UniformDistributionObjectMoveParticleDirectionZ_uint64t(ActualSimulationSpaceSectorBoundsObject.StartZPos, ActualSimulationSpaceSectorBoundsObject.EndZPos);
 
-        auto SimulationSpaceSectorBoundsObject = GetBoundsForThreadSector();
+        const auto SimulationSpaceSectorBoundsObject = GetBoundsForThreadSector();
 
         bool FoundFreePlace = false;
 

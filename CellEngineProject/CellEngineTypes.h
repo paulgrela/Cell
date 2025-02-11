@@ -45,9 +45,19 @@ struct CurrentSectorPosType
 {
     UnsignedInt	SectorPosX, SectorPosY, SectorPosZ;
 
-    bool operator==(const CurrentSectorPosType& CTP) const
+    bool operator==(const CurrentSectorPosType& CSP) const
     {
-        return (CTP.SectorPosX == SectorPosX && CTP.SectorPosY == SectorPosY && CTP.SectorPosZ == SectorPosZ);
+        return (CSP.SectorPosX == SectorPosX && CSP.SectorPosY == SectorPosY && CSP.SectorPosZ == SectorPosZ);
+    }
+};
+
+struct PosType
+{
+    float PosX, PosY, PosZ;
+
+    bool operator==(const PosType& PT) const
+    {
+        return (PT.PosX == PosX && PT.PosY == PosY && PT.PosZ == PosZ);
     }
 };
 

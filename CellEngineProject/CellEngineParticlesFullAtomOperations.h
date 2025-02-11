@@ -26,6 +26,15 @@ protected:
         CATCH_AND_THROW("moving all voxels in particle voxel list by vector")
     }
 protected:
+    static CurrentSectorPosType GetSectorPos(const float X, const float Y, const float Z)
+    {
+        const UnsignedInt SectorPosX = std::floor((X + CellEngineConfigDataObject.ShiftCenterX) / CellEngineConfigDataObject.SizeOfParticlesSectorX);
+        const UnsignedInt SectorPosY = std::floor((Y + CellEngineConfigDataObject.ShiftCenterY) / CellEngineConfigDataObject.SizeOfParticlesSectorY);
+        const UnsignedInt SectorPosZ = std::floor((Z + CellEngineConfigDataObject.ShiftCenterZ) / CellEngineConfigDataObject.SizeOfParticlesSectorZ);
+
+        return { SectorPosX, SectorPosY, SectorPosZ };
+    }
+
     static inline void MoveParticleByVector(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, const float VectorX, const float VectorY, const float VectorZ)
     {
         try
@@ -34,13 +43,8 @@ protected:
 
             ParticleObject.SetCenterCoordinates(ParticleObject.Center.X + VectorX, ParticleObject.Center.Y + VectorY, ParticleObject.Center.Z + VectorZ);
 
-            const UnsignedInt SectorPosX1 = std::floor((ParticleObject.Center.X + CellEngineConfigDataObject.ShiftCenterX) / CellEngineConfigDataObject.SizeOfParticlesSectorX);
-            const UnsignedInt SectorPosY1 = std::floor((ParticleObject.Center.X + CellEngineConfigDataObject.ShiftCenterY) / CellEngineConfigDataObject.SizeOfParticlesSectorY);
-            const UnsignedInt SectorPosZ1 = std::floor((ParticleObject.Center.X + CellEngineConfigDataObject.ShiftCenterZ) / CellEngineConfigDataObject.SizeOfParticlesSectorZ);
-
-            const UnsignedInt SectorPosX2 = std::floor((ParticleObject.Center.X + VectorX + CellEngineConfigDataObject.ShiftCenterX) / CellEngineConfigDataObject.SizeOfParticlesSectorX);
-            const UnsignedInt SectorPosY2 = std::floor((ParticleObject.Center.X + VectorX + CellEngineConfigDataObject.ShiftCenterY) / CellEngineConfigDataObject.SizeOfParticlesSectorY);
-            const UnsignedInt SectorPosZ2 = std::floor((ParticleObject.Center.X + VectorX + CellEngineConfigDataObject.ShiftCenterZ) / CellEngineConfigDataObject.SizeOfParticlesSectorZ);
+            auto [SectorPosX1, SectorPosY1, SectorPosZ1] = GetSectorPos(ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z);
+            auto [SectorPosX2, SectorPosY2, SectorPosZ2] = GetSectorPos(ParticleObject.Center.X + VectorX, ParticleObject.Center.Y + VectorY, ParticleObject.Center.Z + VectorZ);
 
             if (SectorPosX1 != SectorPosX2 || SectorPosY1 != SectorPosY2 || SectorPosZ1 != SectorPosZ2)
                 ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].insert(ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].extract(ParticleObject.Index));
@@ -48,104 +52,128 @@ protected:
         CATCH_AND_THROW("moving particle by vector")
     }
 protected:
+    static bool CheckSectorPos(const UnsignedInt SectorPosX, UnsignedInt SectorPosY, UnsignedInt SectorPosZ)
+    {
+        return (SectorPosX < CellEngineConfigDataObject.NumberOfParticlesSectorsInX && SectorPosY < CellEngineConfigDataObject.NumberOfParticlesSectorsInY && SectorPosZ < CellEngineConfigDataObject.NumberOfParticlesSectorsInZ);
+    }
+protected:
+    static bool CheckDistanceOfParticlesInSector(const float Radius, const UniqueIdInt Index, const ParticlesContainer<Particle>& ParticlesInSector, const UnsignedInt SectorPosX, UnsignedInt SectorPosY, UnsignedInt SectorPosZ, const float TestedPosX, const float TestedPosY, const float TestedPosZ)
+    {
+        for (const auto& ParticleInSectorObject : ParticlesInSector[SectorPosX][SectorPosY][SectorPosZ])
+            if (ParticleInSectorObject.second.Index != Index)
+                if (DistanceOfParticleFromPoint(ParticleInSectorObject.second, { TestedPosX, TestedPosY, TestedPosZ }) < ParticleInSectorObject.second.Radius + Radius)
+                    return false;
 
-    static inline bool CheckFreeSpaceForParticleMovedByVector(const Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, const CurrentSectorPosType& CurrentSectorPos, const float VectorX, const float VectorY, const float VectorZ, const bool CheckOnlyParticlesCenters)
+        return true;
+    }
+protected:
+    static bool CheckDistanceOfParticlesInSectorByComparingAllAtomsDistances(const UniqueIdInt Index, const ParticlesContainer<Particle>& ParticlesInSector, const UnsignedInt SectorPosX, UnsignedInt SectorPosY, UnsignedInt SectorPosZ, const float TestedPosX, const float TestedPosY, const float TestedPosZ)
+    {
+        for (const auto& ParticleInSectorObject : ParticlesInSector[SectorPosX][SectorPosY][SectorPosZ])
+            if (ParticleInSectorObject.second.Index != Index)
+                for (const auto &AtomParticleInSectorObject : ParticleInSectorObject.second.ListOfAtoms)
+                    if (DistanceOfPoints({ AtomParticleInSectorObject.X, AtomParticleInSectorObject.Y, AtomParticleInSectorObject.Z }, { TestedPosX, TestedPosY, TestedPosZ }) < 2 * AtomRadius)
+                        return false;
+
+        return true;
+    }
+protected:
+    static PosType GetNewPosMovedByVector(const float X, const float Y, const float Z, const float VectorX, const float VectorY, const float VectorZ)
+    {
+        const float TestedPosX = X + VectorX;
+        const float TestedPosY = Y + VectorY;
+        const float TestedPosZ = Z + VectorZ;
+
+        return { TestedPosX, TestedPosY, TestedPosZ };
+    }
+
+    //AAA - uzyte w reakcjach transkrypcji i translacji
+    static inline bool CheckFreeSpaceForParticleMovedByVector(const Particle &ParticleObject, const ParticlesContainer<Particle>& ParticlesInSector, const CurrentSectorPosType& CurrentSectorPos, const float VectorX, const float VectorY, const float VectorZ, const bool CheckOnlyParticlesCenters)
     {
         try
         {
             if (CheckOnlyParticlesCenters == true)
             {
-                const float TestedPosX = ParticleObject.Center.X + VectorX;
-                const float TestedPosY = ParticleObject.Center.Y + VectorY;
-                const float TestedPosZ = ParticleObject.Center.Z + VectorZ;
+                auto [TestedPosX, TestedPosY, TestedPosZ] = GetNewPosMovedByVector(ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z, VectorX, VectorY, VectorZ);
 
-                const UnsignedInt SectorPosX = std::floor((TestedPosX + CellEngineConfigDataObject.ShiftCenterX) / CellEngineConfigDataObject.SizeOfParticlesSectorX);
-                const UnsignedInt SectorPosY = std::floor((TestedPosY + CellEngineConfigDataObject.ShiftCenterY) / CellEngineConfigDataObject.SizeOfParticlesSectorY);
-                const UnsignedInt SectorPosZ = std::floor((TestedPosZ + CellEngineConfigDataObject.ShiftCenterZ) / CellEngineConfigDataObject.SizeOfParticlesSectorZ);
+                auto [SectorPosX, SectorPosY, SectorPosZ] = GetSectorPos(TestedPosX, TestedPosY, TestedPosZ);
 
-                if (SectorPosX < CellEngineConfigDataObject.NumberOfParticlesSectorsInX && SectorPosY < CellEngineConfigDataObject.NumberOfParticlesSectorsInY && SectorPosZ < CellEngineConfigDataObject.NumberOfParticlesSectorsInZ)
-                    for (const auto& ParticleInSectorObject : ParticlesInSector[SectorPosX][SectorPosY][SectorPosZ])
-                        if (ParticleInSectorObject.second.Index != ParticleObject.Index)
-                            if (DistanceOfParticleFromPoint(ParticleInSectorObject.second, { TestedPosX, TestedPosY, TestedPosZ }) < ParticleInSectorObject.second.Radius + ParticleObject.Radius)
-                                return false;
+                if (CheckSectorPos(SectorPosX, SectorPosY, SectorPosZ) == false)
+                    return false;
+
+                if (CheckDistanceOfParticlesInSector(ParticleObject.Radius, ParticleObject.Index, ParticlesInSector, SectorPosX, SectorPosY, SectorPosZ, TestedPosX, TestedPosY, TestedPosZ) == false)
+                    return false;
             }
             else
+            {
+                auto [TestedPosXC, TestedPosYC, TestedPosZC] = GetNewPosMovedByVector(ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z, VectorX, VectorY, VectorZ);
+                auto [SectorPosX, SectorPosY, SectorPosZ] = GetSectorPos(TestedPosXC, TestedPosYC, TestedPosZC);
+
                 for (auto &AtomParticleObject : ParticleObject.ListOfAtoms)
                 {
-                    const float TestedPosX = AtomParticleObject.X + VectorX;
-                    const float TestedPosY = AtomParticleObject.Y + VectorY;
-                    const float TestedPosZ = AtomParticleObject.Z + VectorZ;
+                    auto [TestedPosX, TestedPosY, TestedPosZ] = GetNewPosMovedByVector(AtomParticleObject.X, AtomParticleObject.Y, AtomParticleObject.Z, VectorX, VectorY, VectorZ);
 
-                    const UnsignedInt SectorPosX = std::floor((TestedPosX + CellEngineConfigDataObject.ShiftCenterX) / CellEngineConfigDataObject.SizeOfParticlesSectorX);
-                    const UnsignedInt SectorPosY = std::floor((TestedPosY + CellEngineConfigDataObject.ShiftCenterY) / CellEngineConfigDataObject.SizeOfParticlesSectorY);
-                    const UnsignedInt SectorPosZ = std::floor((TestedPosZ + CellEngineConfigDataObject.ShiftCenterZ) / CellEngineConfigDataObject.SizeOfParticlesSectorZ);
+                    if (CheckSectorPos(SectorPosX, SectorPosY, SectorPosZ) == false)
+                        return false;
 
-                    if (SectorPosX < CellEngineConfigDataObject.NumberOfParticlesSectorsInX && SectorPosY < CellEngineConfigDataObject.NumberOfParticlesSectorsInY && SectorPosZ < CellEngineConfigDataObject.NumberOfParticlesSectorsInZ)
-                        for (const auto& ParticleInSectorObject : ParticlesInSector[SectorPosX][SectorPosY][SectorPosZ])
-                            if (ParticleInSectorObject.second.Index != ParticleObject.Index)
-                                for (const auto &AtomParticleInSectorObject : ParticleInSectorObject.second.ListOfAtoms)
-                                    if (DistanceOfPoints({ AtomParticleInSectorObject.X, AtomParticleInSectorObject.Y, AtomParticleInSectorObject.Z }, { TestedPosX, TestedPosY, TestedPosZ }) < 2 * AtomRadius)
-                                        return false;
+                    if (CheckDistanceOfParticlesInSectorByComparingAllAtomsDistances(ParticleObject.Index, ParticlesInSector, SectorPosX, SectorPosY, SectorPosZ, TestedPosX, TestedPosY, TestedPosZ) == false)
+                        return false;
                 }
+            }
         }
         CATCH("checking free space for particle moved by vector")
 
         return true;
     }
 protected:
-    static inline bool CheckFreeSpaceAndBoundsForParticleMovedByVector(const Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, const CurrentSectorPosType& CurrentSectorPos, const float VectorX, const float VectorY, const float VectorZ, const float StartXPosParam, const float StartYPosParam, const float StartZPosParam, const float SizeXParam, const float SizeYParam, const float SizeZParam, const bool CheckOnlyParticlesCenters)
+    //BBB - uzyte w normalnej dyfuzji
+    static inline bool CheckFreeSpaceAndBoundsForParticleMovedByVector(const Particle &ParticleObject, const ParticlesContainer<Particle>& ParticlesInSector, const CurrentSectorPosType& CurrentSectorPos, const float VectorX, const float VectorY, const float VectorZ, const float StartXPosParam, const float StartYPosParam, const float StartZPosParam, const float SizeXParam, const float SizeYParam, const float SizeZParam, const bool CheckOnlyParticlesCenters)
     {
         try
         {
             if (CheckOnlyParticlesCenters == true)
             {
-                const float TestedPosX = ParticleObject.Center.X + VectorX;
-                const float TestedPosY = ParticleObject.Center.Y + VectorY;
-                const float TestedPosZ = ParticleObject.Center.Z + VectorZ;
-
-                const UnsignedInt SectorPosX = std::floor((TestedPosX + CellEngineConfigDataObject.ShiftCenterX) / CellEngineConfigDataObject.SizeOfParticlesSectorX);
-                const UnsignedInt SectorPosY = std::floor((TestedPosY + CellEngineConfigDataObject.ShiftCenterY) / CellEngineConfigDataObject.SizeOfParticlesSectorY);
-                const UnsignedInt SectorPosZ = std::floor((TestedPosZ + CellEngineConfigDataObject.ShiftCenterZ) / CellEngineConfigDataObject.SizeOfParticlesSectorZ);
+                auto [TestedPosX, TestedPosY, TestedPosZ] = GetNewPosMovedByVector(ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z, VectorX, VectorY, VectorZ);
+                auto [SectorPosX, SectorPosY, SectorPosZ] = GetSectorPos(TestedPosX, TestedPosY, TestedPosZ);
 
                 //if (!(TestedPosX >= StartXPosParam && TestedPosX < StartXPosParam + SizeXParam && TestedPosY >= StartYPosParam && TestedPosY < StartYPosParam + SizeYParam && TestedPosZ >= StartZPosParam && TestedPosZ < StartZPosParam + SizeZParam))
                 if (!(SectorPosX >= StartXPosParam && SectorPosX < StartXPosParam + SizeXParam && SectorPosY >= StartYPosParam && SectorPosY < StartYPosParam + SizeYParam && SectorPosZ >= StartZPosParam && SectorPosZ < StartZPosParam + SizeZParam))
                     return false;
 
-                if (SectorPosX < CellEngineConfigDataObject.NumberOfParticlesSectorsInX && SectorPosY < CellEngineConfigDataObject.NumberOfParticlesSectorsInY && SectorPosZ < CellEngineConfigDataObject.NumberOfParticlesSectorsInZ)
-                    for (const auto& ParticleInSectorObject : ParticlesInSector[SectorPosX][SectorPosY][SectorPosZ])
-                        if (ParticleInSectorObject.second.Index != ParticleObject.Index)
-                            if (DistanceOfParticleFromPoint(ParticleInSectorObject.second, { TestedPosX, TestedPosY, TestedPosZ }) < ParticleInSectorObject.second.Radius + ParticleObject.Radius)
-                                return false;
+                if (CheckSectorPos(SectorPosX, SectorPosY, SectorPosZ) == false)
+                    return false;
+
+                if (CheckDistanceOfParticlesInSector(ParticleObject.Radius, ParticleObject.Index, ParticlesInSector, SectorPosX, SectorPosY, SectorPosZ, TestedPosX, TestedPosY, TestedPosZ) == false)
+                    return false;
             }
             else
+            {
+                auto [TestedPosXC, TestedPosYC, TestedPosZC] = GetNewPosMovedByVector(ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z, VectorX, VectorY, VectorZ);
+                auto [SectorPosX, SectorPosY, SectorPosZ] = GetSectorPos(TestedPosXC, TestedPosYC, TestedPosZC);
+
                 for (auto &AtomParticleObject : ParticleObject.ListOfAtoms)
                 {
-                    const float TestedPosX = AtomParticleObject.X + VectorX;
-                    const float TestedPosY = AtomParticleObject.Y + VectorY;
-                    const float TestedPosZ = AtomParticleObject.Z + VectorZ;
-
-                    const UnsignedInt SectorPosX = std::floor((TestedPosX + CellEngineConfigDataObject.ShiftCenterX) / CellEngineConfigDataObject.SizeOfParticlesSectorX);
-                    const UnsignedInt SectorPosY = std::floor((TestedPosY + CellEngineConfigDataObject.ShiftCenterY) / CellEngineConfigDataObject.SizeOfParticlesSectorY);
-                    const UnsignedInt SectorPosZ = std::floor((TestedPosZ + CellEngineConfigDataObject.ShiftCenterZ) / CellEngineConfigDataObject.SizeOfParticlesSectorZ);
+                    auto [TestedPosX, TestedPosY, TestedPosZ] = GetNewPosMovedByVector(AtomParticleObject.X, AtomParticleObject.Y, AtomParticleObject.Z, VectorX, VectorY, VectorZ);
 
                     //if (!(TestedPosX >= StartXPosParam && TestedPosX < StartXPosParam + SizeXParam && TestedPosY >= StartYPosParam && TestedPosY < StartYPosParam + SizeYParam && TestedPosZ >= StartZPosParam && TestedPosZ < StartZPosParam + SizeZParam))
                     if (!(SectorPosX >= StartXPosParam && SectorPosX < StartXPosParam + SizeXParam && SectorPosY >= StartYPosParam && SectorPosY < StartYPosParam + SizeYParam && SectorPosZ >= StartZPosParam && SectorPosZ < StartZPosParam + SizeZParam))
                         return false;
 
-                    if (SectorPosX < CellEngineConfigDataObject.NumberOfParticlesSectorsInX && SectorPosY < CellEngineConfigDataObject.NumberOfParticlesSectorsInY && SectorPosZ < CellEngineConfigDataObject.NumberOfParticlesSectorsInZ)
-                        for (const auto& ParticleInSectorObject : ParticlesInSector[SectorPosX][SectorPosY][SectorPosZ])
-                            if (ParticleInSectorObject.second.Index != ParticleObject.Index)
-                                for (const auto &AtomParticleInSectorObject : ParticleInSectorObject.second.ListOfAtoms)
-                                    if (DistanceOfPoints({ AtomParticleInSectorObject.X, AtomParticleInSectorObject.Y, AtomParticleInSectorObject.Z }, { TestedPosX, TestedPosY, TestedPosZ }) < 2 * AtomRadius)
-                                        return false;
+                    if (CheckSectorPos(SectorPosX, SectorPosY, SectorPosZ) == false)
+                        return false;
+
+                    if (CheckDistanceOfParticlesInSectorByComparingAllAtomsDistances(ParticleObject.Index, ParticlesInSector, SectorPosX, SectorPosY, SectorPosZ, TestedPosX, TestedPosY, TestedPosZ) == false)
+                        return false;
                 }
+            }
         }
         CATCH("checking free space for particle moved by vector")
 
         return true;
     }
 protected:
-    static inline bool CheckFreeSpaceAndBoundsForListOfAtoms(const ListOfAtomsType& ListOfAtoms, ParticlesContainer<Particle>& ParticlesInSector, const CurrentSectorPosType& CurrentSectorPos, const float Radius, const float VectorX, const float VectorY, const float VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CheckOnlyParticlesCenters)
+    //CCC - w sprawdzeniu czy nowa czastka w reakcji
+    static inline bool CheckFreeSpaceAndBoundsForListOfAtoms(const ListOfAtomsType& ListOfAtoms, const ParticlesContainer<Particle>& ParticlesInSector, const CurrentSectorPosType& CurrentSectorPos, const float Radius, const float VectorX, const float VectorY, const float VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CheckOnlyParticlesCenters)
     {
         try
         {
@@ -162,38 +190,36 @@ protected:
                 const float TestedPosY = VectorY;
                 const float TestedPosZ = VectorZ;
 
-                const UnsignedInt SectorPosX = std::floor((TestedPosX + CellEngineConfigDataObject.ShiftCenterX) / CellEngineConfigDataObject.SizeOfParticlesSectorX);
-                const UnsignedInt SectorPosY = std::floor((TestedPosY + CellEngineConfigDataObject.ShiftCenterY) / CellEngineConfigDataObject.SizeOfParticlesSectorY);
-                const UnsignedInt SectorPosZ = std::floor((TestedPosZ + CellEngineConfigDataObject.ShiftCenterZ) / CellEngineConfigDataObject.SizeOfParticlesSectorZ);
+                auto [SectorPosX, SectorPosY, SectorPosZ] = GetSectorPos(TestedPosX, TestedPosY, TestedPosZ);
 
                 if (!(TestedPosX >= StartXPosParam && TestedPosX < StartXPosParam + SizeXParam && TestedPosY >= StartYPosParam && TestedPosY < StartYPosParam + SizeYParam && TestedPosZ >= StartZPosParam && TestedPosZ < StartZPosParam + SizeZParam))
                     return false;
 
-                if (SectorPosX < CellEngineConfigDataObject.NumberOfParticlesSectorsInX && SectorPosY < CellEngineConfigDataObject.NumberOfParticlesSectorsInY && SectorPosZ < CellEngineConfigDataObject.NumberOfParticlesSectorsInZ)
-                    for (const auto& ParticleInSectorObject : ParticlesInSector[SectorPosX][SectorPosY][SectorPosZ])
-                        if (DistanceOfParticleFromPoint(ParticleInSectorObject.second, { TestedPosX, TestedPosY, TestedPosZ }) < ParticleInSectorObject.second.Radius + Radius)
-                            return false;
+                if (CheckSectorPos(SectorPosX, SectorPosY, SectorPosZ) == false)
+                    return false;
+
+                if (CheckDistanceOfParticlesInSector(Radius, 0, ParticlesInSector, SectorPosX, SectorPosY, SectorPosZ, TestedPosX, TestedPosY, TestedPosZ) == false)
+                    return false;
             }
             else
+            {
+                auto [TestedPosXC, TestedPosYC, TestedPosZC] = GetNewPosMovedByVector(VectorX, VectorY, VectorZ, VectorX, VectorY, VectorZ);
+                auto [SectorPosX, SectorPosY, SectorPosZ] = GetSectorPos(TestedPosXC, TestedPosYC, TestedPosZC);
+
                 for (auto &AtomParticleObject : ListOfAtoms)
                 {
-                    const float TestedPosX = AtomParticleObject.X + VectorX;
-                    const float TestedPosY = AtomParticleObject.Y + VectorY;
-                    const float TestedPosZ = AtomParticleObject.Z + VectorZ;
-
-                    const UnsignedInt SectorPosX = std::floor((TestedPosX + CellEngineConfigDataObject.ShiftCenterX) / CellEngineConfigDataObject.SizeOfParticlesSectorX);
-                    const UnsignedInt SectorPosY = std::floor((TestedPosY + CellEngineConfigDataObject.ShiftCenterY) / CellEngineConfigDataObject.SizeOfParticlesSectorY);
-                    const UnsignedInt SectorPosZ = std::floor((TestedPosZ + CellEngineConfigDataObject.ShiftCenterZ) / CellEngineConfigDataObject.SizeOfParticlesSectorZ);
+                    auto [TestedPosX, TestedPosY, TestedPosZ] = GetNewPosMovedByVector(AtomParticleObject.X, AtomParticleObject.Y, AtomParticleObject.Z, VectorX, VectorY, VectorZ);
 
                     if (!(TestedPosX >= StartXPosParam && TestedPosX < StartXPosParam + SizeXParam && TestedPosY >= StartYPosParam && TestedPosY < StartYPosParam + SizeYParam && TestedPosZ >= StartZPosParam && TestedPosZ < StartZPosParam + SizeZParam))
                         return false;
 
-                    for (const auto& ParticleInSectorObject : ParticlesInSector[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ])
-                        if (SectorPosX < CellEngineConfigDataObject.NumberOfParticlesSectorsInX && SectorPosY < CellEngineConfigDataObject.NumberOfParticlesSectorsInY && SectorPosZ < CellEngineConfigDataObject.NumberOfParticlesSectorsInZ)
-                            for (const auto &AtomParticleInSectorObject : ParticleInSectorObject.second.ListOfAtoms)
-                                if (DistanceOfPoints({ AtomParticleInSectorObject.X, AtomParticleInSectorObject.Y, AtomParticleInSectorObject.Z }, { TestedPosX, TestedPosY, TestedPosZ }) < 2 * AtomRadius)
-                                    return false;
+                    if (CheckSectorPos(SectorPosX, SectorPosY, SectorPosZ) == false)
+                        return false;
+
+                    if (CheckDistanceOfParticlesInSectorByComparingAllAtomsDistances(0, ParticlesInSector, SectorPosX, SectorPosY, SectorPosZ, TestedPosX, TestedPosY, TestedPosZ) == false)
+                        return false;
                 }
+            }
         }
         CATCH("checking free space for list of voxels")
 
@@ -201,6 +227,7 @@ protected:
     }
 
 protected:
+    //BBB - uzyte w normalnej dyfuzji
     static inline bool MoveParticleByVectorIfFullAtomSpaceIsEmptyAndIsInBounds(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, const CurrentSectorPosType& CurrentSectorPos, const float VectorX, const float VectorY, const float VectorZ, const float StartXPosParam, const float StartYPosParam, const float StartZPosParam, const float SizeXParam, const float SizeYParam, const float SizeZParam)
     {
         try
@@ -215,6 +242,7 @@ protected:
         return true;
     }
 protected:
+    //AAA - uzyte w reakcjach transkrypcji i translacji
     static inline void MoveParticleNearOtherParticleIfFullAtomSpaceIsEmptyOrNearSpace(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, const CurrentSectorPosType& CurrentSectorPos, const Particle &NewPositionParticleObject, const float AddX, const float AddY, const float AddZ)
     {
         try
