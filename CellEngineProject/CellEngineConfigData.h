@@ -97,6 +97,9 @@ public:
     UnsignedInt Radius2ForGenerationOfParticles{ 420 };
     UnsignedInt Radius2SizeForGenerationOfParticles{ 45 };
 public:
+    bool CompareBoundsBySectorsBounds = true;
+    bool CompareBoundsBySpaceBounds = true;
+public:
     bool DNAPaired = true;
     UnsignedInt SizeOfAdvanceDuringGenerationOfRandomDNA = 50;
 public:
