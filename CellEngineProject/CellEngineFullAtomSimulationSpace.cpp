@@ -48,15 +48,23 @@ CellEngineFullAtomSimulationSpace::~CellEngineFullAtomSimulationSpace()
     return ss;
 }
 
-void CellEngineFullAtomSimulationSpace::FillParticleElementsInSpace(const UniqueIdInt ParticleIndex, ParticleKind& ParticleKindObjectForProduct, const UnsignedInt VectorX, const UnsignedInt VectorY, const UnsignedInt VectorZ)
+void CellEngineFullAtomSimulationSpace::FillParticleElementsInSpace(const UniqueIdInt ParticleIndex, ParticleKind& ParticleKindObjectForProduct, const float VectorX, const float VectorY, const float VectorZ)
 {
     try
     {
         GetParticleFromIndex(ParticleIndex).ListOfAtoms.clear();
 
+        for (const auto& NewPointElement : ParticleKindObjectForProduct.ListOfAtoms)
+            GetParticleFromIndex(ParticleIndex).ListOfAtoms.emplace_back(NewPointElement);
+            //FillParticleElementInSpace(ParticleIndex, { NewPointElement.X + VectorX, NewPointElement.Y + VectorY, NewPointElement.Z + VectorZ });
+
         GetMinMaxCoordinatesForParticle<float, CellEngineAtom>(GetParticleFromIndex(ParticleIndex), &Particle::ListOfAtoms, &ParticleKind::ListOfAtoms, false);
     }
     CATCH("filling particle elements in space")
+}
+
+void CellEngineFullAtomSimulationSpace::FillParticleElementInSpace(const UniqueIdInt ParticleIndex, const vector3_float32 NewPointElement)
+{
 }
 
 Particle& CellEngineFullAtomSimulationSpace::GetParticleFromIndexForGenerator(const UniqueIdInt ParticleIndex)
@@ -72,7 +80,6 @@ void CellEngineFullAtomSimulationSpace::ClearWholeFullAtomSpace()
 {
     try
     {
-        //SetValueToVoxelsForCuboidSelectedSpace(nullptr, 0, 0, 0, 0, 1, 1, 1, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension);
     }
     CATCH("clearing whole full atom space")
 };
@@ -86,8 +93,20 @@ void CellEngineFullAtomSimulationSpace::ClearFullAtomSpaceAndParticles()
     CATCH("clearing full atom space and particles")
 }
 
-void CellEngineFullAtomSimulationSpace::FillParticleElementInSpace(const UniqueIdInt ParticleIndex, const vector3_64 NewPointElement)
+SimulationSpaceSectorBounds CellEngineFullAtomSimulationSpace::GetBoundsForThreadSector()
 {
+    SimulationSpaceSectorBounds SimulationSpaceSectorBoundsObject{};
+
+    try
+    {
+        if (CurrentThreadIndex == 0)
+            SimulationSpaceSectorBoundsObject.SetParameters(-1 * CellEngineConfigDataObject.ShiftCenterX, -1 * CellEngineConfigDataObject.ShiftCenterY, -1 * CellEngineConfigDataObject.ShiftCenterZ, CellEngineConfigDataObject.ShiftCenterX, CellEngineConfigDataObject.ShiftCenterY, CellEngineConfigDataObject.ShiftCenterZ, CellEngineConfigDataObject.ShiftCenterX, CellEngineConfigDataObject.ShiftCenterY, CellEngineConfigDataObject.ShiftCenterZ);
+        else
+            SimulationSpaceSectorBoundsObject.SetParametersForParallelExecutionSectors(CurrentThreadPos, CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfZInOneThreadInSimulationSpace);
+    }
+    CATCH("getting bounds for thread sector")
+
+    return SimulationSpaceSectorBoundsObject;
 }
 
 bool CellEngineFullAtomSimulationSpace::MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, const CurrentSectorPosType& CurrentSectorPos, const float VectorX, const float VectorY, const float VectorZ, const float StartXPosParam, const float StartYPosParam, const float StartZPosParam, const float SizeXParam, const float SizeYParam, const float SizeZParam)

@@ -78,7 +78,7 @@ CellEngineVoxelSimulationSpace::~CellEngineVoxelSimulationSpace()
     return ss;
 }
 
-void CellEngineVoxelSimulationSpace::FillParticleElementsInSpace(const UniqueIdInt ParticleIndex, ParticleKind& ParticleKindObjectForProduct, const UnsignedInt VectorX, const UnsignedInt VectorY, const UnsignedInt VectorZ)
+void CellEngineVoxelSimulationSpace::FillParticleElementsInSpace(const UniqueIdInt ParticleIndex, ParticleKind& ParticleKindObjectForProduct, const float VectorX, const float VectorY, const float VectorZ)
 {
     try
     {
@@ -90,6 +90,15 @@ void CellEngineVoxelSimulationSpace::FillParticleElementsInSpace(const UniqueIdI
         GetMinMaxCoordinatesForParticle<UnsignedInt, vector3_16>(GetParticleFromIndex(ParticleIndex), &Particle::ListOfVoxels, &ParticleKind::ListOfVoxels, false);
     }
     CATCH("filling particle elements in space")
+}
+
+void CellEngineVoxelSimulationSpace::FillParticleElementInSpace(const UniqueIdInt ParticleIndex, const vector3_float32 NewPointElement)
+{
+    try
+    {
+        SetValueToSpaceVoxelWithFillingListOfVoxelsOfParticle(&GetParticleFromIndex(ParticleIndex).ListOfVoxels, ParticleIndex, NewPointElement.X, NewPointElement.Y, NewPointElement.Z);
+    }
+    CATCH("filling particle element in space")
 }
 
 Particle& CellEngineVoxelSimulationSpace::GetParticleFromIndexForGenerator(const UniqueIdInt ParticleIndex)
@@ -141,13 +150,20 @@ void CellEngineVoxelSimulationSpace::ClearVoxelSpaceAndParticles()
     CATCH("clearing voxel space and particles")
 }
 
-void CellEngineVoxelSimulationSpace::FillParticleElementInSpace(const UniqueIdInt ParticleIndex, const vector3_64 NewPointElement)
+SimulationSpaceSectorBounds CellEngineVoxelSimulationSpace::GetBoundsForThreadSector()
 {
+    SimulationSpaceSectorBounds SimulationSpaceSectorBoundsObject{};
+
     try
     {
-        SetValueToSpaceVoxelWithFillingListOfVoxelsOfParticle(&GetParticleFromIndex(ParticleIndex).ListOfVoxels, ParticleIndex, NewPointElement.X, NewPointElement.Y, NewPointElement.Z);
+        if (CurrentThreadIndex == 0)
+            SimulationSpaceSectorBoundsObject.SetParameters(0, 0, 0, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension);
+        else
+            SimulationSpaceSectorBoundsObject.SetParametersForParallelExecutionSectors(CurrentThreadPos, CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfZInOneThreadInSimulationSpace);
     }
-    CATCH("filling particle element in space")
+    CATCH("getting bounds for thread sector")
+
+    return SimulationSpaceSectorBoundsObject;
 }
 
 bool CellEngineVoxelSimulationSpace::MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, const CurrentSectorPosType& CurrentSectorPos, const float VectorX, const float VectorY, const float VectorZ, const float StartXPosParam, const float StartYPosParam, const float StartZPosParam, const float SizeXParam, const float SizeYParam, const float SizeZParam)

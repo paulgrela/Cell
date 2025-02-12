@@ -393,28 +393,6 @@ void LogParticleData(const UniqueIdInt ParticleIndex, const UnsignedInt CenterIn
     LoggersManagerObject.Log(STREAM("K " << ParticleKindElement.X << " " << ParticleKindElement.Y << " " << ParticleKindElement.Z << endl));
 }
 
-SimulationSpaceSectorBounds CellEngineSimulationSpace::GetBoundsForThreadSector() const
-{
-    SimulationSpaceSectorBounds SimulationSpaceSectorBoundsObject{};
-
-    try
-    {
-        //JESLI TO MODEL INNY TO FUNKCJA VIRTUALNA
-        // if (CurrentThreadIndex == 0)
-        //     SimulationSpaceSectorBoundsObject.SetParameters(-1 * CellEngineConfigDataObject.ShiftCenterX, -1 * CellEngineConfigDataObject.ShiftCenterY, -1 * CellEngineConfigDataObject.ShiftCenterZ, CellEngineConfigDataObject.ShiftCenterX, CellEngineConfigDataObject.ShiftCenterY, CellEngineConfigDataObject.ShiftCenterZ, CellEngineConfigDataObject.ShiftCenterX, CellEngineConfigDataObject.ShiftCenterY, CellEngineConfigDataObject.ShiftCenterZ);
-        // else
-        //     SimulationSpaceSectorBoundsObject.SetParametersForParallelExecutionSectors(CurrentThreadPos, CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfZInOneThreadInSimulationSpace);
-
-        if (CurrentThreadIndex == 0)
-            SimulationSpaceSectorBoundsObject.SetParameters(0, 0, 0, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension);
-        else
-            SimulationSpaceSectorBoundsObject.SetParametersForParallelExecutionSectors(CurrentThreadPos, CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfZInOneThreadInSimulationSpace);
-    }
-    CATCH("getting bounds for thread sector")
-
-    return SimulationSpaceSectorBoundsObject;
-}
-
 bool CellEngineSimulationSpace::CancelChemicalReaction(const vector<UniqueIdInt>& CreatedParticlesIndexes, const chrono::high_resolution_clock::time_point start_time, const ParticleKind& ParticleKindObjectForProduct, const char PlaceStr)
 {
     try
@@ -441,7 +419,6 @@ bool CellEngineSimulationSpace::PlaceProductParticleInSpaceInDeterminedPositionO
 {
     try
     {
-        //vector3_64 NewCenter(Centers[CenterIndex].X - ParticleKindObjectForProduct.XSizeDiv2, Centers[CenterIndex].Y - ParticleKindObjectForProduct.YSizeDiv2, Centers[CenterIndex].Z - ParticleKindObjectForProduct.ZSizeDiv2);
         const vector3_float32 NewCenter(Centers[CenterIndex].X - ParticleKindObjectForProduct.XSizeDiv2, Centers[CenterIndex].Y - ParticleKindObjectForProduct.YSizeDiv2, Centers[CenterIndex].Z - ParticleKindObjectForProduct.ZSizeDiv2);
 
         if (CheckIfSpaceIsEmptyAndIsInBoundsForParticleElements(ParticleKindObjectForProduct, Particles, CurrentSectorPos, NewCenter.X, NewCenter.Y, NewCenter.Z, GetBoundsForThreadSector()) == true)
@@ -458,9 +435,9 @@ bool CellEngineSimulationSpace::PlaceProductParticleInSpaceInRandomPositionOrCan
 {
     try
     {
-        uniform_int_distribution<UnsignedInt> UniformDistributionObjectMoveParticleDirectionX_uint64t(ActualSimulationSpaceSectorBoundsObject.StartXPos, ActualSimulationSpaceSectorBoundsObject.EndXPos);
-        uniform_int_distribution<UnsignedInt> UniformDistributionObjectMoveParticleDirectionY_uint64t(ActualSimulationSpaceSectorBoundsObject.StartYPos, ActualSimulationSpaceSectorBoundsObject.EndYPos);
-        uniform_int_distribution<UnsignedInt> UniformDistributionObjectMoveParticleDirectionZ_uint64t(ActualSimulationSpaceSectorBoundsObject.StartZPos, ActualSimulationSpaceSectorBoundsObject.EndZPos);
+        uniform_int_distribution<SignedInt> UniformDistributionObjectMoveParticleDirectionX_uint64t(ActualSimulationSpaceSectorBoundsObject.StartXPos, ActualSimulationSpaceSectorBoundsObject.EndXPos);
+        uniform_int_distribution<SignedInt> UniformDistributionObjectMoveParticleDirectionY_uint64t(ActualSimulationSpaceSectorBoundsObject.StartYPos, ActualSimulationSpaceSectorBoundsObject.EndYPos);
+        uniform_int_distribution<SignedInt> UniformDistributionObjectMoveParticleDirectionZ_uint64t(ActualSimulationSpaceSectorBoundsObject.StartZPos, ActualSimulationSpaceSectorBoundsObject.EndZPos);
 
         const auto SimulationSpaceSectorBoundsObject = GetBoundsForThreadSector();
 
