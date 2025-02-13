@@ -11,6 +11,6 @@ void FindPromotersAndStartCodons2(const std::string& GenomeStr, bool SwitchLogsB
 void FindPromotersAndStartCodons3(const std::string& GenomeStr, bool SwitchLogsBool);
 void FindPromotersForGenesFromGeneStartPos(const std::string& GenomeStr, bool SwitchLogsBoolBool);
 
-void TestSeveralDifferentKindsOfPromotersFindingsAndTerminatorFindingsAlgorithms(const std::vector<std::string>& GenomesLines, const std::vector<std::vector<UniqueIdInt>>& Genomes);
+void TestSeveralDifferentKindsOfPromotersFindingsAndTerminatorFindingsAlgorithms(const std::vector<std::string>& GenomesLines);
 
 #endif

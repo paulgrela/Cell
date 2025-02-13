@@ -626,43 +626,6 @@ public:
         return string(PrefixSize, ' ') + InputStr + string(Size - InputStr.length(), ' ');
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     static void VoxelSimulationSpaceParametersMenu(CellEngineOpenGLVisualiserOfVoxelSimulationSpace* CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer, int DrawSpaceStartXYZ[3], int DrawSpaceStepsXYZ[3], int DrawSpaceSizesXYZ[3], const UnsignedInt StringLength)
     {
         try

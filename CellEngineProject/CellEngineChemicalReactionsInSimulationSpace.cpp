@@ -116,7 +116,7 @@ void CellEngineChemicalReactionsInSimulationSpace::SaveParticleFoundInProximity(
 
             LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity.emplace_back(ParticleIndex);
 
-            Particle& ParticleFromIndex = GetParticleFromIndex(ParticleIndex);
+            const Particle& ParticleFromIndex = GetParticleFromIndex(ParticleIndex);
 
             if (UpdateNucleotides == true)
                 UpdateFoundNucleotidesForFoundParticlesInProximity(ParticleIndex);

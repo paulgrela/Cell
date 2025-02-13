@@ -1,0 +1,17 @@
+
+#ifndef CELL_ENGINE_GENOME_NUCLEIC_ACIDS_PARTICLES_IN_FULL_ATOM_SPACE_GENERATOR_H
+#define CELL_ENGINE_GENOME_NUCLEIC_ACIDS_PARTICLES_IN_FULL_ATOM_SPACE_GENERATOR_H
+
+#include "CellEngineRealRandomParticlesInFullAtomSpaceGenerator.h"
+#include "CellEngineGenomeNucleicAcidsParticlesInSpaceGenerator.h"
+
+class CellEngineGenomeNucleicAcidsParticlesInFullAtomSpaceGenerator : public CellEngineRealRandomParticlesInFullAtomSpaceGenerator, public CellEngineGenomeNucleicAcidsParticlesInSpaceGenerator
+{
+public:
+    explicit CellEngineGenomeNucleicAcidsParticlesInFullAtomSpaceGenerator(ParticlesContainer<Particle>& ParticlesParam) : CellEngineRealRandomParticlesInFullAtomSpaceGenerator(ParticlesParam), CellEngineGenomeNucleicAcidsParticlesInSpaceGenerator()
+    {
+    }
+    ~CellEngineGenomeNucleicAcidsParticlesInFullAtomSpaceGenerator() override = default;
+};
+
+#endif

@@ -29,11 +29,11 @@ void CellEngineParticlesDataFile::ReadCIFFileWithBinaryData(const bool StartValu
     try
     {
         if (CellEngineConfigDataObject.MixedFullAtomWithVoxelSpace == false)
-            ReadDataFromCIFFile();
+            ReadDataFromCIFFile(true);
         else
         {
             ReadAllDataFromBinaryFileAndPrepareData(StartValuesBool, UpdateParticleKindListOfVoxelsBool, Type);
-            ReadDataFromCIFFile();
+            ReadDataFromCIFFile(false);
             CellEngineFullAtomSimulationSpaceObjectPointer->PreprocessData<RealType, CellEngineAtom>(&Particle::ListOfAtoms, &ParticleKind::ListOfAtoms, true);
         }
     }

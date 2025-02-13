@@ -1,12 +1,12 @@
 
 #include "CellEngineParticlesFullAtomShapesGenerator.h"
 
-bool CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceInCuboidSelectedSpace(const ParticlesContainer<Particle>& ParticlesParam, const float PosXStart, const float PosYStart, const float PosZStart, const float StepX, const float StepY, const float StepZ, const float SizeOfParticleX, const float SizeOfParticleY, const float SizeOfParticleZ, const UniqueIdInt ValueToCheck)
+bool CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceInCuboidSelectedSpace(const ParticlesContainer<Particle>& ParticlesParam, const RealType PosXStart, const RealType PosYStart, const RealType PosZStart, const RealType StepX, const RealType StepY, const RealType StepZ, const RealType SizeOfParticleX, const RealType SizeOfParticleY, const RealType SizeOfParticleZ, const UniqueIdInt ValueToCheck)
 {
     try
     {
         vector3_Real32 Center{};
-        const float Radius = (SizeOfParticleX + SizeOfParticleY + SizeOfParticleZ) / 3.0f;
+        const RealType Radius = (SizeOfParticleX + SizeOfParticleY + SizeOfParticleZ) / 3.0f;
         ListOfAtomsType ListOfAtoms;
 
         if (CellEngineConfigDataObject.CheckOnlyParticlesCenters == true)
@@ -21,24 +21,24 @@ bool CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceInCuboidSelectedS
     return false;
 }
 
-void CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForCuboidSelectedSpace(ListOfAtomsType* FilledSpaceAtoms, const float StartXPosParam, const float StartYPosParam, const float StartZPosParam, const float StepXParam, const float StepYParam, const float StepZParam, const float SizeXParam, const float SizeYParam, const float SizeZParam)
+void CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForCuboidSelectedSpace(ListOfAtomsType* FilledSpaceAtoms, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType StepXParam, const RealType StepYParam, const RealType StepZParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam)
 {
     try
     {
-        for (float PosX = StartXPosParam; PosX < StartXPosParam + SizeXParam; PosX += StepXParam)
-            for (float PosY = StartYPosParam; PosY < StartYPosParam + SizeYParam; PosY += StepYParam)
-                for (float PosZ = StartZPosParam; PosZ < StartZPosParam + SizeZParam; PosZ += StepZParam)
+        for (RealType PosX = StartXPosParam; PosX < StartXPosParam + SizeXParam; PosX += StepXParam)
+            for (RealType PosY = StartYPosParam; PosY < StartYPosParam + SizeYParam; PosY += StepYParam)
+                for (RealType PosZ = StartZPosParam; PosZ < StartZPosParam + SizeZParam; PosZ += StepZParam)
                     FilledSpaceAtoms->emplace_back(PosX, PosY, PosZ);
     }
     CATCH("setting value to full atoms for cuboid selected space")
 }
 
-bool CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceForEllipsoidSelectedSpace(const ParticlesContainer<Particle>& ParticlesParam, const float PosXStart, const float PosYStart, const float PosZStart, const float StepX, const float StepY, const float StepZ, const float RadiusXParam, const float RadiusYParam, const float RadiusZParam, const UniqueIdInt ValueToCheck)
+bool CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceForEllipsoidSelectedSpace(const ParticlesContainer<Particle>& ParticlesParam, const RealType PosXStart, const RealType PosYStart, const RealType PosZStart, const RealType StepX, const RealType StepY, const RealType StepZ, const RealType RadiusXParam, const RealType RadiusYParam, const RealType RadiusZParam, const UniqueIdInt ValueToCheck)
 {
     try
     {
         vector3_Real32 Center{};
-        const float Radius = (RadiusXParam + RadiusYParam + RadiusZParam) / 3.0f;
+        const RealType Radius = (RadiusXParam + RadiusYParam + RadiusZParam) / 3.0f;
         ListOfAtomsType ListOfAtoms;
 
         if (CellEngineConfigDataObject.CheckOnlyParticlesCenters == true)
@@ -53,17 +53,17 @@ bool CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceForEllipsoidSelec
     return false;
 };
 
-void CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForEllipsoidSelectedSpace(ListOfAtomsType* FilledSpaceAtoms, const float PosXStart, const float PosYStart, const float PosZStart, const float StepX, const float StepY, const float StepZ, const float RadiusXParam, const float RadiusYParam, const float RadiusZParam)
+void CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForEllipsoidSelectedSpace(ListOfAtomsType* FilledSpaceAtoms, const RealType PosXStart, const RealType PosYStart, const RealType PosZStart, const RealType StepX, const RealType StepY, const RealType StepZ, const RealType RadiusXParam, const RealType RadiusYParam, const RealType RadiusZParam)
 {
     try
     {
-        for (float x = 0; x < RadiusXParam * 2; x += StepX)
-            for (float y = 0; y < RadiusYParam * 2; y += StepY)
-                for (float z = 0; z < RadiusZParam * 2; z += StepZ)
+        for (RealType x = 0; x < RadiusXParam * 2; x += StepX)
+            for (RealType y = 0; y < RadiusYParam * 2; y += StepY)
+                for (RealType z = 0; z < RadiusZParam * 2; z += StepZ)
                 {
-                    const float dx = RadiusXParam - x;
-                    const float dy = RadiusYParam - y;
-                    const float dz = RadiusZParam - z;
+                    const RealType dx = RadiusXParam - x;
+                    const RealType dy = RadiusYParam - y;
+                    const RealType dz = RadiusZParam - z;
                     if ((dx * dx * RadiusYParam * RadiusYParam * RadiusZParam * RadiusZParam + dy * dy * RadiusXParam * RadiusXParam * RadiusZParam * RadiusZParam + dz * dz * RadiusXParam * RadiusXParam * RadiusYParam * RadiusYParam) <= (RadiusXParam * RadiusXParam * RadiusYParam * RadiusYParam * RadiusZParam * RadiusZParam))
                         FilledSpaceAtoms->emplace_back(PosXStart + dx, PosYStart + dy, PosZStart + dz);
                 }
@@ -71,7 +71,7 @@ void CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForEllipsoidSele
     CATCH("setting value to voxels for ellipsoid selected space")
 };
 
-bool CellEngineParticlesFullAtomShapesGenerator::GenerateParticleAtomsWhenSelectedSpaceIsFree(const ParticlesContainer<Particle>& ParticlesParam, const UnsignedInt LocalNewParticleIndex, const float PosXStart, const float PosYStart, const float PosZStart, const float SizeOfParticleX, const float SizeOfParticleY, const float SizeOfParticleZ, const float StartXPosParam, const float StartYPosParam, const float StartZPosParam, const float SizeXParam, const float SizeYParam, const float SizeZParam, const CheckFreeSpaceForSelectedSpaceType CheckFreeSpaceForSelectedSpace, const SetValueToAtomsForSelectedSpaceType SetValueToAtomsForSelectedSpace)
+bool CellEngineParticlesFullAtomShapesGenerator::GenerateParticleAtomsWhenSelectedSpaceIsFree(const ParticlesContainer<Particle>& ParticlesParam, const UnsignedInt LocalNewParticleIndex, const RealType PosXStart, const RealType PosYStart, const RealType PosZStart, const RealType SizeOfParticleX, const RealType SizeOfParticleY, const RealType SizeOfParticleZ, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam, const CheckFreeSpaceForSelectedSpaceType CheckFreeSpaceForSelectedSpace, const SetValueToAtomsForSelectedSpaceType SetValueToAtomsForSelectedSpace)
 {
     try
     {
@@ -85,7 +85,7 @@ bool CellEngineParticlesFullAtomShapesGenerator::GenerateParticleAtomsWhenSelect
             if (FilledAtomsForRandomParticle.empty() == false)
                 GetParticleFromIndexForGenerator(LocalNewParticleIndex).ListOfAtoms = FilledAtomsForRandomParticle;
 
-            CellEngineBasicParticlesOperations::GetMinMaxCoordinatesForParticle<float, CellEngineAtom>(GetParticleFromIndexForGenerator(LocalNewParticleIndex), &Particle::ListOfAtoms, &ParticleKind::ListOfAtoms, true);
+            CellEngineBasicParticlesOperations::GetMinMaxCoordinatesForParticle<RealType, CellEngineAtom>(GetParticleFromIndexForGenerator(LocalNewParticleIndex), &Particle::ListOfAtoms, &ParticleKind::ListOfAtoms, true);
 
             return true;
         }

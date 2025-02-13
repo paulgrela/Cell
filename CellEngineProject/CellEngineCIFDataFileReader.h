@@ -21,7 +21,7 @@ public:
     explicit CellEngineCIFDataFileReader() = default;
     ~CellEngineCIFDataFileReader() override = default;
 public:
-    void ReadDataFromCIFFile();
+    void ReadDataFromCIFFile(const bool SetStartValuesBool);
     static CellEngineAtom ParseRecord(const char* LocalPDBRecord);
 };
 

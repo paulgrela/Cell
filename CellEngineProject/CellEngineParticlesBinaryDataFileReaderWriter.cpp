@@ -451,7 +451,8 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
                 ParticleObject.RandomParticleKindColor = ParticlesKindsManagerObject.GetGraphicParticleKind(ParticleObject.EntityId).RandomParticleColor;
             }
 
-            AddNewParticle(ParticleObject);
+            if (CellEngineConfigDataObject.MixedFullAtomWithVoxelSpace == false)
+                AddNewParticle(ParticleObject);
 
             if (ParticleObject.Index == 0)
                 LoggersManagerObject.Log(STREAM("Particle with Index 0 = " << ParticleObject.Index << " " << ParticleObject.Center.X << " " << ParticleObject.Center.Y << " " << ParticleObject.Center.Z));
@@ -583,7 +584,6 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesKindsAndParticl
 
         ReadChemicalReactionsFromBinaryFile(ParticlesDataFile);
         ReadParticlesKindsFromBinaryFile(ParticlesDataFile);
-        if (CellEngineConfigDataObject.MixedFullAtomWithVoxelSpace == false)
         ReadParticlesFromBinaryFile(ParticlesDataFile);
         ReadGenesFromBinaryFile(ParticlesDataFile);
 
@@ -641,9 +641,17 @@ void CellEngineParticlesBinaryDataFileReaderWriter::FindGenomeParameters() const
 {
     try
     {
-        CellEngineVoxelSimulationSpaceObjectPointer->ReadGenomeDataFromFile(CellEngineConfigDataObject.DNAPaired);
-        CellEngineVoxelSimulationSpaceObjectPointer->ReadGenomeSequenceFromFile(CellEngineConfigDataObject.DNAPaired);
-        CellEngineVoxelSimulationSpaceObjectPointer->TestDifferentKindsOfPromotersFindingsAndTerminatorsFindingsAlgorithms();
+        if (CellEngineConfigDataObject.MixedFullAtomWithVoxelSpace == false)
+        {
+            CellEngineVoxelSimulationSpaceObjectPointer->ReadGenomeDataFromFile(CellEngineConfigDataObject.DNAPaired);
+            CellEngineVoxelSimulationSpaceObjectPointer->ReadGenomeSequenceFromFile(CellEngineConfigDataObject.DNAPaired);
+            CellEngineVoxelSimulationSpaceObjectPointer->TestDifferentKindsOfPromotersFindingsAndTerminatorsFindingsAlgorithms();
+        }
+        else
+        {
+            CellEngineFullAtomSimulationSpaceObjectPointer->ReadGenomeSequenceFromFile(CellEngineConfigDataObject.DNAPaired);
+            CellEngineFullAtomSimulationSpaceObjectPointer->TestDifferentKindsOfPromotersFindingsAndTerminatorsFindingsAlgorithms();
+        }
     }
     CATCH("finding genome parameters")
 }
@@ -676,7 +684,6 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadAllDataFromBinaryFileAnd
 
         CellEngineAminoAcidsManagerObject.MapAminoAcidsIdToAminoAcidsObject();
 
-        if (CellEngineConfigDataObject.MixedFullAtomWithVoxelSpace == false)
         FindGenomeParameters();
 
         CellEngineConfigDataObject.GenomeReadFromFile = true;

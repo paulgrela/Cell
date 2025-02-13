@@ -15,14 +15,10 @@ void CellEngineChemicalReactionsInVoxelSimulationSpace::FindParticlesInProximity
             for (UnsignedInt PosY = StartYPosParam; PosY < StartYPosParam + SizeYParam; PosY++)
                 for (UnsignedInt PosZ = StartZPosParam; PosZ < StartZPosParam + SizeZParam; PosZ++)
                     if (PosX < CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension && PosY < CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension && PosZ < CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension)
-                    {
-                        UniqueIdInt ParticleIndex = GetSpaceVoxel(PosX, PosY, PosZ);
-                        if (ParticleIndex != GetZeroSimulationSpaceVoxel())
+                        if (const UniqueIdInt ParticleIndex = GetSpaceVoxel(PosX, PosY, PosZ); ParticleIndex != GetZeroSimulationSpaceVoxel())
                             if (!FoundParticleIndexes.contains(ParticleIndex))
                                 if (GetParticles().contains(ParticleIndex))
                                     SaveParticleFoundInProximity(ParticleIndex, FoundParticleIndexes, UpdateNucleotides);
-                    }
-
 
         const auto stop_time = chrono::high_resolution_clock::now();
 

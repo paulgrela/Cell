@@ -186,11 +186,12 @@ vector3_Real32 CountCenterForListOfAtoms(const vector<CellEngineAtom>& ListOfAto
     return { CenterOfParticle.X() / static_cast<RealType>(ListOfAtoms.size()), CenterOfParticle.Y() / static_cast<RealType>(ListOfAtoms.size()), CenterOfParticle.Z() / static_cast<RealType>(ListOfAtoms.size()) };
 }
 
-void CellEngineCIFDataFileReader::ReadDataFromCIFFile()
+void CellEngineCIFDataFileReader::ReadDataFromCIFFile(const bool SetStartValuesBool)
 {
     try
     {
-        SetStartValues();
+        if (SetStartValuesBool == true)
+            SetStartValues();
 
         ChainsNames.clear();
         TransformationsMatrixes.clear();

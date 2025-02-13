@@ -259,7 +259,7 @@ void FindPromotersForGenesFromGeneStartPos(const std::string& GenomeStr, const b
     CATCH("finding promoters for genes from gene start position")
 }
 
-void FindPromoters(const std::vector<std::string>& GenomesLines, const std::vector<std::vector<UniqueIdInt>>& Genomes, const bool SwitchLogsBool)
+void FindPromoters(const std::vector<std::string>& GenomesLines, const bool SwitchLogsBool)
 {
     try
     {
@@ -277,7 +277,7 @@ void FindPromoters(const std::vector<std::string>& GenomesLines, const std::vect
 
         auto AttachPolymeraseToDNAStartSequence = CellEngineUseful::ConvertStringSequenceToChainIdSequence(AttachPolymeraseToDNAStartSequenceStr);
 
-        for (UnsignedInt StartGenomeIndex = 0; StartGenomeIndex < Genomes[0].size() - AttachPolymeraseToDNAStartSequenceStr.size(); StartGenomeIndex++)
+        for (UnsignedInt StartGenomeIndex = 0; StartGenomeIndex < GenomesLines[0].size() - AttachPolymeraseToDNAStartSequenceStr.size(); StartGenomeIndex++)
         {
             auto NucleotidesSequenceToCompareVector = CellEngineUseful::ConvertStringSequenceToChainIdSequence(GenomesLines[0].substr(StartGenomeIndex, AttachPolymeraseToDNAStartSequenceStr.size()));
 
@@ -300,7 +300,7 @@ void FindPromoters(const std::vector<std::string>& GenomesLines, const std::vect
                 if (SwitchLogsBool == true)
                     CellEngineUseful::SwitchOnLogs();
 
-                for (UnsignedInt PosInGenomeToFindCodonStart = StartGenomeIndex + 6; PosInGenomeToFindCodonStart < StartGenomeIndex + 6 + MaxDistanceToStart && PosInGenomeToFindCodonStart < Genomes[0].size() - 3; ++PosInGenomeToFindCodonStart)
+                for (UnsignedInt PosInGenomeToFindCodonStart = StartGenomeIndex + 6; PosInGenomeToFindCodonStart < StartGenomeIndex + 6 + MaxDistanceToStart && PosInGenomeToFindCodonStart < GenomesLines[0].size() - 3; ++PosInGenomeToFindCodonStart)
                     FindCodons(GenomesLines[0], StartCodonsList, FoundGenesCounter, NumberOfFoundPromoters, NumberOfFoundPromotersConfirmed, ScopeForStartGeneIndex, PosInGenomeToFindCodonStart, 1, 1, SwitchLogsBool);
 
                 NumberOfFoundPromoterSequences++;
@@ -593,13 +593,13 @@ void FindTerminatorsForGenes2(const std::string& GenomeStr, const bool SwitchLog
     CATCH("finding terminators for genes 2")
 }
 
-void TestSeveralDifferentKindsOfPromotersFindingsAndTerminatorFindingsAlgorithms(const std::vector<std::string>& GenomesLines, const std::vector<std::vector<UniqueIdInt>>& Genomes)
+void TestSeveralDifferentKindsOfPromotersFindingsAndTerminatorFindingsAlgorithms(const std::vector<std::string>& GenomesLines)
 {
     try
     {
         PrintInterGenesSequencesFromGenesData();
 
-        FindPromoters(GenomesLines, Genomes, true);
+        FindPromoters(GenomesLines, true);
 
         FindPromotersAndStartCodons1(GenomesLines[0], true);
         FindPromotersAndStartCodons2(GenomesLines[0], true);

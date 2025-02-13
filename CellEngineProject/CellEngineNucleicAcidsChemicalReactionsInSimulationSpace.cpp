@@ -9,7 +9,7 @@ tuple<vector<ChainIdInt>, string> CellEngineNucleicAcidsChemicalReactionsInSimul
 
     try
     {
-        UnsignedInt LengthOfTemplateForRNA =  32;
+        constexpr UnsignedInt LengthOfTemplateForRNA = 32;
 
         UnsignedInt NucleotidesFoundInProximityCounter = 0;
 

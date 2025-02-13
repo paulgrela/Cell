@@ -13,8 +13,9 @@
 #include "CellEngineChemicalReactionsInFullAtomSimulationSpace.h"
 #include "CellEngineRealRandomParticlesInFullAtomSpaceGenerator.h"
 #include "CellEngineSimulationSpace.h"
+#include "CellEngineGenomeNucleicAcidsParticlesInFullAtomSpaceGenerator.h"
 
-class CellEngineFullAtomSimulationSpace : public CellEngineSimulationSpace, public CellEngineRealRandomParticlesInFullAtomSpaceGenerator, public CellEngineChemicalReactionsInFullAtomSimulationSpace, public CellEngineVoxelSimulationSpaceStatistics
+class CellEngineFullAtomSimulationSpace : public CellEngineSimulationSpace, public CellEngineGenomeNucleicAcidsParticlesInFullAtomSpaceGenerator, public CellEngineChemicalReactionsInFullAtomSimulationSpace, public CellEngineVoxelSimulationSpaceStatistics
 {
 protected:
     RealType XMinGlobal{}, XMaxGlobal{}, YMinGlobal{}, YMaxGlobal{}, ZMinGlobal{}, ZMaxGlobal{};

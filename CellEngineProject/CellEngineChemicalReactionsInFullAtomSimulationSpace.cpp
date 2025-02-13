@@ -8,6 +8,8 @@ void CellEngineChemicalReactionsInFullAtomSimulationSpace::FindParticlesInProxim
     {
         const auto start_time = chrono::high_resolution_clock::now();
 
+
+
         const auto stop_time = chrono::high_resolution_clock::now();
 
         CellEngineExecutionTimeStatisticsObject.ExecutionDurationTimeForFindingParticles += chrono::duration(stop_time - start_time);
