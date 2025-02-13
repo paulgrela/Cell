@@ -18,28 +18,28 @@ public:
     char Name[5 + 1]{};
     char ResName[4 + 1]{};
     char Chain[6 + 1]{};
-    float X{};
-    float Y{};
-    float Z{};
+    RealType X{};
+    RealType Y{};
+    RealType Z{};
     vector3_16 AtomColor{};
 public:
     #ifdef EXTENDED_RAM_MEMORY
-    float SizeXAtom{};
-    float SizeYAtom{};
-    float SizeZAtom{};
-    float SizeXParticle{};
-    float SizeYParticle{};
-    float SizeZParticle{};
+    RealType SizeXAtom{};
+    RealType SizeYAtom{};
+    RealType SizeZAtom{};
+    RealType SizeXParticle{};
+    RealType SizeYParticle{};
+    RealType SizeZParticle{};
     #endif
 public:
     CellEngineAtom() = default;
     ~CellEngineAtom() = default;
 public:
-    CellEngineAtom(const float XParam, const float YParam, const float ZParam) : X { XParam }, Y { YParam }, Z { ZParam }
+    CellEngineAtom(const RealType XParam, const RealType YParam, const RealType ZParam) : X { XParam }, Y { YParam }, Z { ZParam }
     {
     }
 public:
-    void SetAtomPositionsData(float XParam, float YParam, float ZParam);
+    void SetAtomPositionsData(RealType XParam, RealType YParam, RealType ZParam);
 public:
     [[nodiscard]] vmath::vec3 Position() const
     {

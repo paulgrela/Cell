@@ -12,7 +12,7 @@
 class CellEngineParticlesFullAtomOperations
 {
 protected:
-    static inline void MoveAllAtomsInParticleAtomsListByVector(Particle &ParticleObject, const float VectorX, const float VectorY, const float VectorZ)
+    static inline void MoveAllAtomsInParticleAtomsListByVector(Particle &ParticleObject, const RealType VectorX, const RealType VectorY, const RealType VectorZ)
     {
         try
         {
@@ -26,7 +26,7 @@ protected:
         CATCH_AND_THROW("moving all voxels in particle voxel list by vector")
     }
 protected:
-    static CurrentSectorPosType GetSectorPos(const float X, const float Y, const float Z)
+    static CurrentSectorPosType GetSectorPos(const RealType X, const RealType Y, const RealType Z)
     {
         const UnsignedInt SectorPosX = std::floor((X + CellEngineConfigDataObject.ShiftCenterX) / CellEngineConfigDataObject.SizeOfParticlesSectorX);
         const UnsignedInt SectorPosY = std::floor((Y + CellEngineConfigDataObject.ShiftCenterY) / CellEngineConfigDataObject.SizeOfParticlesSectorY);
@@ -35,7 +35,7 @@ protected:
         return { SectorPosX, SectorPosY, SectorPosZ };
     }
 
-    static inline void MoveParticleByVector(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, const float VectorX, const float VectorY, const float VectorZ)
+    static inline void MoveParticleByVector(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, const RealType VectorX, const RealType VectorY, const RealType VectorZ)
     {
         try
         {
@@ -57,7 +57,7 @@ protected:
         return (SectorPosX < CellEngineConfigDataObject.NumberOfParticlesSectorsInX && SectorPosY < CellEngineConfigDataObject.NumberOfParticlesSectorsInY && SectorPosZ < CellEngineConfigDataObject.NumberOfParticlesSectorsInZ);
     }
 protected:
-    static bool CheckDistanceOfParticlesInSector(const float Radius, const UniqueIdInt Index, const ParticlesContainer<Particle>& ParticlesInSector, const UnsignedInt SectorPosX, const UnsignedInt SectorPosY, const UnsignedInt SectorPosZ, const float TestedPosX, const float TestedPosY, const float TestedPosZ)
+    static bool CheckDistanceOfParticlesInSector(const RealType Radius, const UniqueIdInt Index, const ParticlesContainer<Particle>& ParticlesInSector, const UnsignedInt SectorPosX, const UnsignedInt SectorPosY, const UnsignedInt SectorPosZ, const RealType TestedPosX, const RealType TestedPosY, const RealType TestedPosZ)
     {
         for (const auto& ParticleInSectorObject : ParticlesInSector[SectorPosX][SectorPosY][SectorPosZ])
             if (ParticleInSectorObject.second.Index != Index)
@@ -67,7 +67,7 @@ protected:
         return true;
     }
 protected:
-    static bool CheckDistanceOfParticlesInSectorByComparingAllAtomsDistances(const UniqueIdInt Index, const ParticlesContainer<Particle>& ParticlesInSector, const UnsignedInt SectorPosX, const UnsignedInt SectorPosY, const UnsignedInt SectorPosZ, const float TestedPosX, const float TestedPosY, const float TestedPosZ)
+    static bool CheckDistanceOfParticlesInSectorByComparingAllAtomsDistances(const UniqueIdInt Index, const ParticlesContainer<Particle>& ParticlesInSector, const UnsignedInt SectorPosX, const UnsignedInt SectorPosY, const UnsignedInt SectorPosZ, const RealType TestedPosX, const RealType TestedPosY, const RealType TestedPosZ)
     {
         for (const auto& ParticleInSectorObject : ParticlesInSector[SectorPosX][SectorPosY][SectorPosZ])
             if (ParticleInSectorObject.second.Index != Index)
@@ -78,7 +78,7 @@ protected:
         return true;
     }
 protected:
-    static PosType GetNewPosMovedByVector(const float X, const float Y, const float Z, const float VectorX, const float VectorY, const float VectorZ)
+    static PosType GetNewPosMovedByVector(const RealType X, const RealType Y, const RealType Z, const RealType VectorX, const RealType VectorY, const RealType VectorZ)
     {
         return { X + VectorX, Y + VectorY, Z + VectorZ };
     }
@@ -90,7 +90,7 @@ protected:
 
         return true;
     }
-    static inline bool CheckBoundsForSpace(const float TestedPosX, const float TestedPosY, const float TestedPosZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CheckBounds, const bool CompareBoundsBySectorsBounds, const bool CompareBoundsBySpaceBounds)
+    static inline bool CheckBoundsForSpace(const RealType TestedPosX, const RealType TestedPosY, const RealType TestedPosZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CheckBounds, const bool CompareBoundsBySectorsBounds, const bool CompareBoundsBySpaceBounds)
     {
         if (!(TestedPosX >= SimulationSpaceSectorBoundsObjectParam.StartXPos && TestedPosX < SimulationSpaceSectorBoundsObjectParam.StartXPos + SimulationSpaceSectorBoundsObjectParam.SizeX && TestedPosY >= SimulationSpaceSectorBoundsObjectParam.StartYPos && TestedPosY < SimulationSpaceSectorBoundsObjectParam.StartYPos + SimulationSpaceSectorBoundsObjectParam.SizeY && TestedPosZ >= SimulationSpaceSectorBoundsObjectParam.StartZPos && TestedPosZ < SimulationSpaceSectorBoundsObjectParam.StartZPos + SimulationSpaceSectorBoundsObjectParam.SizeZ))
             return false;
@@ -98,7 +98,7 @@ protected:
         return true;
     }
 protected:
-    static inline bool CheckBoundsBySectorAndBySpace(const UnsignedInt SectorPosX, const UnsignedInt SectorPosY, const UnsignedInt SectorPosZ, const float TestedPosX, const float TestedPosY, const float TestedPosZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CheckBounds, const bool CompareBoundsBySectorsBounds, const bool CompareBoundsBySpaceBounds)
+    static inline bool CheckBoundsBySectorAndBySpace(const UnsignedInt SectorPosX, const UnsignedInt SectorPosY, const UnsignedInt SectorPosZ, const RealType TestedPosX, const RealType TestedPosY, const RealType TestedPosZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CheckBounds, const bool CompareBoundsBySectorsBounds, const bool CompareBoundsBySpaceBounds)
     {
         if (CheckBounds == true)
         {
@@ -117,7 +117,7 @@ protected:
         return true;
     }
 protected:
-    static inline bool CheckFreeSpaceOnlyByTestingCenterAndBoundsForParticleMovedByVector(const ListOfAtomsType& ListOfAtoms, const float Radius, const UniqueIdInt Index, const vector3_float32 Center, const ParticlesContainer<Particle>& ParticlesInSector, const CurrentSectorPosType& CurrentSectorPos, const float VectorX, const float VectorY, const float VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CheckBounds, const bool CompareBoundsBySectorsBounds, const bool CompareBoundsBySpaceBounds)
+    static inline bool CheckFreeSpaceOnlyByTestingCenterAndBoundsForParticleMovedByVector(const ListOfAtomsType& ListOfAtoms, const RealType Radius, const UniqueIdInt Index, const vector3_Real32 Center, const ParticlesContainer<Particle>& ParticlesInSector, const CurrentSectorPosType& CurrentSectorPos, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CheckBounds, const bool CompareBoundsBySectorsBounds, const bool CompareBoundsBySpaceBounds)
     {
         try
         {
@@ -138,7 +138,7 @@ protected:
         return true;
     }
 protected:
-    static inline bool CheckFreeSpaceByTestingAllAtomsAndBoundsForParticleMovedByVector(const ListOfAtomsType& ListOfAtoms, const float Radius, const UniqueIdInt Index, const vector3_float32 Center, const ParticlesContainer<Particle>& ParticlesInSector, const CurrentSectorPosType& CurrentSectorPos, const float VectorX, const float VectorY, const float VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CheckBounds, const bool CompareBoundsBySectorsBounds, const bool CompareBoundsBySpaceBounds)
+    static inline bool CheckFreeSpaceByTestingAllAtomsAndBoundsForParticleMovedByVector(const ListOfAtomsType& ListOfAtoms, const RealType Radius, const UniqueIdInt Index, const vector3_Real32 Center, const ParticlesContainer<Particle>& ParticlesInSector, const CurrentSectorPosType& CurrentSectorPos, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CheckBounds, const bool CompareBoundsBySectorsBounds, const bool CompareBoundsBySpaceBounds)
     {
         try
         {
@@ -165,7 +165,7 @@ protected:
     }
 protected:
     //BBB - uzyte w normalnej dyfuzji
-    static inline bool CheckFreeSpaceAndBoundsForParticleMovedByVector(const ListOfAtomsType& ListOfAtoms, const float Radius, const UniqueIdInt Index, const vector3_float32 Center, const ParticlesContainer<Particle>& ParticlesInSector, const CurrentSectorPosType& CurrentSectorPos, const float VectorX, const float VectorY, const float VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CheckOnlyParticlesCenters, const bool CheckBounds, const bool CompareBoundsBySectorsBounds, const bool CompareBoundsBySpaceBounds)
+    static inline bool CheckFreeSpaceAndBoundsForParticleMovedByVector(const ListOfAtomsType& ListOfAtoms, const RealType Radius, const UniqueIdInt Index, const vector3_Real32 Center, const ParticlesContainer<Particle>& ParticlesInSector, const CurrentSectorPosType& CurrentSectorPos, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CheckOnlyParticlesCenters, const bool CheckBounds, const bool CompareBoundsBySectorsBounds, const bool CompareBoundsBySpaceBounds)
     {
         if (CheckOnlyParticlesCenters == true)
             return CheckFreeSpaceOnlyByTestingCenterAndBoundsForParticleMovedByVector(ListOfAtoms, Radius, Index, Center, ParticlesInSector, CurrentSectorPos, VectorX, VectorY, VectorZ, SimulationSpaceSectorBoundsObjectParam, CheckBounds, CompareBoundsBySectorsBounds, CompareBoundsBySpaceBounds);
@@ -174,18 +174,18 @@ protected:
     }
 protected:
     //CCC - w sprawdzeniu czy nowa czastka w reakcji
-    static inline bool CheckFreeSpaceAndBoundsForListOfAtoms(const ListOfAtomsType& ListOfAtoms, const ParticlesContainer<Particle>& ParticlesInSector, const CurrentSectorPosType& CurrentSectorPos, const float Radius, const float PosX, const float PosY, const float PosZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CheckOnlyParticlesCenters)
+    static inline bool CheckFreeSpaceAndBoundsForListOfAtoms(const ListOfAtomsType& ListOfAtoms, const ParticlesContainer<Particle>& ParticlesInSector, const CurrentSectorPosType& CurrentSectorPos, const RealType Radius, const RealType PosX, const RealType PosY, const RealType PosZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CheckOnlyParticlesCenters)
     {
          return CheckFreeSpaceAndBoundsForParticleMovedByVector(ListOfAtoms, Radius, 0, { 0, 0, 0 }, ParticlesInSector, CurrentSectorPos, PosX, PosY, PosZ, SimulationSpaceSectorBoundsObjectParam, CellEngineConfigDataObject.CheckOnlyParticlesCenters, true, false, true);
     }
     //AAA - uzyte w reakcjach transkrypcji i translacji
-    static inline bool CheckFreeSpaceForParticleMovedByVector(const Particle &ParticleObject, const ParticlesContainer<Particle>& ParticlesInSector, const CurrentSectorPosType& CurrentSectorPos, const float VectorX, const float VectorY, const float VectorZ, const bool CheckOnlyParticlesCenters)
+    static inline bool CheckFreeSpaceForParticleMovedByVector(const Particle &ParticleObject, const ParticlesContainer<Particle>& ParticlesInSector, const CurrentSectorPosType& CurrentSectorPos, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const bool CheckOnlyParticlesCenters)
     {
         return CheckFreeSpaceAndBoundsForParticleMovedByVector(ParticleObject.ListOfAtoms, ParticleObject.Radius, ParticleObject.Index, ParticleObject.Center, ParticlesInSector, CurrentSectorPos, VectorX, VectorY, VectorZ, SimulationSpaceSectorBounds{ 0, 0, 0, 0, 0, 0, 0, 0, 0}, CellEngineConfigDataObject.CheckOnlyParticlesCenters, false, false, false);
     }
 protected:
     //BBB - uzyte w normalnej dyfuzji
-    static inline bool MoveParticleByVectorIfFullAtomSpaceIsEmptyAndIsInBounds(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, const CurrentSectorPosType& CurrentSectorPos, const float VectorX, const float VectorY, const float VectorZ, const float StartXPosParam, const float StartYPosParam, const float StartZPosParam, const float SizeXParam, const float SizeYParam, const float SizeZParam)
+    static inline bool MoveParticleByVectorIfFullAtomSpaceIsEmptyAndIsInBounds(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, const CurrentSectorPosType& CurrentSectorPos, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam)
     {
         try
         {
@@ -200,19 +200,19 @@ protected:
     }
 protected:
     //AAA - uzyte w reakcjach transkrypcji i translacji
-    static inline void MoveParticleNearOtherParticleIfFullAtomSpaceIsEmptyOrNearSpace(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, const CurrentSectorPosType& CurrentSectorPos, const Particle &NewPositionParticleObject, const float AddX, const float AddY, const float AddZ)
+    static inline void MoveParticleNearOtherParticleIfFullAtomSpaceIsEmptyOrNearSpace(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, const CurrentSectorPosType& CurrentSectorPos, const Particle &NewPositionParticleObject, const RealType AddX, const RealType AddY, const RealType AddZ)
     {
         try
         {
             bool FoundFreeSpace = false;
 
-            const float VecX = NewPositionParticleObject.ListOfAtoms[0].X - ParticleObject.ListOfAtoms[0].X;
-            const float VecY = NewPositionParticleObject.ListOfAtoms[0].Y - ParticleObject.ListOfAtoms[0].Y;
-            const float VecZ = NewPositionParticleObject.ListOfAtoms[0].Z - ParticleObject.ListOfAtoms[0].Z;
+            const RealType VecX = NewPositionParticleObject.ListOfAtoms[0].X - ParticleObject.ListOfAtoms[0].X;
+            const RealType VecY = NewPositionParticleObject.ListOfAtoms[0].Y - ParticleObject.ListOfAtoms[0].Y;
+            const RealType VecZ = NewPositionParticleObject.ListOfAtoms[0].Z - ParticleObject.ListOfAtoms[0].Z;
 
-            for (float PosX = VecX - AddX; PosX < VecX + AddX; PosX += 1.0)
-                for (float PosY = VecY - AddY; PosY < VecY + AddY; PosY += 1.0)
-                    for (float PosZ = VecZ - AddZ; PosZ < VecZ + AddZ; PosZ += 1.0)
+            for (RealType PosX = VecX - AddX; PosX < VecX + AddX; PosX += 1.0)
+                for (RealType PosY = VecY - AddY; PosY < VecY + AddY; PosY += 1.0)
+                    for (RealType PosZ = VecZ - AddZ; PosZ < VecZ + AddZ; PosZ += 1.0)
                         if (CheckFreeSpaceForParticleMovedByVector(ParticleObject, ParticlesInSector, CurrentSectorPos, PosX, PosY, PosZ, CellEngineConfigDataObject.CheckOnlyParticlesCenters) == true)
                         {
                             LoggersManagerObject.Log(STREAM(terminal_colors_utils::green << "FREE SPACE FOUND " << VecX << " " << VecY << " " << VecZ << " " << PosX << " " << PosY << " " << PosZ << terminal_colors_utils::white));

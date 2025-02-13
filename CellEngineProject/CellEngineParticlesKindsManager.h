@@ -16,9 +16,9 @@
 struct AtomKindGraphicData
 {
     std::string Name;
-    float SizeX;
-    float SizeY;
-    float SizeZ;
+    RealType SizeX;
+    RealType SizeY;
+    RealType SizeZ;
     vector3_16 Color;
     vmath::vec3 ColorVmathVec3;
 };

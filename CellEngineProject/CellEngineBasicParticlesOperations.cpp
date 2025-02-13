@@ -172,8 +172,8 @@ UnsignedInt CellEngineBasicParticlesOperations::GetNumberOfParticlesWithChosenEn
     return ParticleCounter;
 }
 
-template void CellEngineBasicParticlesOperations::PreprocessData<float, CellEngineAtom>(const std::vector<CellEngineAtom> Particle::*ListOfElements, const std::vector<CellEngineAtom> ParticleKind::*ListOfElementsOfParticleKind, bool UpdateParticleKindListOfElementsBool);
+template void CellEngineBasicParticlesOperations::PreprocessData<RealType, CellEngineAtom>(const std::vector<CellEngineAtom> Particle::*ListOfElements, const std::vector<CellEngineAtom> ParticleKind::*ListOfElementsOfParticleKind, bool UpdateParticleKindListOfElementsBool);
 template void CellEngineBasicParticlesOperations::PreprocessData<UnsignedInt, vector3_16>(const std::vector<vector3_16> Particle::*ListOfElements, const std::vector<vector3_16> ParticleKind::*ListOfElementsOfParticleKind, bool UpdateParticleKindListOfElementsBool);
 template void CellEngineBasicParticlesOperations::GetMinMaxOfCoordinates<UnsignedInt>(UnsignedInt PosX, UnsignedInt PosY, UnsignedInt PosZ, UnsignedInt& XMinParam, UnsignedInt& XMaxParam, UnsignedInt& YMinParam, UnsignedInt& YMaxParam, UnsignedInt& ZMinParam, UnsignedInt& ZMaxParam);
 template void CellEngineBasicParticlesOperations::GetMinMaxCoordinatesForParticle<UnsignedInt, vector3_16>(Particle& ParticleObject, const vector<vector3_16> Particle::*ListOfElements, const vector<vector3_16> ParticleKind::*ListOfElementsOfParticleKind, const bool UpdateParticleKindListOfElementsBool);
-template void CellEngineBasicParticlesOperations::GetMinMaxCoordinatesForParticle<float, CellEngineAtom>(Particle& ParticleObject, const vector<CellEngineAtom> Particle::*ListOfElements, const vector<CellEngineAtom> ParticleKind::*ListOfElementsOfParticleKind, const bool UpdateParticleKindListOfElementsBool);
+template void CellEngineBasicParticlesOperations::GetMinMaxCoordinatesForParticle<RealType, CellEngineAtom>(Particle& ParticleObject, const vector<CellEngineAtom> Particle::*ListOfElements, const vector<CellEngineAtom> ParticleKind::*ListOfElementsOfParticleKind, const bool UpdateParticleKindListOfElementsBool);

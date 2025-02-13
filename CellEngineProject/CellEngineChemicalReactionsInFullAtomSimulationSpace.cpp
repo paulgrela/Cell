@@ -15,7 +15,7 @@ void CellEngineChemicalReactionsInFullAtomSimulationSpace::FindParticlesInProxim
     CATCH("finding particles in proximity of simulation space for selected local space")
 };
 
-void CellEngineChemicalReactionsInFullAtomSimulationSpace::MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(Particle &ParticleObject, const Particle &NewPositionParticleObject, const float AddX, const float AddY, const float AddZ)
+void CellEngineChemicalReactionsInFullAtomSimulationSpace::MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(Particle &ParticleObject, const Particle &NewPositionParticleObject, const RealType AddX, const RealType AddY, const RealType AddZ)
 {
     try
     {

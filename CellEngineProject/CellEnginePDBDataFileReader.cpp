@@ -74,7 +74,7 @@ void CellEnginePDBDataFileReader::ReadDataFromFile(const bool StartValuesBool, c
                 vmath::vec3 CenterOfParticle(0.0, 0.0, 0.0);
                 for (const CellEngineAtom& AtomObject : ListOfAtoms)
                     CenterOfParticle += AtomObject.Position();
-                vector3_float32 Center = { CenterOfParticle.X() / static_cast<float>(ListOfAtoms.size()), CenterOfParticle.Y() / static_cast<float>(ListOfAtoms.size()), CenterOfParticle.Z() / static_cast<float>(ListOfAtoms.size()) };
+                vector3_Real32 Center = { CenterOfParticle.X() / static_cast<RealType>(ListOfAtoms.size()), CenterOfParticle.Y() / static_cast<RealType>(ListOfAtoms.size()), CenterOfParticle.Z() / static_cast<RealType>(ListOfAtoms.size()) };
 
                 Particle ParticleToInsert(1, 1, 1, -1, 1, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
                 ParticleToInsert.ListOfAtoms = ListOfAtoms;

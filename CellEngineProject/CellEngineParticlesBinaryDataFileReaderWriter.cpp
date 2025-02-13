@@ -383,7 +383,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesKindsFromBinary
     CATCH("reading particles from binary file")
 }
 
-void ReadVoxelsVectorDividedByStepsFromBinaryFile(ifstream& ParticlesDataFile, ListOfVoxelsType& VectorToBeRead, const float DivideFactor)
+void ReadVoxelsVectorDividedByStepsFromBinaryFile(ifstream& ParticlesDataFile, ListOfVoxelsType& VectorToBeRead, const RealType DivideFactor)
 {
     try
     {
@@ -398,7 +398,7 @@ void ReadVoxelsVectorDividedByStepsFromBinaryFile(ifstream& ParticlesDataFile, L
             vector3_16 Object{};
             ParticlesDataFile.read((char*)&Object, sizeof(Object));
             if (Index % Step == 0)
-                VectorToBeRead.emplace_back(vector3_16{ static_cast<PositionInt>(static_cast<float>(Object.X) / DivideFactor), static_cast<PositionInt>(static_cast<float>(Object.Y) / DivideFactor), static_cast<PositionInt>(static_cast<float>(Object.Z) / DivideFactor) });
+                VectorToBeRead.emplace_back(vector3_16{ static_cast<PositionInt>(static_cast<RealType>(Object.X) / DivideFactor), static_cast<PositionInt>(static_cast<RealType>(Object.Y) / DivideFactor), static_cast<PositionInt>(static_cast<RealType>(Object.Z) / DivideFactor) });
         }
     }
     CATCH("reading vector from binary file")
@@ -426,7 +426,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
 
             vector3_16 CenterReadObject{};
             ParticlesDataFile.read((char*)&CenterReadObject, sizeof(CenterReadObject));
-            ParticleObject.Center = { static_cast<float>(CenterReadObject.X), static_cast<float>(CenterReadObject.Y), static_cast<float>(CenterReadObject.Z) };
+            ParticleObject.Center = { static_cast<RealType>(CenterReadObject.X), static_cast<RealType>(CenterReadObject.Y), static_cast<RealType>(CenterReadObject.Z) };
 
             ParticleObject.Center.X /= CellEngineConfigDataObject.DivisionFactorForReadingPositionsOfParticles;
             ParticleObject.Center.Y /= CellEngineConfigDataObject.DivisionFactorForReadingPositionsOfParticles;

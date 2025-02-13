@@ -19,6 +19,8 @@ using ChainIdInt = std::uint16_t;
 using PositionInt = std::uint16_t;
 using UniqueIdInt = std::uint32_t;
 
+using RealType = float;
+
 using ElectricChargeType = std::int32_t;
 
 template<class T>
@@ -29,7 +31,7 @@ struct vector3
 
 using vector3_16 = vector3<PositionInt>;
 using vector3_64 = vector3<uint64_t>;
-using vector3_float32 = vector3<float>;
+using vector3_Real32 = vector3<RealType>;
 
 struct CurrentThreadPosType
 {

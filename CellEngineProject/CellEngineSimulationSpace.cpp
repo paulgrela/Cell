@@ -108,26 +108,23 @@ void CellEngineSimulationSpace::GenerateNStepsOfDiffusionForWholeCellSpace(const
     CATCH("generating diffusion for whole cell space")
 }
 
-void CellEngineSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpaceFullAtom(const bool InBounds, const float StartXPosParam, const float StartYPosParam, const float StartZPosParam, const float SizeXParam, const float SizeYParam, const float SizeZParam)
+void CellEngineSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpaceFullAtom(const bool InBounds, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam)
 {
     try
     {
         uniform_int_distribution<SignedInt> UniformDistributionObjectMoveParticleDirection_int64t(-10, 10);
-        //uniform_int_distribution<SignedInt> UniformDistributionObjectMoveParticleDirection_int64t(-1, 1);
 
         for (auto& ParticleInProximityObject : Particles[StartXPosParam][StartYPosParam][StartZPosParam])
         {
             CurrentSectorPos = CurrentSectorPosType{ static_cast<UnsignedInt>(StartXPosParam), static_cast<UnsignedInt>(StartYPosParam), static_cast<UnsignedInt>(StartZPosParam) };
             if (CellEngineUseful::IsDNA(ParticleInProximityObject.second.EntityId) == false)
                 MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(ParticleInProximityObject.second, Particles, CurrentSectorPos, UniformDistributionObjectMoveParticleDirection_int64t(mt64R), UniformDistributionObjectMoveParticleDirection_int64t(mt64R), UniformDistributionObjectMoveParticleDirection_int64t(mt64R), 0, 0, 0, SizeXParam, SizeYParam, SizeZParam);
-                //MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(ParticleInProximityObject.second, Particles, CurrentSectorPos, UniformDistributionObjectMoveParticleDirection_int64t(mt64R), UniformDistributionObjectMoveParticleDirection_int64t(mt64R), UniformDistributionObjectMoveParticleDirection_int64t(mt64R), StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
-                //MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(GetParticleFromIndex(ParticleInProximityObject.second.Index), Particles, CurrentSectorPos, UniformDistributionObjectMoveParticleDirection_int64t(mt64R), UniformDistributionObjectMoveParticleDirection_int64t(mt64R), UniformDistributionObjectMoveParticleDirection_int64t(mt64R), StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
         }
     }
     CATCH("generating one step of diffusion for selected space")
 }
 
-void CellEngineSimulationSpace::GenerateNStepsOfDiffusionForWholeCellSpaceFullAtom(const bool InBounds, const float XStartParam, const float YStartParam, const float ZStartParam, const float XStepParam, const float YStepParam, const float ZStepParam, const float XSizeParam, float YSizeParam, const float ZSizeParam, const float NumberOfSimulationSteps)
+void CellEngineSimulationSpace::GenerateNStepsOfDiffusionForWholeCellSpaceFullAtom(const bool InBounds, const RealType XStartParam, const RealType YStartParam, const RealType ZStartParam, const RealType XStepParam, const RealType YStepParam, const RealType ZStepParam, const RealType XSizeParam, RealType YSizeParam, const RealType ZSizeParam, const RealType NumberOfSimulationSteps)
 {
     try
     {
@@ -181,7 +178,7 @@ inline void UpdateNeighbourPointsForChosenElement(T UpdateFunction)
     CATCH("updating probability of move from electric interaction for selected particle")
 }
 
-void CellEngineSimulationSpace::UpdateProbabilityOfMoveFromElectricInteractionForSelectedParticle(Particle& ParticleObject, ElectricChargeType (*NeighbourPoints)[3][3][3], const double MultiplyElectricChargeFactor)
+void CellEngineSimulationSpace::UpdateProbabilityOfMoveFromElectricInteractionForSelectedParticle(const Particle& ParticleObject, ElectricChargeType (*NeighbourPoints)[3][3][3], const double MultiplyElectricChargeFactor)
 {
     try
     {
@@ -192,11 +189,11 @@ void CellEngineSimulationSpace::UpdateProbabilityOfMoveFromElectricInteractionFo
             Particle& NeighbourParticleObject = GetParticleFromIndex(NeighbourParticleIndexObjectToWrite);
             if (NeighbourParticleObject.ElectricCharge != 0)
             {
-                for (UnsignedInt X = 0; X <= 2; X++)
-                    for (UnsignedInt Y = 0; Y <= 2; Y++)
-                        for (UnsignedInt Z = 0; Z <= 2; Z++)
+                for (SignedInt X = 0; X <= 2; X++)
+                    for (SignedInt Y = 0; Y <= 2; Y++)
+                        for (SignedInt Z = 0; Z <= 2; Z++)
                             if (X != 1 && Y != 1 && Z != 1)
-                                if ((NeighbourParticleObject.Center.X < ParticleObject.Center.X && ParticleObject.Center.X +(X - 1) < ParticleObject.Center.X) ||
+                                if ((NeighbourParticleObject.Center.X < ParticleObject.Center.X && ParticleObject.Center.X + (X - 1) < ParticleObject.Center.X) ||
                                     (NeighbourParticleObject.Center.Y < ParticleObject.Center.Y && ParticleObject.Center.Y + (Y - 1) < ParticleObject.Center.Y) ||
                                     (NeighbourParticleObject.Center.Z < ParticleObject.Center.Z && ParticleObject.Center.Z + (Z - 1) < ParticleObject.Center.Z) ||
                                     (NeighbourParticleObject.Center.X > ParticleObject.Center.X && ParticleObject.Center.X + (X - 1) > ParticleObject.Center.X) ||
@@ -419,7 +416,7 @@ bool CellEngineSimulationSpace::PlaceProductParticleInSpaceInDeterminedPositionO
 {
     try
     {
-        const vector3_float32 NewCenter(Centers[CenterIndex].X - ParticleKindObjectForProduct.XSizeDiv2, Centers[CenterIndex].Y - ParticleKindObjectForProduct.YSizeDiv2, Centers[CenterIndex].Z - ParticleKindObjectForProduct.ZSizeDiv2);
+        const vector3_Real32 NewCenter(Centers[CenterIndex].X - ParticleKindObjectForProduct.XSizeDiv2, Centers[CenterIndex].Y - ParticleKindObjectForProduct.YSizeDiv2, Centers[CenterIndex].Z - ParticleKindObjectForProduct.ZSizeDiv2);
 
         if (CheckIfSpaceIsEmptyAndIsInBoundsForParticleElements(ParticleKindObjectForProduct, Particles, CurrentSectorPos, NewCenter.X, NewCenter.Y, NewCenter.Z, GetBoundsForThreadSector()) == true)
             FillParticleElementsInSpace(ParticleIndex, ParticleKindObjectForProduct, NewCenter.X, NewCenter.Y, NewCenter.Z);
@@ -767,7 +764,7 @@ bool CellEngineSimulationSpace::FindAndExecuteChosenReaction(const UnsignedInt R
     return false;
 }
 
-void CellEngineSimulationSpace::GenerateOneRandomReactionForSelectedSpace(const float StartXPosParam, const float StartYPosParam, const float StartZPosParam, const float SizeXParam, const float SizeYParam, const float SizeZParam, const bool FindParticlesInProximityBool)
+void CellEngineSimulationSpace::GenerateOneRandomReactionForSelectedSpace(const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam, const bool FindParticlesInProximityBool)
 {
     try
     {
@@ -794,7 +791,7 @@ void CellEngineSimulationSpace::GenerateOneRandomReactionForChosenParticle(const
     CATCH("generating random reaction for particle")
 }
 
-void CellEngineSimulationSpace::GenerateOneChosenReactionForSelectedSpace(const float ReactionId, const float StartXPosParam, const float StartYPosParam, const float StartZPosParam, const float SizeXParam, const float SizeYParam, const float SizeZParam)
+void CellEngineSimulationSpace::GenerateOneChosenReactionForSelectedSpace(const RealType ReactionId, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam)
 {
     try
     {

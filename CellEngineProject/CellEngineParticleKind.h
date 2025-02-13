@@ -15,9 +15,9 @@ struct ParticleKindGraphicData
     EntityIdInt EntityId{};
     bool Visible{};
     bool Selected{};
-    float SizeX{};
-    float SizeY{};
-    float SizeZ{};
+    RealType SizeX{};
+    RealType SizeY{};
+    RealType SizeZ{};
     vector3_16 AtomColor{};
     vector3_16 ParticleColor{};
     vector3_16 RandomParticleColor{};
@@ -122,8 +122,8 @@ public:
     ListOfVoxelsType ListOfVoxels;
     ListOfAtomsType ListOfAtoms;
 public:
-    float XSizeDiv2{}, YSizeDiv2{}, ZSizeDiv2{};
-    float Radius{};
+    RealType XSizeDiv2{}, YSizeDiv2{}, ZSizeDiv2{};
+    RealType Radius{};
 public:
     ParticleKindGraphicData GraphicData;
 public:

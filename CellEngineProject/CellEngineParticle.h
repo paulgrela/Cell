@@ -80,8 +80,8 @@ public:
     UniqueIdInt GenomeIndexNext{};
     ElectricChargeType ElectricCharge{};
 public:
-    vector3_float32 Center{};
-    float Radius{};
+    vector3_Real32 Center{};
+    RealType Radius{};
 public:
     ListOfVoxelsType ListOfVoxels;
     ListOfAtomsType ListOfAtoms;
@@ -98,7 +98,7 @@ public:
 public:
     UnsignedInt OrderInParticleIndex{};
 public:
-    void SetCenterCoordinates(const float XCenterParam, const float YCenterParam, const float ZCenterParam)
+    void SetCenterCoordinates(const RealType XCenterParam, const RealType YCenterParam, const RealType ZCenterParam)
     {
         Center.X = XCenterParam;
         Center.Y = YCenterParam;
@@ -120,12 +120,12 @@ inline double DistanceOfParticles(const Particle& Particle1, const Particle& Par
     return sqrt(pow(static_cast<double>(Particle1.Center.X) - static_cast<double>(Particle2.Center.X), 2.0) + pow(static_cast<double>(Particle1.Center.Y) - static_cast<double>(Particle2.Center.Y), 2.0) + pow(static_cast<double>(Particle1.Center.Z) - static_cast<double>(Particle2.Center.Z), 2.0));
 }
 
-inline double DistanceOfParticleFromPoint(const Particle& Particle1, const vector3_float32& Point)
+inline double DistanceOfParticleFromPoint(const Particle& Particle1, const vector3_Real32& Point)
 {
     return sqrt(pow(static_cast<double>(Particle1.Center.X) - static_cast<double>(Point.X), 2.0) + pow(static_cast<double>(Particle1.Center.Y) - static_cast<double>(Point.Y), 2.0) + pow(static_cast<double>(Particle1.Center.Z) - static_cast<double>(Point.Z), 2.0));
 }
 
-inline double DistanceOfPoints(const vector3_float32& Point1, const vector3_float32& Point2)
+inline double DistanceOfPoints(const vector3_Real32& Point1, const vector3_Real32& Point2)
 {
     return sqrt(pow(static_cast<double>(Point1.X) - static_cast<double>(Point2.X), 2.0) + pow(static_cast<double>(Point1.Y) - static_cast<double>(Point2.Y), 2.0) + pow(static_cast<double>(Point1.Z) - static_cast<double>(Point2.Z), 2.0));
 }

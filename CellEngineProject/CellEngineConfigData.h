@@ -79,15 +79,16 @@ public:
     UnsignedInt NumberOfParticlesSectorsInY = 1;
     UnsignedInt NumberOfParticlesSectorsInZ = 1;
 public:
-    float ShiftCenterX = 2560.0f;
-    float ShiftCenterY = 2560.0f;
-    float ShiftCenterZ = 2560.0f;
+    RealType ShiftCenterX = 2560.0f;
+    RealType ShiftCenterY = 2560.0f;
+    RealType ShiftCenterZ = 2560.0f;
 public:
-    float SizeOfParticlesSectorX = 128.0f;
-    float SizeOfParticlesSectorY = 128.0f;
-    float SizeOfParticlesSectorZ = 128.0f;
+    RealType SizeOfParticlesSectorX = 128.0f;
+    RealType SizeOfParticlesSectorY = 128.0f;
+    RealType SizeOfParticlesSectorZ = 128.0f;
 public:
     UnsignedInt SizeOfSimulationSpaceInEachDimension{};
+public:
     float DivisionFactorForSimulationSpace{};
     float DivisionFactorForReadingPositionsOfParticles{ 1.0 };
     float DivisionFactorForGeneratingPositionsOfParticles{ 1.0 };

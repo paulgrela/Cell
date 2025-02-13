@@ -5,7 +5,7 @@ bool CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceInCuboidSelectedS
 {
     try
     {
-        vector3_float32 Center{};
+        vector3_Real32 Center{};
         const float Radius = (SizeOfParticleX + SizeOfParticleY + SizeOfParticleZ) / 3.0f;
         ListOfAtomsType ListOfAtoms;
 
@@ -37,7 +37,7 @@ bool CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceForEllipsoidSelec
 {
     try
     {
-        vector3_float32 Center{};
+        vector3_Real32 Center{};
         const float Radius = (RadiusXParam + RadiusYParam + RadiusZParam) / 3.0f;
         ListOfAtomsType ListOfAtoms;
 
