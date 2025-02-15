@@ -119,6 +119,21 @@ public:
 
         return *this;
     }
+public:
+    SimulationSpaceSectorBounds SetParametersForChosenSector(const UnsignedInt SectorXIndex, const UnsignedInt SectorYIndex, const UnsignedInt SectorZIndex, const RealType ShiftCenterX, const RealType ShiftCenterY, const RealType ShiftCenterZ, const RealType SizeOfParticlesSectorX, const RealType SizeOfParticlesSectorY, const RealType SizeOfParticlesSectorZ)
+    {
+        StartXPos = - ShiftCenterX + static_cast<RealType>(SectorXIndex) * SizeOfParticlesSectorX;
+        StartYPos = - ShiftCenterY + static_cast<RealType>(SectorYIndex) * SizeOfParticlesSectorY;
+        StartZPos = - ShiftCenterZ + static_cast<RealType>(SectorZIndex) * SizeOfParticlesSectorZ;
+        SizeX = SizeOfParticlesSectorX;
+        SizeY = SizeOfParticlesSectorY;
+        SizeZ = SizeOfParticlesSectorZ;
+        EndXPos = StartXPos + SizeX;
+        EndYPos = StartYPos + SizeY;
+        EndZPos = StartZPos + SizeZ;
+
+        return *this;
+    }
 };
 
 enum class TypesOfLookingForParticlesInProximity : UnsignedInt

@@ -128,30 +128,27 @@ void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const ch
                     {
                         CellEngineConfigDataObject.TypeOfSpace = static_cast<CellEngineConfigData::TypesOfSpace>(CellStatePropertyTreeElement.second.get<UnsignedInt>("TypeOfSpace"));
 
+
+                        if (CellStatePropertyTreeElement.second.get_child_optional("Radius1ForGenerationOfParticles"))
+                            CellEngineConfigDataObject.Radius1ForGenerationOfParticles = CellStatePropertyTreeElement.second.get<UnsignedInt>("Radius1ForGenerationOfParticles");
+                        if (CellStatePropertyTreeElement.second.get_child_optional("Radius1SizeForGenerationOfParticles"))
+                            CellEngineConfigDataObject.Radius1SizeForGenerationOfParticles = CellStatePropertyTreeElement.second.get<UnsignedInt>("Radius1SizeForGenerationOfParticles");
+                        if (CellStatePropertyTreeElement.second.get_child_optional("Radius2ForGenerationOfParticles"))
+                            CellEngineConfigDataObject.Radius2ForGenerationOfParticles = CellStatePropertyTreeElement.second.get<UnsignedInt>("Radius2ForGenerationOfParticles");
+                        if (CellStatePropertyTreeElement.second.get_child_optional("Radius2SizeForGenerationOfParticles"))
+                            CellEngineConfigDataObject.Radius2SizeForGenerationOfParticles = CellStatePropertyTreeElement.second.get<UnsignedInt>("Radius2SizeForGenerationOfParticles");
+
+                        if (CellStatePropertyTreeElement.second.get_child_optional("SizeOfSimulationSpaceInEachDimension"))
+                            CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension = CellStatePropertyTreeElement.second.get<UnsignedInt>("SizeOfSimulationSpaceInEachDimension");
+                        if (CellStatePropertyTreeElement.second.get_child_optional("DivisionFactorForSimulationSpace"))
+                            CellEngineConfigDataObject.DivisionFactorForSimulationSpace = CellStatePropertyTreeElement.second.get<float>("DivisionFactorForSimulationSpace");
+                        if (CellStatePropertyTreeElement.second.get_child_optional("DivisionFactorForReadingPositionsOfParticles"))
+                            CellEngineConfigDataObject.DivisionFactorForReadingPositionsOfParticles = CellStatePropertyTreeElement.second.get<float>("DivisionFactorForReadingPositionsOfParticles");
+                        if (CellStatePropertyTreeElement.second.get_child_optional("DivisionFactorForGeneratingPositionsOfParticles"))
+                            CellEngineConfigDataObject.DivisionFactorForGeneratingPositionsOfParticles = CellStatePropertyTreeElement.second.get<float>("DivisionFactorForGeneratingPositionsOfParticles");
+
                         if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)
                         {
-                            CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension = CellStatePropertyTreeElement.second.get<UnsignedInt>("SizeOfSimulationSpaceInEachDimension");
-                            CellEngineConfigDataObject.DivisionFactorForSimulationSpace = CellStatePropertyTreeElement.second.get<float>("DivisionFactorForSimulationSpace");
-
-                            if (CellStatePropertyTreeElement.second.get_child_optional("DivisionFactorForReadingPositionsOfParticles"))
-                                CellEngineConfigDataObject.DivisionFactorForReadingPositionsOfParticles = CellStatePropertyTreeElement.second.get<float>("DivisionFactorForReadingPositionsOfParticles");
-                            if (CellStatePropertyTreeElement.second.get_child_optional("DivisionFactorForGeneratingPositionsOfParticles"))
-                                CellEngineConfigDataObject.DivisionFactorForGeneratingPositionsOfParticles = CellStatePropertyTreeElement.second.get<float>("DivisionFactorForGeneratingPositionsOfParticles");
-
-                            if (CellStatePropertyTreeElement.second.get_child_optional("Radius1ForGenerationOfParticles"))
-                                CellEngineConfigDataObject.Radius1ForGenerationOfParticles = CellStatePropertyTreeElement.second.get<UnsignedInt>("Radius1ForGenerationOfParticles");
-                            if (CellStatePropertyTreeElement.second.get_child_optional("Radius1SizeForGenerationOfParticles"))
-                                CellEngineConfigDataObject.Radius1SizeForGenerationOfParticles = CellStatePropertyTreeElement.second.get<UnsignedInt>("Radius1SizeForGenerationOfParticles");
-                            if (CellStatePropertyTreeElement.second.get_child_optional("Radius2ForGenerationOfParticles"))
-                                CellEngineConfigDataObject.Radius2ForGenerationOfParticles = CellStatePropertyTreeElement.second.get<UnsignedInt>("Radius2ForGenerationOfParticles");
-                            if (CellStatePropertyTreeElement.second.get_child_optional("Radius2SizeForGenerationOfParticles"))
-                                CellEngineConfigDataObject.Radius2SizeForGenerationOfParticles = CellStatePropertyTreeElement.second.get<UnsignedInt>("Radius2SizeForGenerationOfParticles");
-
-                            if (CellStatePropertyTreeElement.second.get_child_optional("DNAPaired"))
-                                CellEngineConfigDataObject.DNAPaired = CellStatePropertyTreeElement.second.get<bool>("DNAPaired");
-                            if (CellStatePropertyTreeElement.second.get_child_optional("SizeOfAdvanceDuringGenerationOfRandomDNA"))
-                                CellEngineConfigDataObject.SizeOfAdvanceDuringGenerationOfRandomDNA = CellStatePropertyTreeElement.second.get<UnsignedInt>("SizeOfAdvanceDuringGenerationOfRandomDNA");
-
                             CellEngineConfigDataObject.SimulationSpaceSelectionStartXPos = CellStatePropertyTreeElement.second.get<UnsignedInt>("SimulationSpaceSelectionStartXPos");
                             CellEngineConfigDataObject.SimulationSpaceSelectionStartYPos = CellStatePropertyTreeElement.second.get<UnsignedInt>("SimulationSpaceSelectionStartYPos");
                             CellEngineConfigDataObject.SimulationSpaceSelectionStartZPos = CellStatePropertyTreeElement.second.get<UnsignedInt>("SimulationSpaceSelectionStartZPos");
@@ -204,7 +201,6 @@ void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const ch
                             CellEngineConfigDataObject.RadiusOfCellForDNA = CellStatePropertyTreeElement.second.get<double>("RadiusOfCellForDNA");
                         }
 
-
                         CellEngineConfigDataObject.CellStateFileName = CellStatePropertyTreeElement.second.get<string>("CellStateFileName");
                         CellEngineConfigDataObject.CellStateFileNameBackup = CellStatePropertyTreeElement.second.get<string>("CellStateFileNameBackup");
 
@@ -217,6 +213,20 @@ void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const ch
                             CellEngineConfigDataObject.NumberOfParticlesSectorsInY = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfParticlesSectorsInY");
                         if (CellStatePropertyTreeElement.second.get_child_optional("NumberOfParticlesSectorsInZ"))
                             CellEngineConfigDataObject.NumberOfParticlesSectorsInZ = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfParticlesSectorsInZ");
+
+                        if (CellStatePropertyTreeElement.second.get_child_optional("ShiftCenterX"))
+                            CellEngineConfigDataObject.ShiftCenterX = CellStatePropertyTreeElement.second.get<float>("ShiftCenterX");
+                        if (CellStatePropertyTreeElement.second.get_child_optional("ShiftCenterY"))
+                            CellEngineConfigDataObject.ShiftCenterY = CellStatePropertyTreeElement.second.get<float>("ShiftCenterY");
+                        if (CellStatePropertyTreeElement.second.get_child_optional("ShiftCenterZ"))
+                            CellEngineConfigDataObject.ShiftCenterZ = CellStatePropertyTreeElement.second.get<float>("ShiftCenterZ");
+
+                        if (CellStatePropertyTreeElement.second.get_child_optional("SizeOfParticlesSectorX"))
+                            CellEngineConfigDataObject.SizeOfParticlesSectorX = CellStatePropertyTreeElement.second.get<float>("SizeOfParticlesSectorX");
+                        if (CellStatePropertyTreeElement.second.get_child_optional("SizeOfParticlesSectorY"))
+                            CellEngineConfigDataObject.SizeOfParticlesSectorY = CellStatePropertyTreeElement.second.get<float>("SizeOfParticlesSectorY");
+                        if (CellStatePropertyTreeElement.second.get_child_optional("SizeOfParticlesSectorZ"))
+                            CellEngineConfigDataObject.SizeOfParticlesSectorZ = CellStatePropertyTreeElement.second.get<float>("SizeOfParticlesSectorZ");
 
                         if (CellStatePropertyTreeElement.second.get_child_optional("CellGenomePositionsFileName"))
                             CellEngineConfigDataObject.CellGenomePositionsFileName = CellStatePropertyTreeElement.second.get<string>("CellGenomePositionsFileName");

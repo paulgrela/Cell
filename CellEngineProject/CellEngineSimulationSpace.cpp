@@ -79,7 +79,6 @@ void CellEngineSimulationSpace::GenerateNStepsOfDiffusionForBigPartOfCellSpace(c
             for (UnsignedInt PosX = XStartParam - SizeNMultiplyFactor * XStepParam; PosX <= XStartParam + SizeNMultiplyFactor * XStepParam; PosX += XStepParam)
                 for (UnsignedInt PosY = YStartParam - SizeNMultiplyFactor * YStepParam; PosY <= YStartParam + SizeNMultiplyFactor * YStepParam; PosY += YStepParam)
                     for (UnsignedInt PosZ = ZStartParam - SizeNMultiplyFactor * ZStepParam; PosZ <= ZStartParam + SizeNMultiplyFactor * ZStepParam; PosZ += ZStepParam)
-
                         GenerateOneStepOfDiffusionForSelectedSpace(InBounds, PosX, PosY, PosZ, XStepParam, YStepParam, ZStepParam);
 
         CheckConditionsToIncSimulationStepNumberForStatistics();
@@ -128,12 +127,7 @@ void CellEngineSimulationSpace::GenerateNStepsOfDiffusionForWholeCellSpaceFullAt
 {
     try
     {
-        CellEngineExecutionTimeStatisticsObject.ExecutionDurationTimeForFindingParticles = std::chrono::seconds::zero();
-        CellEngineExecutionTimeStatisticsObject.ExecutionDurationTimeForSavingFoundParticles = std::chrono::seconds::zero();
-        CellEngineExecutionTimeStatisticsObject.ExecutionDurationTimeForMakingChemicalReactions = std::chrono::seconds::zero();
-        CellEngineExecutionTimeStatisticsObject.ExecutionDurationTimeForMakingCancelledChemicalReactions = std::chrono::seconds::zero();
-        CellEngineExecutionTimeStatisticsObject.ExecutionDurationTimeForMakingChemicalReactionsSpecialFunctions = std::chrono::seconds::zero();
-        CellEngineExecutionTimeStatisticsObject.ExecutionDurationTimeForChoosingParticlesForMakingChemicalReactions = std::chrono::seconds::zero();
+        CellEngineExecutionTimeStatisticsObject.ZeroMeasureTime();
 
         const auto start_time = chrono::high_resolution_clock::now();
 
@@ -148,15 +142,12 @@ void CellEngineSimulationSpace::GenerateNStepsOfDiffusionForWholeCellSpaceFullAt
         CellEngineUseful::SwitchOnLogs();
 
         const auto stop_time = chrono::high_resolution_clock::now();
+
         LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Execution of generating random reactions in whole cell space has taken time: ","Execution in threads")));
-        LoggersManagerObject.Log(STREAM(""));
-        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLine(CellEngineExecutionTimeStatisticsObject.ExecutionDurationTimeForFindingParticles, "Execution of finding particles has taken time: ","Execution in threads")));
-        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLine(CellEngineExecutionTimeStatisticsObject.ExecutionDurationTimeForSavingFoundParticles, "Execution of saving found particles has taken time: ","Execution in threads")));
-        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLine(CellEngineExecutionTimeStatisticsObject.ExecutionDurationTimeForMakingChemicalReactions, "Execution of making chemical reactions has taken time: ","Execution in threads")));
-        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLine(CellEngineExecutionTimeStatisticsObject.ExecutionDurationTimeForMakingChemicalReactionsSpecialFunctions, "Execution of making chemical reactions special functions has taken time: ","Execution in threads")));
-        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLine(CellEngineExecutionTimeStatisticsObject.ExecutionDurationTimeForChoosingParticlesForMakingChemicalReactions, "Execution of saving choosing particles for making chemical reactions has taken time: ","Execution in threads")));
+
+        CellEngineExecutionTimeStatisticsObject.PrintMeasureTime();
     }
-    CATCH("generating diffusion for whole cell space")
+    CATCH("generating diffusion for whole cell space full atom")
 }
 
 template <class T>
@@ -764,6 +755,7 @@ bool CellEngineSimulationSpace::FindAndExecuteChosenReaction(const UnsignedInt R
     return false;
 }
 
+//TU
 void CellEngineSimulationSpace::GenerateOneRandomReactionForSelectedSpace(const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam, const bool FindParticlesInProximityBool)
 {
     try
@@ -779,17 +771,17 @@ void CellEngineSimulationSpace::GenerateOneRandomReactionForSelectedSpace(const 
     CATCH("generating random reaction for selected space")
 }
 
-void CellEngineSimulationSpace::GenerateOneRandomReactionForChosenParticle(const Particle& ParticleObject)
-{
-    try
-    {
-        PrepareRandomReaction();
-
-        if (FindParticlesInProximityOfSimulationSpaceForChosenParticle(ParticleObject, 20) == true)
-            FindAndExecuteRandomReaction(min(LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity.size(), ChemicalReactionsManagerObject.MaxNumberOfReactants));
-    }
-    CATCH("generating random reaction for particle")
-}
+// void CellEngineSimulationSpace::GenerateOneRandomReactionForChosenParticle(const Particle& ParticleObject)
+// {
+//     try
+//     {
+//         PrepareRandomReaction();
+//
+//         if (FindParticlesInProximityOfSimulationSpaceForChosenParticle(ParticleObject, 20) == true)
+//             FindAndExecuteRandomReaction(min(LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity.size(), ChemicalReactionsManagerObject.MaxNumberOfReactants));
+//     }
+//     CATCH("generating random reaction for particle")
+// }
 
 void CellEngineSimulationSpace::GenerateOneChosenReactionForSelectedSpace(const RealType ReactionId, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam)
 {
@@ -805,39 +797,39 @@ void CellEngineSimulationSpace::GenerateOneChosenReactionForSelectedSpace(const 
     CATCH("generating random reaction for particle")
 }
 
-void CellEngineSimulationSpace::GenerateOneStepOfRandomReactionsForAllParticles()
-{
-    try
-    {
-        FOR_EACH_PARTICLE_IN_XYZ_CONST
-            if (ParticleObject.second.SelectedForReaction == false)
-                GenerateOneRandomReactionForChosenParticle(ParticleObject.second);
-    }
-    CATCH("generating random reactions for all particles")
-}
+// void CellEngineSimulationSpace::GenerateOneStepOfRandomReactionsForAllParticles()
+// {
+//     try
+//     {
+//         FOR_EACH_PARTICLE_IN_XYZ_CONST
+//             if (ParticleObject.second.SelectedForReaction == false)
+//                 GenerateOneRandomReactionForChosenParticle(ParticleObject.second);
+//     }
+//     CATCH("generating random reactions for all particles")
+// }
 
-void CellEngineSimulationSpace::GenerateOneStepOfRandomReactionsForSelectedRangeOfParticles(UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam)
-{
-    try
-    {
-        GetRangeOfParticlesForRandomParticles(StartParticleIndexParam, EndParticleIndexParam, MaxParticleIndex);
+// void CellEngineSimulationSpace::GenerateOneStepOfRandomReactionsForSelectedRangeOfParticles(UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam)
+// {
+//     try
+//     {
+//         GetRangeOfParticlesForRandomParticles(StartParticleIndexParam, EndParticleIndexParam, MaxParticleIndex);
+//
+//         for (UniqueIdInt ParticleIndex = StartParticleIndexParam; ParticleIndex <= EndParticleIndexParam; ParticleIndex++)
+//             if (auto ParticlesIterator = GetParticles().find(ParticleIndex); ParticlesIterator != GetParticles().end())
+//                 GenerateOneRandomReactionForChosenParticle(ParticlesIterator->second);
+//     }
+//     CATCH("generating one step of random reactions for selected range of particles")
+// }
 
-        for (UniqueIdInt ParticleIndex = StartParticleIndexParam; ParticleIndex <= EndParticleIndexParam; ParticleIndex++)
-            if (auto ParticlesIterator = GetParticles().find(ParticleIndex); ParticlesIterator != GetParticles().end())
-                GenerateOneRandomReactionForChosenParticle(ParticlesIterator->second);
-    }
-    CATCH("generating one step of random reactions for selected range of particles")
-}
-
-void CellEngineSimulationSpace::GenerateOneStepOfRandomReactionsForOneParticleFromRangeOfParticles(UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam, const UnsignedInt ShiftIndexOfChosenParticle)
-{
-    try
-    {
-        GetRangeOfParticlesForRandomParticles(StartParticleIndexParam, EndParticleIndexParam, MaxParticleIndex);
-        GenerateOneRandomReactionForChosenParticle(GetParticleFromIndex(StartParticleIndexParam + ShiftIndexOfChosenParticle));
-    }
-    CATCH("generating one step of random reactions for selected range of particles")
-}
+// void CellEngineSimulationSpace::GenerateOneStepOfRandomReactionsForOneParticleFromRangeOfParticles(UniqueIdInt StartParticleIndexParam, UniqueIdInt EndParticleIndexParam, const UnsignedInt ShiftIndexOfChosenParticle)
+// {
+//     try
+//     {
+//         GetRangeOfParticlesForRandomParticles(StartParticleIndexParam, EndParticleIndexParam, MaxParticleIndex);
+//         GenerateOneRandomReactionForChosenParticle(GetParticleFromIndex(StartParticleIndexParam + ShiftIndexOfChosenParticle));
+//     }
+//     CATCH("generating one step of random reactions for selected range of particles")
+// }
 
 void CellEngineSimulationSpace::SaveHistogramOfParticlesStatisticsToFile()
 {
@@ -936,16 +928,13 @@ void CellEngineSimulationSpace::GenerateNStepsOfOneChosenReactionForWholeCellSpa
     CATCH("generating random reactions for whole cell space")
 }
 
+
+//TU
 void CellEngineSimulationSpace::GenerateNStepsOfOneRandomReactionForWholeCellSpace(const UnsignedInt XStartParam, const UnsignedInt YStartParam, const UnsignedInt ZStartParam, const UnsignedInt XStepParam, const UnsignedInt YStepParam, const UnsignedInt ZStepParam, const UnsignedInt XSizeParam, UnsignedInt YSizeParam, const UnsignedInt ZSizeParam, const UnsignedInt NumberOfSimulationSteps)
 {
     try
     {
-        CellEngineExecutionTimeStatisticsObject.ExecutionDurationTimeForFindingParticles = std::chrono::seconds::zero();
-        CellEngineExecutionTimeStatisticsObject.ExecutionDurationTimeForSavingFoundParticles = std::chrono::seconds::zero();
-        CellEngineExecutionTimeStatisticsObject.ExecutionDurationTimeForMakingChemicalReactions = std::chrono::seconds::zero();
-        CellEngineExecutionTimeStatisticsObject.ExecutionDurationTimeForMakingCancelledChemicalReactions = std::chrono::seconds::zero();
-        CellEngineExecutionTimeStatisticsObject.ExecutionDurationTimeForMakingChemicalReactionsSpecialFunctions = std::chrono::seconds::zero();
-        CellEngineExecutionTimeStatisticsObject.ExecutionDurationTimeForChoosingParticlesForMakingChemicalReactions = std::chrono::seconds::zero();
+        CellEngineExecutionTimeStatisticsObject.PrintMeasureTime();
 
         const auto start_time = chrono::high_resolution_clock::now();
 
@@ -962,16 +951,85 @@ void CellEngineSimulationSpace::GenerateNStepsOfOneRandomReactionForWholeCellSpa
         CellEngineUseful::SwitchOnLogs();
 
         const auto stop_time = chrono::high_resolution_clock::now();
+
         LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Execution of generating random reactions in whole cell space has taken time: ","Execution in threads")));
-        LoggersManagerObject.Log(STREAM(""));
-        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLine(CellEngineExecutionTimeStatisticsObject.ExecutionDurationTimeForFindingParticles, "Execution of finding particles has taken time: ","Execution in threads")));
-        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLine(CellEngineExecutionTimeStatisticsObject.ExecutionDurationTimeForSavingFoundParticles, "Execution of saving found particles has taken time: ","Execution in threads")));
-        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLine(CellEngineExecutionTimeStatisticsObject.ExecutionDurationTimeForMakingChemicalReactions, "Execution of making chemical reactions has taken time: ","Execution in threads")));
-        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLine(CellEngineExecutionTimeStatisticsObject.ExecutionDurationTimeForMakingChemicalReactionsSpecialFunctions, "Execution of making chemical reactions special functions has taken time: ","Execution in threads")));
-        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLine(CellEngineExecutionTimeStatisticsObject.ExecutionDurationTimeForChoosingParticlesForMakingChemicalReactions, "Execution of saving choosing particles for making chemical reactions has taken time: ","Execution in threads")));
+
+        CellEngineExecutionTimeStatisticsObject.PrintMeasureTime();
     }
-    CATCH("generating random reactions for whole cell space")
+    CATCH("generating n steps of random reactions for whole cell space")
 }
+
+
+
+// void CellEngineSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpaceFullAtom(const bool InBounds, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam)
+// {
+//     try
+//     {
+//         uniform_int_distribution<SignedInt> UniformDistributionObjectMoveParticleDirection_int64t(-10, 10);
+//
+//         for (auto& ParticleInProximityObject : Particles[StartXPosParam][StartYPosParam][StartZPosParam])
+//         {
+//             CurrentSectorPos = CurrentSectorPosType{ static_cast<UnsignedInt>(StartXPosParam), static_cast<UnsignedInt>(StartYPosParam), static_cast<UnsignedInt>(StartZPosParam) };
+//             if (CellEngineUseful::IsDNA(ParticleInProximityObject.second.EntityId) == false)
+//                 MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(ParticleInProximityObject.second, Particles, CurrentSectorPos, UniformDistributionObjectMoveParticleDirection_int64t(mt64R), UniformDistributionObjectMoveParticleDirection_int64t(mt64R), UniformDistributionObjectMoveParticleDirection_int64t(mt64R), 0, 0, 0, SizeXParam, SizeYParam, SizeZParam);
+//         }
+//     }
+//     CATCH("generating one step of diffusion for selected space")
+// }
+
+//TUTAJ
+void CellEngineSimulationSpace::GenerateOneRandomReactionForSelectedSpaceFullAtom(const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam, const bool FindParticlesInProximityBool)
+{
+    try
+    {
+        PrepareRandomReaction();
+
+        FindParticlesInProximityOfSimulationSpaceForSelectedSpace(true, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
+
+        ActualSimulationSpaceSectorBoundsObject.SetParametersForChosenSector(StartXPosParam, StartYPosParam, StartZPosParam, CellEngineConfigDataObject.ShiftCenterX, CellEngineConfigDataObject.ShiftCenterY, CellEngineConfigDataObject.ShiftCenterZ, CellEngineConfigDataObject.SizeOfParticlesSectorX, CellEngineConfigDataObject.SizeOfParticlesSectorY, CellEngineConfigDataObject.SizeOfParticlesSectorZ);
+
+        FindAndExecuteRandomReaction(min(LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity.size(), ChemicalReactionsManagerObject.MaxNumberOfReactants));
+    }
+    CATCH("generating random reaction for selected space")
+}
+
+//TUTAJ
+void CellEngineSimulationSpace::GenerateNStepsOfOneRandomReactionForWholeCellSpaceFullAtom(const UnsignedInt XStartParam, const UnsignedInt YStartParam, const UnsignedInt ZStartParam, const UnsignedInt XStepParam, const UnsignedInt YStepParam, const UnsignedInt ZStepParam, const UnsignedInt XSizeParam, UnsignedInt YSizeParam, const UnsignedInt ZSizeParam, const UnsignedInt NumberOfSimulationSteps)
+{
+    try
+    {
+        CellEngineExecutionTimeStatisticsObject.ZeroMeasureTime();
+
+        const auto start_time = chrono::high_resolution_clock::now();
+
+        CellEngineUseful::SwitchOffLogs();
+
+        for (UnsignedInt Step = 1; Step <= NumberOfSimulationSteps; Step++)
+            FOR_EACH_PARTICLE_IN_XYZ_ONLY
+                GenerateOneRandomReactionForSelectedSpaceFullAtom(false, ParticleSectorXIndex, ParticleSectorYIndex, ParticleSectorZIndex, XSizeParam, YSizeParam, ZSizeParam);
+
+        CheckConditionsToIncSimulationStepNumberForStatistics();
+
+        CellEngineUseful::SwitchOnLogs();
+
+        const auto stop_time = chrono::high_resolution_clock::now();
+
+        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Execution of generating random reactions in whole cell space has taken time: ","Execution in threads")));
+
+        CellEngineExecutionTimeStatisticsObject.PrintMeasureTime();
+    }
+    CATCH("generating random reactions for whole cell space full atom")
+}
+
+
+
+
+
+
+
+
+
+
 
 void CellEngineSimulationSpace::GenerateNStepsOfOneRandomReactionForBigPartOfCellSpace(const UnsignedInt SizeNMultiplyFactor, const UnsignedInt XStartParam, const UnsignedInt YStartParam, const UnsignedInt ZStartParam, const UnsignedInt XStepParam, const UnsignedInt YStepParam, const UnsignedInt ZStepParam, const UnsignedInt XSizeParam, const UnsignedInt YSizeParam, const UnsignedInt ZSizeParam, const UnsignedInt NumberOfSimulationSteps)
 {

@@ -1805,10 +1805,27 @@
                         <CellStateFileName>../../WholeCellData/JCVI-syn3A/extended_cellpack_atom_instances.cif</CellStateFileName>
                         <CellStateFileNameBackup>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile33.dat</CellStateFleNameBackup>
 
+                        <DivisionFactorForSimulationSpace>4.0</DivisionFactorForSimulationSpace> <!--4 or 2 or other-->
+                        <DivisionFactorForReadingPositionsOfParticles>1.0</DivisionFactorForReadingPositionsOfParticles>
+                        <DivisionFactorForGeneratingPositionsOfParticles>1.0</DivisionFactorForGeneratingPositionsOfParticles>
+
+                        <Radius1ForGenerationOfParticles>2400</Radius1ForGenerationOfParticles>
+                        <Radius1SizeForGenerationOfParticles>2400</Radius1SizeForGenerationOfParticles>
+                        <Radius2ForGenerationOfParticles>2560</Radius1ForGenerationOfParticles>
+                        <Radius2SizeForGenerationOfParticles>160</Radius1SizeForGenerationOfParticles>
+
                         <MixedFullAtomWithVoxelSpace>true</MixedFullAtomWithVoxelSpace>
                         <NumberOfParticlesSectorsInX>40</NumberOfParticlesSectorsInX>
                         <NumberOfParticlesSectorsInY>40</NumberOfParticlesSectorsInY>
                         <NumberOfParticlesSectorsInZ>40</NumberOfParticlesSectorsInZ>
+
+                        <ShiftCenterX>2560</ShiftCenterX>
+                        <ShiftCenterY>2560</ShiftCenterY>
+                        <ShiftCenterZ>2560</ShiftCenterZ>
+
+                        <SizeOfParticlesSectorX>128</SizeOfParticlesSectorX>
+                        <SizeOfParticlesSectorY>128</SizeOfParticlesSectorY>
+                        <SizeOfParticlesSectorZ>128</SizeOfParticlesSectorZ>
 
                         <CellGenomePositionsFileName>./data/genomes/genome_1024_double_1/GENOME_POSITIONS.DAT</CellGenomePositionsFileName>
                         <CellGenomeSequenceFileName>./data/genomes/genome_1024_double_1/GENOME_SEQUENCE.DAT</CellGenomeSequenceFileName>

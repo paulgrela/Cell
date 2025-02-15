@@ -2,13 +2,14 @@
 #include "CellEngineExecutionTimeStatistics.h"
 #include "CellEngineChemicalReactionsInFullAtomSimulationSpace.h"
 
-void CellEngineChemicalReactionsInFullAtomSimulationSpace::FindParticlesInProximityInSimulationSpaceForSelectedLocalSpace(std::unordered_set<UnsignedInt>& FoundParticleIndexes, bool UpdateNucleotides, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam)
+void CellEngineChemicalReactionsInFullAtomSimulationSpace::FindParticlesInProximityInSimulationSpaceForSelectedLocalSpace(std::unordered_set<UnsignedInt>& FoundParticleIndexes, const bool UpdateNucleotides, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
 {
     try
     {
         const auto start_time = chrono::high_resolution_clock::now();
 
-
+        for (const auto& ParticleObject : Particles[StartXPosParam][StartYPosParam][StartZPosParam])
+            LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity.emplace_back(ParticleObject.second.Index);
 
         const auto stop_time = chrono::high_resolution_clock::now();
 

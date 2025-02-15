@@ -201,9 +201,9 @@ tuple<UnsignedInt, UnsignedInt, UnsignedInt> CellEngineRealRandomParticlesInVoxe
 {
     try
     {
-        UnsignedInt PosXStart = CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension / 2;
-        UnsignedInt PosYStart = CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension / 2;
-        UnsignedInt PosZStart = CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension / 2;
+        const UnsignedInt PosXStart = CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension / 2;
+        const UnsignedInt PosYStart = CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension / 2;
+        const UnsignedInt PosZStart = CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension / 2;
 
         uniform_int_distribution<SignedInt> UniformDistributionObjectMoveParticleDirection_int64t(0, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension);
 
@@ -213,9 +213,9 @@ tuple<UnsignedInt, UnsignedInt, UnsignedInt> CellEngineRealRandomParticlesInVoxe
         {
             TryFindNewRandomPositionCounter++;
 
-            SignedInt dx = static_cast<SignedInt>(Radius) - UniformDistributionObjectMoveParticleDirection_int64t(mt64R);
-            SignedInt dy = static_cast<SignedInt>(Radius) - UniformDistributionObjectMoveParticleDirection_int64t(mt64R);
-            SignedInt dz = static_cast<SignedInt>(Radius) - UniformDistributionObjectMoveParticleDirection_int64t(mt64R);
+            const SignedInt dx = static_cast<SignedInt>(Radius) - UniformDistributionObjectMoveParticleDirection_int64t(mt64R);
+            const SignedInt dy = static_cast<SignedInt>(Radius) - UniformDistributionObjectMoveParticleDirection_int64t(mt64R);
+            const SignedInt dz = static_cast<SignedInt>(Radius) - UniformDistributionObjectMoveParticleDirection_int64t(mt64R);
 
             if ((dx * dx + dy * dy + dz * dz >= (Radius - RadiusSize) * (Radius - RadiusSize)) && (dx * dx + dy * dy + dz * dz) <= (Radius * Radius))
                 return { PosXStart + dx, PosYStart + dy, PosZStart + dz };
@@ -323,7 +323,7 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::InsertNewRandomParticle
 
                             bool Success = false;
 
-                            auto GeneIter = ParticlesKindsManagerObject.Genes.find(ParticleKindSpecialDataObject.GeneId);
+                            const auto GeneIter = ParticlesKindsManagerObject.Genes.find(ParticleKindSpecialDataObject.GeneId);
                             if (GeneIter != ParticlesKindsManagerObject.Genes.end())
                                 Success = TryToGenerateRandomParticlesForType(ParticleKindObject, EntityId, Radius, RadiusSize, NumberOfErrors, GeneIter->second.NumId, GeneIter->second.Sequence, GeneIter->second.Sequence.length());
                             else

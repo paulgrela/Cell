@@ -196,15 +196,11 @@ void CellEngineRealRandomParticlesInFullAtomSpaceGenerator::PrintInformationAbou
     CATCH("printing information about ribosomes proteins")
 }
 
-tuple<UnsignedInt, UnsignedInt, UnsignedInt> CellEngineRealRandomParticlesInFullAtomSpaceGenerator::GetRandomPositionInsideSphere(const UnsignedInt Radius, const UnsignedInt RadiusSize)
+tuple<float, float, float> CellEngineRealRandomParticlesInFullAtomSpaceGenerator::GetRandomPositionInsideSphere(const UnsignedInt Radius, const UnsignedInt RadiusSize)
 {
     try
     {
-        UnsignedInt PosXStart = CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension / 2;
-        UnsignedInt PosYStart = CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension / 2;
-        UnsignedInt PosZStart = CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension / 2;
-
-        uniform_int_distribution<SignedInt> UniformDistributionObjectMoveParticleDirection_int64t(0, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension);
+        uniform_real_distribution<float> UniformDistributionObjectMoveParticleDirection_float(-CellEngineConfigDataObject.ShiftCenterX, CellEngineConfigDataObject.ShiftCenterX);
 
         UnsignedInt TryFindNewRandomPositionCounter = 0;
 
@@ -212,12 +208,12 @@ tuple<UnsignedInt, UnsignedInt, UnsignedInt> CellEngineRealRandomParticlesInFull
         {
             TryFindNewRandomPositionCounter++;
 
-            SignedInt dx = static_cast<SignedInt>(Radius) - UniformDistributionObjectMoveParticleDirection_int64t(mt64R);
-            SignedInt dy = static_cast<SignedInt>(Radius) - UniformDistributionObjectMoveParticleDirection_int64t(mt64R);
-            SignedInt dz = static_cast<SignedInt>(Radius) - UniformDistributionObjectMoveParticleDirection_int64t(mt64R);
+            const float dx = static_cast<float>(Radius) - UniformDistributionObjectMoveParticleDirection_float(mt64R);
+            const float dy = static_cast<float>(Radius) - UniformDistributionObjectMoveParticleDirection_float(mt64R);
+            const float dz = static_cast<float>(Radius) - UniformDistributionObjectMoveParticleDirection_float(mt64R);
 
             if ((dx * dx + dy * dy + dz * dz >= (Radius - RadiusSize) * (Radius - RadiusSize)) && (dx * dx + dy * dy + dz * dz) <= (Radius * Radius))
-                return { PosXStart + dx, PosYStart + dy, PosZStart + dz };
+                return { dx, dy, dz };
         }
     }
     CATCH("getting random position inside cell")
@@ -240,7 +236,7 @@ bool CellEngineRealRandomParticlesInFullAtomSpaceGenerator::TryToGenerateRandomP
         if (EntityId == CellEngineConfigDataObject.RNAIdentifier)
             SizeY = SizeZ = 1;
 
-        UnsignedInt PosX, PosY, PosZ;
+        float PosX, PosY, PosZ;
         bool TryResult = false;
 
         UnsignedInt TryInsertNewParticleCounter = 0;
@@ -249,9 +245,9 @@ bool CellEngineRealRandomParticlesInFullAtomSpaceGenerator::TryToGenerateRandomP
         {
             tie(PosX, PosY, PosZ) = GetRandomPositionInsideSphere(Radius, RadiusSize);
             if (SizeX > 1)
-                TryResult = GenerateParticleAtomsWhenSelectedSpaceIsFree(Particles, AddNewParticle(Particle(GetNewFreeIndexOfParticle(), EntityId, 1, -1, 1, ParticleKindObject.second.ElectricCharge, GeneSequence, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), PosX, PosY, PosZ, SizeX, SizeY, SizeZ, 0, 0, 0, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, &CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceForEllipsoidSelectedSpace, &CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForEllipsoidSelectedSpace);
+                TryResult = GenerateParticleAtomsWhenSelectedSpaceIsFree(Particles, AddNewParticle(Particle(GetNewFreeIndexOfParticle(), EntityId, 1, -1, 1, ParticleKindObject.second.ElectricCharge, GeneSequence, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), PosX, PosY, PosZ, SizeX, SizeY, SizeZ, 0, 0, 0, 0, 0, 0, &CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceForEllipsoidSelectedSpace, &CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForEllipsoidSelectedSpace);
             else
-                TryResult = GenerateParticleAtomsWhenSelectedSpaceIsFree(Particles, AddNewParticle(Particle(GetNewFreeIndexOfParticle(), EntityId, 1, -1, 1, ParticleKindObject.second.ElectricCharge, GeneSequence, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), PosX, PosY, PosZ, SizeX, SizeY, SizeZ, 0, 0, 0, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, &CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForCuboidSelectedSpace);
+                TryResult = GenerateParticleAtomsWhenSelectedSpaceIsFree(Particles, AddNewParticle(Particle(GetNewFreeIndexOfParticle(), EntityId, 1, -1, 1, ParticleKindObject.second.ElectricCharge, GeneSequence, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), PosX, PosY, PosZ, SizeX, SizeY, SizeZ, 0, 0, 0, 0, 0, 0, &CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForCuboidSelectedSpace);
             if (TryResult == false)
                 RemoveParticle(MaxParticleIndex, true);
             TryInsertNewParticleCounter++;
@@ -310,10 +306,34 @@ void CellEngineRealRandomParticlesInFullAtomSpaceGenerator::InsertNewRandomParti
 
         const auto start_time = chrono::high_resolution_clock::now();
 
+        // for (const auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
+        //     if (ParticleKindObject.second.ParticleKindSpecialDataSector.empty() == false)
+        //         for (const auto& ParticleKindSpecialDataObject: ParticleKindObject.second.ParticleKindSpecialDataSector)
+        //             if (ParticleKindSpecialDataObject.ParticleType == ParticleTypeParam)
+        //                 for (UnsignedInt ParticleCounter = 1; ParticleCounter <= ParticleKindSpecialDataObject.CounterAtStartOfSimulation; ParticleCounter++)
+        //                 {
+        //                     LoggersManagerObject.Log(STREAM("Particle Type = " << ParticlesKindsManagerObject.ConvertParticleTypeToString(ParticleKindSpecialDataObject.ParticleType) << " Counter = " << ParticleCounter));
+        //
+        //                     const EntityIdInt EntityId = GetParticleKindIdForRNA_Second(ParticleKindObject.second.EntityId, ParticleKindSpecialDataObject.ParticleType, ModifyParticleKindIdForRNA);
+        //
+        //                     bool Success = false;
+        //
+        //                     auto GeneIter = ParticlesKindsManagerObject.Genes.find(ParticleKindSpecialDataObject.GeneId);
+        //                     if (GeneIter != ParticlesKindsManagerObject.Genes.end())
+        //                         Success = TryToGenerateRandomParticlesForType(ParticleKindObject, EntityId, Radius, RadiusSize, NumberOfErrors, GeneIter->second.NumId, GeneIter->second.Sequence, GeneIter->second.Sequence.length());
+        //                     else
+        //                         Success = TryToGenerateRandomParticlesForType(ParticleKindObject, EntityId, Radius, RadiusSize, NumberOfErrors, 0, "NO GENE", GetSizeOfGeneratedParticle_Second(ParticleKindSpecialDataObject.ParticleType));
+        //
+        //                     if (Success == true)
+        //                         NumberOfGeneratedParticles++;
+        //                 }
+
         for (const auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
             if (ParticleKindObject.second.ParticleKindSpecialDataSector.empty() == false)
                 for (const auto& ParticleKindSpecialDataObject: ParticleKindObject.second.ParticleKindSpecialDataSector)
                     if (ParticleKindSpecialDataObject.ParticleType == ParticleTypeParam)
+                    {
+                                                                                                                        LoggersManagerObject.LogUnconditional(STREAM("EntityId = " << ParticleKindObject.second.EntityId << " Counter = " << ParticleKindSpecialDataObject.CounterAtStartOfSimulation << " Radius = " << Radius << " RadiusSize = " << RadiusSize)); getchar();
                         for (UnsignedInt ParticleCounter = 1; ParticleCounter <= ParticleKindSpecialDataObject.CounterAtStartOfSimulation; ParticleCounter++)
                         {
                             LoggersManagerObject.Log(STREAM("Particle Type = " << ParticlesKindsManagerObject.ConvertParticleTypeToString(ParticleKindSpecialDataObject.ParticleType) << " Counter = " << ParticleCounter));
@@ -331,6 +351,7 @@ void CellEngineRealRandomParticlesInFullAtomSpaceGenerator::InsertNewRandomParti
                             if (Success == true)
                                 NumberOfGeneratedParticles++;
                         }
+                    }
 
         const auto stop_time = chrono::high_resolution_clock::now();
 

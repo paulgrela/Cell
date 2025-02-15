@@ -79,8 +79,7 @@ bool CellEngineParticlesFullAtomShapesGenerator::GenerateParticleAtomsWhenSelect
 
         if ((this->*CheckFreeSpaceForSelectedSpace)(ParticlesParam, PosXStart, PosYStart, PosZStart, 1, 1, 1, SizeOfParticleX, SizeOfParticleY, SizeOfParticleZ, 0) == true)
         {
-            if (PosXStart + SizeOfParticleX < StartXPosParam + SizeXParam && PosYStart + SizeOfParticleY < StartYPosParam + SizeYParam && PosZStart + SizeOfParticleZ < StartZPosParam + SizeZParam)
-                (this->*SetValueToAtomsForSelectedSpace)(&FilledAtomsForRandomParticle, PosXStart, PosYStart, PosZStart, 1, 1, 1, SizeOfParticleX, SizeOfParticleY, SizeOfParticleZ);
+            (this->*SetValueToAtomsForSelectedSpace)(&FilledAtomsForRandomParticle, PosXStart, PosYStart, PosZStart, 1, 1, 1, SizeOfParticleX, SizeOfParticleY, SizeOfParticleZ);
 
             if (FilledAtomsForRandomParticle.empty() == false)
                 GetParticleFromIndexForGenerator(LocalNewParticleIndex).ListOfAtoms = FilledAtomsForRandomParticle;
