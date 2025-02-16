@@ -65,6 +65,7 @@ public:
 
 using ListOfVoxelsType = std::vector<vector3_16>;
 using ListOfAtomsType = std::vector<CellEngineAtom>;
+using ListOfCentersType = std::vector<vector3_Real32>;
 
 class Particle : public DoublyLinkedListNode<Particle, UniqueIdInt>, public PairedNucleotide<Particle>, public LinkedParticles<Particle>
 {
