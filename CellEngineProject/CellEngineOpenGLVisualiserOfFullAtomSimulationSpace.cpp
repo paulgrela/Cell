@@ -14,6 +14,8 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
 {
     try
     {
+        lock_guard LockGuard{ RenderMenuAndFullAtomSimulationSpaceMutexObject };
+
         GLuint PartOfStencilBufferIndex[3];
         vector<tuple<UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt>> TemporaryRenderedAtomsList;
 

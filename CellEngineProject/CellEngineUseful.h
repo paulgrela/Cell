@@ -40,6 +40,15 @@ namespace CellEngineUseful
         return find(values.begin(), values.end(), first) != values.end();
     }
 
+    static CurrentSectorPosType GetSectorPos(const RealType X, const RealType Y, const RealType Z)
+    {
+        const UnsignedInt SectorPosX = std::floor((X + CellEngineConfigDataObject.ShiftCenterX) / CellEngineConfigDataObject.SizeOfParticlesSectorX);
+        const UnsignedInt SectorPosY = std::floor((Y + CellEngineConfigDataObject.ShiftCenterY) / CellEngineConfigDataObject.SizeOfParticlesSectorY);
+        const UnsignedInt SectorPosZ = std::floor((Z + CellEngineConfigDataObject.ShiftCenterZ) / CellEngineConfigDataObject.SizeOfParticlesSectorZ);
+
+        return { SectorPosX, SectorPosY, SectorPosZ };
+    }
+
     static void SwitchOffLogs()
     {
         #ifdef SIMULATION_DETAILED_LOG

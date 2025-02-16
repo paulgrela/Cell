@@ -1641,7 +1641,7 @@ static void RandomParticlesGeneratorFullAtomSimulationSpaceParametersMenu(const 
         {
             if (CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer != nullptr)
             {
-                conditional_lock_guard<recursive_mutex> LockGuardCond(CellEngineConfigDataObject.UseMutexBetweenMainScreenThreadAndMenuThreads, &CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderMenuAndVoxelSimulationSpaceMutexObject);
+                lock_guard<mutex> LockGuard{ CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderMenuAndFullAtomSimulationSpaceMutexObject };
 
                 // const auto CellEngineOpenGLFullAtomSimulationSpaceVisualiserObjectPointer = dynamic_cast<CellEngineOpenGLVisualiserOfVoxelSimulationSpace*>(CellEngineOpenGLVisualiserPointer.get());
                 //

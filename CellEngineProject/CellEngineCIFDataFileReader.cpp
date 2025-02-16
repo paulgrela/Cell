@@ -348,12 +348,10 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile(const bool SetStartValuesB
 
                             if (ListOfAtoms.empty() == false)
                             {
-                                auto SectorX = static_cast<UnsignedInt>((Center.X + CellEngineConfigDataObject.ShiftCenterX) / CellEngineConfigDataObject.SizeOfParticlesSectorX);
-                                auto SectorY = static_cast<UnsignedInt>((Center.Y + CellEngineConfigDataObject.ShiftCenterY) / CellEngineConfigDataObject.SizeOfParticlesSectorY);
-                                auto SectorZ = static_cast<UnsignedInt>((Center.Z + CellEngineConfigDataObject.ShiftCenterZ) / CellEngineConfigDataObject.SizeOfParticlesSectorZ);
-
                                 NumberOfParticles++;
-                                SetCurrentSectorPos({ SectorX, SectorY, SectorZ });
+
+                                SetCurrentSectorPos(CellEngineUseful::GetSectorPos(Center.X, Center.Y, Center.Z));
+
                                 Particle ParticleToInsert(NumberOfParticles, LocalEntityId, CellEngineUseful::GetChainIdFromChainName(AppliedChainName), -1, 1, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(UniqueParticleColor));
                                 ParticleToInsert.ListOfAtoms = ListOfAtoms;
                                 ParticleToInsert.Center = Center;

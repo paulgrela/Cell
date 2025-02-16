@@ -26,15 +26,6 @@ protected:
         CATCH_AND_THROW("moving all voxels in particle voxel list by vector")
     }
 protected:
-    static CurrentSectorPosType GetSectorPos(const RealType X, const RealType Y, const RealType Z)
-    {
-        const UnsignedInt SectorPosX = std::floor((X + CellEngineConfigDataObject.ShiftCenterX) / CellEngineConfigDataObject.SizeOfParticlesSectorX);
-        const UnsignedInt SectorPosY = std::floor((Y + CellEngineConfigDataObject.ShiftCenterY) / CellEngineConfigDataObject.SizeOfParticlesSectorY);
-        const UnsignedInt SectorPosZ = std::floor((Z + CellEngineConfigDataObject.ShiftCenterZ) / CellEngineConfigDataObject.SizeOfParticlesSectorZ);
-
-        return { SectorPosX, SectorPosY, SectorPosZ };
-    }
-
     static inline void MoveParticleByVector(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, const RealType VectorX, const RealType VectorY, const RealType VectorZ)
     {
         try
@@ -43,8 +34,8 @@ protected:
 
             ParticleObject.SetCenterCoordinates(ParticleObject.Center.X + VectorX, ParticleObject.Center.Y + VectorY, ParticleObject.Center.Z + VectorZ);
 
-            auto [SectorPosX1, SectorPosY1, SectorPosZ1] = GetSectorPos(ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z);
-            auto [SectorPosX2, SectorPosY2, SectorPosZ2] = GetSectorPos(ParticleObject.Center.X + VectorX, ParticleObject.Center.Y + VectorY, ParticleObject.Center.Z + VectorZ);
+            auto [SectorPosX1, SectorPosY1, SectorPosZ1] = CellEngineUseful::GetSectorPos(ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z);
+            auto [SectorPosX2, SectorPosY2, SectorPosZ2] = CellEngineUseful::GetSectorPos(ParticleObject.Center.X + VectorX, ParticleObject.Center.Y + VectorY, ParticleObject.Center.Z + VectorZ);
 
             if (SectorPosX1 != SectorPosX2 || SectorPosY1 != SectorPosY2 || SectorPosZ1 != SectorPosZ2)
                 ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].insert(ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].extract(ParticleObject.Index));
@@ -122,7 +113,7 @@ protected:
         try
         {
             auto [TestedPosX, TestedPosY, TestedPosZ] = GetNewPosMovedByVector(Center.X, Center.Y, Center.Z, VectorX, VectorY, VectorZ);
-            auto [SectorPosX, SectorPosY, SectorPosZ] = GetSectorPos(TestedPosX, TestedPosY, TestedPosZ);
+            auto [SectorPosX, SectorPosY, SectorPosZ] = CellEngineUseful::GetSectorPos(TestedPosX, TestedPosY, TestedPosZ);
 
             if (CheckBoundsBySectorAndBySpace(SectorPosX, SectorPosY, SectorPosZ, TestedPosX, TestedPosY, TestedPosZ, SimulationSpaceSectorBoundsObjectParam, CheckBounds, CompareBoundsBySectorsBounds, CompareBoundsBySpaceBounds) == false)
                 return false;
@@ -143,7 +134,7 @@ protected:
         try
         {
             auto [TestedPosXC, TestedPosYC, TestedPosZC] = GetNewPosMovedByVector(Center.X, Center.Y, Center.Z, VectorX, VectorY, VectorZ);
-            auto [SectorPosX, SectorPosY, SectorPosZ] = GetSectorPos(TestedPosXC, TestedPosYC, TestedPosZC);
+            auto [SectorPosX, SectorPosY, SectorPosZ] = CellEngineUseful::GetSectorPos(TestedPosXC, TestedPosYC, TestedPosZC);
 
             for (auto &AtomParticleObject : ListOfAtoms)
             {

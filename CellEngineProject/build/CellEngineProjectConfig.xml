@@ -1809,9 +1809,9 @@
                         <DivisionFactorForReadingPositionsOfParticles>1.0</DivisionFactorForReadingPositionsOfParticles>
                         <DivisionFactorForGeneratingPositionsOfParticles>1.0</DivisionFactorForGeneratingPositionsOfParticles>
 
-                        <Radius1ForGenerationOfParticles>2400</Radius1ForGenerationOfParticles>
-                        <Radius1SizeForGenerationOfParticles>2400</Radius1SizeForGenerationOfParticles>
-                        <Radius2ForGenerationOfParticles>2560</Radius1ForGenerationOfParticles>
+                        <Radius1ForGenerationOfParticles>2000</Radius1ForGenerationOfParticles>
+                        <Radius1SizeForGenerationOfParticles>2000</Radius1SizeForGenerationOfParticles>
+                        <Radius2ForGenerationOfParticles>2160</Radius1ForGenerationOfParticles>
                         <Radius2SizeForGenerationOfParticles>160</Radius1SizeForGenerationOfParticles>
 
                         <MixedFullAtomWithVoxelSpace>true</MixedFullAtomWithVoxelSpace>

@@ -7,6 +7,7 @@
 #include "CellEngineDataFile.h"
 #include "CellEngineParticlesKindsManager.h"
 #include "CellEngineRealRandomParticlesInFullAtomSpaceGenerator.h"
+#include "CellEngineOpenGLVisualiserOfFullAtomSimulationSpace.h"
 
 #ifdef USING_MODULES
 import CellEngineColors;
@@ -233,9 +234,6 @@ bool CellEngineRealRandomParticlesInFullAtomSpaceGenerator::TryToGenerateRandomP
         else
             SizeX = SizeY = SizeZ = GeneSequenceLength;
 
-        if (EntityId == CellEngineConfigDataObject.RNAIdentifier)
-            SizeY = SizeZ = 1;
-
         float PosX, PosY, PosZ;
         bool TryResult = false;
 
@@ -244,12 +242,39 @@ bool CellEngineRealRandomParticlesInFullAtomSpaceGenerator::TryToGenerateRandomP
         while (TryInsertNewParticleCounter < MaxNumberOfTriesToInsertNewParticle && TryResult == false)
         {
             tie(PosX, PosY, PosZ) = GetRandomPositionInsideSphere(Radius, RadiusSize);
-            if (SizeX > 1)
-                TryResult = GenerateParticleAtomsWhenSelectedSpaceIsFree(Particles, AddNewParticle(Particle(GetNewFreeIndexOfParticle(), EntityId, 1, -1, 1, ParticleKindObject.second.ElectricCharge, GeneSequence, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), PosX, PosY, PosZ, SizeX, SizeY, SizeZ, 0, 0, 0, 0, 0, 0, &CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceForEllipsoidSelectedSpace, &CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForEllipsoidSelectedSpace);
-            else
-                TryResult = GenerateParticleAtomsWhenSelectedSpaceIsFree(Particles, AddNewParticle(Particle(GetNewFreeIndexOfParticle(), EntityId, 1, -1, 1, ParticleKindObject.second.ElectricCharge, GeneSequence, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), PosX, PosY, PosZ, SizeX, SizeY, SizeZ, 0, 0, 0, 0, 0, 0, &CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForCuboidSelectedSpace);
+
+                    LoggersManagerObject.LogUnconditional(STREAM("POS RANDOM = " << PosX << " " << PosY << " " << PosZ << " " << Radius << " " << RadiusSize));
+
+                    // UniqueIdInt ParticleIndex = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), EntityId, 1, -1, 1, ParticleKindObject.second.ElectricCharge, GeneSequence, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
+                    // TryResult = GenerateParticleAtomsWhenSelectedSpaceIsFree(Particles, ParticleIndex, PosX, PosY, PosZ, SizeX, SizeY, SizeZ, 0, 0, 0, 0, 0, 0, &CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceForEllipsoidSelectedSpace, &CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForEllipsoidSelectedSpace);
+
+                    SetCurrentSectorPos(CellEngineUseful::GetSectorPos(PosX, PosY, PosZ));
+                    //CurrentSectorPos = GetSectorPos(PosX, PosY, PosZ);
+
+                    //MOZE SEKCJA KRYTYCZNA - bo moze rysuje gdy dodaje{
+                    //lock_guard<mutex> LockGuard{ CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderMenuAndFullAtomSimulationSpaceMutexObject };
+
+                    const UniqueIdInt ParticleIndex = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), EntityId, 1, -1, 1, ParticleKindObject.second.ElectricCharge, GeneSequence, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
+
+                    //GetParticleFromIndex(ParticleIndex).ParticleColor = ParticlesKindsManagerObject.GetParticleKind(GetParticleFromIndex(ParticleIndex).EntityId).GraphicData.ParticleColor;
+
+                    TryResult = GenerateParticleAtomsWhenSelectedSpaceIsFree(Particles, ParticleIndex, PosX, PosY, PosZ, SizeX, SizeY, SizeZ, 0, 0, 0, 0, 0, 0, &CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceForEllipsoidSelectedSpace, &CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForEllipsoidSelectedSpace);
+
+
+            // if (SizeX > 1)
+            // TryResult = GenerateParticleAtomsWhenSelectedSpaceIsFree(Particles, AddNewParticle(Particle(GetNewFreeIndexOfParticle(), EntityId, 1, -1, 1, ParticleKindObject.second.ElectricCharge, GeneSequence, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), PosX, PosY, PosZ, SizeX, SizeY, SizeZ, 0, 0, 0, 0, 0, 0, &CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceForEllipsoidSelectedSpace, &CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForEllipsoidSelectedSpace);
+            // else
+            //     TryResult = GenerateParticleAtomsWhenSelectedSpaceIsFree(Particles, AddNewParticle(Particle(GetNewFreeIndexOfParticle(), EntityId, 1, -1, 1, ParticleKindObject.second.ElectricCharge, GeneSequence, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), PosX, PosY, PosZ, SizeX, SizeY, SizeZ, 0, 0, 0, 0, 0, 0, &CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForCuboidSelectedSpace);
             if (TryResult == false)
-                RemoveParticle(MaxParticleIndex, true);
+                {
+                //MOZE BLAD USUWANIA MAX_PARTICLE_INDEX BO tO NIE DZIALA
+                // cout << "REMOVE " << MaxParticleIndex << endl;
+                // RemoveParticle(MaxParticleIndex, true);
+                // cout << "REMOVE " << MaxParticleIndex << endl;
+                cout << "REMOVE " << ParticleIndex << endl;
+                RemoveParticle(ParticleIndex, true);
+                cout << "REMOVE " << ParticleIndex << endl;
+                }
             TryInsertNewParticleCounter++;
         }
 
@@ -306,34 +331,12 @@ void CellEngineRealRandomParticlesInFullAtomSpaceGenerator::InsertNewRandomParti
 
         const auto start_time = chrono::high_resolution_clock::now();
 
-        // for (const auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
-        //     if (ParticleKindObject.second.ParticleKindSpecialDataSector.empty() == false)
-        //         for (const auto& ParticleKindSpecialDataObject: ParticleKindObject.second.ParticleKindSpecialDataSector)
-        //             if (ParticleKindSpecialDataObject.ParticleType == ParticleTypeParam)
-        //                 for (UnsignedInt ParticleCounter = 1; ParticleCounter <= ParticleKindSpecialDataObject.CounterAtStartOfSimulation; ParticleCounter++)
-        //                 {
-        //                     LoggersManagerObject.Log(STREAM("Particle Type = " << ParticlesKindsManagerObject.ConvertParticleTypeToString(ParticleKindSpecialDataObject.ParticleType) << " Counter = " << ParticleCounter));
-        //
-        //                     const EntityIdInt EntityId = GetParticleKindIdForRNA_Second(ParticleKindObject.second.EntityId, ParticleKindSpecialDataObject.ParticleType, ModifyParticleKindIdForRNA);
-        //
-        //                     bool Success = false;
-        //
-        //                     auto GeneIter = ParticlesKindsManagerObject.Genes.find(ParticleKindSpecialDataObject.GeneId);
-        //                     if (GeneIter != ParticlesKindsManagerObject.Genes.end())
-        //                         Success = TryToGenerateRandomParticlesForType(ParticleKindObject, EntityId, Radius, RadiusSize, NumberOfErrors, GeneIter->second.NumId, GeneIter->second.Sequence, GeneIter->second.Sequence.length());
-        //                     else
-        //                         Success = TryToGenerateRandomParticlesForType(ParticleKindObject, EntityId, Radius, RadiusSize, NumberOfErrors, 0, "NO GENE", GetSizeOfGeneratedParticle_Second(ParticleKindSpecialDataObject.ParticleType));
-        //
-        //                     if (Success == true)
-        //                         NumberOfGeneratedParticles++;
-        //                 }
-
         for (const auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
             if (ParticleKindObject.second.ParticleKindSpecialDataSector.empty() == false)
                 for (const auto& ParticleKindSpecialDataObject: ParticleKindObject.second.ParticleKindSpecialDataSector)
                     if (ParticleKindSpecialDataObject.ParticleType == ParticleTypeParam)
                     {
-                                                                                                                        LoggersManagerObject.LogUnconditional(STREAM("EntityId = " << ParticleKindObject.second.EntityId << " Counter = " << ParticleKindSpecialDataObject.CounterAtStartOfSimulation << " Radius = " << Radius << " RadiusSize = " << RadiusSize)); getchar();
+                                                                                                                        //LoggersManagerObject.LogUnconditional(STREAM("EntityId = " << ParticleKindObject.second.EntityId << " Counter = " << ParticleKindSpecialDataObject.CounterAtStartOfSimulation << " Radius = " << Radius << " RadiusSize = " << RadiusSize)); getchar();
                         for (UnsignedInt ParticleCounter = 1; ParticleCounter <= ParticleKindSpecialDataObject.CounterAtStartOfSimulation; ParticleCounter++)
                         {
                             LoggersManagerObject.Log(STREAM("Particle Type = " << ParticlesKindsManagerObject.ConvertParticleTypeToString(ParticleKindSpecialDataObject.ParticleType) << " Counter = " << ParticleCounter));
