@@ -243,38 +243,16 @@ bool CellEngineRealRandomParticlesInFullAtomSpaceGenerator::TryToGenerateRandomP
         {
             tie(PosX, PosY, PosZ) = GetRandomPositionInsideSphere(Radius, RadiusSize);
 
-                    LoggersManagerObject.LogUnconditional(STREAM("POS RANDOM = " << PosX << " " << PosY << " " << PosZ << " " << Radius << " " << RadiusSize));
+            SetCurrentSectorPos(CellEngineUseful::GetSectorPos(PosX, PosY, PosZ));
 
-                    // UniqueIdInt ParticleIndex = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), EntityId, 1, -1, 1, ParticleKindObject.second.ElectricCharge, GeneSequence, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
-                    // TryResult = GenerateParticleAtomsWhenSelectedSpaceIsFree(Particles, ParticleIndex, PosX, PosY, PosZ, SizeX, SizeY, SizeZ, 0, 0, 0, 0, 0, 0, &CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceForEllipsoidSelectedSpace, &CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForEllipsoidSelectedSpace);
+            if (SizeX > 1)
+                TryResult = GenerateParticleAtomsWhenSelectedSpaceIsFree(Particles, AddNewParticle(Particle(GetNewFreeIndexOfParticle(), EntityId, 1, -1, 1, ParticleKindObject.second.ElectricCharge, GeneSequence, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), PosX, PosY, PosZ, SizeX, SizeY, SizeZ, 0, 0, 0, 0, 0, 0, &CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceForEllipsoidSelectedSpace, &CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForEllipsoidSelectedSpace);
+            else
+                TryResult = GenerateParticleAtomsWhenSelectedSpaceIsFree(Particles, AddNewParticle(Particle(GetNewFreeIndexOfParticle(), EntityId, 1, -1, 1, ParticleKindObject.second.ElectricCharge, GeneSequence, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), PosX, PosY, PosZ, SizeX, SizeY, SizeZ, 0, 0, 0, 0, 0, 0, &CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForCuboidSelectedSpace);
 
-                    SetCurrentSectorPos(CellEngineUseful::GetSectorPos(PosX, PosY, PosZ));
-                    //CurrentSectorPos = GetSectorPos(PosX, PosY, PosZ);
-
-                    //MOZE SEKCJA KRYTYCZNA - bo moze rysuje gdy dodaje{
-                    //lock_guard<mutex> LockGuard{ CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderMenuAndFullAtomSimulationSpaceMutexObject };
-
-                    const UniqueIdInt ParticleIndex = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), EntityId, 1, -1, 1, ParticleKindObject.second.ElectricCharge, GeneSequence, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
-
-                    //GetParticleFromIndex(ParticleIndex).ParticleColor = ParticlesKindsManagerObject.GetParticleKind(GetParticleFromIndex(ParticleIndex).EntityId).GraphicData.ParticleColor;
-
-                    TryResult = GenerateParticleAtomsWhenSelectedSpaceIsFree(Particles, ParticleIndex, PosX, PosY, PosZ, SizeX, SizeY, SizeZ, 0, 0, 0, 0, 0, 0, &CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceForEllipsoidSelectedSpace, &CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForEllipsoidSelectedSpace);
-
-
-            // if (SizeX > 1)
-            //     TryResult = GenerateParticleAtomsWhenSelectedSpaceIsFree(Particles, AddNewParticle(Particle(GetNewFreeIndexOfParticle(), EntityId, 1, -1, 1, ParticleKindObject.second.ElectricCharge, GeneSequence, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), PosX, PosY, PosZ, SizeX, SizeY, SizeZ, 0, 0, 0, 0, 0, 0, &CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceForEllipsoidSelectedSpace, &CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForEllipsoidSelectedSpace);
-            // else
-            //     TryResult = GenerateParticleAtomsWhenSelectedSpaceIsFree(Particles, AddNewParticle(Particle(GetNewFreeIndexOfParticle(), EntityId, 1, -1, 1, ParticleKindObject.second.ElectricCharge, GeneSequence, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), PosX, PosY, PosZ, SizeX, SizeY, SizeZ, 0, 0, 0, 0, 0, 0, &CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForCuboidSelectedSpace);
             if (TryResult == false)
-                {
-                //MOZE BLAD USUWANIA MAX_PARTICLE_INDEX BO tO NIE DZIALA
-                // cout << "REMOVE " << MaxParticleIndex << endl;
-                // RemoveParticle(MaxParticleIndex, true);
-                // cout << "REMOVE " << MaxParticleIndex << endl;
-                cout << "REMOVE " << ParticleIndex << endl;
-                RemoveParticle(ParticleIndex, true);
-                cout << "REMOVE " << ParticleIndex << endl;
-                }
+                RemoveParticle(MaxParticleIndex, true);
+
             TryInsertNewParticleCounter++;
         }
 

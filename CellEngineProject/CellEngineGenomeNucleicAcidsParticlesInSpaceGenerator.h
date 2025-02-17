@@ -21,7 +21,7 @@ public:
     void TestDifferentKindsOfPromotersFindingsAndTerminatorsFindingsAlgorithms() const;
     static void FindInterGenesSequences();
 public:
-    virtual void GenerateParticleVoxelsWhenSelectedSpaceIsFreeBasic(UnsignedInt ParticleIndex, UnsignedInt StartPosX, UnsignedInt StartPosY, UnsignedInt StartPosZ, UnsignedInt ParticleSizeX, UnsignedInt ParticleSizeY, UnsignedInt ParticleSizeZ, UnsignedInt ParticleStepX, UnsignedInt ParticleStepY, UnsignedInt ParticleStepZ)
+    virtual void GenerateParticleElementsWhenSelectedSpaceIsFreeBasic(UnsignedInt ParticleIndex, UnsignedInt StartPosX, UnsignedInt StartPosY, UnsignedInt StartPosZ, UnsignedInt ParticleSizeX, UnsignedInt ParticleSizeY, UnsignedInt ParticleSizeZ, UnsignedInt ParticleStepX, UnsignedInt ParticleStepY, UnsignedInt ParticleStepZ)
     {
     }
 public:

@@ -53,7 +53,7 @@ Particle* CellEngineGenomeNucleicAcidsParticlesInSpaceGenerator::GenerateNucleot
         if (LinkWithPreviousNucleotide == true)
             Particle::InsertAfterGivenNode(ParticlePrev, &GetParticleFromIndex(ParticleIndex));
 
-        GenerateParticleVoxelsWhenSelectedSpaceIsFreeBasic(ParticleIndex, StartPosX, StartPosY, StartPosZ, ParticleSizeX, ParticleSizeY, ParticleSizeZ, 0, 0, 0);
+        GenerateParticleElementsWhenSelectedSpaceIsFreeBasic(ParticleIndex, StartPosX, StartPosY, StartPosZ, ParticleSizeX, ParticleSizeY, ParticleSizeZ, 0, 0, 0);
 
         if (AddToGenome == true)
             Genome.emplace_back(ParticleIndex);

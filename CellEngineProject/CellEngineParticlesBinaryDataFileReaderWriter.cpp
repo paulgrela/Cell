@@ -408,6 +408,8 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
 {
     try
     {
+        UnsignedInt BadParticlesCenters = 0;
+
         LoggersManagerObject.Log(STREAM("START OF READING PARTICLES FROM BINARY FILE"));
 
         UnsignedInt ParticlesSize;
@@ -432,12 +434,23 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
             ParticleObject.Center.Y /= CellEngineConfigDataObject.DivisionFactorForReadingPositionsOfParticles;
             ParticleObject.Center.Z /= CellEngineConfigDataObject.DivisionFactorForReadingPositionsOfParticles;
 
+            if (CellEngineConfigDataObject.MixedFullAtomWithVoxelSpace == false)
+            {
+                if (ParticleObject.Center.X > CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension || ParticleObject.Center.Y > CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension || ParticleObject.Center.Z > CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension)
+                {
+                    cout << ParticleObject.EntityId << " " << ParticleObject.Center.X << " " << ParticleObject.Center.Y << " " << ParticleObject.Center.Z << endl;
+                    BadParticlesCenters++;
+                }
+            }
+
             ParticlesDataFile.read((char*)&ParticleObject.UniqueParticleColor, sizeof(ParticleObject.UniqueParticleColor));
             ParticlesDataFile.read((char*)&ParticleObject.SelectedForReaction, sizeof(ParticleObject.SelectedForReaction));
 
             ReadStringFromBinaryFile(ParticlesDataFile, ParticleObject.SequenceStr);
 
             ReadVoxelsVectorDividedByStepsFromBinaryFile(ParticlesDataFile, ParticleObject.ListOfVoxels, CellEngineConfigDataObject.DivisionFactorForReadingPositionsOfParticles);
+            if (ParticleObject.ListOfVoxels.empty() == true)
+                cout << "Error for particle type = " << ParticleObject.EntityId << " " << ParticleObject.Index << endl;
 
             ParticlesDataFile.read((char*)&ParticleObject.PrevTemporary, sizeof(ParticleObject.PrevTemporary));
             ParticlesDataFile.read((char*)&ParticleObject.NextTemporary, sizeof(ParticleObject.NextTemporary));
@@ -458,7 +471,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
                 LoggersManagerObject.Log(STREAM("Particle with Index 0 = " << ParticleObject.Index << " " << ParticleObject.Center.X << " " << ParticleObject.Center.Y << " " << ParticleObject.Center.Z));
         }
 
-        LoggersManagerObject.Log(STREAM("END OF READING PARTICLES FROM BINARY FILE"));
+        LoggersManagerObject.Log(STREAM("END OF READING PARTICLES FROM BINARY FILE - bad particles = " << BadParticlesCenters));
     }
     CATCH("reading particles from binary file")
 }

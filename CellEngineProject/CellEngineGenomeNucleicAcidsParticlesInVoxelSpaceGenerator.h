@@ -19,7 +19,7 @@ protected:
     static bool TestFormerForbiddenPositions(std::unordered_set<std::string>& TestedFormerForbiddenPositions, UnsignedInt RandomMoveDirection, UnsignedInt RandomPosX, UnsignedInt RandomPosY, UnsignedInt RandomPosZ, UnsignedInt Size);
     std::tuple<UnsignedInt, UnsignedInt, UnsignedInt> EraseLastRandomDNAParticle(std::vector<UniqueIdInt>& Genome);
 protected:
-    void GenerateParticleVoxelsWhenSelectedSpaceIsFreeBasic(UnsignedInt ParticleIndex, UnsignedInt StartPosX, UnsignedInt StartPosY, UnsignedInt StartPosZ, UnsignedInt ParticleSizeX, UnsignedInt ParticleSizeY, UnsignedInt ParticleSizeZ, UnsignedInt ParticleStepX, UnsignedInt ParticleStepY, UnsignedInt ParticleStepZ) override;
+    void GenerateParticleElementsWhenSelectedSpaceIsFreeBasic(UnsignedInt ParticleIndex, UnsignedInt StartPosX, UnsignedInt StartPosY, UnsignedInt StartPosZ, UnsignedInt ParticleSizeX, UnsignedInt ParticleSizeY, UnsignedInt ParticleSizeZ, UnsignedInt ParticleStepX, UnsignedInt ParticleStepY, UnsignedInt ParticleStepZ) override;
 protected:
     explicit CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator(ParticlesContainer<Particle>& ParticlesParam) : CellEngineRealRandomParticlesInVoxelSpaceGenerator(ParticlesParam), CellEngineGenomeNucleicAcidsParticlesInSpaceGenerator()
     {

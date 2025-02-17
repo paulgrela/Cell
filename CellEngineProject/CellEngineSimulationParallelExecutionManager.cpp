@@ -96,6 +96,11 @@ void CellEngineSimulationParallelExecutionManager::FirstSendParticlesForThreads(
 {
     try
     {
+        LoggersManagerObject.LogStatistics(STREAM("THREAD = " << CurrentThreadIndex << " X = " << CellEngineConfigDataObject.NumberOfParticlesSectorsInX << " Y = " << CellEngineConfigDataObject.NumberOfParticlesSectorsInY << " Z = " << CellEngineConfigDataObject.NumberOfParticlesSectorsInZ));
+
+        UnsignedInt GoodParticlesCounter = 0;
+        UnsignedInt BadParticlesCounter = 0;
+
         SaveFormerParticlesAsVectorElements();
 
         const auto start_time = chrono::high_resolution_clock::now();
@@ -104,16 +109,21 @@ void CellEngineSimulationParallelExecutionManager::FirstSendParticlesForThreads(
             SimulationSpaceDataForThreads[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->ParticlesForThreads.clear();
 
         FOR_EACH_PARTICLE_IN_XYZ_CONST
-        {
-            UnsignedInt ThreadXIndex = floor(ParticleObject.second.Center.X / CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace);
-            UnsignedInt ThreadYIndex = floor(ParticleObject.second.Center.Y / CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace);
-            UnsignedInt ThreadZIndex = floor(ParticleObject.second.Center.Z / CellEngineConfigDataObject.SizeOfZInOneThreadInSimulationSpace);
+            if (ParticleObject.second.Center.X < CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension && ParticleObject.second.Center.Y < CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension && ParticleObject.second.Center.Z < CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension)
+            {
+                UnsignedInt ThreadXIndex = floor(ParticleObject.second.Center.X / CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace);
+                UnsignedInt ThreadYIndex = floor(ParticleObject.second.Center.Y / CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace);
+                UnsignedInt ThreadZIndex = floor(ParticleObject.second.Center.Z / CellEngineConfigDataObject.SizeOfZInOneThreadInSimulationSpace);
 
-            if (PrintCenterOfParticleWithThreadIndex == true)
-                LogCenterOfParticleWithThreadIndex(ParticleObject.second, ThreadXIndex, ThreadYIndex, ThreadZIndex);
+                if (PrintCenterOfParticleWithThreadIndex == true)
+                    LogCenterOfParticleWithThreadIndex(ParticleObject.second, ThreadXIndex, ThreadYIndex, ThreadZIndex);
 
-            SimulationSpaceDataForThreads[ThreadXIndex][ThreadYIndex][ThreadZIndex]->ParticlesForThreads.insert(ParticleObject);
-        }
+                SimulationSpaceDataForThreads[ThreadXIndex][ThreadYIndex][ThreadZIndex]->ParticlesForThreads.insert(ParticleObject);
+
+                GoodParticlesCounter++;
+            }
+            else
+                BadParticlesCounter++;
 
         FOR_EACH_THREAD_IN_XYZ
         {
@@ -127,6 +137,8 @@ void CellEngineSimulationParallelExecutionManager::FirstSendParticlesForThreads(
 
         if (PrintTime == true)
             LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "First sending particles to threads has taken time = ","Execution in threads")));
+
+        LoggersManagerObject.Log(STREAM("All particles counter = " << GoodParticlesCounter << " Bad particles counter = " << BadParticlesCounter));
     }
     CATCH("first sending particles for threads")
 }

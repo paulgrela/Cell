@@ -848,15 +848,15 @@ void CellEngineSimulationSpace::SaveNumberOfParticlesStatisticsToFile()
 {
     try
     {
+        LoggersManagerObject.LogStatistics(STREAM("THREAD = " << CurrentThreadIndex << " X = " << CellEngineConfigDataObject.NumberOfParticlesSectorsInX << " Y = " << CellEngineConfigDataObject.NumberOfParticlesSectorsInY << " Z = " << CellEngineConfigDataObject.NumberOfParticlesSectorsInZ));
+
         GetNumberOfParticlesFromParticleKind(ParticlesKindsManagerObject.GetParticleKindFromStrId("M_glc__D_e")->EntityId);
 
         int CounterOfParticles = 0;
         FOR_EACH_PARTICLE_IN_XYZ_CONST
             if (ParticleObject.first != 0)
-            {
-                if (ParticlesKindsManagerObject.GetParticleKind(GetParticleFromIndex(ParticleObject.first).EntityId).IdStr == "M_glc__D_e")
+                if (auto IPK = ParticlesKindsManagerObject.ParticlesKinds.find(GetParticleFromIndex(ParticleObject.first).EntityId); IPK != ParticlesKindsManagerObject.ParticlesKinds.end() && IPK->second.IdStr == "M_glc__D_e")
                     CounterOfParticles++;
-            }
 
         LoggersManagerObject.LogStatistics(STREAM("Particle Name = " << "D-Glucose" << " Number of Particles = " << CounterOfParticles));
     }
