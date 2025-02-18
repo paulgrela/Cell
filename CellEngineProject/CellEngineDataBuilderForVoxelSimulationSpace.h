@@ -42,7 +42,7 @@ protected:
 protected:
     void PreprocessData(bool Update) override
     {
-        CellEngineVoxelSimulationSpaceObjectPointer->PreprocessData<UnsignedInt,vector3_16>(&Particle::ListOfVoxels, &ParticleKind::ListOfVoxels, Update);
+        CellEngineVoxelSimulationSpaceObjectPointer->PreprocessData<UnsignedInt, vector3_16>(&Particle::ListOfVoxels, &ParticleKind::ListOfVoxels, Update);
     }
 protected:
     void PrintStatistics() override

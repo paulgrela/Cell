@@ -25,10 +25,7 @@ protected:
 protected:
     UniqueIdInt AddNewParticle(const Particle& ParticleObjectParam) override
     {
-        if (CellEngineConfigDataObject.MixedFullAtomWithVoxelSpace == false)
-            return 0;
-        else
-            return CellEngineFullAtomSimulationSpaceObjectPointer->AddNewParticle(ParticleObjectParam);
+        return CellEngineFullAtomSimulationSpaceObjectPointer->AddNewParticle(ParticleObjectParam);
     }
 protected:
     void InsertAtom(std::vector<CellEngineAtom>& LocalCellEngineAllAtomsObject, const CellEngineAtom& AppliedAtom, const UniqueIdInt ParticleIndex) override
@@ -46,6 +43,8 @@ protected:
 protected:
     void PreprocessData(bool Update) override
     {
+        if (CellEngineConfigDataObject.MixedFullAtomWithVoxelSpace == false)
+            CellEngineFullAtomSimulationSpaceObjectPointer->PreprocessData<RealType, CellEngineAtom>(&Particle::ListOfAtoms, &ParticleKind::ListOfAtoms, Update);
     }
 protected:
     void PrintStatistics() override
