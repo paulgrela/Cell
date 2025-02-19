@@ -43,11 +43,11 @@ struct CurrentThreadPosType
     }
 };
 
-struct CurrentSectorPosType
+struct SectorPosType
 {
     UnsignedInt	SectorPosX, SectorPosY, SectorPosZ;
 
-    bool operator==(const CurrentSectorPosType& CSP) const
+    bool operator==(const SectorPosType& CSP) const
     {
         return (CSP.SectorPosX == SectorPosX && CSP.SectorPosY == SectorPosY && CSP.SectorPosZ == SectorPosZ);
     }

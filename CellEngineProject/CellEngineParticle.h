@@ -80,6 +80,7 @@ public:
     UniqueIdInt GenomeIndexPrev{};
     UniqueIdInt GenomeIndexNext{};
     ElectricChargeType ElectricCharge{};
+    SectorPosType ParticleSectorPos{};
 public:
     vector3_Real32 Center{};
     RealType Radius{};

@@ -7,6 +7,10 @@
 #include "CellEngineDataFile.h"
 #include "CellEngineParticlesKindsManager.h"
 #include "CellEngineRealRandomParticlesInFullAtomSpaceGenerator.h"
+
+#include <tuple>
+#include <tuple>
+
 #include "CellEngineOpenGLVisualiserOfFullAtomSimulationSpace.h"
 
 #ifdef USING_MODULES
@@ -197,7 +201,7 @@ void CellEngineRealRandomParticlesInFullAtomSpaceGenerator::PrintInformationAbou
     CATCH("printing information about ribosomes proteins")
 }
 
-tuple<float, float, float> CellEngineRealRandomParticlesInFullAtomSpaceGenerator::GetRandomPositionInsideSphere(const UnsignedInt Radius, const UnsignedInt RadiusSize)
+tuple<float, float, float> CellEngineRealRandomParticlesInFullAtomSpaceGenerator::GetRandomPositionInsideSphere(const float Radius, const float RadiusSize)
 {
     try
     {
@@ -209,9 +213,9 @@ tuple<float, float, float> CellEngineRealRandomParticlesInFullAtomSpaceGenerator
         {
             TryFindNewRandomPositionCounter++;
 
-            const float dx = static_cast<float>(Radius) - UniformDistributionObjectMoveParticleDirection_float(mt64R);
-            const float dy = static_cast<float>(Radius) - UniformDistributionObjectMoveParticleDirection_float(mt64R);
-            const float dz = static_cast<float>(Radius) - UniformDistributionObjectMoveParticleDirection_float(mt64R);
+            const float dx = Radius - UniformDistributionObjectMoveParticleDirection_float(mt64R);
+            const float dy = Radius - UniformDistributionObjectMoveParticleDirection_float(mt64R);
+            const float dz = Radius - UniformDistributionObjectMoveParticleDirection_float(mt64R);
 
             if ((dx * dx + dy * dy + dz * dz >= (Radius - RadiusSize) * (Radius - RadiusSize)) && (dx * dx + dy * dy + dz * dz) <= (Radius * Radius))
                 return { dx, dy, dz };
@@ -241,7 +245,7 @@ bool CellEngineRealRandomParticlesInFullAtomSpaceGenerator::TryToGenerateRandomP
 
         while (TryInsertNewParticleCounter < MaxNumberOfTriesToInsertNewParticle && TryResult == false)
         {
-            tie(PosX, PosY, PosZ) = GetRandomPositionInsideSphere(Radius, RadiusSize);
+            tie(PosX, PosY, PosZ) = GetRandomPositionInsideSphere(static_cast<float>(Radius), static_cast<float>(RadiusSize));
 
             SetCurrentSectorPos(CellEngineUseful::GetSectorPos(PosX, PosY, PosZ));
 
@@ -279,7 +283,7 @@ UnsignedInt GetSizeOfGeneratedParticle_Second(const ParticlesTypes ParticlesType
         case ParticlesTypes::RNAPolymerase : return static_cast<UnsignedInt>(CellEngineConfigDataObject.Radius1ForGenerationOfParticles / 24.0f);
         case ParticlesTypes::DNAPolymerase : return static_cast<UnsignedInt>(CellEngineConfigDataObject.Radius1ForGenerationOfParticles / 24.0f);
 
-        case ParticlesTypes::Basic : return 1;
+        case ParticlesTypes::Basic : return 2;
 
         default : return 3;
     }

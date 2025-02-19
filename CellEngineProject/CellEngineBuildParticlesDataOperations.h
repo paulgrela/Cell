@@ -9,7 +9,7 @@ class CellEngineBuildParticlesDataOperations
 {
 protected:
     virtual void SetStartValues() = 0;
-    virtual void SetCurrentSectorPos(const CurrentSectorPosType& CurrentSectorPos) = 0;
+    virtual void SetCurrentSectorPos(const SectorPosType& CurrentSectorPos) = 0;
     virtual UniqueIdInt AddNewParticle(const Particle& ParticleObjectParam) = 0;
     virtual void InsertAtom(std::vector<CellEngineAtom>& LocalCellEngineAllAtomsObject, const CellEngineAtom& AppliedAtom, UniqueIdInt ParticleIndex) = 0;
     virtual void InsertGroupOfAtoms(std::vector<CellEngineAtom>& LocalCellEngineParticlesCentersObject, std::vector<CellEngineAtom>& LocalCellEngineAllAtomsObject) = 0;

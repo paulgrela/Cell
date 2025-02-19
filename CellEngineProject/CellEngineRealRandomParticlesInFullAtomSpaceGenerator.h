@@ -21,7 +21,7 @@ public:
 protected:
     [[nodiscard]] UnsignedInt GetNumberOfRealParticlesOfKind(ParticlesTypes ParticleTypeParam) const;
     std::tuple<UnsignedInt, UnsignedInt> GetNumberOfParticlesKind(ParticlesTypes ParticleTypeParam, bool AddToTotalNumberOfAllParticles);
-    std::tuple<float, float, float> GetRandomPositionInsideSphere(UnsignedInt Radius, UnsignedInt RadiusSize);
+    std::tuple<float, float, float> GetRandomPositionInsideSphere(float Radius, float RadiusSize);
 public:
     void InsertNewRandomParticlesForType(ParticlesTypes ParticleTypeParam, bool ModifyParticleKindIdForRNA, UnsignedInt Radius, UnsignedInt RadiusSize);
     bool TryToGenerateRandomParticlesForType(const std::pair<const EntityIdInt, ParticleKind>& ParticleKindObject, EntityIdInt EntityId, UnsignedInt Radius, UnsignedInt RadiusSize, UnsignedInt& NumberOfErrors, GeneIdInt GeneNumId, const std::string& GeneSequence, UnsignedInt GeneSequenceLength);

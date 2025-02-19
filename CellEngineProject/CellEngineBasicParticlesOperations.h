@@ -60,7 +60,7 @@ protected:
         }
     }
 public:
-    void SetCurrentSectorPos(const CurrentSectorPosType& CurrentSectorPosParam)
+    void SetCurrentSectorPos(const SectorPosType& CurrentSectorPosParam)
     {
         CurrentSectorPos = CurrentSectorPosParam;
     }

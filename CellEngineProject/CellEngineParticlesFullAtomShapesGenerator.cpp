@@ -63,9 +63,9 @@ void CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForEllipsoidSele
 {
     try
     {
-        for (RealType x = 0; x < RadiusXParam * 2; x += StepX)
-            for (RealType y = 0; y < RadiusYParam * 2; y += StepY)
-                for (RealType z = 0; z < RadiusZParam * 2; z += StepZ)
+        for (RealType x = 0; x < RadiusXParam * 2; x += 1.5f * StepX)
+            for (RealType y = 0; y < RadiusYParam * 2; y += 1.5f * StepY)
+                for (RealType z = 0; z < RadiusZParam * 2; z += 1.5f * StepZ)
                 {
                     const RealType dx = RadiusXParam - x;
                     const RealType dy = RadiusYParam - y;

@@ -12,7 +12,7 @@ protected:
     ThreadIdType CurrentThreadIndex{ 0 };
     CurrentThreadPosType CurrentThreadPos{ 1, 1, 1 };
 protected:
-    CurrentSectorPosType CurrentSectorPos{ 0, 0, 0 };
+    SectorPosType CurrentSectorPos{ 0, 0, 0 };
     SimulationSpaceSectorBounds ActualSimulationSpaceSectorBoundsObject{ 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 protected:
     std::mutex MainExchangeParticlesMutexObject;

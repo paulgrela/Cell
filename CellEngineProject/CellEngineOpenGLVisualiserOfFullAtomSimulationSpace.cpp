@@ -42,6 +42,8 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
                                 {
                                     DrawBonds(ParticleObject.second, ParticleObject.second.BondsBetweenAtomsToDraw, CellEngineConfigDataObject.DrawBondsBetweenAtoms, ViewMatrix);
 
+                                    ParticleObject.second.ParticleSectorPos = SectorPosType{ ParticleSectorXIndex, ParticleSectorYIndex, ParticleSectorZIndex };
+
                                     for (UnsignedInt AtomObjectIndex = 0; AtomObjectIndex < ParticleObject.second.ListOfAtoms.size(); AtomObjectIndex += CellEngineConfigDataObject.LoadOfAtomsStep)
                                     {
                                         if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)

@@ -97,7 +97,6 @@ void CellEngineParticlesBinaryDataFileReaderWriter::SaveParticlesKindsToBinaryFi
                 ParticlesDataFile.write((char*)&ParticleKindSpecialDataSectorObject.CounterAtStartOfSimulation, sizeof(ParticleKindSpecialDataSectorObject.CounterAtStartOfSimulation));
             }
 
-            //
             if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)
                 SaveVectorToBinaryFile<vector3_16>(ParticlesDataFile, ParticleKindObject.second.ListOfVoxels);
             else
@@ -118,7 +117,6 @@ void CellEngineParticlesBinaryDataFileReaderWriter::SaveParticlesToBinaryFile(of
         UnsignedInt ParticlesSize = 0;
         FOR_EACH_PARTICLE_IN_XYZ_CONST
             ParticlesSize++;
-        //UnsignedInt ParticlesSize = Particles.size();
         LoggersManagerObject.Log(STREAM("Number of Particles to be saved = " << ParticlesSize));
         ParticlesDataFile.write((char*)&ParticlesSize, sizeof(ParticlesSize));
 
@@ -135,7 +133,6 @@ void CellEngineParticlesBinaryDataFileReaderWriter::SaveParticlesToBinaryFile(of
 
             SaveStringToBinaryFile(ParticlesDataFile, ParticleObject.second.SequenceStr);
 
-            //
             if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)
                 SaveVectorToBinaryFile<vector3_16>(ParticlesDataFile, ParticleObject.second.ListOfVoxels);
             else
@@ -353,7 +350,6 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesKindsFromBinary
             ParticlesDataFile.read((char*)&ParticleKindObject.GraphicData.RandomParticleColor, sizeof(ParticleKindObject.GraphicData.RandomParticleColor));
             ParticleKindObject.GraphicData.ParticleColor = ParticlesKindsManagerObject.GetParticleKindGraphicDataFromConfigXMLData(ParticleKindObject.EntityId);
 
-            //UnsignedInt XSizeDiv2, YSizeDiv2, ZSizeDiv2;
             float XSizeDiv2, YSizeDiv2, ZSizeDiv2;
             ParticlesDataFile.read((char*)&XSizeDiv2, sizeof(XSizeDiv2));
             ParticlesDataFile.read((char*)&YSizeDiv2, sizeof(YSizeDiv2));
@@ -384,7 +380,6 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesKindsFromBinary
                 ParticleKindObject.ParticleKindSpecialDataSector.emplace_back(ParticleKindSpecialDataSectorObject);
             }
 
-            //
             if (CellEngineConfigDataObject.MixedFullAtomWithVoxelSpace == true || CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)
                 ReadVectorFromBinaryFile<vector3_16>(ParticlesDataFile, ParticleKindObject.ListOfVoxels);
             else
@@ -444,7 +439,6 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
             ParticlesDataFile.read((char*)&ParticleObject.GenomeIndex, sizeof(ParticleObject.GenomeIndex));
             ParticlesDataFile.read((char*)&ParticleObject.ElectricCharge, sizeof(ParticleObject.ElectricCharge));
 
-            //vector3_16 CenterReadObject{};
             vector3_Real32 CenterReadObject{};
             ParticlesDataFile.read((char*)&CenterReadObject, sizeof(CenterReadObject));
             ParticleObject.Center = { static_cast<RealType>(CenterReadObject.X), static_cast<RealType>(CenterReadObject.Y), static_cast<RealType>(CenterReadObject.Z) };
@@ -466,10 +460,6 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
             ParticlesDataFile.read((char*)&ParticleObject.SelectedForReaction, sizeof(ParticleObject.SelectedForReaction));
 
             ReadStringFromBinaryFile(ParticlesDataFile, ParticleObject.SequenceStr);
-
-            //
-            //if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)
-            //
 
             if (CellEngineConfigDataObject.MixedFullAtomWithVoxelSpace == true || CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)
             {
@@ -495,7 +485,6 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
 
             if (CellEngineConfigDataObject.MixedFullAtomWithVoxelSpace == false)
             {
-                //
                 if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
                     SetCurrentSectorPos(CellEngineUseful::GetSectorPos(ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z));
                 AddNewParticle(ParticleObject);
