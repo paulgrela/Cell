@@ -10,12 +10,12 @@
         for (UnsignedInt ParticleSectorXIndex = 0; ParticleSectorXIndex < CellEngineConfigDataObject.NumberOfParticlesSectorsInX; ParticleSectorXIndex++) \
             for (UnsignedInt ParticleSectorYIndex = 0; ParticleSectorYIndex < CellEngineConfigDataObject.NumberOfParticlesSectorsInY; ParticleSectorYIndex++) \
                 for (UnsignedInt ParticleSectorZIndex = 0; ParticleSectorZIndex < CellEngineConfigDataObject.NumberOfParticlesSectorsInZ; ParticleSectorZIndex++) \
-                    for (const auto& ParticleObject : Particles[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex])
+                    for (const auto& ParticleObject : Particles[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles)
 
 #define FOR_EACH_PARTICLE_IN_XYZ \
         for (UnsignedInt ParticleSectorXIndex = 0; ParticleSectorXIndex < CellEngineConfigDataObject.NumberOfParticlesSectorsInX; ParticleSectorXIndex++) \
             for (UnsignedInt ParticleSectorYIndex = 0; ParticleSectorYIndex < CellEngineConfigDataObject.NumberOfParticlesSectorsInY; ParticleSectorYIndex++) \
                 for (UnsignedInt ParticleSectorZIndex = 0; ParticleSectorZIndex < CellEngineConfigDataObject.NumberOfParticlesSectorsInZ; ParticleSectorZIndex++) \
-                    for (auto& ParticleObject : Particles[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex])
+                    for (auto& ParticleObject : Particles[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles)
 
 #endif

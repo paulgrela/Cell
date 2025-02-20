@@ -113,7 +113,7 @@ void CellEngineSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpaceFullAt
     {
         uniform_int_distribution<SignedInt> UniformDistributionObjectMoveParticleDirection_int64t(-10, 10);
 
-        for (auto& ParticleInProximityObject : Particles[StartXPosParam][StartYPosParam][StartZPosParam])
+        for (auto& ParticleInProximityObject : Particles[StartXPosParam][StartYPosParam][StartZPosParam].Particles)
         {
             CurrentSectorPos = SectorPosType{ static_cast<UnsignedInt>(StartXPosParam), static_cast<UnsignedInt>(StartYPosParam), static_cast<UnsignedInt>(StartZPosParam) };
             if (CellEngineUseful::IsDNA(ParticleInProximityObject.second.EntityId) == false)

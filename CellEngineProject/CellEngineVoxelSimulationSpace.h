@@ -58,7 +58,7 @@ protected:
     SimulationSpaceSectorBounds GetBoundsForThreadSector() override;
 public:
     template <class T>
-    static void CheckParticlesIndexes(ParticlesContainerInternal<T>& FormerParticlesIndexes, const string& FormerState);
+    static void CheckParticlesIndexes(ParticlesDetailedContainer<T>& FormerParticlesIndexes, const string& FormerState);
     void CheckCancelledParticlesIndexes();
     void CheckFormerExistedParticlesIndexes();
 public:

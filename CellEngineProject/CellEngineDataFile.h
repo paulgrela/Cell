@@ -29,16 +29,16 @@ protected:
 protected:
     inline Particle& GetParticleFromIndex(const UniqueIdInt ParticleIndex)
     {
-        return Particles[0][0][0][ParticleIndex];
+        return Particles[0][0][0].Particles[ParticleIndex];
     }
 public:
-    ParticlesContainerInternal<Particle>::iterator GetParticleIteratorFromIndex(const UniqueIdInt ParticleIndex)
+    ParticlesDetailedContainer<Particle>::iterator GetParticleIteratorFromIndex(const UniqueIdInt ParticleIndex)
     {
-        return Particles[0][0][0].find(ParticleIndex);
+        return Particles[0][0][0].Particles.find(ParticleIndex);
     }
     [[nodiscard]] auto GetParticleEnd() const
     {
-        return Particles[0][0][0].end();
+        return Particles[0][0][0].Particles.end();
     }
 public:
     void GetMemoryForParticlesInSectors()
@@ -54,7 +54,7 @@ public:
                 {
                     ParticlesInSectorsYPos.resize(CellEngineConfigDataObject.NumberOfParticlesSectorsInZ);
                     for (auto& ParticlesInSectorsZPos : ParticlesInSectorsYPos)
-                        ParticlesInSectorsZPos.clear();
+                        ParticlesInSectorsZPos.Particles.clear();
                 }
             }
         }

@@ -177,7 +177,7 @@ bool CellEngineVoxelSimulationSpace::CheckIfSpaceIsEmptyAndIsInBoundsForParticle
 }
 
 template <class T>
-void CellEngineVoxelSimulationSpace::CheckParticlesIndexes(ParticlesContainerInternal<T>& FormerParticlesIndexes, const string& FormerState)
+void CellEngineVoxelSimulationSpace::CheckParticlesIndexes(ParticlesDetailedContainer<T>& FormerParticlesIndexes, const string& FormerState)
 {
     try
     {
@@ -197,8 +197,8 @@ void CellEngineVoxelSimulationSpace::CheckParticlesIndexes(ParticlesContainerInt
     CATCH("checking particles indexes")
 }
 
-template void CellEngineVoxelSimulationSpace::CheckParticlesIndexes(ParticlesContainerInternal<UniqueIdInt>& FormerParticlesIndexes, const string& FormerState);
-template void CellEngineVoxelSimulationSpace::CheckParticlesIndexes(ParticlesContainerInternal<Particle>& FormerParticlesIndexes, const string& FormerState);
+template void CellEngineVoxelSimulationSpace::CheckParticlesIndexes(ParticlesDetailedContainer<UniqueIdInt>& FormerParticlesIndexes, const string& FormerState);
+template void CellEngineVoxelSimulationSpace::CheckParticlesIndexes(ParticlesDetailedContainer<Particle>& FormerParticlesIndexes, const string& FormerState);
 
 void CellEngineVoxelSimulationSpace::CheckCancelledParticlesIndexes()
 {

@@ -31,9 +31,9 @@ void CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForCuboidSelecte
 {
     try
     {
-        for (RealType PosX = StartXPosParam; PosX < StartXPosParam + SizeXParam; PosX += StepXParam)
-            for (RealType PosY = StartYPosParam; PosY < StartYPosParam + SizeYParam; PosY += StepYParam)
-                for (RealType PosZ = StartZPosParam; PosZ < StartZPosParam + SizeZParam; PosZ += StepZParam)
+        for (RealType PosX = StartXPosParam; PosX < StartXPosParam + SizeXParam; PosX += 1.5f * StepXParam)
+            for (RealType PosY = StartYPosParam; PosY < StartYPosParam + SizeYParam; PosY += 1.5f * StepYParam)
+                for (RealType PosZ = StartZPosParam; PosZ < StartZPosParam + SizeZParam; PosZ += 1.5f * StepZParam)
                     FilledSpaceAtoms.emplace_back(EntityId, PosX, PosY, PosZ, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
     }
     CATCH("setting value to full atoms for cuboid selected space")

@@ -17,13 +17,13 @@ protected:
 protected:
     std::mutex MainExchangeParticlesMutexObject;
 protected:
-    ParticlesContainerInternal<Particle> ParticlesForThreads;
+    ParticlesDetailedContainer<Particle> ParticlesForThreads;
 protected:
     UnsignedInt ErrorCounter = 0;
     UnsignedInt AddedParticlesInReactions = 0;
 protected:
-    ParticlesContainerInternal<Particle> FormerParticlesIndexes;
-    ParticlesContainerInternal<UniqueIdInt> CancelledParticlesIndexes;
+    ParticlesDetailedContainer<Particle> FormerParticlesIndexes;
+    ParticlesDetailedContainer<UniqueIdInt> CancelledParticlesIndexes;
 };
 
 #endif

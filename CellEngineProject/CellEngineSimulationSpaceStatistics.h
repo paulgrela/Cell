@@ -48,7 +48,7 @@ protected:
     bool SortHistogramOfParticlesAsSortedVectorElementsBool = true;
 protected:
     std::vector<std::vector<Particle>> ParticlesSnapshots;
-    std::vector<ParticlesContainerInternal<Particle>> ParticlesSnapshotsCopiedUnorderedMap;
+    std::vector<ParticlesDetailedContainer<Particle>> ParticlesSnapshotsCopiedUnorderedMap;
     std::vector<std::vector<ParticleKindStatistics>> ParticlesKindsSnapshotsVectorSortedByCounter;
     std::vector<std::vector<ParticleKindHistogramComparison>> ParticlesKindsHistogramComparisons;
 protected:

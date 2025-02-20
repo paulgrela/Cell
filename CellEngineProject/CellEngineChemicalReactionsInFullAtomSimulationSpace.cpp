@@ -8,7 +8,7 @@ void CellEngineChemicalReactionsInFullAtomSimulationSpace::FindParticlesInProxim
     {
         const auto start_time = chrono::high_resolution_clock::now();
 
-        for (const auto& ParticleObject : Particles[StartXPosParam][StartYPosParam][StartZPosParam])
+        for (const auto& ParticleObject : Particles[StartXPosParam][StartYPosParam][StartZPosParam].Particles)
             LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity.emplace_back(ParticleObject.second.Index);
 
         const auto stop_time = chrono::high_resolution_clock::now();

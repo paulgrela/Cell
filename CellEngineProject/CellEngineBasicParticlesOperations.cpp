@@ -8,7 +8,7 @@
 
 using namespace std;
 
-void  CellEngineBasicParticlesOperations::InitiateFreeParticleIndexes(const ParticlesContainerInternal<Particle>& LocalParticles, const bool PrintInfo)
+void  CellEngineBasicParticlesOperations::InitiateFreeParticleIndexes(const ParticlesDetailedContainer<Particle>& LocalParticles, const bool PrintInfo)
 {
     try
     {
@@ -34,7 +34,8 @@ void CellEngineBasicParticlesOperations::PreprocessData(const vector<A> Particle
     {
         LoggersManagerObject.Log(STREAM("Preprocess data"));
 
-        InitiateFreeParticleIndexes(Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ], true);
+        //czy indeksy powinny byc unikalne w watku czy w sektrze unikalne bo gdy nieunikalne w sektorze to przezucanie generuje blad??
+        InitiateFreeParticleIndexes(Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ].Particles, true);
         GetMinMaxCoordinatesForAllParticles<T, A>(ListOfElements, ListOfElementsOfParticleKind, UpdateParticleKindListOfElementsBool);
     }
     CATCH("preprocessing data for voxel simulation space")

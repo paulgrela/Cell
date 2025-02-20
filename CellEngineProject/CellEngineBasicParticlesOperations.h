@@ -20,14 +20,14 @@ protected:
 protected:
     ParticlesContainer<Particle>& Particles;
 protected:
-    inline ParticlesContainerInternal<Particle>& GetParticles()
+    inline ParticlesDetailedContainer<Particle>& GetParticles()
     {
         if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
-            return Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ];
+            return Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ].Particles;
         else
         {
             if (CurrentThreadIndex == 0)
-                return Particles[0][0][0];
+                return Particles[0][0][0].Particles;
             else
                 return ParticlesForThreads;
         }
@@ -43,7 +43,7 @@ public:
         return FreeIndexesOfParticles.size();
     }
 protected:
-    void InitiateFreeParticleIndexes(const ParticlesContainerInternal<Particle>& LocalParticles, bool PrintInfo);
+    void InitiateFreeParticleIndexes(const ParticlesDetailedContainer<Particle>& LocalParticles, bool PrintInfo);
 protected:
     inline UniqueIdInt GetNewFreeIndexOfParticle()
     {

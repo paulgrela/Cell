@@ -612,7 +612,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesKindsAndParticl
     {
         LoggersManagerObject.Log(STREAM("START OF READING DATA FROM BINARY FILE"));
 
-        Particles[0][0][0].clear();
+        Particles[0][0][0].Particles.clear();
         ParticlesKindsManagerObject.Genes.clear();
         ParticlesKindsManagerObject.ParticlesKinds.clear();
         ChemicalReactionsManagerObject.ClearAllChemicalReactions();

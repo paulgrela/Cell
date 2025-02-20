@@ -3,6 +3,7 @@
 #ifndef CELL_ENGINE_TYPES_H
 #define CELL_ENGINE_TYPES_H
 
+#include <stack>
 #include <memory>
 #include <vector>
 #include <cstdint>
@@ -63,8 +64,15 @@ struct PosType
     }
 };
 
+template<class Particle>
+using ParticlesDetailedContainer = std::unordered_map<UniqueIdInt, Particle>;
+
 template <class Particle>
-using ParticlesContainerInternal = std::unordered_map<UniqueIdInt, Particle>;
+struct ParticlesContainerInternal
+{
+    std::stack<UniqueIdInt> FreeIndexesOfParticles;
+    ParticlesDetailedContainer<Particle> Particles;
+};
 
 template <class Particle>
 using ParticlesContainer = std::vector<std::vector<std::vector<ParticlesContainerInternal<Particle>>>>;

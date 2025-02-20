@@ -596,7 +596,7 @@ public:
                 }
                 if (ChangeColor == true)
                     FOR_EACH_PARTICLE_IN_XYZ_ONLY
-                        for (auto& ParticleObject: CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex])
+                        for (auto& ParticleObject: CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles)
                             for (auto& AtomObject : ParticleObject.second.ListOfAtoms)
                                 AtomObject.AtomColor = ParticlesKindsManagerObject.GetGraphicAtomKindDataFromAtomName(AtomObject.Name[0])->Color;
             }

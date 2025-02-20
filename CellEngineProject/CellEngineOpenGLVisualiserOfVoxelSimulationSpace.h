@@ -39,7 +39,7 @@ private:
     struct TemporaryRenderedVoxel
     {
         CellEngineAtom CellEngineAtomObject;
-        ParticlesContainerInternal<Particle>::iterator CellEngineParticleObject;
+        ParticlesDetailedContainer<Particle>::iterator CellEngineParticleObject;
         UnsignedInt X, Y, Z;
     };
     UnsignedInt SaveXMousePosition{}, SaveYMousePosition{}, SaveZMousePosition{};
