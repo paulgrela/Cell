@@ -499,7 +499,8 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
                     SetCurrentSectorPos(CellEngineUseful::GetSectorPos(ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z));
                 AddNewParticle(ParticleObject);
 
-                CheckCenterForSector(ParticleObject, GetParticles());
+                if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
+                    CheckCenterForSector(ParticleObject, GetParticles());
             }
 
             if (ParticleObject.Index == 0)

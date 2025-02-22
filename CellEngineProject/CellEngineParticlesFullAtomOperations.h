@@ -30,10 +30,10 @@ protected:
     {
         try
         {
-            MoveAllAtomsInParticleAtomsListByVector(ParticleObject, VectorX, VectorY, VectorZ);
-
             auto [SectorPosX1, SectorPosY1, SectorPosZ1] = CellEngineUseful::GetSectorPos(ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z);
             auto [SectorPosX2, SectorPosY2, SectorPosZ2] = CellEngineUseful::GetSectorPos(ParticleObject.Center.X + VectorX, ParticleObject.Center.Y + VectorY, ParticleObject.Center.Z + VectorZ);
+
+            MoveAllAtomsInParticleAtomsListByVector(ParticleObject, VectorX, VectorY, VectorZ);
 
             ParticleObject.SetCenterCoordinates(ParticleObject.Center.X + VectorX, ParticleObject.Center.Y + VectorY, ParticleObject.Center.Z + VectorZ);
 
@@ -43,15 +43,23 @@ protected:
                     ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].Particles.insert(ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].Particles.extract(ParticleObject.Index));
                 else
                 {
+                    if (ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].Particles.contains(ParticleObject.Index) == false)
+                        if (&ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].Particles.find(ParticleObject.Index)->second == &ParticleObject)
+                        {
+                            std::cout << "Bad sector for particle index: " << ParticleObject.Index << SectorPosX1 << " " << SectorPosY1 << " " << SectorPosZ1 << " " << SectorPosX2 << " " << SectorPosY2 << " " << SectorPosZ2 << std::endl;
+                            return;
+                        }
+
                     const UniqueIdInt FormerParticleIndex = ParticleObject.Index;
 
                     ParticleObject.Index = ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].FreeIndexesOfParticles.top();
                     ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].FreeIndexesOfParticles.pop();
+
                     ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].Particles[ParticleObject.Index] = ParticleObject;
 
                     ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].Particles.erase(ParticleObject.Index);
 
-                    std::cout << "New particle index: " << ParticleObject.Index << " Former particle index: " << FormerParticleIndex << std::endl;
+                    std::cout << "New particle index: " << ParticleObject.Index << " Former particle index: " << FormerParticleIndex << " " << SectorPosX1 << " " << SectorPosY1 << " " << SectorPosZ1 << " " << SectorPosX2 << " " << SectorPosY2 << " " << SectorPosZ2 << std::endl;
                 }
 
                 // if (ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].Particles.contains(ParticleObject.Index) == false)

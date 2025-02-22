@@ -1630,6 +1630,9 @@ static void RandomParticlesGeneratorFullAtomSimulationSpaceParametersMenu(const 
                     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SaveHistogramOfParticlesStatisticsToFile();
                 if (ImGui::Button(AlignString("SAVE NUMBER OF PARTICLES TO FILE", StringLength).c_str()) == true)
                     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SaveNumberOfParticlesStatisticsToFile();
+
+                if (ImGui::Button(AlignString("SAVE NUMBER OF PARTICLES IN SECTORS TO FILE", StringLength).c_str()) == true)
+                    CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->WriteNumberOfParticlesInEachSectorToFile();
             }
         }
         CATCH("modification of statistics operations full atom simulation space parameters menu")

@@ -117,3 +117,33 @@ bool CellEngineFullAtomSimulationSpace::CheckIfSpaceIsEmptyAndIsInBoundsForParti
 {
     return CheckFreeSpaceAndBoundsForListOfAtoms(ParticleKindObjectForProduct.ListOfAtoms, ParticlesInSector, CurrentSectorPos, ParticleKindObjectForProduct.Radius, VectorX, VectorY, VectorZ, SimulationSpaceSectorBoundsObjectParam, CellEngineConfigDataObject.CheckOnlyParticlesCenters);
 }
+
+void CellEngineFullAtomSimulationSpace::WriteNumberOfParticlesInEachSectorToFile() const
+{
+    try
+    {
+        UnsignedInt SectorsHistogram[1000];
+        for (auto& SectorHistogram : SectorsHistogram)
+            SectorHistogram = 0;
+
+        FOR_EACH_PARTICLE_IN_XYZ_ONLY
+        {
+            if (Particles[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.size() > 1000)
+                LoggersManagerObject.Log(STREAM("SECTOR = (" << ParticleSectorXIndex << "," << ParticleSectorYIndex  << "," << ParticleSectorZIndex << ") SIZE = " << Particles[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.size()));
+
+            SectorsHistogram[Particles[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.size()]++;
+        }
+
+        UnsignedInt NumberOfSector = 0;
+        UnsignedInt NumberOfAllSectorsWithParticles = 0;
+        for (const auto& SectorHistogram : SectorsHistogram)
+        {
+            LoggersManagerObject.Log(STREAM("SECTOR SIZE = " << NumberOfSector << " NUMBER OF SECTORS OF THIS SIZE = " << SectorHistogram));
+            NumberOfAllSectorsWithParticles += SectorHistogram;
+            NumberOfSector++;
+        }
+        LoggersManagerObject.Log(STREAM("NUMBER OF ALL SECTORS = " << NumberOfAllSectorsWithParticles));
+    }
+    CATCH("writing number of particles in each sector to file")
+}
+
