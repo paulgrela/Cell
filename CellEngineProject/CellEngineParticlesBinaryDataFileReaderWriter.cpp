@@ -417,6 +417,16 @@ void ReadVoxelsVectorDividedByStepsFromBinaryFile(ifstream& ParticlesDataFile, L
     CATCH("reading vector from binary file")
 }
 
+void CheckCenterForSector(const Particle& ParticleObject, const ParticlesContainer<Particle>& ParticlesInSector)
+{
+    const UnsignedInt X = CellEngineUseful::GetSectorPos(ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z).SectorPosX;
+    const UnsignedInt Y = CellEngineUseful::GetSectorPos(ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z).SectorPosY;
+    const UnsignedInt Z = CellEngineUseful::GetSectorPos(ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z).SectorPosZ;
+
+    if (ParticlesInSector[X][Y][Z].Particles.find(ParticleObject.Index)->second.Center != ParticleObject.Center)
+        cout << "Error for particle XYZ = " << ParticleObject.EntityId << " " << ParticleObject.Index << endl;
+}
+
 void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(ifstream& ParticlesDataFile)
 {
     try
@@ -488,6 +498,8 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
                 if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
                     SetCurrentSectorPos(CellEngineUseful::GetSectorPos(ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z));
                 AddNewParticle(ParticleObject);
+
+                CheckCenterForSector(ParticleObject, GetParticles());
             }
 
             if (ParticleObject.Index == 0)

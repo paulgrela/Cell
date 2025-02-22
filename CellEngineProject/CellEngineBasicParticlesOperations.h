@@ -37,6 +37,14 @@ protected:
     {
         return GetParticles()[ParticleIndex];
     }
+protected:
+    inline std::stack<UniqueIdInt>& GetFreeIndexes()
+    {
+        if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
+            return Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ].FreeIndexesOfParticles;
+        else
+            return FreeIndexesOfParticles;
+    }
 public:
     [[nodiscard]] UniqueIdInt GetFreeIndexesOfParticleSize() const
     {
@@ -47,10 +55,10 @@ protected:
 protected:
     inline UniqueIdInt GetNewFreeIndexOfParticle()
     {
-        if (FreeIndexesOfParticles.empty() == false)
+        if (GetFreeIndexes().empty() == false)
         {
-            UniqueIdInt FreeIndexOfParticle = FreeIndexesOfParticles.top();
-            FreeIndexesOfParticles.pop();
+            const UniqueIdInt FreeIndexOfParticle = GetFreeIndexes().top();
+            GetFreeIndexes().pop();
             return FreeIndexOfParticle;
         }
         else

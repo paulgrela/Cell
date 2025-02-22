@@ -23,9 +23,10 @@ void CellEngineChemicalReactionsInSimulationSpace::RemoveParticle(const UniqueId
         SeparateTwoPairedDNANucleotides(&ParticleObject);
         DeleteLinkedParticlesPointersList(ParticleObject);
         ClearSpaceForParticle(ParticleObject, ClearVoxels);
-        FreeIndexesOfParticles.push(ParticleIndex);
 
         GetParticles().erase(ParticleIndex);
+
+        GetFreeIndexes().push(ParticleIndex);
     }
     CATCH("removing particle")
 }

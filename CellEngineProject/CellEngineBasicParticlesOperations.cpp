@@ -8,18 +8,36 @@
 
 using namespace std;
 
-void  CellEngineBasicParticlesOperations::InitiateFreeParticleIndexes(const ParticlesDetailedContainer<Particle>& LocalParticles, const bool PrintInfo)
+void CellEngineBasicParticlesOperations::InitiateFreeParticleIndexes(const ParticlesDetailedContainer<Particle>& LocalParticles, const bool PrintInfo)
 {
     try
     {
         if (PrintInfo == true)
             LoggersManagerObject.Log(STREAM("Scope of particle indexes for current thread = (" << to_string((CurrentThreadIndex + 1) * ParticleIndexesCreatorFactor - 1) << " , " << to_string(CurrentThreadIndex * ParticleIndexesCreatorFactor) << ") LocalParticles.size() = " << LocalParticles.size()));
 
-        FreeIndexesOfParticles = {};
+        if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
+        {
+            UnsignedInt CurrentSectorIndex = 0;
+            FOR_EACH_PARTICLE_IN_XYZ_ONLY
+            {
+                SetCurrentSectorPos({ ParticleSectorXIndex, ParticleSectorYIndex, ParticleSectorZIndex });
 
-        for (UniqueIdInt FreeIndex = (CurrentThreadIndex + 1) * ParticleIndexesCreatorFactor - 1; FreeIndex > CurrentThreadIndex * ParticleIndexesCreatorFactor; FreeIndex--)
-            if (!LocalParticles.contains(FreeIndex))
-                FreeIndexesOfParticles.push(FreeIndex);
+                GetFreeIndexes() = {};
+                for (UniqueIdInt FreeIndex = (CurrentSectorIndex + 1) * ParticleIndexesInSectorsCreatorFactor - 1; FreeIndex > CurrentSectorIndex * ParticleIndexesInSectorsCreatorFactor; FreeIndex--)
+                    if (!GetParticles().contains(FreeIndex))
+                        GetFreeIndexes().push(FreeIndex);
+
+                CurrentSectorIndex++;
+            }
+        }
+        else
+        {
+            FreeIndexesOfParticles = {};
+
+            for (UniqueIdInt FreeIndex = (CurrentThreadIndex + 1) * ParticleIndexesCreatorFactor - 1; FreeIndex > CurrentThreadIndex * ParticleIndexesCreatorFactor; FreeIndex--)
+                if (!LocalParticles.contains(FreeIndex))
+                    FreeIndexesOfParticles.push(FreeIndex);
+        }
 
         if (PrintInfo == true)
             LoggersManagerObject.Log(STREAM("FreeIndexesOfParticles.size() = " << FreeIndexesOfParticles.size()));
@@ -34,7 +52,6 @@ void CellEngineBasicParticlesOperations::PreprocessData(const vector<A> Particle
     {
         LoggersManagerObject.Log(STREAM("Preprocess data"));
 
-        //czy indeksy powinny byc unikalne w watku czy w sektrze unikalne bo gdy nieunikalne w sektorze to przezucanie generuje blad??
         InitiateFreeParticleIndexes(Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ].Particles, true);
         GetMinMaxCoordinatesForAllParticles<T, A>(ListOfElements, ListOfElementsOfParticleKind, UpdateParticleKindListOfElementsBool);
     }

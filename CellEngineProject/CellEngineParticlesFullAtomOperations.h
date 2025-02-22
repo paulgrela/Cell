@@ -32,16 +32,51 @@ protected:
         {
             MoveAllAtomsInParticleAtomsListByVector(ParticleObject, VectorX, VectorY, VectorZ);
 
-            ParticleObject.SetCenterCoordinates(ParticleObject.Center.X + VectorX, ParticleObject.Center.Y + VectorY, ParticleObject.Center.Z + VectorZ);
-
             auto [SectorPosX1, SectorPosY1, SectorPosZ1] = CellEngineUseful::GetSectorPos(ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z);
             auto [SectorPosX2, SectorPosY2, SectorPosZ2] = CellEngineUseful::GetSectorPos(ParticleObject.Center.X + VectorX, ParticleObject.Center.Y + VectorY, ParticleObject.Center.Z + VectorZ);
 
+            ParticleObject.SetCenterCoordinates(ParticleObject.Center.X + VectorX, ParticleObject.Center.Y + VectorY, ParticleObject.Center.Z + VectorZ);
+
             if (SectorPosX1 != SectorPosX2 || SectorPosY1 != SectorPosY2 || SectorPosZ1 != SectorPosZ2)
             {
-                //std::cout << "SECTORS = " << SectorPosX1 << " " << SectorPosY1 << " " << SectorPosZ1 << " " << SectorPosX2 << " " << SectorPosY2 << " " << SectorPosZ2 << " " << std::endl;
-                //if (ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].contains(ParticleObject.Index) == false)
-                ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].Particles.insert(ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].Particles.extract(ParticleObject.Index));
+                if (ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].Particles.contains(ParticleObject.Index) == false)
+                    ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].Particles.insert(ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].Particles.extract(ParticleObject.Index));
+                else
+                {
+                    const UniqueIdInt FormerParticleIndex = ParticleObject.Index;
+
+                    ParticleObject.Index = ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].FreeIndexesOfParticles.top();
+                    ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].FreeIndexesOfParticles.pop();
+                    ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].Particles[ParticleObject.Index] = ParticleObject;
+
+                    ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].Particles.erase(ParticleObject.Index);
+
+                    std::cout << "New particle index: " << ParticleObject.Index << " Former particle index: " << FormerParticleIndex << std::endl;
+                }
+
+                // if (ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].Particles.contains(ParticleObject.Index) == false)
+                //     ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].Particles.insert(ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].Particles.extract(ParticleObject.Index));
+                // else
+                // {
+                //     const UniqueIdInt FormerParticleIndex = ParticleObject.Index;
+                //
+                //     //UniqueIdInt NewParticleIndex = ParticleObject.Index = ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].FreeIndexesOfParticles.top();
+                //     const UniqueIdInt NewParticleIndex = ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].FreeIndexesOfParticles.top();
+                //     ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].FreeIndexesOfParticles.pop();
+                //
+                //     //wyglada na to ze wczesniej czastka przypisana do zlego sektora ale czemu i niema jej w sektorze1
+                //     auto ParticleExtract = ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].Particles.extract(FormerParticleIndex);
+                //     if (ParticleExtract.empty() == false)
+                //     {
+                //         ParticleExtract.mapped().Index = NewParticleIndex;
+                //         ParticleExtract.key() = NewParticleIndex;
+                //         std::cout << "Correct New particle index: " << NewParticleIndex << " Former particle index: " << FormerParticleIndex << std::endl;
+                //     }
+                //     else
+                //         std::cout << "New particle index: " << NewParticleIndex << " Former particle index: " << FormerParticleIndex << std::endl;
+                //
+                //     ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].Particles.insert(std::move(ParticleExtract));
+                // }
             }
         }
         CATCH_AND_THROW("moving particle by vector")

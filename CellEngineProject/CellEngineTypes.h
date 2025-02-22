@@ -28,6 +28,11 @@ template<class T>
 struct vector3
 {
     T X, Y, Z;
+
+    bool operator==(const vector3& CTP) const
+    {
+        return (CTP.X == X && CTP.Y == Y && CTP.Z == Z);
+    }
 };
 
 using vector3_16 = vector3<PositionInt>;
