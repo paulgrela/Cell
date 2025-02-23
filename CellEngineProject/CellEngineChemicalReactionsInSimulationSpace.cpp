@@ -179,19 +179,3 @@ void CellEngineChemicalReactionsInSimulationSpace::PrintInformationAboutFoundPar
     CATCH("printing information found particles in proximity")
 }
 
-//TO DO WYLOTKI - NIECH ZOSTANA SAME SEKTORY DO OZNACZENIA - nigdy nie pobieraj dla czastki - po prostu znajdz w jakim czastka sekotorze i rob reakcje
-// bool CellEngineChemicalReactionsInSimulationSpace::FindParticlesInProximityOfSimulationSpaceForChosenParticle(const Particle& ParticleObject, const UnsignedInt AdditionalBoundFactor)
-// {
-//     try
-//     {
-//         LoggersManagerObject.Log(STREAM("EntityId = " << to_string(ParticleObject.EntityId)));
-//
-//         auto ParticleKindObject = ParticlesKindsManagerObject.GetParticleKind(ParticleObject.EntityId);
-//
-//         FindParticlesInProximityOfSimulationSpaceForSelectedSpace(true, ParticleObject.Center.X - ParticleKindObject.XSizeDiv2 - AdditionalBoundFactor, ParticleObject.Center.Y - ParticleKindObject.YSizeDiv2 - AdditionalBoundFactor, ParticleObject.Center.Z - ParticleKindObject.ZSizeDiv2 - AdditionalBoundFactor, 2 * ParticleKindObject.XSizeDiv2 + 2 * AdditionalBoundFactor, 2 * ParticleKindObject.YSizeDiv2 + 2 * AdditionalBoundFactor, 2 * ParticleKindObject.ZSizeDiv2 + 2 * AdditionalBoundFactor);
-//     }
-//     CATCH("finding particles in proximity of simulation space for chosen particle")
-//
-//     return true;
-// }
-

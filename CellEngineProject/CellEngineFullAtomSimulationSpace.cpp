@@ -52,13 +52,6 @@ void CellEngineFullAtomSimulationSpace::FillParticleElementsInSpace(const Unique
 {
     try
     {
-        // GetParticleFromIndex(ParticleIndex).ListOfAtoms.clear();
-        //
-        // for (const auto& NewPointElement : ParticleKindObjectForProduct.ListOfAtoms)
-        //     GetParticleFromIndex(ParticleIndex).ListOfAtoms.emplace_back(NewPointElement);
-        //
-        // GetMinMaxCoordinatesForParticle<RealType, CellEngineAtom>(GetParticleFromIndex(ParticleIndex), &Particle::ListOfAtoms, &ParticleKind::ListOfAtoms, false);
-
         GetParticleFromIndex(ParticleIndex).ListOfAtoms.clear();
 
         for (const auto& NewPointElement : ParticleKindObjectForProduct.ListOfAtoms)

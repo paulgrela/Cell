@@ -9,6 +9,8 @@
 
 #include "CellEngineParticle.h"
 
+constexpr bool PrintInfoWarning = false;
+
 class CellEngineParticlesFullAtomOperations
 {
 protected:
@@ -46,6 +48,9 @@ protected:
                     if (ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].Particles.contains(ParticleObject.Index) == false)
                         if (&ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].Particles.find(ParticleObject.Index)->second == &ParticleObject)
                         {
+                            if constexpr(PrintInfoWarning == true)
+                                std::cout << "Bad sector for particle index: " << ParticleObject.EntityId << " " << ParticleObject.Index << " " << SectorPosX1 << " " << SectorPosY1 << " " << SectorPosZ1 << " " << SectorPosX2 << " " << SectorPosY2 << " " << SectorPosZ2 << std::endl;
+
                             auto [SectorPosX1B, SectorPosY1B, SectorPosZ1B] = CellEngineUseful::GetSectorPos(ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z);
                             if (SectorPosX1B != SectorPosX2 || SectorPosY1B != SectorPosY2 || SectorPosZ1B != SectorPosZ2)
                                 std::cout << "Still bad sector for particle index: " << ParticleObject.EntityId << " " << ParticleObject.Index << " " << SectorPosX1 << " " << SectorPosY1 << " " << SectorPosZ1 << " " << SectorPosX2 << " " << SectorPosY2 << " " << SectorPosZ2 << std::endl;
