@@ -54,8 +54,11 @@ void CellEngineFullAtomSimulationSpace::FillParticleElementsInSpace(const Unique
     {
         GetParticleFromIndex(ParticleIndex).ListOfAtoms.clear();
 
-        for (const auto& NewPointElement : ParticleKindObjectForProduct.ListOfAtoms)
-            GetParticleFromIndex(ParticleIndex).ListOfAtoms.emplace_back(NewPointElement.X + VectorX, NewPointElement.Y + VectorY, NewPointElement.Z + VectorZ);
+        if (ParticleKindObjectForProduct.ListOfAtoms.empty() == false)
+            for (const auto& NewPointElement : ParticleKindObjectForProduct.ListOfAtoms)
+                GetParticleFromIndex(ParticleIndex).ListOfAtoms.emplace_back(NewPointElement.X + VectorX, NewPointElement.Y + VectorY, NewPointElement.Z + VectorZ);
+        else
+            GetParticleFromIndex(ParticleIndex).ListOfAtoms.emplace_back(VectorX, VectorY, VectorZ);
 
         GetParticleFromIndex(ParticleIndex).Radius = ParticleKindObjectForProduct.Radius;
         GetParticleFromIndex(ParticleIndex).Center = { VectorX, VectorY, VectorZ };
