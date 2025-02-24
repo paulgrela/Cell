@@ -10,6 +10,7 @@
 #include "CellEngineFullAtomSimulationSpace.h"
 
 #include "CellEngineDataBuilderForFullAtomSimulationSpace.h"
+#include "CellEngineParticlesKindsManager.h"
 
 using namespace std;
 
@@ -103,7 +104,8 @@ SimulationSpaceSectorBounds CellEngineFullAtomSimulationSpace::GetBoundsForThrea
     try
     {
         if (CurrentThreadIndex == 0)
-            SimulationSpaceSectorBoundsObject.SetParameters(-1 * CellEngineConfigDataObject.ShiftCenterX, -1 * CellEngineConfigDataObject.ShiftCenterY, -1 * CellEngineConfigDataObject.ShiftCenterZ, CellEngineConfigDataObject.ShiftCenterX, CellEngineConfigDataObject.ShiftCenterY, CellEngineConfigDataObject.ShiftCenterZ, CellEngineConfigDataObject.ShiftCenterX, CellEngineConfigDataObject.ShiftCenterY, CellEngineConfigDataObject.ShiftCenterZ);
+            //SimulationSpaceSectorBoundsObject.SetParameters(-1 * CellEngineConfigDataObject.ShiftCenterX, -1 * CellEngineConfigDataObject.ShiftCenterY, -1 * CellEngineConfigDataObject.ShiftCenterZ, CellEngineConfigDataObject.ShiftCenterX, CellEngineConfigDataObject.ShiftCenterY, CellEngineConfigDataObject.ShiftCenterZ, CellEngineConfigDataObject.ShiftCenterX, CellEngineConfigDataObject.ShiftCenterY, CellEngineConfigDataObject.ShiftCenterZ);
+            SimulationSpaceSectorBoundsObject = ActualSimulationSpaceSectorBoundsObject;
         else
             SimulationSpaceSectorBoundsObject.SetParametersForParallelExecutionSectors(CurrentThreadPos, CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfZInOneThreadInSimulationSpace);
     }
@@ -151,3 +153,20 @@ void CellEngineFullAtomSimulationSpace::WriteNumberOfParticlesInEachSectorToFile
     CATCH("writing number of particles in each sector to file")
 }
 
+void CellEngineFullAtomSimulationSpace::WriteNumberOfParticlesKindsWithoutAtoms()
+{
+    try
+    {
+        UnsignedInt CountParticleKindsWithoutAtoms = 0;
+
+        for (const auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
+            if (ParticleKindObject.second.ListOfAtoms.empty() == true)
+            {
+                LoggersManagerObject.Log(STREAM("Particle Kind Without Atoms = " << ParticleKindObject.second.EntityId << " " << ParticleKindObject.second.IdStr));
+                CountParticleKindsWithoutAtoms++;
+            }
+
+        LoggersManagerObject.Log(STREAM("NUMBER OF PARTICLE KINDS WITHOUT VOXELS = " << CountParticleKindsWithoutAtoms << " " << ParticlesKindsManagerObject.ParticlesKinds.size()));
+    }
+    CATCH("getting number of particles kinds without atoms")
+}

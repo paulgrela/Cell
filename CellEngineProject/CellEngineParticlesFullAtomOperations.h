@@ -50,11 +50,6 @@ protected:
                         {
                             if constexpr(PrintInfoWarning == true)
                                 std::cout << "Bad sector for particle index: " << ParticleObject.EntityId << " " << ParticleObject.Index << " " << SectorPosX1 << " " << SectorPosY1 << " " << SectorPosZ1 << " " << SectorPosX2 << " " << SectorPosY2 << " " << SectorPosZ2 << std::endl;
-
-                            auto [SectorPosX1B, SectorPosY1B, SectorPosZ1B] = CellEngineUseful::GetSectorPos(ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z);
-                            if (SectorPosX1B != SectorPosX2 || SectorPosY1B != SectorPosY2 || SectorPosZ1B != SectorPosZ2)
-                                std::cout << "Still bad sector for particle index: " << ParticleObject.EntityId << " " << ParticleObject.Index << " " << SectorPosX1 << " " << SectorPosY1 << " " << SectorPosZ1 << " " << SectorPosX2 << " " << SectorPosY2 << " " << SectorPosZ2 << std::endl;
-
                             return;
                         }
 
@@ -67,7 +62,8 @@ protected:
 
                     ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].Particles.erase(ParticleObject.Index);
 
-                    std::cout << "New particle index: " << ParticleObject.Index << " Former particle index: " << FormerParticleIndex << " " << SectorPosX1 << " " << SectorPosY1 << " " << SectorPosZ1 << " " << SectorPosX2 << " " << SectorPosY2 << " " << SectorPosZ2 << std::endl;
+                    if constexpr(PrintInfoWarning == true)
+                        std::cout << "New particle index: " << ParticleObject.Index << " Former particle index: " << FormerParticleIndex << " " << SectorPosX1 << " " << SectorPosY1 << " " << SectorPosZ1 << " " << SectorPosX2 << " " << SectorPosY2 << " " << SectorPosZ2 << std::endl;
                 }
             }
         }

@@ -39,6 +39,7 @@ protected:
     bool CheckIfSpaceIsEmptyAndIsInBoundsForParticleElements(const ParticleKind& ParticleKindObjectForProduct, ParticlesContainer<Particle>& ParticlesInSector, const SectorPosType& CurrentSectorPos, RealType VectorX, RealType VectorY, RealType VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam) override;
 public:
     void WriteNumberOfParticlesInEachSectorToFile() const;
+    static void WriteNumberOfParticlesKindsWithoutAtoms();
 protected:
     SimulationSpaceSectorBounds GetBoundsForThreadSector() override;
 public:
