@@ -11,6 +11,7 @@
 
 #include "CellEngineDataBuilderForFullAtomSimulationSpace.h"
 #include "CellEngineParticlesKindsManager.h"
+#include "CellEngineChemicalReactionsManager.h"
 
 using namespace std;
 
@@ -112,6 +113,93 @@ SimulationSpaceSectorBounds CellEngineFullAtomSimulationSpace::GetBoundsForThrea
     CATCH("getting bounds for thread sector")
 
     return SimulationSpaceSectorBoundsObject;
+}
+
+void CellEngineFullAtomSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpace(const bool InBounds, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam)
+{
+    try
+    {
+        uniform_int_distribution<SignedInt> UniformDistributionObjectMoveParticleDirection_int64t(-10, 10);
+
+        for (auto& ParticleInProximityObject : Particles[StartXPosParam][StartYPosParam][StartZPosParam].Particles)
+        {
+            CurrentSectorPos = SectorPosType{ static_cast<UnsignedInt>(StartXPosParam), static_cast<UnsignedInt>(StartYPosParam), static_cast<UnsignedInt>(StartZPosParam) };
+            if (CellEngineUseful::IsDNA(ParticleInProximityObject.second.EntityId) == false)
+                MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(ParticleInProximityObject.second, Particles, CurrentSectorPos, UniformDistributionObjectMoveParticleDirection_int64t(mt64R), UniformDistributionObjectMoveParticleDirection_int64t(mt64R), UniformDistributionObjectMoveParticleDirection_int64t(mt64R), 0, 0, 0, SizeXParam, SizeYParam, SizeZParam);
+        }
+    }
+    CATCH("generating one step of diffusion for selected space")
+}
+
+void CellEngineFullAtomSimulationSpace::GenerateNStepsOfDiffusionForWholeCellSpace(const bool InBounds, const RealType XStartParam, const RealType YStartParam, const RealType ZStartParam, const RealType XStepParam, const RealType YStepParam, const RealType ZStepParam, const RealType XSizeParam, RealType YSizeParam, const RealType ZSizeParam, const RealType NumberOfSimulationSteps)
+{
+    try
+    {
+        CellEngineExecutionTimeStatisticsObject.ZeroMeasureTime();
+
+        const auto start_time = chrono::high_resolution_clock::now();
+
+        CellEngineUseful::SwitchOffLogs();
+
+        for (UnsignedInt Step = 1; Step <= NumberOfSimulationSteps; Step++)
+            FOR_EACH_PARTICLE_IN_XYZ_ONLY
+                GenerateOneStepOfDiffusionForSelectedSpace(InBounds, ParticleSectorXIndex, ParticleSectorYIndex, ParticleSectorZIndex, XSizeParam, YSizeParam, ZSizeParam);
+
+        CheckConditionsToIncSimulationStepNumberForStatistics();
+
+        CellEngineUseful::SwitchOnLogs();
+
+        const auto stop_time = chrono::high_resolution_clock::now();
+
+        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Execution of generating random reactions in whole cell space has taken time: ","Execution in threads")));
+
+        CellEngineExecutionTimeStatisticsObject.PrintMeasureTime();
+    }
+    CATCH("generating diffusion for whole cell space full atom")
+}
+
+void CellEngineFullAtomSimulationSpace::GenerateOneRandomReactionForSelectedSpace(const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam, const bool FindParticlesInProximityBool)
+{
+    try
+    {
+        PrepareRandomReaction();
+
+        SetCurrentSectorPos(SectorPosType{ static_cast<UnsignedInt>(StartXPosParam), static_cast<UnsignedInt>(StartYPosParam), static_cast<UnsignedInt>(StartZPosParam) });
+
+        FindParticlesInProximityOfSimulationSpaceForSelectedSpace(true, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
+
+        ActualSimulationSpaceSectorBoundsObject.SetParametersForChosenSector(StartXPosParam, StartYPosParam, StartZPosParam, CellEngineConfigDataObject.ShiftCenterX, CellEngineConfigDataObject.ShiftCenterY, CellEngineConfigDataObject.ShiftCenterZ, CellEngineConfigDataObject.SizeOfParticlesSectorX, CellEngineConfigDataObject.SizeOfParticlesSectorY, CellEngineConfigDataObject.SizeOfParticlesSectorZ);
+
+        FindAndExecuteRandomReaction(min(LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity.size(), ChemicalReactionsManagerObject.MaxNumberOfReactants));
+    }
+    CATCH("generating random reaction for selected space")
+}
+
+void CellEngineFullAtomSimulationSpace::GenerateNStepsOfOneRandomReactionForWholeCellSpace(const UnsignedInt XStartParam, const UnsignedInt YStartParam, const UnsignedInt ZStartParam, const UnsignedInt XStepParam, const UnsignedInt YStepParam, const UnsignedInt ZStepParam, const UnsignedInt XSizeParam, UnsignedInt YSizeParam, const UnsignedInt ZSizeParam, const UnsignedInt NumberOfSimulationSteps)
+{
+    try
+    {
+        CellEngineExecutionTimeStatisticsObject.ZeroMeasureTime();
+
+        const auto start_time = chrono::high_resolution_clock::now();
+
+        CellEngineUseful::SwitchOffLogs();
+
+        for (UnsignedInt Step = 1; Step <= NumberOfSimulationSteps; Step++)
+            FOR_EACH_PARTICLE_IN_XYZ_ONLY
+                GenerateOneRandomReactionForSelectedSpace(ParticleSectorXIndex, ParticleSectorYIndex, ParticleSectorZIndex, XSizeParam, YSizeParam, ZSizeParam, false);
+
+        CheckConditionsToIncSimulationStepNumberForStatistics();
+
+        CellEngineUseful::SwitchOnLogs();
+
+        const auto stop_time = chrono::high_resolution_clock::now();
+
+        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Execution of generating random reactions in whole cell space has taken time: ","Execution in threads")));
+
+        CellEngineExecutionTimeStatisticsObject.PrintMeasureTime();
+    }
+    CATCH("generating random reactions for whole cell space full atom")
 }
 
 bool CellEngineFullAtomSimulationSpace::MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, const SectorPosType& CurrentSectorPos, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam)

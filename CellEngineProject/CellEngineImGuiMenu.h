@@ -1321,7 +1321,9 @@ public:
                 {
                     //CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfDiffusionForWholeCellSpaceFullAtom(true, 0, 0, 0, 32, 32, 32, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfStepsInSimulationOutside);
                     //CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfDiffusionForWholeCellSpaceFullAtom(true, 0, 0, 0, CellEngineConfigDataObject.NumberOfParticlesSectorsInX, CellEngineConfigDataObject.NumberOfParticlesSectorsInY, CellEngineConfigDataObject.NumberOfParticlesSectorsInZ, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfStepsInSimulationOutside);
-                    CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfDiffusionForWholeCellSpaceFullAtom(true, 0, 0, 0, 1, 1, 1, CellEngineConfigDataObject.NumberOfParticlesSectorsInX, CellEngineConfigDataObject.NumberOfParticlesSectorsInY, CellEngineConfigDataObject.NumberOfParticlesSectorsInZ, CellEngineConfigDataObject.NumberOfStepsInSimulationOutside);
+
+                    //CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfDiffusionForWholeCellSpaceFullAtom(true, 0, 0, 0, 1, 1, 1, CellEngineConfigDataObject.NumberOfParticlesSectorsInX, CellEngineConfigDataObject.NumberOfParticlesSectorsInY, CellEngineConfigDataObject.NumberOfParticlesSectorsInZ, CellEngineConfigDataObject.NumberOfStepsInSimulationOutside);
+                    CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfDiffusionForWholeCellSpace(true, 0, 0, 0, 1, 1, 1, CellEngineConfigDataObject.NumberOfParticlesSectorsInX, CellEngineConfigDataObject.NumberOfParticlesSectorsInY, CellEngineConfigDataObject.NumberOfParticlesSectorsInZ, CellEngineConfigDataObject.NumberOfStepsInSimulationOutside);
                 });
             }
         }
@@ -1341,49 +1343,49 @@ public:
 
             ImGui::Text("CHOOSE REACTION");
 
-            if (ImGui::Button(AlignString("ONLY FIND PARTICLES NR = 0", StringLength, PrefixStringLength).c_str()) == true)
-                CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateOneChosenReactionForSelectedSpace(0, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-
-            if (ImGui::Button(AlignString("DO CHOSEN REACTION IN SELECTED SPACE-STD ONLY WITH SEQ NR = 1101", StringLength, PrefixStringLength).c_str()) == true)
-                CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateOneChosenReactionForSelectedSpace(1101, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-
-            if (ImGui::Button(AlignString("DO CHOSEN REACTION IN SELECTED SPACE-CUT 1 SEQ NR = 10", StringLength, PrefixStringLength).c_str()) == true)
-                CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateOneChosenReactionForSelectedSpace(10, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-            if (ImGui::Button(AlignString("DO CHOSEN REACTION IN SELECTED SPACE-CUT 2 SEQ SHIFT 3 10 NR = 40", StringLength, PrefixStringLength).c_str()) == true)
-                CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateOneChosenReactionForSelectedSpace(40, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-            if (ImGui::Button(AlignString("DO CHOSEN REACTION IN SELECTED SPACE-CUT 2 SEQ SHIFT 7 3 NR = 41", StringLength, PrefixStringLength).c_str()) == true)
-                CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateOneChosenReactionForSelectedSpace(41, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-            if (ImGui::Button(AlignString("DO CHOSEN REACTION IN SELECTED SPACE-CUT 2 SEQ SHIFT 3 10 NR = 42", StringLength, PrefixStringLength).c_str()) == true)
-                CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateOneChosenReactionForSelectedSpace(42, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-
-            if (ImGui::Button(AlignString("DO CHOSEN REACTION IN SELECTED SPACE-LINK 1 SEQ NR = 20", StringLength, PrefixStringLength).c_str()) == true)
-                CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateOneChosenReactionForSelectedSpace(20, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-            if (ImGui::Button(AlignString("DO CHOSEN REACTION IN SELECTED SPACE-LINK 1 ANY NR = 30", StringLength, PrefixStringLength).c_str()) == true)
-                CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateOneChosenReactionForSelectedSpace(30, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-            if (ImGui::Button(AlignString("DO CHOSEN REACTION IN SELECTED SPACE-LINK 2 ANY EQU SAME NR = 80", StringLength, PrefixStringLength).c_str()) == true)
-                CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateOneChosenReactionForSelectedSpace(80, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-
-            if (ImGui::Button(AlignString("DO CHOSEN REACTION IN SELECTED SPACE-LINK 2 SEQ COMPLEMENT NR = 60", StringLength, PrefixStringLength).c_str()) == true)
-                CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateOneChosenReactionForSelectedSpace(60, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-            if (ImGui::Button(AlignString("DO CHOSEN REACTION IN SELECTED SPACE-LINK 2 SEQ COMPLEMENT NR = 61", StringLength, PrefixStringLength).c_str()) == true)
-                CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateOneChosenReactionForSelectedSpace(61, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-            if (ImGui::Button(AlignString("DO CHOSEN REACTION IN SELECTED SPACE-LINK 2 ANY COMPLEMENT NR = 70", StringLength, PrefixStringLength).c_str()) == true)
-                CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateOneChosenReactionForSelectedSpace(70, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-
-            if (ImGui::Button(AlignString("DO CHOSEN REACTION IN SELECTED SPACE-CUT CRISPER 1 NR = 100", StringLength, PrefixStringLength).c_str()) == true)
-                CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateOneChosenReactionForSelectedSpace(100, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-            if (ImGui::Button(AlignString("DO CHOSEN REACTION IN SELECTED SPACE-CUT CRISPER 2 NR = 110", StringLength, PrefixStringLength).c_str()) == true)
-                CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateOneChosenReactionForSelectedSpace(110, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-
-            if (ImGui::Button(AlignString("DO CHOSEN REACTION IN SELECTED SPACE-POLYMERASE DNA START SEQ SPACE NR = 150", StringLength, PrefixStringLength).c_str()) == true)
-                CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateOneChosenReactionForSelectedSpace(150, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-            if (ImGui::Button(AlignString("DO CHOSEN REACTION IN SELECTED SPACE-POLYMERASE DNA CONTINUE SPACE NR = 160", StringLength, PrefixStringLength).c_str()) == true)
-                CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateOneChosenReactionForSelectedSpace(160, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-
-            if (ImGui::Button(AlignString("DO CHOSEN REACTION IN SELECTED SPACE-RIBOSOME RNA START SEQ SPACE NR = 170", StringLength, PrefixStringLength).c_str()) == true)
-                CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateOneChosenReactionForSelectedSpace(170, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-            if (ImGui::Button(AlignString("DO CHOSEN REACTION IN SELECTED SPACE-RIBOSOME RNA CONTINUE SPACE NR = 180", StringLength, PrefixStringLength).c_str()) == true)
-                CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateOneChosenReactionForSelectedSpace(180, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
+            // if (ImGui::Button(AlignString("ONLY FIND PARTICLES NR = 0", StringLength, PrefixStringLength).c_str()) == true)
+            //     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateOneChosenReactionForSelectedSpace(0, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
+            //
+            // if (ImGui::Button(AlignString("DO CHOSEN REACTION IN SELECTED SPACE-STD ONLY WITH SEQ NR = 1101", StringLength, PrefixStringLength).c_str()) == true)
+            //     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateOneChosenReactionForSelectedSpace(1101, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
+            //
+            // if (ImGui::Button(AlignString("DO CHOSEN REACTION IN SELECTED SPACE-CUT 1 SEQ NR = 10", StringLength, PrefixStringLength).c_str()) == true)
+            //     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateOneChosenReactionForSelectedSpace(10, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
+            // if (ImGui::Button(AlignString("DO CHOSEN REACTION IN SELECTED SPACE-CUT 2 SEQ SHIFT 3 10 NR = 40", StringLength, PrefixStringLength).c_str()) == true)
+            //     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateOneChosenReactionForSelectedSpace(40, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
+            // if (ImGui::Button(AlignString("DO CHOSEN REACTION IN SELECTED SPACE-CUT 2 SEQ SHIFT 7 3 NR = 41", StringLength, PrefixStringLength).c_str()) == true)
+            //     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateOneChosenReactionForSelectedSpace(41, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
+            // if (ImGui::Button(AlignString("DO CHOSEN REACTION IN SELECTED SPACE-CUT 2 SEQ SHIFT 3 10 NR = 42", StringLength, PrefixStringLength).c_str()) == true)
+            //     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateOneChosenReactionForSelectedSpace(42, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
+            //
+            // if (ImGui::Button(AlignString("DO CHOSEN REACTION IN SELECTED SPACE-LINK 1 SEQ NR = 20", StringLength, PrefixStringLength).c_str()) == true)
+            //     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateOneChosenReactionForSelectedSpace(20, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
+            // if (ImGui::Button(AlignString("DO CHOSEN REACTION IN SELECTED SPACE-LINK 1 ANY NR = 30", StringLength, PrefixStringLength).c_str()) == true)
+            //     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateOneChosenReactionForSelectedSpace(30, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
+            // if (ImGui::Button(AlignString("DO CHOSEN REACTION IN SELECTED SPACE-LINK 2 ANY EQU SAME NR = 80", StringLength, PrefixStringLength).c_str()) == true)
+            //     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateOneChosenReactionForSelectedSpace(80, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
+            //
+            // if (ImGui::Button(AlignString("DO CHOSEN REACTION IN SELECTED SPACE-LINK 2 SEQ COMPLEMENT NR = 60", StringLength, PrefixStringLength).c_str()) == true)
+            //     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateOneChosenReactionForSelectedSpace(60, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
+            // if (ImGui::Button(AlignString("DO CHOSEN REACTION IN SELECTED SPACE-LINK 2 SEQ COMPLEMENT NR = 61", StringLength, PrefixStringLength).c_str()) == true)
+            //     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateOneChosenReactionForSelectedSpace(61, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
+            // if (ImGui::Button(AlignString("DO CHOSEN REACTION IN SELECTED SPACE-LINK 2 ANY COMPLEMENT NR = 70", StringLength, PrefixStringLength).c_str()) == true)
+            //     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateOneChosenReactionForSelectedSpace(70, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
+            //
+            // if (ImGui::Button(AlignString("DO CHOSEN REACTION IN SELECTED SPACE-CUT CRISPER 1 NR = 100", StringLength, PrefixStringLength).c_str()) == true)
+            //     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateOneChosenReactionForSelectedSpace(100, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
+            // if (ImGui::Button(AlignString("DO CHOSEN REACTION IN SELECTED SPACE-CUT CRISPER 2 NR = 110", StringLength, PrefixStringLength).c_str()) == true)
+            //     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateOneChosenReactionForSelectedSpace(110, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
+            //
+            // if (ImGui::Button(AlignString("DO CHOSEN REACTION IN SELECTED SPACE-POLYMERASE DNA START SEQ SPACE NR = 150", StringLength, PrefixStringLength).c_str()) == true)
+            //     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateOneChosenReactionForSelectedSpace(150, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
+            // if (ImGui::Button(AlignString("DO CHOSEN REACTION IN SELECTED SPACE-POLYMERASE DNA CONTINUE SPACE NR = 160", StringLength, PrefixStringLength).c_str()) == true)
+            //     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateOneChosenReactionForSelectedSpace(160, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
+            //
+            // if (ImGui::Button(AlignString("DO CHOSEN REACTION IN SELECTED SPACE-RIBOSOME RNA START SEQ SPACE NR = 170", StringLength, PrefixStringLength).c_str()) == true)
+            //     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateOneChosenReactionForSelectedSpace(170, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
+            // if (ImGui::Button(AlignString("DO CHOSEN REACTION IN SELECTED SPACE-RIBOSOME RNA CONTINUE SPACE NR = 180", StringLength, PrefixStringLength).c_str()) == true)
+            //     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateOneChosenReactionForSelectedSpace(180, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
 
             if (ImGui::Button(AlignString("CLOSE", StringLength, PrefixStringLength).c_str()) == true)
                 *OpenMenuChemicalReactionsWindow = false;
@@ -1424,7 +1426,7 @@ public:
 
                 ColorButton(AlignString("MAKE ONE STEP OF RANDOM REACTIONS FOR WHOLE CELL SPACE", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
                 {
-                    CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfOneRandomReactionForWholeCellSpaceFullAtom(0, 0, 0, 32, 32, 32, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfStepsInSimulationOutside);
+                    CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfOneRandomReactionForWholeCellSpace(0, 0, 0, 32, 32, 32, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfStepsInSimulationOutside);
                 });
                 // ColorButton(AlignString("MAKE ONE STEP OF CHOSEN REACTIONS FOR WHOLE CELL SPACE", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
                 // {
