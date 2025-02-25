@@ -49,21 +49,9 @@ protected:
                         if (&ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].Particles.find(ParticleObject.Index)->second == &ParticleObject)
                         {
                             if constexpr(PrintInfoWarning == true)
-                                std::cout << "Bad sector for particle index: " << ParticleObject.EntityId << " " << ParticleObject.Index << " " << SectorPosX1 << " " << SectorPosY1 << " " << SectorPosZ1 << " " << SectorPosX2 << " " << SectorPosY2 << " " << SectorPosZ2 << std::endl;
+                                std::cout << "Earlier correct sector for particle index: " << ParticleObject.EntityId << " " << ParticleObject.Index << " " << SectorPosX1 << " " << SectorPosY1 << " " << SectorPosZ1 << " " << SectorPosX2 << " " << SectorPosY2 << " " << SectorPosZ2 << std::endl;
                             return;
                         }
-
-                    const UniqueIdInt FormerParticleIndex = ParticleObject.Index;
-
-                    ParticleObject.Index = ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].FreeIndexesOfParticles.top();
-                    ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].FreeIndexesOfParticles.pop();
-
-                    ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].Particles[ParticleObject.Index] = ParticleObject;
-
-                    ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].Particles.erase(ParticleObject.Index);
-
-                    if constexpr(PrintInfoWarning == true)
-                        std::cout << "New particle index: " << ParticleObject.Index << " Former particle index: " << FormerParticleIndex << " " << SectorPosX1 << " " << SectorPosY1 << " " << SectorPosZ1 << " " << SectorPosX2 << " " << SectorPosY2 << " " << SectorPosZ2 << std::endl;
                 }
             }
         }
