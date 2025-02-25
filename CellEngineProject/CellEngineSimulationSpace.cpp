@@ -138,7 +138,6 @@ void CellEngineSimulationSpace::GenerateOneStepOfElectricDiffusionForOneParticle
     CATCH("generating one step of electric diffusion for one particle")
 }
 
-
 tuple<vector<pair<UniqueIdInt, UnsignedInt>>, bool> CellEngineSimulationSpace::ChooseParticlesForReactionFromAllParticlesInProximity(const ChemicalReaction& ReactionObject)
 {
     const auto start_time1 = chrono::high_resolution_clock::now();

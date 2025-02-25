@@ -175,7 +175,7 @@ void CellEngineFullAtomSimulationSpace::GenerateOneRandomReactionForSelectedSpac
     CATCH("generating random reaction for selected space")
 }
 
-void CellEngineFullAtomSimulationSpace::GenerateNStepsOfOneRandomReactionForWholeCellSpace(const UnsignedInt XStartParam, const UnsignedInt YStartParam, const UnsignedInt ZStartParam, const UnsignedInt XStepParam, const UnsignedInt YStepParam, const UnsignedInt ZStepParam, const UnsignedInt XSizeParam, UnsignedInt YSizeParam, const UnsignedInt ZSizeParam, const UnsignedInt NumberOfSimulationSteps)
+void CellEngineFullAtomSimulationSpace::GenerateNStepsOfOneRandomReactionForWholeCellSpace(const RealType XStartParam, const RealType YStartParam, const RealType ZStartParam, const RealType XStepParam, const RealType YStepParam, const RealType ZStepParam, const RealType XSizeParam, RealType YSizeParam, const RealType ZSizeParam, const RealType NumberOfSimulationSteps)
 {
     try
     {

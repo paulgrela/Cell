@@ -353,6 +353,7 @@ void CellEngineSimulationParallelExecutionManager::GenerateOneStepOfSimulationFo
         {
             LoggersManagerObject.Log(STREAM("STEP INSIDE = " << Step2 << " ThreadX = " << ThreadXIndex << " ThreadX = " << ThreadYIndex << " ThreadX = " << ThreadZIndex));
 
+            //DLA FullAtom SimulationSpaceSectorBoundsObject.SetParametersForChosenSector()
             SimulationSpaceSectorBounds SimulationSpaceSectorBoundsObject = SimulationSpaceSectorBoundsObject.SetParametersForParallelExecutionSectors({ ThreadXIndex, ThreadYIndex, ThreadZIndex }, CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfZInOneThreadInSimulationSpace);
 
             if (StateOfSimulationSpaceDivisionForThreads == true)
