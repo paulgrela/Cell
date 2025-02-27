@@ -133,6 +133,21 @@ public:
         return *this;
     }
 public:
+    SimulationSpaceSectorBounds SetParametersForParallelExecutionSectorsFullAtom(const CurrentThreadPosType& CurrentThreadPos, const UnsignedInt SizeOfXInOneThreadInSimulationSpace, const UnsignedInt SizeOfYInOneThreadInSimulationSpace, const UnsignedInt SizeOfZInOneThreadInSimulationSpace)
+    {
+        StartXPos = static_cast<float>((CurrentThreadPos.ThreadPosX - 1) * SizeOfXInOneThreadInSimulationSpace);
+        EndXPos = static_cast<float>((CurrentThreadPos.ThreadPosX - 1) * SizeOfXInOneThreadInSimulationSpace + SizeOfXInOneThreadInSimulationSpace);
+        StartYPos = static_cast<float>((CurrentThreadPos.ThreadPosY - 1) * SizeOfYInOneThreadInSimulationSpace);
+        EndYPos = static_cast<float>((CurrentThreadPos.ThreadPosY - 1) * SizeOfYInOneThreadInSimulationSpace + SizeOfYInOneThreadInSimulationSpace);
+        StartZPos = static_cast<float>((CurrentThreadPos.ThreadPosZ - 1) * SizeOfZInOneThreadInSimulationSpace);
+        EndZPos = static_cast<float>((CurrentThreadPos.ThreadPosZ - 1) * SizeOfZInOneThreadInSimulationSpace + SizeOfZInOneThreadInSimulationSpace);
+        SizeX = EndXPos - StartXPos;
+        SizeY = EndYPos - StartYPos;
+        SizeZ = EndZPos - StartZPos;
+
+        return *this;
+    }
+public:
     SimulationSpaceSectorBounds SetParametersForChosenSector(const UnsignedInt SectorXIndex, const UnsignedInt SectorYIndex, const UnsignedInt SectorZIndex, const RealType ShiftCenterX, const RealType ShiftCenterY, const RealType ShiftCenterZ, const RealType SizeOfParticlesSectorX, const RealType SizeOfParticlesSectorY, const RealType SizeOfParticlesSectorZ)
     {
         StartXPos = - ShiftCenterX + static_cast<RealType>(SectorXIndex) * SizeOfParticlesSectorX;

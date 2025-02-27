@@ -4774,6 +4774,28 @@
                         <SizeOfParticlesSectorY>128</SizeOfParticlesSectorY>
                         <SizeOfParticlesSectorZ>128</SizeOfParticlesSectorZ>
 
+
+                        <NumberOfStepsInSimulationOutside>1</NumberOfStepsInSimulationOutside>
+                        <NumberOfStepsInSimulationInside>1</NumberOfStepsInSimulationInside>
+                        <TypeOfSimulation>1</TypeOfSimulation>
+
+                        <NumberOfXThreadsInSimulation>2</NumberOfXThreadsInSimulation>
+                        <NumberOfYThreadsInSimulation>2</NumberOfYThreadsInSimulation>
+                        <NumberOfZThreadsInSimulation>2</NumberOfZThreadsInSimulation>
+                        <SizeOfXInOneThreadInSimulationSpace>1280</SizeOfXInOneThreadInSimulationSpace>
+                        <SizeOfYInOneThreadInSimulationSpace>1280</SizeOfYInOneThreadInSimulationSpace>
+                        <SizeOfZInOneThreadInSimulationSpace>1280</SizeOfXInOneThreadInSimulationSpace>
+                        <SizeOfXInOneSectorInOneThreadInSimulationSpace>128</SizeOfXInOneSectorInOneThreadInSimulationSpace>
+                        <SizeOfYInOneSectorInOneThreadInSimulationSpace>128</SizeOfYInOneSectorInOneThreadInSimulationSpace>
+                        <SizeOfZInOneSectorInOneThreadInSimulationSpace>128</SizeOfZInOneSectorInOneThreadInSimulationSpace>
+
+                        <StepToChangeSpaceDivisionForThreads>4</StepToChangeSpaceDivisionForThreads>
+                        <TypeOfExchangeOfParticlesBetweenThreads>1</TypeOfExchangeOfParticlesBetweenThreads>
+
+                        <UseMutexBetweenMainScreenThreadAndMenuThreads>true</UseMutexBetweenMainScreenThreadAndMenuThreads>
+
+
+
                         <CellGenomePositionsFileName>./data/genomes/genome_1024_double_1/GENOME_POSITIONS.DAT</CellGenomePositionsFileName>
                         <CellGenomeSequenceFileName>./data/genomes/genome_1024_double_1/GENOME_SEQUENCE.DAT</CellGenomeSequenceFileName>
                         <CellGenomeSequenceFastaFileName>./data/genomes/genome_1024_double_1/sequence.fasta</CellGenomeSequenceFastaFileName>

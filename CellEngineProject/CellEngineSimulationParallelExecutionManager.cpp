@@ -349,30 +349,62 @@ void CellEngineSimulationParallelExecutionManager::GenerateOneStepOfSimulationFo
 {
     try
     {
-        for (UnsignedInt Step2 = 1; Step2 <= NumberOfStepsInside; Step2++)
-        {
-            LoggersManagerObject.Log(STREAM("STEP INSIDE = " << Step2 << " ThreadX = " << ThreadXIndex << " ThreadX = " << ThreadYIndex << " ThreadX = " << ThreadZIndex));
+        if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)
+            for (UnsignedInt Step2 = 1; Step2 <= NumberOfStepsInside; Step2++)
+            {
+                LoggersManagerObject.Log(STREAM("STEP INSIDE = " << Step2 << " ThreadX = " << ThreadXIndex << " ThreadX = " << ThreadYIndex << " ThreadX = " << ThreadZIndex));
 
-            //DLA FullAtom SimulationSpaceSectorBoundsObject.SetParametersForChosenSector()
-            SimulationSpaceSectorBounds SimulationSpaceSectorBoundsObject = SimulationSpaceSectorBoundsObject.SetParametersForParallelExecutionSectors({ ThreadXIndex, ThreadYIndex, ThreadZIndex }, CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfZInOneThreadInSimulationSpace);
+                SimulationSpaceSectorBounds SimulationSpaceSectorBoundsObject = SimulationSpaceSectorBoundsObject.SetParametersForParallelExecutionSectors({ ThreadXIndex, ThreadYIndex, ThreadZIndex }, CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfZInOneThreadInSimulationSpace);
 
-            if (StateOfSimulationSpaceDivisionForThreads == true)
-                SimulationSpaceSectorBoundsObject.AddToStartParameters(CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace / 2, CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace / 2, CellEngineConfigDataObject.SizeOfZInOneThreadInSimulationSpace / 2);
+                if (StateOfSimulationSpaceDivisionForThreads == true)
+                    SimulationSpaceSectorBoundsObject.AddToStartParameters(CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace / 2, CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace / 2, CellEngineConfigDataObject.SizeOfZInOneThreadInSimulationSpace / 2);
 
-            for (UnsignedInt PosX = SimulationSpaceSectorBoundsObject.StartXPos; PosX < SimulationSpaceSectorBoundsObject.EndXPos; PosX += CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace)
-                for (UnsignedInt PosY = SimulationSpaceSectorBoundsObject.StartYPos; PosY < SimulationSpaceSectorBoundsObject.EndYPos; PosY += CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace)
-                    for (UnsignedInt PosZ = SimulationSpaceSectorBoundsObject.StartZPos; PosZ < SimulationSpaceSectorBoundsObject.EndZPos; PosZ += CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace)
-                    {
-                        LoggersManagerObject.Log(STREAM("XStart = " << SimulationSpaceSectorBoundsObject.StartXPos << " YStart = " << SimulationSpaceSectorBoundsObject.StartYPos << " ZStart = " << SimulationSpaceSectorBoundsObject.StartZPos << " XEnd = " << SimulationSpaceSectorBoundsObject.EndXPos << " YEnd = " << SimulationSpaceSectorBoundsObject.EndYPos << " ZEnd = " << SimulationSpaceSectorBoundsObject.EndZPos << " PosX = " << PosX << " PosY = " << PosY << " PosZ = " << PosZ));
+                for (UnsignedInt PosX = SimulationSpaceSectorBoundsObject.StartXPos; PosX < SimulationSpaceSectorBoundsObject.EndXPos; PosX += CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace)
+                    for (UnsignedInt PosY = SimulationSpaceSectorBoundsObject.StartYPos; PosY < SimulationSpaceSectorBoundsObject.EndYPos; PosY += CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace)
+                        for (UnsignedInt PosZ = SimulationSpaceSectorBoundsObject.StartZPos; PosZ < SimulationSpaceSectorBoundsObject.EndZPos; PosZ += CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace)
+                        {
+                            LoggersManagerObject.Log(STREAM("XStart = " << SimulationSpaceSectorBoundsObject.StartXPos << " YStart = " << SimulationSpaceSectorBoundsObject.StartYPos << " ZStart = " << SimulationSpaceSectorBoundsObject.StartZPos << " XEnd = " << SimulationSpaceSectorBoundsObject.EndXPos << " YEnd = " << SimulationSpaceSectorBoundsObject.EndYPos << " ZEnd = " << SimulationSpaceSectorBoundsObject.EndZPos << " PosX = " << PosX << " PosY = " << PosY << " PosZ = " << PosZ));
 
-                        if (CellEngineUseful::IsIn(CellEngineConfigDataObject.TypeOfSimulation, { CellEngineConfigData::TypesOfSimulation::BothReactionsAndDiffusion, CellEngineConfigData::TypesOfSimulation::OnlyDiffusion }))
-                            GenerateOneStepOfDiffusionForSelectedSpace(true, PosX, PosY, PosZ, CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace);
-                        if (CellEngineUseful::IsIn(CellEngineConfigDataObject.TypeOfSimulation, { CellEngineConfigData::TypesOfSimulation::BothReactionsAndDiffusion }))
-                            GenerateOneRandomReactionForSelectedSpace(PosX, PosY, PosZ, CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace, false);
-                        if (CellEngineUseful::IsIn(CellEngineConfigDataObject.TypeOfSimulation, { CellEngineConfigData::TypesOfSimulation::OnlyReactions }))
-                            GenerateOneRandomReactionForSelectedSpace(PosX, PosY, PosZ, CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace, true);
-                    }
-        }
+                            if (CellEngineUseful::IsIn(CellEngineConfigDataObject.TypeOfSimulation, { CellEngineConfigData::TypesOfSimulation::BothReactionsAndDiffusion, CellEngineConfigData::TypesOfSimulation::OnlyDiffusion }))
+                                GenerateOneStepOfDiffusionForSelectedSpace(true, PosX, PosY, PosZ, CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace);
+                            if (CellEngineUseful::IsIn(CellEngineConfigDataObject.TypeOfSimulation, { CellEngineConfigData::TypesOfSimulation::BothReactionsAndDiffusion }))
+                                GenerateOneRandomReactionForSelectedSpace(PosX, PosY, PosZ, CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace, false);
+                            if (CellEngineUseful::IsIn(CellEngineConfigDataObject.TypeOfSimulation, { CellEngineConfigData::TypesOfSimulation::OnlyReactions }))
+                                GenerateOneRandomReactionForSelectedSpace(PosX, PosY, PosZ, CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace, true);
+                        }
+            }
+        else
+        if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
+            for (UnsignedInt Step2 = 1; Step2 <= NumberOfStepsInside; Step2++)
+            {
+                LoggersManagerObject.Log(STREAM("STEP INSIDE = " << Step2 << " ThreadX = " << ThreadXIndex << " ThreadX = " << ThreadYIndex << " ThreadX = " << ThreadZIndex));
+
+                //SimulationSpaceSectorBounds SimulationSpaceSectorBoundsObject = SimulationSpaceSectorBoundsObject.SetParametersForParallelExecutionSectorsFullAtom({ ThreadXIndex, ThreadYIndex, ThreadZIndex }, CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfZInOneThreadInSimulationSpace);
+
+                // if (StateOfSimulationSpaceDivisionForThreads == true)
+                //     SimulationSpaceSectorBoundsObject.AddToStartParameters(CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace / 2, CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace / 2, CellEngineConfigDataObject.SizeOfZInOneThreadInSimulationSpace / 2);
+
+                // for (UnsignedInt PosX = -CellEngineConfigDataObject.ShiftCenterX + SimulationSpaceSectorBoundsObject.StartXPos; PosX < -CellEngineConfigDataObject.ShiftCenterX + SimulationSpaceSectorBoundsObject.EndXPos; PosX += CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace)
+                //     for (UnsignedInt PosY = -CellEngineConfigDataObject.ShiftCenterY + SimulationSpaceSectorBoundsObject.StartYPos; PosY < -CellEngineConfigDataObject.ShiftCenterY + SimulationSpaceSectorBoundsObject.EndYPos; PosY += CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace)
+                //         for (UnsignedInt PosZ = -CellEngineConfigDataObject.ShiftCenterZ + SimulationSpaceSectorBoundsObject.StartZPos; PosZ < -CellEngineConfigDataObject.ShiftCenterZ + SimulationSpaceSectorBoundsObject.EndZPos; PosZ += CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace)
+                //JAKI SECTOR START A JAKI END
+                // for (UnsignedInt ParticleSectorYIndex = 0; ParticleSectorYIndex < CellEngineConfigDataObject.NumberOfParticlesSectorsInY; ParticleSectorYIndex++)
+                //     for (UnsignedInt ParticleSectorZIndex = 0; ParticleSectorZIndex < CellEngineConfigDataObject.NumberOfParticlesSectorsInZ; ParticleSectorZIndex++)
+
+                for (UnsignedInt ParticleSectorXIndex = (ThreadXIndex - 1) * CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace; ParticleSectorXIndex < ThreadXIndex * CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace; ParticleSectorXIndex++)
+                    for (UnsignedInt ParticleSectorYIndex = (ThreadYIndex - 1) * CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace; ParticleSectorYIndex < ThreadYIndex * CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace; ParticleSectorYIndex++)
+                        for (UnsignedInt ParticleSectorZIndex = (ThreadZIndex - 1) * CellEngineConfigDataObject.SizeOfZInOneThreadInSimulationSpace; ParticleSectorZIndex < ThreadZIndex * CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace; ParticleSectorZIndex++)
+                        {
+                            //LoggersManagerObject.Log(STREAM("XStart = " << SimulationSpaceSectorBoundsObject.StartXPos << " YStart = " << SimulationSpaceSectorBoundsObject.StartYPos << " ZStart = " << SimulationSpaceSectorBoundsObject.StartZPos << " XEnd = " << SimulationSpaceSectorBoundsObject.EndXPos << " YEnd = " << SimulationSpaceSectorBoundsObject.EndYPos << " ZEnd = " << SimulationSpaceSectorBoundsObject.EndZPos << " PosX = " << ParticleSectorXIndex << " PosY = " << ParticleSectorYIndex << " PosZ = " << ParticleSectorZIndex));
+
+                            if (CellEngineUseful::IsIn(CellEngineConfigDataObject.TypeOfSimulation, { CellEngineConfigData::TypesOfSimulation::BothReactionsAndDiffusion, CellEngineConfigData::TypesOfSimulation::OnlyDiffusion }))
+                                GenerateOneStepOfDiffusionForSelectedSpace(true, ParticleSectorXIndex, ParticleSectorYIndex, ParticleSectorZIndex, CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace);
+                            if (CellEngineUseful::IsIn(CellEngineConfigDataObject.TypeOfSimulation, { CellEngineConfigData::TypesOfSimulation::BothReactionsAndDiffusion }))
+                                GenerateOneRandomReactionForSelectedSpace(ParticleSectorXIndex, ParticleSectorYIndex, ParticleSectorZIndex, CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace, false);
+                            if (CellEngineUseful::IsIn(CellEngineConfigDataObject.TypeOfSimulation, { CellEngineConfigData::TypesOfSimulation::OnlyReactions }))
+                                GenerateOneRandomReactionForSelectedSpace(ParticleSectorXIndex, ParticleSectorYIndex, ParticleSectorZIndex, CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace, true);
+                        }
+            }
     }
     CATCH("generating n steps simulation for whole cell space in threads")
 }
