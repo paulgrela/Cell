@@ -123,6 +123,9 @@ public:
     UnsignedInt NumberOfXThreadsInSimulation = 1;
     UnsignedInt NumberOfYThreadsInSimulation = 1;
     UnsignedInt NumberOfZThreadsInSimulation = 1;
+    UnsignedInt NumberOfXSectorsInOneThreadInSimulation = 20;
+    UnsignedInt NumberOfYSectorsInOneThreadInSimulation = 20;
+    UnsignedInt NumberOfZSectorsInOneThreadInSimulation = 20;
     UnsignedInt SizeOfXInOneThreadInSimulationSpace = 1024;
     UnsignedInt SizeOfYInOneThreadInSimulationSpace = 1024;
     UnsignedInt SizeOfZInOneThreadInSimulationSpace = 1024;
@@ -136,7 +139,8 @@ public:
     {
         InMainThread = 0,
         ParallelInsert = 1,
-        ParallelExtract = 2
+        ParallelExtract = 2,
+        NoExchangePhase = 3
     };
     TypesOfExchangeOfParticlesBetweenThreads TypeOfExchangeOfParticlesBetweenThreads = TypesOfExchangeOfParticlesBetweenThreads::ParallelInsert;
 public:

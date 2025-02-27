@@ -163,6 +163,13 @@ void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const ch
                         if (CellStatePropertyTreeElement.second.get_child_optional("NumberOfZThreadsInSimulation"))
                             CellEngineConfigDataObject.NumberOfZThreadsInSimulation = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfZThreadsInSimulation");
 
+                        if (CellStatePropertyTreeElement.second.get_child_optional("NumberOfXSectorsInOneThreadInSimulation"))
+                            CellEngineConfigDataObject.NumberOfXSectorsInOneThreadInSimulation = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfXSectorsInOneThreadInSimulation");
+                        if (CellStatePropertyTreeElement.second.get_child_optional("NumberOfYSectorsInOneThreadInSimulation"))
+                            CellEngineConfigDataObject.NumberOfYSectorsInOneThreadInSimulation = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfYSectorsInOneThreadInSimulation");
+                        if (CellStatePropertyTreeElement.second.get_child_optional("NumberOfZSectorsInOneThreadInSimulation"))
+                            CellEngineConfigDataObject.NumberOfZSectorsInOneThreadInSimulation = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfZSectorsInOneThreadInSimulation");
+
                         if (CellStatePropertyTreeElement.second.get_child_optional("SizeOfXInOneThreadInSimulationSpace"))
                             CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace = CellStatePropertyTreeElement.second.get<UnsignedInt>("SizeOfXInOneThreadInSimulationSpace");
                         if (CellStatePropertyTreeElement.second.get_child_optional("SizeOfYInOneThreadInSimulationSpace"))

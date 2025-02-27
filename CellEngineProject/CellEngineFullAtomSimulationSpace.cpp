@@ -100,19 +100,7 @@ void CellEngineFullAtomSimulationSpace::ClearFullAtomSpaceAndParticles()
 
 SimulationSpaceSectorBounds CellEngineFullAtomSimulationSpace::GetBoundsForThreadSector()
 {
-    SimulationSpaceSectorBounds SimulationSpaceSectorBoundsObject{};
-
-    try
-    {
-        if (CurrentThreadIndex == 0)
-            //SimulationSpaceSectorBoundsObject.SetParameters(-1 * CellEngineConfigDataObject.ShiftCenterX, -1 * CellEngineConfigDataObject.ShiftCenterY, -1 * CellEngineConfigDataObject.ShiftCenterZ, CellEngineConfigDataObject.ShiftCenterX, CellEngineConfigDataObject.ShiftCenterY, CellEngineConfigDataObject.ShiftCenterZ, CellEngineConfigDataObject.ShiftCenterX, CellEngineConfigDataObject.ShiftCenterY, CellEngineConfigDataObject.ShiftCenterZ);
-            SimulationSpaceSectorBoundsObject = ActualSimulationSpaceSectorBoundsObject;
-        else
-            SimulationSpaceSectorBoundsObject.SetParametersForParallelExecutionSectors(CurrentThreadPos, CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfZInOneThreadInSimulationSpace);
-    }
-    CATCH("getting bounds for thread sector")
-
-    return SimulationSpaceSectorBoundsObject;
+     return ActualSimulationSpaceSectorBoundsObject;
 }
 
 void CellEngineFullAtomSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpace(const bool InBounds, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam)
