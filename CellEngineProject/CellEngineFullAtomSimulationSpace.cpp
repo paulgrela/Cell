@@ -167,6 +167,8 @@ void CellEngineFullAtomSimulationSpace::GenerateNStepsOfOneRandomReactionForWhol
 {
     try
     {
+        CellEngineConfigDataObject.MultiThreaded = false;
+
         CellEngineExecutionTimeStatisticsObject.ZeroMeasureTime();
 
         const auto start_time = chrono::high_resolution_clock::now();

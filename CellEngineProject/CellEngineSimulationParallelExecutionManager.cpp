@@ -442,6 +442,8 @@ void CellEngineSimulationParallelExecutionManager::GenerateNStepsOfSimulationFor
 {
     try
     {
+        CellEngineConfigDataObject.MultiThreaded = true;
+
         LoggersManagerObject.Log(STREAM("MaxParticleIndex = " << MaxParticleIndex));
 
         SetZeroForAllParallelExecutionVariables();
