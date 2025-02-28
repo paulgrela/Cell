@@ -17,9 +17,7 @@ protected:
 
         CellEngineSimulationParallelExecutionManager::CreateSimulationSpaceForParallelExecution<CellEngineFullAtomSimulationSpace>(CellEngineSimulationSpaceForThreadsObjectsPointer, Particles);
 
-        CellEngineFullAtomSimulationSpaceObjectPointer->SetProperThreadIndexForEveryParticlesSector(Particles);
-
-        CellEngineFullAtomSimulationSpaceObjectPointer->GetMemoryForMutexesForParallelExecutionInParticlesSectors(Particles);
+        CellEngineFullAtomSimulationSpace::SetProperThreadIndexForEveryParticlesSector(Particles);
     }
 protected:
     void SetCurrentSectorPos(const SectorPosType& CurrentSectorPos) override

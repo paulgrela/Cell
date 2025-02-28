@@ -123,6 +123,7 @@ add_executable(
 	CellEngineBasicVoxelsOperations.h
 	CellEngineNucleicAcidsBasicOperations.h
 	CellEngineParticlesFullAtomOperations.h
+	CellEngineParticlesFullAtomOperations.cpp
 	CellEngineParticlesVoxelsOperations.h
 	CellEngineBasicParallelExecutionData.h
 	CellEngineBasicParticlesOperations.cpp

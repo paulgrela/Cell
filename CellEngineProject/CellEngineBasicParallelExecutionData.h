@@ -14,7 +14,7 @@ protected:
 protected:
     SectorPosType CurrentSectorPos{ 0, 0, 0 };
     SimulationSpaceSectorBounds ActualSimulationSpaceSectorBoundsObject{ 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-protected:
+public:
     std::mutex MainExchangeParticlesMutexObject;
 protected:
     ParticlesDetailedContainer<Particle> ParticlesForThreads;

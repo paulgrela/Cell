@@ -5,6 +5,7 @@
 
 #include "CellEngineTypes.h"
 #include "CellEngineBasicParticlesOperations.h"
+#include "CellEngineSimulationSpace.h"
 
 class ReactionStatistics;
 class CellEngineSimulationSpace;
@@ -43,9 +44,9 @@ private:
 private:
     void GenerateNStepsOfSimulationForWholeCellSpaceInOneThread(barrier<>* SyncPoint, bool* StateOfSimulationSpaceDivisionForThreads, UnsignedInt NumberOfStepsOutside, UnsignedInt NumberOfStepsInside, ThreadIdType CurrentThreadIndexParam, UnsignedInt ThreadXIndexParam, UnsignedInt ThreadYIndexParam, UnsignedInt ThreadZIndexParam) const;
 private:
-    vector<vector<vector<ParticlesContainerInternal<Particle>>>> GatherParticlesToExchangeBetweenThreads(UnsignedInt TypeOfGet, UnsignedInt ThreadXIndex, UnsignedInt ThreadYIndex, UnsignedInt ThreadZIndex, UnsignedInt& ExchangedParticleCounter, bool StateOfSimulationSpaceDivisionForThreads, bool PrintInfo) const;
+    ParticlesContainer<Particle> GatherParticlesToExchangeBetweenThreads(UnsignedInt TypeOfGet, UnsignedInt ThreadXIndex, UnsignedInt ThreadYIndex, UnsignedInt ThreadZIndex, UnsignedInt& ExchangedParticleCounter, bool StateOfSimulationSpaceDivisionForThreads, bool PrintInfo) const;
 private:
-    std::vector<std::vector<std::vector<std::shared_ptr<CellEngineSimulationSpace>>>>& SimulationSpaceDataForThreads;
+    SimulationSpaceForParallelExecutionContainer<CellEngineSimulationSpace>& SimulationSpaceDataForThreads;
 public:
     CellEngineSimulationParallelExecutionManager();
 };

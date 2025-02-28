@@ -78,7 +78,6 @@ template <class Particle>
 struct ParticlesContainerInternal
 {
 public:
-    ThreadIdType CurrentThreadIndex{ 0 };
     CurrentThreadPosType CurrentThreadPos{ 1, 1, 1 };
 public:
     std::stack<UniqueIdInt> FreeIndexesOfParticles;
