@@ -15,10 +15,6 @@ public:
     template <class SimulationSpaceType>
     static void CreateSimulationSpaceForParallelExecution(SimulationSpaceForParallelExecutionContainer<CellEngineSimulationSpace>& CellEngineSimulationSpaceForThreadsObjectsPointer, ParticlesContainer<Particle>& Particles);
 public:
-    //std::unordered_map<std::pair<CurrentThreadPosType, CurrentThreadPosType>, std::mutex> InsertExtractParticleMutexObject;
-    static inline std::vector<std::unique_ptr<std::mutex>> InsertExtractParticleMutexObject;
-    void SetProperThreadIndexForEveryParticlesSector();
-public:
     virtual void GenerateOneStepOfDiffusionForSelectedSpace(bool InBounds, RealType StartXPosParam, RealType StartYPosParam, RealType StartZPosParam, RealType SizeXParam, RealType SizeYParam, RealType SizeZParam) = 0;
     virtual void GenerateOneRandomReactionForSelectedSpace(float StartXPosParam, float StartYPosParam, float StartZPosParam, float SizeXParam, float SizeYParam, float SizeZParam, bool FindParticlesInProximityBool) = 0;
 public:

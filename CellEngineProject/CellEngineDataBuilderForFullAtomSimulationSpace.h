@@ -16,6 +16,10 @@ protected:
         CellEngineFullAtomSimulationSpaceObjectPointer = std::make_unique<CellEngineFullAtomSimulationSpace>(Particles, true, 0, CurrentThreadPosType{ 0, 0, 0 });
 
         CellEngineSimulationParallelExecutionManager::CreateSimulationSpaceForParallelExecution<CellEngineFullAtomSimulationSpace>(CellEngineSimulationSpaceForThreadsObjectsPointer, Particles);
+
+        CellEngineFullAtomSimulationSpaceObjectPointer->SetProperThreadIndexForEveryParticlesSector(Particles);
+
+        CellEngineFullAtomSimulationSpaceObjectPointer->GetMemoryForMutexesForParallelExecutionInParticlesSectors(Particles);
     }
 protected:
     void SetCurrentSectorPos(const SectorPosType& CurrentSectorPos) override

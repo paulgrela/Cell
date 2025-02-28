@@ -53,29 +53,6 @@ void CellEngineSimulationParallelExecutionManager::CreateSimulationSpaceForParal
     CATCH("creating simulation space for parallel execution")
 }
 
-void CellEngineSimulationParallelExecutionManager::SetProperThreadIndexForEveryParticlesSector()
-{
-    try
-    {
-        FOR_EACH_PARTICLE_IN_XYZ_ONLY
-            Particles[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].CurrentThreadPos = { ParticleSectorXIndex / CellEngineConfigDataObject.NumberOfXSectorsInOneThreadInSimulation + 1, ParticleSectorYIndex / CellEngineConfigDataObject.NumberOfYSectorsInOneThreadInSimulation + 1, ParticleSectorZIndex / CellEngineConfigDataObject.NumberOfZSectorsInOneThreadInSimulation + 1 };
-
-        for (SignedInt ParticleSectorXIndex1 = 0; ParticleSectorXIndex1 < CellEngineConfigDataObject.NumberOfParticlesSectorsInX; ParticleSectorXIndex1++)
-            for (SignedInt ParticleSectorYIndex1 = 0; ParticleSectorYIndex1 < CellEngineConfigDataObject.NumberOfParticlesSectorsInY; ParticleSectorYIndex1++)
-                for (SignedInt ParticleSectorZIndex1 = 0; ParticleSectorZIndex1 < CellEngineConfigDataObject.NumberOfParticlesSectorsInZ; ParticleSectorZIndex1++)
-                    for (SignedInt ParticleSectorXIndex2 = 0; ParticleSectorXIndex2 < CellEngineConfigDataObject.NumberOfParticlesSectorsInX; ParticleSectorXIndex2++)
-                        for (SignedInt ParticleSectorYIndex2 = 0; ParticleSectorYIndex2 < CellEngineConfigDataObject.NumberOfParticlesSectorsInY; ParticleSectorYIndex2++)
-                            for (SignedInt ParticleSectorZIndex2 = 0; ParticleSectorZIndex2 < CellEngineConfigDataObject.NumberOfParticlesSectorsInZ; ParticleSectorZIndex2++)
-                                if (Particles[ParticleSectorXIndex1][ParticleSectorYIndex1][ParticleSectorZIndex1].CurrentThreadPos != Particles[ParticleSectorXIndex2][ParticleSectorYIndex2][ParticleSectorZIndex2].CurrentThreadPos)
-                                    if (abs(ParticleSectorXIndex2 - ParticleSectorXIndex1) <= 1 && abs(ParticleSectorYIndex2 - ParticleSectorYIndex1) <= 1 && abs(ParticleSectorZIndex2 - ParticleSectorZIndex1) <= 1)
-                                    {
-                                        InsertExtractParticleMutexObject.emplace_back(make_unique<mutex>());
-                                        //InsertExtractParticleMutexObject[make_pair(CurrentThreadPosType{ static_cast<UnsignedInt>(ParticleSectorXIndex1), static_cast<UnsignedInt>(ParticleSectorYIndex1), static_cast<UnsignedInt>(ParticleSectorZIndex1) }, CurrentThreadPosType{ static_cast<UnsignedInt>(ParticleSectorXIndex2), static_cast<UnsignedInt>(ParticleSectorYIndex2), static_cast<UnsignedInt>(ParticleSectorZIndex2) })] = make_unique<mutex>();
-                                    }
-    }
-    CATCH("set proper thread index for every particles sector")
-}
-
 #define FOR_EACH_THREAD_IN_XYZ \
     for (UnsignedInt ThreadXIndex = 1; ThreadXIndex <= CellEngineConfigDataObject.NumberOfXThreadsInSimulation; ThreadXIndex++) \
         for (UnsignedInt ThreadYIndex = 1; ThreadYIndex <= CellEngineConfigDataObject.NumberOfYThreadsInSimulation; ThreadYIndex++) \

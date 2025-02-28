@@ -3,7 +3,9 @@
 #define CELL_ENGINE_PARTICLES_FULL_ATOM_OPERATIONS_H
 
 #include <cmath>
+#include <memory>
 
+#include "CellEngineMacros.h"
 #include "DestinationPlatform.h"
 #include "TerminalColorsUtils.h"
 
@@ -11,8 +13,64 @@
 
 constexpr bool PrintInfoWarning = false;
 
+struct hash_pair
+{
+    template <class T1, class T2>
+    size_t operator()(const std::pair<T1, T2>& p) const
+    {
+        const size_t hash1 = std::hash<T1>{}(p.first);
+        const size_t hash2 = std::hash<T2>{}(p.second);
+        return hash1 ^ (hash2 + 0x9e3779b9 + (hash1 << 6) + (hash1 >> 2));
+    }
+};
+
 class CellEngineParticlesFullAtomOperations
 {
+protected:
+    static inline std::unordered_map<std::pair<UnsignedInt, UnsignedInt>, std::unique_ptr<std::mutex>, hash_pair> InsertExtractParticleMutexObject;
+public:
+    static void SetProperThreadIndexForEveryParticlesSector(ParticlesContainer<Particle>& Particles)
+    {
+        try
+        {
+            UnsignedInt ThreadIndexPos = 1;
+            FOR_EACH_PARTICLE_IN_XYZ_ONLY
+            {
+                Particles[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].CurrentThreadPos = { ParticleSectorXIndex / CellEngineConfigDataObject.NumberOfXSectorsInOneThreadInSimulation + 1, ParticleSectorYIndex / CellEngineConfigDataObject.NumberOfYSectorsInOneThreadInSimulation + 1, ParticleSectorZIndex / CellEngineConfigDataObject.NumberOfZSectorsInOneThreadInSimulation + 1 };
+                Particles[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].CurrentThreadIndex = ThreadIndexPos;
+                ThreadIndexPos++;
+            }
+        }
+        CATCH("setting proper thread index for every particles sector")
+    }
+public:
+    static void GetMemoryForMutexesForParallelExecutionInParticlesSectors(ParticlesContainer<Particle>& Particles)
+    {
+        try
+        {
+            UnsignedInt CreatedMutexesCounter = 0;
+
+            for (SignedInt ParticleSectorXIndex1 = 0; ParticleSectorXIndex1 < CellEngineConfigDataObject.NumberOfParticlesSectorsInX; ParticleSectorXIndex1++)
+                for (SignedInt ParticleSectorYIndex1 = 0; ParticleSectorYIndex1 < CellEngineConfigDataObject.NumberOfParticlesSectorsInY; ParticleSectorYIndex1++)
+                    for (SignedInt ParticleSectorZIndex1 = 0; ParticleSectorZIndex1 < CellEngineConfigDataObject.NumberOfParticlesSectorsInZ; ParticleSectorZIndex1++)
+                        for (SignedInt ParticleSectorXIndex2 = 0; ParticleSectorXIndex2 < CellEngineConfigDataObject.NumberOfParticlesSectorsInX; ParticleSectorXIndex2++)
+                            for (SignedInt ParticleSectorYIndex2 = 0; ParticleSectorYIndex2 < CellEngineConfigDataObject.NumberOfParticlesSectorsInY; ParticleSectorYIndex2++)
+                                for (SignedInt ParticleSectorZIndex2 = 0; ParticleSectorZIndex2 < CellEngineConfigDataObject.NumberOfParticlesSectorsInZ; ParticleSectorZIndex2++)
+                                    if (Particles[ParticleSectorXIndex1][ParticleSectorYIndex1][ParticleSectorZIndex1].CurrentThreadPos != Particles[ParticleSectorXIndex2][ParticleSectorYIndex2][ParticleSectorZIndex2].CurrentThreadPos)
+                                        if (std::abs(ParticleSectorXIndex2 - ParticleSectorXIndex1) <= 1 && std::abs(ParticleSectorYIndex2 - ParticleSectorYIndex1) <= 1 && std::abs(ParticleSectorZIndex2 - ParticleSectorZIndex1) <= 1)
+                                        {
+                                            InsertExtractParticleMutexObject[std::make_pair(Particles[ParticleSectorXIndex1][ParticleSectorYIndex1][ParticleSectorZIndex1].CurrentThreadIndex, Particles[ParticleSectorXIndex2][ParticleSectorYIndex2][ParticleSectorZIndex2].CurrentThreadIndex)] = std::make_unique<std::mutex>();
+
+                                            if (PrintInfoWarning == true)
+                                                LoggersManagerObject.Log(STREAM("S1 = " << Particles[ParticleSectorXIndex1][ParticleSectorYIndex1][ParticleSectorZIndex1].CurrentThreadIndex << "(" << ParticleSectorXIndex1  << "," << ParticleSectorYIndex1 << "," << ParticleSectorZIndex1 << ") S2 = " << Particles[ParticleSectorXIndex2][ParticleSectorYIndex2][ParticleSectorZIndex2].CurrentThreadIndex << "(" << ParticleSectorXIndex2  << "," << ParticleSectorYIndex2 << "," << ParticleSectorZIndex2 << ")"));
+
+                                            CreatedMutexesCounter++;
+                                        }
+
+            LoggersManagerObject.Log(STREAM("Created Mutex Counter = " << CreatedMutexesCounter));
+        }
+        CATCH("getting memory for mutexes for parallel execution in particles sectors")
+    }
 protected:
     static inline void MoveAllAtomsInParticleAtomsListByVector(Particle &ParticleObject, const RealType VectorX, const RealType VectorY, const RealType VectorZ)
     {
@@ -41,6 +99,8 @@ protected:
 
             if (SectorPosX1 != SectorPosX2 || SectorPosY1 != SectorPosY2 || SectorPosZ1 != SectorPosZ2)
             {
+                //std::lock_guard<std::mutex> LockGuard{ *InsertExtractParticleMutexObject[std::make_pair(ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].CurrentThreadIndex, ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].CurrentThreadIndex)] };
+
                 if (ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].Particles.contains(ParticleObject.Index) == false)
                     ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].Particles.insert(ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].Particles.extract(ParticleObject.Index));
                 else
