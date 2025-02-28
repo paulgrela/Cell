@@ -100,7 +100,7 @@ void CellEngineFullAtomSimulationSpace::ClearFullAtomSpaceAndParticles()
 
 SimulationSpaceSectorBounds CellEngineFullAtomSimulationSpace::GetBoundsForThreadSector()
 {
-     return ActualSimulationSpaceSectorBoundsObject;
+    return ActualSimulationSpaceSectorBoundsObject;
 }
 
 void CellEngineFullAtomSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpace(const bool InBounds, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam)

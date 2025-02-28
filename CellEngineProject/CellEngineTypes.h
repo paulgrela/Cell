@@ -69,12 +69,18 @@ struct PosType
     }
 };
 
+using ThreadIdType = std::uint64_t;
+
 template<class Particle>
 using ParticlesDetailedContainer = std::unordered_map<UniqueIdInt, Particle>;
 
 template <class Particle>
 struct ParticlesContainerInternal
 {
+public:
+    ThreadIdType CurrentThreadIndex{ 0 };
+    CurrentThreadPosType CurrentThreadPos{ 1, 1, 1 };
+public:
     std::stack<UniqueIdInt> FreeIndexesOfParticles;
     ParticlesDetailedContainer<Particle> Particles;
 };
