@@ -57,9 +57,6 @@ void CellEngineParticlesFullAtomOperations::MoveParticleByVector(Particle &Parti
                 if (ExchangeParticleBetweenSectors(ParticleObject, ParticlesInSector, SectorPosX1, SectorPosY1, SectorPosZ1, SectorPosX2, SectorPosY2, SectorPosZ2) == true)
                     return;
             }
-            // else
-            //     if (ExchangeParticleBetweenSectors(ParticleObject, ParticlesInSector, SectorPosX1, SectorPosY1, SectorPosZ1, SectorPosX2, SectorPosY2, SectorPosZ2) == true)
-            //         return;
         }
     }
     CATCH_AND_THROW("moving particle by vector")
