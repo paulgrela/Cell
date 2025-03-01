@@ -223,7 +223,7 @@ void LogParticleData(const UniqueIdInt ParticleIndex, const UnsignedInt CenterIn
     LoggersManagerObject.Log(STREAM("K " << ParticleKindElement.X << " " << ParticleKindElement.Y << " " << ParticleKindElement.Z << endl));
 }
 
-bool CellEngineSimulationSpace::CancelChemicalReaction(const vector<UniqueIdInt>& CreatedParticlesIndexes, const chrono::high_resolution_clock::time_point start_time, const ParticleKind& ParticleKindObjectForProduct, const char PlaceStr)
+bool CellEngineSimulationSpace::CancelChemicalReaction(const vector<UniqueIdInt>& CreatedParticlesIndexes, const ListOfCentersType& Centers, const chrono::high_resolution_clock::time_point start_time, const ParticleKind& ParticleKindObjectForProduct, const char PlaceStr)
 {
     try
     {
@@ -235,6 +235,8 @@ bool CellEngineSimulationSpace::CancelChemicalReaction(const vector<UniqueIdInt>
 
             CancelledParticlesIndexes.insert(pair(CreatedParticleIndex, CreatedParticleIndex));
         }
+
+        RemovedParticlesInReactions -= Centers.size();
 
         const auto stop_time = chrono::high_resolution_clock::now();
 
@@ -252,9 +254,12 @@ bool CellEngineSimulationSpace::PlaceProductParticleInSpaceInDeterminedPositionO
         const vector3_Real32 NewCenter(Centers[CenterIndex].X - ParticleKindObjectForProduct.XSizeDiv2, Centers[CenterIndex].Y - ParticleKindObjectForProduct.YSizeDiv2, Centers[CenterIndex].Z - ParticleKindObjectForProduct.ZSizeDiv2);
 
         if (CheckIfSpaceIsEmptyAndIsInBoundsForParticleElements(ParticleKindObjectForProduct, Particles, CurrentSectorPos, NewCenter.X, NewCenter.Y, NewCenter.Z, GetBoundsForThreadSector()) == true)
+        {
             FillParticleElementsInSpace(ParticleIndex, ParticleKindObjectForProduct, NewCenter.X, NewCenter.Y, NewCenter.Z);
+            AddedParticlesInReactions++;
+        }
         else
-            return CancelChemicalReaction(CreatedParticlesIndexes, start_time, ParticleKindObjectForProduct, 'A');
+            return CancelChemicalReaction(CreatedParticlesIndexes, Centers, start_time, ParticleKindObjectForProduct, 'A');
     }
     CATCH("placing product particle in space in determined position or cancel reaction")
 
@@ -296,7 +301,9 @@ bool CellEngineSimulationSpace::PlaceProductParticleInSpaceInRandomPositionOrCan
             }
         }
         if (FoundFreePlace == false)
-            return CancelChemicalReaction(CreatedParticlesIndexes, start_time, ParticleKindObjectForProduct, 'B');
+            return CancelChemicalReaction(CreatedParticlesIndexes, Centers, start_time, ParticleKindObjectForProduct, 'B');
+        else
+            AddedParticlesInReactions++;
     }
     CATCH("placing product particle in space in random position or cancel reaction")
 
@@ -343,8 +350,6 @@ bool CellEngineSimulationSpace::MakeChemicalReaction(ChemicalReaction& ReactionO
 
             if (ResultOfPlacingParticle == false)
                 return false;
-
-            AddedParticlesInReactions++;
 
             CenterIndex++;
         }
