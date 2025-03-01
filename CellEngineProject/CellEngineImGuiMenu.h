@@ -1199,63 +1199,6 @@ public:
         CATCH("executing voxel simulation space visibility menu")
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    //static void DiffusionFullAtomSimulationSpaceParametersMenu(int DrawSpaceStartXYZ[3], int DrawSpaceStepsXYZ[3], int DrawSpaceSizesXYZ[3], const UnsignedInt StringLength)
     static void DiffusionFullAtomSimulationSpaceParametersMenu(const UnsignedInt StringLength)
     {
         try
@@ -1274,55 +1217,11 @@ public:
                 ColorButton(AlignString("START DIFFUSION", StringLength).c_str(), Nothing, 0, 0, 0, 3, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue){});
                 ColorButton(AlignString("STOP DIFFUSION", StringLength).c_str(), Nothing, 0, 0, 0, 0, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue){});
 
-                // ColorButton(AlignString("MAKE ONE STEP OF DIFFUSION FOR RANGE OF PARTICLES", StringLength).c_str(), Nothing, 0, 0, 0, 8, IDButton, [DrawSpaceStartXYZ, DrawSpaceSizesXYZ](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
-                // {
-                //     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateOneStepOfDiffusionForSelectedRangeOfParticles(10, 0, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-                // });
-
                 constexpr UnsignedInt AdditionalSpaceBoundFactor = 20;
                 constexpr double MultiplyElectricChargeFactor = 100;
 
-                // ColorButton(AlignString("MAKE ONE STEP OF DIFFUSION FOR SELECTED SPACE", StringLength).c_str(), Nothing, 0, 0, 0, 8, IDButton, [MultiplyElectricChargeFactor, DrawSpaceStartXYZ, DrawSpaceSizesXYZ](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
-                // {
-                //     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateOneStepOfDiffusionForSelectedSpace(true, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-                // });
-                //
-                // ColorButton(AlignString("MAKE ONE STEP OF ELECTRIC DIFFUSION FOR RANGE OF PARTICLES - FCP", StringLength).c_str(), Nothing, 0, 0, 0, 9, IDButton, [MultiplyElectricChargeFactor, DrawSpaceStartXYZ, DrawSpaceSizesXYZ](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
-                // {
-                //     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateOneStepOfElectricDiffusionForSelectedRangeOfParticles(TypesOfLookingForParticlesInProximity::FromChosenParticleAsCenter, AdditionalSpaceBoundFactor, MultiplyElectricChargeFactor, 19, 0, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-                // });
-                // ColorButton(AlignString("MAKE ONE STEP OF ELECTRIC DIFFUSION FOR RANGE OF PARTICLES - ISS", StringLength).c_str(), Nothing, 0, 0, 0, 9, IDButton, [MultiplyElectricChargeFactor, DrawSpaceStartXYZ, DrawSpaceSizesXYZ](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
-                // {
-                //     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateOneStepOfElectricDiffusionForSelectedRangeOfParticles(TypesOfLookingForParticlesInProximity::InChosenSectorOfSimulationSpace, AdditionalSpaceBoundFactor, MultiplyElectricChargeFactor, 19, 0, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-                // });
-                //
-                // ColorButton(AlignString("MAKE ONE STEP OF ELECTRIC DIFFUSION FOR SELECTED SPACE", StringLength).c_str(), Nothing, 0, 0, 0, 9, IDButton, [MultiplyElectricChargeFactor, DrawSpaceStartXYZ, DrawSpaceSizesXYZ](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
-                // {
-                //     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateOneStepOfElectricDiffusionForSelectedSpace(TypesOfLookingForParticlesInProximity::InChosenSectorOfSimulationSpace, AdditionalSpaceBoundFactor, MultiplyElectricChargeFactor, 19, 0, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
-                // });
-                //
-
-                // ColorButton(AlignString("MAKE ONE STEP OF DIFFUSION NOT IN BOUNDS FOR SELECTED BIG PART OF CELL", StringLength).c_str(), Nothing, 0, 0, 0, 3, IDButton, [DrawSpaceStartXYZ, DrawSpaceSizesXYZ](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
-                // {
-                //     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfDiffusionForBigPartOfCellSpace(false, CellEngineConfigDataObject.SizeOfBigPartOfTheCellMultiplyFactor, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2], CellEngineConfigDataObject.NumberOfStepsInSimulationOutside);
-                // });
-
-                // ColorButton(AlignString("MAKE ONE STEP OF DIFFUSION NOT IN BOUNDS FOR WHOLE CELL SPACE", StringLength).c_str(), Nothing, 0, 0, 0, 3, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
-                // {
-                //     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfDiffusionForWholeCellSpace(false, 0, 0, 0, 32, 32, 32, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfStepsInSimulationOutside);
-                // });
-
-                // ColorButton(AlignString("MAKE ONE STEP OF DIFFUSION IN BOUNDS FOR SELECTED BIG PART OF CELL", StringLength).c_str(), Nothing, 0, 0, 0, 3, IDButton, [DrawSpaceSizesXYZ, DrawSpaceStartXYZ](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
-                // {
-                //     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfDiffusionForBigPartOfCellSpace(true, CellEngineConfigDataObject.SizeOfBigPartOfTheCellMultiplyFactor, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2], CellEngineConfigDataObject.NumberOfStepsInSimulationOutside);
-                // });
-
                 ColorButton(AlignString("MAKE ONE STEP OF DIFFUSION IN BOUNDS FOR WHOLE CELL SPACE", StringLength).c_str(), Nothing, 0, 0, 0, 3, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
                 {
-                    //CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfDiffusionForWholeCellSpaceFullAtom(true, 0, 0, 0, 32, 32, 32, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfStepsInSimulationOutside);
-                    //CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfDiffusionForWholeCellSpaceFullAtom(true, 0, 0, 0, CellEngineConfigDataObject.NumberOfParticlesSectorsInX, CellEngineConfigDataObject.NumberOfParticlesSectorsInY, CellEngineConfigDataObject.NumberOfParticlesSectorsInZ, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfStepsInSimulationOutside);
-
-                    //CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfDiffusionForWholeCellSpaceFullAtom(true, 0, 0, 0, 1, 1, 1, CellEngineConfigDataObject.NumberOfParticlesSectorsInX, CellEngineConfigDataObject.NumberOfParticlesSectorsInY, CellEngineConfigDataObject.NumberOfParticlesSectorsInZ, CellEngineConfigDataObject.NumberOfStepsInSimulationOutside);
                     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfDiffusionForWholeCellSpace(true, 0, 0, 0, 1, 1, 1, CellEngineConfigDataObject.NumberOfParticlesSectorsInX, CellEngineConfigDataObject.NumberOfParticlesSectorsInY, CellEngineConfigDataObject.NumberOfParticlesSectorsInZ, CellEngineConfigDataObject.NumberOfStepsInSimulationOutside);
                 });
             }
@@ -1395,7 +1294,6 @@ public:
         CATCH("executing menu full atom chemical reactions");
     }
 
-    //static void ReactionsFullAtomSimulationSpaceParametersMenu(int DrawSpaceStartXYZ[3], int DrawSpaceStepsXYZ[3], int DrawSpaceSizesXYZ[3], const UnsignedInt StringLength, const ImGuiWindowFlags WindowFlags, const bool ModifiableWindow)
     static void ReactionsFullAtomSimulationSpaceParametersMenu(const UnsignedInt StringLength, const ImGuiWindowFlags WindowFlags, const bool ModifiableWindow)
     {
         try
@@ -1405,33 +1303,10 @@ public:
                 int IDButton = 1;
                 float Nothing;
 
-                // ColorButton(AlignString("MAKE ONE STEP OF RANDOM REACTIONS FOR RANGE OF PARTICLES", StringLength).c_str(), Nothing, 0, 0, 0, 5, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
-                // {
-                //     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateOneStepOfRandomReactionsForSelectedRangeOfParticles(10, 0);
-                // });
-                // ColorButton(AlignString("MAKE ONE RANDOM REACTION FOR ONE CHOSEN PARTICLE", StringLength).c_str(), Nothing, 0, 0, 0, 5, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
-                // {
-                //     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateOneStepOfRandomReactionsForOneParticleFromRangeOfParticles(10, 0, 4);
-                // });
-                //
-                // ColorButton(AlignString("MAKE ONE RANDOM REACTION FOR SELECTED SPACE", StringLength).c_str(), Nothing, 0, 0, 0, 3, IDButton, [DrawSpaceStartXYZ, DrawSpaceSizesXYZ](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
-                // {
-                //     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateOneRandomReactionForSelectedSpace(DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2], true);
-                // });
-                //
-                // ColorButton(AlignString("MAKE ONE STEP OF RANDOM REACTIONS FOR SELECTED BIG PART OF CELL", StringLength).c_str(), Nothing, 0, 0, 0, 3, IDButton, [DrawSpaceStartXYZ, DrawSpaceSizesXYZ](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
-                // {
-                //     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfOneRandomReactionForBigPartOfCellSpace(CellEngineConfigDataObject.SizeOfBigPartOfTheCellMultiplyFactor, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2], CellEngineConfigDataObject.NumberOfStepsInSimulationOutside);
-                // });
-
                 ColorButton(AlignString("MAKE ONE STEP OF RANDOM REACTIONS FOR WHOLE CELL SPACE", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
                 {
                     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfOneRandomReactionForWholeCellSpace(0, 0, 0, 32, 32, 32, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfStepsInSimulationOutside);
                 });
-                // ColorButton(AlignString("MAKE ONE STEP OF CHOSEN REACTIONS FOR WHOLE CELL SPACE", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
-                // {
-                //     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfOneChosenReactionForWholeCellSpace(10, 0, 0, 0, 32, 32, 32, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfStepsInSimulationOutside);
-                // });
 
                 ImGui::Text("");
 
@@ -1443,7 +1318,7 @@ public:
                     OpenMenuChemicalReactionsWindow = true;
 
                 // if (OpenMenuChemicalReactionsWindow == true)
-                //     MenuChemicalReactions(WindowFlags, ModifiableWindow, DrawSpaceStartXYZ, DrawSpaceSizesXYZ, &OpenMenuChemicalReactionsWindow);
+                //     MenuFullAtomChemicalReactions(WindowFlags, ModifiableWindow, DrawSpaceStartXYZ, DrawSpaceSizesXYZ, &OpenMenuChemicalReactionsWindow);
             }
         }
         CATCH("modification of reactions operations full atom simulation space parameters menu")
@@ -1475,40 +1350,15 @@ public:
                 ImGui::Checkbox("Use Mutex Between Main Screen Thread and Menu Threads", &CellEngineConfigDataObject.UseMutexBetweenMainScreenThreadAndMenuThreads);
                 ImGui::Text("");
 
-                ColorButton(AlignString("START N STEPS OF SIMULATION FOR WHOLE CELL SPACE IN THREADS", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
-                {
-                    CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->FirstSendParticlesForThreads(false, true);
-                });
                 ColorButton(AlignString("MAKE N STEPS OF SIMULATION FOR WHOLE CELL SPACE IN THREADS", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
                 {
                     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfSimulationForWholeCellSpaceInThreads(CellEngineConfigDataObject.NumberOfStepsInSimulationOutside, CellEngineConfigDataObject.NumberOfStepsInSimulationInside);
                 });
-                ColorButton(AlignString("GATHER PARTICLES FROM THREADS AFTER SIMULATION", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
-                {
-                    CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GatherParticlesFromThreadsToParticlesInMainThread();
-                });
-
-                ImGui::Text("");
-
-                ColorButton(AlignString("MAKE FULL N STEPS OF SIMULATION FOR WHOLE CELL SPACE IN THREADS", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
-                {
-                    CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfSimulationWithSendingParticlesToThreadsAndGatheringParticlesToMainThreadForWholeCellSpace(CellEngineConfigDataObject.NumberOfStepsInSimulationOutside, CellEngineConfigDataObject.NumberOfStepsInSimulationInside, true);
-                });
-
-                ImGui::Text("");
 
                 ColorButton(AlignString("CHECK PARTICLES CENTERS", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
                 {
                     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->CheckParticlesCenters(false);
                 });
-                // ColorButton(AlignString("CHECK PARTICLES CANCELLED STILL IN FULL ATOM SPACE", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
-                // {
-                //     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->CheckCancelledParticlesIndexes();
-                // });
-                // ColorButton(AlignString("CHECK IF PARTICLES FORMER EXISTED STILL IN FULL ATOM SPACE", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
-                // {
-                //     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->CheckFormerExistedParticlesIndexes();
-                // });
             }
         }
         CATCH("modification of simulations operations full atom simulation space parameters menu")
@@ -1651,8 +1501,8 @@ static void RandomParticlesGeneratorFullAtomSimulationSpaceParametersMenu(const 
             {
                 lock_guard<mutex> LockGuard{ CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderMenuAndFullAtomSimulationSpaceMutexObject };
 
-                // const auto CellEngineOpenGLFullAtomSimulationSpaceVisualiserObjectPointer = dynamic_cast<CellEngineOpenGLVisualiserOfVoxelSimulationSpace*>(CellEngineOpenGLVisualiserPointer.get());
-                //
+                const auto CellEngineOpenGLFullAtomSimulationSpaceVisualiserObjectPointer = dynamic_cast<CellEngineOpenGLVisualiserOfVoxelSimulationSpace*>(CellEngineOpenGLVisualiserPointer.get());
+
                 // const auto StartPos = CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->GetStartPositions();
                 // static int DrawSpaceStartXYZ[3] = { static_cast<int>(get<0>(StartPos)), static_cast<int>(get<1>(StartPos)), static_cast<int>(get<2>(StartPos)) };
                 // ImGui::DragInt3("StartX StartY StartZ", DrawSpaceStartXYZ, 1, 0, static_cast<int>(CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension), "%d", ImGuiSliderFlags_AlwaysClamp);
@@ -1668,20 +1518,14 @@ static void RandomParticlesGeneratorFullAtomSimulationSpaceParametersMenu(const 
                 constexpr UnsignedInt StringLength = 70;
 
 
-                // VoxelSimulationSpaceParametersMenu(CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer, DrawSpaceStartXYZ, DrawSpaceStepsXYZ, DrawSpaceSizesXYZ, StringLength);
-                //
-                // OftenOperationsVoxelSimulationSpaceParametersMenu(DrawSpaceStartXYZ, DrawSpaceStepsXYZ, DrawSpaceSizesXYZ, StringLength);
-
-                //DiffusionFullAtomSimulationSpaceParametersMenu(DrawSpaceStartXYZ, DrawSpaceStepsXYZ, DrawSpaceSizesXYZ, StringLength);
                 DiffusionFullAtomSimulationSpaceParametersMenu(StringLength);
 
-                //ReactionsFullAtomSimulationSpaceParametersMenu(DrawSpaceStartXYZ, DrawSpaceStepsXYZ, DrawSpaceSizesXYZ, StringLength, WindowFlags, ModifiableWindow);
                 ReactionsFullAtomSimulationSpaceParametersMenu(StringLength, WindowFlags, ModifiableWindow);
 
                 SimulationsFullAtomSimulationSpaceParametersMenu(StringLength);
 
                 // DNARandomGeneratorVoxelSimulationSpaceParametersMenu(StringLength);
-                //
+
                 RandomParticlesGeneratorFullAtomSimulationSpaceParametersMenu(StringLength);
 
                 SavingAndReadingParticlesFromDataFileFullAtomSimulationSpaceParametersMenu(StringLength);
@@ -1691,43 +1535,6 @@ static void RandomParticlesGeneratorFullAtomSimulationSpaceParametersMenu(const 
         }
         CATCH("executing full atom simulation space visibility menu")
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     static void VisibilityParametersOfParticles()
     {

@@ -4792,7 +4792,7 @@
                         <SizeOfZInOneSectorInOneThreadInSimulationSpace>128</SizeOfZInOneSectorInOneThreadInSimulationSpace>
 
                         <StepToChangeSpaceDivisionForThreads>4</StepToChangeSpaceDivisionForThreads>
-                        <TypeOfExchangeOfParticlesBetweenThreads>1</TypeOfExchangeOfParticlesBetweenThreads>
+                        <TypeOfExchangeOfParticlesBetweenThreads>3</TypeOfExchangeOfParticlesBetweenThreads>
 
                         <UseMutexBetweenMainScreenThreadAndMenuThreads>true</UseMutexBetweenMainScreenThreadAndMenuThreads>
 

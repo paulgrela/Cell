@@ -10,8 +10,6 @@
 
 #include "CellEngineParticle.h"
 
-constexpr bool PrintInfoWarning = false;
-
 class CellEngineParticlesFullAtomOperations
 {
 public:

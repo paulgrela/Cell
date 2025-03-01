@@ -4,6 +4,8 @@
 #include "CellEngineDataFile.h"
 #include "CellEngineParticlesFullAtomOperations.h"
 
+constexpr bool PrintInfoWarning = false;
+
 void CellEngineParticlesFullAtomOperations::SetProperThreadIndexForEveryParticlesSector(ParticlesContainer<Particle>& Particles)
 {
     try
@@ -14,7 +16,7 @@ void CellEngineParticlesFullAtomOperations::SetProperThreadIndexForEveryParticle
     CATCH("setting proper thread index for every particles sector")
 }
 
-bool fff(const Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, UnsignedInt SectorPosX1, UnsignedInt SectorPosY1, UnsignedInt SectorPosZ1, UnsignedInt SectorPosX2, UnsignedInt SectorPosY2, UnsignedInt SectorPosZ2)
+bool ExchangeParticleBetweenSectors(const Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, UnsignedInt const SectorPosX1, UnsignedInt const SectorPosY1, const UnsignedInt SectorPosZ1, const UnsignedInt SectorPosX2, const UnsignedInt SectorPosY2, const UnsignedInt SectorPosZ2)
 {
     if (ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].Particles.contains(ParticleObject.Index) == false)
         ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].Particles.insert(ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].Particles.extract(ParticleObject.Index));
@@ -52,12 +54,12 @@ void CellEngineParticlesFullAtomOperations::MoveParticleByVector(Particle &Parti
             {
                 std::scoped_lock LockGuardScopedLock{ CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[Thread1Pos.ThreadPosX - 1][Thread1Pos.ThreadPosY - 1][Thread1Pos.ThreadPosZ - 1]->MainExchangeParticlesMutexObject, CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[Thread2Pos.ThreadPosX - 1][Thread2Pos.ThreadPosY - 1][Thread2Pos.ThreadPosZ - 1]->MainExchangeParticlesMutexObject };
 
-                if (fff(ParticleObject, ParticlesInSector, SectorPosX1, SectorPosY1, SectorPosZ1, SectorPosX2, SectorPosY2, SectorPosZ2) == true)
+                if (ExchangeParticleBetweenSectors(ParticleObject, ParticlesInSector, SectorPosX1, SectorPosY1, SectorPosZ1, SectorPosX2, SectorPosY2, SectorPosZ2) == true)
                     return;
             }
-            else
-                if (fff(ParticleObject, ParticlesInSector, SectorPosX1, SectorPosY1, SectorPosZ1, SectorPosX2, SectorPosY2, SectorPosZ2) == true)
-                    return;
+            // else
+            //     if (ExchangeParticleBetweenSectors(ParticleObject, ParticlesInSector, SectorPosX1, SectorPosY1, SectorPosZ1, SectorPosX2, SectorPosY2, SectorPosZ2) == true)
+            //         return;
         }
     }
     CATCH_AND_THROW("moving particle by vector")
