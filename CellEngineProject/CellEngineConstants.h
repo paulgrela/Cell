@@ -52,4 +52,6 @@ constexpr std::string RNAStartSequence = "ACGUACGU";
 
 constexpr float AtomRadius = 1.0;
 
+constexpr std::string JCVISYN3APredStr = "JCVISYN3A_";
+
 #endif

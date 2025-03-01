@@ -637,7 +637,8 @@ void CellEngineSimulationSpace::SaveReactionsStatisticsToFile() const
         for (const auto& ReactionData : SavedReactionsMap[SimulationStepNumber - 1])
         {
             LoggersManagerObject.LogStatistics(STREAM("REACTION ID = " << ReactionData.first << " REACTION NAME = " << ChemicalReactionsManagerObject.GetReactionFromNumId(ReactionData.first).ReactionName << " REACTION ID_STR = #" << ChemicalReactionsManagerObject.GetReactionFromNumId(ReactionData.first).ReactionIdStr << "# REACTION COUNTER = " << ReactionData.second.Counter));
-            LoggersManagerObject.LogStatistics(STREAM("REACTANTS_STR = " << ChemicalReactionsManagerObject.GetReactionFromNumId(ReactionData.first).ReactantsStr << endl));
+            LoggersManagerObject.LogStatistics(STREAM("REACTANTS_STR = " << ChemicalReactionsManagerObject.GetReactionFromNumId(ReactionData.first).ReactantsStr));
+            LoggersManagerObject.LogStatistics(STREAM("PRODUCTS = " << ChemicalReactionsManager::GetStringOfSortedParticlesDataNames(ChemicalReactionsManagerObject.GetReactionFromNumId(ReactionData.first).Products) << endl));
         }
     }
     CATCH("saving reactions statistics to file")

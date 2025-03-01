@@ -21,6 +21,7 @@ protected:
 protected:
     UnsignedInt ErrorCounter = 0;
     UnsignedInt AddedParticlesInReactions = 0;
+    UnsignedInt RemovedParticlesInReactions = 0;
 protected:
     ParticlesDetailedContainer<Particle> FormerParticlesIndexes;
     ParticlesDetailedContainer<UniqueIdInt> CancelledParticlesIndexes;

@@ -22,6 +22,8 @@ void CellEngineChemicalReactionsInBasicSimulationSpace::EraseParticleChosenForRe
         LoggersManagerObject.Log(STREAM("Centers - X = " << to_string(ParticleObjectToBeErased.Center.X) << " Y = " << to_string(ParticleObjectToBeErased.Center.Y) << " Z = " << to_string(ParticleObjectToBeErased.Center.Z) << endl));
 
         RemoveParticle(ParticleIndexChosenForReaction, true);
+
+        RemovedParticlesInReactions++;
     }
     CATCH("erasing particles chosen for reaction and get centers for new products of reaction")
 }

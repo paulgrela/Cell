@@ -154,7 +154,7 @@ void CellEngineIllinoisDataCreator::GetProteinsFromXMLFile(const boost::property
         for (const auto& ProteinsPropertyTreeXMLTreeElementParticle : ReactionsPropertyTreeXMLTreeElement)
         {
             GeneIdInt GeneId = stoi(ProteinsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:id").substr(9, 4));
-            string ProteinName = "JCVISYN3A_" + ProteinsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:id").substr(9, 4);
+            string ProteinName = JCVISYN3APredStr + ProteinsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:id").substr(9, 4);
             ParticlesKindsManagerObject.AddParticleKind({ ParticleKindId, ProteinName, "", ProteinName, GeneId, 0, "c", 10 });
 
             auto ParticlesDataForGeneratorRange = ParticlesDataForGenerator.equal_range(ProteinName);
@@ -181,7 +181,7 @@ void CellEngineIllinoisDataCreator::GetNewProteinsFromXMLFile(const boost::prope
         {
             GeneIdInt GeneId = stoi(ProteinsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:id").substr(9, 4));
 
-            if (string ProteinName = "JCVISYN3A_" + ProteinsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:id").substr(9, 4); ParticlesKindsManagerObject.GetParticleKindFromStrId(ProteinName).has_value() == false)
+            if (string ProteinName = JCVISYN3APredStr + ProteinsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:id").substr(9, 4); ParticlesKindsManagerObject.GetParticleKindFromStrId(ProteinName).has_value() == false)
             {
                 ParticlesKindsManagerObject.AddParticleKind({ ParticleKindId, ProteinName, "", ProteinName, GeneId, 0, "c", 10 });
 
@@ -211,7 +211,7 @@ void GetDataForGeneProductsForReactionFromXMLFile(const boost::property_tree::pt
             if (auto ParticleKindResult = ParticlesKindsManagerObject.GetParticleKindFromGeneId(GeneId); ParticleKindResult.has_value() == true)
             {
                 LocalVectorOfElements.emplace_back(ParticleKindResult->EntityId, 1, "", true);
-                LoggersManagerObject.Log(STREAM(Str1 << "JCVISYN3A_" + to_string(GeneId) << " " << 1));
+                LoggersManagerObject.Log(STREAM(Str1 << JCVISYN3APredStr + to_string(GeneId) << " " << 1));
             }
             else
                 LoggersManagerObject.Log(STREAM(Str2));
@@ -288,10 +288,10 @@ void CellEngineIllinoisDataCreator::GetProperReactionsListFromXMLFile(const boos
             std::vector<ParticleKindForChemicalReaction> LocalReactantsOr;
 
             if (ReactionsPropertyTreeXMLTreeElementReaction.second.get_child_optional("listOfReactants"))
-                GetDataForReactionFromXMLFile(ReactionsPropertyTreeXMLTreeElementReaction.second, ReactionObject.Products, "listOfReactants", "PRODUCT = ", "ERROR: PRODUCT in REACTION NOT FOUND");
+                GetDataForReactionFromXMLFile(ReactionsPropertyTreeXMLTreeElementReaction.second, ReactionObject.Reactants, "listOfReactants", "PRODUCT = ", "ERROR: PRODUCT in REACTION NOT FOUND");
 
             if (ReactionsPropertyTreeXMLTreeElementReaction.second.get_child_optional("listOfProducts"))
-                GetDataForReactionFromXMLFile(ReactionsPropertyTreeXMLTreeElementReaction.second, ReactionObject.Reactants, "listOfProducts", "REACTANT = ", "ERROR: REACTANT in REACTION NOT FOUND");
+                GetDataForReactionFromXMLFile(ReactionsPropertyTreeXMLTreeElementReaction.second, ReactionObject.Products, "listOfProducts", "REACTANT = ", "ERROR: REACTANT in REACTION NOT FOUND");
 
             if (ReactionsPropertyTreeXMLTreeElementReaction.second.get_child_optional("fbc:geneProductAssociation"))
             {
@@ -612,7 +612,7 @@ void CellEngineIllinoisDataCreator::PrintAllParticlesData()
             LoggersManagerObject.Log(STREAM("P NAME = " << ParticleIterator->first));
             auto Range = ParticlesDataForGenerator.equal_range(ParticleIterator->first);
             for (auto& ParticleDataIterator = Range.first; ParticleDataIterator != Range.second; ParticleDataIterator++)
-                LoggersManagerObject.Log(STREAM(string("P GENE = " + string(ParticleDataIterator->second.GeneId != -1 ? "JCVISYN3A_" + to_string(ParticleDataIterator->second.GeneId) : "NoGene") + " TYPE = " + ParticlesKindsManagerObject.ConvertParticleTypeToString(ParticleDataIterator->second.ParticleType) + " D = #" + ParticleDataIterator->second.Description + "# Added = #" + ParticleDataIterator->second.AddedParticle + "# CLEAN PRODUCT = #" + to_string(ParticleDataIterator->second.CleanProductOfTranscription) + "# COUNTER = " + to_string(ParticleDataIterator->second.CounterAtStartOfSimulation))));
+                LoggersManagerObject.Log(STREAM(string("P GENE = " + string(ParticleDataIterator->second.GeneId != -1 ? JCVISYN3APredStr + to_string(ParticleDataIterator->second.GeneId) : "NoGene") + " TYPE = " + ParticlesKindsManagerObject.ConvertParticleTypeToString(ParticleDataIterator->second.ParticleType) + " D = #" + ParticleDataIterator->second.Description + "# Added = #" + ParticleDataIterator->second.AddedParticle + "# CLEAN PRODUCT = #" + to_string(ParticleDataIterator->second.CleanProductOfTranscription) + "# COUNTER = " + to_string(ParticleDataIterator->second.CounterAtStartOfSimulation))));
 
             LoggersManagerObject.Log(STREAM(""));
         }

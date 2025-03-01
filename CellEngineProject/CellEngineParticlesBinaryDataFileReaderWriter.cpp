@@ -11,6 +11,8 @@
 
 using namespace std;
 
+constexpr bool AddReactionsOfSuddenAppearanceAndDisappearance = false;
+
 void SavePointerToBinaryFile(ofstream& ParticlesDataFile, const Particle* PointerToParticle)
 {
     try
@@ -575,7 +577,8 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadChemicalReactionsFromBin
                 ChemicalReactionObject.Products.emplace_back(ParticleKindForChemicalReactionObject);
             }
 
-            ChemicalReactionsManagerObject.AddChemicalReaction(ChemicalReactionObject);
+            if (ChemicalReactionObject.ReactionName.substr(0,2) != "EX" || AddReactionsOfSuddenAppearanceAndDisappearance == true)
+                ChemicalReactionsManagerObject.AddChemicalReaction(ChemicalReactionObject);
         }
 
         LoggersManagerObject.Log(STREAM("END OF READING CHEMICAL REACTIONS FROM BINARY FILE"));

@@ -7,6 +7,8 @@
 #include "CellEngineRandomDeviceEngine.h"
 #include "CellEngineParticlesKindsManager.h"
 
+constexpr bool ReverseReactantsAndProductsBecauseOfFormerError = true;
+
 class ChemicalReactionsManager : virtual public CellEngineRandomDeviceEngine
 {
 public:
@@ -40,9 +42,29 @@ public:
 public:
     void PreprocessAllChemicalReactions()
     {
+        for (auto& ChemicalReactionObject : ChemicalReactions)
+
+        if constexpr (ReverseReactantsAndProductsBecauseOfFormerError == true)
+        {
+            for (auto& ReactantObject : ChemicalReactionObject.Reactants)
+                if (ParticlesKindsManagerObject.GetParticleKind(ReactantObject.EntityId).IdStr.substr(0, 10) == JCVISYN3APredStr)
+                {
+                    ReactantObject.ToRemoveInReaction = false;
+                    ChemicalReactionObject.Products.emplace_back(ReactantObject);
+                }
+            erase_if(ChemicalReactionObject.Reactants, [](auto& R){ return ParticlesKindsManagerObject.GetParticleKind(R.EntityId).IdStr.substr(0, 10) == JCVISYN3APredStr; });
+
+            swap(ChemicalReactionObject.Products, ChemicalReactionObject.Reactants);
+        }
+
         for (auto& ReactionObject : ChemicalReactions)
         {
-            sort(ReactionObject.Products.begin(), ReactionObject.Products.end(), [](ParticleKindForChemicalReaction &PK1, ParticleKindForChemicalReaction &PK2){ return ParticlesKindsManagerObject.GetParticleKind(PK1.EntityId).ListOfVoxels.size() > ParticlesKindsManagerObject.GetParticleKind(PK2.EntityId).ListOfVoxels.size(); });
+            if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)
+                sort(ReactionObject.Products.begin(), ReactionObject.Products.end(), [](ParticleKindForChemicalReaction &PK1, ParticleKindForChemicalReaction &PK2){ return ParticlesKindsManagerObject.GetParticleKind(PK1.EntityId).ListOfVoxels.size() > ParticlesKindsManagerObject.GetParticleKind(PK2.EntityId).ListOfVoxels.size(); });
+            else
+            if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
+                sort(ReactionObject.Products.begin(), ReactionObject.Products.end(), [](ParticleKindForChemicalReaction &PK1, ParticleKindForChemicalReaction &PK2){ return ParticlesKindsManagerObject.GetParticleKind(PK1.EntityId).ListOfAtoms.size() > ParticlesKindsManagerObject.GetParticleKind(PK2.EntityId).ListOfAtoms.size(); });
+
             ReactionObject.ReactantsStr = GetStringOfSortedParticlesDataNames(ReactionObject.Reactants);
         }
         MaxNumberOfReactants = std::max_element(ChemicalReactions.begin(), ChemicalReactions.end(), [](const ChemicalReaction& R1, const ChemicalReaction& R2){ return R1.Reactants.size() < R2.Reactants.size(); })->Reactants.size();
