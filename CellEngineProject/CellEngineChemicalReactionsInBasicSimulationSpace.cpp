@@ -13,13 +13,15 @@ bool CellEngineChemicalReactionsInBasicSimulationSpace::CompareFitnessOfParticle
          && equal(ParticleObjectForReaction.LinkedParticlesPointersList.begin(), ParticleObjectForReaction.LinkedParticlesPointersList.end(), ParticleKindForReactionObject.LinkedParticleTypes.begin(), [](const Particle* PointerToParticle, const UniqueIdInt ParticleType){ return PointerToParticle->EntityId == ParticleType; })));
 }
 
-void CellEngineChemicalReactionsInBasicSimulationSpace::EraseParticleChosenForReactionAndGetCentersForNewProductsOfReaction(const UnsignedInt ParticleIndexChosenForReaction, ListOfCentersType& Centers)
+void CellEngineChemicalReactionsInBasicSimulationSpace::EraseParticleChosenForReactionAndGetCentersForNewProductsOfReaction(const UnsignedInt ParticleIndexChosenForReaction, ListOfCentersType& Centers, vector<Particle>& ParticlesBackup)
 {
     try
     {
         auto& ParticleObjectToBeErased = GetParticleFromIndex(ParticleIndexChosenForReaction);
         Centers.emplace_back(ParticleObjectToBeErased.Center.X, ParticleObjectToBeErased.Center.Y, ParticleObjectToBeErased.Center.Z);
         LoggersManagerObject.Log(STREAM("Centers - X = " << to_string(ParticleObjectToBeErased.Center.X) << " Y = " << to_string(ParticleObjectToBeErased.Center.Y) << " Z = " << to_string(ParticleObjectToBeErased.Center.Z) << endl));
+
+        ParticlesBackup.emplace_back(move(ParticleObjectToBeErased));
 
         RemoveParticle(ParticleIndexChosenForReaction, true);
 
