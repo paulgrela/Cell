@@ -239,6 +239,7 @@ bool CellEngineSimulationSpace::CancelChemicalReaction(const vector<UniqueIdInt>
         NumberOfCancelledReactions++;
         RemovedParticlesInReactions -= ParticlesBackup.size();
         RestoredParticlesInCancelledReactions += ParticlesBackup.size();
+        PlaceStr == 'A' ? NumberOfCancelledAReactions++ : NumberOfCancelledBReactions++;
 
         for (auto& Particle : ParticlesBackup)
             AddNewParticle(move(Particle));
@@ -348,13 +349,7 @@ bool CellEngineSimulationSpace::MakeChemicalReaction(ChemicalReaction& ReactionO
 
             auto& ParticleKindObjectForProduct = ParticlesKindsManagerObject.GetParticleKind(ReactionProduct.EntityId);
 
-            bool ResultOfPlacingParticle;
-            if (CenterIndex < Centers.size())
-                ResultOfPlacingParticle = PlaceProductParticleInSpaceInDeterminedPositionOrCancelReaction(ParticleIndex, ParticlesBackup, CreatedParticlesIndexes, CenterIndex, Centers, ParticleKindObjectForProduct, start_time);
-            else
-                ResultOfPlacingParticle = PlaceProductParticleInSpaceInRandomPositionOrCancelReaction(ParticleIndex, ParticlesBackup, CreatedParticlesIndexes, CenterIndex, Centers, ParticleKindObjectForProduct, start_time);
-
-            if (ResultOfPlacingParticle == false)
+            if (PlaceProductParticleInSpaceInRandomPositionOrCancelReaction(ParticleIndex, ParticlesBackup, CreatedParticlesIndexes, CenterIndex, Centers, ParticleKindObjectForProduct, start_time) == false)
                 return false;
 
             CenterIndex++;

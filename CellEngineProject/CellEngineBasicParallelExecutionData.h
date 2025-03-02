@@ -21,6 +21,8 @@ protected:
 protected:
     UnsignedInt ErrorCounter = 0;
     UnsignedInt NumberOfCancelledReactions = 0;
+    UnsignedInt NumberOfCancelledAReactions = 0;
+    UnsignedInt NumberOfCancelledBReactions = 0;
     UnsignedInt AddedParticlesInReactions = 0;
     UnsignedInt RemovedParticlesInReactions = 0;
     UnsignedInt RestoredParticlesInCancelledReactions = 0;
