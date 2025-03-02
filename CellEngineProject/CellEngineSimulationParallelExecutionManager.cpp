@@ -319,7 +319,7 @@ void CellEngineSimulationParallelExecutionManager::GatherCancelledParticlesIndex
             SimulationSpaceDataForThreads[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->CancelledParticlesIndexes.clear();
         }
 
-        LoggersManagerObject.Log(STREAM("NUMBER OF CANCELLED PARTICLES = " << CancelledParticlesIndexes.size()));
+        LoggersManagerObject.Log(STREAM("NUMBER OF CANCELLED PARTICLES IN CANCELLED REACTIONS = " << CancelledParticlesIndexes.size()));
     }
     CATCH("gathering particles from threads")
 }
@@ -514,14 +514,18 @@ void CellEngineSimulationParallelExecutionManager::SetZeroForAllParallelExecutio
     try
     {
         ErrorCounter = 0;
+        NumberOfCancelledReactions = 0;
         AddedParticlesInReactions = 0;
         RemovedParticlesInReactions = 0;
+        RestoredParticlesInCancelledReactions = 0;
 
         FOR_EACH_THREAD_IN_XYZ
         {
             SimulationSpaceDataForThreads[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->ErrorCounter = 0;
+            SimulationSpaceDataForThreads[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->NumberOfCancelledReactions = 0;
             SimulationSpaceDataForThreads[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->AddedParticlesInReactions = 0;
             SimulationSpaceDataForThreads[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->RemovedParticlesInReactions = 0;
+            SimulationSpaceDataForThreads[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->RestoredParticlesInCancelledReactions = 0;
         }
     }
     CATCH("setting zero for all parallel execution variables")
@@ -534,12 +538,16 @@ void CellEngineSimulationParallelExecutionManager::GatherAllParallelExecutionVar
         FOR_EACH_THREAD_IN_XYZ
         {
             ErrorCounter += SimulationSpaceDataForThreads[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->ErrorCounter;
+            NumberOfCancelledReactions += SimulationSpaceDataForThreads[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->NumberOfCancelledReactions;
             AddedParticlesInReactions += SimulationSpaceDataForThreads[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->AddedParticlesInReactions;
             RemovedParticlesInReactions += SimulationSpaceDataForThreads[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->RemovedParticlesInReactions;
+            RestoredParticlesInCancelledReactions += SimulationSpaceDataForThreads[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->RestoredParticlesInCancelledReactions;
         }
 
+        LoggersManagerObject.Log(STREAM("RestoredParticlesInCancelledReactions = " + to_string(RestoredParticlesInCancelledReactions)));
         LoggersManagerObject.Log(STREAM("RemovedParticlesInReactions = " + to_string(RemovedParticlesInReactions)));
         LoggersManagerObject.Log(STREAM("AddedParticlesInReactions = " + to_string(AddedParticlesInReactions)));
+        LoggersManagerObject.Log(STREAM("NumberOfCancelledReactions = " + to_string(NumberOfCancelledReactions)));
         LoggersManagerObject.Log(STREAM("ErrorCounter = " + to_string(ErrorCounter)));
     }
     CATCH("gathering all parallel execution variables")

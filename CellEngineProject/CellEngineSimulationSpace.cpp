@@ -227,7 +227,7 @@ bool CellEngineSimulationSpace::CancelChemicalReaction(const vector<UniqueIdInt>
 {
     try
     {
-        LoggersManagerObject.Log(STREAM("CANCELLED PARTICLE IN BOUNDS " << PlaceStr << " = " << ActualSimulationSpaceSectorBoundsObject.StartXPos << " " << ActualSimulationSpaceSectorBoundsObject.StartYPos << " "  << ActualSimulationSpaceSectorBoundsObject.StartZPos << " " << ActualSimulationSpaceSectorBoundsObject.EndXPos << " " << ActualSimulationSpaceSectorBoundsObject.EndYPos << " " << ActualSimulationSpaceSectorBoundsObject.EndZPos << " " << ParticleKindObjectForProduct.ListOfVoxels.size() << " " << ParticleKindObjectForProduct.ListOfAtoms.size() << " " << ParticleKindObjectForProduct.EntityId));
+        LoggersManagerObject.Log(STREAM("CANCELLED REACTION IN BOUNDS " << PlaceStr << " = " << ActualSimulationSpaceSectorBoundsObject.StartXPos << " " << ActualSimulationSpaceSectorBoundsObject.StartYPos << " "  << ActualSimulationSpaceSectorBoundsObject.StartZPos << " " << ActualSimulationSpaceSectorBoundsObject.EndXPos << " " << ActualSimulationSpaceSectorBoundsObject.EndYPos << " " << ActualSimulationSpaceSectorBoundsObject.EndZPos << " " << ParticleKindObjectForProduct.ListOfVoxels.size() << " " << ParticleKindObjectForProduct.ListOfAtoms.size() << " " << ParticleKindObjectForProduct.EntityId));
 
         for (const auto& CreatedParticleIndex : CreatedParticlesIndexes)
         {
@@ -236,7 +236,9 @@ bool CellEngineSimulationSpace::CancelChemicalReaction(const vector<UniqueIdInt>
             CancelledParticlesIndexes.insert(pair(CreatedParticleIndex, CreatedParticleIndex));
         }
 
+        NumberOfCancelledReactions++;
         RemovedParticlesInReactions -= ParticlesBackup.size();
+        RestoredParticlesInCancelledReactions += ParticlesBackup.size();
 
         for (auto& Particle : ParticlesBackup)
             AddNewParticle(move(Particle));
