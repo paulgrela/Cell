@@ -22,6 +22,8 @@ using UniqueIdInt = std::uint32_t;
 
 using RealType = float;
 
+using MDSRealType = double;
+
 using ElectricChargeType = std::int32_t;
 
 template<class T>
