@@ -111,31 +111,31 @@ public:
     }
 };
 
-struct Bond
+struct BondMDS
 {
 public:
     UnsignedInt Atom1Index, Atom2Index;
     MDSRealType r0_EquilibrumDistance;
     MDSRealType k_SpringConstant;
 public:
-    Bond(const UnsignedInt Atom1IndexParam, const UnsignedInt Atom2IndexParam, const MDSRealType r0_EquilibrumDistanceParam, const MDSRealType k_SpringConstantParam) : Atom1Index(Atom1IndexParam), Atom2Index(Atom2IndexParam), r0_EquilibrumDistance(r0_EquilibrumDistanceParam), k_SpringConstant(k_SpringConstantParam)
+    BondMDS(const UnsignedInt Atom1IndexParam, const UnsignedInt Atom2IndexParam, const MDSRealType r0_EquilibrumDistanceParam, const MDSRealType k_SpringConstantParam) : Atom1Index(Atom1IndexParam), Atom2Index(Atom2IndexParam), r0_EquilibrumDistance(r0_EquilibrumDistanceParam), k_SpringConstant(k_SpringConstantParam)
     {
     }
 };
 
-struct Angle
+struct AngleMDS
 {
 public:
     UnsignedInt Atom1Index, Atom2Index, Atom3Index;
     MDSRealType theta0_EquilibriumAngleInRadians;
     MDSRealType k_theta_ForceConstant;
 public:
-    Angle(const UnsignedInt Atom1IndexParam, const UnsignedInt Atom2IndexParam, const UnsignedInt Atom3IndexParam, const MDSRealType theta0, const MDSRealType k_theta) : Atom1Index(Atom1IndexParam), Atom2Index(Atom2IndexParam), Atom3Index(Atom3IndexParam), theta0_EquilibriumAngleInRadians(theta0), k_theta_ForceConstant(k_theta)
+    AngleMDS(const UnsignedInt Atom1IndexParam, const UnsignedInt Atom2IndexParam, const UnsignedInt Atom3IndexParam, const MDSRealType theta0, const MDSRealType k_theta) : Atom1Index(Atom1IndexParam), Atom2Index(Atom2IndexParam), Atom3Index(Atom3IndexParam), theta0_EquilibriumAngleInRadians(theta0), k_theta_ForceConstant(k_theta)
     {
     }
 };
 
-struct Dihedral
+struct DihedralMDS
 {
 public:
     UnsignedInt Atom1Index, Atom2Index, Atom3Index, Atom4Index;
@@ -143,7 +143,7 @@ public:
     UnsignedInt N_Multiplicity;
     MDSRealType phi0_PhaseAngleInRadians;
 public:
-    Dihedral(const UnsignedInt Atom1IndexParam, const UnsignedInt Atom2IndexParam, const UnsignedInt Atom3IndexParam,  const UnsignedInt Atom4IndexParam, const MDSRealType k_phi, const UnsignedInt N_MultiplicityParam, const MDSRealType phi0) : Atom1Index(Atom1IndexParam), Atom2Index(Atom2IndexParam), Atom3Index(Atom3IndexParam), Atom4Index(Atom4IndexParam), k_phi_ForceConstant(k_phi), N_Multiplicity(N_MultiplicityParam), phi0_PhaseAngleInRadians(phi0)
+    DihedralMDS(const UnsignedInt Atom1IndexParam, const UnsignedInt Atom2IndexParam, const UnsignedInt Atom3IndexParam,  const UnsignedInt Atom4IndexParam, const MDSRealType k_phi, const UnsignedInt N_MultiplicityParam, const MDSRealType phi0) : Atom1Index(Atom1IndexParam), Atom2Index(Atom2IndexParam), Atom3Index(Atom3IndexParam), Atom4Index(Atom4IndexParam), k_phi_ForceConstant(k_phi), N_Multiplicity(N_MultiplicityParam), phi0_PhaseAngleInRadians(phi0)
     {
     }
 };

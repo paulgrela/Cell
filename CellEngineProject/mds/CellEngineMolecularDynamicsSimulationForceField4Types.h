@@ -2,33 +2,30 @@
 #ifndef CELL_ENGINE_MOLECULAR_DYNAMICS_SIMULATION_FORCE_FIELD_4_TYPES_H
 #define CELL_ENGINE_MOLECULAR_DYNAMICS_SIMULATION_FORCE_FIELD_4_TYPES_H
 
-// Structure to represent an atom
-struct Atom
+struct AtomMDS
 {
-    MDSRealType x, y, z; // Position (m)
-    MDSRealType vx, vy, vz; // Velocity (m/s)
-    MDSRealType fx, fy, fz; // Force (N)
-    MDSRealType Charge; // Electric charge (C)
-    MDSRealType Mass; // Mass (kg)
+    MDSRealType PositionX, PositionY, PositionZ;
+    MDSRealType VelocityX, VelocityY, VelocityZ;
+    MDSRealType ForceX, ForceY, ForceZ;
+    MDSRealType Charge;
+    MDSRealType Mass;
 };
 
-// Structure to represent a bond between two atoms
-struct Bond
+struct BondMDS
 {
-    int Atom1, Atom2; // Indices of bonded atoms
+    UnsignedInt Atom1Index;
+    UnsignedInt Atom2Index;
     MDSRealType k_bond, r0;
 };
 
-// Structure to represent an angle between three atoms
-struct Angle
+struct AngleMDS
 {
-    int Atom1, Atom2, Atom3; // Indices of atoms forming the angle
+    int Atom1Index, Atom2Index, Atom3Index;
 };
 
-// Structure to represent a dihedral torsion between four atoms
-struct Dihedral
+struct DihedralMDS
 {
-    int Atom1, Atom2, Atom3, Atom4; // Indices of atoms forming the dihedral
+    int Atom1Index, Atom2Index, Atom3Index, Atom4Index;
 };
 
 #endif

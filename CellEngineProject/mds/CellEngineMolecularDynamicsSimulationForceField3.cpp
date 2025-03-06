@@ -17,9 +17,9 @@ class Simulation
 {
 public:
        std::vector<Atom> Atoms;
-       std::vector<Bond> Bonds;
-       std::vector<Angle> Angles;
-       std::vector<Dihedral> Dihedrals;
+       std::vector<BondMDS> Bonds;
+       std::vector<AngleMDS> Angles;
+       std::vector<DihedralMDS> Dihedrals;
        std::unordered_set<int> bonded_pairs; // stores i*N + j for i < j
 
 MDSRealType BoxSize; // cubic box size
@@ -323,7 +323,7 @@ MDSRealType computeTemperature()
 }
 };
 
-int main3()
+int ComputeMolecularDynamicsSimulationForceField3()
 {
     Simulation sim(100.0, 303.15, 0.001); /* 100.0 box size in Å /, 303.15 / 30°C in K /, 0.001 / time step in ps */
     sim.initializeAtoms(1000);

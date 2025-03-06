@@ -21,10 +21,11 @@ struct AtomMDS
     MDSRealType Mass;
 };
 
-struct Bond
+struct BondMDS
 {
     UnsignedInt Atom1Index;
     UnsignedInt Atom2Index;
+    MDSRealType k_bond, r0;
 };
 
 MDSRealType distance_squared(const AtomMDS &p1, const AtomMDS &p2)
@@ -83,7 +84,7 @@ void InitializeAtoms2(std::vector<AtomMDS>& Atoms, const UnsignedInt NumberOfAto
     }
 }
 
-void InitializeBondsBetweenAtoms(const vector<AtomMDS>& Atoms, vector<Bond>& Bonds)
+void InitializeBondsBetweenAtoms(const vector<AtomMDS>& Atoms, vector<BondMDS>& Bonds)
 {
     std::random_device RandomDevice;
     std::mt19937 RandomGenerator(RandomDevice());
@@ -333,7 +334,7 @@ void UpdatePositionsAndVelocities(std::vector<AtomMDS>& Atoms, const std::vector
     }
 }
 
-void PerformVelocityVerletIntegration(std::vector<AtomMDS> &Atoms, const std::vector<Bond>& Bonds)
+void PerformVelocityVerletIntegration(std::vector<AtomMDS> &Atoms, const std::vector<BondMDS>& Bonds)
 {
     // bont streching produce here error of counting
     // for (const auto &Bond : Bonds)
@@ -399,7 +400,7 @@ UnsignedInt ComputeMolecularDynamicsSimulationForceField1()
     constexpr UnsignedInt NumberOfAtoms = 100;
 
     vector<AtomMDS> Particles;
-    vector<Bond> Bonds;
+    vector<BondMDS> Bonds;
 
     InitializeAtoms1(Particles, NumberOfAtoms);
     InitializeBondsBetweenAtoms(Particles, Bonds);

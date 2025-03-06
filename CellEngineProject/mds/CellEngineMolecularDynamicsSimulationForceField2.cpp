@@ -17,9 +17,9 @@ class Simulation
 {
 private:
     std::vector<Atom> Atoms;
-    std::vector<Bond> Bonds;
-    std::vector<Angle> Angles;
-    std::vector<Dihedral> Dihedrals;
+    std::vector<BondMDS> Bonds;
+    std::vector<AngleMDS> Angles;
+    std::vector<DihedralMDS> Dihedrals;
     std::unordered_set<UnsignedInt> BondedPairs;
 private:
     MDSRealType BoxSize;
