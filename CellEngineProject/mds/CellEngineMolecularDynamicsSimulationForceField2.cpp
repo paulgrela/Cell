@@ -340,99 +340,18 @@ public:
     {
         std::random_device RandomDevice;
         std::mt19937 RandomGenerator(RandomDevice());
-        // std::uniform_real_distribution<> PositionsDistribution(0.0, BoxSize);
-        // std::uniform_int_distribution<> AtomTypeDistribution(0, 3);
-        // std::uniform_real_distribution<> ChargeDistribution(-1.0, 1.0);
 
         GenerateRandomAtoms(RandomGenerator, NumberOfAtoms);
-        // // for (UnsignedInt Index = 0; Index < NumberOfAtoms; ++Index)
-        // // {
-        // //     Vec3 pos(PositionsDistribution(RandomGenerator), PositionsDistribution(RandomGenerator), PositionsDistribution(RandomGenerator));
-        // //     UnsignedInt type = AtomTypeDistribution(RandomGenerator);
-        // //     MDSRealType charge = ChargeDistribution(RandomGenerator);
-        // //     Atoms.emplace_back(static_cast<AtomTypes>(type), pos, charge);
-        // // }
-        //
         GenerateAssignRandomVelocitiesBasedOnMaxwellBoltzmannDistribution(RandomGenerator);
-        // // Assign random velocities based on Maxwell-Boltzmann distribution
-        // // std::normal_distribution<> VelocityDistribution(0.0, sqrt(K_Boltzmann * Temperature));
-        // // for (auto& Atom : Atoms)
-        // // {
-        // //     Atom.Velocity.x = VelocityDistribution(RandomGenerator);
-        // //     Atom.Velocity.y = VelocityDistribution(RandomGenerator);
-        // //     Atom.Velocity.z = VelocityDistribution(RandomGenerator);
-        // //     // Subtract center-of-mass velocity to avoid drift
-        // //     // (omitted for brevity)
-        // // }
-        //
-        // // Generate random bonds (example: 500 bonds)
+
         std::uniform_int_distribution<> AtomsIndexesDistribution(0, static_cast<int>(NumberOfAtoms) - 1);
-        //
         GenerateRandomBonds(AtomsIndexesDistribution, RandomGenerator, NumberOfAtoms);
-        //
-        // // for (UnsignedInt Bond = 0; Bond < 500; ++Bond)
-        // // {
-        // //     UnsignedInt Atom1Index = AtomsIndexesDistribution(RandomGenerator);
-        // //     UnsignedInt Atom2Index = AtomsIndexesDistribution(RandomGenerator);
-        // //     if (Atom1Index != Atom2Index)
-        // //     {
-        // //         // Ensure i < j to avoid duplicates
-        // //         if (Atom1Index > Atom2Index)
-        // //            swap(Atom1Index, Atom2Index);
-        // //         // Check if bond already exists
-        // //         UnsignedInt key = Atom1Index * NumberOfAtoms + Atom2Index;
-        // //         if (BondedPairs.find(key) == BondedPairs.end())
-        // //         {
-        // //             BondedPairs.insert(key);
-        // //             // Assign random r0 and k (example values)
-        // //             MDSRealType r0 = 1.5; // Angstrom
-        // //             MDSRealType k = 100.0; // kcal/(mol·Å²)
-        // //             Bonds.emplace_back(Atom1Index, Atom2Index, r0, k);
-        // //         }
-        // //     }
-        // // }
-        //
-        // // Generate angles and dihedrals (example)
-        // // For angles, find triplets i-j-k where i-j and j-k are bonded
-        // // This is a simplified approach; realistically, need to find connected triplets
-        // // For demonstration, randomly select triplets
-        //
+        // Generate angles and dihedrals (example)
+        // For angles, find triplets i-j-k where i-j and j-k are bonded
+        // This is a simplified approach; realistically, need to find connected triplets
+        // For demonstration, randomly select triplets
         GenerateRandomAngles(AtomsIndexesDistribution, RandomGenerator);
-        //
-        // // for (UnsignedInt Angle = 0; Angle < 300; ++Angle)
-        // // {
-        // //     UnsignedInt Atom1Index = AtomsIndexesDistribution(RandomGenerator);
-        // //     UnsignedInt Atom2Index = AtomsIndexesDistribution(RandomGenerator);
-        // //     UnsignedInt Atom3Index = AtomsIndexesDistribution(RandomGenerator);
-        // //     if (Atom1Index != Atom2Index && Atom2Index != Atom3Index && Atom1Index != Atom3Index)
-        // //     {
-        // //         Angles.emplace_back(Atom1Index, Atom2Index, Atom3Index,
-        // //         1.5708 // 90 degree
-        // //         , 100.0 // k_theta
-        // //         );
-        // //     }
-        // // }
-        //
         GenerateRandomDihedrals(AtomsIndexesDistribution, RandomGenerator);
-        //
-        // // Similarly for dihedrals
-        // // for (UnsignedInt Dihedral = 0; Dihedral < 200; ++Dihedral)
-        // // {
-        // //     UnsignedInt Atom1Index = AtomsIndexesDistribution(RandomGenerator);
-        // //     UnsignedInt Atom2Index = AtomsIndexesDistribution(RandomGenerator);
-        // //     UnsignedInt Atom3Index = AtomsIndexesDistribution(RandomGenerator);
-        // //     UnsignedInt Atom4Index = AtomsIndexesDistribution(RandomGenerator);
-        // //     if (Atom1Index != Atom2Index && Atom2Index != Atom3Index && Atom3Index != Atom4Index && Atom1Index != Atom3Index && Atom1Index != Atom4Index && Atom2Index != Atom4Index)
-        // //     {
-        // //         Dihedrals.emplace_back(Atom1Index, Atom2Index, Atom3Index, Atom4Index,
-        // //         5.0 // k_phi
-        // //         ,
-        // //         2 // n
-        // //         ,
-        // //         0.0 // phi0
-        // //         );
-        // //     }
-        // // }
     }
 };
 
@@ -459,4 +378,3 @@ UnsignedInt ComputeMolecularDynamicsSimulationForceField2()
 
     return 0;
 }
-

@@ -192,6 +192,8 @@ add_executable(
 	mds/CellEngineMolecularDynamicsSimulationForceField3.h
 	mds/CellEngineMolecularDynamicsSimulationForceField4.cpp
 	mds/CellEngineMolecularDynamicsSimulationForceField4.h
+	mds/CellEngineMolecularDynamicsSimulationForceField4Constants.h
+	mds/CellEngineMolecularDynamicsSimulationForceField4Types.h
 	CellEngineWellStirredChemicalReactionsSimulation.h
 	CellEngineWellStirredChemicalReactionsSimulation.h
 	CellEngineWellStirredChemicalReactionsSimulation.cpp)
