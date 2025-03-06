@@ -7,26 +7,10 @@
 #include "../CellEngineTypes.h"
 
 #include "CellEngineMolecularDynamicsSimulationForceField1.h"
-
 #include "CellEngineMolecularDynamicsSimulationForceField1Constants.h"
+#include "CellEngineMolecularDynamicsSimulationForceFieldCommonTypes.h"
 
 using namespace std;
-
-struct AtomMDS
-{
-    MDSRealType PositionX, PositionY, PositionZ;
-    MDSRealType VelocityX, VelocityY, VelocityZ;
-    MDSRealType ForceX, ForceY, ForceZ;
-    MDSRealType Charge;
-    MDSRealType Mass;
-};
-
-struct BondMDS
-{
-    UnsignedInt Atom1Index;
-    UnsignedInt Atom2Index;
-    MDSRealType k_bond, r0;
-};
 
 MDSRealType distance_squared(const AtomMDS &p1, const AtomMDS &p2)
 {
@@ -44,23 +28,23 @@ void InitializeAtoms1(std::vector<AtomMDS>& Atoms, const UnsignedInt NumberOfAto
     std::uniform_real_distribution<> RandomPositionsInNMDistribution(-1.0e-9, 1.0e-9);
     std::uniform_real_distribution<> RandomVelocitiesDistribution(-1.0, 1.0);
     std::uniform_int_distribution<> RandomChargeDistribution(-1, 1);
-    std::uniform_int_distribution<> RandomAtomTypeDistribution(0, 3); // Randomly choose atom type (O, N, P, C)
+    std::uniform_int_distribution<> RandomAtomTypeDistribution(0, 3); // Randomly choose AtomObject type (O, N, P, C)
 
     for (UnsignedInt AtomIndex = 0; AtomIndex < NumberOfAtoms; ++AtomIndex)
     {
-        AtomMDS Atom{};
+        AtomMDS AtomObject{};
 
-        Atom.PositionX = RandomPositionsInNMDistribution(RandomGenerator);
-        Atom.PositionY = RandomPositionsInNMDistribution(RandomGenerator);
-        Atom.PositionZ = RandomPositionsInNMDistribution(RandomGenerator);
-        Atom.VelocityX = RandomVelocitiesDistribution(RandomGenerator) * sqrt(kB * T / mass_C);
-        Atom.VelocityY = RandomVelocitiesDistribution(RandomGenerator) * sqrt(kB * T / mass_C);
-        Atom.VelocityZ = RandomVelocitiesDistribution(RandomGenerator) * sqrt(kB * T / mass_C);
-        Atom.Charge = RandomChargeDistribution(RandomGenerator) * 1.602176634e-19;
-        Atom.Mass = (RandomAtomTypeDistribution(RandomGenerator) == 0) ? mass_O : ((RandomAtomTypeDistribution(RandomGenerator) == 1) ? mass_N : ((RandomAtomTypeDistribution(RandomGenerator) == 2) ? mass_P : mass_C));
-        Atom.ForceX = Atom.ForceY = Atom.ForceZ = 0.0;
+        AtomObject.PositionX = RandomPositionsInNMDistribution(RandomGenerator);
+        AtomObject.PositionY = RandomPositionsInNMDistribution(RandomGenerator);
+        AtomObject.PositionZ = RandomPositionsInNMDistribution(RandomGenerator);
+        AtomObject.VelocityX = RandomVelocitiesDistribution(RandomGenerator) * sqrt(kB_BoltzmanConstantJPerK * TemperatureInKelvins / mass_C_kg);
+        AtomObject.VelocityY = RandomVelocitiesDistribution(RandomGenerator) * sqrt(kB_BoltzmanConstantJPerK * TemperatureInKelvins / mass_C_kg);
+        AtomObject.VelocityZ = RandomVelocitiesDistribution(RandomGenerator) * sqrt(kB_BoltzmanConstantJPerK * TemperatureInKelvins / mass_C_kg);
+        AtomObject.Charge = RandomChargeDistribution(RandomGenerator) * 1.602176634e-19;
+        AtomObject.Mass = (RandomAtomTypeDistribution(RandomGenerator) == 0) ? mass_O_kg : ((RandomAtomTypeDistribution(RandomGenerator) == 1) ? mass_N_kg : ((RandomAtomTypeDistribution(RandomGenerator) == 2) ? mass_P_kg : mass_C_kg));
+        AtomObject.ForceX = AtomObject.ForceY = AtomObject.ForceZ = 0.0;
 
-        Atoms.emplace_back(Atom);
+        Atoms.emplace_back(AtomObject);
     }
 }
 
@@ -71,16 +55,16 @@ void InitializeAtoms2(std::vector<AtomMDS>& Atoms, const UnsignedInt NumberOfAto
     std::mt19937 ReandomGenerator(std::random_device{}());
     std::uniform_real_distribution<> Distribution(-5.0, 5.0);
 
-    for (auto &Atom : Atoms)
+    for (auto &AtomObject : Atoms)
     {
-        Atom.PositionX = Distribution(ReandomGenerator);
-        Atom.PositionY = Distribution(ReandomGenerator);
-        Atom.PositionZ = Distribution(ReandomGenerator);
-        Atom.VelocityX = Distribution(ReandomGenerator);
-        Atom.VelocityY = Distribution(ReandomGenerator);
-        Atom.VelocityZ = Distribution(ReandomGenerator);
-        Atom.Mass = 1.0;
-        Atom.ForceX = Atom.ForceY = Atom.ForceZ = 0.0;
+        AtomObject.PositionX = Distribution(ReandomGenerator);
+        AtomObject.PositionY = Distribution(ReandomGenerator);
+        AtomObject.PositionZ = Distribution(ReandomGenerator);
+        AtomObject.VelocityX = Distribution(ReandomGenerator);
+        AtomObject.VelocityY = Distribution(ReandomGenerator);
+        AtomObject.VelocityZ = Distribution(ReandomGenerator);
+        AtomObject.Mass = 1.0;
+        AtomObject.ForceX = AtomObject.ForceY = AtomObject.ForceZ = 0.0;
     }
 }
 
@@ -88,7 +72,7 @@ void InitializeBondsBetweenAtoms(const vector<AtomMDS>& Atoms, vector<BondMDS>& 
 {
     std::random_device RandomDevice;
     std::mt19937 RandomGenerator(RandomDevice());
-    std::uniform_int_distribution<> AtomIndexDistribution(0, Atoms.size() - 1);
+    std::uniform_int_distribution<UnsignedInt> AtomIndexDistribution(0, Atoms.size() - 1);
 
     const UnsignedInt NumberOfBonds = Atoms.size() / 4; // Roughly 25% of atoms are bonded
 
@@ -104,18 +88,18 @@ void InitializeBondsBetweenAtoms(const vector<AtomMDS>& Atoms, vector<BondMDS>& 
 
 void ComputeLennardJonesPotentialAndForces(AtomMDS &Atom1, AtomMDS &Atom2)
 {
-    MDSRealType dx = Atom1.PositionX - Atom2.PositionX;
-    MDSRealType dy = Atom1.PositionY - Atom2.PositionY;
-    MDSRealType dz = Atom1.PositionZ - Atom2.PositionZ;
-    MDSRealType r2 = dx * dx + dy * dy + dz * dz;
+    const MDSRealType dx = Atom1.PositionX - Atom2.PositionX;
+    const MDSRealType dy = Atom1.PositionY - Atom2.PositionY;
+    const MDSRealType dz = Atom1.PositionZ - Atom2.PositionZ;
+    const MDSRealType r2 = dx * dx + dy * dy + dz * dz;
 
-    if (r2 < r_cutoff * r_cutoff)
+    if (r2 < r_cutoff_LennardJonesCutoffDistance * r_cutoff_LennardJonesCutoffDistance)
     {
-        MDSRealType r6 = (sigma * sigma) / r2;
+        MDSRealType r6 = (sigma_LennardJonesDistanceParameter * sigma_LennardJonesDistanceParameter) / r2;
         r6 = r6 * r6 * r6;  // (sigma/r)^6
         const MDSRealType r12 = r6 * r6; // (sigma/r)^12
 
-        const MDSRealType ForceScalar = 48 * epsilon * (r12 - 0.5 * r6) / r2;
+        const MDSRealType ForceScalar = 48 * epsilon_LennardJonesPotentialDepth * (r12 - 0.5 * r6) / r2;
 
         Atom1.ForceX += ForceScalar * dx;
         Atom1.ForceY += ForceScalar * dy;
@@ -129,13 +113,13 @@ void ComputeLennardJonesPotentialAndForces(AtomMDS &Atom1, AtomMDS &Atom2)
 
 void ComputeLennardJonesPotentialAndForces(AtomMDS &Atom1, AtomMDS &Atom2, MDSRealType r2)
 {
-    if (r2 < r_cutoff * r_cutoff)
+    if (r2 < r_cutoff_LennardJonesCutoffDistance * r_cutoff_LennardJonesCutoffDistance)
     {
-        MDSRealType r6 = (sigma * sigma) / r2;
+        MDSRealType r6 = (sigma_LennardJonesDistanceParameter * sigma_LennardJonesDistanceParameter) / r2;
         r6 = r6 * r6 * r6; // (sigma/r)^6
         const MDSRealType r12 = r6 * r6; // (sigma/r)^12
 
-        const MDSRealType ForceScalar = 48 * epsilon * (r12 - 0.5 * r6) / r2;
+        const MDSRealType ForceScalar = 48 * epsilon_LennardJonesPotentialDepth * (r12 - 0.5 * r6) / r2;
         const MDSRealType dx = Atom1.PositionX - Atom2.PositionX;
         const MDSRealType dy = Atom1.PositionY - Atom2.PositionY;
         const MDSRealType dz = Atom1.PositionZ - Atom2.PositionZ;
@@ -151,7 +135,7 @@ void ComputeLennardJonesPotentialAndForces(AtomMDS &Atom1, AtomMDS &Atom2, MDSRe
 
 void ComputeCoulombElectrostaticForces(AtomMDS &Atom1, AtomMDS &Atom2, MDSRealType r2)
 {
-    if (r2 < r_cutoff * r_cutoff)
+    if (r2 < r_cutoff_LennardJonesCutoffDistance * r_cutoff_LennardJonesCutoffDistance)
     {
         MDSRealType dx = Atom1.PositionX - Atom2.PositionX;
         MDSRealType dy = Atom1.PositionY - Atom2.PositionY;
@@ -159,7 +143,7 @@ void ComputeCoulombElectrostaticForces(AtomMDS &Atom1, AtomMDS &Atom2, MDSRealTy
         //MDSRealType r2 = dx * dx + dy * dy + dz * dz;
         MDSRealType r = std::sqrt(r2);
 
-        MDSRealType ForceScalar = (k_e * Atom1.Charge * Atom2.Charge) / (r2 * r);
+        MDSRealType ForceScalar = (k_e_CoulombConstant * Atom1.Charge * Atom2.Charge) / (r2 * r);
 
         Atom1.ForceX += ForceScalar * dx;
         Atom1.ForceY += ForceScalar * dy;
@@ -178,7 +162,7 @@ void ComputeBondStretchingHookesLaw(AtomMDS &Atom1, AtomMDS &Atom2)
     MDSRealType dz = Atom1.PositionZ - Atom2.PositionZ;
     MDSRealType r = sqrt(dx * dx + dy * dy + dz * dz);
 
-    MDSRealType ForceScalar = -k_bond * (r - r0_bond) / r;
+    MDSRealType ForceScalar = -k_bond_HookesLawBondStretchingForceConstant * (r - r0_bond_HookesLawBondStretchingEquilibriumBondLength) / r;
     Atom1.ForceX += ForceScalar * dx;
     Atom1.ForceY += ForceScalar * dy;
     Atom1.ForceZ += ForceScalar * dz;
@@ -324,31 +308,27 @@ void UpdatePositionsAndVelocities(std::vector<AtomMDS>& Atoms, const std::vector
 {
     for (UnsignedInt AtomIndex = 0; AtomIndex < Atoms.size(); ++AtomIndex)
     {
-        Atoms[AtomIndex].PositionX += Atoms[AtomIndex].VelocityX * dt + 0.5 * Forces[AtomIndex][0] / Atoms[AtomIndex].Mass * dt * dt;
-        Atoms[AtomIndex].PositionY += Atoms[AtomIndex].VelocityY * dt + 0.5 * Forces[AtomIndex][1] / Atoms[AtomIndex].Mass * dt * dt;
-        Atoms[AtomIndex].PositionZ += Atoms[AtomIndex].VelocityZ * dt + 0.5 * Forces[AtomIndex][2] / Atoms[AtomIndex].Mass * dt * dt;
+        Atoms[AtomIndex].PositionX += Atoms[AtomIndex].VelocityX * dt_TimeStepFirstInSeconds + 0.5 * Forces[AtomIndex][0] / Atoms[AtomIndex].Mass * dt_TimeStepFirstInSeconds * dt_TimeStepFirstInSeconds;
+        Atoms[AtomIndex].PositionY += Atoms[AtomIndex].VelocityY * dt_TimeStepFirstInSeconds + 0.5 * Forces[AtomIndex][1] / Atoms[AtomIndex].Mass * dt_TimeStepFirstInSeconds * dt_TimeStepFirstInSeconds;
+        Atoms[AtomIndex].PositionZ += Atoms[AtomIndex].VelocityZ * dt_TimeStepFirstInSeconds + 0.5 * Forces[AtomIndex][2] / Atoms[AtomIndex].Mass * dt_TimeStepFirstInSeconds * dt_TimeStepFirstInSeconds;
 
-        Atoms[AtomIndex].VelocityX += 0.5 * Forces[AtomIndex][0] / Atoms[AtomIndex].Mass * dt;
-        Atoms[AtomIndex].VelocityY += 0.5 * Forces[AtomIndex][1] / Atoms[AtomIndex].Mass * dt;
-        Atoms[AtomIndex].VelocityZ += 0.5 * Forces[AtomIndex][2] / Atoms[AtomIndex].Mass * dt;
+        Atoms[AtomIndex].VelocityX += 0.5 * Forces[AtomIndex][0] / Atoms[AtomIndex].Mass * dt_TimeStepFirstInSeconds;
+        Atoms[AtomIndex].VelocityY += 0.5 * Forces[AtomIndex][1] / Atoms[AtomIndex].Mass * dt_TimeStepFirstInSeconds;
+        Atoms[AtomIndex].VelocityZ += 0.5 * Forces[AtomIndex][2] / Atoms[AtomIndex].Mass * dt_TimeStepFirstInSeconds;
     }
 }
 
 void PerformVelocityVerletIntegration(std::vector<AtomMDS> &Atoms, const std::vector<BondMDS>& Bonds)
 {
-    // bont streching produce here error of counting
-    // for (const auto &Bond : Bonds)
-    //     ComputeBondStretchingHookesLaw(Particles[Bond.Atom1Index], Particles[Bond.Atom2Index]);
-
-    for (auto &Atom : Atoms)
+    for (auto &AtomObject : Atoms)
     {
-        Atom.VelocityX += 0.5 * Atom.ForceX / Atom.Mass * dt;
-        Atom.VelocityY += 0.5 * Atom.ForceY / Atom.Mass * dt;
-        Atom.VelocityZ += 0.5 * Atom.ForceZ / Atom.Mass * dt;
+        AtomObject.VelocityX += 0.5 * AtomObject.ForceX / AtomObject.Mass * dt_TimeStepFirstInSeconds;
+        AtomObject.VelocityY += 0.5 * AtomObject.ForceY / AtomObject.Mass * dt_TimeStepFirstInSeconds;
+        AtomObject.VelocityZ += 0.5 * AtomObject.ForceZ / AtomObject.Mass * dt_TimeStepFirstInSeconds;
 
-        Atom.PositionX += Atom.VelocityX * dt;
-        Atom.PositionY += Atom.VelocityY * dt;
-        Atom.PositionZ += Atom.VelocityZ * dt;
+        AtomObject.PositionX += AtomObject.VelocityX * dt_TimeStepFirstInSeconds;
+        AtomObject.PositionY += AtomObject.VelocityY * dt_TimeStepFirstInSeconds;
+        AtomObject.PositionZ += AtomObject.VelocityZ * dt_TimeStepFirstInSeconds;
     }
 
     for (UnsignedInt AtomIndex1 = 0; AtomIndex1 < Atoms.size(); ++AtomIndex1)
@@ -362,26 +342,27 @@ void PerformVelocityVerletIntegration(std::vector<AtomMDS> &Atoms, const std::ve
         }
     }
 
+    // bont streching produce here error of counting
     // for (const auto &Bond : Bonds)
-    //     ComputeBondStretchingHookesLaw(Particles[Bond.Atom1Index], Particles[Bond.Atom2Index]);
+    //     ComputeBondStretchingHookesLaw(Atoms[Bond.Atom1Index], Atoms[Bond.Atom2Index]);
 
     for (auto &ParticleObject : Atoms)
     {
-        ParticleObject.VelocityX += 0.5 * ParticleObject.ForceX / ParticleObject.Mass * dt;
-        ParticleObject.VelocityY += 0.5 * ParticleObject.ForceY / ParticleObject.Mass * dt;
-        ParticleObject.VelocityZ += 0.5 * ParticleObject.ForceZ / ParticleObject.Mass * dt;
+        ParticleObject.VelocityX += 0.5 * ParticleObject.ForceX / ParticleObject.Mass * dt_TimeStepFirstInSeconds;
+        ParticleObject.VelocityY += 0.5 * ParticleObject.ForceY / ParticleObject.Mass * dt_TimeStepFirstInSeconds;
+        ParticleObject.VelocityZ += 0.5 * ParticleObject.ForceZ / ParticleObject.Mass * dt_TimeStepFirstInSeconds;
     }
 }
 
 void ApplyBerendsenThermostatToControlTemperature(std::vector<AtomMDS> &Atoms, MDSRealType CurrentTemperature)
 {
-    MDSRealType Lambda = sqrt(1 + dt / (target_temp - CurrentTemperature) * (target_temp / CurrentTemperature - 1));
+    MDSRealType Lambda = sqrt(1 + dt_TimeStepFirstInSeconds / (TargetTempratureForTheThermostat - CurrentTemperature) * (TargetTempratureForTheThermostat / CurrentTemperature - 1));
 
-    for (auto &Atom : Atoms)
+    for (auto &AtomObject : Atoms)
     {
-        Atom.VelocityX *= Lambda;
-        Atom.VelocityY *= Lambda;
-        Atom.VelocityZ *= Lambda;
+        AtomObject.VelocityX *= Lambda;
+        AtomObject.VelocityY *= Lambda;
+        AtomObject.VelocityZ *= Lambda;
     }
 }
 
@@ -389,10 +370,10 @@ MDSRealType ComputeCurrentKineticTemperature(const std::vector<AtomMDS> &Atoms)
 {
     MDSRealType KineticEnergy = 0.0;
 
-    for (const auto &p : Atoms)
-        KineticEnergy += 0.5 * p.Mass * (p.VelocityX * p.VelocityX + p.VelocityY * p.VelocityY + p.VelocityZ * p.VelocityZ);
+    for (const auto &AtomObject : Atoms)
+        KineticEnergy += 0.5 * AtomObject.Mass * (AtomObject.VelocityX * AtomObject.VelocityX + AtomObject.VelocityY * AtomObject.VelocityY + AtomObject.VelocityZ * AtomObject.VelocityZ);
 
-    return (2.0 * KineticEnergy) / (3.0 * Atoms.size());
+    return (2.0 * KineticEnergy) / (3.0 * static_cast<MDSRealType>(Atoms.size()));
 }
 
 UnsignedInt ComputeMolecularDynamicsSimulationForceField1()
@@ -409,7 +390,7 @@ UnsignedInt ComputeMolecularDynamicsSimulationForceField1()
     {
         PerformVelocityVerletIntegration(Particles, Bonds);
 
-        MDSRealType CurrentTemperature = ComputeCurrentKineticTemperature(Particles);
+        const MDSRealType CurrentTemperature = ComputeCurrentKineticTemperature(Particles);
 
         ApplyBerendsenThermostatToControlTemperature(Particles, CurrentTemperature);
 
@@ -417,8 +398,8 @@ UnsignedInt ComputeMolecularDynamicsSimulationForceField1()
         {
            cout << "Step " << SimulationStep << endl;
 
-           for (const auto& atom : Particles)
-               cout << "Position: (" << atom.PositionX << ", " << atom.PositionY << ", " << atom.PositionZ << ")" << " Velocity: (" << atom.VelocityX << ", " << atom.VelocityY << ", " << atom.VelocityZ << ")" << endl;
+           for (const auto& AtomObject : Particles)
+               cout << "Position: (" << AtomObject.PositionX << ", " << AtomObject.PositionY << ", " << AtomObject.PositionZ << ")" << " Velocity: (" << AtomObject.VelocityX << ", " << AtomObject.VelocityY << ", " << AtomObject.VelocityZ << ")" << endl;
         }
     }
 

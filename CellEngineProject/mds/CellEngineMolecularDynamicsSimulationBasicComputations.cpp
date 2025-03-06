@@ -1,63 +1,64 @@
 
 #include "../CellEngineTypes.h"
-#include "CellEngineMolecularDynamicsSimulationForceField4Types.h"
+
+#include "CellEngineMolecularDynamicsSimulationForceFieldCommonTypes.h"
 #include "CellEngineMolecularDynamicsSimulationForceField4Constants.h"
 #include "CellEngineMolecularDynamicsSimulationBasicComputations.h"
 
 MDSRealType CountLeonardJonesPotential(const MDSRealType r)
 {
-    const MDSRealType sr6 = pow(sigma / r, 6);
+    const MDSRealType sr6 = pow(sigma_LennardJonesPotentialDistanceParameterAngstromPerM / r, 6);
     const MDSRealType sr12 = sr6 * sr6;
 
-    return 4 * epsilon * (sr12 - sr6);
+    return 4 * epsilon_LennardJonesPotentialDepthJouls * (sr12 - sr6);
 }
 
 MDSRealType CountLeonardJoneslForce(const MDSRealType r)
 {
-    const MDSRealType sr6 = pow(sigma / r, 6);
+    const MDSRealType sr6 = pow(sigma_LennardJonesPotentialDistanceParameterAngstromPerM / r, 6);
     const MDSRealType sr12 = sr6 * sr6;
 
-    return 24 * epsilon * (2 * sr12 - sr6) / r;
+    return 24 * epsilon_LennardJonesPotentialDepthJouls * (2 * sr12 - sr6) / r;
 }
 
 MDSRealType CountCoulombPotential(const MDSRealType q1, const MDSRealType q2, const MDSRealType r)
 {
-    return (q1 * q2) / (4 * M_PI * epsilon0 * r);
+    return (q1 * q2) / (4 * M_PI * epsilon0_VacuumPermittivityFPerM * r);
 }
 
 MDSRealType CountCoulombForce(const MDSRealType q1, const MDSRealType q2, const MDSRealType r)
 {
-    return (q1 * q2) / (4 * M_PI * epsilon0 * r * r);
+    return (q1 * q2) / (4 * M_PI * epsilon0_VacuumPermittivityFPerM * r * r);
 }
 
 MDSRealType CountAngleBendingPotential(const MDSRealType theta, const MDSRealType theta0)
 {
-    return 0.5 * k_angle * pow(theta - theta0, 2);
+    return 0.5 * k_angle_AngleBendingSpringConstant * pow(theta - theta0, 2);
 }
 
 MDSRealType CountAngleBendingForce(const MDSRealType theta, const MDSRealType theta0)
 {
-    return k_angle * (theta - theta0);
+    return k_angle_AngleBendingSpringConstant * (theta - theta0);
 }
 
 MDSRealType CountDihedralTorsionPotential(const MDSRealType phi)
 {
-    return k_dihedral * (1 + cos(3 * phi - M_PI));
+    return k_dihedral_DiherdralTorsionSpringConstantInJoules * (1 + cos(3 * phi - M_PI));
 }
 
 MDSRealType CountDihedralTorsionForce(const MDSRealType phi)
 {
-    return -3 * k_dihedral * sin(3 * phi - M_PI);
+    return -3 * k_dihedral_DiherdralTorsionSpringConstantInJoules * sin(3 * phi - M_PI);
 }
 
 MDSRealType CountBondHookesLawPotential(const MDSRealType r, const MDSRealType r0)
 {
-    return 0.5 * k_bond * pow(r - r0, 2);
+    return 0.5 * k_bond_HookesLawBondedInteractionSpringConstantNPerM * pow(r - r0, 2);
 }
 
 MDSRealType CountHookesLawBondForce(const MDSRealType r, const MDSRealType r0)
 {
-    return k_bond * (r - r0);
+    return k_bond_HookesLawBondedInteractionSpringConstantNPerM * (r - r0);
 }
 
 MDSRealType CountDistanceBetweenAtoms(const AtomMDS& Atom1, const AtomMDS& Atom2)

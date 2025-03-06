@@ -4,18 +4,18 @@
 
 struct AtomMDS
 {
-    MDSRealType PositionX, PositionY, PositionZ;
-    MDSRealType VelocityX, VelocityY, VelocityZ;
-    MDSRealType ForceX, ForceY, ForceZ;
-    MDSRealType Charge;
-    MDSRealType Mass;
+    MDSRealType PositionX{}, PositionY{}, PositionZ{};
+    MDSRealType VelocityX{}, VelocityY{}, VelocityZ{};
+    MDSRealType ForceX{}, ForceY{}, ForceZ{};
+    MDSRealType Charge{};
+    MDSRealType Mass{};
 };
 
 struct BondMDS
 {
-    UnsignedInt Atom1Index;
-    UnsignedInt Atom2Index;
-    MDSRealType k_bond, r0;
+    UnsignedInt Atom1Index{};
+    UnsignedInt Atom2Index{};
+    MDSRealType k_bond{}, r0{};
 };
 
 struct AngleMDS

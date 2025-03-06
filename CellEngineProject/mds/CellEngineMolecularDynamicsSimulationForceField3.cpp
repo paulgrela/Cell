@@ -16,7 +16,7 @@ using namespace std;
 class Simulation
 {
 public:
-       std::vector<Atom> Atoms;
+       std::vector<AtomMDS> Atoms;
        std::vector<BondMDS> Bonds;
        std::vector<AngleMDS> Angles;
        std::vector<DihedralMDS> Dihedrals;
@@ -117,8 +117,8 @@ void ComputeAllForces()
     // Bond forces (Hooke's law)
     for (const auto& bond : Bonds)
     {
-        Atom& a = Atoms[bond.Atom1Index];
-        Atom& b = Atoms[bond.Atom2Index];
+        AtomMDS& a = Atoms[bond.Atom1Index];
+        AtomMDS& b = Atoms[bond.Atom2Index];
         Vec3 delta = b.Position - a.Position;
         MDSRealType r = delta.length();
         MDSRealType dr = r - bond.r0_EquilibrumDistance;
@@ -132,9 +132,9 @@ void ComputeAllForces()
     // Angle bending forces
     for (const auto& angle : Angles)
     {
-        Atom& a = Atoms[angle.Atom1Index];
-        Atom& b = Atoms[angle.Atom2Index];
-        Atom& c = Atoms[angle.Atom3Index];
+        AtomMDS& a = Atoms[angle.Atom1Index];
+        AtomMDS& b = Atoms[angle.Atom2Index];
+        AtomMDS& c = Atoms[angle.Atom3Index];
 
         Vec3 r_ij = a.Position - b.Position;
         Vec3 r_kj = c.Position - b.Position;
@@ -160,10 +160,10 @@ void ComputeAllForces()
     // Dihedral torsion forces
     for (const auto& dihedral : Dihedrals)
     {
-        Atom& a = Atoms[dihedral.Atom1Index];
-        Atom& b = Atoms[dihedral.Atom2Index];
-        Atom& c = Atoms[dihedral.Atom3Index];
-        Atom& d = Atoms[dihedral.Atom4Index];
+        AtomMDS& a = Atoms[dihedral.Atom1Index];
+        AtomMDS& b = Atoms[dihedral.Atom2Index];
+        AtomMDS& c = Atoms[dihedral.Atom3Index];
+        AtomMDS& d = Atoms[dihedral.Atom4Index];
 
         Vec3 r_ij = a.Position - b.Position;
         Vec3 r_kj = c.Position - b.Position;
@@ -242,12 +242,11 @@ void ComputeAllForces()
         {
             // Check if i and j are bonded
             int key = i * num_atoms + j;
-            if (bonded_pairs.find(key) != bonded_pairs.end()) {
+            if (bonded_pairs.find(key) != bonded_pairs.end())
                 continue; // skip bonded pairs
-            }
 
-            Atom& a = Atoms[i];
-            Atom& b = Atoms[j];
+            AtomMDS& a = Atoms[i];
+            AtomMDS& b = Atoms[j];
             Vec3 delta = a.Position - b.Position;
             // Apply periodic boundary conditions (if any)
             // For simplicity, assume box is large enough to ignore PBC

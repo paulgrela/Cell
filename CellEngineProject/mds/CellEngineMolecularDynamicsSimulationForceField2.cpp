@@ -16,7 +16,7 @@ using namespace std;
 class Simulation
 {
 private:
-    std::vector<Atom> Atoms;
+    std::vector<AtomMDS> Atoms;
     std::vector<BondMDS> Bonds;
     std::vector<AngleMDS> Angles;
     std::vector<DihedralMDS> Dihedrals;
@@ -33,8 +33,8 @@ public:
     {
         for (const auto& Bond : Bonds)
         {
-            Atom& Atom1 = Atoms[Bond.Atom1Index];
-            Atom& Atom2 = Atoms[Bond.Atom2Index];
+            AtomMDS& Atom1 = Atoms[Bond.Atom1Index];
+            AtomMDS& Atom2 = Atoms[Bond.Atom2Index];
             Vec3 delta = Atom2.Position - Atom1.Position;
             MDSRealType r = delta.length();
             MDSRealType force_mag = -Bond.k_SpringConstant * (r - Bond.r0_EquilibrumDistance) / r;
@@ -48,9 +48,9 @@ public:
     {
         for (const auto& Angle : Angles)
         {
-            Atom& Atom1 = Atoms[Angle.Atom1Index];
-            Atom& Atom2 = Atoms[Angle.Atom2Index];
-            Atom& Atom3 = Atoms[Angle.Atom3Index];
+            AtomMDS& Atom1 = Atoms[Angle.Atom1Index];
+            AtomMDS& Atom2 = Atoms[Angle.Atom2Index];
+            AtomMDS& Atom3 = Atoms[Angle.Atom3Index];
 
             Vec3 r_ij = Atom1.Position - Atom2.Position;
             Vec3 r_kj = Atom3.Position - Atom2.Position;
@@ -80,10 +80,10 @@ public:
     {
         for (const auto& Dihedral : Dihedrals)
         {
-            Atom& Atom1 = Atoms[Dihedral.Atom1Index];
-            Atom& Atom2 = Atoms[Dihedral.Atom2Index];
-            Atom& Atom3 = Atoms[Dihedral.Atom3Index];
-            Atom& Atom4 = Atoms[Dihedral.Atom4Index];
+            AtomMDS& Atom1 = Atoms[Dihedral.Atom1Index];
+            AtomMDS& Atom2 = Atoms[Dihedral.Atom2Index];
+            AtomMDS& Atom3 = Atoms[Dihedral.Atom3Index];
+            AtomMDS& Atom4 = Atoms[Dihedral.Atom4Index];
 
             Vec3 r_ij = Atom1.Position - Atom2.Position;
             Vec3 r_kj = Atom3.Position - Atom2.Position;
@@ -116,7 +116,7 @@ public:
         }
     }
 public:
-    void ComputeCoulombForces(Atom& Atom1, Atom& Atom2, const Vec3& delta, const MDSRealType r) const
+    void ComputeCoulombForces(AtomMDS& Atom1, AtomMDS& Atom2, const Vec3& delta, const MDSRealType r) const
     {
         const MDSRealType coulomb = K_Coulomb * Atom1.Charge * Atom2.Charge / (r * r * r);
         const Vec3 f_coulomb = delta * coulomb;
@@ -125,7 +125,7 @@ public:
         Atom2.Force -= f_coulomb;
     }
 public:
-    static void ComputeLenardJonesInteractionForces(Atom& Atom1, Atom& Atom2, const Vec3& delta, const MDSRealType r)
+    static void ComputeLenardJonesInteractionForces(AtomMDS& Atom1, AtomMDS& Atom2, const Vec3& delta, const MDSRealType r)
     {
         const MDSRealType sigma_avg = (Atom1.SigmaValue + Atom2.SigmaValue) / 2;
         const MDSRealType epsilon_avg = sqrt(Atom1.EpsilonValue * Atom2.EpsilonValue);
@@ -146,8 +146,8 @@ public:
                 if (BondedPairs.count(Atom1Index * NumberOfAtoms + Atom2Index))
                     continue;
 
-                Atom& Atom1 = Atoms[Atom1Index];
-                Atom& Atom2 = Atoms[Atom2Index];
+                AtomMDS& Atom1 = Atoms[Atom1Index];
+                AtomMDS& Atom2 = Atoms[Atom2Index];
                 Vec3 Delta = Atom1.Position - Atom2.Position;
                 MDSRealType R_DeltaLength = Delta.length();
 
@@ -162,8 +162,8 @@ public:
 public:
     void ComputeAllForces()
     {
-        for (auto& Atom : Atoms)
-            Atom.Force = Vec3();
+        for (auto& AtomMDS : Atoms)
+            AtomMDS.Force = Vec3();
 
         ComputeBondForces();
         ComputeAngleForces();
@@ -173,48 +173,48 @@ public:
 public:
     void UpdatePositionWithPeriodicBoundaryConditions()
     {
-        for (auto& Atom : Atoms)
+        for (auto& AtomObject : Atoms)
         {
-            Atom.Position += Atom.Velocity * TimeStep;
+            AtomObject.Position += AtomObject.Velocity * TimeStep;
 
-            Atom.Position.x = fmod(Atom.Position.x + BoxSize, BoxSize);
-            Atom.Position.y = fmod(Atom.Position.y + BoxSize, BoxSize);
-            Atom.Position.z = fmod(Atom.Position.z + BoxSize, BoxSize);
+            AtomObject.Position.x = fmod(AtomObject.Position.x + BoxSize, BoxSize);
+            AtomObject.Position.y = fmod(AtomObject.Position.y + BoxSize, BoxSize);
+            AtomObject.Position.z = fmod(AtomObject.Position.z + BoxSize, BoxSize);
 
-            if (Atom.Position.x < 0)
-                Atom.Position.x += BoxSize;
-            if (Atom.Position.y < 0)
-                Atom.Position.y += BoxSize;
-            if (Atom.Position.z < 0)
-                Atom.Position.z += BoxSize;
+            if (AtomObject.Position.x < 0)
+                AtomObject.Position.x += BoxSize;
+            if (AtomObject.Position.y < 0)
+                AtomObject.Position.y += BoxSize;
+            if (AtomObject.Position.z < 0)
+                AtomObject.Position.z += BoxSize;
         }
     }
 public:
     void IntegrateAllComputations()
     {
-        for (auto& Atom : Atoms)
-            Atom.Velocity += Atom.Force * (TimeStep / (2 * Atom.Mass));
+        for (auto& AtomObject : Atoms)
+            AtomObject.Velocity += AtomObject.Force * (TimeStep / (2 * AtomObject.Mass));
 
         UpdatePositionWithPeriodicBoundaryConditions();
 
         ComputeAllForces();
 
-        for (auto& Atom : Atoms)
-            Atom.Velocity += Atom.Force * (TimeStep / (2 * Atom.Mass));
+        for (auto& AtomObject : Atoms)
+            AtomObject.Velocity += AtomObject.Force * (TimeStep / (2 * AtomObject.Mass));
     }
 public:
     void ApplyBerendsenThermostat(const MDSRealType TargetTemperature, const MDSRealType Tau)
     {
         MDSRealType CurrentTemperature = 0;
 
-        for (const auto& Atom : Atoms)
-            CurrentTemperature += Atom.Mass * Atom.Velocity.dot(Atom.Velocity);
+        for (const auto& AtomObject : Atoms)
+            CurrentTemperature += AtomObject.Mass * AtomObject.Velocity.dot(AtomObject.Velocity);
 
         CurrentTemperature /= (3 * Atoms.size() * K_Boltzmann);
 
         MDSRealType Lambda = std::sqrt(1 + TimeStep / Tau * (TargetTemperature / CurrentTemperature - 1));
-        for (auto& Atom : Atoms)
-            Atom.Velocity = Atom.Velocity * Lambda;
+        for (auto& AtomObject : Atoms)
+            AtomObject.Velocity = AtomObject.Velocity * Lambda;
     }
 public:
     Simulation(const MDSRealType BoxSizeParam, const MDSRealType TemperaturParam, const MDSRealType TimeStepParam) : BoxSize(BoxSizeParam), Temperature(TemperaturParam), TimeStep(TimeStepParam)
@@ -266,11 +266,11 @@ private:
     void GenerateAssignRandomVelocitiesBasedOnMaxwellBoltzmannDistribution(mt19937& RandomGenerator)
     {
         std::normal_distribution<> VelocityDistribution(0.0, sqrt(K_Boltzmann * Temperature));
-        for (auto& Atom : Atoms)
+        for (auto& AtomObject : Atoms)
         {
-            Atom.Velocity.x = VelocityDistribution(RandomGenerator);
-            Atom.Velocity.y = VelocityDistribution(RandomGenerator);
-            Atom.Velocity.z = VelocityDistribution(RandomGenerator);
+            AtomObject.Velocity.x = VelocityDistribution(RandomGenerator);
+            AtomObject.Velocity.y = VelocityDistribution(RandomGenerator);
+            AtomObject.Velocity.z = VelocityDistribution(RandomGenerator);
             // Subtract center-of-mass velocity to avoid drift
             // (omitted for brevity)
         }
@@ -307,12 +307,7 @@ private:
             UnsignedInt Atom2Index = AtomsIndexesDistribution(RandomGenerator);
             UnsignedInt Atom3Index = AtomsIndexesDistribution(RandomGenerator);
             if (Atom1Index != Atom2Index && Atom2Index != Atom3Index && Atom1Index != Atom3Index)
-            {
-                Angles.emplace_back(Atom1Index, Atom2Index, Atom3Index,
-                1.5708 // 90 degree
-                , 100.0 // k_theta
-                );
-            }
+                Angles.emplace_back(Atom1Index, Atom2Index, Atom3Index, 1.5708, 100.0);
         }
     }
     void GenerateRandomDihedrals(uniform_int_distribution<>& AtomsIndexesDistribution, mt19937& RandomGenerator)
@@ -324,15 +319,7 @@ private:
             UnsignedInt Atom3Index = AtomsIndexesDistribution(RandomGenerator);
             UnsignedInt Atom4Index = AtomsIndexesDistribution(RandomGenerator);
             if (Atom1Index != Atom2Index && Atom2Index != Atom3Index && Atom3Index != Atom4Index && Atom1Index != Atom3Index && Atom1Index != Atom4Index && Atom2Index != Atom4Index)
-            {
-                Dihedrals.emplace_back(Atom1Index, Atom2Index, Atom3Index, Atom4Index,
-                5.0 // k_phi
-                ,
-                2 // n
-                ,
-                0.0 // phi0
-                );
-            }
+                Dihedrals.emplace_back(Atom1Index, Atom2Index, Atom3Index, Atom4Index, 5.0, 2, 0.0);
         }
     }
 public:

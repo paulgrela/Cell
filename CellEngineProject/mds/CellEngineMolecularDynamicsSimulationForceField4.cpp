@@ -6,58 +6,59 @@
 #include <chrono>
 
 #include "../CellEngineTypes.h"
+
 #include "CellEngineMolecularDynamicsSimulationForceField4.h"
-#include "CellEngineMolecularDynamicsSimulationForceField4Types.h"
 #include "CellEngineMolecularDynamicsSimulationForceField4Constants.h"
+#include "CellEngineMolecularDynamicsSimulationForceFieldCommonTypes.h"
 
 using namespace std;
 
-void ComputeLennardJonesForce(const AtomMDS& a, const AtomMDS& b, MDSRealType& ForceX, MDSRealType& ForceY, MDSRealType& ForceZ)
+void ComputeLennardJonesForce(const AtomMDS& Atom1, const AtomMDS& Atom2, MDSRealType& ForceX, MDSRealType& ForceY, MDSRealType& ForceZ)
 {
-    const MDSRealType dx = a.PositionX - b.PositionX, dy = a.PositionY - b.PositionY, dz = a.PositionZ - b.PositionZ;
+    const MDSRealType dx = Atom1.PositionX - Atom2.PositionX, dy = Atom1.PositionY - Atom2.PositionY, dz = Atom1.PositionZ - Atom2.PositionZ;
     const MDSRealType r2 = dx * dx + dy * dy + dz * dz;
     const MDSRealType r = sqrt(r2);
-    const MDSRealType r6 = pow(sigma / r, 6);
+    const MDSRealType r6 = pow(sigma_LennardJonesPotentialDistanceParameterAngstromPerM / r, 6);
     const MDSRealType r12 = r6 * r6;
-    const MDSRealType force = 24 * epsilon * (2 * r12 - r6) / r;
+    const MDSRealType force = 24 * epsilon_LennardJonesPotentialDepthJouls * (2 * r12 - r6) / r;
 
     ForceX += force * dx / r;
     ForceY += force * dy / r;
     ForceZ += force * dz / r;
 }
 
-void ComputeCoulombForce(const AtomMDS& a, const AtomMDS& b, MDSRealType& ForceX, MDSRealType& ForceY, MDSRealType& ForceZ)
+void ComputeCoulombForce(const AtomMDS& Atom1, const AtomMDS& Atom2, MDSRealType& ForceX, MDSRealType& ForceY, MDSRealType& ForceZ)
 {
-    const MDSRealType dx = a.PositionX - b.PositionX, dy = a.PositionY - b.PositionY, dz = a.PositionZ - b.PositionZ;
+    const MDSRealType dx = Atom1.PositionX - Atom2.PositionX, dy = Atom1.PositionY - Atom2.PositionY, dz = Atom1.PositionZ - Atom2.PositionZ;
     const MDSRealType r2 = dx * dx + dy * dy + dz * dz;
     const MDSRealType r = sqrt(r2);
-    const MDSRealType force = (a.Charge * b.Charge) / (4 * pi * epsilon0 * r * r);
+    const MDSRealType force = (Atom1.Charge * Atom2.Charge) / (4 * pi * epsilon0_VacuumPermittivityFPerM * r * r);
 
     ForceX += force * dx / r;
     ForceY += force * dy / r;
     ForceZ += force * dz / r;
 }
 
-void ComputeBondedHookesLawForce(const AtomMDS& a, const AtomMDS& b, MDSRealType& ForceX, MDSRealType& ForceY, MDSRealType& ForceZ)
+void ComputeBondedHookesLawForce(const AtomMDS& Atom1, const AtomMDS& Atom2, MDSRealType& ForceX, MDSRealType& ForceY, MDSRealType& ForceZ)
 {
-    const MDSRealType dx = a.PositionX - b.PositionX, dy = a.PositionY - b.PositionY, dz = a.PositionZ - b.PositionZ;
+    const MDSRealType dx = Atom1.PositionX - Atom2.PositionX, dy = Atom1.PositionY - Atom2.PositionY, dz = Atom1.PositionZ - Atom2.PositionZ;
     const MDSRealType r = sqrt(dx * dx + dy * dy + dz * dz);
-    const MDSRealType force = -k_bond * (r - r0);
+    const MDSRealType force = -k_bond_HookesLawBondedInteractionSpringConstantNPerM * (r - r0_EquilibriumBondLengthInM);
 
     ForceX += force * dx / r;
     ForceY += force * dy / r;
     ForceZ += force * dz / r;
 }
 
-void ComputeAngleBendingForce(const AtomMDS& a, const AtomMDS& b, const AtomMDS& c, MDSRealType& ForceX, MDSRealType& ForceY, MDSRealType& ForceZ)
+void ComputeAngleBendingForce(const AtomMDS& Atom1, const AtomMDS& Atom2, const AtomMDS& Atom3, MDSRealType& ForceX, MDSRealType& ForceY, MDSRealType& ForceZ)
 {
-    const MDSRealType abx = a.PositionX - b.PositionX, aby = a.PositionY - b.PositionY, abz = a.PositionZ - b.PositionZ;
-    const MDSRealType cbx = c.PositionX - b.PositionX, cby = c.PositionY - b.PositionY, cbz = c.PositionZ - b.PositionZ;
+    const MDSRealType abx = Atom1.PositionX - Atom2.PositionX, aby = Atom1.PositionY - Atom2.PositionY, abz = Atom1.PositionZ - Atom2.PositionZ;
+    const MDSRealType cbx = Atom3.PositionX - Atom2.PositionX, cby = Atom3.PositionY - Atom2.PositionY, cbz = Atom3.PositionZ - Atom2.PositionZ;
     const MDSRealType dot = abx * cbx + aby * cby + abz * cbz;
     const MDSRealType mag_ab = sqrt(abx * abx + aby * aby + abz * abz);
     const MDSRealType mag_cb = sqrt(cbx * cbx + cby * cby + cbz * cbz);
     const MDSRealType theta = acos(dot / (mag_ab * mag_cb));
-    const MDSRealType force = -k_angle * (theta - theta0);
+    const MDSRealType force = -k_angle_AngleBendingSpringConstant * (theta - theta0_EquilibriumAngle90Degree);
 
     const MDSRealType dtheta_dr1 = (cos(theta) * abx - cbx) / (mag_ab * mag_cb);
     const MDSRealType dtheta_dr3 = (cos(theta) * cbx - abx) / (mag_ab * mag_cb);
@@ -74,12 +75,12 @@ void CalculateBondStretchingForces(const std::vector<BondMDS>& Bonds, std::vecto
 {
     for (const auto& Bond : Bonds)
     {
-        AtomMDS& a1 = Atoms[Bond.Atom1Index];
-        AtomMDS& a2 = Atoms[Bond.Atom2Index];
+        AtomMDS& Atom1 = Atoms[Bond.Atom1Index];
+        AtomMDS& Atom2 = Atoms[Bond.Atom2Index];
 
-        const MDSRealType dx = a2.PositionX - a1.PositionX;
-        const MDSRealType dy = a2.PositionY - a1.PositionY;
-        const MDSRealType dz = a2.PositionZ - a1.PositionZ;
+        const MDSRealType dx = Atom2.PositionX - Atom1.PositionX;
+        const MDSRealType dy = Atom2.PositionY - Atom1.PositionY;
+        const MDSRealType dz = Atom2.PositionZ - Atom1.PositionZ;
         const MDSRealType r = sqrt(dx * dx + dy * dy + dz * dz);
         const MDSRealType dr = r - Bond.r0;
         const MDSRealType force_magnitude = -Bond.k_bond * dr;
@@ -87,21 +88,21 @@ void CalculateBondStretchingForces(const std::vector<BondMDS>& Bonds, std::vecto
         const MDSRealType ForceY = force_magnitude * dy / r;
         const MDSRealType ForceZ = force_magnitude * dz / r;
 
-        a1.ForceX -= ForceX;
-        a1.ForceY -= ForceY;
-        a1.ForceZ -= ForceZ;
-        a2.ForceX += ForceX;
-        a2.ForceY += ForceY;
-        a2.ForceZ += ForceZ;
+        Atom1.ForceX -= ForceX;
+        Atom1.ForceY -= ForceY;
+        Atom1.ForceZ -= ForceZ;
+        Atom2.ForceX += ForceX;
+        Atom2.ForceY += ForceY;
+        Atom2.ForceZ += ForceZ;
     }
 }
 
-void ComputeDihedralTorsionForceBetween4Atoms_Version1(const AtomMDS& a, const AtomMDS& b, const AtomMDS& c, const AtomMDS& d, MDSRealType& ForceX, MDSRealType& ForceY, MDSRealType& ForceZ)
+void ComputeDihedralTorsionForceBetween4Atoms_Version1(const AtomMDS& Atom1, const AtomMDS& Atom2, const AtomMDS& Atom3, const AtomMDS& Atom4, MDSRealType& ForceX, MDSRealType& ForceY, MDSRealType& ForceZ)
 {
     // Vectors for the dihedral
-    const MDSRealType b1x = b.PositionX - a.PositionX, b1y = b.PositionY - a.PositionY, b1z = b.PositionZ - a.PositionZ;
-    const MDSRealType b2x = c.PositionX - b.PositionX, b2y = c.PositionY - b.PositionY, b2z = c.PositionZ - b.PositionZ;
-    const MDSRealType b3x = d.PositionX - c.PositionX, b3y = d.PositionY - c.PositionY, b3z = d.PositionZ - c.PositionZ;
+    const MDSRealType b1x = Atom2.PositionX - Atom1.PositionX, b1y = Atom2.PositionY - Atom1.PositionY, b1z = Atom2.PositionZ - Atom1.PositionZ;
+    const MDSRealType b2x = Atom3.PositionX - Atom2.PositionX, b2y = Atom3.PositionY - Atom2.PositionY, b2z = Atom3.PositionZ - Atom2.PositionZ;
+    const MDSRealType b3x = Atom4.PositionX - Atom3.PositionX, b3y = Atom4.PositionY - Atom3.PositionY, b3z = Atom4.PositionZ - Atom3.PositionZ;
 
     // Cross products
     MDSRealType n1x = b1y * b2z - b1z * b2y, n1y = b1z * b2x - b1x * b2z, n1z = b1x * b2y - b1y * b2x;
@@ -119,7 +120,7 @@ void ComputeDihedralTorsionForceBetween4Atoms_Version1(const AtomMDS& a, const A
     const MDSRealType phi = atan2(sin_phi, cos_phi);
 
     // Compute force magnitude
-    const MDSRealType force_magnitude = -k_dihedral * n * sin(n * phi);
+    const MDSRealType force_magnitude = -k_dihedral_DiherdralTorsionSpringConstantInJoules * PeriodicityOfDihedralTorsionPotential * sin(PeriodicityOfDihedralTorsionPotential * phi);
 
     // Compute forces on atoms
     //MDSRealType dphi_dr1x = ...; // Derivative of phi with respect to atom1's position
@@ -137,12 +138,12 @@ void ComputeDihedralTorsionForceBetween4Atoms_Version1(const AtomMDS& a, const A
     //ForceZ += force_magnitude * dphi_dr4z;
 }
 
-MDSRealType ComputeDihedralTorsionForceBetween4Atoms_Version2(const AtomMDS& a1, const AtomMDS& a2, const AtomMDS& a3, const AtomMDS& a4)
+MDSRealType ComputeDihedralTorsionForceBetween4Atoms_Version2(const AtomMDS& Atom1, const AtomMDS& Atom2, const AtomMDS& Atom3, const AtomMDS& Atom4)
 {
     // Vectors between atoms
-    const MDSRealType b1x = a2.PositionX - a1.PositionX, b1y = a2.PositionY - a1.PositionY, b1z = a2.PositionZ - a1.PositionZ;
-    const MDSRealType b2x = a3.PositionX - a2.PositionX, b2y = a3.PositionY - a2.PositionY, b2z = a3.PositionZ - a2.PositionZ;
-    const MDSRealType b3x = a4.PositionX - a3.PositionX, b3y = a4.PositionY - a3.PositionY, b3z = a4.PositionZ - a3.PositionZ;
+    const MDSRealType b1x = Atom2.PositionX - Atom1.PositionX, b1y = Atom2.PositionY - Atom1.PositionY, b1z = Atom2.PositionZ - Atom1.PositionZ;
+    const MDSRealType b2x = Atom3.PositionX - Atom2.PositionX, b2y = Atom3.PositionY - Atom2.PositionY, b2z = Atom3.PositionZ - Atom2.PositionZ;
+    const MDSRealType b3x = Atom4.PositionX - Atom3.PositionX, b3y = Atom4.PositionY - Atom3.PositionY, b3z = Atom4.PositionZ - Atom3.PositionZ;
 
     // Cross products
     MDSRealType n1x = b1y * b2z - b1z * b2y, n1y = b1z * b2x - b1x * b2z, n1z = b1x * b2y - b1y * b2x;
@@ -167,12 +168,12 @@ MDSRealType ComputeDihedralTorsionForceBetween4Atoms_Version2(const AtomMDS& a1,
 
 void ComputePositionsAndVelocitiesByVelocityVerletAlgorithms(AtomMDS& AtomObject)
 {
-    AtomObject.VelocityX += AtomObject.ForceX / AtomObject.Mass * dt;
-    AtomObject.VelocityY += AtomObject.ForceY / AtomObject.Mass * dt;
-    AtomObject.VelocityZ += AtomObject.ForceZ / AtomObject.Mass * dt;
-    AtomObject.PositionX += AtomObject.VelocityX * dt;
-    AtomObject.PositionY += AtomObject.VelocityY * dt;
-    AtomObject.PositionZ += AtomObject.VelocityZ * dt;
+    AtomObject.VelocityX += AtomObject.ForceX / AtomObject.Mass * dt_TimeStepForSimulation1Fs;
+    AtomObject.VelocityY += AtomObject.ForceY / AtomObject.Mass * dt_TimeStepForSimulation1Fs;
+    AtomObject.VelocityZ += AtomObject.ForceZ / AtomObject.Mass * dt_TimeStepForSimulation1Fs;
+    AtomObject.PositionX += AtomObject.VelocityX * dt_TimeStepForSimulation1Fs;
+    AtomObject.PositionY += AtomObject.VelocityY * dt_TimeStepForSimulation1Fs;
+    AtomObject.PositionZ += AtomObject.VelocityZ * dt_TimeStepForSimulation1Fs;
 }
 
 void Simulate(vector<AtomMDS>& Atoms, const vector<BondMDS>& Bonds, const vector<AngleMDS>& Angles, const vector<DihedralMDS>& Dihedrals, const int Steps)
@@ -212,16 +213,16 @@ int ComputeMolecularDynamicsSimulationForceField4()
     std::uniform_real_distribution<MDSRealType> ChargesInElementaryChargeUnitsDistribution(-1.0, 1.0);
 
     vector<AtomMDS> Atoms(1000);
-    for (AtomMDS& atom : Atoms)
+    for (AtomMDS& AtomObject : Atoms)
     {
-        atom.PositionX = PositionsDistributionInNM(RandomNumberGenerator);
-        atom.PositionY = PositionsDistributionInNM(RandomNumberGenerator);
-        atom.PositionZ = PositionsDistributionInNM(RandomNumberGenerator);
-        atom.VelocityX = VelocityDistributionInMPerS(RandomNumberGenerator);
-        atom.VelocityY = VelocityDistributionInMPerS(RandomNumberGenerator);
-        atom.VelocityZ = VelocityDistributionInMPerS(RandomNumberGenerator);
-        atom.Charge = ChargesInElementaryChargeUnitsDistribution(RandomNumberGenerator) * e_charge;
-        atom.Mass = 1.67e-27; // Approximate mass of a proton (kg)
+        AtomObject.PositionX = PositionsDistributionInNM(RandomNumberGenerator);
+        AtomObject.PositionY = PositionsDistributionInNM(RandomNumberGenerator);
+        AtomObject.PositionZ = PositionsDistributionInNM(RandomNumberGenerator);
+        AtomObject.VelocityX = VelocityDistributionInMPerS(RandomNumberGenerator);
+        AtomObject.VelocityY = VelocityDistributionInMPerS(RandomNumberGenerator);
+        AtomObject.VelocityZ = VelocityDistributionInMPerS(RandomNumberGenerator);
+        AtomObject.Charge = ChargesInElementaryChargeUnitsDistribution(RandomNumberGenerator) * ElementaryCharge;
+        AtomObject.Mass = 1.67e-27; // Approximate mass of a proton (kg)
     }
 
     constexpr vector<BondMDS> Bonds;

@@ -91,14 +91,14 @@ enum class AtomTypes : int
     Carbon = 3
 };
 
-class Atom
+class AtomMDS
 {
 public:
     AtomTypes AtomType;
     Vec3 Position, Velocity, Force;
     MDSRealType Charge, Mass, SigmaValue, EpsilonValue;
 public:
-    Atom(const AtomTypes AtomTypeParam, const Vec3& pos, const MDSRealType charge) : AtomType(AtomTypeParam), Position(pos), Charge(charge)
+    AtomMDS(const AtomTypes AtomTypeParam, const Vec3& pos, const MDSRealType charge) : AtomType(AtomTypeParam), Position(pos), Charge(charge)
     {
         switch(AtomType)
         {
