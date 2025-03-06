@@ -108,7 +108,7 @@ void initializeAtoms(int num_atoms)
     }
 }
 
-void computeForces()
+void ComputeAllForces()
 {
     // Reset forces
     for (auto& atom : Atoms)
@@ -284,7 +284,7 @@ void integrate(MDSRealType dt)
         atom.Position += atom.Velocity * dt;
     }
 
-    computeForces();
+    ComputeAllForces();
 
     for (auto& atom : Atoms)
     {
@@ -296,7 +296,7 @@ void run(int steps)
 {
     for (int step = 0; step < steps; ++step)
     {
-        computeForces();
+        ComputeAllForces();
         integrate(TimeStep);
         // Apply thermostat (e.g., Berendsen)
         // Adjust velocities to maintain temperature

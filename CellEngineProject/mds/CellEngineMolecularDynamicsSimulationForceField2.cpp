@@ -11,6 +11,8 @@
 #include "CellEngineMolecularDynamicsSimulationForceField2.h"
 #include "CellEngineMolecularDynamicsSimulationForceField2Types.h"
 
+using namespace std;
+
 class Simulation
 {
 private:
@@ -142,7 +144,7 @@ public:
             for (UnsignedInt Atom2Index = Atom1Index + 1; Atom2Index < NumberOfAtoms; ++Atom2Index)
             {
                 if (BondedPairs.count(Atom1Index * NumberOfAtoms + Atom2Index))
-                   continue;
+                    continue;
 
                 Atom& Atom1 = Atoms[Atom1Index];
                 Atom& Atom2 = Atoms[Atom2Index];
@@ -150,137 +152,180 @@ public:
                 MDSRealType R_DeltaLength = Delta.length();
 
                 if (R_DeltaLength == 0)
-                   continue;
+                    continue;
 
-                // Coulomb interaction
                 ComputeCoulombForces(Atom1, Atom2, Delta, R_DeltaLength);
-                // MDSRealType coulomb = K_Coulomb * a.Charge * b.Charge / (r*r*r);
-                // Vec3 f_coulomb = delta * coulomb;
-                // a.Force += f_coulomb;
-                // b.Force -= f_coulomb;
 
-                // Lennard-Jones interaction
                 ComputeLenardJonesInteractionForces(Atom1, Atom2, Delta, R_DeltaLength);
-                // MDSRealType sigma_avg = (a.SigmaValue + b.SigmaValue)/2;
-                // MDSRealType epsilon_avg = std::sqrt(a.EpsilonValue * b.EpsilonValue);
-                // MDSRealType sr6 = std::pow(sigma_avg/r, 6);
-                // MDSRealType lj = 24 * epsilon_avg * (2*sr6*sr6 - sr6) / (r*r);
-                // Vec3 f_lj = delta * lj;
-                // a.Force += f_lj;
-                // b.Force -= f_lj;
             }
     }
 public:
-    Simulation(MDSRealType box, MDSRealType temp, MDSRealType dt) : BoxSize(box), Temperature(temp), TimeStep(dt)
+    void ComputeAllForces()
+    {
+        for (auto& Atom : Atoms)
+            Atom.Force = Vec3();
+
+        ComputeBondForces();
+        ComputeAngleForces();
+        ComputeDihedralForces();
+        ComputeNonBondedForces();
+    }
+public:
+    void UpdatePositionWithPeriodicBoundaryConditions()
+    {
+        for (auto& Atom : Atoms)
+        {
+            Atom.Position += Atom.Velocity * TimeStep;
+
+            Atom.Position.x = fmod(Atom.Position.x + BoxSize, BoxSize);
+            Atom.Position.y = fmod(Atom.Position.y + BoxSize, BoxSize);
+            Atom.Position.z = fmod(Atom.Position.z + BoxSize, BoxSize);
+
+            if (Atom.Position.x < 0)
+                Atom.Position.x += BoxSize;
+            if (Atom.Position.y < 0)
+                Atom.Position.y += BoxSize;
+            if (Atom.Position.z < 0)
+                Atom.Position.z += BoxSize;
+        }
+    }
+public:
+    void IntegrateAllComputations()
+    {
+        for (auto& Atom : Atoms)
+            Atom.Velocity += Atom.Force * (TimeStep / (2 * Atom.Mass));
+
+        UpdatePositionWithPeriodicBoundaryConditions();
+
+        ComputeAllForces();
+
+        for (auto& Atom : Atoms)
+            Atom.Velocity += Atom.Force * (TimeStep / (2 * Atom.Mass));
+    }
+public:
+    void ApplyBerendsenThermostat(const MDSRealType TargetTemperature, const MDSRealType Tau)
+    {
+        MDSRealType CurrentTemperature = 0;
+
+        for (const auto& Atom : Atoms)
+            CurrentTemperature += Atom.Mass * Atom.Velocity.dot(Atom.Velocity);
+
+        CurrentTemperature /= (3 * Atoms.size() * K_Boltzmann);
+
+        MDSRealType Lambda = std::sqrt(1 + TimeStep / Tau * (TargetTemperature / CurrentTemperature - 1));
+        for (auto& Atom : Atoms)
+            Atom.Velocity = Atom.Velocity * Lambda;
+    }
+public:
+    Simulation(const MDSRealType BoxSizeParam, const MDSRealType TemperaturParam, const MDSRealType TimeStepParam) : BoxSize(BoxSizeParam), Temperature(TemperaturParam), TimeStep(TimeStepParam)
     {
     }
 public:
-    void initializeAtoms1(UnsignedInt n)
+    void InitializeAtoms1(const UnsignedInt N)
     {
-        std::mt19937 gen(std::random_device{}());
-        std::uniform_real_distribution<> pos(0, BoxSize), charge(-1, 1);
-        std::uniform_int_distribution<> AtomType(0, 3);
+        std::mt19937 RandomGenerator(std::random_device{}());
+        std::uniform_real_distribution<> PositionDistribution(0, BoxSize);
+        std::uniform_real_distribution<> ChargeDistribution(-1, 1);
+        std::uniform_int_distribution<> AtomTypeDistribution(0, 3);
 
-        for (UnsignedInt i = 0; i < n; ++i)
+        for (UnsignedInt Index = 0; Index < N; ++Index)
         {
-            Atoms.emplace_back(static_cast<AtomTypes>(AtomType(gen)), Vec3(pos(gen), pos(gen), pos(gen)), charge(gen));
-            MDSRealType scale = std::sqrt(3 * K_Boltzmann * Temperature / Atoms.back().Mass);
-            std::normal_distribution<> vel(0, scale);
-            Atoms.back().Velocity = Vec3(vel(gen), vel(gen), vel(gen));
+            Atoms.emplace_back(static_cast<AtomTypes>(AtomTypeDistribution(RandomGenerator)), Vec3(PositionDistribution(RandomGenerator), PositionDistribution(RandomGenerator), PositionDistribution(RandomGenerator)), ChargeDistribution(RandomGenerator));
+            MDSRealType Scale = sqrt(3 * K_Boltzmann * Temperature / Atoms.back().Mass);
+            std::normal_distribution<> VelocityDistribution(0, Scale);
+            Atoms.back().Velocity = Vec3(VelocityDistribution(RandomGenerator), VelocityDistribution(RandomGenerator), VelocityDistribution(RandomGenerator));
         }
 
         // Create molecular topology (example: linear chain)
-        for (UnsignedInt i = 0; i < n/2; ++i)
+        for (UnsignedInt Index = 0; Index < N / 2; ++Index)
         {
-            Bonds.emplace_back(i, i+1, 1.5, 100);
-            BondedPairs.insert(i*n + i+1);
-            if (i < n/2 - 2)
+            Bonds.emplace_back(Index, Index + 1, 1.5, 100);
+            BondedPairs.insert(Index * N + Index + 1);
+            if (Index < N / 2 - 2)
             {
-                Angles.emplace_back(i, i+1, i+2, 1.5708, 100);
-                Dihedrals.emplace_back(i, i+1, i+2, i+3, 5, 2, 0);
+                Angles.emplace_back(Index, Index + 1, Index + 2, 1.5708, 100);
+                Dihedrals.emplace_back(Index, Index + 1, Index + 2, Index + 3, 5, 2, 0);
             }
         }
     }
-
-    void initializeAtoms2(int num_atoms)
+private:
+    void GenerateRandomAtoms(mt19937& RandomGenerator, const UnsignedInt NumberOfAtoms)
     {
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_real_distribution<> pos_dist(0.0, BoxSize);
-        std::uniform_int_distribution<> type_dist(0, 3);
-        std::uniform_real_distribution<> charge_dist(-1.0, 1.0);
+        std::uniform_real_distribution<> PositionsDistribution(0.0, BoxSize);
+        std::uniform_int_distribution<> AtomTypeDistribution(0, 3);
+        std::uniform_real_distribution<> ChargeDistribution(-1.0, 1.0);
 
-        for (UnsignedInt i = 0; i < num_atoms; ++i)
+        for (UnsignedInt Index = 0; Index < NumberOfAtoms; ++Index)
         {
-            Vec3 pos(pos_dist(gen), pos_dist(gen), pos_dist(gen));
-            UnsignedInt type = type_dist(gen);
-            MDSRealType charge = charge_dist(gen);
+            Vec3 pos(PositionsDistribution(RandomGenerator), PositionsDistribution(RandomGenerator), PositionsDistribution(RandomGenerator));
+            UnsignedInt type = AtomTypeDistribution(RandomGenerator);
+            MDSRealType charge = ChargeDistribution(RandomGenerator);
             Atoms.emplace_back(static_cast<AtomTypes>(type), pos, charge);
         }
-
-        // Assign random velocities based on Maxwell-Boltzmann distribution
-        std::normal_distribution<> vel_dist(0.0, std::sqrt(K_Boltzmann * Temperature));
-        for (auto& atom : Atoms)
+    }
+    void GenerateAssignRandomVelocitiesBasedOnMaxwellBoltzmannDistribution(mt19937& RandomGenerator)
+    {
+        std::normal_distribution<> VelocityDistribution(0.0, sqrt(K_Boltzmann * Temperature));
+        for (auto& Atom : Atoms)
         {
-            atom.Velocity.x = vel_dist(gen);
-            atom.Velocity.y = vel_dist(gen);
-            atom.Velocity.z = vel_dist(gen);
+            Atom.Velocity.x = VelocityDistribution(RandomGenerator);
+            Atom.Velocity.y = VelocityDistribution(RandomGenerator);
+            Atom.Velocity.z = VelocityDistribution(RandomGenerator);
             // Subtract center-of-mass velocity to avoid drift
             // (omitted for brevity)
         }
-
-        // Generate random bonds (example: 500 bonds)
-        std::uniform_int_distribution<> atom_dist(0, num_atoms - 1);
-
-        for (UnsignedInt b = 0; b < 500; ++b)
+    }
+    void GenerateRandomBonds(uniform_int_distribution<>& AtomsIndexesDistribution, mt19937& RandomGenerator, const UnsignedInt NumberOfAtoms)
+    {
+        for (UnsignedInt Bond = 0; Bond < 500; ++Bond)
         {
-            UnsignedInt i = atom_dist(gen);
-            UnsignedInt j = atom_dist(gen);
-            if (i != j)
+            UnsignedInt Atom1Index = AtomsIndexesDistribution(RandomGenerator);
+            UnsignedInt Atom2Index = AtomsIndexesDistribution(RandomGenerator);
+            if (Atom1Index != Atom2Index)
             {
                 // Ensure i < j to avoid duplicates
-                if (i > j)
-                   std::swap(i, j);
+                if (Atom1Index > Atom2Index)
+                    swap(Atom1Index, Atom2Index);
                 // Check if bond already exists
-                UnsignedInt key = i * num_atoms + j;
+                UnsignedInt key = Atom1Index * NumberOfAtoms + Atom2Index;
                 if (BondedPairs.find(key) == BondedPairs.end())
                 {
                     BondedPairs.insert(key);
                     // Assign random r0 and k (example values)
                     MDSRealType r0 = 1.5; // Angstrom
                     MDSRealType k = 100.0; // kcal/(mol·Å²)
-                    //bonds.emplace_back(i, j, r0, k);
+                    Bonds.emplace_back(Atom1Index, Atom2Index, r0, k);
                 }
             }
         }
-
-        // Generate angles and dihedrals (example)
-        // For angles, find triplets i-j-k where i-j and j-k are bonded
-        // This is a simplified approach; realistically, need to find connected triplets
-        // For demonstration, randomly select triplets
-
-        for (UnsignedInt a = 0; a < 300; ++a)
+    }
+    void GenerateRandomAngles(uniform_int_distribution<>& AtomsIndexesDistribution, mt19937& RandomGenerator)
+    {
+        for (UnsignedInt Angle = 0; Angle < 300; ++Angle)
         {
-            UnsignedInt i = atom_dist(gen);
-            UnsignedInt j = atom_dist(gen);
-            UnsignedInt k = atom_dist(gen);
-            if (i != j && j != k && i != k) {
-                Angles.emplace_back(i, j, k,
+            UnsignedInt Atom1Index = AtomsIndexesDistribution(RandomGenerator);
+            UnsignedInt Atom2Index = AtomsIndexesDistribution(RandomGenerator);
+            UnsignedInt Atom3Index = AtomsIndexesDistribution(RandomGenerator);
+            if (Atom1Index != Atom2Index && Atom2Index != Atom3Index && Atom1Index != Atom3Index)
+            {
+                Angles.emplace_back(Atom1Index, Atom2Index, Atom3Index,
                 1.5708 // 90 degree
                 , 100.0 // k_theta
                 );
             }
         }
-
-        // Similarly for dihedrals
-        for (UnsignedInt d = 0; d < 200; ++d)
+    }
+    void GenerateRandomDihedrals(uniform_int_distribution<>& AtomsIndexesDistribution, mt19937& RandomGenerator)
+    {
+        for (UnsignedInt Dihedral = 0; Dihedral < 200; ++Dihedral)
         {
-            UnsignedInt i = atom_dist(gen);
-            UnsignedInt j = atom_dist(gen);
-            UnsignedInt k = atom_dist(gen);
-            UnsignedInt l = atom_dist(gen);
-            if (i != j && j != k && k != l && i != k && i != l && j != l) {
-                Dihedrals.emplace_back(i, j, k, l,
+            UnsignedInt Atom1Index = AtomsIndexesDistribution(RandomGenerator);
+            UnsignedInt Atom2Index = AtomsIndexesDistribution(RandomGenerator);
+            UnsignedInt Atom3Index = AtomsIndexesDistribution(RandomGenerator);
+            UnsignedInt Atom4Index = AtomsIndexesDistribution(RandomGenerator);
+            if (Atom1Index != Atom2Index && Atom2Index != Atom3Index && Atom3Index != Atom4Index && Atom1Index != Atom3Index && Atom1Index != Atom4Index && Atom2Index != Atom4Index)
+            {
+                Dihedrals.emplace_back(Atom1Index, Atom2Index, Atom3Index, Atom4Index,
                 5.0 // k_phi
                 ,
                 2 // n
@@ -289,89 +334,127 @@ public:
                 );
             }
         }
-
     }
-
-    void computeForces()
+public:
+    void InitializeAtoms2(const UnsignedInt NumberOfAtoms)
     {
-        for (auto& a : Atoms)
-            a.Force = Vec3();
+        std::random_device RandomDevice;
+        std::mt19937 RandomGenerator(RandomDevice());
+        // std::uniform_real_distribution<> PositionsDistribution(0.0, BoxSize);
+        // std::uniform_int_distribution<> AtomTypeDistribution(0, 3);
+        // std::uniform_real_distribution<> ChargeDistribution(-1.0, 1.0);
 
-        ComputeBondForces();
-        ComputeAngleForces();
-        ComputeDihedralForces();
-        ComputeNonBondedForces();
-    }
-
-    void integrate()
-    {
-        // Velocity half-step
-        for (auto& a : Atoms)
-        {
-            a.Velocity += a.Force * (TimeStep / (2 * a.Mass));
-        }
-
-        // Position update with periodic boundary conditions
-        for (auto& a : Atoms)
-        {
-            a.Position += a.Velocity * TimeStep;
-            a.Position.x = fmod(a.Position.x + BoxSize, BoxSize);
-            a.Position.y = fmod(a.Position.y + BoxSize, BoxSize);
-            a.Position.z = fmod(a.Position.z + BoxSize, BoxSize);
-
-            if (a.Position.x < 0) a.Position.x += BoxSize;
-            if (a.Position.y < 0) a.Position.y += BoxSize;
-            if (a.Position.z < 0) a.Position.z += BoxSize;
-        }
-
-        // Compute new forces
-        computeForces();
-
-        // Velocity second half-step
-        for (auto& a : Atoms)
-        {
-            a.Velocity += a.Force * (TimeStep / (2 * a.Mass));
-        }
-    }
-
-    void applyBerendsenThermostat(MDSRealType target_temp, MDSRealType tau)
-    {
-        MDSRealType current_temp = 0;
-        for (const auto& a : Atoms)
-        {
-            current_temp += a.Mass * a.Velocity.dot(a.Velocity);
-        }
-        current_temp /= (3 * Atoms.size() * K_Boltzmann);
-
-        MDSRealType lambda = std::sqrt(1 + TimeStep/tau * (target_temp/current_temp - 1));
-        for (auto& a : Atoms)
-        {
-            a.Velocity = a.Velocity * lambda;
-        }
+        GenerateRandomAtoms(RandomGenerator, NumberOfAtoms);
+        // // for (UnsignedInt Index = 0; Index < NumberOfAtoms; ++Index)
+        // // {
+        // //     Vec3 pos(PositionsDistribution(RandomGenerator), PositionsDistribution(RandomGenerator), PositionsDistribution(RandomGenerator));
+        // //     UnsignedInt type = AtomTypeDistribution(RandomGenerator);
+        // //     MDSRealType charge = ChargeDistribution(RandomGenerator);
+        // //     Atoms.emplace_back(static_cast<AtomTypes>(type), pos, charge);
+        // // }
+        //
+        GenerateAssignRandomVelocitiesBasedOnMaxwellBoltzmannDistribution(RandomGenerator);
+        // // Assign random velocities based on Maxwell-Boltzmann distribution
+        // // std::normal_distribution<> VelocityDistribution(0.0, sqrt(K_Boltzmann * Temperature));
+        // // for (auto& Atom : Atoms)
+        // // {
+        // //     Atom.Velocity.x = VelocityDistribution(RandomGenerator);
+        // //     Atom.Velocity.y = VelocityDistribution(RandomGenerator);
+        // //     Atom.Velocity.z = VelocityDistribution(RandomGenerator);
+        // //     // Subtract center-of-mass velocity to avoid drift
+        // //     // (omitted for brevity)
+        // // }
+        //
+        // // Generate random bonds (example: 500 bonds)
+        std::uniform_int_distribution<> AtomsIndexesDistribution(0, static_cast<int>(NumberOfAtoms) - 1);
+        //
+        GenerateRandomBonds(AtomsIndexesDistribution, RandomGenerator, NumberOfAtoms);
+        //
+        // // for (UnsignedInt Bond = 0; Bond < 500; ++Bond)
+        // // {
+        // //     UnsignedInt Atom1Index = AtomsIndexesDistribution(RandomGenerator);
+        // //     UnsignedInt Atom2Index = AtomsIndexesDistribution(RandomGenerator);
+        // //     if (Atom1Index != Atom2Index)
+        // //     {
+        // //         // Ensure i < j to avoid duplicates
+        // //         if (Atom1Index > Atom2Index)
+        // //            swap(Atom1Index, Atom2Index);
+        // //         // Check if bond already exists
+        // //         UnsignedInt key = Atom1Index * NumberOfAtoms + Atom2Index;
+        // //         if (BondedPairs.find(key) == BondedPairs.end())
+        // //         {
+        // //             BondedPairs.insert(key);
+        // //             // Assign random r0 and k (example values)
+        // //             MDSRealType r0 = 1.5; // Angstrom
+        // //             MDSRealType k = 100.0; // kcal/(mol·Å²)
+        // //             Bonds.emplace_back(Atom1Index, Atom2Index, r0, k);
+        // //         }
+        // //     }
+        // // }
+        //
+        // // Generate angles and dihedrals (example)
+        // // For angles, find triplets i-j-k where i-j and j-k are bonded
+        // // This is a simplified approach; realistically, need to find connected triplets
+        // // For demonstration, randomly select triplets
+        //
+        GenerateRandomAngles(AtomsIndexesDistribution, RandomGenerator);
+        //
+        // // for (UnsignedInt Angle = 0; Angle < 300; ++Angle)
+        // // {
+        // //     UnsignedInt Atom1Index = AtomsIndexesDistribution(RandomGenerator);
+        // //     UnsignedInt Atom2Index = AtomsIndexesDistribution(RandomGenerator);
+        // //     UnsignedInt Atom3Index = AtomsIndexesDistribution(RandomGenerator);
+        // //     if (Atom1Index != Atom2Index && Atom2Index != Atom3Index && Atom1Index != Atom3Index)
+        // //     {
+        // //         Angles.emplace_back(Atom1Index, Atom2Index, Atom3Index,
+        // //         1.5708 // 90 degree
+        // //         , 100.0 // k_theta
+        // //         );
+        // //     }
+        // // }
+        //
+        GenerateRandomDihedrals(AtomsIndexesDistribution, RandomGenerator);
+        //
+        // // Similarly for dihedrals
+        // // for (UnsignedInt Dihedral = 0; Dihedral < 200; ++Dihedral)
+        // // {
+        // //     UnsignedInt Atom1Index = AtomsIndexesDistribution(RandomGenerator);
+        // //     UnsignedInt Atom2Index = AtomsIndexesDistribution(RandomGenerator);
+        // //     UnsignedInt Atom3Index = AtomsIndexesDistribution(RandomGenerator);
+        // //     UnsignedInt Atom4Index = AtomsIndexesDistribution(RandomGenerator);
+        // //     if (Atom1Index != Atom2Index && Atom2Index != Atom3Index && Atom3Index != Atom4Index && Atom1Index != Atom3Index && Atom1Index != Atom4Index && Atom2Index != Atom4Index)
+        // //     {
+        // //         Dihedrals.emplace_back(Atom1Index, Atom2Index, Atom3Index, Atom4Index,
+        // //         5.0 // k_phi
+        // //         ,
+        // //         2 // n
+        // //         ,
+        // //         0.0 // phi0
+        // //         );
+        // //     }
+        // // }
     }
 };
 
-UnsignedInt main2()
+UnsignedInt ComputeMolecularDynamicsSimulationForceField2()
 {
-    const MDSRealType box_size = 100.0;    // Angstroms
-    const MDSRealType temperature = 303.15; // 30°C in Kelvin
-    const MDSRealType time_step = 0.001;    // picoseconds
-    const UnsignedInt num_steps = 1000;
-    const UnsignedInt output_interval = 100;
+    constexpr MDSRealType BoxSizeInAngstroms = 100.0;
+    constexpr MDSRealType TemperatureInKelvins = 303.15;
+    constexpr MDSRealType TimeStep = 0.001;    // picoseconds
+    constexpr UnsignedInt NumberOfSteps = 1000;
+    constexpr UnsignedInt OutputInterval = 100;
 
-    Simulation sim(box_size, temperature, time_step);
-    sim.initializeAtoms1(1000);
-    sim.computeForces();
+    Simulation SimulationObject(BoxSizeInAngstroms, TemperatureInKelvins, TimeStep);
+    SimulationObject.InitializeAtoms1(1000);
+    SimulationObject.ComputeAllForces();
 
-    for (UnsignedInt step = 0; step < num_steps; ++step)
+    for (UnsignedInt Step = 0; Step < NumberOfSteps; ++Step)
     {
-        sim.integrate();
-        sim.applyBerendsenThermostat(temperature, 0.1);
+        SimulationObject.IntegrateAllComputations();
+        SimulationObject.ApplyBerendsenThermostat(TemperatureInKelvins, 0.1);
 
-        if (step % output_interval == 0)
-        {
-            std::cout << "Step " << step << " completed" << std::endl;
-        }
+        if (Step % OutputInterval == 0)
+            cout << "Step " << Step << " completed" << endl;
     }
 
     return 0;
