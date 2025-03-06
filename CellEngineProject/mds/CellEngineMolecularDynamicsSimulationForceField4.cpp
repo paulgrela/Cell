@@ -39,8 +39,8 @@ struct Atom
     double x, y, z; // Position (m)
     double vx, vy, vz; // Velocity (m/s)
     double fx, fy, fz; // Force (N)
-    double charge; // Electric charge (C)
-    double mass; // Mass (kg)
+    double Charge; // Electric charge (C)
+    double Mass; // Mass (kg)
 };
 
 // Structure to represent a bond between two atoms
@@ -82,7 +82,7 @@ void coulomb_force(const Atom& a, const Atom& b, double& fx, double& fy, double&
     double dx = a.x - b.x, dy = a.y - b.y, dz = a.z - b.z;
     double r2 = dx * dx + dy * dy + dz * dz;
     double r = sqrt(r2);
-    double force = (a.charge * b.charge) / (4 * pi * epsilon0 * r * r);
+    double force = (a.Charge * b.Charge) / (4 * pi * epsilon0 * r * r);
     fx += force * dx / r;
     fy += force * dy / r;
     fz += force * dz / r;
@@ -425,9 +425,9 @@ void simulate(std::vector<Atom>& atoms, const std::vector<Bond>& bonds, const st
         // Update positions and velocities (Velocity Verlet algorithm)
         for (Atom& atom : atoms)
         {
-            atom.vx += atom.fx / atom.mass * dt;
-            atom.vy += atom.fy / atom.mass * dt;
-            atom.vz += atom.fz / atom.mass * dt;
+            atom.vx += atom.fx / atom.Mass * dt;
+            atom.vy += atom.fy / atom.Mass * dt;
+            atom.vz += atom.fz / atom.Mass * dt;
             atom.x += atom.vx * dt;
             atom.y += atom.vy * dt;
             atom.z += atom.vz * dt;
@@ -453,8 +453,8 @@ int main4()
         atom.vx = vel_dist(rng);
         atom.vy = vel_dist(rng);
         atom.vz = vel_dist(rng);
-        atom.charge = charge_dist(rng) * e_charge;
-        atom.mass = 1.67e-27; // Approximate mass of a proton (kg)
+        atom.Charge = charge_dist(rng) * e_charge;
+        atom.Mass = 1.67e-27; // Approximate mass of a proton (kg)
     }
 
     // Create bonds, angles, and dihedrals (example)

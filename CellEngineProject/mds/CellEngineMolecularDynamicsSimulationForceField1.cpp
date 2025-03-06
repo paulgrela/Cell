@@ -8,7 +8,7 @@
 
 #include "CellEngineMolecularDynamicsSimulationForceField1.h"
 
-#include "CellEngineMolecularDynamicsSimulationConstantsForceField1.h"
+#include "CellEngineMolecularDynamicsSimulationForceField1Constants.h"
 
 using namespace std;
 
