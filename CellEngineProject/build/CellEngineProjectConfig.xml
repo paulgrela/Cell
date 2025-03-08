@@ -4473,6 +4473,8 @@
                         <DivisionFactorForReadingPositionsOfParticles>1.0</DivisionFactorForReadingPositionsOfParticles>
                         <DivisionFactorForGeneratingPositionsOfParticles>1.0</DivisionFactorForGeneratingPositionsOfParticles>
 
+                        <ReverseReactantsAndProductsBecauseOfFormerErrorBool>false</ReverseReactantsAndProductsBecauseOfFormerErrorBool>
+
                         <Radius1ForGenerationOfParticles>400</Radius1ForGenerationOfParticles>
                         <Radius1SizeForGenerationOfParticles>400</Radius1SizeForGenerationOfParticles>
                         <Radius2ForGenerationOfParticles>420</Radius1ForGenerationOfParticles>

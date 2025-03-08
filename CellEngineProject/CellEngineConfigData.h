@@ -260,6 +260,8 @@ public:
     EntityIdInt UTP_ID{};
 public:
     bool RNAInOneParticle = true;
+public:
+    bool ReverseReactantsAndProductsBecauseOfFormerErrorBool = true;
 };
 
 inline CellEngineConfigData CellEngineConfigDataObject;

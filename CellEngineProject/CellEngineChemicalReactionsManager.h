@@ -7,8 +7,6 @@
 #include "CellEngineRandomDeviceEngine.h"
 #include "CellEngineParticlesKindsManager.h"
 
-constexpr bool ReverseReactantsAndProductsBecauseOfFormerError = true;
-
 class ChemicalReactionsManager : virtual public CellEngineRandomDeviceEngine
 {
 public:
@@ -39,12 +37,10 @@ public:
     {
         return ChemicalReactions[ChemicalReactionsPosFromId.find(ReactionId)->second];
     }
-public:
-    void PreprocessAllChemicalReactions()
+private:
+    void ReverseReactantsAndProductsBecauseOfFormerError()
     {
         for (auto& ChemicalReactionObject : ChemicalReactions)
-
-        if constexpr (ReverseReactantsAndProductsBecauseOfFormerError == true)
         {
             for (auto& ReactantObject : ChemicalReactionObject.Reactants)
                 if (ParticlesKindsManagerObject.GetParticleKind(ReactantObject.EntityId).IdStr.substr(0, 10) == JCVISYN3APredStr)
@@ -56,7 +52,9 @@ public:
 
             swap(ChemicalReactionObject.Products, ChemicalReactionObject.Reactants);
         }
-
+    }
+    void SortReactantsAndProductsForEveryChemicalReaction()
+    {
         for (auto& ReactionObject : ChemicalReactions)
         {
             if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)
@@ -67,6 +65,15 @@ public:
 
             ReactionObject.ReactantsStr = GetStringOfSortedParticlesDataNames(ReactionObject.Reactants);
         }
+    }
+public:
+    void PreprocessAllChemicalReactions()
+    {
+        if (CellEngineConfigDataObject.ReverseReactantsAndProductsBecauseOfFormerErrorBool == true)
+            ReverseReactantsAndProductsBecauseOfFormerError();
+
+        SortReactantsAndProductsForEveryChemicalReaction();
+
         MaxNumberOfReactants = std::max_element(ChemicalReactions.begin(), ChemicalReactions.end(), [](const ChemicalReaction& R1, const ChemicalReaction& R2){ return R1.Reactants.size() < R2.Reactants.size(); })->Reactants.size();
     }
 public:

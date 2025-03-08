@@ -514,6 +514,7 @@ void CellEngineSimulationParallelExecutionManager::SetZeroForAllParallelExecutio
     try
     {
         ErrorCounter = 0;
+        NumberOfExecutedReactions = 0;
         NumberOfCancelledReactions = 0;
         NumberOfCancelledAReactions = 0;
         NumberOfCancelledBReactions = 0;
@@ -524,6 +525,7 @@ void CellEngineSimulationParallelExecutionManager::SetZeroForAllParallelExecutio
         FOR_EACH_THREAD_IN_XYZ
         {
             SimulationSpaceDataForThreads[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->ErrorCounter = 0;
+            SimulationSpaceDataForThreads[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->NumberOfExecutedReactions = 0;
             SimulationSpaceDataForThreads[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->NumberOfCancelledReactions = 0;
             SimulationSpaceDataForThreads[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->NumberOfCancelledAReactions = 0;
             SimulationSpaceDataForThreads[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->NumberOfCancelledBReactions = 0;
@@ -542,6 +544,7 @@ void CellEngineSimulationParallelExecutionManager::GatherAllParallelExecutionVar
         FOR_EACH_THREAD_IN_XYZ
         {
             ErrorCounter += SimulationSpaceDataForThreads[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->ErrorCounter;
+            NumberOfExecutedReactions += SimulationSpaceDataForThreads[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->NumberOfExecutedReactions;
             NumberOfCancelledReactions += SimulationSpaceDataForThreads[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->NumberOfCancelledReactions;
             NumberOfCancelledAReactions += SimulationSpaceDataForThreads[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->NumberOfCancelledAReactions;
             NumberOfCancelledBReactions += SimulationSpaceDataForThreads[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->NumberOfCancelledBReactions;
@@ -556,6 +559,7 @@ void CellEngineSimulationParallelExecutionManager::GatherAllParallelExecutionVar
         LoggersManagerObject.Log(STREAM("NumberOfCancelledAReactions = " + to_string(NumberOfCancelledAReactions)));
         LoggersManagerObject.Log(STREAM("NumberOfCancelledBReactions = " + to_string(NumberOfCancelledBReactions)));
         LoggersManagerObject.Log(STREAM("NumberOfCancelledReactions = " + to_string(NumberOfCancelledReactions)));
+        LoggersManagerObject.Log(STREAM("NumberOfExecutedReactions = " + to_string(NumberOfExecutedReactions)));
         LoggersManagerObject.Log(STREAM("ErrorCounter = " + to_string(ErrorCounter)));
     }
     CATCH("gathering all parallel execution variables")

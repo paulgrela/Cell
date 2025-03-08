@@ -20,6 +20,7 @@ protected:
     ParticlesDetailedContainer<Particle> ParticlesForThreads;
 protected:
     UnsignedInt ErrorCounter = 0;
+    UnsignedInt NumberOfExecutedReactions = 0;
     UnsignedInt NumberOfCancelledReactions = 0;
     UnsignedInt NumberOfCancelledAReactions = 0;
     UnsignedInt NumberOfCancelledBReactions = 0;

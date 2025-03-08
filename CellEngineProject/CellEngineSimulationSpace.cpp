@@ -355,6 +355,8 @@ bool CellEngineSimulationSpace::MakeChemicalReaction(ChemicalReaction& ReactionO
             CenterIndex++;
         }
 
+        NumberOfExecutedReactions++;
+
         LoggersManagerObject.Log(STREAM("Reaction Step 3 - Reaction finished" << endl));
 
         if (SaveReactionsStatisticsBool == true)

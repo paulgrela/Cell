@@ -160,11 +160,14 @@ public:
             }
     }
 public:
-    void ComputeAllForces()
+    void CreateTheForces()
     {
         for (auto& AtomMDS : Atoms)
             AtomMDS.Force = Vec3();
-
+    }
+    void ComputeAllForces()
+    {
+        CreateTheForces();
         ComputeBondForces();
         ComputeAngleForces();
         ComputeDihedralForces();
