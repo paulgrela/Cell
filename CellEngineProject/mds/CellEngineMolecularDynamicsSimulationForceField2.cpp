@@ -22,8 +22,8 @@ private:
     std::vector<DihedralMDS> Dihedrals;
     std::unordered_set<UnsignedInt> BondedPairs;
 private:
-    MDSRealType BoxSize;
-    MDSRealType Temperature;
+    MDSRealType BoxSizeInAngstroms;
+    MDSRealType TemperatureInKelvins;
     MDSRealType TimeStep;
 private:
     const MDSRealType K_Coulomb = 332.0636;
@@ -177,16 +177,16 @@ public:
         {
             AtomObject.Position += AtomObject.Velocity * TimeStep;
 
-            AtomObject.Position.x = fmod(AtomObject.Position.x + BoxSize, BoxSize);
-            AtomObject.Position.y = fmod(AtomObject.Position.y + BoxSize, BoxSize);
-            AtomObject.Position.z = fmod(AtomObject.Position.z + BoxSize, BoxSize);
+            AtomObject.Position.x = fmod(AtomObject.Position.x + BoxSizeInAngstroms, BoxSizeInAngstroms);
+            AtomObject.Position.y = fmod(AtomObject.Position.y + BoxSizeInAngstroms, BoxSizeInAngstroms);
+            AtomObject.Position.z = fmod(AtomObject.Position.z + BoxSizeInAngstroms, BoxSizeInAngstroms);
 
             if (AtomObject.Position.x < 0)
-                AtomObject.Position.x += BoxSize;
+                AtomObject.Position.x += BoxSizeInAngstroms;
             if (AtomObject.Position.y < 0)
-                AtomObject.Position.y += BoxSize;
+                AtomObject.Position.y += BoxSizeInAngstroms;
             if (AtomObject.Position.z < 0)
-                AtomObject.Position.z += BoxSize;
+                AtomObject.Position.z += BoxSizeInAngstroms;
         }
     }
 public:
@@ -217,21 +217,21 @@ public:
             AtomObject.Velocity = AtomObject.Velocity * Lambda;
     }
 public:
-    Simulation(const MDSRealType BoxSizeParam, const MDSRealType TemperaturParam, const MDSRealType TimeStepParam) : BoxSize(BoxSizeParam), Temperature(TemperaturParam), TimeStep(TimeStepParam)
+    Simulation(const MDSRealType BoxSizeInAnsgstromsParam, const MDSRealType TemperaturParam, const MDSRealType TimeStepInPicoSecParam) : BoxSizeInAngstroms(BoxSizeInAnsgstromsParam), TemperatureInKelvins(TemperaturParam), TimeStep(TimeStepInPicoSecParam)
     {
     }
 public:
     void InitializeAtoms1(const UnsignedInt N)
     {
         std::mt19937 RandomGenerator(std::random_device{}());
-        std::uniform_real_distribution<> PositionDistribution(0, BoxSize);
+        std::uniform_real_distribution<> PositionDistribution(0, BoxSizeInAngstroms);
         std::uniform_real_distribution<> ChargeDistribution(-1, 1);
         std::uniform_int_distribution<> AtomTypeDistribution(0, 3);
 
         for (UnsignedInt Index = 0; Index < N; ++Index)
         {
             Atoms.emplace_back(static_cast<AtomTypes>(AtomTypeDistribution(RandomGenerator)), Vec3(PositionDistribution(RandomGenerator), PositionDistribution(RandomGenerator), PositionDistribution(RandomGenerator)), ChargeDistribution(RandomGenerator));
-            MDSRealType Scale = sqrt(3 * K_Boltzmann * Temperature / Atoms.back().Mass);
+            MDSRealType Scale = sqrt(3 * K_Boltzmann * TemperatureInKelvins / Atoms.back().Mass);
             std::normal_distribution<> VelocityDistribution(0, Scale);
             Atoms.back().Velocity = Vec3(VelocityDistribution(RandomGenerator), VelocityDistribution(RandomGenerator), VelocityDistribution(RandomGenerator));
         }
@@ -251,7 +251,7 @@ public:
 private:
     void GenerateRandomAtoms(mt19937& RandomGenerator, const UnsignedInt NumberOfAtoms)
     {
-        std::uniform_real_distribution<> PositionsDistribution(0.0, BoxSize);
+        std::uniform_real_distribution<> PositionsDistribution(0.0, BoxSizeInAngstroms);
         std::uniform_int_distribution<> AtomTypeDistribution(0, 3);
         std::uniform_real_distribution<> ChargeDistribution(-1.0, 1.0);
 
@@ -265,7 +265,7 @@ private:
     }
     void GenerateAssignRandomVelocitiesBasedOnMaxwellBoltzmannDistribution(mt19937& RandomGenerator)
     {
-        std::normal_distribution<> VelocityDistribution(0.0, sqrt(K_Boltzmann * Temperature));
+        std::normal_distribution<> VelocityDistribution(0.0, sqrt(K_Boltzmann * TemperatureInKelvins));
         for (auto& AtomObject : Atoms)
         {
             AtomObject.Velocity.x = VelocityDistribution(RandomGenerator);

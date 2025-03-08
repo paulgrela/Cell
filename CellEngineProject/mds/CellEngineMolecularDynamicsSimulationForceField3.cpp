@@ -13,320 +13,351 @@
 
 using namespace std;
 
+constexpr MDSRealType K_CoulombConstant = 332.0636; // Coulomb constant in kcal·Å/(e^2·mol)
+constexpr MDSRealType K_Boltzmann = 0.0019872041; // kcal/(mol·K)
+
 class Simulation
 {
 public:
-       std::vector<AtomMDS> Atoms;
-       std::vector<BondMDS> Bonds;
-       std::vector<AngleMDS> Angles;
-       std::vector<DihedralMDS> Dihedrals;
-       std::unordered_set<int> bonded_pairs; // stores i*N + j for i < j
-
-MDSRealType BoxSize; // cubic box size
-MDSRealType Temperature; // in Kelvin
-MDSRealType TimeStep;
-
-// Constants
-const MDSRealType K_Coulomb = 332.0636; // Coulomb constant in kcal·Å/(e^2·mol)
-const MDSRealType K_Boltzmann = 0.0019872041; // kcal/(mol·K)
-
-Simulation(MDSRealType box_size, MDSRealType temperature, MDSRealType time_step) : BoxSize(box_size), Temperature(temperature), TimeStep(time_step) {}
-
-void initializeAtoms(int num_atoms)
-{
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_real_distribution<> pos_dist(0.0, BoxSize);
-    std::uniform_int_distribution<> type_dist(0, 3);
-    std::uniform_real_distribution<> charge_dist(-1.0, 1.0);
-
-    for (int i = 0; i < num_atoms; ++i)
+    std::vector<AtomMDS> Atoms;
+    std::vector<BondMDS> Bonds;
+    std::vector<AngleMDS> Angles;
+    std::vector<DihedralMDS> Dihedrals;
+    std::unordered_set<UnsignedInt> BondedPairs; // stores i*N + j for i < j
+public:
+    MDSRealType BoxSizeInAngstroms;
+    MDSRealType TemperatureInKelvins;
+    MDSRealType TimeStep;
+public:
+    Simulation(const MDSRealType BoxSizeInAnsgstromsParam, const MDSRealType TemperatureInKelvinsParam, const MDSRealType TimeStepInPicoSecParam) : BoxSizeInAngstroms(BoxSizeInAnsgstromsParam), TemperatureInKelvins(TemperatureInKelvinsParam), TimeStep(TimeStepInPicoSecParam)
     {
-        Vec3 pos(pos_dist(gen), pos_dist(gen), pos_dist(gen));
-        int AtomType = type_dist(gen);
-        MDSRealType charge = charge_dist(gen);
-        Atoms.emplace_back(static_cast<AtomTypes>(AtomType), pos, charge);
     }
-
-    // Assign random velocities based on Maxwell-Boltzmann distribution
-    std::normal_distribution<> vel_dist(0.0, std::sqrt(K_Boltzmann * Temperature));
-    for (auto& atom : Atoms)
+private:
+    void GenerateRandomAtoms(mt19937& RandomGenerator, const UnsignedInt NumberOfAtoms)
     {
-        atom.Velocity.x = vel_dist(gen);
-        atom.Velocity.y = vel_dist(gen);
-        atom.Velocity.z = vel_dist(gen);
-        // Subtract center-of-mass velocity to avoid drift
-        // (omitted for brevity)
-    }
+        std::uniform_real_distribution<> PositionsDistribution(0.0, BoxSizeInAngstroms);
+        std::uniform_int_distribution<> AtomTypeDistribution(0, 3);
+        std::uniform_real_distribution<> ChargeDistribution(-1.0, 1.0);
 
-    // Generate random bonds (example: 500 bonds)
-    std::uniform_int_distribution<> atom_dist(0, num_atoms - 1);
-    for (int b = 0; b < 500; ++b)
-    {
-        int i = atom_dist(gen);
-        int j = atom_dist(gen);
-        if (i != j)
+        for (UnsignedInt Index = 0; Index < NumberOfAtoms; ++Index)
         {
-            // Ensure i < j to avoid duplicates
-            if (i > j)
-                swap(i, j);
-            // Check if bond already exists
-            int key = i * num_atoms + j;
-            if (bonded_pairs.find(key) == bonded_pairs.end())
+            Vec3 PositionOfAtom(PositionsDistribution(RandomGenerator), PositionsDistribution(RandomGenerator), PositionsDistribution(RandomGenerator));
+            UnsignedInt TypeOfAtom = AtomTypeDistribution(RandomGenerator);
+            MDSRealType ChargeOfAtom = ChargeDistribution(RandomGenerator);
+            Atoms.emplace_back(static_cast<AtomTypes>(TypeOfAtom), PositionOfAtom, ChargeOfAtom);
+        }
+    }
+    void GenerateAssignRandomVelocitiesBasedOnMaxwellBoltzmannDistribution(mt19937& RandomGenerator)
+    {
+        std::normal_distribution<> VelocityDistribution(0.0, sqrt(K_Boltzmann * TemperatureInKelvins));
+        for (auto& AtomObject : Atoms)
+        {
+            AtomObject.Velocity.x = VelocityDistribution(RandomGenerator);
+            AtomObject.Velocity.y = VelocityDistribution(RandomGenerator);
+            AtomObject.Velocity.z = VelocityDistribution(RandomGenerator);
+            // Subtract center-of-mass velocity to avoid drift
+            // (omitted for brevity)
+        }
+    }
+    void GenerateRandomBonds(uniform_int_distribution<>& AtomsIndexesDistribution, mt19937& RandomGenerator, const UnsignedInt NumberOfAtoms)
+    {
+        for (UnsignedInt Bond = 0; Bond < 500; ++Bond)
+        {
+            UnsignedInt Atom1Index = AtomsIndexesDistribution(RandomGenerator);
+            UnsignedInt Atom2Index = AtomsIndexesDistribution(RandomGenerator);
+            if (Atom1Index != Atom2Index)
             {
-                bonded_pairs.insert(key);
-                // Assign random r0 and k (example values)
-                MDSRealType r0 = 1.5; // Angstrom
-                MDSRealType k = 100.0; // kcal/(mol·Å²)
-                Bonds.emplace_back(i, j, r0, k);
+                // Ensure i < j to avoid duplicates
+                if (Atom1Index > Atom2Index)
+                    swap(Atom1Index, Atom2Index);
+                // Check if bond already exists
+                UnsignedInt key = Atom1Index * NumberOfAtoms + Atom2Index;
+                if (BondedPairs.find(key) == BondedPairs.end())
+                {
+                    BondedPairs.insert(key);
+                    // Assign random r0 and k (example values)
+                    MDSRealType r0 = 1.5; // Angstrom
+                    MDSRealType k = 100.0; // kcal/(mol·Å²)
+                    Bonds.emplace_back(Atom1Index, Atom2Index, r0, k);
+                }
             }
         }
     }
-
-    // Generate angles and dihedrals (example)
-    // For angles, find triplets i-j-k where i-j and j-k are bonded
-    // This is a simplified approach; realistically, need to find connected triplets
-    // For demonstration, randomly select triplets
-    for (int a = 0; a < 300; ++a)
+    void GenerateRandomAngles(uniform_int_distribution<>& AtomsIndexesDistribution, mt19937& RandomGenerator)
     {
-        int i = atom_dist(gen);
-        int j = atom_dist(gen);
-        int k = atom_dist(gen);
-        if (i != j && j != k && i != k)
-            Angles.emplace_back(i, j, k, 1.5708 /* 90 degrees */, 100.0 /* k_theta */);
-    }
-
-    // Similarly for dihedrals
-    for (int d = 0; d < 200; ++d)
-    {
-        int i = atom_dist(gen);
-        int j = atom_dist(gen);
-        int k = atom_dist(gen);
-        int l = atom_dist(gen);
-        if (i != j && j != k && k != l && i != k && i != l && j != l)
-            Dihedrals.emplace_back(i, j, k, l, 5.0 /* k_phi */, 2 /* n */, 0.0 /* phi0 */);
-    }
-}
-
-void ComputeAllForces()
-{
-    // Reset forces
-    for (auto& atom : Atoms)
-        atom.Force = Vec3();
-
-    // Bond forces (Hooke's law)
-    for (const auto& bond : Bonds)
-    {
-        AtomMDS& a = Atoms[bond.Atom1Index];
-        AtomMDS& b = Atoms[bond.Atom2Index];
-        Vec3 delta = b.Position - a.Position;
-        MDSRealType r = delta.length();
-        MDSRealType dr = r - bond.r0_EquilibrumDistance;
-        MDSRealType force_mag = -bond.k_SpringConstant * dr;
-        Vec3 force_dir = delta.normalized();
-        Vec3 force = force_dir * force_mag;
-        a.Force += force;
-        b.Force -= force;
-    }
-
-    // Angle bending forces
-    for (const auto& angle : Angles)
-    {
-        AtomMDS& a = Atoms[angle.Atom1Index];
-        AtomMDS& b = Atoms[angle.Atom2Index];
-        AtomMDS& c = Atoms[angle.Atom3Index];
-
-        Vec3 r_ij = a.Position - b.Position;
-        Vec3 r_kj = c.Position - b.Position;
-
-        MDSRealType theta = acos(r_ij.dot(r_kj) / (r_ij.length() * r_kj.length()));
-        MDSRealType dtheta = theta - angle.theta0_EquilibriumAngleInRadians;
-        MDSRealType dE_dtheta = angle.k_theta_ForceConstant * dtheta;
-
-        // Compute derivatives of theta with respect to positions
-        // Using the formula from molecular dynamics textbooks
-        Vec3 dtheta_dri = (r_kj.cross(r_ij.cross(r_kj))) * (1.0 / (r_ij.length() * r_ij.length() * r_kj.length() * sin(theta)));
-        Vec3 dtheta_drk = (r_ij.cross(r_kj.cross(r_ij))) * (1.0 / (r_kj.length() * r_kj.length() * r_ij.length() * sin(theta)));
-        //Vec3 dtheta_drj = -dtheta_dri - dtheta_drk;
-        Vec3 dtheta_drj = (dtheta_dri + dtheta_drk) * -1.0;
-        //dtheta_drj *= { -1.0f, -1.0f, -1.0f };
-
-        // Forces are -dE/dtheta * dtheta/dr
-        a.Force += dtheta_dri * (-dE_dtheta);
-        b.Force += dtheta_drj * (-dE_dtheta);
-        c.Force += dtheta_drk * (-dE_dtheta);
-    }
-
-    // Dihedral torsion forces
-    for (const auto& dihedral : Dihedrals)
-    {
-        AtomMDS& a = Atoms[dihedral.Atom1Index];
-        AtomMDS& b = Atoms[dihedral.Atom2Index];
-        AtomMDS& c = Atoms[dihedral.Atom3Index];
-        AtomMDS& d = Atoms[dihedral.Atom4Index];
-
-        Vec3 r_ij = a.Position - b.Position;
-        Vec3 r_kj = c.Position - b.Position;
-        Vec3 r_lk = d.Position - c.Position;
-
-        Vec3 n1 = r_ij.cross(r_kj); // normal to plane i-j-k
-        Vec3 n2 = r_kj.cross(r_lk); // normal to plane j-k-l
-
-        MDSRealType n1_len = n1.length();
-        MDSRealType n2_len = n2.length();
-        MDSRealType r_kj_len = r_kj.length();
-
-        if (n1_len == 0 || n2_len == 0 || r_kj_len == 0) continue;
-
-        MDSRealType cos_phi = n1.dot(n2) / (n1_len * n2_len);
-        cos_phi = std::max(-1.0, std::min(1.0, cos_phi));
-        MDSRealType phi = acos(cos_phi);
-        // Determine the sign of phi using the cross product of n1 and n2
-        MDSRealType sign = (n1.cross(n2)).dot(r_kj) < 0 ? -1.0 : 1.0;
-        phi *= sign;
-
-        // Compute dV/dphi
-        MDSRealType dV_dphi = dihedral.k_phi_ForceConstant * dihedral.N_Multiplicity * sin(dihedral.N_Multiplicity * phi - dihedral.phi0_PhaseAngleInRadians);
-
-        // Compute derivatives of phi with respect to positions
-        // Using the formulas from:
-        // https://www.plumed.org/doc-v2.7/user-doc/html/_t_o_r_s_i_o_n.html
-        // Or molecular dynamics textbooks
-
-        Vec3 m = r_ij.cross(r_kj);
-        Vec3 n = r_kj.cross(r_lk);
-        MDSRealType m_len = m.length();
-        MDSRealType n_len = n.length();
-        if (m_len == 0 || n_len == 0) continue;
-
-        Vec3 dm_di = r_kj.cross(Vec3(1,0,0)).cross(r_ij) + r_ij.cross(r_kj.cross(Vec3(1,0,0)));
-        // ... This is very complex. The full derivation requires chain rule and vector calculus.
-
-        // For brevity, here's a simplified approach. The full implementation would require
-        // computing the derivatives of phi with respect to each atom's position, which involves
-        // several cross products and normalizations. Due to time constraints, this example will
-        // outline the steps without full derivation.
-
-        // The correct way involves:
-        // 1. Compute vectors between the four atoms.
-        // 2. Compute the normals to the planes.
-        // 3. Compute the dihedral angle phi.
-        // 4. Compute the derivatives of phi with respect to each atom's position.
-
-        // Due to complexity, refer to existing literature for the full expressions.
-        // For example, see:
-        // https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3947985/
-        // Which provides the derivatives for dihedral angles.
-
-        // Given time constraints, this example will skip the full implementation and note that
-        // the forces are computed based on the derivative of the potential with respect to phi,
-        // multiplied by the derivative of phi with respect to each atom's position.
-
-        // Placeholder for force calculation (actual code would require full derivation)
-        Vec3 force_i, force_j, force_k, force_l;
-        // ... compute forces based on dV_dphi and derivatives of phi
-
-        // For the purpose of this example, assume forces are computed correctly.
-        // In practice, this part requires careful implementation.
-        a.Force += force_i;
-        b.Force += force_j;
-        c.Force += force_k;
-        d.Force += force_l;
-    }
-
-    // Non-bonded forces (Coulomb and LJ)
-    int num_atoms = Atoms.size();
-    for (int i = 0; i < num_atoms; ++i)
-    {
-        for (int j = i + 1; j < num_atoms; ++j)
+        for (UnsignedInt Angle = 0; Angle < 300; ++Angle)
         {
-            // Check if i and j are bonded
-            int key = i * num_atoms + j;
-            if (bonded_pairs.find(key) != bonded_pairs.end())
-                continue; // skip bonded pairs
-
-            AtomMDS& a = Atoms[i];
-            AtomMDS& b = Atoms[j];
-            Vec3 delta = a.Position - b.Position;
-            // Apply periodic boundary conditions (if any)
-            // For simplicity, assume box is large enough to ignore PBC
-
-            MDSRealType r_sq = delta.x*delta.x + delta.y*delta.y + delta.z*delta.z;
-            MDSRealType r = std::sqrt(r_sq);
-
-            // Coulomb force
-            MDSRealType coulomb_force_mag = K_Coulomb * a.Charge * b.Charge / r_sq;
-            Vec3 coulomb_force = delta.normalized() * coulomb_force_mag;
-            a.Force += coulomb_force;
-            b.Force -= coulomb_force;
-
-            // Lennard-Jones force
-            MDSRealType sigma_ij = (a.SigmaValue + b.SigmaValue) / 2;
-            MDSRealType epsilon_ij = std::sqrt(a.EpsilonValue * b.EpsilonValue);
-            MDSRealType sigma_r = sigma_ij / r;
-            MDSRealType sigma_r6 = pow(sigma_r, 6);
-            MDSRealType sigma_r12 = sigma_r6 * sigma_r6;
-            MDSRealType lj_force_mag = 24 * epsilon_ij * (2 * sigma_r12 - sigma_r6) / r;
-            Vec3 lj_force = delta.normalized() * lj_force_mag;
-            a.Force += lj_force;
-            b.Force -= lj_force;
+            const UnsignedInt Atom1Index = AtomsIndexesDistribution(RandomGenerator);
+            const UnsignedInt Atom2Index = AtomsIndexesDistribution(RandomGenerator);
+            const UnsignedInt Atom3Index = AtomsIndexesDistribution(RandomGenerator);
+            if (Atom1Index != Atom2Index && Atom2Index != Atom3Index && Atom1Index != Atom3Index)
+                Angles.emplace_back(Atom1Index, Atom2Index, Atom3Index, 1.5708, 100.0);
         }
     }
-}
-
-void integrate(MDSRealType dt)
-{
-    // Velocity Verlet integration
-    for (auto& atom : Atoms)
+    void GenerateRandomDihedrals(uniform_int_distribution<>& AtomsIndexesDistribution, mt19937& RandomGenerator)
     {
-        atom.Velocity += atom.Force * (dt / (2 * atom.Mass));
-        atom.Position += atom.Velocity * dt;
+        for (UnsignedInt Dihedral = 0; Dihedral < 200; ++Dihedral)
+        {
+            const UnsignedInt Atom1Index = AtomsIndexesDistribution(RandomGenerator);
+            const UnsignedInt Atom2Index = AtomsIndexesDistribution(RandomGenerator);
+            const UnsignedInt Atom3Index = AtomsIndexesDistribution(RandomGenerator);
+            const UnsignedInt Atom4Index = AtomsIndexesDistribution(RandomGenerator);
+            if (Atom1Index != Atom2Index && Atom2Index != Atom3Index && Atom3Index != Atom4Index && Atom1Index != Atom3Index && Atom1Index != Atom4Index && Atom2Index != Atom4Index)
+                Dihedrals.emplace_back(Atom1Index, Atom2Index, Atom3Index, Atom4Index, 5.0, 2, 0.0);
+        }
     }
-
-    ComputeAllForces();
-
-    for (auto& atom : Atoms)
+public:
+    void InitializeAtoms(const UnsignedInt NumberOfAtoms)
     {
-        atom.Velocity += atom.Force * (dt / (2 * atom.Mass));
+        std::random_device RandomDevice;
+        std::mt19937 RandomGenerator(RandomDevice());
+
+        GenerateRandomAtoms(RandomGenerator, NumberOfAtoms);
+        GenerateAssignRandomVelocitiesBasedOnMaxwellBoltzmannDistribution(RandomGenerator);
+
+        std::uniform_int_distribution<> AtomsIndexesDistribution(0, static_cast<int>(NumberOfAtoms) - 1);
+        GenerateRandomBonds(AtomsIndexesDistribution, RandomGenerator, NumberOfAtoms);
+        // Generate angles and dihedrals (example)
+        // For angles, find triplets i-j-k where i-j and j-k are bonded
+        // This is Atom1Object simplified approach; realistically, need to find connected triplets
+        // For demonstration, randomly select triplets
+        GenerateRandomAngles(AtomsIndexesDistribution, RandomGenerator);
+        GenerateRandomDihedrals(AtomsIndexesDistribution, RandomGenerator);
     }
-}
-
-void run(int steps)
-{
-    for (int step = 0; step < steps; ++step)
+private:
+    void ComputeBondForcesFromHookesLaw()
     {
+        for (const auto& BondObject : Bonds)
+        {
+            AtomMDS& Atom1Object = Atoms[BondObject.Atom1Index];
+            AtomMDS& Atom2Object = Atoms[BondObject.Atom2Index];
+            const Vec3 delta = Atom2Object.Position - Atom1Object.Position;
+            const MDSRealType r = delta.length();
+            const MDSRealType dr = r - BondObject.r0_EquilibrumDistance;
+            const MDSRealType force_mag = -BondObject.k_SpringConstant * dr;
+            const Vec3 force_dir = delta.normalized();
+            const Vec3 force = force_dir * force_mag;
+            Atom1Object.Force += force;
+            Atom2Object.Force -= force;
+        }
+    }
+private:
+    void ComputeAngleBendingForces()
+    {
+        for (const auto& AngleObject : Angles)
+        {
+            AtomMDS& Atom1Object = Atoms[AngleObject.Atom1Index];
+            AtomMDS& Atom2Object = Atoms[AngleObject.Atom2Index];
+            AtomMDS& Atom3Object = Atoms[AngleObject.Atom3Index];
+
+            Vec3 r_ij = Atom1Object.Position - Atom2Object.Position;
+            Vec3 r_kj = Atom3Object.Position - Atom2Object.Position;
+
+            MDSRealType theta = acos(r_ij.dot(r_kj) / (r_ij.length() * r_kj.length()));
+            MDSRealType dtheta = theta - AngleObject.theta0_EquilibriumAngleInRadians;
+            MDSRealType dE_dtheta = AngleObject.k_theta_ForceConstant * dtheta;
+
+            // Compute derivatives of theta with respect to positions
+            // Using the formula from molecular dynamics textbooks
+            const Vec3 dtheta_dri = (r_kj.cross(r_ij.cross(r_kj))) * (1.0 / (r_ij.length() * r_ij.length() * r_kj.length() * sin(theta)));
+            const Vec3 dtheta_drk = (r_ij.cross(r_kj.cross(r_ij))) * (1.0 / (r_kj.length() * r_kj.length() * r_ij.length() * sin(theta)));
+            //const Vec3 dtheta_drj = -dtheta_dri - dtheta_drk;
+            const Vec3 dtheta_drj = (dtheta_dri + dtheta_drk) * -1.0;
+            //const  dtheta_drj *= { -1.0f, -1.0f, -1.0f };
+
+            // Forces are -dE/dtheta * dtheta/dr
+            Atom1Object.Force += dtheta_dri * (-dE_dtheta);
+            Atom2Object.Force += dtheta_drj * (-dE_dtheta);
+            Atom3Object.Force += dtheta_drk * (-dE_dtheta);
+        }
+    }
+private:
+    void ComputeNonBondedCoulombAndLennardJonesForces()
+    {
+        UnsignedInt NumberOfAtoms = Atoms.size();
+        for (int Atom1Index = 0; Atom1Index < NumberOfAtoms; ++Atom1Index)
+            for (int Atom2Index = Atom1Index + 1; Atom2Index < NumberOfAtoms; ++Atom2Index)
+            {
+                // Check if i and j are bonded
+                UnsignedInt Key = Atom1Index * NumberOfAtoms + Atom2Index;
+                if (BondedPairs.find(Key) != BondedPairs.end())
+                    continue; // skip bonded pairs
+
+                AtomMDS& Atom1Object = Atoms[Atom1Index];
+                AtomMDS& Atom2Object = Atoms[Atom2Index];
+                Vec3 delta = Atom1Object.Position - Atom2Object.Position;
+                // Apply periodic boundary conditions (if any)
+                // For simplicity, assume box is large enough to ignore PBC
+
+                MDSRealType r_sq = delta.x*delta.x + delta.y*delta.y + delta.z*delta.z;
+                MDSRealType r = sqrt(r_sq);
+
+                // Coulomb force
+                MDSRealType coulomb_force_mag = K_CoulombConstant * Atom1Object.Charge * Atom2Object.Charge / r_sq;
+                Vec3 coulomb_force = delta.normalized() * coulomb_force_mag;
+                Atom1Object.Force += coulomb_force;
+                Atom2Object.Force -= coulomb_force;
+
+                // Lennard-Jones force
+                MDSRealType sigma_ij = (Atom1Object.SigmaValue + Atom2Object.SigmaValue) / 2;
+                MDSRealType epsilon_ij = std::sqrt(Atom1Object.EpsilonValue * Atom2Object.EpsilonValue);
+                MDSRealType sigma_r = sigma_ij / r;
+                MDSRealType sigma_r6 = pow(sigma_r, 6);
+                MDSRealType sigma_r12 = sigma_r6 * sigma_r6;
+                MDSRealType lj_force_mag = 24 * epsilon_ij * (2 * sigma_r12 - sigma_r6) / r;
+                Vec3 lj_force = delta.normalized() * lj_force_mag;
+                Atom1Object.Force += lj_force;
+                Atom2Object.Force -= lj_force;
+            }
+    }
+private:
+    void ComputeDihedralTorsionForces()
+    {
+        for (const auto& DihedralObject : Dihedrals)
+        {
+            AtomMDS& Atom1Object = Atoms[DihedralObject.Atom1Index];
+            AtomMDS& Atom2Object = Atoms[DihedralObject.Atom2Index];
+            AtomMDS& Atom3Object = Atoms[DihedralObject.Atom3Index];
+            AtomMDS& Atom4Object = Atoms[DihedralObject.Atom4Index];
+
+            Vec3 r_ij = Atom1Object.Position - Atom2Object.Position;
+            Vec3 r_kj = Atom3Object.Position - Atom2Object.Position;
+            Vec3 r_lk = Atom4Object.Position - Atom3Object.Position;
+
+            Vec3 n1 = r_ij.cross(r_kj); // normal to plane i-j-k
+            Vec3 n2 = r_kj.cross(r_lk); // normal to plane j-k-l
+
+            const MDSRealType n1_len = n1.length();
+            const MDSRealType n2_len = n2.length();
+            const MDSRealType r_kj_len = r_kj.length();
+
+            if (n1_len == 0 || n2_len == 0 || r_kj_len == 0) continue;
+
+            MDSRealType cos_phi = n1.dot(n2) / (n1_len * n2_len);
+            cos_phi = std::max(-1.0, std::min(1.0, cos_phi));
+            MDSRealType phi = acos(cos_phi);
+            // Determine the sign of phi using the cross product of n1 and n2
+            const MDSRealType sign = (n1.cross(n2)).dot(r_kj) < 0 ? -1.0 : 1.0;
+            phi *= sign;
+
+            // Compute dV/dphi
+            const MDSRealType dV_dphi = DihedralObject.k_phi_ForceConstant * DihedralObject.N_Multiplicity * sin(DihedralObject.N_Multiplicity * phi - DihedralObject.phi0_PhaseAngleInRadians);
+
+            // Compute derivatives of phi with respect to positions
+            // Using the formulas from:
+            // https://www.plumed.org/doc-v2.7/user-doc/html/_t_o_r_s_i_o_n.html
+            // Or molecular dynamics textbooks
+
+            Vec3 m = r_ij.cross(r_kj);
+            Vec3 n = r_kj.cross(r_lk);
+            const MDSRealType m_len = m.length();
+            const MDSRealType n_len = n.length();
+            if (m_len == 0 || n_len == 0)
+                continue;
+
+            Vec3 dm_di = r_kj.cross(Vec3(1,0,0)).cross(r_ij) + r_ij.cross(r_kj.cross(Vec3(1,0,0)));
+            // ... This is very complex. The full derivation requires chain rule and vector calculus.
+
+            // For brevity, here's a simplified approach. The full implementation would require
+            // computing the derivatives of phi with respect to each atom's position, which involves
+            // several cross products and normalizations. Due to time constraints, this example will
+            // outline the steps without full derivation.
+
+            // The correct way involves:
+            // 1. Compute vectors between the four atoms.
+            // 2. Compute the normals to the planes.
+            // 3. Compute the dihedral angle phi.
+            // 4. Compute the derivatives of phi with respect to each atom's position.
+
+            // Due to complexity, refer to existing literature for the full expressions.
+            // For example, see:
+            // https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3947985/
+            // Which provides the derivatives for dihedral angles.
+
+            // Given time constraints, this example will skip the full implementation and note that
+            // the forces are computed based on the derivative of the potential with respect to phi,
+            // multiplied by the derivative of phi with respect to each atom's position.
+
+            // Placeholder for force calculation (actual code would require full derivation)
+            Vec3 Force_i, Force_j, Force_k, Force_l;
+            // ... compute forces based on dV_dphi and derivatives of phi
+
+            // For the purpose of this example, assume forces are computed correctly.
+            // In practice, this part requires careful implementation.
+            Atom1Object.Force += Force_i;
+            Atom2Object.Force += Force_j;
+            Atom3Object.Force += Force_k;
+            Atom4Object.Force += Force_l;
+        }
+    }
+private:
+    void ResetForces()
+    {
+        for (auto& AtomObject : Atoms)
+            AtomObject.Force = Vec3();
+    }
+public:
+    void ComputeAllForces()
+    {
+        ResetForces();
+        ComputeBondForcesFromHookesLaw();
+        ComputeAngleBendingForces();
+        ComputeDihedralTorsionForces();
+        ComputeNonBondedCoulombAndLennardJonesForces();
+    }
+private:
+    void VelocityVerletIntegration(const MDSRealType dt)
+    {
+        for (auto& AtomObject : Atoms)
+        {
+            AtomObject.Velocity += AtomObject.Force * (dt / (2 * AtomObject.Mass));
+            AtomObject.Position += AtomObject.Velocity * dt;
+        }
+    }
+public:
+    void Integrate(const MDSRealType dt)
+    {
+        VelocityVerletIntegration(dt);
+
         ComputeAllForces();
-        integrate(TimeStep);
-        // Apply thermostat (e.g., Berendsen)
-        // Adjust velocities to maintain temperature
-        MDSRealType current_temp = computeTemperature();
-        MDSRealType lambda = std::sqrt(Temperature / current_temp);
-        for (auto& atom : Atoms)
+
+        for (auto& AtomObject : Atoms)
+            AtomObject.Velocity += AtomObject.Force * (dt / (2 * AtomObject.Mass));
+    }
+public:
+    void Run(const int NumberOfSteps)
+    {
+        for (UnsignedInt step = 0; step < NumberOfSteps; ++step)
         {
-            atom.Velocity = atom.Velocity * lambda;
+            ComputeAllForces();
+            Integrate(TimeStep);
+            // Apply thermostat (e.g., Berendsen)
+            // Adjust velocities to maintain temperature
+            MDSRealType CurrentTemperature = ComputeCurrentTemperature();
+            MDSRealType Lambda = sqrt(TemperatureInKelvins / CurrentTemperature);
+            for (auto& AtomObject : Atoms)
+                AtomObject.Velocity = AtomObject.Velocity * Lambda;
         }
     }
-}
-
-MDSRealType computeTemperature()
-{
-    MDSRealType total_ke = 0.0;
-    for (const auto& atom : Atoms)
+public:
+    MDSRealType ComputeCurrentTemperature()
     {
-        MDSRealType v_sq = atom.Velocity.x*atom.Velocity.x + atom.Velocity.y*atom.Velocity.y + atom.Velocity.z*atom.Velocity.z;
-        total_ke += 0.5 * atom.Mass * v_sq;
+        MDSRealType TotalKe = 0.0;
+        for (const auto& AtomObject : Atoms)
+        {
+            MDSRealType VSq = AtomObject.Velocity.x * AtomObject.Velocity.x + AtomObject.Velocity.y * AtomObject.Velocity.y + AtomObject.Velocity.z * AtomObject.Velocity.z;
+            TotalKe += 0.5 * AtomObject.Mass * VSq;
+        }
+        // KE = (3/2) N k_b T
+        const UnsignedInt NumberOfAtoms = Atoms.size();
+        return (2.0 * TotalKe) / (3 * NumberOfAtoms * K_Boltzmann);
     }
-    // KE = (3/2) N k_b T
-    int num_atoms = Atoms.size();
-    return (2.0 * total_ke) / (3 * num_atoms * K_Boltzmann);
-}
 };
 
 int ComputeMolecularDynamicsSimulationForceField3()
 {
-    Simulation sim(100.0, 303.15, 0.001); /* 100.0 box size in Å /, 303.15 / 30°C in K /, 0.001 / time step in ps */
-    sim.initializeAtoms(1000);
-    //sim.run(1000 / steps);
-    sim.run(1000);
+    Simulation SimulationObject(100.0, 303.15, 0.001);
+    SimulationObject.InitializeAtoms(1000);
+    SimulationObject.Run(1000);
     return 0;
 }
