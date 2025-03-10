@@ -298,13 +298,6 @@ void CellEngineVoxelSimulationSpace::GenerateNStepsOfOneChosenReactionForWholeCe
     CATCH("generating random reactions for whole cell space")
 }
 
-
-
-
-
-
-
-
 inline void GetRangeOfParticlesForRandomParticles(UniqueIdInt& StartParticleIndexParam, UniqueIdInt& EndParticleIndexParam, UniqueIdInt MaxParticleIndex)
 {
     if (EndParticleIndexParam == 0)
@@ -383,30 +376,6 @@ void CellEngineVoxelSimulationSpace::GenerateNStepsOfOneRandomReactionForBigPart
     }
     CATCH("generating random reactions for big part of cell")
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 bool CellEngineVoxelSimulationSpace::MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, const SectorPosType& CurrentSectorPos, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam)
 {

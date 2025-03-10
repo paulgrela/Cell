@@ -24,27 +24,32 @@ link_directories("${OPENMP_LIBRARIES}")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fopenmp")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
 
+find_package(MPI REQUIRED)
+set(CMAKE_CXX_COMPILE_FLAGS ${CMAKE_CXX_COMPILE_FLAGS} ${MPI_COMPILE_FLAGS})
+set(CMAKE_CXX_LINK_FLAGS ${CMAKE_CXX_LINK_FLAGS} ${MPI_LINK_FLAGS})
+include_directories(${MPI_INCLUDE_PATH})
+
 set(COMMON_LIBS ${COMMON_LIBS} ${EXTRA_LIBS})
 
 add_library(
-	sb7
-	srcsb7/sb7.cpp
-	srcsb7/sb7color.cpp
-	srcsb7/sb7ktx.cpp
-	srcsb7/sb7object.cpp
-	srcsb7/sb7shader.cpp
-	srcsb7/sb7textoverlay.cpp
-	srcsb7/gl3w.c)
+		sb7
+		srcsb7/sb7.cpp
+		srcsb7/sb7color.cpp
+		srcsb7/sb7ktx.cpp
+		srcsb7/sb7object.cpp
+		srcsb7/sb7shader.cpp
+		srcsb7/sb7textoverlay.cpp
+		srcsb7/gl3w.c)
 
 add_library(
-	imgui
-	extern/imgui/imgui.cpp
-	extern/imgui/imgui_demo.cpp
-	extern/imgui/imgui_draw.cpp
-	extern/imgui/imgui_tables.cpp
-	extern/imgui/imgui_widgets.cpp
-	extern/imgui/backends/imgui_impl_glfw.cpp
-	extern/imgui/backends/imgui_impl_opengl3.cpp)
+		imgui
+		extern/imgui/imgui.cpp
+		extern/imgui/imgui_demo.cpp
+		extern/imgui/imgui_draw.cpp
+		extern/imgui/imgui_tables.cpp
+		extern/imgui/imgui_widgets.cpp
+		extern/imgui/backends/imgui_impl_glfw.cpp
+		extern/imgui/backends/imgui_impl_opengl3.cpp)
 
 install(TARGETS sb7 DESTINATION lib/sb7)
 
@@ -210,7 +215,7 @@ endif()
 if(WIN32)
 target_link_libraries(${PROJECT_NAME} -static-libgcc -static-libstdc++ -lpthread -lglew32 -lsb7 -lglfw3 -lopengl32 -lglu32 -limgui)
 else()
-target_link_libraries(${PROJECT_NAME} -static-libgcc -static-libstdc++ -lpthread sb7 -fopenmp ${OPENGL_LIBRARIES} glfw3 X11 Xrandr Xinerama Xi Xxf86vm Xcursor GL rt dl imgui)
+target_link_libraries(${PROJECT_NAME} -static-libgcc -static-libstdc++ -lpthread sb7 -fopenmp ${OPENGL_LIBRARIES}  ${MPI_LIBRARIES} glfw3 X11 Xrandr Xinerama Xi Xxf86vm Xcursor GL rt dl imgui)
 endif()
 
 set(CMAKE_THREAD_LIBS_INIT "-lpthread")
@@ -261,7 +266,7 @@ add_executable(
 if(WIN32)
 target_link_libraries(CellEngineRunTests -static-libgcc -static-libstdc++ -lpthread -lglew32 -lsb7 -lglfw3 -lopengl32 -lglu32 -limgui)
 else()
-target_link_libraries(CellEngineRunTests -static-libgcc -static-libstdc++ -lpthread sb7 ${OPENGL_LIBRARIES} glfw3 X11 Xrandr Xinerama Xi Xxf86vm Xcursor GL rt dl imgui gtest gmock)
+target_link_libraries(CellEngineRunTests -static-libgcc -static-libstdc++ -lpthread sb7 ${OPENGL_LIBRARIES} ${MPI_LIBRARIES} glfw3 X11 Xrandr Xinerama Xi Xxf86vm Xcursor GL rt dl imgui gtest gmock)
 endif()
 
 add_test(CellEngineRunTests CellEngineRunTests)
