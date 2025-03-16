@@ -1,4 +1,5 @@
 
+#include <mpi.h>
 #include <chrono>
 
 #include "DateTimeUtils.h"
@@ -7,6 +8,8 @@
 #include "CellEngineSimulationSpace.h"
 #include "CellEngineParticlesKindsManager.h"
 #include "CellEngineSimulationParallelExecutionManager.h"
+
+#include <mpi.h>
 
 #include "CellEngineOpenGLVisualiserOfVoxelSimulationSpace.h"
 
@@ -52,11 +55,6 @@ void CellEngineSimulationParallelExecutionManager::CreateSimulationSpaceForParal
     }
     CATCH("creating simulation space for parallel execution")
 }
-
-#define FOR_EACH_THREAD_IN_XYZ \
-        for (UnsignedInt ThreadXIndex = 1; ThreadXIndex <= CellEngineConfigDataObject.NumberOfXThreadsInSimulation; ThreadXIndex++) \
-            for (UnsignedInt ThreadYIndex = 1; ThreadYIndex <= CellEngineConfigDataObject.NumberOfYThreadsInSimulation; ThreadYIndex++) \
-                for (UnsignedInt ThreadZIndex = 1; ThreadZIndex <= CellEngineConfigDataObject.NumberOfZThreadsInSimulation; ThreadZIndex++)
 
 UnsignedInt GetProcessGroupNumberVer1(const UnsignedInt ThreadXIndex, const UnsignedInt ThreadYIndex, const UnsignedInt ThreadZIndex)
 {
@@ -105,29 +103,36 @@ void CellEngineSimulationParallelExecutionManager::CreateDataEveryMPIProcessForP
     try
     {
         SignedInt MPIProcessIndex = 0;
-        FOR_EACH_THREAD_IN_XYZ
-        {
-            CurrentMPIProcessSimulationSpaceSectorsRanges.SetParameters((ThreadXIndex - 1) * CellEngineConfigDataObject.NumberOfXSectorsInOneThreadInSimulation, (ThreadYIndex - 1) * CellEngineConfigDataObject.NumberOfYSectorsInOneThreadInSimulation, (ThreadZIndex - 1) * CellEngineConfigDataObject.NumberOfZSectorsInOneThreadInSimulation, ThreadXIndex * CellEngineConfigDataObject.NumberOfXSectorsInOneThreadInSimulation, ThreadYIndex * CellEngineConfigDataObject.NumberOfYSectorsInOneThreadInSimulation, ThreadZIndex * CellEngineConfigDataObject.NumberOfZSectorsInOneThreadInSimulation);
 
-            ProcessGroupNumber = GetProcessGroupNumberVer1(ThreadXIndex, ThreadYIndex, ThreadZIndex);
+        for (UnsignedInt MPIProcessXIndex = 1; MPIProcessXIndex <= CellEngineConfigDataObject.NumberOfXThreadsInSimulation; MPIProcessXIndex++)
+            for (UnsignedInt MPIProcessYIndex = 1; MPIProcessYIndex <= CellEngineConfigDataObject.NumberOfYThreadsInSimulation; MPIProcessYIndex++)
+                for (UnsignedInt MPIProcessZIndex = 1; MPIProcessZIndex <= CellEngineConfigDataObject.NumberOfZThreadsInSimulation; MPIProcessZIndex++)
+                {
+                    if (CurrentMPIProcessIndex == MPIProcessIndex)
+                    {
+                        CurrentMPIProcessSimulationSpaceSectorsRanges.SetParameters((MPIProcessXIndex - 1) * CellEngineConfigDataObject.NumberOfXSectorsInOneThreadInSimulation, (MPIProcessYIndex - 1) * CellEngineConfigDataObject.NumberOfYSectorsInOneThreadInSimulation, (MPIProcessZIndex - 1) * CellEngineConfigDataObject.NumberOfZSectorsInOneThreadInSimulation, MPIProcessXIndex * CellEngineConfigDataObject.NumberOfXSectorsInOneThreadInSimulation, MPIProcessYIndex * CellEngineConfigDataObject.NumberOfYSectorsInOneThreadInSimulation, MPIProcessZIndex * CellEngineConfigDataObject.NumberOfZSectorsInOneThreadInSimulation);
 
-            //if (SimulationSpaceDataForThreads[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->CurrentMPIProcessIndex == MPIProcessIndex)
-            if (CurrentMPIProcessIndex == MPIProcessIndex)
-            {
-                NeigbourhProcessesIndexes[0] = GetProcessPrevNeighbour(static_cast<SignedInt>(ThreadXIndex) - 2, static_cast<SignedInt>(ThreadYIndex) - 1, static_cast<SignedInt>(ThreadZIndex) - 1);
-                NeigbourhProcessesIndexes[1] = GetProcessPrevNeighbour(static_cast<SignedInt>(ThreadXIndex) - 1, static_cast<SignedInt>(ThreadYIndex) - 2, static_cast<SignedInt>(ThreadZIndex) - 1);
-                NeigbourhProcessesIndexes[2] = GetProcessPrevNeighbour(static_cast<SignedInt>(ThreadXIndex) - 1, static_cast<SignedInt>(ThreadYIndex) - 1, static_cast<SignedInt>(ThreadZIndex) - 2);
+                        ProcessGroupNumber = GetProcessGroupNumberVer1(MPIProcessXIndex - 1, MPIProcessYIndex - 1, MPIProcessZIndex - 1);
 
-                NeigbourhProcessesIndexes[3] = GetProcessNextNeighbour(static_cast<SignedInt>(ThreadXIndex), static_cast<SignedInt>(ThreadYIndex) - 1, static_cast<SignedInt>(ThreadZIndex) - 1);
-                NeigbourhProcessesIndexes[4] = GetProcessNextNeighbour(static_cast<SignedInt>(ThreadXIndex) - 1, static_cast<SignedInt>(ThreadYIndex), static_cast<SignedInt>(ThreadZIndex) - 1);
-                NeigbourhProcessesIndexes[5] = GetProcessNextNeighbour(static_cast<SignedInt>(ThreadXIndex) - 1, static_cast<SignedInt>(ThreadYIndex) - 1, static_cast<SignedInt>(ThreadZIndex));
-            }
+                        NeigbourhProcessesIndexes[0] = GetProcessPrevNeighbour(static_cast<SignedInt>(MPIProcessXIndex) - 2, static_cast<SignedInt>(MPIProcessYIndex) - 1, static_cast<SignedInt>(MPIProcessZIndex) - 1);
+                        NeigbourhProcessesIndexes[1] = GetProcessPrevNeighbour(static_cast<SignedInt>(MPIProcessXIndex) - 1, static_cast<SignedInt>(MPIProcessYIndex) - 2, static_cast<SignedInt>(MPIProcessZIndex) - 1);
+                        NeigbourhProcessesIndexes[2] = GetProcessPrevNeighbour(static_cast<SignedInt>(MPIProcessXIndex) - 1, static_cast<SignedInt>(MPIProcessYIndex) - 1, static_cast<SignedInt>(MPIProcessZIndex) - 2);
 
-            MPIProcessIndex++;
-        }
+                        NeigbourhProcessesIndexes[3] = GetProcessNextNeighbour(static_cast<SignedInt>(MPIProcessXIndex), static_cast<SignedInt>(MPIProcessYIndex) - 1, static_cast<SignedInt>(MPIProcessZIndex) - 1);
+                        NeigbourhProcessesIndexes[4] = GetProcessNextNeighbour(static_cast<SignedInt>(MPIProcessXIndex) - 1, static_cast<SignedInt>(MPIProcessYIndex), static_cast<SignedInt>(MPIProcessZIndex) - 1);
+                        NeigbourhProcessesIndexes[5] = GetProcessNextNeighbour(static_cast<SignedInt>(MPIProcessXIndex) - 1, static_cast<SignedInt>(MPIProcessYIndex) - 1, static_cast<SignedInt>(MPIProcessZIndex));
+                    }
+
+                    MPIProcessIndex++;
+                }
     }
     CATCH("creating data for every mpi process for parallel execution")
 }
+
+#define FOR_EACH_THREAD_IN_XYZ \
+        for (UnsignedInt ThreadXIndex = 1; ThreadXIndex <= CellEngineConfigDataObject.NumberOfXThreadsInSimulation; ThreadXIndex++) \
+            for (UnsignedInt ThreadYIndex = 1; ThreadYIndex <= CellEngineConfigDataObject.NumberOfYThreadsInSimulation; ThreadYIndex++) \
+                for (UnsignedInt ThreadZIndex = 1; ThreadZIndex <= CellEngineConfigDataObject.NumberOfZThreadsInSimulation; ThreadZIndex++)
 
 #ifdef SHORTER_CODE
 void CellEngineSimulationParallelExecutionManager::JoinStatisticsFromThreads(vector<map<UnsignedInt, ReactionStatistics>>& SavedReactionsMap, const UnsignedInt SimulationStepNumber) const
@@ -422,8 +427,7 @@ void CellEngineSimulationParallelExecutionManager::GatherParticlesFromThreadsToP
     CATCH("gathering particles from threads to particles in main thread")
 }
 
-void CellEngineSimulationParallelExecutionManager::GenerateOneStepOfSimulationForWholeCellSpaceInOneThread(const UnsignedInt NumberOfStepsInside, const UnsignedInt StepOutside, const UnsignedInt ThreadXIndex, const UnsignedInt ThreadYIndex, const UnsignedInt ThreadZIndex, bool StateOfSimulationSpaceDivisionForThreads, barrier
-    <>* SyncPoint)
+void CellEngineSimulationParallelExecutionManager::GenerateOneStepOfSimulationForWholeCellSpaceInOneThread(const UnsignedInt NumberOfStepsInside, const UnsignedInt StepOutside, const UnsignedInt ThreadXIndex, const UnsignedInt ThreadYIndex, const UnsignedInt ThreadZIndex, bool StateOfSimulationSpaceDivisionForThreads, barrier<>* SyncPoint)
 {
     try
     {
@@ -579,6 +583,92 @@ void CellEngineSimulationParallelExecutionManager::GenerateNStepsOfSimulationFor
     }
     CATCH("generating n steps simulation for whole cell space in threads")
 }
+
+void CellEngineSimulationParallelExecutionManager::GenerateOneStepOfSimulationForWholeCellSpaceInMPIProcess(const UnsignedInt NumberOfStepsInside, const UnsignedInt StepOutside, const UnsignedInt ThreadXIndex, const UnsignedInt ThreadYIndex, const UnsignedInt ThreadZIndex)
+{
+    try
+    {
+        if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
+            for (UnsignedInt Step2 = 1; Step2 <= NumberOfStepsInside; Step2++)
+            {
+                LoggersManagerObject.Log(STREAM("STEP INSIDE = " << Step2 << " ThreadX = " << ThreadXIndex << " ThreadX = " << ThreadYIndex << " ThreadX = " << ThreadZIndex));
+
+                for (UnsignedInt ParticleSectorXIndex = CurrentMPIProcessSimulationSpaceSectorsRanges.StartXPos; ParticleSectorXIndex < CurrentMPIProcessSimulationSpaceSectorsRanges.EndXPos; ParticleSectorXIndex++)
+                    for (UnsignedInt ParticleSectorYIndex = CurrentMPIProcessSimulationSpaceSectorsRanges.StartYPos; ParticleSectorYIndex < CurrentMPIProcessSimulationSpaceSectorsRanges.EndYPos; ParticleSectorYIndex++)
+                        for (UnsignedInt ParticleSectorZIndex = CurrentMPIProcessSimulationSpaceSectorsRanges.StartZPos; ParticleSectorZIndex < CurrentMPIProcessSimulationSpaceSectorsRanges.EndZPos; ParticleSectorZIndex++)
+                        {
+                            LoggersManagerObject.Log(STREAM("XStart = " << CurrentMPIProcessSimulationSpaceSectorsRanges.StartXPos << " YStart = " << CurrentMPIProcessSimulationSpaceSectorsRanges.StartYPos << " ZStart = " << CurrentMPIProcessSimulationSpaceSectorsRanges.StartZPos << " XEnd = " << CurrentMPIProcessSimulationSpaceSectorsRanges.EndXPos << " YEnd = " << CurrentMPIProcessSimulationSpaceSectorsRanges.EndYPos << " ZEnd = " << CurrentMPIProcessSimulationSpaceSectorsRanges.EndZPos << " PosX = " << ParticleSectorXIndex << " PosY = " << ParticleSectorYIndex << " PosZ = " << ParticleSectorZIndex));
+
+                            if (CellEngineUseful::IsIn(CellEngineConfigDataObject.TypeOfSimulation, { CellEngineConfigData::TypesOfSimulation::BothReactionsAndDiffusion, CellEngineConfigData::TypesOfSimulation::OnlyDiffusion }))
+                                GenerateOneStepOfDiffusionForSelectedSpace(true, ParticleSectorXIndex, ParticleSectorYIndex, ParticleSectorZIndex, CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace);
+                        }
+
+                MPI_Barrier(MPI_COMM_WORLD);
+
+                for (UnsignedInt ParticleSectorXIndex = CurrentMPIProcessSimulationSpaceSectorsRanges.StartXPos; ParticleSectorXIndex < CurrentMPIProcessSimulationSpaceSectorsRanges.EndXPos; ParticleSectorXIndex++)
+                    for (UnsignedInt ParticleSectorYIndex = CurrentMPIProcessSimulationSpaceSectorsRanges.StartYPos; ParticleSectorYIndex < CurrentMPIProcessSimulationSpaceSectorsRanges.EndYPos; ParticleSectorYIndex++)
+                        for (UnsignedInt ParticleSectorZIndex = CurrentMPIProcessSimulationSpaceSectorsRanges.StartZPos; ParticleSectorZIndex < CurrentMPIProcessSimulationSpaceSectorsRanges.EndZPos; ParticleSectorZIndex++)
+                        {
+                            LoggersManagerObject.Log(STREAM("XStart = " << CurrentMPIProcessSimulationSpaceSectorsRanges.StartXPos << " YStart = " << CurrentMPIProcessSimulationSpaceSectorsRanges.StartYPos << " ZStart = " << CurrentMPIProcessSimulationSpaceSectorsRanges.StartZPos << " XEnd = " << CurrentMPIProcessSimulationSpaceSectorsRanges.EndXPos << " YEnd = " << CurrentMPIProcessSimulationSpaceSectorsRanges.EndYPos << " ZEnd = " << CurrentMPIProcessSimulationSpaceSectorsRanges.EndZPos << " PosX = " << ParticleSectorXIndex << " PosY = " << ParticleSectorYIndex << " PosZ = " << ParticleSectorZIndex));
+
+                            if (CellEngineUseful::IsIn(CellEngineConfigDataObject.TypeOfSimulation, { CellEngineConfigData::TypesOfSimulation::BothReactionsAndDiffusion }))
+                                GenerateOneRandomReactionForSelectedSpace(ParticleSectorXIndex, ParticleSectorYIndex, ParticleSectorZIndex, CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace, false);
+                            if (CellEngineUseful::IsIn(CellEngineConfigDataObject.TypeOfSimulation, { CellEngineConfigData::TypesOfSimulation::OnlyReactions }))
+                                GenerateOneRandomReactionForSelectedSpace(ParticleSectorXIndex, ParticleSectorYIndex, ParticleSectorZIndex, CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace, true);
+                        }
+            }
+    }
+    CATCH("generating n steps simulation for whole cell space in threads")
+}
+
+void CellEngineSimulationParallelExecutionManager::GenerateNStepsOfSimulationForWholeCellSpaceInMPIProcess(const UnsignedInt NumberOfStepsOutside, const UnsignedInt NumberOfStepsInside, const ThreadIdType CurrentThreadIndexParam, const UnsignedInt ThreadXIndexParam, const UnsignedInt ThreadYIndexParam, const UnsignedInt ThreadZIndexParam)
+{
+    try
+    {
+        for (UnsignedInt StepOutside = 1; StepOutside <= NumberOfStepsOutside; StepOutside++)
+        {
+            GenerateOneStepOfSimulationForWholeCellSpaceInMPIProcess(NumberOfStepsInside, StepOutside, ThreadXIndexParam, ThreadYIndexParam, ThreadZIndexParam);
+
+            MPI_Barrier(MPI_COMM_WORLD);
+        }
+    }
+    CATCH("generating n steps of simulation for whole cell space in one thread")
+}
+
+void CellEngineSimulationParallelExecutionManager::GenerateNStepsOfSimulationForWholeCellSpaceInMPIProcess(const UnsignedInt NumberOfStepsOutside, const UnsignedInt NumberOfStepsInside)
+{
+    try
+    {
+        CellEngineConfigDataObject.MultiThreaded = true;
+
+        LoggersManagerObject.Log(STREAM("MaxParticleIndex = " << MaxParticleIndex));
+
+        SetZeroForAllParallelExecutionVariables();
+
+        std::barrier SyncPoint(CellEngineConfigDataObject.NumberOfXThreadsInSimulation * CellEngineConfigDataObject.NumberOfYThreadsInSimulation * CellEngineConfigDataObject.NumberOfZThreadsInSimulation);
+
+        LoggersManagerObject.Log(STREAM("START THREADS"));
+
+        const auto start_time = chrono::high_resolution_clock::now();
+
+        CellEngineUseful::SwitchOffLogs();
+
+        GenerateNStepsOfSimulationForWholeCellSpaceInMPIProcess(NumberOfStepsOutside, NumberOfStepsInside, CurrentMPIProcessIndex, 0, 0, 0);
+
+        CellEngineUseful::SwitchOnLogs();
+
+        const auto stop_time = chrono::high_resolution_clock::now();
+
+        string ResultText = "Execution in threads for steps outside = " + to_string(NumberOfStepsOutside) + " and steps inside = " + to_string(NumberOfStepsInside) + " has taken time: ";
+        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, ResultText.c_str(),"Execution in threads")));
+
+        LoggersManagerObject.Log(STREAM("END THREADS"));
+
+        GatherAllParallelExecutionVariables();
+    }
+    CATCH("generating n steps simulation for whole cell space in mpi process")
+}
+
 
 void CellEngineSimulationParallelExecutionManager::SetZeroForAllParallelExecutionVariables()
 {

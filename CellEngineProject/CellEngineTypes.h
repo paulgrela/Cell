@@ -105,12 +105,12 @@ public:
 public:
     void SetParameters(const float StartXPosParam, const float StartYPosParam, const float StartZPosParam, const float EndXPosParam, const float EndYPosParam, const float EndZPosParam)
     {
-        StartXPos = StartXPosParam;
-        StartYPos = StartYPosParam;
-        StartZPos = StartZPosParam;
-        EndXPos = EndXPosParam;
-        EndYPos = EndYPosParam;
-        EndZPos = EndZPosParam;
+        StartXPos = static_cast<UnsignedInt>(StartXPosParam);
+        StartYPos = static_cast<UnsignedInt>(StartYPosParam);
+        StartZPos = static_cast<UnsignedInt>(StartZPosParam);
+        EndXPos = static_cast<UnsignedInt>(EndXPosParam);
+        EndYPos = static_cast<UnsignedInt>(EndYPosParam);
+        EndZPos = static_cast<UnsignedInt>(EndZPosParam);
     }
 };
 
