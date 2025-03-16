@@ -80,6 +80,7 @@ template <class Particle>
 struct ParticlesContainerInternal
 {
 public:
+    UnsignedInt CurrentMPIProcessIndex{ 0 };
     CurrentThreadPosType CurrentThreadPos{ 1, 1, 1 };
 public:
     std::stack<UniqueIdInt> FreeIndexesOfParticles;
@@ -91,6 +92,27 @@ using ParticlesContainer = std::vector<std::vector<std::vector<ParticlesContaine
 
 template <class SimulationSpace>
 using SimulationSpaceForParallelExecutionContainer = std::vector<std::vector<std::vector<std::shared_ptr<SimulationSpace>>>>;
+
+struct SimulationSpaceSectorsRanges
+{
+public:
+    UnsignedInt StartXPos;
+    UnsignedInt StartYPos;
+    UnsignedInt StartZPos;
+    UnsignedInt EndXPos;
+    UnsignedInt EndYPos;
+    UnsignedInt EndZPos;
+public:
+    void SetParameters(const float StartXPosParam, const float StartYPosParam, const float StartZPosParam, const float EndXPosParam, const float EndYPosParam, const float EndZPosParam)
+    {
+        StartXPos = StartXPosParam;
+        StartYPos = StartYPosParam;
+        StartZPos = StartZPosParam;
+        EndXPos = EndXPosParam;
+        EndYPos = EndYPosParam;
+        EndZPos = EndZPosParam;
+    }
+};
 
 struct SimulationSpaceSectorBounds
 {
@@ -154,6 +176,15 @@ public:
 
         return *this;
     }
+};
+
+struct MPIParticleSenderStruct
+{
+    UniqueIdInt ParticleIndex;
+    EntityIdInt ParticleKindId;
+    UnsignedInt ProcessIndex;
+    UnsignedInt SectorIndex;
+    PosType NewPosition;
 };
 
 enum class TypesOfLookingForParticlesInProximity : UnsignedInt

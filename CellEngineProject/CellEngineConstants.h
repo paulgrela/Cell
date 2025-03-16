@@ -54,4 +54,6 @@ constexpr float AtomRadius = 1.0;
 
 constexpr std::string JCVISYN3APredStr = "JCVISYN3A_";
 
+constexpr UnsignedInt NumberOfAllNeighbours = 6;
+
 #endif

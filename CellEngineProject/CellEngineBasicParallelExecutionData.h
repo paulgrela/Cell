@@ -2,12 +2,19 @@
 #ifndef CELL_ENGINE_BASIC_PARALLEL_EXECUTION_DATA_H
 #define CELL_ENGINE_BASIC_PARALLEL_EXECUTION_DATA_H
 
+#include <queue>
 #include "CellEngineTypes.h"
 #include "CellEngineParticle.h"
 
 class CellEngineBasicParallelExecutionData
 {
     friend class CellEngineSimulationParallelExecutionManager;
+protected:
+    int CurrentMPIProcessIndex{ 0 };
+    UnsignedInt ProcessGroupNumber;
+    SignedInt NeigbourhProcessesIndexes[NumberOfAllNeighbours];
+    std::queue<MPIParticleSenderStruct> QueueOfParticlesToSendToNeigbourhProcesses[NumberOfAllNeighbours];
+    SimulationSpaceSectorsRanges CurrentMPIProcessSimulationSpaceSectorsRanges;
 protected:
     ThreadIdType CurrentThreadIndex{ 0 };
     CurrentThreadPosType CurrentThreadPos{ 1, 1, 1 };

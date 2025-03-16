@@ -798,12 +798,14 @@ int main(const int argc, const char ** argv)
     //MPIMessagesTest7(true);
 
     //MPIMessagesTest6_2_1(true);
-    MPIMessagesTest6_2_2(true);
+
+    //MPIMessagesTest6_2_2(true);
+
     //MPIMessagesTest6_3(true);
 
     //TestExecutionsLongMessagesTimes();
 
-    //MainProgram();
+    MainProgram(argc, argv);
 
     MPI_Finalize();
 

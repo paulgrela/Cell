@@ -24,6 +24,8 @@ CellEngineFullAtomSimulationSpace::CellEngineFullAtomSimulationSpace(ParticlesCo
 {
     try
     {
+        CurrentMPIProcessIndex = ThreadIndexParam;
+
         CurrentThreadIndex = ThreadIndexParam;
         CurrentThreadPos = CurrentThreadPosParam;
 

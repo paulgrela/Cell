@@ -6,12 +6,17 @@
 
 constexpr bool PrintInfoWarning = false;
 
-void CellEngineParticlesFullAtomOperations::SetProperThreadIndexForEveryParticlesSector(ParticlesContainer<Particle>& Particles)
+void CellEngineParticlesFullAtomOperations::SetProperThreadIndexForEveryParticlesSector(ParticlesContainer<Particle>& ParticlesSectors)
 {
     try
     {
+        UnsignedInt MPIProcessIndex = 0 ;
         FOR_EACH_PARTICLE_IN_XYZ_ONLY
-            Particles[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].CurrentThreadPos = { ParticleSectorXIndex / CellEngineConfigDataObject.NumberOfXSectorsInOneThreadInSimulation + 1, ParticleSectorYIndex / CellEngineConfigDataObject.NumberOfYSectorsInOneThreadInSimulation + 1, ParticleSectorZIndex / CellEngineConfigDataObject.NumberOfZSectorsInOneThreadInSimulation + 1 };
+        {
+            ParticlesSectors[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].CurrentThreadPos = { ParticleSectorXIndex / CellEngineConfigDataObject.NumberOfXSectorsInOneThreadInSimulation + 1, ParticleSectorYIndex / CellEngineConfigDataObject.NumberOfYSectorsInOneThreadInSimulation + 1, ParticleSectorZIndex / CellEngineConfigDataObject.NumberOfZSectorsInOneThreadInSimulation + 1 };
+            ParticlesSectors[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].CurrentMPIProcessIndex = MPIProcessIndex;
+            MPIProcessIndex++;
+        }
     }
     CATCH("setting proper thread index for every particles sector")
 }

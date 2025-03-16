@@ -13,7 +13,7 @@
 class CellEngineParticlesFullAtomOperations
 {
 public:
-    static void SetProperThreadIndexForEveryParticlesSector(ParticlesContainer<Particle>& Particles);
+    static void SetProperThreadIndexForEveryParticlesSector(ParticlesContainer<Particle>& ParticlesSectors);
 protected:
     static void MoveParticleByVector(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, RealType VectorX, RealType VectorY, RealType VectorZ);
 protected:

@@ -58,6 +58,77 @@ void CellEngineSimulationParallelExecutionManager::CreateSimulationSpaceForParal
             for (UnsignedInt ThreadYIndex = 1; ThreadYIndex <= CellEngineConfigDataObject.NumberOfYThreadsInSimulation; ThreadYIndex++) \
                 for (UnsignedInt ThreadZIndex = 1; ThreadZIndex <= CellEngineConfigDataObject.NumberOfZThreadsInSimulation; ThreadZIndex++)
 
+UnsignedInt GetProcessGroupNumberVer1(const UnsignedInt ThreadXIndex, const UnsignedInt ThreadYIndex, const UnsignedInt ThreadZIndex)
+{
+    if (ThreadZIndex % 2 == 0)
+    {
+        if (ThreadXIndex % 2 != 0 || ThreadYIndex % 2 != 0)
+            return 0;
+        else
+            return 1;
+    }
+    else
+    {
+        if ((ThreadXIndex % 2 == 0 && ThreadYIndex % 2 == 0) || (ThreadXIndex == ThreadYIndex))
+            return 0;
+        else
+            return 1;
+    }
+}
+
+UnsignedInt GetProcessGroupNumberVer2(const UnsignedInt ThreadXIndex, const UnsignedInt ThreadYIndex, const UnsignedInt ThreadZIndex)
+{
+    if (ThreadZIndex % 2 == 0)
+        return ThreadXIndex % 2 != ThreadYIndex % 2;
+    else
+        return ThreadXIndex % 2 == ThreadYIndex % 2;
+}
+
+SignedInt CellEngineSimulationParallelExecutionManager::GetProcessPrevNeighbour(const SignedInt ThreadXIndex, const SignedInt ThreadYIndex, const SignedInt ThreadZIndex) const
+{
+    if (ThreadXIndex >= 0 && ThreadYIndex >= 0 && ThreadZIndex >= 0)
+        return SimulationSpaceDataForThreads[ThreadXIndex][ThreadYIndex][ThreadZIndex]->CurrentMPIProcessIndex;
+    else
+        return -1;
+}
+
+SignedInt CellEngineSimulationParallelExecutionManager::GetProcessNextNeighbour(const SignedInt ThreadXIndex, const SignedInt ThreadYIndex, const SignedInt ThreadZIndex) const
+{
+    if (static_cast<SignedInt>(ThreadXIndex) <= CellEngineConfigDataObject.NumberOfXThreadsInSimulation && static_cast<SignedInt>(ThreadYIndex) <= CellEngineConfigDataObject.NumberOfYThreadsInSimulation && static_cast<SignedInt>(ThreadZIndex) <= CellEngineConfigDataObject.NumberOfZThreadsInSimulation)
+        return SimulationSpaceDataForThreads[ThreadXIndex][ThreadYIndex][ThreadZIndex]->CurrentMPIProcessIndex;
+    else
+        return -1;
+}
+
+void CellEngineSimulationParallelExecutionManager::CreateDataEveryMPIProcessForParallelExecution()
+{
+    try
+    {
+        SignedInt MPIProcessIndex = 0;
+        FOR_EACH_THREAD_IN_XYZ
+        {
+            CurrentMPIProcessSimulationSpaceSectorsRanges.SetParameters((ThreadXIndex - 1) * CellEngineConfigDataObject.NumberOfXSectorsInOneThreadInSimulation, (ThreadYIndex - 1) * CellEngineConfigDataObject.NumberOfYSectorsInOneThreadInSimulation, (ThreadZIndex - 1) * CellEngineConfigDataObject.NumberOfZSectorsInOneThreadInSimulation, ThreadXIndex * CellEngineConfigDataObject.NumberOfXSectorsInOneThreadInSimulation, ThreadYIndex * CellEngineConfigDataObject.NumberOfYSectorsInOneThreadInSimulation, ThreadZIndex * CellEngineConfigDataObject.NumberOfZSectorsInOneThreadInSimulation);
+
+            ProcessGroupNumber = GetProcessGroupNumberVer1(ThreadXIndex, ThreadYIndex, ThreadZIndex);
+
+            //if (SimulationSpaceDataForThreads[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->CurrentMPIProcessIndex == MPIProcessIndex)
+            if (CurrentMPIProcessIndex == MPIProcessIndex)
+            {
+                NeigbourhProcessesIndexes[0] = GetProcessPrevNeighbour(static_cast<SignedInt>(ThreadXIndex) - 2, static_cast<SignedInt>(ThreadYIndex) - 1, static_cast<SignedInt>(ThreadZIndex) - 1);
+                NeigbourhProcessesIndexes[1] = GetProcessPrevNeighbour(static_cast<SignedInt>(ThreadXIndex) - 1, static_cast<SignedInt>(ThreadYIndex) - 2, static_cast<SignedInt>(ThreadZIndex) - 1);
+                NeigbourhProcessesIndexes[2] = GetProcessPrevNeighbour(static_cast<SignedInt>(ThreadXIndex) - 1, static_cast<SignedInt>(ThreadYIndex) - 1, static_cast<SignedInt>(ThreadZIndex) - 2);
+
+                NeigbourhProcessesIndexes[3] = GetProcessNextNeighbour(static_cast<SignedInt>(ThreadXIndex), static_cast<SignedInt>(ThreadYIndex) - 1, static_cast<SignedInt>(ThreadZIndex) - 1);
+                NeigbourhProcessesIndexes[4] = GetProcessNextNeighbour(static_cast<SignedInt>(ThreadXIndex) - 1, static_cast<SignedInt>(ThreadYIndex), static_cast<SignedInt>(ThreadZIndex) - 1);
+                NeigbourhProcessesIndexes[5] = GetProcessNextNeighbour(static_cast<SignedInt>(ThreadXIndex) - 1, static_cast<SignedInt>(ThreadYIndex) - 1, static_cast<SignedInt>(ThreadZIndex));
+            }
+
+            MPIProcessIndex++;
+        }
+    }
+    CATCH("creating data for every mpi process for parallel execution")
+}
+
 #ifdef SHORTER_CODE
 void CellEngineSimulationParallelExecutionManager::JoinStatisticsFromThreads(vector<map<UnsignedInt, ReactionStatistics>>& SavedReactionsMap, const UnsignedInt SimulationStepNumber) const
 {
