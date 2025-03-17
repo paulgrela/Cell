@@ -13,7 +13,7 @@ protected:
     UnsignedInt CurrentMPIProcessIndex{ 0 };
     UnsignedInt ProcessGroupNumber;
     SignedInt NeigbourhProcessesIndexes[NumberOfAllNeighbours];
-    std::queue<MPIParticleSenderStruct> QueueOfParticlesToSendToNeigbourhProcesses[NumberOfAllNeighbours];
+    std::vector<MPIParticleSenderStruct> QueueOfParticlesToSendToNeigbourhProcesses[NumberOfAllNeighbours];
     SimulationSpaceSectorsRanges CurrentMPIProcessSimulationSpaceSectorsRanges;
 protected:
     ThreadIdType CurrentThreadIndex{ 0 };

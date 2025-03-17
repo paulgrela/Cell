@@ -599,8 +599,10 @@ void CellEngineSimulationParallelExecutionManager::GenerateOneStepOfSimulationFo
                         {
                             LoggersManagerObject.Log(STREAM("XStart = " << CurrentMPIProcessSimulationSpaceSectorsRanges.StartXPos << " YStart = " << CurrentMPIProcessSimulationSpaceSectorsRanges.StartYPos << " ZStart = " << CurrentMPIProcessSimulationSpaceSectorsRanges.StartZPos << " XEnd = " << CurrentMPIProcessSimulationSpaceSectorsRanges.EndXPos << " YEnd = " << CurrentMPIProcessSimulationSpaceSectorsRanges.EndYPos << " ZEnd = " << CurrentMPIProcessSimulationSpaceSectorsRanges.EndZPos << " PosX = " << ParticleSectorXIndex << " PosY = " << ParticleSectorYIndex << " PosZ = " << ParticleSectorZIndex));
 
-                            if (CellEngineUseful::IsIn(CellEngineConfigDataObject.TypeOfSimulation, { CellEngineConfigData::TypesOfSimulation::BothReactionsAndDiffusion, CellEngineConfigData::TypesOfSimulation::OnlyDiffusion }))
-                                GenerateOneStepOfDiffusionForSelectedSpace(true, ParticleSectorXIndex, ParticleSectorYIndex, ParticleSectorZIndex, CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace);
+                            if (CellEngineUseful::IsIn(CellEngineConfigDataObject.TypeOfSimulation, { CellEngineConfigData::TypesOfSimulation::BothReactionsAndDiffusion }))
+                                GenerateOneRandomReactionForSelectedSpace(ParticleSectorXIndex, ParticleSectorYIndex, ParticleSectorZIndex, CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace, false);
+                            if (CellEngineUseful::IsIn(CellEngineConfigDataObject.TypeOfSimulation, { CellEngineConfigData::TypesOfSimulation::OnlyReactions }))
+                                GenerateOneRandomReactionForSelectedSpace(ParticleSectorXIndex, ParticleSectorYIndex, ParticleSectorZIndex, CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace, true);
                         }
 
                 MPI_Barrier(MPI_COMM_WORLD);
@@ -611,11 +613,11 @@ void CellEngineSimulationParallelExecutionManager::GenerateOneStepOfSimulationFo
                         {
                             LoggersManagerObject.Log(STREAM("XStart = " << CurrentMPIProcessSimulationSpaceSectorsRanges.StartXPos << " YStart = " << CurrentMPIProcessSimulationSpaceSectorsRanges.StartYPos << " ZStart = " << CurrentMPIProcessSimulationSpaceSectorsRanges.StartZPos << " XEnd = " << CurrentMPIProcessSimulationSpaceSectorsRanges.EndXPos << " YEnd = " << CurrentMPIProcessSimulationSpaceSectorsRanges.EndYPos << " ZEnd = " << CurrentMPIProcessSimulationSpaceSectorsRanges.EndZPos << " PosX = " << ParticleSectorXIndex << " PosY = " << ParticleSectorYIndex << " PosZ = " << ParticleSectorZIndex));
 
-                            if (CellEngineUseful::IsIn(CellEngineConfigDataObject.TypeOfSimulation, { CellEngineConfigData::TypesOfSimulation::BothReactionsAndDiffusion }))
-                                GenerateOneRandomReactionForSelectedSpace(ParticleSectorXIndex, ParticleSectorYIndex, ParticleSectorZIndex, CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace, false);
-                            if (CellEngineUseful::IsIn(CellEngineConfigDataObject.TypeOfSimulation, { CellEngineConfigData::TypesOfSimulation::OnlyReactions }))
-                                GenerateOneRandomReactionForSelectedSpace(ParticleSectorXIndex, ParticleSectorYIndex, ParticleSectorZIndex, CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace, true);
+                            if (CellEngineUseful::IsIn(CellEngineConfigDataObject.TypeOfSimulation, { CellEngineConfigData::TypesOfSimulation::BothReactionsAndDiffusion, CellEngineConfigData::TypesOfSimulation::OnlyDiffusion }))
+                                GenerateOneStepOfDiffusionForSelectedSpace(true, ParticleSectorXIndex, ParticleSectorYIndex, ParticleSectorZIndex, CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace);
                         }
+
+                MPI_Barrier(MPI_COMM_WORLD);
             }
     }
     CATCH("generating n steps simulation for whole cell space in threads")
@@ -626,11 +628,7 @@ void CellEngineSimulationParallelExecutionManager::GenerateNStepsOfSimulationFor
     try
     {
         for (UnsignedInt StepOutside = 1; StepOutside <= NumberOfStepsOutside; StepOutside++)
-        {
             GenerateOneStepOfSimulationForWholeCellSpaceInMPIProcess(NumberOfStepsInside, StepOutside, ThreadXIndexParam, ThreadYIndexParam, ThreadZIndexParam);
-
-            MPI_Barrier(MPI_COMM_WORLD);
-        }
     }
     CATCH("generating n steps of simulation for whole cell space in one thread")
 }
@@ -669,6 +667,83 @@ void CellEngineSimulationParallelExecutionManager::GenerateNStepsOfSimulationFor
     CATCH("generating n steps simulation for whole cell space in mpi process")
 }
 
+bool CheckInsertOfParticle()
+{
+    return true;
+}
+
+void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIProcesses()
+{
+    try
+    {
+        for (UnsignedInt NeigbourhProcessIndex = 0; NeigbourhProcessIndex < NumberOfAllNeighbours; NeigbourhProcessIndex++)
+            if (QueueOfParticlesToSendToNeigbourhProcesses[NeigbourhProcessIndex].empty() == false)
+            {
+                MPI_Request request = MPI_REQUEST_NULL;
+                MPI_Isend(QueueOfParticlesToSendToNeigbourhProcesses[NeigbourhProcessIndex].data(), QueueOfParticlesToSendToNeigbourhProcesses[NeigbourhProcessIndex].size() * sizeof(MPIParticleSenderStruct), MPI_INT, NeigbourhProcessesIndexes[NeigbourhProcessIndex], 0, MPI_COMM_WORLD, &request);
+                QueueOfParticlesToSendToNeigbourhProcesses[NeigbourhProcessIndex].clear();
+            }
+            else
+            {
+                MPI_Request request = MPI_REQUEST_NULL;
+                int SentValue = 0;
+                MPI_Isend(&SentValue, 1, MPI_INT, NeigbourhProcessesIndexes[NeigbourhProcessIndex], 0, MPI_COMM_WORLD, &request);
+            }
+
+        int Counter = 0;
+        while (Counter < NumberOfAllNeighbours)
+        {
+            MPI_Status status;
+
+            int flag = 0;
+            MPI_Iprobe(MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &flag, &status);
+
+            int count;
+            MPI_Get_count(&status, MPI_INT, &count);
+
+            if (flag == true)
+            {
+                vector<UniqueIdInt> ReceivedConfirmationOfParticlesToRemove(count / sizeof(UniqueIdInt));
+                MPI_Recv(ReceivedConfirmationOfParticlesToRemove.data(), count, MPI_INT,MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &status);
+                for (const auto& ParticleToRemoveConfirmedIndex : ReceivedConfirmationOfParticlesToRemove)
+                    RemoveParticle(ParticleToRemoveConfirmedIndex, true);
+
+                Counter++;
+            }
+        }
+
+        MPI_Barrier(MPI_COMM_WORLD);
+
+        while (Counter < NumberOfAllNeighbours)
+        {
+            MPI_Status status;
+
+            int flag = 0;
+            MPI_Iprobe(MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &flag, &status);
+
+            int count;
+            MPI_Get_count(&status, MPI_INT, &count);
+
+            if (flag == true)
+            {
+                vector<MPIParticleSenderStruct> ReceivedParticlesIndexesToInsert(count / sizeof(MPIParticleSenderStruct));
+                MPI_Recv(ReceivedParticlesIndexesToInsert.data(), count, MPI_INT,MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &status);
+
+                vector<UniqueIdInt> ReceivedConfirmationOfParticlesToRemove;
+                for (const auto& ReceivedParticleIndexToInsert : ReceivedParticlesIndexesToInsert)
+                    if (CheckInsertOfParticle() == true)
+                        ReceivedConfirmationOfParticlesToRemove.emplace_back(ReceivedParticleIndexToInsert.ParticleIndex);
+
+                MPI_Request request = MPI_REQUEST_NULL;
+                MPI_Isend(ReceivedConfirmationOfParticlesToRemove.data(), ReceivedConfirmationOfParticlesToRemove.size() * sizeof(UniqueIdInt), MPI_INT, ReceivedParticlesIndexesToInsert[0].ProcessIndex, 0, MPI_COMM_WORLD, &request);
+
+                Counter++;
+            }
+        }
+
+    }
+    CATCH("exchange particles between mpi processes")
+}
 
 void CellEngineSimulationParallelExecutionManager::SetZeroForAllParallelExecutionVariables()
 {
