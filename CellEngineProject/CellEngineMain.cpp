@@ -514,6 +514,185 @@ void MPIMessagesTest6_2_1(const bool PrintBool)
     }
 }
 
+void MPIMessagesTest6_2_1_1(const bool PrintBool)
+{
+    int size, rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
+    MPI_Status status;
+
+    MPI_Request request = MPI_REQUEST_NULL;
+
+    int r[8][9] = { { 8,8,8, 8,8,8, 8,8,8 }, { 1,1,1, 1,1,1, 1,1,1 }, { 2,2,2, 2,2,2, 2,2,2 }, { 3,3,3, 3,3,3, 3,3,3 }, { 4,4,4, 4,4,4, 4,4,4 }, { 5,5,5, 5,5,5, 5,5,5 }, { 6,6,6, 6,6,6, 6,6,6 }, { 7,7,7, 7,7,7, 7,7,7 } };
+
+    int rr[8][9];
+
+    for (auto& r1 : rr)
+        for (auto& r2 : r1)
+            r2 = 0;
+
+    for (int p = 0; p < 8; p++)
+    {
+        if (p < 7)
+        {
+            r[p][0] = rank;
+            MPI_Isend(&r[p][0], (p + 1) * sizeof(int), MPI_CHAR, p + 1, 0, MPI_COMM_WORLD, &request);
+            if (PrintBool == true)
+                printf("process %d sent %d to dest %d\n", rank, p + 1, p + 1);
+        }
+        else
+        {
+            r[0][0] = rank;
+            MPI_Isend(&r[0][0], (p + 1) * sizeof(int), MPI_CHAR, 0, 0, MPI_COMM_WORLD, &request);
+            if (PrintBool == true)
+                printf("process %d sent %d to dest %d\n", rank, p + 1, 0);
+        }
+    }
+
+    int Counter = 0;
+    while (Counter < 8)
+    {
+        int flag = 0;
+        MPI_Iprobe(MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &flag, &status);
+
+        int count;
+        MPI_Get_count(&status, MPI_CHAR, &count);
+
+        if (flag == true)
+        {
+            int rrr[9];
+            MPI_Recv(&rrr, count, MPI_CHAR, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &status);
+
+            int ProcessSenderOfMessage = rrr[0];
+            for (int k = 0; k < count / 4; k++)
+                rr[ProcessSenderOfMessage][k] = rrr[k];
+
+            if (PrintBool == true)
+            {
+                printf("process %d got %d bytes value %d from process %d\n", rank, count, rr[ProcessSenderOfMessage][0], ProcessSenderOfMessage);
+                for (int k = 0; k < count / 4; k++)
+                    cout << rr[ProcessSenderOfMessage][k] << "|";
+                cout << endl;
+            }
+
+            Counter++;
+        }
+    }
+
+    MPI_Barrier(MPI_COMM_WORLD);
+
+    if (PrintBool == true)
+    {
+        cout << "Process rank = " << rank << " got message" << endl;
+        for (const auto& r1 : rr)
+        {
+            cout << rank << " ";
+            for (const auto& r2 : r1)
+                cout << r2 << ",";
+
+            cout << endl;
+        }
+    }
+}
+
+void MPIMessagesTest6_2_1_1_1(const bool PrintBool)
+{
+    int size, rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
+    MPI_Status status;
+
+    MPI_Request request = MPI_REQUEST_NULL;
+
+    struct ALFA{ int a1; int a2; int a3; int a4; int a5; int a6; int a7; int a8; int a9; };
+
+    ALFA r[8] = { { 8,8,8, 8,8,8, 8,8,8 }, { 1,1,1, 1,1,1, 1,1,1 }, { 2,2,2, 2,2,2, 2,2,2 }, { 3,3,3, 3,3,3, 3,3,3 }, { 4,4,4, 4,4,4, 4,4,4 }, { 5,5,5, 5,5,5, 5,5,5 }, { 6,6,6, 6,6,6, 6,6,6 }, { 7,7,7, 7,7,7, 7,7,7 } };
+
+    ALFA rr[8];
+
+    for (auto& r1 : rr)
+        r1 = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+    for (int p = 0; p < 8; p++)
+    {
+        if (p < 7)
+        {
+            r[p].a1 = rank;
+            MPI_Isend(&r[p], (p + 1) * sizeof(int), MPI_CHAR, p + 1, 0, MPI_COMM_WORLD, &request);
+            if (PrintBool == true)
+                printf("process %d sent %d to dest %d\n", rank, p + 1, p + 1);
+        }
+        else
+        {
+            r[0].a1 = rank;
+            MPI_Isend(&r[0], (p + 1) * sizeof(int), MPI_CHAR, 0, 0, MPI_COMM_WORLD, &request);
+            if (PrintBool == true)
+                printf("process %d sent %d to dest %d\n", rank, p + 1, 0);
+        }
+    }
+
+    int Counter = 0;
+    while (Counter < 8)
+    {
+        int flag = 0;
+        MPI_Iprobe(MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &flag, &status);
+
+        int count;
+        MPI_Get_count(&status, MPI_CHAR, &count);
+
+        if (flag == true)
+        {
+            ALFA rrr;
+            MPI_Recv(&rrr, count, MPI_CHAR, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &status);
+
+            int ProcessSenderOfMessage = rrr.a1;
+
+            mempcpy(&rr[ProcessSenderOfMessage], &rrr, count);
+
+            if (PrintBool == true)
+            {
+                printf("process %d got %d bytes value %d from process %d\n", rank, count, rr[ProcessSenderOfMessage].a1, ProcessSenderOfMessage);
+
+                cout << rr[ProcessSenderOfMessage].a1 << "|";
+                cout << rr[ProcessSenderOfMessage].a2 << "|";
+                cout << rr[ProcessSenderOfMessage].a3 << "|";
+                cout << rr[ProcessSenderOfMessage].a4 << "|";
+                cout << rr[ProcessSenderOfMessage].a5 << "|";
+                cout << rr[ProcessSenderOfMessage].a6 << "|";
+                cout << rr[ProcessSenderOfMessage].a7 << "|";
+                cout << rr[ProcessSenderOfMessage].a8 << "|";
+                cout << rr[ProcessSenderOfMessage].a9 << "|";
+                cout << endl;
+            }
+
+            Counter++;
+        }
+    }
+
+    MPI_Barrier(MPI_COMM_WORLD);
+
+    if (PrintBool == true)
+    {
+        cout << "Process rank = " << rank << " got message" << endl;
+        for (const auto& r1 : rr)
+        {
+            cout << rank << " ";
+
+            cout << r1.a1 << ",";
+            cout << r1.a2 << ",";
+            cout << r1.a3 << ",";
+            cout << r1.a4 << ",";
+            cout << r1.a5 << ",";
+            cout << r1.a6 << ",";
+            cout << r1.a7 << ",";
+            cout << r1.a8 << ",";
+            cout << r1.a9 << ",";
+
+            cout << endl;
+        }
+    }
+}
+
 void MPIMessagesTest6_2_2(const bool PrintBool)
 {
     int size, rank;
@@ -800,13 +979,17 @@ int main(const int argc, const char ** argv)
 
     //MPIMessagesTest6_2_1(true);
 
+    //MPIMessagesTest6_2_1_1(true);
+
+    MPIMessagesTest6_2_1_1_1(true);
+
     //MPIMessagesTest6_2_2(true);
 
     //MPIMessagesTest6_3(true);
 
     //TestExecutionsLongMessagesTimes();
 
-    MainProgram(argc, argv);
+    //MainProgram(argc, argv);
 
     MPI_Finalize();
 
