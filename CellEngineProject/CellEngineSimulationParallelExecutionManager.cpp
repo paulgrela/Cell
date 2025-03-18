@@ -667,11 +667,6 @@ void CellEngineSimulationParallelExecutionManager::GenerateNStepsOfSimulationFor
     CATCH("generating n steps simulation for whole cell space in mpi process")
 }
 
-bool CheckInsertOfParticle()
-{
-    return true;
-}
-
 void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIProcesses()
 {
     try
@@ -731,7 +726,7 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIPr
 
                 vector<UniqueIdInt> ReceivedConfirmationOfParticlesToRemove;
                 for (const auto& ReceivedParticleIndexToInsert : ReceivedParticlesIndexesToInsert)
-                    if (CheckInsertOfParticle() == true)
+                    if (CheckInsertOfParticle(ReceivedParticleIndexToInsert) == true)
                         ReceivedConfirmationOfParticlesToRemove.emplace_back(ReceivedParticleIndexToInsert.ParticleIndex);
 
                 MPI_Request request = MPI_REQUEST_NULL;

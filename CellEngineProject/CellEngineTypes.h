@@ -184,6 +184,7 @@ struct MPIParticleSenderStruct
     EntityIdInt ParticleKindId;
     UnsignedInt ProcessIndex;
     UnsignedInt SectorIndex;
+    SectorPosType SectorPos;
     PosType NewPosition;
 };
 

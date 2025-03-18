@@ -204,6 +204,22 @@ bool CellEngineFullAtomSimulationSpace::CheckIfSpaceIsEmptyAndIsInBoundsForParti
     return CheckFreeSpaceAndBoundsForListOfAtoms(ParticleKindObjectForProduct.ListOfAtoms, ParticlesInSector, CurrentSectorPos, ParticleKindObjectForProduct.Radius, VectorX, VectorY, VectorZ, SimulationSpaceSectorBoundsObjectParam, CellEngineConfigDataObject.CheckOnlyParticlesCenters);
 }
 
+bool CellEngineFullAtomSimulationSpace::CheckInsertOfParticle(const MPIParticleSenderStruct& MPIParticleSenderToInsert)
+{
+    auto SimulationSpaceSectorBoundsObject = SimulationSpaceSectorBounds().SetParametersForChosenSector(MPIParticleSenderToInsert.SectorPos.SectorPosX, MPIParticleSenderToInsert.SectorPos.SectorPosY, MPIParticleSenderToInsert.SectorPos.SectorPosZ, CellEngineConfigDataObject.ShiftCenterX, CellEngineConfigDataObject.ShiftCenterY, CellEngineConfigDataObject.ShiftCenterZ, CellEngineConfigDataObject.SizeOfParticlesSectorX, CellEngineConfigDataObject.SizeOfParticlesSectorY, CellEngineConfigDataObject.SizeOfParticlesSectorZ);
+    auto& ParticleKindToCheck = ParticlesKindsManagerObject.GetParticleKind(MPIParticleSenderToInsert.ParticleKindId);
+
+    if (CheckIfSpaceIsEmptyAndIsInBoundsForParticleElements(ParticleKindToCheck, Particles, MPIParticleSenderToInsert.SectorPos, MPIParticleSenderToInsert.NewPosition.PosX, MPIParticleSenderToInsert.NewPosition.PosY, MPIParticleSenderToInsert.NewPosition.PosZ, SimulationSpaceSectorBoundsObject) == true)
+    {
+        UnsignedInt ParticleIndex = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), MPIParticleSenderToInsert.ParticleKindId, 1, -1, 1, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
+        FillParticleElementsInSpace(ParticleIndex, ParticleKindToCheck, MPIParticleSenderToInsert.NewPosition.PosX, MPIParticleSenderToInsert.NewPosition.PosX, MPIParticleSenderToInsert.NewPosition.PosX);
+
+        return true;
+    }
+
+    return false;
+}
+
 void CellEngineFullAtomSimulationSpace::WriteNumberOfParticlesInEachSectorToFile() const
 {
     try
