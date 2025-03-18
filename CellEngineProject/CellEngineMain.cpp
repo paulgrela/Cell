@@ -981,7 +981,7 @@ int main(const int argc, const char ** argv)
 
     //MPIMessagesTest6_2_1_1(true);
 
-    MPIMessagesTest6_2_1_1_1(true);
+    //MPIMessagesTest6_2_1_1_1(true);
 
     //MPIMessagesTest6_2_2(true);
 
@@ -989,7 +989,7 @@ int main(const int argc, const char ** argv)
 
     //TestExecutionsLongMessagesTimes();
 
-    //MainProgram(argc, argv);
+    MainProgram(argc, argv);
 
     MPI_Finalize();
 

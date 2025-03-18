@@ -114,13 +114,13 @@ void CellEngineSimulationParallelExecutionManager::CreateDataEveryMPIProcessForP
 
                         ProcessGroupNumber = GetProcessGroupNumberVer1(MPIProcessXIndex - 1, MPIProcessYIndex - 1, MPIProcessZIndex - 1);
 
-                        NeigbourhProcessesIndexes[0] = GetProcessPrevNeighbour(static_cast<SignedInt>(MPIProcessXIndex) - 2, static_cast<SignedInt>(MPIProcessYIndex) - 1, static_cast<SignedInt>(MPIProcessZIndex) - 1);
-                        NeigbourhProcessesIndexes[1] = GetProcessPrevNeighbour(static_cast<SignedInt>(MPIProcessXIndex) - 1, static_cast<SignedInt>(MPIProcessYIndex) - 2, static_cast<SignedInt>(MPIProcessZIndex) - 1);
-                        NeigbourhProcessesIndexes[2] = GetProcessPrevNeighbour(static_cast<SignedInt>(MPIProcessXIndex) - 1, static_cast<SignedInt>(MPIProcessYIndex) - 1, static_cast<SignedInt>(MPIProcessZIndex) - 2);
+                        NeighbourProcessesIndexes[0] = GetProcessPrevNeighbour(static_cast<SignedInt>(MPIProcessXIndex) - 2, static_cast<SignedInt>(MPIProcessYIndex) - 1, static_cast<SignedInt>(MPIProcessZIndex) - 1);
+                        NeighbourProcessesIndexes[1] = GetProcessPrevNeighbour(static_cast<SignedInt>(MPIProcessXIndex) - 1, static_cast<SignedInt>(MPIProcessYIndex) - 2, static_cast<SignedInt>(MPIProcessZIndex) - 1);
+                        NeighbourProcessesIndexes[2] = GetProcessPrevNeighbour(static_cast<SignedInt>(MPIProcessXIndex) - 1, static_cast<SignedInt>(MPIProcessYIndex) - 1, static_cast<SignedInt>(MPIProcessZIndex) - 2);
 
-                        NeigbourhProcessesIndexes[3] = GetProcessNextNeighbour(static_cast<SignedInt>(MPIProcessXIndex), static_cast<SignedInt>(MPIProcessYIndex) - 1, static_cast<SignedInt>(MPIProcessZIndex) - 1);
-                        NeigbourhProcessesIndexes[4] = GetProcessNextNeighbour(static_cast<SignedInt>(MPIProcessXIndex) - 1, static_cast<SignedInt>(MPIProcessYIndex), static_cast<SignedInt>(MPIProcessZIndex) - 1);
-                        NeigbourhProcessesIndexes[5] = GetProcessNextNeighbour(static_cast<SignedInt>(MPIProcessXIndex) - 1, static_cast<SignedInt>(MPIProcessYIndex) - 1, static_cast<SignedInt>(MPIProcessZIndex));
+                        NeighbourProcessesIndexes[3] = GetProcessNextNeighbour(static_cast<SignedInt>(MPIProcessXIndex), static_cast<SignedInt>(MPIProcessYIndex) - 1, static_cast<SignedInt>(MPIProcessZIndex) - 1);
+                        NeighbourProcessesIndexes[4] = GetProcessNextNeighbour(static_cast<SignedInt>(MPIProcessXIndex) - 1, static_cast<SignedInt>(MPIProcessYIndex), static_cast<SignedInt>(MPIProcessZIndex) - 1);
+                        NeighbourProcessesIndexes[5] = GetProcessNextNeighbour(static_cast<SignedInt>(MPIProcessXIndex) - 1, static_cast<SignedInt>(MPIProcessYIndex) - 1, static_cast<SignedInt>(MPIProcessZIndex));
                     }
 
                     MPIProcessIndex++;
@@ -673,12 +673,12 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIPr
     {
         for (UnsignedInt NeigbourhProcessIndex = 0; NeigbourhProcessIndex < NumberOfAllNeighbours; NeigbourhProcessIndex++)
         {
-            if (QueueOfParticlesToSendToNeigbourhProcesses[NeigbourhProcessIndex].empty() == true)
-                QueueOfParticlesToSendToNeigbourhProcesses[NeigbourhProcessIndex].emplace_back(MPIParticleSenderStruct{ 0, 0, CurrentMPIProcessIndex, 0, 0, 0, 0, 0, 0, 0 });
+            if (VectorOfParticlesToSendToNeighbourProcesses[NeigbourhProcessIndex].empty() == true)
+                VectorOfParticlesToSendToNeighbourProcesses[NeigbourhProcessIndex].emplace_back(MPIParticleSenderStruct{ 0, 0, CurrentMPIProcessIndex, 0, 0, 0, 0, 0, 0 });
 
             MPI_Request MPIMessageRequest = MPI_REQUEST_NULL;
-            MPI_Isend(QueueOfParticlesToSendToNeigbourhProcesses[NeigbourhProcessIndex].data(), QueueOfParticlesToSendToNeigbourhProcesses[NeigbourhProcessIndex].size() * sizeof(MPIParticleSenderStruct), MPI_CHAR, NeigbourhProcessesIndexes[NeigbourhProcessIndex], 0, MPI_COMM_WORLD, &MPIMessageRequest);
-            QueueOfParticlesToSendToNeigbourhProcesses[NeigbourhProcessIndex].clear();
+            MPI_Isend(VectorOfParticlesToSendToNeighbourProcesses[NeigbourhProcessIndex].data(), VectorOfParticlesToSendToNeighbourProcesses[NeigbourhProcessIndex].size() * sizeof(MPIParticleSenderStruct), MPI_CHAR, NeighbourProcessesIndexes[NeigbourhProcessIndex], 0, MPI_COMM_WORLD, &MPIMessageRequest);
+            VectorOfParticlesToSendToNeighbourProcesses[NeigbourhProcessIndex].clear();
         }
 
         int NumberOfReceivedMessages = 0;
@@ -726,7 +726,6 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIPr
             if (Flag == true)
             {
                 vector<MPIParticleSenderStruct> ReceivedParticlesToInsert(NumberOfBytesReceived / sizeof(MPIParticleSenderStruct));
-                //MPI_Recv(ReceivedParticlesToInsert.data(), NumberOfBytesReceived * sizeof(MPIParticleSenderStruct), MPI_CHAR,MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &MPIMessageStatus);
                 MPI_Recv(ReceivedParticlesToInsert.data(), NumberOfBytesReceived, MPI_CHAR,MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &MPIMessageStatus);
 
                 vector<UniqueIdInt> ConfirmationOfParticlesToRemoveToSent;
@@ -769,11 +768,10 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIPr
             if (Flag == true)
             {
                 vector<MPIParticleSenderStruct> ReceivedParticlesToInsert(NumberOfBytesReceived / sizeof(MPIParticleSenderStruct));
-                //MPI_Recv(ReceivedParticlesToInsert.data(), NumberOfBytesReceived * sizeof(MPIParticleSenderStruct), MPI_CHAR,MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &MPIMessageStatus);
                 MPI_Recv(ReceivedParticlesToInsert.data(), NumberOfBytesReceived, MPI_CHAR,MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &MPIMessageStatus);
 
                 for (UnsignedInt NeigbourhProcessIndex = 0; NeigbourhProcessIndex < NumberOfAllNeighbours; NeigbourhProcessIndex++)
-                    if (NeigbourhProcessesIndexes[NeigbourhProcessIndex] == ReceivedParticlesToInsert[0].ProcessIndex)
+                    if (NeighbourProcessesIndexes[NeigbourhProcessIndex] == ReceivedParticlesToInsert[0].ProcessIndex)
                     {
                         ReceivedParticlesToInsertFromAllNeigbhours[NeigbourhProcessIndex] = ReceivedParticlesToInsert;
                         break;

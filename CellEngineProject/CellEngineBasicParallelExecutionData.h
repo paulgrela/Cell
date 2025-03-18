@@ -12,8 +12,8 @@ class CellEngineBasicParallelExecutionData
 protected:
     UnsignedInt CurrentMPIProcessIndex{ 0 };
     UnsignedInt ProcessGroupNumber;
-    SignedInt NeigbourhProcessesIndexes[NumberOfAllNeighbours];
-    std::vector<MPIParticleSenderStruct> QueueOfParticlesToSendToNeigbourhProcesses[NumberOfAllNeighbours];
+    SignedInt NeighbourProcessesIndexes[NumberOfAllNeighbours];
+    std::vector<MPIParticleSenderStruct> VectorOfParticlesToSendToNeighbourProcesses[NumberOfAllNeighbours];
     SimulationSpaceSectorsRanges CurrentMPIProcessSimulationSpaceSectorsRanges;
 protected:
     ThreadIdType CurrentThreadIndex{ 0 };

@@ -55,9 +55,6 @@ public:
 public:
     bool GenomeReadFromFile = false;
 public:
-    bool MultiThreaded{};
-    bool SetProcessPriorityHighest{};
-public:
     bool MixedFullAtomWithVoxelSpace = false;
 public:
     enum class TypesOfFileToRead : UnsignedInt
@@ -74,6 +71,11 @@ public:
         VoxelSimulationSpace = 2,
     };
     TypesOfSpace TypeOfSpace = TypesOfSpace::FullAtomSimulationSpace;
+public:
+    bool MultiThreaded{};
+    bool SetProcessPriorityHighest{};
+public:
+    bool MPIFullAtomProcess = false;
 public:
     UnsignedInt NumberOfParticlesSectorsInX = 1;
     UnsignedInt NumberOfParticlesSectorsInY = 1;

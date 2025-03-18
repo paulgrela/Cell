@@ -206,13 +206,13 @@ bool CellEngineFullAtomSimulationSpace::CheckIfSpaceIsEmptyAndIsInBoundsForParti
 
 bool CellEngineFullAtomSimulationSpace::CheckInsertOfParticle(const MPIParticleSenderStruct& MPIParticleSenderToInsert)
 {
-    auto SimulationSpaceSectorBoundsObject = SimulationSpaceSectorBounds().SetParametersForChosenSector(MPIParticleSenderToInsert.SectorPos.SectorPosX, MPIParticleSenderToInsert.SectorPos.SectorPosY, MPIParticleSenderToInsert.SectorPos.SectorPosZ, CellEngineConfigDataObject.ShiftCenterX, CellEngineConfigDataObject.ShiftCenterY, CellEngineConfigDataObject.ShiftCenterZ, CellEngineConfigDataObject.SizeOfParticlesSectorX, CellEngineConfigDataObject.SizeOfParticlesSectorY, CellEngineConfigDataObject.SizeOfParticlesSectorZ);
+    auto SimulationSpaceSectorBoundsObject = SimulationSpaceSectorBounds().SetParametersForChosenSector(MPIParticleSenderToInsert.SectorPos.X, MPIParticleSenderToInsert.SectorPos.Y, MPIParticleSenderToInsert.SectorPos.Z, CellEngineConfigDataObject.ShiftCenterX, CellEngineConfigDataObject.ShiftCenterY, CellEngineConfigDataObject.ShiftCenterZ, CellEngineConfigDataObject.SizeOfParticlesSectorX, CellEngineConfigDataObject.SizeOfParticlesSectorY, CellEngineConfigDataObject.SizeOfParticlesSectorZ);
     auto& ParticleKindToCheck = ParticlesKindsManagerObject.GetParticleKind(MPIParticleSenderToInsert.ParticleKindId);
 
-    if (CheckIfSpaceIsEmptyAndIsInBoundsForParticleElements(ParticleKindToCheck, Particles, MPIParticleSenderToInsert.SectorPos, MPIParticleSenderToInsert.NewPosition.PosX, MPIParticleSenderToInsert.NewPosition.PosY, MPIParticleSenderToInsert.NewPosition.PosZ, SimulationSpaceSectorBoundsObject) == true)
+    if (CheckIfSpaceIsEmptyAndIsInBoundsForParticleElements(ParticleKindToCheck, Particles, { MPIParticleSenderToInsert.SectorPos.X, MPIParticleSenderToInsert.SectorPos.Y, MPIParticleSenderToInsert.SectorPos.Z }, MPIParticleSenderToInsert.NewPosition.X, MPIParticleSenderToInsert.NewPosition.Y, MPIParticleSenderToInsert.NewPosition.Z, SimulationSpaceSectorBoundsObject) == true)
     {
         UnsignedInt ParticleIndex = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), MPIParticleSenderToInsert.ParticleKindId, 1, -1, 1, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
-        FillParticleElementsInSpace(ParticleIndex, ParticleKindToCheck, MPIParticleSenderToInsert.NewPosition.PosX, MPIParticleSenderToInsert.NewPosition.PosX, MPIParticleSenderToInsert.NewPosition.PosX);
+        FillParticleElementsInSpace(ParticleIndex, ParticleKindToCheck, MPIParticleSenderToInsert.NewPosition.X, MPIParticleSenderToInsert.NewPosition.Y, MPIParticleSenderToInsert.NewPosition.Z);
 
         return true;
     }
