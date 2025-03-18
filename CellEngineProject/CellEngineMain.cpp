@@ -480,6 +480,7 @@ void MPIMessagesTest6_2_1(const bool PrintBool)
         {
             int rrr[9];
             MPI_Recv(&rrr, count, MPI_INT,MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &status);
+            //MPI_Recv(&rrr, count, MPI_INT,MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
             int ProcessSenderOfMessage = rrr[0];
             for (int k = 0; k < count; k++)

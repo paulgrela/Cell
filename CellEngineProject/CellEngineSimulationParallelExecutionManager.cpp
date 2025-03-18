@@ -675,14 +675,14 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIPr
             if (QueueOfParticlesToSendToNeigbourhProcesses[NeigbourhProcessIndex].empty() == false)
             {
                 MPI_Request request = MPI_REQUEST_NULL;
-                MPI_Isend(QueueOfParticlesToSendToNeigbourhProcesses[NeigbourhProcessIndex].data(), QueueOfParticlesToSendToNeigbourhProcesses[NeigbourhProcessIndex].size() * sizeof(MPIParticleSenderStruct), MPI_INT, NeigbourhProcessesIndexes[NeigbourhProcessIndex], 0, MPI_COMM_WORLD, &request);
+                MPI_Isend(QueueOfParticlesToSendToNeigbourhProcesses[NeigbourhProcessIndex].data(), QueueOfParticlesToSendToNeigbourhProcesses[NeigbourhProcessIndex].size() * sizeof(MPIParticleSenderStruct), MPI_CHAR, NeigbourhProcessesIndexes[NeigbourhProcessIndex], 0, MPI_COMM_WORLD, &request);
                 QueueOfParticlesToSendToNeigbourhProcesses[NeigbourhProcessIndex].clear();
             }
             else
             {
                 MPI_Request request = MPI_REQUEST_NULL;
                 int SentValue = 0;
-                MPI_Isend(&SentValue, 1, MPI_INT, NeigbourhProcessesIndexes[NeigbourhProcessIndex], 0, MPI_COMM_WORLD, &request);
+                MPI_Isend(&SentValue, 4, MPI_CHAR, NeigbourhProcessesIndexes[NeigbourhProcessIndex], 0, MPI_COMM_WORLD, &request);
             }
 
         int Counter = 0;
@@ -694,14 +694,15 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIPr
             MPI_Iprobe(MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &flag, &status);
 
             int count;
-            MPI_Get_count(&status, MPI_INT, &count);
+            MPI_Get_count(&status, MPI_CHAR, &count);
 
             if (flag == true)
             {
                 vector<UniqueIdInt> ReceivedConfirmationOfParticlesToRemove(count / sizeof(UniqueIdInt));
-                MPI_Recv(ReceivedConfirmationOfParticlesToRemove.data(), count, MPI_INT,MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &status);
-                for (const auto& ParticleToRemoveConfirmedIndex : ReceivedConfirmationOfParticlesToRemove)
-                    RemoveParticle(ParticleToRemoveConfirmedIndex, true);
+                MPI_Recv(ReceivedConfirmationOfParticlesToRemove.data(), count, MPI_CHAR,MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &status);
+                if (ReceivedConfirmationOfParticlesToRemove[0] != 0)
+                    for (const auto& ParticleToRemoveConfirmedIndex : ReceivedConfirmationOfParticlesToRemove)
+                        RemoveParticle(ParticleToRemoveConfirmedIndex, true);
 
                 Counter++;
             }
@@ -717,21 +718,30 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIPr
             MPI_Iprobe(MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &flag, &status);
 
             int count;
-            MPI_Get_count(&status, MPI_INT, &count);
+            MPI_Get_count(&status, MPI_CHAR, &count);
 
             if (flag == true)
             {
-                vector<MPIParticleSenderStruct> ReceivedParticlesIndexesToInsert(count / sizeof(MPIParticleSenderStruct));
-                MPI_Recv(ReceivedParticlesIndexesToInsert.data(), count, MPI_INT,MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &status);
+                vector<MPIParticleSenderStruct> ReceivedParticlesToInsert(count / sizeof(MPIParticleSenderStruct));
+                MPI_Recv(ReceivedParticlesToInsert.data(), count * sizeof(MPIParticleSenderStruct), MPI_CHAR,MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &status);
 
                 vector<UniqueIdInt> ReceivedConfirmationOfParticlesToRemove;
-                for (const auto& ReceivedParticleIndexToInsert : ReceivedParticlesIndexesToInsert)
+
+                for (const auto& ReceivedParticleIndexToInsert : ReceivedParticlesToInsert)
                     if (CheckInsertOfParticle(ReceivedParticleIndexToInsert) == true)
                         ReceivedConfirmationOfParticlesToRemove.emplace_back(ReceivedParticleIndexToInsert.ParticleIndex);
 
-                MPI_Request request = MPI_REQUEST_NULL;
-                MPI_Isend(ReceivedConfirmationOfParticlesToRemove.data(), ReceivedConfirmationOfParticlesToRemove.size() * sizeof(UniqueIdInt), MPI_INT, ReceivedParticlesIndexesToInsert[0].ProcessIndex, 0, MPI_COMM_WORLD, &request);
-
+                if (ReceivedConfirmationOfParticlesToRemove.empty() == false)
+                {
+                    MPI_Request request = MPI_REQUEST_NULL;
+                    MPI_Isend(ReceivedConfirmationOfParticlesToRemove.data(), ReceivedConfirmationOfParticlesToRemove.size() * sizeof(UniqueIdInt), MPI_CHAR, ReceivedParticlesToInsert[0].ProcessIndex, 0, MPI_COMM_WORLD, &request);
+                }
+                else
+                {
+                    MPI_Request request = MPI_REQUEST_NULL;
+                    UniqueIdInt SentValue = 0;
+                    MPI_Isend(&SentValue, 4, MPI_CHAR, ReceivedParticlesToInsert[0].ProcessIndex, 0, MPI_COMM_WORLD, &request);
+                }
                 Counter++;
             }
         }

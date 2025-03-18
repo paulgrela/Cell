@@ -178,7 +178,7 @@ public:
     }
 };
 
-struct MPIParticleSenderStruct
+struct __attribute__ ((packed)) MPIParticleSenderStruct
 {
     UniqueIdInt ParticleIndex;
     EntityIdInt ParticleKindId;
