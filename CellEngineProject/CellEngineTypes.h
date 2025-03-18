@@ -180,12 +180,12 @@ public:
 
 struct __attribute__ ((packed)) MPIParticleSenderStruct
 {
-    UniqueIdInt ParticleIndex;
-    EntityIdInt ParticleKindId;
-    UnsignedInt ProcessIndex;
-    UnsignedInt SectorIndex;
-    SectorPosType SectorPos;
-    PosType NewPosition;
+    UniqueIdInt ParticleIndex{ 0 };
+    EntityIdInt ParticleKindId{ 0 };
+    UnsignedInt ProcessIndex{ 0 };
+    UnsignedInt SectorIndex{ 0 };
+    SectorPosType SectorPos{ 0, 0, 0 };
+    PosType NewPosition{ 0, 0, 0 };
 };
 
 enum class TypesOfLookingForParticlesInProximity : UnsignedInt

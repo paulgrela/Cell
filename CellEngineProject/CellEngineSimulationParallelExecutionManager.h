@@ -15,7 +15,7 @@ class CellEngineSimulationParallelExecutionManager : virtual public CellEngineBa
 public:
     template <class SimulationSpaceType>
     static void CreateSimulationSpaceForParallelExecution(SimulationSpaceForParallelExecutionContainer<CellEngineSimulationSpace>& CellEngineSimulationSpaceForThreadsObjectsPointer, ParticlesContainer<Particle>& Particles);
-
+public:
     virtual bool CheckInsertOfParticle(const MPIParticleSenderStruct& MPIParticleSenderToInsert) = 0;
     SignedInt GetProcessPrevNeighbour(SignedInt ThreadXIndex, SignedInt ThreadYIndex, SignedInt ThreadZIndex) const;
     SignedInt GetProcessNextNeighbour(SignedInt ThreadXIndex, SignedInt ThreadYIndex, SignedInt ThreadZIndex) const;
@@ -49,7 +49,11 @@ private:
     void GenerateNStepsOfSimulationForWholeCellSpaceInMPIProcess(UnsignedInt NumberOfStepsOutside, UnsignedInt NumberOfStepsInside, ThreadIdType CurrentThreadIndexParam, UnsignedInt ThreadXIndexParam, UnsignedInt ThreadYIndexParam, UnsignedInt ThreadZIndexParam);
 public:
     void GenerateNStepsOfSimulationForWholeCellSpaceInMPIProcess(UnsignedInt NumberOfStepsOutside, UnsignedInt NumberOfStepsInside);
-    void ExchangeParticlesBetweenMPIProcesses();
+    void ExchangeParticlesBetweenMPIProcessesVer1();
+    void ExchangeParticlesBetweenMPIProcessesVer2();
+    void ExchangeParticlesBetweenMPIProcessesGroup1();
+    void ExchangeParticlesBetweenMPIProcessesGroup2Ver1();
+    void ExchangeParticlesBetweenMPIProcessesGroup2Ver2();
 private:
     void SetZeroForAllParallelExecutionVariables();
     void GatherAllParallelExecutionVariables();
