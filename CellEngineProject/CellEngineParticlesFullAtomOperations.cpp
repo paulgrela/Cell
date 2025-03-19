@@ -13,8 +13,8 @@ void CellEngineParticlesFullAtomOperations::SetProperThreadIndexForEveryParticle
         UnsignedInt MPIProcessIndex = 0 ;
         FOR_EACH_PARTICLE_IN_XYZ_ONLY
         {
-            ParticlesSectors[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].CurrentThreadPos = { ParticleSectorXIndex / CellEngineConfigDataObject.NumberOfXSectorsInOneThreadInSimulation + 1, ParticleSectorYIndex / CellEngineConfigDataObject.NumberOfYSectorsInOneThreadInSimulation + 1, ParticleSectorZIndex / CellEngineConfigDataObject.NumberOfZSectorsInOneThreadInSimulation + 1 };
-            ParticlesSectors[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].CurrentMPIProcessIndex = MPIProcessIndex;
+            ParticlesSectors[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].ThreadPos = { ParticleSectorXIndex / CellEngineConfigDataObject.NumberOfXSectorsInOneThreadInSimulation + 1, ParticleSectorYIndex / CellEngineConfigDataObject.NumberOfYSectorsInOneThreadInSimulation + 1, ParticleSectorZIndex / CellEngineConfigDataObject.NumberOfZSectorsInOneThreadInSimulation + 1 };
+            ParticlesSectors[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].MPIProcessIndex = MPIProcessIndex;
             MPIProcessIndex++;
         }
     }
@@ -39,7 +39,7 @@ bool ExchangeParticleBetweenSectors(const Particle &ParticleObject, ParticlesCon
     return false;
 }
 
-void CellEngineParticlesFullAtomOperations::MoveParticleByVector(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, const RealType VectorX, const RealType VectorY, const RealType VectorZ)
+void CellEngineParticlesFullAtomOperations::MoveParticleByVector(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, const SignedInt* NeighbourProcessesIndexes, std::vector<MPIParticleSenderStruct>* VectorOfParticlesToSendToNeighbourProcesses, const RealType VectorX, const RealType VectorY, const RealType VectorZ)
 {
     try
     {
@@ -54,8 +54,8 @@ void CellEngineParticlesFullAtomOperations::MoveParticleByVector(Particle &Parti
         {
             if (CellEngineConfigDataObject.MPIFullAtomProcess == false)
             {
-                const auto Thread1Pos = ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].CurrentThreadPos;
-                const auto Thread2Pos = ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].CurrentThreadPos;
+                const auto Thread1Pos = ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].ThreadPos;
+                const auto Thread2Pos = ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].ThreadPos;
 
                 if (CellEngineConfigDataObject.MultiThreaded == true && Thread1Pos != Thread2Pos)
                 {
@@ -66,21 +66,17 @@ void CellEngineParticlesFullAtomOperations::MoveParticleByVector(Particle &Parti
                 }
             }
             else
+            if (CellEngineConfigDataObject.MPIFullAtomProcess == true && NeighbourProcessesIndexes != nullptr && VectorOfParticlesToSendToNeighbourProcesses != nullptr)
             {
-                                                                                                                        SignedInt NeighbourProcessesIndexes[NumberOfAllNeighbours];
-                                                                                                                        std::vector<MPIParticleSenderStruct> VectorOfParticlesToSendToNeighbourProcesses[NumberOfAllNeighbours];
-
-                const auto Process1Pos = ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].CurrentMPIProcessIndex;
-                const auto Process2Pos = ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].CurrentMPIProcessIndex;
+                const auto Process1Pos = ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].MPIProcessIndex;
+                const auto Process2Pos = ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].MPIProcessIndex;
                 if (Process1Pos != Process2Pos)
-                {
                     for (UnsignedInt NeigbourhProcessIndex = 0; NeigbourhProcessIndex < NumberOfAllNeighbours; NeigbourhProcessIndex++)
                         if (NeighbourProcessesIndexes[NeigbourhProcessIndex] == Process2Pos)
                         {
-                            VectorOfParticlesToSendToNeighbourProcesses[NeigbourhProcessIndex].emplace_back(MPIParticleSenderStruct{ ParticleObject.Index, ParticleObject.EntityId, NeigbourhProcessIndex, { static_cast<uint16_t>(SectorPosX2), static_cast<uint16_t>(SectorPosY2), static_cast<uint16_t>(SectorPosZ2) }, { ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z } });
+                            VectorOfParticlesToSendToNeighbourProcesses[NeigbourhProcessIndex].emplace_back(MPIParticleSenderStruct{ ParticleObject.Index, ParticleObject.EntityId, Process2Pos, { static_cast<uint16_t>(SectorPosX2), static_cast<uint16_t>(SectorPosY2), static_cast<uint16_t>(SectorPosZ2) }, { ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z } });
                             break;
                         }
-                }
             }
         }
     }

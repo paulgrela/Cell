@@ -17,7 +17,7 @@ protected:
     SimulationSpaceSectorsRanges CurrentMPIProcessSimulationSpaceSectorsRanges;
 protected:
     ThreadIdType CurrentThreadIndex{ 0 };
-    CurrentThreadPosType CurrentThreadPos{ 1, 1, 1 };
+    ThreadPosType CurrentThreadPos{ 1, 1, 1 };
 protected:
     SectorPosType CurrentSectorPos{ 0, 0, 0 };
     SimulationSpaceSectorBounds ActualSimulationSpaceSectorBoundsObject{ 0, 0, 0, 0, 0, 0, 0, 0, 0 };

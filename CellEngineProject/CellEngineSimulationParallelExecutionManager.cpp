@@ -44,7 +44,7 @@ void CellEngineSimulationParallelExecutionManager::CreateSimulationSpaceForParal
                 {
                     LoggersManagerObject.Log(STREAM("THREAD INDEXES = " << ThreadIndexPos << " (" << ThreadXPos << ", " << ThreadYPos << ", " << ThreadZPos << ")"));
 
-                    ThreadLocalParticlesInProximityZPos = std::make_shared<SimulationSpaceType>(Particles, false, ThreadIndexPos, CurrentThreadPosType{ ThreadXPos, ThreadYPos, ThreadZPos });
+                    ThreadLocalParticlesInProximityZPos = std::make_shared<SimulationSpaceType>(Particles, false, ThreadIndexPos, ThreadPosType{ ThreadXPos, ThreadYPos, ThreadZPos });
                     ThreadIndexPos++;
                     ThreadZPos++;
                 }

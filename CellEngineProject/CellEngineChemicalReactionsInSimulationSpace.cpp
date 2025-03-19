@@ -31,7 +31,7 @@ void CellEngineChemicalReactionsInSimulationSpace::RemoveParticle(const UniqueId
     CATCH("removing particle")
 }
 
-void CellEngineChemicalReactionsInSimulationSpace::MakingZeroSizeForContainersForFoundParticlesInProximity(const CurrentThreadPosType& CurrentThreadPos)
+void CellEngineChemicalReactionsInSimulationSpace::MakingZeroSizeForContainersForFoundParticlesInProximity(const ThreadPosType& CurrentThreadPos)
 {
     try
     {
@@ -165,7 +165,7 @@ bool CellEngineChemicalReactionsInSimulationSpace::FindParticlesInProximityOfSim
     return true;
 }
 
-void CellEngineChemicalReactionsInSimulationSpace::PrintInformationAboutFoundParticlesInProximity(const CurrentThreadPosType& CurrentThreadPos)
+void CellEngineChemicalReactionsInSimulationSpace::PrintInformationAboutFoundParticlesInProximity(const ThreadPosType& CurrentThreadPos)
 {
     try
     {

@@ -41,11 +41,11 @@ using vector3_16 = vector3<PositionInt>;
 using vector3_64 = vector3<uint64_t>;
 using vector3_Real32 = vector3<RealType>;
 
-struct CurrentThreadPosType
+struct ThreadPosType
 {
     UnsignedInt	ThreadPosX, ThreadPosY, ThreadPosZ;
 
-    bool operator==(const CurrentThreadPosType& CTP) const
+    bool operator==(const ThreadPosType& CTP) const
     {
         return (CTP.ThreadPosX == ThreadPosX && CTP.ThreadPosY == ThreadPosY && CTP.ThreadPosZ == ThreadPosZ);
     }
@@ -80,8 +80,8 @@ template <class Particle>
 struct ParticlesContainerInternal
 {
 public:
-    UnsignedInt CurrentMPIProcessIndex{ 0 };
-    CurrentThreadPosType CurrentThreadPos{ 1, 1, 1 };
+    UnsignedInt MPIProcessIndex{ 0 };
+    ThreadPosType ThreadPos{ 1, 1, 1 };
 public:
     std::stack<UniqueIdInt> FreeIndexesOfParticles;
     ParticlesDetailedContainer<Particle> Particles;
@@ -147,7 +147,7 @@ public:
         StartZPos += AddToStartZPosParam;
     }
 public:
-    SimulationSpaceSectorBounds SetParametersForParallelExecutionSectors(const CurrentThreadPosType& CurrentThreadPos, const UnsignedInt SizeOfXInOneThreadInSimulationSpace, const UnsignedInt SizeOfYInOneThreadInSimulationSpace, const UnsignedInt SizeOfZInOneThreadInSimulationSpace)
+    SimulationSpaceSectorBounds SetParametersForParallelExecutionSectors(const ThreadPosType& CurrentThreadPos, const UnsignedInt SizeOfXInOneThreadInSimulationSpace, const UnsignedInt SizeOfYInOneThreadInSimulationSpace, const UnsignedInt SizeOfZInOneThreadInSimulationSpace)
     {
         StartXPos = static_cast<float>((CurrentThreadPos.ThreadPosX - 1) * SizeOfXInOneThreadInSimulationSpace);
         EndXPos = static_cast<float>((CurrentThreadPos.ThreadPosX - 1) * SizeOfXInOneThreadInSimulationSpace + SizeOfXInOneThreadInSimulationSpace);

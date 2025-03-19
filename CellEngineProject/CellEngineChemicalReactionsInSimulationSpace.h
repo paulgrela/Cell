@@ -21,9 +21,9 @@ protected:
 protected:
     void RemoveParticle(UniqueIdInt ParticleIndex, bool ClearVoxels) override;
 protected:
-    void MakingZeroSizeForContainersForFoundParticlesInProximity(const CurrentThreadPosType& CurrentThreadPos);
+    void MakingZeroSizeForContainersForFoundParticlesInProximity(const ThreadPosType& CurrentThreadPos);
     void UpdateFoundNucleotidesForFoundParticlesInProximity(UnsignedInt ParticleIndex);
-    void PrintInformationAboutFoundParticlesInProximity(const CurrentThreadPosType& CurrentThreadPos);
+    void PrintInformationAboutFoundParticlesInProximity(const ThreadPosType& CurrentThreadPos);
 protected:
     bool FindParticlesInProximityOfSimulationSpaceForSelectedSpace(bool UpdateNucleotides, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
 
