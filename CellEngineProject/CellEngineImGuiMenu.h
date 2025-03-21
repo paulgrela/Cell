@@ -1743,10 +1743,12 @@ public:
 
             StartMPI();
 
+            CellEngineDataFileObjectPointer = CreateCellEngineDataFileObject(CellEngineConfigDataObject.CellStateFileName);
+
+            CellEngineDataFileObjectPointer->ReadDataFromFile(true, true, CellEngineConfigDataObject.TypeOfFileToRead);
+
             if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == false || (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true && MPIProcessDataObject.CurrentMPIProcessIndex == 0))
             {
-                CellEngineDataFileObjectPointer = CreateCellEngineDataFileObject(CellEngineConfigDataObject.CellStateFileName);
-
                 GLFWwindow* ImGuiMenuWindow = PrepareImGuiMenuGLFWData();
 
                 thread CellEngineOpenGLVisualiserThreadObject(&CellEngineImGuiMenu::CellEngineOpenGLVisualiserThreadFunction, this, CellEngineConfigDataObject.XTopMainWindow, CellEngineConfigDataObject.YTopMainWindow, CellEngineConfigDataObject.WidthMainWindow, CellEngineConfigDataObject.HeightMainWindow);

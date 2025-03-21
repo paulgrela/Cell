@@ -25,11 +25,6 @@ using namespace std;
 
 void CellEngineOpenGLVisualiser::InitExternalData()
 {
-    try
-    {
-        CellEngineDataFileObjectPointer->ReadDataFromFile(true, true, CellEngineConfigDataObject.TypeOfFileToRead);
-    }
-    CATCH("reading of data file")
 }
 
 void CellEngineOpenGLVisualiser::StartUp()

@@ -93,7 +93,7 @@ SignedInt CellEngineSimulationParallelExecutionManager::GetProcessPrevNeighbour(
 
 SignedInt CellEngineSimulationParallelExecutionManager::GetProcessNextNeighbour(const SignedInt ThreadXIndex, const SignedInt ThreadYIndex, const SignedInt ThreadZIndex) const
 {
-    if (static_cast<SignedInt>(ThreadXIndex) <= CellEngineConfigDataObject.NumberOfXThreadsInSimulation && static_cast<SignedInt>(ThreadYIndex) <= CellEngineConfigDataObject.NumberOfYThreadsInSimulation && static_cast<SignedInt>(ThreadZIndex) <= CellEngineConfigDataObject.NumberOfZThreadsInSimulation)
+    if (static_cast<SignedInt>(ThreadXIndex) < CellEngineConfigDataObject.NumberOfXThreadsInSimulation && static_cast<SignedInt>(ThreadYIndex) < CellEngineConfigDataObject.NumberOfYThreadsInSimulation && static_cast<SignedInt>(ThreadZIndex) < CellEngineConfigDataObject.NumberOfZThreadsInSimulation)
         return SimulationSpaceDataForThreads[ThreadXIndex][ThreadYIndex][ThreadZIndex]->MPIProcessIndex;
     else
         return -1;
