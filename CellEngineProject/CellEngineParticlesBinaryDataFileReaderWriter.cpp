@@ -117,12 +117,12 @@ void CellEngineParticlesBinaryDataFileReaderWriter::SaveParticlesToBinaryFile(of
         LoggersManagerObject.Log(STREAM("START OF SAVING PARTICLES TO BINARY FILE"));
 
         UnsignedInt ParticlesSize = 0;
-        FOR_EACH_PARTICLE_IN_XYZ_CONST
+        FOR_EACH_PARTICLE_IN_SECTORS_XYZ_CONST
             ParticlesSize++;
         LoggersManagerObject.Log(STREAM("Number of Particles to be saved = " << ParticlesSize));
         ParticlesDataFile.write((char*)&ParticlesSize, sizeof(ParticlesSize));
 
-        FOR_EACH_PARTICLE_IN_XYZ_CONST
+        FOR_EACH_PARTICLE_IN_SECTORS_XYZ_CONST
         {
             ParticlesDataFile.write((char*)&ParticleObject.second.EntityId, sizeof(ParticleObject.second.EntityId));
             ParticlesDataFile.write((char*)&ParticleObject.second.ChainId, sizeof(ParticleObject.second.ChainId));
@@ -275,7 +275,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::PrepareParticlesAfterReading
     {
         LoggersManagerObject.Log(STREAM("START OF PREPARING PARTICLES"));
 
-        FOR_EACH_PARTICLE_IN_XYZ
+        FOR_EACH_PARTICLE_IN_SECTORS_XYZ
             if (CellEngineUseful::IsDNA(ParticleObject.second.EntityId) == false)
             {
                 if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)
@@ -497,9 +497,18 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
 
             if (CellEngineConfigDataObject.MixedFullAtomWithVoxelSpace == false)
             {
+                auto ParticleSectorPos = CellEngineUseful::GetSectorPos(ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z);
+
                 if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
-                    SetCurrentSectorPos(CellEngineUseful::GetSectorPos(ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z));
-                AddNewParticle(ParticleObject);
+                    SetCurrentSectorPos(ParticleSectorPos);
+
+                if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true)
+                {
+                    if (Particles[ParticleSectorPos.SectorPosX][ParticleSectorPos.SectorPosY][ParticleSectorPos.SectorPosZ].MPIProcessIndex == CellEngineDataFileObjectPointer->CurrentMPIProcessIndex)
+                        AddNewParticle(ParticleObject);
+                }
+                else
+                    AddNewParticle(ParticleObject);
 
                 if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
                     CheckCenterForSector(ParticleObject, GetParticles());
@@ -512,7 +521,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
         LoggersManagerObject.Log(STREAM("END OF READING PARTICLES FROM BINARY FILE - bad particles = " << BadParticlesCenters));
 
         ParticlesSize = 0;
-        FOR_EACH_PARTICLE_IN_XYZ_CONST
+        FOR_EACH_PARTICLE_IN_SECTORS_XYZ_CONST
             ParticlesSize++;
         LoggersManagerObject.Log(STREAM("Number of Particles to be read = " << ParticlesSize));
     }

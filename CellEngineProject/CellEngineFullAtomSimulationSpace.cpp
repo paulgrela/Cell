@@ -24,7 +24,7 @@ CellEngineFullAtomSimulationSpace::CellEngineFullAtomSimulationSpace(ParticlesCo
 {
     try
     {
-        CurrentMPIProcessIndex = ThreadIndexParam;
+        MPIProcessIndex = ThreadIndexParam;
 
         CurrentThreadIndex = ThreadIndexParam;
         CurrentThreadPos = CurrentThreadPosParam;
@@ -132,7 +132,7 @@ void CellEngineFullAtomSimulationSpace::GenerateNStepsOfDiffusionForWholeCellSpa
         CellEngineUseful::SwitchOffLogs();
 
         for (UnsignedInt Step = 1; Step <= NumberOfSimulationSteps; Step++)
-            FOR_EACH_PARTICLE_IN_XYZ_ONLY
+            FOR_EACH_SECTOR_IN_XYZ_ONLY
                 GenerateOneStepOfDiffusionForSelectedSpace(InBounds, ParticleSectorXIndex, ParticleSectorYIndex, ParticleSectorZIndex, XSizeParam, YSizeParam, ZSizeParam);
 
         CheckConditionsToIncSimulationStepNumberForStatistics();
@@ -178,7 +178,7 @@ void CellEngineFullAtomSimulationSpace::GenerateNStepsOfOneRandomReactionForWhol
         CellEngineUseful::SwitchOffLogs();
 
         for (UnsignedInt Step = 1; Step <= NumberOfSimulationSteps; Step++)
-            FOR_EACH_PARTICLE_IN_XYZ_ONLY
+            FOR_EACH_SECTOR_IN_XYZ_ONLY
                 GenerateOneRandomReactionForSelectedSpace(ParticleSectorXIndex, ParticleSectorYIndex, ParticleSectorZIndex, XSizeParam, YSizeParam, ZSizeParam, false);
 
         CheckConditionsToIncSimulationStepNumberForStatistics();
@@ -228,7 +228,7 @@ void CellEngineFullAtomSimulationSpace::WriteNumberOfParticlesInEachSectorToFile
         for (auto& SectorHistogram : SectorsHistogram)
             SectorHistogram = 0;
 
-        FOR_EACH_PARTICLE_IN_XYZ_ONLY
+        FOR_EACH_SECTOR_IN_XYZ_ONLY
         {
             if (Particles[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.size() > 1000)
                 LoggersManagerObject.Log(STREAM("SECTOR = (" << ParticleSectorXIndex << "," << ParticleSectorYIndex  << "," << ParticleSectorZIndex << ") SIZE = " << Particles[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.size()));

@@ -27,7 +27,7 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
 
             lock_guard LockGuardObject{ CellEngineDataFile::ChosenStructureMutexObject };
 
-            FOR_EACH_PARTICLE_IN_XYZ_ONLY
+            FOR_EACH_SECTOR_IN_XYZ_ONLY
             {
                 if (CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.empty() == false)
                 {

@@ -10,7 +10,7 @@ class CellEngineBasicParallelExecutionData
 {
     friend class CellEngineSimulationParallelExecutionManager;
 protected:
-    UnsignedInt CurrentMPIProcessIndex{ 0 };
+    UnsignedInt MPIProcessIndex{ 0 };
     UnsignedInt ProcessGroupNumber;
     SignedInt NeighbourProcessesIndexes[NumberOfAllNeighbours];
     std::vector<MPIParticleSenderStruct> VectorOfParticlesToSendToNeighbourProcesses[NumberOfAllNeighbours];

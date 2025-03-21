@@ -627,7 +627,7 @@ void CellEngineSimulationSpace::SaveNumberOfParticlesStatisticsToFile()
         GetNumberOfParticlesFromParticleKind(ParticlesKindsManagerObject.GetParticleKindFromStrId("M_glc__D_e")->EntityId);
 
         int CounterOfParticles = 0;
-        FOR_EACH_PARTICLE_IN_XYZ_CONST
+        FOR_EACH_PARTICLE_IN_SECTORS_XYZ_CONST
             if (ParticleObject.first != 0)
                 if (auto IPK = ParticlesKindsManagerObject.ParticlesKinds.find(GetParticleFromIndex(ParticleObject.first).EntityId); IPK != ParticlesKindsManagerObject.ParticlesKinds.end() && IPK->second.IdStr == "M_glc__D_e")
                     CounterOfParticles++;

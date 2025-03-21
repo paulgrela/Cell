@@ -18,7 +18,7 @@ void CellEngineBasicParticlesOperations::InitiateFreeParticleIndexes(const Parti
         if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
         {
             UnsignedInt CurrentSectorIndex = 0;
-            FOR_EACH_PARTICLE_IN_XYZ_ONLY
+            FOR_EACH_SECTOR_IN_XYZ_ONLY
             {
                 SetCurrentSectorPos({ ParticleSectorXIndex, ParticleSectorYIndex, ParticleSectorZIndex });
 
@@ -80,7 +80,7 @@ void CellEngineBasicParticlesOperations::GetMinMaxCoordinatesForAllParticles(con
     {
         LoggersManagerObject.Log(STREAM("GET MIN MAX FOR ALL PARTICLES"));
 
-        FOR_EACH_PARTICLE_IN_XYZ
+        FOR_EACH_PARTICLE_IN_SECTORS_XYZ
             if (ParticleObject.second.EntityId != 0)
                 GetMinMaxCoordinatesForParticle<T, A>(ParticleObject.second, ListOfElements, ListOfElementsOfParticleKind, UpdateParticleKindListOfElementsBool);
     }
@@ -152,7 +152,7 @@ vector<UniqueIdInt> CellEngineBasicParticlesOperations::GetAllParticlesWithChose
     try
     {
         ListOfParticlesIndexes.reserve(1024 * 1024);
-        FOR_EACH_PARTICLE_IN_XYZ_CONST
+        FOR_EACH_PARTICLE_IN_SECTORS_XYZ_CONST
             if (ParticleObject.second.EntityId != 0)
             {
                 auto ParticleKindObject = ParticlesKindsManagerObject.GetParticleKind(ParticleObject.second.EntityId);
@@ -174,7 +174,7 @@ vector<UniqueIdInt> CellEngineBasicParticlesOperations::GetAllParticlesWithChose
     try
     {
         ListOfParticlesIndexes.reserve(1024 * 1024);
-        FOR_EACH_PARTICLE_IN_XYZ_CONST
+        FOR_EACH_PARTICLE_IN_SECTORS_XYZ_CONST
             if (ParticleObject.second.EntityId == EntityId)
                 ListOfParticlesIndexes.emplace_back(ParticleObject.first);
     }
@@ -189,7 +189,7 @@ UnsignedInt CellEngineBasicParticlesOperations::GetNumberOfParticlesWithChosenEn
 
     try
     {
-        FOR_EACH_PARTICLE_IN_XYZ_CONST
+        FOR_EACH_PARTICLE_IN_SECTORS_XYZ_CONST
             if (ParticleObject.second.EntityId == EntityId)
                 ParticleCounter++;
     }

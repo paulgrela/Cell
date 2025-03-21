@@ -25,7 +25,7 @@ void CellEngineRealRandomParticlesInFullAtomSpaceGenerator::UpdateSequence(Parti
 {
     try
     {
-        FOR_EACH_PARTICLE_IN_XYZ
+        FOR_EACH_PARTICLE_IN_SECTORS_XYZ
             if (ParticleObject.second.EntityId != 0)
             {
                 auto ParticleKindObject = ParticlesKindsManagerObject.GetParticleKind(ParticleObject.second.EntityId);
@@ -46,7 +46,7 @@ UnsignedInt CellEngineRealRandomParticlesInFullAtomSpaceGenerator::GetNumberOfRe
 
     try
     {
-        FOR_EACH_PARTICLE_IN_XYZ_CONST
+        FOR_EACH_PARTICLE_IN_SECTORS_XYZ_CONST
             if (ParticleObject.second.EntityId != 0)
             {
                 auto ParticleKindObject = ParticlesKindsManagerObject.GetParticleKind(ParticleObject.second.EntityId);
@@ -134,7 +134,7 @@ void CellEngineRealRandomParticlesInFullAtomSpaceGenerator::PrintNumberOfParticl
 
         UniqueIdInt OldParticlesCounter = 0;
         set<UniqueIdInt> TestSet;
-        FOR_EACH_PARTICLE_IN_XYZ_CONST
+        FOR_EACH_PARTICLE_IN_SECTORS_XYZ_CONST
         {
             if (ParticleObject.second.EntityId < StartParticleKindId)
             {

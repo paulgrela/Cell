@@ -249,7 +249,7 @@ void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const ch
                         if (CellStatePropertyTreeElement.second.get_child_optional("CellGenomeSequenceFastaOneFileName"))
                             CellEngineConfigDataObject.CellGenomeSequenceFastaOneFileName = CellStatePropertyTreeElement.second.get<string>("CellGenomeSequenceFastaOneFileName");
 
-                        CellEngineDataFileObjectPointer = CreateCellEngineDataFileObject(CellEngineConfigDataObject.CellStateFileName);
+                        //CellEngineDataFileObjectPointer = CreateCellEngineDataFileObject(CellEngineConfigDataObject.CellStateFileName);
 
                         CellEngineConfigDataObject.ChosenStructureIndex = CellStatePropertyTreeElement.second.get<UnsignedInt>("ChosenStructureIndex");
 
@@ -351,6 +351,8 @@ void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const ch
                         }
                     }
         }
+
+        CellEngineDataFileObjectPointer = CreateCellEngineDataFileObject(CellEngineConfigDataObject.CellStateFileName);
     }
     CATCH("cell print configuration constructor")
 }

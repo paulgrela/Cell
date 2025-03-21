@@ -19,6 +19,9 @@ public:
 public:
     ~CellEngineDataFile() override = default;
 public:
+    UnsignedInt CurrentMPIProcessIndex{ 0 };
+    int NumberOfMPIProcesses{ 0 };
+public:
     SimulationSpaceForParallelExecutionContainer<CellEngineSimulationSpace> CellEngineSimulationSpaceForThreadsObjectsPointer;
     std::unique_ptr<CellEngineFullAtomSimulationSpace> CellEngineFullAtomSimulationSpaceObjectPointer;
     std::unique_ptr<CellEngineVoxelSimulationSpace> CellEngineVoxelSimulationSpaceObjectPointer;
@@ -73,7 +76,7 @@ public:
 
         try
         {
-            FOR_EACH_PARTICLE_IN_XYZ
+            FOR_EACH_PARTICLE_IN_SECTORS_XYZ
             {
                 vmath::vec3 CenterOfParticle(0.0, 0.0, 0.0);
 
@@ -84,7 +87,7 @@ public:
             }
 
             float NumberOfParticles = 0;
-            FOR_EACH_PARTICLE_IN_XYZ
+            FOR_EACH_PARTICLE_IN_SECTORS_XYZ
             {
                 ParticleObject.second.OrderInParticleIndex = static_cast<UnsignedInt>(NumberOfParticles);
 
@@ -106,7 +109,7 @@ public:
 
         try
         {
-            FOR_EACH_PARTICLE_IN_XYZ_CONST
+            FOR_EACH_PARTICLE_IN_SECTORS_XYZ_CONST
                 NumberOfParticles++;
         }
         CATCH_AND_THROW("getting number of particles")

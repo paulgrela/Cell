@@ -85,7 +85,7 @@ UnsignedInt GetProcessGroupNumberVer2(const UnsignedInt ThreadXIndex, const Unsi
 SignedInt CellEngineSimulationParallelExecutionManager::GetProcessPrevNeighbour(const SignedInt ThreadXIndex, const SignedInt ThreadYIndex, const SignedInt ThreadZIndex) const
 {
     if (ThreadXIndex >= 0 && ThreadYIndex >= 0 && ThreadZIndex >= 0)
-        return SimulationSpaceDataForThreads[ThreadXIndex][ThreadYIndex][ThreadZIndex]->CurrentMPIProcessIndex;
+        return SimulationSpaceDataForThreads[ThreadXIndex][ThreadYIndex][ThreadZIndex]->MPIProcessIndex;
     else
         return -1;
 }
@@ -93,7 +93,7 @@ SignedInt CellEngineSimulationParallelExecutionManager::GetProcessPrevNeighbour(
 SignedInt CellEngineSimulationParallelExecutionManager::GetProcessNextNeighbour(const SignedInt ThreadXIndex, const SignedInt ThreadYIndex, const SignedInt ThreadZIndex) const
 {
     if (static_cast<SignedInt>(ThreadXIndex) <= CellEngineConfigDataObject.NumberOfXThreadsInSimulation && static_cast<SignedInt>(ThreadYIndex) <= CellEngineConfigDataObject.NumberOfYThreadsInSimulation && static_cast<SignedInt>(ThreadZIndex) <= CellEngineConfigDataObject.NumberOfZThreadsInSimulation)
-        return SimulationSpaceDataForThreads[ThreadXIndex][ThreadYIndex][ThreadZIndex]->CurrentMPIProcessIndex;
+        return SimulationSpaceDataForThreads[ThreadXIndex][ThreadYIndex][ThreadZIndex]->MPIProcessIndex;
     else
         return -1;
 }
@@ -108,7 +108,8 @@ void CellEngineSimulationParallelExecutionManager::CreateDataEveryMPIProcessForP
             for (UnsignedInt MPIProcessYIndex = 1; MPIProcessYIndex <= CellEngineConfigDataObject.NumberOfYThreadsInSimulation; MPIProcessYIndex++)
                 for (UnsignedInt MPIProcessZIndex = 1; MPIProcessZIndex <= CellEngineConfigDataObject.NumberOfZThreadsInSimulation; MPIProcessZIndex++)
                 {
-                    if (CurrentMPIProcessIndex == MPIProcessIndex)
+                    //if (MPIProcessIndex == SimulationSpaceDataForThreads[MPIProcessXIndex - 1][MPIProcessYIndex - 1][MPIProcessZIndex - 1]->MPIProcessIndex)
+                    if (MPIProcessIndex == CellEngineDataFileObjectPointer->CurrentMPIProcessIndex)
                     {
                         CurrentMPIProcessSimulationSpaceSectorsRanges.SetParameters((MPIProcessXIndex - 1) * CellEngineConfigDataObject.NumberOfXSectorsInOneThreadInSimulation, (MPIProcessYIndex - 1) * CellEngineConfigDataObject.NumberOfYSectorsInOneThreadInSimulation, (MPIProcessZIndex - 1) * CellEngineConfigDataObject.NumberOfZSectorsInOneThreadInSimulation, MPIProcessXIndex * CellEngineConfigDataObject.NumberOfXSectorsInOneThreadInSimulation, MPIProcessYIndex * CellEngineConfigDataObject.NumberOfYSectorsInOneThreadInSimulation, MPIProcessZIndex * CellEngineConfigDataObject.NumberOfZSectorsInOneThreadInSimulation);
 
@@ -184,7 +185,7 @@ void CellEngineSimulationParallelExecutionManager::FirstSendParticlesForThreads(
         FOR_EACH_THREAD_IN_XYZ
             SimulationSpaceDataForThreads[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->ParticlesForThreads.clear();
 
-        FOR_EACH_PARTICLE_IN_XYZ_CONST
+        FOR_EACH_PARTICLE_IN_SECTORS_XYZ_CONST
             if (ParticleObject.second.Center.X < CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension && ParticleObject.second.Center.Y < CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension && ParticleObject.second.Center.Z < CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension)
             {
                 UnsignedInt ThreadXIndex = floor(ParticleObject.second.Center.X / CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace);
@@ -651,7 +652,8 @@ void CellEngineSimulationParallelExecutionManager::GenerateNStepsOfSimulationFor
 
         CellEngineUseful::SwitchOffLogs();
 
-        GenerateNStepsOfSimulationForWholeCellSpaceInMPIProcess(NumberOfStepsOutside, NumberOfStepsInside, CurrentMPIProcessIndex, 0, 0, 0);
+        //GenerateNStepsOfSimulationForWholeCellSpaceInMPIProcess(NumberOfStepsOutside, NumberOfStepsInside, MPIProcessIndex, 0, 0, 0);
+        GenerateNStepsOfSimulationForWholeCellSpaceInMPIProcess(NumberOfStepsOutside, NumberOfStepsInside, CellEngineDataFileObjectPointer->CurrentMPIProcessIndex, 0, 0, 0);
 
         CellEngineUseful::SwitchOnLogs();
 
@@ -674,7 +676,8 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIPr
         for (UnsignedInt NeigbourhProcessIndex = 0; NeigbourhProcessIndex < NumberOfAllNeighbours; NeigbourhProcessIndex++)
         {
             if (VectorOfParticlesToSendToNeighbourProcesses[NeigbourhProcessIndex].empty() == true)
-                VectorOfParticlesToSendToNeighbourProcesses[NeigbourhProcessIndex].emplace_back(MPIParticleSenderStruct{ 0, 0, CurrentMPIProcessIndex, 0, 0, 0, 0, 0, 0 });
+                VectorOfParticlesToSendToNeighbourProcesses[NeigbourhProcessIndex].emplace_back(MPIParticleSenderStruct{ 0, 0, CellEngineDataFileObjectPointer->CurrentMPIProcessIndex, 0, 0, 0, 0, 0, 0 });
+                //VectorOfParticlesToSendToNeighbourProcesses[NeigbourhProcessIndex].emplace_back(MPIParticleSenderStruct{ 0, 0, MPIProcessIndex, 0, 0, 0, 0, 0, 0 });
 
             MPI_Request MPIMessageRequest = MPI_REQUEST_NULL;
             MPI_Isend(VectorOfParticlesToSendToNeighbourProcesses[NeigbourhProcessIndex].data(), VectorOfParticlesToSendToNeighbourProcesses[NeigbourhProcessIndex].size() * sizeof(MPIParticleSenderStruct), MPI_CHAR, NeighbourProcessesIndexes[NeigbourhProcessIndex], 0, MPI_COMM_WORLD, &MPIMessageRequest);
@@ -938,7 +941,7 @@ void CellEngineSimulationParallelExecutionManager::CheckParticlesCenters(const b
         UnsignedInt NumberOfZeroSizedParticles = 0;
         UnsignedInt NumberOfBadCenterParticles = 0;
 
-        FOR_EACH_PARTICLE_IN_XYZ_CONST
+        FOR_EACH_PARTICLE_IN_SECTORS_XYZ_CONST
         {
             if (PrintAllParticles ==  true)
                 LoggersManagerObject.Log(STREAM("ParticleIndex = " << ParticleObject.second.Index << " " << ParticleObject.second.Center.X << " " << ParticleObject.second.Center.Y << " " << ParticleObject.second.Center.Z));

@@ -75,7 +75,7 @@ public:
     bool MultiThreaded{};
     bool SetProcessPriorityHighest{};
 public:
-    bool MPIFullAtomProcess = false;
+    bool FullAtomMPIParallelProcessesExecution = false;
 public:
     UnsignedInt NumberOfParticlesSectorsInX = 1;
     UnsignedInt NumberOfParticlesSectorsInY = 1;
