@@ -9,6 +9,7 @@
 #include <memory>
 
 #include "Logger.h"
+#include "StringUtils.h"
 #include "Combinatorics.h"
 #include "DateTimeUtils.h"
 #include "ExceptionsMacro.h"
@@ -24,6 +25,19 @@
 #include "CellEngineConfigurationFileReaderWriter.h"
 
 #include "CellEngineWellStirredChemicalReactionsSimulation.h"
+
+#include "CellEnginePDBDataFileReader.h"
+#include "CellEngineDataBuilderForVoxelSimulationSpace.h"
+#include "CellEngineDataBuilderForFullAtomSimulationSpace.h"
+
+class MPIProcessData
+{
+public:
+    UnsignedInt CurrentMPIProcessIndex{ 0 };
+    UnsignedInt NumberOfMPIProcesses{ 0 };
+};
+
+inline MPIProcessData MPIProcessDataObject;
 
 using namespace std;
 
@@ -1673,21 +1687,78 @@ public:
     }
 
 public:
+    std::unique_ptr<CellEngineDataFile> CreateCellEngineDataFileObject(const string_view& CellStateFileName)
+    {
+        if (string_utils::check_end_str(CellStateFileName, ".pdb") == true)
+        {
+            CellEngineConfigDataObject.TypeOfFileToRead = CellEngineConfigData::TypesOfFileToRead::PDBFile;
+            return make_unique<CellEnginePDBDataFileReader>();
+        }
+        else
+        {
+            CellEngineConfigDataObject.TypeOfFileToRead = (string_utils::check_end_str(CellStateFileName, ".cif") == false ? CellEngineConfigData::TypesOfFileToRead::BinaryFile : CellEngineConfigData::TypesOfFileToRead::CIFFile);
+
+            switch (CellEngineConfigDataObject.TypeOfSpace)
+            {
+                case CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace : return make_unique<CellEngineDataBuilderForVoxelSimulationSpace>();
+                case CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace : return make_unique<CellEngineDataBuilderForFullAtomSimulationSpace>();
+                default : break;
+            }
+        }
+        return nullptr;
+    }
+
+public:
+    static void StartMPI()
+    {
+        if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true)
+        {
+            int LocalCurrentMPIProcessIndex;
+            int LocalNumberOfMPIProcesses;
+
+            MPI_Init(0, {});
+            MPI_Comm_rank(MPI_COMM_WORLD, &LocalCurrentMPIProcessIndex);
+            MPI_Comm_size(MPI_COMM_WORLD, &LocalNumberOfMPIProcesses);
+
+            MPIProcessDataObject.CurrentMPIProcessIndex = LocalCurrentMPIProcessIndex;
+            MPIProcessDataObject.NumberOfMPIProcesses = LocalNumberOfMPIProcesses;
+
+            LoggersManagerObject.Log(STREAM("Current MPI Process Index: " << MPIProcessDataObject.CurrentMPIProcessIndex));
+            LoggersManagerObject.Log(STREAM("Number of MPI processes: " << MPIProcessDataObject.NumberOfMPIProcesses));
+        }
+    }
+
+    static void EndMPI()
+    {
+        if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true)
+            MPI_Finalize();
+    }
+
+public:
     CellEngineImGuiMenu(const int argc, const char** argv)
     {
         try
         {
             ReadInitConfiguration(argc, argv);
 
-            GLFWwindow* ImGuiMenuWindow = PrepareImGuiMenuGLFWData();
+            StartMPI();
 
-            thread CellEngineOpenGLVisualiserThreadObject(&CellEngineImGuiMenu::CellEngineOpenGLVisualiserThreadFunction, this, CellEngineConfigDataObject.XTopMainWindow, CellEngineConfigDataObject.YTopMainWindow, CellEngineConfigDataObject.WidthMainWindow, CellEngineConfigDataObject.HeightMainWindow);
+            if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == false || (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true && MPIProcessDataObject.CurrentMPIProcessIndex == 0))
+            {
+                CellEngineDataFileObjectPointer = CreateCellEngineDataFileObject(CellEngineConfigDataObject.CellStateFileName);
 
-            ImGuiMenuGLFWMainLoop(ImGuiMenuWindow);
+                GLFWwindow* ImGuiMenuWindow = PrepareImGuiMenuGLFWData();
 
-            CellEngineOpenGLVisualiserThreadObject.detach();
+                thread CellEngineOpenGLVisualiserThreadObject(&CellEngineImGuiMenu::CellEngineOpenGLVisualiserThreadFunction, this, CellEngineConfigDataObject.XTopMainWindow, CellEngineConfigDataObject.YTopMainWindow, CellEngineConfigDataObject.WidthMainWindow, CellEngineConfigDataObject.HeightMainWindow);
 
-            ImGuiMenuGLFShutdown(ImGuiMenuWindow);
+                ImGuiMenuGLFWMainLoop(ImGuiMenuWindow);
+
+                CellEngineOpenGLVisualiserThreadObject.detach();
+
+                ImGuiMenuGLFShutdown(ImGuiMenuWindow);
+            }
+
+            EndMPI();
         }
         CATCH("starting imgui menu and whole cell opengl visualization")
     }

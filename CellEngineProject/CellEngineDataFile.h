@@ -2,6 +2,7 @@
 #ifndef CELL_ENGINE_DATA_FILE_H
 #define CELL_ENGINE_DATA_FILE_H
 
+#include <mpi.h>
 #include <memory>
 
 #include "CellEngineMacros.h"
@@ -15,12 +16,8 @@
 class CellEngineDataFile : public CellEngineFilmOfStructures
 {
 public:
-    CellEngineDataFile() = default;
-public:
-    ~CellEngineDataFile() override = default;
-public:
-    UnsignedInt CurrentMPIProcessIndex{ 0 };
-    int NumberOfMPIProcesses{ 0 };
+        CellEngineDataFile() = default;
+        ~CellEngineDataFile() override = default;
 public:
     SimulationSpaceForParallelExecutionContainer<CellEngineSimulationSpace> CellEngineSimulationSpaceForThreadsObjectsPointer;
     std::unique_ptr<CellEngineFullAtomSimulationSpace> CellEngineFullAtomSimulationSpaceObjectPointer;

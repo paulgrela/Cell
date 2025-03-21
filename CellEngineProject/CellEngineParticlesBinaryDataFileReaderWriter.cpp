@@ -9,6 +9,8 @@
 #include "CellEngineChemicalReactionsManager.h"
 #include "CellEngineParticlesBinaryDataFileReaderWriter.h"
 
+#include "CellEngineImGuiMenu.h"
+
 using namespace std;
 
 constexpr bool AddReactionsOfSuddenAppearanceAndDisappearance = false;
@@ -504,14 +506,15 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
 
                 if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true)
                 {
-                    if (Particles[ParticleSectorPos.SectorPosX][ParticleSectorPos.SectorPosY][ParticleSectorPos.SectorPosZ].MPIProcessIndex == CellEngineDataFileObjectPointer->CurrentMPIProcessIndex)
+                    if (Particles[ParticleSectorPos.SectorPosX][ParticleSectorPos.SectorPosY][ParticleSectorPos.SectorPosZ].MPIProcessIndex == MPIProcessDataObject.CurrentMPIProcessIndex)
                         AddNewParticle(ParticleObject);
                 }
                 else
                     AddNewParticle(ParticleObject);
 
-                if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
-                    CheckCenterForSector(ParticleObject, GetParticles());
+                if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == false)
+                    if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
+                        CheckCenterForSector(ParticleObject, GetParticles());
             }
 
             if (ParticleObject.Index == 0)

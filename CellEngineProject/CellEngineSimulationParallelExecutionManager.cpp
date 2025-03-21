@@ -5,6 +5,7 @@
 #include "DateTimeUtils.h"
 
 #include "CellEngineDataFile.h"
+#include "CellEngineImGuiMenu.h"
 #include "CellEngineSimulationSpace.h"
 #include "CellEngineParticlesKindsManager.h"
 #include "CellEngineSimulationParallelExecutionManager.h"
@@ -108,8 +109,7 @@ void CellEngineSimulationParallelExecutionManager::CreateDataEveryMPIProcessForP
             for (UnsignedInt MPIProcessYIndex = 1; MPIProcessYIndex <= CellEngineConfigDataObject.NumberOfYThreadsInSimulation; MPIProcessYIndex++)
                 for (UnsignedInt MPIProcessZIndex = 1; MPIProcessZIndex <= CellEngineConfigDataObject.NumberOfZThreadsInSimulation; MPIProcessZIndex++)
                 {
-                    //if (MPIProcessIndex == SimulationSpaceDataForThreads[MPIProcessXIndex - 1][MPIProcessYIndex - 1][MPIProcessZIndex - 1]->MPIProcessIndex)
-                    if (MPIProcessIndex == CellEngineDataFileObjectPointer->CurrentMPIProcessIndex)
+                    if (MPIProcessIndex == MPIProcessDataObject.CurrentMPIProcessIndex)
                     {
                         CurrentMPIProcessSimulationSpaceSectorsRanges.SetParameters((MPIProcessXIndex - 1) * CellEngineConfigDataObject.NumberOfXSectorsInOneThreadInSimulation, (MPIProcessYIndex - 1) * CellEngineConfigDataObject.NumberOfYSectorsInOneThreadInSimulation, (MPIProcessZIndex - 1) * CellEngineConfigDataObject.NumberOfZSectorsInOneThreadInSimulation, MPIProcessXIndex * CellEngineConfigDataObject.NumberOfXSectorsInOneThreadInSimulation, MPIProcessYIndex * CellEngineConfigDataObject.NumberOfYSectorsInOneThreadInSimulation, MPIProcessZIndex * CellEngineConfigDataObject.NumberOfZSectorsInOneThreadInSimulation);
 
@@ -652,8 +652,7 @@ void CellEngineSimulationParallelExecutionManager::GenerateNStepsOfSimulationFor
 
         CellEngineUseful::SwitchOffLogs();
 
-        //GenerateNStepsOfSimulationForWholeCellSpaceInMPIProcess(NumberOfStepsOutside, NumberOfStepsInside, MPIProcessIndex, 0, 0, 0);
-        GenerateNStepsOfSimulationForWholeCellSpaceInMPIProcess(NumberOfStepsOutside, NumberOfStepsInside, CellEngineDataFileObjectPointer->CurrentMPIProcessIndex, 0, 0, 0);
+        GenerateNStepsOfSimulationForWholeCellSpaceInMPIProcess(NumberOfStepsOutside, NumberOfStepsInside, MPIProcessDataObject.CurrentMPIProcessIndex, 0, 0, 0);
 
         CellEngineUseful::SwitchOnLogs();
 
@@ -676,8 +675,7 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIPr
         for (UnsignedInt NeigbourhProcessIndex = 0; NeigbourhProcessIndex < NumberOfAllNeighbours; NeigbourhProcessIndex++)
         {
             if (VectorOfParticlesToSendToNeighbourProcesses[NeigbourhProcessIndex].empty() == true)
-                VectorOfParticlesToSendToNeighbourProcesses[NeigbourhProcessIndex].emplace_back(MPIParticleSenderStruct{ 0, 0, CellEngineDataFileObjectPointer->CurrentMPIProcessIndex, 0, 0, 0, 0, 0, 0 });
-                //VectorOfParticlesToSendToNeighbourProcesses[NeigbourhProcessIndex].emplace_back(MPIParticleSenderStruct{ 0, 0, MPIProcessIndex, 0, 0, 0, 0, 0, 0 });
+                VectorOfParticlesToSendToNeighbourProcesses[NeigbourhProcessIndex].emplace_back(MPIParticleSenderStruct{ 0, 0, MPIProcessDataObject.CurrentMPIProcessIndex, 0, 0, 0, 0, 0, 0 });
 
             MPI_Request MPIMessageRequest = MPI_REQUEST_NULL;
             MPI_Isend(VectorOfParticlesToSendToNeighbourProcesses[NeigbourhProcessIndex].data(), VectorOfParticlesToSendToNeighbourProcesses[NeigbourhProcessIndex].size() * sizeof(MPIParticleSenderStruct), MPI_CHAR, NeighbourProcessesIndexes[NeigbourhProcessIndex], 0, MPI_COMM_WORLD, &MPIMessageRequest);

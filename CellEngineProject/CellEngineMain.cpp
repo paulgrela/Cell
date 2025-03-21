@@ -954,24 +954,9 @@ void TestExecutionsLongMessagesTimes()
     TestBlockingMessagesLongTime();
 }
 
-void MainProgram(const int argc, const char ** argv)
-{
-    #ifdef USE_MPI
-    int NumberOfMPIProcesses;
-    int MPIProcessIdentifier;
-    #endif
-    MPI_Comm_rank(MPI_COMM_WORLD, &MPIProcessIdentifier);
-    MPI_Comm_size(MPI_COMM_WORLD, &NumberOfMPIProcesses);
-
-    if(MPIProcessIdentifier == 0)
-    {
-        CellEngineImGuiMenu CellEngineImGuiMenuObject(argc, argv);
-    }
-}
-
 int main(const int argc, const char ** argv)
 {
-    StartMPI();
+    //StartMPI();
 
     //MPIMessagesTest6(true);
     //MPIMessagesTest6_1(true);
@@ -989,9 +974,11 @@ int main(const int argc, const char ** argv)
 
     //TestExecutionsLongMessagesTimes();
 
-    MainProgram(argc, argv);
+    //MainProgram(argc, argv);
 
-    MPI_Finalize();
+    CellEngineImGuiMenu CellEngineImGuiMenuObject(argc, argv);
+
+    //MPI_Finalize();
 
     return 0;
 }

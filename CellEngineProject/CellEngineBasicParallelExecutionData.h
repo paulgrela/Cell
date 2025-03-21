@@ -9,6 +9,11 @@
 class CellEngineBasicParallelExecutionData
 {
     friend class CellEngineSimulationParallelExecutionManager;
+public:
+    UnsignedInt GetMPIProcessIndex() const
+    {
+        return MPIProcessIndex;
+    }
 protected:
     UnsignedInt MPIProcessIndex{ 0 };
     UnsignedInt ProcessGroupNumber;

@@ -13,34 +13,10 @@
 #include "CellEngineUseful.h"
 #include "CellEngineDataFile.h"
 #include "CellEngineConfigData.h"
-#include "CellEnginePDBDataFileReader.h"
 #include "CellEngineParticlesKindsManager.h"
 #include "CellEngineConfigurationFileReaderWriter.h"
-#include "CellEngineDataBuilderForVoxelSimulationSpace.h"
-#include "CellEngineDataBuilderForFullAtomSimulationSpace.h"
 
 using namespace std;
-
-std::unique_ptr<CellEngineDataFile> CreateCellEngineDataFileObject(const string_view& CellStateFileName)
-{
-    if (string_utils::check_end_str(CellStateFileName, ".pdb") == true)
-    {
-        CellEngineConfigDataObject.TypeOfFileToRead = CellEngineConfigData::TypesOfFileToRead::PDBFile;
-        return make_unique<CellEnginePDBDataFileReader>();
-    }
-    else
-    {
-        CellEngineConfigDataObject.TypeOfFileToRead = (string_utils::check_end_str(CellStateFileName, ".cif") == false ? CellEngineConfigData::TypesOfFileToRead::BinaryFile : CellEngineConfigData::TypesOfFileToRead::CIFFile);
-
-        switch (CellEngineConfigDataObject.TypeOfSpace)
-        {
-            case CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace : return make_unique<CellEngineDataBuilderForVoxelSimulationSpace>();
-            case CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace : return make_unique<CellEngineDataBuilderForFullAtomSimulationSpace>();
-            default : break;
-        }
-    }
-    return nullptr;
-}
 
 void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const char* ConfigFileNameParameter, const UnsignedInt ExecuteCellStateId)
 {
@@ -249,7 +225,8 @@ void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const ch
                         if (CellStatePropertyTreeElement.second.get_child_optional("CellGenomeSequenceFastaOneFileName"))
                             CellEngineConfigDataObject.CellGenomeSequenceFastaOneFileName = CellStatePropertyTreeElement.second.get<string>("CellGenomeSequenceFastaOneFileName");
 
-                        //CellEngineDataFileObjectPointer = CreateCellEngineDataFileObject(CellEngineConfigDataObject.CellStateFileName);
+                        if (CellStatePropertyTreeElement.second.get_child_optional("FullAtomMPIParallelProcessesExecution"))
+                            CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution = CellStatePropertyTreeElement.second.get<bool>("FullAtomMPIParallelProcessesExecution");
 
                         CellEngineConfigDataObject.ChosenStructureIndex = CellStatePropertyTreeElement.second.get<UnsignedInt>("ChosenStructureIndex");
 
@@ -351,8 +328,6 @@ void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const ch
                         }
                     }
         }
-
-        CellEngineDataFileObjectPointer = CreateCellEngineDataFileObject(CellEngineConfigDataObject.CellStateFileName);
     }
     CATCH("cell print configuration constructor")
 }
