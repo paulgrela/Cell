@@ -526,7 +526,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
         ParticlesSize = 0;
         FOR_EACH_PARTICLE_IN_SECTORS_XYZ_CONST
             ParticlesSize++;
-        LoggersManagerObject.Log(STREAM("Number of Particles to be read = " << ParticlesSize));
+        LoggersManagerObject.Log(STREAM("Number of Particles read = " << ParticlesSize));
     }
     CATCH("reading particles from binary file")
 }

@@ -29,6 +29,7 @@ void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const ch
         ConfigFileName = ConfigFileNameParameter;
 
         read_xml(ConfigFileName, MainConfigPropertyTree, boost::property_tree::xml_parser::trim_whitespace);
+
         LoggersManagerObject.Log(STREAM("Reading xml config file finished"));
 
         LoggersManagerObject.Log(STREAM("ExecuteCellStateId = " << ExecuteCellStateId));
@@ -228,6 +229,9 @@ void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const ch
                         if (CellStatePropertyTreeElement.second.get_child_optional("FullAtomMPIParallelProcessesExecution"))
                             CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution = CellStatePropertyTreeElement.second.get<bool>("FullAtomMPIParallelProcessesExecution");
 
+                        if (CellStatePropertyTreeElement.second.get_child_optional("OpenGLGraphicsSwitchedOff"))
+                            CellEngineConfigDataObject.OpenGLGraphicsSwitchedOff = CellStatePropertyTreeElement.second.get<bool>("OpenGLGraphicsSwitchedOff");
+
                         CellEngineConfigDataObject.ChosenStructureIndex = CellStatePropertyTreeElement.second.get<UnsignedInt>("ChosenStructureIndex");
 
                         CellEngineConfigDataObject.SpecularPower = CellStatePropertyTreeElement.second.get<float>("SpecularPower");
@@ -329,7 +333,7 @@ void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const ch
                     }
         }
     }
-    CATCH("cell print configuration constructor")
+    CATCH("reading cell configuration xml file")
 }
 
 void CellEngineConfigurationFileReaderWriter::SaveTestStatisticsToFile(const UnsignedInt ExecuteCellStateId) const
@@ -355,5 +359,5 @@ void CellEngineConfigurationFileReaderWriter::SaveTestStatisticsToFile(const Uns
         std::ofstream OutputConfigFile(ConfigFileName);
         write_xml(OutputConfigFile, MainConfigPropertyTree, boost::property_tree::xml_writer_make_settings<string>('\t', 1));
     }
-    CATCH("chess print configuration constructor")
+    CATCH("saving test statistics configuration xml file")
 }

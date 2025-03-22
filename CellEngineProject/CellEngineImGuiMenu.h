@@ -84,24 +84,33 @@ public:
         CATCH("initializing logger manager parameters")
     }
 
-    static void ReadInitConfiguration(const int argc, const char **argv)
+    static void StartLogger()
     {
         try
         {
             InitializeLoggerManagerParameters();
-            LoggersManagerObject.Log(STREAM("START CELL"));
 
+            LoggersManagerObject.Log(STREAM("CELL ENGINE START"));
+
+            LoggersManagerObject.InitializePrintingParameters(CellEngineConfigDataObject.PrintLogToConsole, CellEngineConfigDataObject.PrintLogToFiles, CellEngineConfigDataObject.PrintLogLineNumberToConsole, CellEngineConfigDataObject.PrintLogDateTimeToConsole, CellEngineConfigDataObject.PrintLogProcessIdToConsole, CellEngineConfigDataObject.PrintLogProcessPriorityLevelToConsole, CellEngineConfigDataObject.PrintLogThreadIdToConsole, CellEngineConfigDataObject.PrintLogLineNumberToFile, CellEngineConfigDataObject.PrintLogDateTimeToFile, CellEngineConfigDataObject.PrintLogProcessIdToFile, CellEngineConfigDataObject.PrintLogProcessPriorityLevelToFile, CellEngineConfigDataObject.PrintLogThreadIdToFile, CellEngineConfigDataObject.MaximalNumberOfLinesInOneFile, CellEngineConfigDataObject.PrintLogToCommonFileWhenPrintLogToSpecialFile);
+        }
+        CATCH("starting logger")
+    }
+
+    static void ReadInitConfiguration(const int argc, const char **argv)
+    {
+        try
+        {
             UnsignedInt ExecuteCellStateId = 1;
+
             if (argc > 1)
                 ExecuteCellStateId = stoi(argv[1]);
             else
                 LoggersManagerObject.Log(STREAM("Lack of cell id to execute in program parameters"));
 
             CellEngineConfigurationFileReaderWriterObject.ReadCellConfigurationFile("CellEngineProjectConfig.xml", ExecuteCellStateId);
-
-            LoggersManagerObject.InitializePrintingParameters(CellEngineConfigDataObject.PrintLogToConsole, CellEngineConfigDataObject.PrintLogToFiles, CellEngineConfigDataObject.PrintLogLineNumberToConsole, CellEngineConfigDataObject.PrintLogDateTimeToConsole, CellEngineConfigDataObject.PrintLogProcessIdToConsole, CellEngineConfigDataObject.PrintLogProcessPriorityLevelToConsole, CellEngineConfigDataObject.PrintLogThreadIdToConsole, CellEngineConfigDataObject.PrintLogLineNumberToFile, CellEngineConfigDataObject.PrintLogDateTimeToFile, CellEngineConfigDataObject.PrintLogProcessIdToFile, CellEngineConfigDataObject.PrintLogProcessPriorityLevelToFile, CellEngineConfigDataObject.PrintLogThreadIdToFile, CellEngineConfigDataObject.MaximalNumberOfLinesInOneFile, CellEngineConfigDataObject.PrintLogToCommonFileWhenPrintLogToSpecialFile);
         }
-        CATCH("reading of data file")
+        CATCH("reading init configuration")
     }
 
     template<class T>
@@ -1369,6 +1378,11 @@ public:
                     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfSimulationForWholeCellSpaceInThreads(CellEngineConfigDataObject.NumberOfStepsInSimulationOutside, CellEngineConfigDataObject.NumberOfStepsInSimulationInside);
                 });
 
+                ColorButton(AlignString("MAKE N STEPS OF SIMULATION FOR WHOLE CELL SPACE IN MPI", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
+                {
+                    CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfSimulationForWholeCellSpaceInMPIProcess(CellEngineConfigDataObject.NumberOfStepsInSimulationOutside, CellEngineConfigDataObject.NumberOfStepsInSimulationInside);
+                });
+
                 ColorButton(AlignString("GATHER IMPORTANT DATA FROM THREADS AFTER SIMULATION", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
                 {
                     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GatherCancelledParticlesIndexesFromThreads();
@@ -1378,6 +1392,17 @@ public:
                 {
                     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->CheckParticlesCenters(false);
                 });
+
+                if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true)
+                {
+                    ColorButton(AlignString("CLOSE SIMULATION PROGRAM ALL PROCESSES IN MPI", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
+                    {
+                        int ValueToSend = 0;
+                        MPI_Bcast(&ValueToSend, 1, MPI_INT, 0, MPI_COMM_WORLD);
+                        ImGuiMenuGLFShutdown(ImGuiMenuWindow);
+                        EndMPIAllProcessesForCellEngine();
+                    });
+                }
             }
         }
         CATCH("modification of simulations operations full atom simulation space parameters menu")
@@ -1709,7 +1734,7 @@ public:
     }
 
 public:
-    static void StartMPI()
+    static void StartMPIAllProcessesForCellEngine()
     {
         if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true)
         {
@@ -1728,40 +1753,73 @@ public:
         }
     }
 
-    static void EndMPI()
+    static void EndMPIAllProcessesForCellEngine()
     {
         if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true)
             MPI_Finalize();
     }
 
 public:
+    static GLFWwindow* ImGuiMenuWindow;
+
     CellEngineImGuiMenu(const int argc, const char** argv)
     {
         try
         {
+            StartLogger();
+
             ReadInitConfiguration(argc, argv);
 
-            StartMPI();
+            StartMPIAllProcessesForCellEngine();
 
             CellEngineDataFileObjectPointer = CreateCellEngineDataFileObject(CellEngineConfigDataObject.CellStateFileName);
 
             CellEngineDataFileObjectPointer->ReadDataFromFile(true, true, CellEngineConfigDataObject.TypeOfFileToRead);
 
-            if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == false || (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true && MPIProcessDataObject.CurrentMPIProcessIndex == 0))
+            if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true && MPIProcessDataObject.CurrentMPIProcessIndex != 0)
             {
-                GLFWwindow* ImGuiMenuWindow = PrepareImGuiMenuGLFWData();
-
-                thread CellEngineOpenGLVisualiserThreadObject(&CellEngineImGuiMenu::CellEngineOpenGLVisualiserThreadFunction, this, CellEngineConfigDataObject.XTopMainWindow, CellEngineConfigDataObject.YTopMainWindow, CellEngineConfigDataObject.WidthMainWindow, CellEngineConfigDataObject.HeightMainWindow);
-
-                ImGuiMenuGLFWMainLoop(ImGuiMenuWindow);
-
-                CellEngineOpenGLVisualiserThreadObject.detach();
-
-                ImGuiMenuGLFShutdown(ImGuiMenuWindow);
+                if (CellEngineConfigDataObject.OpenGLGraphicsSwitchedOff == false)
+                    while (true)
+                    {
+                        int ValueToGet = 0;
+                        MPI_Bcast(&ValueToGet, 1, MPI_INT, 0, MPI_COMM_WORLD);
+                        if (ValueToGet == 1)
+                            CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfSimulationForWholeCellSpaceInMPIProcess(CellEngineConfigDataObject.NumberOfStepsInSimulationOutside, CellEngineConfigDataObject.NumberOfStepsInSimulationInside);
+                        else
+                        if (ValueToGet == 0)
+                            break;
+                    }
+                else
+                {
+                    int ValueToGet = 0;
+                    MPI_Bcast(&ValueToGet, 1, MPI_INT, 0, MPI_COMM_WORLD);
+                    if (ValueToGet == 1)
+                        CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfSimulationForWholeCellSpaceInMPIProcess(CellEngineConfigDataObject.NumberOfStepsInSimulationOutside, CellEngineConfigDataObject.NumberOfStepsInSimulationInside);
+                }
             }
 
-            EndMPI();
+            if (CellEngineConfigDataObject.OpenGLGraphicsSwitchedOff == true)
+                if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true && MPIProcessDataObject.CurrentMPIProcessIndex == 0)
+                    CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfSimulationForWholeCellSpaceInMPIProcess(CellEngineConfigDataObject.NumberOfStepsInSimulationOutside, CellEngineConfigDataObject.NumberOfStepsInSimulationInside);
+
+            if (CellEngineConfigDataObject.OpenGLGraphicsSwitchedOff == false)
+                if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == false || (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true && MPIProcessDataObject.CurrentMPIProcessIndex == 0))
+                {
+                    ImGuiMenuWindow = PrepareImGuiMenuGLFWData();
+
+                    thread CellEngineOpenGLVisualiserThreadObject(&CellEngineImGuiMenu::CellEngineOpenGLVisualiserThreadFunction, this, CellEngineConfigDataObject.XTopMainWindow, CellEngineConfigDataObject.YTopMainWindow, CellEngineConfigDataObject.WidthMainWindow, CellEngineConfigDataObject.HeightMainWindow);
+
+                    ImGuiMenuGLFWMainLoop(ImGuiMenuWindow);
+
+                    CellEngineOpenGLVisualiserThreadObject.detach();
+
+                    ImGuiMenuGLFShutdown(ImGuiMenuWindow);
+                }
+
+            EndMPIAllProcessesForCellEngine();
         }
         CATCH("starting imgui menu and whole cell opengl visualization")
     }
 };
+
+inline GLFWwindow* CellEngineImGuiMenu::ImGuiMenuWindow = nullptr;

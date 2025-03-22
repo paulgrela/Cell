@@ -644,13 +644,17 @@ void CellEngineSimulationParallelExecutionManager::GenerateNStepsOfSimulationFor
 
         SetZeroForAllParallelExecutionVariables();
 
-        std::barrier SyncPoint(CellEngineConfigDataObject.NumberOfXThreadsInSimulation * CellEngineConfigDataObject.NumberOfYThreadsInSimulation * CellEngineConfigDataObject.NumberOfZThreadsInSimulation);
-
-        LoggersManagerObject.Log(STREAM("START THREADS"));
+        LoggersManagerObject.Log(STREAM("START MPI SIMULATION"));
 
         const auto start_time = chrono::high_resolution_clock::now();
 
         CellEngineUseful::SwitchOffLogs();
+
+        if (MPIProcessDataObject.CurrentMPIProcessIndex == 0)
+        {
+            int ValueToSend = 1;
+            MPI_Bcast(&ValueToSend, 1, MPI_INT, 0, MPI_COMM_WORLD);
+        }
 
         GenerateNStepsOfSimulationForWholeCellSpaceInMPIProcess(NumberOfStepsOutside, NumberOfStepsInside, MPIProcessDataObject.CurrentMPIProcessIndex, 0, 0, 0);
 
@@ -661,7 +665,7 @@ void CellEngineSimulationParallelExecutionManager::GenerateNStepsOfSimulationFor
         string ResultText = "Execution in threads for steps outside = " + to_string(NumberOfStepsOutside) + " and steps inside = " + to_string(NumberOfStepsInside) + " has taken time: ";
         LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, ResultText.c_str(),"Execution in threads")));
 
-        LoggersManagerObject.Log(STREAM("END THREADS"));
+        LoggersManagerObject.Log(STREAM("END MPI SIMULATION"));
 
         GatherAllParallelExecutionVariables();
     }
