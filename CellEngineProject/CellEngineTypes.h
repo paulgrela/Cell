@@ -53,7 +53,7 @@ struct ThreadPosType
 
 struct SectorPosType
 {
-    UnsignedInt	SectorPosX, SectorPosY, SectorPosZ;
+    SignedInt SectorPosX, SectorPosY, SectorPosZ;
 
     bool operator==(const SectorPosType& CSP) const
     {
