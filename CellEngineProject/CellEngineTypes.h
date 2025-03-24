@@ -182,7 +182,8 @@ struct __attribute__ ((packed)) MPIParticleSenderStruct
 {
     UniqueIdInt ParticleIndex{ 0 };
     EntityIdInt ParticleKindId{ 0 };
-    UnsignedInt ProcessIndex{ 0 };
+    int SenderProcessIndex{ 0 };
+    int ReceiverProcessIndex{ 0 };
     vector3_16 SectorPos{ 0, 0, 0 };
     vector3_Real32 NewPosition{ 0, 0, 0 };
 };

@@ -42,9 +42,17 @@ namespace CellEngineUseful
 
     static SectorPosType GetSectorPos(const RealType X, const RealType Y, const RealType Z)
     {
-        const UnsignedInt SectorPosX = std::floor((X + CellEngineConfigDataObject.ShiftCenterX) / CellEngineConfigDataObject.SizeOfParticlesSectorX);
-        const UnsignedInt SectorPosY = std::floor((Y + CellEngineConfigDataObject.ShiftCenterY) / CellEngineConfigDataObject.SizeOfParticlesSectorY);
-        const UnsignedInt SectorPosZ = std::floor((Z + CellEngineConfigDataObject.ShiftCenterZ) / CellEngineConfigDataObject.SizeOfParticlesSectorZ);
+        UnsignedInt SectorPosX = std::floor((X + CellEngineConfigDataObject.ShiftCenterX) / CellEngineConfigDataObject.SizeOfParticlesSectorX);
+        UnsignedInt SectorPosY = std::floor((Y + CellEngineConfigDataObject.ShiftCenterY) / CellEngineConfigDataObject.SizeOfParticlesSectorY);
+        UnsignedInt SectorPosZ = std::floor((Z + CellEngineConfigDataObject.ShiftCenterZ) / CellEngineConfigDataObject.SizeOfParticlesSectorZ);
+
+                                                                                                                        // SectorPosX = std::clamp(SectorPosX, 0, CellEngineConfigDataObject.NumberOfParticlesSectorsInX);
+                                                                                                                        // SectorPosY = std::clamp(SectorPosX, 0, CellEngineConfigDataObject.NumberOfParticlesSectorsInY);
+                                                                                                                        // SectorPosZ = std::clamp(SectorPosX, 0, CellEngineConfigDataObject.NumberOfParticlesSectorsInZ);
+
+                                                                                                                        SectorPosX = std::clamp(static_cast<int>(SectorPosX), 0, 40);
+                                                                                                                        SectorPosY = std::clamp(static_cast<int>(SectorPosY), 0, 40);
+                                                                                                                        SectorPosZ = std::clamp(static_cast<int>(SectorPosZ), 0, 40);
 
         return { SectorPosX, SectorPosY, SectorPosZ };
     }

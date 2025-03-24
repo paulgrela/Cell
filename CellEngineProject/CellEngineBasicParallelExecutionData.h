@@ -18,6 +18,7 @@ protected:
     UnsignedInt MPIProcessIndex{ 0 };
     UnsignedInt ProcessGroupNumber;
     SignedInt NeighbourProcessesIndexes[NumberOfAllNeighbours];
+    UnsignedInt NumberOfActiveNeighbours;
     std::vector<MPIParticleSenderStruct> VectorOfParticlesToSendToNeighbourProcesses[NumberOfAllNeighbours];
     SimulationSpaceSectorsRanges CurrentMPIProcessSimulationSpaceSectorsRanges;
 protected:

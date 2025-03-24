@@ -968,7 +968,7 @@ int main(const int argc, const char ** argv)
 
     //MPIMessagesTest6_2_1_1_1(true);
 
-    //MPIMessagesTest6_2_2(true);
+        //MPIMessagesTest6_2_2(true);
 
     //MPIMessagesTest6_3(true);
 
@@ -976,9 +976,9 @@ int main(const int argc, const char ** argv)
 
     //MainProgram(argc, argv);
 
-    CellEngineImGuiMenu CellEngineImGuiMenuObject(argc, argv);
-
     //MPI_Finalize();
+
+    CellEngineImGuiMenu CellEngineImGuiMenuObject(argc, argv);
 
     return 0;
 }
