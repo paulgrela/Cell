@@ -40,17 +40,17 @@ bool ExchangeParticleBetweenSectors(const Particle &ParticleObject, ParticlesCon
     return false;
 }
 
-void CellEngineParticlesFullAtomOperations::MoveParticleByVector(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, const SignedInt* NeighbourProcessesIndexes, std::vector<MPIParticleSenderStruct>* VectorOfParticlesToSendToNeighbourProcesses, const RealType VectorX, const RealType VectorY, const RealType VectorZ)
+void CellEngineParticlesFullAtomOperations::MoveParticleByVector(Particle& ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, const SignedInt* NeighbourProcessesIndexes, std::vector<MPIParticleSenderStruct>* VectorOfParticlesToSendToNeighbourProcesses, const RealType VectorX, const RealType VectorY, const RealType VectorZ)
 {
     try
     {
         auto [SectorPosX1, SectorPosY1, SectorPosZ1] = CellEngineUseful::GetSectorPos(ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z);
         auto [SectorPosX2, SectorPosY2, SectorPosZ2] = CellEngineUseful::GetSectorPos(ParticleObject.Center.X + VectorX, ParticleObject.Center.Y + VectorY, ParticleObject.Center.Z + VectorZ);
+
         if (SectorPosX2 == -1 || SectorPosY2 == -1 || SectorPosZ2 == -1)
             return;
 
         MoveAllAtomsInParticleAtomsListByVector(ParticleObject, VectorX, VectorY, VectorZ);
-
         ParticleObject.SetCenterCoordinates(ParticleObject.Center.X + VectorX, ParticleObject.Center.Y + VectorY, ParticleObject.Center.Z + VectorZ);
 
         if (SectorPosX1 != SectorPosX2 || SectorPosY1 != SectorPosY2 || SectorPosZ1 != SectorPosZ2)
@@ -75,6 +75,7 @@ void CellEngineParticlesFullAtomOperations::MoveParticleByVector(Particle &Parti
                 const auto Process1Pos = ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].MPIProcessIndex;
                 const auto Process2Pos = ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].MPIProcessIndex;
                 if (Process1Pos != Process2Pos)
+                {
                     for (UnsignedInt NeigbourhProcessIndex = 0; NeigbourhProcessIndex < NumberOfAllNeighbours; NeigbourhProcessIndex++)
                         if (NeighbourProcessesIndexes[NeigbourhProcessIndex] == Process2Pos)
                         {
@@ -82,9 +83,23 @@ void CellEngineParticlesFullAtomOperations::MoveParticleByVector(Particle &Parti
 
                             //VectorOfParticlesToSendToNeighbourProcesses[NeigbourhProcessIndex].emplace_back(MPIParticleSenderStruct{ ParticleObject.Index, ParticleObject.EntityId, static_cast<int>(Process1Pos), static_cast<int>(Process2Pos), { static_cast<uint16_t>(SectorPosX2), static_cast<uint16_t>(SectorPosY2), static_cast<uint16_t>(SectorPosZ2) }, { ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z } });
                             VectorOfParticlesToSendToNeighbourProcesses[NeigbourhProcessIndex].emplace_back(MPIParticleSenderStruct{ ParticleObject.Index, ParticleObject.EntityId, static_cast<int>(MPIProcessDataObject.CurrentMPIProcessIndex), static_cast<int>(Process2Pos), { static_cast<uint16_t>(SectorPosX2), static_cast<uint16_t>(SectorPosY2), static_cast<uint16_t>(SectorPosZ2) }, { ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z } });
+                                                                                                                        //ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].FreeIndexesOfParticles.push(ParticleObject.Index);
+                                                                                                                        // const UniqueIdInt ParticleIndex = ParticleObject.Index;
+                                                                                                                        // ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].Particles.erase(ParticleIndex);
+
+
+
                             NewSectorNeighbourProcessFound = true;
                             break;
                         }
+                }
+                else
+                if (Process1Pos == Process2Pos)
+                {
+                    ExchangeParticleBetweenSectors(ParticleObject, ParticlesInSector, SectorPosX1, SectorPosY1, SectorPosZ1, SectorPosX2, SectorPosY2, SectorPosZ2);
+                    NewSectorNeighbourProcessFound = true;
+                }
+
                 if (NewSectorNeighbourProcessFound == false)
                 {
                     MoveAllAtomsInParticleAtomsListByVector(ParticleObject, -VectorX, -VectorY, -VectorZ);

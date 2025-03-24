@@ -28,7 +28,7 @@ protected:
                 AtomObject.Z += VectorZ;
             }
         }
-        CATCH_AND_THROW("moving all voxels in particle voxel list by vector")
+        CATCH_AND_THROW("moving all atoms from atoms list by vector")
     }
 protected:
     static bool CheckSectorPos(const UnsignedInt SectorPosX, UnsignedInt SectorPosY, UnsignedInt SectorPosZ)
