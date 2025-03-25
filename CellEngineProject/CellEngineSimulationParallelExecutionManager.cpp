@@ -109,7 +109,7 @@ void CellEngineSimulationParallelExecutionManager::CreateDataEveryMPIProcessForP
                         NeighbourProcessesIndexes[4] = GetProcessNextNeighbour(static_cast<SignedInt>(MPIProcessXIndex) - 1, static_cast<SignedInt>(MPIProcessYIndex), static_cast<SignedInt>(MPIProcessZIndex) - 1);
                         NeighbourProcessesIndexes[5] = GetProcessNextNeighbour(static_cast<SignedInt>(MPIProcessXIndex) - 1, static_cast<SignedInt>(MPIProcessYIndex) - 1, static_cast<SignedInt>(MPIProcessZIndex));
 
-                        LoggersManagerObject.Log(STREAM("MPIProcessIndex Bounds = " <<  MPIProcessDataObject.CurrentMPIProcessIndex << " " << NeighbourProcessesIndexes[0] << " " << NeighbourProcessesIndexes[1] << " " << NeighbourProcessesIndexes[2] << " " << NeighbourProcessesIndexes[3] << " " << NeighbourProcessesIndexes[4] << " " << NeighbourProcessesIndexes[5]));
+                        LoggersManagerObject.Log(STREAM("MPIProcessIndex Neighbours = " <<  MPIProcessDataObject.CurrentMPIProcessIndex << " " << NeighbourProcessesIndexes[0] << " " << NeighbourProcessesIndexes[1] << " " << NeighbourProcessesIndexes[2] << " " << NeighbourProcessesIndexes[3] << " " << NeighbourProcessesIndexes[4] << " " << NeighbourProcessesIndexes[5]));
                     }
 
                     MPIProcessIndex++;
@@ -775,8 +775,8 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIPr
 
 void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIProcessesGroup2Ver1()
 {
-    try
-    {
+    // try
+    // {
     //     int NumberOfReceivedMessages = 0;
     //
     //     while (NumberOfReceivedMessages < NumberOfActiveNeighbours)
@@ -809,8 +809,8 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIPr
     //             NumberOfReceivedMessages++;
     //         }
     //     }
-    }
-    CATCH("exchange particles between mpi processes ver 1")
+    // }
+    // CATCH("exchange particles between mpi processes ver 1")
 }
 
 void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIProcessesGroup2Ver2()
@@ -971,32 +971,32 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIPr
 
 void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIProcessesVer1()
 {
-    try
-    {
-        LoggersManagerObject.LogUnconditional(STREAM("MPI Process Group Number = " << ProcessGroupNumber << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
-
-        if (ProcessGroupNumber == 0)
-        {
-            ExchangeParticlesBetweenMPIProcessesGroup1();
-
-            MPI_Barrier(MPI_COMM_WORLD);
-
-            // ExchangeParticlesBetweenMPIProcessesGroup2Ver1();
-            //
-            // MPI_Barrier(MPI_COMM_WORLD);
-        }
-        else
-        {
-            ExchangeParticlesBetweenMPIProcessesGroup2Ver1();
-
-            MPI_Barrier(MPI_COMM_WORLD);
-
-            // ExchangeParticlesBetweenMPIProcessesGroup1();
-            //
-            // MPI_Barrier(MPI_COMM_WORLD);
-        }
-    }
-    CATCH("exchange particles between mpi processes")
+    // try
+    // {
+    //     LoggersManagerObject.LogUnconditional(STREAM("MPI Process Group Number = " << ProcessGroupNumber << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
+    //
+    //     if (ProcessGroupNumber == 0)
+    //     {
+    //         ExchangeParticlesBetweenMPIProcessesGroup1();
+    //
+    //         MPI_Barrier(MPI_COMM_WORLD);
+    //
+    //         // ExchangeParticlesBetweenMPIProcessesGroup2Ver1();
+    //         //
+    //         // MPI_Barrier(MPI_COMM_WORLD);
+    //     }
+    //     else
+    //     {
+    //         ExchangeParticlesBetweenMPIProcessesGroup2Ver1();
+    //
+    //         MPI_Barrier(MPI_COMM_WORLD);
+    //
+    //         // ExchangeParticlesBetweenMPIProcessesGroup1();
+    //         //
+    //         // MPI_Barrier(MPI_COMM_WORLD);
+    //     }
+    // }
+    // CATCH("exchange particles between mpi processes")
 }
 
 void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIProcessesVer2()

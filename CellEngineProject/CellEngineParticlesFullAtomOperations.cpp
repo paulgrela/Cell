@@ -72,30 +72,33 @@ void CellEngineParticlesFullAtomOperations::MoveParticleByVector(Particle& Parti
             if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true && NeighbourProcessesIndexes != nullptr && VectorOfParticlesToSendToNeighbourProcesses != nullptr)
             {
                 bool NewSectorNeighbourProcessFound = false;
-                const auto Process1Pos = ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].MPIProcessIndex;
-                const auto Process2Pos = ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].MPIProcessIndex;
-                if (Process1Pos != Process2Pos)
-                {
-                    for (UnsignedInt NeigbourhProcessIndex = 0; NeigbourhProcessIndex < NumberOfAllNeighbours; NeigbourhProcessIndex++)
-                        if (NeighbourProcessesIndexes[NeigbourhProcessIndex] == Process2Pos)
-                        {
-                            LoggersManagerObject.Log(STREAM("PROCESS TO SEND PARTICLE = " << Process2Pos));
 
-                            //VectorOfParticlesToSendToNeighbourProcesses[NeigbourhProcessIndex].emplace_back(MPIParticleSenderStruct{ ParticleObject.Index, ParticleObject.EntityId, static_cast<int>(Process1Pos), static_cast<int>(Process2Pos), { static_cast<uint16_t>(SectorPosX2), static_cast<uint16_t>(SectorPosY2), static_cast<uint16_t>(SectorPosZ2) }, { ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z } });
-                            VectorOfParticlesToSendToNeighbourProcesses[NeigbourhProcessIndex].emplace_back(MPIParticleSenderStruct{ ParticleObject.Index, ParticleObject.EntityId, static_cast<int>(MPIProcessDataObject.CurrentMPIProcessIndex), static_cast<int>(Process2Pos), { static_cast<uint16_t>(SectorPosX2), static_cast<uint16_t>(SectorPosY2), static_cast<uint16_t>(SectorPosZ2) }, { ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z } });
-                                                                                                                        //ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].FreeIndexesOfParticles.push(ParticleObject.Index);
-                                                                                                                        // const UniqueIdInt ParticleIndex = ParticleObject.Index;
-                                                                                                                        // ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].Particles.erase(ParticleIndex);
-
-                            NewSectorNeighbourProcessFound = true;
-                            break;
-                        }
-                }
-                else
-                if (Process1Pos == Process2Pos)
+                if ((SectorPosX1 != SectorPosX2 && SectorPosY1 == SectorPosY2 && SectorPosZ1 == SectorPosZ2) || (SectorPosX1 == SectorPosX2 && SectorPosY1 != SectorPosY2 && SectorPosZ1 == SectorPosZ2) || (SectorPosX1 == SectorPosX2 && SectorPosY1 == SectorPosY2 && SectorPosZ1 != SectorPosZ2))
                 {
-                    ExchangeParticleBetweenSectors(ParticleObject, ParticlesInSector, SectorPosX1, SectorPosY1, SectorPosZ1, SectorPosX2, SectorPosY2, SectorPosZ2);
-                    NewSectorNeighbourProcessFound = true;
+                    const auto Process1Pos = ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].MPIProcessIndex;
+                    const auto Process2Pos = ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].MPIProcessIndex;
+
+                    if (Process1Pos != Process2Pos)
+                    {
+                        for (UnsignedInt NeigbourhProcessIndex = 0; NeigbourhProcessIndex < NumberOfAllNeighbours; NeigbourhProcessIndex++)
+                            if (NeighbourProcessesIndexes[NeigbourhProcessIndex] == Process2Pos)
+                            {
+                                if (Process1Pos != MPIProcessDataObject.CurrentMPIProcessIndex)
+                                    LoggersManagerObject.Log(STREAM("PROCESS TO SEND PARTICLE BAD = " << Process2Pos << " FROM " << Process1Pos << " Current Process " << MPIProcessDataObject.CurrentMPIProcessIndex << " S1 = " << SectorPosX1 << " " << SectorPosY1 << " " << SectorPosZ1 << " S2 = " << SectorPosX2 << " " << SectorPosY2 << " " << SectorPosZ2 << " P = " << ParticleObject.Center.X << " " << ParticleObject.Center.Y << " " << ParticleObject.Center.Z << " V = " << VectorX << " " << VectorY << " " << VectorZ << " PSHIFT = " << ParticleObject.Center.X + VectorX << " " << ParticleObject.Center.Y + VectorY << " " << ParticleObject.Center.Z + VectorZ));
+                                else
+                                    LoggersManagerObject.Log(STREAM("PROCESS TO SEND PARTICLE GOOD = " << Process2Pos << " FROM " << Process1Pos << " Current Process " << MPIProcessDataObject.CurrentMPIProcessIndex <<  " S1 = " << SectorPosX1 << " " << SectorPosY1 << " " << SectorPosZ1 << " S2 = " << SectorPosX2 << " " << SectorPosY2 << " " << SectorPosZ2 << " P = " << ParticleObject.Center.X << " " << ParticleObject.Center.Y << " " << ParticleObject.Center.Z << " V = " << VectorX << " " << VectorY << " " << VectorZ << " PSHIFT = " << ParticleObject.Center.X + VectorX << " " << ParticleObject.Center.Y + VectorY << " " << ParticleObject.Center.Z + VectorZ));
+
+                                VectorOfParticlesToSendToNeighbourProcesses[NeigbourhProcessIndex].emplace_back(MPIParticleSenderStruct{ ParticleObject.Index, ParticleObject.EntityId, static_cast<int>(Process1Pos), static_cast<int>(Process2Pos), { static_cast<uint16_t>(SectorPosX2), static_cast<uint16_t>(SectorPosY2), static_cast<uint16_t>(SectorPosZ2) }, { ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z } });
+
+                                NewSectorNeighbourProcessFound = true;
+                                break;
+                            }
+                    }
+                    else
+                    {
+                        ExchangeParticleBetweenSectors(ParticleObject, ParticlesInSector, SectorPosX1, SectorPosY1, SectorPosZ1, SectorPosX2, SectorPosY2, SectorPosZ2);
+                        NewSectorNeighbourProcessFound = true;
+                    }
                 }
 
                 if (NewSectorNeighbourProcessFound == false)

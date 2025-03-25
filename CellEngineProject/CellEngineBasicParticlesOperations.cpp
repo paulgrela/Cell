@@ -20,7 +20,7 @@ void CellEngineBasicParticlesOperations::InitiateFreeParticleIndexes(const Parti
             UnsignedInt CurrentSectorIndex = 0;
             FOR_EACH_SECTOR_IN_XYZ_ONLY
             {
-                SetCurrentSectorPos({ ParticleSectorXIndex, ParticleSectorYIndex, ParticleSectorZIndex });
+                SetCurrentSectorPos({ static_cast<SignedInt>(ParticleSectorXIndex), static_cast<SignedInt>(ParticleSectorYIndex), static_cast<SignedInt>(ParticleSectorZIndex) });
 
                 GetFreeIndexes() = {};
                 for (UniqueIdInt FreeIndex = (CurrentSectorIndex + 1) * ParticleIndexesInSectorsCreatorFactor - 1; FreeIndex > CurrentSectorIndex * ParticleIndexesInSectorsCreatorFactor; FreeIndex--)
