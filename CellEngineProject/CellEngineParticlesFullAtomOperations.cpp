@@ -87,8 +87,6 @@ void CellEngineParticlesFullAtomOperations::MoveParticleByVector(Particle& Parti
                                                                                                                         // const UniqueIdInt ParticleIndex = ParticleObject.Index;
                                                                                                                         // ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].Particles.erase(ParticleIndex);
 
-
-
                             NewSectorNeighbourProcessFound = true;
                             break;
                         }
