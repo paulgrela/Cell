@@ -49,10 +49,8 @@ private:
     void GenerateNStepsOfSimulationForWholeCellSpaceInMPIProcess(UnsignedInt NumberOfStepsOutside, UnsignedInt NumberOfStepsInside, ThreadIdType CurrentThreadIndexParam, UnsignedInt ThreadXIndexParam, UnsignedInt ThreadYIndexParam, UnsignedInt ThreadZIndexParam);
 public:
     void GenerateNStepsOfSimulationForWholeCellSpaceInMPIProcess(UnsignedInt NumberOfStepsOutside, UnsignedInt NumberOfStepsInside);
-    void ExchangeParticlesBetweenMPIProcessesVer1();
     void ExchangeParticlesBetweenMPIProcessesVer2();
     void ExchangeParticlesBetweenMPIProcessesGroup1();
-    void ExchangeParticlesBetweenMPIProcessesGroup2Ver1();
     void ExchangeParticlesBetweenMPIProcessesGroup2Ver2();
 private:
     void SetZeroForAllParallelExecutionVariables();
