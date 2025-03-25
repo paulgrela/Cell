@@ -764,7 +764,7 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIPr
 
                 if (ReceivedConfirmationOfParticlesToRemove[0] != 0)
                     for (const auto& ParticleToRemoveConfirmedIndex : ReceivedConfirmationOfParticlesToRemove)
-                        ;//RemoveParticle(ParticleToRemoveConfirmedIndex, true);
+                        RemoveParticle(ParticleToRemoveConfirmedIndex, true);
 
                 NumberOfReceivedMessages++;
             }
@@ -1007,9 +1007,9 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIPr
         {
             ExchangeParticlesBetweenMPIProcessesGroup1();
 
-            //MPI_Barrier(MPI_COMM_WORLD);
+            MPI_Barrier(MPI_COMM_WORLD);
 
-            // ExchangeParticlesBetweenMPIProcessesGroup2Ver2();
+            ExchangeParticlesBetweenMPIProcessesGroup2Ver2();
             //
             // MPI_Barrier(MPI_COMM_WORLD);
         }
@@ -1017,9 +1017,9 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIPr
         {
             ExchangeParticlesBetweenMPIProcessesGroup2Ver2();
 
-            //MPI_Barrier(MPI_COMM_WORLD);
+            MPI_Barrier(MPI_COMM_WORLD);
 
-            // ExchangeParticlesBetweenMPIProcessesGroup1();
+            ExchangeParticlesBetweenMPIProcessesGroup1();
             //
             // MPI_Barrier(MPI_COMM_WORLD);
         }
