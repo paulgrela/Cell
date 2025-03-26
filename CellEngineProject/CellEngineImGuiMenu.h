@@ -17,6 +17,7 @@
 #include "CellEngineUseful.h"
 #include "CellEngineDataFile.h"
 #include "CellEngineConfigData.h"
+#include "CellEngineMPIProcess.h"
 #include "CellEngineOpenGLVisualiser.h"
 #include "CellEngineOpenGLVisualiserOfVoxelSimulationSpace.h"
 #include "CellEngineOpenGLVisualiserOfFullAtomSimulationSpace.h"
@@ -29,15 +30,6 @@
 #include "CellEnginePDBDataFileReader.h"
 #include "CellEngineDataBuilderForVoxelSimulationSpace.h"
 #include "CellEngineDataBuilderForFullAtomSimulationSpace.h"
-
-class MPIProcessData
-{
-public:
-    UnsignedInt CurrentMPIProcessIndex{ 0 };
-    UnsignedInt NumberOfMPIProcesses{ 0 };
-};
-
-inline MPIProcessData MPIProcessDataObject;
 
 using namespace std;
 
@@ -1148,7 +1140,7 @@ public:
                 if (ImGui::Button(AlignString("SAVE PARTICLES STATISTICS", StringLength).c_str()) == true)
                     CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->SaveParticlesStatisticsOnce();
                 if (ImGui::Button(AlignString("JOIN REACTIONS STATISTICS FROM THREADS", StringLength).c_str()) == true)
-                    CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->JoinStatisticsFromThreads(CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->SavedReactionsMap, CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->SimulationStepNumber);
+                    CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->JoinReactionsStatisticsFromThreads(CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->SavedReactionsMap, CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->SimulationStepNumber);
                 if (ImGui::Button(AlignString("SAVE REACTIONS STATISTICS TO FILE", StringLength).c_str()) == true)
                     CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->SaveReactionsStatisticsToFile();
                 if (ImGui::Button(AlignString("SAVE HISTOGRAM OF PARTICLES TO FILE", StringLength).c_str()) == true)
@@ -1519,7 +1511,7 @@ static void RandomParticlesGeneratorFullAtomSimulationSpaceParametersMenu(const 
                 if (ImGui::Button(AlignString("SAVE PARTICLES STATISTICS", StringLength).c_str()) == true)
                     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SaveParticlesStatisticsOnce();
                 if (ImGui::Button(AlignString("JOIN REACTIONS STATISTICS FROM THREADS", StringLength).c_str()) == true)
-                    CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->JoinStatisticsFromThreads(CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SavedReactionsMap, CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SimulationStepNumber);
+                    CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->JoinReactionsStatisticsFromThreads(CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SavedReactionsMap, CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SimulationStepNumber);
                 if (ImGui::Button(AlignString("SAVE REACTIONS STATISTICS TO FILE", StringLength).c_str()) == true)
                     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SaveReactionsStatisticsToFile();
                 if (ImGui::Button(AlignString("SAVE HISTOGRAM OF PARTICLES TO FILE", StringLength).c_str()) == true)
@@ -1783,11 +1775,17 @@ public:
                     {
                         int ValueToGet = 0;
                         MPI_Bcast(&ValueToGet, 1, MPI_INT, 0, MPI_COMM_WORLD);
+                        if (ValueToGet == 0)
+                            break;
+                        else
                         if (ValueToGet == 1)
                             CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfSimulationForWholeCellSpaceInMPIProcess(CellEngineConfigDataObject.NumberOfStepsInSimulationOutside, CellEngineConfigDataObject.NumberOfStepsInSimulationInside);
                         else
-                        if (ValueToGet == 0)
-                            break;
+                        if (ValueToGet == 2)
+                            CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SaveParticlesStatisticsOnce();
+                        else
+                        if (ValueToGet == 3)
+                            CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->JoinReactionsStatisticsFromThreads(CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SavedReactionsMap, CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SimulationStepNumber);
                     }
                 else
                 {
@@ -1795,6 +1793,12 @@ public:
                     MPI_Bcast(&ValueToGet, 1, MPI_INT, 0, MPI_COMM_WORLD);
                     if (ValueToGet == 1)
                         CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfSimulationForWholeCellSpaceInMPIProcess(CellEngineConfigDataObject.NumberOfStepsInSimulationOutside, CellEngineConfigDataObject.NumberOfStepsInSimulationInside);
+                    else
+                    if (ValueToGet == 2)
+                        CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SaveParticlesStatisticsOnce();
+                    else
+                    if (ValueToGet == 3)
+                        CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->JoinReactionsStatisticsFromThreads(CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SavedReactionsMap, CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SimulationStepNumber);
                 }
             }
 

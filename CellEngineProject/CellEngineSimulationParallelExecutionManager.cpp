@@ -128,13 +128,24 @@ void CellEngineSimulationParallelExecutionManager::CreateDataEveryMPIProcessForP
                 for (UnsignedInt ThreadZIndex = 1; ThreadZIndex <= CellEngineConfigDataObject.NumberOfZThreadsInSimulation; ThreadZIndex++)
 
 #ifdef SHORTER_CODE
-void CellEngineSimulationParallelExecutionManager::JoinStatisticsFromThreads(vector<map<UnsignedInt, ReactionStatistics>>& SavedReactionsMap, const UnsignedInt SimulationStepNumber) const
+void CellEngineSimulationParallelExecutionManager::JoinReactionsStatisticsFromThreads(vector<map<UnsignedInt, ReactionStatistics>>& SavedReactionsMap, const UnsignedInt SimulationStepNumber) const
 {
     try
     {
-        FOR_EACH_THREAD_IN_XYZ
-            for (const auto& ReactionData : SimulationSpaceDataForThreads[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->SavedReactionsMap.back())
-                SavedReactionsMap[SimulationStepNumber - 1][ReactionData.first].Counter += ReactionData.second.Counter;
+        if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true)
+        {
+            if (MPIProcessDataObject.CurrentMPIProcessIndex == 0)
+            {
+                int ValueToSend = 3;
+                MPI_Bcast(&ValueToSend, 1, MPI_INT, 0, MPI_COMM_WORLD);
+
+                //GATHER
+            }
+        }
+        else
+            FOR_EACH_THREAD_IN_XYZ
+                for (const auto& ReactionData : SimulationSpaceDataForThreads[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->SavedReactionsMap.back())
+                    SavedReactionsMap[SimulationStepNumber - 1][ReactionData.first].Counter += ReactionData.second.Counter;
     }
     CATCH("joining statistics from threads")
 }

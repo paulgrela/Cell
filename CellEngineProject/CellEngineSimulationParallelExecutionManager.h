@@ -37,7 +37,7 @@ public:
 public:
     void SaveFormerParticlesAsVectorElements();
 public:
-    void JoinStatisticsFromThreads(std::vector<std::map<UnsignedInt, ReactionStatistics>>& SavedReactionsMap, UnsignedInt SimulationStepNumber) const;
+    void JoinReactionsStatisticsFromThreads(std::vector<std::map<UnsignedInt, ReactionStatistics>>& SavedReactionsMap, UnsignedInt SimulationStepNumber) const;
 private:
     void GenerateOneStepOfSimulationForWholeCellSpaceInOneThread(UnsignedInt NumberOfStepsInside, UnsignedInt StepOutside, UnsignedInt ThreadXIndex, UnsignedInt ThreadYIndex, UnsignedInt ThreadZIndex, bool StateOfSimulationSpaceDivisionForThreads, barrier<>* SyncPoint);
     void GenerateNStepsOfSimulationForWholeCellSpaceInOneThread(barrier<>* SyncPoint, bool* StateOfSimulationSpaceDivisionForThreads, UnsignedInt NumberOfStepsOutside, UnsignedInt NumberOfStepsInside, ThreadIdType CurrentThreadIndexParam, UnsignedInt ThreadXIndexParam, UnsignedInt ThreadYIndexParam, UnsignedInt ThreadZIndexParam) const;

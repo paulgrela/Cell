@@ -84,7 +84,7 @@ public:
         try
         {
             auto LocalReactionArguments(ReactionArguments);
-            sort(LocalReactionArguments.begin(), LocalReactionArguments.end(), [](const ParticleKindForChemicalReaction& P1, const ParticleKindForChemicalReaction& P2){ return ParticlesKindsManagerObject.GetParticleKind(P1.EntityId).IdStr < ParticlesKindsManagerObject.GetParticleKind(P2.EntityId).IdStr; } );
+            std::sort(LocalReactionArguments.begin(), LocalReactionArguments.end(), [](const ParticleKindForChemicalReaction& P1, const ParticleKindForChemicalReaction& P2){ return ParticlesKindsManagerObject.GetParticleKind(P1.EntityId).IdStr < ParticlesKindsManagerObject.GetParticleKind(P2.EntityId).IdStr; } );
             for (const auto& LocalReactant : LocalReactionArguments)
                 KeyStringOfReaction += ParticlesKindsManagerObject.GetParticleKind(LocalReactant.EntityId).IdStr + "+";
         }

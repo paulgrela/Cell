@@ -101,6 +101,7 @@ add_executable(
 	CellEngineConstants.h
 	CellEngineColors.h
 	CellEngineColors.cpp
+	CellEngineMPIProcess.h
 	CellEngineAminoAcids.h
 	CellEngineAtom.h
 	CellEngineAtom.cpp
