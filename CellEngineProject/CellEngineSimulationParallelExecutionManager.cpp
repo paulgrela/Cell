@@ -138,14 +138,38 @@ void CellEngineSimulationParallelExecutionManager::JoinReactionsStatisticsFromTh
             {
                 int ValueToSend = 3;
                 MPI_Bcast(&ValueToSend, 1, MPI_INT, 0, MPI_COMM_WORLD);
-
-                //GATHER
             }
-        }
-        else
+
             FOR_EACH_THREAD_IN_XYZ
-                for (const auto& ReactionData : SimulationSpaceDataForThreads[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->SavedReactionsMap.back())
-                    SavedReactionsMap[SimulationStepNumber - 1][ReactionData.first].Counter += ReactionData.second.Counter;
+                for (const auto& ReactionStatisticsData : SimulationSpaceDataForThreads[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->SavedReactionsMap.back())
+                    CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SavedReactionsMapForMPI[SimulationStepNumber - 1].emplace_back(ReactionStatisticsData.second.ReactionId, ReactionStatisticsData.second.Counter);
+
+            const int SavedReactionsMapForMPILength = CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SavedReactionsMapForMPI.size();
+            int SavedReactionsMapForMPILengths[MPIProcessDataObject.NumberOfMPIProcesses];
+            MPI_Gather(&SavedReactionsMapForMPILength, 1, MPI_INT, SavedReactionsMapForMPILengths, 1, MPI_INT, 0, MPI_COMM_WORLD);
+
+            int MaximumOfAllSavedReactionsMapForMPILengths;
+            if (MPIProcessDataObject.CurrentMPIProcessIndex == 0)
+                MaximumOfAllSavedReactionsMapForMPILengths = *max_element(SavedReactionsMapForMPILengths, SavedReactionsMapForMPILengths + MPIProcessDataObject.NumberOfMPIProcesses);
+
+            MPI_Bcast(&MaximumOfAllSavedReactionsMapForMPILengths, 1, MPI_INT, 0, MPI_COMM_WORLD);
+
+            unique_ptr<ReactionStatistics[]> ReactionStatisticsVectorGatheringFromAllMPIProcessPointer(new ReactionStatistics[MaximumOfAllSavedReactionsMapForMPILengths * MPIProcessDataObject.NumberOfMPIProcesses + 1]);
+
+            const int NumberOfBytesToGatherFromEveryProcess = MaximumOfAllSavedReactionsMapForMPILengths * sizeof(ReactionStatistics);
+            MPI_Gather(CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SavedReactionsMapForMPI[SimulationStepNumber - 1].data(), NumberOfBytesToGatherFromEveryProcess, MPI_BYTE, ReactionStatisticsVectorGatheringFromAllMPIProcessPointer.get(), NumberOfBytesToGatherFromEveryProcess, MPI_BYTE, 0, MPI_COMM_WORLD);
+
+            if (MPIProcessDataObject.CurrentMPIProcessIndex == 0)
+                for (UnsignedInt ReactionStatisticsDataIndex = 0; ReactionStatisticsDataIndex < MaximumOfAllSavedReactionsMapForMPILengths; ReactionStatisticsDataIndex++)
+                {
+                    const auto& ReactionStatisticsData = ReactionStatisticsVectorGatheringFromAllMPIProcessPointer.get()[ReactionStatisticsDataIndex];
+                    CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SavedReactionsMap[SimulationStepNumber - 1][ReactionStatisticsData.ReactionId] = { ReactionStatisticsData.ReactionId, ReactionStatisticsData.Counter };
+                }
+        }
+
+        FOR_EACH_THREAD_IN_XYZ
+            for (const auto& ReactionStatisticsData : SimulationSpaceDataForThreads[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->SavedReactionsMap.back())
+                SavedReactionsMap[SimulationStepNumber - 1][ReactionStatisticsData.first].Counter += ReactionStatisticsData.second.Counter;
     }
     CATCH("joining statistics from threads")
 }

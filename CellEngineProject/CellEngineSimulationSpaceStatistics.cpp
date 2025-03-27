@@ -110,7 +110,24 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesAsCopiedMap()
                 FOR_EACH_PARTICLE_IN_SECTORS_XYZ_CONST
                     ParticlesSnapshotsCopiedVectorForMPI.emplace_back(ParticleObject.second.EntityId);
 
-                //MPI_Gather Particles (na podstawie szachów moze byc .data() i MPI_BYTE w przesyłaniu struktur). Gromadzic tylko typ czastek i ich centra - nic wiecej
+                const int ParticlesSnapshotsCopiedVectorForMPILength = ParticlesSnapshotsCopiedVectorForMPI.size();
+                int ParticlesSnapshotsCopiedVectorForMPILengths[MPIProcessDataObject.NumberOfMPIProcesses];
+                MPI_Gather(&ParticlesSnapshotsCopiedVectorForMPILength, 1, MPI_INT, ParticlesSnapshotsCopiedVectorForMPILengths, 1, MPI_INT, 0, MPI_COMM_WORLD);
+
+                int MaximumOfAllSavedParticlesSnapshotsCopiedVectorForMPILengths;
+                if (MPIProcessDataObject.CurrentMPIProcessIndex == 0)
+                    MaximumOfAllSavedParticlesSnapshotsCopiedVectorForMPILengths = *max_element(ParticlesSnapshotsCopiedVectorForMPILengths, ParticlesSnapshotsCopiedVectorForMPILengths + MPIProcessDataObject.NumberOfMPIProcesses);
+
+                MPI_Bcast(&MaximumOfAllSavedParticlesSnapshotsCopiedVectorForMPILengths, 1, MPI_INT, 0, MPI_COMM_WORLD);
+
+                const unique_ptr<EntityIdInt[]> SavedParticlesSnapshotsCopiedVectorForMPIVector(new EntityIdInt[MaximumOfAllSavedParticlesSnapshotsCopiedVectorForMPILengths * MPIProcessDataObject.NumberOfMPIProcesses + 1]);
+
+                const int NumberOfBytesToGatherFromEveryProcess = MaximumOfAllSavedParticlesSnapshotsCopiedVectorForMPILengths * sizeof(EntityIdInt);
+                MPI_Gather(ParticlesSnapshotsCopiedVectorForMPI[SimulationStepNumber - 1].data(), NumberOfBytesToGatherFromEveryProcess, MPI_BYTE, SavedParticlesSnapshotsCopiedVectorForMPIVector.get(), NumberOfBytesToGatherFromEveryProcess, MPI_BYTE, 0, MPI_COMM_WORLD);
+
+                if (MPIProcessDataObject.CurrentMPIProcessIndex == 0)
+                    for (UnsignedInt EntityIdIndex = 0; EntityIdIndex < MaximumOfAllSavedParticlesSnapshotsCopiedVectorForMPILengths; EntityIdIndex++)
+                        ParticlesSnapshotsCopiedVectorForMPI.emplace_back(SavedParticlesSnapshotsCopiedVectorForMPIVector.get()[EntityIdIndex]);
             }
             else
             {

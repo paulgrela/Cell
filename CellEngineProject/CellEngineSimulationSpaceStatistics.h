@@ -7,19 +7,17 @@
 #include "CellEngineChemicalReaction.h"
 #include "CellEngineBasicParticlesOperations.h"
 
-class ReactionStatistics
+struct ReactionStatistics
 {
 public:
     UnsignedInt ReactionId{};
-public:
     UnsignedInt Counter = 0;
 };
 
-class ParticleKindStatistics
+struct ParticleKindStatistics
 {
 public:
     EntityIdInt EntityId{};
-public:
     UnsignedInt Counter = 0;
 };
 
