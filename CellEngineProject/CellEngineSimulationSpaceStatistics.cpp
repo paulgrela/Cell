@@ -81,7 +81,8 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesStatistics()
         if (SortParticlesAsSortedVectorElementsBool == true)
             SaveParticlesAsSortedVectorElements();
         if (SortHistogramOfParticlesAsSortedVectorElementsBool == true)
-            CompareHistogramsOfParticles(SimulationStepNumber - 1, SimulationStepNumber);
+            if (SimulationStepNumber > 1)
+                CompareHistogramsOfParticles(SimulationStepNumber - 1, SimulationStepNumber);
     }
     CATCH("saving particles statistics")
 }
@@ -131,10 +132,12 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesAsCopiedMap()
             }
             else
             {
-                ParticlesDetailedContainer<Particle> LocalParticlesFromAllSectors;
+                LoggersManagerObject.LogStatistics(STREAM("Before copying"));
+
                 FOR_EACH_PARTICLE_IN_SECTORS_XYZ_CONST
-                    LocalParticlesFromAllSectors[ParticleObject.first] = ParticleObject.second;
-                ParticlesSnapshotsCopiedUnorderedMap.emplace_back(LocalParticlesFromAllSectors);
+                    ParticlesSnapshotsCopiedVectorForMPI[SimulationStepNumber - 1].emplace_back(ParticleObject.second.EntityId);
+
+                LoggersManagerObject.LogStatistics(STREAM("After copying"));
             }
         }
         else
@@ -153,15 +156,6 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesAsVectorElements()
             if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true)
             {
             }
-            else
-            {
-                ParticlesDetailedContainer<Particle> LocalParticlesFromAllSectors;
-                FOR_EACH_PARTICLE_IN_SECTORS_XYZ_CONST
-                    LocalParticlesFromAllSectors[ParticleObject.first] = ParticleObject.second;
-
-                ParticlesSnapshots[SimulationStepNumber - 1].reserve(LocalParticlesFromAllSectors.size());
-                transform(LocalParticlesFromAllSectors.begin(), LocalParticlesFromAllSectors.end(), std::back_inserter(ParticlesSnapshots[SimulationStepNumber - 1]), [](const auto& ParticlesMapElement){ return ParticlesMapElement.second; } );
-            }
         }
         else
         if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)
@@ -179,11 +173,10 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesAsSortedVectorElements()
     {
         ParticlesKindsSnapshotsCopiedMap[SimulationStepNumber - 1].clear();
 
-        LoggersManagerObject.LogStatistics(STREAM("Size of all particles copied for statistics = " << ParticlesSnapshotsCopiedUnorderedMap[SimulationStepNumber - 1].size()));
-
         #ifdef SHORTER_CODE
-        if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == false)
+        if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)
         {
+            LoggersManagerObject.LogStatistics(STREAM("Size of all particles copied for statistics = " << ParticlesSnapshotsCopiedUnorderedMap[SimulationStepNumber - 1].size()));
             for (const auto& ParticlesSnapshotsCopiedUnorderedMapElement : ParticlesSnapshotsCopiedUnorderedMap[SimulationStepNumber - 1])
             {
                 EntityIdInt ParticleKindId = GetParticleFromIndex(ParticlesSnapshotsCopiedUnorderedMapElement.first).EntityId;
@@ -191,6 +184,7 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesAsSortedVectorElements()
             }
         }
         else
+        if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
         {
             for (const auto& ParticlesSnapshotsCopiedUnorderedMapElement : ParticlesSnapshotsCopiedVectorForMPI[SimulationStepNumber - 1])
             {
@@ -215,6 +209,7 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesAsSortedVectorElements()
 
         sort(ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber - 1].begin(), ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber - 1].end(), [](const auto& P1, const auto& P2){ return P1.Counter > P2.Counter; } );
 
+        LoggersManagerObject.LogStatistics(STREAM("Size of ParticlesKindsSnapshotsVectorSortedByCounter = " << ParticlesKindsSnapshotsVectorSortedByCounter[0].size()));
     }
     CATCH("saving particles as sorted vector elements")
 }
@@ -223,7 +218,7 @@ void CellEngineSimulationSpaceStatistics::CompareHistogramsOfParticles(const Uns
 {
     try
     {
-        LoggersManagerObject.LogStatistics(STREAM("Size of particles vector sorted by number = " << ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber1 - 1].size() << " " << ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber2 - 1].size() << " " << SimulationStepNumber1 << " " << SimulationStepNumber2));
+        LoggersManagerObject.LogStatistics(STREAM("Size of particles vector sorted by number = " << ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber1 - 1].size() << " " << ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber2 - 1].size() << " " << SimulationStepNumber1 - 1 << " " << SimulationStepNumber1 << " " << SimulationStepNumber2));
 
         for (const auto& ParticleKindStatisticsObject1 : ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber1 - 1])
         {
