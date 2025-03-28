@@ -21,6 +21,7 @@
 
 #include "CellEngineChemicalReactionsManager.h"
 #include "CellEngineExecutionTimeStatistics.h"
+#include "CellEngineMPIProcess.h"
 
 #ifdef USING_MODULES
 import CellEngineColors;
@@ -642,6 +643,7 @@ void CellEngineSimulationSpace::SaveReactionsStatisticsToFile() const
 {
     try
     {
+        LoggersManagerObject.LogStatistics(STREAM("NUMBER OF REACTIONS = " << SavedReactionsMap[SimulationStepNumber - 1].size() << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
         for (const auto& ReactionData : SavedReactionsMap[SimulationStepNumber - 1])
         {
             LoggersManagerObject.LogStatistics(STREAM("REACTION ID = " << ReactionData.first << " REACTION NAME = " << ChemicalReactionsManagerObject.GetReactionFromNumId(ReactionData.first).ReactionName << " REACTION ID_STR = #" << ChemicalReactionsManagerObject.GetReactionFromNumId(ReactionData.first).ReactionIdStr << "# REACTION COUNTER = " << ReactionData.second.Counter));

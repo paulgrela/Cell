@@ -106,11 +106,12 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesAsCopiedMap()
     {
         if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
         {
+            LoggersManagerObject.LogStatistics(STREAM("COPYING"));
+            FOR_EACH_PARTICLE_IN_SECTORS_XYZ_CONST
+                ParticlesSnapshotsCopiedVectorForMPI[SimulationStepNumber - 1].emplace_back(ParticleObject.second.EntityId);
+
             if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true)
             {
-                FOR_EACH_PARTICLE_IN_SECTORS_XYZ_CONST
-                    ParticlesSnapshotsCopiedVectorForMPI.emplace_back(ParticleObject.second.EntityId);
-
                 const int ParticlesSnapshotsCopiedVectorForMPILength = ParticlesSnapshotsCopiedVectorForMPI.size();
                 int ParticlesSnapshotsCopiedVectorForMPILengths[MPIProcessDataObject.NumberOfMPIProcesses];
                 MPI_Gather(&ParticlesSnapshotsCopiedVectorForMPILength, 1, MPI_INT, ParticlesSnapshotsCopiedVectorForMPILengths, 1, MPI_INT, 0, MPI_COMM_WORLD);
@@ -130,15 +131,6 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesAsCopiedMap()
                     for (UnsignedInt EntityIdIndex = 0; EntityIdIndex < MaximumOfAllSavedParticlesSnapshotsCopiedVectorForMPILengths; EntityIdIndex++)
                         ParticlesSnapshotsCopiedVectorForMPI.emplace_back(SavedParticlesSnapshotsCopiedVectorForMPIVector.get()[EntityIdIndex]);
             }
-            else
-            {
-                LoggersManagerObject.LogStatistics(STREAM("Before copying"));
-
-                FOR_EACH_PARTICLE_IN_SECTORS_XYZ_CONST
-                    ParticlesSnapshotsCopiedVectorForMPI[SimulationStepNumber - 1].emplace_back(ParticleObject.second.EntityId);
-
-                LoggersManagerObject.LogStatistics(STREAM("After copying"));
-            }
         }
         else
         if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)
@@ -151,13 +143,6 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesAsVectorElements()
 {
     try
     {
-        if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
-        {
-            if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true)
-            {
-            }
-        }
-        else
         if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)
         {
             ParticlesSnapshots[SimulationStepNumber - 1].reserve(Particles.size());
