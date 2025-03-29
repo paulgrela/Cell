@@ -1507,7 +1507,11 @@ static void RandomParticlesGeneratorFullAtomSimulationSpaceParametersMenu(const 
                 if (ImGui::Button(AlignString("ZERO STATISTICS CONTAINERS", StringLength).c_str()) == true)
                     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SetMakeSimulationStepNumberZero();
                 if (ImGui::Button(AlignString("INCREMENT STATISTICS LEVEL", StringLength).c_str()) == true)
+                {
+                    int ValueToGet = 4;
+                    MPI_Bcast(&ValueToGet, 1, MPI_INT, 0, MPI_COMM_WORLD);
                     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SetIncSimulationStepNumber();
+                }
                 if (ImGui::Button(AlignString("SAVE PARTICLES STATISTICS", StringLength).c_str()) == true)
                     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SaveParticlesStatisticsOnce();
                 if (ImGui::Button(AlignString("JOIN REACTIONS STATISTICS FROM THREADS", StringLength).c_str()) == true)
@@ -1786,6 +1790,9 @@ public:
                         else
                         if (ValueToGet == 3)
                             CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->JoinReactionsStatisticsFromThreads(CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SavedReactionsMap, CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SimulationStepNumber);
+                        else
+                        if (ValueToGet == 4)
+                            CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SetIncSimulationStepNumber();
                     }
                 else
                 {
@@ -1799,6 +1806,9 @@ public:
                     else
                     if (ValueToGet == 3)
                         CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->JoinReactionsStatisticsFromThreads(CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SavedReactionsMap, CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SimulationStepNumber);
+                    else
+                    if (ValueToGet == 4)
+                        CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SetIncSimulationStepNumber();
                 }
             }
 

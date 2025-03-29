@@ -46,15 +46,15 @@ protected:
     bool SortHistogramOfParticlesAsSortedVectorElementsBool = true;
 protected:
     std::vector<std::vector<Particle>> ParticlesSnapshots;
-        std::vector<ParticlesDetailedContainer<Particle>> ParticlesSnapshotsCopiedUnorderedMap;
-        std::vector<std::vector<EntityIdInt>> ParticlesSnapshotsCopiedVectorForMPI;
+    std::vector<ParticlesDetailedContainer<Particle>> ParticlesSnapshotsCopiedUnorderedMap;
+    std::vector<std::vector<EntityIdInt>> ParticlesSnapshotsCopiedVectorForMPI;
     std::vector<std::vector<ParticleKindStatistics>> ParticlesKindsSnapshotsVectorSortedByCounter;
     std::vector<std::vector<ParticleKindHistogramComparison>> ParticlesKindsHistogramComparisons;
 protected:
     std::vector<std::map<EntityIdInt, ParticleKindStatistics>> ParticlesKindsSnapshotsCopiedMap;
 protected:
-        std::vector<std::map<UnsignedInt, ReactionStatistics>> SavedReactionsMap;
-        std::vector<std::vector<ReactionStatistics>> SavedReactionsMapForMPI;
+    std::vector<std::map<UnsignedInt, ReactionStatistics>> SavedReactionsMap;
+    std::vector<std::vector<ReactionStatistics>> SavedReactionsMapForMPI;
 protected:
     void MakeSimulationStepNumberZeroForStatistics();
     void IncSimulationStepNumberForStatistics();

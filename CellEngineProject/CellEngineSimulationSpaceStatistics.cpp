@@ -107,14 +107,18 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesAsCopiedMap()
         if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
         {
             LoggersManagerObject.LogStatistics(STREAM("COPYING"));
+
+            ParticlesSnapshotsCopiedVectorForMPI[SimulationStepNumber - 1].clear();
             FOR_EACH_PARTICLE_IN_SECTORS_XYZ_CONST
                 ParticlesSnapshotsCopiedVectorForMPI[SimulationStepNumber - 1].emplace_back(ParticleObject.second.EntityId);
 
             if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true)
             {
-                const int ParticlesSnapshotsCopiedVectorForMPILength = ParticlesSnapshotsCopiedVectorForMPI.size();
+                const int ParticlesSnapshotsCopiedVectorForMPILength = ParticlesSnapshotsCopiedVectorForMPI[SimulationStepNumber - 1].size();
                 int ParticlesSnapshotsCopiedVectorForMPILengths[MPIProcessDataObject.NumberOfMPIProcesses];
                 MPI_Gather(&ParticlesSnapshotsCopiedVectorForMPILength, 1, MPI_INT, ParticlesSnapshotsCopiedVectorForMPILengths, 1, MPI_INT, 0, MPI_COMM_WORLD);
+
+                LoggersManagerObject.LogUnconditional(STREAM("ParticlesSnapshotsCopiedVectorForMPILength = " << ParticlesSnapshotsCopiedVectorForMPILength << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
 
                 int MaximumOfAllSavedParticlesSnapshotsCopiedVectorForMPILengths;
                 if (MPIProcessDataObject.CurrentMPIProcessIndex == 0)
@@ -122,14 +126,23 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesAsCopiedMap()
 
                 MPI_Bcast(&MaximumOfAllSavedParticlesSnapshotsCopiedVectorForMPILengths, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
+                LoggersManagerObject.LogUnconditional(STREAM("MaximumOfAllSavedParticlesSnapshotsCopiedVectorForMPILengths = " << MaximumOfAllSavedParticlesSnapshotsCopiedVectorForMPILengths << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
+
                 const unique_ptr<EntityIdInt[]> SavedParticlesSnapshotsCopiedVectorForMPIVector(new EntityIdInt[MaximumOfAllSavedParticlesSnapshotsCopiedVectorForMPILengths * MPIProcessDataObject.NumberOfMPIProcesses + 1]);
 
-                const int NumberOfBytesToGatherFromEveryProcess = MaximumOfAllSavedParticlesSnapshotsCopiedVectorForMPILengths * sizeof(EntityIdInt);
-                MPI_Gather(ParticlesSnapshotsCopiedVectorForMPI[SimulationStepNumber - 1].data(), NumberOfBytesToGatherFromEveryProcess, MPI_BYTE, SavedParticlesSnapshotsCopiedVectorForMPIVector.get(), NumberOfBytesToGatherFromEveryProcess, MPI_BYTE, 0, MPI_COMM_WORLD);
+                const int NumberOfBytesToGatherFromEveryProcess = MaximumOfAllSavedParticlesSnapshotsCopiedVectorForMPILengths;
+                ParticlesSnapshotsCopiedVectorForMPI[SimulationStepNumber - 1].reserve(MaximumOfAllSavedParticlesSnapshotsCopiedVectorForMPILengths);
+                MPI_Gather(ParticlesSnapshotsCopiedVectorForMPI[SimulationStepNumber - 1].data(), NumberOfBytesToGatherFromEveryProcess, MPI_UNSIGNED, SavedParticlesSnapshotsCopiedVectorForMPIVector.get(), NumberOfBytesToGatherFromEveryProcess, MPI_UNSIGNED, 0, MPI_COMM_WORLD);
+
+                LoggersManagerObject.LogUnconditional(STREAM("COPIED FINISHED" << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
 
                 if (MPIProcessDataObject.CurrentMPIProcessIndex == 0)
-                    for (UnsignedInt EntityIdIndex = 0; EntityIdIndex < MaximumOfAllSavedParticlesSnapshotsCopiedVectorForMPILengths; EntityIdIndex++)
-                        ParticlesSnapshotsCopiedVectorForMPI.emplace_back(SavedParticlesSnapshotsCopiedVectorForMPIVector.get()[EntityIdIndex]);
+                {
+                    ParticlesSnapshotsCopiedVectorForMPI[SimulationStepNumber - 1].clear();
+                    for (UniqueIdInt LocalMPIProcessIndex = 0; LocalMPIProcessIndex < MPIProcessDataObject.NumberOfMPIProcesses; LocalMPIProcessIndex++)
+                        for (UnsignedInt ParticleDataIndex = MaximumOfAllSavedParticlesSnapshotsCopiedVectorForMPILengths * LocalMPIProcessIndex; ParticleDataIndex < MaximumOfAllSavedParticlesSnapshotsCopiedVectorForMPILengths * LocalMPIProcessIndex + ParticlesSnapshotsCopiedVectorForMPILengths[LocalMPIProcessIndex]; ParticleDataIndex++)
+                            ParticlesSnapshotsCopiedVectorForMPI[SimulationStepNumber - 1].emplace_back(SavedParticlesSnapshotsCopiedVectorForMPIVector.get()[ParticleDataIndex]);
+                }
             }
         }
         else

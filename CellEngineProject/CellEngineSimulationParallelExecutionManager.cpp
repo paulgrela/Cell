@@ -140,7 +140,6 @@ void CellEngineSimulationParallelExecutionManager::JoinReactionsStatisticsFromTh
                 MPI_Bcast(&ValueToSend, 1, MPI_INT, 0, MPI_COMM_WORLD);
             }
 
-            //CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SavedReactionsMapForMPI[SimulationStepNumber - 1].emplace_back(0, SavedReactionsMap.back().size());
             for (const auto& ReactionStatisticsData : SavedReactionsMap.back())
             {
                 LoggersManagerObject.LogUnconditional(STREAM("ReactionStatisticsData S = " << ReactionStatisticsData.first << " " << ReactionStatisticsData.second.Counter << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
@@ -170,25 +169,17 @@ void CellEngineSimulationParallelExecutionManager::JoinReactionsStatisticsFromTh
             if (MPIProcessDataObject.CurrentMPIProcessIndex == 0)
             {
                 SavedReactionsMap[SimulationStepNumber - 1].clear();
-                //for (UnsignedInt ReactionStatisticsDataIndex = 0; ReactionStatisticsDataIndex < MaximumOfAllSavedReactionsMapForMPILengths * MPIProcessDataObject.NumberOfMPIProcesses; ReactionStatisticsDataIndex++)
-                //UnsignedInt NextStart = 0;
                 for (UniqueIdInt LocalMPIProcessIndex = 0; LocalMPIProcessIndex < MPIProcessDataObject.NumberOfMPIProcesses; LocalMPIProcessIndex++)
-                {
-                    //for (UnsignedInt ReactionStatisticsDataIndex = NextStart; ReactionStatisticsDataIndex < NextStart + SavedReactionsMapForMPILengths[LocalMPIProcessIndex]; ReactionStatisticsDataIndex++)
-                    //for (UnsignedInt ReactionStatisticsDataIndex = NextStart; ReactionStatisticsDataIndex < NextStart + SavedReactionsMapForMPILengths[LocalMPIProcessIndex]; ReactionStatisticsDataIndex++)
                     for (UnsignedInt ReactionStatisticsDataIndex = MaximumOfAllSavedReactionsMapForMPILengths * LocalMPIProcessIndex; ReactionStatisticsDataIndex < MaximumOfAllSavedReactionsMapForMPILengths * LocalMPIProcessIndex + SavedReactionsMapForMPILengths[LocalMPIProcessIndex]; ReactionStatisticsDataIndex++)
                     {
                         const auto& ReactionStatisticsData = ReactionStatisticsVectorGatheringFromAllMPIProcessPointer.get()[ReactionStatisticsDataIndex];
-                        LoggersManagerObject.LogUnconditional(STREAM("ReactionStatisticsData 1 = " << ReactionStatisticsData.ReactionId << " " << ReactionStatisticsData.Counter << " LocalMPIProcessIndex = " << LocalMPIProcessIndex << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
+                        LoggersManagerObject.LogUnconditional(STREAM("ReactionStatisticsData 1 = " << ReactionStatisticsDataIndex << " " << ReactionStatisticsData.ReactionId << " " << ReactionStatisticsData.Counter << " LocalMPIProcessIndex = " << LocalMPIProcessIndex << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
                         if (ReactionStatisticsData.ReactionId != 0 && ReactionStatisticsData.Counter != 0)
                         {
-                            LoggersManagerObject.LogUnconditional(STREAM("ReactionStatisticsData 2 = " << ReactionStatisticsData.ReactionId << " " << ReactionStatisticsData.Counter << " LocalMPIProcessIndex = " << LocalMPIProcessIndex << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
-                            //SavedReactionsMap[SimulationStepNumber - 1][ReactionStatisticsData.ReactionId] = { ReactionStatisticsData.ReactionId, SavedReactionsMap[SimulationStepNumber - 1][ReactionStatisticsData.ReactionId].Counter += ReactionStatisticsData.Counter };
+                            LoggersManagerObject.LogUnconditional(STREAM("ReactionStatisticsData 2 = " << ReactionStatisticsData.ReactionId << " " << ReactionStatisticsDataIndex << " " << ReactionStatisticsData.Counter << " LocalMPIProcessIndex = " << LocalMPIProcessIndex << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
+                            SavedReactionsMap[SimulationStepNumber - 1][ReactionStatisticsData.ReactionId] = { ReactionStatisticsData.ReactionId, SavedReactionsMap[SimulationStepNumber - 1][ReactionStatisticsData.ReactionId].Counter += ReactionStatisticsData.Counter };
                         }
-
                     }
-                    //NextStart += SavedReactionsMapForMPILengths[LocalMPIProcessIndex];
-                }
             }
         }
         else
