@@ -68,7 +68,7 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesStatistics()
         LoggersManagerObject.LogStatistics(STREAM("SAVE PARTICLES ARRAYS"));
 
         if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true)
-            if (MPIProcessDataObject.CurrentMPIProcessIndex == 0)
+            if (CellEngineConfigDataObject.OpenGLGraphicsSwitchedOff == false && MPIProcessDataObject.CurrentMPIProcessIndex == 0)
             {
                 int ValueToSend = 2;
                 MPI_Bcast(&ValueToSend, 1, MPI_INT, 0, MPI_COMM_WORLD);
