@@ -13,6 +13,7 @@
 
 using namespace std;
 
+constexpr bool AdditionalInfoPrinting = false;
 constexpr bool AddReactionsOfSuddenAppearanceAndDisappearance = false;
 
 void SavePointerToBinaryFile(ofstream& ParticlesDataFile, const Particle* PointerToParticle)
@@ -500,6 +501,9 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
             if (CellEngineConfigDataObject.MixedFullAtomWithVoxelSpace == false)
             {
                 auto ParticleSectorPos = CellEngineUseful::GetSectorPos(ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z);
+
+                if (AdditionalInfoPrinting == true)
+                    cout << ParticleSectorPos.SectorPosX << " " << ParticleSectorPos.SectorPosY << " " << ParticleSectorPos.SectorPosZ << " " << ParticleObject.Center.X << " " << ParticleObject.Center.Y << " " << ParticleObject.Center.Z << " " << endl;
 
                 if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
                     SetCurrentSectorPos(ParticleSectorPos);
