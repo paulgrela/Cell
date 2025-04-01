@@ -820,7 +820,6 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIPr
             int NumberOfBytesReceived;
             MPI_Get_count(&MPIMessageStatus, MPI_CHAR, &NumberOfBytesReceived);
 
-            //{
             LoggersManagerObject.LogUnconditional(STREAM("MPI Process Length Message RECEIVE = " << NumberOfBytesReceived << " " << MPIProcessDataObject.CurrentMPIProcessIndex << " " << NumberOfBytesReceived / sizeof(MPIParticleSenderStruct)));
 
             char ReceivedParticlesToInsert1[1024 * 1024];
@@ -847,35 +846,40 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIPr
                 MPI_Unpack(ReceivedParticlesToInsert1, 1024 * 1024, &PositionInBuffer, &MPIParticleSenderStructElementLocalObject.NewPosition.Y, 1, MPI_FLOAT, MPI_COMM_WORLD);
                 MPI_Unpack(ReceivedParticlesToInsert1, 1024 * 1024, &PositionInBuffer, &MPIParticleSenderStructElementLocalObject.NewPosition.Z, 1, MPI_FLOAT, MPI_COMM_WORLD);
 
-                if (MPIParticleSenderStructElementLocalObject.ParticleIndex != 0)
-                {
-                    bool Found = false;
-                    UnsignedInt NeighbourProcessIndex;
-                    for (NeighbourProcessIndex = 0; NeighbourProcessIndex < NumberOfAllNeighbours; NeighbourProcessIndex++)
-                        if (NeighbourProcessesIndexes[NeighbourProcessIndex] == MPIParticleSenderStructElementLocalObject.SenderProcessIndex)
-                        {
-                            ReceivedParticlesToInsertFromAllNeigbhours[NeighbourProcessIndex].emplace_back(MPIParticleSenderStructElementLocalObject);
-                            Found = true;
-                            break;
-                        }
+                bool Found = false;
+                UnsignedInt NeighbourProcessIndex;
+                for (NeighbourProcessIndex = 0; NeighbourProcessIndex < NumberOfAllNeighbours; NeighbourProcessIndex++)
+                    if (NeighbourProcessesIndexes[NeighbourProcessIndex] == MPIParticleSenderStructElementLocalObject.SenderProcessIndex)
+                    {
+                        ReceivedParticlesToInsertFromAllNeigbhours[NeighbourProcessIndex].emplace_back(MPIParticleSenderStructElementLocalObject);
+                        Found = true;
+                        break;
+                    }
 
-                    if (Found == false)
-                        cout << "GET PROCESS INDEX FROM = " << NeighbourProcessIndex << " " << NeighbourProcessesIndexes[NeighbourProcessIndex] << " " << MPIParticleSenderStructElementLocalObject.SenderProcessIndex << " TO = " << MPIParticleSenderStructElementLocalObject.ReceiverProcessIndex << " " << MPIProcessDataObject.CurrentMPIProcessIndex << endl;
-                }
-                //}
-
-                NumberOfReceivedMessages++;
+                if (Found == false)
+                    cout << "GET PROCESS INDEX FROM = " << NeighbourProcessIndex << " " << NeighbourProcessesIndexes[NeighbourProcessIndex] << " " << MPIParticleSenderStructElementLocalObject.SenderProcessIndex << " TO = " << MPIParticleSenderStructElementLocalObject.ReceiverProcessIndex << " " << MPIProcessDataObject.CurrentMPIProcessIndex << endl;
             }
+
+            NumberOfReceivedMessages++;
         }
+
+        int Counter = 0;
+        for (const auto& ReceivedParticlesToInsert : ReceivedParticlesToInsertFromAllNeigbhours)
+            if (ReceivedParticlesToInsert.empty() == false)
+                Counter++;
+        LoggersManagerObject.LogUnconditional(STREAM("FROM NEIGHBOURS = " << Counter << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
 
         for (const auto& ReceivedParticlesToInsert : ReceivedParticlesToInsertFromAllNeigbhours)
             if (ReceivedParticlesToInsert.empty() == false)
             {
+                LoggersManagerObject.LogUnconditional(STREAM("SENDING CONFIRMATION TO NEIGHBOUR = " << ReceivedParticlesToInsert[0].SenderProcessIndex << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
+
                 vector<UniqueIdInt> ConfirmationOfParticlesToRemoveToSent;
 
                 for (const auto& ReceivedParticleIndexToInsert : ReceivedParticlesToInsert)
-                    if (CheckInsertOfParticle(ReceivedParticleIndexToInsert) == true)
-                        ConfirmationOfParticlesToRemoveToSent.emplace_back(ReceivedParticleIndexToInsert.ParticleIndex);
+                    if (ReceivedParticleIndexToInsert.ParticleIndex != 0)
+                        if (CheckInsertOfParticle(ReceivedParticleIndexToInsert) == true)
+                            ConfirmationOfParticlesToRemoveToSent.emplace_back(ReceivedParticleIndexToInsert.ParticleIndex);
 
                 if (ConfirmationOfParticlesToRemoveToSent.empty() == true)
                     ConfirmationOfParticlesToRemoveToSent.emplace_back(0);
