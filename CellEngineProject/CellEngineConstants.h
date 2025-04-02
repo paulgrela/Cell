@@ -56,4 +56,6 @@ constexpr std::string JCVISYN3APredStr = "JCVISYN3A_";
 
 constexpr UnsignedInt NumberOfAllNeighbours = 6;
 
+constexpr UnsignedInt MaxMPIMessageSize = 1024 * 1024;
+
 #endif

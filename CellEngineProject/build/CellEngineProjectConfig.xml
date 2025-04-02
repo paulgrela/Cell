@@ -4813,9 +4813,9 @@
                         <NumberOfXSectorsInOneThreadInSimulation>20</NumberOfXSectorsInOneThreadInSimulation>
                         <NumberOfYSectorsInOneThreadInSimulation>20</NumberOfYSectorsInOneThreadInSimulation>
                         <NumberOfZSectorsInOneThreadInSimulation>20</NumberOfZSectorsInOneThreadInSimulation>
-                        <SizeOfXInOneThreadInSimulationSpace>1280</SizeOfXInOneThreadInSimulationSpace>
-                        <SizeOfYInOneThreadInSimulationSpace>1280</SizeOfYInOneThreadInSimulationSpace>
-                        <SizeOfZInOneThreadInSimulationSpace>1280</SizeOfXInOneThreadInSimulationSpace>
+                        <SizeOfXInOneThreadInSimulationSpace>2560</SizeOfXInOneThreadInSimulationSpace>
+                        <SizeOfYInOneThreadInSimulationSpace>2560</SizeOfYInOneThreadInSimulationSpace>
+                        <SizeOfZInOneThreadInSimulationSpace>2560</SizeOfXInOneThreadInSimulationSpace>
                         <SizeOfXInOneSectorInOneThreadInSimulationSpace>128</SizeOfXInOneSectorInOneThreadInSimulationSpace>
                         <SizeOfYInOneSectorInOneThreadInSimulationSpace>128</SizeOfYInOneSectorInOneThreadInSimulationSpace>
                         <SizeOfZInOneSectorInOneThreadInSimulationSpace>128</SizeOfZInOneSectorInOneThreadInSimulationSpace>

@@ -151,7 +151,7 @@ vector<UniqueIdInt> CellEngineBasicParticlesOperations::GetAllParticlesWithChose
 
     try
     {
-        ListOfParticlesIndexes.reserve(1024 * 1024);
+        ListOfParticlesIndexes.reserve(MaxMPIMessageSize);
         FOR_EACH_PARTICLE_IN_SECTORS_XYZ_CONST
             if (ParticleObject.second.EntityId != 0)
             {
@@ -173,7 +173,7 @@ vector<UniqueIdInt> CellEngineBasicParticlesOperations::GetAllParticlesWithChose
 
     try
     {
-        ListOfParticlesIndexes.reserve(1024 * 1024);
+        ListOfParticlesIndexes.reserve(MaxMPIMessageSize);
         FOR_EACH_PARTICLE_IN_SECTORS_XYZ_CONST
             if (ParticleObject.second.EntityId == EntityId)
                 ListOfParticlesIndexes.emplace_back(ParticleObject.first);

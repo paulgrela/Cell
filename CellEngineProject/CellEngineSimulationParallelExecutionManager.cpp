@@ -509,7 +509,7 @@ void CellEngineSimulationParallelExecutionManager::GenerateOneStepOfSimulationFo
 
                 for (UnsignedInt ParticleSectorXIndex = (ThreadXIndex - 1) * CellEngineConfigDataObject.NumberOfXSectorsInOneThreadInSimulation; ParticleSectorXIndex < ThreadXIndex * CellEngineConfigDataObject.NumberOfXSectorsInOneThreadInSimulation; ParticleSectorXIndex++)
                     for (UnsignedInt ParticleSectorYIndex = (ThreadYIndex - 1) * CellEngineConfigDataObject.NumberOfYSectorsInOneThreadInSimulation; ParticleSectorYIndex < ThreadYIndex * CellEngineConfigDataObject.NumberOfYSectorsInOneThreadInSimulation; ParticleSectorYIndex++)
-                        for (UnsignedInt ParticleSectorZIndex = (ThreadYIndex - 1) * CellEngineConfigDataObject.NumberOfZSectorsInOneThreadInSimulation; ParticleSectorZIndex < ThreadZIndex * CellEngineConfigDataObject.NumberOfZSectorsInOneThreadInSimulation; ParticleSectorZIndex++)
+                        for (UnsignedInt ParticleSectorZIndex = (ThreadZIndex - 1) * CellEngineConfigDataObject.NumberOfZSectorsInOneThreadInSimulation; ParticleSectorZIndex < ThreadZIndex * CellEngineConfigDataObject.NumberOfZSectorsInOneThreadInSimulation; ParticleSectorZIndex++)
                         {
                             LoggersManagerObject.Log(STREAM("XStart = " << (ThreadXIndex - 1) * CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace << " YStart = " << (ThreadYIndex - 1) * CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace << " ZStart = " << (ThreadYIndex - 1) * CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace << " XEnd = " << ThreadXIndex * CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace << " YEnd = " << ThreadZIndex * CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace << " ZEnd = " << ThreadZIndex * CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace << " PosX = " << ParticleSectorXIndex << " PosY = " << ParticleSectorYIndex << " PosZ = " << ParticleSectorZIndex));
 
@@ -521,7 +521,7 @@ void CellEngineSimulationParallelExecutionManager::GenerateOneStepOfSimulationFo
 
                 for (UnsignedInt ParticleSectorXIndex = (ThreadXIndex - 1) * CellEngineConfigDataObject.NumberOfXSectorsInOneThreadInSimulation; ParticleSectorXIndex < ThreadXIndex * CellEngineConfigDataObject.NumberOfXSectorsInOneThreadInSimulation; ParticleSectorXIndex++)
                     for (UnsignedInt ParticleSectorYIndex = (ThreadYIndex - 1) * CellEngineConfigDataObject.NumberOfYSectorsInOneThreadInSimulation; ParticleSectorYIndex < ThreadYIndex * CellEngineConfigDataObject.NumberOfYSectorsInOneThreadInSimulation; ParticleSectorYIndex++)
-                        for (UnsignedInt ParticleSectorZIndex = (ThreadYIndex - 1) * CellEngineConfigDataObject.NumberOfZSectorsInOneThreadInSimulation; ParticleSectorZIndex < ThreadZIndex * CellEngineConfigDataObject.NumberOfZSectorsInOneThreadInSimulation; ParticleSectorZIndex++)
+                        for (UnsignedInt ParticleSectorZIndex = (ThreadZIndex - 1) * CellEngineConfigDataObject.NumberOfZSectorsInOneThreadInSimulation; ParticleSectorZIndex < ThreadZIndex * CellEngineConfigDataObject.NumberOfZSectorsInOneThreadInSimulation; ParticleSectorZIndex++)
                         {
                             LoggersManagerObject.Log(STREAM("XStart = " << (ThreadXIndex - 1) * CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace << " YStart = " << (ThreadYIndex - 1) * CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace << " ZStart = " << (ThreadYIndex - 1) * CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace << " XEnd = " << ThreadXIndex * CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace << " YEnd = " << ThreadZIndex * CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace << " ZEnd = " << ThreadZIndex * CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace << " PosX = " << ParticleSectorXIndex << " PosY = " << ParticleSectorYIndex << " PosZ = " << ParticleSectorZIndex));
 
@@ -674,12 +674,24 @@ void CellEngineSimulationParallelExecutionManager::GenerateNStepsOfSimulationFor
     try
     {
         for (UnsignedInt StepOutside = 1; StepOutside <= NumberOfStepsOutside; StepOutside++)
+        {
+            LoggersManagerObject.LogUnconditional(STREAM("NUMBER OF STEPS OUTSIDE = " << NumberOfStepsInside << " " << StepOutside));
+
             GenerateOneStepOfSimulationForWholeCellSpaceInMPIProcess(NumberOfStepsInside, StepOutside, ThreadXIndexParam, ThreadYIndexParam, ThreadZIndexParam);
+
+            const auto start_time_exchange = chrono::high_resolution_clock::now();
+
+            ExchangeParticlesBetweenMPIProcessesVer2();
+
+            const auto stop_time_exchange = chrono::high_resolution_clock::now();
+
+            LoggersManagerObject.LogUnconditional(STREAM(GetDurationTimeInOneLineStr(start_time_exchange, stop_time_exchange, "Only exchanging of particles has taken time","Execution in mpi")));
+        }
     }
     CATCH("generating n steps of simulation for whole cell space in one thread")
 }
 
-void CellEngineSimulationParallelExecutionManager::GenerateNStepsOfSimulationForWholeCellSpaceInMPIProcess(const UnsignedInt NumberOfStepsOutside, const UnsignedInt NumberOfStepsInside)
+void CellEngineSimulationParallelExecutionManager::GenerateNStepsOfSimulationForWholeCellSpaceInMPIProcess(UnsignedInt NumberOfStepsOutside, UnsignedInt NumberOfStepsInside)
 {
     try
     {
@@ -701,21 +713,17 @@ void CellEngineSimulationParallelExecutionManager::GenerateNStepsOfSimulationFor
             MPI_Bcast(&ValueToSend, 1, MPI_INT, 0, MPI_COMM_WORLD);
         }
 
+        MPI_Bcast(&NumberOfStepsOutside, 1, MPI_UINT64_T, 0, MPI_COMM_WORLD);
+        MPI_Bcast(&NumberOfStepsInside, 1, MPI_UINT64_T, 0, MPI_COMM_WORLD);
+
         GenerateNStepsOfSimulationForWholeCellSpaceInMPIProcess(NumberOfStepsOutside, NumberOfStepsInside, MPIProcessDataObject.CurrentMPIProcessIndex, 0, 0, 0);
-
-        const auto start_time_exchange = chrono::high_resolution_clock::now();
-
-        ExchangeParticlesBetweenMPIProcessesVer2();
-
-        const auto stop_time_exchange = chrono::high_resolution_clock::now();
 
         CellEngineUseful::SwitchOnLogs();
 
         const auto stop_time = chrono::high_resolution_clock::now();
 
-        string ResultText = "Execution in threads for steps outside = " + to_string(NumberOfStepsOutside) + " and steps inside = " + to_string(NumberOfStepsInside) + " has taken time: ";
+        string ResultText = "Execution in MPI processes for steps outside = " + to_string(NumberOfStepsOutside) + " and steps inside = " + to_string(NumberOfStepsInside) + " has taken time: ";
         LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, ResultText.c_str(),"Execution in mpi")));
-        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time_exchange, stop_time_exchange, "Only exchanging of particles has taken time","Execution in mpi")));
 
         LoggersManagerObject.Log(STREAM("END MPI SIMULATION"));
 
@@ -742,23 +750,23 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIPr
 
                 LoggersManagerObject.LogUnconditional(STREAM("MPI Process Length Message SEND = " << VectorOfParticlesToSendToNeighbourProcesses[NeighbourProcessIndex].size() << " " << VectorOfParticlesToSendToNeighbourProcesses[NeighbourProcessIndex].size() * sizeof(MPIParticleSenderStruct) << " " << NeighbourProcessesIndexes[NeighbourProcessIndex] << " " << VectorOfParticlesToSendToNeighbourProcesses[NeighbourProcessIndex][0].ReceiverProcessIndex << " " << NeighbourProcessIndex << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
 
-                char BufferToSend[1024 * 1024];
+                char BufferToSend[MaxMPIMessageSize];
                 int PositionInBuffer = 0;
                 unsigned int NumberOfPackedStructures = VectorOfParticlesToSendToNeighbourProcesses[NeighbourProcessIndex].size();
                 LoggersManagerObject.LogUnconditional(STREAM("MPI PACKED SIZE = " << NumberOfPackedStructures << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
-                MPI_Pack(&NumberOfPackedStructures, 1, MPI_UNSIGNED, BufferToSend, 1024 * 1024, &PositionInBuffer, MPI_COMM_WORLD);
+                MPI_Pack(&NumberOfPackedStructures, 1, MPI_UNSIGNED, BufferToSend, MaxMPIMessageSize, &PositionInBuffer, MPI_COMM_WORLD);
                 for (const auto& ParticleToSendElement : VectorOfParticlesToSendToNeighbourProcesses[NeighbourProcessIndex])
                 {
-                    MPI_Pack(&ParticleToSendElement.ParticleIndex, 1, MPI_UNSIGNED, BufferToSend, 1024 * 1024, &PositionInBuffer, MPI_COMM_WORLD);
-                    MPI_Pack(&ParticleToSendElement.ParticleKindId, 1, MPI_UNSIGNED, BufferToSend, 1024 * 1024, &PositionInBuffer, MPI_COMM_WORLD);
-                    MPI_Pack(&ParticleToSendElement.SenderProcessIndex, 1, MPI_INT, BufferToSend, 1024 * 1024, &PositionInBuffer, MPI_COMM_WORLD);
-                    MPI_Pack(&ParticleToSendElement.ReceiverProcessIndex, 1, MPI_INT, BufferToSend, 1024 * 1024, &PositionInBuffer, MPI_COMM_WORLD);
-                    MPI_Pack(&ParticleToSendElement.SectorPos.X, 1, MPI_UNSIGNED_SHORT, BufferToSend, 1024 * 1024, &PositionInBuffer, MPI_COMM_WORLD);
-                    MPI_Pack(&ParticleToSendElement.SectorPos.Y, 1, MPI_UNSIGNED_SHORT, BufferToSend, 1024 * 1024, &PositionInBuffer, MPI_COMM_WORLD);
-                    MPI_Pack(&ParticleToSendElement.SectorPos.Z, 1, MPI_UNSIGNED_SHORT, BufferToSend, 1024 * 1024, &PositionInBuffer, MPI_COMM_WORLD);
-                    MPI_Pack(&ParticleToSendElement.NewPosition.X, 1, MPI_FLOAT, BufferToSend, 1024 * 1024, &PositionInBuffer, MPI_COMM_WORLD);
-                    MPI_Pack(&ParticleToSendElement.NewPosition.Y, 1, MPI_FLOAT, BufferToSend, 1024 * 1024, &PositionInBuffer, MPI_COMM_WORLD);
-                    MPI_Pack(&ParticleToSendElement.NewPosition.Z, 1, MPI_FLOAT, BufferToSend, 1024 * 1024, &PositionInBuffer, MPI_COMM_WORLD);
+                    MPI_Pack(&ParticleToSendElement.ParticleIndex, 1, MPI_UNSIGNED, BufferToSend, MaxMPIMessageSize, &PositionInBuffer, MPI_COMM_WORLD);
+                    MPI_Pack(&ParticleToSendElement.ParticleKindId, 1, MPI_UNSIGNED, BufferToSend, MaxMPIMessageSize, &PositionInBuffer, MPI_COMM_WORLD);
+                    MPI_Pack(&ParticleToSendElement.SenderProcessIndex, 1, MPI_INT, BufferToSend, MaxMPIMessageSize, &PositionInBuffer, MPI_COMM_WORLD);
+                    MPI_Pack(&ParticleToSendElement.ReceiverProcessIndex, 1, MPI_INT, BufferToSend, MaxMPIMessageSize, &PositionInBuffer, MPI_COMM_WORLD);
+                    MPI_Pack(&ParticleToSendElement.SectorPos.X, 1, MPI_UNSIGNED_SHORT, BufferToSend, MaxMPIMessageSize, &PositionInBuffer, MPI_COMM_WORLD);
+                    MPI_Pack(&ParticleToSendElement.SectorPos.Y, 1, MPI_UNSIGNED_SHORT, BufferToSend, MaxMPIMessageSize, &PositionInBuffer, MPI_COMM_WORLD);
+                    MPI_Pack(&ParticleToSendElement.SectorPos.Z, 1, MPI_UNSIGNED_SHORT, BufferToSend, MaxMPIMessageSize, &PositionInBuffer, MPI_COMM_WORLD);
+                    MPI_Pack(&ParticleToSendElement.NewPosition.X, 1, MPI_FLOAT, BufferToSend, MaxMPIMessageSize, &PositionInBuffer, MPI_COMM_WORLD);
+                    MPI_Pack(&ParticleToSendElement.NewPosition.Y, 1, MPI_FLOAT, BufferToSend, MaxMPIMessageSize, &PositionInBuffer, MPI_COMM_WORLD);
+                    MPI_Pack(&ParticleToSendElement.NewPosition.Z, 1, MPI_FLOAT, BufferToSend, MaxMPIMessageSize, &PositionInBuffer, MPI_COMM_WORLD);
                 }
                 MPI_Send(BufferToSend, PositionInBuffer, MPI_PACKED, static_cast<int>(NeighbourProcessesIndexes[NeighbourProcessIndex]), 0, MPI_COMM_WORLD);
 
@@ -777,17 +785,17 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIPr
 
             vector<UniqueIdInt> ReceivedConfirmationOfParticlesToRemove;
 
-            char ReceivedParticlesToInsert1[1024 * 1024];
-            MPI_Recv(&ReceivedParticlesToInsert1, 1024 * 1024, MPI_PACKED, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &MPIMessageStatus);
+            char ReceivedParticlesToInsert1[MaxMPIMessageSize];
+            MPI_Recv(&ReceivedParticlesToInsert1, MaxMPIMessageSize, MPI_PACKED, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &MPIMessageStatus);
 
             int PositionInBuffer = 0;
             unsigned int NumberOfUnpackedParticleStructures;
-            MPI_Unpack(ReceivedParticlesToInsert1, 1024 * 1024, &PositionInBuffer, &NumberOfUnpackedParticleStructures, 1, MPI_UNSIGNED, MPI_COMM_WORLD);
+            MPI_Unpack(ReceivedParticlesToInsert1, MaxMPIMessageSize, &PositionInBuffer, &NumberOfUnpackedParticleStructures, 1, MPI_UNSIGNED, MPI_COMM_WORLD);
             LoggersManagerObject.LogUnconditional(STREAM("MPI UNPACKED SIZE TO REMOVE = " << NumberOfUnpackedParticleStructures << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
             for (UnsignedInt UnpackedParticleStructureIndex = 0; UnpackedParticleStructureIndex < NumberOfUnpackedParticleStructures; UnpackedParticleStructureIndex++)
             {
                 UniqueIdInt MPIParticleSenderStructElementLocalObject;
-                MPI_Unpack(ReceivedParticlesToInsert1, 1024 * 1024, &PositionInBuffer, &MPIParticleSenderStructElementLocalObject, 1, MPI_UNSIGNED, MPI_COMM_WORLD);
+                MPI_Unpack(ReceivedParticlesToInsert1, MaxMPIMessageSize, &PositionInBuffer, &MPIParticleSenderStructElementLocalObject, 1, MPI_UNSIGNED, MPI_COMM_WORLD);
                 ReceivedConfirmationOfParticlesToRemove.emplace_back(MPIParticleSenderStructElementLocalObject);
             }
 
@@ -822,29 +830,29 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIPr
 
             LoggersManagerObject.LogUnconditional(STREAM("MPI Process Length Message RECEIVE = " << NumberOfBytesReceived << " " << MPIProcessDataObject.CurrentMPIProcessIndex << " " << NumberOfBytesReceived / sizeof(MPIParticleSenderStruct)));
 
-            char ReceivedParticlesToInsert1[1024 * 1024];
-            if (NumberOfBytesReceived > 1024 * 1024)
+            char ReceivedParticlesToInsert1[MaxMPIMessageSize];
+            if (NumberOfBytesReceived > MaxMPIMessageSize)
                 LoggersManagerObject.LogUnconditional(STREAM("ERROR NumberOfBytesReceived = " << NumberOfBytesReceived << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
 
-            MPI_Recv(&ReceivedParticlesToInsert1, 1024 * 1024, MPI_PACKED, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &MPIMessageStatus);
+            MPI_Recv(&ReceivedParticlesToInsert1, MaxMPIMessageSize, MPI_PACKED, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &MPIMessageStatus);
 
             int PositionInBuffer = 0;
             unsigned int NumberOfUnpackedParticleStructures;
-            MPI_Unpack(ReceivedParticlesToInsert1, 1024 * 1024, &PositionInBuffer, &NumberOfUnpackedParticleStructures, 1, MPI_UNSIGNED, MPI_COMM_WORLD);
+            MPI_Unpack(ReceivedParticlesToInsert1, MaxMPIMessageSize, &PositionInBuffer, &NumberOfUnpackedParticleStructures, 1, MPI_UNSIGNED, MPI_COMM_WORLD);
             LoggersManagerObject.LogUnconditional(STREAM("MPI UNPACKED SIZE = " << NumberOfUnpackedParticleStructures << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
             for (UnsignedInt UnpackedParticleStructureIndex = 0; UnpackedParticleStructureIndex < NumberOfUnpackedParticleStructures; UnpackedParticleStructureIndex++)
             {
                 MPIParticleSenderStruct MPIParticleSenderStructElementLocalObject;
-                MPI_Unpack(ReceivedParticlesToInsert1, 1024 * 1024, &PositionInBuffer, &MPIParticleSenderStructElementLocalObject.ParticleIndex, 1, MPI_UNSIGNED, MPI_COMM_WORLD);
-                MPI_Unpack(ReceivedParticlesToInsert1, 1024 * 1024, &PositionInBuffer, &MPIParticleSenderStructElementLocalObject.ParticleKindId, 1, MPI_UNSIGNED, MPI_COMM_WORLD);
-                MPI_Unpack(ReceivedParticlesToInsert1, 1024 * 1024, &PositionInBuffer, &MPIParticleSenderStructElementLocalObject.SenderProcessIndex, 1, MPI_INT, MPI_COMM_WORLD);
-                MPI_Unpack(ReceivedParticlesToInsert1, 1024 * 1024, &PositionInBuffer, &MPIParticleSenderStructElementLocalObject.ReceiverProcessIndex, 1, MPI_INT, MPI_COMM_WORLD);
-                MPI_Unpack(ReceivedParticlesToInsert1, 1024 * 1024, &PositionInBuffer, &MPIParticleSenderStructElementLocalObject.SectorPos.X, 1, MPI_UNSIGNED_SHORT, MPI_COMM_WORLD);
-                MPI_Unpack(ReceivedParticlesToInsert1, 1024 * 1024, &PositionInBuffer, &MPIParticleSenderStructElementLocalObject.SectorPos.Y, 1, MPI_UNSIGNED_SHORT, MPI_COMM_WORLD);
-                MPI_Unpack(ReceivedParticlesToInsert1, 1024 * 1024, &PositionInBuffer, &MPIParticleSenderStructElementLocalObject.SectorPos.Z, 1, MPI_UNSIGNED_SHORT, MPI_COMM_WORLD);
-                MPI_Unpack(ReceivedParticlesToInsert1, 1024 * 1024, &PositionInBuffer, &MPIParticleSenderStructElementLocalObject.NewPosition.X, 1, MPI_FLOAT, MPI_COMM_WORLD);
-                MPI_Unpack(ReceivedParticlesToInsert1, 1024 * 1024, &PositionInBuffer, &MPIParticleSenderStructElementLocalObject.NewPosition.Y, 1, MPI_FLOAT, MPI_COMM_WORLD);
-                MPI_Unpack(ReceivedParticlesToInsert1, 1024 * 1024, &PositionInBuffer, &MPIParticleSenderStructElementLocalObject.NewPosition.Z, 1, MPI_FLOAT, MPI_COMM_WORLD);
+                MPI_Unpack(ReceivedParticlesToInsert1, MaxMPIMessageSize, &PositionInBuffer, &MPIParticleSenderStructElementLocalObject.ParticleIndex, 1, MPI_UNSIGNED, MPI_COMM_WORLD);
+                MPI_Unpack(ReceivedParticlesToInsert1, MaxMPIMessageSize, &PositionInBuffer, &MPIParticleSenderStructElementLocalObject.ParticleKindId, 1, MPI_UNSIGNED, MPI_COMM_WORLD);
+                MPI_Unpack(ReceivedParticlesToInsert1, MaxMPIMessageSize, &PositionInBuffer, &MPIParticleSenderStructElementLocalObject.SenderProcessIndex, 1, MPI_INT, MPI_COMM_WORLD);
+                MPI_Unpack(ReceivedParticlesToInsert1, MaxMPIMessageSize, &PositionInBuffer, &MPIParticleSenderStructElementLocalObject.ReceiverProcessIndex, 1, MPI_INT, MPI_COMM_WORLD);
+                MPI_Unpack(ReceivedParticlesToInsert1, MaxMPIMessageSize, &PositionInBuffer, &MPIParticleSenderStructElementLocalObject.SectorPos.X, 1, MPI_UNSIGNED_SHORT, MPI_COMM_WORLD);
+                MPI_Unpack(ReceivedParticlesToInsert1, MaxMPIMessageSize, &PositionInBuffer, &MPIParticleSenderStructElementLocalObject.SectorPos.Y, 1, MPI_UNSIGNED_SHORT, MPI_COMM_WORLD);
+                MPI_Unpack(ReceivedParticlesToInsert1, MaxMPIMessageSize, &PositionInBuffer, &MPIParticleSenderStructElementLocalObject.SectorPos.Z, 1, MPI_UNSIGNED_SHORT, MPI_COMM_WORLD);
+                MPI_Unpack(ReceivedParticlesToInsert1, MaxMPIMessageSize, &PositionInBuffer, &MPIParticleSenderStructElementLocalObject.NewPosition.X, 1, MPI_FLOAT, MPI_COMM_WORLD);
+                MPI_Unpack(ReceivedParticlesToInsert1, MaxMPIMessageSize, &PositionInBuffer, &MPIParticleSenderStructElementLocalObject.NewPosition.Y, 1, MPI_FLOAT, MPI_COMM_WORLD);
+                MPI_Unpack(ReceivedParticlesToInsert1, MaxMPIMessageSize, &PositionInBuffer, &MPIParticleSenderStructElementLocalObject.NewPosition.Z, 1, MPI_FLOAT, MPI_COMM_WORLD);
 
                 bool Found = false;
                 UnsignedInt NeighbourProcessIndex;
@@ -884,13 +892,13 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIPr
                 if (ConfirmationOfParticlesToRemoveToSent.empty() == true)
                     ConfirmationOfParticlesToRemoveToSent.emplace_back(0);
 
-                char BufferToSend[1024 * 1024];
+                char BufferToSend[MaxMPIMessageSize];
                 int PositionInBuffer = 0;
                 unsigned int NumberOfPackedStructures = ConfirmationOfParticlesToRemoveToSent.size();
 
-                MPI_Pack(&NumberOfPackedStructures, 1, MPI_UNSIGNED, BufferToSend, 1024 * 1024, &PositionInBuffer, MPI_COMM_WORLD);
+                MPI_Pack(&NumberOfPackedStructures, 1, MPI_UNSIGNED, BufferToSend, MaxMPIMessageSize, &PositionInBuffer, MPI_COMM_WORLD);
                 for (const auto& ParticleToSendElement : ConfirmationOfParticlesToRemoveToSent)
-                    MPI_Pack(&ParticleToSendElement, 1, MPI_UNSIGNED, BufferToSend, 1024 * 1024, &PositionInBuffer, MPI_COMM_WORLD);
+                    MPI_Pack(&ParticleToSendElement, 1, MPI_UNSIGNED, BufferToSend, MaxMPIMessageSize, &PositionInBuffer, MPI_COMM_WORLD);
                 MPI_Send(BufferToSend, PositionInBuffer, MPI_PACKED, ReceivedParticlesToInsert[0].SenderProcessIndex, 0, MPI_COMM_WORLD);
             }
     }
