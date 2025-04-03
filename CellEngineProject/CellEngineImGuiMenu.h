@@ -18,9 +18,13 @@
 #include "CellEngineDataFile.h"
 #include "CellEngineConfigData.h"
 #include "CellEngineMPIProcess.h"
+
+#ifdef USE_OPENGL
 #include "CellEngineOpenGLVisualiser.h"
 #include "CellEngineOpenGLVisualiserOfVoxelSimulationSpace.h"
 #include "CellEngineOpenGLVisualiserOfFullAtomSimulationSpace.h"
+#endif
+
 #include "CellEngineChemicalReactionsManager.h"
 #include "CellEngineParticlesKindsManager.h"
 #include "CellEngineConfigurationFileReaderWriter.h"
@@ -36,6 +40,7 @@ using namespace std;
 class CellEngineImGuiMenu
 {
 public:
+    #ifdef USE_OPENGL
     struct APPINFO
     {
         char Title[128];
@@ -60,6 +65,7 @@ public:
         Flags;
     };
     APPINFO Info{};
+    #endif
 
 public:
     static void InitializeLoggerManagerParameters()
@@ -105,6 +111,7 @@ public:
         CATCH("reading init configuration")
     }
 
+    #ifdef USE_OPENGL
     template<class T>
     static void ColorButton(const char *Text, float &VariableToChange, const float Step, const float MinValue, const float MaxValue, const float ColorParam, int &IDButton, T FunctionToExecute)
     {
@@ -1711,6 +1718,7 @@ public:
         }
         CATCH("running cell engine opengl visualiser thread function");
     }
+    #endif
 
 public:
     std::unique_ptr<CellEngineDataFile> CreateCellEngineDataFileObject(const string_view& CellStateFileName)
@@ -1832,6 +1840,7 @@ public:
                 }
             }
 
+            #ifdef USE_OPENGL
             if (CellEngineConfigDataObject.OpenGLGraphicsSwitchedOff == false)
                 if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == false || (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true && MPIProcessDataObject.CurrentMPIProcessIndex == 0))
                 {
@@ -1845,6 +1854,7 @@ public:
 
                     ImGuiMenuGLFShutdown(ImGuiMenuWindow);
                 }
+            #endif
 
             EndMPIAllProcessesForCellEngine();
         }
@@ -1852,4 +1862,7 @@ public:
     }
 };
 
+#ifdef USE_OPENGL
 inline GLFWwindow* CellEngineImGuiMenu::ImGuiMenuWindow = nullptr;
+#endif
+

@@ -2,6 +2,10 @@
 #ifndef CELL_ENGINE_OPENGL_VISUALISER_H
 #define CELL_ENGINE_OPENGL_VISUALISER_H
 
+#include "CellEngineConditionalCompilationConstants.h"
+
+#ifdef USE_OPENGL
+
 #include <object.h>
 #include <sb7color.h>
 #include <sb7textoverlay.h>
@@ -111,5 +115,7 @@ protected:
 protected:
     [[nodiscard]] static inline bool CheckDistanceToDrawDetailsInAtomScale(float XNew, float YNew, float ZNew);
 };
+
+#endif
 
 #endif

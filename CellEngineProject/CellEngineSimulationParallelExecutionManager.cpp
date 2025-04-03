@@ -12,7 +12,9 @@
 
 #include <mpi.h>
 
+#ifdef USE_OPENGL
 #include "CellEngineOpenGLVisualiserOfVoxelSimulationSpace.h"
+#endif
 
 using namespace std;
 
@@ -456,7 +458,9 @@ void CellEngineSimulationParallelExecutionManager::GatherParticlesFromThreadsToP
         CellEngineConfigDataObject.UseMutexBetweenMainScreenThreadAndMenuThreads = true;
         sleep(1);
         {
+            #ifdef USE_OPENGL
             lock_guard<recursive_mutex> LockGuard{ CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderMenuAndVoxelSimulationSpaceMutexObject };
+            #endif
 
             GatherParticlesFromThreads();
 

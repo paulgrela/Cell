@@ -1,4 +1,8 @@
 
+#include "CellEngineConditionalCompilationConstants.h"
+
+#ifdef USE_OPENGL
+
 #include <omp.h>
 
 #include <sb7.h>
@@ -657,3 +661,5 @@ void CellEngineOpenGLVisualiser::OnResize(int Width, int Height)
     }
     CATCH("executing window resize event - setting bounds of arc ball counting data for cell visualisation")
 }
+
+#endif

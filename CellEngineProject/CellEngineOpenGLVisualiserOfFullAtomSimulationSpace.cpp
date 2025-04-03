@@ -1,4 +1,8 @@
 
+#include "CellEngineConditionalCompilationConstants.h"
+
+#ifdef USE_OPENGL
+
 #include "CellEngineParticlesKindsManager.h"
 #include "CellEngineOpenGLVisualiserOfFullAtomSimulationSpace.h"
 
@@ -115,3 +119,5 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::GetStartCenterPoint()
 
     LoggersManagerObject.Log(STREAM("CENTER OF CELL = " << Center.X() << " " << Center.Y() << " " << Center.Z()));
 }
+
+#endif

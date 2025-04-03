@@ -3,6 +3,10 @@
 #ifndef CELL_ENGINE_OPENGL_FULL_ATOM_SIMULATION_SPACE_VISUALISER_H
 #define CELL_ENGINE_OPENGL_FULL_ATOM_SIMULATION_SPACE_VISUALISER_H
 
+#include "CellEngineConditionalCompilationConstants.h"
+
+#ifdef USE_OPENGL
+
 #include <string>
 
 #include "CellEngineDataFile.h"
@@ -19,5 +23,7 @@ public:
 public:
     static inline std::mutex RenderMenuAndFullAtomSimulationSpaceMutexObject;
 };
+
+#endif
 
 #endif

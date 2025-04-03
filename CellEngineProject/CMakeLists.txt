@@ -208,7 +208,8 @@ add_executable(
 	mds/CellEngineMolecularDynamicsSimulationBasicComputations.h
 	CellEngineWellStirredChemicalReactionsSimulation.h
 	CellEngineWellStirredChemicalReactionsSimulation.h
-	CellEngineWellStirredChemicalReactionsSimulation.cpp)
+	CellEngineWellStirredChemicalReactionsSimulation.cpp
+		CellEngineConditionalCompilationConstants.h)
 
 if(USING_MODULES STREQUAL "TRUE")
 target_sources(CellEngineProject

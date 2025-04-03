@@ -3,6 +3,10 @@
 #ifndef CELL_ENGINE_OPENGL_VOXEL_SIMULATION_SPACE_VISUALISER_H
 #define CELL_ENGINE_OPENGL_VOXEL_SIMULATION_SPACE_VISUALISER_H
 
+#include "CellEngineConditionalCompilationConstants.h"
+
+#ifdef USE_OPENGL
+
 #include <string>
 
 #include <sb7.h>
@@ -60,5 +64,7 @@ public:
 public:
     static inline std::recursive_mutex RenderMenuAndVoxelSimulationSpaceMutexObject;
 };
+
+#endif
 
 #endif

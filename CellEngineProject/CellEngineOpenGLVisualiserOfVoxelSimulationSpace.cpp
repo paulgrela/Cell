@@ -1,4 +1,8 @@
 
+#include "CellEngineConditionalCompilationConstants.h"
+
+#ifdef USE_OPENGL
+
 #include <string>
 
 #include <sb7.h>
@@ -242,3 +246,5 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::GetStartCenterPoint()
 {
     Center = { 0.0f, 0.0f, 0.0f };
 }
+
+#endif
