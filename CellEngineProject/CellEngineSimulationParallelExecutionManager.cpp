@@ -877,17 +877,21 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIPr
                 Counter++;
         LoggersManagerObject.LogUnconditional(STREAM("FROM NEIGHBOURS = " << Counter << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
 
-        for (const auto& ReceivedParticlesToInsert : ReceivedParticlesToInsertFromAllNeigbhours)
-            if (ReceivedParticlesToInsert.empty() == false)
+        for (UnsignedInt NeighbourProcessIndex = 0; NeighbourProcessIndex < NumberOfAllNeighbours; NeighbourProcessIndex++)
+            if (NeighbourProcessesIndexes[NeighbourProcessIndex] != -1)
             {
-                LoggersManagerObject.LogUnconditional(STREAM("SENDING CONFIRMATION TO NEIGHBOUR = " << ReceivedParticlesToInsert[0].SenderProcessIndex << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
-
                 vector<UniqueIdInt> ConfirmationOfParticlesToRemoveToSent;
 
-                for (const auto& ReceivedParticleIndexToInsert : ReceivedParticlesToInsert)
-                    if (ReceivedParticleIndexToInsert.ParticleIndex != 0)
-                        if (CheckInsertOfParticle(ReceivedParticleIndexToInsert) == true)
-                            ConfirmationOfParticlesToRemoveToSent.emplace_back(ReceivedParticleIndexToInsert.ParticleIndex);
+                if (ReceivedParticlesToInsertFromAllNeigbhours[NeighbourProcessIndex].empty() == false)
+                {
+                    auto ReceivedParticlesToInsert = ReceivedParticlesToInsertFromAllNeigbhours[NeighbourProcessIndex];
+                    LoggersManagerObject.LogUnconditional(STREAM("SENDING CONFIRMATION TO NEIGHBOUR = " << ReceivedParticlesToInsert[0].SenderProcessIndex << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
+
+                    for (const auto& ReceivedParticleIndexToInsert : ReceivedParticlesToInsert)
+                        if (ReceivedParticleIndexToInsert.ParticleIndex != 0)
+                            if (CheckInsertOfParticle(ReceivedParticleIndexToInsert) == true)
+                                ConfirmationOfParticlesToRemoveToSent.emplace_back(ReceivedParticleIndexToInsert.ParticleIndex);
+                }
 
                 if (ConfirmationOfParticlesToRemoveToSent.empty() == true)
                     ConfirmationOfParticlesToRemoveToSent.emplace_back(0);
@@ -899,7 +903,7 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIPr
                 MPI_Pack(&NumberOfPackedStructures, 1, MPI_UNSIGNED, BufferToSend, MaxMPIMessageSize, &PositionInBuffer, MPI_COMM_WORLD);
                 for (const auto& ParticleToSendElement : ConfirmationOfParticlesToRemoveToSent)
                     MPI_Pack(&ParticleToSendElement, 1, MPI_UNSIGNED, BufferToSend, MaxMPIMessageSize, &PositionInBuffer, MPI_COMM_WORLD);
-                MPI_Send(BufferToSend, PositionInBuffer, MPI_PACKED, ReceivedParticlesToInsert[0].SenderProcessIndex, 0, MPI_COMM_WORLD);
+                MPI_Send(BufferToSend, PositionInBuffer, MPI_PACKED, NeighbourProcessesIndexes[NeighbourProcessIndex], 0, MPI_COMM_WORLD);
             }
     }
     CATCH("exchange particles between mpi processes ver 2")
