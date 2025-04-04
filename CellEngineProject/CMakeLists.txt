@@ -95,6 +95,7 @@ add_executable(
 	../Common/DoublyLinkedList/DoublyLinkedList.h
 	../Common/DoublyLinkedList/DoublyLinkedList.cpp
 	../Common/TerminalColorsUtils/TerminalColorsUtils.h
+	CellEngineConditionalCompilationConstants.h
 	CellEngineTypes.h
 	CellEngineMacros.h
 	CellEngineUseful.h
@@ -208,8 +209,7 @@ add_executable(
 	mds/CellEngineMolecularDynamicsSimulationBasicComputations.h
 	CellEngineWellStirredChemicalReactionsSimulation.h
 	CellEngineWellStirredChemicalReactionsSimulation.h
-	CellEngineWellStirredChemicalReactionsSimulation.cpp
-		CellEngineConditionalCompilationConstants.h)
+	CellEngineWellStirredChemicalReactionsSimulation.cpp)
 
 if(USING_MODULES STREQUAL "TRUE")
 target_sources(CellEngineProject
@@ -262,6 +262,8 @@ add_executable(
 	CellEngineAtom.h
 	CellEngineAtom.cpp
 	CellEngineParticle.h
+	CellEngineRandomDeviceEngine.cpp
+	CellEngineRandomDeviceEngine.h
 	CellEngineChemicalReaction.h
 	CellEngineChemicalReactionsEngine.h
 	CellEngineChemicalReactionsEngine.cpp

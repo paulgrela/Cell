@@ -213,9 +213,9 @@ tuple<float, float, float> CellEngineRealRandomParticlesInFullAtomSpaceGenerator
         {
             TryFindNewRandomPositionCounter++;
 
-            const float dx = Radius - UniformDistributionObjectMoveParticleDirection_float(mt64R);
-            const float dy = Radius - UniformDistributionObjectMoveParticleDirection_float(mt64R);
-            const float dz = Radius - UniformDistributionObjectMoveParticleDirection_float(mt64R);
+            const float dx = Radius - GetRandomValue<uniform_real_distribution, float>(UniformDistributionObjectMoveParticleDirection_float);
+            const float dy = Radius - GetRandomValue<uniform_real_distribution, float>(UniformDistributionObjectMoveParticleDirection_float);
+            const float dz = Radius - GetRandomValue<uniform_real_distribution, float>(UniformDistributionObjectMoveParticleDirection_float);
 
             if ((dx * dx + dy * dy + dz * dz >= (Radius - RadiusSize) * (Radius - RadiusSize)) && (dx * dx + dy * dy + dz * dz) <= (Radius * Radius))
                 return { dx, dy, dz };

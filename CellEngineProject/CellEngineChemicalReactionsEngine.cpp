@@ -40,7 +40,8 @@ bool CellEngineChemicalReactionsEngine::TryToMakeRandomChemicalReaction(Unsigned
                 if (NumberOfElementsForKey > 1)
                 {
                     uniform_int_distribution<UnsignedInt> UniformDistributionObjectSizeOfParticle_Uint64t(0, NumberOfElementsForKey - 1);
-                    UnsignedInt RandomShift = UniformDistributionObjectSizeOfParticle_Uint64t(mt64R);
+
+                    const UnsignedInt RandomShift = GetRandomValue<uniform_int_distribution, UnsignedInt>(UniformDistributionObjectSizeOfParticle_Uint64t);
 
                     LoggersManagerObject.Log(STREAM("Random Shift = [" << to_string(RandomShift) << "]" << endl));
 

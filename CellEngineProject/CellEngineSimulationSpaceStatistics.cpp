@@ -118,7 +118,7 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesAsCopiedMap()
                 int ParticlesSnapshotsCopiedVectorForMPILengths[MPIProcessDataObject.NumberOfMPIProcesses];
                 MPI_Gather(&ParticlesSnapshotsCopiedVectorForMPILength, 1, MPI_INT, ParticlesSnapshotsCopiedVectorForMPILengths, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
-                LoggersManagerObject.LogUnconditional(STREAM("ParticlesSnapshotsCopiedVectorForMPILength = " << ParticlesSnapshotsCopiedVectorForMPILength << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
+                LoggersManagerObject.Log(STREAM("ParticlesSnapshotsCopiedVectorForMPILength = " << ParticlesSnapshotsCopiedVectorForMPILength << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
 
                 int MaximumOfAllSavedParticlesSnapshotsCopiedVectorForMPILengths;
                 if (MPIProcessDataObject.CurrentMPIProcessIndex == 0)
@@ -126,7 +126,7 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesAsCopiedMap()
 
                 MPI_Bcast(&MaximumOfAllSavedParticlesSnapshotsCopiedVectorForMPILengths, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
-                LoggersManagerObject.LogUnconditional(STREAM("MaximumOfAllSavedParticlesSnapshotsCopiedVectorForMPILengths = " << MaximumOfAllSavedParticlesSnapshotsCopiedVectorForMPILengths << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
+                LoggersManagerObject.Log(STREAM("MaximumOfAllSavedParticlesSnapshotsCopiedVectorForMPILengths = " << MaximumOfAllSavedParticlesSnapshotsCopiedVectorForMPILengths << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
 
                 const unique_ptr<EntityIdInt[]> SavedParticlesSnapshotsCopiedVectorForMPIVector(new EntityIdInt[MaximumOfAllSavedParticlesSnapshotsCopiedVectorForMPILengths * MPIProcessDataObject.NumberOfMPIProcesses + 1]);
 
@@ -134,7 +134,7 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesAsCopiedMap()
                 ParticlesSnapshotsCopiedVectorForMPI[SimulationStepNumber - 1].reserve(MaximumOfAllSavedParticlesSnapshotsCopiedVectorForMPILengths);
                 MPI_Gather(ParticlesSnapshotsCopiedVectorForMPI[SimulationStepNumber - 1].data(), NumberOfBytesToGatherFromEveryProcess, MPI_UNSIGNED, SavedParticlesSnapshotsCopiedVectorForMPIVector.get(), NumberOfBytesToGatherFromEveryProcess, MPI_UNSIGNED, 0, MPI_COMM_WORLD);
 
-                LoggersManagerObject.LogUnconditional(STREAM("COPIED FINISHED" << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
+                LoggersManagerObject.Log(STREAM("COPIED FINISHED" << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
 
                 if (MPIProcessDataObject.CurrentMPIProcessIndex == 0)
                 {

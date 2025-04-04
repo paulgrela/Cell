@@ -213,9 +213,9 @@ tuple<UnsignedInt, UnsignedInt, UnsignedInt> CellEngineRealRandomParticlesInVoxe
         {
             TryFindNewRandomPositionCounter++;
 
-            const SignedInt dx = static_cast<SignedInt>(Radius) - UniformDistributionObjectMoveParticleDirection_int64t(mt64R);
-            const SignedInt dy = static_cast<SignedInt>(Radius) - UniformDistributionObjectMoveParticleDirection_int64t(mt64R);
-            const SignedInt dz = static_cast<SignedInt>(Radius) - UniformDistributionObjectMoveParticleDirection_int64t(mt64R);
+            const SignedInt dx = static_cast<SignedInt>(Radius) - GetRandomValue<std::uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t);
+            const SignedInt dy = static_cast<SignedInt>(Radius) - GetRandomValue<std::uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t);
+            const SignedInt dz = static_cast<SignedInt>(Radius) - GetRandomValue<std::uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t);
 
             if ((dx * dx + dy * dy + dz * dz >= (Radius - RadiusSize) * (Radius - RadiusSize)) && (dx * dx + dy * dy + dz * dz) <= (Radius * Radius))
                 return { PosXStart + dx, PosYStart + dy, PosZStart + dz };

@@ -11,6 +11,11 @@ protected:
 public:
     void RandomGeneratorSetSeedByRandomDevice();
     void RandomGeneratorSetSeedByTime();
+public:
+    template <template <class T> class U, class T>
+    T GetRandomValue(U<T>& UniformDistributionObject);
+public:
+    std::vector<std::variant<UnsignedInt, SignedInt, float>> SavedGeneratedRandomValuesVector;
 };
 
 #endif

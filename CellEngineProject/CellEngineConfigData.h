@@ -152,6 +152,8 @@ public:
 public:
     bool UseMutexBetweenMainScreenThreadAndMenuThreads = true;
 public:
+    bool SaveGeneratedRandomValuesInVectorBool = false;
+public:
     double RadiusOfCellForDNA{};
 public:
     enum class SelectedSpaceStartParametersDrawTypes : UnsignedInt

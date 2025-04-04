@@ -134,7 +134,7 @@ void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::GenerateRandomD
 
             do
             {
-                RandomMoveDirection = UniformDistributionObjectMoveOfParticle_Uint64t(mt64R);
+                RandomMoveDirection = GetRandomValue<uniform_int_distribution, UnsignedInt>(UniformDistributionObjectMoveOfParticle_Uint64t);
 
                 if (TestFormerForbiddenPositions(TestedFormerForbiddenPositions, RandomMoveDirection, RandomPosX, RandomPosY, RandomPosZ, ParticleSize1) == true)
                     RandomMovesDirections[RandomMoveDirection - 1] = 1;
@@ -150,7 +150,7 @@ void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::GenerateRandomD
                 RandomMovesDirections[RandomMoveDirection - 1] = 1;
             }
 
-            UnsignedInt MaxNumberOfMoveAdvanceSteps = UniformDistributionObjectMoveAdvanceOfParticle_Uint64t(mt64R);
+            const UnsignedInt MaxNumberOfMoveAdvanceSteps = GetRandomValue<uniform_int_distribution, UnsignedInt>(UniformDistributionObjectMoveAdvanceOfParticle_Uint64t);
             UnsignedInt NumberOfMoveAdvanceSteps = 0;
 
             bool EmptyVoxelSpaceForNewNucleotideBool = true;
@@ -179,7 +179,7 @@ void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::GenerateRandomD
                     NumberOfGeneratedNucleotides++;
                     NumberOfMoveAdvanceSteps++;
 
-                    ChainIdInt ChainId = UniformDistributionObjectChainOfParticle_Uint64t(mt64R);
+                    ChainIdInt ChainId = GetRandomValue<uniform_int_distribution, UnsignedInt>(UniformDistributionObjectChainOfParticle_Uint64t);
 
                     ParticlePrev1 = GenerateNucleotideParticle(ParticlePrev1, CellEngineConfigDataObject.DNAIdentifier, ChainId, 0, Genomes[0].size(), RandomPosX, RandomPosY, RandomPosZ, ParticleSizeX, ParticleSizeY, ParticleSizeZ, true, Genomes[0], CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), false);
 
@@ -256,7 +256,7 @@ void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::GenerateRandomD
 
             do
             {
-                RandomMoveDirection = UniformDistributionObjectMoveOfParticle_Uint64t(mt64R);
+                RandomMoveDirection = GetRandomValue<uniform_int_distribution, UnsignedInt>(UniformDistributionObjectMoveOfParticle_Uint64t);
 
                 if (TestFormerForbiddenPositions(TestedFormerForbiddenPositions, RandomMoveDirection, RandomPosX, RandomPosY, RandomPosZ, ParticleSize1) == true)
                     RandomMovesDirections[RandomMoveDirection - 1] = 1;
@@ -292,7 +292,7 @@ void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::GenerateRandomD
                 {
                     NumberOfGeneratedNucleotides++;
 
-                    ChainIdInt ChainId = UniformDistributionObjectChainOfParticle_Uint64t(mt64R);
+                    const ChainIdInt ChainId = GetRandomValue<uniform_int_distribution, UnsignedInt>(UniformDistributionObjectChainOfParticle_Uint64t);
 
                     if (Paired == true)
                     {

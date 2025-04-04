@@ -27,14 +27,14 @@ void CellEngineTestParticlesInVoxelSpaceGenerator::GenerateRandomParticlesInSele
         vector<UnsignedInt> LocalNewParticlesIndexes;
 
         for (UniqueIdInt ParticleNumber = 1; ParticleNumber <= NumberOfRandomParticles; ParticleNumber++)
-            LocalNewParticlesIndexes.emplace_back(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), UniformDistributionObjectObjectOfParticle_Uint64t(mt64R), 0, -1, 1, UniformDistributionObjectElectricChargeParticle_int64t(mt64R), CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))));
+            LocalNewParticlesIndexes.emplace_back(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), GetRandomValue<uniform_int_distribution, UnsignedInt>(UniformDistributionObjectObjectOfParticle_Uint64t), 0, -1, 1, GetRandomValue<uniform_int_distribution, ElectricChargeType>(UniformDistributionObjectElectricChargeParticle_int64t), CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))));
 
         ListOfVoxelsType FilledVoxelsForRandomParticle;
 
         for (const auto& LocalNewParticleIndex : LocalNewParticlesIndexes)
         {
-            UnsignedInt RandomSizeOfParticles = UniformDistributionObjectSizeOfParticle_Uint64t(mt64R);
-            GenerateParticleVoxelsWhenSelectedSpaceIsFree(LocalNewParticleIndex, UniformDistributionObjectX_Uint64t(mt64R), UniformDistributionObjectY_Uint64t(mt64R), UniformDistributionObjectZ_Uint64t(mt64R), RandomSizeOfParticles, RandomSizeOfParticles, RandomSizeOfParticles, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, &CellEngineParticlesVoxelsShapesGenerator::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineParticlesVoxelsShapesGenerator::SetValueToVoxelsForCuboidSelectedSpace);
+            UnsignedInt RandomSizeOfParticles = GetRandomValue<uniform_int_distribution, UnsignedInt>(UniformDistributionObjectSizeOfParticle_Uint64t);
+            GenerateParticleVoxelsWhenSelectedSpaceIsFree(LocalNewParticleIndex, GetRandomValue<uniform_int_distribution, UnsignedInt>(UniformDistributionObjectX_Uint64t), GetRandomValue<uniform_int_distribution, UnsignedInt>(UniformDistributionObjectY_Uint64t), GetRandomValue<uniform_int_distribution, UnsignedInt>(UniformDistributionObjectZ_Uint64t), RandomSizeOfParticles, RandomSizeOfParticles, RandomSizeOfParticles, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, &CellEngineParticlesVoxelsShapesGenerator::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineParticlesVoxelsShapesGenerator::SetValueToVoxelsForCuboidSelectedSpace);
         }
     }
     CATCH("generating random particles in selected space")
