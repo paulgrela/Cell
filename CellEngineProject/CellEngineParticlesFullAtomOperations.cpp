@@ -57,11 +57,11 @@ void CellEngineParticlesFullAtomOperations::MoveParticleByVector(Particle& Parti
         {
             if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == false)
             {
-                const auto Thread1Pos = ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].ThreadPos;
-                const auto Thread2Pos = ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].ThreadPos;
-
                 if (CellEngineConfigDataObject.MultiThreaded == true)
                 {
+                    const auto Thread1Pos = ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].ThreadPos;
+                    const auto Thread2Pos = ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].ThreadPos;
+
                     if (Thread1Pos != Thread2Pos)
                     {
                         std::scoped_lock LockGuardScopedLock{ CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[Thread1Pos.ThreadPosX - 1][Thread1Pos.ThreadPosY - 1][Thread1Pos.ThreadPosZ - 1]->MainExchangeParticlesMutexObject, CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[Thread2Pos.ThreadPosX - 1][Thread2Pos.ThreadPosY - 1][Thread2Pos.ThreadPosZ - 1]->MainExchangeParticlesMutexObject };

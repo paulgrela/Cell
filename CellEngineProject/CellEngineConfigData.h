@@ -152,7 +152,7 @@ public:
 public:
     bool UseMutexBetweenMainScreenThreadAndMenuThreads = true;
 public:
-    bool SaveGeneratedRandomValuesInVectorBool = false;
+    bool SaveGeneratedRandomValuesInVectorToFileBool = false;
 public:
     double RadiusOfCellForDNA{};
 public:

@@ -125,6 +125,8 @@ void CellEngineFullAtomSimulationSpace::GenerateNStepsOfDiffusionForWholeCellSpa
 {
     try
     {
+        CellEngineConfigDataObject.MultiThreaded = false;
+
         CellEngineExecutionTimeStatisticsObject.ZeroMeasureTime();
 
         const auto start_time = chrono::high_resolution_clock::now();
@@ -141,7 +143,8 @@ void CellEngineFullAtomSimulationSpace::GenerateNStepsOfDiffusionForWholeCellSpa
 
         const auto stop_time = chrono::high_resolution_clock::now();
 
-        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Execution of generating random reactions in whole cell space has taken time: ","Execution in threads")));
+        LoggersManagerObject.Log(STREAM(""));
+        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Execution of generating random diffusion in whole cell space has taken time: ","Execution in threads")));
 
         CellEngineExecutionTimeStatisticsObject.PrintMeasureTime();
     }

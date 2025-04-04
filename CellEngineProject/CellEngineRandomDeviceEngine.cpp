@@ -19,7 +19,7 @@ T CellEngineRandomDeviceEngine::GetRandomValue(U<T>& UniformDistributionObject)
 {
     T RandomValue = UniformDistributionObject(mt64R);
 
-    if (CellEngineConfigDataObject.SaveGeneratedRandomValuesInVectorBool == true)
+    if (CellEngineConfigDataObject.SaveGeneratedRandomValuesInVectorToFileBool == true)
         SavedGeneratedRandomValuesVector.emplace_back(RandomValue);
 
     return RandomValue;
