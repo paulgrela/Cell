@@ -16,6 +16,11 @@ public:
     T GetRandomValue(U<T>& UniformDistributionObject);
 public:
     std::vector<std::variant<UnsignedInt, SignedInt, float>> SavedGeneratedRandomValuesVector;
+public:
+    void ClearSavedGeneratedRandomValuesVector()
+    {
+        SavedGeneratedRandomValuesVector.clear();
+    }
 };
 
 #endif
