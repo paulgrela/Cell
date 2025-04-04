@@ -194,6 +194,13 @@ enum class TypesOfLookingForParticlesInProximity : UnsignedInt
     InChosenSectorOfSimulationSpace = 2
 };
 
+enum class TypesOfSavedGeneratedRandomValue : uint16_t
+{
+    UnsignedType = 1,
+    SignedType = 2,
+    FloatType = 3
+};
+
 template <typename MutexT>
 class conditional_lock_guard
 {

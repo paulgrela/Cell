@@ -4825,7 +4825,7 @@
 
                         <UseMutexBetweenMainScreenThreadAndMenuThreads>true</UseMutexBetweenMainScreenThreadAndMenuThreads>
 
-                        <SaveGeneratedRandomValuesInVectorToFileBool>false</SaveGeneratedRandomValuesInVectorToFileBool>
+                        <SaveGeneratedRandomValuesInVectorToFileBool>true</SaveGeneratedRandomValuesInVectorToFileBool>
 
                         <CellGenomePositionsFileName>./data/genomes/genome_1024_double_1/GENOME_POSITIONS.DAT</CellGenomePositionsFileName>
                         <CellGenomeSequenceFileName>./data/genomes/genome_1024_double_1/GENOME_SEQUENCE.DAT</CellGenomeSequenceFileName>

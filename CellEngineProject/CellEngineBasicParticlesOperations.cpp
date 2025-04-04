@@ -95,7 +95,7 @@ void CellEngineBasicParticlesOperations::UpdateParticleKindListOfElements(const 
         auto& ParticleKindObject = ParticlesKindsManagerObject.GetParticleKind(ParticleObject.EntityId);
         if (static_cast<vector<A>>(ParticleKindObject.*ListOfElementsOfParticleKind).empty() == true)
         {
-            if constexpr(std::is_same_v<A, CellEngineAtom>)
+            if constexpr(is_same_v<A, CellEngineAtom>)
                 for (const auto& ElementCoordinates : ParticleObject.ListOfAtoms)
                     ParticleKindObject.ListOfAtoms.emplace_back(ElementCoordinates.X - ParticleXMin, ElementCoordinates.Y - ParticleYMin, ElementCoordinates.Z - ParticleZMin);
             else
