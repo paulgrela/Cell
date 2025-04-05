@@ -91,9 +91,9 @@ T CellEngineRandomDeviceEngine::GetRandomValueInside1(U<T>& UniformDistributionO
     const auto SavedGeneratedRandomValueLocalObject = SavedGeneratedRandomValuesVector[GetRandomValueIndex];
     switch (SavedGeneratedRandomValueLocalObject.Type)
     {
-        case static_cast<int>(TypesOfSavedGeneratedRandomValue::UnsignedType) : RandomValue = SavedGeneratedRandomValueLocalObject.ValueUnsignedInt; break;
-        case static_cast<int>(TypesOfSavedGeneratedRandomValue::SignedType) : RandomValue = SavedGeneratedRandomValueLocalObject.ValueSignedInt; break;
-        case static_cast<int>(TypesOfSavedGeneratedRandomValue::FloatType) : RandomValue = SavedGeneratedRandomValueLocalObject.ValueFloat; break;
+        case static_cast<uint16_t>(TypesOfSavedGeneratedRandomValue::UnsignedType) : RandomValue = SavedGeneratedRandomValueLocalObject.ValueUnsignedInt; break;
+        case static_cast<uint16_t>(TypesOfSavedGeneratedRandomValue::SignedType) : RandomValue = SavedGeneratedRandomValueLocalObject.ValueSignedInt; break;
+        case static_cast<uint16_t>(TypesOfSavedGeneratedRandomValue::FloatType) : RandomValue = SavedGeneratedRandomValueLocalObject.ValueFloat; break;
         default : break;
     }
 

@@ -1886,7 +1886,8 @@ public:
                     {
                         LoggersManagerObject.Log(STREAM("START TEST SIMULATION IN SINGLE THREAD"));
 
-                        MakeSimulationInSingleThreadWithSavingGeneratedRandomValues();
+                        CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->ReadSavedGeneratedRandomValuesVectorFromFile();
+
                         RemakeSimulationInSingleThreadWhileGettingSavedRandomValues();
                     }
                 }
