@@ -1352,6 +1352,32 @@ public:
         LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Execution of generating one step simulation in whole cell space has taken time: ","Execution in threads")));
     }
 
+    static void MakeSimulationInSingleThreadWithSavingGeneratedRandomValues()
+    {
+        CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->ClearSavedGeneratedRandomValuesVector();
+
+        CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SetGeneratingRandomValuesParameters(true, false);
+
+        MakeNStepsOfSimulationWithoutParallelExecution();
+
+        CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SetGeneratingRandomValuesParameters(false, false);
+
+        LoggersManagerObject.Log(STREAM("SAVED IN MEM GENERATED RANDOM VALUES VECTOR SIZE = " << CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SavedGeneratedRandomValuesVector.size() << " " << CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SavedGeneratedRandomValuesVector[0].Type));
+    }
+
+    static void RemakeSimulationInSingleThreadWhileGettingSavedRandomValues()
+    {
+        LoggersManagerObject.Log(STREAM("REDO SIM FROM SAVED GENERATED RANDOM VALUES VECTOR SIZE = " << CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SavedGeneratedRandomValuesVector.size() << " " << CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SavedGeneratedRandomValuesVector[0].Type));
+
+        CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GetRandomValueIndex = 0;
+
+        CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SetGeneratingRandomValuesParameters(false, true);
+
+        MakeNStepsOfSimulationWithoutParallelExecution();
+
+        CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SetGeneratingRandomValuesParameters(false, false);
+    }
+
     static void SimulationsFullAtomSimulationSpaceParametersMenu(const UnsignedInt StringLength)
     {
         try
@@ -1406,30 +1432,10 @@ public:
                 });
 
                 if (ImGui::Button(AlignString("MAKE N STEPS OF RANDOM SIM FOR WHOLE CELL SPACE NOT PARALLEL AND SAVE", StringLength).c_str()) == true)
-                {
-                    CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->ClearSavedGeneratedRandomValuesVector();
-
-                    CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SaveGeneratedRandomValuesInVectorToFileBool = true;
-
-                    MakeNStepsOfSimulationWithoutParallelExecution();
-
-                    CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SaveGeneratedRandomValuesInVectorToFileBool = false;
-
-                    LoggersManagerObject.Log(STREAM("SAVED IN MEM GENERATED RANDOM VALUES VECTOR SIZE = " << CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SavedGeneratedRandomValuesVector.size() << " " << CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SavedGeneratedRandomValuesVector[0].Type));
-                }
+                    MakeSimulationInSingleThreadWithSavingGeneratedRandomValues();
 
                 if (ImGui::Button(AlignString("MAKE SIMULATION FROM EARLIER SAVED GENERATED RANDOM VALUES", StringLength).c_str()) == true)
-                {
-                    LoggersManagerObject.Log(STREAM("REDO SIM FROM SAVED GENERATED RANDOM VALUES VECTOR SIZE = " << CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SavedGeneratedRandomValuesVector.size() << " " << CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SavedGeneratedRandomValuesVector[0].Type));
-
-                    CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GetRandomValueIndex = 0;
-
-                    CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GetRandomValuesFromSavedGeneratedRandomValuesInVector = true;
-
-                    MakeNStepsOfSimulationWithoutParallelExecution();
-
-                    CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GetRandomValuesFromSavedGeneratedRandomValuesInVector = false;
-                }
+                    RemakeSimulationInSingleThreadWhileGettingSavedRandomValues();
 
                 if (ImGui::Button(AlignString("SAVE GENERATED RANDOM VALUES TO FILE", StringLength).c_str()) == true)
                     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->WriteSavedGeneratedRandomValuesVectorToFile();
@@ -1863,16 +1869,26 @@ public:
                 }
                 else
                 {
-                    LoggersManagerObject.Log(STREAM("START SIMULATION IN THREADS"));
+                    if (CellEngineConfigDataObject.MultiThreaded == true)
+                    {
+                        LoggersManagerObject.Log(STREAM("START SIMULATION IN THREADS"));
 
-                    CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfSimulationForWholeCellSpaceInThreads(CellEngineConfigDataObject.NumberOfStepsInSimulationOutside, CellEngineConfigDataObject.NumberOfStepsInSimulationInside);
-                    CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SaveParticlesStatisticsOnce();
-                    CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SetIncSimulationStepNumber();
-                    CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfSimulationForWholeCellSpaceInThreads(CellEngineConfigDataObject.NumberOfStepsInSimulationOutside, CellEngineConfigDataObject.NumberOfStepsInSimulationInside);
-                    CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SaveParticlesStatisticsOnce();
-                    CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SaveHistogramOfParticlesStatisticsToFile();
-                    CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->JoinReactionsStatisticsFromThreads(CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SavedReactionsMap, CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SimulationStepNumber);
-                    CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SaveReactionsStatisticsToFile();
+                        CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfSimulationForWholeCellSpaceInThreads(CellEngineConfigDataObject.NumberOfStepsInSimulationOutside, CellEngineConfigDataObject.NumberOfStepsInSimulationInside);
+                        CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SaveParticlesStatisticsOnce();
+                        CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SetIncSimulationStepNumber();
+                        CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfSimulationForWholeCellSpaceInThreads(CellEngineConfigDataObject.NumberOfStepsInSimulationOutside, CellEngineConfigDataObject.NumberOfStepsInSimulationInside);
+                        CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SaveParticlesStatisticsOnce();
+                        CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SaveHistogramOfParticlesStatisticsToFile();
+                        CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->JoinReactionsStatisticsFromThreads(CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SavedReactionsMap, CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SimulationStepNumber);
+                        CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SaveReactionsStatisticsToFile();
+                    }
+                    else
+                    {
+                        LoggersManagerObject.Log(STREAM("START TEST SIMULATION IN SINGLE THREAD"));
+
+                        MakeSimulationInSingleThreadWithSavingGeneratedRandomValues();
+                        RemakeSimulationInSingleThreadWhileGettingSavedRandomValues();
+                    }
                 }
             }
 

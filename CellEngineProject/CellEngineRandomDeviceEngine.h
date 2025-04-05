@@ -32,8 +32,14 @@ public:
     template <template <class T> class U, class T>
     T GetRandomValueInside2(U<T>& UniformDistributionObject);
 public:
+    void SetGeneratingRandomValuesParameters(const bool SaveGeneratedRandomValuesInVectorToFileBoolParam, const bool GetRandomValuesFromSavedGeneratedRandomValuesInVectorBoolParam)
+    {
+        SaveGeneratedRandomValuesInVectorToFileBool = SaveGeneratedRandomValuesInVectorToFileBoolParam;
+        GetRandomValuesFromSavedGeneratedRandomValuesInVectorBool = GetRandomValuesFromSavedGeneratedRandomValuesInVectorBoolParam;
+    }
+protected:
     bool SaveGeneratedRandomValuesInVectorToFileBool = false;
-    bool GetRandomValuesFromSavedGeneratedRandomValuesInVector = false;
+    bool GetRandomValuesFromSavedGeneratedRandomValuesInVectorBool = false;
 public:
     UnsignedInt GetRandomValueIndex = 0;
 public:

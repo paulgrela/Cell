@@ -120,7 +120,7 @@ T CellEngineRandomDeviceEngine::GetRandomValue(U<T>& UniformDistributionObject)
 {
     T RandomValue;
 
-    if (GetRandomValuesFromSavedGeneratedRandomValuesInVector == false)
+    if (GetRandomValuesFromSavedGeneratedRandomValuesInVectorBool == false)
     {
         RandomValue = UniformDistributionObject(mt64R);
 
