@@ -9,7 +9,7 @@
 
 using namespace std;
 
-bool CellEngineChemicalReactionsEngine::TryToMakeRandomChemicalReaction(UnsignedInt NumberOfReactants, UnsignedInt MaxNumberOfReactants)
+bool CellEngineChemicalReactionsEngine::TryToMakeRandomChemicalReaction(const UnsignedInt NumberOfReactants, const UnsignedInt MaxNumberOfReactants)
 {
     try
     {
@@ -25,7 +25,7 @@ bool CellEngineChemicalReactionsEngine::TryToMakeRandomChemicalReaction(Unsigned
             ParticlesSymbolsForReactionToSort.reserve(10);
             for (auto& RandomParticleType : RandomParticlesTypes)
                 ParticlesSymbolsForReactionToSort.emplace_back(ParticlesKindsManagerObject.GetParticleKind(RandomParticleType).IdStr);
-            std::sort(ParticlesSymbolsForReactionToSort.begin(), ParticlesSymbolsForReactionToSort.end());
+            sort(ParticlesSymbolsForReactionToSort.begin(), ParticlesSymbolsForReactionToSort.end());
 
             string ReactionSymbolsStr;
             for (auto& ParticleSymbolForReaction : ParticlesSymbolsForReactionToSort)
