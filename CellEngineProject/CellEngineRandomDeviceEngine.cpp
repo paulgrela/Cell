@@ -72,6 +72,17 @@ void CellEngineRandomDeviceEngine::ReadSavedGeneratedRandomValuesVectorFromFile(
     CATCH("reading saved generated random values vector to file");
 }
 
+template <class T>
+void CellEngineRandomDeviceEngine::SaveRandomValue(T RandomValue)
+{
+    if constexpr (is_same_v<T, UnsignedInt>)
+        SavedGeneratedRandomValuesVector.emplace_back(SavedGeneratedRandomValue{ static_cast<uint16_t>(TypesOfSavedGeneratedRandomValue::UnsignedType), RandomValue, 0, 0 });
+    if constexpr (is_same_v<T, SignedInt>)
+        SavedGeneratedRandomValuesVector.emplace_back(SavedGeneratedRandomValue{ static_cast<uint16_t>(TypesOfSavedGeneratedRandomValue::SignedType), 0, RandomValue, 0 });
+    if constexpr (is_same_v<T, float>)
+        SavedGeneratedRandomValuesVector.emplace_back(SavedGeneratedRandomValue{ static_cast<uint16_t>(TypesOfSavedGeneratedRandomValue::FloatType), 0, 0, RandomValue });
+}
+
 template <template <class T> class U, class T>
 T CellEngineRandomDeviceEngine::GetRandomValueInside1(U<T>& UniformDistributionObject)
 {
@@ -88,7 +99,6 @@ T CellEngineRandomDeviceEngine::GetRandomValueInside1(U<T>& UniformDistributionO
 
     return RandomValue;
 }
-
 
 template <template <class T> class U, class T>
 T CellEngineRandomDeviceEngine::GetRandomValueInside2(U<T>& UniformDistributionObject)
@@ -115,19 +125,12 @@ T CellEngineRandomDeviceEngine::GetRandomValue(U<T>& UniformDistributionObject)
         RandomValue = UniformDistributionObject(mt64R);
 
         if (SaveGeneratedRandomValuesInVectorToFileBool == true)
-        {
-            if constexpr (is_same_v<T, UnsignedInt>)
-                SavedGeneratedRandomValuesVector.emplace_back(SavedGeneratedRandomValue{ static_cast<uint16_t>(TypesOfSavedGeneratedRandomValue::UnsignedType), RandomValue, 0, 0 });
-            if constexpr (is_same_v<T, SignedInt>)
-                SavedGeneratedRandomValuesVector.emplace_back(SavedGeneratedRandomValue{ static_cast<uint16_t>(TypesOfSavedGeneratedRandomValue::SignedType), 0, RandomValue, 0 });
-            if constexpr (is_same_v<T, float>)
-                SavedGeneratedRandomValuesVector.emplace_back(SavedGeneratedRandomValue{ static_cast<uint16_t>(TypesOfSavedGeneratedRandomValue::FloatType), 0, 0, RandomValue });
-        }
+            SaveRandomValue<T>(RandomValue);
     }
     else
     if (GetRandomValueIndex < SavedGeneratedRandomValuesVector.size())
     {
-        GetRandomValueInside1<U, T>(UniformDistributionObject);
+        RandomValue = GetRandomValueInside1<U, T>(UniformDistributionObject);
 
         GetRandomValueIndex++;
     }

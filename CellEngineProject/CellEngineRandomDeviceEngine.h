@@ -23,6 +23,9 @@ public:
     template <template <class T> class U, class T>
     T GetRandomValue(U<T>& UniformDistributionObject);
 
+    template <class T>
+    void SaveRandomValue(T RandomValue);
+
     template <template <class T> class U, class T>
     T GetRandomValueInside1(U<T>& UniformDistributionObject);
 
