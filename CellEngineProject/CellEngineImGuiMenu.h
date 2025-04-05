@@ -1,8 +1,4 @@
 
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
-
 #include "DestinationPlatform.h"
 
 #include <string>
@@ -20,6 +16,10 @@
 #include "CellEngineMPIProcess.h"
 
 #ifdef USE_OPENGL
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+
 #include "CellEngineOpenGLVisualiser.h"
 #include "CellEngineOpenGLVisualiserOfVoxelSimulationSpace.h"
 #include "CellEngineOpenGLVisualiserOfFullAtomSimulationSpace.h"
@@ -1338,6 +1338,7 @@ public:
         }
         CATCH("modification of reactions operations full atom simulation space parameters menu")
     }
+    #endif
 
     static void MakeNStepsOfSimulationWithoutParallelExecution()
     {
@@ -1378,6 +1379,7 @@ public:
         CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SetGeneratingRandomValuesParameters(false, false);
     }
 
+    #ifdef USE_OPENGL
     static void SimulationsFullAtomSimulationSpaceParametersMenu(const UnsignedInt StringLength)
     {
         try
@@ -1811,7 +1813,9 @@ public:
     }
 
 public:
+    #ifdef USE_OPENGL
     static GLFWwindow* ImGuiMenuWindow;
+    #endif
 
     CellEngineImGuiMenu(const int argc, const char** argv)
     {

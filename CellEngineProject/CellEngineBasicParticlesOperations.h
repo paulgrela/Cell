@@ -2,7 +2,6 @@
 #ifndef CELL_ENGINE_BASIC_PARTICLES_OPERATIONS_H
 #define CELL_ENGINE_BASIC_PARTICLES_OPERATIONS_H
 
-#include <imgui.h>
 #include <stack>
 #include <shared_mutex>
 
