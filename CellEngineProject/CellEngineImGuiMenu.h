@@ -1346,6 +1346,19 @@ public:
         CATCH("modification of reactions operations full atom simulation space parameters menu")
     }
 
+    static void MakeNStepsOfSimulationWithoutParallelExecution()
+    {
+        const auto start_time = chrono::high_resolution_clock::now();
+
+        CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfOneRandomReactionForWholeCellSpace(0, 0, 0, 32, 32, 32, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfStepsInSimulationOutside);
+        CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfDiffusionForWholeCellSpace(true, 0, 0, 0, 1, 1, 1, CellEngineConfigDataObject.NumberOfParticlesSectorsInX, CellEngineConfigDataObject.NumberOfParticlesSectorsInY, CellEngineConfigDataObject.NumberOfParticlesSectorsInZ, CellEngineConfigDataObject.NumberOfStepsInSimulationOutside);
+
+        const auto stop_time = chrono::high_resolution_clock::now();
+
+        LoggersManagerObject.Log(STREAM(""));
+        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Execution of generating one step simulation in whole cell space has taken time: ","Execution in threads")));
+    }
+
     static void SimulationsFullAtomSimulationSpaceParametersMenu(const UnsignedInt StringLength)
     {
         try
@@ -1386,21 +1399,7 @@ public:
 
                 ColorButton(AlignString("MAKE N STEPS OF SIMULATION FOR WHOLE CELL SPACE NOT PARALLEL", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
                 {
-                    if (CellEngineConfigDataObject.SaveGeneratedRandomValuesInVectorToFileBool == true)
-                        CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->ClearSavedGeneratedRandomValuesVector();
-
-                    const auto start_time = chrono::high_resolution_clock::now();
-
-                    CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfOneRandomReactionForWholeCellSpace(0, 0, 0, 32, 32, 32, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfStepsInSimulationOutside);
-                    CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfDiffusionForWholeCellSpace(true, 0, 0, 0, 1, 1, 1, CellEngineConfigDataObject.NumberOfParticlesSectorsInX, CellEngineConfigDataObject.NumberOfParticlesSectorsInY, CellEngineConfigDataObject.NumberOfParticlesSectorsInZ, CellEngineConfigDataObject.NumberOfStepsInSimulationOutside);
-
-                    const auto stop_time = chrono::high_resolution_clock::now();
-
-                    LoggersManagerObject.Log(STREAM(""));
-                    LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Execution of generating one step simulation in whole cell space has taken time: ","Execution in threads")));
-
-                    if (CellEngineConfigDataObject.SaveGeneratedRandomValuesInVectorToFileBool == true)
-                        CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SavedGeneratedRandomValuesVectorToFile();
+                    MakeNStepsOfSimulationWithoutParallelExecution();
                 });
 
                 ColorButton(AlignString("GATHER IMPORTANT DATA FROM THREADS AFTER SIMULATION", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
@@ -1412,6 +1411,32 @@ public:
                 {
                     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->CheckParticlesCenters(false);
                 });
+
+                if (ImGui::Button(AlignString("MAKE N STEPS OF RANDOM SIM FOR WHOLE CELL SPACE NOT PARALLEL AND SAVE", StringLength).c_str()) == true)
+                {
+                    CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SaveGeneratedRandomValuesInVectorToFileBool = true;
+                    CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->ClearSavedGeneratedRandomValuesVector();
+
+                    MakeNStepsOfSimulationWithoutParallelExecution();
+
+                    CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SaveGeneratedRandomValuesInVectorToFileBool = false;
+                }
+
+                if (ImGui::Button(AlignString("MAKE SIMULATION FROM EARLIER SAVED GENERATED RANDOM VALUES", StringLength).c_str()) == true)
+                {
+                    CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GetRandomValuesFromSavedGeneratedRandomValuesInVector = true;
+                    CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GetRandomValueIndex = 0;
+
+                    MakeNStepsOfSimulationWithoutParallelExecution();
+
+                    CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GetRandomValuesFromSavedGeneratedRandomValuesInVector = false;
+                }
+
+                if (ImGui::Button(AlignString("SAVE GENERATED RANDOM VALUES TO FILE", StringLength).c_str()) == true)
+                    CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->WriteSavedGeneratedRandomValuesVectorToFile();
+
+                if (ImGui::Button(AlignString("READ SAVED GENERATED RANDOM VALUES FROM FILE", StringLength).c_str()) == true)
+                    CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->ReadSavedGeneratedRandomValuesVectorFromFile();
 
                 if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true)
                 {

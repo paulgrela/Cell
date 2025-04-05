@@ -23,13 +23,19 @@ public:
     template <template <class T> class U, class T>
     T GetRandomValue(U<T>& UniformDistributionObject);
 public:
+    bool SaveGeneratedRandomValuesInVectorToFileBool = false;
+    bool GetRandomValuesFromSavedGeneratedRandomValuesInVector = false;
+public:
+    UnsignedInt GetRandomValueIndex = 0;
+protected:
     std::vector<SavedGeneratedRandomValue> SavedGeneratedRandomValuesVector;
 public:
     void ClearSavedGeneratedRandomValuesVector()
     {
         SavedGeneratedRandomValuesVector.clear();
     }
-    void SavedGeneratedRandomValuesVectorToFile();
+    void WriteSavedGeneratedRandomValuesVectorToFile();
+    void ReadSavedGeneratedRandomValuesVectorFromFile();
 };
 
 #endif

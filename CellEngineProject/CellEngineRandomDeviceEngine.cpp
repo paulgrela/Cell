@@ -19,13 +19,13 @@ void CellEngineRandomDeviceEngine::RandomGeneratorSetSeedByTime()
     mt64R.seed(time(nullptr));
 }
 
-void CellEngineRandomDeviceEngine::SavedGeneratedRandomValuesVectorToFile()
+void CellEngineRandomDeviceEngine::WriteSavedGeneratedRandomValuesVectorToFile()
 {
     try
     {
         LoggersManagerObject.Log(STREAM("SAVED GENERATED RANDOM VALUES VECTOR SIZE = " << SavedGeneratedRandomValuesVector.size()));
 
-        LoggersManagerObject.Log(STREAM("SAVING OF SAVING GENERATED RANDOM VALUES VECTOR TO BINARY FILE"));
+        LoggersManagerObject.Log(STREAM("WRITING SAVED GENERATED RANDOM VALUES VECTOR TO BINARY FILE"));
 
         string SavedGeneratedRandomValuesVectorFileName = string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("binary") + OS_DIR_SEP + string("SavedGeneratedRandomValuesVectorFile.dat");
         ofstream SavedGeneratedRandomValuesVectorFile(SavedGeneratedRandomValuesVectorFileName, ios_base::out | ios_base::trunc | ios_base::binary);
@@ -42,22 +42,67 @@ void CellEngineRandomDeviceEngine::SavedGeneratedRandomValuesVectorToFile()
 
         LoggersManagerObject.Log(STREAM("END OF SAVING GENERATED RANDOM VALUES VECTOR TO BINARY FILE"));
     }
-    CATCH("saving generated random values vector to file");
+    CATCH("writing saved generated random values vector to file");
+}
+
+void CellEngineRandomDeviceEngine::ReadSavedGeneratedRandomValuesVectorFromFile()
+{
+    try
+    {
+        LoggersManagerObject.Log(STREAM("READ SAVED GENERATED RANDOM VALUES VECTOR FROM BINARY FILE"));
+
+        string SavedGeneratedRandomValuesVectorFileName = string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("binary") + OS_DIR_SEP + string("SavedGeneratedRandomValuesVectorFile.dat");
+        ifstream SavedGeneratedRandomValuesVectorFile(SavedGeneratedRandomValuesVectorFileName, ios_base::in | ios_base::binary);
+
+        UnsignedInt SavedGeneratedRandomValuesVectorSize;
+        SavedGeneratedRandomValuesVectorFile.read((char*)&SavedGeneratedRandomValuesVectorSize, sizeof(SavedGeneratedRandomValuesVectorSize));
+        LoggersManagerObject.Log(STREAM("Number of saved generated random values vector size = " << SavedGeneratedRandomValuesVectorSize));
+
+        for (UnsignedInt GeneObjectIndex = 1; GeneObjectIndex <= SavedGeneratedRandomValuesVectorSize; GeneObjectIndex++)
+        {
+            SavedGeneratedRandomValue SavedGeneratedRandomValueLocalObject;
+            SavedGeneratedRandomValuesVectorFile.read((char*)&SavedGeneratedRandomValueLocalObject, sizeof(SavedGeneratedRandomValueLocalObject));
+            SavedGeneratedRandomValuesVector.emplace_back(SavedGeneratedRandomValueLocalObject);
+        }
+
+        SavedGeneratedRandomValuesVectorFile.close();
+
+        LoggersManagerObject.Log(STREAM("END OF READING SAVED GENERATED RANDOM VALUES VECTOR FROM BINARY FILE"));
+    }
+    CATCH("reading saved generated random values vector to file");
 }
 
 template <template <class T> class U, class T>
 T CellEngineRandomDeviceEngine::GetRandomValue(U<T>& UniformDistributionObject)
 {
-    T RandomValue = UniformDistributionObject(mt64R);
+    T RandomValue;
 
-    if (CellEngineConfigDataObject.SaveGeneratedRandomValuesInVectorToFileBool == true)
+    if (GetRandomValuesFromSavedGeneratedRandomValuesInVector == false)
     {
-        if constexpr (is_same_v<T, UnsignedInt>)
-            SavedGeneratedRandomValuesVector.emplace_back(SavedGeneratedRandomValue{ static_cast<UnsignedInt>(TypesOfSavedGeneratedRandomValue::UnsignedType), RandomValue, 0, 0 });
-        if constexpr (is_same_v<T, SignedInt>)
-            SavedGeneratedRandomValuesVector.emplace_back(SavedGeneratedRandomValue{ static_cast<UnsignedInt>(TypesOfSavedGeneratedRandomValue::SignedType), 0, RandomValue, 0 });
-        if constexpr (is_same_v<T, float>)
-            SavedGeneratedRandomValuesVector.emplace_back(SavedGeneratedRandomValue{ static_cast<UnsignedInt>(TypesOfSavedGeneratedRandomValue::FloatType), 0, 0, RandomValue });
+        RandomValue = UniformDistributionObject(mt64R);
+
+        if (SaveGeneratedRandomValuesInVectorToFileBool == true)
+        {
+            if constexpr (is_same_v<T, UnsignedInt>)
+                SavedGeneratedRandomValuesVector.emplace_back(SavedGeneratedRandomValue{ static_cast<uint16_t>(TypesOfSavedGeneratedRandomValue::UnsignedType), RandomValue, 0, 0 });
+            if constexpr (is_same_v<T, SignedInt>)
+                SavedGeneratedRandomValuesVector.emplace_back(SavedGeneratedRandomValue{ static_cast<uint16_t>(TypesOfSavedGeneratedRandomValue::SignedType), 0, RandomValue, 0 });
+            if constexpr (is_same_v<T, float>)
+                SavedGeneratedRandomValuesVector.emplace_back(SavedGeneratedRandomValue{ static_cast<uint16_t>(TypesOfSavedGeneratedRandomValue::FloatType), 0, 0, RandomValue });
+        }
+    }
+    else
+    {
+        const auto SavedGeneratedRandomValueLocalObject = SavedGeneratedRandomValuesVector[GetRandomValueIndex];
+        switch (SavedGeneratedRandomValueLocalObject.Type)
+        {
+            case static_cast<int>(TypesOfSavedGeneratedRandomValue::UnsignedType) : RandomValue = SavedGeneratedRandomValueLocalObject.ValueUnsignedInt; break;
+            case static_cast<int>(TypesOfSavedGeneratedRandomValue::SignedType) : RandomValue = SavedGeneratedRandomValueLocalObject.ValueSignedInt; break;
+            case static_cast<int>(TypesOfSavedGeneratedRandomValue::FloatType) : RandomValue = SavedGeneratedRandomValueLocalObject.ValueFloat; break;
+            default : break;
+        }
+
+        GetRandomValueIndex++;
     }
 
     return RandomValue;

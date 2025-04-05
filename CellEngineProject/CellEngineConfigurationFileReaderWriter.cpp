@@ -173,9 +173,6 @@ void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const ch
                         if (CellStatePropertyTreeElement.second.get_child_optional("UseMutexBetweenMainScreenThreadAndMenuThreads"))
                             CellEngineConfigDataObject.UseMutexBetweenMainScreenThreadAndMenuThreads = CellStatePropertyTreeElement.second.get<bool>("UseMutexBetweenMainScreenThreadAndMenuThreads");
 
-                        if (CellStatePropertyTreeElement.second.get_child_optional("SaveGeneratedRandomValuesInVectorToFileBool"))
-                            CellEngineConfigDataObject.SaveGeneratedRandomValuesInVectorToFileBool = CellStatePropertyTreeElement.second.get<bool>("SaveGeneratedRandomValuesInVectorToFileBool");
-
                         if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)
                         {
                             CellEngineConfigDataObject.SimulationSpaceSelectionStartXPos = CellStatePropertyTreeElement.second.get<UnsignedInt>("SimulationSpaceSelectionStartXPos");
