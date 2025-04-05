@@ -49,7 +49,7 @@ void CellEngineRandomDeviceEngine::ReadSavedGeneratedRandomValuesVectorFromFile(
 {
     try
     {
-        LoggersManagerObject.Log(STREAM("READ SAVED GENERATED RANDOM VALUES VECTOR FROM BINARY FILE"));
+        LoggersManagerObject.Log(STREAM("READ EARLIER SAVED GENERATED RANDOM VALUES VECTOR FROM BINARY FILE"));
 
         string SavedGeneratedRandomValuesVectorFileName = string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("binary") + OS_DIR_SEP + string("SavedGeneratedRandomValuesVectorFile.dat");
         ifstream SavedGeneratedRandomValuesVectorFile(SavedGeneratedRandomValuesVectorFileName, ios_base::in | ios_base::binary);
@@ -73,6 +73,39 @@ void CellEngineRandomDeviceEngine::ReadSavedGeneratedRandomValuesVectorFromFile(
 }
 
 template <template <class T> class U, class T>
+T CellEngineRandomDeviceEngine::GetRandomValueInside1(U<T>& UniformDistributionObject)
+{
+    T RandomValue;
+
+    const auto SavedGeneratedRandomValueLocalObject = SavedGeneratedRandomValuesVector[GetRandomValueIndex];
+    switch (SavedGeneratedRandomValueLocalObject.Type)
+    {
+        case static_cast<int>(TypesOfSavedGeneratedRandomValue::UnsignedType) : RandomValue = SavedGeneratedRandomValueLocalObject.ValueUnsignedInt; break;
+        case static_cast<int>(TypesOfSavedGeneratedRandomValue::SignedType) : RandomValue = SavedGeneratedRandomValueLocalObject.ValueSignedInt; break;
+        case static_cast<int>(TypesOfSavedGeneratedRandomValue::FloatType) : RandomValue = SavedGeneratedRandomValueLocalObject.ValueFloat; break;
+        default : break;
+    }
+
+    return RandomValue;
+}
+
+
+template <template <class T> class U, class T>
+T CellEngineRandomDeviceEngine::GetRandomValueInside2(U<T>& UniformDistributionObject)
+{
+    T RandomValue;
+
+    if constexpr (is_same_v<T, UnsignedInt>)
+        RandomValue = SavedGeneratedRandomValuesVector[GetRandomValueIndex].ValueUnsignedInt;
+    if constexpr (is_same_v<T, SignedInt>)
+        RandomValue = SavedGeneratedRandomValuesVector[GetRandomValueIndex].ValueSignedInt;
+    if constexpr (is_same_v<T, float>)
+        RandomValue = SavedGeneratedRandomValuesVector[GetRandomValueIndex].ValueFloat;
+
+    return RandomValue;
+}
+
+template <template <class T> class U, class T>
 T CellEngineRandomDeviceEngine::GetRandomValue(U<T>& UniformDistributionObject)
 {
     T RandomValue;
@@ -92,15 +125,9 @@ T CellEngineRandomDeviceEngine::GetRandomValue(U<T>& UniformDistributionObject)
         }
     }
     else
+    if (GetRandomValueIndex < SavedGeneratedRandomValuesVector.size())
     {
-        const auto SavedGeneratedRandomValueLocalObject = SavedGeneratedRandomValuesVector[GetRandomValueIndex];
-        switch (SavedGeneratedRandomValueLocalObject.Type)
-        {
-            case static_cast<int>(TypesOfSavedGeneratedRandomValue::UnsignedType) : RandomValue = SavedGeneratedRandomValueLocalObject.ValueUnsignedInt; break;
-            case static_cast<int>(TypesOfSavedGeneratedRandomValue::SignedType) : RandomValue = SavedGeneratedRandomValueLocalObject.ValueSignedInt; break;
-            case static_cast<int>(TypesOfSavedGeneratedRandomValue::FloatType) : RandomValue = SavedGeneratedRandomValueLocalObject.ValueFloat; break;
-            default : break;
-        }
+        GetRandomValueInside1<U, T>(UniformDistributionObject);
 
         GetRandomValueIndex++;
     }

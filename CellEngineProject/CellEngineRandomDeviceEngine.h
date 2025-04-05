@@ -22,12 +22,18 @@ public:
 public:
     template <template <class T> class U, class T>
     T GetRandomValue(U<T>& UniformDistributionObject);
+
+    template <template <class T> class U, class T>
+    T GetRandomValueInside1(U<T>& UniformDistributionObject);
+
+    template <template <class T> class U, class T>
+    T GetRandomValueInside2(U<T>& UniformDistributionObject);
 public:
     bool SaveGeneratedRandomValuesInVectorToFileBool = false;
     bool GetRandomValuesFromSavedGeneratedRandomValuesInVector = false;
 public:
     UnsignedInt GetRandomValueIndex = 0;
-protected:
+public:
     std::vector<SavedGeneratedRandomValue> SavedGeneratedRandomValuesVector;
 public:
     void ClearSavedGeneratedRandomValuesVector()

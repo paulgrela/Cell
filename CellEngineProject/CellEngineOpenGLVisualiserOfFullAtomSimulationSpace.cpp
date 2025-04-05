@@ -6,6 +6,16 @@
 #include "CellEngineParticlesKindsManager.h"
 #include "CellEngineOpenGLVisualiserOfFullAtomSimulationSpace.h"
 
+std::tuple<UnsignedInt, UnsignedInt, UnsignedInt> CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::GetStartPositions()
+{
+    return { SelectionStartXPos, SelectionStartYPos, SelectionStartZPos };
+}
+
+std::tuple<UnsignedInt, UnsignedInt, UnsignedInt> CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::GetSizes()
+{
+    return { SelectionSizeX, SelectionSizeY, SelectionSizeZ };
+}
+
 bool CheckVisibility(const bool Visibility)
 {
     if (CellEngineConfigDataObject.TypeOfFileToRead == CellEngineConfigData::TypesOfFileToRead::PDBFile)
