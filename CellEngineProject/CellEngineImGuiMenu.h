@@ -89,8 +89,6 @@ public:
             InitializeLoggerManagerParameters();
 
             LoggersManagerObject.Log(STREAM("CELL ENGINE START"));
-
-            LoggersManagerObject.InitializePrintingParameters(CellEngineConfigDataObject.PrintLogToConsole, CellEngineConfigDataObject.PrintLogToFiles, CellEngineConfigDataObject.PrintLogLineNumberToConsole, CellEngineConfigDataObject.PrintLogDateTimeToConsole, CellEngineConfigDataObject.PrintLogProcessIdToConsole, CellEngineConfigDataObject.PrintLogProcessPriorityLevelToConsole, CellEngineConfigDataObject.PrintLogThreadIdToConsole, CellEngineConfigDataObject.PrintLogLineNumberToFile, CellEngineConfigDataObject.PrintLogDateTimeToFile, CellEngineConfigDataObject.PrintLogProcessIdToFile, CellEngineConfigDataObject.PrintLogProcessPriorityLevelToFile, CellEngineConfigDataObject.PrintLogThreadIdToFile, CellEngineConfigDataObject.MaximalNumberOfLinesInOneFile, CellEngineConfigDataObject.PrintLogToCommonFileWhenPrintLogToSpecialFile);
         }
         CATCH("starting logger")
     }
@@ -1812,6 +1810,12 @@ public:
             MPI_Finalize();
     }
 
+    static void SwitchOffLogsWhenMPIOnHelios()
+    {
+        if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true && CellEngineConfigDataObject.OpenGLGraphicsSwitchedOff == true)
+            CellEngineUseful::SwitchOffLogs();
+    }
+
 public:
     #ifdef USE_OPENGL
     static GLFWwindow* ImGuiMenuWindow;
@@ -1824,6 +1828,8 @@ public:
             StartLogger();
 
             ReadInitConfiguration(argc, argv);
+
+            SwitchOffLogsWhenMPIOnHelios();
 
             StartMPIAllProcessesForCellEngine();
 
