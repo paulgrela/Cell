@@ -4,6 +4,10 @@
 
 #include <cmath>
 
+#include "../Compilation/ConditionalCompilationConstants.h"
+
+#ifdef USE_OPENGL
+
 typedef union Tuple2f_t
 {
 	struct
@@ -300,6 +304,8 @@ protected:
 	GLfloat AdjustHeight{};
 
 } ArcBallT;
+
+#endif
 
 #endif
 

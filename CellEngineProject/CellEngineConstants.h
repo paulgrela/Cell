@@ -5,7 +5,7 @@
 #include <string>
 #include "CellEngineTypes.h"
 
-#include "CellEngineConditionalCompilationConstants.h"
+#include "../Common/Compilation/ConditionalCompilationConstants.h"
 
 constexpr UnsignedInt MaxLengthOfGene = 16384;
 

@@ -2,7 +2,7 @@
 #ifndef CELL_ENGINE_OPENGL_VISUALISER_H
 #define CELL_ENGINE_OPENGL_VISUALISER_H
 
-#include "CellEngineConditionalCompilationConstants.h"
+#include "../Compilation/ConditionalCompilationConstants.h"
 
 #ifdef USE_OPENGL
 

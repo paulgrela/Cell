@@ -5,6 +5,10 @@
 #include <windows.h>
 #endif
 
+#include "../Compilation/ConditionalCompilationConstants.h"
+
+#ifdef USE_OPENGL
+
 #include <GL/gl.h>
 
 #include "ArcBall.h"
@@ -81,3 +85,4 @@ void ArcBall_t::drag(const Point2fT* NewPt, Quat4fT* NewRot)
 	}
 }
 
+#endif

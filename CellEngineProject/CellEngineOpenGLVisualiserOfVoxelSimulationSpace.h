@@ -3,7 +3,7 @@
 #ifndef CELL_ENGINE_OPENGL_VOXEL_SIMULATION_SPACE_VISUALISER_H
 #define CELL_ENGINE_OPENGL_VOXEL_SIMULATION_SPACE_VISUALISER_H
 
-#include "CellEngineConditionalCompilationConstants.h"
+#include "../Compilation/ConditionalCompilationConstants.h"
 
 #ifdef USE_OPENGL
 

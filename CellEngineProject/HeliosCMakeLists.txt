@@ -17,53 +17,15 @@ LINK_DIRECTORIES(${CMAKE_SOURCE_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
 
-set(OpenGL_GL_PREFERENCE LEGACY)
-find_package(OpenGL)
-
 link_directories("${OPENMP_LIBRARIES}")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fopenmp")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
 
-find_package(MPI REQUIRED)
-if (MPI_FOUND)
-	set(CMAKE_CXX_COMPILE_FLAGS ${CMAKE_CXX_COMPILE_FLAGS} ${MPI_COMPILE_FLAGS})
-	set(CMAKE_CXX_LINK_FLAGS ${CMAKE_CXX_LINK_FLAGS} ${MPI_LINK_FLAGS})
-	include_directories(${MPI_INCLUDE_PATH})
-else (MPI_FOUND)
-	message(SYSTEM "This application will be compiled without MPI")
-endif (MPI_FOUND)
-
 set(COMMON_LIBS ${COMMON_LIBS} ${EXTRA_LIBS})
-
-add_library(
-		sb7
-		srcsb7/sb7.cpp
-		srcsb7/sb7color.cpp
-		srcsb7/sb7ktx.cpp
-		srcsb7/sb7object.cpp
-		srcsb7/sb7shader.cpp
-		srcsb7/sb7textoverlay.cpp
-		srcsb7/gl3w.c)
-
-add_library(
-		imgui
-		extern/imgui/imgui.cpp
-		extern/imgui/imgui_demo.cpp
-		extern/imgui/imgui_draw.cpp
-		extern/imgui/imgui_tables.cpp
-		extern/imgui/imgui_widgets.cpp
-		extern/imgui/backends/imgui_impl_glfw.cpp
-		extern/imgui/backends/imgui_impl_opengl3.cpp)
-
-install(TARGETS sb7 DESTINATION lib/sb7)
 
 include_directories(glm)
 include_directories(include)
 
-include_directories(extern/imgui)
-include_directories(extern/imgui/backends)
-
-include_directories(extern/glfw-3.3.7.bin.WIN64/include)
 include_directories(
 	"../../Boost/*"
 	"../Common/Platform"
@@ -78,6 +40,7 @@ include_directories(
 
 add_executable(
 	CellEngineProject
+        ./srcsb7/sb7color.cpp
 	../Common/Include/ExceptionsMacro.h
 	../Common/Platform/DestinationPlatform.h
 	../Common/Logger/Logger.h
@@ -220,11 +183,7 @@ target_sources(CellEngineProject
 		CellEngineColors.cpp)
 endif()
 
-if(WIN32)
-target_link_libraries(${PROJECT_NAME} -static-libgcc -static-libstdc++ -lpthread -lglew32 -lsb7 -lglfw3 -lopengl32 -lglu32 -limgui)
-else()
-target_link_libraries(${PROJECT_NAME} -static-libgcc -static-libstdc++ -lpthread sb7 -fopenmp ${OPENGL_LIBRARIES}  ${MPI_LIBRARIES} glfw3 X11 Xrandr Xinerama Xi Xxf86vm Xcursor GL rt dl imgui)
-endif()
+target_link_libraries(${PROJECT_NAME} -static-libgcc -static-libstdc++ -lpthread -fopenmp -lmpi)
 
 set(CMAKE_THREAD_LIBS_INIT "-lpthread")
 set(CMAKE_HAVE_THREADS_LIBRARY 1)
@@ -233,53 +192,6 @@ set(CMAKE_USE_PTHREADS_INIT 1)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 
 find_package(Threads REQUIRED)
-find_package(GTest REQUIRED)
-include_directories(${GTEST_INCLUDE_DIRS})
-
-include(CTest)
-enable_testing()
-
-set (GMOCK_DIR "/usr/src/googletest/googlemock")
-add_subdirectory(${GMOCK_DIR} ${CMAKE_BINARY_DIR}/gmock)
-include_directories("/usr/src/googletest/googlemock/include")
-
-add_executable(
-	CellEngineRunTests
-	../Common/Logger/Logger.h
-	../Common/Logger/Logger.cpp
-	../Common/MathUtils/ArcBall.h
-	../Common/MathUtils/ArcBall.cpp
-	../Common/FileUtils/FileUtils.h
-	../Common/FileUtils/FileUtils.cpp
-	../Common/StringUtils/StringUtils.h
-	../Common/StringUtils/StringUtils.cpp
-	../Common/DateTimeUtils/DateTimeUtils.h
-	../Common/DateTimeUtils/DateTimeUtils.cpp
-	../Common/DoublyLinkedList/DoublyLinkedList.h
-	../Common/DoublyLinkedList/DoublyLinkedList.cpp
-	CellEngineTypes.h
-	CellEngineUseful.h
-	CellEngineColors.h
-	CellEngineColors.cpp
-	CellEngineAtom.h
-	CellEngineAtom.cpp
-	CellEngineParticle.h
-	CellEngineRandomDeviceEngine.cpp
-	CellEngineRandomDeviceEngine.h
-	CellEngineChemicalReaction.h
-	CellEngineChemicalReactionsEngine.h
-	CellEngineChemicalReactionsEngine.cpp
-	CellEngineWellStirredChemicalReactionsSimulation.h
-	CellEngineWellStirredChemicalReactionsSimulation.cpp
-	tests/CellEngineRunTests.cpp)
-
-if(WIN32)
-target_link_libraries(CellEngineRunTests -static-libgcc -static-libstdc++ -lpthread -lglew32 -lsb7 -lglfw3 -lopengl32 -lglu32 -limgui)
-else()
-target_link_libraries(CellEngineRunTests -static-libgcc -static-libstdc++ -lpthread sb7 ${OPENGL_LIBRARIES} ${MPI_LIBRARIES} glfw3 X11 Xrandr Xinerama Xi Xxf86vm Xcursor GL rt dl imgui gtest gmock)
-endif()
-
-add_test(CellEngineRunTests CellEngineRunTests)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
