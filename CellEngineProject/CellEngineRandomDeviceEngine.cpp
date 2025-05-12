@@ -27,7 +27,7 @@ void CellEngineRandomDeviceEngine::WriteSavedGeneratedRandomValuesVectorToFile()
 
         LoggersManagerObject.Log(STREAM("WRITING SAVED GENERATED RANDOM VALUES VECTOR TO BINARY FILE"));
 
-        string SavedGeneratedRandomValuesVectorFileName = string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("binary") + OS_DIR_SEP + string("SavedGeneratedRandomValuesVectorFile.dat");
+        const string SavedGeneratedRandomValuesVectorFileName = string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("binary") + OS_DIR_SEP + string("SavedGeneratedRandomValuesVectorFile.dat");
         ofstream SavedGeneratedRandomValuesVectorFile(SavedGeneratedRandomValuesVectorFileName, ios_base::out | ios_base::trunc | ios_base::binary);
 
         UnsignedInt SizeToSave = SavedGeneratedRandomValuesVector.size();
@@ -51,7 +51,7 @@ void CellEngineRandomDeviceEngine::ReadSavedGeneratedRandomValuesVectorFromFile(
     {
         LoggersManagerObject.Log(STREAM("READ EARLIER SAVED GENERATED RANDOM VALUES VECTOR FROM BINARY FILE"));
 
-        string SavedGeneratedRandomValuesVectorFileName = string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("binary") + OS_DIR_SEP + string("SavedGeneratedRandomValuesVectorFile.dat");
+        const string SavedGeneratedRandomValuesVectorFileName = string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("binary") + OS_DIR_SEP + string("SavedGeneratedRandomValuesVectorFile.dat");
         ifstream SavedGeneratedRandomValuesVectorFile(SavedGeneratedRandomValuesVectorFileName, ios_base::in | ios_base::binary);
 
         UnsignedInt SavedGeneratedRandomValuesVectorSize;

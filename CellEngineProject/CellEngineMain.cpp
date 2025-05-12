@@ -5,7 +5,7 @@
 
 #include "./mds/CellEngineMolecularDynamicsSimulationForceField1.h"
 
-int main(const int argc, const char ** argv)
+int main(const int argc, const char** argv)
 {
     CellEngineImGuiMenu CellEngineImGuiMenuObject(argc, argv);
 
