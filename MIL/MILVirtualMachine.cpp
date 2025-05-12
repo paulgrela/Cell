@@ -49,7 +49,7 @@ struct MILNode
 // MIL Virtual Machine
 class MILVirtualMachine
 {
-private:
+public:
     int programCounter;
     std::shared_ptr<MILNode> root;          // Root of the MIL tree
     std::unordered_map<int, int> memory;    // Memory for the VM
@@ -77,16 +77,19 @@ private:
         switch (node->op)
         {
             case MILOp::mMIL:
-                for (auto &child : node->children) executeNode(child);
+                for (auto &child : node->children)
+                    executeNode(child);
                 break;
 
             case MILOp::mFUNC:
                 std::cout << "Executing function block\n";
-                for (auto &child : node->children) executeNode(child);
+                for (auto &child : node->children)
+                    executeNode(child);
                 break;
 
             case MILOp::mBLOCK:
-                for (auto &child : node->children) executeNode(child);
+                for (auto &child : node->children)
+                    executeNode(child);
                 break;
 
             case MILOp::mADD:
@@ -118,19 +121,21 @@ private:
                 break;
 
             case MILOp::mJUMPT:
-                if (node->condition) programCounter = node->value;
+                if (node->condition)
+                    programCounter = node->value;
                 break;
 
             case MILOp::mJUMPF:
-                if (!node->condition) programCounter = node->value;
+                if (!node->condition)
+                    programCounter = node->value;
                 break;
 
             case MILOp::mLD:
-                node->value = memory[node->attributes["addr"]];
+                node->value = memory[node->value];
                 break;
 
             case MILOp::mST:
-                memory[node->attributes["addr"]] = node->value;
+                memory[node->value] = node->value;
                 break;
 
             case MILOp::mCALL:
@@ -157,16 +162,24 @@ private:
 
     void executeExpression(std::shared_ptr<MILNode> node, std::function<int(int, int)> operation)
     {
-        if (node->children.size() < 2)
-            throw std::runtime_error("Invalid expression node");
+        std::cout << node->value << std::endl;
 
         auto left = node->children[0];
         auto right = node->children[1];
 
-        executeNode(left);
-        executeNode(right);
+        std::cout << node->value << std::endl;
+
+        if (left != nullptr && right != nullptr)
+        {
+            executeNode(left);
+            executeNode(right);
+        }
+
+        std::cout << node->value << std::endl;
 
         node->value = operation(left->value, right->value);
+
+        std::cout << node->value << std::endl;
     }
 
     void executeSwitch(std::shared_ptr<MILNode> node)
@@ -200,15 +213,23 @@ int main()
     auto blockNode = std::make_shared<MILNode>(MILOp::mBLOCK, NodeType::FLOW);
     funcNode->children.push_back(blockNode);
 
-    // Add node
     auto addNode = std::make_shared<MILNode>(MILOp::mADD, NodeType::EXPR);
-    addNode->attributes["left"] = 5;  // Left operand
-    addNode->attributes["right"] = 3; // Right operand
     blockNode->children.push_back(addNode);
+
+    auto LD1Node = std::make_shared<MILNode>(MILOp::mLD, NodeType::EXPR);
+    LD1Node->value = 3;
+
+    auto LD2Node = std::make_shared<MILNode>(MILOp::mLD, NodeType::EXPR);
+    LD2Node->value = 5;
+    addNode->children.push_back(LD1Node);
+    addNode->children.push_back(LD2Node);
 
     // Set up the MIL VM
     MILVirtualMachine vm;
     vm.setRoot(root);
+
+    vm.memory[3] = 3;
+    vm.memory[5] = 5;
 
     // Execute
     vm.execute();
@@ -216,3 +237,25 @@ int main()
     return 0;
 }
 
+/*
+class MyClass
+{
+public:
+    void func()
+    {
+        if (x > 0)
+        {
+            x++;
+        }
+    }
+};
+
+Output MIL Code:
+
+mCLASS MyClass
+  mFUNC func
+    mJUMPF label_if_false
+      mGT x 0
+    mADD x 1
+label_if_false
+*/
