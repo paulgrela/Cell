@@ -31,11 +31,11 @@ inline bool operator==(const AtomKindGraphicData& AtomKindParameter, const std::
 class ParticlesKindsManager
 {
 public:
-    std::unordered_map<GeneIdInt, Gene> Genes;
-    std::unordered_map<UnsignedInt, Promoter> Promoters;
-    std::unordered_map<std::string, Terminator> Terminators;
-    std::unordered_map<EntityIdInt, ParticleKind> ParticlesKinds;
-    std::unordered_map<EntityIdInt, ParticleKindGraphicData> GraphicParticlesKindsFromConfigXML;
+    MainMapType<GeneIdInt, Gene> Genes;
+    MainMapType<UnsignedInt, Promoter> Promoters;
+    MainMapType<std::string, Terminator> Terminators;
+    MainMapType<EntityIdInt, ParticleKind> ParticlesKinds;
+    MainMapType<EntityIdInt, ParticleKindGraphicData> GraphicParticlesKindsFromConfigXML;
 public:
     std::vector<InterGeneSequence> InterGenesSequences;
 public:

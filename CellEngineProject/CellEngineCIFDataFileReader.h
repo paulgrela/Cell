@@ -15,13 +15,13 @@ struct TransformationMatrix3x4
 class CellEngineCIFDataFileReader : virtual public CellEngineDataFile, virtual public CellEngineBuildParticlesDataOperations
 {
 private:
-    std::unordered_map<UnsignedInt, TransformationMatrix3x4> TransformationsMatrixes;
-    std::unordered_map<std::string, std::vector<CellEngineAtom>> ChainsNames;
+    MainMapType<UnsignedInt, TransformationMatrix3x4> TransformationsMatrixes;
+    MainMapType<std::string, std::vector<CellEngineAtom>> ChainsNames;
 public:
     explicit CellEngineCIFDataFileReader() = default;
     ~CellEngineCIFDataFileReader() override = default;
 public:
-    void ReadDataFromCIFFile(const bool SetStartValuesBool);
+    void ReadDataFromCIFFile(bool SetStartValuesBool);
     static CellEngineAtom ParseRecord(const char* LocalPDBRecord);
 };
 

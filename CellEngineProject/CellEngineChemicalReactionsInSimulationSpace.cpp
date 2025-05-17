@@ -107,7 +107,7 @@ void CellEngineChemicalReactionsInSimulationSpace::UpdateFoundNucleotidesForFoun
     CATCH("updating found nucleotides for found particles in proximity")
 }
 
-void CellEngineChemicalReactionsInSimulationSpace::SaveParticleFoundInProximity(const UniqueIdInt ParticleIndex, unordered_set<UnsignedInt>& FoundParticleIndexes, const bool UpdateNucleotides)
+void CellEngineChemicalReactionsInSimulationSpace::SaveParticleFoundInProximity(const UniqueIdInt ParticleIndex, MainSetType<UnsignedInt>& FoundParticleIndexes, const bool UpdateNucleotides)
 {
     try
     {
@@ -138,7 +138,7 @@ bool CellEngineChemicalReactionsInSimulationSpace::FindParticlesInProximityOfSim
 {
     try
     {
-        unordered_set<UnsignedInt> FoundParticleIndexes;
+        MainSetType<UnsignedInt> FoundParticleIndexes;
 
         MakingZeroSizeForContainersForFoundParticlesInProximity(CurrentThreadPos);
 

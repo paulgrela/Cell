@@ -50,7 +50,7 @@ class CellEngineAminoAcidsManager
     const CellEngineAminoAcid Tyrosine = { "Y", "Tyr", "Tyrosine", "M_trnatyr_c", "M_tyrtrna_c", "M_tyr__L_c", { "TAC", "TAT" }, { "UAC", "UAU" }, { 509 }, { 613 }, 0, 0, 0 };
     const CellEngineAminoAcid Valine = { "V", "Val", "Valine", "M_trnaval_c", "M_valtrna_c", "M_val__L_c", { "GTA", "GTC", "GTG", "GTT" }, { "GUA", "GUC", "GUG", "GUU" }, { 679 }, { 260 }, 0, 0, 0 };
 
-    const std::unordered_map<std::string, const CellEngineAminoAcid*> CellEngineNamesForAminoAcidsMap =
+    const MainMapType<std::string, const CellEngineAminoAcid*> CellEngineNamesForAminoAcidsMap =
     {
         { "Alanine", &Alanine },
         { "Arginine", &Arginine },
@@ -74,11 +74,11 @@ class CellEngineAminoAcidsManager
         { "Valine", &Valine}
     };
 
-    std::unordered_map<std::string, const CellEngineAminoAcid*> CellEngineCodonsForAminoAcidsMap;
+    MainMapType<std::string, const CellEngineAminoAcid*> CellEngineCodonsForAminoAcidsMap;
 
-    std::unordered_map<EntityIdInt, const CellEngineAminoAcid*> CellEngineAminoAcidsIdMap;
-    std::unordered_map<EntityIdInt, const CellEngineAminoAcid*> CellEnginetRNAChargedIdMap;
-    std::unordered_map<EntityIdInt, const CellEngineAminoAcid*> CellEnginetRNAUnchargedIdMap;
+    MainMapType<EntityIdInt, const CellEngineAminoAcid*> CellEngineAminoAcidsIdMap;
+    MainMapType<EntityIdInt, const CellEngineAminoAcid*> CellEnginetRNAChargedIdMap;
+    MainMapType<EntityIdInt, const CellEngineAminoAcid*> CellEnginetRNAUnchargedIdMap;
 
     static void SetNumIdFromName(const CellEngineAminoAcid& CellEngineAminoAcidObject)
     {

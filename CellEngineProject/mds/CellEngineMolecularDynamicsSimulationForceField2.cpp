@@ -20,7 +20,7 @@ private:
     std::vector<BondMDS> Bonds;
     std::vector<AngleMDS> Angles;
     std::vector<DihedralMDS> Dihedrals;
-    std::unordered_set<UnsignedInt> BondedPairs;
+    MainSetType<UnsignedInt> BondedPairs;
 private:
     MDSRealType BoxSizeInAngstroms;
     MDSRealType TemperatureInKelvins;
@@ -165,6 +165,7 @@ public:
         for (auto& AtomMDS : Atoms)
             AtomMDS.Force = Vec3();
     }
+public:
     void ComputeAllForces()
     {
         CreateTheForces();

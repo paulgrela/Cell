@@ -13,9 +13,9 @@ public:
     UnsignedInt MaxNumberOfReactants{};
 public:
     std::vector<ChemicalReaction> ChemicalReactions;
-    std::unordered_map<UnsignedInt, UnsignedInt> ChemicalReactionsPosFromId;
-    std::unordered_map<std::string, UnsignedInt> ChemicalReactionsPosFromIdStr;
-    std::unordered_multimap<std::string, UnsignedInt> ChemicalReactionsPosFromString;
+    MainMapType<UnsignedInt, UnsignedInt> ChemicalReactionsPosFromId;
+    MainMapType<std::string, UnsignedInt> ChemicalReactionsPosFromIdStr;
+    MainMultiMapType<std::string, UnsignedInt> ChemicalReactionsPosFromString;
 public:
     void ClearAllChemicalReactions()
     {

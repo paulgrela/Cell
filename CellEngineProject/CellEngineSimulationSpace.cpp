@@ -129,7 +129,8 @@ void CellEngineSimulationSpace::GenerateOneStepOfElectricDiffusionForOneParticle
             discrete_distribution<int> UniformDiscreteDistributionMoveParticleDirectionObject(DiscreteDistribution.begin(), DiscreteDistribution.end());
 
             UnsignedInt RandomMoveVectorIndex = UniformDiscreteDistributionMoveParticleDirectionObject(mt64R);
-            MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(ParticleObject, Particles, CurrentSectorPos, MoveVectors[RandomMoveVectorIndex].X, MoveVectors[RandomMoveVectorIndex].Y, MoveVectors[RandomMoveVectorIndex].Z, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
+            auto EmptyParticlesIter = GetParticles().end();
+            MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(ParticleObject, Particles, EmptyParticlesIter, CurrentSectorPos, MoveVectors[RandomMoveVectorIndex].X, MoveVectors[RandomMoveVectorIndex].Y, MoveVectors[RandomMoveVectorIndex].Z, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
 
             #ifdef SIMULATION_DETAILED_LOG
             LoggersManagerObject.Log(STREAM("Random Index = " << to_string(RandomMoveVectorIndex) << " " << to_string(MoveVectors[RandomMoveVectorIndex].X) << " " << to_string(MoveVectors[RandomMoveVectorIndex].Y) << " " << to_string(MoveVectors[RandomMoveVectorIndex].Z) << endl));

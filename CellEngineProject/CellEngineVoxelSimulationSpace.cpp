@@ -194,10 +194,11 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpace(
     {
         uniform_int_distribution<SignedInt> UniformDistributionObjectMoveParticleDirection_int64t(-1, 1);
 
+        auto EmptyParticlesIter = GetParticles().end();
         FindParticlesInProximityOfSimulationSpaceForSelectedSpace(false, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
         for (auto& ParticleInProximityIndex : LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity)
             if (CellEngineUseful::IsDNA(GetParticleFromIndex(ParticleInProximityIndex).EntityId) == false)
-                MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(GetParticleFromIndex(ParticleInProximityIndex), Particles, CurrentSectorPos, GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
+                MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(GetParticleFromIndex(ParticleInProximityIndex), Particles, EmptyParticlesIter, CurrentSectorPos, GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
     }
     CATCH("generating one step of diffusion for selected space")
 }
@@ -315,8 +316,9 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfDiffusionForSelectedRangeO
 
         GetRangeOfParticlesForRandomParticles(StartParticleIndexParam, EndParticleIndexParam, MaxParticleIndex);
 
+        auto EmptyParticlesIter = GetParticles().end();
         for (UniqueIdInt ParticleIndex = StartParticleIndexParam; ParticleIndex <= EndParticleIndexParam; ParticleIndex++)
-            MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(GetParticleFromIndex(ParticleIndex), Particles, CurrentSectorPos, GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
+            MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(GetParticleFromIndex(ParticleIndex), Particles, EmptyParticlesIter, CurrentSectorPos, GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
     }
     CATCH("generating one step of diffusion for selected range of particles")
 }
@@ -377,7 +379,7 @@ void CellEngineVoxelSimulationSpace::GenerateNStepsOfOneRandomReactionForBigPart
     CATCH("generating random reactions for big part of cell")
 }
 
-bool CellEngineVoxelSimulationSpace::MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, const SectorPosType& CurrentSectorPos, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam)
+bool CellEngineVoxelSimulationSpace::MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, ParticlesDetailedContainer<Particle>::iterator& ParticlesInSectorIter, const SectorPosType& CurrentSectorPos, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam)
 {
     return MoveParticleByVectorIfVoxelSpaceIsEmptyAndIsInBounds(ParticleObject, VectorX, VectorY, VectorZ, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
 }

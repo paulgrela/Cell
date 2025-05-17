@@ -5264,7 +5264,7 @@
                         <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
 
                         <FullAtomMPIParallelProcessesExecution>false</FullAtomMPIParallelProcessesExecution>
-                        <OpenGLGraphicsSwitchedOff>false</OpenGLGraphicsSwitchedOff>
+                        <OpenGLGraphicsSwitchedOff>true</OpenGLGraphicsSwitchedOff>
 
                         <CellStateFileName>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile42.dat</CellStateFileName>
                         <CellStateFileNameBackup>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile42.dat</CellStateFleNameBackup>

@@ -2,6 +2,6 @@
 #ifndef CELL_ENGINE_MOLECULAR_DYNAMICS_SIMULATION_FORCE_FIELD_2_H
 #define CELL_ENGINE_MOLECULAR_DYNAMICS_SIMULATION_FORCE_FIELD_2_H
 
-
+UnsignedInt ComputeMolecularDynamicsSimulationForceField2();
 
 #endif

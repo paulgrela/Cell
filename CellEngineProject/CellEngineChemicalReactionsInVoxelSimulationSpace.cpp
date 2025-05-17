@@ -5,7 +5,7 @@
 #include "CellEngineParticlesVoxelsOperations.h"
 #include "CellEngineChemicalReactionsInVoxelSimulationSpace.h"
 
-void CellEngineChemicalReactionsInVoxelSimulationSpace::FindParticlesInProximityInSimulationSpaceForSelectedLocalSpace(std::unordered_set<UnsignedInt>& FoundParticleIndexes, const bool UpdateNucleotides, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
+void CellEngineChemicalReactionsInVoxelSimulationSpace::FindParticlesInProximityInSimulationSpaceForSelectedLocalSpace(MainSetType<UnsignedInt>& FoundParticleIndexes, const bool UpdateNucleotides, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
 {
     try
     {

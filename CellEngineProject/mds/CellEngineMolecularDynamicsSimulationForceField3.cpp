@@ -23,7 +23,7 @@ public:
     std::vector<BondMDS> Bonds;
     std::vector<AngleMDS> Angles;
     std::vector<DihedralMDS> Dihedrals;
-    std::unordered_set<UnsignedInt> BondedPairs; // stores i*N + j for i < j
+    MainSetType<UnsignedInt> BondedPairs; // stores i*N + j for i < j
 public:
     MDSRealType BoxSizeInAngstroms;
     MDSRealType TemperatureInKelvins;

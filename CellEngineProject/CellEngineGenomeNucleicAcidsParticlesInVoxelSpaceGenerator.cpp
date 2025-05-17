@@ -31,7 +31,7 @@ void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::UpdateRandomPos
     }
 }
 
-bool CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::TestFormerForbiddenPositions(unordered_set<string>& TestedFormerForbiddenPositions, UnsignedInt RandomMoveDirection, UnsignedInt RandomPosX, UnsignedInt RandomPosY, UnsignedInt RandomPosZ, const UnsignedInt Size)
+bool CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::TestFormerForbiddenPositions(const MainSetType<string>& TestedFormerForbiddenPositions, UnsignedInt RandomMoveDirection, UnsignedInt RandomPosX, UnsignedInt RandomPosY, UnsignedInt RandomPosZ, const UnsignedInt Size)
 {
     UnsignedInt PosX = RandomPosX;
     UnsignedInt PosY = RandomPosY;
@@ -48,7 +48,7 @@ tuple<UnsignedInt, UnsignedInt, UnsignedInt> CellEngineGenomeNucleicAcidsParticl
 
     try
     {
-        UnsignedInt PreviousParticleIndex = Genome.back();
+        const UnsignedInt PreviousParticleIndex = Genome.back();
         Genome.pop_back();
 
         LastLocalRandomPos = GetParticleFromIndex(PreviousParticleIndex).ListOfVoxels[0];
@@ -105,7 +105,7 @@ void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::GenerateRandomD
 
         EraseAllDNAParticles();
 
-        UnsignedInt ParticlesSizeBeforeAddingRandomDNA = Particles.size();
+        const UnsignedInt ParticlesSizeBeforeAddingRandomDNA = Particles.size();
 
         CellEngineUseful::SwitchOffLogs();
 
@@ -115,13 +115,13 @@ void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::GenerateRandomD
 
         UnsignedInt NumberOfGeneratedNucleotides = 0;
 
-        unordered_set<string> TestedFormerForbiddenPositions;
+        MainSetType<string> TestedFormerForbiddenPositions;
 
         vector<UnsignedInt> RandomMovesDirections = { 0, 0, 0, 0, 0, 0 };
 
         auto CheckIfAllRandomMovesDirectionsWereChecked = [&RandomMovesDirections]() { return all_of(RandomMovesDirections.cbegin(), RandomMovesDirections.cend(), [] (const UnsignedInt Element) { return Element == 1; }); };
 
-        auto timeStart = clock();
+        const auto timeStart = clock();
 
         Particle* ParticlePrev1 = nullptr;
 
@@ -157,9 +157,9 @@ void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::GenerateRandomD
 
             while (EmptyVoxelSpaceForNewNucleotideBool == true && NumberOfMoveAdvanceSteps < MaxNumberOfMoveAdvanceSteps && NumberOfGeneratedNucleotides < NumberOfNucleotidesToBeGenerated)
             {
-                bool EmptyVoxelSpaceForNewNucleotideBoolX = CheckFreeSpaceInCuboidSelectedSpace(RandomPosX, RandomPosY, RandomPosZ, 1, 1, 1, 1 * ParticleSizeX, ParticleSizeY, ParticleSizeZ, GetZeroSimulationSpaceVoxel());
-                bool EmptyVoxelSpaceForNewNucleotideBoolY = CheckFreeSpaceInCuboidSelectedSpace(RandomPosX, RandomPosY, RandomPosZ, 1, 1, 1, ParticleSizeX, 1 * ParticleSizeY, ParticleSizeZ, GetZeroSimulationSpaceVoxel());
-                bool EmptyVoxelSpaceForNewNucleotideBoolZ = CheckFreeSpaceInCuboidSelectedSpace(RandomPosX, RandomPosY, RandomPosZ, 1, 1, 1, ParticleSizeX, ParticleSizeY, 1 * ParticleSizeZ, GetZeroSimulationSpaceVoxel());
+                const bool EmptyVoxelSpaceForNewNucleotideBoolX = CheckFreeSpaceInCuboidSelectedSpace(RandomPosX, RandomPosY, RandomPosZ, 1, 1, 1, 1 * ParticleSizeX, ParticleSizeY, ParticleSizeZ, GetZeroSimulationSpaceVoxel());
+                const bool EmptyVoxelSpaceForNewNucleotideBoolY = CheckFreeSpaceInCuboidSelectedSpace(RandomPosX, RandomPosY, RandomPosZ, 1, 1, 1, ParticleSizeX, 1 * ParticleSizeY, ParticleSizeZ, GetZeroSimulationSpaceVoxel());
+                const bool EmptyVoxelSpaceForNewNucleotideBoolZ = CheckFreeSpaceInCuboidSelectedSpace(RandomPosX, RandomPosY, RandomPosZ, 1, 1, 1, ParticleSizeX, ParticleSizeY, 1 * ParticleSizeZ, GetZeroSimulationSpaceVoxel());
 
                 EmptyVoxelSpaceForNewNucleotideBool = EmptyVoxelSpaceForNewNucleotideBoolX || EmptyVoxelSpaceForNewNucleotideBoolY || EmptyVoxelSpaceForNewNucleotideBoolZ;
 
@@ -227,7 +227,7 @@ void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::GenerateRandomD
 
         EraseAllDNAParticles();
 
-        UnsignedInt ParticlesSizeBeforeAddingRandomDNA = Particles.size();
+        const UnsignedInt ParticlesSizeBeforeAddingRandomDNA = Particles.size();
 
         CellEngineUseful::SwitchOffLogs();
 
@@ -236,7 +236,7 @@ void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::GenerateRandomD
 
         UnsignedInt NumberOfGeneratedNucleotides = 0;
 
-        unordered_set<string> TestedFormerForbiddenPositions;
+        MainSetType<string> TestedFormerForbiddenPositions;
 
         vector<UnsignedInt> RandomMovesDirections = { 0, 0, 0, 0, 0, 0 };
 

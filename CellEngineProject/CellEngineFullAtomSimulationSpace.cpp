@@ -111,12 +111,24 @@ void CellEngineFullAtomSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpa
     {
         uniform_int_distribution<SignedInt> UniformDistributionObjectMoveParticleDirection_int64t(-10, 10);
 
+        #ifdef CONTAINERS_FOR_SPEED
+        auto EmptyParticlesIter = GetParticles().end();
         for (auto& ParticleInProximityObject : Particles[StartXPosParam][StartYPosParam][StartZPosParam].Particles)
         {
             CurrentSectorPos = SectorPosType{ static_cast<SignedInt>(StartXPosParam), static_cast<SignedInt>(StartYPosParam), static_cast<SignedInt>(StartZPosParam) };
             if (CellEngineUseful::IsDNA(ParticleInProximityObject.second.EntityId) == false)
-                MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(ParticleInProximityObject.second, Particles, CurrentSectorPos, GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), 0, 0, 0, SizeXParam, SizeYParam, SizeZParam);
+                MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(ParticleInProximityObject.second, Particles, EmptyParticlesIter, CurrentSectorPos, GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), 0, 0, 0, SizeXParam, SizeYParam, SizeZParam);
         }
+        #else
+        for (auto ParticleInProximityObjectIter = Particles[StartXPosParam][StartYPosParam][StartZPosParam].Particles.begin(); ParticleInProximityObjectIter != Particles[StartXPosParam][StartYPosParam][StartZPosParam].Particles.end(); )
+        {
+            CurrentSectorPos = SectorPosType{ static_cast<SignedInt>(StartXPosParam), static_cast<SignedInt>(StartYPosParam), static_cast<SignedInt>(StartZPosParam) };
+            if (CellEngineUseful::IsDNA(ParticleInProximityObjectIter->second.EntityId) == false)
+                MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(ParticleInProximityObjectIter->second, Particles, ParticleInProximityObjectIter, CurrentSectorPos, GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), 0, 0, 0, SizeXParam, SizeYParam, SizeZParam);
+            else
+                ++ParticleInProximityObjectIter;
+        }
+        #endif
     }
     CATCH("generating one step of diffusion for selected space")
 }
@@ -197,9 +209,9 @@ void CellEngineFullAtomSimulationSpace::GenerateNStepsOfOneRandomReactionForWhol
     CATCH("generating random reactions for whole cell space full atom")
 }
 
-bool CellEngineFullAtomSimulationSpace::MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, const SectorPosType& CurrentSectorPos, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam)
+bool CellEngineFullAtomSimulationSpace::MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, ParticlesDetailedContainer<Particle>::iterator& ParticleObjectIter, const SectorPosType& CurrentSectorPos, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam)
 {
-    return MoveParticleByVectorIfFullAtomSpaceIsEmptyAndIsInBounds(ParticleObject, ParticlesInSector, NeighbourProcessesIndexes, VectorOfParticlesToSendToNeighbourProcesses, CurrentSectorPos, VectorX, VectorY, VectorZ, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, CurrentThreadPos);
+    return MoveParticleByVectorIfFullAtomSpaceIsEmptyAndIsInBounds(ParticleObject, ParticlesInSector, ParticleObjectIter, NeighbourProcessesIndexes, VectorOfParticlesToSendToNeighbourProcesses, CurrentSectorPos, VectorX, VectorY, VectorZ, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, CurrentThreadPos);
 }
 
 bool CellEngineFullAtomSimulationSpace::CheckIfSpaceIsEmptyAndIsInBoundsForParticleElements(const ParticleKind& ParticleKindObjectForProduct, ParticlesContainer<Particle>& ParticlesInSector, const SectorPosType& CurrentSectorPos, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam)

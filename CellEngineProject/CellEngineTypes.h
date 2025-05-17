@@ -7,7 +7,12 @@
 #include <memory>
 #include <vector>
 #include <cstdint>
+#include <set>
+#include <map>
+#include <unordered_set>
 #include <unordered_map>
+
+#include "../../Cell/Common/Compilation/ConditionalCompilationConstants.h"
 
 #include "vmath.h"
 
@@ -73,8 +78,32 @@ struct PosType
 
 using ThreadIdType = std::uint64_t;
 
+#ifdef CONTAINERS_FOR_SPEED
+template <class Key, class Hash = std::hash<Key>, class KeyEqual = std::equal_to<Key>, class Allocator = std::allocator<Key>>
+using MainSetType = std::unordered_set<Key, Hash, KeyEqual, Allocator>;
+#else
+template <class Key, class Compare = std::less<Key>, class Allocator = std::allocator<Key>>
+using MainSetType = std::set<Key, Compare, Allocator>;
+#endif
+
+#ifdef CONTAINERS_FOR_SPEED
+template <class Key, class T, class Hash = std::hash<Key>, class KeyEqual = std::equal_to<Key>, class Allocator = std::allocator<std::pair<const Key, T>>>
+using MainMapType = std::unordered_map<Key, T, Hash, KeyEqual, Allocator>;
+#else
+template <class Key, class T, class Compare = std::less<Key>, class Allocator = std::allocator<std::pair<const Key, T>>>
+using MainMapType = std::map<Key, T, Compare, Allocator>;
+#endif
+
+#ifdef CONTAINERS_FOR_SPEED
+template <class Key, class T, class Hash = std::hash<Key>, class KeyEqual = std::equal_to<Key>, class Allocator = std::allocator<std::pair<const Key, T>>>
+using MainMultiMapType = std::unordered_multimap<Key, T, Hash, KeyEqual, Allocator>;
+#else
+template <class Key, class T, class Compare = std::less<Key>, class Allocator = std::allocator<std::pair<const Key, T>>>
+using MainMultiMapType = std::multimap<Key, T, Compare, Allocator>;
+#endif
+
 template<class Particle>
-using ParticlesDetailedContainer = std::unordered_map<UniqueIdInt, Particle>;
+using ParticlesDetailedContainer = MainMapType<UniqueIdInt, Particle>;
 
 template <class Particle>
 struct ParticlesContainerInternal

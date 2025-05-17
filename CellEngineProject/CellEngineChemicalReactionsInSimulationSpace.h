@@ -27,9 +27,9 @@ protected:
 protected:
     bool FindParticlesInProximityOfSimulationSpaceForSelectedSpace(bool UpdateNucleotides, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
 
-    virtual void FindParticlesInProximityInSimulationSpaceForSelectedLocalSpace(std::unordered_set<UnsignedInt>& FoundParticleIndexes, bool UpdateNucleotides, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam) = 0;
+    virtual void FindParticlesInProximityInSimulationSpaceForSelectedLocalSpace(MainSetType<UnsignedInt>& FoundParticleIndexes, bool UpdateNucleotides, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam) = 0;
 
-    void SaveParticleFoundInProximity(UniqueIdInt ParticleIndex, unordered_set<UnsignedInt>& FoundParticleIndexes, bool UpdateNucleotides);
+    void SaveParticleFoundInProximity(UniqueIdInt ParticleIndex, MainSetType<UnsignedInt>& FoundParticleIndexes, bool UpdateNucleotides);
 protected:
     explicit CellEngineChemicalReactionsInSimulationSpace(ParticlesContainer<Particle>& ParticlesParam) : CellEngineNucleicAcidsChemicalReactionsInSimulationSpace(ParticlesParam)
     {

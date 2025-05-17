@@ -17,8 +17,8 @@ public:
     static void CreateSimulationSpaceForParallelExecution(SimulationSpaceForParallelExecutionContainer<CellEngineSimulationSpace>& CellEngineSimulationSpaceForThreadsObjectsPointer, ParticlesContainer<Particle>& Particles);
 public:
     virtual bool CheckInsertOfParticle(const MPIParticleSenderStruct& MPIParticleSenderToInsert) = 0;
-    SignedInt GetProcessPrevNeighbour(SignedInt ThreadXIndex, SignedInt ThreadYIndex, SignedInt ThreadZIndex) const;
-    SignedInt GetProcessNextNeighbour(SignedInt ThreadXIndex, SignedInt ThreadYIndex, SignedInt ThreadZIndex) const;
+    [[nodiscard]] SignedInt GetProcessPrevNeighbour(SignedInt ThreadXIndex, SignedInt ThreadYIndex, SignedInt ThreadZIndex) const;
+    [[nodiscard]] SignedInt GetProcessNextNeighbour(SignedInt ThreadXIndex, SignedInt ThreadYIndex, SignedInt ThreadZIndex) const;
     void CreateDataEveryMPIProcessForParallelExecution();
 public:
     virtual void GenerateOneStepOfDiffusionForSelectedSpace(bool InBounds, RealType StartXPosParam, RealType StartYPosParam, RealType StartZPosParam, RealType SizeXParam, RealType SizeYParam, RealType SizeZParam) = 0;

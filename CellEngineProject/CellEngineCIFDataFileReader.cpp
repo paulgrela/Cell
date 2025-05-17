@@ -85,7 +85,7 @@ void CopyFieldsToMatrix(TransformationMatrix3x4& TransformationMatrix3x4Object, 
     CATCH("copying fields to matrix")
 }
 
-glm::vec3 CountResultPositionsFromTransformationMatrix(const std::unordered_map<UnsignedInt, TransformationMatrix3x4>::iterator& TransformationMatrixIterator, const CellEngineAtom& AppliedAtom)
+glm::vec3 CountResultPositionsFromTransformationMatrix(const MainMapType<UnsignedInt, TransformationMatrix3x4>::iterator& TransformationMatrixIterator, const CellEngineAtom& AppliedAtom)
 {
     glm::vec3 Result{};
 
@@ -112,7 +112,7 @@ glm::vec3 CountResultPositionsFromTransformationMatrix(const std::unordered_map<
     return Result;
 }
 
-void AssociateAutinNameWithIllinoisName(unordered_map<string, string>& AutinIllinoisNamesMap)
+void AssociateAutinNameWithIllinoisName(MainMapType<string, string>& AutinIllinoisNamesMap)
 {
     AutinIllinoisNamesMap["'root.syn3A.interior.proteins.DNA'"] = "DNANucleotide";
     AutinIllinoisNamesMap["'root.syn3A.interior.proteins.RNA'"] = "RNANucleotide";
@@ -141,7 +141,7 @@ void AssociateAutinNameWithIllinoisName(unordered_map<string, string>& AutinIlli
     AutinIllinoisNamesMap["'root.syn3A.interior.proteins.ASP_tRNASYNTH'"] = "JCVISYN3A_0287";
 }
 
-EntityIdInt GetParticleKindIdFromGeneIdOrName(const string& ParticleKindName, const EntityIdInt ParticleKindIdParam, const std::unordered_map<EntityIdInt, UniqueIdInt>& ProteinIdFromGeneIdTranslator, const unordered_map<string, string>& AutinIllinoisNameMap)
+EntityIdInt GetParticleKindIdFromGeneIdOrName(const string& ParticleKindName, const EntityIdInt ParticleKindIdParam, const MainMapType<EntityIdInt, UniqueIdInt>& ProteinIdFromGeneIdTranslator, const MainMapType<string, string>& AutinIllinoisNameMap)
 {
     try
     {
@@ -200,10 +200,10 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile(const bool SetStartValuesB
         vector<CellEngineAtom> LocalCellEngineAllAtomsObject;
         vector<CellEngineAtom> LocalCellEngineParticlesCentersObject;
 
-        unordered_map<string, string> AutinIllinoisNamesMap;
+        MainMapType<string, string> AutinIllinoisNamesMap;
         AssociateAutinNameWithIllinoisName(AutinIllinoisNamesMap);
-        std::unordered_map<EntityIdInt, UniqueIdInt> ProteinIdFromGeneIdTranslator;
-        std::unordered_map<EntityIdInt, string> ParticleAutinKindIdToAutinNameTranslator;
+        MainMapType<EntityIdInt, UniqueIdInt> ProteinIdFromGeneIdTranslator;
+        MainMapType<EntityIdInt, string> ParticleAutinKindIdToAutinNameTranslator;
 
         if (CellEngineConfigDataObject.MixedFullAtomWithVoxelSpace == true)
         {

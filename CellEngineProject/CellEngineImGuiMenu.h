@@ -1342,8 +1342,10 @@ public:
     {
         const auto start_time = chrono::high_resolution_clock::now();
 
-        CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfOneRandomReactionForWholeCellSpace(0, 0, 0, 32, 32, 32, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfStepsInSimulationOutside);
-        CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfDiffusionForWholeCellSpace(true, 0, 0, 0, 1, 1, 1, CellEngineConfigDataObject.NumberOfParticlesSectorsInX, CellEngineConfigDataObject.NumberOfParticlesSectorsInY, CellEngineConfigDataObject.NumberOfParticlesSectorsInZ, CellEngineConfigDataObject.NumberOfStepsInSimulationOutside);
+        if (CellEngineUseful::IsIn(CellEngineConfigDataObject.TypeOfSimulation, { CellEngineConfigData::TypesOfSimulation::BothReactionsAndDiffusion, CellEngineConfigData::TypesOfSimulation::OnlyReactions }))
+            CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfOneRandomReactionForWholeCellSpace(0, 0, 0, 32, 32, 32, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfStepsInSimulationOutside);
+        if (CellEngineUseful::IsIn(CellEngineConfigDataObject.TypeOfSimulation, { CellEngineConfigData::TypesOfSimulation::BothReactionsAndDiffusion, CellEngineConfigData::TypesOfSimulation::OnlyDiffusion }))
+            CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfDiffusionForWholeCellSpace(true, 0, 0, 0, 1, 1, 1, CellEngineConfigDataObject.NumberOfParticlesSectorsInX, CellEngineConfigDataObject.NumberOfParticlesSectorsInY, CellEngineConfigDataObject.NumberOfParticlesSectorsInZ, CellEngineConfigDataObject.NumberOfStepsInSimulationOutside);
 
         const auto stop_time = chrono::high_resolution_clock::now();
 
@@ -1404,11 +1406,13 @@ public:
                 ImGui::Checkbox("Use Mutex Between Main Screen Thread and Menu Threads", &CellEngineConfigDataObject.UseMutexBetweenMainScreenThreadAndMenuThreads);
                 ImGui::Text("");
 
+                #ifdef CONTAINERS_FOR_SPEED
                 if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == false)
                     ColorButton(AlignString("MAKE N STEPS OF SIMULATION FOR WHOLE CELL SPACE IN THREADS", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
                     {
                         CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfSimulationForWholeCellSpaceInThreads(CellEngineConfigDataObject.NumberOfStepsInSimulationOutside, CellEngineConfigDataObject.NumberOfStepsInSimulationInside);
                     });
+                #endif
 
                 if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true)
                     ColorButton(AlignString("MAKE N STEPS OF SIMULATION FOR WHOLE CELL SPACE IN MPI", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)

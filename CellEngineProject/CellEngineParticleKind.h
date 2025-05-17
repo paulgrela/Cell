@@ -127,9 +127,9 @@ public:
 public:
     ParticleKindGraphicData GraphicData;
 public:
-    std::unordered_map<std::string, UnsignedInt> ReactionsIdByString;
+    MainMapType<std::string, UnsignedInt> ReactionsIdByString;
 public:
-    void SetReactionsIdByString(const std::unordered_map<std::string, UnsignedInt>& ReactionsIdByStringParam)
+    void SetReactionsIdByString(const MainMapType<std::string, UnsignedInt>& ReactionsIdByStringParam)
     {
         ReactionsIdByString = ReactionsIdByStringParam;
     }
