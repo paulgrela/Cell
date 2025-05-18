@@ -35,6 +35,7 @@ bool ExchangeParticleBetweenSectors(const Particle &ParticleObject, ParticlesCon
         #else
         if (ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].Particles.contains(ParticleObjectIter->first) == true)
         {
+            //ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].Particles.insert(ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].Particles.extract(ParticleObjectIter++));
             const auto ParticleIndexCopiedObject = ParticleObjectIter->first;
             const auto ParticleCopiedObject = ParticleObjectIter->second;
             ParticleObjectIter = ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].Particles.erase(ParticleObjectIter);
@@ -79,7 +80,12 @@ void CellEngineParticlesFullAtomOperations::MoveParticleByVector(Particle& Parti
         auto [SectorPosX2, SectorPosY2, SectorPosZ2] = CellEngineUseful::GetSectorPos(ParticleObject.Center.X + VectorX, ParticleObject.Center.Y + VectorY, ParticleObject.Center.Z + VectorZ);
 
         if (SectorPosX2 == -1 || SectorPosY2 == -1 || SectorPosZ2 == -1)
+        {
+            #ifndef CONTAINERS_FOR_SPEED
+            ++ParticleObjectIter;
+            #endif
             return;
+        }
 
         MoveAllAtomsInParticleAtomsListByVector(ParticleObject, VectorX, VectorY, VectorZ);
         ParticleObject.SetCenterCoordinates(ParticleObject.Center.X + VectorX, ParticleObject.Center.Y + VectorY, ParticleObject.Center.Z + VectorZ);
