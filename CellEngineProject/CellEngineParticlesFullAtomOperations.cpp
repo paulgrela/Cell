@@ -8,6 +8,8 @@
 
 constexpr bool PrintInfoWarning = false;
 
+//CORRECT FOR THREADS LIKE FOR MPI
+
 void CellEngineParticlesFullAtomOperations::SetProperThreadIndexForEveryParticlesSector(ParticlesContainer<Particle>& ParticlesSectors)
 {
     try
