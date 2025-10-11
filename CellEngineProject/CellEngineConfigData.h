@@ -5,7 +5,6 @@
 #include "vmath.h"
 #include <map>
 #include <random>
-#include <boost/property_tree/ptree.hpp>
 
 #include "sb7color.h"
 
