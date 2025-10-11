@@ -65,7 +65,6 @@ include_directories(extern/imgui/backends)
 
 include_directories(extern/glfw-3.3.7.bin.WIN64/include)
 include_directories(
-	"../../Boost/*"
 	"../Common/Platform"
 	"../Common/MathUtils"
 	"../Common/Include"
@@ -223,7 +222,8 @@ endif()
 if(WIN32)
 target_link_libraries(${PROJECT_NAME} -static-libgcc -static-libstdc++ -lpthread -lglew32 -lsb7 -lglfw3 -lopengl32 -lglu32 -limgui)
 else()
-target_link_libraries(${PROJECT_NAME} -static-libgcc -static-libstdc++ -lpthread sb7 -fopenmp ${OPENGL_LIBRARIES}  ${MPI_LIBRARIES} glfw3 X11 Xrandr Xinerama Xi Xxf86vm Xcursor GL rt dl imgui)
+#target_link_libraries(${PROJECT_NAME} -static-libgcc -static-libstdc++ -lpthread sb7 -fopenmp ${OPENGL_LIBRARIES}  ${MPI_LIBRARIES} glfw3 X11 Xrandr Xinerama Xi Xxf86vm Xcursor GL rt dl imgui)
+target_link_libraries(${PROJECT_NAME} -static-libgcc -static-libstdc++ -lpthread sb7 -fopenmp ${OPENGL_LIBRARIES}  ${MPI_LIBRARIES} glfw3 X11 GL rt dl imgui)
 endif()
 
 set(CMAKE_THREAD_LIBS_INIT "-lpthread")
@@ -276,7 +276,8 @@ add_executable(
 if(WIN32)
 target_link_libraries(CellEngineRunTests -static-libgcc -static-libstdc++ -lpthread -lglew32 -lsb7 -lglfw3 -lopengl32 -lglu32 -limgui)
 else()
-target_link_libraries(CellEngineRunTests -static-libgcc -static-libstdc++ -lpthread sb7 ${OPENGL_LIBRARIES} ${MPI_LIBRARIES} glfw3 X11 Xrandr Xinerama Xi Xxf86vm Xcursor GL rt dl imgui gtest gmock)
+#target_link_libraries(CellEngineRunTests -static-libgcc -static-libstdc++ -lpthread sb7 ${OPENGL_LIBRARIES} ${MPI_LIBRARIES} glfw3 X11 Xrandr Xinerama Xi Xxf86vm Xcursor GL rt dl imgui gtest gmock)
+target_link_libraries(CellEngineRunTests -static-libgcc -static-libstdc++ -lpthread sb7 ${OPENGL_LIBRARIES} ${MPI_LIBRARIES} glfw3 X11 GL rt dl imgui gtest gmock)
 endif()
 
 add_test(CellEngineRunTests CellEngineRunTests)

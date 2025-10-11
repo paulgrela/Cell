@@ -936,6 +936,8 @@
 		<CellState id="5">
                         <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
 
+                        <FullAtomMPIParallelProcessesExecution>false</FullAtomMPIParallelProcessesExecution>
+
 			<CellStateFileName>../../WholeCellData/Mycoplasma Genitalium/cellpack_atom_instances_149_curated.cif</CellStateFileName>
                         <CellStateFileNameBackup>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile1.dat</CellStateFileNameBackup>
 
@@ -2693,6 +2695,8 @@
 
 		<CellState id="13">
                         <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
+
+                        <FullAtomMPIParallelProcessesExecution>false</FullAtomMPIParallelProcessesExecution>
 
 			<CellStateFileName>../../WholeCellData/Mycoplasma Genitalium/MG_1184_cellpack_atom_instances_1.cif</CellStateFileName>
                         <CellStateFileNameBackup>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile33.dat</CellStateFileNameBackup>
@@ -4807,15 +4811,15 @@
                         <NumberOfStepsInSimulationInside>1</NumberOfStepsInSimulationInside>
                         <TypeOfSimulation>1</TypeOfSimulation>
 
-                        <NumberOfXThreadsInSimulation>2</NumberOfXThreadsInSimulation>
-                        <NumberOfYThreadsInSimulation>2</NumberOfYThreadsInSimulation>
+                        <NumberOfXThreadsInSimulation>4</NumberOfXThreadsInSimulation>
+                        <NumberOfYThreadsInSimulation>4</NumberOfYThreadsInSimulation>
                         <NumberOfZThreadsInSimulation>2</NumberOfZThreadsInSimulation>
-                        <NumberOfXSectorsInOneThreadInSimulation>20</NumberOfXSectorsInOneThreadInSimulation>
-                        <NumberOfYSectorsInOneThreadInSimulation>20</NumberOfYSectorsInOneThreadInSimulation>
+                        <NumberOfXSectorsInOneThreadInSimulation>10</NumberOfXSectorsInOneThreadInSimulation>
+                        <NumberOfYSectorsInOneThreadInSimulation>10</NumberOfYSectorsInOneThreadInSimulation>
                         <NumberOfZSectorsInOneThreadInSimulation>20</NumberOfZSectorsInOneThreadInSimulation>
-                        <SizeOfXInOneThreadInSimulationSpace>2560</SizeOfXInOneThreadInSimulationSpace>
-                        <SizeOfYInOneThreadInSimulationSpace>2560</SizeOfYInOneThreadInSimulationSpace>
-                        <SizeOfZInOneThreadInSimulationSpace>2560</SizeOfXInOneThreadInSimulationSpace>
+                        <SizeOfXInOneThreadInSimulationSpace>1280</SizeOfXInOneThreadInSimulationSpace>
+                        <SizeOfYInOneThreadInSimulationSpace>1280</SizeOfYInOneThreadInSimulationSpace>
+                        <SizeOfZInOneThreadInSimulationSpace>1280</SizeOfXInOneThreadInSimulationSpace>
                         <SizeOfXInOneSectorInOneThreadInSimulationSpace>128</SizeOfXInOneSectorInOneThreadInSimulationSpace>
                         <SizeOfYInOneSectorInOneThreadInSimulationSpace>128</SizeOfYInOneSectorInOneThreadInSimulationSpace>
                         <SizeOfZInOneSectorInOneThreadInSimulationSpace>128</SizeOfZInOneSectorInOneThreadInSimulationSpace>
@@ -5051,15 +5055,15 @@
                         <NumberOfStepsInSimulationInside>1</NumberOfStepsInSimulationInside>
                         <TypeOfSimulation>1</TypeOfSimulation>
 
-                        <NumberOfXThreadsInSimulation>2</NumberOfXThreadsInSimulation>
-                        <NumberOfYThreadsInSimulation>2</NumberOfYThreadsInSimulation>
-                        <NumberOfZThreadsInSimulation>2</NumberOfZThreadsInSimulation>
-                        <NumberOfXSectorsInOneThreadInSimulation>20</NumberOfXSectorsInOneThreadInSimulation>
-                        <NumberOfYSectorsInOneThreadInSimulation>20</NumberOfYSectorsInOneThreadInSimulation>
-                        <NumberOfZSectorsInOneThreadInSimulation>20</NumberOfZSectorsInOneThreadInSimulation>
-                        <SizeOfXInOneThreadInSimulationSpace>2560</SizeOfXInOneThreadInSimulationSpace>
-                        <SizeOfYInOneThreadInSimulationSpace>2560</SizeOfYInOneThreadInSimulationSpace>
-                        <SizeOfZInOneThreadInSimulationSpace>2560</SizeOfXInOneThreadInSimulationSpace>
+                        <NumberOfXThreadsInSimulation>4</NumberOfXThreadsInSimulation>
+                        <NumberOfYThreadsInSimulation>4</NumberOfYThreadsInSimulation>
+                        <NumberOfZThreadsInSimulation>4</NumberOfZThreadsInSimulation>
+                        <NumberOfXSectorsInOneThreadInSimulation>10</NumberOfXSectorsInOneThreadInSimulation>
+                        <NumberOfYSectorsInOneThreadInSimulation>10</NumberOfYSectorsInOneThreadInSimulation>
+                        <NumberOfZSectorsInOneThreadInSimulation>10</NumberOfZSectorsInOneThreadInSimulation>
+                        <SizeOfXInOneThreadInSimulationSpace>1280</SizeOfXInOneThreadInSimulationSpace>
+                        <SizeOfYInOneThreadInSimulationSpace>1280</SizeOfYInOneThreadInSimulationSpace>
+                        <SizeOfZInOneThreadInSimulationSpace>1280</SizeOfXInOneThreadInSimulationSpace>
                         <SizeOfXInOneSectorInOneThreadInSimulationSpace>128</SizeOfXInOneSectorInOneThreadInSimulationSpace>
                         <SizeOfYInOneSectorInOneThreadInSimulationSpace>128</SizeOfYInOneSectorInOneThreadInSimulationSpace>
                         <SizeOfZInOneSectorInOneThreadInSimulationSpace>128</SizeOfZInOneSectorInOneThreadInSimulationSpace>
@@ -5263,7 +5267,7 @@
 		<CellState id="23">
                         <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
 
-                        <FullAtomMPIParallelProcessesExecution>false</FullAtomMPIParallelProcessesExecution>
+                        <FullAtomMPIParallelProcessesExecution>true</FullAtomMPIParallelProcessesExecution>
                         <OpenGLGraphicsSwitchedOff>true</OpenGLGraphicsSwitchedOff>
 
                         <CellStateFileName>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile42.dat</CellStateFileName>
