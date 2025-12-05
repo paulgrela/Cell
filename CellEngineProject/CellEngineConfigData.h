@@ -50,6 +50,7 @@ public:
     bool LogParametersOfRenderingToFile{};
 public:
     std::string TimeParametersOfRenderingStr;
+    std::string ExecutionDurationTimeForDrawingParticlesStr;
     std::string NumberOfRenderedAtomsParametersOfRenderingStr;
 public:
     bool GenomeReadFromFile = false;
@@ -268,5 +269,10 @@ public:
 };
 
 inline CellEngineConfigData CellEngineConfigDataObject;
+
+inline std::common_type<std::chrono::duration<long, std::ratio<1, 1000000000>>, std::chrono::duration<long, std::ratio<1, 1000000000>>>::type ExecutionDurationTimeForDrawingParticles { 0 };
+inline std::common_type<std::chrono::duration<long, std::ratio<1, 1000000000>>, std::chrono::duration<long, std::ratio<1, 1000000000>>>::type ExecutionDurationTimeForPreparingParticles { 0 };
+inline std::common_type<std::chrono::duration<long, std::ratio<1, 1000000000>>, std::chrono::duration<long, std::ratio<1, 1000000000>>>::type ExecutionDurationTimeForTotalPreparingParticles { 0 };
+inline std::common_type<std::chrono::duration<long, std::ratio<1, 1000000000>>, std::chrono::duration<long, std::ratio<1, 1000000000>>>::type ExecutionDurationTimeForCopyingParticlesToGraphicMemory { 0 };
 
 #endif

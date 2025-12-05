@@ -60,9 +60,9 @@ namespace sb7
 
         if (DataChunk != nullptr)
         {
-            glGenBuffers(1, &DataBuffer);
-            glBindBuffer(GL_ARRAY_BUFFER, DataBuffer);
-            glBufferData(GL_ARRAY_BUFFER, DataChunk->DataLength, (unsigned char*)DataChunk + DataChunk->DataOffset, GL_STATIC_DRAW);
+            // glGenBuffers(1, &DataBuffer);
+            // glBindBuffer(GL_ARRAY_BUFFER, DataBuffer);
+            // glBufferData(GL_ARRAY_BUFFER, DataChunk->DataLength, (unsigned char*)DataChunk + DataChunk->DataOffset, GL_STATIC_DRAW);
         }
         else
         {
@@ -144,10 +144,23 @@ namespace sb7
     {
         glBindVertexArray(VAO);
 
-        if (IndexType != GL_NONE)
-            glDrawElementsInstancedBaseInstance(GL_TRIANGLES, static_cast<GLint>(SubGraphicObjects[GraphicObjectIndex].Count), IndexType, (void*)SubGraphicObjects[GraphicObjectIndex].First, static_cast<GLsizei>(InstanceCount), BaseInstance);
-        else
+        //if (IndexType != GL_NONE)
+            //glDrawElementsInstancedBaseInstance(GL_TRIANGLES, static_cast<GLint>(SubGraphicObjects[GraphicObjectIndex].Count), IndexType, (void*)SubGraphicObjects[GraphicObjectIndex].First, static_cast<GLsizei>(InstanceCount), BaseInstance);
+        //else
             glDrawArraysInstancedBaseInstance(GL_TRIANGLES, static_cast<GLint>(SubGraphicObjects[GraphicObjectIndex].First), static_cast<GLsizei>(SubGraphicObjects[GraphicObjectIndex].Count), static_cast<GLsizei>(InstanceCount), BaseInstance);
+            //glMultiDrawArraysIndirect(GL_TRIANGLES, NULL, 50000, 0);
     }
     #pragma GCC diagnostic pop
+
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wint-to-pointer-cast"
+    void GraphicObject::RenderSubGraphicAllObjects(unsigned int GraphicObjectIndex, unsigned int InstanceCount, unsigned int BaseInstance)
+    {
+        glBindVertexArray(VAO);
+
+        glDrawArraysInstanced(GL_TRIANGLES, static_cast<GLint>(SubGraphicObjects[GraphicObjectIndex].First), static_cast<GLsizei>(SubGraphicObjects[GraphicObjectIndex].Count), static_cast<GLsizei>(InstanceCount));
+        //glMultiDrawArraysIndirect(GL_TRIANGLES, NULL, 50000, 0);
+    }
+    #pragma GCC diagnostic pop
+
 }

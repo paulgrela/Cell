@@ -5,6 +5,8 @@
 
 #include <omp.h>
 
+        #include <chrono>
+
 #include <sb7.h>
 #include <vmath.h>
 #include <shader.h>
@@ -24,6 +26,8 @@
 #include "CellEngineOpenGLVisualiser.h"
 #include "CellEngineParticlesKindsManager.h"
 #include "CellEngineChemicalReactionsEngine.h"
+
+static constexpr size_t MAX_PARTICLES = 100'000'000;
 
 using namespace std;
 
@@ -49,6 +53,13 @@ void CellEngineOpenGLVisualiser::StartUp()
         glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
+
+
+        glGenBuffers(1, &instanceSSBO);
+        glBindBuffer(GL_SHADER_STORAGE_BUFFER, instanceSSBO);
+        glBufferData(GL_SHADER_STORAGE_BUFFER, MAX_PARTICLES * sizeof(UniformsBlock), nullptr, GL_DYNAMIC_DRAW);
+        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, instanceSSBO);
+
 
         InitArcBall();
 
@@ -85,6 +96,7 @@ void CellEngineOpenGLVisualiser::LoadShadersPhong()
     try
     {
         LoadShaders("..//shaders//per-fragment-phong.vs.glsl", "..//shaders//per-fragment-phong.fs.glsl", ShaderProgramPhong);
+        //LoadShaders("..//shaders//per-fragment-phong-1.vs.glsl", "..//shaders//per-fragment-phong.fs.glsl", ShaderProgramPhong);
 
         Uniforms.DiffuseAlbedo = glGetUniformLocation(ShaderProgramPhong, "diffuse_albedo");
         Uniforms.SpecularAlbedo = glGetUniformLocation(ShaderProgramPhong, "specular_albedo");
@@ -202,7 +214,7 @@ void CellEngineOpenGLVisualiser::DrawBonds(const Particle& ParticleObject, vecto
                 const auto& AtomObject1 = ParticleObject.ListOfAtoms[BondToDrawObject.first];
                 const auto& AtomObject2 = ParticleObject.ListOfAtoms[BondToDrawObject.second];
 
-                CreateUniformBlockForVertexShader(vmath::vec3(0.0, 0.0, 0.0), vmath::vec3(-1.0, -1.0, -1.0), ViewMatrix, vmath::translate(0.0f, 0.0f, 0.0f), false, false, false, false);
+                CreateUniformBlockForVertexShader1(vmath::vec3(0.0, 0.0, 0.0), vmath::vec3(-1.0, -1.0, -1.0), ViewMatrix, vmath::translate(0.0f, 0.0f, 0.0f), false, false, false, false);
 
                 DrawBond(AtomObject1.X - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomObject1.Y - CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomObject1.Z - CellEngineConfigDataObject.CameraZPosition - Center.Z(), AtomObject2.X - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomObject2.Y - CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomObject2.Z - CellEngineConfigDataObject.CameraZPosition - Center.Z());
             }
@@ -264,7 +276,9 @@ inline bool CellEngineOpenGLVisualiser::GetFinalVisibilityInModelWorld(const vma
     return false;
 }
 
-inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4 ModelMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, bool DrawAdditional) const
+//std::common_type<std::chrono::duration<long, std::ratio<1, 1000000000>>, std::chrono::duration<long, std::ratio<1, 1000000000>>>::type ExecutionDurationTimeForDrawingParticles { 0 };
+
+inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader1(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4 ModelMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, bool DrawAdditional) const
 {
     bool FinalVisibilityInModelWorld = false;
 
@@ -273,7 +287,16 @@ inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader(const 
         glBindBufferBase(GL_UNIFORM_BUFFER, 0, UniformsBuffer);
         auto MatrixUniformBlockForVertexShaderPointer = (UniformsBlock*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(UniformsBlock), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
 
-        MatrixUniformBlockForVertexShaderPointer->ProjectionMatrix = vmath::perspective(50.0f, (float)Info.WindowWidth / (float)Info.WindowHeight, 0.1f, 10000.0f);
+        const auto start_time = chrono::high_resolution_clock::now();
+        const vmath::mat4 ProjectionMatrix1 = vmath::perspective(50.0f, (float)Info.WindowWidth / (float)Info.WindowHeight, 0.1f, 10000.0f);
+        const vmath::mat4 MoveMatrix1 = ViewMatrix * ModelMatrix;
+        const auto stop_time = chrono::high_resolution_clock::now();
+
+        //CellEngineConfigDataObject.ExecutionDurationTimeForDrawingParticlesStr = GetDurationTimeInOneLineStr(start_time, stop_time, "Time of one frame = ", "Exception in measuring time");
+        ExecutionDurationTimeForDrawingParticles += chrono::duration(stop_time - start_time);
+
+        //MatrixUniformBlockForVertexShaderPointer->ProjectionMatrix = vmath::perspective(50.0f, (float)Info.WindowWidth / (float)Info.WindowHeight, 0.1f, 10000.0f);
+        MatrixUniformBlockForVertexShaderPointer->ProjectionMatrix = ProjectionMatrix1;
         MatrixUniformBlockForVertexShaderPointer->Color = Color;
 
         if (DrawAdditional == true)
@@ -283,9 +306,59 @@ inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader(const 
                 DrawCenterPoint(MatrixUniformBlockForVertexShaderPointer, ModelMatrix);
         }
 
-        MatrixUniformBlockForVertexShaderPointer->MoveMatrix = ViewMatrix * ModelMatrix;
+        //MatrixUniformBlockForVertexShaderPointer->MoveMatrix = ViewMatrix * ModelMatrix;
+        MatrixUniformBlockForVertexShaderPointer->MoveMatrix = MoveMatrix1;
 
         glUnmapBuffer(GL_UNIFORM_BUFFER);
+    }
+    CATCH("rendering object for data for cell visualization")
+
+    return FinalVisibilityInModelWorld;
+}
+
+inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4 ModelMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, bool DrawAdditional)
+{
+    bool FinalVisibilityInModelWorld = false;
+
+    try
+    {
+        //glBindBufferBase(GL_UNIFORM_BUFFER, 0, UniformsBuffer);
+        //auto MatrixUniformBlockForVertexShaderPointer = (UniformsBlock*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(UniformsBlock), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
+
+
+        const auto start_time = chrono::high_resolution_clock::now();
+        const vmath::mat4 ProjectionMatrix1 = vmath::perspective(50.0f, (float)Info.WindowWidth / (float)Info.WindowHeight, 0.1f, 10000.0f);
+        const vmath::mat4 MoveMatrix1 = ViewMatrix * ModelMatrix;
+        const auto stop_time = chrono::high_resolution_clock::now();
+
+        ExecutionDurationTimeForDrawingParticles += chrono::duration(stop_time - start_time);
+
+        UniformsBlock MatrixUniformBlockForVertexShaderPointer;
+        MatrixUniformBlockForVertexShaderPointer.ProjectionMatrix = vmath::perspective(50.0f, (float)Info.WindowWidth / (float)Info.WindowHeight, 0.1f, 10000.0f);
+        MatrixUniformBlockForVertexShaderPointer.MoveMatrix = MoveMatrix1;
+        MatrixUniformBlockForVertexShaderPointer.Color = Color;
+
+        UniformsBlocks.emplace_back(MatrixUniformBlockForVertexShaderPointer);
+        //UniformsBlocks.emplace_back(UniformsBlock{ MoveMatrix1, ProjectionMatrix1, Color });
+        //UniformsBlocksTest.emplace_back(UniformsBlockTest{ 10, 20, 30 });
+
+        //ten UniformsBlock do SSBO
+
+        if (DrawAdditional == true)
+        {
+            FinalVisibilityInModelWorld = GetFinalVisibilityInModelWorld(Position, &MatrixUniformBlockForVertexShaderPointer, CountNewPosition, DrawOutsideBorder);
+            if (DrawCenter == true)
+                DrawCenterPoint(&MatrixUniformBlockForVertexShaderPointer, ModelMatrix);
+        }
+
+        const auto stop_time1 = chrono::high_resolution_clock::now();
+
+        ExecutionDurationTimeForPreparingParticles += chrono::duration(stop_time1 - start_time);
+
+        //MatrixUniformBlockForVertexShaderPointer->MoveMatrix = ViewMatrix * ModelMatrix;
+        //MatrixUniformBlockForVertexShaderPointer->MoveMatrix = MoveMatrix1;
+
+        //glUnmapBuffer(GL_UNIFORM_BUFFER);
     }
     CATCH("rendering object for data for cell visualization")
 
@@ -352,8 +425,8 @@ bool CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom& AtomObject, 
 
         FinalVisibilityInModelWorld = CreateUniformBlockForVertexShader(AtomPosition, CellEngineUseful::GetVMathVec3FromVector3ForColor(GetColor<CellEngineAtom>(AtomObject, ParticleObject, Chosen)), ViewMatrix, ModelMatrix, CountNewPosition, DrawCenter, DrawOutsideBorder, true);
 
-        if (RenderObjectParameter == true)
-            AtomGraphicsObject.Render();
+        //if (RenderObjectParameter == true)
+        //    AtomGraphicsObject.Render();
     }
     CATCH("rendering object for data for cell visualization")
 

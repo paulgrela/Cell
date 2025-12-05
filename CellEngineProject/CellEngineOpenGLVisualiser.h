@@ -17,18 +17,30 @@ class CellEngineOpenGLVisualiser : public sb7::OpenGLApplication
 public:
     sb7::GraphicObject AtomGraphicsObject;
     sb7::TextOverlay TextOverlayObject;
+protected:
+    GLuint instanceSSBO;
 private:
     GLuint LineVAO{};
     GLuint LineDataBuffer[2]{};
 private:
     GLuint ShaderProgramPhong = 0;
-private:
+protected:
     struct UniformsBlock
     {
         vmath::mat4 MoveMatrix;
         vmath::mat4 ProjectionMatrix;
         vmath::vec3 Color;
+        float padding;
     };
+    struct UniformsBlockTest
+    {
+        int S1;
+        int S2;
+        int S3;
+    };
+protected:
+    std::vector<UniformsBlock> UniformsBlocks;
+    std::vector<UniformsBlockTest> UniformsBlocksTest;
 private:
     GLuint UniformsBuffer{};
 private:
@@ -102,7 +114,8 @@ protected:
     template <class T> static vector3_16 GetColor(const T& Object, const Particle& ParticleObject, bool Chosen);
     static inline void DrawCenterPoint(UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, vmath::mat4& ModelMatrix);
     inline bool GetFinalVisibilityInModelWorld(const vmath::vec3& AtomPosition, UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, bool CountNewPosition, bool DrawOutsideBorder) const;
-    inline bool CreateUniformBlockForVertexShader(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4 ModelMatrix, bool CountNewPosition, bool DrawCenter, bool DrawOutsideBorder, bool DrawAdditional) const;
+    inline bool CreateUniformBlockForVertexShader(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4 ModelMatrix, bool CountNewPosition, bool DrawCenter, bool DrawOutsideBorder, bool DrawAdditional);
+    inline bool CreateUniformBlockForVertexShader1(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4 ModelMatrix, bool CountNewPosition, bool DrawCenter, bool DrawOutsideBorder, bool DrawAdditional) const;
     bool RenderObject(const CellEngineAtom& AtomObject, const Particle& ParticleObject, const vmath::mat4& ViewMatrix, bool CountNewPosition, bool DrawCenter, bool DrawOutsideBorder, UnsignedInt& NumberOfAllRenderedAtoms, bool Chosen, bool RenderObjectParameter);
     static inline void SetAutomaticParametersForRendering();
     inline void PrepareOpenGLToRenderObjectsOnScene() const;

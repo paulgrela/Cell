@@ -1,13 +1,19 @@
-#version 410 core
+#version 450 core
 
 layout (location = 0) in vec4 position;
 layout (location = 1) in vec3 normal;
 
-layout (std140) uniform constants
+struct Particle
 {
     mat4 mv_matrix;
     mat4 proj_matrix;
-	vec3 color;
+    vec3 color;
+    float padding;
+};
+
+layout(std430, binding = 0) readonly buffer ParticleBuffer
+{
+    Particle particles[];
 };
 
 out VS_OUT
@@ -23,15 +29,17 @@ uniform vec3 light_pos = vec3(100.0, 100.0, 100.0);
 
 void main(void)
 {
-    vec4 P = mv_matrix * position;
+    Particle p = particles[gl_InstanceID];
 
-    vs_out.N = mat3(mv_matrix) * normal;
+    vec4 P = p.mv_matrix * position;
+
+    vs_out.N = mat3(p.mv_matrix) * normal;
 
     vs_out.L = light_pos - P.xyz;
 
     vs_out.V = -P.xyz;
 
-    gl_Position = proj_matrix * P;
+    gl_Position = p.proj_matrix * P;
 	
-	vs_out.C = color;
+	vs_out.C = p.color;
 }

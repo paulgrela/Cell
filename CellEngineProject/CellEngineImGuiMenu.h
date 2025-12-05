@@ -384,6 +384,16 @@ public:
             if (ImGui::CollapsingHeader("Rendering Information", ImGuiTreeNodeFlags_DefaultOpen))
             {
                 ImGui::Text("%s", CellEngineConfigDataObject.TimeParametersOfRenderingStr.c_str());
+
+                    ImGui::Text("%s", GetDurationTimeInOneLine(ExecutionDurationTimeForDrawingParticles, "A=", "E").c_str());
+                    ExecutionDurationTimeForDrawingParticles = std::chrono::seconds::zero();
+                    ImGui::Text("%s", GetDurationTimeInOneLine(ExecutionDurationTimeForPreparingParticles, "B=", "E").c_str());
+                    ExecutionDurationTimeForPreparingParticles = std::chrono::seconds::zero();
+                    ImGui::Text("%s", GetDurationTimeInOneLine(ExecutionDurationTimeForTotalPreparingParticles, "C=", "E").c_str());
+                    ExecutionDurationTimeForTotalPreparingParticles = std::chrono::seconds::zero();
+                    ImGui::Text("%s", GetDurationTimeInOneLine(ExecutionDurationTimeForCopyingParticlesToGraphicMemory, "D=", "E").c_str());
+                    ExecutionDurationTimeForCopyingParticlesToGraphicMemory = std::chrono::seconds::zero();
+
                 ImGui::Text("%s", CellEngineConfigDataObject.NumberOfRenderedAtomsParametersOfRenderingStr.c_str());
                 ImGui::Checkbox("Log parameters of rendering to file", &CellEngineConfigDataObject.LogParametersOfRenderingToFile);
             }

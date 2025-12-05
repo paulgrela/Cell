@@ -33,13 +33,29 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
         GLuint PartOfStencilBufferIndex[3];
         vector<tuple<UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt>> TemporaryRenderedAtomsList;
 
-        for (UnsignedInt StencilBufferLoopCounter = 0; StencilBufferLoopCounter < CellEngineConfigDataObject.NumberOfStencilBufferLoops; StencilBufferLoopCounter++)
+        const auto start_time = chrono::high_resolution_clock::now();
+
+        //for (UnsignedInt StencilBufferLoopCounter = 0; StencilBufferLoopCounter < CellEngineConfigDataObject.NumberOfStencilBufferLoops; StencilBufferLoopCounter++)
         {
             NumberOfAllRenderedAtoms = 0;
 
             TemporaryRenderedAtomsList.clear();
 
             lock_guard LockGuardObject{ CellEngineDataFile::ChosenStructureMutexObject };
+
+
+
+
+
+
+
+            //UTWORZYC Z CZASTEK TABLICE JEDNA WIELKA DO RYSOWANIA
+            //CZYLI W sb7object.load - dodac tam sa przesylane ksztalty kuli
+            //CZYLI trzeba do shadera przeslac wszystkie macierze, pozycje na raz pamieci by zastosowac MultiDraw i korzystac z tego w pamieci w shaderze wierzcholkow
+            //tak by wszystko narysowac jednym poleceniem rysowania
+            //zatem trzeba przekazac move_matrix, project_matrix, - po co position do shadera jak juz sa matrixy - bo to position wierzcholka wczytanego z kuli przez load
+
+
 
             FOR_EACH_SECTOR_IN_XYZ_ONLY
             {
@@ -60,11 +76,11 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
 
                                     for (UnsignedInt AtomObjectIndex = 0; AtomObjectIndex < ParticleObject.second.ListOfAtoms.size(); AtomObjectIndex += CellEngineConfigDataObject.LoadOfAtomsStep)
                                     {
-                                        if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
-                                        {
-                                            glStencilFunc(GL_ALWAYS, uint8_t((TemporaryRenderedAtomsList.size()) >> (8 * StencilBufferLoopCounter)), -1);
-                                            TemporaryRenderedAtomsList.emplace_back(ParticleSectorXIndex, ParticleSectorYIndex, ParticleSectorZIndex, ParticleObject.first, AtomObjectIndex);
-                                        }
+                                        // if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
+                                        // {
+                                        //     glStencilFunc(GL_ALWAYS, uint8_t((TemporaryRenderedAtomsList.size()) >> (8 * StencilBufferLoopCounter)), -1);
+                                        //     TemporaryRenderedAtomsList.emplace_back(ParticleSectorXIndex, ParticleSectorYIndex, ParticleSectorZIndex, ParticleObject.first, AtomObjectIndex);
+                                        // }
 
                                         RenderObject(ParticleObject.second.ListOfAtoms[AtomObjectIndex], ParticleObject.second, ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, false, RenderObjectsBool);
                                     }
@@ -72,12 +88,43 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
                 }
             }
 
-            if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
-                glReadPixels(GLint(MousePositionLocal.s.X), GLint((float)Info.WindowHeight - MousePositionLocal.s.Y - 1), 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &PartOfStencilBufferIndex[StencilBufferLoopCounter]);
+            // if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
+            //     glReadPixels(GLint(MousePositionLocal.s.X), GLint((float)Info.WindowHeight - MousePositionLocal.s.Y - 1), 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &PartOfStencilBufferIndex[StencilBufferLoopCounter]);
         }
 
-        if (PressedRightMouseButton != 1)
-            DrawChosenAtomUsingStencilBuffer(ViewMatrix, PartOfStencilBufferIndex, NumberOfAllRenderedAtoms, TemporaryRenderedAtomsList);
+        const auto stop_time = chrono::high_resolution_clock::now();
+        ExecutionDurationTimeForTotalPreparingParticles += chrono::duration(stop_time - start_time);
+
+        //if (PressedRightMouseButton != 1)
+        //    DrawChosenAtomUsingStencilBuffer(ViewMatrix, PartOfStencilBufferIndex, NumberOfAllRenderedAtoms, TemporaryRenderedAtomsList);
+
+        const auto start_time1 = chrono::high_resolution_clock::now();
+
+        glBindBuffer(GL_SHADER_STORAGE_BUFFER, instanceSSBO);
+        glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, UniformsBlocks.size() * sizeof(UniformsBlock), UniformsBlocks.data());
+        LoggersManagerObject.Log(STREAM("S=" << UniformsBlocks.size()));
+
+        const auto stop_time1 = chrono::high_resolution_clock::now();
+
+        ExecutionDurationTimeForCopyingParticlesToGraphicMemory += chrono::duration(stop_time1 - start_time1);
+
+        //glBindBuffer(GL_SHADER_STORAGE_BUFFER, instanceSSBO);
+        //glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, UniformsBlocksTest.size() * sizeof(UniformsBlockTest), UniformsBlocksTest.data());
+        //LoggersManagerObject.Log(STREAM("S=" << UniformsBlocksTest.size()));
+        //UniformsBlocksTests.clear();
+
+        // Render chunk
+        //glBindVertexArray(sphereVAO);
+        //glDrawElementsInstanced(GL_TRIANGLES, sphereIndexCount, GL_UNSIGNED_INT, 0, count);
+        //glDrawArraysInstanced(GL_TRIANGLES, sphereIndexCount, GL_UNSIGNED_INT, 0, count);
+        //glDrawArrays(GL_TRIANGLES, 0, count);
+
+        //AtomGraphicsObject.RenderAll();
+
+        //AtomGraphicsObject.RenderSubGraphicAllObjects(0, UniformsBlocks.size(), 0);
+        AtomGraphicsObject.RenderSubGraphicObject(0, UniformsBlocks.size(), 0);
+
+        UniformsBlocks.clear();
     }
     CATCH("rendering full atom simulation space");
 }
