@@ -27,8 +27,6 @@
 #include "CellEngineParticlesKindsManager.h"
 #include "CellEngineChemicalReactionsEngine.h"
 
-static constexpr size_t MAX_PARTICLES = 100'000'000;
-
 using namespace std;
 
 void CellEngineOpenGLVisualiser::InitExternalData()
@@ -54,10 +52,20 @@ void CellEngineOpenGLVisualiser::StartUp()
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
 
+        glGenBuffers(1, &ParticleSSBO);
+        glBindBuffer(GL_SHADER_STORAGE_BUFFER, ParticleSSBO);
+        //glBufferData(GL_SHADER_STORAGE_BUFFER, MAX_PARTICLES * sizeof(GPUParticle), nullptr, GL_STATIC_DRAW);
+        glBufferData(GL_SHADER_STORAGE_BUFFER, MAX_PARTICLES * sizeof(GPUParticle), nullptr, GL_DYNAMIC_DRAW);
+
+        glGenBuffers(1, &AtomSSBO);
+        glBindBuffer(GL_SHADER_STORAGE_BUFFER, AtomSSBO);
+        //glBufferData(GL_SHADER_STORAGE_BUFFER, MAX_ATOMS * sizeof(GPUAtom), nullptr, GL_STATIC_DRAW);
+        glBufferData(GL_SHADER_STORAGE_BUFFER, MAX_ATOMS * sizeof(GPUAtom), nullptr, GL_DYNAMIC_DRAW);
 
         glGenBuffers(1, &instanceSSBO);
         glBindBuffer(GL_SHADER_STORAGE_BUFFER, instanceSSBO);
         glBufferData(GL_SHADER_STORAGE_BUFFER, MAX_PARTICLES * sizeof(UniformsBlock), nullptr, GL_DYNAMIC_DRAW);
+
         glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, instanceSSBO);
 
 
@@ -70,12 +78,18 @@ void CellEngineOpenGLVisualiser::StartUp()
     CATCH("initiation of data for cell visualization")
 }
 
-void CellEngineOpenGLVisualiser::LoadShaders(const char* VertexShaderFileName, const char* FragmentShaderFileName, GLuint& ShaderProgram)
+void CellEngineOpenGLVisualiser::LoadShaders(const char* ComputeShaderFileName, const char* VertexShaderFileName, const char* FragmentShaderFileName, GLuint& ComputeShaderProgram, GLuint& ShaderProgram)
 {
     try
     {
-        GLuint VertexShader = sb7::shader::Load(VertexShaderFileName, GL_VERTEX_SHADER);
-        GLuint FragmentShader = sb7::shader::Load(FragmentShaderFileName, GL_FRAGMENT_SHADER);
+        const GLuint ComputeShader = sb7::shader::Load(ComputeShaderFileName, GL_COMPUTE_SHADER);
+        ComputeShaderProgram = glCreateProgram();
+        glAttachShader(ComputeShaderProgram, ComputeShader);
+        glLinkProgram(ComputeShaderProgram);
+        glDeleteShader(ComputeShader);
+
+        const GLuint VertexShader = sb7::shader::Load(VertexShaderFileName, GL_VERTEX_SHADER);
+        const GLuint FragmentShader = sb7::shader::Load(FragmentShaderFileName, GL_FRAGMENT_SHADER);
 
         if (ShaderProgram)
             glDeleteProgram(ShaderProgram);
@@ -95,7 +109,7 @@ void CellEngineOpenGLVisualiser::LoadShadersPhong()
 {
     try
     {
-        LoadShaders("..//shaders//per-fragment-phong.vs.glsl", "..//shaders//per-fragment-phong.fs.glsl", ShaderProgramPhong);
+        LoadShaders("..//shaders//per-fragment-phong.cs.glsl", "..//shaders//per-fragment-phong.vs.glsl", "..//shaders//per-fragment-phong.fs.glsl", ComputeShaderProgramPhong, ShaderProgramPhong);
         //LoadShaders("..//shaders//per-fragment-phong-1.vs.glsl", "..//shaders//per-fragment-phong.fs.glsl", ShaderProgramPhong);
 
         Uniforms.DiffuseAlbedo = glGetUniformLocation(ShaderProgramPhong, "diffuse_albedo");
@@ -276,8 +290,6 @@ inline bool CellEngineOpenGLVisualiser::GetFinalVisibilityInModelWorld(const vma
     return false;
 }
 
-//std::common_type<std::chrono::duration<long, std::ratio<1, 1000000000>>, std::chrono::duration<long, std::ratio<1, 1000000000>>>::type ExecutionDurationTimeForDrawingParticles { 0 };
-
 inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader1(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4 ModelMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, bool DrawAdditional) const
 {
     bool FinalVisibilityInModelWorld = false;
@@ -316,7 +328,7 @@ inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader1(const
     return FinalVisibilityInModelWorld;
 }
 
-inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4 ModelMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, bool DrawAdditional)
+inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4 ModelMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, bool DrawAdditional, const UnsignedInt ParticleSectorXIndex)
 {
     bool FinalVisibilityInModelWorld = false;
 
@@ -334,11 +346,18 @@ inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader(const 
         ExecutionDurationTimeForDrawingParticles += chrono::duration(stop_time - start_time);
 
         UniformsBlock MatrixUniformBlockForVertexShaderPointer;
-        MatrixUniformBlockForVertexShaderPointer.ProjectionMatrix = vmath::perspective(50.0f, (float)Info.WindowWidth / (float)Info.WindowHeight, 0.1f, 10000.0f);
+        //MatrixUniformBlockForVertexShaderPointer.ProjectionMatrix = vmath::perspective(50.0f, (float)Info.WindowWidth / (float)Info.WindowHeight, 0.1f, 10000.0f);
+        MatrixUniformBlockForVertexShaderPointer.ProjectionMatrix = ProjectionMatrix1;
         MatrixUniformBlockForVertexShaderPointer.MoveMatrix = MoveMatrix1;
         MatrixUniformBlockForVertexShaderPointer.Color = Color;
-
+        //UniformsBlocks[ParticleSectorXIndex].emplace_back(MatrixUniformBlockForVertexShaderPointer);
+        //UniformsBlocks[0].emplace_back(MatrixUniformBlockForVertexShaderPointer);
         UniformsBlocks.emplace_back(MatrixUniformBlockForVertexShaderPointer);
+        // {
+        //     lock_guard LockGuard{ UniformsBlocksFullAtomSimulationSpaceMutexObject };
+        //     UniformsBlocks.emplace_back(MatrixUniformBlockForVertexShaderPointer);
+        // }
+
         //UniformsBlocks.emplace_back(UniformsBlock{ MoveMatrix1, ProjectionMatrix1, Color });
         //UniformsBlocksTest.emplace_back(UniformsBlockTest{ 10, 20, 30 });
 
@@ -410,7 +429,7 @@ inline vmath::vec3 CellEngineOpenGLVisualiser::GetSize(const CellEngineAtom& Ato
     return Size;
 }
 
-bool CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom& AtomObject, const Particle& ParticleObject, const vmath::mat4& ViewMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, UnsignedInt& NumberOfAllRenderedAtoms, const bool Chosen, const bool RenderObjectParameter)
+bool CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom& AtomObject, const Particle& ParticleObject, const vmath::mat4& ViewMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, UnsignedInt& NumberOfAllRenderedAtoms, const bool Chosen, const bool RenderObjectParameter, const UnsignedInt ParticleSectorXIndex)
 {
     bool FinalVisibilityInModelWorld{};
 
@@ -423,10 +442,10 @@ bool CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom& AtomObject, 
         const vmath::vec3 SizeLocal = GetSize(AtomObject);
         const vmath::mat4 ModelMatrix = vmath::translate(AtomPosition.X() - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomPosition.Y() + CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomPosition.Z() + CellEngineConfigDataObject.CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(SizeLocal.X(), SizeLocal.Y(), SizeLocal.Z()));
 
-        FinalVisibilityInModelWorld = CreateUniformBlockForVertexShader(AtomPosition, CellEngineUseful::GetVMathVec3FromVector3ForColor(GetColor<CellEngineAtom>(AtomObject, ParticleObject, Chosen)), ViewMatrix, ModelMatrix, CountNewPosition, DrawCenter, DrawOutsideBorder, true);
+        FinalVisibilityInModelWorld = CreateUniformBlockForVertexShader(AtomPosition, CellEngineUseful::GetVMathVec3FromVector3ForColor(GetColor<CellEngineAtom>(AtomObject, ParticleObject, Chosen)), ViewMatrix, ModelMatrix, CountNewPosition, DrawCenter, DrawOutsideBorder, true, ParticleSectorXIndex);
 
-        //if (RenderObjectParameter == true)
-        //    AtomGraphicsObject.Render();
+            //if (RenderObjectParameter == true)
+            //    AtomGraphicsObject.Render();
     }
     CATCH("rendering object for data for cell visualization")
 
@@ -533,8 +552,8 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
 
         PrepareOpenGLToRenderObjectsOnScene();
 
-        vmath::vec3 ViewPositionVector = vmath::vec3(CellEngineConfigDataObject.ViewPositionX, CellEngineConfigDataObject.ViewPositionY, CellEngineConfigDataObject.ViewPositionZ);
-        vmath::mat4 ViewMatrix = vmath::lookat(ViewPositionVector, vmath::vec3(0.0f, 0.0f, 0.0f), vmath::vec3(0.0f, 1.0f, 0.0f)) * vmath::rotate(CellEngineConfigDataObject.RotationAngle1, CellEngineConfigDataObject.RotationAngle2, CellEngineConfigDataObject.RotationAngle3) * RotationMatrix;
+        const vmath::vec3 ViewPositionVector = vmath::vec3(CellEngineConfigDataObject.ViewPositionX, CellEngineConfigDataObject.ViewPositionY, CellEngineConfigDataObject.ViewPositionZ);
+        const vmath::mat4 ViewMatrix = vmath::lookat(ViewPositionVector, vmath::vec3(0.0f, 0.0f, 0.0f), vmath::vec3(0.0f, 1.0f, 0.0f)) * vmath::rotate(CellEngineConfigDataObject.RotationAngle1, CellEngineConfigDataObject.RotationAngle2, CellEngineConfigDataObject.RotationAngle3) * RotationMatrix;
 
         UnsignedInt NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = 0;
         UnsignedInt NumberOfAllRenderedAtoms = 0;

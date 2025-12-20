@@ -16,6 +16,11 @@ layout(std430, binding = 0) readonly buffer ParticleBuffer
     Particle particles[];
 };
 
+layout(std430, binding = 1) readonly buffer VisibleIndices
+{
+    uint VisibleList[];
+};
+
 out VS_OUT
 {
     vec3 N;
@@ -29,6 +34,9 @@ uniform vec3 light_pos = vec3(100.0, 100.0, 100.0);
 
 void main(void)
 {
+//    uint ParticleIndex = VisibleList[gl_InstanceID];
+//    Particle p = particles[ParticleIndex];
+
     Particle p = particles[gl_InstanceID];
 
     vec4 P = p.mv_matrix * position;

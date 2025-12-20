@@ -152,15 +152,4 @@ namespace sb7
     }
     #pragma GCC diagnostic pop
 
-    #pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Wint-to-pointer-cast"
-    void GraphicObject::RenderSubGraphicAllObjects(unsigned int GraphicObjectIndex, unsigned int InstanceCount, unsigned int BaseInstance)
-    {
-        glBindVertexArray(VAO);
-
-        glDrawArraysInstanced(GL_TRIANGLES, static_cast<GLint>(SubGraphicObjects[GraphicObjectIndex].First), static_cast<GLsizei>(SubGraphicObjects[GraphicObjectIndex].Count), static_cast<GLsizei>(InstanceCount));
-        //glMultiDrawArraysIndirect(GL_TRIANGLES, NULL, 50000, 0);
-    }
-    #pragma GCC diagnostic pop
-
 }

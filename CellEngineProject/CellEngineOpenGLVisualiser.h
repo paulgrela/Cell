@@ -12,17 +12,54 @@
 
 #include "ArcBall.h"
 
+struct GPUAtom
+{
+public:
+    // EntityIdInt EntityId{};
+    // char Name[5 + 1]{};
+    // char ResName[4 + 1]{};
+    // char Chain[6 + 1]{};
+    RealType X{};
+    RealType Y{};
+    RealType Z{};
+    uint16_t ColorR;              // Using int instead of short for simplicity
+    uint16_t ColorG;
+    uint16_t ColorB;
+    //vector3_16 AtomColor{};
+    //vmath::vec3 AtomColor{};
+    //uint16_t _padding1{};
+    uint8_t _padding1[7]{};
+};
+
+struct GPUParticle
+{
+public:
+    EntityIdInt EntityId{};
+    //ChainIdInt ChainId{};
+    uint32_t ChainId{};
+    UniqueIdInt Index{};
+    uint32_t AtomOffset{};         // 4 bytes - offset in atom buffer
+    uint32_t AtomCount{};          // 4 bytes - number of atoms
+    uint32_t _padding[3]{};        // 12 bytes - align to 32 bytes
+};
+
+static constexpr size_t MAX_PARTICLES = 100'000'000;
+static constexpr size_t MAX_ATOMS = 100'000'000;
+
 class CellEngineOpenGLVisualiser : public sb7::OpenGLApplication
 {
 public:
     sb7::GraphicObject AtomGraphicsObject;
     sb7::TextOverlay TextOverlayObject;
 protected:
-    GLuint instanceSSBO;
+    GLuint AtomSSBO{};
+    GLuint ParticleSSBO{};
+    GLuint instanceSSBO{};
 private:
     GLuint LineVAO{};
     GLuint LineDataBuffer[2]{};
-private:
+protected:
+    GLuint ComputeShaderProgramPhong = 0;
     GLuint ShaderProgramPhong = 0;
 protected:
     struct UniformsBlock
@@ -32,15 +69,13 @@ protected:
         vmath::vec3 Color;
         float padding;
     };
-    struct UniformsBlockTest
-    {
-        int S1;
-        int S2;
-        int S3;
-    };
 protected:
-    std::vector<UniformsBlock> UniformsBlocks;
-    std::vector<UniformsBlockTest> UniformsBlocksTest;
+    GLuint ComputeShader{};
+    std::vector<GPUParticle> GPUParticles{};
+    //std::array<std::vector<UniformsBlock>, 256> UniformsBlocks{};
+    //std::vector<std::vector<UniformsBlock>> UniformsBlocks{};
+    std::vector<UniformsBlock> UniformsBlocks{};
+    static inline std::mutex UniformsBlocksFullAtomSimulationSpaceMutexObject;
 private:
     GLuint UniformsBuffer{};
 private:
@@ -97,7 +132,7 @@ public:
     static void SetVisibilityOfParticlesExcept(UnsignedInt EntityId, bool VisibleParam);
 protected:
     void LoadShadersPhong();
-    static void LoadShaders(const char* VertexShaderFileName, const char* FragmentShaderFileName, GLuint& ShaderProgram);
+    static void LoadShaders(const char* ComputeShaderFileName, const char* VertexShaderFileName, const char* FragmentShaderFileName, GLuint& ComputeShaderProgram, GLuint& ShaderProgram);
 protected:
     void StartUp() override;
     void ShutDown() override;
@@ -114,15 +149,15 @@ protected:
     template <class T> static vector3_16 GetColor(const T& Object, const Particle& ParticleObject, bool Chosen);
     static inline void DrawCenterPoint(UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, vmath::mat4& ModelMatrix);
     inline bool GetFinalVisibilityInModelWorld(const vmath::vec3& AtomPosition, UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, bool CountNewPosition, bool DrawOutsideBorder) const;
-    inline bool CreateUniformBlockForVertexShader(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4 ModelMatrix, bool CountNewPosition, bool DrawCenter, bool DrawOutsideBorder, bool DrawAdditional);
+    inline bool CreateUniformBlockForVertexShader(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4 ModelMatrix, bool CountNewPosition, bool DrawCenter, bool DrawOutsideBorder, bool DrawAdditional, UnsignedInt ParticleSectorXIndex);
     inline bool CreateUniformBlockForVertexShader1(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4 ModelMatrix, bool CountNewPosition, bool DrawCenter, bool DrawOutsideBorder, bool DrawAdditional) const;
-    bool RenderObject(const CellEngineAtom& AtomObject, const Particle& ParticleObject, const vmath::mat4& ViewMatrix, bool CountNewPosition, bool DrawCenter, bool DrawOutsideBorder, UnsignedInt& NumberOfAllRenderedAtoms, bool Chosen, bool RenderObjectParameter);
+    bool RenderObject(const CellEngineAtom& AtomObject, const Particle& ParticleObject, const vmath::mat4& ViewMatrix, bool CountNewPosition, bool DrawCenter, bool DrawOutsideBorder, UnsignedInt& NumberOfAllRenderedAtoms, bool Chosen, bool RenderObjectParameter, UnsignedInt ParticleSectorXIndex);
     static inline void SetAutomaticParametersForRendering();
     inline void PrepareOpenGLToRenderObjectsOnScene() const;
     inline void LoadShapeOfAtomsWhenChanged();
     void PrintAtomDescriptionOnScreen(CellEngineAtom& ChosenAtomObject, const Particle& ChosenParticleObject);
 protected:
-    virtual void RenderSpace(UnsignedInt& NumberOfAllRenderedAtoms, UnsignedInt& NumberOfFoundParticlesCenterToBeRenderedInAtomDetails, vmath::mat4& ViewMatrix) = 0;
+    virtual void RenderSpace(UnsignedInt& NumberOfAllRenderedAtoms, UnsignedInt& NumberOfFoundParticlesCenterToBeRenderedInAtomDetails, const vmath::mat4& ViewMatrix) = 0;
 protected:
     virtual void GetStartCenterPoint() = 0;
 protected:
