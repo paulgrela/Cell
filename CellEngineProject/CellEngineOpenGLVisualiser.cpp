@@ -68,6 +68,7 @@ void CellEngineOpenGLVisualiser::StartUp()
 
         glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, instanceSSBO);
 
+        ProjectionMatrixGlobal = vmath::perspective(50.0f, (float)Info.WindowWidth / (float)Info.WindowHeight, 0.1f, 10000.0f);
 
         InitArcBall();
 
@@ -308,7 +309,7 @@ inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader1(const
         ExecutionDurationTimeForDrawingParticles += chrono::duration(stop_time - start_time);
 
         //MatrixUniformBlockForVertexShaderPointer->ProjectionMatrix = vmath::perspective(50.0f, (float)Info.WindowWidth / (float)Info.WindowHeight, 0.1f, 10000.0f);
-        MatrixUniformBlockForVertexShaderPointer->ProjectionMatrix = ProjectionMatrix1;
+        //MatrixUniformBlockForVertexShaderPointer->ProjectionMatrix = ProjectionMatrix1;
         MatrixUniformBlockForVertexShaderPointer->Color = Color;
 
         if (DrawAdditional == true)
@@ -339,7 +340,7 @@ inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader(const 
 
 
         const auto start_time = chrono::high_resolution_clock::now();
-        const vmath::mat4 ProjectionMatrix1 = vmath::perspective(50.0f, (float)Info.WindowWidth / (float)Info.WindowHeight, 0.1f, 10000.0f);
+        //const vmath::mat4 ProjectionMatrix1 = vmath::perspective(50.0f, (float)Info.WindowWidth / (float)Info.WindowHeight, 0.1f, 10000.0f);
         const vmath::mat4 MoveMatrix1 = ViewMatrix * ModelMatrix;
         const auto stop_time = chrono::high_resolution_clock::now();
 
@@ -347,7 +348,8 @@ inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader(const 
 
         UniformsBlock MatrixUniformBlockForVertexShaderPointer;
         //MatrixUniformBlockForVertexShaderPointer.ProjectionMatrix = vmath::perspective(50.0f, (float)Info.WindowWidth / (float)Info.WindowHeight, 0.1f, 10000.0f);
-        MatrixUniformBlockForVertexShaderPointer.ProjectionMatrix = ProjectionMatrix1;
+        //MatrixUniformBlockForVertexShaderPointer.ProjectionMatrix = ProjectionMatrix1;
+        //MatrixUniformBlockForVertexShaderPointer.ProjectionMatrix = ProjectionMatrixGlobal;
         MatrixUniformBlockForVertexShaderPointer.MoveMatrix = MoveMatrix1;
         MatrixUniformBlockForVertexShaderPointer.Color = Color;
         //UniformsBlocks[ParticleSectorXIndex].emplace_back(MatrixUniformBlockForVertexShaderPointer);

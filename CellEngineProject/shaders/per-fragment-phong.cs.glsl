@@ -16,8 +16,7 @@ float YHighToDrawInAtomScale = 200;
 float ZLowToDrawInAtomScale = -650;
 float ZHighToDrawInAtomScale = -50;
 
-
-//IN
+uniform vec3 Center;
 
 layout(local_size_x = 256) in;
 
@@ -26,7 +25,7 @@ struct GPUAtom
     float X;
     float Y;
     float Z;
-    short ColorR;              // Using int instead of short for simplicity
+    short ColorR;
     short ColorG;
     short ColorB;
     uint _padding1[7];
@@ -52,31 +51,10 @@ layout(std430, binding = 1) readonly buffer AtomBuffer
     GPUAtom GPUAtoms[];
 };
 
-layout(local_size_x = 64) in;
-
-//layout(std430, binding = 1) buffer VisibleIndices
-//{
-//    uint visibleList[];
-//};
-
-vec3 Center;
-
-uniform mat4 frustumPlanes[6];
-uniform vec3 viewPos;
-uniform float maxRenderDistance;
-
-
-
-
-//layout(std430, binding = 2) buffer IndirectDraw //Czy potrzebna
-//{
-//    uint count;
-//    uint instanceCount;
-//    uint firstIndex;
-//    uint baseVertex;
-//    uint baseInstance;
-//}
-//drawCmd;
+layout(std430, binding = 1) buffer VisibleIndices
+{
+    uint VisibleList[];
+};
 
 layout(std430, binding = 2) buffer IndirectDraw
 {
@@ -92,22 +70,12 @@ drawCmd;
 struct UniformsBlock
 {
     mat4 MoveMatrix;
-    mat4 ProjectionMatrix;
     vec3 Color;
     float padding;
 };
 
-//struct Particle //UniformsBlock do wyjscia
-//{
-//    mat4 mv_matrix;
-//    mat4 proj_matrix;
-//    vec3 color;
-//    float padding;
-//};
-
-layout(std430, binding = 0) buffer ParticleBuffer //UniformsBlocks do wyjscia
+layout(std430, binding = 0) buffer ParticleBuffer
 {
-    //Particle particles[];
     UniformsBlock ParticlesOut[];
 };
 
@@ -139,10 +107,7 @@ bool GetFinalVisibilityInModelWorld(const vec3& AtomPosition, UniformsBlock* Mat
 
         if (DrawOutsideBorder == true)
     	    if (CheckDistanceToDrawDetailsInAtomScale(XNew, YNew, ZNew) == true)
-            {
-                //MatrixUniformBlock->Color = FromVec4ToVec3(sb7::color::Purple);
                 return true;
-            }
 
     	return false;
     }
@@ -153,7 +118,6 @@ bool CreateUniformBlockForVertexShader(const vec3& Position, const vec3& Color, 
     bool FinalVisibilityInModelWorld = false;
 
     UniformsBlock MatrixUniformBlock;
-    MatrixUniformBlock.ProjectionMatrix = perspective(50.0f, (float)Info.WindowWidth / (float)Info.WindowHeight, 0.1f, 10000.0f);
     MatrixUniformBlock.MoveMatrix = ViewMatrix * ModelMatrix;
     MatrixUniformBlock.Color = Color;
 
@@ -165,27 +129,23 @@ bool CreateUniformBlockForVertexShader(const vec3& Position, const vec3& Color, 
     ParticlesOut.emplace_back(MatrixUniformBlock);
 
     if (DrawAdditional == true)
-    //{
     	FinalVisibilityInModelWorld = GetFinalVisibilityInModelWorld(Position, &MatrixUniformBlock, CountNewPosition, DrawOutsideBorder);
-    	//if (DrawCenter == true)
-	        //DrawCenterPoint(&MatrixUniformBlock, ModelMatrix);
-    //}
 
     return FinalVisibilityInModelWorld;
 }
 
-bool RenderObject(const CellEngineAtom& AtomObject, const Particle& ParticleObject, const mat4& ViewMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, UnsignedInt& NumberOfAllRenderedAtoms, const bool Chosen, const bool RenderObjectParameter, const UnsignedInt ParticleSectorXIndex)
+bool RenderObject(const GPUAtom& AtomObject, const Particle& ParticleObject, const mat4& ViewMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, const bool RenderObjectParameter)
 {
     bool FinalVisibilityInModelWorld{};
 
-    if (RenderObjectParameter == true)
-        NumberOfAllRenderedAtoms++;
+    //if (RenderObjectParameter == true)
+    //    NumberOfAllRenderedAtoms++;
 
     const vec3 AtomPosition = LengthUnit * vec3(AtomObject.X, AtomObject.Y, AtomObject.Z);
     const vec3 SizeLocal = GetSize(AtomObject);
     const mat4 ModelMatrix = translate(AtomPosition.x - CameraXPosition - Center.x, AtomPosition.y + CameraYPosition - Center.y, AtomPosition.z + CameraZPosition - Center.z));
 
-    FinalVisibilityInModelWorld = CreateUniformBlockForVertexShader(AtomPosition, vec3(AtomObject.ColorR, AtomObject.ColorG, AtomObject.ColorB), ViewMatrix, ModelMatrix, CountNewPosition, DrawCenter, DrawOutsideBorder, true, ParticleSectorXIndex);
+    FinalVisibilityInModelWorld = CreateUniformBlockForVertexShader(AtomPosition, vec3(AtomObject.ColorR, AtomObject.ColorG, AtomObject.ColorB), ViewMatrix, ModelMatrix, CountNewPosition, DrawCenter, DrawOutsideBorder, true);
 
     return FinalVisibilityInModelWorld;
 }
@@ -206,10 +166,7 @@ void main()
     {
         GPUAtom atom = atoms[particle.AtomOffset + i];
 
-        vec3 position = vec3(atom.X, atom.Y, atom.Z);
-        vec3 color = vec3(atom.ColorR, atom.ColorG, atom.ColorB);
-
-        
+        RenderObject(atom, particle, ViewMatrix, false, false, false, true);
     }
 
 

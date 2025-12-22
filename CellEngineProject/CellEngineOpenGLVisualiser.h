@@ -65,7 +65,7 @@ protected:
     struct UniformsBlock
     {
         vmath::mat4 MoveMatrix;
-        vmath::mat4 ProjectionMatrix;
+        //vmath::mat4 ProjectionMatrix;
         vmath::vec3 Color;
         float padding;
     };
@@ -104,6 +104,8 @@ protected:
     bool PressedRightMouseButtonBool = false;
 public:
     bool RenderObjectsBool = true;
+public:
+    vmath::mat4 ProjectionMatrixGlobal;
 public:
     CellEngineOpenGLVisualiser() = default;
 protected:

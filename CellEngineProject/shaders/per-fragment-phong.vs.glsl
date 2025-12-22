@@ -6,7 +6,6 @@ layout (location = 1) in vec3 normal;
 struct Particle
 {
     mat4 mv_matrix;
-    mat4 proj_matrix;
     vec3 color;
     float padding;
 };
@@ -31,6 +30,7 @@ out VS_OUT
 vs_out;
 
 uniform vec3 light_pos = vec3(100.0, 100.0, 100.0);
+uniform mat4 ProjectionMatrix;
 
 void main(void)
 {
@@ -47,7 +47,7 @@ void main(void)
 
     vs_out.V = -P.xyz;
 
-    gl_Position = p.proj_matrix * P;
-	
+    gl_Position = ProjectionMatrix * P;
+
 	vs_out.C = p.color;
 }

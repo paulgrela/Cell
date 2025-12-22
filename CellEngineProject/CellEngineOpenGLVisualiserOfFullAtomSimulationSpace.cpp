@@ -630,9 +630,12 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
                         }
             }
 
-        vmath::vec3 viewPos;
-        glUniform3fv(glGetUniformLocation(ComputeShader, "viewPos"), 1, &viewPos[0]);
+        //vmath::vec3 viewPos;
+        //glUniform3fv(glGetUniformLocation(ComputeShader, "viewPos"), 1, &viewPos[0]);
+
         glUseProgram(ComputeShaderProgramPhong);
+
+        glUniform3fv(glGetUniformLocation(ComputeShader, "Center"), 1, Center);
 
         glBindBuffer(GL_SHADER_STORAGE_BUFFER, ParticleSSBO);
         glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, GPUParticles.size() * sizeof(GPUParticle), GPUParticles.data());
@@ -656,6 +659,9 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
 
 
 
+        GLint ProjLoc = glGetUniformLocation(ShaderProgramPhong, "ProjectionMatrix");
+        //glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(ProjectionMatrixGlobal));
+        glUniformMatrix4fv(ProjLoc, 1, GL_FALSE, ProjectionMatrixGlobal);
 
 
 
