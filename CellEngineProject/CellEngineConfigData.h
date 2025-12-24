@@ -278,5 +278,7 @@ inline std::common_type<std::chrono::duration<long, std::ratio<1, 1000000000>>, 
 inline std::common_type<std::chrono::duration<long, std::ratio<1, 1000000000>>, std::chrono::duration<long, std::ratio<1, 1000000000>>>::type ExecutionDurationTimeForCheckingPreparingParticles3 { 0 };
 inline std::common_type<std::chrono::duration<long, std::ratio<1, 1000000000>>, std::chrono::duration<long, std::ratio<1, 1000000000>>>::type ExecutionDurationTimeForCopyingParticlesToGraphicMemory { 0 };
 inline std::common_type<std::chrono::duration<long, std::ratio<1, 1000000000>>, std::chrono::duration<long, std::ratio<1, 1000000000>>>::type ExecutionDurationTimeForCopyingParticlesToGraphicMemory0 { 0 };
+inline std::common_type<std::chrono::duration<long, std::ratio<1, 1000000000>>, std::chrono::duration<long, std::ratio<1, 1000000000>>>::type ExecutionDurationTimeForCopyingParticlesToGraphicMemory1 { 0 };
+inline std::common_type<std::chrono::duration<long, std::ratio<1, 1000000000>>, std::chrono::duration<long, std::ratio<1, 1000000000>>>::type ExecutionDurationTimeForCopyingParticlesToGraphicMemory2 { 0 };
 
 #endif

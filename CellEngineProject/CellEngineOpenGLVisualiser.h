@@ -19,16 +19,21 @@ public:
     // char Name[5 + 1]{};
     // char ResName[4 + 1]{};
     // char Chain[6 + 1]{};
-    RealType X{};
-    RealType Y{};
-    RealType Z{};
+    float X{};
+    float Y{};
+    float Z{};
+    // float ColorR;              // Using int instead of short for simplicity
+    // float ColorG;
+    // float ColorB;
+    //float _padding1[2]{};
+
     uint16_t ColorR;              // Using int instead of short for simplicity
     uint16_t ColorG;
     uint16_t ColorB;
     //vector3_16 AtomColor{};
     //vmath::vec3 AtomColor{};
     //uint16_t _padding1{};
-    uint8_t _padding1[7]{};
+    uint8_t _padding[14];
 };
 
 struct GPUParticle
@@ -54,7 +59,7 @@ public:
 protected:
     GLuint AtomSSBO{};
     GLuint ParticleSSBO{};
-    GLuint instanceSSBO{};
+    GLuint ParticlesAtomsBufferSharedBetweenComputeShaderAndVertexShaderSSBO{};
 private:
     GLuint LineVAO{};
     GLuint LineDataBuffer[2]{};
@@ -70,8 +75,8 @@ protected:
         float padding;
     };
 protected:
-    GLuint ComputeShader{};
-    std::vector<GPUParticle> GPUParticles{};
+    //GLuint ComputeShader{};
+    //std::vector<GPUParticle> GPUParticles{};
     //std::array<std::vector<UniformsBlock>, 256> UniformsBlocks{};
     //std::vector<std::vector<UniformsBlock>> UniformsBlocks{};
     std::vector<UniformsBlock> UniformsBlocks{};

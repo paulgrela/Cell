@@ -3,21 +3,16 @@
 layout (location = 0) in vec4 position;
 layout (location = 1) in vec3 normal;
 
-struct Particle
+struct ParticleIn
 {
     mat4 mv_matrix;
     vec3 color;
     float padding;
 };
 
-layout(std430, binding = 0) readonly buffer ParticleBuffer
+layout(std430, binding = 2) readonly buffer ParticleBufferIn
 {
-    Particle particles[];
-};
-
-layout(std430, binding = 1) readonly buffer VisibleIndices
-{
-    uint VisibleList[];
+    ParticleIn ParticlesIn[];
 };
 
 out VS_OUT
@@ -34,10 +29,7 @@ uniform mat4 ProjectionMatrix;
 
 void main(void)
 {
-//    uint ParticleIndex = VisibleList[gl_InstanceID];
-//    Particle p = particles[ParticleIndex];
-
-    Particle p = particles[gl_InstanceID];
+    ParticleIn p = ParticlesIn[gl_InstanceID];
 
     vec4 P = p.mv_matrix * position;
 
@@ -50,4 +42,5 @@ void main(void)
     gl_Position = ProjectionMatrix * P;
 
 	vs_out.C = p.color;
+	//vs_out.C = p.color.rgb;
 }

@@ -403,6 +403,11 @@ public:
                     ImGui::Text("%s", GetDurationTimeInOneLine(ExecutionDurationTimeForCopyingParticlesToGraphicMemory0, "N=", "E").c_str());
                     ExecutionDurationTimeForCopyingParticlesToGraphicMemory0 = std::chrono::seconds::zero();
 
+                    ImGui::Text("%s", GetDurationTimeInOneLine(ExecutionDurationTimeForCopyingParticlesToGraphicMemory1, "K=", "E").c_str());
+                    ExecutionDurationTimeForCopyingParticlesToGraphicMemory1 = std::chrono::seconds::zero();
+                    ImGui::Text("%s", GetDurationTimeInOneLine(ExecutionDurationTimeForCopyingParticlesToGraphicMemory2, "L=", "E").c_str());
+                    ExecutionDurationTimeForCopyingParticlesToGraphicMemory2 = std::chrono::seconds::zero();
+
                 ImGui::Text("%s", CellEngineConfigDataObject.NumberOfRenderedAtomsParametersOfRenderingStr.c_str());
                 ImGui::Checkbox("Log parameters of rendering to file", &CellEngineConfigDataObject.LogParametersOfRenderingToFile);
             }

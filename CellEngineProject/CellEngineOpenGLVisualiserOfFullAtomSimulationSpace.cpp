@@ -512,44 +512,44 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
 
 
             //for (UnsignedInt ParticleSectorXIndex = 0; ParticleSectorXIndex < CellEngineConfigDataObject.NumberOfParticlesSectorsInX; ParticleSectorXIndex++)
-            {
-            FOR_EACH_SECTOR_IN_XYZ_ONLY
-            {
-                if (CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.empty() == false)
-                {
-                    bool FinalVisibilityInModelWorld = RenderObject(CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.begin()->second.ListOfAtoms.back(), Particle(), ViewMatrix, true, false, true, NumberOfAllRenderedAtoms, false, !CellEngineConfigDataObject.ShowDetailsInAtomScale, ParticleSectorXIndex);
-
-                    //FinalVisibilityInModelWorld = CheckVisibility(FinalVisibilityInModelWorld);
-
-                    if (FinalVisibilityInModelWorld == true)
-                        if (CellEngineConfigDataObject.ShowDetailsInAtomScale == true)
-                        {
-                            for (auto& ParticleObject : CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles)
-                            {
-                                if (ParticlesKindsManagerObject.GetGraphicParticleKind(ParticleObject.second.EntityId).Visible == true)
-                                {
-                                    // Threads.emplace_back([&, ParticleSectorXIndex, this]()
-                                    // {
-                                        //DrawBonds(ParticleObject.second, ParticleObject.second.BondsBetweenAtomsToDraw, CellEngineConfigDataObject.DrawBondsBetweenAtoms, ViewMatrix);
-
-                                        ParticleObject.second.ParticleSectorPos = SectorPosType{ static_cast<SignedInt>(ParticleSectorXIndex), static_cast<SignedInt>(ParticleSectorYIndex), static_cast<SignedInt>(ParticleSectorZIndex) };
-
-                                        for (UnsignedInt AtomObjectIndex = 0; AtomObjectIndex < ParticleObject.second.ListOfAtoms.size(); AtomObjectIndex += CellEngineConfigDataObject.LoadOfAtomsStep)
-                                        {
-                                            // if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
-                                            // {
-                                            //     glStencilFunc(GL_ALWAYS, uint8_t((TemporaryRenderedAtomsList.size()) >> (8 * StencilBufferLoopCounter)), -1);
-                                            //     TemporaryRenderedAtomsList.emplace_back(ParticleSectorXIndex, ParticleSectorYIndex, ParticleSectorZIndex, ParticleObject.first, AtomObjectIndex);
-                                            // }
-
-                                            RenderObject(ParticleObject.second.ListOfAtoms[AtomObjectIndex], ParticleObject.second, ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, false, RenderObjectsBool, ParticleSectorXIndex);
-                                        }
-                                }
-                            }
-                        }
-                }
-            }
-            }
+            // {
+            // FOR_EACH_SECTOR_IN_XYZ_ONLY
+            // {
+            //     if (CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.empty() == false)
+            //     {
+            //         bool FinalVisibilityInModelWorld = RenderObject(CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.begin()->second.ListOfAtoms.back(), Particle(), ViewMatrix, true, false, true, NumberOfAllRenderedAtoms, false, !CellEngineConfigDataObject.ShowDetailsInAtomScale, ParticleSectorXIndex);
+            //
+            //         //FinalVisibilityInModelWorld = CheckVisibility(FinalVisibilityInModelWorld);
+            //
+            //         if (FinalVisibilityInModelWorld == true)
+            //             if (CellEngineConfigDataObject.ShowDetailsInAtomScale == true)
+            //             {
+            //                 for (auto& ParticleObject : CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles)
+            //                 {
+            //                     if (ParticlesKindsManagerObject.GetGraphicParticleKind(ParticleObject.second.EntityId).Visible == true)
+            //                     {
+            //                         // Threads.emplace_back([&, ParticleSectorXIndex, this]()
+            //                         // {
+            //                             //DrawBonds(ParticleObject.second, ParticleObject.second.BondsBetweenAtomsToDraw, CellEngineConfigDataObject.DrawBondsBetweenAtoms, ViewMatrix);
+            //
+            //                             ParticleObject.second.ParticleSectorPos = SectorPosType{ static_cast<SignedInt>(ParticleSectorXIndex), static_cast<SignedInt>(ParticleSectorYIndex), static_cast<SignedInt>(ParticleSectorZIndex) };
+            //
+            //                             for (UnsignedInt AtomObjectIndex = 0; AtomObjectIndex < ParticleObject.second.ListOfAtoms.size(); AtomObjectIndex += CellEngineConfigDataObject.LoadOfAtomsStep)
+            //                             {
+            //                                 // if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
+            //                                 // {
+            //                                 //     glStencilFunc(GL_ALWAYS, uint8_t((TemporaryRenderedAtomsList.size()) >> (8 * StencilBufferLoopCounter)), -1);
+            //                                 //     TemporaryRenderedAtomsList.emplace_back(ParticleSectorXIndex, ParticleSectorYIndex, ParticleSectorZIndex, ParticleObject.first, AtomObjectIndex);
+            //                                 // }
+            //
+            //                                 RenderObject(ParticleObject.second.ListOfAtoms[AtomObjectIndex], ParticleObject.second, ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, false, RenderObjectsBool, ParticleSectorXIndex);
+            //                             }
+            //                     }
+            //                 }
+            //             }
+            //     }
+            // }
+            // }
 
 
         }
@@ -570,17 +570,14 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
 
         const auto start_time111 = chrono::high_resolution_clock::now();
 
-        std::vector<GPUParticle> GPUParticles;
-        std::vector<GPUAtom> GPUAtoms;
+        vector<GPUParticle> GPUParticles;
+        vector<GPUAtom> GPUAtoms;
 
         uint32_t atomOffset = 0;
 
         FOR_EACH_SECTOR_IN_XYZ_ONLY
             if (CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.empty() == false)
-            {
-                bool FinalVisibilityInModelWorld = RenderObject(CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.begin()->second.ListOfAtoms.back(), Particle(), ViewMatrix, true, false, true, NumberOfAllRenderedAtoms, false, !CellEngineConfigDataObject.ShowDetailsInAtomScale, ParticleSectorXIndex);
-
-                if (FinalVisibilityInModelWorld == true)
+                if (const bool FinalVisibilityInModelWorld = RenderObject(CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.begin()->second.ListOfAtoms.back(), Particle(), ViewMatrix, true, false, true, NumberOfAllRenderedAtoms, false, !CellEngineConfigDataObject.ShowDetailsInAtomScale, ParticleSectorXIndex); FinalVisibilityInModelWorld == true)
                     if (CellEngineConfigDataObject.ShowDetailsInAtomScale == true)
                         for (auto& ParticleObject : CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles)
                         {
@@ -605,12 +602,22 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
                                 // gpuAtom.ColorR = atom.AtomColor.X;
                                 // gpuAtom.ColorG = atom.AtomColor.Y;
                                 // gpuAtom.ColorB = atom.AtomColor.Z;
-                                //gpuAtom.AtomColor = atom.AtomColor;
+
+                                // gpuAtom.AtomColor = atom.AtomColor;
+                                //ParticleObject.second.RandomParticleKindColor = GetColor<CellEngineAtom>(atom, ParticleObject.second, false);
+
                                 gpuAtom.ColorR = ParticleObject.second.RandomParticleKindColor.X;
                                 gpuAtom.ColorG = ParticleObject.second.RandomParticleKindColor.Y;
                                 gpuAtom.ColorB = ParticleObject.second.RandomParticleKindColor.Z;
 
-                                memset(gpuAtom._padding1, 0, 7);
+                                // gpuAtom.ColorR = static_cast<float>(ParticleObject.second.RandomParticleKindColor.X);
+                                // gpuAtom.ColorG = static_cast<float>(ParticleObject.second.RandomParticleKindColor.Y);
+                                // gpuAtom.ColorB = static_cast<float>(ParticleObject.second.RandomParticleKindColor.Z);
+
+                                //gpuAtom._padding1[0] = 0.0f;
+                                //gpuAtom._padding1[1] = 0.0f;
+                                memset(gpuAtom._padding, 0, 14);
+
                                 // gpuAtom._padding1 = 0;
                                 //
                                 // // Copy strings with padding
@@ -628,14 +635,21 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
 
                             atomOffset += ParticleObject.second.ListOfAtoms.size();
                         }
-            }
 
-        //vmath::vec3 viewPos;
-        //glUniform3fv(glGetUniformLocation(ComputeShader, "viewPos"), 1, &viewPos[0]);
+        const auto stop_time111 = chrono::high_resolution_clock::now();
+
+        ExecutionDurationTimeForCopyingParticlesToGraphicMemory0 += chrono::duration(stop_time111 - start_time111);
 
         glUseProgram(ComputeShaderProgramPhong);
 
-        glUniform3fv(glGetUniformLocation(ComputeShader, "Center"), 1, Center);
+        glUniform3fv(glGetUniformLocation(ComputeShaderProgramPhong, "Center"), 1, Center);
+        glUniformMatrix4fv(glGetUniformLocation(ComputeShaderProgramPhong, "ViewMatrix"), 1, GL_FALSE, ViewMatrix);
+
+        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ParticleSSBO);
+        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, AtomSSBO);
+        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, ParticlesAtomsBufferSharedBetweenComputeShaderAndVertexShaderSSBO);
+
+        const auto start_time112 = chrono::high_resolution_clock::now();
 
         glBindBuffer(GL_SHADER_STORAGE_BUFFER, ParticleSSBO);
         glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, GPUParticles.size() * sizeof(GPUParticle), GPUParticles.data());
@@ -643,15 +657,39 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
         glBindBuffer(GL_SHADER_STORAGE_BUFFER, AtomSSBO);
         glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, GPUAtoms.size() * sizeof(GPUAtom), GPUAtoms.data());
 
-        // glDispatchCompute((MAX_PARTICLES + 255) / 256, 1, 1);
-        // glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+        const auto stop_time112 = chrono::high_resolution_clock::now();
 
-        const auto stop_time111 = chrono::high_resolution_clock::now();
+        ExecutionDurationTimeForCopyingParticlesToGraphicMemory1 += chrono::duration(stop_time112 - start_time112);
 
-        ExecutionDurationTimeForCopyingParticlesToGraphicMemory0 += chrono::duration(stop_time111 - start_time111);
+
+        const auto start_time113 = chrono::high_resolution_clock::now();
+
+        glDispatchCompute((GPUParticles.size() + 255) / 256, 1, 1);
+        glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+        //glDispatchCompute((MAX_PARTICLES + 255) / 256, 1, 1);
+        //glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT | GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT);
+
+        const auto stop_time113 = chrono::high_resolution_clock::now();
+
+        ExecutionDurationTimeForCopyingParticlesToGraphicMemory2 += chrono::duration(stop_time113 - start_time113);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         glUseProgram(ShaderProgramPhong);
-
 
 
 
@@ -695,8 +733,14 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
 
         const auto start_time1 = chrono::high_resolution_clock::now();
 
-        glBindBuffer(GL_SHADER_STORAGE_BUFFER, instanceSSBO);
-        glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, UniformsBlocks.size() * sizeof(UniformsBlock), UniformsBlocks.data());
+        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, ParticlesAtomsBufferSharedBetweenComputeShaderAndVertexShaderSSBO);
+
+        //glBindBuffer(GL_SHADER_STORAGE_BUFFER, ParticlesAtomsBufferSharedBetweenComputeShaderAndVertexShaderSSBO);
+
+        //glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, UniformsBlocks.size() * sizeof(UniformsBlock), UniformsBlocks.data());
+
+
+
 
         // UnsignedInt Offset = 0;
         // for (const auto& UniformsBlocksSingle : UniformsBlocks)
@@ -718,7 +762,11 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
 
         ExecutionDurationTimeForCopyingParticlesToGraphicMemory += chrono::duration(stop_time1 - start_time1);
 
-        AtomGraphicsObject.RenderSubGraphicObject(0, UniformsBlocks.size(), 0);
+
+
+
+        AtomGraphicsObject.RenderSubGraphicObject(0, GPUAtoms.size(), 0);
+        //AtomGraphicsObject.RenderSubGraphicObject(0, UniformsBlocks.size(), 0);
         //AtomGraphicsObject.RenderSubGraphicObject(0, UniformsBlocksTotal.size(), 0);
         //AtomGraphicsObject.RenderSubGraphicObject(0, UniformsBlocks[0].size(), 0);
 

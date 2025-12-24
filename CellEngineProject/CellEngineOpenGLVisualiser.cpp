@@ -62,11 +62,11 @@ void CellEngineOpenGLVisualiser::StartUp()
         //glBufferData(GL_SHADER_STORAGE_BUFFER, MAX_ATOMS * sizeof(GPUAtom), nullptr, GL_STATIC_DRAW);
         glBufferData(GL_SHADER_STORAGE_BUFFER, MAX_ATOMS * sizeof(GPUAtom), nullptr, GL_DYNAMIC_DRAW);
 
-        glGenBuffers(1, &instanceSSBO);
-        glBindBuffer(GL_SHADER_STORAGE_BUFFER, instanceSSBO);
+        glGenBuffers(1, &ParticlesAtomsBufferSharedBetweenComputeShaderAndVertexShaderSSBO);
+        glBindBuffer(GL_SHADER_STORAGE_BUFFER, ParticlesAtomsBufferSharedBetweenComputeShaderAndVertexShaderSSBO);
         glBufferData(GL_SHADER_STORAGE_BUFFER, MAX_PARTICLES * sizeof(UniformsBlock), nullptr, GL_DYNAMIC_DRAW);
 
-        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, instanceSSBO);
+        //glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ParticlesAtomsBufferSharedBetweenComputeShaderAndVertexShaderSSBO);
 
         ProjectionMatrixGlobal = vmath::perspective(50.0f, (float)Info.WindowWidth / (float)Info.WindowHeight, 0.1f, 10000.0f);
 
