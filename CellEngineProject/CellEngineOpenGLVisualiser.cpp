@@ -540,7 +540,7 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
 {
     try
     {
-        glUseProgram(ShaderProgramPhong);
+        //glUseProgram(ShaderProgramPhong);
 
         CopyMousePositionWhenButtonPressed();
 

@@ -9,19 +9,24 @@ struct GPUAtom
     float X;
     float Y;
     float Z;
-    //float ColorR;
-    //float ColorG;
-    //float ColorB;
+
+    float ColorR;
+    float ColorG;
+    float ColorB;
+
 
     //short ColorR;
     //short ColorG;
     //short ColorB;
-    uint ColorR;
-    uint ColorG;
-    uint ColorB;
-    uint _padding[2];
+    //uint ColorR;
+    //uint ColorG;
+    //uint ColorB;
+    //int ColorR;
+    //int ColorG;
+    //int ColorB;
+    //uint _padding[2];
 
-    //float _padding1[2];
+    float _padding1[2];
     //vec2 _padding1;
 };
 
@@ -83,7 +88,12 @@ void main()
         ModelMatrix[3][2] = AtomPosition.z - Center.z;
 
         ParticlesOut[AtomOffsetIndexOut].MoveMatrix = ViewMatrix * ModelMatrix;
-        //ParticlesOut[AtomOffsetIndexOut].Color = vec4(AtomIn.ColorR / 255.0, AtomIn.ColorG / 255.0, AtomIn.ColorB, 1.0 / 255.0);
-        ParticlesOut[AtomOffsetIndexOut].Color = vec3(AtomIn.ColorR, AtomIn.ColorG, AtomIn.ColorB);
+
+        //ParticlesOut[AtomOffsetIndexOut].Color = vec4(AtomIn.ColorR / 255.0, AtomIn.ColorG / 255.0, AtomIn.ColorB / 255.0, 1.0 / 255.0);
+        //ParticlesOut[AtomOffsetIndexOut].Color = vec3(AtomIn.ColorR / 255.0, AtomIn.ColorG / 255.0, AtomIn.ColorB / 255.0);
+        //ParticlesOut[AtomOffsetIndexOut].Color = vec3(float(AtomIn.ColorR), float(AtomIn.ColorG), float(AtomIn.ColorB)) / 65535.0;
+        //ParticlesOut[AtomOffsetIndexOut].Color = vec3(float(AtomIn.ColorR), float(AtomIn.ColorG), float(AtomIn.ColorB)) / 255.0;
+        ParticlesOut[AtomOffsetIndexOut].Color = vec3(AtomIn.ColorR, AtomIn.ColorG, AtomIn.ColorB) / 255.0;
+        //ParticlesOut[AtomOffsetIndexOut].Color = vec3(AtomIn.ColorR, AtomIn.ColorG, AtomIn.ColorB) / 65535.0;
     }
 }

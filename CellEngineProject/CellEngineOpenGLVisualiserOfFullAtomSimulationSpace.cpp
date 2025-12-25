@@ -571,7 +571,9 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
         const auto start_time111 = chrono::high_resolution_clock::now();
 
         vector<GPUParticle> GPUParticles;
+        GPUParticles.reserve(10'000'000);
         vector<GPUAtom> GPUAtoms;
+        GPUAtoms.reserve(1000'000'000);
 
         uint32_t atomOffset = 0;
 
@@ -579,7 +581,7 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
             if (CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.empty() == false)
                 if (const bool FinalVisibilityInModelWorld = RenderObject(CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.begin()->second.ListOfAtoms.back(), Particle(), ViewMatrix, true, false, true, NumberOfAllRenderedAtoms, false, !CellEngineConfigDataObject.ShowDetailsInAtomScale, ParticleSectorXIndex); FinalVisibilityInModelWorld == true)
                     if (CellEngineConfigDataObject.ShowDetailsInAtomScale == true)
-                        for (auto& ParticleObject : CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles)
+                        for (const auto& ParticleObject : CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles)
                         {
                             GPUParticle GPUParticleObject;
                             GPUParticleObject.EntityId = ParticleObject.second.EntityId;
@@ -588,7 +590,8 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
 
                             GPUParticleObject.AtomOffset = atomOffset;
                             GPUParticleObject.AtomCount = ParticleObject.second.ListOfAtoms.size();
-                            memset(GPUParticleObject._padding, 0, sizeof(GPUParticleObject._padding));
+                            //memset(GPUParticleObject._padding, 0, sizeof(GPUParticleObject._padding));
+                            //memset(GPUParticleObject._padding, 0, 12);
 
                             GPUParticles.emplace_back(GPUParticleObject);
 
@@ -606,17 +609,17 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
                                 // gpuAtom.AtomColor = atom.AtomColor;
                                 //ParticleObject.second.RandomParticleKindColor = GetColor<CellEngineAtom>(atom, ParticleObject.second, false);
 
-                                gpuAtom.ColorR = ParticleObject.second.RandomParticleKindColor.X;
-                                gpuAtom.ColorG = ParticleObject.second.RandomParticleKindColor.Y;
-                                gpuAtom.ColorB = ParticleObject.second.RandomParticleKindColor.Z;
+                                // gpuAtom.ColorR = ParticleObject.second.RandomParticleKindColor.X;
+                                // gpuAtom.ColorG = ParticleObject.second.RandomParticleKindColor.Y;
+                                // gpuAtom.ColorB = ParticleObject.second.RandomParticleKindColor.Z;
 
-                                // gpuAtom.ColorR = static_cast<float>(ParticleObject.second.RandomParticleKindColor.X);
-                                // gpuAtom.ColorG = static_cast<float>(ParticleObject.second.RandomParticleKindColor.Y);
-                                // gpuAtom.ColorB = static_cast<float>(ParticleObject.second.RandomParticleKindColor.Z);
+                                gpuAtom.ColorR = static_cast<float>(ParticleObject.second.RandomParticleKindColor.X);
+                                gpuAtom.ColorG = static_cast<float>(ParticleObject.second.RandomParticleKindColor.Y);
+                                gpuAtom.ColorB = static_cast<float>(ParticleObject.second.RandomParticleKindColor.Z);
 
                                 //gpuAtom._padding1[0] = 0.0f;
                                 //gpuAtom._padding1[1] = 0.0f;
-                                memset(gpuAtom._padding, 0, 14);
+                                //memset(gpuAtom._padding, 0, 14);
 
                                 // gpuAtom._padding1 = 0;
                                 //
@@ -630,7 +633,7 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
                                 // memset(gpuAtom.Chain, 0, 8);
                                 // strncpy(gpuAtom.Chain, atom.Chain, 7);
 
-                                GPUAtoms.push_back(gpuAtom);
+                                GPUAtoms.emplace_back(gpuAtom);
                             }
 
                             atomOffset += ParticleObject.second.ListOfAtoms.size();
@@ -758,14 +761,12 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
         //LoggersManagerObject.Log(STREAM("S=" << UniformsBlocksTotal.size()));
         //LoggersManagerObject.Log(STREAM("NX=" << CellEngineConfigDataObject.NumberOfParticlesSectorsInX));
 
+        AtomGraphicsObject.RenderSubGraphicObject(0, GPUAtoms.size(), 0);
+
         const auto stop_time1 = chrono::high_resolution_clock::now();
 
         ExecutionDurationTimeForCopyingParticlesToGraphicMemory += chrono::duration(stop_time1 - start_time1);
 
-
-
-
-        AtomGraphicsObject.RenderSubGraphicObject(0, GPUAtoms.size(), 0);
         //AtomGraphicsObject.RenderSubGraphicObject(0, UniformsBlocks.size(), 0);
         //AtomGraphicsObject.RenderSubGraphicObject(0, UniformsBlocksTotal.size(), 0);
         //AtomGraphicsObject.RenderSubGraphicObject(0, UniformsBlocks[0].size(), 0);

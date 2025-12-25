@@ -15,25 +15,24 @@
 struct GPUAtom
 {
 public:
-    // EntityIdInt EntityId{};
-    // char Name[5 + 1]{};
-    // char ResName[4 + 1]{};
-    // char Chain[6 + 1]{};
     float X{};
     float Y{};
     float Z{};
-    // float ColorR;              // Using int instead of short for simplicity
-    // float ColorG;
-    // float ColorB;
-    //float _padding1[2]{};
 
-    uint16_t ColorR;              // Using int instead of short for simplicity
-    uint16_t ColorG;
-    uint16_t ColorB;
-    //vector3_16 AtomColor{};
-    //vmath::vec3 AtomColor{};
-    //uint16_t _padding1{};
-    uint8_t _padding[14];
+    float ColorR;
+    float ColorG;
+    float ColorB;
+    float _padding1[2]{};
+
+    // uint16_t ColorR;
+    // uint16_t ColorG;
+    // uint16_t ColorB;
+    // uint8_t _padding[14];
+
+    // int16_t ColorR;
+    // int16_t ColorG;
+    // int16_t ColorB;
+    //uint8_t _padding[14];
 };
 
 struct GPUParticle
@@ -70,15 +69,10 @@ protected:
     struct UniformsBlock
     {
         vmath::mat4 MoveMatrix;
-        //vmath::mat4 ProjectionMatrix;
         vmath::vec3 Color;
         float padding;
     };
 protected:
-    //GLuint ComputeShader{};
-    //std::vector<GPUParticle> GPUParticles{};
-    //std::array<std::vector<UniformsBlock>, 256> UniformsBlocks{};
-    //std::vector<std::vector<UniformsBlock>> UniformsBlocks{};
     std::vector<UniformsBlock> UniformsBlocks{};
     static inline std::mutex UniformsBlocksFullAtomSimulationSpaceMutexObject;
 private:
