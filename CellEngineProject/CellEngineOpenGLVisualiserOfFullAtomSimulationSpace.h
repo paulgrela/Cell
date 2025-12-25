@@ -28,6 +28,8 @@ public:
     void GetStartCenterPoint() override;
 public:
     static inline std::mutex RenderMenuAndFullAtomSimulationSpaceMutexObject;
+
+    static inline std::mutex PrepareParticlesFullAtomSimulationSpaceMutexObject;
 };
 
 #endif

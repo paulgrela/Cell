@@ -351,10 +351,10 @@ inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader(const 
         //MatrixUniformBlockForVertexShaderPointer.ProjectionMatrix = ProjectionMatrix1;
         //MatrixUniformBlockForVertexShaderPointer.ProjectionMatrix = ProjectionMatrixGlobal;
         MatrixUniformBlockForVertexShaderPointer.MoveMatrix = MoveMatrix1;
-        MatrixUniformBlockForVertexShaderPointer.Color = Color;
+        //MatrixUniformBlockForVertexShaderPointer.Color = Color;
         //UniformsBlocks[ParticleSectorXIndex].emplace_back(MatrixUniformBlockForVertexShaderPointer);
         //UniformsBlocks[0].emplace_back(MatrixUniformBlockForVertexShaderPointer);
-        UniformsBlocks.emplace_back(MatrixUniformBlockForVertexShaderPointer);
+//UniformsBlocks.emplace_back(MatrixUniformBlockForVertexShaderPointer);
         // {
         //     lock_guard LockGuard{ UniformsBlocksFullAtomSimulationSpaceMutexObject };
         //     UniformsBlocks.emplace_back(MatrixUniformBlockForVertexShaderPointer);

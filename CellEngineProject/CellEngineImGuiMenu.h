@@ -407,6 +407,8 @@ public:
                     ExecutionDurationTimeForCopyingParticlesToGraphicMemory1 = std::chrono::seconds::zero();
                     ImGui::Text("%s", GetDurationTimeInOneLine(ExecutionDurationTimeForCopyingParticlesToGraphicMemory2, "L=", "E").c_str());
                     ExecutionDurationTimeForCopyingParticlesToGraphicMemory2 = std::chrono::seconds::zero();
+                    ImGui::Text("%s", GetDurationTimeInOneLine(ExecutionDurationTimeForCopyingParticlesToGraphicMemory3, "O=", "E").c_str());
+                    ExecutionDurationTimeForCopyingParticlesToGraphicMemory3 = std::chrono::seconds::zero();
 
                 ImGui::Text("%s", CellEngineConfigDataObject.NumberOfRenderedAtomsParametersOfRenderingStr.c_str());
                 ImGui::Checkbox("Log parameters of rendering to file", &CellEngineConfigDataObject.LogParametersOfRenderingToFile);
