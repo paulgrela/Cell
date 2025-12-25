@@ -18,21 +18,10 @@ public:
     float X{};
     float Y{};
     float Z{};
-
     float ColorR;
     float ColorG;
     float ColorB;
     float _padding1[2]{};
-
-    // uint16_t ColorR;
-    // uint16_t ColorG;
-    // uint16_t ColorB;
-    // uint8_t _padding[14];
-
-    // int16_t ColorR;
-    // int16_t ColorG;
-    // int16_t ColorB;
-    //uint8_t _padding[14];
 };
 
 struct GPUParticle
@@ -42,9 +31,9 @@ public:
     //ChainIdInt ChainId{};
     uint32_t ChainId{};
     UniqueIdInt Index{};
-    uint32_t AtomOffset{};         // 4 bytes - offset in atom buffer
-    uint32_t AtomCount{};          // 4 bytes - number of atoms
-    uint32_t _padding[3]{};        // 12 bytes - align to 32 bytes
+    uint32_t AtomOffset{};
+    uint32_t AtomCount{};
+    uint32_t _padding[3]{};
 };
 
 static constexpr size_t MAX_PARTICLES = 100'000'000;

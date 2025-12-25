@@ -42,5 +42,4 @@ void main(void)
     gl_Position = ProjectionMatrix * P;
 
 	vs_out.C = p.color;
-	//vs_out.C = p.color.rgb;
 }

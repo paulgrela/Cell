@@ -1,7 +1,5 @@
 #version 450
 
-//INPUT DATA
-
 layout(local_size_x = 256) in;
 
 struct GPUAtom
@@ -9,25 +7,10 @@ struct GPUAtom
     float X;
     float Y;
     float Z;
-
     float ColorR;
     float ColorG;
     float ColorB;
-
-
-    //short ColorR;
-    //short ColorG;
-    //short ColorB;
-    //uint ColorR;
-    //uint ColorG;
-    //uint ColorB;
-    //int ColorR;
-    //int ColorG;
-    //int ColorB;
-    //uint _padding[2];
-
     float _padding1[2];
-    //vec2 _padding1;
 };
 
 struct GPUParticle
@@ -52,8 +35,6 @@ layout(std430, binding = 1) readonly buffer AtomBufferIn
 
 uniform vec3 Center;
 uniform mat4 ViewMatrix;
-
-//OUT DATA
 
 struct ParticleOut
 {
@@ -89,7 +70,6 @@ void main()
 
         ParticlesOut[AtomOffsetIndexOut].MoveMatrix = ViewMatrix * ModelMatrix;
 
-        //ParticlesOut[AtomOffsetIndexOut].Color = vec3(AtomIn.ColorR, AtomIn.ColorG, AtomIn.ColorB) / 255.0;
         ParticlesOut[AtomOffsetIndexOut].Color = vec3(AtomIn.ColorR, AtomIn.ColorG, AtomIn.ColorB) / 100.00;
     }
 }
