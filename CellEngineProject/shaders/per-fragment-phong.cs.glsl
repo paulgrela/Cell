@@ -89,11 +89,7 @@ void main()
 
         ParticlesOut[AtomOffsetIndexOut].MoveMatrix = ViewMatrix * ModelMatrix;
 
-        //ParticlesOut[AtomOffsetIndexOut].Color = vec4(AtomIn.ColorR / 255.0, AtomIn.ColorG / 255.0, AtomIn.ColorB / 255.0, 1.0 / 255.0);
-        //ParticlesOut[AtomOffsetIndexOut].Color = vec3(AtomIn.ColorR / 255.0, AtomIn.ColorG / 255.0, AtomIn.ColorB / 255.0);
-        //ParticlesOut[AtomOffsetIndexOut].Color = vec3(float(AtomIn.ColorR), float(AtomIn.ColorG), float(AtomIn.ColorB)) / 65535.0;
-        //ParticlesOut[AtomOffsetIndexOut].Color = vec3(float(AtomIn.ColorR), float(AtomIn.ColorG), float(AtomIn.ColorB)) / 255.0;
-        ParticlesOut[AtomOffsetIndexOut].Color = vec3(AtomIn.ColorR, AtomIn.ColorG, AtomIn.ColorB) / 255.0;
-        //ParticlesOut[AtomOffsetIndexOut].Color = vec3(AtomIn.ColorR, AtomIn.ColorG, AtomIn.ColorB) / 65535.0;
+        //ParticlesOut[AtomOffsetIndexOut].Color = vec3(AtomIn.ColorR, AtomIn.ColorG, AtomIn.ColorB) / 255.0;
+        ParticlesOut[AtomOffsetIndexOut].Color = vec3(AtomIn.ColorR, AtomIn.ColorG, AtomIn.ColorB) / 100.00;
     }
 }
