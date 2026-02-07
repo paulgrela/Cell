@@ -148,7 +148,6 @@ namespace sb7
             //glDrawElementsInstancedBaseInstance(GL_TRIANGLES, static_cast<GLint>(SubGraphicObjects[GraphicObjectIndex].Count), IndexType, (void*)SubGraphicObjects[GraphicObjectIndex].First, static_cast<GLsizei>(InstanceCount), BaseInstance);
         //else
             glDrawArraysInstancedBaseInstance(GL_TRIANGLES, static_cast<GLint>(SubGraphicObjects[GraphicObjectIndex].First), static_cast<GLsizei>(SubGraphicObjects[GraphicObjectIndex].Count), static_cast<GLsizei>(InstanceCount), BaseInstance);
-            //glMultiDrawArraysIndirect(GL_TRIANGLES, NULL, 50000, 0);
     }
     #pragma GCC diagnostic pop
 

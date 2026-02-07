@@ -329,7 +329,7 @@ inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader1(const
     return FinalVisibilityInModelWorld;
 }
 
-inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4 ModelMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, bool DrawAdditional, const UnsignedInt ParticleSectorXIndex)
+inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4 ModelMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, bool DrawAdditional)
 {
     bool FinalVisibilityInModelWorld = false;
 
@@ -431,7 +431,7 @@ inline vmath::vec3 CellEngineOpenGLVisualiser::GetSize(const CellEngineAtom& Ato
     return Size;
 }
 
-bool CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom& AtomObject, const Particle& ParticleObject, const vmath::mat4& ViewMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, UnsignedInt& NumberOfAllRenderedAtoms, const bool Chosen, const bool RenderObjectParameter, const UnsignedInt ParticleSectorXIndex)
+bool CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom& AtomObject, const Particle& ParticleObject, const vmath::mat4& ViewMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, UnsignedInt& NumberOfAllRenderedAtoms, const bool Chosen, const bool RenderObjectParameter)
 {
     bool FinalVisibilityInModelWorld{};
 
@@ -444,7 +444,7 @@ bool CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom& AtomObject, 
         const vmath::vec3 SizeLocal = GetSize(AtomObject);
         const vmath::mat4 ModelMatrix = vmath::translate(AtomPosition.X() - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomPosition.Y() + CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomPosition.Z() + CellEngineConfigDataObject.CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(SizeLocal.X(), SizeLocal.Y(), SizeLocal.Z()));
 
-        FinalVisibilityInModelWorld = CreateUniformBlockForVertexShader(AtomPosition, CellEngineUseful::GetVMathVec3FromVector3ForColor(GetColor<CellEngineAtom>(AtomObject, ParticleObject, Chosen)), ViewMatrix, ModelMatrix, CountNewPosition, DrawCenter, DrawOutsideBorder, true, ParticleSectorXIndex);
+        FinalVisibilityInModelWorld = CreateUniformBlockForVertexShader(AtomPosition, CellEngineUseful::GetVMathVec3FromVector3ForColor(GetColor<CellEngineAtom>(AtomObject, ParticleObject, Chosen)), ViewMatrix, ModelMatrix, CountNewPosition, DrawCenter, DrawOutsideBorder, true);
 
             //if (RenderObjectParameter == true)
             //    AtomGraphicsObject.Render();

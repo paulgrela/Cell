@@ -138,7 +138,7 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSelectedSpace(const
                                         TemporaryRenderedVoxelsList.emplace_back(TemporaryRenderedVoxel{ TempAtomObject, FoundParticleIter, PosX, PosY, PosZ });
                                     }
 
-                                    RenderObject(TempAtomObject, ParticleObject, ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, false, RenderObjectsBool, 1);
+                                    RenderObject(TempAtomObject, ParticleObject, ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, false, RenderObjectsBool);
                                 }
                             }
                             else
@@ -153,7 +153,7 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSelectedSpace(const
 
                             ConvertAtomPosToGraphicCoordinate(TempAtomObject, XStartParam, YStartParam, ZStartParam, PosX, PosY, PosZ, XSizeParam, YSizeParam, ZSizeParam);
 
-                            RenderObject(TempAtomObject, ParticleObject, ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, false, RenderObjectsBool, 1);
+                            RenderObject(TempAtomObject, ParticleObject, ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, false, RenderObjectsBool);
                         }
                     }
     }
@@ -189,7 +189,7 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSpace(UnsignedInt& 
                         {
                             TempAtomObject.SetAtomPositionsData(CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(PosX), CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(PosY), CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(PosZ));
 
-                            if (RenderObject(TempAtomObject, Particle(), ViewMatrix, true, false, true, NumberOfAllRenderedAtoms, false, !CellEngineConfigDataObject.ShowDetailsInAtomScale, 1) == true)
+                            if (RenderObject(TempAtomObject, Particle(), ViewMatrix, true, false, true, NumberOfAllRenderedAtoms, false, !CellEngineConfigDataObject.ShowDetailsInAtomScale) == true)
                             {
                                 NumberOfFoundParticlesCenterToBeRenderedInAtomDetails++;
                                 RenderSelectedSpace(PosX, PosY, PosZ, CellEngineConfigDataObject.LoadOfAtomsStep, CellEngineConfigDataObject.LoadOfAtomsStep, CellEngineConfigDataObject.LoadOfAtomsStep, 64, 64, 64, NumberOfAllRenderedAtoms, ViewMatrix, TempAtomObject, TemporaryRenderedVoxelsList, StencilBufferLoopCounter);
@@ -233,7 +233,7 @@ inline void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::DrawChosenAtomUsin
 
                 SetSaveXYZPositions(ChosenObject.X, ChosenObject.Y, ChosenObject.Z);
 
-                RenderObject(ChosenObject.CellEngineAtomObject, ChosenObject.CellEngineParticleObject->second, ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, true, RenderObjectsBool, 1);
+                RenderObject(ChosenObject.CellEngineAtomObject, ChosenObject.CellEngineParticleObject->second, ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, true, RenderObjectsBool);
 
                 PrintAtomDescriptionOnScreen(ChosenObject.CellEngineAtomObject, ChosenObject.CellEngineParticleObject->second);
             }
