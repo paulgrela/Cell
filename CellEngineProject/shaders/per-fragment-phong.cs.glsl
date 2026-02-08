@@ -40,7 +40,7 @@ struct ParticleOut
 {
     mat4 MoveMatrix;
     vec3 Color;
-    float padding;
+    uint ParticleIdL;
 };
 
 layout(std430, binding = 2) buffer ParticlesBufferOut
@@ -71,5 +71,7 @@ void main()
         ParticlesOut[AtomOffsetIndexOut].MoveMatrix = ViewMatrix * ModelMatrix;
 
         ParticlesOut[AtomOffsetIndexOut].Color = vec3(AtomIn.ColorR, AtomIn.ColorG, AtomIn.ColorB) / 100.00;
+
+        ParticlesOut[AtomOffsetIndexOut].ParticleIdL = ParticleId;
     }
 }

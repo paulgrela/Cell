@@ -44,6 +44,18 @@ class CellEngineOpenGLVisualiser : public sb7::OpenGLApplication
 public:
     sb7::GraphicObject AtomGraphicsObject;
     sb7::TextOverlay TextOverlayObject;
+
+public:
+    GLuint fbo;
+    GLuint colorTexture;
+    GLuint instanceTexture;
+    GLuint depthRenderbuffer;
+
+    //int width = 1930, height = 1375;
+    int width = 2560, height = 1440;
+
+    void CreateFramebuffer();
+
 protected:
     GLuint AtomSSBO{};
     GLuint ParticleSSBO{};

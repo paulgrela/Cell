@@ -450,17 +450,73 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
                             //         glReadPixels(GLint(MousePositionLocal.s.X), GLint((float)Info.WindowHeight - MousePositionLocal.s.Y - 1), 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &PartOfStencilBufferIndex[StencilBufferLoopCounter]);
                             // }
 
+                            //czy petla 3 stencilów nie w shaderze fragmentów trzy razy rysuje z zaznaczeniem indeksu particle i atomobject index
+                            //Jak urzyć stencil buffer w shaderze
+
         AtomGraphicsObject.RenderSubGraphicObject(0, GPUAtoms.size(), 0);
 
                             //if (PressedRightMouseButton != 1)
                             //    DrawChosenAtomUsingStencilBuffer(ViewMatrix, PartOfStencilBufferIndex, NumberOfAllRenderedAtoms, TemporaryRenderedAtomsList);
 
+                            GLuint ClickedObjectID;
+
+                            glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
+                            glReadBuffer(GL_COLOR_ATTACHMENT1);
+
+                            glReadPixels(GLint(MousePositionLocal.s.X), GLint((float)Info.WindowHeight - MousePositionLocal.s.Y - 1), 1, 1, GL_RED_INTEGER, GL_UNSIGNED_INT, &ClickedObjectID);
+
+                            glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+
 
         const auto stop_time1 = chrono::high_resolution_clock::now();
 
         ExecutionDurationTimeForCopyingParticlesToGraphicMemory += chrono::duration(stop_time1 - start_time1);
+
+                            // if (PressedRightMouseButton != 1)
+                            //     DrawChosenAtomUsingStencilBuffer(ViewMatrix, PartOfStencilBufferIndex, NumberOfAllRenderedAtoms, TemporaryRenderedAtomsList);
+
+                            if (PressedRightMouseButton != 1)
+                                DrawChosenAtomUsingStencilBuffer1(ViewMatrix, ClickedObjectID, NumberOfAllRenderedAtoms, GPUAtoms);
     }
     CATCH("rendering full atom simulation space");
+}
+
+inline void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::DrawChosenAtomUsingStencilBuffer1(const vmath::mat4& ViewMatrix, const GLuint PartOfStencilBufferIndex, UnsignedInt& NumberOfAllRenderedAtoms, const vector<GPUAtom>& GPUAtoms)
+{
+    try
+    {
+        if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
+        {
+            UnsignedInt ChosenParticleCenterIndex = PartOfStencilBufferIndex;
+
+            if (ChosenParticleCenterIndex > 0)
+            {
+                Particle ChosenParticleObject{};
+                CellEngineAtom ChosenAtomObject{};
+                if (ChosenParticleCenterIndex < GPUAtoms.size())
+                {
+                    // if (const auto ParticleIter = CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.find(TemporaryRenderedAtomsList[ChosenParticleCenterIndex]); ParticleIter != CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.end())
+                    // {
+                    //     if (ChosenParticleCenterIndex > ParticleIter->second.ListOfAtoms.size())
+                    //         throw std::runtime_error("ERROR STENCIL INDEX TOO BIG IN INNER 2 = " + std::to_string(TemporaryRenderedAtomsList[ChosenParticleCenterIndex]));
+                    //     else
+                    //     {
+                    //         ChosenParticleObject = ParticleIter->second;
+                    //         ChosenAtomObject = ParticleIter->second.ListOfAtoms[TemporaryRenderedAtomsList[ChosenParticleCenterIndex]];
+                    //     }
+                    // }
+                    // else
+                    //     throw std::runtime_error("ERROR STENCIL INDEX TOO BIG IN INNER 1 = " + std::to_string(TemporaryRenderedAtomsList[ChosenParticleCenterIndex]));
+                }
+
+
+                RenderObject(ChosenAtomObject, ChosenParticleObject, ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, true, RenderObjectsBool);
+
+                PrintAtomDescriptionOnScreen(ChosenAtomObject, ChosenParticleObject);
+            }
+        }
+    }
+    CATCH("choosing atom using buffer")
 }
 
 inline void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::DrawChosenAtomUsingStencilBuffer(const vmath::mat4& ViewMatrix, const GLuint* PartOfStencilBufferIndex, UnsignedInt& NumberOfAllRenderedAtoms, const vector<tuple<UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt>>& TemporaryRenderedAtomsList)

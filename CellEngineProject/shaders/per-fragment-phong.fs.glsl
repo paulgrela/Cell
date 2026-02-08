@@ -1,6 +1,9 @@
-#version 410 core
+#version 450 core
+
+in flat uint instanceID;
 
 layout (location = 0) out vec4 color;
+layout (location = 1) out uint instanceIDOut;
 
 in VS_OUT
 {
@@ -18,7 +21,10 @@ uniform vec3 ambient = vec3(0.1, 0.1, 0.1);
 void main(void)
 {
     if (fs_in.C.x < 0.0)
+    {
         color = vec4(vec3(0.0, 1.0, 1.0), 1.0);
+        instanceIDOut = 0u;
+    }
     else
     {
         vec3 diffuse_albedo = fs_in.C;
@@ -34,5 +40,7 @@ void main(void)
         vec3 specular = pow(max(dot(R, V), 0.0), specular_power) * specular_albedo;
 
         color = vec4(ambient + diffuse + specular, 1.0);
+
+        instanceIDOut = uint(instanceID);
     }
 }
