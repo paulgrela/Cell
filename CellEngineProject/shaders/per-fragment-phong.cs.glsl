@@ -15,9 +15,9 @@ struct GPUAtom
 
 struct GPUParticle
 {
-    uint EntityId;
-    uint ChainId;
-    uint Index;
+    //uint EntityId;
+    //uint ChainId;
+    //uint Index;
     uint AtomOffset;
     uint AtomCount;
     uint _padding[3];
@@ -72,6 +72,7 @@ void main()
 
         ParticlesOut[AtomOffsetIndexOut].Color = vec3(AtomIn.ColorR, AtomIn.ColorG, AtomIn.ColorB) / 100.00;
 
-        ParticlesOut[AtomOffsetIndexOut].ParticleIdL = ParticleId;
+        //ParticlesOut[AtomOffsetIndexOut].ParticleIdL = ParticleId;
+        ParticlesOut[AtomOffsetIndexOut].ParticleIdL = AtomOffsetIndexOut;
     }
 }

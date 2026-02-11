@@ -27,14 +27,25 @@ public:
 struct GPUParticle
 {
 public:
-    EntityIdInt EntityId{};
+    //EntityIdInt EntityId{};
     //ChainIdInt ChainId{};
-    uint32_t ChainId{};
-    UniqueIdInt Index{};
+    //uint32_t ChainId{};
+    //UniqueIdInt Index{};
     uint32_t AtomOffset{};
     uint32_t AtomCount{};
     uint32_t _padding[3]{};
 };
+
+struct GPUAtomLocal
+{
+public:
+    UniqueIdInt Index{};
+    UniqueIdInt AtomOffset{};
+    uint16_t ParticleSectorXIndex{};
+    uint16_t ParticleSectorYIndex{};
+    uint16_t ParticleSectorZIndex{};
+};
+
 
 static constexpr size_t MAX_PARTICLES = 100'000'000;
 static constexpr size_t MAX_ATOMS = 100'000'000;
