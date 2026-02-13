@@ -69,7 +69,6 @@ void main()
 
         ParticlesOut[AtomOffsetIndexOut].Color = vec3(AtomIn.ColorR, AtomIn.ColorG, AtomIn.ColorB) / 100.00;
 
-        //ParticlesOut[AtomOffsetIndexOut].ParticleIdL = ParticleId;
         ParticlesOut[AtomOffsetIndexOut].ParticleIdL = AtomOffsetIndexOut;
     }
 }
