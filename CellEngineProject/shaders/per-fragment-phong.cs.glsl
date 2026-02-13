@@ -15,9 +15,6 @@ struct GPUAtom
 
 struct GPUParticle
 {
-    //uint EntityId;
-    //uint ChainId;
-    //uint Index;
     uint AtomOffset;
     uint AtomCount;
     uint _padding[3];

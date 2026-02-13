@@ -27,10 +27,6 @@ public:
 struct GPUParticle
 {
 public:
-    //EntityIdInt EntityId{};
-    //ChainIdInt ChainId{};
-    //uint32_t ChainId{};
-    //UniqueIdInt Index{};
     uint32_t AtomOffset{};
     uint32_t AtomCount{};
     uint32_t _padding[3]{};
@@ -62,8 +58,8 @@ public:
     GLuint instanceTexture;
     GLuint depthRenderbuffer;
 
-    //int width = 1930, height = 1375;
-    int width = 2560, height = 1440;
+    int width = 1930, height = 1375;
+    //int width = 2560, height = 1440;
 
     void CreateFramebuffer();
 

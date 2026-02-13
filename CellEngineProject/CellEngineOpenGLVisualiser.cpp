@@ -41,23 +41,25 @@ inline void CellEngineOpenGLVisualiser::CreateFramebuffer()
         glGenTextures(1, &colorTexture);
         glBindTexture(GL_TEXTURE_2D, colorTexture);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
         glGenTextures(1, &instanceTexture);
         glBindTexture(GL_TEXTURE_2D, instanceTexture);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_R32UI, width, height, 0, GL_RED_INTEGER, GL_UNSIGNED_INT, nullptr);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-        // Create depth renderbuffer
-        glGenRenderbuffers(1, &depthRenderbuffer);
-        glBindRenderbuffer(GL_RENDERBUFFER, depthRenderbuffer);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width, height);
+        // // Create depth renderbuffer
+            glGenRenderbuffers(1, &depthRenderbuffer);
+            glBindRenderbuffer(GL_RENDERBUFFER, depthRenderbuffer);
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width, height);
+
+
 
         // Create framebuffer
         glGenFramebuffers(1, &fbo);
@@ -66,7 +68,7 @@ inline void CellEngineOpenGLVisualiser::CreateFramebuffer()
         // Attach textures and renderbuffer
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTexture, 0);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, instanceTexture, 0);
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRenderbuffer);
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRenderbuffer);
 
         // Specify draw buffers
         GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
@@ -98,20 +100,17 @@ void CellEngineOpenGLVisualiser::StartUp()
 
         glGenBuffers(1, &ParticleSSBO);
         glBindBuffer(GL_SHADER_STORAGE_BUFFER, ParticleSSBO);
-        //glBufferData(GL_SHADER_STORAGE_BUFFER, MAX_PARTICLES * sizeof(GPUParticle), nullptr, GL_STATIC_DRAW);
         glBufferData(GL_SHADER_STORAGE_BUFFER, MAX_PARTICLES * sizeof(GPUParticle), nullptr, GL_DYNAMIC_DRAW);
 
         glGenBuffers(1, &AtomSSBO);
         glBindBuffer(GL_SHADER_STORAGE_BUFFER, AtomSSBO);
-        //glBufferData(GL_SHADER_STORAGE_BUFFER, MAX_ATOMS * sizeof(GPUAtom), nullptr, GL_STATIC_DRAW);
         glBufferData(GL_SHADER_STORAGE_BUFFER, MAX_ATOMS * sizeof(GPUAtom), nullptr, GL_DYNAMIC_DRAW);
 
         glGenBuffers(1, &ParticlesAtomsBufferSharedBetweenComputeShaderAndVertexShaderSSBO);
         glBindBuffer(GL_SHADER_STORAGE_BUFFER, ParticlesAtomsBufferSharedBetweenComputeShaderAndVertexShaderSSBO);
         glBufferData(GL_SHADER_STORAGE_BUFFER, MAX_PARTICLES * sizeof(UniformsBlock), nullptr, GL_DYNAMIC_DRAW);
 
-        //glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ParticlesAtomsBufferSharedBetweenComputeShaderAndVertexShaderSSBO);
-                                                                                                                        //CreateFramebuffer();
+                                                                                                                        CreateFramebuffer();
 
 
         ProjectionMatrixGlobal = vmath::perspective(50.0f, (float)Info.WindowWidth / (float)Info.WindowHeight, 0.1f, 10000.0f);
@@ -610,23 +609,25 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
 {
     try
     {
-        // Bind our framebuffer
-        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+        // // Bind our framebuffer
+        // glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+        //
+        // // Clear both color and instance ID buffers
+        // glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        //
+        // // Clear instance texture to 0xFFFFFFFF (no instance)
+        // GLuint clearValue = 0xFFFFFFFF;
+        // glClearTexImage(instanceTexture, 0, GL_RED_INTEGER, GL_UNSIGNED_INT, &clearValue);
+        //
+        // glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-        // Clear both color and instance ID buffers
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        // Clear instance texture to 0xFFFFFFFF (no instance)
-        GLuint clearValue = 0xFFFFFFFF;
-        glClearTexImage(instanceTexture, 0, GL_RED_INTEGER, GL_UNSIGNED_INT, &clearValue);
-
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+                                                                                                                        // // Enable depth test
+                                                                                                                        // glEnable(GL_DEPTH_TEST);
+                                                                                                                        // glDepthFunc(GL_LESS);
 
 
-
-
-        //glUseProgram(ShaderProgramPhong);
+                                                                                                                        //glUseProgram(ShaderProgramPhong);
 
         CopyMousePositionWhenButtonPressed();
 

@@ -50,6 +50,7 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace1(UnsignedI
 
                             GPUParticles.emplace_back(GPUParticleObject);
 
+                            UnsignedInt AtomIndex = 0;
                             for (const auto& atom : ParticleObject.second.ListOfAtoms)
                             {
                                 if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
@@ -59,7 +60,9 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace1(UnsignedI
                                     GPUAtomLocalObject.ParticleSectorYIndex = ParticleSectorYIndex;
                                     GPUAtomLocalObject.ParticleSectorZIndex = ParticleSectorZIndex;
                                     GPUAtomLocalObject.Index = ParticleObject.second.Index;
-                                    GPUAtomLocalObject.AtomOffset = GPUAtomsLocal.size();
+                                    //GPUAtomLocalObject.AtomOffset = GPUAtomsLocal.size();
+                                    GPUAtomLocalObject.AtomOffset = AtomIndex;
+                                    AtomIndex++;
                                     GPUAtomsLocal.emplace_back(GPUAtomLocalObject);
                                 }
 
@@ -440,6 +443,36 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
 
 
 
+
+
+
+                                                                                                                        // Bind our framebuffer
+                                                                                                                        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+                                                                                                                        // Clear both color and instance ID buffers
+                                                                                                                        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+                                                                                                                        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+                                                                                                                        // Clear instance texture to 0xFFFFFFFF (no instance)
+                                                                                                                        GLuint ClearValue = 0xFFFFFFFF;
+                                                                                                                        glClearTexImage(instanceTexture, 0, GL_RED_INTEGER, GL_UNSIGNED_INT, &ClearValue);
+
+                                                                                                                        // Enable depth test
+                                                                                                                        glEnable(GL_DEPTH_TEST);
+                                                                                                                        glDepthFunc(GL_LESS);
+
+                                                                                                                        // glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
+
+
+
+                                                                                                                        // glBindVertexArray(0);
+                                                                                                                        // glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
+
+
         glUseProgram(ShaderProgramPhong);
 
         glUniformMatrix4fv(glGetUniformLocation(ShaderProgramPhong, "ProjectionMatrix"), 1, GL_FALSE, ProjectionMatrixGlobal);
@@ -470,25 +503,48 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
 
         AtomGraphicsObject.RenderSubGraphicObject(0, GPUAtoms.size(), 0);
 
+
+
+                                                                                                                        //glBindVertexArray(0);
+                                                                                                                        //glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+                                                                                                                        glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
+                                                                                                                        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+
+                                                                                                                        glReadBuffer(GL_COLOR_ATTACHMENT0);
+
+                                                                                                                        glBlitFramebuffer(0, 0, width, height,0, 0, width, height, GL_COLOR_BUFFER_BIT,GL_LINEAR);
+
+
+
+                                                                                                                        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+                                                                                                                        // glReadBuffer(GL_COLOR_ATTACHMENT0);         // Read from color texture
+                                                                                                                        // glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+
                             //if (PressedRightMouseButton != 1)
                             //    DrawChosenAtomUsingStencilBuffer(ViewMatrix, PartOfStencilBufferIndex, NumberOfAllRenderedAtoms, TemporaryRenderedAtomsList);
-
-                            GLuint ClickedObjectID;
-
-                            glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
-                            glReadBuffer(GL_COLOR_ATTACHMENT1);
-
-                            glReadPixels(GLint(MousePositionLocal.s.X), GLint((float)Info.WindowHeight - MousePositionLocal.s.Y - 1), 1, 1, GL_RED_INTEGER, GL_UNSIGNED_INT, &ClickedObjectID);
-
-                            glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
-
 
         const auto stop_time1 = chrono::high_resolution_clock::now();
 
         ExecutionDurationTimeForCopyingParticlesToGraphicMemory += chrono::duration(stop_time1 - start_time1);
 
-                            // if (PressedRightMouseButton != 1)
-                            //     DrawChosenAtomUsingStencilBuffer(ViewMatrix, PartOfStencilBufferIndex, NumberOfAllRenderedAtoms, TemporaryRenderedAtomsList);
+                                                                                                                        // if (PressedRightMouseButton != 1)
+                                                                                                                        //     DrawChosenAtomUsingStencilBuffer(ViewMatrix, PartOfStencilBufferIndex, NumberOfAllRenderedAtoms, TemporaryRenderedAtomsList);
+
+                            //GLuint ClickedObjectID;
+                            uint32_t ClickedObjectID;
+
+                            glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
+                            glReadBuffer(GL_COLOR_ATTACHMENT1);
+
+                            if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
+                            {
+                                LoggersManagerObject.Log(STREAM("MOUSE0 X = " << MousePositionLocal.s.X << " " << MousePositionLocal.s.Y << " " << Info.WindowHeight));
+                                glReadPixels(GLint(MousePositionLocal.s.X), GLint((float)Info.WindowHeight - MousePositionLocal.s.Y - 1), 1, 1, GL_RED_INTEGER, GL_UNSIGNED_INT, &ClickedObjectID);
+                            }
+
+                            glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
 
                             if (PressedRightMouseButton != 1)
                                 DrawChosenAtomUsingStencilBuffer1(ViewMatrix, ClickedObjectID, NumberOfAllRenderedAtoms, GPUAtomsLocal);
@@ -504,15 +560,20 @@ inline void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::DrawChosenAtomU
         {
             UnsignedInt ChosenParticleCenterIndex = PartOfStencilBufferIndex;
 
+                            LoggersManagerObject.Log(STREAM("MOUSE1 = " << ChosenParticleCenterIndex));
+
             if (ChosenParticleCenterIndex > 0)
             {
                 Particle ChosenParticleObject{};
                 CellEngineAtom ChosenAtomObject{};
                 if (ChosenParticleCenterIndex < GPUAtomsLocal.size())
                 {
+                            LoggersManagerObject.Log(STREAM("MOUSE2 = " << ChosenParticleCenterIndex));
                     if (const auto ParticleIter = CellEngineDataFileObjectPointer->GetParticles()[GPUAtomsLocal[PartOfStencilBufferIndex].ParticleSectorXIndex][GPUAtomsLocal[PartOfStencilBufferIndex].ParticleSectorYIndex][GPUAtomsLocal[PartOfStencilBufferIndex].ParticleSectorZIndex].Particles.find(GPUAtomsLocal[PartOfStencilBufferIndex].Index); ParticleIter != CellEngineDataFileObjectPointer->GetParticles()[GPUAtomsLocal[PartOfStencilBufferIndex].ParticleSectorXIndex][GPUAtomsLocal[PartOfStencilBufferIndex].ParticleSectorYIndex][GPUAtomsLocal[PartOfStencilBufferIndex].ParticleSectorZIndex].Particles.end())
                     {
-                        if (ChosenParticleCenterIndex > ParticleIter->second.ListOfAtoms.size())
+                            LoggersManagerObject.Log(STREAM("MOUSE3 = " << ChosenParticleCenterIndex));
+                        //if (ChosenParticleCenterIndex > ParticleIter->second.ListOfAtoms.size())
+                        if (GPUAtomsLocal[PartOfStencilBufferIndex].AtomOffset > ParticleIter->second.ListOfAtoms.size())
                             throw std::runtime_error("ERROR STENCIL INDEX TOO BIG IN INNER 2 = " + std::to_string(ChosenParticleCenterIndex));
                         else
                         {
