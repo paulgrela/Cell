@@ -752,4 +752,6 @@ void CellEngineOpenGLVisualiser::OnResize(int Width, int Height)
     CATCH("executing window resize event - setting bounds of arc ball counting data for cell visualisation")
 }
 
+template vector3_16 CellEngineOpenGLVisualiser::GetColor<CellEngineAtom>(const CellEngineAtom& Object, const Particle& ParticleObject, const bool Chosen);
+
 #endif

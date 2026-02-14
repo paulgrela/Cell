@@ -38,45 +38,46 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace1(UnsignedI
                 if (const bool FinalVisibilityInModelWorld = RenderObject(CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.begin()->second.ListOfAtoms.back(), Particle(), ViewMatrix, true, false, true, NumberOfAllRenderedAtoms, false, !CellEngineConfigDataObject.ShowDetailsInAtomScale); FinalVisibilityInModelWorld == true)
                     if (CellEngineConfigDataObject.ShowDetailsInAtomScale == true)
                         for (const auto& ParticleObject : CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles)
-                        {
-                            GPUParticle GPUParticleObject;
-
-                            GPUParticleObject.AtomOffset = AtomOffsetTotal;
-                            GPUParticleObject.AtomCount = ParticleObject.second.ListOfAtoms.size();
-
-                            GPUParticles.emplace_back(GPUParticleObject);
-
-                            UnsignedInt AtomIndex = 0;
-                            for (const auto& atom : ParticleObject.second.ListOfAtoms)
+                            if (ParticlesKindsManagerObject.GetGraphicParticleKind(ParticleObject.second.EntityId).Visible == true)
                             {
-                                if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
+                                GPUParticle GPUParticleObject;
+
+                                GPUParticleObject.AtomOffset = AtomOffsetTotal;
+                                GPUParticleObject.AtomCount = ParticleObject.second.ListOfAtoms.size();
+
+                                GPUParticles.emplace_back(GPUParticleObject);
+
+                                UnsignedInt AtomIndex = 0;
+                                for (const auto& AtomObject : ParticleObject.second.ListOfAtoms)
                                 {
-                                    GPUAtomLocal GPUAtomLocalObject;
-                                    GPUAtomLocalObject.ParticleSectorXIndex = ParticleSectorXIndex;
-                                    GPUAtomLocalObject.ParticleSectorYIndex = ParticleSectorYIndex;
-                                    GPUAtomLocalObject.ParticleSectorZIndex = ParticleSectorZIndex;
-                                    GPUAtomLocalObject.Index = ParticleObject.second.Index;
-                                    GPUAtomLocalObject.AtomOffset = AtomIndex;
-                                    AtomIndex++;
-                                    GPUAtomsLocal.emplace_back(GPUAtomLocalObject);
+                                    if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
+                                    {
+                                        GPUAtomLocal GPUAtomLocalObject;
+                                        GPUAtomLocalObject.ParticleSectorXIndex = ParticleSectorXIndex;
+                                        GPUAtomLocalObject.ParticleSectorYIndex = ParticleSectorYIndex;
+                                        GPUAtomLocalObject.ParticleSectorZIndex = ParticleSectorZIndex;
+                                        GPUAtomLocalObject.Index = ParticleObject.second.Index;
+                                        GPUAtomLocalObject.AtomOffset = AtomIndex++;
+                                        GPUAtomsLocal.emplace_back(GPUAtomLocalObject);
+                                    }
+
+                                    GPUAtom GPUAtomObject;
+
+                                    GPUAtomObject.X = AtomObject.X;
+                                    GPUAtomObject.Y = AtomObject.Y;
+                                    GPUAtomObject.Z = AtomObject.Z;
+
+                                    const auto ParticleColor = CellEngineUseful::GetVMathVec3FromVector3ForColor(GetColor<CellEngineAtom>(AtomObject, ParticleObject.second, ChosenParticleObject.Index == ParticleObject.second.Index && ChosenAtomObjectIndex == AtomIndex));
+
+                                    GPUAtomObject.ColorR = ParticleColor.X();
+                                    GPUAtomObject.ColorG = ParticleColor.Y();
+                                    GPUAtomObject.ColorB = ParticleColor.Z();
+
+                                    GPUAtoms.emplace_back(GPUAtomObject);
                                 }
 
-
-                                GPUAtom gpuAtom;
-
-                                gpuAtom.X = atom.X;
-                                gpuAtom.Y = atom.Y;
-                                gpuAtom.Z = atom.Z;
-
-                                gpuAtom.ColorR = static_cast<float>(ParticleObject.second.RandomParticleKindColor.X);
-                                gpuAtom.ColorG = static_cast<float>(ParticleObject.second.RandomParticleKindColor.Y);
-                                gpuAtom.ColorB = static_cast<float>(ParticleObject.second.RandomParticleKindColor.Z);
-
-                                GPUAtoms.emplace_back(gpuAtom);
+                                AtomOffsetTotal += ParticleObject.second.ListOfAtoms.size();
                             }
-
-                            AtomOffsetTotal += ParticleObject.second.ListOfAtoms.size();
-                        }
 
         const auto stop_time111 = chrono::high_resolution_clock::now();
 
@@ -265,8 +266,6 @@ inline void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::DrawChosenAtomU
 
             if (ChosenParticleCenterIndex > 0)
             {
-                Particle ChosenParticleObject{};
-                CellEngineAtom ChosenAtomObject{};
                 if (ChosenParticleCenterIndex < GPUAtomsLocal.size())
                 {
                     if (const auto ParticleIter = CellEngineDataFileObjectPointer->GetParticles()[GPUAtomsLocal[PartOfStencilBufferIndex].ParticleSectorXIndex][GPUAtomsLocal[PartOfStencilBufferIndex].ParticleSectorYIndex][GPUAtomsLocal[PartOfStencilBufferIndex].ParticleSectorZIndex].Particles.find(GPUAtomsLocal[PartOfStencilBufferIndex].Index); ParticleIter != CellEngineDataFileObjectPointer->GetParticles()[GPUAtomsLocal[PartOfStencilBufferIndex].ParticleSectorXIndex][GPUAtomsLocal[PartOfStencilBufferIndex].ParticleSectorYIndex][GPUAtomsLocal[PartOfStencilBufferIndex].ParticleSectorZIndex].Particles.end())
@@ -277,13 +276,12 @@ inline void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::DrawChosenAtomU
                         {
                             ChosenParticleObject = ParticleIter->second;
                             ChosenAtomObject = ParticleIter->second.ListOfAtoms[GPUAtomsLocal[PartOfStencilBufferIndex].AtomOffset];
+                            ChosenAtomObjectIndex = GPUAtomsLocal[PartOfStencilBufferIndex].AtomOffset + 1;
                         }
                     }
                     else
                         throw std::runtime_error("ERROR STENCIL INDEX TOO BIG IN INNER 1 = " + std::to_string(ChosenParticleCenterIndex));
                 }
-
-                //RenderObject(ChosenAtomObject, ChosenParticleObject, ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, true, RenderObjectsBool);
 
                 PrintAtomDescriptionOnScreen(ChosenAtomObject, ChosenParticleObject);
             }
@@ -302,8 +300,6 @@ inline void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::DrawChosenAtomU
 
             if (ChosenParticleCenterIndex > 0)
             {
-                Particle ChosenParticleObject{};
-                CellEngineAtom ChosenAtomObject{};
                 if (ChosenParticleCenterIndex < TemporaryRenderedAtomsList.size())
                 {
                     const UnsignedInt ParticleSectorXIndex = get<0>(TemporaryRenderedAtomsList[ChosenParticleCenterIndex]);

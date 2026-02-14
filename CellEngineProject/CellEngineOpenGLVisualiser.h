@@ -18,9 +18,9 @@ public:
     float X{};
     float Y{};
     float Z{};
-    float ColorR;
-    float ColorG;
-    float ColorB;
+    float ColorR{};
+    float ColorG{};
+    float ColorB{};
     float _padding1[2]{};
 };
 
@@ -53,10 +53,10 @@ public:
     sb7::TextOverlay TextOverlayObject;
 
 public:
-    GLuint fbo;
-    GLuint colorTexture;
-    GLuint instanceTexture;
-    GLuint depthRenderbuffer;
+    GLuint fbo{};
+    GLuint colorTexture{};
+    GLuint instanceTexture{};
+    GLuint depthRenderbuffer{};
 
     //int width = 1930, height = 1375;
     int width = 2560, height = 1440;

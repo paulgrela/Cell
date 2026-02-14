@@ -67,7 +67,7 @@ void main()
 
         ParticlesOut[AtomOffsetIndexOut].MoveMatrix = ViewMatrix * ModelMatrix;
 
-        ParticlesOut[AtomOffsetIndexOut].Color = vec3(AtomIn.ColorR, AtomIn.ColorG, AtomIn.ColorB) / 100.00;
+        ParticlesOut[AtomOffsetIndexOut].Color = vec3(AtomIn.ColorR, AtomIn.ColorG, AtomIn.ColorB);
 
         ParticlesOut[AtomOffsetIndexOut].ParticleIdL = AtomOffsetIndexOut;
     }

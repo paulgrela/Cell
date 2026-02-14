@@ -16,6 +16,10 @@
 class CellEngineOpenGLVisualiserOfFullAtomSimulationSpace : public CellEngineOpenGLVisualiser
 {
 public:
+    Particle ChosenParticleObject{};
+    CellEngineAtom ChosenAtomObject{};
+    UnsignedInt ChosenAtomObjectIndex{};
+public:
     std::tuple<UnsignedInt, UnsignedInt, UnsignedInt> GetStartPositions();
     std::tuple<UnsignedInt, UnsignedInt, UnsignedInt> GetSizes();
 private:
@@ -27,13 +31,11 @@ private:
 
     void RenderSpace(UnsignedInt& NumberOfAllRenderedAtoms, UnsignedInt& NumberOfFoundParticlesCenterToBeRenderedInAtomDetails, const vmath::mat4& ViewMatrix) override;
     inline void DrawChosenAtomUsingStencilBuffer(const vmath::mat4& ViewMatrix, const GLuint* PartOfStencilBufferIndex, UnsignedInt& NumberOfAllRenderedAtoms, const std::vector<std::tuple<UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt>>& TemporaryRenderedAtomsList);
-    inline void DrawChosenAtomUsingStencilBuffer1(const vmath::mat4& ViewMatrix, const GLuint PartOfStencilBufferIndex, UnsignedInt& NumberOfAllRenderedAtoms, const vector<GPUAtomLocal>& GPUAtomsLocal);
+    inline void DrawChosenAtomUsingStencilBuffer1(const vmath::mat4& ViewMatrix, GLuint PartOfStencilBufferIndex, UnsignedInt& NumberOfAllRenderedAtoms, const vector<GPUAtomLocal>& GPUAtomsLocal);
 public:
     void GetStartCenterPoint() override;
 public:
     static inline std::mutex RenderMenuAndFullAtomSimulationSpaceMutexObject;
-
-    static inline std::mutex PrepareParticlesFullAtomSimulationSpaceMutexObject;
 };
 
 #endif
