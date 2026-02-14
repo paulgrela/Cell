@@ -27,11 +27,13 @@ bool CheckVisibility(const bool Visibility)
         return Visibility;
 }
 
-void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace1(UnsignedInt& NumberOfAllRenderedAtoms, const vmath::mat4& ViewMatrix, uint32_t AtomOffsetTotal, vector<GPUParticle>& GPUParticles, vector<GPUAtom>& GPUAtoms, vector<GPUAtomLocal>& GPUAtomsLocal)
+void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace1(UnsignedInt& NumberOfAllRenderedAtoms, const vmath::mat4& ViewMatrix, vector<GPUParticle>& GPUParticles, vector<GPUAtom>& GPUAtoms, vector<GPUAtomLocal>& GPUAtomsLocal)
 {
     try
     {
         const auto start_time111 = chrono::high_resolution_clock::now();
+
+        uint32_t AtomOffsetTotal = 0;
 
         FOR_EACH_SECTOR_IN_XYZ_ONLY
             if (CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.empty() == false)
@@ -150,9 +152,6 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
 
         //RenderSpace0(NumberOfAllRenderedAtoms, ViewMatrix);
 
-        uint32_t ParticlesOffsetTotal = 0;
-        uint32_t AtomOffsetTotal = 0;
-
         vector<GPUParticle> GPUParticles;
         GPUParticles.reserve(10'000'000);
         vector<GPUAtom> GPUAtoms;
@@ -160,7 +159,7 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
         vector<GPUAtomLocal> GPUAtomsLocal;
         GPUAtomsLocal.reserve(1000'000'000);
 
-        RenderSpace1(NumberOfAllRenderedAtoms, ViewMatrix, AtomOffsetTotal, GPUParticles, GPUAtoms, GPUAtomsLocal);
+        RenderSpace1(NumberOfAllRenderedAtoms, ViewMatrix, GPUParticles, GPUAtoms, GPUAtomsLocal);
         //RenderSpace2(NumberOfAllRenderedAtoms, ViewMatrix, AtomOffsetTotal, GPUParticles, GPUAtoms);
         //RenderSpace3(NumberOfAllRenderedAtoms, ViewMatrix, AtomOffsetTotal, ParticlesOffsetTotal, GPUParticles, GPUAtoms);
 
@@ -232,7 +231,7 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
 
                                                                                                                         glReadBuffer(GL_COLOR_ATTACHMENT0);
 
-                                                                                                                        glBlitFramebuffer(0, 0, width, height,0, 0, width, height, GL_COLOR_BUFFER_BIT,GL_LINEAR);
+                                                                                                                        glBlitFramebuffer(0, 0, TextureWidth, TextureHeight,0, 0, TextureWidth, TextureHeight, GL_COLOR_BUFFER_BIT,GL_LINEAR);
 
                                                                                                                         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -251,32 +250,30 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
                             glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
 
                             if (PressedRightMouseButton != 1)
-                                DrawChosenAtomUsingStencilBuffer1(ViewMatrix, ClickedObjectID, NumberOfAllRenderedAtoms, GPUAtomsLocal);
+                                DrawChosenAtomUsingStencilBuffer1(ClickedObjectID, GPUAtomsLocal);
     }
     CATCH("rendering full atom simulation space");
 }
 
-inline void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::DrawChosenAtomUsingStencilBuffer1(const vmath::mat4& ViewMatrix, const GLuint PartOfStencilBufferIndex, UnsignedInt& NumberOfAllRenderedAtoms, const vector<GPUAtomLocal>& GPUAtomsLocal)
+inline void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::DrawChosenAtomUsingStencilBuffer1(const GLuint ChosenParticleCenterIndex, const vector<GPUAtomLocal>& GPUAtomsLocal)
 {
     try
     {
         if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
         {
-            UnsignedInt ChosenParticleCenterIndex = PartOfStencilBufferIndex;
-
             if (ChosenParticleCenterIndex > 0)
             {
                 if (ChosenParticleCenterIndex < GPUAtomsLocal.size())
                 {
-                    if (const auto ParticleIter = CellEngineDataFileObjectPointer->GetParticles()[GPUAtomsLocal[PartOfStencilBufferIndex].ParticleSectorXIndex][GPUAtomsLocal[PartOfStencilBufferIndex].ParticleSectorYIndex][GPUAtomsLocal[PartOfStencilBufferIndex].ParticleSectorZIndex].Particles.find(GPUAtomsLocal[PartOfStencilBufferIndex].Index); ParticleIter != CellEngineDataFileObjectPointer->GetParticles()[GPUAtomsLocal[PartOfStencilBufferIndex].ParticleSectorXIndex][GPUAtomsLocal[PartOfStencilBufferIndex].ParticleSectorYIndex][GPUAtomsLocal[PartOfStencilBufferIndex].ParticleSectorZIndex].Particles.end())
+                    if (const auto ParticleIter = CellEngineDataFileObjectPointer->GetParticles()[GPUAtomsLocal[ChosenParticleCenterIndex].ParticleSectorXIndex][GPUAtomsLocal[ChosenParticleCenterIndex].ParticleSectorYIndex][GPUAtomsLocal[ChosenParticleCenterIndex].ParticleSectorZIndex].Particles.find(GPUAtomsLocal[ChosenParticleCenterIndex].Index); ParticleIter != CellEngineDataFileObjectPointer->GetParticles()[GPUAtomsLocal[ChosenParticleCenterIndex].ParticleSectorXIndex][GPUAtomsLocal[ChosenParticleCenterIndex].ParticleSectorYIndex][GPUAtomsLocal[ChosenParticleCenterIndex].ParticleSectorZIndex].Particles.end())
                     {
-                        if (GPUAtomsLocal[PartOfStencilBufferIndex].AtomOffset > ParticleIter->second.ListOfAtoms.size())
+                        if (GPUAtomsLocal[ChosenParticleCenterIndex].AtomOffset > ParticleIter->second.ListOfAtoms.size())
                             throw std::runtime_error("ERROR STENCIL INDEX TOO BIG IN INNER 2 = " + std::to_string(ChosenParticleCenterIndex));
                         else
                         {
                             ChosenParticleObject = ParticleIter->second;
-                            ChosenAtomObject = ParticleIter->second.ListOfAtoms[GPUAtomsLocal[PartOfStencilBufferIndex].AtomOffset];
-                            ChosenAtomObjectIndex = GPUAtomsLocal[PartOfStencilBufferIndex].AtomOffset + 1;
+                            ChosenAtomObject = ParticleIter->second.ListOfAtoms[GPUAtomsLocal[ChosenParticleCenterIndex].AtomOffset];
+                            ChosenAtomObjectIndex = GPUAtomsLocal[ChosenParticleCenterIndex].AtomOffset + 1;
                         }
                     }
                     else
