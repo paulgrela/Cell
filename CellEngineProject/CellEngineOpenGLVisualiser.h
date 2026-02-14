@@ -58,8 +58,8 @@ public:
     GLuint instanceTexture;
     GLuint depthRenderbuffer;
 
-    int width = 1930, height = 1375;
-    //int width = 2560, height = 1440;
+    //int width = 1930, height = 1375;
+    int width = 2560, height = 1440;
 
     void CreateFramebuffer();
 

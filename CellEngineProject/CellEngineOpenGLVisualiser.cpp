@@ -41,36 +41,22 @@ inline void CellEngineOpenGLVisualiser::CreateFramebuffer()
         glGenTextures(1, &colorTexture);
         glBindTexture(GL_TEXTURE_2D, colorTexture);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-        // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
         glGenTextures(1, &instanceTexture);
         glBindTexture(GL_TEXTURE_2D, instanceTexture);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_R32UI, width, height, 0, GL_RED_INTEGER, GL_UNSIGNED_INT, nullptr);
-        // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-        // // Create depth renderbuffer
-            glGenRenderbuffers(1, &depthRenderbuffer);
-            glBindRenderbuffer(GL_RENDERBUFFER, depthRenderbuffer);
-            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width, height);
+        glGenRenderbuffers(1, &depthRenderbuffer);
+        glBindRenderbuffer(GL_RENDERBUFFER, depthRenderbuffer);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width, height);
 
-
-
-        // Create framebuffer
         glGenFramebuffers(1, &fbo);
         glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
-        // Attach textures and renderbuffer
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTexture, 0);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, instanceTexture, 0);
-            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRenderbuffer);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRenderbuffer);
 
-        // Specify draw buffers
         GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
         glDrawBuffers(2, drawBuffers);
 
@@ -110,8 +96,7 @@ void CellEngineOpenGLVisualiser::StartUp()
         glBindBuffer(GL_SHADER_STORAGE_BUFFER, ParticlesAtomsBufferSharedBetweenComputeShaderAndVertexShaderSSBO);
         glBufferData(GL_SHADER_STORAGE_BUFFER, MAX_PARTICLES * sizeof(UniformsBlock), nullptr, GL_DYNAMIC_DRAW);
 
-                                                                                                                        CreateFramebuffer();
-
+                CreateFramebuffer();
 
         ProjectionMatrixGlobal = vmath::perspective(50.0f, (float)Info.WindowWidth / (float)Info.WindowHeight, 0.1f, 10000.0f);
 
@@ -380,35 +365,14 @@ inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader(const 
 
     try
     {
-        //glBindBufferBase(GL_UNIFORM_BUFFER, 0, UniformsBuffer);
-        //auto MatrixUniformBlockForVertexShaderPointer = (UniformsBlock*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(UniformsBlock), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
-
-
         const auto start_time = chrono::high_resolution_clock::now();
-        //const vmath::mat4 ProjectionMatrix1 = vmath::perspective(50.0f, (float)Info.WindowWidth / (float)Info.WindowHeight, 0.1f, 10000.0f);
         const vmath::mat4 MoveMatrix1 = ViewMatrix * ModelMatrix;
         const auto stop_time = chrono::high_resolution_clock::now();
 
         ExecutionDurationTimeForDrawingParticles += chrono::duration(stop_time - start_time);
 
         UniformsBlock MatrixUniformBlockForVertexShaderPointer;
-        //MatrixUniformBlockForVertexShaderPointer.ProjectionMatrix = vmath::perspective(50.0f, (float)Info.WindowWidth / (float)Info.WindowHeight, 0.1f, 10000.0f);
-        //MatrixUniformBlockForVertexShaderPointer.ProjectionMatrix = ProjectionMatrix1;
-        //MatrixUniformBlockForVertexShaderPointer.ProjectionMatrix = ProjectionMatrixGlobal;
         MatrixUniformBlockForVertexShaderPointer.MoveMatrix = MoveMatrix1;
-        //MatrixUniformBlockForVertexShaderPointer.Color = Color;
-        //UniformsBlocks[ParticleSectorXIndex].emplace_back(MatrixUniformBlockForVertexShaderPointer);
-        //UniformsBlocks[0].emplace_back(MatrixUniformBlockForVertexShaderPointer);
-//UniformsBlocks.emplace_back(MatrixUniformBlockForVertexShaderPointer);
-        // {
-        //     lock_guard LockGuard{ UniformsBlocksFullAtomSimulationSpaceMutexObject };
-        //     UniformsBlocks.emplace_back(MatrixUniformBlockForVertexShaderPointer);
-        // }
-
-        //UniformsBlocks.emplace_back(UniformsBlock{ MoveMatrix1, ProjectionMatrix1, Color });
-        //UniformsBlocksTest.emplace_back(UniformsBlockTest{ 10, 20, 30 });
-
-        //ten UniformsBlock do SSBO
 
         if (DrawAdditional == true)
         {
@@ -420,11 +384,6 @@ inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader(const 
         const auto stop_time1 = chrono::high_resolution_clock::now();
 
         ExecutionDurationTimeForPreparingParticles += chrono::duration(stop_time1 - start_time);
-
-        //MatrixUniformBlockForVertexShaderPointer->MoveMatrix = ViewMatrix * ModelMatrix;
-        //MatrixUniformBlockForVertexShaderPointer->MoveMatrix = MoveMatrix1;
-
-        //glUnmapBuffer(GL_UNIFORM_BUFFER);
     }
     CATCH("rendering object for data for cell visualization")
 
@@ -539,36 +498,6 @@ inline void CellEngineOpenGLVisualiser::PrepareOpenGLToRenderObjectsOnScene() co
         vmath::vec3 BackgroundColor = CellEngineConfigDataObject.BackgroundColors[CellEngineConfigDataObject.ChosenBackgroundColor];
         glClearColor(BackgroundColor.data[0], BackgroundColor.data[1], BackgroundColor.data[2], 0.0f);
 
-        // glClearStencil(0);
-        // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-        //
-        // glEnable(GL_STENCIL_TEST);
-        // glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-
-
-
-        // glStencilMask(0xFF);
-        // glStencilFunc(GL_ALWAYS, 0, 0xFF);
-
-
-
-        // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-        // glEnable(GL_STENCIL_TEST);
-        // glStencilMask(0xFF);  // Enable all bits for writing
-        // glStencilFunc(GL_ALWAYS, 0, 0xFF);  // Always pass stencil test
-        // glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);  // Replace on pass
-
-
-
-        // glEnable(GL_STENCIL_TEST);
-        // glClearStencil(0);
-        // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-        // glStencilMask(0xFF);
-        // glStencilFunc(GL_ALWAYS, 0, 0xFF);
-        // glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-
-
-
         glUniform1f(Uniforms.SpecularPower, CellEngineConfigDataObject.SpecularPower);
         glUniform3fv(Uniforms.SpecularAlbedo, 1, vmath::vec3(CellEngineConfigDataObject.SpecularAlbedo));
     }
@@ -609,26 +538,6 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
 {
     try
     {
-        // // Bind our framebuffer
-        // glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-        //
-        // // Clear both color and instance ID buffers
-        // glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        //
-        // // Clear instance texture to 0xFFFFFFFF (no instance)
-        // GLuint clearValue = 0xFFFFFFFF;
-        // glClearTexImage(instanceTexture, 0, GL_RED_INTEGER, GL_UNSIGNED_INT, &clearValue);
-        //
-        // glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-                                                                                                                        // // Enable depth test
-                                                                                                                        // glEnable(GL_DEPTH_TEST);
-                                                                                                                        // glDepthFunc(GL_LESS);
-
-
-                                                                                                                        //glUseProgram(ShaderProgramPhong);
-
         CopyMousePositionWhenButtonPressed();
 
         CellEngineConfigDataObject.UseStencilBuffer == true ? CellEngineConfigDataObject.NumberOfStencilBufferLoops = 3 : CellEngineConfigDataObject.NumberOfStencilBufferLoops = 1;
