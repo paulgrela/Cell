@@ -37,7 +37,7 @@ namespace sb7
 
         virtual ~OpenGLApplication() = default;
 
-        virtual void Run(int XPosWindow, int YPosWindow, int WidthWindow, int HeightWindow)
+        void PrepareData(const int XPosWindow, const int YPosWindow, const int WidthWindow, const int HeightWindow)
         {
             InitExternalData();
 
@@ -67,7 +67,7 @@ namespace sb7
             glfwWindowHint(GLFW_SAMPLES, Info.Samples);
             glfwWindowHint(GLFW_STEREO, Info.Flags.Stereo ? GL_TRUE : GL_FALSE);
 
-            Window = glfwCreateWindow(Info.WindowWidth, Info.WindowHeight, Info.Title, Info.Flags.FullScreen ? glfwGetPrimaryMonitor() : NULL, NULL);
+            Window = glfwCreateWindow(Info.WindowWidth, Info.WindowHeight, Info.Title, Info.Flags.FullScreen ? glfwGetPrimaryMonitor() : nullptr, nullptr);
             if (!Window)
             {
                 fprintf(stderr, "Failed to open window\n");
@@ -78,6 +78,7 @@ namespace sb7
             glfwMakeContextCurrent(Window);
 
             glfwSetWindowSizeCallback(Window, glfw_onResize);
+
             glfwSetKeyCallback(Window, glfw_onKey);
             glfwSetMouseButtonCallback(Window, glfw_onMouseButton);
             glfwSetCursorPosCallback(Window, glfw_onMouseMove);
@@ -113,6 +114,11 @@ namespace sb7
             glClear(GL_COLOR_BUFFER_BIT);
             glfwSwapBuffers(Window);
             glfwPollEvents();
+        }
+
+        virtual void Run(int XPosWindow, int YPosWindow, int WidthWindow, int HeightWindow)
+        {
+            PrepareData(XPosWindow, YPosWindow, WidthWindow, HeightWindow);
 
             bool Running = true;
             do
@@ -120,15 +126,21 @@ namespace sb7
                 Render(glfwGetTime());
 
                 glfwSwapBuffers(Window);
+
                 #ifdef WINDOWS_PLATFORM
                 glfwPollEvents();
                 #endif
-
+                                                                                                                        glfwPollEvents();
                 Running &= (glfwGetKey(Window, GLFW_KEY_ESCAPE) == GLFW_RELEASE);
                 Running &= (glfwWindowShouldClose(Window) != GL_TRUE);
             }
             while (Running);
 
+            DestroyData();
+        }
+
+        void DestroyData()
+        {
             ShutDown();
 
             glfwDestroyWindow(Window);

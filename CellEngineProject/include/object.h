@@ -22,9 +22,8 @@ namespace sb7
         }
 
         void RenderSubGraphicObject(unsigned int GraphicObjectIndex, unsigned int InstanceCount = 1, unsigned int BaseInstance = 0);
-        void RenderSubGraphicAllObjects(unsigned int GraphicObjectIndex, unsigned int InstanceCount = 1, unsigned int BaseInstance = 0);
 
-        void GetSubGraphicObjectInfo(unsigned int Index, GLuint &First, GLuint &NumberOfGraphicObjectsParameter)
+        void GetSubGraphicObjectInfo(unsigned int Index, GLuint &First, GLuint &NumberOfGraphicObjectsParameter) const
         {
             if (Index >= NumberOfSubGraphicObjects)
             {

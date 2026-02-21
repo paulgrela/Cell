@@ -1,3 +1,7 @@
+#pragma once
+
+#ifndef CELL_ENGINE_IM_GUI_MENU_H
+#define CELL_ENGINE_IM_GUI_MENU_H
 
 #include "DestinationPlatform.h"
 
@@ -140,79 +144,6 @@ public:
         }
         CATCH("drawing plus minus scalar button");
     }
-
-    static void glfw_error_callback(int Error, const char *Description)
-    {
-        LoggersManagerObject.Log(STREAM("Glfw Error nr " << Error << " : " << Description << endl));
-    }
-
-    GLFWwindow *PrepareImGuiMenuGLFWData()
-    {
-        GLFWwindow *ImGuiMenuWindow;
-
-        try
-        {
-            glfwSetErrorCallback(glfw_error_callback);
-            if (!glfwInit())
-            #ifdef WINDOWS_PLATFORM
-                ExitProcess(1);
-            #endif
-            #ifdef UNIX_PLATFORM
-                exit(1);
-            #endif
-
-            Info.WindowWidth = 1600;
-            Info.WindowHeight = 1200;
-            Info.MajorVersion = 4;
-            Info.MinorVersion = 3;
-            Info.Samples = 0;
-            Info.Flags.All = 0;
-            Info.Flags.Cursor = 1;
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, Info.MajorVersion);
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, Info.MinorVersion);
-
-            glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
-
-            if (Info.Flags.Robust)
-                glfwWindowHint(GLFW_CONTEXT_ROBUSTNESS, GLFW_LOSE_CONTEXT_ON_RESET);
-
-            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-            glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-            glfwWindowHint(GLFW_SAMPLES, Info.Samples);
-            glfwWindowHint(GLFW_STEREO, Info.Flags.Stereo ? GL_TRUE : GL_FALSE);
-
-            ImGuiMenuWindow = glfwCreateWindow(CellEngineConfigDataObject.WidthMenuWindow, CellEngineConfigDataObject.HeightMenuWindow, "Dear ImGui GLFW+OpenGL3 example", NULL, NULL);
-            if (ImGuiMenuWindow == nullptr)
-            #ifdef WINDOWS_PLATFORM
-                ExitProcess(1);
-            #endif
-            #ifdef UNIX_PLATFORM
-                exit(1);
-            #endif
-
-            glfwSetWindowPos(ImGuiMenuWindow, CellEngineConfigDataObject.XTopMenuWindow, CellEngineConfigDataObject.YTopMenuWindow);
-
-            if (!Info.Flags.Cursor)
-                glfwSetInputMode(ImGuiMenuWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-
-            gl3wInit();
-
-            glfwMakeContextCurrent(ImGuiMenuWindow);
-
-            glfwSwapInterval(1);
-
-            IMGUI_CHECKVERSION();
-            ImGui::CreateContext();
-            ImGuiIO &io = ImGui::GetIO();
-
-            ImGui_ImplGlfw_InitForOpenGL(ImGuiMenuWindow, true);
-            const char *glsl_version = "#version 130";
-            ImGui_ImplOpenGL3_Init(glsl_version);
-        }
-        CATCH("preparing imgui menu glfw data");
-
-        return ImGuiMenuWindow;
-    };
 
 public:
     static void MenuParametersMenu(bool &ModifiableWindow)
@@ -1479,7 +1410,8 @@ public:
                     {
                         int ValueToSend = 0;
                         MPI_Bcast(&ValueToSend, 1, MPI_INT, 0, MPI_COMM_WORLD);
-                        ImGuiMenuGLFShutdown(ImGuiMenuWindow);
+                        //ImGuiMenuGLFShutdown(ImGuiMenuWindow);
+                        ImGuiMenuGLFShutdown();
                         EndMPIAllProcessesForCellEngine();
                     });
                 }
@@ -1488,7 +1420,7 @@ public:
         CATCH("modification of simulations operations full atom simulation space parameters menu")
     }
 
-static void RandomParticlesGeneratorFullAtomSimulationSpaceParametersMenu(const UnsignedInt StringLength)
+    static void RandomParticlesGeneratorFullAtomSimulationSpaceParametersMenu(const UnsignedInt StringLength)
     {
         try
         {
@@ -1704,7 +1636,78 @@ static void RandomParticlesGeneratorFullAtomSimulationSpaceParametersMenu(const 
         CATCH("executing menu window 2");
     }
 
-    static void ImGuiMenuGLFWMainLoop(GLFWwindow* ImGuiMenuWindow)
+    static void glfw_error_callback(int Error, const char *Description)
+    {
+        LoggersManagerObject.Log(STREAM("Glfw Error nr " << Error << " : " << Description << endl));
+    }
+
+    GLFWwindow *PrepareImGuiMenuGLFWData()
+    {
+        try
+        {
+            glfwSetErrorCallback(glfw_error_callback);
+            if (!glfwInit())
+            #ifdef WINDOWS_PLATFORM
+                ExitProcess(1);
+            #endif
+            #ifdef UNIX_PLATFORM
+                exit(1);
+            #endif
+
+            Info.WindowWidth = 1600;
+            Info.WindowHeight = 1200;
+            Info.MajorVersion = 4;
+            Info.MinorVersion = 3;
+            Info.Samples = 0;
+            Info.Flags.All = 0;
+            Info.Flags.Cursor = 1;
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, Info.MajorVersion);
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, Info.MinorVersion);
+
+            glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
+
+            if (Info.Flags.Robust)
+                glfwWindowHint(GLFW_CONTEXT_ROBUSTNESS, GLFW_LOSE_CONTEXT_ON_RESET);
+
+            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+            glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+            glfwWindowHint(GLFW_SAMPLES, Info.Samples);
+            glfwWindowHint(GLFW_STEREO, Info.Flags.Stereo ? GL_TRUE : GL_FALSE);
+
+            ImGuiMenuWindow = glfwCreateWindow(CellEngineConfigDataObject.WidthMenuWindow, CellEngineConfigDataObject.HeightMenuWindow, "Dear ImGui GLFW+OpenGL3 example", NULL, NULL);
+            if (ImGuiMenuWindow == nullptr)
+            #ifdef WINDOWS_PLATFORM
+                ExitProcess(1);
+            #endif
+            #ifdef UNIX_PLATFORM
+                exit(1);
+            #endif
+
+            glfwSetWindowPos(ImGuiMenuWindow, CellEngineConfigDataObject.XTopMenuWindow, CellEngineConfigDataObject.YTopMenuWindow);
+
+            if (!Info.Flags.Cursor)
+                glfwSetInputMode(ImGuiMenuWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+
+            gl3wInit();
+
+            glfwMakeContextCurrent(ImGuiMenuWindow);
+
+            glfwSwapInterval(1);
+
+            IMGUI_CHECKVERSION();
+            ImGui::CreateContext();
+            ImGuiIO &io = ImGui::GetIO();
+
+            ImGui_ImplGlfw_InitForOpenGL(ImGuiMenuWindow, true);
+            const char *glsl_version = "#version 130";
+            ImGui_ImplOpenGL3_Init(glsl_version);
+        }
+        CATCH("preparing imgui menu glfw data");
+
+        return ImGuiMenuWindow;
+    };
+
+    static void ImGuiMenuGLFWMainLoop()
     {
         try
         {
@@ -1739,7 +1742,7 @@ static void RandomParticlesGeneratorFullAtomSimulationSpaceParametersMenu(const 
                 int ImGuiMenuWindowWidth, ImGuiMenuWindowHeight;
                 glfwGetFramebufferSize(ImGuiMenuWindow, &ImGuiMenuWindowWidth, &ImGuiMenuWindowHeight);
                 glViewport(0, 0, ImGuiMenuWindowWidth, ImGuiMenuWindowHeight);
-                ImVec4 BackgroundColor = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+                constexpr auto BackgroundColor = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
                 glClearColor(BackgroundColor.x * BackgroundColor.w, BackgroundColor.y * BackgroundColor.w, BackgroundColor.z * BackgroundColor.w, BackgroundColor.w);
                 glClear(GL_COLOR_BUFFER_BIT);
                 ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -1750,7 +1753,7 @@ static void RandomParticlesGeneratorFullAtomSimulationSpaceParametersMenu(const 
         CATCH("executing imgui menu glfw main loop");
     }
 
-    static void ImGuiMenuGLFShutdown(GLFWwindow* ImGuiMenuWindow)
+    static void ImGuiMenuGLFShutdown()
     {
         try
         {
@@ -1939,13 +1942,19 @@ public:
                 {
                     ImGuiMenuWindow = PrepareImGuiMenuGLFWData();
 
-                    thread CellEngineOpenGLVisualiserThreadObject(&CellEngineImGuiMenu::CellEngineOpenGLVisualiserThreadFunction, this, CellEngineConfigDataObject.XTopMainWindow, CellEngineConfigDataObject.YTopMainWindow, CellEngineConfigDataObject.WidthMainWindow, CellEngineConfigDataObject.HeightMainWindow);
+                    //sb7::OpenGLApplication::PrepareData(CellEngineConfigDataObject.XTopMainWindow, CellEngineConfigDataObject.YTopMainWindow, CellEngineConfigDataObject.WidthMainWindow, CellEngineConfigDataObject.HeightMainWindow);
 
-                    ImGuiMenuGLFWMainLoop(ImGuiMenuWindow);
+                    // thread CellEngineOpenGLVisualiserThreadObject(&CellEngineImGuiMenu::CellEngineOpenGLVisualiserThreadFunction, this, CellEngineConfigDataObject.XTopMainWindow, CellEngineConfigDataObject.YTopMainWindow, CellEngineConfigDataObject.WidthMainWindow, CellEngineConfigDataObject.HeightMainWindow);
+                    //
+                    // ImGuiMenuGLFWMainLoop(ImGuiMenuWindow);
+                    //
+                    // CellEngineOpenGLVisualiserThreadObject.detach();
+                    //
+                    // ImGuiMenuGLFShutdown(ImGuiMenuWindow);
 
-                    CellEngineOpenGLVisualiserThreadObject.detach();
+                    CellEngineOpenGLVisualiserThreadFunction(CellEngineConfigDataObject.XTopMainWindow, CellEngineConfigDataObject.YTopMainWindow, CellEngineConfigDataObject.WidthMainWindow, CellEngineConfigDataObject.HeightMainWindow);
 
-                    ImGuiMenuGLFShutdown(ImGuiMenuWindow);
+                    ImGuiMenuGLFShutdown();
                 }
             #endif
 
@@ -1959,3 +1968,4 @@ public:
 inline GLFWwindow* CellEngineImGuiMenu::ImGuiMenuWindow = nullptr;
 #endif
 
+#endif

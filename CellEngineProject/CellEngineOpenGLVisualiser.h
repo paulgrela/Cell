@@ -6,8 +6,8 @@
 
 #ifdef USE_OPENGL
 
+#include <sb7.h>
 #include <object.h>
-#include <sb7color.h>
 #include <sb7textoverlay.h>
 
 #include "ArcBall.h"
@@ -42,26 +42,25 @@ public:
     uint16_t ParticleSectorZIndex{};
 };
 
-
 static constexpr size_t MAX_PARTICLES = 100'000'000;
 static constexpr size_t MAX_ATOMS = 100'000'000;
 
 class CellEngineOpenGLVisualiser : public sb7::OpenGLApplication
 {
 public:
-    sb7::GraphicObject AtomGraphicsObject;
-    sb7::TextOverlay TextOverlayObject;
+    sb7::GraphicObject AtomGraphicsObject{};
+    sb7::TextOverlay TextOverlayObject{};
 
 public:
-    GLuint fbo{};
-    GLuint colorTexture{};
-    GLuint instanceTexture{};
-    GLuint depthRenderbuffer{};
-
-    int TextureWidth = 2560, TextureHeight = 1440;
+    GLuint FrameBufferObject{};
+    GLuint ScreenColorTexture{};
+    GLuint ScreenBufferInstanceTexture{};
+    GLuint ScreenDepthRenderBuffer{};
 
     void CreateFramebuffer();
+    void ResizeFramebuffer(int NewWidth, int NewHeight);
 
+    void DiagnoseFBO() const;
 protected:
     GLuint AtomSSBO{};
     GLuint ParticleSSBO{};
@@ -75,9 +74,9 @@ protected:
 protected:
     struct UniformsBlock
     {
-        vmath::mat4 MoveMatrix;
-        vmath::vec3 Color;
-        float padding;
+        vmath::mat4 MoveMatrix{};
+        vmath::vec3 Color{};
+        float padding{};
     };
 protected:
     std::vector<UniformsBlock> UniformsBlocks{};
@@ -104,14 +103,14 @@ private:
 protected:
     vmath::vec3 Center{};
 private:
-    vmath::mat4 RotationMatrix;
+    vmath::mat4 RotationMatrix{};
 protected:
     UnsignedInt PressedRightMouseButton = 0;
     bool PressedRightMouseButtonBool = false;
 public:
     bool RenderObjectsBool = true;
 public:
-    vmath::mat4 ProjectionMatrixGlobal;
+    vmath::mat4 ProjectionMatrixGlobal{};
 public:
     CellEngineOpenGLVisualiser() = default;
 protected:
