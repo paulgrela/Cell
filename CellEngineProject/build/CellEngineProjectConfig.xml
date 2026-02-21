@@ -4837,7 +4837,7 @@
 			<ChosenStructureIndex>0</ChosenStructureIndex>
 			<FilmOfStructuresActive>0</FilmOfStructuresActive>
 
-			<NumberOfStencilBufferLoops>3</NumberOfStencilBufferLoops>
+			<NumberOfStencilBufferLoops>1</NumberOfStencilBufferLoops>
 			<StencilForDrawingObjectsTypes>2</StencilForDrawingObjectsTypes> <!--StencilForDrawingOnlyParticlesCenters = 1, StencilForDrawingOnlyInAtomScale = 2-->
 
 			<MakeColorsType>4</MakeColorsType> <!--DrawColorForEveryAtom = 1, DrawColorForEveryParticle = 2, DrawRandomColorForEveryParticleKind = 3-->

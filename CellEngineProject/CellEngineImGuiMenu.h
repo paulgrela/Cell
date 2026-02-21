@@ -1707,13 +1707,61 @@ public:
         return ImGuiMenuWindow;
     };
 
+    // static void ImGuiMenuGLFWMainLoop()
+    // {
+    //     try
+    //     {
+    //         bool ModifiableWindow = false;
+    //
+    //         while (!glfwWindowShouldClose(ImGuiMenuWindow))
+    //         {
+    //             if (CellEngineConfigDataObject.ImGuiLightVersion == true)
+    //                 ImGui::StyleColorsLight();
+    //             else
+    //                 ImGui::StyleColorsDark();
+    //
+    //             glfwPollEvents();
+    //
+    //             ImGui_ImplOpenGL3_NewFrame();
+    //             ImGui_ImplGlfw_NewFrame();
+    //             ImGui::NewFrame();
+    //
+    //             if (CellEngineConfigDataObject.ImGuiDemoWindowMenu == true)
+    //                 ImGui::ShowDemoWindow();
+    //
+    //             ImGuiWindowFlags WindowFlags = 0;
+    //             WindowFlags |= ImGuiWindowFlags_NoMove;
+    //             WindowFlags |= ImGuiWindowFlags_NoResize;
+    //
+    //             MenuWindow1(WindowFlags, ModifiableWindow);
+    //
+    //             MenuWindow2(WindowFlags, ModifiableWindow);
+    //
+    //             ImGui::Render();
+    //
+    //             int ImGuiMenuWindowWidth, ImGuiMenuWindowHeight;
+    //             glfwGetFramebufferSize(ImGuiMenuWindow, &ImGuiMenuWindowWidth, &ImGuiMenuWindowHeight);
+    //             glViewport(0, 0, ImGuiMenuWindowWidth, ImGuiMenuWindowHeight);
+    //             constexpr auto BackgroundColor = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+    //             glClearColor(BackgroundColor.x * BackgroundColor.w, BackgroundColor.y * BackgroundColor.w, BackgroundColor.z * BackgroundColor.w, BackgroundColor.w);
+    //             glClear(GL_COLOR_BUFFER_BIT);
+    //             ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    //
+    //             glfwSwapBuffers(ImGuiMenuWindow);
+    //         }
+    //     }
+    //     CATCH("executing imgui menu glfw main loop");
+    // }
+
     static void ImGuiMenuGLFWMainLoop()
     {
         try
         {
+            bool Running = true;
+
             bool ModifiableWindow = false;
 
-            while (!glfwWindowShouldClose(ImGuiMenuWindow))
+            while (!glfwWindowShouldClose(ImGuiMenuWindow) && Running == true)
             {
                 if (CellEngineConfigDataObject.ImGuiLightVersion == true)
                     ImGui::StyleColorsLight();
@@ -1721,6 +1769,8 @@ public:
                     ImGui::StyleColorsDark();
 
                 glfwPollEvents();
+
+                                                                                                                        glfwMakeContextCurrent(ImGuiMenuWindow);
 
                 ImGui_ImplOpenGL3_NewFrame();
                 ImGui_ImplGlfw_NewFrame();
@@ -1748,6 +1798,17 @@ public:
                 ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
                 glfwSwapBuffers(ImGuiMenuWindow);
+
+
+
+                                                                                                                        glfwMakeContextCurrent(CellEngineOpenGLVisualiserPointer->Window);
+
+                                                                                                                        CellEngineOpenGLVisualiserPointer->Render(glfwGetTime());
+
+                                                                                                                        glfwSwapBuffers(CellEngineOpenGLVisualiserPointer->Window);
+
+                                                                                                                        Running &= (glfwGetKey(CellEngineOpenGLVisualiserPointer->Window, GLFW_KEY_ESCAPE) == GLFW_RELEASE);
+                                                                                                                        Running &= (glfwWindowShouldClose(CellEngineOpenGLVisualiserPointer->Window) != GL_TRUE);
             }
         }
         CATCH("executing imgui menu glfw main loop");
@@ -1789,7 +1850,7 @@ public:
         try
         {
             CellEngineOpenGLVisualiserPointer = CreateCellEngineOpenGLVisualiserObject(CellEngineConfigDataObject.TypeOfSpace);
-            CellEngineOpenGLVisualiserPointer->Run(XPosWindow, YPosWindow, WidthWindow, HeightWindow);
+            //CellEngineOpenGLVisualiserPointer->Run(XPosWindow, YPosWindow, WidthWindow, HeightWindow);
         }
         CATCH("running cell engine opengl visualiser thread function");
     }
@@ -1954,7 +2015,13 @@ public:
 
                     CellEngineOpenGLVisualiserThreadFunction(CellEngineConfigDataObject.XTopMainWindow, CellEngineConfigDataObject.YTopMainWindow, CellEngineConfigDataObject.WidthMainWindow, CellEngineConfigDataObject.HeightMainWindow);
 
+                    CellEngineOpenGLVisualiserPointer->PrepareData(CellEngineConfigDataObject.XTopMainWindow, CellEngineConfigDataObject.YTopMainWindow, CellEngineConfigDataObject.WidthMainWindow, CellEngineConfigDataObject.HeightMainWindow);
+
+                    ImGuiMenuGLFWMainLoop();
+
                     ImGuiMenuGLFShutdown();
+
+                    CellEngineOpenGLVisualiserPointer->DestroyData();
                 }
             #endif
 

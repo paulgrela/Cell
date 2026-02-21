@@ -182,7 +182,7 @@ namespace sb7
         {
         }
 
-        void SetWindowTitle(const char* Title)
+        void SetWindowTitle(const char* Title) const
         {
             glfwSetWindowTitle(Window, Title);
         }
@@ -217,7 +217,7 @@ namespace sb7
             #endif
         }
 
-        void GetMousePosition(int& X, int& Y)
+        void GetMousePosition(int& X, int& Y) const
         {
             double DX, DY;
             glfwGetCursorPos(Window, &DX, &DY);
@@ -254,8 +254,10 @@ namespace sb7
     protected:
         APPINFO Info{};
         static sb7::OpenGLApplication* OpenGLApplicationObject;
+    public:
         GLFWwindow* Window{};
 
+    protected:
         static void glfw_onResize(GLFWwindow* Window, int w, int h)
         {
             OpenGLApplicationObject->OnResize(w, h);

@@ -880,7 +880,7 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
     {
         CopyMousePositionWhenButtonPressed();
 
-        //CellEngineConfigDataObject.UseStencilBuffer == true ? CellEngineConfigDataObject.NumberOfStencilBufferLoops = 3 : CellEngineConfigDataObject.NumberOfStencilBufferLoops = 1;
+        CellEngineConfigDataObject.UseStencilBuffer == true ? CellEngineConfigDataObject.NumberOfStencilBufferLoops = 3 : CellEngineConfigDataObject.NumberOfStencilBufferLoops = 1;
 
         const auto start_time = chrono::high_resolution_clock::now();
 
