@@ -17,21 +17,19 @@ namespace sb7
     void GraphicObject::Load(const char* FileName)
     {
         FILE* GraphicObjectFile = fopen(FileName, "rb");
-        size_t FileSize;
-        char* FileData;
 
         this->Free();
 
         fseek(GraphicObjectFile, 0, SEEK_END);
-        FileSize = ftell(GraphicObjectFile);
+        const size_t FileSize = ftell(GraphicObjectFile);
         fseek(GraphicObjectFile, 0, SEEK_SET);
 
-        FileData = new char[FileSize];
+        const auto FileData = new char[FileSize];
 
         fread(FileData, FileSize, 1, GraphicObjectFile);
 
         char* Ptr = FileData;
-        auto Header = (SB6M_HEADER*)Ptr;
+        const auto Header = reinterpret_cast<SB6M_HEADER*>(Ptr);
         Ptr += Header->Size;
 
         SB6M_VERTEX_ATTRIB_CHUNK* VertexAttribChunk = nullptr;
@@ -42,15 +40,15 @@ namespace sb7
 
         for (unsigned int ChunkIndex = 0; ChunkIndex < Header->NumberOfChunks; ChunkIndex++)
         {
-            auto Chunk = (SB6M_CHUNK_HEADER*)Ptr;
+            const auto Chunk = reinterpret_cast<SB6M_CHUNK_HEADER*>(Ptr);
             Ptr += Chunk->Size;
             switch (Chunk->ChunkType)
             {
-                case SB6M_CHUNK_TYPE_VERTEX_ATTRIBS: VertexAttribChunk = (SB6M_VERTEX_ATTRIB_CHUNK*)Chunk; break;
-                case SB6M_CHUNK_TYPE_VERTEX_DATA: VertexDataChunk = (SB6M_CHUNK_VERTEX_DATA*)Chunk; break;
-                case SB6M_CHUNK_TYPE_INDEX_DATA: IndexDataChunk = (SB6M_CHUNK_INDEX_DATA*)Chunk; break;
-                case SB6M_CHUNK_TYPE_SUB_OBJECT_LIST: SubGraphicObjectChunk = (SB6M_CHUNK_SUB_OBJECT_LIST*)Chunk; break;
-                case SB6M_CHUNK_TYPE_DATA: DataChunk = (SB6M_DATA_CHUNK*)Chunk; break;
+                case SB6M_CHUNK_TYPE_VERTEX_ATTRIBS: VertexAttribChunk = reinterpret_cast<SB6M_VERTEX_ATTRIB_CHUNK*>(Chunk); break;
+                case SB6M_CHUNK_TYPE_VERTEX_DATA: VertexDataChunk = reinterpret_cast<SB6M_CHUNK_VERTEX_DATA*>(Chunk); break;
+                case SB6M_CHUNK_TYPE_INDEX_DATA: IndexDataChunk = reinterpret_cast<SB6M_CHUNK_INDEX_DATA*>(Chunk); break;
+                case SB6M_CHUNK_TYPE_SUB_OBJECT_LIST: SubGraphicObjectChunk = reinterpret_cast<SB6M_CHUNK_SUB_OBJECT_LIST*>(Chunk); break;
+                case SB6M_CHUNK_TYPE_DATA: DataChunk = reinterpret_cast<SB6M_DATA_CHUNK*>(Chunk); break;
                 default: break;
             }
         }
@@ -60,9 +58,9 @@ namespace sb7
 
         if (DataChunk != nullptr)
         {
-            // glGenBuffers(1, &DataBuffer);
-            // glBindBuffer(GL_ARRAY_BUFFER, DataBuffer);
-            // glBufferData(GL_ARRAY_BUFFER, DataChunk->DataLength, (unsigned char*)DataChunk + DataChunk->DataOffset, GL_STATIC_DRAW);
+            glGenBuffers(1, &DataBuffer);
+            glBindBuffer(GL_ARRAY_BUFFER, DataBuffer);
+            glBufferData(GL_ARRAY_BUFFER, DataChunk->DataLength, reinterpret_cast<unsigned char*>(DataChunk) + DataChunk->DataOffset, GL_STATIC_DRAW);
         }
         else
         {
@@ -140,13 +138,13 @@ namespace sb7
 
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wint-to-pointer-cast"
-    void GraphicObject::RenderSubGraphicObject(unsigned int GraphicObjectIndex, unsigned int InstanceCount, unsigned int BaseInstance)
+    void GraphicObject::RenderSubGraphicObject(const unsigned int GraphicObjectIndex, const unsigned int InstanceCount, const unsigned int BaseInstance) const
     {
         glBindVertexArray(VAO);
 
-        //if (IndexType != GL_NONE)
-            //glDrawElementsInstancedBaseInstance(GL_TRIANGLES, static_cast<GLint>(SubGraphicObjects[GraphicObjectIndex].Count), IndexType, (void*)SubGraphicObjects[GraphicObjectIndex].First, static_cast<GLsizei>(InstanceCount), BaseInstance);
-        //else
+        if (IndexType != GL_NONE)
+            glDrawElementsInstancedBaseInstance(GL_TRIANGLES, static_cast<GLint>(SubGraphicObjects[GraphicObjectIndex].Count), IndexType, reinterpret_cast<void*>(SubGraphicObjects[GraphicObjectIndex].First), static_cast<GLsizei>(InstanceCount), BaseInstance);
+        else
             glDrawArraysInstancedBaseInstance(GL_TRIANGLES, static_cast<GLint>(SubGraphicObjects[GraphicObjectIndex].First), static_cast<GLsizei>(SubGraphicObjects[GraphicObjectIndex].Count), static_cast<GLsizei>(InstanceCount), BaseInstance);
     }
     #pragma GCC diagnostic pop

@@ -58,9 +58,7 @@ public:
     GLuint ScreenDepthRenderBuffer{};
 
     void CreateFramebuffer();
-    void ResizeFramebuffer(int NewWidth, int NewHeight);
-
-    void DiagnoseFBO() const;
+    void DiagnoseFrameBufferObject() const;
 protected:
     GLuint AtomSSBO{};
     GLuint ParticleSSBO{};

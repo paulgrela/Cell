@@ -16,14 +16,14 @@ namespace sb7
         GraphicObject();
         ~GraphicObject();
 
-        inline void Render(unsigned int InstanceCount = 1, unsigned int BaseInstance = 0)
+        void Render(const unsigned int InstanceCount = 1, const unsigned int BaseInstance = 0) const
         {
             RenderSubGraphicObject(0, InstanceCount, BaseInstance);
         }
 
-        void RenderSubGraphicObject(unsigned int GraphicObjectIndex, unsigned int InstanceCount = 1, unsigned int BaseInstance = 0);
+        void RenderSubGraphicObject(unsigned int GraphicObjectIndex, unsigned int InstanceCount = 1, unsigned int BaseInstance = 0) const;
 
-        void GetSubGraphicObjectInfo(unsigned int Index, GLuint &First, GLuint &NumberOfGraphicObjectsParameter) const
+        void GetSubGraphicObjectInfo(const unsigned int Index, GLuint &First, GLuint &NumberOfGraphicObjectsParameter) const
         {
             if (Index >= NumberOfSubGraphicObjects)
             {
@@ -57,8 +57,8 @@ namespace sb7
 
         enum { MAX_SUB_GRAPHIC_OBJECTS = 256 };
 
-        unsigned int NumberOfSubGraphicObjects;
-        SB6M_SUB_OBJECT_DECL SubGraphicObjects[MAX_SUB_GRAPHIC_OBJECTS];
+        unsigned int NumberOfSubGraphicObjects{};
+        SB6M_SUB_OBJECT_DECL SubGraphicObjects[MAX_SUB_GRAPHIC_OBJECTS]{};
     };
 }
 

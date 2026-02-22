@@ -37,11 +37,12 @@ inline void CellEngineOpenGLVisualiser::CreateFramebuffer()
 {
     try
     {
-                                                                                                                        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-            // glDeleteTextures(1, &ScreenColorTexture);
-            // glDeleteTextures(1, &ScreenBufferInstanceTexture);
-            // glDeleteRenderbuffers(1, &ScreenDepthRenderBuffer);
-        //glDeleteFramebuffers(1, &FrameBufferObject);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        glDeleteTextures(1, &ScreenColorTexture);
+        glDeleteTextures(1, &ScreenBufferInstanceTexture);
+        glDeleteRenderbuffers(1, &ScreenDepthRenderBuffer);
+        glDeleteFramebuffers(1, &FrameBufferObject);
 
         glGenTextures(1, &ScreenColorTexture);
         glBindTexture(GL_TEXTURE_2D, ScreenColorTexture);
@@ -65,10 +66,6 @@ inline void CellEngineOpenGLVisualiser::CreateFramebuffer()
         glBindRenderbuffer(GL_RENDERBUFFER, ScreenDepthRenderBuffer);
         glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, Info.WindowWidth, Info.WindowHeight);
 
-                                                                                                                        glBindRenderbuffer(GL_RENDERBUFFER, 0);
-
-                                                                                                                        glBindTexture(GL_TEXTURE_2D, 0);
-
         glGenFramebuffers(1, &FrameBufferObject);
         printf("Generated FBO: %u\n", FrameBufferObject);
         glBindFramebuffer(GL_FRAMEBUFFER, FrameBufferObject);
@@ -82,328 +79,38 @@ inline void CellEngineOpenGLVisualiser::CreateFramebuffer()
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-                                                                                                                        glViewport(0, 0, Info.WindowWidth, Info.WindowHeight);
+        glViewport(0, 0, Info.WindowWidth, Info.WindowHeight);
     }
     CATCH("")
 }
 
-void CellEngineOpenGLVisualiser::DiagnoseFBO() const
+void CellEngineOpenGLVisualiser::DiagnoseFrameBufferObject() const
 {
-    glBindFramebuffer(GL_FRAMEBUFFER, FrameBufferObject);
+    try
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, FrameBufferObject);
 
-    GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-    printf("FBO complete: %s\n", status == GL_FRAMEBUFFER_COMPLETE ? "YES" : "NO");
+        GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+        printf("FBO complete: %s\n", status == GL_FRAMEBUFFER_COMPLETE ? "YES" : "NO");
 
-    GLint attachedTex;
-    glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME, &attachedTex);
-    printf("Attached to ATTACHMENT1: %d (should be: %u)\n", attachedTex, ScreenBufferInstanceTexture);
+        GLint attachedTex;
+        glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME, &attachedTex);
+        printf("Attached to ATTACHMENT1: %d (should be: %u)\n", attachedTex, ScreenBufferInstanceTexture);
 
-    glBindTexture(GL_TEXTURE_2D, ScreenBufferInstanceTexture);
-    GLint texWidth, texHeight;
-    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH,  &texWidth);
-    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &texHeight);
-    printf("Texture size: %dx%d (should be: %dx%d)\n", texWidth, texHeight, Info.WindowWidth, Info.WindowHeight);
+        glBindTexture(GL_TEXTURE_2D, ScreenBufferInstanceTexture);
+        GLint texWidth, texHeight;
+        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH,  &texWidth);
+        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &texHeight);
+        printf("Texture size: %dx%d (should be: %dx%d)\n", texWidth, texHeight, Info.WindowWidth, Info.WindowHeight);
 
-    GLint drawBuf1;
-    glGetIntegerv(GL_DRAW_BUFFER1, &drawBuf1);
-    printf("Draw buffer 1: 0x%x (should be: 0x%x)\n", drawBuf1, GL_COLOR_ATTACHMENT1);
+        GLint drawBuf1;
+        glGetIntegerv(GL_DRAW_BUFFER1, &drawBuf1);
+        printf("Draw buffer 1: 0x%x (should be: 0x%x)\n", drawBuf1, GL_COLOR_ATTACHMENT1);
 
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+    CATCH("diagnosing frame buffer object")
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-void CellEngineOpenGLVisualiser::ResizeFramebuffer(const int NewWidth, const int NewHeight)
-{
-    // //DiagnoseFBO();
-    //
-    // printf("\n========================================\n");
-    // printf("RESIZE CALLED: %dx%d\n", NewWidth, NewHeight);
-    // printf("========================================\n");
-    //
-    // // ═══ CRITICAL FIX: Check if FBO is valid ═══
-    // GLboolean fboValid = glIsFramebuffer(FrameBufferObject);
-    // printf("FBO %u is valid: %s\n", FrameBufferObject, fboValid ? "YES" : "NO");
-    //
-    // if (!fboValid)
-    // {
-    //     printf("FBO is invalid! Recreating entire framebuffer...\n");
-    //     // FBO was destroyed - recreate everything from scratch
-    //     //CreateFramebuffer();
-    //     //return;
-    // }
-    //
-    // printf("\n=== BEFORE RESIZE DEBUG ===\n");
-    //
-    // // Check if FBO is still valid
-    // fboValid = glIsFramebuffer(FrameBufferObject);
-    // printf("FBO %u is valid: %s\n", FrameBufferObject, fboValid ? "YES" : "NO");
-    //
-    // // Check if textures are still valid
-    // GLboolean colorValid = glIsTexture(ScreenColorTexture);
-    // GLboolean instanceValid = glIsTexture(ScreenBufferInstanceTexture);
-    // printf("colorTexture %u is valid: %s\n", ScreenColorTexture, colorValid ? "YES" : "NO");
-    // printf("instanceTexture %u is valid: %s\n", ScreenBufferInstanceTexture, instanceValid ? "YES" : "NO");
-    //
-    // // Check current OpenGL context
-    // GLFWwindow* currentContext = glfwGetCurrentContext();
-    // printf("Current GLFW context: %p\n", currentContext);
-    //
-    // // If FBO became invalid, something deleted it
-    // if (!fboValid)
-    // {
-    //     printf("ERROR: FBO was deleted or context changed!\n");
-    //     printf("Searching for glDeleteFramebuffers or context changes in your code...\n");
-    // }
-    //
-    // printf("\n===== CREATING FRAMEBUFFER =====\n");
-    //
-    // // Create FBO FIRST
-    //                                                                                                                     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    //                                                                                                                     //glDeleteFramebuffers(1, &FrameBufferObject);
-    // //glGenFramebuffers(1, &FrameBufferObject);
-    // printf("Generated FBO: %u\n", FrameBufferObject);
-    //
-    // GLboolean isFBO = glIsFramebuffer(FrameBufferObject);
-    // printf("Is valid FBO: %s\n", isFBO ? "YES" : "NO");
-    //
-    // if (!isFBO)
-    // {
-    //     fprintf(stderr, "ERROR: Failed to create FBO!\n");
-    //     //return;
-    // }
-    //
-    // printf("\n========================================\n");
-    // printf("RESIZE CALLED: %dx%d\n", NewWidth, NewHeight);
-    // printf("========================================\n");
-    //
-    // // Show current state
-    // printf("BEFORE resize:\n");
-    // printf("  colorTexture:    %u\n", ScreenColorTexture);
-    // printf("  instanceTexture: %u\n", ScreenBufferInstanceTexture);
-    // printf("  depthRBO:        %u\n", ScreenDepthRenderBuffer);
-    // printf("  fbo:             %u\n", FrameBufferObject);
-    //
-    // // Verify textures exist
-    // GLboolean colorExists = glIsTexture(ScreenColorTexture);
-    // GLboolean instanceExists = glIsTexture(ScreenBufferInstanceTexture);
-    // printf("  colorTexture exists: %s\n", colorExists ? "YES" : "NO");
-    // printf("  instanceTexture exists: %s\n", instanceExists ? "YES" : "NO");
-    //
-    // // STEP 1: Unbind FBO
-    // printf("\nSTEP 1: Unbinding FBO...\n");
-    // glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    //
-    // // STEP 2: Delete old textures
-    // printf("STEP 2: Deleting old textures...\n");
-    // glDeleteTextures(1, &ScreenColorTexture);
-    // glDeleteTextures(1, &ScreenBufferInstanceTexture);
-    // glDeleteRenderbuffers(1, &ScreenDepthRenderBuffer);
-    //
-    // // STEP 3: Create new textures
-    // printf("STEP 3: Creating new textures (%dx%d)...\n", NewWidth, NewHeight);
-    //
-    // glGenTextures(1, &ScreenColorTexture);
-    // printf("  Generated colorTexture: %u\n", ScreenColorTexture);
-    // glBindTexture(GL_TEXTURE_2D, ScreenColorTexture);
-    // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, NewWidth, NewHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    // GLenum err = glGetError();
-    // if (err) printf("  ERROR creating color texture: 0x%x\n", err);
-    //
-    // glGenTextures(1, &ScreenBufferInstanceTexture);
-    // printf("  Generated instanceTexture: %u\n", ScreenBufferInstanceTexture);
-    // glBindTexture(GL_TEXTURE_2D, ScreenBufferInstanceTexture);
-    // glTexImage2D(GL_TEXTURE_2D, 0, GL_R32UI, NewWidth, NewHeight, 0, GL_RED_INTEGER, GL_UNSIGNED_INT, nullptr);
-    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    // err = glGetError();
-    // if (err) printf("  ERROR creating instance texture: 0x%x\n", err);
-    //
-    // glGenRenderbuffers(1, &ScreenDepthRenderBuffer);
-    // printf("  Generated depthRBO: %u\n", ScreenDepthRenderBuffer);
-    // glBindRenderbuffer(GL_RENDERBUFFER, ScreenDepthRenderBuffer);
-    // glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, NewWidth, NewHeight);
-    // err = glGetError();
-    // if (err) printf("  ERROR creating depth RBO: 0x%x\n", err);
-    //
-    // glBindTexture(GL_TEXTURE_2D, 0);
-    // glBindRenderbuffer(GL_RENDERBUFFER, 0);
-    //
-    //
-    // //glGenFramebuffers(1, &FrameBufferObject);
-    //
-    // // STEP 4: Bind FBO and attach
-    // printf("STEP 4: Binding FBO %u and attaching...\n", FrameBufferObject);
-    // glBindFramebuffer(GL_FRAMEBUFFER, FrameBufferObject);
-    //
-    // GLint currentFBO;
-    // glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentFBO);
-    // printf("  Currently bound FBO: %d\n", currentFBO);
-    //
-    // printf("  Attaching colorTexture %u to ATTACHMENT0...\n", ScreenColorTexture);
-    // glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ScreenColorTexture, 0);
-    // err = glGetError();
-    // if (err) printf("  ERROR attaching color: 0x%x\n", err);
-    //
-    // printf("  Attaching instanceTexture %u to ATTACHMENT1...\n", ScreenBufferInstanceTexture);
-    // glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, ScreenBufferInstanceTexture, 0);
-    // err = glGetError();
-    // if (err) printf("  ERROR attaching instance: 0x%x\n", err);
-    //
-    // printf("  Attaching depthRBO %u to DEPTH_ATTACHMENT...\n", ScreenDepthRenderBuffer);
-    // glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, ScreenDepthRenderBuffer);
-    // err = glGetError();
-    // if (err) printf("  ERROR attaching depth: 0x%x\n", err);
-    //
-    // // STEP 5: Set draw buffers
-    // printf("STEP 5: Setting draw buffers...\n");
-    // GLenum drawBuffers[2] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1};
-    // glDrawBuffers(2, drawBuffers);
-    // err = glGetError();
-    // if (err)
-    //     printf("  ERROR setting draw buffers: 0x%x\n", err);
-    //
-    // // STEP 6: Verify immediately
-    // printf("STEP 6: Verifying...\n");
-    //
-    // GLint attachmentType;
-    // glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE, &attachmentType);
-    // printf("  Attachment 1 type: ");
-    // if (attachmentType == GL_NONE) printf("GL_NONE (NOTHING ATTACHED!)\n");
-    // else if (attachmentType == GL_TEXTURE) printf("GL_TEXTURE (correct)\n");
-    // else printf("Unknown: 0x%x\n", attachmentType);
-    //
-    // if (attachmentType == GL_TEXTURE)
-    // {
-    //     GLint attachedTex;
-    //     glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME, &attachedTex);
-    //     printf("  Attached texture name: %d (should be: %u) %s\n", attachedTex, ScreenBufferInstanceTexture, attachedTex == (GLint)ScreenBufferInstanceTexture ? "✓" : "✗ MISMATCH!");
-    // }
-    //
-    // GLint drawBuf1;
-    // glGetIntegerv(GL_DRAW_BUFFER1, &drawBuf1);
-    // printf("  Draw buffer 1: 0x%x (should be 0x%x) %s\n", drawBuf1, GL_COLOR_ATTACHMENT1, drawBuf1 == GL_COLOR_ATTACHMENT1 ? "✓" : "✗ WRONG!");
-    //
-    // GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-    // printf("  FBO status: ");
-    // if (status == GL_FRAMEBUFFER_COMPLETE)
-    //     printf("COMPLETE ✓\n");
-    // else
-    //     printf("INCOMPLETE: 0x%x ✗\n", status);
-    //
-    // glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    //
-    // // STEP 7: Update state
-    // printf("STEP 7: Updating state...\n");
-    // glViewport(0, 0, NewWidth, NewHeight);
-    //
-    // printf("========================================\n");
-    // printf("RESIZE COMPLETE\n");
-    // printf("========================================\n\n");
-    //
-    //
-    //
-    // DiagnoseFBO();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-                    glDeleteTextures(1, &ScreenColorTexture);
-                    glDeleteTextures(1, &ScreenBufferInstanceTexture);
-                    glDeleteRenderbuffers(1, &ScreenDepthRenderBuffer);
-                                                                                                                        //glDeleteFramebuffers(1, &FrameBufferObject);
-                                                                                                                        glGenFramebuffers(1, &FrameBufferObject);
-
-
-
-                    glGenTextures(1, &ScreenColorTexture);
-    glBindTexture(GL_TEXTURE_2D, ScreenColorTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, NewWidth, NewHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-                    glGenTextures(1, &ScreenBufferInstanceTexture);
-    glBindTexture(GL_TEXTURE_2D, ScreenBufferInstanceTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_R32UI, NewWidth, NewHeight, 0, GL_RED_INTEGER, GL_UNSIGNED_INT, nullptr);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-
-                    glGenRenderbuffers(1, &ScreenDepthRenderBuffer);
-    glBindRenderbuffer(GL_RENDERBUFFER, ScreenDepthRenderBuffer);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, NewWidth, NewHeight);
-    //glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, ScreenBufferInstanceTexture);
-
-                    // glBindTexture(GL_TEXTURE_2D, 0);
-                    // glBindRenderbuffer(GL_RENDERBUFFER, 0);
-                                                                                                                        //glGenFramebuffers(1, &FrameBufferObject);
-    glBindFramebuffer(GL_FRAMEBUFFER, FrameBufferObject);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ScreenColorTexture, 0);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, ScreenBufferInstanceTexture, 0);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, ScreenDepthRenderBuffer);
-
-    GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
-    glDrawBuffers(2, drawBuffers);
-
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-    glViewport(0, 0, NewWidth, NewHeight);
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 void CellEngineOpenGLVisualiser::StartUp()
 {
@@ -689,7 +396,7 @@ inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader1(const
                 DrawCenterPoint(MatrixUniformBlockForVertexShaderPointer, ModelMatrix);
         }
 
-        //MatrixUniformBlockForVertexShaderPointer->MoveMatrix = ViewMatrix * ModelMatrix;
+        ////MatrixUniformBlockForVertexShaderPointer->MoveMatrix = ViewMatrix * ModelMatrix;
         MatrixUniformBlockForVertexShaderPointer->MoveMatrix = MoveMatrix1;
 
         glUnmapBuffer(GL_UNIFORM_BUFFER);
@@ -827,8 +534,8 @@ inline void CellEngineOpenGLVisualiser::PrepareOpenGLToRenderObjectsOnScene() co
 {
     try
     {
-        static const GLfloat gray[] = { 0.1f, 0.1f, 0.1f, 0.0f };
-        static const GLfloat ones[] = { 1.0f };
+        static constexpr GLfloat gray[] = { 0.1f, 0.1f, 0.1f, 0.0f };
+        static constexpr GLfloat ones[] = { 1.0f };
 
         glViewport(0, 0, Info.WindowWidth, Info.WindowHeight);
 
@@ -991,7 +698,7 @@ void CellEngineOpenGLVisualiser::SetVisibilityOfParticlesExcept(const UnsignedIn
     CATCH("setting visibility of particles except")
 }
 
-void CellEngineOpenGLVisualiser::OnKey(int Key, int Action)
+void CellEngineOpenGLVisualiser::OnKey(const int Key, const int Action)
 {
     try
     {
@@ -1006,7 +713,7 @@ void CellEngineOpenGLVisualiser::OnKey(int Key, int Action)
     CATCH("executing on Key event for cell visualisation")
 }
 
-void CellEngineOpenGLVisualiser::OnMouseWheel(int Pos)
+void CellEngineOpenGLVisualiser::OnMouseWheel(const int Pos)
 {
     try
     {
@@ -1015,7 +722,7 @@ void CellEngineOpenGLVisualiser::OnMouseWheel(int Pos)
     CATCH("executing on mouse wheel event for cell visualisation")
 }
 
-void CellEngineOpenGLVisualiser::OnMouseButton(int Button, int Action)
+void CellEngineOpenGLVisualiser::OnMouseButton(const int Button, int Action)
 {
     try
     {
@@ -1036,7 +743,7 @@ void CellEngineOpenGLVisualiser::OnMouseButton(int Button, int Action)
     CATCH("executing on mouse Button event for cell visualisation")
 }
 
-void CellEngineOpenGLVisualiser::OnMouseMove(int X, int Y)
+void CellEngineOpenGLVisualiser::OnMouseMove(const int X, const int Y)
 {
     try
     {
@@ -1081,90 +788,17 @@ void CellEngineOpenGLVisualiser::InitArcBall()
     CATCH("initiation of arc ball counting data for cell visualisation")
 }
 
-void CellEngineOpenGLVisualiser::OnResize(int Width, int Height)
+void CellEngineOpenGLVisualiser::OnResize(const int Width, const int Height)
 {
     try
     {
         sb7::OpenGLApplication::OnResize(Width, Height);
 
-                                                                                                                        // GLFWwindow* currentCtx = glfwGetCurrentContext();
-                                                                                                                        // printf("ResizeFramebuffer: current context = %p, our window = %p, MATCH = %s\n", currentCtx, Window, currentCtx == Window ? "YES" : "NO");
-                                                                                                                        //
-                                                                                                                        // if (currentCtx != Window)
-                                                                                                                        // {
-                                                                                                                        //     fprintf(stderr, "CONTEXT MISMATCH DETECTED!\n");
-                                                                                                                        //     glfwMakeContextCurrent(Window);
-                                                                                                                        // }
-
-                                                                                                                        // if (glfwGetCurrentContext() != Window)
-                                                                                                                        //     glfwMakeContextCurrent(Window);
-
-
-        // GLFWwindow* currentContext = glfwGetCurrentContext();
-        //
-        // printf("Current context: %p\n", currentContext);
-        // printf("Our window: %p\n", Window);
-        //
-        // if (currentContext != Window)
-        // {
-        //     printf("WARNING: Wrong context! Making our context current...\n");
-        //     glfwMakeContextCurrent(Window);
-        //
-        //     // Verify it worked
-        //     currentContext = glfwGetCurrentContext();
-        //     if (currentContext != Window)
-        //     {
-        //         fprintf(stderr, "CRITICAL ERROR: Failed to make our context current!\n");
-        //         return;
-        //     }
-        //     printf("Context restored successfully\n");
-        // }
-        //
-        // // Test OpenGL is working
-        // glGetError();  // Clear errors
-        // GLint dummy;
-        // glGetIntegerv(GL_MAJOR_VERSION, &dummy);
-        // GLenum err = glGetError();
-        // if (err != GL_NO_ERROR)
-        // {
-        //     fprintf(stderr, "ERROR: OpenGL context not functional! Error: 0x%x\n", err);
-        //     return;
-        // }
-        //
-        // printf("OpenGL context valid, proceeding with resize\n");
-
-
-
-
-        // Info.WindowWidth = Width;
-        // Info.WindowHeight = Height;
-
-        //CreateFramebuffer();
-
-        // Info.WindowWidth = Width;
-        // Info.WindowHeight = Height;
-
-        //LoadShadersPhong();
-
-        // glDeleteTextures(1, &ScreenColorTexture);
-        // glDeleteTextures(1, &ScreenBufferInstanceTexture);
-        // glDeleteRenderbuffers(1, &ScreenDepthRenderBuffer);
-        // glDeleteFramebuffers(1, &FrameBufferObject);
-
-        // glGenTextures(1, &ScreenColorTexture);
-        // glGenTextures(1, &ScreenBufferInstanceTexture);
-        // glGenRenderbuffers(1, &ScreenDepthRenderBuffer);
-        // glGenFramebuffers(1, &FrameBufferObject);
-
-        ResizeFramebuffer(Info.WindowWidth, Info.WindowHeight);
-        //ResizeFramebuffer(Width, Height);
+        CreateFramebuffer();
 
         ProjectionMatrixGlobal = vmath::perspective(50.0f, (float)Info.WindowWidth / (float)Info.WindowHeight, 0.1f, 10000.0f);
-        //ProjectionMatrixGlobal = vmath::perspective(50.0f, Width / Height, 0.1f, 10000.0f);
-
 
         ArcBall->setBounds(static_cast<float>(Info.WindowWidth), static_cast<float>(Info.WindowHeight));
-        //ArcBall->setBounds(static_cast<float>(Width), static_cast<float>(Height));
     }
     CATCH("executing window resize event - setting bounds of arc ball counting data for cell visualisation")
 }

@@ -1410,7 +1410,6 @@ public:
                     {
                         int ValueToSend = 0;
                         MPI_Bcast(&ValueToSend, 1, MPI_INT, 0, MPI_COMM_WORLD);
-                        //ImGuiMenuGLFShutdown(ImGuiMenuWindow);
                         ImGuiMenuGLFShutdown();
                         EndMPIAllProcessesForCellEngine();
                     });
@@ -1707,52 +1706,6 @@ public:
         return ImGuiMenuWindow;
     };
 
-    // static void ImGuiMenuGLFWMainLoop()
-    // {
-    //     try
-    //     {
-    //         bool ModifiableWindow = false;
-    //
-    //         while (!glfwWindowShouldClose(ImGuiMenuWindow))
-    //         {
-    //             if (CellEngineConfigDataObject.ImGuiLightVersion == true)
-    //                 ImGui::StyleColorsLight();
-    //             else
-    //                 ImGui::StyleColorsDark();
-    //
-    //             glfwPollEvents();
-    //
-    //             ImGui_ImplOpenGL3_NewFrame();
-    //             ImGui_ImplGlfw_NewFrame();
-    //             ImGui::NewFrame();
-    //
-    //             if (CellEngineConfigDataObject.ImGuiDemoWindowMenu == true)
-    //                 ImGui::ShowDemoWindow();
-    //
-    //             ImGuiWindowFlags WindowFlags = 0;
-    //             WindowFlags |= ImGuiWindowFlags_NoMove;
-    //             WindowFlags |= ImGuiWindowFlags_NoResize;
-    //
-    //             MenuWindow1(WindowFlags, ModifiableWindow);
-    //
-    //             MenuWindow2(WindowFlags, ModifiableWindow);
-    //
-    //             ImGui::Render();
-    //
-    //             int ImGuiMenuWindowWidth, ImGuiMenuWindowHeight;
-    //             glfwGetFramebufferSize(ImGuiMenuWindow, &ImGuiMenuWindowWidth, &ImGuiMenuWindowHeight);
-    //             glViewport(0, 0, ImGuiMenuWindowWidth, ImGuiMenuWindowHeight);
-    //             constexpr auto BackgroundColor = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-    //             glClearColor(BackgroundColor.x * BackgroundColor.w, BackgroundColor.y * BackgroundColor.w, BackgroundColor.z * BackgroundColor.w, BackgroundColor.w);
-    //             glClear(GL_COLOR_BUFFER_BIT);
-    //             ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-    //
-    //             glfwSwapBuffers(ImGuiMenuWindow);
-    //         }
-    //     }
-    //     CATCH("executing imgui menu glfw main loop");
-    // }
-
     static void ImGuiMenuGLFWMainLoop()
     {
         try
@@ -1845,19 +1798,18 @@ public:
     }
     #pragma GCC diagnostic pop
 
-    void CellEngineOpenGLVisualiserThreadFunction(const int XPosWindow, const int YPosWindow, const int WidthWindow, const int HeightWindow)
+    static void CellEngineOpenGLVisualiserThreadFunction(const int XPosWindow, const int YPosWindow, const int WidthWindow, const int HeightWindow)
     {
         try
         {
             CellEngineOpenGLVisualiserPointer = CreateCellEngineOpenGLVisualiserObject(CellEngineConfigDataObject.TypeOfSpace);
-            //CellEngineOpenGLVisualiserPointer->Run(XPosWindow, YPosWindow, WidthWindow, HeightWindow);
         }
         CATCH("running cell engine opengl visualiser thread function");
     }
     #endif
 
 public:
-    std::unique_ptr<CellEngineDataFile> CreateCellEngineDataFileObject(const string_view& CellStateFileName)
+    static std::unique_ptr<CellEngineDataFile> CreateCellEngineDataFileObject(const string_view& CellStateFileName)
     {
         if (string_utils::check_end_str(CellStateFileName, ".pdb") == true)
         {
@@ -2002,16 +1954,6 @@ public:
                 if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == false || (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true && MPIProcessDataObject.CurrentMPIProcessIndex == 0))
                 {
                     ImGuiMenuWindow = PrepareImGuiMenuGLFWData();
-
-                    //sb7::OpenGLApplication::PrepareData(CellEngineConfigDataObject.XTopMainWindow, CellEngineConfigDataObject.YTopMainWindow, CellEngineConfigDataObject.WidthMainWindow, CellEngineConfigDataObject.HeightMainWindow);
-
-                    // thread CellEngineOpenGLVisualiserThreadObject(&CellEngineImGuiMenu::CellEngineOpenGLVisualiserThreadFunction, this, CellEngineConfigDataObject.XTopMainWindow, CellEngineConfigDataObject.YTopMainWindow, CellEngineConfigDataObject.WidthMainWindow, CellEngineConfigDataObject.HeightMainWindow);
-                    //
-                    // ImGuiMenuGLFWMainLoop(ImGuiMenuWindow);
-                    //
-                    // CellEngineOpenGLVisualiserThreadObject.detach();
-                    //
-                    // ImGuiMenuGLFShutdown(ImGuiMenuWindow);
 
                     CellEngineOpenGLVisualiserThreadFunction(CellEngineConfigDataObject.XTopMainWindow, CellEngineConfigDataObject.YTopMainWindow, CellEngineConfigDataObject.WidthMainWindow, CellEngineConfigDataObject.HeightMainWindow);
 
