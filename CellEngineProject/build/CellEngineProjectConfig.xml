@@ -3735,13 +3735,103 @@
 		<CellState id="17">
                         <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
 
-                        <CellStateFileName>../../WholeCellData/JCVI-syn3A/syn3a_atom_instances.cif</CellStateFileName>
-                        <CellStateFileNameBackup>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile33.dat</CellStateFileNameBackup>
+                                                <FullAtomMPIParallelProcessesExecution>false</FullAtomMPIParallelProcessesExecution>
 
-                        <MixedFullAtomWithVoxelSpace>true</MixedFullAtomWithVoxelSpace>
+                        <CellStateFileName>../../WholeCellData/JCVI-syn3A/syn3a_atom_instances.cif</CellStateFileName>
+                        <CellStateFileNameBackup>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile40.dat</CellStateFileNameBackup>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                        <DivisionFactorForSimulationSpace>4.0</DivisionFactorForSimulationSpace> <!--4 or 2 or other-->
+                        <DivisionFactorForReadingPositionsOfParticles>1.0</DivisionFactorForReadingPositionsOfParticles>
+                        <DivisionFactorForGeneratingPositionsOfParticles>1.0</DivisionFactorForGeneratingPositionsOfParticles>
+
+                        <Radius1ForGenerationOfParticles>2000</Radius1ForGenerationOfParticles>
+                        <Radius1SizeForGenerationOfParticles>2000</Radius1SizeForGenerationOfParticles>
+                        <Radius2ForGenerationOfParticles>2160</Radius1ForGenerationOfParticles>
+                        <Radius2SizeForGenerationOfParticles>160</Radius1SizeForGenerationOfParticles>
+
+                        <MixedFullAtomWithVoxelSpace>false</MixedFullAtomWithVoxelSpace>
                         <NumberOfParticlesSectorsInX>40</NumberOfParticlesSectorsInX>
                         <NumberOfParticlesSectorsInY>40</NumberOfParticlesSectorsInY>
                         <NumberOfParticlesSectorsInZ>40</NumberOfParticlesSectorsInZ>
+
+                        <ShiftCenterX>2560</ShiftCenterX>
+                        <ShiftCenterY>2560</ShiftCenterY>
+                        <ShiftCenterZ>2560</ShiftCenterZ>
+
+                        <SizeOfParticlesSectorX>128</SizeOfParticlesSectorX>
+                        <SizeOfParticlesSectorY>128</SizeOfParticlesSectorY>
+                        <SizeOfParticlesSectorZ>128</SizeOfParticlesSectorZ>
+
+                        <NumberOfStepsInSimulationOutside>1</NumberOfStepsInSimulationOutside>
+                        <NumberOfStepsInSimulationInside>1</NumberOfStepsInSimulationInside>
+                        <TypeOfSimulation>1</TypeOfSimulation>
+
+                        <NumberOfXThreadsInSimulation>4</NumberOfXThreadsInSimulation>
+                        <NumberOfYThreadsInSimulation>4</NumberOfYThreadsInSimulation>
+                        <NumberOfZThreadsInSimulation>2</NumberOfZThreadsInSimulation>
+                        <NumberOfXSectorsInOneThreadInSimulation>10</NumberOfXSectorsInOneThreadInSimulation>
+                        <NumberOfYSectorsInOneThreadInSimulation>10</NumberOfYSectorsInOneThreadInSimulation>
+                        <NumberOfZSectorsInOneThreadInSimulation>20</NumberOfZSectorsInOneThreadInSimulation>
+                        <SizeOfXInOneThreadInSimulationSpace>1280</SizeOfXInOneThreadInSimulationSpace>
+                        <SizeOfYInOneThreadInSimulationSpace>1280</SizeOfYInOneThreadInSimulationSpace>
+                        <SizeOfZInOneThreadInSimulationSpace>1280</SizeOfXInOneThreadInSimulationSpace>
+                        <SizeOfXInOneSectorInOneThreadInSimulationSpace>128</SizeOfXInOneSectorInOneThreadInSimulationSpace>
+                        <SizeOfYInOneSectorInOneThreadInSimulationSpace>128</SizeOfYInOneSectorInOneThreadInSimulationSpace>
+                        <SizeOfZInOneSectorInOneThreadInSimulationSpace>128</SizeOfZInOneSectorInOneThreadInSimulationSpace>
+
+                        <StepToChangeSpaceDivisionForThreads>4</StepToChangeSpaceDivisionForThreads>
+                        <TypeOfExchangeOfParticlesBetweenThreads>3</TypeOfExchangeOfParticlesBetweenThreads>
+
+                        <UseMutexBetweenMainScreenThreadAndMenuThreads>true</UseMutexBetweenMainScreenThreadAndMenuThreads>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
                         <CellGenomePositionsFileName>./data/genomes/genome_1024_double_1/GENOME_POSITIONS.DAT</CellGenomePositionsFileName>
                         <CellGenomeSequenceFileName>./data/genomes/genome_1024_double_1/GENOME_SEQUENCE.DAT</CellGenomeSequenceFileName>

@@ -366,7 +366,7 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile(const bool SetStartValuesB
             }
         }
 
-        LoggersManagerObject.Log(STREAM("Number of erased particles from particle kinds = " << erase_if(ParticlesKindsManagerObject.ParticlesKinds, [](auto& P){ return P.first < CellEngineConfigDataObject.DNAIdentifier; })));
+        //LoggersManagerObject.Log(STREAM("Number of erased particles from particle kinds = " << erase_if(ParticlesKindsManagerObject.ParticlesKinds, [](auto& P){ return P.first < CellEngineConfigDataObject.DNAIdentifier; })));
 
         PreprocessData(true);
 

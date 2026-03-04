@@ -39,26 +39,29 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace1(UnsignedI
             if (CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.empty() == false)
                 if (const bool FinalVisibilityInModelWorld = RenderObject(CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.begin()->second.ListOfAtoms.back(), Particle(), ViewMatrix, true, false, true, NumberOfAllRenderedAtoms, false, !CellEngineConfigDataObject.ShowDetailsInAtomScale); FinalVisibilityInModelWorld == true)
                     if (CellEngineConfigDataObject.ShowDetailsInAtomScale == true)
-                        for (const auto& ParticleObject : CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles)
-                            if (ParticlesKindsManagerObject.GetGraphicParticleKind(ParticleObject.second.EntityId).Visible == true)
+                        for (const auto& ParticleObject : CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles | views::values)
+                            if (ParticlesKindsManagerObject.GetGraphicParticleKind(ParticleObject.EntityId).Visible == true)
                             {
                                 GPUParticle GPUParticleObject;
 
                                 GPUParticleObject.AtomOffset = AtomOffsetTotal;
-                                GPUParticleObject.AtomCount = ParticleObject.second.ListOfAtoms.size();
+                                GPUParticleObject.AtomCount = ParticleObject.ListOfAtoms.size();
 
                                 GPUParticles.emplace_back(GPUParticleObject);
 
                                 UnsignedInt AtomIndex = 0;
-                                for (const auto& AtomObject : ParticleObject.second.ListOfAtoms)
+                                //for (const auto& AtomObject : ParticleObject.ListOfAtoms)
+                                for (UnsignedInt AtomObjectIndex = 0; AtomObjectIndex < ParticleObject.ListOfAtoms.size(); AtomObjectIndex += CellEngineConfigDataObject.LoadOfAtomsStep)
                                 {
+                                    const auto& AtomObject = ParticleObject.ListOfAtoms[AtomObjectIndex];
+
                                     if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
                                     {
                                         GPUAtomLocal GPUAtomLocalObject;
                                         GPUAtomLocalObject.ParticleSectorXIndex = ParticleSectorXIndex;
                                         GPUAtomLocalObject.ParticleSectorYIndex = ParticleSectorYIndex;
                                         GPUAtomLocalObject.ParticleSectorZIndex = ParticleSectorZIndex;
-                                        GPUAtomLocalObject.Index = ParticleObject.second.Index;
+                                        GPUAtomLocalObject.Index = ParticleObject.Index;
                                         GPUAtomLocalObject.AtomOffset = AtomIndex++;
                                         GPUAtomsLocal.emplace_back(GPUAtomLocalObject);
                                     }
@@ -69,7 +72,7 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace1(UnsignedI
                                     GPUAtomObject.Y = AtomObject.Y;
                                     GPUAtomObject.Z = AtomObject.Z;
 
-                                    const auto ParticleColor = CellEngineUseful::GetVMathVec3FromVector3ForColor(GetColor<CellEngineAtom>(AtomObject, ParticleObject.second, ChosenParticleObject.Index == ParticleObject.second.Index && ChosenAtomObjectIndex == AtomIndex));
+                                    const auto ParticleColor = CellEngineUseful::GetVMathVec3FromVector3ForColor(GetColor<CellEngineAtom>(AtomObject, ParticleObject, ChosenParticleObject.Index == ParticleObject.Index && ChosenAtomObjectIndex == AtomIndex));
 
                                     GPUAtomObject.ColorR = ParticleColor.X();
                                     GPUAtomObject.ColorG = ParticleColor.Y();
@@ -78,7 +81,7 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace1(UnsignedI
                                     GPUAtoms.emplace_back(GPUAtomObject);
                                 }
 
-                                AtomOffsetTotal += ParticleObject.second.ListOfAtoms.size();
+                                AtomOffsetTotal += ParticleObject.ListOfAtoms.size();
                             }
 
         const auto stop_time111 = chrono::high_resolution_clock::now();
@@ -148,9 +151,11 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
 {
     try
     {
-        lock_guard LockGuard{ RenderMenuAndFullAtomSimulationSpaceMutexObject };
+        //lock_guard LockGuard{ RenderMenuAndFullAtomSimulationSpaceMutexObject };
 
         //RenderSpace0(NumberOfAllRenderedAtoms, ViewMatrix);
+
+                                                                                                                        //printf(("BBB\n"));getchar();
 
         vector<GPUParticle> GPUParticles;
         GPUParticles.reserve(10'000'000);
@@ -161,7 +166,7 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
 
         RenderSpace1(NumberOfAllRenderedAtoms, ViewMatrix, GPUParticles, GPUAtoms, GPUAtomsLocal);
         //LoggersManagerObject.Log(STREAM("P=" << GPUParticles.size() << " " << GPUAtoms.size()));
-
+                                                                                                                        //printf(("BBB1\n"));getchar();
         glUseProgram(ComputeShaderProgramPhong);
 
         glUniform3fv(glGetUniformLocation(ComputeShaderProgramPhong, "Center"), 1, Center);
@@ -192,18 +197,20 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
 
         ExecutionDurationTimeForCopyingParticlesToGraphicMemory2 += chrono::duration(stop_time113 - start_time113);
 
+                                                                                                                        //printf(("BBB2\n"));getchar();
+
                                                                                                                         glBindFramebuffer(GL_FRAMEBUFFER, FrameBufferObject);
 
                                                                                                                         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
                                                                                                                         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-                                                                                                                        GLuint ClearValue = 0xFFFFFFFF;
+                                                                                                                        constexpr GLuint ClearValue = 0xFFFFFFFF;
                                                                                                                         glClearTexImage(ScreenBufferInstanceTexture, 0, GL_RED_INTEGER, GL_UNSIGNED_INT, &ClearValue);
 
                                                                                                                         glEnable(GL_DEPTH_TEST);
                                                                                                                         glDepthFunc(GL_LESS);
 
-
+                                                                                                                        //printf(("CCC\n"));getchar();
 
         glUseProgram(ShaderProgramPhong);
 
@@ -215,7 +222,7 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
 
         vector<tuple<UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt>> TemporaryRenderedAtomsList;
 
-
+                                                                                                                        //printf(("DDD\n"));getchar();
         AtomGraphicsObject.RenderSubGraphicObject(0, GPUAtoms.size(), 0);
 
                                                                                                                         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);

@@ -67,7 +67,7 @@ inline void CellEngineOpenGLVisualiser::CreateFramebuffer()
         glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, Info.WindowWidth, Info.WindowHeight);
 
         glGenFramebuffers(1, &FrameBufferObject);
-        printf("Generated FBO: %u\n", FrameBufferObject);
+
         glBindFramebuffer(GL_FRAMEBUFFER, FrameBufferObject);
 
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ScreenColorTexture, 0);
@@ -145,7 +145,7 @@ void CellEngineOpenGLVisualiser::StartUp()
 
         CreateFramebuffer();
 
-        ProjectionMatrixGlobal = vmath::perspective(50.0f, (float)Info.WindowWidth / (float)Info.WindowHeight, 0.1f, 10000.0f);
+        ProjectionMatrixGlobal = vmath::perspective(50.0f, static_cast<float>(Info.WindowWidth) / static_cast<float>(Info.WindowHeight), 0.1f, 10000.0f);
 
         InitArcBall();
 
@@ -305,8 +305,9 @@ void CellEngineOpenGLVisualiser::DrawBonds(const Particle& ParticleObject, vecto
             {
                 const auto& AtomObject1 = ParticleObject.ListOfAtoms[BondToDrawObject.first];
                 const auto& AtomObject2 = ParticleObject.ListOfAtoms[BondToDrawObject.second];
+                auto TranslateMatrix = vmath::translate(0.0f, 0.0f, 0.0f);
 
-                CreateUniformBlockForVertexShader1(vmath::vec3(0.0, 0.0, 0.0), vmath::vec3(-1.0, -1.0, -1.0), ViewMatrix, vmath::translate(0.0f, 0.0f, 0.0f), false, false, false, false);
+                CreateUniformBlockForVertexShader1(vmath::vec3(0.0, 0.0, 0.0), vmath::vec3(-1.0, -1.0, -1.0), ViewMatrix, TranslateMatrix, false, false, false, false);
 
                 DrawBond(AtomObject1.X - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomObject1.Y - CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomObject1.Z - CellEngineConfigDataObject.CameraZPosition - Center.Z(), AtomObject2.X - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomObject2.Y - CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomObject2.Z - CellEngineConfigDataObject.CameraZPosition - Center.Z());
             }
@@ -322,7 +323,11 @@ inline bool CellEngineOpenGLVisualiser::CheckDistanceToDrawDetailsInAtomScale(co
         if (CellEngineConfigDataObject.ViewPositionZ > CellEngineConfigDataObject.Distance)
         {
             if (CellEngineConfigDataObject.ShowAtomsInEachPartOfTheCellWhenObserverIsFromOutside == false)
-                return ZNew > CellEngineConfigDataObject.CutZ && sqrt((XNew * XNew) + (YNew * YNew) + (ZNew * ZNew)) > CellEngineConfigDataObject.Distance;
+                //return ZNew > CellEngineConfigDataObject.CutZ && sqrt((XNew * XNew) + (YNew * YNew) + (ZNew * ZNew)) > CellEngineConfigDataObject.Distance;
+            {
+                const float AtomDistance = sqrt((XNew * XNew) + (YNew * YNew) + (ZNew * ZNew));
+                return ZNew > CellEngineConfigDataObject.CutZ && AtomDistance - 200 > CellEngineConfigDataObject.Distance && AtomDistance < CellEngineConfigDataObject.Distance + 400;
+            }
             else
                 return true;
         }
@@ -368,14 +373,14 @@ inline bool CellEngineOpenGLVisualiser::GetFinalVisibilityInModelWorld(const vma
     return false;
 }
 
-inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader1(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4 ModelMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, bool DrawAdditional) const
+inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader1(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4& ModelMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, bool DrawAdditional) const
 {
     bool FinalVisibilityInModelWorld = false;
 
     try
     {
         glBindBufferBase(GL_UNIFORM_BUFFER, 0, UniformsBuffer);
-        auto MatrixUniformBlockForVertexShaderPointer = (UniformsBlock*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(UniformsBlock), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
+        const auto MatrixUniformBlockForVertexShaderPointer = static_cast<UniformsBlock*>(glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(UniformsBlock), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT));
 
         const auto start_time = chrono::high_resolution_clock::now();
         const vmath::mat4 ProjectionMatrix1 = vmath::perspective(50.0f, (float)Info.WindowWidth / (float)Info.WindowHeight, 0.1f, 10000.0f);
@@ -396,7 +401,7 @@ inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader1(const
                 DrawCenterPoint(MatrixUniformBlockForVertexShaderPointer, ModelMatrix);
         }
 
-        ////MatrixUniformBlockForVertexShaderPointer->MoveMatrix = ViewMatrix * ModelMatrix;
+        //MatrixUniformBlockForVertexShaderPointer->MoveMatrix = ViewMatrix * ModelMatrix;
         MatrixUniformBlockForVertexShaderPointer->MoveMatrix = MoveMatrix1;
 
         glUnmapBuffer(GL_UNIFORM_BUFFER);
@@ -406,7 +411,7 @@ inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader1(const
     return FinalVisibilityInModelWorld;
 }
 
-inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4 ModelMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, bool DrawAdditional) const
+inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4& ModelMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, bool DrawAdditional) const
 {
     bool FinalVisibilityInModelWorld = false;
 
@@ -493,7 +498,7 @@ bool CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom& AtomObject, 
 
         const vmath::vec3 AtomPosition = LengthUnit * AtomObject.Position();
         const vmath::vec3 SizeLocal = GetSize(AtomObject);
-        const vmath::mat4 ModelMatrix = vmath::translate(AtomPosition.X() - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomPosition.Y() + CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomPosition.Z() + CellEngineConfigDataObject.CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(SizeLocal.X(), SizeLocal.Y(), SizeLocal.Z()));
+        vmath::mat4 ModelMatrix = vmath::translate(AtomPosition.X() - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomPosition.Y() + CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomPosition.Z() + CellEngineConfigDataObject.CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(SizeLocal.X(), SizeLocal.Y(), SizeLocal.Z()));
 
         FinalVisibilityInModelWorld = CreateUniformBlockForVertexShader(AtomPosition, CellEngineUseful::GetVMathVec3FromVector3ForColor(GetColor<CellEngineAtom>(AtomObject, ParticleObject, Chosen)), ViewMatrix, ModelMatrix, CountNewPosition, DrawCenter, DrawOutsideBorder, true);
 
@@ -514,7 +519,9 @@ inline void CellEngineOpenGLVisualiser::SetAutomaticParametersForRendering()
             if (CellEngineConfigDataObject.ViewPositionZ > CellEngineConfigDataObject.Distance)
             {
                 if (CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep == true)
-                    CellEngineConfigDataObject.LoadOfAtomsStep = 100;
+                    //CellEngineConfigDataObject.LoadOfAtomsStep = 100;
+                    //CellEngineConfigDataObject.LoadOfAtomsStep = 20;
+                    CellEngineConfigDataObject.LoadOfAtomsStep = 5;
                 if (CellEngineConfigDataObject.AutomaticChangeOfSizeOfAtom == true)
                     CellEngineConfigDataObject.SizeOfAtomX = CellEngineConfigDataObject.SizeOfAtomY = CellEngineConfigDataObject.SizeOfAtomZ = 3;
             }
@@ -597,13 +604,17 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
 
         PrepareOpenGLToRenderObjectsOnScene();
 
-        const vmath::vec3 ViewPositionVector = vmath::vec3(CellEngineConfigDataObject.ViewPositionX, CellEngineConfigDataObject.ViewPositionY, CellEngineConfigDataObject.ViewPositionZ);
+        const auto ViewPositionVector = vmath::vec3(CellEngineConfigDataObject.ViewPositionX, CellEngineConfigDataObject.ViewPositionY, CellEngineConfigDataObject.ViewPositionZ);
         const vmath::mat4 ViewMatrix = vmath::lookat(ViewPositionVector, vmath::vec3(0.0f, 0.0f, 0.0f), vmath::vec3(0.0f, 1.0f, 0.0f)) * vmath::rotate(CellEngineConfigDataObject.RotationAngle1, CellEngineConfigDataObject.RotationAngle2, CellEngineConfigDataObject.RotationAngle3) * RotationMatrix;
 
         UnsignedInt NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = 0;
         UnsignedInt NumberOfAllRenderedAtoms = 0;
 
+//                                                                                                                        printf(("AAA\n"));getchar();
+
         RenderSpace(NumberOfAllRenderedAtoms, NumberOfFoundParticlesCenterToBeRenderedInAtomDetails, ViewMatrix);
+
+//                                                                                                                        printf(("AAA1\n"));getchar();
 
         const auto stop_time = chrono::high_resolution_clock::now();
 
@@ -796,7 +807,7 @@ void CellEngineOpenGLVisualiser::OnResize(const int Width, const int Height)
 
         CreateFramebuffer();
 
-        ProjectionMatrixGlobal = vmath::perspective(50.0f, (float)Info.WindowWidth / (float)Info.WindowHeight, 0.1f, 10000.0f);
+        ProjectionMatrixGlobal = vmath::perspective(50.0f, static_cast<float>(Info.WindowWidth) / static_cast<float>(Info.WindowHeight), 0.1f, 10000.0f);
 
         ArcBall->setBounds(static_cast<float>(Info.WindowWidth), static_cast<float>(Info.WindowHeight));
     }

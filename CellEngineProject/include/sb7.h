@@ -103,7 +103,7 @@ namespace sb7
                 }
                 else if (sb6IsExtensionSupported("GL_ARB_debug_output"))
                 {
-                    glDebugMessageCallbackARB((GLDEBUGPROC)debug_callback, this);
+                    glDebugMessageCallbackARB(reinterpret_cast<GLDEBUGPROC>(debug_callback), this);
                     glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS_ARB);
                 }
             }
@@ -130,7 +130,9 @@ namespace sb7
                 #ifdef WINDOWS_PLATFORM
                 glfwPollEvents();
                 #endif
-                                                                                                                        glfwPollEvents();
+
+                glfwPollEvents();
+
                 Running &= (glfwGetKey(Window, GLFW_KEY_ESCAPE) == GLFW_RELEASE);
                 Running &= (glfwWindowShouldClose(Window) != GL_TRUE);
             }
@@ -286,7 +288,7 @@ namespace sb7
         void setVsync(bool Enable)
         {
             Info.Flags.VSync = Enable ? 1 : 0;
-            glfwSwapInterval((int)Info.Flags.VSync);
+            glfwSwapInterval(static_cast<int>(Info.Flags.VSync));
         }
     };
 };

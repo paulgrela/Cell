@@ -1698,7 +1698,7 @@ public:
             ImGuiIO &io = ImGui::GetIO();
 
             ImGui_ImplGlfw_InitForOpenGL(ImGuiMenuWindow, true);
-            const char *glsl_version = "#version 130";
+            const auto glsl_version = "#version 130";
             ImGui_ImplOpenGL3_Init(glsl_version);
         }
         CATCH("preparing imgui menu glfw data");
@@ -1962,8 +1962,6 @@ public:
                     ImGuiMenuGLFWMainLoop();
 
                     ImGuiMenuGLFShutdown();
-
-                    CellEngineOpenGLVisualiserPointer->DestroyData();
                 }
             #endif
 
