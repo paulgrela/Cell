@@ -53,7 +53,7 @@ void CellEngineBasicParticlesOperations::PreprocessData(const vector<A> Particle
         LoggersManagerObject.Log(STREAM("Preprocess data"));
 
         InitiateFreeParticleIndexes(Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ].Particles, true);
-        //GetMinMaxCoordinatesForAllParticles<T, A>(ListOfElements, ListOfElementsOfParticleKind, UpdateParticleKindListOfElementsBool);
+        GetMinMaxCoordinatesForAllParticles<T, A>(ListOfElements, ListOfElementsOfParticleKind, UpdateParticleKindListOfElementsBool);//XXX
     }
     CATCH("preprocessing data for voxel simulation space")
 }

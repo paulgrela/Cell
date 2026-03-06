@@ -231,6 +231,7 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile(const bool SetStartValuesB
 
         MainMapType<string, string> AutinIllinoisNamesMap;
         NEWAssociateAutinNameWithIllinoisName(AutinIllinoisNamesMap);
+        //AssociateAutinNameWithIllinoisName(AutinIllinoisNamesMap);
         MainMapType<EntityIdInt, UniqueIdInt> ProteinIdFromGeneIdTranslator;
         MainMapType<EntityIdInt, string> ParticleAutinKindIdToAutinNameTranslator;
 
@@ -277,7 +278,10 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile(const bool SetStartValuesB
                         ProteinIdFromGeneIdTranslator[EntityId] = stoi(AtomFields[5].substr(Pos + StrToFind.length(), 3));
                     ParticleAutinKindIdToAutinNameTranslator[EntityId] = AtomFields[5];
 
-                    LoggersManagerObject.Log(STREAM("PARTCILE NAME = " << AtomFields[5] << " " << ProteinIdFromGeneIdTranslator[EntityId] << " " << ParticleAutinKindIdToAutinNameTranslator[EntityId]));
+                    if (Pos != string::npos)
+                        LoggersManagerObject.Log(STREAM("PARTCILE NAME = " << AtomFields[5] << " " << ProteinIdFromGeneIdTranslator[EntityId] << " " << ParticleAutinKindIdToAutinNameTranslator[EntityId]));
+                    else
+                        LoggersManagerObject.Log(STREAM("PARTCILE NAME = " << AtomFields[5] << " " << ParticleAutinKindIdToAutinNameTranslator[EntityId]));
                 }
             }
             else
@@ -397,7 +401,7 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile(const bool SetStartValuesB
             }
         }
 
-        //LoggersManagerObject.Log(STREAM("Number of erased particles from particle kinds = " << erase_if(ParticlesKindsManagerObject.ParticlesKinds, [](auto& P){ return P.first < CellEngineConfigDataObject.DNAIdentifier; })));
+        LoggersManagerObject.Log(STREAM("Number of erased particles from particle kinds = " << erase_if(ParticlesKindsManagerObject.ParticlesKinds, [](auto& P){ return P.first < CellEngineConfigDataObject.DNAIdentifier; })));//XXX
 
         PreprocessData(true);
 

@@ -59,31 +59,31 @@ void CellEngineIllinoisDataCreator::ReadReactionsFromJSONFile(const string& File
 
             LoggersManagerObject.Log(STREAM("JSON NUMBER OF TYPES OF PARTICLES = " << ReactionsPropertyTreeJSON.get_child("metabolites").size()));
             UnsignedInt ParticleNumber = 1;
-            for (const auto &ReactionsPropertyTreeJSONTreeElementParticle: ReactionsPropertyTreeJSON.get_child("metabolites"))
+            for (const auto& ReactionsPropertyTreeJSONTreeElementParticle : ReactionsPropertyTreeJSON.get_child("metabolites") | views::values)
             {
-                LoggersManagerObject.Log(STREAM("PARTICLE ID = " << ParticleNumber << " " << ReactionsPropertyTreeJSONTreeElementParticle.second.get<string>("id")));
-                LoggersManagerObject.Log(STREAM("PARTICLE NAME = " << ParticleNumber << " " << ReactionsPropertyTreeJSONTreeElementParticle.second.get<string>("name")));
-                LoggersManagerObject.Log(STREAM("PARTICLE FORMULA = " << ParticleNumber << " " << ReactionsPropertyTreeJSONTreeElementParticle.second.get<string>("formula")));
-                LoggersManagerObject.Log(STREAM("PARTICLE CHARGE = " << ParticleNumber << " " << ReactionsPropertyTreeJSONTreeElementParticle.second.get<int>("charge")));
-                LoggersManagerObject.Log(STREAM("PARTICLE COMPARTMENT = " << ParticleNumber << " " << ReactionsPropertyTreeJSONTreeElementParticle.second.get<string>("compartment")));
+                LoggersManagerObject.Log(STREAM("PARTICLE ID = " << ParticleNumber << " " << ReactionsPropertyTreeJSONTreeElementParticle.get<string>("id")));
+                LoggersManagerObject.Log(STREAM("PARTICLE NAME = " << ParticleNumber << " " << ReactionsPropertyTreeJSONTreeElementParticle.get<string>("name")));
+                LoggersManagerObject.Log(STREAM("PARTICLE FORMULA = " << ParticleNumber << " " << ReactionsPropertyTreeJSONTreeElementParticle.get<string>("formula")));
+                LoggersManagerObject.Log(STREAM("PARTICLE CHARGE = " << ParticleNumber << " " << ReactionsPropertyTreeJSONTreeElementParticle.get<int>("charge")));
+                LoggersManagerObject.Log(STREAM("PARTICLE COMPARTMENT = " << ParticleNumber << " " << ReactionsPropertyTreeJSONTreeElementParticle.get<string>("compartment")));
                 LoggersManagerObject.Log(STREAM(""));
                 ParticleNumber++;
             }
 
             LoggersManagerObject.Log(STREAM("JSON NUMBER OF TYPES OF REACTIONS = " << ReactionsPropertyTreeJSON.get_child("reactions").size()));
             UnsignedInt ReactionNumber = 1;
-            for (const auto &ReactionsPropertyTreeJSONTreeElementReaction: ReactionsPropertyTreeJSON.get_child("reactions"))
+            for (const auto& ReactionsPropertyTreeJSONTreeElementReaction : ReactionsPropertyTreeJSON.get_child("reactions") | views::values)
             {
-                LoggersManagerObject.Log(STREAM("REACTION ID = " << ReactionNumber << " " << ReactionsPropertyTreeJSONTreeElementReaction.second.get<string>("id")));
-                LoggersManagerObject.Log(STREAM("REACTION NAME = " << ReactionNumber << " " << ReactionsPropertyTreeJSONTreeElementReaction.second.get<string>("name")));
-                for (const auto &ReactionsPropertyTreeJSONTreeElementParticle: ReactionsPropertyTreeJSONTreeElementReaction.second.get_child("metabolites"))
+                LoggersManagerObject.Log(STREAM("REACTION ID = " << ReactionNumber << " " << ReactionsPropertyTreeJSONTreeElementReaction.get<string>("id")));
+                LoggersManagerObject.Log(STREAM("REACTION NAME = " << ReactionNumber << " " << ReactionsPropertyTreeJSONTreeElementReaction.get<string>("name")));
+                for (const auto &ReactionsPropertyTreeJSONTreeElementParticle: ReactionsPropertyTreeJSONTreeElementReaction.get_child("metabolites"))
                 {
                     LoggersManagerObject.Log(STREAM("PARTICLE = " << ReactionsPropertyTreeJSONTreeElementParticle.first << " " << ReactionsPropertyTreeJSONTreeElementParticle.second.get_value<string>()));
                     LoggersManagerObject.Log(STREAM("PARTICLE = " << ReactionsPropertyTreeJSONTreeElementParticle.first << " " << ReactionsPropertyTreeJSONTreeElementParticle.second.get_value<double>()));
                 }
-                LoggersManagerObject.Log(STREAM("LOWER BOUND = " << ReactionNumber << " " << ReactionsPropertyTreeJSONTreeElementReaction.second.get<string>("lower_bound")));
-                LoggersManagerObject.Log(STREAM("UPPER BOUND = " << ReactionNumber << " " << ReactionsPropertyTreeJSONTreeElementReaction.second.get<string>("upper_bound")));
-                LoggersManagerObject.Log(STREAM("GENE REACTION RULE = " << ReactionNumber << " " << ReactionsPropertyTreeJSONTreeElementReaction.second.get<string>("gene_reaction_rule")));
+                LoggersManagerObject.Log(STREAM("LOWER BOUND = " << ReactionNumber << " " << ReactionsPropertyTreeJSONTreeElementReaction.get<string>("lower_bound")));
+                LoggersManagerObject.Log(STREAM("UPPER BOUND = " << ReactionNumber << " " << ReactionsPropertyTreeJSONTreeElementReaction.get<string>("upper_bound")));
+                LoggersManagerObject.Log(STREAM("GENE REACTION RULE = " << ReactionNumber << " " << ReactionsPropertyTreeJSONTreeElementReaction.get<string>("gene_reaction_rule")));
 
                 LoggersManagerObject.Log(STREAM(""));
                 ReactionNumber++;
@@ -620,7 +620,7 @@ void CellEngineIllinoisDataCreator::PrintAllParticlesData()
     CATCH("printing all particles data")
 }
 
-void CellEngineIllinoisDataCreator::ReadCSVFiles(bool Read, const string& ParticlesDirectory)
+void CellEngineIllinoisDataCreator::ReadCSVFiles(const bool Read, const string& ParticlesDirectory)
 {
     try
     {
@@ -647,7 +647,7 @@ void CellEngineIllinoisDataCreator::ReadCSVFiles(bool Read, const string& Partic
     CATCH("reading tsv files")
 }
 
-void CellEngineIllinoisDataCreator::ReadTSVFiles(bool Read, const string& ParticlesDirectory)
+void CellEngineIllinoisDataCreator::ReadTSVFiles(const bool Read, const string& ParticlesDirectory)
 {
     try
     {
