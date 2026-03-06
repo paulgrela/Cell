@@ -3735,31 +3735,12 @@
 		<CellState id="17">
                         <TypeOfSpace>1</TypeOfSpace> <!--FullAtomSpace = 1, VoxelSimulationSpace = 2-->
 
-                                                <FullAtomMPIParallelProcessesExecution>false</FullAtomMPIParallelProcessesExecution>
+                        <FullAtomMPIParallelProcessesExecution>false</FullAtomMPIParallelProcessesExecution>
+
+
 
                         <CellStateFileName>../../WholeCellData/JCVI-syn3A/syn3a_atom_instances.cif</CellStateFileName>
                         <CellStateFileNameBackup>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile40.dat</CellStateFileNameBackup>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -3773,7 +3754,7 @@
                         <Radius2ForGenerationOfParticles>2160</Radius1ForGenerationOfParticles>
                         <Radius2SizeForGenerationOfParticles>160</Radius1SizeForGenerationOfParticles>
 
-                        <MixedFullAtomWithVoxelSpace>false</MixedFullAtomWithVoxelSpace>
+                        <MixedFullAtomWithVoxelSpace>true</MixedFullAtomWithVoxelSpace>
                         <NumberOfParticlesSectorsInX>40</NumberOfParticlesSectorsInX>
                         <NumberOfParticlesSectorsInY>40</NumberOfParticlesSectorsInY>
                         <NumberOfParticlesSectorsInZ>40</NumberOfParticlesSectorsInZ>
@@ -3807,29 +3788,6 @@
                         <TypeOfExchangeOfParticlesBetweenThreads>3</TypeOfExchangeOfParticlesBetweenThreads>
 
                         <UseMutexBetweenMainScreenThreadAndMenuThreads>true</UseMutexBetweenMainScreenThreadAndMenuThreads>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

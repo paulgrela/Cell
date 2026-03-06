@@ -35,7 +35,7 @@ CellEngineAtom CellEngineCIFDataFileReader::ParseRecord(const char* LocalCIFReco
     {
         string RecordStr = LocalCIFRecord;
 
-        vector<string> AtomFields = split(RecordStr, " ");
+        const vector<string> AtomFields = split(RecordStr, " ");
 
         strncpy(CellEngineAtomObject.Name, AtomFields[3].c_str(), AtomFields[3].length() + 1);
         strncpy(CellEngineAtomObject.ResName, AtomFields[5].c_str(), AtomFields[5].length() + 1);
@@ -44,7 +44,7 @@ CellEngineAtom CellEngineCIFDataFileReader::ParseRecord(const char* LocalCIFReco
 
         CellEngineAtomObject.SetAtomPositionsData(stof(AtomFields[10]), stof(AtomFields[11]), stof(AtomFields[12]));
 
-        auto AtomKindObjectIterator = ParticlesKindsManagerObject.GetGraphicAtomKindDataFromAtomName(AtomFields[3][0]);
+        const auto AtomKindObjectIterator = ParticlesKindsManagerObject.GetGraphicAtomKindDataFromAtomName(AtomFields[3][0]);
         CellEngineAtomObject.AtomColor = AtomKindObjectIterator->Color;
         #ifdef EXTENDED_RAM_MEMORY
         CellEngineAtomObject.SizeXAtom = AtomKindObjectIterator->SizeX;
@@ -141,15 +141,44 @@ void AssociateAutinNameWithIllinoisName(MainMapType<string, string>& AutinIllino
     AutinIllinoisNamesMap["'root.syn3A.interior.proteins.ASP_tRNASYNTH'"] = "JCVISYN3A_0287";
 }
 
+void NEWAssociateAutinNameWithIllinoisName(MainMapType<string, string>& AutinIllinoisNamesMap)
+{
+    AutinIllinoisNamesMap["'genome'"] = "DNANucleotide";
+    AutinIllinoisNamesMap["'RNA_messenger'"] = "RNANucleotide";
+    AutinIllinoisNamesMap["'DNA_polym erase_III-DNA_POL_III'"] = "particle_DNAPolymerase";
+    AutinIllinoisNamesMap["'RNA polymerase-RNA_POL'"] = "particle_RNAPolymerase";
+    AutinIllinoisNamesMap["'root.syn3A.membrane.inner_membrane'"] = "LipidInnerMembrane";
+    AutinIllinoisNamesMap["'root.syn3A.membrane.outer_membrane'"] = "LipidOuterMembrane";
+    AutinIllinoisNamesMap["'70S ribosome-RIBOSOME_70S'"] = "particle_RIBOSOME";
+
+    AutinIllinoisNamesMap["'Glycine--tRNAligase-JCVISYN3A_0405'"] = "JCVISYN3A_0405";
+    AutinIllinoisNamesMap["'Threonine--tRNA ligase-JCVISYN3A_0222'"] = "JCVISYN3A_0222";
+    AutinIllinoisNamesMap["'Serine--tRNA ligase-JCVISYN3A_006'"] = "JCVISYN3A_0061";
+    AutinIllinoisNamesMap["'Histidine--tRNAligase-JCVISYN3A_028'"] = "JCVISYN3A_0288";
+    AutinIllinoisNamesMap["'Alanine--tRNAligase-JCVISYN3A_0163'"] = "JCVISYN3A_0163";
+    AutinIllinoisNamesMap["'Tryptophan--tRNA ligase-JCVISYN3A_0308'"] = "JCVISYN3A_0308";
+    AutinIllinoisNamesMap["'Methionine--tRNA ligase-JCVISYN3A_0012'"] = "JCVISYN3A_0012";
+    AutinIllinoisNamesMap["'Leucine--tRNA ligase-JCVISYN3A_0634'"] = "JCVISYN3A_0634";
+    AutinIllinoisNamesMap["'Cysteine--tRNA ligase-JCVISYN3A_0837'"] = "JCVISYN3A_0837";
+    AutinIllinoisNamesMap["'Glutamate--tRNA ligase-JCVISYN3A_01'"] = "JCVISYN3A_0126";
+    AutinIllinoisNamesMap["'Tyrosine--tRNA ligase-JCVISYN3A_0613'"] = "JCVISYN3A_0613";
+    AutinIllinoisNamesMap["'Valine--tRNA ligase-JCVISYN3A_0260'"] = "JCVISYN3A_0260";
+    AutinIllinoisNamesMap["'Proline--tRNA ligase-JCVISYN3A_0282'"] = "JCVISYN3A_0282";
+    AutinIllinoisNamesMap["'Isoleucine--tRNA ligase-JCVISYN3A_0519'"] = "JCVISYN3A_0519";
+    AutinIllinoisNamesMap["'Arginine--tRNA ligase-JCVISYN3A_0535'"] = "JCVISYN3A_0535";
+    AutinIllinoisNamesMap["'Phenylalanine--tRNA ligase-PHE_tRNASYNTH'"] = "JCVISYN3A_0529";
+    AutinIllinoisNamesMap["'Aspartate--tRNA ligase-JCVISYN3A_0287'"] = "JCVISYN3A_0287";
+}
+
 EntityIdInt GetParticleKindIdFromGeneIdOrName(const string& ParticleKindName, const EntityIdInt ParticleKindIdParam, const MainMapType<EntityIdInt, UniqueIdInt>& ProteinIdFromGeneIdTranslator, const MainMapType<string, string>& AutinIllinoisNameMap)
 {
     try
     {
-        if (auto GeneId = ProteinIdFromGeneIdTranslator.find(ParticleKindIdParam); GeneId != ProteinIdFromGeneIdTranslator.end())
-             if (auto ParticleKindId = ParticlesKindsManagerObject.GetParticleKindFromGeneId(GeneId->second); ParticleKindId.has_value() == true)
+        if (const auto GeneId = ProteinIdFromGeneIdTranslator.find(ParticleKindIdParam); GeneId != ProteinIdFromGeneIdTranslator.end())
+             if (const auto ParticleKindId = ParticlesKindsManagerObject.GetParticleKindFromGeneId(GeneId->second); ParticleKindId.has_value() == true)
                  return ParticleKindId->EntityId;
 
-        if (auto IllinoisNameIter = AutinIllinoisNameMap.find(ParticleKindName); IllinoisNameIter != AutinIllinoisNameMap.end())
+        if (const auto IllinoisNameIter = AutinIllinoisNameMap.find(ParticleKindName); IllinoisNameIter != AutinIllinoisNameMap.end())
             return ParticlesKindsManagerObject.GetParticleKindFromStrId(IllinoisNameIter->second)->EntityId;
     }
     CATCH("translating entity id")
@@ -161,9 +190,9 @@ void AddParticleKindGraphicDataFromConfigXMLData(const EntityIdInt EntityId)
 {
     try
     {
-        if (auto ParticleKindObjectIterator = ParticlesKindsManagerObject.GraphicParticlesKindsFromConfigXML.find(EntityId); ParticleKindObjectIterator == ParticlesKindsManagerObject.GraphicParticlesKindsFromConfigXML.end())
+        if (const auto ParticleKindObjectIterator = ParticlesKindsManagerObject.GraphicParticlesKindsFromConfigXML.find(EntityId); ParticleKindObjectIterator == ParticlesKindsManagerObject.GraphicParticlesKindsFromConfigXML.end())
         {
-            auto OthersParticleKindObjectIterator = ParticlesKindsManagerObject.GraphicParticlesKindsFromConfigXML.find(10000);
+            const auto OthersParticleKindObjectIterator = ParticlesKindsManagerObject.GraphicParticlesKindsFromConfigXML.find(10000);
             ParticlesKindsManagerObject.ParticlesKinds[EntityId].GraphicData = ParticleKindGraphicData{ EntityId, OthersParticleKindObjectIterator->second.Visible, false, OthersParticleKindObjectIterator->second.SizeX, OthersParticleKindObjectIterator->second.SizeY, OthersParticleKindObjectIterator->second.SizeZ, OthersParticleKindObjectIterator->second.ParticleColor, OthersParticleKindObjectIterator->second.ParticleColor, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), OthersParticleKindObjectIterator->second.NameFromXML, "NAME_FROM_DATA_FILE" };
         }
         else
@@ -201,13 +230,13 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile(const bool SetStartValuesB
         vector<CellEngineAtom> LocalCellEngineParticlesCentersObject;
 
         MainMapType<string, string> AutinIllinoisNamesMap;
-        AssociateAutinNameWithIllinoisName(AutinIllinoisNamesMap);
+        NEWAssociateAutinNameWithIllinoisName(AutinIllinoisNamesMap);
         MainMapType<EntityIdInt, UniqueIdInt> ProteinIdFromGeneIdTranslator;
         MainMapType<EntityIdInt, string> ParticleAutinKindIdToAutinNameTranslator;
 
         if (CellEngineConfigDataObject.MixedFullAtomWithVoxelSpace == true)
         {
-            EntityIdInt LocalParticleKindId = max_element(ParticlesKindsManagerObject.ParticlesKinds.begin(), ParticlesKindsManagerObject.ParticlesKinds.end(), [](const pair<EntityIdInt, ParticleKind>& lhs, const pair<EntityIdInt, ParticleKind>& rhs){ return lhs.first < rhs.first; })->first + 1;
+            EntityIdInt LocalParticleKindId = ranges::max_element(ParticlesKindsManagerObject.ParticlesKinds, [](const pair<EntityIdInt, ParticleKind>& lhs, const pair<EntityIdInt, ParticleKind>& rhs){ return lhs.first < rhs.first; })->first + 1;
             ParticlesKindsManagerObject.AddSingleParticleKind(ParticlesTypes::Lipid, LocalParticleKindId, "LipidOuterMembrane", "LipidOuterMembrane", "LipidOuterMembrane", -1, 0, "m", 1);
             ParticlesKindsManagerObject.AddSingleParticleKind(ParticlesTypes::Lipid, LocalParticleKindId, "LipidInnerMembrane", "LipidInnerMembrane", "LipidInnerMembrane", -1, 0, "m", 1);
         }
@@ -247,6 +276,8 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile(const bool SetStartValuesB
                     if (Pos != string::npos)
                         ProteinIdFromGeneIdTranslator[EntityId] = stoi(AtomFields[5].substr(Pos + StrToFind.length(), 3));
                     ParticleAutinKindIdToAutinNameTranslator[EntityId] = AtomFields[5];
+
+                    LoggersManagerObject.Log(STREAM("PARTCILE NAME = " << AtomFields[5] << " " << ProteinIdFromGeneIdTranslator[EntityId] << " " << ParticleAutinKindIdToAutinNameTranslator[EntityId]));
                 }
             }
             else
@@ -295,7 +326,7 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile(const bool SetStartValuesB
                     LocalCellEngineAllAtomsObject.clear();
 
                     if (AppliedChainsNames.empty() == true)
-                        if (WriteErrorsInCIFFileToScreen == true)
+                        if constexpr (WriteErrorsInCIFFileToScreen == true)
                             LoggersManagerObject.Log(STREAM("ERROR IN CIF FILE AppliedChainsNames EMPTY = " << to_string(AppliedMatrixId)));
 
                     for (const auto& AppliedChainName : AppliedChainsNames)
@@ -303,14 +334,14 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile(const bool SetStartValuesB
                         auto AtomsForChainNameIterator = ChainsNames.find(AppliedChainName);
                         if (AtomsForChainNameIterator == ChainsNames.end())
                         {
-                            if (WriteErrorsInCIFFileToScreen == true)
+                            if constexpr (WriteErrorsInCIFFileToScreen == true)
                                 LoggersManagerObject.Log(STREAM("ERROR IN CIF FILE LACKS AppliedChainName: " << AppliedChainName));
                             continue;
                         }
                         else
                         {
                             if (AtomsForChainNameIterator->second.empty() == true)
-                                if (WriteErrorsInCIFFileToScreen == true)
+                                if constexpr (WriteErrorsInCIFFileToScreen == true)
                                     LoggersManagerObject.Log(STREAM("ERROR IN CIF FILE - ChainsNames.find(AppliedChainName)->second.size() == 0 " << AppliedChainName));
 
                             vmath::vec3 UniqueParticleColor = CellEngineColorsObject.GetRandomColor();

@@ -242,7 +242,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::SaveParticlesKindsAndParticl
     {
         LoggersManagerObject.Log(STREAM("SAVING OF SAVING DATA TO BINARY FILE"));
 
-        string ParticlesDataFileName = string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("binary") + OS_DIR_SEP + string("ParticlesDataFile.dat");
+        const string ParticlesDataFileName = string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("binary") + OS_DIR_SEP + string("ParticlesDataFile.dat");
         ofstream ParticlesDataFile(ParticlesDataFileName, ios_base::out | ios_base::trunc | ios_base::binary);
 
         SaveChemicalReactionsToBinaryFile(ParticlesDataFile);
@@ -289,7 +289,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::PrepareParticlesAfterReading
                 ParticleObject.second.PairedNucleotidePtr = ParticleObject.second.PairedNucleotideTemporary != 0 ? &GetParticleFromIndex(ParticleObject.second.PairedNucleotideTemporary) : nullptr;
 
                 ParticleObject.second.LinkedParticlesPointersList.clear();
-                for (auto& LinkedParticlesPointerObjectTemporary : ParticleObject.second.LinkedParticlesPointersListTemporary)
+                for (const auto& LinkedParticlesPointerObjectTemporary : ParticleObject.second.LinkedParticlesPointersListTemporary)
                     ParticleObject.second.LinkedParticlesPointersList.emplace_back(&GetParticleFromIndex(LinkedParticlesPointerObjectTemporary));
             }
 
@@ -303,9 +303,9 @@ void ReadStringFromBinaryFile(ifstream& ParticlesDataFile, string& StringToRead)
     try
     {
         UniqueIdInt Length = 0;
-        ParticlesDataFile.read((char*)&Length, sizeof(Length));
+        ParticlesDataFile.read(reinterpret_cast<char*>(&Length), sizeof(Length));
         StringToRead.resize(Length);
-        ParticlesDataFile.read((char*)StringToRead.c_str(), Length);
+        ParticlesDataFile.read(const_cast<char*>(StringToRead.c_str()), Length);
     }
     CATCH("reading string from binary file")
 }
@@ -318,11 +318,11 @@ void ReadVectorFromBinaryFile(ifstream& ParticlesDataFile, vector<TElement>& Vec
         VectorToBeRead.clear();
 
         UnsignedInt Size;
-        ParticlesDataFile.read((char*)&Size, sizeof(Size));
+        ParticlesDataFile.read(reinterpret_cast<char*>(&Size), sizeof(Size));
         for (UnsignedInt Index = 1; Index <= Size; Index++)
         {
             TElement Object{};
-            ParticlesDataFile.read((char*)&Object, sizeof(Object));
+            ParticlesDataFile.read(reinterpret_cast<char*>(&Object), sizeof(Object));
             VectorToBeRead.emplace_back(Object);
         }
     }
@@ -336,29 +336,29 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesKindsFromBinary
         LoggersManagerObject.Log(STREAM("START OF READING PARTICLES KINDS FROM BINARY FILE"));
 
         UnsignedInt ParticlesKindsSize;
-        ParticlesDataFile.read((char*)&ParticlesKindsSize, sizeof(ParticlesKindsSize));
+        ParticlesDataFile.read(reinterpret_cast<char*>(&ParticlesKindsSize), sizeof(ParticlesKindsSize));
         LoggersManagerObject.Log(STREAM("Number of Particles Kinds to be read = " << ParticlesKindsSize));
 
         for (UnsignedInt ParticleKindObjectIndex = 1; ParticleKindObjectIndex <= ParticlesKindsSize; ParticleKindObjectIndex++)
         {
             ParticleKind ParticleKindObject;
 
-            ParticlesDataFile.read((char*)&ParticleKindObject.EntityId, sizeof(ParticleKindObject.EntityId));
-            ParticlesDataFile.read((char*)&ParticleKindObject.GeneId, sizeof(ParticleKindObject.GeneId));
-            ParticlesDataFile.read((char*)&ParticleKindObject.ElectricCharge, sizeof(ParticleKindObject.ElectricCharge));
-            ParticlesDataFile.read((char*)&ParticleKindObject.Counter, sizeof(ParticleKindObject.Counter));
-            ParticlesDataFile.read((char*)&ParticleKindObject.GraphicData.SizeX, sizeof(ParticleKindObject.GraphicData.SizeX));
-            ParticlesDataFile.read((char*)&ParticleKindObject.GraphicData.SizeY, sizeof(ParticleKindObject.GraphicData.SizeY));
-            ParticlesDataFile.read((char*)&ParticleKindObject.GraphicData.SizeZ, sizeof(ParticleKindObject.GraphicData.SizeZ));
-            ParticlesDataFile.read((char*)&ParticleKindObject.GraphicData.AtomColor, sizeof(ParticleKindObject.GraphicData.AtomColor));
-            ParticlesDataFile.read((char*)&ParticleKindObject.GraphicData.ParticleColor, sizeof(ParticleKindObject.GraphicData.ParticleColor));
-            ParticlesDataFile.read((char*)&ParticleKindObject.GraphicData.RandomParticleColor, sizeof(ParticleKindObject.GraphicData.RandomParticleColor));
+            ParticlesDataFile.read(reinterpret_cast<char*>(&ParticleKindObject.EntityId), sizeof(ParticleKindObject.EntityId));
+            ParticlesDataFile.read(reinterpret_cast<char*>(&ParticleKindObject.GeneId), sizeof(ParticleKindObject.GeneId));
+            ParticlesDataFile.read(reinterpret_cast<char*>(&ParticleKindObject.ElectricCharge), sizeof(ParticleKindObject.ElectricCharge));
+            ParticlesDataFile.read(reinterpret_cast<char*>(&ParticleKindObject.Counter), sizeof(ParticleKindObject.Counter));
+            ParticlesDataFile.read(reinterpret_cast<char*>(&ParticleKindObject.GraphicData.SizeX), sizeof(ParticleKindObject.GraphicData.SizeX));
+            ParticlesDataFile.read(reinterpret_cast<char*>(&ParticleKindObject.GraphicData.SizeY), sizeof(ParticleKindObject.GraphicData.SizeY));
+            ParticlesDataFile.read(reinterpret_cast<char*>(&ParticleKindObject.GraphicData.SizeZ), sizeof(ParticleKindObject.GraphicData.SizeZ));
+            ParticlesDataFile.read(reinterpret_cast<char*>(&ParticleKindObject.GraphicData.AtomColor), sizeof(ParticleKindObject.GraphicData.AtomColor));
+            ParticlesDataFile.read(reinterpret_cast<char*>(&ParticleKindObject.GraphicData.ParticleColor), sizeof(ParticleKindObject.GraphicData.ParticleColor));
+            ParticlesDataFile.read(reinterpret_cast<char*>(&ParticleKindObject.GraphicData.RandomParticleColor), sizeof(ParticleKindObject.GraphicData.RandomParticleColor));
             ParticleKindObject.GraphicData.ParticleColor = ParticlesKindsManagerObject.GetParticleKindGraphicDataFromConfigXMLData(ParticleKindObject.EntityId);
 
             float XSizeDiv2, YSizeDiv2, ZSizeDiv2;
-            ParticlesDataFile.read((char*)&XSizeDiv2, sizeof(XSizeDiv2));
-            ParticlesDataFile.read((char*)&YSizeDiv2, sizeof(YSizeDiv2));
-            ParticlesDataFile.read((char*)&ZSizeDiv2, sizeof(ZSizeDiv2));
+            ParticlesDataFile.read(reinterpret_cast<char*>(&XSizeDiv2), sizeof(XSizeDiv2));
+            ParticlesDataFile.read(reinterpret_cast<char*>(&YSizeDiv2), sizeof(YSizeDiv2));
+            ParticlesDataFile.read(reinterpret_cast<char*>(&ZSizeDiv2), sizeof(ZSizeDiv2));
             ParticleKindObject.XSizeDiv2 = XSizeDiv2;
             ParticleKindObject.YSizeDiv2 = YSizeDiv2;
             ParticleKindObject.ZSizeDiv2 = ZSizeDiv2;
@@ -371,17 +371,17 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesKindsFromBinary
 	        ReadStringFromBinaryFile(ParticlesDataFile, ParticleKindObject.GraphicData.NameFromDataFile);
 
 	        UnsignedInt ParticleKindSpecialDataSectorSize;
-	        ParticlesDataFile.read((char*)&ParticleKindSpecialDataSectorSize, sizeof(ParticleKindSpecialDataSectorSize));
+	        ParticlesDataFile.read(reinterpret_cast<char*>(&ParticleKindSpecialDataSectorSize), sizeof(ParticleKindSpecialDataSectorSize));
 	        for (UnsignedInt ParticleKindSpecialDataSectorIndex = 0; ParticleKindSpecialDataSectorIndex < ParticleKindSpecialDataSectorSize; ParticleKindSpecialDataSectorIndex++)
             {
                 ParticleKindSpecialData ParticleKindSpecialDataSectorObject;
                 ReadStringFromBinaryFile(ParticlesDataFile, ParticleKindSpecialDataSectorObject.Description);
                 ReadStringFromBinaryFile(ParticlesDataFile, ParticleKindSpecialDataSectorObject.AddedParticle);
-                ParticlesDataFile.read((char*)&ParticleKindSpecialDataSectorObject.GeneId, sizeof(ParticleKindSpecialDataSectorObject.GeneId));
-                ParticlesDataFile.read((char*)&ParticleKindSpecialDataSectorObject.IsProtein, sizeof(ParticleKindSpecialDataSectorObject.IsProtein));
-                ParticlesDataFile.read((char*)&ParticleKindSpecialDataSectorObject.ParticleType, sizeof(ParticleKindSpecialDataSectorObject.ParticleType));
-                ParticlesDataFile.read((char*)&ParticleKindSpecialDataSectorObject.CleanProductOfTranscription, sizeof(ParticleKindSpecialDataSectorObject.CleanProductOfTranscription));
-                ParticlesDataFile.read((char*)&ParticleKindSpecialDataSectorObject.CounterAtStartOfSimulation, sizeof(ParticleKindSpecialDataSectorObject.CounterAtStartOfSimulation));
+                ParticlesDataFile.read(reinterpret_cast<char*>(&ParticleKindSpecialDataSectorObject.GeneId), sizeof(ParticleKindSpecialDataSectorObject.GeneId));
+                ParticlesDataFile.read(reinterpret_cast<char*>(&ParticleKindSpecialDataSectorObject.IsProtein), sizeof(ParticleKindSpecialDataSectorObject.IsProtein));
+                ParticlesDataFile.read(reinterpret_cast<char*>(&ParticleKindSpecialDataSectorObject.ParticleType), sizeof(ParticleKindSpecialDataSectorObject.ParticleType));
+                ParticlesDataFile.read(reinterpret_cast<char*>(&ParticleKindSpecialDataSectorObject.CleanProductOfTranscription), sizeof(ParticleKindSpecialDataSectorObject.CleanProductOfTranscription));
+                ParticlesDataFile.read(reinterpret_cast<char*>(&ParticleKindSpecialDataSectorObject.CounterAtStartOfSimulation), sizeof(ParticleKindSpecialDataSectorObject.CounterAtStartOfSimulation));
                 ParticleKindObject.ParticleKindSpecialDataSector.emplace_back(ParticleKindSpecialDataSectorObject);
             }
 
@@ -410,11 +410,11 @@ void ReadVoxelsVectorDividedByStepsFromBinaryFile(ifstream& ParticlesDataFile, L
         VectorToBeRead.clear();
 
         UnsignedInt Size;
-        ParticlesDataFile.read((char*)&Size, sizeof(Size));
+        ParticlesDataFile.read(reinterpret_cast<char*>(&Size), sizeof(Size));
         for (UnsignedInt Index = 0; Index < Size; Index++)
         {
             vector3_16 Object{};
-            ParticlesDataFile.read((char*)&Object, sizeof(Object));
+            ParticlesDataFile.read(reinterpret_cast<char*>(&Object), sizeof(Object));
             if (Index % Step == 0)
                 VectorToBeRead.emplace_back(vector3_16{ static_cast<PositionInt>(static_cast<RealType>(Object.X) / DivideFactor), static_cast<PositionInt>(static_cast<RealType>(Object.Y) / DivideFactor), static_cast<PositionInt>(static_cast<RealType>(Object.Z) / DivideFactor) });
         }
@@ -441,21 +441,21 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
         LoggersManagerObject.Log(STREAM("START OF READING PARTICLES FROM BINARY FILE"));
 
         UnsignedInt ParticlesSize;
-        ParticlesDataFile.read((char*)&ParticlesSize, sizeof(ParticlesSize));
+        ParticlesDataFile.read(reinterpret_cast<char*>(&ParticlesSize), sizeof(ParticlesSize));
         LoggersManagerObject.Log(STREAM("Number of Particles to be read = " << ParticlesSize));
 
         for (UnsignedInt ParticleObjectIndex = 1; ParticleObjectIndex <= ParticlesSize; ParticleObjectIndex++)
         {
             Particle ParticleObject;
 
-            ParticlesDataFile.read((char*)&ParticleObject.EntityId, sizeof(ParticleObject.EntityId));
-            ParticlesDataFile.read((char*)&ParticleObject.ChainId, sizeof(ParticleObject.ChainId));
-            ParticlesDataFile.read((char*)&ParticleObject.Index, sizeof(ParticleObject.Index));
-            ParticlesDataFile.read((char*)&ParticleObject.GenomeIndex, sizeof(ParticleObject.GenomeIndex));
-            ParticlesDataFile.read((char*)&ParticleObject.ElectricCharge, sizeof(ParticleObject.ElectricCharge));
+            ParticlesDataFile.read(reinterpret_cast<char*>(&ParticleObject.EntityId), sizeof(ParticleObject.EntityId));
+            ParticlesDataFile.read(reinterpret_cast<char*>(&ParticleObject.ChainId), sizeof(ParticleObject.ChainId));
+            ParticlesDataFile.read(reinterpret_cast<char*>(&ParticleObject.Index), sizeof(ParticleObject.Index));
+            ParticlesDataFile.read(reinterpret_cast<char*>(&ParticleObject.GenomeIndex), sizeof(ParticleObject.GenomeIndex));
+            ParticlesDataFile.read(reinterpret_cast<char*>(&ParticleObject.ElectricCharge), sizeof(ParticleObject.ElectricCharge));
 
             vector3_Real32 CenterReadObject{};
-            ParticlesDataFile.read((char*)&CenterReadObject, sizeof(CenterReadObject));
+            ParticlesDataFile.read(reinterpret_cast<char*>(&CenterReadObject), sizeof(CenterReadObject));
             ParticleObject.Center = { static_cast<RealType>(CenterReadObject.X), static_cast<RealType>(CenterReadObject.Y), static_cast<RealType>(CenterReadObject.Z) };
 
             ParticleObject.Center.X /= CellEngineConfigDataObject.DivisionFactorForReadingPositionsOfParticles;
@@ -471,8 +471,8 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
                 }
             }
 
-            ParticlesDataFile.read((char*)&ParticleObject.UniqueParticleColor, sizeof(ParticleObject.UniqueParticleColor));
-            ParticlesDataFile.read((char*)&ParticleObject.SelectedForReaction, sizeof(ParticleObject.SelectedForReaction));
+            ParticlesDataFile.read(reinterpret_cast<char*>(&ParticleObject.UniqueParticleColor), sizeof(ParticleObject.UniqueParticleColor));
+            ParticlesDataFile.read(reinterpret_cast<char*>(&ParticleObject.SelectedForReaction), sizeof(ParticleObject.SelectedForReaction));
 
             ReadStringFromBinaryFile(ParticlesDataFile, ParticleObject.SequenceStr);
 
@@ -486,9 +486,9 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
             if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
                 ReadVectorFromBinaryFile<CellEngineAtom>(ParticlesDataFile, ParticleObject.ListOfAtoms);
 
-            ParticlesDataFile.read((char*)&ParticleObject.PrevTemporary, sizeof(ParticleObject.PrevTemporary));
-            ParticlesDataFile.read((char*)&ParticleObject.NextTemporary, sizeof(ParticleObject.NextTemporary));
-            ParticlesDataFile.read((char*)&ParticleObject.PairedNucleotideTemporary, sizeof(ParticleObject.PairedNucleotideTemporary));
+            ParticlesDataFile.read(reinterpret_cast<char*>(&ParticleObject.PrevTemporary), sizeof(ParticleObject.PrevTemporary));
+            ParticlesDataFile.read(reinterpret_cast<char*>(&ParticleObject.NextTemporary), sizeof(ParticleObject.NextTemporary));
+            ParticlesDataFile.read(reinterpret_cast<char*>(&ParticleObject.PairedNucleotideTemporary), sizeof(ParticleObject.PairedNucleotideTemporary));
 
             ReadVectorFromBinaryFile<UniqueIdInt>(ParticlesDataFile, ParticleObject.LinkedParticlesPointersListTemporary);
 
@@ -542,34 +542,34 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadChemicalReactionsFromBin
         LoggersManagerObject.Log(STREAM("START OF READING CHEMICAL REACTIONS FROM BINARY FILE"));
 
         UnsignedInt ChemicalReactionsSize;
-        ParticlesDataFile.read((char*)&ChemicalReactionsSize, sizeof(ChemicalReactionsSize));
+        ParticlesDataFile.read(reinterpret_cast<char*>(&ChemicalReactionsSize), sizeof(ChemicalReactionsSize));
         LoggersManagerObject.Log(STREAM("Number of chemical reactions to be read = " << ChemicalReactionsSize));
 
         for (UnsignedInt ChemicalReactionObjectIndex = 1; ChemicalReactionObjectIndex <= ChemicalReactionsSize; ChemicalReactionObjectIndex++)
         {
             ChemicalReaction ChemicalReactionObject;
 
-            ParticlesDataFile.read((char*)&ChemicalReactionObject.ReactionIdNum, sizeof(ChemicalReactionObject.ReactionIdNum));
+            ParticlesDataFile.read(reinterpret_cast<char*>(&ChemicalReactionObject.ReactionIdNum), sizeof(ChemicalReactionObject.ReactionIdNum));
             ReadStringFromBinaryFile(ParticlesDataFile, ChemicalReactionObject.ReactionIdStr);
             ReadStringFromBinaryFile(ParticlesDataFile, ChemicalReactionObject.ReactionName);
             ReadStringFromBinaryFile(ParticlesDataFile, ChemicalReactionObject.ReactantsStr);
-            ParticlesDataFile.read((char*)&ChemicalReactionObject.Duration, sizeof(ChemicalReactionObject.Duration));
-            ParticlesDataFile.read((char*)&ChemicalReactionObject.Reversible, sizeof(ChemicalReactionObject.Reversible));
+            ParticlesDataFile.read(reinterpret_cast<char*>(&ChemicalReactionObject.Duration), sizeof(ChemicalReactionObject.Duration));
+            ParticlesDataFile.read(reinterpret_cast<char*>(&ChemicalReactionObject.Reversible), sizeof(ChemicalReactionObject.Reversible));
             ReadStringFromBinaryFile(ParticlesDataFile, ChemicalReactionObject.UpperFluxBound);
             ReadStringFromBinaryFile(ParticlesDataFile, ChemicalReactionObject.LowerFluxBound);
-            ParticlesDataFile.read((char*)&ChemicalReactionObject.AdditionalParameter1, sizeof(ChemicalReactionObject.AdditionalParameter1));
-            ParticlesDataFile.read((char*)&ChemicalReactionObject.AdditionalParameter2, sizeof(ChemicalReactionObject.AdditionalParameter2));
+            ParticlesDataFile.read(reinterpret_cast<char*>(&ChemicalReactionObject.AdditionalParameter1), sizeof(ChemicalReactionObject.AdditionalParameter1));
+            ParticlesDataFile.read(reinterpret_cast<char*>(&ChemicalReactionObject.AdditionalParameter2), sizeof(ChemicalReactionObject.AdditionalParameter2));
             ReadStringFromBinaryFile(ParticlesDataFile, ChemicalReactionObject.Comment);
 
             UnsignedInt ChemicalReactionReactantsSize;
-            ParticlesDataFile.read((char*)&ChemicalReactionReactantsSize, sizeof(ChemicalReactionReactantsSize));
+            ParticlesDataFile.read(reinterpret_cast<char*>(&ChemicalReactionReactantsSize), sizeof(ChemicalReactionReactantsSize));
             for (UnsignedInt ChemicalReactionReactantIndex = 0; ChemicalReactionReactantIndex < ChemicalReactionReactantsSize; ChemicalReactionReactantIndex++)
             {
                 ParticleKindForChemicalReaction ParticleKindForChemicalReactionObject;
 
-                ParticlesDataFile.read((char*)&ParticleKindForChemicalReactionObject.EntityId, sizeof(ParticleKindForChemicalReactionObject.EntityId));
-                ParticlesDataFile.read((char*)&ParticleKindForChemicalReactionObject.Counter, sizeof(ParticleKindForChemicalReactionObject.Counter));
-                ParticlesDataFile.read((char*)&ParticleKindForChemicalReactionObject.ToRemoveInReaction, sizeof(ParticleKindForChemicalReactionObject.ToRemoveInReaction));
+                ParticlesDataFile.read(reinterpret_cast<char*>(&ParticleKindForChemicalReactionObject.EntityId), sizeof(ParticleKindForChemicalReactionObject.EntityId));
+                ParticlesDataFile.read(reinterpret_cast<char*>(&ParticleKindForChemicalReactionObject.Counter), sizeof(ParticleKindForChemicalReactionObject.Counter));
+                ParticlesDataFile.read(reinterpret_cast<char*>(&ParticleKindForChemicalReactionObject.ToRemoveInReaction), sizeof(ParticleKindForChemicalReactionObject.ToRemoveInReaction));
                 ReadStringFromBinaryFile(ParticlesDataFile, ParticleKindForChemicalReactionObject.SequenceStr);
                 ReadVectorFromBinaryFile<ChainIdInt>(ParticlesDataFile, ParticleKindForChemicalReactionObject.Sequence);
                 ReadVectorFromBinaryFile<UniqueIdInt>(ParticlesDataFile, ParticleKindForChemicalReactionObject.LinkedParticleTypes);
@@ -578,14 +578,14 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadChemicalReactionsFromBin
             }
 
             UnsignedInt ChemicalReactionProductsSize;
-            ParticlesDataFile.read((char*)&ChemicalReactionProductsSize, sizeof(ChemicalReactionProductsSize));
+            ParticlesDataFile.read(reinterpret_cast<char*>(&ChemicalReactionProductsSize), sizeof(ChemicalReactionProductsSize));
             for (UnsignedInt ChemicalReactionProductIndex = 0; ChemicalReactionProductIndex < ChemicalReactionProductsSize; ChemicalReactionProductIndex++)
             {
                 ParticleKindForChemicalReaction ParticleKindForChemicalReactionObject;
 
-                ParticlesDataFile.read((char*)&ParticleKindForChemicalReactionObject.EntityId, sizeof(ParticleKindForChemicalReactionObject.EntityId));
-                ParticlesDataFile.read((char*)&ParticleKindForChemicalReactionObject.Counter, sizeof(ParticleKindForChemicalReactionObject.Counter));
-                ParticlesDataFile.read((char*)&ParticleKindForChemicalReactionObject.ToRemoveInReaction, sizeof(ParticleKindForChemicalReactionObject.ToRemoveInReaction));
+                ParticlesDataFile.read(reinterpret_cast<char*>(&ParticleKindForChemicalReactionObject.EntityId), sizeof(ParticleKindForChemicalReactionObject.EntityId));
+                ParticlesDataFile.read(reinterpret_cast<char*>(&ParticleKindForChemicalReactionObject.Counter), sizeof(ParticleKindForChemicalReactionObject.Counter));
+                ParticlesDataFile.read(reinterpret_cast<char*>(&ParticleKindForChemicalReactionObject.ToRemoveInReaction), sizeof(ParticleKindForChemicalReactionObject.ToRemoveInReaction));
                 ReadStringFromBinaryFile(ParticlesDataFile, ParticleKindForChemicalReactionObject.SequenceStr);
                 ReadVectorFromBinaryFile<ChainIdInt>(ParticlesDataFile, ParticleKindForChemicalReactionObject.Sequence);
                 ReadVectorFromBinaryFile<UniqueIdInt>(ParticlesDataFile, ParticleKindForChemicalReactionObject.LinkedParticleTypes);
@@ -609,20 +609,20 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadGenesFromBinaryFile(ifst
         LoggersManagerObject.Log(STREAM("START OF READING GENES FROM BINARY FILE"));
 
         UnsignedInt GenesSize;
-        ParticlesDataFile.read((char*)&GenesSize, sizeof(GenesSize));
+        ParticlesDataFile.read(reinterpret_cast<char*>(&GenesSize), sizeof(GenesSize));
         LoggersManagerObject.Log(STREAM("Number of genes to be read = " << GenesSize));
 
         for (UnsignedInt GeneObjectIndex = 1; GeneObjectIndex <= GenesSize; GeneObjectIndex++)
         {
             Gene GeneObject;
 
-            ParticlesDataFile.read((char*)&GeneObject.NumId, sizeof(GeneObject.NumId));
+            ParticlesDataFile.read(reinterpret_cast<char*>(&GeneObject.NumId), sizeof(GeneObject.NumId));
             ReadStringFromBinaryFile(ParticlesDataFile, GeneObject.StrId);
             ReadStringFromBinaryFile(ParticlesDataFile, GeneObject.Description);
             ReadStringFromBinaryFile(ParticlesDataFile, GeneObject.ProteinId);
             ReadStringFromBinaryFile(ParticlesDataFile, GeneObject.Sequence);
-            ParticlesDataFile.read((char*)&GeneObject.StartPosInGenome, sizeof(GeneObject.StartPosInGenome));
-            ParticlesDataFile.read((char*)&GeneObject.EndPosInGenome, sizeof(GeneObject.EndPosInGenome));
+            ParticlesDataFile.read(reinterpret_cast<char*>(&GeneObject.StartPosInGenome), sizeof(GeneObject.StartPosInGenome));
+            ParticlesDataFile.read(reinterpret_cast<char*>(&GeneObject.EndPosInGenome), sizeof(GeneObject.EndPosInGenome));
 
             ParticlesKindsManagerObject.Genes[GeneObject.NumId] = GeneObject;
 
@@ -673,26 +673,26 @@ void CellEngineParticlesBinaryDataFileReaderWriter::PreprocessLinkAndAssociateEv
 {
     try
     {
-        for (auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
+        for (auto& PartcileKindObject : ParticlesKindsManagerObject.ParticlesKinds | views::values)
         {
-            ParticleKindObject.second.AssociatedChemicalReactions.clear();
+            PartcileKindObject.AssociatedChemicalReactions.clear();
 
             for (const auto &ChemicalReactionObject : ChemicalReactionsManagerObject.ChemicalReactions)
                 for (const auto& ReactantObject : ChemicalReactionObject.Reactants)
-                    if (ReactantObject.EntityId == ParticleKindObject.second.EntityId)
+                    if (ReactantObject.EntityId == PartcileKindObject.EntityId)
                     {
-                        ParticleKindObject.second.AssociatedChemicalReactions.insert(ChemicalReactionObject.ReactionIdNum);
+                        PartcileKindObject.AssociatedChemicalReactions.insert(ChemicalReactionObject.ReactionIdNum);
                         break;
                     }
         }
 
-        for (auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
+        for (auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds | views::values)
         {
             string ListOfAssociatedReactions;
-            for (const auto& AssociatedChemicalReactionObject : ParticleKindObject.second.AssociatedChemicalReactions)
+            for (const auto& AssociatedChemicalReactionObject : ParticleKindObject.AssociatedChemicalReactions)
                 ListOfAssociatedReactions += to_string(AssociatedChemicalReactionObject) + " " + ChemicalReactionsManagerObject.GetReactionFromNumId(AssociatedChemicalReactionObject).ReactantsStr + " | ";
 
-            LoggersManagerObject.Log(STREAM("PARTICLE KIND = " << to_string(ParticleKindObject.second.EntityId) << " " << ParticleKindObject.second.IdStr << " " << ParticleKindObject.second.Name));
+            LoggersManagerObject.Log(STREAM("PARTICLE KIND = " << to_string(ParticleKindObject.EntityId) << " " << ParticleKindObject.IdStr << " " << ParticleKindObject.Name));
             LoggersManagerObject.Log(STREAM("ListOfAssociatedReactions = " << ListOfAssociatedReactions));
         }
     }

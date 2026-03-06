@@ -698,7 +698,7 @@ void CellEngineIllinoisDataCreator::ReadAllIllinoisDataFromFiles()
         ReadAndParseGenesFile(string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("genome") + OS_DIR_SEP + string("GENES.txt"));
         PrintGenesFile();
 
-        string ParticlesDirectory = string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("particles") + OS_DIR_SEP;
+        const string ParticlesDirectory = string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("particles") + OS_DIR_SEP;
 
         ReadCSVFiles(true, ParticlesDirectory);
         PrintAllParticlesData();
