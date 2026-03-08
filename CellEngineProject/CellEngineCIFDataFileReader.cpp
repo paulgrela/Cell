@@ -230,8 +230,10 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile(const bool SetStartValuesB
         vector<CellEngineAtom> LocalCellEngineParticlesCentersObject;
 
         MainMapType<string, string> AutinIllinoisNamesMap;
+
         NEWAssociateAutinNameWithIllinoisName(AutinIllinoisNamesMap);
         //AssociateAutinNameWithIllinoisName(AutinIllinoisNamesMap);
+
         MainMapType<EntityIdInt, UniqueIdInt> ProteinIdFromGeneIdTranslator;
         MainMapType<EntityIdInt, string> ParticleAutinKindIdToAutinNameTranslator;
 
@@ -261,11 +263,19 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile(const bool SetStartValuesB
         vector<string> AppliedChainsNames;
         regex RegexObject2("([A-z]+[0-9]*)");
 
+        std::regex RegexObject3(R"('[^']*'|[^\s]+)");
+
         while (getline(File, Line, '\n'))
         {
             if (Line.substr(0, 4) == ". . ")
             {
-                vector<string> AtomFields = split(Line, " ");
+                vector<string> AtomFields;
+
+                auto begin = std::sregex_iterator(Line.begin(), Line.end(), RegexObject3);
+                auto end = std::sregex_iterator();
+
+                for (auto Token = begin; Token != end; ++Token)
+                    AtomFields.emplace_back(Token->str());
 
                 EntityIdInt EntityId = stoi(AtomFields[2]);
                 ParticlesKindsManagerObject.ParticlesKinds[EntityId].EntityId = EntityId;
@@ -401,7 +411,7 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile(const bool SetStartValuesB
             }
         }
 
-        LoggersManagerObject.Log(STREAM("Number of erased particles from particle kinds = " << erase_if(ParticlesKindsManagerObject.ParticlesKinds, [](auto& P){ return P.first < CellEngineConfigDataObject.DNAIdentifier; })));//XXX
+        LoggersManagerObject.Log(STREAM("Number of erased particles from particle kinds = " << erase_if(ParticlesKindsManagerObject.ParticlesKinds, [](auto& P){ return P.first < CellEngineConfigDataObject.DNAIdentifier; })));
 
         PreprocessData(true);
 
