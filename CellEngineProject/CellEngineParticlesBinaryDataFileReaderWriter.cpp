@@ -21,11 +21,11 @@ void SavePointerToBinaryFile(ofstream& ParticlesDataFile, const Particle* Pointe
     try
     {
         if (PointerToParticle != nullptr)
-            ParticlesDataFile.write((char*)&PointerToParticle->Index, sizeof(UniqueIdInt));
+            ParticlesDataFile.write(reinterpret_cast<const char*>(&PointerToParticle->Index), sizeof(UniqueIdInt));
         else
         {
             UniqueIdInt ValueToWrite = 0;
-            ParticlesDataFile.write((char*)&ValueToWrite, sizeof(UniqueIdInt));
+            ParticlesDataFile.write(reinterpret_cast<char*>(&ValueToWrite), sizeof(UniqueIdInt));
         }
     }
     CATCH("saving pointer to binary file")
@@ -36,8 +36,8 @@ void SaveStringToBinaryFile(ofstream& ParticlesDataFile, const string& StringToB
     try
     {
         UniqueIdInt Length = StringToBeSaved.length();
-        ParticlesDataFile.write((char*)&Length, sizeof(Length));
-        ParticlesDataFile.write((char*)StringToBeSaved.c_str(), Length);
+        ParticlesDataFile.write(reinterpret_cast<char*>(&Length), sizeof(Length));
+        ParticlesDataFile.write(StringToBeSaved.c_str(), Length);
     }
     CATCH("saving string to binary file")
 }
@@ -48,12 +48,12 @@ void SaveVectorToBinaryFile(ofstream& ParticlesDataFile, const vector<TElement>&
     try
     {
         UnsignedInt Size = VectorToBeSaved.size();
-        ParticlesDataFile.write((char*)&Size, sizeof(Size));
+        ParticlesDataFile.write(reinterpret_cast<char*>(&Size), sizeof(Size));
         for (const auto& Object : VectorToBeSaved)
             if constexpr(std::is_pointer_v<TElement>)
                 SavePointerToBinaryFile(ParticlesDataFile, Object);
             else
-                ParticlesDataFile.write((char*)&Object, sizeof(Object));
+                ParticlesDataFile.write(reinterpret_cast<const char*>(&Object), sizeof(Object));
     }
     CATCH("saving vector to binary file")
 }
@@ -65,22 +65,22 @@ void CellEngineParticlesBinaryDataFileReaderWriter::SaveParticlesKindsToBinaryFi
         LoggersManagerObject.Log(STREAM("START OF SAVING PARTICLES KINDS TO BINARY FILE"));
 
         UnsignedInt ParticlesKindsSize = ParticlesKindsManagerObject.ParticlesKinds.size();
-        ParticlesDataFile.write((char*)&ParticlesKindsSize, sizeof(ParticlesKindsSize));
+        ParticlesDataFile.write(reinterpret_cast<char*>(&ParticlesKindsSize), sizeof(ParticlesKindsSize));
         for (auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
         {
-            ParticlesDataFile.write((char*)&ParticleKindObject.second.EntityId, sizeof(ParticleKindObject.second.EntityId));
-            ParticlesDataFile.write((char*)&ParticleKindObject.second.GeneId, sizeof(ParticleKindObject.second.GeneId));
-            ParticlesDataFile.write((char*)&ParticleKindObject.second.ElectricCharge, sizeof(ParticleKindObject.second.ElectricCharge));
-            ParticlesDataFile.write((char*)&ParticleKindObject.second.Counter, sizeof(ParticleKindObject.second.Counter));
-            ParticlesDataFile.write((char*)&ParticleKindObject.second.GraphicData.SizeX, sizeof(ParticleKindObject.second.GraphicData.SizeX));
-            ParticlesDataFile.write((char*)&ParticleKindObject.second.GraphicData.SizeY, sizeof(ParticleKindObject.second.GraphicData.SizeY));
-            ParticlesDataFile.write((char*)&ParticleKindObject.second.GraphicData.SizeZ, sizeof(ParticleKindObject.second.GraphicData.SizeZ));
-            ParticlesDataFile.write((char*)&ParticleKindObject.second.GraphicData.AtomColor, sizeof(ParticleKindObject.second.GraphicData.AtomColor));
-            ParticlesDataFile.write((char*)&ParticleKindObject.second.GraphicData.ParticleColor, sizeof(ParticleKindObject.second.GraphicData.ParticleColor));
-            ParticlesDataFile.write((char*)&ParticleKindObject.second.GraphicData.RandomParticleColor, sizeof(ParticleKindObject.second.GraphicData.RandomParticleColor));
-            ParticlesDataFile.write((char*)&ParticleKindObject.second.XSizeDiv2, sizeof(ParticleKindObject.second.XSizeDiv2));
-            ParticlesDataFile.write((char*)&ParticleKindObject.second.YSizeDiv2, sizeof(ParticleKindObject.second.YSizeDiv2));
-            ParticlesDataFile.write((char*)&ParticleKindObject.second.ZSizeDiv2, sizeof(ParticleKindObject.second.ZSizeDiv2));
+            ParticlesDataFile.write(reinterpret_cast<char*>(&ParticleKindObject.second.EntityId), sizeof(ParticleKindObject.second.EntityId));
+            ParticlesDataFile.write(reinterpret_cast<char*>(&ParticleKindObject.second.GeneId), sizeof(ParticleKindObject.second.GeneId));
+            ParticlesDataFile.write(reinterpret_cast<char*>(&ParticleKindObject.second.ElectricCharge), sizeof(ParticleKindObject.second.ElectricCharge));
+            ParticlesDataFile.write(reinterpret_cast<char*>(&ParticleKindObject.second.Counter), sizeof(ParticleKindObject.second.Counter));
+            ParticlesDataFile.write(reinterpret_cast<char*>(&ParticleKindObject.second.GraphicData.SizeX), sizeof(ParticleKindObject.second.GraphicData.SizeX));
+            ParticlesDataFile.write(reinterpret_cast<char*>(&ParticleKindObject.second.GraphicData.SizeY), sizeof(ParticleKindObject.second.GraphicData.SizeY));
+            ParticlesDataFile.write(reinterpret_cast<char*>(&ParticleKindObject.second.GraphicData.SizeZ), sizeof(ParticleKindObject.second.GraphicData.SizeZ));
+            ParticlesDataFile.write(reinterpret_cast<char*>(&ParticleKindObject.second.GraphicData.AtomColor), sizeof(ParticleKindObject.second.GraphicData.AtomColor));
+            ParticlesDataFile.write(reinterpret_cast<char*>(&ParticleKindObject.second.GraphicData.ParticleColor), sizeof(ParticleKindObject.second.GraphicData.ParticleColor));
+            ParticlesDataFile.write(reinterpret_cast<char*>(&ParticleKindObject.second.GraphicData.RandomParticleColor), sizeof(ParticleKindObject.second.GraphicData.RandomParticleColor));
+            ParticlesDataFile.write(reinterpret_cast<char*>(&ParticleKindObject.second.XSizeDiv2), sizeof(ParticleKindObject.second.XSizeDiv2));
+            ParticlesDataFile.write(reinterpret_cast<char*>(&ParticleKindObject.second.YSizeDiv2), sizeof(ParticleKindObject.second.YSizeDiv2));
+            ParticlesDataFile.write(reinterpret_cast<char*>(&ParticleKindObject.second.ZSizeDiv2), sizeof(ParticleKindObject.second.ZSizeDiv2));
 
             SaveStringToBinaryFile(ParticlesDataFile, ParticleKindObject.second.IdStr);
             SaveStringToBinaryFile(ParticlesDataFile, ParticleKindObject.second.Name);
@@ -90,16 +90,16 @@ void CellEngineParticlesBinaryDataFileReaderWriter::SaveParticlesKindsToBinaryFi
             SaveStringToBinaryFile(ParticlesDataFile, ParticleKindObject.second.GraphicData.NameFromDataFile);
 
             UnsignedInt ParticleKindSpecialDataSectorSize = ParticleKindObject.second.ParticleKindSpecialDataSector.size();
-            ParticlesDataFile.write((char*)&ParticleKindSpecialDataSectorSize, sizeof(ParticleKindSpecialDataSectorSize));
+            ParticlesDataFile.write(reinterpret_cast<char*>(&ParticleKindSpecialDataSectorSize), sizeof(ParticleKindSpecialDataSectorSize));
             for (const auto& ParticleKindSpecialDataSectorObject : ParticleKindObject.second.ParticleKindSpecialDataSector)
             {
                 SaveStringToBinaryFile(ParticlesDataFile, ParticleKindSpecialDataSectorObject.Description);
                 SaveStringToBinaryFile(ParticlesDataFile, ParticleKindSpecialDataSectorObject.AddedParticle);
-                ParticlesDataFile.write((char*)&ParticleKindSpecialDataSectorObject.GeneId, sizeof(ParticleKindSpecialDataSectorObject.GeneId));
-                ParticlesDataFile.write((char*)&ParticleKindSpecialDataSectorObject.IsProtein, sizeof(ParticleKindSpecialDataSectorObject.IsProtein));
-                ParticlesDataFile.write((char*)&ParticleKindSpecialDataSectorObject.ParticleType, sizeof(ParticleKindSpecialDataSectorObject.ParticleType));
-                ParticlesDataFile.write((char*)&ParticleKindSpecialDataSectorObject.CleanProductOfTranscription, sizeof(ParticleKindSpecialDataSectorObject.CleanProductOfTranscription));
-                ParticlesDataFile.write((char*)&ParticleKindSpecialDataSectorObject.CounterAtStartOfSimulation, sizeof(ParticleKindSpecialDataSectorObject.CounterAtStartOfSimulation));
+                ParticlesDataFile.write(reinterpret_cast<const char*>(&ParticleKindSpecialDataSectorObject.GeneId), sizeof(ParticleKindSpecialDataSectorObject.GeneId));
+                ParticlesDataFile.write(reinterpret_cast<const char*>(&ParticleKindSpecialDataSectorObject.IsProtein), sizeof(ParticleKindSpecialDataSectorObject.IsProtein));
+                ParticlesDataFile.write(reinterpret_cast<const char*>(&ParticleKindSpecialDataSectorObject.ParticleType), sizeof(ParticleKindSpecialDataSectorObject.ParticleType));
+                ParticlesDataFile.write(reinterpret_cast<const char*>(&ParticleKindSpecialDataSectorObject.CleanProductOfTranscription), sizeof(ParticleKindSpecialDataSectorObject.CleanProductOfTranscription));
+                ParticlesDataFile.write(reinterpret_cast<const char*>(&ParticleKindSpecialDataSectorObject.CounterAtStartOfSimulation), sizeof(ParticleKindSpecialDataSectorObject.CounterAtStartOfSimulation));
             }
 
             if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)
@@ -123,18 +123,18 @@ void CellEngineParticlesBinaryDataFileReaderWriter::SaveParticlesToBinaryFile(of
         FOR_EACH_PARTICLE_IN_SECTORS_XYZ_CONST
             ParticlesSize++;
         LoggersManagerObject.Log(STREAM("Number of Particles to be saved = " << ParticlesSize));
-        ParticlesDataFile.write((char*)&ParticlesSize, sizeof(ParticlesSize));
+        ParticlesDataFile.write(reinterpret_cast<char*>(&ParticlesSize), sizeof(ParticlesSize));
 
         FOR_EACH_PARTICLE_IN_SECTORS_XYZ_CONST
         {
-            ParticlesDataFile.write((char*)&ParticleObject.second.EntityId, sizeof(ParticleObject.second.EntityId));
-            ParticlesDataFile.write((char*)&ParticleObject.second.ChainId, sizeof(ParticleObject.second.ChainId));
-            ParticlesDataFile.write((char*)&ParticleObject.second.Index, sizeof(ParticleObject.second.Index));
-            ParticlesDataFile.write((char*)&ParticleObject.second.GenomeIndex, sizeof(ParticleObject.second.GenomeIndex));
-            ParticlesDataFile.write((char*)&ParticleObject.second.ElectricCharge, sizeof(ParticleObject.second.ElectricCharge));
-            ParticlesDataFile.write((char*)&ParticleObject.second.Center, sizeof(ParticleObject.second.Center));
-            ParticlesDataFile.write((char*)&ParticleObject.second.UniqueParticleColor, sizeof(ParticleObject.second.UniqueParticleColor));
-            ParticlesDataFile.write((char*)&ParticleObject.second.SelectedForReaction, sizeof(ParticleObject.second.SelectedForReaction));
+            ParticlesDataFile.write(reinterpret_cast<const char*>(&ParticleObject.second.EntityId), sizeof(ParticleObject.second.EntityId));
+            ParticlesDataFile.write(reinterpret_cast<const char*>(&ParticleObject.second.ChainId), sizeof(ParticleObject.second.ChainId));
+            ParticlesDataFile.write(reinterpret_cast<const char*>(&ParticleObject.second.Index), sizeof(ParticleObject.second.Index));
+            ParticlesDataFile.write(reinterpret_cast<const char*>(&ParticleObject.second.GenomeIndex), sizeof(ParticleObject.second.GenomeIndex));
+            ParticlesDataFile.write(reinterpret_cast<const char*>(&ParticleObject.second.ElectricCharge), sizeof(ParticleObject.second.ElectricCharge));
+            ParticlesDataFile.write(reinterpret_cast<const char*>(&ParticleObject.second.Center), sizeof(ParticleObject.second.Center));
+            ParticlesDataFile.write(reinterpret_cast<const char*>(&ParticleObject.second.UniqueParticleColor), sizeof(ParticleObject.second.UniqueParticleColor));
+            ParticlesDataFile.write(reinterpret_cast<const char*>(&ParticleObject.second.SelectedForReaction), sizeof(ParticleObject.second.SelectedForReaction));
 
             SaveStringToBinaryFile(ParticlesDataFile, ParticleObject.second.SequenceStr);
 
@@ -163,42 +163,42 @@ void CellEngineParticlesBinaryDataFileReaderWriter::SaveChemicalReactionsToBinar
 
         UnsignedInt ChemicalReactionsSize = ChemicalReactionsManagerObject.ChemicalReactions.size();
         LoggersManagerObject.Log(STREAM("Number of chemical reactions to be saved = " << ChemicalReactionsSize));
-        ParticlesDataFile.write((char*)&ChemicalReactionsSize, sizeof(ChemicalReactionsSize));
+        ParticlesDataFile.write(reinterpret_cast<char*>(&ChemicalReactionsSize), sizeof(ChemicalReactionsSize));
 
         for (const auto& ChemicalReactionObject : ChemicalReactionsManagerObject.ChemicalReactions)
             if (ChemicalReactionObject.SpecialReactionFunction == nullptr)
             {
-                ParticlesDataFile.write((char*)&ChemicalReactionObject.ReactionIdNum, sizeof(ChemicalReactionObject.ReactionIdNum));
+                ParticlesDataFile.write(reinterpret_cast<const char*>(&ChemicalReactionObject.ReactionIdNum), sizeof(ChemicalReactionObject.ReactionIdNum));
                 SaveStringToBinaryFile(ParticlesDataFile, ChemicalReactionObject.ReactionIdStr);
                 SaveStringToBinaryFile(ParticlesDataFile, ChemicalReactionObject.ReactionName);
                 SaveStringToBinaryFile(ParticlesDataFile, ChemicalReactionObject.ReactantsStr);
-                ParticlesDataFile.write((char*)&ChemicalReactionObject.Duration, sizeof(ChemicalReactionObject.Duration));
-                ParticlesDataFile.write((char*)&ChemicalReactionObject.Reversible, sizeof(ChemicalReactionObject.Reversible));
+                ParticlesDataFile.write(reinterpret_cast<const char*>(&ChemicalReactionObject.Duration), sizeof(ChemicalReactionObject.Duration));
+                ParticlesDataFile.write(reinterpret_cast<const char*>(&ChemicalReactionObject.Reversible), sizeof(ChemicalReactionObject.Reversible));
                 SaveStringToBinaryFile(ParticlesDataFile, ChemicalReactionObject.UpperFluxBound);
                 SaveStringToBinaryFile(ParticlesDataFile, ChemicalReactionObject.LowerFluxBound);
-                ParticlesDataFile.write((char*)&ChemicalReactionObject.AdditionalParameter1, sizeof(ChemicalReactionObject.AdditionalParameter1));
-                ParticlesDataFile.write((char*)&ChemicalReactionObject.AdditionalParameter2, sizeof(ChemicalReactionObject.AdditionalParameter2));
+                ParticlesDataFile.write(reinterpret_cast<const char*>(&ChemicalReactionObject.AdditionalParameter1), sizeof(ChemicalReactionObject.AdditionalParameter1));
+                ParticlesDataFile.write(reinterpret_cast<const char*>(&ChemicalReactionObject.AdditionalParameter2), sizeof(ChemicalReactionObject.AdditionalParameter2));
                 SaveStringToBinaryFile(ParticlesDataFile, ChemicalReactionObject.Comment);
 
                 UnsignedInt ChemicalReactionReactantsSize = ChemicalReactionObject.Reactants.size();
-                ParticlesDataFile.write((char*)&ChemicalReactionReactantsSize, sizeof(ChemicalReactionReactantsSize));
+                ParticlesDataFile.write(reinterpret_cast<char*>(&ChemicalReactionReactantsSize), sizeof(ChemicalReactionReactantsSize));
                 for (const auto& ChemicalReactionReactantObject : ChemicalReactionObject.Reactants)
                 {
-                    ParticlesDataFile.write((char*)&ChemicalReactionReactantObject.EntityId, sizeof(ChemicalReactionReactantObject.EntityId));
-                    ParticlesDataFile.write((char*)&ChemicalReactionReactantObject.Counter, sizeof(ChemicalReactionReactantObject.Counter));
-                    ParticlesDataFile.write((char*)&ChemicalReactionReactantObject.ToRemoveInReaction, sizeof(ChemicalReactionReactantObject.ToRemoveInReaction));
+                    ParticlesDataFile.write(reinterpret_cast<const char*>(&ChemicalReactionReactantObject.EntityId), sizeof(ChemicalReactionReactantObject.EntityId));
+                    ParticlesDataFile.write(reinterpret_cast<const char*>(&ChemicalReactionReactantObject.Counter), sizeof(ChemicalReactionReactantObject.Counter));
+                    ParticlesDataFile.write(reinterpret_cast<const char*>(&ChemicalReactionReactantObject.ToRemoveInReaction), sizeof(ChemicalReactionReactantObject.ToRemoveInReaction));
                     SaveStringToBinaryFile(ParticlesDataFile, ChemicalReactionReactantObject.SequenceStr);
                     SaveVectorToBinaryFile<ChainIdInt>(ParticlesDataFile, ChemicalReactionReactantObject.Sequence);
                     SaveVectorToBinaryFile<UniqueIdInt>(ParticlesDataFile, ChemicalReactionReactantObject.LinkedParticleTypes);
                 }
 
                 UnsignedInt ChemicalReactionProductsSize = ChemicalReactionObject.Products.size();
-                ParticlesDataFile.write((char*)&ChemicalReactionProductsSize, sizeof(ChemicalReactionProductsSize));
+                ParticlesDataFile.write(reinterpret_cast<char*>(&ChemicalReactionProductsSize), sizeof(ChemicalReactionProductsSize));
                 for (const auto& ChemicalReactionProductObject : ChemicalReactionObject.Products)
                 {
-                    ParticlesDataFile.write((char*)&ChemicalReactionProductObject.EntityId, sizeof(ChemicalReactionProductObject.EntityId));
-                    ParticlesDataFile.write((char*)&ChemicalReactionProductObject.Counter, sizeof(ChemicalReactionProductObject.Counter));
-                    ParticlesDataFile.write((char*)&ChemicalReactionProductObject.ToRemoveInReaction, sizeof(ChemicalReactionProductObject.ToRemoveInReaction));
+                    ParticlesDataFile.write(reinterpret_cast<const char*>(&ChemicalReactionProductObject.EntityId), sizeof(ChemicalReactionProductObject.EntityId));
+                    ParticlesDataFile.write(reinterpret_cast<const char*>(&ChemicalReactionProductObject.Counter), sizeof(ChemicalReactionProductObject.Counter));
+                    ParticlesDataFile.write(reinterpret_cast<const char*>(&ChemicalReactionProductObject.ToRemoveInReaction), sizeof(ChemicalReactionProductObject.ToRemoveInReaction));
                     SaveStringToBinaryFile(ParticlesDataFile, ChemicalReactionProductObject.SequenceStr);
                     SaveVectorToBinaryFile<ChainIdInt>(ParticlesDataFile, ChemicalReactionProductObject.Sequence);
                     SaveVectorToBinaryFile<UniqueIdInt>(ParticlesDataFile, ChemicalReactionProductObject.LinkedParticleTypes);
@@ -218,17 +218,17 @@ void CellEngineParticlesBinaryDataFileReaderWriter::SaveGenesToBinaryFile(ofstre
 
         UnsignedInt GenesSize = ParticlesKindsManagerObject.Genes.size();
         LoggersManagerObject.Log(STREAM("Number of genes to be saved = " << GenesSize));
-        ParticlesDataFile.write((char*)&GenesSize, sizeof(GenesSize));
+        ParticlesDataFile.write(reinterpret_cast<char*>(&GenesSize), sizeof(GenesSize));
 
         for (const auto& GeneObject : ParticlesKindsManagerObject.Genes)
         {
-            ParticlesDataFile.write((char*)&GeneObject.second.NumId, sizeof(GeneObject.second.NumId));
+            ParticlesDataFile.write(reinterpret_cast<const char*>(&GeneObject.second.NumId), sizeof(GeneObject.second.NumId));
             SaveStringToBinaryFile(ParticlesDataFile, GeneObject.second.StrId);
             SaveStringToBinaryFile(ParticlesDataFile, GeneObject.second.Description);
             SaveStringToBinaryFile(ParticlesDataFile, GeneObject.second.ProteinId);
             SaveStringToBinaryFile(ParticlesDataFile, GeneObject.second.Sequence);
-            ParticlesDataFile.write((char*)&GeneObject.second.StartPosInGenome, sizeof(GeneObject.second.StartPosInGenome));
-            ParticlesDataFile.write((char*)&GeneObject.second.EndPosInGenome, sizeof(GeneObject.second.EndPosInGenome));
+            ParticlesDataFile.write(reinterpret_cast<const char*>(&GeneObject.second.StartPosInGenome), sizeof(GeneObject.second.StartPosInGenome));
+            ParticlesDataFile.write(reinterpret_cast<const char*>(&GeneObject.second.EndPosInGenome), sizeof(GeneObject.second.EndPosInGenome));
         }
 
         LoggersManagerObject.Log(STREAM("END OF SAVING GENES TO BINARY FILE"));

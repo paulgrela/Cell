@@ -292,11 +292,11 @@ public:
         {
             if (ImGui::CollapsingHeader("Picked Atom Detailed Information", ImGuiTreeNodeFlags_DefaultOpen))
             {
-                ImGui::Checkbox("Show details of picked atom", &CellEngineConfigDataObject.UseStencilBuffer);
+                ImGui::Checkbox("Show details of picked atom", &CellEngineConfigDataObject.ShowDetailsOfPickedAtomParticle);
 
                 ImGui::Checkbox("Print atom description on screen", &CellEngineConfigDataObject.PrintAtomDescriptionOnScreen);
 
-                if (CellEngineConfigDataObject.NumberOfStencilBufferLoops == 3)
+                if (CellEngineConfigDataObject.ShowDetailsOfPickedAtomParticle == true)
                 {
                     ImGui::Text("ATOM DATA:");
                     ImGui::Text("%s", string(CellEngineUseful::AtomDescriptionTextsObject.Texts[0] + " " + CellEngineUseful::AtomDescriptionTextsObject.Texts[1]).c_str());

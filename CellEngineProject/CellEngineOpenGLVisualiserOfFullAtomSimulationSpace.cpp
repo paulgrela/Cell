@@ -27,7 +27,7 @@ bool CheckVisibility(const bool Visibility)
         return Visibility;
 }
 
-void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace1(UnsignedInt& NumberOfAllRenderedAtoms, const vmath::mat4& ViewMatrix, vector<GPUParticle>& GPUParticles, vector<GPUAtom>& GPUAtoms, vector<GPUAtomLocal>& GPUAtomsLocal)
+void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace1(const vmath::mat4& ViewMatrix, vector<GPUParticle>& GPUParticles, vector<GPUAtom>& GPUAtoms, vector<GPUAtomLocal>& GPUAtomsLocal)
 {
     try
     {
@@ -37,7 +37,7 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace1(UnsignedI
 
         FOR_EACH_SECTOR_IN_XYZ_ONLY
             if (CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.empty() == false)
-                if (const bool FinalVisibilityInModelWorld = RenderObject(CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.begin()->second.ListOfAtoms.back(), Particle(), ViewMatrix, true, false, true, NumberOfAllRenderedAtoms, false, !CellEngineConfigDataObject.ShowDetailsInAtomScale); FinalVisibilityInModelWorld == true)
+                if (const bool FinalVisibilityInModelWorld = RenderObject(CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.begin()->second.ListOfAtoms.back(), Particle(), ViewMatrix, true, false, true, false, !CellEngineConfigDataObject.ShowDetailsInAtomScale); FinalVisibilityInModelWorld == true)
                     if (CellEngineConfigDataObject.ShowDetailsInAtomScale == true)
                         for (const auto& ParticleObject : CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles | views::values)
                             if (ParticlesKindsManagerObject.GetGraphicParticleKind(ParticleObject.EntityId).Visible == true)
@@ -50,12 +50,11 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace1(UnsignedI
                                 GPUParticles.emplace_back(GPUParticleObject);
 
                                 UnsignedInt AtomIndex = 0;
-                                //for (const auto& AtomObject : ParticleObject.ListOfAtoms)
                                 for (UnsignedInt AtomObjectIndex = 0; AtomObjectIndex < ParticleObject.ListOfAtoms.size(); AtomObjectIndex += CellEngineConfigDataObject.LoadOfAtomsStep)
                                 {
                                     const auto& AtomObject = ParticleObject.ListOfAtoms[AtomObjectIndex];
 
-                                    if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
+                                    if (CellEngineConfigDataObject.ShowDetailsOfPickedAtomParticle == true)
                                     {
                                         GPUAtomLocal GPUAtomLocalObject;
                                         GPUAtomLocalObject.ParticleSectorXIndex = ParticleSectorXIndex;
@@ -110,7 +109,7 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace0(UnsignedI
             {
                 if (CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.empty() == false)
                 {
-                    bool FinalVisibilityInModelWorld = RenderObject(CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.begin()->second.ListOfAtoms.back(), Particle(), ViewMatrix, true, false, true, NumberOfAllRenderedAtoms, false, !CellEngineConfigDataObject.ShowDetailsInAtomScale);
+                    bool FinalVisibilityInModelWorld = RenderObject(CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.begin()->second.ListOfAtoms.back(), Particle(), ViewMatrix, true, false, true, false, !CellEngineConfigDataObject.ShowDetailsInAtomScale);
 
                     FinalVisibilityInModelWorld = CheckVisibility(FinalVisibilityInModelWorld);
 
@@ -125,20 +124,21 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace0(UnsignedI
 
                                     for (UnsignedInt AtomObjectIndex = 0; AtomObjectIndex < ParticleObject.second.ListOfAtoms.size(); AtomObjectIndex += CellEngineConfigDataObject.LoadOfAtomsStep)
                                     {
-                                        if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
+                                        if (CellEngineConfigDataObject.ShowDetailsOfPickedAtomParticle == true)
                                         {
-                                            glStencilFunc(GL_ALWAYS, uint8_t((TemporaryRenderedAtomsList.size()) >> (8 * StencilBufferLoopCounter)), -1);
+                                            glStencilFunc(GL_ALWAYS, static_cast<uint8_t>((TemporaryRenderedAtomsList.size()) >> (8 * StencilBufferLoopCounter)), -1);
                                             TemporaryRenderedAtomsList.emplace_back(ParticleSectorXIndex, ParticleSectorYIndex, ParticleSectorZIndex, ParticleObject.first, AtomObjectIndex);
                                         }
 
-                                        RenderObject(ParticleObject.second.ListOfAtoms[AtomObjectIndex], ParticleObject.second, ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, false, RenderObjectsBool);
+                                        RenderObject(ParticleObject.second.ListOfAtoms[AtomObjectIndex], ParticleObject.second, ViewMatrix, false, false, false, false, RenderObjectsBool);
+                                        NumberOfAllRenderedAtoms++;
                                     }
                                 }
                 }
             }
 
-            if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
-                glReadPixels(GLint(MousePositionLocal.s.X), GLint((float)Info.WindowHeight - MousePositionLocal.s.Y - 1), 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &PartOfStencilBufferIndex[StencilBufferLoopCounter]);
+            if (CellEngineConfigDataObject.ShowDetailsOfPickedAtomParticle == true)
+                glReadPixels(static_cast<GLint>(MousePositionLocal.s.X), static_cast<GLint>(static_cast<float>(Info.WindowHeight) - MousePositionLocal.s.Y - 1), 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &PartOfStencilBufferIndex[StencilBufferLoopCounter]);
         }
 
         if (PressedRightMouseButton != 1)
@@ -153,9 +153,7 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
     {
         //lock_guard LockGuard{ RenderMenuAndFullAtomSimulationSpaceMutexObject };
 
-        //RenderSpace0(NumberOfAllRenderedAtoms, ViewMatrix);
-
-                                                                                                                        //printf(("BBB\n"));getchar();
+        //RenderSpace0(ViewMatrix);
 
         vector<GPUParticle> GPUParticles;
         GPUParticles.reserve(10'000'000);
@@ -164,9 +162,12 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
         vector<GPUAtomLocal> GPUAtomsLocal;
         GPUAtomsLocal.reserve(1000'000'000);
 
-        RenderSpace1(NumberOfAllRenderedAtoms, ViewMatrix, GPUParticles, GPUAtoms, GPUAtomsLocal);
+        RenderSpace1(ViewMatrix, GPUParticles, GPUAtoms, GPUAtomsLocal);
         //LoggersManagerObject.Log(STREAM("P=" << GPUParticles.size() << " " << GPUAtoms.size()));
-                                                                                                                        //printf(("BBB1\n"));getchar();
+
+        NumberOfAllRenderedAtoms = GPUAtoms.size();
+        NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = GPUParticles.size();
+
         glUseProgram(ComputeShaderProgramPhong);
 
         glUniform3fv(glGetUniformLocation(ComputeShaderProgramPhong, "Center"), 1, Center);
@@ -197,8 +198,6 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
 
         ExecutionDurationTimeForCopyingParticlesToGraphicMemory2 += chrono::duration(stop_time113 - start_time113);
 
-                                                                                                                        //printf(("BBB2\n"));getchar();
-
                                                                                                                         glBindFramebuffer(GL_FRAMEBUFFER, FrameBufferObject);
 
                                                                                                                         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -210,8 +209,6 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
                                                                                                                         glEnable(GL_DEPTH_TEST);
                                                                                                                         glDepthFunc(GL_LESS);
 
-                                                                                                                        //printf(("CCC\n"));getchar();
-
         glUseProgram(ShaderProgramPhong);
 
         glUniformMatrix4fv(glGetUniformLocation(ShaderProgramPhong, "ProjectionMatrix"), 1, GL_FALSE, ProjectionMatrixGlobal);
@@ -222,7 +219,6 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
 
         vector<tuple<UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt>> TemporaryRenderedAtomsList;
 
-                                                                                                                        //printf(("DDD\n"));getchar();
         AtomGraphicsObject.RenderSubGraphicObject(0, GPUAtoms.size(), 0);
 
                                                                                                                         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
@@ -238,14 +234,14 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
 
 
 
-                                                                                                                        if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
+                                                                                                                        if (CellEngineConfigDataObject.ShowDetailsOfPickedAtomParticle == true)
                                                                                                                         {
                                                                                                                             uint32_t ClickedObjectID = 0xFFFFFFFF;
 
                                                                                                                             glBindFramebuffer(GL_READ_FRAMEBUFFER, FrameBufferObject);
                                                                                                                             glReadBuffer(GL_COLOR_ATTACHMENT1);
 
-                                                                                                                            glReadPixels(GLint(MousePositionLocal.s.X), GLint((float)Info.WindowHeight - MousePositionLocal.s.Y - 1), 1, 1, GL_RED_INTEGER, GL_UNSIGNED_INT, &ClickedObjectID);
+                                                                                                                            glReadPixels(static_cast<GLint>(MousePositionLocal.s.X), static_cast<GLint>(static_cast<float>(Info.WindowHeight) - MousePositionLocal.s.Y - 1), 1, 1, GL_RED_INTEGER, GL_UNSIGNED_INT, &ClickedObjectID);
 
                                                                                                                             glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
 
@@ -263,7 +259,7 @@ inline void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::DrawChosenAtomU
 {
     try
     {
-        if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
+        if (CellEngineConfigDataObject.ShowDetailsOfPickedAtomParticle == true)
         {
             if (ChosenParticleCenterIndex > 0)
             {
@@ -295,11 +291,9 @@ inline void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::DrawChosenAtomU
 {
     try
     {
-        if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
+        if (CellEngineConfigDataObject.ShowDetailsOfPickedAtomParticle == true)
         {
-            UnsignedInt ChosenParticleCenterIndex = PartOfStencilBufferIndex[0] | (PartOfStencilBufferIndex[1] << 8) | (PartOfStencilBufferIndex[2] << 16);
-
-            if (ChosenParticleCenterIndex > 0)
+            if (const UnsignedInt ChosenParticleCenterIndex = PartOfStencilBufferIndex[0] | (PartOfStencilBufferIndex[1] << 8) | (PartOfStencilBufferIndex[2] << 16); ChosenParticleCenterIndex > 0)
             {
                 if (ChosenParticleCenterIndex < TemporaryRenderedAtomsList.size())
                 {
@@ -321,7 +315,8 @@ inline void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::DrawChosenAtomU
                         throw std::runtime_error("ERROR STENCIL INDEX TOO BIG IN INNER 1 = " + std::to_string(get<3>(TemporaryRenderedAtomsList[ChosenParticleCenterIndex])));
                 }
 
-                RenderObject(ChosenAtomObject, ChosenParticleObject, ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, true, RenderObjectsBool);
+                //RenderObject(ChosenAtomObject, ChosenParticleObject, ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, true, RenderObjectsBool);
+                RenderObject(ChosenAtomObject, ChosenParticleObject, ViewMatrix, false, false, false, true, RenderObjectsBool);
 
                 PrintAtomDescriptionOnScreen(ChosenAtomObject, ChosenParticleObject);
             }

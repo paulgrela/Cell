@@ -20,6 +20,9 @@ void CellEngineCompiledDataCreator::AddSpecialParticlesKinds()
         EntityIdInt LocalProteinInBuildingProcessIdentifier = CellEngineConfigDataObject.ProteinInBuildingProcessIdentifier;
         ParticlesKindsManagerObject.AddSingleParticleKind(ParticlesTypes::ProteinInBuildingProcess, LocalProteinInBuildingProcessIdentifier, "ProteinInBuildingProcess", "ProteinInBuildingProcess", "ProteinInBuildingProcess", -1, 0, "c", 1);
 
+        EntityIdInt LocalUnknownParticleKindId = UnknownParticleKindId;
+        ParticlesKindsManagerObject.AddSingleParticleKind(ParticlesTypes::UnknownParticleKind, LocalUnknownParticleKindId, "UnknownParticleKind", "UnknownParticleName", "UnknownParticleFormula", -1, 0, "c", 1);
+
         LoggersManagerObject.Log(STREAM("ADDED SPECIAL PARTICLES KINDS"));
     }
     CATCH("adding special particles kinds")

@@ -132,13 +132,15 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSelectedSpace(const
                                     if (DrawEmptyVoxels == false || (DrawEmptyVoxels == true && SimulationSpaceVoxelObject != 0))
                                         SetParticleParametersToDraw(TempAtomObject, ParticleObject);
 
-                                    if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
+                                    if (CellEngineConfigDataObject.ShowDetailsOfPickedAtomParticle == true)
                                     {
-                                        glStencilFunc(GL_ALWAYS, uint8_t((TemporaryRenderedVoxelsList.size()) >> (8 * StencilBufferLoopCounter)), -1);
+                                        glStencilFunc(GL_ALWAYS, static_cast<uint8_t>((TemporaryRenderedVoxelsList.size()) >> (8 * StencilBufferLoopCounter)), -1);
                                         TemporaryRenderedVoxelsList.emplace_back(TemporaryRenderedVoxel{ TempAtomObject, FoundParticleIter, PosX, PosY, PosZ });
                                     }
 
-                                    RenderObject(TempAtomObject, ParticleObject, ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, false, RenderObjectsBool);
+                                    //RenderObject(TempAtomObject, ParticleObject, ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, false, RenderObjectsBool);
+                                    RenderObject(TempAtomObject, ParticleObject, ViewMatrix, false, false, false, false, RenderObjectsBool);
+                                    NumberOfAllRenderedAtoms++;
                                 }
                             }
                             else
@@ -153,7 +155,8 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSelectedSpace(const
 
                             ConvertAtomPosToGraphicCoordinate(TempAtomObject, XStartParam, YStartParam, ZStartParam, PosX, PosY, PosZ, XSizeParam, YSizeParam, ZSizeParam);
 
-                            RenderObject(TempAtomObject, ParticleObject, ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, false, RenderObjectsBool);
+                            //RenderObject(TempAtomObject, ParticleObject, ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, false, RenderObjectsBool);
+                            RenderObject(TempAtomObject, ParticleObject, ViewMatrix, false, false, false, false, RenderObjectsBool);
                         }
                     }
     }
@@ -189,7 +192,7 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSpace(UnsignedInt& 
                         {
                             TempAtomObject.SetAtomPositionsData(CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(PosX), CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(PosY), CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(PosZ));
 
-                            if (RenderObject(TempAtomObject, Particle(), ViewMatrix, true, false, true, NumberOfAllRenderedAtoms, false, !CellEngineConfigDataObject.ShowDetailsInAtomScale) == true)
+                            if (RenderObject(TempAtomObject, Particle(), ViewMatrix, true, false, true, false, !CellEngineConfigDataObject.ShowDetailsInAtomScale) == true)
                             {
                                 NumberOfFoundParticlesCenterToBeRenderedInAtomDetails++;
                                 RenderSelectedSpace(PosX, PosY, PosZ, CellEngineConfigDataObject.LoadOfAtomsStep, CellEngineConfigDataObject.LoadOfAtomsStep, CellEngineConfigDataObject.LoadOfAtomsStep, 64, 64, 64, NumberOfAllRenderedAtoms, ViewMatrix, TempAtomObject, TemporaryRenderedVoxelsList, StencilBufferLoopCounter);
@@ -204,8 +207,8 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSpace(UnsignedInt& 
                 RenderSelectedSpace(SelectionStartXPos - SubStartPos, SelectionStartYPos - SubStartPos, SelectionStartZPos - SubStartPos, SelectionStepX, SelectionStepY, SelectionStepZ, SelectionSizeX, SelectionSizeY, SelectionSizeY, NumberOfAllRenderedAtoms, ViewMatrix, TempAtomObject, TemporaryRenderedVoxelsList, StencilBufferLoopCounter);
             }
 
-            if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
-                glReadPixels(GLint(MousePositionLocal.s.X), GLint((float)Info.WindowHeight - MousePositionLocal.s.Y - 1), 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &PartOfStencilBufferIndex[StencilBufferLoopCounter]);
+            if (CellEngineConfigDataObject.ShowDetailsOfPickedAtomParticle == true)
+                glReadPixels(static_cast<GLint>(MousePositionLocal.s.X), static_cast<GLint>(static_cast<float>(Info.WindowHeight) - MousePositionLocal.s.Y - 1), 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &PartOfStencilBufferIndex[StencilBufferLoopCounter]);
         }
 
         if (PressedRightMouseButton != 1)
@@ -218,7 +221,7 @@ inline void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::DrawChosenAtomUsin
 {
     try
     {
-        if (CellEngineConfigDataObject.NumberOfStencilBufferLoops > 1)
+        if (CellEngineConfigDataObject.ShowDetailsOfPickedAtomParticle == true)
         {
             UnsignedInt ChosenVoxelIndex = PartOfStencilBufferIndex[0] | (PartOfStencilBufferIndex[1] << 8) | (PartOfStencilBufferIndex[2] << 16);
 
@@ -233,7 +236,7 @@ inline void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::DrawChosenAtomUsin
 
                 SetSaveXYZPositions(ChosenObject.X, ChosenObject.Y, ChosenObject.Z);
 
-                RenderObject(ChosenObject.CellEngineAtomObject, ChosenObject.CellEngineParticleObject->second, ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, true, RenderObjectsBool);
+                RenderObject(ChosenObject.CellEngineAtomObject, ChosenObject.CellEngineParticleObject->second, ViewMatrix, false, false, false, true, RenderObjectsBool);
 
                 PrintAtomDescriptionOnScreen(ChosenObject.CellEngineAtomObject, ChosenObject.CellEngineParticleObject->second);
             }

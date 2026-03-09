@@ -45,7 +45,8 @@ enum class ParticlesTypes : UnsignedInt
     Ribosome = 15,
     Other = 16,
     Empty = 17,
-    ProteinInBuildingProcess = 18
+    ProteinInBuildingProcess = 18,
+    UnknownParticleKind = 19
 };
 
 class InterGeneSequence

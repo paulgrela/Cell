@@ -189,7 +189,7 @@ public:
     MakeColorsType MakeColorsTypeObject = MakeColorsType::DrawColorForEveryParticle;
 public:
     UnsignedInt NumberOfStencilBufferLoops{};
-    bool UseStencilBuffer = false;
+    bool ShowDetailsOfPickedAtomParticle = false;
 public:
     bool DrawBondsBetweenAtoms{};
 public:

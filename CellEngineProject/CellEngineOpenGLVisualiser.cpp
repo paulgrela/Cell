@@ -487,14 +487,14 @@ inline vmath::vec3 CellEngineOpenGLVisualiser::GetSize(const CellEngineAtom& Ato
     return Size;
 }
 
-bool CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom& AtomObject, const Particle& ParticleObject, const vmath::mat4& ViewMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, UnsignedInt& NumberOfAllRenderedAtoms, const bool Chosen, const bool RenderObjectParameter)
+bool CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom& AtomObject, const Particle& ParticleObject, const vmath::mat4& ViewMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, const bool Chosen, const bool RenderObjectParameter)
 {
     bool FinalVisibilityInModelWorld{};
 
     try
     {
-        if (RenderObjectParameter == true)
-            NumberOfAllRenderedAtoms++;
+        // if (RenderObjectParameter == true)
+        //     NumberOfAllRenderedAtoms++;
 
         const vmath::vec3 AtomPosition = LengthUnit * AtomObject.Position();
         const vmath::vec3 SizeLocal = GetSize(AtomObject);
@@ -549,7 +549,7 @@ inline void CellEngineOpenGLVisualiser::PrepareOpenGLToRenderObjectsOnScene() co
         glClearBufferfv(GL_COLOR, 0, gray);
         glClearBufferfv(GL_DEPTH, 0, ones);
 
-        vmath::vec3 BackgroundColor = CellEngineConfigDataObject.BackgroundColors[CellEngineConfigDataObject.ChosenBackgroundColor];
+        const vmath::vec3 BackgroundColor = CellEngineConfigDataObject.BackgroundColors[CellEngineConfigDataObject.ChosenBackgroundColor];
         glClearColor(BackgroundColor.data[0], BackgroundColor.data[1], BackgroundColor.data[2], 0.0f);
 
         glUniform1f(Uniforms.SpecularPower, CellEngineConfigDataObject.SpecularPower);
@@ -594,7 +594,7 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
     {
         CopyMousePositionWhenButtonPressed();
 
-        CellEngineConfigDataObject.UseStencilBuffer == true ? CellEngineConfigDataObject.NumberOfStencilBufferLoops = 3 : CellEngineConfigDataObject.NumberOfStencilBufferLoops = 1;
+        CellEngineConfigDataObject.ShowDetailsOfPickedAtomParticle == true ? CellEngineConfigDataObject.NumberOfStencilBufferLoops = 3 : CellEngineConfigDataObject.NumberOfStencilBufferLoops = 1;
 
         const auto start_time = chrono::high_resolution_clock::now();
 
@@ -610,11 +610,7 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
         UnsignedInt NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = 0;
         UnsignedInt NumberOfAllRenderedAtoms = 0;
 
-//                                                                                                                        printf(("AAA\n"));getchar();
-
         RenderSpace(NumberOfAllRenderedAtoms, NumberOfFoundParticlesCenterToBeRenderedInAtomDetails, ViewMatrix);
-
-//                                                                                                                        printf(("AAA1\n"));getchar();
 
         const auto stop_time = chrono::high_resolution_clock::now();
 
@@ -679,7 +675,7 @@ string CellEngineOpenGLVisualiser::GetEntityName(const UnsignedInt EntityId)
 
     try
     {
-        if (auto EntityIterator = ParticlesKindsManagerObject.ParticlesKinds.find(EntityId); EntityIterator != ParticlesKindsManagerObject.ParticlesKinds.end())
+        if (const auto EntityIterator = ParticlesKindsManagerObject.ParticlesKinds.find(EntityId); EntityIterator != ParticlesKindsManagerObject.ParticlesKinds.end())
             EntityName = (EntityIterator->second.IdStr.empty() == false ? EntityIterator->second.IdStr + " " + EntityIterator->second.GraphicData.NameFromDataFile : EntityIterator->second.GraphicData.NameFromDataFile);
         else
             EntityName = "";
@@ -693,8 +689,8 @@ void CellEngineOpenGLVisualiser::SetVisibilityOfAllParticles(const bool VisibleP
 {
     try
     {
-        for (auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
-            ParticleKindObject.second.GraphicData.Visible = VisibleParam;
+        for (auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds | views::values)
+            ParticleKindObject.GraphicData.Visible = VisibleParam;
     }
     CATCH("setting visibility of all particles")
 }

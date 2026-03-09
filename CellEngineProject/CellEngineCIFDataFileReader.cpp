@@ -172,6 +172,8 @@ void NEWAssociateAutinNameWithIllinoisName(MainMapType<string, string>& AutinIll
 
 EntityIdInt GetParticleKindIdFromGeneIdOrName(const string& ParticleKindName, const EntityIdInt ParticleKindIdParam, const MainMapType<EntityIdInt, UniqueIdInt>& ProteinIdFromGeneIdTranslator, const MainMapType<string, string>& AutinIllinoisNameMap)
 {
+    static EntityIdInt LastParticleKindId = 0;
+
     try
     {
         if (const auto GeneId = ProteinIdFromGeneIdTranslator.find(ParticleKindIdParam); GeneId != ProteinIdFromGeneIdTranslator.end())
@@ -180,10 +182,16 @@ EntityIdInt GetParticleKindIdFromGeneIdOrName(const string& ParticleKindName, co
 
         if (const auto IllinoisNameIter = AutinIllinoisNameMap.find(ParticleKindName); IllinoisNameIter != AutinIllinoisNameMap.end())
             return ParticlesKindsManagerObject.GetParticleKindFromStrId(IllinoisNameIter->second)->EntityId;
+
+        if (ParticleKindIdParam != LastParticleKindId)
+        {
+            LoggersManagerObject.Log(STREAM("NAME NOT FOUND = " << ParticleKindName << " " << ParticleKindIdParam));
+            LastParticleKindId = ParticleKindIdParam;
+        }
     }
     CATCH("translating entity id")
 
-    return ParticlesKindsManagerObject.GetParticleKindFromStrId("M_coa_c")->EntityId;
+    return ParticlesKindsManagerObject.GetParticleKindFromStrId("UnknownParticleKind")->EntityId;
 }
 
 void AddParticleKindGraphicDataFromConfigXMLData(const EntityIdInt EntityId)
