@@ -1124,7 +1124,7 @@ public:
         {
             if (CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer != nullptr)
             {
-                conditional_lock_guard<recursive_mutex> LockGuardCond(CellEngineConfigDataObject.UseMutexBetweenMainScreenThreadAndMenuThreads, &CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderMenuAndVoxelSimulationSpaceMutexObject);
+                //conditional_lock_guard<recursive_mutex> LockGuardCond(CellEngineConfigDataObject.UseMutexBetweenMainScreenThreadAndMenuThreads, &CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderMenuAndVoxelSimulationSpaceMutexObject);
 
                 const auto CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer = dynamic_cast<CellEngineOpenGLVisualiserOfVoxelSimulationSpace*>(CellEngineOpenGLVisualiserPointer.get());
 
@@ -1559,8 +1559,6 @@ public:
         {
             if (CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer != nullptr)
             {
-                lock_guard<mutex> LockGuard{ CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderMenuAndFullAtomSimulationSpaceMutexObject };
-
                 const auto CellEngineOpenGLFullAtomSimulationSpaceVisualiserObjectPointer = dynamic_cast<CellEngineOpenGLVisualiserOfFullAtomSimulationSpace*>(CellEngineOpenGLVisualiserPointer.get());
 
                 const auto StartPos = CellEngineOpenGLFullAtomSimulationSpaceVisualiserObjectPointer->GetStartPositions();

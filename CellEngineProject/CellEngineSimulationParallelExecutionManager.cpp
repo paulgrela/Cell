@@ -459,7 +459,7 @@ void CellEngineSimulationParallelExecutionManager::GatherParticlesFromThreadsToP
         sleep(1);
         {
             #ifdef USE_OPENGL
-            lock_guard<recursive_mutex> LockGuard{ CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderMenuAndVoxelSimulationSpaceMutexObject };
+            //lock_guard<recursive_mutex> LockGuard{ CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderMenuAndVoxelSimulationSpaceMutexObject };
             #endif
 
             GatherParticlesFromThreads();

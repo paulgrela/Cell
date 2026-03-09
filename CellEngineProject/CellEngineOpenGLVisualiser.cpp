@@ -493,9 +493,6 @@ bool CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom& AtomObject, 
 
     try
     {
-        // if (RenderObjectParameter == true)
-        //     NumberOfAllRenderedAtoms++;
-
         const vmath::vec3 AtomPosition = LengthUnit * AtomObject.Position();
         const vmath::vec3 SizeLocal = GetSize(AtomObject);
         vmath::mat4 ModelMatrix = vmath::translate(AtomPosition.X() - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomPosition.Y() + CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomPosition.Z() + CellEngineConfigDataObject.CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(SizeLocal.X(), SizeLocal.Y(), SizeLocal.Z()));

@@ -34,8 +34,6 @@ private:
     inline void DrawChosenAtomUsingStencilBuffer1(GLuint ChosenParticleCenterIndex, const vector<GPUAtomLocal>& GPUAtomsLocal);
 public:
     void GetStartCenterPoint() override;
-public:
-    static inline std::mutex RenderMenuAndFullAtomSimulationSpaceMutexObject;
 };
 
 #endif

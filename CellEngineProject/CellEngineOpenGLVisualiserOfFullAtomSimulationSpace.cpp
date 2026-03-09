@@ -151,8 +151,6 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
 {
     try
     {
-        //lock_guard LockGuard{ RenderMenuAndFullAtomSimulationSpaceMutexObject };
-
         //RenderSpace0(ViewMatrix);
 
         vector<GPUParticle> GPUParticles;
@@ -315,7 +313,6 @@ inline void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::DrawChosenAtomU
                         throw std::runtime_error("ERROR STENCIL INDEX TOO BIG IN INNER 1 = " + std::to_string(get<3>(TemporaryRenderedAtomsList[ChosenParticleCenterIndex])));
                 }
 
-                //RenderObject(ChosenAtomObject, ChosenParticleObject, ViewMatrix, false, false, false, NumberOfAllRenderedAtoms, true, RenderObjectsBool);
                 RenderObject(ChosenAtomObject, ChosenParticleObject, ViewMatrix, false, false, false, true, RenderObjectsBool);
 
                 PrintAtomDescriptionOnScreen(ChosenAtomObject, ChosenParticleObject);
