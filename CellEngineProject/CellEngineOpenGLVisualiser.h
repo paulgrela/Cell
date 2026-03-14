@@ -167,6 +167,7 @@ protected:
     virtual void GetStartCenterPoint() = 0;
 protected:
     [[nodiscard]] static inline bool CheckDistanceToDrawDetailsInAtomScale(float XNew, float YNew, float ZNew);
+    //[[nodiscard]] inline bool CheckDistanceToDrawDetailsInAtomScale(const vmath::vec3& AtomPosition, float XNew, float YNew, float ZNew) const;
 };
 
 #endif
