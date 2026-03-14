@@ -45,7 +45,7 @@ protected:
     {
     }
 protected:
-    void PreprocessData(bool Update) override
+    void PreprocessData(const bool Update) override
     {
         if (CellEngineConfigDataObject.MixedFullAtomWithVoxelSpace == false)
             CellEngineFullAtomSimulationSpaceObjectPointer->PreprocessData<RealType, CellEngineAtom>(&Particle::ListOfAtoms, &ParticleKind::ListOfAtoms, Update);
@@ -53,6 +53,8 @@ protected:
 protected:
     void PrintStatistics() override
     {
+        CellEngineFullAtomSimulationSpaceObjectPointer->CountMinMaxValuesOfBordersAtomsPositionsInTheCell();
+        LoggersManagerObject.Log(CellEngineFullAtomSimulationSpaceObjectPointer->PrintSpaceMinMaxValues());
     }
 };
 

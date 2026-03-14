@@ -40,6 +40,8 @@ protected:
 protected:
     bool CheckInsertOfParticle(const MPIParticleSenderStruct& MPIParticleSenderToInsert) override;
 public:
+    void CountMinMaxValuesOfBordersAtomsPositionsInTheCell();
+public:
     void WriteNumberOfParticlesInEachSectorToFile() const;
     static void WriteNumberOfParticlesKindsWithoutAtoms();
 protected:

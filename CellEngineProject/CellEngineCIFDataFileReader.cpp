@@ -239,8 +239,8 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile(const bool SetStartValuesB
 
         MainMapType<string, string> AutinIllinoisNamesMap;
 
-        NEWAssociateAutinNameWithIllinoisName(AutinIllinoisNamesMap);
-        //AssociateAutinNameWithIllinoisName(AutinIllinoisNamesMap);
+        AssociateAutinNameWithIllinoisName(AutinIllinoisNamesMap);
+        //NEWAssociateAutinNameWithIllinoisName(AutinIllinoisNamesMap);
 
         MainMapType<EntityIdInt, UniqueIdInt> ProteinIdFromGeneIdTranslator;
         MainMapType<EntityIdInt, string> ParticleAutinKindIdToAutinNameTranslator;
@@ -248,7 +248,10 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile(const bool SetStartValuesB
         if (CellEngineConfigDataObject.MixedFullAtomWithVoxelSpace == true)
         {
             EntityIdInt LocalParticleKindId = ranges::max_element(ParticlesKindsManagerObject.ParticlesKinds, [](const pair<EntityIdInt, ParticleKind>& lhs, const pair<EntityIdInt, ParticleKind>& rhs){ return lhs.first < rhs.first; })->first + 1;
+
+            LoggersManagerObject.Log(STREAM("LIPIDS OUTER PARTICLE KIND ID = " << LocalParticleKindId));
             ParticlesKindsManagerObject.AddSingleParticleKind(ParticlesTypes::Lipid, LocalParticleKindId, "LipidOuterMembrane", "LipidOuterMembrane", "LipidOuterMembrane", -1, 0, "m", 1);
+            LoggersManagerObject.Log(STREAM("LIPIDS INNER PARTICLE KIND ID = " << LocalParticleKindId));
             ParticlesKindsManagerObject.AddSingleParticleKind(ParticlesTypes::Lipid, LocalParticleKindId, "LipidInnerMembrane", "LipidInnerMembrane", "LipidInnerMembrane", -1, 0, "m", 1);
         }
 
@@ -419,7 +422,8 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile(const bool SetStartValuesB
             }
         }
 
-        LoggersManagerObject.Log(STREAM("Number of erased particles from particle kinds = " << erase_if(ParticlesKindsManagerObject.ParticlesKinds, [](auto& P){ return P.first < CellEngineConfigDataObject.DNAIdentifier; })));
+        if (CellEngineConfigDataObject.MixedFullAtomWithVoxelSpace == true)
+            LoggersManagerObject.Log(STREAM("Number of erased particles from particle kinds = " << erase_if(ParticlesKindsManagerObject.ParticlesKinds, [](auto& P){ return P.first < CellEngineConfigDataObject.DNAIdentifier; })));
 
         PreprocessData(true);
 

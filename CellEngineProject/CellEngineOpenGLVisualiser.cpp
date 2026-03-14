@@ -320,13 +320,28 @@ inline bool CellEngineOpenGLVisualiser::CheckDistanceToDrawDetailsInAtomScale(co
 {
     if (CellEngineConfigDataObject.CheckAtomVisibility == true)
     {
-        if (CellEngineConfigDataObject.ViewPositionZ > CellEngineConfigDataObject.Distance)
+        //if (CellEngineConfigDataObject.ViewPositionZ > CellEngineConfigDataObject.Distance)
+        if (CellEngineConfigDataObject.ViewPositionZ > 2300)
         {
             if (CellEngineConfigDataObject.ShowAtomsInEachPartOfTheCellWhenObserverIsFromOutside == false)
                 //return ZNew > CellEngineConfigDataObject.CutZ && sqrt((XNew * XNew) + (YNew * YNew) + (ZNew * ZNew)) > CellEngineConfigDataObject.Distance;
             {
-                const float AtomDistance = sqrt((XNew * XNew) + (YNew * YNew) + (ZNew * ZNew));
-                return ZNew > CellEngineConfigDataObject.CutZ && AtomDistance - 200 > CellEngineConfigDataObject.Distance && AtomDistance < CellEngineConfigDataObject.Distance + 400;
+                //const float AtomDistance = sqrt((XNew * XNew) + (YNew * YNew) + (ZNew * ZNew));
+                //const float AtomDistance = sqrt(((XNew - CellEngineConfigDataObject.CameraXPosition) * (XNew - CellEngineConfigDataObject.CameraXPosition)) + ((YNew - CellEngineConfigDataObject.CameraYPosition) * (YNew - CellEngineConfigDataObject.CameraYPosition)) + ((ZNew - CellEngineConfigDataObject.CameraZPosition) * (ZNew - CellEngineConfigDataObject.CameraZPosition)));
+                const float AtomDistance = sqrt(((XNew - CellEngineConfigDataObject.ViewPositionX) * (XNew - CellEngineConfigDataObject.ViewPositionX)) + ((YNew - CellEngineConfigDataObject.ViewPositionY) * (YNew - CellEngineConfigDataObject.ViewPositionY)) + ((ZNew - CellEngineConfigDataObject.ViewPositionZ) * (ZNew - CellEngineConfigDataObject.ViewPositionZ)));
+
+                //return ZNew > CellEngineConfigDataObject.CutZ && AtomDistance - 200 > CellEngineConfigDataObject.Distance && AtomDistance < CellEngineConfigDataObject.Distance + 400;
+                //return ZNew > CellEngineConfigDataObject.CutZ && (AtomDistance - 200 > CellEngineConfigDataObject.Distance && AtomDistance < CellEngineConfigDataObject.Distance + 400);
+                //return ZNew > CellEngineConfigDataObject.CutZ && (AtomDistance > CellEngineConfigDataObject.Distance - 200 && AtomDistance < CellEngineConfigDataObject.Distance + 200);
+
+                //return ZNew > CellEngineConfigDataObject.CutZ && ((AtomDistance > CellEngineConfigDataObject.Distance - 200 && AtomDistance < CellEngineConfigDataObject.Distance + 200));
+
+                return ZNew > CellEngineConfigDataObject.CutZ && (AtomDistance > 1900 && AtomDistance < 2200);
+
+                //return (ZNew > CellEngineConfigDataObject.ViewPositionZ + CellEngineConfigDataObject.ZLowToDrawInAtomScale - 1500 && ZNew < CellEngineConfigDataObject.ViewPositionZ + CellEngineConfigDataObject.ZHighToDrawInAtomScale && XNew > CellEngineConfigDataObject.XLowToDrawInAtomScale - 600 && XNew < CellEngineConfigDataObject.XHighToDrawInAtomScale + 600 && YNew > CellEngineConfigDataObject.YLowToDrawInAtomScale - 600 && YNew < CellEngineConfigDataObject.YHighToDrawInAtomScale + 600);
+                //return (ZNew > CellEngineConfigDataObject.ViewPositionZ + CellEngineConfigDataObject.ZLowToDrawInAtomScale - 1500 && ZNew < CellEngineConfigDataObject.ViewPositionZ + CellEngineConfigDataObject.ZHighToDrawInAtomScale && XNew > CellEngineConfigDataObject.XLowToDrawInAtomScale - 500 && XNew < CellEngineConfigDataObject.XHighToDrawInAtomScale + 500 && YNew > CellEngineConfigDataObject.YLowToDrawInAtomScale - 500 && YNew < CellEngineConfigDataObject.YHighToDrawInAtomScale + 500);
+                //return (ZNew > CellEngineConfigDataObject.ViewPositionZ + CellEngineConfigDataObject.ZLowToDrawInAtomScale - 400 && ZNew < CellEngineConfigDataObject.ViewPositionZ + CellEngineConfigDataObject.ZHighToDrawInAtomScale + 400 && XNew > CellEngineConfigDataObject.XLowToDrawInAtomScale - 500 && XNew < CellEngineConfigDataObject.XHighToDrawInAtomScale + 500 && YNew > CellEngineConfigDataObject.YLowToDrawInAtomScale - 500 && YNew < CellEngineConfigDataObject.YHighToDrawInAtomScale + 500);
+                //return (ZNew > CellEngineConfigDataObject.ViewPositionZ + CellEngineConfigDataObject.ZLowToDrawInAtomScale && ZNew < CellEngineConfigDataObject.ViewPositionZ + CellEngineConfigDataObject.ZHighToDrawInAtomScale && XNew > CellEngineConfigDataObject.XLowToDrawInAtomScale - 500 && XNew < CellEngineConfigDataObject.XHighToDrawInAtomScale + 500 && YNew > CellEngineConfigDataObject.YLowToDrawInAtomScale - 500 && YNew < CellEngineConfigDataObject.YHighToDrawInAtomScale + 500);
             }
             else
                 return true;
@@ -513,12 +528,15 @@ inline void CellEngineOpenGLVisualiser::SetAutomaticParametersForRendering()
     {
         if (CellEngineConfigDataObject.ShowDetailsInAtomScale == true)
         {
-            if (CellEngineConfigDataObject.ViewPositionZ > CellEngineConfigDataObject.Distance)
+            //if (CellEngineConfigDataObject.ViewPositionZ > CellEngineConfigDataObject.Distance)
+            if (CellEngineConfigDataObject.ViewPositionZ > 2300)
             {
                 if (CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep == true)
                     //CellEngineConfigDataObject.LoadOfAtomsStep = 100;
                     //CellEngineConfigDataObject.LoadOfAtomsStep = 20;
+                    //CellEngineConfigDataObject.LoadOfAtomsStep = 10;
                     CellEngineConfigDataObject.LoadOfAtomsStep = 5;
+                    //CellEngineConfigDataObject.LoadOfAtomsStep = 1;
                 if (CellEngineConfigDataObject.AutomaticChangeOfSizeOfAtom == true)
                     CellEngineConfigDataObject.SizeOfAtomX = CellEngineConfigDataObject.SizeOfAtomY = CellEngineConfigDataObject.SizeOfAtomZ = 3;
             }

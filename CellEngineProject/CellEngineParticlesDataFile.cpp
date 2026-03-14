@@ -29,10 +29,7 @@ void CellEngineParticlesDataFile::ReadCIFFileWithBinaryData(const bool StartValu
     try
     {
         if (CellEngineConfigDataObject.MixedFullAtomWithVoxelSpace == false)
-                                                                                                                        //{
             ReadDataFromCIFFile(true);
-                                                                                                                        //printf(("EEE\n"));getchar();
-                                                                                                                        //}
         else
         {
             ReadAllDataFromBinaryFileAndPrepareData(StartValuesBool, UpdateParticleKindListOfVoxelsBool, Type);

@@ -20,10 +20,28 @@ Particle& CellEngineFullAtomSimulationSpace::GetParticleFromIndexForOuterClass(U
     return GetParticleFromIndex(ParticleIndex);
 }
 
+void CellEngineFullAtomSimulationSpace::CountMinMaxValuesOfBordersAtomsPositionsInTheCell()
+{
+    try
+    {
+        XMinGlobal = YMinGlobal = ZMinGlobal = 10000;
+        XMaxGlobal = YMaxGlobal = ZMaxGlobal = -10000;
+
+        FOR_EACH_SECTOR_IN_XYZ_ONLY
+            for (const auto& ParticleObject : CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles | views::values)
+                for (const auto& AtomObject : ParticleObject.ListOfAtoms)
+                    GetMinMaxOfCoordinates<RealType>(AtomObject.X, AtomObject.Y, AtomObject.Z, XMinGlobal, XMaxGlobal, YMinGlobal, YMaxGlobal, ZMinGlobal, ZMaxGlobal);
+    }
+    CATCH("counting min max values of borders atoms positions in the cell")
+}
+
 CellEngineFullAtomSimulationSpace::CellEngineFullAtomSimulationSpace(ParticlesContainer<Particle>& ParticlesParam, const bool GetMemoryForFullAtomSpace, const ThreadIdType ThreadIndexParam, ThreadPosType CurrentThreadPosParam) : Particles(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam), CellEngineChemicalReactionsInSimulationSpace(ParticlesParam), CellEngineChemicalReactionsInFullAtomSimulationSpace(ParticlesParam), CellEngineSimulationSpace(ParticlesParam), CellEngineGenomeNucleicAcidsParticlesInFullAtomSpaceGenerator(ParticlesParam), CellEngineVoxelSimulationSpaceStatistics()
 {
     try
     {
+        XMinGlobal = YMinGlobal = ZMinGlobal = 10000;
+        XMaxGlobal = YMaxGlobal = ZMaxGlobal = -10000;
+
         MPIProcessIndex = ThreadIndexParam;
 
         CurrentThreadIndex = ThreadIndexParam;
@@ -221,12 +239,12 @@ bool CellEngineFullAtomSimulationSpace::CheckIfSpaceIsEmptyAndIsInBoundsForParti
 
 bool CellEngineFullAtomSimulationSpace::CheckInsertOfParticle(const MPIParticleSenderStruct& MPIParticleSenderToInsert)
 {
-    auto SimulationSpaceSectorBoundsObject = SimulationSpaceSectorBounds().SetParametersForChosenSector(MPIParticleSenderToInsert.SectorPos.X, MPIParticleSenderToInsert.SectorPos.Y, MPIParticleSenderToInsert.SectorPos.Z, CellEngineConfigDataObject.ShiftCenterX, CellEngineConfigDataObject.ShiftCenterY, CellEngineConfigDataObject.ShiftCenterZ, CellEngineConfigDataObject.SizeOfParticlesSectorX, CellEngineConfigDataObject.SizeOfParticlesSectorY, CellEngineConfigDataObject.SizeOfParticlesSectorZ);
+    const auto SimulationSpaceSectorBoundsObject = SimulationSpaceSectorBounds().SetParametersForChosenSector(MPIParticleSenderToInsert.SectorPos.X, MPIParticleSenderToInsert.SectorPos.Y, MPIParticleSenderToInsert.SectorPos.Z, CellEngineConfigDataObject.ShiftCenterX, CellEngineConfigDataObject.ShiftCenterY, CellEngineConfigDataObject.ShiftCenterZ, CellEngineConfigDataObject.SizeOfParticlesSectorX, CellEngineConfigDataObject.SizeOfParticlesSectorY, CellEngineConfigDataObject.SizeOfParticlesSectorZ);
     auto& ParticleKindToCheck = ParticlesKindsManagerObject.GetParticleKind(MPIParticleSenderToInsert.ParticleKindId);
 
     if (CheckIfSpaceIsEmptyAndIsInBoundsForParticleElements(ParticleKindToCheck, Particles, { MPIParticleSenderToInsert.SectorPos.X, MPIParticleSenderToInsert.SectorPos.Y, MPIParticleSenderToInsert.SectorPos.Z }, MPIParticleSenderToInsert.NewPosition.X, MPIParticleSenderToInsert.NewPosition.Y, MPIParticleSenderToInsert.NewPosition.Z, SimulationSpaceSectorBoundsObject) == true)
     {
-        UnsignedInt ParticleIndex = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), MPIParticleSenderToInsert.ParticleKindId, 1, -1, 1, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
+        const UnsignedInt ParticleIndex = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), MPIParticleSenderToInsert.ParticleKindId, 1, -1, 1, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
         FillParticleElementsInSpace(ParticleIndex, ParticleKindToCheck, MPIParticleSenderToInsert.NewPosition.X, MPIParticleSenderToInsert.NewPosition.Y, MPIParticleSenderToInsert.NewPosition.Z);
 
         return true;

@@ -1877,7 +1877,7 @@
 			<ShowDetailsInAtomScale>true</ShowDetailsInAtomScale>
 			<CheckAtomVisibility>true</CheckAtomVisibility>
 			<CutZ>200</CutZ>
-			<Distance>2300</Distance>
+			<Distance>4500</Distance>
 			<LoadOfAtomsStep>1</LoadOfAtomsStep>
 
 			<XLowToDrawInAtomScale>-200</XLowToDrawInAtomScale>
@@ -2016,16 +2016,16 @@
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>
 				</ParticleKind>
-                                <ParticleKind id="342">
-					<Name>MEMBRANE</Name>
+                                <ParticleKind id="101226">
+					<Name>LipidInnerMembrane</Name>
 					<Color>Orange</Color>
 					<Visible>true</Visible>
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>
 				</ParticleKind>
-				<ParticleKind id="343">
-					<Name>MEMBRANE</Name>
+				<ParticleKind id="101227">
+					<Name>LipidOuterMembrane</Name>
 					<Color>Pink</Color>
 					<Visible>true</Visible>
 					<SizeX>1</SizeX>
@@ -3737,13 +3737,8 @@
 
                         <FullAtomMPIParallelProcessesExecution>false</FullAtomMPIParallelProcessesExecution>
 
-
-
                         <CellStateFileName>../../WholeCellData/JCVI-syn3A/syn3a_atom_instances.cif</CellStateFileName>
                         <CellStateFileNameBackup>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile40.dat</CellStateFileNameBackup>
-
-
-
 
                         <DivisionFactorForSimulationSpace>4.0</DivisionFactorForSimulationSpace> <!--4 or 2 or other-->
                         <DivisionFactorForReadingPositionsOfParticles>1.0</DivisionFactorForReadingPositionsOfParticles>
@@ -3789,8 +3784,6 @@
 
                         <UseMutexBetweenMainScreenThreadAndMenuThreads>true</UseMutexBetweenMainScreenThreadAndMenuThreads>
 
-
-
                         <CellGenomePositionsFileName>./data/genomes/genome_1024_double_1/GENOME_POSITIONS.DAT</CellGenomePositionsFileName>
                         <CellGenomeSequenceFileName>./data/genomes/genome_1024_double_1/GENOME_SEQUENCE.DAT</CellGenomeSequenceFileName>
                         <CellGenomeSequenceFastaFileName>./data/genomes/genome_1024_double_1/sequence.fasta</CellGenomeSequenceFastaFileName>
@@ -3815,7 +3808,7 @@
 			<ShowDetailsInAtomScale>true</ShowDetailsInAtomScale>
 			<CheckAtomVisibility>true</CheckAtomVisibility>
 			<CutZ>200</CutZ>
-			<Distance>2400</Distance>
+			<Distance>2300</Distance>
 			<LoadOfAtomsStep>1</LoadOfAtomsStep>
 
 			<XLowToDrawInAtomScale>-200</XLowToDrawInAtomScale>

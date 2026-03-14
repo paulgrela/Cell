@@ -525,6 +525,8 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
                 LoggersManagerObject.Log(STREAM("Particle with Index 0 = " << ParticleObject.Index << " " << ParticleObject.Center.X << " " << ParticleObject.Center.Y << " " << ParticleObject.Center.Z));
         }
 
+
+
         LoggersManagerObject.Log(STREAM("END OF READING PARTICLES FROM BINARY FILE - bad particles = " << BadParticlesCenters));
 
         ParticlesSize = 0;
@@ -747,6 +749,8 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadAllDataFromBinaryFileAnd
         PrepareParticlesAfterReadingFromBinaryFile();
 
         PreprocessData(UpdateParticleKindListOfVoxelsBool);
+
+        PrintStatistics();
 
         ChemicalReactionsManagerObject.PreprocessAllChemicalReactions();
 

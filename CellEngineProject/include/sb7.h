@@ -98,7 +98,7 @@ namespace sb7
             {
                 if (gl3wIsSupported(4, 3))
                 {
-                    glDebugMessageCallback((GLDEBUGPROC)debug_callback, this);
+                    glDebugMessageCallback(reinterpret_cast<GLDEBUGPROC>(debug_callback), this);
                     glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
                 }
                 else if (sb6IsExtensionSupported("GL_ARB_debug_output"))
@@ -148,7 +148,7 @@ namespace sb7
             glfwDestroyWindow(Window);
         }
 
-        virtual void Init(int WindowWidth, int WindowHeight)
+        virtual void Init(const int WindowWidth, const int WindowHeight)
         {
             strcpy(Info.Title, "OpenGL Window");
             Info.WindowWidth = WindowWidth;
@@ -189,7 +189,7 @@ namespace sb7
             glfwSetWindowTitle(Window, Title);
         }
 
-        virtual void OnResize(int Width, int Height)
+        virtual void OnResize(const int Width, const int Height)
         {
             Info.WindowWidth = Width;
             Info.WindowHeight = Height;
@@ -260,32 +260,32 @@ namespace sb7
         GLFWwindow* Window{};
 
     protected:
-        static void glfw_onResize(GLFWwindow* Window, int w, int h)
+        static void glfw_onResize(GLFWwindow* Window, const int w, const int h)
         {
             OpenGLApplicationObject->OnResize(w, h);
         }
 
-        static void glfw_onKey(GLFWwindow* Window, int Key, int ScanCode, int Action, int Mods)
+        static void glfw_onKey(GLFWwindow* Window, const int Key, int ScanCode, const int Action, int Mods)
         {
             OpenGLApplicationObject->OnKey(Key, Action);
         }
 
-        static void glfw_onMouseButton(GLFWwindow* Window, int Button, int Action, int Mods)
+        static void glfw_onMouseButton(GLFWwindow* Window, const int Button, const int Action, int Mods)
         {
             OpenGLApplicationObject->OnMouseButton(Button, Action);
         }
 
-        static void glfw_onMouseMove(GLFWwindow* Window, double X, double Y)
+        static void glfw_onMouseMove(GLFWwindow* Window, const double X, const double Y)
         {
             OpenGLApplicationObject->OnMouseMove(static_cast<int>(X), static_cast<int>(Y));
         }
 
-        static void glfw_onMouseWheel(GLFWwindow* Window, double XOffset, double YOffset)
+        static void glfw_onMouseWheel(GLFWwindow* Window, double XOffset, const double YOffset)
         {
             OpenGLApplicationObject->OnMouseWheel(static_cast<int>(YOffset));
         }
 
-        void setVsync(bool Enable)
+        void setVsync(const bool Enable)
         {
             Info.Flags.VSync = Enable ? 1 : 0;
             glfwSwapInterval(static_cast<int>(Info.Flags.VSync));
