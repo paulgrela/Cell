@@ -49,7 +49,7 @@ class CellEngineOpenGLVisualiser : public sb7::OpenGLApplication
 {
 protected:
     std::vector<GPUAtom> GPUAtoms{};//CCC
-
+    std::vector<GPUAtomLocal> GPUAtomsLocal{};//CCC
 public:
     sb7::GraphicObject AtomGraphicsObject{};
     sb7::TextOverlay TextOverlayObject{};

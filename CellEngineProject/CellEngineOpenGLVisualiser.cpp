@@ -117,7 +117,7 @@ void CellEngineOpenGLVisualiser::StartUp()
     try
     {
                                                                                                                         GPUAtoms.resize(100'000'000);//CCC
-
+                                                                                                                        GPUAtomsLocal.resize(100'000'000);//CCC
         LoadShadersPhong();
 
         TextOverlayObject.Init(160, 80, "..//textures//cp437_9x16.ktx");

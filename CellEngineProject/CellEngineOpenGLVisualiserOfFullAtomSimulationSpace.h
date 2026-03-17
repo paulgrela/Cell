@@ -32,7 +32,7 @@ private:
 
     //void RenderSpace2(UnsignedInt& NumberOfAllRenderedAtoms, const vmath::mat4& ViewMatrix, vector<GPUParticle>& GPUParticles, vector<GPUAtomLocal>& GPUAtomsLocal);
     //void RenderSpace2(const vmath::mat4& ViewMatrix, vector<GPUParticle>& GPUParticles, vector<GPUAtom>& GPUAtoms1, vector<GPUAtomLocal>& GPUAtomsLocal);
-    void RenderSpace2(const vmath::mat4& ViewMatrix, uint32_t& AtomOffsetTotal, uint32_t& ParticlesOffsetTotal, vector<GPUParticle>& GPUParticles, vector<GPUAtom>& GPUAtoms1, vector<GPUAtomLocal>& GPUAtomsLocal);
+    void RenderSpace2(const vmath::mat4& ViewMatrix, uint32_t& AtomOffsetTotal, uint32_t& AtomLocalOffsetTotal, uint32_t& ParticlesOffsetTotal, vector<GPUParticle>& GPUParticles, vector<GPUAtom>& GPUAtoms1, vector<GPUAtomLocal>& GPUAtomsLocal);
     void RenderSpace3(const vmath::mat4& ViewMatrix, uint32_t& AtomOffsetTotal, uint32_t& ParticlesOffsetTotal, vector<GPUParticle>& GPUParticles, vector<GPUAtom>& GPUAtoms1);
 
     void RenderSpace(UnsignedInt& NumberOfAllRenderedAtoms, UnsignedInt& NumberOfFoundParticlesCenterToBeRenderedInAtomDetails, const vmath::mat4& ViewMatrix) override;
