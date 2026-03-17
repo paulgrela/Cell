@@ -116,6 +116,8 @@ void CellEngineOpenGLVisualiser::StartUp()
 {
     try
     {
+                                                                                                                        GPUAtoms.resize(100'000'000);//CCC
+
         LoadShadersPhong();
 
         TextOverlayObject.Init(160, 80, "..//textures//cp437_9x16.ktx");
@@ -152,6 +154,9 @@ void CellEngineOpenGLVisualiser::StartUp()
         GetStartCenterPoint();
 
         glUseProgram(ShaderProgramPhong);
+
+                                                                                                                        //glEnable(GL_PROGRAM_POINT_SIZE);//???
+                                                                                                                        //glPointParameteri(GL_POINT_SPRITE_COORD_ORIGIN, GL_LOWER_LEFT);//???
     }
     CATCH("initiation of data for cell visualization")
 }
@@ -188,6 +193,8 @@ void CellEngineOpenGLVisualiser::LoadShadersPhong()
     try
     {
         LoadShaders("..//shaders//per-fragment-phong.cs.glsl", "..//shaders//per-fragment-phong.vs.glsl", "..//shaders//per-fragment-phong.fs.glsl", ComputeShaderProgramPhong, ShaderProgramPhong);
+        //LoadShaders("..//shaders//per-fragment-phong.cs.glsl", "..//shaders//per-fragment-phong-point.vs.glsl", "..//shaders//per-fragment-phong-point.fs.glsl", ComputeShaderProgramPhong, ShaderProgramPhong);
+        //LoadShaders("..//shaders//per-fragment-phong.cs.glsl", "..//shaders//per-fragment-phong-point-1.vs.glsl", "..//shaders//per-fragment-phong-point-1.fs.glsl", ComputeShaderProgramPhong, ShaderProgramPhong);
         //LoadShaders("..//shaders//per-fragment-phong-1.vs.glsl", "..//shaders//per-fragment-phong.fs.glsl", ShaderProgramPhong);
 
         Uniforms.DiffuseAlbedo = glGetUniformLocation(ShaderProgramPhong, "diffuse_albedo");
@@ -316,7 +323,6 @@ void CellEngineOpenGLVisualiser::DrawBonds(const Particle& ParticleObject, vecto
     CATCH("drawing bonds")
 }
 
-//inline bool CellEngineOpenGLVisualiser::CheckDistanceToDrawDetailsInAtomScale(const vmath::vec3& AtomPosition, const float XNew, const float YNew, const float ZNew) const
 inline bool CellEngineOpenGLVisualiser::CheckDistanceToDrawDetailsInAtomScale(const float XNew, const float YNew, const float ZNew)
 {
     if (CellEngineConfigDataObject.CheckAtomVisibility == true)
@@ -328,38 +334,9 @@ inline bool CellEngineOpenGLVisualiser::CheckDistanceToDrawDetailsInAtomScale(co
                 //return ZNew > CellEngineConfigDataObject.CutZ && sqrt((XNew * XNew) + (YNew * YNew) + (ZNew * ZNew)) > CellEngineConfigDataObject.Distance;
             {
                 if (ZNew > 3000)
-                //if (ZNew > 4000)
                 {
-                    //const float AtomDistance = sqrt((AtomPosition.X() * AtomPosition.X()) + (AtomPosition.Y() * AtomPosition.Y()) + (AtomPosition.Z() * AtomPosition.Z()));
-                    //const float AtomDistance = sqrt(((AtomPosition.X() - Center.X()) * (AtomPosition.X() - Center.X())) + ((AtomPosition.Y() - Center.Y()) * (AtomPosition.Y() - Center.Y())) + ((AtomPosition.Z() - Center.Z()) * (AtomPosition.Z() - Center.Z())));
                     const float AtomDistance = sqrt((XNew * XNew) + (YNew * YNew) + (ZNew * ZNew));
-                    //const float AtomDistance = sqrt(((XNew - CellEngineConfigDataObject.CameraXPosition) * (XNew - CellEngineConfigDataObject.CameraXPosition)) + ((YNew - CellEngineConfigDataObject.CameraYPosition) * (YNew - CellEngineConfigDataObject.CameraYPosition)) + ((ZNew - CellEngineConfigDataObject.CameraZPosition) * (ZNew - CellEngineConfigDataObject.CameraZPosition)));
-                    //const float AtomDistance = sqrt(((XNew - CellEngineConfigDataObject.ViewPositionX) * (XNew - CellEngineConfigDataObject.ViewPositionX)) + ((YNew - CellEngineConfigDataObject.ViewPositionY) * (YNew - CellEngineConfigDataObject.ViewPositionY)) + ((ZNew - CellEngineConfigDataObject.ViewPositionZ) * (ZNew - CellEngineConfigDataObject.ViewPositionZ)));
-                    //const float AtomDistance = sqrt(((XNew + CellEngineConfigDataObject.ViewPositionX) * (XNew + CellEngineConfigDataObject.ViewPositionX)) + ((YNew + CellEngineConfigDataObject.ViewPositionY) * (YNew + CellEngineConfigDataObject.ViewPositionY)) + ((ZNew + CellEngineConfigDataObject.ViewPositionZ) * (ZNew + CellEngineConfigDataObject.ViewPositionZ)));
-
-                    //return ZNew > CellEngineConfigDataObject.CutZ && AtomDistance - 200 > CellEngineConfigDataObject.Distance && AtomDistance < CellEngineConfigDataObject.Distance + 400;
-                    //return ZNew > CellEngineConfigDataObject.CutZ && (AtomDistance - 200 > CellEngineConfigDataObject.Distance && AtomDistance < CellEngineConfigDataObject.Distance + 400);
-                    //return ZNew > CellEngineConfigDataObject.CutZ && (AtomDistance > CellEngineConfigDataObject.Distance - 200 && AtomDistance < CellEngineConfigDataObject.Distance + 200);
-
-                    //return ZNew > CellEngineConfigDataObject.CutZ && ((AtomDistance > CellEngineConfigDataObject.Distance - 200 && AtomDistance < CellEngineConfigDataObject.Distance + 200));
-
-                    //return ZNew > CellEngineConfigDataObject.CutZ && (AtomDistance > 1900 + 3500 && AtomDistance < 2200 + 3500);
-
-                    //return ZNew > 2000 && (AtomDistance > 1900 + 3500 && AtomDistance < 2200 + 3500);
-
-                    //return ZNew > 2000 && (AtomDistance > 1700 + 3500 && AtomDistance < 2400 + 3500);
-                    //return ZNew > 2000 && (AtomDistance > 2100 + 3500 && AtomDistance < 2500 + 3500);
-                    //return ZNew > 2000 && (AtomDistance > 2300 + 3500 && AtomDistance < 2700 + 3500);
-                    //return ZNew > 2000 && (AtomDistance > 2300 + 3500 && AtomDistance < 3000 + 3500);
-                    //return ZNew > 4000 && (AtomDistance > 2000 + 3500 && AtomDistance < 3000 + 3500);
-                    //return (AtomDistance > 2000 + 3500 && AtomDistance < 3000 + 3500);
-                    //return (AtomDistance > 2000 + 3500 && AtomDistance < 3000 + 3800);
-                    //return (AtomDistance > 2000 + 3500 && AtomDistance < 3000 + 4000);
-                    //return (AtomDistance > 2000 + 3300 && AtomDistance < 3000 + 4000);
                     return (AtomDistance > 2000 + 3000 && AtomDistance < 3000 + 4000);
-
-                    //return (AtomDistance > 1900 + 3500 && AtomDistance < 2200 + 3500);
-                    //return (AtomDistance > 1900 && AtomDistance < 2200);
                 }
                 else return false;
             }
@@ -395,7 +372,6 @@ inline bool CellEngineOpenGLVisualiser::GetFinalVisibilityInModelWorld(const vma
 
             if (DrawOutsideBorder == true)
                 if (CheckDistanceToDrawDetailsInAtomScale(XNew, YNew, ZNew) == true)
-                //if (CheckDistanceToDrawDetailsInAtomScale(AtomPosition, XNew, YNew, ZNew) == true)
                 {
                     MatrixUniformBlockForVertexShaderPointer->Color = vmath::FromVec4ToVec3(sb7::color::Purple);
                     return true;
@@ -553,11 +529,7 @@ inline void CellEngineOpenGLVisualiser::SetAutomaticParametersForRendering()
             if (CellEngineConfigDataObject.ViewPositionZ > 2300)
             {
                 if (CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep == true)
-                    //CellEngineConfigDataObject.LoadOfAtomsStep = 100;
-                    //CellEngineConfigDataObject.LoadOfAtomsStep = 20;
                     CellEngineConfigDataObject.LoadOfAtomsStep = 10;
-                    //CellEngineConfigDataObject.LoadOfAtomsStep = 5;
-                    //CellEngineConfigDataObject.LoadOfAtomsStep = 1;
                 if (CellEngineConfigDataObject.AutomaticChangeOfSizeOfAtom == true)
                     CellEngineConfigDataObject.SizeOfAtomX = CellEngineConfigDataObject.SizeOfAtomY = CellEngineConfigDataObject.SizeOfAtomZ = 3;
             }

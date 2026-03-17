@@ -300,9 +300,9 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile(const bool SetStartValuesB
                     ParticleAutinKindIdToAutinNameTranslator[EntityId] = AtomFields[5];
 
                     if (Pos != string::npos)
-                        LoggersManagerObject.Log(STREAM("PARTCILE NAME = " << AtomFields[5] << " " << ProteinIdFromGeneIdTranslator[EntityId] << " " << ParticleAutinKindIdToAutinNameTranslator[EntityId]));
+                        LoggersManagerObject.Log(STREAM("PARTICLE NAME = " << AtomFields[5] << " " << ProteinIdFromGeneIdTranslator[EntityId] << " " << ParticleAutinKindIdToAutinNameTranslator[EntityId]));
                     else
-                        LoggersManagerObject.Log(STREAM("PARTCILE NAME = " << AtomFields[5] << " " << ParticleAutinKindIdToAutinNameTranslator[EntityId]));
+                        LoggersManagerObject.Log(STREAM("PARTICLE NAME = " << AtomFields[5] << " " << ParticleAutinKindIdToAutinNameTranslator[EntityId]));
                 }
             }
             else

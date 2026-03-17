@@ -1796,7 +1796,7 @@ public:
     }
     #pragma GCC diagnostic pop
 
-    static void CellEngineOpenGLVisualiserThreadFunction(const int XPosWindow, const int YPosWindow, const int WidthWindow, const int HeightWindow)
+    static void CellEngineOpenGLVisualiserThreadFunction()
     {
         try
         {
@@ -1953,7 +1953,7 @@ public:
                 {
                     ImGuiMenuWindow = PrepareImGuiMenuGLFWData();
 
-                    CellEngineOpenGLVisualiserThreadFunction(CellEngineConfigDataObject.XTopMainWindow, CellEngineConfigDataObject.YTopMainWindow, CellEngineConfigDataObject.WidthMainWindow, CellEngineConfigDataObject.HeightMainWindow);
+                    CellEngineOpenGLVisualiserThreadFunction();
 
                     CellEngineOpenGLVisualiserPointer->PrepareData(CellEngineConfigDataObject.XTopMainWindow, CellEngineConfigDataObject.YTopMainWindow, CellEngineConfigDataObject.WidthMainWindow, CellEngineConfigDataObject.HeightMainWindow);
 

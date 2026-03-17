@@ -47,6 +47,9 @@ static constexpr size_t MAX_ATOMS = 100'000'000;
 
 class CellEngineOpenGLVisualiser : public sb7::OpenGLApplication
 {
+protected:
+    std::vector<GPUAtom> GPUAtoms{};//CCC
+
 public:
     sb7::GraphicObject AtomGraphicsObject{};
     sb7::TextOverlay TextOverlayObject{};
@@ -167,7 +170,6 @@ protected:
     virtual void GetStartCenterPoint() = 0;
 protected:
     [[nodiscard]] static inline bool CheckDistanceToDrawDetailsInAtomScale(float XNew, float YNew, float ZNew);
-    //[[nodiscard]] inline bool CheckDistanceToDrawDetailsInAtomScale(const vmath::vec3& AtomPosition, float XNew, float YNew, float ZNew) const;
 };
 
 #endif
