@@ -138,7 +138,7 @@ namespace sb7
 
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wint-to-pointer-cast"
-    void GraphicObject::RenderSubGraphicObject(const unsigned int GraphicObjectIndex, const unsigned int InstanceCount, const unsigned int BaseInstance) const
+    void GraphicObject::RenderSubGraphicObjectTriangles(const unsigned int GraphicObjectIndex, const unsigned int InstanceCount, const unsigned int BaseInstance) const
     {
         glBindVertexArray(VAO);
 
@@ -146,6 +146,13 @@ namespace sb7
             glDrawElementsInstancedBaseInstance(GL_TRIANGLES, static_cast<GLint>(SubGraphicObjects[GraphicObjectIndex].Count), IndexType, reinterpret_cast<void*>(SubGraphicObjects[GraphicObjectIndex].First), static_cast<GLsizei>(InstanceCount), BaseInstance);
         else
             glDrawArraysInstancedBaseInstance(GL_TRIANGLES, static_cast<GLint>(SubGraphicObjects[GraphicObjectIndex].First), static_cast<GLsizei>(SubGraphicObjects[GraphicObjectIndex].Count), static_cast<GLsizei>(InstanceCount), BaseInstance);
+    }
+
+    void GraphicObject::RenderSubGraphicObjectPoints(const unsigned int GraphicObjectIndex, const unsigned int InstanceCount, const unsigned int BaseInstance) const
+    {
+        glBindVertexArray(VAO);
+
+        glDrawArraysInstanced(GL_POINTS, 0, 1, static_cast<GLsizei>(InstanceCount));
     }
     #pragma GCC diagnostic pop
 

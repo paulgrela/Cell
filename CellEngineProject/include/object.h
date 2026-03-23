@@ -18,10 +18,11 @@ namespace sb7
 
         void Render(const unsigned int InstanceCount = 1, const unsigned int BaseInstance = 0) const
         {
-            RenderSubGraphicObject(0, InstanceCount, BaseInstance);
+            RenderSubGraphicObjectTriangles(0, InstanceCount, BaseInstance);
         }
 
-        void RenderSubGraphicObject(unsigned int GraphicObjectIndex, unsigned int InstanceCount = 1, unsigned int BaseInstance = 0) const;
+        void RenderSubGraphicObjectTriangles(unsigned int GraphicObjectIndex, unsigned int InstanceCount = 1, unsigned int BaseInstance = 0) const;
+        void RenderSubGraphicObjectPoints(unsigned int GraphicObjectIndex, unsigned int InstanceCount = 1, unsigned int BaseInstance = 0) const;
 
         void GetSubGraphicObjectInfo(const unsigned int Index, GLuint &First, GLuint &NumberOfGraphicObjectsParameter) const
         {

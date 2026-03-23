@@ -1685,9 +1685,11 @@ public:
             if (!Info.Flags.Cursor)
                 glfwSetInputMode(ImGuiMenuWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
+                                                                                                                        glfwMakeContextCurrent(ImGuiMenuWindow);
+
             gl3wInit();
 
-            glfwMakeContextCurrent(ImGuiMenuWindow);
+            //glfwMakeContextCurrent(ImGuiMenuWindow);
 
             glfwSwapInterval(1);
 
@@ -1714,19 +1716,24 @@ public:
 
             while (!glfwWindowShouldClose(ImGuiMenuWindow) && Running == true)
             {
+                                                                                                                        auto start_time119 = chrono::high_resolution_clock::now();
                 if (CellEngineConfigDataObject.ImGuiLightVersion == true)
                     ImGui::StyleColorsLight();
                 else
                     ImGui::StyleColorsDark();
-
+                                                                                                                        //const auto start_time119 = chrono::high_resolution_clock::now();
                 glfwPollEvents();
+                                                                                                                        //const auto start_time119 = chrono::high_resolution_clock::now();
 
                                                                                                                         glfwMakeContextCurrent(ImGuiMenuWindow);
 
+                                                                                                                        glfwSwapInterval(0);//???
+
+                                                                                                                        //const auto start_time119 = chrono::high_resolution_clock::now();
                 ImGui_ImplOpenGL3_NewFrame();
                 ImGui_ImplGlfw_NewFrame();
                 ImGui::NewFrame();
-
+                                                                                                                        //const auto start_time119 = chrono::high_resolution_clock::now();
                 if (CellEngineConfigDataObject.ImGuiDemoWindowMenu == true)
                     ImGui::ShowDemoWindow();
 
@@ -1737,9 +1744,9 @@ public:
                 MenuWindow1(WindowFlags, ModifiableWindow);
 
                 MenuWindow2(WindowFlags, ModifiableWindow);
-
+                                                                                                                        //const auto start_time119 = chrono::high_resolution_clock::now();
                 ImGui::Render();
-
+                                                                                                                        //const auto start_time119 = chrono::high_resolution_clock::now();
                 int ImGuiMenuWindowWidth, ImGuiMenuWindowHeight;
                 glfwGetFramebufferSize(ImGuiMenuWindow, &ImGuiMenuWindowWidth, &ImGuiMenuWindowHeight);
                 glViewport(0, 0, ImGuiMenuWindowWidth, ImGuiMenuWindowHeight);
@@ -1748,11 +1755,26 @@ public:
                 glClear(GL_COLOR_BUFFER_BIT);
                 ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
+                                                                                                                        auto stop_time119 = chrono::high_resolution_clock::now();
+
+                                                                                                                        ExecutionDurationTimeForCopyingParticlesToGraphicMemory2 += chrono::duration(stop_time119 - start_time119);
+                                                                                                                        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time119, stop_time119, "Time of one frame 1 = ", "Exception in measuring time")));
+
+
+                                                                                                                        //const auto start_time119 = chrono::high_resolution_clock::now();
+                                                                                                                        start_time119 = chrono::high_resolution_clock::now();
                 glfwSwapBuffers(ImGuiMenuWindow);
+                                                                                                                        stop_time119 = chrono::high_resolution_clock::now();
 
+                                                                                                                        ExecutionDurationTimeForCopyingParticlesToGraphicMemory2 += chrono::duration(stop_time119 - start_time119);
+                                                                                                                        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time119, stop_time119, "Time of one frame 2 = ", "Exception in measuring time")));
 
+                                                                                                                        //const auto start_time119 = chrono::high_resolution_clock::now();
+                                                                                                                        start_time119 = chrono::high_resolution_clock::now();
 
                                                                                                                         glfwMakeContextCurrent(CellEngineOpenGLVisualiserPointer->Window);
+
+                                                                                                                        glfwSwapInterval(1);//???
 
                                                                                                                         CellEngineOpenGLVisualiserPointer->Render(glfwGetTime());
 
@@ -1760,6 +1782,17 @@ public:
 
                                                                                                                         Running &= (glfwGetKey(CellEngineOpenGLVisualiserPointer->Window, GLFW_KEY_ESCAPE) == GLFW_RELEASE);
                                                                                                                         Running &= (glfwWindowShouldClose(CellEngineOpenGLVisualiserPointer->Window) != GL_TRUE);
+
+
+
+
+                                                                                                                        //const auto stop_time119 = chrono::high_resolution_clock::now();
+                                                                                                                        stop_time119 = chrono::high_resolution_clock::now();
+
+                                                                                                                        ExecutionDurationTimeForCopyingParticlesToGraphicMemory2 += chrono::duration(stop_time119 - start_time119);
+                                                                                                                        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time119, stop_time119, "Time of one frame 3 = ", "Exception in measuring time")));
+
+
             }
         }
         CATCH("executing imgui menu glfw main loop");

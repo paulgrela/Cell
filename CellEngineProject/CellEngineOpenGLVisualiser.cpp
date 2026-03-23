@@ -155,7 +155,7 @@ void CellEngineOpenGLVisualiser::StartUp()
 
         glUseProgram(ShaderProgramPhong);
 
-                                                                                                                        //glEnable(GL_PROGRAM_POINT_SIZE);//???
+                                                                                                                        glEnable(GL_PROGRAM_POINT_SIZE);//???
                                                                                                                         //glPointParameteri(GL_POINT_SPRITE_COORD_ORIGIN, GL_LOWER_LEFT);//???
     }
     CATCH("initiation of data for cell visualization")
@@ -192,10 +192,9 @@ void CellEngineOpenGLVisualiser::LoadShadersPhong()
 {
     try
     {
-        LoadShaders("..//shaders//per-fragment-phong.cs.glsl", "..//shaders//per-fragment-phong.vs.glsl", "..//shaders//per-fragment-phong.fs.glsl", ComputeShaderProgramPhong, ShaderProgramPhong);
+        //LoadShaders("..//shaders//per-fragment-phong.cs.glsl", "..//shaders//per-fragment-phong.vs.glsl", "..//shaders//per-fragment-phong.fs.glsl", ComputeShaderProgramPhong, ShaderProgramPhong);
         //LoadShaders("..//shaders//per-fragment-phong.cs.glsl", "..//shaders//per-fragment-phong-point.vs.glsl", "..//shaders//per-fragment-phong-point.fs.glsl", ComputeShaderProgramPhong, ShaderProgramPhong);
-        //LoadShaders("..//shaders//per-fragment-phong.cs.glsl", "..//shaders//per-fragment-phong-point-1.vs.glsl", "..//shaders//per-fragment-phong-point-1.fs.glsl", ComputeShaderProgramPhong, ShaderProgramPhong);
-        //LoadShaders("..//shaders//per-fragment-phong-1.vs.glsl", "..//shaders//per-fragment-phong.fs.glsl", ShaderProgramPhong);
+        LoadShaders("..//shaders//per-fragment-phong.cs.glsl", "..//shaders//per-fragment-phong-point-1.vs.glsl", "..//shaders//per-fragment-phong-point-1.fs.glsl", ComputeShaderProgramPhong, ShaderProgramPhong);
 
         Uniforms.DiffuseAlbedo = glGetUniformLocation(ShaderProgramPhong, "diffuse_albedo");
         Uniforms.SpecularAlbedo = glGetUniformLocation(ShaderProgramPhong, "specular_albedo");
