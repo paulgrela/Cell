@@ -332,12 +332,15 @@ inline bool CellEngineOpenGLVisualiser::CheckDistanceToDrawDetailsInAtomScale(co
             if (CellEngineConfigDataObject.ShowAtomsInEachPartOfTheCellWhenObserverIsFromOutside == false)
                 //return ZNew > CellEngineConfigDataObject.CutZ && sqrt((XNew * XNew) + (YNew * YNew) + (ZNew * ZNew)) > CellEngineConfigDataObject.Distance;
             {
-                if (ZNew > 3000)
+                //XNew, YNew, ZNew sa po przeliczeniu wczesniej przez macierz obrotu, przesuniecia i  rozciagniecia wiec granice tez musza byc przeliczone wczesniej
+                //if (ZNew > 4500)
+                if (ZNew > 4000)
                 {
                     const float AtomDistance = sqrt((XNew * XNew) + (YNew * YNew) + (ZNew * ZNew));
                     return (AtomDistance > 2000 + 3000 && AtomDistance < 3000 + 4000);
                 }
-                else return false;
+                else
+                    return false;
             }
             else
                 return true;
