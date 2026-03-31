@@ -105,6 +105,8 @@ protected:
     vmath::vec3 Center{};
 private:
     vmath::mat4 RotationMatrix{};
+private:
+    float DistanceAfterCounting;
 protected:
     UnsignedInt PressedRightMouseButton = 0;
     bool PressedRightMouseButtonBool = false;

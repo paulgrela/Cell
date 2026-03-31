@@ -21,7 +21,7 @@ uniform vec3 ambient = vec3(0.1, 0.1, 0.1);
 void main(void)
 {
     bool isBillboard = (fs_in.V.z < -0.99);
-                                                                                                                        //color = vec4(34.0,234.0,123.0,1.0);
+
     if (isBillboard && gl_PointCoord != vec2(0,0))
     {
         vec2 coord = gl_PointCoord * 2.0 - 1.0;
@@ -39,19 +39,16 @@ void main(void)
 
         color = vec4(fs_in.C * (ambient + diffuse * vec3(0.8)), 1.0);
 
-        //color = vec4(ambient + diffuse, 1.0);
-        //color = vec4(34.0,234.0,123.0,1.0);
-
         instanceIDOut = instanceID;
     }
     else
     {
-        //if (fs_in.C.x < 0.0)
-        //{
-        //    color = vec4(vec3(0.0, 1.0, 1.0), 1.0);
-        //    instanceIDOut = 0u;
-        //}
-        //else
+        if (fs_in.C.x < 0.0)
+        {
+            color = vec4(vec3(0.0, 1.0, 1.0), 1.0);
+            instanceIDOut = 0u;
+        }
+        else
         {
             vec3 diffuse_albedo = fs_in.C;
             vec3 N = normalize(fs_in.N);
@@ -63,7 +60,7 @@ void main(void)
             vec3 specular = pow(max(dot(R, V), 0.0), specular_power) * specular_albedo;
 
             color = vec4(ambient + diffuse + specular, 1.0);
-                                                                                                                        //color = vec4(34.0,234.0,123.0,1.0);
+
             instanceIDOut = instanceID;
         }
     }

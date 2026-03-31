@@ -324,8 +324,8 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
 
         glUniformMatrix4fv(glGetUniformLocation(ShaderProgramPhong, "ProjectionMatrix"), 1, GL_FALSE, ProjectionMatrixGlobal);
 
-                                                                                                                        glUniform3fv(glGetUniformLocation(ShaderProgramPhong, "cameraPos"), 1, static_cast<float*>(&CellEngineConfigDataObject.ViewPositionZ));
-                                                                                                                        glUniform1f(glGetUniformLocation(ShaderProgramPhong, "billboardDistance"), 2300.0f);
+                                                                                                                        //glUniform3fv(glGetUniformLocation(ShaderProgramPhong, "cameraPos"), 1, static_cast<float*>(&CellEngineConfigDataObject.ViewPositionZ));
+                                                                                                                        glUniform1f(glGetUniformLocation(ShaderProgramPhong, "billboardDistance"), CellEngineConfigDataObject.Distance);
 
                                                                                                                         vmath::vec2 screenSize(Info.WindowWidth, Info.WindowHeight);
                                                                                                                         glUniform2fv(glGetUniformLocation(ShaderProgramPhong, "screenSize"), 1, reinterpret_cast<float*>(&screenSize));
@@ -337,7 +337,7 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
 
         vector<tuple<UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt>> TemporaryRenderedAtomsList;
 
-        if (CellEngineConfigDataObject.ViewPositionZ <= 2300)
+        if (CellEngineConfigDataObject.ViewPositionZ <= CellEngineConfigDataObject.Distance)
             AtomGraphicsObject.RenderSubGraphicObjectTriangles(0, AtomOffsetTotal, 0);
         else
             AtomGraphicsObject.RenderSubGraphicObjectPoints(0, AtomOffsetTotal, 0);

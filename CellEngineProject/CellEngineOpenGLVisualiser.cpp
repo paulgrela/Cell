@@ -116,8 +116,8 @@ void CellEngineOpenGLVisualiser::StartUp()
 {
     try
     {
-                                                                                                                        GPUAtoms.resize(100'000'000);//CCC
-                                                                                                                        GPUAtomsLocal.resize(100'000'000);//CCC
+                                                                                                                        GPUAtoms.resize(100'000'000);
+                                                                                                                        GPUAtomsLocal.resize(100'000'000);
         LoadShadersPhong();
 
         TextOverlayObject.Init(160, 80, "..//textures//cp437_9x16.ktx");
@@ -193,7 +193,6 @@ void CellEngineOpenGLVisualiser::LoadShadersPhong()
     try
     {
         //LoadShaders("..//shaders//per-fragment-phong.cs.glsl", "..//shaders//per-fragment-phong.vs.glsl", "..//shaders//per-fragment-phong.fs.glsl", ComputeShaderProgramPhong, ShaderProgramPhong);
-        //LoadShaders("..//shaders//per-fragment-phong.cs.glsl", "..//shaders//per-fragment-phong-point.vs.glsl", "..//shaders//per-fragment-phong-point.fs.glsl", ComputeShaderProgramPhong, ShaderProgramPhong);
         LoadShaders("..//shaders//per-fragment-phong.cs.glsl", "..//shaders//per-fragment-phong-point-1.vs.glsl", "..//shaders//per-fragment-phong-point-1.fs.glsl", ComputeShaderProgramPhong, ShaderProgramPhong);
 
         Uniforms.DiffuseAlbedo = glGetUniformLocation(ShaderProgramPhong, "diffuse_albedo");
@@ -326,18 +325,20 @@ inline bool CellEngineOpenGLVisualiser::CheckDistanceToDrawDetailsInAtomScale(co
 {
     if (CellEngineConfigDataObject.CheckAtomVisibility == true)
     {
-        //if (CellEngineConfigDataObject.ViewPositionZ > CellEngineConfigDataObject.Distance)
-        if (CellEngineConfigDataObject.ViewPositionZ > 2300)
+        if (CellEngineConfigDataObject.ViewPositionZ > CellEngineConfigDataObject.Distance)
         {
             if (CellEngineConfigDataObject.ShowAtomsInEachPartOfTheCellWhenObserverIsFromOutside == false)
-                //return ZNew > CellEngineConfigDataObject.CutZ && sqrt((XNew * XNew) + (YNew * YNew) + (ZNew * ZNew)) > CellEngineConfigDataObject.Distance;
             {
-                //XNew, YNew, ZNew sa po przeliczeniu wczesniej przez macierz obrotu, przesuniecia i  rozciagniecia wiec granice tez musza byc przeliczone wczesniej
-                //if (ZNew > 4500)
-                if (ZNew > 4000)
+                //Ponizsza linia wariantowo bo gdy usunieta to cala sfera a z ta linia to pol sfery
+                if (ZNew > CellEngineConfigDataObject.ViewPositionZ - CellEngineConfigDataObject.Distance)
                 {
-                    const float AtomDistance = sqrt((XNew * XNew) + (YNew * YNew) + (ZNew * ZNew));
-                    return (AtomDistance > 2000 + 3000 && AtomDistance < 3000 + 4000);
+                    //const float AtomDistance = sqrt((XNew * XNew) + (YNew * YNew) + (ZNew * ZNew));
+                    const float AtomDistance = sqrt((XNew * XNew) + (YNew * YNew) + (ZNew * ZNew - CellEngineConfigDataObject.ViewPositionZ * CellEngineConfigDataObject.ViewPositionZ));
+
+                    const float minDist = CellEngineConfigDataObject.ViewPositionZ - CellEngineConfigDataObject.Distance - 1000;
+                    const float maxDist = CellEngineConfigDataObject.ViewPositionZ - CellEngineConfigDataObject.Distance + 1000;
+
+                    return (AtomDistance > minDist && AtomDistance < maxDist);
                 }
                 else
                     return false;
@@ -352,7 +353,7 @@ inline bool CellEngineOpenGLVisualiser::CheckDistanceToDrawDetailsInAtomScale(co
         return false;
 }
 
-inline void CellEngineOpenGLVisualiser::DrawCenterPoint(UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, vmath::mat4& ModelMatrix)
+inline void CellEngineOpenGLVisualiser::DrawCenterPoint(UniformsBlock* MatrixUniformBlockForVertexShaderPointer, vmath::mat4& ModelMatrix)
 {
     try
     {
@@ -387,7 +388,7 @@ inline bool CellEngineOpenGLVisualiser::GetFinalVisibilityInModelWorld(const vma
     return false;
 }
 
-inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader1(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4& ModelMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, bool DrawAdditional) const
+inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader1(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4& ModelMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, const bool DrawAdditional) const
 {
     bool FinalVisibilityInModelWorld = false;
 
@@ -513,8 +514,8 @@ bool CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom& AtomObject, 
 
         FinalVisibilityInModelWorld = CreateUniformBlockForVertexShader(AtomPosition, CellEngineUseful::GetVMathVec3FromVector3ForColor(GetColor<CellEngineAtom>(AtomObject, ParticleObject, Chosen)), ViewMatrix, ModelMatrix, CountNewPosition, DrawCenter, DrawOutsideBorder, true);
 
-            //if (RenderObjectParameter == true)
-            //    AtomGraphicsObject.Render();
+        //if (RenderObjectParameter == true)
+        //    AtomGraphicsObject.Render();
     }
     CATCH("rendering object for data for cell visualization")
 
@@ -527,8 +528,7 @@ inline void CellEngineOpenGLVisualiser::SetAutomaticParametersForRendering()
     {
         if (CellEngineConfigDataObject.ShowDetailsInAtomScale == true)
         {
-            //if (CellEngineConfigDataObject.ViewPositionZ > CellEngineConfigDataObject.Distance)
-            if (CellEngineConfigDataObject.ViewPositionZ > 2300)
+            if (CellEngineConfigDataObject.ViewPositionZ > CellEngineConfigDataObject.Distance)
             {
                 if (CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep == true)
                     CellEngineConfigDataObject.LoadOfAtomsStep = 10;

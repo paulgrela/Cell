@@ -29,10 +29,7 @@ vs_out;
 uniform vec3 light_pos = vec3(100.0, 100.0, 100.0);
 uniform mat4 ProjectionMatrix;
 
-uniform vec3 cameraPos;
-//uniform float billboardDistance = 2300.0;
 uniform float billboardDistance;
-//uniform vec2 screenSize = vec2(2560.0, 1440.0);
 uniform vec2 screenSize;
 
 void main(void)
@@ -44,14 +41,6 @@ void main(void)
     float viewDistance = -particleCenter.z;
 
     if (viewDistance > billboardDistance)
-
-
-    //vec3 particleWorldPos = vec3(p.mv_matrix[3][0], p.mv_matrix[3][1], p.mv_matrix[3][2]);
-    //float distToCamera = distance(particleWorldPos, cameraPos);
-
-    //if (distToCamera > billboardDistance)
-    //if (cameraPos > 2300)
-
     {
         vec4 clipPos = ProjectionMatrix * vec4(particleCenter, 1.0);
         gl_Position = clipPos;
