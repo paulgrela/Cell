@@ -48,6 +48,10 @@ static constexpr size_t MAX_ATOMS = 100'000'000;
 class CellEngineOpenGLVisualiser : public sb7::OpenGLApplication
 {
 protected:
+    uint32_t ParticlesOffsetTotal = 0;
+    uint32_t AtomOffsetTotal = 0;
+    uint32_t AtomLocalOffsetTotal = 0;
+protected:
     std::vector<GPUParticle> GPUParticles{};
     std::vector<GPUAtom> GPUAtoms{};
     std::vector<GPUAtomLocal> GPUAtomsLocal{};

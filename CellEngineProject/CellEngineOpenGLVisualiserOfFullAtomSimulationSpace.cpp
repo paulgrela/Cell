@@ -27,7 +27,7 @@ bool CheckVisibility(const bool Visibility)
         return Visibility;
 }
 
-void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace1(const vmath::mat4& ViewMatrix, uint32_t& AtomOffsetTotal, uint32_t& AtomLocalOffsetTotal, vector<GPUParticle>& GPUParticles, vector<GPUAtom>& GPUAtoms, vector<GPUAtomLocal>& GPUAtomsLocal)
+void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace1(const vmath::mat4& ViewMatrix, uint32_t& ParticlesOffsetTotal, uint32_t& AtomOffsetTotal, uint32_t& AtomLocalOffsetTotal, vector<GPUParticle>& GPUParticles, vector<GPUAtom>& GPUAtoms, vector<GPUAtomLocal>& GPUAtomsLocal)
 {
     try
     {
@@ -86,7 +86,7 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace1(const vma
                                 GPUParticleObject.AtomOffset = AtomOffsetTotal;
                                 GPUParticleObject.AtomCount = AtomIndex;
 
-                                GPUParticles.emplace_back(GPUParticleObject);
+                                GPUParticles[ParticlesOffsetTotal++] = std::move(GPUParticleObject);
 
                                 AtomOffsetTotal += AtomIndex;
                             }
@@ -261,11 +261,7 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
     {
         //RenderSpace0(ViewMatrix);
 
-        uint32_t ParticlesOffsetTotal = 0;
-        uint32_t AtomOffsetTotal = 0;
-        uint32_t AtomLocalOffsetTotal = 0;
-
-        //RenderSpace1(ViewMatrix, AtomOffsetTotal, AtomLocalOffsetTotal, GPUParticles, GPUAtoms, GPUAtomsLocal);
+        //RenderSpace1(ViewMatrix, ParticlesOffsetTotal, AtomOffsetTotal, AtomLocalOffsetTotal, GPUParticles, GPUAtoms, GPUAtomsLocal);
         RenderSpace2(ViewMatrix, ParticlesOffsetTotal, AtomOffsetTotal, AtomLocalOffsetTotal);
 
         //LoggersManagerObject.Log(STREAM("P=" << GPUParticles.size() << " " << GPUAtoms.size()));
@@ -285,7 +281,7 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
         const auto start_time112 = chrono::high_resolution_clock::now();
 
         glBindBuffer(GL_SHADER_STORAGE_BUFFER, ParticleSSBO);
-        glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, (ParticlesOffsetTotal - 1) * sizeof(GPUParticle), GPUParticles.data());
+        glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, ParticlesOffsetTotal * sizeof(GPUParticle), GPUParticles.data());
 
         glBindBuffer(GL_SHADER_STORAGE_BUFFER, AtomSSBO);
         glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, (AtomOffsetTotal - 1) * sizeof(GPUAtom), GPUAtoms.data());
@@ -296,7 +292,7 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
 
         const auto start_time113 = chrono::high_resolution_clock::now();
 
-        glDispatchCompute(((ParticlesOffsetTotal - 1) + 255) / 256, 1, 1);
+        glDispatchCompute((ParticlesOffsetTotal + 255) / 256, 1, 1);
         glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 
         const auto stop_time113 = chrono::high_resolution_clock::now();
@@ -320,7 +316,6 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
 
         glUniformMatrix4fv(glGetUniformLocation(ShaderProgramPhong, "ProjectionMatrix"), 1, GL_FALSE, ProjectionMatrixGlobal);
 
-                                                                                                                        //glUniform3fv(glGetUniformLocation(ShaderProgramPhong, "cameraPos"), 1, static_cast<float*>(&CellEngineConfigDataObject.ViewPositionZ));
                                                                                                                         glUniform1f(glGetUniformLocation(ShaderProgramPhong, "billboardDistance"), CellEngineConfigDataObject.Distance);
 
                                                                                                                         vmath::vec2 screenSize(Info.WindowWidth, Info.WindowHeight);

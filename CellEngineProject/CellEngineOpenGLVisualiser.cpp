@@ -620,6 +620,10 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
         UnsignedInt NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = 0;
         UnsignedInt NumberOfAllRenderedAtoms = 0;
 
+        ParticlesOffsetTotal = 0;
+        AtomOffsetTotal = 0;
+        AtomLocalOffsetTotal = 0;
+
         RenderSpace(NumberOfAllRenderedAtoms, NumberOfFoundParticlesCenterToBeRenderedInAtomDetails, ViewMatrix);
 
         const auto stop_time = chrono::high_resolution_clock::now();
