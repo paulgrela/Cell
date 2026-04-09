@@ -48,8 +48,9 @@ static constexpr size_t MAX_ATOMS = 100'000'000;
 class CellEngineOpenGLVisualiser : public sb7::OpenGLApplication
 {
 protected:
-    std::vector<GPUAtom> GPUAtoms{};//CCC
-    std::vector<GPUAtomLocal> GPUAtomsLocal{};//CCC
+    std::vector<GPUParticle> GPUParticles{};
+    std::vector<GPUAtom> GPUAtoms{};
+    std::vector<GPUAtomLocal> GPUAtomsLocal{};
 public:
     sb7::GraphicObject AtomGraphicsObject{};
     sb7::TextOverlay TextOverlayObject{};
@@ -106,7 +107,7 @@ protected:
 private:
     vmath::mat4 RotationMatrix{};
 private:
-    float DistanceAfterCounting;
+    float DistanceAfterCounting{};
 protected:
     UnsignedInt PressedRightMouseButton = 0;
     bool PressedRightMouseButtonBool = false;

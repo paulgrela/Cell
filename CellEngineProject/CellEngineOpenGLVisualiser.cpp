@@ -116,8 +116,10 @@ void CellEngineOpenGLVisualiser::StartUp()
 {
     try
     {
-                                                                                                                        GPUAtoms.resize(100'000'000);
-                                                                                                                        GPUAtomsLocal.resize(100'000'000);
+        GPUParticles.resize(10'000'000);
+        GPUAtoms.resize(100'000'000);
+        GPUAtomsLocal.resize(100'000'000);
+
         LoadShadersPhong();
 
         TextOverlayObject.Init(160, 80, "..//textures//cp437_9x16.ktx");
@@ -155,8 +157,7 @@ void CellEngineOpenGLVisualiser::StartUp()
 
         glUseProgram(ShaderProgramPhong);
 
-                                                                                                                        glEnable(GL_PROGRAM_POINT_SIZE);//???
-                                                                                                                        //glPointParameteri(GL_POINT_SPRITE_COORD_ORIGIN, GL_LOWER_LEFT);//???
+                                                                                                                        glEnable(GL_PROGRAM_POINT_SIZE);
     }
     CATCH("initiation of data for cell visualization")
 }
@@ -332,7 +333,6 @@ inline bool CellEngineOpenGLVisualiser::CheckDistanceToDrawDetailsInAtomScale(co
                 //Ponizsza linia wariantowo bo gdy usunieta to cala sfera a z ta linia to pol sfery
                 if (ZNew > CellEngineConfigDataObject.ViewPositionZ - CellEngineConfigDataObject.Distance)
                 {
-                    //const float AtomDistance = sqrt((XNew * XNew) + (YNew * YNew) + (ZNew * ZNew));
                     const float AtomDistance = sqrt((XNew * XNew) + (YNew * YNew) + (ZNew * ZNew - CellEngineConfigDataObject.ViewPositionZ * CellEngineConfigDataObject.ViewPositionZ));
 
                     const float minDist = CellEngineConfigDataObject.ViewPositionZ - CellEngineConfigDataObject.Distance - 1000;

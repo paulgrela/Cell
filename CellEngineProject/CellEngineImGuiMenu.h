@@ -316,30 +316,30 @@ public:
             {
                 ImGui::Text("%s", CellEngineConfigDataObject.TimeParametersOfRenderingStr.c_str());
 
-                    ImGui::Text("%s", GetDurationTimeInOneLine(ExecutionDurationTimeForDrawingParticles, "A=", "E").c_str());
-                    ExecutionDurationTimeForDrawingParticles = std::chrono::seconds::zero();
-                    ImGui::Text("%s", GetDurationTimeInOneLine(ExecutionDurationTimeForPreparingParticles, "B=", "E").c_str());
-                    ExecutionDurationTimeForPreparingParticles = std::chrono::seconds::zero();
-                    ImGui::Text("%s", GetDurationTimeInOneLine(ExecutionDurationTimeForTotalPreparingParticles, "C=", "E").c_str());
-                    ExecutionDurationTimeForTotalPreparingParticles = std::chrono::seconds::zero();
-                    ImGui::Text("%s", GetDurationTimeInOneLine(ExecutionDurationTimeForCheckingPreparingParticles, "D=", "E").c_str());
-                    ExecutionDurationTimeForCheckingPreparingParticles = std::chrono::seconds::zero();
-                    ImGui::Text("%s", GetDurationTimeInOneLine(ExecutionDurationTimeForCheckingPreparingParticles2, "E=", "E").c_str());
-                    ExecutionDurationTimeForCheckingPreparingParticles2 = std::chrono::seconds::zero();
-                    ImGui::Text("%s", GetDurationTimeInOneLine(ExecutionDurationTimeForCheckingPreparingParticles3, "F=", "E").c_str());
-                    ExecutionDurationTimeForCheckingPreparingParticles3 = std::chrono::seconds::zero();
+                ImGui::Text("%s", GetDurationTimeInOneLine(ExecutionDurationTimeForDrawingParticles, "A=", "E").c_str());
+                ExecutionDurationTimeForDrawingParticles = std::chrono::seconds::zero();
+                ImGui::Text("%s", GetDurationTimeInOneLine(ExecutionDurationTimeForPreparingParticles, "B=", "E").c_str());
+                ExecutionDurationTimeForPreparingParticles = std::chrono::seconds::zero();
+                ImGui::Text("%s", GetDurationTimeInOneLine(ExecutionDurationTimeForTotalPreparingParticles, "C=", "E").c_str());
+                ExecutionDurationTimeForTotalPreparingParticles = std::chrono::seconds::zero();
+                ImGui::Text("%s", GetDurationTimeInOneLine(ExecutionDurationTimeForCheckingPreparingParticles, "D=", "E").c_str());
+                ExecutionDurationTimeForCheckingPreparingParticles = std::chrono::seconds::zero();
+                ImGui::Text("%s", GetDurationTimeInOneLine(ExecutionDurationTimeForCheckingPreparingParticles2, "E=", "E").c_str());
+                ExecutionDurationTimeForCheckingPreparingParticles2 = std::chrono::seconds::zero();
+                ImGui::Text("%s", GetDurationTimeInOneLine(ExecutionDurationTimeForCheckingPreparingParticles3, "F=", "E").c_str());
+                ExecutionDurationTimeForCheckingPreparingParticles3 = std::chrono::seconds::zero();
 
-                    ImGui::Text("%s", GetDurationTimeInOneLine(ExecutionDurationTimeForCopyingParticlesToGraphicMemory, "M=", "E").c_str());
-                    ExecutionDurationTimeForCopyingParticlesToGraphicMemory = std::chrono::seconds::zero();
-                    ImGui::Text("%s", GetDurationTimeInOneLine(ExecutionDurationTimeForCopyingParticlesToGraphicMemory0, "N=", "E").c_str());
-                    ExecutionDurationTimeForCopyingParticlesToGraphicMemory0 = std::chrono::seconds::zero();
+                ImGui::Text("%s", GetDurationTimeInOneLine(ExecutionDurationTimeForCopyingParticlesToGraphicMemory, "M=", "E").c_str());
+                ExecutionDurationTimeForCopyingParticlesToGraphicMemory = std::chrono::seconds::zero();
+                ImGui::Text("%s", GetDurationTimeInOneLine(ExecutionDurationTimeForCopyingParticlesToGraphicMemory0, "N=", "E").c_str());
+                ExecutionDurationTimeForCopyingParticlesToGraphicMemory0 = std::chrono::seconds::zero();
 
-                    ImGui::Text("%s", GetDurationTimeInOneLine(ExecutionDurationTimeForCopyingParticlesToGraphicMemory1, "K=", "E").c_str());
-                    ExecutionDurationTimeForCopyingParticlesToGraphicMemory1 = std::chrono::seconds::zero();
-                    ImGui::Text("%s", GetDurationTimeInOneLine(ExecutionDurationTimeForCopyingParticlesToGraphicMemory2, "L=", "E").c_str());
-                    ExecutionDurationTimeForCopyingParticlesToGraphicMemory2 = std::chrono::seconds::zero();
-                    ImGui::Text("%s", GetDurationTimeInOneLine(ExecutionDurationTimeForCopyingParticlesToGraphicMemory3, "O=", "E").c_str());
-                    ExecutionDurationTimeForCopyingParticlesToGraphicMemory3 = std::chrono::seconds::zero();
+                ImGui::Text("%s", GetDurationTimeInOneLine(ExecutionDurationTimeForCopyingParticlesToGraphicMemory1, "K=", "E").c_str());
+                ExecutionDurationTimeForCopyingParticlesToGraphicMemory1 = std::chrono::seconds::zero();
+                ImGui::Text("%s", GetDurationTimeInOneLine(ExecutionDurationTimeForCopyingParticlesToGraphicMemory2, "L=", "E").c_str());
+                ExecutionDurationTimeForCopyingParticlesToGraphicMemory2 = std::chrono::seconds::zero();
+                ImGui::Text("%s", GetDurationTimeInOneLine(ExecutionDurationTimeForCopyingParticlesToGraphicMemory3, "O=", "E").c_str());
+                ExecutionDurationTimeForCopyingParticlesToGraphicMemory3 = std::chrono::seconds::zero();
 
                 ImGui::Text("%s", CellEngineConfigDataObject.NumberOfRenderedAtomsParametersOfRenderingStr.c_str());
                 ImGui::Checkbox("Log parameters of rendering to file", &CellEngineConfigDataObject.LogParametersOfRenderingToFile);
