@@ -154,6 +154,10 @@ protected:
 public:
     void Render(double CurrentTime) override;
 public:
+    void ComputeInShaderCopyParticlesAndAtomsDataToGPUMemoryAndRender(const vmath::mat4& ViewMatrix);
+public:
+    virtual void DrawChosenAtomUsingStencilBuffer1(GLuint ChosenParticleCenterIndex) = 0;
+public:
     void OnKey(int Key, int Action) override;
     void OnMouseWheel(int Pos) override;
     void OnMouseButton(int Button, int Action) override;

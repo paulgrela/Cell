@@ -264,106 +264,105 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(UnsignedIn
         //RenderSpace1(ViewMatrix, ParticlesOffsetTotal, AtomOffsetTotal, AtomLocalOffsetTotal, GPUParticles, GPUAtoms, GPUAtomsLocal);
         RenderSpace2(ViewMatrix, ParticlesOffsetTotal, AtomOffsetTotal, AtomLocalOffsetTotal);
 
-        //LoggersManagerObject.Log(STREAM("P=" << GPUParticles.size() << " " << GPUAtoms.size()));
-
-        NumberOfAllRenderedAtoms = AtomOffsetTotal;
-        NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = ParticlesOffsetTotal;
-
-        glUseProgram(ComputeShaderProgramPhong);
-
-        glUniform3fv(glGetUniformLocation(ComputeShaderProgramPhong, "Center"), 1, Center);
-        glUniformMatrix4fv(glGetUniformLocation(ComputeShaderProgramPhong, "ViewMatrix"), 1, GL_FALSE, ViewMatrix);
-
-        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ParticleSSBO);
-        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, AtomSSBO);
-        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, ParticlesAtomsBufferSharedBetweenComputeShaderAndVertexShaderSSBO);
-
-        const auto start_time112 = chrono::high_resolution_clock::now();
-
-        glBindBuffer(GL_SHADER_STORAGE_BUFFER, ParticleSSBO);
-        glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, ParticlesOffsetTotal * sizeof(GPUParticle), GPUParticles.data());
-
-        glBindBuffer(GL_SHADER_STORAGE_BUFFER, AtomSSBO);
-        glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, (AtomOffsetTotal - 1) * sizeof(GPUAtom), GPUAtoms.data());
-
-        const auto stop_time112 = chrono::high_resolution_clock::now();
-
-        ExecutionDurationTimeForCopyingParticlesToGraphicMemory1 += chrono::duration(stop_time112 - start_time112);
-
-        const auto start_time113 = chrono::high_resolution_clock::now();
-
-        glDispatchCompute((ParticlesOffsetTotal + 255) / 256, 1, 1);
-        glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
-
-        const auto stop_time113 = chrono::high_resolution_clock::now();
-
-        ExecutionDurationTimeForCopyingParticlesToGraphicMemory2 += chrono::duration(stop_time113 - start_time113);
-
-                                                                                                                        glBindFramebuffer(GL_FRAMEBUFFER, FrameBufferObject);
-
-        const vmath::vec3 BackgroundColor = CellEngineConfigDataObject.BackgroundColors[CellEngineConfigDataObject.ChosenBackgroundColor];
-        glClearColor(BackgroundColor.data[0], BackgroundColor.data[1], BackgroundColor.data[2], 0.0f);
-
-                                                                                                                        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-                                                                                                                        constexpr GLuint ClearValue = 0xFFFFFFFF;
-                                                                                                                        glClearTexImage(ScreenBufferInstanceTexture, 0, GL_RED_INTEGER, GL_UNSIGNED_INT, &ClearValue);
-
-                                                                                                                        glEnable(GL_DEPTH_TEST);
-                                                                                                                        glDepthFunc(GL_LESS);
-
-        glUseProgram(ShaderProgramPhong);
-
-        glUniformMatrix4fv(glGetUniformLocation(ShaderProgramPhong, "ProjectionMatrix"), 1, GL_FALSE, ProjectionMatrixGlobal);
-
-                                                                                                                        glUniform1f(glGetUniformLocation(ShaderProgramPhong, "billboardDistance"), CellEngineConfigDataObject.Distance);
-
-                                                                                                                        vmath::vec2 screenSize(Info.WindowWidth, Info.WindowHeight);
-                                                                                                                        glUniform2fv(glGetUniformLocation(ShaderProgramPhong, "screenSize"), 1, reinterpret_cast<float*>(&screenSize));
-
-
-        const auto start_time1 = chrono::high_resolution_clock::now();
-
-        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, ParticlesAtomsBufferSharedBetweenComputeShaderAndVertexShaderSSBO);
-
-        vector<tuple<UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt>> TemporaryRenderedAtomsList;
-
-        if (CellEngineConfigDataObject.ViewPositionZ <= CellEngineConfigDataObject.Distance)
-            AtomGraphicsObject.RenderSubGraphicObjectTriangles(0, AtomOffsetTotal, 0);
-        else
-            AtomGraphicsObject.RenderSubGraphicObjectPoints(0, AtomOffsetTotal, 0);
-
-
-                                                                                                                        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-
-                                                                                                                        glReadBuffer(GL_COLOR_ATTACHMENT0);
-
-                                                                                                                        glBlitFramebuffer(0, 0, Info.WindowWidth, Info.WindowHeight, 0, 0, Info.WindowWidth, Info.WindowHeight, GL_COLOR_BUFFER_BIT,GL_LINEAR);
-
-        const auto stop_time1 = chrono::high_resolution_clock::now();
-
-        ExecutionDurationTimeForCopyingParticlesToGraphicMemory += chrono::duration(stop_time1 - start_time1);
-
-
-
-
-                                                                                                                        if (CellEngineConfigDataObject.ShowDetailsOfPickedAtomParticle == true)
-                                                                                                                        {
-                                                                                                                            uint32_t ClickedObjectID = 0xFFFFFFFF;
-
-                                                                                                                            glBindFramebuffer(GL_READ_FRAMEBUFFER, FrameBufferObject);
-                                                                                                                            glReadBuffer(GL_COLOR_ATTACHMENT1);
-
-                                                                                                                            glReadPixels(static_cast<GLint>(MousePositionLocal.s.X), static_cast<GLint>(static_cast<float>(Info.WindowHeight) - MousePositionLocal.s.Y - 1), 1, 1, GL_RED_INTEGER, GL_UNSIGNED_INT, &ClickedObjectID);
-
-                                                                                                                            glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
-
-                                                                                                                            if (PressedRightMouseButton != 1)
-                                                                                                                                DrawChosenAtomUsingStencilBuffer1(ClickedObjectID);
-
-                                                                                                                            //LoggersManagerObject.Log(STREAM("C=" << CellEngineConfigDataObject.NumberOfStencilBufferLoops << " " << MousePositionLocal.s.X << " " << MousePositionLocal.s.Y << " " << Info.WindowWidth << " " << Info.WindowHeight << " " << ClickedObjectID));
-                                                                                                                        }
-
+        // //LoggersManagerObject.Log(STREAM("P=" << GPUParticles.size() << " " << GPUAtoms.size()));
+        //
+        // NumberOfAllRenderedAtoms = AtomOffsetTotal;
+        // NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = ParticlesOffsetTotal;
+        //
+        // glUseProgram(ComputeShaderProgramPhong);
+        //
+        // glUniform3fv(glGetUniformLocation(ComputeShaderProgramPhong, "Center"), 1, Center);
+        // glUniformMatrix4fv(glGetUniformLocation(ComputeShaderProgramPhong, "ViewMatrix"), 1, GL_FALSE, ViewMatrix);
+        //
+        // glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ParticleSSBO);
+        // glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, AtomSSBO);
+        // glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, ParticlesAtomsBufferSharedBetweenComputeShaderAndVertexShaderSSBO);
+        //
+        // const auto start_time112 = chrono::high_resolution_clock::now();
+        //
+        // glBindBuffer(GL_SHADER_STORAGE_BUFFER, ParticleSSBO);
+        // glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, ParticlesOffsetTotal * sizeof(GPUParticle), GPUParticles.data());
+        //
+        // glBindBuffer(GL_SHADER_STORAGE_BUFFER, AtomSSBO);
+        // glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, (AtomOffsetTotal - 1) * sizeof(GPUAtom), GPUAtoms.data());
+        //
+        // const auto stop_time112 = chrono::high_resolution_clock::now();
+        //
+        // ExecutionDurationTimeForCopyingParticlesToGraphicMemory1 += chrono::duration(stop_time112 - start_time112);
+        //
+        // const auto start_time113 = chrono::high_resolution_clock::now();
+        //
+        // glDispatchCompute((ParticlesOffsetTotal + 255) / 256, 1, 1);
+        // glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+        //
+        // const auto stop_time113 = chrono::high_resolution_clock::now();
+        //
+        // ExecutionDurationTimeForCopyingParticlesToGraphicMemory2 += chrono::duration(stop_time113 - start_time113);
+        //
+        //                                                                                                                 glBindFramebuffer(GL_FRAMEBUFFER, FrameBufferObject);
+        //
+        // const vmath::vec3 BackgroundColor = CellEngineConfigDataObject.BackgroundColors[CellEngineConfigDataObject.ChosenBackgroundColor];
+        // glClearColor(BackgroundColor.data[0], BackgroundColor.data[1], BackgroundColor.data[2], 0.0f);
+        //
+        //                                                                                                                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        //
+        //                                                                                                                 constexpr GLuint ClearValue = 0xFFFFFFFF;
+        //                                                                                                                 glClearTexImage(ScreenBufferInstanceTexture, 0, GL_RED_INTEGER, GL_UNSIGNED_INT, &ClearValue);
+        //
+        //                                                                                                                 glEnable(GL_DEPTH_TEST);
+        //                                                                                                                 glDepthFunc(GL_LESS);
+        //
+        // glUseProgram(ShaderProgramPhong);
+        //
+        // glUniformMatrix4fv(glGetUniformLocation(ShaderProgramPhong, "ProjectionMatrix"), 1, GL_FALSE, ProjectionMatrixGlobal);
+        //
+        //                                                                                                                 glUniform1f(glGetUniformLocation(ShaderProgramPhong, "billboardDistance"), CellEngineConfigDataObject.Distance);
+        //
+        //                                                                                                                 vmath::vec2 screenSize(Info.WindowWidth, Info.WindowHeight);
+        //                                                                                                                 glUniform2fv(glGetUniformLocation(ShaderProgramPhong, "screenSize"), 1, reinterpret_cast<float*>(&screenSize));
+        //
+        //
+        // const auto start_time1 = chrono::high_resolution_clock::now();
+        //
+        // glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, ParticlesAtomsBufferSharedBetweenComputeShaderAndVertexShaderSSBO);
+        //
+        // vector<tuple<UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt>> TemporaryRenderedAtomsList;
+        //
+        // if (CellEngineConfigDataObject.ViewPositionZ <= CellEngineConfigDataObject.Distance)
+        //     AtomGraphicsObject.RenderSubGraphicObjectTriangles(0, AtomOffsetTotal, 0);
+        // else
+        //     AtomGraphicsObject.RenderSubGraphicObjectPoints(0, AtomOffsetTotal, 0);
+        //
+        //
+        //                                                                                                                 glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+        //
+        //                                                                                                                 glReadBuffer(GL_COLOR_ATTACHMENT0);
+        //
+        //                                                                                                                 glBlitFramebuffer(0, 0, Info.WindowWidth, Info.WindowHeight, 0, 0, Info.WindowWidth, Info.WindowHeight, GL_COLOR_BUFFER_BIT,GL_LINEAR);
+        //
+        // const auto stop_time1 = chrono::high_resolution_clock::now();
+        //
+        // ExecutionDurationTimeForCopyingParticlesToGraphicMemory += chrono::duration(stop_time1 - start_time1);
+        //
+        //
+        //
+        //
+        //                                                                                                                 if (CellEngineConfigDataObject.ShowDetailsOfPickedAtomParticle == true)
+        //                                                                                                                 {
+        //                                                                                                                     uint32_t ClickedObjectID = 0xFFFFFFFF;
+        //
+        //                                                                                                                     glBindFramebuffer(GL_READ_FRAMEBUFFER, FrameBufferObject);
+        //                                                                                                                     glReadBuffer(GL_COLOR_ATTACHMENT1);
+        //
+        //                                                                                                                     glReadPixels(static_cast<GLint>(MousePositionLocal.s.X), static_cast<GLint>(static_cast<float>(Info.WindowHeight) - MousePositionLocal.s.Y - 1), 1, 1, GL_RED_INTEGER, GL_UNSIGNED_INT, &ClickedObjectID);
+        //
+        //                                                                                                                     glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+        //
+        //                                                                                                                     if (PressedRightMouseButton != 1)
+        //                                                                                                                         DrawChosenAtomUsingStencilBuffer1(ClickedObjectID);
+        //
+        //                                                                                                                     //LoggersManagerObject.Log(STREAM("C=" << CellEngineConfigDataObject.NumberOfStencilBufferLoops << " " << MousePositionLocal.s.X << " " << MousePositionLocal.s.Y << " " << Info.WindowWidth << " " << Info.WindowHeight << " " << ClickedObjectID));
+        //                                                                                                                 }
     }
     CATCH("rendering full atom simulation space");
 }
