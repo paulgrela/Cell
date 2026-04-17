@@ -48,19 +48,19 @@ inline void CellEngineOpenGLVisualiser::CreateFramebuffer()
         glBindTexture(GL_TEXTURE_2D, ScreenColorTexture);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, Info.WindowWidth, Info.WindowHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 
-                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
         glGenTextures(1, &ScreenBufferInstanceTexture);
         glBindTexture(GL_TEXTURE_2D, ScreenBufferInstanceTexture);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_R32UI, Info.WindowWidth, Info.WindowHeight, 0, GL_RED_INTEGER, GL_UNSIGNED_INT, nullptr);
 
-                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
         glGenRenderbuffers(1, &ScreenDepthRenderBuffer);
         glBindRenderbuffer(GL_RENDERBUFFER, ScreenDepthRenderBuffer);
@@ -157,7 +157,7 @@ void CellEngineOpenGLVisualiser::StartUp()
 
         glUseProgram(ShaderProgramPhong);
 
-                                                                                                                        glEnable(GL_PROGRAM_POINT_SIZE);
+        glEnable(GL_PROGRAM_POINT_SIZE);
     }
     CATCH("initiation of data for cell visualization")
 }
@@ -195,6 +195,7 @@ void CellEngineOpenGLVisualiser::LoadShadersPhong()
     {
         //LoadShaders("..//shaders//per-fragment-phong.cs.glsl", "..//shaders//per-fragment-phong.vs.glsl", "..//shaders//per-fragment-phong.fs.glsl", ComputeShaderProgramPhong, ShaderProgramPhong);
         LoadShaders("..//shaders//per-fragment-phong.cs.glsl", "..//shaders//per-fragment-phong-point-1.vs.glsl", "..//shaders//per-fragment-phong-point-1.fs.glsl", ComputeShaderProgramPhong, ShaderProgramPhong);
+        //LoadShaders("..//shaders//per-fragment-phong.cs.glsl", "..//shaders//per-fragment-phong-old.vs.glsl","..//shaders//per-fragment-phong-old.fs.glsl", ComputeShaderProgramPhong, ShaderProgramPhong);
 
         Uniforms.DiffuseAlbedo = glGetUniformLocation(ShaderProgramPhong, "diffuse_albedo");
         Uniforms.SpecularAlbedo = glGetUniformLocation(ShaderProgramPhong, "specular_albedo");
@@ -388,25 +389,19 @@ inline bool CellEngineOpenGLVisualiser::GetFinalVisibilityInModelWorld(const vma
     return false;
 }
 
-inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader1(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4& ModelMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, const bool DrawAdditional) const
+
+
+
+inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader1(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4& ModelMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, bool DrawAdditional) const
 {
     bool FinalVisibilityInModelWorld = false;
 
     try
     {
         glBindBufferBase(GL_UNIFORM_BUFFER, 0, UniformsBuffer);
-        const auto MatrixUniformBlockForVertexShaderPointer = static_cast<UniformsBlock*>(glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(UniformsBlock), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT));
+        auto MatrixUniformBlockForVertexShaderPointer = (UniformsBlock*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(UniformsBlock), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
 
-        const auto start_time = chrono::high_resolution_clock::now();
-        const vmath::mat4 ProjectionMatrix1 = vmath::perspective(50.0f, (float)Info.WindowWidth / (float)Info.WindowHeight, 0.1f, 10000.0f);
-        const vmath::mat4 MoveMatrix1 = ViewMatrix * ModelMatrix;
-        const auto stop_time = chrono::high_resolution_clock::now();
-
-        //CellEngineConfigDataObject.ExecutionDurationTimeForDrawingParticlesStr = GetDurationTimeInOneLineStr(start_time, stop_time, "Time of one frame = ", "Exception in measuring time");
-        ExecutionDurationTimeForDrawingParticles += chrono::duration(stop_time - start_time);
-
-        //MatrixUniformBlockForVertexShaderPointer->ProjectionMatrix = vmath::perspective(50.0f, (float)Info.WindowWidth / (float)Info.WindowHeight, 0.1f, 10000.0f);
-        //MatrixUniformBlockForVertexShaderPointer->ProjectionMatrix = ProjectionMatrix1;
+        MatrixUniformBlockForVertexShaderPointer->ProjectionMatrix = vmath::perspective(50.0f, (float)Info.WindowWidth / (float)Info.WindowHeight, 0.1f, 10000.0f);
         MatrixUniformBlockForVertexShaderPointer->Color = Color;
 
         if (DrawAdditional == true)
@@ -416,8 +411,7 @@ inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader1(const
                 DrawCenterPoint(MatrixUniformBlockForVertexShaderPointer, ModelMatrix);
         }
 
-        //MatrixUniformBlockForVertexShaderPointer->MoveMatrix = ViewMatrix * ModelMatrix;
-        MatrixUniformBlockForVertexShaderPointer->MoveMatrix = MoveMatrix1;
+        MatrixUniformBlockForVertexShaderPointer->MoveMatrix = ViewMatrix * ModelMatrix;
 
         glUnmapBuffer(GL_UNIFORM_BUFFER);
     }
@@ -426,20 +420,22 @@ inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader1(const
     return FinalVisibilityInModelWorld;
 }
 
+
+
+
 inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4& ModelMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, bool DrawAdditional) const
 {
     bool FinalVisibilityInModelWorld = false;
 
     try
     {
+        UniformsBlock UniformsBlockObject;
+
         const auto start_time = chrono::high_resolution_clock::now();
-        const vmath::mat4 MoveMatrix1 = ViewMatrix * ModelMatrix;
+        UniformsBlockObject.MoveMatrix = ViewMatrix * ModelMatrix;
         const auto stop_time = chrono::high_resolution_clock::now();
 
         ExecutionDurationTimeForDrawingParticles += chrono::duration(stop_time - start_time);
-
-        UniformsBlock UniformsBlockObject;
-        UniformsBlockObject.MoveMatrix = MoveMatrix1;
 
         if (DrawAdditional == true)
         {
@@ -732,8 +728,7 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
         AtomOffsetTotal = 0;
         AtomLocalOffsetTotal = 0;
 
-        //RenderSpace(NumberOfAllRenderedAtoms, NumberOfFoundParticlesCenterToBeRenderedInAtomDetails, ViewMatrix);
-        RenderSpace(NumberOfAllRenderedAtoms, NumberOfFoundParticlesCenterToBeRenderedInAtomDetails, ViewMatrix);
+        RenderSpace(ViewMatrix);
 
         NumberOfAllRenderedAtoms = AtomOffsetTotal;
         NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = ParticlesOffsetTotal;

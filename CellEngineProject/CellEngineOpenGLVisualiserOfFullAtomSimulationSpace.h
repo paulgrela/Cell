@@ -15,24 +15,24 @@
 
 class CellEngineOpenGLVisualiserOfFullAtomSimulationSpace : public CellEngineOpenGLVisualiser
 {
-public:
-    Particle ChosenParticleObject{};
-    CellEngineAtom ChosenAtomObject{};
-    UnsignedInt ChosenAtomObjectIndex{};
+// public:
+//     Particle ChosenParticleObject{};
+//     CellEngineAtom ChosenAtomObject{};
+//     UnsignedInt ChosenAtomObjectIndex{};
 public:
     std::tuple<UnsignedInt, UnsignedInt, UnsignedInt> GetStartPositions();
     std::tuple<UnsignedInt, UnsignedInt, UnsignedInt> GetSizes();
 private:
     UnsignedInt SelectionStartXPos{}, SelectionStartYPos{}, SelectionStartZPos{};
     UnsignedInt SelectionSizeX{}, SelectionSizeY{}, SelectionSizeZ{};
-private:
-    void RenderSpace0(UnsignedInt& NumberOfAllRenderedAtoms, const vmath::mat4& ViewMatrix);
+protected:
     void RenderSpace1(const vmath::mat4& ViewMatrix, uint32_t& ParticlesOffsetTotal, uint32_t& AtomOffsetTotal, uint32_t& AtomLocalOffsetTotal, vector<GPUParticle>& GPUParticles, vector<GPUAtom>& GPUAtoms, vector<GPUAtomLocal>& GPUAtomsLocal);
     void RenderSpace2(const vmath::mat4& ViewMatrix, uint32_t& ParticlesOffsetTotal, uint32_t& AtomOffsetTotal, uint32_t& AtomLocalOffsetTotal);
-    void RenderSpace(UnsignedInt& NumberOfAllRenderedAtoms, UnsignedInt& NumberOfFoundParticlesCenterToBeRenderedInAtomDetails, const vmath::mat4& ViewMatrix) override;
+    void RenderSpace(const vmath::mat4& ViewMatrix) override;
+public:
     inline void DrawChosenAtomUsingStencilBuffer(const vmath::mat4& ViewMatrix, const GLuint* PartOfStencilBufferIndex, UnsignedInt& NumberOfAllRenderedAtoms, const std::vector<std::tuple<UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt>>& TemporaryRenderedAtomsList);
     inline void DrawChosenAtomUsingStencilBuffer1(GLuint ChosenParticleCenterIndex) override;
-public:
+protected:
     void GetStartCenterPoint() override;
 };
 

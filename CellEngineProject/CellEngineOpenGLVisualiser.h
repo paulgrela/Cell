@@ -80,10 +80,21 @@ protected:
 protected:
     struct UniformsBlock
     {
-        vmath::mat4 MoveMatrix{};
-        vmath::vec3 Color{};
-        float padding{};
+        vmath::mat4 MoveMatrix;
+        vmath::mat4 ProjectionMatrix;
+        vmath::vec3 Color;
     };
+protected:
+    Particle ChosenParticleObject{};
+    CellEngineAtom ChosenAtomObject{};
+    UnsignedInt ChosenAtomObjectIndex{};
+    //
+    // struct UniformsBlock
+    // {
+    //     vmath::mat4 MoveMatrix{};
+    //     vmath::vec3 Color{};
+    //     float padding{};
+    // };
 protected:
     std::vector<UniformsBlock> UniformsBlocks{};
     static inline std::mutex UniformsBlocksFullAtomSimulationSpaceMutexObject;
@@ -169,14 +180,18 @@ protected:
     static inline void DrawCenterPoint(UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, vmath::mat4& ModelMatrix);
     inline bool GetFinalVisibilityInModelWorld(const vmath::vec3& AtomPosition, UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, bool CountNewPosition, bool DrawOutsideBorder) const;
     inline bool CreateUniformBlockForVertexShader(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4& ModelMatrix, bool CountNewPosition, bool DrawCenter, bool DrawOutsideBorder, bool DrawAdditional) const;
+
     inline bool CreateUniformBlockForVertexShader1(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4& ModelMatrix, bool CountNewPosition, bool DrawCenter, bool DrawOutsideBorder, bool DrawAdditional) const;
+    //inline bool CreateUniformBlockForVertexShader1(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4 ModelMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, bool DrawAdditional) const;
+    //inline bool CreateUniformBlockForVertexShader1(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4& ModelMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, bool DrawAdditional) const;
+
     bool RenderObject(const CellEngineAtom& AtomObject, const Particle& ParticleObject, const vmath::mat4& ViewMatrix, bool CountNewPosition, bool DrawCenter, bool DrawOutsideBorder, bool Chosen, bool RenderObjectParameter);
     static inline void SetAutomaticParametersForRendering();
     inline void PrepareOpenGLToRenderObjectsOnScene() const;
     inline void LoadShapeOfAtomsWhenChanged();
     void PrintAtomDescriptionOnScreen(CellEngineAtom& ChosenAtomObject, const Particle& ChosenParticleObject);
 protected:
-    virtual void RenderSpace(UnsignedInt& NumberOfAllRenderedAtoms, UnsignedInt& NumberOfFoundParticlesCenterToBeRenderedInAtomDetails, const vmath::mat4& ViewMatrix) = 0;
+    virtual void RenderSpace(const vmath::mat4& ViewMatrix) = 0;
 protected:
     virtual void GetStartCenterPoint() = 0;
 protected:

@@ -55,13 +55,14 @@ private:
     inline void ConvertAtomPosToGraphicCoordinate(CellEngineAtom& CellEngineAtomObjectParam, UnsignedInt StartXParam, UnsignedInt StartYParam, UnsignedInt StartZParam, UnsignedInt SpaceXParam, UnsignedInt SpaceYParam, UnsignedInt SpaceZParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam) const;
     static inline void SetParticleParametersToDraw(CellEngineAtom& TempAtomObject, Particle& ParticleObject);
 private:
-    void RenderSelectedSpace(UnsignedInt XStartParam, UnsignedInt YStartParam, UnsignedInt ZStartParam, UnsignedInt XStepParam, UnsignedInt YStepParam, UnsignedInt ZStepParam, UnsignedInt XSizeParam, UnsignedInt YSizeParam, UnsignedInt ZSizeParam, UnsignedInt& NumberOfAllRenderedAtoms, const vmath::mat4& ViewMatrix, CellEngineAtom& TempAtomObject, std::vector<TemporaryRenderedVoxel>& TemporaryRenderedVoxelsList, UnsignedInt StencilBufferLoopCounter);
-    void RenderSpace(UnsignedInt& NumberOfAllRenderedAtoms, UnsignedInt& NumberOfFoundParticlesCenterToBeRenderedInAtomDetails, const vmath::mat4& ViewMatrix) override;
-private:
-    inline void DrawChosenAtomUsingStencilBuffer(const vmath::mat4& ViewMatrix, const GLuint* PartOfStencilBufferIndex, UnsignedInt& NumberOfAllRenderedAtoms, const std::vector<TemporaryRenderedVoxel>& TemporaryRenderedVoxelsList);
-    inline void DrawChosenAtomUsingStencilBuffer1(GLuint ChosenParticleCenterIndex) override
-    {}
+    void GenerateVoxelsForGPU(SimulationSpaceVoxel SimulationSpaceVoxelObject, SimulationSpaceVoxel LastSimulationSpaceVoxel, UnsignedInt& AtomsCounter, UnsignedInt& AtomsLocalCounter, const CellEngineAtom& TempAtomObject, const Particle& ParticleObject, UnsignedInt PosX, UnsignedInt PosY, UnsignedInt PosZ, UnsignedInt XStartParam, UnsignedInt YStartParam, UnsignedInt ZStartParam, UnsignedInt XSizeParam, UnsignedInt YSizeParam, UnsignedInt ZSizeParam);
+    void RenderSelectedSpace(UnsignedInt XStartParam, UnsignedInt YStartParam, UnsignedInt ZStartParam, UnsignedInt XStepParam, UnsignedInt YStepParam, UnsignedInt ZStepParam, UnsignedInt XSizeParam, UnsignedInt YSizeParam, UnsignedInt ZSizeParam, const vmath::mat4& ViewMatrix, CellEngineAtom& TempAtomObject, std::vector<TemporaryRenderedVoxel>& TemporaryRenderedVoxelsList, UnsignedInt StencilBufferLoopCounter);
+protected:
+    void RenderSpace(const vmath::mat4& ViewMatrix) override;
 public:
+    inline void DrawChosenAtomUsingStencilBuffer(const vmath::mat4& ViewMatrix, const GLuint* PartOfStencilBufferIndex, UnsignedInt& NumberOfAllRenderedAtoms, const std::vector<TemporaryRenderedVoxel>& TemporaryRenderedVoxelsList);
+    inline void DrawChosenAtomUsingStencilBuffer1(GLuint ChosenParticleCenterIndex) override;
+protected:
     void GetStartCenterPoint() override;
 };
 
