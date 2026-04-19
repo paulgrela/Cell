@@ -128,6 +128,8 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::GenerateVoxelsForGPU(cons
 
             AtomOffsetTotal += AtomsCounter;
             AtomsCounter = 0;
+
+            AtomsLocalCounter = 0;
         }
         else
         {
@@ -138,8 +140,12 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::GenerateVoxelsForGPU(cons
                 GPUAtomLocalObject.ParticleSectorYIndex = 0;
                 GPUAtomLocalObject.ParticleSectorZIndex = 0;
                 GPUAtomLocalObject.Index = ParticleObject.Index;
+
+                //GPUAtomLocalObject.AtomOffset = 0;
                 GPUAtomLocalObject.AtomOffset = AtomsLocalCounter + 1;
+                //GPUAtomLocalObject.AtomOffset = AtomsLocalCounter;
                 GPUAtomsLocal[AtomLocalOffsetTotal] = std::move(GPUAtomLocalObject);
+
                 AtomLocalOffsetTotal++;
                 AtomsLocalCounter++;
             }
@@ -215,6 +221,7 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSelectedSpace(const
                         if (DrawEmptyVoxels == true)
                         {
                             Particle ParticleObject;
+
                             TempAtomObject.AtomColor = ParticleObject.ParticleColor = ParticleObject.UniqueParticleColor = ParticleObject.RandomParticleKindColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(vmath::FromVec4ToVec3(sb7::color::DeepSkyBlue));
 
                             ConvertAtomPosToGraphicCoordinate(TempAtomObject, XStartParam, YStartParam, ZStartParam, PosX, PosY, PosZ, XSizeParam, YSizeParam, ZSizeParam);
@@ -292,20 +299,28 @@ inline void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::DrawChosenAtomUsin
                 {
                     if (const auto ParticleIter = CellEngineDataFileObjectPointer->GetParticles()[GPUAtomsLocal[ChosenParticleCenterIndex].ParticleSectorXIndex][GPUAtomsLocal[ChosenParticleCenterIndex].ParticleSectorYIndex][GPUAtomsLocal[ChosenParticleCenterIndex].ParticleSectorZIndex].Particles.find(GPUAtomsLocal[ChosenParticleCenterIndex].Index); ParticleIter != CellEngineDataFileObjectPointer->GetParticles()[GPUAtomsLocal[ChosenParticleCenterIndex].ParticleSectorXIndex][GPUAtomsLocal[ChosenParticleCenterIndex].ParticleSectorYIndex][GPUAtomsLocal[ChosenParticleCenterIndex].ParticleSectorZIndex].Particles.end())
                     //if (const auto ParticleIter = CellEngineDataFileObjectPointer->GetParticles()[0][0][0].Particles.find(GPUAtomsLocal[ChosenParticleCenterIndex].Index); ParticleIter != CellEngineDataFileObjectPointer->GetParticles()[0][0][0].Particles.end())
+                    //if (const auto ParticleIter = CellEngineDataFileObjectPointer->GetParticleIteratorFromIndex(GPUAtomsLocal[ChosenParticleCenterIndex].Index); ParticleIter != CellEngineDataFileObjectPointer->GetParticleEnd())
                     {
-                        if (GPUAtomsLocal[ChosenParticleCenterIndex].AtomOffset > ParticleIter->second.ListOfAtoms.size())
-                            throw std::runtime_error("ERROR STENCIL INDEX TOO BIG IN INNER 2 = " + std::to_string(ChosenParticleCenterIndex));
-                        else
+                        // if (GPUAtomsLocal[ChosenParticleCenterIndex].AtomOffset > ParticleIter->second.ListOfVoxels.size())
+                        //     throw std::runtime_error("ERROR STENCIL INDEX TOO BIG IN INNER 2 = " + std::to_string(ChosenParticleCenterIndex) + " " + to_string(GPUAtomsLocal[ChosenParticleCenterIndex].AtomOffset) + " " + to_string(ParticleIter->second.ListOfAtoms.size()));
+                        // else
                         {
+                            cout << "PICKING OBJECT = " << std::to_string(ChosenParticleCenterIndex) + " " + to_string(GPUAtomsLocal[ChosenParticleCenterIndex].AtomOffset) + " " + to_string(ParticleIter->second.ListOfAtoms.size()) << endl;
                             ChosenParticleObject = ParticleIter->second;
-                            ChosenAtomObject = ParticleIter->second.ListOfAtoms[GPUAtomsLocal[ChosenParticleCenterIndex].AtomOffset];
-                            ChosenAtomObjectIndex = GPUAtomsLocal[ChosenParticleCenterIndex].AtomOffset;
+                            //cout << "END1" << endl;
+                            //ChosenAtomObject = ParticleIter->second.ListOfAtoms[GPUAtomsLocal[ChosenParticleCenterIndex].AtomOffset];
+                            //ChosenAtomObject = ParticleIter->second.ListOfAtoms[0];
+                            //cout << "END2" << endl;
+                            //ChosenAtomObjectIndex = GPUAtomsLocal[ChosenParticleCenterIndex].AtomOffset;
+                            ChosenAtomObjectIndex = 0;
+                            //cout << "END" << endl;
                         }
                     }
                     else
                         throw std::runtime_error("ERROR STENCIL INDEX TOO BIG IN INNER 1 = " + std::to_string(ChosenParticleCenterIndex));
                 }
 
+                CellEngineAtom ChosenAtomObject{};
                 PrintAtomDescriptionOnScreen(ChosenAtomObject, ChosenParticleObject);
             }
         }

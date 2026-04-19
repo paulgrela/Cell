@@ -19,6 +19,10 @@
 
 class CellEngineOpenGLVisualiserOfVoxelSimulationSpace : public CellEngineOpenGLVisualiser
 {
+// public:
+//     Particle ChosenParticleObject{};
+//     CellEngineAtom ChosenAtomObject{};
+//     UnsignedInt ChosenAtomObjectIndex{};
 public:
     enum class VoxelSpaceDrawingTypes : UnsignedInt
     {
