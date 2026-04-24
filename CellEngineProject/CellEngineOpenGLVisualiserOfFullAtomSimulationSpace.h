@@ -15,10 +15,6 @@
 
 class CellEngineOpenGLVisualiserOfFullAtomSimulationSpace : public CellEngineOpenGLVisualiser
 {
-// public:
-//     Particle ChosenParticleObject{};
-//     CellEngineAtom ChosenAtomObject{};
-//     UnsignedInt ChosenAtomObjectIndex{};
 public:
     std::tuple<UnsignedInt, UnsignedInt, UnsignedInt> GetStartPositions();
     std::tuple<UnsignedInt, UnsignedInt, UnsignedInt> GetSizes();
@@ -30,7 +26,6 @@ protected:
     void RenderSpace2(const vmath::mat4& ViewMatrix, uint32_t& ParticlesOffsetTotal, uint32_t& AtomOffsetTotal, uint32_t& AtomLocalOffsetTotal);
     void RenderSpace(const vmath::mat4& ViewMatrix) override;
 public:
-    inline void DrawChosenAtomUsingStencilBuffer(const vmath::mat4& ViewMatrix, const GLuint* PartOfStencilBufferIndex, UnsignedInt& NumberOfAllRenderedAtoms, const std::vector<std::tuple<UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt>>& TemporaryRenderedAtomsList);
     inline void DrawChosenAtomUsingStencilBuffer1(GLuint ChosenParticleCenterIndex) override;
 protected:
     void GetStartCenterPoint() override;

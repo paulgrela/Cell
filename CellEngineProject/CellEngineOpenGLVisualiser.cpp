@@ -314,7 +314,7 @@ void CellEngineOpenGLVisualiser::DrawBonds(const Particle& ParticleObject, vecto
                 const auto& AtomObject2 = ParticleObject.ListOfAtoms[BondToDrawObject.second];
                 auto TranslateMatrix = vmath::translate(0.0f, 0.0f, 0.0f);
 
-                CreateUniformBlockForVertexShader1(vmath::vec3(0.0, 0.0, 0.0), vmath::vec3(-1.0, -1.0, -1.0), ViewMatrix, TranslateMatrix, false, false, false, false);
+                //CreateUniformBlockForVertexShader1(vmath::vec3(0.0, 0.0, 0.0), vmath::vec3(-1.0, -1.0, -1.0), ViewMatrix, TranslateMatrix, false, false, false, false);
 
                 DrawBond(AtomObject1.X - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomObject1.Y - CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomObject1.Z - CellEngineConfigDataObject.CameraZPosition - Center.Z(), AtomObject2.X - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomObject2.Y - CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomObject2.Z - CellEngineConfigDataObject.CameraZPosition - Center.Z());
             }
@@ -392,33 +392,33 @@ inline bool CellEngineOpenGLVisualiser::GetFinalVisibilityInModelWorld(const vma
 
 
 
-inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader1(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4& ModelMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, bool DrawAdditional) const
-{
-    bool FinalVisibilityInModelWorld = false;
-
-    try
-    {
-        glBindBufferBase(GL_UNIFORM_BUFFER, 0, UniformsBuffer);
-        auto MatrixUniformBlockForVertexShaderPointer = (UniformsBlock*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(UniformsBlock), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
-
-        MatrixUniformBlockForVertexShaderPointer->ProjectionMatrix = vmath::perspective(50.0f, (float)Info.WindowWidth / (float)Info.WindowHeight, 0.1f, 10000.0f);
-        MatrixUniformBlockForVertexShaderPointer->Color = Color;
-
-        if (DrawAdditional == true)
-        {
-            FinalVisibilityInModelWorld = GetFinalVisibilityInModelWorld(Position, MatrixUniformBlockForVertexShaderPointer, CountNewPosition, DrawOutsideBorder);
-            if (DrawCenter == true)
-                DrawCenterPoint(MatrixUniformBlockForVertexShaderPointer, ModelMatrix);
-        }
-
-        MatrixUniformBlockForVertexShaderPointer->MoveMatrix = ViewMatrix * ModelMatrix;
-
-        glUnmapBuffer(GL_UNIFORM_BUFFER);
-    }
-    CATCH("rendering object for data for cell visualization")
-
-    return FinalVisibilityInModelWorld;
-}
+// inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader1(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4& ModelMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, bool DrawAdditional) const
+// {
+//     bool FinalVisibilityInModelWorld = false;
+//
+//     try
+//     {
+//         glBindBufferBase(GL_UNIFORM_BUFFER, 0, UniformsBuffer);
+//         auto MatrixUniformBlockForVertexShaderPointer = (UniformsBlock*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(UniformsBlock), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
+//
+//         MatrixUniformBlockForVertexShaderPointer->ProjectionMatrix = vmath::perspective(50.0f, (float)Info.WindowWidth / (float)Info.WindowHeight, 0.1f, 10000.0f);
+//         MatrixUniformBlockForVertexShaderPointer->Color = Color;
+//
+//         if (DrawAdditional == true)
+//         {
+//             FinalVisibilityInModelWorld = GetFinalVisibilityInModelWorld(Position, MatrixUniformBlockForVertexShaderPointer, CountNewPosition, DrawOutsideBorder);
+//             if (DrawCenter == true)
+//                 DrawCenterPoint(MatrixUniformBlockForVertexShaderPointer, ModelMatrix);
+//         }
+//
+//         MatrixUniformBlockForVertexShaderPointer->MoveMatrix = ViewMatrix * ModelMatrix;
+//
+//         glUnmapBuffer(GL_UNIFORM_BUFFER);
+//     }
+//     CATCH("rendering object for data for cell visualization")
+//
+//     return FinalVisibilityInModelWorld;
+// }
 
 
 

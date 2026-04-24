@@ -239,43 +239,6 @@ inline void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::DrawChosenAtomU
     CATCH("choosing atom using buffer")
 }
 
-inline void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::DrawChosenAtomUsingStencilBuffer(const vmath::mat4& ViewMatrix, const GLuint* PartOfStencilBufferIndex, UnsignedInt& NumberOfAllRenderedAtoms, const vector<tuple<UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt>>& TemporaryRenderedAtomsList)
-{
-    try
-    {
-        if (CellEngineConfigDataObject.ShowDetailsOfPickedAtomParticle == true)
-        {
-            if (const UnsignedInt ChosenParticleCenterIndex = PartOfStencilBufferIndex[0] | (PartOfStencilBufferIndex[1] << 8) | (PartOfStencilBufferIndex[2] << 16); ChosenParticleCenterIndex > 0)
-            {
-                if (ChosenParticleCenterIndex < TemporaryRenderedAtomsList.size())
-                {
-                    const UnsignedInt ParticleSectorXIndex = get<0>(TemporaryRenderedAtomsList[ChosenParticleCenterIndex]);
-                    const UnsignedInt ParticleSectorYIndex = get<1>(TemporaryRenderedAtomsList[ChosenParticleCenterIndex]);
-                    const UnsignedInt ParticleSectorZIndex = get<2>(TemporaryRenderedAtomsList[ChosenParticleCenterIndex]);
-
-                    if (const auto ParticleIter = CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.find(get<3>(TemporaryRenderedAtomsList[ChosenParticleCenterIndex])); ParticleIter != CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.end())
-                    {
-                        if (get<4>(TemporaryRenderedAtomsList[ChosenParticleCenterIndex]) > ParticleIter->second.ListOfAtoms.size())
-                            throw std::runtime_error("ERROR STENCIL INDEX TOO BIG IN INNER 2 = " + std::to_string(get<4>(TemporaryRenderedAtomsList[ChosenParticleCenterIndex])));
-                        else
-                        {
-                            ChosenParticleObject = ParticleIter->second;
-                            ChosenAtomObject = ParticleIter->second.ListOfAtoms[get<4>(TemporaryRenderedAtomsList[ChosenParticleCenterIndex])];
-                        }
-                    }
-                    else
-                        throw std::runtime_error("ERROR STENCIL INDEX TOO BIG IN INNER 1 = " + std::to_string(get<3>(TemporaryRenderedAtomsList[ChosenParticleCenterIndex])));
-                }
-
-                RenderObject(ChosenAtomObject, ChosenParticleObject, ViewMatrix, false, false, false, true, RenderObjectsBool);
-
-                PrintAtomDescriptionOnScreen(ChosenAtomObject, ChosenParticleObject);
-            }
-        }
-    }
-    CATCH("choosing atom using stencil buffer")
-}
-
 void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::GetStartCenterPoint()
 {
     Center = CellEngineDataFileObjectPointer->GetCenterForAllParticles();

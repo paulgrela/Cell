@@ -78,23 +78,16 @@ protected:
     GLuint ComputeShaderProgramPhong = 0;
     GLuint ShaderProgramPhong = 0;
 protected:
-    struct UniformsBlock
-    {
-        vmath::mat4 MoveMatrix;
-        vmath::mat4 ProjectionMatrix;
-        vmath::vec3 Color;
-    };
-protected:
     Particle ChosenParticleObject{};
     CellEngineAtom ChosenAtomObject{};
     UnsignedInt ChosenAtomObjectIndex{};
-    //
-    // struct UniformsBlock
-    // {
-    //     vmath::mat4 MoveMatrix{};
-    //     vmath::vec3 Color{};
-    //     float padding{};
-    // };
+protected:
+    struct UniformsBlock
+    {
+        vmath::mat4 MoveMatrix{};
+        vmath::vec3 Color{};
+        float padding{};
+    };
 protected:
     std::vector<UniformsBlock> UniformsBlocks{};
     static inline std::mutex UniformsBlocksFullAtomSimulationSpaceMutexObject;
@@ -133,11 +126,11 @@ public:
 public:
     CellEngineOpenGLVisualiser() = default;
 protected:
-    void Init(int WindowWidth, int WindowHeight) override
+    void Init(const int WindowWidth, const int WindowHeight) override
     {
         sb7::OpenGLApplication::Init(WindowWidth, WindowHeight);
 
-        static const char title[] = "Cell Engine Visualizer";
+        static constexpr char title[] = "Cell Engine Visualizer";
         memcpy(Info.Title, title, sizeof(title));
     }
 protected:
@@ -181,9 +174,7 @@ protected:
     inline bool GetFinalVisibilityInModelWorld(const vmath::vec3& AtomPosition, UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, bool CountNewPosition, bool DrawOutsideBorder) const;
     inline bool CreateUniformBlockForVertexShader(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4& ModelMatrix, bool CountNewPosition, bool DrawCenter, bool DrawOutsideBorder, bool DrawAdditional) const;
 
-    inline bool CreateUniformBlockForVertexShader1(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4& ModelMatrix, bool CountNewPosition, bool DrawCenter, bool DrawOutsideBorder, bool DrawAdditional) const;
-    //inline bool CreateUniformBlockForVertexShader1(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4 ModelMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, bool DrawAdditional) const;
-    //inline bool CreateUniformBlockForVertexShader1(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4& ModelMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, bool DrawAdditional) const;
+    //inline bool CreateUniformBlockForVertexShader1(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4& ModelMatrix, bool CountNewPosition, bool DrawCenter, bool DrawOutsideBorder, bool DrawAdditional) const;
 
     bool RenderObject(const CellEngineAtom& AtomObject, const Particle& ParticleObject, const vmath::mat4& ViewMatrix, bool CountNewPosition, bool DrawCenter, bool DrawOutsideBorder, bool Chosen, bool RenderObjectParameter);
     static inline void SetAutomaticParametersForRendering();

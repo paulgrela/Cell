@@ -111,7 +111,7 @@ inline void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::SetParticleParamet
 
 uint32_t AtomTotalIndex = 0;
 
-void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::GenerateVoxelsForGPU(const SimulationSpaceVoxel SimulationSpaceVoxelObject, const SimulationSpaceVoxel LastSimulationSpaceVoxel, UnsignedInt& AtomsCounter, UnsignedInt& AtomsLocalCounter, const CellEngineAtom& TempAtomObject, const Particle& ParticleObject, const UnsignedInt PosX, const UnsignedInt PosY, const UnsignedInt PosZ, const UnsignedInt XStartParam, const UnsignedInt YStartParam, const UnsignedInt ZStartParam, const UnsignedInt XSizeParam, const UnsignedInt YSizeParam, const UnsignedInt ZSizeParam)
+void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::GenerateVoxelsForGPU(const SimulationSpaceVoxel SimulationSpaceVoxelObject, const SimulationSpaceVoxel LastSimulationSpaceVoxel, UnsignedInt& AtomsCounter, const CellEngineAtom& TempAtomObject, const Particle& ParticleObject)
 {
     try
     {
@@ -127,9 +127,8 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::GenerateVoxelsForGPU(cons
             ParticlesOffsetTotal++;
 
             AtomOffsetTotal += AtomsCounter;
-            AtomsCounter = 0;
 
-            AtomsLocalCounter = 0;
+            AtomsCounter = 0;
         }
         else
         {
@@ -140,14 +139,9 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::GenerateVoxelsForGPU(cons
                 GPUAtomLocalObject.ParticleSectorYIndex = 0;
                 GPUAtomLocalObject.ParticleSectorZIndex = 0;
                 GPUAtomLocalObject.Index = ParticleObject.Index;
-
-                //GPUAtomLocalObject.AtomOffset = 0;
-                GPUAtomLocalObject.AtomOffset = AtomsLocalCounter + 1;
-                //GPUAtomLocalObject.AtomOffset = AtomsLocalCounter;
+                GPUAtomLocalObject.AtomOffset = AtomTotalIndex;
                 GPUAtomsLocal[AtomLocalOffsetTotal] = std::move(GPUAtomLocalObject);
-
                 AtomLocalOffsetTotal++;
-                AtomsLocalCounter++;
             }
 
             GPUAtom GPUAtomObject;
@@ -156,8 +150,8 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::GenerateVoxelsForGPU(cons
             GPUAtomObject.Y = TempAtomObject.Y;
             GPUAtomObject.Z = TempAtomObject.Z;
 
-            const auto ParticleColor = CellEngineUseful::GetVMathVec3FromVector3ForColor(GetColor<CellEngineAtom>(TempAtomObject, ParticleObject, ChosenParticleObject.Index == ParticleObject.Index && ChosenAtomObjectIndex == AtomsLocalCounter));
-            //const auto ParticleColor = CellEngineUseful::GetVMathVec3FromVector3ForColor(GetColor<CellEngineAtom>(TempAtomObject, ParticleObject, false));
+            const auto ParticleColor = CellEngineUseful::GetVMathVec3FromVector3ForColor(GetColor<CellEngineAtom>(TempAtomObject, ParticleObject, ChosenAtomObjectIndex == AtomTotalIndex));
+            //const auto ParticleColor = CellEngineUseful::GetVMathVec3FromVector3ForColor(GetColor<CellEngineAtom>(TempAtomObject, ParticleObject, ChosenParticleObject.Index == ParticleObject.Index));
 
             GPUAtomObject.ColorR = ParticleColor.X();
             GPUAtomObject.ColorG = ParticleColor.Y();
@@ -177,7 +171,6 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSelectedSpace(const
     try
     {
         UnsignedInt AtomsCounter = 0;
-        UnsignedInt AtomsLocalCounter = 0;
 
         for (UnsignedInt PosX = XStartParam; PosX < XStartParam + XSizeParam; PosX += XStepParam)
             for (UnsignedInt PosY = YStartParam; PosY < YStartParam + YSizeParam; PosY += YStepParam)
@@ -202,15 +195,9 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSelectedSpace(const
                                     if (DrawEmptyVoxels == false || SimulationSpaceVoxelObject != 0)
                                         SetParticleParametersToDraw(TempAtomObject, ParticleObject);
 
-                                    GenerateVoxelsForGPU(SimulationSpaceVoxelObject, LastSimulationSpaceVoxel, AtomsCounter, AtomsLocalCounter, TempAtomObject, ParticleObject, PosX, PosY, PosZ, XStartParam, YStartParam, ZStartParam, XSizeParam, YSizeParam, ZSizeParam);
+                                    GenerateVoxelsForGPU(SimulationSpaceVoxelObject, LastSimulationSpaceVoxel, AtomsCounter, TempAtomObject, ParticleObject);
 
                                     LastSimulationSpaceVoxel = SimulationSpaceVoxelObject;
-
-                                    // if (CellEngineConfigDataObject.ShowDetailsOfPickedAtomParticle == true)
-                                    // {
-                                    //     glStencilFunc(GL_ALWAYS, static_cast<uint8_t>((TemporaryRenderedVoxelsList.size()) >> (8 * StencilBufferLoopCounter)), -1);
-                                    //     TemporaryRenderedVoxelsList.emplace_back(TemporaryRenderedVoxel{ TempAtomObject, FoundParticleIter, PosX, PosY, PosZ });
-                                    // }
                                 }
                             }
                             else
@@ -226,7 +213,7 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSelectedSpace(const
 
                             ConvertAtomPosToGraphicCoordinate(TempAtomObject, XStartParam, YStartParam, ZStartParam, PosX, PosY, PosZ, XSizeParam, YSizeParam, ZSizeParam);
 
-                            GenerateVoxelsForGPU(SimulationSpaceVoxelObject, LastSimulationSpaceVoxel, AtomsCounter, AtomsLocalCounter, TempAtomObject, ParticleObject, PosX, PosY, PosZ, XStartParam, YStartParam, ZStartParam, XSizeParam, YSizeParam, ZSizeParam);
+                            GenerateVoxelsForGPU(SimulationSpaceVoxelObject, LastSimulationSpaceVoxel, AtomsCounter, TempAtomObject, ParticleObject);
 
                             LastSimulationSpaceVoxel = SimulationSpaceVoxelObject;
                         }
@@ -276,13 +263,7 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSpace(const vmath::
             RenderSelectedSpace(SelectionStartXPos - SubStartPos, SelectionStartYPos - SubStartPos, SelectionStartZPos - SubStartPos, SelectionStepX, SelectionStepY, SelectionStepZ, SelectionSizeX, SelectionSizeY, SelectionSizeY, ViewMatrix, TempAtomObject, TemporaryRenderedVoxelsList, 0);
         }
 
-        // if (CellEngineConfigDataObject.ShowDetailsOfPickedAtomParticle == true)
-        //     glReadPixels(static_cast<GLint>(MousePositionLocal.s.X), static_cast<GLint>(static_cast<float>(Info.WindowHeight) - MousePositionLocal.s.Y - 1), 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &PartOfStencilBufferIndex[StencilBufferLoopCounter]);
-
         LoggersManagerObject.Log(STREAM("NumberOfRenderedSelectedSpaces = " << NumberOfRenderedSelectedSpaces));
-
-        // if (PressedRightMouseButton != 1)
-        //     DrawChosenAtomUsingStencilBuffer(ViewMatrix, PartOfStencilBufferIndex, NumberOfAllRenderedAtoms, TemporaryRenderedVoxelsList);
     }
     CATCH("rendering voxel simulation space");
 }
@@ -297,63 +278,22 @@ inline void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::DrawChosenAtomUsin
             {
                 if (ChosenParticleCenterIndex < GPUAtomsLocal.size())
                 {
-                    if (const auto ParticleIter = CellEngineDataFileObjectPointer->GetParticles()[GPUAtomsLocal[ChosenParticleCenterIndex].ParticleSectorXIndex][GPUAtomsLocal[ChosenParticleCenterIndex].ParticleSectorYIndex][GPUAtomsLocal[ChosenParticleCenterIndex].ParticleSectorZIndex].Particles.find(GPUAtomsLocal[ChosenParticleCenterIndex].Index); ParticleIter != CellEngineDataFileObjectPointer->GetParticles()[GPUAtomsLocal[ChosenParticleCenterIndex].ParticleSectorXIndex][GPUAtomsLocal[ChosenParticleCenterIndex].ParticleSectorYIndex][GPUAtomsLocal[ChosenParticleCenterIndex].ParticleSectorZIndex].Particles.end())
-                    //if (const auto ParticleIter = CellEngineDataFileObjectPointer->GetParticles()[0][0][0].Particles.find(GPUAtomsLocal[ChosenParticleCenterIndex].Index); ParticleIter != CellEngineDataFileObjectPointer->GetParticles()[0][0][0].Particles.end())
-                    //if (const auto ParticleIter = CellEngineDataFileObjectPointer->GetParticleIteratorFromIndex(GPUAtomsLocal[ChosenParticleCenterIndex].Index); ParticleIter != CellEngineDataFileObjectPointer->GetParticleEnd())
+                    if (const auto ParticleIter = CellEngineDataFileObjectPointer->GetParticleIteratorFromIndex(GPUAtomsLocal[ChosenParticleCenterIndex].Index); ParticleIter != CellEngineDataFileObjectPointer->GetParticleEnd())
                     {
-                        // if (GPUAtomsLocal[ChosenParticleCenterIndex].AtomOffset > ParticleIter->second.ListOfVoxels.size())
-                        //     throw std::runtime_error("ERROR STENCIL INDEX TOO BIG IN INNER 2 = " + std::to_string(ChosenParticleCenterIndex) + " " + to_string(GPUAtomsLocal[ChosenParticleCenterIndex].AtomOffset) + " " + to_string(ParticleIter->second.ListOfAtoms.size()));
-                        // else
-                        {
-                            cout << "PICKING OBJECT = " << std::to_string(ChosenParticleCenterIndex) + " " + to_string(GPUAtomsLocal[ChosenParticleCenterIndex].AtomOffset) + " " + to_string(ParticleIter->second.ListOfAtoms.size()) << endl;
-                            ChosenParticleObject = ParticleIter->second;
-                            //cout << "END1" << endl;
-                            //ChosenAtomObject = ParticleIter->second.ListOfAtoms[GPUAtomsLocal[ChosenParticleCenterIndex].AtomOffset];
-                            //ChosenAtomObject = ParticleIter->second.ListOfAtoms[0];
-                            //cout << "END2" << endl;
-                            //ChosenAtomObjectIndex = GPUAtomsLocal[ChosenParticleCenterIndex].AtomOffset;
-                            ChosenAtomObjectIndex = 0;
-                            //cout << "END" << endl;
-                        }
+                        cout << "PICKING OBJECT = " << std::to_string(ChosenParticleCenterIndex) + " " + to_string(GPUAtomsLocal[ChosenParticleCenterIndex].AtomOffset) + " " + to_string(ParticleIter->second.ListOfAtoms.size()) << endl;
+
+                        ChosenParticleObject = ParticleIter->second;
+                        ChosenAtomObjectIndex = GPUAtomsLocal[ChosenParticleCenterIndex].AtomOffset;
                     }
                     else
                         throw std::runtime_error("ERROR STENCIL INDEX TOO BIG IN INNER 1 = " + std::to_string(ChosenParticleCenterIndex));
                 }
 
-                CellEngineAtom ChosenAtomObject{};
                 PrintAtomDescriptionOnScreen(ChosenAtomObject, ChosenParticleObject);
             }
         }
     }
     CATCH("choosing atom using buffer")
-}
-
-inline void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::DrawChosenAtomUsingStencilBuffer(const vmath::mat4& ViewMatrix, const GLuint* PartOfStencilBufferIndex, UnsignedInt& NumberOfAllRenderedAtoms, const std::vector<TemporaryRenderedVoxel>& TemporaryRenderedVoxelsList)
-{
-    try
-    {
-        if (CellEngineConfigDataObject.ShowDetailsOfPickedAtomParticle == true)
-        {
-            UnsignedInt ChosenVoxelIndex = PartOfStencilBufferIndex[0] | (PartOfStencilBufferIndex[1] << 8) | (PartOfStencilBufferIndex[2] << 16);
-
-            if (ChosenVoxelIndex > 0)
-            {
-                TemporaryRenderedVoxel ChosenObject{};
-
-                if (ChosenVoxelIndex > TemporaryRenderedVoxelsList.size())
-                    throw std::runtime_error("ERROR STENCIL INDEX TOO BIG = " + std::to_string(ChosenVoxelIndex) + " MAXIMAL NUMBER OF OBJECTS = " + std::to_string(TemporaryRenderedVoxelsList.size()));
-                else
-                    ChosenObject = TemporaryRenderedVoxelsList[ChosenVoxelIndex];
-
-                SetSaveXYZPositions(ChosenObject.X, ChosenObject.Y, ChosenObject.Z);
-
-                RenderObject(ChosenObject.CellEngineAtomObject, ChosenObject.CellEngineParticleObject->second, ViewMatrix, false, false, false, true, RenderObjectsBool);
-
-                PrintAtomDescriptionOnScreen(ChosenObject.CellEngineAtomObject, ChosenObject.CellEngineParticleObject->second);
-            }
-        }
-    }
-    CATCH("choosing atom using stencil buffer")
 }
 
 void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::GetStartCenterPoint()
