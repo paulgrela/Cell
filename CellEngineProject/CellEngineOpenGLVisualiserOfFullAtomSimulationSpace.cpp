@@ -112,7 +112,7 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace2(const vma
         omp_set_max_active_levels(2);
         omp_set_dynamic(0);
 
-        #pragma omp parallel for collapse(3) num_threads(128) default(none) shared(CellEngineConfigDataObject, CellEngineDataFileObjectPointer, ViewMatrix, ParticlesKindsManagerObject, RenderObjectsBool, AtomOffsetInSectors, GPUAtomsInSectors, GPUParticlesInSectors, GPUAtomsLocalInSectors) schedule(dynamic)
+        #pragma omp parallel for collapse(3) num_threads(128) default(none) shared(CellEngineConfigDataObject, CellEngineDataFileObjectPointer, ViewMatrix, ParticlesKindsManagerObject, AtomOffsetInSectors, GPUAtomsInSectors, GPUParticlesInSectors, GPUAtomsLocalInSectors) schedule(dynamic)
         FOR_EACH_SECTOR_IN_XYZ_ONLY
             if (CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.empty() == false)
                 if (RenderObject(CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.begin()->second.ListOfAtoms.back(), Particle(), ViewMatrix, true, false, true, false, !CellEngineConfigDataObject.ShowDetailsInAtomScale) == true)
@@ -197,12 +197,36 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace2(const vma
     CATCH("");
 }
 
+void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::FindAndDrawAllBondsBetweenAtoms(const vmath::mat4& ViewMatrix)
+{
+    try
+    {
+        if (CellEngineConfigDataObject.DrawBondsBetweenAtoms == true)
+        {
+            // omp_set_nested(1);
+            // omp_set_max_active_levels(2);
+            // omp_set_dynamic(0);
+            //
+            // #pragma omp parallel for collapse(3) num_threads(16) default(none) shared(CellEngineConfigDataObject, CellEngineDataFileObjectPointer, ViewMatrix, ParticlesKindsManagerObject) schedule(dynamic)
+            FOR_EACH_SECTOR_IN_XYZ_ONLY
+                if (CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.empty() == false)
+                    if (RenderObject(CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.begin()->second.ListOfAtoms.back(), Particle(), ViewMatrix, true, false, true, false, !CellEngineConfigDataObject.ShowDetailsInAtomScale) == true)
+                        if (CellEngineConfigDataObject.ShowDetailsInAtomScale == true)
+                            for (auto& ParticleObject : CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles)
+                                if (ParticlesKindsManagerObject.GetGraphicParticleKind(ParticleObject.second.EntityId).Visible == true)
+                                    FindAllBondsToDrawForParticle(ParticleObject.second, ParticleObject.second.BondsBetweenAtomsToDraw, CellEngineConfigDataObject.DrawBondsBetweenAtoms, ViewMatrix);
+        }
+    }
+    CATCH("drawing all bonds between atoms")
+}
+
 void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(const vmath::mat4& ViewMatrix)
 {
     try
     {
-        //RenderSpace1(ViewMatrix, ParticlesOffsetTotal, AtomOffsetTotal, AtomLocalOffsetTotal, GPUParticles, GPUAtoms, GPUAtomsLocal);
-        RenderSpace2(ViewMatrix, ParticlesOffsetTotal, AtomOffsetTotal, AtomLocalOffsetTotal);
+        if (RenderObjectsBool == true)
+            //RenderSpace1(ViewMatrix, ParticlesOffsetTotal, AtomOffsetTotal, AtomLocalOffsetTotal, GPUParticles, GPUAtoms, GPUAtomsLocal);
+            RenderSpace2(ViewMatrix, ParticlesOffsetTotal, AtomOffsetTotal, AtomLocalOffsetTotal);
     }
     CATCH("rendering full atom simulation space");
 }

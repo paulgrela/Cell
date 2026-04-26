@@ -116,6 +116,8 @@ void CellEngineOpenGLVisualiser::StartUp()
 {
     try
     {
+        LinesVertexes.reserve(1'000'000 * 6);
+
         GPUParticles.resize(10'000'000);
         GPUAtoms.resize(100'000'000);
         GPUAtomsLocal.resize(100'000'000);
@@ -193,7 +195,6 @@ void CellEngineOpenGLVisualiser::LoadShadersPhong()
 {
     try
     {
-        //LoadShaders("..//shaders//per-fragment-phong.cs.glsl", "..//shaders//per-fragment-phong.vs.glsl", "..//shaders//per-fragment-phong.fs.glsl", ComputeShaderProgramPhong, ShaderProgramPhong);
         LoadShaders("..//shaders//per-fragment-phong.cs.glsl", "..//shaders//per-fragment-phong-point-1.vs.glsl", "..//shaders//per-fragment-phong-point-1.fs.glsl", ComputeShaderProgramPhong, ShaderProgramPhong);
         //LoadShaders("..//shaders//per-fragment-phong.cs.glsl", "..//shaders//per-fragment-phong-old.vs.glsl","..//shaders//per-fragment-phong-old.fs.glsl", ComputeShaderProgramPhong, ShaderProgramPhong);
 
@@ -212,6 +213,21 @@ void CellEngineOpenGLVisualiser::ShutDown()
     }
     CATCH("deleting of data for cell visualization")
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 void CellEngineOpenGLVisualiser::DeleteLineVertexes() const
 {
@@ -253,17 +269,21 @@ void CellEngineOpenGLVisualiser::InitLineVertexes()
     CATCH("initiation of line vertexes")
 }
 
-void CellEngineOpenGLVisualiser::DrawBond(const float x1, const float y1, const float z1, const float x2, const float y2, const float z2) const
+//void CellEngineOpenGLVisualiser::DrawAllFoundBondsBetweenAtoms(const vector<float>& LinesVertexes) const
+void CellEngineOpenGLVisualiser::DrawAllFoundBondsBetweenAtoms() const
 {
     try
     {
         glBindVertexArray(LineVAO);
-        const float LineVertexes[] = { x1, y1, z1, x2, y2, z2 };
         glBindBuffer(GL_ARRAY_BUFFER, LineDataBuffer[0]);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(LineVertexes), LineVertexes, GL_STATIC_DRAW);
-        glDrawArrays(GL_LINES, 0, 2);
+        glBufferData(GL_ARRAY_BUFFER, LinesVertexes.size() * sizeof(float), LinesVertexes.data(), GL_STATIC_DRAW);
+
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(0);
+
+        glDrawArrays(GL_LINES, 0, LinesVertexes.size() / 3);
     }
-    CATCH("drawing bond")
+    CATCH("drawing bonds")
 }
 
 void CellEngineOpenGLVisualiser::FindBondsToDraw(const vector<CellEngineAtom>& Atoms, vector<pair<UnsignedInt, UnsignedInt>>& BondsToDraw)
@@ -271,12 +291,20 @@ void CellEngineOpenGLVisualiser::FindBondsToDraw(const vector<CellEngineAtom>& A
     try
     {
         vector<vector<pair<UnsignedInt, UnsignedInt>>> BondsToDrawLocal;
-        BondsToDrawLocal.resize(std::thread::hardware_concurrency());
+        //BondsToDrawLocal.resize(std::thread::hardware_concurrency());
+        BondsToDrawLocal.resize(256);
 
         UnsignedInt AtomObjectIndex1 = 0;
         UnsignedInt AtomObjectIndex2 = 0;
 
-        #pragma omp parallel for default(none) shared(BondsToDrawLocal, Atoms, LoggersManagerObject) private(AtomObjectIndex1, AtomObjectIndex2)
+
+        omp_set_nested(1);
+        omp_set_max_active_levels(2);
+        omp_set_dynamic(0);
+
+        //#pragma omp parallel for default(none) shared(BondsToDrawLocal, Atoms, LoggersManagerObject) private(AtomObjectIndex1, AtomObjectIndex2)
+        //#pragma omp parallel for collapse(2) num_threads(16) default(none) shared(BondsToDrawLocal, BondsToDraw, Atoms, LoggersManagerObject) private(AtomObjectIndex1, AtomObjectIndex2)
+        #pragma omp parallel for collapse(2) num_threads(256) default(none) shared(BondsToDrawLocal, BondsToDraw, Atoms, LoggersManagerObject) private(AtomObjectIndex1, AtomObjectIndex2)
         for (AtomObjectIndex1 = 0; AtomObjectIndex1 < Atoms.size(); AtomObjectIndex1++)
             for (AtomObjectIndex2 = 0; AtomObjectIndex2 < Atoms.size(); AtomObjectIndex2++)
                 if (AtomObjectIndex1 != AtomObjectIndex2)
@@ -289,6 +317,8 @@ void CellEngineOpenGLVisualiser::FindBondsToDraw(const vector<CellEngineAtom>& A
                     const float VectorLength = sqrt(DiffX * DiffX + DiffY * DiffY + DiffZ * DiffZ);
                     if (VectorLength < 1.5)
                         BondsToDrawLocal[omp_get_thread_num()].emplace_back(make_pair(AtomObjectIndex1, AtomObjectIndex2));
+
+                        //BondsToDraw.emplace_back(make_pair(AtomObjectIndex1, AtomObjectIndex2));
                 }
 
         for (const auto& BondsToDrawLocalObject : BondsToDrawLocal)
@@ -298,7 +328,7 @@ void CellEngineOpenGLVisualiser::FindBondsToDraw(const vector<CellEngineAtom>& A
     CATCH("finding bonds")
 }
 
-void CellEngineOpenGLVisualiser::DrawBonds(const Particle& ParticleObject, vector<pair<UnsignedInt, UnsignedInt>>& BondsToDraw, const bool DrawBonds, const vmath::mat4& ViewMatrix) const
+void CellEngineOpenGLVisualiser::FindAllBondsToDrawForParticle(const Particle& ParticleObject, vector<pair<UnsignedInt, UnsignedInt>>& BondsToDraw, const bool DrawBonds, const vmath::mat4& ViewMatrix)
 {
     try
     {
@@ -308,20 +338,59 @@ void CellEngineOpenGLVisualiser::DrawBonds(const Particle& ParticleObject, vecto
                 if (ParticleObject.ListOfAtoms.empty() == false)
                     FindBondsToDraw(ParticleObject.ListOfAtoms, BondsToDraw);
 
+            //vector<float> LinesVertexes;
+            //LinesVertexes.reserve(ParticleObject.ListOfAtoms.size() * 6);
+
+            //LinesVertexes.clear();
+
             for (const auto& BondToDrawObject : BondsToDraw)
             {
                 const auto& AtomObject1 = ParticleObject.ListOfAtoms[BondToDrawObject.first];
                 const auto& AtomObject2 = ParticleObject.ListOfAtoms[BondToDrawObject.second];
-                auto TranslateMatrix = vmath::translate(0.0f, 0.0f, 0.0f);
 
-                //CreateUniformBlockForVertexShader1(vmath::vec3(0.0, 0.0, 0.0), vmath::vec3(-1.0, -1.0, -1.0), ViewMatrix, TranslateMatrix, false, false, false, false);
+                //auto TranslateMatrix = vmath::translate(0.0f, 0.0f, 0.0f);
+                //CreateUniformBlockForVertexShaderOld(vmath::vec3(0.0, 0.0, 0.0), vmath::vec3(-1.0, -1.0, -1.0), ViewMatrix, TranslateMatrix, false, false, false, false);
 
-                DrawBond(AtomObject1.X - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomObject1.Y - CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomObject1.Z - CellEngineConfigDataObject.CameraZPosition - Center.Z(), AtomObject2.X - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomObject2.Y - CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomObject2.Z - CellEngineConfigDataObject.CameraZPosition - Center.Z());
+                //DrawAllBondsBetweenAtoms(AtomObject1.X - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomObject1.Y - CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomObject1.Z - CellEngineConfigDataObject.CameraZPosition - Center.Z(), AtomObject2.X - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomObject2.Y - CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomObject2.Z - CellEngineConfigDataObject.CameraZPosition - Center.Z());
+                //DrawAllBondsBetweenAtoms({ AtomObject1.X - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomObject1.Y - CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomObject1.Z - CellEngineConfigDataObject.CameraZPosition - Center.Z(), AtomObject2.X - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomObject2.Y - CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomObject2.Z - CellEngineConfigDataObject.CameraZPosition - Center.Z() });
+
+                LinesVertexes.emplace_back(AtomObject1.X - CellEngineConfigDataObject.CameraXPosition - Center.X());
+                LinesVertexes.emplace_back(AtomObject1.Y - CellEngineConfigDataObject.CameraYPosition - Center.Y());
+                LinesVertexes.emplace_back(AtomObject1.Z - CellEngineConfigDataObject.CameraZPosition - Center.Z());
+                LinesVertexes.emplace_back(AtomObject2.X - CellEngineConfigDataObject.CameraXPosition - Center.X());
+                LinesVertexes.emplace_back(AtomObject2.Y - CellEngineConfigDataObject.CameraYPosition - Center.Y());
+                LinesVertexes.emplace_back(AtomObject2.Z - CellEngineConfigDataObject.CameraZPosition - Center.Z());
             }
+
+            //DrawAllFoundBondsBetweenAtoms(LinesVertexes);
+            //DrawAllFoundBondsBetweenAtoms();
         }
     }
     CATCH("drawing bonds")
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 inline bool CellEngineOpenGLVisualiser::CheckDistanceToDrawDetailsInAtomScale(const float XNew, const float YNew, const float ZNew)
 {
@@ -389,39 +458,40 @@ inline bool CellEngineOpenGLVisualiser::GetFinalVisibilityInModelWorld(const vma
     return false;
 }
 
+inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShaderOld(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4& ModelMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, bool DrawAdditional) const
+{
+    struct UniformsBlockOld
+    {
+        vmath::mat4 MoveMatrix;
+        vmath::mat4 ProjectionMatrix;
+        vmath::vec3 Color;
+    };
 
+    constexpr bool FinalVisibilityInModelWorld = false;
 
+    try
+    {
+        glBindBufferBase(GL_UNIFORM_BUFFER, 0, UniformsBuffer);
+        const auto MatrixUniformBlockForVertexShaderPointer = (UniformsBlockOld*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(UniformsBlock), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
 
-// inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader1(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4& ModelMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, bool DrawAdditional) const
-// {
-//     bool FinalVisibilityInModelWorld = false;
-//
-//     try
-//     {
-//         glBindBufferBase(GL_UNIFORM_BUFFER, 0, UniformsBuffer);
-//         auto MatrixUniformBlockForVertexShaderPointer = (UniformsBlock*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(UniformsBlock), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
-//
-//         MatrixUniformBlockForVertexShaderPointer->ProjectionMatrix = vmath::perspective(50.0f, (float)Info.WindowWidth / (float)Info.WindowHeight, 0.1f, 10000.0f);
-//         MatrixUniformBlockForVertexShaderPointer->Color = Color;
-//
-//         if (DrawAdditional == true)
-//         {
-//             FinalVisibilityInModelWorld = GetFinalVisibilityInModelWorld(Position, MatrixUniformBlockForVertexShaderPointer, CountNewPosition, DrawOutsideBorder);
-//             if (DrawCenter == true)
-//                 DrawCenterPoint(MatrixUniformBlockForVertexShaderPointer, ModelMatrix);
-//         }
-//
-//         MatrixUniformBlockForVertexShaderPointer->MoveMatrix = ViewMatrix * ModelMatrix;
-//
-//         glUnmapBuffer(GL_UNIFORM_BUFFER);
-//     }
-//     CATCH("rendering object for data for cell visualization")
-//
-//     return FinalVisibilityInModelWorld;
-// }
+        MatrixUniformBlockForVertexShaderPointer->ProjectionMatrix = vmath::perspective(50.0f, (float)Info.WindowWidth / (float)Info.WindowHeight, 0.1f, 10000.0f);
+        MatrixUniformBlockForVertexShaderPointer->Color = Color;
 
+        // if (DrawAdditional == true)
+        // {
+        //     FinalVisibilityInModelWorld = GetFinalVisibilityInModelWorld(Position, MatrixUniformBlockForVertexShaderPointer, CountNewPosition, DrawOutsideBorder);
+        //     if (DrawCenter == true)
+        //         DrawCenterPoint(MatrixUniformBlockForVertexShaderPointer, ModelMatrix);
+        // }
 
+        MatrixUniformBlockForVertexShaderPointer->MoveMatrix = ViewMatrix * ModelMatrix;
 
+        glUnmapBuffer(GL_UNIFORM_BUFFER);
+    }
+    CATCH("rendering object for data for cell visualization")
+
+    return FinalVisibilityInModelWorld;
+}
 
 inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4& ModelMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, bool DrawAdditional) const
 {
@@ -509,9 +579,6 @@ bool CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom& AtomObject, 
         vmath::mat4 ModelMatrix = vmath::translate(AtomPosition.X() - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomPosition.Y() + CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomPosition.Z() + CellEngineConfigDataObject.CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(SizeLocal.X(), SizeLocal.Y(), SizeLocal.Z()));
 
         FinalVisibilityInModelWorld = CreateUniformBlockForVertexShader(AtomPosition, CellEngineUseful::GetVMathVec3FromVector3ForColor(GetColor<CellEngineAtom>(AtomObject, ParticleObject, Chosen)), ViewMatrix, ModelMatrix, CountNewPosition, DrawCenter, DrawOutsideBorder, true);
-
-        //if (RenderObjectParameter == true)
-        //    AtomGraphicsObject.Render();
     }
     CATCH("rendering object for data for cell visualization")
 
@@ -734,6 +801,10 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
         NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = ParticlesOffsetTotal;
 
         ComputeInShaderCopyParticlesAndAtomsDataToGPUMemoryAndRender(ViewMatrix);
+
+        FindAndDrawAllBondsBetweenAtoms(ViewMatrix);
+        if (CellEngineConfigDataObject.DrawBondsBetweenAtoms == true)
+            DrawAllFoundBondsBetweenAtoms();
 
         const auto stop_time = chrono::high_resolution_clock::now();
 

@@ -101,6 +101,8 @@ private:
         GLint SpecularPower;
     }
     Uniforms{};
+protected:
+    vector<float> LinesVertexes;
 private:
     Matrix3fT ArcBallPrevRotationMatrix{};
     Matrix3fT ArcBallActualRotationMatrix{};
@@ -143,8 +145,9 @@ protected:
     void InitLineVertexes();
     void DeleteLineVertexes() const;
     static void FindBondsToDraw(const std::vector<CellEngineAtom>& Atoms, std::vector<std::pair<UnsignedInt, UnsignedInt>>& BondsToDraw);
-    void DrawBonds(const Particle& ParticleObject, std::vector<std::pair<UnsignedInt, UnsignedInt>>& BondsToDraw, bool DrawBonds, const vmath::mat4& ViewMatrix) const;
-    void DrawBond(float x1, float y1, float z1, float x2, float y2, float z2) const;
+    void FindAllBondsToDrawForParticle(const Particle& ParticleObject, std::vector<std::pair<UnsignedInt, UnsignedInt>>& BondsToDraw, bool DrawBonds, const vmath::mat4& ViewMatrix);
+    //void DrawAllBondsBetweenAtoms(const vector<float>& LinesVertexes) const;
+    void DrawAllFoundBondsBetweenAtoms() const;
 public:
     static std::string GetEntityName(UnsignedInt EntityId);
     static void SetVisibilityOfAllParticles(bool VisibleParam);
@@ -173,9 +176,7 @@ protected:
     static inline void DrawCenterPoint(UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, vmath::mat4& ModelMatrix);
     inline bool GetFinalVisibilityInModelWorld(const vmath::vec3& AtomPosition, UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, bool CountNewPosition, bool DrawOutsideBorder) const;
     inline bool CreateUniformBlockForVertexShader(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4& ModelMatrix, bool CountNewPosition, bool DrawCenter, bool DrawOutsideBorder, bool DrawAdditional) const;
-
-    //inline bool CreateUniformBlockForVertexShader1(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4& ModelMatrix, bool CountNewPosition, bool DrawCenter, bool DrawOutsideBorder, bool DrawAdditional) const;
-
+    inline bool CreateUniformBlockForVertexShaderOld(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4& ModelMatrix, bool CountNewPosition, bool DrawCenter, bool DrawOutsideBorder, bool DrawAdditional) const;
     bool RenderObject(const CellEngineAtom& AtomObject, const Particle& ParticleObject, const vmath::mat4& ViewMatrix, bool CountNewPosition, bool DrawCenter, bool DrawOutsideBorder, bool Chosen, bool RenderObjectParameter);
     static inline void SetAutomaticParametersForRendering();
     inline void PrepareOpenGLToRenderObjectsOnScene() const;
@@ -183,6 +184,7 @@ protected:
     void PrintAtomDescriptionOnScreen(CellEngineAtom& ChosenAtomObject, const Particle& ChosenParticleObject);
 protected:
     virtual void RenderSpace(const vmath::mat4& ViewMatrix) = 0;
+    virtual void FindAndDrawAllBondsBetweenAtoms(const vmath::mat4& ViewMatrix) = 0;
 protected:
     virtual void GetStartCenterPoint() = 0;
 protected:

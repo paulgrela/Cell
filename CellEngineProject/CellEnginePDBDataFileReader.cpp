@@ -18,20 +18,20 @@ CellEngineAtom CellEnginePDBDataFileReader::ParseRecord(const char* LocalPDBReco
 
     try
     {
-        string RecordStr = LocalPDBRecord;
+        const string RecordStr = LocalPDBRecord;
 
         CellEngineAtomObject.EntityId = 1;
 
-        string NameStr = trim_whitespace_surrounding(RecordStr.substr(12, 4));
-        string ResNameStr = trim_whitespace_surrounding(RecordStr.substr(17, 3));
+        const string NameStr = trim_whitespace_surrounding(RecordStr.substr(12, 4));
+        const string ResNameStr = trim_whitespace_surrounding(RecordStr.substr(17, 3));
         strncpy(CellEngineAtomObject.Name, NameStr.c_str(), NameStr.length() + 1);
         strncpy(CellEngineAtomObject.ResName, ResNameStr.c_str(), ResNameStr.length() + 1);
 
         CellEngineAtomObject.X = stof(RecordStr.substr(30, 8));
         CellEngineAtomObject.Y = stof(RecordStr.substr(38, 8));
         CellEngineAtomObject.Z = stof(RecordStr.substr(46, 8));
-        
-        auto AtomKindObjectIterator = ParticlesKindsManagerObject.GetGraphicAtomKindDataFromAtomName(CellEngineAtomObject.Name[0]);
+
+        const auto AtomKindObjectIterator = ParticlesKindsManagerObject.GetGraphicAtomKindDataFromAtomName(CellEngineAtomObject.Name[0]);
         CellEngineAtomObject.AtomColor = AtomKindObjectIterator->Color;
 
         #ifdef EXTENDED_RAM_MEMORY

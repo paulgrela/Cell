@@ -25,6 +25,8 @@ protected:
     void RenderSpace1(const vmath::mat4& ViewMatrix, uint32_t& ParticlesOffsetTotal, uint32_t& AtomOffsetTotal, uint32_t& AtomLocalOffsetTotal, vector<GPUParticle>& GPUParticles, vector<GPUAtom>& GPUAtoms, vector<GPUAtomLocal>& GPUAtomsLocal);
     void RenderSpace2(const vmath::mat4& ViewMatrix, uint32_t& ParticlesOffsetTotal, uint32_t& AtomOffsetTotal, uint32_t& AtomLocalOffsetTotal);
     void RenderSpace(const vmath::mat4& ViewMatrix) override;
+protected:
+    void FindAndDrawAllBondsBetweenAtoms(const vmath::mat4& ViewMatrix) override;
 public:
     inline void DrawChosenAtomUsingStencilBuffer1(GLuint ChosenParticleCenterIndex) override;
 protected:

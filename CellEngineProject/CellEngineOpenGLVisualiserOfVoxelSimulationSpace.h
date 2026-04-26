@@ -59,6 +59,10 @@ private:
     void RenderSelectedSpace(UnsignedInt XStartParam, UnsignedInt YStartParam, UnsignedInt ZStartParam, UnsignedInt XStepParam, UnsignedInt YStepParam, UnsignedInt ZStepParam, UnsignedInt XSizeParam, UnsignedInt YSizeParam, UnsignedInt ZSizeParam, const vmath::mat4& ViewMatrix, CellEngineAtom& TempAtomObject, std::vector<TemporaryRenderedVoxel>& TemporaryRenderedVoxelsList, UnsignedInt StencilBufferLoopCounter);
 protected:
     void RenderSpace(const vmath::mat4& ViewMatrix) override;
+protected:
+    void FindAndDrawAllBondsBetweenAtoms(const vmath::mat4& ViewMatrix) override
+    {
+    }
 public:
     inline void DrawChosenAtomUsingStencilBuffer1(GLuint ChosenParticleCenterIndex) override;
 protected:
