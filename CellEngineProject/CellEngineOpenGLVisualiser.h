@@ -58,13 +58,12 @@ protected:
 public:
     sb7::GraphicObject AtomGraphicsObject{};
     sb7::TextOverlay TextOverlayObject{};
-
 public:
     GLuint FrameBufferObject{};
     GLuint ScreenColorTexture{};
     GLuint ScreenBufferInstanceTexture{};
     GLuint ScreenDepthRenderBuffer{};
-
+public:
     void CreateFramebuffer();
     void DiagnoseFrameBufferObject() const;
 protected:
@@ -75,8 +74,9 @@ private:
     GLuint LineVAO{};
     GLuint LineDataBuffer[2]{};
 protected:
-    GLuint ComputeShaderProgramPhong = 0;
-    GLuint ShaderProgramPhong = 0;
+    GLuint ComputeShaderProgram = 0;
+    GLuint ParticlesAtomsShaderProgram = 0;
+    GLuint LinesShaderProgram = 0;
 protected:
     Particle ChosenParticleObject{};
     CellEngineAtom ChosenAtomObject{};
@@ -102,7 +102,8 @@ private:
     }
     Uniforms{};
 protected:
-    vector<float> LinesVertexes;
+    //vector<vector<float>> LinesVertexes{};
+    vector<float> LinesVertexes{};
 private:
     Matrix3fT ArcBallPrevRotationMatrix{};
     Matrix3fT ArcBallActualRotationMatrix{};
@@ -146,15 +147,16 @@ protected:
     void DeleteLineVertexes() const;
     static void FindBondsToDraw(const std::vector<CellEngineAtom>& Atoms, std::vector<std::pair<UnsignedInt, UnsignedInt>>& BondsToDraw);
     void FindAllBondsToDrawForParticle(const Particle& ParticleObject, std::vector<std::pair<UnsignedInt, UnsignedInt>>& BondsToDraw, bool DrawBonds, const vmath::mat4& ViewMatrix);
-    //void DrawAllBondsBetweenAtoms(const vector<float>& LinesVertexes) const;
-    void DrawAllFoundBondsBetweenAtoms() const;
+    void DrawAllFoundBondsBetweenAtoms(const vector<float>& LinesVertexesLocal) const;
+    //void DrawAllFoundBondsBetweenAtoms() const;
 public:
     static std::string GetEntityName(UnsignedInt EntityId);
     static void SetVisibilityOfAllParticles(bool VisibleParam);
     static void SetVisibilityOfParticlesExcept(UnsignedInt EntityId, bool VisibleParam);
 protected:
     void LoadShadersPhong();
-    static void LoadShaders(const char* ComputeShaderFileName, const char* VertexShaderFileName, const char* FragmentShaderFileName, GLuint& ComputeShaderProgram, GLuint& ShaderProgram);
+    static void LoadMainRenderShaders(const char* VertexShaderFileName, const char* FragmentShaderFileName, GLuint& MainRenderShaderProgram);
+    static void LoadComputeShaders(const char* ComputeShaderFileName, GLuint& ComputeShaderProgram);
 protected:
     void StartUp() override;
     void ShutDown() override;
@@ -176,7 +178,7 @@ protected:
     static inline void DrawCenterPoint(UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, vmath::mat4& ModelMatrix);
     inline bool GetFinalVisibilityInModelWorld(const vmath::vec3& AtomPosition, UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, bool CountNewPosition, bool DrawOutsideBorder) const;
     inline bool CreateUniformBlockForVertexShader(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4& ModelMatrix, bool CountNewPosition, bool DrawCenter, bool DrawOutsideBorder, bool DrawAdditional) const;
-    inline bool CreateUniformBlockForVertexShaderOld(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4& ModelMatrix, bool CountNewPosition, bool DrawCenter, bool DrawOutsideBorder, bool DrawAdditional) const;
+    //inline bool CreateUniformBlockForVertexShaderOld(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4& ModelMatrix, bool CountNewPosition, bool DrawCenter, bool DrawOutsideBorder, bool DrawAdditional) const;
     bool RenderObject(const CellEngineAtom& AtomObject, const Particle& ParticleObject, const vmath::mat4& ViewMatrix, bool CountNewPosition, bool DrawCenter, bool DrawOutsideBorder, bool Chosen, bool RenderObjectParameter);
     static inline void SetAutomaticParametersForRendering();
     inline void PrepareOpenGLToRenderObjectsOnScene() const;
