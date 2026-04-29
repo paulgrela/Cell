@@ -235,11 +235,13 @@ public:
             {
                 DrawPlusMinusScalarButton(CellEngineConfigDataObject.SizeOfAtomChangeStep, 0.01, 0, 10, "Size Of Atoms Change Step", IDButton);
 
-                static float SizeOfAtom3Axis = CellEngineConfigDataObject.SizeOfAtomX;
-                DrawPlusMinusScalarButton(SizeOfAtom3Axis, CellEngineConfigDataObject.SizeOfAtomChangeStep, 0, 10, "Size Of Atoms 3 Axis", IDButton);
-                CellEngineConfigDataObject.SizeOfAtomX = SizeOfAtom3Axis;
-                CellEngineConfigDataObject.SizeOfAtomY = SizeOfAtom3Axis;
-                CellEngineConfigDataObject.SizeOfAtomZ = SizeOfAtom3Axis;
+                //static float SizeOfAtom3Axis = CellEngineConfigDataObject.SizeOfAtomX;
+                //DrawPlusMinusScalarButton(SizeOfAtom3Axis, CellEngineConfigDataObject.SizeOfAtomChangeStep, 0, 10, "Size Of Atoms 3 Axis", IDButton);
+                //static float SizeOfAtom3Axis = CellEngineConfigDataObject.MainSizeOfAtom;
+                DrawPlusMinusScalarButton(CellEngineConfigDataObject.MainSizeOfAtom, CellEngineConfigDataObject.SizeOfAtomChangeStep, 0, 10, "Size Of Atoms 3 Axis", IDButton);
+                CellEngineConfigDataObject.SizeOfAtomX = CellEngineConfigDataObject.MainSizeOfAtom;
+                CellEngineConfigDataObject.SizeOfAtomY = CellEngineConfigDataObject.MainSizeOfAtom;
+                CellEngineConfigDataObject.SizeOfAtomZ = CellEngineConfigDataObject.MainSizeOfAtom;
             }
         }
         CATCH("executing size of atoms menu");

@@ -30,6 +30,11 @@ layout(std430, binding = 1) readonly buffer AtomBufferIn
     GPUAtom AtomsIn[];
 };
 
+uniform float AtomSize;
+uniform float CameraXPosition;
+uniform float CameraYPosition;
+uniform float CameraZPosition;
+
 uniform vec3 Center;
 uniform mat4 ViewMatrix;
 
@@ -62,13 +67,13 @@ void main()
 
         mat4 ModelMatrix = mat4(1.0);
 
-        ModelMatrix[0][0] = 0.25;
-        ModelMatrix[1][1] = 0.25;
-        ModelMatrix[2][2] = 0.25;
+        ModelMatrix[0][0] = AtomSize;
+        ModelMatrix[1][1] = AtomSize;
+        ModelMatrix[2][2] = AtomSize;
 
-        ModelMatrix[3][0] = AtomPosition.x - Center.x;
-        ModelMatrix[3][1] = AtomPosition.y - Center.y;
-        ModelMatrix[3][2] = AtomPosition.z - Center.z;
+        ModelMatrix[3][0] = AtomPosition.x - CameraXPosition - Center.x;
+        ModelMatrix[3][1] = AtomPosition.y - CameraYPosition - Center.y;
+        ModelMatrix[3][2] = AtomPosition.z - CameraZPosition - Center.z;
 
         ParticlesOut[AtomOffsetIndexOut].MoveMatrix = ViewMatrix * ModelMatrix;
 

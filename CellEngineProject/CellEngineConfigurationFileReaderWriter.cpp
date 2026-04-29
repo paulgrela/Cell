@@ -261,6 +261,7 @@ void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const ch
                         CellEngineConfigDataObject.SizeOfAtomX = CellStatePropertyTreeElement.second.get<float>("SizeOfAtomX");
                         CellEngineConfigDataObject.SizeOfAtomY = CellStatePropertyTreeElement.second.get<float>("SizeOfAtomY");
                         CellEngineConfigDataObject.SizeOfAtomZ = CellStatePropertyTreeElement.second.get<float>("SizeOfAtomZ");
+                        CellEngineConfigDataObject.MainSizeOfAtom = 1.0;
                         CellEngineConfigDataObject.RotationAngle1 = CellStatePropertyTreeElement.second.get<float>("RotationAngle1");
                         CellEngineConfigDataObject.RotationAngle2 = CellStatePropertyTreeElement.second.get<float>("RotationAngle2");
                         CellEngineConfigDataObject.RotationAngle3 = CellStatePropertyTreeElement.second.get<float>("RotationAngle3");

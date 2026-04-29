@@ -219,6 +219,7 @@ public:
     float SizeOfAtomX{};
     float SizeOfAtomY{};
     float SizeOfAtomZ{};
+    float MainSizeOfAtom{};
     float RotationAngle1{};
     float RotationAngle2{};
     float RotationAngle3{};

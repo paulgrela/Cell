@@ -177,7 +177,6 @@ protected:
     static inline void DrawCenterPoint(UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, vmath::mat4& ModelMatrix);
     inline bool GetFinalVisibilityInModelWorld(const vmath::vec3& AtomPosition, UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, bool CountNewPosition, bool DrawOutsideBorder) const;
     inline bool CreateUniformBlockForVertexShader(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4& ModelMatrix, bool CountNewPosition, bool DrawCenter, bool DrawOutsideBorder, bool DrawAdditional) const;
-    //inline bool CreateUniformBlockForVertexShaderOld(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4& ModelMatrix, bool CountNewPosition, bool DrawCenter, bool DrawOutsideBorder, bool DrawAdditional) const;
     bool RenderObject(const CellEngineAtom& AtomObject, const Particle& ParticleObject, const vmath::mat4& ViewMatrix, bool CountNewPosition, bool DrawCenter, bool DrawOutsideBorder, bool Chosen, bool RenderObjectParameter);
     static inline void SetAutomaticParametersForRendering();
     inline void PrepareOpenGLToRenderObjectsOnScene() const;

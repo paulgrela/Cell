@@ -208,7 +208,6 @@ void CellEngineOpenGLVisualiser::LoadShadersPhong()
     {
         LoadComputeShaders("..//shaders//per-fragment-phong.cs.glsl", ComputeShaderProgram);
         LoadMainRenderShaders("..//shaders//per-fragment-phong-point-1.vs.glsl", "..//shaders//per-fragment-phong-point-1.fs.glsl", ParticlesAtomsShaderProgram);
-        //LoadMainRenderShaders("..//shaders//per-fragment-phong-old.vs.glsl","..//shaders//per-fragment-phong-old.fs.glsl", LinesShaderProgram);
         LoadMainRenderShaders("..//shaders//per-fragment-phong-line.vs.glsl","..//shaders//per-fragment-phong-line.fs.glsl", LinesShaderProgram);
 
         Uniforms.DiffuseAlbedo = glGetUniformLocation(ParticlesAtomsShaderProgram, "diffuse_albedo");
@@ -258,24 +257,6 @@ void CellEngineOpenGLVisualiser::InitLineVertexes()
     {
         DeleteLineVertexes();
 
-
-        // glGenVertexArrays(1, &LineVAO);
-        // glGenBuffers(2, LineDataBuffer);
-        //
-        // glBindVertexArray(LineVAO);
-        //
-        // glBindBuffer(GL_ARRAY_BUFFER, LineDataBuffer[0]);
-        // glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-        // glEnableVertexAttribArray(0);
-        //
-        // glBindBuffer(GL_ARRAY_BUFFER, LineDataBuffer[1]);
-        // glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-        // glEnableVertexAttribArray(1);
-        //
-        // glBindVertexArray(0);
-
-
-
         glGenVertexArrays(1, &LineVAO);
         glGenBuffers(2, LineDataBuffer);
 
@@ -290,46 +271,6 @@ void CellEngineOpenGLVisualiser::InitLineVertexes()
         glEnableVertexAttribArray(1);
 
         glBindVertexArray(0);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        // constexpr float LineVertexes[] = { 0.0, 0.0, 0.0,   1.0, 0.0, 0.0 };
-        // constexpr float LineNormals[] = { 1.0, 1.0 };
-        //
-        // glGenVertexArrays(1, &LineVAO);
-        // glBindVertexArray(LineVAO);
-        //
-        // glGenBuffers(2, &LineDataBuffer[0]);
-        //
-        //     // glBindBuffer(GL_ARRAY_BUFFER, LineDataBuffer[0]);
-        //     // glBufferData(GL_ARRAY_BUFFER, sizeof(LineVertexes), LineVertexes, GL_STATIC_DRAW);
-        //     // glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
-        //     // glEnableVertexAttribArray(0);
-        //
-        //     // glBindBuffer(GL_ARRAY_BUFFER, LineDataBuffer[0]);
-        //     // glBufferData(GL_ARRAY_BUFFER, sizeof(LineVertexes), LineVertexes, GL_STATIC_DRAW);
-        //     // glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
-        //     // glEnableVertexAttribArray(0);
-        //     //
-        //     //
-        //     // glBindBuffer(GL_ARRAY_BUFFER, LineDataBuffer[1]);
-        //     // glBufferData(GL_ARRAY_BUFFER, sizeof(LineNormals), LineNormals, GL_STATIC_DRAW);
-        //     // glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 0, nullptr);
-        //     // glEnableVertexAttribArray(1);
-        //
-        // glBindVertexArray(0);
-        // glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
     CATCH("initiation of line vertexes")
 }
@@ -364,27 +305,13 @@ void CellEngineOpenGLVisualiser::DrawAllFoundBondsBetweenAtoms(const vector<floa
 
         glUseProgram(LinesShaderProgram);
 
-        //glUniform3fv(glGetUniformLocation(LinesShaderProgram, "Center"), 1, Center);
-
         vmath::mat4 MVP = ProjectionMatrixGlobal * ViewMatrix;
         glUniformMatrix4fv(glGetUniformLocation(LinesShaderProgram, "MVP"), 1, GL_FALSE, MVP);
-        //GLint MVPLoc = glGetUniformLocation(LinesShaderProgram, "MVP");
-        //glUniformMatrix4fv(MVPLoc, 1, GL_FALSE, ProjectionMatrixGlobal);
 
         glBindVertexArray(LineVAO);
         glLineWidth(2.0f);
         glDrawArrays(GL_LINES, 0, NumVertices);
         glBindVertexArray(0);
-
-
-        // glBindVertexArray(LineVAO);
-        // glBindBuffer(GL_ARRAY_BUFFER, LineDataBuffer[0]);
-        // glBufferData(GL_ARRAY_BUFFER, LinesVertexesLocal.size() * sizeof(float), LinesVertexesLocal.data(), GL_STATIC_DRAW);
-        //
-        // glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-        // glEnableVertexAttribArray(0);
-        //
-        // glDrawArrays(GL_LINES, 0, LinesVertexesLocal.size() / 3);
     }
     CATCH("drawing bonds")
 }
@@ -406,9 +333,7 @@ void CellEngineOpenGLVisualiser::FindBondsToDraw(const vector<CellEngineAtom>& A
         omp_set_max_active_levels(2);
         omp_set_dynamic(0);
 
-        //#pragma omp parallel for default(none) shared(BondsToDrawLocal, Atoms, LoggersManagerObject) private(AtomObjectIndex1, AtomObjectIndex2)
         //#pragma omp parallel for collapse(2) num_threads(16) default(none) shared(BondsToDrawLocal, BondsToDraw, Atoms, LoggersManagerObject) private(AtomObjectIndex1, AtomObjectIndex2)
-
         #pragma omp parallel for collapse(2) num_threads(256) default(none) shared(BondsToDrawLocal, BondsToDraw, Atoms, LoggersManagerObject) private(AtomObjectIndex1, AtomObjectIndex2)
         for (AtomObjectIndex1 = 0; AtomObjectIndex1 < Atoms.size(); AtomObjectIndex1++)
             for (AtomObjectIndex2 = 0; AtomObjectIndex2 < Atoms.size(); AtomObjectIndex2++)
@@ -426,9 +351,8 @@ void CellEngineOpenGLVisualiser::FindBondsToDraw(const vector<CellEngineAtom>& A
                 }
 
         for (const auto& BondsToDrawLocalObject : BondsToDrawLocal)
-            //if (BondsToDrawLocalObject.empty() == false)
-                for (const auto& BondsToDrawObject : BondsToDrawLocalObject)
-                    BondsToDraw.emplace_back(BondsToDrawObject);
+            for (const auto& BondsToDrawObject : BondsToDrawLocalObject)
+                BondsToDraw.emplace_back(BondsToDrawObject);
     }
     CATCH("finding bonds")
 }
@@ -437,8 +361,6 @@ void CellEngineOpenGLVisualiser::FindAllBondsToDrawForParticle(const Particle& P
 {
     try
     {
-        //LinesVertexes.clear();
-
         if (DrawBonds == true)
         {
             if (BondsToDraw.empty() == true)
@@ -462,15 +384,6 @@ void CellEngineOpenGLVisualiser::FindAllBondsToDrawForParticle(const Particle& P
                 const auto& AtomObject1 = ParticleObject.ListOfAtoms[BondToDrawObject.first];
                 const auto& AtomObject2 = ParticleObject.ListOfAtoms[BondToDrawObject.second];
 
-
-                //auto TranslateMatrix = vmath::translate(0.0f, 0.0f, 0.0f);
-                //CreateUniformBlockForVertexShaderOld(vmath::vec3(0.0, 0.0, 0.0), vmath::vec3(-1.0, -1.0, -1.0), ViewMatrix, TranslateMatrix, false, false, false, false);
-
-                //DrawAllBondsBetweenAtoms(AtomObject1.X - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomObject1.Y - CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomObject1.Z - CellEngineConfigDataObject.CameraZPosition - Center.Z(), AtomObject2.X - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomObject2.Y - CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomObject2.Z - CellEngineConfigDataObject.CameraZPosition - Center.Z());
-                //DrawAllBondsBetweenAtoms({ AtomObject1.X - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomObject1.Y - CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomObject1.Z - CellEngineConfigDataObject.CameraZPosition - Center.Z(), AtomObject2.X - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomObject2.Y - CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomObject2.Z - CellEngineConfigDataObject.CameraZPosition - Center.Z() });
-
-
-
                 // LinesVertexes[omp_get_thread_num()].emplace_back(AtomObject1.X - CellEngineConfigDataObject.CameraXPosition - Center.X());
                 // LinesVertexes[omp_get_thread_num()].emplace_back(AtomObject1.Y - CellEngineConfigDataObject.CameraYPosition - Center.Y());
                 // LinesVertexes[omp_get_thread_num()].emplace_back(AtomObject1.Z - CellEngineConfigDataObject.CameraZPosition - Center.Z());
@@ -478,54 +391,9 @@ void CellEngineOpenGLVisualiser::FindAllBondsToDrawForParticle(const Particle& P
                 // LinesVertexes[omp_get_thread_num()].emplace_back(AtomObject2.Y - CellEngineConfigDataObject.CameraYPosition - Center.Y());
                 // LinesVertexes[omp_get_thread_num()].emplace_back(AtomObject2.Z - CellEngineConfigDataObject.CameraZPosition - Center.Z());
 
-                //vmath::vec4 P = MoveMatrix * PointPosition;
-
-                //vmath::mat4 ModelMatrix = vmath::translate(AtomObject1.X - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomObject1.Y + CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomObject1.Z + CellEngineConfigDataObject.CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(SizeLocal.X(), SizeLocal.Y(), SizeLocal.Z()));
-                //vmath::mat4 ModelMatrix = vmath::translate(AtomObject1.X - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomObject1.Y + CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomObject1.Z + CellEngineConfigDataObject.CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(1, 1, 1));
-
-
-                // vmath::mat4 ModelMatrix1 = vmath::translate(AtomObject1.X - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomObject1.Y + CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomObject1.Z + CellEngineConfigDataObject.CameraZPosition - Center.Z());
-                // auto MoveMatrix1 = ViewMatrix * ModelMatrix1;
-                // auto PointPosition1 = vmath::vec4(AtomObject1.X, AtomObject1.Y, AtomObject1.Z, 1);
-                // vmath::vec4 P1 = PointPosition1 * MoveMatrix1;
-                // PointPosition1 = P1 * ProjectionMatrixGlobal;
-                //
-                // vmath::mat4 ModelMatrix2 = vmath::translate(AtomObject1.X - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomObject1.Y + CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomObject1.Z + CellEngineConfigDataObject.CameraZPosition - Center.Z());
-                // auto MoveMatrix2 = ViewMatrix * ModelMatrix2;
-                // auto PointPosition2 = vmath::vec4(AtomObject2.X, AtomObject2.Y, AtomObject2.Z, 1);
-                // vmath::vec4 P2 = PointPosition2 * MoveMatrix1;
-                // PointPosition2 = P2 * ProjectionMatrixGlobal;
-                //
-                // LinesVertexes.emplace_back(PointPosition1[0]);
-                // LinesVertexes.emplace_back(PointPosition1[1]);
-                // LinesVertexes.emplace_back(PointPosition1[2]);
-                // LinesVertexes.emplace_back(PointPosition2[0]);
-                // LinesVertexes.emplace_back(PointPosition2[1]);
-                // LinesVertexes.emplace_back(PointPosition2[2]);
-
-
-                //AtomObject(X, Y, Z) = ProjectionMatrix * MoveMatrix * AtomObject(X, Y, Z);
-                //AtomObject(X, Y, Z) = ProjectionMatrix * ViewMatrix * ModelMatrix * AtomObject(X, Y, Z);
-
-                //U mnie pozycja AtomObject w ModelMatrix to cenrum kuli czyli obiektu a w kolejnych liniach to pozycja z punktow kuli - moze nalezy utworzyc obiekt linia i go rysowac jak kule
-
-                //vec4 P = p.mv_matrix * position;
-                //gl_Position = ProjectionMatrix * P;
-
-                // LinesVertexes.emplace_back(AtomObject1.X - CellEngineConfigDataObject.CameraXPosition - Center.X());
-                // LinesVertexes.emplace_back(AtomObject1.Y - CellEngineConfigDataObject.CameraYPosition - Center.Y());
-                // LinesVertexes.emplace_back(AtomObject1.Z - CellEngineConfigDataObject.CameraZPosition - Center.Z());
-                // LinesVertexes.emplace_back(AtomObject2.X - CellEngineConfigDataObject.CameraXPosition - Center.X());
-                // LinesVertexes.emplace_back(AtomObject2.Y - CellEngineConfigDataObject.CameraYPosition - Center.Y());
-                // LinesVertexes.emplace_back(AtomObject2.Z - CellEngineConfigDataObject.CameraZPosition - Center.Z());
-
                 LinesVertexes.emplace_back(AtomObject1.X - CellEngineConfigDataObject.CameraXPosition - Center.X());
-                LinesVertexes.emplace_back(AtomObject1.Y - CellEngineConfigDataObject.CameraXPosition - Center.Y());
-                LinesVertexes.emplace_back(AtomObject1.Z - CellEngineConfigDataObject.CameraXPosition - Center.Z());
-
-                // LinesVertexes.emplace_back(AtomObject1.X);
-                // LinesVertexes.emplace_back(AtomObject1.Y);
-                // LinesVertexes.emplace_back(AtomObject1.Z);
+                LinesVertexes.emplace_back(AtomObject1.Y - CellEngineConfigDataObject.CameraYPosition - Center.Y());
+                LinesVertexes.emplace_back(AtomObject1.Z - CellEngineConfigDataObject.CameraZPosition - Center.Z());
 
                 // LinesVertexes.push_back(AtomObject1.AtomColor.X);
                 // LinesVertexes.push_back(AtomObject1.AtomColor.Y);
@@ -536,24 +404,17 @@ void CellEngineOpenGLVisualiser::FindAllBondsToDrawForParticle(const Particle& P
                 LinesVertexes.push_back(0.0);
 
                 LinesVertexes.emplace_back(AtomObject2.X - CellEngineConfigDataObject.CameraXPosition - Center.X());
-                LinesVertexes.emplace_back(AtomObject2.Y - CellEngineConfigDataObject.CameraXPosition - Center.Y());
-                LinesVertexes.emplace_back(AtomObject2.Z - CellEngineConfigDataObject.CameraXPosition - Center.Z());
+                LinesVertexes.emplace_back(AtomObject2.Y - CellEngineConfigDataObject.CameraYPosition - Center.Y());
+                LinesVertexes.emplace_back(AtomObject2.Z - CellEngineConfigDataObject.CameraZPosition - Center.Z());
 
-                // LinesVertexes.emplace_back(AtomObject2.X);
-                // LinesVertexes.emplace_back(AtomObject2.Y);
-                // LinesVertexes.emplace_back(AtomObject2.Z);
-
-                // LinesVertexes.push_back(AtomObject2.AtomColor.X);
-                // LinesVertexes.push_back(AtomObject2.AtomColor.Y);
-                // LinesVertexes.push_back(AtomObject2.AtomColor.Z);
+                // LinesVertexes.emplace_back(AtomObject2.AtomColor.X);
+                // LinesVertexes.emplace_back(AtomObject2.AtomColor.Y);
+                // LinesVertexes.emplace_back(AtomObject2.AtomColor.Z);
 
                 LinesVertexes.push_back(0.0);
                 LinesVertexes.push_back(0.0);
                 LinesVertexes.push_back(0.0);
             }
-
-            //DrawAllFoundBondsBetweenAtoms(LinesVertexes);
-            //DrawAllFoundBondsBetweenAtoms();
         }
     }
     CATCH("drawing bonds")
@@ -648,44 +509,6 @@ inline bool CellEngineOpenGLVisualiser::GetFinalVisibilityInModelWorld(const vma
     return false;
 }
 
-
-
-/*
-inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShaderOld(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4& ModelMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, bool DrawAdditional) const
-{
-    struct UniformsBlockOld
-    {
-        vmath::mat4 MoveMatrix;
-        vmath::mat4 ProjectionMatrix;
-        vmath::vec3 Color;
-    };
-
-    constexpr bool FinalVisibilityInModelWorld = false;
-
-    try
-    {
-        glBindBufferBase(GL_UNIFORM_BUFFER, 0, UniformsBuffer);
-        const auto MatrixUniformBlockForVertexShaderPointer = (UniformsBlockOld*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(UniformsBlock), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
-
-        MatrixUniformBlockForVertexShaderPointer->ProjectionMatrix = vmath::perspective(50.0f, (float)Info.WindowWidth / (float)Info.WindowHeight, 0.1f, 10000.0f);
-        MatrixUniformBlockForVertexShaderPointer->Color = Color;
-
-        // if (DrawAdditional == true)
-        // {
-        //     FinalVisibilityInModelWorld = GetFinalVisibilityInModelWorld(Position, MatrixUniformBlockForVertexShaderPointer, CountNewPosition, DrawOutsideBorder);
-        //     if (DrawCenter == true)
-        //         DrawCenterPoint(MatrixUniformBlockForVertexShaderPointer, ModelMatrix);
-        // }
-
-        MatrixUniformBlockForVertexShaderPointer->MoveMatrix = ViewMatrix * ModelMatrix;
-
-        glUnmapBuffer(GL_UNIFORM_BUFFER);
-    }
-    CATCH("rendering object for data for cell visualization")
-
-    return FinalVisibilityInModelWorld;
-}
-*/
 inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4& ModelMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, bool DrawAdditional) const
 {
     bool FinalVisibilityInModelWorld = false;
@@ -752,7 +575,8 @@ inline vmath::vec3 CellEngineOpenGLVisualiser::GetSize(const CellEngineAtom& Ato
             case CellEngineConfigData::SizeOfAtomsDrawingTypes::AtomSize : Size = vmath::vec3(AtomObject.SizeXAtom, AtomObject.SizeYAtom, AtomObject.SizeZAtom); break;
             case CellEngineConfigData::SizeOfAtomsDrawingTypes::ParticleSize : Size = vmath::vec3(AtomObject.SizeXParticle, AtomObject.SizeYParticle, AtomObject.SizeZParticle); break;
             #endif
-            case CellEngineConfigData::SizeOfAtomsDrawingTypes::AutomaticChangeSize : Size = vmath::vec3(CellEngineConfigDataObject.SizeOfAtomX, CellEngineConfigDataObject.SizeOfAtomY, CellEngineConfigDataObject.SizeOfAtomZ); break;
+            //case CellEngineConfigData::SizeOfAtomsDrawingTypes::AutomaticChangeSize : Size = vmath::vec3(CellEngineConfigDataObject.SizeOfAtomX, CellEngineConfigDataObject.SizeOfAtomY, CellEngineConfigDataObject.SizeOfAtomZ); break;
+            case CellEngineConfigData::SizeOfAtomsDrawingTypes::AutomaticChangeSize : Size = vmath::vec3(CellEngineConfigDataObject.MainSizeOfAtom, CellEngineConfigDataObject.MainSizeOfAtom, CellEngineConfigDataObject.MainSizeOfAtom); break;
             default : break;
         }
     }
@@ -788,15 +612,15 @@ inline void CellEngineOpenGLVisualiser::SetAutomaticParametersForRendering()
             {
                 if (CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep == true)
                     CellEngineConfigDataObject.LoadOfAtomsStep = 10;
-                if (CellEngineConfigDataObject.AutomaticChangeOfSizeOfAtom == true)
-                    CellEngineConfigDataObject.SizeOfAtomX = CellEngineConfigDataObject.SizeOfAtomY = CellEngineConfigDataObject.SizeOfAtomZ = 3;
+                // if (CellEngineConfigDataObject.AutomaticChangeOfSizeOfAtom == true)
+                //     CellEngineConfigDataObject.SizeOfAtomX = CellEngineConfigDataObject.SizeOfAtomY = CellEngineConfigDataObject.SizeOfAtomZ = 3;
             }
             else
             {
                 if (CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep == true)
                     CellEngineConfigDataObject.LoadOfAtomsStep = 1;
-                if (CellEngineConfigDataObject.AutomaticChangeOfSizeOfAtom == true)
-                    CellEngineConfigDataObject.SizeOfAtomX = CellEngineConfigDataObject.SizeOfAtomY = CellEngineConfigDataObject.SizeOfAtomZ = 1;
+                // if (CellEngineConfigDataObject.AutomaticChangeOfSizeOfAtom == true)
+                //     CellEngineConfigDataObject.SizeOfAtomX = CellEngineConfigDataObject.SizeOfAtomY = CellEngineConfigDataObject.SizeOfAtomZ = CellEngineConfigDataObject.MainSizeOfAtom;
             }
         }
     }
@@ -864,6 +688,13 @@ void CellEngineOpenGLVisualiser::ComputeInShaderCopyParticlesAndAtomsDataToGPUMe
         // NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = ParticlesOffsetTotal;
 
         glUseProgram(ComputeShaderProgram);
+
+        //const float LocalMainSizeOfAtom = 0.3;
+        const float LocalMainSizeOfAtom = CellEngineConfigDataObject.MainSizeOfAtom;
+        glUniform1fv(glGetUniformLocation(ComputeShaderProgram, "AtomSize"), 1, &LocalMainSizeOfAtom);
+        glUniform1fv(glGetUniformLocation(ComputeShaderProgram, "CameraXPosition"), 1, &CellEngineConfigDataObject.CameraXPosition);
+        glUniform1fv(glGetUniformLocation(ComputeShaderProgram, "CameraYPosition"), 1, &CellEngineConfigDataObject.CameraYPosition);
+        glUniform1fv(glGetUniformLocation(ComputeShaderProgram, "CameraZPosition"), 1, &CellEngineConfigDataObject.CameraZPosition);
 
         glUniform3fv(glGetUniformLocation(ComputeShaderProgram, "Center"), 1, Center);
         glUniformMatrix4fv(glGetUniformLocation(ComputeShaderProgram, "ViewMatrix"), 1, GL_FALSE, ViewMatrix);
@@ -1016,7 +847,7 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
         if (CellEngineConfigDataObject.LogParametersOfRenderingToFile == true)
         {
             LoggersManagerObject.Log(STREAM(CellEngineConfigDataObject.TimeParametersOfRenderingStr));
-            LoggersManagerObject.Log(STREAM(CellEngineConfigDataObject.NumberOfRenderedAtomsParametersOfRenderingStr << " ViewZ = " << to_string(CellEngineConfigDataObject.ViewPositionZ) << " CameraZPosition = " << to_string(CellEngineConfigDataObject.CameraZPosition) << " AtomSize = " << to_string(CellEngineConfigDataObject.SizeOfAtomX) << endl));
+            LoggersManagerObject.Log(STREAM(CellEngineConfigDataObject.NumberOfRenderedAtomsParametersOfRenderingStr << " ViewZ = " << to_string(CellEngineConfigDataObject.ViewPositionZ) << " CameraZPosition = " << to_string(CellEngineConfigDataObject.CameraZPosition) << " AtomsMainSize = " << to_string(CellEngineConfigDataObject.MainSizeOfAtom) << endl));
         }
     }
     CATCH("rendering cell visualization")
