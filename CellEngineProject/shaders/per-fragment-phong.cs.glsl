@@ -61,6 +61,11 @@ void main()
         vec3 AtomPosition = vec3(AtomIn.X, AtomIn.Y, AtomIn.Z);
 
         mat4 ModelMatrix = mat4(1.0);
+
+        ModelMatrix[0][0] = 0.25;
+        ModelMatrix[1][1] = 0.25;
+        ModelMatrix[2][2] = 0.25;
+
         ModelMatrix[3][0] = AtomPosition.x - Center.x;
         ModelMatrix[3][1] = AtomPosition.y - Center.y;
         ModelMatrix[3][2] = AtomPosition.z - Center.z;

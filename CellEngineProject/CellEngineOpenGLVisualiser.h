@@ -147,8 +147,7 @@ protected:
     void DeleteLineVertexes() const;
     static void FindBondsToDraw(const std::vector<CellEngineAtom>& Atoms, std::vector<std::pair<UnsignedInt, UnsignedInt>>& BondsToDraw);
     void FindAllBondsToDrawForParticle(const Particle& ParticleObject, std::vector<std::pair<UnsignedInt, UnsignedInt>>& BondsToDraw, bool DrawBonds, const vmath::mat4& ViewMatrix);
-    void DrawAllFoundBondsBetweenAtoms(const vector<float>& LinesVertexesLocal) const;
-    //void DrawAllFoundBondsBetweenAtoms() const;
+    void DrawAllFoundBondsBetweenAtoms(const vector<float>& LinesVertexesLocal, const vmath::mat4& ViewMatrix) const;
 public:
     static std::string GetEntityName(UnsignedInt EntityId);
     static void SetVisibilityOfAllParticles(bool VisibleParam);

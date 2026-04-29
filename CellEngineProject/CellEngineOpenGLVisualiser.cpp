@@ -116,7 +116,7 @@ void CellEngineOpenGLVisualiser::StartUp()
 {
     try
     {
-        //LinesVertexes.resize(std::thread::hardware_concurrency() + 1);
+        // LinesVertexes.resize(std::thread::hardware_concurrency() + 1);
         // LinesVertexes.resize(256 + 1);
         // for (auto& LinesVertexesThread : LinesVertexes)
         //     LinesVertexesThread.reserve(1'000'000 * 6);
@@ -208,7 +208,8 @@ void CellEngineOpenGLVisualiser::LoadShadersPhong()
     {
         LoadComputeShaders("..//shaders//per-fragment-phong.cs.glsl", ComputeShaderProgram);
         LoadMainRenderShaders("..//shaders//per-fragment-phong-point-1.vs.glsl", "..//shaders//per-fragment-phong-point-1.fs.glsl", ParticlesAtomsShaderProgram);
-        LoadMainRenderShaders("..//shaders//per-fragment-phong-old.vs.glsl","..//shaders//per-fragment-phong-old.fs.glsl", LinesShaderProgram);
+        //LoadMainRenderShaders("..//shaders//per-fragment-phong-old.vs.glsl","..//shaders//per-fragment-phong-old.fs.glsl", LinesShaderProgram);
+        LoadMainRenderShaders("..//shaders//per-fragment-phong-line.vs.glsl","..//shaders//per-fragment-phong-line.fs.glsl", LinesShaderProgram);
 
         Uniforms.DiffuseAlbedo = glGetUniformLocation(ParticlesAtomsShaderProgram, "diffuse_albedo");
         Uniforms.SpecularAlbedo = glGetUniformLocation(ParticlesAtomsShaderProgram, "specular_albedo");
@@ -257,49 +258,133 @@ void CellEngineOpenGLVisualiser::InitLineVertexes()
     {
         DeleteLineVertexes();
 
-        constexpr float LineVertexes[] = { 0.0, 0.0, 0.0,   1.0, 0.0, 0.0 };
-        constexpr float LineNormals[] = { 1.0, 1.0 };
+
+        // glGenVertexArrays(1, &LineVAO);
+        // glGenBuffers(2, LineDataBuffer);
+        //
+        // glBindVertexArray(LineVAO);
+        //
+        // glBindBuffer(GL_ARRAY_BUFFER, LineDataBuffer[0]);
+        // glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+        // glEnableVertexAttribArray(0);
+        //
+        // glBindBuffer(GL_ARRAY_BUFFER, LineDataBuffer[1]);
+        // glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+        // glEnableVertexAttribArray(1);
+        //
+        // glBindVertexArray(0);
+
+
 
         glGenVertexArrays(1, &LineVAO);
+        glGenBuffers(2, LineDataBuffer);
+
         glBindVertexArray(LineVAO);
 
-        glGenBuffers(2, &LineDataBuffer[0]);
-
-        // glBindBuffer(GL_ARRAY_BUFFER, LineDataBuffer[0]);
-        // glBufferData(GL_ARRAY_BUFFER, sizeof(LineVertexes), LineVertexes, GL_STATIC_DRAW);
-        // glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
-        // glEnableVertexAttribArray(0);
-
         glBindBuffer(GL_ARRAY_BUFFER, LineDataBuffer[0]);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(LineVertexes), LineVertexes, GL_STATIC_DRAW);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
         glEnableVertexAttribArray(0);
 
-
         glBindBuffer(GL_ARRAY_BUFFER, LineDataBuffer[1]);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(LineNormals), LineNormals, GL_STATIC_DRAW);
-        glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 0, nullptr);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
         glEnableVertexAttribArray(1);
 
         glBindVertexArray(0);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // constexpr float LineVertexes[] = { 0.0, 0.0, 0.0,   1.0, 0.0, 0.0 };
+        // constexpr float LineNormals[] = { 1.0, 1.0 };
+        //
+        // glGenVertexArrays(1, &LineVAO);
+        // glBindVertexArray(LineVAO);
+        //
+        // glGenBuffers(2, &LineDataBuffer[0]);
+        //
+        //     // glBindBuffer(GL_ARRAY_BUFFER, LineDataBuffer[0]);
+        //     // glBufferData(GL_ARRAY_BUFFER, sizeof(LineVertexes), LineVertexes, GL_STATIC_DRAW);
+        //     // glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+        //     // glEnableVertexAttribArray(0);
+        //
+        //     // glBindBuffer(GL_ARRAY_BUFFER, LineDataBuffer[0]);
+        //     // glBufferData(GL_ARRAY_BUFFER, sizeof(LineVertexes), LineVertexes, GL_STATIC_DRAW);
+        //     // glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+        //     // glEnableVertexAttribArray(0);
+        //     //
+        //     //
+        //     // glBindBuffer(GL_ARRAY_BUFFER, LineDataBuffer[1]);
+        //     // glBufferData(GL_ARRAY_BUFFER, sizeof(LineNormals), LineNormals, GL_STATIC_DRAW);
+        //     // glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 0, nullptr);
+        //     // glEnableVertexAttribArray(1);
+        //
+        // glBindVertexArray(0);
+        // glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
     CATCH("initiation of line vertexes")
 }
 
-void CellEngineOpenGLVisualiser::DrawAllFoundBondsBetweenAtoms(const vector<float>& LinesVertexesLocal) const
-//void CellEngineOpenGLVisualiser::DrawAllFoundBondsBetweenAtoms() const
+void CellEngineOpenGLVisualiser::DrawAllFoundBondsBetweenAtoms(const vector<float>& LinesVertexesLocal, const vmath::mat4& ViewMatrix) const
 {
     try
     {
-        glBindVertexArray(LineVAO);
+        uint32_t NumVertices = LinesVertexesLocal.size() / 6;
+
+        std::vector<float> Positions;
+        std::vector<float> Colors;
+        Positions.reserve(NumVertices * 3);
+        Colors.reserve(NumVertices * 3);
+
+        for (size_t i = 0; i < LinesVertexesLocal.size(); i += 6)
+        {
+            Positions.push_back(LinesVertexesLocal[i]);
+            Positions.push_back(LinesVertexesLocal[i + 1]);
+            Positions.push_back(LinesVertexesLocal[i + 2]);
+
+            Colors.push_back(LinesVertexesLocal[i + 3]);
+            Colors.push_back(LinesVertexesLocal[i + 4]);
+            Colors.push_back(LinesVertexesLocal[i + 5]);
+        }
+
         glBindBuffer(GL_ARRAY_BUFFER, LineDataBuffer[0]);
-        glBufferData(GL_ARRAY_BUFFER, LinesVertexesLocal.size() * sizeof(float), LinesVertexesLocal.data(), GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, Positions.size() * sizeof(float), Positions.data(), GL_DYNAMIC_DRAW);
 
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-        glEnableVertexAttribArray(0);
+        glBindBuffer(GL_ARRAY_BUFFER, LineDataBuffer[1]);
+        glBufferData(GL_ARRAY_BUFFER, Colors.size() * sizeof(float), Colors.data(), GL_DYNAMIC_DRAW);
 
-        glDrawArrays(GL_LINES, 0, LinesVertexesLocal.size() / 3);
+        glUseProgram(LinesShaderProgram);
+
+        //glUniform3fv(glGetUniformLocation(LinesShaderProgram, "Center"), 1, Center);
+
+        vmath::mat4 MVP = ProjectionMatrixGlobal * ViewMatrix;
+        glUniformMatrix4fv(glGetUniformLocation(LinesShaderProgram, "MVP"), 1, GL_FALSE, MVP);
+        //GLint MVPLoc = glGetUniformLocation(LinesShaderProgram, "MVP");
+        //glUniformMatrix4fv(MVPLoc, 1, GL_FALSE, ProjectionMatrixGlobal);
+
+        glBindVertexArray(LineVAO);
+        glLineWidth(2.0f);
+        glDrawArrays(GL_LINES, 0, NumVertices);
+        glBindVertexArray(0);
+
+
+        // glBindVertexArray(LineVAO);
+        // glBindBuffer(GL_ARRAY_BUFFER, LineDataBuffer[0]);
+        // glBufferData(GL_ARRAY_BUFFER, LinesVertexesLocal.size() * sizeof(float), LinesVertexesLocal.data(), GL_STATIC_DRAW);
+        //
+        // glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+        // glEnableVertexAttribArray(0);
+        //
+        // glDrawArrays(GL_LINES, 0, LinesVertexesLocal.size() / 3);
     }
     CATCH("drawing bonds")
 }
@@ -323,6 +408,7 @@ void CellEngineOpenGLVisualiser::FindBondsToDraw(const vector<CellEngineAtom>& A
 
         //#pragma omp parallel for default(none) shared(BondsToDrawLocal, Atoms, LoggersManagerObject) private(AtomObjectIndex1, AtomObjectIndex2)
         //#pragma omp parallel for collapse(2) num_threads(16) default(none) shared(BondsToDrawLocal, BondsToDraw, Atoms, LoggersManagerObject) private(AtomObjectIndex1, AtomObjectIndex2)
+
         #pragma omp parallel for collapse(2) num_threads(256) default(none) shared(BondsToDrawLocal, BondsToDraw, Atoms, LoggersManagerObject) private(AtomObjectIndex1, AtomObjectIndex2)
         for (AtomObjectIndex1 = 0; AtomObjectIndex1 < Atoms.size(); AtomObjectIndex1++)
             for (AtomObjectIndex2 = 0; AtomObjectIndex2 < Atoms.size(); AtomObjectIndex2++)
@@ -336,7 +422,6 @@ void CellEngineOpenGLVisualiser::FindBondsToDraw(const vector<CellEngineAtom>& A
                     const float VectorLength = sqrt(DiffX * DiffX + DiffY * DiffY + DiffZ * DiffZ);
                     if (VectorLength < 1.5)
                         BondsToDrawLocal[omp_get_thread_num()].emplace_back(make_pair(AtomObjectIndex1, AtomObjectIndex2));
-
                         //BondsToDraw.emplace_back(make_pair(AtomObjectIndex1, AtomObjectIndex2));
                 }
 
@@ -377,6 +462,7 @@ void CellEngineOpenGLVisualiser::FindAllBondsToDrawForParticle(const Particle& P
                 const auto& AtomObject1 = ParticleObject.ListOfAtoms[BondToDrawObject.first];
                 const auto& AtomObject2 = ParticleObject.ListOfAtoms[BondToDrawObject.second];
 
+
                 //auto TranslateMatrix = vmath::translate(0.0f, 0.0f, 0.0f);
                 //CreateUniformBlockForVertexShaderOld(vmath::vec3(0.0, 0.0, 0.0), vmath::vec3(-1.0, -1.0, -1.0), ViewMatrix, TranslateMatrix, false, false, false, false);
 
@@ -392,12 +478,78 @@ void CellEngineOpenGLVisualiser::FindAllBondsToDrawForParticle(const Particle& P
                 // LinesVertexes[omp_get_thread_num()].emplace_back(AtomObject2.Y - CellEngineConfigDataObject.CameraYPosition - Center.Y());
                 // LinesVertexes[omp_get_thread_num()].emplace_back(AtomObject2.Z - CellEngineConfigDataObject.CameraZPosition - Center.Z());
 
+                //vmath::vec4 P = MoveMatrix * PointPosition;
+
+                //vmath::mat4 ModelMatrix = vmath::translate(AtomObject1.X - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomObject1.Y + CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomObject1.Z + CellEngineConfigDataObject.CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(SizeLocal.X(), SizeLocal.Y(), SizeLocal.Z()));
+                //vmath::mat4 ModelMatrix = vmath::translate(AtomObject1.X - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomObject1.Y + CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomObject1.Z + CellEngineConfigDataObject.CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(1, 1, 1));
+
+
+                // vmath::mat4 ModelMatrix1 = vmath::translate(AtomObject1.X - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomObject1.Y + CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomObject1.Z + CellEngineConfigDataObject.CameraZPosition - Center.Z());
+                // auto MoveMatrix1 = ViewMatrix * ModelMatrix1;
+                // auto PointPosition1 = vmath::vec4(AtomObject1.X, AtomObject1.Y, AtomObject1.Z, 1);
+                // vmath::vec4 P1 = PointPosition1 * MoveMatrix1;
+                // PointPosition1 = P1 * ProjectionMatrixGlobal;
+                //
+                // vmath::mat4 ModelMatrix2 = vmath::translate(AtomObject1.X - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomObject1.Y + CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomObject1.Z + CellEngineConfigDataObject.CameraZPosition - Center.Z());
+                // auto MoveMatrix2 = ViewMatrix * ModelMatrix2;
+                // auto PointPosition2 = vmath::vec4(AtomObject2.X, AtomObject2.Y, AtomObject2.Z, 1);
+                // vmath::vec4 P2 = PointPosition2 * MoveMatrix1;
+                // PointPosition2 = P2 * ProjectionMatrixGlobal;
+                //
+                // LinesVertexes.emplace_back(PointPosition1[0]);
+                // LinesVertexes.emplace_back(PointPosition1[1]);
+                // LinesVertexes.emplace_back(PointPosition1[2]);
+                // LinesVertexes.emplace_back(PointPosition2[0]);
+                // LinesVertexes.emplace_back(PointPosition2[1]);
+                // LinesVertexes.emplace_back(PointPosition2[2]);
+
+
+                //AtomObject(X, Y, Z) = ProjectionMatrix * MoveMatrix * AtomObject(X, Y, Z);
+                //AtomObject(X, Y, Z) = ProjectionMatrix * ViewMatrix * ModelMatrix * AtomObject(X, Y, Z);
+
+                //U mnie pozycja AtomObject w ModelMatrix to cenrum kuli czyli obiektu a w kolejnych liniach to pozycja z punktow kuli - moze nalezy utworzyc obiekt linia i go rysowac jak kule
+
+                //vec4 P = p.mv_matrix * position;
+                //gl_Position = ProjectionMatrix * P;
+
+                // LinesVertexes.emplace_back(AtomObject1.X - CellEngineConfigDataObject.CameraXPosition - Center.X());
+                // LinesVertexes.emplace_back(AtomObject1.Y - CellEngineConfigDataObject.CameraYPosition - Center.Y());
+                // LinesVertexes.emplace_back(AtomObject1.Z - CellEngineConfigDataObject.CameraZPosition - Center.Z());
+                // LinesVertexes.emplace_back(AtomObject2.X - CellEngineConfigDataObject.CameraXPosition - Center.X());
+                // LinesVertexes.emplace_back(AtomObject2.Y - CellEngineConfigDataObject.CameraYPosition - Center.Y());
+                // LinesVertexes.emplace_back(AtomObject2.Z - CellEngineConfigDataObject.CameraZPosition - Center.Z());
+
                 LinesVertexes.emplace_back(AtomObject1.X - CellEngineConfigDataObject.CameraXPosition - Center.X());
-                LinesVertexes.emplace_back(AtomObject1.Y - CellEngineConfigDataObject.CameraYPosition - Center.Y());
-                LinesVertexes.emplace_back(AtomObject1.Z - CellEngineConfigDataObject.CameraZPosition - Center.Z());
+                LinesVertexes.emplace_back(AtomObject1.Y - CellEngineConfigDataObject.CameraXPosition - Center.Y());
+                LinesVertexes.emplace_back(AtomObject1.Z - CellEngineConfigDataObject.CameraXPosition - Center.Z());
+
+                // LinesVertexes.emplace_back(AtomObject1.X);
+                // LinesVertexes.emplace_back(AtomObject1.Y);
+                // LinesVertexes.emplace_back(AtomObject1.Z);
+
+                // LinesVertexes.push_back(AtomObject1.AtomColor.X);
+                // LinesVertexes.push_back(AtomObject1.AtomColor.Y);
+                // LinesVertexes.push_back(AtomObject1.AtomColor.Z);
+
+                LinesVertexes.push_back(0.0);
+                LinesVertexes.push_back(0.0);
+                LinesVertexes.push_back(0.0);
+
                 LinesVertexes.emplace_back(AtomObject2.X - CellEngineConfigDataObject.CameraXPosition - Center.X());
-                LinesVertexes.emplace_back(AtomObject2.Y - CellEngineConfigDataObject.CameraYPosition - Center.Y());
-                LinesVertexes.emplace_back(AtomObject2.Z - CellEngineConfigDataObject.CameraZPosition - Center.Z());
+                LinesVertexes.emplace_back(AtomObject2.Y - CellEngineConfigDataObject.CameraXPosition - Center.Y());
+                LinesVertexes.emplace_back(AtomObject2.Z - CellEngineConfigDataObject.CameraXPosition - Center.Z());
+
+                // LinesVertexes.emplace_back(AtomObject2.X);
+                // LinesVertexes.emplace_back(AtomObject2.Y);
+                // LinesVertexes.emplace_back(AtomObject2.Z);
+
+                // LinesVertexes.push_back(AtomObject2.AtomColor.X);
+                // LinesVertexes.push_back(AtomObject2.AtomColor.Y);
+                // LinesVertexes.push_back(AtomObject2.AtomColor.Z);
+
+                LinesVertexes.push_back(0.0);
+                LinesVertexes.push_back(0.0);
+                LinesVertexes.push_back(0.0);
             }
 
             //DrawAllFoundBondsBetweenAtoms(LinesVertexes);
@@ -848,9 +1000,9 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
 
         ComputeInShaderCopyParticlesAndAtomsDataToGPUMemoryAndRender(ViewMatrix);
 
-        //FindAndDrawAllBondsBetweenAtoms(ViewMatrix);
+        FindAndDrawAllBondsBetweenAtoms(ViewMatrix);
         if (CellEngineConfigDataObject.DrawBondsBetweenAtoms == true)
-            DrawAllFoundBondsBetweenAtoms(LinesVertexes);
+            DrawAllFoundBondsBetweenAtoms(LinesVertexes, ViewMatrix);
             // for (UnsignedInt LinesVertexesThreadIndex = 1; LinesVertexesThreadIndex < LinesVertexes.size(); LinesVertexesThreadIndex++)
             //     if (LinesVertexes[LinesVertexesThreadIndex].empty() == false)
             //         DrawAllFoundBondsBetweenAtoms(LinesVertexes[LinesVertexesThreadIndex]);

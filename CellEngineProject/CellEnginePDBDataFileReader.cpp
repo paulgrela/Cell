@@ -98,6 +98,12 @@ void CellEnginePDBDataFileReader::ReadDataFromFile(const bool StartValuesBool, c
         LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Reading data from pdb file has taken time: ","executing printing duration_time")));
 
         File.close();
+
+        UnsignedInt ParticlesSize = 0;
+        FOR_EACH_PARTICLE_IN_SECTORS_XYZ_CONST
+            ParticlesSize++;
+
+        LoggersManagerObject.Log(STREAM("Number Of Particles = " << ParticlesSize << " Number Of Atoms = " << to_string(Particles[0][0][0].Particles.begin()->second.ListOfAtoms.size())));
     }
     CATCH("reading data from PDB file")
 }
