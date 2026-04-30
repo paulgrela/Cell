@@ -236,9 +236,11 @@ public:
                 DrawPlusMinusScalarButton(CellEngineConfigDataObject.SizeOfAtomChangeStep, 0.01, 0, 10, "Size Of Atoms Change Step", IDButton);
 
                 //static float SizeOfAtom3Axis = CellEngineConfigDataObject.SizeOfAtomX;
-                //DrawPlusMinusScalarButton(SizeOfAtom3Axis, CellEngineConfigDataObject.SizeOfAtomChangeStep, 0, 10, "Size Of Atoms 3 Axis", IDButton);
-                //static float SizeOfAtom3Axis = CellEngineConfigDataObject.MainSizeOfAtom;
-                DrawPlusMinusScalarButton(CellEngineConfigDataObject.MainSizeOfAtom, CellEngineConfigDataObject.SizeOfAtomChangeStep, 0, 10, "Size Of Atoms 3 Axis", IDButton);
+
+                static float SizeOfAtom3Axis = CellEngineConfigDataObject.MainSizeOfAtom;
+                //DrawPlusMinusScalarButton(CellEngineConfigDataObject.MainSizeOfAtom, CellEngineConfigDataObject.SizeOfAtomChangeStep, 0, 10, "Size Of Atoms 3 Axis", IDButton);
+                DrawPlusMinusScalarButton(SizeOfAtom3Axis, CellEngineConfigDataObject.SizeOfAtomChangeStep, 0, 10, "Size Of Atoms 3 Axis", IDButton);
+                CellEngineConfigDataObject.MainSizeOfAtom = SizeOfAtom3Axis;
                 CellEngineConfigDataObject.SizeOfAtomX = CellEngineConfigDataObject.MainSizeOfAtom;
                 CellEngineConfigDataObject.SizeOfAtomY = CellEngineConfigDataObject.MainSizeOfAtom;
                 CellEngineConfigDataObject.SizeOfAtomZ = CellEngineConfigDataObject.MainSizeOfAtom;
