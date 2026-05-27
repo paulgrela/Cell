@@ -169,6 +169,9 @@ public:
     };
     RandomColorEngineTypes RandomColorEngineObject = RandomColorEngineTypes::Rand;
 public:
+    bool UseMainColorForAllBondsBetweenAtoms = true;
+    vmath::vec3 MainColorForAllBondsBetweenAtoms{};
+public:
     std::string CellStateFileName;
     std::string CellStateFileNameBackup;
     std::string CellGenomePositionsFileName;
@@ -188,13 +191,13 @@ public:
     };
     MakeColorsType MakeColorsTypeObject = MakeColorsType::DrawColorForEveryParticle;
 public:
-    UnsignedInt NumberOfStencilBufferLoops{};
+    bool RenderTheWholePickedParticleInOnePickingColorForVoxelSpace = false;
     bool ShowDetailsOfPickedAtomParticle = false;
 public:
     bool DrawBondsBetweenAtoms{};
 public:
-    bool ShowDetailsInAtomScale = false;
-    bool CheckAtomVisibility{};
+    //bool ShowDetailsInAtomScale = false;
+    //bool CheckAtomVisibility{};//????
     float CutZ{};
     float Distance{};
     UnsignedInt LoadOfAtomsStep{};
@@ -215,11 +218,15 @@ public:
     };
     SizeOfAtomsDrawingTypes SizeOfAtomsDrawingTypesObject = SizeOfAtomsDrawingTypes::AutomaticChangeSize;
 public:
+    bool RenderCellWithCPUComputing = true;
+public:
+    bool UseMainSizeOfAtoms = true;
+public:
     float SizeOfAtomChangeStep{};
+    float MainSizeOfAtom{};
     float SizeOfAtomX{};
     float SizeOfAtomY{};
     float SizeOfAtomZ{};
-    float MainSizeOfAtom{};
     float RotationAngle1{};
     float RotationAngle2{};
     float RotationAngle3{};
@@ -243,7 +250,6 @@ public:
     float ViewZMoveLongStep{};
 public:
     bool ViewChangeUsingLongStep{};
-    bool AutomaticChangeOfSizeOfAtom{};
     bool AutomaticChangeOfLoadAtomsStep{};
 public:
     UnsignedInt ChosenStructureIndex = 0;

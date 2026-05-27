@@ -317,7 +317,7 @@
 			<ZLowToDrawInAtomScale>0</ZLowToDrawInAtomScale>
 			<ZHighToDrawInAtomScale>0</ZHighToDrawInAtomScale>
 			
-			<SizeOfAtomChangeStep>0.01</SizeOfAtomChangeStep>
+			<SizeOfAtomChangeStep>0.1</SizeOfAtomChangeStep>
 	
 			<SizeOfAtomX>1</SizeOfAtomX>
 			<SizeOfAtomY>1</SizeOfAtomY>
@@ -3808,7 +3808,7 @@
 			<ShowDetailsInAtomScale>true</ShowDetailsInAtomScale>
 			<CheckAtomVisibility>true</CheckAtomVisibility>
 			<CutZ>200</CutZ>
-			<Distance>2300</Distance>
+			<Distance>2550</Distance>
 			<LoadOfAtomsStep>1</LoadOfAtomsStep>
 
 			<XLowToDrawInAtomScale>-200</XLowToDrawInAtomScale>
@@ -3948,22 +3948,23 @@
 					<SizeZ>1</SizeZ>
 				</ParticleKind>
 
-                                <ParticleKind id="531">
-					<Name>MEMBRANE</Name>
+                                <ParticleKind id="101226">
+					<Name>LipidInnerMembrane</Name>
 					<Color>Orange</Color>
 					<Visible>true</Visible>
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>
 				</ParticleKind>
-				<ParticleKind id="532">
-					<Name>MEMBRANE</Name>
+				<ParticleKind id="101227">
+					<Name>LipidOuterMembrane</Name>
 					<Color>Pink</Color>
 					<Visible>true</Visible>
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>
 				</ParticleKind>
+
 				<ParticleKind id="10000">
 					<Name>OTHERS</Name>
 					<Color>Green</Color>

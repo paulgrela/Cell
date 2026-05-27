@@ -5,7 +5,7 @@
 
 #include <omp.h>
 
-        #include <chrono>
+#include <chrono>
 
 #include <sb7.h>
 #include <vmath.h>
@@ -25,7 +25,7 @@
 #include "CellEngineConfigData.h"
 #include "CellEngineOpenGLVisualiser.h"
 #include "CellEngineParticlesKindsManager.h"
-#include "CellEngineChemicalReactionsEngine.h"
+#include "glm/vec3.hpp"
 
 using namespace std;
 
@@ -120,7 +120,9 @@ void CellEngineOpenGLVisualiser::StartUp()
         // LinesVertexes.resize(256 + 1);
         // for (auto& LinesVertexesThread : LinesVertexes)
         //     LinesVertexesThread.reserve(1'000'000 * 6);
-        LinesVertexes.reserve(10'000'000 * 6);
+        //LinesVertexes.reserve(10'000'000 * 6);
+        LinesPositions.reserve(10'000'000 * 6);
+        LinesColors.reserve(10'000'000 * 6);
 
         GPUParticles.resize(10'000'000);
         GPUAtoms.resize(100'000'000);
@@ -275,35 +277,25 @@ void CellEngineOpenGLVisualiser::InitLineVertexes()
     CATCH("initiation of line vertexes")
 }
 
-void CellEngineOpenGLVisualiser::DrawAllFoundBondsBetweenAtoms(const vector<float>& LinesVertexesLocal, const vmath::mat4& ViewMatrix) const
+void CellEngineOpenGLVisualiser::DrawAllFoundBondsBetweenAtoms(const vmath::mat4& ViewMatrix) const
 {
     try
     {
-        uint32_t NumVertices = LinesVertexesLocal.size() / 6;
-
-        std::vector<float> Positions;
-        std::vector<float> Colors;
-        Positions.reserve(NumVertices * 3);
-        Colors.reserve(NumVertices * 3);
-
-        for (size_t i = 0; i < LinesVertexesLocal.size(); i += 6)
-        {
-            Positions.push_back(LinesVertexesLocal[i]);
-            Positions.push_back(LinesVertexesLocal[i + 1]);
-            Positions.push_back(LinesVertexesLocal[i + 2]);
-
-            Colors.push_back(LinesVertexesLocal[i + 3]);
-            Colors.push_back(LinesVertexesLocal[i + 4]);
-            Colors.push_back(LinesVertexesLocal[i + 5]);
-        }
+        const uint32_t NumVertices = LinesPositions.size() / 3;
 
         glBindBuffer(GL_ARRAY_BUFFER, LineDataBuffer[0]);
-        glBufferData(GL_ARRAY_BUFFER, Positions.size() * sizeof(float), Positions.data(), GL_DYNAMIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, LinesPositions.size() * sizeof(float), LinesPositions.data(), GL_DYNAMIC_DRAW);
 
         glBindBuffer(GL_ARRAY_BUFFER, LineDataBuffer[1]);
-        glBufferData(GL_ARRAY_BUFFER, Colors.size() * sizeof(float), Colors.data(), GL_DYNAMIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, LinesColors.size() * sizeof(float), LinesColors.data(), GL_DYNAMIC_DRAW);
 
         glUseProgram(LinesShaderProgram);
+
+        constexpr int UseMainLineColor = 1;
+        glUniform1i(glGetUniformLocation(LinesShaderProgram, "UseMainLineColor"), UseMainLineColor);
+
+        const auto MainLineColor = CellEngineConfigDataObject.MainColorForAllBondsBetweenAtoms;
+        glUniform3fv(glGetUniformLocation(LinesShaderProgram, "MainLineColor"), 1, MainLineColor);
 
         vmath::mat4 MVP = ProjectionMatrixGlobal * ViewMatrix;
         glUniformMatrix4fv(glGetUniformLocation(LinesShaderProgram, "MVP"), 1, GL_FALSE, MVP);
@@ -367,16 +359,6 @@ void CellEngineOpenGLVisualiser::FindAllBondsToDrawForParticle(const Particle& P
                 if (ParticleObject.ListOfAtoms.empty() == false)
                     FindBondsToDraw(ParticleObject.ListOfAtoms, BondsToDraw);
 
-            //vector<float> LinesVertexes;
-            //LinesVertexes.reserve(ParticleObject.ListOfAtoms.size() * 6);
-
-            // LinesVertexes.resize(std::thread::hardware_concurrency());
-            // for (auto& LinesVertexesThread : LinesVertexes)
-            //     LinesVertexesThread.reserve(1'000'000 * 6);
-
-            //for (auto& LinesVertexesThread : LinesVertexes)
-            //    LinesVertexesThread.clear();
-
             //LinesVertexes[omp_get_thread_num()].clear();
 
             for (const auto& BondToDrawObject : BondsToDraw)
@@ -384,36 +366,31 @@ void CellEngineOpenGLVisualiser::FindAllBondsToDrawForParticle(const Particle& P
                 const auto& AtomObject1 = ParticleObject.ListOfAtoms[BondToDrawObject.first];
                 const auto& AtomObject2 = ParticleObject.ListOfAtoms[BondToDrawObject.second];
 
+                LinesPositions.emplace_back(AtomObject1.X - CellEngineConfigDataObject.CameraXPosition - Center.X());
+                LinesPositions.emplace_back(AtomObject1.Y - CellEngineConfigDataObject.CameraYPosition - Center.Y());
+                LinesPositions.emplace_back(AtomObject1.Z - CellEngineConfigDataObject.CameraZPosition - Center.Z());
+
+                LinesPositions.emplace_back(AtomObject2.X - CellEngineConfigDataObject.CameraXPosition - Center.X());
+                LinesPositions.emplace_back(AtomObject2.Y - CellEngineConfigDataObject.CameraYPosition - Center.Y());
+                LinesPositions.emplace_back(AtomObject2.Z - CellEngineConfigDataObject.CameraZPosition - Center.Z());
+
+                if (CellEngineConfigDataObject.UseMainColorForAllBondsBetweenAtoms == false)
+                {
+                    LinesColors.push_back(AtomObject1.AtomColor.X);
+                    LinesColors.push_back(AtomObject1.AtomColor.Y);
+                    LinesColors.push_back(AtomObject1.AtomColor.Z);
+
+                    LinesColors.push_back(AtomObject2.AtomColor.X);
+                    LinesColors.push_back(AtomObject2.AtomColor.Y);
+                    LinesColors.push_back(AtomObject2.AtomColor.Z);
+                }
+
                 // LinesVertexes[omp_get_thread_num()].emplace_back(AtomObject1.X - CellEngineConfigDataObject.CameraXPosition - Center.X());
                 // LinesVertexes[omp_get_thread_num()].emplace_back(AtomObject1.Y - CellEngineConfigDataObject.CameraYPosition - Center.Y());
                 // LinesVertexes[omp_get_thread_num()].emplace_back(AtomObject1.Z - CellEngineConfigDataObject.CameraZPosition - Center.Z());
                 // LinesVertexes[omp_get_thread_num()].emplace_back(AtomObject2.X - CellEngineConfigDataObject.CameraXPosition - Center.X());
                 // LinesVertexes[omp_get_thread_num()].emplace_back(AtomObject2.Y - CellEngineConfigDataObject.CameraYPosition - Center.Y());
                 // LinesVertexes[omp_get_thread_num()].emplace_back(AtomObject2.Z - CellEngineConfigDataObject.CameraZPosition - Center.Z());
-
-                LinesVertexes.emplace_back(AtomObject1.X - CellEngineConfigDataObject.CameraXPosition - Center.X());
-                LinesVertexes.emplace_back(AtomObject1.Y - CellEngineConfigDataObject.CameraYPosition - Center.Y());
-                LinesVertexes.emplace_back(AtomObject1.Z - CellEngineConfigDataObject.CameraZPosition - Center.Z());
-
-                // LinesVertexes.push_back(AtomObject1.AtomColor.X);
-                // LinesVertexes.push_back(AtomObject1.AtomColor.Y);
-                // LinesVertexes.push_back(AtomObject1.AtomColor.Z);
-
-                LinesVertexes.push_back(0.0);
-                LinesVertexes.push_back(0.0);
-                LinesVertexes.push_back(0.0);
-
-                LinesVertexes.emplace_back(AtomObject2.X - CellEngineConfigDataObject.CameraXPosition - Center.X());
-                LinesVertexes.emplace_back(AtomObject2.Y - CellEngineConfigDataObject.CameraYPosition - Center.Y());
-                LinesVertexes.emplace_back(AtomObject2.Z - CellEngineConfigDataObject.CameraZPosition - Center.Z());
-
-                // LinesVertexes.emplace_back(AtomObject2.AtomColor.X);
-                // LinesVertexes.emplace_back(AtomObject2.AtomColor.Y);
-                // LinesVertexes.emplace_back(AtomObject2.AtomColor.Z);
-
-                LinesVertexes.push_back(0.0);
-                LinesVertexes.push_back(0.0);
-                LinesVertexes.push_back(0.0);
             }
         }
     }
@@ -443,35 +420,51 @@ void CellEngineOpenGLVisualiser::FindAllBondsToDrawForParticle(const Particle& P
 
 
 
-inline bool CellEngineOpenGLVisualiser::CheckDistanceToDrawDetailsInAtomScale(const float XNew, const float YNew, const float ZNew)
+inline bool CellEngineOpenGLVisualiser::CheckDistanceToDrawDetailsInAtomScale(const float XNew, const float YNew, const float ZNew) const
 {
-    if (CellEngineConfigDataObject.CheckAtomVisibility == true)
+    //if (CellEngineConfigDataObject.CheckAtomVisibility == true)
+    //{
+    if (CellEngineConfigDataObject.ViewPositionZ > CellEngineConfigDataObject.Distance)
     {
-        if (CellEngineConfigDataObject.ViewPositionZ > CellEngineConfigDataObject.Distance)
+        if (CellEngineConfigDataObject.ShowAtomsInEachPartOfTheCellWhenObserverIsFromOutside == false)
         {
-            if (CellEngineConfigDataObject.ShowAtomsInEachPartOfTheCellWhenObserverIsFromOutside == false)
+            //Ponizsza linia wariantowo bo gdy usunieta to cala sfera a z ta linia to pol sfery
+            //if (ZNew > CellEngineConfigDataObject.ViewPositionZ - CellEngineConfigDataObject.Distance)
+            if (ZNew > CellEngineConfigDataObject.ViewPositionZ - CellEngineConfigDataObject.Distance - 1300)
+            //if (CellEngineConfigDataObject.ViewPositionZ > CellEngineConfigDataObject.Distance + 200)
             {
-                //Ponizsza linia wariantowo bo gdy usunieta to cala sfera a z ta linia to pol sfery
-                if (ZNew > CellEngineConfigDataObject.ViewPositionZ - CellEngineConfigDataObject.Distance)
-                {
-                    const float AtomDistance = sqrt((XNew * XNew) + (YNew * YNew) + (ZNew * ZNew - CellEngineConfigDataObject.ViewPositionZ * CellEngineConfigDataObject.ViewPositionZ));
+                //const float AtomDistance = sqrt((XNew * XNew) + (YNew * YNew) + (ZNew * ZNew - CellEngineConfigDataObject.ViewPositionZ * CellEngineConfigDataObject.ViewPositionZ));
+                //const float AtomDistance = sqrt((XNew * XNew) + (YNew * YNew) + (ZNew * ZNew));
+                //const float AtomDistance = sqrt((XNew * XNew) + (YNew * YNew) + ((ZNew - CellEngineConfigDataObject.ViewPositionZ) * (ZNew - CellEngineConfigDataObject.ViewPositionZ)));
+                //const float AtomDistance = sqrt(((XNew - CellEngineConfigDataObject.ViewPositionX) * (XNew - CellEngineConfigDataObject.ViewPositionX)) + ((YNew - CellEngineConfigDataObject.ViewPositionY) * (YNew - CellEngineConfigDataObject.ViewPositionY)) + ((ZNew - CellEngineConfigDataObject.ViewPositionZ) * (ZNew - CellEngineConfigDataObject.ViewPositionZ)));
+                //const float AtomDistance = sqrt(((XNew - CellEngineConfigDataObject.ViewPositionX - Center.X()) * (XNew - CellEngineConfigDataObject.ViewPositionX - Center.X())) + ((YNew - CellEngineConfigDataObject.ViewPositionY - Center.Y()) * (YNew - CellEngineConfigDataObject.ViewPositionY - Center.Y())) + ((ZNew - CellEngineConfigDataObject.ViewPositionZ - Center.Z()) * (ZNew - CellEngineConfigDataObject.ViewPositionZ - Center.Z())));
 
-                    const float minDist = CellEngineConfigDataObject.ViewPositionZ - CellEngineConfigDataObject.Distance - 1000;
-                    const float maxDist = CellEngineConfigDataObject.ViewPositionZ - CellEngineConfigDataObject.Distance + 1000;
+                const float AtomDistance = sqrt(((XNew - Center.X()) * (XNew - Center.X())) + ((YNew - Center.Y()) * (YNew - Center.Y())) + ((ZNew - Center.Z()) * (ZNew - Center.Z())));
 
-                    return (AtomDistance > minDist && AtomDistance < maxDist);
-                }
-                else
-                    return false;
+                const float minDist = CellEngineConfigDataObject.ViewPositionZ - CellEngineConfigDataObject.Distance - 250;
+                const float maxDist = CellEngineConfigDataObject.ViewPositionZ - CellEngineConfigDataObject.Distance + 250;
+
+                // const float minDist = CellEngineConfigDataObject.ViewPositionZ - CellEngineConfigDataObject.Distance - 100;
+                // const float maxDist = CellEngineConfigDataObject.ViewPositionZ - CellEngineConfigDataObject.Distance + 100;
+
+                //const float minDist = CellEngineConfigDataObject.ViewPositionZ - CellEngineConfigDataObject.Distance - 1000;
+                //const float maxDist = CellEngineConfigDataObject.ViewPositionZ - CellEngineConfigDataObject.Distance + 1000;
+                // const float minDist = CellEngineConfigDataObject.Distance - 1000;
+                // const float maxDist = CellEngineConfigDataObject.Distance + 1000;
+
+                return (AtomDistance > minDist && AtomDistance < maxDist);
             }
             else
-                return true;
+                return false;
         }
         else
-            return (ZNew > CellEngineConfigDataObject.ViewPositionZ + CellEngineConfigDataObject.ZLowToDrawInAtomScale && ZNew < CellEngineConfigDataObject.ViewPositionZ + CellEngineConfigDataObject.ZHighToDrawInAtomScale && XNew > CellEngineConfigDataObject.XLowToDrawInAtomScale && XNew < CellEngineConfigDataObject.XHighToDrawInAtomScale && YNew > CellEngineConfigDataObject.YLowToDrawInAtomScale && YNew < CellEngineConfigDataObject.YHighToDrawInAtomScale);
+            return true;
     }
     else
-        return false;
+        return (ZNew > CellEngineConfigDataObject.ViewPositionZ + CellEngineConfigDataObject.ZLowToDrawInAtomScale && ZNew < CellEngineConfigDataObject.ViewPositionZ + CellEngineConfigDataObject.ZHighToDrawInAtomScale && XNew > CellEngineConfigDataObject.XLowToDrawInAtomScale && XNew < CellEngineConfigDataObject.XHighToDrawInAtomScale && YNew > CellEngineConfigDataObject.YLowToDrawInAtomScale && YNew < CellEngineConfigDataObject.YHighToDrawInAtomScale);
+    //}
+    //else
+    //    return false;
 }
 
 inline void CellEngineOpenGLVisualiser::DrawCenterPoint(UniformsBlock* MatrixUniformBlockForVertexShaderPointer, vmath::mat4& ModelMatrix)
@@ -490,9 +483,9 @@ inline bool CellEngineOpenGLVisualiser::GetFinalVisibilityInModelWorld(const vma
     {
         if (CountNewPosition == true)
         {
-            const float XNew = MatrixUniformBlockForVertexShaderPointer->MoveMatrix[0][0] * (AtomPosition.X() + CellEngineConfigDataObject.CameraXPosition - Center.X()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[1][0] * (AtomPosition.Y() + CellEngineConfigDataObject.CameraYPosition - Center.Y()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[2][0] * (AtomPosition.Z() + CellEngineConfigDataObject.CameraZPosition - Center.Z());
-            const float YNew = MatrixUniformBlockForVertexShaderPointer->MoveMatrix[0][1] * (AtomPosition.X() + CellEngineConfigDataObject.CameraXPosition - Center.X()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[1][1] * (AtomPosition.Y() + CellEngineConfigDataObject.CameraYPosition - Center.Y()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[2][1] * (AtomPosition.Z() + CellEngineConfigDataObject.CameraZPosition - Center.Z());
-            const float ZNew = MatrixUniformBlockForVertexShaderPointer->MoveMatrix[0][2] * (AtomPosition.X() + CellEngineConfigDataObject.CameraXPosition - Center.X()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[1][2] * (AtomPosition.Y() + CellEngineConfigDataObject.CameraYPosition - Center.Y()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[2][2] * (AtomPosition.Z() + CellEngineConfigDataObject.CameraZPosition - Center.Z());
+            const float XNew = MatrixUniformBlockForVertexShaderPointer->MoveMatrix[0][0] * (AtomPosition.X() - CellEngineConfigDataObject.CameraXPosition - Center.X()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[1][0] * (AtomPosition.Y() - CellEngineConfigDataObject.CameraYPosition - Center.Y()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[2][0] * (AtomPosition.Z() + CellEngineConfigDataObject.CameraZPosition - Center.Z());
+            const float YNew = MatrixUniformBlockForVertexShaderPointer->MoveMatrix[0][1] * (AtomPosition.X() - CellEngineConfigDataObject.CameraXPosition - Center.X()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[1][1] * (AtomPosition.Y() - CellEngineConfigDataObject.CameraYPosition - Center.Y()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[2][1] * (AtomPosition.Z() + CellEngineConfigDataObject.CameraZPosition - Center.Z());
+            const float ZNew = MatrixUniformBlockForVertexShaderPointer->MoveMatrix[0][2] * (AtomPosition.X() - CellEngineConfigDataObject.CameraXPosition - Center.X()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[1][2] * (AtomPosition.Y() - CellEngineConfigDataObject.CameraYPosition - Center.Y()) + MatrixUniformBlockForVertexShaderPointer->MoveMatrix[2][2] * (AtomPosition.Z() + CellEngineConfigDataObject.CameraZPosition - Center.Z());
 
             if (DrawOutsideBorder == true)
                 if (CheckDistanceToDrawDetailsInAtomScale(XNew, YNew, ZNew) == true)
@@ -575,8 +568,7 @@ inline vmath::vec3 CellEngineOpenGLVisualiser::GetSize(const CellEngineAtom& Ato
             case CellEngineConfigData::SizeOfAtomsDrawingTypes::AtomSize : Size = vmath::vec3(AtomObject.SizeXAtom, AtomObject.SizeYAtom, AtomObject.SizeZAtom); break;
             case CellEngineConfigData::SizeOfAtomsDrawingTypes::ParticleSize : Size = vmath::vec3(AtomObject.SizeXParticle, AtomObject.SizeYParticle, AtomObject.SizeZParticle); break;
             #endif
-            //case CellEngineConfigData::SizeOfAtomsDrawingTypes::AutomaticChangeSize : Size = vmath::vec3(CellEngineConfigDataObject.SizeOfAtomX, CellEngineConfigDataObject.SizeOfAtomY, CellEngineConfigDataObject.SizeOfAtomZ); break;
-            case CellEngineConfigData::SizeOfAtomsDrawingTypes::AutomaticChangeSize : Size = vmath::vec3(CellEngineConfigDataObject.MainSizeOfAtom, CellEngineConfigDataObject.MainSizeOfAtom, CellEngineConfigDataObject.MainSizeOfAtom); break;
+            case CellEngineConfigData::SizeOfAtomsDrawingTypes::AutomaticChangeSize : (CellEngineConfigDataObject.UseMainSizeOfAtoms == true ? Size = vmath::vec3(CellEngineConfigDataObject.MainSizeOfAtom, CellEngineConfigDataObject.MainSizeOfAtom, CellEngineConfigDataObject.MainSizeOfAtom) : Size = vmath::vec3(CellEngineConfigDataObject.SizeOfAtomX, CellEngineConfigDataObject.SizeOfAtomY, CellEngineConfigDataObject.SizeOfAtomZ)); break;
             default : break;
         }
     }
@@ -585,16 +577,17 @@ inline vmath::vec3 CellEngineOpenGLVisualiser::GetSize(const CellEngineAtom& Ato
     return Size;
 }
 
-bool CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom& AtomObject, const Particle& ParticleObject, const vmath::mat4& ViewMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, const bool Chosen, const bool RenderObjectParameter)
+bool CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom& AtomObject, const Particle& ParticleObject, const vmath::mat4& ViewMatrix, const bool CountNewPosition, const bool DrawCenter, const bool DrawOutsideBorder, const bool Chosen)
 {
     bool FinalVisibilityInModelWorld{};
 
     try
     {
         const vmath::vec3 AtomPosition = LengthUnit * AtomObject.Position();
-        //const vmath::vec3 SizeLocal = GetSize(AtomObject);
-        //vmath::mat4 ModelMatrix = vmath::translate(AtomPosition.X() - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomPosition.Y() + CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomPosition.Z() + CellEngineConfigDataObject.CameraZPosition - Center.Z()) * vmath::scale(vmath::vec3(SizeLocal.X(), SizeLocal.Y(), SizeLocal.Z()));
-        vmath::mat4 ModelMatrix = vmath::translate(AtomPosition.X() - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomPosition.Y() + CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomPosition.Z() + CellEngineConfigDataObject.CameraZPosition - Center.Z());
+        //TU PONIZEJ + czy - CellEngineConfigDataObject.CameraXPosition
+        //vmath::mat4 ModelMatrix = vmath::translate(AtomPosition.X() - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomPosition.Y() + CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomPosition.Z() + CellEngineConfigDataObject.CameraZPosition - Center.Z());
+        //vmath::mat4 ModelMatrix = vmath::translate(AtomPosition.X() - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomPosition.Y() - CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomPosition.Z() - CellEngineConfigDataObject.CameraZPosition - Center.Z());
+        vmath::mat4 ModelMatrix = vmath::translate(AtomPosition.X() - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomPosition.Y() - CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomPosition.Z() - CellEngineConfigDataObject.CameraZPosition - Center.Z());
 
         FinalVisibilityInModelWorld = CreateUniformBlockForVertexShader(AtomPosition, CellEngineUseful::GetVMathVec3FromVector3ForColor(GetColor<CellEngineAtom>(AtomObject, ParticleObject, Chosen)), ViewMatrix, ModelMatrix, CountNewPosition, DrawCenter, DrawOutsideBorder, true);
     }
@@ -607,23 +600,19 @@ inline void CellEngineOpenGLVisualiser::SetAutomaticParametersForRendering()
 {
     try
     {
-        if (CellEngineConfigDataObject.ShowDetailsInAtomScale == true)
+        // if (CellEngineConfigDataObject.ShowDetailsInAtomScale == true)
+        // {
+        if (CellEngineConfigDataObject.ViewPositionZ > CellEngineConfigDataObject.Distance)
         {
-            if (CellEngineConfigDataObject.ViewPositionZ > CellEngineConfigDataObject.Distance)
-            {
-                if (CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep == true)
-                    CellEngineConfigDataObject.LoadOfAtomsStep = 10;
-                if (CellEngineConfigDataObject.AutomaticChangeOfSizeOfAtom == true)
-                    CellEngineConfigDataObject.SizeOfAtomX = CellEngineConfigDataObject.SizeOfAtomY = CellEngineConfigDataObject.SizeOfAtomZ = 3;
-            }
-            else
-            {
-                if (CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep == true)
-                    CellEngineConfigDataObject.LoadOfAtomsStep = 1;
-                if (CellEngineConfigDataObject.AutomaticChangeOfSizeOfAtom == true)
-                    CellEngineConfigDataObject.SizeOfAtomX = CellEngineConfigDataObject.SizeOfAtomY = CellEngineConfigDataObject.SizeOfAtomZ = CellEngineConfigDataObject.MainSizeOfAtom;
-            }
+            if (CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep == true)
+                CellEngineConfigDataObject.LoadOfAtomsStep = 5;
         }
+        else
+        {
+            if (CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep == true)
+                CellEngineConfigDataObject.LoadOfAtomsStep = 1;
+        }
+        // }
     }
     CATCH("setting automatic parameters for rendering")
 }
@@ -685,14 +674,9 @@ void CellEngineOpenGLVisualiser::ComputeInShaderCopyParticlesAndAtomsDataToGPUMe
     {
         //LoggersManagerObject.Log(STREAM("P=" << GPUParticles.size() << " " << GPUAtoms.size()));
 
-        // NumberOfAllRenderedAtoms = AtomOffsetTotal;
-        // NumberOfFoundParticlesCenterToBeRenderedInAtomDetails = ParticlesOffsetTotal;
-
         glUseProgram(ComputeShaderProgram);
 
-        //const float LocalMainSizeOfAtom = 0.3;
-        const float LocalMainSizeOfAtom = CellEngineConfigDataObject.MainSizeOfAtom;
-        glUniform1fv(glGetUniformLocation(ComputeShaderProgram, "AtomSize"), 1, &LocalMainSizeOfAtom);
+        glUniform1fv(glGetUniformLocation(ComputeShaderProgram, "AtomSize"), 1, &CellEngineConfigDataObject.MainSizeOfAtom);
         glUniform1fv(glGetUniformLocation(ComputeShaderProgram, "CameraXPosition"), 1, &CellEngineConfigDataObject.CameraXPosition);
         glUniform1fv(glGetUniformLocation(ComputeShaderProgram, "CameraYPosition"), 1, &CellEngineConfigDataObject.CameraYPosition);
         glUniform1fv(glGetUniformLocation(ComputeShaderProgram, "CameraZPosition"), 1, &CellEngineConfigDataObject.CameraZPosition);
@@ -740,7 +724,7 @@ void CellEngineOpenGLVisualiser::ComputeInShaderCopyParticlesAndAtomsDataToGPUMe
 
 
         if (CellEngineConfigDataObject.DrawBondsBetweenAtoms == true)
-            DrawAllFoundBondsBetweenAtoms(LinesVertexes, ViewMatrix);
+            DrawAllFoundBondsBetweenAtoms(ViewMatrix);
         // for (UnsignedInt LinesVertexesThreadIndex = 1; LinesVertexesThreadIndex < LinesVertexes.size(); LinesVertexesThreadIndex++)
         //     if (LinesVertexes[LinesVertexesThreadIndex].empty() == false)
         //         DrawAllFoundBondsBetweenAtoms(LinesVertexes[LinesVertexesThreadIndex]);
@@ -809,8 +793,6 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
     {
         CopyMousePositionWhenButtonPressed();
 
-        CellEngineConfigDataObject.ShowDetailsOfPickedAtomParticle == true ? CellEngineConfigDataObject.NumberOfStencilBufferLoops = 3 : CellEngineConfigDataObject.NumberOfStencilBufferLoops = 1;
-
         const auto start_time = chrono::high_resolution_clock::now();
 
         LoadShapeOfAtomsWhenChanged();
@@ -829,7 +811,11 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
         AtomOffsetTotal = 0;
         AtomLocalOffsetTotal = 0;
 
-        LinesVertexes.clear();
+        //LinesVertexes.clear();
+        LinesPositions.clear();
+        LinesColors.clear();
+        if (CellEngineConfigDataObject.UseMainColorForAllBondsBetweenAtoms == true)
+            LinesColors.resize(6);
 
         RenderSpace(ViewMatrix);
         FindAndDrawAllBondsBetweenAtoms(ViewMatrix);

@@ -103,7 +103,9 @@ private:
     Uniforms{};
 protected:
     //vector<vector<float>> LinesVertexes{};
-    vector<float> LinesVertexes{};
+    //vector<float> LinesVertexes{};
+    std::vector<float> LinesPositions{};
+    std::vector<float> LinesColors{};
 private:
     Matrix3fT ArcBallPrevRotationMatrix{};
     Matrix3fT ArcBallActualRotationMatrix{};
@@ -147,7 +149,7 @@ protected:
     void DeleteLineVertexes() const;
     static void FindBondsToDraw(const std::vector<CellEngineAtom>& Atoms, std::vector<std::pair<UnsignedInt, UnsignedInt>>& BondsToDraw);
     void FindAllBondsToDrawForParticle(const Particle& ParticleObject, std::vector<std::pair<UnsignedInt, UnsignedInt>>& BondsToDraw, bool DrawBonds, const vmath::mat4& ViewMatrix);
-    void DrawAllFoundBondsBetweenAtoms(const vector<float>& LinesVertexesLocal, const vmath::mat4& ViewMatrix) const;
+    void DrawAllFoundBondsBetweenAtoms(const vmath::mat4& ViewMatrix) const;
 public:
     static std::string GetEntityName(UnsignedInt EntityId);
     static void SetVisibilityOfAllParticles(bool VisibleParam);
@@ -177,7 +179,7 @@ protected:
     static inline void DrawCenterPoint(UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, vmath::mat4& ModelMatrix);
     inline bool GetFinalVisibilityInModelWorld(const vmath::vec3& AtomPosition, UniformsBlock*  MatrixUniformBlockForVertexShaderPointer, bool CountNewPosition, bool DrawOutsideBorder) const;
     inline bool CreateUniformBlockForVertexShader(const vmath::vec3& Position, const vmath::vec3& Color, const vmath::mat4& ViewMatrix, vmath::mat4& ModelMatrix, bool CountNewPosition, bool DrawCenter, bool DrawOutsideBorder, bool DrawAdditional) const;
-    bool RenderObject(const CellEngineAtom& AtomObject, const Particle& ParticleObject, const vmath::mat4& ViewMatrix, bool CountNewPosition, bool DrawCenter, bool DrawOutsideBorder, bool Chosen, bool RenderObjectParameter);
+    bool RenderObject(const CellEngineAtom& AtomObject, const Particle& ParticleObject, const vmath::mat4& ViewMatrix, bool CountNewPosition, bool DrawCenter, bool DrawOutsideBorder, bool Chosen);
     static inline void SetAutomaticParametersForRendering();
     inline void PrepareOpenGLToRenderObjectsOnScene() const;
     inline void LoadShapeOfAtomsWhenChanged();
@@ -188,7 +190,7 @@ protected:
 protected:
     virtual void GetStartCenterPoint() = 0;
 protected:
-    [[nodiscard]] static inline bool CheckDistanceToDrawDetailsInAtomScale(float XNew, float YNew, float ZNew);
+    [[nodiscard]] inline bool CheckDistanceToDrawDetailsInAtomScale(float XNew, float YNew, float ZNew) const;
 };
 
 #endif

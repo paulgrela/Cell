@@ -234,13 +234,7 @@ public:
             if (ImGui::CollapsingHeader("Size Of Atoms"))
             {
                 DrawPlusMinusScalarButton(CellEngineConfigDataObject.SizeOfAtomChangeStep, 0.01, 0, 10, "Size Of Atoms Change Step", IDButton);
-
-                //static float SizeOfAtom3Axis = CellEngineConfigDataObject.SizeOfAtomX;
-
-                static float SizeOfAtom3Axis = CellEngineConfigDataObject.MainSizeOfAtom;
-                //DrawPlusMinusScalarButton(CellEngineConfigDataObject.MainSizeOfAtom, CellEngineConfigDataObject.SizeOfAtomChangeStep, 0, 10, "Size Of Atoms 3 Axis", IDButton);
-                DrawPlusMinusScalarButton(SizeOfAtom3Axis, CellEngineConfigDataObject.SizeOfAtomChangeStep, 0, 10, "Size Of Atoms 3 Axis", IDButton);
-                CellEngineConfigDataObject.MainSizeOfAtom = SizeOfAtom3Axis;
+                DrawPlusMinusScalarButton(CellEngineConfigDataObject.MainSizeOfAtom, CellEngineConfigDataObject.SizeOfAtomChangeStep, 0, 10, "Size Of Atoms 3 Axis", IDButton);
                 CellEngineConfigDataObject.SizeOfAtomX = CellEngineConfigDataObject.MainSizeOfAtom;
                 CellEngineConfigDataObject.SizeOfAtomY = CellEngineConfigDataObject.MainSizeOfAtom;
                 CellEngineConfigDataObject.SizeOfAtomZ = CellEngineConfigDataObject.MainSizeOfAtom;
@@ -300,6 +294,8 @@ public:
 
                 ImGui::Checkbox("Print atom description on screen", &CellEngineConfigDataObject.PrintAtomDescriptionOnScreen);
 
+                ImGui::Checkbox("Render the whole picked particle in one picking color for voxel space", &CellEngineConfigDataObject.RenderTheWholePickedParticleInOnePickingColorForVoxelSpace);
+
                 if (CellEngineConfigDataObject.ShowDetailsOfPickedAtomParticle == true)
                 {
                     ImGui::Text("ATOM DATA:");
@@ -318,6 +314,8 @@ public:
         {
             if (ImGui::CollapsingHeader("Rendering Information", ImGuiTreeNodeFlags_DefaultOpen))
             {
+                ImGui::Checkbox("Render Cell with CPU Computing", &CellEngineConfigDataObject.RenderCellWithCPUComputing);
+
                 ImGui::Text("%s", CellEngineConfigDataObject.TimeParametersOfRenderingStr.c_str());
 
                 ImGui::Text("%s", GetDurationTimeInOneLine(ExecutionDurationTimeForDrawingParticles, "A=", "E").c_str());
@@ -444,8 +442,7 @@ public:
     {
         try
         {
-            ImGui::Checkbox("Automatic Change Of Size Of Atom", &CellEngineConfigDataObject.AutomaticChangeOfSizeOfAtom);
-            ImGui::Checkbox("Show Details In Atom Scale", &CellEngineConfigDataObject.ShowDetailsInAtomScale);
+            //ImGui::Checkbox("Show Details In Atom Scale", &CellEngineConfigDataObject.ShowDetailsInAtomScale);
             ImGui::Checkbox("Show Atoms In Each Part Of the Cell", &CellEngineConfigDataObject.ShowAtomsInEachPartOfTheCellWhenObserverIsFromOutside);
             ImGui::Checkbox("Draw Bonds Between Atoms", &CellEngineConfigDataObject.DrawBondsBetweenAtoms);
             ImGui::Checkbox("Render Objects", &CellEngineOpenGLVisualiserPointer->RenderObjectsBool);
@@ -1128,8 +1125,6 @@ public:
         {
             if (CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer != nullptr)
             {
-                //conditional_lock_guard<recursive_mutex> LockGuardCond(CellEngineConfigDataObject.UseMutexBetweenMainScreenThreadAndMenuThreads, &CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderMenuAndVoxelSimulationSpaceMutexObject);
-
                 const auto CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer = dynamic_cast<CellEngineOpenGLVisualiserOfVoxelSimulationSpace*>(CellEngineOpenGLVisualiserPointer.get());
 
                 const auto StartPos = CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->GetStartPositions();
@@ -1915,6 +1910,9 @@ public:
             StartMPIAllProcessesForCellEngine();
 
             CellEngineDataFileObjectPointer = CreateCellEngineDataFileObject(CellEngineConfigDataObject.CellStateFileName);
+
+            CellEngineConfigDataObject.UseMainColorForAllBondsBetweenAtoms = true;
+            CellEngineConfigDataObject.MainColorForAllBondsBetweenAtoms = CellEngineConfigDataObject.TypeOfFileToRead != CellEngineConfigData::TypesOfFileToRead::PDBFile ? vmath::vec3(0.0, 0.0, 0.0) : vmath::FromVec4ToVec3(sb7::color::Cyan);
 
             CellEngineDataFileObjectPointer->ReadDataFromFile(true, true, CellEngineConfigDataObject.TypeOfFileToRead);
 

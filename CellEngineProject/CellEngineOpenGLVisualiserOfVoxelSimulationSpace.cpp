@@ -150,8 +150,7 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::GenerateVoxelsForGPU(cons
             GPUAtomObject.Y = TempAtomObject.Y;
             GPUAtomObject.Z = TempAtomObject.Z;
 
-            const auto ParticleColor = CellEngineUseful::GetVMathVec3FromVector3ForColor(GetColor<CellEngineAtom>(TempAtomObject, ParticleObject, ChosenAtomObjectIndex == AtomTotalIndex));
-            //const auto ParticleColor = CellEngineUseful::GetVMathVec3FromVector3ForColor(GetColor<CellEngineAtom>(TempAtomObject, ParticleObject, ChosenParticleObject.Index == ParticleObject.Index));
+            const auto ParticleColor = CellEngineConfigDataObject.RenderTheWholePickedParticleInOnePickingColorForVoxelSpace == false ? CellEngineUseful::GetVMathVec3FromVector3ForColor(GetColor<CellEngineAtom>(TempAtomObject, ParticleObject, ChosenAtomObjectIndex == AtomTotalIndex)) : CellEngineUseful::GetVMathVec3FromVector3ForColor(GetColor<CellEngineAtom>(TempAtomObject, ParticleObject, ChosenParticleObject.Index == ParticleObject.Index));
 
             GPUAtomObject.ColorR = ParticleColor.X();
             GPUAtomObject.ColorG = ParticleColor.Y();
@@ -229,8 +228,6 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSpace(const vmath::
     {
         AtomTotalIndex = 0;
 
-        GLuint PartOfStencilBufferIndex[3];
-
         CellEngineAtom TempAtomObject;
 
         std::vector<TemporaryRenderedVoxel> TemporaryRenderedVoxelsList;
@@ -248,7 +245,7 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSpace(const vmath::
                     {
                         TempAtomObject.SetAtomPositionsData(CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(PosX), CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(PosY), CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(PosZ));
 
-                        if (RenderObject(TempAtomObject, Particle(), ViewMatrix, true, false, true, false, !CellEngineConfigDataObject.ShowDetailsInAtomScale) == true)
+                        if (RenderObject(TempAtomObject, Particle(), ViewMatrix, true, false, true, false) == true)
                         {
                             RenderSelectedSpace(PosX, PosY, PosZ, CellEngineConfigDataObject.LoadOfAtomsStep, CellEngineConfigDataObject.LoadOfAtomsStep, CellEngineConfigDataObject.LoadOfAtomsStep, 64, 64, 64, ViewMatrix, TempAtomObject, TemporaryRenderedVoxelsList, 0);
                             NumberOfRenderedSelectedSpaces++;

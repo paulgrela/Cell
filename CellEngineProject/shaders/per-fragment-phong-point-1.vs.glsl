@@ -38,7 +38,9 @@ void main(void)
     instanceID = p.ParticleIdL;
 
     vec3 particleCenter = vec3(p.mv_matrix[3][0], p.mv_matrix[3][1], p.mv_matrix[3][2]);
-    float viewDistance = -particleCenter.z;
+
+    float viewDistance = -particleCenter.z + 1300;
+    //float viewDistance = -particleCenter.z;//DLA PDB
 
     if (viewDistance > billboardDistance)
     {

@@ -37,8 +37,8 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace1(const vma
 
         FOR_EACH_SECTOR_IN_XYZ_ONLY
             if (CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.empty() == false)
-                if (CellEngineConfigDataObject.TypeOfFileToRead == CellEngineConfigData::TypesOfFileToRead::PDBFile || (CellEngineConfigDataObject.TypeOfFileToRead != CellEngineConfigData::TypesOfFileToRead::PDBFile && RenderObject(CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.begin()->second.ListOfAtoms.back(), Particle(), ViewMatrix, true, false, true, false, !CellEngineConfigDataObject.ShowDetailsInAtomScale) == true))
-                    if (CellEngineConfigDataObject.ShowDetailsInAtomScale == true)
+                if (CellEngineConfigDataObject.TypeOfFileToRead == CellEngineConfigData::TypesOfFileToRead::PDBFile || (CellEngineConfigDataObject.TypeOfFileToRead != CellEngineConfigData::TypesOfFileToRead::PDBFile && RenderObject(CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.begin()->second.ListOfAtoms.back(), Particle(), ViewMatrix, true, false, true, false) == true))
+                    //if (CellEngineConfigDataObject.ShowDetailsInAtomScale == true)
                         for (const auto& ParticleObject : CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles | views::values)
                             if (ParticlesKindsManagerObject.GetGraphicParticleKind(ParticleObject.EntityId).Visible == true)
                             {
@@ -115,9 +115,10 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace2(const vma
         #pragma omp parallel for collapse(3) num_threads(128) default(none) shared(CellEngineConfigDataObject, CellEngineDataFileObjectPointer, ViewMatrix, ParticlesKindsManagerObject, AtomOffsetInSectors, GPUAtomsInSectors, GPUParticlesInSectors, GPUAtomsLocalInSectors) schedule(dynamic)
         FOR_EACH_SECTOR_IN_XYZ_ONLY
             if (CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.empty() == false)
-                if (CellEngineConfigDataObject.TypeOfFileToRead == CellEngineConfigData::TypesOfFileToRead::PDBFile || (CellEngineConfigDataObject.TypeOfFileToRead != CellEngineConfigData::TypesOfFileToRead::PDBFile && RenderObject(CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.begin()->second.ListOfAtoms.back(), Particle(), ViewMatrix, true, false, true, false, !CellEngineConfigDataObject.ShowDetailsInAtomScale) == true))
-                    if (CellEngineConfigDataObject.ShowDetailsInAtomScale == true)
+                if (CellEngineConfigDataObject.TypeOfFileToRead == CellEngineConfigData::TypesOfFileToRead::PDBFile || (CellEngineConfigDataObject.TypeOfFileToRead != CellEngineConfigData::TypesOfFileToRead::PDBFile && RenderObject(CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.begin()->second.ListOfAtoms.back(), Particle(), ViewMatrix, true, false, true, false) == true))
+                    //if (CellEngineConfigDataObject.ShowDetailsInAtomScale == true)
                         for (const auto& ParticleObject : CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles)
+                        //if (CellEngineConfigDataObject.TypeOfFileToRead == CellEngineConfigData::TypesOfFileToRead::PDBFile || (CellEngineConfigDataObject.TypeOfFileToRead != CellEngineConfigData::TypesOfFileToRead::PDBFile && RenderObject(ParticleObject.second.ListOfAtoms.back(), Particle(), ViewMatrix, true, false, true, false) == true))
                             if (ParticlesKindsManagerObject.GetGraphicParticleKind(ParticleObject.second.EntityId).Visible == true)
                             {
                                 GPUParticle GPUParticleObject;
@@ -210,8 +211,8 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::FindAndDrawAllBondsBet
             // #pragma omp parallel for collapse(3) num_threads(16) default(none) shared(CellEngineConfigDataObject, CellEngineDataFileObjectPointer, ViewMatrix, ParticlesKindsManagerObject) schedule(dynamic)
             FOR_EACH_SECTOR_IN_XYZ_ONLY
                 if (CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.empty() == false)
-                    if (CellEngineConfigDataObject.TypeOfFileToRead == CellEngineConfigData::TypesOfFileToRead::PDBFile || (CellEngineConfigDataObject.TypeOfFileToRead != CellEngineConfigData::TypesOfFileToRead::PDBFile && RenderObject(CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.begin()->second.ListOfAtoms.back(), Particle(), ViewMatrix, true, false, true, false, !CellEngineConfigDataObject.ShowDetailsInAtomScale) == true))
-                        if (CellEngineConfigDataObject.ShowDetailsInAtomScale == true)
+                    if (CellEngineConfigDataObject.TypeOfFileToRead == CellEngineConfigData::TypesOfFileToRead::PDBFile || (CellEngineConfigDataObject.TypeOfFileToRead != CellEngineConfigData::TypesOfFileToRead::PDBFile && RenderObject(CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.begin()->second.ListOfAtoms.back(), Particle(), ViewMatrix, true, false, true, false) == true))
+                        //if (CellEngineConfigDataObject.ShowDetailsInAtomScale == true)
                             for (auto& ParticleObject : CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles)
                                 if (ParticlesKindsManagerObject.GetGraphicParticleKind(ParticleObject.second.EntityId).Visible == true)
                                     FindAllBondsToDrawForParticle(ParticleObject.second, ParticleObject.second.BondsBetweenAtomsToDraw, CellEngineConfigDataObject.DrawBondsBetweenAtoms, ViewMatrix);
@@ -224,8 +225,10 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(const vmat
 {
     try
     {
-        //RenderSpace1(ViewMatrix, ParticlesOffsetTotal, AtomOffsetTotal, AtomLocalOffsetTotal, GPUParticles, GPUAtoms, GPUAtomsLocal);
-        RenderSpace2(ViewMatrix, ParticlesOffsetTotal, AtomOffsetTotal, AtomLocalOffsetTotal);
+        if (CellEngineConfigDataObject.RenderCellWithCPUComputing == false)
+            RenderSpace1(ViewMatrix, ParticlesOffsetTotal, AtomOffsetTotal, AtomLocalOffsetTotal, GPUParticles, GPUAtoms, GPUAtomsLocal);
+        else
+            RenderSpace2(ViewMatrix, ParticlesOffsetTotal, AtomOffsetTotal, AtomLocalOffsetTotal);
     }
     CATCH("rendering full atom simulation space");
 }
