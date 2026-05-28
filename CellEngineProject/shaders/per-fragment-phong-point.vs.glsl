@@ -39,28 +39,13 @@ void main(void)
 
     vec3 particleCenter = vec3(p.mv_matrix[3][0], p.mv_matrix[3][1], p.mv_matrix[3][2]);
 
-    float viewDistance = -particleCenter.z;
+    vec4 clipPos = ProjectionMatrix * vec4(particleCenter, 1.0);
+    gl_Position = clipPos;
 
-    if (viewDistance > billboardDistance)
-    {
-        vec4 clipPos = ProjectionMatrix * vec4(particleCenter, 1.0);
-        gl_Position = clipPos;
+    gl_PointSize = 2;
 
-        gl_PointSize = 2;
-
-        vs_out.C = p.color;
-        vs_out.N = vec3(0, 0, 1);
-        vs_out.L = vec3(0, 0, 1);
-        vs_out.V = vec3(0, 0, -1);
-    }
-    else
-    {
-        vec4 P = p.mv_matrix * position;
-        vs_out.N = mat3(p.mv_matrix) * normal;
-        vs_out.L = light_pos - P.xyz;
-        vs_out.V = -P.xyz;
-        vs_out.C = p.color;
-
-        gl_Position = ProjectionMatrix * P;
-    }
+    vs_out.C = p.color;
+    vs_out.N = vec3(0, 0, 1);
+    vs_out.L = vec3(0, 0, 1);
+    vs_out.V = vec3(0, 0, -1);
 }

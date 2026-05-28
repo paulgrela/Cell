@@ -75,8 +75,9 @@ private:
     GLuint LineDataBuffer[2]{};
 protected:
     GLuint ComputeShaderProgram = 0;
-    GLuint ParticlesAtomsShaderProgram = 0;
-    GLuint LinesShaderProgram = 0;
+    GLuint ParticlesAtomsPointsShadersProgram = 0;
+    GLuint ParticlesAtomsTrianglesShadersProgram = 0;
+    GLuint ParticlesAtomsBondsLinesShadersProgram = 0;
 protected:
     Particle ChosenParticleObject{};
     CellEngineAtom ChosenAtomObject{};
