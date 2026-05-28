@@ -584,7 +584,6 @@ inline void CellEngineOpenGLVisualiser::SetAutomaticParametersForRendering()
 {
     try
     {
-        //if (CellEngineConfigDataObject.ViewPositionZ > CellEngineConfigDataObject.Distance)
         if (CellEngineConfigDataObject.ViewPositionZ >= CellEngineConfigDataObject.Distance - BackSize)
         {
             if (CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep == true)
@@ -713,40 +712,24 @@ void CellEngineOpenGLVisualiser::ComputeInShaderCopyParticlesAndAtomsDataToGPUMe
 
 
 
-
-        // glUseProgram(ParticlesAtomsTrianglesShadersProgram);
-        //
-        // glUniformMatrix4fv(glGetUniformLocation(ParticlesAtomsTrianglesShadersProgram, "ProjectionMatrix"), 1, GL_FALSE, ProjectionMatrixGlobal);
-        //
-        //                                                                                                                 glUniform1f(glGetUniformLocation(ParticlesAtomsTrianglesShadersProgram, "billboardDistance"), CellEngineConfigDataObject.Distance);
-        //
-        //                                                                                                                 vmath::vec2 screenSize(Info.WindowWidth, Info.WindowHeight);
-        //                                                                                                                 glUniform2fv(glGetUniformLocation(ParticlesAtomsTrianglesShadersProgram, "screenSize"), 1, reinterpret_cast<float*>(&screenSize));
-
-
         const auto start_time1 = chrono::high_resolution_clock::now();
 
-        //glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, ParticlesAtomsBufferSharedBetweenComputeShaderAndVertexShaderSSBO);
+        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, ParticlesAtomsBufferSharedBetweenComputeShaderAndVertexShaderSSBO);
 
         vector<tuple<UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt>> TemporaryRenderedAtomsList;
 
         if (RenderObjectsBool == true)
         {
-            //if (CellEngineConfigDataObject.ViewPositionZ <= CellEngineConfigDataObject.Distance)
-            //if (CellEngineConfigDataObject.ViewPositionZ <= CellEngineConfigDataObject.Distance + 1700)
-            //if (CellEngineConfigDataObject.ViewPositionZ <= CellEngineConfigDataObject.Distance + 1000)
             if (CellEngineConfigDataObject.ViewPositionZ <= CellEngineConfigDataObject.Distance + 700)
             {
                 glUseProgram(ParticlesAtomsTrianglesShadersProgram);
 
                 glUniformMatrix4fv(glGetUniformLocation(ParticlesAtomsTrianglesShadersProgram, "ProjectionMatrix"), 1, GL_FALSE, ProjectionMatrixGlobal);
 
-                glUniform1f(glGetUniformLocation(ParticlesAtomsTrianglesShadersProgram, "billboardDistance"), CellEngineConfigDataObject.Distance);
-
-                vmath::vec2 screenSize(Info.WindowWidth, Info.WindowHeight);
-                glUniform2fv(glGetUniformLocation(ParticlesAtomsTrianglesShadersProgram, "screenSize"), 1, reinterpret_cast<float*>(&screenSize));
-
-                    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, ParticlesAtomsBufferSharedBetweenComputeShaderAndVertexShaderSSBO);
+                // glUniform1f(glGetUniformLocation(ParticlesAtomsTrianglesShadersProgram, "billboardDistance"), CellEngineConfigDataObject.Distance);
+                //
+                // vmath::vec2 screenSize(Info.WindowWidth, Info.WindowHeight);
+                // glUniform2fv(glGetUniformLocation(ParticlesAtomsTrianglesShadersProgram, "screenSize"), 1, reinterpret_cast<float*>(&screenSize));
 
                 AtomGraphicsObject.RenderSubGraphicObjectTriangles(0, AtomOffsetTotal, 0);
             }
@@ -756,12 +739,11 @@ void CellEngineOpenGLVisualiser::ComputeInShaderCopyParticlesAndAtomsDataToGPUMe
 
                 glUniformMatrix4fv(glGetUniformLocation(ParticlesAtomsPointsShadersProgram, "ProjectionMatrix"), 1, GL_FALSE, ProjectionMatrixGlobal);
 
-                glUniform1f(glGetUniformLocation(ParticlesAtomsPointsShadersProgram, "billboardDistance"), CellEngineConfigDataObject.Distance);
+                // glUniform1f(glGetUniformLocation(ParticlesAtomsPointsShadersProgram, "billboardDistance"), CellEngineConfigDataObject.Distance);
+                //
+                // vmath::vec2 screenSize(Info.WindowWidth, Info.WindowHeight);
+                // glUniform2fv(glGetUniformLocation(ParticlesAtomsPointsShadersProgram, "screenSize"), 1, reinterpret_cast<float*>(&screenSize));
 
-                vmath::vec2 screenSize(Info.WindowWidth, Info.WindowHeight);
-                glUniform2fv(glGetUniformLocation(ParticlesAtomsPointsShadersProgram, "screenSize"), 1, reinterpret_cast<float*>(&screenSize));
-
-                    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, ParticlesAtomsBufferSharedBetweenComputeShaderAndVertexShaderSSBO);
 
                 AtomGraphicsObject.RenderSubGraphicObjectPoints(0, AtomOffsetTotal, 0);
             }

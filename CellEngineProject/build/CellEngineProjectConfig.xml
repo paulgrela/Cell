@@ -4895,7 +4895,7 @@
 			<ShowDetailsInAtomScale>true</ShowDetailsInAtomScale>
 			<CheckAtomVisibility>true</CheckAtomVisibility>
 			<CutZ>200</CutZ>
-			<Distance>2500</Distance>
+			<Distance>2300</Distance>
 			<LoadOfAtomsStep>1</LoadOfAtomsStep>
 
 			<XLowToDrawInAtomScale>-200</XLowToDrawInAtomScale>

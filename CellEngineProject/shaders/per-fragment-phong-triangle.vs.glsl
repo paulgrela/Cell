@@ -29,8 +29,8 @@ vs_out;
 uniform vec3 light_pos = vec3(100.0, 100.0, 100.0);
 uniform mat4 ProjectionMatrix;
 
-uniform float billboardDistance;
-uniform vec2 screenSize;
+//uniform float billboardDistance;
+//uniform vec2 screenSize;
 
 void main(void)
 {
