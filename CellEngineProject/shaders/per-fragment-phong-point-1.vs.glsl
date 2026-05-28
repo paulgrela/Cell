@@ -39,25 +39,26 @@ void main(void)
 
     vec3 particleCenter = vec3(p.mv_matrix[3][0], p.mv_matrix[3][1], p.mv_matrix[3][2]);
 
-    float viewDistance = -particleCenter.z + 1300;
-    //float viewDistance = -particleCenter.z;//DLA PDB
+    float viewDistance = -particleCenter.z;
 
+    //if (viewDistance > billboardDistance + 1000 - 400)
     if (viewDistance > billboardDistance)
     {
         vec4 clipPos = ProjectionMatrix * vec4(particleCenter, 1.0);
         gl_Position = clipPos;
 
-        float radius = length(vec3(p.mv_matrix[0][0], p.mv_matrix[1][0], p.mv_matrix[2][0]));
+        //float radius = length(vec3(p.mv_matrix[0][0], p.mv_matrix[1][0], p.mv_matrix[2][0]));
 
-        vec4 offsetClip = ProjectionMatrix * vec4(particleCenter.x + radius, particleCenter.y, particleCenter.z, 1.0);
+        //vec4 offsetClip = ProjectionMatrix * vec4(particleCenter.x + radius, particleCenter.y, particleCenter.z, 1.0);
 
-        vec2 centerNDC = clipPos.xy / clipPos.w;
-        vec2 offsetNDC = offsetClip.xy / offsetClip.w;
+        //vec2 centerNDC = clipPos.xy / clipPos.w;
+        //vec2 offsetNDC = offsetClip.xy / offsetClip.w;
 
-        float radiusNDC = length(offsetNDC - centerNDC);
-        float radiusPixels = radiusNDC * screenSize.x * 0.5;
+        //float radiusNDC = length(offsetNDC - centerNDC);
+        //float radiusPixels = radiusNDC * screenSize.x * 0.5;
 
-        gl_PointSize = clamp(radiusPixels, 1.0, 64.0);
+        //gl_PointSize = clamp(radiusPixels, 1.0, 64.0);
+        gl_PointSize = 2;
 
         vs_out.C = p.color;
         vs_out.N = vec3(0, 0, 1);
