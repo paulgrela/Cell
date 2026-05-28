@@ -5034,16 +5034,16 @@
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>
 				</ParticleKind>
-                                <ParticleKind id="342">
-					<Name>MEMBRANE</Name>
+                                <ParticleKind id="101226">
+					<Name>LipidInnerMembrane</Name>
 					<Color>Orange</Color>
 					<Visible>true</Visible>
 					<SizeX>1</SizeX>
 					<SizeY>1</SizeY>
 					<SizeZ>1</SizeZ>
 				</ParticleKind>
-				<ParticleKind id="343">
-					<Name>MEMBRANE</Name>
+				<ParticleKind id="101227">
+					<Name>LipidOuterMembrane</Name>
 					<Color>Pink</Color>
 					<Visible>true</Visible>
 					<SizeX>1</SizeX>

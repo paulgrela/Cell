@@ -130,13 +130,13 @@ void CellEngineOpenGLVisualiser::StartUp()
 
         LoadShadersPhong();
 
-        TextOverlayObject.Init(160, 80, "..//textures//cp437_9x16.ktx");
+        TextOverlayObject.Init(160, 80, R"(../textures/cp437_9x16.ktx)");
 
         glGenBuffers(1, &UniformsBuffer);
         glBindBuffer(GL_UNIFORM_BUFFER, UniformsBuffer);
         glBufferData(GL_UNIFORM_BUFFER, sizeof(UniformsBlock), nullptr, GL_DYNAMIC_DRAW);
 
-        AtomGraphicsObject.Load("..//objects//sphere.sbm");
+        AtomGraphicsObject.Load(R"(../objects/sphere.sbm)");
         InitLineVertexes();
 
         glEnable(GL_CULL_FACE);
@@ -208,10 +208,10 @@ void CellEngineOpenGLVisualiser::LoadShadersPhong()
 {
     try
     {
-        LoadComputeShaders("..//shaders//per-fragment-phong.cs.glsl", ComputeShaderProgram);
-        LoadMainRenderShaders("..//shaders//per-fragment-phong-triangle.vs.glsl", "..//shaders//per-fragment-phong-triangle.fs.glsl", ParticlesAtomsTrianglesShadersProgram);
-        LoadMainRenderShaders("..//shaders//per-fragment-phong-point.vs.glsl", "..//shaders//per-fragment-phong-point.fs.glsl", ParticlesAtomsPointsShadersProgram);
-        LoadMainRenderShaders("..//shaders//per-fragment-phong-line.vs.glsl","..//shaders//per-fragment-phong-line.fs.glsl", ParticlesAtomsBondsLinesShadersProgram);
+        LoadComputeShaders(R"(../shaders/per-fragment-phong.cs.glsl)", ComputeShaderProgram);
+        LoadMainRenderShaders(R"(../shaders/per-fragment-phong-triangle.vs.glsl)", R"(../shaders/per-fragment-phong-triangle.fs.glsl)", ParticlesAtomsTrianglesShadersProgram);
+        LoadMainRenderShaders(R"(../shaders/per-fragment-phong-point.vs.glsl)", R"(../shaders/per-fragment-phong-point.fs.glsl)", ParticlesAtomsPointsShadersProgram);
+        LoadMainRenderShaders(R"(../shaders/per-fragment-phong-line.vs.glsl)", R"(../shaders/per-fragment-phong-line.fs.glsl)", ParticlesAtomsBondsLinesShadersProgram);
 
         Uniforms.DiffuseAlbedo = glGetUniformLocation(ParticlesAtomsTrianglesShadersProgram, "diffuse_albedo");
         Uniforms.SpecularAlbedo = glGetUniformLocation(ParticlesAtomsTrianglesShadersProgram, "specular_albedo");
@@ -568,9 +568,7 @@ bool CellEngineOpenGLVisualiser::RenderObject(const CellEngineAtom& AtomObject, 
     try
     {
         const vmath::vec3 AtomPosition = LengthUnit * AtomObject.Position();
-        //TU PONIZEJ + czy - CellEngineConfigDataObject.CameraXPosition
-        //vmath::mat4 ModelMatrix = vmath::translate(AtomPosition.X() - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomPosition.Y() + CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomPosition.Z() + CellEngineConfigDataObject.CameraZPosition - Center.Z());
-        //vmath::mat4 ModelMatrix = vmath::translate(AtomPosition.X() - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomPosition.Y() - CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomPosition.Z() - CellEngineConfigDataObject.CameraZPosition - Center.Z());
+
         vmath::mat4 ModelMatrix = vmath::translate(AtomPosition.X() - CellEngineConfigDataObject.CameraXPosition - Center.X(), AtomPosition.Y() - CellEngineConfigDataObject.CameraYPosition - Center.Y(), AtomPosition.Z() - CellEngineConfigDataObject.CameraZPosition - Center.Z());
 
         FinalVisibilityInModelWorld = CreateUniformBlockForVertexShader(AtomPosition, CellEngineUseful::GetVMathVec3FromVector3ForColor(GetColor<CellEngineAtom>(AtomObject, ParticleObject, Chosen)), ViewMatrix, ModelMatrix, CountNewPosition, DrawCenter, DrawOutsideBorder, true);
@@ -629,9 +627,9 @@ inline void CellEngineOpenGLVisualiser::LoadShapeOfAtomsWhenChanged()
         {
             switch (CellEngineConfigDataObject.ChosenShapeOfAtoms)
             {
-                case 1 : AtomGraphicsObject.Load("..//objects//sphere.sbm"); break;
-                case 2 : AtomGraphicsObject.Load("..//objects//cube.sbm"); break;
-                case 3 : AtomGraphicsObject.Load("..//objects//torus.sbm"); break;
+                case 1 : AtomGraphicsObject.Load(R"(../objects/sphere.sbm)"); break;
+                case 2 : AtomGraphicsObject.Load(R"(../objects/cube.sbm)"); break;
+                case 3 : AtomGraphicsObject.Load(R"(../objects/torus.sbm)"); break;
                 default : break;
             }
             PrevShapesOfAtoms = CellEngineConfigDataObject.ChosenShapeOfAtoms;
@@ -726,11 +724,6 @@ void CellEngineOpenGLVisualiser::ComputeInShaderCopyParticlesAndAtomsDataToGPUMe
 
                 glUniformMatrix4fv(glGetUniformLocation(ParticlesAtomsTrianglesShadersProgram, "ProjectionMatrix"), 1, GL_FALSE, ProjectionMatrixGlobal);
 
-                // glUniform1f(glGetUniformLocation(ParticlesAtomsTrianglesShadersProgram, "billboardDistance"), CellEngineConfigDataObject.Distance);
-                //
-                // vmath::vec2 screenSize(Info.WindowWidth, Info.WindowHeight);
-                // glUniform2fv(glGetUniformLocation(ParticlesAtomsTrianglesShadersProgram, "screenSize"), 1, reinterpret_cast<float*>(&screenSize));
-
                 AtomGraphicsObject.RenderSubGraphicObjectTriangles(0, AtomOffsetTotal, 0);
             }
             else
@@ -738,12 +731,6 @@ void CellEngineOpenGLVisualiser::ComputeInShaderCopyParticlesAndAtomsDataToGPUMe
                 glUseProgram(ParticlesAtomsPointsShadersProgram);
 
                 glUniformMatrix4fv(glGetUniformLocation(ParticlesAtomsPointsShadersProgram, "ProjectionMatrix"), 1, GL_FALSE, ProjectionMatrixGlobal);
-
-                // glUniform1f(glGetUniformLocation(ParticlesAtomsPointsShadersProgram, "billboardDistance"), CellEngineConfigDataObject.Distance);
-                //
-                // vmath::vec2 screenSize(Info.WindowWidth, Info.WindowHeight);
-                // glUniform2fv(glGetUniformLocation(ParticlesAtomsPointsShadersProgram, "screenSize"), 1, reinterpret_cast<float*>(&screenSize));
-
 
                 AtomGraphicsObject.RenderSubGraphicObjectPoints(0, AtomOffsetTotal, 0);
             }
@@ -933,10 +920,8 @@ void CellEngineOpenGLVisualiser::OnMouseWheel(const int Pos)
 {
     try
     {
-                                                                                                                        //if (CellEngineConfigDataObject.ViewPositionZ > CellEngineConfigDataObject.Distance)
-                                                                                                                        if (CellEngineConfigDataObject.ViewPositionZ >= CellEngineConfigDataObject.Distance - BackSize)
-                                                                                                                            StepForScope += static_cast<float>(Pos);
-                                                                                                                        //cout << "STEP FOR SCOPE = " << StepForScope << endl;
+        if (CellEngineConfigDataObject.ViewPositionZ >= CellEngineConfigDataObject.Distance - BackSize)
+            StepForScope += static_cast<float>(Pos);
 
         CellEngineConfigDataObject.ViewPositionZ += static_cast<float>(Pos) * (CellEngineConfigDataObject.ViewChangeUsingLongStep == false ? CellEngineConfigDataObject.ViewZMoveShortStep : CellEngineConfigDataObject.ViewZMoveLongStep);
     }
