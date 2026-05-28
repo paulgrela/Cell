@@ -22,7 +22,7 @@ void main(void)
 {
     bool isBillboard = (fs_in.V.z < -0.99);
 
-    if (isBillboard && gl_PointCoord != vec2(0,0))
+    if (isBillboard)
     {
         vec2 coord = gl_PointCoord * 2.0 - 1.0;
         float dist = length(coord);
@@ -43,6 +43,8 @@ void main(void)
     }
     else
     {
+        color = vec4(fs_in.C, 1.0);
+
         if (fs_in.C.x < 0.0)
         {
             color = vec4(vec3(0.0, 1.0, 1.0), 1.0);
