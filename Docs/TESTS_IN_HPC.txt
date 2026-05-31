@@ -1,0 +1,35 @@
+ARCHITECTURE in HPC and TESTS RESULTS in HPC
+
+The application simulates the work of a bacterial cell reaction by reaction and particle by particle.
+
+The cell is shaped like a sphere with a radius of 200 nm, or a diameter of 400 nm.
+I placed it in a cube - a test tube with a side of 500 nm.
+I divided the test tube into cubes-sectors 40x40x40, that is, a total of 64,000 sectors with a real sector side of about 12.5 nm.
+MPI/CPU processes are also organized in the form of a cuboid with sides NX x NY x NZ. I.e.
+ex: 2000 processes are 20 x 10 x 10 MPI/CPU processes.
+Each of these processes has its own slice of the sectors of the cell,
+and must know the processes (and the sector numbers they have) of their neighbors,
+in order to send particles to the processes of their neighbors if they move there in reactions or diffusion.
+At home, I used a grid of 2x2x2 processes = 8 CPUs.
+
+On Helios I started by increasing the grid of processes to 4x4x4 64 CPU (each had 10x10x10 sectors for calculations)
+and so increased until, to a grid of MPI/CPU process 20x10x10 = 2000 MPI/CPU processes (20 nodes of 100 cores each)
+and here I reached the maximum speed of the whole application. Increasing the grid to the size of 20x20x10 MPI/CPU processes (40 nodes of 100 cores each)
+that is 4000 processes or all the way to 20x20x20 MPI/CPU processes (80 nodes of 100 cores each)
+did not result in an increase in performance but its decrease probably due to multi-process communication (flipping particles)
+and synchronization of such a number of processes.
+So 2000 cores of MPI/CPU processes for me for now is the found and tested OPTIMUM-MAXIMUM,
+but the project thanks to the correct implementation of scalability both downward
+(accuracy of calculations - more more CPU cores per sector calculation)
+and upward (larger and larger cells - more sectors means more CPU cores) is very promising for more cores.
+The program works flawlessly - I only corrected minor problems impossible to find on home CPUs.
+
+Tests that were successful are in my "plgagh" directory on Helios
+in the directory: "~/plgagh/Repos/Cell/CellEngineProject/build/Backups/MPI/SUCESSESS/".
+
+There is a list of directories and each directory contains files with the configuration
+of my test application and an output file in which is the test run and results.
+The name of the directory describes the test parameters
+in the key NumberTest_TotalNumberNofCores_NxNyNwithNNgridProcesses_Number of simulation steps.
+
+It is located there, also the source code of the program in C++ and its compiled version
