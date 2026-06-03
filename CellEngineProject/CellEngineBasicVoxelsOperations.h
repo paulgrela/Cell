@@ -12,7 +12,8 @@ using Space_2048_2048_2048 = SimulationSpaceVoxel[NumberOfVoxelSimulationSpaceIn
 
 class CellEngineBasicVoxelsOperations
 {
-protected:
+//protected:
+public:
     void* SpacePointer = nullptr;
 protected:
     [[nodiscard]] inline SimulationSpaceVoxel& GetSpaceVoxel(const UnsignedInt x, const UnsignedInt y, const UnsignedInt z) const

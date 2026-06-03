@@ -196,8 +196,6 @@ public:
 public:
     bool DrawBondsBetweenAtoms{};
 public:
-    //bool ShowDetailsInAtomScale = false;
-    //bool CheckAtomVisibility{};//????
     float CutZ{};
     float Distance{};
     UnsignedInt LoadOfAtomsStep{};
@@ -287,6 +285,9 @@ inline std::common_type<std::chrono::duration<long, std::ratio<1, 1000000000>>, 
 inline std::common_type<std::chrono::duration<long, std::ratio<1, 1000000000>>, std::chrono::duration<long, std::ratio<1, 1000000000>>>::type ExecutionDurationTimeForCopyingParticlesToGraphicMemory0 { 0 };
 inline std::common_type<std::chrono::duration<long, std::ratio<1, 1000000000>>, std::chrono::duration<long, std::ratio<1, 1000000000>>>::type ExecutionDurationTimeForCopyingParticlesToGraphicMemory1 { 0 };
 inline std::common_type<std::chrono::duration<long, std::ratio<1, 1000000000>>, std::chrono::duration<long, std::ratio<1, 1000000000>>>::type ExecutionDurationTimeForCopyingParticlesToGraphicMemory2 { 0 };
+inline std::common_type<std::chrono::duration<long, std::ratio<1, 1000000000>>, std::chrono::duration<long, std::ratio<1, 1000000000>>>::type ExecutionDurationTimeForCopyingParticlesToGraphicMemory21 { 0 };
+inline std::common_type<std::chrono::duration<long, std::ratio<1, 1000000000>>, std::chrono::duration<long, std::ratio<1, 1000000000>>>::type ExecutionDurationTimeForCopyingParticlesToGraphicMemory22 { 0 };
+inline std::common_type<std::chrono::duration<long, std::ratio<1, 1000000000>>, std::chrono::duration<long, std::ratio<1, 1000000000>>>::type ExecutionDurationTimeForCopyingParticlesToGraphicMemory23 { 0 };
 inline std::common_type<std::chrono::duration<long, std::ratio<1, 1000000000>>, std::chrono::duration<long, std::ratio<1, 1000000000>>>::type ExecutionDurationTimeForCopyingParticlesToGraphicMemory3 { 0 };
 
 #endif

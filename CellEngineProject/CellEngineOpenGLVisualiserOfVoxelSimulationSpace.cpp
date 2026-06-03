@@ -1,4 +1,5 @@
 
+#include <omp.h>
 #include "../Common/Compilation/ConditionalCompilationConstants.h"
 
 #ifdef USE_OPENGL
@@ -110,6 +111,61 @@ inline void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::SetParticleParamet
 };
 
 uint32_t AtomTotalIndex = 0;
+constexpr UnsignedInt NumberOfSectors = 40;
+constexpr UnsignedInt MaxNumberOfSectors = 16;
+
+void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::GenerateVoxelsForGPUParallel(const UnsignedInt MainPosX, const UnsignedInt MainPosY, const UnsignedInt MainPosZ, const SimulationSpaceVoxel SimulationSpaceVoxelObject, const SimulationSpaceVoxel LastSimulationSpaceVoxel, UnsignedInt& AtomsCounter, const CellEngineAtom& TempAtomObject, const Particle& ParticleObject)
+{
+    try
+    {
+        //cout << "K = " << MainPosX << " " << MainPosY << " " << MainPosZ << endl;
+
+        if (LastSimulationSpaceVoxel != SimulationSpaceVoxelObject)
+        {
+            GPUParticle GPUParticleObject;
+
+            GPUParticleObject.AtomOffset = AtomOffsetInSectors[MainPosX][MainPosY][MainPosZ];
+            GPUParticleObject.AtomCount = AtomsCounter + 1;
+
+            GPUParticlesInSectors[MainPosX][MainPosY][MainPosZ].emplace_back(std::move(GPUParticleObject));
+
+            AtomOffsetInSectors[MainPosX][MainPosY][MainPosZ] += (AtomsCounter + 1);
+
+            AtomsCounter = 0;
+        }
+        else
+        {
+            if (CellEngineConfigDataObject.ShowDetailsOfPickedAtomParticle == true)
+            {
+                GPUAtomLocal GPUAtomLocalObject;
+                GPUAtomLocalObject.ParticleSectorXIndex = 0;
+                GPUAtomLocalObject.ParticleSectorYIndex = 0;
+                GPUAtomLocalObject.ParticleSectorZIndex = 0;
+                GPUAtomLocalObject.Index = ParticleObject.Index;
+                GPUAtomLocalObject.AtomOffset = AtomTotalIndex;
+                GPUAtomsLocalInSectors[MainPosX][MainPosY][MainPosZ].emplace_back(std::move(GPUAtomLocalObject));
+            }
+
+            GPUAtom GPUAtomObject;
+
+            GPUAtomObject.X = TempAtomObject.X;
+            GPUAtomObject.Y = TempAtomObject.Y;
+            GPUAtomObject.Z = TempAtomObject.Z;
+
+            const auto ParticleColor = CellEngineConfigDataObject.RenderTheWholePickedParticleInOnePickingColorForVoxelSpace == false ? CellEngineUseful::GetVMathVec3FromVector3ForColor(GetColor<CellEngineAtom>(TempAtomObject, ParticleObject, ChosenAtomObjectIndex == AtomTotalIndex)) : CellEngineUseful::GetVMathVec3FromVector3ForColor(GetColor<CellEngineAtom>(TempAtomObject, ParticleObject, ChosenParticleObject.Index == ParticleObject.Index));
+
+            GPUAtomObject.ColorR = ParticleColor.X();
+            GPUAtomObject.ColorG = ParticleColor.Y();
+            GPUAtomObject.ColorB = ParticleColor.Z();
+
+            GPUAtomsInSectors[MainPosX][MainPosY][MainPosZ].emplace_back(std::move(GPUAtomObject));
+
+            AtomsCounter++;
+            AtomTotalIndex++;
+        }
+    }
+    CATCH("");
+}
 
 void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::GenerateVoxelsForGPU(const SimulationSpaceVoxel SimulationSpaceVoxelObject, const SimulationSpaceVoxel LastSimulationSpaceVoxel, UnsignedInt& AtomsCounter, const CellEngineAtom& TempAtomObject, const Particle& ParticleObject)
 {
@@ -165,21 +221,27 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::GenerateVoxelsForGPU(cons
     CATCH("");
 }
 
-void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSelectedSpace(const UnsignedInt XStartParam, const UnsignedInt YStartParam, const UnsignedInt ZStartParam, const UnsignedInt XStepParam, const UnsignedInt YStepParam, const UnsignedInt ZStepParam, const UnsignedInt XSizeParam, UnsignedInt YSizeParam, const UnsignedInt ZSizeParam, const vmath::mat4& ViewMatrix, CellEngineAtom& TempAtomObject, std::vector<TemporaryRenderedVoxel>& TemporaryRenderedVoxelsList, UnsignedInt StencilBufferLoopCounter)
+typedef SimulationSpaceVoxel (*PointerToSpace_2048_2048_2048)[2048][2048][2048];
+
+void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSelectedSpace(const vmath::mat4& ViewMatrix, const UnsignedInt XStartParam, const UnsignedInt YStartParam, const UnsignedInt ZStartParam, const UnsignedInt XStepParam, const UnsignedInt YStepParam, const UnsignedInt ZStepParam, const UnsignedInt XSizeParam, const UnsignedInt YSizeParam, const UnsignedInt ZSizeParam, CellEngineAtom& TempAtomObject)
 {
     try
     {
+        const auto SpacePointer = static_cast<PointerToSpace_2048_2048_2048>(CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->SpacePointer);
+
         UnsignedInt AtomsCounter = 0;
 
         for (UnsignedInt PosX = XStartParam; PosX < XStartParam + XSizeParam; PosX += XStepParam)
             for (UnsignedInt PosY = YStartParam; PosY < YStartParam + YSizeParam; PosY += YStepParam)
             {
-                SimulationSpaceVoxel LastSimulationSpaceVoxel = CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GetSpaceVoxelForOuterClass(PosX, PosY, ZStartParam);
+                //SimulationSpaceVoxel LastSimulationSpaceVoxel = CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GetSpaceVoxelForOuterClass(PosX, PosY, ZStartParam);
+                SimulationSpaceVoxel LastSimulationSpaceVoxel = (*SpacePointer)[PosX][PosY][ZStartParam];
 
                 for (UnsignedInt PosZ = ZStartParam; PosZ < ZStartParam + ZSizeParam; PosZ += ZStepParam)
                     if (PosX < CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension && PosY < CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension && PosZ < CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension)
                     {
-                        const SimulationSpaceVoxel SimulationSpaceVoxelObject = CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GetSpaceVoxelForOuterClass(PosX, PosY, PosZ);
+                        //const SimulationSpaceVoxel SimulationSpaceVoxelObject = CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GetSpaceVoxelForOuterClass(PosX, PosY, PosZ);
+                        const SimulationSpaceVoxel SimulationSpaceVoxelObject = (*SpacePointer)[PosX][PosY][PosZ];
 
                         if (SimulationSpaceVoxelObject != CellEngineParticlesVoxelsOperations::GetZeroSimulationSpaceVoxel())
                         {
@@ -187,16 +249,24 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSelectedSpace(const
                             {
                                 Particle& ParticleObject = FoundParticleIter->second;
 
-                                if (DrawEmptyVoxels == true || (DrawEmptyVoxels == false && SimulationSpaceVoxelObject != 0 && ParticlesKindsManagerObject.GetGraphicParticleKind(ParticleObject.EntityId).Visible == true))
+                                //if (RenderObject(TempAtomObject, ParticleObject, ViewMatrix, true, false, true, false) == true)
                                 {
                                     ConvertAtomPosToGraphicCoordinate(TempAtomObject, XStartParam, YStartParam, ZStartParam, PosX, PosY, PosZ, XSizeParam, YSizeParam, ZSizeParam);
 
                                     if (DrawEmptyVoxels == false || SimulationSpaceVoxelObject != 0)
                                         SetParticleParametersToDraw(TempAtomObject, ParticleObject);
 
-                                    GenerateVoxelsForGPU(SimulationSpaceVoxelObject, LastSimulationSpaceVoxel, AtomsCounter, TempAtomObject, ParticleObject);
+                                    if (DrawEmptyVoxels == true || (DrawEmptyVoxels == false && SimulationSpaceVoxelObject != 0 && ParticlesKindsManagerObject.GetGraphicParticleKind(ParticleObject.EntityId).Visible == true))
+                                    {
+                                        if ((SpaceDrawingType == VoxelSpaceDrawingTypes::DrawVoxelSpaceFull && CellEngineConfigDataObject.ViewPositionZ <= CellEngineConfigDataObject.Distance + 700) || SpaceDrawingType == VoxelSpaceDrawingTypes::DrawVoxelSpaceSelected)
+                                            GenerateVoxelsForGPU(SimulationSpaceVoxelObject, LastSimulationSpaceVoxel, AtomsCounter, TempAtomObject, ParticleObject);
+                                        else
+                                        if (SpaceDrawingType == VoxelSpaceDrawingTypes::DrawVoxelSpaceFull && CellEngineConfigDataObject.ViewPositionZ > CellEngineConfigDataObject.Distance + 700)
+                                            GenerateVoxelsForGPUParallel(XStartParam >> 6, YStartParam >> 6, ZStartParam >> 6, SimulationSpaceVoxelObject, LastSimulationSpaceVoxel, AtomsCounter, TempAtomObject, ParticleObject);
+                                            //GenerateVoxelsForGPUParallel(XStartParam / SelectionStepX, YStartParam / SelectionStepY, ZStartParam / SelectionStepZ, SimulationSpaceVoxelObject, LastSimulationSpaceVoxel, AtomsCounter, TempAtomObject, ParticleObject);
 
-                                    LastSimulationSpaceVoxel = SimulationSpaceVoxelObject;
+                                        LastSimulationSpaceVoxel = SimulationSpaceVoxelObject;
+                                    }
                                 }
                             }
                             else
@@ -224,21 +294,24 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSelectedSpace(const
 
 void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSpace(const vmath::mat4& ViewMatrix)
 {
+    //SpacePointer = static_cast<Space_1024_1024_1024>(CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->SpacePointer);
+
     try
     {
         AtomTotalIndex = 0;
 
         CellEngineAtom TempAtomObject;
 
-        std::vector<TemporaryRenderedVoxel> TemporaryRenderedVoxelsList;
-
-        CellEngineConfigDataObject.LoadOfAtomsStep > 10 ? CellEngineConfigDataObject.LoadOfAtomsStep = 4 : 1;
+        //CellEngineConfigDataObject.LoadOfAtomsStep > 10 ? CellEngineConfigDataObject.LoadOfAtomsStep = 4 : 1;
 
         UnsignedInt NumberOfRenderedSelectedSpaces = 0;
 
-        TemporaryRenderedVoxelsList.clear();
+        cout << "P = " << SelectionStartXPos << " " << SelectionStartYPos << " " << SelectionStartZPos << " " << SelectionStepX << " " << SelectionStepY << " " << SelectionStepZ << " " << SelectionSizeX << " " << SelectionSizeY << " " << SelectionSizeZ << endl;
 
-        if (SpaceDrawingType == VoxelSpaceDrawingTypes::DrawVoxelSpaceFull)
+        if (SpaceDrawingType == VoxelSpaceDrawingTypes::DrawVoxelSpaceFull && CellEngineConfigDataObject.ViewPositionZ <= CellEngineConfigDataObject.Distance + 700)
+        {
+            const auto start_time111 = chrono::high_resolution_clock::now();
+
             for (UnsignedInt PosX = SelectionStartXPos; PosX < SelectionSizeX; PosX += SelectionStepX)
                 for (UnsignedInt PosY = SelectionStartYPos; PosY < SelectionSizeY; PosY += SelectionStepY)
                     for (UnsignedInt PosZ = SelectionStartZPos; PosZ < SelectionSizeZ; PosZ += SelectionStepZ)
@@ -247,17 +320,85 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSpace(const vmath::
 
                         if (RenderObject(TempAtomObject, Particle(), ViewMatrix, true, false, true, false) == true)
                         {
-                            RenderSelectedSpace(PosX, PosY, PosZ, CellEngineConfigDataObject.LoadOfAtomsStep, CellEngineConfigDataObject.LoadOfAtomsStep, CellEngineConfigDataObject.LoadOfAtomsStep, 64, 64, 64, ViewMatrix, TempAtomObject, TemporaryRenderedVoxelsList, 0);
+                            RenderSelectedSpace(ViewMatrix, PosX, PosY, PosZ, CellEngineConfigDataObject.LoadOfAtomsStep, CellEngineConfigDataObject.LoadOfAtomsStep, CellEngineConfigDataObject.LoadOfAtomsStep, 64, 64, 64, TempAtomObject);
                             NumberOfRenderedSelectedSpaces++;
                         }
                     }
+
+            const auto stop_time111 = chrono::high_resolution_clock::now();
+
+            ExecutionDurationTimeForCopyingParticlesToGraphicMemory0 += chrono::duration(stop_time111 - start_time111);
+        }
         else
+        if (SpaceDrawingType == VoxelSpaceDrawingTypes::DrawVoxelSpaceFull && CellEngineConfigDataObject.ViewPositionZ > CellEngineConfigDataObject.Distance + 700)
+        {
+            for (UnsignedInt PosX = 0; PosX < NumberOfSectors; PosX++)
+                for (UnsignedInt PosY = 0; PosY < NumberOfSectors; PosY++)
+                    for (UnsignedInt PosZ = 0; PosZ < NumberOfSectors; PosZ++)
+                    {
+                        GPUParticlesInSectors[PosX][PosY][PosZ].clear();
+                        GPUAtomsInSectors[PosX][PosY][PosZ].clear();
+                        GPUAtomsLocalInSectors[PosX][PosY][PosZ].clear();
+                        AtomOffsetInSectors[PosX][PosY][PosZ] = 0;
+                        TempAtomObjectInSectors[PosX][PosY][PosZ] = {};
+                    }
+
+            const auto start_time111 = chrono::high_resolution_clock::now();
+
+            #pragma omp parallel for collapse(3) num_threads(256) default(none) shared(CellEngineConfigDataObject, ViewMatrix, TempAtomObject, NumberOfRenderedSelectedSpaces, AtomOffsetInSectors, GPUAtomsInSectors, GPUParticlesInSectors, GPUAtomsLocalInSectors, TempAtomObjectInSectors) schedule(dynamic)
+            for (UnsignedInt PosX = 0; PosX < MaxNumberOfSectors; PosX++)
+                for (UnsignedInt PosY = 0; PosY < MaxNumberOfSectors; PosY++)
+                    for (UnsignedInt PosZ = 0; PosZ < MaxNumberOfSectors; PosZ++)
+                    {
+                        TempAtomObjectInSectors[PosX][PosY][PosZ].SetAtomPositionsData(CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(PosX * SelectionStepX), CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(PosY * SelectionStepY), CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(PosZ * SelectionStepZ));
+
+                        if (RenderObject(TempAtomObjectInSectors[PosX][PosY][PosZ], Particle(), ViewMatrix, true, false, true, false) == true)
+                        {
+                            //RenderSelectedSpace(PosX * SelectionStepX, PosY * SelectionStepY, PosZ * SelectionStepZ, CellEngineConfigDataObject.LoadOfAtomsStep, CellEngineConfigDataObject.LoadOfAtomsStep, CellEngineConfigDataObject.LoadOfAtomsStep, 64, 64, 64, TempAtomObject);
+                            RenderSelectedSpace(ViewMatrix, PosX * SelectionStepX, PosY * SelectionStepY, PosZ * SelectionStepZ, CellEngineConfigDataObject.LoadOfAtomsStep, CellEngineConfigDataObject.LoadOfAtomsStep, CellEngineConfigDataObject.LoadOfAtomsStep, 64, 64, 64, TempAtomObjectInSectors[PosX][PosY][PosZ]);
+                            NumberOfRenderedSelectedSpaces++;
+                        }
+                    }
+
+            const auto stop_time111 = chrono::high_resolution_clock::now();
+
+            ExecutionDurationTimeForCopyingParticlesToGraphicMemory0 += chrono::duration(stop_time111 - start_time111);
+
+            LoggersManagerObject.LogOnlyToConsole(STREAM("END OF PARALLEL -> ParticlesOffsetTotal = " << ParticlesOffsetTotal << " AtomsOffsetTotal = " << AtomOffsetTotal));
+
+            const auto start_time114 = chrono::high_resolution_clock::now();
+
+            for (UnsignedInt PosX = 0; PosX < MaxNumberOfSectors; PosX++)
+                for (UnsignedInt PosY = 0; PosY < MaxNumberOfSectors; PosY++)
+                    for (UnsignedInt PosZ = 0; PosZ < MaxNumberOfSectors; PosZ++)
+                    {
+                        for (auto& GPUParticleInSectors : GPUParticlesInSectors[PosX][PosY][PosZ])
+                        {
+                            GPUParticleInSectors.AtomOffset += AtomOffsetTotal;
+                            GPUParticles[ParticlesOffsetTotal++] = std::move(GPUParticleInSectors);
+                        }
+
+                        memcpy(&GPUAtoms[AtomOffsetTotal], GPUAtomsInSectors[PosX][PosY][PosZ].data(), GPUAtomsInSectors[PosX][PosY][PosZ].size() * sizeof(GPUAtom));
+
+                        if (CellEngineConfigDataObject.ShowDetailsOfPickedAtomParticle == true)
+                            memcpy(&GPUAtomsLocal[AtomLocalOffsetTotal], GPUAtomsLocalInSectors[PosX][PosY][PosZ].data(), GPUAtomsLocalInSectors[PosX][PosY][PosZ].size() * sizeof(GPUAtomLocal));
+
+                        AtomOffsetTotal += GPUAtomsInSectors[PosX][PosY][PosZ].size();
+                        AtomLocalOffsetTotal += GPUAtomsLocalInSectors[PosX][PosY][PosZ].size();
+                    }
+
+            const auto stop_time114 = chrono::high_resolution_clock::now();
+
+            ExecutionDurationTimeForCopyingParticlesToGraphicMemory3 += chrono::duration(stop_time114 - start_time114);
+        }
+        else
+        if (SpaceDrawingType == VoxelSpaceDrawingTypes::DrawVoxelSpaceSelected)
         {
             UnsignedInt SubStartPos = 0;
             if (CellEngineConfigDataObject.SelectedSpaceStartParametersDrawTypesObject == CellEngineConfigData::SelectedSpaceStartParametersDrawTypes::DrawFromCenter)
                 SubStartPos = SelectionSizeX / 2;
 
-            RenderSelectedSpace(SelectionStartXPos - SubStartPos, SelectionStartYPos - SubStartPos, SelectionStartZPos - SubStartPos, SelectionStepX, SelectionStepY, SelectionStepZ, SelectionSizeX, SelectionSizeY, SelectionSizeY, ViewMatrix, TempAtomObject, TemporaryRenderedVoxelsList, 0);
+            RenderSelectedSpace(ViewMatrix, SelectionStartXPos - SubStartPos, SelectionStartYPos - SubStartPos, SelectionStartZPos - SubStartPos, SelectionStepX, SelectionStepY, SelectionStepZ, SelectionSizeX, SelectionSizeY, SelectionSizeY, TempAtomObject);
         }
 
         LoggersManagerObject.Log(STREAM("NumberOfRenderedSelectedSpaces = " << NumberOfRenderedSelectedSpaces));

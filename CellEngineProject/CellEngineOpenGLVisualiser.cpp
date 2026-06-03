@@ -321,11 +321,6 @@ void CellEngineOpenGLVisualiser::FindBondsToDraw(const vector<CellEngineAtom>& A
         UnsignedInt AtomObjectIndex1 = 0;
         UnsignedInt AtomObjectIndex2 = 0;
 
-
-        omp_set_nested(1);
-        omp_set_max_active_levels(2);
-        omp_set_dynamic(0);
-
         //#pragma omp parallel for collapse(2) num_threads(16) default(none) shared(BondsToDrawLocal, BondsToDraw, Atoms, LoggersManagerObject) private(AtomObjectIndex1, AtomObjectIndex2)
         #pragma omp parallel for collapse(2) num_threads(256) default(none) shared(BondsToDrawLocal, BondsToDraw, Atoms, LoggersManagerObject) private(AtomObjectIndex1, AtomObjectIndex2)
         for (AtomObjectIndex1 = 0; AtomObjectIndex1 < Atoms.size(); AtomObjectIndex1++)

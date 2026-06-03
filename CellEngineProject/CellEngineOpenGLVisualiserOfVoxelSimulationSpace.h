@@ -19,6 +19,13 @@
 
 class CellEngineOpenGLVisualiserOfVoxelSimulationSpace : public CellEngineOpenGLVisualiser
 {
+private:
+    CellEngineAtom TempAtomObjectInSectors[40][40][40] = {};
+    std::uint32_t AtomOffsetInSectors[40][40][40] = {};
+    std::vector<GPUParticle> GPUParticlesInSectors[40][40][40];
+    std::vector<GPUAtom> GPUAtomsInSectors[40][40][40];
+    std::vector<GPUAtomLocal> GPUAtomsLocalInSectors[40][40][40];
+
 public:
     enum class VoxelSpaceDrawingTypes : UnsignedInt
     {
@@ -55,8 +62,9 @@ private:
     inline void ConvertAtomPosToGraphicCoordinate(CellEngineAtom& CellEngineAtomObjectParam, UnsignedInt StartXParam, UnsignedInt StartYParam, UnsignedInt StartZParam, UnsignedInt SpaceXParam, UnsignedInt SpaceYParam, UnsignedInt SpaceZParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam) const;
     static inline void SetParticleParametersToDraw(CellEngineAtom& TempAtomObject, Particle& ParticleObject);
 private:
+    void GenerateVoxelsForGPUParallel(UnsignedInt MainPosX, UnsignedInt MainPosY, UnsignedInt MainPosZ, SimulationSpaceVoxel SimulationSpaceVoxelObject, SimulationSpaceVoxel LastSimulationSpaceVoxel, UnsignedInt& AtomsCounter, const CellEngineAtom& TempAtomObject, const Particle& ParticleObject);
     void GenerateVoxelsForGPU(SimulationSpaceVoxel SimulationSpaceVoxelObject, SimulationSpaceVoxel LastSimulationSpaceVoxel, UnsignedInt& AtomsCounter, const CellEngineAtom& TempAtomObject, const Particle& ParticleObject);
-    void RenderSelectedSpace(UnsignedInt XStartParam, UnsignedInt YStartParam, UnsignedInt ZStartParam, UnsignedInt XStepParam, UnsignedInt YStepParam, UnsignedInt ZStepParam, UnsignedInt XSizeParam, UnsignedInt YSizeParam, UnsignedInt ZSizeParam, const vmath::mat4& ViewMatrix, CellEngineAtom& TempAtomObject, std::vector<TemporaryRenderedVoxel>& TemporaryRenderedVoxelsList, UnsignedInt StencilBufferLoopCounter);
+    void RenderSelectedSpace(const vmath::mat4& ViewMatrix, UnsignedInt XStartParam, UnsignedInt YStartParam, UnsignedInt ZStartParam, UnsignedInt XStepParam, UnsignedInt YStepParam, UnsignedInt ZStepParam, UnsignedInt XSizeParam, UnsignedInt YSizeParam, UnsignedInt ZSizeParam, CellEngineAtom& TempAtomObject);
 protected:
     void RenderSpace(const vmath::mat4& ViewMatrix) override;
 protected:
