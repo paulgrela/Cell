@@ -314,7 +314,7 @@ public:
         {
             if (ImGui::CollapsingHeader("Rendering Information", ImGuiTreeNodeFlags_DefaultOpen))
             {
-                ImGui::Checkbox("Render Cell with CPU Computing", &CellEngineConfigDataObject.RenderCellWithCPUComputing);
+                ImGui::Checkbox("Render Cell with Parallel CPU Computing", &CellEngineConfigDataObject.RenderCellWithParallelCPUComputing);
 
                 ImGui::Text("%s", CellEngineConfigDataObject.TimeParametersOfRenderingStr.c_str());
 
@@ -422,24 +422,40 @@ public:
     {
         try
         {
-            const char *DensityOfDrawnAtomsComboBoxItems[] = { "1", "10", "100", "AUTOMATIC" };
+            const char *DensityOfDrawnAtomsComboBoxItems[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "100", "AUTOMATIC" };
             int DensityOfDrawnAtomsItemIndex;
             switch (CellEngineConfigDataObject.LoadOfAtomsStep)
             {
                 case 1 : DensityOfDrawnAtomsItemIndex = 0; break;
-                case 10 : DensityOfDrawnAtomsItemIndex = 1; break;
-                case 100 : DensityOfDrawnAtomsItemIndex = 2; break;
+                case 2 : DensityOfDrawnAtomsItemIndex = 1; break;
+                case 3 : DensityOfDrawnAtomsItemIndex = 2; break;
+                case 4 : DensityOfDrawnAtomsItemIndex = 3; break;
+                case 5 : DensityOfDrawnAtomsItemIndex = 4; break;
+                case 6 : DensityOfDrawnAtomsItemIndex = 5; break;
+                case 7 : DensityOfDrawnAtomsItemIndex = 6; break;
+                case 8 : DensityOfDrawnAtomsItemIndex = 7; break;
+                case 9 : DensityOfDrawnAtomsItemIndex = 8; break;
+                case 10 : DensityOfDrawnAtomsItemIndex = 9; break;
+                case 100 : DensityOfDrawnAtomsItemIndex = 10; break;
                 default : break;
             }
             if (CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep == true)
-                DensityOfDrawnAtomsItemIndex = 3;
+                DensityOfDrawnAtomsItemIndex = 11;
             ImGui::Combo(" Density Of Drawn Atoms", &DensityOfDrawnAtomsItemIndex, DensityOfDrawnAtomsComboBoxItems, IM_ARRAYSIZE(DensityOfDrawnAtomsComboBoxItems));
             switch (DensityOfDrawnAtomsItemIndex)
             {
                 case 0 : CellEngineConfigDataObject.LoadOfAtomsStep = 1; CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep = false; break;
-                case 1 : CellEngineConfigDataObject.LoadOfAtomsStep = 10; CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep = false; break;
-                case 2 : CellEngineConfigDataObject.LoadOfAtomsStep = 100; CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep = false; break;
-                case 3 : CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep = true; break;
+                case 1 : CellEngineConfigDataObject.LoadOfAtomsStep = 2; CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep = false; break;
+                case 2 : CellEngineConfigDataObject.LoadOfAtomsStep = 3; CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep = false; break;
+                case 3 : CellEngineConfigDataObject.LoadOfAtomsStep = 4; CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep = false; break;
+                case 4 : CellEngineConfigDataObject.LoadOfAtomsStep = 5; CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep = false; break;
+                case 5 : CellEngineConfigDataObject.LoadOfAtomsStep = 6; CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep = false; break;
+                case 6 : CellEngineConfigDataObject.LoadOfAtomsStep = 7; CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep = false; break;
+                case 7 : CellEngineConfigDataObject.LoadOfAtomsStep = 8; CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep = false; break;
+                case 8 : CellEngineConfigDataObject.LoadOfAtomsStep = 9; CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep = false; break;
+                case 9 : CellEngineConfigDataObject.LoadOfAtomsStep = 10; CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep = false; break;
+                case 10 : CellEngineConfigDataObject.LoadOfAtomsStep = 100; CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep = false; break;
+                case 11 : CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep = true; break;
                 default : break;
             }
         }
@@ -450,7 +466,6 @@ public:
     {
         try
         {
-            //ImGui::Checkbox("Show Details In Atom Scale", &CellEngineConfigDataObject.ShowDetailsInAtomScale);
             ImGui::Checkbox("Show Atoms In Each Part Of the Cell", &CellEngineConfigDataObject.ShowAtomsInEachPartOfTheCellWhenObserverIsFromOutside);
             ImGui::Checkbox("Draw Bonds Between Atoms", &CellEngineConfigDataObject.DrawBondsBetweenAtoms);
             ImGui::Checkbox("Render Objects", &CellEngineOpenGLVisualiserPointer->RenderObjectsBool);

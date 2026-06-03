@@ -214,7 +214,7 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace(const vmat
 {
     try
     {
-        if (CellEngineConfigDataObject.RenderCellWithCPUComputing == false)
+        if (CellEngineConfigDataObject.RenderCellWithParallelCPUComputing == false)
             RenderSpace1(ViewMatrix, ParticlesOffsetTotal, AtomOffsetTotal, AtomLocalOffsetTotal, GPUParticles, GPUAtoms, GPUAtomsLocal);
         else
             RenderSpace2(ViewMatrix, ParticlesOffsetTotal, AtomOffsetTotal, AtomLocalOffsetTotal);

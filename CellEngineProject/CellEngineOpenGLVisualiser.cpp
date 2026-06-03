@@ -580,7 +580,7 @@ inline void CellEngineOpenGLVisualiser::SetAutomaticParametersForRendering()
         if (CellEngineConfigDataObject.ViewPositionZ >= CellEngineConfigDataObject.Distance - BackSize)
         {
             if (CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep == true)
-                CellEngineConfigDataObject.LoadOfAtomsStep = 5;
+                CellEngineConfigDataObject.LoadOfAtomsStep = (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace ? 2 : 4);
         }
         else
         {

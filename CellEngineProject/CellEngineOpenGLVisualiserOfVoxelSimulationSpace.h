@@ -17,14 +17,16 @@
 #include "CellEngineOpenGLVisualiser.h"
 #include "CellEngineSimulationSpace.h"
 
+constexpr UnsignedInt MaxNumberOfSectors = 16;
+
 class CellEngineOpenGLVisualiserOfVoxelSimulationSpace : public CellEngineOpenGLVisualiser
 {
 private:
-    CellEngineAtom TempAtomObjectInSectors[40][40][40] = {};
-    std::uint32_t AtomOffsetInSectors[40][40][40] = {};
-    std::vector<GPUParticle> GPUParticlesInSectors[40][40][40];
-    std::vector<GPUAtom> GPUAtomsInSectors[40][40][40];
-    std::vector<GPUAtomLocal> GPUAtomsLocalInSectors[40][40][40];
+    CellEngineAtom TempAtomObjectInSectors[MaxNumberOfSectors][MaxNumberOfSectors][MaxNumberOfSectors] = {};
+    std::uint32_t AtomOffsetInSectors[MaxNumberOfSectors][MaxNumberOfSectors][MaxNumberOfSectors] = {};
+    std::vector<GPUParticle> GPUParticlesInSectors[MaxNumberOfSectors][MaxNumberOfSectors][MaxNumberOfSectors];
+    std::vector<GPUAtom> GPUAtomsInSectors[MaxNumberOfSectors][MaxNumberOfSectors][MaxNumberOfSectors];
+    std::vector<GPUAtomLocal> GPUAtomsLocalInSectors[MaxNumberOfSectors][MaxNumberOfSectors][MaxNumberOfSectors];
 
 public:
     enum class VoxelSpaceDrawingTypes : UnsignedInt

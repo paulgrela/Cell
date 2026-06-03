@@ -216,7 +216,7 @@ public:
     };
     SizeOfAtomsDrawingTypes SizeOfAtomsDrawingTypesObject = SizeOfAtomsDrawingTypes::AutomaticChangeSize;
 public:
-    bool RenderCellWithCPUComputing = true;
+    bool RenderCellWithParallelCPUComputing = true;
 public:
     bool UseMainSizeOfAtoms = true;
 public:
