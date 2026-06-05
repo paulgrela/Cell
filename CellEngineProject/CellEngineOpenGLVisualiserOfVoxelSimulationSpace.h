@@ -64,9 +64,9 @@ private:
     inline void ConvertAtomPosToGraphicCoordinate(CellEngineAtom& CellEngineAtomObjectParam, UnsignedInt StartXParam, UnsignedInt StartYParam, UnsignedInt StartZParam, UnsignedInt SpaceXParam, UnsignedInt SpaceYParam, UnsignedInt SpaceZParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam) const;
     static inline void SetParticleParametersToDraw(CellEngineAtom& TempAtomObject, Particle& ParticleObject);
 private:
-    void GenerateVoxelsForGPUParallel(UnsignedInt MainPosX, UnsignedInt MainPosY, UnsignedInt MainPosZ, SimulationSpaceVoxel SimulationSpaceVoxelObject, SimulationSpaceVoxel LastSimulationSpaceVoxel, UnsignedInt& AtomsCounter, const CellEngineAtom& TempAtomObject, const Particle& ParticleObject);
+    void GenerateVoxelsForGPUParallel(UnsignedInt PosXParam, UnsignedInt XEndParam, UnsignedInt PosYParam, UnsignedInt YEndParam, UnsignedInt PosZParam, UnsignedInt ZEndParam, UnsignedInt MainPosX, UnsignedInt MainPosY, UnsignedInt MainPosZ, SimulationSpaceVoxel SimulationSpaceVoxelObject, SimulationSpaceVoxel LastSimulationSpaceVoxel, UnsignedInt& AtomsCounter, const CellEngineAtom& TempAtomObject, const Particle& ParticleObject);
     void GenerateVoxelsForGPU(SimulationSpaceVoxel SimulationSpaceVoxelObject, SimulationSpaceVoxel LastSimulationSpaceVoxel, UnsignedInt& AtomsCounter, const CellEngineAtom& TempAtomObject, const Particle& ParticleObject);
-    void RenderSelectedSpace(const vmath::mat4& ViewMatrix, UnsignedInt XStartParam, UnsignedInt YStartParam, UnsignedInt ZStartParam, UnsignedInt XStepParam, UnsignedInt YStepParam, UnsignedInt ZStepParam, UnsignedInt XSizeParam, UnsignedInt YSizeParam, UnsignedInt ZSizeParam, CellEngineAtom& TempAtomObject);
+    void RenderSelectedSpace(UnsignedInt XStartParam, UnsignedInt YStartParam, UnsignedInt ZStartParam, UnsignedInt XStepParam, UnsignedInt YStepParam, UnsignedInt ZStepParam, UnsignedInt XSizeParam, UnsignedInt YSizeParam, UnsignedInt ZSizeParam, CellEngineAtom& TempAtomObject);
 protected:
     void RenderSpace(const vmath::mat4& ViewMatrix) override;
 protected:
