@@ -27,6 +27,7 @@ import CellEngineColors;
 #endif
 
 constexpr bool DrawError = false;
+constexpr bool DrawData = false;
 
 std::tuple<UnsignedInt, UnsignedInt, UnsignedInt> CellEngineOpenGLVisualiserOfVoxelSimulationSpace::GetStartPositions()
 {
@@ -129,7 +130,8 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::GenerateVoxelsForGPUParal
 {
     try
     {
-        //cout << "K = " << MainPosX << " " << MainPosY << " " << MainPosZ << endl;
+        if (DrawData == true)
+            LoggersManagerObject.LogOnlyToConsole(STREAM("K = " << MainPosX << " " << MainPosY << " " << MainPosZ));
 
         if (LastSimulationSpaceVoxel != SimulationSpaceVoxelObject || PosXParam == XEndParam - 2 || PosYParam == YEndParam - 2 || PosZParam == ZEndParam - 2)
         {
@@ -246,14 +248,12 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSelectedSpace(const
         for (UnsignedInt PosX = XStartParam; PosX < XStartParam + XSizeParam; PosX += XStepParam)
             for (UnsignedInt PosY = YStartParam; PosY < YStartParam + YSizeParam; PosY += YStepParam)
             {
-                //SimulationSpaceVoxel LastSimulationSpaceVoxel = CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GetSpaceVoxelForOuterClass(PosX, PosY, ZStartParam);
-                SimulationSpaceVoxel LastSimulationSpaceVoxel = (*SpacePointer)[PosX][PosY][ZStartParam];
+                SimulationSpaceVoxel LastSimulationSpaceVoxel = CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GetSpaceVoxelForOuterClass(PosX, PosY, ZStartParam);
 
                 for (UnsignedInt PosZ = ZStartParam; PosZ < ZStartParam + ZSizeParam; PosZ += ZStepParam)
                     if (PosX < CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension && PosY < CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension && PosZ < CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension)
                     {
-                        //const SimulationSpaceVoxel SimulationSpaceVoxelObject = CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GetSpaceVoxelForOuterClass(PosX, PosY, PosZ);
-                        const SimulationSpaceVoxel SimulationSpaceVoxelObject = (*SpacePointer)[PosX][PosY][PosZ];
+                        const SimulationSpaceVoxel SimulationSpaceVoxelObject = CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GetSpaceVoxelForOuterClass(PosX, PosY, PosZ);
 
                         if (SimulationSpaceVoxelObject != CellEngineParticlesVoxelsOperations::GetZeroSimulationSpaceVoxel())
                         {
@@ -349,20 +349,16 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSpace(const vmath::
 
             const auto start_time111 = chrono::high_resolution_clock::now();
 
-            constexpr UnsignedInt StepSizeX = 64;
-            constexpr UnsignedInt StepSizeY = 64;
-            constexpr UnsignedInt StepSizeZ = 64;
-
             #pragma omp parallel for collapse(3) num_threads(256) default(none) shared(CellEngineConfigDataObject, ViewMatrix, TempAtomObject, NumberOfRenderedSelectedSpaces, AtomOffsetInSectors, GPUAtomsInSectors, GPUParticlesInSectors, GPUAtomsLocalInSectors, TempAtomObjectInSectors) schedule(dynamic)
             for (UnsignedInt PosX = 0; PosX < MaxNumberOfSectors; PosX++)
                 for (UnsignedInt PosY = 0; PosY < MaxNumberOfSectors; PosY++)
                     for (UnsignedInt PosZ = 0; PosZ < MaxNumberOfSectors; PosZ++)
                     {
-                        TempAtomObjectInSectors[PosX][PosY][PosZ].SetAtomPositionsData(CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(PosX * StepSizeX), CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(PosY * StepSizeY), CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(PosZ * StepSizeZ));
+                        TempAtomObjectInSectors[PosX][PosY][PosZ].SetAtomPositionsData(CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(PosX * StepSizeXInSectors), CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(PosY * StepSizeYInSectors), CellEngineVoxelSimulationSpace::ConvertToGraphicsCoordinate(PosZ * StepSizeZInSectors));
 
                         if (RenderObject(TempAtomObjectInSectors[PosX][PosY][PosZ], Particle(), ViewMatrix, true, false, true, false) == true)
                         {
-                            RenderSelectedSpace(PosX * StepSizeX, PosY * StepSizeY, PosZ * StepSizeZ, CellEngineConfigDataObject.LoadOfAtomsStepX, CellEngineConfigDataObject.LoadOfAtomsStepY, CellEngineConfigDataObject.LoadOfAtomsStepZ, StepSizeX, StepSizeY, StepSizeZ, TempAtomObjectInSectors[PosX][PosY][PosZ]);
+                            RenderSelectedSpace(PosX * StepSizeXInSectors, PosY * StepSizeYInSectors, PosZ * StepSizeZInSectors, CellEngineConfigDataObject.LoadOfAtomsStepX, CellEngineConfigDataObject.LoadOfAtomsStepY, CellEngineConfigDataObject.LoadOfAtomsStepZ, StepSizeXInSectors, StepSizeYInSectors, StepSizeZInSectors, TempAtomObjectInSectors[PosX][PosY][PosZ]);
                             NumberOfRenderedSelectedSpaces++;
                         }
                     }

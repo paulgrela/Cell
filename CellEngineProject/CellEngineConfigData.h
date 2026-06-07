@@ -198,7 +198,7 @@ public:
 public:
     float CutZ{};
     float Distance{};
-    bool RenderZAxWithDensity1 = true;
+    bool RenderZAxWithDensity1 = false;
     UnsignedInt LoadOfAtomsStep{};
     UnsignedInt LoadOfAtomsStepX{};
     UnsignedInt LoadOfAtomsStepY{};

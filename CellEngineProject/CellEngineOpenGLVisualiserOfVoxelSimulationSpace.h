@@ -18,6 +18,9 @@
 #include "CellEngineSimulationSpace.h"
 
 constexpr UnsignedInt MaxNumberOfSectors = 16;
+constexpr UnsignedInt StepSizeXInSectors = 64;
+constexpr UnsignedInt StepSizeYInSectors = 64;
+constexpr UnsignedInt StepSizeZInSectors = 64;
 
 class CellEngineOpenGLVisualiserOfVoxelSimulationSpace : public CellEngineOpenGLVisualiser
 {
@@ -27,7 +30,6 @@ private:
     std::vector<GPUParticle> GPUParticlesInSectors[MaxNumberOfSectors][MaxNumberOfSectors][MaxNumberOfSectors];
     std::vector<GPUAtom> GPUAtomsInSectors[MaxNumberOfSectors][MaxNumberOfSectors][MaxNumberOfSectors];
     std::vector<GPUAtomLocal> GPUAtomsLocalInSectors[MaxNumberOfSectors][MaxNumberOfSectors][MaxNumberOfSectors];
-
 public:
     enum class VoxelSpaceDrawingTypes : UnsignedInt
     {

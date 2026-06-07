@@ -12,6 +12,10 @@
 
 #include "ArcBall.h"
 
+constexpr bool DrawBondsOnePragmaVersion = true;
+constexpr bool LogAdditionalInformationAboutParitclesAndAtoms = false;
+constexpr bool LogAdditionalInformationAboutMousePositionAndScreenSize = false;
+
 struct GPUAtom
 {
 public:
@@ -103,8 +107,10 @@ private:
     }
     Uniforms{};
 protected:
-    //vector<vector<float>> LinesVertexes{};
+    vector<vector<float>> LinesVertexes{};
     //vector<float> LinesVertexes{};
+
+
     std::vector<float> LinesPositions{};
     std::vector<float> LinesColors{};
 private:
@@ -150,7 +156,7 @@ protected:
     void DeleteLineVertexes() const;
     static void FindBondsToDraw(const std::vector<CellEngineAtom>& Atoms, std::vector<std::pair<UnsignedInt, UnsignedInt>>& BondsToDraw);
     void FindAllBondsToDrawForParticle(const Particle& ParticleObject, std::vector<std::pair<UnsignedInt, UnsignedInt>>& BondsToDraw, bool DrawBonds, const vmath::mat4& ViewMatrix);
-    void DrawAllFoundBondsBetweenAtoms(const vmath::mat4& ViewMatrix) const;
+    void DrawAllFoundBondsBetweenAtoms(const vector<float>& LinesVertexesLocal, const vmath::mat4& ViewMatrix) const;
 public:
     static std::string GetEntityName(UnsignedInt EntityId);
     static void SetVisibilityOfAllParticles(bool VisibleParam);
