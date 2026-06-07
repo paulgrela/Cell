@@ -580,7 +580,16 @@ inline void CellEngineOpenGLVisualiser::SetAutomaticParametersForRendering()
         if (CellEngineConfigDataObject.ViewPositionZ >= CellEngineConfigDataObject.Distance - BackSize)
         {
             if (CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep == true)
-                CellEngineConfigDataObject.LoadOfAtomsStep = (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace ? 2 : 4);
+            {
+                if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)
+                {
+                    CellEngineConfigDataObject.LoadOfAtomsStepX = CellEngineConfigDataObject.LoadOfAtomsStepY = CellEngineConfigDataObject.LoadOfAtomsStepZ = CellEngineConfigDataObject.LoadOfAtomsStep = 2;
+                    if (CellEngineConfigDataObject.RenderZAxWithDensity1 == true)
+                        CellEngineConfigDataObject.LoadOfAtomsStepZ = CellEngineConfigDataObject.LoadOfAtomsStep - 1;
+                }
+                else
+                    CellEngineConfigDataObject.LoadOfAtomsStep = 4;
+            }
         }
         else
         {

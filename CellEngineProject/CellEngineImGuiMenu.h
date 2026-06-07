@@ -458,6 +458,12 @@ public:
                 case 11 : CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep = true; break;
                 default : break;
             }
+
+            CellEngineConfigDataObject.LoadOfAtomsStepX = CellEngineConfigDataObject.LoadOfAtomsStepY = CellEngineConfigDataObject.LoadOfAtomsStepZ = CellEngineConfigDataObject.LoadOfAtomsStep;
+
+            ImGui::Checkbox(" Render Z Ax With Density 1", &CellEngineConfigDataObject.RenderZAxWithDensity1);
+            if (CellEngineConfigDataObject.RenderZAxWithDensity1 == true)
+                CellEngineConfigDataObject.LoadOfAtomsStepZ = CellEngineConfigDataObject.LoadOfAtomsStep - 1;
         }
         CATCH("executing of density of drawn atoms menu");
     }

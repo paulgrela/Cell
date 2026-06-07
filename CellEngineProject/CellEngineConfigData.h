@@ -198,7 +198,11 @@ public:
 public:
     float CutZ{};
     float Distance{};
+    bool RenderZAxWithDensity1 = true;
     UnsignedInt LoadOfAtomsStep{};
+    UnsignedInt LoadOfAtomsStepX{};
+    UnsignedInt LoadOfAtomsStepY{};
+    UnsignedInt LoadOfAtomsStepZ{};
     bool ShowAtomsInEachPartOfTheCellWhenObserverIsFromOutside = false;
 public:
     float XLowToDrawInAtomScale{};

@@ -362,7 +362,7 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSpace(const vmath::
 
                         if (RenderObject(TempAtomObjectInSectors[PosX][PosY][PosZ], Particle(), ViewMatrix, true, false, true, false) == true)
                         {
-                            RenderSelectedSpace(PosX * StepSizeX, PosY * StepSizeY, PosZ * StepSizeZ, CellEngineConfigDataObject.LoadOfAtomsStep, CellEngineConfigDataObject.LoadOfAtomsStep, CellEngineConfigDataObject.LoadOfAtomsStep, StepSizeX, StepSizeY, StepSizeZ, TempAtomObjectInSectors[PosX][PosY][PosZ]);
+                            RenderSelectedSpace(PosX * StepSizeX, PosY * StepSizeY, PosZ * StepSizeZ, CellEngineConfigDataObject.LoadOfAtomsStepX, CellEngineConfigDataObject.LoadOfAtomsStepY, CellEngineConfigDataObject.LoadOfAtomsStepZ, StepSizeX, StepSizeY, StepSizeZ, TempAtomObjectInSectors[PosX][PosY][PosZ]);
                             NumberOfRenderedSelectedSpaces++;
                         }
                     }
