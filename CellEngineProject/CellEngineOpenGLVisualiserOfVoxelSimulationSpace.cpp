@@ -241,8 +241,6 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSelectedSpace(const
 {
     try
     {
-        const auto SpacePointer = static_cast<PointerToSpace_2048_2048_2048>(CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->SpacePointer);
-
         UnsignedInt AtomsCounter = 0;
 
         for (UnsignedInt PosX = XStartParam; PosX < XStartParam + XSizeParam; PosX += XStepParam)

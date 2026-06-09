@@ -120,7 +120,7 @@ void CellEngineOpenGLVisualiser::StartUp()
             LinesPositions.reserve(10'000'000 * 6);
         else
         {
-            LinesVertexes.resize(16 + 1);
+            LinesVertexes.resize(16);
             for (auto& LinesVertexesThread : LinesVertexes)
                 LinesVertexesThread.reserve(1'000'000 * 6);
         }
@@ -285,10 +285,7 @@ void CellEngineOpenGLVisualiser::DrawAllFoundBondsBetweenAtoms(const vector<floa
     try
     {
         uint32_t NumVertices;
-        if (DrawBondsOnePragmaVersion == true)
-            NumVertices = LinesPositions.size() / 3;
-        else
-            NumVertices = LinesVertexesLocal.size() / 3;
+        DrawBondsOnePragmaVersion == true ? NumVertices = LinesPositions.size() / 3 : NumVertices = LinesVertexesLocal.size() / 3;
 
         glBindBuffer(GL_ARRAY_BUFFER, LineDataBuffer[0]);
 
@@ -325,20 +322,14 @@ void CellEngineOpenGLVisualiser::FindBondsToDraw(const vector<CellEngineAtom>& A
     {
         vector<vector<pair<UnsignedInt, UnsignedInt>>> BondsToDrawLocal;
         UnsignedInt NumOfThreads;
-        if (DrawBondsOnePragmaVersion == true)
-        {
-            NumOfThreads = std::thread::hardware_concurrency() + 1;
-            NumOfThreads = 256 + 1;
-        }
-        else
-            NumOfThreads = 16 + 1;
+        DrawBondsOnePragmaVersion == true ? NumOfThreads = std::thread::hardware_concurrency() : NumOfThreads = 16;
 
         BondsToDrawLocal.resize(NumOfThreads);
 
         UnsignedInt AtomObjectIndex1 = 0;
         UnsignedInt AtomObjectIndex2 = 0;
 
-        #pragma omp parallel for collapse(2) num_threads(NumOfThreads - 1) default(none) shared(BondsToDrawLocal, BondsToDraw, Atoms, LoggersManagerObject) private(AtomObjectIndex1, AtomObjectIndex2)
+        #pragma omp parallel for collapse(2) num_threads(NumOfThreads) default(none) shared(BondsToDrawLocal, BondsToDraw, Atoms, LoggersManagerObject) private(AtomObjectIndex1, AtomObjectIndex2)
         for (AtomObjectIndex1 = 0; AtomObjectIndex1 < Atoms.size(); AtomObjectIndex1++)
             for (AtomObjectIndex2 = 0; AtomObjectIndex2 < Atoms.size(); AtomObjectIndex2++)
                 if (AtomObjectIndex1 != AtomObjectIndex2)
@@ -730,7 +721,7 @@ void CellEngineOpenGLVisualiser::ComputeInShaderCopyParticlesAndAtomsDataToGPUMe
             if (DrawBondsOnePragmaVersion == true)
                 DrawAllFoundBondsBetweenAtoms(LinesVertexes[0], ViewMatrix);
             else
-                for (UnsignedInt LinesVertexesThreadIndex = 1; LinesVertexesThreadIndex < LinesVertexes.size(); LinesVertexesThreadIndex++)
+                for (UnsignedInt LinesVertexesThreadIndex = 0; LinesVertexesThreadIndex < LinesVertexes.size(); LinesVertexesThreadIndex++)
                     if (LinesVertexes[LinesVertexesThreadIndex].empty() == false)
                         DrawAllFoundBondsBetweenAtoms(LinesVertexes[LinesVertexesThreadIndex], ViewMatrix);
         }

@@ -458,10 +458,6 @@ void CellEngineSimulationParallelExecutionManager::GatherParticlesFromThreadsToP
         CellEngineConfigDataObject.UseMutexBetweenMainScreenThreadAndMenuThreads = true;
         sleep(1);
         {
-            #ifdef USE_OPENGL
-            //lock_guard<recursive_mutex> LockGuard{ CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderMenuAndVoxelSimulationSpaceMutexObject };
-            #endif
-
             GatherParticlesFromThreads();
 
             InitiateFreeParticleIndexes(GetParticles(), false);

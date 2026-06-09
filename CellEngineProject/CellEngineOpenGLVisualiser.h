@@ -108,9 +108,6 @@ private:
     Uniforms{};
 protected:
     vector<vector<float>> LinesVertexes{};
-    //vector<float> LinesVertexes{};
-
-
     std::vector<float> LinesPositions{};
     std::vector<float> LinesColors{};
 private:
