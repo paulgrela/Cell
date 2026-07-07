@@ -422,14 +422,16 @@ void ReadVoxelsVectorDividedByStepsFromBinaryFile(ifstream& ParticlesDataFile, L
     CATCH("reading vector from binary file")
 }
 
-void CheckCenterForSector(const Particle& ParticleObject, const ParticlesContainer<Particle>& ParticlesInSector)
+std::tuple<UnsignedInt, UnsignedInt, UnsignedInt> CheckCenterForSector(const Particle& ParticleObject, const ParticlesContainer<Particle>& ParticlesInSector)
 {
     const UnsignedInt X = CellEngineUseful::GetSectorPos(ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z).SectorPosX;
     const UnsignedInt Y = CellEngineUseful::GetSectorPos(ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z).SectorPosY;
     const UnsignedInt Z = CellEngineUseful::GetSectorPos(ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z).SectorPosZ;
 
-    if (ParticlesInSector[X][Y][Z].Particles.find(ParticleObject.Index)->second.Center != ParticleObject.Center)
-        cout << "Error for particle XYZ = " << ParticleObject.EntityId << " " << ParticleObject.Index << endl;
+        // if (ParticlesInSector[X][Y][Z].Particles.find(ParticleObject.Index)->second.Center != ParticleObject.Center)
+        //     cout << "Error for particle XYZ = " << ParticleObject.EntityId << " " << ParticleObject.Index << endl;
+
+    return { X, Y, Z };
 }
 
 void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(ifstream& ParticlesDataFile)
@@ -510,8 +512,19 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
 
                 if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true)
                 {
+                    // if (Particles[ParticleSectorPos.SectorPosX][ParticleSectorPos.SectorPosY][ParticleSectorPos.SectorPosZ].MPIProcessIndex == MPIProcessDataObject.CurrentMPIProcessIndex)
+                    //     AddNewParticle(ParticleObject);
+
                     if (Particles[ParticleSectorPos.SectorPosX][ParticleSectorPos.SectorPosY][ParticleSectorPos.SectorPosZ].MPIProcessIndex == MPIProcessDataObject.CurrentMPIProcessIndex)
-                        AddNewParticle(ParticleObject);
+                    {
+                        //CZY DODAC ZE JESLI Particles w tym samym sektorzez
+                        if (CheckCenterForSector(ParticleObject, GetParticles()) == std::make_tuple(ParticleSectorPos.SectorPosX, ParticleSectorPos.SectorPosY, ParticleSectorPos.SectorPosZ))
+                        {
+                            //cout << ParticleSectorPos.SectorPosX << " " << ParticleSectorPos.SectorPosY << " " << ParticleSectorPos.SectorPosZ << " " << ParticleObject.EntityId << " " << ParticleObject.Index << endl;
+
+                            AddNewParticle(ParticleObject);
+                        }
+                    }
                 }
                 else
                     AddNewParticle(ParticleObject);

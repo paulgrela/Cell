@@ -136,10 +136,11 @@ void CellEngineSimulationParallelExecutionManager::JoinReactionsStatisticsFromTh
     {
         if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true)
         {
-            if (CellEngineConfigDataObject.OpenGLGraphicsSwitchedOff == false && MPIProcessDataObject.CurrentMPIProcessIndex == 0)
+            //if (CellEngineConfigDataObject.OpenGLGraphicsSwitchedOff == false && MPIProcessDataObject.CurrentMPIProcessIndex == 0)
+            if (CellEngineConfigDataObject.OpenGLGraphicsSwitchedOff == false && MPIProcessDataObject.CurrentMPIProcessIndex == CellEngineConfigDataObject.MainMPIProcessNumber)
             {
                 int ValueToSend = 3;
-                MPI_Bcast(&ValueToSend, 1, MPI_INT, 0, MPI_COMM_WORLD);
+                MPI_Bcast(&ValueToSend, 1, MPI_INT, CellEngineConfigDataObject.MainMPIProcessNumber, MPI_COMM_WORLD);
             }
 
             for (const auto& ReactionStatisticsData : SavedReactionsMap.back())
@@ -153,24 +154,26 @@ void CellEngineSimulationParallelExecutionManager::JoinReactionsStatisticsFromTh
 
             const int SavedReactionsMapForMPILength = CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SavedReactionsMapForMPI[SimulationStepNumber - 1].size();
             int SavedReactionsMapForMPILengths[MPIProcessDataObject.NumberOfMPIProcesses];
-            MPI_Gather(&SavedReactionsMapForMPILength, 1, MPI_INT, SavedReactionsMapForMPILengths, 1, MPI_INT, 0, MPI_COMM_WORLD);
+            MPI_Gather(&SavedReactionsMapForMPILength, 1, MPI_INT, SavedReactionsMapForMPILengths, 1, MPI_INT, CellEngineConfigDataObject.MainMPIProcessNumber, MPI_COMM_WORLD);
 
             LoggersManagerObject.Log(STREAM("SavedReactionsMapForMPILength = " << SavedReactionsMapForMPILength << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
 
             int MaximumOfAllSavedReactionsMapForMPILengths;
-            if (MPIProcessDataObject.CurrentMPIProcessIndex == 0)
+            //if (MPIProcessDataObject.CurrentMPIProcessIndex == 0)
+            if (MPIProcessDataObject.CurrentMPIProcessIndex == CellEngineConfigDataObject.MainMPIProcessNumber)
                 MaximumOfAllSavedReactionsMapForMPILengths = *max_element(SavedReactionsMapForMPILengths, SavedReactionsMapForMPILengths + MPIProcessDataObject.NumberOfMPIProcesses);
 
-            MPI_Bcast(&MaximumOfAllSavedReactionsMapForMPILengths, 1, MPI_INT, 0, MPI_COMM_WORLD);
+            MPI_Bcast(&MaximumOfAllSavedReactionsMapForMPILengths, 1, MPI_INT, CellEngineConfigDataObject.MainMPIProcessNumber, MPI_COMM_WORLD);
 
             LoggersManagerObject.Log(STREAM("MaximumOfAllSavedReactionsMapForMPILengths = " << MaximumOfAllSavedReactionsMapForMPILengths << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
 
             unique_ptr<ReactionStatistics[]> ReactionStatisticsVectorGatheringFromAllMPIProcessPointer(new ReactionStatistics[MaximumOfAllSavedReactionsMapForMPILengths * MPIProcessDataObject.NumberOfMPIProcesses + 1]);
 
             const int NumberOfBytesToGatherFromEveryProcess = static_cast<int>(MaximumOfAllSavedReactionsMapForMPILengths * sizeof(ReactionStatistics));
-            MPI_Gather(CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SavedReactionsMapForMPI[SimulationStepNumber - 1].data(), NumberOfBytesToGatherFromEveryProcess, MPI_BYTE, ReactionStatisticsVectorGatheringFromAllMPIProcessPointer.get(), NumberOfBytesToGatherFromEveryProcess, MPI_BYTE, 0, MPI_COMM_WORLD);
+            MPI_Gather(CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SavedReactionsMapForMPI[SimulationStepNumber - 1].data(), NumberOfBytesToGatherFromEveryProcess, MPI_BYTE, ReactionStatisticsVectorGatheringFromAllMPIProcessPointer.get(), NumberOfBytesToGatherFromEveryProcess, MPI_BYTE, CellEngineConfigDataObject.MainMPIProcessNumber, MPI_COMM_WORLD);
 
-            if (MPIProcessDataObject.CurrentMPIProcessIndex == 0)
+            //if (MPIProcessDataObject.CurrentMPIProcessIndex == 0)
+            if (MPIProcessDataObject.CurrentMPIProcessIndex == CellEngineConfigDataObject.MainMPIProcessNumber)
             {
                 SavedReactionsMap[SimulationStepNumber - 1].clear();
                 for (UniqueIdInt LocalMPIProcessIndex = 0; LocalMPIProcessIndex < MPIProcessDataObject.NumberOfMPIProcesses; LocalMPIProcessIndex++)
@@ -707,14 +710,15 @@ void CellEngineSimulationParallelExecutionManager::GenerateNStepsOfSimulationFor
 
         CellEngineUseful::SwitchOffLogs();
 
-        if (CellEngineConfigDataObject.OpenGLGraphicsSwitchedOff == false && MPIProcessDataObject.CurrentMPIProcessIndex == 0)
+        //if (CellEngineConfigDataObject.OpenGLGraphicsSwitchedOff == false && MPIProcessDataObject.CurrentMPIProcessIndex == 0)
+        if (CellEngineConfigDataObject.OpenGLGraphicsSwitchedOff == false && MPIProcessDataObject.CurrentMPIProcessIndex == CellEngineConfigDataObject.MainMPIProcessNumber)
         {
             int ValueToSend = 1;
-            MPI_Bcast(&ValueToSend, 1, MPI_INT, 0, MPI_COMM_WORLD);
+            MPI_Bcast(&ValueToSend, 1, MPI_INT, CellEngineConfigDataObject.MainMPIProcessNumber, MPI_COMM_WORLD);
         }
 
-        MPI_Bcast(&NumberOfStepsOutside, 1, MPI_UINT64_T, 0, MPI_COMM_WORLD);
-        MPI_Bcast(&NumberOfStepsInside, 1, MPI_UINT64_T, 0, MPI_COMM_WORLD);
+        MPI_Bcast(&NumberOfStepsOutside, 1, MPI_UINT64_T, CellEngineConfigDataObject.MainMPIProcessNumber, MPI_COMM_WORLD);
+        MPI_Bcast(&NumberOfStepsInside, 1, MPI_UINT64_T, CellEngineConfigDataObject.MainMPIProcessNumber, MPI_COMM_WORLD);
 
         GenerateNStepsOfSimulationForWholeCellSpaceInMPIProcess(NumberOfStepsOutside, NumberOfStepsInside, MPIProcessDataObject.CurrentMPIProcessIndex, 0, 0, 0);
 

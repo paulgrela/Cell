@@ -77,6 +77,8 @@ public:
 public:
     bool FullAtomMPIParallelProcessesExecution = false;
 public:
+    UnsignedInt MainMPIProcessNumber = 22;
+public:
     bool OpenGLGraphicsSwitchedOff = false;
 public:
     UnsignedInt NumberOfParticlesSectorsInX = 1;

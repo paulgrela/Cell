@@ -68,7 +68,8 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesStatistics()
         LoggersManagerObject.LogStatistics(STREAM("SAVE PARTICLES ARRAYS"));
 
         if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true)
-            if (CellEngineConfigDataObject.OpenGLGraphicsSwitchedOff == false && MPIProcessDataObject.CurrentMPIProcessIndex == 0)
+            //if (CellEngineConfigDataObject.OpenGLGraphicsSwitchedOff == false && MPIProcessDataObject.CurrentMPIProcessIndex == 0)
+            if (CellEngineConfigDataObject.OpenGLGraphicsSwitchedOff == false && MPIProcessDataObject.CurrentMPIProcessIndex == CellEngineConfigDataObject.MainMPIProcessNumber)
             {
                 int ValueToSend = 2;
                 MPI_Bcast(&ValueToSend, 1, MPI_INT, 0, MPI_COMM_WORLD);
@@ -121,7 +122,8 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesAsCopiedMap()
                 LoggersManagerObject.Log(STREAM("ParticlesSnapshotsCopiedVectorForMPILength = " << ParticlesSnapshotsCopiedVectorForMPILength << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
 
                 int MaximumOfAllSavedParticlesSnapshotsCopiedVectorForMPILengths;
-                if (MPIProcessDataObject.CurrentMPIProcessIndex == 0)
+                //if (MPIProcessDataObject.CurrentMPIProcessIndex == 0)
+                if (MPIProcessDataObject.CurrentMPIProcessIndex == CellEngineConfigDataObject.MainMPIProcessNumber)
                     MaximumOfAllSavedParticlesSnapshotsCopiedVectorForMPILengths = *max_element(ParticlesSnapshotsCopiedVectorForMPILengths, ParticlesSnapshotsCopiedVectorForMPILengths + MPIProcessDataObject.NumberOfMPIProcesses);
 
                 MPI_Bcast(&MaximumOfAllSavedParticlesSnapshotsCopiedVectorForMPILengths, 1, MPI_INT, 0, MPI_COMM_WORLD);
@@ -136,7 +138,8 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesAsCopiedMap()
 
                 LoggersManagerObject.Log(STREAM("COPIED FINISHED" << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
 
-                if (MPIProcessDataObject.CurrentMPIProcessIndex == 0)
+                //if (MPIProcessDataObject.CurrentMPIProcessIndex == 0)
+                if (MPIProcessDataObject.CurrentMPIProcessIndex == CellEngineConfigDataObject.MainMPIProcessNumber)
                 {
                     ParticlesSnapshotsCopiedVectorForMPI[SimulationStepNumber - 1].clear();
                     for (UniqueIdInt LocalMPIProcessIndex = 0; LocalMPIProcessIndex < MPIProcessDataObject.NumberOfMPIProcesses; LocalMPIProcessIndex++)

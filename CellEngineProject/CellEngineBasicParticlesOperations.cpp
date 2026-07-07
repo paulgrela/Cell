@@ -3,6 +3,7 @@
 
 #include "CellEngineMacros.h"
 
+#include "CellEngineMPIProcess.h"
 #include "CellEngineParticlesKindsManager.h"
 #include "CellEngineBasicParticlesOperations.h"
 
@@ -23,9 +24,24 @@ void CellEngineBasicParticlesOperations::InitiateFreeParticleIndexes(const Parti
                 SetCurrentSectorPos({ static_cast<SignedInt>(ParticleSectorXIndex), static_cast<SignedInt>(ParticleSectorYIndex), static_cast<SignedInt>(ParticleSectorZIndex) });
 
                 GetFreeIndexes() = {};
-                for (UniqueIdInt FreeIndex = (CurrentSectorIndex + 1) * ParticleIndexesInSectorsCreatorFactor - 1; FreeIndex > CurrentSectorIndex * ParticleIndexesInSectorsCreatorFactor; FreeIndex--)
-                    if (!GetParticles().contains(FreeIndex))
-                        GetFreeIndexes().push(FreeIndex);
+
+                // if (PrintInfo == true)
+                //     LoggersManagerObject.Log(STREAM("SCOPE OF INDEXES IN SECTOR = " << ParticleSectorXIndex << " " << ParticleSectorYIndex << " " << ParticleSectorZIndex << " " << (CurrentSectorIndex + 1) * ParticleIndexesInSectorsCreatorFactor - 1 << " " << CurrentSectorIndex * ParticleIndexesInSectorsCreatorFactor));
+
+                if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true)
+                {
+                    if (Particles[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].MPIProcessIndex == MPIProcessDataObject.CurrentMPIProcessIndex)
+                        for (UniqueIdInt FreeIndex = (CurrentSectorIndex + 1) * ParticleIndexesInSectorsCreatorFactor - 1; FreeIndex > CurrentSectorIndex * ParticleIndexesInSectorsCreatorFactor; FreeIndex--)
+                            if (!GetParticles().contains(FreeIndex))
+                                GetFreeIndexes().push(FreeIndex);
+                }
+                else
+                    for (UniqueIdInt FreeIndex = (CurrentSectorIndex + 1) * ParticleIndexesInSectorsCreatorFactor - 1; FreeIndex > CurrentSectorIndex * ParticleIndexesInSectorsCreatorFactor; FreeIndex--)
+                        if (!GetParticles().contains(FreeIndex))
+                            GetFreeIndexes().push(FreeIndex);
+
+                // if (PrintInfo == true)
+                //     LoggersManagerObject.Log(STREAM("FREE INDEXES SIZE IN SECTOR = " << ParticleSectorXIndex << " " << ParticleSectorYIndex << " " << ParticleSectorZIndex << " " << GetFreeIndexes().size()));
 
                 CurrentSectorIndex++;
             }
