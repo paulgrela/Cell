@@ -1970,7 +1970,6 @@ public:
                     StartGraphics();
             #endif
 
-            //if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true && MPIProcessDataObject.CurrentMPIProcessIndex != 0)
             if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true && MPIProcessDataObject.CurrentMPIProcessIndex != CellEngineConfigDataObject.MainMPIProcessNumber)
             {
                 if (CellEngineConfigDataObject.OpenGLGraphicsSwitchedOff == false)
@@ -2005,11 +2004,9 @@ public:
                     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SetIncSimulationStepNumber();
                     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfSimulationForWholeCellSpaceInMPIProcess(CellEngineConfigDataObject.NumberOfStepsInSimulationOutside, CellEngineConfigDataObject.NumberOfStepsInSimulationInside);
                     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SaveParticlesStatisticsOnce();
-                    //if (MPIProcessDataObject.CurrentMPIProcessIndex == 0)
                     if (MPIProcessDataObject.CurrentMPIProcessIndex == CellEngineConfigDataObject.MainMPIProcessNumber)
                         CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SaveHistogramOfParticlesStatisticsToFile();
                     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->JoinReactionsStatisticsFromThreads(CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SavedReactionsMap, CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SimulationStepNumber);
-                    //if (MPIProcessDataObject.CurrentMPIProcessIndex == 0)
                     if (MPIProcessDataObject.CurrentMPIProcessIndex == CellEngineConfigDataObject.MainMPIProcessNumber)
                         CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SaveReactionsStatisticsToFile();
                 }
@@ -2038,25 +2035,6 @@ public:
                     }
                 }
             }
-
-            // #ifdef USE_OPENGL
-            // if (CellEngineConfigDataObject.OpenGLGraphicsSwitchedOff == false)
-            //     if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == false || (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true && MPIProcessDataObject.CurrentMPIProcessIndex == 0))
-            //         StartGraphics();
-            //     // {
-            //     //     LoggersManagerObject.Log(STREAM("START GRAPHICS:"));
-            //     //
-            //     //     ImGuiMenuWindow = PrepareImGuiMenuGLFWData();
-            //     //
-            //     //     CellEngineOpenGLVisualiserThreadFunction();
-            //     //
-            //     //     CellEngineOpenGLVisualiserPointer->PrepareData(CellEngineConfigDataObject.XTopMainWindow, CellEngineConfigDataObject.YTopMainWindow, CellEngineConfigDataObject.WidthMainWindow, CellEngineConfigDataObject.HeightMainWindow);
-            //     //
-            //     //     ImGuiMenuGLFWMainLoop();
-            //     //
-            //     //     ImGuiMenuGLFShutdown();
-            //     // }
-            // #endif
 
             EndMPIAllProcessesForCellEngine();
         }

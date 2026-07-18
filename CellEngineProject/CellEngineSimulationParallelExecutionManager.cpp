@@ -136,7 +136,6 @@ void CellEngineSimulationParallelExecutionManager::JoinReactionsStatisticsFromTh
     {
         if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true)
         {
-            //if (CellEngineConfigDataObject.OpenGLGraphicsSwitchedOff == false && MPIProcessDataObject.CurrentMPIProcessIndex == 0)
             if (CellEngineConfigDataObject.OpenGLGraphicsSwitchedOff == false && MPIProcessDataObject.CurrentMPIProcessIndex == CellEngineConfigDataObject.MainMPIProcessNumber)
             {
                 int ValueToSend = 3;
@@ -159,7 +158,6 @@ void CellEngineSimulationParallelExecutionManager::JoinReactionsStatisticsFromTh
             LoggersManagerObject.Log(STREAM("SavedReactionsMapForMPILength = " << SavedReactionsMapForMPILength << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
 
             int MaximumOfAllSavedReactionsMapForMPILengths;
-            //if (MPIProcessDataObject.CurrentMPIProcessIndex == 0)
             if (MPIProcessDataObject.CurrentMPIProcessIndex == CellEngineConfigDataObject.MainMPIProcessNumber)
                 MaximumOfAllSavedReactionsMapForMPILengths = *max_element(SavedReactionsMapForMPILengths, SavedReactionsMapForMPILengths + MPIProcessDataObject.NumberOfMPIProcesses);
 
@@ -172,7 +170,6 @@ void CellEngineSimulationParallelExecutionManager::JoinReactionsStatisticsFromTh
             const int NumberOfBytesToGatherFromEveryProcess = static_cast<int>(MaximumOfAllSavedReactionsMapForMPILengths * sizeof(ReactionStatistics));
             MPI_Gather(CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SavedReactionsMapForMPI[SimulationStepNumber - 1].data(), NumberOfBytesToGatherFromEveryProcess, MPI_BYTE, ReactionStatisticsVectorGatheringFromAllMPIProcessPointer.get(), NumberOfBytesToGatherFromEveryProcess, MPI_BYTE, CellEngineConfigDataObject.MainMPIProcessNumber, MPI_COMM_WORLD);
 
-            //if (MPIProcessDataObject.CurrentMPIProcessIndex == 0)
             if (MPIProcessDataObject.CurrentMPIProcessIndex == CellEngineConfigDataObject.MainMPIProcessNumber)
             {
                 SavedReactionsMap[SimulationStepNumber - 1].clear();
@@ -633,6 +630,38 @@ void CellEngineSimulationParallelExecutionManager::GenerateNStepsOfSimulationFor
     CATCH("generating n steps simulation for whole cell space in threads")
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 void CellEngineSimulationParallelExecutionManager::GenerateOneStepOfSimulationForWholeCellSpaceInMPIProcess(const UnsignedInt NumberOfStepsInside, const UnsignedInt StepOutside, const UnsignedInt ThreadXIndex, const UnsignedInt ThreadYIndex, const UnsignedInt ThreadZIndex)
 {
     try
@@ -710,7 +739,6 @@ void CellEngineSimulationParallelExecutionManager::GenerateNStepsOfSimulationFor
 
         CellEngineUseful::SwitchOffLogs();
 
-        //if (CellEngineConfigDataObject.OpenGLGraphicsSwitchedOff == false && MPIProcessDataObject.CurrentMPIProcessIndex == 0)
         if (CellEngineConfigDataObject.OpenGLGraphicsSwitchedOff == false && MPIProcessDataObject.CurrentMPIProcessIndex == CellEngineConfigDataObject.MainMPIProcessNumber)
         {
             int ValueToSend = 1;
@@ -726,7 +754,7 @@ void CellEngineSimulationParallelExecutionManager::GenerateNStepsOfSimulationFor
 
         const auto stop_time = chrono::high_resolution_clock::now();
 
-        string ResultText = "Execution in MPI processes for steps outside = " + to_string(NumberOfStepsOutside) + " and steps inside = " + to_string(NumberOfStepsInside) + " has taken time: ";
+        const string ResultText = "Execution in MPI processes for steps outside = " + to_string(NumberOfStepsOutside) + " and steps inside = " + to_string(NumberOfStepsInside) + " has taken time: ";
         LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, ResultText.c_str(),"Execution in mpi")));
 
         LoggersManagerObject.Log(STREAM("END MPI SIMULATION"));
@@ -736,11 +764,181 @@ void CellEngineSimulationParallelExecutionManager::GenerateNStepsOfSimulationFor
     CATCH("generating n steps simulation for whole cell space in mpi process")
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThreadsGroup1()
+{
+    try
+    {
+        vector<MPIParticleSenderStruct> ReceivedParticlesToInsertFromAllNeigbhours[NumberOfAllNeighbours];
+
+        //MOZE PONIZSZA CZESC NIE POTRZEBNA BO SEKCKA KRYTYCZNA w FullAtomOperations
+        for (UnsignedInt NeighbourProcessIndex = 0; NeighbourProcessIndex < NumberOfAllNeighbours; NeighbourProcessIndex++)
+            if (NeighbourProcessesIndexes[NeighbourProcessIndex] != -1)
+            {
+                // if (VectorOfParticlesToSendToNeighbourProcesses[NeighbourProcessIndex].empty() == true)
+                // {
+                //     //SEKCJA KRYTYCZNA OBU WATKOW MPIProcessDataObject.CurrentMPIProcessIndex NeighbourProcessesIndexes[NeighbourProcessIndex]
+                //     VectorOfParticlesToSendToNeighbourProcesses[NeighbourProcessIndex].emplace_back(MPIParticleSenderStruct{ 0, 0, static_cast<int>(MPIProcessDataObject.CurrentMPIProcessIndex), static_cast<int>(NeighbourProcessesIndexes[NeighbourProcessIndex]), 0, 0, 0, 0, 0, 0 });
+                //
+                //     LoggersManagerObject.Log(STREAM("Thread Index to EMPTY send = " << NeighbourProcessesIndexes[NeighbourProcessIndex] << " " << VectorOfParticlesToSendToNeighbourProcesses[NeighbourProcessIndex][0].ReceiverProcessIndex << " " << NeighbourProcessIndex << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
+                // }
+                // else
+                //     LoggersManagerObject.Log(STREAM("Thread Index to send = " << NeighbourProcessesIndexes[NeighbourProcessIndex] << " " << VectorOfParticlesToSendToNeighbourProcesses[NeighbourProcessIndex][0].ReceiverProcessIndex << " " << NeighbourProcessIndex << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
+                //
+                // LoggersManagerObject.Log(STREAM("Thread Length Message SEND = " << VectorOfParticlesToSendToNeighbourProcesses[NeighbourProcessIndex].size() << " " << VectorOfParticlesToSendToNeighbourProcesses[NeighbourProcessIndex].size() * sizeof(MPIParticleSenderStruct) << " " << NeighbourProcessesIndexes[NeighbourProcessIndex] << " " << VectorOfParticlesToSendToNeighbourProcesses[NeighbourProcessIndex][0].ReceiverProcessIndex << " " << NeighbourProcessIndex << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
+
+                for (const auto& ParticleToSendElement : VectorOfParticlesToSendToNeighbourProcesses[NeighbourProcessIndex])
+                {
+                    //SEKCJA KRYTYCZNA OBU WATKOW MPIProcessDataObject.CurrentMPIProcessIndex ParticleToSendElement.SenderProcessIndex
+                    ReceivedParticlesToInsertFromAllNeigbhours[NeighbourProcessIndex].emplace_back(ParticleToSendElement);
+                }
+                VectorOfParticlesToSendToNeighbourProcesses[NeighbourProcessIndex].clear();
+            }
+
+
+        vector<vector<UniqueIdInt>> ConfirmationOfParticlesToRemoveToSent; //WSPOLNA TABLICA
+        vector<UniqueIdInt> ReceivedConfirmationOfParticlesToRemove;
+        //TU NIE WIEM Z JAKICH PRZYLEGŁYCH PRZYJDZIE INFORMACJA WIEC KOPIUJE ZE WSZYSTKICH
+        for (UnsignedInt NeighbourProcessIndex = 0; NeighbourProcessIndex < NumberOfAllNeighbours; NeighbourProcessIndex++)
+            if (NeighbourProcessesIndexes[NeighbourProcessIndex] != -1)
+                for (const auto& ConfirmationOfParticlesToRemoveToSentObject : ConfirmationOfParticlesToRemoveToSent[NeighbourProcessIndex])
+                {
+                    //SEKCJA KRYTYCZNA OBU WATKOW MPIProcessDataObject.CurrentMPIProcessIndex
+                    ReceivedConfirmationOfParticlesToRemove.emplace_back(ConfirmationOfParticlesToRemoveToSentObject);
+                }
+
+        if (ReceivedConfirmationOfParticlesToRemove[0] != 0)
+            for (const auto& ParticleToRemoveConfirmedIndex : ReceivedConfirmationOfParticlesToRemove)
+                RemoveParticle(ParticleToRemoveConfirmedIndex, true);
+    }
+    CATCH("exchange particles between mpi processes")
+}
+
+void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThreadsGroup2Ver2()
+{
+    try
+    {
+        vector<MPIParticleSenderStruct> ReceivedParticlesToInsertFromAllNeigbhours[NumberOfAllNeighbours];
+
+        LoggersManagerObject.Log(STREAM("NumberOfActiveNeighbours = " << NumberOfActiveNeighbours << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
+
+        int NumberOfBytesReceived;
+
+        LoggersManagerObject.Log(STREAM("MPI Process Length Message RECEIVE = " << NumberOfBytesReceived << " " << MPIProcessDataObject.CurrentMPIProcessIndex << " " << NumberOfBytesReceived / sizeof(MPIParticleSenderStruct)));
+
+        // //TU NIE WIEM Z JAKICH PRZYLEGŁYCH PRZYJDZIE INFORMACJA WIEC KOPIUJE ZE WSZYSTKICH
+        // for (UnsignedInt NeighbourProcessIndex = 0; NeighbourProcessIndex < NumberOfAllNeighbours; NeighbourProcessIndex++)
+        //     if (NeighbourProcessesIndexes[NeighbourProcessIndex] != -1)
+        //     {
+        //         //SEKCJA KRYTYCZNA OBU WATKOW MPIProcessDataObject.CurrentMPIProcessIndex NeighbourProcessesIndexes[NeighbourProcessIndex]
+        //         ReceivedParticlesToInsertFromAllNeigbhours[NeighbourProcessIndex] = VectorOfParticlesToSendToNeighbourProcesses[NeighbourProcessIndex];
+        //     }
+
+        int Counter = 0;
+        for (const auto& ReceivedParticlesToInsert : ReceivedParticlesToInsertFromAllNeigbhours)
+            if (ReceivedParticlesToInsert.empty() == false)
+                Counter++;
+        LoggersManagerObject.Log(STREAM("FROM NEIGHBOURS = " << Counter << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
+
+        for (UnsignedInt NeighbourProcessIndex = 0; NeighbourProcessIndex < NumberOfAllNeighbours; NeighbourProcessIndex++)
+            if (NeighbourProcessesIndexes[NeighbourProcessIndex] != -1)
+            {
+                vector<UniqueIdInt> ConfirmationOfParticlesToRemoveToSent;
+
+                if (ReceivedParticlesToInsertFromAllNeigbhours[NeighbourProcessIndex].empty() == false)
+                {
+                    auto ReceivedParticlesToInsert = ReceivedParticlesToInsertFromAllNeigbhours[NeighbourProcessIndex];
+                    LoggersManagerObject.Log(STREAM("SENDING CONFIRMATION TO NEIGHBOUR = " << ReceivedParticlesToInsert[0].SenderProcessIndex << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
+
+                    for (const auto& ReceivedParticleIndexToInsert : ReceivedParticlesToInsert)
+                        if (ReceivedParticleIndexToInsert.ParticleIndex != 0)
+                            if (CheckInsertOfParticle(ReceivedParticleIndexToInsert) == true)
+                            {
+                                //SEKCJA KRYTYCZNA OBU WATKOW MPIProcessDataObject.CurrentMPIProcessIndex NeighbourProcessesIndexes[NeighbourProcessIndex]
+                                ConfirmationOfParticlesToRemoveToSent.emplace_back(ReceivedParticleIndexToInsert.ParticleIndex);
+                            }
+                }
+
+                if (ConfirmationOfParticlesToRemoveToSent.empty() == true)
+                    ConfirmationOfParticlesToRemoveToSent.emplace_back(0);
+            }
+    }
+    CATCH("exchange particles between mpi processes ver 2")
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIProcessesGroup1()
 {
     try
     {
-        MPI_Request MPIMessageRequest = MPI_REQUEST_NULL;
         for (UnsignedInt NeighbourProcessIndex = 0; NeighbourProcessIndex < NumberOfAllNeighbours; NeighbourProcessIndex++)
             if (NeighbourProcessesIndexes[NeighbourProcessIndex] != -1)
             {
@@ -1016,6 +1214,39 @@ void CellEngineSimulationParallelExecutionManager::SaveFormerParticlesAsVectorEl
     }
     CATCH("saving former particles as vector elements")
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 void CellEngineSimulationParallelExecutionManager::CheckParticlesCenters(const bool PrintAllParticles)
 {
