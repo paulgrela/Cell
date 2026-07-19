@@ -111,6 +111,14 @@ void CellEngineSimulationParallelExecutionManager::CreateDataEveryMPIProcessForP
                         NeighbourProcessesIndexes[4] = GetProcessNextNeighbour(static_cast<SignedInt>(MPIProcessXIndex) - 1, static_cast<SignedInt>(MPIProcessYIndex), static_cast<SignedInt>(MPIProcessZIndex) - 1);
                         NeighbourProcessesIndexes[5] = GetProcessNextNeighbour(static_cast<SignedInt>(MPIProcessXIndex) - 1, static_cast<SignedInt>(MPIProcessYIndex) - 1, static_cast<SignedInt>(MPIProcessZIndex));
 
+                        NeighbourThreadsIndexes[0] = NeighbourThreadPosType{ static_cast<SignedInt>(MPIProcessXIndex) - 2, static_cast<SignedInt>(MPIProcessYIndex) - 1, static_cast<SignedInt>(MPIProcessZIndex) - 1 };
+                        NeighbourThreadsIndexes[1] = NeighbourThreadPosType{ static_cast<SignedInt>(MPIProcessXIndex) - 1, static_cast<SignedInt>(MPIProcessYIndex) - 2, static_cast<SignedInt>(MPIProcessZIndex) - 1 };
+                        NeighbourThreadsIndexes[2] = NeighbourThreadPosType{ static_cast<SignedInt>(MPIProcessXIndex) - 1, static_cast<SignedInt>(MPIProcessYIndex) - 1, static_cast<SignedInt>(MPIProcessZIndex) - 2 };
+
+                        NeighbourThreadsIndexes[3] = NeighbourThreadPosType{ static_cast<SignedInt>(MPIProcessXIndex), static_cast<SignedInt>(MPIProcessYIndex) - 1, static_cast<SignedInt>(MPIProcessZIndex) - 1 };
+                        NeighbourThreadsIndexes[4] = NeighbourThreadPosType{ static_cast<SignedInt>(MPIProcessXIndex) - 1, static_cast<SignedInt>(MPIProcessYIndex), static_cast<SignedInt>(MPIProcessZIndex) - 1 };
+                        NeighbourThreadsIndexes[5] = NeighbourThreadPosType{ static_cast<SignedInt>(MPIProcessXIndex) - 1, static_cast<SignedInt>(MPIProcessYIndex) - 1, static_cast<SignedInt>(MPIProcessZIndex) };
+
                         LoggersManagerObject.Log(STREAM("MPIProcessIndex Neighbours = " <<  MPIProcessDataObject.CurrentMPIProcessIndex << " " << NeighbourProcessesIndexes[0] << " " << NeighbourProcessesIndexes[1] << " " << NeighbourProcessesIndexes[2] << " " << NeighbourProcessesIndexes[3] << " " << NeighbourProcessesIndexes[4] << " " << NeighbourProcessesIndexes[5]));
                     }
 
@@ -791,45 +799,34 @@ void CellEngineSimulationParallelExecutionManager::GenerateNStepsOfSimulationFor
 
 
 
-void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThreadsGroup1()
+void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThreadsGroup1(const UnsignedInt ThreadXIndexParam, const UnsignedInt ThreadYIndexParam, const UnsignedInt ThreadZIndexParam)
 {
     try
     {
-        vector<MPIParticleSenderStruct> ReceivedParticlesToInsertFromAllNeigbhours[NumberOfAllNeighbours];
+        vector<MPIParticleSenderStruct> ReceivedParticlesToInsertFromAllNeigbhours[NumberOfAllNeighbours]; //WSPOLNA TABLICA DLA WATKOW
 
-        //MOZE PONIZSZA CZESC NIE POTRZEBNA BO SEKCKA KRYTYCZNA w FullAtomOperations
         for (UnsignedInt NeighbourProcessIndex = 0; NeighbourProcessIndex < NumberOfAllNeighbours; NeighbourProcessIndex++)
             if (NeighbourProcessesIndexes[NeighbourProcessIndex] != -1)
             {
-                // if (VectorOfParticlesToSendToNeighbourProcesses[NeighbourProcessIndex].empty() == true)
-                // {
-                //     //SEKCJA KRYTYCZNA OBU WATKOW MPIProcessDataObject.CurrentMPIProcessIndex NeighbourProcessesIndexes[NeighbourProcessIndex]
-                //     VectorOfParticlesToSendToNeighbourProcesses[NeighbourProcessIndex].emplace_back(MPIParticleSenderStruct{ 0, 0, static_cast<int>(MPIProcessDataObject.CurrentMPIProcessIndex), static_cast<int>(NeighbourProcessesIndexes[NeighbourProcessIndex]), 0, 0, 0, 0, 0, 0 });
-                //
-                //     LoggersManagerObject.Log(STREAM("Thread Index to EMPTY send = " << NeighbourProcessesIndexes[NeighbourProcessIndex] << " " << VectorOfParticlesToSendToNeighbourProcesses[NeighbourProcessIndex][0].ReceiverProcessIndex << " " << NeighbourProcessIndex << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
-                // }
-                // else
-                //     LoggersManagerObject.Log(STREAM("Thread Index to send = " << NeighbourProcessesIndexes[NeighbourProcessIndex] << " " << VectorOfParticlesToSendToNeighbourProcesses[NeighbourProcessIndex][0].ReceiverProcessIndex << " " << NeighbourProcessIndex << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
-                //
-                // LoggersManagerObject.Log(STREAM("Thread Length Message SEND = " << VectorOfParticlesToSendToNeighbourProcesses[NeighbourProcessIndex].size() << " " << VectorOfParticlesToSendToNeighbourProcesses[NeighbourProcessIndex].size() * sizeof(MPIParticleSenderStruct) << " " << NeighbourProcessesIndexes[NeighbourProcessIndex] << " " << VectorOfParticlesToSendToNeighbourProcesses[NeighbourProcessIndex][0].ReceiverProcessIndex << " " << NeighbourProcessIndex << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
-
                 for (const auto& ParticleToSendElement : VectorOfParticlesToSendToNeighbourProcesses[NeighbourProcessIndex])
                 {
-                    //SEKCJA KRYTYCZNA OBU WATKOW MPIProcessDataObject.CurrentMPIProcessIndex ParticleToSendElement.SenderProcessIndex
+                    const auto& LocalNeighbourThreadsIndexes = NeighbourThreadsIndexes[NeighbourProcessIndex];
+                    scoped_lock LockGuardScopedLock{ CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[CurrentThreadPos.ThreadPosX - 1][CurrentThreadPos.ThreadPosY - 1][CurrentThreadPos.ThreadPosZ - 1]->MainExchangeParticlesMutexObject, CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[LocalNeighbourThreadsIndexes.ThreadPosX - 1][LocalNeighbourThreadsIndexes.ThreadPosX  - 1][LocalNeighbourThreadsIndexes.ThreadPosX  - 1]->MainExchangeParticlesMutexObject };
                     ReceivedParticlesToInsertFromAllNeigbhours[NeighbourProcessIndex].emplace_back(ParticleToSendElement);
                 }
                 VectorOfParticlesToSendToNeighbourProcesses[NeighbourProcessIndex].clear();
             }
 
 
-        vector<vector<UniqueIdInt>> ConfirmationOfParticlesToRemoveToSent; //WSPOLNA TABLICA
+        vector<vector<UniqueIdInt>> ConfirmationOfParticlesToRemoveToSent; //WSPOLNA TABLICA DLA WATKOW
         vector<UniqueIdInt> ReceivedConfirmationOfParticlesToRemove;
         //TU NIE WIEM Z JAKICH PRZYLEGŁYCH PRZYJDZIE INFORMACJA WIEC KOPIUJE ZE WSZYSTKICH
         for (UnsignedInt NeighbourProcessIndex = 0; NeighbourProcessIndex < NumberOfAllNeighbours; NeighbourProcessIndex++)
             if (NeighbourProcessesIndexes[NeighbourProcessIndex] != -1)
                 for (const auto& ConfirmationOfParticlesToRemoveToSentObject : ConfirmationOfParticlesToRemoveToSent[NeighbourProcessIndex])
                 {
-                    //SEKCJA KRYTYCZNA OBU WATKOW MPIProcessDataObject.CurrentMPIProcessIndex
+                    const auto& LocalNeighbourThreadsIndexes = NeighbourThreadsIndexes[NeighbourProcessIndex];
+                    scoped_lock LockGuardScopedLock{ CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[CurrentThreadPos.ThreadPosX - 1][CurrentThreadPos.ThreadPosY - 1][CurrentThreadPos.ThreadPosZ - 1]->MainExchangeParticlesMutexObject, CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[LocalNeighbourThreadsIndexes.ThreadPosX - 1][LocalNeighbourThreadsIndexes.ThreadPosX  - 1][LocalNeighbourThreadsIndexes.ThreadPosX  - 1]->MainExchangeParticlesMutexObject };
                     ReceivedConfirmationOfParticlesToRemove.emplace_back(ConfirmationOfParticlesToRemoveToSentObject);
                 }
 
@@ -844,21 +841,9 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
 {
     try
     {
-        vector<MPIParticleSenderStruct> ReceivedParticlesToInsertFromAllNeigbhours[NumberOfAllNeighbours];
+        vector<MPIParticleSenderStruct> ReceivedParticlesToInsertFromAllNeigbhours[NumberOfAllNeighbours];  //WSPOLNA TABLICA DLA WATKOW - juz zadelklarowana
 
         LoggersManagerObject.Log(STREAM("NumberOfActiveNeighbours = " << NumberOfActiveNeighbours << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
-
-        int NumberOfBytesReceived;
-
-        LoggersManagerObject.Log(STREAM("MPI Process Length Message RECEIVE = " << NumberOfBytesReceived << " " << MPIProcessDataObject.CurrentMPIProcessIndex << " " << NumberOfBytesReceived / sizeof(MPIParticleSenderStruct)));
-
-        // //TU NIE WIEM Z JAKICH PRZYLEGŁYCH PRZYJDZIE INFORMACJA WIEC KOPIUJE ZE WSZYSTKICH
-        // for (UnsignedInt NeighbourProcessIndex = 0; NeighbourProcessIndex < NumberOfAllNeighbours; NeighbourProcessIndex++)
-        //     if (NeighbourProcessesIndexes[NeighbourProcessIndex] != -1)
-        //     {
-        //         //SEKCJA KRYTYCZNA OBU WATKOW MPIProcessDataObject.CurrentMPIProcessIndex NeighbourProcessesIndexes[NeighbourProcessIndex]
-        //         ReceivedParticlesToInsertFromAllNeigbhours[NeighbourProcessIndex] = VectorOfParticlesToSendToNeighbourProcesses[NeighbourProcessIndex];
-        //     }
 
         int Counter = 0;
         for (const auto& ReceivedParticlesToInsert : ReceivedParticlesToInsertFromAllNeigbhours)
@@ -869,7 +854,7 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
         for (UnsignedInt NeighbourProcessIndex = 0; NeighbourProcessIndex < NumberOfAllNeighbours; NeighbourProcessIndex++)
             if (NeighbourProcessesIndexes[NeighbourProcessIndex] != -1)
             {
-                vector<UniqueIdInt> ConfirmationOfParticlesToRemoveToSent;
+                vector<UniqueIdInt> ConfirmationOfParticlesToRemoveToSent; //WSPOLNA TABLICA DLA WATKOW - juz zadelklarowana
 
                 if (ReceivedParticlesToInsertFromAllNeigbhours[NeighbourProcessIndex].empty() == false)
                 {
@@ -880,7 +865,8 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
                         if (ReceivedParticleIndexToInsert.ParticleIndex != 0)
                             if (CheckInsertOfParticle(ReceivedParticleIndexToInsert) == true)
                             {
-                                //SEKCJA KRYTYCZNA OBU WATKOW MPIProcessDataObject.CurrentMPIProcessIndex NeighbourProcessesIndexes[NeighbourProcessIndex]
+                                const auto& LocalNeighbourThreadsIndexes = NeighbourThreadsIndexes[NeighbourProcessIndex];
+                                scoped_lock LockGuardScopedLock{ CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[CurrentThreadPos.ThreadPosX - 1][CurrentThreadPos.ThreadPosY - 1][CurrentThreadPos.ThreadPosZ - 1]->MainExchangeParticlesMutexObject, CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[LocalNeighbourThreadsIndexes.ThreadPosX - 1][LocalNeighbourThreadsIndexes.ThreadPosX  - 1][LocalNeighbourThreadsIndexes.ThreadPosX  - 1]->MainExchangeParticlesMutexObject };
                                 ConfirmationOfParticlesToRemoveToSent.emplace_back(ReceivedParticleIndexToInsert.ParticleIndex);
                             }
                 }

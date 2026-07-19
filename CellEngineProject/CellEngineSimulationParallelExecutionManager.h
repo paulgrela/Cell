@@ -53,7 +53,7 @@ public:
     void ExchangeParticlesBetweenMPIProcessesGroup1();
     void ExchangeParticlesBetweenMPIProcessesGroup2Ver2();
 
-    void ExchangeParticlesBetweenThreadsGroup1();
+    void ExchangeParticlesBetweenThreadsGroup1(UnsignedInt ThreadXIndexParam, UnsignedInt ThreadYIndexParam, UnsignedInt ThreadZIndexParam);
     void ExchangeParticlesBetweenThreadsGroup2Ver2();
 private:
     void SetZeroForAllParallelExecutionVariables();

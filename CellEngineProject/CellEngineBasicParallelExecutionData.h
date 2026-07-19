@@ -24,6 +24,7 @@ protected:
 protected:
     ThreadIdType CurrentThreadIndex{ 0 };
     ThreadPosType CurrentThreadPos{ 1, 1, 1 };
+    NeighbourThreadPosType NeighbourThreadsIndexes[NumberOfAllNeighbours];
 protected:
     SectorPosType CurrentSectorPos{ 0, 0, 0 };
     SimulationSpaceSectorBounds ActualSimulationSpaceSectorBoundsObject{ 0, 0, 0, 0, 0, 0, 0, 0, 0 };
