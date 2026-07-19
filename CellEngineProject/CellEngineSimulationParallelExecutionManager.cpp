@@ -548,7 +548,7 @@ inline UnsignedInt StepToChangeSimulationSpaceDivisionForThreads(const UnsignedI
     return ((StepOutside % CellEngineConfigDataObject.StepToChangeSpaceDivisionForThreads == 0) ? !StateOfSimulationSpaceDivisionForThreads : StateOfSimulationSpaceDivisionForThreads);
 }
 
-void CellEngineSimulationParallelExecutionManager::GenerateNStepsOfSimulationForWholeCellSpaceInOneThread(barrier<>* SyncPoint, bool* StateOfSimulationSpaceDivisionForThreads, const UnsignedInt NumberOfStepsOutside, const UnsignedInt NumberOfStepsInside, const ThreadIdType CurrentThreadIndexParam, const UnsignedInt ThreadXIndexParam, const UnsignedInt ThreadYIndexParam, const UnsignedInt ThreadZIndexParam) const
+void CellEngineSimulationParallelExecutionManager::GenerateNStepsOfSimulationForWholeCellSpaceInOneThread(barrier<>* SyncPoint, bool* StateOfSimulationSpaceDivisionForThreads, const UnsignedInt NumberOfStepsOutside, const UnsignedInt NumberOfStepsInside, const ThreadIdType CurrentThreadIndexParam, const UnsignedInt ThreadXIndexParam, const UnsignedInt ThreadYIndexParam, const UnsignedInt ThreadZIndexParam)
 {
     try
     {
@@ -583,7 +583,7 @@ void CellEngineSimulationParallelExecutionManager::GenerateNStepsOfSimulationFor
                 SyncPoint->arrive_and_wait();
             }
             else
-                SyncPoint->arrive_and_wait();
+                ExchangeParticlesBetweenThreadsVer2(SyncPoint);
         }
     }
     CATCH("generating n steps of simulation for whole cell space in one thread")
@@ -628,7 +628,7 @@ void CellEngineSimulationParallelExecutionManager::GenerateNStepsOfSimulationFor
 
         const auto stop_time = chrono::high_resolution_clock::now();
 
-        string ResultText = "Execution in threads for steps outside = " + to_string(NumberOfStepsOutside) + " and steps inside = " + to_string(NumberOfStepsInside) + " has taken time: ";
+        const string ResultText = "Execution in threads for steps outside = " + to_string(NumberOfStepsOutside) + " and steps inside = " + to_string(NumberOfStepsInside) + " has taken time: ";
         LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, ResultText.c_str(),"Execution in threads")));
 
         LoggersManagerObject.Log(STREAM("END THREADS"));
@@ -637,6 +637,135 @@ void CellEngineSimulationParallelExecutionManager::GenerateNStepsOfSimulationFor
     }
     CATCH("generating n steps simulation for whole cell space in threads")
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThreadsGroup1()
+{
+    try
+    {
+        for (UnsignedInt NeighbourProcessIndex = 0; NeighbourProcessIndex < NumberOfAllNeighbours; NeighbourProcessIndex++)
+            if (NeighbourProcessesIndexes[NeighbourProcessIndex] != -1)
+            {
+                for (const auto& ParticleToSendElement : VectorOfParticlesToSendToNeighbourProcesses[NeighbourProcessIndex])
+                {
+                    const auto& LocalNeighbourThreadsIndexes = NeighbourThreadsIndexes[NeighbourProcessIndex];
+                    scoped_lock LockGuardScopedLock{ CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[CurrentThreadPos.ThreadPosX - 1][CurrentThreadPos.ThreadPosY - 1][CurrentThreadPos.ThreadPosZ - 1]->MainExchangeParticlesMutexObject, CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[LocalNeighbourThreadsIndexes.ThreadPosX - 1][LocalNeighbourThreadsIndexes.ThreadPosX  - 1][LocalNeighbourThreadsIndexes.ThreadPosX  - 1]->MainExchangeParticlesMutexObject };
+                    ReceivedParticlesToInsertFromAllNeigbhours[NeighbourProcessIndex].emplace_back(ParticleToSendElement);
+                }
+                VectorOfParticlesToSendToNeighbourProcesses[NeighbourProcessIndex].clear();
+            }
+
+        //CZY TU NIE BARIERA arrive_and_wait
+
+        vector<UniqueIdInt> ReceivedConfirmationOfParticlesToRemove;
+        for (UnsignedInt NeighbourProcessIndex = 0; NeighbourProcessIndex < NumberOfAllNeighbours; NeighbourProcessIndex++)
+            if (NeighbourProcessesIndexes[NeighbourProcessIndex] != -1)
+                for (const auto& ConfirmationOfParticlesToRemoveToSentObject : ConfirmationOfParticlesToRemoveToSent[NeighbourProcessIndex])
+                {
+                    const auto& LocalNeighbourThreadsIndexes = NeighbourThreadsIndexes[NeighbourProcessIndex];
+                    scoped_lock LockGuardScopedLock{ CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[CurrentThreadPos.ThreadPosX - 1][CurrentThreadPos.ThreadPosY - 1][CurrentThreadPos.ThreadPosZ - 1]->MainExchangeParticlesMutexObject, CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[LocalNeighbourThreadsIndexes.ThreadPosX - 1][LocalNeighbourThreadsIndexes.ThreadPosX  - 1][LocalNeighbourThreadsIndexes.ThreadPosX  - 1]->MainExchangeParticlesMutexObject };
+                    ReceivedConfirmationOfParticlesToRemove.emplace_back(ConfirmationOfParticlesToRemoveToSentObject);
+                }
+
+        if (ReceivedConfirmationOfParticlesToRemove[0] != 0)
+            for (const auto& ParticleToRemoveConfirmedIndex : ReceivedConfirmationOfParticlesToRemove)
+                RemoveParticle(ParticleToRemoveConfirmedIndex, true);
+    }
+    CATCH("exchange particles threads processes")
+}
+
+void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThreadsGroup2Ver2()
+{
+    try
+    {
+        //CZY TU NIE BARIERA arrive_and_wait
+
+        LoggersManagerObject.Log(STREAM("NumberOfActiveNeighbours = " << NumberOfActiveNeighbours << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
+
+        int Counter = 0;
+        for (const auto& ReceivedParticlesToInsert : ReceivedParticlesToInsertFromAllNeigbhours)
+            if (ReceivedParticlesToInsert.empty() == false)
+                Counter++;
+        LoggersManagerObject.Log(STREAM("FROM NEIGHBOURS = " << Counter << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
+
+        for (UnsignedInt NeighbourProcessIndex = 0; NeighbourProcessIndex < NumberOfAllNeighbours; NeighbourProcessIndex++)
+            if (NeighbourProcessesIndexes[NeighbourProcessIndex] != -1)
+            {
+                if (ReceivedParticlesToInsertFromAllNeigbhours[NeighbourProcessIndex].empty() == false)
+                {
+                    auto ReceivedParticlesToInsert = ReceivedParticlesToInsertFromAllNeigbhours[NeighbourProcessIndex];
+                    LoggersManagerObject.Log(STREAM("SENDING CONFIRMATION TO NEIGHBOUR = " << ReceivedParticlesToInsert[0].SenderProcessIndex << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
+
+                    for (const auto& ReceivedParticleIndexToInsert : ReceivedParticlesToInsert)
+                        if (ReceivedParticleIndexToInsert.ParticleIndex != 0)
+                            if (CheckInsertOfParticle(ReceivedParticleIndexToInsert) == true)
+                            {
+                                const auto& LocalNeighbourThreadsIndexes = NeighbourThreadsIndexes[NeighbourProcessIndex];
+                                scoped_lock LockGuardScopedLock{ CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[CurrentThreadPos.ThreadPosX - 1][CurrentThreadPos.ThreadPosY - 1][CurrentThreadPos.ThreadPosZ - 1]->MainExchangeParticlesMutexObject, CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[LocalNeighbourThreadsIndexes.ThreadPosX - 1][LocalNeighbourThreadsIndexes.ThreadPosX  - 1][LocalNeighbourThreadsIndexes.ThreadPosX  - 1]->MainExchangeParticlesMutexObject };
+                                ConfirmationOfParticlesToRemoveToSent[NeighbourProcessIndex].emplace_back(ReceivedParticleIndexToInsert.ParticleIndex);
+                            }
+                }
+
+                if (ConfirmationOfParticlesToRemoveToSent[NeighbourProcessIndex].empty() == true)
+                    ConfirmationOfParticlesToRemoveToSent[NeighbourProcessIndex].emplace_back(0);
+            }
+    }
+    CATCH("exchange particles between threads ver 2")
+}
+
+void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThreadsVer2(barrier<>* SyncPoint)
+{
+    try
+    {
+        if (ProcessGroupNumber == 0)
+        {
+            ExchangeParticlesBetweenThreadsGroup1();
+
+            SyncPoint->arrive_and_wait();
+
+            ExchangeParticlesBetweenThreadsGroup2Ver2();
+
+            SyncPoint->arrive_and_wait();
+        }
+        else
+        {
+            ExchangeParticlesBetweenThreadsGroup2Ver2();
+
+            SyncPoint->arrive_and_wait();
+
+            ExchangeParticlesBetweenThreadsGroup1();
+
+            SyncPoint->arrive_and_wait();
+        }
+    }
+    CATCH("exchange particles between threads")
+}
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -771,146 +900,6 @@ void CellEngineSimulationParallelExecutionManager::GenerateNStepsOfSimulationFor
     }
     CATCH("generating n steps simulation for whole cell space in mpi process")
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThreadsGroup1(const UnsignedInt ThreadXIndexParam, const UnsignedInt ThreadYIndexParam, const UnsignedInt ThreadZIndexParam)
-{
-    try
-    {
-        vector<MPIParticleSenderStruct> ReceivedParticlesToInsertFromAllNeigbhours[NumberOfAllNeighbours]; //WSPOLNA TABLICA DLA WATKOW
-
-        for (UnsignedInt NeighbourProcessIndex = 0; NeighbourProcessIndex < NumberOfAllNeighbours; NeighbourProcessIndex++)
-            if (NeighbourProcessesIndexes[NeighbourProcessIndex] != -1)
-            {
-                for (const auto& ParticleToSendElement : VectorOfParticlesToSendToNeighbourProcesses[NeighbourProcessIndex])
-                {
-                    const auto& LocalNeighbourThreadsIndexes = NeighbourThreadsIndexes[NeighbourProcessIndex];
-                    scoped_lock LockGuardScopedLock{ CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[CurrentThreadPos.ThreadPosX - 1][CurrentThreadPos.ThreadPosY - 1][CurrentThreadPos.ThreadPosZ - 1]->MainExchangeParticlesMutexObject, CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[LocalNeighbourThreadsIndexes.ThreadPosX - 1][LocalNeighbourThreadsIndexes.ThreadPosX  - 1][LocalNeighbourThreadsIndexes.ThreadPosX  - 1]->MainExchangeParticlesMutexObject };
-                    ReceivedParticlesToInsertFromAllNeigbhours[NeighbourProcessIndex].emplace_back(ParticleToSendElement);
-                }
-                VectorOfParticlesToSendToNeighbourProcesses[NeighbourProcessIndex].clear();
-            }
-
-
-        vector<vector<UniqueIdInt>> ConfirmationOfParticlesToRemoveToSent; //WSPOLNA TABLICA DLA WATKOW
-        vector<UniqueIdInt> ReceivedConfirmationOfParticlesToRemove;
-        //TU NIE WIEM Z JAKICH PRZYLEGŁYCH PRZYJDZIE INFORMACJA WIEC KOPIUJE ZE WSZYSTKICH
-        for (UnsignedInt NeighbourProcessIndex = 0; NeighbourProcessIndex < NumberOfAllNeighbours; NeighbourProcessIndex++)
-            if (NeighbourProcessesIndexes[NeighbourProcessIndex] != -1)
-                for (const auto& ConfirmationOfParticlesToRemoveToSentObject : ConfirmationOfParticlesToRemoveToSent[NeighbourProcessIndex])
-                {
-                    const auto& LocalNeighbourThreadsIndexes = NeighbourThreadsIndexes[NeighbourProcessIndex];
-                    scoped_lock LockGuardScopedLock{ CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[CurrentThreadPos.ThreadPosX - 1][CurrentThreadPos.ThreadPosY - 1][CurrentThreadPos.ThreadPosZ - 1]->MainExchangeParticlesMutexObject, CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[LocalNeighbourThreadsIndexes.ThreadPosX - 1][LocalNeighbourThreadsIndexes.ThreadPosX  - 1][LocalNeighbourThreadsIndexes.ThreadPosX  - 1]->MainExchangeParticlesMutexObject };
-                    ReceivedConfirmationOfParticlesToRemove.emplace_back(ConfirmationOfParticlesToRemoveToSentObject);
-                }
-
-        if (ReceivedConfirmationOfParticlesToRemove[0] != 0)
-            for (const auto& ParticleToRemoveConfirmedIndex : ReceivedConfirmationOfParticlesToRemove)
-                RemoveParticle(ParticleToRemoveConfirmedIndex, true);
-    }
-    CATCH("exchange particles between mpi processes")
-}
-
-void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThreadsGroup2Ver2()
-{
-    try
-    {
-        vector<MPIParticleSenderStruct> ReceivedParticlesToInsertFromAllNeigbhours[NumberOfAllNeighbours];  //WSPOLNA TABLICA DLA WATKOW - juz zadelklarowana
-
-        LoggersManagerObject.Log(STREAM("NumberOfActiveNeighbours = " << NumberOfActiveNeighbours << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
-
-        int Counter = 0;
-        for (const auto& ReceivedParticlesToInsert : ReceivedParticlesToInsertFromAllNeigbhours)
-            if (ReceivedParticlesToInsert.empty() == false)
-                Counter++;
-        LoggersManagerObject.Log(STREAM("FROM NEIGHBOURS = " << Counter << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
-
-        for (UnsignedInt NeighbourProcessIndex = 0; NeighbourProcessIndex < NumberOfAllNeighbours; NeighbourProcessIndex++)
-            if (NeighbourProcessesIndexes[NeighbourProcessIndex] != -1)
-            {
-                vector<UniqueIdInt> ConfirmationOfParticlesToRemoveToSent; //WSPOLNA TABLICA DLA WATKOW - juz zadelklarowana
-
-                if (ReceivedParticlesToInsertFromAllNeigbhours[NeighbourProcessIndex].empty() == false)
-                {
-                    auto ReceivedParticlesToInsert = ReceivedParticlesToInsertFromAllNeigbhours[NeighbourProcessIndex];
-                    LoggersManagerObject.Log(STREAM("SENDING CONFIRMATION TO NEIGHBOUR = " << ReceivedParticlesToInsert[0].SenderProcessIndex << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
-
-                    for (const auto& ReceivedParticleIndexToInsert : ReceivedParticlesToInsert)
-                        if (ReceivedParticleIndexToInsert.ParticleIndex != 0)
-                            if (CheckInsertOfParticle(ReceivedParticleIndexToInsert) == true)
-                            {
-                                const auto& LocalNeighbourThreadsIndexes = NeighbourThreadsIndexes[NeighbourProcessIndex];
-                                scoped_lock LockGuardScopedLock{ CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[CurrentThreadPos.ThreadPosX - 1][CurrentThreadPos.ThreadPosY - 1][CurrentThreadPos.ThreadPosZ - 1]->MainExchangeParticlesMutexObject, CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[LocalNeighbourThreadsIndexes.ThreadPosX - 1][LocalNeighbourThreadsIndexes.ThreadPosX  - 1][LocalNeighbourThreadsIndexes.ThreadPosX  - 1]->MainExchangeParticlesMutexObject };
-                                ConfirmationOfParticlesToRemoveToSent.emplace_back(ReceivedParticleIndexToInsert.ParticleIndex);
-                            }
-                }
-
-                if (ConfirmationOfParticlesToRemoveToSent.empty() == true)
-                    ConfirmationOfParticlesToRemoveToSent.emplace_back(0);
-            }
-    }
-    CATCH("exchange particles between mpi processes ver 2")
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
