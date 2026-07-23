@@ -17,8 +17,8 @@ public:
     static void CreateSimulationSpaceForParallelExecution(SimulationSpaceForParallelExecutionContainer<CellEngineSimulationSpace>& CellEngineSimulationSpaceForThreadsObjectsPointer, ParticlesContainer<Particle>& Particles);
 public:
     virtual bool CheckInsertOfParticle(const MPIParticleSenderStruct& MPIParticleSenderToInsert) = 0;
-    [[nodiscard]] SignedInt GetProcessPrevNeighbour(SignedInt ThreadXIndex, SignedInt ThreadYIndex, SignedInt ThreadZIndex) const;
-    [[nodiscard]] SignedInt GetProcessNextNeighbour(SignedInt ThreadXIndex, SignedInt ThreadYIndex, SignedInt ThreadZIndex) const;
+    [[nodiscard]] SignedInt GetProcessPrevNeighbor(SignedInt ThreadXIndex, SignedInt ThreadYIndex, SignedInt ThreadZIndex) const;
+    [[nodiscard]] SignedInt GetProcessNextNeighbor(SignedInt ThreadXIndex, SignedInt ThreadYIndex, SignedInt ThreadZIndex) const;
     void CreateDataEveryMPIProcessForParallelExecution();
 public:
     virtual void GenerateOneStepOfDiffusionForSelectedSpace(bool InBounds, RealType StartXPosParam, RealType StartYPosParam, RealType StartZPosParam, RealType SizeXParam, RealType SizeYParam, RealType SizeZParam) = 0;
@@ -53,9 +53,18 @@ public:
     void ExchangeParticlesBetweenMPIProcessesGroup1();
     void ExchangeParticlesBetweenMPIProcessesGroup2Ver2();
 
-    void ExchangeParticlesBetweenThreadsVer2(std::barrier<>* SyncPoint);
-    void ExchangeParticlesBetweenThreadsGroup1();
-    void ExchangeParticlesBetweenThreadsGroup2Ver2();
+    void ExchangeParticlesBetweenThreadsVer2ConditionalVariableOneMutex(std::barrier<>* SyncPoint);
+    void ExchangeParticlesBetweenThreadsGroup1ConditionalVariableOneMutex();
+    void ExchangeParticlesBetweenThreadsGroup2Ver2ConditionalVariableOneMutex();
+    void ExchangeParticlesBetweenThreadsGroup3ConditionalVariableOneMutex();
+
+    void SynchronizeWithNeighborByLocalBarrier() const;
+    void ExchangeParticlesBetweenThreadsVer2LocalBarrier();
+    void ExchangeParticlesBetweenThreadsVer2OneGlobalBarrier(std::barrier<>* SyncPoint);
+
+    void ExchangeParticlesBetweenThreadsGroup1Barrier();
+    void ExchangeParticlesBetweenThreadsGroup2Ver2Barrier();
+    void ExchangeParticlesBetweenThreadsGroup3Barrier();
 private:
     void SetZeroForAllParallelExecutionVariables();
     void GatherAllParallelExecutionVariables();

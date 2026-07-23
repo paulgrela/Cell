@@ -46,11 +46,11 @@ using vector3_16 = vector3<PositionInt>;
 using vector3_64 = vector3<uint64_t>;
 using vector3_Real32 = vector3<RealType>;
 
-struct NeighbourThreadPosType
+struct NeighborThreadPosType
 {
     SignedInt ThreadPosX, ThreadPosY, ThreadPosZ;
 
-    bool operator==(const NeighbourThreadPosType& CTP) const
+    bool operator==(const NeighborThreadPosType& CTP) const
     {
         return (CTP.ThreadPosX == ThreadPosX && CTP.ThreadPosY == ThreadPosY && CTP.ThreadPosZ == ThreadPosZ);
     }

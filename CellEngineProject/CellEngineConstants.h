@@ -52,7 +52,7 @@ constexpr float AtomRadius = 1.0;
 
 constexpr std::string JCVISYN3APredStr = "JCVISYN3A_";
 
-constexpr UnsignedInt NumberOfAllNeighbours = 6;
+constexpr UnsignedInt NumberOfAllNeighbors = 6;
 
 constexpr UnsignedInt MaxMPIMessageSize = 1024 * 1024;
 

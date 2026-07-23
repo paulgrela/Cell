@@ -25,8 +25,8 @@ void CellEngineBasicParticlesOperations::InitiateFreeParticleIndexes(const Parti
 
                 GetFreeIndexes() = {};
 
-                // if (PrintInfo == true)
-                //     LoggersManagerObject.Log(STREAM("SCOPE OF INDEXES IN SECTOR = " << ParticleSectorXIndex << " " << ParticleSectorYIndex << " " << ParticleSectorZIndex << " " << (CurrentSectorIndex + 1) * ParticleIndexesInSectorsCreatorFactor - 1 << " " << CurrentSectorIndex * ParticleIndexesInSectorsCreatorFactor));
+                if (PrintInfo == true)
+                    LoggersManagerObject.Log(STREAM("SCOPE OF INDEXES IN SECTOR = " << ParticleSectorXIndex << " " << ParticleSectorYIndex << " " << ParticleSectorZIndex << " " << (CurrentSectorIndex + 1) * ParticleIndexesInSectorsCreatorFactor - 1 << " " << CurrentSectorIndex * ParticleIndexesInSectorsCreatorFactor));
 
                 if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true)
                 {
@@ -40,8 +40,8 @@ void CellEngineBasicParticlesOperations::InitiateFreeParticleIndexes(const Parti
                         if (!GetParticles().contains(FreeIndex))
                             GetFreeIndexes().push(FreeIndex);
 
-                // if (PrintInfo == true)
-                //     LoggersManagerObject.Log(STREAM("FREE INDEXES SIZE IN SECTOR = " << ParticleSectorXIndex << " " << ParticleSectorYIndex << " " << ParticleSectorZIndex << " " << GetFreeIndexes().size()));
+                if (PrintInfo == true)
+                    LoggersManagerObject.Log(STREAM("FREE INDEXES SIZE IN SECTOR = " << ParticleSectorXIndex << " " << ParticleSectorYIndex << " " << ParticleSectorZIndex << " " << GetFreeIndexes().size()));
 
                 CurrentSectorIndex++;
             }
@@ -68,7 +68,7 @@ void CellEngineBasicParticlesOperations::PreprocessData(const vector<A> Particle
     {
         LoggersManagerObject.Log(STREAM("Preprocess data"));
 
-        InitiateFreeParticleIndexes(Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ].Particles, true);
+        InitiateFreeParticleIndexes(Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ].Particles, false);
         GetMinMaxCoordinatesForAllParticles<T, A>(ListOfElements, ListOfElementsOfParticleKind, UpdateParticleKindListOfElementsBool);
     }
     CATCH("preprocessing data for voxel simulation space")

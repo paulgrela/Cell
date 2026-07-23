@@ -3,6 +3,8 @@
 #define CELL_ENGINE_BASIC_PARALLEL_EXECUTION_DATA_H
 
 #include <queue>
+#include <barrier>
+
 #include "CellEngineTypes.h"
 #include "CellEngineParticle.h"
 
@@ -17,17 +19,19 @@ public:
 protected:
     UnsignedInt MPIProcessIndex{ 0 };
     UnsignedInt ProcessGroupNumber;
-    SignedInt NeighbourProcessesIndexes[NumberOfAllNeighbours];
-    UnsignedInt NumberOfActiveNeighbours;
-    std::vector<MPIParticleSenderStruct> VectorOfParticlesToSendToNeighbourProcesses[NumberOfAllNeighbours];
+    SignedInt NeighborProcessesIndexes[NumberOfAllNeighbors];
+    UnsignedInt NumberOfActiveNeighbors;
+    std::vector<MPIParticleSenderStruct> VectorOfParticlesToSendToNeighborProcesses[NumberOfAllNeighbors];
     SimulationSpaceSectorsRanges CurrentMPIProcessSimulationSpaceSectorsRanges;
 protected:
     ThreadIdType CurrentThreadIndex{ 0 };
     ThreadPosType CurrentThreadPos{ 1, 1, 1 };
-    NeighbourThreadPosType NeighbourThreadsIndexes[NumberOfAllNeighbours];
+    NeighborThreadPosType NeighborThreadsIndexes[NumberOfAllNeighbors];
 
-    std::vector<MPIParticleSenderStruct> ReceivedParticlesToInsertFromAllNeigbhours[NumberOfAllNeighbours];
-    std::vector<UniqueIdInt> ConfirmationOfParticlesToRemoveToSent[NumberOfAllNeighbours];
+    std::vector<MPIParticleSenderStruct> ReceivedParticlesToInsertFromAllNeigbhours[NumberOfAllNeighbors];
+    std::vector<UniqueIdInt> ConfirmationOfParticlesToRemoveToSent[NumberOfAllNeighbors];
+
+    std::unique_ptr<std::barrier<>> TwoThreadsWallSychronizationBarriers;
 protected:
     SectorPosType CurrentSectorPos{ 0, 0, 0 };
     SimulationSpaceSectorBounds ActualSimulationSpaceSectorBoundsObject{ 0, 0, 0, 0, 0, 0, 0, 0, 0 };
