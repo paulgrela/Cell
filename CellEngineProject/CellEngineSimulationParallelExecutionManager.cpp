@@ -833,24 +833,34 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
         for (UnsignedInt NeighborProcessIndex = 0; NeighborProcessIndex < NumberOfAllNeighbors; NeighborProcessIndex++)
             if (NeighborProcessesIndexes[NeighborProcessIndex] != -1)
             {
+                const auto& LocalNeighborThreadsIndexes = NeighborThreadsIndexes[NeighborProcessIndex];
+                unique_lock<mutex> LockGuardScopedLock1(CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[CurrentThreadPos.ThreadPosX - 1][CurrentThreadPos.ThreadPosY - 1][CurrentThreadPos.ThreadPosZ - 1]->MainExchangeParticlesMutexObject, std::defer_lock);
+                unique_lock<mutex> LockGuardScopedLock2(CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[LocalNeighborThreadsIndexes.ThreadPosX - 1][LocalNeighborThreadsIndexes.ThreadPosX  - 1][LocalNeighborThreadsIndexes.ThreadPosX  - 1]->MainExchangeParticlesMutexObject, std::defer_lock);
+                lock(LockGuardScopedLock1, LockGuardScopedLock2);
+
                 for (const auto& ParticleToSendElement : VectorOfParticlesToSendToNeighborProcesses[NeighborProcessIndex])
-                {
-                    //const auto& LocalNeighborThreadsIndexes = NeighborThreadsIndexes[NeighborProcessIndex];
-                    //scoped_lock LockGuardScopedLock{ CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[CurrentThreadPos.ThreadPosX - 1][CurrentThreadPos.ThreadPosY - 1][CurrentThreadPos.ThreadPosZ - 1]->MainExchangeParticlesMutexObject, CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[LocalNeighborThreadsIndexes.ThreadPosX - 1][LocalNeighborThreadsIndexes.ThreadPosX  - 1][LocalNeighborThreadsIndexes.ThreadPosX  - 1]->MainExchangeParticlesMutexObject };
                     ReceivedParticlesToInsertFromAllNeigbhours[NeighborProcessIndex].emplace_back(ParticleToSendElement);
-                }
+
+                ProposalsReady = true;
+
                 VectorOfParticlesToSendToNeighborProcesses[NeighborProcessIndex].clear();
+
+                ProposalConditionalVariable.notify_all();
             }
 
         vector<UniqueIdInt> ReceivedConfirmationOfParticlesToRemove;
         for (UnsignedInt NeighborProcessIndex = 0; NeighborProcessIndex < NumberOfAllNeighbors; NeighborProcessIndex++)
             if (NeighborProcessesIndexes[NeighborProcessIndex] != -1)
+            {
+                const auto& LocalNeighborThreadsIndexes = NeighborThreadsIndexes[NeighborProcessIndex];
+                unique_lock<mutex> LockGuardScopedLock2(CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[LocalNeighborThreadsIndexes.ThreadPosX - 1][LocalNeighborThreadsIndexes.ThreadPosX  - 1][LocalNeighborThreadsIndexes.ThreadPosX  - 1]->MainExchangeParticlesMutexObject);
+                VerdictConditionalVariable.wait(LockGuardScopedLock2, [&] { return VerdictsReady; });
+
                 for (const auto& ConfirmationOfParticlesToRemoveToSentObject : ConfirmationOfParticlesToRemoveToSent[NeighborProcessIndex])
-                {
-                    //const auto& LocalNeighborThreadsIndexes = NeighborThreadsIndexes[NeighborProcessIndex];
-                    //scoped_lock LockGuardScopedLock{ CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[CurrentThreadPos.ThreadPosX - 1][CurrentThreadPos.ThreadPosY - 1][CurrentThreadPos.ThreadPosZ - 1]->MainExchangeParticlesMutexObject, CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[LocalNeighborThreadsIndexes.ThreadPosX - 1][LocalNeighborThreadsIndexes.ThreadPosX  - 1][LocalNeighborThreadsIndexes.ThreadPosX  - 1]->MainExchangeParticlesMutexObject };
                     ReceivedConfirmationOfParticlesToRemove.emplace_back(ConfirmationOfParticlesToRemoveToSentObject);
-                }
+
+                VerdictsReady = false;
+            }
 
         if (ReceivedConfirmationOfParticlesToRemove[0] != 0)
             for (const auto& ParticleToRemoveConfirmedIndex : ReceivedConfirmationOfParticlesToRemove)
@@ -863,35 +873,44 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
 {
     try
     {
-        LoggersManagerObject.Log(STREAM("NumberOfActiveNeighbors = " << NumberOfActiveNeighbors << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
-
-        int Counter = 0;
-        for (const auto& ReceivedParticlesToInsert : ReceivedParticlesToInsertFromAllNeigbhours)
-            if (ReceivedParticlesToInsert.empty() == false)
-                Counter++;
-        LoggersManagerObject.Log(STREAM("FROM NeighborS = " << Counter << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
+        LoggersManagerObject.Log(STREAM("NumberOfActiveNeighbors = " << NumberOfActiveNeighbors));
 
         for (UnsignedInt NeighborProcessIndex = 0; NeighborProcessIndex < NumberOfAllNeighbors; NeighborProcessIndex++)
             if (NeighborProcessesIndexes[NeighborProcessIndex] != -1)
             {
                 if (ReceivedParticlesToInsertFromAllNeigbhours[NeighborProcessIndex].empty() == false)
                 {
+                    unique_lock<mutex> LockGuardScopedLock1First(CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[CurrentThreadPos.ThreadPosX - 1][CurrentThreadPos.ThreadPosY - 1][CurrentThreadPos.ThreadPosZ - 1]->MainExchangeParticlesMutexObject);
+                    ProposalConditionalVariable.wait(LockGuardScopedLock1First, [&] { return ProposalsReady; });
+
                     auto ReceivedParticlesToInsert = ReceivedParticlesToInsertFromAllNeigbhours[NeighborProcessIndex];
                     LoggersManagerObject.Log(STREAM("SENDING CONFIRMATION TO Neighbor = " << ReceivedParticlesToInsert[0].SenderProcessIndex << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
 
                     for (const auto& ReceivedParticleIndexToInsert : ReceivedParticlesToInsert)
                         if (ReceivedParticleIndexToInsert.ParticleIndex != 0)
                             if (CheckInsertOfParticle(ReceivedParticleIndexToInsert) == true)
-                            {
-                                // const auto& LocalNeighborThreadsIndexes = NeighborThreadsIndexes[NeighborProcessIndex];
-                                // scoped_lock LockGuardScopedLock{ CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[CurrentThreadPos.ThreadPosX - 1][CurrentThreadPos.ThreadPosY - 1][CurrentThreadPos.ThreadPosZ - 1]->MainExchangeParticlesMutexObject, CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[LocalNeighborThreadsIndexes.ThreadPosX - 1][LocalNeighborThreadsIndexes.ThreadPosX  - 1][LocalNeighborThreadsIndexes.ThreadPosX  - 1]->MainExchangeParticlesMutexObject };
                                 ConfirmationOfParticlesToRemoveToSent[NeighborProcessIndex].emplace_back(ReceivedParticleIndexToInsert.ParticleIndex);
-                            }
+
+                    const auto& LocalNeighborThreadsIndexes = NeighborThreadsIndexes[NeighborProcessIndex];
+                    unique_lock<mutex> LockGuardScopedLock1(CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[CurrentThreadPos.ThreadPosX - 1][CurrentThreadPos.ThreadPosY - 1][CurrentThreadPos.ThreadPosZ - 1]->MainExchangeParticlesMutexObject, std::defer_lock);
+                    unique_lock<mutex> LockGuardScopedLock2(CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[LocalNeighborThreadsIndexes.ThreadPosX - 1][LocalNeighborThreadsIndexes.ThreadPosX  - 1][LocalNeighborThreadsIndexes.ThreadPosX  - 1]->MainExchangeParticlesMutexObject, std::defer_lock);
+                    lock(LockGuardScopedLock1, LockGuardScopedLock2);
+
+                    VerdictsReady = true;
+
+                    VerdictConditionalVariable.notify_all();
                 }
 
                 if (ConfirmationOfParticlesToRemoveToSent[NeighborProcessIndex].empty() == true)
                     ConfirmationOfParticlesToRemoveToSent[NeighborProcessIndex].emplace_back(0);
             }
+
+        int Counter = 0;
+        for (const auto& ReceivedParticlesToInsert : ReceivedParticlesToInsertFromAllNeigbhours)
+            if (ReceivedParticlesToInsert.empty() == false)
+                Counter++;
+
+        LoggersManagerObject.Log(STREAM("FROM NeighborS = " << Counter));
     }
     CATCH("exchange particles between threads ver 2")
 }
@@ -911,22 +930,12 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
         if (ProcessGroupNumber == 0)
         {
             ExchangeParticlesBetweenThreadsGroup1ConditionalVariableOneMutex();
-
-            SyncPoint->arrive_and_wait();
-
             ExchangeParticlesBetweenThreadsGroup2Ver2ConditionalVariableOneMutex();
-
-            SyncPoint->arrive_and_wait();
         }
         else
         {
             ExchangeParticlesBetweenThreadsGroup2Ver2ConditionalVariableOneMutex();
-
-            SyncPoint->arrive_and_wait();
-
             ExchangeParticlesBetweenThreadsGroup1ConditionalVariableOneMutex();
-
-            SyncPoint->arrive_and_wait();
         }
     }
     CATCH("exchange particles between threads")

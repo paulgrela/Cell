@@ -4,6 +4,7 @@
 
 #include <queue>
 #include <barrier>
+#include <condition_variable>
 
 #include "CellEngineTypes.h"
 #include "CellEngineParticle.h"
@@ -27,11 +28,16 @@ protected:
     ThreadIdType CurrentThreadIndex{ 0 };
     ThreadPosType CurrentThreadPos{ 1, 1, 1 };
     NeighborThreadPosType NeighborThreadsIndexes[NumberOfAllNeighbors];
-
+protected:
     std::vector<MPIParticleSenderStruct> ReceivedParticlesToInsertFromAllNeigbhours[NumberOfAllNeighbors];
     std::vector<UniqueIdInt> ConfirmationOfParticlesToRemoveToSent[NumberOfAllNeighbors];
-
+protected:
     std::unique_ptr<std::barrier<>> TwoThreadsWallSychronizationBarriers;
+protected:
+    std::condition_variable ProposalConditionalVariable;
+    std::condition_variable VerdictConditionalVariable;
+    bool ProposalsReady = false;
+    bool VerdictsReady = false;
 protected:
     SectorPosType CurrentSectorPos{ 0, 0, 0 };
     SimulationSpaceSectorBounds ActualSimulationSpaceSectorBoundsObject{ 0, 0, 0, 0, 0, 0, 0, 0, 0 };
