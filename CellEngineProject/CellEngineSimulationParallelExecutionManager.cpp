@@ -826,7 +826,7 @@ void CellEngineSimulationParallelExecutionManager::SynchronizeWithNeighborByLoca
 
 
 
-void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThreadsGroup1ConditionalVariableOneMutex()
+void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThreadsGroup1ConditionalVariableTwoMutexes()
 {
     try
     {
@@ -837,6 +837,144 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
                 unique_lock<mutex> LockGuardScopedLock1(CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[CurrentThreadPos.ThreadPosX - 1][CurrentThreadPos.ThreadPosY - 1][CurrentThreadPos.ThreadPosZ - 1]->MainExchangeParticlesMutexObject, std::defer_lock);
                 unique_lock<mutex> LockGuardScopedLock2(CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[LocalNeighborThreadsIndexes.ThreadPosX - 1][LocalNeighborThreadsIndexes.ThreadPosX  - 1][LocalNeighborThreadsIndexes.ThreadPosX  - 1]->MainExchangeParticlesMutexObject, std::defer_lock);
                 lock(LockGuardScopedLock1, LockGuardScopedLock2);
+
+                for (const auto& ParticleToSendElement : VectorOfParticlesToSendToNeighborProcesses[NeighborProcessIndex])
+                    ReceivedParticlesToInsertFromAllNeigbhours[NeighborProcessIndex].emplace_back(ParticleToSendElement);
+
+                ProposalsReady = true;
+
+                VectorOfParticlesToSendToNeighborProcesses[NeighborProcessIndex].clear();
+
+                ProposalConditionalVariable.notify_all();
+            }
+
+        vector<UniqueIdInt> ReceivedConfirmationOfParticlesToRemove;
+        for (UnsignedInt NeighborProcessIndex = 0; NeighborProcessIndex < NumberOfAllNeighbors; NeighborProcessIndex++)
+            if (NeighborProcessesIndexes[NeighborProcessIndex] != -1)
+            {
+                const auto& LocalNeighborThreadsIndexes = NeighborThreadsIndexes[NeighborProcessIndex];
+                unique_lock<mutex> LockGuardScopedLock2(CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[LocalNeighborThreadsIndexes.ThreadPosX - 1][LocalNeighborThreadsIndexes.ThreadPosX  - 1][LocalNeighborThreadsIndexes.ThreadPosX  - 1]->MainExchangeParticlesMutexObject);
+                VerdictConditionalVariable.wait(LockGuardScopedLock2, [&] { return VerdictsReady; });
+
+                for (const auto& ConfirmationOfParticlesToRemoveToSentObject : ConfirmationOfParticlesToRemoveToSent[NeighborProcessIndex])
+                    ReceivedConfirmationOfParticlesToRemove.emplace_back(ConfirmationOfParticlesToRemoveToSentObject);
+
+                VerdictsReady = false;
+            }
+
+        if (ReceivedConfirmationOfParticlesToRemove[0] != 0)
+            for (const auto& ParticleToRemoveConfirmedIndex : ReceivedConfirmationOfParticlesToRemove)
+                RemoveParticle(ParticleToRemoveConfirmedIndex, true);
+    }
+    CATCH("exchange particles threads processes")
+}
+
+void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThreadsGroup2Ver2ConditionalVariableTwoMutexes()
+{
+    try
+    {
+        LoggersManagerObject.Log(STREAM("NumberOfActiveNeighbors = " << NumberOfActiveNeighbors));
+
+        for (UnsignedInt NeighborProcessIndex = 0; NeighborProcessIndex < NumberOfAllNeighbors; NeighborProcessIndex++)
+            if (NeighborProcessesIndexes[NeighborProcessIndex] != -1)
+            {
+                if (ReceivedParticlesToInsertFromAllNeigbhours[NeighborProcessIndex].empty() == false)
+                {
+                    unique_lock<mutex> LockGuardScopedLock1First(CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[CurrentThreadPos.ThreadPosX - 1][CurrentThreadPos.ThreadPosY - 1][CurrentThreadPos.ThreadPosZ - 1]->MainExchangeParticlesMutexObject);
+                    ProposalConditionalVariable.wait(LockGuardScopedLock1First, [&] { return ProposalsReady; });
+
+                    auto ReceivedParticlesToInsert = ReceivedParticlesToInsertFromAllNeigbhours[NeighborProcessIndex];
+                    LoggersManagerObject.Log(STREAM("SENDING CONFIRMATION TO Neighbor = " << ReceivedParticlesToInsert[0].SenderProcessIndex << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
+
+                    for (const auto& ReceivedParticleIndexToInsert : ReceivedParticlesToInsert)
+                        if (ReceivedParticleIndexToInsert.ParticleIndex != 0)
+                            if (CheckInsertOfParticle(ReceivedParticleIndexToInsert) == true)
+                                ConfirmationOfParticlesToRemoveToSent[NeighborProcessIndex].emplace_back(ReceivedParticleIndexToInsert.ParticleIndex);
+
+                    const auto& LocalNeighborThreadsIndexes = NeighborThreadsIndexes[NeighborProcessIndex];
+                    unique_lock<mutex> LockGuardScopedLock1(CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[CurrentThreadPos.ThreadPosX - 1][CurrentThreadPos.ThreadPosY - 1][CurrentThreadPos.ThreadPosZ - 1]->MainExchangeParticlesMutexObject, std::defer_lock);
+                    unique_lock<mutex> LockGuardScopedLock2(CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[LocalNeighborThreadsIndexes.ThreadPosX - 1][LocalNeighborThreadsIndexes.ThreadPosX  - 1][LocalNeighborThreadsIndexes.ThreadPosX  - 1]->MainExchangeParticlesMutexObject, std::defer_lock);
+                    lock(LockGuardScopedLock1, LockGuardScopedLock2);
+
+                    VerdictsReady = true;
+
+                    VerdictConditionalVariable.notify_all();
+                }
+
+                if (ConfirmationOfParticlesToRemoveToSent[NeighborProcessIndex].empty() == true)
+                    ConfirmationOfParticlesToRemoveToSent[NeighborProcessIndex].emplace_back(0);
+            }
+
+        int Counter = 0;
+        for (const auto& ReceivedParticlesToInsert : ReceivedParticlesToInsertFromAllNeigbhours)
+            if (ReceivedParticlesToInsert.empty() == false)
+                Counter++;
+
+        LoggersManagerObject.Log(STREAM("FROM NeighborS = " << Counter));
+    }
+    CATCH("exchange particles between threads ver 2")
+}
+
+void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThreadsVer2ConditionalVariableTwoMutexes()
+{
+    try
+    {
+        if (ProcessGroupNumber == 0)
+        {
+            ExchangeParticlesBetweenThreadsGroup1ConditionalVariableTwoMutexes();
+            ExchangeParticlesBetweenThreadsGroup2Ver2ConditionalVariableTwoMutexes();
+        }
+        else
+        {
+            ExchangeParticlesBetweenThreadsGroup2Ver2ConditionalVariableTwoMutexes();
+            ExchangeParticlesBetweenThreadsGroup1ConditionalVariableTwoMutexes();
+        }
+    }
+    CATCH("exchange particles between threads")
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThreadsGroup1ConditionalVariableOneMutex()
+{
+    try
+    {
+        for (UnsignedInt NeighborProcessIndex = 0; NeighborProcessIndex < NumberOfAllNeighbors; NeighborProcessIndex++)
+            if (NeighborProcessesIndexes[NeighborProcessIndex] != -1)
+            {
+                const auto& LocalNeighborThreadsIndexes = NeighborThreadsIndexes[NeighborProcessIndex];
+                //unique_lock<mutex> LockGuardScopedLock1(CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[CurrentThreadPos.ThreadPosX - 1][CurrentThreadPos.ThreadPosY - 1][CurrentThreadPos.ThreadPosZ - 1]->MainExchangeParticlesMutexObject, std::defer_lock);
+                lock_guard<mutex> LockGuardScopedLock2(CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[LocalNeighborThreadsIndexes.ThreadPosX - 1][LocalNeighborThreadsIndexes.ThreadPosX  - 1][LocalNeighborThreadsIndexes.ThreadPosX  - 1]->MainExchangeParticlesMutexObject);
 
                 for (const auto& ParticleToSendElement : VectorOfParticlesToSendToNeighborProcesses[NeighborProcessIndex])
                     ReceivedParticlesToInsertFromAllNeigbhours[NeighborProcessIndex].emplace_back(ParticleToSendElement);
@@ -892,9 +1030,7 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
                                 ConfirmationOfParticlesToRemoveToSent[NeighborProcessIndex].emplace_back(ReceivedParticleIndexToInsert.ParticleIndex);
 
                     const auto& LocalNeighborThreadsIndexes = NeighborThreadsIndexes[NeighborProcessIndex];
-                    unique_lock<mutex> LockGuardScopedLock1(CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[CurrentThreadPos.ThreadPosX - 1][CurrentThreadPos.ThreadPosY - 1][CurrentThreadPos.ThreadPosZ - 1]->MainExchangeParticlesMutexObject, std::defer_lock);
-                    unique_lock<mutex> LockGuardScopedLock2(CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[LocalNeighborThreadsIndexes.ThreadPosX - 1][LocalNeighborThreadsIndexes.ThreadPosX  - 1][LocalNeighborThreadsIndexes.ThreadPosX  - 1]->MainExchangeParticlesMutexObject, std::defer_lock);
-                    lock(LockGuardScopedLock1, LockGuardScopedLock2);
+                    lock_guard<mutex> LockGuard1(CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[LocalNeighborThreadsIndexes.ThreadPosX - 1][LocalNeighborThreadsIndexes.ThreadPosX  - 1][LocalNeighborThreadsIndexes.ThreadPosX  - 1]->MainExchangeParticlesMutexObject);
 
                     VerdictsReady = true;
 
@@ -915,15 +1051,7 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
     CATCH("exchange particles between threads ver 2")
 }
 
-void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThreadsGroup3ConditionalVariableOneMutex()
-{
-    try
-    {
-    }
-    CATCH("exchange particles threads processes group 3")
-}
-
-void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThreadsVer2ConditionalVariableOneMutex(barrier<>* SyncPoint)
+void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThreadsVer2ConditionalVariableOneMutex()
 {
     try
     {
@@ -940,10 +1068,6 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
     }
     CATCH("exchange particles between threads")
 }
-
-
-
-
 
 
 

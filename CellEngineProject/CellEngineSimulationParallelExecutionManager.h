@@ -49,19 +49,23 @@ private:
     void GenerateNStepsOfSimulationForWholeCellSpaceInMPIProcess(UnsignedInt NumberOfStepsOutside, UnsignedInt NumberOfStepsInside, ThreadIdType CurrentThreadIndexParam, UnsignedInt ThreadXIndexParam, UnsignedInt ThreadYIndexParam, UnsignedInt ThreadZIndexParam);
 public:
     void GenerateNStepsOfSimulationForWholeCellSpaceInMPIProcess(UnsignedInt NumberOfStepsOutside, UnsignedInt NumberOfStepsInside);
+public:
     void ExchangeParticlesBetweenMPIProcessesVer2();
     void ExchangeParticlesBetweenMPIProcessesGroup1();
     void ExchangeParticlesBetweenMPIProcessesGroup2Ver2();
-
-    void ExchangeParticlesBetweenThreadsVer2ConditionalVariableOneMutex(std::barrier<>* SyncPoint);
+public:
+    void ExchangeParticlesBetweenThreadsVer2ConditionalVariableTwoMutexes();
+    void ExchangeParticlesBetweenThreadsGroup1ConditionalVariableTwoMutexes();
+    void ExchangeParticlesBetweenThreadsGroup2Ver2ConditionalVariableTwoMutexes();
+public:
+    void ExchangeParticlesBetweenThreadsVer2ConditionalVariableOneMutex();
     void ExchangeParticlesBetweenThreadsGroup1ConditionalVariableOneMutex();
     void ExchangeParticlesBetweenThreadsGroup2Ver2ConditionalVariableOneMutex();
-    void ExchangeParticlesBetweenThreadsGroup3ConditionalVariableOneMutex();
-
+public:
     void SynchronizeWithNeighborByLocalBarrier() const;
     void ExchangeParticlesBetweenThreadsVer2LocalBarrier();
     void ExchangeParticlesBetweenThreadsVer2OneGlobalBarrier(std::barrier<>* SyncPoint);
-
+public:
     void ExchangeParticlesBetweenThreadsGroup1Barrier();
     void ExchangeParticlesBetweenThreadsGroup2Ver2Barrier();
     void ExchangeParticlesBetweenThreadsGroup3Barrier();
