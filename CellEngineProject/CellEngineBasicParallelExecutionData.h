@@ -9,6 +9,12 @@
 #include "CellEngineTypes.h"
 #include "CellEngineParticle.h"
 
+constexpr UnsignedInt MaxNumberOfThreadsX = 40;
+constexpr UnsignedInt MaxNumberOfThreadsY = 40;
+constexpr UnsignedInt MaxNumberOfThreadsZ = 40;
+
+typedef UnsignedInt (*ThreadsIndexesType)[MaxNumberOfThreadsX][MaxNumberOfThreadsY][MaxNumberOfThreadsZ];
+
 class CellEngineBasicParallelExecutionData
 {
     friend class CellEngineSimulationParallelExecutionManager;
@@ -18,21 +24,25 @@ public:
         return MPIProcessIndex;
     }
 protected:
+    ThreadsIndexesType ThreadsIndexes;
+protected:
     UnsignedInt MPIProcessIndex{ 0 };
     UnsignedInt ProcessGroupNumber;
-    SignedInt NeighborProcessesIndexes[NumberOfAllNeighbors];
     UnsignedInt NumberOfActiveNeighbors;
-    std::vector<MPIParticleSenderStruct> VectorOfParticlesToSendToNeighborProcesses[NumberOfAllNeighbors];
+    SignedInt NeighborProcessesIndexes[NumberOfAllNeighbors];
+protected:
     SimulationSpaceSectorsRanges CurrentMPIProcessSimulationSpaceSectorsRanges;
 protected:
     ThreadIdType CurrentThreadIndex{ 0 };
     ThreadPosType CurrentThreadPos{ 1, 1, 1 };
-    NeighborThreadPosType NeighborThreadsIndexes[NumberOfAllNeighbors];
+    ThreadPosType NeighborThreadsIndexes[NumberOfAllNeighbors];
 protected:
-    std::vector<MPIParticleSenderStruct> ReceivedParticlesToInsertFromAllNeigbhours[NumberOfAllNeighbors];
-    std::vector<UniqueIdInt> ConfirmationOfParticlesToRemoveToSent[NumberOfAllNeighbors];
+    std::vector<ParticleSenderStruct> VectorOfParticlesToSendToNeighborProcessesOrThreads[NumberOfAllNeighbors];
+    std::vector<ParticleSenderStruct> ReceivedParticlesToInsertFromAllNeighborProcessesOrThreads[NumberOfAllNeighbors];
 protected:
     std::unique_ptr<std::barrier<>> TwoThreadsWallSychronizationBarriers;
+protected:
+    std::vector<UniqueIdInt> ConfirmationOfParticlesToRemoveToSent[NumberOfAllNeighbors];
 protected:
     std::condition_variable ProposalConditionalVariable;
     std::condition_variable VerdictConditionalVariable;

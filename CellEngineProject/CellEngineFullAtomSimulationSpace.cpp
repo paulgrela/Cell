@@ -123,6 +123,7 @@ SimulationSpaceSectorBounds CellEngineFullAtomSimulationSpace::GetBoundsForThrea
     return ActualSimulationSpaceSectorBoundsObject;
 }
 
+//DLA WATKOW I DLA MPI - rozdzielone potem w virtual
 void CellEngineFullAtomSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpace(const bool InBounds, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam)
 {
     try
@@ -229,7 +230,10 @@ void CellEngineFullAtomSimulationSpace::GenerateNStepsOfOneRandomReactionForWhol
 
 bool CellEngineFullAtomSimulationSpace::MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, ParticlesDetailedContainer<Particle>::iterator& ParticleObjectIter, const SectorPosType& CurrentSectorPos, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam)
 {
-    return MoveParticleByVectorIfFullAtomSpaceIsEmptyAndIsInBounds(ParticleObject, ParticlesInSector, ParticleObjectIter, NeighborProcessesIndexes, VectorOfParticlesToSendToNeighborProcesses, CurrentSectorPos, VectorX, VectorY, VectorZ, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, CurrentThreadPos);
+    if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == false)
+        return MoveParticleByVectorIfFullAtomSpaceIsEmptyAndIsInBoundsForThreads(ParticleObject, ParticlesInSector, ParticleObjectIter, NeighborThreadsIndexes, ThreadsIndexes, VectorOfParticlesToSendToNeighborProcessesOrThreads, CurrentSectorPos, VectorX, VectorY, VectorZ, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, CurrentThreadPos);
+    else
+        return MoveParticleByVectorIfFullAtomSpaceIsEmptyAndIsInBoundsForMPIProcesses(ParticleObject, ParticlesInSector, ParticleObjectIter, NeighborProcessesIndexes, VectorOfParticlesToSendToNeighborProcessesOrThreads, CurrentSectorPos, VectorX, VectorY, VectorZ, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, CurrentThreadPos);
 }
 
 bool CellEngineFullAtomSimulationSpace::CheckIfSpaceIsEmptyAndIsInBoundsForParticleElements(const ParticleKind& ParticleKindObjectForProduct, ParticlesContainer<Particle>& ParticlesInSector, const SectorPosType& CurrentSectorPos, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam)
@@ -237,7 +241,7 @@ bool CellEngineFullAtomSimulationSpace::CheckIfSpaceIsEmptyAndIsInBoundsForParti
     return CheckFreeSpaceAndBoundsForListOfAtoms(ParticleKindObjectForProduct.ListOfAtoms, ParticlesInSector, CurrentSectorPos, ParticleKindObjectForProduct.Radius, VectorX, VectorY, VectorZ, SimulationSpaceSectorBoundsObjectParam, CellEngineConfigDataObject.CheckOnlyParticlesCenters);
 }
 
-bool CellEngineFullAtomSimulationSpace::CheckInsertOfParticle(const MPIParticleSenderStruct& MPIParticleSenderToInsert)
+bool CellEngineFullAtomSimulationSpace::CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossible(const ParticleSenderStruct& MPIParticleSenderToInsert)
 {
     const auto SimulationSpaceSectorBoundsObject = SimulationSpaceSectorBounds().SetParametersForChosenSector(MPIParticleSenderToInsert.SectorPos.X, MPIParticleSenderToInsert.SectorPos.Y, MPIParticleSenderToInsert.SectorPos.Z, CellEngineConfigDataObject.ShiftCenterX, CellEngineConfigDataObject.ShiftCenterY, CellEngineConfigDataObject.ShiftCenterZ, CellEngineConfigDataObject.SizeOfParticlesSectorX, CellEngineConfigDataObject.SizeOfParticlesSectorY, CellEngineConfigDataObject.SizeOfParticlesSectorZ);
     auto& ParticleKindToCheck = ParticlesKindsManagerObject.GetParticleKind(MPIParticleSenderToInsert.ParticleKindId);

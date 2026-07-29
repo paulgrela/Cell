@@ -46,19 +46,9 @@ using vector3_16 = vector3<PositionInt>;
 using vector3_64 = vector3<uint64_t>;
 using vector3_Real32 = vector3<RealType>;
 
-struct NeighborThreadPosType
-{
-    SignedInt ThreadPosX, ThreadPosY, ThreadPosZ;
-
-    bool operator==(const NeighborThreadPosType& CTP) const
-    {
-        return (CTP.ThreadPosX == ThreadPosX && CTP.ThreadPosY == ThreadPosY && CTP.ThreadPosZ == ThreadPosZ);
-    }
-};
-
 struct ThreadPosType
 {
-    UnsignedInt	ThreadPosX, ThreadPosY, ThreadPosZ;
+    SignedInt ThreadPosX, ThreadPosY, ThreadPosZ;
 
     bool operator==(const ThreadPosType& CTP) const
     {
@@ -217,7 +207,7 @@ public:
     }
 };
 
-struct __attribute__ ((packed)) MPIParticleSenderStruct
+struct __attribute__ ((packed)) ParticleSenderStruct
 {
     UniqueIdInt ParticleIndex{ 0 };
     EntityIdInt ParticleKindId{ 0 };

@@ -9,13 +9,15 @@
 #include "TerminalColorsUtils.h"
 
 #include "CellEngineParticle.h"
+#include "CellEngineBasicParallelExecutionData.h"
 
 class CellEngineParticlesFullAtomOperations
 {
 public:
     static void SetProperThreadIndexForEveryParticlesSector(ParticlesContainer<Particle>& ParticlesSectors);
 protected:
-    static void MoveParticleByVector(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, ParticlesDetailedContainer<Particle>::iterator& ParticleObjectIter, const SignedInt* NeighbourProcessesIndexes, std::vector<MPIParticleSenderStruct>* VectorOfParticlesToSendToNeighbourProcesses, RealType VectorX, RealType VectorY, RealType VectorZ, ThreadPosType CurrentThreadPos);
+    static void MoveParticleByVectorForThreads(Particle& ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, ParticlesDetailedContainer<Particle>::iterator& ParticleObjectIter, const ThreadPosType* NeighborThreadsIndexes, ThreadsIndexesType ThreadsIndexes, std::vector<ParticleSenderStruct>* VectorOfParticlesToSendToNeighborThreads, RealType VectorX, RealType VectorY, RealType VectorZ, const ThreadPosType& CurrentThreadPos);
+    static void MoveParticleByVectorForMPIProcesses(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, ParticlesDetailedContainer<Particle>::iterator& ParticleObjectIter, const SignedInt* NeighbourProcessesIndexes, std::vector<ParticleSenderStruct>* VectorOfParticlesToSendToNeighbourProcesses, RealType VectorX, RealType VectorY, RealType VectorZ, ThreadPosType CurrentThreadPos);
 protected:
     static inline void MoveAllAtomsInParticleAtomsListByVector(Particle &ParticleObject, const RealType VectorX, const RealType VectorY, const RealType VectorZ)
     {
@@ -164,7 +166,7 @@ protected:
     }
 protected:
     //BBB - uzyte w normalnej dyfuzji
-    static inline bool MoveParticleByVectorIfFullAtomSpaceIsEmptyAndIsInBounds(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, ParticlesDetailedContainer<Particle>::iterator& ParticleObjectIter, const SignedInt* NeighbourProcessesIndexes, std::vector<MPIParticleSenderStruct>* VectorOfParticlesToSendToNeighbourProcesses, const SectorPosType& CurrentSectorPos, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam, const ThreadPosType CurrentThreadPos)
+    static inline bool MoveParticleByVectorIfFullAtomSpaceIsEmptyAndIsInBoundsForMPIProcesses(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, ParticlesDetailedContainer<Particle>::iterator& ParticleObjectIter, const SignedInt* NeighbourProcessesIndexes, std::vector<ParticleSenderStruct>* VectorOfParticlesToSendToNeighbourProcesses, const SectorPosType& CurrentSectorPos, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam, const ThreadPosType CurrentThreadPos)
     {
         try
         {
@@ -173,7 +175,30 @@ protected:
             #else
             if (CheckFreeSpaceAndBoundsForParticleMovedByVector(ParticleObjectIter->second.ListOfAtoms, ParticleObjectIter->second.Radius, ParticleObjectIter->second.Index, ParticleObjectIter->second.Center, ParticlesInSector, CurrentSectorPos, VectorX, VectorY, VectorZ, SimulationSpaceSectorBounds{ StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, StartXPosParam + SizeXParam, StartYPosParam + SizeYParam, StartZPosParam + SizeZParam }, CellEngineConfigDataObject.CheckOnlyParticlesCenters, true, true, false) == true)
             #endif
-                MoveParticleByVector(ParticleObject, ParticlesInSector, ParticleObjectIter, NeighbourProcessesIndexes, VectorOfParticlesToSendToNeighbourProcesses, VectorX, VectorY, VectorZ, CurrentThreadPos);
+                MoveParticleByVectorForMPIProcesses(ParticleObject, ParticlesInSector, ParticleObjectIter, NeighbourProcessesIndexes, VectorOfParticlesToSendToNeighbourProcesses, VectorX, VectorY, VectorZ, CurrentThreadPos);
+            else
+            {
+                #ifndef CONTAINERS_FOR_SPEED
+                ++ParticleObjectIter;
+                #endif
+                return false;
+            }
+        }
+        CATCH_AND_THROW("moving particle by vector if voxel space is empty and is in bounds")
+
+        return true;
+    }
+
+    static inline bool MoveParticleByVectorIfFullAtomSpaceIsEmptyAndIsInBoundsForThreads(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, ParticlesDetailedContainer<Particle>::iterator& ParticleObjectIter, const ThreadPosType* NeighbourThreadsIndexes, const ThreadsIndexesType ThreadsIndexes, std::vector<ParticleSenderStruct>* VectorOfParticlesToSendToNeighbourThreads, const SectorPosType& CurrentSectorPos, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam, const ThreadPosType& CurrentThreadPos)
+    {
+        try
+        {
+            #ifdef CONTAINERS_FOR_SPEED
+            if (CheckFreeSpaceAndBoundsForParticleMovedByVector(ParticleObject.ListOfAtoms, ParticleObject.Radius, ParticleObject.Index, ParticleObject.Center, ParticlesInSector, CurrentSectorPos, VectorX, VectorY, VectorZ, SimulationSpaceSectorBounds{ StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, StartXPosParam + SizeXParam, StartYPosParam + SizeYParam, StartZPosParam + SizeZParam }, CellEngineConfigDataObject.CheckOnlyParticlesCenters, true, true, false) == true)
+            #else
+            if (CheckFreeSpaceAndBoundsForParticleMovedByVector(ParticleObjectIter->second.ListOfAtoms, ParticleObjectIter->second.Radius, ParticleObjectIter->second.Index, ParticleObjectIter->second.Center, ParticlesInSector, CurrentSectorPos, VectorX, VectorY, VectorZ, SimulationSpaceSectorBounds{ StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, StartXPosParam + SizeXParam, StartYPosParam + SizeYParam, StartZPosParam + SizeZParam }, CellEngineConfigDataObject.CheckOnlyParticlesCenters, true, true, false) == true)
+            #endif
+                MoveParticleByVectorForThreads(ParticleObject, ParticlesInSector, ParticleObjectIter, NeighbourThreadsIndexes, ThreadsIndexes, VectorOfParticlesToSendToNeighbourThreads, VectorX, VectorY, VectorZ, CurrentThreadPos);
             else
             {
                 #ifndef CONTAINERS_FOR_SPEED
@@ -205,7 +230,7 @@ protected:
                         {
                             LoggersManagerObject.Log(STREAM(terminal_colors_utils::green << "FREE SPACE FOUND " << VecX << " " << VecY << " " << VecZ << " " << PosX << " " << PosY << " " << PosZ << terminal_colors_utils::white));
                             ParticlesDetailedContainer<Particle>::iterator ParticleIter;
-                            MoveParticleByVector(ParticleObject, ParticlesInSector, ParticleIter, nullptr, nullptr, PosX, PosY, PosZ, CurrentThreadPos);
+                            MoveParticleByVectorForMPIProcesses(ParticleObject, ParticlesInSector, ParticleIter, nullptr, nullptr, PosX, PosY, PosZ, CurrentThreadPos);
                             FoundFreeSpace = true;
                             goto Outside;
                         }
