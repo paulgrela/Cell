@@ -47,7 +47,7 @@ void CellEngineSimulationParallelExecutionManager::CreateSimulationSpaceForParal
                 {
                     LoggersManagerObject.Log(STREAM("THREAD INDEXES = " << ThreadIndexPos << " (" << ThreadXPos << ", " << ThreadYPos << ", " << ThreadZPos << ")"));
 
-                    ThreadLocalParticlesInProximityZPos = std::make_shared<SimulationSpaceType>(Particles, false, ThreadIndexPos, ThreadPosType{ static_cast<SignedInt>(ThreadXPos), static_cast<SignedInt>(ThreadYPos), static_cast<SignedInt>(ThreadZPos) });
+                    ThreadLocalParticlesInProximityZPos = make_shared<SimulationSpaceType>(Particles, false, ThreadIndexPos, ThreadPosType{ static_cast<SignedInt>(ThreadXPos), static_cast<SignedInt>(ThreadYPos), static_cast<SignedInt>(ThreadZPos) });
                     ThreadIndexPos++;
                     ThreadZPos++;
                 }
@@ -87,6 +87,8 @@ void CellEngineSimulationParallelExecutionManager::CreateDataEveryMPIProcessForP
 {
     try
     {
+        ThreadsIndexes = make_unique<ThreadsIndexesType>(CellEngineConfigDataObject.NumberOfXThreadsInSimulation, vector<vector<UnsignedInt>>(CellEngineConfigDataObject.NumberOfYThreadsInSimulation, vector<UnsignedInt>(CellEngineConfigDataObject.NumberOfZThreadsInSimulation)));
+
         SignedInt MPIProcessIndex = 0;
 
         for (UnsignedInt MPIProcessXIndex = 1; MPIProcessXIndex <= CellEngineConfigDataObject.NumberOfXThreadsInSimulation; MPIProcessXIndex++)

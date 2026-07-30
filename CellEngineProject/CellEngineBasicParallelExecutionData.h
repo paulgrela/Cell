@@ -9,11 +9,7 @@
 #include "CellEngineTypes.h"
 #include "CellEngineParticle.h"
 
-constexpr UnsignedInt MaxNumberOfThreadsX = 40;
-constexpr UnsignedInt MaxNumberOfThreadsY = 40;
-constexpr UnsignedInt MaxNumberOfThreadsZ = 40;
-
-typedef UnsignedInt (*ThreadsIndexesType)[MaxNumberOfThreadsX][MaxNumberOfThreadsY][MaxNumberOfThreadsZ];
+using ThreadsIndexesType = std::vector<std::vector<std::vector<UnsignedInt>>>;
 
 class CellEngineBasicParallelExecutionData
 {
@@ -24,7 +20,7 @@ public:
         return MPIProcessIndex;
     }
 protected:
-    ThreadsIndexesType ThreadsIndexes;
+    std::unique_ptr<ThreadsIndexesType> ThreadsIndexes;
 protected:
     UnsignedInt MPIProcessIndex{ 0 };
     UnsignedInt ProcessGroupNumber;
