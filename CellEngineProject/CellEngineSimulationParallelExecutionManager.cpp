@@ -674,8 +674,12 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
                 const auto& LocalNeighborThreadsIndexes = NeighborThreadsIndexes[NeighborProcessIndex];
 
                 for (const auto& ParticleToSendElement : VectorOfParticlesToSendToNeighborProcessesOrThreads[NeighborProcessIndex])
+                {
                     SimulationSpaceDataForThreads[LocalNeighborThreadsIndexes.ThreadPosX - 1][LocalNeighborThreadsIndexes.ThreadPosX - 1][LocalNeighborThreadsIndexes.ThreadPosX - 1]->ReceivedParticlesToInsertFromAllNeighborProcessesOrThreads[NeighborProcessIndex].emplace_back(ParticleToSendElement);
                     //ReceivedParticlesToInsertFromAllNeigbhours[NeighborProcessIndex].emplace_back(ParticleToSendElement);
+
+                    LoggersManagerObject.Log(STREAM("SENDING CONFIRMATION TO Neighbor = " << ParticleToSendElement.SenderProcessIndex << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
+                }
 
                 VectorOfParticlesToSendToNeighborProcessesOrThreads[NeighborProcessIndex].clear();
             }
@@ -704,9 +708,9 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
                 {
                     //auto ReceivedParticlesToInsert = SimulationSpaceDataForThreads[LocalNeighborThreadsIndexes.ThreadPosX - 1][LocalNeighborThreadsIndexes.ThreadPosX  - 1][LocalNeighborThreadsIndexes.ThreadPosX  - 1]->ReceivedParticlesToInsertFromAllNeigbhours[NeighborProcessIndex];
                     //auto ReceivedParticlesToInsert = ReceivedParticlesToInsertFromAllNeighborProcesses[NeighborProcessIndex];
-                    auto ReceivedParticlesToInsert = ReceivedParticlesToInsertFromAllNeighborProcessesOrThreads[NeighborProcessIndex];
+                    const auto ReceivedParticlesToInsert = ReceivedParticlesToInsertFromAllNeighborProcessesOrThreads[NeighborProcessIndex];
 
-                    //LoggersManagerObject.Log(STREAM("SENDING CONFIRMATION TO Neighbor = " << ReceivedParticlesToInsert[0].SenderProcessIndex << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
+                    LoggersManagerObject.Log(STREAM("SENDING CONFIRMATION TO Neighbor = " << ReceivedParticlesToInsert[0].SenderProcessIndex << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
 
                     for (const auto& ReceivedParticleIndexToInsert : ReceivedParticlesToInsert)
                         if (ReceivedParticleIndexToInsert.ParticleIndex != 0)
@@ -715,8 +719,9 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
                                 //ConfirmationOfParticlesToRemoveToSent[NeighborProcessIndex].emplace_back(ReceivedParticleIndexToInsert.ParticleIndex);
                 }
 
-                if (SimulationSpaceDataForThreads[LocalNeighborThreadsIndexes.ThreadPosX - 1][LocalNeighborThreadsIndexes.ThreadPosX  - 1][LocalNeighborThreadsIndexes.ThreadPosX  - 1]->ConfirmationOfParticlesToRemoveToSent[NeighborProcessIndex].empty() == true)
-                    SimulationSpaceDataForThreads[LocalNeighborThreadsIndexes.ThreadPosX - 1][LocalNeighborThreadsIndexes.ThreadPosX  - 1][LocalNeighborThreadsIndexes.ThreadPosX  - 1]->ConfirmationOfParticlesToRemoveToSent[NeighborProcessIndex].emplace_back(0);
+                // if (SimulationSpaceDataForThreads[LocalNeighborThreadsIndexes.ThreadPosX - 1][LocalNeighborThreadsIndexes.ThreadPosX  - 1][LocalNeighborThreadsIndexes.ThreadPosX  - 1]->ConfirmationOfParticlesToRemoveToSent[NeighborProcessIndex].empty() == true)
+                //     SimulationSpaceDataForThreads[LocalNeighborThreadsIndexes.ThreadPosX - 1][LocalNeighborThreadsIndexes.ThreadPosX  - 1][LocalNeighborThreadsIndexes.ThreadPosX  - 1]->ConfirmationOfParticlesToRemoveToSent[NeighborProcessIndex].emplace_back(0);
+
                 //if (ConfirmationOfParticlesToRemoveToSent[NeighborProcessIndex].empty() == true)
                 //    ConfirmationOfParticlesToRemoveToSent[NeighborProcessIndex].emplace_back(0);
             }
@@ -757,9 +762,9 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
 
         SyncPoint->arrive_and_wait();
 
-        ExchangeParticlesBetweenThreadsGroup3Barrier();
-
-        SyncPoint->arrive_and_wait();
+        // ExchangeParticlesBetweenThreadsGroup3Barrier();
+        //
+        // SyncPoint->arrive_and_wait();
     }
     CATCH("exchange particles between threads")
 }

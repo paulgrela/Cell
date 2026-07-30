@@ -1786,7 +1786,7 @@ public:
                                                                                                                         auto stop_time119 = chrono::high_resolution_clock::now();
 
                                                                                                                         ExecutionDurationTimeForCopyingParticlesToGraphicMemory21 += chrono::duration(stop_time119 - start_time119);
-                                                                                                                        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time119, stop_time119, "Time of one frame 1 = ", "Exception in measuring time")));
+                                                                                                                        //LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time119, stop_time119, "Time of one frame 1 = ", "Exception in measuring time")));
 
 
                                                                                                                         //const auto start_time119 = chrono::high_resolution_clock::now();
@@ -1795,7 +1795,7 @@ public:
                                                                                                                         stop_time119 = chrono::high_resolution_clock::now();
 
                                                                                                                         ExecutionDurationTimeForCopyingParticlesToGraphicMemory22 += chrono::duration(stop_time119 - start_time119);
-                                                                                                                        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time119, stop_time119, "Time of one frame 2 = ", "Exception in measuring time")));
+                                                                                                                        //LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time119, stop_time119, "Time of one frame 2 = ", "Exception in measuring time")));
 
                                                                                                                         //const auto start_time119 = chrono::high_resolution_clock::now();
                                                                                                                         start_time119 = chrono::high_resolution_clock::now();
@@ -1818,7 +1818,7 @@ public:
                                                                                                                         stop_time119 = chrono::high_resolution_clock::now();
 
                                                                                                                         ExecutionDurationTimeForCopyingParticlesToGraphicMemory23 += chrono::duration(stop_time119 - start_time119);
-                                                                                                                        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time119, stop_time119, "Time of one frame 3 = ", "Exception in measuring time")));
+                                                                                                                        //LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time119, stop_time119, "Time of one frame 3 = ", "Exception in measuring time")));
 
 
             }
