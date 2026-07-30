@@ -16,7 +16,8 @@ class CellEngineParticlesFullAtomOperations
 public:
     static void SetProperThreadIndexForEveryParticlesSector(ParticlesContainer<Particle>& ParticlesSectors);
 protected:
-    static void MoveParticleByVectorForThreads(Particle& ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, ParticlesDetailedContainer<Particle>::iterator& ParticleObjectIter, const ThreadPosType* NeighborThreadsIndexes, const std::unique_ptr<ThreadsIndexesType>& ThreadsIndexes, std::vector<ParticleSenderStruct>* VectorOfParticlesToSendToNeighborThreads, RealType VectorX, RealType VectorY, RealType VectorZ, const ThreadPosType& CurrentThreadPos);
+    //static void MoveParticleByVectorForThreads(Particle& ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, ParticlesDetailedContainer<Particle>::iterator& ParticleObjectIter, const ThreadPosType* NeighborThreadsIndexes, const std::unique_ptr<ThreadsIndexesType>& ThreadsIndexes, std::vector<ParticleSenderStruct>* VectorOfParticlesToSendToNeighborThreads, RealType VectorX, RealType VectorY, RealType VectorZ, const ThreadPosType& CurrentThreadPos);
+    static void MoveParticleByVectorForThreads(Particle& ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, ParticlesDetailedContainer<Particle>::iterator& ParticleObjectIter, const SignedInt* NeighborProcessesIndexes, std::vector<ParticleSenderStruct>* VectorOfParticlesToSendToNeighborProcesses, RealType VectorX, RealType VectorY, RealType VectorZ, const ThreadPosType& CurrentThreadPos);
     static void MoveParticleByVectorForMPIProcesses(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, ParticlesDetailedContainer<Particle>::iterator& ParticleObjectIter, const SignedInt* NeighbourProcessesIndexes, std::vector<ParticleSenderStruct>* VectorOfParticlesToSendToNeighbourProcesses, RealType VectorX, RealType VectorY, RealType VectorZ, ThreadPosType CurrentThreadPos);
 protected:
     static inline void MoveAllAtomsInParticleAtomsListByVector(Particle &ParticleObject, const RealType VectorX, const RealType VectorY, const RealType VectorZ)
@@ -189,7 +190,8 @@ protected:
         return true;
     }
 
-    static inline bool MoveParticleByVectorIfFullAtomSpaceIsEmptyAndIsInBoundsForThreads(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, ParticlesDetailedContainer<Particle>::iterator& ParticleObjectIter, const ThreadPosType* NeighbourThreadsIndexes, const std::unique_ptr<ThreadsIndexesType>& ThreadsIndexes, std::vector<ParticleSenderStruct>* VectorOfParticlesToSendToNeighbourThreads, const SectorPosType& CurrentSectorPos, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam, const ThreadPosType& CurrentThreadPos)
+    //static inline bool MoveParticleByVectorIfFullAtomSpaceIsEmptyAndIsInBoundsForThreads(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, ParticlesDetailedContainer<Particle>::iterator& ParticleObjectIter, const ThreadPosType* NeighbourThreadsIndexes, const std::unique_ptr<ThreadsIndexesType>& ThreadsIndexes, std::vector<ParticleSenderStruct>* VectorOfParticlesToSendToNeighbourThreads, const SectorPosType& CurrentSectorPos, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam, const ThreadPosType& CurrentThreadPos)
+    static inline bool MoveParticleByVectorIfFullAtomSpaceIsEmptyAndIsInBoundsForThreads(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, ParticlesDetailedContainer<Particle>::iterator& ParticleObjectIter, const SignedInt* NeighbourProcessesIndexes, std::vector<ParticleSenderStruct>* VectorOfParticlesToSendToNeighbourProcesses, const SectorPosType& CurrentSectorPos, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam, const ThreadPosType& CurrentThreadPos)
     {
         try
         {
@@ -198,7 +200,8 @@ protected:
             #else
             if (CheckFreeSpaceAndBoundsForParticleMovedByVector(ParticleObjectIter->second.ListOfAtoms, ParticleObjectIter->second.Radius, ParticleObjectIter->second.Index, ParticleObjectIter->second.Center, ParticlesInSector, CurrentSectorPos, VectorX, VectorY, VectorZ, SimulationSpaceSectorBounds{ StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, StartXPosParam + SizeXParam, StartYPosParam + SizeYParam, StartZPosParam + SizeZParam }, CellEngineConfigDataObject.CheckOnlyParticlesCenters, true, true, false) == true)
             #endif
-                MoveParticleByVectorForThreads(ParticleObject, ParticlesInSector, ParticleObjectIter, NeighbourThreadsIndexes, ThreadsIndexes, VectorOfParticlesToSendToNeighbourThreads, VectorX, VectorY, VectorZ, CurrentThreadPos);
+                //MoveParticleByVectorForThreads(ParticleObject, ParticlesInSector, ParticleObjectIter, NeighbourThreadsIndexes, ThreadsIndexes, VectorOfParticlesToSendToNeighbourThreads, VectorX, VectorY, VectorZ, CurrentThreadPos);
+                MoveParticleByVectorForThreads(ParticleObject, ParticlesInSector, ParticleObjectIter, NeighbourProcessesIndexes, VectorOfParticlesToSendToNeighbourProcesses, VectorX, VectorY, VectorZ, CurrentThreadPos);
             else
             {
                 #ifndef CONTAINERS_FOR_SPEED

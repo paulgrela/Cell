@@ -35,7 +35,7 @@ void CellEngineFullAtomSimulationSpace::CountMinMaxValuesOfBordersAtomsPositions
     CATCH("counting min max values of borders atoms positions in the cell")
 }
 
-CellEngineFullAtomSimulationSpace::CellEngineFullAtomSimulationSpace(ParticlesContainer<Particle>& ParticlesParam, const bool GetMemoryForFullAtomSpace, const ThreadIdType ThreadIndexParam, ThreadPosType CurrentThreadPosParam) : Particles(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam), CellEngineChemicalReactionsInSimulationSpace(ParticlesParam), CellEngineChemicalReactionsInFullAtomSimulationSpace(ParticlesParam), CellEngineSimulationSpace(ParticlesParam), CellEngineGenomeNucleicAcidsParticlesInFullAtomSpaceGenerator(ParticlesParam), CellEngineVoxelSimulationSpaceStatistics()
+CellEngineFullAtomSimulationSpace::CellEngineFullAtomSimulationSpace(ParticlesContainer<Particle>& ParticlesParam, const bool GetMemoryForFullAtomSpace, const ThreadIdType ThreadIndexParam, const ThreadPosType& CurrentThreadPosParam) : Particles(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam), CellEngineChemicalReactionsInSimulationSpace(ParticlesParam), CellEngineChemicalReactionsInFullAtomSimulationSpace(ParticlesParam), CellEngineSimulationSpace(ParticlesParam), CellEngineGenomeNucleicAcidsParticlesInFullAtomSpaceGenerator(ParticlesParam), CellEngineVoxelSimulationSpaceStatistics()
 {
     try
     {
@@ -231,7 +231,8 @@ void CellEngineFullAtomSimulationSpace::GenerateNStepsOfOneRandomReactionForWhol
 bool CellEngineFullAtomSimulationSpace::MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, ParticlesDetailedContainer<Particle>::iterator& ParticleObjectIter, const SectorPosType& CurrentSectorPos, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam)
 {
     if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == false)
-        return MoveParticleByVectorIfFullAtomSpaceIsEmptyAndIsInBoundsForThreads(ParticleObject, ParticlesInSector, ParticleObjectIter, NeighborThreadsIndexes, ThreadsIndexes, VectorOfParticlesToSendToNeighborProcessesOrThreads, CurrentSectorPos, VectorX, VectorY, VectorZ, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, CurrentThreadPos);
+        //return MoveParticleByVectorIfFullAtomSpaceIsEmptyAndIsInBoundsForThreads(ParticleObject, ParticlesInSector, ParticleObjectIter, NeighborThreadsIndexes, ThreadsIndexes, VectorOfParticlesToSendToNeighborProcessesOrThreads, CurrentSectorPos, VectorX, VectorY, VectorZ, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, CurrentThreadPos);
+        return MoveParticleByVectorIfFullAtomSpaceIsEmptyAndIsInBoundsForThreads(ParticleObject, ParticlesInSector, ParticleObjectIter, NeighborProcessesIndexes, VectorOfParticlesToSendToNeighborProcessesOrThreads, CurrentSectorPos, VectorX, VectorY, VectorZ, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, CurrentThreadPos);
     else
         return MoveParticleByVectorIfFullAtomSpaceIsEmptyAndIsInBoundsForMPIProcesses(ParticleObject, ParticlesInSector, ParticleObjectIter, NeighborProcessesIndexes, VectorOfParticlesToSendToNeighborProcessesOrThreads, CurrentSectorPos, VectorX, VectorY, VectorZ, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, CurrentThreadPos);
 }
