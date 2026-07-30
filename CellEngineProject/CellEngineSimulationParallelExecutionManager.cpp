@@ -754,17 +754,19 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
 {
     try
     {
-        ExchangeParticlesBetweenThreadsGroup1Barrier();
-
-        SyncPoint->arrive_and_wait();
-
-        ExchangeParticlesBetweenThreadsGroup2Ver2Barrier();
-
-        SyncPoint->arrive_and_wait();
-
+        // CellEngineUseful::SwitchOnLogs();
+        // ExchangeParticlesBetweenThreadsGroup1Barrier();
+        //
+        // SyncPoint->arrive_and_wait();
+        //
+        // ExchangeParticlesBetweenThreadsGroup2Ver2Barrier();
+        //
+        // SyncPoint->arrive_and_wait();
+        //
         // ExchangeParticlesBetweenThreadsGroup3Barrier();
         //
         // SyncPoint->arrive_and_wait();
+        // CellEngineUseful::SwitchOffLogs();
     }
     CATCH("exchange particles between threads")
 }
@@ -1244,6 +1246,8 @@ void CellEngineSimulationParallelExecutionManager::GenerateNStepsOfSimulationFor
 
 void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIProcessesGroup1()
 {
+    CellEngineUseful::SwitchOnLogs();
+
     try
     {
         for (UnsignedInt NeighborProcessIndex = 0; NeighborProcessIndex < NumberOfAllNeighbors; NeighborProcessIndex++)
@@ -1316,10 +1320,14 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIPr
         }
     }
     CATCH("exchange particles between mpi processes")
+
+    CellEngineUseful::SwitchOffLogs();
 }
 
 void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIProcessesGroup2Ver2()
 {
+    CellEngineUseful::SwitchOnLogs();
+
     try
     {
         int NumberOfReceivedMessages = 0;
@@ -1416,6 +1424,8 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIPr
             }
     }
     CATCH("exchange particles between mpi processes ver 2")
+
+    CellEngineUseful::SwitchOffLogs();
 }
 
 void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIProcessesVer2()
