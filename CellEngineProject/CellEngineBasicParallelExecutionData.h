@@ -23,14 +23,16 @@ protected:
     std::unique_ptr<ThreadsIndexesType> ThreadsIndexes;
 protected:
     UnsignedInt MPIProcessIndex{ 0 };
+protected:
     UnsignedInt ProcessGroupNumber;
     UnsignedInt NumberOfActiveNeighbors;
 public:
     SignedInt NeighborProcessesIndexes[NumberOfAllNeighbors];
 protected:
     SimulationSpaceSectorsRanges CurrentMPIProcessSimulationSpaceSectorsRanges;
-protected:
+public:
     ThreadIdType CurrentThreadIndex{ 0 };
+protected:
     ThreadPosType CurrentThreadPos{ 1, 1, 1 };
     ThreadPosType NeighborThreadsIndexes[NumberOfAllNeighbors];
 public:
