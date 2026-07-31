@@ -25,6 +25,7 @@ protected:
     UnsignedInt MPIProcessIndex{ 0 };
     UnsignedInt ProcessGroupNumber;
     UnsignedInt NumberOfActiveNeighbors;
+public:
     SignedInt NeighborProcessesIndexes[NumberOfAllNeighbors];
 protected:
     SimulationSpaceSectorsRanges CurrentMPIProcessSimulationSpaceSectorsRanges;
@@ -32,8 +33,9 @@ protected:
     ThreadIdType CurrentThreadIndex{ 0 };
     ThreadPosType CurrentThreadPos{ 1, 1, 1 };
     ThreadPosType NeighborThreadsIndexes[NumberOfAllNeighbors];
-protected:
+public:
     std::vector<ParticleSenderStruct> VectorOfParticlesToSendToNeighborProcessesOrThreads[NumberOfAllNeighbors];
+protected:
     std::vector<ParticleSenderStruct> ReceivedParticlesToInsertFromAllNeighborProcessesOrThreads[NumberOfAllNeighbors];
 protected:
     std::unique_ptr<std::barrier<>> TwoThreadsWallSychronizationBarriers;
