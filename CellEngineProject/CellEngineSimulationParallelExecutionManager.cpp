@@ -839,7 +839,7 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
         for (UnsignedInt NeighborProcessIndex = 0; NeighborProcessIndex < NumberOfAllNeighbors; NeighborProcessIndex++)
             if (CurrentThreadLocalSimulationSpaceData->NeighborProcessesIndexes[NeighborProcessIndex] != -1)
                 for (const auto& ConfirmationOfParticlesToRemoveToSentObject : CurrentThreadLocalSimulationSpaceData->ConfirmationOfParticlesToRemoveToSent[NeighborProcessIndex])
-                    RemoveParticle(ConfirmationOfParticlesToRemoveToSentObject, true);
+                    CurrentThreadLocalSimulationSpaceData->RemoveParticle(ConfirmationOfParticlesToRemoveToSentObject, true);
                     //ReceivedConfirmationOfParticlesToRemove.emplace_back(ConfirmationOfParticlesToRemoveToSentObject);
 
         // if (ReceivedConfirmationOfParticlesToRemove[0] != 0)
@@ -865,11 +865,11 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
 
         LoggersManagerObject.LogOnlyToConsoleUnconditional(STREAM("BARRIER 2"));
 
-        // ExchangeParticlesBetweenThreadsGroup3Barrier(CurrentThreadLocalSimulationSpaceData);
-        //
-        // SyncPoint->arrive_and_wait();
-        //
-        // LoggersManagerObject.LogOnlyToConsoleUnconditional(STREAM("BARRIER 3"));
+        ExchangeParticlesBetweenThreadsGroup3Barrier(CurrentThreadLocalSimulationSpaceData);
+
+        SyncPoint->arrive_and_wait();
+
+        LoggersManagerObject.LogOnlyToConsoleUnconditional(STREAM("BARRIER 3"));
     }
     CATCH("exchange particles between threads")
 }

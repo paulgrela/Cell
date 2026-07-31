@@ -18,7 +18,7 @@ protected:
     UnsignedInt GenerateCombinationsStateNumber{};
 protected:
     virtual void ClearSpaceForParticle(Particle& ParticleObject, bool ClearVoxels) = 0;
-protected:
+public:
     void RemoveParticle(UniqueIdInt ParticleIndex, bool ClearVoxels) override;
 protected:
     void MakingZeroSizeForContainersForFoundParticlesInProximity(const ThreadPosType& CurrentThreadPos);
