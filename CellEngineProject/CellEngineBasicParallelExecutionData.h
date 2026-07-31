@@ -9,8 +9,6 @@
 #include "CellEngineTypes.h"
 #include "CellEngineParticle.h"
 
-using ThreadsIndexesType = std::vector<std::vector<std::vector<UnsignedInt>>>;
-
 class CellEngineBasicParallelExecutionData
 {
     friend class CellEngineSimulationParallelExecutionManager;
@@ -19,8 +17,6 @@ public:
     {
         return MPIProcessIndex;
     }
-protected:
-    std::unique_ptr<ThreadsIndexesType> ThreadsIndexes;
 protected:
     UnsignedInt MPIProcessIndex{ 0 };
 protected:

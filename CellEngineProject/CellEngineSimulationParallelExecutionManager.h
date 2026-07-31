@@ -41,7 +41,7 @@ public:
     void JoinReactionsStatisticsFromThreads(std::vector<std::map<UnsignedInt, ReactionStatistics>>& SavedReactionsMap, UnsignedInt SimulationStepNumber) const;
 private:
     void GenerateOneStepOfSimulationForWholeCellSpaceInOneThread(UnsignedInt NumberOfStepsInside, UnsignedInt StepOutside, UnsignedInt ThreadXIndex, UnsignedInt ThreadYIndex, UnsignedInt ThreadZIndex, bool StateOfSimulationSpaceDivisionForThreads, barrier<>* SyncPoint);
-    void GenerateNStepsOfSimulationForWholeCellSpaceInOneThread(barrier<>* SyncPoint, bool* StateOfSimulationSpaceDivisionForThreads, UnsignedInt NumberOfStepsOutside, UnsignedInt NumberOfStepsInside, ThreadIdType CurrentThreadIndexParam, UnsignedInt ThreadXIndexParam, UnsignedInt ThreadYIndexParam, UnsignedInt ThreadZIndexParam, const std::shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData);
+    void GenerateNStepsOfSimulationForWholeCellSpaceInOneThread(barrier<>* SyncPoint, bool* StateOfSimulationSpaceDivisionForThreads, UnsignedInt NumberOfStepsOutside, UnsignedInt NumberOfStepsInside, ThreadIdType CurrentThreadIndexParam, UnsignedInt ThreadXIndexParam, UnsignedInt ThreadYIndexParam, UnsignedInt ThreadZIndexParam, const std::shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData) const;
 public:
     void GenerateNStepsOfSimulationForWholeCellSpaceInThreads(UnsignedInt NumberOfStepsOutside, UnsignedInt NumberOfStepsInside);
     void GenerateNStepsOfSimulationWithSendingParticlesToThreadsAndGatheringParticlesToMainThreadForWholeCellSpace(UnsignedInt NumberOfStepsOutside, UnsignedInt NumberOfStepsInside, bool PrintTime);
@@ -64,12 +64,11 @@ public:
     void ExchangeParticlesBetweenThreadsGroup2Ver2ConditionalVariableOneMutex();
 public:
     void SynchronizeWithNeighborByLocalBarrier(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData) const;
-    void ExchangeParticlesBetweenThreadsVer2LocalBarrier(const std::shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData);
-    void ExchangeParticlesBetweenThreadsVer2OneGlobalBarrier(std::barrier<>* SyncPoint, const std::shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, ThreadIdType CurrentThreadIndexParam, UnsignedInt ThreadXIndexParam, UnsignedInt ThreadYIndexParam, UnsignedInt ThreadZIndexParam);
+    void ExchangeParticlesBetweenThreadsVer2LocalBarrier(const std::shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, ThreadIdType CurrentThreadIndexParam, UnsignedInt ThreadXIndexParam, UnsignedInt ThreadYIndexParam, UnsignedInt ThreadZIndexParam) const;
+    void ExchangeParticlesBetweenThreadsVer2OneGlobalBarrier(std::barrier<>* SyncPoint, const std::shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, ThreadIdType CurrentThreadIndexParam, UnsignedInt ThreadXIndexParam, UnsignedInt ThreadYIndexParam, UnsignedInt ThreadZIndexParam) const;
 public:
-    void ExchangeParticlesBetweenThreadsGroup1Barrier(const std::shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, ThreadIdType CurrentThreadIndexParam, UnsignedInt ThreadXIndexParam, UnsignedInt ThreadYIndexParam, UnsignedInt ThreadZIndexParam);
-    void ExchangeParticlesBetweenThreadsGroup2Ver2Barrier(const std::shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, const ThreadIdType CurrentThreadIndexParam, const UnsignedInt ThreadXIndexParam, const UnsignedInt ThreadYIndexParam, const UnsignedInt ThreadZIndexParam);
-    void ExchangeParticlesBetweenThreadsGroup3Barrier(const std::shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData);
+    void ExchangeParticlesBetweenThreadsGroup2Ver2Barrier(const std::shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, ThreadIdType CurrentThreadIndexParam, UnsignedInt ThreadXIndexParam, UnsignedInt ThreadYIndexParam, UnsignedInt ThreadZIndexParam) const;
+    static void ExchangeParticlesBetweenThreadsGroup3Barrier(const std::shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData);
 private:
     void SetZeroForAllParallelExecutionVariables();
     void GatherAllParallelExecutionVariables();
