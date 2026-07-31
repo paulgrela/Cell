@@ -714,31 +714,31 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
 {
     try
     {
-        LoggersManagerObject.LogOnlyToConsoleUnconditional(STREAM("NumberOfActiveNeighbors = " << NumberOfActiveNeighbors));
+        LoggersManagerObject.Log(STREAM("NumberOfActiveNeighbors = " << NumberOfActiveNeighbors));
 
         int Counter = 0;
         for (const auto& ReceivedParticlesToInsert : CurrentThreadLocalSimulationSpaceData->VectorOfParticlesToSendToNeighborProcessesOrThreads)
             if (ReceivedParticlesToInsert.empty() == false)
                 Counter++;
-        LoggersManagerObject.LogOnlyToConsoleUnconditional(STREAM("NUMBER OF NEIGHBOR THAT SENT PARTCILES TO ACTUAL THREAD = " << Counter << " ACTUAL THREAD = " << CurrentThreadLocalSimulationSpaceData->CurrentThreadIndex));
+        LoggersManagerObject.Log(STREAM("NUMBER OF NEIGHBOR THAT SENT PARTCILES TO ACTUAL THREAD = " << Counter << " ACTUAL THREAD = " << CurrentThreadLocalSimulationSpaceData->CurrentThreadIndex));
 
         for (UnsignedInt NeighborProcessIndex = 0; NeighborProcessIndex < NumberOfAllNeighbors; NeighborProcessIndex++)
             if (CurrentThreadLocalSimulationSpaceData->NeighborProcessesIndexes[NeighborProcessIndex] != -1)
             {
                 const auto LocalNeighborThreadsIndexes = CurrentThreadLocalSimulationSpaceData->NeighborThreadsIndexes[NeighborProcessIndex];
-                LoggersManagerObject.LogOnlyToConsoleUnconditional(STREAM("LocalNeighborThreadsIndexes = " << LocalNeighborThreadsIndexes.ThreadPosX << " , " << LocalNeighborThreadsIndexes.ThreadPosY << " , " << LocalNeighborThreadsIndexes.ThreadPosZ << " CurrentThreadIndex = [" << CurrentThreadLocalSimulationSpaceData->CurrentThreadIndex << "]"));
+                LoggersManagerObject.Log(STREAM("LocalNeighborThreadsIndexes = " << LocalNeighborThreadsIndexes.ThreadPosX << " , " << LocalNeighborThreadsIndexes.ThreadPosY << " , " << LocalNeighborThreadsIndexes.ThreadPosZ << " CurrentThreadIndex = [" << CurrentThreadLocalSimulationSpaceData->CurrentThreadIndex << "]"));
 
                 if (CurrentThreadLocalSimulationSpaceData->VectorOfParticlesToSendToNeighborProcessesOrThreads[NeighborProcessIndex].empty() == false)
                 {
                     const auto& ReceivedParticlesToInsert = CurrentThreadLocalSimulationSpaceData->VectorOfParticlesToSendToNeighborProcessesOrThreads[NeighborProcessIndex];
 
-                    LoggersManagerObject.LogOnlyToConsoleUnconditional(STREAM("WANT SENDING CONFIRMATION TO NEIGHBOR = " << ReceivedParticlesToInsert[0].SenderProcessIndex << " " << ReceivedParticlesToInsert[0].ReceiverProcessIndex << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadIndex - 1 << " NEIGHBOR = (" << LocalNeighborThreadsIndexes.ThreadPosX - 1 << " " << LocalNeighborThreadsIndexes.ThreadPosY - 1 << " " << LocalNeighborThreadsIndexes.ThreadPosZ - 1 << ")"));
+                    LoggersManagerObject.Log(STREAM("WANT SENDING CONFIRMATION TO NEIGHBOR = " << ReceivedParticlesToInsert[0].SenderProcessIndex << " " << ReceivedParticlesToInsert[0].ReceiverProcessIndex << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadIndex - 1 << " NEIGHBOR = (" << LocalNeighborThreadsIndexes.ThreadPosX - 1 << " " << LocalNeighborThreadsIndexes.ThreadPosY - 1 << " " << LocalNeighborThreadsIndexes.ThreadPosZ - 1 << ")"));
 
                     bool FoundNeighbor = false;
                     UnsignedInt LocalNeighborProcessIndex = 0;
                     for (LocalNeighborProcessIndex = 0; LocalNeighborProcessIndex < NumberOfAllNeighbors; LocalNeighborProcessIndex++)
                     {
-                        LoggersManagerObject.LogOnlyToConsoleUnconditional(STREAM("LOOKING FOR NEIGHBOR = " << SimulationSpaceDataForThreads[LocalNeighborThreadsIndexes.ThreadPosX][LocalNeighborThreadsIndexes.ThreadPosY][LocalNeighborThreadsIndexes.ThreadPosZ]->NeighborProcessesIndexes[NeighborProcessIndex] << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadIndex));
+                        LoggersManagerObject.Log(STREAM("LOOKING FOR NEIGHBOR = " << SimulationSpaceDataForThreads[LocalNeighborThreadsIndexes.ThreadPosX][LocalNeighborThreadsIndexes.ThreadPosY][LocalNeighborThreadsIndexes.ThreadPosZ]->NeighborProcessesIndexes[NeighborProcessIndex] << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadIndex));
 
                         if (SimulationSpaceDataForThreads[LocalNeighborThreadsIndexes.ThreadPosX][LocalNeighborThreadsIndexes.ThreadPosY][LocalNeighborThreadsIndexes.ThreadPosZ]->NeighborProcessesIndexes[LocalNeighborProcessIndex] == CurrentThreadLocalSimulationSpaceData->CurrentThreadIndex - 1)
                         {
@@ -751,11 +751,11 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
                         for (const auto& ReceivedParticleIndexToInsert : ReceivedParticlesToInsert)
                             if (ReceivedParticleIndexToInsert.ParticleIndex != 0)
                             {
-                                LoggersManagerObject.LogOnlyToConsoleUnconditional(STREAM("PARTCLE_KIND_ID TO CHECK = " << ReceivedParticleIndexToInsert.ParticleIndex));
+                                LoggersManagerObject.Log(STREAM("PARTCLE_KIND_ID TO CHECK = " << ReceivedParticleIndexToInsert.ParticleIndex));
 
                                 if (CurrentThreadLocalSimulationSpaceData->CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossible(ReceivedParticleIndexToInsert) == true)
                                 {
-                                    LoggersManagerObject.LogOnlyToConsoleUnconditional(STREAM("SENDING CONFIRMATION TO NEIGHBOR = (" << ReceivedParticleIndexToInsert.SenderProcessIndex << " " << ReceivedParticleIndexToInsert.ReceiverProcessIndex << ") (" << CurrentThreadLocalSimulationSpaceData->CurrentThreadIndex << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.ThreadPosX << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.ThreadPosY << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.ThreadPosZ << "["  << CurrentThreadIndexParam << " " << ThreadXIndexParam << " " << ThreadYIndexParam << " " << ThreadZIndexParam << "]) NEIGHBOR = (" << LocalNeighborThreadsIndexes.ThreadPosX << " " << LocalNeighborThreadsIndexes.ThreadPosY << " " << LocalNeighborThreadsIndexes.ThreadPosZ << ")"));
+                                    LoggersManagerObject.Log(STREAM("SENDING CONFIRMATION TO NEIGHBOR = (" << ReceivedParticleIndexToInsert.SenderProcessIndex << " " << ReceivedParticleIndexToInsert.ReceiverProcessIndex << ") (" << CurrentThreadLocalSimulationSpaceData->CurrentThreadIndex << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.ThreadPosX << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.ThreadPosY << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.ThreadPosZ << "["  << CurrentThreadIndexParam << " " << ThreadXIndexParam << " " << ThreadYIndexParam << " " << ThreadZIndexParam << "]) NEIGHBOR = (" << LocalNeighborThreadsIndexes.ThreadPosX << " " << LocalNeighborThreadsIndexes.ThreadPosY << " " << LocalNeighborThreadsIndexes.ThreadPosZ << ")"));
 
                                     SimulationSpaceDataForThreads[LocalNeighborThreadsIndexes.ThreadPosX][LocalNeighborThreadsIndexes.ThreadPosY][LocalNeighborThreadsIndexes.ThreadPosZ]->ConfirmationOfParticlesToRemoveToSent[LocalNeighborProcessIndex].emplace_back(ReceivedParticleIndexToInsert.ParticleIndex);
                                 }
@@ -788,13 +788,13 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
 
         SyncPoint->arrive_and_wait();
 
-        LoggersManagerObject.LogOnlyToConsoleUnconditional(STREAM("BARRIER 2"));
+        LoggersManagerObject.Log(STREAM("BARRIER 2"));
 
         ExchangeParticlesBetweenThreadsGroup3Barrier(CurrentThreadLocalSimulationSpaceData);
 
         SyncPoint->arrive_and_wait();
 
-        LoggersManagerObject.LogOnlyToConsoleUnconditional(STREAM("BARRIER 3"));
+        LoggersManagerObject.Log(STREAM("BARRIER 3"));
     }
     CATCH("exchange particles between threads")
 }
