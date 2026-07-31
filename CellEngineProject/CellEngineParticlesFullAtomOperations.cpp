@@ -6,7 +6,7 @@
 
 #include "CellEngineImGuiMenu.h"
 
-constexpr bool PrintInfoWarning = false;
+constexpr bool PrintAdditionalInformation = false;
 
 void CellEngineParticlesFullAtomOperations::SetProperThreadIndexForEveryParticlesSector(ParticlesContainer<Particle>& ParticlesSectors)
 {
@@ -18,7 +18,8 @@ void CellEngineParticlesFullAtomOperations::SetProperThreadIndexForEveryParticle
             ParticlesSectors[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].ThreadPos = ThreadPos;
             ParticlesSectors[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].MPIProcessIndex = CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[ThreadPos.ThreadPosX - 1][ThreadPos.ThreadPosY - 1][ThreadPos.ThreadPosZ - 1]->GetMPIProcessIndex() - 1;
 
-            LoggersManagerObject.Log(STREAM("ThreadPos = " << ThreadPos.ThreadPosX << "'" << ThreadPos.ThreadPosY << "'" << ThreadPos.ThreadPosZ << " ProcessIndex = " << ParticlesSectors[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].MPIProcessIndex));
+            if constexpr (PrintAdditionalInformation == true)
+                LoggersManagerObject.Log(STREAM("ThreadPos = " << ThreadPos.ThreadPosX << "'" << ThreadPos.ThreadPosY << "'" << ThreadPos.ThreadPosZ << " ProcessIndex = " << ParticlesSectors[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].MPIProcessIndex));
         }
     }
     CATCH("setting proper thread index for every particles sector")
@@ -53,7 +54,7 @@ static bool ExchangeParticleBetweenSectors(const Particle &ParticleObject, Parti
         if (ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].Particles.contains(ParticleObject.Index) == false)
             if (&ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].Particles.find(ParticleObject.Index)->second == &ParticleObject)
             {
-                if constexpr(PrintInfoWarning == true)
+                if constexpr(PrintAdditionalInformation == true)
                     std::cout << "Earlier correct sector for particle index: " << ParticleObject.EntityId << " " << ParticleObject.Index << " " << SectorPosX1 << " " << SectorPosY1 << " " << SectorPosZ1 << " " << SectorPosX2 << " " << SectorPosY2 << " " << SectorPosZ2 << std::endl;
                 return true;
             }
@@ -63,7 +64,7 @@ static bool ExchangeParticleBetweenSectors(const Particle &ParticleObject, Parti
             {
                 ++ParticleObjectIter;
 
-                if constexpr(PrintInfoWarning == true)
+                if constexpr(PrintAdditionalInformation == true)
                     std::cout << "Earlier correct sector for particle index: " << ParticleObject.EntityId << " " << ParticleObject.Index << " " << SectorPosX1 << " " << SectorPosY1 << " " << SectorPosZ1 << " " << SectorPosX2 << " " << SectorPosY2 << " " << SectorPosZ2 << std::endl;
                 return true;
             }
