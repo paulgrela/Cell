@@ -42,24 +42,29 @@ namespace CellEngineUseful
 
     static SectorPosType GetSectorPos(const RealType X, const RealType Y, const RealType Z)
     {
-        SignedInt SectorPosX = std::floor((X + CellEngineConfigDataObject.ShiftCenterX) / CellEngineConfigDataObject.SizeOfParticlesSectorX);
-        SignedInt SectorPosY = std::floor((Y + CellEngineConfigDataObject.ShiftCenterY) / CellEngineConfigDataObject.SizeOfParticlesSectorY);
-        SignedInt SectorPosZ = std::floor((Z + CellEngineConfigDataObject.ShiftCenterZ) / CellEngineConfigDataObject.SizeOfParticlesSectorZ);
+        const SignedInt SectorPosX = std::floor((X + CellEngineConfigDataObject.ShiftCenterX) / CellEngineConfigDataObject.SizeOfParticlesSectorX);
+        const SignedInt SectorPosY = std::floor((Y + CellEngineConfigDataObject.ShiftCenterY) / CellEngineConfigDataObject.SizeOfParticlesSectorY);
+        const SignedInt SectorPosZ = std::floor((Z + CellEngineConfigDataObject.ShiftCenterZ) / CellEngineConfigDataObject.SizeOfParticlesSectorZ);
 
         if (SectorPosX <= 0 || SectorPosX > CellEngineConfigDataObject.NumberOfParticlesSectorsInX - 1)
-            return { -1, SectorPosY, SectorPosZ };
+            return { .SectorPosX = -1, .SectorPosY = SectorPosY, .SectorPosZ = SectorPosZ };
         if (SectorPosY <= 0 || SectorPosY > CellEngineConfigDataObject.NumberOfParticlesSectorsInY - 1)
-            return { SectorPosX, -1, SectorPosZ };
+            return { .SectorPosX = SectorPosX, .SectorPosY = -1, .SectorPosZ = SectorPosZ };
         if (SectorPosZ <= 0 || SectorPosZ > CellEngineConfigDataObject.NumberOfParticlesSectorsInZ - 1)
-            return { SectorPosX, SectorPosY, -1, };
+            return { .SectorPosX = SectorPosX, .SectorPosY = SectorPosY, .SectorPosZ = -1, };
 
-        return { SectorPosX, SectorPosY, SectorPosZ };
+        return { .SectorPosX = SectorPosX, .SectorPosY = SectorPosY, .SectorPosZ = SectorPosZ };
     }
 
     static void SwitchOffLogs()
     {
         #ifdef SIMULATION_DETAILED_LOG
-        LoggersManagerObject.InitializePrintingParameters(false, false, false, false, false, false, false, false, false, false, false, false, CellEngineConfigDataObject.MaximalNumberOfLinesInOneFile, false);
+        //LoggersManagerObject.InitializePrintingParameters(false, false, false, false, false, false, false, false, false, false, false, false, CellEngineConfigDataObject.MaximalNumberOfLinesInOneFile, false);
+        //TO:
+        //LoggersManagerObject.InitializePrintingParameters(false, true, false, false, false, false, false, false, false, false, false, false, CellEngineConfigDataObject.MaximalNumberOfLinesInOneFile, false);
+        //:EXPERYMENT
+        //LoggersManagerObject.InitializePrintingParameters(false, CellEngineConfigDataObject.PrintLogToFiles, CellEngineConfigDataObject.PrintLogLineNumberToConsole, CellEngineConfigDataObject.PrintLogDateTimeToConsole, CellEngineConfigDataObject.PrintLogProcessIdToConsole, CellEngineConfigDataObject.PrintLogProcessPriorityLevelToConsole, CellEngineConfigDataObject.PrintLogThreadIdToConsole, CellEngineConfigDataObject.PrintLogLineNumberToFile, CellEngineConfigDataObject.PrintLogDateTimeToFile, CellEngineConfigDataObject.PrintLogProcessIdToFile, CellEngineConfigDataObject.PrintLogProcessPriorityLevelToFile, CellEngineConfigDataObject.PrintLogThreadIdToFile, CellEngineConfigDataObject.MaximalNumberOfLinesInOneFile, CellEngineConfigDataObject.PrintLogToCommonFileWhenPrintLogToSpecialFile);
+        LoggersManagerObject.InitializePrintingParameters(false, false, CellEngineConfigDataObject.PrintLogLineNumberToConsole, CellEngineConfigDataObject.PrintLogDateTimeToConsole, CellEngineConfigDataObject.PrintLogProcessIdToConsole, CellEngineConfigDataObject.PrintLogProcessPriorityLevelToConsole, CellEngineConfigDataObject.PrintLogThreadIdToConsole, CellEngineConfigDataObject.PrintLogLineNumberToFile, CellEngineConfigDataObject.PrintLogDateTimeToFile, CellEngineConfigDataObject.PrintLogProcessIdToFile, CellEngineConfigDataObject.PrintLogProcessPriorityLevelToFile, CellEngineConfigDataObject.PrintLogThreadIdToFile, CellEngineConfigDataObject.MaximalNumberOfLinesInOneFile, CellEngineConfigDataObject.PrintLogToCommonFileWhenPrintLogToSpecialFile);
         #endif
     }
 

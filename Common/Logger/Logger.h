@@ -35,7 +35,9 @@ private:
 private:
 	static inline std::mutex LogMessageCoutMutexObject;
 public:
-	Logger(const char* LogDirectoryParameter, const char* MainDirectoryNameParameter, const char* LoggerNameParameter, const char* TaskNameParameter, std::uint64_t ThisThreadIdParameter);
+	bool PrintLogToFilesUnconditional = false;
+public:
+	Logger(const char* LogDirectoryParameter, const char* MainDirectoryNameParameter, const char* LoggerNameParameter, const char* TaskNameParameter, std::uint64_t ThisThreadIdParameter, bool PrintLogToFilesUnconditionalParam = false);
 	~Logger();
 private:
 	void AllocResourcesForFiles();
@@ -51,7 +53,8 @@ private:
 	static void WriteToCommonLogFromThread(bool Condition, const std::string& MessageStr, std::ostream& StreamObject, ThreadIdType CurrentThreadId, std::uint64_t FileNumber);
 	void WriteToLogsFromThread(const std::string& MessageStrToFile, ThreadIdType CurrentThreadId, std::int64_t SpecialLogFileIndex);
 public:
-	void LogMessageBool(const std::string& MessageStr, bool LogLineInfo, ThreadIdType CurrentThreadId, bool PrintLogToConsoleUnconditional, bool PrintLogToFilesUnconditional, bool PrintLogToConsole, bool PrintLogToFiles, std::int64_t SpecialLogFileIndex);
+	void LogMessageBool(const std::string& MessageStr, bool LogLineInfo, ThreadIdType CurrentThreadId, bool PrintLogToConsoleUnconditional, bool PrintLogToFilesUnconditional, bool PrintLogToConsole, bool PrintLogToFiles, std::int64_t SpecialLogFileIndex, bool PrintLogToFilesUnconditionalParam = false);
+	//void LogMessageBool(const std::string& MessageStr, bool LogLineInfo, ThreadIdType CurrentThreadId, bool PrintLogToConsoleUnconditional, bool PrintLogToFilesUnconditional, bool PrintLogToConsole, bool PrintLogToFiles, std::int64_t SpecialLogFileIndex);
 };
 
 class LoggersManager
@@ -102,7 +105,7 @@ private:
 private:
 	static inline std::mutex CreateNewLoggerForThreadMutexObject;
 private:
-	void LogMessageBool(const std::string& MessageStr, bool LogLineInfo, bool PrintLogToConsoleUnconditional, bool PrintLogToFilesUnconditional, bool PrintToConsole, bool PrintLogToFiles, std::int64_t SpecialLogFileIndex);
+	void LogMessageBool(const std::string& MessageStr, bool LogLineInfo, bool PrintLogToConsoleUnconditional, bool PrintLogToFilesUnconditional, bool PrintToConsoleParam, bool PrintLogToFilesParam, std::int64_t SpecialLogFileIndex, bool PrintLogToFilesUnconditionalParam = false);
 public:
 	void Log(const std::stringstream& Message);
 

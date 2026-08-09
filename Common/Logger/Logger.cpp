@@ -1,4 +1,6 @@
 
+#include <syncstream>
+
 #include "DestinationPlatform.h"
 
 #ifdef WINDOWS_PLATFORM
@@ -31,10 +33,18 @@ using namespace terminal_colors_utils;
 
 constexpr char EndLineChar = '\n';
 
-Logger::Logger(const char* LogDirectoryParameter, const char* MainDirectoryNameParameter, const char* LoggerNameParameter, const char* TaskNameParameter, const uint64_t ThisThreadIdParameter)
+Logger::Logger(const char* LogDirectoryParameter, const char* MainDirectoryNameParameter, const char* LoggerNameParameter, const char* TaskNameParameter, const uint64_t ThisThreadIdParameter, const bool PrintLogToFilesUnconditionalParam)
 {
 	try
 	{
+		PrintLogToFilesUnconditional = PrintLogToFilesUnconditionalParam;
+		//
+		// if (PrintLogToFilesUnconditional == true)
+		// {
+		// 	cout << "XXX555 = " << PrintLogToFilesUnconditional << endl;
+		// 	getchar();
+		// }
+
 		ThisThreadId = ThisThreadIdParameter;
         LogDirectory = LogDirectoryParameter;
 		MainDirectoryName = MainDirectoryNameParameter;
@@ -44,6 +54,8 @@ Logger::Logger(const char* LogDirectoryParameter, const char* MainDirectoryNameP
 		CreateDirectories();
 		AllocResourcesForFiles();
 		OpenLogFiles();
+
+		PrintLogToFilesUnconditional = false;
 	}
 	CATCH_COUT("logger constructor")
 }
@@ -57,7 +69,8 @@ void Logger::CreateDirectories()
 {
 	try
 	{
-		if (LoggersManagerObject.PrintLogToFiles == true)
+		//if (LoggersManagerObject.PrintLogToFiles == true)
+		if (LoggersManagerObject.PrintLogToFiles == true || PrintLogToFilesUnconditional == true)
 		{
 		    #ifdef WINDOWS_PLATFORM
 			mkdir(string(string(LogDirectory) + string("logs")).c_str());
@@ -94,7 +107,8 @@ void Logger::AllocResourcesForFiles()
 {
 	try
 	{
-		if (LoggersManagerObject.PrintLogToFiles == true)
+		//if (LoggersManagerObject.PrintLogToFiles == true)
+		if (LoggersManagerObject.PrintLogToFiles == true || PrintLogToFilesUnconditional == true)
 		{
 			UserLogFiles.clear();
 			UserLogFiles.resize(LoggersManagerObject.UserLogFilesNames.size());
@@ -110,14 +124,25 @@ void Logger::OpenLogFiles()
 {
 	try
 	{
-		if (LoggersManagerObject.PrintLogToFiles == true)
-        {
-            for (uint64_t FileNumber = 0; FileNumber < LoggersManagerObject.UserLogFilesNames.size(); FileNumber++)
-                UserLogFiles[FileNumber].open(string(LogDirectory) + OS_DIR_SEP + string("logs") + OS_DIR_SEP + MainDirectoryName + OS_DIR_SEP + TaskName + OS_DIR_SEP + LoggerName + OS_DIR_SEP + LoggersManagerObject.UserLogFilesNames[FileNumber] + OS_DIR_SEP + LoggersManagerObject.UserLogFilesNames[FileNumber] + string_utils::align_str(to_string(FileNumberInLog), '0', 5) + ".log.txt");
+		// if (PrintLogToFilesUnconditional == true)
+		// cout << "XXX444 = " << PrintLogToFilesUnconditional << endl; //getchar();
+		//if (LoggersManagerObject.PrintLogToFiles == true)
+		// if (const ThreadIdType CurrentThreadId = stoll((stringstream() << this_thread::get_id()).str()); CurrentThreadId != LoggerMainObjectPointer->ThisThreadId)
+		// 	if (const auto FoundLoggerIterator = LoggersThreadsObjectsPointersMap.find(CurrentThreadId); FoundLoggerIterator == LoggersThreadsObjectsPointersMap.end())
+		//	if (const ThreadIdType CurrentThreadId = stoll((stringstream() << this_thread::get_id()).str()); CurrentThreadId != ThisThreadId)
+		//		cout << "XXX6 = " << PrintLogToFilesUnconditional << " " << CurrentThreadId << " " << ThisThreadId << endl;
+				//if (const auto FoundLoggerIterator = LoggersThreadsObjectsPointersMap.find(CurrentThreadId); FoundLoggerIterator == LoggersThreadsObjectsPointersMap.end())
 
-            for (uint64_t FileNumber = 0; FileNumber < LoggersManagerObject.SpecialLogFilesNames.size(); FileNumber++)
-                if (LoggersManagerObject.UseSpecialLogFiles[FileNumber] == true)
-                    SpecialLogFiles[FileNumber].open(string(LogDirectory) + OS_DIR_SEP + string("logs") + OS_DIR_SEP + MainDirectoryName + OS_DIR_SEP + TaskName + OS_DIR_SEP + LoggerName + OS_DIR_SEP + LoggersManagerObject.SpecialLogFilesNames[FileNumber] + OS_DIR_SEP + LoggersManagerObject.SpecialLogFilesNames[FileNumber] + string_utils::align_str(to_string(FileNumberInLog), '0', 5) + ".log.txt");
+		if (LoggersManagerObject.PrintLogToFiles == true || PrintLogToFilesUnconditional == true)
+		{
+			//cout << "XXX5 = " << PrintLogToFilesUnconditional << endl;
+
+			for (uint64_t FileNumber = 0; FileNumber < LoggersManagerObject.UserLogFilesNames.size(); FileNumber++)
+				UserLogFiles[FileNumber].open(string(LogDirectory) + OS_DIR_SEP + string("logs") + OS_DIR_SEP + MainDirectoryName + OS_DIR_SEP + TaskName + OS_DIR_SEP + LoggerName + OS_DIR_SEP + LoggersManagerObject.UserLogFilesNames[FileNumber] + OS_DIR_SEP + LoggersManagerObject.UserLogFilesNames[FileNumber] + string_utils::align_str(to_string(FileNumberInLog), '0', 5) + ".log.txt");
+
+			for (uint64_t FileNumber = 0; FileNumber < LoggersManagerObject.SpecialLogFilesNames.size(); FileNumber++)
+				if (LoggersManagerObject.UseSpecialLogFiles[FileNumber] == true)
+					SpecialLogFiles[FileNumber].open(string(LogDirectory) + OS_DIR_SEP + string("logs") + OS_DIR_SEP + MainDirectoryName + OS_DIR_SEP + TaskName + OS_DIR_SEP + LoggerName + OS_DIR_SEP + LoggersManagerObject.SpecialLogFilesNames[FileNumber] + OS_DIR_SEP + LoggersManagerObject.SpecialLogFilesNames[FileNumber] + string_utils::align_str(to_string(FileNumberInLog), '0', 5) + ".log.txt");
         }
 	}
 	CATCH_AND_THROW_COUT("opening log files in logger")
@@ -127,7 +152,8 @@ void Logger::CloseLogFiles()
 {
 	try
 	{
-		if (LoggersManagerObject.PrintLogToFiles == true)
+		if (LoggersManagerObject.PrintLogToFiles == true || PrintLogToFilesUnconditional == true)
+		//if (LoggersManagerObject.PrintLogToFiles == true || PrintLogToFilesUnconditional == true)
         {
 			for (auto& FileNumber : UserLogFiles)
 				FileNumber.close();
@@ -163,7 +189,7 @@ void Logger::LimitLogSizeByClosingOldLogFilesAndOpeningNewLogFilesAfterMaximalLi
 	CATCH_COUT("limiting log size by closing old log files and opening new log files after maximal limit of lines in old file is exceeded in logger")
 }
 
-string Logger::CreateLogString(const string& MessageStr, const bool LogLineInfo, const ThreadIdType CurrentThreadId, uint64_t LineNumberInCommonLog, const bool PrintLogLineNumber, const bool PrintLogDateTime, const bool PrintLogProcessId, const bool PrintLogProcessPriorityLevel, const bool PrintLogThreadId) const
+string Logger::CreateLogString(const string& MessageStr, const bool LogLineInfo, const ThreadIdType CurrentThreadId, const uint64_t LineNumberInCommonLog, const bool PrintLogLineNumber, const bool PrintLogDateTime, const bool PrintLogProcessId, const bool PrintLogProcessPriorityLevel, const bool PrintLogThreadId) const
 {
 	using namespace string_utils;
 
@@ -225,6 +251,7 @@ void Logger::WriteToCommonLogFromThread(const bool Condition, const string& Mess
 		if (Condition == true)
 		{
 			StreamObject << MessageStr << flush;
+			//std::osyncstream(StreamObject) << MessageStr << flush;
 
 			if (FileNumber != numeric_limits<uint64_t>::max())
 				if (LoggersManagerObject.DrawMessageFunctionObject)
@@ -252,7 +279,7 @@ void Logger::WriteToLogsFromThread(const string& MessageStrToFile, const ThreadI
 	CATCH_AND_THROW_COUT("writing to logs from thread in logger")
 }
 
-void Logger::LogMessageBool(const string& MessageStr, const bool LogLineInfo, const ThreadIdType CurrentThreadId, const bool PrintLogToConsoleUnconditional, const bool PrintLogToFilesUnconditional, const bool PrintLogToConsole, const bool PrintLogToFiles, const std::int64_t SpecialLogFileIndex)
+void Logger::LogMessageBool(const string& MessageStr, const bool LogLineInfo, const ThreadIdType CurrentThreadId, const bool PrintLogToConsoleUnconditional, const bool PrintLogToFilesUnconditionalNOT, const bool PrintLogToConsole, const bool PrintLogToFiles, const std::int64_t SpecialLogFileIndex, const bool PrintLogToFilesUnconditionalParam)
 {
 	try
 	{
@@ -260,20 +287,25 @@ void Logger::LogMessageBool(const string& MessageStr, const bool LogLineInfo, co
 
 		lock_guard LockGuardObject{ LogMessageCoutMutexObject };
 
-		uint64_t LineNumberInCommonLog = LoggersManagerObject.LoggerMainObjectPointer->LineNumberInLog;
+		const uint64_t LineNumberInCommonLog = LoggersManagerObject.LoggerMainObjectPointer->LineNumberInLog;
 		LoggersManagerObject.LoggerMainObjectPointer->LineNumberInLog++;
 
 		if ((LoggersManagerObject.PrintLogToConsole == true && PrintLogToConsole == true) || PrintLogToConsoleUnconditional == true)
 		{
+			//cout << "XXX3" << endl;
 			LocalMessageStr = LoggersManagerObject.LoggerMainObjectPointer->CreateLogString(MessageStr, LogLineInfo, CurrentThreadId, LineNumberInCommonLog, LoggersManagerObject.PrintLogLineNumberToConsole, LoggersManagerObject.PrintLogDateTimeToConsole, LoggersManagerObject.PrintLogProcessIdToConsole, LoggersManagerObject.PrintLogProcessPriorityLevelToConsole, LoggersManagerObject.PrintLogThreadIdToConsole);
 			WriteToCommonLogFromThread(true, LocalMessageStr, cout, CurrentThreadId, numeric_limits<uint64_t>::max());
 		}
 
-		if ((LoggersManagerObject.PrintLogToFiles == true && PrintLogToFiles == true) || PrintLogToFilesUnconditional == true)
+		//cout << "XXX4" << endl;
+		//if ((LoggersManagerObject.PrintLogToFiles == true && PrintLogToFiles == true) || PrintLogToFilesUnconditional == true)
+		if ((LoggersManagerObject.PrintLogToFiles == true && PrintLogToFiles == true) || PrintLogToFilesUnconditionalParam == true)
 			if (LoggersManagerObject.LoggerMainObjectPointer)
 			{
+				//cout << "XXX5" << endl;
 				if (LoggersManagerObject.LoggerMainObjectPointer->ThisThreadId != CurrentThreadId)
 				{
+					//cout << "XXX6" << endl;
 					LoggersManagerObject.LoggerMainObjectPointer->LimitLogSizeByClosingOldLogFilesAndOpeningNewLogFilesAfterMaximalLimitOfLinesInOldFileIsExceeded(LoggersManagerObject.LoggerMainObjectPointer->ThisThreadId);
 
 					LocalMessageStr = LoggersManagerObject.LoggerMainObjectPointer->CreateLogString(MessageStr, LogLineInfo, CurrentThreadId, LineNumberInCommonLog, LoggersManagerObject.PrintLogLineNumberToFile, LoggersManagerObject.PrintLogDateTimeToFile, LoggersManagerObject.PrintLogProcessIdToFile, LoggersManagerObject.PrintLogProcessPriorityLevelToFile, LoggersManagerObject.PrintLogThreadIdToFile);
@@ -281,23 +313,27 @@ void Logger::LogMessageBool(const string& MessageStr, const bool LogLineInfo, co
 
 					LimitLogSizeByClosingOldLogFilesAndOpeningNewLogFilesAfterMaximalLimitOfLinesInOldFileIsExceeded(CurrentThreadId);
 
+					//cout << "XXX60" << endl;
 					LineNumberInLog++;
 					LocalMessageStr = CreateLogString(MessageStr, LogLineInfo, CurrentThreadId, LineNumberInCommonLog, LoggersManagerObject.PrintLogLineNumberToFile, LoggersManagerObject.PrintLogDateTimeToFile, LoggersManagerObject.PrintLogProcessIdToFile, LoggersManagerObject.PrintLogProcessPriorityLevelToFile, LoggersManagerObject.PrintLogThreadIdToFile);
 					WriteToLogsFromThread(LocalMessageStr, CurrentThreadId, SpecialLogFileIndex);
+					//cout << "XXX61" << endl;
 				}
 				else
 				{
+					//cout << "XXX7" << endl;
 					LoggersManagerObject.LoggerMainObjectPointer->LimitLogSizeByClosingOldLogFilesAndOpeningNewLogFilesAfterMaximalLimitOfLinesInOldFileIsExceeded(LoggersManagerObject.LoggerMainObjectPointer->ThisThreadId);
 
 					LocalMessageStr = CreateLogString(MessageStr, LogLineInfo, CurrentThreadId, LineNumberInCommonLog, LoggersManagerObject.PrintLogLineNumberToFile, LoggersManagerObject.PrintLogDateTimeToFile, LoggersManagerObject.PrintLogProcessIdToFile, LoggersManagerObject.PrintLogProcessPriorityLevelToFile, LoggersManagerObject.PrintLogThreadIdToFile);
 					WriteToLogsFromThread(LocalMessageStr, CurrentThreadId, SpecialLogFileIndex);
+					//cout << "XXX71" << endl;
 				}
 			}
 	}
 	CATCH_COUT("logging message in logger")
 }
 
-void  LoggersManager::InitializeFilesNames(const initializer_list<const string> InitialFilesNames)
+void LoggersManager::InitializeFilesNames(const initializer_list<const string> InitialFilesNames)
 {
 	try
 	{
@@ -317,7 +353,7 @@ void  LoggersManager::InitializeSelectiveWordsFunctions(const initializer_list<f
 	CATCH_AND_THROW_COUT("initializing loggers manager selective words functions")
 }
 
-void LoggersManager::InitializePrintingParameters(bool PrintLogToConsoleParam, bool PrintLogToFilesParam, bool PrintLogLineNumberToConsoleParam, bool PrintLogDateTimeToConsoleParam, bool PrintLogProcessIdToConsoleParam, bool PrintLogProcessPriorityLevelToConsoleParam, bool PrintLogThreadIdToConsoleParam, bool PrintLogLineNumberToFileParam, bool PrintLogDateTimeToFileParam, bool PrintLogProcessIdToFileParam, bool PrintLogProcessPriorityLevelToFileParam, bool PrintLogThreadIdToFileParam, uint64_t MaximalNumberOfLinesInOneFileParam, bool PrintLogToCommonFileWhenPrintLogToSpecialFile)
+void LoggersManager::InitializePrintingParameters(const bool PrintLogToConsoleParam, const bool PrintLogToFilesParam, const bool PrintLogLineNumberToConsoleParam, const bool PrintLogDateTimeToConsoleParam, const bool PrintLogProcessIdToConsoleParam, const bool PrintLogProcessPriorityLevelToConsoleParam, const bool PrintLogThreadIdToConsoleParam, const bool PrintLogLineNumberToFileParam, const bool PrintLogDateTimeToFileParam, const bool PrintLogProcessIdToFileParam, const bool PrintLogProcessPriorityLevelToFileParam, const bool PrintLogThreadIdToFileParam, const uint64_t MaximalNumberOfLinesInOneFileParam, const bool PrintLogToCommonFileWhenPrintLogToSpecialFileParam)
 {
 	try
 	{
@@ -338,12 +374,12 @@ void LoggersManager::InitializePrintingParameters(bool PrintLogToConsoleParam, b
 
 		this->MaximalNumberOfLinesInOneFile = MaximalNumberOfLinesInOneFileParam;
 
-        this->PrintLogToCommonFileWhenPrintLogToSpecialFile = PrintLogToCommonFileWhenPrintLogToSpecialFile;
+        this->PrintLogToCommonFileWhenPrintLogToSpecialFile = PrintLogToCommonFileWhenPrintLogToSpecialFileParam;
 	}
 	CATCH_AND_THROW_COUT("initializing loggers manager printing conditions")
 };
 
-void LoggersManager::InitializeSpecialLogFiles(bool CreateLogWarningsFileParam, bool CreateLogErrorsFileParam, bool CreateLogExceptionsFileParam, bool CreateLogErrorsAndExceptionsFileParam, bool CreateLogCriticalFileParam, bool CreateLogInformationFileParam, bool CreateLogImportantFileParam, bool CreateLogStatisticsFileParam, bool CreateLogDebugFileParam)
+void LoggersManager::InitializeSpecialLogFiles(const bool CreateLogWarningsFileParam, const bool CreateLogErrorsFileParam, const bool CreateLogExceptionsFileParam, const bool CreateLogErrorsAndExceptionsFileParam, const bool CreateLogCriticalFileParam, const bool CreateLogInformationFileParam, const bool CreateLogImportantFileParam, const bool CreateLogStatisticsFileParam, const bool CreateLogDebugFileParam)
 {
     try
     {
@@ -412,6 +448,14 @@ void LoggersManager::LogWithoutLineInfoOnlyToFiles(const stringstream& Message)
 
 void LoggersManager::LogUnconditional(const stringstream& Message)
 {
+	// if (const ThreadIdType CurrentThreadId = stoll((stringstream() << this_thread::get_id()).str()); CurrentThreadId != LoggerMainObjectPointer->ThisThreadId)
+	// 	if (const auto FoundLoggerIterator = LoggersThreadsObjectsPointersMap.find(CurrentThreadId); FoundLoggerIterator != LoggersThreadsObjectsPointersMap.end())
+	// 	{
+	// 		LoggersThreadsObjectsPointersMap[CurrentThreadId]->PrintLogToFilesUnconditional = true;
+	// 		LogMessageBool(Message.str(), true, false, true, false, false, -1);
+	// 		LoggersThreadsObjectsPointersMap[CurrentThreadId]->PrintLogToFilesUnconditional = false;
+	// 	}
+
 	LogMessageBool(Message.str(), true, true, true, false, false, -1);
 };
 
@@ -422,7 +466,34 @@ void LoggersManager::LogOnlyToConsoleUnconditional(const stringstream& Message)
 
 void LoggersManager::LogOnlyToFilesUnconditional(const stringstream& Message)
 {
-	LogMessageBool(Message.str(), true, false, true, false, false, -1);
+	//cout << "XXX0" << endl; //getchar();
+	//if (const ThreadIdType CurrentThreadId = stoll((stringstream() << this_thread::get_id()).str()); CurrentThreadId != LoggerMainObjectPointer->ThisThreadId)
+		//if (const auto FoundLoggerIterator = LoggersThreadsObjectsPointersMap.find(CurrentThreadId); FoundLoggerIterator != LoggersThreadsObjectsPointersMap.end())
+		{
+			//cout << "XXX1" << endl;
+			//LoggersThreadsObjectsPointersMap[CurrentThreadId]->PrintLogToFilesUnconditional = true; //NIE TEN NUMBER WATKU BO TO WATEK PRZED POWOLANIEM OBIEKTU WIEC MUSI BYC CARSH
+			LogMessageBool(Message.str(), true, false, true, false, false, -1, true);
+
+			//if (const ThreadIdType CurrentThreadId = stoll((stringstream() << this_thread::get_id()).str()); CurrentThreadId != LoggerMainObjectPointer->ThisThreadId)
+			//	if (const auto FoundLoggerIterator = LoggersThreadsObjectsPointersMap.find(CurrentThreadId); FoundLoggerIterator != LoggersThreadsObjectsPointersMap.end())
+			//LoggersThreadsObjectsPointersMap[CurrentThreadId]->PrintLogToFilesUnconditional = false;
+
+			//cout << "XXX2" << endl;
+			//return;
+		}
+
+	//LoggersManagerObject.PrintLogToFiles = true;
+	//
+	//LogMessageBool(Message.str(), true, false, true, false, false, -1);
+
+	//cout << "XXX0" << endl;
+
+	// const auto RememberPrintLogToFiles = LoggersManagerObject.PrintLogToFiles;
+	// LoggersManagerObject.PrintLogToFiles = true;
+	//
+	//LogMessageBool(Message.str(), true, false, true, false, false, -1);
+	//
+	// LoggersManagerObject.PrintLogToFiles = RememberPrintLogToFiles;
 };
 
 void LoggersManager::LogInColorTerminal(ostream& color(ostream& s), const stringstream& Message)
@@ -431,7 +502,7 @@ void LoggersManager::LogInColorTerminal(ostream& color(ostream& s), const string
     cout << color << Message.str() << white << endl;
 }
 
-void LoggersManager::LogMessageBool(const string& MessageStr, const bool LogLineInfo, const bool PrintLogToConsoleUnconditional, const bool PrintLogToFilesUnconditional, const bool PrintToConsole, const bool PrintLogToFiles, const std::int64_t SpecialLogFileIndex)
+void LoggersManager::LogMessageBool(const string& MessageStr, const bool LogLineInfo, const bool PrintLogToConsoleUnconditional, const bool PrintLogToFilesUnconditional, const bool PrintToConsoleParam, const bool PrintLogToFilesParam, const std::int64_t SpecialLogFileIndex, const bool PrintLogToFilesUnconditionalParam)
 {
 	try
 	{
@@ -439,26 +510,56 @@ void LoggersManager::LogMessageBool(const string& MessageStr, const bool LogLine
 
         if (LoggerMainObjectPointer)
         {
+        								// if (PrintLogToFilesUnconditionalParam == true)
+        								// cout << "XXX3SSS-" << LoggerMainObjectPointer << " " << PrintLogToFilesUnconditionalParam << endl;
+
             if (LogThreadsToSeparatedFiles == true)
             {
+            							// if (PrintLogToFilesUnconditionalParam == true)
+            							// cout << "XXX4KKK-" << LogThreadsToSeparatedFiles << " " << PrintLogToFilesUnconditionalParam << endl;
+
                 if (CurrentThreadId == LoggerMainObjectPointer->ThisThreadId)
-                    LoggerMainObjectPointer->LogMessageBool(MessageStr, LogLineInfo, CurrentThreadId, PrintLogToConsoleUnconditional, PrintLogToFilesUnconditional, PrintToConsole, PrintLogToFiles, SpecialLogFileIndex);
+                    LoggerMainObjectPointer->LogMessageBool(MessageStr, LogLineInfo, CurrentThreadId, PrintLogToConsoleUnconditional, PrintLogToFilesUnconditional, PrintToConsoleParam, PrintLogToFilesParam, SpecialLogFileIndex);
                 else
                 {
-                    {
-                        lock_guard CreateNewLoggerForThreadLockGuardMutexObject{ CreateNewLoggerForThreadMutexObject };
+                	// if (PrintLogToFilesUnconditionalParam == true)
+                	// cout << "XXX5RRR-" << LogThreadsToSeparatedFiles << " " << PrintLogToFilesUnconditionalParam << endl;
 
-                        auto FoundLoggerIterator = LoggersThreadsObjectsPointersMap.find(CurrentThreadId);
+	                {
+		                lock_guard CreateNewLoggerForThreadLockGuardMutexObject{ CreateNewLoggerForThreadMutexObject };
 
-                        if (FoundLoggerIterator == LoggersThreadsObjectsPointersMap.end())
-                            LoggersThreadsObjectsPointersMap[CurrentThreadId] = make_unique<Logger>(LogDirectory.c_str(), ActualDateTimeStr.c_str(), string("THREAD_" + to_string(LoggersThreadsObjectsPointersMap.size() + 1) + "_" + (stringstream() << CurrentThreadId).str()).c_str(), TaskName.c_str(), CurrentThreadId);
+	                	// cout << "XXX2" << endl;
+                		// if (PrintLogToFilesUnconditionalParam == true)
+                		// cout << "XXX6RRR-" << LogThreadsToSeparatedFiles << " " << PrintLogToFilesUnconditionalParam << endl;
+
+	                	if (const auto FoundLoggerIterator = LoggersThreadsObjectsPointersMap.find(CurrentThreadId); FoundLoggerIterator == LoggersThreadsObjectsPointersMap.end())
+	                	{
+	                		//cout << "XXX3" << endl; getchar();
+	                		//if (const ThreadIdType CurrentThreadId = stoll((stringstream() << this_thread::get_id()).str()); CurrentThreadId != LoggerMainObjectPointer->ThisThreadId)
+	                		//if (const auto FoundLoggerIterator = LoggersThreadsObjectsPointersMap.find(CurrentThreadId); FoundLoggerIterator != LoggersThreadsObjectsPointersMap.end())
+	                			//LoggersThreadsObjectsPointersMap[CurrentThreadId]->PrintLogToFilesUnconditional = true; //NIE TEN NUMBER WATKU BO TO WATEK PRZED POWOLANIEM OBIEKTU WIEC MUSI BYC CRASH
+
+	                																									//if (PrintLogToFilesUnconditionalParam == true)
+	                																									//cout << "XXX3DDD = " << PrintLogToFilesUnconditionalParam << endl; //getchar();
+
+	                		//else faktycznie nie otwiera plików - problem logiki - co z otwieraniem plików - kiedy to zrobić - czy w momencie pierwszego wejscia i tworzenia obiektu czy
+	                		//gdy mam pisac ale pliki nie otwarte - ale wtedy już jest zrobione
+	                		//CZY ZAWSZE OTWIERAC PLIKI DLA WATKOW - chyba tak - ale wtedy za wczesniej pisze dane do plikow
+
+	                		//LoggersThreadsObjectsPointersMap[CurrentThreadId] = make_unique<Logger>(LogDirectory.c_str(), ActualDateTimeStr.c_str(), string("THREAD_" + to_string(LoggersThreadsObjectsPointersMap.size() + 1) + "_" + (stringstream() << CurrentThreadId).str()).c_str(), TaskName.c_str(), CurrentThreadId, PrintLogToFilesUnconditionalParam);
+	                		LoggersThreadsObjectsPointersMap[CurrentThreadId] = make_unique<Logger>(LogDirectory.c_str(), ActualDateTimeStr.c_str(), string("THREAD_" + to_string(LoggersThreadsObjectsPointersMap.size() + 1) + "_" + (stringstream() << CurrentThreadId).str()).c_str(), TaskName.c_str(), CurrentThreadId, true);
+	                	}
                     }
 
-                    LoggersThreadsObjectsPointersMap[CurrentThreadId]->LogMessageBool(MessageStr, LogLineInfo, CurrentThreadId, PrintLogToConsoleUnconditional, PrintLogToFilesUnconditional, PrintToConsole, PrintLogToFiles, SpecialLogFileIndex);
+                    //LoggersThreadsObjectsPointersMap[CurrentThreadId]->LogMessageBool(MessageStr, LogLineInfo, CurrentThreadId, PrintLogToConsoleUnconditional, PrintLogToFilesUnconditional, PrintToConsoleParam, PrintLogToFilesParam, SpecialLogFileIndex);
+                	LoggersThreadsObjectsPointersMap[CurrentThreadId]->PrintLogToFilesUnconditional = PrintLogToFilesUnconditionalParam;
+                    LoggersThreadsObjectsPointersMap[CurrentThreadId]->LogMessageBool(MessageStr, LogLineInfo, CurrentThreadId, PrintLogToConsoleUnconditional, PrintLogToFilesUnconditional, PrintToConsoleParam, PrintLogToFilesParam, SpecialLogFileIndex, PrintLogToFilesUnconditionalParam);
+                	LoggersThreadsObjectsPointersMap[CurrentThreadId]->PrintLogToFilesUnconditional = false;
+					//LoggersThreadsObjectsPointersMap[CurrentThreadId]->PrintLogToFilesUnconditional = false;
                 }
             }
             else
-                LoggerMainObjectPointer->LogMessageBool(MessageStr, LogLineInfo, CurrentThreadId, PrintLogToConsoleUnconditional, PrintLogToFilesUnconditional, PrintToConsole, PrintLogToFiles, SpecialLogFileIndex);
+                LoggerMainObjectPointer->LogMessageBool(MessageStr, LogLineInfo, CurrentThreadId, PrintLogToConsoleUnconditional, PrintLogToFilesUnconditional, PrintToConsoleParam, PrintLogToFilesParam, SpecialLogFileIndex);
         }
 	}
 	CATCH_COUT("logging message in loggers manager")
