@@ -36,9 +36,9 @@ void CellEngineBasicParticlesOperations::InitiateFreeParticleIndexes(const Parti
                                 GetFreeIndexes().push(FreeIndex);
                 }
                 else
-                    for (UniqueIdInt FreeIndex = (CurrentSectorIndex + 1) * ParticleIndexesInSectorsCreatorFactor - 1; FreeIndex > CurrentSectorIndex * ParticleIndexesInSectorsCreatorFactor; FreeIndex--)
-                        if (!GetParticles().contains(FreeIndex))
-                            GetFreeIndexes().push(FreeIndex);
+                for (UniqueIdInt FreeIndex = (CurrentSectorIndex + 1) * ParticleIndexesInSectorsCreatorFactor - 1; FreeIndex > CurrentSectorIndex * ParticleIndexesInSectorsCreatorFactor; FreeIndex--)
+                    if (!GetParticles().contains(FreeIndex))
+                        GetFreeIndexes().push(FreeIndex);
 
                 if (PrintInfo == true)
                     LoggersManagerObject.Log(STREAM("FREE INDEXES SIZE IN SECTOR = " << ParticleSectorXIndex << " " << ParticleSectorYIndex << " " << ParticleSectorZIndex << " " << GetFreeIndexes().size()));

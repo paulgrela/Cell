@@ -77,7 +77,7 @@ public:
 public:
     bool FullAtomMPIParallelProcessesExecution = false;
 public:
-    UnsignedInt MainMPIProcessNumber = 22;
+    UnsignedInt MainMPIProcessNumber = 0;
 public:
     bool OpenGLGraphicsSwitchedOff = false;
 public:

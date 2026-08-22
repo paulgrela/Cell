@@ -1568,6 +1568,7 @@ public:
                     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SaveReactionsStatisticsToFile();
                 if (ImGui::Button(AlignString("SAVE HISTOGRAM OF PARTICLES TO FILE", StringLength).c_str()) == true)
                     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SaveHistogramOfParticlesStatisticsToFile();
+
                 if (ImGui::Button(AlignString("SAVE NUMBER OF PARTICLES TO FILE", StringLength).c_str()) == true)
                     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SaveNumberOfParticlesStatisticsToFile();
 
@@ -1576,6 +1577,9 @@ public:
 
                 if (ImGui::Button(AlignString("SAVE NUMBER OF PARTICLES KINDS WITHOUT ATOMS", StringLength).c_str()) == true)
                     CellEngineFullAtomSimulationSpace::WriteNumberOfParticlesKindsWithoutAtoms();
+
+                if (ImGui::Button(AlignString("SAVE TOTAL NUMBER OF PARTICLES TO FILE", StringLength).c_str()) == true)
+                    CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->WriteNumberOfParticlesToFile(false);
             }
         }
         CATCH("modification of statistics operations full atom simulation space parameters menu")

@@ -42,6 +42,7 @@ protected:
 public:
     void CountMinMaxValuesOfBordersAtomsPositionsInTheCell();
 public:
+    void WriteNumberOfParticlesToFile(bool PrintEverySectorSize) const;
     void WriteNumberOfParticlesInEachSectorToFile() const;
     static void WriteNumberOfParticlesKindsWithoutAtoms();
 protected:

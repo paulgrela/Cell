@@ -37,7 +37,7 @@ public:
     void SaveParticlesStatisticsOnce();
     void SaveReactionsStatisticsToFile() const;
 public:
-    void SaveHistogramOfParticlesStatisticsToFile();
+    void SaveHistogramOfParticlesStatisticsToFile() const;
     void SaveNumberOfParticlesStatisticsToFile();
 public:
     virtual void GenerateNStepsOfDiffusionForWholeCellSpace(bool InBounds, RealType XStartParam, RealType YStartParam, RealType ZStartParam, RealType XStepParam, RealType YStepParam, RealType ZStepParam, RealType XSizeParam, RealType YSizeParam, RealType ZSizeParam, RealType NumberOfSimulationSteps) = 0;

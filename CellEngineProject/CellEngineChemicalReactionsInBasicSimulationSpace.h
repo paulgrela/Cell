@@ -10,6 +10,7 @@ struct ThreadLocalParticlesInProximity
 {
 public:
     std::map<EntityIdInt, UnsignedInt> ParticlesKindsFoundInProximity;
+    //std::unordered_map<EntityIdInt, UnsignedInt> ParticlesKindsFoundInProximity;
     std::vector<UniqueIdInt> ParticlesSortedByCapacityFoundInProximity;
 public:
     std::vector<UniqueIdInt> NucleotidesWithFreeNextEndingsFoundInProximity;

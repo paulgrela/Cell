@@ -1,4 +1,5 @@
 
+
 #include <unordered_set>
 
 #include "CellEngineConstants.h"
@@ -36,7 +37,10 @@ void CellEngineChemicalReactionsInSimulationSpace::MakingZeroSizeForContainersFo
     try
     {
         LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity.clear();
+                                                //LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity.reserve(100000);
+
         LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity.clear();
+                                                //LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity.reserve(100000);
 
         LocalThreadParticlesInProximityObject.NucleotidesWithFreeNextEndingsFoundInProximity.clear();
         LocalThreadParticlesInProximityObject.NucleotidesWithFreePrevEndingsFoundInProximity.clear();
@@ -148,9 +152,10 @@ bool CellEngineChemicalReactionsInSimulationSpace::FindParticlesInProximityOfSim
 
         if (LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity.empty() == false)
         {
-            if (AdditionalSortParticlesInProximityByCapacity == true)
+            if constexpr (AdditionalSortParticlesInProximityByCapacity == true)
                 sort(LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity.begin(), LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity.end(), [this](const UnsignedInt PK1, const UnsignedInt PK2) { return GetParticleFromIndex(PK1).ListOfVoxels.size() > GetParticleFromIndex(PK2).ListOfVoxels.size(); });
-            PrintInformationAboutFoundParticlesInProximity(CurrentThreadPos);
+
+            //PrintInformationAboutFoundParticlesInProximity(CurrentThreadPos);
         }
         else
         {

@@ -40,7 +40,7 @@ T sqr(T A)
 }
 
 template <class T>
-inline void UpdateNeighbourPointsForChosenElement(T UpdateFunction)
+static inline void UpdateNeighbourPointsForChosenElement(T UpdateFunction)
 {
     try
     {
@@ -159,7 +159,7 @@ tuple<vector<pair<UniqueIdInt, UnsignedInt>>, bool> CellEngineSimulationSpace::C
         {
             auto& ParticleObjectTestedForReaction = GetParticleFromIndex(ParticleObjectIndex);
 
-            LoggersManagerObject.Log(STREAM("ParticleObjectIndex = " << to_string(ParticleObjectIndex) <<" EntityId = " << to_string(ParticleObjectTestedForReaction.EntityId) << " X = " << to_string(ParticleObjectTestedForReaction.Center.X) << " Y = " << to_string(ParticleObjectTestedForReaction.Center.Y) << " Z = " << to_string(ParticleObjectTestedForReaction.Center.Z)));
+            //LoggersManagerObject.Log(STREAM("ParticleObjectIndex = " << to_string(ParticleObjectIndex) <<" EntityId = " << to_string(ParticleObjectTestedForReaction.EntityId) << " X = " << to_string(ParticleObjectTestedForReaction.Center.X) << " Y = " << to_string(ParticleObjectTestedForReaction.Center.Y) << " Z = " << to_string(ParticleObjectTestedForReaction.Center.Z)));
 
             vector<ParticleKindForChemicalReaction>::const_iterator ReactantIterator;
             if (CellEngineUseful::IsDNAorRNA(ParticleObjectTestedForReaction.EntityId) == false)
@@ -179,17 +179,18 @@ tuple<vector<pair<UniqueIdInt, UnsignedInt>>, bool> CellEngineSimulationSpace::C
             if (ReactantIterator != ReactionObject.Reactants.cend() && ReactantsCounters[PositionInReactants] > 0)
             {
                 AllParticlesIndexesChosenForReaction.emplace_back(ParticleObjectIndex, PositionInReactants);
-                LoggersManagerObject.Log(STREAM("CHOSEN ParticleObjectIndex = " << to_string(ParticleObjectIndex) <<" EntityId = " << to_string(ParticleObjectTestedForReaction.EntityId) << " X = " << to_string(ParticleObjectTestedForReaction.Center.X) << " Y = " << to_string(ParticleObjectTestedForReaction.Center.Y) << " Z = " << to_string(ParticleObjectTestedForReaction.Center.Z) << endl));
+                //LoggersManagerObject.Log(STREAM("CHOSEN ParticleObjectIndex = " << to_string(ParticleObjectIndex) <<" EntityId = " << to_string(ParticleObjectTestedForReaction.EntityId) << " X = " << to_string(ParticleObjectTestedForReaction.Center.X) << " Y = " << to_string(ParticleObjectTestedForReaction.Center.Y) << " Z = " << to_string(ParticleObjectTestedForReaction.Center.Z) << endl));
                 ReactantsCounters[PositionInReactants]--;
             }
 
             AllAreZero = all_of(ReactantsCounters.cbegin(), ReactantsCounters.cend(), [this](const UnsignedInt& Counter){ return Counter == 0; });
             if (AllAreZero == true)
             {
-                LoggersManagerObject.Log(STREAM("ALL ARE ZERO"));
+                //LoggersManagerObject.Log(STREAM("ALL ARE ZERO"));
                 break;
             }
-            LoggersManagerObject.Log(STREAM(""));
+
+            //LoggersManagerObject.Log(STREAM(""));
         }
 
         const auto start_time2 = chrono::high_resolution_clock::now();
@@ -329,16 +330,16 @@ bool CellEngineSimulationSpace::MakeChemicalReaction(ChemicalReaction& ReactionO
         if (FoundInProximity == false)
             return false;
 
-        LoggersManagerObject.Log(STREAM("Reaction Step 1 - chosen particles for reaction from all particles in proximity" << endl));
+        //LoggersManagerObject.Log(STREAM("Reaction Step 1 - chosen particles for reaction from all particles in proximity" << endl));
 
         ListOfCentersType Centers;
         vector<Particle> ParticlesBackup;
         for (const auto& ParticleIndexChosenForReaction : ParticlesIndexesChosenForReaction)
             EraseParticleChosenForReactionAndGetCentersForNewProductsOfReaction(ParticleIndexChosenForReaction.first, Centers, ParticlesBackup);
 
-        LoggersManagerObject.Log(STREAM("Reaction Step 2 - erasing particles chosen for reaction" << endl));
+        //LoggersManagerObject.Log(STREAM("Reaction Step 2 - erasing particles chosen for reaction" << endl));
 
-        LoggersManagerObject.Log(STREAM("Centers size = " << to_string(Centers.size()) << endl));
+        //LoggersManagerObject.Log(STREAM("Centers size = " << to_string(Centers.size()) << endl));
 
         vector<UniqueIdInt> CreatedParticlesIndexes;
 
@@ -359,7 +360,7 @@ bool CellEngineSimulationSpace::MakeChemicalReaction(ChemicalReaction& ReactionO
 
         NumberOfExecutedReactions++;
 
-        LoggersManagerObject.Log(STREAM("Reaction Step 3 - Reaction finished" << endl));
+        //LoggersManagerObject.Log(STREAM("Reaction Step 3 - Reaction finished" << endl));
 
         if (SaveReactionsStatisticsBool == true)
             SaveReactionForStatistics(ReactionObject);
@@ -486,9 +487,7 @@ void CellEngineSimulationSpace::FindAndExecuteRandomReactionVersion3(const Unsig
 {
     try
     {
-        set<UnsignedInt> PossibleReactionsIdNums = GetAllPossibleReactionsFromParticlesInProximity();
-
-        if (PossibleReactionsIdNums.empty() == false)
+        if (set<UnsignedInt> PossibleReactionsIdNums = GetAllPossibleReactionsFromParticlesInProximity(); PossibleReactionsIdNums.empty() == false)
         {
             string ListOfPossibleReactions;
             for (const auto& PossibleReactionsIdNum : PossibleReactionsIdNums)
@@ -496,7 +495,7 @@ void CellEngineSimulationSpace::FindAndExecuteRandomReactionVersion3(const Unsig
             LoggersManagerObject.Log(STREAM("ListOfPossibleReactions = " << ListOfPossibleReactions));
 
             std::uniform_int_distribution<UnsignedInt> UniformDistributionObjectUint64t(0, PossibleReactionsIdNums.size() - 1);
-            auto ReactionIdNum = *std::next(std::begin(PossibleReactionsIdNums), static_cast<int>(GetRandomValue<uniform_int_distribution, UnsignedInt>(UniformDistributionObjectUint64t)));
+            const auto ReactionIdNum = *std::next(std::begin(PossibleReactionsIdNums), static_cast<int>(GetRandomValue<uniform_int_distribution, UnsignedInt>(UniformDistributionObjectUint64t)));
             LoggersManagerObject.Log(STREAM("Random ReactionIdNum = " << ReactionIdNum));
             FindAndExecuteChosenReaction(ReactionIdNum);
         }
@@ -529,7 +528,7 @@ void CellEngineSimulationSpace::FindAndExecuteRandomReactionVersion2(const Unsig
             LoggersManagerObject.Log(STREAM("GenerateCombinationsStateNumber START = " << Combinations::CreateBoolStringFromInt64BitState(GenerateCombinationsStateNumber)));
 
             UnsignedInt NumberOfTries = 0;
-            UnsignedInt NumberOfAllPossibleTries = min(UnsignedInt(100), NumberOfCombinations);
+            const UnsignedInt NumberOfAllPossibleTries = min(UnsignedInt(100), NumberOfCombinations);
             while (NumberOfTries < NumberOfAllPossibleTries)
             {
                 NumberOfTries++;
@@ -579,12 +578,11 @@ bool CellEngineSimulationSpace::FindAndExecuteChosenReaction(const UnsignedInt R
 {
     try
     {
-        if (auto ReactionIter = ChemicalReactionsManagerObject.ChemicalReactionsPosFromId.find(ReactionId); ReactionIter != ChemicalReactionsManagerObject.ChemicalReactionsPosFromId.end())
+        if (const auto ReactionIter = ChemicalReactionsManagerObject.ChemicalReactionsPosFromId.find(ReactionId); ReactionIter != ChemicalReactionsManagerObject.ChemicalReactionsPosFromId.end())
         {
             auto& ReactionObject = ChemicalReactionsManagerObject.ChemicalReactions[ReactionIter->second];
 
-            bool IsPossible = IsChemicalReactionPossible(ReactionObject);
-            if (IsPossible == true)
+            if (const bool IsPossible = IsChemicalReactionPossible(ReactionObject); IsPossible == true)
             {
                 LoggersManagerObject.Log(STREAM("CHOSEN REACTION POSSIBLE" << endl));
 
@@ -607,15 +605,15 @@ bool CellEngineSimulationSpace::FindAndExecuteChosenReaction(const UnsignedInt R
     return false;
 }
 
-void CellEngineSimulationSpace::SaveHistogramOfParticlesStatisticsToFile()
+void CellEngineSimulationSpace::SaveHistogramOfParticlesStatisticsToFile() const
 {
     try
     {
         LoggersManagerObject.LogStatistics(STREAM("SORTED HISTOGRAM OF PARTICLES"));
 
-        for (const auto& ParticleKindHistogramComparisonObject : ParticlesKindsHistogramComparisons.back())
-            if (ParticleKindHistogramComparisonObject.EntityId != 0)
-                LoggersManagerObject.LogStatistics(STREAM("PARTICLE KIND = " << ParticleKindHistogramComparisonObject.EntityId << " NAME = " << ParticlesKindsManagerObject.GetParticleKind(ParticleKindHistogramComparisonObject.EntityId).IdStr << " DIFFERENCE = " << ParticleKindHistogramComparisonObject.Difference << " " << ParticleKindHistogramComparisonObject.Counter1 << " " << ParticleKindHistogramComparisonObject.Counter2 << endl));
+        for (const auto& [EntityId, Counter1, Counter2, Difference] : ParticlesKindsHistogramComparisons.back())
+            if (EntityId != 0)
+                LoggersManagerObject.LogStatistics(STREAM("PARTICLE KIND = " << EntityId << " NAME = " << ParticlesKindsManagerObject.GetParticleKind(EntityId).IdStr << " DIFFERENCE = " << Difference << " " << Counter1 << " " << Counter2 << endl));
     }
     CATCH("saving histograms of particles statistics to file")
 }

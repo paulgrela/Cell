@@ -7,7 +7,6 @@
 #include "CellEngineSimulationSpaceStatistics.h"
 #include "CellEngineParticlesKindsManager.h"
 
-
 using namespace std;
 
 CellEngineSimulationSpaceStatistics::CellEngineSimulationSpaceStatistics()
@@ -70,9 +69,16 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesStatistics()
         if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true)
             if (CellEngineConfigDataObject.OpenGLGraphicsSwitchedOff == false && MPIProcessDataObject.CurrentMPIProcessIndex == CellEngineConfigDataObject.MainMPIProcessNumber)
             {
+                LoggersManagerObject.LogStatistics(STREAM("SAVE PARTICLES ARRAYS START SIGNAL FOR MPI 1"));
+
                 int ValueToSend = 2;
-                MPI_Bcast(&ValueToSend, 1, MPI_INT, 0, MPI_COMM_WORLD);
+                if (MPIProcessDataObject.CurrentMPIProcessIndex == CellEngineConfigDataObject.MainMPIProcessNumber)
+                    MPI_Bcast(&ValueToSend, 1, MPI_INT, 0, MPI_COMM_WORLD);
+
+                LoggersManagerObject.LogStatistics(STREAM("SAVE PARTICLES ARRAYS START SIGNAL FOR MPI 2"));
             }
+
+        LoggersManagerObject.LogStatistics(STREAM("SAVE PARTICLES ARRAYS EXECUTION"));
 
         if (SaveParticlesAsCopiedMapBool == true)
             SaveParticlesAsCopiedMap();
@@ -142,6 +148,8 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesAsCopiedMap()
                     for (UniqueIdInt LocalMPIProcessIndex = 0; LocalMPIProcessIndex < MPIProcessDataObject.NumberOfMPIProcesses; LocalMPIProcessIndex++)
                         for (UnsignedInt ParticleDataIndex = MaximumOfAllSavedParticlesSnapshotsCopiedVectorForMPILengths * LocalMPIProcessIndex; ParticleDataIndex < MaximumOfAllSavedParticlesSnapshotsCopiedVectorForMPILengths * LocalMPIProcessIndex + ParticlesSnapshotsCopiedVectorForMPILengths[LocalMPIProcessIndex]; ParticleDataIndex++)
                             ParticlesSnapshotsCopiedVectorForMPI[SimulationStepNumber - 1].emplace_back(SavedParticlesSnapshotsCopiedVectorForMPIVector.get()[ParticleDataIndex]);
+
+                    LoggersManagerObject.Log(STREAM("TOTAL SIZE OF ARRAY = " << " " << ParticlesSnapshotsCopiedVectorForMPI[SimulationStepNumber - 1].size()));
                 }
             }
         }
