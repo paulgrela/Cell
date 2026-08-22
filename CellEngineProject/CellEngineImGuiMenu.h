@@ -461,7 +461,7 @@ public:
 
             CellEngineConfigDataObject.LoadOfAtomsStepX = CellEngineConfigDataObject.LoadOfAtomsStepY = CellEngineConfigDataObject.LoadOfAtomsStepZ = CellEngineConfigDataObject.LoadOfAtomsStep;
 
-            ImGui::Checkbox(" Render Z Ax With Density 1", &CellEngineConfigDataObject.RenderZAxWithDensity1);
+            ImGui::Checkbox("Render Z Ax With Density 1", &CellEngineConfigDataObject.RenderZAxWithDensity1);
             if (CellEngineConfigDataObject.RenderZAxWithDensity1 == true)
                 CellEngineConfigDataObject.LoadOfAtomsStepZ = CellEngineConfigDataObject.LoadOfAtomsStep - 1;
         }
@@ -1373,7 +1373,6 @@ public:
             {
                 int IDButton = 1;
                 float Nothing;
-
                 ImGui::Text("");
                 ImGui::Text("Number Of Simulation Steps Outside");
                 ImGui::DragInt("Num Of Steps Outside", &CellEngineConfigDataObject.NumberOfStepsInSimulationOutside, 1, 1, 1000, "%d", ImGuiSliderFlags_AlwaysClamp);

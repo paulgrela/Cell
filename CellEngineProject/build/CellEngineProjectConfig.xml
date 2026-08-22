@@ -4849,7 +4849,7 @@
                         <SizeOfParticlesSectorY>128</SizeOfParticlesSectorY>
                         <SizeOfParticlesSectorZ>128</SizeOfParticlesSectorZ>
 
-                        <NumberOfStepsInSimulationOutside>1</NumberOfStepsInSimulationOutside>
+                        <NumberOfStepsInSimulationOutside>10</NumberOfStepsInSimulationOutside>
                         <NumberOfStepsInSimulationInside>1</NumberOfStepsInSimulationInside>
                         <TypeOfSimulation>1</TypeOfSimulation>
 
