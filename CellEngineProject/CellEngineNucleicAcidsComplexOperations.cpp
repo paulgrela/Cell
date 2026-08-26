@@ -294,8 +294,10 @@ bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNATranscriptionStart(co
                 if (auto PromoterIter = ParticlesKindsManagerObject.Promoters.find(GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first).GenomeIndex); PromoterIter != ParticlesKindsManagerObject.Promoters.end())
                     ParticleObject.AddNewLinkToParticle(GoToGenomeIndex(&Particle::Next, PromoterIter->second.StartCodonPosition, 16384, *GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first).Next));
 
-            MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(ParticleObject, *ParticleObject.LinkedParticlesPointersList[1], 2, 2, 2);
-            MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(*ParticleObject.LinkedParticlesPointersList[0], ParticleObject, 2, 2, 2);
+            //PROBLEM PONIZEJ vector<ParticleToBeMovedFromOneSectorToAnotherSector> TempListOfParticlesToChangeSectors;
+            vector<ParticleToBeMovedFromOneSectorToAnotherSector> TempListOfParticlesToChangeSectors;
+            MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(TempListOfParticlesToChangeSectors, ParticleObject, *ParticleObject.LinkedParticlesPointersList[1], 2, 2, 2);
+            MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(TempListOfParticlesToChangeSectors, *ParticleObject.LinkedParticlesPointersList[0], ParticleObject, 2, 2, 2);
 
             return true;
         }
@@ -365,7 +367,7 @@ bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNATranscriptionContinue
 
             LoggersManagerObject.Log(STREAM("Letter to find = " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.LinkedParticlesPointersList[1]->ChainId) << " NEXT " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.LinkedParticlesPointersList[1]->Next->ChainId) << " Particle Object Index = " << ParticleObject.Index << " " << ParticlesIndexesChosenForReaction[0].first));
 
-            auto ChosenNucleotideIterator = find_if(LocalThreadParticlesInProximityObject.RNANucleotidesFullFreeFoundInProximity.cbegin(), LocalThreadParticlesInProximityObject.RNANucleotidesFullFreeFoundInProximity.cend(), [this, ParticleObject](const UniqueIdInt &NucleotideParticleIndex){ return &GetParticleFromIndex(NucleotideParticleIndex) != ParticleObject.LinkedParticlesPointersList[0] && CellEngineUseful::IsRNANucleotidePairedForRNAEqual(GetParticleFromIndex(NucleotideParticleIndex).EntityId, ParticleObject.LinkedParticlesPointersList[1]->ChainId) == true; });
+            auto ChosenNucleotideIterator = ranges::find_if(std::as_const(LocalThreadParticlesInProximityObject.RNANucleotidesFullFreeFoundInProximity), [this, ParticleObject](const UniqueIdInt &NucleotideParticleIndex){ return &GetParticleFromIndex(NucleotideParticleIndex) != ParticleObject.LinkedParticlesPointersList[0] && CellEngineUseful::IsRNANucleotidePairedForRNAEqual(GetParticleFromIndex(NucleotideParticleIndex).EntityId, ParticleObject.LinkedParticlesPointersList[1]->ChainId) == true; });
             if (ChosenNucleotideIterator != LocalThreadParticlesInProximityObject.RNANucleotidesFullFreeFoundInProximity.end())
             {
                 string SequenceOfLettersToCheckFinishSequence;
@@ -380,8 +382,10 @@ bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNATranscriptionContinue
                     ParticleObject.LinkedParticlesPointersList[0] = ChosenNucleotide;
                     ParticleObject.LinkedParticlesPointersList[1] = ParticleObject.LinkedParticlesPointersList[1]->Next;
 
-                    MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(ParticleObject, *ParticleObject.LinkedParticlesPointersList[1], 2, 2, 2);
-                    MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(*ChosenNucleotide, ParticleObject, 2, 2, 2);
+                    //PROBLEM PONIZEJ vector<ParticleToBeMovedFromOneSectorToAnotherSector> TempListOfParticlesToChangeSectors;
+                    vector<ParticleToBeMovedFromOneSectorToAnotherSector> TempListOfParticlesToChangeSectors;
+                    MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(TempListOfParticlesToChangeSectors, ParticleObject, *ParticleObject.LinkedParticlesPointersList[1], 2, 2, 2);
+                    MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(TempListOfParticlesToChangeSectors, *ChosenNucleotide, ParticleObject, 2, 2, 2);
 
                     SequenceOfLettersToCheckFinishSequence = get<3>(GetNucleotidesSequence(&Particle::Prev, MaxLengthOfGene, *(ParticleObject.LinkedParticlesPointersList[1]), true, false, [](const Particle* P){ return true; }));
                 }
@@ -392,8 +396,10 @@ bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNATranscriptionContinue
 
                     ParticleObject.LinkedParticlesPointersList[1] = ParticleObject.LinkedParticlesPointersList[1]->Next;
 
-                    MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(ParticleObject, *ParticleObject.LinkedParticlesPointersList[1], 2, 2, 2);
-                    MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(*ParticleObject.LinkedParticlesPointersList[0], *ParticleObject.LinkedParticlesPointersList[1], 2, 2, 2);
+                    //PROBLEM PONIZEJ vector<ParticleToBeMovedFromOneSectorToAnotherSector> TempListOfParticlesToChangeSectors;
+                    vector<ParticleToBeMovedFromOneSectorToAnotherSector> TempListOfParticlesToChangeSectors;
+                    MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(TempListOfParticlesToChangeSectors, ParticleObject, *ParticleObject.LinkedParticlesPointersList[1], 2, 2, 2);
+                    MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(TempListOfParticlesToChangeSectors, *ParticleObject.LinkedParticlesPointersList[0], *ParticleObject.LinkedParticlesPointersList[1], 2, 2, 2);
                     ListOfCentersType Centers;
                     vector<Particle> ParticlesBackup;
                     EraseParticleChosenForReactionAndGetCentersForNewProductsOfReaction(*ChosenNucleotideIterator, Centers, ParticlesBackup);
@@ -450,8 +456,10 @@ bool CellEngineNucleicAcidsComplexOperations::RibosomeTranslationStartSpecialRea
             ParticleObject.AddNewLinkToParticle(&GetParticleFromIndex(LocalParticlesIndexesChosenForReaction[1].first));
             ParticleObject.AddNewLinkToParticle(&GetParticleFromIndex(LocalThreadParticlesInProximityObject.RNANucleotidesFreeFoundInProximity[0]));
 
-            MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(*ParticleObject.LinkedParticlesPointersList[0], ParticleObject, 2, 2, 2);
-            MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(*ParticleObject.LinkedParticlesPointersList[1], ParticleObject, 2, 2, 2);
+            //PROBLEM PONIZEJ vector<ParticleToBeMovedFromOneSectorToAnotherSector> TempListOfParticlesToChangeSectors;
+            vector<ParticleToBeMovedFromOneSectorToAnotherSector> TempListOfParticlesToChangeSectors;
+            MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(TempListOfParticlesToChangeSectors, *ParticleObject.LinkedParticlesPointersList[0], ParticleObject, 2, 2, 2);
+            MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(TempListOfParticlesToChangeSectors, *ParticleObject.LinkedParticlesPointersList[1], ParticleObject, 2, 2, 2);
         }
     }
     CATCH("executing ribosome start dna translation special reaction function")
@@ -491,8 +499,10 @@ bool CellEngineNucleicAcidsComplexOperations::RibosomeTranslationContinueSpecial
                 ParticleObject.LinkedParticlesPointersList[1]->PositionInSequence += 3;
                 LoggersManagerObject.Log(STREAM("SequenceStr = " << ParticleObject.LinkedParticlesPointersList[0]->SequenceStr));
 
-                MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(ParticleObject, *ParticleObject.LinkedParticlesPointersList[1], 2, 2, 2);
-                MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(*ParticleObject.LinkedParticlesPointersList[0], *ParticleObject.LinkedParticlesPointersList[1], 2, 2, 2);
+                //PROBLEM PONIZEJ vector<ParticleToBeMovedFromOneSectorToAnotherSector> TempListOfParticlesToChangeSectors;
+                vector<ParticleToBeMovedFromOneSectorToAnotherSector> TempListOfParticlesToChangeSectors;
+                MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(TempListOfParticlesToChangeSectors, ParticleObject, *ParticleObject.LinkedParticlesPointersList[1], 2, 2, 2);
+                MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(TempListOfParticlesToChangeSectors, *ParticleObject.LinkedParticlesPointersList[0], *ParticleObject.LinkedParticlesPointersList[1], 2, 2, 2);
                 ListOfCentersType Centers;
                 vector<Particle> ParticlesBackup;
                 EraseParticleChosenForReactionAndGetCentersForNewProductsOfReaction(*ChosentRNAChargedIterator, Centers, ParticlesBackup);

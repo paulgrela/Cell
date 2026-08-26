@@ -10,7 +10,7 @@ class CellEngineChemicalReactionsInVoxelSimulationSpace : virtual public CellEng
 {
 protected:
     void ClearSpaceForParticle(Particle& ParticleObject, bool ClearVoxels) override;
-    void MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(Particle &ParticleObject, const Particle &NewPositionParticleObject, RealType AddX, RealType AddY, RealType AddZ) override;
+    void MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(vector<ParticleToBeMovedFromOneSectorToAnotherSector>& ListOfParticlesToChangeSectors, Particle &ParticleObject, const Particle &NewPositionParticleObject, RealType AddX, RealType AddY, RealType AddZ) override;
     void FindParticlesInProximityInSimulationSpaceForSelectedLocalSpace(MainSetType<UnsignedInt>& FoundParticleIndexes, bool UpdateNucleotides, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam) override;
 protected:
     explicit CellEngineChemicalReactionsInVoxelSimulationSpace(ParticlesContainer<Particle>& ParticlesParam) : CellEngineChemicalReactionsInSimulationSpace(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam)

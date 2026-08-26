@@ -34,7 +34,7 @@ constexpr bool PrintDetailsOfMakingReaction = true;
 using namespace std;
 
 template <class T>
-T sqr(T A)
+static T sqr(T A)
 {
     return A * A;
 }
@@ -60,8 +60,7 @@ void CellEngineSimulationSpace::UpdateProbabilityOfMoveFromElectricInteractionFo
 
         for (const auto& NeighbourParticleIndexObjectToWrite : LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity)
         {
-            Particle& NeighbourParticleObject = GetParticleFromIndex(NeighbourParticleIndexObjectToWrite);
-            if (NeighbourParticleObject.ElectricCharge != 0)
+            if (const Particle& NeighbourParticleObject = GetParticleFromIndex(NeighbourParticleIndexObjectToWrite); NeighbourParticleObject.ElectricCharge != 0)
             {
                 for (SignedInt X = 0; X <= 2; X++)
                     for (SignedInt Y = 0; Y <= 2; Y++)
@@ -103,7 +102,7 @@ void CellEngineSimulationSpace::GenerateOneStepOfElectricDiffusionForOneParticle
             LoggersManagerObject.Log(STREAM("EntityId = " << to_string(ParticleObject.EntityId) << " ElectricCharge = " << to_string(ParticleObject.ElectricCharge)));
             #endif
 
-            auto ParticleKindObject = ParticlesKindsManagerObject.GetParticleKind(ParticleObject.EntityId);
+            const auto ParticleKindObject = ParticlesKindsManagerObject.GetParticleKind(ParticleObject.EntityId);
 
             switch (TypeOfLookingForParticles)
             {
@@ -128,9 +127,11 @@ void CellEngineSimulationSpace::GenerateOneStepOfElectricDiffusionForOneParticle
 
             discrete_distribution<int> UniformDiscreteDistributionMoveParticleDirectionObject(DiscreteDistribution.begin(), DiscreteDistribution.end());
 
-            UnsignedInt RandomMoveVectorIndex = UniformDiscreteDistributionMoveParticleDirectionObject(mt64R);
+            const UnsignedInt RandomMoveVectorIndex = UniformDiscreteDistributionMoveParticleDirectionObject(mt64R);
             auto EmptyParticlesIter = GetParticles().end();
-            MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(ParticleObject, Particles, EmptyParticlesIter, CurrentSectorPos, MoveVectors[RandomMoveVectorIndex].X, MoveVectors[RandomMoveVectorIndex].Y, MoveVectors[RandomMoveVectorIndex].Z, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
+            // PROBLEMEM vector<ParticleToBeMovedFromOneSectorToAnotherSector> TempListOfParticlesToChangeSectors
+            vector<ParticleToBeMovedFromOneSectorToAnotherSector> TempListOfParticlesToChangeSectors;
+            MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(ParticleObject, Particles, EmptyParticlesIter, TempListOfParticlesToChangeSectors, CurrentSectorPos, MoveVectors[RandomMoveVectorIndex].X, MoveVectors[RandomMoveVectorIndex].Y, MoveVectors[RandomMoveVectorIndex].Z, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
 
             #ifdef SIMULATION_DETAILED_LOG
             LoggersManagerObject.Log(STREAM("Random Index = " << to_string(RandomMoveVectorIndex) << " " << to_string(MoveVectors[RandomMoveVectorIndex].X) << " " << to_string(MoveVectors[RandomMoveVectorIndex].Y) << " " << to_string(MoveVectors[RandomMoveVectorIndex].Z) << endl));
@@ -163,9 +164,9 @@ tuple<vector<pair<UniqueIdInt, UnsignedInt>>, bool> CellEngineSimulationSpace::C
 
             vector<ParticleKindForChemicalReaction>::const_iterator ReactantIterator;
             if (CellEngineUseful::IsDNAorRNA(ParticleObjectTestedForReaction.EntityId) == false)
-                ReactantIterator = find_if(ReactionObject.Reactants.cbegin(), ReactionObject.Reactants.cend(), [&ParticleObjectTestedForReaction](const ParticleKindForChemicalReaction& ParticleKindForReactionObjectParam){ return ParticleKindForReactionObjectParam.EntityId == ParticleObjectTestedForReaction.EntityId && CompareFitnessOfParticle(ParticleKindForReactionObjectParam, ParticleObjectTestedForReaction) == true; });
+                ReactantIterator = ranges::find_if(ReactionObject.Reactants, [&ParticleObjectTestedForReaction](const ParticleKindForChemicalReaction& ParticleKindForReactionObjectParam){ return ParticleKindForReactionObjectParam.EntityId == ParticleObjectTestedForReaction.EntityId && CompareFitnessOfParticle(ParticleKindForReactionObjectParam, ParticleObjectTestedForReaction) == true; });
             else
-                ReactantIterator = find_if(ReactionObject.Reactants.cbegin(), ReactionObject.Reactants.cend(), [&ParticleObjectTestedForReaction, this](const ParticleKindForChemicalReaction& ParticleKindForReactionObjectParam){ return CellEngineUseful::IsDNA(ParticleKindForReactionObjectParam.EntityId) == true && CompareFitnessOfDNASequenceByNucleotidesLoop(ComparisonType::ByVectorLoop, ParticleKindForReactionObjectParam, ParticleObjectTestedForReaction) == true; });
+                ReactantIterator = ranges::find_if(ReactionObject.Reactants, [&ParticleObjectTestedForReaction, this](const ParticleKindForChemicalReaction& ParticleKindForReactionObjectParam){ return CellEngineUseful::IsDNA(ParticleKindForReactionObjectParam.EntityId) == true && CompareFitnessOfDNASequenceByNucleotidesLoop(ComparisonType::ByVectorLoop, ParticleKindForReactionObjectParam, ParticleObjectTestedForReaction) == true; });
 
             auto PositionInReactants = distance(ReactionObject.Reactants.cbegin(), ReactantIterator);
 
@@ -183,7 +184,7 @@ tuple<vector<pair<UniqueIdInt, UnsignedInt>>, bool> CellEngineSimulationSpace::C
                 ReactantsCounters[PositionInReactants]--;
             }
 
-            AllAreZero = all_of(ReactantsCounters.cbegin(), ReactantsCounters.cend(), [this](const UnsignedInt& Counter){ return Counter == 0; });
+            AllAreZero = ranges::all_of(std::as_const(ReactantsCounters), [](const UnsignedInt& Counter){ return Counter == 0; });
             if (AllAreZero == true)
             {
                 //LoggersManagerObject.Log(STREAM("ALL ARE ZERO"));
@@ -217,7 +218,7 @@ tuple<vector<pair<UniqueIdInt, UnsignedInt>>, bool> CellEngineSimulationSpace::C
         return { vector<pair<UniqueIdInt, UnsignedInt>>(), false };
 }
 
-void LogParticleData(const UniqueIdInt ParticleIndex, const UnsignedInt CenterIndex, const ListOfAtomsType& Centers, const ParticleKind& ParticleKindObjectForProduct, const vector3_16& ParticleKindElement)
+static void LogParticleData(const UniqueIdInt ParticleIndex, const UnsignedInt CenterIndex, const ListOfAtomsType& Centers, const ParticleKind& ParticleKindObjectForProduct, const vector3_16& ParticleKindElement)
 {
     LoggersManagerObject.Log(STREAM(endl));
     LoggersManagerObject.Log(STREAM("I " << ParticleIndex << " " << Centers.size() << " " << CenterIndex << endl));
@@ -230,7 +231,7 @@ bool CellEngineSimulationSpace::CancelChemicalReaction(const vector<UniqueIdInt>
 {
     try
     {
-        LoggersManagerObject.Log(STREAM("CANCELLED REACTION IN BOUNDS " << PlaceStr << " = " << ActualSimulationSpaceSectorBoundsObject.StartXPos << " " << ActualSimulationSpaceSectorBoundsObject.StartYPos << " "  << ActualSimulationSpaceSectorBoundsObject.StartZPos << " " << ActualSimulationSpaceSectorBoundsObject.EndXPos << " " << ActualSimulationSpaceSectorBoundsObject.EndYPos << " " << ActualSimulationSpaceSectorBoundsObject.EndZPos << " " << ParticleKindObjectForProduct.ListOfVoxels.size() << " " << ParticleKindObjectForProduct.ListOfAtoms.size() << " " << ParticleKindObjectForProduct.EntityId));
+        //LoggersManagerObject.Log(STREAM("CANCELLED REACTION IN BOUNDS " << PlaceStr << " = " << ActualSimulationSpaceSectorBoundsObject.StartXPos << " " << ActualSimulationSpaceSectorBoundsObject.StartYPos << " "  << ActualSimulationSpaceSectorBoundsObject.StartZPos << " " << ActualSimulationSpaceSectorBoundsObject.EndXPos << " " << ActualSimulationSpaceSectorBoundsObject.EndYPos << " " << ActualSimulationSpaceSectorBoundsObject.EndZPos << " " << ParticleKindObjectForProduct.ListOfVoxels.size() << " " << ParticleKindObjectForProduct.ListOfAtoms.size() << " " << ParticleKindObjectForProduct.EntityId));
 
         for (const auto& CreatedParticleIndex : CreatedParticlesIndexes)
         {
@@ -245,7 +246,7 @@ bool CellEngineSimulationSpace::CancelChemicalReaction(const vector<UniqueIdInt>
         PlaceStr == 'A' ? NumberOfCancelledAReactions++ : NumberOfCancelledBReactions++;
 
         for (auto& Particle : ParticlesBackup)
-            AddNewParticle(move(Particle));
+            AddNewParticle(std::move(Particle));
 
         const auto stop_time = chrono::high_resolution_clock::now();
 
@@ -304,7 +305,7 @@ bool CellEngineSimulationSpace::PlaceProductParticleInSpaceInRandomPositionOrCan
 
                 FillParticleElementsInSpace(ParticleIndex, ParticleKindObjectForProduct, RandomVectorX, RandomVectorY, RandomVectorZ);
 
-                LoggersManagerObject.Log(STREAM("R2 = " << RandomVectorX << " " << RandomVectorY << " " << RandomVectorZ << " " << SimulationSpaceSectorBoundsObject.StartXPos << " " << SimulationSpaceSectorBoundsObject.EndXPos << " " << SimulationSpaceSectorBoundsObject.StartYPos << " " << SimulationSpaceSectorBoundsObject.EndYPos << " " << SimulationSpaceSectorBoundsObject.StartZPos << " " << SimulationSpaceSectorBoundsObject.EndZPos << " ListOfAtoms.size() = " << ParticleKindObjectForProduct.ListOfAtoms.size()));
+                //LoggersManagerObject.Log(STREAM("R2 = " << RandomVectorX << " " << RandomVectorY << " " << RandomVectorZ << " " << SimulationSpaceSectorBoundsObject.StartXPos << " " << SimulationSpaceSectorBoundsObject.EndXPos << " " << SimulationSpaceSectorBoundsObject.StartYPos << " " << SimulationSpaceSectorBoundsObject.EndYPos << " " << SimulationSpaceSectorBoundsObject.StartZPos << " " << SimulationSpaceSectorBoundsObject.EndZPos << " ListOfAtoms.size() = " << ParticleKindObjectForProduct.ListOfAtoms.size()));
 
                 break;
             }
@@ -334,8 +335,8 @@ bool CellEngineSimulationSpace::MakeChemicalReaction(ChemicalReaction& ReactionO
 
         ListOfCentersType Centers;
         vector<Particle> ParticlesBackup;
-        for (const auto& ParticleIndexChosenForReaction : ParticlesIndexesChosenForReaction)
-            EraseParticleChosenForReactionAndGetCentersForNewProductsOfReaction(ParticleIndexChosenForReaction.first, Centers, ParticlesBackup);
+        for (const auto& ParticleIndexChosenForReaction : ParticlesIndexesChosenForReaction | views::keys)
+            EraseParticleChosenForReactionAndGetCentersForNewProductsOfReaction(ParticleIndexChosenForReaction, Centers, ParticlesBackup);
 
         //LoggersManagerObject.Log(STREAM("Reaction Step 2 - erasing particles chosen for reaction" << endl));
 
@@ -374,7 +375,8 @@ bool CellEngineSimulationSpace::MakeChemicalReaction(ChemicalReaction& ReactionO
     return true;
 };
 
-std::vector<UnsignedInt> CellEngineSimulationSpace::GetRandomParticlesVersion3(const UnsignedInt NumberOfReactants, const UnsignedInt MaxNumberOfReactants) const
+//TYLKO WELL STIRRED
+std::vector<UnsignedInt> CellEngineSimulationSpace::GetRandomParticlesVersion3() const
 {
     vector<UnsignedInt> RandomParticlesTypes;
 
@@ -387,58 +389,73 @@ std::vector<UnsignedInt> CellEngineSimulationSpace::GetRandomParticlesVersion3(c
     return RandomParticlesTypes;
 }
 
-std::vector<UnsignedInt> CellEngineSimulationSpace::GetRandomParticlesVersion2(const UnsignedInt NumberOfReactants, const UnsignedInt MaxNumberOfReactants)
-{
-    vector<UnsignedInt> RandomParticlesTypes;
+// std::vector<UnsignedInt> CellEngineSimulationSpace::GetRandomParticlesVersion3(const UnsignedInt NumberOfReactants, const UnsignedInt MaxNumberOfReactants) const
+// {
+//     vector<UnsignedInt> RandomParticlesTypes;
+//
+//     try
+//     {
+//         std::uniform_int_distribution<UnsignedInt> UniformDistributionObjectUint64t(0, LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity.size() - 1);
+//     }
+//     CATCH("getting random particles kind")
+//
+//     return RandomParticlesTypes;
+// }
 
-    try
-    {
-        auto BitsValuesString = Combinations::CreateBoolStringFromInt64BitState(GenerateCombinationsStateNumber);
-        LoggersManagerObject.Log(STREAM("GenerateCombinationsStateNumber NEXT = " << BitsValuesString));
+// std::vector<UnsignedInt> CellEngineSimulationSpace::GetRandomParticlesVersion2(const UnsignedInt NumberOfReactants, const UnsignedInt MaxNumberOfReactants)
+// {
+//     vector<UnsignedInt> RandomParticlesTypes;
+//
+//     try
+//     {
+//         const auto BitsValuesString = Combinations::CreateBoolStringFromInt64BitState(GenerateCombinationsStateNumber);
+//         LoggersManagerObject.Log(STREAM("GenerateCombinationsStateNumber NEXT = " << BitsValuesString));
+//
+//         for (UnsignedInt ReactantNumberBitValuePos = 0; ReactantNumberBitValuePos < MaxNumberOfReactants; ReactantNumberBitValuePos++)
+//             if (BitsValuesString[ReactantNumberBitValuePos] == '1')
+//             {
+//                 RandomParticlesTypes.emplace_back(std::next(std::begin(LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity), static_cast<int>(ReactantNumberBitValuePos))->first);
+//
+//                 LoggersManagerObject.Log(STREAM("ParticleKind Reactant " << to_string(ReactantNumberBitValuePos) << " (" << to_string(RandomParticlesTypes.back()) << ")"));
+//             }
+//
+//         GenerateCombinationsStateNumber = Combinations::NextNumberWithTheSameNumberOf1Bits(GenerateCombinationsStateNumber);
+//     }
+//     CATCH("getting random particles kind")
+//
+//     return RandomParticlesTypes;
+// }
 
-        for (UnsignedInt ReactantNumberBitValuePos = 0; ReactantNumberBitValuePos < MaxNumberOfReactants; ReactantNumberBitValuePos++)
-            if (BitsValuesString[ReactantNumberBitValuePos] == '1')
-            {
-                RandomParticlesTypes.emplace_back(std::next(std::begin(LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity), static_cast<int>(ReactantNumberBitValuePos))->first);
+// std::vector<UnsignedInt> CellEngineSimulationSpace::GetRandomParticlesVersion1(const UnsignedInt NumberOfReactants, const UnsignedInt MaxNumberOfReactants)
+// {
+//     vector<UnsignedInt> RandomParticlesTypes;
+//
+//     try
+//     {
+//         std::uniform_int_distribution<UnsignedInt> UniformDistributionObjectUint64t(0, LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity.size() - 1);
+//
+//         for (UnsignedInt ReactantNumber = 1; ReactantNumber <= NumberOfReactants; ReactantNumber++)
+//         {
+//             RandomParticlesTypes.emplace_back(std::next(std::begin(LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity), static_cast<int>(GetRandomValue<uniform_int_distribution, UnsignedInt>(UniformDistributionObjectUint64t)))->first);
+//
+//             LoggersManagerObject.Log(STREAM("ParticleKind Reactant " << to_string(ReactantNumber) << " (" << to_string(RandomParticlesTypes.back()) << ")"));
+//         }
+//     }
+//     CATCH("getting random particles kind")
+//
+//     return RandomParticlesTypes;
+// }
 
-                LoggersManagerObject.Log(STREAM("ParticleKind Reactant " << to_string(ReactantNumberBitValuePos) << " (" << to_string(RandomParticlesTypes.back()) << ")"));
-            }
-
-        GenerateCombinationsStateNumber = Combinations::NextNumberWithTheSameNumberOf1Bits(GenerateCombinationsStateNumber);
-    }
-    CATCH("getting random particles kind")
-
-    return RandomParticlesTypes;
-}
-
-std::vector<UnsignedInt> CellEngineSimulationSpace::GetRandomParticlesVersion1(const UnsignedInt NumberOfReactants, const UnsignedInt MaxNumberOfReactants)
-{
-    vector<UnsignedInt> RandomParticlesTypes;
-
-    try
-    {
-        std::uniform_int_distribution<UnsignedInt> UniformDistributionObjectUint64t(0, LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity.size() - 1);
-
-        for (UnsignedInt ReactantNumber = 1; ReactantNumber <= NumberOfReactants; ReactantNumber++)
-        {
-            RandomParticlesTypes.emplace_back(std::next(std::begin(LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity), static_cast<int>(GetRandomValue<uniform_int_distribution, UnsignedInt>(UniformDistributionObjectUint64t)))->first);
-
-            LoggersManagerObject.Log(STREAM("ParticleKind Reactant " << to_string(ReactantNumber) << " (" << to_string(RandomParticlesTypes.back()) << ")"));
-        }
-    }
-    CATCH("getting random particles kind")
-
-    return RandomParticlesTypes;
-}
-
+//TYLKO WELL STIRRED
 std::vector<UnsignedInt> CellEngineSimulationSpace::GetRandomParticles(const UnsignedInt NumberOfReactants, const UnsignedInt MaxNumberOfReactants)
 {
-    return GetRandomParticlesVersion3(NumberOfReactants, MaxNumberOfReactants);
+    //return GetRandomParticlesVersion3(NumberOfReactants, MaxNumberOfReactants);
+    return GetRandomParticlesVersion3();
 }
 
 bool CellEngineSimulationSpace::IsChemicalReactionPossible(const ChemicalReaction& ReactionObject)
 {
-    return all_of(ReactionObject.Reactants.begin(), ReactionObject.Reactants.end(), [this](const ParticleKindForChemicalReaction& ReactionReactant){ return ReactionReactant.Counter <= LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity[ReactionReactant.EntityId]; });
+    return ranges::all_of(ReactionObject.Reactants, [this](const ParticleKindForChemicalReaction& ReactionReactant){ return ReactionReactant.Counter <= LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity[ReactionReactant.EntityId]; });
 }
 
 void CellEngineSimulationSpace::PrepareRandomReaction()
@@ -452,19 +469,19 @@ void CellEngineSimulationSpace::PrepareRandomReaction()
     CATCH("preparing random reaction")
 }
 
-void CellEngineSimulationSpace::FindAndExecuteRandomReactionVersion4(const UnsignedInt MaxNumberOfReactants)
-{
-    try
-    {
-        for (const auto& ParticleKindFoundInProximityObject : LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity)
-            for (const auto& ReactionIdNum : ParticlesKindsManagerObject.GetParticleKind(ParticleKindFoundInProximityObject.first).AssociatedChemicalReactions)
-                if (FindAndExecuteChosenReaction(ReactionIdNum) == true)
-                    goto EndLoops;
-
-        EndLoops:;
-    }
-    CATCH("finding and executing random reaction v4")
-}
+// void CellEngineSimulationSpace::FindAndExecuteRandomReactionVersion4(const UnsignedInt MaxNumberOfReactants)
+// {
+//     try
+//     {
+//         for (const auto& ParticleKindFoundInProximityObject : LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity | views::keys)
+//             for (const auto& ReactionIdNum : ParticlesKindsManagerObject.GetParticleKind(ParticleKindFoundInProximityObject).AssociatedChemicalReactions)
+//                 if (FindAndExecuteChosenReaction(ReactionIdNum) == true)
+//                     goto EndLoops;
+//
+//         EndLoops:;
+//     }
+//     CATCH("finding and executing random reaction v4")
+// }
 
 set<UnsignedInt> CellEngineSimulationSpace::GetAllPossibleReactionsFromParticlesInProximity()
 {
@@ -472,8 +489,8 @@ set<UnsignedInt> CellEngineSimulationSpace::GetAllPossibleReactionsFromParticles
 
     try
     {
-        for (const auto& ParticleKindFoundInProximityObject : LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity)
-            for (const auto& ReactionIdNum : ParticlesKindsManagerObject.GetParticleKind(ParticleKindFoundInProximityObject.first).AssociatedChemicalReactions)
+        for (const auto& ParticleKindFoundInProximityObject : LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity | views::keys)
+            for (const auto& ReactionIdNum : ParticlesKindsManagerObject.GetParticleKind(ParticleKindFoundInProximityObject).AssociatedChemicalReactions)
                 if (auto ReactionIter = ChemicalReactionsManagerObject.ChemicalReactionsPosFromId.find(ReactionIdNum); ReactionIter != ChemicalReactionsManagerObject.ChemicalReactionsPosFromId.end())
                     if (IsChemicalReactionPossible(ChemicalReactionsManagerObject.ChemicalReactions[ReactionIter->second]) == true)
                         PossibleReactionsIdNums.insert(ReactionIdNum);
@@ -492,78 +509,78 @@ void CellEngineSimulationSpace::FindAndExecuteRandomReactionVersion3(const Unsig
             string ListOfPossibleReactions;
             for (const auto& PossibleReactionsIdNum : PossibleReactionsIdNums)
                 ListOfPossibleReactions += to_string(PossibleReactionsIdNum) + ",";
-            LoggersManagerObject.Log(STREAM("ListOfPossibleReactions = " << ListOfPossibleReactions));
+            //LoggersManagerObject.Log(STREAM("ListOfPossibleReactions = " << ListOfPossibleReactions));
 
             std::uniform_int_distribution<UnsignedInt> UniformDistributionObjectUint64t(0, PossibleReactionsIdNums.size() - 1);
             const auto ReactionIdNum = *std::next(std::begin(PossibleReactionsIdNums), static_cast<int>(GetRandomValue<uniform_int_distribution, UnsignedInt>(UniformDistributionObjectUint64t)));
-            LoggersManagerObject.Log(STREAM("Random ReactionIdNum = " << ReactionIdNum));
+            //LoggersManagerObject.Log(STREAM("Random ReactionIdNum = " << ReactionIdNum));
             FindAndExecuteChosenReaction(ReactionIdNum);
         }
-        else
-            LoggersManagerObject.Log(STREAM("NONE REACTION FOUND for particles kinds in proximity "));
+        // else
+        //     LoggersManagerObject.Log(STREAM("NONE REACTION FOUND for particles kinds in proximity "));
     }
     CATCH("finding and executing random reaction v3")
 }
 
-void CellEngineSimulationSpace::FindAndExecuteRandomReactionVersion2(const UnsignedInt MaxNumberOfReactants)
-{
-    try
-    {
-        LoggersManagerObject.Log(STREAM("MAX NUMBER OF REACTANTS = " << MaxNumberOfReactants));
+// void CellEngineSimulationSpace::FindAndExecuteRandomReactionVersion2(const UnsignedInt MaxNumberOfReactants)
+// {
+//     try
+//     {
+//         LoggersManagerObject.Log(STREAM("MAX NUMBER OF REACTANTS = " << MaxNumberOfReactants));
+//
+//         uniform_int_distribution<UnsignedInt> UniformDistributionObjectNumberOfReactants_Uint64t(1, MaxNumberOfReactants);
+//
+//         UnsignedInt NumberOfRandom = 0;
+//         while (NumberOfRandom < 100)
+//         {
+//             NumberOfRandom++;
+//
+//             UnsignedInt NumberOfReactants = GetRandomValue<uniform_int_distribution, UnsignedInt>(UniformDistributionObjectNumberOfReactants_Uint64t);
+//
+//             LoggersManagerObject.Log(STREAM("NumberOfReactants = " << NumberOfReactants));
+//             LoggersManagerObject.Log(STREAM("MaxNumberOfReactants = " << MaxNumberOfReactants));
+//             UnsignedInt NumberOfCombinations = Combinations::NumberOfCombinations(MaxNumberOfReactants, NumberOfReactants);
+//             LoggersManagerObject.Log(STREAM("NumberOfCombinations = " << NumberOfCombinations));
+//             GenerateCombinationsStateNumber = Combinations::SetKBitsInNumber(MaxNumberOfReactants, NumberOfReactants);
+//             LoggersManagerObject.Log(STREAM("GenerateCombinationsStateNumber START = " << Combinations::CreateBoolStringFromInt64BitState(GenerateCombinationsStateNumber)));
+//
+//             UnsignedInt NumberOfTries = 0;
+//             const UnsignedInt NumberOfAllPossibleTries = min(UnsignedInt(100), NumberOfCombinations);
+//             while (NumberOfTries < NumberOfAllPossibleTries)
+//             {
+//                 NumberOfTries++;
+//                 LoggersManagerObject.Log(STREAM("Number Of Tries = " << NumberOfTries));
+//
+//                 if (TryToMakeRandomChemicalReaction(NumberOfReactants, MaxNumberOfReactants) == true)
+//                     goto BreakLoop;
+//             }
+//         }
+//         BreakLoop:;
+//     }
+//     CATCH("finding and executing random reaction v2")
+// }
 
-        uniform_int_distribution<UnsignedInt> UniformDistributionObjectNumberOfReactants_Uint64t(1, MaxNumberOfReactants);
-
-        UnsignedInt NumberOfRandom = 0;
-        while (NumberOfRandom < 100)
-        {
-            NumberOfRandom++;
-
-            UnsignedInt NumberOfReactants = GetRandomValue<uniform_int_distribution, UnsignedInt>(UniformDistributionObjectNumberOfReactants_Uint64t);
-
-            LoggersManagerObject.Log(STREAM("NumberOfReactants = " << NumberOfReactants));
-            LoggersManagerObject.Log(STREAM("MaxNumberOfReactants = " << MaxNumberOfReactants));
-            UnsignedInt NumberOfCombinations = Combinations::NumberOfCombinations(MaxNumberOfReactants, NumberOfReactants);
-            LoggersManagerObject.Log(STREAM("NumberOfCombinations = " << NumberOfCombinations));
-            GenerateCombinationsStateNumber = Combinations::SetKBitsInNumber(MaxNumberOfReactants, NumberOfReactants);
-            LoggersManagerObject.Log(STREAM("GenerateCombinationsStateNumber START = " << Combinations::CreateBoolStringFromInt64BitState(GenerateCombinationsStateNumber)));
-
-            UnsignedInt NumberOfTries = 0;
-            const UnsignedInt NumberOfAllPossibleTries = min(UnsignedInt(100), NumberOfCombinations);
-            while (NumberOfTries < NumberOfAllPossibleTries)
-            {
-                NumberOfTries++;
-                LoggersManagerObject.Log(STREAM("Number Of Tries = " << NumberOfTries));
-
-                if (TryToMakeRandomChemicalReaction(NumberOfReactants, MaxNumberOfReactants) == true)
-                    goto BreakLoop;
-            }
-        }
-        BreakLoop:;
-    }
-    CATCH("finding and executing random reaction v2")
-}
-
-void CellEngineSimulationSpace::FindAndExecuteRandomReactionVersion1(const UnsignedInt MaxNumberOfReactants)
-{
-    try
-    {
-        LoggersManagerObject.Log(STREAM("MAX NUMBER OF REACTANTS = " << MaxNumberOfReactants));
-
-        uniform_int_distribution<UnsignedInt> UniformDistributionObjectNumberOfReactants_Uint64t(1, MaxNumberOfReactants);
-
-        UnsignedInt NumberOfTries = 0;
-        while (NumberOfTries <= 100)
-        {
-            NumberOfTries++;
-
-            UnsignedInt NumberOfReactants = GetRandomValue<std::uniform_int_distribution, UnsignedInt>(UniformDistributionObjectNumberOfReactants_Uint64t);
-
-            if (TryToMakeRandomChemicalReaction(NumberOfReactants, MaxNumberOfReactants) == true)
-                break;
-        }
-    }
-    CATCH("finding and executing random reaction v1")
-}
+// void CellEngineSimulationSpace::FindAndExecuteRandomReactionVersion1(const UnsignedInt MaxNumberOfReactants)
+// {
+//     try
+//     {
+//         LoggersManagerObject.Log(STREAM("MAX NUMBER OF REACTANTS = " << MaxNumberOfReactants));
+//
+//         uniform_int_distribution<UnsignedInt> UniformDistributionObjectNumberOfReactants_Uint64t(1, MaxNumberOfReactants);
+//
+//         UnsignedInt NumberOfTries = 0;
+//         while (NumberOfTries <= 100)
+//         {
+//             NumberOfTries++;
+//
+//             UnsignedInt NumberOfReactants = GetRandomValue<std::uniform_int_distribution, UnsignedInt>(UniformDistributionObjectNumberOfReactants_Uint64t);
+//
+//             if (TryToMakeRandomChemicalReaction(NumberOfReactants, MaxNumberOfReactants) == true)
+//                 break;
+//         }
+//     }
+//     CATCH("finding and executing random reaction v1")
+// }
 
 void CellEngineSimulationSpace::FindAndExecuteRandomReaction(const UnsignedInt MaxNumberOfReactants)
 {
@@ -584,21 +601,21 @@ bool CellEngineSimulationSpace::FindAndExecuteChosenReaction(const UnsignedInt R
 
             if (const bool IsPossible = IsChemicalReactionPossible(ReactionObject); IsPossible == true)
             {
-                LoggersManagerObject.Log(STREAM("CHOSEN REACTION POSSIBLE" << endl));
+                //LoggersManagerObject.Log(STREAM("CHOSEN REACTION POSSIBLE" << endl));
 
                 if (MakeChemicalReaction(ReactionObject) == false)
                 {
-                    LoggersManagerObject.Log(STREAM("Chosen reaction not executed!"));
+                    //LoggersManagerObject.Log(STREAM("Chosen reaction not executed!"));
                     return false;
                 }
                 else
                     return true;
             }
-            else
-                LoggersManagerObject.Log(STREAM("Chosen reaction impossible!"));
+            // else
+            //     LoggersManagerObject.Log(STREAM("Chosen reaction impossible!"));
         }
-        else
-            LoggersManagerObject.Log(STREAM("Chosen reaction Id not found!"));
+        // else
+        //     LoggersManagerObject.Log(STREAM("Chosen reaction Id not found!"));
     }
     CATCH("finding and executing chosen reaction")
 

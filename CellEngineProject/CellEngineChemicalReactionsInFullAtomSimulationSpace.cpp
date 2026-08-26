@@ -8,10 +8,10 @@ void CellEngineChemicalReactionsInFullAtomSimulationSpace::FindParticlesInProxim
     {
         const auto start_time = chrono::high_resolution_clock::now();
 
-        for (const auto& ParticleObject : Particles[StartXPosParam][StartYPosParam][StartZPosParam].Particles)
+        for (const auto& ParticleObject : Particles[StartXPosParam][StartYPosParam][StartZPosParam].Particles | views::values)
         {
-            LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity.emplace_back(ParticleObject.second.Index);
-            LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity[ParticleObject.second.EntityId]++;
+            LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity.emplace_back(ParticleObject.Index);
+            LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity[ParticleObject.EntityId]++;
         }
 
         const auto stop_time = chrono::high_resolution_clock::now();
@@ -21,11 +21,11 @@ void CellEngineChemicalReactionsInFullAtomSimulationSpace::FindParticlesInProxim
     CATCH("finding particles in proximity of simulation space for selected local space")
 };
 
-void CellEngineChemicalReactionsInFullAtomSimulationSpace::MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(Particle &ParticleObject, const Particle &NewPositionParticleObject, const RealType AddX, const RealType AddY, const RealType AddZ)
+void CellEngineChemicalReactionsInFullAtomSimulationSpace::MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(vector<ParticleToBeMovedFromOneSectorToAnotherSector>& ListOfParticlesToChangeSectors, Particle &ParticleObject, const Particle &NewPositionParticleObject, const RealType AddX, const RealType AddY, const RealType AddZ)
 {
     try
     {
-        MoveParticleNearOtherParticleIfFullAtomSpaceIsEmptyOrNearSpace(ParticleObject, Particles, CurrentSectorPos, NewPositionParticleObject, AddX, AddY, AddZ, CurrentThreadPos);
+        MoveParticleNearOtherParticleIfFullAtomSpaceIsEmptyOrNearSpace(ParticleObject, Particles, ListOfParticlesToChangeSectors, CurrentSectorPos, NewPositionParticleObject, AddX, AddY, AddZ, CurrentThreadPos);
     }
     CATCH("moving particle near other particle if space is empty or to near space")
 }

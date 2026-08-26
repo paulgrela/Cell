@@ -13,7 +13,7 @@ protected:
     {
         GetMemoryForParticlesInSectors();
 
-        CellEngineFullAtomSimulationSpaceObjectPointer = std::make_unique<CellEngineFullAtomSimulationSpace>(Particles, true, 0, ThreadPosType{ 0, 0, 0 });
+        CellEngineFullAtomSimulationSpaceObjectPointer = std::make_unique<CellEngineFullAtomSimulationSpace>(Particles, true, 0, ThreadPosType{ .ThreadPosX = 0, .ThreadPosY = 0, .ThreadPosZ = 0 });
 
         CellEngineSimulationParallelExecutionManager::CreateSimulationSpaceForParallelExecution<CellEngineFullAtomSimulationSpace>(CellEngineSimulationSpaceForThreadsObjectsPointer, Particles);
 

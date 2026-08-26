@@ -2,6 +2,8 @@
 #ifndef CELL_ENGINE_CHEMICAL_REACTIONS_MANAGER_H
 #define CELL_ENGINE_CHEMICAL_REACTIONS_MANAGER_H
 
+#include <ranges>
+
 #include "CellEngineParticle.h"
 #include "CellEngineChemicalReaction.h"
 #include "CellEngineRandomDeviceEngine.h"
@@ -74,7 +76,7 @@ public:
 
         SortReactantsAndProductsForEveryChemicalReaction();
 
-        MaxNumberOfReactants = std::max_element(ChemicalReactions.begin(), ChemicalReactions.end(), [](const ChemicalReaction& R1, const ChemicalReaction& R2){ return R1.Reactants.size() < R2.Reactants.size(); })->Reactants.size();
+        MaxNumberOfReactants = std::ranges::max_element(ChemicalReactions, [](const ChemicalReaction& R1, const ChemicalReaction& R2){ return R1.Reactants.size() < R2.Reactants.size(); })->Reactants.size();
     }
 public:
     static std::string GetStringOfSortedParticlesDataNames(const std::vector<ParticleKindForChemicalReaction>& ReactionArguments)
@@ -84,7 +86,7 @@ public:
         try
         {
             auto LocalReactionArguments(ReactionArguments);
-            std::sort(LocalReactionArguments.begin(), LocalReactionArguments.end(), [](const ParticleKindForChemicalReaction& P1, const ParticleKindForChemicalReaction& P2){ return ParticlesKindsManagerObject.GetParticleKind(P1.EntityId).IdStr < ParticlesKindsManagerObject.GetParticleKind(P2.EntityId).IdStr; } );
+            std::ranges::sort(LocalReactionArguments, [](const ParticleKindForChemicalReaction& P1, const ParticleKindForChemicalReaction& P2){ return ParticlesKindsManagerObject.GetParticleKind(P1.EntityId).IdStr < ParticlesKindsManagerObject.GetParticleKind(P2.EntityId).IdStr; } );
             for (const auto& LocalReactant : LocalReactionArguments)
                 KeyStringOfReaction += ParticlesKindsManagerObject.GetParticleKind(LocalReactant.EntityId).IdStr + "+";
         }
@@ -93,7 +95,7 @@ public:
         return KeyStringOfReaction;
     }
 public:
-    void PrintChemicalReactions()
+    void PrintChemicalReactions() const
     {
         LoggersManagerObject.Log(STREAM("Number of chemical reactions = " << ChemicalReactions.size()));
 

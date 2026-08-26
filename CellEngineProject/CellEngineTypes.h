@@ -122,6 +122,13 @@ using ParticlesContainer = std::vector<std::vector<std::vector<ParticlesContaine
 template <class SimulationSpace>
 using SimulationSpaceForParallelExecutionContainer = std::vector<std::vector<std::vector<std::shared_ptr<SimulationSpace>>>>;
 
+struct ParticleToBeMovedFromOneSectorToAnotherSector
+{
+    UniqueIdInt ParticleIndex{};
+    SectorPosType SectorPosSource{};
+    SectorPosType SectorPosTarget{};
+};
+
 struct SimulationSpaceSectorsRanges
 {
 public:

@@ -29,8 +29,10 @@ protected:
 public:
     ThreadIdType CurrentThreadIndex{ 0 };
 protected:
-    ThreadPosType CurrentThreadPos{ 1, 1, 1 };
+    ThreadPosType CurrentThreadPos{ .ThreadPosX = 1, .ThreadPosY = 1, .ThreadPosZ = 1 };
     ThreadPosType NeighborThreadsIndexes[NumberOfAllNeighbors];
+public:
+    std::vector<ParticleToBeMovedFromOneSectorToAnotherSector> ListOfParticlesToChangeSectors;
 public:
     std::vector<ParticleSenderStruct> VectorOfParticlesToSendToNeighborProcessesOrThreads[NumberOfAllNeighbors];
 protected:

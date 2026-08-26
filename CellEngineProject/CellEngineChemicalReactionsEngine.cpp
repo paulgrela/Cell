@@ -17,15 +17,15 @@ bool CellEngineChemicalReactionsEngine::TryToMakeRandomChemicalReaction(const Un
 
         vector<UnsignedInt> RandomParticlesTypes = GetRandomParticles(NumberOfReactants, MaxNumberOfReactants);
 
-        sort(begin(RandomParticlesTypes), end(RandomParticlesTypes));
+        ranges::sort(RandomParticlesTypes);
 
-        if (auto IteratorUnique = unique(begin(RandomParticlesTypes), end(RandomParticlesTypes)); IteratorUnique == RandomParticlesTypes.end())
+        if (auto IteratorUnique = ranges::unique(RandomParticlesTypes).begin(); IteratorUnique == RandomParticlesTypes.end())
         {
             vector<string> ParticlesSymbolsForReactionToSort;
             ParticlesSymbolsForReactionToSort.reserve(10);
-            for (auto& RandomParticleType : RandomParticlesTypes)
+            for (const auto& RandomParticleType : RandomParticlesTypes)
                 ParticlesSymbolsForReactionToSort.emplace_back(ParticlesKindsManagerObject.GetParticleKind(RandomParticleType).IdStr);
-            sort(ParticlesSymbolsForReactionToSort.begin(), ParticlesSymbolsForReactionToSort.end());
+            ranges::sort(ParticlesSymbolsForReactionToSort);
 
             string ReactionSymbolsStr;
             for (auto& ParticleSymbolForReaction : ParticlesSymbolsForReactionToSort)
@@ -33,7 +33,7 @@ bool CellEngineChemicalReactionsEngine::TryToMakeRandomChemicalReaction(const Un
 
             LoggersManagerObject.Log(STREAM("Reaction Symbols = [" << ReactionSymbolsStr << "]" << endl));
 
-            auto NumberOfElementsForKey = ChemicalReactionsManagerObject.ChemicalReactionsPosFromString.count(ReactionSymbolsStr);
+            const auto NumberOfElementsForKey = ChemicalReactionsManagerObject.ChemicalReactionsPosFromString.count(ReactionSymbolsStr);
             if (NumberOfElementsForKey > 0)
             {
                 auto ReactionIter = ChemicalReactionsManagerObject.ChemicalReactionsPosFromString.equal_range(ReactionSymbolsStr).first;
