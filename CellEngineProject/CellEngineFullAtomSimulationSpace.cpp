@@ -164,10 +164,11 @@ void CellEngineFullAtomSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpa
         {
             CurrentSectorPos = SectorPosType{ static_cast<SignedInt>(StartXPosParam), static_cast<SignedInt>(StartYPosParam), static_cast<SignedInt>(StartZPosParam) };
             if (CellEngineUseful::IsDNA(ParticleInProximityObjectIter->second.EntityId) == false)
-                MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(ParticleInProximityObjectIter->second, Particles, ParticleInProximityObjectIter, CurrentSectorPos, GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), 0, 0, 0, SizeXParam, SizeYParam, SizeZParam);
-            else
-                ++ParticleInProximityObjectIter;
+                MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(ParticleInProximityObjectIter->second, Particles, ParticleInProximityObjectIter, ListOfParticlesToChangeSectors, CurrentSectorPos, GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), 0, 0, 0, SizeXParam, SizeYParam, SizeZParam);
         }
+        for (const auto& [ParticleIndex, SectorPosSource, SectorPosTarget] : ListOfParticlesToChangeSectors)
+            Particles[SectorPosTarget.SectorPosX][SectorPosTarget.SectorPosY][SectorPosTarget.SectorPosZ].Particles.insert(Particles[SectorPosSource.SectorPosX][SectorPosSource.SectorPosY][SectorPosSource.SectorPosZ].Particles.extract(ParticleIndex));
+        ListOfParticlesToChangeSectors.clear();
         #endif
     }
     CATCH("generating one step of diffusion for selected space")

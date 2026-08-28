@@ -1279,7 +1279,7 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIPr
                 // else
                 //     LoggersManagerObject.Log(STREAM("MPI Process Index to send = " << NeighborProcessesIndexes[NeighborProcessIndex] << " " << VectorOfParticlesToSendToNeighborProcessesOrThreads[NeighborProcessIndex][0].ReceiverProcessIndex << " " << NeighborProcessIndex << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
 
-                LoggersManagerObject.Log(STREAM("MPI Process Length Message SEND = " << VectorOfParticlesToSendToNeighborProcessesOrThreads[NeighborProcessIndex].size() << " " << VectorOfParticlesToSendToNeighborProcessesOrThreads[NeighborProcessIndex].size() * sizeof(ParticleSenderStruct) << " " << NeighborProcessesIndexes[NeighborProcessIndex] << " " << VectorOfParticlesToSendToNeighborProcessesOrThreads[NeighborProcessIndex][0].ReceiverProcessIndex << " " << NeighborProcessIndex << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
+                //LoggersManagerObject.Log(STREAM("MPI Process Length Message SEND = " << VectorOfParticlesToSendToNeighborProcessesOrThreads[NeighborProcessIndex].size() << " " << VectorOfParticlesToSendToNeighborProcessesOrThreads[NeighborProcessIndex].size() * sizeof(ParticleSenderStruct) << " " << NeighborProcessesIndexes[NeighborProcessIndex] << " " << VectorOfParticlesToSendToNeighborProcessesOrThreads[NeighborProcessIndex][0].ReceiverProcessIndex << " " << NeighborProcessIndex << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
 
                 char BufferToSend[MaxMPIMessageSize];
                 int PositionInBuffer = 0;

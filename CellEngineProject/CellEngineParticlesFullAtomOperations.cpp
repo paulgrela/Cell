@@ -32,42 +32,11 @@ static bool ExchangeParticleBetweenSectors(const Particle &ParticleObject, Parti
 {
     #ifdef CONTAINERS_FOR_SPEED
     if (ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].Particles.contains(ParticleObject.Index) == false)
+        ListOfParticlesToChangeSectors.emplace_back(ParticleToBeMovedFromOneSectorToAnotherSector{ .ParticleIndex = ParticleObject.Index, .SectorPosSource = SectorPosType{ .SectorPosX = SectorPosX1, .SectorPosY = SectorPosY1, .SectorPosZ = SectorPosZ1 }, .SectorPosTarget = SectorPosType{ .SectorPosX = SectorPosX2, .SectorPosY = SectorPosY2, .SectorPosZ = SectorPosZ2 }});
     #else
     if (ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].Particles.contains(ParticleObjectIter->second.Index) == false)
+        ListOfParticlesToChangeSectors.emplace_back(ParticleToBeMovedFromOneSectorToAnotherSector{ .ParticleIndex = ParticleObjectIter->second.Index, .SectorPosSource = SectorPosType{ .SectorPosX = SectorPosX1, .SectorPosY = SectorPosY1, .SectorPosZ = SectorPosZ1 }, .SectorPosTarget = SectorPosType{ .SectorPosX = SectorPosX2, .SectorPosY = SectorPosY2, .SectorPosZ = SectorPosZ2 }});
     #endif
-    {
-        #ifdef CONTAINERS_FOR_SPEED
-        ListOfParticlesToChangeSectors.emplace_back(ParticleToBeMovedFromOneSectorToAnotherSector{ .ParticleIndex = ParticleObject.Index, .SectorPosSource = SectorPosType{ .SectorPosX = SectorPosX1, .SectorPosY = SectorPosY1, .SectorPosZ = SectorPosZ1 }, .SectorPosTarget = SectorPosType{ .SectorPosX = SectorPosX2, .SectorPosY = SectorPosY2, .SectorPosZ = SectorPosZ2 }});
-        #else
-        if (ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].Particles.contains(ParticleObjectIter->first) == true)
-        {
-            //ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].Particles.insert(ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].Particles.extract(ParticleObjectIter++));
-            const auto ParticleIndexCopiedObject = ParticleObjectIter->first;
-            const auto ParticleCopiedObject = ParticleObjectIter->second;
-            ParticleObjectIter = ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].Particles.erase(ParticleObjectIter);
-            ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].Particles.insert({ ParticleIndexCopiedObject, ParticleCopiedObject });
-        }
-        else
-            ++ParticleObjectIter;
-        #endif
-    }
-    else
-    {
-        #ifdef CONTAINERS_FOR_SPEED
-        #else
-        if (ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].Particles.contains(ParticleObjectIter->second.Index) == false)
-            if (&ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].Particles.find(ParticleObjectIter->second.Index)->second == &ParticleObject)
-            {
-                ++ParticleObjectIter;
-
-                if constexpr(PrintAdditionalInformation == true)
-                    std::cout << "Earlier correct sector for particle index: " << ParticleObject.EntityId << " " << ParticleObject.Index << " " << SectorPosX1 << " " << SectorPosY1 << " " << SectorPosZ1 << " " << SectorPosX2 << " " << SectorPosY2 << " " << SectorPosZ2 << std::endl;
-                return true;
-            }
-        ++ParticleObjectIter;
-        #endif
-    }
-
     return false;
 }
 
@@ -79,12 +48,7 @@ void CellEngineParticlesFullAtomOperations::MoveParticleByVectorForThreads(Parti
         auto [SectorPosX2, SectorPosY2, SectorPosZ2] = CellEngineUseful::GetSectorPos(ParticleObject.Center.X + VectorX, ParticleObject.Center.Y + VectorY, ParticleObject.Center.Z + VectorZ);
 
         if (SectorPosX2 == -1 || SectorPosY2 == -1 || SectorPosZ2 == -1)
-        {
-            #ifndef CONTAINERS_FOR_SPEED
-            ++ParticleObjectIter;
-            #endif
             return;
-        }
 
         MoveAllAtomsInParticleAtomsListByVector(ParticleObject, VectorX, VectorY, VectorZ);
         ParticleObject.SetCenterCoordinates(ParticleObject.Center.X + VectorX, ParticleObject.Center.Y + VectorY, ParticleObject.Center.Z + VectorZ);
@@ -97,7 +61,6 @@ void CellEngineParticlesFullAtomOperations::MoveParticleByVectorForThreads(Parti
 
                 if ((SectorPosX1 != SectorPosX2 && SectorPosY1 == SectorPosY2 && SectorPosZ1 == SectorPosZ2) || (SectorPosX1 == SectorPosX2 && SectorPosY1 != SectorPosY2 && SectorPosZ1 == SectorPosZ2) || (SectorPosX1 == SectorPosX2 && SectorPosY1 == SectorPosY2 && SectorPosZ1 != SectorPosZ2))
                 {
-                    #ifdef CONTAINERS_FOR_SPEED
                     const auto Thread1Pos = ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].ThreadPos;
                     const auto Thread2Pos = ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].ThreadPos;
 
@@ -139,7 +102,6 @@ void CellEngineParticlesFullAtomOperations::MoveParticleByVectorForThreads(Parti
                     if (Thread1Pos == CurrentThreadPos)
                         if (ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].Particles.contains(ParticleObject.Index) == false)
                             ListOfParticlesToChangeSectors.emplace_back(ParticleToBeMovedFromOneSectorToAnotherSector{ .ParticleIndex = ParticleObject.Index, .SectorPosSource = SectorPosType{ .SectorPosX = SectorPosX1, .SectorPosY = SectorPosY1, .SectorPosZ = SectorPosZ1 }, .SectorPosTarget = SectorPosType{ .SectorPosX = SectorPosX2, .SectorPosY = SectorPosY2, .SectorPosZ = SectorPosZ2 }});
-                    #endif
                 }
 
                 if (NewSectorNeighborThreadFound == false)
@@ -151,10 +113,6 @@ void CellEngineParticlesFullAtomOperations::MoveParticleByVectorForThreads(Parti
             else
                 ExchangeParticleBetweenSectors(ParticleObject, ParticlesInSector, ParticleObjectIter, ListOfParticlesToChangeSectors, SectorPosX1, SectorPosY1, SectorPosZ1, SectorPosX2, SectorPosY2, SectorPosZ2);
         }
-        #ifndef CONTAINERS_FOR_SPEED
-        else
-            ++ParticleObjectIter;
-        #endif
     }
     CATCH_AND_THROW("moving particle by vector for threads")
 }
@@ -167,12 +125,7 @@ void CellEngineParticlesFullAtomOperations::MoveParticleByVectorForMPIProcesses(
         auto [SectorPosX2, SectorPosY2, SectorPosZ2] = CellEngineUseful::GetSectorPos(ParticleObject.Center.X + VectorX, ParticleObject.Center.Y + VectorY, ParticleObject.Center.Z + VectorZ);
 
         if (SectorPosX2 == -1 || SectorPosY2 == -1 || SectorPosZ2 == -1)
-        {
-            #ifndef CONTAINERS_FOR_SPEED
-            ++ParticleObjectIter;
-            #endif
             return;
-        }
 
         MoveAllAtomsInParticleAtomsListByVector(ParticleObject, VectorX, VectorY, VectorZ);
         ParticleObject.SetCenterCoordinates(ParticleObject.Center.X + VectorX, ParticleObject.Center.Y + VectorY, ParticleObject.Center.Z + VectorZ);
@@ -215,10 +168,6 @@ void CellEngineParticlesFullAtomOperations::MoveParticleByVectorForMPIProcesses(
                 ParticleObject.SetCenterCoordinates(ParticleObject.Center.X - VectorX, ParticleObject.Center.Y - VectorY, ParticleObject.Center.Z - VectorZ);
             }
         }
-        #ifndef CONTAINERS_FOR_SPEED
-        else
-            ++ParticleObjectIter;
-        #endif
     }
     CATCH_AND_THROW("moving particle by vector for mpi processes")
 }

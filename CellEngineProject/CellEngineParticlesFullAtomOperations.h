@@ -177,12 +177,7 @@ protected:
             #endif
                 MoveParticleByVectorForMPIProcesses(ParticleObject, ParticlesInSector, ParticleObjectIter, ListOfParticlesToChangeSectors, NeighbourProcessesIndexes, VectorOfParticlesToSendToNeighbourProcesses, VectorX, VectorY, VectorZ, CurrentThreadPos);
             else
-            {
-                #ifndef CONTAINERS_FOR_SPEED
-                ++ParticleObjectIter;
-                #endif
                 return false;
-            }
         }
         CATCH_AND_THROW("moving particle by vector if voxel space is empty and is in bounds")
 
@@ -200,12 +195,7 @@ protected:
             #endif
                 MoveParticleByVectorForThreads(ParticleObject, ParticlesInSector, ParticleObjectIter, ListOfParticlesToChangeSectors, NeighbourProcessesIndexes, VectorOfParticlesToSendToNeighbourProcesses, VectorX, VectorY, VectorZ, CurrentThreadPos);
             else
-            {
-                #ifndef CONTAINERS_FOR_SPEED
-                ++ParticleObjectIter;
-                #endif
                 return false;
-            }
         }
         CATCH_AND_THROW("moving particle by vector if voxel space is empty and is in bounds")
 
