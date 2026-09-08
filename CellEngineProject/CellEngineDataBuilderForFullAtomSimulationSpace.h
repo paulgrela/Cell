@@ -22,6 +22,7 @@ protected:
         CellEngineFullAtomSimulationSpaceObjectPointer->CreateDataEveryMPIProcessForParallelExecution();
 
         CellEngineFullAtomSimulationSpaceObjectPointer->CreateDataEveryThreadForParallelExecution();
+        CellEngineFullAtomSimulationSpaceObjectPointer->CreateDataEveryThreadForParallelExecutionADD();
     }
 protected:
     void SetCurrentSectorPos(const SectorPosType& CurrentSectorPos) override

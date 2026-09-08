@@ -24,13 +24,17 @@ protected:
     UnsignedInt NumberOfActiveNeighbors;
 public:
     SignedInt NeighborProcessesIndexes[NumberOfAllNeighbors];
+
+    SignedInt NeighborProcessesIndexesADD[NumberOfAllNeighbors];
 protected:
     SimulationSpaceSectorsRanges CurrentMPIProcessSimulationSpaceSectorsRanges;
 public:
     ThreadIdType CurrentThreadIndex{ 0 };
 protected:
     ThreadPosType CurrentThreadPos{ .ThreadPosX = 1, .ThreadPosY = 1, .ThreadPosZ = 1 };
+protected:
     ThreadPosType NeighborThreadsIndexes[NumberOfAllNeighbors];
+    ThreadPosType NeighborThreadsIndexesADD[NumberOfAllNeighbors];
 public:
     std::vector<ParticleToBeMovedFromOneSectorToAnotherSector> ListOfParticlesToChangeSectors;
 public:
@@ -38,7 +42,7 @@ public:
 protected:
     std::vector<ParticleSenderStruct> ReceivedParticlesToInsertFromAllNeighborProcessesOrThreads[NumberOfAllNeighbors];
 protected:
-    std::unique_ptr<std::barrier<>> TwoThreadsWallSychronizationBarriers;
+    SignedInt TwoThreadsWallSychronizationBarriersIndexes[NumberOfAllNeighbors]{ -1, -1, -1, -1, -1, -1 };
 protected:
     std::vector<UniqueIdInt> ConfirmationOfParticlesToRemoveToSent[NumberOfAllNeighbors];
 protected:
