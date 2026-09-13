@@ -22,6 +22,8 @@ protected:
         CellEngineFullAtomSimulationSpaceObjectPointer->CreateDataEveryMPIProcessForParallelExecution();
 
         CellEngineFullAtomSimulationSpaceObjectPointer->CreateDataEveryThreadForParallelExecution();
+
+        //DLA LOCAL_BARRIER
         CellEngineFullAtomSimulationSpaceObjectPointer->CreateDataEveryThreadForParallelExecutionADD();
     }
 protected:
