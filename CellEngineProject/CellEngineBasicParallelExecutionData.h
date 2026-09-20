@@ -24,8 +24,6 @@ protected:
     UnsignedInt NumberOfActiveNeighbors;
 public:
     SignedInt NeighborProcessesIndexes[NumberOfAllNeighbors];
-
-    //SignedInt NeighborProcessesIndexesADD[NumberOfAllNeighbors];
 protected:
     SimulationSpaceSectorsRanges CurrentMPIProcessSimulationSpaceSectorsRanges;
 public:
@@ -34,7 +32,6 @@ protected:
     ThreadPosType CurrentThreadPos{ .ThreadPosX = 1, .ThreadPosY = 1, .ThreadPosZ = 1 };
 protected:
     ThreadPosType NeighborThreadsIndexes[NumberOfAllNeighbors];
-    //ThreadPosType NeighborThreadsIndexesADD[NumberOfAllNeighbors];
 public:
     std::vector<ParticleToBeMovedFromOneSectorToAnotherSector> ListOfParticlesToChangeSectors;
 public:
@@ -45,13 +42,6 @@ protected:
     SignedInt TwoThreadsWallSychronizationBarriersIndexes[NumberOfAllNeighbors]{ -1, -1, -1, -1, -1, -1 };
 protected:
     std::vector<UniqueIdInt> ConfirmationOfParticlesToRemoveToSent[NumberOfAllNeighbors];
-protected:
-    std::condition_variable ProposalConditionalVariable;
-    std::condition_variable VerdictConditionalVariable;
-    // bool ProposalsReady = false;
-    // bool VerdictsReady = false;
-    bool ProposalsReady[2] = { false, false };
-    bool VerdictsReady[2] = { false, false };
 protected:
     SectorPosType CurrentSectorPos{ 0, 0, 0 };
     SimulationSpaceSectorBounds ActualSimulationSpaceSectorBoundsObject{ 0, 0, 0, 0, 0, 0, 0, 0, 0 };

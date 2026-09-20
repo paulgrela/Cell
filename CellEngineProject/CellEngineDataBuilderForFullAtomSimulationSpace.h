@@ -23,7 +23,6 @@ protected:
 
         CellEngineFullAtomSimulationSpaceObjectPointer->CreateDataEveryThreadForParallelExecution();
 
-        //DLA LOCAL_BARRIER
         CellEngineFullAtomSimulationSpaceObjectPointer->CreateDataEveryThreadForParallelExecutionADD();
     }
 protected:
