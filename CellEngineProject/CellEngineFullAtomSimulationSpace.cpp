@@ -74,6 +74,8 @@ void CellEngineFullAtomSimulationSpace::FillParticleElementsInSpace(const Unique
 {
     try
     {
+                                                                                                                        //CZY TU USTAWIANIE SECTORA
+
         GetParticleFromIndex(ParticleIndex).ListOfAtoms.clear();
 
         if (ParticleKindObjectForProduct.ListOfAtoms.empty() == false)
@@ -83,7 +85,10 @@ void CellEngineFullAtomSimulationSpace::FillParticleElementsInSpace(const Unique
             GetParticleFromIndex(ParticleIndex).ListOfAtoms.emplace_back(VectorX, VectorY, VectorZ);
 
         GetParticleFromIndex(ParticleIndex).Radius = ParticleKindObjectForProduct.Radius;
-        GetParticleFromIndex(ParticleIndex).Center = { VectorX, VectorY, VectorZ };
+        GetParticleFromIndex(ParticleIndex).Center = { .X = VectorX, .Y = VectorY, .Z = VectorZ };
+
+
+                                                                                                                        CellEngineUseful::CheckCenterForSector<Particle>(GetParticleFromIndex(ParticleIndex), Particles, "CF1");
     }
     CATCH("filling particle elements in space")
 }
@@ -138,7 +143,7 @@ void CellEngineFullAtomSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpa
             {
                 for (auto& ParticleInProximityObject : Particles[StartXPosParam][StartYPosParam][StartZPosParam].Particles | views::values)
                 {
-                                                                                                                        CellEngineUseful::CheckCenterForSector<Particle>(ParticleInProximityObject, Particles);
+                                                                                                                        CellEngineUseful::CheckCenterForSector<Particle>(ParticleInProximityObject, Particles, "C0");
 
                     CurrentSectorPos = SectorPosType{ .SectorPosX = static_cast<SignedInt>(StartXPosParam), .SectorPosY = static_cast<SignedInt>(StartYPosParam), .SectorPosZ = static_cast<SignedInt>(StartZPosParam) };
                     if (CellEngineUseful::IsDNA(ParticleInProximityObject.EntityId) == false)
@@ -169,7 +174,16 @@ void CellEngineFullAtomSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpa
             //TO CO DLA MPI ale z poprawionym końcem zroznicowania dla unordered_map i mapy
             for (auto& ParticleInProximityObject : Particles[StartXPosParam][StartYPosParam][StartZPosParam].Particles | views::values)
             {
-                                                                                                                        CellEngineUseful::CheckCenterForSector<Particle>(ParticleInProximityObject, Particles);
+                                                                                                                        CellEngineUseful::CheckCenterForSector<Particle>(ParticleInProximityObject, Particles, "C1");
+                                                                                                                        //Czemu tu leci
+                                                                                                                        //Error particle center in sector = 100114 489390115 SectorPosX = 30 SectorPosY = 23 SectorPosZ = 19
+                                                                                                                        //przeciez ParticleInProximityObject pochodzi z tej mapy
+                                                                                                                        //a linie
+                                                                                                                        //const auto [SectorPosX, SectorPosY, SectorPosZ] = CellEngineUseful::GetSectorPos(ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z);
+                                                                                                                        //if (ParticlesInSector[SectorPosX][SectorPosY][SectorPosZ].Particles.find(ParticleObject.Index)->second.Center != ParticleObject.Center)
+                                                                                                                        //sprawdza jakby - particle byla nie w tym sektorze co trzeba ale w dwoch sektorach po reakcjach chemicznych bo ma zle wyliczony srodek a z sektora poprzedniego nieusunieta
+                                                                                                                        //czyli moze FillParticleElementsInSpace() zle
+                                                                                                                        //i osobno dla Diffusion i osobno dla Reakcji jak teraz
 
                 CurrentSectorPos = SectorPosType{ .SectorPosX = static_cast<SignedInt>(StartXPosParam), .SectorPosY = static_cast<SignedInt>(StartYPosParam), .SectorPosZ = static_cast<SignedInt>(StartZPosParam) };
                 if (CellEngineUseful::IsDNA(ParticleInProximityObject.EntityId) == false)
@@ -187,12 +201,15 @@ void CellEngineFullAtomSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpa
                 if (const auto ParticleFromSourceToMoveToTargetIterator = LocalSourceParticles.find(ParticleIndex); ParticleFromSourceToMoveToTargetIterator != LocalSourceParticles.end())
                 {
                     Particles[SectorPosTarget.SectorPosX][SectorPosTarget.SectorPosY][SectorPosTarget.SectorPosZ].Particles.insert_or_assign(ParticleFromSourceToMoveToTargetIterator->first, std::move(ParticleFromSourceToMoveToTargetIterator->second));
+                                                                                                                        CellEngineUseful::CheckCenterForSector<Particle>(ParticleFromSourceToMoveToTargetIterator->second, Particles, "C2");
                     LocalSourceParticles.erase(ParticleFromSourceToMoveToTargetIterator);
                 }
                 else
                     cout << "LACK OF PARTICLE INDEX IN SOURCE MAP DATA = " << ParticleIndex << " TARGET = " << SectorPosTarget.SectorPosX << "," << SectorPosTarget.SectorPosY << "," << SectorPosTarget.SectorPosZ << " FROM " << SectorPosSource.SectorPosX << "," << SectorPosSource.SectorPosY << "," << SectorPosSource.SectorPosZ << endl;
             }
             ListOfParticlesToChangeSectors.clear();
+
+            //czy w tej petli nie ma bledu i sie znajdzie w nowym dobrym docelowym sektorze -
             #endif
         }
     }
@@ -235,7 +252,7 @@ void CellEngineFullAtomSimulationSpace::GenerateOneRandomReactionForSelectedSpac
     {
         PrepareRandomReaction();
 
-        SetCurrentSectorPos(SectorPosType{ static_cast<SignedInt>(StartXPosParam), static_cast<SignedInt>(StartYPosParam), static_cast<SignedInt>(StartZPosParam) });
+        SetCurrentSectorPos(SectorPosType{ .SectorPosX = static_cast<SignedInt>(StartXPosParam), .SectorPosY = static_cast<SignedInt>(StartYPosParam), .SectorPosZ = static_cast<SignedInt>(StartZPosParam) });
 
         FindParticlesInProximityOfSimulationSpaceForSelectedSpace(true, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
 
@@ -283,9 +300,14 @@ bool CellEngineFullAtomSimulationSpace::MoveParticleByVectorIfSpaceIsEmptyAndIsI
         return MoveParticleByVectorIfFullAtomSpaceIsEmptyAndIsInBoundsForMPIProcesses(ParticleObject, ParticlesInSector, ParticleObjectIter, ListOfParticlesToChangeSectors, NeighborProcessesIndexes, VectorOfParticlesToSendToNeighborProcessesOrThreads, CurrentSectorPos, VectorX, VectorY, VectorZ, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, CurrentThreadPos);
 }
 
-bool CellEngineFullAtomSimulationSpace::CheckIfSpaceIsEmptyAndIsInBoundsForParticleElements(const ParticleKind& ParticleKindObjectForProduct, ParticlesContainer<Particle>& ParticlesInSector, const SectorPosType& CurrentSectorPos, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam)
+bool CellEngineFullAtomSimulationSpace::CheckIfSpaceIsEmptyAndIsInBoundsForParticleElementsReactions(const ParticleKind& ParticleKindObjectForProduct, ParticlesContainer<Particle>& ParticlesInSector, const SectorPosType& CurrentSectorPos, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam)
 {
-    return CheckFreeSpaceAndBoundsForListOfAtoms(ParticleKindObjectForProduct.ListOfAtoms, ParticlesInSector, CurrentSectorPos, ParticleKindObjectForProduct.Radius, VectorX, VectorY, VectorZ, SimulationSpaceSectorBoundsObjectParam, CellEngineConfigDataObject.CheckOnlyParticlesCenters);
+    return CheckFreeSpaceAndBoundsForListOfAtomsReactions(ParticleKindObjectForProduct.ListOfAtoms, ParticlesInSector, CurrentSectorPos, ParticleKindObjectForProduct.Radius, VectorX, VectorY, VectorZ, SimulationSpaceSectorBoundsObjectParam, CellEngineConfigDataObject.CheckOnlyParticlesCenters);
+}
+
+bool CellEngineFullAtomSimulationSpace::CheckIfSpaceIsEmptyAndIsInBoundsForParticleElementsDiffusion(const ParticleKind& ParticleKindObjectForProduct, ParticlesContainer<Particle>& ParticlesInSector, const SectorPosType& CurrentSectorPos, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam)
+{
+    return CheckFreeSpaceAndBoundsForListOfAtomsDiffusion(ParticleKindObjectForProduct.ListOfAtoms, ParticlesInSector, CurrentSectorPos, ParticleKindObjectForProduct.Radius, VectorX, VectorY, VectorZ, SimulationSpaceSectorBoundsObjectParam, CellEngineConfigDataObject.CheckOnlyParticlesCenters);
 }
 
 bool CellEngineFullAtomSimulationSpace::CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossible(const ParticleSenderStruct& ParticleSenderToInsert)
@@ -293,7 +315,8 @@ bool CellEngineFullAtomSimulationSpace::CheckPossibilityOfInsertingParticleToCur
     const auto SimulationSpaceSectorBoundsObject = SimulationSpaceSectorBounds().SetParametersForChosenSector(ParticleSenderToInsert.SectorPos.X, ParticleSenderToInsert.SectorPos.Y, ParticleSenderToInsert.SectorPos.Z, CellEngineConfigDataObject.ShiftCenterX, CellEngineConfigDataObject.ShiftCenterY, CellEngineConfigDataObject.ShiftCenterZ, CellEngineConfigDataObject.SizeOfParticlesSectorX, CellEngineConfigDataObject.SizeOfParticlesSectorY, CellEngineConfigDataObject.SizeOfParticlesSectorZ);
     auto& ParticleKindToCheck = ParticlesKindsManagerObject.GetParticleKind(ParticleSenderToInsert.ParticleKindId);
 
-    if (CheckIfSpaceIsEmptyAndIsInBoundsForParticleElements(ParticleKindToCheck, Particles, { ParticleSenderToInsert.SectorPos.X, ParticleSenderToInsert.SectorPos.Y, ParticleSenderToInsert.SectorPos.Z }, ParticleSenderToInsert.NewPosition.X, ParticleSenderToInsert.NewPosition.Y, ParticleSenderToInsert.NewPosition.Z, SimulationSpaceSectorBoundsObject) == true)
+    //if (CheckIfSpaceIsEmptyAndIsInBoundsForParticleElementsReactions(ParticleKindToCheck, Particles, { .SectorPosX = ParticleSenderToInsert.SectorPos.X, .SectorPosY = ParticleSenderToInsert.SectorPos.Y, .SectorPosZ = ParticleSenderToInsert.SectorPos.Z }, ParticleSenderToInsert.NewPosition.X, ParticleSenderToInsert.NewPosition.Y, ParticleSenderToInsert.NewPosition.Z, SimulationSpaceSectorBoundsObject) == true)
+    if (CheckIfSpaceIsEmptyAndIsInBoundsForParticleElementsDiffusion(ParticleKindToCheck, Particles, { .SectorPosX = ParticleSenderToInsert.SectorPos.X, .SectorPosY = ParticleSenderToInsert.SectorPos.Y, .SectorPosZ = ParticleSenderToInsert.SectorPos.Z }, ParticleSenderToInsert.NewPosition.X, ParticleSenderToInsert.NewPosition.Y, ParticleSenderToInsert.NewPosition.Z, SimulationSpaceSectorBoundsObject) == true)
     {
         const UnsignedInt ParticleIndex = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), ParticleSenderToInsert.ParticleKindId, 1, -1, 1, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
         FillParticleElementsInSpace(ParticleIndex, ParticleKindToCheck, ParticleSenderToInsert.NewPosition.X, ParticleSenderToInsert.NewPosition.Y, ParticleSenderToInsert.NewPosition.Z);

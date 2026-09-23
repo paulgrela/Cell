@@ -28,7 +28,7 @@ void CellEngineRealRandomParticlesInFullAtomSpaceGenerator::UpdateSequence(Parti
         FOR_EACH_PARTICLE_IN_SECTORS_XYZ
             if (ParticleObject.second.EntityId != 0)
             {
-                auto ParticleKindObject = ParticlesKindsManagerObject.GetParticleKind(ParticleObject.second.EntityId);
+                const auto ParticleKindObject = ParticlesKindsManagerObject.GetParticleKind(ParticleObject.second.EntityId);
                 if (ParticleKindObject.ParticleKindSpecialDataSector.empty() == false)
                     for (const auto& ParticleKindSpecialDataObject : ParticleKindObject.ParticleKindSpecialDataSector)
                         if (auto GeneIter = ParticlesKindsManagerObject.Genes.find(ParticleKindSpecialDataObject.GeneId); GeneIter != ParticlesKindsManagerObject.Genes.end())
@@ -49,7 +49,7 @@ UnsignedInt CellEngineRealRandomParticlesInFullAtomSpaceGenerator::GetNumberOfRe
         FOR_EACH_PARTICLE_IN_SECTORS_XYZ_CONST
             if (ParticleObject.second.EntityId != 0)
             {
-                auto ParticleKindObject = ParticlesKindsManagerObject.GetParticleKind(ParticleObject.second.EntityId);
+                const auto ParticleKindObject = ParticlesKindsManagerObject.GetParticleKind(ParticleObject.second.EntityId);
                 if (ParticleKindObject.ParticleKindSpecialDataSector.empty() == false)
                     for (const auto& ParticleKindSpecialDataObject : ParticleKindObject.ParticleKindSpecialDataSector)
                         if (ParticleKindSpecialDataObject.ParticleType == ParticleTypeParam)
@@ -275,7 +275,7 @@ bool CellEngineRealRandomParticlesInFullAtomSpaceGenerator::TryToGenerateRandomP
     return true;
 }
 
-UnsignedInt GetSizeOfGeneratedParticle_Second(const ParticlesTypes ParticlesTypesObject)
+static UnsignedInt GetSizeOfGeneratedParticle_Second(const ParticlesTypes ParticlesTypesObject)
 {
     switch (ParticlesTypesObject)
     {
@@ -289,7 +289,7 @@ UnsignedInt GetSizeOfGeneratedParticle_Second(const ParticlesTypes ParticlesType
     }
 }
 
-EntityIdInt GetParticleKindIdForRNA_Second(const EntityIdInt EntityId, const ParticlesTypes ParticleTypeParam, const bool ModifyRNAParticleKindId)
+static EntityIdInt GetParticleKindIdForRNA_Second(const EntityIdInt EntityId, const ParticlesTypes ParticleTypeParam, const bool ModifyRNAParticleKindId)
 {
     if (ModifyRNAParticleKindId == true)
     {

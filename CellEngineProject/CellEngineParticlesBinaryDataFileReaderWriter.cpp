@@ -1,5 +1,4 @@
 
-
 #include <fstream>
 
 #include "StringUtils.h"
@@ -502,7 +501,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
                 {
                     if (Particles[ParticleSectorPos.SectorPosX][ParticleSectorPos.SectorPosY][ParticleSectorPos.SectorPosZ].MPIProcessIndex == MPIProcessDataObject.CurrentMPIProcessIndex)
                     {
-                        if (CellEngineUseful::CheckCenterForSector<Particle>(ParticleObject, GetParticles()) == std::make_tuple(ParticleSectorPos.SectorPosX, ParticleSectorPos.SectorPosY, ParticleSectorPos.SectorPosZ))
+                        if (CellEngineUseful::CheckCenterForSector<Particle>(ParticleObject, GetParticles(), "CA1") == std::make_tuple(ParticleSectorPos.SectorPosX, ParticleSectorPos.SectorPosY, ParticleSectorPos.SectorPosZ))
                         {
                             if constexpr(AdditionalInfoPrinting == true)
                                 cout << ParticleSectorPos.SectorPosX << " " << ParticleSectorPos.SectorPosY << " " << ParticleSectorPos.SectorPosZ << " " << ParticleObject.EntityId << " " << ParticleObject.Index << endl;
@@ -516,7 +515,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
 
                 if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == false)
                     if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
-                        CellEngineUseful::CheckCenterForSector<Particle>(ParticleObject, GetParticles());
+                        CellEngineUseful::CheckCenterForSector<Particle>(ParticleObject, GetParticles(), "CA2");
             }
 
             if (ParticleObject.Index == 0)

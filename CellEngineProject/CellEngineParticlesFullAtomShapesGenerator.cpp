@@ -20,7 +20,8 @@ bool CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceInCuboidSelectedS
         else
             SetValueToAtomsForCuboidSelectedSpace(ListOfAtoms, 0, PosXStart, PosYStart, PosZStart, StepX, StepY, StepZ, SizeOfParticleX, SizeOfParticleY, SizeOfParticleZ);
 
-        return CheckFreeSpaceAndBoundsForParticleMovedByVector(ListOfAtoms, Radius, 0, Center, ParticlesParam, CellEngineUseful::GetSectorPos(Center.X, Center.Y, Center.Z), 0, 0, 0, SimulationSpaceSectorBounds{}, CellEngineConfigDataObject.CheckOnlyParticlesCenters, false, false, false);
+        //return CheckFreeSpaceAndBoundsForParticleMovedByVector(ListOfAtoms, Radius, 0, Center, ParticlesParam, CellEngineUseful::GetSectorPos(Center.X, Center.Y, Center.Z), 0, 0, 0, SimulationSpaceSectorBounds{}, CellEngineConfigDataObject.CheckOnlyParticlesCenters, false, false, false);
+        return CheckFreeSpaceAndBoundsForParticleMovedByVectorDiffusion(ListOfAtoms, Radius, 0, Center, ParticlesParam, CellEngineUseful::GetSectorPos(Center.X, Center.Y, Center.Z), 0, 0, 0, SimulationSpaceSectorBounds{}, CellEngineConfigDataObject.CheckOnlyParticlesCenters, false, false, false);
     }
     CATCH("checking free space in cuboid selected space")
 
@@ -52,7 +53,8 @@ bool CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceForEllipsoidSelec
         else
             SetValueToAtomsForEllipsoidSelectedSpace(ListOfAtoms, 0, PosXStart, PosYStart, PosZStart, StepX, StepY, StepZ, RadiusXParam, RadiusYParam, RadiusZParam);
 
-        return CheckFreeSpaceAndBoundsForParticleMovedByVector(ListOfAtoms, Radius, 0, Center, ParticlesParam, CellEngineUseful::GetSectorPos(Center.X, Center.Y, Center.Z), 0, 0, 0, SimulationSpaceSectorBounds{}, CellEngineConfigDataObject.CheckOnlyParticlesCenters, false, false, false);
+        //return CheckFreeSpaceAndBoundsForParticleMovedByVector(ListOfAtoms, Radius, 0, Center, ParticlesParam, CellEngineUseful::GetSectorPos(Center.X, Center.Y, Center.Z), 0, 0, 0, SimulationSpaceSectorBounds{}, CellEngineConfigDataObject.CheckOnlyParticlesCenters, false, false, false);
+        return CheckFreeSpaceAndBoundsForParticleMovedByVectorDiffusion(ListOfAtoms, Radius, 0, Center, ParticlesParam, CellEngineUseful::GetSectorPos(Center.X, Center.Y, Center.Z), 0, 0, 0, SimulationSpaceSectorBounds{}, CellEngineConfigDataObject.CheckOnlyParticlesCenters, false, false, false);
     }
     CATCH("checking free space in ellipsoid selected space")
 

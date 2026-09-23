@@ -57,15 +57,15 @@ namespace CellEngineUseful
     }
 
     template <class Particle>
-    static std::tuple<UnsignedInt, UnsignedInt, UnsignedInt> CheckCenterForSector(const Particle& ParticleObject, const ParticlesContainer<Particle>& ParticlesInSector)
+    static std::tuple<UnsignedInt, UnsignedInt, UnsignedInt> CheckCenterForSector(const Particle& ParticleObject, const ParticlesContainer<Particle>& ParticlesInSector, const char* Str)
     {
         const auto [SectorPosX, SectorPosY, SectorPosZ] = CellEngineUseful::GetSectorPos(ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z);
 
         if (ParticlesInSector[SectorPosX][SectorPosY][SectorPosZ].Particles.find(ParticleObject.Index) == ParticlesInSector[SectorPosX][SectorPosY][SectorPosZ].Particles.end())
-            std::cout << "Error particle not existing in sector = " << ParticleObject.EntityId << " " << ParticleObject.Index << " SectorPosX = " << SectorPosX << " SectorPosY = " << SectorPosY << " SectorPosZ = " << SectorPosZ << std::endl;
+            std::cout << Str << " Error particle not existing in sector = " << ParticleObject.EntityId << " " << ParticleObject.Index << " SectorPosX = " << SectorPosX << " SectorPosY = " << SectorPosY << " SectorPosZ = " << SectorPosZ << std::endl;
 
         if (ParticlesInSector[SectorPosX][SectorPosY][SectorPosZ].Particles.find(ParticleObject.Index)->second.Center != ParticleObject.Center)
-            std::cout << "Error particle center in sector = " << ParticleObject.EntityId << " " << ParticleObject.Index << " SectorPosX = " << SectorPosX << " SectorPosY = " << SectorPosY << " SectorPosZ = " << SectorPosZ << std::endl;
+            std::cout << Str << " Error particle center in sector = " << ParticleObject.EntityId << " " << ParticleObject.Index << " SectorPosX = " << SectorPosX << " SectorPosY = " << SectorPosY << " SectorPosZ = " << SectorPosZ << std::endl;
 
         return { SectorPosX, SectorPosY, SectorPosZ };
     }
