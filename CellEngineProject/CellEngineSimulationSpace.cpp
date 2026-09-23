@@ -303,6 +303,11 @@ bool CellEngineSimulationSpace::PlaceProductParticleInSpaceInRandomPositionOrCan
             if (CheckIfSpaceIsEmptyAndIsInBoundsForParticleElementsReactions(ParticleKindObjectForProduct, Particles, CurrentSectorPos, RandomVectorX, RandomVectorY, RandomVectorZ, SimulationSpaceSectorBoundsObject) == true)
             {
                 //cout << "R3 = (" << RandomVectorX << " " << RandomVectorY << " " << RandomVectorZ << ") (" << SimulationSpaceSectorBoundsObject.StartXPos << "," << SimulationSpaceSectorBoundsObject.EndXPos << ") (" << SimulationSpaceSectorBoundsObject.StartYPos << "," << SimulationSpaceSectorBoundsObject.EndYPos << ") (" << SimulationSpaceSectorBoundsObject.StartZPos << "," << SimulationSpaceSectorBoundsObject.EndZPos << ")" << endl;
+                                        //CZY TE RandomVectorX, RandomVectorY, RandomVectorZ pokrywaja sie z ustwionym SEKTOREM
+                                        const auto [SectorPosX, SectorPosY, SectorPosZ] = CellEngineUseful::GetSectorPos(RandomVectorX, RandomVectorY, RandomVectorZ);
+                                        if (SectorPosX != CurrentSectorPos.SectorPosX || SectorPosY != CurrentSectorPos.SectorPosY || SectorPosZ != CurrentSectorPos.SectorPosZ)
+                                            std::cout << "R4" << " Error particle not in proper sector " << " SectorPosX = " << SectorPosX << " SectorPosY = " << SectorPosY << " SectorPosZ = " << SectorPosZ << " SectorPosXS = " << CurrentSectorPos.SectorPosX << " SectorPosYS = " << CurrentSectorPos.SectorPosY << " SectorPosZS = " << CurrentSectorPos.SectorPosZ << std::endl;
+
 
                 FoundFreePlace = true;
 

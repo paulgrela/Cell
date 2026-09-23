@@ -174,7 +174,10 @@ void CellEngineFullAtomSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpa
             //TO CO DLA MPI ale z poprawionym końcem zroznicowania dla unordered_map i mapy
             for (auto& ParticleInProximityObject : Particles[StartXPosParam][StartYPosParam][StartZPosParam].Particles | views::values)
             {
-                                                                                                                        CellEngineUseful::CheckCenterForSector<Particle>(ParticleInProximityObject, Particles, "C1");
+                                                                                                                        auto [SectorPosX, SectorPosY, SectorPosZ] = CellEngineUseful::CheckCenterForSector<Particle>(ParticleInProximityObject, Particles, "C1");
+                                                                                                                        if (SectorPosX != StartXPosParam || SectorPosY != StartYPosParam || SectorPosZ != StartZPosParam)
+                                                                                                                            std::cout << "C1" << " Error particle center not in proper sector = " << ParticleInProximityObject.EntityId << " " << ParticleInProximityObject.Index << " SectorPosX = " << SectorPosX << " SectorPosY = " << SectorPosY << " SectorPosZ = " << SectorPosZ << " SectorPosXS = " << StartXPosParam << " SectorPosYS = " << StartYPosParam << " SectorPosZS = " << StartZPosParam << std::endl;
+
                                                                                                                         //Czemu tu leci
                                                                                                                         //Error particle center in sector = 100114 489390115 SectorPosX = 30 SectorPosY = 23 SectorPosZ = 19
                                                                                                                         //przeciez ParticleInProximityObject pochodzi z tej mapy
@@ -182,8 +185,10 @@ void CellEngineFullAtomSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpa
                                                                                                                         //const auto [SectorPosX, SectorPosY, SectorPosZ] = CellEngineUseful::GetSectorPos(ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z);
                                                                                                                         //if (ParticlesInSector[SectorPosX][SectorPosY][SectorPosZ].Particles.find(ParticleObject.Index)->second.Center != ParticleObject.Center)
                                                                                                                         //sprawdza jakby - particle byla nie w tym sektorze co trzeba ale w dwoch sektorach po reakcjach chemicznych bo ma zle wyliczony srodek a z sektora poprzedniego nieusunieta
-                                                                                                                        //czyli moze FillParticleElementsInSpace() zle
-                                                                                                                        //i osobno dla Diffusion i osobno dla Reakcji jak teraz
+
+                                                                                                                        //czyli moze FillParticleElementsInSpace() zle dla dyfuzji tutaj
+                                                                                                                        //i trzeba osobno dla Diffusion i osobno dla Reakcji jak teraz
+                                                                                                                        //ta funkcja jest tylko w wielowatkowosci dla dyfuzji lub bez wgledu na to czy sa watki w reakcjach
 
                 CurrentSectorPos = SectorPosType{ .SectorPosX = static_cast<SignedInt>(StartXPosParam), .SectorPosY = static_cast<SignedInt>(StartYPosParam), .SectorPosZ = static_cast<SignedInt>(StartZPosParam) };
                 if (CellEngineUseful::IsDNA(ParticleInProximityObject.EntityId) == false)
@@ -310,6 +315,7 @@ bool CellEngineFullAtomSimulationSpace::CheckIfSpaceIsEmptyAndIsInBoundsForParti
     return CheckFreeSpaceAndBoundsForListOfAtomsDiffusion(ParticleKindObjectForProduct.ListOfAtoms, ParticlesInSector, CurrentSectorPos, ParticleKindObjectForProduct.Radius, VectorX, VectorY, VectorZ, SimulationSpaceSectorBoundsObjectParam, CellEngineConfigDataObject.CheckOnlyParticlesCenters);
 }
 
+//PO DYFUZJI W MULTITHREADING TO JEST FUNKCJA DO WSTAWIANIA PO ZATWIERDZENIU DYFUZJI W SRODOWISKU WIELOWATKOWYM i MOZE ONA POWODUJE ZE NIE MA BLEDOW GDY WIELE WATKOW
 bool CellEngineFullAtomSimulationSpace::CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossible(const ParticleSenderStruct& ParticleSenderToInsert)
 {
     const auto SimulationSpaceSectorBoundsObject = SimulationSpaceSectorBounds().SetParametersForChosenSector(ParticleSenderToInsert.SectorPos.X, ParticleSenderToInsert.SectorPos.Y, ParticleSenderToInsert.SectorPos.Z, CellEngineConfigDataObject.ShiftCenterX, CellEngineConfigDataObject.ShiftCenterY, CellEngineConfigDataObject.ShiftCenterZ, CellEngineConfigDataObject.SizeOfParticlesSectorX, CellEngineConfigDataObject.SizeOfParticlesSectorY, CellEngineConfigDataObject.SizeOfParticlesSectorZ);
