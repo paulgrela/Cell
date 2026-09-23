@@ -293,14 +293,19 @@ bool CellEngineSimulationSpace::PlaceProductParticleInSpaceInRandomPositionOrCan
         {
             NumberOfTries++;
 
-            auto RandomVectorX = GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirectionX_int64t);
-            auto RandomVectorY = GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirectionY_int64t);
-            auto RandomVectorZ = GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirectionZ_int64t);;
+            const auto RandomVectorX = GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirectionX_int64t);
+            const auto RandomVectorY = GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirectionY_int64t);
+            const auto RandomVectorZ = GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirectionZ_int64t);;
 
-            LoggersManagerObject.Log(STREAM("R1 = " << RandomVectorX << " " << RandomVectorY << " " << RandomVectorZ << " " << SimulationSpaceSectorBoundsObject.StartXPos << " " << SimulationSpaceSectorBoundsObject.EndXPos << " " << SimulationSpaceSectorBoundsObject.StartYPos << " " << SimulationSpaceSectorBoundsObject.EndYPos << " " << SimulationSpaceSectorBoundsObject.StartZPos << " " << SimulationSpaceSectorBoundsObject.EndZPos));
+            //LoggersManagerObject.Log(STREAM("R1 = " << RandomVectorX << " " << RandomVectorY << " " << RandomVectorZ << " " << SimulationSpaceSectorBoundsObject.StartXPos << " " << SimulationSpaceSectorBoundsObject.EndXPos << " " << SimulationSpaceSectorBoundsObject.StartYPos << " " << SimulationSpaceSectorBoundsObject.EndYPos << " " << SimulationSpaceSectorBoundsObject.StartZPos << " " << SimulationSpaceSectorBoundsObject.EndZPos));
+            cout << "R1 = (" << RandomVectorX << " " << RandomVectorY << " " << RandomVectorZ << ") (" << SimulationSpaceSectorBoundsObject.StartXPos << "," << SimulationSpaceSectorBoundsObject.EndXPos << ") (" << SimulationSpaceSectorBoundsObject.StartYPos << "," << SimulationSpaceSectorBoundsObject.EndYPos << ") (" << SimulationSpaceSectorBoundsObject.StartZPos << "," << SimulationSpaceSectorBoundsObject.EndZPos << ")" << endl;
+            // R1 nie wchodzi chociaz powinien - blad sprawdzania
 
             if (CheckIfSpaceIsEmptyAndIsInBoundsForParticleElements(ParticleKindObjectForProduct, Particles, CurrentSectorPos, RandomVectorX, RandomVectorY, RandomVectorZ, SimulationSpaceSectorBoundsObject) == true)
+            //JESLI NOWE DANE POZA SEKTOREM TO NIE ROB ALBO - TU SAM SPRAWDZ
             {
+                cout << "R2 = (" << RandomVectorX << " " << RandomVectorY << " " << RandomVectorZ << ") (" << SimulationSpaceSectorBoundsObject.StartXPos << "," << SimulationSpaceSectorBoundsObject.EndXPos << ") (" << SimulationSpaceSectorBoundsObject.StartYPos << "," << SimulationSpaceSectorBoundsObject.EndYPos << ") (" << SimulationSpaceSectorBoundsObject.StartZPos << "," << SimulationSpaceSectorBoundsObject.EndZPos << ")" << endl;
+
                 FoundFreePlace = true;
 
                 FillParticleElementsInSpace(ParticleIndex, ParticleKindObjectForProduct, RandomVectorX, RandomVectorY, RandomVectorZ);
@@ -354,6 +359,7 @@ bool CellEngineSimulationSpace::MakeChemicalReaction(ChemicalReaction& ReactionO
             auto& ParticleKindObjectForProduct = ParticlesKindsManagerObject.GetParticleKind(ReactionProduct.EntityId);
 
             if (PlaceProductParticleInSpaceInRandomPositionOrCancelReaction(ParticleIndex, ParticlesBackup, CreatedParticlesIndexes, CenterIndex, Centers, ParticleKindObjectForProduct, start_time) == false)
+            //if (PlaceProductParticleInSpaceInDeterminedPositionOrCancelReaction(ParticleIndex, ParticlesBackup, CreatedParticlesIndexes, CenterIndex, Centers, ParticleKindObjectForProduct, start_time) == false)
                 return false;
 
             CenterIndex++;

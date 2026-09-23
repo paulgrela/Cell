@@ -16,7 +16,7 @@ using namespace std;
 constexpr bool AdditionalInfoPrinting = false;
 constexpr bool AddReactionsOfSuddenAppearanceAndDisappearance = false;
 
-void SavePointerToBinaryFile(ofstream& ParticlesDataFile, const Particle* PointerToParticle)
+static void SavePointerToBinaryFile(ofstream& ParticlesDataFile, const Particle* PointerToParticle)
 {
     try
     {
@@ -31,7 +31,7 @@ void SavePointerToBinaryFile(ofstream& ParticlesDataFile, const Particle* Pointe
     CATCH("saving pointer to binary file")
 }
 
-void SaveStringToBinaryFile(ofstream& ParticlesDataFile, const string& StringToBeSaved)
+static void SaveStringToBinaryFile(ofstream& ParticlesDataFile, const string& StringToBeSaved)
 {
     try
     {
@@ -43,7 +43,7 @@ void SaveStringToBinaryFile(ofstream& ParticlesDataFile, const string& StringToB
 }
 
 template <class TElement>
-void SaveVectorToBinaryFile(ofstream& ParticlesDataFile, const vector<TElement>& VectorToBeSaved)
+static void SaveVectorToBinaryFile(ofstream& ParticlesDataFile, const vector<TElement>& VectorToBeSaved)
 {
     try
     {
@@ -298,7 +298,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::PrepareParticlesAfterReading
     CATCH("preparing particles after reading from file")
 };
 
-void ReadStringFromBinaryFile(ifstream& ParticlesDataFile, string& StringToRead)
+static void ReadStringFromBinaryFile(ifstream& ParticlesDataFile, string& StringToRead)
 {
     try
     {
@@ -311,7 +311,7 @@ void ReadStringFromBinaryFile(ifstream& ParticlesDataFile, string& StringToRead)
 }
 
 template <class TElement>
-void ReadVectorFromBinaryFile(ifstream& ParticlesDataFile, vector<TElement>& VectorToBeRead)
+static void ReadVectorFromBinaryFile(ifstream& ParticlesDataFile, vector<TElement>& VectorToBeRead)
 {
     try
     {
@@ -401,7 +401,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesKindsFromBinary
     CATCH("reading particles from binary file")
 }
 
-void ReadVoxelsVectorDividedByStepsFromBinaryFile(ifstream& ParticlesDataFile, ListOfVoxelsType& VectorToBeRead, const RealType DivideFactor)
+static void ReadVoxelsVectorDividedByStepsFromBinaryFile(ifstream& ParticlesDataFile, ListOfVoxelsType& VectorToBeRead, const RealType DivideFactor)
 {
     try
     {
@@ -420,18 +420,6 @@ void ReadVoxelsVectorDividedByStepsFromBinaryFile(ifstream& ParticlesDataFile, L
         }
     }
     CATCH("reading vector from binary file")
-}
-
-std::tuple<UnsignedInt, UnsignedInt, UnsignedInt> CheckCenterForSector(const Particle& ParticleObject, const ParticlesContainer<Particle>& ParticlesInSector)
-{
-    const UnsignedInt X = CellEngineUseful::GetSectorPos(ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z).SectorPosX;
-    const UnsignedInt Y = CellEngineUseful::GetSectorPos(ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z).SectorPosY;
-    const UnsignedInt Z = CellEngineUseful::GetSectorPos(ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z).SectorPosZ;
-
-        // if (ParticlesInSector[X][Y][Z].Particles.find(ParticleObject.Index)->second.Center != ParticleObject.Center)
-        //     cout << "Error for particle XYZ = " << ParticleObject.EntityId << " " << ParticleObject.Index << endl;
-
-    return { X, Y, Z };
 }
 
 void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(ifstream& ParticlesDataFile)
@@ -514,7 +502,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
                 {
                     if (Particles[ParticleSectorPos.SectorPosX][ParticleSectorPos.SectorPosY][ParticleSectorPos.SectorPosZ].MPIProcessIndex == MPIProcessDataObject.CurrentMPIProcessIndex)
                     {
-                        if (CheckCenterForSector(ParticleObject, GetParticles()) == std::make_tuple(ParticleSectorPos.SectorPosX, ParticleSectorPos.SectorPosY, ParticleSectorPos.SectorPosZ))
+                        if (CellEngineUseful::CheckCenterForSector<Particle>(ParticleObject, GetParticles()) == std::make_tuple(ParticleSectorPos.SectorPosX, ParticleSectorPos.SectorPosY, ParticleSectorPos.SectorPosZ))
                         {
                             if constexpr(AdditionalInfoPrinting == true)
                                 cout << ParticleSectorPos.SectorPosX << " " << ParticleSectorPos.SectorPosY << " " << ParticleSectorPos.SectorPosZ << " " << ParticleObject.EntityId << " " << ParticleObject.Index << endl;
@@ -528,7 +516,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
 
                 if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == false)
                     if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
-                        CheckCenterForSector(ParticleObject, GetParticles());
+                        CellEngineUseful::CheckCenterForSector<Particle>(ParticleObject, GetParticles());
             }
 
             if (ParticleObject.Index == 0)

@@ -1390,13 +1390,13 @@ public:
                 ImGui::Checkbox("Use Mutex Between Main Screen Thread and Menu Threads", &CellEngineConfigDataObject.UseMutexBetweenMainScreenThreadAndMenuThreads);
                 ImGui::Text("");
 
-                #ifdef CONTAINERS_FOR_SPEED
+                //#ifdef CONTAINERS_FOR_SPEED
                 if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == false)
                     ColorButton(AlignString("MAKE N STEPS OF SIMULATION FOR WHOLE CELL SPACE IN THREADS", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
                     {
                         CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfSimulationForWholeCellSpaceInThreads(CellEngineConfigDataObject.NumberOfStepsInSimulationOutside, CellEngineConfigDataObject.NumberOfStepsInSimulationInside);
                     });
-                #endif
+                //#endif
 
                 if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true)
                     ColorButton(AlignString("MAKE N STEPS OF SIMULATION FOR WHOLE CELL SPACE IN MPI", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)

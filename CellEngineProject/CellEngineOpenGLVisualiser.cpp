@@ -116,7 +116,7 @@ void CellEngineOpenGLVisualiser::StartUp()
 {
     try
     {
-        if (DrawBondsOnePragmaVersion == true)
+        if constexpr (DrawBondsOnePragmaVersion == true)
             LinesPositions.reserve(10'000'000 * 6);
         else
         {
@@ -163,7 +163,7 @@ void CellEngineOpenGLVisualiser::StartUp()
 
         InitArcBall();
 
-        GetStartCenterPoint();
+        //GetStartCenterPoint();
 
         glUseProgram(ParticlesAtomsTrianglesShadersProgram);
 

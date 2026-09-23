@@ -130,46 +130,71 @@ void CellEngineFullAtomSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpa
     {
         uniform_int_distribution<SignedInt> UniformDistributionObjectMoveParticleDirection_int64t(-10, 10);
 
-        #ifdef CONTAINERS_FOR_SPEED
         auto EmptyParticlesIter = GetParticles().end();
-        if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == false)
-        {
-            for (auto& ParticleInProximityObject : Particles[StartXPosParam][StartYPosParam][StartZPosParam].Particles | views::values)
-            {
-                CurrentSectorPos = SectorPosType{ .SectorPosX = static_cast<SignedInt>(StartXPosParam), .SectorPosY = static_cast<SignedInt>(StartYPosParam), .SectorPosZ = static_cast<SignedInt>(StartZPosParam) };
-                if (CellEngineUseful::IsDNA(ParticleInProximityObject.EntityId) == false)
-                    MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(ParticleInProximityObject, Particles, EmptyParticlesIter, CurrentThreadLocalSimulationSpaceData->ListOfParticlesToChangeSectors, CurrentSectorPos, GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), 0, 0, 0, SizeXParam, SizeYParam, SizeZParam);
-            }
 
-            for (const auto& [ParticleIndex, SectorPosSource, SectorPosTarget] : CurrentThreadLocalSimulationSpaceData->ListOfParticlesToChangeSectors)
-                Particles[SectorPosTarget.SectorPosX][SectorPosTarget.SectorPosY][SectorPosTarget.SectorPosZ].Particles.insert(Particles[SectorPosSource.SectorPosX][SectorPosSource.SectorPosY][SectorPosSource.SectorPosZ].Particles.extract(ParticleIndex));
-            CurrentThreadLocalSimulationSpaceData->ListOfParticlesToChangeSectors.clear();
+        if (CurrentThreadLocalSimulationSpaceData != nullptr)
+        {
+            if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == false)
+            {
+                for (auto& ParticleInProximityObject : Particles[StartXPosParam][StartYPosParam][StartZPosParam].Particles | views::values)
+                {
+                                                                                                                        CellEngineUseful::CheckCenterForSector<Particle>(ParticleInProximityObject, Particles);
+
+                    CurrentSectorPos = SectorPosType{ .SectorPosX = static_cast<SignedInt>(StartXPosParam), .SectorPosY = static_cast<SignedInt>(StartYPosParam), .SectorPosZ = static_cast<SignedInt>(StartZPosParam) };
+                    if (CellEngineUseful::IsDNA(ParticleInProximityObject.EntityId) == false)
+                        MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(ParticleInProximityObject, Particles, EmptyParticlesIter, CurrentThreadLocalSimulationSpaceData->ListOfParticlesToChangeSectors, CurrentSectorPos, GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), 0, 0, 0, SizeXParam, SizeYParam, SizeZParam);
+                }
+
+                for (const auto& [ParticleIndex, SectorPosSource, SectorPosTarget] : CurrentThreadLocalSimulationSpaceData->ListOfParticlesToChangeSectors)
+                    Particles[SectorPosTarget.SectorPosX][SectorPosTarget.SectorPosY][SectorPosTarget.SectorPosZ].Particles.insert(Particles[SectorPosSource.SectorPosX][SectorPosSource.SectorPosY][SectorPosSource.SectorPosZ].Particles.extract(ParticleIndex));
+                CurrentThreadLocalSimulationSpaceData->ListOfParticlesToChangeSectors.clear();
+            }
+            else
+            if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true)
+            {
+                for (auto& ParticleInProximityObject : Particles[StartXPosParam][StartYPosParam][StartZPosParam].Particles | views::values)
+                {
+                    CurrentSectorPos = SectorPosType{ .SectorPosX = static_cast<SignedInt>(StartXPosParam), .SectorPosY = static_cast<SignedInt>(StartYPosParam), .SectorPosZ = static_cast<SignedInt>(StartZPosParam) };
+                    if (CellEngineUseful::IsDNA(ParticleInProximityObject.EntityId) == false)
+                        MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(ParticleInProximityObject, Particles, EmptyParticlesIter, ListOfParticlesToChangeSectors, CurrentSectorPos, GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), 0, 0, 0, SizeXParam, SizeYParam, SizeZParam);
+                }
+
+                for (const auto& [ParticleIndex, SectorPosSource, SectorPosTarget] : ListOfParticlesToChangeSectors)
+                    Particles[SectorPosTarget.SectorPosX][SectorPosTarget.SectorPosY][SectorPosTarget.SectorPosZ].Particles.insert(Particles[SectorPosSource.SectorPosX][SectorPosSource.SectorPosY][SectorPosSource.SectorPosZ].Particles.extract(ParticleIndex));
+                ListOfParticlesToChangeSectors.clear();
+            }
         }
         else
-        if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true)
         {
+            //TO CO DLA MPI ale z poprawionym końcem zroznicowania dla unordered_map i mapy
             for (auto& ParticleInProximityObject : Particles[StartXPosParam][StartYPosParam][StartZPosParam].Particles | views::values)
             {
+                                                                                                                        CellEngineUseful::CheckCenterForSector<Particle>(ParticleInProximityObject, Particles);
+
                 CurrentSectorPos = SectorPosType{ .SectorPosX = static_cast<SignedInt>(StartXPosParam), .SectorPosY = static_cast<SignedInt>(StartYPosParam), .SectorPosZ = static_cast<SignedInt>(StartZPosParam) };
                 if (CellEngineUseful::IsDNA(ParticleInProximityObject.EntityId) == false)
                     MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(ParticleInProximityObject, Particles, EmptyParticlesIter, ListOfParticlesToChangeSectors, CurrentSectorPos, GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), 0, 0, 0, SizeXParam, SizeYParam, SizeZParam);
             }
 
+            #ifdef CONTAINERS_FOR_SPEED
             for (const auto& [ParticleIndex, SectorPosSource, SectorPosTarget] : ListOfParticlesToChangeSectors)
                 Particles[SectorPosTarget.SectorPosX][SectorPosTarget.SectorPosY][SectorPosTarget.SectorPosZ].Particles.insert(Particles[SectorPosSource.SectorPosX][SectorPosSource.SectorPosY][SectorPosSource.SectorPosZ].Particles.extract(ParticleIndex));
             ListOfParticlesToChangeSectors.clear();
+            #else
+            for (const auto& [ParticleIndex, SectorPosSource, SectorPosTarget] : ListOfParticlesToChangeSectors)
+            {
+                auto& LocalSourceParticles = Particles[SectorPosSource.SectorPosX][SectorPosSource.SectorPosY][SectorPosSource.SectorPosZ].Particles;
+                if (const auto ParticleFromSourceToMoveToTargetIterator = LocalSourceParticles.find(ParticleIndex); ParticleFromSourceToMoveToTargetIterator != LocalSourceParticles.end())
+                {
+                    Particles[SectorPosTarget.SectorPosX][SectorPosTarget.SectorPosY][SectorPosTarget.SectorPosZ].Particles.insert_or_assign(ParticleFromSourceToMoveToTargetIterator->first, std::move(ParticleFromSourceToMoveToTargetIterator->second));
+                    LocalSourceParticles.erase(ParticleFromSourceToMoveToTargetIterator);
+                }
+                else
+                    cout << "LACK OF PARTICLE INDEX IN SOURCE MAP DATA = " << ParticleIndex << " TARGET = " << SectorPosTarget.SectorPosX << "," << SectorPosTarget.SectorPosY << "," << SectorPosTarget.SectorPosZ << " FROM " << SectorPosSource.SectorPosX << "," << SectorPosSource.SectorPosY << "," << SectorPosSource.SectorPosZ << endl;
+            }
+            ListOfParticlesToChangeSectors.clear();
+            #endif
         }
-        #else
-        for (auto ParticleInProximityObjectIter = Particles[StartXPosParam][StartYPosParam][StartZPosParam].Particles.begin(); ParticleInProximityObjectIter != Particles[StartXPosParam][StartYPosParam][StartZPosParam].Particles.end(); )
-        {
-            CurrentSectorPos = SectorPosType{ static_cast<SignedInt>(StartXPosParam), static_cast<SignedInt>(StartYPosParam), static_cast<SignedInt>(StartZPosParam) };
-            if (CellEngineUseful::IsDNA(ParticleInProximityObjectIter->second.EntityId) == false)
-                MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(ParticleInProximityObjectIter->second, Particles, ParticleInProximityObjectIter, ListOfParticlesToChangeSectors, CurrentSectorPos, GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), 0, 0, 0, SizeXParam, SizeYParam, SizeZParam);
-        }
-        for (const auto& [ParticleIndex, SectorPosSource, SectorPosTarget] : ListOfParticlesToChangeSectors)
-            Particles[SectorPosTarget.SectorPosX][SectorPosTarget.SectorPosY][SectorPosTarget.SectorPosZ].Particles.insert(Particles[SectorPosSource.SectorPosX][SectorPosSource.SectorPosY][SectorPosSource.SectorPosZ].Particles.extract(ParticleIndex));
-        ListOfParticlesToChangeSectors.clear();
-        #endif
     }
     CATCH("generating one step of diffusion for selected space")
 }
@@ -189,19 +214,6 @@ void CellEngineFullAtomSimulationSpace::GenerateNStepsOfDiffusionForWholeCellSpa
         for (UnsignedInt Step = 1; Step <= NumberOfSimulationSteps; Step++)
             FOR_EACH_SECTOR_IN_XYZ_ONLY
                 GenerateOneStepOfDiffusionForSelectedSpace(CurrentThreadLocalSimulationSpaceData, InBounds, ParticleSectorXIndex, ParticleSectorYIndex, ParticleSectorZIndex, XSizeParam, YSizeParam, ZSizeParam);
-
-        if (CurrentThreadLocalSimulationSpaceData != nullptr)
-        {
-            for (const auto& [ParticleIndex, SectorPosSource, SectorPosTarget] : CurrentThreadLocalSimulationSpaceData->ListOfParticlesToChangeSectors)
-                Particles[SectorPosTarget.SectorPosX][SectorPosTarget.SectorPosY][SectorPosTarget.SectorPosZ].Particles.insert(Particles[SectorPosSource.SectorPosX][SectorPosSource.SectorPosY][SectorPosSource.SectorPosZ].Particles.extract(ParticleIndex));
-            CurrentThreadLocalSimulationSpaceData->ListOfParticlesToChangeSectors.clear();
-        }
-        else
-        {
-            for (const auto& [ParticleIndex, SectorPosSource, SectorPosTarget] : ListOfParticlesToChangeSectors)
-                Particles[SectorPosTarget.SectorPosX][SectorPosTarget.SectorPosY][SectorPosTarget.SectorPosZ].Particles.insert(Particles[SectorPosSource.SectorPosX][SectorPosSource.SectorPosY][SectorPosSource.SectorPosZ].Particles.extract(ParticleIndex));
-            ListOfParticlesToChangeSectors.clear();
-        }
 
         CheckConditionsToIncSimulationStepNumberForStatistics();
 
@@ -234,7 +246,7 @@ void CellEngineFullAtomSimulationSpace::GenerateOneRandomReactionForSelectedSpac
     CATCH("generating random reaction for selected space")
 }
 
-void CellEngineFullAtomSimulationSpace::GenerateNStepsOfOneRandomReactionForWholeCellSpace(const RealType XStartParam, const RealType YStartParam, const RealType ZStartParam, const RealType XStepParam, const RealType YStepParam, const RealType ZStepParam, const RealType XSizeParam, RealType YSizeParam, const RealType ZSizeParam, const RealType NumberOfSimulationSteps)
+void CellEngineFullAtomSimulationSpace::GenerateNStepsOfOneRandomReactionForWholeCellSpace(const RealType XStartParam, const RealType YStartParam, const RealType ZStartParam, const RealType XStepParam, const RealType YStepParam, const RealType ZStepParam, const RealType XSizeParam, const RealType YSizeParam, const RealType ZSizeParam, const RealType NumberOfSimulationSteps)
 {
     try
     {

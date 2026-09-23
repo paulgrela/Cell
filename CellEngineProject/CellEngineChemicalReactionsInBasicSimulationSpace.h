@@ -1,6 +1,6 @@
 
-#ifndef CELL_ENGINE_CHEMICAL_REACTIONS_IN_VOXEL_SPACE_H
-#define CELL_ENGINE_CHEMICAL_REACTIONS_IN_VOXEL_SPACE_H
+#ifndef CELL_ENGINE_CHEMICAL_REACTIONS_IN_BASIC_SIMULATION_SPACE_H
+#define CELL_ENGINE_CHEMICAL_REACTIONS_IN_BASIC_SIMULATION_SPACE_H
 
 #include "CellEngineBasicParticlesOperations.h"
 #include "CellEngineConfigData.h"
@@ -9,8 +9,7 @@
 struct ThreadLocalParticlesInProximity
 {
 public:
-    std::map<EntityIdInt, UnsignedInt> ParticlesKindsFoundInProximity;
-    //std::unordered_map<EntityIdInt, UnsignedInt> ParticlesKindsFoundInProximity;
+    MainMapType<EntityIdInt, UnsignedInt> ParticlesKindsFoundInProximity;
     std::vector<UniqueIdInt> ParticlesSortedByCapacityFoundInProximity;
 public:
     std::vector<UniqueIdInt> NucleotidesWithFreeNextEndingsFoundInProximity;

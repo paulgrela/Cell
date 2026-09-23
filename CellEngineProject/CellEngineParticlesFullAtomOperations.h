@@ -170,11 +170,11 @@ protected:
     {
         try
         {
-            #ifdef CONTAINERS_FOR_SPEED
+            //#ifdef CONTAINERS_FOR_SPEED
             if (CheckFreeSpaceAndBoundsForParticleMovedByVector(ParticleObject.ListOfAtoms, ParticleObject.Radius, ParticleObject.Index, ParticleObject.Center, ParticlesInSector, CurrentSectorPos, VectorX, VectorY, VectorZ, SimulationSpaceSectorBounds{ StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, StartXPosParam + SizeXParam, StartYPosParam + SizeYParam, StartZPosParam + SizeZParam }, CellEngineConfigDataObject.CheckOnlyParticlesCenters, true, true, false) == true)
-            #else
-            if (CheckFreeSpaceAndBoundsForParticleMovedByVector(ParticleObjectIter->second.ListOfAtoms, ParticleObjectIter->second.Radius, ParticleObjectIter->second.Index, ParticleObjectIter->second.Center, ParticlesInSector, CurrentSectorPos, VectorX, VectorY, VectorZ, SimulationSpaceSectorBounds{ StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, StartXPosParam + SizeXParam, StartYPosParam + SizeYParam, StartZPosParam + SizeZParam }, CellEngineConfigDataObject.CheckOnlyParticlesCenters, true, true, false) == true)
-            #endif
+            //#else
+            //if (CheckFreeSpaceAndBoundsForParticleMovedByVector(ParticleObjectIter->second.ListOfAtoms, ParticleObjectIter->second.Radius, ParticleObjectIter->second.Index, ParticleObjectIter->second.Center, ParticlesInSector, CurrentSectorPos, VectorX, VectorY, VectorZ, SimulationSpaceSectorBounds{ StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, StartXPosParam + SizeXParam, StartYPosParam + SizeYParam, StartZPosParam + SizeZParam }, CellEngineConfigDataObject.CheckOnlyParticlesCenters, true, true, false) == true)
+            //#endif
                 MoveParticleByVectorForMPIProcesses(ParticleObject, ParticlesInSector, ParticleObjectIter, ListOfParticlesToChangeSectors, NeighbourProcessesIndexes, VectorOfParticlesToSendToNeighbourProcesses, VectorX, VectorY, VectorZ, CurrentThreadPos);
             else
                 return false;
@@ -188,11 +188,11 @@ protected:
     {
         try
         {
-            #ifdef CONTAINERS_FOR_SPEED
+            //#ifdef CONTAINERS_FOR_SPEED
             if (CheckFreeSpaceAndBoundsForParticleMovedByVector(ParticleObject.ListOfAtoms, ParticleObject.Radius, ParticleObject.Index, ParticleObject.Center, ParticlesInSector, CurrentSectorPos, VectorX, VectorY, VectorZ, SimulationSpaceSectorBounds{ StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, StartXPosParam + SizeXParam, StartYPosParam + SizeYParam, StartZPosParam + SizeZParam }, CellEngineConfigDataObject.CheckOnlyParticlesCenters, true, true, false) == true)
-            #else
-            if (CheckFreeSpaceAndBoundsForParticleMovedByVector(ParticleObjectIter->second.ListOfAtoms, ParticleObjectIter->second.Radius, ParticleObjectIter->second.Index, ParticleObjectIter->second.Center, ParticlesInSector, CurrentSectorPos, VectorX, VectorY, VectorZ, SimulationSpaceSectorBounds{ StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, StartXPosParam + SizeXParam, StartYPosParam + SizeYParam, StartZPosParam + SizeZParam }, CellEngineConfigDataObject.CheckOnlyParticlesCenters, true, true, false) == true)
-            #endif
+            //#else
+            //if (CheckFreeSpaceAndBoundsForParticleMovedByVector(ParticleObjectIter->second.ListOfAtoms, ParticleObjectIter->second.Radius, ParticleObjectIter->second.Index, ParticleObjectIter->second.Center, ParticlesInSector, CurrentSectorPos, VectorX, VectorY, VectorZ, SimulationSpaceSectorBounds{ StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, StartXPosParam + SizeXParam, StartYPosParam + SizeYParam, StartZPosParam + SizeZParam }, CellEngineConfigDataObject.CheckOnlyParticlesCenters, true, true, false) == true)
+            //#endif
                 MoveParticleByVectorForThreads(ParticleObject, ParticlesInSector, ParticleObjectIter, ListOfParticlesToChangeSectors, NeighbourProcessesIndexes, VectorOfParticlesToSendToNeighbourProcesses, VectorX, VectorY, VectorZ, CurrentThreadPos);
             else
                 return false;
