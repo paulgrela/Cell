@@ -37,10 +37,10 @@ void CellEngineChemicalReactionsInSimulationSpace::MakingZeroSizeForContainersFo
     try
     {
         LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity.clear();
-                                                //LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity.reserve(100000);
+        //LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity.reserve(100000);
 
         LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity.clear();
-                                                //LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity.reserve(100000);
+        //LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity.reserve(100000);
 
         LocalThreadParticlesInProximityObject.NucleotidesWithFreeNextEndingsFoundInProximity.clear();
         LocalThreadParticlesInProximityObject.NucleotidesWithFreePrevEndingsFoundInProximity.clear();

@@ -25,6 +25,7 @@ public:
     T* PairedNucleotidePtr = nullptr;
 public:
     UniqueIdInt PairedNucleotideTemporary = 0;
+    //UniqueIdIntReduced PairedNucleotideTemporary = 0;
 public:
     static void LinkPairedNucleotides(T* PairedNucleotide1, T* PairedNucleotide2)
     {
@@ -40,6 +41,7 @@ public:
     std::vector<T*> LinkedParticlesPointersList;
 public:
     std::vector<UniqueIdInt> LinkedParticlesPointersListTemporary;
+    //std::vector<UniqueIdIntReduced> LinkedParticlesPointersListTemporary;
 public:
     void AddNewLinkToParticle(T* NewLinkToParticle)
     {
@@ -68,6 +70,7 @@ using ListOfAtomsType = std::vector<CellEngineAtom>;
 using ListOfCentersType = std::vector<vector3_Real32>;
 
 class Particle : public DoublyLinkedListNode<Particle, UniqueIdInt>, public PairedNucleotide<Particle>, public LinkedParticles<Particle>
+//class Particle : public DoublyLinkedListNode<Particle, UniqueIdIntReduced>, public PairedNucleotide<Particle>, public LinkedParticles<Particle>
 {
 public:
     bool SelectedForReaction{};
@@ -75,10 +78,17 @@ public:
     EntityIdInt EntityId{};
     ChainIdInt ChainId{};
     UniqueIdInt Index{};
-    UniqueIdInt GenomeThread{};
-    UniqueIdInt GenomeIndex{};
-    UniqueIdInt GenomeIndexPrev{};
-    UniqueIdInt GenomeIndexNext{};
+
+    // UniqueIdInt GenomeThread{};
+    // UniqueIdInt GenomeIndex{};
+    // UniqueIdInt GenomeIndexPrev{};
+    // UniqueIdInt GenomeIndexNext{};
+
+    UniqueIdIntReduced GenomeThread{};
+    UniqueIdIntReduced GenomeIndex{};
+    UniqueIdIntReduced GenomeIndexPrev{};
+    UniqueIdIntReduced GenomeIndexNext{};
+
     ElectricChargeType ElectricCharge{};
     SectorPosType ParticleSectorPos{};
 public:
@@ -107,10 +117,10 @@ public:
         Center.Z = ZCenterParam;
     }
 public:
-    explicit Particle(const UniqueIdInt IndexParam, const EntityIdInt EntityIdParam, const ChainIdInt ChainIdParam, const UniqueIdInt GenomeThreadParam, const UniqueIdInt GenomeIndexParam, const ElectricChargeType ElectricChargeParam, const vector3_16 UniqueColorParam) : Index(IndexParam), EntityId(EntityIdParam), ChainId(ChainIdParam), GenomeThread(GenomeThreadParam), GenomeIndex(GenomeIndexParam), ElectricCharge(ElectricChargeParam), UniqueParticleColor(UniqueColorParam)
+    explicit Particle(const UniqueIdInt IndexParam, const EntityIdInt EntityIdParam, const ChainIdInt ChainIdParam, const UniqueIdIntReduced GenomeThreadParam, const UniqueIdIntReduced GenomeIndexParam, const ElectricChargeType ElectricChargeParam, const vector3_16 UniqueColorParam) : Index(IndexParam), EntityId(EntityIdParam), ChainId(ChainIdParam), GenomeThread(GenomeThreadParam), GenomeIndex(GenomeIndexParam), ElectricCharge(ElectricChargeParam), UniqueParticleColor(UniqueColorParam)
     {
     }
-    explicit Particle(const UniqueIdInt IndexParam, const EntityIdInt EntityIdParam, const ChainIdInt ChainIdParam, const UniqueIdInt GenomeThreadParam, const UniqueIdInt GenomeIndexParam, const ElectricChargeType ElectricChargeParam, std::string SequenceStrParam, const vector3_16 UniqueColorParam) : Index(IndexParam), EntityId(EntityIdParam), ChainId(ChainIdParam), GenomeThread(GenomeThreadParam), GenomeIndex(GenomeIndexParam), ElectricCharge(ElectricChargeParam), SequenceStr(std::move(SequenceStrParam)), UniqueParticleColor(UniqueColorParam)
+    explicit Particle(const UniqueIdInt IndexParam, const EntityIdInt EntityIdParam, const ChainIdInt ChainIdParam, const UniqueIdIntReduced GenomeThreadParam, const UniqueIdIntReduced GenomeIndexParam, const ElectricChargeType ElectricChargeParam, std::string SequenceStrParam, const vector3_16 UniqueColorParam) : Index(IndexParam), EntityId(EntityIdParam), ChainId(ChainIdParam), GenomeThread(GenomeThreadParam), GenomeIndex(GenomeIndexParam), ElectricCharge(ElectricChargeParam), SequenceStr(std::move(SequenceStrParam)), UniqueParticleColor(UniqueColorParam)
     {
     }
 public:

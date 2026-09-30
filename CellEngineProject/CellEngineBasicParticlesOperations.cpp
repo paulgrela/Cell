@@ -21,7 +21,7 @@ void CellEngineBasicParticlesOperations::InitiateFreeParticleIndexes(const Parti
             UnsignedInt CurrentSectorIndex = 0;
             FOR_EACH_SECTOR_IN_XYZ_ONLY
             {
-                SetCurrentSectorPos({ static_cast<SignedInt>(ParticleSectorXIndex), static_cast<SignedInt>(ParticleSectorYIndex), static_cast<SignedInt>(ParticleSectorZIndex) });
+                SetCurrentSectorPos({ .SectorPosX = static_cast<SignedInt>(ParticleSectorXIndex), .SectorPosY = static_cast<SignedInt>(ParticleSectorYIndex), .SectorPosZ = static_cast<SignedInt>(ParticleSectorZIndex) });
 
                 GetFreeIndexes() = {};
 
@@ -69,6 +69,9 @@ void CellEngineBasicParticlesOperations::PreprocessData(const vector<A> Particle
         LoggersManagerObject.Log(STREAM("Preprocess data"));
 
         InitiateFreeParticleIndexes(Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ].Particles, false);
+
+        LoggersManagerObject.Log(STREAM("Get Min Max Coodridnates For All Particles"));
+
         GetMinMaxCoordinatesForAllParticles<T, A>(ListOfElements, ListOfElementsOfParticleKind, UpdateParticleKindListOfElementsBool);
     }
     CATCH("preprocessing data for voxel simulation space")

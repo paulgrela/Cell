@@ -303,17 +303,25 @@ bool CellEngineSimulationSpace::PlaceProductParticleInSpaceInRandomPositionOrCan
             if (CheckIfSpaceIsEmptyAndIsInBoundsForParticleElementsReactions(ParticleKindObjectForProduct, Particles, CurrentSectorPos, RandomVectorX, RandomVectorY, RandomVectorZ, SimulationSpaceSectorBoundsObject) == true)
             {
                 //cout << "R3 = (" << RandomVectorX << " " << RandomVectorY << " " << RandomVectorZ << ") (" << SimulationSpaceSectorBoundsObject.StartXPos << "," << SimulationSpaceSectorBoundsObject.EndXPos << ") (" << SimulationSpaceSectorBoundsObject.StartYPos << "," << SimulationSpaceSectorBoundsObject.EndYPos << ") (" << SimulationSpaceSectorBoundsObject.StartZPos << "," << SimulationSpaceSectorBoundsObject.EndZPos << ")" << endl;
-                                        //CZY TE RandomVectorX, RandomVectorY, RandomVectorZ pokrywaja sie z ustwionym SEKTOREM
+                                        //CZY TE RandomVectorX, RandomVectorY, RandomVectorZ pokrywaja sie z ustawionym SEKTOREM
                                         const auto [SectorPosX, SectorPosY, SectorPosZ] = CellEngineUseful::GetSectorPos(RandomVectorX, RandomVectorY, RandomVectorZ);
                                         if (SectorPosX != CurrentSectorPos.SectorPosX || SectorPosY != CurrentSectorPos.SectorPosY || SectorPosZ != CurrentSectorPos.SectorPosZ)
-                                            std::cout << "R4" << " Error particle not in proper sector " << " SectorPosX = " << SectorPosX << " SectorPosY = " << SectorPosY << " SectorPosZ = " << SectorPosZ << " SectorPosXS = " << CurrentSectorPos.SectorPosX << " SectorPosYS = " << CurrentSectorPos.SectorPosY << " SectorPosZS = " << CurrentSectorPos.SectorPosZ << std::endl;
+                                            cout << "R4" << " Error particle not in proper sector " << " SectorPosX = " << SectorPosX << " SectorPosY = " << SectorPosY << " SectorPosZ = " << SectorPosZ << " SectorPosXS = " << CurrentSectorPos.SectorPosX << " SectorPosYS = " << CurrentSectorPos.SectorPosY << " SectorPosZS = " << CurrentSectorPos.SectorPosZ << endl;
 
 
                 FoundFreePlace = true;
 
                 FillParticleElementsInSpace(ParticleIndex, ParticleKindObjectForProduct, RandomVectorX, RandomVectorY, RandomVectorZ);
 
+                                        auto [SectorPosX1, SectorPosY1, SectorPosZ1] = CellEngineUseful::CheckCenterForSector<Particle>(GetParticleFromIndex(ParticleIndex), Particles, "CK1");
+                                        if (SectorPosX1 != CurrentSectorPos.SectorPosX || SectorPosY1 != CurrentSectorPos.SectorPosY || SectorPosZ1 != CurrentSectorPos.SectorPosZ)
+                                            cout << "R5" << " Error particle not in proper sector " << " SectorPosX = " << SectorPosX1 << " SectorPosY = " << SectorPosY1 << " SectorPosZ = " << SectorPosZ1 << " SectorPosXS = " << CurrentSectorPos.SectorPosX << " SectorPosYS = " << CurrentSectorPos.SectorPosY << " SectorPosZS = " << CurrentSectorPos.SectorPosZ << endl;
+
+                                        const auto [SectorPosX11, SectorPosY11, SectorPosZ11] = CellEngineUseful::GetSectorPos(GetParticleFromIndex(ParticleIndex).Center.X, GetParticleFromIndex(ParticleIndex).Center.Y, GetParticleFromIndex(ParticleIndex).Center.Z);
                 //LoggersManagerObject.Log(STREAM("R2 = " << RandomVectorX << " " << RandomVectorY << " " << RandomVectorZ << " " << SimulationSpaceSectorBoundsObject.StartXPos << " " << SimulationSpaceSectorBoundsObject.EndXPos << " " << SimulationSpaceSectorBoundsObject.StartYPos << " " << SimulationSpaceSectorBoundsObject.EndYPos << " " << SimulationSpaceSectorBoundsObject.StartZPos << " " << SimulationSpaceSectorBoundsObject.EndZPos << " ListOfAtoms.size() = " << ParticleKindObjectForProduct.ListOfAtoms.size()));
+
+                // LoggersManagerObject.LogUnconditional(STREAM("R2A = " << ParticleIndex << " " << GetParticleFromIndex(ParticleIndex).Center.X << " " << GetParticleFromIndex(ParticleIndex).Center.Y << " " << GetParticleFromIndex(ParticleIndex).Center.Z << " " << RandomVectorX << " " << RandomVectorY << " " << RandomVectorZ << " " << SimulationSpaceSectorBoundsObject.StartXPos << " " << SimulationSpaceSectorBoundsObject.EndXPos << " " << SimulationSpaceSectorBoundsObject.StartYPos << " " << SimulationSpaceSectorBoundsObject.EndYPos << " " << SimulationSpaceSectorBoundsObject.StartZPos << " " << SimulationSpaceSectorBoundsObject.EndZPos << " ListOfAtoms.size() = " << ParticleKindObjectForProduct.ListOfAtoms.size()));
+                // LoggersManagerObject.LogUnconditional(STREAM("R2B = " << ParticleIndex << " " << SectorPosX << " " << SectorPosY << " " << SectorPosZ << " " << SectorPosX1 << " " << SectorPosY1 << " " << SectorPosZ1 << " " << SectorPosX11 << " " << SectorPosY11 << " " << SectorPosZ11));
 
                 break;
             }

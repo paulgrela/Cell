@@ -23,7 +23,10 @@ using GeneIdInt = std::uint64_t;
 using EntityIdInt = std::uint32_t;
 using ChainIdInt = std::uint16_t;
 using PositionInt = std::uint16_t;
-using UniqueIdInt = std::uint32_t;
+//using UniqueIdInt = std::uint32_t;
+using UniqueIdInt = std::uint64_t;
+using UniqueIdIntReduced = std::uint32_t;
+
 
 using RealType = float;
 
@@ -220,8 +223,8 @@ struct __attribute__ ((packed)) ParticleSenderStruct
     EntityIdInt ParticleKindId{ 0 };
     int SenderProcessIndex{ 0 };
     int ReceiverProcessIndex{ 0 };
-    vector3_16 SectorPos{ 0, 0, 0 };
-    vector3_Real32 NewPosition{ 0, 0, 0 };
+    vector3_16 SectorPos{ .X = 0, .Y = 0, .Z = 0 };
+    vector3_Real32 NewPosition{ .X = 0, .Y = 0, .Z = 0 };
 };
 
 enum class TypesOfLookingForParticlesInProximity : UnsignedInt
