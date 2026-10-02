@@ -26,7 +26,7 @@ void CellEngineTestParticlesInVoxelSpaceGenerator::GenerateRandomParticlesInSele
 
         vector<UnsignedInt> LocalNewParticlesIndexes;
 
-        for (UniqueIdInt ParticleNumber = 1; ParticleNumber <= NumberOfRandomParticles; ParticleNumber++)
+        for (UniqueIdUnsignedInt ParticleNumber = 1; ParticleNumber <= NumberOfRandomParticles; ParticleNumber++)
             LocalNewParticlesIndexes.emplace_back(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), GetRandomValue<uniform_int_distribution, UnsignedInt>(UniformDistributionObjectObjectOfParticle_Uint64t), 0, -1, 1, GetRandomValue<uniform_int_distribution, ElectricChargeType>(UniformDistributionObjectElectricChargeParticle_int64t), CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))));
 
         ListOfVoxelsType FilledVoxelsForRandomParticle;

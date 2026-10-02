@@ -170,7 +170,7 @@ void NEWAssociateAutinNameWithIllinoisName(MainMapType<string, string>& AutinIll
     AutinIllinoisNamesMap["'Aspartate--tRNA ligase-JCVISYN3A_0287'"] = "JCVISYN3A_0287";
 }
 
-EntityIdInt GetParticleKindIdFromGeneIdOrName(const string& ParticleKindName, const EntityIdInt ParticleKindIdParam, const MainMapType<EntityIdInt, UniqueIdInt>& ProteinIdFromGeneIdTranslator, const MainMapType<string, string>& AutinIllinoisNameMap)
+EntityIdInt GetParticleKindIdFromGeneIdOrName(const string& ParticleKindName, const EntityIdInt ParticleKindIdParam, const MainMapType<EntityIdInt, UniqueIdUnsignedInt>& ProteinIdFromGeneIdTranslator, const MainMapType<string, string>& AutinIllinoisNameMap)
 {
     static EntityIdInt LastParticleKindId = 0;
 
@@ -242,7 +242,7 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile(const bool SetStartValuesB
         AssociateAutinNameWithIllinoisName(AutinIllinoisNamesMap);
         //NEWAssociateAutinNameWithIllinoisName(AutinIllinoisNamesMap);
 
-        MainMapType<EntityIdInt, UniqueIdInt> ProteinIdFromGeneIdTranslator;
+        MainMapType<EntityIdInt, UniqueIdUnsignedInt> ProteinIdFromGeneIdTranslator;
         MainMapType<EntityIdInt, string> ParticleAutinKindIdToAutinNameTranslator;
 
         if (CellEngineConfigDataObject.MixedFullAtomWithVoxelSpace == true)

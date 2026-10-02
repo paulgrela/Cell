@@ -20,21 +20,21 @@ class CellEngineFullAtomSimulationSpace : public CellEngineSimulationSpace, publ
 protected:
     RealType XMinGlobal{}, XMaxGlobal{}, YMinGlobal{}, YMaxGlobal{}, ZMinGlobal{}, ZMaxGlobal{};
 public:
-    Particle& GetParticleFromIndexForOuterClass(UniqueIdInt ParticleIndex);
+    Particle& GetParticleFromIndexForOuterClass(UniqueIdUnsignedInt ParticleIndex);
 private:
     ParticlesContainer<Particle>& Particles;
 public:
     [[nodiscard]] std::stringstream PrintSpaceMinMaxValues() const;
 public:
-    Particle& GetParticleFromIndexForGenerator(UniqueIdInt ParticleIndex) override;
+    Particle& GetParticleFromIndexForGenerator(UniqueIdUnsignedInt ParticleIndex) override;
 public:
     void ClearFullAtomSpaceAndParticles() override;
 public:
     static void ClearWholeFullAtomSpace();
     static void ClearSelectedSpace(UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt StepXParam, UnsignedInt StepYParam, UnsignedInt StepZParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
 protected:
-    void FillParticleElementsInSpace(UniqueIdInt ParticleIndex, ParticleKind& ParticleKindObjectForProduct, RealType VectorX, RealType VectorY, RealType VectorZ) override;
-    void FillParticleElementInSpace(UniqueIdInt ParticleIndex, vector3_Real32 NewPointElement) override;
+    void FillParticleElementsInSpace(UniqueIdUnsignedInt ParticleIndex, ParticleKind& ParticleKindObjectForProduct, RealType VectorX, RealType VectorY, RealType VectorZ) override;
+    void FillParticleElementInSpace(UniqueIdUnsignedInt ParticleIndex, vector3_Real32 NewPointElement) override;
     bool MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, ParticlesDetailedContainer<Particle>::iterator& ParticleObjectIter, std::vector<ParticleToBeMovedFromOneSectorToAnotherSector>& ListOfParticlesToChangeSectors, const SectorPosType& CurrentSectorPos, RealType VectorX, RealType VectorY, RealType VectorZ, RealType StartXPosParam, RealType StartYPosParam, RealType StartZPosParam, RealType SizeXParam, RealType SizeYParam, RealType SizeZParam) override;
 
     bool CheckIfSpaceIsEmptyAndIsInBoundsForParticleElementsReactions(const ParticleKind& ParticleKindObjectForProduct, ParticlesContainer<Particle>& ParticlesInSector, const SectorPosType& CurrentSectorPos, RealType VectorX, RealType VectorY, RealType VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam) override;

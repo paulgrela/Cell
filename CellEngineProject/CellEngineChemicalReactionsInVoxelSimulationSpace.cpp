@@ -15,7 +15,7 @@ void CellEngineChemicalReactionsInVoxelSimulationSpace::FindParticlesInProximity
             for (UnsignedInt PosY = StartYPosParam; PosY < StartYPosParam + SizeYParam; PosY++)
                 for (UnsignedInt PosZ = StartZPosParam; PosZ < StartZPosParam + SizeZParam; PosZ++)
                     if (PosX < CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension && PosY < CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension && PosZ < CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension)
-                        if (const UniqueIdInt ParticleIndex = GetSpaceVoxel(PosX, PosY, PosZ); ParticleIndex != GetZeroSimulationSpaceVoxel())
+                        if (const UniqueIdUnsignedInt ParticleIndex = GetSpaceVoxel(PosX, PosY, PosZ); ParticleIndex != GetZeroSimulationSpaceVoxel())
                             if (!FoundParticleIndexes.contains(ParticleIndex))
                                 if (GetParticles().contains(ParticleIndex))
                                     SaveParticleFoundInProximity(ParticleIndex, FoundParticleIndexes, UpdateNucleotides);

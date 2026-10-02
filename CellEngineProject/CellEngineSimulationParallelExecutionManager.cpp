@@ -33,7 +33,7 @@ namespace
         std::condition_variable WallConditionalVariable;
 
         std::vector<ParticleSenderStruct> Proposals[2];
-        std::vector<UniqueIdInt> Verdicts[2];
+        std::vector<UniqueIdUnsignedInt> Verdicts[2];
         bool ProposalsReady[2]{ false, false };
         bool VerdictsReady[2]{ false, false };
     };
@@ -361,7 +361,7 @@ void CellEngineSimulationParallelExecutionManager::JoinReactionsStatisticsFromTh
             if (MPIProcessDataObject.CurrentMPIProcessIndex == CellEngineConfigDataObject.MainMPIProcessNumber)
             {
                 SavedReactionsMap[SimulationStepNumber - 1].clear();
-                for (UniqueIdInt LocalMPIProcessIndex = 0; LocalMPIProcessIndex < MPIProcessDataObject.NumberOfMPIProcesses; LocalMPIProcessIndex++)
+                for (UniqueIdUnsignedInt LocalMPIProcessIndex = 0; LocalMPIProcessIndex < MPIProcessDataObject.NumberOfMPIProcesses; LocalMPIProcessIndex++)
                     for (UnsignedInt ReactionStatisticsDataIndex = MaximumOfAllSavedReactionsMapForMPILengths * LocalMPIProcessIndex; ReactionStatisticsDataIndex < MaximumOfAllSavedReactionsMapForMPILengths * LocalMPIProcessIndex + SavedReactionsMapForMPILengths[LocalMPIProcessIndex]; ReactionStatisticsDataIndex++)
                     {
                         const auto& ReactionStatisticsData = ReactionStatisticsVectorGatheringFromAllMPIProcessPointer.get()[ReactionStatisticsDataIndex];
@@ -982,7 +982,7 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
             Wall.ProposalConditionalVariable.notify_all();
         }
 
-        vector<UniqueIdInt> ReceivedConfirmationOfParticlesToRemove;
+        vector<UniqueIdUnsignedInt> ReceivedConfirmationOfParticlesToRemove;
 
         for (UnsignedInt NeighborProcessIndex = 0; NeighborProcessIndex < NumberOfAllNeighbors; NeighborProcessIndex++)
         {
@@ -1034,7 +1034,7 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
 
             //LoggersManagerObject.Log(STREAM("SENDING CONFIRMATION TO Neighbor = " << ReceivedParticlesToInsert[0].SenderProcessIndex << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
 
-            vector<UniqueIdInt> ConfirmationOfParticlesToRemoveToSent;
+            vector<UniqueIdUnsignedInt> ConfirmationOfParticlesToRemoveToSent;
             for (const auto& ReceivedParticleIndexToInsert : ReceivedParticlesToInsert)
                 if (ReceivedParticleIndexToInsert.ParticleIndex != 0)
                     if (CurrentThreadLocalSimulationSpaceData->CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossible(ReceivedParticleIndexToInsert) == true)
@@ -1107,7 +1107,7 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
             Wall.WallConditionalVariable.notify_all();
         }
 
-        vector<UniqueIdInt> ReceivedConfirmationOfParticlesToRemove;
+        vector<UniqueIdUnsignedInt> ReceivedConfirmationOfParticlesToRemove;
 
         for (UnsignedInt NeighborProcessIndex = 0; NeighborProcessIndex < NumberOfAllNeighbors; NeighborProcessIndex++)
         {
@@ -1157,7 +1157,7 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
                 Wall.ProposalsReady[SlotIndex] = false;
             }
 
-            std::vector<UniqueIdInt> ConfirmationOfParticlesToRemove;
+            std::vector<UniqueIdUnsignedInt> ConfirmationOfParticlesToRemove;
             for (const auto& ReceivedParticleIndexToInsert : ReceivedParticlesToInsert)
                 if (ReceivedParticleIndexToInsert.ParticleIndex != 0)
                     if (CurrentThreadLocalSimulationSpaceData->CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossible(ReceivedParticleIndexToInsert) == true)
@@ -1348,7 +1348,7 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIPr
             int NumberOfBytesReceived;
             MPI_Get_count(&MPIMessageStatus, MPI_UNSIGNED, &NumberOfBytesReceived);
 
-            vector<UniqueIdInt> ReceivedConfirmationOfParticlesToRemove;
+            vector<UniqueIdUnsignedInt> ReceivedConfirmationOfParticlesToRemove;
 
             char ReceivedParticlesToInsert1[MaxMPIMessageSize];
             MPI_Recv(&ReceivedParticlesToInsert1, MaxMPIMessageSize, MPI_PACKED, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &MPIMessageStatus);
@@ -1359,7 +1359,7 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIPr
             // LoggersManagerObject.Log(STREAM("MPI UNPACKED SIZE TO REMOVE = " << NumberOfUnpackedParticleStructures << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
             for (UnsignedInt UnpackedParticleStructureIndex = 0; UnpackedParticleStructureIndex < NumberOfUnpackedParticleStructures; UnpackedParticleStructureIndex++)
             {
-                UniqueIdInt MPIParticleSenderStructElementLocalObject;
+                UniqueIdUnsignedInt MPIParticleSenderStructElementLocalObject;
                 MPI_Unpack(ReceivedParticlesToInsert1, MaxMPIMessageSize, &PositionInBuffer, &MPIParticleSenderStructElementLocalObject, 1, MPI_UNSIGNED, MPI_COMM_WORLD);
                 ReceivedConfirmationOfParticlesToRemove.emplace_back(MPIParticleSenderStructElementLocalObject);
             }
@@ -1448,7 +1448,7 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIPr
         for (UnsignedInt NeighborProcessIndex = 0; NeighborProcessIndex < NumberOfAllNeighbors; NeighborProcessIndex++)
             if (NeighborProcessesIndexes[NeighborProcessIndex] != -1)
             {
-                vector<UniqueIdInt> ConfirmationOfParticlesToRemoveToSent;
+                vector<UniqueIdUnsignedInt> ConfirmationOfParticlesToRemoveToSent;
 
                 if (ReceivedParticlesToInsertFromAllNeigbhours[NeighborProcessIndex].empty() == false)
                 {

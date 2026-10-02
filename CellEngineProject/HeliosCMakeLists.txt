@@ -40,7 +40,7 @@ include_directories(
 
 add_executable(
 	CellEngineProject
-        ./srcsb7/sb7color.cpp
+    ./srcsb7/sb7color.cpp
 	../Common/Include/ExceptionsMacro.h
 	../Common/Platform/DestinationPlatform.h
 	../Common/Logger/Logger.h
@@ -80,7 +80,8 @@ add_executable(
 	CellEngineChemicalReactionsEngine.cpp
 	CellEngineRandomDeviceEngine.cpp
 	CellEngineRandomDeviceEngine.h
-	CellEngineDataFile.h
+	CellEngineParticleUniqueIdGenerator.h
+    CellEngineDataFile.h
 	CellEngineFilmOfStructures.h
 	CellEngineMain.cpp
 	CellEngineImGuiMenu.h

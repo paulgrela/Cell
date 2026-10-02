@@ -10,21 +10,21 @@ struct ThreadLocalParticlesInProximity
 {
 public:
     MainMapType<EntityIdInt, UnsignedInt> ParticlesKindsFoundInProximity;
-    std::vector<UniqueIdInt> ParticlesSortedByCapacityFoundInProximity;
+    std::vector<UniqueIdUnsignedInt> ParticlesSortedByCapacityFoundInProximity;
 public:
-    std::vector<UniqueIdInt> NucleotidesWithFreeNextEndingsFoundInProximity;
-    std::vector<UniqueIdInt> NucleotidesWithFreePrevEndingsFoundInProximity;
-    std::vector<UniqueIdInt> DNANucleotidesWithFreeNextEndingsFoundInProximity;
-    std::vector<UniqueIdInt> DNANucleotidesWithFreePrevEndingsFoundInProximity;
+    std::vector<UniqueIdUnsignedInt> NucleotidesWithFreeNextEndingsFoundInProximity;
+    std::vector<UniqueIdUnsignedInt> NucleotidesWithFreePrevEndingsFoundInProximity;
+    std::vector<UniqueIdUnsignedInt> DNANucleotidesWithFreeNextEndingsFoundInProximity;
+    std::vector<UniqueIdUnsignedInt> DNANucleotidesWithFreePrevEndingsFoundInProximity;
 public:
-    std::vector<UniqueIdInt> NucleotidesFreeFoundInProximity;
-    std::vector<UniqueIdInt> RNANucleotidesFreeFoundInProximity;
-    std::vector<UniqueIdInt> RNANucleotidesFoundInProximity;
+    std::vector<UniqueIdUnsignedInt> NucleotidesFreeFoundInProximity;
+    std::vector<UniqueIdUnsignedInt> RNANucleotidesFreeFoundInProximity;
+    std::vector<UniqueIdUnsignedInt> RNANucleotidesFoundInProximity;
 public:
-    std::vector<UniqueIdInt> DNANucleotidesFullFreeFoundInProximity;
-    std::vector<UniqueIdInt> RNANucleotidesFullFreeFoundInProximity;
-    std::vector<UniqueIdInt> tRNAChargedFoundInProximity;
-    std::vector<UniqueIdInt> tRNAUnchargedFoundInProximity;
+    std::vector<UniqueIdUnsignedInt> DNANucleotidesFullFreeFoundInProximity;
+    std::vector<UniqueIdUnsignedInt> RNANucleotidesFullFreeFoundInProximity;
+    std::vector<UniqueIdUnsignedInt> tRNAChargedFoundInProximity;
+    std::vector<UniqueIdUnsignedInt> tRNAUnchargedFoundInProximity;
 };
 
 class CellEngineChemicalReactionsInBasicSimulationSpace : virtual public CellEngineBasicParticlesOperations

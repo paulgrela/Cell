@@ -9,6 +9,29 @@
 
 using namespace std;
 
+void CellEngineBasicParticlesOperations::InitiateFreeParticleIndexesForAllSectors()
+{
+    try
+    {
+        if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
+        {
+            UnsignedInt CurrentSectorIndex = 0;
+            FOR_EACH_SECTOR_IN_XYZ_ONLY
+            {
+                SetCurrentSectorPos({ .SectorPosX = static_cast<SignedInt>(ParticleSectorXIndex), .SectorPosY = static_cast<SignedInt>(ParticleSectorYIndex), .SectorPosZ = static_cast<SignedInt>(ParticleSectorZIndex) });
+                Particles[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].ParticleUniqueIdGenerator.Initialize(CurrentSectorIndex);
+                CurrentSectorIndex++;
+            }
+        }
+        else
+            ParticleUniqueIdGenerator.Initialize(0);
+    }
+    CATCH("initiating free particle indexes for all sectors")
+}
+
+constexpr UniqueIdUnsignedInt ParticleIndexesCreatorFactor = 10'000'000;
+constexpr UniqueIdUnsignedInt ParticleIndexesInSectorsCreatorFactor = 100'000;
+
 void CellEngineBasicParticlesOperations::InitiateFreeParticleIndexes(const ParticlesDetailedContainer<Particle>& LocalParticles, const bool PrintInfo)
 {
     try
@@ -31,12 +54,12 @@ void CellEngineBasicParticlesOperations::InitiateFreeParticleIndexes(const Parti
                 if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true)
                 {
                     if (Particles[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].MPIProcessIndex == MPIProcessDataObject.CurrentMPIProcessIndex)
-                        for (UniqueIdInt FreeIndex = (CurrentSectorIndex + 1) * ParticleIndexesInSectorsCreatorFactor - 1; FreeIndex > CurrentSectorIndex * ParticleIndexesInSectorsCreatorFactor; FreeIndex--)
+                        for (UniqueIdUnsignedInt FreeIndex = (CurrentSectorIndex + 1) * ParticleIndexesInSectorsCreatorFactor - 1; FreeIndex > CurrentSectorIndex * ParticleIndexesInSectorsCreatorFactor; FreeIndex--)
                             if (!GetParticles().contains(FreeIndex))
                                 GetFreeIndexes().push(FreeIndex);
                 }
                 else
-                    for (UniqueIdInt FreeIndex = (CurrentSectorIndex + 1) * ParticleIndexesInSectorsCreatorFactor - 1; FreeIndex > CurrentSectorIndex * ParticleIndexesInSectorsCreatorFactor; FreeIndex--)
+                    for (UniqueIdUnsignedInt FreeIndex = (CurrentSectorIndex + 1) * ParticleIndexesInSectorsCreatorFactor - 1; FreeIndex > CurrentSectorIndex * ParticleIndexesInSectorsCreatorFactor; FreeIndex--)
                         if (!GetParticles().contains(FreeIndex))
                             GetFreeIndexes().push(FreeIndex);
 
@@ -48,15 +71,15 @@ void CellEngineBasicParticlesOperations::InitiateFreeParticleIndexes(const Parti
         }
         else
         {
-            FreeIndexesOfParticles = {};
+            FreeIndexesOfParticlesGlobal = {};
 
-            for (UniqueIdInt FreeIndex = (CurrentThreadIndex + 1) * ParticleIndexesCreatorFactor - 1; FreeIndex > CurrentThreadIndex * ParticleIndexesCreatorFactor; FreeIndex--)
+            for (UniqueIdUnsignedInt FreeIndex = (CurrentThreadIndex + 1) * ParticleIndexesCreatorFactor - 1; FreeIndex > CurrentThreadIndex * ParticleIndexesCreatorFactor; FreeIndex--)
                 if (!LocalParticles.contains(FreeIndex))
-                    FreeIndexesOfParticles.push(FreeIndex);
-        }
+                    FreeIndexesOfParticlesGlobal.push(FreeIndex);
 
-        if (PrintInfo == true)
-            LoggersManagerObject.Log(STREAM("FreeIndexesOfParticles.size() = " << FreeIndexesOfParticles.size()));
+            if (PrintInfo == true)
+                LoggersManagerObject.Log(STREAM("FreeIndexesOfParticles.size() = " << FreeIndexesOfParticlesGlobal.size()));
+        }
     }
     CATCH("initiating free particle indexes")
 }
@@ -68,7 +91,9 @@ void CellEngineBasicParticlesOperations::PreprocessData(const vector<A> Particle
     {
         LoggersManagerObject.Log(STREAM("Preprocess data"));
 
-        InitiateFreeParticleIndexes(Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ].Particles, false);
+        CellEngineParticleUniqueIdGenerator::ConfigureForNumberOfSectors(CellEngineConfigDataObject.NumberOfParticlesSectorsInX * CellEngineConfigDataObject.NumberOfParticlesSectorsInY * CellEngineConfigDataObject.NumberOfParticlesSectorsInZ);
+
+        InitiateFreeParticleIndexesForAllSectors();
 
         LoggersManagerObject.Log(STREAM("Get Min Max Coodridnates For All Particles"));
 
@@ -167,9 +192,9 @@ void CellEngineBasicParticlesOperations::GetMinMaxCoordinatesForParticle(Particl
     CATCH("getting min max coordinates for one particle")
 }
 
-vector<UniqueIdInt> CellEngineBasicParticlesOperations::GetAllParticlesWithChosenParticleType(const ParticlesTypes ParticleTypeParam) const
+vector<UniqueIdUnsignedInt> CellEngineBasicParticlesOperations::GetAllParticlesWithChosenParticleType(const ParticlesTypes ParticleTypeParam) const
 {
-    vector<UniqueIdInt> ListOfParticlesIndexes;
+    vector<UniqueIdUnsignedInt> ListOfParticlesIndexes;
 
     try
     {
@@ -189,9 +214,9 @@ vector<UniqueIdInt> CellEngineBasicParticlesOperations::GetAllParticlesWithChose
     return ListOfParticlesIndexes;
 }
 
-vector<UniqueIdInt> CellEngineBasicParticlesOperations::GetAllParticlesWithChosenEntityId(const UniqueIdInt EntityId) const
+vector<UniqueIdUnsignedInt> CellEngineBasicParticlesOperations::GetAllParticlesWithChosenEntityId(const UniqueIdUnsignedInt EntityId) const
 {
-    vector<UniqueIdInt> ListOfParticlesIndexes;
+    vector<UniqueIdUnsignedInt> ListOfParticlesIndexes;
 
     try
     {
@@ -205,7 +230,7 @@ vector<UniqueIdInt> CellEngineBasicParticlesOperations::GetAllParticlesWithChose
     return ListOfParticlesIndexes;
 }
 
-UnsignedInt CellEngineBasicParticlesOperations::GetNumberOfParticlesWithChosenEntityId(const UniqueIdInt EntityId) const
+UnsignedInt CellEngineBasicParticlesOperations::GetNumberOfParticlesWithChosenEntityId(const UniqueIdUnsignedInt EntityId) const
 {
     UnsignedInt ParticleCounter = 0;
 

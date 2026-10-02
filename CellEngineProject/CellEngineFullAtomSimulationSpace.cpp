@@ -15,7 +15,7 @@
 
 using namespace std;
 
-Particle& CellEngineFullAtomSimulationSpace::GetParticleFromIndexForOuterClass(UniqueIdInt ParticleIndex)
+Particle& CellEngineFullAtomSimulationSpace::GetParticleFromIndexForOuterClass(UniqueIdUnsignedInt ParticleIndex)
 {
     return GetParticleFromIndex(ParticleIndex);
 }
@@ -70,7 +70,7 @@ CellEngineFullAtomSimulationSpace::~CellEngineFullAtomSimulationSpace()
     return ss;
 }
 
-void CellEngineFullAtomSimulationSpace::FillParticleElementsInSpace(const UniqueIdInt ParticleIndex, ParticleKind& ParticleKindObjectForProduct, const RealType VectorX, const RealType VectorY, const RealType VectorZ)
+void CellEngineFullAtomSimulationSpace::FillParticleElementsInSpace(const UniqueIdUnsignedInt ParticleIndex, ParticleKind& ParticleKindObjectForProduct, const RealType VectorX, const RealType VectorY, const RealType VectorZ)
 {
     try
     {
@@ -93,11 +93,11 @@ void CellEngineFullAtomSimulationSpace::FillParticleElementsInSpace(const Unique
     CATCH("filling particle elements in space")
 }
 
-void CellEngineFullAtomSimulationSpace::FillParticleElementInSpace(const UniqueIdInt ParticleIndex, const vector3_Real32 NewPointElement)
+void CellEngineFullAtomSimulationSpace::FillParticleElementInSpace(const UniqueIdUnsignedInt ParticleIndex, const vector3_Real32 NewPointElement)
 {
 }
 
-Particle& CellEngineFullAtomSimulationSpace::GetParticleFromIndexForGenerator(const UniqueIdInt ParticleIndex)
+Particle& CellEngineFullAtomSimulationSpace::GetParticleFromIndexForGenerator(const UniqueIdUnsignedInt ParticleIndex)
 {
     return GetParticleFromIndex(ParticleIndex);
 }

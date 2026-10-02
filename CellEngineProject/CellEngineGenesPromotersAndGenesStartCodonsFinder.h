@@ -4,7 +4,7 @@
 
 void PrintInterGenesSequencesFromGenesData();
 
-void FindPromoters(const std::vector<std::string>& GenomesLines, std::vector<std::vector<UniqueIdInt>>& Genomes, bool SwitchOffLogsBool);
+void FindPromoters(const std::vector<std::string>& GenomesLines, std::vector<std::vector<UniqueIdUnsignedInt>>& Genomes, bool SwitchOffLogsBool);
 
 void FindPromotersAndStartCodons1(const std::string& GenomeStr, bool SwitchLogsBool);
 void FindPromotersAndStartCodons2(const std::string& GenomeStr, bool SwitchLogsBool);

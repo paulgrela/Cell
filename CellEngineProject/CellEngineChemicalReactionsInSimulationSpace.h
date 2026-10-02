@@ -19,7 +19,7 @@ protected:
 protected:
     virtual void ClearSpaceForParticle(Particle& ParticleObject, bool ClearVoxels) = 0;
 public:
-    void RemoveParticle(UniqueIdInt ParticleIndex, bool ClearVoxels) override;
+    void RemoveParticle(UniqueIdUnsignedInt ParticleIndex, bool ClearVoxels) override;
 protected:
     void MakingZeroSizeForContainersForFoundParticlesInProximity(const ThreadPosType& CurrentThreadPos);
     void UpdateFoundNucleotidesForFoundParticlesInProximity(UnsignedInt ParticleIndex);
@@ -29,7 +29,7 @@ protected:
 
     virtual void FindParticlesInProximityInSimulationSpaceForSelectedLocalSpace(MainSetType<UnsignedInt>& FoundParticleIndexes, bool UpdateNucleotides, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam) = 0;
 
-    void SaveParticleFoundInProximity(UniqueIdInt ParticleIndex, MainSetType<UnsignedInt>& FoundParticleIndexes, bool UpdateNucleotides);
+    void SaveParticleFoundInProximity(UniqueIdUnsignedInt ParticleIndex, MainSetType<UnsignedInt>& FoundParticleIndexes, bool UpdateNucleotides);
 protected:
     explicit CellEngineChemicalReactionsInSimulationSpace(ParticlesContainer<Particle>& ParticlesParam) : CellEngineNucleicAcidsChemicalReactionsInSimulationSpace(ParticlesParam)
     {

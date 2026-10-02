@@ -23,16 +23,16 @@ using GeneIdInt = std::uint64_t;
 using EntityIdInt = std::uint32_t;
 using ChainIdInt = std::uint16_t;
 using PositionInt = std::uint16_t;
-//using UniqueIdInt = std::uint32_t;
-using UniqueIdInt = std::uint64_t;
-using UniqueIdIntReduced = std::uint32_t;
-
+using UniqueIdUnsignedInt = std::uint64_t;
+using UniqueIdUnsignedIntReduced = std::uint32_t;
 
 using RealType = float;
 
 using MDSRealType = double;
 
 using ElectricChargeType = std::int32_t;
+
+#include "CellEngineParticleUniqueIdGenerator.h"
 
 template<class T>
 struct vector3
@@ -106,7 +106,7 @@ using MainMultiMapType = std::multimap<Key, T, Compare, Allocator>;
 #endif
 
 template<class Particle>
-using ParticlesDetailedContainer = MainMapType<UniqueIdInt, Particle>;
+using ParticlesDetailedContainer = MainMapType<UniqueIdUnsignedInt, Particle>;
 
 template <class Particle>
 struct ParticlesContainerInternal
@@ -115,7 +115,9 @@ public:
     UnsignedInt MPIProcessIndex{ 0 };
     ThreadPosType ThreadPos{ 1, 1, 1 };
 public:
-    std::stack<UniqueIdInt> FreeIndexesOfParticles;
+    std::stack<UniqueIdUnsignedInt> FreeIndexesOfParticles;
+
+    CellEngineParticleUniqueIdGenerator ParticleUniqueIdGenerator{};
     ParticlesDetailedContainer<Particle> Particles;
 };
 
@@ -127,7 +129,7 @@ using SimulationSpaceForParallelExecutionContainer = std::vector<std::vector<std
 
 struct ParticleToBeMovedFromOneSectorToAnotherSector
 {
-    UniqueIdInt ParticleIndex{};
+    UniqueIdUnsignedInt ParticleIndex{};
     SectorPosType SectorPosSource{};
     SectorPosType SectorPosTarget{};
 };
@@ -219,7 +221,7 @@ public:
 
 struct __attribute__ ((packed)) ParticleSenderStruct
 {
-    UniqueIdInt ParticleIndex{ 0 };
+    UniqueIdUnsignedInt ParticleIndex{ 0 };
     EntityIdInt ParticleKindId{ 0 };
     int SenderProcessIndex{ 0 };
     int ReceiverProcessIndex{ 0 };

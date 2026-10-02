@@ -7,7 +7,7 @@ import CellEngineColors;
 #include "CellEngineColors.h"
 #endif
 
-bool CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceInCuboidSelectedSpace(const ParticlesContainer<Particle>& ParticlesParam, const RealType PosXStart, const RealType PosYStart, const RealType PosZStart, const RealType StepX, const RealType StepY, const RealType StepZ, const RealType SizeOfParticleX, const RealType SizeOfParticleY, const RealType SizeOfParticleZ, const UniqueIdInt ValueToCheck)
+bool CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceInCuboidSelectedSpace(const ParticlesContainer<Particle>& ParticlesParam, const RealType PosXStart, const RealType PosYStart, const RealType PosZStart, const RealType StepX, const RealType StepY, const RealType StepZ, const RealType SizeOfParticleX, const RealType SizeOfParticleY, const RealType SizeOfParticleZ, const UniqueIdUnsignedInt ValueToCheck)
 {
     try
     {
@@ -40,7 +40,7 @@ void CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForCuboidSelecte
     CATCH("setting value to full atoms for cuboid selected space")
 }
 
-bool CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceForEllipsoidSelectedSpace(const ParticlesContainer<Particle>& ParticlesParam, const RealType PosXStart, const RealType PosYStart, const RealType PosZStart, const RealType StepX, const RealType StepY, const RealType StepZ, const RealType RadiusXParam, const RealType RadiusYParam, const RealType RadiusZParam, const UniqueIdInt ValueToCheck)
+bool CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceForEllipsoidSelectedSpace(const ParticlesContainer<Particle>& ParticlesParam, const RealType PosXStart, const RealType PosYStart, const RealType PosZStart, const RealType StepX, const RealType StepY, const RealType StepZ, const RealType RadiusXParam, const RealType RadiusYParam, const RealType RadiusZParam, const UniqueIdUnsignedInt ValueToCheck)
 {
     try
     {

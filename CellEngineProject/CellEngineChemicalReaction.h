@@ -22,7 +22,7 @@ public:
     UnsignedInt Counter{};
     bool ToRemoveInReaction{};
     //std::vector<UniqueIdInt> LinkedParticleTypes;
-    std::vector<UniqueIdIntReduced> LinkedParticleTypes;
+    std::vector<UniqueIdUnsignedIntReduced> LinkedParticleTypes;
 public:
     std::string SequenceStr;
     std::vector<ChainIdInt> Sequence;
@@ -34,7 +34,7 @@ public:
         Sequence = CellEngineUseful::ConvertStringSequenceToChainIdSequence(SequenceStr);
     }
     //ParticleKindForChemicalReaction(const EntityIdInt EntityIdParam, const UnsignedInt CounterParam, std::string SequenceStrParam, const bool ToRemoveInReactionParam, std::vector<UniqueIdInt> LinkedParticlesTypesParam) : ParticleKindForChemicalReaction(EntityIdParam, CounterParam, std::move(SequenceStrParam), ToRemoveInReactionParam)
-    ParticleKindForChemicalReaction(const EntityIdInt EntityIdParam, const UnsignedInt CounterParam, std::string SequenceStrParam, const bool ToRemoveInReactionParam, std::vector<UniqueIdIntReduced> LinkedParticlesTypesParam) : ParticleKindForChemicalReaction(EntityIdParam, CounterParam, std::move(SequenceStrParam), ToRemoveInReactionParam)
+    ParticleKindForChemicalReaction(const EntityIdInt EntityIdParam, const UnsignedInt CounterParam, std::string SequenceStrParam, const bool ToRemoveInReactionParam, std::vector<UniqueIdUnsignedIntReduced> LinkedParticlesTypesParam) : ParticleKindForChemicalReaction(EntityIdParam, CounterParam, std::move(SequenceStrParam), ToRemoveInReactionParam)
     {
         LinkedParticleTypes = std::move(LinkedParticlesTypesParam);
     }
@@ -43,7 +43,7 @@ public:
         SpecialCompareFunction = std::move(SpecialCompareFunctionParam);
     }
     //ParticleKindForChemicalReaction(const EntityIdInt EntityIdParam, const UnsignedInt CounterParam, std::string SequenceStrParam, const bool ToRemoveInReactionParam, const std::vector<UniqueIdInt>& LinkedParticlesTypesParam, SpecialCompareFunctionType SpecialCompareFunctionParam) : ParticleKindForChemicalReaction(EntityIdParam, CounterParam, std::move(SequenceStrParam), ToRemoveInReactionParam, LinkedParticlesTypesParam)
-    ParticleKindForChemicalReaction(const EntityIdInt EntityIdParam, const UnsignedInt CounterParam, std::string SequenceStrParam, const bool ToRemoveInReactionParam, const std::vector<UniqueIdIntReduced>& LinkedParticlesTypesParam, SpecialCompareFunctionType SpecialCompareFunctionParam) : ParticleKindForChemicalReaction(EntityIdParam, CounterParam, std::move(SequenceStrParam), ToRemoveInReactionParam, LinkedParticlesTypesParam)
+    ParticleKindForChemicalReaction(const EntityIdInt EntityIdParam, const UnsignedInt CounterParam, std::string SequenceStrParam, const bool ToRemoveInReactionParam, const std::vector<UniqueIdUnsignedIntReduced>& LinkedParticlesTypesParam, SpecialCompareFunctionType SpecialCompareFunctionParam) : ParticleKindForChemicalReaction(EntityIdParam, CounterParam, std::move(SequenceStrParam), ToRemoveInReactionParam, LinkedParticlesTypesParam)
     {
         SpecialCompareFunction = std::move(SpecialCompareFunctionParam);
     }
@@ -52,7 +52,7 @@ public:
 
 class ChemicalReaction
 {
-    using SpecialReactionFunctionType = std::function<bool (CellEngineChemicalReactionsInSimulationSpace*, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>&, const std::vector<std::pair<UniqueIdInt, UnsignedInt>>&, const ChemicalReaction&)>;
+    using SpecialReactionFunctionType = std::function<bool (CellEngineChemicalReactionsInSimulationSpace*, const std::vector<std::pair<UniqueIdUnsignedInt, UnsignedInt>>&, const std::vector<std::pair<UniqueIdUnsignedInt, UnsignedInt>>&, const ChemicalReaction&)>;
 public:
     UnsignedInt ReactionIdNum{};
     std::string ReactionIdStr;

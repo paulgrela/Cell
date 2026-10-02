@@ -33,7 +33,7 @@ void CellEngineGenomeNucleicAcidsParticlesInSpaceGenerator::GenerateOneStrand(co
 {
     try
     {
-        vector<UniqueIdInt> MockVector;
+        vector<UniqueIdUnsignedInt> MockVector;
         Particle* ParticlePrev1 = nullptr;
 
         for (UnsignedInt SequenceIndex = 0; SequenceIndex < Sequence.size(); SequenceIndex++)
@@ -42,7 +42,7 @@ void CellEngineGenomeNucleicAcidsParticlesInSpaceGenerator::GenerateOneStrand(co
     CATCH("generating one strand")
 }
 
-Particle* CellEngineGenomeNucleicAcidsParticlesInSpaceGenerator::GenerateNucleotideParticle(Particle* ParticlePrev, const EntityIdInt EntityId, const ChainIdInt ChainId, const UnsignedInt GenomeThread, const UnsignedInt GenomeIndex, const UnsignedInt StartPosX, const UnsignedInt StartPosY, const UnsignedInt StartPosZ, const UnsignedInt ParticleSizeX, const UnsignedInt ParticleSizeY, const UnsignedInt ParticleSizeZ, const bool AddToGenome, vector<UniqueIdInt>& Genome, const vector3_16 UniqueColorParam, const bool LinkWithPreviousNucleotide)
+Particle* CellEngineGenomeNucleicAcidsParticlesInSpaceGenerator::GenerateNucleotideParticle(Particle* ParticlePrev, const EntityIdInt EntityId, const ChainIdInt ChainId, const UnsignedInt GenomeThread, const UnsignedInt GenomeIndex, const UnsignedInt StartPosX, const UnsignedInt StartPosY, const UnsignedInt StartPosZ, const UnsignedInt ParticleSizeX, const UnsignedInt ParticleSizeY, const UnsignedInt ParticleSizeZ, const bool AddToGenome, vector<UniqueIdUnsignedInt>& Genome, const vector3_16 UniqueColorParam, const bool LinkWithPreviousNucleotide)
 {
     UnsignedInt ParticleIndex;
 
@@ -102,7 +102,7 @@ void CellEngineGenomeNucleicAcidsParticlesInSpaceGenerator::SaveGenomeDataToFile
         {
             const EntityIdInt EntityId = GetParticleFromIndex(Nucleotide).EntityId;
             const ChainIdInt ChainId = GetParticleFromIndex(Nucleotide).ChainId;
-            const UniqueIdInt GenomeIndex = GetParticleFromIndex(Nucleotide).GenomeIndex;
+            const UniqueIdUnsignedInt GenomeIndex = GetParticleFromIndex(Nucleotide).GenomeIndex;
             const UnsignedInt PosX = GetParticleFromIndex(Nucleotide).ListOfVoxels[0].X;
             const UnsignedInt PosY = GetParticleFromIndex(Nucleotide).ListOfVoxels[0].Y;
             const UnsignedInt PosZ = GetParticleFromIndex(Nucleotide).ListOfVoxels[0].Z;

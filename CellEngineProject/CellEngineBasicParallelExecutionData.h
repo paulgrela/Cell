@@ -41,7 +41,7 @@ protected:
 protected:
     SignedInt TwoThreadsWallSychronizationBarriersIndexes[NumberOfAllNeighbors]{ -1, -1, -1, -1, -1, -1 };
 protected:
-    std::vector<UniqueIdInt> ConfirmationOfParticlesToRemoveToSent[NumberOfAllNeighbors];
+    std::vector<UniqueIdUnsignedInt> ConfirmationOfParticlesToRemoveToSent[NumberOfAllNeighbors];
 protected:
     SectorPosType CurrentSectorPos{ 0, 0, 0 };
     SimulationSpaceSectorBounds ActualSimulationSpaceSectorBoundsObject{ 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -60,7 +60,7 @@ protected:
     UnsignedInt RestoredParticlesInCancelledReactions = 0;
 protected:
     ParticlesDetailedContainer<Particle> FormerParticlesIndexes;
-    ParticlesDetailedContainer<UniqueIdInt> CancelledParticlesIndexes;
+    ParticlesDetailedContainer<UniqueIdUnsignedInt> CancelledParticlesIndexes;
 };
 
 #endif

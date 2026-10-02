@@ -42,7 +42,7 @@ bool CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::TestFormerForbi
     return TestedFormerForbiddenPositions.contains(to_string(PosX) + "|" + to_string(PosY) + "|" + to_string(PosZ));
 }
 
-tuple<UnsignedInt, UnsignedInt, UnsignedInt> CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::EraseLastRandomDNAParticle(vector<UniqueIdInt>& Genome)
+tuple<UnsignedInt, UnsignedInt, UnsignedInt> CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::EraseLastRandomDNAParticle(vector<UniqueIdUnsignedInt>& Genome)
 {
     vector3_16 LastLocalRandomPos;
 

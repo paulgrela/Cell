@@ -8,14 +8,17 @@
 #include "CellEngineTypes.h"
 #include "CellEngineParticle.h"
 #include "CellEngineParticleKind.h"
+#include "CellEngineParticleUniqueIdGenerator.h"
 #include "CellEngineParticlesVoxelsOperations.h"
 #include "CellEngineBasicParallelExecutionData.h"
 
 class CellEngineBasicParticlesOperations : public CellEngineBasicParallelExecutionData
 {
 protected:
+    CellEngineParticleUniqueIdGenerator ParticleUniqueIdGenerator;
+protected:
     UnsignedInt MaxParticleIndex{};
-    std::stack<UniqueIdInt> FreeIndexesOfParticles;
+    std::stack<UniqueIdUnsignedInt> FreeIndexesOfParticlesGlobal;
 protected:
     ParticlesContainer<Particle>& Particles;
 protected:
@@ -32,31 +35,53 @@ protected:
         }
     }
 protected:
-    inline Particle& GetParticleFromIndex(const UniqueIdInt ParticleIndex)
+    inline Particle& GetParticleFromIndex(const UniqueIdUnsignedInt ParticleIndex)
     {
         return GetParticles()[ParticleIndex];
     }
 protected:
-    inline std::stack<UniqueIdInt>& GetFreeIndexes()
+
+    inline std::stack<UniqueIdUnsignedInt>& GetFreeIndexes()
     {
         if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
             return Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ].FreeIndexesOfParticles;
         else
-            return FreeIndexesOfParticles;
+            return FreeIndexesOfParticlesGlobal;
+    }
+    inline CellEngineParticleUniqueIdGenerator& GetFreeParticleIndexes()
+    {
+        if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
+            return Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ].ParticleUniqueIdGenerator;
+        else
+            return ParticleUniqueIdGenerator;
     }
 public:
-    [[nodiscard]] UniqueIdInt GetFreeIndexesOfParticleSize() const
+    [[nodiscard]] UniqueIdUnsignedInt GetFreeIndexesOfParticleSize() const
     {
-        return FreeIndexesOfParticles.size();
+        return FreeIndexesOfParticlesGlobal.size();
     }
 protected:
+    void InitiateFreeParticleIndexesForAllSectors();
     void InitiateFreeParticleIndexes(const ParticlesDetailedContainer<Particle>& LocalParticles, bool PrintInfo);
 protected:
-    inline UniqueIdInt GetNewFreeIndexOfParticle()
+    inline UniqueIdUnsignedInt GetNewFreeIndexOfParticleFinal()
+    {
+        return ParticleUniqueIdGenerator.GetNewUniqueParticleIndex();
+    }
+    inline UniqueIdUnsignedInt GetNewFreeIndexOfParticle()
+    {
+        UniqueIdUnsignedInt NewUniqueParticleIndex = ParticleUniqueIdGenerator.GetNewUniqueParticleIndex();
+
+        while (GetParticles().contains(NewUniqueParticleIndex) == true)
+            NewUniqueParticleIndex = ParticleUniqueIdGenerator.GetNewUniqueParticleIndex();
+
+        return NewUniqueParticleIndex;
+    }
+    inline UniqueIdUnsignedInt GetNewFreeIndexOfParticleReuse()
     {
         if (GetFreeIndexes().empty() == false)
         {
-            const UniqueIdInt FreeIndexOfParticle = GetFreeIndexes().top();
+            const UniqueIdUnsignedInt FreeIndexOfParticle = GetFreeIndexes().top();
             GetFreeIndexes().pop();
             return FreeIndexOfParticle;
         }
@@ -72,13 +97,13 @@ public:
         CurrentSectorPos = CurrentSectorPosParam;
     }
 public:
-    UniqueIdInt AddNewParticle(const Particle& ParticleParam)
+    UniqueIdUnsignedInt AddNewParticle(const Particle& ParticleParam)
     {
         GetParticles()[ParticleParam.Index] = ParticleParam;
         return MaxParticleIndex = ParticleParam.Index;
     }
 protected:
-    virtual void RemoveParticle(UniqueIdInt ParticleIndex, bool ClearElements) = 0;
+    virtual void RemoveParticle(UniqueIdUnsignedInt ParticleIndex, bool ClearElements) = 0;
 public:
     template <class T, class A>
     void PreprocessData(const std::vector<A> Particle::*ListOfElements, const std::vector<A> ParticleKind::*ListOfElementsOfParticleKind, bool UpdateParticleKindListOfElementsBool);
@@ -93,9 +118,9 @@ public:
     template <class T, class A>
     static void GetMinMaxCoordinatesForParticle(Particle& ParticleObject, const std::vector<A> Particle::*ListOfElements, const std::vector<A> ParticleKind::*ListOfElementsOfParticleKind, bool UpdateParticleKindListOfElements);
 protected:
-    std::vector<UniqueIdInt> GetAllParticlesWithChosenParticleType(ParticlesTypes ParticleTypeParam) const;
-    std::vector<UniqueIdInt> GetAllParticlesWithChosenEntityId(UniqueIdInt EntityId) const;
-    UnsignedInt GetNumberOfParticlesWithChosenEntityId(UniqueIdInt EntityId) const;
+    std::vector<UniqueIdUnsignedInt> GetAllParticlesWithChosenParticleType(ParticlesTypes ParticleTypeParam) const;
+    std::vector<UniqueIdUnsignedInt> GetAllParticlesWithChosenEntityId(UniqueIdUnsignedInt EntityId) const;
+    UnsignedInt GetNumberOfParticlesWithChosenEntityId(UniqueIdUnsignedInt EntityId) const;
 protected:
     explicit CellEngineBasicParticlesOperations(ParticlesContainer<Particle>& ParticlesParam) : Particles(ParticlesParam)
     {

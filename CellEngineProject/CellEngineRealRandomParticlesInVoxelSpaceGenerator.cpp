@@ -128,8 +128,8 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::PrintNumberOfParticlesF
                 OldParticlesKindsCounter++;
         LoggersManagerObject.Log(STREAM("Old Particles Kinds Counter = " << OldParticlesKindsCounter));
 
-        UniqueIdInt OldParticlesCounter = 0;
-        set<UniqueIdInt> TestSet;
+        UniqueIdUnsignedInt OldParticlesCounter = 0;
+        set<UniqueIdUnsignedInt> TestSet;
         FOR_EACH_PARTICLE_IN_SECTORS_XYZ_CONST
         {
             if (ParticleObject.second.EntityId < StartParticleKindId)

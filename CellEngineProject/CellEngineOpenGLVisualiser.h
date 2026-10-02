@@ -39,8 +39,8 @@ public:
 struct GPUAtomLocal
 {
 public:
-    UniqueIdInt Index{};
-    UniqueIdInt AtomOffset{};
+    UniqueIdUnsignedInt Index{};
+    UniqueIdUnsignedInt AtomOffset{};
     uint16_t ParticleSectorXIndex{};
     uint16_t ParticleSectorYIndex{};
     uint16_t ParticleSectorZIndex{};

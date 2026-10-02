@@ -116,6 +116,7 @@ add_executable(
 	CellEngineChemicalReactionsEngine.cpp
 	CellEngineRandomDeviceEngine.cpp
 	CellEngineRandomDeviceEngine.h
+	CellEngineParticleUniqueIdGenerator.h
 	CellEngineDataFile.h
 	CellEngineFilmOfStructures.h
 	CellEngineMain.cpp
