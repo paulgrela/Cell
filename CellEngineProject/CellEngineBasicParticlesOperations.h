@@ -3,7 +3,6 @@
 #define CELL_ENGINE_BASIC_PARTICLES_OPERATIONS_H
 
 #include <stack>
-#include <shared_mutex>
 
 #include "CellEngineTypes.h"
 #include "CellEngineParticle.h"
@@ -17,8 +16,8 @@ class CellEngineBasicParticlesOperations : public CellEngineBasicParallelExecuti
 protected:
     CellEngineParticleUniqueIdGenerator ParticleUniqueIdGenerator;
 protected:
-    UnsignedInt MaxParticleIndex{};
-    std::stack<UniqueIdUnsignedInt> FreeIndexesOfParticlesGlobal;
+    UnsignedInt MaxParticleIndex{};//USUNAC
+    //std::stack<UniqueIdUnsignedInt> FreeIndexesOfParticlesGlobal;
 protected:
     ParticlesContainer<Particle>& Particles;
 protected:
@@ -41,13 +40,13 @@ protected:
     }
 protected:
 
-    inline std::stack<UniqueIdUnsignedInt>& GetFreeIndexes()
-    {
-        if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
-            return Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ].FreeIndexesOfParticles;
-        else
-            return FreeIndexesOfParticlesGlobal;
-    }
+    // inline std::stack<UniqueIdUnsignedInt>& GetFreeIndexes()
+    // {
+    //     if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
+    //         return Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ].FreeIndexesOfParticles;
+    //     else
+    //         return FreeIndexesOfParticlesGlobal;
+    // }
     inline CellEngineParticleUniqueIdGenerator& GetFreeParticleIndexes()
     {
         if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
@@ -56,41 +55,77 @@ protected:
             return ParticleUniqueIdGenerator;
     }
 public:
-    [[nodiscard]] UniqueIdUnsignedInt GetFreeIndexesOfParticleSize() const
-    {
-        return FreeIndexesOfParticlesGlobal.size();
-    }
+    // [[nodiscard]] UniqueIdUnsignedInt GetFreeIndexesOfParticleSize() const
+    // {
+    //     return FreeIndexesOfParticlesGlobal.size();
+    // }
 protected:
     void InitiateFreeParticleIndexesForAllSectors();
     void InitiateFreeParticleIndexes(const ParticlesDetailedContainer<Particle>& LocalParticles, bool PrintInfo);
 protected:
+
+
     inline UniqueIdUnsignedInt GetNewFreeIndexOfParticleFinal()
     {
-        return ParticleUniqueIdGenerator.GetNewUniqueParticleIndex();
+        if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
+            return Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ].ParticleUniqueIdGenerator.GetNewUniqueParticleIndex();
+        else
+        {
+            if (CurrentThreadIndex == 0)
+                return Particles[0][0][0].ParticleUniqueIdGenerator.GetNewUniqueParticleIndex();
+            else
+                return ParticleUniqueIdGenerator.GetNewUniqueParticleIndex();
+        }
     }
     inline UniqueIdUnsignedInt GetNewFreeIndexOfParticle()
     {
-        UniqueIdUnsignedInt NewUniqueParticleIndex = ParticleUniqueIdGenerator.GetNewUniqueParticleIndex();
-
-        while (GetParticles().contains(NewUniqueParticleIndex) == true)
-            NewUniqueParticleIndex = ParticleUniqueIdGenerator.GetNewUniqueParticleIndex();
-
-        return NewUniqueParticleIndex;
-    }
-    inline UniqueIdUnsignedInt GetNewFreeIndexOfParticleReuse()
-    {
-        if (GetFreeIndexes().empty() == false)
+        if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
         {
-            const UniqueIdUnsignedInt FreeIndexOfParticle = GetFreeIndexes().top();
-            GetFreeIndexes().pop();
-            return FreeIndexOfParticle;
+            UniqueIdUnsignedInt NewUniqueParticleIndex = Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ].ParticleUniqueIdGenerator.GetNewUniqueParticleIndex();
+
+            while (GetParticles().contains(NewUniqueParticleIndex) == true)
+                NewUniqueParticleIndex = Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ].ParticleUniqueIdGenerator.GetNewUniqueParticleIndex();
+
+            return NewUniqueParticleIndex;
         }
         else
         {
-            LoggersManagerObject.Log(STREAM("Lack of new free indexes of particles"));
-            return MaxParticleIndex + 1;
+            if (CurrentThreadIndex == 0)
+            {
+                UniqueIdUnsignedInt NewUniqueParticleIndex = Particles[0][0][0].ParticleUniqueIdGenerator.GetNewUniqueParticleIndex();
+
+                while (GetParticles().contains(NewUniqueParticleIndex) == true)
+                    NewUniqueParticleIndex = Particles[0][0][0].ParticleUniqueIdGenerator.GetNewUniqueParticleIndex();
+
+                return NewUniqueParticleIndex;
+            }
+            else
+            {
+                UniqueIdUnsignedInt NewUniqueParticleIndex = ParticleUniqueIdGenerator.GetNewUniqueParticleIndex();
+
+                while (GetParticles().contains(NewUniqueParticleIndex) == true)
+                    NewUniqueParticleIndex = ParticleUniqueIdGenerator.GetNewUniqueParticleIndex();
+
+                return NewUniqueParticleIndex;
+            }
         }
     }
+    // inline UniqueIdUnsignedInt GetNewFreeIndexOfParticleReuse()
+    // {
+    //     if (GetFreeIndexes().empty() == false)
+    //     {
+    //         const UniqueIdUnsignedInt FreeIndexOfParticle = GetFreeIndexes().top();
+    //         GetFreeIndexes().pop();
+    //         return FreeIndexOfParticle;
+    //     }
+    //     else
+    //     {
+    //         LoggersManagerObject.Log(STREAM("Lack of new free indexes of particles"));
+    //         return MaxParticleIndex + 1;
+    //     }
+    // }
+
+
 public:
     void SetCurrentSectorPos(const SectorPosType& CurrentSectorPosParam)
     {

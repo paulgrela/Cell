@@ -1,7 +1,5 @@
-#pragma once
-
-#ifndef _STRING_UTILS_H_
-#define _STRING_UTILS_H_
+#ifndef STRING_UTILS_H_
+#define STRING_UTILS_H_
 
 #include <string>
 #include <vector>

@@ -1,7 +1,5 @@
-#pragma once
-
-#ifndef _DATE_TIME_UTILS_H_
-#define _DATE_TIME_UTILS_H_
+#ifndef DATE_TIME_UTILS_H_
+#define DATE_TIME_UTILS_H_
 
 #include <chrono>
 #include <string>

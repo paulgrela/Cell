@@ -1,7 +1,5 @@
-#pragma once
-
-#ifndef _TERMINAL_COLORS_UTILS_H_
-#define _TERMINAL_COLORS_UTILS_H_
+#ifndef TERMINAL_COLORS_UTILS_H_
+#define TERMINAL_COLORS_UTILS_H_
 
 #include <iostream>
 

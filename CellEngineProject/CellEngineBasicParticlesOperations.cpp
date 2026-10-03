@@ -19,7 +19,15 @@ void CellEngineBasicParticlesOperations::InitiateFreeParticleIndexesForAllSector
             FOR_EACH_SECTOR_IN_XYZ_ONLY
             {
                 SetCurrentSectorPos({ .SectorPosX = static_cast<SignedInt>(ParticleSectorXIndex), .SectorPosY = static_cast<SignedInt>(ParticleSectorYIndex), .SectorPosZ = static_cast<SignedInt>(ParticleSectorZIndex) });
-                Particles[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].ParticleUniqueIdGenerator.Initialize(CurrentSectorIndex);
+
+                if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true)
+                {
+                    if (Particles[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].MPIProcessIndex == MPIProcessDataObject.CurrentMPIProcessIndex)
+                        Particles[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].ParticleUniqueIdGenerator.Initialize(CurrentSectorIndex);
+                }
+                else
+                    Particles[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].ParticleUniqueIdGenerator.Initialize(CurrentSectorIndex);
+
                 CurrentSectorIndex++;
             }
         }
@@ -36,50 +44,50 @@ void CellEngineBasicParticlesOperations::InitiateFreeParticleIndexes(const Parti
 {
     try
     {
-        if (PrintInfo == true)
-            LoggersManagerObject.Log(STREAM("Scope of particle indexes for current thread = (" << to_string((CurrentThreadIndex + 1) * ParticleIndexesCreatorFactor - 1) << " , " << to_string(CurrentThreadIndex * ParticleIndexesCreatorFactor) << ") LocalParticles.size() = " << LocalParticles.size()));
-
-        if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
-        {
-            UnsignedInt CurrentSectorIndex = 0;
-            FOR_EACH_SECTOR_IN_XYZ_ONLY
-            {
-                SetCurrentSectorPos({ .SectorPosX = static_cast<SignedInt>(ParticleSectorXIndex), .SectorPosY = static_cast<SignedInt>(ParticleSectorYIndex), .SectorPosZ = static_cast<SignedInt>(ParticleSectorZIndex) });
-
-                GetFreeIndexes() = {};
-
-                if (PrintInfo == true)
-                    LoggersManagerObject.Log(STREAM("SCOPE OF INDEXES IN SECTOR = " << ParticleSectorXIndex << " " << ParticleSectorYIndex << " " << ParticleSectorZIndex << " " << (CurrentSectorIndex + 1) * ParticleIndexesInSectorsCreatorFactor - 1 << " " << CurrentSectorIndex * ParticleIndexesInSectorsCreatorFactor));
-
-                if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true)
-                {
-                    if (Particles[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].MPIProcessIndex == MPIProcessDataObject.CurrentMPIProcessIndex)
-                        for (UniqueIdUnsignedInt FreeIndex = (CurrentSectorIndex + 1) * ParticleIndexesInSectorsCreatorFactor - 1; FreeIndex > CurrentSectorIndex * ParticleIndexesInSectorsCreatorFactor; FreeIndex--)
-                            if (!GetParticles().contains(FreeIndex))
-                                GetFreeIndexes().push(FreeIndex);
-                }
-                else
-                    for (UniqueIdUnsignedInt FreeIndex = (CurrentSectorIndex + 1) * ParticleIndexesInSectorsCreatorFactor - 1; FreeIndex > CurrentSectorIndex * ParticleIndexesInSectorsCreatorFactor; FreeIndex--)
-                        if (!GetParticles().contains(FreeIndex))
-                            GetFreeIndexes().push(FreeIndex);
-
-                if (PrintInfo == true)
-                    LoggersManagerObject.Log(STREAM("FREE INDEXES SIZE IN SECTOR = " << ParticleSectorXIndex << " " << ParticleSectorYIndex << " " << ParticleSectorZIndex << " " << GetFreeIndexes().size()));
-
-                CurrentSectorIndex++;
-            }
-        }
-        else
-        {
-            FreeIndexesOfParticlesGlobal = {};
-
-            for (UniqueIdUnsignedInt FreeIndex = (CurrentThreadIndex + 1) * ParticleIndexesCreatorFactor - 1; FreeIndex > CurrentThreadIndex * ParticleIndexesCreatorFactor; FreeIndex--)
-                if (!LocalParticles.contains(FreeIndex))
-                    FreeIndexesOfParticlesGlobal.push(FreeIndex);
-
-            if (PrintInfo == true)
-                LoggersManagerObject.Log(STREAM("FreeIndexesOfParticles.size() = " << FreeIndexesOfParticlesGlobal.size()));
-        }
+        // if (PrintInfo == true)
+        //     LoggersManagerObject.Log(STREAM("Scope of particle indexes for current thread = (" << to_string((CurrentThreadIndex + 1) * ParticleIndexesCreatorFactor - 1) << " , " << to_string(CurrentThreadIndex * ParticleIndexesCreatorFactor) << ") LocalParticles.size() = " << LocalParticles.size()));
+        //
+        // if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
+        // {
+        //     UnsignedInt CurrentSectorIndex = 0;
+        //     FOR_EACH_SECTOR_IN_XYZ_ONLY
+        //     {
+        //         SetCurrentSectorPos({ .SectorPosX = static_cast<SignedInt>(ParticleSectorXIndex), .SectorPosY = static_cast<SignedInt>(ParticleSectorYIndex), .SectorPosZ = static_cast<SignedInt>(ParticleSectorZIndex) });
+        //
+        //         GetFreeIndexes() = {};
+        //
+        //         if (PrintInfo == true)
+        //             LoggersManagerObject.Log(STREAM("SCOPE OF INDEXES IN SECTOR = " << ParticleSectorXIndex << " " << ParticleSectorYIndex << " " << ParticleSectorZIndex << " " << (CurrentSectorIndex + 1) * ParticleIndexesInSectorsCreatorFactor - 1 << " " << CurrentSectorIndex * ParticleIndexesInSectorsCreatorFactor));
+        //
+        //         if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true)
+        //         {
+        //             if (Particles[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].MPIProcessIndex == MPIProcessDataObject.CurrentMPIProcessIndex)
+        //                 for (UniqueIdUnsignedInt FreeIndex = (CurrentSectorIndex + 1) * ParticleIndexesInSectorsCreatorFactor - 1; FreeIndex > CurrentSectorIndex * ParticleIndexesInSectorsCreatorFactor; FreeIndex--)
+        //                     if (!GetParticles().contains(FreeIndex))
+        //                         GetFreeIndexes().push(FreeIndex);
+        //         }
+        //         else
+        //             for (UniqueIdUnsignedInt FreeIndex = (CurrentSectorIndex + 1) * ParticleIndexesInSectorsCreatorFactor - 1; FreeIndex > CurrentSectorIndex * ParticleIndexesInSectorsCreatorFactor; FreeIndex--)
+        //                 if (!GetParticles().contains(FreeIndex))
+        //                     GetFreeIndexes().push(FreeIndex);
+        //
+        //         if (PrintInfo == true)
+        //             LoggersManagerObject.Log(STREAM("FREE INDEXES SIZE IN SECTOR = " << ParticleSectorXIndex << " " << ParticleSectorYIndex << " " << ParticleSectorZIndex << " " << GetFreeIndexes().size()));
+        //
+        //         CurrentSectorIndex++;
+        //     }
+        // }
+        // else
+        // {
+        //     FreeIndexesOfParticlesGlobal = {};
+        //
+        //     for (UniqueIdUnsignedInt FreeIndex = (CurrentThreadIndex + 1) * ParticleIndexesCreatorFactor - 1; FreeIndex > CurrentThreadIndex * ParticleIndexesCreatorFactor; FreeIndex--)
+        //         if (!LocalParticles.contains(FreeIndex))
+        //             FreeIndexesOfParticlesGlobal.push(FreeIndex);
+        //
+        //     if (PrintInfo == true)
+        //         LoggersManagerObject.Log(STREAM("FreeIndexesOfParticles.size() = " << FreeIndexesOfParticlesGlobal.size()));
+        // }
     }
     CATCH("initiating free particle indexes")
 }
@@ -94,6 +102,8 @@ void CellEngineBasicParticlesOperations::PreprocessData(const vector<A> Particle
         CellEngineParticleUniqueIdGenerator::ConfigureForNumberOfSectors(CellEngineConfigDataObject.NumberOfParticlesSectorsInX * CellEngineConfigDataObject.NumberOfParticlesSectorsInY * CellEngineConfigDataObject.NumberOfParticlesSectorsInZ);
 
         InitiateFreeParticleIndexesForAllSectors();
+
+        //InitiateFreeParticleIndexes(Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ].Particles, false);
 
         LoggersManagerObject.Log(STREAM("Get Min Max Coodridnates For All Particles"));
 

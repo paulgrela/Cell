@@ -88,7 +88,8 @@ void CellEngineFullAtomSimulationSpace::FillParticleElementsInSpace(const Unique
         GetParticleFromIndex(ParticleIndex).Center = { .X = VectorX, .Y = VectorY, .Z = VectorZ };
 
 
-                                                                                                                        CellEngineUseful::CheckCenterForSector<Particle>(GetParticleFromIndex(ParticleIndex), Particles, "CF1");
+                                                                                                                        if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == false)
+                                                                                                                            CellEngineUseful::CheckCenterForSector<Particle>(GetParticleFromIndex(ParticleIndex), Particles, "CF1");
     }
     CATCH("filling particle elements in space")
 }
@@ -157,6 +158,7 @@ void CellEngineFullAtomSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpa
             else
             if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true)
             {
+                //cout << "MPI_GOOD" << endl;
                 for (auto& ParticleInProximityObject : Particles[StartXPosParam][StartYPosParam][StartZPosParam].Particles | views::values)
                 {
                     CurrentSectorPos = SectorPosType{ .SectorPosX = static_cast<SignedInt>(StartXPosParam), .SectorPosY = static_cast<SignedInt>(StartYPosParam), .SectorPosZ = static_cast<SignedInt>(StartZPosParam) };
@@ -171,7 +173,7 @@ void CellEngineFullAtomSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpa
         }
         else
         {
-            //TO CO DLA MPI ale z poprawionym końcem zroznicowania dla unordered_map i mapy
+            // //TO CO DLA MPI ale z poprawionym końcem zroznicowania dla unordered_map i mapy
             for (auto& ParticleInProximityObject : Particles[StartXPosParam][StartYPosParam][StartZPosParam].Particles | views::values)
             {
                                                                                                                         auto [SectorPosX, SectorPosY, SectorPosZ] = CellEngineUseful::CheckCenterForSector<Particle>(ParticleInProximityObject, Particles, "C1");
@@ -194,8 +196,8 @@ void CellEngineFullAtomSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpa
                 auto& LocalSourceParticles = Particles[SectorPosSource.SectorPosX][SectorPosSource.SectorPosY][SectorPosSource.SectorPosZ].Particles;
                 if (const auto ParticleFromSourceToMoveToTargetIterator = LocalSourceParticles.find(ParticleIndex); ParticleFromSourceToMoveToTargetIterator != LocalSourceParticles.end())
                 {
-                    // Particles[SectorPosTarget.SectorPosX][SectorPosTarget.SectorPosY][SectorPosTarget.SectorPosZ].Particles.insert_or_assign(ParticleFromSourceToMoveToTargetIterator->first, std::move(ParticleFromSourceToMoveToTargetIterator->second));
-                    //                                                                                                  CellEngineUseful::CheckCenterForSector<Particle>(ParticleFromSourceToMoveToTargetIterator->second, Particles, "C2");
+                    Particles[SectorPosTarget.SectorPosX][SectorPosTarget.SectorPosY][SectorPosTarget.SectorPosZ].Particles.insert_or_assign(ParticleFromSourceToMoveToTargetIterator->first, std::move(ParticleFromSourceToMoveToTargetIterator->second));
+                                                                                                                     CellEngineUseful::CheckCenterForSector<Particle>(ParticleFromSourceToMoveToTargetIterator->second, Particles, "C2");
                     LocalSourceParticles.erase(ParticleFromSourceToMoveToTargetIterator);
                 }
                 else

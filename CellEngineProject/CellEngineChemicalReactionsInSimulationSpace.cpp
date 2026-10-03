@@ -27,7 +27,7 @@ void CellEngineChemicalReactionsInSimulationSpace::RemoveParticle(const UniqueId
 
         GetParticles().erase(ParticleIndex);
 
-        GetFreeIndexes().push(ParticleIndex);
+        //GetFreeIndexes().push(ParticleIndex);
     }
     CATCH("removing particle")
 }

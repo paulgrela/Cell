@@ -1,7 +1,5 @@
-#pragma once
-
-#ifndef _EXCEPTIONS_MACRO_H_
-#define _EXCEPTIONS_MACRO_H_
+#ifndef EXCEPTIONS_MACRO_H_
+#define EXCEPTIONS_MACRO_H_
 
 #include <iostream>
 #include <exception>

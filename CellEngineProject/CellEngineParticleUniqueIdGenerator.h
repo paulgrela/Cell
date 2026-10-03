@@ -17,6 +17,7 @@ private:
     static inline unsigned SectorBits{ 16 };
     static inline unsigned CounterBits{ 48 };
     static inline UniqueIdUnsignedInt LastCounterValue{ (std::uint64_t{ 1 } << 48) - 1 };
+
 public:
     static void ConfigureForNumberOfSectors(const UnsignedInt NumberOfAllSectors)
     {
@@ -73,6 +74,7 @@ private:
     UniqueIdUnsignedInt NextFreshId{ 1 };
     UniqueIdUnsignedInt EndOfRange{ 1 };
     std::vector<UniqueIdUnsignedInt> FreeList{};
+
 public:
     void Initialize(const UniqueIdUnsignedInt GlobalSectorLinearIndex, UniqueIdUnsignedInt IdsPerSector)
     {

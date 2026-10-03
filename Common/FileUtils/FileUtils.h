@@ -1,7 +1,5 @@
-#pragma once
-
-#ifndef _FILE_UTILS_H_
-#define _FILE_UTILS_H_
+#ifndef FILE_UTILS_H_
+#define FILE_UTILS_H_
 
 #include <string>
 
