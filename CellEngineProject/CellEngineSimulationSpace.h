@@ -48,16 +48,10 @@ protected:
     std::tuple<std::vector<std::pair<UniqueIdUnsignedInt, UnsignedInt>>, bool> ChooseParticlesForReactionFromAllParticlesInProximity(const ChemicalReaction& ReactionObject);
 protected:
     void PrepareRandomReaction();
-    // void FindAndExecuteRandomReactionVersion1(UnsignedInt MaxNumberOfReactantsParam);
-    // void FindAndExecuteRandomReactionVersion2(UnsignedInt MaxNumberOfReactantsParam);
     void FindAndExecuteRandomReactionVersion3(UnsignedInt MaxNumberOfReactantsParam);
-    // void FindAndExecuteRandomReactionVersion4(UnsignedInt MaxNumberOfReactantsParam);
 private:
     set<UnsignedInt> GetAllPossibleReactionsFromParticlesInProximity();
 protected:
-    // std::vector<UnsignedInt> GetRandomParticlesVersion1(UnsignedInt NumberOfReactants, UnsignedInt MaxNumberOfReactants);
-    // std::vector<UnsignedInt> GetRandomParticlesVersion2(UnsignedInt NumberOfReactants, UnsignedInt MaxNumberOfReactants);
-    //std::vector<UnsignedInt> GetRandomParticlesVersion3(UnsignedInt NumberOfReactants, UnsignedInt MaxNumberOfReactants) const;
     //TYLKO WELL STIRRED
     std::vector<UnsignedInt> GetRandomParticlesVersion3() const;
 public:

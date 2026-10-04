@@ -1331,7 +1331,6 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIPr
                 MPI_Pack(&NumberOfPackedStructures, 1, MPI_UNSIGNED, BufferToSend, MaxMPIMessageSize, &PositionInBuffer, MPI_COMM_WORLD);
                 for (const auto& ParticleToSendElement : VectorOfParticlesToSendToNeighborProcessesOrThreads[NeighborProcessIndex])
                 {
-                    //MPI_Pack(&ParticleToSendElement.ParticleIndex, 1, MPI_UNSIGNED, BufferToSend, MaxMPIMessageSize, &PositionInBuffer, MPI_COMM_WORLD);
                     MPI_Pack(&ParticleToSendElement.ParticleIndex, 1, MPI_UINT64_T, BufferToSend, MaxMPIMessageSize, &PositionInBuffer, MPI_COMM_WORLD);
                     MPI_Pack(&ParticleToSendElement.ParticleKindId, 1, MPI_UNSIGNED, BufferToSend, MaxMPIMessageSize, &PositionInBuffer, MPI_COMM_WORLD);
                     MPI_Pack(&ParticleToSendElement.SenderProcessIndex, 1, MPI_INT, BufferToSend, MaxMPIMessageSize, &PositionInBuffer, MPI_COMM_WORLD);
@@ -1370,8 +1369,6 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIPr
             for (UnsignedInt UnpackedParticleStructureIndex = 0; UnpackedParticleStructureIndex < NumberOfUnpackedParticleStructures; UnpackedParticleStructureIndex++)
             {
                 UniqueIdUnsignedInt MPIParticleSenderStructElementLocalObject;
-                //MPI_Unpack(ReceivedParticlesToInsert1, MaxMPIMessageSize, &PositionInBuffer, &MPIParticleSenderStructElementLocalObject, 1, MPI_INT32_T, MPI_COMM_WORLD);
-                //MPI_Unpack(ReceivedParticlesToInsert1, MaxMPIMessageSize, &PositionInBuffer, &MPIParticleSenderStructElementLocalObject, 1, MPI_UNSIGNED, MPI_COMM_WORLD);
                 MPI_Unpack(ReceivedParticlesToInsert1, MaxMPIMessageSize, &PositionInBuffer, &MPIParticleSenderStructElementLocalObject, 1, MPI_UINT64_T, MPI_COMM_WORLD);
                 ReceivedConfirmationOfParticlesToRemove.emplace_back(MPIParticleSenderStructElementLocalObject);
             }
@@ -1424,7 +1421,6 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIPr
             for (UnsignedInt UnpackedParticleStructureIndex = 0; UnpackedParticleStructureIndex < NumberOfUnpackedParticleStructures; UnpackedParticleStructureIndex++)
             {
                 ParticleSenderStruct MPIParticleSenderStructElementLocalObject;
-                //MPI_Unpack(ReceivedParticlesToInsert1, MaxMPIMessageSize, &PositionInBuffer, &MPIParticleSenderStructElementLocalObject.ParticleIndex, 1, MPI_UNSIGNED, MPI_COMM_WORLD);
                 MPI_Unpack(ReceivedParticlesToInsert1, MaxMPIMessageSize, &PositionInBuffer, &MPIParticleSenderStructElementLocalObject.ParticleIndex, 1, MPI_UINT64_T, MPI_COMM_WORLD);
                 MPI_Unpack(ReceivedParticlesToInsert1, MaxMPIMessageSize, &PositionInBuffer, &MPIParticleSenderStructElementLocalObject.ParticleKindId, 1, MPI_UNSIGNED, MPI_COMM_WORLD);
                 MPI_Unpack(ReceivedParticlesToInsert1, MaxMPIMessageSize, &PositionInBuffer, &MPIParticleSenderStructElementLocalObject.SenderProcessIndex, 1, MPI_INT, MPI_COMM_WORLD);
@@ -1483,8 +1479,6 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIPr
 
                 MPI_Pack(&NumberOfPackedStructures, 1, MPI_UNSIGNED, BufferToSend, MaxMPIMessageSize, &PositionInBuffer, MPI_COMM_WORLD);
                 for (const auto& ParticleToSendElement : ConfirmationOfParticlesToRemoveToSent)
-                    //MPI_Pack(&ParticleToSendElement, 1, MPI_INT32_T, BufferToSend, MaxMPIMessageSize, &PositionInBuffer, MPI_COMM_WORLD);
-                    //MPI_Pack(&ParticleToSendElement, 1, MPI_UNSIGNED, BufferToSend, MaxMPIMessageSize, &PositionInBuffer, MPI_COMM_WORLD);
                     MPI_Pack(&ParticleToSendElement, 1, MPI_UINT64_T, BufferToSend, MaxMPIMessageSize, &PositionInBuffer, MPI_COMM_WORLD);
                 MPI_Send(BufferToSend, PositionInBuffer, MPI_PACKED, NeighborProcessesIndexes[NeighborProcessIndex], 0, MPI_COMM_WORLD);
             }

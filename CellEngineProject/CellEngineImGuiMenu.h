@@ -1325,6 +1325,10 @@ public:
 
     static void MakeNStepsOfSimulationWithoutParallelExecution()
     {
+        LoggersManagerObject.Log(STREAM(""));
+        LoggersManagerObject.Log(STREAM("START NOT PARALLEL SIMULATION"));
+        LoggersManagerObject.Log(STREAM(""));
+
         const auto start_time = chrono::high_resolution_clock::now();
 
         if (CellEngineUseful::IsIn(CellEngineConfigDataObject.TypeOfSimulation, { CellEngineConfigData::TypesOfSimulation::BothReactionsAndDiffusion, CellEngineConfigData::TypesOfSimulation::OnlyReactions }))
@@ -1336,6 +1340,7 @@ public:
 
         LoggersManagerObject.Log(STREAM(""));
         LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Execution of generating one step simulation in whole cell space has taken time: ","Execution in threads")));
+        LoggersManagerObject.Log(STREAM(""));
     }
 
     static void MakeSimulationInSingleThreadWithSavingGeneratedRandomValues()

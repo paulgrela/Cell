@@ -37,6 +37,8 @@ protected:
 protected:
     explicit CellEngineChemicalReactionsInBasicSimulationSpace(ParticlesContainer<Particle>& ParticlesParam) : CellEngineBasicParticlesOperations(ParticlesParam)
     {
+        LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity.reserve(1000);
+        LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity.reserve(10000);
     }
     ~CellEngineChemicalReactionsInBasicSimulationSpace() override = default;
 };

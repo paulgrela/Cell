@@ -37,9 +37,6 @@ void CellEngineBasicParticlesOperations::InitiateFreeParticleIndexesForAllSector
     CATCH("initiating free particle indexes for all sectors")
 }
 
-constexpr UniqueIdUnsignedInt ParticleIndexesCreatorFactor = 10'000'000;
-constexpr UniqueIdUnsignedInt ParticleIndexesInSectorsCreatorFactor = 100'000;
-
 template <class T, class A>
 void CellEngineBasicParticlesOperations::PreprocessData(const vector<A> Particle::*ListOfElements, const std::vector<A> ParticleKind::*ListOfElementsOfParticleKind, const bool UpdateParticleKindListOfElementsBool)
 {
