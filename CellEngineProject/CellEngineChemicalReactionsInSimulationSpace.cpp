@@ -146,7 +146,7 @@ bool CellEngineChemicalReactionsInSimulationSpace::FindParticlesInProximityOfSim
 
         MakingZeroSizeForContainersForFoundParticlesInProximity(CurrentThreadPos);
 
-        FindParticlesInProximityInSimulationSpaceForSelectedLocalSpace(FoundParticleIndexes, UpdateNucleotides, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
+        FindParticlesInProximityInSimulationSpaceForSelectedLocalSpace(FoundParticleIndexes, UpdateNucleotides, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam); //SizeXParam, SizeYParam, SizeZParam - sa nieuzywane w tej funkcji a zatem niepotrzebne wcale i tu
 
         //LoggersManagerObject.Log(STREAM(endl << "Number of Particles Kinds Found In Proximity = " << LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity.size()));
 

@@ -79,7 +79,7 @@ CellEngineVoxelSimulationSpace::~CellEngineVoxelSimulationSpace()
     return ss;
 }
 
-void CellEngineVoxelSimulationSpace::FillParticleElementsInSpace(const UniqueIdUnsignedInt ParticleIndex, ParticleKind& ParticleKindObjectForProduct, const RealType VectorX, const RealType VectorY, const RealType VectorZ)
+void CellEngineVoxelSimulationSpace::FillParticleElementsInSpace(const UniqueIdUnsignedInt ParticleIndex, const ParticleKind& ParticleKindObjectForProduct, const RealType VectorX, const RealType VectorY, const RealType VectorZ)
 {
     try
     {
@@ -188,14 +188,14 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfElectricDiffusionForSelect
     CATCH("generating one step of electric diffusion")
 }
 
-void CellEngineVoxelSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpace(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, const bool InBounds, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam)
+void CellEngineVoxelSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpace(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, const bool InBounds, const UnsignedInt StartSectorXPosParam, const UnsignedInt StartSectorYPosParam, const UnsignedInt StartSectorZPosParam, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam)
 {
     try
     {
         uniform_int_distribution<SignedInt> UniformDistributionObjectMoveParticleDirection_int64t(-1, 1);
 
         auto EmptyParticlesIter = GetParticles().end();
-        FindParticlesInProximityOfSimulationSpaceForSelectedSpace(false, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
+        FindParticlesInProximityOfSimulationSpaceForSelectedSpace(false, StartSectorXPosParam, StartSectorYPosParam, StartSectorZPosParam, SizeXParam, SizeYParam, SizeZParam);
         for (const auto& ParticleInProximityIndex : LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity)
             if (CellEngineUseful::IsDNA(GetParticleFromIndex(ParticleInProximityIndex).EntityId) == false)
                 MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(GetParticleFromIndex(ParticleInProximityIndex), Particles, EmptyParticlesIter, CurrentThreadLocalSimulationSpaceData->ListOfParticlesToChangeSectors, CurrentSectorPos, GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
@@ -209,11 +209,11 @@ void CellEngineVoxelSimulationSpace::GenerateNStepsOfDiffusionForWholeCellSpace(
     {
         CellEngineUseful::SwitchOffLogs();
 
-        for (UnsignedInt Step = 1; Step <= NumberOfSimulationSteps; Step++)
-            for (UnsignedInt PosX = XStartParam; PosX < XSizeParam; PosX += XStepParam)
-                for (UnsignedInt PosY = YStartParam; PosY < YSizeParam; PosY += YStepParam)
-                    for (UnsignedInt PosZ = ZStartParam; PosZ < ZSizeParam; PosZ += ZStepParam)
-                        GenerateOneStepOfDiffusionForSelectedSpace(CurrentThreadLocalSimulationSpaceData, InBounds, PosX, PosY, PosZ, XStepParam, YStepParam, ZStepParam);
+        // for (UnsignedInt Step = 1; Step <= NumberOfSimulationSteps; Step++)
+        //     for (UnsignedInt PosX = XStartParam; PosX < XSizeParam; PosX += XStepParam)
+        //         for (UnsignedInt PosY = YStartParam; PosY < YSizeParam; PosY += YStepParam)
+        //             for (UnsignedInt PosZ = ZStartParam; PosZ < ZSizeParam; PosZ += ZStepParam)
+        //                 GenerateOneStepOfDiffusionForSelectedSpace(CurrentThreadLocalSimulationSpaceData, InBounds, PosX, PosY, PosZ, XStepParam, YStepParam, ZStepParam);
 
         CheckConditionsToIncSimulationStepNumberForStatistics();
 
@@ -351,11 +351,11 @@ void CellEngineVoxelSimulationSpace::GenerateNStepsOfDiffusionForBigPartOfCellSp
     {
         CellEngineUseful::SwitchOffLogs();
 
-        for (UnsignedInt Step = 1; Step <= NumberOfSimulationSteps; Step++)
-            for (UnsignedInt PosX = XStartParam - SizeNMultiplyFactor * XStepParam; PosX <= XStartParam + SizeNMultiplyFactor * XStepParam; PosX += XStepParam)
-                for (UnsignedInt PosY = YStartParam - SizeNMultiplyFactor * YStepParam; PosY <= YStartParam + SizeNMultiplyFactor * YStepParam; PosY += YStepParam)
-                    for (UnsignedInt PosZ = ZStartParam - SizeNMultiplyFactor * ZStepParam; PosZ <= ZStartParam + SizeNMultiplyFactor * ZStepParam; PosZ += ZStepParam)
-                        GenerateOneStepOfDiffusionForSelectedSpace(nullptr, InBounds, PosX, PosY, PosZ, XStepParam, YStepParam, ZStepParam);
+        // for (UnsignedInt Step = 1; Step <= NumberOfSimulationSteps; Step++)
+        //     for (UnsignedInt PosX = XStartParam - SizeNMultiplyFactor * XStepParam; PosX <= XStartParam + SizeNMultiplyFactor * XStepParam; PosX += XStepParam)
+        //         for (UnsignedInt PosY = YStartParam - SizeNMultiplyFactor * YStepParam; PosY <= YStartParam + SizeNMultiplyFactor * YStepParam; PosY += YStepParam)
+        //             for (UnsignedInt PosZ = ZStartParam - SizeNMultiplyFactor * ZStepParam; PosZ <= ZStartParam + SizeNMultiplyFactor * ZStepParam; PosZ += ZStepParam)
+        //                 GenerateOneStepOfDiffusionForSelectedSpace(nullptr, InBounds, PosX, PosY, PosZ, XStepParam, YStepParam, ZStepParam);
 
         CheckConditionsToIncSimulationStepNumberForStatistics();
 

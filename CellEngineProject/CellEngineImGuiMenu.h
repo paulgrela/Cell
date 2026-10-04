@@ -751,7 +751,7 @@ public:
 
                 ColorButton(AlignString("MAKE ONE STEP OF DIFFUSION FOR SELECTED SPACE", StringLength).c_str(), Nothing, 0, 0, 0, 8, IDButton, [MultiplyElectricChargeFactor, DrawSpaceStartXYZ, DrawSpaceSizesXYZ](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
                 {
-                    CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateOneStepOfDiffusionForSelectedSpace(nullptr, true, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
+                    CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GenerateOneStepOfDiffusionForSelectedSpace(nullptr, true, 0, 0, 0, DrawSpaceStartXYZ[0], DrawSpaceStartXYZ[1], DrawSpaceStartXYZ[2], DrawSpaceSizesXYZ[0], DrawSpaceSizesXYZ[1], DrawSpaceSizesXYZ[2]);
                 });
 
                 ColorButton(AlignString("MAKE ONE STEP OF ELECTRIC DIFFUSION FOR RANGE OF PARTICLES - FCP", StringLength).c_str(), Nothing, 0, 0, 0, 9, IDButton, [MultiplyElectricChargeFactor, DrawSpaceStartXYZ, DrawSpaceSizesXYZ](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)

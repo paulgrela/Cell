@@ -61,7 +61,7 @@ public:
     // }
 protected:
     void InitiateFreeParticleIndexesForAllSectors();
-    void InitiateFreeParticleIndexes(const ParticlesDetailedContainer<Particle>& LocalParticles, bool PrintInfo);
+    // void InitiateFreeParticleIndexes(const ParticlesDetailedContainer<Particle>& LocalParticles, bool PrintInfo);
 protected:
 
 

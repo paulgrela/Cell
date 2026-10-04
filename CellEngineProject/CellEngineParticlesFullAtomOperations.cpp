@@ -40,6 +40,7 @@ static bool ExchangeParticleBetweenSectors(const Particle &ParticleObject, const
                 const auto ParticleFromSourceToMoveToTargetIterator = ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].Particles.find(ListOfParticlesToChangeSectors.back().ParticleIndex);
                 if (ParticleFromSourceToMoveToTargetIterator == ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].Particles.end())
                     cout << "ERROR2 = " << ListOfParticlesToChangeSectors.back().ParticleIndex << " " << ParticleObject.Index << endl;
+                //czemu w startowym sekotrze nie ma czastki która ma być wsłana - to nie wątek a sektor więc się zmienia
     }
 
     return false;
