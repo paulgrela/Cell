@@ -40,7 +40,6 @@ static bool ExchangeParticleBetweenSectors(const Particle &ParticleObject, const
                 const auto ParticleFromSourceToMoveToTargetIterator = ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].Particles.find(ListOfParticlesToChangeSectors.back().ParticleIndex);
                 if (ParticleFromSourceToMoveToTargetIterator == ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].Particles.end())
                     cout << "ERROR2 = " << ListOfParticlesToChangeSectors.back().ParticleIndex << " " << ParticleObject.Index << endl;
-                //czemu w startowym sekotrze nie ma czastki która ma być wsłana - to nie wątek a sektor więc się zmienia
     }
 
     return false;
@@ -109,13 +108,13 @@ void CellEngineParticlesFullAtomOperations::MoveParticleByVectorForThreads(Parti
                         }
                     }
                     else
-                    if (Thread1Pos == CurrentThreadPos)
-                        if (ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].Particles.contains(ParticleObject.Index) == false)
-                        {
-                            ListOfParticlesToChangeSectors.emplace_back(ParticleToBeMovedFromOneSectorToAnotherSector{ .ParticleIndex = ParticleObject.Index, .SectorPosSource = SectorPosType{ .SectorPosX = SectorPosX1, .SectorPosY = SectorPosY1, .SectorPosZ = SectorPosZ1 }, .SectorPosTarget = SectorPosType{ .SectorPosX = SectorPosX2, .SectorPosY = SectorPosY2, .SectorPosZ = SectorPosZ2 }});
-                            NewSectorNeighborThreadFound = true;
-                        }
-                }
+                    //if (Thread1Pos == CurrentThreadPos)
+                    if (ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].Particles.contains(ParticleObject.Index) == false)
+                    {
+                        ListOfParticlesToChangeSectors.emplace_back(ParticleToBeMovedFromOneSectorToAnotherSector{ .ParticleIndex = ParticleObject.Index, .SectorPosSource = SectorPosType{ .SectorPosX = SectorPosX1, .SectorPosY = SectorPosY1, .SectorPosZ = SectorPosZ1 }, .SectorPosTarget = SectorPosType{ .SectorPosX = SectorPosX2, .SectorPosY = SectorPosY2, .SectorPosZ = SectorPosZ2 }});
+                        NewSectorNeighborThreadFound = true;
+                    }
+            }
 
                 if (NewSectorNeighborThreadFound == false)
                 {

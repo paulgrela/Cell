@@ -16,8 +16,7 @@ class CellEngineBasicParticlesOperations : public CellEngineBasicParallelExecuti
 protected:
     CellEngineParticleUniqueIdGenerator ParticleUniqueIdGenerator;
 protected:
-    UnsignedInt MaxParticleIndex{};//USUNAC
-    //std::stack<UniqueIdUnsignedInt> FreeIndexesOfParticlesGlobal;
+    UnsignedInt MaxParticleIndex{};
 protected:
     ParticlesContainer<Particle>& Particles;
 protected:
@@ -40,13 +39,6 @@ protected:
     }
 protected:
 
-    // inline std::stack<UniqueIdUnsignedInt>& GetFreeIndexes()
-    // {
-    //     if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
-    //         return Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ].FreeIndexesOfParticles;
-    //     else
-    //         return FreeIndexesOfParticlesGlobal;
-    // }
     inline CellEngineParticleUniqueIdGenerator& GetFreeParticleIndexes()
     {
         if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
@@ -54,14 +46,8 @@ protected:
         else
             return ParticleUniqueIdGenerator;
     }
-public:
-    // [[nodiscard]] UniqueIdUnsignedInt GetFreeIndexesOfParticleSize() const
-    // {
-    //     return FreeIndexesOfParticlesGlobal.size();
-    // }
 protected:
     void InitiateFreeParticleIndexesForAllSectors();
-    // void InitiateFreeParticleIndexes(const ParticlesDetailedContainer<Particle>& LocalParticles, bool PrintInfo);
 protected:
 
 
@@ -110,20 +96,6 @@ protected:
             }
         }
     }
-    // inline UniqueIdUnsignedInt GetNewFreeIndexOfParticleReuse()
-    // {
-    //     if (GetFreeIndexes().empty() == false)
-    //     {
-    //         const UniqueIdUnsignedInt FreeIndexOfParticle = GetFreeIndexes().top();
-    //         GetFreeIndexes().pop();
-    //         return FreeIndexOfParticle;
-    //     }
-    //     else
-    //     {
-    //         LoggersManagerObject.Log(STREAM("Lack of new free indexes of particles"));
-    //         return MaxParticleIndex + 1;
-    //     }
-    // }
 
 
 public:

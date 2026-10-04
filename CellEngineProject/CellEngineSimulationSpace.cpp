@@ -466,7 +466,6 @@ std::vector<UnsignedInt> CellEngineSimulationSpace::GetRandomParticlesVersion3()
 //TYLKO WELL STIRRED
 std::vector<UnsignedInt> CellEngineSimulationSpace::GetRandomParticles(const UnsignedInt NumberOfReactants, const UnsignedInt MaxNumberOfReactants)
 {
-    //return GetRandomParticlesVersion3(NumberOfReactants, MaxNumberOfReactants);
     return GetRandomParticlesVersion3();
 }
 

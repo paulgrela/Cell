@@ -115,8 +115,6 @@ public:
     UnsignedInt MPIProcessIndex{ 0 };
     ThreadPosType ThreadPos{ 1, 1, 1 };
 public:
-    //std::stack<UniqueIdUnsignedInt> FreeIndexesOfParticles;
-
     CellEngineParticleUniqueIdGenerator ParticleUniqueIdGenerator{};
     ParticlesDetailedContainer<Particle> Particles;
 };

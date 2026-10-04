@@ -25,7 +25,6 @@ public:
     T* PairedNucleotidePtr = nullptr;
 public:
     UniqueIdUnsignedInt PairedNucleotideTemporary = 0;
-    //UniqueIdIntReduced PairedNucleotideTemporary = 0;
 public:
     static void LinkPairedNucleotides(T* PairedNucleotide1, T* PairedNucleotide2)
     {
@@ -41,7 +40,6 @@ public:
     std::vector<T*> LinkedParticlesPointersList;
 public:
     std::vector<UniqueIdUnsignedInt> LinkedParticlesPointersListTemporary;
-    //std::vector<UniqueIdIntReduced> LinkedParticlesPointersListTemporary;
 public:
     void AddNewLinkToParticle(T* NewLinkToParticle)
     {
@@ -70,7 +68,6 @@ using ListOfAtomsType = std::vector<CellEngineAtom>;
 using ListOfCentersType = std::vector<vector3_Real32>;
 
 class Particle : public DoublyLinkedListNode<Particle, UniqueIdUnsignedInt>, public PairedNucleotide<Particle>, public LinkedParticles<Particle>
-//class Particle : public DoublyLinkedListNode<Particle, UniqueIdIntReduced>, public PairedNucleotide<Particle>, public LinkedParticles<Particle>
 {
 public:
     bool SelectedForReaction{};
@@ -78,11 +75,6 @@ public:
     EntityIdInt EntityId{};
     ChainIdInt ChainId{};
     UniqueIdUnsignedInt Index{};
-
-    // UniqueIdInt GenomeThread{};
-    // UniqueIdInt GenomeIndex{};
-    // UniqueIdInt GenomeIndexPrev{};
-    // UniqueIdInt GenomeIndexNext{};
 
     UniqueIdUnsignedIntReduced GenomeThread{};
     UniqueIdUnsignedIntReduced GenomeIndex{};
