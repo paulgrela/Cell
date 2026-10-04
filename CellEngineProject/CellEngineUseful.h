@@ -3,10 +3,9 @@
 #define CELL_ENGINE_USEFUL_H
 
 #include "CellEngineTypes.h"
+#include "CellEngineMacros.h"
 #include "CellEngineConstants.h"
 #include "CellEngineConfigData.h"
-
-#define SIMULATION_DETAILED_LOG
 
 namespace CellEngineUseful
 {
@@ -61,27 +60,25 @@ namespace CellEngineUseful
     {
         const auto [SectorPosX, SectorPosY, SectorPosZ] = CellEngineUseful::GetSectorPos(ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z);
 
+        #ifdef SIMULATION_DETAILED_DEBUG_LOG
         if (ParticlesInSector[SectorPosX][SectorPosY][SectorPosZ].Particles.find(ParticleObject.Index) == ParticlesInSector[SectorPosX][SectorPosY][SectorPosZ].Particles.end())
-            std::cout << Str << " Error particle not existing in sector = " << ParticleObject.EntityId << " " << ParticleObject.Index << " SectorPosX = " << SectorPosX << " SectorPosY = " << SectorPosY << " SectorPosZ = " << SectorPosZ << std::endl;
+            LoggersManagerObject.Log(STREAM(Str << " Error particle not existing in sector = " << ParticleObject.EntityId << " " << ParticleObject.Index << " SectorPosX = " << SectorPosX << " SectorPosY = " << SectorPosY << " SectorPosZ = " << SectorPosZ));
 
         if (ParticlesInSector[SectorPosX][SectorPosY][SectorPosZ].Particles.find(ParticleObject.Index)->second.Center != ParticleObject.Center)
-            std::cout << Str << " Error particle center in sector = " << ParticleObject.EntityId << " " << ParticleObject.Index << " SectorPosX = " << SectorPosX << " SectorPosY = " << SectorPosY << " SectorPosZ = " << SectorPosZ << std::endl;
+            LoggersManagerObject.Log(STREAM(Str << " Error particle center in sector = " << ParticleObject.EntityId << " " << ParticleObject.Index << " SectorPosX = " << SectorPosX << " SectorPosY = " << SectorPosY << " SectorPosZ = " << SectorPosZ));
+        #endif
 
         return { SectorPosX, SectorPosY, SectorPosZ };
     }
 
     static void SwitchOffLogs()
     {
-        #ifdef SIMULATION_DETAILED_LOG
         LoggersManagerObject.InitializePrintingParameters(false, false, CellEngineConfigDataObject.PrintLogLineNumberToConsole, CellEngineConfigDataObject.PrintLogDateTimeToConsole, CellEngineConfigDataObject.PrintLogProcessIdToConsole, CellEngineConfigDataObject.PrintLogProcessPriorityLevelToConsole, CellEngineConfigDataObject.PrintLogThreadIdToConsole, CellEngineConfigDataObject.PrintLogLineNumberToFile, CellEngineConfigDataObject.PrintLogDateTimeToFile, CellEngineConfigDataObject.PrintLogProcessIdToFile, CellEngineConfigDataObject.PrintLogProcessPriorityLevelToFile, CellEngineConfigDataObject.PrintLogThreadIdToFile, CellEngineConfigDataObject.MaximalNumberOfLinesInOneFile, CellEngineConfigDataObject.PrintLogToCommonFileWhenPrintLogToSpecialFile);
-        #endif
     }
 
     static void SwitchOnLogs()
     {
-        #ifdef SIMULATION_DETAILED_LOG
         LoggersManagerObject.InitializePrintingParameters(CellEngineConfigDataObject.PrintLogToConsole, CellEngineConfigDataObject.PrintLogToFiles, CellEngineConfigDataObject.PrintLogLineNumberToConsole, CellEngineConfigDataObject.PrintLogDateTimeToConsole, CellEngineConfigDataObject.PrintLogProcessIdToConsole, CellEngineConfigDataObject.PrintLogProcessPriorityLevelToConsole, CellEngineConfigDataObject.PrintLogThreadIdToConsole, CellEngineConfigDataObject.PrintLogLineNumberToFile, CellEngineConfigDataObject.PrintLogDateTimeToFile, CellEngineConfigDataObject.PrintLogProcessIdToFile, CellEngineConfigDataObject.PrintLogProcessPriorityLevelToFile, CellEngineConfigDataObject.PrintLogThreadIdToFile, CellEngineConfigDataObject.MaximalNumberOfLinesInOneFile, CellEngineConfigDataObject.PrintLogToCommonFileWhenPrintLogToSpecialFile);
-        #endif
     }
 
     inline bool IsRNANucleotideEqual(const EntityIdInt EntityId,  const ChainIdInt ChainId)
@@ -331,19 +328,22 @@ namespace CellEngineUseful
         return false;
     }
 
-    inline void CompareSequences(const std::vector<ChainIdInt>& TemplateSequence, const std::vector<ChainIdInt>& NucleotidesSequenceToCompareVector, bool& FoundSequenceNotFit, const bool SwitchLogsBool)
+    inline void CompareSequences(const std::vector<ChainIdInt>& TemplateSequence, const std::vector<ChainIdInt>& NucleotidesSequenceToCompareVector, bool& FoundSequenceNotFit, const bool PrintLogsBool)
     {
-        if (SwitchLogsBool == true)
-            CellEngineUseful::SwitchOffLogs();
-
         if (NucleotidesSequenceToCompareVector.size() >= TemplateSequence.size())
         {
-            LoggersManagerObject.Log(STREAM("LOOP COMPARISON SIZE = " << std::to_string(NucleotidesSequenceToCompareVector.size()) << " " << std::to_string(TemplateSequence.size())));
+            #ifdef SIMULATION_DETAILED_DEBUG_LOG
+            if (PrintLogsBool == true)
+                LoggersManagerObject.Log(STREAM("LOOP COMPARISON SIZE = " << std::to_string(NucleotidesSequenceToCompareVector.size()) << " " << std::to_string(TemplateSequence.size())));
+            #endif
 
             for (UnsignedInt NucleotideNum = 0; NucleotideNum < TemplateSequence.size(); NucleotideNum++)
                 if (CompareIUPACNucleotideCode(TemplateSequence[NucleotideNum], NucleotidesSequenceToCompareVector[NucleotideNum]) == false)
                 {
-                    LoggersManagerObject.Log(STREAM("LOOP COMPARISON BREAK = " << std::to_string(NucleotideNum) << "#"));
+                    #ifdef SIMULATION_DETAILED_DEBUG_LOG
+                    if (PrintLogsBool == true)
+                        LoggersManagerObject.Log(STREAM("LOOP COMPARISON BREAK = " << std::to_string(NucleotideNum) << "#"));
+                    #endif
 
                     FoundSequenceNotFit = true;
                     break;
@@ -351,9 +351,6 @@ namespace CellEngineUseful
         }
         else
             FoundSequenceNotFit = true;
-
-        if (SwitchLogsBool == true)
-            CellEngineUseful::SwitchOnLogs();
     }
 
     inline std::vector<ChainIdInt> ConvertStringSequenceToChainIdSequence(const std::string& SequenceStr)
@@ -373,7 +370,7 @@ namespace CellEngineUseful
 
     inline vmath::vec3 GetVMathVec3FromVector3ForColor(vector3_16 Color)
     {
-        return { float(Color.X) / 100.00f, float(Color.Y) / 100.00f, float(Color.Z) / 100.00f };
+        return { static_cast<float>(Color.X) / 100.00f, static_cast<float>(Color.Y) / 100.00f, static_cast<float>(Color.Z) / 100.00f };
     }
 
     class AtomDescriptionTexts

@@ -282,7 +282,7 @@ void FindPromoters(const std::vector<std::string>& GenomesLines, const bool Swit
             auto NucleotidesSequenceToCompareVector = CellEngineUseful::ConvertStringSequenceToChainIdSequence(GenomesLines[0].substr(StartGenomeIndex, AttachPolymeraseToDNAStartSequenceStr.size()));
 
             bool FoundSequenceNotFit = false;
-            CellEngineUseful::CompareSequences(AttachPolymeraseToDNAStartSequence, NucleotidesSequenceToCompareVector, FoundSequenceNotFit, true);
+            CellEngineUseful::CompareSequences(AttachPolymeraseToDNAStartSequence, NucleotidesSequenceToCompareVector, FoundSequenceNotFit, false);
             if (FoundSequenceNotFit == false)
             {
                 if (SwitchLogsBool == true)

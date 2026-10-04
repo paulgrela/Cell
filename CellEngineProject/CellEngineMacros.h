@@ -1,6 +1,8 @@
 #ifndef CELL_ENGINE_MACROS_H
 #define CELL_ENGINE_MACROS_H
 
+#include "../Compilation/ConditionalCompilationConstants.h"
+
 #define FOR_EACH_SECTOR_IN_XYZ_ONLY \
         for (UnsignedInt ParticleSectorXIndex = 0; ParticleSectorXIndex < CellEngineConfigDataObject.NumberOfParticlesSectorsInX; ParticleSectorXIndex++) \
             for (UnsignedInt ParticleSectorYIndex = 0; ParticleSectorYIndex < CellEngineConfigDataObject.NumberOfParticlesSectorsInY; ParticleSectorYIndex++) \
@@ -17,5 +19,11 @@
             for (UnsignedInt ParticleSectorYIndex = 0; ParticleSectorYIndex < CellEngineConfigDataObject.NumberOfParticlesSectorsInY; ParticleSectorYIndex++) \
                 for (UnsignedInt ParticleSectorZIndex = 0; ParticleSectorZIndex < CellEngineConfigDataObject.NumberOfParticlesSectorsInZ; ParticleSectorZIndex++) \
                     for (auto& ParticleObject : Particles[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles)
+
+#ifdef SIMULATION_DETAILED_DEBUG_LOG
+    #define DEBUGLOG(...) __VA_ARGS__
+#else
+    #define DEBUGLOG(...)
+#endif
 
 #endif

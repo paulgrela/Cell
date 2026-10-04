@@ -3,7 +3,6 @@
 #define CELL_ENGINE_BASIC_PARALLEL_EXECUTION_DATA_H
 
 #include <queue>
-#include <barrier>
 #include <condition_variable>
 
 #include "CellEngineTypes.h"

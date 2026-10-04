@@ -74,7 +74,7 @@ void CellEngineFullAtomSimulationSpace::FillParticleElementsInSpace(const Unique
 {
     try
     {
-                                                                                                                        //CZY TU USTAWIANIE SECTORA
+        //CZY TU USTAWIANIE SECTORA
 
         GetParticleFromIndex(ParticleIndex).ListOfAtoms.clear();
 
@@ -87,9 +87,10 @@ void CellEngineFullAtomSimulationSpace::FillParticleElementsInSpace(const Unique
         GetParticleFromIndex(ParticleIndex).Radius = ParticleKindObjectForProduct.Radius;
         GetParticleFromIndex(ParticleIndex).Center = { .X = VectorX, .Y = VectorY, .Z = VectorZ };
 
-
-                                                                                                                        if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == false)
-                                                                                                                            CellEngineUseful::CheckCenterForSector<Particle>(GetParticleFromIndex(ParticleIndex), Particles, "CF1");
+        #ifdef SIMULATION_DETAILED_DEBUG_LOG
+        if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == false)
+            CellEngineUseful::CheckCenterForSector<Particle>(GetParticleFromIndex(ParticleIndex), Particles, "CF1");
+        #endif
     }
     CATCH("filling particle elements in space")
 }
@@ -144,7 +145,7 @@ void CellEngineFullAtomSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpa
             {
                 for (auto& ParticleInProximityObject : Particles[StartSectorXPosParam][StartSectorYPosParam][StartSectorZPosParam].Particles | views::values)
                 {
-                                                                                                                        CellEngineUseful::CheckCenterForSector<Particle>(ParticleInProximityObject, Particles, "C0");
+                    DEBUGLOG(CellEngineUseful::CheckCenterForSector<Particle>(ParticleInProximityObject, Particles, "C0");)
 
                     CurrentSectorPos = SectorPosType{ .SectorPosX = static_cast<SignedInt>(StartSectorXPosParam), .SectorPosY = static_cast<SignedInt>(StartSectorYPosParam), .SectorPosZ = static_cast<SignedInt>(StartSectorZPosParam) };
                     if (CellEngineUseful::IsDNA(ParticleInProximityObject.EntityId) == false)
@@ -175,10 +176,11 @@ void CellEngineFullAtomSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpa
             // TO CO DLA MPI ale z poprawionym końcem zroznicowania dla unordered_map i mapy
             for (auto& ParticleInProximityObject : Particles[StartSectorXPosParam][StartSectorYPosParam][StartSectorZPosParam].Particles | views::values)
             {
-                                                                                                                        auto [SectorPosX, SectorPosY, SectorPosZ] = CellEngineUseful::CheckCenterForSector<Particle>(ParticleInProximityObject, Particles, "C1");
-                                                                                                                        if (SectorPosX != StartSectorXPosParam || SectorPosY != StartSectorYPosParam || SectorPosZ != StartSectorZPosParam)
-                                                                                                                            //std::cout << "C10" << " Error particle center not in proper sector = " << ParticleInProximityObject.EntityId << " " << ParticleInProximityObject.Index << " SectorPosX = " << SectorPosX << " SectorPosY = " << SectorPosY << " SectorPosZ = " << SectorPosZ << " SectorPosXS = " << StartXPosParam << " SectorPosYS = " << StartYPosParam << " SectorPosZS = " << StartZPosParam << std::endl;
-                                                                                                                            LoggersManagerObject.LogUnconditional(STREAM("C10" << " Error particle center not in proper sector = " << ParticleInProximityObject.EntityId << " " << ParticleInProximityObject.Index << " SectorPosX = " << SectorPosX << " SectorPosY = " << SectorPosY << " SectorPosZ = " << SectorPosZ << " SectorPosXS = " << StartSectorXPosParam << " SectorPosYS = " << StartSectorYPosParam << " SectorPosZS = " << StartSectorZPosParam));
+                #ifdef SIMULATION_DETAILED_DEBUG_LOG
+                const auto [SectorPosX, SectorPosY, SectorPosZ] = CellEngineUseful::CheckCenterForSector<Particle>(ParticleInProximityObject, Particles, "C1");
+                if (SectorPosX != StartSectorXPosParam || SectorPosY != StartSectorYPosParam || SectorPosZ != StartSectorZPosParam)
+                    LoggersManagerObject.LogUnconditional(STREAM("C10" << " Error particle center not in proper sector = " << ParticleInProximityObject.EntityId << " " << ParticleInProximityObject.Index << " SectorPosX = " << SectorPosX << " SectorPosY = " << SectorPosY << " SectorPosZ = " << SectorPosZ << " SectorPosXS = " << StartSectorXPosParam << " SectorPosYS = " << StartSectorYPosParam << " SectorPosZS = " << StartSectorZPosParam));
+                #endif
 
                 CurrentSectorPos = SectorPosType{ .SectorPosX = static_cast<SignedInt>(StartSectorXPosParam), .SectorPosY = static_cast<SignedInt>(StartSectorYPosParam), .SectorPosZ = static_cast<SignedInt>(StartSectorZPosParam) };
                 if (CellEngineUseful::IsDNA(ParticleInProximityObject.EntityId) == false)
@@ -196,11 +198,15 @@ void CellEngineFullAtomSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpa
                 if (const auto ParticleFromSourceToMoveToTargetIterator = LocalSourceParticles.find(ParticleIndex); ParticleFromSourceToMoveToTargetIterator != LocalSourceParticles.end())
                 {
                     Particles[SectorPosTarget.SectorPosX][SectorPosTarget.SectorPosY][SectorPosTarget.SectorPosZ].Particles.insert_or_assign(ParticleFromSourceToMoveToTargetIterator->first, std::move(ParticleFromSourceToMoveToTargetIterator->second));
-                                                                                                                     CellEngineUseful::CheckCenterForSector<Particle>(ParticleFromSourceToMoveToTargetIterator->second, Particles, "C2");
+
+                    DEBUGLOG(CellEngineUseful::CheckCenterForSector<Particle>(ParticleFromSourceToMoveToTargetIterator->second, Particles, "C2");)
+
                     LocalSourceParticles.erase(ParticleFromSourceToMoveToTargetIterator);
                 }
                 else
-                    cout << "LACK OF PARTICLE INDEX IN SOURCE MAP DATA = " << ParticleIndex << " TARGET = " << SectorPosTarget.SectorPosX << "," << SectorPosTarget.SectorPosY << "," << SectorPosTarget.SectorPosZ << " FROM " << SectorPosSource.SectorPosX << "," << SectorPosSource.SectorPosY << "," << SectorPosSource.SectorPosZ << endl;
+                {
+                    DEBUGLOG(LoggersManagerObject.Log(STREAM("LACK OF PARTICLE INDEX IN SOURCE MAP DATA = " << ParticleIndex << " TARGET = " << SectorPosTarget.SectorPosX << "," << SectorPosTarget.SectorPosY << "," << SectorPosTarget.SectorPosZ << " FROM " << SectorPosSource.SectorPosX << "," << SectorPosSource.SectorPosY << "," << SectorPosSource.SectorPosZ));)
+                }
             }
             ListOfParticlesToChangeSectors.clear();
             #endif
@@ -365,6 +371,7 @@ void CellEngineFullAtomSimulationSpace::WriteNumberOfParticlesInEachSectorToFile
         for (const auto& SectorHistogram : SectorsHistogram)
         {
             LoggersManagerObject.Log(STREAM("SECTOR SIZE = " << NumberOfSector << " NUMBER OF SECTORS OF THIS SIZE = " << SectorHistogram));
+
             NumberOfAllSectorsWithParticles += SectorHistogram;
             NumberOfSector++;
         }

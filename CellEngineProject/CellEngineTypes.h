@@ -1,5 +1,3 @@
-#pragma once
-
 #ifndef CELL_ENGINE_TYPES_H
 #define CELL_ENGINE_TYPES_H
 

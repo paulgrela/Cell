@@ -1,4 +1,3 @@
-#pragma once
 
 #ifndef CELL_ENGINE_SIMULATION_SPACE_H
 #define CELL_ENGINE_SIMULATION_SPACE_H
@@ -12,8 +11,6 @@
 #include "CellEngineChemicalReactionsInSimulationSpace.h"
 #include "CellEngineSimulationParallelExecutionManager.h"
 #include "CellEngineSimulationSpaceStatistics.h"
-
-#define SIMULATION_DETAILED_LOG
 
 class CellEngineSimulationSpace : public CellEngineChemicalReactionsEngine, public CellEngineIllinoisDataCreator, public CellEngineCompiledDataCreator, virtual public CellEngineChemicalReactionsInSimulationSpace, public CellEngineSimulationSpaceStatistics, public CellEngineSimulationParallelExecutionManager
 {

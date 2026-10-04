@@ -2,8 +2,6 @@
 #ifndef CELL_ENGINE_BASIC_PARTICLES_OPERATIONS_H
 #define CELL_ENGINE_BASIC_PARTICLES_OPERATIONS_H
 
-#include <stack>
-
 #include "CellEngineTypes.h"
 #include "CellEngineParticle.h"
 #include "CellEngineParticleKind.h"
@@ -14,7 +12,7 @@
 class CellEngineBasicParticlesOperations : public CellEngineBasicParallelExecutionData
 {
 protected:
-    CellEngineParticleUniqueIdGenerator ParticleUniqueIdGenerator;
+    CellEngineParticleUniqueIdGenerator ParticleUniqueIdGenerator{};
 protected:
     UnsignedInt MaxParticleIndex{};
 protected:

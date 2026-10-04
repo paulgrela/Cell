@@ -37,7 +37,9 @@ protected:
 protected:
     explicit CellEngineChemicalReactionsInBasicSimulationSpace(ParticlesContainer<Particle>& ParticlesParam) : CellEngineBasicParticlesOperations(ParticlesParam)
     {
+        #ifdef CONTAINERS_FOR_SPEED
         LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity.reserve(1000);
+        #endif
         LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity.reserve(10000);
     }
     ~CellEngineChemicalReactionsInBasicSimulationSpace() override = default;

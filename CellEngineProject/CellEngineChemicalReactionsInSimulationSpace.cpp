@@ -1,7 +1,7 @@
 
-
 #include <unordered_set>
 
+#include "CellEngineMacros.h"
 #include "CellEngineConstants.h"
 #include "CellEngineParticle.h"
 #include "CellEngineAminoAcids.h"
@@ -143,22 +143,22 @@ bool CellEngineChemicalReactionsInSimulationSpace::FindParticlesInProximityOfSim
 
         FindParticlesInProximityInSimulationSpaceForSelectedLocalSpace(FoundParticleIndexes, UpdateNucleotides, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam); //SizeXParam, SizeYParam, SizeZParam - sa nieuzywane w tej funkcji a zatem niepotrzebne wcale i tu
 
-        //LoggersManagerObject.Log(STREAM(endl << "Number of Particles Kinds Found In Proximity = " << LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity.size()));
+        DEBUGLOG(LoggersManagerObject.Log(STREAM(endl << "Number of Particles Kinds Found In Proximity = " << LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity.size()));)
 
         if (LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity.empty() == false)
         {
             if constexpr (AdditionalSortParticlesInProximityByCapacity == true)
                 sort(LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity.begin(), LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity.end(), [this](const UnsignedInt PK1, const UnsignedInt PK2) { return GetParticleFromIndex(PK1).ListOfVoxels.size() > GetParticleFromIndex(PK2).ListOfVoxels.size(); });
 
-            //PrintInformationAboutFoundParticlesInProximity(CurrentThreadPos);
+            DEBUGLOG(PrintInformationAboutFoundParticlesInProximity(CurrentThreadPos);)
         }
         else
         {
-            //LoggersManagerObject.Log(STREAM(endl << "No particle found in proximity"));
+            DEBUGLOG(LoggersManagerObject.Log(STREAM(endl << "No particle found in proximity"));)
             return false;
         }
 
-        //LoggersManagerObject.Log(STREAM("Looking for particles in proximity done"));
+        DEBUGLOG(LoggersManagerObject.Log(STREAM("Looking for particles in proximity done"));)
     }
     CATCH("finding particles in proximity of simulation space for selected space")
 
