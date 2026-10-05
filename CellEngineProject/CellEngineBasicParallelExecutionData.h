@@ -36,8 +36,6 @@ public:
 public:
     std::vector<ParticleSenderStruct> VectorOfParticlesToSendToNeighborProcessesOrThreads[NumberOfAllNeighbors];
 protected:
-    std::vector<ParticleSenderStruct> ReceivedParticlesToInsertFromAllNeighborProcessesOrThreads[NumberOfAllNeighbors];
-protected:
     SignedInt TwoThreadsWallSychronizationBarriersIndexes[NumberOfAllNeighbors]{ -1, -1, -1, -1, -1, -1 };
 protected:
     std::vector<UniqueIdUnsignedInt> ConfirmationOfParticlesToRemoveToSent[NumberOfAllNeighbors];

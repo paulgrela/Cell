@@ -86,7 +86,7 @@ void CellEngineParticlesFullAtomOperations::MoveParticleByVectorForThreads(Parti
                             const ThreadIdType TargetThreadIndex = CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[Thread2Pos.ThreadPosX - 1][Thread2Pos.ThreadPosY - 1][Thread2Pos.ThreadPosZ - 1]->CurrentThreadIndex - 1;
                             if (NeighborThreadIndexFoundInSourceThreadNeighborThreadIndexes == TargetThreadIndex)
                             {
-                                //#ifdef SIMULATION_DETAILED_DEBUG_LOG
+                                #ifdef SIMULATION_DETAILED_DEBUG_LOG
                                 if (Thread1Pos != CurrentThreadPos)
                                 {
                                     if constexpr(PrintAdditionalInformationToLogs == true)
@@ -105,9 +105,9 @@ void CellEngineParticlesFullAtomOperations::MoveParticleByVectorForThreads(Parti
                                     if constexpr(PrintAdditionalInformationToConsole == true)
                                         LoggersManagerObject.LogOnlyToConsoleUnconditional(STREAM("PROCESS TO SEND PARTICLE GOOD - TO THREAD = (" << Thread2Pos.ThreadPosX << "," << Thread2Pos.ThreadPosY << "," << Thread2Pos.ThreadPosZ << ") FROM THREAD = (" << Thread1Pos.ThreadPosX << "," << Thread1Pos.ThreadPosY << "," << Thread1Pos.ThreadPosZ << ") CurrentThreadIndex = " << TargetThreadIndex << " CurrentProcessIndex = " << MPIProcessDataObject.CurrentMPIProcessIndex <<  " S1 = (" << SectorPosX1 << "," << SectorPosY1 << "," << SectorPosZ1 << ") S2 = (" << SectorPosX2 << "," << SectorPosY2 << "," << SectorPosZ2 << ") P = (" << ParticleObject.Center.X << ", " << ParticleObject.Center.Y << ", " << ParticleObject.Center.Z << ") V = (" << VectorX << ", " << VectorY << ", "  << VectorZ << ") PSHIFT = (" << ParticleObject.Center.X + VectorX << ", " << ParticleObject.Center.Y + VectorY << ", " << ParticleObject.Center.Z + VectorZ << ") PARTCLE_INDEX = " << ParticleObject.Index));
                                 }
-                                //#endif
+                                #endif
 
-                                VectorOfParticlesToSendToNeighborThreads[NeighborProcessIndex].emplace_back(ParticleSenderStruct{ .ParticleIndex = ParticleObject.Index, .ParticleKindId = ParticleObject.EntityId, .SenderProcessIndex = 0, .ReceiverProcessIndex = 0, .SectorPos = { static_cast<uint16_t>(SectorPosX2), static_cast<uint16_t>(SectorPosY2), static_cast<uint16_t>(SectorPosZ2) }, .NewPosition = { ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z }});
+                                CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[Thread2Pos.ThreadPosX - 1][Thread2Pos.ThreadPosY - 1][Thread2Pos.ThreadPosZ - 1]->VectorOfParticlesToSendToNeighborProcessesOrThreads[NeighborProcessIndex].emplace_back(ParticleSenderStruct{ .ParticleIndex = ParticleObject.Index, .ParticleKindId = ParticleObject.EntityId, .SenderProcessIndex = 0, .ReceiverProcessIndex = 0, .SenderThreadPos = { .ThreadPosX = Thread1Pos.ThreadPosX, .ThreadPosY = Thread1Pos.ThreadPosY, .ThreadPosZ = Thread1Pos.ThreadPosZ }, .ReceiverThreadPos = { .ThreadPosX = Thread2Pos.ThreadPosX, .ThreadPosY = Thread2Pos.ThreadPosY, .ThreadPosZ = Thread2Pos.ThreadPosZ }, .SectorPos = { .X = static_cast<uint16_t>(SectorPosX2), .Y = static_cast<uint16_t>(SectorPosY2), .Z = static_cast<uint16_t>(SectorPosZ2) }, .NewPosition = { .X = ParticleObject.Center.X, .Y = ParticleObject.Center.Y, .Z = ParticleObject.Center.Z }});
 
                                 NewSectorNeighborThreadFound = true;
                                 break;
@@ -115,13 +115,12 @@ void CellEngineParticlesFullAtomOperations::MoveParticleByVectorForThreads(Parti
                         }
                     }
                     else
-                                    if (Thread1Pos == CurrentThreadPos)
                     if (ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].Particles.contains(ParticleObject.Index) == false)
                     {
                         ListOfParticlesToChangeSectors.emplace_back(ParticleToBeMovedFromOneSectorToAnotherSector{ .ParticleIndex = ParticleObject.Index, .SectorPosSource = SectorPosType{ .SectorPosX = SectorPosX1, .SectorPosY = SectorPosY1, .SectorPosZ = SectorPosZ1 }, .SectorPosTarget = SectorPosType{ .SectorPosX = SectorPosX2, .SectorPosY = SectorPosY2, .SectorPosZ = SectorPosZ2 }});
                         NewSectorNeighborThreadFound = true;
                     }
-            }
+                }
 
                 if (NewSectorNeighborThreadFound == false)
                 {

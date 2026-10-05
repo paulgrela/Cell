@@ -119,9 +119,11 @@ void CellEngineSimulationSpace::GenerateOneStepOfElectricDiffusionForOneParticle
 
             const UnsignedInt RandomMoveVectorIndex = UniformDiscreteDistributionMoveParticleDirectionObject(mt64R);
             auto EmptyParticlesIter = GetParticles().end();
-            // PROBLEMEM vector<ParticleToBeMovedFromOneSectorToAnotherSector> TempListOfParticlesToChangeSectors
+
+            //FUNKCJA MUSI BYC PRZENIESIONA bo PROBLEMEM vector<ParticleToBeMovedFromOneSectorToAnotherSector> TempListOfParticlesToChangeSectors i shared_ptr<CellEngineSimulationSpace>& TempCurrentThreadLocalSimulationSpaceData
             vector<ParticleToBeMovedFromOneSectorToAnotherSector> TempListOfParticlesToChangeSectors;
-            MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(ParticleObject, Particles, EmptyParticlesIter, TempListOfParticlesToChangeSectors, CurrentSectorPos, MoveVectors[RandomMoveVectorIndex].X, MoveVectors[RandomMoveVectorIndex].Y, MoveVectors[RandomMoveVectorIndex].Z, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
+            shared_ptr<CellEngineSimulationSpace>& TempCurrentThreadLocalSimulationSpaceData = CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[0][0][0];
+            MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(ParticleObject, Particles, EmptyParticlesIter, TempListOfParticlesToChangeSectors, TempCurrentThreadLocalSimulationSpaceData, CurrentSectorPos, MoveVectors[RandomMoveVectorIndex].X, MoveVectors[RandomMoveVectorIndex].Y, MoveVectors[RandomMoveVectorIndex].Z, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
 
             DEBUGLOG(LoggersManagerObject.Log(STREAM("Random Index = " << to_string(RandomMoveVectorIndex) << " " << to_string(MoveVectors[RandomMoveVectorIndex].X) << " " << to_string(MoveVectors[RandomMoveVectorIndex].Y) << " " << to_string(MoveVectors[RandomMoveVectorIndex].Z) << endl));)
         }
