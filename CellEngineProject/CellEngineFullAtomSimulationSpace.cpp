@@ -65,9 +65,9 @@ CellEngineFullAtomSimulationSpace::~CellEngineFullAtomSimulationSpace()
 
 [[nodiscard]] stringstream CellEngineFullAtomSimulationSpace::PrintSpaceMinMaxValues() const
 {
-    stringstream ss;
-    ss << "CELL SPACE LIMITS PARAMETERS [ Xmin = " << to_string(XMinGlobal) << " ][ Xmax = " << to_string(XMaxGlobal) << " ][ Ymin = " << to_string(YMinGlobal) << " ][ Ymax = " << to_string(YMaxGlobal) << " ][ Zmin = " << to_string(ZMinGlobal) << " ][ Zmax = " << to_string(XMaxGlobal) << " ] " << endl;
-    return ss;
+    stringstream SpaceMinMaxValuesStringStream;
+    SpaceMinMaxValuesStringStream << "CELL SPACE LIMITS PARAMETERS [ Xmin = " << to_string(XMinGlobal) << " ][ Xmax = " << to_string(XMaxGlobal) << " ][ Ymin = " << to_string(YMinGlobal) << " ][ Ymax = " << to_string(YMaxGlobal) << " ][ Zmin = " << to_string(ZMinGlobal) << " ][ Zmax = " << to_string(XMaxGlobal) << " ] " << endl;
+    return SpaceMinMaxValuesStringStream;
 }
 
 void CellEngineFullAtomSimulationSpace::FillParticleElementsInSpace(const UniqueIdUnsignedInt ParticleIndex, const ParticleKind& ParticleKindObjectForProduct, const RealType VectorX, const RealType VectorY, const RealType VectorZ)
@@ -135,7 +135,7 @@ void CellEngineFullAtomSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpa
 {
     try
     {
-        uniform_int_distribution<SignedInt> UniformDistributionObjectMoveParticleDirection_int64t(-10, 10);
+        uniform_int_distribution<SignedInt> UniformDistributionObjectMoveParticleDirection_int64t(-ParticleMoveSizeinDiffusionUnsignedInt, ParticleMoveSizeinDiffusionUnsignedInt);
 
         auto EmptyParticlesIter = GetParticles().end();
 

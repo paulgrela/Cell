@@ -14,6 +14,9 @@ constexpr EntityIdInt UnknownParticleKindId = 99999;
 constexpr EntityIdInt StartParticleKindId = 100000;
 constexpr EntityIdInt StartReactionId = 10000;
 
+constexpr RealType ParticleMoveSizeinDiffusionRealType = 10.0;
+constexpr UnsignedInt ParticleMoveSizeinDiffusionUnsignedInt = 10;
+
 constexpr bool AdditionalSortParticlesInProximityByCapacity = false;
 
 constexpr UnsignedInt GenomeLength = 543380;

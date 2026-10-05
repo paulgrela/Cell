@@ -69,7 +69,7 @@ struct SectorPosType
 
 struct PosType
 {
-    float PosX, PosY, PosZ;
+    RealType PosX, PosY, PosZ;
 
     bool operator==(const PosType& PT) const
     {
@@ -140,7 +140,7 @@ public:
     UnsignedInt EndYPos;
     UnsignedInt EndZPos;
 public:
-    void SetParameters(const float StartXPosParam, const float StartYPosParam, const float StartZPosParam, const float EndXPosParam, const float EndYPosParam, const float EndZPosParam)
+    void SetParameters(const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType EndXPosParam, const RealType EndYPosParam, const RealType EndZPosParam)
     {
         StartXPos = static_cast<UnsignedInt>(StartXPosParam);
         StartYPos = static_cast<UnsignedInt>(StartYPosParam);
@@ -154,17 +154,17 @@ public:
 struct SimulationSpaceSectorBounds
 {
 public:
-    float StartXPos;
-    float StartYPos;
-    float StartZPos;
-    float SizeX;
-    float SizeY;
-    float SizeZ;
-    float EndXPos;
-    float EndYPos;
-    float EndZPos;
+    RealType StartXPos;
+    RealType StartYPos;
+    RealType StartZPos;
+    RealType SizeX;
+    RealType SizeY;
+    RealType SizeZ;
+    RealType EndXPos;
+    RealType EndYPos;
+    RealType EndZPos;
 public:
-    void SetParameters(const float StartXPosParam, const float StartYPosParam, const float StartZPosParam, const float SizeXParam, const float SizeYParam, const float SizeZParam, const float EndXPosParam, const float EndYPosParam, const float EndZPosParam)
+    void SetParameters(const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam, const RealType EndXPosParam, const RealType EndYPosParam, const RealType EndZPosParam)
     {
         StartXPos = StartXPosParam;
         StartYPos = StartYPosParam;
@@ -177,7 +177,7 @@ public:
         EndZPos = EndZPosParam;
     }
 public:
-    void AddToStartParameters(const float AddToStartXPosParam, const float AddToStartYPosParam, const float AddToStartZPosParam)
+    void AddToStartParameters(const RealType AddToStartXPosParam, const RealType AddToStartYPosParam, const RealType AddToStartZPosParam)
     {
         StartXPos += AddToStartXPosParam;
         StartYPos += AddToStartYPosParam;
@@ -186,12 +186,12 @@ public:
 public:
     SimulationSpaceSectorBounds SetParametersForParallelExecutionSectors(const ThreadPosType& CurrentThreadPos, const UnsignedInt SizeOfXInOneThreadInSimulationSpace, const UnsignedInt SizeOfYInOneThreadInSimulationSpace, const UnsignedInt SizeOfZInOneThreadInSimulationSpace)
     {
-        StartXPos = static_cast<float>((CurrentThreadPos.ThreadPosX - 1) * SizeOfXInOneThreadInSimulationSpace);
-        EndXPos = static_cast<float>((CurrentThreadPos.ThreadPosX - 1) * SizeOfXInOneThreadInSimulationSpace + SizeOfXInOneThreadInSimulationSpace);
-        StartYPos = static_cast<float>((CurrentThreadPos.ThreadPosY - 1) * SizeOfYInOneThreadInSimulationSpace);
-        EndYPos = static_cast<float>((CurrentThreadPos.ThreadPosY - 1) * SizeOfYInOneThreadInSimulationSpace + SizeOfYInOneThreadInSimulationSpace);
-        StartZPos = static_cast<float>((CurrentThreadPos.ThreadPosZ - 1) * SizeOfZInOneThreadInSimulationSpace);
-        EndZPos = static_cast<float>((CurrentThreadPos.ThreadPosZ - 1) * SizeOfZInOneThreadInSimulationSpace + SizeOfZInOneThreadInSimulationSpace);
+        StartXPos = static_cast<RealType>((CurrentThreadPos.ThreadPosX - 1) * SizeOfXInOneThreadInSimulationSpace);
+        EndXPos = static_cast<RealType>((CurrentThreadPos.ThreadPosX - 1) * SizeOfXInOneThreadInSimulationSpace + SizeOfXInOneThreadInSimulationSpace);
+        StartYPos = static_cast<RealType>((CurrentThreadPos.ThreadPosY - 1) * SizeOfYInOneThreadInSimulationSpace);
+        EndYPos = static_cast<RealType>((CurrentThreadPos.ThreadPosY - 1) * SizeOfYInOneThreadInSimulationSpace + SizeOfYInOneThreadInSimulationSpace);
+        StartZPos = static_cast<RealType>((CurrentThreadPos.ThreadPosZ - 1) * SizeOfZInOneThreadInSimulationSpace);
+        EndZPos = static_cast<RealType>((CurrentThreadPos.ThreadPosZ - 1) * SizeOfZInOneThreadInSimulationSpace + SizeOfZInOneThreadInSimulationSpace);
         SizeX = EndXPos - StartXPos;
         SizeY = EndYPos - StartYPos;
         SizeZ = EndZPos - StartZPos;

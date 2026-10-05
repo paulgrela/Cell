@@ -27,9 +27,9 @@ protected:
     SimulationSpaceSectorsRanges CurrentMPIProcessSimulationSpaceSectorsRanges;
 public:
     ThreadIdType CurrentThreadIndex{ 0 };
-protected:
+public:
     ThreadPosType CurrentThreadPos{ .ThreadPosX = 1, .ThreadPosY = 1, .ThreadPosZ = 1 };
-protected:
+public:
     ThreadPosType NeighborThreadsIndexes[NumberOfAllNeighbors];
 public:
     std::vector<ParticleToBeMovedFromOneSectorToAnotherSector> ListOfParticlesToChangeSectors;

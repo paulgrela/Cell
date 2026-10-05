@@ -880,6 +880,8 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
                                 if (CurrentThreadLocalSimulationSpaceData->CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossible(ReceivedParticleIndexToInsert) == true)
                                 {
                                     DEBUGLOG(LoggersManagerObject.Log(STREAM("SENDING CONFIRMATION TO NEIGHBOR = (" << ReceivedParticleIndexToInsert.SenderProcessIndex << " " << ReceivedParticleIndexToInsert.ReceiverProcessIndex << ") (" << CurrentThreadLocalSimulationSpaceData->CurrentThreadIndex << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.ThreadPosX << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.ThreadPosY << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.ThreadPosZ << "["  << CurrentThreadIndexParam << " " << ThreadXIndexParam << " " << ThreadYIndexParam << " " << ThreadZIndexParam << "]) NEIGHBOR = (" << ThreadPosX << " " << ThreadPosY << " " << ThreadPosZ << ")"));)
+                                    LoggersManagerObject.LogOnlyToFilesUnconditional(STREAM("PARTCLE_INDEX TO SEND CONFIRMATION = " << ReceivedParticleIndexToInsert.ParticleIndex));
+                                    LoggersManagerObject.LogOnlyToConsoleUnconditional(STREAM("PARTCLE_INDEX TO SEND CONFIRMATION = " << ReceivedParticleIndexToInsert.ParticleIndex));
 
                                     SimulationSpaceDataForThreads[ThreadPosX][ThreadPosY][ThreadPosZ]->ConfirmationOfParticlesToRemoveToSent[LocalNeighborProcessIndex].emplace_back(ReceivedParticleIndexToInsert.ParticleIndex);
                                 }
@@ -898,8 +900,15 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
     {
         for (UnsignedInt NeighborProcessIndex = 0; NeighborProcessIndex < NumberOfAllNeighbors; NeighborProcessIndex++)
             if (CurrentThreadLocalSimulationSpaceData->NeighborProcessesIndexes[NeighborProcessIndex] != -1)
+            {
                 for (const auto& ConfirmationOfParticlesToRemoveToSentObject : CurrentThreadLocalSimulationSpaceData->ConfirmationOfParticlesToRemoveToSent[NeighborProcessIndex])
+                {
                     CurrentThreadLocalSimulationSpaceData->RemoveParticle(ConfirmationOfParticlesToRemoveToSentObject, true);
+                    LoggersManagerObject.LogOnlyToFilesUnconditional(STREAM("PARTCLE_INDEX TO REMOVE THIS PARTCILE = " << ConfirmationOfParticlesToRemoveToSentObject));
+                    LoggersManagerObject.LogOnlyToConsoleUnconditional(STREAM("PARTCLE_INDEX TO REMOVE THIS PARTCILE = " << ConfirmationOfParticlesToRemoveToSentObject));
+                }
+                CurrentThreadLocalSimulationSpaceData->ConfirmationOfParticlesToRemoveToSent[NeighborProcessIndex].clear();
+            }
     }
     CATCH("exchange particles threads processes group 3")
 }

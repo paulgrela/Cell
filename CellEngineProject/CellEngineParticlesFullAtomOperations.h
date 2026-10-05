@@ -130,11 +130,28 @@ protected:
 
 
 protected:
+    // static inline bool CheckBoundsForSectorDiffusion(const RealType TestedPosX, const RealType TestedPosY, const RealType TestedPosZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CheckBounds, const bool CompareBoundsBySectorsBounds, const bool CompareBoundsBySpaceBounds)
+    // {
+    //     // std::cout << "R2 = (" << TestedPosX << " " << TestedPosY << " " << TestedPosZ << ") (" << SimulationSpaceSectorBoundsObjectParam.StartXPos << "," << SimulationSpaceSectorBoundsObjectParam.EndXPos << ") (" << SimulationSpaceSectorBoundsObjectParam.StartYPos << "," << SimulationSpaceSectorBoundsObjectParam.EndYPos << ") (" << SimulationSpaceSectorBoundsObjectParam.StartZPos << "," << SimulationSpaceSectorBoundsObjectParam.EndZPos << ")" << std::endl;
+    //
+    //     if (!(TestedPosX >= SimulationSpaceSectorBoundsObjectParam.StartXPos && TestedPosX < SimulationSpaceSectorBoundsObjectParam.EndXPos && TestedPosY >= SimulationSpaceSectorBoundsObjectParam.StartYPos && TestedPosY < SimulationSpaceSectorBoundsObjectParam.EndYPos && TestedPosZ >= SimulationSpaceSectorBoundsObjectParam.StartZPos && TestedPosZ < SimulationSpaceSectorBoundsObjectParam.EndZPos))
+    //     {
+    //         // std::cout << "R3 = (" << TestedPosX << " " << TestedPosY << " " << TestedPosZ << ") (" << SimulationSpaceSectorBoundsObjectParam.StartXPos << "," << SimulationSpaceSectorBoundsObjectParam.EndXPos << ") (" << SimulationSpaceSectorBoundsObjectParam.StartYPos << "," << SimulationSpaceSectorBoundsObjectParam.EndYPos << ") (" << SimulationSpaceSectorBoundsObjectParam.StartZPos << "," << SimulationSpaceSectorBoundsObjectParam.EndZPos << ")" << std::endl;
+    //         return false;
+    //     }
+    //
+    //     return true;
+    // }
+
     static inline bool CheckBoundsForSectorDiffusion(const RealType TestedPosX, const RealType TestedPosY, const RealType TestedPosZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CheckBounds, const bool CompareBoundsBySectorsBounds, const bool CompareBoundsBySpaceBounds)
     {
         // std::cout << "R2 = (" << TestedPosX << " " << TestedPosY << " " << TestedPosZ << ") (" << SimulationSpaceSectorBoundsObjectParam.StartXPos << "," << SimulationSpaceSectorBoundsObjectParam.EndXPos << ") (" << SimulationSpaceSectorBoundsObjectParam.StartYPos << "," << SimulationSpaceSectorBoundsObjectParam.EndYPos << ") (" << SimulationSpaceSectorBoundsObjectParam.StartZPos << "," << SimulationSpaceSectorBoundsObjectParam.EndZPos << ")" << std::endl;
 
-        if (!(TestedPosX >= SimulationSpaceSectorBoundsObjectParam.StartXPos && TestedPosX < SimulationSpaceSectorBoundsObjectParam.EndXPos && TestedPosY >= SimulationSpaceSectorBoundsObjectParam.StartYPos && TestedPosY < SimulationSpaceSectorBoundsObjectParam.EndYPos && TestedPosZ >= SimulationSpaceSectorBoundsObjectParam.StartZPos && TestedPosZ < SimulationSpaceSectorBoundsObjectParam.EndZPos))
+        if (!(
+            (TestedPosX >= -CellEngineConfigDataObject.ShiftCenterX && TestedPosX < CellEngineConfigDataObject.ShiftCenterX && TestedPosY >= -CellEngineConfigDataObject.ShiftCenterY && TestedPosY < CellEngineConfigDataObject.ShiftCenterY && TestedPosZ >= -CellEngineConfigDataObject.ShiftCenterZ && TestedPosZ < CellEngineConfigDataObject.ShiftCenterZ)
+            &&
+            (TestedPosX >= SimulationSpaceSectorBoundsObjectParam.StartXPos - ParticleMoveSizeinDiffusionUnsignedInt && TestedPosX < SimulationSpaceSectorBoundsObjectParam.EndXPos + ParticleMoveSizeinDiffusionUnsignedInt && TestedPosY >= SimulationSpaceSectorBoundsObjectParam.StartYPos - ParticleMoveSizeinDiffusionUnsignedInt && TestedPosY < SimulationSpaceSectorBoundsObjectParam.EndYPos + ParticleMoveSizeinDiffusionUnsignedInt && TestedPosZ >= SimulationSpaceSectorBoundsObjectParam.StartZPos - ParticleMoveSizeinDiffusionUnsignedInt && TestedPosZ < SimulationSpaceSectorBoundsObjectParam.EndZPos + ParticleMoveSizeinDiffusionUnsignedInt)
+            ))
         {
             // std::cout << "R3 = (" << TestedPosX << " " << TestedPosY << " " << TestedPosZ << ") (" << SimulationSpaceSectorBoundsObjectParam.StartXPos << "," << SimulationSpaceSectorBoundsObjectParam.EndXPos << ") (" << SimulationSpaceSectorBoundsObjectParam.StartYPos << "," << SimulationSpaceSectorBoundsObjectParam.EndYPos << ") (" << SimulationSpaceSectorBoundsObjectParam.StartZPos << "," << SimulationSpaceSectorBoundsObjectParam.EndZPos << ")" << std::endl;
             return false;
@@ -142,6 +159,7 @@ protected:
 
         return true;
     }
+
 protected:
     static inline bool CheckBoundsBySectorAndBySpaceDiffusion(const UnsignedInt SectorPosX, const UnsignedInt SectorPosY, const UnsignedInt SectorPosZ, const RealType TestedPosX, const RealType TestedPosY, const RealType TestedPosZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CheckBounds, const bool CompareBoundsBySectorsBounds, const bool CompareBoundsBySpaceBounds)
     {
@@ -149,7 +167,6 @@ protected:
         {
             if (CompareBoundsBySectorsBounds == true)
             {
-                //if (CheckBoundsForSectorDiffusion(SectorPosX, SectorPosY, SectorPosZ, SimulationSpaceSectorBoundsObjectParam, CheckBounds, CompareBoundsBySectorsBounds, CompareBoundsBySpaceBounds) == false)
                 if (CheckBoundsForSectorDiffusion(TestedPosX, TestedPosY, TestedPosZ, SimulationSpaceSectorBoundsObjectParam, CheckBounds, CompareBoundsBySectorsBounds, CompareBoundsBySpaceBounds) == false)
                     return false;
             }
@@ -167,9 +184,8 @@ protected:
     {
         try
         {
-                        // auto [TestedPosX1, TestedPosY1, TestedPosZ1] = GetNewPosMovedByVector(Center.X, Center.Y, Center.Z, 0, 0, 0);
-                        // std::cout << "R2S = (" << TestedPosX1 << " " << TestedPosY1 << " " << TestedPosZ1 << ") (" << SimulationSpaceSectorBoundsObjectParam.StartXPos << "," << SimulationSpaceSectorBoundsObjectParam.EndXPos << ") (" << SimulationSpaceSectorBoundsObjectParam.StartYPos << "," << SimulationSpaceSectorBoundsObjectParam.EndYPos << ") (" << SimulationSpaceSectorBoundsObjectParam.StartZPos << "," << SimulationSpaceSectorBoundsObjectParam.EndZPos << ")" << std::endl;
-                        // getchar();
+            // auto [TestedPosX1, TestedPosY1, TestedPosZ1] = GetNewPosMovedByVector(Center.X, Center.Y, Center.Z, 0, 0, 0);
+            // std::cout << "R2S = (" << TestedPosX1 << " " << TestedPosY1 << " " << TestedPosZ1 << ") (" << SimulationSpaceSectorBoundsObjectParam.StartXPos << "," << SimulationSpaceSectorBoundsObjectParam.EndXPos << ") (" << SimulationSpaceSectorBoundsObjectParam.StartYPos << "," << SimulationSpaceSectorBoundsObjectParam.EndYPos << ") (" << SimulationSpaceSectorBoundsObjectParam.StartZPos << "," << SimulationSpaceSectorBoundsObjectParam.EndZPos << ")" << std::endl;
 
             auto [TestedPosX, TestedPosY, TestedPosZ] = GetNewPosMovedByVector(Center.X, Center.Y, Center.Z, VectorX, VectorY, VectorZ);
             auto [SectorPosX, SectorPosY, SectorPosZ] = CellEngineUseful::GetSectorPos(TestedPosX, TestedPosY, TestedPosZ);
