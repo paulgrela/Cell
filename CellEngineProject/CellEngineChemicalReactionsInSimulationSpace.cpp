@@ -1,7 +1,6 @@
 
 #include <unordered_set>
 
-
 #include "CellEngineDataFile.h"
 #include "CellEngineMacros.h"
 #include "CellEngineConstants.h"
@@ -171,7 +170,7 @@ bool CellEngineChemicalReactionsInSimulationSpace::FindParticlesInProximityOfSim
         if (LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity.empty() == false)
         {
             if constexpr (AdditionalSortParticlesInProximityByCapacity == true)
-                sort(LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity.begin(), LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity.end(), [this](const UnsignedInt PK1, const UnsignedInt PK2) { return GetParticleFromIndex(PK1).ListOfVoxels.size() > GetParticleFromIndex(PK2).ListOfVoxels.size(); });
+                ranges::sort(LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity, [this](const UnsignedInt PK1, const UnsignedInt PK2) { return GetParticleFromIndex(PK1).ListOfVoxels.size() > GetParticleFromIndex(PK2).ListOfVoxels.size(); });
 
             DEBUGLOG(PrintInformationAboutFoundParticlesInProximity(CurrentThreadPos);)
         }
@@ -196,8 +195,8 @@ void CellEngineChemicalReactionsInSimulationSpace::PrintInformationAboutFoundPar
         for (const auto& LocalParticleIndexObjectToWrite : LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity)
             LoggersManagerObject.Log(STREAM("ParticleIndex = " << to_string(LocalParticleIndexObjectToWrite) << " EntityId = " << to_string(GetParticleFromIndex(LocalParticleIndexObjectToWrite).EntityId) << " NUCLEOTIDE = " << ((CellEngineUseful::IsDNAorRNA(GetParticleFromIndex(LocalParticleIndexObjectToWrite).EntityId) == true) ? CellEngineUseful::GetLetterFromChainIdForDNAorRNA(GetParticleFromIndex(LocalParticleIndexObjectToWrite).ChainId) : '0') << " GENOME INDEX = " << GetParticleFromIndex(LocalParticleIndexObjectToWrite).GenomeIndex));
         LoggersManagerObject.Log(STREAM(endl << "ParticlesKindsFoundInProximity List"));
-        for (const auto& LocalParticleKindObjectToWrite : LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity)
-            LoggersManagerObject.Log(STREAM("ParticleKind EntityId = " << to_string(LocalParticleKindObjectToWrite.first) << " in quantity = " << to_string(LocalParticleKindObjectToWrite.second)));
+        for (const auto& [LocalParticleKindObjectToWriteFirst, LocalParticleKindObjectToWriteSecond] : LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity)
+            LoggersManagerObject.Log(STREAM("ParticleKind EntityId = " << to_string(LocalParticleKindObjectToWriteFirst) << " in quantity = " << to_string(LocalParticleKindObjectToWriteSecond)));
     }
     CATCH("printing information found particles in proximity")
 }

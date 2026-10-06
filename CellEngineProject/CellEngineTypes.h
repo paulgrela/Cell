@@ -126,8 +126,8 @@ using SimulationSpaceForParallelExecutionContainer = std::vector<std::vector<std
 struct ParticleToBeMovedFromOneSectorToAnotherSector
 {
     UniqueIdUnsignedInt ParticleIndex{};
-    SectorPosType SectorPosSource{};
-    SectorPosType SectorPosTarget{};
+    SectorPosType SenderSectorPos{};
+    SectorPosType ReceiverSectorPos{};
 };
 
 struct SimulationSpaceSectorsRanges

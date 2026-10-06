@@ -34,7 +34,7 @@ static bool ExchangeParticleBetweenSectors(const Particle &ParticleObject, const
 {
     if (ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].Particles.contains(ParticleObject.Index) == false)
     {
-        ListOfParticlesToChangeSectors.emplace_back(ParticleToBeMovedFromOneSectorToAnotherSector{ .ParticleIndex = ParticleObject.Index, .SectorPosSource = SectorPosType{ .SectorPosX = SectorPosX1, .SectorPosY = SectorPosY1, .SectorPosZ = SectorPosZ1 }, .SectorPosTarget = SectorPosType{ .SectorPosX = SectorPosX2, .SectorPosY = SectorPosY2, .SectorPosZ = SectorPosZ2 }});
+        ListOfParticlesToChangeSectors.emplace_back(ParticleToBeMovedFromOneSectorToAnotherSector{ .ParticleIndex = ParticleObject.Index, .SenderSectorPos = SectorPosType{ .SectorPosX = SectorPosX1, .SectorPosY = SectorPosY1, .SectorPosZ = SectorPosZ1 }, .ReceiverSectorPos = SectorPosType{ .SectorPosX = SectorPosX2, .SectorPosY = SectorPosY2, .SectorPosZ = SectorPosZ2 }});
 
         #ifdef SIMULATION_DETAILED_DEBUG_LOG
         const auto ParticleFromSourceToMoveToTargetIterator = ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].Particles.find(ListOfParticlesToChangeSectors.back().ParticleIndex);
@@ -114,12 +114,12 @@ void CellEngineParticlesFullAtomOperations::MoveParticleByVectorForThreads(Parti
                             }
                         }
                     }
-                    // else
-                    // if (ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].Particles.contains(ParticleObject.Index) == false)
-                    // {
-                    //     ListOfParticlesToChangeSectors.emplace_back(ParticleToBeMovedFromOneSectorToAnotherSector{ .ParticleIndex = ParticleObject.Index, .SectorPosSource = SectorPosType{ .SectorPosX = SectorPosX1, .SectorPosY = SectorPosY1, .SectorPosZ = SectorPosZ1 }, .SectorPosTarget = SectorPosType{ .SectorPosX = SectorPosX2, .SectorPosY = SectorPosY2, .SectorPosZ = SectorPosZ2 }});
-                    //     NewSectorNeighborThreadFound = true;
-                    // }
+                    else
+                    if (ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].Particles.contains(ParticleObject.Index) == false)
+                    {
+                        ListOfParticlesToChangeSectors.emplace_back(ParticleToBeMovedFromOneSectorToAnotherSector{ .ParticleIndex = ParticleObject.Index, .SenderSectorPos = SectorPosType{ .SectorPosX = SectorPosX1, .SectorPosY = SectorPosY1, .SectorPosZ = SectorPosZ1 }, .ReceiverSectorPos = SectorPosType{ .SectorPosX = SectorPosX2, .SectorPosY = SectorPosY2, .SectorPosZ = SectorPosZ2 }});
+                        NewSectorNeighborThreadFound = true;
+                    }
                 }
 
                 if (NewSectorNeighborThreadFound == false)

@@ -1,15 +1,11 @@
 
 #include <set>
 #include <map>
-#include <thread>
 #include <algorithm>
 
-#include "FileUtils.h"
 #include "Combinatorics.h"
-
 #include "CellEngineTypes.h"
 #include "CellEngineUseful.h"
-#include "CellEngineConstants.h"
 
 #include "CellEngineDataFile.h"
 #include "CellEngineSimulationSpace.h"
@@ -227,7 +223,7 @@ bool CellEngineSimulationSpace::CancelChemicalReaction(const vector<UniqueIdUnsi
         {
             RemoveParticle(CreatedParticleIndex, true, false);
 
-            //CancelledParticlesIndexes.insert(pair(CreatedParticleIndex, CreatedParticleIndex));
+            //CancelledParticlesIndexes.insert(pair(CreatedParticleIndex, CreatedParticleIndex)); // - dla kazdego watku osobne a teraz wspolne
         }
 
         NumberOfCancelledReactions++;

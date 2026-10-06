@@ -899,7 +899,6 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
                                 }
                                 #endif
                             }
-                            //else NIE WYSYLA POTWIERDZENIA
                             #ifdef SIMULATION_DETAILED_DEBUG_LOG
                             else
                             {
@@ -914,9 +913,6 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
                     CurrentThreadLocalSimulationSpaceData->VectorOfParticlesToSendToNeighborProcessesOrThreads[NeighborProcessIndex].clear();
                 }
             }
-
-                                                                                                                        for (UnsignedInt NeighborProcessIndex = 0; NeighborProcessIndex < NumberOfAllNeighbors; NeighborProcessIndex++)
-                                                                                                                            CurrentThreadLocalSimulationSpaceData->VectorOfParticlesToSendToNeighborProcessesOrThreads[NeighborProcessIndex].clear();
     }
     CATCH("exchange particles between threads ver 2")
 }
@@ -942,9 +938,6 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
 
                 CurrentThreadLocalSimulationSpaceData->ConfirmationOfParticlesToRemoveToSent[NeighborProcessIndex].clear();
             }
-
-                                                                                                                        for (UnsignedInt NeighborProcessIndex = 0; NeighborProcessIndex < NumberOfAllNeighbors; NeighborProcessIndex++)
-                                                                                                                            CurrentThreadLocalSimulationSpaceData->ConfirmationOfParticlesToRemoveToSent[NeighborProcessIndex].clear();
     }
     CATCH("exchange particles threads processes group 3")
 }
