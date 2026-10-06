@@ -19,7 +19,7 @@ protected:
 protected:
     virtual void ClearSpaceForParticle(Particle& ParticleObject, bool ClearVoxels) = 0;
 public:
-    void RemoveParticle(UniqueIdUnsignedInt ParticleIndex, bool ClearVoxels) override;
+    void RemoveParticle(UniqueIdUnsignedInt ParticleIndex, bool ClearVoxels, bool CountAllParticlesBool) override;
 protected:
     void MakingZeroSizeForContainersForFoundParticlesInProximity(const ThreadPosType& CurrentThreadPos);
     void UpdateFoundNucleotidesForFoundParticlesInProximity(UnsignedInt ParticleIndex);

@@ -254,7 +254,7 @@ bool CellEngineRealRandomParticlesInVoxelSpaceGenerator::TryToGenerateRandomPart
             else
                 TryResult = GenerateParticleVoxelsWhenSelectedSpaceIsFree(AddNewParticle(Particle(GetNewFreeIndexOfParticle(), EntityId, 1, -1, 1, ParticleKindObject.second.ElectricCharge, GeneSequence, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), PosX, PosY, PosZ, SizeX, SizeY, SizeZ, 0, 0, 0, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, &CellEngineParticlesVoxelsShapesGenerator::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineParticlesVoxelsShapesGenerator::SetValueToVoxelsForCuboidSelectedSpace);
             if (TryResult == false)
-                RemoveParticle(MaxParticleIndex, true);
+                RemoveParticle(MaxParticleIndex, true, false);
             TryInsertNewParticleCounter++;
         }
 
@@ -406,7 +406,7 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::RemoveParticlesWithChos
             if (ParticleIndexCounter + 1 > NumberOfParticlesToBeRemoved)
                 break;
 
-            RemoveParticle(ParticleIndex, true);
+            RemoveParticle(ParticleIndex, true, false);
             ParticleIndexCounter++;
         }
     }
@@ -418,7 +418,7 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::RemoveAllParticlesWithC
     try
     {
         for (const auto& ParticleIndex : GetAllParticlesWithChosenEntityId(EntityId))
-            RemoveParticle(ParticleIndex, true);
+            RemoveParticle(ParticleIndex, true, false);
     }
     CATCH("removing all of particles with chosen entity id")
 }
@@ -434,7 +434,7 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::RemoveParticlesWithChos
             if (ParticleIndexCounter + 1 > NumberOfParticlesToBeRemoved)
                 break;
 
-            RemoveParticle(ParticleIndex, true);
+            RemoveParticle(ParticleIndex, true, false);
             ParticleIndexCounter++;
         }
     }
@@ -446,7 +446,7 @@ void CellEngineRealRandomParticlesInVoxelSpaceGenerator::RemoveAllParticlesWithC
     try
     {
         for (const auto& ParticleIndex : GetAllParticlesWithChosenParticleType(ParticleTypeParam))
-            RemoveParticle(ParticleIndex, true);
+            RemoveParticle(ParticleIndex, true, false);
     }
     CATCH("removing all of particles with chosen particle type")
 }

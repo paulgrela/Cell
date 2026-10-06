@@ -19,7 +19,7 @@ void CellEngineGenomeNucleicAcidsParticlesInSpaceGenerator::EraseAllDNAParticles
         LoggersManagerObject.Log(STREAM("Number of DNA particles to be removed = " << GetNumberOfParticlesWithChosenEntityId(CellEngineConfigDataObject.DNAIdentifier)));
 
         for (const auto& ParticleIndex : GetAllParticlesWithChosenEntityId(CellEngineConfigDataObject.DNAIdentifier))
-            RemoveParticle(ParticleIndex, true);
+            RemoveParticle(ParticleIndex, true, false);
 
         LoggersManagerObject.Log(STREAM("Number of DNA particles after remove = " << GetNumberOfParticlesWithChosenEntityId(CellEngineConfigDataObject.DNAIdentifier)));
 

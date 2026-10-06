@@ -15,20 +15,21 @@
 
 using namespace std;
 
-void CellEngineChemicalReactionsInSimulationSpace::RemoveParticle(const UniqueIdUnsignedInt ParticleIndex, const bool ClearVoxels)
+void CellEngineChemicalReactionsInSimulationSpace::RemoveParticle(const UniqueIdUnsignedInt ParticleIndex, const bool ClearVoxels, const bool CountAllParticlesBool)
 {
     try
     {
-        //CZY EREASE NIE JEST WIELOWATKOWY
-        //JAKBY ROWNO 20 CZZASTECZEK USUWAL
-
         Particle& ParticleObject = GetParticleFromIndex(ParticleIndex);
 
-        //#ifdef SIMULATION_DETAILED_DEBUG_LOG
-        const UnsignedInt NumberOfAllParticlesBeforeRemoval = CellEngineDataFileObjectPointer->GetNumberOfAllParticles();
+        #ifdef SIMULATION_DETAILED_DEBUG_LOG
+        UnsignedInt NumberOfAllParticlesBeforeRemoval;
+        if (CountAllParticlesBool == true)
+            NumberOfAllParticlesBeforeRemoval = CellEngineDataFileObjectPointer->GetNumberOfAllParticles();
+        else
+            NumberOfAllParticlesBeforeRemoval = CellEngineDataFileObjectPointer->GetNumberOfAllParticlesInSector(CurrentSectorPos);
         LoggersManagerObject.LogOnlyToFilesUnconditional(STREAM("NUMBER OF ALL PARTICLES BEFORE REMOVAL = " << NumberOfAllParticlesBeforeRemoval << " Particle to be removed has index = " << ParticleObject.Index << " " << ParticleIndex));
         LoggersManagerObject.LogOnlyToConsoleUnconditional(STREAM("NUMBER OF ALL PARTICLES BEFORE REMOVAL = " << NumberOfAllParticlesBeforeRemoval << " Particle to be removed has index = " << ParticleObject.Index << " " << ParticleIndex));
-        //#endif
+        #endif
 
         CutDNAPrev(&ParticleObject);
         CutDNANext(&ParticleObject);
@@ -38,12 +39,16 @@ void CellEngineChemicalReactionsInSimulationSpace::RemoveParticle(const UniqueId
 
         GetParticles().erase(ParticleIndex);
 
-        //#ifdef SIMULATION_DETAILED_DEBUG_LOG
-        const UnsignedInt NumberOfAllParticlesAfterRemoval = CellEngineDataFileObjectPointer->GetNumberOfAllParticles();
+        #ifdef SIMULATION_DETAILED_DEBUG_LOG
+        UnsignedInt NumberOfAllParticlesAfterRemoval;
+        if (CountAllParticlesBool == true)
+            NumberOfAllParticlesAfterRemoval = CellEngineDataFileObjectPointer->GetNumberOfAllParticles();
+        else
+            NumberOfAllParticlesAfterRemoval = CellEngineDataFileObjectPointer->GetNumberOfAllParticlesInSector(CurrentSectorPos);
         const UnsignedInt DifferenceOfAllParticlesBeforeAndAfterRemoval = NumberOfAllParticlesBeforeRemoval - NumberOfAllParticlesAfterRemoval;
         LoggersManagerObject.LogOnlyToFilesUnconditional(STREAM("NUMBER OF ALL PARTICLES AFTER REMOVAL = " << NumberOfAllParticlesBeforeRemoval << " " << NumberOfAllParticlesAfterRemoval << " DIFFERENCE = " << DifferenceOfAllParticlesBeforeAndAfterRemoval << " Particle to be removed has index = " << ParticleObject.Index << " " << ParticleIndex));
         LoggersManagerObject.LogOnlyToConsoleUnconditional(STREAM("NUMBER OF ALL PARTICLES AFTER REMOVAL = " << NumberOfAllParticlesBeforeRemoval << " " << NumberOfAllParticlesAfterRemoval << " DIFFERENCE = " << DifferenceOfAllParticlesBeforeAndAfterRemoval << " Particle to be removed has index = " << ParticleObject.Index << " " << ParticleIndex));
-        //#endif
+        #endif
     }
     CATCH("removing particle")
 }

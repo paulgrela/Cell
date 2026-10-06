@@ -108,7 +108,7 @@ public:
         return MaxParticleIndex = ParticleParam.Index;
     }
 protected:
-    virtual void RemoveParticle(UniqueIdUnsignedInt ParticleIndex, bool ClearElements) = 0;
+    virtual void RemoveParticle(UniqueIdUnsignedInt ParticleIndex, bool ClearElements, bool CountAllParticlesBool) = 0;
 public:
     template <class T, class A>
     void PreprocessData(const std::vector<A> Particle::*ListOfElements, const std::vector<A> ParticleKind::*ListOfElementsOfParticleKind, bool UpdateParticleKindListOfElementsBool);

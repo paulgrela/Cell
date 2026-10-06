@@ -114,6 +114,20 @@ public:
         return NumberOfParticles;
     }
 public:
+    [[nodiscard]] UnsignedInt GetNumberOfAllParticlesInSector(const SectorPosType& SectorPos) const
+    {
+        UnsignedInt NumberOfParticles = 0;
+
+        try
+        {
+            for (const auto& ParticleObject : Particles[SectorPos.SectorPosX][SectorPos.SectorPosY][SectorPos.SectorPosZ].Particles)
+                NumberOfParticles++;
+        }
+        CATCH_AND_THROW("getting number of particles")
+
+        return NumberOfParticles;
+    }
+public:
     [[nodiscard]] ParticlesContainer<Particle>& GetParticles()
     {
         return Particles;

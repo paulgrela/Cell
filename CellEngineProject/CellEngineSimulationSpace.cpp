@@ -225,7 +225,7 @@ bool CellEngineSimulationSpace::CancelChemicalReaction(const vector<UniqueIdUnsi
 
         for (const auto& CreatedParticleIndex : CreatedParticlesIndexes)
         {
-            RemoveParticle(CreatedParticleIndex, true);
+            RemoveParticle(CreatedParticleIndex, true, false);
 
             //CancelledParticlesIndexes.insert(pair(CreatedParticleIndex, CreatedParticleIndex));
         }

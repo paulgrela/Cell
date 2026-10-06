@@ -23,7 +23,7 @@ void CellEngineChemicalReactionsInBasicSimulationSpace::EraseParticleChosenForRe
 
         ParticlesBackup.emplace_back(std::move(ParticleObjectToBeErased));
 
-        RemoveParticle(ParticleIndexChosenForReaction, true);
+        RemoveParticle(ParticleIndexChosenForReaction, true, false);
 
         RemovedParticlesInReactions++;
     }

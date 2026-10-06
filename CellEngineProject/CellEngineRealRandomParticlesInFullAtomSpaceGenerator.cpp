@@ -255,7 +255,7 @@ bool CellEngineRealRandomParticlesInFullAtomSpaceGenerator::TryToGenerateRandomP
                 TryResult = GenerateParticleAtomsWhenSelectedSpaceIsFree(Particles, AddNewParticle(Particle(GetNewFreeIndexOfParticle(), EntityId, 1, -1, 1, ParticleKindObject.second.ElectricCharge, GeneSequence, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), PosX, PosY, PosZ, SizeX, SizeY, SizeZ, 0, 0, 0, 0, 0, 0, &CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForCuboidSelectedSpace);
 
             if (TryResult == false)
-                RemoveParticle(MaxParticleIndex, true);
+                RemoveParticle(MaxParticleIndex, true, false);
 
             TryInsertNewParticleCounter++;
         }
@@ -408,7 +408,7 @@ void CellEngineRealRandomParticlesInFullAtomSpaceGenerator::RemoveParticlesWithC
             if (ParticleIndexCounter + 1 > NumberOfParticlesToBeRemoved)
                 break;
 
-            RemoveParticle(ParticleIndex, true);
+            RemoveParticle(ParticleIndex, true, false);
             ParticleIndexCounter++;
         }
     }
@@ -420,7 +420,7 @@ void CellEngineRealRandomParticlesInFullAtomSpaceGenerator::RemoveAllParticlesWi
     try
     {
         for (const auto& ParticleIndex : GetAllParticlesWithChosenEntityId(EntityId))
-            RemoveParticle(ParticleIndex, true);
+            RemoveParticle(ParticleIndex, true, false);
     }
     CATCH("removing all of particles with chosen entity id")
 }
@@ -436,7 +436,7 @@ void CellEngineRealRandomParticlesInFullAtomSpaceGenerator::RemoveParticlesWithC
             if (ParticleIndexCounter + 1 > NumberOfParticlesToBeRemoved)
                 break;
 
-            RemoveParticle(ParticleIndex, true);
+            RemoveParticle(ParticleIndex, true, false);
             ParticleIndexCounter++;
         }
     }
@@ -448,7 +448,7 @@ void CellEngineRealRandomParticlesInFullAtomSpaceGenerator::RemoveAllParticlesWi
     try
     {
         for (const auto& ParticleIndex : GetAllParticlesWithChosenParticleType(ParticleTypeParam))
-            RemoveParticle(ParticleIndex, true);
+            RemoveParticle(ParticleIndex, true, false);
     }
     CATCH("removing all of particles with chosen particle type")
 }

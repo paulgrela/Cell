@@ -38,8 +38,8 @@ public:
 protected:
     SignedInt TwoThreadsWallSychronizationBarriersIndexes[NumberOfAllNeighbors]{ -1, -1, -1, -1, -1, -1 };
 protected:
-    std::vector<UniqueIdUnsignedInt> ConfirmationOfParticlesToRemoveToSent[NumberOfAllNeighbors];
-protected:
+    std::vector<ConfirmationOfParticlesToRemoveToSentStruct> ConfirmationOfParticlesToRemoveToSent[NumberOfAllNeighbors];
+public:
     SectorPosType CurrentSectorPos{ 0, 0, 0 };
     SimulationSpaceSectorBounds ActualSimulationSpaceSectorBoundsObject{ 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 public:
