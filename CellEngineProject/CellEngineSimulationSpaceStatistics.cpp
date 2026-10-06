@@ -167,7 +167,7 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesAsVectorElements()
         if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)
         {
             ParticlesSnapshots[SimulationStepNumber - 1].reserve(Particles.size());
-            transform(GetParticles().begin(), GetParticles().end(), std::back_inserter(ParticlesSnapshots[SimulationStepNumber - 1]), [](const auto& ParticlesMapElement){ return ParticlesMapElement.second; } );
+            ranges::transform(GetParticles(), std::back_inserter(ParticlesSnapshots[SimulationStepNumber - 1]), [](const auto& ParticlesMapElement){ return ParticlesMapElement.second; } );
         }
     }
     CATCH("saving particles as vector elements")
@@ -183,9 +183,9 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesAsSortedVectorElements()
         if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)
         {
             LoggersManagerObject.LogStatistics(STREAM("Size of all particles copied for statistics = " << ParticlesSnapshotsCopiedUnorderedMap[SimulationStepNumber - 1].size()));
-            for (const auto& ParticlesSnapshotsCopiedUnorderedMapElement : ParticlesSnapshotsCopiedUnorderedMap[SimulationStepNumber - 1])
+            for (const auto& ParticlesSnapshotsCopiedUnorderedMapElementFirst : ParticlesSnapshotsCopiedUnorderedMap[SimulationStepNumber - 1] | views::keys)
             {
-                EntityIdInt ParticleKindId = GetParticleFromIndex(ParticlesSnapshotsCopiedUnorderedMapElement.first).EntityId;
+                EntityIdInt ParticleKindId = GetParticleFromIndex(ParticlesSnapshotsCopiedUnorderedMapElementFirst).EntityId;
                 ParticlesKindsSnapshotsCopiedMap[SimulationStepNumber - 1][ParticleKindId] = { ParticleKindId, ++ParticlesKindsSnapshotsCopiedMap[SimulationStepNumber - 1][ParticleKindId].Counter };
             }
         }
@@ -211,9 +211,9 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesAsSortedVectorElements()
 
         LoggersManagerObject.LogStatistics(STREAM("Size of all particle kinds with number of particles for particle kind = " << ParticlesKindsSnapshotsCopiedMap[SimulationStepNumber - 1].size()));
 
-        transform(ParticlesKindsSnapshotsCopiedMap[SimulationStepNumber - 1].begin(), ParticlesKindsSnapshotsCopiedMap[SimulationStepNumber - 1].end(), back_inserter(ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber - 1]), [](const auto& ParticlesMapElement){ return ParticlesMapElement.second; } );
+        ranges::transform(ParticlesKindsSnapshotsCopiedMap[SimulationStepNumber - 1], back_inserter(ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber - 1]), [](const auto& ParticlesMapElement){ return ParticlesMapElement.second; } );
 
-        sort(ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber - 1].begin(), ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber - 1].end(), [](const auto& P1, const auto& P2){ return P1.Counter > P2.Counter; } );
+        ranges::sort(ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber - 1], [](const auto& P1, const auto& P2){ return P1.Counter > P2.Counter; } );
 
         LoggersManagerObject.LogStatistics(STREAM("Size of ParticlesKindsSnapshotsVectorSortedByCounter = " << ParticlesKindsSnapshotsVectorSortedByCounter[0].size()));
     }
@@ -271,7 +271,7 @@ void CellEngineSimulationSpaceStatistics::GetNumberOfParticlesFromParticleKind(c
 {
     try
     {
-        auto FoundResult = find_if(ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber - 1].begin(), ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber - 1].end(), [ParticleKindId](const auto& P){ return P.EntityId == ParticleKindId; });
+        const auto FoundResult = ranges::find_if(ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber - 1], [ParticleKindId](const auto& P){ return P.EntityId == ParticleKindId; });
         if (FoundResult != ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber - 1].end())
             LoggersManagerObject.LogStatistics(STREAM("Particle Kind Name = " << ParticlesKindsManagerObject.GetParticleKind(FoundResult->EntityId).IdStr << " Particle Kind Id = " << FoundResult->EntityId << " Number of Particles = " << FoundResult->Counter));
     }

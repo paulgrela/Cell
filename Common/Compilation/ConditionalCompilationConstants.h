@@ -14,4 +14,6 @@
 
 #define USE_OPENGL
 
+#define WELL_STIRRED
+
 #endif

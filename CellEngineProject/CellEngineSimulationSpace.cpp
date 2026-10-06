@@ -381,26 +381,6 @@ bool CellEngineSimulationSpace::MakeChemicalReaction(ChemicalReaction& ReactionO
     return true;
 };
 
-//TYLKO WELL STIRRED
-std::vector<UnsignedInt> CellEngineSimulationSpace::GetRandomParticlesVersion3() const
-{
-    vector<UnsignedInt> RandomParticlesTypes;
-
-    try
-    {
-        std::uniform_int_distribution<UnsignedInt> UniformDistributionObjectUint64t(0, LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity.size() - 1);
-    }
-    CATCH("getting random particles kind")
-
-    return RandomParticlesTypes;
-}
-
-//TYLKO WELL STIRRED
-std::vector<UnsignedInt> CellEngineSimulationSpace::GetRandomParticles(const UnsignedInt NumberOfReactants, const UnsignedInt MaxNumberOfReactants)
-{
-    return GetRandomParticlesVersion3();
-}
-
 bool CellEngineSimulationSpace::IsChemicalReactionPossible(const ChemicalReaction& ReactionObject)
 {
     return ranges::all_of(ReactionObject.Reactants, [this](const ParticleKindForChemicalReaction& ReactionReactant){ return ReactionReactant.Counter <= LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity[ReactionReactant.EntityId]; });
@@ -584,3 +564,23 @@ void CellEngineSimulationSpace::SaveParticlesStatisticsOnce()
 {
     SaveParticlesStatistics();
 }
+
+#ifdef WELL_STIRRED
+std::vector<UnsignedInt> CellEngineSimulationSpace::GetRandomParticlesVersion3() const
+{
+    vector<UnsignedInt> RandomParticlesTypes;
+
+    try
+    {
+        std::uniform_int_distribution<UnsignedInt> UniformDistributionObjectUint64t(0, LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity.size() - 1);
+    }
+    CATCH("getting random particles kind")
+
+    return RandomParticlesTypes;
+}
+
+std::vector<UnsignedInt> CellEngineSimulationSpace::GetRandomParticles(const UnsignedInt NumberOfReactants, const UnsignedInt MaxNumberOfReactants)
+{
+    return GetRandomParticlesVersion3();
+}
+#endif

@@ -701,7 +701,6 @@ void CellEngineSimulationParallelExecutionManager::GenerateOneStepOfSimulationFo
                         for (UnsignedInt ParticleSectorZIndex = (ThreadZIndex - 1) * CellEngineConfigDataObject.NumberOfZSectorsInOneThreadInSimulation; ParticleSectorZIndex < ThreadZIndex * CellEngineConfigDataObject.NumberOfZSectorsInOneThreadInSimulation; ParticleSectorZIndex++)
                         {
                             DEBUGLOG(LoggersManagerObject.Log(STREAM("XStart = " << (ThreadXIndex - 1) * CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace << " YStart = " << (ThreadYIndex - 1) * CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace << " ZStart = " << (ThreadYIndex - 1) * CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace << " XEnd = " << ThreadXIndex * CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace << " YEnd = " << ThreadZIndex * CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace << " ZEnd = " << ThreadZIndex * CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace << " PosX = " << ParticleSectorXIndex << " PosY = " << ParticleSectorYIndex << " PosZ = " << ParticleSectorZIndex));)
-                            // MOZNA WYKONAC WIECEJ NIZ JEDNA LOSOWA REAKCJE W KAZDYM SEKTORZE
 
                             if (CellEngineUseful::IsIn(CellEngineConfigDataObject.TypeOfSimulation, { CellEngineConfigData::TypesOfSimulation::BothReactionsAndDiffusion }))
                                 GenerateOneRandomReactionForSelectedSpace(ParticleSectorXIndex, ParticleSectorYIndex, ParticleSectorZIndex, CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace, false);
@@ -719,9 +718,6 @@ void CellEngineSimulationParallelExecutionManager::GenerateOneStepOfSimulationFo
                         for (UnsignedInt ParticleSectorZIndex = (ThreadZIndex - 1) * CellEngineConfigDataObject.NumberOfZSectorsInOneThreadInSimulation; ParticleSectorZIndex < ThreadZIndex * CellEngineConfigDataObject.NumberOfZSectorsInOneThreadInSimulation; ParticleSectorZIndex++)
                         {
                             DEBUGLOG(LoggersManagerObject.Log(STREAM("XStart = " << (ThreadXIndex - 1) * CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace << " YStart = " << (ThreadYIndex - 1) * CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace << " ZStart = " << (ThreadYIndex - 1) * CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace << " XEnd = " << ThreadXIndex * CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace << " YEnd = " << ThreadZIndex * CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace << " ZEnd = " << ThreadZIndex * CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace << " PosX = " << ParticleSectorXIndex << " PosY = " << ParticleSectorYIndex << " PosZ = " << ParticleSectorZIndex));)
-
-                            //CurrentThreadLocalSimulationSpaceData->CurrentSectorPos = SectorPosType{ .SectorPosX = static_cast<SignedInt>(ParticleSectorXIndex), .SectorPosY = static_cast<SignedInt>(ParticleSectorYIndex), .SectorPosZ = static_cast<SignedInt>(ParticleSectorZIndex) };
-                            //CurrentThreadLocalSimulationSpaceData->SetCurrentSectorPos(SectorPosType{ .SectorPosX = static_cast<SignedInt>(ParticleSectorXIndex), .SectorPosY = static_cast<SignedInt>(ParticleSectorYIndex), .SectorPosZ = static_cast<SignedInt>(ParticleSectorZIndex) });
 
                             if (CellEngineUseful::IsIn(CellEngineConfigDataObject.TypeOfSimulation, { CellEngineConfigData::TypesOfSimulation::BothReactionsAndDiffusion, CellEngineConfigData::TypesOfSimulation::OnlyDiffusion }))
                                 GenerateOneStepOfDiffusionForSelectedSpace(CurrentThreadLocalSimulationSpaceData, true, ParticleSectorXIndex, ParticleSectorYIndex, ParticleSectorZIndex, (ThreadXIndex - 1) * CellEngineConfigDataObject.NumberOfXSectorsInOneThreadInSimulation * CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace - CellEngineConfigDataObject.ShiftCenterX, (ThreadYIndex - 1) * CellEngineConfigDataObject.NumberOfYSectorsInOneThreadInSimulation * CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace - CellEngineConfigDataObject.ShiftCenterY, (ThreadZIndex - 1) * CellEngineConfigDataObject.NumberOfZSectorsInOneThreadInSimulation * CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace - CellEngineConfigDataObject.ShiftCenterZ, ThreadXIndex * CellEngineConfigDataObject.NumberOfXSectorsInOneThreadInSimulation * CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace - CellEngineConfigDataObject.ShiftCenterX, ThreadYIndex * CellEngineConfigDataObject.NumberOfYSectorsInOneThreadInSimulation * CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace - CellEngineConfigDataObject.ShiftCenterY, ThreadZIndex * CellEngineConfigDataObject.NumberOfZSectorsInOneThreadInSimulation * CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace - CellEngineConfigDataObject.ShiftCenterZ);
@@ -869,9 +865,10 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
                         {
                             DEBUGLOG(LoggersManagerObject.Log(STREAM("PARTCLE_KIND_ID TO CHECK = " << ReceivedParticleIndexToInsert.ParticleIndex));)
 
-                            CurrentThreadLocalSimulationSpaceData->CurrentSectorPos = SectorPosType{ .SectorPosX = static_cast<SignedInt>(ReceivedParticleIndexToInsert.ReceiverSectorPos.X), .SectorPosY = static_cast<SignedInt>(ReceivedParticleIndexToInsert.ReceiverSectorPos.Y), .SectorPosZ = static_cast<SignedInt>(ReceivedParticleIndexToInsert.ReceiverSectorPos.Z) };
+                            //CurrentThreadLocalSimulationSpaceData->CurrentSectorPos = SectorPosType{ .SectorPosX = static_cast<SignedInt>(ReceivedParticleIndexToInsert.ReceiverSectorPos.X), .SectorPosY = static_cast<SignedInt>(ReceivedParticleIndexToInsert.ReceiverSectorPos.Y), .SectorPosZ = static_cast<SignedInt>(ReceivedParticleIndexToInsert.ReceiverSectorPos.Z) };
+                            CurrentThreadLocalSimulationSpaceData->SetCurrentSectorPos(SectorPosType{ .SectorPosX = static_cast<SignedInt>(ReceivedParticleIndexToInsert.ReceiverSectorPos.X), .SectorPosY = static_cast<SignedInt>(ReceivedParticleIndexToInsert.ReceiverSectorPos.Y), .SectorPosZ = static_cast<SignedInt>(ReceivedParticleIndexToInsert.ReceiverSectorPos.Z) });
 
-                            if (CurrentThreadLocalSimulationSpaceData->CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossible(ReceivedParticleIndexToInsert) == true)
+                            if (CurrentThreadLocalSimulationSpaceData->CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossibleInMultiThreadOrMulitProcessDiffusion(ReceivedParticleIndexToInsert) == true)
                             {
                                 #ifdef SIMULATION_DETAILED_DEBUG_LOG
                                 LoggersManagerObject.LogOnlyToFilesUnconditional(STREAM("SENDING CONFIRMATION TO NEIGHBOR = (PARTICLE_INDEX = " << ReceivedParticleIndexToInsert.ParticleIndex << ")(" << ReceivedParticleIndexToInsert.SenderProcessIndex << " " << ReceivedParticleIndexToInsert.ReceiverProcessIndex << ") (" << CurrentThreadLocalSimulationSpaceData->CurrentThreadIndex << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.ThreadPosX << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.ThreadPosY << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.ThreadPosZ << ")["  << CurrentThreadIndexParam << " " << ThreadXIndexParam << " " << ThreadYIndexParam << " " << ThreadZIndexParam << "] NEIGHBOR = (" << ReceivedParticleIndexToInsert.ReceiverThreadPos.ThreadPosX << " " << ReceivedParticleIndexToInsert.ReceiverThreadPos.ThreadPosY << " " << ReceivedParticleIndexToInsert.ReceiverThreadPos.ThreadPosZ << ")"));
@@ -926,7 +923,8 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
             {
                 for (const auto& ConfirmationOfParticlesToRemoveToSentObject : CurrentThreadLocalSimulationSpaceData->ConfirmationOfParticlesToRemoveToSent[NeighborProcessIndex])
                 {
-                    CurrentThreadLocalSimulationSpaceData->CurrentSectorPos = SectorPosType{ .SectorPosX = static_cast<SignedInt>(ConfirmationOfParticlesToRemoveToSentObject.SenderSectorPos.X), .SectorPosY = static_cast<SignedInt>(ConfirmationOfParticlesToRemoveToSentObject.SenderSectorPos.Y), .SectorPosZ = static_cast<SignedInt>(ConfirmationOfParticlesToRemoveToSentObject.SenderSectorPos.Z) };
+                    //CurrentThreadLocalSimulationSpaceData->CurrentSectorPos = SectorPosType{ .SectorPosX = static_cast<SignedInt>(ConfirmationOfParticlesToRemoveToSentObject.SenderSectorPos.X), .SectorPosY = static_cast<SignedInt>(ConfirmationOfParticlesToRemoveToSentObject.SenderSectorPos.Y), .SectorPosZ = static_cast<SignedInt>(ConfirmationOfParticlesToRemoveToSentObject.SenderSectorPos.Z) };
+                    CurrentThreadLocalSimulationSpaceData->SetCurrentSectorPos(SectorPosType{ .SectorPosX = static_cast<SignedInt>(ConfirmationOfParticlesToRemoveToSentObject.SenderSectorPos.X), .SectorPosY = static_cast<SignedInt>(ConfirmationOfParticlesToRemoveToSentObject.SenderSectorPos.Y), .SectorPosZ = static_cast<SignedInt>(ConfirmationOfParticlesToRemoveToSentObject.SenderSectorPos.Z) });
 
                     CurrentThreadLocalSimulationSpaceData->RemoveParticle(ConfirmationOfParticlesToRemoveToSentObject.ParticleIndex, true, false);
 
@@ -1079,7 +1077,7 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
             vector<UniqueIdUnsignedInt> ConfirmationOfParticlesToRemoveToSent;
             for (const auto& ReceivedParticleIndexToInsert : ReceivedParticlesToInsert)
                 if (ReceivedParticleIndexToInsert.ParticleIndex != 0)
-                    if (CurrentThreadLocalSimulationSpaceData->CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossible(ReceivedParticleIndexToInsert) == true)
+                    if (CurrentThreadLocalSimulationSpaceData->CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossibleInMultiThreadOrMulitProcessDiffusion(ReceivedParticleIndexToInsert) == true)
                         ConfirmationOfParticlesToRemoveToSent.emplace_back(ReceivedParticleIndexToInsert.ParticleIndex);
 
             {
@@ -1195,7 +1193,7 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
             std::vector<UniqueIdUnsignedInt> ConfirmationOfParticlesToRemove;
             for (const auto& ReceivedParticleIndexToInsert : ReceivedParticlesToInsert)
                 if (ReceivedParticleIndexToInsert.ParticleIndex != 0)
-                    if (CurrentThreadLocalSimulationSpaceData->CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossible(ReceivedParticleIndexToInsert) == true)
+                    if (CurrentThreadLocalSimulationSpaceData->CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossibleInMultiThreadOrMulitProcessDiffusion(ReceivedParticleIndexToInsert) == true)
                         ConfirmationOfParticlesToRemove.emplace_back(ReceivedParticleIndexToInsert.ParticleIndex);
 
             {
@@ -1246,7 +1244,6 @@ void CellEngineSimulationParallelExecutionManager::GenerateOneStepOfSimulationFo
                         for (UnsignedInt ParticleSectorZIndex = CurrentMPIProcessSimulationSpaceSectorsRanges.StartZPos; ParticleSectorZIndex < CurrentMPIProcessSimulationSpaceSectorsRanges.EndZPos; ParticleSectorZIndex++)
                         {
                             DEBUGLOG(LoggersManagerObject.Log(STREAM("XStart = " << CurrentMPIProcessSimulationSpaceSectorsRanges.StartXPos << " YStart = " << CurrentMPIProcessSimulationSpaceSectorsRanges.StartYPos << " ZStart = " << CurrentMPIProcessSimulationSpaceSectorsRanges.StartZPos << " XEnd = " << CurrentMPIProcessSimulationSpaceSectorsRanges.EndXPos << " YEnd = " << CurrentMPIProcessSimulationSpaceSectorsRanges.EndYPos << " ZEnd = " << CurrentMPIProcessSimulationSpaceSectorsRanges.EndZPos << " PosX = " << ParticleSectorXIndex << " PosY = " << ParticleSectorYIndex << " PosZ = " << ParticleSectorZIndex));)
-                            // MOZNA WYKONAC WIECEJ NIZ JEDNA LOSOWA REAKCJE W KAZDYM SEKTORZE
 
                             if (CellEngineUseful::IsIn(CellEngineConfigDataObject.TypeOfSimulation, { CellEngineConfigData::TypesOfSimulation::BothReactionsAndDiffusion }))
                                 GenerateOneRandomReactionForSelectedSpace(ParticleSectorXIndex, ParticleSectorYIndex, ParticleSectorZIndex, CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace, false);
@@ -1511,7 +1508,7 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIPr
 
                     for (const auto& ReceivedParticleIndexToInsert : ReceivedParticlesToInsert)
                         if (ReceivedParticleIndexToInsert.ParticleIndex != 0)
-                            if (CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossible(ReceivedParticleIndexToInsert) == true)
+                            if (CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossibleInMultiThreadOrMulitProcessDiffusion(ReceivedParticleIndexToInsert) == true)
                                 ConfirmationOfParticlesToRemoveToSent.emplace_back(ReceivedParticleIndexToInsert.ParticleIndex);
                 }
 

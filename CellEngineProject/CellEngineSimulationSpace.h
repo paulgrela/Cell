@@ -48,9 +48,6 @@ protected:
     void FindAndExecuteRandomReactionVersion3(UnsignedInt MaxNumberOfReactantsParam);
 private:
     set<UnsignedInt> GetAllPossibleReactionsFromParticlesInProximity();
-protected:
-    //TYLKO WELL STIRRED
-    std::vector<UnsignedInt> GetRandomParticlesVersion3() const;
 public:
     void FindAndExecuteRandomReaction(UnsignedInt MaxNumberOfReactantsParam);
     bool FindAndExecuteChosenReaction(UnsignedInt ReactionId);
@@ -59,11 +56,13 @@ protected:
     bool PlaceProductParticleInSpaceInDeterminedPositionOrCancelReaction(UniqueIdUnsignedInt ParticleIndex, const vector<Particle>& ParticlesBackup, const vector<UniqueIdUnsignedInt>& CreatedParticlesIndexes, UnsignedInt CenterIndex, const ListOfCentersType& Centers, ParticleKind& ParticleKindObjectForProduct, chrono::high_resolution_clock::time_point start_time);
     bool PlaceProductParticleInSpaceInRandomPositionOrCancelReaction(UniqueIdUnsignedInt ParticleIndex, const vector<Particle>& ParticlesBackup, const vector<UniqueIdUnsignedInt>& CreatedParticlesIndexes, UnsignedInt CenterIndex, const ListOfCentersType& Centers, ParticleKind& ParticleKindObjectForProduct, chrono::high_resolution_clock::time_point start_time);
 protected:
-    //TYLKO WELL STIRRED
-    std::vector<UnsignedInt> GetRandomParticles(UnsignedInt NumberOfReactants, UnsignedInt MaxNumberOfReactants) override;
-
     bool IsChemicalReactionPossible(const ChemicalReaction& ReactionObject) override;
     bool MakeChemicalReaction(ChemicalReaction& ReactionObject) override;
+protected:
+    #ifdef WELL_STIRRED
+    std::vector<UnsignedInt> GetRandomParticles(UnsignedInt NumberOfReactants, UnsignedInt MaxNumberOfReactants) override;
+    std::vector<UnsignedInt> GetRandomParticlesVersion3() const;
+    #endif
 public:
     explicit CellEngineSimulationSpace(ParticlesContainer<Particle>& ParticlesParam) : CellEngineSimulationSpaceStatistics(), Particles(ParticlesParam), CellEngineSimulationParallelExecutionManager()
     {
