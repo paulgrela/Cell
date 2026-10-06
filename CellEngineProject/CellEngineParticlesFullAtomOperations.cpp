@@ -46,7 +46,7 @@ static bool ExchangeParticleBetweenSectors(const Particle &ParticleObject, const
     return false;
 }
 
-void CellEngineParticlesFullAtomOperations::MoveParticleByVectorForThreads(Particle& ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, ParticlesDetailedContainer<Particle>::iterator& ParticleObjectIter, vector<ParticleToBeMovedFromOneSectorToAnotherSector>& ListOfParticlesToChangeSectors, const SignedInt* NeighborProcessesIndexes, std::vector<ParticleSenderStruct>* VectorOfParticlesToSendToNeighborThreads, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const ThreadPosType& CurrentThreadPos)
+void CellEngineParticlesFullAtomOperations::MoveParticleByVectorForThreads(Particle& ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, ParticlesDetailedContainer<Particle>::iterator& ParticleObjectIter, vector<ParticleToBeMovedFromOneSectorToAnotherSector>& ListOfParticlesToChangeSectors, const SignedInt* NeighborProcessesIndexes, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const ThreadPosType& CurrentThreadPos)
 {
     try
     {
@@ -114,12 +114,12 @@ void CellEngineParticlesFullAtomOperations::MoveParticleByVectorForThreads(Parti
                             }
                         }
                     }
-                    else
-                    if (ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].Particles.contains(ParticleObject.Index) == false)
-                    {
-                        ListOfParticlesToChangeSectors.emplace_back(ParticleToBeMovedFromOneSectorToAnotherSector{ .ParticleIndex = ParticleObject.Index, .SectorPosSource = SectorPosType{ .SectorPosX = SectorPosX1, .SectorPosY = SectorPosY1, .SectorPosZ = SectorPosZ1 }, .SectorPosTarget = SectorPosType{ .SectorPosX = SectorPosX2, .SectorPosY = SectorPosY2, .SectorPosZ = SectorPosZ2 }});
-                        NewSectorNeighborThreadFound = true;
-                    }
+                    // else
+                    // if (ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].Particles.contains(ParticleObject.Index) == false)
+                    // {
+                    //     ListOfParticlesToChangeSectors.emplace_back(ParticleToBeMovedFromOneSectorToAnotherSector{ .ParticleIndex = ParticleObject.Index, .SectorPosSource = SectorPosType{ .SectorPosX = SectorPosX1, .SectorPosY = SectorPosY1, .SectorPosZ = SectorPosZ1 }, .SectorPosTarget = SectorPosType{ .SectorPosX = SectorPosX2, .SectorPosY = SectorPosY2, .SectorPosZ = SectorPosZ2 }});
+                    //     NewSectorNeighborThreadFound = true;
+                    // }
                 }
 
                 if (NewSectorNeighborThreadFound == false)

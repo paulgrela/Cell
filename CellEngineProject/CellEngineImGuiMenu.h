@@ -1,4 +1,3 @@
-#pragma once
 
 #ifndef CELL_ENGINE_IM_GUI_MENU_H
 #define CELL_ENGINE_IM_GUI_MENU_H
@@ -603,8 +602,8 @@ public:
                 }
                 if (ChangeColor == true)
                     FOR_EACH_SECTOR_IN_XYZ_ONLY
-                        for (auto& ParticleObject: CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles)
-                            for (auto& AtomObject : ParticleObject.second.ListOfAtoms)
+                        for (auto& ParticleObject : CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles | views::values)
+                            for (auto& AtomObject : ParticleObject.ListOfAtoms)
                                 AtomObject.AtomColor = ParticlesKindsManagerObject.GetGraphicAtomKindDataFromAtomName(AtomObject.Name[0])->Color;
             }
         }
@@ -1229,8 +1228,8 @@ public:
     {
         try
         {
-            UnsignedInt StringLength = 90;
-            UnsignedInt PrefixStringLength = 0;
+            const UnsignedInt StringLength = 90;
+            const UnsignedInt PrefixStringLength = 0;
             if (ModifiableWindow == false)
                 ImGui::Begin("Chemical ChemicalReactions Menu", nullptr, WindowFlags);
             else
@@ -1325,9 +1324,11 @@ public:
 
     static void MakeNStepsOfSimulationWithoutParallelExecution()
     {
+        const UnsignedInt NumberOfAllParticlesBeforeSimulation = CellEngineDataFileObjectPointer->GetNumberOfAllParticles();
         LoggersManagerObject.Log(STREAM(""));
+        LoggersManagerObject.Log(STREAM(""));
+        LoggersManagerObject.Log(STREAM("NUMBER OF ALL PARTICLES BEFORE SIMULATION = " << NumberOfAllParticlesBeforeSimulation));
         LoggersManagerObject.Log(STREAM("START NOT PARALLEL SIMULATION"));
-        LoggersManagerObject.Log(STREAM(""));
 
         const auto start_time = chrono::high_resolution_clock::now();
 
@@ -1338,9 +1339,13 @@ public:
 
         const auto stop_time = chrono::high_resolution_clock::now();
 
+        const UnsignedInt NumberOfAllParticlesAfterSimulation = CellEngineDataFileObjectPointer->GetNumberOfAllParticles();
+        LoggersManagerObject.Log(STREAM("END NOT PARALLEL SIMULATION"));
+        LoggersManagerObject.Log(STREAM("NUMBER OF ALL PARTICLES AFTER SIMULATION = " << NumberOfAllParticlesAfterSimulation));
+        LoggersManagerObject.Log(STREAM("DIFFERENCE OF ALL PARTICLES BEFORE AND AFTER SIMULATION = " << NumberOfAllParticlesAfterSimulation - NumberOfAllParticlesBeforeSimulation));
+
         LoggersManagerObject.Log(STREAM(""));
         LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Execution of generating one step simulation in whole cell space has taken time: ","Execution in threads")));
-        LoggersManagerObject.Log(STREAM(""));
     }
 
     static void MakeSimulationInSingleThreadWithSavingGeneratedRandomValues()
