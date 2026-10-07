@@ -438,12 +438,8 @@ void CellEngineSimulationParallelExecutionManager::FirstSendParticlesForThreads(
                 BadParticlesCounter++;
 
         FOR_EACH_THREAD_IN_XYZ
-        {
-            //InitiateFreeParticleIndexes(SimulationSpaceDataForThreads[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->ParticlesForThreads, false);
-
             if (PrintCenterOfParticleWithThreadIndex == true)
                 LoggersManagerObject.Log(STREAM("THREAD[" << ThreadXIndex << "," << ThreadYIndex << "," << ThreadZIndex << "] SIZE = " << SimulationSpaceDataForThreads[ThreadXIndex - 1][ThreadYIndex - 1][ThreadZIndex - 1]->ParticlesForThreads.size()));
-        }
 
         const auto stop_time = chrono::high_resolution_clock::now();
 
@@ -648,8 +644,6 @@ void CellEngineSimulationParallelExecutionManager::GatherParticlesFromThreadsToP
         sleep(1);
         {
             GatherParticlesFromThreads();
-
-            //InitiateFreeParticleIndexes(GetParticles(), false);
 
             GatherCancelledParticlesIndexesFromThreads();
         }

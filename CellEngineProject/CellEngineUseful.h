@@ -9,6 +9,12 @@
 
 namespace CellEngineUseful
 {
+    template <typename T>
+    constexpr T& AsLvalue(T&& Value) noexcept
+    {
+        return static_cast<T&>(Value);
+    }
+
     template <typename T, typename U>
     bool all_equal_and(const T &t, const U &u)
     {

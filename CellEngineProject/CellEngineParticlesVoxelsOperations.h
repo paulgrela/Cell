@@ -27,7 +27,7 @@ protected:
     {
         try
         {
-            for (auto &Voxel: ListOfVoxels)
+            for (const auto &Voxel: ListOfVoxels)
                 GetSpaceVoxel(Voxel.X, Voxel.Y, Voxel.Z) = SimulationSpaceVoxelValue;
         }
         CATCH("making all zero voxels in list of voxels")
@@ -75,11 +75,11 @@ protected:
     {
         try
         {
-            for (auto &VoxelOfParticle: ParticleObject.ListOfVoxels)
+            for (const auto &VoxelOfParticle: ParticleObject.ListOfVoxels)
             {
-                UnsignedInt TestedPosX = VoxelOfParticle.X + VectorX;
-                UnsignedInt TestedPosY = VoxelOfParticle.Y + VectorY;
-                UnsignedInt TestedPosZ = VoxelOfParticle.Z + VectorZ;
+                const UnsignedInt TestedPosX = VoxelOfParticle.X + VectorX;
+                const UnsignedInt TestedPosY = VoxelOfParticle.Y + VectorY;
+                const UnsignedInt TestedPosZ = VoxelOfParticle.Z + VectorZ;
                 if (GetSpaceVoxel(TestedPosX, TestedPosY, TestedPosZ) != GetZeroSimulationSpaceVoxel() && GetSpaceVoxel(TestedPosX, TestedPosY, TestedPosZ) != ParticleObject.Index)
                     return false;
             }
@@ -93,7 +93,7 @@ protected:
     {
         try
         {
-            for (auto &VoxelOfParticle: ListOfVoxels)
+            for (const auto &VoxelOfParticle: ListOfVoxels)
                 if (GetSpaceVoxel(VoxelOfParticle.X + VectorX, VoxelOfParticle.Y + VectorY, VoxelOfParticle.Z + VectorZ) != GetZeroSimulationSpaceVoxel() || !(VoxelOfParticle.X + VectorX >= SimulationSpaceSectorBoundsObjectParam.StartXPos && VoxelOfParticle.X + VectorX < SimulationSpaceSectorBoundsObjectParam.StartXPos + SimulationSpaceSectorBoundsObjectParam.SizeX && VoxelOfParticle.Y + VectorY >= SimulationSpaceSectorBoundsObjectParam.StartYPos && VoxelOfParticle.Y + VectorY < SimulationSpaceSectorBoundsObjectParam.StartYPos + SimulationSpaceSectorBoundsObjectParam.SizeY && VoxelOfParticle.Z + VectorZ >= SimulationSpaceSectorBoundsObjectParam.StartZPos && VoxelOfParticle.Z + VectorZ < SimulationSpaceSectorBoundsObjectParam.StartZPos + SimulationSpaceSectorBoundsObjectParam.SizeZ))
                     return false;
         }
@@ -108,9 +108,9 @@ protected:
         {
             for (auto &VoxelOfParticle: ParticleObject.ListOfVoxels)
             {
-                UnsignedInt TestedPosX = VoxelOfParticle.X + VectorX;
-                UnsignedInt TestedPosY = VoxelOfParticle.Y + VectorY;
-                UnsignedInt TestedPosZ = VoxelOfParticle.Z + VectorZ;
+                const UnsignedInt TestedPosX = VoxelOfParticle.X + VectorX;
+                const UnsignedInt TestedPosY = VoxelOfParticle.Y + VectorY;
+                const UnsignedInt TestedPosZ = VoxelOfParticle.Z + VectorZ;
                 if ((GetSpaceVoxel(TestedPosX, TestedPosY, TestedPosZ) != GetZeroSimulationSpaceVoxel() && GetSpaceVoxel(TestedPosX, TestedPosY, TestedPosZ) != ParticleObject.Index) || !(TestedPosX >= StartXPosParam && TestedPosX < StartXPosParam + SizeXParam && TestedPosY >= StartYPosParam && TestedPosY < StartYPosParam + SizeYParam && TestedPosZ >= StartZPosParam && TestedPosZ < StartZPosParam + SizeZParam))
                     return false;
             }

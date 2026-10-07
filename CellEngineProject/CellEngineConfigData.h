@@ -116,6 +116,13 @@ public:
 public:
     UnsignedInt SizeOfBigPartOfTheCellMultiplyFactor = 1;
 public:
+    enum class TypesOfReactionsByPlacingNewParticles : UnsignedInt
+    {
+        ByRandomPosition = 1,
+        InPositionDeterminedByFormerParticles = 2
+    };
+    TypesOfReactionsByPlacingNewParticles TypeOfReactionsByPlacingNewParticles = TypesOfReactionsByPlacingNewParticles::ByRandomPosition;
+public:
     int NumberOfStepsInSimulationOutside = 1;
     int NumberOfStepsInSimulationInside = 1;
     enum class TypesOfSimulation : UnsignedInt

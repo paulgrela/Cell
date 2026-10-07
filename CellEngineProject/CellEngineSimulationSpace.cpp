@@ -116,10 +116,10 @@ void CellEngineSimulationSpace::GenerateOneStepOfElectricDiffusionForOneParticle
             const UnsignedInt RandomMoveVectorIndex = UniformDiscreteDistributionMoveParticleDirectionObject(mt64R);
             auto EmptyParticlesIter = GetParticles().end();
 
-            //FUNKCJA MUSI BYC PRZENIESIONA bo PROBLEMEM vector<ParticleToBeMovedFromOneSectorToAnotherSector> TempListOfParticlesToChangeSectors i shared_ptr<CellEngineSimulationSpace>& TempCurrentThreadLocalSimulationSpaceData
-            vector<ParticleToBeMovedFromOneSectorToAnotherSector> TempListOfParticlesToChangeSectors;
-            shared_ptr<CellEngineSimulationSpace>& TempCurrentThreadLocalSimulationSpaceData = CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[0][0][0];
-            MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(ParticleObject, Particles, EmptyParticlesIter, TempListOfParticlesToChangeSectors, CurrentSectorPos, MoveVectors[RandomMoveVectorIndex].X, MoveVectors[RandomMoveVectorIndex].Y, MoveVectors[RandomMoveVectorIndex].Z, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
+            if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == false)
+                MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(ParticleObject, Particles, EmptyParticlesIter, CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[CurrentThreadPos.ThreadPosX - 1][CurrentThreadPos.ThreadPosY - 1][CurrentThreadPos.ThreadPosZ - 1]->ListOfParticlesToChangeSectors, CurrentSectorPos, MoveVectors[RandomMoveVectorIndex].X, MoveVectors[RandomMoveVectorIndex].Y, MoveVectors[RandomMoveVectorIndex].Z, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
+            else
+                MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(ParticleObject, Particles, EmptyParticlesIter, ListOfParticlesToChangeSectors, CurrentSectorPos, MoveVectors[RandomMoveVectorIndex].X, MoveVectors[RandomMoveVectorIndex].Y, MoveVectors[RandomMoveVectorIndex].Z, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
 
             DEBUGLOG(LoggersManagerObject.Log(STREAM("Random Index = " << to_string(RandomMoveVectorIndex) << " " << to_string(MoveVectors[RandomMoveVectorIndex].X) << " " << to_string(MoveVectors[RandomMoveVectorIndex].Y) << " " << to_string(MoveVectors[RandomMoveVectorIndex].Z) << endl));)
         }
@@ -223,7 +223,10 @@ bool CellEngineSimulationSpace::CancelChemicalReaction(const vector<UniqueIdUnsi
         {
             RemoveParticle(CreatedParticleIndex, true, false);
 
-            //CancelledParticlesIndexes.insert(pair(CreatedParticleIndex, CreatedParticleIndex)); // - dla kazdego watku osobne a teraz wspolne
+            if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == false)
+                CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[CurrentThreadPos.ThreadPosX - 1][CurrentThreadPos.ThreadPosY - 1][CurrentThreadPos.ThreadPosZ - 1]->CancelledParticlesIndexes.insert(pair(CreatedParticleIndex, CreatedParticleIndex));
+            else
+                CancelledParticlesIndexes.insert(pair(CreatedParticleIndex, CreatedParticleIndex));
         }
 
         NumberOfCancelledReactions++;
@@ -358,9 +361,16 @@ bool CellEngineSimulationSpace::MakeChemicalReaction(ChemicalReaction& ReactionO
 
             auto& ParticleKindObjectForProduct = ParticlesKindsManagerObject.GetParticleKind(ReactionProduct.EntityId);
 
-            if (PlaceProductParticleInSpaceInRandomPositionOrCancelReaction(ParticleIndex, ParticlesBackup, CreatedParticlesIndexes, CenterIndex, Centers, ParticleKindObjectForProduct, start_time) == false)
-            //if (PlaceProductParticleInSpaceInDeterminedPositionOrCancelReaction(ParticleIndex, ParticlesBackup, CreatedParticlesIndexes, CenterIndex, Centers, ParticleKindObjectForProduct, start_time) == false)
-                return false;
+            if (CellEngineConfigDataObject.TypeOfReactionsByPlacingNewParticles == CellEngineConfigData::TypesOfReactionsByPlacingNewParticles::ByRandomPosition)
+            {
+                if (PlaceProductParticleInSpaceInRandomPositionOrCancelReaction(ParticleIndex, ParticlesBackup, CreatedParticlesIndexes, CenterIndex, Centers, ParticleKindObjectForProduct, start_time) == false)
+                    return false;
+            }
+            else
+            {
+                if (PlaceProductParticleInSpaceInDeterminedPositionOrCancelReaction(ParticleIndex, ParticlesBackup, CreatedParticlesIndexes, CenterIndex, Centers, ParticleKindObjectForProduct, start_time) == false)
+                    return false;
+            }
 
             CenterIndex++;
         }

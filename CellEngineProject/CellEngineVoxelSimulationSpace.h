@@ -32,7 +32,7 @@ class CellEngineVoxelSimulationSpace : public CellEngineSimulationSpace, public 
 protected:
     UnsignedInt XMinGlobal{}, XMaxGlobal{}, YMinGlobal{}, YMaxGlobal{}, ZMinGlobal{}, ZMaxGlobal{};
 public:
-    SimulationSpaceVoxel GetSpaceVoxelForOuterClass(UnsignedInt X, UnsignedInt Y, UnsignedInt Z);
+    SimulationSpaceVoxel GetSpaceVoxelForOuterClass(UnsignedInt X, UnsignedInt Y, UnsignedInt Z) const;
     Particle& GetParticleFromIndexForOuterClass(UniqueIdUnsignedInt ParticleIndex);
 private:
     ParticlesContainer<Particle>& Particles;

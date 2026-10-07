@@ -36,7 +36,7 @@ public:
     bool PolymeraseRNATranscriptionStartSpecialReactionFunction(const std::vector<std::pair<UniqueIdUnsignedInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdUnsignedInt, UnsignedInt>> &NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject);
     bool PolymeraseRNATranscriptionFullStartSpecialReactionFunction(const std::vector<std::pair<UniqueIdUnsignedInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdUnsignedInt, UnsignedInt>> &NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject);
 public:
-    void CheckEndingByHairpin(Particle& ParticleObject);
+    static void CheckEndingByHairpin(Particle& ParticleObject);
     static void CheckEndingByCodonStop(Particle& ParticleObject, const string& SequenceOfLettersToCheckFinishSequence);
     bool PolymeraseRNATranscriptionContinue(bool EndingByHairpin, const std::vector<std::pair<UniqueIdUnsignedInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdUnsignedInt, UnsignedInt>> &NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject);
     bool PolymeraseRNATranscriptionContinueEndedByHairpinSpecialReactionFunction(const std::vector<std::pair<UniqueIdUnsignedInt, UnsignedInt>>& ParticlesIndexesChosenForReaction, const vector<pair<UniqueIdUnsignedInt, UnsignedInt>> &NucleotidesIndexesChosenForReaction, const ChemicalReaction& ReactionObject);

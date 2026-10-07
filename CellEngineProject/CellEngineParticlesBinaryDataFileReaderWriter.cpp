@@ -188,7 +188,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::SaveChemicalReactionsToBinar
                     ParticlesDataFile.write(reinterpret_cast<const char*>(&ChemicalReactionReactantObject.ToRemoveInReaction), sizeof(ChemicalReactionReactantObject.ToRemoveInReaction));
                     SaveStringToBinaryFile(ParticlesDataFile, ChemicalReactionReactantObject.SequenceStr);
                     SaveVectorToBinaryFile<ChainIdInt>(ParticlesDataFile, ChemicalReactionReactantObject.Sequence);
-                    //SaveVectorToBinaryFile<UniqueIdInt>(ParticlesDataFile, ChemicalReactionReactantObject.LinkedParticleTypes);
+
                     SaveVectorToBinaryFile<UniqueIdUnsignedIntReduced>(ParticlesDataFile, ChemicalReactionReactantObject.LinkedParticleTypes);
                 }
 
@@ -201,7 +201,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::SaveChemicalReactionsToBinar
                     ParticlesDataFile.write(reinterpret_cast<const char*>(&ChemicalReactionProductObject.ToRemoveInReaction), sizeof(ChemicalReactionProductObject.ToRemoveInReaction));
                     SaveStringToBinaryFile(ParticlesDataFile, ChemicalReactionProductObject.SequenceStr);
                     SaveVectorToBinaryFile<ChainIdInt>(ParticlesDataFile, ChemicalReactionProductObject.Sequence);
-                    //SaveVectorToBinaryFile<UniqueIdInt>(ParticlesDataFile, ChemicalReactionProductObject.LinkedParticleTypes);
+
                     SaveVectorToBinaryFile<UniqueIdUnsignedIntReduced>(ParticlesDataFile, ChemicalReactionProductObject.LinkedParticleTypes);
                 }
             }
@@ -461,12 +461,13 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
 
             ParticlesDataFile.read(reinterpret_cast<char*>(&ParticleObject.EntityId), sizeof(ParticleObject.EntityId));
             ParticlesDataFile.read(reinterpret_cast<char*>(&ParticleObject.ChainId), sizeof(ParticleObject.ChainId));
-            //ParticlesDataFile.read(reinterpret_cast<char*>(&ParticleObject.Index), sizeof(ParticleObject.Index));
+
             UniqueIdUnsignedIntReduced LocalParticleObjectIndex;
             ParticlesDataFile.read(reinterpret_cast<char*>(&LocalParticleObjectIndex), sizeof(LocalParticleObjectIndex));
             ParticleObject.Index = LocalParticleObjectIndex;
 
-            //cout << ParticleObject.Index << " " << LocalParticleObjectIndex << endl;
+            if constexpr(AdditionalInfoPrinting == true)
+                cout << ParticleObject.Index << " " << LocalParticleObjectIndex << endl;
 
             ParticlesDataFile.read(reinterpret_cast<char*>(&ParticleObject.GenomeIndex), sizeof(ParticleObject.GenomeIndex));
             ParticlesDataFile.read(reinterpret_cast<char*>(&ParticleObject.ElectricCharge), sizeof(ParticleObject.ElectricCharge));

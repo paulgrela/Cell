@@ -14,6 +14,7 @@
 #include "ExceptionsMacro.h"
 
 #include "CellEngineUseful.h"
+#include "CellEngineConstants.h"
 #include "CellEngineDataFile.h"
 #include "CellEngineConfigData.h"
 #include "CellEngineMPIProcess.h"
@@ -658,8 +659,6 @@ public:
             ImGui::RadioButton("Draw Selected Space From Corner", &SelectedSpaceStartParametersDrawTypesIndex, 2);
             CellEngineConfigDataObject.SelectedSpaceStartParametersDrawTypesObject = static_cast<CellEngineConfigData::SelectedSpaceStartParametersDrawTypes>(SelectedSpaceStartParametersDrawTypesIndex);
 
-            //ImGui::Text("%s", string("Number of free indexes for particles = " + to_string(CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GetFreeIndexesOfParticleSize())).c_str());
-
             if (ImGui::Button(AlignString("SAVE MOUSE POSITION", StringLength).c_str()) == true)
             {
                 CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer->SaveVoxelPositionChosenByMouse();
@@ -1217,7 +1216,7 @@ public:
 
                 ColorButton(AlignString("MAKE ONE STEP OF DIFFUSION IN BOUNDS FOR WHOLE CELL SPACE", StringLength).c_str(), Nothing, 0, 0, 0, 3, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
                 {
-                    CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfDiffusionForWholeCellSpace(nullptr, true, 0, 0, 0, 1, 1, 1, CellEngineConfigDataObject.NumberOfParticlesSectorsInX, CellEngineConfigDataObject.NumberOfParticlesSectorsInY, CellEngineConfigDataObject.NumberOfParticlesSectorsInZ, CellEngineConfigDataObject.NumberOfStepsInSimulationOutside);
+                    CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfDiffusionForWholeCellSpace(nullptr, true, UnusedValueRealType, UnusedValueRealType, UnusedValueRealType, UnusedValueRealType, UnusedValueRealType, UnusedValueRealType, UnusedValueRealType, UnusedValueRealType, UnusedValueRealType, CellEngineConfigDataObject.NumberOfStepsInSimulationOutside);
                 });
             }
         }
@@ -1335,7 +1334,7 @@ public:
         if (CellEngineUseful::IsIn(CellEngineConfigDataObject.TypeOfSimulation, { CellEngineConfigData::TypesOfSimulation::BothReactionsAndDiffusion, CellEngineConfigData::TypesOfSimulation::OnlyReactions }))
             CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfOneRandomReactionForWholeCellSpace(0, 0, 0, 32, 32, 32, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.NumberOfStepsInSimulationOutside);
         if (CellEngineUseful::IsIn(CellEngineConfigDataObject.TypeOfSimulation, { CellEngineConfigData::TypesOfSimulation::BothReactionsAndDiffusion, CellEngineConfigData::TypesOfSimulation::OnlyDiffusion }))
-            CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfDiffusionForWholeCellSpace(nullptr, true, 0, 0, 0, 1, 1, 1, CellEngineConfigDataObject.NumberOfParticlesSectorsInX, CellEngineConfigDataObject.NumberOfParticlesSectorsInY, CellEngineConfigDataObject.NumberOfParticlesSectorsInZ, CellEngineConfigDataObject.NumberOfStepsInSimulationOutside);
+            CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfDiffusionForWholeCellSpace(nullptr, true, UnusedValueRealType, UnusedValueRealType, UnusedValueRealType, UnusedValueRealType, UnusedValueRealType, UnusedValueRealType, UnusedValueRealType, UnusedValueRealType, UnusedValueRealType, CellEngineConfigDataObject.NumberOfStepsInSimulationOutside);
 
         const auto stop_time = chrono::high_resolution_clock::now();
 
@@ -1400,13 +1399,11 @@ public:
                 ImGui::Checkbox("Use Mutex Between Main Screen Thread and Menu Threads", &CellEngineConfigDataObject.UseMutexBetweenMainScreenThreadAndMenuThreads);
                 ImGui::Text("");
 
-                //#ifdef CONTAINERS_FOR_SPEED
                 if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == false)
                     ColorButton(AlignString("MAKE N STEPS OF SIMULATION FOR WHOLE CELL SPACE IN THREADS", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
                     {
                         CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfSimulationForWholeCellSpaceInThreads(CellEngineConfigDataObject.NumberOfStepsInSimulationOutside, CellEngineConfigDataObject.NumberOfStepsInSimulationInside);
                     });
-                //#endif
 
                 if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true)
                     ColorButton(AlignString("MAKE N STEPS OF SIMULATION FOR WHOLE CELL SPACE IN MPI", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
@@ -1730,8 +1727,6 @@ public:
 
             gl3wInit();
 
-            //glfwMakeContextCurrent(ImGuiMenuWindow);
-
             glfwSwapInterval(1);
 
             IMGUI_CHECKVERSION();
@@ -1768,7 +1763,7 @@ public:
 
                                                                                                                         glfwMakeContextCurrent(ImGuiMenuWindow);
 
-                                                                                                                        glfwSwapInterval(0);//???
+                                                                                                                        glfwSwapInterval(0);
 
                                                                                                                         //const auto start_time119 = chrono::high_resolution_clock::now();
                 ImGui_ImplOpenGL3_NewFrame();
@@ -1799,7 +1794,7 @@ public:
                                                                                                                         auto stop_time119 = chrono::high_resolution_clock::now();
 
                                                                                                                         ExecutionDurationTimeForCopyingParticlesToGraphicMemory21 += chrono::duration(stop_time119 - start_time119);
-                                                                                                                        //LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time119, stop_time119, "Time of one frame 1 = ", "Exception in measuring time")));
+                                                                                                                        DEBUGLOG(LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time119, stop_time119, "Time of one frame 1 = ", "Exception in measuring time")));)
 
 
                                                                                                                         //const auto start_time119 = chrono::high_resolution_clock::now();
@@ -1808,14 +1803,14 @@ public:
                                                                                                                         stop_time119 = chrono::high_resolution_clock::now();
 
                                                                                                                         ExecutionDurationTimeForCopyingParticlesToGraphicMemory22 += chrono::duration(stop_time119 - start_time119);
-                                                                                                                        //LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time119, stop_time119, "Time of one frame 2 = ", "Exception in measuring time")));
+                                                                                                                        DEBUGLOG(LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time119, stop_time119, "Time of one frame 2 = ", "Exception in measuring time")));)
 
                                                                                                                         //const auto start_time119 = chrono::high_resolution_clock::now();
                                                                                                                         start_time119 = chrono::high_resolution_clock::now();
 
                                                                                                                         glfwMakeContextCurrent(CellEngineOpenGLVisualiserPointer->Window);
 
-                                                                                                                        glfwSwapInterval(1);//???
+                                                                                                                        glfwSwapInterval(1);
 
                                                                                                                         CellEngineOpenGLVisualiserPointer->Render(glfwGetTime());
 
@@ -1831,7 +1826,7 @@ public:
                                                                                                                         stop_time119 = chrono::high_resolution_clock::now();
 
                                                                                                                         ExecutionDurationTimeForCopyingParticlesToGraphicMemory23 += chrono::duration(stop_time119 - start_time119);
-                                                                                                                        //LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time119, stop_time119, "Time of one frame 3 = ", "Exception in measuring time")));
+                                                                                                                        DEBUGLOG(LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time119, stop_time119, "Time of one frame 3 = ", "Exception in measuring time")));)
 
 
             }
