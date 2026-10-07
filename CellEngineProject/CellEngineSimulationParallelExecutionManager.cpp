@@ -32,7 +32,7 @@ namespace
 
         std::condition_variable WallConditionalVariable;
 
-        std::vector<ParticleSenderStruct> Proposals[2];
+        std::vector<ParticleSenderStructMultiThreaded> Proposals[2];
         std::vector<UniqueIdUnsignedInt> Verdicts[2];
         bool ProposalsReady[2]{ false, false };
         bool VerdictsReady[2]{ false, false };
@@ -707,7 +707,6 @@ void CellEngineSimulationParallelExecutionManager::GenerateOneStepOfSimulationFo
                                 //SizeXParam, SizeYParam, SizeZParam - sa nieuzywane w tej funkcji a zatem niepotrzebne wcale i tu
                             if (CellEngineUseful::IsIn(CellEngineConfigDataObject.TypeOfSimulation, { CellEngineConfigData::TypesOfSimulation::OnlyReactions }))
                                 GenerateOneRandomReactionForSelectedSpace(ParticleSectorXIndex, ParticleSectorYIndex, ParticleSectorZIndex, CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace, true);
-                                //SizeXParam, SizeYParam, SizeZParam - sa nieuzywane w tej funkcji a zatem niepotrzebne wcale i tu
                         }
 
                 SyncPoint->arrive_and_wait();
@@ -854,21 +853,24 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
             {
                 DEBUGLOG(LoggersManagerObject.Log(STREAM("LocalNeighborThreadsIndexes = " << ThreadPosX << " , " << ThreadPosY << " , " << ThreadPosZ << " CurrentThreadIndex = [" << CurrentThreadLocalSimulationSpaceData->CurrentThreadIndex << "]"));)
 
-                if (CurrentThreadLocalSimulationSpaceData->VectorOfParticlesToSendToNeighborProcessesOrThreads[NeighborProcessIndex].empty() == false)
+                if (CurrentThreadLocalSimulationSpaceData->VectorOfParticlesToSendToNeighborThreads[NeighborProcessIndex].empty() == false)
                 {
-                    const auto& ReceivedParticlesToInsert = CurrentThreadLocalSimulationSpaceData->VectorOfParticlesToSendToNeighborProcessesOrThreads[NeighborProcessIndex];
+                    const auto& ReceivedParticlesToInsert = CurrentThreadLocalSimulationSpaceData->VectorOfParticlesToSendToNeighborThreads[NeighborProcessIndex];
 
                     DEBUGLOG(LoggersManagerObject.Log(STREAM("WANT SENDING CONFIRMATION TO NEIGHBOR = " << ReceivedParticlesToInsert[0].SenderProcessIndex << " " << ReceivedParticlesToInsert[0].ReceiverProcessIndex << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadIndex - 1 << " NEIGHBOR = (" << ThreadPosX - 1 << " " << ThreadPosY - 1 << " " << ThreadPosZ - 1 << ")"));)
 
+                    //UnsignedInt ParticleOffset = 0;
                     for (const auto& ReceivedParticleIndexToInsert : ReceivedParticlesToInsert)
                         if (ReceivedParticleIndexToInsert.ParticleIndex != 0)
                         {
                             DEBUGLOG(LoggersManagerObject.Log(STREAM("PARTCLE_KIND_ID TO CHECK = " << ReceivedParticleIndexToInsert.ParticleIndex));)
 
-                            //CurrentThreadLocalSimulationSpaceData->CurrentSectorPos = SectorPosType{ .SectorPosX = static_cast<SignedInt>(ReceivedParticleIndexToInsert.ReceiverSectorPos.X), .SectorPosY = static_cast<SignedInt>(ReceivedParticleIndexToInsert.ReceiverSectorPos.Y), .SectorPosZ = static_cast<SignedInt>(ReceivedParticleIndexToInsert.ReceiverSectorPos.Z) };
                             CurrentThreadLocalSimulationSpaceData->SetCurrentSectorPos(SectorPosType{ .SectorPosX = static_cast<SignedInt>(ReceivedParticleIndexToInsert.ReceiverSectorPos.X), .SectorPosY = static_cast<SignedInt>(ReceivedParticleIndexToInsert.ReceiverSectorPos.Y), .SectorPosZ = static_cast<SignedInt>(ReceivedParticleIndexToInsert.ReceiverSectorPos.Z) });
 
-                            if (CurrentThreadLocalSimulationSpaceData->CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossibleInMultiThreadOrMulitProcessDiffusion(ReceivedParticleIndexToInsert) == true)
+                            // if (CurrentThreadLocalSimulationSpaceData->CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossibleInMultiThreadOrMulitProcessDiffusion(ReceivedParticleIndexToInsert) == true)
+                            // if (CurrentThreadLocalSimulationSpaceData->CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossibleInMultiThreadedDiffusion(ReceivedParticleIndexToInsert, CurrentThreadLocalSimulationSpaceData->VectorOfWholeParticlesToSendToNeighborProcessesOrThreads[NeighborProcessIndex][ParticleOffset]) == true)
+                            if (CurrentThreadLocalSimulationSpaceData->CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossibleInMultiThreadedDiffusion(ReceivedParticleIndexToInsert, ReceivedParticleIndexToInsert.ParticleObject) == true)
+
                             {
                                 #ifdef SIMULATION_DETAILED_DEBUG_LOG
                                 LoggersManagerObject.LogOnlyToFilesUnconditional(STREAM("SENDING CONFIRMATION TO NEIGHBOR = (PARTICLE_INDEX = " << ReceivedParticleIndexToInsert.ParticleIndex << ")(" << ReceivedParticleIndexToInsert.SenderProcessIndex << " " << ReceivedParticleIndexToInsert.ReceiverProcessIndex << ") (" << CurrentThreadLocalSimulationSpaceData->CurrentThreadIndex << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.ThreadPosX << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.ThreadPosY << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.ThreadPosZ << ")["  << CurrentThreadIndexParam << " " << ThreadXIndexParam << " " << ThreadYIndexParam << " " << ThreadZIndexParam << "] NEIGHBOR = (" << ReceivedParticleIndexToInsert.ReceiverThreadPos.ThreadPosX << " " << ReceivedParticleIndexToInsert.ReceiverThreadPos.ThreadPosY << " " << ReceivedParticleIndexToInsert.ReceiverThreadPos.ThreadPosZ << ")"));
@@ -905,9 +907,11 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
                                 LoggersManagerObject.LogOnlyToConsoleUnconditional(STREAM("PARTCLE_INDEX TO NOT SEND CONFIRMATION = " << ReceivedParticleIndexToInsert.ParticleIndex));
                             }
                             #endif
+
+                            //ParticleOffset++;
                         }
 
-                    CurrentThreadLocalSimulationSpaceData->VectorOfParticlesToSendToNeighborProcessesOrThreads[NeighborProcessIndex].clear();
+                    CurrentThreadLocalSimulationSpaceData->VectorOfParticlesToSendToNeighborThreads[NeighborProcessIndex].clear();
                 }
             }
     }
@@ -923,7 +927,6 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
             {
                 for (const auto& ConfirmationOfParticlesToRemoveToSentObject : CurrentThreadLocalSimulationSpaceData->ConfirmationOfParticlesToRemoveToSent[NeighborProcessIndex])
                 {
-                    //CurrentThreadLocalSimulationSpaceData->CurrentSectorPos = SectorPosType{ .SectorPosX = static_cast<SignedInt>(ConfirmationOfParticlesToRemoveToSentObject.SenderSectorPos.X), .SectorPosY = static_cast<SignedInt>(ConfirmationOfParticlesToRemoveToSentObject.SenderSectorPos.Y), .SectorPosZ = static_cast<SignedInt>(ConfirmationOfParticlesToRemoveToSentObject.SenderSectorPos.Z) };
                     CurrentThreadLocalSimulationSpaceData->SetCurrentSectorPos(SectorPosType{ .SectorPosX = static_cast<SignedInt>(ConfirmationOfParticlesToRemoveToSentObject.SenderSectorPos.X), .SectorPosY = static_cast<SignedInt>(ConfirmationOfParticlesToRemoveToSentObject.SenderSectorPos.Y), .SectorPosZ = static_cast<SignedInt>(ConfirmationOfParticlesToRemoveToSentObject.SenderSectorPos.Z) });
 
                     CurrentThreadLocalSimulationSpaceData->RemoveParticle(ConfirmationOfParticlesToRemoveToSentObject.ParticleIndex, true, false);
@@ -1013,11 +1016,11 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
                 unique_lock<mutex> LockGuardScopedLock2(Wall.MutexNumber2, std::defer_lock);
                 lock(LockGuardScopedLock1, LockGuardScopedLock2);
 
-                Wall.Proposals[SlotIndex] = std::move(CurrentThreadLocalSimulationSpaceData->VectorOfParticlesToSendToNeighborProcessesOrThreads[NeighborProcessIndex]);
+                Wall.Proposals[SlotIndex] = std::move(CurrentThreadLocalSimulationSpaceData->VectorOfParticlesToSendToNeighborThreads[NeighborProcessIndex]);
                 Wall.ProposalsReady[SlotIndex] = true;
             }
 
-            CurrentThreadLocalSimulationSpaceData->VectorOfParticlesToSendToNeighborProcessesOrThreads[NeighborProcessIndex].clear();
+            CurrentThreadLocalSimulationSpaceData->VectorOfParticlesToSendToNeighborThreads[NeighborProcessIndex].clear();
 
             Wall.ProposalConditionalVariable.notify_all();
         }
@@ -1062,7 +1065,7 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
 
             WallChannel& Wall = *TwoThreadsWallChannels[WallIndex];
 
-            std::vector<ParticleSenderStruct> ReceivedParticlesToInsert;
+            std::vector<ParticleSenderStructMultiThreaded> ReceivedParticlesToInsert;
             {
                 unique_lock<mutex> LockGuardScopedLock1(Wall.MutexNumber1);
                 Wall.ProposalConditionalVariable.wait(LockGuardScopedLock1, [&] { return Wall.ProposalsReady[SlotIndex]; });
@@ -1077,7 +1080,8 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
             vector<UniqueIdUnsignedInt> ConfirmationOfParticlesToRemoveToSent;
             for (const auto& ReceivedParticleIndexToInsert : ReceivedParticlesToInsert)
                 if (ReceivedParticleIndexToInsert.ParticleIndex != 0)
-                    if (CurrentThreadLocalSimulationSpaceData->CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossibleInMultiThreadOrMulitProcessDiffusion(ReceivedParticleIndexToInsert) == true)
+                    //if (CurrentThreadLocalSimulationSpaceData->CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossibleInMultiThreadedDiffusion(ReceivedParticleIndexToInsert) == true)
+                    if (CurrentThreadLocalSimulationSpaceData->CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossibleInMultiThreadedDiffusion(ReceivedParticleIndexToInsert, ReceivedParticleIndexToInsert.ParticleObject) == true)
                         ConfirmationOfParticlesToRemoveToSent.emplace_back(ReceivedParticleIndexToInsert.ParticleIndex);
 
             {
@@ -1131,11 +1135,11 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
             {
                 lock_guard<mutex> LockGuardScopedLock1(Wall.MutexNumber1);
 
-                Wall.Proposals[SlotIndex] = std::move(CurrentThreadLocalSimulationSpaceData->VectorOfParticlesToSendToNeighborProcessesOrThreads[NeighborProcessIndex]);
+                Wall.Proposals[SlotIndex] = std::move(CurrentThreadLocalSimulationSpaceData->VectorOfParticlesToSendToNeighborThreads[NeighborProcessIndex]);
                 Wall.ProposalsReady[SlotIndex] = true;
             }
 
-            CurrentThreadLocalSimulationSpaceData->VectorOfParticlesToSendToNeighborProcessesOrThreads[NeighborProcessIndex].clear();
+            CurrentThreadLocalSimulationSpaceData->VectorOfParticlesToSendToNeighborThreads[NeighborProcessIndex].clear();
 
             Wall.WallConditionalVariable.notify_all();
         }
@@ -1180,7 +1184,7 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
 
             WallChannel& Wall = *TwoThreadsWallChannels[WallIndex];
 
-            std::vector<ParticleSenderStruct> ReceivedParticlesToInsert;
+            std::vector<ParticleSenderStructMultiThreaded> ReceivedParticlesToInsert;
             {
                 unique_lock<mutex> LockGuardScopedLock1(Wall.MutexNumber1);
                 Wall.WallConditionalVariable.wait(LockGuardScopedLock1, [&] { return Wall.ProposalsReady[SlotIndex]; });
@@ -1193,7 +1197,8 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
             std::vector<UniqueIdUnsignedInt> ConfirmationOfParticlesToRemove;
             for (const auto& ReceivedParticleIndexToInsert : ReceivedParticlesToInsert)
                 if (ReceivedParticleIndexToInsert.ParticleIndex != 0)
-                    if (CurrentThreadLocalSimulationSpaceData->CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossibleInMultiThreadOrMulitProcessDiffusion(ReceivedParticleIndexToInsert) == true)
+                    //if (CurrentThreadLocalSimulationSpaceData->CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossibleInMultiThreadedDiffusion(ReceivedParticleIndexToInsert) == true)
+                    if (CurrentThreadLocalSimulationSpaceData->CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossibleInMultiThreadedDiffusion(ReceivedParticleIndexToInsert, ReceivedParticleIndexToInsert.ParticleObject) == true)
                         ConfirmationOfParticlesToRemove.emplace_back(ReceivedParticleIndexToInsert.ParticleIndex);
 
             {
@@ -1250,7 +1255,6 @@ void CellEngineSimulationParallelExecutionManager::GenerateOneStepOfSimulationFo
                                 //SizeXParam, SizeYParam, SizeZParam - sa nieuzywane w tej funkcji a zatem niepotrzebne wcale i tu
                             if (CellEngineUseful::IsIn(CellEngineConfigDataObject.TypeOfSimulation, { CellEngineConfigData::TypesOfSimulation::OnlyReactions }))
                                 GenerateOneRandomReactionForSelectedSpace(ParticleSectorXIndex, ParticleSectorYIndex, ParticleSectorZIndex, CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace, true);
-                                //SizeXParam, SizeYParam, SizeZParam - sa nieuzywane w tej funkcji a zatem niepotrzebne wcale i tu
                         }
 
                 MPI_Barrier(MPI_COMM_WORLD);
@@ -1342,9 +1346,9 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIPr
         for (UnsignedInt NeighborProcessIndex = 0; NeighborProcessIndex < NumberOfAllNeighbors; NeighborProcessIndex++)
             if (NeighborProcessesIndexes[NeighborProcessIndex] != -1)
             {
-                if (VectorOfParticlesToSendToNeighborProcessesOrThreads[NeighborProcessIndex].empty() == true)
+                if (VectorOfParticlesToSendToNeighborProcesses[NeighborProcessIndex].empty() == true)
                 {
-                    VectorOfParticlesToSendToNeighborProcessesOrThreads[NeighborProcessIndex].emplace_back(ParticleSenderStruct{ 0, 0, static_cast<int>(MPIProcessDataObject.CurrentMPIProcessIndex), static_cast<int>(NeighborProcessesIndexes[NeighborProcessIndex]), 0, 0, 0, 0, 0, 0 });
+                    VectorOfParticlesToSendToNeighborProcesses[NeighborProcessIndex].emplace_back(ParticleSenderStructMPIMultiProcess{ 0, 0, static_cast<int>(MPIProcessDataObject.CurrentMPIProcessIndex), static_cast<int>(NeighborProcessesIndexes[NeighborProcessIndex]), 0, 0, 0, 0, 0, 0 });
                     DEBUGLOG(LoggersManagerObject.Log(STREAM("MPI Process Index to EMPTY send = " << NeighborProcessesIndexes[NeighborProcessIndex] << " " << VectorOfParticlesToSendToNeighborProcessesOrThreads[NeighborProcessIndex][0].ReceiverProcessIndex << " " << NeighborProcessIndex << " " << MPIProcessDataObject.CurrentMPIProcessIndex));)
                 }
                 else
@@ -1352,17 +1356,17 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIPr
                     DEBUGLOG(LoggersManagerObject.Log(STREAM("MPI Process Index to send = " << NeighborProcessesIndexes[NeighborProcessIndex] << " " << VectorOfParticlesToSendToNeighborProcessesOrThreads[NeighborProcessIndex][0].ReceiverProcessIndex << " " << NeighborProcessIndex << " " << MPIProcessDataObject.CurrentMPIProcessIndex));)
                 }
 
-                DEBUGLOG(LoggersManagerObject.Log(STREAM("MPI Process Length Message SEND = " << VectorOfParticlesToSendToNeighborProcessesOrThreads[NeighborProcessIndex].size() << " " << VectorOfParticlesToSendToNeighborProcessesOrThreads[NeighborProcessIndex].size() * sizeof(ParticleSenderStruct) << " " << NeighborProcessesIndexes[NeighborProcessIndex] << " " << VectorOfParticlesToSendToNeighborProcessesOrThreads[NeighborProcessIndex][0].ReceiverProcessIndex << " " << NeighborProcessIndex << " " << MPIProcessDataObject.CurrentMPIProcessIndex));)
+                DEBUGLOG(LoggersManagerObject.Log(STREAM("MPI Process Length Message SEND = " << VectorOfParticlesToSendToNeighborProcessesOrThreads[NeighborProcessIndex].size() << " " << VectorOfParticlesToSendToNeighborProcessesOrThreads[NeighborProcessIndex].size() * sizeof(ParticleSenderStructMPIMultiProcess) << " " << NeighborProcessesIndexes[NeighborProcessIndex] << " " << VectorOfParticlesToSendToNeighborProcessesOrThreads[NeighborProcessIndex][0].ReceiverProcessIndex << " " << NeighborProcessIndex << " " << MPIProcessDataObject.CurrentMPIProcessIndex));)
 
                 char BufferToSend[MaxMPIMessageSize];
                 int PositionInBuffer = 0;
-                unsigned int NumberOfPackedStructures = VectorOfParticlesToSendToNeighborProcessesOrThreads[NeighborProcessIndex].size();
+                unsigned int NumberOfPackedStructures = VectorOfParticlesToSendToNeighborProcesses[NeighborProcessIndex].size();
 
                 DEBUGLOG(LoggersManagerObject.Log(STREAM("MPI PACKED SIZE = " << NumberOfPackedStructures << " " << MPIProcessDataObject.CurrentMPIProcessIndex));)
 
                 MPI_Pack(&NumberOfPackedStructures, 1, MPI_UNSIGNED, BufferToSend, MaxMPIMessageSize, &PositionInBuffer, MPI_COMM_WORLD);
 
-                for (const auto& ParticleToSendElement : VectorOfParticlesToSendToNeighborProcessesOrThreads[NeighborProcessIndex])
+                for (const auto& ParticleToSendElement : VectorOfParticlesToSendToNeighborProcesses[NeighborProcessIndex])
                 {
                     MPI_Pack(&ParticleToSendElement.ParticleIndex, 1, MPI_UINT64_T, BufferToSend, MaxMPIMessageSize, &PositionInBuffer, MPI_COMM_WORLD);
                     MPI_Pack(&ParticleToSendElement.ParticleKindId, 1, MPI_UNSIGNED, BufferToSend, MaxMPIMessageSize, &PositionInBuffer, MPI_COMM_WORLD);
@@ -1377,7 +1381,7 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIPr
                 }
                 MPI_Send(BufferToSend, PositionInBuffer, MPI_PACKED, static_cast<int>(NeighborProcessesIndexes[NeighborProcessIndex]), 0, MPI_COMM_WORLD);
 
-                VectorOfParticlesToSendToNeighborProcessesOrThreads[NeighborProcessIndex].clear();
+                VectorOfParticlesToSendToNeighborProcesses[NeighborProcessIndex].clear();
             }
 
         int NumberOfReceivedMessages = 0;
@@ -1426,7 +1430,7 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIPr
     {
         int NumberOfReceivedMessages = 0;
 
-        vector<ParticleSenderStruct> ReceivedParticlesToInsertFromAllNeigbhours[NumberOfAllNeighbors];
+        vector<ParticleSenderStructMPIMultiProcess> ReceivedParticlesToInsertFromAllNeigbhours[NumberOfAllNeighbors];
 
         DEBUGLOG(LoggersManagerObject.Log(STREAM("NumberOfActiveNeighbors = " << NumberOfActiveNeighbors << " " << MPIProcessDataObject.CurrentMPIProcessIndex));)
 
@@ -1439,7 +1443,7 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIPr
             int NumberOfBytesReceived;
             MPI_Get_count(&MPIMessageStatus, MPI_CHAR, &NumberOfBytesReceived);
 
-            DEBUGLOG(LoggersManagerObject.Log(STREAM("MPI Process Length Message RECEIVE = " << NumberOfBytesReceived << " " << MPIProcessDataObject.CurrentMPIProcessIndex << " " << NumberOfBytesReceived / sizeof(ParticleSenderStruct)));)
+            DEBUGLOG(LoggersManagerObject.Log(STREAM("MPI Process Length Message RECEIVE = " << NumberOfBytesReceived << " " << MPIProcessDataObject.CurrentMPIProcessIndex << " " << NumberOfBytesReceived / sizeof(ParticleSenderStructMPIMultiProcess)));)
 
             char ReceivedParticlesToInsert1[MaxMPIMessageSize];
 
@@ -1458,7 +1462,7 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIPr
 
             for (UnsignedInt UnpackedParticleStructureIndex = 0; UnpackedParticleStructureIndex < NumberOfUnpackedParticleStructures; UnpackedParticleStructureIndex++)
             {
-                ParticleSenderStruct MPIParticleSenderStructElementLocalObject;
+                ParticleSenderStructMPIMultiProcess MPIParticleSenderStructElementLocalObject;
                 MPI_Unpack(ReceivedParticlesToInsert1, MaxMPIMessageSize, &PositionInBuffer, &MPIParticleSenderStructElementLocalObject.ParticleIndex, 1, MPI_UINT64_T, MPI_COMM_WORLD);
                 MPI_Unpack(ReceivedParticlesToInsert1, MaxMPIMessageSize, &PositionInBuffer, &MPIParticleSenderStructElementLocalObject.ParticleKindId, 1, MPI_UNSIGNED, MPI_COMM_WORLD);
                 MPI_Unpack(ReceivedParticlesToInsert1, MaxMPIMessageSize, &PositionInBuffer, &MPIParticleSenderStructElementLocalObject.SenderProcessIndex, 1, MPI_INT, MPI_COMM_WORLD);
@@ -1508,7 +1512,7 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIPr
 
                     for (const auto& ReceivedParticleIndexToInsert : ReceivedParticlesToInsert)
                         if (ReceivedParticleIndexToInsert.ParticleIndex != 0)
-                            if (CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossibleInMultiThreadOrMulitProcessDiffusion(ReceivedParticleIndexToInsert) == true)
+                            if (CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossibleInMPIMultiProcessDiffusion(ReceivedParticleIndexToInsert) == true)
                                 ConfirmationOfParticlesToRemoveToSent.emplace_back(ReceivedParticleIndexToInsert.ParticleIndex);
                 }
 

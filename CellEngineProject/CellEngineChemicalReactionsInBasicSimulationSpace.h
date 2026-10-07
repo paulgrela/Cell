@@ -3,8 +3,6 @@
 #define CELL_ENGINE_CHEMICAL_REACTIONS_IN_BASIC_SIMULATION_SPACE_H
 
 #include "CellEngineBasicParticlesOperations.h"
-#include "CellEngineConfigData.h"
-#include "CellEngineConfigurationFileReaderWriter.h"
 
 struct ThreadLocalParticlesInProximity
 {
