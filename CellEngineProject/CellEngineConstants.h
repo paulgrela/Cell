@@ -56,4 +56,6 @@ constexpr UnsignedInt NumberOfAllNeighbors = 6;
 
 constexpr UnsignedInt MaxMPIMessageSize = 1024 * 1024;
 
+constexpr RealType UnusedValueRealType = 0.0;
+
 #endif

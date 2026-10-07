@@ -215,25 +215,6 @@ public:
     }
 };
 
-// struct __attribute__ ((packed)) ParticleSenderStruct
-// {
-//     UniqueIdUnsignedInt ParticleIndex{ 0 };
-//     EntityIdInt ParticleKindId{ 0 };
-//     int SenderProcessIndex{ 0 };
-//     int ReceiverProcessIndex{ 0 };
-//     ThreadPosType SenderThreadPos{ .ThreadPosX = 0, .ThreadPosY = 0, .ThreadPosZ = 0 };
-//     ThreadPosType ReceiverThreadPos{ .ThreadPosX = 0, .ThreadPosY = 0, .ThreadPosZ = 0 };
-//     vector3_16 SenderSectorPos{ .X = 0, .Y = 0, .Z = 0 };
-//     vector3_16 ReceiverSectorPos{ .X = 0, .Y = 0, .Z = 0 };
-//     vector3_Real32 NewPosition{ .X = 0, .Y = 0, .Z = 0 };
-// };
-//
-// struct ConfirmationOfParticlesToRemoveToSentStruct
-// {
-//     UniqueIdUnsignedInt ParticleIndex{ 0 };
-//     vector3_16 SenderSectorPos{ .X = 0, .Y = 0, .Z = 0 };
-// };
-
 enum class TypesOfLookingForParticlesInProximity : UnsignedInt
 {
     FromChosenParticleAsCenter = 1,

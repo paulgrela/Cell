@@ -2,14 +2,12 @@
 #ifndef CELL_ENGINE_PARTICLE_H
 #define CELL_ENGINE_PARTICLE_H
 
-#include <optional>
-#include <algorithm>
-
 #include <list>
 #include <utility>
 #include <vector>
 #include <string>
-#include <unordered_map>
+
+#include <algorithm>
 
 #include "DoublyLinkedList.h"
 
