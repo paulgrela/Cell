@@ -205,7 +205,7 @@ void CellEngineFullAtomSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpa
     GenerateOneStepOfDiffusionForSelectedSpace(CurrentThreadLocalSimulationSpaceData->ListOfParticlesToChangeSectors, InBounds, StartSectorXPosParam, StartSectorYPosParam, StartSectorZPosParam, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, false);
 }
 
-void CellEngineFullAtomSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpaceForExecutionUnparallel(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, const bool InBounds, const UnsignedInt StartSectorXPosParam, const UnsignedInt StartSectorYPosParam, const UnsignedInt StartSectorZPosParam, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam)
+void CellEngineFullAtomSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpaceForExecutionNonParallel(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, const bool InBounds, const UnsignedInt StartSectorXPosParam, const UnsignedInt StartSectorYPosParam, const UnsignedInt StartSectorZPosParam, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam)
 {
     GenerateOneStepOfDiffusionForSelectedSpace(ListOfParticlesToChangeSectors, InBounds, StartSectorXPosParam, StartSectorYPosParam, StartSectorZPosParam, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, true);
 }
@@ -224,7 +224,7 @@ void CellEngineFullAtomSimulationSpace::GenerateNStepsOfDiffusionForWholeCellSpa
 
         for (UnsignedInt Step = 1; Step <= NumberOfSimulationSteps; Step++)
             FOR_EACH_SECTOR_IN_XYZ_ONLY
-                GenerateOneStepOfDiffusionForSelectedSpaceForExecutionUnparallel(CurrentThreadLocalSimulationSpaceData, InBounds, ParticleSectorXIndex, ParticleSectorYIndex, ParticleSectorZIndex, -CellEngineConfigDataObject.ShiftCenterX, -CellEngineConfigDataObject.ShiftCenterY, -CellEngineConfigDataObject.ShiftCenterZ, CellEngineConfigDataObject.ShiftCenterX, CellEngineConfigDataObject.ShiftCenterY, CellEngineConfigDataObject.ShiftCenterZ);
+                GenerateOneStepOfDiffusionForSelectedSpaceForExecutionNonParallel(CurrentThreadLocalSimulationSpaceData, InBounds, ParticleSectorXIndex, ParticleSectorYIndex, ParticleSectorZIndex, -CellEngineConfigDataObject.ShiftCenterX, -CellEngineConfigDataObject.ShiftCenterY, -CellEngineConfigDataObject.ShiftCenterZ, CellEngineConfigDataObject.ShiftCenterX, CellEngineConfigDataObject.ShiftCenterY, CellEngineConfigDataObject.ShiftCenterZ);
 
         CheckConditionsToIncSimulationStepNumberForStatistics();
 

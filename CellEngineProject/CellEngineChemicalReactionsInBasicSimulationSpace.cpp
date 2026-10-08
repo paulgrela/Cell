@@ -9,7 +9,7 @@ bool CellEngineChemicalReactionsInBasicSimulationSpace::CompareFitnessOfParticle
     return
         ((ParticleKindForReactionObject.LinkedParticleTypes.empty() == true && ParticleObjectForReaction.LinkedParticlesPointersList.empty() == true) ||
          (ParticleKindForReactionObject.LinkedParticleTypes.empty() == false && ParticleObjectForReaction.LinkedParticlesPointersList.size() == ParticleKindForReactionObject.LinkedParticleTypes.size()
-         && all_of(ParticleObjectForReaction.LinkedParticlesPointersList.begin(), ParticleObjectForReaction.LinkedParticlesPointersList.end(), [](const Particle* PointerToParticle){ return PointerToParticle != nullptr; })
+         && ranges::all_of(ParticleObjectForReaction.LinkedParticlesPointersList, [](const Particle* PointerToParticle){ return PointerToParticle != nullptr; })
          && equal(ParticleObjectForReaction.LinkedParticlesPointersList.begin(), ParticleObjectForReaction.LinkedParticlesPointersList.end(), ParticleKindForReactionObject.LinkedParticleTypes.begin(), [](const Particle* PointerToParticle, const UniqueIdUnsignedInt ParticleType){ return PointerToParticle->EntityId == ParticleType; })));
 }
 
@@ -19,7 +19,8 @@ void CellEngineChemicalReactionsInBasicSimulationSpace::EraseParticleChosenForRe
     {
         auto& ParticleObjectToBeErased = GetParticleFromIndex(ParticleIndexChosenForReaction);
         Centers.emplace_back(ParticleObjectToBeErased.Center.X, ParticleObjectToBeErased.Center.Y, ParticleObjectToBeErased.Center.Z);
-        LoggersManagerObject.Log(STREAM("Centers - X = " << to_string(ParticleObjectToBeErased.Center.X) << " Y = " << to_string(ParticleObjectToBeErased.Center.Y) << " Z = " << to_string(ParticleObjectToBeErased.Center.Z) << endl));
+
+        DEBUGLOG(LoggersManagerObject.Log(STREAM("Centers - X = " << to_string(ParticleObjectToBeErased.Center.X) << " Y = " << to_string(ParticleObjectToBeErased.Center.Y) << " Z = " << to_string(ParticleObjectToBeErased.Center.Z) << endl));)
 
         ParticlesBackup.emplace_back(std::move(ParticleObjectToBeErased));
 

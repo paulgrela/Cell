@@ -1,6 +1,8 @@
 
 #include "CellEngineNucleicAcidsChemicalReactionsInSimulationSpace.h"
 
+constexpr UnsignedInt LengthOfTemplateForRNA = 32;
+
 tuple<vector<ChainIdInt>, string> CellEngineNucleicAcidsChemicalReactionsInSimulationSpace::GetNucleotidesSequenceInBothDirections(const std::vector<UniqueIdUnsignedInt>& NucleotidesFoundInProximity, const UnsignedInt SizeOfLoop)
 {
     string TemplateSequenceStr;
@@ -9,8 +11,6 @@ tuple<vector<ChainIdInt>, string> CellEngineNucleicAcidsChemicalReactionsInSimul
 
     try
     {
-        constexpr UnsignedInt LengthOfTemplateForRNA = 32;
-
         UnsignedInt NucleotidesFoundInProximityCounter = 0;
 
         while (TemplateSequenceStr.empty() == true && NucleotidesFoundInProximityCounter < SizeOfLoop)
@@ -75,7 +75,7 @@ bool CellEngineNucleicAcidsChemicalReactionsInSimulationSpace::CompareFitnessOfD
 
         vector<ChainIdInt> TemplateSequence = ParticleKindForReactionObject.Sequence;
 
-        string OriginalTemplateRNASequenceStr;
+        const string OriginalTemplateRNASequenceStr;
 
         if (TemplateSequenceStr == "RNA")
             if (LocalThreadParticlesInProximityObject.RNANucleotidesFoundInProximity.empty() == false)

@@ -24,7 +24,7 @@ void CellEngineNucleicAcidsComplexOperations::SelectMPIorThreadsForMoveParticleN
 {
     try
     {
-        if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == false)
+        if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == false && CellEngineConfigDataObject.NonParallelProcessesExecution == false)
             Move2ParticlesNearOtherParticleIfSpaceIsEmptyOrNearSpace(SimulationSpaceDataForThreads->ListOfParticlesToChangeSectors, ParticleObject1, NewPositionParticleObject1, AddX1, AddY1, AddZ1, ParticleObject2, NewPositionParticleObject2, AddX2, AddY2, AddZ2);
         else
             Move2ParticlesNearOtherParticleIfSpaceIsEmptyOrNearSpace(ListOfParticlesToChangeSectors, ParticleObject1, NewPositionParticleObject1, AddX1, AddY1, AddZ1, ParticleObject2, NewPositionParticleObject2, AddX2, AddY2, AddZ2);

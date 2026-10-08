@@ -12,6 +12,8 @@
 #include "CellEngineSimulationParallelExecutionManager.h"
 #include "CellEngineSimulationSpaceStatistics.h"
 
+using IndexesChosenForReactionType = vector<pair<UniqueIdUnsignedInt, UnsignedInt>>;
+
 class CellEngineSimulationSpace : public CellEngineChemicalReactionsEngine, public CellEngineIllinoisDataCreator, public CellEngineCompiledDataCreator, virtual public CellEngineChemicalReactionsInSimulationSpace, public CellEngineSimulationSpaceStatistics, public CellEngineSimulationParallelExecutionManager
 {
 private:
@@ -42,7 +44,7 @@ public:
     virtual void GenerateNStepsOfDiffusionForWholeCellSpace(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, bool InBounds, RealType XStartParam, RealType YStartParam, RealType ZStartParam, RealType XStepParam, RealType YStepParam, RealType ZStepParam, RealType XSizeParam, RealType YSizeParam, RealType ZSizeParam, RealType NumberOfSimulationSteps) = 0;
     virtual void GenerateNStepsOfOneRandomReactionForWholeCellSpace(RealType XStartParam, RealType YStartParam, RealType ZStartParam, RealType XStepParam, RealType YStepParam, RealType ZStepParam, RealType XSizeParam, RealType YSizeParam, RealType ZSizeParam, RealType NumberOfSimulationSteps) = 0;
 protected:
-    std::tuple<std::vector<std::pair<UniqueIdUnsignedInt, UnsignedInt>>, bool> ChooseParticlesForReactionFromAllParticlesInProximity(const ChemicalReaction& ReactionObject);
+    std::tuple<IndexesChosenForReactionType, bool> ChooseParticlesForReactionFromAllParticlesInProximity(const ChemicalReaction& ReactionObject);
 protected:
     void PrepareRandomReaction();
     void FindAndExecuteRandomReactionVersion3(UnsignedInt MaxNumberOfReactantsParam);

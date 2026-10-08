@@ -1324,10 +1324,13 @@ public:
     static void MakeNStepsOfSimulationWithoutParallelExecution()
     {
         const UnsignedInt NumberOfAllParticlesBeforeSimulation = CellEngineDataFileObjectPointer->GetNumberOfAllParticles();
+
         LoggersManagerObject.Log(STREAM(""));
         LoggersManagerObject.Log(STREAM(""));
         LoggersManagerObject.Log(STREAM("NUMBER OF ALL PARTICLES BEFORE SIMULATION = " << NumberOfAllParticlesBeforeSimulation));
         LoggersManagerObject.Log(STREAM("START NOT PARALLEL SIMULATION"));
+
+        CellEngineConfigDataObject.NonParallelProcessesExecution = true;
 
         const auto start_time = chrono::high_resolution_clock::now();
 
@@ -1338,7 +1341,10 @@ public:
 
         const auto stop_time = chrono::high_resolution_clock::now();
 
+        CellEngineConfigDataObject.NonParallelProcessesExecution = false;
+
         const UnsignedInt NumberOfAllParticlesAfterSimulation = CellEngineDataFileObjectPointer->GetNumberOfAllParticles();
+
         LoggersManagerObject.Log(STREAM("END NOT PARALLEL SIMULATION"));
         LoggersManagerObject.Log(STREAM("NUMBER OF ALL PARTICLES AFTER SIMULATION = " << NumberOfAllParticlesAfterSimulation));
         LoggersManagerObject.Log(STREAM("DIFFERENCE OF ALL PARTICLES BEFORE AND AFTER SIMULATION = " << NumberOfAllParticlesAfterSimulation - NumberOfAllParticlesBeforeSimulation));
