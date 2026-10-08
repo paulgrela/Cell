@@ -116,12 +116,21 @@ public:
 public:
     UnsignedInt SizeOfBigPartOfTheCellMultiplyFactor = 1;
 public:
-    enum class TypesOfReactionsByPlacingNewParticles : UnsignedInt
+    enum class TypesOfReactionsDeterminedByFindingNewPositionForPlacingNewParticles : UnsignedInt
     {
-        ByRandomPosition = 1,
-        InPositionDeterminedByFormerParticles = 2
+        NewParticlePlacedInNewRandomPosition = 1,
+        NewParticlePlacedInPositionDeterminedFromPositionOfFormerReactantParticle = 2
     };
-    TypesOfReactionsByPlacingNewParticles TypeOfReactionsByPlacingNewParticles = TypesOfReactionsByPlacingNewParticles::ByRandomPosition;
+    TypesOfReactionsDeterminedByFindingNewPositionForPlacingNewParticles TypeOfReactionsDeterminedByFindingNewPositionForPlacingNewParticles = TypesOfReactionsDeterminedByFindingNewPositionForPlacingNewParticles::NewParticlePlacedInNewRandomPosition;
+public:
+    enum class TypesOfSychronizationfSimulationExecutedInThreads : UnsignedInt
+    {
+        SynchronizeSimulationExecutedInThreadsByOneGlobalBarrier = 1,
+        SynchronizeSimulationExecutedInThreadsByLocalBarriersOnWallsBetweenThreads = 2,
+        SynchronizeSimulationExecutedInThreadsByConditionalVariableWithTwoMutexes = 3,
+        SynchronizeSimulationExecutedInThreadsByConditionalVariableWithOneMutex = 4
+    };
+    TypesOfSychronizationfSimulationExecutedInThreads TypeOfSychronizationfSimulationExecutedInThreads = TypesOfSychronizationfSimulationExecutedInThreads::SynchronizeSimulationExecutedInThreadsByOneGlobalBarrier;
 public:
     int NumberOfStepsInSimulationOutside = 1;
     int NumberOfStepsInSimulationInside = 1;

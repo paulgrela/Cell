@@ -27,7 +27,10 @@ public:
 public:
     SignedInt GetProcessNeighbor(SignedInt ThreadXIndex, SignedInt ThreadYIndex, SignedInt ThreadZIndex) const;
 public:
-    virtual void GenerateOneStepOfDiffusionForSelectedSpace(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, bool InBounds, UnsignedInt StartSectorXPosParam, UnsignedInt StartSectorYPosParam, UnsignedInt StartSectorZPosParam, RealType StartXPosParam, RealType StartYPosParam, RealType StartZPosParam, RealType SizeXParam, RealType SizeYParam, RealType SizeZParam) = 0;
+    virtual void GenerateOneStepOfDiffusionForSelectedSpaceForExecutionInMPIProcesses(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, bool InBounds, UnsignedInt StartSectorXPosParam, UnsignedInt StartSectorYPosParam, UnsignedInt StartSectorZPosParam, RealType StartXPosParam, RealType StartYPosParam, RealType StartZPosParam, RealType SizeXParam, RealType SizeYParam, RealType SizeZParam) = 0;
+    virtual void GenerateOneStepOfDiffusionForSelectedSpaceForExecutionInThreads(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, bool InBounds, UnsignedInt StartSectorXPosParam, UnsignedInt StartSectorYPosParam, UnsignedInt StartSectorZPosParam, RealType StartXPosParam, RealType StartYPosParam, RealType StartZPosParam, RealType SizeXParam, RealType SizeYParam, RealType SizeZParam) = 0;
+    virtual void GenerateOneStepOfDiffusionForSelectedSpaceForExecutionUnparallel(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, bool InBounds, UnsignedInt StartSectorXPosParam, UnsignedInt StartSectorYPosParam, UnsignedInt StartSectorZPosParam, RealType StartXPosParam, RealType StartYPosParam, RealType StartZPosParam, RealType SizeXParam, RealType SizeYParam, RealType SizeZParam) = 0;
+public:
     virtual void GenerateOneRandomReactionForSelectedSpace(RealType StartXPosParam, RealType StartYPosParam, RealType StartZPosParam, RealType SizeXParam, RealType SizeYParam, RealType SizeZParam, bool FindParticlesInProximityBool) = 0;
 public:
     void ExchangeParticlesBetweenThreads(UnsignedInt StepOutside, bool StateOfSimulationSpaceDivisionForThreads, bool PrintInfo) const;
@@ -46,7 +49,7 @@ public:
     void JoinReactionsStatisticsFromThreads(std::vector<std::map<UnsignedInt, ReactionStatistics>>& SavedReactionsMap, UnsignedInt SimulationStepNumber) const;
 private:
     void GenerateOneStepOfSimulationForWholeCellSpaceInOneThread(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, UnsignedInt NumberOfStepsInside, UnsignedInt StepOutside, UnsignedInt ThreadXIndex, UnsignedInt ThreadYIndex, UnsignedInt ThreadZIndex, bool StateOfSimulationSpaceDivisionForThreads, barrier<>* SyncPoint);
-    void GenerateNStepsOfSimulationForWholeCellSpaceInOneThread(barrier<>* SyncPoint, bool* StateOfSimulationSpaceDivisionForThreads, UnsignedInt NumberOfStepsOutside, UnsignedInt NumberOfStepsInside, ThreadIdType CurrentThreadIndexParam, UnsignedInt ThreadXIndexParam, UnsignedInt ThreadYIndexParam, UnsignedInt ThreadZIndexParam, const std::shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData) const;
+    void GenerateNStepsOfSimulationForWholeCellSpaceInOneThread(barrier<>* SyncPoint, bool* StateOfSimulationSpaceDivisionForThreads, UnsignedInt NumberOfStepsOutside, UnsignedInt NumberOfStepsInside, ThreadIdType CurrentThreadIndexParam, UnsignedInt ThreadXIndexParam, UnsignedInt ThreadYIndexParam, UnsignedInt ThreadZIndexParam, const std::shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData);
 public:
     void GenerateNStepsOfSimulationForWholeCellSpaceInThreads(UnsignedInt NumberOfStepsOutside, UnsignedInt NumberOfStepsInside);
     void GenerateNStepsOfSimulationWithSendingParticlesToThreadsAndGatheringParticlesToMainThreadForWholeCellSpace(UnsignedInt NumberOfStepsOutside, UnsignedInt NumberOfStepsInside, bool PrintTime);
@@ -55,6 +58,9 @@ private:
     void GenerateNStepsOfSimulationForWholeCellSpaceInMPIProcess(UnsignedInt NumberOfStepsOutside, UnsignedInt NumberOfStepsInside, ThreadIdType CurrentThreadIndexParam, UnsignedInt ThreadXIndexParam, UnsignedInt ThreadYIndexParam, UnsignedInt ThreadZIndexParam);
 public:
     void GenerateNStepsOfSimulationForWholeCellSpaceInMPIProcess(UnsignedInt NumberOfStepsOutside, UnsignedInt NumberOfStepsInside);
+private:
+    static void SychronizeSimulationExecutedInThreads(barrier<>* SyncPoint, const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData);
+    void ExchangeParticlesBetweenThreadsAndSychronizeSimulationExecutedInThreads(barrier<>* SyncPoint, const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, ThreadIdType CurrentThreadIndexParam, UnsignedInt ThreadXIndexParam, UnsignedInt ThreadYIndexParam, const UnsignedInt ThreadZIndexParam);
 public:
     void ExchangeParticlesBetweenMPIProcessesVer2();
     void ExchangeParticlesBetweenMPIProcessesGroup1();

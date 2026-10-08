@@ -70,7 +70,14 @@ protected:
 public:
     void GenerateNStepsOfDiffusionForWholeCellSpace(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, bool InBounds, RealType XStartParam, RealType YStartParam, RealType ZStartParam, RealType XStepParam, RealType YStepParam, RealType ZStepParam, RealType XSizeParam, RealType YSizeParam, RealType ZSizeParam, RealType NumberOfSimulationSteps) override;
     void GenerateNStepsOfOneRandomReactionForWholeCellSpace(RealType XStartParam, RealType YStartParam, RealType ZStartParam, RealType XStepParam, RealType YStepParam, RealType ZStepParam, RealType XSizeParam, RealType YSizeParam, RealType ZSizeParam, RealType NumberOfSimulationSteps) override;
-    void GenerateOneStepOfDiffusionForSelectedSpace(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, bool InBounds, UnsignedInt StartSectorXPosParam, UnsignedInt StartSectorYPosParam, UnsignedInt StartSectorZPosParam, RealType StartXPosParam, RealType StartYPosParam, RealType StartZPosParam, RealType SizeXParam, RealType SizeYParam, RealType SizeZParam) override;
+public:
+    void GenerateOneStepOfDiffusionForSelectedSpaceForExecutionInThreads(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, bool InBounds, UnsignedInt StartSectorXPosParam, UnsignedInt StartSectorYPosParam, UnsignedInt StartSectorZPosParam, RealType StartXPosParam, RealType StartYPosParam, RealType StartZPosParam, RealType SizeXParam, RealType SizeYParam, RealType SizeZParam) override;
+    void GenerateOneStepOfDiffusionForSelectedSpaceForExecutionInMPIProcesses(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, bool InBounds, UnsignedInt StartSectorXPosParam, UnsignedInt StartSectorYPosParam, UnsignedInt StartSectorZPosParam, RealType StartXPosParam, RealType StartYPosParam, RealType StartZPosParam, RealType SizeXParam, RealType SizeYParam, RealType SizeZParam) override
+    {
+    }
+    void GenerateOneStepOfDiffusionForSelectedSpaceForExecutionUnparallel(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, bool InBounds, UnsignedInt StartSectorXPosParam, UnsignedInt StartSectorYPosParam, UnsignedInt StartSectorZPosParam, RealType StartXPosParam, RealType StartYPosParam, RealType StartZPosParam, RealType SizeXParam, RealType SizeYParam, RealType SizeZParam) override
+    {
+    }
     void GenerateOneRandomReactionForSelectedSpace(RealType StartXPosParam, RealType StartYPosParam, RealType StartZPosParam, RealType SizeXParam, RealType SizeYParam, RealType SizeZParam, bool FindParticlesInProximityBool) override;
 public:
     void GenerateOneStepOfElectricDiffusionForSelectedSpace(TypesOfLookingForParticlesInProximity TypeOfLookingForParticles, UnsignedInt AdditionalSpaceBoundFactor, double MultiplyElectricChargeFactor, UniqueIdUnsignedInt StartParticleIndexParam, UniqueIdUnsignedInt EndParticleIndexParam, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);

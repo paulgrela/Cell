@@ -11,16 +11,16 @@ protected:
     virtual Particle& GetParticleFromIndexForGenerator(UniqueIdUnsignedInt ParticleIndex) = 0;
     virtual void ClearFullAtomSpaceAndParticles() = 0;
 protected:
-    typedef bool (CellEngineParticlesFullAtomShapesGenerator::*CheckFreeSpaceForSelectedSpaceType)(const ParticlesContainer<Particle>& ParticlesParam, RealType, RealType, RealType, RealType, RealType, RealType, RealType, RealType, RealType, UniqueIdUnsignedInt);
-    typedef void (CellEngineParticlesFullAtomShapesGenerator::*SetValueToAtomsForSelectedSpaceType)(ListOfAtomsType&, EntityIdInt, RealType, RealType, RealType, RealType, RealType, RealType, RealType, RealType, RealType);
+    typedef bool (*CheckFreeSpaceForSelectedSpaceType)(const ParticlesContainer<Particle>& ParticlesParam, RealType, RealType, RealType, RealType, RealType, RealType, RealType, RealType, RealType, UniqueIdUnsignedInt);
+    typedef void (*SetValueToAtomsForSelectedSpaceType)(ListOfAtomsType&, EntityIdInt, RealType, RealType, RealType, RealType, RealType, RealType, RealType, RealType, RealType);
 protected:
     bool GenerateParticleAtomsWhenSelectedSpaceIsFree(const ParticlesContainer<Particle>& ParticlesParam, UnsignedInt LocalNewParticleIndex, RealType PosXStart, RealType PosYStart, RealType PosZStart, RealType SizeOfParticleX, RealType SizeOfParticleY, RealType SizeOfParticleZ, RealType StartXPosParam, RealType StartYPosParam, RealType StartZPosParam, RealType SizeXParam, RealType SizeYParam, RealType SizeZParam, CheckFreeSpaceForSelectedSpaceType CheckFreeSpaceForSelectedSpace, SetValueToAtomsForSelectedSpaceType SetValueToFullAtomsForSelectedSpace);
 public:
-    bool CheckFreeSpaceInCuboidSelectedSpace(const ParticlesContainer<Particle>& ParticlesParam, RealType PosXStart, RealType PosYStart, RealType PosZStart, RealType StepX, RealType StepY, RealType StepZ, RealType SizeOfParticleX, RealType SizeOfParticleY, RealType SizeOfParticleZ, UniqueIdUnsignedInt ValueToCheck);
-    bool CheckFreeSpaceForEllipsoidSelectedSpace(const ParticlesContainer<Particle>& ParticlesParam, RealType PosXStart, RealType PosYStart, RealType PosZStart, RealType StepX, RealType StepY, RealType StepZ, RealType RadiusXParam, RealType RadiusYParam, RealType RadiusZParam, UniqueIdUnsignedInt ValueToCheck);
+    static bool CheckFreeSpaceInCuboidSelectedSpace(const ParticlesContainer<Particle>& ParticlesParam, RealType PosXStart, RealType PosYStart, RealType PosZStart, RealType StepX, RealType StepY, RealType StepZ, RealType SizeOfParticleX, RealType SizeOfParticleY, RealType SizeOfParticleZ, UniqueIdUnsignedInt ValueToCheck);
+    static bool CheckFreeSpaceForEllipsoidSelectedSpace(const ParticlesContainer<Particle>& ParticlesParam, RealType PosXStart, RealType PosYStart, RealType PosZStart, RealType StepX, RealType StepY, RealType StepZ, RealType RadiusXParam, RealType RadiusYParam, RealType RadiusZParam, UniqueIdUnsignedInt ValueToCheck);
 public:
-    void SetValueToAtomsForCuboidSelectedSpace(ListOfAtomsType& FilledSpaceAtoms, EntityIdInt EntityId, RealType StartXPosParam, RealType StartYPosParam, RealType StartZPosParam, RealType StepXParam, RealType StepYParam, RealType StepZParam, RealType SizeXParam, RealType SizeYParam, RealType SizeZParam);
-    void SetValueToAtomsForEllipsoidSelectedSpace(ListOfAtomsType& FilledSpaceAtoms, EntityIdInt EntityId, RealType PosXStart, RealType PosYStart, RealType PosZStart, RealType StepX, RealType StepY, RealType StepZ, RealType RadiusXParam, RealType RadiusYParam, RealType RadiusZParam);
+    static void SetValueToAtomsForCuboidSelectedSpace(ListOfAtomsType& FilledSpaceAtoms, EntityIdInt EntityId, RealType StartXPosParam, RealType StartYPosParam, RealType StartZPosParam, RealType StepXParam, RealType StepYParam, RealType StepZParam, RealType SizeXParam, RealType SizeYParam, RealType SizeZParam);
+    static void SetValueToAtomsForEllipsoidSelectedSpace(ListOfAtomsType& FilledSpaceAtoms, EntityIdInt EntityId, RealType PosXStart, RealType PosYStart, RealType PosZStart, RealType StepX, RealType StepY, RealType StepZ, RealType RadiusXParam, RealType RadiusYParam, RealType RadiusZParam);
 protected:
     explicit CellEngineParticlesFullAtomShapesGenerator(ParticlesContainer<Particle>& ParticlesParam)
     {

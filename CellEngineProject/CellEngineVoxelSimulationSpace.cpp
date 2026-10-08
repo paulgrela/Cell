@@ -188,7 +188,7 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfElectricDiffusionForSelect
     CATCH("generating one step of electric diffusion")
 }
 
-void CellEngineVoxelSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpace(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, const bool InBounds, const UnsignedInt StartSectorXPosParam, const UnsignedInt StartSectorYPosParam, const UnsignedInt StartSectorZPosParam, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam)
+void CellEngineVoxelSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpaceForExecutionInThreads(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, const bool InBounds, const UnsignedInt StartSectorXPosParam, const UnsignedInt StartSectorYPosParam, const UnsignedInt StartSectorZPosParam, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam)
 {
     try
     {
@@ -215,7 +215,7 @@ void CellEngineVoxelSimulationSpace::GenerateNStepsOfDiffusionForWholeCellSpace(
             for (UnsignedInt PosX = XStartParam; PosX < XSizeParam; PosX += XStepParam)
                 for (UnsignedInt PosY = YStartParam; PosY < YSizeParam; PosY += YStepParam)
                     for (UnsignedInt PosZ = ZStartParam; PosZ < ZSizeParam; PosZ += ZStepParam)
-                        GenerateOneStepOfDiffusionForSelectedSpace(CurrentThreadLocalSimulationSpaceData, InBounds, PosX, PosY, PosZ, XStepParam, YStepParam, ZStepParam, UnusedValueRealType, UnusedValueRealType, UnusedValueRealType);
+                        GenerateOneStepOfDiffusionForSelectedSpaceForExecutionInThreads(CurrentThreadLocalSimulationSpaceData, InBounds, PosX, PosY, PosZ, XStepParam, YStepParam, ZStepParam, UnusedValueRealType, UnusedValueRealType, UnusedValueRealType);
 
         CheckConditionsToIncSimulationStepNumberForStatistics();
 
@@ -232,7 +232,7 @@ void CellEngineVoxelSimulationSpace::GenerateOneRandomReactionForSelectedSpace(c
 
         if (FindParticlesInProximityBool == false || (FindParticlesInProximityBool == true && FindParticlesInProximityOfSimulationSpaceForSelectedSpace(true, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam) == true))
         {
-            ActualSimulationSpaceSectorBoundsObject = { StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, StartXPosParam + SizeXParam - 1, StartYPosParam + SizeYParam - 1, StartZPosParam + SizeZParam - 1 };
+            ActualSimulationSpaceSectorBoundsObject = { .StartXPos = StartXPosParam, .StartYPos = StartYPosParam, .StartZPos = StartZPosParam, .SizeX = SizeXParam, .SizeY = SizeYParam, .SizeZ = SizeZParam, .EndXPos = StartXPosParam + SizeXParam - 1, .EndYPos = StartYPosParam + SizeYParam - 1, .EndZPos = StartZPosParam + SizeZParam - 1 };
             FindAndExecuteRandomReaction(min(LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity.size(), ChemicalReactionsManagerObject.MaxNumberOfReactants));
         }
     }
@@ -275,7 +275,7 @@ void CellEngineVoxelSimulationSpace::GenerateOneChosenReactionForSelectedSpace(c
         if (FindParticlesInProximityOfSimulationSpaceForSelectedSpace(true, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam) == true)
             if (ReactionId != 0)
             {
-                ActualSimulationSpaceSectorBoundsObject = { StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, StartXPosParam + SizeXParam - 1, StartYPosParam + SizeYParam - 1, StartZPosParam + SizeZParam - 1 };
+                ActualSimulationSpaceSectorBoundsObject = { .StartXPos = StartXPosParam, .StartYPos = StartYPosParam, .StartZPos = StartZPosParam, .SizeX = SizeXParam, .SizeY = SizeYParam, .SizeZ = SizeZParam, .EndXPos = StartXPosParam + SizeXParam - 1, .EndYPos = StartYPosParam + SizeYParam - 1, .EndZPos = StartZPosParam + SizeZParam - 1 };
                 FindAndExecuteChosenReaction(ReactionId);
             }
     }
@@ -353,7 +353,7 @@ void CellEngineVoxelSimulationSpace::GenerateNStepsOfDiffusionForBigPartOfCellSp
             for (UnsignedInt PosX = XStartParam - SizeNMultiplyFactor * XStepParam; PosX <= XStartParam + SizeNMultiplyFactor * XStepParam; PosX += XStepParam)
                 for (UnsignedInt PosY = YStartParam - SizeNMultiplyFactor * YStepParam; PosY <= YStartParam + SizeNMultiplyFactor * YStepParam; PosY += YStepParam)
                     for (UnsignedInt PosZ = ZStartParam - SizeNMultiplyFactor * ZStepParam; PosZ <= ZStartParam + SizeNMultiplyFactor * ZStepParam; PosZ += ZStepParam)
-                        GenerateOneStepOfDiffusionForSelectedSpace(nullptr, InBounds, PosX, PosY, PosZ, XStepParam, YStepParam, ZStepParam, UnusedValueRealType, UnusedValueRealType, UnusedValueRealType);
+                        GenerateOneStepOfDiffusionForSelectedSpaceForExecutionInThreads(nullptr, InBounds, PosX, PosY, PosZ, XStepParam, YStepParam, ZStepParam, UnusedValueRealType, UnusedValueRealType, UnusedValueRealType);
 
         CheckConditionsToIncSimulationStepNumberForStatistics();
 

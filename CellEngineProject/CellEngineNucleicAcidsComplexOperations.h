@@ -12,6 +12,9 @@ bool CheckIfThisIsPromoter(UnsignedInt Box10Position);
 
 class CellEngineNucleicAcidsComplexOperations : public CellEngineChemicalReactionsInBasicSimulationSpace, public CellEngineNucleicAcidsBasicOperations
 {
+private:
+    void Move2ParticlesNearOtherParticleIfSpaceIsEmptyOrNearSpace(std::vector<ParticleToBeMovedFromOneSectorToAnotherSector>& ListOfParticlesToChangeSectors, Particle &ParticleObject1, const Particle &NewPositionParticleObject1, RealType AddX1, RealType AddY1, RealType AddZ1, Particle &ParticleObject2, const Particle &NewPositionParticleObject2, RealType AddX2, RealType AddY2, RealType AddZ2);
+    void SelectMPIorThreadsForMoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(Particle &ParticleObject1, const Particle &NewPositionParticleObject1, RealType AddX1, RealType AddY1, RealType AddZ1, Particle &ParticleObject2, const Particle &NewPositionParticleObject2, RealType AddX2, RealType AddY2, RealType AddZ2);
 protected:
     virtual void MoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(vector<ParticleToBeMovedFromOneSectorToAnotherSector>& ListOfParticlesToChangeSectors, Particle &ParticleObject, const Particle &NewPositionParticleObject, float AddX, float AddY, float AddZ) = 0;
 public:

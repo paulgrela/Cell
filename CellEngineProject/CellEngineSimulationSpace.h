@@ -53,8 +53,8 @@ public:
     bool FindAndExecuteChosenReaction(UnsignedInt ReactionId);
 protected:
     bool CancelChemicalReaction(const vector<UniqueIdUnsignedInt>& CreatedParticlesIndexes, const ListOfCentersType& Centers, const vector<Particle>& ParticlesBackup, chrono::high_resolution_clock::time_point start_time, const ParticleKind& ParticleKindObjectForProduct, char PlaceStr);
-    bool PlaceProductParticleInSpaceInDeterminedPositionOrCancelReaction(UniqueIdUnsignedInt ParticleIndex, const vector<Particle>& ParticlesBackup, const vector<UniqueIdUnsignedInt>& CreatedParticlesIndexes, UnsignedInt CenterIndex, const ListOfCentersType& Centers, ParticleKind& ParticleKindObjectForProduct, chrono::high_resolution_clock::time_point start_time);
-    bool PlaceProductParticleInSpaceInRandomPositionOrCancelReaction(UniqueIdUnsignedInt ParticleIndex, const vector<Particle>& ParticlesBackup, const vector<UniqueIdUnsignedInt>& CreatedParticlesIndexes, UnsignedInt CenterIndex, const ListOfCentersType& Centers, ParticleKind& ParticleKindObjectForProduct, chrono::high_resolution_clock::time_point start_time);
+    bool PlaceNewProductParticleInSpaceDeterminedFromPositionOfFormerReactantParticleOrCancelReaction(UniqueIdUnsignedInt ParticleIndex, const vector<Particle>& ParticlesBackup, const vector<UniqueIdUnsignedInt>& CreatedParticlesIndexes, UnsignedInt CenterIndex, const ListOfCentersType& Centers, ParticleKind& ParticleKindObjectForProduct, chrono::high_resolution_clock::time_point start_time);
+    bool PlaceNewProductParticleInSpaceInNewRandomPositionOrCancelReaction(UniqueIdUnsignedInt ParticleIndex, const vector<Particle>& ParticlesBackup, const vector<UniqueIdUnsignedInt>& CreatedParticlesIndexes, UnsignedInt CenterIndex, const ListOfCentersType& Centers, ParticleKind& ParticleKindObjectForProduct, chrono::high_resolution_clock::time_point start_time);
 protected:
     bool IsChemicalReactionPossible(const ChemicalReaction& ReactionObject) override;
     bool MakeChemicalReaction(ChemicalReaction& ReactionObject) override;

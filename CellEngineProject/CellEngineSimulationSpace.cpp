@@ -247,7 +247,7 @@ bool CellEngineSimulationSpace::CancelChemicalReaction(const vector<UniqueIdUnsi
     return false;
 }
 
-bool CellEngineSimulationSpace::PlaceProductParticleInSpaceInDeterminedPositionOrCancelReaction(const UniqueIdUnsignedInt ParticleIndex, const vector<Particle>& ParticlesBackup, const vector<UniqueIdUnsignedInt>& CreatedParticlesIndexes, const UnsignedInt CenterIndex, const ListOfCentersType& Centers, ParticleKind& ParticleKindObjectForProduct, const chrono::high_resolution_clock::time_point start_time)
+bool CellEngineSimulationSpace::PlaceNewProductParticleInSpaceDeterminedFromPositionOfFormerReactantParticleOrCancelReaction(const UniqueIdUnsignedInt ParticleIndex, const vector<Particle>& ParticlesBackup, const vector<UniqueIdUnsignedInt>& CreatedParticlesIndexes, const UnsignedInt CenterIndex, const ListOfCentersType& Centers, ParticleKind& ParticleKindObjectForProduct, const chrono::high_resolution_clock::time_point start_time)
 {
     try
     {
@@ -266,7 +266,7 @@ bool CellEngineSimulationSpace::PlaceProductParticleInSpaceInDeterminedPositionO
     return true;
 }
 
-bool CellEngineSimulationSpace::PlaceProductParticleInSpaceInRandomPositionOrCancelReaction(const UniqueIdUnsignedInt ParticleIndex, const vector<Particle>& ParticlesBackup, const vector<UniqueIdUnsignedInt>& CreatedParticlesIndexes, const UnsignedInt CenterIndex, const ListOfCentersType& Centers, ParticleKind& ParticleKindObjectForProduct, const chrono::high_resolution_clock::time_point start_time)
+bool CellEngineSimulationSpace::PlaceNewProductParticleInSpaceInNewRandomPositionOrCancelReaction(const UniqueIdUnsignedInt ParticleIndex, const vector<Particle>& ParticlesBackup, const vector<UniqueIdUnsignedInt>& CreatedParticlesIndexes, const UnsignedInt CenterIndex, const ListOfCentersType& Centers, ParticleKind& ParticleKindObjectForProduct, const chrono::high_resolution_clock::time_point start_time)
 {
     try
     {
@@ -361,14 +361,14 @@ bool CellEngineSimulationSpace::MakeChemicalReaction(ChemicalReaction& ReactionO
 
             auto& ParticleKindObjectForProduct = ParticlesKindsManagerObject.GetParticleKind(ReactionProduct.EntityId);
 
-            if (CellEngineConfigDataObject.TypeOfReactionsByPlacingNewParticles == CellEngineConfigData::TypesOfReactionsByPlacingNewParticles::ByRandomPosition)
+            if (CellEngineConfigDataObject.TypeOfReactionsDeterminedByFindingNewPositionForPlacingNewParticles == CellEngineConfigData::TypesOfReactionsDeterminedByFindingNewPositionForPlacingNewParticles::NewParticlePlacedInNewRandomPosition)
             {
-                if (PlaceProductParticleInSpaceInRandomPositionOrCancelReaction(ParticleIndex, ParticlesBackup, CreatedParticlesIndexes, CenterIndex, Centers, ParticleKindObjectForProduct, start_time) == false)
+                if (PlaceNewProductParticleInSpaceInNewRandomPositionOrCancelReaction(ParticleIndex, ParticlesBackup, CreatedParticlesIndexes, CenterIndex, Centers, ParticleKindObjectForProduct, start_time) == false)
                     return false;
             }
             else
             {
-                if (PlaceProductParticleInSpaceInDeterminedPositionOrCancelReaction(ParticleIndex, ParticlesBackup, CreatedParticlesIndexes, CenterIndex, Centers, ParticleKindObjectForProduct, start_time) == false)
+                if (PlaceNewProductParticleInSpaceDeterminedFromPositionOfFormerReactantParticleOrCancelReaction(ParticleIndex, ParticlesBackup, CreatedParticlesIndexes, CenterIndex, Centers, ParticleKindObjectForProduct, start_time) == false)
                     return false;
             }
 

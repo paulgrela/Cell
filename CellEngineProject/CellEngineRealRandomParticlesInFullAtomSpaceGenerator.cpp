@@ -65,11 +65,11 @@ void CellEngineRealRandomParticlesInFullAtomSpaceGenerator::ShowParticlesKindsDa
 {
     try
     {
-        for (const auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
-            if (ParticleKindObject.second.ParticleKindSpecialDataSector.empty() == false)
-                for (const auto& ParticleKindSpecialDataObject: ParticleKindObject.second.ParticleKindSpecialDataSector)
+        for (const auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds | views::values)
+            if (ParticleKindObject.ParticleKindSpecialDataSector.empty() == false)
+                for (const auto& ParticleKindSpecialDataObject: ParticleKindObject.ParticleKindSpecialDataSector)
                     if (ParticleKindSpecialDataObject.ParticleType == ParticleTypeParam)
-                        LoggersManagerObject.Log(STREAM("ParticleKind IdStr = " << ParticleKindObject.second.IdStr << " Formula = " << ParticleKindObject.second.Formula));
+                        LoggersManagerObject.Log(STREAM("ParticleKind IdStr = " << ParticleKindObject.IdStr << " Formula = " << ParticleKindObject.Formula));
     }
     CATCH("show particles kinds data")
 }
@@ -81,9 +81,9 @@ tuple<UnsignedInt, UnsignedInt> CellEngineRealRandomParticlesInFullAtomSpaceGene
 
     try
     {
-        for (const auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
-            if (ParticleKindObject.second.ParticleKindSpecialDataSector.empty() == false)
-                for (const auto& ParticleKindSpecialDataObject: ParticleKindObject.second.ParticleKindSpecialDataSector)
+        for (const auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds | views::values)
+            if (ParticleKindObject.ParticleKindSpecialDataSector.empty() == false)
+                for (const auto& ParticleKindSpecialDataObject: ParticleKindObject.ParticleKindSpecialDataSector)
                     if (ParticleKindSpecialDataObject.ParticleType == ParticleTypeParam)
                     {
                         if (AddToTotalNumberOfAllParticles == true)
@@ -148,12 +148,12 @@ void CellEngineRealRandomParticlesInFullAtomSpaceGenerator::PrintNumberOfParticl
             LoggersManagerObject.Log(STREAM("Test set element id = " << TestSetElementObject));
 
         UnsignedInt CountMultiParticleKind = 0;
-        for (auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
-            if (ParticleKindObject.second.ParticleKindSpecialDataSector.size() > 1)
-                if (ParticleKindObject.second.ParticleKindSpecialDataSector[0].ParticleType == ParticlesTypes::Basic && ParticleKindObject.second.ParticleKindSpecialDataSector[1].ParticleType != ParticlesTypes::Basic)
+        for (auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds | views::values)
+            if (ParticleKindObject.ParticleKindSpecialDataSector.size() > 1)
+                if (ParticleKindObject.ParticleKindSpecialDataSector[0].ParticleType == ParticlesTypes::Basic && ParticleKindObject.ParticleKindSpecialDataSector[1].ParticleType != ParticlesTypes::Basic)
                 {
                     CountMultiParticleKind++;
-                    ParticleKindObject.second.ParticleKindSpecialDataSector.erase(ParticleKindObject.second.ParticleKindSpecialDataSector.begin());
+                    ParticleKindObject.ParticleKindSpecialDataSector.erase(ParticleKindObject.ParticleKindSpecialDataSector.begin());
                 }
 
         LoggersManagerObject.Log(STREAM("CountMultiParticleKind = " << CountMultiParticleKind));
@@ -187,16 +187,16 @@ void CellEngineRealRandomParticlesInFullAtomSpaceGenerator::PrintInformationAbou
     {
         double Average30SLength = 0;
         for (const auto& GeneId : ParticlesKindsManagerObject.Ribosomes30SProteinsList)
-            Average30SLength += (double) ParticlesKindsManagerObject.Genes[GeneId].Sequence.length();
-        Average30SLength /= (double)ParticlesKindsManagerObject.Ribosomes30SProteinsList.size();
+            Average30SLength += static_cast<double>(ParticlesKindsManagerObject.Genes[GeneId].Sequence.length());
+        Average30SLength /= static_cast<double>(ParticlesKindsManagerObject.Ribosomes30SProteinsList.size());
 
         double Average50SLength = 0;
         for (const auto& GeneId : ParticlesKindsManagerObject.Ribosomes50SProteinsList)
-            Average50SLength += (double) ParticlesKindsManagerObject.Genes[GeneId].Sequence.length();
-        Average50SLength /= (double)ParticlesKindsManagerObject.Ribosomes50SProteinsList.size();
+            Average50SLength += static_cast<double>(ParticlesKindsManagerObject.Genes[GeneId].Sequence.length());
+        Average50SLength /= static_cast<double>(ParticlesKindsManagerObject.Ribosomes50SProteinsList.size());
 
-        LoggersManagerObject.Log(STREAM("Number of 30S proteins = " << ParticlesKindsManagerObject.Ribosomes30SProteinsList.size() << " AVERAGE SIZE = " << (UnsignedInt)Average30SLength << " " << static_cast<UnsignedInt>(pow(Average30SLength, (1.0 / 3.0)))));
-        LoggersManagerObject.Log(STREAM("Number of 50S proteins = " << ParticlesKindsManagerObject.Ribosomes50SProteinsList.size() << " AVERAGE SIZE = " << (UnsignedInt)Average50SLength << " " << static_cast<UnsignedInt>(pow(Average50SLength, (1.0 / 3.0)))));
+        LoggersManagerObject.Log(STREAM("Number of 30S proteins = " << ParticlesKindsManagerObject.Ribosomes30SProteinsList.size() << " AVERAGE SIZE = " << static_cast<UnsignedInt>(Average30SLength) << " " << static_cast<UnsignedInt>(pow(Average30SLength, (1.0 / 3.0)))));
+        LoggersManagerObject.Log(STREAM("Number of 50S proteins = " << ParticlesKindsManagerObject.Ribosomes50SProteinsList.size() << " AVERAGE SIZE = " << static_cast<UnsignedInt>(Average50SLength) << " " << static_cast<UnsignedInt>(pow(Average50SLength, (1.0 / 3.0)))));
     }
     CATCH("printing information about ribosomes proteins")
 }
