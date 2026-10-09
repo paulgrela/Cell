@@ -14,7 +14,6 @@
 #include "CellEngineAtom.h"
 #include "CellEngineTypes.h"
 #include "CellEngineUseful.h"
-#include "CellEngineConstants.h"
 
 template <class T>
 class PairedNucleotide

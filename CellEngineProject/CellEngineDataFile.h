@@ -2,7 +2,6 @@
 #ifndef CELL_ENGINE_DATA_FILE_H
 #define CELL_ENGINE_DATA_FILE_H
 
-#include <mpi.h>
 #include <memory>
 
 #include "CellEngineMacros.h"

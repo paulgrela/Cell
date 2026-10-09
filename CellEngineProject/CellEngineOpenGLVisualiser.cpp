@@ -16,13 +16,13 @@
 #include <iostream>
 
 #include "Logger.h"
-#include "StringUtils.h"
 #include "DateTimeUtils.h"
 #include "ExceptionsMacro.h"
 
 #include "CellEngineUseful.h"
 #include "CellEngineDataFile.h"
 #include "CellEngineConfigData.h"
+#include "CellEngineMeasureTimeData.h"
 #include "CellEngineOpenGLVisualiser.h"
 #include "CellEngineParticlesKindsManager.h"
 #include "glm/vec3.hpp"
@@ -361,12 +361,12 @@ void CellEngineOpenGLVisualiser::FindAllBondsToDrawForParticle(const Particle& P
                 if (ParticleObject.ListOfAtoms.empty() == false)
                     FindBondsToDraw(ParticleObject.ListOfAtoms, BondsToDraw);
 
-            for (const auto& BondToDrawObject : BondsToDraw)
+            for (const auto& [BondToDrawObjectFirst, BondToDrawObjectSecond] : BondsToDraw)
             {
-                const auto& AtomObject1 = ParticleObject.ListOfAtoms[BondToDrawObject.first];
-                const auto& AtomObject2 = ParticleObject.ListOfAtoms[BondToDrawObject.second];
+                const auto& AtomObject1 = ParticleObject.ListOfAtoms[BondToDrawObjectFirst];
+                const auto& AtomObject2 = ParticleObject.ListOfAtoms[BondToDrawObjectSecond];
 
-                if (DrawBondsOnePragmaVersion == true)
+                if constexpr (DrawBondsOnePragmaVersion == true)
                 {
                     LinesPositions.emplace_back(AtomObject1.X - CellEngineConfigDataObject.CameraXPosition - Center.X());
                     LinesPositions.emplace_back(AtomObject1.Y - CellEngineConfigDataObject.CameraYPosition - Center.Y());
@@ -502,7 +502,7 @@ inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader(const 
         UniformsBlockObject.MoveMatrix = ViewMatrix * ModelMatrix;
         const auto stop_time = chrono::high_resolution_clock::now();
 
-        ExecutionDurationTimeForDrawingParticles += chrono::duration(stop_time - start_time);
+        CellEngineMeasureTimeData::ExecutionDurationTimeForDrawingParticles += chrono::duration(stop_time - start_time);
 
         if (DrawAdditional == true)
         {
@@ -513,7 +513,7 @@ inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader(const 
 
         const auto stop_time1 = chrono::high_resolution_clock::now();
 
-        ExecutionDurationTimeForPreparingParticles += chrono::duration(stop_time1 - start_time);
+        CellEngineMeasureTimeData::ExecutionDurationTimeForPreparingParticles += chrono::duration(stop_time1 - start_time);
     }
     CATCH("rendering object for data for cell visualization")
 
@@ -691,7 +691,7 @@ void CellEngineOpenGLVisualiser::ComputeInShaderCopyParticlesAndAtomsDataToGPUMe
 
         const auto stop_time112 = chrono::high_resolution_clock::now();
 
-        ExecutionDurationTimeForCopyingParticlesToGraphicMemory1 += chrono::duration(stop_time112 - start_time112);
+        CellEngineMeasureTimeData::ExecutionDurationTimeForCopyingParticlesToGraphicMemory1 += chrono::duration(stop_time112 - start_time112);
 
         const auto start_time113 = chrono::high_resolution_clock::now();
 
@@ -700,7 +700,7 @@ void CellEngineOpenGLVisualiser::ComputeInShaderCopyParticlesAndAtomsDataToGPUMe
 
         const auto stop_time113 = chrono::high_resolution_clock::now();
 
-        ExecutionDurationTimeForCopyingParticlesToGraphicMemory2 += chrono::duration(stop_time113 - start_time113);
+        CellEngineMeasureTimeData::ExecutionDurationTimeForCopyingParticlesToGraphicMemory2 += chrono::duration(stop_time113 - start_time113);
 
                                                                                                                         glBindFramebuffer(GL_FRAMEBUFFER, FrameBufferObject);
 
@@ -763,7 +763,7 @@ void CellEngineOpenGLVisualiser::ComputeInShaderCopyParticlesAndAtomsDataToGPUMe
 
         const auto stop_time1 = chrono::high_resolution_clock::now();
 
-        ExecutionDurationTimeForCopyingParticlesToGraphicMemory += chrono::duration(stop_time1 - start_time1);
+        CellEngineMeasureTimeData::ExecutionDurationTimeForCopyingParticlesToGraphicMemory += chrono::duration(stop_time1 - start_time1);
 
 
 
@@ -847,7 +847,7 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
     CATCH("rendering cell visualization")
 }
 
-inline void ClearRectangleOnScreen(const GLint XStart, const GLint YStart, const GLsizei  XWidth, const GLsizei YHeight)
+static inline void ClearRectangleOnScreen(const GLint XStart, const GLint YStart, const GLsizei  XWidth, const GLsizei YHeight)
 {
     try
     {
@@ -859,7 +859,7 @@ inline void ClearRectangleOnScreen(const GLint XStart, const GLint YStart, const
     CATCH("filling rectangle on screen")
 }
 
-void CellEngineOpenGLVisualiser::PrintAtomDescriptionOnScreen(CellEngineAtom& ChosenAtomObject, const Particle& ChosenParticleObject)
+void CellEngineOpenGLVisualiser::PrintAtomDescriptionOnScreen(CellEngineAtom& ChosenAtomObject1, const Particle& ChosenParticleObject1)
 {
     try
     {
@@ -867,13 +867,13 @@ void CellEngineOpenGLVisualiser::PrintAtomDescriptionOnScreen(CellEngineAtom& Ch
 
         TextOverlayObject.Clear();
 
-        string LocalTextStr = CellEngineUseful::AtomDescriptionTextsObject.Texts[0] = string("Name = ") + ChosenAtomObject.Name + " ResName = " + ChosenAtomObject.ResName + "S[" + to_string(ChosenParticleObject.ParticleSectorPos.SectorPosX) + "," + to_string(ChosenParticleObject.ParticleSectorPos.SectorPosY) + "," + to_string(ChosenParticleObject.ParticleSectorPos.SectorPosZ) + "]";
-        CellEngineUseful::AtomDescriptionTextsObject.Texts[1] = "Chain [" + string(ChosenAtomObject.Chain) + "]" + "(" + ChosenParticleObject.Nucleotide + ")";
-        CellEngineUseful::AtomDescriptionTextsObject.Texts[1] += " SEQ = [" + ChosenParticleObject.SequenceStr + "]";
-        CellEngineUseful::AtomDescriptionTextsObject.Texts[2] = "EntityId = " + to_string(ChosenParticleObject.EntityId);
-        CellEngineUseful::AtomDescriptionTextsObject.Texts[3] = "Entity Name = [" + GetEntityName(ChosenParticleObject.EntityId) + "]";
-        CellEngineUseful::AtomDescriptionTextsObject.Texts[4] = "Gen Index = [" + to_string(ChosenParticleObject.GenomeIndex) + "]";
-        CellEngineUseful::AtomDescriptionTextsObject.Texts[5] = "Gen Index Prev = [" + to_string(ChosenParticleObject.GenomeIndexPrev) + "] Gen Index Next = [" + to_string(ChosenParticleObject.GenomeIndexNext) + "]";
+        string LocalTextStr = CellEngineUseful::AtomDescriptionTextsObject.Texts[0] = string("Name = ") + ChosenAtomObject1.Name + " ResName = " + ChosenAtomObject1.ResName + "S[" + to_string(ChosenParticleObject1.ParticleSectorPos.SectorPosX) + "," + to_string(ChosenParticleObject1.ParticleSectorPos.SectorPosY) + "," + to_string(ChosenParticleObject1.ParticleSectorPos.SectorPosZ) + "]";
+        CellEngineUseful::AtomDescriptionTextsObject.Texts[1] = "Chain [" + string(ChosenAtomObject1.Chain) + "]" + "(" + ChosenParticleObject1.Nucleotide + ")";
+        CellEngineUseful::AtomDescriptionTextsObject.Texts[1] += " SEQ = [" + ChosenParticleObject1.SequenceStr + "]";
+        CellEngineUseful::AtomDescriptionTextsObject.Texts[2] = "EntityId = " + to_string(ChosenParticleObject1.EntityId);
+        CellEngineUseful::AtomDescriptionTextsObject.Texts[3] = "Entity Name = [" + GetEntityName(ChosenParticleObject1.EntityId) + "]";
+        CellEngineUseful::AtomDescriptionTextsObject.Texts[4] = "Gen Index = [" + to_string(ChosenParticleObject1.GenomeIndex) + "]";
+        CellEngineUseful::AtomDescriptionTextsObject.Texts[5] = "Gen Index Prev = [" + to_string(ChosenParticleObject1.GenomeIndexPrev) + "] Gen Index Next = [" + to_string(ChosenParticleObject1.GenomeIndexNext) + "]";
         LocalTextStr += " " + CellEngineUseful::AtomDescriptionTextsObject.Texts[1] + " " + CellEngineUseful::AtomDescriptionTextsObject.Texts[2] + " " + CellEngineUseful::AtomDescriptionTextsObject.Texts[3];
 
         if (CellEngineConfigDataObject.PrintAtomDescriptionOnScreen == true)

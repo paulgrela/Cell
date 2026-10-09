@@ -187,7 +187,7 @@ protected:
     static inline void SetAutomaticParametersForRendering();
     inline void PrepareOpenGLToRenderObjectsOnScene() const;
     inline void LoadShapeOfAtomsWhenChanged();
-    void PrintAtomDescriptionOnScreen(CellEngineAtom& ChosenAtomObject, const Particle& ChosenParticleObject);
+    void PrintAtomDescriptionOnScreen(CellEngineAtom& ChosenAtomObject1, const Particle& ChosenParticleObject1);
 protected:
     virtual void RenderSpace(const vmath::mat4& ViewMatrix) = 0;
     virtual void FindAndDrawAllBondsBetweenAtoms(const vmath::mat4& ViewMatrix) = 0;

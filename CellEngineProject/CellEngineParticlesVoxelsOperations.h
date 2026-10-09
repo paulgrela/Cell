@@ -2,8 +2,6 @@
 #ifndef CELL_ENGINE_PARTICLES_VOXELS_OPERATIONS_H
 #define CELL_ENGINE_PARTICLES_VOXELS_OPERATIONS_H
 
-#include <shared_mutex>
-
 #include "DestinationPlatform.h"
 #include "TerminalColorsUtils.h"
 
@@ -13,7 +11,7 @@
 class CellEngineParticlesVoxelsOperations : public CellEngineBasicVoxelsOperations
 {
 public:
-    void SetAllVoxelsInListOfVoxelsToValueForOuterClass(ListOfVoxelsType& ListOfVoxels, SimulationSpaceVoxel SimulationSpaceVoxelValue) const
+    void SetAllVoxelsInListOfVoxelsToValueForOuterClass(const ListOfVoxelsType& ListOfVoxels, const SimulationSpaceVoxel SimulationSpaceVoxelValue) const
     {
         SetAllVoxelsInListOfVoxelsToValue(ListOfVoxels, SimulationSpaceVoxelValue);
     }
@@ -23,7 +21,7 @@ public:
         return 0;
     }
 protected:
-    inline void SetAllVoxelsInListOfVoxelsToValue(ListOfVoxelsType& ListOfVoxels, SimulationSpaceVoxel SimulationSpaceVoxelValue) const
+    inline void SetAllVoxelsInListOfVoxelsToValue(const ListOfVoxelsType& ListOfVoxels, SimulationSpaceVoxel SimulationSpaceVoxelValue) const
     {
         try
         {
@@ -140,9 +138,9 @@ protected:
         {
             bool FoundFreeSpace = false;
 
-            SignedInt VecX = NewPositionParticleObject.ListOfVoxels[0].X - ParticleObject.ListOfVoxels[0].X;
-            SignedInt VecY = NewPositionParticleObject.ListOfVoxels[0].Y - ParticleObject.ListOfVoxels[0].Y;
-            SignedInt VecZ = NewPositionParticleObject.ListOfVoxels[0].Z - ParticleObject.ListOfVoxels[0].Z;
+            const SignedInt VecX = NewPositionParticleObject.ListOfVoxels[0].X - ParticleObject.ListOfVoxels[0].X;
+            const SignedInt VecY = NewPositionParticleObject.ListOfVoxels[0].Y - ParticleObject.ListOfVoxels[0].Y;
+            const SignedInt VecZ = NewPositionParticleObject.ListOfVoxels[0].Z - ParticleObject.ListOfVoxels[0].Z;
 
             for (SignedInt PosX = VecX - AddX; PosX < VecX + AddX; PosX++)
                 for (SignedInt PosY = VecY - AddY; PosY < VecY + AddY; PosY++)

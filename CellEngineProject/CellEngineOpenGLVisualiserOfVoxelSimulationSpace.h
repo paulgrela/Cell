@@ -25,6 +25,8 @@ constexpr UnsignedInt StepSizeZInSectors = 64;
 class CellEngineOpenGLVisualiserOfVoxelSimulationSpace : public CellEngineOpenGLVisualiser
 {
 private:
+    uint32_t AtomTotalIndex = 0;
+private:
     CellEngineAtom TempAtomObjectInSectors[MaxNumberOfSectors][MaxNumberOfSectors][MaxNumberOfSectors] = {};
     std::uint32_t AtomOffsetInSectors[MaxNumberOfSectors][MaxNumberOfSectors][MaxNumberOfSectors] = {};
     std::vector<GPUParticle> GPUParticlesInSectors[MaxNumberOfSectors][MaxNumberOfSectors][MaxNumberOfSectors];

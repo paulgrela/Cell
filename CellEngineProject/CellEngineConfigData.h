@@ -3,7 +3,6 @@
 #define CELL_ENGINE_CONFIG_DATA_H
 
 #include "vmath.h"
-#include <map>
 #include <random>
 
 #include "sb7color.h"
@@ -300,20 +299,5 @@ public:
 };
 
 inline CellEngineConfigData CellEngineConfigDataObject;
-
-inline std::common_type<std::chrono::duration<long, std::ratio<1, 1000000000>>, std::chrono::duration<long, std::ratio<1, 1000000000>>>::type ExecutionDurationTimeForDrawingParticles { 0 };
-inline std::common_type<std::chrono::duration<long, std::ratio<1, 1000000000>>, std::chrono::duration<long, std::ratio<1, 1000000000>>>::type ExecutionDurationTimeForPreparingParticles { 0 };
-inline std::common_type<std::chrono::duration<long, std::ratio<1, 1000000000>>, std::chrono::duration<long, std::ratio<1, 1000000000>>>::type ExecutionDurationTimeForTotalPreparingParticles { 0 };
-inline std::common_type<std::chrono::duration<long, std::ratio<1, 1000000000>>, std::chrono::duration<long, std::ratio<1, 1000000000>>>::type ExecutionDurationTimeForCheckingPreparingParticles { 0 };
-inline std::common_type<std::chrono::duration<long, std::ratio<1, 1000000000>>, std::chrono::duration<long, std::ratio<1, 1000000000>>>::type ExecutionDurationTimeForCheckingPreparingParticles2 { 0 };
-inline std::common_type<std::chrono::duration<long, std::ratio<1, 1000000000>>, std::chrono::duration<long, std::ratio<1, 1000000000>>>::type ExecutionDurationTimeForCheckingPreparingParticles3 { 0 };
-inline std::common_type<std::chrono::duration<long, std::ratio<1, 1000000000>>, std::chrono::duration<long, std::ratio<1, 1000000000>>>::type ExecutionDurationTimeForCopyingParticlesToGraphicMemory { 0 };
-inline std::common_type<std::chrono::duration<long, std::ratio<1, 1000000000>>, std::chrono::duration<long, std::ratio<1, 1000000000>>>::type ExecutionDurationTimeForCopyingParticlesToGraphicMemory0 { 0 };
-inline std::common_type<std::chrono::duration<long, std::ratio<1, 1000000000>>, std::chrono::duration<long, std::ratio<1, 1000000000>>>::type ExecutionDurationTimeForCopyingParticlesToGraphicMemory1 { 0 };
-inline std::common_type<std::chrono::duration<long, std::ratio<1, 1000000000>>, std::chrono::duration<long, std::ratio<1, 1000000000>>>::type ExecutionDurationTimeForCopyingParticlesToGraphicMemory2 { 0 };
-inline std::common_type<std::chrono::duration<long, std::ratio<1, 1000000000>>, std::chrono::duration<long, std::ratio<1, 1000000000>>>::type ExecutionDurationTimeForCopyingParticlesToGraphicMemory21 { 0 };
-inline std::common_type<std::chrono::duration<long, std::ratio<1, 1000000000>>, std::chrono::duration<long, std::ratio<1, 1000000000>>>::type ExecutionDurationTimeForCopyingParticlesToGraphicMemory22 { 0 };
-inline std::common_type<std::chrono::duration<long, std::ratio<1, 1000000000>>, std::chrono::duration<long, std::ratio<1, 1000000000>>>::type ExecutionDurationTimeForCopyingParticlesToGraphicMemory23 { 0 };
-inline std::common_type<std::chrono::duration<long, std::ratio<1, 1000000000>>, std::chrono::duration<long, std::ratio<1, 1000000000>>>::type ExecutionDurationTimeForCopyingParticlesToGraphicMemory3 { 0 };
 
 #endif

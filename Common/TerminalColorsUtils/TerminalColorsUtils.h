@@ -1,3 +1,4 @@
+
 #ifndef TERMINAL_COLORS_UTILS_H_
 #define TERMINAL_COLORS_UTILS_H_
 

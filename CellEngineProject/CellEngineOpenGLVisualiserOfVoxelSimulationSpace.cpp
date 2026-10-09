@@ -12,10 +12,9 @@
 #include "CellEngineDataFile.h"
 
 #include "CellEngineUseful.h"
-#include "CellEngineConstants.h"
 #include "CellEngineConfigData.h"
+#include "CellEngineMeasureTimeData.h"
 #include "CellEngineOpenGLVisualiser.h"
-#include "CellEngineSimulationSpace.h"
 #include "CellEngineParticlesKindsManager.h"
 #include "CellEngineParticlesVoxelsOperations.h"
 #include "CellEngineOpenGLVisualiserOfVoxelSimulationSpace.h"
@@ -25,9 +24,6 @@ import CellEngineColors;
 #else
 #include "CellEngineColors.h"
 #endif
-
-constexpr bool DrawError = false;
-constexpr bool DrawData = false;
 
 std::tuple<UnsignedInt, UnsignedInt, UnsignedInt> CellEngineOpenGLVisualiserOfVoxelSimulationSpace::GetStartPositions()
 {
@@ -124,14 +120,11 @@ inline void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::SetParticleParamet
     CATCH("setting particle parameters to draw")
 };
 
-uint32_t AtomTotalIndex = 0;
-
 void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::GenerateVoxelsForGPUParallel(const UnsignedInt PosXParam, const UnsignedInt XEndParam, const UnsignedInt PosYParam, const UnsignedInt YEndParam, const UnsignedInt PosZParam, const UnsignedInt ZEndParam, const UnsignedInt MainPosX, const UnsignedInt MainPosY, const UnsignedInt MainPosZ, const SimulationSpaceVoxel SimulationSpaceVoxelObject, const SimulationSpaceVoxel LastSimulationSpaceVoxel, UnsignedInt& AtomsCounter, const CellEngineAtom& TempAtomObject, const Particle& ParticleObject)
 {
     try
     {
-        if (DrawData == true)
-            LoggersManagerObject.LogOnlyToConsole(STREAM("K = " << MainPosX << " " << MainPosY << " " << MainPosZ));
+        DEBUGLOG(LoggersManagerObject.LogOnlyToConsole(STREAM("K = " << MainPosX << " " << MainPosY << " " << MainPosZ));)
 
         if (LastSimulationSpaceVoxel != SimulationSpaceVoxelObject || PosXParam == XEndParam - 2 || PosYParam == YEndParam - 2 || PosZParam == ZEndParam - 2)
         {
@@ -235,8 +228,6 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::GenerateVoxelsForGPU(cons
     CATCH("");
 }
 
-typedef SimulationSpaceVoxel (*PointerToSpace_2048_2048_2048)[2048][2048][2048];
-
 void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSelectedSpace(const UnsignedInt XStartParam, const UnsignedInt YStartParam, const UnsignedInt ZStartParam, const UnsignedInt XStepParam, const UnsignedInt YStepParam, const UnsignedInt ZStepParam, const UnsignedInt XSizeParam, const UnsignedInt YSizeParam, const UnsignedInt ZSizeParam, CellEngineAtom& TempAtomObject)
 {
     try
@@ -275,9 +266,10 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSelectedSpace(const
                                     LastSimulationSpaceVoxel = SimulationSpaceVoxelObject;
                                 }
                             }
+                            #ifdef SIMULATION_DETAILED_DEBUG_LOG
                             else
-                            if (DrawError ==  true)
                                 LoggersManagerObject.LogError(STREAM("Try to draw the particle from not existing index = " << SimulationSpaceVoxelObject));
+                            #endif
                         }
                         else
                         if (DrawEmptyVoxels == true)
@@ -308,7 +300,7 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSpace(const vmath::
 
         UnsignedInt NumberOfRenderedSelectedSpaces = 0;
 
-        cout << "P = " << SelectionStartXPos << " " << SelectionStartYPos << " " << SelectionStartZPos << " " << SelectionStepX << " " << SelectionStepY << " " << SelectionStepZ << " " << SelectionSizeX << " " << SelectionSizeY << " " << SelectionSizeZ << endl;
+        DEBUGLOG(LoggersManagerObject.LogOnlyToConsole(STREAM("P = " << SelectionStartXPos << " " << SelectionStartYPos << " " << SelectionStartZPos << " " << SelectionStepX << " " << SelectionStepY << " " << SelectionStepZ << " " << SelectionSizeX << " " << SelectionSizeY << " " << SelectionSizeZ));)
 
         if (SpaceDrawingType == VoxelSpaceDrawingTypes::DrawVoxelSpaceFull && (CellEngineConfigDataObject.ViewPositionZ <= CellEngineConfigDataObject.Distance + 700 || (CellEngineConfigDataObject.ViewPositionZ > CellEngineConfigDataObject.Distance + 700 && CellEngineConfigDataObject.RenderCellWithParallelCPUComputing == false)))
         {
@@ -329,7 +321,7 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSpace(const vmath::
 
             const auto stop_time111 = chrono::high_resolution_clock::now();
 
-            ExecutionDurationTimeForCopyingParticlesToGraphicMemory0 += chrono::duration(stop_time111 - start_time111);
+            CellEngineMeasureTimeData::ExecutionDurationTimeForCopyingParticlesToGraphicMemory0 += chrono::duration(stop_time111 - start_time111);
         }
         else
         if (SpaceDrawingType == VoxelSpaceDrawingTypes::DrawVoxelSpaceFull && (CellEngineConfigDataObject.RenderCellWithParallelCPUComputing == true && CellEngineConfigDataObject.ViewPositionZ > CellEngineConfigDataObject.Distance + 700))
@@ -363,9 +355,9 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSpace(const vmath::
 
             const auto stop_time111 = chrono::high_resolution_clock::now();
 
-            ExecutionDurationTimeForCopyingParticlesToGraphicMemory0 += chrono::duration(stop_time111 - start_time111);
+            CellEngineMeasureTimeData::ExecutionDurationTimeForCopyingParticlesToGraphicMemory0 += chrono::duration(stop_time111 - start_time111);
 
-            LoggersManagerObject.LogOnlyToConsole(STREAM("END OF PARALLEL -> ParticlesOffsetTotal = " << ParticlesOffsetTotal << " AtomsOffsetTotal = " << AtomOffsetTotal));
+            DEBUGLOG(LoggersManagerObject.LogOnlyToConsole(STREAM("END OF PARALLEL -> ParticlesOffsetTotal = " << ParticlesOffsetTotal << " AtomsOffsetTotal = " << AtomOffsetTotal));)
 
             const auto start_time114 = chrono::high_resolution_clock::now();
 
@@ -390,7 +382,7 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSpace(const vmath::
 
             const auto stop_time114 = chrono::high_resolution_clock::now();
 
-            ExecutionDurationTimeForCopyingParticlesToGraphicMemory3 += chrono::duration(stop_time114 - start_time114);
+            CellEngineMeasureTimeData::ExecutionDurationTimeForCopyingParticlesToGraphicMemory3 += chrono::duration(stop_time114 - start_time114);
         }
         else
         if (SpaceDrawingType == VoxelSpaceDrawingTypes::DrawVoxelSpaceSelected)
@@ -402,7 +394,7 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSpace(const vmath::
             RenderSelectedSpace(SelectionStartXPos - SubStartPos, SelectionStartYPos - SubStartPos, SelectionStartZPos - SubStartPos, SelectionStepX, SelectionStepY, SelectionStepZ, SelectionSizeX, SelectionSizeY, SelectionSizeY, TempAtomObject);
         }
 
-        LoggersManagerObject.Log(STREAM("NumberOfRenderedSelectedSpaces = " << NumberOfRenderedSelectedSpaces));
+        DEBUGLOG(LoggersManagerObject.Log(STREAM("NumberOfRenderedSelectedSpaces = " << NumberOfRenderedSelectedSpaces));)
     }
     CATCH("rendering voxel simulation space");
 }
@@ -419,7 +411,7 @@ inline void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::DrawChosenAtomUsin
                 {
                     if (const auto ParticleIter = CellEngineDataFileObjectPointer->GetParticleIteratorFromIndex(GPUAtomsLocal[ChosenParticleCenterIndex].Index); ParticleIter != CellEngineDataFileObjectPointer->GetParticleEnd())
                     {
-                        cout << "PICKING OBJECT = " << std::to_string(ChosenParticleCenterIndex) + " " + to_string(GPUAtomsLocal[ChosenParticleCenterIndex].AtomOffset) + " " + to_string(ParticleIter->second.ListOfAtoms.size()) << endl;
+                        DEBUGLOG(LoggersManagerObject.LogOnlyToConsole(STREAM("PICKING OBJECT = " << std::to_string(ChosenParticleCenterIndex) + " " + to_string(GPUAtomsLocal[ChosenParticleCenterIndex].AtomOffset) + " " + to_string(ParticleIter->second.ListOfAtoms.size())));)
 
                         ChosenParticleObject = ParticleIter->second;
                         ChosenAtomObjectIndex = GPUAtomsLocal[ChosenParticleCenterIndex].AtomOffset;

@@ -2,7 +2,6 @@
 #ifndef CELL_ENGINE_PARTICLES_FULL_ATOM_OPERATIONS_H
 #define CELL_ENGINE_PARTICLES_FULL_ATOM_OPERATIONS_H
 
-#include <cmath>
 #include <memory>
 #include <ranges>
 

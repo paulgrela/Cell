@@ -10,8 +10,6 @@
 #include "CellEngineParticlesKindsManager.h"
 #include "CellEngineSimulationParallelExecutionManager.h"
 
-#include <mpi.h>
-
 #ifdef USE_OPENGL
 #include "CellEngineOpenGLVisualiserOfVoxelSimulationSpace.h"
 #endif

@@ -3,10 +3,8 @@
 #define CELL_ENGINE_FULL_ATOM_SIMULATION_SPACE_H
 
 #include "CellEngineTypes.h"
-#include "CellEngineAtom.h"
 #include "CellEngineParticle.h"
 #include "CellEngineChemicalReaction.h"
-#include "CellEngineChemicalReactionsEngine.h"
 #include "CellEngineIllinoisDataCreator.h"
 #include "CellEngineChemicalReactionsInSimulationSpace.h"
 #include "CellEngineVoxelSimulationSpaceStatistics.h"

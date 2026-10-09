@@ -4,8 +4,6 @@
 #include "CellEngineDataFile.h"
 #include "CellEngineParticlesFullAtomOperations.h"
 
-#include "CellEngineImGuiMenu.h"
-
 constexpr bool PrintAdditionalInformation = false;
 constexpr bool PrintAdditionalInformationToLogs = false;
 constexpr bool PrintAdditionalInformationToFiles = true;

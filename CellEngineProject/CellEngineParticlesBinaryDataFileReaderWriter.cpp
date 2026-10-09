@@ -1,7 +1,6 @@
 
 #include <fstream>
 
-#include "StringUtils.h"
 #include "DateTimeUtils.h"
 #include "DestinationPlatform.h"
 #include "CellEngineAminoAcids.h"
@@ -467,7 +466,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
             ParticleObject.Index = LocalParticleObjectIndex;
 
             if constexpr(AdditionalInfoPrinting == true)
-                cout << ParticleObject.Index << " " << LocalParticleObjectIndex << endl;
+                LoggersManagerObject.Log(STREAM(ParticleObject.Index << " " << LocalParticleObjectIndex));
 
             ParticlesDataFile.read(reinterpret_cast<char*>(&ParticleObject.GenomeIndex), sizeof(ParticleObject.GenomeIndex));
             ParticlesDataFile.read(reinterpret_cast<char*>(&ParticleObject.ElectricCharge), sizeof(ParticleObject.ElectricCharge));
@@ -498,7 +497,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
             {
                 ReadVoxelsVectorDividedByStepsFromBinaryFile(ParticlesDataFile, ParticleObject.ListOfVoxels, CellEngineConfigDataObject.DivisionFactorForReadingPositionsOfParticles);
                 if (ParticleObject.ListOfVoxels.empty() == true)
-                    cout << "Error for particle type = " << ParticleObject.EntityId << " " << ParticleObject.Index << endl;
+                    LoggersManagerObject.Log(STREAM("Error for particle type = " << ParticleObject.EntityId << " " << ParticleObject.Index));
             }
             else
             if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
@@ -527,7 +526,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
                 auto ParticleSectorPos = CellEngineUseful::GetSectorPos(ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z);
 
                 if constexpr(AdditionalInfoPrinting == true)
-                    cout << ParticleSectorPos.SectorPosX << " " << ParticleSectorPos.SectorPosY << " " << ParticleSectorPos.SectorPosZ << " " << ParticleObject.Center.X << " " << ParticleObject.Center.Y << " " << ParticleObject.Center.Z << " " << endl;
+                    LoggersManagerObject.Log(STREAM(ParticleSectorPos.SectorPosX << " " << ParticleSectorPos.SectorPosY << " " << ParticleSectorPos.SectorPosZ << " " << ParticleObject.Center.X << " " << ParticleObject.Center.Y << " " << ParticleObject.Center.Z));
 
                 if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
                     SetCurrentSectorPos(ParticleSectorPos);
@@ -540,7 +539,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
                         if (make_tuple(SectorPosX, SectorPosY, SectorPosZ) == make_tuple(ParticleSectorPos.SectorPosX, ParticleSectorPos.SectorPosY, ParticleSectorPos.SectorPosZ))
                         {
                             if constexpr(AdditionalInfoPrinting == true)
-                                cout << ParticleSectorPos.SectorPosX << " " << ParticleSectorPos.SectorPosY << " " << ParticleSectorPos.SectorPosZ << " " << ParticleObject.EntityId << " " << ParticleObject.Index << endl;
+                                LoggersManagerObject.Log(STREAM(ParticleSectorPos.SectorPosX << " " << ParticleSectorPos.SectorPosY << " " << ParticleSectorPos.SectorPosZ << " " << ParticleObject.EntityId << " " << ParticleObject.Index));
 
                             AddNewParticle(ParticleObject);
                         }
