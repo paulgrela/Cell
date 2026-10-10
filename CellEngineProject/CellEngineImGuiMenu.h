@@ -311,42 +311,50 @@ public:
         CATCH("executing picket atom detailed information");
     }
 
+    static string AlignString(const string& InputStr, const UnsignedInt Size, const UnsignedInt PrefixSize = 3)
+    {
+        return string(PrefixSize, ' ') + InputStr + string(Size - InputStr.length(), ' ');
+    }
+
     static void RenderingInformationMenu()
     {
         try
         {
             if (ImGui::CollapsingHeader("Rendering Information", ImGuiTreeNodeFlags_DefaultOpen))
             {
+                constexpr UnsignedInt StringLength = 54;
+
                 ImGui::Checkbox("Render Cell with Parallel CPU Computing", &CellEngineConfigDataObject.RenderCellWithParallelCPUComputing);
 
                 ImGui::Text("%s", CellEngineConfigDataObject.TimeParametersOfRenderingStr.c_str());
 
-                ImGui::Text("%s", GetDurationTimeInOneLine(CellEngineMeasureTimeData::ExecutionDurationTimeForComputingViewAndModelMatrixesForDrawingParticles, "A=", "E").c_str());
-                CellEngineMeasureTimeData::ExecutionDurationTimeForComputingViewAndModelMatrixesForDrawingParticles = std::chrono::seconds::zero();
-                ImGui::Text("%s", GetDurationTimeInOneLine(CellEngineMeasureTimeData::ExecutionDurationTimeForComputingViewAndModelMatrixesAndVisibilityForDrawingParticles, "B=", "E").c_str());
-                CellEngineMeasureTimeData::ExecutionDurationTimeForComputingViewAndModelMatrixesAndVisibilityForDrawingParticles = std::chrono::seconds::zero();
-
-                ImGui::Text("%s", GetDurationTimeInOneLine(CellEngineMeasureTimeData::ExecutionDurationTimeForDrawingParticles, "M=", "E").c_str());
-                CellEngineMeasureTimeData::ExecutionDurationTimeForDrawingParticles = std::chrono::seconds::zero();
-                ImGui::Text("%s", GetDurationTimeInOneLine(CellEngineMeasureTimeData::ExecutionDurationTimeForPreparingParticlesForDrawingByCPUComputationsPhase1, "N=", "E").c_str());
+                ImGui::Text("%s", GetDurationTimeInOneLineSecondsOnly(CellEngineMeasureTimeData::ExecutionDurationTimeForPreparingParticlesForDrawingByCPUComputationsPhase1, AlignString("PreparingParticlesForDrawingByCPUComputationsPhase1 = ", StringLength, 0).c_str(), "E").c_str());
                 CellEngineMeasureTimeData::ExecutionDurationTimeForPreparingParticlesForDrawingByCPUComputationsPhase1 = std::chrono::seconds::zero();
-
-                ImGui::Text("%s", GetDurationTimeInOneLine(CellEngineMeasureTimeData::ExecutionDurationTimeForCopyingParticlesAndAtomsToGraphicMemoryForComputations, "K=", "E").c_str());
-                CellEngineMeasureTimeData::ExecutionDurationTimeForCopyingParticlesAndAtomsToGraphicMemoryForComputations = std::chrono::seconds::zero();
-                ImGui::Text("%s", GetDurationTimeInOneLine(CellEngineMeasureTimeData::ExecutionDurationTimeForComputationsOfParticlesInGPUInComputeShader, "L=", "E").c_str());
-                CellEngineMeasureTimeData::ExecutionDurationTimeForComputationsOfParticlesInGPUInComputeShader = std::chrono::seconds::zero();
-
-                ImGui::Text("%s", GetDurationTimeInOneLine(CellEngineMeasureTimeData::ExecutionDurationTimeForDrawingImGuiMenu, "L1=", "E").c_str());
-                CellEngineMeasureTimeData::ExecutionDurationTimeForDrawingImGuiMenu = std::chrono::seconds::zero();
-                ImGui::Text("%s", GetDurationTimeInOneLine(CellEngineMeasureTimeData::ExecutionDurationTimeForSwapingGraphicBuffersForDrawingParticles, "L2=", "E").c_str());
-                CellEngineMeasureTimeData::ExecutionDurationTimeForSwapingGraphicBuffersForDrawingParticles = std::chrono::seconds::zero();
-                ImGui::Text("%s", GetDurationTimeInOneLine(CellEngineMeasureTimeData::ExecutionDurationTimeForDrawingParticlesWithSwapingGraphicBuffers, "L3=", "E").c_str());
-                CellEngineMeasureTimeData::ExecutionDurationTimeForDrawingParticlesWithSwapingGraphicBuffers = std::chrono::seconds::zero();
-
-                ImGui::Text("%s", GetDurationTimeInOneLine(CellEngineMeasureTimeData::ExecutionDurationTimeForPreparingParticlesForDrawingByCPUComputationsPhase2, "O=", "E").c_str());
+                ImGui::Text("%s", GetDurationTimeInOneLineSecondsOnly(CellEngineMeasureTimeData::ExecutionDurationTimeForPreparingParticlesForDrawingByCPUComputationsPhase2, AlignString("PreparingParticlesForDrawingByCPUComputationsPhase2 = ", StringLength, 0).c_str(), "E").c_str());
                 CellEngineMeasureTimeData::ExecutionDurationTimeForPreparingParticlesForDrawingByCPUComputationsPhase2 = std::chrono::seconds::zero();
 
+                ImGui::Text("%s", GetDurationTimeInOneLineSecondsOnly(CellEngineMeasureTimeData::ExecutionDurationTimeForComputingViewAndModelMatrixesByCPUForDrawingParticles, AlignString("ViewModelMatrixesTime = ", StringLength, 0).c_str(), "E").c_str());
+                CellEngineMeasureTimeData::ExecutionDurationTimeForComputingViewAndModelMatrixesByCPUForDrawingParticles = std::chrono::seconds::zero();
+                ImGui::Text("%s", GetDurationTimeInOneLineSecondsOnly(CellEngineMeasureTimeData::ExecutionDurationTimeForComputingViewAndModelMatrixesAndVisibilityByCPUForDrawingParticles, AlignString("ViewModelMatrixesVisibilityTime = ", StringLength, 0).c_str(), "E").c_str());
+                CellEngineMeasureTimeData::ExecutionDurationTimeForComputingViewAndModelMatrixesAndVisibilityByCPUForDrawingParticles = std::chrono::seconds::zero();
+
+                ImGui::Text("%s", GetDurationTimeInOneLineSecondsOnly(CellEngineMeasureTimeData::ExecutionDurationTimeForCopyingParticlesAndAtomsToGPUMemoryForComputations, AlignString("CopyingParticlesAndAtomsToGPUMemoryTime = ", StringLength, 0).c_str(), "E").c_str());
+                CellEngineMeasureTimeData::ExecutionDurationTimeForCopyingParticlesAndAtomsToGPUMemoryForComputations = std::chrono::seconds::zero();
+                ImGui::Text("%s", GetDurationTimeInOneLineSecondsOnly(CellEngineMeasureTimeData::ExecutionDurationTimeForComputationsOfParticlesInGPUInComputeShader, AlignString("ComputationsOfParticlesInGPUInComputeShaderTime = ", StringLength, 0).c_str(), "E").c_str());
+                CellEngineMeasureTimeData::ExecutionDurationTimeForComputationsOfParticlesInGPUInComputeShader = std::chrono::seconds::zero();
+
+                ImGui::Text("%s", GetDurationTimeInOneLineSecondsOnly(CellEngineMeasureTimeData::ExecutionDurationTimeForSwapingGraphicBuffersForDrawingParticles, AlignString("SwapingGraphicBuffersTime = ", StringLength, 0).c_str(), "E").c_str());
+                CellEngineMeasureTimeData::ExecutionDurationTimeForSwapingGraphicBuffersForDrawingParticles = std::chrono::seconds::zero();
+                ImGui::Text("%s", GetDurationTimeInOneLineSecondsOnly(CellEngineMeasureTimeData::ExecutionDurationTimeForDrawingParticlesWithSwapingGraphicBuffers, AlignString("DrawingParticlesWithSwapingGraphicBuffersTime = ", StringLength, 0).c_str(), "E").c_str());
+                CellEngineMeasureTimeData::ExecutionDurationTimeForDrawingParticlesWithSwapingGraphicBuffers = std::chrono::seconds::zero();
+
+                ImGui::Text("%s", GetDurationTimeInOneLineSecondsOnly(CellEngineMeasureTimeData::ExecutionDurationTimeForDrawingParticles, AlignString("DrawingParticlesTime = ", StringLength, 0).c_str(), "E").c_str());
+                CellEngineMeasureTimeData::ExecutionDurationTimeForDrawingParticles = std::chrono::seconds::zero();
+                ImGui::Text("%s", GetDurationTimeInOneLineSecondsOnly(CellEngineMeasureTimeData::ExecutionDurationTimeForDrawingImGuiMenu, AlignString("DrawingImGuiMenuTime = ", StringLength, 0).c_str(), "E").c_str());
+                CellEngineMeasureTimeData::ExecutionDurationTimeForDrawingImGuiMenu = std::chrono::seconds::zero();
+
                 ImGui::Text("%s", CellEngineConfigDataObject.NumberOfRenderedAtomsParametersOfRenderingStr.c_str());
+
                 ImGui::Checkbox("Log parameters of rendering to file", &CellEngineConfigDataObject.LogParametersOfRenderingToFile);
             }
         }
@@ -362,7 +370,7 @@ public:
                 for (UnsignedInt BackgroundColorIndex = 1; BackgroundColorIndex <= 3; BackgroundColorIndex++)
                 {
                     auto BackgroundColor = ImVec4(CellEngineConfigDataObject.BackgroundColors[BackgroundColorIndex].X(), CellEngineConfigDataObject.BackgroundColors[BackgroundColorIndex].Y(), CellEngineConfigDataObject.BackgroundColors[BackgroundColorIndex].Z(), 1.00f);
-                    ImGui::ColorEdit3(string("Background Color " + to_string(BackgroundColorIndex)).c_str(), (float *) &BackgroundColor);
+                    ImGui::ColorEdit3(string("Background Color " + to_string(BackgroundColorIndex)).c_str(), reinterpret_cast<float*>(&BackgroundColor));
                     CellEngineConfigDataObject.BackgroundColors[BackgroundColorIndex] = vmath::vec3(BackgroundColor.x, BackgroundColor.y, BackgroundColor.z);
                 }
                 const char *BackgroundColorComboBoxItems[] = { "Background Color 1", "Background Color 2", "Background Color 3" };
@@ -623,11 +631,6 @@ public:
         CATCH("executing types of generated colors menu");
     }
 
-    static string AlignString(const string& InputStr, const UnsignedInt Size, UnsignedInt PrefixSize = 3)
-    {
-        return string(PrefixSize, ' ') + InputStr + string(Size - InputStr.length(), ' ');
-    }
-
     static void VoxelSimulationSpaceParametersMenu(CellEngineOpenGLVisualiserOfVoxelSimulationSpace* CellEngineOpenGLVoxelSimulationSpaceVisualiserObjectPointer, int DrawSpaceStartXYZ[3], int DrawSpaceStepsXYZ[3], int DrawSpaceSizesXYZ[3], const UnsignedInt StringLength)
     {
         try
@@ -787,8 +790,9 @@ public:
     {
         try
         {
-            UnsignedInt StringLength = 90;
-            UnsignedInt PrefixStringLength = 0;
+            constexpr UnsignedInt StringLength = 90;
+            constexpr UnsignedInt PrefixStringLength = 0;
+
             if (ModifiableWindow == false)
                 ImGui::Begin("Chemical ChemicalReactions Menu", nullptr, WindowFlags);
             else
@@ -1222,8 +1226,9 @@ public:
     {
         try
         {
-            const UnsignedInt StringLength = 90;
-            const UnsignedInt PrefixStringLength = 0;
+            constexpr UnsignedInt StringLength = 90;
+            constexpr UnsignedInt PrefixStringLength = 0;
+
             if (ModifiableWindow == false)
                 ImGui::Begin("Chemical ChemicalReactions Menu", nullptr, WindowFlags);
             else
@@ -1724,7 +1729,7 @@ public:
             if (!Info.Flags.Cursor)
                 glfwSetInputMode(ImGuiMenuWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
-                                                                                                                        glfwMakeContextCurrent(ImGuiMenuWindow);
+            glfwMakeContextCurrent(ImGuiMenuWindow);
 
             gl3wInit();
 
@@ -1735,7 +1740,7 @@ public:
             ImGuiIO &io = ImGui::GetIO();
 
             ImGui_ImplGlfw_InitForOpenGL(ImGuiMenuWindow, true);
-            const auto glsl_version = "#version 130";
+            constexpr auto glsl_version = "#version 130";
             ImGui_ImplOpenGL3_Init(glsl_version);
         }
         CATCH("preparing imgui menu glfw data");

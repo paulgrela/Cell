@@ -14,6 +14,13 @@
 
 using namespace std;
 
+constexpr bool PrintHours = true;
+constexpr bool PrintMinutes = true;
+constexpr bool PrintSeconds = true;
+constexpr bool PrintMiliseconds = true;
+constexpr bool PrintMicroseconds = true;
+constexpr bool PrintNanoseconds = true;
+
 string GetActualDateTimeStandardCPP(const char* sep1, const char* sep2, const char* sep3, const char* sep4, const char* sep5)
 {
 	using namespace string_utils;
@@ -36,7 +43,7 @@ string GetActualDateTimeWindows(const char* sep1, const char* sep2, const char* 
 }
 #endif
 
-string GetDurationTimeInOneLine(const common_type<chrono::duration<long, ratio<1, 1000000000>>, chrono::duration<long, ratio<1, 1000000000>>>::type duration_time, const char* TextToPrint, const char* ExceptionTextToPrint)
+string GetDurationTimeInOneLine(const common_type_t<chrono::duration<long, ratio<1, 1000000000>>, chrono::duration<long, ratio<1, 1000000000>>> duration_time, const char* TextToPrint, const char* ExceptionTextToPrint)
 {
 	stringstream TempDurationTimeStr;
 
@@ -48,15 +55,60 @@ string GetDurationTimeInOneLine(const common_type<chrono::duration<long, ratio<1
 
 		TempDurationTimeStr << setfill('0');
 
-		TempDurationTimeStr << (duration_time_form_nano % 3600'000'000'000'000) / 3600'000'000'000 << " hours ";
-		TempDurationTimeStr << (duration_time_form_nano % 3600'000'000'000) / 60'000'000'000 << " minutes ";
-		TempDurationTimeStr << (duration_time_form_nano % 60'000'000'000) / 1000'000'000 << " seconds ";
+		if constexpr (PrintHours == true)
+			TempDurationTimeStr << (duration_time_form_nano % 3600'000'000'000'000) / 3600'000'000'000 << " hours ";
 
-		TempDurationTimeStr << (duration_time_form_nano % 1000'000'000) / 1000'000; // format milliseconds
+		if constexpr (PrintMinutes == true)
+			TempDurationTimeStr << (duration_time_form_nano % 3600'000'000'000) / 60'000'000'000 << " minutes ";
+
+		if constexpr (PrintSeconds == true)
+			TempDurationTimeStr << (duration_time_form_nano % 60'000'000'000) / 1000'000'000 << " seconds ";
+
+		if constexpr (PrintMiliseconds == true)
+			TempDurationTimeStr << (duration_time_form_nano % 1000'000'000) / 1000'000;
+
 		TempDurationTimeStr << ".";
-		TempDurationTimeStr << setw(3) << (duration_time_form_nano % 1000'000) / 1000; // format microseconds
+
+		if constexpr (PrintMicroseconds == true)
+			TempDurationTimeStr << setw(3) << (duration_time_form_nano % 1000'000) / 1000;
+
 		TempDurationTimeStr << ".";
-		TempDurationTimeStr << setw(3) << duration_time_form_nano % 1000; // format nanoseconds
+
+		if constexpr (PrintNanoseconds == true)
+			TempDurationTimeStr << setw(3) << duration_time_form_nano % 1000;
+	}
+	CATCH(ExceptionTextToPrint)
+
+	return TempDurationTimeStr.str();
+}
+
+string GetDurationTimeInOneLineSecondsOnly(const common_type_t<chrono::duration<long, ratio<1, 1000000000>>, chrono::duration<long, ratio<1, 1000000000>>> duration_time, const char* TextToPrint, const char* ExceptionTextToPrint)
+{
+	stringstream TempDurationTimeStr;
+
+	try
+	{
+		const auto duration_time_form_nano = chrono::duration_cast<chrono::nanoseconds>(duration_time).count();
+
+		TempDurationTimeStr << TextToPrint;
+
+		TempDurationTimeStr << setfill('0');
+
+		if constexpr (PrintSeconds == true)
+			TempDurationTimeStr << (duration_time_form_nano % 60'000'000'000) / 1000'000'000 << " seconds ";
+
+		if constexpr (PrintMiliseconds == true)
+			TempDurationTimeStr << (duration_time_form_nano % 1000'000'000) / 1000'000;
+
+		TempDurationTimeStr << ".";
+
+		if constexpr (PrintMicroseconds == true)
+			TempDurationTimeStr << setw(3) << (duration_time_form_nano % 1000'000) / 1000;
+
+		TempDurationTimeStr << ".";
+
+		if constexpr (PrintNanoseconds == true)
+			TempDurationTimeStr << setw(3) << duration_time_form_nano % 1000;
 	}
 	CATCH(ExceptionTextToPrint)
 
