@@ -3740,6 +3740,8 @@
                         <CellStateFileName>../../WholeCellData/JCVI-syn3A/syn3a_atom_instances.cif</CellStateFileName>
                         <CellStateFileNameBackup>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile40.dat</CellStateFileNameBackup>
 
+                        <UseNewerAutinNamesToAssociateWithIllinoisNames>true</UseNewerAutinNamesToAssociateWithIllinoisNames>
+
                         <DivisionFactorForSimulationSpace>4.0</DivisionFactorForSimulationSpace> <!--4 or 2 or other-->
                         <DivisionFactorForReadingPositionsOfParticles>1.0</DivisionFactorForReadingPositionsOfParticles>
                         <DivisionFactorForGeneratingPositionsOfParticles>1.0</DivisionFactorForGeneratingPositionsOfParticles>
@@ -4826,6 +4828,8 @@
 
                         <CellStateFileName>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile42.dat</CellStateFileName>
                         <CellStateFileNameBackup>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile42.dat</CellStateFleNameBackup>
+
+                        <UseNewerAutinNamesToAssociateWithIllinoisNames>false</UseNewerAutinNamesToAssociateWithIllinoisNames>
 
                         <DivisionFactorForSimulationSpace>4.0</DivisionFactorForSimulationSpace> <!--4 or 2 or other-->
                         <DivisionFactorForReadingPositionsOfParticles>1.0</DivisionFactorForReadingPositionsOfParticles>

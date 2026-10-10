@@ -382,7 +382,7 @@ namespace CellEngineUseful
     class AtomDescriptionTexts
     {
     public:
-        std::string Texts[6];
+        std::string Texts[10];
     };
 
     inline AtomDescriptionTexts AtomDescriptionTextsObject;

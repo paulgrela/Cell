@@ -193,6 +193,9 @@ void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const ch
                         CellEngineConfigDataObject.CellStateFileName = CellStatePropertyTreeElement.second.get<string>("CellStateFileName");
                         CellEngineConfigDataObject.CellStateFileNameBackup = CellStatePropertyTreeElement.second.get<string>("CellStateFileNameBackup");
 
+                        if (CellStatePropertyTreeElement.second.get_child_optional("UseNewerAutinNamesToAssociateWithIllinoisNames"))
+                            CellEngineConfigDataObject.UseNewerAutinNamesToAssociateWithIllinoisNames = CellStatePropertyTreeElement.second.get<bool>("UseNewerAutinNamesToAssociateWithIllinoisNames");
+
                         if (CellStatePropertyTreeElement.second.get_child_optional("MixedFullAtomWithVoxelSpace"))
                             CellEngineConfigDataObject.MixedFullAtomWithVoxelSpace = CellStatePropertyTreeElement.second.get<bool>("MixedFullAtomWithVoxelSpace");
 
@@ -343,10 +346,10 @@ void CellEngineConfigurationFileReaderWriter::SaveTestStatisticsToFile(const Uns
 
         read_xml(ConfigFileName, MainConfigPropertyTree, boost::property_tree::xml_parser::trim_whitespace);
 
-        for (ptree::value_type& TestPropertyTreeElement : MainConfigPropertyTree.get_child("Settings.Tests"))
-            if (ExecuteCellStateId == TestPropertyTreeElement.second.get<UnsignedInt>("<xmlattr>.id"))
+        for (auto& TestPropertyTreeElement : MainConfigPropertyTree.get_child("Settings.Tests") | views::values)
+            if (ExecuteCellStateId == TestPropertyTreeElement.get<UnsignedInt>("<xmlattr>.id"))
             {
-                ptree& TestPropertyTreeElementToWriteInFile = TestPropertyTreeElement.second;
+                ptree& TestPropertyTreeElementToWriteInFile = TestPropertyTreeElement;
 
                 TestPropertyTreeElementToWriteInFile.put("CellStateFileName", CellEngineConfigDataObject.CellStateFileName);
 

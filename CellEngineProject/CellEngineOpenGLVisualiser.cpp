@@ -163,7 +163,7 @@ void CellEngineOpenGLVisualiser::StartUp()
 
         InitArcBall();
 
-        //GetStartCenterPoint();
+        GetStartCenterPoint();
 
         glUseProgram(ParticlesAtomsTrianglesShadersProgram);
 
@@ -231,21 +231,6 @@ void CellEngineOpenGLVisualiser::ShutDown()
     CATCH("deleting of data for cell visualization")
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 void CellEngineOpenGLVisualiser::DeleteLineVertexes() const
 {
     try
@@ -289,7 +274,7 @@ void CellEngineOpenGLVisualiser::DrawAllFoundBondsBetweenAtoms(const vector<floa
 
         glBindBuffer(GL_ARRAY_BUFFER, LineDataBuffer[0]);
 
-        if (DrawBondsOnePragmaVersion == true)
+        if constexpr (DrawBondsOnePragmaVersion == true)
             glBufferData(GL_ARRAY_BUFFER, LinesPositions.size() * sizeof(float), LinesPositions.data(), GL_DYNAMIC_DRAW);
         else
             glBufferData(GL_ARRAY_BUFFER, LinesVertexesLocal.size() * sizeof(float), LinesVertexesLocal.data(), GL_DYNAMIC_DRAW);
@@ -413,11 +398,6 @@ void CellEngineOpenGLVisualiser::FindAllBondsToDrawForParticle(const Particle& P
 
 
 
-
-
-
-
-
 constexpr UnsignedInt BackSize = 50;
 static UnsignedInt StepForScope = 0;
 
@@ -499,10 +479,12 @@ inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader(const 
         UniformsBlock UniformsBlockObject;
 
         const auto start_time = chrono::high_resolution_clock::now();
+
         UniformsBlockObject.MoveMatrix = ViewMatrix * ModelMatrix;
+
         const auto stop_time = chrono::high_resolution_clock::now();
 
-        CellEngineMeasureTimeData::ExecutionDurationTimeForDrawingParticles += chrono::duration(stop_time - start_time);
+        CellEngineMeasureTimeData::ExecutionDurationTimeForComputingViewAndModelMatrixesForDrawingParticles += chrono::duration(stop_time - start_time);
 
         if (DrawAdditional == true)
         {
@@ -513,7 +495,7 @@ inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader(const 
 
         const auto stop_time1 = chrono::high_resolution_clock::now();
 
-        CellEngineMeasureTimeData::ExecutionDurationTimeForPreparingParticles += chrono::duration(stop_time1 - start_time);
+        CellEngineMeasureTimeData::ExecutionDurationTimeForComputingViewAndModelMatrixesAndVisibilityForDrawingParticles += chrono::duration(stop_time1 - start_time);
     }
     CATCH("rendering object for data for cell visualization")
 
@@ -691,7 +673,7 @@ void CellEngineOpenGLVisualiser::ComputeInShaderCopyParticlesAndAtomsDataToGPUMe
 
         const auto stop_time112 = chrono::high_resolution_clock::now();
 
-        CellEngineMeasureTimeData::ExecutionDurationTimeForCopyingParticlesToGraphicMemory1 += chrono::duration(stop_time112 - start_time112);
+        CellEngineMeasureTimeData::ExecutionDurationTimeForCopyingParticlesAndAtomsToGraphicMemoryForComputations += chrono::duration(stop_time112 - start_time112);
 
         const auto start_time113 = chrono::high_resolution_clock::now();
 
@@ -700,33 +682,31 @@ void CellEngineOpenGLVisualiser::ComputeInShaderCopyParticlesAndAtomsDataToGPUMe
 
         const auto stop_time113 = chrono::high_resolution_clock::now();
 
-        CellEngineMeasureTimeData::ExecutionDurationTimeForCopyingParticlesToGraphicMemory2 += chrono::duration(stop_time113 - start_time113);
+        CellEngineMeasureTimeData::ExecutionDurationTimeForComputationsOfParticlesInGPUInComputeShader += chrono::duration(stop_time113 - start_time113);
 
-                                                                                                                        glBindFramebuffer(GL_FRAMEBUFFER, FrameBufferObject);
+        glBindFramebuffer(GL_FRAMEBUFFER, FrameBufferObject);
 
         const vmath::vec3 BackgroundColor = CellEngineConfigDataObject.BackgroundColors[CellEngineConfigDataObject.ChosenBackgroundColor];
         glClearColor(BackgroundColor.data[0], BackgroundColor.data[1], BackgroundColor.data[2], 0.0f);
 
-                                                                                                                        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-                                                                                                                        constexpr GLuint ClearValue = 0xFFFFFFFF;
-                                                                                                                        glClearTexImage(ScreenBufferInstanceTexture, 0, GL_RED_INTEGER, GL_UNSIGNED_INT, &ClearValue);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-                                                                                                                        glEnable(GL_DEPTH_TEST);
-                                                                                                                        glDepthFunc(GL_LESS);
+        constexpr GLuint ClearValue = 0xFFFFFFFF;
+        glClearTexImage(ScreenBufferInstanceTexture, 0, GL_RED_INTEGER, GL_UNSIGNED_INT, &ClearValue);
 
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
 
         if (CellEngineConfigDataObject.DrawBondsBetweenAtoms == true)
         {
-            if (DrawBondsOnePragmaVersion == true)
+            if constexpr (DrawBondsOnePragmaVersion == true)
                 DrawAllFoundBondsBetweenAtoms(LinesVertexes[0], ViewMatrix);
             else
                 for (UnsignedInt LinesVertexesThreadIndex = 0; LinesVertexesThreadIndex < LinesVertexes.size(); LinesVertexesThreadIndex++)
                     if (LinesVertexes[LinesVertexesThreadIndex].empty() == false)
                         DrawAllFoundBondsBetweenAtoms(LinesVertexes[LinesVertexesThreadIndex], ViewMatrix);
         }
-
-
 
         const auto start_time1 = chrono::high_resolution_clock::now();
 
@@ -754,37 +734,33 @@ void CellEngineOpenGLVisualiser::ComputeInShaderCopyParticlesAndAtomsDataToGPUMe
             }
         }
 
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
-                                                                                                                        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+        glReadBuffer(GL_COLOR_ATTACHMENT0);
 
-                                                                                                                        glReadBuffer(GL_COLOR_ATTACHMENT0);
-
-                                                                                                                        glBlitFramebuffer(0, 0, Info.WindowWidth, Info.WindowHeight, 0, 0, Info.WindowWidth, Info.WindowHeight, GL_COLOR_BUFFER_BIT,GL_LINEAR);
+        glBlitFramebuffer(0, 0, Info.WindowWidth, Info.WindowHeight, 0, 0, Info.WindowWidth, Info.WindowHeight, GL_COLOR_BUFFER_BIT,GL_LINEAR);
 
         const auto stop_time1 = chrono::high_resolution_clock::now();
 
-        CellEngineMeasureTimeData::ExecutionDurationTimeForCopyingParticlesToGraphicMemory += chrono::duration(stop_time1 - start_time1);
+        CellEngineMeasureTimeData::ExecutionDurationTimeForDrawingParticles += chrono::duration(stop_time1 - start_time1);
 
+        if (CellEngineConfigDataObject.ShowDetailsOfPickedAtomParticle == true)
+        {
+            uint32_t ClickedObjectID = 0xFFFFFFFF;
 
+            glBindFramebuffer(GL_READ_FRAMEBUFFER, FrameBufferObject);
+            glReadBuffer(GL_COLOR_ATTACHMENT1);
 
-                                                                                                                        if (CellEngineConfigDataObject.ShowDetailsOfPickedAtomParticle == true)
-                                                                                                                        {
-                                                                                                                            uint32_t ClickedObjectID = 0xFFFFFFFF;
+            glReadPixels(static_cast<GLint>(MousePositionLocal.s.X), static_cast<GLint>(static_cast<float>(Info.WindowHeight) - MousePositionLocal.s.Y - 1), 1, 1, GL_RED_INTEGER, GL_UNSIGNED_INT, &ClickedObjectID);
 
-                                                                                                                            glBindFramebuffer(GL_READ_FRAMEBUFFER, FrameBufferObject);
-                                                                                                                            glReadBuffer(GL_COLOR_ATTACHMENT1);
+            glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
 
-                                                                                                                            glReadPixels(static_cast<GLint>(MousePositionLocal.s.X), static_cast<GLint>(static_cast<float>(Info.WindowHeight) - MousePositionLocal.s.Y - 1), 1, 1, GL_RED_INTEGER, GL_UNSIGNED_INT, &ClickedObjectID);
+            if (PressedRightMouseButton != 1)
+                DrawChosenAtomUsingStencilBuffer1(ClickedObjectID);
 
-                                                                                                                            glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
-
-                                                                                                                            if (PressedRightMouseButton != 1)
-                                                                                                                                DrawChosenAtomUsingStencilBuffer1(ClickedObjectID);
-
-                                                                                                                            if constexpr(LogAdditionalInformationAboutMousePositionAndScreenSize == true)
-                                                                                                                                LoggersManagerObject.Log(STREAM("C=" << MousePositionLocal.s.X << " " << MousePositionLocal.s.Y << " " << Info.WindowWidth << " " << Info.WindowHeight << " " << ClickedObjectID));
-                                                                                                                        }
-
+            if constexpr(LogAdditionalInformationAboutMousePositionAndScreenSize == true)
+                LoggersManagerObject.Log(STREAM("C=" << MousePositionLocal.s.X << " " << MousePositionLocal.s.Y << " " << Info.WindowWidth << " " << Info.WindowHeight << " " << ClickedObjectID));
+        }
     }
     CATCH("compute in shader and copy particles and atoms data to gpu memory and render")
 }
@@ -813,8 +789,7 @@ void CellEngineOpenGLVisualiser::Render(double CurrentTime)
         AtomOffsetTotal = 0;
         AtomLocalOffsetTotal = 0;
 
-
-        if (DrawBondsOnePragmaVersion == true)
+        if constexpr (DrawBondsOnePragmaVersion == true)
             LinesPositions.clear();
         else
             for (auto& LinesVertexesThread : LinesVertexes)
@@ -874,6 +849,8 @@ void CellEngineOpenGLVisualiser::PrintAtomDescriptionOnScreen(CellEngineAtom& Ch
         CellEngineUseful::AtomDescriptionTextsObject.Texts[3] = "Entity Name = [" + GetEntityName(ChosenParticleObject1.EntityId) + "]";
         CellEngineUseful::AtomDescriptionTextsObject.Texts[4] = "Gen Index = [" + to_string(ChosenParticleObject1.GenomeIndex) + "]";
         CellEngineUseful::AtomDescriptionTextsObject.Texts[5] = "Gen Index Prev = [" + to_string(ChosenParticleObject1.GenomeIndexPrev) + "] Gen Index Next = [" + to_string(ChosenParticleObject1.GenomeIndexNext) + "]";
+        CellEngineUseful::AtomDescriptionTextsObject.Texts[6] = "Particle Individual Index = [" + to_string(ChosenParticleObject1.Index) + "]";
+
         LocalTextStr += " " + CellEngineUseful::AtomDescriptionTextsObject.Texts[1] + " " + CellEngineUseful::AtomDescriptionTextsObject.Texts[2] + " " + CellEngineUseful::AtomDescriptionTextsObject.Texts[3];
 
         if (CellEngineConfigDataObject.PrintAtomDescriptionOnScreen == true)

@@ -8,7 +8,7 @@
 
 namespace sb7
 {
-    GraphicObject::GraphicObject() : DataBuffer(0), IndexType(0), VAO(0)
+    GraphicObject::GraphicObject() : DataBuffer(0), VAO(0), IndexType(0)
     {
     }
 
@@ -32,9 +32,9 @@ namespace sb7
         const auto Header = reinterpret_cast<SB6M_HEADER*>(Ptr);
         Ptr += Header->Size;
 
+        const SB6M_CHUNK_VERTEX_DATA* VertexDataChunk = nullptr;
+        const SB6M_CHUNK_INDEX_DATA* IndexDataChunk = nullptr;
         SB6M_VERTEX_ATTRIB_CHUNK* VertexAttribChunk = nullptr;
-        SB6M_CHUNK_VERTEX_DATA* VertexDataChunk = nullptr;
-        SB6M_CHUNK_INDEX_DATA* IndexDataChunk = nullptr;
         SB6M_CHUNK_SUB_OBJECT_LIST* SubGraphicObjectChunk = nullptr;
         SB6M_DATA_CHUNK* DataChunk = nullptr;
 
@@ -89,8 +89,8 @@ namespace sb7
 
         for (unsigned int attrib_index = 0; attrib_index < VertexAttribChunk->AttribCount; attrib_index++)
         {
-            SB6M_VERTEX_ATTRIB_DECL &attrib_decl = VertexAttribChunk->AttribData[attrib_index];
-            glVertexAttribPointer(attrib_index, static_cast<GLint>(attrib_decl.Size), attrib_decl.Type, attrib_decl.Flags & SB6M_VERTEX_ATTRIB_FLAG_NORMALIZED ? GL_TRUE : GL_FALSE, static_cast<GLsizei>(attrib_decl.Stride), (GLvoid*)(uintptr_t)attrib_decl.DataOffset);
+            const SB6M_VERTEX_ATTRIB_DECL &attrib_decl = VertexAttribChunk->AttribData[attrib_index];
+            glVertexAttribPointer(attrib_index, static_cast<GLint>(attrib_decl.Size), attrib_decl.Type, attrib_decl.Flags & SB6M_VERTEX_ATTRIB_FLAG_NORMALIZED ? GL_TRUE : GL_FALSE, static_cast<GLsizei>(attrib_decl.Stride), reinterpret_cast<GLvoid*>(static_cast<uintptr_t>(attrib_decl.DataOffset)));
             glEnableVertexAttribArray(attrib_index);
         }
 

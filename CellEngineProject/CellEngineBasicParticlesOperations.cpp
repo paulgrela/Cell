@@ -132,7 +132,7 @@ void CellEngineBasicParticlesOperations::GetMinMaxCoordinatesForParticle(Particl
         T YSizeDiv2 = (ParticleYMax - ParticleYMin) / 2;
         T ZSizeDiv2 = (ParticleZMax - ParticleZMin) / 2;
 
-                                                                                                                        const auto LocalCenter = ParticleObject.Center;
+        const auto LocalCenter = ParticleObject.Center;
 
         ParticleObject.Radius = max({ XSizeDiv2, YSizeDiv2, ZSizeDiv2 });
         ParticleObject.SetCenterCoordinates(ParticleXMin + XSizeDiv2, ParticleYMin + YSizeDiv2, ParticleZMin + ZSizeDiv2);
@@ -140,7 +140,7 @@ void CellEngineBasicParticlesOperations::GetMinMaxCoordinatesForParticle(Particl
         if (UpdateParticleKindListOfElementsBool == true)
             UpdateParticleKindListOfElements<T, A>(ParticleObject, ListOfElements, ListOfElementsOfParticleKind, ParticleXMin, ParticleXMax, ParticleYMin, ParticleYMax, ParticleZMin, ParticleZMax, XSizeDiv2, YSizeDiv2, ZSizeDiv2);
 
-                                                                                                                        ParticleObject.Center = LocalCenter;
+        ParticleObject.Center = LocalCenter;
     }
     CATCH("getting min max coordinates for one particle")
 }

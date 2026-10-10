@@ -91,8 +91,8 @@ protected:
     {
         try
         {
-            for (const auto &VoxelOfParticle: ListOfVoxels)
-                if (GetSpaceVoxel(VoxelOfParticle.X + VectorX, VoxelOfParticle.Y + VectorY, VoxelOfParticle.Z + VectorZ) != GetZeroSimulationSpaceVoxel() || !(VoxelOfParticle.X + VectorX >= SimulationSpaceSectorBoundsObjectParam.StartXPos && VoxelOfParticle.X + VectorX < SimulationSpaceSectorBoundsObjectParam.StartXPos + SimulationSpaceSectorBoundsObjectParam.SizeX && VoxelOfParticle.Y + VectorY >= SimulationSpaceSectorBoundsObjectParam.StartYPos && VoxelOfParticle.Y + VectorY < SimulationSpaceSectorBoundsObjectParam.StartYPos + SimulationSpaceSectorBoundsObjectParam.SizeY && VoxelOfParticle.Z + VectorZ >= SimulationSpaceSectorBoundsObjectParam.StartZPos && VoxelOfParticle.Z + VectorZ < SimulationSpaceSectorBoundsObjectParam.StartZPos + SimulationSpaceSectorBoundsObjectParam.SizeZ))
+            for (const auto &VoxelOfParticle : ListOfVoxels)
+                if (GetSpaceVoxel(VoxelOfParticle.X + VectorX, VoxelOfParticle.Y + VectorY, VoxelOfParticle.Z + VectorZ) != GetZeroSimulationSpaceVoxel() || !(static_cast<RealType>(VoxelOfParticle.X + VectorX) >= SimulationSpaceSectorBoundsObjectParam.StartXPos && static_cast<RealType>(VoxelOfParticle.X + VectorX) < SimulationSpaceSectorBoundsObjectParam.StartXPos + SimulationSpaceSectorBoundsObjectParam.SizeX && static_cast<RealType>(VoxelOfParticle.Y + VectorY) >= SimulationSpaceSectorBoundsObjectParam.StartYPos && static_cast<RealType>(VoxelOfParticle.Y + VectorY) < SimulationSpaceSectorBoundsObjectParam.StartYPos + SimulationSpaceSectorBoundsObjectParam.SizeY && static_cast<RealType>(VoxelOfParticle.Z + VectorZ) >= SimulationSpaceSectorBoundsObjectParam.StartZPos && static_cast<RealType>(VoxelOfParticle.Z + VectorZ) < SimulationSpaceSectorBoundsObjectParam.StartZPos + SimulationSpaceSectorBoundsObjectParam.SizeZ))
                     return false;
         }
         CATCH("checking free space for list of voxels")

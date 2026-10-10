@@ -296,6 +296,8 @@ public:
     bool RNAInOneParticle = true;
 public:
     bool ReverseReactantsAndProductsBecauseOfFormerErrorBool = true;
+public:
+    bool UseNewerAutinNamesToAssociateWithIllinoisNames = false;
 };
 
 inline CellEngineConfigData CellEngineConfigDataObject;

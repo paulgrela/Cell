@@ -64,7 +64,7 @@ CellEngineAtom CellEngineCIFDataFileReader::ParseRecord(const char* LocalCIFReco
     return CellEngineAtomObject;
 }
 
-void CopyFieldsToMatrix(TransformationMatrix3x4& TransformationMatrix3x4Object, const vector<string>& MatrixFields)
+static void CopyFieldsToMatrix(TransformationMatrix3x4& TransformationMatrix3x4Object, const vector<string>& MatrixFields)
 {
     try
     {
@@ -85,7 +85,7 @@ void CopyFieldsToMatrix(TransformationMatrix3x4& TransformationMatrix3x4Object, 
     CATCH("copying fields to matrix")
 }
 
-glm::vec3 CountResultPositionsFromTransformationMatrix(const MainMapType<UnsignedInt, TransformationMatrix3x4>::iterator& TransformationMatrixIterator, const CellEngineAtom& AppliedAtom)
+static glm::vec3 CountResultPositionsFromTransformationMatrix(const MainMapType<UnsignedInt, TransformationMatrix3x4>::iterator& TransformationMatrixIterator, const CellEngineAtom& AppliedAtom)
 {
     glm::vec3 Result{};
 
@@ -112,7 +112,7 @@ glm::vec3 CountResultPositionsFromTransformationMatrix(const MainMapType<Unsigne
     return Result;
 }
 
-void AssociateAutinNameWithIllinoisName(MainMapType<string, string>& AutinIllinoisNamesMap)
+static void AssociateAutinNameWithIllinoisName(MainMapType<string, string>& AutinIllinoisNamesMap)
 {
     AutinIllinoisNamesMap["'root.syn3A.interior.proteins.DNA'"] = "DNANucleotide";
     AutinIllinoisNamesMap["'root.syn3A.interior.proteins.RNA'"] = "RNANucleotide";
@@ -141,7 +141,7 @@ void AssociateAutinNameWithIllinoisName(MainMapType<string, string>& AutinIllino
     AutinIllinoisNamesMap["'root.syn3A.interior.proteins.ASP_tRNASYNTH'"] = "JCVISYN3A_0287";
 }
 
-void NEWAssociateAutinNameWithIllinoisName(MainMapType<string, string>& AutinIllinoisNamesMap)
+static void NEWAssociateAutinNameWithIllinoisName(MainMapType<string, string>& AutinIllinoisNamesMap)
 {
     AutinIllinoisNamesMap["'genome'"] = "DNANucleotide";
     AutinIllinoisNamesMap["'RNA_messenger'"] = "RNANucleotide";
@@ -170,7 +170,7 @@ void NEWAssociateAutinNameWithIllinoisName(MainMapType<string, string>& AutinIll
     AutinIllinoisNamesMap["'Aspartate--tRNA ligase-JCVISYN3A_0287'"] = "JCVISYN3A_0287";
 }
 
-EntityIdInt GetParticleKindIdFromGeneIdOrName(const string& ParticleKindName, const EntityIdInt ParticleKindIdParam, const MainMapType<EntityIdInt, UniqueIdUnsignedInt>& ProteinIdFromGeneIdTranslator, const MainMapType<string, string>& AutinIllinoisNameMap)
+static EntityIdInt GetParticleKindIdFromGeneIdOrName(const string& ParticleKindName, const EntityIdInt ParticleKindIdParam, const MainMapType<EntityIdInt, UniqueIdUnsignedInt>& ProteinIdFromGeneIdTranslator, const MainMapType<string, string>& AutinIllinoisNameMap)
 {
     static EntityIdInt LastParticleKindId = 0;
 
@@ -194,22 +194,22 @@ EntityIdInt GetParticleKindIdFromGeneIdOrName(const string& ParticleKindName, co
     return ParticlesKindsManagerObject.GetParticleKindFromStrId("UnknownParticleKind")->EntityId;
 }
 
-void AddParticleKindGraphicDataFromConfigXMLData(const EntityIdInt EntityId)
+static void AddParticleKindGraphicDataFromConfigXMLData(const EntityIdInt EntityId)
 {
     try
     {
         if (const auto ParticleKindObjectIterator = ParticlesKindsManagerObject.GraphicParticlesKindsFromConfigXML.find(EntityId); ParticleKindObjectIterator == ParticlesKindsManagerObject.GraphicParticlesKindsFromConfigXML.end())
         {
             const auto OthersParticleKindObjectIterator = ParticlesKindsManagerObject.GraphicParticlesKindsFromConfigXML.find(10000);
-            ParticlesKindsManagerObject.ParticlesKinds[EntityId].GraphicData = ParticleKindGraphicData{ EntityId, OthersParticleKindObjectIterator->second.Visible, false, OthersParticleKindObjectIterator->second.SizeX, OthersParticleKindObjectIterator->second.SizeY, OthersParticleKindObjectIterator->second.SizeZ, OthersParticleKindObjectIterator->second.ParticleColor, OthersParticleKindObjectIterator->second.ParticleColor, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), OthersParticleKindObjectIterator->second.NameFromXML, "NAME_FROM_DATA_FILE" };
+            ParticlesKindsManagerObject.ParticlesKinds[EntityId].GraphicData = ParticleKindGraphicData{ .EntityId = EntityId, .Visible = OthersParticleKindObjectIterator->second.Visible, .Selected = false, .SizeX = OthersParticleKindObjectIterator->second.SizeX, .SizeY = OthersParticleKindObjectIterator->second.SizeY, .SizeZ = OthersParticleKindObjectIterator->second.SizeZ, .AtomColor = OthersParticleKindObjectIterator->second.ParticleColor, .ParticleColor = OthersParticleKindObjectIterator->second.ParticleColor, .RandomParticleColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), .NameFromXML = OthersParticleKindObjectIterator->second.NameFromXML, .NameFromDataFile = "NAME_FROM_DATA_FILE" };
         }
         else
-            ParticlesKindsManagerObject.ParticlesKinds[EntityId].GraphicData = ParticleKindGraphicData{ EntityId, ParticleKindObjectIterator->second.Visible, false, ParticleKindObjectIterator->second.SizeX, ParticleKindObjectIterator->second.SizeY, ParticleKindObjectIterator->second.SizeZ, ParticleKindObjectIterator->second.ParticleColor, ParticleKindObjectIterator->second.ParticleColor, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), ParticleKindObjectIterator->second.NameFromXML, "NAME_FROM_DATA_FILE"};
+            ParticlesKindsManagerObject.ParticlesKinds[EntityId].GraphicData = ParticleKindGraphicData{ .EntityId = EntityId, .Visible = ParticleKindObjectIterator->second.Visible, .Selected = false, .SizeX = ParticleKindObjectIterator->second.SizeX, .SizeY = ParticleKindObjectIterator->second.SizeY, .SizeZ = ParticleKindObjectIterator->second.SizeZ, .AtomColor = ParticleKindObjectIterator->second.ParticleColor, .ParticleColor = ParticleKindObjectIterator->second.ParticleColor, .RandomParticleColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), .NameFromXML = ParticleKindObjectIterator->second.NameFromXML, .NameFromDataFile = "NAME_FROM_DATA_FILE"};
     }
     CATCH("adding particle kind graphic data from xml config data")
 }
 
-vector3_Real32 CountCenterForListOfAtoms(const vector<CellEngineAtom>& ListOfAtoms)
+static vector3_Real32 CountCenterForListOfAtoms(const vector<CellEngineAtom>& ListOfAtoms)
 {
     vmath::vec3 CenterOfParticle(0.0, 0.0, 0.0);
 
@@ -220,7 +220,7 @@ vector3_Real32 CountCenterForListOfAtoms(const vector<CellEngineAtom>& ListOfAto
     }
     CATCH("counting center for list of atoms")
 
-    return { CenterOfParticle.X() / static_cast<RealType>(ListOfAtoms.size()), CenterOfParticle.Y() / static_cast<RealType>(ListOfAtoms.size()), CenterOfParticle.Z() / static_cast<RealType>(ListOfAtoms.size()) };
+    return { .X = CenterOfParticle.X() / static_cast<RealType>(ListOfAtoms.size()), .Y = CenterOfParticle.Y() / static_cast<RealType>(ListOfAtoms.size()), .Z = CenterOfParticle.Z() / static_cast<RealType>(ListOfAtoms.size()) };
 }
 
 void CellEngineCIFDataFileReader::ReadDataFromCIFFile(const bool SetStartValuesBool)
@@ -239,8 +239,10 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile(const bool SetStartValuesB
 
         MainMapType<string, string> AutinIllinoisNamesMap;
 
-        AssociateAutinNameWithIllinoisName(AutinIllinoisNamesMap);
-        //NEWAssociateAutinNameWithIllinoisName(AutinIllinoisNamesMap);
+        if (CellEngineConfigDataObject.UseNewerAutinNamesToAssociateWithIllinoisNames == false)
+            AssociateAutinNameWithIllinoisName(AutinIllinoisNamesMap);
+        else
+            NEWAssociateAutinNameWithIllinoisName(AutinIllinoisNamesMap);
 
         MainMapType<EntityIdInt, UniqueIdUnsignedInt> ProteinIdFromGeneIdTranslator;
         MainMapType<EntityIdInt, string> ParticleAutinKindIdToAutinNameTranslator;

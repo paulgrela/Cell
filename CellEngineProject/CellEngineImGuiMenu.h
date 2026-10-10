@@ -304,6 +304,7 @@ public:
                     ImGui::Text("%s", string(CellEngineUseful::AtomDescriptionTextsObject.Texts[0] + " " + CellEngineUseful::AtomDescriptionTextsObject.Texts[1]).c_str());
                     ImGui::Text("%s", string(CellEngineUseful::AtomDescriptionTextsObject.Texts[2] + " " + CellEngineUseful::AtomDescriptionTextsObject.Texts[3]).c_str());
                     ImGui::Text("%s", string(CellEngineUseful::AtomDescriptionTextsObject.Texts[4] + " " + CellEngineUseful::AtomDescriptionTextsObject.Texts[5]).c_str());
+                    ImGui::Text("%s", string(CellEngineUseful::AtomDescriptionTextsObject.Texts[6]).c_str());
                 }
             }
         }
@@ -320,38 +321,30 @@ public:
 
                 ImGui::Text("%s", CellEngineConfigDataObject.TimeParametersOfRenderingStr.c_str());
 
-                ImGui::Text("%s", GetDurationTimeInOneLine(CellEngineMeasureTimeData::ExecutionDurationTimeForDrawingParticles, "A=", "E").c_str());
+                ImGui::Text("%s", GetDurationTimeInOneLine(CellEngineMeasureTimeData::ExecutionDurationTimeForComputingViewAndModelMatrixesForDrawingParticles, "A=", "E").c_str());
+                CellEngineMeasureTimeData::ExecutionDurationTimeForComputingViewAndModelMatrixesForDrawingParticles = std::chrono::seconds::zero();
+                ImGui::Text("%s", GetDurationTimeInOneLine(CellEngineMeasureTimeData::ExecutionDurationTimeForComputingViewAndModelMatrixesAndVisibilityForDrawingParticles, "B=", "E").c_str());
+                CellEngineMeasureTimeData::ExecutionDurationTimeForComputingViewAndModelMatrixesAndVisibilityForDrawingParticles = std::chrono::seconds::zero();
+
+                ImGui::Text("%s", GetDurationTimeInOneLine(CellEngineMeasureTimeData::ExecutionDurationTimeForDrawingParticles, "M=", "E").c_str());
                 CellEngineMeasureTimeData::ExecutionDurationTimeForDrawingParticles = std::chrono::seconds::zero();
-                ImGui::Text("%s", GetDurationTimeInOneLine(CellEngineMeasureTimeData::ExecutionDurationTimeForPreparingParticles, "B=", "E").c_str());
-                CellEngineMeasureTimeData::ExecutionDurationTimeForPreparingParticles = std::chrono::seconds::zero();
-                ImGui::Text("%s", GetDurationTimeInOneLine(CellEngineMeasureTimeData::ExecutionDurationTimeForTotalPreparingParticles, "C=", "E").c_str());
-                CellEngineMeasureTimeData::ExecutionDurationTimeForTotalPreparingParticles = std::chrono::seconds::zero();
-                ImGui::Text("%s", GetDurationTimeInOneLine(CellEngineMeasureTimeData::ExecutionDurationTimeForCheckingPreparingParticles, "D=", "E").c_str());
-                CellEngineMeasureTimeData::ExecutionDurationTimeForCheckingPreparingParticles = std::chrono::seconds::zero();
-                ImGui::Text("%s", GetDurationTimeInOneLine(CellEngineMeasureTimeData::ExecutionDurationTimeForCheckingPreparingParticles2, "E=", "E").c_str());
-                CellEngineMeasureTimeData::ExecutionDurationTimeForCheckingPreparingParticles2 = std::chrono::seconds::zero();
-                ImGui::Text("%s", GetDurationTimeInOneLine(CellEngineMeasureTimeData::ExecutionDurationTimeForCheckingPreparingParticles3, "F=", "E").c_str());
-                CellEngineMeasureTimeData::ExecutionDurationTimeForCheckingPreparingParticles3 = std::chrono::seconds::zero();
+                ImGui::Text("%s", GetDurationTimeInOneLine(CellEngineMeasureTimeData::ExecutionDurationTimeForPreparingParticlesForDrawingByCPUComputationsPhase1, "N=", "E").c_str());
+                CellEngineMeasureTimeData::ExecutionDurationTimeForPreparingParticlesForDrawingByCPUComputationsPhase1 = std::chrono::seconds::zero();
 
-                ImGui::Text("%s", GetDurationTimeInOneLine(CellEngineMeasureTimeData::ExecutionDurationTimeForCopyingParticlesToGraphicMemory, "M=", "E").c_str());
-                CellEngineMeasureTimeData::ExecutionDurationTimeForCopyingParticlesToGraphicMemory = std::chrono::seconds::zero();
-                ImGui::Text("%s", GetDurationTimeInOneLine(CellEngineMeasureTimeData::ExecutionDurationTimeForCopyingParticlesToGraphicMemory0, "N=", "E").c_str());
-                CellEngineMeasureTimeData::ExecutionDurationTimeForCopyingParticlesToGraphicMemory0 = std::chrono::seconds::zero();
+                ImGui::Text("%s", GetDurationTimeInOneLine(CellEngineMeasureTimeData::ExecutionDurationTimeForCopyingParticlesAndAtomsToGraphicMemoryForComputations, "K=", "E").c_str());
+                CellEngineMeasureTimeData::ExecutionDurationTimeForCopyingParticlesAndAtomsToGraphicMemoryForComputations = std::chrono::seconds::zero();
+                ImGui::Text("%s", GetDurationTimeInOneLine(CellEngineMeasureTimeData::ExecutionDurationTimeForComputationsOfParticlesInGPUInComputeShader, "L=", "E").c_str());
+                CellEngineMeasureTimeData::ExecutionDurationTimeForComputationsOfParticlesInGPUInComputeShader = std::chrono::seconds::zero();
 
-                ImGui::Text("%s", GetDurationTimeInOneLine(CellEngineMeasureTimeData::ExecutionDurationTimeForCopyingParticlesToGraphicMemory1, "K=", "E").c_str());
-                CellEngineMeasureTimeData::ExecutionDurationTimeForCopyingParticlesToGraphicMemory1 = std::chrono::seconds::zero();
-                ImGui::Text("%s", GetDurationTimeInOneLine(CellEngineMeasureTimeData::ExecutionDurationTimeForCopyingParticlesToGraphicMemory2, "L=", "E").c_str());
-                CellEngineMeasureTimeData::ExecutionDurationTimeForCopyingParticlesToGraphicMemory2 = std::chrono::seconds::zero();
+                ImGui::Text("%s", GetDurationTimeInOneLine(CellEngineMeasureTimeData::ExecutionDurationTimeForDrawingImGuiMenu, "L1=", "E").c_str());
+                CellEngineMeasureTimeData::ExecutionDurationTimeForDrawingImGuiMenu = std::chrono::seconds::zero();
+                ImGui::Text("%s", GetDurationTimeInOneLine(CellEngineMeasureTimeData::ExecutionDurationTimeForSwapingGraphicBuffersForDrawingParticles, "L2=", "E").c_str());
+                CellEngineMeasureTimeData::ExecutionDurationTimeForSwapingGraphicBuffersForDrawingParticles = std::chrono::seconds::zero();
+                ImGui::Text("%s", GetDurationTimeInOneLine(CellEngineMeasureTimeData::ExecutionDurationTimeForDrawingParticlesWithSwapingGraphicBuffers, "L3=", "E").c_str());
+                CellEngineMeasureTimeData::ExecutionDurationTimeForDrawingParticlesWithSwapingGraphicBuffers = std::chrono::seconds::zero();
 
-                ImGui::Text("%s", GetDurationTimeInOneLine(CellEngineMeasureTimeData::ExecutionDurationTimeForCopyingParticlesToGraphicMemory21, "L1=", "E").c_str());
-                CellEngineMeasureTimeData::ExecutionDurationTimeForCopyingParticlesToGraphicMemory21 = std::chrono::seconds::zero();
-                ImGui::Text("%s", GetDurationTimeInOneLine(CellEngineMeasureTimeData::ExecutionDurationTimeForCopyingParticlesToGraphicMemory22, "L2=", "E").c_str());
-                CellEngineMeasureTimeData::ExecutionDurationTimeForCopyingParticlesToGraphicMemory22 = std::chrono::seconds::zero();
-                ImGui::Text("%s", GetDurationTimeInOneLine(CellEngineMeasureTimeData::ExecutionDurationTimeForCopyingParticlesToGraphicMemory23, "L3=", "E").c_str());
-                CellEngineMeasureTimeData::ExecutionDurationTimeForCopyingParticlesToGraphicMemory23 = std::chrono::seconds::zero();
-
-                ImGui::Text("%s", GetDurationTimeInOneLine(CellEngineMeasureTimeData::ExecutionDurationTimeForCopyingParticlesToGraphicMemory3, "O=", "E").c_str());
-                CellEngineMeasureTimeData::ExecutionDurationTimeForCopyingParticlesToGraphicMemory3 = std::chrono::seconds::zero();
+                ImGui::Text("%s", GetDurationTimeInOneLine(CellEngineMeasureTimeData::ExecutionDurationTimeForPreparingParticlesForDrawingByCPUComputationsPhase2, "O=", "E").c_str());
+                CellEngineMeasureTimeData::ExecutionDurationTimeForPreparingParticlesForDrawingByCPUComputationsPhase2 = std::chrono::seconds::zero();
 
                 ImGui::Text("%s", CellEngineConfigDataObject.NumberOfRenderedAtomsParametersOfRenderingStr.c_str());
                 ImGui::Checkbox("Log parameters of rendering to file", &CellEngineConfigDataObject.LogParametersOfRenderingToFile);
@@ -1801,7 +1794,8 @@ public:
 
                                                                                                                         auto stop_time119 = chrono::high_resolution_clock::now();
 
-                                                                                                                        CellEngineMeasureTimeData::ExecutionDurationTimeForCopyingParticlesToGraphicMemory21 += chrono::duration(stop_time119 - start_time119);
+                                                                                                                        CellEngineMeasureTimeData::ExecutionDurationTimeForDrawingImGuiMenu += chrono::duration(stop_time119 - start_time119);
+
                                                                                                                         DEBUGLOG(LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time119, stop_time119, "Time of one frame 1 = ", "Exception in measuring time")));)
 
 
@@ -1810,7 +1804,8 @@ public:
                 glfwSwapBuffers(ImGuiMenuWindow);
                                                                                                                         stop_time119 = chrono::high_resolution_clock::now();
 
-                                                                                                                        CellEngineMeasureTimeData::ExecutionDurationTimeForCopyingParticlesToGraphicMemory22 += chrono::duration(stop_time119 - start_time119);
+                                                                                                                        CellEngineMeasureTimeData::ExecutionDurationTimeForSwapingGraphicBuffersForDrawingParticles += chrono::duration(stop_time119 - start_time119);
+
                                                                                                                         DEBUGLOG(LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time119, stop_time119, "Time of one frame 2 = ", "Exception in measuring time")));)
 
                                                                                                                         //const auto start_time119 = chrono::high_resolution_clock::now();
@@ -1833,7 +1828,7 @@ public:
                                                                                                                         //const auto stop_time119 = chrono::high_resolution_clock::now();
                                                                                                                         stop_time119 = chrono::high_resolution_clock::now();
 
-                                                                                                                        CellEngineMeasureTimeData::ExecutionDurationTimeForCopyingParticlesToGraphicMemory23 += chrono::duration(stop_time119 - start_time119);
+                                                                                                                        CellEngineMeasureTimeData::ExecutionDurationTimeForDrawingParticlesWithSwapingGraphicBuffers += chrono::duration(stop_time119 - start_time119);
                                                                                                                         DEBUGLOG(LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time119, stop_time119, "Time of one frame 3 = ", "Exception in measuring time")));)
 
 

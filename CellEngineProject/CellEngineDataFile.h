@@ -66,31 +66,28 @@ public:
     {
     }
 public:
-    vmath::vec3 GetCenterForAllParticles()
+    [[nodiscard]] vmath::vec3 GetCenterForAllParticles()
     {
         vmath::vec3 Center(0.0, 0.0, 0.0);
 
         try
         {
-            FOR_EACH_PARTICLE_IN_SECTORS_XYZ
-            {
-                vmath::vec3 CenterOfParticle(0.0, 0.0, 0.0);
-
-                for (const CellEngineAtom& AtomObject : ParticleObject.second.ListOfAtoms)
-                    CenterOfParticle += AtomObject.Position();
-
-                ParticleObject.second.Center = { CenterOfParticle.X() / static_cast<float>(ParticleObject.second.ListOfAtoms.size()), CenterOfParticle.Y() / static_cast<float>(ParticleObject.second.ListOfAtoms.size()), CenterOfParticle.Z() / static_cast<float>(ParticleObject.second.ListOfAtoms.size()) };
-            }
-
             float NumberOfParticles = 0;
-            FOR_EACH_PARTICLE_IN_SECTORS_XYZ
-            {
-                ParticleObject.second.OrderInParticleIndex = static_cast<UnsignedInt>(NumberOfParticles);
 
-                Center += vmath::vec3{ ParticleObject.second.Center.X, ParticleObject.second.Center.Y, ParticleObject.second.Center.Z };
+            FOR_EACH_SECTOR_IN_XYZ_ONLY
+                for (auto& ParticleObject : Particles[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles | views::values)
+                {
+                    ParticleObject.OrderInParticleIndex = static_cast<UnsignedInt>(NumberOfParticles);
 
-                NumberOfParticles++;
-            }
+                    vmath::vec3 CenterOfParticle(0.0, 0.0, 0.0);
+
+                    for (const CellEngineAtom& AtomObject : ParticleObject.ListOfAtoms)
+                        CenterOfParticle += AtomObject.Position();
+
+                    Center += vmath::vec3{ CenterOfParticle.X() / static_cast<float>(ParticleObject.ListOfAtoms.size()), CenterOfParticle.Y() / static_cast<float>(ParticleObject.ListOfAtoms.size()), CenterOfParticle.Z() / static_cast<float>(ParticleObject.ListOfAtoms.size()) };
+
+                    NumberOfParticles++;
+                }
 
             Center /= NumberOfParticles;
         }

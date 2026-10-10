@@ -321,7 +321,7 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSpace(const vmath::
 
             const auto stop_time111 = chrono::high_resolution_clock::now();
 
-            CellEngineMeasureTimeData::ExecutionDurationTimeForCopyingParticlesToGraphicMemory0 += chrono::duration(stop_time111 - start_time111);
+            CellEngineMeasureTimeData::ExecutionDurationTimeForPreparingParticlesForDrawingByCPUComputationsPhase1 += chrono::duration(stop_time111 - start_time111);
         }
         else
         if (SpaceDrawingType == VoxelSpaceDrawingTypes::DrawVoxelSpaceFull && (CellEngineConfigDataObject.RenderCellWithParallelCPUComputing == true && CellEngineConfigDataObject.ViewPositionZ > CellEngineConfigDataObject.Distance + 700))
@@ -355,7 +355,7 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSpace(const vmath::
 
             const auto stop_time111 = chrono::high_resolution_clock::now();
 
-            CellEngineMeasureTimeData::ExecutionDurationTimeForCopyingParticlesToGraphicMemory0 += chrono::duration(stop_time111 - start_time111);
+            CellEngineMeasureTimeData::ExecutionDurationTimeForPreparingParticlesForDrawingByCPUComputationsPhase1 += chrono::duration(stop_time111 - start_time111);
 
             DEBUGLOG(LoggersManagerObject.LogOnlyToConsole(STREAM("END OF PARALLEL -> ParticlesOffsetTotal = " << ParticlesOffsetTotal << " AtomsOffsetTotal = " << AtomOffsetTotal));)
 
@@ -382,7 +382,7 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSpace(const vmath::
 
             const auto stop_time114 = chrono::high_resolution_clock::now();
 
-            CellEngineMeasureTimeData::ExecutionDurationTimeForCopyingParticlesToGraphicMemory3 += chrono::duration(stop_time114 - start_time114);
+            CellEngineMeasureTimeData::ExecutionDurationTimeForPreparingParticlesForDrawingByCPUComputationsPhase2 += chrono::duration(stop_time114 - start_time114);
         }
         else
         if (SpaceDrawingType == VoxelSpaceDrawingTypes::DrawVoxelSpaceSelected)

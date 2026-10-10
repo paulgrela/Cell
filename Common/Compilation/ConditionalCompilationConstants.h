@@ -16,4 +16,6 @@
 
 #define WELL_STIRRED
 
+#define COMPUTE_MOLECULAR_DYNAMICS_
+
 #endif

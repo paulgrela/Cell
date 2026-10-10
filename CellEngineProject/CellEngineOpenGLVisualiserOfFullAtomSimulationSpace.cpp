@@ -92,7 +92,7 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace1(const vma
 
         const auto stop_time111 = chrono::high_resolution_clock::now();
 
-        CellEngineMeasureTimeData::ExecutionDurationTimeForCopyingParticlesToGraphicMemory0 += chrono::duration(stop_time111 - start_time111);
+        CellEngineMeasureTimeData::ExecutionDurationTimeForPreparingParticlesForDrawingByCPUComputationsPhase1 += chrono::duration(stop_time111 - start_time111);
     }
     CATCH("");
 }
@@ -163,7 +163,7 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace2(const vma
 
         const auto stop_time111 = chrono::high_resolution_clock::now();
 
-        CellEngineMeasureTimeData::ExecutionDurationTimeForCopyingParticlesToGraphicMemory0 += chrono::duration(stop_time111 - start_time111);
+        CellEngineMeasureTimeData::ExecutionDurationTimeForPreparingParticlesForDrawingByCPUComputationsPhase1 += chrono::duration(stop_time111 - start_time111);
 
 
         const auto start_time114 = chrono::high_resolution_clock::now();
@@ -188,7 +188,7 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace2(const vma
 
         const auto stop_time114 = chrono::high_resolution_clock::now();
 
-        CellEngineMeasureTimeData::ExecutionDurationTimeForCopyingParticlesToGraphicMemory3 += chrono::duration(stop_time114 - start_time114);
+        CellEngineMeasureTimeData::ExecutionDurationTimeForPreparingParticlesForDrawingByCPUComputationsPhase2 += chrono::duration(stop_time114 - start_time114);
     }
     CATCH("");
 }
