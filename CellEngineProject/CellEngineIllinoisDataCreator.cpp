@@ -351,7 +351,7 @@ void CellEngineIllinoisDataCreator::ReadNewReactionsFromXMLFile(const string& Fi
 {
     try
     {
-        ParticleKindId = max_element(ParticlesKindsManagerObject.ParticlesKinds.begin(), ParticlesKindsManagerObject.ParticlesKinds.end(), [](const pair<EntityIdInt, ParticleKind>& lhs, const pair<EntityIdInt, ParticleKind>& rhs){ return lhs.first < rhs.first; })->first + 1;
+        ParticleKindId = max_element(ParticlesKindsManagerObject.ParticlesKinds.begin(), ParticlesKindsManagerObject.ParticlesKinds.end(), [](const pair<UniqueIdType, ParticleKind>& lhs, const pair<UniqueIdType, ParticleKind>& rhs){ return lhs.first < rhs.first; })->first + 1;
         ReactionId = max_element(ChemicalReactionsManagerObject.ChemicalReactionsPosFromId.begin(), ChemicalReactionsManagerObject.ChemicalReactionsPosFromId.end(), [](const pair<UnsignedInt, UnsignedInt>& lhs, const pair<UnsignedInt, UnsignedInt>& rhs){ return lhs.first < rhs.first; })->first + 1;
 
         boost::property_tree::ptree ReactionsPropertyTreeXML;
@@ -690,9 +690,9 @@ void CellEngineIllinoisDataCreator::ReadAllIllinoisDataFromFiles()
         ParticlesKindsManagerObject.ParticlesKinds.clear();
         ChemicalReactionsManagerObject.ChemicalReactions.clear();
 
-        EntityIdInt LocalDNAIdentifier = CellEngineConfigDataObject.DNAIdentifier;
+        UniqueIdType LocalDNAIdentifier = CellEngineConfigDataObject.DNAIdentifier;
         ParticlesKindsManagerObject.AddSingleParticleKind(ParticlesTypes::DNANucleotide, LocalDNAIdentifier, "DNANucleotide", "DNANucleotide", "DNA", -1, 0, "c", 1);
-        EntityIdInt LocalRNAIdentifier = CellEngineConfigDataObject.RNAIdentifier;
+        UniqueIdType LocalRNAIdentifier = CellEngineConfigDataObject.RNAIdentifier;
         ParticlesKindsManagerObject.AddSingleParticleKind(ParticlesTypes::DNANucleotide, LocalRNAIdentifier, "RNANucleotide", "RNANucleotide", "RNA", -1, 0, "c", 1);
 
         ReadAndParseGenesFile(string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("genome") + OS_DIR_SEP + string("GENES.txt"));

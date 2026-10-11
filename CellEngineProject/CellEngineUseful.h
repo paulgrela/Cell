@@ -87,71 +87,71 @@ namespace CellEngineUseful
         LoggersManagerObject.InitializePrintingParameters(CellEngineConfigDataObject.PrintLogToConsole, CellEngineConfigDataObject.PrintLogToFiles, CellEngineConfigDataObject.PrintLogLineNumberToConsole, CellEngineConfigDataObject.PrintLogDateTimeToConsole, CellEngineConfigDataObject.PrintLogProcessIdToConsole, CellEngineConfigDataObject.PrintLogProcessPriorityLevelToConsole, CellEngineConfigDataObject.PrintLogThreadIdToConsole, CellEngineConfigDataObject.PrintLogLineNumberToFile, CellEngineConfigDataObject.PrintLogDateTimeToFile, CellEngineConfigDataObject.PrintLogProcessIdToFile, CellEngineConfigDataObject.PrintLogProcessPriorityLevelToFile, CellEngineConfigDataObject.PrintLogThreadIdToFile, CellEngineConfigDataObject.MaximalNumberOfLinesInOneFile, CellEngineConfigDataObject.PrintLogToCommonFileWhenPrintLogToSpecialFile);
     }
 
-    inline bool IsRNANucleotideEqual(const EntityIdInt EntityId,  const ChainIdInt ChainId)
+    inline bool IsRNANucleotideEqual(const UniqueIdType ParticleKindId,  const ChainIdInt ChainId)
     {
-        return ((EntityId == CellEngineConfigDataObject.ATP_ID && ChainId == ACode) || (EntityId == CellEngineConfigDataObject.CTP_ID && ChainId == CCode) || (EntityId == CellEngineConfigDataObject.GTP_ID && ChainId == GCode) || (EntityId == CellEngineConfigDataObject.UTP_ID && ChainId == TCode));
+        return ((ParticleKindId == CellEngineConfigDataObject.ATP_ID && ChainId == ACode) || (ParticleKindId == CellEngineConfigDataObject.CTP_ID && ChainId == CCode) || (ParticleKindId == CellEngineConfigDataObject.GTP_ID && ChainId == GCode) || (ParticleKindId == CellEngineConfigDataObject.UTP_ID && ChainId == TCode));
     }
 
-    inline bool IsRNANucleotidePairedForRNAEqual(const EntityIdInt EntityId,  const ChainIdInt ChainId)
+    inline bool IsRNANucleotidePairedForRNAEqual(const UniqueIdType ParticleKindId,  const ChainIdInt ChainId)
     {
-        return ((EntityId == CellEngineConfigDataObject.ATP_ID && ChainId == TCode) || (EntityId == CellEngineConfigDataObject.CTP_ID && ChainId == GCode) || (EntityId == CellEngineConfigDataObject.GTP_ID && ChainId == CCode) || (EntityId == CellEngineConfigDataObject.UTP_ID && ChainId == ACode));
+        return ((ParticleKindId == CellEngineConfigDataObject.ATP_ID && ChainId == TCode) || (ParticleKindId == CellEngineConfigDataObject.CTP_ID && ChainId == GCode) || (ParticleKindId == CellEngineConfigDataObject.GTP_ID && ChainId == CCode) || (ParticleKindId == CellEngineConfigDataObject.UTP_ID && ChainId == ACode));
     }
 
-    inline bool IsFreeDNANucleotide(const EntityIdInt EntityId)
+    inline bool IsFreeDNANucleotide(const UniqueIdType ParticleKindId)
     {
-        return (EntityId == CellEngineConfigDataObject.ATP_ID || EntityId == CellEngineConfigDataObject.CTP_ID || EntityId == CellEngineConfigDataObject.GTP_ID || EntityId == CellEngineConfigDataObject.TTP_ID);
+        return (ParticleKindId == CellEngineConfigDataObject.ATP_ID || ParticleKindId == CellEngineConfigDataObject.CTP_ID || ParticleKindId == CellEngineConfigDataObject.GTP_ID || ParticleKindId == CellEngineConfigDataObject.TTP_ID);
     }
 
-    inline bool IsFreeRNANucleotide(const EntityIdInt EntityId)
+    inline bool IsFreeRNANucleotide(const UniqueIdType ParticleKindId)
     {
-        return (EntityId == CellEngineConfigDataObject.ATP_ID || EntityId == CellEngineConfigDataObject.CTP_ID || EntityId == CellEngineConfigDataObject.GTP_ID || EntityId == CellEngineConfigDataObject.UTP_ID);
+        return (ParticleKindId == CellEngineConfigDataObject.ATP_ID || ParticleKindId == CellEngineConfigDataObject.CTP_ID || ParticleKindId == CellEngineConfigDataObject.GTP_ID || ParticleKindId == CellEngineConfigDataObject.UTP_ID);
     }
 
-    inline char GetLetterFromNucleotidePairedForRNA(const EntityIdInt EntityId)
+    inline char GetLetterFromNucleotidePairedForRNA(const UniqueIdType ParticleKindId)
     {
-        if (EntityId == CellEngineConfigDataObject.ATP_ID)
+        if (ParticleKindId == CellEngineConfigDataObject.ATP_ID)
             return 'U';
-        if (EntityId == CellEngineConfigDataObject.CTP_ID)
+        if (ParticleKindId == CellEngineConfigDataObject.CTP_ID)
             return 'G';
-        if (EntityId == CellEngineConfigDataObject.GTP_ID)
+        if (ParticleKindId == CellEngineConfigDataObject.GTP_ID)
             return 'C';
-        if (EntityId == CellEngineConfigDataObject.TTP_ID)
+        if (ParticleKindId == CellEngineConfigDataObject.TTP_ID)
             return 'A';
-        if (EntityId == CellEngineConfigDataObject.UTP_ID)
+        if (ParticleKindId == CellEngineConfigDataObject.UTP_ID)
             return 'U';
 
         return 'I';
     }
 
-    inline char GetLetterFromNucleotideForDNAorRNA(const EntityIdInt EntityId)
+    inline char GetLetterFromNucleotideForDNAorRNA(const UniqueIdType ParticleKindId)
     {
-        if (EntityId == CellEngineConfigDataObject.ATP_ID)
+        if (ParticleKindId == CellEngineConfigDataObject.ATP_ID)
             return 'A';
-        if (EntityId == CellEngineConfigDataObject.CTP_ID)
+        if (ParticleKindId == CellEngineConfigDataObject.CTP_ID)
             return 'C';
-        if (EntityId == CellEngineConfigDataObject.GTP_ID)
+        if (ParticleKindId == CellEngineConfigDataObject.GTP_ID)
             return 'G';
-        if (EntityId == CellEngineConfigDataObject.TTP_ID)
+        if (ParticleKindId == CellEngineConfigDataObject.TTP_ID)
             return 'T';
-        if (EntityId == CellEngineConfigDataObject.UTP_ID)
+        if (ParticleKindId == CellEngineConfigDataObject.UTP_ID)
             return 'U';
 
         return 'I';
     }
 
-    inline bool IsDNAorRNA(const EntityIdInt EntityId)
+    inline bool IsDNAorRNA(const UniqueIdType ParticleKindId)
     {
-        return EntityId == CellEngineConfigDataObject.DNAIdentifier || EntityId == CellEngineConfigDataObject.RNAIdentifier;
+        return ParticleKindId == CellEngineConfigDataObject.DNAIdentifier || ParticleKindId == CellEngineConfigDataObject.RNAIdentifier;
     }
 
-    inline bool IsDNA(const EntityIdInt EntityId)
+    inline bool IsDNA(const UniqueIdType ParticleKindId)
     {
-        return EntityId == CellEngineConfigDataObject.DNAIdentifier;
+        return ParticleKindId == CellEngineConfigDataObject.DNAIdentifier;
     }
 
-    inline bool IsRNA(const EntityIdInt EntityId)
+    inline bool IsRNA(const UniqueIdType ParticleKindId)
     {
-        return EntityId == CellEngineConfigDataObject.RNAIdentifier;
+        return ParticleKindId == CellEngineConfigDataObject.RNAIdentifier;
     }
 
     inline bool IsNucleotide(const std::string_view ChainName)

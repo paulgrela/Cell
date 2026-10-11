@@ -7,7 +7,7 @@
 struct ThreadLocalParticlesInProximity
 {
 public:
-    MainMapType<EntityIdInt, UnsignedInt> ParticlesKindsFoundInProximity;
+    MainMapType<UniqueIdType, UnsignedInt> ParticlesKindsFoundInProximity;
     std::vector<UniqueIdUnsignedInt> ParticlesSortedByCapacityFoundInProximity;
 public:
     std::vector<UniqueIdUnsignedInt> NucleotidesWithFreeNextEndingsFoundInProximity;

@@ -12,7 +12,7 @@
 
 struct ParticleKindGraphicData
 {
-    EntityIdInt ParticleKindId{};
+    UniqueIdType ParticleKindId{};
     bool Visible{};
     bool Selected{};
     RealType SizeX{};
@@ -107,7 +107,7 @@ public:
 class ParticleKind
 {
 public:
-    EntityIdInt ParticleKindId{};
+    UniqueIdType ParticleKindId{};
     std::string IdStr;
     std::string Name;
     std::string Formula;

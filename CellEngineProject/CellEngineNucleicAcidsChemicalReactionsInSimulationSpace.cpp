@@ -69,7 +69,7 @@ bool CellEngineNucleicAcidsChemicalReactionsInSimulationSpace::CompareFitnessOfD
 
         if (TemplateSequenceStr == "ANY")
         {
-            LoggersManagerObject.Log(STREAM("DNA SEQUENCE FOUND = ANY => ParticleKindForReactionObject.EntityId = " << to_string(ParticleKindForReactionObject.ParticleKindId)));
+            LoggersManagerObject.Log(STREAM("DNA SEQUENCE FOUND = ANY => ParticleKindForReactionObject.ParticleKindId = " << to_string(ParticleKindForReactionObject.ParticleKindId)));
             return true;
         }
 

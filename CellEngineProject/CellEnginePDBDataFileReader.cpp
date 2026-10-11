@@ -20,7 +20,7 @@ CellEngineAtom CellEnginePDBDataFileReader::ParseRecord(const char* LocalPDBReco
     {
         const string RecordStr = LocalPDBRecord;
 
-        CellEngineAtomObject.EntityId = 1;
+        CellEngineAtomObject.ParticleKindId = 1;
 
         const string NameStr = trim_whitespace_surrounding(RecordStr.substr(12, 4));
         const string ResNameStr = trim_whitespace_surrounding(RecordStr.substr(17, 3));
@@ -85,7 +85,7 @@ void CellEnginePDBDataFileReader::ReadDataFromFile(const bool StartValuesBool, c
 
                 GetParticleFromIndex(1) = ParticleToInsert;
 
-                EntityIdInt P = 1;
+                UniqueIdType P = 1;
                 ParticlesKindsManagerObject.AddSingleParticleKind(ParticlesTypes::Lipid, P, "LipidOuterMembrane", "LipidOuterMembrane", "LipidOuterMembrane", -1, 0, "m", 1);
                 ParticlesKindsManagerObject.GetParticleKind(1).GraphicData.Visible = true;
             }

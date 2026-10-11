@@ -16,12 +16,12 @@ void CellEngineGenomeNucleicAcidsParticlesInSpaceGenerator::EraseAllDNAParticles
 {
     try
     {
-        LoggersManagerObject.Log(STREAM("Number of DNA particles to be removed = " << GetNumberOfParticlesWithChosenEntityId(CellEngineConfigDataObject.DNAIdentifier)));
+        LoggersManagerObject.Log(STREAM("Number of DNA particles to be removed = " << GetNumberOfParticlesWithChosenParticleKindId(CellEngineConfigDataObject.DNAIdentifier)));
 
-        for (const auto& ParticleIndex : GetAllParticlesWithChosenEntityId(CellEngineConfigDataObject.DNAIdentifier))
+        for (const auto& ParticleIndex : GetAllParticlesWithChosenParticleKindId(CellEngineConfigDataObject.DNAIdentifier))
             RemoveParticle(ParticleIndex, true, false);
 
-        LoggersManagerObject.Log(STREAM("Number of DNA particles after remove = " << GetNumberOfParticlesWithChosenEntityId(CellEngineConfigDataObject.DNAIdentifier)));
+        LoggersManagerObject.Log(STREAM("Number of DNA particles after remove = " << GetNumberOfParticlesWithChosenParticleKindId(CellEngineConfigDataObject.DNAIdentifier)));
 
         Genomes[0].clear();
         Genomes[1].clear();
@@ -29,7 +29,7 @@ void CellEngineGenomeNucleicAcidsParticlesInSpaceGenerator::EraseAllDNAParticles
     CATCH("erasing all dna particles")
 }
 
-void CellEngineGenomeNucleicAcidsParticlesInSpaceGenerator::GenerateOneStrand(const EntityIdInt EntityId, const string_view Sequence, const UnsignedInt StartPosX, const UnsignedInt StartPosY, const UnsignedInt StartPosZ, const UnsignedInt ParticleSizeX, const UnsignedInt ParticleSizeY, const UnsignedInt ParticleSizeZ, const UnsignedInt ParticleStepX, const UnsignedInt ParticleStepY, const UnsignedInt ParticleStepZ)
+void CellEngineGenomeNucleicAcidsParticlesInSpaceGenerator::GenerateOneStrand(const UniqueIdType ParticleKindId, const string_view Sequence, const UnsignedInt StartPosX, const UnsignedInt StartPosY, const UnsignedInt StartPosZ, const UnsignedInt ParticleSizeX, const UnsignedInt ParticleSizeY, const UnsignedInt ParticleSizeZ, const UnsignedInt ParticleStepX, const UnsignedInt ParticleStepY, const UnsignedInt ParticleStepZ)
 {
     try
     {
@@ -37,18 +37,18 @@ void CellEngineGenomeNucleicAcidsParticlesInSpaceGenerator::GenerateOneStrand(co
         Particle* ParticlePrev1 = nullptr;
 
         for (UnsignedInt SequenceIndex = 0; SequenceIndex < Sequence.size(); SequenceIndex++)
-            ParticlePrev1 = GenerateNucleotideParticle(ParticlePrev1, EntityId, CellEngineUseful::GetChainIdFromLetterForDNAorRNA(Sequence[SequenceIndex]), 0, 1, StartPosX + SequenceIndex * ParticleStepX, StartPosY + SequenceIndex * ParticleStepY, StartPosZ + SequenceIndex * ParticleStepZ, ParticleSizeX, ParticleSizeY, ParticleSizeZ, false, MockVector, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), true);
+            ParticlePrev1 = GenerateNucleotideParticle(ParticlePrev1, ParticleKindId, CellEngineUseful::GetChainIdFromLetterForDNAorRNA(Sequence[SequenceIndex]), 0, 1, StartPosX + SequenceIndex * ParticleStepX, StartPosY + SequenceIndex * ParticleStepY, StartPosZ + SequenceIndex * ParticleStepZ, ParticleSizeX, ParticleSizeY, ParticleSizeZ, false, MockVector, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), true);
     }
     CATCH("generating one strand")
 }
 
-Particle* CellEngineGenomeNucleicAcidsParticlesInSpaceGenerator::GenerateNucleotideParticle(Particle* ParticlePrev, const EntityIdInt EntityId, const ChainIdInt ChainId, const UnsignedInt GenomeThread, const UnsignedInt GenomeIndex, const UnsignedInt StartPosX, const UnsignedInt StartPosY, const UnsignedInt StartPosZ, const UnsignedInt ParticleSizeX, const UnsignedInt ParticleSizeY, const UnsignedInt ParticleSizeZ, const bool AddToGenome, vector<UniqueIdUnsignedInt>& Genome, const vector3_16 UniqueColorParam, const bool LinkWithPreviousNucleotide)
+Particle* CellEngineGenomeNucleicAcidsParticlesInSpaceGenerator::GenerateNucleotideParticle(Particle* ParticlePrev, const UniqueIdType ParticleKindId, const ChainIdInt ChainId, const UnsignedInt GenomeThread, const UnsignedInt GenomeIndex, const UnsignedInt StartPosX, const UnsignedInt StartPosY, const UnsignedInt StartPosZ, const UnsignedInt ParticleSizeX, const UnsignedInt ParticleSizeY, const UnsignedInt ParticleSizeZ, const bool AddToGenome, vector<UniqueIdUnsignedInt>& Genome, const vector3_16 UniqueColorParam, const bool LinkWithPreviousNucleotide)
 {
     UnsignedInt ParticleIndex;
 
     try
     {
-        ParticleIndex = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), EntityId, ChainId, GenomeThread, GenomeIndex, 0, UniqueColorParam));
+        ParticleIndex = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), ParticleKindId, ChainId, GenomeThread, GenomeIndex, 0, UniqueColorParam));
 
         if (LinkWithPreviousNucleotide == true)
             Particle::InsertAfterGivenNode(ParticlePrev, &GetParticleFromIndex(ParticleIndex));
@@ -63,7 +63,7 @@ Particle* CellEngineGenomeNucleicAcidsParticlesInSpaceGenerator::GenerateNucleot
     return &GetParticleFromIndex(ParticleIndex);
 }
 
-tuple<Particle*, Particle*> CellEngineGenomeNucleicAcidsParticlesInSpaceGenerator::GenerateTwoPairedNucleotides(Particle* ParticlePrev1, Particle* ParticlePrev2, const EntityIdInt EntityId, const ChainIdInt ChainId, const UnsignedInt GenomeIndex, const UnsignedInt StartPosX, const UnsignedInt StartPosY, const UnsignedInt StartPosZ, const UnsignedInt ParticleSizeX, const UnsignedInt ParticleSizeY, const UnsignedInt ParticleSizeZ, const UnsignedInt AddSizeX, const UnsignedInt AddSizeY, const UnsignedInt AddSizeZ, const vector3_16 UniqueColorParam, const bool Linked, const bool LinkWithPreviousNucleotide)
+tuple<Particle*, Particle*> CellEngineGenomeNucleicAcidsParticlesInSpaceGenerator::GenerateTwoPairedNucleotides(Particle* ParticlePrev1, Particle* ParticlePrev2, const UniqueIdType ParticleKindId, const ChainIdInt ChainId, const UnsignedInt GenomeIndex, const UnsignedInt StartPosX, const UnsignedInt StartPosY, const UnsignedInt StartPosZ, const UnsignedInt ParticleSizeX, const UnsignedInt ParticleSizeY, const UnsignedInt ParticleSizeZ, const UnsignedInt AddSizeX, const UnsignedInt AddSizeY, const UnsignedInt AddSizeZ, const vector3_16 UniqueColorParam, const bool Linked, const bool LinkWithPreviousNucleotide)
 {
     try
     {
@@ -100,13 +100,13 @@ void CellEngineGenomeNucleicAcidsParticlesInSpaceGenerator::SaveGenomeDataToFile
         FileToWriteGenome << to_string(Genomes[0].size()) << endl;
         for (const auto& Nucleotide : Genomes[0])
         {
-            const EntityIdInt EntityId = GetParticleFromIndex(Nucleotide).ParticleKindId;
+            const UniqueIdType ParticleKindId = GetParticleFromIndex(Nucleotide).ParticleKindId;
             const ChainIdInt ChainId = GetParticleFromIndex(Nucleotide).ChainId;
             const UniqueIdUnsignedInt GenomeIndex = GetParticleFromIndex(Nucleotide).GenomeIndex;
             const UnsignedInt PosX = GetParticleFromIndex(Nucleotide).ListOfVoxels[0].X;
             const UnsignedInt PosY = GetParticleFromIndex(Nucleotide).ListOfVoxels[0].Y;
             const UnsignedInt PosZ = GetParticleFromIndex(Nucleotide).ListOfVoxels[0].Z;
-            FileToWriteGenome << to_string(EntityId) << "," << to_string(ChainId)  << "," << to_string(GenomeIndex) << "," << to_string(PosX) << "," << to_string(PosY) << "," << to_string(PosZ) << endl;
+            FileToWriteGenome << to_string(ParticleKindId) << "," << to_string(ChainId)  << "," << to_string(GenomeIndex) << "," << to_string(PosX) << "," << to_string(PosY) << "," << to_string(PosZ) << endl;
         }
         FileToWriteGenome.close();
     }

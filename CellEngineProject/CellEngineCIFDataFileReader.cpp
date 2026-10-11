@@ -40,7 +40,7 @@ CellEngineAtom CellEngineCIFDataFileReader::ParseRecord(const char* LocalCIFReco
         strncpy(CellEngineAtomObject.Name, AtomFields[3].c_str(), AtomFields[3].length() + 1);
         strncpy(CellEngineAtomObject.ResName, AtomFields[5].c_str(), AtomFields[5].length() + 1);
         strncpy(CellEngineAtomObject.Chain, AtomFields[6].c_str(), AtomFields[6].length() + 1);
-        CellEngineAtomObject.EntityId = stoi(AtomFields[7]);
+        CellEngineAtomObject.ParticleKindId = stoi(AtomFields[7]);
 
         CellEngineAtomObject.SetAtomPositionsData(stof(AtomFields[10]), stof(AtomFields[11]), stof(AtomFields[12]));
 
@@ -53,7 +53,7 @@ CellEngineAtom CellEngineCIFDataFileReader::ParseRecord(const char* LocalCIFReco
         #endif
 
         #ifdef EXTENDED_RAM_MEMORY
-        auto ParticleKindObject = ParticlesKindsManagerObject.GetGraphicParticleKind(CellEngineAtomObject.EntityId);
+        auto ParticleKindObject = ParticlesKindsManagerObject.GetGraphicParticleKind(CellEngineAtomObject.ParticleKindId);
         CellEngineAtomObject.SizeXParticle = ParticleKindObject.SizeX;
         CellEngineAtomObject.SizeYParticle = ParticleKindObject.SizeY;
         CellEngineAtomObject.SizeZParticle = ParticleKindObject.SizeZ;
@@ -170,9 +170,9 @@ static void NEWAssociateAutinNameWithIllinoisName(MainMapType<string, string>& A
     AutinIllinoisNamesMap["'Aspartate--tRNA ligase-JCVISYN3A_0287'"] = "JCVISYN3A_0287";
 }
 
-static EntityIdInt GetParticleKindIdFromGeneIdOrName(const string& ParticleKindName, const EntityIdInt ParticleKindIdParam, const MainMapType<EntityIdInt, UniqueIdUnsignedInt>& ProteinIdFromGeneIdTranslator, const MainMapType<string, string>& AutinIllinoisNameMap)
+static UniqueIdType GetParticleKindIdFromGeneIdOrName(const string& ParticleKindName, const UniqueIdType ParticleKindIdParam, const MainMapType<UniqueIdType, UniqueIdUnsignedInt>& ProteinIdFromGeneIdTranslator, const MainMapType<string, string>& AutinIllinoisNameMap)
 {
-    static EntityIdInt LastParticleKindId = 0;
+    static UniqueIdType LastParticleKindId = 0;
 
     try
     {
@@ -194,17 +194,17 @@ static EntityIdInt GetParticleKindIdFromGeneIdOrName(const string& ParticleKindN
     return ParticlesKindsManagerObject.GetParticleKindFromStrId("UnknownParticleKind")->ParticleKindId;
 }
 
-static void AddParticleKindGraphicDataFromConfigXMLData(const EntityIdInt EntityId)
+static void AddParticleKindGraphicDataFromConfigXMLData(const UniqueIdType ParticleKindId)
 {
     try
     {
-        if (const auto ParticleKindObjectIterator = ParticlesKindsManagerObject.GraphicParticlesKindsFromConfigXML.find(EntityId); ParticleKindObjectIterator == ParticlesKindsManagerObject.GraphicParticlesKindsFromConfigXML.end())
+        if (const auto ParticleKindObjectIterator = ParticlesKindsManagerObject.GraphicParticlesKindsFromConfigXML.find(ParticleKindId); ParticleKindObjectIterator == ParticlesKindsManagerObject.GraphicParticlesKindsFromConfigXML.end())
         {
             const auto OthersParticleKindObjectIterator = ParticlesKindsManagerObject.GraphicParticlesKindsFromConfigXML.find(10000);
-            ParticlesKindsManagerObject.ParticlesKinds[EntityId].GraphicData = ParticleKindGraphicData{ .ParticleKindId = EntityId, .Visible = OthersParticleKindObjectIterator->second.Visible, .Selected = false, .SizeX = OthersParticleKindObjectIterator->second.SizeX, .SizeY = OthersParticleKindObjectIterator->second.SizeY, .SizeZ = OthersParticleKindObjectIterator->second.SizeZ, .AtomColor = OthersParticleKindObjectIterator->second.ParticleColor, .ParticleColor = OthersParticleKindObjectIterator->second.ParticleColor, .RandomParticleColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), .NameFromXML = OthersParticleKindObjectIterator->second.NameFromXML, .NameFromDataFile = "NAME_FROM_DATA_FILE" };
+            ParticlesKindsManagerObject.ParticlesKinds[ParticleKindId].GraphicData = ParticleKindGraphicData{ .ParticleKindId = ParticleKindId, .Visible = OthersParticleKindObjectIterator->second.Visible, .Selected = false, .SizeX = OthersParticleKindObjectIterator->second.SizeX, .SizeY = OthersParticleKindObjectIterator->second.SizeY, .SizeZ = OthersParticleKindObjectIterator->second.SizeZ, .AtomColor = OthersParticleKindObjectIterator->second.ParticleColor, .ParticleColor = OthersParticleKindObjectIterator->second.ParticleColor, .RandomParticleColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), .NameFromXML = OthersParticleKindObjectIterator->second.NameFromXML, .NameFromDataFile = "NAME_FROM_DATA_FILE" };
         }
         else
-            ParticlesKindsManagerObject.ParticlesKinds[EntityId].GraphicData = ParticleKindGraphicData{ .ParticleKindId = EntityId, .Visible = ParticleKindObjectIterator->second.Visible, .Selected = false, .SizeX = ParticleKindObjectIterator->second.SizeX, .SizeY = ParticleKindObjectIterator->second.SizeY, .SizeZ = ParticleKindObjectIterator->second.SizeZ, .AtomColor = ParticleKindObjectIterator->second.ParticleColor, .ParticleColor = ParticleKindObjectIterator->second.ParticleColor, .RandomParticleColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), .NameFromXML = ParticleKindObjectIterator->second.NameFromXML, .NameFromDataFile = "NAME_FROM_DATA_FILE"};
+            ParticlesKindsManagerObject.ParticlesKinds[ParticleKindId].GraphicData = ParticleKindGraphicData{ .ParticleKindId = ParticleKindId, .Visible = ParticleKindObjectIterator->second.Visible, .Selected = false, .SizeX = ParticleKindObjectIterator->second.SizeX, .SizeY = ParticleKindObjectIterator->second.SizeY, .SizeZ = ParticleKindObjectIterator->second.SizeZ, .AtomColor = ParticleKindObjectIterator->second.ParticleColor, .ParticleColor = ParticleKindObjectIterator->second.ParticleColor, .RandomParticleColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), .NameFromXML = ParticleKindObjectIterator->second.NameFromXML, .NameFromDataFile = "NAME_FROM_DATA_FILE"};
     }
     CATCH("adding particle kind graphic data from xml config data")
 }
@@ -244,12 +244,12 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile(const bool SetStartValuesB
         else
             NEWAssociateAutinNameWithIllinoisName(AutinIllinoisNamesMap);
 
-        MainMapType<EntityIdInt, UniqueIdUnsignedInt> ProteinIdFromGeneIdTranslator;
-        MainMapType<EntityIdInt, string> ParticleAutinKindIdToAutinNameTranslator;
+        MainMapType<UniqueIdType, UniqueIdUnsignedInt> ProteinIdFromGeneIdTranslator;
+        MainMapType<UniqueIdType, string> ParticleAutinKindIdToAutinNameTranslator;
 
         if (CellEngineConfigDataObject.MixedFullAtomWithVoxelSpace == true)
         {
-            EntityIdInt LocalParticleKindId = ranges::max_element(ParticlesKindsManagerObject.ParticlesKinds, [](const pair<EntityIdInt, ParticleKind>& lhs, const pair<EntityIdInt, ParticleKind>& rhs){ return lhs.first < rhs.first; })->first + 1;
+            UniqueIdType LocalParticleKindId = ranges::max_element(ParticlesKindsManagerObject.ParticlesKinds, [](const pair<UniqueIdType, ParticleKind>& lhs, const pair<UniqueIdType, ParticleKind>& rhs){ return lhs.first < rhs.first; })->first + 1;
 
             LoggersManagerObject.Log(STREAM("LIPIDS OUTER PARTICLE KIND ID = " << LocalParticleKindId));
             ParticlesKindsManagerObject.AddSingleParticleKind(ParticlesTypes::Lipid, LocalParticleKindId, "LipidOuterMembrane", "LipidOuterMembrane", "LipidOuterMembrane", -1, 0, "m", 1);
@@ -290,21 +290,21 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile(const bool SetStartValuesB
                 for (auto Token = begin; Token != end; ++Token)
                     AtomFields.emplace_back(Token->str());
 
-                EntityIdInt EntityId = stoi(AtomFields[2]);
-                ParticlesKindsManagerObject.ParticlesKinds[EntityId].ParticleKindId = EntityId;
+                UniqueIdType ParticleKindId = stoi(AtomFields[2]);
+                ParticlesKindsManagerObject.ParticlesKinds[ParticleKindId].ParticleKindId = ParticleKindId;
 
                 if (CellEngineConfigDataObject.MixedFullAtomWithVoxelSpace == true)
                 {
                     const string StrToFind = "SYN3A_0";
                     auto Pos = AtomFields[5].find(StrToFind);
                     if (Pos != string::npos)
-                        ProteinIdFromGeneIdTranslator[EntityId] = stoi(AtomFields[5].substr(Pos + StrToFind.length(), 3));
-                    ParticleAutinKindIdToAutinNameTranslator[EntityId] = AtomFields[5];
+                        ProteinIdFromGeneIdTranslator[ParticleKindId] = stoi(AtomFields[5].substr(Pos + StrToFind.length(), 3));
+                    ParticleAutinKindIdToAutinNameTranslator[ParticleKindId] = AtomFields[5];
 
                     if (Pos != string::npos)
-                        LoggersManagerObject.Log(STREAM("PARTICLE NAME = " << AtomFields[5] << " " << ProteinIdFromGeneIdTranslator[EntityId] << " " << ParticleAutinKindIdToAutinNameTranslator[EntityId]));
+                        LoggersManagerObject.Log(STREAM("PARTICLE NAME = " << AtomFields[5] << " " << ProteinIdFromGeneIdTranslator[ParticleKindId] << " " << ParticleAutinKindIdToAutinNameTranslator[ParticleKindId]));
                     else
-                        LoggersManagerObject.Log(STREAM("PARTICLE NAME = " << AtomFields[5] << " " << ParticleAutinKindIdToAutinNameTranslator[EntityId]));
+                        LoggersManagerObject.Log(STREAM("PARTICLE NAME = " << AtomFields[5] << " " << ParticleAutinKindIdToAutinNameTranslator[ParticleKindId]));
                 }
             }
             else
@@ -373,12 +373,12 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile(const bool SetStartValuesB
 
                             vmath::vec3 UniqueParticleColor = CellEngineColorsObject.GetRandomColor();
 
-                            EntityIdInt LocalEntityId = AtomsForChainNameIterator->second[0].EntityId;
+                            UniqueIdType LocalParticleKindId = AtomsForChainNameIterator->second[0].ParticleKindId;
 
                             if (CellEngineConfigDataObject.MixedFullAtomWithVoxelSpace == true)
                             {
-                                LocalEntityId = GetParticleKindIdFromGeneIdOrName(ParticleAutinKindIdToAutinNameTranslator.find(LocalEntityId)->second, LocalEntityId, ProteinIdFromGeneIdTranslator, AutinIllinoisNamesMap);
-                                AddParticleKindGraphicDataFromConfigXMLData(LocalEntityId);
+                                LocalParticleKindId = GetParticleKindIdFromGeneIdOrName(ParticleAutinKindIdToAutinNameTranslator.find(LocalParticleKindId)->second, LocalParticleKindId, ProteinIdFromGeneIdTranslator, AutinIllinoisNamesMap);
+                                AddParticleKindGraphicDataFromConfigXMLData(LocalParticleKindId);
                             }
 
                             if (CellEngineUseful::IsNucleotide(AppliedChainName))
@@ -410,7 +410,7 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile(const bool SetStartValuesB
 
                                 SetCurrentSectorPos(CellEngineUseful::GetSectorPos(Center.X, Center.Y, Center.Z));
 
-                                Particle ParticleToInsert(NumberOfParticles, LocalEntityId, CellEngineUseful::GetChainIdFromChainName(AppliedChainName), -1, 1, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(UniqueParticleColor));
+                                Particle ParticleToInsert(NumberOfParticles, LocalParticleKindId, CellEngineUseful::GetChainIdFromChainName(AppliedChainName), -1, 1, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(UniqueParticleColor));
                                 ParticleToInsert.ListOfAtoms = ListOfAtoms;
                                 ParticleToInsert.Center = Center;
                                 ParticleToInsert.ParticleColor = ParticlesKindsManagerObject.GetParticleKind(ParticleToInsert.ParticleKindId).GraphicData.ParticleColor;

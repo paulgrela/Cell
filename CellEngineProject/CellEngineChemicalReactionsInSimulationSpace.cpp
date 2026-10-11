@@ -198,10 +198,10 @@ void CellEngineChemicalReactionsInSimulationSpace::PrintInformationAboutFoundPar
     {
         LoggersManagerObject.Log(STREAM(endl << "ParticlesSortedByCapacityFoundInParticlesProximity List"));
         for (const auto& LocalParticleIndexObjectToWrite : LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity)
-            LoggersManagerObject.Log(STREAM("ParticleIndex = " << to_string(LocalParticleIndexObjectToWrite) << " EntityId = " << to_string(GetParticleFromIndex(LocalParticleIndexObjectToWrite).ParticleKindId) << " NUCLEOTIDE = " << ((CellEngineUseful::IsDNAorRNA(GetParticleFromIndex(LocalParticleIndexObjectToWrite).ParticleKindId) == true) ? CellEngineUseful::GetLetterFromChainIdForDNAorRNA(GetParticleFromIndex(LocalParticleIndexObjectToWrite).ChainId) : '0') << " GENOME INDEX = " << GetParticleFromIndex(LocalParticleIndexObjectToWrite).GenomeIndex));
+            LoggersManagerObject.Log(STREAM("ParticleIndex = " << to_string(LocalParticleIndexObjectToWrite) << " ParticleKindId = " << to_string(GetParticleFromIndex(LocalParticleIndexObjectToWrite).ParticleKindId) << " NUCLEOTIDE = " << ((CellEngineUseful::IsDNAorRNA(GetParticleFromIndex(LocalParticleIndexObjectToWrite).ParticleKindId) == true) ? CellEngineUseful::GetLetterFromChainIdForDNAorRNA(GetParticleFromIndex(LocalParticleIndexObjectToWrite).ChainId) : '0') << " GENOME INDEX = " << GetParticleFromIndex(LocalParticleIndexObjectToWrite).GenomeIndex));
         LoggersManagerObject.Log(STREAM(endl << "ParticlesKindsFoundInProximity List"));
         for (const auto& [LocalParticleKindObjectToWriteFirst, LocalParticleKindObjectToWriteSecond] : LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity)
-            LoggersManagerObject.Log(STREAM("ParticleKind EntityId = " << to_string(LocalParticleKindObjectToWriteFirst) << " in quantity = " << to_string(LocalParticleKindObjectToWriteSecond)));
+            LoggersManagerObject.Log(STREAM("ParticleKind ParticleKindId = " << to_string(LocalParticleKindObjectToWriteFirst) << " in quantity = " << to_string(LocalParticleKindObjectToWriteSecond)));
     }
     CATCH("printing information found particles in proximity")
 }

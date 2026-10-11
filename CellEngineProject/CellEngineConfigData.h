@@ -284,14 +284,14 @@ public:
     bool ImGuiLightVersion = false;
 public:
     int ChosenShapeOfAtoms = 1;
-    EntityIdInt DNAIdentifier{};
-    EntityIdInt RNAIdentifier{};
-    EntityIdInt ProteinInBuildingProcessIdentifier{};
-    EntityIdInt ATP_ID{};
-    EntityIdInt CTP_ID{};
-    EntityIdInt GTP_ID{};
-    EntityIdInt TTP_ID{};
-    EntityIdInt UTP_ID{};
+    UniqueIdType DNAIdentifier{};
+    UniqueIdType RNAIdentifier{};
+    UniqueIdType ProteinInBuildingProcessIdentifier{};
+    UniqueIdType ATP_ID{};
+    UniqueIdType CTP_ID{};
+    UniqueIdType GTP_ID{};
+    UniqueIdType TTP_ID{};
+    UniqueIdType UTP_ID{};
 public:
     bool RNAInOneParticle = true;
 public:

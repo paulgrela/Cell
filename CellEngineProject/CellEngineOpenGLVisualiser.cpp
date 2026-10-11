@@ -845,7 +845,7 @@ void CellEngineOpenGLVisualiser::PrintAtomDescriptionOnScreen(CellEngineAtom& Ch
         string LocalTextStr = CellEngineUseful::AtomDescriptionTextsObject.Texts[0] = string("Name = ") + ChosenAtomObject1.Name + " ResName = " + ChosenAtomObject1.ResName + "S[" + to_string(ChosenParticleObject1.ParticleSectorPos.SectorPosX) + "," + to_string(ChosenParticleObject1.ParticleSectorPos.SectorPosY) + "," + to_string(ChosenParticleObject1.ParticleSectorPos.SectorPosZ) + "]";
         CellEngineUseful::AtomDescriptionTextsObject.Texts[1] = "Chain [" + string(ChosenAtomObject1.Chain) + "]" + "(" + ChosenParticleObject1.Nucleotide + ")";
         CellEngineUseful::AtomDescriptionTextsObject.Texts[1] += " SEQ = [" + ChosenParticleObject1.SequenceStr + "]";
-        CellEngineUseful::AtomDescriptionTextsObject.Texts[2] = "EntityId = " + to_string(ChosenParticleObject1.ParticleKindId);
+        CellEngineUseful::AtomDescriptionTextsObject.Texts[2] = "ParticleKindId = " + to_string(ChosenParticleObject1.ParticleKindId);
         CellEngineUseful::AtomDescriptionTextsObject.Texts[3] = "Entity Name = [" + GetEntityName(ChosenParticleObject1.ParticleKindId) + "]";
         CellEngineUseful::AtomDescriptionTextsObject.Texts[4] = "Gen Index = [" + to_string(ChosenParticleObject1.GenomeIndex) + "]";
         CellEngineUseful::AtomDescriptionTextsObject.Texts[5] = "Gen Index Prev = [" + to_string(ChosenParticleObject1.GenomeIndexPrev) + "] Gen Index Next = [" + to_string(ChosenParticleObject1.GenomeIndexNext) + "]";
@@ -866,13 +866,13 @@ void CellEngineOpenGLVisualiser::PrintAtomDescriptionOnScreen(CellEngineAtom& Ch
     CATCH("printing atom description on screen")
 }
 
-string CellEngineOpenGLVisualiser::GetEntityName(const UnsignedInt EntityId)
+string CellEngineOpenGLVisualiser::GetEntityName(const UnsignedInt ParticleKindId)
 {
     string EntityName;
 
     try
     {
-        if (const auto EntityIterator = ParticlesKindsManagerObject.ParticlesKinds.find(EntityId); EntityIterator != ParticlesKindsManagerObject.ParticlesKinds.end())
+        if (const auto EntityIterator = ParticlesKindsManagerObject.ParticlesKinds.find(ParticleKindId); EntityIterator != ParticlesKindsManagerObject.ParticlesKinds.end())
             EntityName = (EntityIterator->second.IdStr.empty() == false ? EntityIterator->second.IdStr + " " + EntityIterator->second.GraphicData.NameFromDataFile : EntityIterator->second.GraphicData.NameFromDataFile);
         else
             EntityName = "";
@@ -892,12 +892,12 @@ void CellEngineOpenGLVisualiser::SetVisibilityOfAllParticles(const bool VisibleP
     CATCH("setting visibility of all particles")
 }
 
-void CellEngineOpenGLVisualiser::SetVisibilityOfParticlesExcept(const UnsignedInt EntityId, const bool VisibleParam)
+void CellEngineOpenGLVisualiser::SetVisibilityOfParticlesExcept(const UnsignedInt ParticleKindId, const bool VisibleParam)
 {
     try
     {
         SetVisibilityOfAllParticles(VisibleParam);
-        ParticlesKindsManagerObject.GetGraphicParticleKind(EntityId).Visible = !VisibleParam;
+        ParticlesKindsManagerObject.GetGraphicParticleKind(ParticleKindId).Visible = !VisibleParam;
     }
     CATCH("setting visibility of particles except")
 }

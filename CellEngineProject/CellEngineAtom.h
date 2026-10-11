@@ -14,7 +14,7 @@
 class CellEngineAtom
 {
 public:
-    EntityIdInt EntityId{};
+    UniqueIdType ParticleKindId{};
     char Name[5 + 1]{};
     char ResName[4 + 1]{};
     char Chain[6 + 1]{};
@@ -35,7 +35,7 @@ public:
     CellEngineAtom() = default;
     ~CellEngineAtom() = default;
 public:
-    CellEngineAtom(const EntityIdInt EntityIdParam, const RealType XParam, const RealType YParam, const RealType ZParam, const vector3_16 AtomColorParam) : EntityId{ EntityIdParam }, X { XParam }, Y { YParam }, Z { ZParam }, AtomColor { AtomColorParam }
+    CellEngineAtom(const UniqueIdType ParticleKindIdParam, const RealType XParam, const RealType YParam, const RealType ZParam, const vector3_16 AtomColorParam) : ParticleKindId{ ParticleKindIdParam }, X { XParam }, Y { YParam }, Z { ZParam }, AtomColor { AtomColorParam }
     {
     }
     CellEngineAtom(const RealType XParam, const RealType YParam, const RealType ZParam) : X { XParam }, Y { YParam }, Z { ZParam }

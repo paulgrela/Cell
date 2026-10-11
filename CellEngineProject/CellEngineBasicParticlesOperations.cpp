@@ -167,7 +167,7 @@ vector<UniqueIdUnsignedInt> CellEngineBasicParticlesOperations::GetAllParticlesW
     return ListOfParticlesIndexes;
 }
 
-vector<UniqueIdUnsignedInt> CellEngineBasicParticlesOperations::GetAllParticlesWithChosenEntityId(const UniqueIdUnsignedInt EntityId) const
+vector<UniqueIdUnsignedInt> CellEngineBasicParticlesOperations::GetAllParticlesWithChosenParticleKindId(const UniqueIdUnsignedInt ParticleKindId) const
 {
     vector<UniqueIdUnsignedInt> ListOfParticlesIndexes;
 
@@ -175,7 +175,7 @@ vector<UniqueIdUnsignedInt> CellEngineBasicParticlesOperations::GetAllParticlesW
     {
         ListOfParticlesIndexes.reserve(MaxMPIMessageSize);
         FOR_EACH_PARTICLE_IN_SECTORS_XYZ_CONST
-            if (ParticleObject.second.ParticleKindId == EntityId)
+            if (ParticleObject.second.ParticleKindId == ParticleKindId)
                 ListOfParticlesIndexes.emplace_back(ParticleObject.first);
     }
     CATCH("getting all particles with chosen entity id")
@@ -183,14 +183,14 @@ vector<UniqueIdUnsignedInt> CellEngineBasicParticlesOperations::GetAllParticlesW
     return ListOfParticlesIndexes;
 }
 
-UnsignedInt CellEngineBasicParticlesOperations::GetNumberOfParticlesWithChosenEntityId(const UniqueIdUnsignedInt EntityId) const
+UnsignedInt CellEngineBasicParticlesOperations::GetNumberOfParticlesWithChosenParticleKindId(const UniqueIdUnsignedInt ParticleKindId) const
 {
     UnsignedInt ParticleCounter = 0;
 
     try
     {
         FOR_EACH_PARTICLE_IN_SECTORS_XYZ_CONST
-            if (ParticleObject.second.ParticleKindId == EntityId)
+            if (ParticleObject.second.ParticleKindId == ParticleKindId)
                 ParticleCounter++;
     }
     CATCH("getting number of all particles with chosen entity id")

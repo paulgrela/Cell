@@ -97,20 +97,20 @@ inline void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::SetParticleParamet
 {
     try
     {
-        TempAtomObject.EntityId = ParticleObject.ParticleKindId;
+        TempAtomObject.ParticleKindId = ParticleObject.ParticleKindId;
         auto ParticleKindObject = ParticlesKindsManagerObject.GetGraphicParticleKind(ParticleObject.ParticleKindId);
         TempAtomObject.AtomColor = ParticleKindObject.AtomColor;
         ParticleObject.ParticleColor = ParticleKindObject.ParticleColor;
-        ParticleObject.RandomParticleKindColor = (CellEngineUseful::IsDNAorRNA(TempAtomObject.EntityId) == true ? CellEngineColorsObject.GetDNAorRNAColor(TempAtomObject.EntityId, ParticleObject.ChainId) : ParticleKindObject.RandomParticleColor);
+        ParticleObject.RandomParticleKindColor = (CellEngineUseful::IsDNAorRNA(TempAtomObject.ParticleKindId) == true ? CellEngineColorsObject.GetDNAorRNAColor(TempAtomObject.ParticleKindId, ParticleObject.ChainId) : ParticleKindObject.RandomParticleColor);
 
         if (CellEngineConfigDataObject.DNAPaired == true)
-            if (CellEngineUseful::IsDNA(TempAtomObject.EntityId) == true && ((CellEngineConfigDataObject.GenomeReadFromFile == false && ParticleObject.GenomeIndex == 0) || (CellEngineConfigDataObject.GenomeReadFromFile == true && (ParticleObject.Prev != nullptr && ParticleObject.Next != nullptr && ParticleObject.PairedNucleotidePtr == nullptr))))
+            if (CellEngineUseful::IsDNA(TempAtomObject.ParticleKindId) == true && ((CellEngineConfigDataObject.GenomeReadFromFile == false && ParticleObject.GenomeIndex == 0) || (CellEngineConfigDataObject.GenomeReadFromFile == true && (ParticleObject.Prev != nullptr && ParticleObject.Next != nullptr && ParticleObject.PairedNucleotidePtr == nullptr))))
                 ParticleObject.RandomParticleKindColor = ParticleObject.UniqueParticleColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(vmath::FromVec4ToVec3(sb7::color::Purple));
 
-        if (CellEngineUseful::IsDNAorRNA(TempAtomObject.EntityId) == true && ((CellEngineConfigDataObject.GenomeReadFromFile == false && ParticleObject.GenomeIndex == 0) || (CellEngineConfigDataObject.GenomeReadFromFile == true && (ParticleObject.Prev == nullptr || ParticleObject.Next == nullptr))))
+        if (CellEngineUseful::IsDNAorRNA(TempAtomObject.ParticleKindId) == true && ((CellEngineConfigDataObject.GenomeReadFromFile == false && ParticleObject.GenomeIndex == 0) || (CellEngineConfigDataObject.GenomeReadFromFile == true && (ParticleObject.Prev == nullptr || ParticleObject.Next == nullptr))))
             ParticleObject.RandomParticleKindColor = ParticleObject.UniqueParticleColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(vmath::FromVec4ToVec3(sb7::color::Blue));
 
-        if (CellEngineUseful::IsDNAorRNA(TempAtomObject.EntityId) == true && (CellEngineConfigDataObject.GenomeReadFromFile == true))
+        if (CellEngineUseful::IsDNAorRNA(TempAtomObject.ParticleKindId) == true && (CellEngineConfigDataObject.GenomeReadFromFile == true))
         {
             ParticleObject.GenomeIndexPrev = (ParticleObject.Prev != nullptr ? ParticleObject.Prev->GenomeIndex : 0);
             ParticleObject.GenomeIndexNext = (ParticleObject.Next != nullptr ? ParticleObject.Next->GenomeIndex : 0);

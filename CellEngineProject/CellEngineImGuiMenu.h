@@ -568,12 +568,12 @@ public:
                     if (ImGui::Button("SUB PARTICLES") == true)
                         for (const auto &ParticleKindForImGuiSelectionObject: LocalParticlesKindsForImGuiSelection)
                             if (ParticleKindForImGuiSelectionObject.GraphicData.Selected == true)
-                                CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->RemoveParticlesWithChosenEntityId(ParticleKindForImGuiSelectionObject.ParticleKindId, NumberOfParticlesToSub[0]);
+                                CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->RemoveParticlesWithChosenParticleKindId(ParticleKindForImGuiSelectionObject.ParticleKindId, NumberOfParticlesToSub[0]);
 
                     if (ImGui::Button("REMOVE ALL PARTICLES") == true)
                         for (const auto &ParticleKindForImGuiSelectionObject: LocalParticlesKindsForImGuiSelection)
                             if (ParticleKindForImGuiSelectionObject.GraphicData.Selected == true)
-                                CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->RemoveAllParticlesWithChosenEntityId(ParticleKindForImGuiSelectionObject.ParticleKindId);
+                                CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->RemoveAllParticlesWithChosenParticleKindId(ParticleKindForImGuiSelectionObject.ParticleKindId);
 
                     if (ImGui::Button("REMOVE ALL RNA PARTICLES ") == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->RemoveAllRNAParticles();

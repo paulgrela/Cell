@@ -14,13 +14,13 @@ void CellEngineCompiledDataCreator::AddSpecialParticlesKinds()
 {
     try
     {
-        EntityIdInt LocalRNAIdentifier = CellEngineConfigDataObject.RNAIdentifier;
+        UniqueIdType LocalRNAIdentifier = CellEngineConfigDataObject.RNAIdentifier;
         ParticlesKindsManagerObject.AddSingleParticleKind(ParticlesTypes::DNANucleotide, LocalRNAIdentifier, "RNANucleotide", "RNANucleotide", "rna", -1, 0, "c", 1);
 
-        EntityIdInt LocalProteinInBuildingProcessIdentifier = CellEngineConfigDataObject.ProteinInBuildingProcessIdentifier;
+        UniqueIdType LocalProteinInBuildingProcessIdentifier = CellEngineConfigDataObject.ProteinInBuildingProcessIdentifier;
         ParticlesKindsManagerObject.AddSingleParticleKind(ParticlesTypes::ProteinInBuildingProcess, LocalProteinInBuildingProcessIdentifier, "ProteinInBuildingProcess", "ProteinInBuildingProcess", "ProteinInBuildingProcess", -1, 0, "c", 1);
 
-        EntityIdInt LocalUnknownParticleKindId = UnknownParticleKindId;
+        UniqueIdType LocalUnknownParticleKindId = UnknownParticleKindId;
         ParticlesKindsManagerObject.AddSingleParticleKind(ParticlesTypes::UnknownParticleKind, LocalUnknownParticleKindId, "UnknownParticleKind", "UnknownParticleName", "UnknownParticleFormula", -1, 0, "c", 1);
 
         LoggersManagerObject.Log(STREAM("ADDED SPECIAL PARTICLES KINDS"));

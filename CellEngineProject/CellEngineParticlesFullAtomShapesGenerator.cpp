@@ -27,14 +27,14 @@ bool CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceInCuboidSelectedS
     return false;
 }
 
-void CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForCuboidSelectedSpace(ListOfAtomsType& FilledSpaceAtoms, const EntityIdInt EntityId, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType StepXParam, const RealType StepYParam, const RealType StepZParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam)
+void CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForCuboidSelectedSpace(ListOfAtomsType& FilledSpaceAtoms, const UniqueIdType ParticleKindId, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType StepXParam, const RealType StepYParam, const RealType StepZParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam)
 {
     try
     {
         for (RealType PosX = StartXPosParam; PosX < StartXPosParam + SizeXParam; PosX += 1.5f * StepXParam)
             for (RealType PosY = StartYPosParam; PosY < StartYPosParam + SizeYParam; PosY += 1.5f * StepYParam)
                 for (RealType PosZ = StartZPosParam; PosZ < StartZPosParam + SizeZParam; PosZ += 1.5f * StepZParam)
-                    FilledSpaceAtoms.emplace_back(EntityId, PosX, PosY, PosZ, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
+                    FilledSpaceAtoms.emplace_back(ParticleKindId, PosX, PosY, PosZ, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
     }
     CATCH("setting value to full atoms for cuboid selected space")
 }
@@ -59,7 +59,7 @@ bool CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceForEllipsoidSelec
     return false;
 };
 
-void CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForEllipsoidSelectedSpace(ListOfAtomsType& FilledSpaceAtoms, const EntityIdInt EntityId, const RealType PosXStart, const RealType PosYStart, const RealType PosZStart, const RealType StepX, const RealType StepY, const RealType StepZ, const RealType RadiusXParam, const RealType RadiusYParam, const RealType RadiusZParam)
+void CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForEllipsoidSelectedSpace(ListOfAtomsType& FilledSpaceAtoms, const UniqueIdType ParticleKindId, const RealType PosXStart, const RealType PosYStart, const RealType PosZStart, const RealType StepX, const RealType StepY, const RealType StepZ, const RealType RadiusXParam, const RealType RadiusYParam, const RealType RadiusZParam)
 {
     try
     {
@@ -72,7 +72,7 @@ void CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForEllipsoidSele
                     const RealType dz = RadiusZParam - z;
 
                     if ((dx * dx * RadiusYParam * RadiusYParam * RadiusZParam * RadiusZParam + dy * dy * RadiusXParam * RadiusXParam * RadiusZParam * RadiusZParam + dz * dz * RadiusXParam * RadiusXParam * RadiusYParam * RadiusYParam) <= (RadiusXParam * RadiusXParam * RadiusYParam * RadiusYParam * RadiusZParam * RadiusZParam))
-                        FilledSpaceAtoms.emplace_back(EntityId, PosXStart + dx, PosYStart + dy, PosZStart + dz, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
+                        FilledSpaceAtoms.emplace_back(ParticleKindId, PosXStart + dx, PosYStart + dy, PosZStart + dz, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()));
                 }
     }
     CATCH("setting value to voxels for ellipsoid selected space")

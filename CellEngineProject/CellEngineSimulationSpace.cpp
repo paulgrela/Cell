@@ -70,7 +70,7 @@ void CellEngineSimulationSpace::UpdateProbabilityOfMoveFromElectricInteractionFo
                                     DEBUGLOG(LoggersManagerObject.Log(STREAM("new value after change from neighbour = " << to_string((*NeighbourPoints)[X][Y][Z]) << " " << to_string(static_cast<ElectricChargeType>(X - 1)) << " "<< to_string(static_cast<ElectricChargeType>(Y - 1)) << " " << to_string(static_cast<ElectricChargeType>(Z - 1))));)
                                 }
 
-                DEBUGLOG(LoggersManagerObject.Log(STREAM("ParticleIndex of neighbour particle = " << to_string(NeighbourParticleIndexObjectToWrite) << " EntityId = " << to_string(GetParticleFromIndex(NeighbourParticleIndexObjectToWrite).EntityId) << " Electric Charge = " << to_string(NeighbourParticleObject.ElectricCharge) << " Electric Charge = " << to_string(ParticleObject.ElectricCharge) << " NUCLEOTIDE = " << ((CellEngineUseful::IsDNAorRNA(GetParticleFromIndex(NeighbourParticleIndexObjectToWrite).EntityId) == true) ? CellEngineUseful::GetLetterFromChainIdForDNAorRNA(NeighbourParticleObject.ChainId) : '0') << " GENOME INDEX = " << NeighbourParticleObject.GenomeIndex));)
+                DEBUGLOG(LoggersManagerObject.Log(STREAM("ParticleIndex of neighbour particle = " << to_string(NeighbourParticleIndexObjectToWrite) << " ParticleKindId = " << to_string(GetParticleFromIndex(NeighbourParticleIndexObjectToWrite).ParticleKindId) << " Electric Charge = " << to_string(NeighbourParticleObject.ElectricCharge) << " Electric Charge = " << to_string(ParticleObject.ElectricCharge) << " NUCLEOTIDE = " << ((CellEngineUseful::IsDNAorRNA(GetParticleFromIndex(NeighbourParticleIndexObjectToWrite).ParticleKindId) == true) ? CellEngineUseful::GetLetterFromChainIdForDNAorRNA(NeighbourParticleObject.ChainId) : '0') << " GENOME INDEX = " << NeighbourParticleObject.GenomeIndex));)
             }
         }
     }
@@ -85,7 +85,7 @@ void CellEngineSimulationSpace::GenerateOneStepOfElectricDiffusionForOneParticle
         {
             Particle& ParticleObject = GetParticleFromIndex(ParticleIndexParam);
 
-            DEBUGLOG(LoggersManagerObject.Log(STREAM("EntityId = " << to_string(ParticleObject.EntityId) << " ElectricCharge = " << to_string(ParticleObject.ElectricCharge)));)
+            DEBUGLOG(LoggersManagerObject.Log(STREAM("ParticleKindId = " << to_string(ParticleObject.ParticleKindId) << " ElectricCharge = " << to_string(ParticleObject.ElectricCharge)));)
 
             const auto ParticleKindObject = ParticlesKindsManagerObject.GetParticleKind(ParticleObject.ParticleKindId);
 
@@ -148,7 +148,7 @@ tuple<IndexesChosenForReactionType, bool> CellEngineSimulationSpace::ChooseParti
         {
             auto& ParticleObjectTestedForReaction = GetParticleFromIndex(ParticleObjectIndex);
 
-            DEBUGLOG(LoggersManagerObject.Log(STREAM("ParticleObjectIndex = " << to_string(ParticleObjectIndex) <<" EntityId = " << to_string(ParticleObjectTestedForReaction.EntityId) << " X = " << to_string(ParticleObjectTestedForReaction.Center.X) << " Y = " << to_string(ParticleObjectTestedForReaction.Center.Y) << " Z = " << to_string(ParticleObjectTestedForReaction.Center.Z)));)
+            DEBUGLOG(LoggersManagerObject.Log(STREAM("ParticleObjectIndex = " << to_string(ParticleObjectIndex) <<" ParticleKindId = " << to_string(ParticleObjectTestedForReaction.ParticleKindId) << " X = " << to_string(ParticleObjectTestedForReaction.Center.X) << " Y = " << to_string(ParticleObjectTestedForReaction.Center.Y) << " Z = " << to_string(ParticleObjectTestedForReaction.Center.Z)));)
 
             vector<ParticleKindForChemicalReaction>::const_iterator ReactantIterator;
             if (CellEngineUseful::IsDNAorRNA(ParticleObjectTestedForReaction.ParticleKindId) == false)
@@ -168,7 +168,7 @@ tuple<IndexesChosenForReactionType, bool> CellEngineSimulationSpace::ChooseParti
             if (ReactantIterator != ReactionObject.Reactants.cend() && ReactantsCounters[PositionInReactants] > 0)
             {
                 AllParticlesIndexesChosenForReaction.emplace_back(ParticleObjectIndex, PositionInReactants);
-                DEBUGLOG(LoggersManagerObject.Log(STREAM("CHOSEN ParticleObjectIndex = " << to_string(ParticleObjectIndex) <<" EntityId = " << to_string(ParticleObjectTestedForReaction.EntityId) << " X = " << to_string(ParticleObjectTestedForReaction.Center.X) << " Y = " << to_string(ParticleObjectTestedForReaction.Center.Y) << " Z = " << to_string(ParticleObjectTestedForReaction.Center.Z) << endl));)
+                DEBUGLOG(LoggersManagerObject.Log(STREAM("CHOSEN ParticleObjectIndex = " << to_string(ParticleObjectIndex) <<" ParticleKindId = " << to_string(ParticleObjectTestedForReaction.ParticleKindId) << " X = " << to_string(ParticleObjectTestedForReaction.Center.X) << " Y = " << to_string(ParticleObjectTestedForReaction.Center.Y) << " Z = " << to_string(ParticleObjectTestedForReaction.Center.Z) << endl));)
                 ReactantsCounters[PositionInReactants]--;
             }
 
@@ -221,7 +221,7 @@ bool CellEngineSimulationSpace::CancelChemicalReaction(const vector<UniqueIdUnsi
 {
     try
     {
-        DEBUGLOG(LoggersManagerObject.Log(STREAM("CANCELLED REACTION IN BOUNDS " << PlaceStr << " = " << ActualSimulationSpaceSectorBoundsObject.StartXPos << " " << ActualSimulationSpaceSectorBoundsObject.StartYPos << " "  << ActualSimulationSpaceSectorBoundsObject.StartZPos << " " << ActualSimulationSpaceSectorBoundsObject.EndXPos << " " << ActualSimulationSpaceSectorBoundsObject.EndYPos << " " << ActualSimulationSpaceSectorBoundsObject.EndZPos << " " << ParticleKindObjectForProduct.ListOfVoxels.size() << " " << ParticleKindObjectForProduct.ListOfAtoms.size() << " " << ParticleKindObjectForProduct.EntityId));)
+        DEBUGLOG(LoggersManagerObject.Log(STREAM("CANCELLED REACTION IN BOUNDS " << PlaceStr << " = " << ActualSimulationSpaceSectorBoundsObject.StartXPos << " " << ActualSimulationSpaceSectorBoundsObject.StartYPos << " "  << ActualSimulationSpaceSectorBoundsObject.StartZPos << " " << ActualSimulationSpaceSectorBoundsObject.EndXPos << " " << ActualSimulationSpaceSectorBoundsObject.EndYPos << " " << ActualSimulationSpaceSectorBoundsObject.EndZPos << " " << ParticleKindObjectForProduct.ListOfVoxels.size() << " " << ParticleKindObjectForProduct.ListOfAtoms.size() << " " << ParticleKindObjectForProduct.ParticleKindId));)
 
         for (const auto& CreatedParticleIndex : CreatedParticlesIndexes)
         {
@@ -510,9 +510,9 @@ void CellEngineSimulationSpace::SaveHistogramOfParticlesStatisticsToFile() const
     {
         LoggersManagerObject.LogStatistics(STREAM("SORTED HISTOGRAM OF PARTICLES"));
 
-        for (const auto& [EntityId, Counter1, Counter2, Difference] : ParticlesKindsHistogramComparisons.back())
-            if (EntityId != 0)
-                LoggersManagerObject.LogStatistics(STREAM("PARTICLE KIND = " << EntityId << " NAME = " << ParticlesKindsManagerObject.GetParticleKind(EntityId).IdStr << " DIFFERENCE = " << Difference << " " << Counter1 << " " << Counter2 << endl));
+        for (const auto& [ParticleKindId, Counter1, Counter2, Difference] : ParticlesKindsHistogramComparisons.back())
+            if (ParticleKindId != 0)
+                LoggersManagerObject.LogStatistics(STREAM("PARTICLE KIND = " << ParticleKindId << " NAME = " << ParticlesKindsManagerObject.GetParticleKind(ParticleKindId).IdStr << " DIFFERENCE = " << Difference << " " << Counter1 << " " << Counter2 << endl));
     }
     CATCH("saving histograms of particles statistics to file")
 }

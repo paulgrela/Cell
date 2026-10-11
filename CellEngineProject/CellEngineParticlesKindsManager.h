@@ -34,8 +34,8 @@ public:
     MainMapType<GeneIdInt, Gene> Genes;
     MainMapType<UnsignedInt, Promoter> Promoters;
     MainMapType<std::string, Terminator> Terminators;
-    MainMapType<EntityIdInt, ParticleKind> ParticlesKinds;
-    MainMapType<EntityIdInt, ParticleKindGraphicData> GraphicParticlesKindsFromConfigXML;
+    MainMapType<UniqueIdType, ParticleKind> ParticlesKinds;
+    MainMapType<UniqueIdType, ParticleKindGraphicData> GraphicParticlesKindsFromConfigXML;
 public:
     std::vector<InterGeneSequence> InterGenesSequences;
 public:
@@ -49,9 +49,9 @@ public:
         return Promoters.find(Box10Position)->second;
     }
 public:
-    ParticleKind& GetParticleKind(const EntityIdInt EntityId)
+    ParticleKind& GetParticleKind(const UniqueIdType ParticleKindId)
     {
-        return ParticlesKinds.find(EntityId)->second;
+        return ParticlesKinds.find(ParticleKindId)->second;
     }
 public:
     std::optional<ParticleKind> GetParticleKindFromStrId(const std::string& StrId) const
@@ -77,9 +77,9 @@ public:
         return {};
     }
 public:
-    ParticleKindGraphicData& GetGraphicParticleKind(const EntityIdInt EntityId)
+    ParticleKindGraphicData& GetGraphicParticleKind(const UniqueIdType ParticleKindId)
     {
-        return ParticlesKinds.find(EntityId)->second.GraphicData;
+        return ParticlesKinds.find(ParticleKindId)->second.GraphicData;
     }
 public:
     std::vector<AtomKindGraphicData>::iterator GetGraphicAtomKindDataFromAtomName(char Name)
@@ -97,9 +97,9 @@ public:
         return AtomKindObjectIterator;
     }
 public:
-    vector3_16 GetParticleKindGraphicDataFromConfigXMLData(const EntityIdInt EntityId)
+    vector3_16 GetParticleKindGraphicDataFromConfigXMLData(const UniqueIdType ParticleKindId)
     {
-        if (auto ParticleKindObjectIterator = GraphicParticlesKindsFromConfigXML.find(EntityId); ParticleKindObjectIterator == GraphicParticlesKindsFromConfigXML.end())
+        if (auto ParticleKindObjectIterator = GraphicParticlesKindsFromConfigXML.find(ParticleKindId); ParticleKindObjectIterator == GraphicParticlesKindsFromConfigXML.end())
             return GraphicParticlesKindsFromConfigXML.find(10000)->second.ParticleColor;
         else
             return ParticleKindObjectIterator->second.ParticleColor;
@@ -113,7 +113,7 @@ public:
         #endif
     }
 public:
-    void AddSingleParticleKind(const ParticlesTypes ParticlesTypesObject, EntityIdInt& ParticleKindIdParam, const std::string& IdStrParam, const std::string& NameParam, const std::string& FormulaParam, const SignedInt GeneIdParam, const ElectricChargeType ElectricChargeParam, const std::string& CompartmentParam, const UnsignedInt CounterParam)
+    void AddSingleParticleKind(const ParticlesTypes ParticlesTypesObject, UniqueIdType& ParticleKindIdParam, const std::string& IdStrParam, const std::string& NameParam, const std::string& FormulaParam, const SignedInt GeneIdParam, const ElectricChargeType ElectricChargeParam, const std::string& CompartmentParam, const UnsignedInt CounterParam)
     {
         try
         {

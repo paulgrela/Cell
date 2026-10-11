@@ -155,9 +155,9 @@ protected:
     void FindAllBondsToDrawForParticle(const Particle& ParticleObject, std::vector<std::pair<UnsignedInt, UnsignedInt>>& BondsToDraw, bool DrawBonds, const vmath::mat4& ViewMatrix);
     void DrawAllFoundBondsBetweenAtoms(const vector<float>& LinesVertexesLocal, const vmath::mat4& ViewMatrix) const;
 public:
-    static std::string GetEntityName(UnsignedInt EntityId);
+    static std::string GetEntityName(UnsignedInt ParticleKindId);
     static void SetVisibilityOfAllParticles(bool VisibleParam);
-    static void SetVisibilityOfParticlesExcept(UnsignedInt EntityId, bool VisibleParam);
+    static void SetVisibilityOfParticlesExcept(UnsignedInt ParticleKindId, bool VisibleParam);
 protected:
     void LoadShadersPhong();
     static void LoadMainRenderShaders(const char* VertexShaderFileName, const char* FragmentShaderFileName, GLuint& MainRenderShaderProgram);

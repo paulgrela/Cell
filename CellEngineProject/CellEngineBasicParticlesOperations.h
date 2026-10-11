@@ -124,8 +124,8 @@ public:
     static void GetMinMaxCoordinatesForParticle(Particle& ParticleObject, const std::vector<A> Particle::*ListOfElements, const std::vector<A> ParticleKind::*ListOfElementsOfParticleKind, bool UpdateParticleKindListOfElements);
 protected:
     std::vector<UniqueIdUnsignedInt> GetAllParticlesWithChosenParticleType(ParticlesTypes ParticleTypeParam) const;
-    std::vector<UniqueIdUnsignedInt> GetAllParticlesWithChosenEntityId(UniqueIdUnsignedInt EntityId) const;
-    UnsignedInt GetNumberOfParticlesWithChosenEntityId(UniqueIdUnsignedInt EntityId) const;
+    std::vector<UniqueIdUnsignedInt> GetAllParticlesWithChosenParticleKindId(UniqueIdUnsignedInt ParticleKindId) const;
+    UnsignedInt GetNumberOfParticlesWithChosenParticleKindId(UniqueIdUnsignedInt ParticleKindId) const;
 protected:
     explicit CellEngineBasicParticlesOperations(ParticlesContainer<Particle>& ParticlesParam) : Particles(ParticlesParam)
     {

@@ -13,8 +13,8 @@
 class CellEngineIllinoisDataCreator
 {
 private:
-    EntityIdInt ParticleKindId = StartParticleKindId;
-    EntityIdInt ReactionId = StartReactionId;
+    UniqueIdType ParticleKindId = StartParticleKindId;
+    UniqueIdType ReactionId = StartReactionId;
 private:
     std::map<std::string, std::string> MappedNamesOfProteins;
     std::multimap<std::string, ParticleKindSpecialData> ParticlesDataForGenerator;

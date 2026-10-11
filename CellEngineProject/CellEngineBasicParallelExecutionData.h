@@ -11,7 +11,7 @@
 struct __attribute__ ((packed)) ParticleSenderStructMPIMultiProcess
 {
     UniqueIdUnsignedInt ParticleIndex{ 0 };
-    EntityIdInt ParticleKindId{ 0 };
+    UniqueIdType ParticleKindId{ 0 };
     int SenderProcessIndex{ 0 };
     int ReceiverProcessIndex{ 0 };
     ThreadPosType SenderThreadPos{ .ThreadPosX = 0, .ThreadPosY = 0, .ThreadPosZ = 0 };
@@ -24,7 +24,7 @@ struct __attribute__ ((packed)) ParticleSenderStructMPIMultiProcess
 struct ParticleSenderStructMultiThreaded
 {
     UniqueIdUnsignedInt ParticleIndex{ 0 };
-    EntityIdInt ParticleKindId{ 0 };
+    UniqueIdType ParticleKindId{ 0 };
     int SenderProcessIndex{ 0 };
     int ReceiverProcessIndex{ 0 };
     ThreadPosType SenderThreadPos{ .ThreadPosX = 0, .ThreadPosY = 0, .ThreadPosZ = 0 };

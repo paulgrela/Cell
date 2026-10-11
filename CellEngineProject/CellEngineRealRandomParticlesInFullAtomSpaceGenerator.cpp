@@ -226,7 +226,7 @@ tuple<float, float, float> CellEngineRealRandomParticlesInFullAtomSpaceGenerator
     return { 0, 0, 0 };
 }
 
-bool CellEngineRealRandomParticlesInFullAtomSpaceGenerator::TryToGenerateRandomParticlesForType(const pair<const EntityIdInt, ParticleKind>& ParticleKindObject, const EntityIdInt EntityId, const UnsignedInt Radius, const UnsignedInt RadiusSize, UnsignedInt& NumberOfErrors, const GeneIdInt GeneNumId, const string& GeneSequence, const UnsignedInt GeneSequenceLength)
+bool CellEngineRealRandomParticlesInFullAtomSpaceGenerator::TryToGenerateRandomParticlesForType(const pair<const UniqueIdType, ParticleKind>& ParticleKindObject, const UniqueIdType ParticleKindId, const UnsignedInt Radius, const UnsignedInt RadiusSize, UnsignedInt& NumberOfErrors, const GeneIdInt GeneNumId, const string& GeneSequence, const UnsignedInt GeneSequenceLength)
 {
     try
     {
@@ -250,9 +250,9 @@ bool CellEngineRealRandomParticlesInFullAtomSpaceGenerator::TryToGenerateRandomP
             SetCurrentSectorPos(CellEngineUseful::GetSectorPos(PosX, PosY, PosZ));
 
             if (SizeX > 1)
-                TryResult = GenerateParticleAtomsWhenSelectedSpaceIsFree(Particles, AddNewParticle(Particle(GetNewFreeIndexOfParticle(), EntityId, 1, -1, 1, ParticleKindObject.second.ElectricCharge, GeneSequence, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), PosX, PosY, PosZ, SizeX, SizeY, SizeZ, 0, 0, 0, 0, 0, 0, &CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceForEllipsoidSelectedSpace, &CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForEllipsoidSelectedSpace);
+                TryResult = GenerateParticleAtomsWhenSelectedSpaceIsFree(Particles, AddNewParticle(Particle(GetNewFreeIndexOfParticle(), ParticleKindId, 1, -1, 1, ParticleKindObject.second.ElectricCharge, GeneSequence, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), PosX, PosY, PosZ, SizeX, SizeY, SizeZ, 0, 0, 0, 0, 0, 0, &CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceForEllipsoidSelectedSpace, &CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForEllipsoidSelectedSpace);
             else
-                TryResult = GenerateParticleAtomsWhenSelectedSpaceIsFree(Particles, AddNewParticle(Particle(GetNewFreeIndexOfParticle(), EntityId, 1, -1, 1, ParticleKindObject.second.ElectricCharge, GeneSequence, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), PosX, PosY, PosZ, SizeX, SizeY, SizeZ, 0, 0, 0, 0, 0, 0, &CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForCuboidSelectedSpace);
+                TryResult = GenerateParticleAtomsWhenSelectedSpaceIsFree(Particles, AddNewParticle(Particle(GetNewFreeIndexOfParticle(), ParticleKindId, 1, -1, 1, ParticleKindObject.second.ElectricCharge, GeneSequence, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), PosX, PosY, PosZ, SizeX, SizeY, SizeZ, 0, 0, 0, 0, 0, 0, &CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForCuboidSelectedSpace);
 
             if (TryResult == false)
                 RemoveParticle(MaxParticleIndex, true, false);
@@ -289,17 +289,17 @@ static UnsignedInt GetSizeOfGeneratedParticle_Second(const ParticlesTypes Partic
     }
 }
 
-static EntityIdInt GetParticleKindIdForRNA_Second(const EntityIdInt EntityId, const ParticlesTypes ParticleTypeParam, const bool ModifyRNAParticleKindId)
+static UniqueIdType GetParticleKindIdForRNA_Second(const UniqueIdType ParticleKindId, const ParticlesTypes ParticleTypeParam, const bool ModifyRNAParticleKindId)
 {
     if (ModifyRNAParticleKindId == true)
     {
         if (ParticleTypeParam == ParticlesTypes::mRNA || ParticleTypeParam == ParticlesTypes::rRNA || ParticleTypeParam == ParticlesTypes::tRNA_uncharged || ParticleTypeParam == ParticlesTypes::tRNA_charged)
             return CellEngineConfigDataObject.RNAIdentifier;
         else
-            return EntityId;
+            return ParticleKindId;
     }
     else
-        return EntityId;
+        return ParticleKindId;
 }
 
 void CellEngineRealRandomParticlesInFullAtomSpaceGenerator::InsertNewRandomParticlesForType(const ParticlesTypes ParticleTypeParam, const bool ModifyParticleKindIdForRNA, const UnsignedInt Radius, const UnsignedInt RadiusSize)
@@ -322,15 +322,15 @@ void CellEngineRealRandomParticlesInFullAtomSpaceGenerator::InsertNewRandomParti
                         {
                             LoggersManagerObject.Log(STREAM("Particle Type = " << ParticlesKindsManagerObject.ConvertParticleTypeToString(ParticleKindSpecialDataObject.ParticleType) << " Counter = " << ParticleCounter));
 
-                            const EntityIdInt EntityId = GetParticleKindIdForRNA_Second(ParticleKindObject.second.ParticleKindId, ParticleKindSpecialDataObject.ParticleType, ModifyParticleKindIdForRNA);
+                            const UniqueIdType ParticleKindId = GetParticleKindIdForRNA_Second(ParticleKindObject.second.ParticleKindId, ParticleKindSpecialDataObject.ParticleType, ModifyParticleKindIdForRNA);
 
                             bool Success = false;
 
                             auto GeneIter = ParticlesKindsManagerObject.Genes.find(ParticleKindSpecialDataObject.GeneId);
                             if (GeneIter != ParticlesKindsManagerObject.Genes.end())
-                                Success = TryToGenerateRandomParticlesForType(ParticleKindObject, EntityId, Radius, RadiusSize, NumberOfErrors, GeneIter->second.NumId, GeneIter->second.Sequence, GeneIter->second.Sequence.length());
+                                Success = TryToGenerateRandomParticlesForType(ParticleKindObject, ParticleKindId, Radius, RadiusSize, NumberOfErrors, GeneIter->second.NumId, GeneIter->second.Sequence, GeneIter->second.Sequence.length());
                             else
-                                Success = TryToGenerateRandomParticlesForType(ParticleKindObject, EntityId, Radius, RadiusSize, NumberOfErrors, 0, "NO GENE", GetSizeOfGeneratedParticle_Second(ParticleKindSpecialDataObject.ParticleType));
+                                Success = TryToGenerateRandomParticlesForType(ParticleKindObject, ParticleKindId, Radius, RadiusSize, NumberOfErrors, 0, "NO GENE", GetSizeOfGeneratedParticle_Second(ParticleKindSpecialDataObject.ParticleType));
 
                             if (Success == true)
                                 NumberOfGeneratedParticles++;
@@ -398,12 +398,12 @@ void CellEngineRealRandomParticlesInFullAtomSpaceGenerator::GenerateAllRealRando
     CATCH("generating all random particles")
 }
 
-void CellEngineRealRandomParticlesInFullAtomSpaceGenerator::RemoveParticlesWithChosenEntityId(const EntityIdInt EntityId, const UnsignedInt NumberOfParticlesToBeRemoved)
+void CellEngineRealRandomParticlesInFullAtomSpaceGenerator::RemoveParticlesWithChosenParticleKindId(const UniqueIdType ParticleKindId, const UnsignedInt NumberOfParticlesToBeRemoved)
 {
     try
     {
         UnsignedInt ParticleIndexCounter = 0;
-        for (const auto& ParticleIndex : GetAllParticlesWithChosenEntityId(EntityId))
+        for (const auto& ParticleIndex : GetAllParticlesWithChosenParticleKindId(ParticleKindId))
         {
             if (ParticleIndexCounter + 1 > NumberOfParticlesToBeRemoved)
                 break;
@@ -415,11 +415,11 @@ void CellEngineRealRandomParticlesInFullAtomSpaceGenerator::RemoveParticlesWithC
     CATCH("removing number of particles with chosen entity id")
 }
 
-void CellEngineRealRandomParticlesInFullAtomSpaceGenerator::RemoveAllParticlesWithChosenEntityId(const EntityIdInt EntityId)
+void CellEngineRealRandomParticlesInFullAtomSpaceGenerator::RemoveAllParticlesWithChosenParticleKindId(const UniqueIdType ParticleKindId)
 {
     try
     {
-        for (const auto& ParticleIndex : GetAllParticlesWithChosenEntityId(EntityId))
+        for (const auto& ParticleIndex : GetAllParticlesWithChosenParticleKindId(ParticleKindId))
             RemoveParticle(ParticleIndex, true, false);
     }
     CATCH("removing all of particles with chosen entity id")
