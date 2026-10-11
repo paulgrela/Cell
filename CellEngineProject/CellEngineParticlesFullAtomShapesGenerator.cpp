@@ -7,7 +7,7 @@ import CellEngineColors;
 #include "CellEngineColors.h"
 #endif
 
-bool CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceInCuboidSelectedSpace(const ParticlesContainer<Particle>& ParticlesParam, const RealType PosXStart, const RealType PosYStart, const RealType PosZStart, const RealType StepX, const RealType StepY, const RealType StepZ, const RealType SizeOfParticleX, const RealType SizeOfParticleY, const RealType SizeOfParticleZ, const UniqueIdUnsignedInt ValueToCheck)
+bool CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceInCuboidSelectedSpace(const ParticlesContainer<Particle>& ParticlesParam, const RealType PosXStart, const RealType PosYStart, const RealType PosZStart, const RealType StepX, const RealType StepY, const RealType StepZ, const RealType SizeOfParticleX, const RealType SizeOfParticleY, const RealType SizeOfParticleZ, const UniqueIdUInt64Type ValueToCheck)
 {
     try
     {
@@ -27,7 +27,7 @@ bool CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceInCuboidSelectedS
     return false;
 }
 
-void CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForCuboidSelectedSpace(ListOfAtomsType& FilledSpaceAtoms, const UniqueIdType ParticleKindId, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType StepXParam, const RealType StepYParam, const RealType StepZParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam)
+void CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForCuboidSelectedSpace(ListOfAtomsType& FilledSpaceAtoms, const UniqueIdUInt32Type ParticleKindId, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType StepXParam, const RealType StepYParam, const RealType StepZParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam)
 {
     try
     {
@@ -39,7 +39,7 @@ void CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForCuboidSelecte
     CATCH("setting value to full atoms for cuboid selected space")
 }
 
-bool CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceForEllipsoidSelectedSpace(const ParticlesContainer<Particle>& ParticlesParam, const RealType PosXStart, const RealType PosYStart, const RealType PosZStart, const RealType StepX, const RealType StepY, const RealType StepZ, const RealType RadiusXParam, const RealType RadiusYParam, const RealType RadiusZParam, const UniqueIdUnsignedInt ValueToCheck)
+bool CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceForEllipsoidSelectedSpace(const ParticlesContainer<Particle>& ParticlesParam, const RealType PosXStart, const RealType PosYStart, const RealType PosZStart, const RealType StepX, const RealType StepY, const RealType StepZ, const RealType RadiusXParam, const RealType RadiusYParam, const RealType RadiusZParam, const UniqueIdUInt64Type ValueToCheck)
 {
     try
     {
@@ -59,7 +59,7 @@ bool CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceForEllipsoidSelec
     return false;
 };
 
-void CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForEllipsoidSelectedSpace(ListOfAtomsType& FilledSpaceAtoms, const UniqueIdType ParticleKindId, const RealType PosXStart, const RealType PosYStart, const RealType PosZStart, const RealType StepX, const RealType StepY, const RealType StepZ, const RealType RadiusXParam, const RealType RadiusYParam, const RealType RadiusZParam)
+void CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForEllipsoidSelectedSpace(ListOfAtomsType& FilledSpaceAtoms, const UniqueIdUInt32Type ParticleKindId, const RealType PosXStart, const RealType PosYStart, const RealType PosZStart, const RealType StepX, const RealType StepY, const RealType StepZ, const RealType RadiusXParam, const RealType RadiusYParam, const RealType RadiusZParam)
 {
     try
     {

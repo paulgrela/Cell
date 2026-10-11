@@ -10,8 +10,8 @@
 
 struct __attribute__ ((packed)) ParticleSenderStructMPIMultiProcess
 {
-    UniqueIdUnsignedInt ParticleIndex{ 0 };
-    UniqueIdType ParticleKindId{ 0 };
+    UniqueIdUInt64Type ParticleIndex{ 0 };
+    UniqueIdUInt32Type ParticleKindId{ 0 };
     int SenderProcessIndex{ 0 };
     int ReceiverProcessIndex{ 0 };
     ThreadPosType SenderThreadPos{ .ThreadPosX = 0, .ThreadPosY = 0, .ThreadPosZ = 0 };
@@ -23,8 +23,8 @@ struct __attribute__ ((packed)) ParticleSenderStructMPIMultiProcess
 
 struct ParticleSenderStructMultiThreaded
 {
-    UniqueIdUnsignedInt ParticleIndex{ 0 };
-    UniqueIdType ParticleKindId{ 0 };
+    UniqueIdUInt64Type ParticleIndex{ 0 };
+    UniqueIdUInt32Type ParticleKindId{ 0 };
     int SenderProcessIndex{ 0 };
     int ReceiverProcessIndex{ 0 };
     ThreadPosType SenderThreadPos{ .ThreadPosX = 0, .ThreadPosY = 0, .ThreadPosZ = 0 };
@@ -38,7 +38,7 @@ struct ParticleSenderStructMultiThreaded
 
 struct ConfirmationOfParticlesToRemoveToSentStruct
 {
-    UniqueIdUnsignedInt ParticleIndex{ 0 };
+    UniqueIdUInt64Type ParticleIndex{ 0 };
     vector3_16 SenderSectorPos{ .X = 0, .Y = 0, .Z = 0 };
 };
 
@@ -92,7 +92,7 @@ protected:
     UnsignedInt RestoredParticlesInCancelledReactions = 0;
 protected:
     ParticlesDetailedContainer<Particle> FormerParticlesIndexes;
-    ParticlesDetailedContainer<UniqueIdUnsignedInt> CancelledParticlesIndexes;
+    ParticlesDetailedContainer<UniqueIdUInt64Type> CancelledParticlesIndexes;
 };
 
 #endif

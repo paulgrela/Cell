@@ -7,8 +7,8 @@
 #include "CellEngineBasicParticlesOperations.h"
 #include "CellEngineSimulationSpace.h"
 
-class ReactionStatistics;
 class CellEngineSimulationSpace;
+struct ReactionStatistics;
 
 class CellEngineSimulationParallelExecutionManager : virtual public CellEngineBasicParticlesOperations
 {

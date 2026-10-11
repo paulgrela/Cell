@@ -24,10 +24,10 @@ protected:
     std::tuple<float, float, float> GetRandomPositionInsideSphere(float Radius, float RadiusSize);
 public:
     void InsertNewRandomParticlesForType(ParticlesTypes ParticleTypeParam, bool ModifyParticleKindIdForRNA, UnsignedInt Radius, UnsignedInt RadiusSize);
-    bool TryToGenerateRandomParticlesForType(const std::pair<const UniqueIdType, ParticleKind>& ParticleKindObject, UniqueIdType ParticleKindId, UnsignedInt Radius, UnsignedInt RadiusSize, UnsignedInt& NumberOfErrors, GeneIdInt GeneNumId, const std::string& GeneSequence, UnsignedInt GeneSequenceLength);
+    bool TryToGenerateRandomParticlesForType(const std::pair<const UniqueIdUInt32Type, ParticleKind>& ParticleKindObject, UniqueIdUInt32Type ParticleKindId, UnsignedInt Radius, UnsignedInt RadiusSize, UnsignedInt& NumberOfErrors, GeneIdUInt64Type GeneNumId, const std::string& GeneSequence, UnsignedInt GeneSequenceLength);
 public:
-    void RemoveParticlesWithChosenParticleKindId(UniqueIdType ParticleKindId, UnsignedInt NumberOfParticlesToBeRemoved);
-    void RemoveAllParticlesWithChosenParticleKindId(UniqueIdType ParticleKindId);
+    void RemoveParticlesWithChosenParticleKindId(UniqueIdUInt32Type ParticleKindId, UnsignedInt NumberOfParticlesToBeRemoved);
+    void RemoveAllParticlesWithChosenParticleKindId(UniqueIdUInt32Type ParticleKindId);
     void RemoveParticlesWithChosenParticleType(ParticlesTypes ParticleTypeParam, UnsignedInt NumberOfParticlesToBeRemoved);
     void RemoveAllParticlesWithChosenParticleType(ParticlesTypes ParticleTypeParam);
 public:

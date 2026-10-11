@@ -145,9 +145,9 @@ void CellEngineBasicParticlesOperations::GetMinMaxCoordinatesForParticle(Particl
     CATCH("getting min max coordinates for one particle")
 }
 
-vector<UniqueIdUnsignedInt> CellEngineBasicParticlesOperations::GetAllParticlesWithChosenParticleType(const ParticlesTypes ParticleTypeParam) const
+vector<UniqueIdUInt64Type> CellEngineBasicParticlesOperations::GetAllParticlesWithChosenParticleType(const ParticlesTypes ParticleTypeParam) const
 {
-    vector<UniqueIdUnsignedInt> ListOfParticlesIndexes;
+    vector<UniqueIdUInt64Type> ListOfParticlesIndexes;
 
     try
     {
@@ -167,9 +167,9 @@ vector<UniqueIdUnsignedInt> CellEngineBasicParticlesOperations::GetAllParticlesW
     return ListOfParticlesIndexes;
 }
 
-vector<UniqueIdUnsignedInt> CellEngineBasicParticlesOperations::GetAllParticlesWithChosenParticleKindId(const UniqueIdUnsignedInt ParticleKindId) const
+vector<UniqueIdUInt64Type> CellEngineBasicParticlesOperations::GetAllParticlesWithChosenParticleKindId(const UniqueIdUInt64Type ParticleKindId) const
 {
-    vector<UniqueIdUnsignedInt> ListOfParticlesIndexes;
+    vector<UniqueIdUInt64Type> ListOfParticlesIndexes;
 
     try
     {
@@ -183,7 +183,7 @@ vector<UniqueIdUnsignedInt> CellEngineBasicParticlesOperations::GetAllParticlesW
     return ListOfParticlesIndexes;
 }
 
-UnsignedInt CellEngineBasicParticlesOperations::GetNumberOfParticlesWithChosenParticleKindId(const UniqueIdUnsignedInt ParticleKindId) const
+UnsignedInt CellEngineBasicParticlesOperations::GetNumberOfParticlesWithChosenParticleKindId(const UniqueIdUInt64Type ParticleKindId) const
 {
     UnsignedInt ParticleCounter = 0;
 

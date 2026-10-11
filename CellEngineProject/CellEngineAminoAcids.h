@@ -20,11 +20,11 @@ public:
     std::string Name{};
     std::vector<std::string> CodonsDNA{};
     std::vector<std::string> CodonsRNA{};
-    std::vector<GeneIdInt> GeneID{};
-    std::vector<GeneIdInt> SynthaseGeneID{};
-    UniqueIdType ParticleKindId;
-    UniqueIdType tRNAUnchargedNumId{};
-    UniqueIdType tRNAChargedNumId{};
+    std::vector<GeneIdUInt64Type> GeneID{};
+    std::vector<GeneIdUInt64Type> SynthaseGeneID{};
+    UniqueIdUInt32Type ParticleKindId;
+    UniqueIdUInt32Type tRNAUnchargedNumId{};
+    UniqueIdUInt32Type tRNAChargedNumId{};
 };
 
 class CellEngineAminoAcidsManager
@@ -76,9 +76,9 @@ class CellEngineAminoAcidsManager
 
     MainMapType<std::string, const CellEngineAminoAcid*> CellEngineCodonsForAminoAcidsMap;
 
-    MainMapType<UniqueIdType, const CellEngineAminoAcid*> CellEngineAminoAcidsIdMap;
-    MainMapType<UniqueIdType, const CellEngineAminoAcid*> CellEnginetRNAChargedIdMap;
-    MainMapType<UniqueIdType, const CellEngineAminoAcid*> CellEnginetRNAUnchargedIdMap;
+    MainMapType<UniqueIdUInt32Type, const CellEngineAminoAcid*> CellEngineAminoAcidsIdMap;
+    MainMapType<UniqueIdUInt32Type, const CellEngineAminoAcid*> CellEnginetRNAChargedIdMap;
+    MainMapType<UniqueIdUInt32Type, const CellEngineAminoAcid*> CellEnginetRNAUnchargedIdMap;
 
     static void SetNumIdFromName(const CellEngineAminoAcid& CellEngineAminoAcidObject)
     {
@@ -217,22 +217,22 @@ public:
         CellEngineCodonsForAminoAcidsMap["GUU"] = &Valine;
     }
 
-    bool IsAminoAcid(const UniqueIdType ParticleKindId) const
+    bool IsAminoAcid(const UniqueIdUInt32Type ParticleKindId) const
     {
         return CellEngineAminoAcidsIdMap.contains(ParticleKindId);
     }
 
-    bool IstRNAUncharged(const UniqueIdType ParticleKindId) const
+    bool IstRNAUncharged(const UniqueIdUInt32Type ParticleKindId) const
     {
         return CellEnginetRNAUnchargedIdMap.contains(ParticleKindId);
     }
 
-    bool IstRNACharged(const UniqueIdType ParticleKindId) const
+    bool IstRNACharged(const UniqueIdUInt32Type ParticleKindId) const
     {
         return CellEnginetRNAChargedIdMap.contains(ParticleKindId);
     }
 
-    bool IstRNAChargedWithAminoAcidForCodon(const UniqueIdType ParticleParticleKindId, const std::string& Codon) const
+    bool IstRNAChargedWithAminoAcidForCodon(const UniqueIdUInt32Type ParticleParticleKindId, const std::string& Codon) const
     {
         if (const auto AminoAcidIter = CellEngineCodonsForAminoAcidsMap.find(Codon); AminoAcidIter != CellEngineCodonsForAminoAcidsMap.end())
         {

@@ -26,12 +26,12 @@ public:
 protected:
     ParticlesContainer<Particle> Particles;
 protected:
-    inline Particle& GetParticleFromIndex(const UniqueIdUnsignedInt ParticleIndex)
+    inline Particle& GetParticleFromIndex(const UniqueIdUInt64Type ParticleIndex)
     {
         return Particles[0][0][0].Particles[ParticleIndex];
     }
 public:
-    ParticlesDetailedContainer<Particle>::iterator GetParticleIteratorFromIndex(const UniqueIdUnsignedInt ParticleIndex)
+    ParticlesDetailedContainer<Particle>::iterator GetParticleIteratorFromIndex(const UniqueIdUInt64Type ParticleIndex)
     {
         return Particles[0][0][0].Particles.find(ParticleIndex);
     }

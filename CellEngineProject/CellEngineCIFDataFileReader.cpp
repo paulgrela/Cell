@@ -170,9 +170,9 @@ static void NEWAssociateAutinNameWithIllinoisName(MainMapType<string, string>& A
     AutinIllinoisNamesMap["'Aspartate--tRNA ligase-JCVISYN3A_0287'"] = "JCVISYN3A_0287";
 }
 
-static UniqueIdType GetParticleKindIdFromGeneIdOrName(const string& ParticleKindName, const UniqueIdType ParticleKindIdParam, const MainMapType<UniqueIdType, UniqueIdUnsignedInt>& ProteinIdFromGeneIdTranslator, const MainMapType<string, string>& AutinIllinoisNameMap)
+static UniqueIdUInt32Type GetParticleKindIdFromGeneIdOrName(const string& ParticleKindName, const UniqueIdUInt32Type ParticleKindIdParam, const MainMapType<UniqueIdUInt32Type, UniqueIdUInt64Type>& ProteinIdFromGeneIdTranslator, const MainMapType<string, string>& AutinIllinoisNameMap)
 {
-    static UniqueIdType LastParticleKindId = 0;
+    static UniqueIdUInt32Type LastParticleKindId = 0;
 
     try
     {
@@ -194,7 +194,7 @@ static UniqueIdType GetParticleKindIdFromGeneIdOrName(const string& ParticleKind
     return ParticlesKindsManagerObject.GetParticleKindFromStrId("UnknownParticleKind")->ParticleKindId;
 }
 
-static void AddParticleKindGraphicDataFromConfigXMLData(const UniqueIdType ParticleKindId)
+static void AddParticleKindGraphicDataFromConfigXMLData(const UniqueIdUInt32Type ParticleKindId)
 {
     try
     {
@@ -244,12 +244,12 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile(const bool SetStartValuesB
         else
             NEWAssociateAutinNameWithIllinoisName(AutinIllinoisNamesMap);
 
-        MainMapType<UniqueIdType, UniqueIdUnsignedInt> ProteinIdFromGeneIdTranslator;
-        MainMapType<UniqueIdType, string> ParticleAutinKindIdToAutinNameTranslator;
+        MainMapType<UniqueIdUInt32Type, UniqueIdUInt64Type> ProteinIdFromGeneIdTranslator;
+        MainMapType<UniqueIdUInt32Type, string> ParticleAutinKindIdToAutinNameTranslator;
 
         if (CellEngineConfigDataObject.MixedFullAtomWithVoxelSpace == true)
         {
-            UniqueIdType LocalParticleKindId = ranges::max_element(ParticlesKindsManagerObject.ParticlesKinds, [](const pair<UniqueIdType, ParticleKind>& lhs, const pair<UniqueIdType, ParticleKind>& rhs){ return lhs.first < rhs.first; })->first + 1;
+            UniqueIdUInt32Type LocalParticleKindId = ranges::max_element(ParticlesKindsManagerObject.ParticlesKinds, [](const pair<UniqueIdUInt32Type, ParticleKind>& lhs, const pair<UniqueIdUInt32Type, ParticleKind>& rhs){ return lhs.first < rhs.first; })->first + 1;
 
             LoggersManagerObject.Log(STREAM("LIPIDS OUTER PARTICLE KIND ID = " << LocalParticleKindId));
             ParticlesKindsManagerObject.AddSingleParticleKind(ParticlesTypes::Lipid, LocalParticleKindId, "LipidOuterMembrane", "LipidOuterMembrane", "LipidOuterMembrane", -1, 0, "m", 1);
@@ -290,7 +290,7 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile(const bool SetStartValuesB
                 for (auto Token = begin; Token != end; ++Token)
                     AtomFields.emplace_back(Token->str());
 
-                UniqueIdType ParticleKindId = stoi(AtomFields[2]);
+                UniqueIdUInt32Type ParticleKindId = stoi(AtomFields[2]);
                 ParticlesKindsManagerObject.ParticlesKinds[ParticleKindId].ParticleKindId = ParticleKindId;
 
                 if (CellEngineConfigDataObject.MixedFullAtomWithVoxelSpace == true)
@@ -373,7 +373,7 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile(const bool SetStartValuesB
 
                             vmath::vec3 UniqueParticleColor = CellEngineColorsObject.GetRandomColor();
 
-                            UniqueIdType LocalParticleKindId = AtomsForChainNameIterator->second[0].ParticleKindId;
+                            UniqueIdUInt32Type LocalParticleKindId = AtomsForChainNameIterator->second[0].ParticleKindId;
 
                             if (CellEngineConfigDataObject.MixedFullAtomWithVoxelSpace == true)
                             {

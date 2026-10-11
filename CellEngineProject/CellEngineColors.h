@@ -33,7 +33,7 @@ private:
 public:
     void SelectRandomEngineForColors();
     vmath::vec3 GetRandomColor();
-    vector3_16 GetDNAorRNAColor(UniqueIdType ParticleKindId, ChainIdInt ChainId) const;
+    vector3_16 GetDNAorRNAColor(UniqueIdUInt32Type ParticleKindId, ChainIdUInt16Type ChainId) const;
 };
 
 inline CellEngineColors CellEngineColorsObject;

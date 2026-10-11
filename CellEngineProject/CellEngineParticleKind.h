@@ -12,7 +12,7 @@
 
 struct ParticleKindGraphicData
 {
-    UniqueIdType ParticleKindId{};
+    UniqueIdUInt32Type ParticleKindId{};
     bool Visible{};
     bool Selected{};
     RealType SizeX{};
@@ -64,7 +64,7 @@ public:
 class Promoter
 {
 public:
-    GeneIdInt GeneId;
+    GeneIdUInt64Type GeneId;
     UnsignedInt Box10Position;
     UnsignedInt Box35Position;
     UnsignedInt StartCodonPosition;
@@ -83,7 +83,7 @@ public:
 class Gene
 {
 public:
-    GeneIdInt NumId;
+    GeneIdUInt64Type NumId;
     std::string StrId;
     std::string Description;
     std::string ProteinId;
@@ -107,7 +107,7 @@ public:
 class ParticleKind
 {
 public:
-    UniqueIdType ParticleKindId{};
+    UniqueIdUInt32Type ParticleKindId{};
     std::string IdStr;
     std::string Name;
     std::string Formula;
@@ -116,7 +116,7 @@ public:
 public:
     std::set<UnsignedInt> AssociatedChemicalReactions;
     std::vector<ParticleKindSpecialData> ParticleKindSpecialDataSector;
-    GeneIdInt GeneId{};
+    GeneIdUInt64Type GeneId{};
 public:
     UnsignedInt Counter{};
 public:
@@ -137,7 +137,7 @@ public:
 public:
     ParticleKind() = default;
 public:
-    ParticleKind(const UnsignedInt ParticleKindIdParam, std::string IdStrParam, std::string NameParam, std::string FormulaParam, const GeneIdInt GeneIdParam, ElectricChargeType const ElectricChargeParam, std::string CompartmentParam, const UnsignedInt CounterParam) : ParticleKindId(ParticleKindIdParam), IdStr(std::move(IdStrParam)), Name(std::move(NameParam)), Formula(std::move(FormulaParam)), GeneId(GeneIdParam), ElectricCharge(ElectricChargeParam), Compartment(std::move(CompartmentParam)), Counter(CounterParam)
+    ParticleKind(const UnsignedInt ParticleKindIdParam, std::string IdStrParam, std::string NameParam, std::string FormulaParam, const GeneIdUInt64Type GeneIdParam, ElectricChargeType const ElectricChargeParam, std::string CompartmentParam, const UnsignedInt CounterParam) : ParticleKindId(ParticleKindIdParam), IdStr(std::move(IdStrParam)), Name(std::move(NameParam)), Formula(std::move(FormulaParam)), GeneId(GeneIdParam), ElectricCharge(ElectricChargeParam), Compartment(std::move(CompartmentParam)), Counter(CounterParam)
     {
     }
     ParticleKind(const UnsignedInt ParticleKindIdParam, const UnsignedInt CounterParam) : ParticleKindId(ParticleKindIdParam), Counter(CounterParam)

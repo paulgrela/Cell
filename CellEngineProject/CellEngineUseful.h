@@ -87,27 +87,27 @@ namespace CellEngineUseful
         LoggersManagerObject.InitializePrintingParameters(CellEngineConfigDataObject.PrintLogToConsole, CellEngineConfigDataObject.PrintLogToFiles, CellEngineConfigDataObject.PrintLogLineNumberToConsole, CellEngineConfigDataObject.PrintLogDateTimeToConsole, CellEngineConfigDataObject.PrintLogProcessIdToConsole, CellEngineConfigDataObject.PrintLogProcessPriorityLevelToConsole, CellEngineConfigDataObject.PrintLogThreadIdToConsole, CellEngineConfigDataObject.PrintLogLineNumberToFile, CellEngineConfigDataObject.PrintLogDateTimeToFile, CellEngineConfigDataObject.PrintLogProcessIdToFile, CellEngineConfigDataObject.PrintLogProcessPriorityLevelToFile, CellEngineConfigDataObject.PrintLogThreadIdToFile, CellEngineConfigDataObject.MaximalNumberOfLinesInOneFile, CellEngineConfigDataObject.PrintLogToCommonFileWhenPrintLogToSpecialFile);
     }
 
-    inline bool IsRNANucleotideEqual(const UniqueIdType ParticleKindId,  const ChainIdInt ChainId)
+    inline bool IsRNANucleotideEqual(const UniqueIdUInt32Type ParticleKindId,  const ChainIdUInt16Type ChainId)
     {
         return ((ParticleKindId == CellEngineConfigDataObject.ATP_ID && ChainId == ACode) || (ParticleKindId == CellEngineConfigDataObject.CTP_ID && ChainId == CCode) || (ParticleKindId == CellEngineConfigDataObject.GTP_ID && ChainId == GCode) || (ParticleKindId == CellEngineConfigDataObject.UTP_ID && ChainId == TCode));
     }
 
-    inline bool IsRNANucleotidePairedForRNAEqual(const UniqueIdType ParticleKindId,  const ChainIdInt ChainId)
+    inline bool IsRNANucleotidePairedForRNAEqual(const UniqueIdUInt32Type ParticleKindId,  const ChainIdUInt16Type ChainId)
     {
         return ((ParticleKindId == CellEngineConfigDataObject.ATP_ID && ChainId == TCode) || (ParticleKindId == CellEngineConfigDataObject.CTP_ID && ChainId == GCode) || (ParticleKindId == CellEngineConfigDataObject.GTP_ID && ChainId == CCode) || (ParticleKindId == CellEngineConfigDataObject.UTP_ID && ChainId == ACode));
     }
 
-    inline bool IsFreeDNANucleotide(const UniqueIdType ParticleKindId)
+    inline bool IsFreeDNANucleotide(const UniqueIdUInt32Type ParticleKindId)
     {
         return (ParticleKindId == CellEngineConfigDataObject.ATP_ID || ParticleKindId == CellEngineConfigDataObject.CTP_ID || ParticleKindId == CellEngineConfigDataObject.GTP_ID || ParticleKindId == CellEngineConfigDataObject.TTP_ID);
     }
 
-    inline bool IsFreeRNANucleotide(const UniqueIdType ParticleKindId)
+    inline bool IsFreeRNANucleotide(const UniqueIdUInt32Type ParticleKindId)
     {
         return (ParticleKindId == CellEngineConfigDataObject.ATP_ID || ParticleKindId == CellEngineConfigDataObject.CTP_ID || ParticleKindId == CellEngineConfigDataObject.GTP_ID || ParticleKindId == CellEngineConfigDataObject.UTP_ID);
     }
 
-    inline char GetLetterFromNucleotidePairedForRNA(const UniqueIdType ParticleKindId)
+    inline char GetLetterFromNucleotidePairedForRNA(const UniqueIdUInt32Type ParticleKindId)
     {
         if (ParticleKindId == CellEngineConfigDataObject.ATP_ID)
             return 'U';
@@ -123,7 +123,7 @@ namespace CellEngineUseful
         return 'I';
     }
 
-    inline char GetLetterFromNucleotideForDNAorRNA(const UniqueIdType ParticleKindId)
+    inline char GetLetterFromNucleotideForDNAorRNA(const UniqueIdUInt32Type ParticleKindId)
     {
         if (ParticleKindId == CellEngineConfigDataObject.ATP_ID)
             return 'A';
@@ -139,17 +139,17 @@ namespace CellEngineUseful
         return 'I';
     }
 
-    inline bool IsDNAorRNA(const UniqueIdType ParticleKindId)
+    inline bool IsDNAorRNA(const UniqueIdUInt32Type ParticleKindId)
     {
         return ParticleKindId == CellEngineConfigDataObject.DNAIdentifier || ParticleKindId == CellEngineConfigDataObject.RNAIdentifier;
     }
 
-    inline bool IsDNA(const UniqueIdType ParticleKindId)
+    inline bool IsDNA(const UniqueIdUInt32Type ParticleKindId)
     {
         return ParticleKindId == CellEngineConfigDataObject.DNAIdentifier;
     }
 
-    inline bool IsRNA(const UniqueIdType ParticleKindId)
+    inline bool IsRNA(const UniqueIdUInt32Type ParticleKindId)
     {
         return ParticleKindId == CellEngineConfigDataObject.RNAIdentifier;
     }
@@ -159,12 +159,12 @@ namespace CellEngineUseful
         return (ChainName == "NU01" || ChainName == "NU11" || ChainName == "NU02" || ChainName == "NU12" || ChainName == "NU03" || ChainName == "NU13" || ChainName == "NU04" || ChainName == "NU14");
     }
 
-    inline ChainIdInt GetChainIdFromChainName(const std::string_view ChainName)
+    inline ChainIdUInt16Type GetChainIdFromChainName(const std::string_view ChainName)
     {
         return ChainName.substr(0, 2) == "NU" || ChainName.substr(0, 2) == "NV" ? stoi(std::string(ChainName).substr(2, 2)) : 0;
     }
 
-    inline char GetLetterFromChainIdForDNAorRNA(const ChainIdInt ChainId)
+    inline char GetLetterFromChainIdForDNAorRNA(const ChainIdUInt16Type ChainId)
     {
         switch (ChainId)
         {
@@ -186,7 +186,7 @@ namespace CellEngineUseful
         return 'I';
     }
 
-    inline ChainIdInt GetChainIdFromLetterForDNAorRNA(const char Letter)
+    inline ChainIdUInt16Type GetChainIdFromLetterForDNAorRNA(const char Letter)
     {
         switch (Letter)
         {
@@ -215,7 +215,7 @@ namespace CellEngineUseful
         return 0;
     }
 
-    inline ChainIdInt GetPairedChainIdForDNAorRNA(const ChainIdInt ChainId)
+    inline ChainIdUInt16Type GetPairedChainIdForDNAorRNA(const ChainIdUInt16Type ChainId)
     {
         switch (ChainId)
         {
@@ -231,7 +231,7 @@ namespace CellEngineUseful
         return 0;
     }
 
-    bool inline CompareIUPACNucleotideCode(const ChainIdInt LetterIUPAC, const ChainIdInt LetterToCheck)
+    bool inline CompareIUPACNucleotideCode(const ChainIdUInt16Type LetterIUPAC, const ChainIdUInt16Type LetterToCheck)
     {
         if (LetterIUPAC == NCode)
             return true;
@@ -334,7 +334,7 @@ namespace CellEngineUseful
         return false;
     }
 
-    inline void CompareSequences(const std::vector<ChainIdInt>& TemplateSequence, const std::vector<ChainIdInt>& NucleotidesSequenceToCompareVector, bool& FoundSequenceNotFit, const bool PrintLogsBool)
+    inline void CompareSequences(const std::vector<ChainIdUInt16Type>& TemplateSequence, const std::vector<ChainIdUInt16Type>& NucleotidesSequenceToCompareVector, bool& FoundSequenceNotFit, const bool PrintLogsBool)
     {
         if (NucleotidesSequenceToCompareVector.size() >= TemplateSequence.size())
         {
@@ -359,9 +359,9 @@ namespace CellEngineUseful
             FoundSequenceNotFit = true;
     }
 
-    inline std::vector<ChainIdInt> ConvertStringSequenceToChainIdSequence(const std::string& SequenceStr)
+    inline std::vector<ChainIdUInt16Type> ConvertStringSequenceToChainIdSequence(const std::string& SequenceStr)
     {
-        std::vector<ChainIdInt> ChainIdSequence;
+        std::vector<ChainIdUInt16Type> ChainIdSequence;
 
         for (const auto& NucleotideLetter : SequenceStr)
             ChainIdSequence.emplace_back(CellEngineUseful::GetChainIdFromLetterForDNAorRNA(NucleotideLetter));

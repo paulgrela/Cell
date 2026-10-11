@@ -7,22 +7,22 @@
 struct ThreadLocalParticlesInProximity
 {
 public:
-    MainMapType<UniqueIdType, UnsignedInt> ParticlesKindsFoundInProximity;
-    std::vector<UniqueIdUnsignedInt> ParticlesSortedByCapacityFoundInProximity;
+    MainMapType<UniqueIdUInt32Type, UnsignedInt> ParticlesKindsFoundInProximity;
+    std::vector<UniqueIdUInt64Type> ParticlesSortedByCapacityFoundInProximity;
 public:
-    std::vector<UniqueIdUnsignedInt> NucleotidesWithFreeNextEndingsFoundInProximity;
-    std::vector<UniqueIdUnsignedInt> NucleotidesWithFreePrevEndingsFoundInProximity;
-    std::vector<UniqueIdUnsignedInt> DNANucleotidesWithFreeNextEndingsFoundInProximity;
-    std::vector<UniqueIdUnsignedInt> DNANucleotidesWithFreePrevEndingsFoundInProximity;
+    std::vector<UniqueIdUInt64Type> NucleotidesWithFreeNextEndingsFoundInProximity;
+    std::vector<UniqueIdUInt64Type> NucleotidesWithFreePrevEndingsFoundInProximity;
+    std::vector<UniqueIdUInt64Type> DNANucleotidesWithFreeNextEndingsFoundInProximity;
+    std::vector<UniqueIdUInt64Type> DNANucleotidesWithFreePrevEndingsFoundInProximity;
 public:
-    std::vector<UniqueIdUnsignedInt> NucleotidesFreeFoundInProximity;
-    std::vector<UniqueIdUnsignedInt> RNANucleotidesFreeFoundInProximity;
-    std::vector<UniqueIdUnsignedInt> RNANucleotidesFoundInProximity;
+    std::vector<UniqueIdUInt64Type> NucleotidesFreeFoundInProximity;
+    std::vector<UniqueIdUInt64Type> RNANucleotidesFreeFoundInProximity;
+    std::vector<UniqueIdUInt64Type> RNANucleotidesFoundInProximity;
 public:
-    std::vector<UniqueIdUnsignedInt> DNANucleotidesFullFreeFoundInProximity;
-    std::vector<UniqueIdUnsignedInt> RNANucleotidesFullFreeFoundInProximity;
-    std::vector<UniqueIdUnsignedInt> tRNAChargedFoundInProximity;
-    std::vector<UniqueIdUnsignedInt> tRNAUnchargedFoundInProximity;
+    std::vector<UniqueIdUInt64Type> DNANucleotidesFullFreeFoundInProximity;
+    std::vector<UniqueIdUInt64Type> RNANucleotidesFullFreeFoundInProximity;
+    std::vector<UniqueIdUInt64Type> tRNAChargedFoundInProximity;
+    std::vector<UniqueIdUInt64Type> tRNAUnchargedFoundInProximity;
 };
 
 class CellEngineChemicalReactionsInBasicSimulationSpace : virtual public CellEngineBasicParticlesOperations

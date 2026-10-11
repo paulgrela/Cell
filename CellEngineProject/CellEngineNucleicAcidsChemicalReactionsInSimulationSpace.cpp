@@ -3,11 +3,11 @@
 
 constexpr UnsignedInt LengthOfTemplateForRNA = 32;
 
-tuple<vector<ChainIdInt>, string> CellEngineNucleicAcidsChemicalReactionsInSimulationSpace::GetNucleotidesSequenceInBothDirections(const std::vector<UniqueIdUnsignedInt>& NucleotidesFoundInProximity, const UnsignedInt SizeOfLoop)
+tuple<vector<ChainIdUInt16Type>, string> CellEngineNucleicAcidsChemicalReactionsInSimulationSpace::GetNucleotidesSequenceInBothDirections(const std::vector<UniqueIdUInt64Type>& NucleotidesFoundInProximity, const UnsignedInt SizeOfLoop)
 {
     string TemplateSequenceStr;
 
-    vector<ChainIdInt> TemplateSequence;
+    vector<ChainIdUInt16Type> TemplateSequence;
 
     try
     {
@@ -37,11 +37,11 @@ tuple<vector<ChainIdInt>, string> CellEngineNucleicAcidsChemicalReactionsInSimul
     return { TemplateSequence, TemplateSequenceStr };
 }
 
-tuple<vector<ChainIdInt>, string> CellEngineNucleicAcidsChemicalReactionsInSimulationSpace::GetNucleotidesSequenceFromRNAInOneParticle(const std::vector<UniqueIdUnsignedInt>& NucleotidesFoundInProximity, const UnsignedInt SizeOfLoop)
+tuple<vector<ChainIdUInt16Type>, string> CellEngineNucleicAcidsChemicalReactionsInSimulationSpace::GetNucleotidesSequenceFromRNAInOneParticle(const std::vector<UniqueIdUInt64Type>& NucleotidesFoundInProximity, const UnsignedInt SizeOfLoop)
 {
     string TemplateSequenceStr;
 
-    vector<ChainIdInt> TemplateSequence;
+    vector<ChainIdUInt16Type> TemplateSequence;
 
     try
     {
@@ -73,7 +73,7 @@ bool CellEngineNucleicAcidsChemicalReactionsInSimulationSpace::CompareFitnessOfD
             return true;
         }
 
-        vector<ChainIdInt> TemplateSequence = ParticleKindForReactionObject.Sequence;
+        vector<ChainIdUInt16Type> TemplateSequence = ParticleKindForReactionObject.Sequence;
 
         const string OriginalTemplateRNASequenceStr;
 

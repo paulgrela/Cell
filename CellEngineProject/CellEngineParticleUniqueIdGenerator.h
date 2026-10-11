@@ -12,11 +12,11 @@ class CellEngineParticleUniqueIdGenerator
 {
 private:
     std::uint64_t Prefix{ 0 };
-    UniqueIdUnsignedInt LastIssuedCounter{ 0 };
+    UniqueIdUInt64Type LastIssuedCounter{ 0 };
 
     static inline unsigned SectorBits{ 16 };
     static inline unsigned CounterBits{ 48 };
-    static inline UniqueIdUnsignedInt LastCounterValue{ (std::uint64_t{ 1 } << 48) - 1 };
+    static inline UniqueIdUInt64Type LastCounterValue{ (std::uint64_t{ 1 } << 48) - 1 };
 
 public:
     static void ConfigureForNumberOfSectors(const UnsignedInt NumberOfAllSectors)
@@ -32,29 +32,29 @@ public:
         LastIssuedCounter = 0;
     }
 
-    [[nodiscard]] UniqueIdUnsignedInt GetNewUniqueParticleIndex()
+    [[nodiscard]] UniqueIdUInt64Type GetNewUniqueParticleIndex()
     {
         if (LastIssuedCounter == LastCounterValue) [[unlikely]]
             throw std::overflow_error("ParticleUniqueIdGenerator: ID space of this sector is exhausted");
         return Prefix | ++LastIssuedCounter;
     }
 
-    static void ReleaseUniqueParticleIndex(const UniqueIdUnsignedInt) noexcept {}
+    static void ReleaseUniqueParticleIndex(const UniqueIdUInt64Type) noexcept {}
 
-    [[nodiscard]] UniqueIdUnsignedInt SaveState() const noexcept
+    [[nodiscard]] UniqueIdUInt64Type SaveState() const noexcept
     {
         return LastIssuedCounter;
     }
-    void RestoreState(const UniqueIdUnsignedInt SavedLastIssuedCounter) noexcept
+    void RestoreState(const UniqueIdUInt64Type SavedLastIssuedCounter) noexcept
     {
         LastIssuedCounter = SavedLastIssuedCounter;
     }
 
-    [[nodiscard]] static UniqueIdUnsignedInt CreatorSectorOf(const UniqueIdUnsignedInt Id) noexcept
+    [[nodiscard]] static UniqueIdUInt64Type CreatorSectorOf(const UniqueIdUInt64Type Id) noexcept
     {
         return Id >> CounterBits;
     }
-    [[nodiscard]] static UniqueIdUnsignedInt LocalCounterOf(const UniqueIdUnsignedInt Id) noexcept
+    [[nodiscard]] static UniqueIdUInt64Type LocalCounterOf(const UniqueIdUInt64Type Id) noexcept
     {
         return Id & LastCounterValue;
     }
@@ -71,23 +71,23 @@ public:
 class CellEngineParticleUniqueIdGeneratorWithReuse
 {
 private:
-    UniqueIdUnsignedInt NextFreshId{ 1 };
-    UniqueIdUnsignedInt EndOfRange{ 1 };
-    std::vector<UniqueIdUnsignedInt> FreeList{};
+    UniqueIdUInt64Type NextFreshId{ 1 };
+    UniqueIdUInt64Type EndOfRange{ 1 };
+    std::vector<UniqueIdUInt64Type> FreeList{};
 
 public:
-    void Initialize(const UniqueIdUnsignedInt GlobalSectorLinearIndex, UniqueIdUnsignedInt IdsPerSector)
+    void Initialize(const UniqueIdUInt64Type GlobalSectorLinearIndex, UniqueIdUInt64Type IdsPerSector)
     {
         NextFreshId = GlobalSectorLinearIndex * IdsPerSector + 1;
         EndOfRange = (GlobalSectorLinearIndex + 1) * IdsPerSector;
         FreeList.clear();
     }
 
-    [[nodiscard]] UniqueIdUnsignedInt GetNewUniqueParticleIndex()
+    [[nodiscard]] UniqueIdUInt64Type GetNewUniqueParticleIndex()
     {
         if (!FreeList.empty())
         {
-            const UniqueIdUnsignedInt Id = FreeList.back();
+            const UniqueIdUInt64Type Id = FreeList.back();
             FreeList.pop_back();
             return Id;
         }
@@ -98,7 +98,7 @@ public:
         return NextFreshId++;
     }
 
-    void ReleaseUniqueParticleIndex(const UniqueIdUnsignedInt Id)
+    void ReleaseUniqueParticleIndex(const UniqueIdUInt64Type Id)
     {
         FreeList.push_back(Id);
     }

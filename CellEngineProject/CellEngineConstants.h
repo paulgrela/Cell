@@ -9,10 +9,10 @@
 
 constexpr UnsignedInt MaxLengthOfGene = 16384;
 
-constexpr UniqueIdType UnknownParticleKindId = 99999;
+constexpr UniqueIdUInt32Type UnknownParticleKindId = 99999;
 
-constexpr UniqueIdType StartParticleKindId = 100000;
-constexpr UniqueIdType StartReactionId = 10000;
+constexpr UniqueIdUInt32Type StartParticleKindId = 100000;
+constexpr UniqueIdUInt32Type StartReactionId = 10000;
 
 constexpr RealType ParticleMoveSizeinDiffusionRealType = 10.0;
 constexpr UnsignedInt ParticleMoveSizeinDiffusionUnsignedInt = 10;
@@ -21,30 +21,30 @@ constexpr bool AdditionalSortParticlesInProximityByCapacity = false;
 
 constexpr UnsignedInt GenomeLength = 543380;
 
-constexpr ChainIdInt ACode = 1;
-constexpr ChainIdInt CCode = 2;
-constexpr ChainIdInt GCode = 3;
-constexpr ChainIdInt TCode = 4;
-constexpr ChainIdInt UCode = 5;
+constexpr ChainIdUInt16Type ACode = 1;
+constexpr ChainIdUInt16Type CCode = 2;
+constexpr ChainIdUInt16Type GCode = 3;
+constexpr ChainIdUInt16Type TCode = 4;
+constexpr ChainIdUInt16Type UCode = 5;
 
-constexpr ChainIdInt TCodeAdd = 11;
-constexpr ChainIdInt GCodeAdd = 12;
-constexpr ChainIdInt CCodeAdd = 13;
-constexpr ChainIdInt ACodeAdd = 14;
-constexpr ChainIdInt UCodeAdd = 15;
+constexpr ChainIdUInt16Type TCodeAdd = 11;
+constexpr ChainIdUInt16Type GCodeAdd = 12;
+constexpr ChainIdUInt16Type CCodeAdd = 13;
+constexpr ChainIdUInt16Type ACodeAdd = 14;
+constexpr ChainIdUInt16Type UCodeAdd = 15;
 
-constexpr ChainIdInt RCode = 21;
-constexpr ChainIdInt YCode = 22;
-constexpr ChainIdInt SCode = 23;
-constexpr ChainIdInt WCode = 24;
-constexpr ChainIdInt KCode = 25;
-constexpr ChainIdInt MCode = 26;
-constexpr ChainIdInt BCode = 27;
-constexpr ChainIdInt DCode = 28;
-constexpr ChainIdInt HCode = 29;
-constexpr ChainIdInt VCode = 30;
+constexpr ChainIdUInt16Type RCode = 21;
+constexpr ChainIdUInt16Type YCode = 22;
+constexpr ChainIdUInt16Type SCode = 23;
+constexpr ChainIdUInt16Type WCode = 24;
+constexpr ChainIdUInt16Type KCode = 25;
+constexpr ChainIdUInt16Type MCode = 26;
+constexpr ChainIdUInt16Type BCode = 27;
+constexpr ChainIdUInt16Type DCode = 28;
+constexpr ChainIdUInt16Type HCode = 29;
+constexpr ChainIdUInt16Type VCode = 30;
 
-constexpr ChainIdInt NCode = 31;
+constexpr ChainIdUInt16Type NCode = 31;
 
 constexpr std::string RNAStartSequence = "ACGUACGU";
 

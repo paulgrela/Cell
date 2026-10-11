@@ -41,7 +41,7 @@ private:
 public:
     void SelectRandomEngineForColors();
     vmath::vec3 GetRandomColor();
-    vector3_16 GetDNAorRNAColor(UniqueIdType ParticleKindId, ChainIdInt ChainId);
+    vector3_16 GetDNAorRNAColor(UniqueIdUInt32Type ParticleKindId, ChainIdUInt16Type ChainId);
 };
 #else
 #include "CellEngineColors.h"
@@ -81,7 +81,7 @@ vmath::vec3 CellEngineColors::GetRandomColor()
     return ReturnRandomColor;
 }
 
-vector3_16 CellEngineColors::GetDNAorRNAColor(const UniqueIdType ParticleKindId, const ChainIdInt ChainId) const
+vector3_16 CellEngineColors::GetDNAorRNAColor(const UniqueIdUInt32Type ParticleKindId, const ChainIdUInt16Type ChainId) const
 {
     if (ParticleKindId == CellEngineConfigDataObject.DNAIdentifier)
     {

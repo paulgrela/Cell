@@ -17,12 +17,12 @@
 using SignedInt = std::int64_t;
 using UnsignedInt = std::uint64_t;
 
-using GeneIdInt = std::uint64_t;
-using UniqueIdType = std::uint32_t;
-using ChainIdInt = std::uint16_t;
-using PositionInt = std::uint16_t;
-using UniqueIdUnsignedInt = std::uint64_t;
-using UniqueIdUnsignedIntReduced = std::uint32_t;
+using UniqueIdUInt64Type = std::uint64_t;
+using UniqueIdUInt32Type = std::uint32_t;
+
+using GeneIdUInt64Type = std::uint64_t;
+using ChainIdUInt16Type = std::uint16_t;
+using PositionUInt16Type = std::uint16_t;
 
 using RealType = float;
 
@@ -43,7 +43,7 @@ struct vector3
     }
 };
 
-using vector3_16 = vector3<PositionInt>;
+using vector3_16 = vector3<PositionUInt16Type>;
 using vector3_64 = vector3<uint64_t>;
 using vector3_Real32 = vector3<RealType>;
 
@@ -104,7 +104,7 @@ using MainMultiMapType = std::multimap<Key, T, Compare, Allocator>;
 #endif
 
 template<class Particle>
-using ParticlesDetailedContainer = MainMapType<UniqueIdUnsignedInt, Particle>;
+using ParticlesDetailedContainer = MainMapType<UniqueIdUInt64Type, Particle>;
 
 template <class Particle>
 struct ParticlesContainerInternal
@@ -125,7 +125,7 @@ using SimulationSpaceForParallelExecutionContainer = std::vector<std::vector<std
 
 struct ParticleToBeMovedFromOneSectorToAnotherSector
 {
-    UniqueIdUnsignedInt ParticleIndex{};
+    UniqueIdUInt64Type ParticleIndex{};
     SectorPosType SenderSectorPos{};
     SectorPosType ReceiverSectorPos{};
 };

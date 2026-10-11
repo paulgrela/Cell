@@ -134,7 +134,7 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesAsCopiedMap()
 
                 LoggersManagerObject.Log(STREAM("MaximumOfAllSavedParticlesSnapshotsCopiedVectorForMPILengths = " << MaximumOfAllSavedParticlesSnapshotsCopiedVectorForMPILengths << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
 
-                const unique_ptr<UniqueIdType[]> SavedParticlesSnapshotsCopiedVectorForMPIVector(new UniqueIdType[MaximumOfAllSavedParticlesSnapshotsCopiedVectorForMPILengths * MPIProcessDataObject.NumberOfMPIProcesses + 1]);
+                const unique_ptr<UniqueIdUInt32Type[]> SavedParticlesSnapshotsCopiedVectorForMPIVector(new UniqueIdUInt32Type[MaximumOfAllSavedParticlesSnapshotsCopiedVectorForMPILengths * MPIProcessDataObject.NumberOfMPIProcesses + 1]);
 
                 const int NumberOfBytesToGatherFromEveryProcess = MaximumOfAllSavedParticlesSnapshotsCopiedVectorForMPILengths;
                 ParticlesSnapshotsCopiedVectorForMPI[SimulationStepNumber - 1].reserve(MaximumOfAllSavedParticlesSnapshotsCopiedVectorForMPILengths);
@@ -145,7 +145,7 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesAsCopiedMap()
                 if (MPIProcessDataObject.CurrentMPIProcessIndex == CellEngineConfigDataObject.MainMPIProcessNumber)
                 {
                     ParticlesSnapshotsCopiedVectorForMPI[SimulationStepNumber - 1].clear();
-                    for (UniqueIdUnsignedInt LocalMPIProcessIndex = 0; LocalMPIProcessIndex < MPIProcessDataObject.NumberOfMPIProcesses; LocalMPIProcessIndex++)
+                    for (UniqueIdUInt64Type LocalMPIProcessIndex = 0; LocalMPIProcessIndex < MPIProcessDataObject.NumberOfMPIProcesses; LocalMPIProcessIndex++)
                         for (UnsignedInt ParticleDataIndex = MaximumOfAllSavedParticlesSnapshotsCopiedVectorForMPILengths * LocalMPIProcessIndex; ParticleDataIndex < MaximumOfAllSavedParticlesSnapshotsCopiedVectorForMPILengths * LocalMPIProcessIndex + ParticlesSnapshotsCopiedVectorForMPILengths[LocalMPIProcessIndex]; ParticleDataIndex++)
                             ParticlesSnapshotsCopiedVectorForMPI[SimulationStepNumber - 1].emplace_back(SavedParticlesSnapshotsCopiedVectorForMPIVector.get()[ParticleDataIndex]);
 
@@ -185,7 +185,7 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesAsSortedVectorElements()
             LoggersManagerObject.LogStatistics(STREAM("Size of all particles copied for statistics = " << ParticlesSnapshotsCopiedUnorderedMap[SimulationStepNumber - 1].size()));
             for (const auto& ParticlesSnapshotsCopiedUnorderedMapElementFirst : ParticlesSnapshotsCopiedUnorderedMap[SimulationStepNumber - 1] | views::keys)
             {
-                UniqueIdType ParticleKindId = GetParticleFromIndex(ParticlesSnapshotsCopiedUnorderedMapElementFirst).ParticleKindId;
+                UniqueIdUInt32Type ParticleKindId = GetParticleFromIndex(ParticlesSnapshotsCopiedUnorderedMapElementFirst).ParticleKindId;
                 ParticlesKindsSnapshotsCopiedMap[SimulationStepNumber - 1][ParticleKindId] = { .ParticleKindId = ParticleKindId, .Counter = ++ParticlesKindsSnapshotsCopiedMap[SimulationStepNumber - 1][ParticleKindId].Counter };
             }
         }
@@ -194,14 +194,14 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesAsSortedVectorElements()
         {
             for (const auto& ParticlesSnapshotsCopiedUnorderedMapElement : ParticlesSnapshotsCopiedVectorForMPI[SimulationStepNumber - 1])
             {
-                UniqueIdType ParticleKindId = ParticlesSnapshotsCopiedUnorderedMapElement;
+                UniqueIdUInt32Type ParticleKindId = ParticlesSnapshotsCopiedUnorderedMapElement;
                 ParticlesKindsSnapshotsCopiedMap[SimulationStepNumber - 1][ParticleKindId] = { .ParticleKindId = ParticleKindId, .Counter = ++ParticlesKindsSnapshotsCopiedMap[SimulationStepNumber - 1][ParticleKindId].Counter };
             }
         }
         #else
         for (const auto& ParticlesSnapshotsCopiedUnorderedMapElement : ParticlesSnapshotsCopiedUnorderedMap[SimulationStepNumber - 1])
         {
-            UniqueIdUnsignedInt ParticleKindId = GetParticleFromIndex(ParticlesSnapshotsCopiedUnorderedMapElement.first).ParticleKindId;
+            UniqueIdUInt64Type ParticleKindId = GetParticleFromIndex(ParticlesSnapshotsCopiedUnorderedMapElement.first).ParticleKindId;
             if (auto FoundResult = ParticlesKindsSnapshotsCopiedMap[SimulationStepNumber - 1].find(ParticleKindId); FoundResult != ParticlesKindsSnapshotsCopiedMap[SimulationStepNumber - 1].end())
                 FoundResult->second.Counter++;
             else
@@ -267,7 +267,7 @@ void CellEngineSimulationSpaceStatistics::SaveReactionForStatisticsExtended(cons
 }
 #endif
 
-void CellEngineSimulationSpaceStatistics::GetNumberOfParticlesFromParticleKind(const UniqueIdType ParticleKindId)
+void CellEngineSimulationSpaceStatistics::GetNumberOfParticlesFromParticleKind(const UniqueIdUInt32Type ParticleKindId)
 {
     try
     {

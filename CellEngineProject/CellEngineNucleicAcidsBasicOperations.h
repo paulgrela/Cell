@@ -59,10 +59,10 @@ protected:
         return ParticlePtr;
     }
 protected:
-    static inline tuple<Particle*, Particle*, UnsignedInt, string, vector<ChainIdInt>> GetNucleotidesSequence(Particle* Particle::*Direction, const UnsignedInt LengthOfSequence, Particle& ParticleObjectForReaction, const bool ToString, const bool ToVector, bool (*Predicate)(const Particle*))
+    static inline tuple<Particle*, Particle*, UnsignedInt, string, vector<ChainIdUInt16Type>> GetNucleotidesSequence(Particle* Particle::*Direction, const UnsignedInt LengthOfSequence, Particle& ParticleObjectForReaction, const bool ToString, const bool ToVector, bool (*Predicate)(const Particle*))
     {
         string NucleotidesSequenceToCompareString;
-        vector<ChainIdInt> NucleotidesSequenceToCompareVector;
+        vector<ChainIdUInt16Type> NucleotidesSequenceToCompareVector;
 
         Particle* ParticlePtr = &ParticleObjectForReaction;
         Particle* ParticlePtrPrev = &ParticleObjectForReaction;

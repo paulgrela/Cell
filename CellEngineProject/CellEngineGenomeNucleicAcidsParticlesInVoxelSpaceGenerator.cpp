@@ -42,7 +42,7 @@ bool CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::TestFormerForbi
     return TestedFormerForbiddenPositions.contains(to_string(PosX) + "|" + to_string(PosY) + "|" + to_string(PosZ));
 }
 
-tuple<UnsignedInt, UnsignedInt, UnsignedInt> CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::EraseLastRandomDNAParticle(vector<UniqueIdUnsignedInt>& Genome)
+tuple<UnsignedInt, UnsignedInt, UnsignedInt> CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::EraseLastRandomDNAParticle(vector<UniqueIdUInt64Type>& Genome)
 {
     vector3_16 LastLocalRandomPos;
 
@@ -179,7 +179,7 @@ void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::GenerateRandomD
                     NumberOfGeneratedNucleotides++;
                     NumberOfMoveAdvanceSteps++;
 
-                    ChainIdInt ChainId = GetRandomValue<uniform_int_distribution, UnsignedInt>(UniformDistributionObjectChainOfParticle_Uint64t);
+                    ChainIdUInt16Type ChainId = GetRandomValue<uniform_int_distribution, UnsignedInt>(UniformDistributionObjectChainOfParticle_Uint64t);
 
                     ParticlePrev1 = GenerateNucleotideParticle(ParticlePrev1, CellEngineConfigDataObject.DNAIdentifier, ChainId, 0, Genomes[0].size(), RandomPosX, RandomPosY, RandomPosZ, ParticleSizeX, ParticleSizeY, ParticleSizeZ, true, Genomes[0], CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), false);
 
@@ -292,7 +292,7 @@ void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::GenerateRandomD
                 {
                     NumberOfGeneratedNucleotides++;
 
-                    const ChainIdInt ChainId = GetRandomValue<uniform_int_distribution, UnsignedInt>(UniformDistributionObjectChainOfParticle_Uint64t);
+                    const ChainIdUInt16Type ChainId = GetRandomValue<uniform_int_distribution, UnsignedInt>(UniformDistributionObjectChainOfParticle_Uint64t);
 
                     if (Paired == true)
                     {

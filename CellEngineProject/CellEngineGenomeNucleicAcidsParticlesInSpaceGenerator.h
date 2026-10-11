@@ -10,11 +10,11 @@ class CellEngineGenomeNucleicAcidsParticlesInSpaceGenerator : virtual public Cel
 {
 protected:
     std::vector<std::string> GenomesLines;
-    std::vector<std::vector<UniqueIdUnsignedInt>> Genomes;
+    std::vector<std::vector<UniqueIdUInt64Type>> Genomes;
 protected:
-    void GenerateOneStrand(UniqueIdType ParticleKindId, std::string_view Sequence, UnsignedInt StartPosX, UnsignedInt StartPosY, UnsignedInt StartPosZ, UnsignedInt ParticleSizeX, UnsignedInt ParticleSizeY, UnsignedInt ParticleSizeZ, UnsignedInt ParticleStepX, UnsignedInt ParticleStepY, UnsignedInt ParticleStepZ);
-    Particle* GenerateNucleotideParticle(Particle* ParticlePrev, UniqueIdType ParticleKindId, ChainIdInt ChainId, UnsignedInt GenomeThread, UnsignedInt GenomeIndex, UnsignedInt StartPosX, UnsignedInt StartPosY, UnsignedInt StartPosZ, UnsignedInt ParticleSizeX, UnsignedInt ParticleSizeY, UnsignedInt ParticleSizeZ, bool AddToGenome, std::vector<UniqueIdUnsignedInt>& Genome, vector3_16 UniqueColorParam, bool LinkWithPreviousNucleotide);
-    std::tuple<Particle*, Particle*> GenerateTwoPairedNucleotides(Particle* ParticlePrev1, Particle* ParticlePrev2, UniqueIdType ParticleKindId, ChainIdInt ChainId, UnsignedInt GenomeIndex, UnsignedInt StartPosX, UnsignedInt StartPosY, UnsignedInt StartPosZ, UnsignedInt ParticleSizeX, UnsignedInt ParticleSizeY, UnsignedInt ParticleSizeZ, UnsignedInt AddSizeX, UnsignedInt AddSizeY, UnsignedInt AddSizeZ, vector3_16 UniqueColorParam, bool Linked, bool LinkWithPreviousNucleotide);
+    void GenerateOneStrand(UniqueIdUInt32Type ParticleKindId, std::string_view Sequence, UnsignedInt StartPosX, UnsignedInt StartPosY, UnsignedInt StartPosZ, UnsignedInt ParticleSizeX, UnsignedInt ParticleSizeY, UnsignedInt ParticleSizeZ, UnsignedInt ParticleStepX, UnsignedInt ParticleStepY, UnsignedInt ParticleStepZ);
+    Particle* GenerateNucleotideParticle(Particle* ParticlePrev, UniqueIdUInt32Type ParticleKindId, ChainIdUInt16Type ChainId, UnsignedInt GenomeThread, UnsignedInt GenomeIndex, UnsignedInt StartPosX, UnsignedInt StartPosY, UnsignedInt StartPosZ, UnsignedInt ParticleSizeX, UnsignedInt ParticleSizeY, UnsignedInt ParticleSizeZ, bool AddToGenome, std::vector<UniqueIdUInt64Type>& Genome, vector3_16 UniqueColorParam, bool LinkWithPreviousNucleotide);
+    std::tuple<Particle*, Particle*> GenerateTwoPairedNucleotides(Particle* ParticlePrev1, Particle* ParticlePrev2, UniqueIdUInt32Type ParticleKindId, ChainIdUInt16Type ChainId, UnsignedInt GenomeIndex, UnsignedInt StartPosX, UnsignedInt StartPosY, UnsignedInt StartPosZ, UnsignedInt ParticleSizeX, UnsignedInt ParticleSizeY, UnsignedInt ParticleSizeZ, UnsignedInt AddSizeX, UnsignedInt AddSizeY, UnsignedInt AddSizeZ, vector3_16 UniqueColorParam, bool Linked, bool LinkWithPreviousNucleotide);
 public:
     void EraseAllDNAParticles();
 public:

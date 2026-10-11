@@ -28,7 +28,7 @@ void CellEngineParticlesFullAtomOperations::SetProperThreadIndexForEveryParticle
     CATCH("setting proper thread index for every particles sector")
 }
 
-static bool ExchangeParticleBetweenSectors(const Particle &ParticleObject, const ParticlesContainer<Particle>& ParticlesInSector, ParticlesDetailedContainer<Particle>::iterator& ParticleObjectIter, vector<ParticleToBeMovedFromOneSectorToAnotherSector>& ListOfParticlesToChangeSectors, const SignedInt SectorPosX1, const SignedInt SectorPosY1, const SignedInt SectorPosZ1, const SignedInt SectorPosX2, const SignedInt SectorPosY2, const SignedInt SectorPosZ2)
+static bool ExchangeParticleBetweenSectors(const Particle &ParticleObject, const ParticlesContainer<Particle>& ParticlesInSector, vector<ParticleToBeMovedFromOneSectorToAnotherSector>& ListOfParticlesToChangeSectors, const SignedInt SectorPosX1, const SignedInt SectorPosY1, const SignedInt SectorPosZ1, const SignedInt SectorPosX2, const SignedInt SectorPosY2, const SignedInt SectorPosZ2)
 {
     if (ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].Particles.contains(ParticleObject.Index) == false)
     {
@@ -44,7 +44,7 @@ static bool ExchangeParticleBetweenSectors(const Particle &ParticleObject, const
     return false;
 }
 
-void CellEngineParticlesFullAtomOperations::MoveParticleByVectorForThreads(Particle& ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, ParticlesDetailedContainer<Particle>::iterator& ParticleObjectIter, vector<ParticleToBeMovedFromOneSectorToAnotherSector>& ListOfParticlesToChangeSectors, const SignedInt* NeighborProcessesIndexes, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const ThreadPosType& CurrentThreadPos)
+void CellEngineParticlesFullAtomOperations::MoveParticleByVectorForThreads(Particle& ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, vector<ParticleToBeMovedFromOneSectorToAnotherSector>& ListOfParticlesToChangeSectors, const SignedInt* NeighborProcessesIndexes, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const ThreadPosType& CurrentThreadPos)
 {
     try
     {
@@ -127,13 +127,13 @@ void CellEngineParticlesFullAtomOperations::MoveParticleByVectorForThreads(Parti
                 }
             }
             else
-                ExchangeParticleBetweenSectors(ParticleObject, ParticlesInSector, ParticleObjectIter, ListOfParticlesToChangeSectors, SectorPosX1, SectorPosY1, SectorPosZ1, SectorPosX2, SectorPosY2, SectorPosZ2);
+                ExchangeParticleBetweenSectors(ParticleObject, ParticlesInSector, ListOfParticlesToChangeSectors, SectorPosX1, SectorPosY1, SectorPosZ1, SectorPosX2, SectorPosY2, SectorPosZ2);
         }
     }
     CATCH_AND_THROW("moving particle by vector for threads")
 }
 
-void CellEngineParticlesFullAtomOperations::MoveParticleByVectorForMPIProcesses(Particle& ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, ParticlesDetailedContainer<Particle>::iterator& ParticleObjectIter, vector<ParticleToBeMovedFromOneSectorToAnotherSector>& ListOfParticlesToChangeSectors, const SignedInt* NeighborProcessesIndexes, std::vector<ParticleSenderStructMPIMultiProcess>* VectorOfParticlesToSendToNeighborProcesses, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const ThreadPosType CurrentThreadPos)
+void CellEngineParticlesFullAtomOperations::MoveParticleByVectorForMPIProcesses(Particle& ParticleObject, const ParticlesContainer<Particle>& ParticlesInSector, vector<ParticleToBeMovedFromOneSectorToAnotherSector>& ListOfParticlesToChangeSectors, const SignedInt* NeighborProcessesIndexes, std::vector<ParticleSenderStructMPIMultiProcess>* VectorOfParticlesToSendToNeighborProcesses, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const ThreadPosType CurrentThreadPos)
 {
     try
     {
@@ -189,7 +189,7 @@ void CellEngineParticlesFullAtomOperations::MoveParticleByVectorForMPIProcesses(
                 }
                 else
                 {
-                    ExchangeParticleBetweenSectors(ParticleObject, ParticlesInSector, ParticleObjectIter, ListOfParticlesToChangeSectors, SectorPosX1, SectorPosY1, SectorPosZ1, SectorPosX2, SectorPosY2, SectorPosZ2);
+                    ExchangeParticleBetweenSectors(ParticleObject, ParticlesInSector, ListOfParticlesToChangeSectors, SectorPosX1, SectorPosY1, SectorPosZ1, SectorPosX2, SectorPosY2, SectorPosZ2);
                     NewSectorNeighborProcessFound = true;
                 }
             }

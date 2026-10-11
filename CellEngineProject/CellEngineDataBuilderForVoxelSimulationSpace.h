@@ -22,12 +22,12 @@ protected:
         CellEngineFullAtomSimulationSpaceObjectPointer->SetCurrentSectorPos(CurrentSectorPos);
     }
 protected:
-    UniqueIdUnsignedInt AddNewParticle(const Particle& ParticleObjectParam) override
+    UniqueIdUInt64Type AddNewParticle(const Particle& ParticleObjectParam) override
     {
         return CellEngineVoxelSimulationSpaceObjectPointer->AddNewParticle(ParticleObjectParam);
     }
 protected:
-    void InsertAtom(std::vector<CellEngineAtom>& LocalCellEngineAllAtomsObject, const CellEngineAtom& AppliedAtom, const UniqueIdUnsignedInt ParticleIndex) override
+    void InsertAtom(std::vector<CellEngineAtom>& LocalCellEngineAllAtomsObject, const CellEngineAtom& AppliedAtom, const UniqueIdUInt64Type ParticleIndex) override
     {
         CellEngineVoxelSimulationSpaceObjectPointer->SetAtomInVoxelSimulationSpace(ParticleIndex, AppliedAtom);
     }

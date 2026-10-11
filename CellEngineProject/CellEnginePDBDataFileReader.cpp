@@ -85,7 +85,7 @@ void CellEnginePDBDataFileReader::ReadDataFromFile(const bool StartValuesBool, c
 
                 GetParticleFromIndex(1) = ParticleToInsert;
 
-                UniqueIdType P = 1;
+                UniqueIdUInt32Type P = 1;
                 ParticlesKindsManagerObject.AddSingleParticleKind(ParticlesTypes::Lipid, P, "LipidOuterMembrane", "LipidOuterMembrane", "LipidOuterMembrane", -1, 0, "m", 1);
                 ParticlesKindsManagerObject.GetParticleKind(1).GraphicData.Visible = true;
             }

@@ -14,7 +14,7 @@
 
 using namespace std;
 
-void CellEngineChemicalReactionsInSimulationSpace::RemoveParticle(const UniqueIdUnsignedInt ParticleIndex, const bool ClearVoxels, const bool CountAllParticlesBool)
+void CellEngineChemicalReactionsInSimulationSpace::RemoveParticle(const UniqueIdUInt64Type ParticleIndex, const bool ClearVoxels, const bool CountAllParticlesBool)
 {
     try
     {
@@ -133,7 +133,7 @@ void CellEngineChemicalReactionsInSimulationSpace::UpdateFoundNucleotidesForFoun
     CATCH("updating found nucleotides for found particles in proximity")
 }
 
-void CellEngineChemicalReactionsInSimulationSpace::SaveParticleFoundInProximity(const UniqueIdUnsignedInt ParticleIndex, MainSetType<UnsignedInt>& FoundParticleIndexes, const bool UpdateNucleotides)
+void CellEngineChemicalReactionsInSimulationSpace::SaveParticleFoundInProximity(const UniqueIdUInt64Type ParticleIndex, MainSetType<UnsignedInt>& FoundParticleIndexes, const bool UpdateNucleotides)
 {
     try
     {

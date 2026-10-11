@@ -19,11 +19,11 @@ static void SavePointerToBinaryFile(ofstream& ParticlesDataFile, const Particle*
     try
     {
         if (PointerToParticle != nullptr)
-            ParticlesDataFile.write(reinterpret_cast<const char*>(&PointerToParticle->Index), sizeof(UniqueIdUnsignedInt));
+            ParticlesDataFile.write(reinterpret_cast<const char*>(&PointerToParticle->Index), sizeof(UniqueIdUInt64Type));
         else
         {
-            UniqueIdUnsignedInt ValueToWrite = 0;
-            ParticlesDataFile.write(reinterpret_cast<char*>(&ValueToWrite), sizeof(UniqueIdUnsignedInt));
+            UniqueIdUInt64Type ValueToWrite = 0;
+            ParticlesDataFile.write(reinterpret_cast<char*>(&ValueToWrite), sizeof(UniqueIdUInt64Type));
         }
     }
     CATCH("saving pointer to binary file")
@@ -33,7 +33,7 @@ static void SaveStringToBinaryFile(ofstream& ParticlesDataFile, const string& St
 {
     try
     {
-        UniqueIdUnsignedInt Length = StringToBeSaved.length();
+        UniqueIdUInt64Type Length = StringToBeSaved.length();
         ParticlesDataFile.write(reinterpret_cast<char*>(&Length), sizeof(Length));
         ParticlesDataFile.write(StringToBeSaved.c_str(), Length);
     }
@@ -186,9 +186,9 @@ void CellEngineParticlesBinaryDataFileReaderWriter::SaveChemicalReactionsToBinar
                     ParticlesDataFile.write(reinterpret_cast<const char*>(&ChemicalReactionReactantObject.Counter), sizeof(ChemicalReactionReactantObject.Counter));
                     ParticlesDataFile.write(reinterpret_cast<const char*>(&ChemicalReactionReactantObject.ToRemoveInReaction), sizeof(ChemicalReactionReactantObject.ToRemoveInReaction));
                     SaveStringToBinaryFile(ParticlesDataFile, ChemicalReactionReactantObject.SequenceStr);
-                    SaveVectorToBinaryFile<ChainIdInt>(ParticlesDataFile, ChemicalReactionReactantObject.Sequence);
+                    SaveVectorToBinaryFile<ChainIdUInt16Type>(ParticlesDataFile, ChemicalReactionReactantObject.Sequence);
 
-                    SaveVectorToBinaryFile<UniqueIdUnsignedIntReduced>(ParticlesDataFile, ChemicalReactionReactantObject.LinkedParticleTypes);
+                    SaveVectorToBinaryFile<UniqueIdUInt32Type>(ParticlesDataFile, ChemicalReactionReactantObject.LinkedParticleTypes);
                 }
 
                 UnsignedInt ChemicalReactionProductsSize = ChemicalReactionObject.Products.size();
@@ -199,9 +199,9 @@ void CellEngineParticlesBinaryDataFileReaderWriter::SaveChemicalReactionsToBinar
                     ParticlesDataFile.write(reinterpret_cast<const char*>(&ChemicalReactionProductObject.Counter), sizeof(ChemicalReactionProductObject.Counter));
                     ParticlesDataFile.write(reinterpret_cast<const char*>(&ChemicalReactionProductObject.ToRemoveInReaction), sizeof(ChemicalReactionProductObject.ToRemoveInReaction));
                     SaveStringToBinaryFile(ParticlesDataFile, ChemicalReactionProductObject.SequenceStr);
-                    SaveVectorToBinaryFile<ChainIdInt>(ParticlesDataFile, ChemicalReactionProductObject.Sequence);
+                    SaveVectorToBinaryFile<ChainIdUInt16Type>(ParticlesDataFile, ChemicalReactionProductObject.Sequence);
 
-                    SaveVectorToBinaryFile<UniqueIdUnsignedIntReduced>(ParticlesDataFile, ChemicalReactionProductObject.LinkedParticleTypes);
+                    SaveVectorToBinaryFile<UniqueIdUInt32Type>(ParticlesDataFile, ChemicalReactionProductObject.LinkedParticleTypes);
                 }
             }
 
@@ -302,7 +302,7 @@ static void ReadStringFromBinaryFile(ifstream& ParticlesDataFile, string& String
 {
     try
     {
-        UniqueIdUnsignedIntReduced Length = 0;
+        UniqueIdUInt32Type Length = 0;
 
         ParticlesDataFile.read(reinterpret_cast<char*>(&Length), sizeof(Length));
         StringToRead.resize(Length);
@@ -341,7 +341,7 @@ static void ReadVectorFromBinaryFileTemporary(ifstream& ParticlesDataFile, vecto
         ParticlesDataFile.read(reinterpret_cast<char*>(&Size), sizeof(Size));
         for (UnsignedInt Index = 1; Index <= Size; Index++)
         {
-            UniqueIdUnsignedIntReduced Object{};
+            UniqueIdUInt32Type Object{};
             ParticlesDataFile.read(reinterpret_cast<char*>(&Object), sizeof(Object));
             VectorToBeRead.emplace_back(Object);
         }
@@ -425,7 +425,7 @@ static void ReadVoxelsVectorDividedByStepsFromBinaryFile(ifstream& ParticlesData
 {
     try
     {
-        const PositionInt Step = DivideFactor * DivideFactor * DivideFactor;
+        const PositionUInt16Type Step = DivideFactor * DivideFactor * DivideFactor;
 
         VectorToBeRead.clear();
 
@@ -436,7 +436,7 @@ static void ReadVoxelsVectorDividedByStepsFromBinaryFile(ifstream& ParticlesData
             vector3_16 Object{};
             ParticlesDataFile.read(reinterpret_cast<char*>(&Object), sizeof(Object));
             if (Index % Step == 0)
-                VectorToBeRead.emplace_back(vector3_16{ static_cast<PositionInt>(static_cast<RealType>(Object.X) / DivideFactor), static_cast<PositionInt>(static_cast<RealType>(Object.Y) / DivideFactor), static_cast<PositionInt>(static_cast<RealType>(Object.Z) / DivideFactor) });
+                VectorToBeRead.emplace_back(vector3_16{ static_cast<PositionUInt16Type>(static_cast<RealType>(Object.X) / DivideFactor), static_cast<PositionUInt16Type>(static_cast<RealType>(Object.Y) / DivideFactor), static_cast<PositionUInt16Type>(static_cast<RealType>(Object.Z) / DivideFactor) });
         }
     }
     CATCH("reading vector from binary file")
@@ -461,7 +461,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
             ParticlesDataFile.read(reinterpret_cast<char*>(&ParticleObject.ParticleKindId), sizeof(ParticleObject.ParticleKindId));
             ParticlesDataFile.read(reinterpret_cast<char*>(&ParticleObject.ChainId), sizeof(ParticleObject.ChainId));
 
-            UniqueIdUnsignedIntReduced LocalParticleObjectIndex;
+            UniqueIdUInt32Type LocalParticleObjectIndex;
             ParticlesDataFile.read(reinterpret_cast<char*>(&LocalParticleObjectIndex), sizeof(LocalParticleObjectIndex));
             ParticleObject.Index = LocalParticleObjectIndex;
 
@@ -503,9 +503,9 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
             if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
                 ReadVectorFromBinaryFile<CellEngineAtom>(ParticlesDataFile, ParticleObject.ListOfAtoms);
 
-            UniqueIdUnsignedIntReduced LocalParticleObjectPrevTemporary;
-            UniqueIdUnsignedIntReduced LocalParticleObjectNextTemporary;
-            UniqueIdUnsignedIntReduced LocalParticleObjectPairedNucleotideTemporary;
+            UniqueIdUInt32Type LocalParticleObjectPrevTemporary;
+            UniqueIdUInt32Type LocalParticleObjectNextTemporary;
+            UniqueIdUInt32Type LocalParticleObjectPairedNucleotideTemporary;
             ParticlesDataFile.read(reinterpret_cast<char*>(&LocalParticleObjectPrevTemporary), sizeof(LocalParticleObjectPrevTemporary));
             ParticlesDataFile.read(reinterpret_cast<char*>(&LocalParticleObjectNextTemporary), sizeof(LocalParticleObjectNextTemporary));
             ParticlesDataFile.read(reinterpret_cast<char*>(&LocalParticleObjectPairedNucleotideTemporary), sizeof(LocalParticleObjectPairedNucleotideTemporary));
@@ -513,7 +513,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
             LocalParticleObjectNextTemporary = ParticleObject.NextTemporary;
             LocalParticleObjectPairedNucleotideTemporary = ParticleObject.PairedNucleotideTemporary;
 
-            ReadVectorFromBinaryFileTemporary<UniqueIdUnsignedInt>(ParticlesDataFile, ParticleObject.LinkedParticlesPointersListTemporary);
+            ReadVectorFromBinaryFileTemporary<UniqueIdUInt64Type>(ParticlesDataFile, ParticleObject.LinkedParticlesPointersListTemporary);
 
             if (ParticleObject.Index != 0)
             {
@@ -603,8 +603,8 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadChemicalReactionsFromBin
                 ParticlesDataFile.read(reinterpret_cast<char*>(&ParticleKindForChemicalReactionObject.Counter), sizeof(ParticleKindForChemicalReactionObject.Counter));
                 ParticlesDataFile.read(reinterpret_cast<char*>(&ParticleKindForChemicalReactionObject.ToRemoveInReaction), sizeof(ParticleKindForChemicalReactionObject.ToRemoveInReaction));
                 ReadStringFromBinaryFile(ParticlesDataFile, ParticleKindForChemicalReactionObject.SequenceStr);
-                ReadVectorFromBinaryFile<ChainIdInt>(ParticlesDataFile, ParticleKindForChemicalReactionObject.Sequence);
-                ReadVectorFromBinaryFile<UniqueIdUnsignedIntReduced>(ParticlesDataFile, ParticleKindForChemicalReactionObject.LinkedParticleTypes);
+                ReadVectorFromBinaryFile<ChainIdUInt16Type>(ParticlesDataFile, ParticleKindForChemicalReactionObject.Sequence);
+                ReadVectorFromBinaryFile<UniqueIdUInt32Type>(ParticlesDataFile, ParticleKindForChemicalReactionObject.LinkedParticleTypes);
 
                 ChemicalReactionObject.Reactants.emplace_back(ParticleKindForChemicalReactionObject);
             }
@@ -619,8 +619,8 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadChemicalReactionsFromBin
                 ParticlesDataFile.read(reinterpret_cast<char*>(&ParticleKindForChemicalReactionObject.Counter), sizeof(ParticleKindForChemicalReactionObject.Counter));
                 ParticlesDataFile.read(reinterpret_cast<char*>(&ParticleKindForChemicalReactionObject.ToRemoveInReaction), sizeof(ParticleKindForChemicalReactionObject.ToRemoveInReaction));
                 ReadStringFromBinaryFile(ParticlesDataFile, ParticleKindForChemicalReactionObject.SequenceStr);
-                ReadVectorFromBinaryFile<ChainIdInt>(ParticlesDataFile, ParticleKindForChemicalReactionObject.Sequence);
-                ReadVectorFromBinaryFile<UniqueIdUnsignedIntReduced>(ParticlesDataFile, ParticleKindForChemicalReactionObject.LinkedParticleTypes);
+                ReadVectorFromBinaryFile<ChainIdUInt16Type>(ParticlesDataFile, ParticleKindForChemicalReactionObject.Sequence);
+                ReadVectorFromBinaryFile<UniqueIdUInt32Type>(ParticlesDataFile, ParticleKindForChemicalReactionObject.LinkedParticleTypes);
 
                 ChemicalReactionObject.Products.emplace_back(ParticleKindForChemicalReactionObject);
             }

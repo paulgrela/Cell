@@ -4,7 +4,6 @@
 
 #include <ranges>
 
-#include "CellEngineParticle.h"
 #include "CellEngineChemicalReaction.h"
 #include "CellEngineRandomDeviceEngine.h"
 #include "CellEngineParticlesKindsManager.h"
@@ -50,6 +49,7 @@ private:
                     ReactantObject.ToRemoveInReaction = false;
                     ChemicalReactionObject.Products.emplace_back(ReactantObject);
                 }
+
             erase_if(ChemicalReactionObject.Reactants, [](auto& R){ return ParticlesKindsManagerObject.GetParticleKind(R.ParticleKindId).IdStr.substr(0, 10) == JCVISYN3APredStr; });
 
             swap(ChemicalReactionObject.Products, ChemicalReactionObject.Reactants);
@@ -60,10 +60,10 @@ private:
         for (auto& ReactionObject : ChemicalReactions)
         {
             if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)
-                sort(ReactionObject.Products.begin(), ReactionObject.Products.end(), [](ParticleKindForChemicalReaction &PK1, ParticleKindForChemicalReaction &PK2){ return ParticlesKindsManagerObject.GetParticleKind(PK1.ParticleKindId).ListOfVoxels.size() > ParticlesKindsManagerObject.GetParticleKind(PK2.ParticleKindId).ListOfVoxels.size(); });
+                std::ranges::sort(ReactionObject.Products, [](const ParticleKindForChemicalReaction &PK1, const ParticleKindForChemicalReaction &PK2){ return ParticlesKindsManagerObject.GetParticleKind(PK1.ParticleKindId).ListOfVoxels.size() > ParticlesKindsManagerObject.GetParticleKind(PK2.ParticleKindId).ListOfVoxels.size(); });
             else
             if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
-                sort(ReactionObject.Products.begin(), ReactionObject.Products.end(), [](ParticleKindForChemicalReaction &PK1, ParticleKindForChemicalReaction &PK2){ return ParticlesKindsManagerObject.GetParticleKind(PK1.ParticleKindId).ListOfAtoms.size() > ParticlesKindsManagerObject.GetParticleKind(PK2.ParticleKindId).ListOfAtoms.size(); });
+                std::ranges::sort(ReactionObject.Products, [](const ParticleKindForChemicalReaction &PK1, const ParticleKindForChemicalReaction &PK2){ return ParticlesKindsManagerObject.GetParticleKind(PK1.ParticleKindId).ListOfAtoms.size() > ParticlesKindsManagerObject.GetParticleKind(PK2.ParticleKindId).ListOfAtoms.size(); });
 
             ReactionObject.ReactantsStr = GetStringOfSortedParticlesDataNames(ReactionObject.Reactants);
         }

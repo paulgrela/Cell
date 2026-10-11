@@ -132,8 +132,8 @@ void CellEngineRealRandomParticlesInFullAtomSpaceGenerator::PrintNumberOfParticl
                 OldParticlesKindsCounter++;
         LoggersManagerObject.Log(STREAM("Old Particles Kinds Counter = " << OldParticlesKindsCounter));
 
-        UniqueIdUnsignedInt OldParticlesCounter = 0;
-        set<UniqueIdUnsignedInt> TestSet;
+        UniqueIdUInt64Type OldParticlesCounter = 0;
+        set<UniqueIdUInt64Type> TestSet;
         FOR_EACH_PARTICLE_IN_SECTORS_XYZ_CONST
         {
             if (ParticleObject.second.ParticleKindId < StartParticleKindId)
@@ -226,7 +226,7 @@ tuple<float, float, float> CellEngineRealRandomParticlesInFullAtomSpaceGenerator
     return { 0, 0, 0 };
 }
 
-bool CellEngineRealRandomParticlesInFullAtomSpaceGenerator::TryToGenerateRandomParticlesForType(const pair<const UniqueIdType, ParticleKind>& ParticleKindObject, const UniqueIdType ParticleKindId, const UnsignedInt Radius, const UnsignedInt RadiusSize, UnsignedInt& NumberOfErrors, const GeneIdInt GeneNumId, const string& GeneSequence, const UnsignedInt GeneSequenceLength)
+bool CellEngineRealRandomParticlesInFullAtomSpaceGenerator::TryToGenerateRandomParticlesForType(const pair<const UniqueIdUInt32Type, ParticleKind>& ParticleKindObject, const UniqueIdUInt32Type ParticleKindId, const UnsignedInt Radius, const UnsignedInt RadiusSize, UnsignedInt& NumberOfErrors, const GeneIdUInt64Type GeneNumId, const string& GeneSequence, const UnsignedInt GeneSequenceLength)
 {
     try
     {
@@ -289,7 +289,7 @@ static UnsignedInt GetSizeOfGeneratedParticle_Second(const ParticlesTypes Partic
     }
 }
 
-static UniqueIdType GetParticleKindIdForRNA_Second(const UniqueIdType ParticleKindId, const ParticlesTypes ParticleTypeParam, const bool ModifyRNAParticleKindId)
+static UniqueIdUInt32Type GetParticleKindIdForRNA_Second(const UniqueIdUInt32Type ParticleKindId, const ParticlesTypes ParticleTypeParam, const bool ModifyRNAParticleKindId)
 {
     if (ModifyRNAParticleKindId == true)
     {
@@ -322,7 +322,7 @@ void CellEngineRealRandomParticlesInFullAtomSpaceGenerator::InsertNewRandomParti
                         {
                             LoggersManagerObject.Log(STREAM("Particle Type = " << ParticlesKindsManagerObject.ConvertParticleTypeToString(ParticleKindSpecialDataObject.ParticleType) << " Counter = " << ParticleCounter));
 
-                            const UniqueIdType ParticleKindId = GetParticleKindIdForRNA_Second(ParticleKindObject.second.ParticleKindId, ParticleKindSpecialDataObject.ParticleType, ModifyParticleKindIdForRNA);
+                            const UniqueIdUInt32Type ParticleKindId = GetParticleKindIdForRNA_Second(ParticleKindObject.second.ParticleKindId, ParticleKindSpecialDataObject.ParticleType, ModifyParticleKindIdForRNA);
 
                             bool Success = false;
 
@@ -398,7 +398,7 @@ void CellEngineRealRandomParticlesInFullAtomSpaceGenerator::GenerateAllRealRando
     CATCH("generating all random particles")
 }
 
-void CellEngineRealRandomParticlesInFullAtomSpaceGenerator::RemoveParticlesWithChosenParticleKindId(const UniqueIdType ParticleKindId, const UnsignedInt NumberOfParticlesToBeRemoved)
+void CellEngineRealRandomParticlesInFullAtomSpaceGenerator::RemoveParticlesWithChosenParticleKindId(const UniqueIdUInt32Type ParticleKindId, const UnsignedInt NumberOfParticlesToBeRemoved)
 {
     try
     {
@@ -415,7 +415,7 @@ void CellEngineRealRandomParticlesInFullAtomSpaceGenerator::RemoveParticlesWithC
     CATCH("removing number of particles with chosen entity id")
 }
 
-void CellEngineRealRandomParticlesInFullAtomSpaceGenerator::RemoveAllParticlesWithChosenParticleKindId(const UniqueIdType ParticleKindId)
+void CellEngineRealRandomParticlesInFullAtomSpaceGenerator::RemoveAllParticlesWithChosenParticleKindId(const UniqueIdUInt32Type ParticleKindId)
 {
     try
     {

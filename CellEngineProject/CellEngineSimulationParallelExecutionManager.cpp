@@ -31,7 +31,7 @@ namespace
         std::condition_variable WallConditionalVariable;
 
         std::vector<ParticleSenderStructMultiThreaded> Proposals[2];
-        std::vector<UniqueIdUnsignedInt> Verdicts[2];
+        std::vector<UniqueIdUInt64Type> Verdicts[2];
         bool ProposalsReady[2]{ false, false };
         bool VerdictsReady[2]{ false, false };
     };
@@ -359,7 +359,7 @@ void CellEngineSimulationParallelExecutionManager::JoinReactionsStatisticsFromTh
             if (MPIProcessDataObject.CurrentMPIProcessIndex == CellEngineConfigDataObject.MainMPIProcessNumber)
             {
                 SavedReactionsMap[SimulationStepNumber - 1].clear();
-                for (UniqueIdUnsignedInt LocalMPIProcessIndex = 0; LocalMPIProcessIndex < MPIProcessDataObject.NumberOfMPIProcesses; LocalMPIProcessIndex++)
+                for (UniqueIdUInt64Type LocalMPIProcessIndex = 0; LocalMPIProcessIndex < MPIProcessDataObject.NumberOfMPIProcesses; LocalMPIProcessIndex++)
                     for (UnsignedInt ReactionStatisticsDataIndex = MaximumOfAllSavedReactionsMapForMPILengths * LocalMPIProcessIndex; ReactionStatisticsDataIndex < MaximumOfAllSavedReactionsMapForMPILengths * LocalMPIProcessIndex + SavedReactionsMapForMPILengths[LocalMPIProcessIndex]; ReactionStatisticsDataIndex++)
                     {
                         const auto& ReactionStatisticsData = ReactionStatisticsVectorGatheringFromAllMPIProcessPointer.get()[ReactionStatisticsDataIndex];
@@ -1037,7 +1037,7 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
             Wall.ProposalConditionalVariable.notify_all();
         }
 
-        vector<UniqueIdUnsignedInt> ReceivedConfirmationOfParticlesToRemove;
+        vector<UniqueIdUInt64Type> ReceivedConfirmationOfParticlesToRemove;
 
         for (UnsignedInt NeighborProcessIndex = 0; NeighborProcessIndex < NumberOfAllNeighbors; NeighborProcessIndex++)
         {
@@ -1089,7 +1089,7 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
 
             DEBUGLOG(LoggersManagerObject.Log(STREAM("SENDING CONFIRMATION TO Neighbor = " << ReceivedParticlesToInsert[0].SenderProcessIndex << " " << MPIProcessDataObject.CurrentMPIProcessIndex));)
 
-            vector<UniqueIdUnsignedInt> ConfirmationOfParticlesToRemoveToSent;
+            vector<UniqueIdUInt64Type> ConfirmationOfParticlesToRemoveToSent;
             for (const auto& ReceivedParticleIndexToInsert : ReceivedParticlesToInsert)
                 if (ReceivedParticleIndexToInsert.ParticleIndex != 0)
                     if (CurrentThreadLocalSimulationSpaceData->CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossibleInMultiThreadedDiffusion(ReceivedParticleIndexToInsert, ReceivedParticleIndexToInsert.ParticleObject) == true)
@@ -1155,7 +1155,7 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
             Wall.WallConditionalVariable.notify_all();
         }
 
-        vector<UniqueIdUnsignedInt> ReceivedConfirmationOfParticlesToRemove;
+        vector<UniqueIdUInt64Type> ReceivedConfirmationOfParticlesToRemove;
 
         for (UnsignedInt NeighborProcessIndex = 0; NeighborProcessIndex < NumberOfAllNeighbors; NeighborProcessIndex++)
         {
@@ -1205,7 +1205,7 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
                 Wall.ProposalsReady[SlotIndex] = false;
             }
 
-            std::vector<UniqueIdUnsignedInt> ConfirmationOfParticlesToRemove;
+            std::vector<UniqueIdUInt64Type> ConfirmationOfParticlesToRemove;
             for (const auto& ReceivedParticleIndexToInsert : ReceivedParticlesToInsert)
                 if (ReceivedParticleIndexToInsert.ParticleIndex != 0)
                     if (CurrentThreadLocalSimulationSpaceData->CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossibleInMultiThreadedDiffusion(ReceivedParticleIndexToInsert, ReceivedParticleIndexToInsert.ParticleObject) == true)
@@ -1400,7 +1400,7 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIPr
             int NumberOfBytesReceived;
             MPI_Get_count(&MPIMessageStatus, MPI_UNSIGNED, &NumberOfBytesReceived);
 
-            vector<UniqueIdUnsignedInt> ReceivedConfirmationOfParticlesToRemove;
+            vector<UniqueIdUInt64Type> ReceivedConfirmationOfParticlesToRemove;
 
             char ReceivedParticlesToInsert1[MaxMPIMessageSize];
             MPI_Recv(&ReceivedParticlesToInsert1, MaxMPIMessageSize, MPI_PACKED, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &MPIMessageStatus);
@@ -1411,7 +1411,7 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIPr
             DEBUGLOG(LoggersManagerObject.Log(STREAM("MPI UNPACKED SIZE TO REMOVE = " << NumberOfUnpackedParticleStructures << " " << MPIProcessDataObject.CurrentMPIProcessIndex));)
             for (UnsignedInt UnpackedParticleStructureIndex = 0; UnpackedParticleStructureIndex < NumberOfUnpackedParticleStructures; UnpackedParticleStructureIndex++)
             {
-                UniqueIdUnsignedInt MPIParticleSenderStructElementLocalObject;
+                UniqueIdUInt64Type MPIParticleSenderStructElementLocalObject;
                 MPI_Unpack(ReceivedParticlesToInsert1, MaxMPIMessageSize, &PositionInBuffer, &MPIParticleSenderStructElementLocalObject, 1, MPI_UINT64_T, MPI_COMM_WORLD);
                 ReceivedConfirmationOfParticlesToRemove.emplace_back(MPIParticleSenderStructElementLocalObject);
             }
@@ -1508,7 +1508,7 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIPr
         for (UnsignedInt NeighborProcessIndex = 0; NeighborProcessIndex < NumberOfAllNeighbors; NeighborProcessIndex++)
             if (NeighborProcessesIndexes[NeighborProcessIndex] != -1)
             {
-                vector<UniqueIdUnsignedInt> ConfirmationOfParticlesToRemoveToSent;
+                vector<UniqueIdUInt64Type> ConfirmationOfParticlesToRemoveToSent;
 
                 if (ReceivedParticlesToInsertFromAllNeigbhours[NeighborProcessIndex].empty() == false)
                 {

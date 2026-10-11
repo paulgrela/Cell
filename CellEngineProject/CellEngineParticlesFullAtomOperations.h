@@ -16,8 +16,8 @@ class CellEngineParticlesFullAtomOperations
 public:
     static void SetProperThreadIndexForEveryParticlesSector(ParticlesContainer<Particle>& ParticlesSectors);
 protected:
-    static void MoveParticleByVectorForThreads(Particle& ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, ParticlesDetailedContainer<Particle>::iterator& ParticleObjectIter, std::vector<ParticleToBeMovedFromOneSectorToAnotherSector>& ListOfParticlesToChangeSectors, const SignedInt* NeighborProcessesIndexes, RealType VectorX, RealType VectorY, RealType VectorZ, const ThreadPosType& CurrentThreadPos);
-    static void MoveParticleByVectorForMPIProcesses(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, ParticlesDetailedContainer<Particle>::iterator& ParticleObjectIter, std::vector<ParticleToBeMovedFromOneSectorToAnotherSector>& ListOfParticlesToChangeSectors, const SignedInt* NeighbourProcessesIndexes, std::vector<ParticleSenderStructMPIMultiProcess>* VectorOfParticlesToSendToNeighbourProcesses, RealType VectorX, RealType VectorY, RealType VectorZ, ThreadPosType CurrentThreadPos);
+    static void MoveParticleByVectorForThreads(Particle& ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, std::vector<ParticleToBeMovedFromOneSectorToAnotherSector>& ListOfParticlesToChangeSectors, const SignedInt* NeighborProcessesIndexes, RealType VectorX, RealType VectorY, RealType VectorZ, const ThreadPosType& CurrentThreadPos);
+    static void MoveParticleByVectorForMPIProcesses(Particle &ParticleObject, const ParticlesContainer<Particle>& ParticlesInSector, std::vector<ParticleToBeMovedFromOneSectorToAnotherSector>& ListOfParticlesToChangeSectors, const SignedInt* NeighbourProcessesIndexes, std::vector<ParticleSenderStructMPIMultiProcess>* VectorOfParticlesToSendToNeighbourProcesses, RealType VectorX, RealType VectorY, RealType VectorZ, ThreadPosType CurrentThreadPos);
 protected:
     static inline void MoveAllAtomsInParticleAtomsListByVector(Particle &ParticleObject, const RealType VectorX, const RealType VectorY, const RealType VectorZ)
     {
@@ -38,7 +38,7 @@ protected:
         return (SectorPosX < CellEngineConfigDataObject.NumberOfParticlesSectorsInX && SectorPosY < CellEngineConfigDataObject.NumberOfParticlesSectorsInY && SectorPosZ < CellEngineConfigDataObject.NumberOfParticlesSectorsInZ);
     }
 protected:
-    static bool CheckDistanceOfParticlesInSector(const RealType Radius, const UniqueIdUnsignedInt Index, const ParticlesContainer<Particle>& ParticlesInSector, const UnsignedInt SectorPosX, const UnsignedInt SectorPosY, const UnsignedInt SectorPosZ, const RealType TestedPosX, const RealType TestedPosY, const RealType TestedPosZ)
+    static bool CheckDistanceOfParticlesInSector(const RealType Radius, const UniqueIdUInt64Type Index, const ParticlesContainer<Particle>& ParticlesInSector, const UnsignedInt SectorPosX, const UnsignedInt SectorPosY, const UnsignedInt SectorPosZ, const RealType TestedPosX, const RealType TestedPosY, const RealType TestedPosZ)
     {
         for (const auto& ParticleInSectorObject : ParticlesInSector[SectorPosX][SectorPosY][SectorPosZ].Particles)
             if (ParticleInSectorObject.second.Index != Index)
@@ -48,7 +48,7 @@ protected:
         return true;
     }
 protected:
-    static bool CheckDistanceOfParticlesInSectorByComparingAllAtomsDistances(const UniqueIdUnsignedInt Index, const ParticlesContainer<Particle>& ParticlesInSector, const UnsignedInt SectorPosX, const UnsignedInt SectorPosY, const UnsignedInt SectorPosZ, const RealType TestedPosX, const RealType TestedPosY, const RealType TestedPosZ)
+    static bool CheckDistanceOfParticlesInSectorByComparingAllAtomsDistances(const UniqueIdUInt64Type Index, const ParticlesContainer<Particle>& ParticlesInSector, const UnsignedInt SectorPosX, const UnsignedInt SectorPosY, const UnsignedInt SectorPosZ, const RealType TestedPosX, const RealType TestedPosY, const RealType TestedPosZ)
     {
         for (const auto& ParticleInSectorObject : ParticlesInSector[SectorPosX][SectorPosY][SectorPosZ].Particles | std::ranges::views::values)
             if (ParticleInSectorObject.Index != Index)
@@ -105,7 +105,7 @@ protected:
         return true;
     }
 protected:
-    static inline bool CheckFreeSpaceOnlyByTestingCenterAndBoundsForParticleMovedByVectorReactions(const ListOfAtomsType& ListOfAtoms, const RealType Radius, const UniqueIdUnsignedInt Index, const vector3_Real32 Center, const ParticlesContainer<Particle>& ParticlesInSector, const SectorPosType& CurrentSectorPos, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CheckBounds, const bool CompareBoundsBySectorsBounds, const bool CompareBoundsBySpaceBounds)
+    static inline bool CheckFreeSpaceOnlyByTestingCenterAndBoundsForParticleMovedByVectorReactions(const ListOfAtomsType& ListOfAtoms, const RealType Radius, const UniqueIdUInt64Type Index, const vector3_Real32 Center, const ParticlesContainer<Particle>& ParticlesInSector, const SectorPosType& CurrentSectorPos, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CheckBounds, const bool CompareBoundsBySectorsBounds, const bool CompareBoundsBySpaceBounds)
     {
         try
         {
@@ -166,7 +166,7 @@ protected:
         return true;
     }
 protected:
-    static inline bool CheckFreeSpaceOnlyByTestingCenterAndBoundsForParticleMovedByVectorDiffusion(const ListOfAtomsType& ListOfAtoms, const RealType Radius, const UniqueIdUnsignedInt Index, const vector3_Real32 Center, const ParticlesContainer<Particle>& ParticlesInSector, const SectorPosType& CurrentSectorPos, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CheckBounds, const bool CompareBoundsBySectorsBounds, const bool CompareBoundsBySpaceBounds)
+    static inline bool CheckFreeSpaceOnlyByTestingCenterAndBoundsForParticleMovedByVectorDiffusion(const ListOfAtomsType& ListOfAtoms, const RealType Radius, const UniqueIdUInt64Type Index, const vector3_Real32 Center, const ParticlesContainer<Particle>& ParticlesInSector, const SectorPosType& CurrentSectorPos, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CheckBounds, const bool CompareBoundsBySectorsBounds, const bool CompareBoundsBySpaceBounds)
     {
         try
         {
@@ -193,7 +193,7 @@ protected:
     }
 
 protected:
-    static inline bool CheckFreeSpaceByTestingAllAtomsAndBoundsForParticleMovedByVectorReactions(const ListOfAtomsType& ListOfAtoms, const RealType Radius, const UniqueIdUnsignedInt Index, const vector3_Real32 Center, const ParticlesContainer<Particle>& ParticlesInSector, const SectorPosType& CurrentSectorPos, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CheckBounds, const bool CompareBoundsBySectorsBounds, const bool CompareBoundsBySpaceBounds)
+    static inline bool CheckFreeSpaceByTestingAllAtomsAndBoundsForParticleMovedByVectorReactions(const ListOfAtomsType& ListOfAtoms, const RealType Radius, const UniqueIdUInt64Type Index, const vector3_Real32 Center, const ParticlesContainer<Particle>& ParticlesInSector, const SectorPosType& CurrentSectorPos, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CheckBounds, const bool CompareBoundsBySectorsBounds, const bool CompareBoundsBySpaceBounds)
     {
         try
         {
@@ -217,7 +217,7 @@ protected:
         return true;
     }
 protected:
-    static inline bool CheckFreeSpaceByTestingAllAtomsAndBoundsForParticleMovedByVectorDiffusion(const ListOfAtomsType& ListOfAtoms, const RealType Radius, const UniqueIdUnsignedInt Index, const vector3_Real32 Center, const ParticlesContainer<Particle>& ParticlesInSector, const SectorPosType& CurrentSectorPos, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CheckBounds, const bool CompareBoundsBySectorsBounds, const bool CompareBoundsBySpaceBounds)
+    static inline bool CheckFreeSpaceByTestingAllAtomsAndBoundsForParticleMovedByVectorDiffusion(const ListOfAtomsType& ListOfAtoms, const RealType Radius, const UniqueIdUInt64Type Index, const vector3_Real32 Center, const ParticlesContainer<Particle>& ParticlesInSector, const SectorPosType& CurrentSectorPos, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CheckBounds, const bool CompareBoundsBySectorsBounds, const bool CompareBoundsBySpaceBounds)
     {
         try
         {
@@ -242,7 +242,7 @@ protected:
     }
 
 protected:
-    static inline bool CheckFreeSpaceAndBoundsForParticleMovedByVectorReactions(const ListOfAtomsType& ListOfAtoms, const RealType Radius, const UniqueIdUnsignedInt Index, const vector3_Real32 Center, const ParticlesContainer<Particle>& ParticlesInSector, const SectorPosType& CurrentSectorPos, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CheckOnlyParticlesCenters, const bool CheckBounds, const bool CompareBoundsBySectorsBounds, const bool CompareBoundsBySpaceBounds)
+    static inline bool CheckFreeSpaceAndBoundsForParticleMovedByVectorReactions(const ListOfAtomsType& ListOfAtoms, const RealType Radius, const UniqueIdUInt64Type Index, const vector3_Real32 Center, const ParticlesContainer<Particle>& ParticlesInSector, const SectorPosType& CurrentSectorPos, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CheckOnlyParticlesCenters, const bool CheckBounds, const bool CompareBoundsBySectorsBounds, const bool CompareBoundsBySpaceBounds)
     {
         if (CheckOnlyParticlesCenters == true)
             return CheckFreeSpaceOnlyByTestingCenterAndBoundsForParticleMovedByVectorReactions(ListOfAtoms, Radius, Index, Center, ParticlesInSector, CurrentSectorPos, VectorX, VectorY, VectorZ, SimulationSpaceSectorBoundsObjectParam, CheckBounds, CompareBoundsBySectorsBounds, CompareBoundsBySpaceBounds);
@@ -255,7 +255,7 @@ protected:
          return CheckFreeSpaceAndBoundsForParticleMovedByVectorReactions(ListOfAtoms, Radius, 0, { .X = 0, .Y = 0, .Z = 0 }, ParticlesInSector, CurrentSectorPos, PosX, PosY, PosZ, SimulationSpaceSectorBoundsObjectParam, CellEngineConfigDataObject.CheckOnlyParticlesCenters, true, true, true);
     }
 protected:
-    static inline bool CheckFreeSpaceAndBoundsForParticleMovedByVectorDiffusion(const ListOfAtomsType& ListOfAtoms, const RealType Radius, const UniqueIdUnsignedInt Index, const vector3_Real32 Center, const ParticlesContainer<Particle>& ParticlesInSector, const SectorPosType& CurrentSectorPos, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CheckOnlyParticlesCenters, const bool CheckBounds, const bool CompareBoundsBySectorsBounds, const bool CompareBoundsBySpaceBounds)
+    static inline bool CheckFreeSpaceAndBoundsForParticleMovedByVectorDiffusion(const ListOfAtomsType& ListOfAtoms, const RealType Radius, const UniqueIdUInt64Type Index, const vector3_Real32 Center, const ParticlesContainer<Particle>& ParticlesInSector, const SectorPosType& CurrentSectorPos, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CheckOnlyParticlesCenters, const bool CheckBounds, const bool CompareBoundsBySectorsBounds, const bool CompareBoundsBySpaceBounds)
     {
         if (CheckOnlyParticlesCenters == true)
             return CheckFreeSpaceOnlyByTestingCenterAndBoundsForParticleMovedByVectorDiffusion(ListOfAtoms, Radius, Index, Center, ParticlesInSector, CurrentSectorPos, VectorX, VectorY, VectorZ, SimulationSpaceSectorBoundsObjectParam, CheckBounds, CompareBoundsBySectorsBounds, CompareBoundsBySpaceBounds);
@@ -263,12 +263,12 @@ protected:
             return CheckFreeSpaceByTestingAllAtomsAndBoundsForParticleMovedByVectorDiffusion(ListOfAtoms, Radius, Index, Center, ParticlesInSector, CurrentSectorPos, VectorX, VectorY, VectorZ, SimulationSpaceSectorBoundsObjectParam, CheckBounds, CompareBoundsBySectorsBounds, CompareBoundsBySpaceBounds);
     }
 protected:
-    static inline bool MoveParticleByVectorIfFullAtomSpaceIsEmptyAndIsInBoundsForMPIProcessesDiffusion(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, ParticlesDetailedContainer<Particle>::iterator& ParticleObjectIter, std::vector<ParticleToBeMovedFromOneSectorToAnotherSector>& ListOfParticlesToChangeSectors, const SignedInt* NeighbourProcessesIndexes, std::vector<ParticleSenderStructMPIMultiProcess>* VectorOfParticlesToSendToNeighbourProcesses, const SectorPosType& CurrentSectorPos, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam, const ThreadPosType& CurrentThreadPos)
+    static inline bool MoveParticleByVectorIfFullAtomSpaceIsEmptyAndIsInBoundsForMPIProcessesDiffusion(Particle &ParticleObject, const ParticlesContainer<Particle>& ParticlesInSector, std::vector<ParticleToBeMovedFromOneSectorToAnotherSector>& ListOfParticlesToChangeSectors, const SignedInt* NeighbourProcessesIndexes, std::vector<ParticleSenderStructMPIMultiProcess>* VectorOfParticlesToSendToNeighbourProcesses, const SectorPosType& CurrentSectorPos, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam, const ThreadPosType& CurrentThreadPos)
     {
         try
         {
             if (CheckFreeSpaceAndBoundsForParticleMovedByVectorDiffusion(ParticleObject.ListOfAtoms, ParticleObject.Radius, ParticleObject.Index, ParticleObject.Center, ParticlesInSector, CurrentSectorPos, VectorX, VectorY, VectorZ, SimulationSpaceSectorBounds{ .StartXPos = StartXPosParam, .StartYPos = StartYPosParam, .StartZPos = StartZPosParam, .SizeX = SizeXParam, .SizeY = SizeYParam, .SizeZ = SizeZParam, .EndXPos = SizeXParam, .EndYPos = SizeYParam, .EndZPos = SizeZParam }, CellEngineConfigDataObject.CheckOnlyParticlesCenters, true, true, false) == true)
-                MoveParticleByVectorForMPIProcesses(ParticleObject, ParticlesInSector, ParticleObjectIter, ListOfParticlesToChangeSectors, NeighbourProcessesIndexes, VectorOfParticlesToSendToNeighbourProcesses, VectorX, VectorY, VectorZ, CurrentThreadPos);
+                MoveParticleByVectorForMPIProcesses(ParticleObject, ParticlesInSector, ListOfParticlesToChangeSectors, NeighbourProcessesIndexes, VectorOfParticlesToSendToNeighbourProcesses, VectorX, VectorY, VectorZ, CurrentThreadPos);
             else
                 return false;
         }
@@ -277,12 +277,12 @@ protected:
         return true;
     }
 
-    static inline bool MoveParticleByVectorIfFullAtomSpaceIsEmptyAndIsInBoundsForThreadsDiffusion(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, ParticlesDetailedContainer<Particle>::iterator& ParticleObjectIter, std::vector<ParticleToBeMovedFromOneSectorToAnotherSector>& ListOfParticlesToChangeSectors, const SignedInt* NeighbourProcessesIndexes, const SectorPosType& CurrentSectorPos, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam, const ThreadPosType& CurrentThreadPos)
+    static inline bool MoveParticleByVectorIfFullAtomSpaceIsEmptyAndIsInBoundsForThreadsDiffusion(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, std::vector<ParticleToBeMovedFromOneSectorToAnotherSector>& ListOfParticlesToChangeSectors, const SignedInt* NeighbourProcessesIndexes, const SectorPosType& CurrentSectorPos, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam, const ThreadPosType& CurrentThreadPos)
     {
         try
         {
             if (CheckFreeSpaceAndBoundsForParticleMovedByVectorDiffusion(ParticleObject.ListOfAtoms, ParticleObject.Radius, ParticleObject.Index, ParticleObject.Center, ParticlesInSector, CurrentSectorPos, VectorX, VectorY, VectorZ, SimulationSpaceSectorBounds{ .StartXPos = StartXPosParam, .StartYPos = StartYPosParam, .StartZPos = StartZPosParam, .SizeX = SizeXParam, .SizeY = SizeYParam, .SizeZ = SizeZParam, .EndXPos = SizeXParam, .EndYPos = SizeYParam, .EndZPos = SizeZParam }, CellEngineConfigDataObject.CheckOnlyParticlesCenters, true, true, false) == true)
-                MoveParticleByVectorForThreads(ParticleObject, ParticlesInSector, ParticleObjectIter, ListOfParticlesToChangeSectors, NeighbourProcessesIndexes, VectorX, VectorY, VectorZ, CurrentThreadPos);
+                MoveParticleByVectorForThreads(ParticleObject, ParticlesInSector, ListOfParticlesToChangeSectors, NeighbourProcessesIndexes, VectorX, VectorY, VectorZ, CurrentThreadPos);
             else
                 return false;
         }
@@ -323,7 +323,7 @@ protected:
                             DEBUGLOG(LoggersManagerObject.Log(STREAM(terminal_colors_utils::green << "FREE SPACE FOUND " << VecX << " " << VecY << " " << VecZ << " " << PosX << " " << PosY << " " << PosZ << terminal_colors_utils::white));)
 
                             ParticlesDetailedContainer<Particle>::iterator ParticleIter;
-                            MoveParticleByVectorForMPIProcesses(ParticleObject, ParticlesInSector, ParticleIter, ListOfParticlesToChangeSectors, nullptr, nullptr, PosX, PosY, PosZ, CurrentThreadPos);
+                            MoveParticleByVectorForMPIProcesses(ParticleObject, ParticlesInSector, ListOfParticlesToChangeSectors, nullptr, nullptr, PosX, PosY, PosZ, CurrentThreadPos);
                             FoundFreeSpace = true;
                             goto Outside;
                         }

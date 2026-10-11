@@ -153,7 +153,7 @@ void CellEngineIllinoisDataCreator::GetProteinsFromXMLFile(const boost::property
         LoggersManagerObject.Log(STREAM("XML NUMBER OF GENE PRODUCTS PROTEINS = " << ReactionsPropertyTreeXMLTreeElement.size()));
         for (const auto& ProteinsPropertyTreeXMLTreeElementParticle : ReactionsPropertyTreeXMLTreeElement)
         {
-            GeneIdInt GeneId = stoi(ProteinsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:id").substr(9, 4));
+            GeneIdUInt64Type GeneId = stoi(ProteinsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:id").substr(9, 4));
             string ProteinName = JCVISYN3APredStr + ProteinsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:id").substr(9, 4);
             ParticlesKindsManagerObject.AddParticleKind({ ParticleKindId, ProteinName, "", ProteinName, GeneId, 0, "c", 10 });
 
@@ -179,7 +179,7 @@ void CellEngineIllinoisDataCreator::GetNewProteinsFromXMLFile(const boost::prope
         LoggersManagerObject.Log(STREAM("XML NUMBER OF GENE PRODUCTS PROTEINS = " << ReactionsPropertyTreeXMLTreeElement.size()));
         for (const auto& ProteinsPropertyTreeXMLTreeElementParticle : ReactionsPropertyTreeXMLTreeElement)
         {
-            GeneIdInt GeneId = stoi(ProteinsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:id").substr(9, 4));
+            GeneIdUInt64Type GeneId = stoi(ProteinsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:id").substr(9, 4));
 
             if (string ProteinName = JCVISYN3APredStr + ProteinsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:id").substr(9, 4); ParticlesKindsManagerObject.GetParticleKindFromStrId(ProteinName).has_value() == false)
             {
@@ -351,7 +351,7 @@ void CellEngineIllinoisDataCreator::ReadNewReactionsFromXMLFile(const string& Fi
 {
     try
     {
-        ParticleKindId = max_element(ParticlesKindsManagerObject.ParticlesKinds.begin(), ParticlesKindsManagerObject.ParticlesKinds.end(), [](const pair<UniqueIdType, ParticleKind>& lhs, const pair<UniqueIdType, ParticleKind>& rhs){ return lhs.first < rhs.first; })->first + 1;
+        ParticleKindId = max_element(ParticlesKindsManagerObject.ParticlesKinds.begin(), ParticlesKindsManagerObject.ParticlesKinds.end(), [](const pair<UniqueIdUInt32Type, ParticleKind>& lhs, const pair<UniqueIdUInt32Type, ParticleKind>& rhs){ return lhs.first < rhs.first; })->first + 1;
         ReactionId = max_element(ChemicalReactionsManagerObject.ChemicalReactionsPosFromId.begin(), ChemicalReactionsManagerObject.ChemicalReactionsPosFromId.end(), [](const pair<UnsignedInt, UnsignedInt>& lhs, const pair<UnsignedInt, UnsignedInt>& rhs){ return lhs.first < rhs.first; })->first + 1;
 
         boost::property_tree::ptree ReactionsPropertyTreeXML;
@@ -487,7 +487,7 @@ void CellEngineIllinoisDataCreator::ReadAndParseGenesFile(const string& FileName
                 for ( ; regex_search(pos1, end1, SMatchObject, GeneScopeRegexObject); pos1 = SMatchObject.suffix().first)
                     MatchSave2.emplace_back(SMatchObject[0]);
 
-                GeneIdInt GeneId = stoi(MatchSave1[1].substr(10, 4));
+                GeneIdUInt64Type GeneId = stoi(MatchSave1[1].substr(10, 4));
                 UnsignedInt StartPos = stoi(MatchSave2[0]);
                 UnsignedInt EndPos = stoi(MatchSave2[1]);
                 GeneObject = { GeneId, MatchSave1[0], MatchSave1[1], MatchSave1[2], "", StartPos, EndPos };
@@ -690,9 +690,9 @@ void CellEngineIllinoisDataCreator::ReadAllIllinoisDataFromFiles()
         ParticlesKindsManagerObject.ParticlesKinds.clear();
         ChemicalReactionsManagerObject.ChemicalReactions.clear();
 
-        UniqueIdType LocalDNAIdentifier = CellEngineConfigDataObject.DNAIdentifier;
+        UniqueIdUInt32Type LocalDNAIdentifier = CellEngineConfigDataObject.DNAIdentifier;
         ParticlesKindsManagerObject.AddSingleParticleKind(ParticlesTypes::DNANucleotide, LocalDNAIdentifier, "DNANucleotide", "DNANucleotide", "DNA", -1, 0, "c", 1);
-        UniqueIdType LocalRNAIdentifier = CellEngineConfigDataObject.RNAIdentifier;
+        UniqueIdUInt32Type LocalRNAIdentifier = CellEngineConfigDataObject.RNAIdentifier;
         ParticlesKindsManagerObject.AddSingleParticleKind(ParticlesTypes::DNANucleotide, LocalRNAIdentifier, "RNANucleotide", "RNANucleotide", "RNA", -1, 0, "c", 1);
 
         ReadAndParseGenesFile(string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("genome") + OS_DIR_SEP + string("GENES.txt"));

@@ -38,7 +38,7 @@ void PrintInterGenesSequencesFromGenesData()
     CATCH("finding inter genes sequences from genes")
 }
 
-inline void FindCodons(const string& GenomeStr, const vector<string>& StartCodonsList, map<GeneIdInt, UnsignedInt>& FoundGenesCounter, UnsignedInt& NumberOfFoundPromoters, UnsignedInt& NumberOfFoundPromotersConfirmed, const UnsignedInt ScopeForStartGeneIndex, const UnsignedInt PosInGenomeToFindCodonStart, const UnsignedInt PosInGenomeToFind35Box, const UnsignedInt PosInGenomeToFind10Box, const bool SwitchLogsBool)
+inline void FindCodons(const string& GenomeStr, const vector<string>& StartCodonsList, map<GeneIdUInt64Type, UnsignedInt>& FoundGenesCounter, UnsignedInt& NumberOfFoundPromoters, UnsignedInt& NumberOfFoundPromotersConfirmed, const UnsignedInt ScopeForStartGeneIndex, const UnsignedInt PosInGenomeToFindCodonStart, const UnsignedInt PosInGenomeToFind35Box, const UnsignedInt PosInGenomeToFind10Box, const bool SwitchLogsBool)
 {
     try
     {
@@ -83,7 +83,7 @@ void FindPromotersAndStartCodons1(const string& GenomeStr, const bool SwitchLogs
 
         UnsignedInt NumberOfFoundPromoters = 0;
         UnsignedInt NumberOfFoundPromotersConfirmed = 0;
-        map<GeneIdInt, UnsignedInt> FoundGenesCounter;
+        map<GeneIdUInt64Type, UnsignedInt> FoundGenesCounter;
         UnsignedInt ScopeForStartGeneIndex = 5;
 
         for (UnsignedInt PosInGenomeToFind35Box = 0; PosInGenomeToFind35Box < GenomeStr.size() - Promoter35BoxesList.size(); ++PosInGenomeToFind35Box)
@@ -128,7 +128,7 @@ void FindPromotersAndStartCodons2(const std::string& GenomeStr, const bool Switc
 
         UnsignedInt NumberOfFoundPromoters = 0;
         UnsignedInt NumberOfFoundPromotersConfirmed = 0;
-        map<GeneIdInt, UnsignedInt> FoundGenesCounter;
+        map<GeneIdUInt64Type, UnsignedInt> FoundGenesCounter;
         UnsignedInt ScopeForStartGeneIndex = 5;
 
         for (UnsignedInt PosInGenomeToFind35Box = 0; PosInGenomeToFind35Box < GenomeStr.size() - 6; ++PosInGenomeToFind35Box)
@@ -177,7 +177,7 @@ void FindPromotersAndStartCodons3(const string& GenomeStr, const bool SwitchLogs
 
         UnsignedInt NumberOfFoundPromoters = 0;
         UnsignedInt NumberOfFoundPromotersConfirmed = 0;
-        map<GeneIdInt, UnsignedInt> FoundGenesCounter;
+        map<GeneIdUInt64Type, UnsignedInt> FoundGenesCounter;
         UnsignedInt ScopeForStartGeneIndex = 3;
 
         for (UnsignedInt PosInGenomeToFind35Box = 0; PosInGenomeToFind35Box < GenomeStr.size() - 6; ++PosInGenomeToFind35Box)
@@ -206,7 +206,7 @@ void FindPromotersForGenesFromGeneStartPos(const std::string& GenomeStr, const b
         if (SwitchLogsBool == true)
             CellEngineUseful::SwitchOffLogs();
 
-        std::vector<pair<GeneIdInt, UnsignedInt>> GenesStarts;
+        std::vector<pair<GeneIdUInt64Type, UnsignedInt>> GenesStarts;
         for (const auto& Gene : ParticlesKindsManagerObject.Genes)
             GenesStarts.emplace_back(Gene.second.NumId, Gene.second.StartPosInGenome);
 
@@ -220,7 +220,7 @@ void FindPromotersForGenesFromGeneStartPos(const std::string& GenomeStr, const b
         const UnsignedInt MinimumSimilarityScoreFor10Box = 5;
 
         UnsignedInt NumberOfFoundPromoters = 0;
-        map<GeneIdInt, UnsignedInt> FoundPromotersCounter;
+        map<GeneIdUInt64Type, UnsignedInt> FoundPromotersCounter;
 
         for (const auto& GeneStartPos : GenesStarts)
         {
@@ -270,7 +270,7 @@ void FindPromoters(const std::vector<std::string>& GenomesLines, const bool Swit
 
         UnsignedInt NumberOfFoundPromoters = 0;
         UnsignedInt NumberOfFoundPromotersConfirmed = 0;
-        map<GeneIdInt, UnsignedInt> FoundGenesCounter;
+        map<GeneIdUInt64Type, UnsignedInt> FoundGenesCounter;
         UnsignedInt ScopeForStartGeneIndex = 5;
         const vector<string> StartCodonsList = { "ATG", "GTG", "TTG" };
         const SignedInt MaxDistanceToStart = 100;
@@ -345,7 +345,7 @@ void FindTranscriptionTerminators1(const std::string& GenomeStr, const bool Swit
         const SignedInt MaximumLengthOfADownstreamOfHairpin = 8;
 
         UnsignedInt NumberOfFoundTerminators = 0;
-        map<GeneIdInt, UnsignedInt> FoundTerminatorsCounter;
+        map<GeneIdUInt64Type, UnsignedInt> FoundTerminatorsCounter;
 
         for (UnsignedInt PosInGenome = 0; PosInGenome < GenomeStr.size() - HairpinLength - MaximumLengthOfADownstreamOfHairpin; ++PosInGenome)
         {
@@ -417,7 +417,7 @@ void FindTerminatorsForGenes1(const std::string& GenomeStr, const bool SwitchLog
         if (SwitchLogsBool == true)
             CellEngineUseful::SwitchOffLogs();
 
-        std::vector<pair<GeneIdInt, pair<UnsignedInt, UnsignedInt>>> GenesStartsAndEnds;
+        std::vector<pair<GeneIdUInt64Type, pair<UnsignedInt, UnsignedInt>>> GenesStartsAndEnds;
         for (const auto& Gene : GetGenesVectorSortedByStartPosInGenome())
             GenesStartsAndEnds.emplace_back(Gene.NumId, make_pair(Gene.StartPosInGenome, Gene.EndPosInGenome));
 
@@ -430,7 +430,7 @@ void FindTerminatorsForGenes1(const std::string& GenomeStr, const bool SwitchLog
         const SignedInt MinHairpinScore = 5;
 
         SignedInt NumberOfFoundTerminators = 0;
-        map<GeneIdInt, UnsignedInt> FoundTerminatorsCounter;
+        map<GeneIdUInt64Type, UnsignedInt> FoundTerminatorsCounter;
 
         for (UnsignedInt GeneIndex = 0; GeneIndex < GenesStartsAndEnds.size(); ++GeneIndex)
         {
@@ -523,7 +523,7 @@ void FindTerminatorsForGenes2(const std::string& GenomeStr, const bool SwitchLog
         if (SwitchLogsBool == true)
             CellEngineUseful::SwitchOffLogs();
 
-        std::vector<pair<GeneIdInt, UnsignedInt>> GenesEnds;
+        std::vector<pair<GeneIdUInt64Type, UnsignedInt>> GenesEnds;
         for (const auto& Gene : ParticlesKindsManagerObject.Genes)
             GenesEnds.emplace_back(Gene.second.NumId, Gene.second.EndPosInGenome);
 
@@ -536,7 +536,7 @@ void FindTerminatorsForGenes2(const std::string& GenomeStr, const bool SwitchLog
         const SignedInt MinHairpinScore = 5;
 
         SignedInt NumberOfFoundTerminators = 0;
-        map<GeneIdInt, UnsignedInt> FoundTerminatorsCounter;
+        map<GeneIdUInt64Type, UnsignedInt> FoundTerminatorsCounter;
 
         for (const auto& GeneEnd : GenesEnds)
         {

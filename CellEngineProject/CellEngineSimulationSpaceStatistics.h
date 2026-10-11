@@ -17,14 +17,14 @@ public:
 struct ParticleKindStatistics
 {
 public:
-    UniqueIdType ParticleKindId{};
+    UniqueIdUInt32Type ParticleKindId{};
     UnsignedInt Counter = 0;
 };
 
 class ParticleKindHistogramComparison
 {
 public:
-    UniqueIdType ParticleKindId{};
+    UniqueIdUInt32Type ParticleKindId{};
 public:
     UnsignedInt Counter1 = 0;
     UnsignedInt Counter2 = 0;
@@ -47,11 +47,11 @@ protected:
 protected:
     std::vector<std::vector<Particle>> ParticlesSnapshots;
     std::vector<ParticlesDetailedContainer<Particle>> ParticlesSnapshotsCopiedUnorderedMap;
-    std::vector<std::vector<UniqueIdType>> ParticlesSnapshotsCopiedVectorForMPI;
+    std::vector<std::vector<UniqueIdUInt32Type>> ParticlesSnapshotsCopiedVectorForMPI;
     std::vector<std::vector<ParticleKindStatistics>> ParticlesKindsSnapshotsVectorSortedByCounter;
     std::vector<std::vector<ParticleKindHistogramComparison>> ParticlesKindsHistogramComparisons;
 protected:
-    std::vector<std::map<UniqueIdType, ParticleKindStatistics>> ParticlesKindsSnapshotsCopiedMap;
+    std::vector<std::map<UniqueIdUInt32Type, ParticleKindStatistics>> ParticlesKindsSnapshotsCopiedMap;
 protected:
     std::vector<std::map<UnsignedInt, ReactionStatistics>> SavedReactionsMap;
     std::vector<std::vector<ReactionStatistics>> SavedReactionsMapForMPI;
@@ -70,7 +70,7 @@ protected:
 protected:
     void SaveReactionForStatistics(const ChemicalReaction& ReactionParam);
 protected:
-    void GetNumberOfParticlesFromParticleKind(UniqueIdType ParticleKindId);
+    void GetNumberOfParticlesFromParticleKind(UniqueIdUInt32Type ParticleKindId);
 public:
     CellEngineSimulationSpaceStatistics();
     ~CellEngineSimulationSpaceStatistics() override = default;

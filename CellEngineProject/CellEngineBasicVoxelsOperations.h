@@ -4,7 +4,7 @@
 
 #include "CellEngineTypes.h"
 
-using SimulationSpaceVoxel = UniqueIdUnsignedInt;
+using SimulationSpaceVoxel = UniqueIdUInt64Type;
 
 constexpr UnsignedInt NumberOfVoxelSimulationSpaceInEachDimensionMaxConst2048 = 2048;
 

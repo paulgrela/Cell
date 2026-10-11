@@ -21,7 +21,7 @@ class PairedNucleotide
 public:
     T* PairedNucleotidePtr = nullptr;
 public:
-    UniqueIdUnsignedInt PairedNucleotideTemporary = 0;
+    UniqueIdUInt64Type PairedNucleotideTemporary = 0;
 public:
     static void LinkPairedNucleotides(T* PairedNucleotide1, T* PairedNucleotide2)
     {
@@ -36,7 +36,7 @@ class LinkedParticles
 public:
     std::vector<T*> LinkedParticlesPointersList;
 public:
-    std::vector<UniqueIdUnsignedInt> LinkedParticlesPointersListTemporary;
+    std::vector<UniqueIdUInt64Type> LinkedParticlesPointersListTemporary;
 public:
     void AddNewLinkToParticle(T* NewLinkToParticle)
     {
@@ -64,19 +64,19 @@ using ListOfVoxelsType = std::vector<vector3_16>;
 using ListOfAtomsType = std::vector<CellEngineAtom>;
 using ListOfCentersType = std::vector<vector3_Real32>;
 
-class Particle : public DoublyLinkedListNode<Particle, UniqueIdUnsignedInt>, public PairedNucleotide<Particle>, public LinkedParticles<Particle>
+class Particle : public DoublyLinkedListNode<Particle, UniqueIdUInt64Type>, public PairedNucleotide<Particle>, public LinkedParticles<Particle>
 {
 public:
     bool SelectedForReaction{};
 public:
-    UniqueIdType ParticleKindId{};
-    ChainIdInt ChainId{};
-    UniqueIdUnsignedInt Index{};
+    UniqueIdUInt32Type ParticleKindId{};
+    ChainIdUInt16Type ChainId{};
+    UniqueIdUInt64Type Index{};
 
-    UniqueIdUnsignedIntReduced GenomeThread{};
-    UniqueIdUnsignedIntReduced GenomeIndex{};
-    UniqueIdUnsignedIntReduced GenomeIndexPrev{};
-    UniqueIdUnsignedIntReduced GenomeIndexNext{};
+    UniqueIdUInt32Type GenomeThread{};
+    UniqueIdUInt32Type GenomeIndex{};
+    UniqueIdUInt32Type GenomeIndexPrev{};
+    UniqueIdUInt32Type GenomeIndexNext{};
 
     ElectricChargeType ElectricCharge{};
     SectorPosType ParticleSectorPos{};
@@ -106,10 +106,10 @@ public:
         Center.Z = ZCenterParam;
     }
 public:
-    explicit Particle(const UniqueIdUnsignedInt IndexParam, const UniqueIdType ParticleKindIdParam, const ChainIdInt ChainIdParam, const UniqueIdUnsignedIntReduced GenomeThreadParam, const UniqueIdUnsignedIntReduced GenomeIndexParam, const ElectricChargeType ElectricChargeParam, const vector3_16 UniqueColorParam) : Index(IndexParam), ParticleKindId(ParticleKindIdParam), ChainId(ChainIdParam), GenomeThread(GenomeThreadParam), GenomeIndex(GenomeIndexParam), ElectricCharge(ElectricChargeParam), UniqueParticleColor(UniqueColorParam)
+    explicit Particle(const UniqueIdUInt64Type IndexParam, const UniqueIdUInt32Type ParticleKindIdParam, const ChainIdUInt16Type ChainIdParam, const UniqueIdUInt32Type GenomeThreadParam, const UniqueIdUInt32Type GenomeIndexParam, const ElectricChargeType ElectricChargeParam, const vector3_16 UniqueColorParam) : Index(IndexParam), ParticleKindId(ParticleKindIdParam), ChainId(ChainIdParam), GenomeThread(GenomeThreadParam), GenomeIndex(GenomeIndexParam), ElectricCharge(ElectricChargeParam), UniqueParticleColor(UniqueColorParam)
     {
     }
-    explicit Particle(const UniqueIdUnsignedInt IndexParam, const UniqueIdType ParticleKindIdParam, const ChainIdInt ChainIdParam, const UniqueIdUnsignedIntReduced GenomeThreadParam, const UniqueIdUnsignedIntReduced GenomeIndexParam, const ElectricChargeType ElectricChargeParam, std::string SequenceStrParam, const vector3_16 UniqueColorParam) : Index(IndexParam), ParticleKindId(ParticleKindIdParam), ChainId(ChainIdParam), GenomeThread(GenomeThreadParam), GenomeIndex(GenomeIndexParam), ElectricCharge(ElectricChargeParam), SequenceStr(std::move(SequenceStrParam)), UniqueParticleColor(UniqueColorParam)
+    explicit Particle(const UniqueIdUInt64Type IndexParam, const UniqueIdUInt32Type ParticleKindIdParam, const ChainIdUInt16Type ChainIdParam, const UniqueIdUInt32Type GenomeThreadParam, const UniqueIdUInt32Type GenomeIndexParam, const ElectricChargeType ElectricChargeParam, std::string SequenceStrParam, const vector3_16 UniqueColorParam) : Index(IndexParam), ParticleKindId(ParticleKindIdParam), ChainId(ChainIdParam), GenomeThread(GenomeThreadParam), GenomeIndex(GenomeIndexParam), ElectricCharge(ElectricChargeParam), SequenceStr(std::move(SequenceStrParam)), UniqueParticleColor(UniqueColorParam)
     {
     }
 public:

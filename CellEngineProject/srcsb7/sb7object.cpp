@@ -34,7 +34,7 @@ namespace sb7
 
         const SB6M_CHUNK_VERTEX_DATA* VertexDataChunk = nullptr;
         const SB6M_CHUNK_INDEX_DATA* IndexDataChunk = nullptr;
-        SB6M_VERTEX_ATTRIB_CHUNK* VertexAttribChunk = nullptr;
+        const SB6M_VERTEX_ATTRIB_CHUNK* VertexAttribChunk = nullptr;
         SB6M_CHUNK_SUB_OBJECT_LIST* SubGraphicObjectChunk = nullptr;
         SB6M_DATA_CHUNK* DataChunk = nullptr;
 

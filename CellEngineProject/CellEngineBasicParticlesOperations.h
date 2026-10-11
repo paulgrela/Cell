@@ -31,7 +31,7 @@ protected:
         }
     }
 protected:
-    inline Particle& GetParticleFromIndex(const UniqueIdUnsignedInt ParticleIndex)
+    inline Particle& GetParticleFromIndex(const UniqueIdUInt64Type ParticleIndex)
     {
         return GetParticles()[ParticleIndex];
     }
@@ -49,7 +49,7 @@ protected:
 protected:
 
 
-    inline UniqueIdUnsignedInt GetNewFreeIndexOfParticleFinal()
+    inline UniqueIdUInt64Type GetNewFreeIndexOfParticleFinal()
     {
         if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
             return Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ].ParticleUniqueIdGenerator.GetNewUniqueParticleIndex();
@@ -61,11 +61,11 @@ protected:
                 return ParticleUniqueIdGenerator.GetNewUniqueParticleIndex();
         }
     }
-    inline UniqueIdUnsignedInt GetNewFreeIndexOfParticle()
+    inline UniqueIdUInt64Type GetNewFreeIndexOfParticle()
     {
         if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
         {
-            UniqueIdUnsignedInt NewUniqueParticleIndex = Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ].ParticleUniqueIdGenerator.GetNewUniqueParticleIndex();
+            UniqueIdUInt64Type NewUniqueParticleIndex = Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ].ParticleUniqueIdGenerator.GetNewUniqueParticleIndex();
 
             while (GetParticles().contains(NewUniqueParticleIndex) == true)
                 NewUniqueParticleIndex = Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ].ParticleUniqueIdGenerator.GetNewUniqueParticleIndex();
@@ -76,7 +76,7 @@ protected:
         {
             if (CurrentThreadIndex == 0)
             {
-                UniqueIdUnsignedInt NewUniqueParticleIndex = Particles[0][0][0].ParticleUniqueIdGenerator.GetNewUniqueParticleIndex();
+                UniqueIdUInt64Type NewUniqueParticleIndex = Particles[0][0][0].ParticleUniqueIdGenerator.GetNewUniqueParticleIndex();
 
                 while (GetParticles().contains(NewUniqueParticleIndex) == true)
                     NewUniqueParticleIndex = Particles[0][0][0].ParticleUniqueIdGenerator.GetNewUniqueParticleIndex();
@@ -85,7 +85,7 @@ protected:
             }
             else
             {
-                UniqueIdUnsignedInt NewUniqueParticleIndex = ParticleUniqueIdGenerator.GetNewUniqueParticleIndex();
+                UniqueIdUInt64Type NewUniqueParticleIndex = ParticleUniqueIdGenerator.GetNewUniqueParticleIndex();
 
                 while (GetParticles().contains(NewUniqueParticleIndex) == true)
                     NewUniqueParticleIndex = ParticleUniqueIdGenerator.GetNewUniqueParticleIndex();
@@ -102,13 +102,13 @@ public:
         CurrentSectorPos = CurrentSectorPosParam;
     }
 public:
-    UniqueIdUnsignedInt AddNewParticle(const Particle& ParticleParam)
+    UniqueIdUInt64Type AddNewParticle(const Particle& ParticleParam)
     {
         GetParticles()[ParticleParam.Index] = ParticleParam;
         return MaxParticleIndex = ParticleParam.Index;
     }
 protected:
-    virtual void RemoveParticle(UniqueIdUnsignedInt ParticleIndex, bool ClearElements, bool CountAllParticlesBool) = 0;
+    virtual void RemoveParticle(UniqueIdUInt64Type ParticleIndex, bool ClearElements, bool CountAllParticlesBool) = 0;
 public:
     template <class T, class A>
     void PreprocessData(const std::vector<A> Particle::*ListOfElements, const std::vector<A> ParticleKind::*ListOfElementsOfParticleKind, bool UpdateParticleKindListOfElementsBool);
@@ -123,9 +123,9 @@ public:
     template <class T, class A>
     static void GetMinMaxCoordinatesForParticle(Particle& ParticleObject, const std::vector<A> Particle::*ListOfElements, const std::vector<A> ParticleKind::*ListOfElementsOfParticleKind, bool UpdateParticleKindListOfElements);
 protected:
-    std::vector<UniqueIdUnsignedInt> GetAllParticlesWithChosenParticleType(ParticlesTypes ParticleTypeParam) const;
-    std::vector<UniqueIdUnsignedInt> GetAllParticlesWithChosenParticleKindId(UniqueIdUnsignedInt ParticleKindId) const;
-    UnsignedInt GetNumberOfParticlesWithChosenParticleKindId(UniqueIdUnsignedInt ParticleKindId) const;
+    std::vector<UniqueIdUInt64Type> GetAllParticlesWithChosenParticleType(ParticlesTypes ParticleTypeParam) const;
+    std::vector<UniqueIdUInt64Type> GetAllParticlesWithChosenParticleKindId(UniqueIdUInt64Type ParticleKindId) const;
+    UnsignedInt GetNumberOfParticlesWithChosenParticleKindId(UniqueIdUInt64Type ParticleKindId) const;
 protected:
     explicit CellEngineBasicParticlesOperations(ParticlesContainer<Particle>& ParticlesParam) : Particles(ParticlesParam)
     {
