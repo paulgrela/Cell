@@ -31,7 +31,7 @@ protected:
     ThreadLocalParticlesInProximity LocalThreadParticlesInProximityObject;
 protected:
     static bool CompareFitnessOfParticle(const ParticleKindForChemicalReaction& ParticleKindForReactionObject, Particle& ParticleObjectForReaction);
-    void EraseParticleChosenForReactionAndGetCentersForNewProductsOfReaction(UnsignedInt ParticleIndexChosenForReaction, ListOfCentersType &Centers, std::vector<Particle>& ParticlesBackup);
+    void EraseParticleChosenForReactionAndGetCentersForNewProductsOfReaction(UnsignedInt ParticleUniqueIdChosenForReaction, ListOfCentersType &Centers, std::vector<Particle>& ParticlesBackup);
 protected:
     explicit CellEngineChemicalReactionsInBasicSimulationSpace(ParticlesContainer<Particle>& ParticlesParam) : CellEngineBasicParticlesOperations(ParticlesParam)
     {

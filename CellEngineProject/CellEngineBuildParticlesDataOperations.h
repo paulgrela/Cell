@@ -11,7 +11,7 @@ protected:
     virtual void SetStartValues() = 0;
     virtual void SetCurrentSectorPos(const SectorPosType& CurrentSectorPos) = 0;
     virtual UniqueIdUInt64Type AddNewParticle(const Particle& ParticleObjectParam) = 0;
-    virtual void InsertAtom(std::vector<CellEngineAtom>& LocalCellEngineAllAtomsObject, const CellEngineAtom& AppliedAtom, UniqueIdUInt64Type ParticleIndex) = 0;
+    virtual void InsertAtom(std::vector<CellEngineAtom>& LocalCellEngineAllAtomsObject, const CellEngineAtom& AppliedAtom, UniqueIdUInt64Type ParticleUniqueId) = 0;
     virtual void InsertGroupOfAtoms(std::vector<CellEngineAtom>& LocalCellEngineParticlesCentersObject, std::vector<CellEngineAtom>& LocalCellEngineAllAtomsObject) = 0;
     virtual void InsertParticlesCenters(std::vector<CellEngineAtom>& LocalCellEngineParticlesCentersObject) = 0;
     virtual void PreprocessData(bool Update) = 0;

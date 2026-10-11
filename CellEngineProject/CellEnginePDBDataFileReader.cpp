@@ -83,7 +83,7 @@ void CellEnginePDBDataFileReader::ReadDataFromFile(const bool StartValuesBool, c
                 ParticleToInsert.UniqueParticleColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor());
                 ParticleToInsert.RandomParticleKindColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor());
 
-                GetParticleFromIndex(1) = ParticleToInsert;
+                GetParticleFromUniqueId(1) = ParticleToInsert;
 
                 UniqueIdUInt32Type P = 1;
                 ParticlesKindsManagerObject.AddSingleParticleKind(ParticlesTypes::Lipid, P, "LipidOuterMembrane", "LipidOuterMembrane", "LipidOuterMembrane", -1, 0, "m", 1);

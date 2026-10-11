@@ -14,25 +14,25 @@
 
 using namespace std;
 
-void CellEngineChemicalReactionsInSimulationSpace::RemoveParticle(const UniqueIdUInt64Type ParticleIndex, const bool ClearVoxels, const bool CountAllParticlesBool)
+void CellEngineChemicalReactionsInSimulationSpace::RemoveParticle(const UniqueIdUInt64Type ParticleUniqueId, const bool ClearVoxels, const bool CountAllParticlesBool)
 {
     try
     {
         #ifdef SIMULATION_DETAILED_DEBUG_LOG
-        const bool NotFoundParticle2 = Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ].Particles.contains(ParticleIndex);
+        const bool NotFoundParticle2 = Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ].Particles.contains(ParticleUniqueId);
         #endif
 
-        Particle& ParticleObject = GetParticleFromIndex(ParticleIndex);
+        Particle& ParticleObject = GetParticleFromIndex(ParticleUniqueId);
 
         #ifdef SIMULATION_DETAILED_DEBUG_LOG
-        const bool NotFoundParticle1 = Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ].Particles.contains(ParticleIndex);
+        const bool NotFoundParticle1 = Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ].Particles.contains(ParticleUniqueId);
         UnsignedInt NumberOfAllParticlesBeforeRemoval;
         if (CountAllParticlesBool == true)
             NumberOfAllParticlesBeforeRemoval = CellEngineDataFileObjectPointer->GetNumberOfAllParticles();
         else
             NumberOfAllParticlesBeforeRemoval = CellEngineDataFileObjectPointer->GetNumberOfAllParticlesInSector(CurrentSectorPos);
-        LoggersManagerObject.LogOnlyToFilesUnconditional(STREAM("NUMBER OF ALL PARTICLES BEFORE REMOVAL = " << NumberOfAllParticlesBeforeRemoval << " Particle to be removed has index = " << ParticleObject.ParticleIndex << " " << ParticleIndex << " NOT FOUND PARTICLE = " << NotFoundParticle1 << " " << NotFoundParticle2));
-        LoggersManagerObject.LogOnlyToConsoleUnconditional(STREAM("NUMBER OF ALL PARTICLES BEFORE REMOVAL = " << NumberOfAllParticlesBeforeRemoval << " Particle to be removed has index = " << ParticleObject.ParticleIndex << " " << ParticleIndex << " NOT FOUND PARTICLE = " << NotFoundParticle1 << " " << NotFoundParticle2));
+        LoggersManagerObject.LogOnlyToFilesUnconditional(STREAM("NUMBER OF ALL PARTICLES BEFORE REMOVAL = " << NumberOfAllParticlesBeforeRemoval << " Particle to be removed has index = " << ParticleObject.ParticleUniqueId << " " << ParticleUniqueId << " NOT FOUND PARTICLE = " << NotFoundParticle1 << " " << NotFoundParticle2));
+        LoggersManagerObject.LogOnlyToConsoleUnconditional(STREAM("NUMBER OF ALL PARTICLES BEFORE REMOVAL = " << NumberOfAllParticlesBeforeRemoval << " Particle to be removed has index = " << ParticleObject.ParticleUniqueId << " " << ParticleUniqueId << " NOT FOUND PARTICLE = " << NotFoundParticle1 << " " << NotFoundParticle2));
         #endif
 
         CutDNAPrev(&ParticleObject);
@@ -41,7 +41,7 @@ void CellEngineChemicalReactionsInSimulationSpace::RemoveParticle(const UniqueId
         DeleteLinkedParticlesPointersList(ParticleObject);
         ClearSpaceForParticle(ParticleObject, ClearVoxels);
 
-        const UnsignedInt NumberOfRemovedParticelAfterErase = GetParticles().erase(ParticleIndex);
+        const UnsignedInt NumberOfRemovedParticelAfterErase = GetParticles().erase(ParticleUniqueId);
 
         #ifdef SIMULATION_DETAILED_DEBUG_LOG
         UnsignedInt NumberOfAllParticlesAfterRemoval;
@@ -50,8 +50,8 @@ void CellEngineChemicalReactionsInSimulationSpace::RemoveParticle(const UniqueId
         else
             NumberOfAllParticlesAfterRemoval = CellEngineDataFileObjectPointer->GetNumberOfAllParticlesInSector(CurrentSectorPos);
         const UnsignedInt DifferenceOfAllParticlesBeforeAndAfterRemoval = NumberOfAllParticlesBeforeRemoval - NumberOfAllParticlesAfterRemoval;
-        LoggersManagerObject.LogOnlyToFilesUnconditional(STREAM("NUMBER OF ALL PARTICLES AFTER REMOVAL = " << NumberOfAllParticlesBeforeRemoval << " " << NumberOfAllParticlesAfterRemoval << " DIFFERENCE = " << DifferenceOfAllParticlesBeforeAndAfterRemoval << " " << NumberOfRemovedParticelAfterErase << " Particle to be removed has index = " << ParticleObject.ParticleIndex << " " << ParticleIndex));
-        LoggersManagerObject.LogOnlyToConsoleUnconditional(STREAM("NUMBER OF ALL PARTICLES AFTER REMOVAL = " << NumberOfAllParticlesBeforeRemoval << " " << NumberOfAllParticlesAfterRemoval << " DIFFERENCE = " << DifferenceOfAllParticlesBeforeAndAfterRemoval << " " << NumberOfRemovedParticelAfterErase <<  " Particle to be removed has index = " << ParticleObject.ParticleIndex << " " << ParticleIndex));
+        LoggersManagerObject.LogOnlyToFilesUnconditional(STREAM("NUMBER OF ALL PARTICLES AFTER REMOVAL = " << NumberOfAllParticlesBeforeRemoval << " " << NumberOfAllParticlesAfterRemoval << " DIFFERENCE = " << DifferenceOfAllParticlesBeforeAndAfterRemoval << " " << NumberOfRemovedParticelAfterErase << " Particle to be removed has index = " << ParticleObject.ParticleUniqueId << " " << ParticleUniqueId));
+        LoggersManagerObject.LogOnlyToConsoleUnconditional(STREAM("NUMBER OF ALL PARTICLES AFTER REMOVAL = " << NumberOfAllParticlesBeforeRemoval << " " << NumberOfAllParticlesAfterRemoval << " DIFFERENCE = " << DifferenceOfAllParticlesBeforeAndAfterRemoval << " " << NumberOfRemovedParticelAfterErase <<  " Particle to be removed has index = " << ParticleObject.ParticleUniqueId << " " << ParticleUniqueId));
         #endif
     }
     CATCH("removing particle")
@@ -82,75 +82,75 @@ void CellEngineChemicalReactionsInSimulationSpace::MakingZeroSizeForContainersFo
     CATCH("making zero size for containers for found particles in proximity")
 }
 
-void CellEngineChemicalReactionsInSimulationSpace::UpdateFoundNucleotidesForFoundParticlesInProximity(const UnsignedInt ParticleIndex)
+void CellEngineChemicalReactionsInSimulationSpace::UpdateFoundNucleotidesForFoundParticlesInProximity(const UnsignedInt ParticleUniqueId)
 {
     try
     {
-        const Particle& ParticleObject = GetParticleFromIndex(ParticleIndex);
+        const Particle& ParticleObject = GetParticleFromIndex(ParticleUniqueId);
 
         if (CellEngineUseful::IsDNAorRNA(ParticleObject.ParticleKindId) && ParticleObject.Next == nullptr && ParticleObject.Prev != nullptr)
-            LocalThreadParticlesInProximityObject.NucleotidesWithFreeNextEndingsFoundInProximity.emplace_back(ParticleIndex);
+            LocalThreadParticlesInProximityObject.NucleotidesWithFreeNextEndingsFoundInProximity.emplace_back(ParticleUniqueId);
         if (CellEngineUseful::IsDNAorRNA(ParticleObject.ParticleKindId) && ParticleObject.Prev == nullptr && ParticleObject.Next != nullptr)
-            LocalThreadParticlesInProximityObject.NucleotidesWithFreePrevEndingsFoundInProximity.emplace_back(ParticleIndex);
+            LocalThreadParticlesInProximityObject.NucleotidesWithFreePrevEndingsFoundInProximity.emplace_back(ParticleUniqueId);
 
         if (CellEngineUseful::IsDNA(ParticleObject.ParticleKindId) && ParticleObject.Next == nullptr && ParticleObject.Prev != nullptr)
-            LocalThreadParticlesInProximityObject.DNANucleotidesWithFreeNextEndingsFoundInProximity.emplace_back(ParticleIndex);
+            LocalThreadParticlesInProximityObject.DNANucleotidesWithFreeNextEndingsFoundInProximity.emplace_back(ParticleUniqueId);
         if (CellEngineUseful::IsDNA(ParticleObject.ParticleKindId) && ParticleObject.Prev == nullptr && ParticleObject.Next != nullptr)
-            LocalThreadParticlesInProximityObject.DNANucleotidesWithFreePrevEndingsFoundInProximity.emplace_back(ParticleIndex);
+            LocalThreadParticlesInProximityObject.DNANucleotidesWithFreePrevEndingsFoundInProximity.emplace_back(ParticleUniqueId);
 
         if (CellEngineConfigDataObject.RNAInOneParticle == false)
         {
             if (CellEngineUseful::IsDNAorRNA(ParticleObject.ParticleKindId) && ParticleObject.Next == nullptr && ParticleObject.Prev == nullptr)
             {
-                LocalThreadParticlesInProximityObject.NucleotidesFreeFoundInProximity.emplace_back(ParticleIndex);
-                LocalThreadParticlesInProximityObject.RNANucleotidesFreeFoundInProximity.emplace_back(ParticleIndex);
+                LocalThreadParticlesInProximityObject.NucleotidesFreeFoundInProximity.emplace_back(ParticleUniqueId);
+                LocalThreadParticlesInProximityObject.RNANucleotidesFreeFoundInProximity.emplace_back(ParticleUniqueId);
             }
             if (CellEngineUseful::IsRNA(ParticleObject.ParticleKindId))
-                LocalThreadParticlesInProximityObject.RNANucleotidesFoundInProximity.emplace_back(ParticleIndex);
+                LocalThreadParticlesInProximityObject.RNANucleotidesFoundInProximity.emplace_back(ParticleUniqueId);
         }
         else
         {
             if (CellEngineUseful::IsRNA(ParticleObject.ParticleKindId) && ParticleObject.SequenceStr.substr(0, RNAStartSequence.length()) == RNAStartSequence)
-                LocalThreadParticlesInProximityObject.RNANucleotidesFreeFoundInProximity.emplace_back(ParticleIndex);
+                LocalThreadParticlesInProximityObject.RNANucleotidesFreeFoundInProximity.emplace_back(ParticleUniqueId);
             if (CellEngineUseful::IsDNA(ParticleObject.ParticleKindId) && ParticleObject.Next == nullptr && ParticleObject.Prev == nullptr)
-                LocalThreadParticlesInProximityObject.NucleotidesFreeFoundInProximity.emplace_back(ParticleIndex);
+                LocalThreadParticlesInProximityObject.NucleotidesFreeFoundInProximity.emplace_back(ParticleUniqueId);
             if (CellEngineUseful::IsRNA(ParticleObject.ParticleKindId))
-                LocalThreadParticlesInProximityObject.RNANucleotidesFoundInProximity.emplace_back(ParticleIndex);
+                LocalThreadParticlesInProximityObject.RNANucleotidesFoundInProximity.emplace_back(ParticleUniqueId);
         }
 
         if (CellEngineUseful::IsFreeDNANucleotide(ParticleObject.ParticleKindId) == true)
-            LocalThreadParticlesInProximityObject.DNANucleotidesFullFreeFoundInProximity.emplace_back(ParticleIndex);
+            LocalThreadParticlesInProximityObject.DNANucleotidesFullFreeFoundInProximity.emplace_back(ParticleUniqueId);
         if (CellEngineUseful::IsFreeRNANucleotide(ParticleObject.ParticleKindId) == true)
-            LocalThreadParticlesInProximityObject.RNANucleotidesFullFreeFoundInProximity.emplace_back(ParticleIndex);
+            LocalThreadParticlesInProximityObject.RNANucleotidesFullFreeFoundInProximity.emplace_back(ParticleUniqueId);
 
         if (CellEngineAminoAcidsManagerObject.IstRNAUncharged(ParticleObject.ParticleKindId) == true)
-            LocalThreadParticlesInProximityObject.tRNAUnchargedFoundInProximity.emplace_back(ParticleIndex);
+            LocalThreadParticlesInProximityObject.tRNAUnchargedFoundInProximity.emplace_back(ParticleUniqueId);
         if (CellEngineAminoAcidsManagerObject.IstRNACharged(ParticleObject.ParticleKindId) == true)
-            LocalThreadParticlesInProximityObject.tRNAChargedFoundInProximity.emplace_back(ParticleIndex);
+            LocalThreadParticlesInProximityObject.tRNAChargedFoundInProximity.emplace_back(ParticleUniqueId);
 
         LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity[ParticleObject.ParticleKindId]++;
     }
     CATCH("updating found nucleotides for found particles in proximity")
 }
 
-void CellEngineChemicalReactionsInSimulationSpace::SaveParticleFoundInProximity(const UniqueIdUInt64Type ParticleIndex, MainSetType<UnsignedInt>& FoundParticleIndexes, const bool UpdateNucleotides)
+void CellEngineChemicalReactionsInSimulationSpace::SaveParticleFoundInProximity(const UniqueIdUInt64Type ParticleUniqueId, MainSetType<UnsignedInt>& FoundParticleUniqueIdes, const bool UpdateNucleotides)
 {
     try
     {
-        if (FoundParticleIndexes.contains(ParticleIndex) == false)
+        if (FoundParticleUniqueIdes.contains(ParticleUniqueId) == false)
         {
             const auto start_time = chrono::high_resolution_clock::now();
 
-            LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity.emplace_back(ParticleIndex);
+            LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity.emplace_back(ParticleUniqueId);
 
-            const Particle& ParticleFromIndex = GetParticleFromIndex(ParticleIndex);
+            const Particle& ParticleFromIndex = GetParticleFromIndex(ParticleUniqueId);
 
             if (UpdateNucleotides == true)
-                UpdateFoundNucleotidesForFoundParticlesInProximity(ParticleIndex);
+                UpdateFoundNucleotidesForFoundParticlesInProximity(ParticleUniqueId);
 
             LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity[ParticleFromIndex.ParticleKindId]++;
 
-            FoundParticleIndexes.insert(ParticleIndex);
+            FoundParticleUniqueIdes.insert(ParticleUniqueId);
 
             const auto stop_time = chrono::high_resolution_clock::now();
 
@@ -164,11 +164,11 @@ bool CellEngineChemicalReactionsInSimulationSpace::FindParticlesInProximityOfSim
 {
     try
     {
-        MainSetType<UnsignedInt> FoundParticleIndexes;
+        MainSetType<UnsignedInt> FoundParticleUniqueIdes;
 
         MakingZeroSizeForContainersForFoundParticlesInProximity(CurrentThreadPos);
 
-        FindParticlesInProximityInSimulationSpaceForSelectedLocalSpace(FoundParticleIndexes, UpdateNucleotides, StartXPosParam, StartYPosParam, StartZPosParam, UnusedValueRealType, UnusedValueRealType, UnusedValueRealType);
+        FindParticlesInProximityInSimulationSpaceForSelectedLocalSpace(FoundParticleUniqueIdes, UpdateNucleotides, StartXPosParam, StartYPosParam, StartZPosParam, UnusedValueRealType, UnusedValueRealType, UnusedValueRealType);
 
         DEBUGLOG(LoggersManagerObject.Log(STREAM(endl << "Number of Particles Kinds Found In Proximity = " << LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity.size()));)
 
@@ -197,8 +197,8 @@ void CellEngineChemicalReactionsInSimulationSpace::PrintInformationAboutFoundPar
     try
     {
         LoggersManagerObject.Log(STREAM(endl << "ParticlesSortedByCapacityFoundInParticlesProximity List"));
-        for (const auto& LocalParticleIndexObjectToWrite : LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity)
-            LoggersManagerObject.Log(STREAM("ParticleIndex = " << to_string(LocalParticleIndexObjectToWrite) << " ParticleKindId = " << to_string(GetParticleFromIndex(LocalParticleIndexObjectToWrite).ParticleKindId) << " NUCLEOTIDE = " << ((CellEngineUseful::IsDNAorRNA(GetParticleFromIndex(LocalParticleIndexObjectToWrite).ParticleKindId) == true) ? CellEngineUseful::GetLetterFromChainIdForDNAorRNA(GetParticleFromIndex(LocalParticleIndexObjectToWrite).ChainId) : '0') << " GENOME INDEX = " << GetParticleFromIndex(LocalParticleIndexObjectToWrite).GenomeIndex));
+        for (const auto& LocalParticleUniqueIdObjectToWrite : LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity)
+            LoggersManagerObject.Log(STREAM("ParticleUniqueId = " << to_string(LocalParticleUniqueIdObjectToWrite) << " ParticleKindId = " << to_string(GetParticleFromIndex(LocalParticleUniqueIdObjectToWrite).ParticleKindId) << " NUCLEOTIDE = " << ((CellEngineUseful::IsDNAorRNA(GetParticleFromIndex(LocalParticleUniqueIdObjectToWrite).ParticleKindId) == true) ? CellEngineUseful::GetLetterFromChainIdForDNAorRNA(GetParticleFromIndex(LocalParticleUniqueIdObjectToWrite).ChainId) : '0') << " GENOME INDEX = " << GetParticleFromIndex(LocalParticleUniqueIdObjectToWrite).GenomeIndex));
         LoggersManagerObject.Log(STREAM(endl << "ParticlesKindsFoundInProximity List"));
         for (const auto& [LocalParticleKindObjectToWriteFirst, LocalParticleKindObjectToWriteSecond] : LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity)
             LoggersManagerObject.Log(STREAM("ParticleKind ParticleKindId = " << to_string(LocalParticleKindObjectToWriteFirst) << " in quantity = " << to_string(LocalParticleKindObjectToWriteSecond)));

@@ -12,9 +12,9 @@ import CellEngineColors;
 
 using namespace std;
 
-void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::GenerateParticleElementsWhenSelectedSpaceIsFreeBasic(const UnsignedInt ParticleIndex, const UnsignedInt StartPosX, const UnsignedInt StartPosY, const UnsignedInt StartPosZ, const UnsignedInt ParticleSizeX, const UnsignedInt ParticleSizeY, const UnsignedInt ParticleSizeZ, const UnsignedInt ParticleStepX, const UnsignedInt ParticleStepY, const UnsignedInt ParticleStepZ)
+void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::GenerateParticleElementsWhenSelectedSpaceIsFreeBasic(const UnsignedInt ParticleUniqueId, const UnsignedInt StartPosX, const UnsignedInt StartPosY, const UnsignedInt StartPosZ, const UnsignedInt ParticleSizeX, const UnsignedInt ParticleSizeY, const UnsignedInt ParticleSizeZ, const UnsignedInt ParticleStepX, const UnsignedInt ParticleStepY, const UnsignedInt ParticleStepZ)
 {
-    GenerateParticleVoxelsWhenSelectedSpaceIsFree(ParticleIndex, StartPosX, StartPosY, StartPosZ, ParticleSizeX, ParticleSizeY, ParticleSizeZ, 0, 0, 0, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, &CellEngineParticlesVoxelsShapesGenerator::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineParticlesVoxelsShapesGenerator::SetValueToVoxelsForCuboidSelectedSpace);
+    GenerateParticleVoxelsWhenSelectedSpaceIsFree(ParticleUniqueId, StartPosX, StartPosY, StartPosZ, ParticleSizeX, ParticleSizeY, ParticleSizeZ, 0, 0, 0, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, &CellEngineParticlesVoxelsShapesGenerator::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineParticlesVoxelsShapesGenerator::SetValueToVoxelsForCuboidSelectedSpace);
 }
 
 void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::UpdateRandomPositions(const UnsignedInt RandomMoveDirection, UnsignedInt& RandomPosX, UnsignedInt& RandomPosY, UnsignedInt& RandomPosZ, const UnsignedInt Size)
@@ -48,14 +48,14 @@ tuple<UnsignedInt, UnsignedInt, UnsignedInt> CellEngineGenomeNucleicAcidsParticl
 
     try
     {
-        const UnsignedInt PreviousParticleIndex = Genome.back();
+        const UnsignedInt PreviousParticleUniqueId = Genome.back();
         Genome.pop_back();
 
-        LastLocalRandomPos = GetParticleFromIndex(PreviousParticleIndex).ListOfVoxels[0];
+        LastLocalRandomPos = GetParticleFromIndex(PreviousParticleUniqueId).ListOfVoxels[0];
 
-        RemoveParticle(PreviousParticleIndex, true, false);
+        RemoveParticle(PreviousParticleUniqueId, true, false);
 
-        LoggersManagerObject.Log(STREAM("ERASED PARTICLE PreviousParticleIndex = " << PreviousParticleIndex << " RandomPosX = " << LastLocalRandomPos.X << " RandomPosY = " << LastLocalRandomPos.Y << " RandomPosZ = " << LastLocalRandomPos.Z));
+        LoggersManagerObject.Log(STREAM("ERASED PARTICLE PreviousParticleUniqueId = " << PreviousParticleUniqueId << " RandomPosX = " << LastLocalRandomPos.X << " RandomPosY = " << LastLocalRandomPos.Y << " RandomPosZ = " << LastLocalRandomPos.Z));
     }
     CATCH("erasing last random particle")
 

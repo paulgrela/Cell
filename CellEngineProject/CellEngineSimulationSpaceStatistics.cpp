@@ -248,7 +248,7 @@ void CellEngineSimulationSpaceStatistics::SaveReactionForStatistics(const Chemic
 {
     try
     {
-        SavedReactionsMap[SimulationStepNumber - 1][ReactionParam.ReactionIdNum].Counter++;
+        SavedReactionsMap[SimulationStepNumber - 1][ReactionParam.ChemicalReactionIdNum].Counter++;
     }
     CATCH("saving reaction for statistics")
 }
@@ -257,11 +257,11 @@ void CellEngineSimulationSpaceStatistics::SaveReactionForStatisticsExtended(cons
 {
     try
     {
-        auto ReactionIter = SavedReactionsMap[SimulationStepNumber - 1].find(ReactionParam.ReactionIdNum);
+        auto ReactionIter = SavedReactionsMap[SimulationStepNumber - 1].find(ReactionParam.ChemicalReactionIdNum);
         if (ReactionIter != SavedReactionsMap[SimulationStepNumber - 1].end())
             ReactionIter->second.Counter++;
         else
-            SavedReactionsMap[SimulationStepNumber - 1][ReactionParam.ReactionIdNum] = ReactionStatistics{ ReactionParam.ReactionIdNum, 1 };
+            SavedReactionsMap[SimulationStepNumber - 1][ReactionParam.ChemicalReactionIdNum] = ChemicalReactionStatistics{ ReactionParam.ChemicalReactionIdNum, 1 };
     }
     CATCH("saving reaction for statistics extended")
 }

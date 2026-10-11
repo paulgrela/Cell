@@ -78,7 +78,7 @@ void CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForEllipsoidSele
     CATCH("setting value to voxels for ellipsoid selected space")
 };
 
-bool CellEngineParticlesFullAtomShapesGenerator::GenerateParticleAtomsWhenSelectedSpaceIsFree(const ParticlesContainer<Particle>& ParticlesParam, const UnsignedInt LocalNewParticleIndex, const RealType PosXStart, const RealType PosYStart, const RealType PosZStart, const RealType SizeOfParticleX, const RealType SizeOfParticleY, const RealType SizeOfParticleZ, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam, const CheckFreeSpaceForSelectedSpaceType CheckFreeSpaceForSelectedSpace, const SetValueToAtomsForSelectedSpaceType SetValueToAtomsForSelectedSpace)
+bool CellEngineParticlesFullAtomShapesGenerator::GenerateParticleAtomsWhenSelectedSpaceIsFree(const ParticlesContainer<Particle>& ParticlesParam, const UnsignedInt LocalNewParticleUniqueId, const RealType PosXStart, const RealType PosYStart, const RealType PosZStart, const RealType SizeOfParticleX, const RealType SizeOfParticleY, const RealType SizeOfParticleZ, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam, const CheckFreeSpaceForSelectedSpaceType CheckFreeSpaceForSelectedSpace, const SetValueToAtomsForSelectedSpaceType SetValueToAtomsForSelectedSpace)
 {
     try
     {
@@ -86,9 +86,9 @@ bool CellEngineParticlesFullAtomShapesGenerator::GenerateParticleAtomsWhenSelect
 
         if (CheckFreeSpaceForSelectedSpace(ParticlesParam, PosXStart, PosYStart, PosZStart, 1, 1, 1, SizeOfParticleX, SizeOfParticleY, SizeOfParticleZ, 0) == true)
         {
-            SetValueToAtomsForSelectedSpace(GetParticleFromIndexForGenerator(LocalNewParticleIndex).ListOfAtoms, GetParticleFromIndexForGenerator(LocalNewParticleIndex).ParticleKindId, PosXStart, PosYStart, PosZStart, 1, 1, 1, SizeOfParticleX, SizeOfParticleY, SizeOfParticleZ);
+            SetValueToAtomsForSelectedSpace(GetParticleFromIndexForGenerator(LocalNewParticleUniqueId).ListOfAtoms, GetParticleFromIndexForGenerator(LocalNewParticleUniqueId).ParticleKindId, PosXStart, PosYStart, PosZStart, 1, 1, 1, SizeOfParticleX, SizeOfParticleY, SizeOfParticleZ);
 
-            CellEngineBasicParticlesOperations::GetMinMaxCoordinatesForParticle<RealType, CellEngineAtom>(GetParticleFromIndexForGenerator(LocalNewParticleIndex), &Particle::ListOfAtoms, &ParticleKind::ListOfAtoms, true);
+            CellEngineBasicParticlesOperations::GetMinMaxCoordinatesForParticle<RealType, CellEngineAtom>(GetParticleFromIndexForGenerator(LocalNewParticleUniqueId), &Particle::ListOfAtoms, &ParticleKind::ListOfAtoms, true);
 
             return true;
         }

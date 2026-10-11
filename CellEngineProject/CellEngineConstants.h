@@ -12,7 +12,7 @@ constexpr UnsignedInt MaxLengthOfGene = 16384;
 constexpr UniqueIdUInt32Type UnknownParticleKindId = 99999;
 
 constexpr UniqueIdUInt32Type StartParticleKindId = 100000;
-constexpr UniqueIdUInt32Type StartReactionId = 10000;
+constexpr UniqueIdUInt32Type StartChemicalReactionId = 10000;
 
 constexpr RealType ParticleMoveSizeinDiffusionRealType = 10.0;
 constexpr UnsignedInt ParticleMoveSizeinDiffusionUnsignedInt = 10;

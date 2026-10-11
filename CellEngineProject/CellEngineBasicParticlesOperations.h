@@ -14,7 +14,7 @@ class CellEngineBasicParticlesOperations : public CellEngineBasicParallelExecuti
 protected:
     CellEngineParticleUniqueIdGenerator ParticleUniqueIdGenerator{};
 protected:
-    UnsignedInt MaxParticleIndex{};
+    UnsignedInt MaxParticleUniqueId{};
 protected:
     ParticlesContainer<Particle>& Particles;
 protected:
@@ -31,13 +31,13 @@ protected:
         }
     }
 protected:
-    inline Particle& GetParticleFromIndex(const UniqueIdUInt64Type ParticleIndex)
+    inline Particle& GetParticleFromIndex(const UniqueIdUInt64Type ParticleUniqueId)
     {
-        return GetParticles()[ParticleIndex];
+        return GetParticles()[ParticleUniqueId];
     }
 protected:
 
-    inline CellEngineParticleUniqueIdGenerator& GetFreeParticleIndexes()
+    inline CellEngineParticleUniqueIdGenerator& GetFreeParticleUniqueIdes()
     {
         if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
             return Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ].ParticleUniqueIdGenerator;
@@ -45,57 +45,53 @@ protected:
             return ParticleUniqueIdGenerator;
     }
 protected:
-    void InitiateFreeParticleIndexesForAllSectors();
+    void InitiateFreeParticleUniqueIdesForAllSectors();
 protected:
-
-
-    inline UniqueIdUInt64Type GetNewFreeIndexOfParticleFinal()
+    inline UniqueIdUInt64Type GetNewParticleUniqueIdFinal()
     {
         if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
-            return Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ].ParticleUniqueIdGenerator.GetNewUniqueParticleIndex();
+            return Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ].ParticleUniqueIdGenerator.GetNewParticleUniqueId();
         else
         {
             if (CurrentThreadIndex == 0)
-                return Particles[0][0][0].ParticleUniqueIdGenerator.GetNewUniqueParticleIndex();
+                return Particles[0][0][0].ParticleUniqueIdGenerator.GetNewParticleUniqueId();
             else
-                return ParticleUniqueIdGenerator.GetNewUniqueParticleIndex();
+                return ParticleUniqueIdGenerator.GetNewParticleUniqueId();
         }
     }
-    inline UniqueIdUInt64Type GetNewFreeIndexOfParticle()
+    inline UniqueIdUInt64Type GetNewFreeParticleUniqueId()
     {
         if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
         {
-            UniqueIdUInt64Type NewUniqueParticleIndex = Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ].ParticleUniqueIdGenerator.GetNewUniqueParticleIndex();
+            UniqueIdUInt64Type NewParticleUniqueId = Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ].ParticleUniqueIdGenerator.GetNewParticleUniqueId();
 
-            while (GetParticles().contains(NewUniqueParticleIndex) == true)
-                NewUniqueParticleIndex = Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ].ParticleUniqueIdGenerator.GetNewUniqueParticleIndex();
+            while (GetParticles().contains(NewParticleUniqueId) == true)
+                NewParticleUniqueId = Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ].ParticleUniqueIdGenerator.GetNewParticleUniqueId();
 
-            return NewUniqueParticleIndex;
+            return NewParticleUniqueId;
         }
         else
         {
             if (CurrentThreadIndex == 0)
             {
-                UniqueIdUInt64Type NewUniqueParticleIndex = Particles[0][0][0].ParticleUniqueIdGenerator.GetNewUniqueParticleIndex();
+                UniqueIdUInt64Type NewParticleUniqueId = Particles[0][0][0].ParticleUniqueIdGenerator.GetNewParticleUniqueId();
 
-                while (GetParticles().contains(NewUniqueParticleIndex) == true)
-                    NewUniqueParticleIndex = Particles[0][0][0].ParticleUniqueIdGenerator.GetNewUniqueParticleIndex();
+                while (GetParticles().contains(NewParticleUniqueId) == true)
+                    NewParticleUniqueId = Particles[0][0][0].ParticleUniqueIdGenerator.GetNewParticleUniqueId();
 
-                return NewUniqueParticleIndex;
+                return NewParticleUniqueId;
             }
             else
             {
-                UniqueIdUInt64Type NewUniqueParticleIndex = ParticleUniqueIdGenerator.GetNewUniqueParticleIndex();
+                UniqueIdUInt64Type NewParticleUniqueId = ParticleUniqueIdGenerator.GetNewParticleUniqueId();
 
-                while (GetParticles().contains(NewUniqueParticleIndex) == true)
-                    NewUniqueParticleIndex = ParticleUniqueIdGenerator.GetNewUniqueParticleIndex();
+                while (GetParticles().contains(NewParticleUniqueId) == true)
+                    NewParticleUniqueId = ParticleUniqueIdGenerator.GetNewParticleUniqueId();
 
-                return NewUniqueParticleIndex;
+                return NewParticleUniqueId;
             }
         }
     }
-
-
 public:
     void SetCurrentSectorPos(const SectorPosType& CurrentSectorPosParam)
     {
@@ -104,11 +100,11 @@ public:
 public:
     UniqueIdUInt64Type AddNewParticle(const Particle& ParticleParam)
     {
-        GetParticles()[ParticleParam.ParticleIndex] = ParticleParam;
-        return MaxParticleIndex = ParticleParam.ParticleIndex;
+        GetParticles()[ParticleParam.ParticleUniqueId] = ParticleParam;
+        return MaxParticleUniqueId = ParticleParam.ParticleUniqueId;
     }
 protected:
-    virtual void RemoveParticle(UniqueIdUInt64Type ParticleIndex, bool ClearElements, bool CountAllParticlesBool) = 0;
+    virtual void RemoveParticle(UniqueIdUInt64Type ParticleUniqueId, bool ClearElements, bool CountAllParticlesBool) = 0;
 public:
     template <class T, class A>
     void PreprocessData(const std::vector<A> Particle::*ListOfElements, const std::vector<A> ParticleKind::*ListOfElementsOfParticleKind, bool UpdateParticleKindListOfElementsBool);

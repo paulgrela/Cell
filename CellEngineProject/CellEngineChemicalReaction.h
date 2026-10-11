@@ -51,9 +51,9 @@ class ChemicalReaction
 {
     using SpecialReactionFunctionType = std::function<bool (CellEngineChemicalReactionsInSimulationSpace*, const std::vector<std::pair<UniqueIdUInt64Type, UnsignedInt>>&, const std::vector<std::pair<UniqueIdUInt64Type, UnsignedInt>>&, const ChemicalReaction&)>;
 public:
-    UnsignedInt ReactionIdNum{};
-    std::string ReactionIdStr;
-    std::string ReactionName;
+    UnsignedInt ChemicalReactionIdNum{};
+    std::string ChemicalReactionIdStr;
+    std::string ChemicalReactionName;
 public:
     std::string ReactantsStr;
 public:
@@ -75,10 +75,10 @@ public:
 public:
     ChemicalReaction() = default;
 public:
-    ChemicalReaction(const UnsignedInt IdNumParam, std::string ReactionNameParam, std::string ReactantsStrParam, std::vector<ParticleKindForChemicalReaction> ReactantsParam, std::vector<ParticleKindForChemicalReaction> ProductsParam, SpecialReactionFunctionType SpecialReactionFunctionParam, std::string CommentParam = "") : ReactionIdNum(IdNumParam), ReactionName(std::move(ReactionNameParam)), ReactantsStr(std::move(ReactantsStrParam)), Reactants(std::move(ReactantsParam)), Products(std::move(ProductsParam)), SpecialReactionFunction(std::move(SpecialReactionFunctionParam)), Comment(std::move(CommentParam))
+    ChemicalReaction(const UnsignedInt IdNumParam, std::string ReactionNameParam, std::string ReactantsStrParam, std::vector<ParticleKindForChemicalReaction> ReactantsParam, std::vector<ParticleKindForChemicalReaction> ProductsParam, SpecialReactionFunctionType SpecialReactionFunctionParam, std::string CommentParam = "") : ChemicalReactionIdNum(IdNumParam), ChemicalReactionName(std::move(ReactionNameParam)), ReactantsStr(std::move(ReactantsStrParam)), Reactants(std::move(ReactantsParam)), Products(std::move(ProductsParam)), SpecialReactionFunction(std::move(SpecialReactionFunctionParam)), Comment(std::move(CommentParam))
     {
     }
-    ChemicalReaction(const UnsignedInt IdNumParam, std::string ReactionNameParam, std::string ReactantsStrParam, UnsignedInt AdditionalParameterParam1, UnsignedInt AdditionalParameterParam2, std::vector<ParticleKindForChemicalReaction> ReactantsParam, std::vector<ParticleKindForChemicalReaction> ProductsParam, SpecialReactionFunctionType SpecialReactionFunctionParam, std::string CommentParam = "") : ReactionIdNum(IdNumParam), ReactionName(std::move(ReactionNameParam)), ReactantsStr(std::move(ReactantsStrParam)), Reactants(std::move(ReactantsParam)), Products(std::move(ProductsParam)), AdditionalParameter1(AdditionalParameterParam1), AdditionalParameter2(AdditionalParameterParam2), SpecialReactionFunction(std::move(SpecialReactionFunctionParam)), Comment(std::move(CommentParam))
+    ChemicalReaction(const UnsignedInt IdNumParam, std::string ReactionNameParam, std::string ReactantsStrParam, UnsignedInt AdditionalParameterParam1, UnsignedInt AdditionalParameterParam2, std::vector<ParticleKindForChemicalReaction> ReactantsParam, std::vector<ParticleKindForChemicalReaction> ProductsParam, SpecialReactionFunctionType SpecialReactionFunctionParam, std::string CommentParam = "") : ChemicalReactionIdNum(IdNumParam), ChemicalReactionName(std::move(ReactionNameParam)), ReactantsStr(std::move(ReactantsStrParam)), Reactants(std::move(ReactantsParam)), Products(std::move(ProductsParam)), AdditionalParameter1(AdditionalParameterParam1), AdditionalParameter2(AdditionalParameterParam2), SpecialReactionFunction(std::move(SpecialReactionFunctionParam)), Comment(std::move(CommentParam))
     {
     }
 };

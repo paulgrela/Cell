@@ -18,8 +18,8 @@ void CellEngineGenomeNucleicAcidsParticlesInSpaceGenerator::EraseAllDNAParticles
     {
         LoggersManagerObject.Log(STREAM("Number of DNA particles to be removed = " << GetNumberOfParticlesWithChosenParticleKindId(CellEngineConfigDataObject.DNAIdentifier)));
 
-        for (const auto& ParticleIndex : GetAllParticlesWithChosenParticleKindId(CellEngineConfigDataObject.DNAIdentifier))
-            RemoveParticle(ParticleIndex, true, false);
+        for (const auto& ParticleUniqueId : GetAllParticlesWithChosenParticleKindId(CellEngineConfigDataObject.DNAIdentifier))
+            RemoveParticle(ParticleUniqueId, true, false);
 
         LoggersManagerObject.Log(STREAM("Number of DNA particles after remove = " << GetNumberOfParticlesWithChosenParticleKindId(CellEngineConfigDataObject.DNAIdentifier)));
 
@@ -44,23 +44,23 @@ void CellEngineGenomeNucleicAcidsParticlesInSpaceGenerator::GenerateOneStrand(co
 
 Particle* CellEngineGenomeNucleicAcidsParticlesInSpaceGenerator::GenerateNucleotideParticle(Particle* ParticlePrev, const UniqueIdUInt32Type ParticleKindId, const ChainIdUInt16Type ChainId, const UnsignedInt GenomeThread, const UnsignedInt GenomeIndex, const UnsignedInt StartPosX, const UnsignedInt StartPosY, const UnsignedInt StartPosZ, const UnsignedInt ParticleSizeX, const UnsignedInt ParticleSizeY, const UnsignedInt ParticleSizeZ, const bool AddToGenome, vector<UniqueIdUInt64Type>& Genome, const vector3_16 UniqueColorParam, const bool LinkWithPreviousNucleotide)
 {
-    UnsignedInt ParticleIndex;
+    UnsignedInt ParticleUniqueId;
 
     try
     {
-        ParticleIndex = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), ParticleKindId, ChainId, GenomeThread, GenomeIndex, 0, UniqueColorParam));
+        ParticleUniqueId = AddNewParticle(Particle(GetNewFreeParticleUniqueId(), ParticleKindId, ChainId, GenomeThread, GenomeIndex, 0, UniqueColorParam));
 
         if (LinkWithPreviousNucleotide == true)
-            Particle::InsertAfterGivenNode(ParticlePrev, &GetParticleFromIndex(ParticleIndex));
+            Particle::InsertAfterGivenNode(ParticlePrev, &GetParticleFromIndex(ParticleUniqueId));
 
-        GenerateParticleElementsWhenSelectedSpaceIsFreeBasic(ParticleIndex, StartPosX, StartPosY, StartPosZ, ParticleSizeX, ParticleSizeY, ParticleSizeZ, 0, 0, 0);
+        GenerateParticleElementsWhenSelectedSpaceIsFreeBasic(ParticleUniqueId, StartPosX, StartPosY, StartPosZ, ParticleSizeX, ParticleSizeY, ParticleSizeZ, 0, 0, 0);
 
         if (AddToGenome == true)
-            Genome.emplace_back(ParticleIndex);
+            Genome.emplace_back(ParticleUniqueId);
     }
     CATCH_AND_THROW("generating nucleotide particle")
 
-    return &GetParticleFromIndex(ParticleIndex);
+    return &GetParticleFromIndex(ParticleUniqueId);
 }
 
 tuple<Particle*, Particle*> CellEngineGenomeNucleicAcidsParticlesInSpaceGenerator::GenerateTwoPairedNucleotides(Particle* ParticlePrev1, Particle* ParticlePrev2, const UniqueIdUInt32Type ParticleKindId, const ChainIdUInt16Type ChainId, const UnsignedInt GenomeIndex, const UnsignedInt StartPosX, const UnsignedInt StartPosY, const UnsignedInt StartPosZ, const UnsignedInt ParticleSizeX, const UnsignedInt ParticleSizeY, const UnsignedInt ParticleSizeZ, const UnsignedInt AddSizeX, const UnsignedInt AddSizeY, const UnsignedInt AddSizeZ, const vector3_16 UniqueColorParam, const bool Linked, const bool LinkWithPreviousNucleotide)
@@ -82,10 +82,10 @@ void CellEngineGenomeNucleicAcidsParticlesInSpaceGenerator::GetMinMaxCoordinates
 {
     try
     {
-        for (const auto& LocalNewParticleIndex : Genomes[0])
-            GetMinMaxCoordinatesForParticle<UnsignedInt, vector3_16>(GetParticleFromIndex(LocalNewParticleIndex), &Particle::ListOfVoxels, &ParticleKind::ListOfVoxels, true);
-        for (const auto& LocalNewParticleIndex : Genomes[1])
-            GetMinMaxCoordinatesForParticle<UnsignedInt, vector3_16>(GetParticleFromIndex(LocalNewParticleIndex), &Particle::ListOfVoxels, &ParticleKind::ListOfVoxels, true);
+        for (const auto& LocalNewParticleUniqueId : Genomes[0])
+            GetMinMaxCoordinatesForParticle<UnsignedInt, vector3_16>(GetParticleFromIndex(LocalNewParticleUniqueId), &Particle::ListOfVoxels, &ParticleKind::ListOfVoxels, true);
+        for (const auto& LocalNewParticleUniqueId : Genomes[1])
+            GetMinMaxCoordinatesForParticle<UnsignedInt, vector3_16>(GetParticleFromIndex(LocalNewParticleUniqueId), &Particle::ListOfVoxels, &ParticleKind::ListOfVoxels, true);
     }
     CATCH("getting min max of coordinates for DNA")
 }

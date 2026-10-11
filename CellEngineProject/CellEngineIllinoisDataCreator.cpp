@@ -15,7 +15,7 @@
 
 using namespace std;
 
-constexpr long double constexpr_power(long double num, unsigned int pow)
+static constexpr long double constexpr_power(long double num, unsigned int pow)
 {
     return (pow == 0 ? 1 : num * constexpr_power(num, pow - 1));
 }
@@ -24,7 +24,7 @@ constexpr long double CapacityOfCell = (4.0 / 3.0) * M_PI * constexpr_power((200
 
 constexpr long double AvogardoConstant = 6.022 * 1E+23;
 
-vector<vector<string>> ReadAndParseCSVFile(const string& FileName, const char Separator)
+static vector<vector<string>> ReadAndParseCSVFile(const string& FileName, const char Separator)
 {
     vector<vector<string>> ParsedCSVFileStructure;
 
@@ -98,16 +98,16 @@ void CellEngineIllinoisDataCreator::GetParticlesFromXMLFile(const boost::propert
     try
     {
         LoggersManagerObject.Log(STREAM("XML NUMBER OF TYPES OF PARTICLES = " << ReactionsPropertyTreeXMLTreeElement.size()));
-        for (const auto& ReactionsPropertyTreeXMLTreeElementParticle : ReactionsPropertyTreeXMLTreeElement)
+        for (const auto& ReactionsPropertyTreeXMLTreeElementParticle : ReactionsPropertyTreeXMLTreeElement | views::values)
         {
-            auto IdStr = ReactionsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.id");
-            ParticlesKindsManagerObject.AddParticleKind({ ParticleKindId, IdStr, ReactionsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.name"), ReactionsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:chemicalFormula"), 0, 0, ReactionsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.compartment"), 0 });
+            auto IdStr = ReactionsPropertyTreeXMLTreeElementParticle.get<string>("<xmlattr>.id");
+            ParticlesKindsManagerObject.AddParticleKind({ ParticleKindId, IdStr, ReactionsPropertyTreeXMLTreeElementParticle.get<string>("<xmlattr>.name"), ReactionsPropertyTreeXMLTreeElementParticle.get<string>("<xmlattr>.fbc:chemicalFormula"), 0, 0, ReactionsPropertyTreeXMLTreeElementParticle.get<string>("<xmlattr>.compartment"), 0 });
 
             auto ParticlesDataForGeneratorRange = ParticlesDataForGenerator.equal_range(IdStr);
             for (auto& ParticleDataForGeneratorIterator = ParticlesDataForGeneratorRange.first; ParticleDataForGeneratorIterator != ParticlesDataForGeneratorRange.second; ParticleDataForGeneratorIterator++)
                 ParticlesKindsManagerObject.GetParticleKind(ParticleKindId).ParticleKindSpecialDataSector.emplace_back(ParticleDataForGeneratorIterator->second);
 
-            LoggersManagerObject.Log(STREAM("PARTICLE = " << IdStr << " " << ReactionsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.name") << " " << ReactionsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.compartment") << " " << ReactionsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:charge") << " " << ReactionsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:chemicalFormula")));
+            LoggersManagerObject.Log(STREAM("PARTICLE = " << IdStr << " " << ReactionsPropertyTreeXMLTreeElementParticle.get<string>("<xmlattr>.name") << " " << ReactionsPropertyTreeXMLTreeElementParticle.get<string>("<xmlattr>.compartment") << " " << ReactionsPropertyTreeXMLTreeElementParticle.get<string>("<xmlattr>.fbc:charge") << " " << ReactionsPropertyTreeXMLTreeElementParticle.get<string>("<xmlattr>.fbc:chemicalFormula")));
             LoggersManagerObject.Log(STREAM(""));
 
             ParticleKindId++;
@@ -151,17 +151,17 @@ void CellEngineIllinoisDataCreator::GetProteinsFromXMLFile(const boost::property
     try
     {
         LoggersManagerObject.Log(STREAM("XML NUMBER OF GENE PRODUCTS PROTEINS = " << ReactionsPropertyTreeXMLTreeElement.size()));
-        for (const auto& ProteinsPropertyTreeXMLTreeElementParticle : ReactionsPropertyTreeXMLTreeElement)
+        for (const auto& ProteinsPropertyTreeXMLTreeElementParticle : ReactionsPropertyTreeXMLTreeElement | views::values)
         {
-            GeneIdUInt64Type GeneId = stoi(ProteinsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:id").substr(9, 4));
-            string ProteinName = JCVISYN3APredStr + ProteinsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:id").substr(9, 4);
+            GeneIdUInt64Type GeneId = stoi(ProteinsPropertyTreeXMLTreeElementParticle.get<string>("<xmlattr>.fbc:id").substr(9, 4));
+            string ProteinName = JCVISYN3APredStr + ProteinsPropertyTreeXMLTreeElementParticle.get<string>("<xmlattr>.fbc:id").substr(9, 4);
             ParticlesKindsManagerObject.AddParticleKind({ ParticleKindId, ProteinName, "", ProteinName, GeneId, 0, "c", 10 });
 
             auto ParticlesDataForGeneratorRange = ParticlesDataForGenerator.equal_range(ProteinName);
             for (auto& ParticleDataForGeneratorIterator = ParticlesDataForGeneratorRange.first; ParticleDataForGeneratorIterator != ParticlesDataForGeneratorRange.second; ParticleDataForGeneratorIterator++)
                 ParticlesKindsManagerObject.GetParticleKind(ParticleKindId).ParticleKindSpecialDataSector.emplace_back(ParticleDataForGeneratorIterator->second);
 
-            LoggersManagerObject.Log(STREAM("PARTICLE PROTEIN = " << GeneId << " " << ProteinName << " " << ParticlesKindsManagerObject.GetParticleKind(ParticleKindId).GeneId << " " << ProteinsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:id") << " " << ProteinsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:name") << " " << ProteinsPropertyTreeXMLTreeElementParticle.second.get<string>("<xmlattr>.fbc:label")));
+            LoggersManagerObject.Log(STREAM("PARTICLE PROTEIN = " << GeneId << " " << ProteinName << " " << ParticlesKindsManagerObject.GetParticleKind(ParticleKindId).GeneId << " " << ProteinsPropertyTreeXMLTreeElementParticle.get<string>("<xmlattr>.fbc:id") << " " << ProteinsPropertyTreeXMLTreeElementParticle.get<string>("<xmlattr>.fbc:name") << " " << ProteinsPropertyTreeXMLTreeElementParticle.get<string>("<xmlattr>.fbc:label")));
             LoggersManagerObject.Log(STREAM(""));
 
             ParticleKindId++;
@@ -201,13 +201,13 @@ void CellEngineIllinoisDataCreator::GetNewProteinsFromXMLFile(const boost::prope
     CATCH("getting proteins from reactions xml")
 }
 
-void GetDataForGeneProductsForReactionFromXMLFile(const boost::property_tree::ptree& PropertyTreeXMLTreeElementReactionGeneProduct, vector<ParticleKindForChemicalReaction>& LocalVectorOfElements, const string& Str0, const string& Str1, const string& Str2, const string& Str3)
+static void GetDataForGeneProductsForReactionFromXMLFile(const boost::property_tree::ptree& PropertyTreeXMLTreeElementReactionGeneProduct, vector<ParticleKindForChemicalReaction>& LocalVectorOfElements, const string& Str0, const string& Str1, const string& Str2, const string& Str3)
 {
     try
     {
-        for (const auto &ReactionsPropertyTreeXMLTreeElementGeneProduct : PropertyTreeXMLTreeElementReactionGeneProduct.get_child(Str0))
+        for (const auto& ReactionsPropertyTreeXMLTreeElementGeneProduct : PropertyTreeXMLTreeElementReactionGeneProduct.get_child(Str0) | views::values)
         {
-            SignedInt GeneId = stoi(ReactionsPropertyTreeXMLTreeElementGeneProduct.second.get<string>("<xmlattr>.fbc:geneProduct").substr(9, 4));
+            const SignedInt GeneId = stoi(ReactionsPropertyTreeXMLTreeElementGeneProduct.get<string>("<xmlattr>.fbc:geneProduct").substr(9, 4));
             if (auto ParticleKindResult = ParticlesKindsManagerObject.GetParticleKindFromGeneId(GeneId); ParticleKindResult.has_value() == true)
             {
                 LocalVectorOfElements.emplace_back(ParticleKindResult->ParticleKindId, 1, "", true);
@@ -216,25 +216,25 @@ void GetDataForGeneProductsForReactionFromXMLFile(const boost::property_tree::pt
             else
                 LoggersManagerObject.Log(STREAM(Str2));
 
-            LoggersManagerObject.Log(STREAM(Str3 << ReactionsPropertyTreeXMLTreeElementGeneProduct.second.get<string>("<xmlattr>.fbc:geneProduct")));
+            LoggersManagerObject.Log(STREAM(Str3 << ReactionsPropertyTreeXMLTreeElementGeneProduct.get<string>("<xmlattr>.fbc:geneProduct")));
         }
     }
     CATCH("getting data for gene products from xml file")
 }
 
-void GetDataForReactionFromXMLFile(const boost::property_tree::ptree& PropertyTreeXMLTreeElementReaction, vector<ParticleKindForChemicalReaction>& LocalVectorOfElements, const string& Str0, const string& Str1, const string& Str2)
+static void GetDataForReactionFromXMLFile(const boost::property_tree::ptree& PropertyTreeXMLTreeElementReaction, vector<ParticleKindForChemicalReaction>& LocalVectorOfElements, const string& Str0, const string& Str1, const string& Str2)
 {
     try
     {
-        for (const auto& ReactionsPropertyTreeXMLTreeElementProduct : PropertyTreeXMLTreeElementReaction.get_child(Str0))
+        for (const auto& ReactionsPropertyTreeXMLTreeElementProduct : PropertyTreeXMLTreeElementReaction.get_child(Str0) | views::values)
         {
-            auto ParticleKindIdStr = ReactionsPropertyTreeXMLTreeElementProduct.second.get<string>("<xmlattr>.species");
-            UnsignedInt Counter = stoi(ReactionsPropertyTreeXMLTreeElementProduct.second.get<string>("<xmlattr>.stoichiometry"));
+            auto ParticleKindIdStr = ReactionsPropertyTreeXMLTreeElementProduct.get<string>("<xmlattr>.species");
+            UnsignedInt Counter = stoi(ReactionsPropertyTreeXMLTreeElementProduct.get<string>("<xmlattr>.stoichiometry"));
 
             if (auto LocalParticleKindObject = ParticlesKindsManagerObject.GetParticleKindFromStrId(ParticleKindIdStr); LocalParticleKindObject.has_value() == true)
             {
                  LocalVectorOfElements.emplace_back(LocalParticleKindObject->ParticleKindId, Counter, "", true);
-                 LoggersManagerObject.Log(STREAM(Str1 << ReactionsPropertyTreeXMLTreeElementProduct.second.get<string>("<xmlattr>.constant") << " " << ParticleKindIdStr << " " << Counter));
+                 LoggersManagerObject.Log(STREAM(Str1 << ReactionsPropertyTreeXMLTreeElementProduct.get<string>("<xmlattr>.constant") << " " << ParticleKindIdStr << " " << Counter));
             }
             else
                  LoggersManagerObject.Log(STREAM(Str2 << " : " << ParticleKindIdStr));
@@ -247,11 +247,11 @@ void CellEngineIllinoisDataCreator::AddXMLChemicalReaction(ChemicalReaction& Rea
 {
     try
     {
-        if (ChemicalReactionsManagerObject.ChemicalReactionsPosFromIdStr.contains(ReactionObject.ReactionIdStr) == false)
+        if (ChemicalReactionsManagerObject.ChemicalReactionsPosFromIdStr.contains(ReactionObject.ChemicalReactionIdStr) == false)
         {
-            LoggersManagerObject.Log(STREAM("ADDED NEW TYPE OF REACTION ID_STR = " << ReactionObject.ReactionIdStr));
+            LoggersManagerObject.Log(STREAM("ADDED NEW TYPE OF REACTION ID_STR = " << ReactionObject.ChemicalReactionIdStr));
 
-            ReactionObject.ReactionIdNum = ReactionId;
+            ReactionObject.ChemicalReactionIdNum = ChemicalReactionId;
             ReactionObject.ReactantsStr = ChemicalReactionsManager::GetStringOfSortedParticlesDataNames(ReactionObject.Reactants);
             ReactionObject.SpecialReactionFunction = nullptr;
             ChemicalReactionsManagerObject.AddChemicalReaction(ReactionObject);
@@ -263,7 +263,7 @@ void CellEngineIllinoisDataCreator::AddXMLChemicalReaction(ChemicalReaction& Rea
                 ChemicalReactionsManagerObject.AddChemicalReaction(ReactionObject);
             }
 
-            ReactionId++;
+            ChemicalReactionId++;
         }
     }
     CATCH("adding xml chemical reaction")
@@ -274,35 +274,35 @@ void CellEngineIllinoisDataCreator::GetProperReactionsListFromXMLFile(const boos
     try
     {
         LoggersManagerObject.Log(STREAM("XML NUMBER OF TYPES OF REACTIONS = " << ReactionsPropertyTreeXMLTreeElement.size()));
-        for (const auto& ReactionsPropertyTreeXMLTreeElementReaction : ReactionsPropertyTreeXMLTreeElement)
+        for (const auto& ReactionsPropertyTreeXMLTreeElementChemicalReaction : ReactionsPropertyTreeXMLTreeElement | views::values)
         {
             ChemicalReaction ReactionObject;
-            ReactionObject.ReactionIdStr = ReactionsPropertyTreeXMLTreeElementReaction.second.get<string>("<xmlattr>.id");
-            ReactionObject.ReactionName = ReactionsPropertyTreeXMLTreeElementReaction.second.get<string>("<xmlattr>.name");
-            ReactionObject.Reversible = ReactionsPropertyTreeXMLTreeElementReaction.second.get<bool>("<xmlattr>.reversible");
-            ReactionObject.UpperFluxBound = ReactionsPropertyTreeXMLTreeElementReaction.second.get<string>("<xmlattr>.fbc:upperFluxBound");
-            ReactionObject.LowerFluxBound = ReactionsPropertyTreeXMLTreeElementReaction.second.get<string>("<xmlattr>.fbc:lowerFluxBound");
+            ReactionObject.ChemicalReactionIdStr = ReactionsPropertyTreeXMLTreeElementChemicalReaction.get<string>("<xmlattr>.id");
+            ReactionObject.ChemicalReactionName = ReactionsPropertyTreeXMLTreeElementChemicalReaction.get<string>("<xmlattr>.name");
+            ReactionObject.Reversible = ReactionsPropertyTreeXMLTreeElementChemicalReaction.get<bool>("<xmlattr>.reversible");
+            ReactionObject.UpperFluxBound = ReactionsPropertyTreeXMLTreeElementChemicalReaction.get<string>("<xmlattr>.fbc:upperFluxBound");
+            ReactionObject.LowerFluxBound = ReactionsPropertyTreeXMLTreeElementChemicalReaction.get<string>("<xmlattr>.fbc:lowerFluxBound");
 
-            LoggersManagerObject.Log(STREAM("REACTION = " << ReactionObject.ReactionIdStr << " " << ReactionObject.Reversible << " " << ReactionObject.ReactionName << " " << ReactionObject.UpperFluxBound << " " << ReactionObject.LowerFluxBound));
+            LoggersManagerObject.Log(STREAM("REACTION = " << ReactionObject.ChemicalReactionIdStr << " " << ReactionObject.Reversible << " " << ReactionObject.ChemicalReactionName << " " << ReactionObject.UpperFluxBound << " " << ReactionObject.LowerFluxBound));
 
             std::vector<ParticleKindForChemicalReaction> LocalReactantsOr;
 
-            if (ReactionsPropertyTreeXMLTreeElementReaction.second.get_child_optional("listOfReactants"))
-                GetDataForReactionFromXMLFile(ReactionsPropertyTreeXMLTreeElementReaction.second, ReactionObject.Reactants, "listOfReactants", "PRODUCT = ", "ERROR: PRODUCT in REACTION NOT FOUND");
+            if (ReactionsPropertyTreeXMLTreeElementChemicalReaction.get_child_optional("listOfReactants"))
+                GetDataForReactionFromXMLFile(ReactionsPropertyTreeXMLTreeElementChemicalReaction, ReactionObject.Reactants, "listOfReactants", "PRODUCT = ", "ERROR: PRODUCT in REACTION NOT FOUND");
 
-            if (ReactionsPropertyTreeXMLTreeElementReaction.second.get_child_optional("listOfProducts"))
-                GetDataForReactionFromXMLFile(ReactionsPropertyTreeXMLTreeElementReaction.second, ReactionObject.Products, "listOfProducts", "REACTANT = ", "ERROR: REACTANT in REACTION NOT FOUND");
+            if (ReactionsPropertyTreeXMLTreeElementChemicalReaction.get_child_optional("listOfProducts"))
+                GetDataForReactionFromXMLFile(ReactionsPropertyTreeXMLTreeElementChemicalReaction, ReactionObject.Products, "listOfProducts", "REACTANT = ", "ERROR: REACTANT in REACTION NOT FOUND");
 
-            if (ReactionsPropertyTreeXMLTreeElementReaction.second.get_child_optional("fbc:geneProductAssociation"))
+            if (ReactionsPropertyTreeXMLTreeElementChemicalReaction.get_child_optional("fbc:geneProductAssociation"))
             {
-                auto& ReactionsPropertyTreeXMLTreeElementReactionGeneProduct = ReactionsPropertyTreeXMLTreeElementReaction.second.get_child("fbc:geneProductAssociation");
+                auto& ReactionsPropertyTreeXMLTreeElementReactionGeneProduct = ReactionsPropertyTreeXMLTreeElementChemicalReaction.get_child("fbc:geneProductAssociation");
                 if (ReactionsPropertyTreeXMLTreeElementReactionGeneProduct.get_child_optional("fbc:or"))
                     GetDataForGeneProductsForReactionFromXMLFile(ReactionsPropertyTreeXMLTreeElementReactionGeneProduct, LocalReactantsOr, "fbc:or", "GENE PRODUCT OR = ", "ERROR: GENE PRODUCT OR in REACTION NOT FOUND", "GENE PRODUCT OR = ");
                 else
                 if (ReactionsPropertyTreeXMLTreeElementReactionGeneProduct.get_child_optional("fbc:and"))
                     GetDataForGeneProductsForReactionFromXMLFile(ReactionsPropertyTreeXMLTreeElementReactionGeneProduct, ReactionObject.Reactants, "fbc:and", "GENE PRODUCT AND = ", "ERROR: GENE PRODUCT AND in REACTION NOT FOUND", "GENE PRODUCT AND = ");
                 else
-                    GetDataForGeneProductsForReactionFromXMLFile(ReactionsPropertyTreeXMLTreeElementReaction.second, ReactionObject.Reactants, "fbc:geneProductAssociation", "GENE PRODUCT = ", "ERROR: GENE PRODUCT in REACTION NOT FOUND", "GENE PRODUCT ONE = ");
+                    GetDataForGeneProductsForReactionFromXMLFile(ReactionsPropertyTreeXMLTreeElementChemicalReaction, ReactionObject.Reactants, "fbc:geneProductAssociation", "GENE PRODUCT = ", "ERROR: GENE PRODUCT in REACTION NOT FOUND", "GENE PRODUCT ONE = ");
             }
 
             if (LocalReactantsOr.empty() == false)
@@ -351,23 +351,23 @@ void CellEngineIllinoisDataCreator::ReadNewReactionsFromXMLFile(const string& Fi
 {
     try
     {
-        ParticleKindId = max_element(ParticlesKindsManagerObject.ParticlesKinds.begin(), ParticlesKindsManagerObject.ParticlesKinds.end(), [](const pair<UniqueIdUInt32Type, ParticleKind>& lhs, const pair<UniqueIdUInt32Type, ParticleKind>& rhs){ return lhs.first < rhs.first; })->first + 1;
-        ReactionId = max_element(ChemicalReactionsManagerObject.ChemicalReactionsPosFromId.begin(), ChemicalReactionsManagerObject.ChemicalReactionsPosFromId.end(), [](const pair<UnsignedInt, UnsignedInt>& lhs, const pair<UnsignedInt, UnsignedInt>& rhs){ return lhs.first < rhs.first; })->first + 1;
+        ParticleKindId = ranges::max_element(ParticlesKindsManagerObject.ParticlesKinds, [](const pair<UniqueIdUInt32Type, ParticleKind>& lhs, const pair<UniqueIdUInt32Type, ParticleKind>& rhs){ return lhs.first < rhs.first; })->first + 1;
+        ChemicalReactionId = ranges::max_element(ChemicalReactionsManagerObject.ChemicalReactionsPosFromId, [](const pair<UnsignedInt, UnsignedInt>& lhs, const pair<UnsignedInt, UnsignedInt>& rhs){ return lhs.first < rhs.first; })->first + 1;
 
         boost::property_tree::ptree ReactionsPropertyTreeXML;
 
         read_xml(FileName, ReactionsPropertyTreeXML, boost::property_tree::xml_parser::trim_whitespace);
 
-        for (const auto& ReactionsPropertyTreeXMLTreeElement : ReactionsPropertyTreeXML.get_child("sbml").get_child("model"))
+        for (const auto& [ReactionsPropertyTreeXMLTreeElementFirst, ReactionsPropertyTreeXMLTreeElementSecond] : ReactionsPropertyTreeXML.get_child("sbml").get_child("model"))
         {
-            if (ReactionsPropertyTreeXMLTreeElement.first == "listOfSpecies")
-                GetNewParticlesFromXMLFile(ReactionsPropertyTreeXMLTreeElement.second);
+            if (ReactionsPropertyTreeXMLTreeElementFirst == "listOfSpecies")
+                GetNewParticlesFromXMLFile(ReactionsPropertyTreeXMLTreeElementSecond);
             else
-            if (ReactionsPropertyTreeXMLTreeElement.first == "fbc:listOfGeneProducts")
-                GetNewProteinsFromXMLFile(ReactionsPropertyTreeXMLTreeElement.second);
+            if (ReactionsPropertyTreeXMLTreeElementFirst == "fbc:listOfGeneProducts")
+                GetNewProteinsFromXMLFile(ReactionsPropertyTreeXMLTreeElementSecond);
             else
-            if (ReactionsPropertyTreeXMLTreeElement.first == "listOfReactions")
-                GetProperReactionsListFromXMLFile(ReactionsPropertyTreeXMLTreeElement.second);
+            if (ReactionsPropertyTreeXMLTreeElementFirst == "listOfReactions")
+                GetProperReactionsListFromXMLFile(ReactionsPropertyTreeXMLTreeElementSecond);
         }
     }
     CATCH("reading new reactions from xml file")
@@ -410,17 +410,17 @@ void CellEngineIllinoisDataCreator::CheckHowManyParticleDataForGeneratorIsNotInP
                 }
 
         if (UpdateParticleKinds == true)
-            for (auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
-                if (ParticleKindObject.second.ParticleKindSpecialDataSector.empty() == false)
-                    if (ParticleKindObject.second.ParticleKindSpecialDataSector[0].ParticleType == ParticlesTypes::OtherProtein)
+            for (auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds | views::values)
+                if (ParticleKindObject.ParticleKindSpecialDataSector.empty() == false)
+                    if (ParticleKindObject.ParticleKindSpecialDataSector[0].ParticleType == ParticlesTypes::OtherProtein)
                         for (auto ParticleIterator = ParticlesDataForGenerator.begin(); ParticleIterator != ParticlesDataForGenerator.end(); ParticleIterator = ParticlesDataForGenerator.upper_bound(ParticleIterator->first))
                         {
                             auto ParticlesDataForGeneratorRange = ParticlesDataForGenerator.equal_range(ParticleIterator->first);
                             for (auto &ParticleDataForGeneratorIterator = ParticlesDataForGeneratorRange.first; ParticleDataForGeneratorIterator != ParticlesDataForGeneratorRange.second; ParticleDataForGeneratorIterator++)
-                                if (ParticleDataForGeneratorIterator->second.GeneId == ParticleKindObject.second.GeneId && ParticleDataForGeneratorIterator->second.ParticleType != ParticlesTypes::OtherProtein && ParticleDataForGeneratorIterator->second.IsProtein == true)
+                                if (ParticleDataForGeneratorIterator->second.GeneId == ParticleKindObject.GeneId && ParticleDataForGeneratorIterator->second.ParticleType != ParticlesTypes::OtherProtein && ParticleDataForGeneratorIterator->second.IsProtein == true)
                                 {
-                                    ParticleKindObject.second.ParticleKindSpecialDataSector[0].ParticleType = ParticleDataForGeneratorIterator->second.ParticleType;
-                                    ParticleKindObject.second.Name = ParticleDataForGeneratorIterator->first;
+                                    ParticleKindObject.ParticleKindSpecialDataSector[0].ParticleType = ParticleDataForGeneratorIterator->second.ParticleType;
+                                    ParticleKindObject.Name = ParticleDataForGeneratorIterator->first;
                                     LoggersManagerObject.Log(STREAM("UPDATED TYPE = " << ParticleDataForGeneratorIterator->second.GeneId << " " << ParticlesKindsManagerObject.ConvertParticleTypeToString(ParticleDataForGeneratorIterator->second.ParticleType)));
                                 }
                         }
@@ -433,12 +433,12 @@ void CellEngineIllinoisDataCreator::CheckHowManyParticlesKindsHasCounterAtStartO
     try
     {
         if (UpdateParticleKinds == true)
-            for (auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
-                if (ParticleKindObject.second.ParticleKindId >= StartParticleKindId)
-                    if (ParticleKindObject.second.ParticleKindSpecialDataSector.empty() == true)
+            for (auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds | views::values)
+                if (ParticleKindObject.ParticleKindId >= StartParticleKindId)
+                    if (ParticleKindObject.ParticleKindSpecialDataSector.empty() == true)
                     {
-                        ParticleKindObject.second.ParticleKindSpecialDataSector.emplace_back(ParticleKindSpecialData{ -1, "", "", false, ParticlesTypes::Basic, false, 100 });
-                        LoggersManagerObject.Log(STREAM("UPDATED COUNTER FOR PARTICLE = " << ParticleKindObject.second.ParticleKindId << " " << ParticleKindObject.second.IdStr << " " << ParticleKindObject.second.Name << " " << ParticleKindObject.second.Formula << ParticlesKindsManagerObject.ConvertParticleTypeToString(ParticleKindObject.second.ParticleKindSpecialDataSector[0].ParticleType)));
+                        ParticleKindObject.ParticleKindSpecialDataSector.emplace_back(ParticleKindSpecialData{ -1, "", "", false, ParticlesTypes::Basic, false, 100 });
+                        LoggersManagerObject.Log(STREAM("UPDATED COUNTER FOR PARTICLE = " << ParticleKindObject.ParticleKindId << " " << ParticleKindObject.IdStr << " " << ParticleKindObject.Name << " " << ParticleKindObject.Formula << ParticlesKindsManagerObject.ConvertParticleTypeToString(ParticleKindObject.ParticleKindSpecialDataSector[0].ParticleType)));
                     }
     }
     CATCH("checking how many particles kinds has counter at start of simulation equ zero")
@@ -446,11 +446,12 @@ void CellEngineIllinoisDataCreator::CheckHowManyParticlesKindsHasCounterAtStartO
 
 void CellEngineIllinoisDataCreator::ReadAndParseGenesFile(const string& FileName)
 {
-    smatch SMatchObject;
     regex GeneRegexObject(R"(=[\w. ()]+)");
 
     try
     {
+        smatch SMatchObject;
+
         ifstream Data(FileName);
         string Line;
         Gene GeneObject;
@@ -511,15 +512,15 @@ void CellEngineIllinoisDataCreator::PrintGenesFile()
 {
     try
     {
-        for (const auto& GeneObject : ParticlesKindsManagerObject.Genes)
+        for (const auto& GeneObject : ParticlesKindsManagerObject.Genes | views::values)
         {
-            LoggersManagerObject.Log(STREAM("Gene NumId = " << GeneObject.second.NumId));
-            LoggersManagerObject.Log(STREAM("Gene StrId = " << GeneObject.second.StrId));
-            LoggersManagerObject.Log(STREAM("Gene Description = " << GeneObject.second.Description));
-            LoggersManagerObject.Log(STREAM("Gene ProteinId = " << GeneObject.second.ProteinId));
-            LoggersManagerObject.Log(STREAM("Gene Start Position in Genome= " << GeneObject.second.StartPosInGenome));
-            LoggersManagerObject.Log(STREAM("Gene End Position in Genome = " << GeneObject.second.EndPosInGenome));
-            LoggersManagerObject.Log(STREAM("Gene Sequence = " << GeneObject.second.Sequence));
+            LoggersManagerObject.Log(STREAM("Gene NumId = " << GeneObject.NumId));
+            LoggersManagerObject.Log(STREAM("Gene StrId = " << GeneObject.StrId));
+            LoggersManagerObject.Log(STREAM("Gene Description = " << GeneObject.Description));
+            LoggersManagerObject.Log(STREAM("Gene ProteinId = " << GeneObject.ProteinId));
+            LoggersManagerObject.Log(STREAM("Gene Start Position in Genome= " << GeneObject.StartPosInGenome));
+            LoggersManagerObject.Log(STREAM("Gene End Position in Genome = " << GeneObject.EndPosInGenome));
+            LoggersManagerObject.Log(STREAM("Gene Sequence = " << GeneObject.Sequence));
             LoggersManagerObject.Log(STREAM("Gene END" << endl));
         }
         LoggersManagerObject.Log(STREAM("Gene Size = " << ParticlesKindsManagerObject.Genes.size()));
@@ -665,7 +666,7 @@ void CellEngineIllinoisDataCreator::ReadChemicalReactionsFromFiles()
 {
     try
     {
-        string ReactionsDirectory = string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("reactions") + OS_DIR_SEP;
+        const string ReactionsDirectory = string(".") + OS_DIR_SEP + string("data") + OS_DIR_SEP + string("reactions") + OS_DIR_SEP;
 
         ReadReactionsFromXMLFile(ReactionsDirectory + string("iMB155.xml"));
         ReadReactionsFromJSONFile(ReactionsDirectory + string("iMB155.json"), false);

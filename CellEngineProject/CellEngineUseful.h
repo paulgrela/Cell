@@ -67,11 +67,11 @@ namespace CellEngineUseful
         const auto [SectorPosX, SectorPosY, SectorPosZ] = CellEngineUseful::GetSectorPos(ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z);
 
         #ifdef SIMULATION_DETAILED_DEBUG_LOG
-        if (ParticlesInSector[SectorPosX][SectorPosY][SectorPosZ].Particles.find(ParticleObject.ParticleIndex) == ParticlesInSector[SectorPosX][SectorPosY][SectorPosZ].Particles.end())
-            LoggersManagerObject.Log(STREAM(Str << " Error particle not existing in sector = " << ParticleObject.ParticleKindId << " " << ParticleObject.ParticleIndex << " SectorPosX = " << SectorPosX << " SectorPosY = " << SectorPosY << " SectorPosZ = " << SectorPosZ));
+        if (ParticlesInSector[SectorPosX][SectorPosY][SectorPosZ].Particles.find(ParticleObject.ParticleUniqueId) == ParticlesInSector[SectorPosX][SectorPosY][SectorPosZ].Particles.end())
+            LoggersManagerObject.Log(STREAM(Str << " Error particle not existing in sector = " << ParticleObject.ParticleKindId << " " << ParticleObject.ParticleUniqueId << " SectorPosX = " << SectorPosX << " SectorPosY = " << SectorPosY << " SectorPosZ = " << SectorPosZ));
 
-        if (ParticlesInSector[SectorPosX][SectorPosY][SectorPosZ].Particles.find(ParticleObject.ParticleIndex)->second.Center != ParticleObject.Center)
-            LoggersManagerObject.Log(STREAM(Str << " Error particle center in sector = " << ParticleObject.ParticleKindId << " " << ParticleObject.ParticleIndex << " SectorPosX = " << SectorPosX << " SectorPosY = " << SectorPosY << " SectorPosZ = " << SectorPosZ));
+        if (ParticlesInSector[SectorPosX][SectorPosY][SectorPosZ].Particles.find(ParticleObject.ParticleUniqueId)->second.Center != ParticleObject.Center)
+            LoggersManagerObject.Log(STREAM(Str << " Error particle center in sector = " << ParticleObject.ParticleKindId << " " << ParticleObject.ParticleUniqueId << " SectorPosX = " << SectorPosX << " SectorPosY = " << SectorPosY << " SectorPosZ = " << SectorPosZ));
         #endif
 
         return { SectorPosX, SectorPosY, SectorPosZ };

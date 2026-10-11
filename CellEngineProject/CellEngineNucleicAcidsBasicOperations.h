@@ -174,7 +174,7 @@ protected:
                 if (LinkedParticlesPointersListObject != nullptr)
                 {
                     for (auto &LinkedParticlesPointersListObjectInternal: LinkedParticlesPointersListObject->LinkedParticlesPointersList)
-                        if (LinkedParticlesPointersListObjectInternal->ParticleIndex == ParticleObject.ParticleIndex)
+                        if (LinkedParticlesPointersListObjectInternal->ParticleUniqueId == ParticleObject.ParticleUniqueId)
                             LinkedParticlesPointersListObjectInternal = nullptr;
                     erase_if(LinkedParticlesPointersListObject->LinkedParticlesPointersList, [](const Particle *item){ return (item == nullptr); });
 

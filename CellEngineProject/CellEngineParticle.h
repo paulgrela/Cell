@@ -69,7 +69,7 @@ class Particle : public DoublyLinkedListNode<Particle, UniqueIdUInt64Type>, publ
 public:
     bool SelectedForReaction{};
 public:
-    UniqueIdUInt64Type ParticleIndex{};
+    UniqueIdUInt64Type ParticleUniqueId{};
     UniqueIdUInt32Type ParticleKindId{};
     ChainIdUInt16Type ChainId{};
 
@@ -97,7 +97,7 @@ public:
     vector3_16 UniqueParticleColor{};
     vector3_16 RandomParticleKindColor{};
 public:
-    UnsignedInt OrderInParticleIndex{};
+    UnsignedInt OrderInParticleUniqueId{};
 public:
     void SetCenterCoordinates(const RealType XCenterParam, const RealType YCenterParam, const RealType ZCenterParam)
     {
@@ -106,10 +106,10 @@ public:
         Center.Z = ZCenterParam;
     }
 public:
-    explicit Particle(const UniqueIdUInt64Type IndexParam, const UniqueIdUInt32Type ParticleKindIdParam, const ChainIdUInt16Type ChainIdParam, const UniqueIdUInt32Type GenomeThreadParam, const UniqueIdUInt32Type GenomeIndexParam, const ElectricChargeType ElectricChargeParam, const vector3_16 UniqueColorParam) : ParticleIndex(IndexParam), ParticleKindId(ParticleKindIdParam), ChainId(ChainIdParam), GenomeThread(GenomeThreadParam), GenomeIndex(GenomeIndexParam), ElectricCharge(ElectricChargeParam), UniqueParticleColor(UniqueColorParam)
+    explicit Particle(const UniqueIdUInt64Type IndexParam, const UniqueIdUInt32Type ParticleKindIdParam, const ChainIdUInt16Type ChainIdParam, const UniqueIdUInt32Type GenomeThreadParam, const UniqueIdUInt32Type GenomeIndexParam, const ElectricChargeType ElectricChargeParam, const vector3_16 UniqueColorParam) : ParticleUniqueId(IndexParam), ParticleKindId(ParticleKindIdParam), ChainId(ChainIdParam), GenomeThread(GenomeThreadParam), GenomeIndex(GenomeIndexParam), ElectricCharge(ElectricChargeParam), UniqueParticleColor(UniqueColorParam)
     {
     }
-    explicit Particle(const UniqueIdUInt64Type IndexParam, const UniqueIdUInt32Type ParticleKindIdParam, const ChainIdUInt16Type ChainIdParam, const UniqueIdUInt32Type GenomeThreadParam, const UniqueIdUInt32Type GenomeIndexParam, const ElectricChargeType ElectricChargeParam, std::string SequenceStrParam, const vector3_16 UniqueColorParam) : ParticleIndex(IndexParam), ParticleKindId(ParticleKindIdParam), ChainId(ChainIdParam), GenomeThread(GenomeThreadParam), GenomeIndex(GenomeIndexParam), ElectricCharge(ElectricChargeParam), SequenceStr(std::move(SequenceStrParam)), UniqueParticleColor(UniqueColorParam)
+    explicit Particle(const UniqueIdUInt64Type IndexParam, const UniqueIdUInt32Type ParticleKindIdParam, const ChainIdUInt16Type ChainIdParam, const UniqueIdUInt32Type GenomeThreadParam, const UniqueIdUInt32Type GenomeIndexParam, const ElectricChargeType ElectricChargeParam, std::string SequenceStrParam, const vector3_16 UniqueColorParam) : ParticleUniqueId(IndexParam), ParticleKindId(ParticleKindIdParam), ChainId(ChainIdParam), GenomeThread(GenomeThreadParam), GenomeIndex(GenomeIndexParam), ElectricCharge(ElectricChargeParam), SequenceStr(std::move(SequenceStrParam)), UniqueParticleColor(UniqueColorParam)
     {
     }
 public:

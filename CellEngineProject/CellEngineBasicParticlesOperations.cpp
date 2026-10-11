@@ -9,7 +9,7 @@
 
 using namespace std;
 
-void CellEngineBasicParticlesOperations::InitiateFreeParticleIndexesForAllSectors()
+void CellEngineBasicParticlesOperations::InitiateFreeParticleUniqueIdesForAllSectors()
 {
     try
     {
@@ -46,7 +46,7 @@ void CellEngineBasicParticlesOperations::PreprocessData(const vector<A> Particle
 
         CellEngineParticleUniqueIdGenerator::ConfigureForNumberOfSectors(CellEngineConfigDataObject.NumberOfParticlesSectorsInX * CellEngineConfigDataObject.NumberOfParticlesSectorsInY * CellEngineConfigDataObject.NumberOfParticlesSectorsInZ);
 
-        InitiateFreeParticleIndexesForAllSectors();
+        InitiateFreeParticleUniqueIdesForAllSectors();
 
         LoggersManagerObject.Log(STREAM("Get Min Max Coodridnates For All Particles"));
 
@@ -96,8 +96,8 @@ void CellEngineBasicParticlesOperations::UpdateParticleKindListOfElements(const 
                 for (const auto& ElementCoordinates : ParticleObject.ListOfAtoms)
                     ParticleKindObject.ListOfAtoms.emplace_back(ElementCoordinates.X - ParticleXMin, ElementCoordinates.Y - ParticleYMin, ElementCoordinates.Z - ParticleZMin);
             else
-                for (const auto& ElementCoordinates : ParticleObject.ListOfVoxels)
-                    ParticleKindObject.ListOfVoxels.emplace_back(ElementCoordinates.X - ParticleXMin, ElementCoordinates.Y - ParticleYMin, ElementCoordinates.Z - ParticleZMin);
+                for (const auto& [X, Y, Z] : ParticleObject.ListOfVoxels)
+                    ParticleKindObject.ListOfVoxels.emplace_back(X - ParticleXMin, Y - ParticleYMin, Z - ParticleZMin);
 
             ParticleKindObject.XSizeDiv2 = XSizeDiv2;
             ParticleKindObject.YSizeDiv2 = YSizeDiv2;

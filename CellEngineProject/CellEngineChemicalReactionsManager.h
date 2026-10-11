@@ -29,8 +29,8 @@ public:
     void AddChemicalReaction(const ChemicalReaction& ReactionParam)
     {
         ChemicalReactions.emplace_back(ReactionParam);
-        ChemicalReactionsPosFromId.insert(std::make_pair(ReactionParam.ReactionIdNum, ChemicalReactions.size() - 1));
-        ChemicalReactionsPosFromIdStr.insert(std::make_pair(ReactionParam.ReactionIdStr, ChemicalReactions.size() - 1));
+        ChemicalReactionsPosFromId.insert(std::make_pair(ReactionParam.ChemicalReactionIdNum, ChemicalReactions.size() - 1));
+        ChemicalReactionsPosFromIdStr.insert(std::make_pair(ReactionParam.ChemicalReactionIdStr, ChemicalReactions.size() - 1));
         ChemicalReactionsPosFromString.insert(std::make_pair(ReactionParam.ReactantsStr, ChemicalReactions.size() - 1));
     }
 public:
@@ -102,7 +102,7 @@ public:
         LoggersManagerObject.Log(STREAM("Maximal number of reactants = " << MaxNumberOfReactants));
 
         for (const auto& ChemicalReactionObject : ChemicalReactions)
-            LoggersManagerObject.Log(STREAM("ReactionId = " << ChemicalReactionObject.ReactionIdNum << " ReactantsStr = |" << ChemicalReactionObject.ReactantsStr << "| ReactionIdStr = " << ChemicalReactionObject.ReactionIdStr << " Reactants Size " << ChemicalReactionObject.Reactants.size() << " Products Size " << ChemicalReactionObject.Products.size()));
+            LoggersManagerObject.Log(STREAM("ReactionId = " << ChemicalReactionObject.ChemicalReactionIdNum << " ReactantsStr = |" << ChemicalReactionObject.ReactantsStr << "| ReactionIdStr = " << ChemicalReactionObject.ChemicalReactionIdStr << " Reactants Size " << ChemicalReactionObject.Reactants.size() << " Products Size " << ChemicalReactionObject.Products.size()));
     }
 };
 

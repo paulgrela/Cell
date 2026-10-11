@@ -27,9 +27,9 @@ protected:
         return CellEngineVoxelSimulationSpaceObjectPointer->AddNewParticle(ParticleObjectParam);
     }
 protected:
-    void InsertAtom(std::vector<CellEngineAtom>& LocalCellEngineAllAtomsObject, const CellEngineAtom& AppliedAtom, const UniqueIdUInt64Type ParticleIndex) override
+    void InsertAtom(std::vector<CellEngineAtom>& LocalCellEngineAllAtomsObject, const CellEngineAtom& AppliedAtom, const UniqueIdUInt64Type ParticleUniqueId) override
     {
-        CellEngineVoxelSimulationSpaceObjectPointer->SetAtomInVoxelSimulationSpace(ParticleIndex, AppliedAtom);
+        CellEngineVoxelSimulationSpaceObjectPointer->SetAtomInVoxelSimulationSpace(ParticleUniqueId, AppliedAtom);
     }
 protected:
     void InsertGroupOfAtoms(std::vector<CellEngineAtom>& LocalCellEngineParticlesCentersObject, std::vector<CellEngineAtom>& LocalCellEngineAllAtomsObject) override

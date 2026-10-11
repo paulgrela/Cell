@@ -18,11 +18,11 @@ protected:
 
         CellEngineFullAtomSimulationSpace::SetProperThreadIndexForEveryParticlesSector(Particles);
 
-        CellEngineFullAtomSimulationSpaceObjectPointer->CreateDataEveryMPIProcessForParallelExecution();
+        CellEngineFullAtomSimulationSpaceObjectPointer->CreateDataForEveryMPIProcessForParallelExecution();
 
-        CellEngineFullAtomSimulationSpaceObjectPointer->CreateDataEveryThreadForParallelExecution();
+        CellEngineFullAtomSimulationSpaceObjectPointer->CreateDataForEveryThreadForParallelExecution();
 
-        CellEngineFullAtomSimulationSpaceObjectPointer->CreateDataEveryThreadForParallelExecutionADD();
+        CellEngineFullAtomSimulationSpaceObjectPointer->CreateDataForEveryThreadForParallelExecutionADD();
     }
 protected:
     void SetCurrentSectorPos(const SectorPosType& CurrentSectorPos) override
@@ -35,7 +35,7 @@ protected:
         return CellEngineFullAtomSimulationSpaceObjectPointer->AddNewParticle(ParticleObjectParam);
     }
 protected:
-    void InsertAtom(std::vector<CellEngineAtom>& LocalCellEngineAllAtomsObject, const CellEngineAtom& AppliedAtom, const UniqueIdUInt64Type ParticleIndex) override
+    void InsertAtom(std::vector<CellEngineAtom>& LocalCellEngineAllAtomsObject, const CellEngineAtom& AppliedAtom, const UniqueIdUInt64Type ParticleUniqueId) override
     {
         LocalCellEngineAllAtomsObject.emplace_back(AppliedAtom);
     }

@@ -919,8 +919,6 @@ public:
                 ImGui::RadioButton("Only Diffusion", &TypeOfSimulation, 3);
                 CellEngineConfigDataObject.TypeOfSimulation = static_cast<CellEngineConfigData::TypesOfSimulation>(TypeOfSimulation);
                 ImGui::Text("");
-                ImGui::Checkbox("Use Mutex Between Main Screen Thread and Menu Threads", &CellEngineConfigDataObject.UseMutexBetweenMainScreenThreadAndMenuThreads);
-                ImGui::Text("");
 
                 ColorButton(AlignString("START N STEPS OF SIMULATION FOR WHOLE CELL SPACE IN THREADS", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
                 {
@@ -1401,8 +1399,6 @@ public:
                 ImGui::RadioButton("Only Reactions ", &TypeOfSimulation, 2);
                 ImGui::RadioButton("Only Diffusion", &TypeOfSimulation, 3);
                 CellEngineConfigDataObject.TypeOfSimulation = static_cast<CellEngineConfigData::TypesOfSimulation>(TypeOfSimulation);
-                ImGui::Text("");
-                ImGui::Checkbox("Use Mutex Between Main Screen Thread and Menu Threads", &CellEngineConfigDataObject.UseMutexBetweenMainScreenThreadAndMenuThreads);
                 ImGui::Text("");
 
                 if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == false)

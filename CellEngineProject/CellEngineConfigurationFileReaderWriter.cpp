@@ -170,9 +170,6 @@ void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const ch
                         if (CellStatePropertyTreeElement.second.get_child_optional("TypeOfExchangeOfParticlesBetweenThreads"))
                             CellEngineConfigDataObject.TypeOfExchangeOfParticlesBetweenThreads = static_cast<CellEngineConfigData::TypesOfExchangeOfParticlesBetweenThreads>(CellStatePropertyTreeElement.second.get<UnsignedInt>("TypeOfExchangeOfParticlesBetweenThreads"));
 
-                        if (CellStatePropertyTreeElement.second.get_child_optional("UseMutexBetweenMainScreenThreadAndMenuThreads"))
-                            CellEngineConfigDataObject.UseMutexBetweenMainScreenThreadAndMenuThreads = CellStatePropertyTreeElement.second.get<bool>("UseMutexBetweenMainScreenThreadAndMenuThreads");
-
                         if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)
                         {
                             CellEngineConfigDataObject.SimulationSpaceSelectionStartXPos = CellStatePropertyTreeElement.second.get<UnsignedInt>("SimulationSpaceSelectionStartXPos");

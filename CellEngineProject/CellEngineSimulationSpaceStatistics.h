@@ -7,10 +7,10 @@
 #include "CellEngineChemicalReaction.h"
 #include "CellEngineBasicParticlesOperations.h"
 
-struct ReactionStatistics
+struct ChemicalReactionStatistics
 {
 public:
-    UnsignedInt ReactionId{};
+    UnsignedInt ChemicalReactionId{};
     UnsignedInt Counter = 0;
 };
 
@@ -53,8 +53,8 @@ protected:
 protected:
     std::vector<std::map<UniqueIdUInt32Type, ParticleKindStatistics>> ParticlesKindsSnapshotsCopiedMap;
 protected:
-    std::vector<std::map<UnsignedInt, ReactionStatistics>> SavedReactionsMap;
-    std::vector<std::vector<ReactionStatistics>> SavedReactionsMapForMPI;
+    std::vector<std::map<UnsignedInt, ChemicalReactionStatistics>> SavedReactionsMap;
+    std::vector<std::vector<ChemicalReactionStatistics>> SavedReactionsMapForMPI;
 protected:
     void MakeSimulationStepNumberZeroForStatistics();
     void IncSimulationStepNumberForStatistics();

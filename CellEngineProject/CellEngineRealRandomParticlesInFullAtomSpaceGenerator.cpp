@@ -250,12 +250,12 @@ bool CellEngineRealRandomParticlesInFullAtomSpaceGenerator::TryToGenerateRandomP
             SetCurrentSectorPos(CellEngineUseful::GetSectorPos(PosX, PosY, PosZ));
 
             if (SizeX > 1)
-                TryResult = GenerateParticleAtomsWhenSelectedSpaceIsFree(Particles, AddNewParticle(Particle(GetNewFreeIndexOfParticle(), ParticleKindId, 1, -1, 1, ParticleKindObject.second.ElectricCharge, GeneSequence, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), PosX, PosY, PosZ, SizeX, SizeY, SizeZ, 0, 0, 0, 0, 0, 0, &CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceForEllipsoidSelectedSpace, &CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForEllipsoidSelectedSpace);
+                TryResult = GenerateParticleAtomsWhenSelectedSpaceIsFree(Particles, AddNewParticle(Particle(GetNewFreeParticleUniqueId(), ParticleKindId, 1, -1, 1, ParticleKindObject.second.ElectricCharge, GeneSequence, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), PosX, PosY, PosZ, SizeX, SizeY, SizeZ, 0, 0, 0, 0, 0, 0, &CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceForEllipsoidSelectedSpace, &CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForEllipsoidSelectedSpace);
             else
-                TryResult = GenerateParticleAtomsWhenSelectedSpaceIsFree(Particles, AddNewParticle(Particle(GetNewFreeIndexOfParticle(), ParticleKindId, 1, -1, 1, ParticleKindObject.second.ElectricCharge, GeneSequence, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), PosX, PosY, PosZ, SizeX, SizeY, SizeZ, 0, 0, 0, 0, 0, 0, &CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForCuboidSelectedSpace);
+                TryResult = GenerateParticleAtomsWhenSelectedSpaceIsFree(Particles, AddNewParticle(Particle(GetNewFreeParticleUniqueId(), ParticleKindId, 1, -1, 1, ParticleKindObject.second.ElectricCharge, GeneSequence, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), PosX, PosY, PosZ, SizeX, SizeY, SizeZ, 0, 0, 0, 0, 0, 0, &CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForCuboidSelectedSpace);
 
             if (TryResult == false)
-                RemoveParticle(MaxParticleIndex, true, false);
+                RemoveParticle(MaxParticleUniqueId, true, false);
 
             TryInsertNewParticleCounter++;
         }
@@ -402,14 +402,14 @@ void CellEngineRealRandomParticlesInFullAtomSpaceGenerator::RemoveParticlesWithC
 {
     try
     {
-        UnsignedInt ParticleIndexCounter = 0;
-        for (const auto& ParticleIndex : GetAllParticlesWithChosenParticleKindId(ParticleKindId))
+        UnsignedInt ParticleUniqueIdCounter = 0;
+        for (const auto& ParticleUniqueId : GetAllParticlesWithChosenParticleKindId(ParticleKindId))
         {
-            if (ParticleIndexCounter + 1 > NumberOfParticlesToBeRemoved)
+            if (ParticleUniqueIdCounter + 1 > NumberOfParticlesToBeRemoved)
                 break;
 
-            RemoveParticle(ParticleIndex, true, false);
-            ParticleIndexCounter++;
+            RemoveParticle(ParticleUniqueId, true, false);
+            ParticleUniqueIdCounter++;
         }
     }
     CATCH("removing number of particles with chosen entity id")
@@ -419,8 +419,8 @@ void CellEngineRealRandomParticlesInFullAtomSpaceGenerator::RemoveAllParticlesWi
 {
     try
     {
-        for (const auto& ParticleIndex : GetAllParticlesWithChosenParticleKindId(ParticleKindId))
-            RemoveParticle(ParticleIndex, true, false);
+        for (const auto& ParticleUniqueId : GetAllParticlesWithChosenParticleKindId(ParticleKindId))
+            RemoveParticle(ParticleUniqueId, true, false);
     }
     CATCH("removing all of particles with chosen entity id")
 }
@@ -429,15 +429,15 @@ void CellEngineRealRandomParticlesInFullAtomSpaceGenerator::RemoveParticlesWithC
 {
     try
     {
-        UnsignedInt ParticleIndexCounter = 0;
+        UnsignedInt ParticleUniqueIdCounter = 0;
 
-        for (const auto& ParticleIndex : GetAllParticlesWithChosenParticleType(ParticleTypeParam))
+        for (const auto& ParticleUniqueId : GetAllParticlesWithChosenParticleType(ParticleTypeParam))
         {
-            if (ParticleIndexCounter + 1 > NumberOfParticlesToBeRemoved)
+            if (ParticleUniqueIdCounter + 1 > NumberOfParticlesToBeRemoved)
                 break;
 
-            RemoveParticle(ParticleIndex, true, false);
-            ParticleIndexCounter++;
+            RemoveParticle(ParticleUniqueId, true, false);
+            ParticleUniqueIdCounter++;
         }
     }
     CATCH("removing number of particles with chosen entity id")
@@ -447,8 +447,8 @@ void CellEngineRealRandomParticlesInFullAtomSpaceGenerator::RemoveAllParticlesWi
 {
     try
     {
-        for (const auto& ParticleIndex : GetAllParticlesWithChosenParticleType(ParticleTypeParam))
-            RemoveParticle(ParticleIndex, true, false);
+        for (const auto& ParticleUniqueId : GetAllParticlesWithChosenParticleType(ParticleTypeParam))
+            RemoveParticle(ParticleUniqueId, true, false);
     }
     CATCH("removing all of particles with chosen particle type")
 }

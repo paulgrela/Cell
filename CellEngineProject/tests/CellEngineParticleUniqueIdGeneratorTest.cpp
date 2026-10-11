@@ -55,7 +55,7 @@ namespace
         for (auto& Sector : Sectors)
             for (int k = 0; k < InitialParticlesPerSector; ++k)
             {
-                const std::uint64_t Id = Sector.IdGenerator.GetNewUniqueParticleIndex();
+                const std::uint64_t Id = Sector.IdGenerator.GetNewUniqueParticleUniqueId();
                 Sector.LiveParticles.push_back(Id);
                 AllIssued.push_back(Id);
             }
@@ -93,14 +93,14 @@ namespace
                                         for (int a = 0; a < Shape[0]; ++a)          // reactants disappear
                                         {
                                             const std::size_t j = Rng() % Sector.LiveParticles.size();
-                                            Sector.IdGenerator.ReleaseUniqueParticleIndex(Sector.LiveParticles[j]);
+                                            Sector.IdGenerator.ReleaseUniqueParticleUniqueId(Sector.LiveParticles[j]);
                                             Sector.LiveParticles[j] = Sector.LiveParticles.back();
                                             Sector.LiveParticles.pop_back();
                                             ++DestroyedByThread[t];
                                         }
                                         for (int p = 0; p < Shape[1]; ++p)          // products appear
                                         {
-                                            const std::uint64_t Id = Sector.IdGenerator.GetNewUniqueParticleIndex();
+                                            const std::uint64_t Id = Sector.IdGenerator.GetNewUniqueParticleUniqueId();
                                             Sector.LiveParticles.push_back(Id);
                                             IssuedByThread[t].push_back(Id);
                                             ++CreatedByThread[t];
@@ -175,17 +175,17 @@ int main()
     Sector0.Initialize(0);
     Sector12345.Initialize(12345);
     SectorLast.Initialize(NumberOfAllSectors - 1);
-    Check(Sector0.GetNewUniqueParticleIndex() == 1, "first ID of sector 0 is 1, so ID 0 is never issued");
-    const auto Id = Sector12345.GetNewUniqueParticleIndex();
+    Check(Sector0.GetNewUniqueParticleUniqueId() == 1, "first ID of sector 0 is 1, so ID 0 is never issued");
+    const auto Id = Sector12345.GetNewUniqueParticleUniqueId();
     Check(Gen::CreatorSectorOf(Id) == 12345 && Gen::LocalCounterOf(Id) == 1, "CreatorSectorOf / LocalCounterOf decode an ID");
-    Check(Gen::CreatorSectorOf(SectorLast.GetNewUniqueParticleIndex()) == NumberOfAllSectors - 1, "prefix of the last sector fits");
+    Check(Gen::CreatorSectorOf(SectorLast.GetNewUniqueParticleUniqueId()) == NumberOfAllSectors - 1, "prefix of the last sector fits");
 
     Gen Nearly;
     Nearly.Initialize(7);
     Nearly.RestoreState((std::uint64_t{ 1 } << 48) - 2);
-    const auto LastId = Nearly.GetNewUniqueParticleIndex();
+    const auto LastId = Nearly.GetNewUniqueParticleUniqueId();
     bool Threw = false;
-    try { (void)Nearly.GetNewUniqueParticleIndex(); }
+    try { (void)Nearly.GetNewUniqueParticleUniqueId(); }
     catch (const std::overflow_error&) { Threw = true; }
     Check(Gen::CreatorSectorOf(LastId) == 7 && Threw, "last counter value is issued, the next call throws instead of spilling into sector 8");
 

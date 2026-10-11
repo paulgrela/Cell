@@ -5,7 +5,7 @@
 #include "CellEngineParticlesVoxelsOperations.h"
 #include "CellEngineChemicalReactionsInVoxelSimulationSpace.h"
 
-void CellEngineChemicalReactionsInVoxelSimulationSpace::FindParticlesInProximityInSimulationSpaceForSelectedLocalSpace(MainSetType<UnsignedInt>& FoundParticleIndexes, const bool UpdateNucleotides, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
+void CellEngineChemicalReactionsInVoxelSimulationSpace::FindParticlesInProximityInSimulationSpaceForSelectedLocalSpace(MainSetType<UnsignedInt>& FoundParticleUniqueIdes, const bool UpdateNucleotides, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
 {
     try
     {
@@ -15,10 +15,10 @@ void CellEngineChemicalReactionsInVoxelSimulationSpace::FindParticlesInProximity
             for (UnsignedInt PosY = StartYPosParam; PosY < StartYPosParam + SizeYParam; PosY++)
                 for (UnsignedInt PosZ = StartZPosParam; PosZ < StartZPosParam + SizeZParam; PosZ++)
                     if (PosX < CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension && PosY < CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension && PosZ < CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension)
-                        if (const UniqueIdUInt64Type ParticleIndex = GetSpaceVoxel(PosX, PosY, PosZ); ParticleIndex != GetZeroSimulationSpaceVoxel())
-                            if (!FoundParticleIndexes.contains(ParticleIndex))
-                                if (GetParticles().contains(ParticleIndex))
-                                    SaveParticleFoundInProximity(ParticleIndex, FoundParticleIndexes, UpdateNucleotides);
+                        if (const UniqueIdUInt64Type ParticleUniqueId = GetSpaceVoxel(PosX, PosY, PosZ); ParticleUniqueId != GetZeroSimulationSpaceVoxel())
+                            if (!FoundParticleUniqueIdes.contains(ParticleUniqueId))
+                                if (GetParticles().contains(ParticleUniqueId))
+                                    SaveParticleFoundInProximity(ParticleUniqueId, FoundParticleUniqueIdes, UpdateNucleotides);
 
         const auto stop_time = chrono::high_resolution_clock::now();
 

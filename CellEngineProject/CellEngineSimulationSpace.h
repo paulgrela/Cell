@@ -19,8 +19,8 @@ class CellEngineSimulationSpace : public CellEngineChemicalReactionsEngine, publ
 private:
     ParticlesContainer<Particle>& Particles;
 protected:
-    virtual void FillParticleElementsInSpace(UniqueIdUInt64Type ParticleIndex, const ParticleKind& ParticleKindObjectForProduct, RealType VectorX, RealType VectorY, RealType VectorZ) = 0;
-    virtual void FillParticleElementInSpace(UniqueIdUInt64Type ParticleIndex, vector3_Real32 NewPointElement) = 0;
+    virtual void FillParticleElementsInSpace(UniqueIdUInt64Type ParticleUniqueId, const ParticleKind& ParticleKindObjectForProduct, RealType VectorX, RealType VectorY, RealType VectorZ) = 0;
+    virtual void FillParticleElementInSpace(UniqueIdUInt64Type ParticleUniqueId, vector3_Real32 NewPointElement) = 0;
 protected:
     virtual bool MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, vector<ParticleToBeMovedFromOneSectorToAnotherSector>& ListOfParticlesToChangeSectors, const SectorPosType& CurrentSectorPos, RealType VectorX, RealType VectorY, RealType VectorZ, RealType StartXPosParam, RealType StartYPosParam, RealType StartZPosParam, RealType SizeXParam, RealType SizeYParam, RealType SizeZParam) = 0;
 
@@ -29,7 +29,7 @@ protected:
 protected:
     virtual SimulationSpaceSectorBounds GetBoundsForThreadSector() = 0;
 public:
-    void GenerateOneStepOfElectricDiffusionForOneParticle(TypesOfLookingForParticlesInProximity TypeOfLookingForParticles, UnsignedInt AdditionalSpaceBoundFactor, double MultiplyElectricChargeFactor, UniqueIdUInt64Type ParticleIndexParam, ElectricChargeType (*NeighbourPoints)[3][3][3], UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
+    void GenerateOneStepOfElectricDiffusionForOneParticle(TypesOfLookingForParticlesInProximity TypeOfLookingForParticles, UnsignedInt AdditionalSpaceBoundFactor, double MultiplyElectricChargeFactor, UniqueIdUInt64Type ParticleUniqueIdParam, ElectricChargeType (*NeighbourPoints)[3][3][3], UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
 protected:
     void UpdateProbabilityOfMoveFromElectricInteractionForSelectedParticle(const Particle& ParticleObject, ElectricChargeType (*NeighbourPoints)[3][3][3], double MultiplyElectricChargeFactor);
 public:
@@ -55,8 +55,8 @@ public:
     bool FindAndExecuteChosenReaction(UnsignedInt ReactionId);
 protected:
     bool CancelChemicalReaction(const vector<UniqueIdUInt64Type>& CreatedParticlesIndexes, const ListOfCentersType& Centers, const vector<Particle>& ParticlesBackup, chrono::high_resolution_clock::time_point start_time, const ParticleKind& ParticleKindObjectForProduct, char PlaceStr);
-    bool PlaceNewProductParticleInSpaceDeterminedFromPositionOfFormerReactantParticleOrCancelReaction(UniqueIdUInt64Type ParticleIndex, const vector<Particle>& ParticlesBackup, const vector<UniqueIdUInt64Type>& CreatedParticlesIndexes, UnsignedInt CenterIndex, const ListOfCentersType& Centers, ParticleKind& ParticleKindObjectForProduct, chrono::high_resolution_clock::time_point start_time);
-    bool PlaceNewProductParticleInSpaceInNewRandomPositionOrCancelReaction(UniqueIdUInt64Type ParticleIndex, const vector<Particle>& ParticlesBackup, const vector<UniqueIdUInt64Type>& CreatedParticlesIndexes, UnsignedInt CenterIndex, const ListOfCentersType& Centers, ParticleKind& ParticleKindObjectForProduct, chrono::high_resolution_clock::time_point start_time);
+    bool PlaceNewProductParticleInSpaceDeterminedFromPositionOfFormerReactantParticleOrCancelReaction(UniqueIdUInt64Type ParticleUniqueId, const vector<Particle>& ParticlesBackup, const vector<UniqueIdUInt64Type>& CreatedParticlesIndexes, UnsignedInt CenterIndex, const ListOfCentersType& Centers, ParticleKind& ParticleKindObjectForProduct, chrono::high_resolution_clock::time_point start_time);
+    bool PlaceNewProductParticleInSpaceInNewRandomPositionOrCancelReaction(UniqueIdUInt64Type ParticleUniqueId, const vector<Particle>& ParticlesBackup, const vector<UniqueIdUInt64Type>& CreatedParticlesIndexes, UnsignedInt CenterIndex, const ListOfCentersType& Centers, ParticleKind& ParticleKindObjectForProduct, chrono::high_resolution_clock::time_point start_time);
 protected:
     bool IsChemicalReactionPossible(const ChemicalReaction& ReactionObject) override;
     bool MakeChemicalReaction(ChemicalReaction& ReactionObject) override;

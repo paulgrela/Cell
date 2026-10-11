@@ -32,14 +32,15 @@ public:
         LastIssuedCounter = 0;
     }
 
-    [[nodiscard]] UniqueIdUInt64Type GetNewUniqueParticleIndex()
+    [[nodiscard]] UniqueIdUInt64Type GetNewParticleUniqueId()
     {
         if (LastIssuedCounter == LastCounterValue) [[unlikely]]
             throw std::overflow_error("ParticleUniqueIdGenerator: ID space of this sector is exhausted");
+
         return Prefix | ++LastIssuedCounter;
     }
 
-    static void ReleaseUniqueParticleIndex(const UniqueIdUInt64Type) noexcept {}
+    static void ReleaseParticleUniqueId(const UniqueIdUInt64Type) noexcept {}
 
     [[nodiscard]] UniqueIdUInt64Type SaveState() const noexcept
     {
@@ -83,7 +84,7 @@ public:
         FreeList.clear();
     }
 
-    [[nodiscard]] UniqueIdUInt64Type GetNewUniqueParticleIndex()
+    [[nodiscard]] UniqueIdUInt64Type GetNewParticleUniqueId()
     {
         if (!FreeList.empty())
         {
@@ -98,7 +99,7 @@ public:
         return NextFreshId++;
     }
 
-    void ReleaseUniqueParticleIndex(const UniqueIdUInt64Type Id)
+    void ReleaseUniqueParticleUniqueId(const UniqueIdUInt64Type Id)
     {
         FreeList.push_back(Id);
     }

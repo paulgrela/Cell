@@ -26,14 +26,14 @@ public:
 protected:
     ParticlesContainer<Particle> Particles;
 protected:
-    inline Particle& GetParticleFromIndex(const UniqueIdUInt64Type ParticleIndex)
+    inline Particle& GetParticleFromUniqueId(const UniqueIdUInt64Type ParticleUniqueId)
     {
-        return Particles[0][0][0].Particles[ParticleIndex];
+        return Particles[0][0][0].Particles[ParticleUniqueId];
     }
 public:
-    ParticlesDetailedContainer<Particle>::iterator GetParticleIteratorFromIndex(const UniqueIdUInt64Type ParticleIndex)
+    ParticlesDetailedContainer<Particle>::iterator GetParticleIteratorFromUniqueId(const UniqueIdUInt64Type ParticleUniqueId)
     {
-        return Particles[0][0][0].Particles.find(ParticleIndex);
+        return Particles[0][0][0].Particles.find(ParticleUniqueId);
     }
     [[nodiscard]] auto GetParticleEnd() const
     {
@@ -77,7 +77,7 @@ public:
             FOR_EACH_SECTOR_IN_XYZ_ONLY
                 for (auto& ParticleObject : Particles[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles | views::values)
                 {
-                    ParticleObject.OrderInParticleIndex = static_cast<UnsignedInt>(NumberOfParticles);
+                    ParticleObject.OrderInParticleUniqueId = static_cast<UnsignedInt>(NumberOfParticles);
 
                     vmath::vec3 CenterOfParticle(0.0, 0.0, 0.0);
 

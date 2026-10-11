@@ -171,8 +171,6 @@ public:
 public:
     bool CheckOnlyParticlesCenters = true;
 public:
-    bool UseMutexBetweenMainScreenThreadAndMenuThreads = true;
-public:
     double RadiusOfCellForDNA{};
 public:
     enum class SelectedSpaceStartParametersDrawTypes : UnsignedInt

@@ -19,17 +19,17 @@ protected:
 protected:
     virtual void ClearSpaceForParticle(Particle& ParticleObject, bool ClearVoxels) = 0;
 public:
-    void RemoveParticle(UniqueIdUInt64Type ParticleIndex, bool ClearVoxels, bool CountAllParticlesBool) override;
+    void RemoveParticle(UniqueIdUInt64Type ParticleUniqueId, bool ClearVoxels, bool CountAllParticlesBool) override;
 protected:
     void MakingZeroSizeForContainersForFoundParticlesInProximity(const ThreadPosType& CurrentThreadPos);
-    void UpdateFoundNucleotidesForFoundParticlesInProximity(UnsignedInt ParticleIndex);
+    void UpdateFoundNucleotidesForFoundParticlesInProximity(UnsignedInt ParticleUniqueId);
     void PrintInformationAboutFoundParticlesInProximity(const ThreadPosType& CurrentThreadPos);
 protected:
     bool FindParticlesInProximityOfSimulationSpaceForSelectedSpace(bool UpdateNucleotides, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam);
 
-    virtual void FindParticlesInProximityInSimulationSpaceForSelectedLocalSpace(MainSetType<UnsignedInt>& FoundParticleIndexes, bool UpdateNucleotides, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam) = 0;
+    virtual void FindParticlesInProximityInSimulationSpaceForSelectedLocalSpace(MainSetType<UnsignedInt>& FoundParticleUniqueIdes, bool UpdateNucleotides, UnsignedInt StartXPosParam, UnsignedInt StartYPosParam, UnsignedInt StartZPosParam, UnsignedInt SizeXParam, UnsignedInt SizeYParam, UnsignedInt SizeZParam) = 0;
 
-    void SaveParticleFoundInProximity(UniqueIdUInt64Type ParticleIndex, MainSetType<UnsignedInt>& FoundParticleIndexes, bool UpdateNucleotides);
+    void SaveParticleFoundInProximity(UniqueIdUInt64Type ParticleUniqueId, MainSetType<UnsignedInt>& FoundParticleUniqueIdes, bool UpdateNucleotides);
 protected:
     explicit CellEngineChemicalReactionsInSimulationSpace(ParticlesContainer<Particle>& ParticlesParam) : CellEngineNucleicAcidsChemicalReactionsInSimulationSpace(ParticlesParam)
     {

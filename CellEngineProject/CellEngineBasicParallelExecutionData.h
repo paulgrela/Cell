@@ -10,7 +10,7 @@
 
 struct __attribute__ ((packed)) ParticleSenderStructMPIMultiProcess
 {
-    UniqueIdUInt64Type ParticleIndex{ 0 };
+    UniqueIdUInt64Type ParticleUniqueId{ 0 };
     UniqueIdUInt32Type ParticleKindId{ 0 };
     int SenderProcessIndex{ 0 };
     int ReceiverProcessIndex{ 0 };
@@ -23,7 +23,7 @@ struct __attribute__ ((packed)) ParticleSenderStructMPIMultiProcess
 
 struct ParticleSenderStructMultiThreaded
 {
-    UniqueIdUInt64Type ParticleIndex{ 0 };
+    UniqueIdUInt64Type ParticleUniqueId{ 0 };
     UniqueIdUInt32Type ParticleKindId{ 0 };
     int SenderProcessIndex{ 0 };
     int ReceiverProcessIndex{ 0 };
@@ -38,7 +38,7 @@ struct ParticleSenderStructMultiThreaded
 
 struct ConfirmationOfParticlesToRemoveToSentStruct
 {
-    UniqueIdUInt64Type ParticleIndex{ 0 };
+    UniqueIdUInt64Type ParticleUniqueId{ 0 };
     vector3_16 SenderSectorPos{ .X = 0, .Y = 0, .Z = 0 };
 };
 
