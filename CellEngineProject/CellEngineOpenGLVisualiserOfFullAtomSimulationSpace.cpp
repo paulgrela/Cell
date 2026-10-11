@@ -55,7 +55,7 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace1(const vma
                                     GPUAtomLocalObject.ParticleSectorXIndex = ParticleSectorXIndex;
                                     GPUAtomLocalObject.ParticleSectorYIndex = ParticleSectorYIndex;
                                     GPUAtomLocalObject.ParticleSectorZIndex = ParticleSectorZIndex;
-                                    GPUAtomLocalObject.Index = ParticleObject.Index;
+                                    GPUAtomLocalObject.Index = ParticleObject.ParticleIndex;
                                     GPUAtomLocalObject.AtomOffset = AtomLocalIndex + 1;
                                     GPUAtomsLocal[AtomLocalOffsetTotal] = std::move(GPUAtomLocalObject);
                                     AtomLocalOffsetTotal++;
@@ -68,7 +68,7 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace1(const vma
                                 GPUAtomObject.Y = AtomObject.Y;
                                 GPUAtomObject.Z = AtomObject.Z;
 
-                                const auto ParticleColor = CellEngineUseful::GetVMathVec3FromVector3ForColor(GetColor<CellEngineAtom>(AtomObject, ParticleObject, ChosenParticleObject.Index == ParticleObject.Index && ChosenAtomObjectIndex == AtomLocalIndex));
+                                const auto ParticleColor = CellEngineUseful::GetVMathVec3FromVector3ForColor(GetColor<CellEngineAtom>(AtomObject, ParticleObject, ChosenParticleObject.ParticleIndex == ParticleObject.ParticleIndex && ChosenAtomObjectIndex == AtomLocalIndex));
 
                                 GPUAtomObject.ColorR = ParticleColor.X();
                                 GPUAtomObject.ColorG = ParticleColor.Y();
@@ -136,7 +136,7 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace2(const vma
                                         GPUAtomLocalObject.ParticleSectorXIndex = ParticleSectorXIndex;
                                         GPUAtomLocalObject.ParticleSectorYIndex = ParticleSectorYIndex;
                                         GPUAtomLocalObject.ParticleSectorZIndex = ParticleSectorZIndex;
-                                        GPUAtomLocalObject.Index = ParticleObject.second.Index;
+                                        GPUAtomLocalObject.Index = ParticleObject.second.ParticleIndex;
                                         GPUAtomLocalObject.AtomOffset = AtomLocalIndex++;
                                         GPUAtomsLocalInSectors[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].emplace_back(GPUAtomLocalObject);
                                     }
@@ -147,7 +147,7 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace2(const vma
                                     GPUAtomObject.Y = AtomObject.Y;
                                     GPUAtomObject.Z = AtomObject.Z;
 
-                                    const auto ParticleColor = CellEngineUseful::GetVMathVec3FromVector3ForColor(GetColor<CellEngineAtom>(AtomObject, ParticleObject.second, ChosenParticleObject.Index == ParticleObject.second.Index && ChosenAtomObjectIndex == AtomIndex));
+                                    const auto ParticleColor = CellEngineUseful::GetVMathVec3FromVector3ForColor(GetColor<CellEngineAtom>(AtomObject, ParticleObject.second, ChosenParticleObject.ParticleIndex == ParticleObject.second.ParticleIndex && ChosenAtomObjectIndex == AtomIndex));
 
                                     GPUAtomObject.ColorR = ParticleColor.X();
                                     GPUAtomObject.ColorG = ParticleColor.Y();

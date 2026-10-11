@@ -329,7 +329,7 @@ bool CellEngineFullAtomSimulationSpace::CheckPossibilityOfInsertingParticleToCur
 
         if (CheckIfSpaceIsEmptyAndIsInBoundsForParticleElementsDiffusion(ParticleKindToCheck, Particles, { .SectorPosX = ParticleSenderToInsert.ReceiverSectorPos.X, .SectorPosY = ParticleSenderToInsert.ReceiverSectorPos.Y, .SectorPosZ = ParticleSenderToInsert.ReceiverSectorPos.Z }, ParticleSenderToInsert.NewPosition.X, ParticleSenderToInsert.NewPosition.Y, ParticleSenderToInsert.NewPosition.Z, SimulationSpaceSectorBoundsObject) == true)
         {
-            GetParticles().insert(std::move(make_pair(ParticleObject.Index, std::move(ParticleObject))));
+            GetParticles().insert(std::move(make_pair(ParticleObject.ParticleIndex, std::move(ParticleObject))));
             return true;
         }
     }

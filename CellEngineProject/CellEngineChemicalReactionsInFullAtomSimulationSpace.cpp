@@ -10,7 +10,7 @@ void CellEngineChemicalReactionsInFullAtomSimulationSpace::FindParticlesInProxim
 
         for (const auto& ParticleObject : Particles[StartXPosParam][StartYPosParam][StartZPosParam].Particles | views::values)
         {
-            LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity.emplace_back(ParticleObject.Index);
+            LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity.emplace_back(ParticleObject.ParticleIndex);
             LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity[ParticleObject.ParticleKindId]++;
         }
 

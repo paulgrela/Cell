@@ -147,7 +147,7 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::GenerateVoxelsForGPUParal
                 GPUAtomLocalObject.ParticleSectorXIndex = 0;
                 GPUAtomLocalObject.ParticleSectorYIndex = 0;
                 GPUAtomLocalObject.ParticleSectorZIndex = 0;
-                GPUAtomLocalObject.Index = ParticleObject.Index;
+                GPUAtomLocalObject.Index = ParticleObject.ParticleIndex;
                 GPUAtomLocalObject.AtomOffset = AtomTotalIndex;
                 GPUAtomsLocalInSectors[MainPosX][MainPosY][MainPosZ].emplace_back(std::move(GPUAtomLocalObject));
             }
@@ -158,7 +158,7 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::GenerateVoxelsForGPUParal
             GPUAtomObject.Y = TempAtomObject.Y;
             GPUAtomObject.Z = TempAtomObject.Z;
 
-            const auto ParticleColor = CellEngineConfigDataObject.RenderTheWholePickedParticleInOnePickingColorForVoxelSpace == false ? CellEngineUseful::GetVMathVec3FromVector3ForColor(GetColor<CellEngineAtom>(TempAtomObject, ParticleObject, ChosenAtomObjectIndex == AtomTotalIndex)) : CellEngineUseful::GetVMathVec3FromVector3ForColor(GetColor<CellEngineAtom>(TempAtomObject, ParticleObject, ChosenParticleObject.Index == ParticleObject.Index));
+            const auto ParticleColor = CellEngineConfigDataObject.RenderTheWholePickedParticleInOnePickingColorForVoxelSpace == false ? CellEngineUseful::GetVMathVec3FromVector3ForColor(GetColor<CellEngineAtom>(TempAtomObject, ParticleObject, ChosenAtomObjectIndex == AtomTotalIndex)) : CellEngineUseful::GetVMathVec3FromVector3ForColor(GetColor<CellEngineAtom>(TempAtomObject, ParticleObject, ChosenParticleObject.ParticleIndex == ParticleObject.ParticleIndex));
 
             GPUAtomObject.ColorR = ParticleColor.X();
             GPUAtomObject.ColorG = ParticleColor.Y();
@@ -201,7 +201,7 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::GenerateVoxelsForGPU(cons
                 GPUAtomLocalObject.ParticleSectorXIndex = 0;
                 GPUAtomLocalObject.ParticleSectorYIndex = 0;
                 GPUAtomLocalObject.ParticleSectorZIndex = 0;
-                GPUAtomLocalObject.Index = ParticleObject.Index;
+                GPUAtomLocalObject.Index = ParticleObject.ParticleIndex;
                 GPUAtomLocalObject.AtomOffset = AtomTotalIndex;
                 GPUAtomsLocal[AtomLocalOffsetTotal] = std::move(GPUAtomLocalObject);
                 AtomLocalOffsetTotal++;
@@ -213,7 +213,7 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::GenerateVoxelsForGPU(cons
             GPUAtomObject.Y = TempAtomObject.Y;
             GPUAtomObject.Z = TempAtomObject.Z;
 
-            const auto ParticleColor = CellEngineConfigDataObject.RenderTheWholePickedParticleInOnePickingColorForVoxelSpace == false ? CellEngineUseful::GetVMathVec3FromVector3ForColor(GetColor<CellEngineAtom>(TempAtomObject, ParticleObject, ChosenAtomObjectIndex == AtomTotalIndex)) : CellEngineUseful::GetVMathVec3FromVector3ForColor(GetColor<CellEngineAtom>(TempAtomObject, ParticleObject, ChosenParticleObject.Index == ParticleObject.Index));
+            const auto ParticleColor = CellEngineConfigDataObject.RenderTheWholePickedParticleInOnePickingColorForVoxelSpace == false ? CellEngineUseful::GetVMathVec3FromVector3ForColor(GetColor<CellEngineAtom>(TempAtomObject, ParticleObject, ChosenAtomObjectIndex == AtomTotalIndex)) : CellEngineUseful::GetVMathVec3FromVector3ForColor(GetColor<CellEngineAtom>(TempAtomObject, ParticleObject, ChosenParticleObject.ParticleIndex == ParticleObject.ParticleIndex));
 
             GPUAtomObject.ColorR = ParticleColor.X();
             GPUAtomObject.ColorG = ParticleColor.Y();

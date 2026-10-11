@@ -104,8 +104,8 @@ public:
 public:
     UniqueIdUInt64Type AddNewParticle(const Particle& ParticleParam)
     {
-        GetParticles()[ParticleParam.Index] = ParticleParam;
-        return MaxParticleIndex = ParticleParam.Index;
+        GetParticles()[ParticleParam.ParticleIndex] = ParticleParam;
+        return MaxParticleIndex = ParticleParam.ParticleIndex;
     }
 protected:
     virtual void RemoveParticle(UniqueIdUInt64Type ParticleIndex, bool ClearElements, bool CountAllParticlesBool) = 0;

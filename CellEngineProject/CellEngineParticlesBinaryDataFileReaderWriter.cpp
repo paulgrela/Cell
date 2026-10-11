@@ -19,7 +19,7 @@ static void SavePointerToBinaryFile(ofstream& ParticlesDataFile, const Particle*
     try
     {
         if (PointerToParticle != nullptr)
-            ParticlesDataFile.write(reinterpret_cast<const char*>(&PointerToParticle->Index), sizeof(UniqueIdUInt64Type));
+            ParticlesDataFile.write(reinterpret_cast<const char*>(&PointerToParticle->ParticleIndex), sizeof(UniqueIdUInt64Type));
         else
         {
             UniqueIdUInt64Type ValueToWrite = 0;
@@ -127,7 +127,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::SaveParticlesToBinaryFile(of
         {
             ParticlesDataFile.write(reinterpret_cast<const char*>(&ParticleObject.second.ParticleKindId), sizeof(ParticleObject.second.ParticleKindId));
             ParticlesDataFile.write(reinterpret_cast<const char*>(&ParticleObject.second.ChainId), sizeof(ParticleObject.second.ChainId));
-            ParticlesDataFile.write(reinterpret_cast<const char*>(&ParticleObject.second.Index), sizeof(ParticleObject.second.Index));
+            ParticlesDataFile.write(reinterpret_cast<const char*>(&ParticleObject.second.ParticleIndex), sizeof(ParticleObject.second.ParticleIndex));
             ParticlesDataFile.write(reinterpret_cast<const char*>(&ParticleObject.second.GenomeIndex), sizeof(ParticleObject.second.GenomeIndex));
             ParticlesDataFile.write(reinterpret_cast<const char*>(&ParticleObject.second.ElectricCharge), sizeof(ParticleObject.second.ElectricCharge));
             ParticlesDataFile.write(reinterpret_cast<const char*>(&ParticleObject.second.Center), sizeof(ParticleObject.second.Center));
@@ -282,7 +282,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::PrepareParticlesAfterReading
             if (CellEngineUseful::IsDNA(ParticleObject.second.ParticleKindId) == false)
             {
                 if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)
-                CellEngineVoxelSimulationSpaceObjectPointer->SetAllVoxelsInListOfVoxelsToValueForOuterClass(ParticleObject.second.ListOfVoxels, ParticleObject.second.Index);
+                CellEngineVoxelSimulationSpaceObjectPointer->SetAllVoxelsInListOfVoxelsToValueForOuterClass(ParticleObject.second.ListOfVoxels, ParticleObject.second.ParticleIndex);
 
                 ParticleObject.second.Prev = ParticleObject.second.PrevTemporary != 0 ? &GetParticleFromIndex(ParticleObject.second.PrevTemporary) : nullptr;
                 ParticleObject.second.Next = ParticleObject.second.NextTemporary != 0 ? &GetParticleFromIndex(ParticleObject.second.NextTemporary) : nullptr;
@@ -463,10 +463,10 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
 
             UniqueIdUInt32Type LocalParticleObjectIndex;
             ParticlesDataFile.read(reinterpret_cast<char*>(&LocalParticleObjectIndex), sizeof(LocalParticleObjectIndex));
-            ParticleObject.Index = LocalParticleObjectIndex;
+            ParticleObject.ParticleIndex = LocalParticleObjectIndex;
 
             if constexpr(AdditionalInfoPrinting == true)
-                LoggersManagerObject.Log(STREAM(ParticleObject.Index << " " << LocalParticleObjectIndex));
+                LoggersManagerObject.Log(STREAM(ParticleObject.ParticleIndex << " " << LocalParticleObjectIndex));
 
             ParticlesDataFile.read(reinterpret_cast<char*>(&ParticleObject.GenomeIndex), sizeof(ParticleObject.GenomeIndex));
             ParticlesDataFile.read(reinterpret_cast<char*>(&ParticleObject.ElectricCharge), sizeof(ParticleObject.ElectricCharge));
@@ -497,7 +497,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
             {
                 ReadVoxelsVectorDividedByStepsFromBinaryFile(ParticlesDataFile, ParticleObject.ListOfVoxels, CellEngineConfigDataObject.DivisionFactorForReadingPositionsOfParticles);
                 if (ParticleObject.ListOfVoxels.empty() == true)
-                    LoggersManagerObject.Log(STREAM("Error for particle type = " << ParticleObject.ParticleKindId << " " << ParticleObject.Index));
+                    LoggersManagerObject.Log(STREAM("Error for particle type = " << ParticleObject.ParticleKindId << " " << ParticleObject.ParticleIndex));
             }
             else
             if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
@@ -515,7 +515,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
 
             ReadVectorFromBinaryFileTemporary<UniqueIdUInt64Type>(ParticlesDataFile, ParticleObject.LinkedParticlesPointersListTemporary);
 
-            if (ParticleObject.Index != 0)
+            if (ParticleObject.ParticleIndex != 0)
             {
                 ParticleObject.ParticleColor = ParticlesKindsManagerObject.GetGraphicParticleKind(ParticleObject.ParticleKindId).ParticleColor;
                 ParticleObject.RandomParticleKindColor = ParticlesKindsManagerObject.GetGraphicParticleKind(ParticleObject.ParticleKindId).RandomParticleColor;
@@ -539,7 +539,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
                         if (make_tuple(SectorPosX, SectorPosY, SectorPosZ) == make_tuple(ParticleSectorPos.SectorPosX, ParticleSectorPos.SectorPosY, ParticleSectorPos.SectorPosZ))
                         {
                             if constexpr(AdditionalInfoPrinting == true)
-                                LoggersManagerObject.Log(STREAM(ParticleSectorPos.SectorPosX << " " << ParticleSectorPos.SectorPosY << " " << ParticleSectorPos.SectorPosZ << " " << ParticleObject.ParticleKindId << " " << ParticleObject.Index));
+                                LoggersManagerObject.Log(STREAM(ParticleSectorPos.SectorPosX << " " << ParticleSectorPos.SectorPosY << " " << ParticleSectorPos.SectorPosZ << " " << ParticleObject.ParticleKindId << " " << ParticleObject.ParticleIndex));
 
                             AddNewParticle(ParticleObject);
                         }
@@ -553,8 +553,8 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
                         CellEngineUseful::CheckCenterForSector<Particle>(ParticleObject, GetParticles(), "CA2");
             }
 
-            if (ParticleObject.Index == 0)
-                LoggersManagerObject.Log(STREAM("Particle with Index 0 = " << ParticleObject.Index << " " << ParticleObject.Center.X << " " << ParticleObject.Center.Y << " " << ParticleObject.Center.Z));
+            if (ParticleObject.ParticleIndex == 0)
+                LoggersManagerObject.Log(STREAM("Particle with Index 0 = " << ParticleObject.ParticleIndex << " " << ParticleObject.Center.X << " " << ParticleObject.Center.Y << " " << ParticleObject.Center.Z));
         }
 
         LoggersManagerObject.Log(STREAM("END OF READING PARTICLES FROM BINARY FILE - bad particles = " << BadParticlesCenters));

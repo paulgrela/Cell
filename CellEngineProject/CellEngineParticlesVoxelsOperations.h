@@ -53,7 +53,7 @@ protected:
 
             MoveAllVoxelsInParticleVoxelListByVector(ParticleObject, VectorX, VectorY, VectorZ);
 
-            SetAllVoxelsInListOfVoxelsToValue(ParticleObject.ListOfVoxels, ParticleObject.Index);
+            SetAllVoxelsInListOfVoxelsToValue(ParticleObject.ListOfVoxels, ParticleObject.ParticleIndex);
 
             ParticleObject.SetCenterCoordinates(ParticleObject.Center.X + static_cast<float>(VectorX), ParticleObject.Center.Y + static_cast<float>(VectorY), ParticleObject.Center.Z + static_cast<float>(VectorZ));
         }
@@ -78,7 +78,7 @@ protected:
                 const UnsignedInt TestedPosX = VoxelOfParticle.X + VectorX;
                 const UnsignedInt TestedPosY = VoxelOfParticle.Y + VectorY;
                 const UnsignedInt TestedPosZ = VoxelOfParticle.Z + VectorZ;
-                if (GetSpaceVoxel(TestedPosX, TestedPosY, TestedPosZ) != GetZeroSimulationSpaceVoxel() && GetSpaceVoxel(TestedPosX, TestedPosY, TestedPosZ) != ParticleObject.Index)
+                if (GetSpaceVoxel(TestedPosX, TestedPosY, TestedPosZ) != GetZeroSimulationSpaceVoxel() && GetSpaceVoxel(TestedPosX, TestedPosY, TestedPosZ) != ParticleObject.ParticleIndex)
                     return false;
             }
         }
@@ -109,7 +109,7 @@ protected:
                 const UnsignedInt TestedPosX = VoxelOfParticle.X + VectorX;
                 const UnsignedInt TestedPosY = VoxelOfParticle.Y + VectorY;
                 const UnsignedInt TestedPosZ = VoxelOfParticle.Z + VectorZ;
-                if ((GetSpaceVoxel(TestedPosX, TestedPosY, TestedPosZ) != GetZeroSimulationSpaceVoxel() && GetSpaceVoxel(TestedPosX, TestedPosY, TestedPosZ) != ParticleObject.Index) || !(TestedPosX >= StartXPosParam && TestedPosX < StartXPosParam + SizeXParam && TestedPosY >= StartYPosParam && TestedPosY < StartYPosParam + SizeYParam && TestedPosZ >= StartZPosParam && TestedPosZ < StartZPosParam + SizeZParam))
+                if ((GetSpaceVoxel(TestedPosX, TestedPosY, TestedPosZ) != GetZeroSimulationSpaceVoxel() && GetSpaceVoxel(TestedPosX, TestedPosY, TestedPosZ) != ParticleObject.ParticleIndex) || !(TestedPosX >= StartXPosParam && TestedPosX < StartXPosParam + SizeXParam && TestedPosY >= StartYPosParam && TestedPosY < StartYPosParam + SizeYParam && TestedPosZ >= StartZPosParam && TestedPosZ < StartZPosParam + SizeZParam))
                     return false;
             }
         }
