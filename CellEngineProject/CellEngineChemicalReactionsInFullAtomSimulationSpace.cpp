@@ -11,7 +11,7 @@ void CellEngineChemicalReactionsInFullAtomSimulationSpace::FindParticlesInProxim
         for (const auto& ParticleObject : Particles[StartXPosParam][StartYPosParam][StartZPosParam].Particles | views::values)
         {
             LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity.emplace_back(ParticleObject.Index);
-            LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity[ParticleObject.EntityId]++;
+            LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity[ParticleObject.ParticleKindId]++;
         }
 
         const auto stop_time = chrono::high_resolution_clock::now();

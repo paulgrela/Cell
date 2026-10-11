@@ -86,7 +86,7 @@ bool CellEngineParticlesFullAtomShapesGenerator::GenerateParticleAtomsWhenSelect
 
         if (CheckFreeSpaceForSelectedSpace(ParticlesParam, PosXStart, PosYStart, PosZStart, 1, 1, 1, SizeOfParticleX, SizeOfParticleY, SizeOfParticleZ, 0) == true)
         {
-            SetValueToAtomsForSelectedSpace(GetParticleFromIndexForGenerator(LocalNewParticleIndex).ListOfAtoms, GetParticleFromIndexForGenerator(LocalNewParticleIndex).EntityId, PosXStart, PosYStart, PosZStart, 1, 1, 1, SizeOfParticleX, SizeOfParticleY, SizeOfParticleZ);
+            SetValueToAtomsForSelectedSpace(GetParticleFromIndexForGenerator(LocalNewParticleIndex).ListOfAtoms, GetParticleFromIndexForGenerator(LocalNewParticleIndex).ParticleKindId, PosXStart, PosYStart, PosZStart, 1, 1, 1, SizeOfParticleX, SizeOfParticleY, SizeOfParticleZ);
 
             CellEngineBasicParticlesOperations::GetMinMaxCoordinatesForParticle<RealType, CellEngineAtom>(GetParticleFromIndexForGenerator(LocalNewParticleIndex), &Particle::ListOfAtoms, &ParticleKind::ListOfAtoms, true);
 

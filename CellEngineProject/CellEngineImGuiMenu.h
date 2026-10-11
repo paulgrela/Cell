@@ -529,11 +529,11 @@ public:
                             string TypeStr = "Unknown Type ";
                             if (ParticlesKindForImGuiSelectionObject.ParticleKindSpecialDataSector.empty() == false)
                                 TypeStr = ParticlesKindsManager::ConvertParticleTypeToString(ParticlesKindForImGuiSelectionObject.ParticleKindSpecialDataSector.back().ParticleType);
-                            ImGui::Checkbox(string(to_string(ParticlesKindForImGuiSelectionObject.EntityId) + " " + "T = " + TypeStr + " " + ParticlesKindForImGuiSelectionObject.IdStr + " " + (ParticlesKindForImGuiSelectionObject.Name.starts_with("M_") ? ParticlesKindForImGuiSelectionObject.Name : "") + (ParticlesKindForImGuiSelectionObject.Formula != ParticlesKindForImGuiSelectionObject.IdStr && ParticlesKindForImGuiSelectionObject.Formula.empty() == false ? ("F = " + ParticlesKindForImGuiSelectionObject.Formula + " ") : "")).c_str(), &ParticlesKindForImGuiSelectionObject.GraphicData.Visible);
+                            ImGui::Checkbox(string(to_string(ParticlesKindForImGuiSelectionObject.ParticleKindId) + " " + "T = " + TypeStr + " " + ParticlesKindForImGuiSelectionObject.IdStr + " " + (ParticlesKindForImGuiSelectionObject.Name.starts_with("M_") ? ParticlesKindForImGuiSelectionObject.Name : "") + (ParticlesKindForImGuiSelectionObject.Formula != ParticlesKindForImGuiSelectionObject.IdStr && ParticlesKindForImGuiSelectionObject.Formula.empty() == false ? ("F = " + ParticlesKindForImGuiSelectionObject.Formula + " ") : "")).c_str(), &ParticlesKindForImGuiSelectionObject.GraphicData.Visible);
                         }
 
                     for (const auto &ParticleKindForImGuiSelectionObject: LocalParticlesKindsForImGuiSelection)
-                        ParticlesKindsManagerObject.GetParticleKind(ParticleKindForImGuiSelectionObject.EntityId).GraphicData.Visible = ParticleKindForImGuiSelectionObject.GraphicData.Visible;
+                        ParticlesKindsManagerObject.GetParticleKind(ParticleKindForImGuiSelectionObject.ParticleKindId).GraphicData.Visible = ParticleKindForImGuiSelectionObject.GraphicData.Visible;
                 }
             PrevTypesOfVisibilityComboBoxCurrentItemIndex = TypesOfVisibilityComboBoxCurrentItemIndex;
         }
@@ -558,22 +558,22 @@ public:
                     vector<bool> LocalParticleKindSelection;
                     for (auto &ParticlesKindForImGuiSelectionObject : LocalParticlesKindsForImGuiSelection)
                         if (ParticlesKindForImGuiSelectionObject.ParticleKindSpecialDataSector.empty() == false)
-                            ImGui::Checkbox(string(to_string(ParticlesKindForImGuiSelectionObject.EntityId) + " " + "T = " + ParticlesKindsManager::ConvertParticleTypeToString(ParticlesKindForImGuiSelectionObject.ParticleKindSpecialDataSector.back().ParticleType) + " " + ParticlesKindForImGuiSelectionObject.IdStr + " " + (ParticlesKindForImGuiSelectionObject.Name.starts_with("M_") ? ParticlesKindForImGuiSelectionObject.Name : "") + (ParticlesKindForImGuiSelectionObject.Formula != ParticlesKindForImGuiSelectionObject.IdStr && ParticlesKindForImGuiSelectionObject.Formula.empty() == false ? ("F = " + ParticlesKindForImGuiSelectionObject.Formula + " ") : "")).c_str(), &ParticlesKindForImGuiSelectionObject.GraphicData.Selected);
+                            ImGui::Checkbox(string(to_string(ParticlesKindForImGuiSelectionObject.ParticleKindId) + " " + "T = " + ParticlesKindsManager::ConvertParticleTypeToString(ParticlesKindForImGuiSelectionObject.ParticleKindSpecialDataSector.back().ParticleType) + " " + ParticlesKindForImGuiSelectionObject.IdStr + " " + (ParticlesKindForImGuiSelectionObject.Name.starts_with("M_") ? ParticlesKindForImGuiSelectionObject.Name : "") + (ParticlesKindForImGuiSelectionObject.Formula != ParticlesKindForImGuiSelectionObject.IdStr && ParticlesKindForImGuiSelectionObject.Formula.empty() == false ? ("F = " + ParticlesKindForImGuiSelectionObject.Formula + " ") : "")).c_str(), &ParticlesKindForImGuiSelectionObject.GraphicData.Selected);
 
                     for (const auto &ParticleKindForImGuiSelectionObject : LocalParticlesKindsForImGuiSelection)
-                        ParticlesKindsManagerObject.GetParticleKind(ParticleKindForImGuiSelectionObject.EntityId).GraphicData.Selected = ParticleKindForImGuiSelectionObject.GraphicData.Selected;
+                        ParticlesKindsManagerObject.GetParticleKind(ParticleKindForImGuiSelectionObject.ParticleKindId).GraphicData.Selected = ParticleKindForImGuiSelectionObject.GraphicData.Selected;
 
                     static int NumberOfParticlesToSub[1] = { 100 };
                     ImGui::DragInt("SUB", NumberOfParticlesToSub, 1, 0, 1000, "%d", ImGuiSliderFlags_AlwaysClamp);
                     if (ImGui::Button("SUB PARTICLES") == true)
                         for (const auto &ParticleKindForImGuiSelectionObject: LocalParticlesKindsForImGuiSelection)
                             if (ParticleKindForImGuiSelectionObject.GraphicData.Selected == true)
-                                CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->RemoveParticlesWithChosenEntityId(ParticleKindForImGuiSelectionObject.EntityId, NumberOfParticlesToSub[0]);
+                                CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->RemoveParticlesWithChosenEntityId(ParticleKindForImGuiSelectionObject.ParticleKindId, NumberOfParticlesToSub[0]);
 
                     if (ImGui::Button("REMOVE ALL PARTICLES") == true)
                         for (const auto &ParticleKindForImGuiSelectionObject: LocalParticlesKindsForImGuiSelection)
                             if (ParticleKindForImGuiSelectionObject.GraphicData.Selected == true)
-                                CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->RemoveAllParticlesWithChosenEntityId(ParticleKindForImGuiSelectionObject.EntityId);
+                                CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->RemoveAllParticlesWithChosenEntityId(ParticleKindForImGuiSelectionObject.ParticleKindId);
 
                     if (ImGui::Button("REMOVE ALL RNA PARTICLES ") == true)
                         CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->RemoveAllRNAParticles();
@@ -1803,6 +1803,7 @@ public:
                 ImGui::Render();
 
                 const auto StopTime5 = chrono::high_resolution_clock::now();
+
 
                 const auto StartTime6 = chrono::high_resolution_clock::now();
 

@@ -33,21 +33,21 @@ bool CellEngineWellStirredChemicalReactionsSimulation::MakeChemicalReaction(Chem
     try
     {
         for (const auto& ReactionReactant : ReactionObject.Reactants)
-            LoggersManagerObject.Log(STREAM("BEFORE REACTANT = " << ReactionReactant.EntityId << " " << ParticlesKindsManagerObject.ParticlesKinds[ReactionReactant.EntityId].Formula << " " << ParticlesKindsManagerObject.ParticlesKinds[ReactionReactant.EntityId].Counter));
+            LoggersManagerObject.Log(STREAM("BEFORE REACTANT = " << ReactionReactant.ParticleKindId << " " << ParticlesKindsManagerObject.ParticlesKinds[ReactionReactant.ParticleKindId].Formula << " " << ParticlesKindsManagerObject.ParticlesKinds[ReactionReactant.ParticleKindId].Counter));
         for (const auto& ReactionProduct : ReactionObject.Products)
-            LoggersManagerObject.Log(STREAM("BEFORE PRODUCT = " << ReactionProduct.EntityId << " " << ParticlesKindsManagerObject.ParticlesKinds[ReactionProduct.EntityId].Formula << " " << ParticlesKindsManagerObject.ParticlesKinds[ReactionProduct.EntityId].Counter));
+            LoggersManagerObject.Log(STREAM("BEFORE PRODUCT = " << ReactionProduct.ParticleKindId << " " << ParticlesKindsManagerObject.ParticlesKinds[ReactionProduct.ParticleKindId].Formula << " " << ParticlesKindsManagerObject.ParticlesKinds[ReactionProduct.ParticleKindId].Counter));
         LoggersManagerObject.Log(STREAM(""));
 
         for (const auto& ReactionReactant : ReactionObject.Reactants)
-            ParticlesKindsManagerObject.ParticlesKinds[ReactionReactant.EntityId].Counter -=  ReactionReactant.Counter;
+            ParticlesKindsManagerObject.ParticlesKinds[ReactionReactant.ParticleKindId].Counter -=  ReactionReactant.Counter;
 
         for (const auto& ReactionProduct : ReactionObject.Products)
-            ParticlesKindsManagerObject.ParticlesKinds[ReactionProduct.EntityId].Counter +=  ReactionProduct.Counter;
+            ParticlesKindsManagerObject.ParticlesKinds[ReactionProduct.ParticleKindId].Counter +=  ReactionProduct.Counter;
 
         for (const auto& ReactionReactant : ReactionObject.Reactants)
-            LoggersManagerObject.Log(STREAM("AFTER REACTANT = " << ReactionReactant.EntityId << " " << ParticlesKindsManagerObject.ParticlesKinds[ReactionReactant.EntityId].Formula << " " << ParticlesKindsManagerObject.ParticlesKinds[ReactionReactant.EntityId].Counter));
+            LoggersManagerObject.Log(STREAM("AFTER REACTANT = " << ReactionReactant.ParticleKindId << " " << ParticlesKindsManagerObject.ParticlesKinds[ReactionReactant.ParticleKindId].Formula << " " << ParticlesKindsManagerObject.ParticlesKinds[ReactionReactant.ParticleKindId].Counter));
         for (const auto& ReactionProduct : ReactionObject.Products)
-            LoggersManagerObject.Log(STREAM("AFTER PRODUCT = " << ReactionProduct.EntityId << " " << ParticlesKindsManagerObject.ParticlesKinds[ReactionProduct.EntityId].Formula << " " << ParticlesKindsManagerObject.ParticlesKinds[ReactionProduct.EntityId].Counter));
+            LoggersManagerObject.Log(STREAM("AFTER PRODUCT = " << ReactionProduct.ParticleKindId << " " << ParticlesKindsManagerObject.ParticlesKinds[ReactionProduct.ParticleKindId].Formula << " " << ParticlesKindsManagerObject.ParticlesKinds[ReactionProduct.ParticleKindId].Counter));
         LoggersManagerObject.Log(STREAM(""));
     }
     CATCH("making reaction")
@@ -57,7 +57,7 @@ bool CellEngineWellStirredChemicalReactionsSimulation::MakeChemicalReaction(Chem
 
 bool CellEngineWellStirredChemicalReactionsSimulation::IsChemicalReactionPossible(const ChemicalReaction& ReactionObject)
 {
-    return all_of(ReactionObject.Reactants.cbegin(), ReactionObject.Reactants.cend(), [this](const ParticleKindForChemicalReaction& ReactionReactant){ return ReactionReactant.Counter <= ParticlesKindsManagerObject.ParticlesKinds[ReactionReactant.EntityId].Counter; });
+    return all_of(ReactionObject.Reactants.cbegin(), ReactionObject.Reactants.cend(), [this](const ParticleKindForChemicalReaction& ReactionReactant){ return ReactionReactant.Counter <= ParticlesKindsManagerObject.ParticlesKinds[ReactionReactant.ParticleKindId].Counter; });
 };
 
 void CellEngineWellStirredChemicalReactionsSimulation::Run(UnsignedInt NumberOfSteps)

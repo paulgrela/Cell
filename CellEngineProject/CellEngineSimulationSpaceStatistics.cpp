@@ -116,7 +116,7 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesAsCopiedMap()
 
             ParticlesSnapshotsCopiedVectorForMPI[SimulationStepNumber - 1].clear();
             FOR_EACH_PARTICLE_IN_SECTORS_XYZ_CONST
-                ParticlesSnapshotsCopiedVectorForMPI[SimulationStepNumber - 1].emplace_back(ParticleObject.second.EntityId);
+                ParticlesSnapshotsCopiedVectorForMPI[SimulationStepNumber - 1].emplace_back(ParticleObject.second.ParticleKindId);
 
             if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true)
             {
@@ -185,8 +185,8 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesAsSortedVectorElements()
             LoggersManagerObject.LogStatistics(STREAM("Size of all particles copied for statistics = " << ParticlesSnapshotsCopiedUnorderedMap[SimulationStepNumber - 1].size()));
             for (const auto& ParticlesSnapshotsCopiedUnorderedMapElementFirst : ParticlesSnapshotsCopiedUnorderedMap[SimulationStepNumber - 1] | views::keys)
             {
-                EntityIdInt ParticleKindId = GetParticleFromIndex(ParticlesSnapshotsCopiedUnorderedMapElementFirst).EntityId;
-                ParticlesKindsSnapshotsCopiedMap[SimulationStepNumber - 1][ParticleKindId] = { ParticleKindId, ++ParticlesKindsSnapshotsCopiedMap[SimulationStepNumber - 1][ParticleKindId].Counter };
+                EntityIdInt ParticleKindId = GetParticleFromIndex(ParticlesSnapshotsCopiedUnorderedMapElementFirst).ParticleKindId;
+                ParticlesKindsSnapshotsCopiedMap[SimulationStepNumber - 1][ParticleKindId] = { .ParticleKindId = ParticleKindId, .Counter = ++ParticlesKindsSnapshotsCopiedMap[SimulationStepNumber - 1][ParticleKindId].Counter };
             }
         }
         else
@@ -195,13 +195,13 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesAsSortedVectorElements()
             for (const auto& ParticlesSnapshotsCopiedUnorderedMapElement : ParticlesSnapshotsCopiedVectorForMPI[SimulationStepNumber - 1])
             {
                 EntityIdInt ParticleKindId = ParticlesSnapshotsCopiedUnorderedMapElement;
-                ParticlesKindsSnapshotsCopiedMap[SimulationStepNumber - 1][ParticleKindId] = { ParticleKindId, ++ParticlesKindsSnapshotsCopiedMap[SimulationStepNumber - 1][ParticleKindId].Counter };
+                ParticlesKindsSnapshotsCopiedMap[SimulationStepNumber - 1][ParticleKindId] = { .ParticleKindId = ParticleKindId, .Counter = ++ParticlesKindsSnapshotsCopiedMap[SimulationStepNumber - 1][ParticleKindId].Counter };
             }
         }
         #else
         for (const auto& ParticlesSnapshotsCopiedUnorderedMapElement : ParticlesSnapshotsCopiedUnorderedMap[SimulationStepNumber - 1])
         {
-            UniqueIdUnsignedInt ParticleKindId = GetParticleFromIndex(ParticlesSnapshotsCopiedUnorderedMapElement.first).EntityId;
+            UniqueIdUnsignedInt ParticleKindId = GetParticleFromIndex(ParticlesSnapshotsCopiedUnorderedMapElement.first).ParticleKindId;
             if (auto FoundResult = ParticlesKindsSnapshotsCopiedMap[SimulationStepNumber - 1].find(ParticleKindId); FoundResult != ParticlesKindsSnapshotsCopiedMap[SimulationStepNumber - 1].end())
                 FoundResult->second.Counter++;
             else
@@ -230,14 +230,14 @@ void CellEngineSimulationSpaceStatistics::CompareHistogramsOfParticles(const Uns
         {
             bool Found = false;
             for (const auto& ParticleKindStatisticsObject2 : ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber2 - 1])
-                if (ParticleKindStatisticsObject2.EntityId == ParticleKindStatisticsObject1.EntityId)
+                if (ParticleKindStatisticsObject2.ParticleKindId == ParticleKindStatisticsObject1.ParticleKindId)
                 {
-                    ParticlesKindsHistogramComparisons[SimulationStepNumber - 1].emplace_back(ParticleKindHistogramComparison{ ParticleKindStatisticsObject1.EntityId, ParticleKindStatisticsObject1.Counter, ParticleKindStatisticsObject2.Counter, static_cast<SignedInt>(ParticleKindStatisticsObject2.Counter - ParticleKindStatisticsObject1.Counter) });
+                    ParticlesKindsHistogramComparisons[SimulationStepNumber - 1].emplace_back(ParticleKindHistogramComparison{ .EntityId = ParticleKindStatisticsObject1.ParticleKindId, .Counter1 = ParticleKindStatisticsObject1.Counter, .Counter2 = ParticleKindStatisticsObject2.Counter, .Difference = static_cast<SignedInt>(ParticleKindStatisticsObject2.Counter - ParticleKindStatisticsObject1.Counter) });
                     Found = true;
                     break;
                 }
             if (Found == false)
-                ParticlesKindsHistogramComparisons[SimulationStepNumber - 1].emplace_back(ParticleKindHistogramComparison{ ParticleKindStatisticsObject1.EntityId, ParticleKindStatisticsObject1.Counter, 0, static_cast<SignedInt>(0 - ParticleKindStatisticsObject1.Counter) });
+                ParticlesKindsHistogramComparisons[SimulationStepNumber - 1].emplace_back(ParticleKindHistogramComparison{ .EntityId = ParticleKindStatisticsObject1.ParticleKindId, .Counter1 = ParticleKindStatisticsObject1.Counter, .Counter2 = 0, .Difference = static_cast<SignedInt>(0 - ParticleKindStatisticsObject1.Counter) });
         }
     }
     CATCH("comparing histograms of particles")
@@ -271,9 +271,9 @@ void CellEngineSimulationSpaceStatistics::GetNumberOfParticlesFromParticleKind(c
 {
     try
     {
-        const auto FoundResult = ranges::find_if(ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber - 1], [ParticleKindId](const auto& P){ return P.EntityId == ParticleKindId; });
+        const auto FoundResult = ranges::find_if(ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber - 1], [ParticleKindId](const auto& P){ return P.ParticleKindId == ParticleKindId; });
         if (FoundResult != ParticlesKindsSnapshotsVectorSortedByCounter[SimulationStepNumber - 1].end())
-            LoggersManagerObject.LogStatistics(STREAM("Particle Kind Name = " << ParticlesKindsManagerObject.GetParticleKind(FoundResult->EntityId).IdStr << " Particle Kind Id = " << FoundResult->EntityId << " Number of Particles = " << FoundResult->Counter));
+            LoggersManagerObject.LogStatistics(STREAM("Particle Kind Name = " << ParticlesKindsManagerObject.GetParticleKind(FoundResult->ParticleKindId).IdStr << " Particle Kind Id = " << FoundResult->ParticleKindId << " Number of Particles = " << FoundResult->Counter));
     }
     CATCH("getting number of particles from particle kind")
 }

@@ -210,7 +210,7 @@ void GetDataForGeneProductsForReactionFromXMLFile(const boost::property_tree::pt
             SignedInt GeneId = stoi(ReactionsPropertyTreeXMLTreeElementGeneProduct.second.get<string>("<xmlattr>.fbc:geneProduct").substr(9, 4));
             if (auto ParticleKindResult = ParticlesKindsManagerObject.GetParticleKindFromGeneId(GeneId); ParticleKindResult.has_value() == true)
             {
-                LocalVectorOfElements.emplace_back(ParticleKindResult->EntityId, 1, "", true);
+                LocalVectorOfElements.emplace_back(ParticleKindResult->ParticleKindId, 1, "", true);
                 LoggersManagerObject.Log(STREAM(Str1 << JCVISYN3APredStr + to_string(GeneId) << " " << 1));
             }
             else
@@ -233,7 +233,7 @@ void GetDataForReactionFromXMLFile(const boost::property_tree::ptree& PropertyTr
 
             if (auto LocalParticleKindObject = ParticlesKindsManagerObject.GetParticleKindFromStrId(ParticleKindIdStr); LocalParticleKindObject.has_value() == true)
             {
-                 LocalVectorOfElements.emplace_back(LocalParticleKindObject->EntityId, Counter, "", true);
+                 LocalVectorOfElements.emplace_back(LocalParticleKindObject->ParticleKindId, Counter, "", true);
                  LoggersManagerObject.Log(STREAM(Str1 << ReactionsPropertyTreeXMLTreeElementProduct.second.get<string>("<xmlattr>.constant") << " " << ParticleKindIdStr << " " << Counter));
             }
             else
@@ -434,11 +434,11 @@ void CellEngineIllinoisDataCreator::CheckHowManyParticlesKindsHasCounterAtStartO
     {
         if (UpdateParticleKinds == true)
             for (auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
-                if (ParticleKindObject.second.EntityId >= StartParticleKindId)
+                if (ParticleKindObject.second.ParticleKindId >= StartParticleKindId)
                     if (ParticleKindObject.second.ParticleKindSpecialDataSector.empty() == true)
                     {
                         ParticleKindObject.second.ParticleKindSpecialDataSector.emplace_back(ParticleKindSpecialData{ -1, "", "", false, ParticlesTypes::Basic, false, 100 });
-                        LoggersManagerObject.Log(STREAM("UPDATED COUNTER FOR PARTICLE = " << ParticleKindObject.second.EntityId << " " << ParticleKindObject.second.IdStr << " " << ParticleKindObject.second.Name << " " << ParticleKindObject.second.Formula << ParticlesKindsManagerObject.ConvertParticleTypeToString(ParticleKindObject.second.ParticleKindSpecialDataSector[0].ParticleType)));
+                        LoggersManagerObject.Log(STREAM("UPDATED COUNTER FOR PARTICLE = " << ParticleKindObject.second.ParticleKindId << " " << ParticleKindObject.second.IdStr << " " << ParticleKindObject.second.Name << " " << ParticleKindObject.second.Formula << ParticlesKindsManagerObject.ConvertParticleTypeToString(ParticleKindObject.second.ParticleKindSpecialDataSector[0].ParticleType)));
                     }
     }
     CATCH("checking how many particles kinds has counter at start of simulation equ zero")

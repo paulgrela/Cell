@@ -87,7 +87,7 @@ void CellEngineSimulationSpace::GenerateOneStepOfElectricDiffusionForOneParticle
 
             DEBUGLOG(LoggersManagerObject.Log(STREAM("EntityId = " << to_string(ParticleObject.EntityId) << " ElectricCharge = " << to_string(ParticleObject.ElectricCharge)));)
 
-            const auto ParticleKindObject = ParticlesKindsManagerObject.GetParticleKind(ParticleObject.EntityId);
+            const auto ParticleKindObject = ParticlesKindsManagerObject.GetParticleKind(ParticleObject.ParticleKindId);
 
             switch (TypeOfLookingForParticles)
             {
@@ -151,14 +151,14 @@ tuple<IndexesChosenForReactionType, bool> CellEngineSimulationSpace::ChooseParti
             DEBUGLOG(LoggersManagerObject.Log(STREAM("ParticleObjectIndex = " << to_string(ParticleObjectIndex) <<" EntityId = " << to_string(ParticleObjectTestedForReaction.EntityId) << " X = " << to_string(ParticleObjectTestedForReaction.Center.X) << " Y = " << to_string(ParticleObjectTestedForReaction.Center.Y) << " Z = " << to_string(ParticleObjectTestedForReaction.Center.Z)));)
 
             vector<ParticleKindForChemicalReaction>::const_iterator ReactantIterator;
-            if (CellEngineUseful::IsDNAorRNA(ParticleObjectTestedForReaction.EntityId) == false)
-                ReactantIterator = ranges::find_if(ReactionObject.Reactants, [&ParticleObjectTestedForReaction](const ParticleKindForChemicalReaction& ParticleKindForReactionObjectParam){ return ParticleKindForReactionObjectParam.EntityId == ParticleObjectTestedForReaction.EntityId && CompareFitnessOfParticle(ParticleKindForReactionObjectParam, ParticleObjectTestedForReaction) == true; });
+            if (CellEngineUseful::IsDNAorRNA(ParticleObjectTestedForReaction.ParticleKindId) == false)
+                ReactantIterator = ranges::find_if(ReactionObject.Reactants, [&ParticleObjectTestedForReaction](const ParticleKindForChemicalReaction& ParticleKindForReactionObjectParam){ return ParticleKindForReactionObjectParam.ParticleKindId == ParticleObjectTestedForReaction.ParticleKindId && CompareFitnessOfParticle(ParticleKindForReactionObjectParam, ParticleObjectTestedForReaction) == true; });
             else
-                ReactantIterator = ranges::find_if(ReactionObject.Reactants, [&ParticleObjectTestedForReaction, this](const ParticleKindForChemicalReaction& ParticleKindForReactionObjectParam){ return CellEngineUseful::IsDNA(ParticleKindForReactionObjectParam.EntityId) == true && CompareFitnessOfDNASequenceByNucleotidesLoop(ComparisonType::ByVectorLoop, ParticleKindForReactionObjectParam, ParticleObjectTestedForReaction) == true; });
+                ReactantIterator = ranges::find_if(ReactionObject.Reactants, [&ParticleObjectTestedForReaction, this](const ParticleKindForChemicalReaction& ParticleKindForReactionObjectParam){ return CellEngineUseful::IsDNA(ParticleKindForReactionObjectParam.ParticleKindId) == true && CompareFitnessOfDNASequenceByNucleotidesLoop(ComparisonType::ByVectorLoop, ParticleKindForReactionObjectParam, ParticleObjectTestedForReaction) == true; });
 
             auto PositionInReactants = distance(ReactionObject.Reactants.cbegin(), ReactantIterator);
 
-            if (CellEngineUseful::IsDNAorRNA(ParticleObjectTestedForReaction.EntityId) == true)
+            if (CellEngineUseful::IsDNAorRNA(ParticleObjectTestedForReaction.ParticleKindId) == true)
                 if (ReactantIterator != ReactionObject.Reactants.cend() && ReactantsCounters[PositionInReactants] > 0 && ReactantIterator->ToRemoveInReaction == false)
                     NucleotidesIndexesChosenForReaction.emplace_back(ParticleObjectIndex, PositionInReactants);
 
@@ -364,11 +364,11 @@ bool CellEngineSimulationSpace::MakeChemicalReaction(ChemicalReaction& ReactionO
         UnsignedInt CenterIndex = 0;
         for (const auto& ReactionProduct : ReactionObject.Products)
         {
-            UnsignedInt ParticleIndex = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), ReactionProduct.EntityId, 1, -1, 1, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
+            UnsignedInt ParticleIndex = AddNewParticle(Particle(GetNewFreeIndexOfParticle(), ReactionProduct.ParticleKindId, 1, -1, 1, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
 
             CreatedParticlesIndexes.emplace_back(ParticleIndex);
 
-            auto& ParticleKindObjectForProduct = ParticlesKindsManagerObject.GetParticleKind(ReactionProduct.EntityId);
+            auto& ParticleKindObjectForProduct = ParticlesKindsManagerObject.GetParticleKind(ReactionProduct.ParticleKindId);
 
             if (CellEngineConfigDataObject.TypeOfReactionsDeterminedByFindingNewPositionForPlacingNewParticles == CellEngineConfigData::TypesOfReactionsDeterminedByFindingNewPositionForPlacingNewParticles::NewParticlePlacedInNewRandomPosition)
             {
@@ -402,7 +402,7 @@ bool CellEngineSimulationSpace::MakeChemicalReaction(ChemicalReaction& ReactionO
 
 bool CellEngineSimulationSpace::IsChemicalReactionPossible(const ChemicalReaction& ReactionObject)
 {
-    return ranges::all_of(ReactionObject.Reactants, [this](const ParticleKindForChemicalReaction& ReactionReactant){ return ReactionReactant.Counter <= LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity[ReactionReactant.EntityId]; });
+    return ranges::all_of(ReactionObject.Reactants, [this](const ParticleKindForChemicalReaction& ReactionReactant){ return ReactionReactant.Counter <= LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity[ReactionReactant.ParticleKindId]; });
 }
 
 void CellEngineSimulationSpace::PrepareRandomReaction()
@@ -523,12 +523,12 @@ void CellEngineSimulationSpace::SaveNumberOfParticlesStatisticsToFile()
     {
         LoggersManagerObject.LogStatistics(STREAM("THREAD = " << CurrentThreadIndex << " X = " << CellEngineConfigDataObject.NumberOfParticlesSectorsInX << " Y = " << CellEngineConfigDataObject.NumberOfParticlesSectorsInY << " Z = " << CellEngineConfigDataObject.NumberOfParticlesSectorsInZ));
 
-        GetNumberOfParticlesFromParticleKind(ParticlesKindsManagerObject.GetParticleKindFromStrId("M_glc__D_e")->EntityId);
+        GetNumberOfParticlesFromParticleKind(ParticlesKindsManagerObject.GetParticleKindFromStrId("M_glc__D_e")->ParticleKindId);
 
         int CounterOfParticles = 0;
         FOR_EACH_PARTICLE_IN_SECTORS_XYZ_CONST
             if (ParticleObject.first != 0)
-                if (auto IPK = ParticlesKindsManagerObject.ParticlesKinds.find(GetParticleFromIndex(ParticleObject.first).EntityId); IPK != ParticlesKindsManagerObject.ParticlesKinds.end() && IPK->second.IdStr == "M_glc__D_e")
+                if (auto IPK = ParticlesKindsManagerObject.ParticlesKinds.find(GetParticleFromIndex(ParticleObject.first).ParticleKindId); IPK != ParticlesKindsManagerObject.ParticlesKinds.end() && IPK->second.IdStr == "M_glc__D_e")
                     CounterOfParticles++;
 
         LoggersManagerObject.LogStatistics(STREAM("Particle Name = " << "D-Glucose" << " Number of Particles = " << CounterOfParticles));

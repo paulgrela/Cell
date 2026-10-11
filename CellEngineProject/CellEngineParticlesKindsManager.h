@@ -107,9 +107,9 @@ public:
 public:
     void AddParticleKind(const ParticleKind& ParticleKindObjectParam)
     {
-        ParticlesKinds[ParticleKindObjectParam.EntityId] = ParticleKindObjectParam;
+        ParticlesKinds[ParticleKindObjectParam.ParticleKindId] = ParticleKindObjectParam;
         #ifndef USING_MODULES
-        ParticlesKinds[ParticleKindObjectParam.EntityId].GraphicData = ParticleKindGraphicData{ParticleKindObjectParam.EntityId, true, false, 1, 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), ParticleKindObjectParam.Name, ParticleKindObjectParam.Formula };
+        ParticlesKinds[ParticleKindObjectParam.ParticleKindId].GraphicData = ParticleKindGraphicData{ParticleKindObjectParam.ParticleKindId, true, false, 1, 1, 1, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), ParticleKindObjectParam.Name, ParticleKindObjectParam.Formula };
         #endif
     }
 public:
@@ -133,7 +133,7 @@ public:
         {
             for (const auto& ParticleKindObject : ParticlesKinds)
             {
-                LoggersManagerObject.Log(STREAM("KIND PARTICLE = " << ParticleKindObject.second.EntityId << " " << ParticleKindObject.second.IdStr << " " << ParticleKindObject.second.Name << " " << ParticleKindObject.second.Formula << " " << ParticleKindObject.second.ElectricCharge << " GeneId = " << ParticleKindObject.second.GeneId));
+                LoggersManagerObject.Log(STREAM("KIND PARTICLE = " << ParticleKindObject.second.ParticleKindId << " " << ParticleKindObject.second.IdStr << " " << ParticleKindObject.second.Name << " " << ParticleKindObject.second.Formula << " " << ParticleKindObject.second.ElectricCharge << " GeneId = " << ParticleKindObject.second.GeneId));
                 for (const auto& ParticleKindParticleKindSpecialDataSectorObject : ParticleKindObject.second.ParticleKindSpecialDataSector)
                     LoggersManagerObject.Log(STREAM(std::string("KIND GENE = " + std::string(ParticleKindParticleKindSpecialDataSectorObject.GeneId != -1 ? JCVISYN3APredStr + std::to_string(ParticleKindParticleKindSpecialDataSectorObject.GeneId) : "NoGene") + " TYPE = " + ParticlesKindsManager::ConvertParticleTypeToString(ParticleKindParticleKindSpecialDataSectorObject.ParticleType) + " D = #" + ParticleKindParticleKindSpecialDataSectorObject.Description + "# Added = #" + ParticleKindParticleKindSpecialDataSectorObject.AddedParticle + "# CLEAN PRODUCT = #" + std::to_string(ParticleKindParticleKindSpecialDataSectorObject.CleanProductOfTranscription) + "# COUNTER = " + std::to_string(ParticleKindParticleKindSpecialDataSectorObject.CounterAtStartOfSimulation))));                ;
 

@@ -173,7 +173,7 @@ void CellEngineFullAtomSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpa
             DEBUGLOG(CellEngineUseful::CheckCenterForSector<Particle>(ParticleInProximityObject, Particles, "C0");)
 
             SetCurrentSectorPos(SectorPosType{ .SectorPosX = static_cast<SignedInt>(StartSectorXPosParam), .SectorPosY = static_cast<SignedInt>(StartSectorYPosParam), .SectorPosZ = static_cast<SignedInt>(StartSectorZPosParam) });
-            if (CellEngineUseful::IsDNA(ParticleInProximityObject.EntityId) == false)
+            if (CellEngineUseful::IsDNA(ParticleInProximityObject.ParticleKindId) == false)
                 MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(ParticleInProximityObject, Particles, EmptyParticlesIter, ListOfParticlesToChangeSectors, CurrentSectorPos, GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
         }
 
@@ -401,7 +401,7 @@ void CellEngineFullAtomSimulationSpace::WriteNumberOfParticlesKindsWithoutAtoms(
         for (const auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds | views::values)
             if (ParticleKindObject.ListOfAtoms.empty() == true)
             {
-                LoggersManagerObject.Log(STREAM("Particle Kind Without Atoms = " << ParticleKindObject.EntityId << " " << ParticleKindObject.IdStr));
+                LoggersManagerObject.Log(STREAM("Particle Kind Without Atoms = " << ParticleKindObject.ParticleKindId << " " << ParticleKindObject.IdStr));
                 CountParticleKindsWithoutAtoms++;
             }
 

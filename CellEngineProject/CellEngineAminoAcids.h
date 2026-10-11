@@ -82,9 +82,9 @@ class CellEngineAminoAcidsManager
 
     static void SetNumIdFromName(const CellEngineAminoAcid& CellEngineAminoAcidObject)
     {
-        const_cast<CellEngineAminoAcid&>(CellEngineAminoAcidObject).EntityId = ParticlesKindsManagerObject.GetParticleKindFromStrId(CellEngineAminoAcidObject.Name)->EntityId;
-        const_cast<CellEngineAminoAcid&>(CellEngineAminoAcidObject).tRNAUnchargedNumId = ParticlesKindsManagerObject.GetParticleKindFromStrId(CellEngineAminoAcidObject.tRNAUnchargedName)->EntityId;
-        const_cast<CellEngineAminoAcid&>(CellEngineAminoAcidObject).tRNAChargedNumId = ParticlesKindsManagerObject.GetParticleKindFromStrId(CellEngineAminoAcidObject.tRNAChargedName)->EntityId;
+        const_cast<CellEngineAminoAcid&>(CellEngineAminoAcidObject).EntityId = ParticlesKindsManagerObject.GetParticleKindFromStrId(CellEngineAminoAcidObject.Name)->ParticleKindId;
+        const_cast<CellEngineAminoAcid&>(CellEngineAminoAcidObject).tRNAUnchargedNumId = ParticlesKindsManagerObject.GetParticleKindFromStrId(CellEngineAminoAcidObject.tRNAUnchargedName)->ParticleKindId;
+        const_cast<CellEngineAminoAcid&>(CellEngineAminoAcidObject).tRNAChargedNumId = ParticlesKindsManagerObject.GetParticleKindFromStrId(CellEngineAminoAcidObject.tRNAChargedName)->ParticleKindId;
     }
 public:
     void MapAminoAcidsIdToAminoAcidsObject()

@@ -178,10 +178,10 @@ static EntityIdInt GetParticleKindIdFromGeneIdOrName(const string& ParticleKindN
     {
         if (const auto GeneId = ProteinIdFromGeneIdTranslator.find(ParticleKindIdParam); GeneId != ProteinIdFromGeneIdTranslator.end())
              if (const auto ParticleKindId = ParticlesKindsManagerObject.GetParticleKindFromGeneId(GeneId->second); ParticleKindId.has_value() == true)
-                 return ParticleKindId->EntityId;
+                 return ParticleKindId->ParticleKindId;
 
         if (const auto IllinoisNameIter = AutinIllinoisNameMap.find(ParticleKindName); IllinoisNameIter != AutinIllinoisNameMap.end())
-            return ParticlesKindsManagerObject.GetParticleKindFromStrId(IllinoisNameIter->second)->EntityId;
+            return ParticlesKindsManagerObject.GetParticleKindFromStrId(IllinoisNameIter->second)->ParticleKindId;
 
         if (ParticleKindIdParam != LastParticleKindId)
         {
@@ -191,7 +191,7 @@ static EntityIdInt GetParticleKindIdFromGeneIdOrName(const string& ParticleKindN
     }
     CATCH("translating entity id")
 
-    return ParticlesKindsManagerObject.GetParticleKindFromStrId("UnknownParticleKind")->EntityId;
+    return ParticlesKindsManagerObject.GetParticleKindFromStrId("UnknownParticleKind")->ParticleKindId;
 }
 
 static void AddParticleKindGraphicDataFromConfigXMLData(const EntityIdInt EntityId)
@@ -201,10 +201,10 @@ static void AddParticleKindGraphicDataFromConfigXMLData(const EntityIdInt Entity
         if (const auto ParticleKindObjectIterator = ParticlesKindsManagerObject.GraphicParticlesKindsFromConfigXML.find(EntityId); ParticleKindObjectIterator == ParticlesKindsManagerObject.GraphicParticlesKindsFromConfigXML.end())
         {
             const auto OthersParticleKindObjectIterator = ParticlesKindsManagerObject.GraphicParticlesKindsFromConfigXML.find(10000);
-            ParticlesKindsManagerObject.ParticlesKinds[EntityId].GraphicData = ParticleKindGraphicData{ .EntityId = EntityId, .Visible = OthersParticleKindObjectIterator->second.Visible, .Selected = false, .SizeX = OthersParticleKindObjectIterator->second.SizeX, .SizeY = OthersParticleKindObjectIterator->second.SizeY, .SizeZ = OthersParticleKindObjectIterator->second.SizeZ, .AtomColor = OthersParticleKindObjectIterator->second.ParticleColor, .ParticleColor = OthersParticleKindObjectIterator->second.ParticleColor, .RandomParticleColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), .NameFromXML = OthersParticleKindObjectIterator->second.NameFromXML, .NameFromDataFile = "NAME_FROM_DATA_FILE" };
+            ParticlesKindsManagerObject.ParticlesKinds[EntityId].GraphicData = ParticleKindGraphicData{ .ParticleKindId = EntityId, .Visible = OthersParticleKindObjectIterator->second.Visible, .Selected = false, .SizeX = OthersParticleKindObjectIterator->second.SizeX, .SizeY = OthersParticleKindObjectIterator->second.SizeY, .SizeZ = OthersParticleKindObjectIterator->second.SizeZ, .AtomColor = OthersParticleKindObjectIterator->second.ParticleColor, .ParticleColor = OthersParticleKindObjectIterator->second.ParticleColor, .RandomParticleColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), .NameFromXML = OthersParticleKindObjectIterator->second.NameFromXML, .NameFromDataFile = "NAME_FROM_DATA_FILE" };
         }
         else
-            ParticlesKindsManagerObject.ParticlesKinds[EntityId].GraphicData = ParticleKindGraphicData{ .EntityId = EntityId, .Visible = ParticleKindObjectIterator->second.Visible, .Selected = false, .SizeX = ParticleKindObjectIterator->second.SizeX, .SizeY = ParticleKindObjectIterator->second.SizeY, .SizeZ = ParticleKindObjectIterator->second.SizeZ, .AtomColor = ParticleKindObjectIterator->second.ParticleColor, .ParticleColor = ParticleKindObjectIterator->second.ParticleColor, .RandomParticleColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), .NameFromXML = ParticleKindObjectIterator->second.NameFromXML, .NameFromDataFile = "NAME_FROM_DATA_FILE"};
+            ParticlesKindsManagerObject.ParticlesKinds[EntityId].GraphicData = ParticleKindGraphicData{ .ParticleKindId = EntityId, .Visible = ParticleKindObjectIterator->second.Visible, .Selected = false, .SizeX = ParticleKindObjectIterator->second.SizeX, .SizeY = ParticleKindObjectIterator->second.SizeY, .SizeZ = ParticleKindObjectIterator->second.SizeZ, .AtomColor = ParticleKindObjectIterator->second.ParticleColor, .ParticleColor = ParticleKindObjectIterator->second.ParticleColor, .RandomParticleColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()), .NameFromXML = ParticleKindObjectIterator->second.NameFromXML, .NameFromDataFile = "NAME_FROM_DATA_FILE"};
     }
     CATCH("adding particle kind graphic data from xml config data")
 }
@@ -291,7 +291,7 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile(const bool SetStartValuesB
                     AtomFields.emplace_back(Token->str());
 
                 EntityIdInt EntityId = stoi(AtomFields[2]);
-                ParticlesKindsManagerObject.ParticlesKinds[EntityId].EntityId = EntityId;
+                ParticlesKindsManagerObject.ParticlesKinds[EntityId].ParticleKindId = EntityId;
 
                 if (CellEngineConfigDataObject.MixedFullAtomWithVoxelSpace == true)
                 {
@@ -413,7 +413,7 @@ void CellEngineCIFDataFileReader::ReadDataFromCIFFile(const bool SetStartValuesB
                                 Particle ParticleToInsert(NumberOfParticles, LocalEntityId, CellEngineUseful::GetChainIdFromChainName(AppliedChainName), -1, 1, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(UniqueParticleColor));
                                 ParticleToInsert.ListOfAtoms = ListOfAtoms;
                                 ParticleToInsert.Center = Center;
-                                ParticleToInsert.ParticleColor = ParticlesKindsManagerObject.GetParticleKind(ParticleToInsert.EntityId).GraphicData.ParticleColor;
+                                ParticleToInsert.ParticleColor = ParticlesKindsManagerObject.GetParticleKind(ParticleToInsert.ParticleKindId).GraphicData.ParticleColor;
                                 ParticleToInsert.UniqueParticleColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(UniqueParticleColor);
                                 ParticleToInsert.RandomParticleKindColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(ChainColor);
                                 AddNewParticle(ParticleToInsert);

@@ -12,7 +12,7 @@
 
 struct ParticleKindGraphicData
 {
-    EntityIdInt EntityId{};
+    EntityIdInt ParticleKindId{};
     bool Visible{};
     bool Selected{};
     RealType SizeX{};
@@ -107,7 +107,7 @@ public:
 class ParticleKind
 {
 public:
-    EntityIdInt EntityId{};
+    EntityIdInt ParticleKindId{};
     std::string IdStr;
     std::string Name;
     std::string Formula;
@@ -137,13 +137,13 @@ public:
 public:
     ParticleKind() = default;
 public:
-    ParticleKind(const UnsignedInt EntityIdParam, std::string IdStrParam, std::string NameParam, std::string FormulaParam, const GeneIdInt GeneIdParam, ElectricChargeType const ElectricChargeParam, std::string CompartmentParam, const UnsignedInt CounterParam) : EntityId(EntityIdParam), IdStr(std::move(IdStrParam)), Name(std::move(NameParam)), Formula(std::move(FormulaParam)), GeneId(GeneIdParam), ElectricCharge(ElectricChargeParam), Compartment(std::move(CompartmentParam)), Counter(CounterParam)
+    ParticleKind(const UnsignedInt ParticleKindIdParam, std::string IdStrParam, std::string NameParam, std::string FormulaParam, const GeneIdInt GeneIdParam, ElectricChargeType const ElectricChargeParam, std::string CompartmentParam, const UnsignedInt CounterParam) : ParticleKindId(ParticleKindIdParam), IdStr(std::move(IdStrParam)), Name(std::move(NameParam)), Formula(std::move(FormulaParam)), GeneId(GeneIdParam), ElectricCharge(ElectricChargeParam), Compartment(std::move(CompartmentParam)), Counter(CounterParam)
     {
     }
-    ParticleKind(const UnsignedInt EntityIdParam, const UnsignedInt CounterParam) : EntityId(EntityIdParam), Counter(CounterParam)
+    ParticleKind(const UnsignedInt ParticleKindIdParam, const UnsignedInt CounterParam) : ParticleKindId(ParticleKindIdParam), Counter(CounterParam)
     {
     }
-    explicit ParticleKind(const ParticleKindGraphicData& ParticleKindGraphicDataObjectParam) : EntityId(ParticleKindGraphicDataObjectParam.EntityId), GraphicData(ParticleKindGraphicDataObjectParam)
+    explicit ParticleKind(const ParticleKindGraphicData& ParticleKindGraphicDataObjectParam) : ParticleKindId(ParticleKindGraphicDataObjectParam.ParticleKindId), GraphicData(ParticleKindGraphicDataObjectParam)
     {
     }
 };

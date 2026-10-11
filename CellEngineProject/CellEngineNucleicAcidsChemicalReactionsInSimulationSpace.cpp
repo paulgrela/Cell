@@ -69,7 +69,7 @@ bool CellEngineNucleicAcidsChemicalReactionsInSimulationSpace::CompareFitnessOfD
 
         if (TemplateSequenceStr == "ANY")
         {
-            LoggersManagerObject.Log(STREAM("DNA SEQUENCE FOUND = ANY => ParticleKindForReactionObject.EntityId = " << to_string(ParticleKindForReactionObject.EntityId)));
+            LoggersManagerObject.Log(STREAM("DNA SEQUENCE FOUND = ANY => ParticleKindForReactionObject.EntityId = " << to_string(ParticleKindForReactionObject.ParticleKindId)));
             return true;
         }
 
@@ -91,7 +91,7 @@ bool CellEngineNucleicAcidsChemicalReactionsInSimulationSpace::CompareFitnessOfD
 
         auto [ParticlePtr, ParticlePtrPrev, NucleotidesCounter, NucleotidesSequenceToCompareString, NucleotidesSequenceToCompareVector] = GetNucleotidesSequence(&Particle::Next, TemplateSequenceStr.length(), ParticleObjectTestedForReaction, true, true, [](const Particle*){ return true; });
 
-        LoggersManagerObject.Log(STREAM("DNA SEQUENCE COMPARE = #" << NucleotidesSequenceToCompareString << "#" << TemplateSequenceStr << "#" << OriginalTemplateRNASequenceStr << "#" << to_string(ParticleKindForReactionObject.EntityId)));
+        LoggersManagerObject.Log(STREAM("DNA SEQUENCE COMPARE = #" << NucleotidesSequenceToCompareString << "#" << TemplateSequenceStr << "#" << OriginalTemplateRNASequenceStr << "#" << to_string(ParticleKindForReactionObject.ParticleKindId)));
 
         if (TypeOfComparison == ComparisonType::ByVectorLoop)
             CellEngineUseful::CompareSequences(TemplateSequence, NucleotidesSequenceToCompareVector, FoundSequenceNotFit, false);

@@ -78,7 +78,7 @@ void CellEngineBasicParticlesOperations::GetMinMaxCoordinatesForAllParticles(con
         LoggersManagerObject.Log(STREAM("GET MIN MAX FOR ALL PARTICLES"));
 
         FOR_EACH_PARTICLE_IN_SECTORS_XYZ
-            if (ParticleObject.second.EntityId != 0)
+            if (ParticleObject.second.ParticleKindId != 0)
                 GetMinMaxCoordinatesForParticle<T, A>(ParticleObject.second, ListOfElements, ListOfElementsOfParticleKind, UpdateParticleKindListOfElementsBool);
     }
     CATCH("getting min max coordinates for all particles")
@@ -89,7 +89,7 @@ void CellEngineBasicParticlesOperations::UpdateParticleKindListOfElements(const 
 {
     try
     {
-        auto& ParticleKindObject = ParticlesKindsManagerObject.GetParticleKind(ParticleObject.EntityId);
+        auto& ParticleKindObject = ParticlesKindsManagerObject.GetParticleKind(ParticleObject.ParticleKindId);
         if (static_cast<vector<A>>(ParticleKindObject.*ListOfElementsOfParticleKind).empty() == true)
         {
             if constexpr(is_same_v<A, CellEngineAtom>)
@@ -153,9 +153,9 @@ vector<UniqueIdUnsignedInt> CellEngineBasicParticlesOperations::GetAllParticlesW
     {
         ListOfParticlesIndexes.reserve(MaxMPIMessageSize);
         FOR_EACH_PARTICLE_IN_SECTORS_XYZ_CONST
-            if (ParticleObject.second.EntityId != 0)
+            if (ParticleObject.second.ParticleKindId != 0)
             {
-                auto ParticleKindObject = ParticlesKindsManagerObject.GetParticleKind(ParticleObject.second.EntityId);
+                auto ParticleKindObject = ParticlesKindsManagerObject.GetParticleKind(ParticleObject.second.ParticleKindId);
                 if (ParticleKindObject.ParticleKindSpecialDataSector.empty() == false)
                     for (const auto& ParticleKindSpecialDataObject : ParticleKindObject.ParticleKindSpecialDataSector)
                         if (ParticleKindSpecialDataObject.ParticleType == ParticleTypeParam)
@@ -175,7 +175,7 @@ vector<UniqueIdUnsignedInt> CellEngineBasicParticlesOperations::GetAllParticlesW
     {
         ListOfParticlesIndexes.reserve(MaxMPIMessageSize);
         FOR_EACH_PARTICLE_IN_SECTORS_XYZ_CONST
-            if (ParticleObject.second.EntityId == EntityId)
+            if (ParticleObject.second.ParticleKindId == EntityId)
                 ListOfParticlesIndexes.emplace_back(ParticleObject.first);
     }
     CATCH("getting all particles with chosen entity id")
@@ -190,7 +190,7 @@ UnsignedInt CellEngineBasicParticlesOperations::GetNumberOfParticlesWithChosenEn
     try
     {
         FOR_EACH_PARTICLE_IN_SECTORS_XYZ_CONST
-            if (ParticleObject.second.EntityId == EntityId)
+            if (ParticleObject.second.ParticleKindId == EntityId)
                 ParticleCounter++;
     }
     CATCH("getting number of all particles with chosen entity id")

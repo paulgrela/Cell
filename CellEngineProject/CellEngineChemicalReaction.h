@@ -18,7 +18,7 @@ class ParticleKindForChemicalReaction
 {
     using SpecialCompareFunctionType = std::function<bool (UnsignedInt)>;
 public:
-    EntityIdInt EntityId{};
+    EntityIdInt ParticleKindId{};
     UnsignedInt Counter{};
     bool ToRemoveInReaction{};
     std::vector<UniqueIdUnsignedIntReduced> LinkedParticleTypes;
@@ -28,7 +28,7 @@ public:
 public:
     SpecialCompareFunctionType SpecialCompareFunction = nullptr;
 public:
-    ParticleKindForChemicalReaction(const EntityIdInt EntityIdParam, const UnsignedInt CounterParam, std::string SequenceStrParam, const bool ToRemoveInReactionParam) : EntityId(EntityIdParam), Counter(CounterParam), SequenceStr(std::move(SequenceStrParam)), ToRemoveInReaction(ToRemoveInReactionParam)
+    ParticleKindForChemicalReaction(const EntityIdInt EntityIdParam, const UnsignedInt CounterParam, std::string SequenceStrParam, const bool ToRemoveInReactionParam) : ParticleKindId(EntityIdParam), Counter(CounterParam), SequenceStr(std::move(SequenceStrParam)), ToRemoveInReaction(ToRemoveInReactionParam)
     {
         Sequence = CellEngineUseful::ConvertStringSequenceToChainIdSequence(SequenceStr);
     }

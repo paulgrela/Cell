@@ -180,7 +180,7 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfElectricDiffusionForSelect
         const auto ParticlesSortedByCapacityFoundInProximityCopy(LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity);
 
         for (auto& ParticleInProximityIndex : ParticlesSortedByCapacityFoundInProximityCopy)
-            if (CellEngineUseful::IsDNA(GetParticleFromIndex(ParticleInProximityIndex).EntityId) == false)
+            if (CellEngineUseful::IsDNA(GetParticleFromIndex(ParticleInProximityIndex).ParticleKindId) == false)
                 GenerateOneStepOfElectricDiffusionForOneParticle(TypeOfLookingForParticles, AdditionalSpaceBoundFactor, MultiplyElectricChargeFactor, ParticleInProximityIndex, &NeighbourPoints, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
 
         CellEngineUseful::SwitchOnLogs();
@@ -199,7 +199,7 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpaceF
         FindParticlesInProximityOfSimulationSpaceForSelectedSpace(false, StartSectorXPosParam, StartSectorYPosParam, StartSectorZPosParam, UnusedValueRealType, UnusedValueRealType, UnusedValueRealType);
 
         for (const auto& ParticleInProximityIndex : LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity)
-            if (CellEngineUseful::IsDNA(GetParticleFromIndex(ParticleInProximityIndex).EntityId) == false)
+            if (CellEngineUseful::IsDNA(GetParticleFromIndex(ParticleInProximityIndex).ParticleKindId) == false)
                 MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(GetParticleFromIndex(ParticleInProximityIndex), Particles, EmptyParticlesIter, CurrentThreadLocalSimulationSpaceData->ListOfParticlesToChangeSectors, CurrentSectorPos, GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
     }
     CATCH("generating one step of diffusion for selected space")

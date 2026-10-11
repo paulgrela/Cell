@@ -9,7 +9,7 @@ void CellEngineVoxelSimulationSpaceStatistics::CountStatisticsOfVoxelSimulationS
             for (UnsignedInt PosY = 0; PosY < CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension; PosY++)
                 for (UnsignedInt PosZ = 0; PosZ < CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension; PosZ++)
                 {
-                    if (GetParticleFromIndex(GetSpaceVoxel(PosX, PosY, PosZ)).EntityId != 0)
+                    if (GetParticleFromIndex(GetSpaceVoxel(PosX, PosY, PosZ)).ParticleKindId != 0)
                         SumOfNotEmptyVoxels++;
                 }
     }

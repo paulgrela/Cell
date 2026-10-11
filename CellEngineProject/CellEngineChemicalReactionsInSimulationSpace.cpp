@@ -88,47 +88,47 @@ void CellEngineChemicalReactionsInSimulationSpace::UpdateFoundNucleotidesForFoun
     {
         const Particle& ParticleObject = GetParticleFromIndex(ParticleIndex);
 
-        if (CellEngineUseful::IsDNAorRNA(ParticleObject.EntityId) && ParticleObject.Next == nullptr && ParticleObject.Prev != nullptr)
+        if (CellEngineUseful::IsDNAorRNA(ParticleObject.ParticleKindId) && ParticleObject.Next == nullptr && ParticleObject.Prev != nullptr)
             LocalThreadParticlesInProximityObject.NucleotidesWithFreeNextEndingsFoundInProximity.emplace_back(ParticleIndex);
-        if (CellEngineUseful::IsDNAorRNA(ParticleObject.EntityId) && ParticleObject.Prev == nullptr && ParticleObject.Next != nullptr)
+        if (CellEngineUseful::IsDNAorRNA(ParticleObject.ParticleKindId) && ParticleObject.Prev == nullptr && ParticleObject.Next != nullptr)
             LocalThreadParticlesInProximityObject.NucleotidesWithFreePrevEndingsFoundInProximity.emplace_back(ParticleIndex);
 
-        if (CellEngineUseful::IsDNA(ParticleObject.EntityId) && ParticleObject.Next == nullptr && ParticleObject.Prev != nullptr)
+        if (CellEngineUseful::IsDNA(ParticleObject.ParticleKindId) && ParticleObject.Next == nullptr && ParticleObject.Prev != nullptr)
             LocalThreadParticlesInProximityObject.DNANucleotidesWithFreeNextEndingsFoundInProximity.emplace_back(ParticleIndex);
-        if (CellEngineUseful::IsDNA(ParticleObject.EntityId) && ParticleObject.Prev == nullptr && ParticleObject.Next != nullptr)
+        if (CellEngineUseful::IsDNA(ParticleObject.ParticleKindId) && ParticleObject.Prev == nullptr && ParticleObject.Next != nullptr)
             LocalThreadParticlesInProximityObject.DNANucleotidesWithFreePrevEndingsFoundInProximity.emplace_back(ParticleIndex);
 
         if (CellEngineConfigDataObject.RNAInOneParticle == false)
         {
-            if (CellEngineUseful::IsDNAorRNA(ParticleObject.EntityId) && ParticleObject.Next == nullptr && ParticleObject.Prev == nullptr)
+            if (CellEngineUseful::IsDNAorRNA(ParticleObject.ParticleKindId) && ParticleObject.Next == nullptr && ParticleObject.Prev == nullptr)
             {
                 LocalThreadParticlesInProximityObject.NucleotidesFreeFoundInProximity.emplace_back(ParticleIndex);
                 LocalThreadParticlesInProximityObject.RNANucleotidesFreeFoundInProximity.emplace_back(ParticleIndex);
             }
-            if (CellEngineUseful::IsRNA(ParticleObject.EntityId))
+            if (CellEngineUseful::IsRNA(ParticleObject.ParticleKindId))
                 LocalThreadParticlesInProximityObject.RNANucleotidesFoundInProximity.emplace_back(ParticleIndex);
         }
         else
         {
-            if (CellEngineUseful::IsRNA(ParticleObject.EntityId) && ParticleObject.SequenceStr.substr(0, RNAStartSequence.length()) == RNAStartSequence)
+            if (CellEngineUseful::IsRNA(ParticleObject.ParticleKindId) && ParticleObject.SequenceStr.substr(0, RNAStartSequence.length()) == RNAStartSequence)
                 LocalThreadParticlesInProximityObject.RNANucleotidesFreeFoundInProximity.emplace_back(ParticleIndex);
-            if (CellEngineUseful::IsDNA(ParticleObject.EntityId) && ParticleObject.Next == nullptr && ParticleObject.Prev == nullptr)
+            if (CellEngineUseful::IsDNA(ParticleObject.ParticleKindId) && ParticleObject.Next == nullptr && ParticleObject.Prev == nullptr)
                 LocalThreadParticlesInProximityObject.NucleotidesFreeFoundInProximity.emplace_back(ParticleIndex);
-            if (CellEngineUseful::IsRNA(ParticleObject.EntityId))
+            if (CellEngineUseful::IsRNA(ParticleObject.ParticleKindId))
                 LocalThreadParticlesInProximityObject.RNANucleotidesFoundInProximity.emplace_back(ParticleIndex);
         }
 
-        if (CellEngineUseful::IsFreeDNANucleotide(ParticleObject.EntityId) == true)
+        if (CellEngineUseful::IsFreeDNANucleotide(ParticleObject.ParticleKindId) == true)
             LocalThreadParticlesInProximityObject.DNANucleotidesFullFreeFoundInProximity.emplace_back(ParticleIndex);
-        if (CellEngineUseful::IsFreeRNANucleotide(ParticleObject.EntityId) == true)
+        if (CellEngineUseful::IsFreeRNANucleotide(ParticleObject.ParticleKindId) == true)
             LocalThreadParticlesInProximityObject.RNANucleotidesFullFreeFoundInProximity.emplace_back(ParticleIndex);
 
-        if (CellEngineAminoAcidsManagerObject.IstRNAUncharged(ParticleObject.EntityId) == true)
+        if (CellEngineAminoAcidsManagerObject.IstRNAUncharged(ParticleObject.ParticleKindId) == true)
             LocalThreadParticlesInProximityObject.tRNAUnchargedFoundInProximity.emplace_back(ParticleIndex);
-        if (CellEngineAminoAcidsManagerObject.IstRNACharged(ParticleObject.EntityId) == true)
+        if (CellEngineAminoAcidsManagerObject.IstRNACharged(ParticleObject.ParticleKindId) == true)
             LocalThreadParticlesInProximityObject.tRNAChargedFoundInProximity.emplace_back(ParticleIndex);
 
-        LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity[ParticleObject.EntityId]++;
+        LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity[ParticleObject.ParticleKindId]++;
     }
     CATCH("updating found nucleotides for found particles in proximity")
 }
@@ -148,7 +148,7 @@ void CellEngineChemicalReactionsInSimulationSpace::SaveParticleFoundInProximity(
             if (UpdateNucleotides == true)
                 UpdateFoundNucleotidesForFoundParticlesInProximity(ParticleIndex);
 
-            LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity[ParticleFromIndex.EntityId]++;
+            LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity[ParticleFromIndex.ParticleKindId]++;
 
             FoundParticleIndexes.insert(ParticleIndex);
 
@@ -198,7 +198,7 @@ void CellEngineChemicalReactionsInSimulationSpace::PrintInformationAboutFoundPar
     {
         LoggersManagerObject.Log(STREAM(endl << "ParticlesSortedByCapacityFoundInParticlesProximity List"));
         for (const auto& LocalParticleIndexObjectToWrite : LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity)
-            LoggersManagerObject.Log(STREAM("ParticleIndex = " << to_string(LocalParticleIndexObjectToWrite) << " EntityId = " << to_string(GetParticleFromIndex(LocalParticleIndexObjectToWrite).EntityId) << " NUCLEOTIDE = " << ((CellEngineUseful::IsDNAorRNA(GetParticleFromIndex(LocalParticleIndexObjectToWrite).EntityId) == true) ? CellEngineUseful::GetLetterFromChainIdForDNAorRNA(GetParticleFromIndex(LocalParticleIndexObjectToWrite).ChainId) : '0') << " GENOME INDEX = " << GetParticleFromIndex(LocalParticleIndexObjectToWrite).GenomeIndex));
+            LoggersManagerObject.Log(STREAM("ParticleIndex = " << to_string(LocalParticleIndexObjectToWrite) << " EntityId = " << to_string(GetParticleFromIndex(LocalParticleIndexObjectToWrite).ParticleKindId) << " NUCLEOTIDE = " << ((CellEngineUseful::IsDNAorRNA(GetParticleFromIndex(LocalParticleIndexObjectToWrite).ParticleKindId) == true) ? CellEngineUseful::GetLetterFromChainIdForDNAorRNA(GetParticleFromIndex(LocalParticleIndexObjectToWrite).ChainId) : '0') << " GENOME INDEX = " << GetParticleFromIndex(LocalParticleIndexObjectToWrite).GenomeIndex));
         LoggersManagerObject.Log(STREAM(endl << "ParticlesKindsFoundInProximity List"));
         for (const auto& [LocalParticleKindObjectToWriteFirst, LocalParticleKindObjectToWriteSecond] : LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity)
             LoggersManagerObject.Log(STREAM("ParticleKind EntityId = " << to_string(LocalParticleKindObjectToWriteFirst) << " in quantity = " << to_string(LocalParticleKindObjectToWriteSecond)));

@@ -17,7 +17,7 @@ public:
 struct ParticleKindStatistics
 {
 public:
-    EntityIdInt EntityId{};
+    EntityIdInt ParticleKindId{};
     UnsignedInt Counter = 0;
 };
 

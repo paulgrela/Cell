@@ -97,8 +97,8 @@ inline void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::SetParticleParamet
 {
     try
     {
-        TempAtomObject.EntityId = ParticleObject.EntityId;
-        auto ParticleKindObject = ParticlesKindsManagerObject.GetGraphicParticleKind(ParticleObject.EntityId);
+        TempAtomObject.EntityId = ParticleObject.ParticleKindId;
+        auto ParticleKindObject = ParticlesKindsManagerObject.GetGraphicParticleKind(ParticleObject.ParticleKindId);
         TempAtomObject.AtomColor = ParticleKindObject.AtomColor;
         ParticleObject.ParticleColor = ParticleKindObject.ParticleColor;
         ParticleObject.RandomParticleKindColor = (CellEngineUseful::IsDNAorRNA(TempAtomObject.EntityId) == true ? CellEngineColorsObject.GetDNAorRNAColor(TempAtomObject.EntityId, ParticleObject.ChainId) : ParticleKindObject.RandomParticleColor);
@@ -115,7 +115,7 @@ inline void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::SetParticleParamet
             ParticleObject.GenomeIndexPrev = (ParticleObject.Prev != nullptr ? ParticleObject.Prev->GenomeIndex : 0);
             ParticleObject.GenomeIndexNext = (ParticleObject.Next != nullptr ? ParticleObject.Next->GenomeIndex : 0);
         }
-        ParticleObject.Nucleotide = ((CellEngineUseful::IsDNAorRNA(ParticleObject.EntityId) == true) ? CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.ChainId) : '0');
+        ParticleObject.Nucleotide = ((CellEngineUseful::IsDNAorRNA(ParticleObject.ParticleKindId) == true) ? CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.ChainId) : '0');
     }
     CATCH("setting particle parameters to draw")
 };
@@ -255,7 +255,7 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSelectedSpace(const
                                 if (DrawEmptyVoxels == false || SimulationSpaceVoxelObject != 0)
                                     SetParticleParametersToDraw(TempAtomObject, ParticleObject);
 
-                                if (DrawEmptyVoxels == true || (DrawEmptyVoxels == false && SimulationSpaceVoxelObject != 0 && ParticlesKindsManagerObject.GetGraphicParticleKind(ParticleObject.EntityId).Visible == true))
+                                if (DrawEmptyVoxels == true || (DrawEmptyVoxels == false && SimulationSpaceVoxelObject != 0 && ParticlesKindsManagerObject.GetGraphicParticleKind(ParticleObject.ParticleKindId).Visible == true))
                                 {
                                     if ((SpaceDrawingType == VoxelSpaceDrawingTypes::DrawVoxelSpaceFull && CellEngineConfigDataObject.ViewPositionZ <= CellEngineConfigDataObject.Distance + 700  || (CellEngineConfigDataObject.ViewPositionZ > CellEngineConfigDataObject.Distance + 700 && CellEngineConfigDataObject.RenderCellWithParallelCPUComputing == false)) || SpaceDrawingType == VoxelSpaceDrawingTypes::DrawVoxelSpaceSelected)
                                         GenerateVoxelsForGPU(SimulationSpaceVoxelObject, LastSimulationSpaceVoxel, AtomsCounter, TempAtomObject, ParticleObject);

@@ -26,9 +26,9 @@ void CellEngineRealRandomParticlesInFullAtomSpaceGenerator::UpdateSequence(Parti
     try
     {
         FOR_EACH_PARTICLE_IN_SECTORS_XYZ
-            if (ParticleObject.second.EntityId != 0)
+            if (ParticleObject.second.ParticleKindId != 0)
             {
-                const auto ParticleKindObject = ParticlesKindsManagerObject.GetParticleKind(ParticleObject.second.EntityId);
+                const auto ParticleKindObject = ParticlesKindsManagerObject.GetParticleKind(ParticleObject.second.ParticleKindId);
                 if (ParticleKindObject.ParticleKindSpecialDataSector.empty() == false)
                     for (const auto& ParticleKindSpecialDataObject : ParticleKindObject.ParticleKindSpecialDataSector)
                         if (auto GeneIter = ParticlesKindsManagerObject.Genes.find(ParticleKindSpecialDataObject.GeneId); GeneIter != ParticlesKindsManagerObject.Genes.end())
@@ -47,9 +47,9 @@ UnsignedInt CellEngineRealRandomParticlesInFullAtomSpaceGenerator::GetNumberOfRe
     try
     {
         FOR_EACH_PARTICLE_IN_SECTORS_XYZ_CONST
-            if (ParticleObject.second.EntityId != 0)
+            if (ParticleObject.second.ParticleKindId != 0)
             {
-                const auto ParticleKindObject = ParticlesKindsManagerObject.GetParticleKind(ParticleObject.second.EntityId);
+                const auto ParticleKindObject = ParticlesKindsManagerObject.GetParticleKind(ParticleObject.second.ParticleKindId);
                 if (ParticleKindObject.ParticleKindSpecialDataSector.empty() == false)
                     for (const auto& ParticleKindSpecialDataObject : ParticleKindObject.ParticleKindSpecialDataSector)
                         if (ParticleKindSpecialDataObject.ParticleType == ParticleTypeParam)
@@ -128,7 +128,7 @@ void CellEngineRealRandomParticlesInFullAtomSpaceGenerator::PrintNumberOfParticl
 
         UnsignedInt OldParticlesKindsCounter = 0;
         for (const auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
-            if (ParticleKindObject.second.EntityId < StartParticleKindId)
+            if (ParticleKindObject.second.ParticleKindId < StartParticleKindId)
                 OldParticlesKindsCounter++;
         LoggersManagerObject.Log(STREAM("Old Particles Kinds Counter = " << OldParticlesKindsCounter));
 
@@ -136,9 +136,9 @@ void CellEngineRealRandomParticlesInFullAtomSpaceGenerator::PrintNumberOfParticl
         set<UniqueIdUnsignedInt> TestSet;
         FOR_EACH_PARTICLE_IN_SECTORS_XYZ_CONST
         {
-            if (ParticleObject.second.EntityId < StartParticleKindId)
+            if (ParticleObject.second.ParticleKindId < StartParticleKindId)
             {
-                TestSet.insert(ParticleObject.second.EntityId);
+                TestSet.insert(ParticleObject.second.ParticleKindId);
                 OldParticlesCounter++;
             }
         }
@@ -322,7 +322,7 @@ void CellEngineRealRandomParticlesInFullAtomSpaceGenerator::InsertNewRandomParti
                         {
                             LoggersManagerObject.Log(STREAM("Particle Type = " << ParticlesKindsManagerObject.ConvertParticleTypeToString(ParticleKindSpecialDataObject.ParticleType) << " Counter = " << ParticleCounter));
 
-                            const EntityIdInt EntityId = GetParticleKindIdForRNA_Second(ParticleKindObject.second.EntityId, ParticleKindSpecialDataObject.ParticleType, ModifyParticleKindIdForRNA);
+                            const EntityIdInt EntityId = GetParticleKindIdForRNA_Second(ParticleKindObject.second.ParticleKindId, ParticleKindSpecialDataObject.ParticleType, ModifyParticleKindIdForRNA);
 
                             bool Success = false;
 

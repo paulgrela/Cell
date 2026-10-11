@@ -40,7 +40,7 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace1(const vma
             if (CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.empty() == false)
                 if (CellEngineConfigDataObject.TypeOfFileToRead == CellEngineConfigData::TypesOfFileToRead::PDBFile || (CellEngineConfigDataObject.TypeOfFileToRead != CellEngineConfigData::TypesOfFileToRead::PDBFile && RenderObject(CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.begin()->second.ListOfAtoms.back(), Particle(), ViewMatrix, true, false, true, false) == true))
                     for (const auto& ParticleObject : CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles | views::values)
-                        if (ParticlesKindsManagerObject.GetGraphicParticleKind(ParticleObject.EntityId).Visible == true)
+                        if (ParticlesKindsManagerObject.GetGraphicParticleKind(ParticleObject.ParticleKindId).Visible == true)
                         {
                             UnsignedInt AtomIndex = 0;
                             UnsignedInt AtomLocalIndex = 0;
@@ -114,7 +114,7 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::RenderSpace2(const vma
                 if (CellEngineConfigDataObject.TypeOfFileToRead == CellEngineConfigData::TypesOfFileToRead::PDBFile || (CellEngineConfigDataObject.TypeOfFileToRead != CellEngineConfigData::TypesOfFileToRead::PDBFile && RenderObject(CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.begin()->second.ListOfAtoms.back(), Particle(), ViewMatrix, true, false, true, false) == true))
                     for (const auto& ParticleObject : CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles)
                         if ((CellEngineConfigDataObject.ViewPositionZ <= CellEngineConfigDataObject.Distance + 700 && (CellEngineConfigDataObject.TypeOfFileToRead == CellEngineConfigData::TypesOfFileToRead::PDBFile || (CellEngineConfigDataObject.TypeOfFileToRead != CellEngineConfigData::TypesOfFileToRead::PDBFile && RenderObject(ParticleObject.second.ListOfAtoms.back(), Particle(), ViewMatrix, true, false, true, false) == true))) || CellEngineConfigDataObject.ViewPositionZ > CellEngineConfigDataObject.Distance + 700)
-                            if (ParticlesKindsManagerObject.GetGraphicParticleKind(ParticleObject.second.EntityId).Visible == true)
+                            if (ParticlesKindsManagerObject.GetGraphicParticleKind(ParticleObject.second.ParticleKindId).Visible == true)
                             {
                                 GPUParticle GPUParticleObject;
 
@@ -205,7 +205,7 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::FindAndDrawAllBondsBet
                     if (CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.empty() == false)
                         if (CellEngineConfigDataObject.TypeOfFileToRead == CellEngineConfigData::TypesOfFileToRead::PDBFile || (CellEngineConfigDataObject.TypeOfFileToRead != CellEngineConfigData::TypesOfFileToRead::PDBFile && RenderObject(CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.begin()->second.ListOfAtoms.back(), Particle(), ViewMatrix, true, false, true, false) == true))
                             for (auto& ParticleObject : CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles | views::values)
-                                if (ParticlesKindsManagerObject.GetGraphicParticleKind(ParticleObject.EntityId).Visible == true)
+                                if (ParticlesKindsManagerObject.GetGraphicParticleKind(ParticleObject.ParticleKindId).Visible == true)
                                     FindAllBondsToDrawForParticle(ParticleObject, ParticleObject.BondsBetweenAtomsToDraw, CellEngineConfigDataObject.DrawBondsBetweenAtoms, ViewMatrix);
             }
             else
@@ -218,7 +218,7 @@ void CellEngineOpenGLVisualiserOfFullAtomSimulationSpace::FindAndDrawAllBondsBet
                     if (CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.empty() == false)
                         if (CellEngineConfigDataObject.TypeOfFileToRead == CellEngineConfigData::TypesOfFileToRead::PDBFile || (CellEngineConfigDataObject.TypeOfFileToRead != CellEngineConfigData::TypesOfFileToRead::PDBFile && RenderObject(CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles.begin()->second.ListOfAtoms.back(), Particle(), ViewMatrix, true, false, true, false) == true))
                             for (auto& ParticleObject : CellEngineDataFileObjectPointer->GetParticles()[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles | views::values)
-                                if (ParticlesKindsManagerObject.GetGraphicParticleKind(ParticleObject.EntityId).Visible == true)
+                                if (ParticlesKindsManagerObject.GetGraphicParticleKind(ParticleObject.ParticleKindId).Visible == true)
                                     FindAllBondsToDrawForParticle(ParticleObject, ParticleObject.BondsBetweenAtomsToDraw, CellEngineConfigDataObject.DrawBondsBetweenAtoms, ViewMatrix);
             }
         }

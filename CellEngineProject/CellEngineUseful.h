@@ -68,10 +68,10 @@ namespace CellEngineUseful
 
         #ifdef SIMULATION_DETAILED_DEBUG_LOG
         if (ParticlesInSector[SectorPosX][SectorPosY][SectorPosZ].Particles.find(ParticleObject.Index) == ParticlesInSector[SectorPosX][SectorPosY][SectorPosZ].Particles.end())
-            LoggersManagerObject.Log(STREAM(Str << " Error particle not existing in sector = " << ParticleObject.EntityId << " " << ParticleObject.Index << " SectorPosX = " << SectorPosX << " SectorPosY = " << SectorPosY << " SectorPosZ = " << SectorPosZ));
+            LoggersManagerObject.Log(STREAM(Str << " Error particle not existing in sector = " << ParticleObject.ParticleKindId << " " << ParticleObject.Index << " SectorPosX = " << SectorPosX << " SectorPosY = " << SectorPosY << " SectorPosZ = " << SectorPosZ));
 
         if (ParticlesInSector[SectorPosX][SectorPosY][SectorPosZ].Particles.find(ParticleObject.Index)->second.Center != ParticleObject.Center)
-            LoggersManagerObject.Log(STREAM(Str << " Error particle center in sector = " << ParticleObject.EntityId << " " << ParticleObject.Index << " SectorPosX = " << SectorPosX << " SectorPosY = " << SectorPosY << " SectorPosZ = " << SectorPosZ));
+            LoggersManagerObject.Log(STREAM(Str << " Error particle center in sector = " << ParticleObject.ParticleKindId << " " << ParticleObject.Index << " SectorPosX = " << SectorPosX << " SectorPosY = " << SectorPosY << " SectorPosZ = " << SectorPosZ));
         #endif
 
         return { SectorPosX, SectorPosY, SectorPosZ };

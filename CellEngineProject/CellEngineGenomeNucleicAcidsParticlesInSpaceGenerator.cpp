@@ -100,7 +100,7 @@ void CellEngineGenomeNucleicAcidsParticlesInSpaceGenerator::SaveGenomeDataToFile
         FileToWriteGenome << to_string(Genomes[0].size()) << endl;
         for (const auto& Nucleotide : Genomes[0])
         {
-            const EntityIdInt EntityId = GetParticleFromIndex(Nucleotide).EntityId;
+            const EntityIdInt EntityId = GetParticleFromIndex(Nucleotide).ParticleKindId;
             const ChainIdInt ChainId = GetParticleFromIndex(Nucleotide).ChainId;
             const UniqueIdUnsignedInt GenomeIndex = GetParticleFromIndex(Nucleotide).GenomeIndex;
             const UnsignedInt PosX = GetParticleFromIndex(Nucleotide).ListOfVoxels[0].X;

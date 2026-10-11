@@ -45,12 +45,12 @@ private:
         for (auto& ChemicalReactionObject : ChemicalReactions)
         {
             for (auto& ReactantObject : ChemicalReactionObject.Reactants)
-                if (ParticlesKindsManagerObject.GetParticleKind(ReactantObject.EntityId).IdStr.substr(0, 10) == JCVISYN3APredStr)
+                if (ParticlesKindsManagerObject.GetParticleKind(ReactantObject.ParticleKindId).IdStr.substr(0, 10) == JCVISYN3APredStr)
                 {
                     ReactantObject.ToRemoveInReaction = false;
                     ChemicalReactionObject.Products.emplace_back(ReactantObject);
                 }
-            erase_if(ChemicalReactionObject.Reactants, [](auto& R){ return ParticlesKindsManagerObject.GetParticleKind(R.EntityId).IdStr.substr(0, 10) == JCVISYN3APredStr; });
+            erase_if(ChemicalReactionObject.Reactants, [](auto& R){ return ParticlesKindsManagerObject.GetParticleKind(R.ParticleKindId).IdStr.substr(0, 10) == JCVISYN3APredStr; });
 
             swap(ChemicalReactionObject.Products, ChemicalReactionObject.Reactants);
         }
@@ -60,10 +60,10 @@ private:
         for (auto& ReactionObject : ChemicalReactions)
         {
             if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)
-                sort(ReactionObject.Products.begin(), ReactionObject.Products.end(), [](ParticleKindForChemicalReaction &PK1, ParticleKindForChemicalReaction &PK2){ return ParticlesKindsManagerObject.GetParticleKind(PK1.EntityId).ListOfVoxels.size() > ParticlesKindsManagerObject.GetParticleKind(PK2.EntityId).ListOfVoxels.size(); });
+                sort(ReactionObject.Products.begin(), ReactionObject.Products.end(), [](ParticleKindForChemicalReaction &PK1, ParticleKindForChemicalReaction &PK2){ return ParticlesKindsManagerObject.GetParticleKind(PK1.ParticleKindId).ListOfVoxels.size() > ParticlesKindsManagerObject.GetParticleKind(PK2.ParticleKindId).ListOfVoxels.size(); });
             else
             if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
-                sort(ReactionObject.Products.begin(), ReactionObject.Products.end(), [](ParticleKindForChemicalReaction &PK1, ParticleKindForChemicalReaction &PK2){ return ParticlesKindsManagerObject.GetParticleKind(PK1.EntityId).ListOfAtoms.size() > ParticlesKindsManagerObject.GetParticleKind(PK2.EntityId).ListOfAtoms.size(); });
+                sort(ReactionObject.Products.begin(), ReactionObject.Products.end(), [](ParticleKindForChemicalReaction &PK1, ParticleKindForChemicalReaction &PK2){ return ParticlesKindsManagerObject.GetParticleKind(PK1.ParticleKindId).ListOfAtoms.size() > ParticlesKindsManagerObject.GetParticleKind(PK2.ParticleKindId).ListOfAtoms.size(); });
 
             ReactionObject.ReactantsStr = GetStringOfSortedParticlesDataNames(ReactionObject.Reactants);
         }
@@ -86,9 +86,9 @@ public:
         try
         {
             auto LocalReactionArguments(ReactionArguments);
-            std::ranges::sort(LocalReactionArguments, [](const ParticleKindForChemicalReaction& P1, const ParticleKindForChemicalReaction& P2){ return ParticlesKindsManagerObject.GetParticleKind(P1.EntityId).IdStr < ParticlesKindsManagerObject.GetParticleKind(P2.EntityId).IdStr; } );
+            std::ranges::sort(LocalReactionArguments, [](const ParticleKindForChemicalReaction& P1, const ParticleKindForChemicalReaction& P2){ return ParticlesKindsManagerObject.GetParticleKind(P1.ParticleKindId).IdStr < ParticlesKindsManagerObject.GetParticleKind(P2.ParticleKindId).IdStr; } );
             for (const auto& LocalReactant : LocalReactionArguments)
-                KeyStringOfReaction += ParticlesKindsManagerObject.GetParticleKind(LocalReactant.EntityId).IdStr + "+";
+                KeyStringOfReaction += ParticlesKindsManagerObject.GetParticleKind(LocalReactant.ParticleKindId).IdStr + "+";
         }
         CATCH("getting string of sorted particles data names")
 
