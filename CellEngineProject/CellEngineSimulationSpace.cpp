@@ -261,7 +261,7 @@ bool CellEngineSimulationSpace::PlaceNewProductParticleInSpaceDeterminedFromPosi
     {
         const vector3_Real32 NewCenter(Centers[CenterIndex].X - ParticleKindObjectForProduct.XSizeDiv2, Centers[CenterIndex].Y - ParticleKindObjectForProduct.YSizeDiv2, Centers[CenterIndex].Z - ParticleKindObjectForProduct.ZSizeDiv2);
 
-        if (CheckIfSpaceIsEmptyAndIsInBoundsForParticleElementsReactions(ParticleKindObjectForProduct, Particles, CurrentSectorPos, NewCenter.X, NewCenter.Y, NewCenter.Z, GetBoundsForThreadSector()) == true)
+        if (CheckIfSpaceIsEmptyAndIsInBoundsForParticleElementsReactions(ParticleKindObjectForProduct, Particles, NewCenter.X, NewCenter.Y, NewCenter.Z, GetBoundsForThreadSector()) == true)
         {
             FillParticleElementsInSpace(ParticleUniqueId, ParticleKindObjectForProduct, NewCenter.X, NewCenter.Y, NewCenter.Z);
             AddedParticlesInReactions++;
@@ -297,7 +297,7 @@ bool CellEngineSimulationSpace::PlaceNewProductParticleInSpaceInNewRandomPositio
 
             DEBUGLOG(LoggersManagerObject.Log(STREAM("R1 = (" << RandomVectorX << " " << RandomVectorY << " " << RandomVectorZ << ") (" << SimulationSpaceSectorBoundsObject.StartXPos << "," << SimulationSpaceSectorBoundsObject.EndXPos << ") (" << SimulationSpaceSectorBoundsObject.StartYPos << "," << SimulationSpaceSectorBoundsObject.EndYPos << ") (" << SimulationSpaceSectorBoundsObject.StartZPos << "," << SimulationSpaceSectorBoundsObject.EndZPos << ")"));)
 
-            if (CheckIfSpaceIsEmptyAndIsInBoundsForParticleElementsReactions(ParticleKindObjectForProduct, Particles, CurrentSectorPos, RandomVectorX, RandomVectorY, RandomVectorZ, SimulationSpaceSectorBoundsObject) == true)
+            if (CheckIfSpaceIsEmptyAndIsInBoundsForParticleElementsReactions(ParticleKindObjectForProduct, Particles, RandomVectorX, RandomVectorY, RandomVectorZ, SimulationSpaceSectorBoundsObject) == true)
             {
                 #ifdef SIMULATION_DETAILED_DEBUG_LOG
                 LoggersManagerObject.Log(STREAM("R2 = (" << RandomVectorX << " " << RandomVectorY << " " << RandomVectorZ << ") (" << SimulationSpaceSectorBoundsObject.StartXPos << "," << SimulationSpaceSectorBoundsObject.EndXPos << ") (" << SimulationSpaceSectorBoundsObject.StartYPos << "," << SimulationSpaceSectorBoundsObject.EndYPos << ") (" << SimulationSpaceSectorBoundsObject.StartZPos << "," << SimulationSpaceSectorBoundsObject.EndZPos << ")"));
