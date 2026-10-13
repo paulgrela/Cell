@@ -3,6 +3,7 @@
 
 #include "CellEngineAtom.h"
 #include "CellEngineUseful.h"
+#include "CellEngineExecutionTimeStatistics.h"
 #include "CellEngineFullAtomSimulationSpace.h"
 
 #include "CellEngineDataBuilderForFullAtomSimulationSpace.h"

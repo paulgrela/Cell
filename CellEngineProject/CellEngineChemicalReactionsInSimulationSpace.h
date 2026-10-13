@@ -1,15 +1,7 @@
 
-#ifndef CELL_ENGINE_NUCLEIC_ACIDS_CHEMICAL_REACTIONS_IN_VOXEL_SPACE_H
-#define CELL_ENGINE_NUCLEIC_ACIDS_CHEMICAL_REACTIONS_IN_VOXEL_SPACE_H
+#ifndef CELL_ENGINE_CHEMICAL_REACTIONS_IN_SIMULATION_SPACE_H
+#define CELL_ENGINE_CHEMICAL_REACTIONS_IN_SIMULATION_SPACE_H
 
-#include <unordered_set>
-
-#include "CellEngineExecutionTimeStatistics.h"
-
-#include "CellEngineChemicalReaction.h"
-#include "CellEngineNucleicAcidsBasicOperations.h"
-#include "CellEngineNucleicAcidsComplexOperations.h"
-#include "CellEngineChemicalReactionsInBasicSimulationSpace.h"
 #include "CellEngineNucleicAcidsChemicalReactionsInSimulationSpace.h"
 
 class CellEngineChemicalReactionsInSimulationSpace : public CellEngineNucleicAcidsChemicalReactionsInSimulationSpace
