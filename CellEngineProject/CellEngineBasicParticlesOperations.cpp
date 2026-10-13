@@ -9,7 +9,7 @@
 
 using namespace std;
 
-void CellEngineBasicParticlesOperations::InitiateFreeParticleUniqueIdesForAllSectors()
+void CellEngineBasicParticlesOperations::InitiateFreeParticlesUniqueIdsForAllSectors()
 {
     try
     {
@@ -46,7 +46,9 @@ void CellEngineBasicParticlesOperations::PreprocessData(const vector<A> Particle
 
         CellEngineParticleUniqueIdGenerator::ConfigureForNumberOfSectors(CellEngineConfigDataObject.NumberOfParticlesSectorsInX * CellEngineConfigDataObject.NumberOfParticlesSectorsInY * CellEngineConfigDataObject.NumberOfParticlesSectorsInZ);
 
-        InitiateFreeParticleUniqueIdesForAllSectors();
+        LoggersManagerObject.Log(STREAM("Initiate Free Particles UniqueIds For All Sectors"));
+
+        InitiateFreeParticlesUniqueIdsForAllSectors();
 
         LoggersManagerObject.Log(STREAM("Get Min Max Coodridnates For All Particles"));
 

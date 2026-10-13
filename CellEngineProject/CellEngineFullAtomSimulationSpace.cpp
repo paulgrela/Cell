@@ -155,6 +155,7 @@ void CellEngineFullAtomSimulationSpace::TransferParticlesFromOneSectortoAnotherS
                 DEBUGLOG(LoggersManagerObject.Log(STREAM("LACK OF PARTICLE INDEX IN SOURCE MAP DATA = " << ParticleUniqueId << " TARGET = " << SectorPosTarget.SectorPosX << "," << SectorPosTarget.SectorPosY << "," << SectorPosTarget.SectorPosZ << " FROM " << SectorPosSource.SectorPosX << "," << SectorPosSource.SectorPosY << "," << SectorPosSource.SectorPosZ));)
             }
         }
+
         ListOfParticlesToChangeSectors.clear();
     }
     CATCH("")
@@ -166,15 +167,13 @@ void CellEngineFullAtomSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpa
     {
         uniform_int_distribution<SignedInt> UniformDistributionObjectMoveParticleDirection_int64t(-ParticleMoveSizeinDiffusionUnsignedInt, ParticleMoveSizeinDiffusionUnsignedInt);
 
-        auto EmptyParticlesIter = GetParticles().end();
-
         for (auto& ParticleInProximityObject : Particles[StartSectorXPosParam][StartSectorYPosParam][StartSectorZPosParam].Particles | views::values)
         {
             DEBUGLOG(CellEngineUseful::CheckCenterForSector<Particle>(ParticleInProximityObject, Particles, "C0");)
 
             SetCurrentSectorPos(SectorPosType{ .SectorPosX = static_cast<SignedInt>(StartSectorXPosParam), .SectorPosY = static_cast<SignedInt>(StartSectorYPosParam), .SectorPosZ = static_cast<SignedInt>(StartSectorZPosParam) });
             if (CellEngineUseful::IsDNA(ParticleInProximityObject.ParticleKindId) == false)
-                MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(ParticleInProximityObject, Particles, ListOfParticlesToChangeSectors, CurrentSectorPos, GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
+                MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(ParticleInProximityObject, Particles, ListOfParticlesToChangeSectors, GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
         }
 
         if (ContainersNotForSpeedUnparalled == false)
@@ -282,10 +281,10 @@ void CellEngineFullAtomSimulationSpace::GenerateNStepsOfOneRandomReactionForWhol
     CATCH("generating random reactions for whole cell space full atom")
 }
 
-bool CellEngineFullAtomSimulationSpace::MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, vector<ParticleToBeMovedFromOneSectorToAnotherSector>& ListOfParticlesToChangeSectors, const SectorPosType& CurrentSectorPos, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam)
+bool CellEngineFullAtomSimulationSpace::MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, vector<ParticleToBeMovedFromOneSectorToAnotherSector>& ListOfParticlesToChangeSectors, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam)
 {
     if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == false)
-        return MoveParticleByVectorIfFullAtomSpaceIsEmptyAndIsInBoundsForThreadsDiffusion(ParticleObject, ParticlesInSector, ListOfParticlesToChangeSectors, NeighborProcessesIndexes, CurrentSectorPos, VectorX, VectorY, VectorZ, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, CurrentThreadPos);
+        return MoveParticleByVectorIfFullAtomSpaceIsEmptyAndIsInBoundsForThreadsDiffusion(ParticleObject, ParticlesInSector, ListOfParticlesToChangeSectors, VectorX, VectorY, VectorZ, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, CurrentThreadPos);
     else
         return MoveParticleByVectorIfFullAtomSpaceIsEmptyAndIsInBoundsForMPIProcessesDiffusion(ParticleObject, ParticlesInSector, ListOfParticlesToChangeSectors, NeighborProcessesIndexes, VectorOfParticlesToSendToNeighborProcesses, VectorX, VectorY, VectorZ, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
 }

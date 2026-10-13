@@ -45,7 +45,7 @@ protected:
             return ParticleUniqueIdGenerator;
     }
 protected:
-    void InitiateFreeParticleUniqueIdesForAllSectors();
+    void InitiateFreeParticlesUniqueIdsForAllSectors();
 protected:
     inline UniqueIdUInt64Type GetNewParticleUniqueIdFinal()
     {

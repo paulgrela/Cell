@@ -198,7 +198,7 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpaceF
 
         for (const auto& ParticleInProximityIndex : LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity)
             if (CellEngineUseful::IsDNA(GetParticleFromIndex(ParticleInProximityIndex).ParticleKindId) == false)
-                MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(GetParticleFromIndex(ParticleInProximityIndex), Particles, CurrentThreadLocalSimulationSpaceData->ListOfParticlesToChangeSectors, CurrentSectorPos, GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
+                MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(GetParticleFromIndex(ParticleInProximityIndex), Particles, CurrentThreadLocalSimulationSpaceData->ListOfParticlesToChangeSectors, GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
     }
     CATCH("generating one step of diffusion for selected space")
 }
@@ -231,6 +231,7 @@ void CellEngineVoxelSimulationSpace::GenerateOneRandomReactionForSelectedSpace(c
         if (FindParticlesInProximityBool == false || (FindParticlesInProximityBool == true && FindParticlesInProximityOfSimulationSpaceForSelectedSpace(true, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam) == true))
         {
             ActualSimulationSpaceSectorBoundsObject = { .StartXPos = StartXPosParam, .StartYPos = StartYPosParam, .StartZPos = StartZPosParam, .SizeX = SizeXParam, .SizeY = SizeYParam, .SizeZ = SizeZParam, .EndXPos = StartXPosParam + SizeXParam - 1, .EndYPos = StartYPosParam + SizeYParam - 1, .EndZPos = StartZPosParam + SizeZParam - 1 };
+
             FindAndExecuteRandomReaction(min(LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity.size(), ChemicalReactionsManagerObject.MaxNumberOfReactants));
         }
     }
@@ -316,9 +317,8 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfDiffusionForSelectedRangeO
 
         GetRangeOfParticlesForRandomParticles(StartParticleUniqueIdParam, EndParticleUniqueIdParam, MaxParticleUniqueId);
 
-        auto EmptyParticlesIter = GetParticles().end();
         for (UniqueIdUInt64Type ParticleUniqueId = StartParticleUniqueIdParam; ParticleUniqueId <= EndParticleUniqueIdParam; ParticleUniqueId++)
-            MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(GetParticleFromIndex(ParticleUniqueId), Particles, CellEngineUseful::AsLvalue(vector<ParticleToBeMovedFromOneSectorToAnotherSector>()), CurrentSectorPos, GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
+            MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(GetParticleFromIndex(ParticleUniqueId), Particles, CellEngineUseful::AsLvalue(vector<ParticleToBeMovedFromOneSectorToAnotherSector>()), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
     }
     CATCH("generating one step of diffusion for selected range of particles")
 }
@@ -379,7 +379,7 @@ void CellEngineVoxelSimulationSpace::GenerateNStepsOfOneRandomReactionForBigPart
     CATCH("generating random reactions for big part of cell")
 }
 
-bool CellEngineVoxelSimulationSpace::MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, vector<ParticleToBeMovedFromOneSectorToAnotherSector>& ListOfParticlesToChangeSectors, const SectorPosType& CurrentSectorPos, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam)
+bool CellEngineVoxelSimulationSpace::MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, vector<ParticleToBeMovedFromOneSectorToAnotherSector>& ListOfParticlesToChangeSectors, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam)
 {
     return MoveParticleByVectorIfVoxelSpaceIsEmptyAndIsInBounds(ParticleObject, VectorX, VectorY, VectorZ, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
 }
@@ -404,7 +404,7 @@ void CellEngineVoxelSimulationSpace::CheckParticlesIndexes(ParticlesDetailedCont
                 for (UnsignedInt PosZ = 0; PosZ < CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension; PosZ++)
                 {
                     SimulationSpaceVoxel SimulationSpaceVoxelObject = CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer->GetSpaceVoxelForOuterClass(PosX, PosY, PosZ);
-                    if (SimulationSpaceVoxelObject != CellEngineParticlesVoxelsOperations::GetZeroSimulationSpaceVoxel())
+                    if (SimulationSpaceVoxelObject != GetZeroSimulationSpaceVoxel())
                         if (auto FoundParticleIter = CellEngineDataFileObjectPointer->GetParticleIteratorFromUniqueId(SimulationSpaceVoxelObject); FoundParticleIter == CellEngineDataFileObjectPointer->GetParticleEnd())
                             if (auto FormerParticleIter = FormerParticlesIndexes.find(SimulationSpaceVoxelObject); FormerParticleIter != FormerParticlesIndexes.end())
                                 LoggersManagerObject.LogInformation(STREAM("Try to draw the particle from not existing index but formerly " << FormerState << " = " << SimulationSpaceVoxelObject));
