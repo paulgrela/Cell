@@ -66,15 +66,30 @@ namespace CellEngineUseful
     {
         const auto [SectorPosX, SectorPosY, SectorPosZ] = CellEngineUseful::GetSectorPos(ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z);
 
-        #ifdef SIMULATION_DETAILED_DEBUG_LOG
+        //#ifdef SIMULATION_DETAILED_DEBUG_LOG
         if (ParticlesInSector[SectorPosX][SectorPosY][SectorPosZ].Particles.find(ParticleObject.ParticleUniqueId) == ParticlesInSector[SectorPosX][SectorPosY][SectorPosZ].Particles.end())
-            LoggersManagerObject.Log(STREAM(Str << " Error particle not existing in sector = " << ParticleObject.ParticleKindId << " " << ParticleObject.ParticleUniqueId << " SectorPosX = " << SectorPosX << " SectorPosY = " << SectorPosY << " SectorPosZ = " << SectorPosZ));
+            LoggersManagerObject.LogUnconditional(STREAM(Str << " Error particle not existing in sector = " << ParticleObject.ParticleKindId << " " << ParticleObject.ParticleUniqueId << " SectorPosX = " << SectorPosX << " SectorPosY = " << SectorPosY << " SectorPosZ = " << SectorPosZ));
 
-        if (ParticlesInSector[SectorPosX][SectorPosY][SectorPosZ].Particles.find(ParticleObject.ParticleUniqueId)->second.Center != ParticleObject.Center)
-            LoggersManagerObject.Log(STREAM(Str << " Error particle center in sector = " << ParticleObject.ParticleKindId << " " << ParticleObject.ParticleUniqueId << " SectorPosX = " << SectorPosX << " SectorPosY = " << SectorPosY << " SectorPosZ = " << SectorPosZ));
-        #endif
+        // if (ParticlesInSector[SectorPosX][SectorPosY][SectorPosZ].Particles.find(ParticleObject.ParticleUniqueId)->second.Center != ParticleObject.Center)
+        //     LoggersManagerObject.LogOnlyToConsoleUnconditional(STREAM(Str << " Error particle center in sector = " << ParticleObject.ParticleKindId << " " << ParticleObject.ParticleUniqueId << " SectorPosX = " << SectorPosX << " SectorPosY = " << SectorPosY << " SectorPosZ = " << SectorPosZ));
+        //#endif
 
         return { SectorPosX, SectorPosY, SectorPosZ };
+    }
+
+    template <class Particle>
+    static inline void MoveAllAtomsInParticleAtomsListByVector(Particle& ParticleObject, const RealType VectorX, const RealType VectorY, const RealType VectorZ)
+    {
+        try
+        {
+            for (auto& AtomObject : ParticleObject.ListOfAtoms)
+            {
+                AtomObject.X += VectorX;
+                AtomObject.Y += VectorY;
+                AtomObject.Z += VectorZ;
+            }
+        }
+        CATCH_AND_THROW("moving all atoms from atoms list by vector")
     }
 
     static void SwitchOffLogs()

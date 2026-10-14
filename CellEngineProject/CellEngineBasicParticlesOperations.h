@@ -30,20 +30,19 @@ protected:
                 return ParticlesForThreads;
         }
     }
-protected:
-    inline Particle& GetParticleFromIndex(const UniqueIdUInt64Type ParticleUniqueId)
+public:
+    inline Particle& GetParticleFromUniqueId(const UniqueIdUInt64Type ParticleUniqueId)
     {
         return GetParticles()[ParticleUniqueId];
     }
-protected:
-
-    inline CellEngineParticleUniqueIdGenerator& GetFreeParticleUniqueIdes()
-    {
-        if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
-            return Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ].ParticleUniqueIdGenerator;
-        else
-            return ParticleUniqueIdGenerator;
-    }
+// protected:
+//     inline CellEngineParticleUniqueIdGenerator& GetFreeParticleUniqueIdes()
+//     {
+//         if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
+//             return Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ].ParticleUniqueIdGenerator;
+//         else
+//             return ParticleUniqueIdGenerator;
+//     }
 protected:
     void InitiateFreeParticlesUniqueIdsForAllSectors();
 protected:

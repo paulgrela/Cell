@@ -26,16 +26,16 @@ public:
 protected:
     ParticlesContainer<Particle> Particles;
 protected:
-    inline Particle& GetParticleFromUniqueId(const UniqueIdUInt64Type ParticleUniqueId)
+    inline Particle& GetParticleFromUniqueIdData(const UniqueIdUInt64Type ParticleUniqueId)
     {
         return Particles[0][0][0].Particles[ParticleUniqueId];
     }
 public:
-    ParticlesDetailedContainer<Particle>::iterator GetParticleIteratorFromUniqueId(const UniqueIdUInt64Type ParticleUniqueId)
+    ParticlesDetailedContainer<Particle>::iterator GetParticleIteratorFromUniqueIdData(const UniqueIdUInt64Type ParticleUniqueId)
     {
         return Particles[0][0][0].Particles.find(ParticleUniqueId);
     }
-    [[nodiscard]] auto GetParticleEnd() const
+    [[nodiscard]] auto GetParticleEndData() const
     {
         return Particles[0][0][0].Particles.end();
     }

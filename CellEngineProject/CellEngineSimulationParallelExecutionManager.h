@@ -5,7 +5,6 @@
 
 #include "CellEngineTypes.h"
 #include "CellEngineBasicParticlesOperations.h"
-#include "CellEngineSimulationSpace.h"
 
 class CellEngineSimulationSpace;
 struct ChemicalReactionStatistics;
@@ -75,10 +74,10 @@ public:
     static void ExchangeParticlesBetweenThreadsGroup2ConditionalVariableOneMutex(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData);
 public:
     static void SynchronizeWithNeighborByLocalBarrier(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData);
-    void ExchangeParticlesBetweenThreadsLocalBarrier(const std::shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, ThreadIdType CurrentThreadIndexParam, UnsignedInt ThreadXIndexParam, UnsignedInt ThreadYIndexParam, UnsignedInt ThreadZIndexParam) const;
-    void ExchangeParticlesBetweenThreadsOneGlobalBarrier(std::barrier<>* SyncPoint, const std::shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, ThreadIdType CurrentThreadIndexParam, UnsignedInt ThreadXIndexParam, UnsignedInt ThreadYIndexParam, UnsignedInt ThreadZIndexParam) const;
+    void ExchangeParticlesBetweenThreadsLocalBarrier(const std::shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, ThreadIdType CurrentThreadIndexParam, UnsignedInt ThreadXIndexParam, UnsignedInt ThreadYIndexParam, UnsignedInt ThreadZIndexParam);
+    void ExchangeParticlesBetweenThreadsOneGlobalBarrier(std::barrier<>* SyncPoint, const std::shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, ThreadIdType CurrentThreadIndexParam, UnsignedInt ThreadXIndexParam, UnsignedInt ThreadYIndexParam, UnsignedInt ThreadZIndexParam);
 public:
-    void ExchangeParticlesBetweenThreadsByBarrierPhase1(const std::shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, ThreadIdType CurrentThreadIndexParam, UnsignedInt ThreadXIndexParam, UnsignedInt ThreadYIndexParam, UnsignedInt ThreadZIndexParam) const;
+    void ExchangeParticlesBetweenThreadsByBarrierPhase1(const std::shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, ThreadIdType CurrentThreadIndexParam, UnsignedInt ThreadXIndexParam, UnsignedInt ThreadYIndexParam, UnsignedInt ThreadZIndexParam);
     static void ExchangeParticlesBetweenThreadsByBarrierPhase2(const std::shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData);
 private:
     void SetZeroForAllParallelExecutionVariables();

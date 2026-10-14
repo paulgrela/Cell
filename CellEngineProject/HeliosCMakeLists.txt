@@ -81,7 +81,8 @@ add_executable(
 	CellEngineRandomDeviceEngine.cpp
 	CellEngineRandomDeviceEngine.h
 	CellEngineParticleUniqueIdGenerator.h
-	CellEngineMeasureTimeData.h
+	CellEngineGraphicsExecutionMeasureTimeStatisticsData.h
+	CellEngineSimulationExecutionMeasureTimeStatisticsData.h
     CellEngineDataFile.h
 	CellEngineFilmOfStructures.h
 	CellEngineMain.cpp

@@ -15,8 +15,8 @@ tuple<vector<ChainIdUInt16Type>, string> CellEngineNucleicAcidsChemicalReactions
 
         while (TemplateSequenceStr.empty() == true && NucleotidesFoundInProximityCounter < SizeOfLoop)
         {
-            auto [ParticlePtrNext, ParticlePtrPrevNext, NucleotidesCounterNext, NucleotidesSequenceToCompareStringNext, NucleotidesSequenceToCompareVectorNext] = GetNucleotidesSequence(&Particle::Next, LengthOfTemplateForRNA, GetParticleFromIndex(NucleotidesFoundInProximity[NucleotidesFoundInProximityCounter]), true, true, [](const Particle *){ return true; });
-            auto [ParticlePtrBack, ParticlePtrBackNext, NucleotidesCounterBack, NucleotidesSequenceToCompareStringBack, NucleotidesSequenceToCompareVectorBack] = GetNucleotidesSequence(&Particle::Prev, LengthOfTemplateForRNA, GetParticleFromIndex(NucleotidesFoundInProximity[NucleotidesFoundInProximityCounter]), true, true, [](const Particle *){ return true; });
+            auto [ParticlePtrNext, ParticlePtrPrevNext, NucleotidesCounterNext, NucleotidesSequenceToCompareStringNext, NucleotidesSequenceToCompareVectorNext] = GetNucleotidesSequence(&Particle::Next, LengthOfTemplateForRNA, GetParticleFromUniqueId(NucleotidesFoundInProximity[NucleotidesFoundInProximityCounter]), true, true, [](const Particle *){ return true; });
+            auto [ParticlePtrBack, ParticlePtrBackNext, NucleotidesCounterBack, NucleotidesSequenceToCompareStringBack, NucleotidesSequenceToCompareVectorBack] = GetNucleotidesSequence(&Particle::Prev, LengthOfTemplateForRNA, GetParticleFromUniqueId(NucleotidesFoundInProximity[NucleotidesFoundInProximityCounter]), true, true, [](const Particle *){ return true; });
 
             ranges::reverse(NucleotidesSequenceToCompareVectorBack);
             TemplateSequence = NucleotidesSequenceToCompareVectorBack;
@@ -45,7 +45,7 @@ tuple<vector<ChainIdUInt16Type>, string> CellEngineNucleicAcidsChemicalReactions
 
     try
     {
-        TemplateSequenceStr = GetParticleFromIndex(*LocalThreadParticlesInProximityObject.RNANucleotidesFoundInProximity.begin()).SequenceStr;
+        TemplateSequenceStr = GetParticleFromUniqueId(*LocalThreadParticlesInProximityObject.RNANucleotidesFoundInProximity.begin()).SequenceStr;
 
         for (auto &TemplateSequenceNucleotideChar: TemplateSequenceStr)
             TemplateSequenceNucleotideChar = CellEngineUseful::GetLetterFromChainIdForDNAorRNA(CellEngineUseful::GetPairedChainIdForDNAorRNA(CellEngineUseful::GetChainIdFromLetterForDNAorRNA(TemplateSequenceNucleotideChar)));

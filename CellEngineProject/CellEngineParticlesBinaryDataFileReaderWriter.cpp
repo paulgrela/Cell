@@ -284,13 +284,13 @@ void CellEngineParticlesBinaryDataFileReaderWriter::PrepareParticlesAfterReading
                 if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)
                 CellEngineVoxelSimulationSpaceObjectPointer->SetAllVoxelsInListOfVoxelsToValueForOuterClass(ParticleObject.second.ListOfVoxels, ParticleObject.second.ParticleUniqueId);
 
-                ParticleObject.second.Prev = ParticleObject.second.PrevTemporary != 0 ? &GetParticleFromUniqueId(ParticleObject.second.PrevTemporary) : nullptr;
-                ParticleObject.second.Next = ParticleObject.second.NextTemporary != 0 ? &GetParticleFromUniqueId(ParticleObject.second.NextTemporary) : nullptr;
-                ParticleObject.second.PairedNucleotidePtr = ParticleObject.second.PairedNucleotideTemporary != 0 ? &GetParticleFromUniqueId(ParticleObject.second.PairedNucleotideTemporary) : nullptr;
+                ParticleObject.second.Prev = ParticleObject.second.PrevTemporary != 0 ? &GetParticleFromUniqueIdData(ParticleObject.second.PrevTemporary) : nullptr;
+                ParticleObject.second.Next = ParticleObject.second.NextTemporary != 0 ? &GetParticleFromUniqueIdData(ParticleObject.second.NextTemporary) : nullptr;
+                ParticleObject.second.PairedNucleotidePtr = ParticleObject.second.PairedNucleotideTemporary != 0 ? &GetParticleFromUniqueIdData(ParticleObject.second.PairedNucleotideTemporary) : nullptr;
 
                 ParticleObject.second.LinkedParticlesPointersList.clear();
                 for (const auto& LinkedParticlesPointerObjectTemporary : ParticleObject.second.LinkedParticlesPointersListTemporary)
-                    ParticleObject.second.LinkedParticlesPointersList.emplace_back(&GetParticleFromUniqueId(LinkedParticlesPointerObjectTemporary));
+                    ParticleObject.second.LinkedParticlesPointersList.emplace_back(&GetParticleFromUniqueIdData(LinkedParticlesPointerObjectTemporary));
             }
 
         LoggersManagerObject.Log(STREAM("END OF PREPARING PARTICLES"));

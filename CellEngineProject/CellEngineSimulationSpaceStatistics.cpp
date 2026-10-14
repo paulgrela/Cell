@@ -185,7 +185,7 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesAsSortedVectorElements()
             LoggersManagerObject.LogStatistics(STREAM("Size of all particles copied for statistics = " << ParticlesSnapshotsCopiedUnorderedMap[SimulationStepNumber - 1].size()));
             for (const auto& ParticlesSnapshotsCopiedUnorderedMapElementFirst : ParticlesSnapshotsCopiedUnorderedMap[SimulationStepNumber - 1] | views::keys)
             {
-                UniqueIdUInt32Type ParticleKindId = GetParticleFromIndex(ParticlesSnapshotsCopiedUnorderedMapElementFirst).ParticleKindId;
+                UniqueIdUInt32Type ParticleKindId = GetParticleFromUniqueId(ParticlesSnapshotsCopiedUnorderedMapElementFirst).ParticleKindId;
                 ParticlesKindsSnapshotsCopiedMap[SimulationStepNumber - 1][ParticleKindId] = { .ParticleKindId = ParticleKindId, .Counter = ++ParticlesKindsSnapshotsCopiedMap[SimulationStepNumber - 1][ParticleKindId].Counter };
             }
         }
@@ -201,7 +201,7 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesAsSortedVectorElements()
         #else
         for (const auto& ParticlesSnapshotsCopiedUnorderedMapElement : ParticlesSnapshotsCopiedUnorderedMap[SimulationStepNumber - 1])
         {
-            UniqueIdUInt64Type ParticleKindId = GetParticleFromIndex(ParticlesSnapshotsCopiedUnorderedMapElement.first).ParticleKindId;
+            UniqueIdUInt64Type ParticleKindId = GetParticleFromUniqueId(ParticlesSnapshotsCopiedUnorderedMapElement.first).ParticleKindId;
             if (auto FoundResult = ParticlesKindsSnapshotsCopiedMap[SimulationStepNumber - 1].find(ParticleKindId); FoundResult != ParticlesKindsSnapshotsCopiedMap[SimulationStepNumber - 1].end())
                 FoundResult->second.Counter++;
             else

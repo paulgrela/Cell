@@ -1,13 +1,13 @@
 
-#ifndef CELL_ENGINE_EXECUTION_TIME_STATISTICS_H
-#define CELL_ENGINE_EXECUTION_TIME_STATISTICS_H
+#ifndef CELL_ENGINE_SIMULATION_EXECUTION_MEASURE_TIME_STATISTICS_DATA_H
+#define CELL_ENGINE_SIMULATION_EXECUTION_MEASURE_TIME_STATISTICS_DATA_H
 
 #include <chrono>
 
 #include "Logger.h"
 #include "DateTimeUtils.h"
 
-class CellEngineExecutionTimeStatistics
+class CellEngineSimulationExecutionMeasureTimeStatisticsData
 {
 public:
     std::common_type_t<std::chrono::duration<long, std::ratio<1, 1000000000>>, std::chrono::duration<long, std::ratio<1, 1000000000>>> ExecutionDurationTimeForFindingParticles { 0 };
@@ -39,6 +39,6 @@ public:
     }
 };
 
-inline CellEngineExecutionTimeStatistics CellEngineExecutionTimeStatisticsObject;
+inline CellEngineSimulationExecutionMeasureTimeStatisticsData CellEngineExecutionTimeStatisticsObject;
 
 #endif

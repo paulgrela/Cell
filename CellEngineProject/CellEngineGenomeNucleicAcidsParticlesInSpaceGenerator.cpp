@@ -51,7 +51,7 @@ Particle* CellEngineGenomeNucleicAcidsParticlesInSpaceGenerator::GenerateNucleot
         ParticleUniqueId = AddNewParticle(Particle(GetNewFreeParticleUniqueId(), ParticleKindId, ChainId, GenomeThread, GenomeIndex, 0, UniqueColorParam));
 
         if (LinkWithPreviousNucleotide == true)
-            Particle::InsertAfterGivenNode(ParticlePrev, &GetParticleFromIndex(ParticleUniqueId));
+            Particle::InsertAfterGivenNode(ParticlePrev, &GetParticleFromUniqueId(ParticleUniqueId));
 
         GenerateParticleElementsWhenSelectedSpaceIsFreeBasic(ParticleUniqueId, StartPosX, StartPosY, StartPosZ, ParticleSizeX, ParticleSizeY, ParticleSizeZ, 0, 0, 0);
 
@@ -60,7 +60,7 @@ Particle* CellEngineGenomeNucleicAcidsParticlesInSpaceGenerator::GenerateNucleot
     }
     CATCH_AND_THROW("generating nucleotide particle")
 
-    return &GetParticleFromIndex(ParticleUniqueId);
+    return &GetParticleFromUniqueId(ParticleUniqueId);
 }
 
 tuple<Particle*, Particle*> CellEngineGenomeNucleicAcidsParticlesInSpaceGenerator::GenerateTwoPairedNucleotides(Particle* ParticlePrev1, Particle* ParticlePrev2, const UniqueIdUInt32Type ParticleKindId, const ChainIdUInt16Type ChainId, const UnsignedInt GenomeIndex, const UnsignedInt StartPosX, const UnsignedInt StartPosY, const UnsignedInt StartPosZ, const UnsignedInt ParticleSizeX, const UnsignedInt ParticleSizeY, const UnsignedInt ParticleSizeZ, const UnsignedInt AddSizeX, const UnsignedInt AddSizeY, const UnsignedInt AddSizeZ, const vector3_16 UniqueColorParam, const bool Linked, const bool LinkWithPreviousNucleotide)
@@ -83,9 +83,9 @@ void CellEngineGenomeNucleicAcidsParticlesInSpaceGenerator::GetMinMaxCoordinates
     try
     {
         for (const auto& LocalNewParticleUniqueId : Genomes[0])
-            GetMinMaxCoordinatesForParticle<UnsignedInt, vector3_16>(GetParticleFromIndex(LocalNewParticleUniqueId), &Particle::ListOfVoxels, &ParticleKind::ListOfVoxels, true);
+            GetMinMaxCoordinatesForParticle<UnsignedInt, vector3_16>(GetParticleFromUniqueId(LocalNewParticleUniqueId), &Particle::ListOfVoxels, &ParticleKind::ListOfVoxels, true);
         for (const auto& LocalNewParticleUniqueId : Genomes[1])
-            GetMinMaxCoordinatesForParticle<UnsignedInt, vector3_16>(GetParticleFromIndex(LocalNewParticleUniqueId), &Particle::ListOfVoxels, &ParticleKind::ListOfVoxels, true);
+            GetMinMaxCoordinatesForParticle<UnsignedInt, vector3_16>(GetParticleFromUniqueId(LocalNewParticleUniqueId), &Particle::ListOfVoxels, &ParticleKind::ListOfVoxels, true);
     }
     CATCH("getting min max of coordinates for DNA")
 }
@@ -100,12 +100,12 @@ void CellEngineGenomeNucleicAcidsParticlesInSpaceGenerator::SaveGenomeDataToFile
         FileToWriteGenome << to_string(Genomes[0].size()) << endl;
         for (const auto& Nucleotide : Genomes[0])
         {
-            const UniqueIdUInt32Type ParticleKindId = GetParticleFromIndex(Nucleotide).ParticleKindId;
-            const ChainIdUInt16Type ChainId = GetParticleFromIndex(Nucleotide).ChainId;
-            const UniqueIdUInt64Type GenomeIndex = GetParticleFromIndex(Nucleotide).GenomeIndex;
-            const UnsignedInt PosX = GetParticleFromIndex(Nucleotide).ListOfVoxels[0].X;
-            const UnsignedInt PosY = GetParticleFromIndex(Nucleotide).ListOfVoxels[0].Y;
-            const UnsignedInt PosZ = GetParticleFromIndex(Nucleotide).ListOfVoxels[0].Z;
+            const UniqueIdUInt32Type ParticleKindId = GetParticleFromUniqueId(Nucleotide).ParticleKindId;
+            const ChainIdUInt16Type ChainId = GetParticleFromUniqueId(Nucleotide).ChainId;
+            const UniqueIdUInt64Type GenomeIndex = GetParticleFromUniqueId(Nucleotide).GenomeIndex;
+            const UnsignedInt PosX = GetParticleFromUniqueId(Nucleotide).ListOfVoxels[0].X;
+            const UnsignedInt PosY = GetParticleFromUniqueId(Nucleotide).ListOfVoxels[0].Y;
+            const UnsignedInt PosZ = GetParticleFromUniqueId(Nucleotide).ListOfVoxels[0].Z;
             FileToWriteGenome << to_string(ParticleKindId) << "," << to_string(ChainId)  << "," << to_string(GenomeIndex) << "," << to_string(PosX) << "," << to_string(PosY) << "," << to_string(PosZ) << endl;
         }
         FileToWriteGenome.close();
@@ -191,9 +191,9 @@ void CellEngineGenomeNucleicAcidsParticlesInSpaceGenerator::ReadGenomeSequenceFr
 
         for (UnsignedInt GenomeIndex = 0; GenomeIndex < Genomes[0].size(); GenomeIndex++)
         {
-            GetParticleFromIndex(Genomes[0][GenomeIndex + 1]).ChainId = CellEngineUseful::GetChainIdFromLetterForDNAorRNA(GenomesLines[0][GenomeIndex]);
+            GetParticleFromUniqueId(Genomes[0][GenomeIndex + 1]).ChainId = CellEngineUseful::GetChainIdFromLetterForDNAorRNA(GenomesLines[0][GenomeIndex]);
             if (Paired == true)
-                GetParticleFromIndex(Genomes[1][GenomeIndex + 1]).ChainId = CellEngineUseful::GetPairedChainIdForDNAorRNA(CellEngineUseful::GetChainIdFromLetterForDNAorRNA(GenomesLines[0][GenomeIndex]));
+                GetParticleFromUniqueId(Genomes[1][GenomeIndex + 1]).ChainId = CellEngineUseful::GetPairedChainIdForDNAorRNA(CellEngineUseful::GetChainIdFromLetterForDNAorRNA(GenomesLines[0][GenomeIndex]));
         }
     }
     CATCH("reading real genome data from file")
@@ -225,14 +225,14 @@ void CellEngineGenomeNucleicAcidsParticlesInSpaceGenerator::TestGeneratedGenomeC
         for (UnsignedInt GenomeIndex = 0; GenomeIndex < Genomes[0].size(); GenomeIndex++)
             if (GenomeIndex > 3)
             {
-                if ((abs(GetParticleFromIndex(Genomes[0][GenomeIndex]).ListOfVoxels[0].X - GetParticleFromIndex(Genomes[0][GenomeIndex - 1]).ListOfVoxels[0].X) != ParticleSize) &&
-                    (abs(GetParticleFromIndex(Genomes[0][GenomeIndex]).ListOfVoxels[0].Y - GetParticleFromIndex(Genomes[0][GenomeIndex - 1]).ListOfVoxels[0].Y) != ParticleSize) &&
-                    (abs(GetParticleFromIndex(Genomes[0][GenomeIndex]).ListOfVoxels[0].Z - GetParticleFromIndex(Genomes[0][GenomeIndex - 1]).ListOfVoxels[0].Z) != ParticleSize))
+                if ((abs(GetParticleFromUniqueId(Genomes[0][GenomeIndex]).ListOfVoxels[0].X - GetParticleFromUniqueId(Genomes[0][GenomeIndex - 1]).ListOfVoxels[0].X) != ParticleSize) &&
+                    (abs(GetParticleFromUniqueId(Genomes[0][GenomeIndex]).ListOfVoxels[0].Y - GetParticleFromUniqueId(Genomes[0][GenomeIndex - 1]).ListOfVoxels[0].Y) != ParticleSize) &&
+                    (abs(GetParticleFromUniqueId(Genomes[0][GenomeIndex]).ListOfVoxels[0].Z - GetParticleFromUniqueId(Genomes[0][GenomeIndex - 1]).ListOfVoxels[0].Z) != ParticleSize))
                 {
-                    LoggersManagerObject.Log(STREAM("GenomeIndex = " << GenomeIndex << " ChainId = " << GetParticleFromIndex(Genomes[0][GenomeIndex]).ChainId << " Letter = " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(GetParticleFromIndex(Genomes[0][GenomeIndex]).ChainId)));
-                    LoggersManagerObject.Log(STREAM("DIFF X = " << GetParticleFromIndex(Genomes[0][GenomeIndex]).ListOfVoxels[0].X << " " << GetParticleFromIndex(Genomes[0][GenomeIndex - ParticleSize]).ListOfVoxels[0].X));
-                    LoggersManagerObject.Log(STREAM("DIFF Y = " << GetParticleFromIndex(Genomes[0][GenomeIndex]).ListOfVoxels[0].Y << " " << GetParticleFromIndex(Genomes[0][GenomeIndex - ParticleSize]).ListOfVoxels[0].Y));
-                    LoggersManagerObject.Log(STREAM("DIFF Z = " << GetParticleFromIndex(Genomes[0][GenomeIndex]).ListOfVoxels[0].Z << " " << GetParticleFromIndex(Genomes[0][GenomeIndex - ParticleSize]).ListOfVoxels[0].Z));
+                    LoggersManagerObject.Log(STREAM("GenomeIndex = " << GenomeIndex << " ChainId = " << GetParticleFromUniqueId(Genomes[0][GenomeIndex]).ChainId << " Letter = " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(GetParticleFromUniqueId(Genomes[0][GenomeIndex]).ChainId)));
+                    LoggersManagerObject.Log(STREAM("DIFF X = " << GetParticleFromUniqueId(Genomes[0][GenomeIndex]).ListOfVoxels[0].X << " " << GetParticleFromUniqueId(Genomes[0][GenomeIndex - ParticleSize]).ListOfVoxels[0].X));
+                    LoggersManagerObject.Log(STREAM("DIFF Y = " << GetParticleFromUniqueId(Genomes[0][GenomeIndex]).ListOfVoxels[0].Y << " " << GetParticleFromUniqueId(Genomes[0][GenomeIndex - ParticleSize]).ListOfVoxels[0].Y));
+                    LoggersManagerObject.Log(STREAM("DIFF Z = " << GetParticleFromUniqueId(Genomes[0][GenomeIndex]).ListOfVoxels[0].Z << " " << GetParticleFromUniqueId(Genomes[0][GenomeIndex - ParticleSize]).ListOfVoxels[0].Z));
                     FoundBreak = true;
                     break;
                 }

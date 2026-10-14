@@ -51,7 +51,7 @@ tuple<UnsignedInt, UnsignedInt, UnsignedInt> CellEngineGenomeNucleicAcidsParticl
         const UnsignedInt PreviousParticleUniqueId = Genome.back();
         Genome.pop_back();
 
-        LastLocalRandomPos = GetParticleFromIndex(PreviousParticleUniqueId).ListOfVoxels[0];
+        LastLocalRandomPos = GetParticleFromUniqueId(PreviousParticleUniqueId).ListOfVoxels[0];
 
         RemoveParticle(PreviousParticleUniqueId, true, false);
 
@@ -76,7 +76,7 @@ void CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator::AddPairedNucleo
         for (UnsignedInt GenomeIndex = 0; GenomeIndex < Genomes[0].size(); GenomeIndex++)
         {
             bool FoundFreeSpace = false;
-            auto ParticleObject = GetParticleFromIndex(Genomes[0][GenomeIndex]);
+            auto ParticleObject = GetParticleFromUniqueId(Genomes[0][GenomeIndex]);
             for (auto PosX = static_cast<SignedInt>(ParticleObject.ListOfVoxels[0].X - ParticleSizeX); PosX <= ParticleObject.ListOfVoxels[0].X + ParticleSizeX; PosX++)
                 for (auto PosY = static_cast<SignedInt>(ParticleObject.ListOfVoxels[0].Y - ParticleSizeY); PosY <= ParticleObject.ListOfVoxels[0].Y + ParticleSizeY; PosY++)
                     for (auto PosZ = static_cast<SignedInt>(ParticleObject.ListOfVoxels[0].Z - ParticleSizeZ); PosZ <= ParticleObject.ListOfVoxels[0].Z + ParticleSizeZ; PosZ++)

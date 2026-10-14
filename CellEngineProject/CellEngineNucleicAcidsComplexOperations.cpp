@@ -45,7 +45,7 @@ bool CellEngineNucleicAcidsComplexOperations::CutDNAInChosenPlace(const bool Bot
         {
             LoggersManagerObject.Log(STREAM("CUT inside 1"));
 
-            const auto NucleotidePtr1 = get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[0].second].SequenceStr.length() + ReactionObject.AdditionalParameter1, GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first), false, false, [](const Particle*){ return true; }));
+            const auto NucleotidePtr1 = get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[0].second].SequenceStr.length() + ReactionObject.AdditionalParameter1, GetParticleFromUniqueId(NucleotidesIndexesChosenForReaction[0].first), false, false, [](const Particle*){ return true; }));
 
             if (NucleotidePtr1 != nullptr && NucleotidePtr1->Prev != nullptr)
             {
@@ -53,7 +53,7 @@ bool CellEngineNucleicAcidsComplexOperations::CutDNAInChosenPlace(const bool Bot
 
                 if (BothStrandsBool == true)
                 {
-                    const auto NucleotidePtr2 = get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[0].second].SequenceStr.length() + ReactionObject.AdditionalParameter2, *GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first).PairedNucleotidePtr, false, false, [](const Particle*){ return true; }));
+                    const auto NucleotidePtr2 = get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[0].second].SequenceStr.length() + ReactionObject.AdditionalParameter2, *GetParticleFromUniqueId(NucleotidesIndexesChosenForReaction[0].first).PairedNucleotidePtr, false, false, [](const Particle*){ return true; }));
                     if (NucleotidePtr2 != nullptr && NucleotidePtr2->Prev != nullptr)
                     {
                         CutDNANext(NucleotidePtr2->Prev);
@@ -89,11 +89,11 @@ bool CellEngineNucleicAcidsComplexOperations::LinkDNAInChosenPlaceSpecialReactio
         {
             LoggersManagerObject.Log(STREAM("LINK 1 inside 1"));
 
-            Particle* NucleotideObjectForReactionPtr1 = &GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first);
-            Particle* NucleotideObjectForReactionPtr2 = get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[1].second].SequenceStr.length() - 1, GetParticleFromIndex(NucleotidesIndexesChosenForReaction[1].first), false, false, [](const Particle*){ return true; }));
+            Particle* NucleotideObjectForReactionPtr1 = &GetParticleFromUniqueId(NucleotidesIndexesChosenForReaction[0].first);
+            Particle* NucleotideObjectForReactionPtr2 = get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[1].second].SequenceStr.length() - 1, GetParticleFromUniqueId(NucleotidesIndexesChosenForReaction[1].first), false, false, [](const Particle*){ return true; }));
 
-            Particle* NucleotideObjectForReactionPtr1Inv = &GetParticleFromIndex(NucleotidesIndexesChosenForReaction[1].first);
-            Particle* NucleotideObjectForReactionPtr2Inv = get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[0].second].SequenceStr.length() - 1, GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first), false, false, [](const Particle*){ return true; }));
+            Particle* NucleotideObjectForReactionPtr1Inv = &GetParticleFromUniqueId(NucleotidesIndexesChosenForReaction[1].first);
+            Particle* NucleotideObjectForReactionPtr2Inv = get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.Reactants[NucleotidesIndexesChosenForReaction[0].second].SequenceStr.length() - 1, GetParticleFromUniqueId(NucleotidesIndexesChosenForReaction[0].first), false, false, [](const Particle*){ return true; }));
 
             LoggersManagerObject.Log(STREAM("NUCLEOTIDE 1 GENOME INDEX = " << NucleotideObjectForReactionPtr1->GenomeIndex));
             LoggersManagerObject.Log(STREAM("NUCLEOTIDE 2 GENOME INDEX = " << NucleotideObjectForReactionPtr2->GenomeIndex));
@@ -125,14 +125,14 @@ bool CellEngineNucleicAcidsComplexOperations::LinkDNAInAnyPlace(const bool BothS
         {
             LoggersManagerObject.Log(STREAM("LINK 1 or 2 ANY inside 1"));
 
-            if (DistanceOfParticles(GetParticleFromIndex(LocalThreadParticlesInProximityObject.NucleotidesWithFreePrevEndingsFoundInProximity[0]), GetParticleFromIndex(LocalThreadParticlesInProximityObject.NucleotidesWithFreeNextEndingsFoundInProximity[0])) <= 2.0)
+            if (DistanceOfParticles(GetParticleFromUniqueId(LocalThreadParticlesInProximityObject.NucleotidesWithFreePrevEndingsFoundInProximity[0]), GetParticleFromUniqueId(LocalThreadParticlesInProximityObject.NucleotidesWithFreeNextEndingsFoundInProximity[0])) <= 2.0)
             {
                 LoggersManagerObject.Log(STREAM("LINK 1 or 2 ANY CLOSE ENOUGH"));
 
-                LinkDNA(&GetParticleFromIndex(LocalThreadParticlesInProximityObject.NucleotidesWithFreePrevEndingsFoundInProximity[0]), &GetParticleFromIndex(LocalThreadParticlesInProximityObject.NucleotidesWithFreeNextEndingsFoundInProximity[0]));
+                LinkDNA(&GetParticleFromUniqueId(LocalThreadParticlesInProximityObject.NucleotidesWithFreePrevEndingsFoundInProximity[0]), &GetParticleFromUniqueId(LocalThreadParticlesInProximityObject.NucleotidesWithFreeNextEndingsFoundInProximity[0]));
 
                 if (BothStrandsBool == true)
-                    LinkDNA(GetParticleFromIndex(LocalThreadParticlesInProximityObject.NucleotidesWithFreePrevEndingsFoundInProximity[0]).PairedNucleotidePtr, GetParticleFromIndex(LocalThreadParticlesInProximityObject.NucleotidesWithFreeNextEndingsFoundInProximity[0]).PairedNucleotidePtr);
+                    LinkDNA(GetParticleFromUniqueId(LocalThreadParticlesInProximityObject.NucleotidesWithFreePrevEndingsFoundInProximity[0]).PairedNucleotidePtr, GetParticleFromUniqueId(LocalThreadParticlesInProximityObject.NucleotidesWithFreeNextEndingsFoundInProximity[0]).PairedNucleotidePtr);
             }
         }
         else
@@ -161,7 +161,7 @@ bool CellEngineNucleicAcidsComplexOperations::CutDNACrisperInChosenPlace(const b
         {
             LoggersManagerObject.Log(STREAM("CUT CRISPER inside 1"));
 
-            Particle* FirstStrand = get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.AdditionalParameter1, GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first), false, false, [](const Particle*){ return true; }))->Prev;
+            Particle* FirstStrand = get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.AdditionalParameter1, GetParticleFromUniqueId(NucleotidesIndexesChosenForReaction[0].first), false, false, [](const Particle*){ return true; }))->Prev;
 
             if (FirstStrand != nullptr && FirstStrand->Prev != nullptr)
             {
@@ -197,17 +197,17 @@ bool CellEngineNucleicAcidsComplexOperations::LinkDNALigaseInAnyPlaceSpecialReac
         {
             LoggersManagerObject.Log(STREAM("LINK 2 ANY COMPATIBLE inside 1"));
 
-            if (DistanceOfParticles(GetParticleFromIndex(LocalThreadParticlesInProximityObject.DNANucleotidesWithFreePrevEndingsFoundInProximity[0]), GetParticleFromIndex(LocalThreadParticlesInProximityObject.DNANucleotidesWithFreeNextEndingsFoundInProximity[0])) <= 2.0 && (DistanceOfParticles(GetParticleFromIndex(LocalThreadParticlesInProximityObject.DNANucleotidesWithFreePrevEndingsFoundInProximity[1]), GetParticleFromIndex(LocalThreadParticlesInProximityObject.DNANucleotidesWithFreeNextEndingsFoundInProximity[1])) <= 2.0))
+            if (DistanceOfParticles(GetParticleFromUniqueId(LocalThreadParticlesInProximityObject.DNANucleotidesWithFreePrevEndingsFoundInProximity[0]), GetParticleFromUniqueId(LocalThreadParticlesInProximityObject.DNANucleotidesWithFreeNextEndingsFoundInProximity[0])) <= 2.0 && (DistanceOfParticles(GetParticleFromUniqueId(LocalThreadParticlesInProximityObject.DNANucleotidesWithFreePrevEndingsFoundInProximity[1]), GetParticleFromUniqueId(LocalThreadParticlesInProximityObject.DNANucleotidesWithFreeNextEndingsFoundInProximity[1])) <= 2.0))
             {
-                LoggersManagerObject.Log(STREAM("LINK 2 ANY COMPATIBLE CLOSE ENOUGH - " << to_string(GetParticleFromIndex(LocalThreadParticlesInProximityObject.DNANucleotidesWithFreePrevEndingsFoundInProximity[0]).GenomeIndex) << " " << to_string(GetParticleFromIndex(LocalThreadParticlesInProximityObject.DNANucleotidesWithFreeNextEndingsFoundInProximity[0]).GenomeIndex) << " " << to_string(GetParticleFromIndex(LocalThreadParticlesInProximityObject.DNANucleotidesWithFreePrevEndingsFoundInProximity[1]).GenomeIndex) << " " << to_string(GetParticleFromIndex(LocalThreadParticlesInProximityObject.DNANucleotidesWithFreeNextEndingsFoundInProximity[1]).GenomeIndex) << " "));
+                LoggersManagerObject.Log(STREAM("LINK 2 ANY COMPATIBLE CLOSE ENOUGH - " << to_string(GetParticleFromUniqueId(LocalThreadParticlesInProximityObject.DNANucleotidesWithFreePrevEndingsFoundInProximity[0]).GenomeIndex) << " " << to_string(GetParticleFromUniqueId(LocalThreadParticlesInProximityObject.DNANucleotidesWithFreeNextEndingsFoundInProximity[0]).GenomeIndex) << " " << to_string(GetParticleFromUniqueId(LocalThreadParticlesInProximityObject.DNANucleotidesWithFreePrevEndingsFoundInProximity[1]).GenomeIndex) << " " << to_string(GetParticleFromUniqueId(LocalThreadParticlesInProximityObject.DNANucleotidesWithFreeNextEndingsFoundInProximity[1]).GenomeIndex) << " "));
 
-                LinkDNA(&GetParticleFromIndex(LocalThreadParticlesInProximityObject.DNANucleotidesWithFreePrevEndingsFoundInProximity[0]), &GetParticleFromIndex(LocalThreadParticlesInProximityObject.DNANucleotidesWithFreeNextEndingsFoundInProximity[0]));
-                LinkDNA(&GetParticleFromIndex(LocalThreadParticlesInProximityObject.DNANucleotidesWithFreePrevEndingsFoundInProximity[1]), &GetParticleFromIndex(LocalThreadParticlesInProximityObject.DNANucleotidesWithFreeNextEndingsFoundInProximity[1]));
+                LinkDNA(&GetParticleFromUniqueId(LocalThreadParticlesInProximityObject.DNANucleotidesWithFreePrevEndingsFoundInProximity[0]), &GetParticleFromUniqueId(LocalThreadParticlesInProximityObject.DNANucleotidesWithFreeNextEndingsFoundInProximity[0]));
+                LinkDNA(&GetParticleFromUniqueId(LocalThreadParticlesInProximityObject.DNANucleotidesWithFreePrevEndingsFoundInProximity[1]), &GetParticleFromUniqueId(LocalThreadParticlesInProximityObject.DNANucleotidesWithFreeNextEndingsFoundInProximity[1]));
 
-                if (GetParticleFromIndex(LocalThreadParticlesInProximityObject.DNANucleotidesWithFreePrevEndingsFoundInProximity[0]).GenomeIndex < GetParticleFromIndex(LocalThreadParticlesInProximityObject.DNANucleotidesWithFreePrevEndingsFoundInProximity[1]).GenomeIndex)
-                    JoinDNAStrands(&Particle::Prev, GetParticleFromIndex(LocalThreadParticlesInProximityObject.DNANucleotidesWithFreePrevEndingsFoundInProximity[1]).Prev, GetParticleFromIndex(LocalThreadParticlesInProximityObject.DNANucleotidesWithFreePrevEndingsFoundInProximity[1]).PairedNucleotidePtr->Prev);
+                if (GetParticleFromUniqueId(LocalThreadParticlesInProximityObject.DNANucleotidesWithFreePrevEndingsFoundInProximity[0]).GenomeIndex < GetParticleFromUniqueId(LocalThreadParticlesInProximityObject.DNANucleotidesWithFreePrevEndingsFoundInProximity[1]).GenomeIndex)
+                    JoinDNAStrands(&Particle::Prev, GetParticleFromUniqueId(LocalThreadParticlesInProximityObject.DNANucleotidesWithFreePrevEndingsFoundInProximity[1]).Prev, GetParticleFromUniqueId(LocalThreadParticlesInProximityObject.DNANucleotidesWithFreePrevEndingsFoundInProximity[1]).PairedNucleotidePtr->Prev);
                 else
-                    JoinDNAStrands(&Particle::Next, GetParticleFromIndex(LocalThreadParticlesInProximityObject.DNANucleotidesWithFreeNextEndingsFoundInProximity[1]).Next, GetParticleFromIndex(LocalThreadParticlesInProximityObject.DNANucleotidesWithFreeNextEndingsFoundInProximity[1]).PairedNucleotidePtr->Next);
+                    JoinDNAStrands(&Particle::Next, GetParticleFromUniqueId(LocalThreadParticlesInProximityObject.DNANucleotidesWithFreeNextEndingsFoundInProximity[1]).Next, GetParticleFromUniqueId(LocalThreadParticlesInProximityObject.DNANucleotidesWithFreeNextEndingsFoundInProximity[1]).PairedNucleotidePtr->Next);
             }
         }
         else
@@ -226,10 +226,10 @@ bool CellEngineNucleicAcidsComplexOperations::LinkDNALigaseInChosenPlaceSpecialR
 
         auto NucleotidesIndexesChosenForReactionCopy(NucleotidesIndexesChosenForReaction);
 
-        Particle* NucleotideObjectForReactionPtr1 = &GetParticleFromIndex(NucleotidesIndexesChosenForReactionCopy[0].first);
-        Particle* NucleotideObjectForReactionPtr1Paired = GetParticleFromIndex(NucleotidesIndexesChosenForReactionCopy[0].first).PairedNucleotidePtr;
-        Particle* NucleotideObjectForReactionPtr1Inv = &GetParticleFromIndex(NucleotidesIndexesChosenForReactionCopy[1].first);
-        Particle* NucleotideObjectForReactionPtr1InvPaired = GetParticleFromIndex(NucleotidesIndexesChosenForReactionCopy[1].first).PairedNucleotidePtr;
+        Particle* NucleotideObjectForReactionPtr1 = &GetParticleFromUniqueId(NucleotidesIndexesChosenForReactionCopy[0].first);
+        Particle* NucleotideObjectForReactionPtr1Paired = GetParticleFromUniqueId(NucleotidesIndexesChosenForReactionCopy[0].first).PairedNucleotidePtr;
+        Particle* NucleotideObjectForReactionPtr1Inv = &GetParticleFromUniqueId(NucleotidesIndexesChosenForReactionCopy[1].first);
+        Particle* NucleotideObjectForReactionPtr1InvPaired = GetParticleFromUniqueId(NucleotidesIndexesChosenForReactionCopy[1].first).PairedNucleotidePtr;
 
         LoggersManagerObject.Log(STREAM("NUCLEOTIDE 1 GENOME INDEX = " << NucleotideObjectForReactionPtr1->GenomeIndex));
         LoggersManagerObject.Log(STREAM("NUCLEOTIDE 1INV GENOME INDEX = " << NucleotideObjectForReactionPtr1Inv->GenomeIndex));
@@ -245,8 +245,8 @@ bool CellEngineNucleicAcidsComplexOperations::LinkDNALigaseInChosenPlaceSpecialR
             LoggersManagerObject.Log(STREAM("NUCLEOTIDE 1INV AFTER SWAP GENOME INDEX = " << NucleotideObjectForReactionPtr1Inv->GenomeIndex));
         }
 
-        Particle* NucleotideObjectForReactionPtr2 = get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.Reactants[NucleotidesIndexesChosenForReactionCopy[1].second].SequenceStr.length() - 1, GetParticleFromIndex(NucleotidesIndexesChosenForReactionCopy[1].first), false, false, [](const Particle*){ return true; }));
-        const Particle* NucleotideObjectForReactionPtr2Paired = get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.Reactants[NucleotidesIndexesChosenForReactionCopy[1].second].SequenceStr.length() - 1, *GetParticleFromIndex(NucleotidesIndexesChosenForReactionCopy[1].first).PairedNucleotidePtr, false, false, [](const Particle*){ return true; }));
+        Particle* NucleotideObjectForReactionPtr2 = get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.Reactants[NucleotidesIndexesChosenForReactionCopy[1].second].SequenceStr.length() - 1, GetParticleFromUniqueId(NucleotidesIndexesChosenForReactionCopy[1].first), false, false, [](const Particle*){ return true; }));
+        const Particle* NucleotideObjectForReactionPtr2Paired = get<0>(GetNucleotidesSequence(&Particle::Next, ReactionObject.Reactants[NucleotidesIndexesChosenForReactionCopy[1].second].SequenceStr.length() - 1, *GetParticleFromUniqueId(NucleotidesIndexesChosenForReactionCopy[1].first).PairedNucleotidePtr, false, false, [](const Particle*){ return true; }));
 
         LoggersManagerObject.Log(STREAM("NUCLEOTIDE 1 GENOME INDEX = " << NucleotideObjectForReactionPtr1->GenomeIndex));
         LoggersManagerObject.Log(STREAM("NUCLEOTIDE 2 GENOME INDEX = " << NucleotideObjectForReactionPtr2->GenomeIndex));
@@ -304,23 +304,23 @@ bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNATranscriptionStart(co
 
         auto LocalParticlesIndexesChosenForReaction(ParticlesIndexesChosenForReaction);
         for (const auto& ParticleChosenForReactionObject : LocalParticlesIndexesChosenForReaction)
-            LoggersManagerObject.Log(STREAM("ParticleUniqueIdA = " << to_string(ParticleChosenForReactionObject.first) << " " << to_string(ParticleChosenForReactionObject.second) << " Particle Type = " << ParticlesKindsManagerObject.GetParticleKind(GetParticleFromIndex(ParticleChosenForReactionObject.first).ParticleKindId).IdStr));
+            LoggersManagerObject.Log(STREAM("ParticleUniqueIdA = " << to_string(ParticleChosenForReactionObject.first) << " " << to_string(ParticleChosenForReactionObject.second) << " Particle Type = " << ParticlesKindsManagerObject.GetParticleKind(GetParticleFromUniqueId(ParticleChosenForReactionObject.first).ParticleKindId).IdStr));
 
         ranges::sort(LocalParticlesIndexesChosenForReaction, [](const auto& PK1, const auto& PK2) { return PK1.second < PK2.second; });
 
-        if (auto& ParticleObject = GetParticleFromIndex(LocalParticlesIndexesChosenForReaction[0].first); LocalThreadParticlesInProximityObject.RNANucleotidesFreeFoundInProximity.empty() == false && ParticleObject.LinkedParticlesPointersList.empty() == true)
+        if (auto& ParticleObject = GetParticleFromUniqueId(LocalParticlesIndexesChosenForReaction[0].first); LocalThreadParticlesInProximityObject.RNANucleotidesFreeFoundInProximity.empty() == false && ParticleObject.LinkedParticlesPointersList.empty() == true)
         {
             for (const auto& ParticleChosenForReactionObject : LocalParticlesIndexesChosenForReaction)
-                LoggersManagerObject.Log(STREAM("ParticleUniqueIdB = " << to_string(ParticleChosenForReactionObject.first) << " " << to_string(ParticleChosenForReactionObject.second) << " Particle Type = " << ParticlesKindsManagerObject.GetParticleKind(GetParticleFromIndex(ParticleChosenForReactionObject.first).ParticleKindId).IdStr));
+                LoggersManagerObject.Log(STREAM("ParticleUniqueIdB = " << to_string(ParticleChosenForReactionObject.first) << " " << to_string(ParticleChosenForReactionObject.second) << " Particle Type = " << ParticlesKindsManagerObject.GetParticleKind(GetParticleFromUniqueId(ParticleChosenForReactionObject.first).ParticleKindId).IdStr));
 
             LoggersManagerObject.Log(STREAM("ParticleUniqueId = " << to_string(LocalParticlesIndexesChosenForReaction[0].first) << " Nucleotide = " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.ChainId) << " Nucleotide Index = " << ParticleObject.GenomeIndex));
 
-            ParticleObject.AddNewLinkToParticle(&GetParticleFromIndex(LocalThreadParticlesInProximityObject.RNANucleotidesFreeFoundInProximity[0]));
+            ParticleObject.AddNewLinkToParticle(&GetParticleFromUniqueId(LocalThreadParticlesInProximityObject.RNANucleotidesFreeFoundInProximity[0]));
             if (FullPromoter == false)
-                ParticleObject.AddNewLinkToParticle(GoSomeNucleotides(&Particle::Next, ReactionObject.Reactants[1].SequenceStr.length(), *GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first).Next));
+                ParticleObject.AddNewLinkToParticle(GoSomeNucleotides(&Particle::Next, ReactionObject.Reactants[1].SequenceStr.length(), *GetParticleFromUniqueId(NucleotidesIndexesChosenForReaction[0].first).Next));
             else
-            if (const auto PromoterIter = ParticlesKindsManagerObject.Promoters.find(GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first).GenomeIndex); PromoterIter != ParticlesKindsManagerObject.Promoters.end())
-                ParticleObject.AddNewLinkToParticle(GoToGenomeIndex(&Particle::Next, PromoterIter->second.StartCodonPosition, 16384, *GetParticleFromIndex(NucleotidesIndexesChosenForReaction[0].first).Next));
+            if (const auto PromoterIter = ParticlesKindsManagerObject.Promoters.find(GetParticleFromUniqueId(NucleotidesIndexesChosenForReaction[0].first).GenomeIndex); PromoterIter != ParticlesKindsManagerObject.Promoters.end())
+                ParticleObject.AddNewLinkToParticle(GoToGenomeIndex(&Particle::Next, PromoterIter->second.StartCodonPosition, 16384, *GetParticleFromUniqueId(NucleotidesIndexesChosenForReaction[0].first).Next));
 
             SelectMPIorThreadsForMoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(ParticleObject, *ParticleObject.LinkedParticlesPointersList[1], 2, 2, 2, *ParticleObject.LinkedParticlesPointersList[0], ParticleObject, 2, 2, 2);
 
@@ -383,21 +383,21 @@ bool CellEngineNucleicAcidsComplexOperations::PolymeraseRNATranscriptionContinue
             LoggersManagerObject.Log(STREAM("ParticlesIndexesChosenForReaction SIZE = " << ParticlesIndexesChosenForReaction.size()));
             const auto LocalParticlesIndexesChosenForReaction(ParticlesIndexesChosenForReaction);
             for (const auto& ParticleChosenForReactionObject : LocalParticlesIndexesChosenForReaction)
-                LoggersManagerObject.Log(STREAM("ParticleUniqueIdA = " << to_string(ParticleChosenForReactionObject.first) << " " << to_string(ParticleChosenForReactionObject.second) << " Particle Type = " << ParticlesKindsManagerObject.GetParticleKind(GetParticleFromIndex(ParticleChosenForReactionObject.first).ParticleKindId).IdStr));
+                LoggersManagerObject.Log(STREAM("ParticleUniqueIdA = " << to_string(ParticleChosenForReactionObject.first) << " " << to_string(ParticleChosenForReactionObject.second) << " Particle Type = " << ParticlesKindsManagerObject.GetParticleKind(GetParticleFromUniqueId(ParticleChosenForReactionObject.first).ParticleKindId).IdStr));
 
-            auto& ParticleObject = GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first);
+            auto& ParticleObject = GetParticleFromUniqueId(ParticlesIndexesChosenForReaction[0].first);
 
             for (const auto &NucleotideFree : LocalThreadParticlesInProximityObject.RNANucleotidesFullFreeFoundInProximity)
-                LoggersManagerObject.Log(STREAM("FOUND FREE NUCLEOTIDES = " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(GetParticleFromIndex(NucleotideFree).ChainId)));
+                LoggersManagerObject.Log(STREAM("FOUND FREE NUCLEOTIDES = " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(GetParticleFromUniqueId(NucleotideFree).ChainId)));
 
             LoggersManagerObject.Log(STREAM("Letter to find = " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.LinkedParticlesPointersList[1]->ChainId) << " NEXT " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.LinkedParticlesPointersList[1]->Next->ChainId) << " Particle Object Index = " << ParticleObject.ParticleUniqueId << " " << ParticlesIndexesChosenForReaction[0].first));
 
-            const auto ChosenNucleotideIterator = ranges::find_if(std::as_const(LocalThreadParticlesInProximityObject.RNANucleotidesFullFreeFoundInProximity), [this, ParticleObject](const UniqueIdUInt64Type &NucleotideParticleUniqueId){ return &GetParticleFromIndex(NucleotideParticleUniqueId) != ParticleObject.LinkedParticlesPointersList[0] && CellEngineUseful::IsRNANucleotidePairedForRNAEqual(GetParticleFromIndex(NucleotideParticleUniqueId).ParticleKindId, ParticleObject.LinkedParticlesPointersList[1]->ChainId) == true; });
+            const auto ChosenNucleotideIterator = ranges::find_if(std::as_const(LocalThreadParticlesInProximityObject.RNANucleotidesFullFreeFoundInProximity), [this, ParticleObject](const UniqueIdUInt64Type &NucleotideParticleUniqueId){ return &GetParticleFromUniqueId(NucleotideParticleUniqueId) != ParticleObject.LinkedParticlesPointersList[0] && CellEngineUseful::IsRNANucleotidePairedForRNAEqual(GetParticleFromUniqueId(NucleotideParticleUniqueId).ParticleKindId, ParticleObject.LinkedParticlesPointersList[1]->ChainId) == true; });
             if (ChosenNucleotideIterator != LocalThreadParticlesInProximityObject.RNANucleotidesFullFreeFoundInProximity.end())
             {
                 string SequenceOfLettersToCheckFinishSequence;
 
-                Particle *ChosenNucleotide = &GetParticleFromIndex(*ChosenNucleotideIterator);
+                Particle *ChosenNucleotide = &GetParticleFromUniqueId(*ChosenNucleotideIterator);
 
                 LoggersManagerObject.Log(STREAM("Letter to compare = " << CellEngineUseful::GetLetterFromNucleotideForDNAorRNA(ChosenNucleotide->ParticleKindId) << " " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.LinkedParticlesPointersList[1]->ChainId) << " NEXT " << CellEngineUseful::GetLetterFromChainIdForDNAorRNA(ParticleObject.LinkedParticlesPointersList[1]->Next->ChainId)));
 
@@ -464,17 +464,17 @@ bool CellEngineNucleicAcidsComplexOperations::RibosomeTranslationStartSpecialRea
         auto LocalParticlesIndexesChosenForReaction(ParticlesIndexesChosenForReaction);
 
         for (const auto& ParticleChosenForReactionObject : LocalParticlesIndexesChosenForReaction)
-            LoggersManagerObject.Log(STREAM("ParticleUniqueId before sort = " << to_string(ParticleChosenForReactionObject.first) << " " << to_string(ParticleChosenForReactionObject.second) << " Particle Type = " << ParticlesKindsManagerObject.GetParticleKind(GetParticleFromIndex(ParticleChosenForReactionObject.first).ParticleKindId).IdStr));
+            LoggersManagerObject.Log(STREAM("ParticleUniqueId before sort = " << to_string(ParticleChosenForReactionObject.first) << " " << to_string(ParticleChosenForReactionObject.second) << " Particle Type = " << ParticlesKindsManagerObject.GetParticleKind(GetParticleFromUniqueId(ParticleChosenForReactionObject.first).ParticleKindId).IdStr));
 
         ranges::sort(LocalParticlesIndexesChosenForReaction, [](const auto& PK1, const auto& PK2) { return PK1.second < PK2.second; });
 
-        if (auto& ParticleObject = GetParticleFromIndex(LocalParticlesIndexesChosenForReaction[0].first); ParticleObject.LinkedParticlesPointersList.empty() == true)
+        if (auto& ParticleObject = GetParticleFromUniqueId(LocalParticlesIndexesChosenForReaction[0].first); ParticleObject.LinkedParticlesPointersList.empty() == true)
         {
             for (const auto& ParticleChosenForReactionObject : LocalParticlesIndexesChosenForReaction)
-                LoggersManagerObject.Log(STREAM("ParticleUniqueId after sort = " << to_string(ParticleChosenForReactionObject.first) << " " << to_string(ParticleChosenForReactionObject.second) << " Particle Type = " << ParticlesKindsManagerObject.GetParticleKind(GetParticleFromIndex(ParticleChosenForReactionObject.first).ParticleKindId).IdStr));
+                LoggersManagerObject.Log(STREAM("ParticleUniqueId after sort = " << to_string(ParticleChosenForReactionObject.first) << " " << to_string(ParticleChosenForReactionObject.second) << " Particle Type = " << ParticlesKindsManagerObject.GetParticleKind(GetParticleFromUniqueId(ParticleChosenForReactionObject.first).ParticleKindId).IdStr));
 
-            ParticleObject.AddNewLinkToParticle(&GetParticleFromIndex(LocalParticlesIndexesChosenForReaction[1].first));
-            ParticleObject.AddNewLinkToParticle(&GetParticleFromIndex(LocalThreadParticlesInProximityObject.RNANucleotidesFreeFoundInProximity[0]));
+            ParticleObject.AddNewLinkToParticle(&GetParticleFromUniqueId(LocalParticlesIndexesChosenForReaction[1].first));
+            ParticleObject.AddNewLinkToParticle(&GetParticleFromUniqueId(LocalThreadParticlesInProximityObject.RNANucleotidesFreeFoundInProximity[0]));
 
             SelectMPIorThreadsForMoveParticleNearOtherParticleIfSpaceIsEmptyOrNearSpace(*ParticleObject.LinkedParticlesPointersList[0], ParticleObject, 2, 2, 2, *ParticleObject.LinkedParticlesPointersList[1], ParticleObject, 2, 2, 2);
         }
@@ -495,9 +495,9 @@ bool CellEngineNucleicAcidsComplexOperations::RibosomeTranslationContinueSpecial
         LoggersManagerObject.Log(STREAM("SIZE OF tRNA charged found = " << LocalThreadParticlesInProximityObject.tRNAChargedFoundInProximity.size()));
 
         for (const auto &tRNAChargedFree : LocalThreadParticlesInProximityObject.tRNAChargedFoundInProximity)
-            LoggersManagerObject.Log(STREAM("FOUND FREE CHARGED TRNA = " << ParticlesKindsManagerObject.GetParticleKind(GetParticleFromIndex(tRNAChargedFree).ParticleKindId).IdStr));
+            LoggersManagerObject.Log(STREAM("FOUND FREE CHARGED TRNA = " << ParticlesKindsManagerObject.GetParticleKind(GetParticleFromUniqueId(tRNAChargedFree).ParticleKindId).IdStr));
 
-        auto& ParticleObject = GetParticleFromIndex(ParticlesIndexesChosenForReaction[0].first);
+        auto& ParticleObject = GetParticleFromUniqueId(ParticlesIndexesChosenForReaction[0].first);
 
         if (CellEngineConfigDataObject.RNAInOneParticle == false)
         {
@@ -508,7 +508,7 @@ bool CellEngineNucleicAcidsComplexOperations::RibosomeTranslationContinueSpecial
 
             LoggersManagerObject.Log(STREAM("Codon = " << Codon << " " << ParticleObject.LinkedParticlesPointersList[1]->PositionInSequence));
 
-            const auto ChosentRNAChargedIterator = ranges::find_if(LocalThreadParticlesInProximityObject.tRNAChargedFoundInProximity, [this, Codon](const UniqueIdUInt64Type &tRNAParticleUniqueId){ return CellEngineAminoAcidsManagerObject.IstRNAChargedWithAminoAcidForCodon(GetParticleFromIndex(tRNAParticleUniqueId).ParticleKindId, Codon); });
+            const auto ChosentRNAChargedIterator = ranges::find_if(LocalThreadParticlesInProximityObject.tRNAChargedFoundInProximity, [this, Codon](const UniqueIdUInt64Type &tRNAParticleUniqueId){ return CellEngineAminoAcidsManagerObject.IstRNAChargedWithAminoAcidForCodon(GetParticleFromUniqueId(tRNAParticleUniqueId).ParticleKindId, Codon); });
 
             if (ChosentRNAChargedIterator != LocalThreadParticlesInProximityObject.tRNAChargedFoundInProximity.end())
             {

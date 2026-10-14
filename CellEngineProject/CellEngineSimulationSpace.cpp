@@ -10,7 +10,7 @@
 #include "CellEngineDataFile.h"
 #include "CellEngineSimulationSpace.h"
 #include "CellEngineChemicalReactionsManager.h"
-#include "CellEngineExecutionTimeStatistics.h"
+#include "CellEngineSimulationExecutionMeasureTimeStatisticsData.h"
 #include "CellEngineMPIProcess.h"
 
 #ifdef USING_MODULES
@@ -50,7 +50,7 @@ void CellEngineSimulationSpace::UpdateProbabilityOfMoveFromElectricInteractionFo
 
         for (const auto& NeighbourParticleUniqueIdObjectToWrite : LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity)
         {
-            if (const Particle& NeighbourParticleObject = GetParticleFromIndex(NeighbourParticleUniqueIdObjectToWrite); NeighbourParticleObject.ElectricCharge != 0)
+            if (const Particle& NeighbourParticleObject = GetParticleFromUniqueId(NeighbourParticleUniqueIdObjectToWrite); NeighbourParticleObject.ElectricCharge != 0)
             {
                 for (SignedInt X = 0; X <= 2; X++)
                     for (SignedInt Y = 0; Y <= 2; Y++)
@@ -81,9 +81,9 @@ void CellEngineSimulationSpace::GenerateOneStepOfElectricDiffusionForOneParticle
 {
     try
     {
-        if (GetParticleFromIndex(ParticleUniqueIdParam).ElectricCharge != 0)
+        if (GetParticleFromUniqueId(ParticleUniqueIdParam).ElectricCharge != 0)
         {
-            Particle& ParticleObject = GetParticleFromIndex(ParticleUniqueIdParam);
+            Particle& ParticleObject = GetParticleFromUniqueId(ParticleUniqueIdParam);
 
             DEBUGLOG(LoggersManagerObject.Log(STREAM("ParticleKindId = " << to_string(ParticleObject.ParticleKindId) << " ElectricCharge = " << to_string(ParticleObject.ElectricCharge)));)
 
@@ -145,7 +145,7 @@ tuple<IndexesChosenForReactionType, bool> CellEngineSimulationSpace::ChooseParti
 
         for (const auto& ParticleObjectIndex : LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity)
         {
-            auto& ParticleObjectTestedForReaction = GetParticleFromIndex(ParticleObjectIndex);
+            auto& ParticleObjectTestedForReaction = GetParticleFromUniqueId(ParticleObjectIndex);
 
             DEBUGLOG(LoggersManagerObject.Log(STREAM("ParticleObjectIndex = " << to_string(ParticleObjectIndex) <<" ParticleKindId = " << to_string(ParticleObjectTestedForReaction.ParticleKindId) << " X = " << to_string(ParticleObjectTestedForReaction.Center.X) << " Y = " << to_string(ParticleObjectTestedForReaction.Center.Y) << " Z = " << to_string(ParticleObjectTestedForReaction.Center.Z)));)
 
@@ -312,14 +312,14 @@ bool CellEngineSimulationSpace::PlaceNewProductParticleInSpaceInNewRandomPositio
                 FillParticleElementsInSpace(ParticleUniqueId, ParticleKindObjectForProduct, RandomVectorX, RandomVectorY, RandomVectorZ);
 
                 #ifdef SIMULATION_DETAILED_DEBUG_LOG
-                auto [SectorPosX1, SectorPosY1, SectorPosZ1] = CellEngineUseful::CheckCenterForSector<Particle>(GetParticleFromIndex(ParticleUniqueId), Particles, "CK1");
+                auto [SectorPosX1, SectorPosY1, SectorPosZ1] = CellEngineUseful::CheckCenterForSector<Particle>(GetParticleFromUniqueId(ParticleUniqueId), Particles, "CK1");
                 if (SectorPosX1 != CurrentSectorPos.SectorPosX || SectorPosY1 != CurrentSectorPos.SectorPosY || SectorPosZ1 != CurrentSectorPos.SectorPosZ)
                     LoggersManagerObject.Log(STREAM("R5" << " Error particle not in proper sector " << " SectorPosX = " << SectorPosX1 << " SectorPosY = " << SectorPosY1 << " SectorPosZ = " << SectorPosZ1 << " SectorPosXS = " << CurrentSectorPos.SectorPosX << " SectorPosYS = " << CurrentSectorPos.SectorPosY << " SectorPosZS = " << CurrentSectorPos.SectorPosZ));
 
-                const auto [SectorPosX11, SectorPosY11, SectorPosZ11] = CellEngineUseful::GetSectorPos(GetParticleFromIndex(ParticleUniqueId).Center.X, GetParticleFromIndex(ParticleUniqueId).Center.Y, GetParticleFromIndex(ParticleUniqueId).Center.Z);
+                const auto [SectorPosX11, SectorPosY11, SectorPosZ11] = CellEngineUseful::GetSectorPos(GetParticleFromUniqueId(ParticleUniqueId).Center.X, GetParticleFromUniqueId(ParticleUniqueId).Center.Y, GetParticleFromUniqueId(ParticleUniqueId).Center.Z);
 
                 LoggersManagerObject.Log(STREAM("R2 = (" << RandomVectorX << " " << RandomVectorY << " " << RandomVectorZ << ") (" << SimulationSpaceSectorBoundsObject.StartXPos << "," << SimulationSpaceSectorBoundsObject.EndXPos << ") (" << SimulationSpaceSectorBoundsObject.StartYPos << "," << SimulationSpaceSectorBoundsObject.EndYPos << ") (" << SimulationSpaceSectorBoundsObject.StartZPos << "," << SimulationSpaceSectorBoundsObject.EndZPos << ")" << " ListOfAtoms.size() = " << ParticleKindObjectForProduct.ListOfAtoms.size()));
-                LoggersManagerObject.Log(STREAM("R2A = " << ParticleUniqueId << " " << GetParticleFromIndex(ParticleUniqueId).Center.X << " " << GetParticleFromIndex(ParticleUniqueId).Center.Y << " " << GetParticleFromIndex(ParticleUniqueId).Center.Z << " " << RandomVectorX << " " << RandomVectorY << " " << RandomVectorZ << " " << SimulationSpaceSectorBoundsObject.StartXPos << " " << SimulationSpaceSectorBoundsObject.EndXPos << " " << SimulationSpaceSectorBoundsObject.StartYPos << " " << SimulationSpaceSectorBoundsObject.EndYPos << " " << SimulationSpaceSectorBoundsObject.StartZPos << " " << SimulationSpaceSectorBoundsObject.EndZPos << " ListOfAtoms.size() = " << ParticleKindObjectForProduct.ListOfAtoms.size()));
+                LoggersManagerObject.Log(STREAM("R2A = " << ParticleUniqueId << " " << GetParticleFromUniqueId(ParticleUniqueId).Center.X << " " << GetParticleFromUniqueId(ParticleUniqueId).Center.Y << " " << GetParticleFromUniqueId(ParticleUniqueId).Center.Z << " " << RandomVectorX << " " << RandomVectorY << " " << RandomVectorZ << " " << SimulationSpaceSectorBoundsObject.StartXPos << " " << SimulationSpaceSectorBoundsObject.EndXPos << " " << SimulationSpaceSectorBoundsObject.StartYPos << " " << SimulationSpaceSectorBoundsObject.EndYPos << " " << SimulationSpaceSectorBoundsObject.StartZPos << " " << SimulationSpaceSectorBoundsObject.EndZPos << " ListOfAtoms.size() = " << ParticleKindObjectForProduct.ListOfAtoms.size()));
                 LoggersManagerObject.Log(STREAM("R2B = " << ParticleUniqueId << " " << SectorPosX << " " << SectorPosY << " " << SectorPosZ << " " << SectorPosX1 << " " << SectorPosY1 << " " << SectorPosZ1 << " " << SectorPosX11 << " " << SectorPosY11 << " " << SectorPosZ11));
                 #endif
 
@@ -527,7 +527,7 @@ void CellEngineSimulationSpace::SaveNumberOfParticlesStatisticsToFile()
         int CounterOfParticles = 0;
         FOR_EACH_PARTICLE_IN_SECTORS_XYZ_CONST
             if (ParticleObject.first != 0)
-                if (auto IPK = ParticlesKindsManagerObject.ParticlesKinds.find(GetParticleFromIndex(ParticleObject.first).ParticleKindId); IPK != ParticlesKindsManagerObject.ParticlesKinds.end() && IPK->second.IdStr == "M_glc__D_e")
+                if (auto IPK = ParticlesKindsManagerObject.ParticlesKinds.find(GetParticleFromUniqueId(ParticleObject.first).ParticleKindId); IPK != ParticlesKindsManagerObject.ParticlesKinds.end() && IPK->second.IdStr == "M_glc__D_e")
                     CounterOfParticles++;
 
         LoggersManagerObject.LogStatistics(STREAM("Particle Name = " << "D-Glucose" << " Number of Particles = " << CounterOfParticles));

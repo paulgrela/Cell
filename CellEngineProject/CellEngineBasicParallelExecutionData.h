@@ -18,7 +18,8 @@ struct __attribute__ ((packed)) ParticleSenderStructMPIMultiProcess
     ThreadPosType ReceiverThreadPos{ .ThreadPosX = 0, .ThreadPosY = 0, .ThreadPosZ = 0 };
     vector3_16 SenderSectorPos{ .X = 0, .Y = 0, .Z = 0 };
     vector3_16 ReceiverSectorPos{ .X = 0, .Y = 0, .Z = 0 };
-    vector3_Real32 NewPosition{ .X = 0, .Y = 0, .Z = 0 };
+    vector3_Real32 NewParticleCenter{ .X = 0, .Y = 0, .Z = 0 };
+    vector3_Real32 Vector{ .X = 0, .Y = 0, .Z = 0 };
 };
 
 struct ParticleSenderStructMultiThreaded
@@ -31,7 +32,8 @@ struct ParticleSenderStructMultiThreaded
     ThreadPosType ReceiverThreadPos{ .ThreadPosX = 0, .ThreadPosY = 0, .ThreadPosZ = 0 };
     vector3_16 SenderSectorPos{ .X = 0, .Y = 0, .Z = 0 };
     vector3_16 ReceiverSectorPos{ .X = 0, .Y = 0, .Z = 0 };
-    vector3_Real32 NewPosition{ .X = 0, .Y = 0, .Z = 0 };
+    vector3_Real32 NewParticleCenter{ .X = 0, .Y = 0, .Z = 0 };
+    vector3_Real32 Vector{ .X = 0, .Y = 0, .Z = 0 };
 
     Particle ParticleObject;
 };

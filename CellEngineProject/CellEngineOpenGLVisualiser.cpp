@@ -22,7 +22,7 @@
 #include "CellEngineUseful.h"
 #include "CellEngineDataFile.h"
 #include "CellEngineConfigData.h"
-#include "CellEngineMeasureTimeData.h"
+#include "CellEngineGraphicsExecutionMeasureTimeStatisticsData.h"
 #include "CellEngineOpenGLVisualiser.h"
 #include "CellEngineParticlesKindsManager.h"
 #include "glm/vec3.hpp"
@@ -484,7 +484,7 @@ inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader(const 
 
         const auto stop_time = chrono::high_resolution_clock::now();
 
-        CellEngineMeasureTimeData::ExecutionDurationTimeForComputingViewAndModelMatrixesByCPUForDrawingParticles += chrono::duration(stop_time - start_time);
+        CellEngineGraphicsExecutionMeasureTimeStatisticsData::ExecutionDurationTimeForComputingViewAndModelMatrixesByCPUForDrawingParticles += chrono::duration(stop_time - start_time);
 
         if (DrawAdditional == true)
         {
@@ -495,7 +495,7 @@ inline bool CellEngineOpenGLVisualiser::CreateUniformBlockForVertexShader(const 
 
         const auto stop_time1 = chrono::high_resolution_clock::now();
 
-        CellEngineMeasureTimeData::ExecutionDurationTimeForComputingViewAndModelMatrixesAndVisibilityByCPUForDrawingParticles += chrono::duration(stop_time1 - start_time);
+        CellEngineGraphicsExecutionMeasureTimeStatisticsData::ExecutionDurationTimeForComputingViewAndModelMatrixesAndVisibilityByCPUForDrawingParticles += chrono::duration(stop_time1 - start_time);
     }
     CATCH("rendering object for data for cell visualization")
 
@@ -673,7 +673,7 @@ void CellEngineOpenGLVisualiser::ComputeInShaderCopyParticlesAndAtomsDataToGPUMe
 
         const auto stop_time112 = chrono::high_resolution_clock::now();
 
-        CellEngineMeasureTimeData::ExecutionDurationTimeForCopyingParticlesAndAtomsToGPUMemoryForComputations += chrono::duration(stop_time112 - start_time112);
+        CellEngineGraphicsExecutionMeasureTimeStatisticsData::ExecutionDurationTimeForCopyingParticlesAndAtomsToGPUMemoryForComputations += chrono::duration(stop_time112 - start_time112);
 
         const auto start_time113 = chrono::high_resolution_clock::now();
 
@@ -682,7 +682,7 @@ void CellEngineOpenGLVisualiser::ComputeInShaderCopyParticlesAndAtomsDataToGPUMe
 
         const auto stop_time113 = chrono::high_resolution_clock::now();
 
-        CellEngineMeasureTimeData::ExecutionDurationTimeForComputationsOfParticlesInGPUInComputeShader += chrono::duration(stop_time113 - start_time113);
+        CellEngineGraphicsExecutionMeasureTimeStatisticsData::ExecutionDurationTimeForComputationsOfParticlesInGPUInComputeShader += chrono::duration(stop_time113 - start_time113);
 
         glBindFramebuffer(GL_FRAMEBUFFER, FrameBufferObject);
 
@@ -742,7 +742,7 @@ void CellEngineOpenGLVisualiser::ComputeInShaderCopyParticlesAndAtomsDataToGPUMe
 
         const auto stop_time1 = chrono::high_resolution_clock::now();
 
-        CellEngineMeasureTimeData::ExecutionDurationTimeForDrawingParticles += chrono::duration(stop_time1 - start_time1);
+        CellEngineGraphicsExecutionMeasureTimeStatisticsData::ExecutionDurationTimeForDrawingParticles += chrono::duration(stop_time1 - start_time1);
 
         if (CellEngineConfigDataObject.ShowDetailsOfPickedAtomParticle == true)
         {

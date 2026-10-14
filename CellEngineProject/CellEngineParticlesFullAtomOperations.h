@@ -19,20 +19,6 @@ protected:
     static void MoveParticleByVectorForThreads(Particle& ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, std::vector<ParticleToBeMovedFromOneSectorToAnotherSector>& ListOfParticlesToChangeSectors, RealType VectorX, RealType VectorY, RealType VectorZ, const ThreadPosType& CurrentThreadPos);
     static void MoveParticleByVectorForMPIProcesses(Particle &ParticleObject, const ParticlesContainer<Particle>& ParticlesInSector, std::vector<ParticleToBeMovedFromOneSectorToAnotherSector>& ListOfParticlesToChangeSectors, const SignedInt* NeighborProcessesIndexes, std::vector<ParticleSenderStructMPIMultiProcess>* VectorOfParticlesToSendToNeighborProcesses, RealType VectorX, RealType VectorY, RealType VectorZ);
 protected:
-    static inline void MoveAllAtomsInParticleAtomsListByVector(Particle &ParticleObject, const RealType VectorX, const RealType VectorY, const RealType VectorZ)
-    {
-        try
-        {
-            for (auto& AtomObject : ParticleObject.ListOfAtoms)
-            {
-                AtomObject.X += VectorX;
-                AtomObject.Y += VectorY;
-                AtomObject.Z += VectorZ;
-            }
-        }
-        CATCH_AND_THROW("moving all atoms from atoms list by vector")
-    }
-
     static bool CheckSectorPos(const UnsignedInt SectorPosX, const UnsignedInt SectorPosY, const UnsignedInt SectorPosZ)
     {
         return (SectorPosX < CellEngineConfigDataObject.NumberOfParticlesSectorsInX && SectorPosY < CellEngineConfigDataObject.NumberOfParticlesSectorsInY && SectorPosZ < CellEngineConfigDataObject.NumberOfParticlesSectorsInZ);
@@ -58,11 +44,13 @@ protected:
 
         return true;
     }
+
     static PosType GetNewPosMovedByVector(const RealType X, const RealType Y, const RealType Z, const RealType VectorX, const RealType VectorY, const RealType VectorZ)
     {
         return { .PosX = X + VectorX, .PosY = Y + VectorY, .PosZ = Z + VectorZ };
     }
-    static inline bool CheckBoundsForSpace(const RealType TestedPosX, const RealType TestedPosY, const RealType TestedPosZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam)
+
+    static inline bool CheckBoundsForSpaceV2(const RealType TestedPosX, const RealType TestedPosY, const RealType TestedPosZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam)
     {
         if (!(TestedPosX >= SimulationSpaceSectorBoundsObjectParam.StartXPos && TestedPosX < SimulationSpaceSectorBoundsObjectParam.StartXPos + SimulationSpaceSectorBoundsObjectParam.SizeX && TestedPosY >= SimulationSpaceSectorBoundsObjectParam.StartYPos && TestedPosY < SimulationSpaceSectorBoundsObjectParam.StartYPos + SimulationSpaceSectorBoundsObjectParam.SizeY && TestedPosZ >= SimulationSpaceSectorBoundsObjectParam.StartZPos && TestedPosZ < SimulationSpaceSectorBoundsObjectParam.StartZPos + SimulationSpaceSectorBoundsObjectParam.SizeZ))
             return false;
@@ -71,7 +59,7 @@ protected:
     }
 
 protected:
-    static inline bool CheckBoundsForSectorReactions(const RealType TestedPosX, const RealType TestedPosY, const RealType TestedPosZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam)
+    static inline bool CheckBoundsForSpaceV1Reactions(const RealType TestedPosX, const RealType TestedPosY, const RealType TestedPosZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam)
     {
         DEBUGLOG(LoggersManagerObject.Log(STREAM("R2 = (" << TestedPosX << " " << TestedPosY << " " << TestedPosZ << ") (" << SimulationSpaceSectorBoundsObjectParam.StartXPos << "," << SimulationSpaceSectorBoundsObjectParam.EndXPos << ") (" << SimulationSpaceSectorBoundsObjectParam.StartYPos << "," << SimulationSpaceSectorBoundsObjectParam.EndYPos << ") (" << SimulationSpaceSectorBoundsObjectParam.StartZPos << "," << SimulationSpaceSectorBoundsObjectParam.EndZPos << ")"));)
 
@@ -81,18 +69,18 @@ protected:
         return true;
     }
 
-    static inline bool CheckBoundsBySectorAndBySpaceReactions(const RealType TestedPosX, const RealType TestedPosY, const RealType TestedPosZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CheckBounds, const bool CompareBoundsBySectorsBounds, const bool CompareBoundsBySpaceBounds)
+    static inline bool CheckBoundsBySpaceV1V2Reactions(const RealType TestedPosX, const RealType TestedPosY, const RealType TestedPosZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CheckBounds, const bool CompareBoundsBySectorsBounds, const bool CompareBoundsBySpaceBounds)
     {
         if (CheckBounds == true)
         {
             if (CompareBoundsBySectorsBounds == true)
             {
-                if (CheckBoundsForSectorReactions(TestedPosX, TestedPosY, TestedPosZ, SimulationSpaceSectorBoundsObjectParam) == false)
+                if (CheckBoundsForSpaceV1Reactions(TestedPosX, TestedPosY, TestedPosZ, SimulationSpaceSectorBoundsObjectParam) == false)
                     return false;
             }
             if (CompareBoundsBySpaceBounds == true)
             {
-                if (CheckBoundsForSpace(TestedPosX, TestedPosY, TestedPosZ, SimulationSpaceSectorBoundsObjectParam) == false)
+                if (CheckBoundsForSpaceV2(TestedPosX, TestedPosY, TestedPosZ, SimulationSpaceSectorBoundsObjectParam) == false)
                     return false;
             }
         }
@@ -107,7 +95,7 @@ protected:
             auto [TestedPosX, TestedPosY, TestedPosZ] = GetNewPosMovedByVector(Center.X, Center.Y, Center.Z, VectorX, VectorY, VectorZ);
             auto [SectorPosX, SectorPosY, SectorPosZ] = CellEngineUseful::GetSectorPos(TestedPosX, TestedPosY, TestedPosZ);
 
-            if (CheckBoundsBySectorAndBySpaceReactions(TestedPosX, TestedPosY, TestedPosZ, SimulationSpaceSectorBoundsObjectParam, CheckBounds, CompareBoundsBySectorsBounds, CompareBoundsBySpaceBounds) == false)
+            if (CheckBoundsBySpaceV1V2Reactions(TestedPosX, TestedPosY, TestedPosZ, SimulationSpaceSectorBoundsObjectParam, CheckBounds, CompareBoundsBySectorsBounds, CompareBoundsBySpaceBounds) == false)
                 return false;
 
             if (CheckSectorPos(SectorPosX, SectorPosY, SectorPosZ) == false)
@@ -122,7 +110,7 @@ protected:
     }
 
 protected:
-    static inline bool CheckBoundsForSectorDiffusion(const RealType TestedPosX, const RealType TestedPosY, const RealType TestedPosZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam)
+    static inline bool CheckBoundsForSpaceV1InDiffusion(const RealType TestedPosX, const RealType TestedPosY, const RealType TestedPosZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam)
     {
         DEBUGLOG(LoggersManagerObject.Log(STREAM("R2 = (" << TestedPosX << " " << TestedPosY << " " << TestedPosZ << ") (" << SimulationSpaceSectorBoundsObjectParam.StartXPos << "," << SimulationSpaceSectorBoundsObjectParam.EndXPos << ") (" << SimulationSpaceSectorBoundsObjectParam.StartYPos << "," << SimulationSpaceSectorBoundsObjectParam.EndYPos << ") (" << SimulationSpaceSectorBoundsObjectParam.StartZPos << "," << SimulationSpaceSectorBoundsObjectParam.EndZPos << ")"));)
 
@@ -139,18 +127,18 @@ protected:
         return true;
     }
 
-    static inline bool CheckBoundsBySectorAndBySpaceDiffusion(const RealType TestedPosX, const RealType TestedPosY, const RealType TestedPosZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CheckBounds, const bool CompareBoundsBySectorsBounds, const bool CompareBoundsBySpaceBounds)
+    static inline bool CheckBoundsForSpaceV1V2InDiffusion(const RealType TestedPosX, const RealType TestedPosY, const RealType TestedPosZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CheckBounds, const bool CompareBoundsBySectorsBounds, const bool CompareBoundsBySpaceBounds)
     {
         if (CheckBounds == true)
         {
             if (CompareBoundsBySectorsBounds == true)
             {
-                if (CheckBoundsForSectorDiffusion(TestedPosX, TestedPosY, TestedPosZ, SimulationSpaceSectorBoundsObjectParam) == false)
+                if (CheckBoundsForSpaceV1InDiffusion(TestedPosX, TestedPosY, TestedPosZ, SimulationSpaceSectorBoundsObjectParam) == false)
                     return false;
             }
             if (CompareBoundsBySpaceBounds == true)
             {
-                if (CheckBoundsForSpace(TestedPosX, TestedPosY, TestedPosZ, SimulationSpaceSectorBoundsObjectParam) == false)
+                if (CheckBoundsForSpaceV2(TestedPosX, TestedPosY, TestedPosZ, SimulationSpaceSectorBoundsObjectParam) == false)
                     return false;
             }
         }
@@ -170,7 +158,7 @@ protected:
             auto [TestedPosX, TestedPosY, TestedPosZ] = GetNewPosMovedByVector(Center.X, Center.Y, Center.Z, VectorX, VectorY, VectorZ);
             auto [SectorPosX, SectorPosY, SectorPosZ] = CellEngineUseful::GetSectorPos(TestedPosX, TestedPosY, TestedPosZ);
 
-            if (CheckBoundsBySectorAndBySpaceDiffusion(TestedPosX, TestedPosY, TestedPosZ, SimulationSpaceSectorBoundsObjectParam, CheckBounds, CompareBoundsBySectorsBounds, CompareBoundsBySpaceBounds) == false)
+            if (CheckBoundsForSpaceV1V2InDiffusion(TestedPosX, TestedPosY, TestedPosZ, SimulationSpaceSectorBoundsObjectParam, CheckBounds, CompareBoundsBySectorsBounds, CompareBoundsBySpaceBounds) == false)
                 return false;
 
             if (CheckSectorPos(SectorPosX, SectorPosY, SectorPosZ) == false)
@@ -194,7 +182,7 @@ protected:
                 auto [TestedPosX, TestedPosY, TestedPosZ] = GetNewPosMovedByVector(AtomParticleObject.X, AtomParticleObject.Y, AtomParticleObject.Z, VectorX, VectorY, VectorZ);
                 auto [SectorPosX, SectorPosY, SectorPosZ] = CellEngineUseful::GetSectorPos(TestedPosX, TestedPosY, TestedPosZ);
 
-                if (CheckBoundsBySectorAndBySpaceReactions(TestedPosX, TestedPosY, TestedPosZ, SimulationSpaceSectorBoundsObjectParam, CheckBounds, CompareBoundsBySectorsBounds, CompareBoundsBySpaceBounds) == false)
+                if (CheckBoundsBySpaceV1V2Reactions(TestedPosX, TestedPosY, TestedPosZ, SimulationSpaceSectorBoundsObjectParam, CheckBounds, CompareBoundsBySectorsBounds, CompareBoundsBySpaceBounds) == false)
                     return false;
 
                 if (CheckSectorPos(SectorPosX, SectorPosY, SectorPosZ) == false)
@@ -218,7 +206,7 @@ protected:
                 auto [TestedPosX, TestedPosY, TestedPosZ] = GetNewPosMovedByVector(AtomParticleObject.X, AtomParticleObject.Y, AtomParticleObject.Z, VectorX, VectorY, VectorZ);
                 auto [SectorPosX, SectorPosY, SectorPosZ] = CellEngineUseful::GetSectorPos(TestedPosX, TestedPosY, TestedPosZ);
 
-                if (CheckBoundsBySectorAndBySpaceDiffusion(TestedPosX, TestedPosY, TestedPosZ, SimulationSpaceSectorBoundsObjectParam, CheckBounds, CompareBoundsBySectorsBounds, CompareBoundsBySpaceBounds) == false)
+                if (CheckBoundsForSpaceV1V2InDiffusion(TestedPosX, TestedPosY, TestedPosZ, SimulationSpaceSectorBoundsObjectParam, CheckBounds, CompareBoundsBySectorsBounds, CompareBoundsBySpaceBounds) == false)
                     return false;
 
                 if (CheckSectorPos(SectorPosX, SectorPosY, SectorPosZ) == false)

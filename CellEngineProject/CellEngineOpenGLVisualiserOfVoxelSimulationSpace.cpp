@@ -13,7 +13,7 @@
 
 #include "CellEngineUseful.h"
 #include "CellEngineConfigData.h"
-#include "CellEngineMeasureTimeData.h"
+#include "CellEngineGraphicsExecutionMeasureTimeStatisticsData.h"
 #include "CellEngineOpenGLVisualiser.h"
 #include "CellEngineParticlesKindsManager.h"
 #include "CellEngineParticlesVoxelsOperations.h"
@@ -246,7 +246,7 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSelectedSpace(const
 
                         if (SimulationSpaceVoxelObject != CellEngineParticlesVoxelsOperations::GetZeroSimulationSpaceVoxel())
                         {
-                            if (auto FoundParticleIter = CellEngineDataFileObjectPointer->GetParticleIteratorFromUniqueId(SimulationSpaceVoxelObject); FoundParticleIter != CellEngineDataFileObjectPointer->GetParticleEnd())
+                            if (auto FoundParticleIter = CellEngineDataFileObjectPointer->GetParticleIteratorFromUniqueIdData(SimulationSpaceVoxelObject); FoundParticleIter != CellEngineDataFileObjectPointer->GetParticleEndData())
                             {
                                 Particle& ParticleObject = FoundParticleIter->second;
 
@@ -321,7 +321,7 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSpace(const vmath::
 
             const auto stop_time111 = chrono::high_resolution_clock::now();
 
-            CellEngineMeasureTimeData::ExecutionDurationTimeForPreparingParticlesForDrawingByCPUComputationsPhase1 += chrono::duration(stop_time111 - start_time111);
+            CellEngineGraphicsExecutionMeasureTimeStatisticsData::ExecutionDurationTimeForPreparingParticlesForDrawingByCPUComputationsPhase1 += chrono::duration(stop_time111 - start_time111);
         }
         else
         if (SpaceDrawingType == VoxelSpaceDrawingTypes::DrawVoxelSpaceFull && (CellEngineConfigDataObject.RenderCellWithParallelCPUComputing == true && CellEngineConfigDataObject.ViewPositionZ > CellEngineConfigDataObject.Distance + 700))
@@ -355,7 +355,7 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSpace(const vmath::
 
             const auto stop_time111 = chrono::high_resolution_clock::now();
 
-            CellEngineMeasureTimeData::ExecutionDurationTimeForPreparingParticlesForDrawingByCPUComputationsPhase1 += chrono::duration(stop_time111 - start_time111);
+            CellEngineGraphicsExecutionMeasureTimeStatisticsData::ExecutionDurationTimeForPreparingParticlesForDrawingByCPUComputationsPhase1 += chrono::duration(stop_time111 - start_time111);
 
             DEBUGLOG(LoggersManagerObject.LogOnlyToConsole(STREAM("END OF PARALLEL -> ParticlesOffsetTotal = " << ParticlesOffsetTotal << " AtomsOffsetTotal = " << AtomOffsetTotal));)
 
@@ -382,7 +382,7 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSpace(const vmath::
 
             const auto stop_time114 = chrono::high_resolution_clock::now();
 
-            CellEngineMeasureTimeData::ExecutionDurationTimeForPreparingParticlesForDrawingByCPUComputationsPhase2 += chrono::duration(stop_time114 - start_time114);
+            CellEngineGraphicsExecutionMeasureTimeStatisticsData::ExecutionDurationTimeForPreparingParticlesForDrawingByCPUComputationsPhase2 += chrono::duration(stop_time114 - start_time114);
         }
         else
         if (SpaceDrawingType == VoxelSpaceDrawingTypes::DrawVoxelSpaceSelected)
@@ -409,7 +409,7 @@ inline void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::DrawChosenAtomUsin
             {
                 if (ChosenParticleCenterIndex < GPUAtomsLocal.size())
                 {
-                    if (const auto ParticleIter = CellEngineDataFileObjectPointer->GetParticleIteratorFromUniqueId(GPUAtomsLocal[ChosenParticleCenterIndex].Index); ParticleIter != CellEngineDataFileObjectPointer->GetParticleEnd())
+                    if (const auto ParticleIter = CellEngineDataFileObjectPointer->GetParticleIteratorFromUniqueIdData(GPUAtomsLocal[ChosenParticleCenterIndex].Index); ParticleIter != CellEngineDataFileObjectPointer->GetParticleEndData())
                     {
                         DEBUGLOG(LoggersManagerObject.LogOnlyToConsole(STREAM("PICKING OBJECT = " << std::to_string(ChosenParticleCenterIndex) + " " + to_string(GPUAtomsLocal[ChosenParticleCenterIndex].AtomOffset) + " " + to_string(ParticleIter->second.ListOfAtoms.size())));)
 
