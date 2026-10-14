@@ -35,14 +35,6 @@ public:
     {
         return GetParticles()[ParticleUniqueId];
     }
-// protected:
-//     inline CellEngineParticleUniqueIdGenerator& GetFreeParticleUniqueIdes()
-//     {
-//         if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
-//             return Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ].ParticleUniqueIdGenerator;
-//         else
-//             return ParticleUniqueIdGenerator;
-//     }
 protected:
     void InitiateFreeParticlesUniqueIdsForAllSectors();
 protected:

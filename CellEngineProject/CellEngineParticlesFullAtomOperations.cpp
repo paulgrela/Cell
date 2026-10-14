@@ -37,7 +37,6 @@ static bool ExchangeParticleBetweenSectors(const Particle &ParticleObject, const
         //#ifdef SIMULATION_DETAILED_DEBUG_LOG
         const auto ParticleFromSourceToMoveToTargetIterator = ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].Particles.find(ListOfParticlesToChangeSectors.back().ParticleUniqueId);
         if (ParticleFromSourceToMoveToTargetIterator == ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].Particles.end())
-            //LoggersManagerObject.Log(STREAM("ERROR2 = " << ListOfParticlesToChangeSectors.back().ParticleUniqueId << " " << ParticleObject.ParticleUniqueId));
             LoggersManagerObject.LogOnlyToFilesUnconditional(STREAM("ERROR2 = " << ListOfParticlesToChangeSectors.back().ParticleUniqueId << " " << ParticleObject.ParticleUniqueId));
         //#endif
     }
@@ -58,19 +57,13 @@ void CellEngineParticlesFullAtomOperations::MoveParticleByVectorForThreads(Parti
         //#ifdef SIMULATION_DETAILED_DEBUG_LOG
         const auto ParticleFromSourceToMoveToTargetIterator = ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].Particles.find(ParticleObject.ParticleUniqueId);
         if (ParticleFromSourceToMoveToTargetIterator == ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].Particles.end())
-            //LoggersManagerObject.Log(STREAM("ERROR1 = " << ParticleObject.ParticleUniqueId));
             LoggersManagerObject.LogOnlyToFilesUnconditional(STREAM("ERROR1 = " << ParticleObject.ParticleUniqueId));
         //#endif
-
-        // CellEngineUseful::MoveAllAtomsInParticleAtomsListByVector(ParticleObject, VectorX, VectorY, VectorZ);
-        // ParticleObject.SetCenterCoordinates(ParticleObject.Center.X + VectorX, ParticleObject.Center.Y + VectorY, ParticleObject.Center.Z + VectorZ);
 
         if (SectorPosX1 != SectorPosX2 || SectorPosY1 != SectorPosY2 || SectorPosZ1 != SectorPosZ2)
         {
             if (CellEngineConfigDataObject.MultiThreaded == true)
             {
-                //bool NewSectorNeighborThreadFound = false;
-
                 if ((SectorPosX1 != SectorPosX2 && SectorPosY1 == SectorPosY2 && SectorPosZ1 == SectorPosZ2) || (SectorPosX1 == SectorPosX2 && SectorPosY1 != SectorPosY2 && SectorPosZ1 == SectorPosZ2) || (SectorPosX1 == SectorPosX2 && SectorPosY1 == SectorPosY2 && SectorPosZ1 != SectorPosZ2))
                 {
                     const auto Thread1Pos = ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].ThreadPos;
@@ -119,7 +112,6 @@ void CellEngineParticlesFullAtomOperations::MoveParticleByVectorForThreads(Parti
                                 LoggersManagerObject.LogOnlyToConsoleUnconditional(STREAM("VectorOfParticlesToSendToNeighborThreads = " << NeighborProcessIndex << " " << ParticleObject.ParticleUniqueId << " " << CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[Thread2Pos.ThreadPosX - 1][Thread2Pos.ThreadPosY - 1][Thread2Pos.ThreadPosZ - 1]->VectorOfParticlesToSendToNeighborThreads[NeighborProcessIndex].back().ParticleUniqueId << " " << CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[Thread2Pos.ThreadPosX - 1][Thread2Pos.ThreadPosY - 1][Thread2Pos.ThreadPosZ - 1]->VectorOfParticlesToSendToNeighborThreads[NeighborProcessIndex].size()));
                                 //#endif
 
-                                //NewSectorNeighborThreadFound = true;
                                 break;
                             }
                         }
@@ -131,15 +123,8 @@ void CellEngineParticlesFullAtomOperations::MoveParticleByVectorForThreads(Parti
                                                                                                                         ParticleObject.SetCenterCoordinates(ParticleObject.Center.X + VectorX, ParticleObject.Center.Y + VectorY, ParticleObject.Center.Z + VectorZ);
 
                         ListOfParticlesToChangeSectors.emplace_back(ParticleToBeMovedFromOneSectorToAnotherSector{ .ParticleUniqueId = ParticleObject.ParticleUniqueId, .SenderSectorPos = SectorPosType{ .SectorPosX = SectorPosX1, .SectorPosY = SectorPosY1, .SectorPosZ = SectorPosZ1 }, .ReceiverSectorPos = SectorPosType{ .SectorPosX = SectorPosX2, .SectorPosY = SectorPosY2, .SectorPosZ = SectorPosZ2 }});
-                        //NewSectorNeighborThreadFound = true;
                     }
                 }
-
-                // if (NewSectorNeighborThreadFound == false)
-                // {
-                //     CellEngineUseful::MoveAllAtomsInParticleAtomsListByVector(ParticleObject, -VectorX, -VectorY, -VectorZ);
-                //     ParticleObject.SetCenterCoordinates(ParticleObject.Center.X - VectorX, ParticleObject.Center.Y - VectorY, ParticleObject.Center.Z - VectorZ);
-                // }
             }
             else
             {
@@ -169,13 +154,8 @@ void CellEngineParticlesFullAtomOperations::MoveParticleByVectorForMPIProcesses(
             LoggersManagerObject.Log(STREAM("ERROR1 = " << ParticleObject.ParticleUniqueId));
         //#endif
 
-        CellEngineUseful::MoveAllAtomsInParticleAtomsListByVector(ParticleObject, VectorX, VectorY, VectorZ);
-        ParticleObject.SetCenterCoordinates(ParticleObject.Center.X + VectorX, ParticleObject.Center.Y + VectorY, ParticleObject.Center.Z + VectorZ);
-
         if (SectorPosX1 != SectorPosX2 || SectorPosY1 != SectorPosY2 || SectorPosZ1 != SectorPosZ2)
         {
-            bool NewSectorNeighborProcessFound = false;
-
             if ((SectorPosX1 != SectorPosX2 && SectorPosY1 == SectorPosY2 && SectorPosZ1 == SectorPosZ2) || (SectorPosX1 == SectorPosX2 && SectorPosY1 != SectorPosY2 && SectorPosZ1 == SectorPosZ2) || (SectorPosX1 == SectorPosX2 && SectorPosY1 == SectorPosY2 && SectorPosZ1 != SectorPosZ2))
             {
                 const auto Process1Pos = ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].MPIProcessIndex;
@@ -207,23 +187,18 @@ void CellEngineParticlesFullAtomOperations::MoveParticleByVectorForMPIProcesses(
                             }
                             #endif
 
-                            VectorOfParticlesToSendToNeighborProcesses[NeighborProcessIndex].emplace_back(ParticleSenderStructMPIMultiProcess{ .ParticleUniqueId = ParticleObject.ParticleUniqueId, .ParticleKindId = ParticleObject.ParticleKindId, .SenderProcessIndex = static_cast<int>(Process1Pos), .ReceiverProcessIndex = static_cast<int>(Process2Pos), .ReceiverSectorPos = { .X = static_cast<uint16_t>(SectorPosX2), .Y = static_cast<uint16_t>(SectorPosY2), .Z = static_cast<uint16_t>(SectorPosZ2) }, .NewParticleCenter = { .X = ParticleObject.Center.X, .Y = ParticleObject.Center.Y, .Z = ParticleObject.Center.Z }});
+                            VectorOfParticlesToSendToNeighborProcesses[NeighborProcessIndex].emplace_back(ParticleSenderStructMPIMultiProcess{ .ParticleUniqueId = ParticleObject.ParticleUniqueId, .ParticleKindId = ParticleObject.ParticleKindId, .SenderProcessIndex = static_cast<int>(Process1Pos), .ReceiverProcessIndex = static_cast<int>(Process2Pos), .ReceiverSectorPos = { .X = static_cast<uint16_t>(SectorPosX2), .Y = static_cast<uint16_t>(SectorPosY2), .Z = static_cast<uint16_t>(SectorPosZ2) }, .NewParticleCenter = { .X = ParticleObject.Center.X, .Y = ParticleObject.Center.Y, .Z = ParticleObject.Center.Z }, .Vector = { .X = VectorX, .Y = VectorY, .Z = VectorZ }});
 
-                            NewSectorNeighborProcessFound = true;
                             break;
                         }
                 }
                 else
                 {
-                    ExchangeParticleBetweenSectors(ParticleObject, ParticlesInSector, ListOfParticlesToChangeSectors, SectorPosX1, SectorPosY1, SectorPosZ1, SectorPosX2, SectorPosY2, SectorPosZ2);
-                    NewSectorNeighborProcessFound = true;
-                }
-            }
+                    CellEngineUseful::MoveAllAtomsInParticleAtomsListByVector(ParticleObject, VectorX, VectorY, VectorZ);
+                    ParticleObject.SetCenterCoordinates(ParticleObject.Center.X + VectorX, ParticleObject.Center.Y + VectorY, ParticleObject.Center.Z + VectorZ);
 
-            if (NewSectorNeighborProcessFound == false)
-            {
-                CellEngineUseful::MoveAllAtomsInParticleAtomsListByVector(ParticleObject, -VectorX, -VectorY, -VectorZ);
-                ParticleObject.SetCenterCoordinates(ParticleObject.Center.X - VectorX, ParticleObject.Center.Y - VectorY, ParticleObject.Center.Z - VectorZ);
+                    ExchangeParticleBetweenSectors(ParticleObject, ParticlesInSector, ListOfParticlesToChangeSectors, SectorPosX1, SectorPosY1, SectorPosZ1, SectorPosX2, SectorPosY2, SectorPosZ2);
+                }
             }
         }
     }
