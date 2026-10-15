@@ -135,9 +135,9 @@ bool CellEngineParticlesVoxelsShapesGenerator::GenerateParticleVoxelsWhenSelecte
                 (this->*SetValueToVoxelsForSelectedSpace)(&FilledVoxelsForRandomParticle, LocalNewParticleUniqueId, PosXStart, PosYStart, PosZStart, 1, 1, 1, SizeOfParticleX, SizeOfParticleY, SizeOfParticleZ);
 
             if (FilledVoxelsForRandomParticle.empty() == false)
-                GetParticleFromIndexForGenerator(LocalNewParticleUniqueId).ListOfVoxels = FilledVoxelsForRandomParticle;
+                GetParticleFromUniqueIdForGenerator(LocalNewParticleUniqueId).ListOfVoxels = FilledVoxelsForRandomParticle;
 
-            CellEngineBasicParticlesOperations::GetMinMaxCoordinatesForParticle<UnsignedInt, vector3_16>(GetParticleFromIndexForGenerator(LocalNewParticleUniqueId), &Particle::ListOfVoxels, &ParticleKind::ListOfVoxels, true);
+            CellEngineBasicParticlesOperations::GetMinMaxCoordinatesForParticle<UnsignedInt, vector3_16>(GetParticleFromUniqueIdForGenerator(LocalNewParticleUniqueId), &Particle::ListOfVoxels, &ParticleKind::ListOfVoxels, true);
 
             return true;
         }

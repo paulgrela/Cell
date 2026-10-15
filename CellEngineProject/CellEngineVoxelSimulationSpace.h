@@ -1,31 +1,12 @@
-#pragma once
 
 #ifndef CELL_ENGINE_VOXEL_SIMULATION_SPACE_H
 #define CELL_ENGINE_VOXEL_SIMULATION_SPACE_H
 
-#include <stack>
-#include <unordered_set>
-
 #include "CellEngineTypes.h"
-#include "CellEngineAtom.h"
-#include "CellEngineParticle.h"
-#include "CellEngineChemicalReaction.h"
-#include "CellEngineConfigData.h"
-#include "CellEngineChemicalReactionsEngine.h"
-#include "CellEngineIllinoisDataCreator.h"
-#include "CellEngineBasicVoxelsOperations.h"
-#include "CellEngineParticlesVoxelsOperations.h"
-#include "CellEngineBasicParticlesOperations.h"
-#include "CellEngineParticlesVoxelsShapesGenerator.h"
-#include "CellEngineRealRandomParticlesInVoxelSpaceGenerator.h"
-#include "CellEngineNucleicAcidsBasicOperations.h"
-#include "CellEngineGenomeNucleicAcidsParticlesInVoxelSpaceGenerator.h"
-#include "CellEngineTestParticlesInVoxelSpaceGenerator.h"
-#include "CellEngineChemicalReactionsInBasicSimulationSpace.h"
-#include "CellEngineChemicalReactionsInSimulationSpace.h"
-#include "CellEngineVoxelSimulationSpaceStatistics.h"
-#include "CellEngineChemicalReactionsInVoxelSimulationSpace.h"
 #include "CellEngineSimulationSpace.h"
+#include "CellEngineVoxelSimulationSpaceStatistics.h"
+#include "CellEngineTestParticlesInVoxelSpaceGenerator.h"
+#include "CellEngineChemicalReactionsInVoxelSimulationSpace.h"
 
 class CellEngineVoxelSimulationSpace : public CellEngineSimulationSpace, public CellEngineTestParticlesInVoxelSpaceGenerator, public CellEngineChemicalReactionsInVoxelSimulationSpace, public CellEngineVoxelSimulationSpaceStatistics
 {
@@ -43,7 +24,7 @@ public:
     [[nodiscard]] std::stringstream PrintSpaceMinMaxValues() const;
 public:
     void SetAtomInVoxelSimulationSpace(UniqueIdUInt64Type ParticleUniqueId, const CellEngineAtom& AppliedAtom);
-    Particle& GetParticleFromIndexForGenerator(UniqueIdUInt64Type ParticleUniqueId) override;
+    Particle& GetParticleFromUniqueIdForGenerator(UniqueIdUInt64Type ParticleUniqueId) override;
 public:
     void ClearVoxelSpaceAndParticles() override;
 public:

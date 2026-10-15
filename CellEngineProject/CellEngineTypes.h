@@ -111,7 +111,7 @@ struct ParticlesContainerInternal
 {
 public:
     UnsignedInt MPIProcessIndex{ 0 };
-    ThreadPosType ThreadPos{ 1, 1, 1 };
+    ThreadPosType ThreadPos{ .ThreadPosX = 1, .ThreadPosY = 1, .ThreadPosZ = 1 };
 public:
     CellEngineParticleUniqueIdGenerator ParticleUniqueIdGenerator{};
     ParticlesDetailedContainer<Particle> Particles;

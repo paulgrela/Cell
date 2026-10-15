@@ -174,10 +174,7 @@ add_executable(
 	mds/CellEngineMolecularDynamicsSimulationForceField4Constants.h
 	mds/CellEngineMolecularDynamicsSimulationForceFieldCommonTypes.h
 	mds/CellEngineMolecularDynamicsSimulationBasicComputations.cpp
-	mds/CellEngineMolecularDynamicsSimulationBasicComputations.h
-	CellEngineWellStirredChemicalReactionsSimulation.h
-	CellEngineWellStirredChemicalReactionsSimulation.h
-	CellEngineWellStirredChemicalReactionsSimulation.cpp)
+	mds/CellEngineMolecularDynamicsSimulationBasicComputations.h)
 
 if(USING_MODULES STREQUAL "TRUE")
 target_sources(CellEngineProject

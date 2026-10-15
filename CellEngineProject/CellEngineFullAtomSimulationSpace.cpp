@@ -314,8 +314,8 @@ bool CellEngineFullAtomSimulationSpace::CheckPossibilityOfInsertingParticleToCur
 
         if (CheckIfSpaceIsEmptyAndIsInBoundsForParticleElementsDiffusion(ParticleKindToCheck, Particles, ParticleSenderToInsert.NewParticleCenter.X, ParticleSenderToInsert.NewParticleCenter.Y, ParticleSenderToInsert.NewParticleCenter.Z, SimulationSpaceSectorBoundsObject) == true)
         {
-            const UnsignedInt ParticleUniqueId = AddNewParticle(Particle(GetNewFreeParticleUniqueId(), ParticleSenderToInsert.ParticleKindId, 1, -1, 1, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
-            FillParticleElementsInSpace(ParticleUniqueId, ParticleKindToCheck, ParticleSenderToInsert.NewParticleCenter.X, ParticleSenderToInsert.NewParticleCenter.Y, ParticleSenderToInsert.NewParticleCenter.Z);
+            UniqueIdOfNewCreatedParticle = AddNewParticle(Particle(GetNewFreeParticleUniqueId(), ParticleSenderToInsert.ParticleKindId, 1, -1, 1, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
+            FillParticleElementsInSpace(UniqueIdOfNewCreatedParticle, ParticleKindToCheck, ParticleSenderToInsert.NewParticleCenter.X, ParticleSenderToInsert.NewParticleCenter.Y, ParticleSenderToInsert.NewParticleCenter.Z);
 
             return true;
         }

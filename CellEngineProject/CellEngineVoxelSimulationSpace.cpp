@@ -1,16 +1,8 @@
 
-#include <set>
-#include <unordered_map>
-
-#include "FileUtils.h"
-
-#include "CellEngineAtom.h"
-#include "CellEngineUseful.h"
 #include "CellEngineVoxelSimulationSpace.h"
-#include "CellEngineSimulationExecutionMeasureTimeStatisticsData.h"
 #include "CellEngineChemicalReactionsManager.h"
-
 #include "CellEngineDataBuilderForVoxelSimulationSpace.h"
+#include "CellEngineSimulationExecutionMeasureTimeStatisticsData.h"
 
 using namespace std;
 
@@ -102,7 +94,7 @@ void CellEngineVoxelSimulationSpace::FillParticleElementInSpace(const UniqueIdUI
     CATCH("filling particle element in space")
 }
 
-Particle& CellEngineVoxelSimulationSpace::GetParticleFromIndexForGenerator(const UniqueIdUInt64Type ParticleUniqueId)
+Particle& CellEngineVoxelSimulationSpace::GetParticleFromUniqueIdForGenerator(const UniqueIdUInt64Type ParticleUniqueId)
 {
     return GetParticleFromUniqueId(ParticleUniqueId);
 }

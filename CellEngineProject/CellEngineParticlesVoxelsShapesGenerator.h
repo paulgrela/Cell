@@ -8,7 +8,7 @@
 class CellEngineParticlesVoxelsShapesGenerator : virtual public CellEngineParticlesVoxelsOperations
 {
 protected:
-    virtual Particle& GetParticleFromIndexForGenerator(UniqueIdUInt64Type ParticleUniqueId) = 0;
+    virtual Particle& GetParticleFromUniqueIdForGenerator(UniqueIdUInt64Type ParticleUniqueId) = 0;
     virtual void ClearVoxelSpaceAndParticles() = 0;
 protected:
     typedef bool (CellEngineParticlesVoxelsShapesGenerator::*CheckFreeSpaceForSelectedSpaceType)(UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UnsignedInt, UniqueIdUInt64Type );
