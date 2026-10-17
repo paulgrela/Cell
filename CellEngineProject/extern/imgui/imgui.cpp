@@ -13141,7 +13141,7 @@ void ImGui::DebugNodeWindowsListByBeginStackParent(ImGuiWindow** windows, int wi
 // [SECTION] DEBUG LOG
 //-----------------------------------------------------------------------------
 
-void ImGui::DebugLog(const char* fmt, ...)
+void ImGui::DEBUG_LOG(const char* fmt, ...)
 {
     va_list args;
     va_start(args, fmt);
@@ -13418,7 +13418,7 @@ void ImGui::DebugNodeWindowSettings(ImGuiWindowSettings*) {}
 void ImGui::DebugNodeWindowsList(ImVector<ImGuiWindow*>*, const char*) {}
 void ImGui::DebugNodeViewport(ImGuiViewportP*) {}
 
-void ImGui::DebugLog(const char*, ...) {}
+void ImGui::DEBUG_LOG(const char*, ...) {}
 void ImGui::DebugLogV(const char*, va_list) {}
 void ImGui::ShowDebugLogWindow(bool*) {}
 void ImGui::ShowStackToolWindow(bool*) {}

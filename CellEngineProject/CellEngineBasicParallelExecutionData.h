@@ -66,7 +66,9 @@ public:
 public:
     ThreadPosType CurrentThreadPos{ .ThreadPosX = 1, .ThreadPosY = 1, .ThreadPosZ = 1 };
 public:
+    #ifdef NEIGHBOR_THREAD_INDEXES
     ThreadPosType NeighborThreadsIndexes[NumberOfAllNeighbors];
+    #endif
 public:
     std::vector<ParticleToBeMovedFromOneSectorToAnotherSector> ListOfParticlesToChangeSectors;
 public:

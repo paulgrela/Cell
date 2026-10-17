@@ -124,7 +124,7 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::GenerateVoxelsForGPUParal
 {
     try
     {
-        DEBUGLOG(LoggersManagerObject.LogOnlyToConsole(STREAM("K = " << MainPosX << " " << MainPosY << " " << MainPosZ));)
+        DEBUG_LOG(LoggersManagerObject.LogOnlyToConsole(STREAM("K = " << MainPosX << " " << MainPosY << " " << MainPosZ));)
 
         if (LastSimulationSpaceVoxel != SimulationSpaceVoxelObject || PosXParam == XEndParam - 2 || PosYParam == YEndParam - 2 || PosZParam == ZEndParam - 2)
         {
@@ -300,7 +300,7 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSpace(const vmath::
 
         UnsignedInt NumberOfRenderedSelectedSpaces = 0;
 
-        DEBUGLOG(LoggersManagerObject.LogOnlyToConsole(STREAM("P = " << SelectionStartXPos << " " << SelectionStartYPos << " " << SelectionStartZPos << " " << SelectionStepX << " " << SelectionStepY << " " << SelectionStepZ << " " << SelectionSizeX << " " << SelectionSizeY << " " << SelectionSizeZ));)
+        DEBUG_LOG(LoggersManagerObject.LogOnlyToConsole(STREAM("P = " << SelectionStartXPos << " " << SelectionStartYPos << " " << SelectionStartZPos << " " << SelectionStepX << " " << SelectionStepY << " " << SelectionStepZ << " " << SelectionSizeX << " " << SelectionSizeY << " " << SelectionSizeZ));)
 
         if (SpaceDrawingType == VoxelSpaceDrawingTypes::DrawVoxelSpaceFull && (CellEngineConfigDataObject.ViewPositionZ <= CellEngineConfigDataObject.Distance + 700 || (CellEngineConfigDataObject.ViewPositionZ > CellEngineConfigDataObject.Distance + 700 && CellEngineConfigDataObject.RenderCellWithParallelCPUComputing == false)))
         {
@@ -357,7 +357,7 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSpace(const vmath::
 
             CellEngineGraphicsExecutionMeasureTimeStatisticsData::ExecutionDurationTimeForPreparingParticlesForDrawingByCPUComputationsPhase1 += chrono::duration(stop_time111 - start_time111);
 
-            DEBUGLOG(LoggersManagerObject.LogOnlyToConsole(STREAM("END OF PARALLEL -> ParticlesOffsetTotal = " << ParticlesOffsetTotal << " AtomsOffsetTotal = " << AtomOffsetTotal));)
+            DEBUG_LOG(LoggersManagerObject.LogOnlyToConsole(STREAM("END OF PARALLEL -> ParticlesOffsetTotal = " << ParticlesOffsetTotal << " AtomsOffsetTotal = " << AtomOffsetTotal));)
 
             const auto start_time114 = chrono::high_resolution_clock::now();
 
@@ -394,7 +394,7 @@ void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::RenderSpace(const vmath::
             RenderSelectedSpace(SelectionStartXPos - SubStartPos, SelectionStartYPos - SubStartPos, SelectionStartZPos - SubStartPos, SelectionStepX, SelectionStepY, SelectionStepZ, SelectionSizeX, SelectionSizeY, SelectionSizeY, TempAtomObject);
         }
 
-        DEBUGLOG(LoggersManagerObject.Log(STREAM("NumberOfRenderedSelectedSpaces = " << NumberOfRenderedSelectedSpaces));)
+        DEBUG_LOG(LoggersManagerObject.Log(STREAM("NumberOfRenderedSelectedSpaces = " << NumberOfRenderedSelectedSpaces));)
     }
     CATCH("rendering voxel simulation space");
 }
@@ -411,7 +411,7 @@ inline void CellEngineOpenGLVisualiserOfVoxelSimulationSpace::DrawChosenAtomUsin
                 {
                     if (const auto ParticleIter = CellEngineDataFileObjectPointer->GetParticleIteratorFromUniqueIdData(GPUAtomsLocal[ChosenParticleCenterIndex].Index); ParticleIter != CellEngineDataFileObjectPointer->GetParticleEndData())
                     {
-                        DEBUGLOG(LoggersManagerObject.LogOnlyToConsole(STREAM("PICKING OBJECT = " << std::to_string(ChosenParticleCenterIndex) + " " + to_string(GPUAtomsLocal[ChosenParticleCenterIndex].AtomOffset) + " " + to_string(ParticleIter->second.ListOfAtoms.size())));)
+                        DEBUG_LOG(LoggersManagerObject.LogOnlyToConsole(STREAM("PICKING OBJECT = " << std::to_string(ChosenParticleCenterIndex) + " " + to_string(GPUAtomsLocal[ChosenParticleCenterIndex].AtomOffset) + " " + to_string(ParticleIter->second.ListOfAtoms.size())));)
 
                         ChosenParticleObject = ParticleIter->second;
                         ChosenAtomObjectIndex = GPUAtomsLocal[ChosenParticleCenterIndex].AtomOffset;

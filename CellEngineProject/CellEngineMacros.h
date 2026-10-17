@@ -21,9 +21,27 @@
                     for (auto& ParticleObject : Particles[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles)
 
 #ifdef SIMULATION_DETAILED_DEBUG_LOG
-    #define DEBUGLOG(...) __VA_ARGS__
+    #define DEBUG_LOG(...) __VA_ARGS__
 #else
-    #define DEBUGLOG(...)
+    #define DEBUG_LOG(...)
+#endif
+
+#ifdef SIMULATION_DETAILED_DEBUG_LOG_DIFFUSION
+    #define DEBUG_LOG_DIFFUSION(...) __VA_ARGS__
+#else
+    #define DEBUG_LOG_DIFFUSION(...)
+#endif
+
+#ifdef SIMULATION_DETAILED_DEBUG_LOG_CHEMICAL_REACTION
+    #define DEBUG_LOG_CHEMICAL_REACTION(...) __VA_ARGS__
+#else
+    #define DEBUG_LOG_CHEMICAL_REACTION(...)
+#endif
+
+#if defined(SIMULATION_DETAILED_DEBUG_LOG_DIFFUSION) || defined(SIMULATION_DETAILED_DEBUG_LOG_CHEMICAL_REACTION)
+    #define DEBUG_LOG_DIFFUSION_OR_CHEMICAL_REACTION(...) __VA_ARGS__
+#else
+    #define DEBUG_LOG_DIFFUSION_OR_CHEMICAL_REACTION(...)
 #endif
 
 #endif

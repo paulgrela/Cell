@@ -55,6 +55,7 @@ private:
             swap(ChemicalReactionObject.Products, ChemicalReactionObject.Reactants);
         }
     }
+private:
     void SortReactantsAndProductsForEveryChemicalReaction()
     {
         for (auto& ReactionObject : ChemicalReactions)

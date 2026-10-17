@@ -61,7 +61,7 @@ protected:
 protected:
     static inline bool CheckBoundsForSpaceV1Reactions(const RealType TestedPosX, const RealType TestedPosY, const RealType TestedPosZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam)
     {
-        DEBUGLOG(LoggersManagerObject.Log(STREAM("R2 = (" << TestedPosX << " " << TestedPosY << " " << TestedPosZ << ") (" << SimulationSpaceSectorBoundsObjectParam.StartXPos << "," << SimulationSpaceSectorBoundsObjectParam.EndXPos << ") (" << SimulationSpaceSectorBoundsObjectParam.StartYPos << "," << SimulationSpaceSectorBoundsObjectParam.EndYPos << ") (" << SimulationSpaceSectorBoundsObjectParam.StartZPos << "," << SimulationSpaceSectorBoundsObjectParam.EndZPos << ")"));)
+        DEBUG_LOG_CHEMICAL_REACTION(LoggersManagerObject.Log(STREAM("R2 = (" << TestedPosX << " " << TestedPosY << " " << TestedPosZ << ") (" << SimulationSpaceSectorBoundsObjectParam.StartXPos << "," << SimulationSpaceSectorBoundsObjectParam.EndXPos << ") (" << SimulationSpaceSectorBoundsObjectParam.StartYPos << "," << SimulationSpaceSectorBoundsObjectParam.EndYPos << ") (" << SimulationSpaceSectorBoundsObjectParam.StartZPos << "," << SimulationSpaceSectorBoundsObjectParam.EndZPos << ")"));)
 
         if (!((TestedPosX >= SimulationSpaceSectorBoundsObjectParam.StartXPos && TestedPosX < SimulationSpaceSectorBoundsObjectParam.StartXPos + SimulationSpaceSectorBoundsObjectParam.SizeX) && (TestedPosY >= SimulationSpaceSectorBoundsObjectParam.StartYPos && TestedPosY < SimulationSpaceSectorBoundsObjectParam.StartYPos + SimulationSpaceSectorBoundsObjectParam.SizeY) && (TestedPosZ >= SimulationSpaceSectorBoundsObjectParam.StartZPos && TestedPosZ < SimulationSpaceSectorBoundsObjectParam.StartZPos + SimulationSpaceSectorBoundsObjectParam.SizeZ)))
             return false;
@@ -112,7 +112,7 @@ protected:
 protected:
     static inline bool CheckBoundsForSpaceV1InDiffusion(const RealType TestedPosX, const RealType TestedPosY, const RealType TestedPosZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam)
     {
-        DEBUGLOG(LoggersManagerObject.Log(STREAM("R2 = (" << TestedPosX << " " << TestedPosY << " " << TestedPosZ << ") (" << SimulationSpaceSectorBoundsObjectParam.StartXPos << "," << SimulationSpaceSectorBoundsObjectParam.EndXPos << ") (" << SimulationSpaceSectorBoundsObjectParam.StartYPos << "," << SimulationSpaceSectorBoundsObjectParam.EndYPos << ") (" << SimulationSpaceSectorBoundsObjectParam.StartZPos << "," << SimulationSpaceSectorBoundsObjectParam.EndZPos << ")"));)
+        DEBUG_LOG_DIFFUSION(LoggersManagerObject.Log(STREAM("R2 = (" << TestedPosX << " " << TestedPosY << " " << TestedPosZ << ") (" << SimulationSpaceSectorBoundsObjectParam.StartXPos << "," << SimulationSpaceSectorBoundsObjectParam.EndXPos << ") (" << SimulationSpaceSectorBoundsObjectParam.StartYPos << "," << SimulationSpaceSectorBoundsObjectParam.EndYPos << ") (" << SimulationSpaceSectorBoundsObjectParam.StartZPos << "," << SimulationSpaceSectorBoundsObjectParam.EndZPos << ")"));)
 
         if (!(
             (TestedPosX >= -CellEngineConfigDataObject.ShiftCenterX && TestedPosX < CellEngineConfigDataObject.ShiftCenterX && TestedPosY >= -CellEngineConfigDataObject.ShiftCenterY && TestedPosY < CellEngineConfigDataObject.ShiftCenterY && TestedPosZ >= -CellEngineConfigDataObject.ShiftCenterZ && TestedPosZ < CellEngineConfigDataObject.ShiftCenterZ)
@@ -120,7 +120,7 @@ protected:
             (TestedPosX >= SimulationSpaceSectorBoundsObjectParam.StartXPos - ParticleMoveSizeinDiffusionUnsignedInt && TestedPosX < SimulationSpaceSectorBoundsObjectParam.EndXPos + ParticleMoveSizeinDiffusionUnsignedInt && TestedPosY >= SimulationSpaceSectorBoundsObjectParam.StartYPos - ParticleMoveSizeinDiffusionUnsignedInt && TestedPosY < SimulationSpaceSectorBoundsObjectParam.EndYPos + ParticleMoveSizeinDiffusionUnsignedInt && TestedPosZ >= SimulationSpaceSectorBoundsObjectParam.StartZPos - ParticleMoveSizeinDiffusionUnsignedInt && TestedPosZ < SimulationSpaceSectorBoundsObjectParam.EndZPos + ParticleMoveSizeinDiffusionUnsignedInt)
             ))
         {
-            DEBUGLOG(LoggersManagerObject.Log(STREAM("R3 = (" << TestedPosX << " " << TestedPosY << " " << TestedPosZ << ") (" << SimulationSpaceSectorBoundsObjectParam.StartXPos << "," << SimulationSpaceSectorBoundsObjectParam.EndXPos << ") (" << SimulationSpaceSectorBoundsObjectParam.StartYPos << "," << SimulationSpaceSectorBoundsObjectParam.EndYPos << ") (" << SimulationSpaceSectorBoundsObjectParam.StartZPos << "," << SimulationSpaceSectorBoundsObjectParam.EndZPos << ")"));)
+            DEBUG_LOG(LoggersManagerObject.Log(STREAM("R3 = (" << TestedPosX << " " << TestedPosY << " " << TestedPosZ << ") (" << SimulationSpaceSectorBoundsObjectParam.StartXPos << "," << SimulationSpaceSectorBoundsObjectParam.EndXPos << ") (" << SimulationSpaceSectorBoundsObjectParam.StartYPos << "," << SimulationSpaceSectorBoundsObjectParam.EndYPos << ") (" << SimulationSpaceSectorBoundsObjectParam.StartZPos << "," << SimulationSpaceSectorBoundsObjectParam.EndZPos << ")"));)
             return false;
         }
 
@@ -131,7 +131,7 @@ protected:
     {
         try
         {
-            #ifdef SIMULATION_DETAILED_DEBUG_LOG
+            #ifdef SIMULATION_DETAILED_DEBUG_LOG_DIFFUSION
             auto [TestedPosX1, TestedPosY1, TestedPosZ1] = GetNewPosMovedByVector(Center.X, Center.Y, Center.Z, 0, 0, 0);
             LoggersManagerObject.Log(STREAM("R2S = (" << TestedPosX1 << " " << TestedPosY1 << " " << TestedPosZ1 << ") (" << SimulationSpaceSectorBoundsObjectParam.StartXPos << "," << SimulationSpaceSectorBoundsObjectParam.EndXPos << ") (" << SimulationSpaceSectorBoundsObjectParam.StartYPos << "," << SimulationSpaceSectorBoundsObjectParam.EndYPos << ") (" << SimulationSpaceSectorBoundsObjectParam.StartZPos << "," << SimulationSpaceSectorBoundsObjectParam.EndZPos << ")"));
             #endif
@@ -287,7 +287,7 @@ protected:
                     for (RealType PosZ = VecZ - AddZ; PosZ < VecZ + AddZ; PosZ += 1.0)
                         if (CheckFreeSpaceForParticleMovedByVectorReactionsOfTranscriptionTranslation(ParticleObject, ParticlesInSector, PosX, PosY, PosZ) == true)
                         {
-                            DEBUGLOG(LoggersManagerObject.Log(STREAM(terminal_colors_utils::green << "FREE SPACE FOUND " << VecX << " " << VecY << " " << VecZ << " " << PosX << " " << PosY << " " << PosZ << terminal_colors_utils::white));)
+                            DEBUG_LOG(LoggersManagerObject.Log(STREAM(terminal_colors_utils::green << "FREE SPACE FOUND " << VecX << " " << VecY << " " << VecZ << " " << PosX << " " << PosY << " " << PosZ << terminal_colors_utils::white));)
 
                             MoveParticleByVectorForMPIProcesses(ParticleObject, ParticlesInSector, ListOfParticlesToChangeSectors, nullptr, nullptr, PosX, PosY, PosZ);
                             FoundFreeSpace = true;
@@ -295,7 +295,7 @@ protected:
                         }
             Outside:
 
-            #ifdef SIMULATION_DETAILED_DEBUG_LOG
+            #ifdef SIMULATION_DETAILED_DEBUG_LOG_CHEMICAL_REACTION
             if (FoundFreeSpace == false)
                 LoggersManagerObject.Log(STREAM(terminal_colors_utils::red << "FREE SPACE NOT FOUND " << VecX << " " << VecY << " " << VecZ << " " << terminal_colors_utils::white));
             #endif

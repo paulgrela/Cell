@@ -1815,7 +1815,7 @@ public:
 
                 CellEngineGraphicsExecutionMeasureTimeStatisticsData::ExecutionDurationTimeForDrawingImGuiMenu += chrono::duration(StopTime6 - StartTime1);
 
-                DEBUGLOG(LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(StartTime1, StopTime6, "Time of one frame 1 = ", "Exception in measuring time")));)
+                DEBUG_LOG(LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(StartTime1, StopTime6, "Time of one frame 1 = ", "Exception in measuring time")));)
 
                 const auto StartTime7 = chrono::high_resolution_clock::now();
 
@@ -1825,7 +1825,7 @@ public:
 
                 CellEngineGraphicsExecutionMeasureTimeStatisticsData::ExecutionDurationTimeForSwapingGraphicBuffersForDrawingParticles += chrono::duration(StopTime7 - StartTime7);
 
-                DEBUGLOG(LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(StartTime7, StopTime7, "Time of one frame 2 = ", "Exception in measuring time")));)
+                DEBUG_LOG(LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(StartTime7, StopTime7, "Time of one frame 2 = ", "Exception in measuring time")));)
 
                 const auto StartTime8 = chrono::high_resolution_clock::now();
 
@@ -1844,7 +1844,7 @@ public:
 
                 CellEngineGraphicsExecutionMeasureTimeStatisticsData::ExecutionDurationTimeForDrawingParticlesWithSwapingGraphicBuffers += chrono::duration(StopTime8 - StartTime8);
 
-                DEBUGLOG(LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(StartTime8, StopTime8, "Time of one frame 3 = ", "Exception in measuring time")));)
+                DEBUG_LOG(LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(StartTime8, StopTime8, "Time of one frame 3 = ", "Exception in measuring time")));)
             }
         }
         CATCH("executing imgui menu glfw main loop");

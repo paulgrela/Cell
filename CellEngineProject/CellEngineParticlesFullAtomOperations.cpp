@@ -19,7 +19,7 @@ void CellEngineParticlesFullAtomOperations::SetProperThreadIndexForEveryParticle
             ParticlesSectors[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].ThreadPos = ThreadPos;
             ParticlesSectors[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].MPIProcessIndex = CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[ThreadPos.ThreadPosX - 1][ThreadPos.ThreadPosY - 1][ThreadPos.ThreadPosZ - 1]->GetMPIProcessIndex() - 1;
 
-            #ifdef SIMULATION_DETAILED_DEBUG_LOG
+            #ifdef SIMULATION_DETAILED_DEBUG_LOG_DIFFUSION
             if constexpr (PrintAdditionalInformation == true)
                 LoggersManagerObject.Log(STREAM("ThreadPos = " << ThreadPos.ThreadPosX << "'" << ThreadPos.ThreadPosY << "'" << ThreadPos.ThreadPosZ << " ProcessIndex = " << ParticlesSectors[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].MPIProcessIndex));
             #endif
@@ -34,11 +34,11 @@ static bool ExchangeParticleBetweenSectors(const Particle &ParticleObject, const
     {
         ListOfParticlesToChangeSectors.emplace_back(ParticleToBeMovedFromOneSectorToAnotherSector{ .ParticleUniqueId = ParticleObject.ParticleUniqueId, .SenderSectorPos = SectorPosType{ .SectorPosX = SectorPosX1, .SectorPosY = SectorPosY1, .SectorPosZ = SectorPosZ1 }, .ReceiverSectorPos = SectorPosType{ .SectorPosX = SectorPosX2, .SectorPosY = SectorPosY2, .SectorPosZ = SectorPosZ2 }});
 
-        //#ifdef SIMULATION_DETAILED_DEBUG_LOG
+        #ifdef SIMULATION_DETAILED_DEBUG_LOG_DIFFUSION
         const auto ParticleFromSourceToMoveToTargetIterator = ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].Particles.find(ListOfParticlesToChangeSectors.back().ParticleUniqueId);
         if (ParticleFromSourceToMoveToTargetIterator == ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].Particles.end())
             LoggersManagerObject.LogOnlyToFilesUnconditional(STREAM("ERROR2 = " << ListOfParticlesToChangeSectors.back().ParticleUniqueId << " " << ParticleObject.ParticleUniqueId));
-        //#endif
+        #endif
     }
 
     return false;
@@ -54,11 +54,11 @@ void CellEngineParticlesFullAtomOperations::MoveParticleByVectorForThreads(Parti
         if (SectorPosX2 == -1 || SectorPosY2 == -1 || SectorPosZ2 == -1)
             return;
 
-        //#ifdef SIMULATION_DETAILED_DEBUG_LOG
+        #ifdef SIMULATION_DETAILED_DEBUG_LOG_DIFFUSION
         const auto ParticleFromSourceToMoveToTargetIterator = ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].Particles.find(ParticleObject.ParticleUniqueId);
         if (ParticleFromSourceToMoveToTargetIterator == ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].Particles.end())
             LoggersManagerObject.LogOnlyToFilesUnconditional(STREAM("ERROR1 = " << ParticleObject.ParticleUniqueId));
-        //#endif
+        #endif
 
         if (SectorPosX1 != SectorPosX2 || SectorPosY1 != SectorPosY2 || SectorPosZ1 != SectorPosZ2)
         {
@@ -73,13 +73,13 @@ void CellEngineParticlesFullAtomOperations::MoveParticleByVectorForThreads(Parti
                     {
                         for (UnsignedInt NeighborProcessIndex = 0; NeighborProcessIndex < NumberOfAllNeighbors; NeighborProcessIndex++)
                         {
-                            DEBUGLOG(LoggersManagerObject.Log(STREAM("NeighborProcessIndex = " << NeighborProcessesIndexes[NeighborProcessIndex] << "ThreadPos = " << Thread2Pos.ThreadPosX << "'" << Thread2Pos.ThreadPosY << "'" << Thread2Pos.ThreadPosZ << " ProcessIndex = " << CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[Thread2Pos.ThreadPosX - 1][Thread2Pos.ThreadPosY - 1][Thread2Pos.ThreadPosZ - 1]->GetMPIProcessIndex() - 1));)
+                            DEBUG_LOG_DIFFUSION(LoggersManagerObject.Log(STREAM("NeighborProcessIndex = " << NeighborProcessIndex << " ThreadPos = " << Thread2Pos.ThreadPosX << "'" << Thread2Pos.ThreadPosY << "'" << Thread2Pos.ThreadPosZ << " ProcessIndex = " << CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[Thread2Pos.ThreadPosX - 1][Thread2Pos.ThreadPosY - 1][Thread2Pos.ThreadPosZ - 1]->GetMPIProcessIndex() - 1));)
 
                             const ThreadIdType NeighborThreadIndexFoundInSourceThreadNeighborThreadIndexes = CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[CurrentThreadPos.ThreadPosX - 1][CurrentThreadPos.ThreadPosY - 1][CurrentThreadPos.ThreadPosZ - 1]->NeighborProcessesIndexes[NeighborProcessIndex];
                             const ThreadIdType TargetThreadIndex = CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[Thread2Pos.ThreadPosX - 1][Thread2Pos.ThreadPosY - 1][Thread2Pos.ThreadPosZ - 1]->CurrentThreadIndex - 1;
                             if (NeighborThreadIndexFoundInSourceThreadNeighborThreadIndexes == TargetThreadIndex)
                             {
-                                //#ifdef SIMULATION_DETAILED_DEBUG_LOG
+                                #ifdef SIMULATION_DETAILED_DEBUG_LOG_DIFFUSION
                                 if (Thread1Pos != CurrentThreadPos)
                                 {
                                     if constexpr(PrintAdditionalInformationToLogs == true)
@@ -94,23 +94,17 @@ void CellEngineParticlesFullAtomOperations::MoveParticleByVectorForThreads(Parti
                                     if constexpr(PrintAdditionalInformationToLogs == true)
                                         LoggersManagerObject.Log(STREAM("PROCESS TO SEND PARTICLE GOOD - TO THREAD = (" << Thread2Pos.ThreadPosX << "," << Thread2Pos.ThreadPosY << "," << Thread2Pos.ThreadPosZ << ") FROM THREAD = (" << Thread1Pos.ThreadPosX << "," << Thread1Pos.ThreadPosY << "," << Thread1Pos.ThreadPosZ << ") CurrentThreadIndex = " << TargetThreadIndex << " CurrentProcessIndex = " << MPIProcessDataObject.CurrentMPIProcessIndex <<  " S1 = (" << SectorPosX1 << "," << SectorPosY1 << "," << SectorPosZ1 << ") S2 = (" << SectorPosX2 << "," << SectorPosY2 << "," << SectorPosZ2 << ") P = (" << ParticleObject.Center.X << ", " << ParticleObject.Center.Y << ", " << ParticleObject.Center.Z << ") V = (" << VectorX << ", " << VectorY << ", " << VectorZ << ") PSHIFT = (" << ParticleObject.Center.X + VectorX << ", " << ParticleObject.Center.Y + VectorY << ", " << ParticleObject.Center.Z + VectorZ << ") PARTCLE_INDEX = "));
                                     if constexpr(PrintAdditionalInformationToFiles == true)
-                                        LoggersManagerObject.LogOnlyToFilesUnconditional(STREAM("PROCESS TO SEND PARTICLE GOOD - TO THREAD = (" << Thread2Pos.ThreadPosX << "," << Thread2Pos.ThreadPosY << "," << Thread2Pos.ThreadPosZ << ") FROM THREAD = (" << Thread1Pos.ThreadPosX << "," << Thread1Pos.ThreadPosY << "," << Thread1Pos.ThreadPosZ << ") CurrentThreadIndex = " << TargetThreadIndex << " CurrentProcessIndex = " << MPIProcessDataObject.CurrentMPIProcessIndex <<  " S1 = (" << SectorPosX1 << "," << SectorPosY1 << "," << SectorPosZ1 << ") S2 = (" << SectorPosX2 << "," << SectorPosY2 << "," << SectorPosZ2 << ") P = (" << ParticleObject.Center.X << ", " << ParticleObject.Center.Y << ", " << ParticleObject.Center.Z << ") V = (" << VectorX << ", " << VectorY << ", " << VectorZ << ") PSHIFT = (" << ParticleObject.Center.X + VectorX << ", " << ParticleObject.Center.Y + VectorY << ","  << ParticleObject.Center.Z + VectorZ << ") PARTCLE_INDEX = " << ParticleObject.ParticleUniqueId));
+                                        LoggersManagerObject.LogOnlyToFilesUnconditional(STREAM("PROCESS TO SEND PARTICLE GOOD - TO THREAD = (" << Thread2Pos.ThreadPosX << "," << Thread2Pos.ThreadPosY << "," << Thread2Pos.ThreadPosZ << ") FROM THREAD = (" << Thread1Pos.ThreadPosX << "," << Thread1Pos.ThreadPosY << "," << Thread1Pos.ThreadPosZ << ") CurrentThreadIndex = " << TargetThreadIndex << " CurrentProcessIndex = " << MPIProcessDataObject.CurrentMPIProcessIndex <<  " S1 = (" << SectorPosX1 << "," << SectorPosY1 << "," << SectorPosZ1 << ") S2 = (" << SectorPosX2 << "," << SectorPosY2 << "," << SectorPosZ2 << ") P = (" << ParticleObject.Center.X << ", " << ParticleObject.Center.Y << ", " << ParticleObject.Center.Z << ") V = (" << VectorX << ", " << VectorY << ", " << VectorZ << ") PSHIFT = (" << ParticleObject.Center.X + VectorX << ", " << ParticleObject.Center.Y + VectorY << ", "  << ParticleObject.Center.Z + VectorZ << ") PARTCLE_INDEX = " << ParticleObject.ParticleUniqueId));
                                     if constexpr(PrintAdditionalInformationToConsole == true)
                                         LoggersManagerObject.LogOnlyToConsoleUnconditional(STREAM("PROCESS TO SEND PARTICLE GOOD - TO THREAD = (" << Thread2Pos.ThreadPosX << "," << Thread2Pos.ThreadPosY << "," << Thread2Pos.ThreadPosZ << ") FROM THREAD = (" << Thread1Pos.ThreadPosX << "," << Thread1Pos.ThreadPosY << "," << Thread1Pos.ThreadPosZ << ") CurrentThreadIndex = " << TargetThreadIndex << " CurrentProcessIndex = " << MPIProcessDataObject.CurrentMPIProcessIndex <<  " S1 = (" << SectorPosX1 << "," << SectorPosY1 << "," << SectorPosZ1 << ") S2 = (" << SectorPosX2 << "," << SectorPosY2 << "," << SectorPosZ2 << ") P = (" << ParticleObject.Center.X << ", " << ParticleObject.Center.Y << ", " << ParticleObject.Center.Z << ") V = (" << VectorX << ", " << VectorY << ", "  << VectorZ << ") PSHIFT = (" << ParticleObject.Center.X + VectorX << ", " << ParticleObject.Center.Y + VectorY << ", " << ParticleObject.Center.Z + VectorZ << ") PARTCLE_INDEX = " << ParticleObject.ParticleUniqueId));
                                 }
-                                //#endif
+                                #endif
 
-                                //#ifdef SIMULATION_DETAILED_DEBUG_LOG
-                                LoggersManagerObject.LogOnlyToFilesUnconditional(STREAM("VectorOfParticlesToSendToNeighborThreads = " << NeighborProcessIndex << " " << ParticleObject.ParticleUniqueId << " " << CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[Thread2Pos.ThreadPosX - 1][Thread2Pos.ThreadPosY - 1][Thread2Pos.ThreadPosZ - 1]->VectorOfParticlesToSendToNeighborThreads[NeighborProcessIndex].size()));
-                                LoggersManagerObject.LogOnlyToConsoleUnconditional(STREAM("VectorOfParticlesToSendToNeighborThreads = " << NeighborProcessIndex << " " << ParticleObject.ParticleUniqueId << " " << CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[Thread2Pos.ThreadPosX - 1][Thread2Pos.ThreadPosY - 1][Thread2Pos.ThreadPosZ - 1]->VectorOfParticlesToSendToNeighborThreads[NeighborProcessIndex].size()));
-                                //#endif
+                                DEBUG_LOG_DIFFUSION(LoggersManagerObject.LogUnconditional(STREAM("VectorOfParticlesToSendToNeighborThreads = " << NeighborProcessIndex << " " << ParticleObject.ParticleUniqueId << " " << CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[Thread2Pos.ThreadPosX - 1][Thread2Pos.ThreadPosY - 1][Thread2Pos.ThreadPosZ - 1]->VectorOfParticlesToSendToNeighborThreads[NeighborProcessIndex].size()));)
 
                                 CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[Thread2Pos.ThreadPosX - 1][Thread2Pos.ThreadPosY - 1][Thread2Pos.ThreadPosZ - 1]->VectorOfParticlesToSendToNeighborThreads[NeighborProcessIndex].emplace_back(ParticleSenderStructMultiThreaded{ .ParticleUniqueId = ParticleObject.ParticleUniqueId, .ParticleKindId = ParticleObject.ParticleKindId, .SenderProcessIndex = 0, .ReceiverProcessIndex = 0, .SenderThreadPos = { .ThreadPosX = Thread1Pos.ThreadPosX, .ThreadPosY = Thread1Pos.ThreadPosY, .ThreadPosZ = Thread1Pos.ThreadPosZ }, .ReceiverThreadPos = { .ThreadPosX = Thread2Pos.ThreadPosX, .ThreadPosY = Thread2Pos.ThreadPosY, .ThreadPosZ = Thread2Pos.ThreadPosZ }, .SenderSectorPos{ .X = static_cast<uint16_t>(SectorPosX1), .Y = static_cast<uint16_t>(SectorPosY1), .Z = static_cast<uint16_t>(SectorPosZ1) }, .ReceiverSectorPos = { .X = static_cast<uint16_t>(SectorPosX2), .Y = static_cast<uint16_t>(SectorPosY2), .Z = static_cast<uint16_t>(SectorPosZ2) }, .NewParticleCenter = { .X = ParticleObject.Center.X, .Y = ParticleObject.Center.Y, .Z = ParticleObject.Center.Z }, .Vector = { .X = VectorX, .Y = VectorY, .Z = VectorZ }, .ParticleObject = ParticleObject });
 
-                                //#ifdef SIMULATION_DETAILED_DEBUG_LOG
-                                LoggersManagerObject.LogOnlyToFilesUnconditional(STREAM("VectorOfParticlesToSendToNeighborThreads = " << NeighborProcessIndex << " " << ParticleObject.ParticleUniqueId << " " << CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[Thread2Pos.ThreadPosX - 1][Thread2Pos.ThreadPosY - 1][Thread2Pos.ThreadPosZ - 1]->VectorOfParticlesToSendToNeighborThreads[NeighborProcessIndex].back().ParticleUniqueId << " " << CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[Thread2Pos.ThreadPosX - 1][Thread2Pos.ThreadPosY - 1][Thread2Pos.ThreadPosZ - 1]->VectorOfParticlesToSendToNeighborThreads[NeighborProcessIndex].size()));
-                                LoggersManagerObject.LogOnlyToConsoleUnconditional(STREAM("VectorOfParticlesToSendToNeighborThreads = " << NeighborProcessIndex << " " << ParticleObject.ParticleUniqueId << " " << CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[Thread2Pos.ThreadPosX - 1][Thread2Pos.ThreadPosY - 1][Thread2Pos.ThreadPosZ - 1]->VectorOfParticlesToSendToNeighborThreads[NeighborProcessIndex].back().ParticleUniqueId << " " << CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[Thread2Pos.ThreadPosX - 1][Thread2Pos.ThreadPosY - 1][Thread2Pos.ThreadPosZ - 1]->VectorOfParticlesToSendToNeighborThreads[NeighborProcessIndex].size()));
-                                //#endif
+                                DEBUG_LOG_DIFFUSION(LoggersManagerObject.LogUnconditional(STREAM("VectorOfParticlesToSendToNeighborThreads = " << NeighborProcessIndex << " " << ParticleObject.ParticleUniqueId << " " << CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[Thread2Pos.ThreadPosX - 1][Thread2Pos.ThreadPosY - 1][Thread2Pos.ThreadPosZ - 1]->VectorOfParticlesToSendToNeighborThreads[NeighborProcessIndex].back().ParticleUniqueId << " " << CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[Thread2Pos.ThreadPosX - 1][Thread2Pos.ThreadPosY - 1][Thread2Pos.ThreadPosZ - 1]->VectorOfParticlesToSendToNeighborThreads[NeighborProcessIndex].size()));)
 
                                 break;
                             }
@@ -119,8 +113,8 @@ void CellEngineParticlesFullAtomOperations::MoveParticleByVectorForThreads(Parti
                     else
                     if (ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].Particles.contains(ParticleObject.ParticleUniqueId) == false)
                     {
-                                                                                                                        CellEngineUseful::MoveAllAtomsInParticleAtomsListByVector(ParticleObject, VectorX, VectorY, VectorZ);
-                                                                                                                        ParticleObject.SetCenterCoordinates(ParticleObject.Center.X + VectorX, ParticleObject.Center.Y + VectorY, ParticleObject.Center.Z + VectorZ);
+                        CellEngineUseful::MoveAllAtomsInParticleAtomsListByVector(ParticleObject, VectorX, VectorY, VectorZ);
+                        ParticleObject.SetCenterCoordinates(ParticleObject.Center.X + VectorX, ParticleObject.Center.Y + VectorY, ParticleObject.Center.Z + VectorZ);
 
                         ListOfParticlesToChangeSectors.emplace_back(ParticleToBeMovedFromOneSectorToAnotherSector{ .ParticleUniqueId = ParticleObject.ParticleUniqueId, .SenderSectorPos = SectorPosType{ .SectorPosX = SectorPosX1, .SectorPosY = SectorPosY1, .SectorPosZ = SectorPosZ1 }, .ReceiverSectorPos = SectorPosType{ .SectorPosX = SectorPosX2, .SectorPosY = SectorPosY2, .SectorPosZ = SectorPosZ2 }});
                     }
@@ -128,8 +122,8 @@ void CellEngineParticlesFullAtomOperations::MoveParticleByVectorForThreads(Parti
             }
             else
             {
-                                                                                                                        CellEngineUseful::MoveAllAtomsInParticleAtomsListByVector(ParticleObject, VectorX, VectorY, VectorZ);
-                                                                                                                        ParticleObject.SetCenterCoordinates(ParticleObject.Center.X + VectorX, ParticleObject.Center.Y + VectorY, ParticleObject.Center.Z + VectorZ);
+                CellEngineUseful::MoveAllAtomsInParticleAtomsListByVector(ParticleObject, VectorX, VectorY, VectorZ);
+                ParticleObject.SetCenterCoordinates(ParticleObject.Center.X + VectorX, ParticleObject.Center.Y + VectorY, ParticleObject.Center.Z + VectorZ);
 
                 ExchangeParticleBetweenSectors(ParticleObject, ParticlesInSector, ListOfParticlesToChangeSectors, SectorPosX1, SectorPosY1, SectorPosZ1, SectorPosX2, SectorPosY2, SectorPosZ2);
             }
@@ -148,11 +142,11 @@ void CellEngineParticlesFullAtomOperations::MoveParticleByVectorForMPIProcesses(
         if (SectorPosX2 == -1 || SectorPosY2 == -1 || SectorPosZ2 == -1)
             return;
 
-        //#ifdef SIMULATION_DETAILED_DEBUG_LOG
+        #ifdef SIMULATION_DETAILED_DEBUG_LOG_DIFFUSION
         const auto ParticleFromSourceToMoveToTargetIterator = ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].Particles.find(ParticleObject.ParticleUniqueId);
         if (ParticleFromSourceToMoveToTargetIterator == ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].Particles.end())
             LoggersManagerObject.Log(STREAM("ERROR1 = " << ParticleObject.ParticleUniqueId));
-        //#endif
+        #endif
 
         if (SectorPosX1 != SectorPosX2 || SectorPosY1 != SectorPosY2 || SectorPosZ1 != SectorPosZ2)
         {
@@ -166,7 +160,7 @@ void CellEngineParticlesFullAtomOperations::MoveParticleByVectorForMPIProcesses(
                     for (UnsignedInt NeighborProcessIndex = 0; NeighborProcessIndex < NumberOfAllNeighbors; NeighborProcessIndex++)
                         if (NeighborProcessesIndexes[NeighborProcessIndex] == Process2Pos)
                         {
-                            #ifdef SIMULATION_DETAILED_DEBUG_LOG
+                            #ifdef SIMULATION_DETAILED_DEBUG_LOG_DIFFUSION
                             if (Process1Pos != MPIProcessDataObject.CurrentMPIProcessIndex)
                             {
                                 if constexpr(PrintAdditionalInformationToLogs == true)

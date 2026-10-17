@@ -83,7 +83,7 @@ void CellEngineFullAtomSimulationSpace::FillParticleElementsInSpace(const Unique
         GetParticleFromUniqueId(ParticleUniqueId).Radius = ParticleKindObjectForProduct.Radius;
         GetParticleFromUniqueId(ParticleUniqueId).Center = { .X = VectorX, .Y = VectorY, .Z = VectorZ };
 
-        #ifdef SIMULATION_DETAILED_DEBUG_LOG
+        #if defined(SIMULATION_DETAILED_DEBUG_LOG_DIFFUSION) || defined(DEBUG_LOG_CHEMICAL_REACTION)
         if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == false)
             CellEngineUseful::CheckCenterForSector<Particle>(GetParticleFromUniqueId(ParticleUniqueId), Particles, "CF1");
         #endif
@@ -150,13 +150,13 @@ void CellEngineFullAtomSimulationSpace::TransferParticlesFromOneSectortoAnotherS
             {
                 Particles[SectorPosTarget.SectorPosX][SectorPosTarget.SectorPosY][SectorPosTarget.SectorPosZ].Particles.insert_or_assign(ParticleFromSourceToMoveToTargetIterator->first, std::move(ParticleFromSourceToMoveToTargetIterator->second));
 
-                DEBUGLOG(CellEngineUseful::CheckCenterForSector<Particle>(ParticleFromSourceToMoveToTargetIterator->second, Particles, "C2");)
+                DEBUG_LOG_DIFFUSION(CellEngineUseful::CheckCenterForSector<Particle>(ParticleFromSourceToMoveToTargetIterator->second, Particles, "C2");)
 
                 LocalSourceParticles.erase(ParticleFromSourceToMoveToTargetIterator);
             }
             else
             {
-                DEBUGLOG(LoggersManagerObject.Log(STREAM("LACK OF PARTICLE INDEX IN SOURCE MAP DATA = " << ParticleUniqueId << " TARGET = " << SectorPosTarget.SectorPosX << "," << SectorPosTarget.SectorPosY << "," << SectorPosTarget.SectorPosZ << " FROM " << SectorPosSource.SectorPosX << "," << SectorPosSource.SectorPosY << "," << SectorPosSource.SectorPosZ));)
+                DEBUG_LOG_DIFFUSION(LoggersManagerObject.Log(STREAM("LACK OF PARTICLE INDEX IN SOURCE MAP DATA = " << ParticleUniqueId << " TARGET = " << SectorPosTarget.SectorPosX << "," << SectorPosTarget.SectorPosY << "," << SectorPosTarget.SectorPosZ << " FROM " << SectorPosSource.SectorPosX << "," << SectorPosSource.SectorPosY << "," << SectorPosSource.SectorPosZ));)
             }
         }
 
@@ -172,9 +172,9 @@ void CellEngineFullAtomSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpa
         uniform_int_distribution<SignedInt> UniformDistributionObjectMoveParticleDirection_int64t(-ParticleMoveSizeinDiffusionUnsignedInt, ParticleMoveSizeinDiffusionUnsignedInt);
 
         for (auto& ParticleInProximityObject : Particles[StartSectorXPosParam][StartSectorYPosParam][StartSectorZPosParam].Particles | views::values)
+                                                                                                                        if (ParticleInProximityObject.ParticleKindId != 100042)
         {
-            //DEBUGLOG(CellEngineUseful::CheckCenterForSector<Particle>(ParticleInProximityObject, Particles, "C0");)
-            CellEngineUseful::CheckCenterForSector<Particle>(ParticleInProximityObject, Particles, "C0");
+            DEBUG_LOG_DIFFUSION(CellEngineUseful::CheckCenterForSector<Particle>(ParticleInProximityObject, Particles, "C0");)
 
             SetCurrentSectorPos(SectorPosType{ .SectorPosX = static_cast<SignedInt>(StartSectorXPosParam), .SectorPosY = static_cast<SignedInt>(StartSectorYPosParam), .SectorPosZ = static_cast<SignedInt>(StartSectorZPosParam) });
 
@@ -334,11 +334,10 @@ bool CellEngineFullAtomSimulationSpace::CheckPossibilityOfInsertingParticleToCur
 
         if (CheckIfSpaceIsEmptyAndIsInBoundsForParticleElementsDiffusion(ParticleKindToCheck, Particles, ParticleSenderToInsert.NewParticleCenter.X, ParticleSenderToInsert.NewParticleCenter.Y, ParticleSenderToInsert.NewParticleCenter.Z, SimulationSpaceSectorBoundsObject) == true)
         {
-            //#ifdef SIMULATION_DETAILED_DEBUG_LOG
+            #ifdef SIMULATION_DETAILED_DEBUG_LOG_DIFFUSION
             auto [SectorPosX1, SectorPosY1, SectorPosZ1] = CellEngineUseful::GetSectorPos(ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z);
-            LoggersManagerObject.LogOnlyToFilesUnconditional(STREAM("Particle in thread = (" << CurrentThreadPos.ThreadPosX << "," << CurrentThreadPos.ThreadPosY << "," << CurrentThreadPos.ThreadPosZ << ") CurrentThreadIndex = " << CurrentThreadIndex << " CurrentProcessIndex = " << MPIProcessDataObject.CurrentMPIProcessIndex <<  " S1 = (" << SectorPosX1 << "," << SectorPosY1 << "," << SectorPosZ1 << ") P = (" << ParticleObject.Center.X << ", " << ParticleObject.Center.Y << ", " << ParticleObject.Center.Z << ") V = (" << ParticleSenderToInsert.NewParticleCenter.X << ", " << ParticleSenderToInsert.NewParticleCenter.Y << ", " << ParticleSenderToInsert.NewParticleCenter.Z << ") PARTCLE_INDEX = " << ParticleObject.ParticleUniqueId));
-            LoggersManagerObject.LogOnlyToConsoleUnconditional(STREAM("Particle in thread = (" << CurrentThreadPos.ThreadPosX << "," << CurrentThreadPos.ThreadPosY << "," << CurrentThreadPos.ThreadPosZ << ") CurrentThreadIndex = " << CurrentThreadIndex << " CurrentProcessIndex = " << MPIProcessDataObject.CurrentMPIProcessIndex <<  " S1 = (" << SectorPosX1 << "," << SectorPosY1 << "," << SectorPosZ1 << ") P = (" << ParticleObject.Center.X << ", " << ParticleObject.Center.Y << ", " << ParticleObject.Center.Z << ") V = (" << ParticleSenderToInsert.NewParticleCenter.X << ", " << ParticleSenderToInsert.NewParticleCenter.Y << ", "  << ParticleSenderToInsert.NewParticleCenter.Z << ") PARTCLE_INDEX = " << ParticleObject.ParticleUniqueId));
-            //#endif
+            LoggersManagerObject.LogUnconditional(STREAM("Particle in thread = (" << CurrentThreadPos.ThreadPosX << "," << CurrentThreadPos.ThreadPosY << "," << CurrentThreadPos.ThreadPosZ << ") CurrentThreadIndex = " << CurrentThreadIndex << " CurrentProcessIndex = " << MPIProcessDataObject.CurrentMPIProcessIndex <<  " S1 = (" << SectorPosX1 << "," << SectorPosY1 << "," << SectorPosZ1 << ") P = (" << ParticleObject.Center.X << ", " << ParticleObject.Center.Y << ", " << ParticleObject.Center.Z << ") V = (" << ParticleSenderToInsert.NewParticleCenter.X << ", " << ParticleSenderToInsert.NewParticleCenter.Y << ", " << ParticleSenderToInsert.NewParticleCenter.Z << ") PARTCLE_INDEX = " << ParticleObject.ParticleUniqueId));
+            #endif
 
             GetParticles().insert(std::move(make_pair(ParticleObject.ParticleUniqueId, std::move(ParticleObject))));
             return true;

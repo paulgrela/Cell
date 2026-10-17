@@ -18,9 +18,10 @@ void CellEngineChemicalReactionsInBasicSimulationSpace::EraseParticleChosenForRe
     try
     {
         auto& ParticleObjectToBeErased = GetParticleFromUniqueId(ParticleUniqueIdChosenForReaction);
+
         Centers.emplace_back(ParticleObjectToBeErased.Center.X, ParticleObjectToBeErased.Center.Y, ParticleObjectToBeErased.Center.Z);
 
-        DEBUGLOG(LoggersManagerObject.Log(STREAM("Centers - X = " << to_string(ParticleObjectToBeErased.Center.X) << " Y = " << to_string(ParticleObjectToBeErased.Center.Y) << " Z = " << to_string(ParticleObjectToBeErased.Center.Z) << endl));)
+        DEBUG_LOG(LoggersManagerObject.Log(STREAM("Centers - X = " << to_string(ParticleObjectToBeErased.Center.X) << " Y = " << to_string(ParticleObjectToBeErased.Center.Y) << " Z = " << to_string(ParticleObjectToBeErased.Center.Z) << endl));)
 
         ParticlesBackup.emplace_back(std::move(ParticleObjectToBeErased));
 

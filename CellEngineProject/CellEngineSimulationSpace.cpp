@@ -67,10 +67,10 @@ void CellEngineSimulationSpace::UpdateProbabilityOfMoveFromElectricInteractionFo
                                     (*NeighbourPoints)[X][Y][Z] += static_cast<ElectricChargeType>((-1.0 * NeighbourParticleObject.ElectricCharge * ParticleObject.ElectricCharge) * MultiplyElectricChargeFactor / sqr(DistanceOfParticles(ParticleObject, NeighbourParticleObject)));
                                     (*NeighbourPoints)[X][Y][Z] = (*NeighbourPoints)[X][Y][Z] < 0 ? 0 : (*NeighbourPoints)[X][Y][Z];
 
-                                    DEBUGLOG(LoggersManagerObject.Log(STREAM("new value after change from neighbour = " << to_string((*NeighbourPoints)[X][Y][Z]) << " " << to_string(static_cast<ElectricChargeType>(X - 1)) << " "<< to_string(static_cast<ElectricChargeType>(Y - 1)) << " " << to_string(static_cast<ElectricChargeType>(Z - 1))));)
+                                    DEBUG_LOG_DIFFUSION(LoggersManagerObject.Log(STREAM("new value after change from neighbour = " << to_string((*NeighbourPoints)[X][Y][Z]) << " " << to_string(static_cast<ElectricChargeType>(X - 1)) << " "<< to_string(static_cast<ElectricChargeType>(Y - 1)) << " " << to_string(static_cast<ElectricChargeType>(Z - 1))));)
                                 }
 
-                DEBUGLOG(LoggersManagerObject.Log(STREAM("ParticleUniqueId of neighbour particle = " << to_string(NeighbourParticleUniqueIdObjectToWrite) << " ParticleKindId = " << to_string(GetParticleFromIndex(NeighbourParticleUniqueIdObjectToWrite).ParticleKindId) << " Electric Charge = " << to_string(NeighbourParticleObject.ElectricCharge) << " Electric Charge = " << to_string(ParticleObject.ElectricCharge) << " NUCLEOTIDE = " << ((CellEngineUseful::IsDNAorRNA(GetParticleFromIndex(NeighbourParticleUniqueIdObjectToWrite).ParticleKindId) == true) ? CellEngineUseful::GetLetterFromChainIdForDNAorRNA(NeighbourParticleObject.ChainId) : '0') << " GENOME INDEX = " << NeighbourParticleObject.GenomeIndex));)
+                DEBUG_LOG_DIFFUSION(LoggersManagerObject.Log(STREAM("ParticleUniqueId of neighbour particle = " << to_string(NeighbourParticleUniqueIdObjectToWrite) << " ParticleKindId = " << to_string(GetParticleFromUniqueId(NeighbourParticleUniqueIdObjectToWrite).ParticleKindId) << " Electric Charge = " << to_string(NeighbourParticleObject.ElectricCharge) << " Electric Charge = " << to_string(ParticleObject.ElectricCharge) << " NUCLEOTIDE = " << ((CellEngineUseful::IsDNAorRNA(GetParticleFromUniqueId(NeighbourParticleUniqueIdObjectToWrite).ParticleKindId) == true) ? CellEngineUseful::GetLetterFromChainIdForDNAorRNA(NeighbourParticleObject.ChainId) : '0') << " GENOME INDEX = " << NeighbourParticleObject.GenomeIndex));)
             }
         }
     }
@@ -85,7 +85,7 @@ void CellEngineSimulationSpace::GenerateOneStepOfElectricDiffusionForOneParticle
         {
             Particle& ParticleObject = GetParticleFromUniqueId(ParticleUniqueIdParam);
 
-            DEBUGLOG(LoggersManagerObject.Log(STREAM("ParticleKindId = " << to_string(ParticleObject.ParticleKindId) << " ElectricCharge = " << to_string(ParticleObject.ElectricCharge)));)
+            DEBUG_LOG_DIFFUSION(LoggersManagerObject.Log(STREAM("ParticleKindId = " << to_string(ParticleObject.ParticleKindId) << " ElectricCharge = " << to_string(ParticleObject.ElectricCharge)));)
 
             const auto ParticleKindObject = ParticlesKindsManagerObject.GetParticleKind(ParticleObject.ParticleKindId);
 
@@ -106,7 +106,7 @@ void CellEngineSimulationSpace::GenerateOneStepOfElectricDiffusionForOneParticle
 
             UpdateNeighbourPointsForChosenElement([&NeighbourPoints, &DiscreteDistribution](const SignedInt X, const SignedInt Y, const SignedInt Z){ DiscreteDistribution.emplace_back((*NeighbourPoints)[X][Y][Z]); });
 
-            #ifdef SIMULATION_DETAILED_DEBUG_LOG
+            #ifdef SIMULATION_DETAILED_DEBUG_LOG_DIFFUSION
             UnsignedInt NumberOfElement = 0;
             UpdateNeighbourPointsForChosenElement([&NeighbourPoints, &MoveVectors, &NumberOfElement](const SignedInt X, const SignedInt Y, const SignedInt Z){ LoggersManagerObject.Log(STREAM("Element[" << NumberOfElement << "] = " << to_string((*NeighbourPoints)[X][Y][Z]) + " for (X,Y,Z) = (" << to_string(MoveVectors[NumberOfElement].X) << "," << to_string(MoveVectors[NumberOfElement].Y) << "," << to_string(MoveVectors[NumberOfElement].Z) << ")")); NumberOfElement++; });
             #endif
@@ -120,7 +120,7 @@ void CellEngineSimulationSpace::GenerateOneStepOfElectricDiffusionForOneParticle
             else
                 MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(ParticleObject, Particles, ListOfParticlesToChangeSectors, MoveVectors[RandomMoveVectorIndex].X, MoveVectors[RandomMoveVectorIndex].Y, MoveVectors[RandomMoveVectorIndex].Z, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
 
-            DEBUGLOG(LoggersManagerObject.Log(STREAM("Random Index = " << to_string(RandomMoveVectorIndex) << " " << to_string(MoveVectors[RandomMoveVectorIndex].X) << " " << to_string(MoveVectors[RandomMoveVectorIndex].Y) << " " << to_string(MoveVectors[RandomMoveVectorIndex].Z) << endl));)
+            DEBUG_LOG_DIFFUSION(LoggersManagerObject.Log(STREAM("Random Index = " << to_string(RandomMoveVectorIndex) << " " << to_string(MoveVectors[RandomMoveVectorIndex].X) << " " << to_string(MoveVectors[RandomMoveVectorIndex].Y) << " " << to_string(MoveVectors[RandomMoveVectorIndex].Z) << endl));)
         }
     }
     CATCH("generating one step of electric diffusion for one particle")
@@ -147,7 +147,7 @@ tuple<IndexesChosenForReactionType, bool> CellEngineSimulationSpace::ChooseParti
         {
             auto& ParticleObjectTestedForReaction = GetParticleFromUniqueId(ParticleObjectIndex);
 
-            DEBUGLOG(LoggersManagerObject.Log(STREAM("ParticleObjectIndex = " << to_string(ParticleObjectIndex) <<" ParticleKindId = " << to_string(ParticleObjectTestedForReaction.ParticleKindId) << " X = " << to_string(ParticleObjectTestedForReaction.Center.X) << " Y = " << to_string(ParticleObjectTestedForReaction.Center.Y) << " Z = " << to_string(ParticleObjectTestedForReaction.Center.Z)));)
+            DEBUG_LOG_CHEMICAL_REACTION(LoggersManagerObject.Log(STREAM("ParticleObjectIndex = " << to_string(ParticleObjectIndex) <<" ParticleKindId = " << to_string(ParticleObjectTestedForReaction.ParticleKindId) << " X = " << to_string(ParticleObjectTestedForReaction.Center.X) << " Y = " << to_string(ParticleObjectTestedForReaction.Center.Y) << " Z = " << to_string(ParticleObjectTestedForReaction.Center.Z)));)
 
             vector<ParticleKindForChemicalReaction>::const_iterator ReactantIterator;
             if (CellEngineUseful::IsDNAorRNA(ParticleObjectTestedForReaction.ParticleKindId) == false)
@@ -167,18 +167,18 @@ tuple<IndexesChosenForReactionType, bool> CellEngineSimulationSpace::ChooseParti
             if (ReactantIterator != ReactionObject.Reactants.cend() && ReactantsCounters[PositionInReactants] > 0)
             {
                 AllParticlesIndexesChosenForReaction.emplace_back(ParticleObjectIndex, PositionInReactants);
-                DEBUGLOG(LoggersManagerObject.Log(STREAM("CHOSEN ParticleObjectIndex = " << to_string(ParticleObjectIndex) <<" ParticleKindId = " << to_string(ParticleObjectTestedForReaction.ParticleKindId) << " X = " << to_string(ParticleObjectTestedForReaction.Center.X) << " Y = " << to_string(ParticleObjectTestedForReaction.Center.Y) << " Z = " << to_string(ParticleObjectTestedForReaction.Center.Z) << endl));)
+                DEBUG_LOG_DIFFUSION(LoggersManagerObject.Log(STREAM("CHOSEN ParticleObjectIndex = " << to_string(ParticleObjectIndex) <<" ParticleKindId = " << to_string(ParticleObjectTestedForReaction.ParticleKindId) << " X = " << to_string(ParticleObjectTestedForReaction.Center.X) << " Y = " << to_string(ParticleObjectTestedForReaction.Center.Y) << " Z = " << to_string(ParticleObjectTestedForReaction.Center.Z) << endl));)
                 ReactantsCounters[PositionInReactants]--;
             }
 
             AllAreZero = ranges::all_of(std::as_const(ReactantsCounters), [](const UnsignedInt& Counter){ return Counter == 0; });
             if (AllAreZero == true)
             {
-                DEBUGLOG(LoggersManagerObject.Log(STREAM("ALL ARE ZERO"));)
+                DEBUG_LOG_CHEMICAL_REACTION(LoggersManagerObject.Log(STREAM("ALL ARE ZERO"));)
                 break;
             }
 
-            DEBUGLOG(LoggersManagerObject.Log(STREAM(""));)
+            DEBUG_LOG_CHEMICAL_REACTION(LoggersManagerObject.Log(STREAM(""));)
         }
 
         const auto start_time2 = chrono::high_resolution_clock::now();
@@ -198,14 +198,14 @@ tuple<IndexesChosenForReactionType, bool> CellEngineSimulationSpace::ChooseParti
 
     if (AllAreZero == true)
     {
-        DEBUGLOG(LoggersManagerObject.Log(STREAM("ALL ARE ZERO AT END = " << to_string(ParticlesIndexesChosenForReaction.size()))));
+        DEBUG_LOG_CHEMICAL_REACTION(LoggersManagerObject.Log(STREAM("ALL ARE ZERO AT END = " << to_string(ParticlesIndexesChosenForReaction.size()))));
         return { ParticlesIndexesChosenForReaction, true };
     }
     else
         return { IndexesChosenForReactionType(), false };
 }
 
-#ifdef SIMULATION_DETAILED_DEBUG_LOG
+#if defined(SIMULATION_DETAILED_DEBUG_LOG_DIFFUSION) || defined(SIMULATION_DETAILED_DEBUG_LOG_CHEMICAL_REACTION)
 static void LogParticleData(const UniqueIdUInt64Type ParticleUniqueId, const UnsignedInt CenterIndex, const ListOfAtomsType& Centers, const ParticleKind& ParticleKindObjectForProduct, const vector3_16& ParticleKindElement)
 {
     LoggersManagerObject.Log(STREAM(endl));
@@ -220,13 +220,13 @@ bool CellEngineSimulationSpace::CancelChemicalReaction(const vector<UniqueIdUInt
 {
     try
     {
-        DEBUGLOG(LoggersManagerObject.Log(STREAM("CANCELLED REACTION IN BOUNDS " << PlaceStr << " = " << ActualSimulationSpaceSectorBoundsObject.StartXPos << " " << ActualSimulationSpaceSectorBoundsObject.StartYPos << " "  << ActualSimulationSpaceSectorBoundsObject.StartZPos << " " << ActualSimulationSpaceSectorBoundsObject.EndXPos << " " << ActualSimulationSpaceSectorBoundsObject.EndYPos << " " << ActualSimulationSpaceSectorBoundsObject.EndZPos << " " << ParticleKindObjectForProduct.ListOfVoxels.size() << " " << ParticleKindObjectForProduct.ListOfAtoms.size() << " " << ParticleKindObjectForProduct.ParticleKindId));)
+        DEBUG_LOG_CHEMICAL_REACTION(LoggersManagerObject.Log(STREAM("CANCELLED REACTION IN BOUNDS " << PlaceStr << " = " << ActualSimulationSpaceSectorBoundsObject.StartXPos << " " << ActualSimulationSpaceSectorBoundsObject.StartYPos << " "  << ActualSimulationSpaceSectorBoundsObject.StartZPos << " " << ActualSimulationSpaceSectorBoundsObject.EndXPos << " " << ActualSimulationSpaceSectorBoundsObject.EndYPos << " " << ActualSimulationSpaceSectorBoundsObject.EndZPos << " " << ParticleKindObjectForProduct.ListOfVoxels.size() << " " << ParticleKindObjectForProduct.ListOfAtoms.size() << " " << ParticleKindObjectForProduct.ParticleKindId));)
 
         for (const auto& CreatedParticleUniqueId : CreatedParticlesIndexes)
         {
             RemoveParticle(CreatedParticleUniqueId, true, false);
 
-            DEBUGLOG(LoggersManagerObject.LogOnlyToConsoleUnconditional(STREAM("Current Thread = " << CurrentThreadPos.ThreadPosX << " " << CurrentThreadPos.ThreadPosY << " "  << CurrentThreadPos.ThreadPosZ));)
+            DEBUG_LOG_CHEMICAL_REACTION(LoggersManagerObject.LogOnlyToConsoleUnconditional(STREAM("Current Thread = " << CurrentThreadPos.ThreadPosX << " " << CurrentThreadPos.ThreadPosY << " "  << CurrentThreadPos.ThreadPosZ));)
 
             if (CellEngineConfigDataObject.GatherCancelledParticlesIndexes == true)
             {
@@ -295,32 +295,32 @@ bool CellEngineSimulationSpace::PlaceNewProductParticleInSpaceInNewRandomPositio
             const auto RandomVectorY = GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirectionY_int64t);
             const auto RandomVectorZ = GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirectionZ_int64t);
 
-            DEBUGLOG(LoggersManagerObject.Log(STREAM("R1 = (" << RandomVectorX << " " << RandomVectorY << " " << RandomVectorZ << ") (" << SimulationSpaceSectorBoundsObject.StartXPos << "," << SimulationSpaceSectorBoundsObject.EndXPos << ") (" << SimulationSpaceSectorBoundsObject.StartYPos << "," << SimulationSpaceSectorBoundsObject.EndYPos << ") (" << SimulationSpaceSectorBoundsObject.StartZPos << "," << SimulationSpaceSectorBoundsObject.EndZPos << ")"));)
+            DEBUG_LOG_CHEMICAL_REACTION(LoggersManagerObject.LogUnconditional(STREAM("R1 = (" << RandomVectorX << " " << RandomVectorY << " " << RandomVectorZ << ") (" << SimulationSpaceSectorBoundsObject.StartXPos << "," << SimulationSpaceSectorBoundsObject.EndXPos << ") (" << SimulationSpaceSectorBoundsObject.StartYPos << "," << SimulationSpaceSectorBoundsObject.EndYPos << ") (" << SimulationSpaceSectorBoundsObject.StartZPos << "," << SimulationSpaceSectorBoundsObject.EndZPos << ")"));)
 
             if (CheckIfSpaceIsEmptyAndIsInBoundsForParticleElementsReactions(ParticleKindObjectForProduct, Particles, RandomVectorX, RandomVectorY, RandomVectorZ, SimulationSpaceSectorBoundsObject) == true)
             {
-                #ifdef SIMULATION_DETAILED_DEBUG_LOG
-                LoggersManagerObject.Log(STREAM("R2 = (" << RandomVectorX << " " << RandomVectorY << " " << RandomVectorZ << ") (" << SimulationSpaceSectorBoundsObject.StartXPos << "," << SimulationSpaceSectorBoundsObject.EndXPos << ") (" << SimulationSpaceSectorBoundsObject.StartYPos << "," << SimulationSpaceSectorBoundsObject.EndYPos << ") (" << SimulationSpaceSectorBoundsObject.StartZPos << "," << SimulationSpaceSectorBoundsObject.EndZPos << ")"));
+                #ifdef SIMULATION_DETAILED_DEBUG_LOG_CHEMICAL_REACTION
+                LoggersManagerObject.LogUnconditional(STREAM("R2 = (" << RandomVectorX << " " << RandomVectorY << " " << RandomVectorZ << ") (" << SimulationSpaceSectorBoundsObject.StartXPos << "," << SimulationSpaceSectorBoundsObject.EndXPos << ") (" << SimulationSpaceSectorBoundsObject.StartYPos << "," << SimulationSpaceSectorBoundsObject.EndYPos << ") (" << SimulationSpaceSectorBoundsObject.StartZPos << "," << SimulationSpaceSectorBoundsObject.EndZPos << ")"));
 
                 const auto [SectorPosX, SectorPosY, SectorPosZ] = CellEngineUseful::GetSectorPos(RandomVectorX, RandomVectorY, RandomVectorZ);
                 if (SectorPosX != CurrentSectorPos.SectorPosX || SectorPosY != CurrentSectorPos.SectorPosY || SectorPosZ != CurrentSectorPos.SectorPosZ)
-                    LoggersManagerObject.Log(STREAM("R4" << " Error particle not in proper sector " << " SectorPosX = " << SectorPosX << " SectorPosY = " << SectorPosY << " SectorPosZ = " << SectorPosZ << " SectorPosXS = " << CurrentSectorPos.SectorPosX << " SectorPosYS = " << CurrentSectorPos.SectorPosY << " SectorPosZS = " << CurrentSectorPos.SectorPosZ));
+                    LoggersManagerObject.LogUnconditional(STREAM("ERROR R4" << " Error particle not in proper sector " << " SectorPosX = " << SectorPosX << " SectorPosY = " << SectorPosY << " SectorPosZ = " << SectorPosZ << " SectorPosXS = " << CurrentSectorPos.SectorPosX << " SectorPosYS = " << CurrentSectorPos.SectorPosY << " SectorPosZS = " << CurrentSectorPos.SectorPosZ));
                 #endif
 
                 FoundFreePlace = true;
 
                 FillParticleElementsInSpace(ParticleUniqueId, ParticleKindObjectForProduct, RandomVectorX, RandomVectorY, RandomVectorZ);
 
-                #ifdef SIMULATION_DETAILED_DEBUG_LOG
+                #ifdef SIMULATION_DETAILED_DEBUG_LOG_CHEMICAL_REACTION
                 auto [SectorPosX1, SectorPosY1, SectorPosZ1] = CellEngineUseful::CheckCenterForSector<Particle>(GetParticleFromUniqueId(ParticleUniqueId), Particles, "CK1");
                 if (SectorPosX1 != CurrentSectorPos.SectorPosX || SectorPosY1 != CurrentSectorPos.SectorPosY || SectorPosZ1 != CurrentSectorPos.SectorPosZ)
-                    LoggersManagerObject.Log(STREAM("R5" << " Error particle not in proper sector " << " SectorPosX = " << SectorPosX1 << " SectorPosY = " << SectorPosY1 << " SectorPosZ = " << SectorPosZ1 << " SectorPosXS = " << CurrentSectorPos.SectorPosX << " SectorPosYS = " << CurrentSectorPos.SectorPosY << " SectorPosZS = " << CurrentSectorPos.SectorPosZ));
+                    LoggersManagerObject.LogUnconditional(STREAM("ERROR R5" << " Error particle not in proper sector " << " SectorPosX = " << SectorPosX1 << " SectorPosY = " << SectorPosY1 << " SectorPosZ = " << SectorPosZ1 << " SectorPosXS = " << CurrentSectorPos.SectorPosX << " SectorPosYS = " << CurrentSectorPos.SectorPosY << " SectorPosZS = " << CurrentSectorPos.SectorPosZ));
 
                 const auto [SectorPosX11, SectorPosY11, SectorPosZ11] = CellEngineUseful::GetSectorPos(GetParticleFromUniqueId(ParticleUniqueId).Center.X, GetParticleFromUniqueId(ParticleUniqueId).Center.Y, GetParticleFromUniqueId(ParticleUniqueId).Center.Z);
 
-                LoggersManagerObject.Log(STREAM("R2 = (" << RandomVectorX << " " << RandomVectorY << " " << RandomVectorZ << ") (" << SimulationSpaceSectorBoundsObject.StartXPos << "," << SimulationSpaceSectorBoundsObject.EndXPos << ") (" << SimulationSpaceSectorBoundsObject.StartYPos << "," << SimulationSpaceSectorBoundsObject.EndYPos << ") (" << SimulationSpaceSectorBoundsObject.StartZPos << "," << SimulationSpaceSectorBoundsObject.EndZPos << ")" << " ListOfAtoms.size() = " << ParticleKindObjectForProduct.ListOfAtoms.size()));
-                LoggersManagerObject.Log(STREAM("R2A = " << ParticleUniqueId << " " << GetParticleFromUniqueId(ParticleUniqueId).Center.X << " " << GetParticleFromUniqueId(ParticleUniqueId).Center.Y << " " << GetParticleFromUniqueId(ParticleUniqueId).Center.Z << " " << RandomVectorX << " " << RandomVectorY << " " << RandomVectorZ << " " << SimulationSpaceSectorBoundsObject.StartXPos << " " << SimulationSpaceSectorBoundsObject.EndXPos << " " << SimulationSpaceSectorBoundsObject.StartYPos << " " << SimulationSpaceSectorBoundsObject.EndYPos << " " << SimulationSpaceSectorBoundsObject.StartZPos << " " << SimulationSpaceSectorBoundsObject.EndZPos << " ListOfAtoms.size() = " << ParticleKindObjectForProduct.ListOfAtoms.size()));
-                LoggersManagerObject.Log(STREAM("R2B = " << ParticleUniqueId << " " << SectorPosX << " " << SectorPosY << " " << SectorPosZ << " " << SectorPosX1 << " " << SectorPosY1 << " " << SectorPosZ1 << " " << SectorPosX11 << " " << SectorPosY11 << " " << SectorPosZ11));
+                LoggersManagerObject.LogUnconditional(STREAM("R2 = (" << RandomVectorX << " " << RandomVectorY << " " << RandomVectorZ << ") (" << SimulationSpaceSectorBoundsObject.StartXPos << "," << SimulationSpaceSectorBoundsObject.EndXPos << ") (" << SimulationSpaceSectorBoundsObject.StartYPos << "," << SimulationSpaceSectorBoundsObject.EndYPos << ") (" << SimulationSpaceSectorBoundsObject.StartZPos << "," << SimulationSpaceSectorBoundsObject.EndZPos << ")" << " ListOfAtoms.size() = " << ParticleKindObjectForProduct.ListOfAtoms.size()));
+                LoggersManagerObject.LogUnconditional(STREAM("R2A = " << ParticleUniqueId << " " << GetParticleFromUniqueId(ParticleUniqueId).Center.X << " " << GetParticleFromUniqueId(ParticleUniqueId).Center.Y << " " << GetParticleFromUniqueId(ParticleUniqueId).Center.Z << " " << RandomVectorX << " " << RandomVectorY << " " << RandomVectorZ << " " << SimulationSpaceSectorBoundsObject.StartXPos << " " << SimulationSpaceSectorBoundsObject.EndXPos << " " << SimulationSpaceSectorBoundsObject.StartYPos << " " << SimulationSpaceSectorBoundsObject.EndYPos << " " << SimulationSpaceSectorBoundsObject.StartZPos << " " << SimulationSpaceSectorBoundsObject.EndZPos << " ListOfAtoms.size() = " << ParticleKindObjectForProduct.ListOfAtoms.size()));
+                LoggersManagerObject.LogUnconditional(STREAM("R2B = " << ParticleUniqueId << " " << SectorPosX << " " << SectorPosY << " " << SectorPosZ << " " << SectorPosX1 << " " << SectorPosY1 << " " << SectorPosZ1 << " " << SectorPosX11 << " " << SectorPosY11 << " " << SectorPosZ11));
                 #endif
 
                 break;
@@ -347,16 +347,16 @@ bool CellEngineSimulationSpace::MakeChemicalReaction(ChemicalReaction& ReactionO
         if (FoundInProximity == false)
             return false;
 
-        DEBUGLOG(LoggersManagerObject.Log(STREAM("Reaction Step 1 - chosen particles for reaction from all particles in proximity" << endl));)
+        DEBUG_LOG_CHEMICAL_REACTION(LoggersManagerObject.Log(STREAM("Reaction Step 1 - chosen particles for reaction from all particles in proximity" << endl));)
 
         ListOfCentersType Centers;
         vector<Particle> ParticlesBackup;
         for (const auto& ParticleUniqueIdChosenForReaction : ParticlesIndexesChosenForReaction | views::keys)
             EraseParticleChosenForReactionAndGetCentersForNewProductsOfReaction(ParticleUniqueIdChosenForReaction, Centers, ParticlesBackup);
 
-        DEBUGLOG(LoggersManagerObject.Log(STREAM("Reaction Step 2 - erasing particles chosen for reaction" << endl));)
+        DEBUG_LOG_CHEMICAL_REACTION(LoggersManagerObject.Log(STREAM("Reaction Step 2 - erasing particles chosen for reaction" << endl));)
 
-        DEBUGLOG(LoggersManagerObject.Log(STREAM("Centers size = " << to_string(Centers.size()) << endl));)
+        DEBUG_LOG_CHEMICAL_REACTION(LoggersManagerObject.Log(STREAM("Centers size = " << to_string(Centers.size()) << endl));)
 
         vector<UniqueIdUInt64Type> CreatedParticlesIndexes;
 
@@ -385,7 +385,7 @@ bool CellEngineSimulationSpace::MakeChemicalReaction(ChemicalReaction& ReactionO
 
         NumberOfExecutedReactions++;
 
-        DEBUGLOG(LoggersManagerObject.Log(STREAM("Reaction Step 3 - Reaction finished" << endl));)
+        DEBUG_LOG_CHEMICAL_REACTION(LoggersManagerObject.Log(STREAM("Reaction Step 3 - Reaction finished" << endl));)
 
         if (SaveReactionsStatisticsBool == true)
             SaveReactionForStatistics(ReactionObject);
@@ -432,7 +432,7 @@ set<UnsignedInt> CellEngineSimulationSpace::GetAllPossibleReactionsFromParticles
     return PossibleReactionsIdNums;
 }
 
-void CellEngineSimulationSpace::FindAndExecuteRandomReactionVersion3(const UnsignedInt MaxNumberOfReactants)
+void CellEngineSimulationSpace::FindAndExecuteRandomReactionVersion3(const UnsignedInt MaxNumberOfReactantsParam)
 {
     try
     {
@@ -442,18 +442,18 @@ void CellEngineSimulationSpace::FindAndExecuteRandomReactionVersion3(const Unsig
             for (const auto& PossibleReactionsIdNum : PossibleReactionsIdNums)
                 ListOfPossibleReactions += to_string(PossibleReactionsIdNum) + ",";
 
-            DEBUGLOG(LoggersManagerObject.Log(STREAM("ListOfPossibleReactions = " << ListOfPossibleReactions));)
+            DEBUG_LOG_CHEMICAL_REACTION(LoggersManagerObject.Log(STREAM("ListOfPossibleReactions = " << ListOfPossibleReactions));)
 
             std::uniform_int_distribution<UnsignedInt> UniformDistributionObjectUint64t(0, PossibleReactionsIdNums.size() - 1);
             const auto ReactionIdNum = *std::next(std::begin(PossibleReactionsIdNums), static_cast<int>(GetRandomValue<uniform_int_distribution, UnsignedInt>(UniformDistributionObjectUint64t)));
 
-            DEBUGLOG(LoggersManagerObject.Log(STREAM("Random ReactionIdNum = " << ReactionIdNum));)
+            DEBUG_LOG_CHEMICAL_REACTION(LoggersManagerObject.Log(STREAM("Random ReactionIdNum = " << ReactionIdNum));)
 
             FindAndExecuteChosenReaction(ReactionIdNum);
         }
         else
         {
-            DEBUGLOG(LoggersManagerObject.Log(STREAM("NONE REACTION FOUND for particles kinds in proximity "));)
+            DEBUG_LOG_CHEMICAL_REACTION(LoggersManagerObject.Log(STREAM("NONE REACTION FOUND for particles kinds in proximity "));)
         }
     }
     CATCH("finding and executing random reaction v3")
@@ -478,11 +478,11 @@ bool CellEngineSimulationSpace::FindAndExecuteChosenReaction(const UnsignedInt R
 
             if (const bool IsPossible = IsChemicalReactionPossible(ReactionObject); IsPossible == true)
             {
-                DEBUGLOG(LoggersManagerObject.Log(STREAM("CHOSEN REACTION POSSIBLE" << endl));)
+                DEBUG_LOG_CHEMICAL_REACTION(LoggersManagerObject.Log(STREAM("CHOSEN REACTION POSSIBLE" << endl));)
 
                 if (MakeChemicalReaction(ReactionObject) == false)
                 {
-                    DEBUGLOG(LoggersManagerObject.Log(STREAM("Chosen reaction not executed!"));)
+                    DEBUG_LOG_CHEMICAL_REACTION(LoggersManagerObject.Log(STREAM("Chosen reaction not executed!"));)
                     return false;
                 }
                 else
@@ -490,12 +490,12 @@ bool CellEngineSimulationSpace::FindAndExecuteChosenReaction(const UnsignedInt R
             }
             else
             {
-                DEBUGLOG(LoggersManagerObject.Log(STREAM("Chosen reaction impossible!"));)
+                DEBUG_LOG_CHEMICAL_REACTION(LoggersManagerObject.Log(STREAM("Chosen reaction impossible!"));)
             }
         }
         else
         {
-            DEBUGLOG(LoggersManagerObject.Log(STREAM("Chosen reaction Id not found!"));)
+            DEBUG_LOG_CHEMICAL_REACTION(LoggersManagerObject.Log(STREAM("Chosen reaction Id not found!"));)
         }
     }
     CATCH("finding and executing chosen reaction")

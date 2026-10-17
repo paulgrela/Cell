@@ -721,8 +721,8 @@ void CellEngineParticlesBinaryDataFileReaderWriter::PreprocessLinkAndAssociateEv
         for (auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds | views::values)
         {
             string ListOfAssociatedReactions;
-            for (const auto& AssociatedChemicalReactionObject : ParticleKindObject.AssociatedChemicalReactions)
-                ListOfAssociatedReactions += to_string(AssociatedChemicalReactionObject) + " " + ChemicalReactionsManagerObject.GetReactionFromNumId(AssociatedChemicalReactionObject).ReactantsStr + " | ";
+            for (const auto& AssociatedChemicalReactionId : ParticleKindObject.AssociatedChemicalReactions)
+                ListOfAssociatedReactions += to_string(AssociatedChemicalReactionId) + " " + ChemicalReactionsManagerObject.GetReactionFromNumId(AssociatedChemicalReactionId).ReactantsStr + " | ";
 
             LoggersManagerObject.Log(STREAM("PARTICLE KIND = " << to_string(ParticleKindObject.ParticleKindId) << " " << ParticleKindObject.IdStr << " " << ParticleKindObject.Name));
             LoggersManagerObject.Log(STREAM("ListOfAssociatedReactions = " << ListOfAssociatedReactions));
