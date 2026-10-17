@@ -117,10 +117,11 @@ protected:
         if (!(
             (TestedPosX >= -CellEngineConfigDataObject.ShiftCenterX && TestedPosX < CellEngineConfigDataObject.ShiftCenterX && TestedPosY >= -CellEngineConfigDataObject.ShiftCenterY && TestedPosY < CellEngineConfigDataObject.ShiftCenterY && TestedPosZ >= -CellEngineConfigDataObject.ShiftCenterZ && TestedPosZ < CellEngineConfigDataObject.ShiftCenterZ)
             &&
-            (TestedPosX >= SimulationSpaceSectorBoundsObjectParam.StartXPos - ParticleMoveSizeinDiffusionUnsignedInt && TestedPosX < SimulationSpaceSectorBoundsObjectParam.EndXPos + ParticleMoveSizeinDiffusionUnsignedInt && TestedPosY >= SimulationSpaceSectorBoundsObjectParam.StartYPos - ParticleMoveSizeinDiffusionUnsignedInt && TestedPosY < SimulationSpaceSectorBoundsObjectParam.EndYPos + ParticleMoveSizeinDiffusionUnsignedInt && TestedPosZ >= SimulationSpaceSectorBoundsObjectParam.StartZPos - ParticleMoveSizeinDiffusionUnsignedInt && TestedPosZ < SimulationSpaceSectorBoundsObjectParam.EndZPos + ParticleMoveSizeinDiffusionUnsignedInt)
+            (TestedPosX >= SimulationSpaceSectorBoundsObjectParam.StartXPos - ParticleMoveSizeInDiffusionRealType && TestedPosX < SimulationSpaceSectorBoundsObjectParam.EndXPos + ParticleMoveSizeInDiffusionRealType && TestedPosY >= SimulationSpaceSectorBoundsObjectParam.StartYPos - ParticleMoveSizeInDiffusionRealType && TestedPosY < SimulationSpaceSectorBoundsObjectParam.EndYPos + ParticleMoveSizeInDiffusionRealType && TestedPosZ >= SimulationSpaceSectorBoundsObjectParam.StartZPos - ParticleMoveSizeInDiffusionRealType && TestedPosZ < SimulationSpaceSectorBoundsObjectParam.EndZPos + ParticleMoveSizeInDiffusionRealType)
             ))
         {
-            DEBUG_LOG(LoggersManagerObject.Log(STREAM("R3 = (" << TestedPosX << " " << TestedPosY << " " << TestedPosZ << ") (" << SimulationSpaceSectorBoundsObjectParam.StartXPos << "," << SimulationSpaceSectorBoundsObjectParam.EndXPos << ") (" << SimulationSpaceSectorBoundsObjectParam.StartYPos << "," << SimulationSpaceSectorBoundsObjectParam.EndYPos << ") (" << SimulationSpaceSectorBoundsObjectParam.StartZPos << "," << SimulationSpaceSectorBoundsObjectParam.EndZPos << ")"));)
+            DEBUG_LOG_DIFFUSION(LoggersManagerObject.Log(STREAM("R3 = (" << TestedPosX << " " << TestedPosY << " " << TestedPosZ << ") (" << SimulationSpaceSectorBoundsObjectParam.StartXPos << "," << SimulationSpaceSectorBoundsObjectParam.EndXPos << ") (" << SimulationSpaceSectorBoundsObjectParam.StartYPos << "," << SimulationSpaceSectorBoundsObjectParam.EndYPos << ") (" << SimulationSpaceSectorBoundsObjectParam.StartZPos << "," << SimulationSpaceSectorBoundsObjectParam.EndZPos << ")"));)
+
             return false;
         }
 

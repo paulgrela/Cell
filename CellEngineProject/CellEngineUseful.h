@@ -66,13 +66,13 @@ namespace CellEngineUseful
     {
         const auto [SectorPosX, SectorPosY, SectorPosZ] = CellEngineUseful::GetSectorPos(ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z);
 
-        //#if defined(SIMULATION_DETAILED_DEBUG_LOG_DIFFUSION) || defined(SIMULATION_DETAILED_DEBUG_LOG_CHEMICAL_REACTION)
+        #if defined(SIMULATION_DETAILED_DEBUG_LOG_DIFFUSION) || defined(SIMULATION_DETAILED_DEBUG_LOG_CHEMICAL_REACTION) || defined(SIMULATION_DETAILED_DEBUG_LOG_CHECKING_CORRECTNESS_PARTICLES_POSITION_IN_SECTOR)
         if (ParticlesInSector[SectorPosX][SectorPosY][SectorPosZ].Particles.find(ParticleObject.ParticleUniqueId) == ParticlesInSector[SectorPosX][SectorPosY][SectorPosZ].Particles.end())
             LoggersManagerObject.LogUnconditional(STREAM(Str << " Error particle not existing in sector = " << ParticleObject.ParticleKindId << " " << ParticleObject.ParticleUniqueId << " SectorPosX = " << SectorPosX << " SectorPosY = " << SectorPosY << " SectorPosZ = " << SectorPosZ << " P = (" << ParticleObject.Center.X << ", " << ParticleObject.Center.Y << ", " << ParticleObject.Center.Z << ")"));
 
         if (ParticlesInSector[SectorPosX][SectorPosY][SectorPosZ].Particles.find(ParticleObject.ParticleUniqueId)->second.Center != ParticleObject.Center)
             LoggersManagerObject.LogUnconditional(STREAM(Str << " Error particle center in sector = " << ParticleObject.ParticleKindId << " " << ParticleObject.ParticleUniqueId << " SectorPosX = " << SectorPosX << " SectorPosY = " << SectorPosY << " SectorPosZ = " << SectorPosZ));
-        //#endif
+        #endif
 
         return { SectorPosX, SectorPosY, SectorPosZ };
     }

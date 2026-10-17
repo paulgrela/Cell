@@ -14,8 +14,8 @@ constexpr UniqueIdUInt32Type UnknownParticleKindId = 99999;
 constexpr UniqueIdUInt32Type StartParticleKindId = 100000;
 constexpr UniqueIdUInt32Type StartChemicalReactionId = 10000;
 
-constexpr RealType ParticleMoveSizeinDiffusionRealType = 10.0;
-constexpr UnsignedInt ParticleMoveSizeinDiffusionUnsignedInt = 10;
+constexpr RealType ParticleMoveSizeInDiffusionRealType = 10.0;
+constexpr RealType ParticleMoveSizeInDiffusionUnsignedInt = 10;
 
 constexpr bool AdditionalSortParticlesInProximityByCapacity = false;
 
