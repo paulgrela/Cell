@@ -527,7 +527,7 @@ void CellEngineSimulationSpace::SaveNumberOfParticlesStatisticsToFile()
         int CounterOfParticles = 0;
         FOR_EACH_PARTICLE_IN_SECTORS_XYZ_CONST
             if (ParticleObject.first != 0)
-                if (auto IPK = ParticlesKindsManagerObject.ParticlesKinds.find(GetParticleFromUniqueId(ParticleObject.first).ParticleKindId); IPK != ParticlesKindsManagerObject.ParticlesKinds.end() && IPK->second.IdStr == "M_glc__D_e")
+                if (auto IPK = ParticlesKindsManagerObject.ParticlesKinds.find(ParticleObject.second.ParticleKindId); IPK != ParticlesKindsManagerObject.ParticlesKinds.end() && IPK->second.IdStr == "M_glc__D_e")
                     CounterOfParticles++;
 
         LoggersManagerObject.LogStatistics(STREAM("Particle Name = " << "D-Glucose" << " Number of Particles = " << CounterOfParticles));
@@ -541,6 +541,7 @@ void CellEngineSimulationSpace::SaveReactionsStatisticsToFile() const
     try
     {
         LoggersManagerObject.LogStatistics(STREAM("NUMBER OF REACTIONS = " << SavedReactionsMap[SimulationStepNumber - 1].size() << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
+
         for (const auto& [ReactionDataFirst, ReactionDataSecond] : SavedReactionsMap[SimulationStepNumber - 1])
         {
             LoggersManagerObject.LogStatistics(STREAM("REACTION ID = " << ReactionDataFirst << " REACTION NAME = " << ChemicalReactionsManagerObject.GetReactionFromNumId(ReactionDataFirst).ChemicalReactionName << " REACTION ID_STR = #" << ChemicalReactionsManagerObject.GetReactionFromNumId(ReactionDataFirst).ChemicalReactionIdStr << "# REACTION COUNTER = " << ReactionDataSecond.Counter));

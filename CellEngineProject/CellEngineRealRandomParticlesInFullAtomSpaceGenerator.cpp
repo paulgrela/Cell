@@ -101,6 +101,8 @@ void CellEngineRealRandomParticlesInFullAtomSpaceGenerator::PrintNumberOfParticl
 {
     try
     {
+        LoggersManagerObject.Log(STREAM("Number Of DNA Nucleotides = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::DNANucleotide, true)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::DNANucleotide, false))));
+
         LoggersManagerObject.Log(STREAM("Number Of Ribosomes = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::Ribosome, true)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::Ribosome, false))));
         LoggersManagerObject.Log(STREAM("Number Of RNAPolymerases = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::RNAPolymerase, true)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::RNAPolymerase, false))));
         LoggersManagerObject.Log(STREAM("Number Of DNAPolymerases = " << get<0>(GetNumberOfParticlesKind(ParticlesTypes::DNAPolymerase, true)) << " Total Number = " << get<1>(GetNumberOfParticlesKind(ParticlesTypes::DNAPolymerase, false))));
@@ -127,8 +129,8 @@ void CellEngineRealRandomParticlesInFullAtomSpaceGenerator::PrintNumberOfParticl
         LoggersManagerObject.Log(STREAM("Particles.size() = " << Particles.size()));
 
         UnsignedInt OldParticlesKindsCounter = 0;
-        for (const auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds)
-            if (ParticleKindObject.second.ParticleKindId < StartParticleKindId)
+        for (const auto& ParticleKindObject : ParticlesKindsManagerObject.ParticlesKinds | views::values)
+            if (ParticleKindObject.ParticleKindId < StartParticleKindId)
                 OldParticlesKindsCounter++;
         LoggersManagerObject.Log(STREAM("Old Particles Kinds Counter = " << OldParticlesKindsCounter));
 
@@ -157,6 +159,8 @@ void CellEngineRealRandomParticlesInFullAtomSpaceGenerator::PrintNumberOfParticl
                 }
 
         LoggersManagerObject.Log(STREAM("CountMultiParticleKind = " << CountMultiParticleKind));
+
+        LoggersManagerObject.Log(STREAM("Number Of DNA Nucleotides = " << GetNumberOfRealParticlesOfKind(ParticlesTypes::DNANucleotide)));
 
         LoggersManagerObject.Log(STREAM("Number Of Ribosomes P = " << GetNumberOfRealParticlesOfKind(ParticlesTypes::Ribosome)));
         LoggersManagerObject.Log(STREAM("Number Of RNAPolymerases P = " << GetNumberOfRealParticlesOfKind(ParticlesTypes::RNAPolymerase)));

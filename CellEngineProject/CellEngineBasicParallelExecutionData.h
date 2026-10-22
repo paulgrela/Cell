@@ -89,10 +89,9 @@ public:
     UnsignedInt NumberOfDNAParticles;
 public:
     UnsignedInt NumberOfParticlesMovedInDiffusion = 0;
+    UnsignedInt NumberOfParticlesRejectedToBeMovedInDiffusion = 0;
     UnsignedInt NumberOfParticlesSentToAnotherThreadAndMovedInDiffusion = 0;
     UnsignedInt NumberOfParticlesSentToCheckInAnotherThreadToBeMovedInDiffusion = 0;
-public:
-    UnsignedInt NumberOfParticlesRejectedToBeMovedInDiffusion = 0;
 protected:
     UnsignedInt ErrorCounter = 0;
     UnsignedInt NumberOfExecutedReactions = 0;

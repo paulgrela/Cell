@@ -1468,7 +1468,7 @@ public:
                 if (ImGui::Button(AlignString("UPDATE SEQUENCE", StringLength).c_str()) == true)
                     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->UpdateSequence(ParticlesTypes::mRNA);
 
-                if (ImGui::Button(AlignString("CLEAR VOXEL SPACE AND PARTICLES", StringLength).c_str()) == true)
+                if (ImGui::Button(AlignString("CLEAR FULL ATOM SPACE AND PARTICLES", StringLength).c_str()) == true)
                     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->ClearFullAtomSpaceAndParticles();
                 if (ImGui::Button(AlignString("CLEAR DNA PARTICLES", StringLength).c_str()) == true)
                     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->EraseAllDNAParticles();
