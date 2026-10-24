@@ -167,7 +167,7 @@ void CellEngineFullAtomSimulationSpace::TransferParticlesFromOneSectortoAnotherS
     CATCH("")
 }
 
-void CellEngineFullAtomSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpace(vector<ParticleToBeMovedFromOneSectorToAnotherSector>& ListOfParticlesToChangeSectors, UnsignedInt& NumberOfParticlesMovedInDiffusionParam, UnsignedInt& NumberOfParticlesRejectedToBeMovedInDiffusionParam, UnsignedInt& NumberOfParticlesSentToCheckInAnotherThreadToBeMovedInDiffusion, UnsignedInt& NumberOfDNAParticlesParam, const bool InBounds, const UnsignedInt StartSectorXPosParam, const UnsignedInt StartSectorYPosParam, const UnsignedInt StartSectorZPosParam, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam, const bool ContainersNotForSpeedUnparalled)
+void CellEngineFullAtomSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpace(vector<ParticleToBeMovedFromOneSectorToAnotherSector>& ListOfParticlesToChangeSectors, UnsignedInt& NumberOfParticlesMovedInDiffusionParam, UnsignedInt& NumberOfParticlesToBeMovedInDiffusionRejectedLocallyParam, UnsignedInt& NumberOfParticlesSentToCheckInAnotherThreadToBeMovedInDiffusion, UnsignedInt& NumberOfDNAParticlesParam, const bool InBounds, const UnsignedInt StartSectorXPosParam, const UnsignedInt StartSectorYPosParam, const UnsignedInt StartSectorZPosParam, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam, const bool ContainersNotForSpeedUnparalled)
 {
     try
     {
@@ -183,7 +183,7 @@ void CellEngineFullAtomSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpa
             if (CellEngineUseful::IsDNA(ParticleInProximityObject.ParticleKindId) == false)
             {
                 if (MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(ParticleInProximityObject, Particles, ListOfParticlesToChangeSectors, GetRandomValue<uniform_real_distribution, RealType>(UniformDistributionObjectMoveParticleDirection_RealType), GetRandomValue<uniform_real_distribution, RealType>(UniformDistributionObjectMoveParticleDirection_RealType), GetRandomValue<uniform_real_distribution, RealType>(UniformDistributionObjectMoveParticleDirection_RealType), StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam) == false)
-                    NumberOfParticlesRejectedToBeMovedInDiffusionParam++;
+                    NumberOfParticlesToBeMovedInDiffusionRejectedLocallyParam++;
             }
             else
                 NumberOfDNAParticlesParam++;
@@ -205,19 +205,19 @@ void CellEngineFullAtomSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpa
 
 void CellEngineFullAtomSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpaceForExecutionInMPIProcesses(const bool InBounds, const UnsignedInt StartSectorXPosParam, const UnsignedInt StartSectorYPosParam, const UnsignedInt StartSectorZPosParam, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam)
 {
-    GenerateOneStepOfDiffusionForSelectedSpace(ListOfParticlesToChangeSectors, NumberOfParticlesMovedInDiffusion, NumberOfParticlesRejectedToBeMovedInDiffusion, NumberOfParticlesSentToCheckInAnotherThreadToBeMovedInDiffusion, NumberOfDNAParticles, InBounds, StartSectorXPosParam, StartSectorYPosParam, StartSectorZPosParam, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, false);
+    GenerateOneStepOfDiffusionForSelectedSpace(ListOfParticlesToChangeSectors, NumberOfParticlesMovedInDiffusion, NumberOfParticlesToBeMovedInDiffusionRejectedLocally, NumberOfParticlesToBeMovedInDiffusionSentToCheckInAnotherThread, NumberOfDNAParticles, InBounds, StartSectorXPosParam, StartSectorYPosParam, StartSectorZPosParam, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, false);
 }
 
 void CellEngineFullAtomSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpaceForExecutionInThreads(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, const bool InBounds, const UnsignedInt StartSectorXPosParam, const UnsignedInt StartSectorYPosParam, const UnsignedInt StartSectorZPosParam, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam)
 {
     DEBUG_LOG_DIFFUSION(LoggersManagerObject.LogUnconditional(STREAM("INSIDE XStart = " << StartXPosParam << " YStart = " << StartYPosParam << " ZStart = " << StartZPosParam << " XEnd = " << SizeXParam << " YEnd = " << SizeYParam << " ZEnd = " << SizeZParam << " PosX = " << StartSectorXPosParam << " PosY = " << StartSectorXPosParam << " PosZ = " << StartSectorXPosParam));)
 
-    GenerateOneStepOfDiffusionForSelectedSpace(CurrentThreadLocalSimulationSpaceData->ListOfParticlesToChangeSectors, CurrentThreadLocalSimulationSpaceData->NumberOfParticlesMovedInDiffusion, CurrentThreadLocalSimulationSpaceData->NumberOfParticlesRejectedToBeMovedInDiffusion, CurrentThreadLocalSimulationSpaceData->NumberOfParticlesSentToCheckInAnotherThreadToBeMovedInDiffusion, CurrentThreadLocalSimulationSpaceData->NumberOfDNAParticles, InBounds, StartSectorXPosParam, StartSectorYPosParam, StartSectorZPosParam, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, false);
+    GenerateOneStepOfDiffusionForSelectedSpace(CurrentThreadLocalSimulationSpaceData->ListOfParticlesToChangeSectors, CurrentThreadLocalSimulationSpaceData->NumberOfParticlesMovedInDiffusion, CurrentThreadLocalSimulationSpaceData->NumberOfParticlesToBeMovedInDiffusionRejectedLocally, CurrentThreadLocalSimulationSpaceData->NumberOfParticlesToBeMovedInDiffusionSentToCheckInAnotherThread, CurrentThreadLocalSimulationSpaceData->NumberOfDNAParticles, InBounds, StartSectorXPosParam, StartSectorYPosParam, StartSectorZPosParam, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, false);
 }
 
 void CellEngineFullAtomSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpaceForExecutionNonParallel(const bool InBounds, const UnsignedInt StartSectorXPosParam, const UnsignedInt StartSectorYPosParam, const UnsignedInt StartSectorZPosParam, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam)
 {
-    GenerateOneStepOfDiffusionForSelectedSpace(ListOfParticlesToChangeSectors, NumberOfParticlesMovedInDiffusion, NumberOfParticlesRejectedToBeMovedInDiffusion, NumberOfParticlesSentToCheckInAnotherThreadToBeMovedInDiffusion, NumberOfDNAParticles, InBounds, StartSectorXPosParam, StartSectorYPosParam, StartSectorZPosParam, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, true);
+    GenerateOneStepOfDiffusionForSelectedSpace(ListOfParticlesToChangeSectors, NumberOfParticlesMovedInDiffusion, NumberOfParticlesToBeMovedInDiffusionRejectedLocally, NumberOfParticlesToBeMovedInDiffusionSentToCheckInAnotherThread, NumberOfDNAParticles, InBounds, StartSectorXPosParam, StartSectorYPosParam, StartSectorZPosParam, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, true);
 }
 
 void CellEngineFullAtomSimulationSpace::GenerateNStepsOfDiffusionForWholeCellSpace(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, const bool InBounds, const RealType XStartParam, const RealType YStartParam, const RealType ZStartParam, const RealType XStepParam, const RealType YStepParam, const RealType ZStepParam, const RealType XSizeParam, RealType YSizeParam, const RealType ZSizeParam, const RealType NumberOfSimulationSteps)
@@ -349,6 +349,7 @@ bool CellEngineFullAtomSimulationSpace::CheckPossibilityOfInsertingParticleToCur
             #endif
 
             GetParticles().insert(std::move(make_pair(ParticleObject.ParticleUniqueId, std::move(ParticleObject))));
+
             return true;
         }
     }

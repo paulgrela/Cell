@@ -5,12 +5,11 @@
 #include "CellEngineTypes.h"
 #include "CellEngineParticle.h"
 #include "CellEngineChemicalReaction.h"
+#include "CellEngineSimulationSpace.h"
 #include "CellEngineIllinoisDataCreator.h"
-#include "CellEngineChemicalReactionsInSimulationSpace.h"
 #include "CellEngineVoxelSimulationSpaceStatistics.h"
 #include "CellEngineChemicalReactionsInFullAtomSimulationSpace.h"
 #include "CellEngineRealRandomParticlesInFullAtomSpaceGenerator.h"
-#include "CellEngineSimulationSpace.h"
 #include "CellEngineGenomeNucleicAcidsParticlesInFullAtomSpaceGenerator.h"
 
 class CellEngineFullAtomSimulationSpace : public CellEngineSimulationSpace, public CellEngineGenomeNucleicAcidsParticlesInFullAtomSpaceGenerator, public CellEngineChemicalReactionsInFullAtomSimulationSpace, public CellEngineVoxelSimulationSpaceStatistics
@@ -54,7 +53,7 @@ public:
 
     void TransferParticlesFromOneSectorToAnotherSectorInOneStepOfDiffusionForSelectedSpaceForParallelExecutionOrForContainersForSpeedAndForNonParallelExecution(std::vector<ParticleToBeMovedFromOneSectorToAnotherSector>& ListOfParticlesToChangeSectors, UnsignedInt& NumberOfParticlesMovedInDiffusionParam) const;
     void TransferParticlesFromOneSectortoAnotherSectorInOneStepOfDiffusionForSelectedSpaceForContainersNotForSpeedAndForNonParallelExecution(std::vector<ParticleToBeMovedFromOneSectorToAnotherSector>& ListOfParticlesToChangeSectors) const;
-    void GenerateOneStepOfDiffusionForSelectedSpace(std::vector<ParticleToBeMovedFromOneSectorToAnotherSector>& ListOfParticlesToChangeSectors, UnsignedInt& NumberOfParticlesMovedInDiffusionParam, UnsignedInt& NumberOfParticlesRejectedToBeMovedInDiffusionParam, UnsignedInt& NumberOfParticlesSentToCheckInAnotherThreadToBeMovedInDiffusion, UnsignedInt& NumberOfDNAParticlesParam, bool InBounds, UnsignedInt StartSectorXPosParam, UnsignedInt StartSectorYPosParam, UnsignedInt StartSectorZPosParam, RealType StartXPosParam, RealType StartYPosParam, RealType StartZPosParam, RealType SizeXParam, RealType SizeYParam, RealType SizeZParam, bool ContainersNotForSpeedUnparalled);
+    void GenerateOneStepOfDiffusionForSelectedSpace(std::vector<ParticleToBeMovedFromOneSectorToAnotherSector>& ListOfParticlesToChangeSectors, UnsignedInt& NumberOfParticlesMovedInDiffusionParam, UnsignedInt& NumberOfParticlesToBeMovedInDiffusionRejectedLocallyParam, UnsignedInt& NumberOfParticlesSentToCheckInAnotherThreadToBeMovedInDiffusion, UnsignedInt& NumberOfDNAParticlesParam, bool InBounds, UnsignedInt StartSectorXPosParam, UnsignedInt StartSectorYPosParam, UnsignedInt StartSectorZPosParam, RealType StartXPosParam, RealType StartYPosParam, RealType StartZPosParam, RealType SizeXParam, RealType SizeYParam, RealType SizeZParam, bool ContainersNotForSpeedUnparalled);
 
     void GenerateOneStepOfDiffusionForSelectedSpaceForExecutionInMPIProcesses(bool InBounds, UnsignedInt StartSectorXPosParam, UnsignedInt StartSectorYPosParam, UnsignedInt StartSectorZPosParam, RealType StartXPosParam, RealType StartYPosParam, RealType StartZPosParam, RealType SizeXParam, RealType SizeYParam, RealType SizeZParam) override;
     void GenerateOneStepOfDiffusionForSelectedSpaceForExecutionInThreads(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, bool InBounds, UnsignedInt StartSectorXPosParam, UnsignedInt StartSectorYPosParam, UnsignedInt StartSectorZPosParam, RealType StartXPosParam, RealType StartYPosParam, RealType StartZPosParam, RealType SizeXParam, RealType SizeYParam, RealType SizeZParam) override;

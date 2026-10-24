@@ -79,8 +79,8 @@ protected:
 protected:
     std::vector<ConfirmationOfParticlesToRemoveToSentStruct> ConfirmationOfParticlesToRemoveToSent[NumberOfAllNeighbors];
 public:
-    SectorPosType CurrentSectorPos{ 0, 0, 0 };
-    SimulationSpaceSectorBounds ActualSimulationSpaceSectorBoundsObject{ 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    SectorPosType CurrentSectorPos{ .SectorPosX = 0, .SectorPosY = 0, .SectorPosZ = 0 };
+    SimulationSpaceSectorBounds ActualSimulationSpaceSectorBoundsObject{ .StartXPos = 0, .StartYPos = 0, .StartZPos = 0, .SizeX = 0, .SizeY = 0, .SizeZ = 0, .EndXPos = 0, .EndYPos = 0, .EndZPos = 0 };
 public:
     std::mutex MainExchangeParticlesMutexObject;
 protected:
@@ -89,9 +89,11 @@ public:
     UnsignedInt NumberOfDNAParticles;
 public:
     UnsignedInt NumberOfParticlesMovedInDiffusion = 0;
-    UnsignedInt NumberOfParticlesRejectedToBeMovedInDiffusion = 0;
+    UnsignedInt NumberOfParticlesToBeMovedInDiffusionRejectedLocally = 0;
+    UnsignedInt NumberOfParticlesToBeMovedInDiffusionSentToCheckInAnotherThread = 0;
+    UnsignedInt NumberOfParticlesToBeMovedInDiffusionRejectedByAnotherThread = 0;
+    UnsignedInt NumberOfParticlesToBeMovedInDiffusionConfirmedAfterSentInAnotherThread = 0;
     UnsignedInt NumberOfParticlesSentToAnotherThreadAndMovedInDiffusion = 0;
-    UnsignedInt NumberOfParticlesSentToCheckInAnotherThreadToBeMovedInDiffusion = 0;
 protected:
     UnsignedInt ErrorCounter = 0;
     UnsignedInt NumberOfExecutedReactions = 0;
