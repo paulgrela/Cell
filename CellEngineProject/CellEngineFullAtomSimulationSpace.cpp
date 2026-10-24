@@ -341,7 +341,7 @@ bool CellEngineFullAtomSimulationSpace::CheckPossibilityOfInsertingParticleToCur
         const auto SimulationSpaceSectorBoundsObject = SimulationSpaceSectorBounds().SetParametersForChosenSector(ParticleSenderToInsert.ReceiverSectorPos.X, ParticleSenderToInsert.ReceiverSectorPos.Y, ParticleSenderToInsert.ReceiverSectorPos.Z, CellEngineConfigDataObject.ShiftCenterX, CellEngineConfigDataObject.ShiftCenterY, CellEngineConfigDataObject.ShiftCenterZ, CellEngineConfigDataObject.SizeOfParticlesSectorX, CellEngineConfigDataObject.SizeOfParticlesSectorY, CellEngineConfigDataObject.SizeOfParticlesSectorZ);
         const auto& ParticleKindToCheck = ParticlesKindsManagerObject.GetParticleKind(ParticleSenderToInsert.ParticleKindId);
 
-        if (CheckIfSpaceIsEmptyAndIsInBoundsForParticleElementsDiffusion(ParticleKindToCheck, Particles, ParticleSenderToInsert.NewParticleCenter.X, ParticleSenderToInsert.NewParticleCenter.Y, ParticleSenderToInsert.NewParticleCenter.Z, SimulationSpaceSectorBoundsObject) == true)
+        if (CheckIfSpaceIsEmptyAndIsInBoundsForParticleElementsDiffusion(ParticleKindToCheck, Particles, ParticleObject.Center.X + ParticleSenderToInsert.Vector.X, ParticleObject.Center.Y + ParticleSenderToInsert.Vector.Y, ParticleObject.Center.Z + ParticleSenderToInsert.Vector.Z, SimulationSpaceSectorBoundsObject) == true)
         {
             #ifdef SIMULATION_DETAILED_DEBUG_LOG_DIFFUSION
             auto [SectorPosX1, SectorPosY1, SectorPosZ1] = CellEngineUseful::GetSectorPos(ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z);

@@ -24,22 +24,22 @@ protected:
         return (SectorPosX < CellEngineConfigDataObject.NumberOfParticlesSectorsInX && SectorPosY < CellEngineConfigDataObject.NumberOfParticlesSectorsInY && SectorPosZ < CellEngineConfigDataObject.NumberOfParticlesSectorsInZ);
     }
 
-    static bool CheckDistanceOfParticlesInSector(const RealType Radius, const UniqueIdUInt64Type Index, const ParticlesContainer<Particle>& ParticlesInSector, const UnsignedInt SectorPosX, const UnsignedInt SectorPosY, const UnsignedInt SectorPosZ, const RealType TestedPosX, const RealType TestedPosY, const RealType TestedPosZ)
+    static bool CheckDistanceOfParticlesInSector(const RealType Radius, const UniqueIdUInt64Type ForbiddenParticleUniqueId, const ParticlesContainer<Particle>& ParticlesInSector, const UnsignedInt SectorPosX, const UnsignedInt SectorPosY, const UnsignedInt SectorPosZ, const RealType TestedPosX, const RealType TestedPosY, const RealType TestedPosZ)
     {
         for (const auto& ParticleInSectorObject : ParticlesInSector[SectorPosX][SectorPosY][SectorPosZ].Particles | std::views::values)
-            if (ParticleInSectorObject.ParticleUniqueId != Index)
-                if (DistanceOfParticleFromPoint(ParticleInSectorObject, { .X = TestedPosX, .Y = TestedPosY, .Z = TestedPosZ }) < ParticleInSectorObject.Radius + Radius)
+            if (ParticleInSectorObject.ParticleUniqueId != ForbiddenParticleUniqueId)
+                if (DistanceOfParticleFromPoint(ParticleInSectorObject, { .X = TestedPosX, .Y = TestedPosY, .Z = TestedPosZ }) < 0.5)
                     return false;
 
         return true;
     }
 
-    static bool CheckDistanceOfParticlesInSectorByComparingAllAtomsDistances(const UniqueIdUInt64Type Index, const ParticlesContainer<Particle>& ParticlesInSector, const UnsignedInt SectorPosX, const UnsignedInt SectorPosY, const UnsignedInt SectorPosZ, const RealType TestedPosX, const RealType TestedPosY, const RealType TestedPosZ)
+    static bool CheckDistanceOfParticlesInSectorByComparingAllAtomsDistances(const UniqueIdUInt64Type ForbiddenParticleUniqueId, const ParticlesContainer<Particle>& ParticlesInSector, const UnsignedInt SectorPosX, const UnsignedInt SectorPosY, const UnsignedInt SectorPosZ, const RealType TestedPosX, const RealType TestedPosY, const RealType TestedPosZ)
     {
         for (const auto& ParticleInSectorObject : ParticlesInSector[SectorPosX][SectorPosY][SectorPosZ].Particles | std::views::values)
-            if (ParticleInSectorObject.ParticleUniqueId != Index)
+            if (ParticleInSectorObject.ParticleUniqueId != ForbiddenParticleUniqueId)
                 for (const auto &AtomParticleInSectorObject : ParticleInSectorObject.ListOfAtoms)
-                    if (DistanceOfPoints({ .X = AtomParticleInSectorObject.X, .Y = AtomParticleInSectorObject.Y, .Z = AtomParticleInSectorObject.Z }, { .X = TestedPosX, .Y = TestedPosY, .Z = TestedPosZ }) < 2 * AtomRadius)
+                    if (DistanceOfParticleFromPoint(ParticleInSectorObject, { .X = TestedPosX, .Y = TestedPosY, .Z = TestedPosZ }) < 0.5)
                         return false;
 
         return true;
@@ -88,7 +88,7 @@ protected:
         return true;
     }
 
-    static inline bool CheckFreeSpaceOnlyByTestingCenterAndBoundsForParticleMovedByVectorReactions(const RealType Radius, const UniqueIdUInt64Type Index, const vector3_Real32 Center, const ParticlesContainer<Particle>& ParticlesInSector, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CheckBounds, const bool CompareBoundsBySpaceBounds1, const bool CompareBoundsBySpaceBounds2)
+    static inline bool CheckFreeSpaceOnlyByTestingCenterAndBoundsForParticleMovedByVectorReactions(const RealType Radius, const UniqueIdUInt64Type ForbiddenParticleUniqueId, const vector3_Real32 Center, const ParticlesContainer<Particle>& ParticlesInSector, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CheckBounds, const bool CompareBoundsBySpaceBounds1, const bool CompareBoundsBySpaceBounds2)
     {
         try
         {
@@ -101,7 +101,7 @@ protected:
             if (CheckSectorPos(SectorPosX, SectorPosY, SectorPosZ) == false)
                 return false;
 
-            if (CheckDistanceOfParticlesInSector(Radius, Index, ParticlesInSector, SectorPosX, SectorPosY, SectorPosZ, TestedPosX, TestedPosY, TestedPosZ) == false)
+            if (CheckDistanceOfParticlesInSector(Radius, ForbiddenParticleUniqueId, ParticlesInSector, SectorPosX, SectorPosY, SectorPosZ, TestedPosX, TestedPosY, TestedPosZ) == false)
                 return false;
         }
         CATCH("checking free space only by center and bounds for particle moved by vector")
@@ -128,8 +128,7 @@ protected:
         return true;
     }
 
-protected:
-    static inline bool CheckFreeSpaceOnlyByTestingCenterAndBoundsForParticleMovedByVectorDiffusion(const RealType Radius, const UniqueIdUInt64Type Index, const vector3_Real32 Center, const ParticlesContainer<Particle>& ParticlesInSector, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CompareBoundsBySpaceBounds1)
+    static inline bool CheckFreeSpaceOnlyByTestingCenterAndBoundsForParticleMovedByVectorDiffusion(const RealType Radius, const UniqueIdUInt64Type ForbiddenParticleUniqueId, const vector3_Real32 Center, const ParticlesContainer<Particle>& ParticlesInSector, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CompareBoundsBySpaceBounds1)
     {
         try
         {
@@ -150,8 +149,8 @@ protected:
             if (CheckSectorPos(SectorPosX, SectorPosY, SectorPosZ) == false)
                 return false;
 
-            // if (CheckDistanceOfParticlesInSector(Radius, Index, ParticlesInSector, SectorPosX, SectorPosY, SectorPosZ, TestedPosX, TestedPosY, TestedPosZ) == false)
-            //     return false;
+            if (CheckDistanceOfParticlesInSector(Radius, ForbiddenParticleUniqueId, ParticlesInSector, SectorPosX, SectorPosY, SectorPosZ, TestedPosX, TestedPosY, TestedPosZ) == false)
+                return false;
         }
         CATCH("checking free space only by center and bounds for particle moved by vector")
 
@@ -216,12 +215,12 @@ protected:
         return CheckFreeSpaceAndBoundsForParticleMovedByVectorReactions(ListOfAtoms, Radius, 0, { .X = 0, .Y = 0, .Z = 0 }, ParticlesInSector, PosX, PosY, PosZ, SimulationSpaceSectorBoundsObjectParam, CellEngineConfigDataObject.CheckOnlyParticlesCenters, true, true, true);
     }
 
-    static inline bool CheckFreeSpaceAndBoundsForParticleMovedByVectorReactions(const ListOfAtomsType& ListOfAtoms, const RealType Radius, const UniqueIdUInt64Type Index, const vector3_Real32 Center, const ParticlesContainer<Particle>& ParticlesInSector, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CheckOnlyParticlesCenters, const bool CheckBounds, const bool CompareBoundsBySpaceBounds1, const bool CompareBoundsBySpaceBounds2)
+    static inline bool CheckFreeSpaceAndBoundsForParticleMovedByVectorReactions(const ListOfAtomsType& ListOfAtoms, const RealType Radius, const UniqueIdUInt64Type ForbiddenParticleUniqueId, const vector3_Real32 Center, const ParticlesContainer<Particle>& ParticlesInSector, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CheckOnlyParticlesCenters, const bool CheckBounds, const bool CompareBoundsBySpaceBounds1, const bool CompareBoundsBySpaceBounds2)
     {
         if (CheckOnlyParticlesCenters == true)
-            return CheckFreeSpaceOnlyByTestingCenterAndBoundsForParticleMovedByVectorReactions(Radius, Index, Center, ParticlesInSector, VectorX, VectorY, VectorZ, SimulationSpaceSectorBoundsObjectParam, CheckBounds, CompareBoundsBySpaceBounds1, CompareBoundsBySpaceBounds2);
+            return CheckFreeSpaceOnlyByTestingCenterAndBoundsForParticleMovedByVectorReactions(Radius, ForbiddenParticleUniqueId, Center, ParticlesInSector, VectorX, VectorY, VectorZ, SimulationSpaceSectorBoundsObjectParam, CheckBounds, CompareBoundsBySpaceBounds1, CompareBoundsBySpaceBounds2);
         else
-            return CheckFreeSpaceByTestingAllAtomsAndBoundsForParticleMovedByVectorReactions(ListOfAtoms, Index, ParticlesInSector, VectorX, VectorY, VectorZ, SimulationSpaceSectorBoundsObjectParam, CheckBounds, CompareBoundsBySpaceBounds1, CompareBoundsBySpaceBounds2);
+            return CheckFreeSpaceByTestingAllAtomsAndBoundsForParticleMovedByVectorReactions(ListOfAtoms, ForbiddenParticleUniqueId, ParticlesInSector, VectorX, VectorY, VectorZ, SimulationSpaceSectorBoundsObjectParam, CheckBounds, CompareBoundsBySpaceBounds1, CompareBoundsBySpaceBounds2);
     }
 
     static inline bool CheckFreeSpaceAndBoundsForParticleMovedByVectorDiffusion(const ListOfAtomsType& ListOfAtoms, const RealType Radius, const UniqueIdUInt64Type Index, const vector3_Real32 Center, const ParticlesContainer<Particle>& ParticlesInSector, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam, const bool CheckOnlyParticlesCenters, const bool CompareBoundsBySpaceBounds1)
