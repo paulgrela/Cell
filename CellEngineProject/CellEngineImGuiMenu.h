@@ -1325,8 +1325,12 @@ public:
 
         LoggersManagerObject.Log(STREAM(""));
         LoggersManagerObject.Log(STREAM(""));
+
+         CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SetZeroForAllParallelExecutionVariables();
+
         LoggersManagerObject.Log(STREAM("NUMBER OF ALL PARTICLES BEFORE SIMULATION = " << NumberOfAllParticlesBeforeSimulation));
         LoggersManagerObject.Log(STREAM("START NOT PARALLEL SIMULATION"));
+        LoggersManagerObject.Log(STREAM(""));
 
         CellEngineConfigDataObject.NonParallelProcessesExecution = true;
 
@@ -1343,9 +1347,13 @@ public:
 
         const UnsignedInt NumberOfAllParticlesAfterSimulation = CellEngineDataFileObjectPointer->GetNumberOfAllParticles();
 
+        LoggersManagerObject.Log(STREAM(""));
         LoggersManagerObject.Log(STREAM("END NOT PARALLEL SIMULATION"));
         LoggersManagerObject.Log(STREAM("NUMBER OF ALL PARTICLES AFTER SIMULATION = " << NumberOfAllParticlesAfterSimulation));
         LoggersManagerObject.Log(STREAM("DIFFERENCE OF ALL PARTICLES BEFORE AND AFTER SIMULATION = " << NumberOfAllParticlesAfterSimulation - NumberOfAllParticlesBeforeSimulation));
+        LoggersManagerObject.Log(STREAM(""));
+
+        CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GatherAllParallelExecutionVariables();
 
         LoggersManagerObject.Log(STREAM(""));
         LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, "Execution of generating one step simulation in whole cell space has taken time: ","Execution in threads")));

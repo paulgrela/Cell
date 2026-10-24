@@ -187,6 +187,8 @@ void CellEngineParticlesFullAtomOperations::MoveParticleByVectorForMPIProcesses(
 
                             VectorOfParticlesToSendToNeighborProcesses[NeighborProcessIndex].emplace_back(ParticleSenderStructMPIMultiProcess{ .ParticleUniqueId = ParticleObject.ParticleUniqueId, .ParticleKindId = ParticleObject.ParticleKindId, .SenderProcessIndex = static_cast<int>(Process1Pos), .ReceiverProcessIndex = static_cast<int>(Process2Pos), .ReceiverSectorPos = { .X = static_cast<uint16_t>(SectorPosX2), .Y = static_cast<uint16_t>(SectorPosY2), .Z = static_cast<uint16_t>(SectorPosZ2) }, .NewParticleCenter = { .X = ParticleObject.Center.X, .Y = ParticleObject.Center.Y, .Z = ParticleObject.Center.Z }, .Vector = { .X = VectorX, .Y = VectorY, .Z = VectorZ }});
 
+                            CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->NumberOfParticlesToBeMovedInDiffusionSentToCheckInAnotherThread++;
+
                             break;
                         }
                 }

@@ -78,20 +78,22 @@ void CellEngineFullAtomSimulationSpace::FillParticleElementsInSpace(const Unique
 {
     try
     {
-        GetParticleFromUniqueId(ParticleUniqueId).ListOfAtoms.clear();
+        auto& ParticleFromUniqueId = GetParticleFromUniqueId(ParticleUniqueId);
 
-        if (ParticleKindObjectForProduct.ListOfAtoms.empty() == false)
+        ParticleFromUniqueId.ListOfAtoms.clear();
+
+        if (ParticleFromUniqueId.ListOfAtoms.empty() == false)
             for (const auto& NewPointElement : ParticleKindObjectForProduct.ListOfAtoms)
-                GetParticleFromUniqueId(ParticleUniqueId).ListOfAtoms.emplace_back(NewPointElement.X + VectorX, NewPointElement.Y + VectorY, NewPointElement.Z + VectorZ);
+                ParticleFromUniqueId.ListOfAtoms.emplace_back(NewPointElement.X + VectorX, NewPointElement.Y + VectorY, NewPointElement.Z + VectorZ);
         else
-            GetParticleFromUniqueId(ParticleUniqueId).ListOfAtoms.emplace_back(VectorX, VectorY, VectorZ);
+            ParticleFromUniqueId.ListOfAtoms.emplace_back(VectorX, VectorY, VectorZ);
 
-        GetParticleFromUniqueId(ParticleUniqueId).Radius = ParticleKindObjectForProduct.Radius;
-        GetParticleFromUniqueId(ParticleUniqueId).Center = { .X = VectorX, .Y = VectorY, .Z = VectorZ };
+        ParticleFromUniqueId.Radius = ParticleKindObjectForProduct.Radius;
+        ParticleFromUniqueId.Center = { .X = VectorX, .Y = VectorY, .Z = VectorZ };
 
         #if defined(SIMULATION_DETAILED_DEBUG_LOG_DIFFUSION) || defined(DEBUG_LOG_CHEMICAL_REACTION)
         if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == false)
-            CellEngineUseful::CheckCenterForSector<Particle>(GetParticleFromUniqueId(ParticleUniqueId), Particles, "CF1");
+            CellEngineUseful::CheckCenterForSector<Particle>(ParticleFromUniqueId, Particles, "CF1");
         #endif
     }
     CATCH("filling particle elements in space")
@@ -180,7 +182,6 @@ void CellEngineFullAtomSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpa
         uniform_real_distribution<RealType> UniformDistributionObjectMoveParticleDirection_RealType(-ParticleMoveSizeInDiffusionRealType, ParticleMoveSizeInDiffusionRealType);
 
         for (auto& ParticleInProximityObject : Particles[StartSectorXPosParam][StartSectorYPosParam][StartSectorZPosParam].Particles | views::values)
-                                                                                                                        //if (ParticleInProximityObject.ParticleKindId != 100042) //gdy reakcje wlaczone
         {
             DEBUG_LOG_DIFFUSION(CellEngineUseful::CheckCenterForSector<Particle>(ParticleInProximityObject, Particles, "C0");)
 
