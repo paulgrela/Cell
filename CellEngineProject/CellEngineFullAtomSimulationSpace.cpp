@@ -11,6 +11,12 @@
 #include "CellEngineParticlesKindsManager.h"
 #include "CellEngineChemicalReactionsManager.h"
 
+#ifdef USING_MODULES
+import CellEngineColors;
+#else
+#include "CellEngineColors.h"
+#endif
+
 using namespace std;
 
 Particle& CellEngineFullAtomSimulationSpace::GetParticleFromIndexForOuterClass(UniqueIdUInt64Type ParticleUniqueId)

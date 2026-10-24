@@ -53,6 +53,9 @@ private:
             erase_if(ChemicalReactionObject.Reactants, [](auto& R){ return ParticlesKindsManagerObject.GetParticleKind(R.ParticleKindId).IdStr.substr(0, 10) == JCVISYN3APredStr; });
 
             swap(ChemicalReactionObject.Products, ChemicalReactionObject.Reactants);
+
+            if (ChemicalReactionObject.ChemicalReactionIdNum == 10028)
+                std::erase_if(ChemicalReactionObject.Reactants, [](const auto& R) { return R.ParticleKindId == 100042; });
         }
     }
 private:
@@ -87,7 +90,9 @@ public:
         try
         {
             auto LocalReactionArguments(ReactionArguments);
+
             std::ranges::sort(LocalReactionArguments, [](const ParticleKindForChemicalReaction& P1, const ParticleKindForChemicalReaction& P2){ return ParticlesKindsManagerObject.GetParticleKind(P1.ParticleKindId).IdStr < ParticlesKindsManagerObject.GetParticleKind(P2.ParticleKindId).IdStr; } );
+
             for (const auto& LocalReactant : LocalReactionArguments)
                 KeyStringOfReaction += ParticlesKindsManagerObject.GetParticleKind(LocalReactant.ParticleKindId).IdStr + "+";
         }

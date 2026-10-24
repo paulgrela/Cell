@@ -1,16 +1,18 @@
-cmake_minimum_required(VERSION 3.5.0)
+cmake_minimum_required(VERSION 3.28)
 
 set(USING_MODULES "FALSE")
 
 project(CellEngineProject)
+
+if (NOT USING_MODULES STREQUAL "TRUE")
+	set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
+endif()
 
 set(CMAKE_BUILD_TYPE "Release")
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
-set(CMAKE_CXX_FLAGS "-Ofast")
-set(CMAKE_CXX_FLAGS "-fmodules-ts")
 
 LINK_DIRECTORIES(${CMAKE_SOURCE_DIR}/lib)
 
@@ -102,7 +104,6 @@ add_executable(
 	CellEngineUseful.h
 	CellEngineConstants.h
 	CellEngineColors.h
-	CellEngineColors.cpp
 	CellEngineMPIProcess.h
 	CellEngineAminoAcids.h
 	CellEngineAtom.h
@@ -211,17 +212,9 @@ add_executable(
 	mds/CellEngineMolecularDynamicsSimulationBasicComputations.cpp
 	mds/CellEngineMolecularDynamicsSimulationBasicComputations.h)
 
-if(USING_MODULES STREQUAL "TRUE")
-target_sources(CellEngineProject
-		PUBLIC
-		FILE_SET all_my_modules TYPE CXX_MODULES FILES
-		CellEngineColors.cpp)
-endif()
-
-if(WIN32)
+if (WIN32)
 target_link_libraries(${PROJECT_NAME} -static-libgcc -static-libstdc++ -lpthread -lglew32 -lsb7 -lglfw3 -lopengl32 -lglu32 -limgui)
 else()
-#target_link_libraries(${PROJECT_NAME} -static-libgcc -static-libstdc++ -lpthread sb7 -fopenmp ${OPENGL_LIBRARIES}  ${MPI_LIBRARIES} glfw3 X11 Xrandr Xinerama Xi Xxf86vm Xcursor GL rt dl imgui)
 target_link_libraries(${PROJECT_NAME} -static-libgcc -static-libstdc++ -lpthread sb7 -fopenmp ${OPENGL_LIBRARIES}  ${MPI_LIBRARIES} glfw3 X11 GL rt dl imgui)
 endif()
 
@@ -259,7 +252,6 @@ add_executable(
 	CellEngineTypes.h
 	CellEngineUseful.h
 	CellEngineColors.h
-	CellEngineColors.cpp
 	CellEngineAtom.h
 	CellEngineAtom.cpp
 	CellEngineParticle.h
@@ -272,11 +264,24 @@ add_executable(
 	CellEngineWellStirredChemicalReactionsSimulation.cpp
 	tests/CellEngineRunTests.cpp)
 
-if(WIN32)
+if (WIN32)
 target_link_libraries(CellEngineRunTests -static-libgcc -static-libstdc++ -lpthread -lglew32 -lsb7 -lglfw3 -lopengl32 -lglu32 -limgui)
 else()
-#target_link_libraries(CellEngineRunTests -static-libgcc -static-libstdc++ -lpthread sb7 ${OPENGL_LIBRARIES} ${MPI_LIBRARIES} glfw3 X11 Xrandr Xinerama Xi Xxf86vm Xcursor GL rt dl imgui gtest gmock)
 target_link_libraries(CellEngineRunTests -static-libgcc -static-libstdc++ -lpthread sb7 ${OPENGL_LIBRARIES} ${MPI_LIBRARIES} glfw3 X11 GL rt dl imgui gtest gmock)
+endif()
+
+if (USING_MODULES STREQUAL "TRUE")
+	add_library(CellEngineModules STATIC)
+	target_sources(CellEngineModules
+			PUBLIC
+			FILE_SET CXX_MODULES FILES
+			CellEngineColors.cpp)
+	target_compile_definitions(CellEngineModules PUBLIC USING_MODULES)
+	target_link_libraries(CellEngineProject CellEngineModules)
+	target_link_libraries(CellEngineRunTests CellEngineModules)
+else()
+	target_sources(CellEngineProject PRIVATE CellEngineColors.cpp)
+	target_sources(CellEngineRunTests PRIVATE CellEngineColors.cpp)
 endif()
 
 add_test(CellEngineRunTests CellEngineRunTests)

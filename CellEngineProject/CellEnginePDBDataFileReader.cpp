@@ -9,6 +9,12 @@
 #include "CellEnginePDBDataFileReader.h"
 #include "CellEngineParticlesKindsManager.h"
 
+#ifdef USING_MODULES
+import CellEngineColors;
+#else
+#include "CellEngineColors.h"
+#endif
+
 using namespace std;
 using namespace string_utils;
 

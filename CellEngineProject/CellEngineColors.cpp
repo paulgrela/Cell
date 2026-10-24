@@ -1,4 +1,3 @@
-#define USING_MODULES_
 
 #ifdef USING_MODULES
 module;
@@ -41,7 +40,7 @@ private:
 public:
     void SelectRandomEngineForColors();
     vmath::vec3 GetRandomColor();
-    vector3_16 GetDNAorRNAColor(UniqueIdUInt32Type ParticleKindId, ChainIdUInt16Type ChainId);
+    [[nodiscard]] vector3_16 GetDNAorRNAColor(UniqueIdUInt32Type ParticleKindId, ChainIdUInt16Type ChainId) const;
 };
 #else
 #include "CellEngineColors.h"
@@ -53,7 +52,7 @@ void CellEngineColors::SelectRandomEngineForColors()
     {
         switch (CellEngineConfigDataObject.RandomColorEngineObject)
         {
-            case CellEngineConfigData::RandomColorEngineTypes::Rand : srand((unsigned int)time(nullptr)); break;
+            case CellEngineConfigData::RandomColorEngineTypes::Rand : srand(static_cast<unsigned int>(time(nullptr))); break;
             case CellEngineConfigData::RandomColorEngineTypes::mt19937 : mt64.seed(std::random_device{}()); break;
             case CellEngineConfigData::RandomColorEngineTypes::DefaultRandomEngine: DefaultRandomEngineObject.seed(static_cast<unsigned int>(std::chrono::steady_clock::now().time_since_epoch().count())); break;
             default:  break;
