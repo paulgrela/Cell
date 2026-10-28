@@ -87,6 +87,7 @@ protected:
     ParticlesDetailedContainer<Particle> ParticlesForThreads;
 public:
     UnsignedInt NumberOfDNAParticles;
+    UnsignedInt NumberOfAllParticlesInMPISimulation;
 public:
     UnsignedInt NumberOfParticlesMovedInDiffusion = 0;
     UnsignedInt NumberOfParticlesToBeMovedInDiffusionRejectedLocally = 0;

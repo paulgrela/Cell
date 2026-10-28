@@ -18,7 +18,6 @@ constexpr bool PrintAdditionalInformation = false;
 
 using namespace std;
 
-
 namespace
 {
     struct WallChannel
@@ -1326,8 +1325,6 @@ void CellEngineSimulationParallelExecutionManager::GenerateNStepsOfSimulationFor
         LoggersManagerObject.Log(STREAM("START MPI SIMULATION"));
         LoggersManagerObject.Log(STREAM("MaxParticleUniqueId = " << MaxParticleUniqueId));
 
-        const auto start_time = chrono::high_resolution_clock::now();
-
         CellEngineUseful::SwitchOffLogs();
 
         if (CellEngineConfigDataObject.OpenGLGraphicsSwitchedOff == false && MPIProcessDataObject.CurrentMPIProcessIndex == CellEngineConfigDataObject.MainMPIProcessNumber)
@@ -1339,11 +1336,17 @@ void CellEngineSimulationParallelExecutionManager::GenerateNStepsOfSimulationFor
         MPI_Bcast(&NumberOfStepsOutside, 1, MPI_UINT64_T, CellEngineConfigDataObject.MainMPIProcessNumber, MPI_COMM_WORLD);
         MPI_Bcast(&NumberOfStepsInside, 1, MPI_UINT64_T, CellEngineConfigDataObject.MainMPIProcessNumber, MPI_COMM_WORLD);
 
+        CountAllParticlesInMPI();
+
+        LoggersManagerObject.LogUnconditional(STREAM("NUMBER OF ALL PARTICLES IN MPI SIMULATION = " << NumberOfAllParticlesInMPISimulation << " " << MPIProcessDataObject.CurrentMPIProcessIndex << " " << "START"));
+
+        const auto start_time = chrono::high_resolution_clock::now();
+
         GenerateNStepsOfSimulationForWholeCellSpaceInMPIProcess(NumberOfStepsOutside, NumberOfStepsInside, MPIProcessDataObject.CurrentMPIProcessIndex, 0, 0, 0);
 
-        CellEngineUseful::SwitchOnLogs();
-
         const auto stop_time = chrono::high_resolution_clock::now();
+
+        CellEngineUseful::SwitchOnLogs();
 
         const string ResultText = "Execution in MPI processes for steps outside = " + to_string(NumberOfStepsOutside) + " and steps inside = " + to_string(NumberOfStepsInside) + " has taken time: ";
         LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, ResultText.c_str(),"Execution in mpi")));
@@ -1405,6 +1408,7 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIPr
 
                     AllParticlesSentToAnotherProcess.insert(make_pair(ParticleToSendElement.ParticleUniqueId, SectorPosType(ParticleToSendElement.SenderSectorPos.X, ParticleToSendElement.SenderSectorPos.Y, ParticleToSendElement.SenderSectorPos.Z)));
                 }
+
                 MPI_Send(BufferToSend, PositionInBuffer, MPI_PACKED, static_cast<int>(NeighborProcessesIndexes[NeighborProcessIndex]), 0, MPI_COMM_WORLD);
 
                 VectorOfParticlesToSendToNeighborProcesses[NeighborProcessIndex].clear();
@@ -1479,7 +1483,8 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenMPIPr
 
             char ReceivedParticlesToInsert1[MaxMPIMessageSize];
 
-            #ifdef SIMULATION_DETAILED_DEBUG_LOG_DIFFUSION
+            #ifdef SIMULATION_DETAILED_DE
+            BUG_LOG_DIFFUSION
             if (NumberOfBytesReceived > MaxMPIMessageSize)
                 LoggersManagerObject.Log(STREAM("ERROR NumberOfBytesReceived = " << NumberOfBytesReceived << " " << MPIProcessDataObject.CurrentMPIProcessIndex));
             #endif
@@ -1624,6 +1629,8 @@ void CellEngineSimulationParallelExecutionManager::SetZeroForAllParallelExecutio
 {
     try
     {
+        LoggersManagerObject.Log(STREAM("NUMBER OF ALL PARTICLES BEFORE SIMULATION = " << NumberOfAllParticlesInMPISimulation));
+
         NumberOfDNAParticles = 0;
 
         ErrorCounter = 0;
@@ -1687,10 +1694,28 @@ void CellEngineSimulationParallelExecutionManager::PrintAllExecutionVariables(co
         LoggersManagerObject.Log(STREAM("NumberOfCancelledReactions = " + to_string(NumberOfCancelledReactions) << " " << MPIProcessDataObject.CurrentMPIProcessIndex << " " << PhaseId));
         LoggersManagerObject.Log(STREAM("NumberOfExecutedReactions = " + to_string(NumberOfExecutedReactions) << " " << MPIProcessDataObject.CurrentMPIProcessIndex << " " << PhaseId));
         LoggersManagerObject.Log(STREAM("ErrorCounter = " + to_string(ErrorCounter) << " " << MPIProcessDataObject.CurrentMPIProcessIndex << " " << PhaseId));
+
         LoggersManagerObject.Log(STREAM("GENERAL STATISTICS:"));
         LoggersManagerObject.Log(STREAM("NumberOfDNAParticles = " << NumberOfDNAParticles << " " << MPIProcessDataObject.CurrentMPIProcessIndex << " " << PhaseId));
+        LoggersManagerObject.Log(STREAM("NumberOfAllParticlesInMPISimulation = " << NumberOfAllParticlesInMPISimulation << " " << MPIProcessDataObject.CurrentMPIProcessIndex << " " << PhaseId));
     }
     CATCH("")
+}
+
+void CellEngineSimulationParallelExecutionManager::CountAllParticlesInMPI()
+{
+    try
+    {
+        NumberOfAllParticlesInMPISimulation = 0;
+
+        for (UnsignedInt ParticleSectorXIndex = CurrentMPIProcessSimulationSpaceSectorsRanges.StartXPos; ParticleSectorXIndex < CurrentMPIProcessSimulationSpaceSectorsRanges.EndXPos; ParticleSectorXIndex++)
+            for (UnsignedInt ParticleSectorYIndex = CurrentMPIProcessSimulationSpaceSectorsRanges.StartYPos; ParticleSectorYIndex < CurrentMPIProcessSimulationSpaceSectorsRanges.EndYPos; ParticleSectorYIndex++)
+                for (UnsignedInt ParticleSectorZIndex = CurrentMPIProcessSimulationSpaceSectorsRanges.StartZPos; ParticleSectorZIndex < CurrentMPIProcessSimulationSpaceSectorsRanges.EndZPos; ParticleSectorZIndex++)
+                    NumberOfAllParticlesInMPISimulation += CellEngineDataFileObjectPointer->GetNumberOfAllParticlesInSector(SectorPosType(ParticleSectorXIndex, ParticleSectorYIndex, ParticleSectorZIndex));
+
+        MPI_Allreduce(MPI_IN_PLACE, &NumberOfAllParticlesInMPISimulation, 1, MPI_UINT64_T, MPI_SUM, MPI_COMM_WORLD);
+    }
+    CATCH("counting all particles in MPI")
 }
 
 void CellEngineSimulationParallelExecutionManager::GatherAllParallelExecutionVariables()
@@ -1702,6 +1727,8 @@ void CellEngineSimulationParallelExecutionManager::GatherAllParallelExecutionVar
             PrintAllExecutionVariables(1);
 
             MPI_Allreduce(MPI_IN_PLACE, &NumberOfDNAParticles, 1, MPI_UINT64_T, MPI_SUM, MPI_COMM_WORLD);
+
+            CountAllParticlesInMPI();
 
             MPI_Allreduce(MPI_IN_PLACE, &ErrorCounter, 1, MPI_UINT64_T, MPI_SUM, MPI_COMM_WORLD);
             MPI_Allreduce(MPI_IN_PLACE, &NumberOfExecutedReactions, 1, MPI_UINT64_T, MPI_SUM, MPI_COMM_WORLD);

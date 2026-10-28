@@ -80,6 +80,7 @@ public:
     void ExchangeParticlesBetweenThreadsByBarrierPhase1(const std::shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, ThreadIdType CurrentThreadIndexParam, UnsignedInt ThreadXIndexParam, UnsignedInt ThreadYIndexParam, UnsignedInt ThreadZIndexParam) const;
     static void ExchangeParticlesBetweenThreadsByBarrierPhase2(const std::shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData);
 public:
+    void CountAllParticlesInMPI();
     void SetZeroForAllParallelExecutionVariables();
     void GatherAllParallelExecutionVariables();
     void PrintAllExecutionVariables(UnsignedInt PhaseId) const;
