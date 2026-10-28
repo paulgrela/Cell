@@ -11,6 +11,35 @@ using namespace std;
 
 CellEngineSimulationSpaceStatistics::CellEngineSimulationSpaceStatistics()
 {
+    try
+    {
+        SavedReactionsMap.reserve(10 * 1024);
+
+        SavedReactionsMapForMPI.reserve(10 * 1024);
+        for (auto& SavedReactionsMapForMPIObject : SavedReactionsMapForMPI)
+            SavedReactionsMapForMPIObject.reserve(10 * 1024);
+
+        ParticlesSnapshots.reserve(10 * 1024);
+        for (auto& ParticlesSnapshotsObject : ParticlesSnapshots)
+            ParticlesSnapshotsObject.reserve(1024 * 1024);
+
+        ParticlesSnapshotsCopiedUnorderedMap.reserve(1024 * 1024);
+
+        ParticlesSnapshotsCopiedVectorForMPI.reserve(10 * 1024);
+        for (auto& ParticlesSnapshotsCopiedVectorForMPIObject : ParticlesSnapshotsCopiedVectorForMPI)
+            ParticlesSnapshotsCopiedVectorForMPIObject.reserve(1024 * 1024);
+
+        ParticlesKindsSnapshotsVectorSortedByCounter.reserve(10 * 1024);
+        for (auto& ParticlesSnapshotsCopiedVectorForMPIObject : ParticlesSnapshotsCopiedVectorForMPI)
+            ParticlesSnapshotsCopiedVectorForMPIObject.reserve(10 * 1024);
+
+        ParticlesKindsHistogramComparisons.reserve(10 * 102 );
+        for (auto& ParticlesKindsHistogramComparisonsObject : ParticlesKindsHistogramComparisons)
+            ParticlesKindsHistogramComparisonsObject.reserve(10 * 1024);
+
+        ParticlesKindsSnapshotsCopiedMap.reserve(10 * 1024);
+    }
+    CATCH("cell engine smulation space statistics constructor")
 }
 
 void CellEngineSimulationSpaceStatistics::MakeSimulationStepNumberZeroForStatistics()

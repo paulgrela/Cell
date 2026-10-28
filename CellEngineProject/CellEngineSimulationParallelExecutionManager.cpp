@@ -139,6 +139,15 @@ void CellEngineSimulationParallelExecutionManager::CreateDataForEveryMPIProcessF
                         NeighborProcessesIndexes[4] = GetProcessNextNeighbor(static_cast<SignedInt>(MPIProcessXIndex) - 1, static_cast<SignedInt>(MPIProcessYIndex), static_cast<SignedInt>(MPIProcessZIndex) - 1);
                         NeighborProcessesIndexes[5] = GetProcessNextNeighbor(static_cast<SignedInt>(MPIProcessXIndex) - 1, static_cast<SignedInt>(MPIProcessYIndex) - 1, static_cast<SignedInt>(MPIProcessZIndex));
 
+                        ListOfParticlesToChangeSectors.reserve(65536);
+
+                        for (UnsignedInt NeighborProcessIndex = 0; NeighborProcessIndex < NumberOfAllNeighbors; NeighborProcessIndex++)
+                            if (NeighborProcessesIndexes[NeighborProcessIndex] != -1)
+                            {
+                                VectorOfParticlesToSendToNeighborThreads[NeighborProcessIndex].reserve(16384);
+                                VectorOfParticlesToSendToNeighborProcesses[NeighborProcessIndex].reserve(16384);
+                            }
+
                         LoggersManagerObject.Log(STREAM("MPIProcessIndex Neighbors = " <<  MPIProcessDataObject.CurrentMPIProcessIndex << " " << NeighborProcessesIndexes[0] << " " << NeighborProcessesIndexes[1] << " " << NeighborProcessesIndexes[2] << " " << NeighborProcessesIndexes[3] << " " << NeighborProcessesIndexes[4] << " " << NeighborProcessesIndexes[5]));
                     }
 
