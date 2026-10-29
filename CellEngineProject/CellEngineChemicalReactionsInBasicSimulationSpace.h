@@ -36,9 +36,23 @@ protected:
     explicit CellEngineChemicalReactionsInBasicSimulationSpace(ParticlesContainer<Particle>& ParticlesParam) : CellEngineBasicParticlesOperations(ParticlesParam)
     {
         #ifdef CONTAINERS_FOR_SPEED
-        LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity.reserve(1000);
+        LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity.reserve(1024);
         #endif
-        LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity.reserve(10000);
+        LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity.reserve(10240);
+
+        LocalThreadParticlesInProximityObject.NucleotidesWithFreeNextEndingsFoundInProximity.reserve(1024);
+        LocalThreadParticlesInProximityObject.NucleotidesWithFreePrevEndingsFoundInProximity.reserve(1024);
+        LocalThreadParticlesInProximityObject.DNANucleotidesWithFreeNextEndingsFoundInProximity.reserve(1024);
+        LocalThreadParticlesInProximityObject.DNANucleotidesWithFreePrevEndingsFoundInProximity.reserve(1024);
+
+        LocalThreadParticlesInProximityObject.NucleotidesFreeFoundInProximity.reserve(1024);
+        LocalThreadParticlesInProximityObject.RNANucleotidesFreeFoundInProximity.reserve(1024);
+        LocalThreadParticlesInProximityObject.RNANucleotidesFoundInProximity.reserve(1024);
+
+        LocalThreadParticlesInProximityObject.DNANucleotidesFullFreeFoundInProximity.reserve(1024);
+        LocalThreadParticlesInProximityObject.RNANucleotidesFullFreeFoundInProximity.reserve(1024);
+        LocalThreadParticlesInProximityObject.tRNAChargedFoundInProximity.reserve(1024);
+        LocalThreadParticlesInProximityObject.tRNAUnchargedFoundInProximity.reserve(1024);
     }
     ~CellEngineChemicalReactionsInBasicSimulationSpace() override = default;
 };
