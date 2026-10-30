@@ -25,8 +25,8 @@ protected:
     {
         try
         {
-            for (const auto &Voxel: ListOfVoxels)
-                GetSpaceVoxel(Voxel.X, Voxel.Y, Voxel.Z) = SimulationSpaceVoxelValue;
+            for (const auto& [X, Y, Z] : ListOfVoxels)
+                GetSpaceVoxel(X, Y, Z) = SimulationSpaceVoxelValue;
         }
         CATCH("making all zero voxels in list of voxels")
     }
@@ -35,11 +35,11 @@ protected:
     {
         try
         {
-            for (auto& VoxelOfParticle: ParticleObject.ListOfVoxels)
+            for (auto& [X, Y, Z] : ParticleObject.ListOfVoxels)
             {
-                VoxelOfParticle.X += VectorX;
-                VoxelOfParticle.Y += VectorY;
-                VoxelOfParticle.Z += VectorZ;
+                X += VectorX;
+                Y += VectorY;
+                Z += VectorZ;
             }
         }
         CATCH_AND_THROW("moving all voxels in particle voxel list by vector")
@@ -73,11 +73,11 @@ protected:
     {
         try
         {
-            for (const auto &VoxelOfParticle: ParticleObject.ListOfVoxels)
+            for (const auto& [X, Y, Z] : ParticleObject.ListOfVoxels)
             {
-                const UnsignedInt TestedPosX = VoxelOfParticle.X + VectorX;
-                const UnsignedInt TestedPosY = VoxelOfParticle.Y + VectorY;
-                const UnsignedInt TestedPosZ = VoxelOfParticle.Z + VectorZ;
+                const UnsignedInt TestedPosX = X + VectorX;
+                const UnsignedInt TestedPosY = Y + VectorY;
+                const UnsignedInt TestedPosZ = Z + VectorZ;
                 if (GetSpaceVoxel(TestedPosX, TestedPosY, TestedPosZ) != GetZeroSimulationSpaceVoxel() && GetSpaceVoxel(TestedPosX, TestedPosY, TestedPosZ) != ParticleObject.ParticleUniqueId)
                     return false;
             }
@@ -91,8 +91,8 @@ protected:
     {
         try
         {
-            for (const auto &VoxelOfParticle : ListOfVoxels)
-                if (GetSpaceVoxel(VoxelOfParticle.X + VectorX, VoxelOfParticle.Y + VectorY, VoxelOfParticle.Z + VectorZ) != GetZeroSimulationSpaceVoxel() || !(static_cast<RealType>(VoxelOfParticle.X + VectorX) >= SimulationSpaceSectorBoundsObjectParam.StartXPos && static_cast<RealType>(VoxelOfParticle.X + VectorX) < SimulationSpaceSectorBoundsObjectParam.StartXPos + SimulationSpaceSectorBoundsObjectParam.SizeX && static_cast<RealType>(VoxelOfParticle.Y + VectorY) >= SimulationSpaceSectorBoundsObjectParam.StartYPos && static_cast<RealType>(VoxelOfParticle.Y + VectorY) < SimulationSpaceSectorBoundsObjectParam.StartYPos + SimulationSpaceSectorBoundsObjectParam.SizeY && static_cast<RealType>(VoxelOfParticle.Z + VectorZ) >= SimulationSpaceSectorBoundsObjectParam.StartZPos && static_cast<RealType>(VoxelOfParticle.Z + VectorZ) < SimulationSpaceSectorBoundsObjectParam.StartZPos + SimulationSpaceSectorBoundsObjectParam.SizeZ))
+            for (const auto& [X, Y, Z] : ListOfVoxels)
+                if (GetSpaceVoxel(X + VectorX, Y + VectorY, Z + VectorZ) != GetZeroSimulationSpaceVoxel() || !(static_cast<RealType>(X + VectorX) >= SimulationSpaceSectorBoundsObjectParam.StartXPos && static_cast<RealType>(X + VectorX) < SimulationSpaceSectorBoundsObjectParam.StartXPos + SimulationSpaceSectorBoundsObjectParam.SizeX && static_cast<RealType>(Y + VectorY) >= SimulationSpaceSectorBoundsObjectParam.StartYPos && static_cast<RealType>(Y + VectorY) < SimulationSpaceSectorBoundsObjectParam.StartYPos + SimulationSpaceSectorBoundsObjectParam.SizeY && static_cast<RealType>(Z + VectorZ) >= SimulationSpaceSectorBoundsObjectParam.StartZPos && static_cast<RealType>(Z + VectorZ) < SimulationSpaceSectorBoundsObjectParam.StartZPos + SimulationSpaceSectorBoundsObjectParam.SizeZ))
                     return false;
         }
         CATCH("checking free space for list of voxels")
@@ -104,11 +104,11 @@ protected:
     {
         try
         {
-            for (auto &VoxelOfParticle: ParticleObject.ListOfVoxels)
+            for (const auto& [X, Y, Z] : ParticleObject.ListOfVoxels)
             {
-                const UnsignedInt TestedPosX = VoxelOfParticle.X + VectorX;
-                const UnsignedInt TestedPosY = VoxelOfParticle.Y + VectorY;
-                const UnsignedInt TestedPosZ = VoxelOfParticle.Z + VectorZ;
+                const UnsignedInt TestedPosX = X + VectorX;
+                const UnsignedInt TestedPosY = Y + VectorY;
+                const UnsignedInt TestedPosZ = Z + VectorZ;
                 if ((GetSpaceVoxel(TestedPosX, TestedPosY, TestedPosZ) != GetZeroSimulationSpaceVoxel() && GetSpaceVoxel(TestedPosX, TestedPosY, TestedPosZ) != ParticleObject.ParticleUniqueId) || !(TestedPosX >= StartXPosParam && TestedPosX < StartXPosParam + SizeXParam && TestedPosY >= StartYPosParam && TestedPosY < StartYPosParam + SizeYParam && TestedPosZ >= StartZPosParam && TestedPosZ < StartZPosParam + SizeZParam))
                     return false;
             }
