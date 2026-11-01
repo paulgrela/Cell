@@ -170,6 +170,9 @@ void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const ch
                         if (CellStatePropertyTreeElement.second.get_child_optional("TypeOfExchangeOfParticlesBetweenThreads"))
                             CellEngineConfigDataObject.TypeOfExchangeOfParticlesBetweenThreads = static_cast<CellEngineConfigData::TypesOfExchangeOfParticlesBetweenThreads>(CellStatePropertyTreeElement.second.get<UnsignedInt>("TypeOfExchangeOfParticlesBetweenThreads"));
 
+                        if (CellStatePropertyTreeElement.second.get_child_optional("TypeOfSychronizationfSimulationExecutedInThreads"))
+                            CellEngineConfigDataObject.TypeOfSychronizationfSimulationExecutedInThreads = static_cast<CellEngineConfigData::TypesOfSychronizationfSimulationExecutedInThreads>(CellStatePropertyTreeElement.second.get<UnsignedInt>("TypeOfSychronizationfSimulationExecutedInThreads"));
+
                         if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)
                         {
                             CellEngineConfigDataObject.SimulationSpaceSelectionStartXPos = CellStatePropertyTreeElement.second.get<UnsignedInt>("SimulationSpaceSelectionStartXPos");

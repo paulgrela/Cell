@@ -1851,6 +1851,8 @@
                         <StepToChangeSpaceDivisionForThreads>4</StepToChangeSpaceDivisionForThreads>
                         <TypeOfExchangeOfParticlesBetweenThreads>3</TypeOfExchangeOfParticlesBetweenThreads>
 
+                        <TypeOfSychronizationfSimulationExecutedInThreads>1</TypeOfSychronizationfSimulationExecutedInThreads>
+
                         <UseMutexBetweenMainScreenThreadAndMenuThreads>true</UseMutexBetweenMainScreenThreadAndMenuThreads>
 
                         <CellGenomePositionsFileName>./data/genomes/genome_1024_double_1/GENOME_POSITIONS.DAT</CellGenomePositionsFileName>
@@ -3237,6 +3239,8 @@
                         <SizeOfYInOneSectorInOneThreadInSimulationSpace>32</SizeOfYInOneSectorInOneThreadInSimulationSpace>
                         <SizeOfZInOneSectorInOneThreadInSimulationSpace>32</SizeOfZInOneSectorInOneThreadInSimulationSpace>
 
+                        <TypeOfSychronizationfSimulationExecutedInThreads>1</TypeOfSychronizationfSimulationExecutedInThreads>
+
                         <StepToChangeSpaceDivisionForThreads>4</StepToChangeSpaceDivisionForThreads>
                         <TypeOfExchangeOfParticlesBetweenThreads>1</TypeOfExchangeOfParticlesBetweenThreads>
 
@@ -3780,6 +3784,8 @@
                         <SizeOfXInOneSectorInOneThreadInSimulationSpace>128</SizeOfXInOneSectorInOneThreadInSimulationSpace>
                         <SizeOfYInOneSectorInOneThreadInSimulationSpace>128</SizeOfYInOneSectorInOneThreadInSimulationSpace>
                         <SizeOfZInOneSectorInOneThreadInSimulationSpace>128</SizeOfZInOneSectorInOneThreadInSimulationSpace>
+
+                        <TypeOfSychronizationfSimulationExecutedInThreads>1</TypeOfSychronizationfSimulationExecutedInThreads>
 
                         <StepToChangeSpaceDivisionForThreads>4</StepToChangeSpaceDivisionForThreads>
                         <TypeOfExchangeOfParticlesBetweenThreads>3</TypeOfExchangeOfParticlesBetweenThreads>
@@ -4872,6 +4878,8 @@
 
                         <StepToChangeSpaceDivisionForThreads>4</StepToChangeSpaceDivisionForThreads>
                         <TypeOfExchangeOfParticlesBetweenThreads>3</TypeOfExchangeOfParticlesBetweenThreads>
+
+                        <TypeOfSychronizationfSimulationExecutedInThreads>1</TypeOfSychronizationfSimulationExecutedInThreads>
 
                         <UseMutexBetweenMainScreenThreadAndMenuThreads>true</UseMutexBetweenMainScreenThreadAndMenuThreads>
 
