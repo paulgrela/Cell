@@ -18,14 +18,10 @@ protected:
 
         CellEngineFullAtomSimulationSpace::SetProperThreadIndexForEveryParticlesSector(Particles);
 
-        CellEngineFullAtomSimulationSpaceObjectPointer->CreateDataForEveryMPIProcessForParallelExecution();
-
-        if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == false)
-        {
+        if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true)
+            CellEngineFullAtomSimulationSpaceObjectPointer->CreateDataForEveryMPIProcessForParallelExecution();
+        else
             CellEngineFullAtomSimulationSpaceObjectPointer->CreateDataForEveryThreadForParallelExecution();
-
-            CellEngineFullAtomSimulationSpaceObjectPointer->CreateDataForEveryThreadForParallelExecutionADD();
-        }
     }
 protected:
     void SetCurrentSectorPos(const SectorPosType& CurrentSectorPos) override

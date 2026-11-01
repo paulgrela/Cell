@@ -21,8 +21,7 @@ public:
     [[nodiscard]] SignedInt GetProcessPrevNeighbor(SignedInt ThreadXIndex, SignedInt ThreadYIndex, SignedInt ThreadZIndex) const;
     [[nodiscard]] SignedInt GetProcessNextNeighbor(SignedInt ThreadXIndex, SignedInt ThreadYIndex, SignedInt ThreadZIndex) const;
     void CreateDataForEveryMPIProcessForParallelExecution();
-    void CreateDataForEveryThreadForParallelExecution() const;
-    void CreateDataForEveryThreadForParallelExecutionADD() const;
+    void CreateDataForEveryThreadForParallelExecution();
 public:
     SignedInt GetProcessNeighbor(SignedInt ThreadXIndex, SignedInt ThreadYIndex, SignedInt ThreadZIndex) const;
 public:
