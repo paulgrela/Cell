@@ -1,3 +1,4 @@
+
 #ifndef CELL_ENGINE_SIMULATION_PARALLEL_EXECUTION_MANAGER_H
 #define CELL_ENGINE_SIMULATION_PARALLEL_EXECUTION_MANAGER_H
 
@@ -60,7 +61,7 @@ public:
     void GenerateNStepsOfSimulationForWholeCellSpaceInMPIProcess(UnsignedInt NumberOfStepsOutside, UnsignedInt NumberOfStepsInside);
 private:
     void SychronizeSimulationExecutedInThreads(barrier<>* SyncPoint, const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData) const;
-    void ExchangeParticlesBetweenThreadsAndSychronizeSimulationExecutedInThreads(barrier<>* SyncPoint, const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, ThreadIdType CurrentThreadIndexParam, UnsignedInt ThreadXIndexParam, UnsignedInt ThreadYIndexParam, const UnsignedInt ThreadZIndexParam) const;
+    void ExchangeParticlesBetweenThreadsAndSychronizeSimulationExecutedInThreads(barrier<>* SyncPoint, const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, ThreadIdType CurrentThreadIndexParam, UnsignedInt ThreadXIndexParam, UnsignedInt ThreadYIndexParam, UnsignedInt ThreadZIndexParam) const;
 public:
     void ExchangeParticlesBetweenMPIProcessesVer2();
     void ExchangeParticlesBetweenMPIProcessesGroup1();

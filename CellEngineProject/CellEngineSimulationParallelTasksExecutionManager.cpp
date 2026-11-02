@@ -91,7 +91,7 @@ static UnsignedInt GetProcessGroupNumber(const UnsignedInt ThreadXIndex, const U
 SignedInt CellEngineSimulationParallelTasksExecutionManager::GetProcessPrevNeighbor(const SignedInt ThreadXIndex, const SignedInt ThreadYIndex, const SignedInt ThreadZIndex) const
 {
     if (ThreadXIndex >= 0 && ThreadYIndex >= 0 && ThreadZIndex >= 0)
-        return SimulationSpaceDataForThreads[ThreadXIndex][ThreadYIndex][ThreadZIndex]->MPIProcessIndex - 1;
+        return SimulationSpaceDataForThreads[ThreadXIndex][ThreadYIndex][ThreadZIndex]->MPIProcessIndex;
     else
         return -1;
 }
@@ -99,7 +99,7 @@ SignedInt CellEngineSimulationParallelTasksExecutionManager::GetProcessPrevNeigh
 SignedInt CellEngineSimulationParallelTasksExecutionManager::GetProcessNextNeighbor(const SignedInt ThreadXIndex, const SignedInt ThreadYIndex, const SignedInt ThreadZIndex) const
 {
     if (static_cast<SignedInt>(ThreadXIndex) < CellEngineConfigDataObject.NumberOfXThreadsInSimulation && static_cast<SignedInt>(ThreadYIndex) < CellEngineConfigDataObject.NumberOfYThreadsInSimulation && static_cast<SignedInt>(ThreadZIndex) < CellEngineConfigDataObject.NumberOfZThreadsInSimulation)
-        return SimulationSpaceDataForThreads[ThreadXIndex][ThreadYIndex][ThreadZIndex]->MPIProcessIndex - 1;
+        return SimulationSpaceDataForThreads[ThreadXIndex][ThreadYIndex][ThreadZIndex]->MPIProcessIndex;
     else
         return -1;
 }
@@ -110,27 +110,27 @@ void CellEngineSimulationParallelTasksExecutionManager::CreateDataForEveryMPIPro
     {
         SignedInt MPIProcessIndex = 0;
 
-        for (UnsignedInt MPIProcessXIndex = 1; MPIProcessXIndex <= CellEngineConfigDataObject.NumberOfXThreadsInSimulation; MPIProcessXIndex++)
-            for (UnsignedInt MPIProcessYIndex = 1; MPIProcessYIndex <= CellEngineConfigDataObject.NumberOfYThreadsInSimulation; MPIProcessYIndex++)
-                for (UnsignedInt MPIProcessZIndex = 1; MPIProcessZIndex <= CellEngineConfigDataObject.NumberOfZThreadsInSimulation; MPIProcessZIndex++)
+        for (UnsignedInt MPIProcessXIndex = 0; MPIProcessXIndex < CellEngineConfigDataObject.NumberOfXThreadsInSimulation; MPIProcessXIndex++)
+            for (UnsignedInt MPIProcessYIndex = 0; MPIProcessYIndex < CellEngineConfigDataObject.NumberOfYThreadsInSimulation; MPIProcessYIndex++)
+                for (UnsignedInt MPIProcessZIndex = 0; MPIProcessZIndex < CellEngineConfigDataObject.NumberOfZThreadsInSimulation; MPIProcessZIndex++)
                 {
                     if (MPIProcessIndex == MPIProcessDataObject.CurrentMPIProcessIndex)
                     {
-                        SimulationSpaceSectorsRangesForCurrentParallelTask.SetParameters((MPIProcessXIndex - 1) * CellEngineConfigDataObject.NumberOfXSectorsInOneThreadInSimulation, (MPIProcessYIndex - 1) * CellEngineConfigDataObject.NumberOfYSectorsInOneThreadInSimulation, (MPIProcessZIndex - 1) * CellEngineConfigDataObject.NumberOfZSectorsInOneThreadInSimulation, MPIProcessXIndex * CellEngineConfigDataObject.NumberOfXSectorsInOneThreadInSimulation, MPIProcessYIndex * CellEngineConfigDataObject.NumberOfYSectorsInOneThreadInSimulation, MPIProcessZIndex * CellEngineConfigDataObject.NumberOfZSectorsInOneThreadInSimulation);
+                        SimulationSpaceSectorsRangesForCurrentParallelTask.SetParameters(MPIProcessXIndex * CellEngineConfigDataObject.NumberOfXSectorsInOneThreadInSimulation, MPIProcessYIndex * CellEngineConfigDataObject.NumberOfYSectorsInOneThreadInSimulation, MPIProcessZIndex * CellEngineConfigDataObject.NumberOfZSectorsInOneThreadInSimulation, (MPIProcessXIndex + 1) * CellEngineConfigDataObject.NumberOfXSectorsInOneThreadInSimulation, (MPIProcessYIndex + 1) * CellEngineConfigDataObject.NumberOfYSectorsInOneThreadInSimulation, (MPIProcessZIndex + 1) * CellEngineConfigDataObject.NumberOfZSectorsInOneThreadInSimulation);
 
                         LoggersManagerObject.Log(STREAM("MPIProcessIndex Bounds = " << MPIProcessDataObject.CurrentMPIProcessIndex << " (" << SimulationSpaceSectorsRangesForCurrentParallelTask.StartXPos << "," << SimulationSpaceSectorsRangesForCurrentParallelTask.StartYPos << "," << SimulationSpaceSectorsRangesForCurrentParallelTask.StartZPos << ") (" << SimulationSpaceSectorsRangesForCurrentParallelTask.EndXPos << "," << SimulationSpaceSectorsRangesForCurrentParallelTask.EndYPos << "," << SimulationSpaceSectorsRangesForCurrentParallelTask.EndZPos << ")"));
 
-                        ParallelTaskGroupNumber = GetProcessGroupNumber(MPIProcessXIndex - 1, MPIProcessYIndex - 1, MPIProcessZIndex - 1);
+                        ParallelTaskGroupNumber = GetProcessGroupNumber(MPIProcessXIndex, MPIProcessYIndex, MPIProcessZIndex);
 
                         LoggersManagerObject.Log(STREAM("ProcessGroupNumber = " << ParallelTaskGroupNumber << " " << MPIProcessDataObject.CurrentMPIProcessIndex << " (" << MPIProcessXIndex << "," << MPIProcessYIndex << "," << MPIProcessZIndex << ")"));
 
-                        NeighborParallelTasksIndexes[0] = GetProcessPrevNeighbor(static_cast<SignedInt>(MPIProcessXIndex) - 2, static_cast<SignedInt>(MPIProcessYIndex) - 1, static_cast<SignedInt>(MPIProcessZIndex) - 1);
-                        NeighborParallelTasksIndexes[1] = GetProcessPrevNeighbor(static_cast<SignedInt>(MPIProcessXIndex) - 1, static_cast<SignedInt>(MPIProcessYIndex) - 2, static_cast<SignedInt>(MPIProcessZIndex) - 1);
-                        NeighborParallelTasksIndexes[2] = GetProcessPrevNeighbor(static_cast<SignedInt>(MPIProcessXIndex) - 1, static_cast<SignedInt>(MPIProcessYIndex) - 1, static_cast<SignedInt>(MPIProcessZIndex) - 2);
+                        NeighborParallelTasksIndexes[0] = GetProcessPrevNeighbor(static_cast<SignedInt>(MPIProcessXIndex) - 1, static_cast<SignedInt>(MPIProcessYIndex), static_cast<SignedInt>(MPIProcessZIndex));
+                        NeighborParallelTasksIndexes[1] = GetProcessPrevNeighbor(static_cast<SignedInt>(MPIProcessXIndex), static_cast<SignedInt>(MPIProcessYIndex) - 1, static_cast<SignedInt>(MPIProcessZIndex));
+                        NeighborParallelTasksIndexes[2] = GetProcessPrevNeighbor(static_cast<SignedInt>(MPIProcessXIndex), static_cast<SignedInt>(MPIProcessYIndex), static_cast<SignedInt>(MPIProcessZIndex) - 1);
 
-                        NeighborParallelTasksIndexes[3] = GetProcessNextNeighbor(static_cast<SignedInt>(MPIProcessXIndex), static_cast<SignedInt>(MPIProcessYIndex) - 1, static_cast<SignedInt>(MPIProcessZIndex) - 1);
-                        NeighborParallelTasksIndexes[4] = GetProcessNextNeighbor(static_cast<SignedInt>(MPIProcessXIndex) - 1, static_cast<SignedInt>(MPIProcessYIndex), static_cast<SignedInt>(MPIProcessZIndex) - 1);
-                        NeighborParallelTasksIndexes[5] = GetProcessNextNeighbor(static_cast<SignedInt>(MPIProcessXIndex) - 1, static_cast<SignedInt>(MPIProcessYIndex) - 1, static_cast<SignedInt>(MPIProcessZIndex));
+                        NeighborParallelTasksIndexes[3] = GetProcessNextNeighbor(static_cast<SignedInt>(MPIProcessXIndex) + 1, static_cast<SignedInt>(MPIProcessYIndex), static_cast<SignedInt>(MPIProcessZIndex));
+                        NeighborParallelTasksIndexes[4] = GetProcessNextNeighbor(static_cast<SignedInt>(MPIProcessXIndex), static_cast<SignedInt>(MPIProcessYIndex) + 1, static_cast<SignedInt>(MPIProcessZIndex));
+                        NeighborParallelTasksIndexes[5] = GetProcessNextNeighbor(static_cast<SignedInt>(MPIProcessXIndex), static_cast<SignedInt>(MPIProcessYIndex), static_cast<SignedInt>(MPIProcessZIndex) + 1);
 
                         ListOfParticlesToChangeSectors.reserve(65536);
 
