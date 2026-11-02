@@ -112,7 +112,7 @@ struct ParticlesContainerInternal
 {
 public:
     UnsignedInt MPIProcessIndex{ 0 };
-    ParallelTaskPosType ThreadOrProcessPos{ .PosX = 1, .PosY = 1, .PosZ = 1 };
+    ParallelTaskPosType ParallelTaskPos{ .PosX = 1, .PosY = 1, .PosZ = 1 };
 public:
     CellEngineParticleUniqueIdGenerator ParticleUniqueIdGenerator{};
     ParticlesDetailedContainer<Particle> Particles;
@@ -185,14 +185,14 @@ public:
         StartZPos += AddToStartZPosParam;
     }
 public:
-    SimulationSpaceSectorBounds SetParametersForParallelExecutionSectors(const ParallelTaskPosType& CurrentThreadPos, const UnsignedInt SizeOfXInOneThreadInSimulationSpace, const UnsignedInt SizeOfYInOneThreadInSimulationSpace, const UnsignedInt SizeOfZInOneThreadInSimulationSpace)
+    SimulationSpaceSectorBounds SetParametersForParallelExecutionSectors(const ParallelTaskPosType& CurrentParallelTaskPos, const UnsignedInt SizeOfXInOneThreadInSimulationSpace, const UnsignedInt SizeOfYInOneThreadInSimulationSpace, const UnsignedInt SizeOfZInOneThreadInSimulationSpace)
     {
-        StartXPos = static_cast<RealType>((CurrentThreadPos.PosX - 1) * SizeOfXInOneThreadInSimulationSpace);
-        EndXPos = static_cast<RealType>((CurrentThreadPos.PosX - 1) * SizeOfXInOneThreadInSimulationSpace + SizeOfXInOneThreadInSimulationSpace);
-        StartYPos = static_cast<RealType>((CurrentThreadPos.PosY - 1) * SizeOfYInOneThreadInSimulationSpace);
-        EndYPos = static_cast<RealType>((CurrentThreadPos.PosY - 1) * SizeOfYInOneThreadInSimulationSpace + SizeOfYInOneThreadInSimulationSpace);
-        StartZPos = static_cast<RealType>((CurrentThreadPos.PosZ - 1) * SizeOfZInOneThreadInSimulationSpace);
-        EndZPos = static_cast<RealType>((CurrentThreadPos.PosZ - 1) * SizeOfZInOneThreadInSimulationSpace + SizeOfZInOneThreadInSimulationSpace);
+        StartXPos = static_cast<RealType>((CurrentParallelTaskPos.PosX - 1) * SizeOfXInOneThreadInSimulationSpace);
+        EndXPos = static_cast<RealType>((CurrentParallelTaskPos.PosX - 1) * SizeOfXInOneThreadInSimulationSpace + SizeOfXInOneThreadInSimulationSpace);
+        StartYPos = static_cast<RealType>((CurrentParallelTaskPos.PosY - 1) * SizeOfYInOneThreadInSimulationSpace);
+        EndYPos = static_cast<RealType>((CurrentParallelTaskPos.PosY - 1) * SizeOfYInOneThreadInSimulationSpace + SizeOfYInOneThreadInSimulationSpace);
+        StartZPos = static_cast<RealType>((CurrentParallelTaskPos.PosZ - 1) * SizeOfZInOneThreadInSimulationSpace);
+        EndZPos = static_cast<RealType>((CurrentParallelTaskPos.PosZ - 1) * SizeOfZInOneThreadInSimulationSpace + SizeOfZInOneThreadInSimulationSpace);
         SizeX = EndXPos - StartXPos;
         SizeY = EndYPos - StartYPos;
         SizeZ = EndZPos - StartZPos;

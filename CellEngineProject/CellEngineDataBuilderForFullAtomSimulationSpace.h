@@ -16,7 +16,7 @@ protected:
 
         CellEngineSimulationParallelTasksExecutionManager::CreateSimulationSpaceForParallelExecution<CellEngineFullAtomSimulationSpace>(CellEngineSimulationSpaceForThreadsObjectsPointer, Particles);
 
-        CellEngineSimulationParallelTasksExecutionManager::SetProperThreadOrProcessPositionAndProperMPIProcessIndexForEveryParticlesSector(Particles);
+        CellEngineSimulationParallelTasksExecutionManager::SetProperParallelTasksPositionsAndProperMPIProcessIndexesForEveryParticlesSector(Particles);
 
         if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true)
             CellEngineFullAtomSimulationSpaceObjectPointer->CreateDataForEveryMPIProcessForParallelExecution();

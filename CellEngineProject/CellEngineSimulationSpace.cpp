@@ -226,7 +226,7 @@ bool CellEngineSimulationSpace::CancelChemicalReaction(const vector<UniqueIdUInt
         {
             RemoveParticle(CreatedParticleUniqueId, true, false);
 
-            DEBUG_LOG_CHEMICAL_REACTION(LoggersManagerObject.LogOnlyToConsoleUnconditional(STREAM("Current Thread = " << CurrentThreadPos.ThreadPosX << " " << CurrentThreadPos.ThreadPosY << " "  << CurrentThreadPos.ThreadPosZ));)
+            DEBUG_LOG_CHEMICAL_REACTION(LoggersManagerObject.LogOnlyToConsoleUnconditional(STREAM("Current Thread = " << CurrentThreadPos.PosX << " " << CurrentThreadPos.PosY << " "  << CurrentThreadPos.PosZ));)
 
             if (CellEngineConfigDataObject.GatherCancelledParticlesIndexes == true)
             {

@@ -13,10 +13,10 @@ struct ParticleSenderStructForParallelMultiTaskingExecution
 {
     UniqueIdUInt64Type ParticleUniqueId{ 0 };
     UniqueIdUInt32Type ParticleKindId{ 0 };
-    int SenderProcessIndex{ 0 };
-    int ReceiverProcessIndex{ 0 };
-    ParallelTaskPosType SenderThreadPos{ .PosX = 0, .PosY = 0, .PosZ = 0 };
-    ParallelTaskPosType ReceiverThreadPos{ .PosX = 0, .PosY = 0, .PosZ = 0 };
+    int SenderParallelTaskIndex{ 0 };
+    int ReceiverParallelTaskIndex{ 0 };
+    ParallelTaskPosType SenderParallelTaskPos{ .PosX = 0, .PosY = 0, .PosZ = 0 };
+    ParallelTaskPosType ReceiverParallelTaskPos{ .PosX = 0, .PosY = 0, .PosZ = 0 };
     vector3_16 SenderSectorPos{ .X = 0, .Y = 0, .Z = 0 };
     vector3_16 ReceiverSectorPos{ .X = 0, .Y = 0, .Z = 0 };
     vector3_Real32 NewParticleCenter{ .X = 0, .Y = 0, .Z = 0 };
@@ -49,37 +49,36 @@ struct WallChannel
 class CellEngineBasicParallelTasksExecutionData
 {
     friend class CellEngineSimulationParallelTasksExecutionManager;
-protected:
+public:
     UnsignedInt MPIProcessIndex{ 0 };
 public:
     UnsignedInt ThreadIndex{ 0 };
     ThreadIdType CurrentThreadIndex{ 0 };
     ParallelTaskPosType CurrentThreadPos{ .PosX = 1, .PosY = 1, .PosZ = 1 };
 protected:
-    UnsignedInt ProcessGroupNumber;
+    UnsignedInt ParallelTaskGroupNumber;
     UnsignedInt NumberOfActiveNeighbors;
 public:
     SignedInt NeighborParallelTasksIndexes[NumberOfAllNeighbors];
 protected:
     SimulationSpaceSectorsRanges SimulationSpaceSectorsRangesForCurrentParallelTask;
 public:
-    #ifdef NEIGHBOR_THREADS_POSITIONS
-    ParallelTaskPosType NeighborThreadsPositions[NumberOfAllNeighbors];
+    #ifdef NEIGHBOR_PARALLEL_TASKS_POSITIONS
+    ParallelTaskPosType NeighborParallelTasksPositions[NumberOfAllNeighbors];
     #endif
+public:
+    SectorPosType CurrentSectorPos{ .PosX = 0, .PosY = 0, .PosZ = 0 };
+    SimulationSpaceSectorBounds ActualSimulationSpaceSectorBoundsObject{ .StartXPos = 0, .StartYPos = 0, .StartZPos = 0, .SizeX = 0, .SizeY = 0, .SizeZ = 0, .EndXPos = 0, .EndYPos = 0, .EndZPos = 0 };
 public:
     std::vector<ParticleToBeMovedFromOneSectorToAnotherSector> ListOfParticlesToChangeSectors;
 public:
-    std::vector<ParticleSenderStructForParallelMultiTaskingExecution> VectorOfParticlesToSendToNeighborThreads[NumberOfAllNeighbors];
-    std::vector<ParticleSenderStructForParallelMultiTaskingExecution> VectorOfParticlesToSendToNeighborProcesses[NumberOfAllNeighbors];
+    std::vector<ParticleSenderStructForParallelMultiTaskingExecution> VectorOfParticlesToSendToNeighborParallelTasks[NumberOfAllNeighbors];
+protected:
+    std::vector<ConfirmationOfParticlesToRemoveToSentStruct> ConfirmationOfParticlesToRemoveToSent[NumberOfAllNeighbors];
 protected:
     std::vector<std::unique_ptr<WallChannel>> TwoThreadsWallChannels;
     std::vector<std::unique_ptr<std::barrier<>>> TwoThreadsWallSychronizationBarriers;
     SignedInt TwoThreadsWallSychronizationBarriersIndexes[NumberOfAllNeighbors]{ -1, -1, -1, -1, -1, -1 };
-protected:
-    std::vector<ConfirmationOfParticlesToRemoveToSentStruct> ConfirmationOfParticlesToRemoveToSent[NumberOfAllNeighbors];
-public:
-    SectorPosType CurrentSectorPos{ .PosX = 0, .PosY = 0, .PosZ = 0 };
-    SimulationSpaceSectorBounds ActualSimulationSpaceSectorBoundsObject{ .StartXPos = 0, .StartYPos = 0, .StartZPos = 0, .SizeX = 0, .SizeY = 0, .SizeZ = 0, .EndXPos = 0, .EndYPos = 0, .EndZPos = 0 };
 public:
     std::mutex MainExchangeParticlesMutexObject;
 protected:
@@ -90,10 +89,10 @@ public:
 public:
     UnsignedInt NumberOfParticlesMovedInDiffusion = 0;
     UnsignedInt NumberOfParticlesToBeMovedInDiffusionRejectedLocally = 0;
-    UnsignedInt NumberOfParticlesToBeMovedInDiffusionSentToCheckInAnotherThread = 0;
-    UnsignedInt NumberOfParticlesToBeMovedInDiffusionRejectedByAnotherThread = 0;
-    UnsignedInt NumberOfParticlesToBeMovedInDiffusionConfirmedAfterSentInAnotherThread = 0;
-    UnsignedInt NumberOfParticlesSentToAnotherThreadAndMovedInDiffusion = 0;
+    UnsignedInt NumberOfParticlesToBeMovedInDiffusionSentToCheckInAnotherParallelTask = 0;
+    UnsignedInt NumberOfParticlesToBeMovedInDiffusionRejectedByAnotherParallelTask = 0;
+    UnsignedInt NumberOfParticlesToBeMovedInDiffusionConfirmedAfterSentInAnotherParallelTask = 0;
+    UnsignedInt NumberOfParticlesSentToAnotherParallelTaskAndMovedInDiffusion = 0;
 protected:
     UnsignedInt ErrorCounter = 0;
     UnsignedInt NumberOfExecutedReactions = 0;

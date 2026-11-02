@@ -353,7 +353,7 @@ namespace CellEngineUseful
     {
         if (NucleotidesSequenceToCompareVector.size() >= TemplateSequence.size())
         {
-            #ifdef SIMULATION_DETAILED_DEBUG_LOG
+            #ifdef SIMULATION_DETAILED_DEBUG_LOG_CHEMICAL_REACTION
             if (PrintLogsBool == true)
                 LoggersManagerObject.Log(STREAM("LOOP COMPARISON SIZE = " << std::to_string(NucleotidesSequenceToCompareVector.size()) << " " << std::to_string(TemplateSequence.size())));
             #endif
@@ -361,7 +361,7 @@ namespace CellEngineUseful
             for (UnsignedInt NucleotideNum = 0; NucleotideNum < TemplateSequence.size(); NucleotideNum++)
                 if (CompareIUPACNucleotideCode(TemplateSequence[NucleotideNum], NucleotidesSequenceToCompareVector[NucleotideNum]) == false)
                 {
-                    #ifdef SIMULATION_DETAILED_DEBUG_LOG
+                    #ifdef SIMULATION_DETAILED_DEBUG_LOG_CHEMICAL_REACTION
                     if (PrintLogsBool == true)
                         LoggersManagerObject.Log(STREAM("LOOP COMPARISON BREAK = " << std::to_string(NucleotideNum) << "#"));
                     #endif

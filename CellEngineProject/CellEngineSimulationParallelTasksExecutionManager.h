@@ -15,7 +15,7 @@ public:
     template <class SimulationSpaceType>
     static void CreateSimulationSpaceForParallelExecution(SimulationSpaceForParallelExecutionContainer<CellEngineSimulationSpace>& CellEngineSimulationSpaceForThreadsObjectsPointer, ParticlesContainer<Particle>& Particles);
 public:
-    static void SetProperThreadOrProcessPositionAndProperMPIProcessIndexForEveryParticlesSector(ParticlesContainer<Particle>& ParticlesSectors);
+    static void SetProperParallelTasksPositionsAndProperMPIProcessIndexesForEveryParticlesSector(ParticlesContainer<Particle>& ParticlesSectors);
 protected:
     virtual bool CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossibleInMPIMultiProcessDiffusion(const ParticleSenderStructForParallelMultiTaskingExecution& ThreadsParticleSenderToInsert, UniqueIdUInt64Type& UniqueIdOfNewCreatedParticle) = 0;
     virtual bool CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossibleInMultiThreadedDiffusion(const ParticleSenderStructForParallelMultiTaskingExecution& ThreadsParticleSenderToInsert, const Particle& ParticleObject) = 0;
@@ -75,7 +75,7 @@ public:
     void ExchangeParticlesBetweenThreadsGroup2ConditionalVariableOneMutex(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData) const;
 public:
     void SynchronizeWithNeighborByLocalBarrier(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData) const;
-    void ExchangeParticlesBetweenThreadsLocalBarrier(const std::shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, ThreadIdType CurrentThreadIndexParam, UnsignedInt ThreadXIndexParam, UnsignedInt ThreadYIndexParam, UnsignedInt ThreadZIndexParam);
+    void ExchangeParticlesBetweenThreadsLocalBarrier(const std::shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, ThreadIdType CurrentThreadIndexParam, UnsignedInt ThreadXIndexParam, UnsignedInt ThreadYIndexParam, UnsignedInt ThreadZIndexParam) const;
     void ExchangeParticlesBetweenThreadsOneGlobalBarrier(std::barrier<>* SyncPoint, const std::shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, ThreadIdType CurrentThreadIndexParam, UnsignedInt ThreadXIndexParam, UnsignedInt ThreadYIndexParam, UnsignedInt ThreadZIndexParam) const;
 public:
     void ExchangeParticlesBetweenThreadsByBarrierPhase1(const std::shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, ThreadIdType CurrentThreadIndexParam, UnsignedInt ThreadXIndexParam, UnsignedInt ThreadYIndexParam, UnsignedInt ThreadZIndexParam) const;

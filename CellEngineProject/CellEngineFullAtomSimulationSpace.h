@@ -61,7 +61,7 @@ public:
 
     void GenerateOneRandomReactionForSelectedSpace(RealType StartXPosParam, RealType StartYPosParam, RealType StartZPosParam, RealType SizeXParam, RealType SizeYParam, RealType SizeZParam, bool FindParticlesInProximityBool) override;
 public:
-    explicit CellEngineFullAtomSimulationSpace(ParticlesContainer<Particle>& ParticlesParam, bool GetMemoryForFullAtomSpace, ThreadIdType ThreadIndexParam, const ParallelTaskPosType& CurrentThreadPos);
+    explicit CellEngineFullAtomSimulationSpace(ParticlesContainer<Particle>& ParticlesParam, bool GetMemoryForFullAtomSpace, ThreadIdType ThreadIndexParam, const ParallelTaskPosType& CurrentThreadPosParam);
     ~CellEngineFullAtomSimulationSpace() override;
 };
 
