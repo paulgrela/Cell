@@ -3,6 +3,7 @@
 #define CELL_ENGINE_BASIC_PARALLEL_EXECUTION_DATA_H
 
 #include <queue>
+#include <barrier>
 #include <condition_variable>
 
 #include "CellEngineTypes.h"
@@ -44,6 +45,21 @@ struct ConfirmationOfParticlesToRemoveToSentStruct
     vector3_16 SenderSectorPos{ .X = 0, .Y = 0, .Z = 0 };
 };
 
+struct WallChannel
+{
+    std::mutex MutexNumber1;
+    std::mutex MutexNumber2;
+    std::condition_variable ProposalConditionalVariable;
+    std::condition_variable VerdictConditionalVariable;
+
+    std::condition_variable WallConditionalVariable;
+
+    std::vector<ParticleSenderStructMultiThreaded> Proposals[2];
+    std::vector<ConfirmationOfParticlesToRemoveToSentStruct> Verdicts[2];
+    bool ProposalsReady[2]{ false, false };
+    bool VerdictsReady[2]{ false, false };
+};
+
 class CellEngineBasicParallelExecutionData
 {
     friend class CellEngineSimulationParallelExecutionManager;
@@ -75,6 +91,8 @@ public:
     std::vector<ParticleSenderStructMultiThreaded> VectorOfParticlesToSendToNeighborThreads[NumberOfAllNeighbors];
     std::vector<ParticleSenderStructMPIMultiProcess> VectorOfParticlesToSendToNeighborProcesses[NumberOfAllNeighbors];
 protected:
+    std::vector<std::unique_ptr<WallChannel>> TwoThreadsWallChannels;
+    std::vector<std::unique_ptr<std::barrier<>>> TwoThreadsWallSychronizationBarriers;
     SignedInt TwoThreadsWallSychronizationBarriersIndexes[NumberOfAllNeighbors]{ -1, -1, -1, -1, -1, -1 };
 protected:
     std::vector<ConfirmationOfParticlesToRemoveToSentStruct> ConfirmationOfParticlesToRemoveToSent[NumberOfAllNeighbors];

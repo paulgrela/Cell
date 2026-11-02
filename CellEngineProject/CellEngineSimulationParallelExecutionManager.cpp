@@ -18,33 +18,33 @@ constexpr bool PrintAdditionalInformation = false;
 
 using namespace std;
 
-namespace
-{
-    struct WallChannel
-    {
-        std::mutex MutexNumber1;
-        std::mutex MutexNumber2;
-        std::condition_variable ProposalConditionalVariable;
-        std::condition_variable VerdictConditionalVariable;
-
-        std::condition_variable WallConditionalVariable;
-
-        std::vector<ParticleSenderStructMultiThreaded> Proposals[2];
-        std::vector<ConfirmationOfParticlesToRemoveToSentStruct> Verdicts[2];
-        bool ProposalsReady[2]{ false, false };
-        bool VerdictsReady[2]{ false, false };
-    };
-}
-
-namespace
-{
-    static std::vector<std::unique_ptr<WallChannel>> TwoThreadsWallChannels;
-}
-
-namespace
-{
-    static std::vector<std::unique_ptr<std::barrier<>>> TwoThreadsWallSychronizationBarriers;
-}
+// namespace
+// {
+//     struct WallChannel
+//     {
+//         std::mutex MutexNumber1;
+//         std::mutex MutexNumber2;
+//         std::condition_variable ProposalConditionalVariable;
+//         std::condition_variable VerdictConditionalVariable;
+//
+//         std::condition_variable WallConditionalVariable;
+//
+//         std::vector<ParticleSenderStructMultiThreaded> Proposals[2];
+//         std::vector<ConfirmationOfParticlesToRemoveToSentStruct> Verdicts[2];
+//         bool ProposalsReady[2]{ false, false };
+//         bool VerdictsReady[2]{ false, false };
+//     };
+// }
+//
+// namespace
+// {
+//     static std::vector<std::unique_ptr<WallChannel>> TwoThreadsWallChannels;
+// }
+//
+// namespace
+// {
+//     static std::vector<std::unique_ptr<std::barrier<>>> TwoThreadsWallSychronizationBarriers;
+// }
 
 CellEngineSimulationParallelExecutionManager::CellEngineSimulationParallelExecutionManager() : SimulationSpaceDataForThreads(CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer)
 {
@@ -683,7 +683,7 @@ void CellEngineSimulationParallelExecutionManager::GatherParticlesFromThreadsToP
     CATCH("gathering particles from threads to particles in main thread")
 }
 
-void CellEngineSimulationParallelExecutionManager::SychronizeSimulationExecutedInThreads(barrier<>* SyncPoint, const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData)
+void CellEngineSimulationParallelExecutionManager::SychronizeSimulationExecutedInThreads(barrier<>* SyncPoint, const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData) const
 {
     try
     {
@@ -1009,7 +1009,7 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
     CATCH("exchange particles between threads")
 }
 
-void CellEngineSimulationParallelExecutionManager::SynchronizeWithNeighborByLocalBarrier(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData)
+void CellEngineSimulationParallelExecutionManager::SynchronizeWithNeighborByLocalBarrier(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData) const
 {
     try
     {
@@ -1032,7 +1032,7 @@ void CellEngineSimulationParallelExecutionManager::SynchronizeWithNeighborByLoca
     CATCH("synchronizing with neighbor by local barrier")
 }
 
-void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThreadsLocalBarrier(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, const ThreadIdType CurrentThreadIndexParam, const UnsignedInt ThreadXIndexParam, const UnsignedInt ThreadYIndexParam, const UnsignedInt ThreadZIndexParam) const
+void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThreadsLocalBarrier(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, const ThreadIdType CurrentThreadIndexParam, const UnsignedInt ThreadXIndexParam, const UnsignedInt ThreadYIndexParam, const UnsignedInt ThreadZIndexParam)
 {
     try
     {
@@ -1047,7 +1047,7 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
     CATCH("exchange particles between threads")
 }
 
-void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThreadsGroup1ConditionalVariableTwoMutexes(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData)
+void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThreadsGroup1ConditionalVariableTwoMutexes(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData) const
 {
     try
     {
@@ -1111,7 +1111,7 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
     CATCH("exchange particles threads processes")
 }
 
-void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThreadsGroup2ConditionalVariableTwoMutexes(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData)
+void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThreadsGroup2ConditionalVariableTwoMutexes(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData) const
 {
     try
     {
@@ -1184,7 +1184,7 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
     CATCH("exchange particles between threads ver 2")
 }
 
-void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThreadsConditionalVariableTwoMutexes(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData)
+void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThreadsConditionalVariableTwoMutexes(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData) const
 {
     try
     {
@@ -1202,7 +1202,7 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
     CATCH("exchange particles between threads")
 }
 
-void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThreadsGroup1ConditionalVariableOneMutex(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData)
+void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThreadsGroup1ConditionalVariableOneMutex(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData) const
 {
     try
     {
@@ -1263,7 +1263,7 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
     CATCH("exchange particles between threads group 1")
 }
 
-void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThreadsGroup2ConditionalVariableOneMutex(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData)
+void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThreadsGroup2ConditionalVariableOneMutex(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData) const
 {
     try
     {
@@ -1333,7 +1333,7 @@ void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThrea
     CATCH("exchange particles between threads group 2 ver 2")
 }
 
-void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThreadsConditionalVariableOneMutex(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData)
+void CellEngineSimulationParallelExecutionManager::ExchangeParticlesBetweenThreadsConditionalVariableOneMutex(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData) const
 {
     try
     {
