@@ -18,7 +18,7 @@ void CellEngineBasicParticlesOperations::InitiateFreeParticlesUniqueIdsForAllSec
             UnsignedInt CurrentSectorIndex = 0;
             FOR_EACH_SECTOR_IN_XYZ_ONLY
             {
-                SetCurrentSectorPos({ .SectorPosX = static_cast<SignedInt>(ParticleSectorXIndex), .SectorPosY = static_cast<SignedInt>(ParticleSectorYIndex), .SectorPosZ = static_cast<SignedInt>(ParticleSectorZIndex) });
+                SetCurrentSectorPos({ .PosX = static_cast<SignedInt>(ParticleSectorXIndex), .PosY = static_cast<SignedInt>(ParticleSectorYIndex), .PosZ = static_cast<SignedInt>(ParticleSectorZIndex) });
 
                 if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true)
                 {

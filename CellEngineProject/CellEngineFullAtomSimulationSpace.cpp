@@ -39,7 +39,7 @@ void CellEngineFullAtomSimulationSpace::CountMinMaxValuesOfBordersAtomsPositions
     CATCH("counting min max values of borders atoms positions in the cell")
 }
 
-CellEngineFullAtomSimulationSpace::CellEngineFullAtomSimulationSpace(ParticlesContainer<Particle>& ParticlesParam, const bool GetMemoryForFullAtomSpace, const ThreadIdType ThreadIndexParam, const ThreadPosType& CurrentThreadPosParam) : Particles(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam), CellEngineChemicalReactionsInSimulationSpace(ParticlesParam), CellEngineChemicalReactionsInFullAtomSimulationSpace(ParticlesParam), CellEngineSimulationSpace(ParticlesParam), CellEngineGenomeNucleicAcidsParticlesInFullAtomSpaceGenerator(ParticlesParam), CellEngineVoxelSimulationSpaceStatistics()
+CellEngineFullAtomSimulationSpace::CellEngineFullAtomSimulationSpace(ParticlesContainer<Particle>& ParticlesParam, const bool GetMemoryForFullAtomSpace, const ThreadIdType ThreadIndexParam, const ParallelTaskPosType& CurrentThreadPosParam) : Particles(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam), CellEngineChemicalReactionsInSimulationSpace(ParticlesParam), CellEngineChemicalReactionsInFullAtomSimulationSpace(ParticlesParam), CellEngineSimulationSpace(ParticlesParam), CellEngineGenomeNucleicAcidsParticlesInFullAtomSpaceGenerator(ParticlesParam), CellEngineVoxelSimulationSpaceStatistics()
 {
     try
     {
@@ -51,7 +51,7 @@ CellEngineFullAtomSimulationSpace::CellEngineFullAtomSimulationSpace(ParticlesCo
         CurrentThreadIndex = ThreadIndexParam;
         CurrentThreadPos = CurrentThreadPosParam;
 
-        LoggersManagerObject.Log(STREAM("CurrentThreadIndexes = " << CurrentThreadIndex << " (" << CurrentThreadPos.ThreadPosX << "," << CurrentThreadPos.ThreadPosY << "," << CurrentThreadPos.ThreadPosZ << ")" << std::endl));
+        LoggersManagerObject.Log(STREAM("CurrentThreadIndexes = " << CurrentThreadIndex << " (" << CurrentThreadPos.PosX << "," << CurrentThreadPos.PosY << "," << CurrentThreadPos.PosZ << ")" << std::endl));
 
         Genomes.resize(2);
         GenomesLines.resize(2);
@@ -141,7 +141,7 @@ void CellEngineFullAtomSimulationSpace::TransferParticlesFromOneSectorToAnotherS
         NumberOfParticlesMovedInDiffusionParam += ListOfParticlesToChangeSectors.size();
 
         for (const auto& [ParticleUniqueId, SectorPosSource, SectorPosTarget] : ListOfParticlesToChangeSectors)
-            Particles[SectorPosTarget.SectorPosX][SectorPosTarget.SectorPosY][SectorPosTarget.SectorPosZ].Particles.insert(Particles[SectorPosSource.SectorPosX][SectorPosSource.SectorPosY][SectorPosSource.SectorPosZ].Particles.extract(ParticleUniqueId));
+            Particles[SectorPosTarget.PosX][SectorPosTarget.PosY][SectorPosTarget.PosZ].Particles.insert(Particles[SectorPosSource.PosX][SectorPosSource.PosY][SectorPosSource.PosZ].Particles.extract(ParticleUniqueId));
 
         ListOfParticlesToChangeSectors.clear();
     }
@@ -154,11 +154,11 @@ void CellEngineFullAtomSimulationSpace::TransferParticlesFromOneSectortoAnotherS
     {
         for (const auto& [ParticleUniqueId, SectorPosSource, SectorPosTarget] : ListOfParticlesToChangeSectors)
         {
-            auto& LocalSourceParticles = Particles[SectorPosSource.SectorPosX][SectorPosSource.SectorPosY][SectorPosSource.SectorPosZ].Particles;
+            auto& LocalSourceParticles = Particles[SectorPosSource.PosX][SectorPosSource.PosY][SectorPosSource.PosZ].Particles;
 
             if (const auto ParticleFromSourceToMoveToTargetIterator = LocalSourceParticles.find(ParticleUniqueId); ParticleFromSourceToMoveToTargetIterator != LocalSourceParticles.end())
             {
-                Particles[SectorPosTarget.SectorPosX][SectorPosTarget.SectorPosY][SectorPosTarget.SectorPosZ].Particles.insert_or_assign(ParticleFromSourceToMoveToTargetIterator->first, std::move(ParticleFromSourceToMoveToTargetIterator->second));
+                Particles[SectorPosTarget.PosX][SectorPosTarget.PosY][SectorPosTarget.PosZ].Particles.insert_or_assign(ParticleFromSourceToMoveToTargetIterator->first, std::move(ParticleFromSourceToMoveToTargetIterator->second));
 
                 DEBUG_LOG_DIFFUSION(CellEngineUseful::CheckCenterForSector<Particle>(ParticleFromSourceToMoveToTargetIterator->second, Particles, "C2");)
 
@@ -185,7 +185,7 @@ void CellEngineFullAtomSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpa
         {
             DEBUG_LOG_DIFFUSION(CellEngineUseful::CheckCenterForSector<Particle>(ParticleInProximityObject, Particles, "C0");)
 
-            SetCurrentSectorPos(SectorPosType{ .SectorPosX = static_cast<SignedInt>(StartSectorXPosParam), .SectorPosY = static_cast<SignedInt>(StartSectorYPosParam), .SectorPosZ = static_cast<SignedInt>(StartSectorZPosParam) });
+            SetCurrentSectorPos(SectorPosType{ .PosX = static_cast<SignedInt>(StartSectorXPosParam), .PosY = static_cast<SignedInt>(StartSectorYPosParam), .PosZ = static_cast<SignedInt>(StartSectorZPosParam) });
 
             if (CellEngineUseful::IsDNA(ParticleInProximityObject.ParticleKindId) == false)
             {
@@ -263,7 +263,7 @@ void CellEngineFullAtomSimulationSpace::GenerateOneRandomReactionForSelectedSpac
     {
         PrepareRandomReaction();
 
-        SetCurrentSectorPos(SectorPosType{ .SectorPosX = static_cast<SignedInt>(StartXPosParam), .SectorPosY = static_cast<SignedInt>(StartYPosParam), .SectorPosZ = static_cast<SignedInt>(StartZPosParam) });
+        SetCurrentSectorPos(SectorPosType{ .PosX = static_cast<SignedInt>(StartXPosParam), .PosY = static_cast<SignedInt>(StartYPosParam), .PosZ = static_cast<SignedInt>(StartZPosParam) });
 
         FindParticlesInProximityOfSimulationSpaceForSelectedSpace(true, StartXPosParam, StartYPosParam, StartZPosParam, UnusedValueRealType, UnusedValueRealType, UnusedValueRealType);
 
@@ -308,7 +308,7 @@ bool CellEngineFullAtomSimulationSpace::MoveParticleByVectorIfSpaceIsEmptyAndIsI
     if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == false)
         return MoveParticleByVectorIfFullAtomSpaceIsEmptyAndIsInBoundsForThreadsDiffusion(ParticleObject, ParticlesInSector, ListOfParticlesToChangeSectors, VectorX, VectorY, VectorZ, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, CurrentThreadPos);
     else
-        return MoveParticleByVectorIfFullAtomSpaceIsEmptyAndIsInBoundsForMPIProcessesDiffusion(ParticleObject, ParticlesInSector, ListOfParticlesToChangeSectors, NeighborProcessesIndexes, VectorOfParticlesToSendToNeighborProcesses, VectorX, VectorY, VectorZ, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
+        return MoveParticleByVectorIfFullAtomSpaceIsEmptyAndIsInBoundsForMPIProcessesDiffusion(ParticleObject, ParticlesInSector, ListOfParticlesToChangeSectors, NeighborParallelTasksIndexes, VectorOfParticlesToSendToNeighborProcesses, VectorX, VectorY, VectorZ, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
 }
 
 bool CellEngineFullAtomSimulationSpace::CheckIfSpaceIsEmptyAndIsInBoundsForParticleElementsReactions(const ParticleKind& ParticleKindObjectForProduct, ParticlesContainer<Particle>& ParticlesInSector, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam)
@@ -321,7 +321,7 @@ bool CellEngineFullAtomSimulationSpace::CheckIfSpaceIsEmptyAndIsInBoundsForParti
     return CheckFreeSpaceAndBoundsForListOfAtomsDiffusion(ParticleKindObjectForProduct.ListOfAtoms, ParticlesInSector, ParticleKindObjectForProduct.Radius, VectorX, VectorY, VectorZ, SimulationSpaceSectorBoundsObjectParam);
 }
 
-bool CellEngineFullAtomSimulationSpace::CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossibleInMPIMultiProcessDiffusion(const ParticleSenderStructMPIMultiProcess& ParticleSenderToInsert, UniqueIdUInt64Type& UniqueIdOfNewCreatedParticle)
+bool CellEngineFullAtomSimulationSpace::CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossibleInMPIMultiProcessDiffusion(const ParticleSenderStructForParallelMultiTaskingExecution& ParticleSenderToInsert, UniqueIdUInt64Type& UniqueIdOfNewCreatedParticle)
 {
     try
     {
@@ -341,7 +341,7 @@ bool CellEngineFullAtomSimulationSpace::CheckPossibilityOfInsertingParticleToCur
     return false;
 }
 
-bool CellEngineFullAtomSimulationSpace::CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossibleInMultiThreadedDiffusion(const ParticleSenderStructMultiThreaded& ParticleSenderToInsert, const Particle& ParticleObject)
+bool CellEngineFullAtomSimulationSpace::CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossibleInMultiThreadedDiffusion(const ParticleSenderStructForParallelMultiTaskingExecution& ParticleSenderToInsert, const Particle& ParticleObject)
 {
     try
     {
@@ -352,7 +352,7 @@ bool CellEngineFullAtomSimulationSpace::CheckPossibilityOfInsertingParticleToCur
         {
             #ifdef SIMULATION_DETAILED_DEBUG_LOG_DIFFUSION
             auto [SectorPosX1, SectorPosY1, SectorPosZ1] = CellEngineUseful::GetSectorPos(ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z);
-            LoggersManagerObject.LogUnconditional(STREAM("Particle in thread = (" << CurrentThreadPos.ThreadPosX << "," << CurrentThreadPos.ThreadPosY << "," << CurrentThreadPos.ThreadPosZ << ") CurrentThreadIndex = " << CurrentThreadIndex << " CurrentProcessIndex = " << MPIProcessDataObject.CurrentMPIProcessIndex <<  " S1 = (" << SectorPosX1 << "," << SectorPosY1 << "," << SectorPosZ1 << ") P = (" << ParticleObject.Center.X << ", " << ParticleObject.Center.Y << ", " << ParticleObject.Center.Z << ") V = (" << ParticleSenderToInsert.NewParticleCenter.X << ", " << ParticleSenderToInsert.NewParticleCenter.Y << ", " << ParticleSenderToInsert.NewParticleCenter.Z << ") PARTCLE_INDEX = " << ParticleObject.ParticleUniqueId));
+            LoggersManagerObject.LogUnconditional(STREAM("Particle in thread = (" << CurrentThreadPos.PosX << "," << CurrentThreadPos.PosY << "," << CurrentThreadPos.PosZ << ") CurrentThreadIndex = " << CurrentThreadIndex << " CurrentProcessIndex = " << MPIProcessDataObject.CurrentMPIProcessIndex <<  " S1 = (" << SectorPosX1 << "," << SectorPosY1 << "," << SectorPosZ1 << ") P = (" << ParticleObject.Center.X << ", " << ParticleObject.Center.Y << ", " << ParticleObject.Center.Z << ") V = (" << ParticleSenderToInsert.NewParticleCenter.X << ", " << ParticleSenderToInsert.NewParticleCenter.Y << ", " << ParticleSenderToInsert.NewParticleCenter.Z << ") PARTCLE_INDEX = " << ParticleObject.ParticleUniqueId));
             #endif
 
             GetParticles().insert(std::move(make_pair(ParticleObject.ParticleUniqueId, std::move(ParticleObject))));

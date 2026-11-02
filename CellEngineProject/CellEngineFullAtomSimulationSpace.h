@@ -37,8 +37,8 @@ protected:
     bool CheckIfSpaceIsEmptyAndIsInBoundsForParticleElementsReactions(const ParticleKind& ParticleKindObjectForProduct, ParticlesContainer<Particle>& ParticlesInSector, RealType VectorX, RealType VectorY, RealType VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam) override;
     bool CheckIfSpaceIsEmptyAndIsInBoundsForParticleElementsDiffusion(const ParticleKind& ParticleKindObjectForProduct, ParticlesContainer<Particle>& ParticlesInSector, RealType VectorX, RealType VectorY, RealType VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam) override;
 protected:
-    bool CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossibleInMPIMultiProcessDiffusion(const ParticleSenderStructMPIMultiProcess& ParticleSenderToInsert, UniqueIdUInt64Type& UniqueIdOfNewCreatedParticle) override;
-    bool CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossibleInMultiThreadedDiffusion(const ParticleSenderStructMultiThreaded& ParticleSenderToInsert, const Particle& ParticleObject) override;
+    bool CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossibleInMPIMultiProcessDiffusion(const ParticleSenderStructForParallelMultiTaskingExecution& ParticleSenderToInsert, UniqueIdUInt64Type& UniqueIdOfNewCreatedParticle) override;
+    bool CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossibleInMultiThreadedDiffusion(const ParticleSenderStructForParallelMultiTaskingExecution& ParticleSenderToInsert, const Particle& ParticleObject) override;
 public:
     void CountMinMaxValuesOfBordersAtomsPositionsInTheCell();
 public:
@@ -61,7 +61,7 @@ public:
 
     void GenerateOneRandomReactionForSelectedSpace(RealType StartXPosParam, RealType StartYPosParam, RealType StartZPosParam, RealType SizeXParam, RealType SizeYParam, RealType SizeZParam, bool FindParticlesInProximityBool) override;
 public:
-    explicit CellEngineFullAtomSimulationSpace(ParticlesContainer<Particle>& ParticlesParam, bool GetMemoryForFullAtomSpace, ThreadIdType ThreadIndexParam, const ThreadPosType& CurrentThreadPos);
+    explicit CellEngineFullAtomSimulationSpace(ParticlesContainer<Particle>& ParticlesParam, bool GetMemoryForFullAtomSpace, ThreadIdType ThreadIndexParam, const ParallelTaskPosType& CurrentThreadPos);
     ~CellEngineFullAtomSimulationSpace() override;
 };
 

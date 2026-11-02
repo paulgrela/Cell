@@ -526,20 +526,20 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
                 auto ParticleSectorPos = CellEngineUseful::GetSectorPos(ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z);
 
                 if constexpr(AdditionalInfoPrinting == true)
-                    LoggersManagerObject.Log(STREAM(ParticleSectorPos.SectorPosX << " " << ParticleSectorPos.SectorPosY << " " << ParticleSectorPos.SectorPosZ << " " << ParticleObject.Center.X << " " << ParticleObject.Center.Y << " " << ParticleObject.Center.Z));
+                    LoggersManagerObject.Log(STREAM(ParticleSectorPos.PosX << " " << ParticleSectorPos.PosY << " " << ParticleSectorPos.PosZ << " " << ParticleObject.Center.X << " " << ParticleObject.Center.Y << " " << ParticleObject.Center.Z));
 
                 if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
                     SetCurrentSectorPos(ParticleSectorPos);
 
                 if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true)
                 {
-                    if (Particles[ParticleSectorPos.SectorPosX][ParticleSectorPos.SectorPosY][ParticleSectorPos.SectorPosZ].MPIProcessIndex == MPIProcessDataObject.CurrentMPIProcessIndex)
+                    if (Particles[ParticleSectorPos.PosX][ParticleSectorPos.PosY][ParticleSectorPos.PosZ].MPIProcessIndex == MPIProcessDataObject.CurrentMPIProcessIndex)
                     {
                         const auto [SectorPosX, SectorPosY, SectorPosZ] = CellEngineUseful::GetSectorPos(ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z);
-                        if (make_tuple(SectorPosX, SectorPosY, SectorPosZ) == make_tuple(ParticleSectorPos.SectorPosX, ParticleSectorPos.SectorPosY, ParticleSectorPos.SectorPosZ))
+                        if (make_tuple(SectorPosX, SectorPosY, SectorPosZ) == make_tuple(ParticleSectorPos.PosX, ParticleSectorPos.PosY, ParticleSectorPos.PosZ))
                         {
                             if constexpr(AdditionalInfoPrinting == true)
-                                LoggersManagerObject.Log(STREAM(ParticleSectorPos.SectorPosX << " " << ParticleSectorPos.SectorPosY << " " << ParticleSectorPos.SectorPosZ << " " << ParticleObject.ParticleKindId << " " << ParticleObject.ParticleUniqueId));
+                                LoggersManagerObject.Log(STREAM(ParticleSectorPos.PosX << " " << ParticleSectorPos.PosY << " " << ParticleSectorPos.PosZ << " " << ParticleObject.ParticleKindId << " " << ParticleObject.ParticleUniqueId));
 
                             AddNewParticle(ParticleObject);
                         }

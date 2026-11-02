@@ -19,13 +19,13 @@ void CellEngineChemicalReactionsInSimulationSpace::RemoveParticle(const UniqueId
     try
     {
         #if defined(SIMULATION_DETAILED_DEBUG_LOG_DIFFUSION) || defined(SIMULATION_DETAILED_DEBUG_LOG_CHEMICAL_REACTION)
-        const bool NotFoundParticle2 = Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ].Particles.contains(ParticleUniqueId);
+        const bool NotFoundParticle2 = Particles[CurrentSectorPos.PosX][CurrentSectorPos.PosY][CurrentSectorPos.PosZ].Particles.contains(ParticleUniqueId);
         #endif
 
         Particle& ParticleObject = GetParticleFromUniqueId(ParticleUniqueId);
 
         #if defined(SIMULATION_DETAILED_DEBUG_LOG_DIFFUSION) || defined(SIMULATION_DETAILED_DEBUG_LOG_CHEMICAL_REACTION)
-        const bool NotFoundParticle1 = Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ].Particles.contains(ParticleUniqueId);
+        const bool NotFoundParticle1 = Particles[CurrentSectorPos.PosX][CurrentSectorPos.PosY][CurrentSectorPos.PosZ].Particles.contains(ParticleUniqueId);
         UnsignedInt NumberOfAllParticlesBeforeRemoval;
         if (CountAllParticlesBool == true)
             NumberOfAllParticlesBeforeRemoval = CellEngineDataFileObjectPointer->GetNumberOfAllParticles();
@@ -57,7 +57,7 @@ void CellEngineChemicalReactionsInSimulationSpace::RemoveParticle(const UniqueId
     CATCH("removing particle")
 }
 
-void CellEngineChemicalReactionsInSimulationSpace::MakingZeroSizeForContainersForFoundParticlesInProximity(const ThreadPosType& CurrentThreadPos)
+void CellEngineChemicalReactionsInSimulationSpace::MakingZeroSizeForContainersForFoundParticlesInProximity()
 {
     try
     {
@@ -166,7 +166,7 @@ bool CellEngineChemicalReactionsInSimulationSpace::FindParticlesInProximityOfSim
     {
         MainSetType<UnsignedInt> FoundParticleUniqueIdes;
 
-        MakingZeroSizeForContainersForFoundParticlesInProximity(CurrentThreadPos);
+        MakingZeroSizeForContainersForFoundParticlesInProximity();
 
         FindParticlesInProximityInSimulationSpaceForSelectedLocalSpace(FoundParticleUniqueIdes, UpdateNucleotides, StartXPosParam, StartYPosParam, StartZPosParam, UnusedValueRealType, UnusedValueRealType, UnusedValueRealType);
 
@@ -192,7 +192,7 @@ bool CellEngineChemicalReactionsInSimulationSpace::FindParticlesInProximityOfSim
     return true;
 }
 
-void CellEngineChemicalReactionsInSimulationSpace::PrintInformationAboutFoundParticlesInProximity(const ThreadPosType& CurrentThreadPos)
+void CellEngineChemicalReactionsInSimulationSpace::PrintInformationAboutFoundParticlesInProximity(const ParallelTaskPosType& CurrentThreadPos)
 {
     try
     {

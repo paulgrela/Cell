@@ -3,7 +3,7 @@
 #define CELL_ENGINE_FULL_ATOM_SIMULATION_SPACE_CIF_DATA_FILE_READER_H
 
 #include "CellEngineParticlesDataFile.h"
-#include "CellEngineSimulationParallelExecutionManager.h"
+#include "CellEngineSimulationParallelTasksExecutionManager.h"
 
 class CellEngineDataBuilderForFullAtomSimulationSpace : public CellEngineParticlesDataFile
 {
@@ -12,11 +12,11 @@ protected:
     {
         GetMemoryForParticlesInSectors();
 
-        CellEngineFullAtomSimulationSpaceObjectPointer = std::make_unique<CellEngineFullAtomSimulationSpace>(Particles, true, 0, ThreadPosType{ .ThreadPosX = 0, .ThreadPosY = 0, .ThreadPosZ = 0 });
+        CellEngineFullAtomSimulationSpaceObjectPointer = std::make_unique<CellEngineFullAtomSimulationSpace>(Particles, true, 0, ParallelTaskPosType{ .PosX = 0, .PosY = 0, .PosZ = 0 });
 
-        CellEngineSimulationParallelExecutionManager::CreateSimulationSpaceForParallelExecution<CellEngineFullAtomSimulationSpace>(CellEngineSimulationSpaceForThreadsObjectsPointer, Particles);
+        CellEngineSimulationParallelTasksExecutionManager::CreateSimulationSpaceForParallelExecution<CellEngineFullAtomSimulationSpace>(CellEngineSimulationSpaceForThreadsObjectsPointer, Particles);
 
-        CellEngineFullAtomSimulationSpace::SetProperThreadIndexForEveryParticlesSector(Particles);
+        CellEngineSimulationParallelTasksExecutionManager::SetProperThreadOrProcessPositionAndProperMPIProcessIndexForEveryParticlesSector(Particles);
 
         if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true)
             CellEngineFullAtomSimulationSpaceObjectPointer->CreateDataForEveryMPIProcessForParallelExecution();

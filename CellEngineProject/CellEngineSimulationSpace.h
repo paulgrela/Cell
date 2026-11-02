@@ -9,12 +9,12 @@
 #include "CellEngineCompiledDataCreator.h"
 #include "CellEngineIllinoisDataCreator.h"
 #include "CellEngineChemicalReactionsInSimulationSpace.h"
-#include "CellEngineSimulationParallelExecutionManager.h"
+#include "CellEngineSimulationParallelTasksExecutionManager.h"
 #include "CellEngineSimulationSpaceStatistics.h"
 
 using IndexesChosenForReactionType = vector<pair<UniqueIdUInt64Type, UnsignedInt>>;
 
-class CellEngineSimulationSpace : public CellEngineChemicalReactionsEngine, public CellEngineIllinoisDataCreator, public CellEngineCompiledDataCreator, virtual public CellEngineChemicalReactionsInSimulationSpace, public CellEngineSimulationSpaceStatistics, public CellEngineSimulationParallelExecutionManager
+class CellEngineSimulationSpace : public CellEngineChemicalReactionsEngine, public CellEngineIllinoisDataCreator, public CellEngineCompiledDataCreator, virtual public CellEngineChemicalReactionsInSimulationSpace, public CellEngineSimulationSpaceStatistics, public CellEngineSimulationParallelTasksExecutionManager
 {
 private:
     ParticlesContainer<Particle>& Particles;
@@ -66,7 +66,7 @@ protected:
     std::vector<UnsignedInt> GetRandomParticlesVersion3() const;
     #endif
 public:
-    explicit CellEngineSimulationSpace(ParticlesContainer<Particle>& ParticlesParam) : CellEngineSimulationSpaceStatistics(), Particles(ParticlesParam), CellEngineSimulationParallelExecutionManager()
+    explicit CellEngineSimulationSpace(ParticlesContainer<Particle>& ParticlesParam) : CellEngineSimulationSpaceStatistics(), Particles(ParticlesParam), CellEngineSimulationParallelTasksExecutionManager()
     {
         SetMakeSimulationStepNumberZero();
     }

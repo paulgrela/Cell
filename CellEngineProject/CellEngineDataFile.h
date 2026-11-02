@@ -112,7 +112,7 @@ public:
 public:
     [[nodiscard]] UnsignedInt GetNumberOfAllParticlesInSector(const SectorPosType& SectorPos) const
     {
-        return Particles[SectorPos.SectorPosX][SectorPos.SectorPosY][SectorPos.SectorPosZ].Particles.size();
+        return Particles[SectorPos.PosX][SectorPos.PosY][SectorPos.PosZ].Particles.size();
     }
 public:
     [[nodiscard]] ParticlesContainer<Particle>& GetParticles()

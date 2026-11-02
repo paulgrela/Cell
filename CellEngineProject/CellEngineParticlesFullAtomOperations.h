@@ -9,15 +9,13 @@
 #include "TerminalColorsUtils.h"
 
 #include "CellEngineParticle.h"
-#include "CellEngineBasicParallelExecutionData.h"
+#include "CellEngineBasicParallelTasksExecutionData.h"
 
 class CellEngineParticlesFullAtomOperations
 {
-public:
-    static void SetProperThreadIndexForEveryParticlesSector(ParticlesContainer<Particle>& ParticlesSectors);
 protected:
-    static void MoveParticleByVectorForThreads(Particle& ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, std::vector<ParticleToBeMovedFromOneSectorToAnotherSector>& ListOfParticlesToChangeSectors, RealType VectorX, RealType VectorY, RealType VectorZ, const ThreadPosType& CurrentThreadPos);
-    static void MoveParticleByVectorForMPIProcesses(Particle &ParticleObject, const ParticlesContainer<Particle>& ParticlesInSector, std::vector<ParticleToBeMovedFromOneSectorToAnotherSector>& ListOfParticlesToChangeSectors, const SignedInt* NeighborProcessesIndexes, std::vector<ParticleSenderStructMPIMultiProcess>* VectorOfParticlesToSendToNeighborProcesses, RealType VectorX, RealType VectorY, RealType VectorZ);
+    static void MoveParticleByVectorForThreads(Particle& ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, std::vector<ParticleToBeMovedFromOneSectorToAnotherSector>& ListOfParticlesToChangeSectors, RealType VectorX, RealType VectorY, RealType VectorZ, const ParallelTaskPosType& CurrentThreadPos);
+    static void MoveParticleByVectorForMPIProcesses(Particle &ParticleObject, const ParticlesContainer<Particle>& ParticlesInSector, std::vector<ParticleToBeMovedFromOneSectorToAnotherSector>& ListOfParticlesToChangeSectors, const SignedInt* NeighborProcessesIndexes, std::vector<ParticleSenderStructForParallelMultiTaskingExecution>* VectorOfParticlesToSendToNeighborProcesses, RealType VectorX, RealType VectorY, RealType VectorZ);
 protected:
     static bool CheckSectorPos(const UnsignedInt SectorPosX, const UnsignedInt SectorPosY, const UnsignedInt SectorPosZ)
     {
@@ -45,7 +43,7 @@ protected:
         return true;
     }
 
-    static PosType GetNewPosMovedByVector(const RealType X, const RealType Y, const RealType Z, const RealType VectorX, const RealType VectorY, const RealType VectorZ)
+    static RealPosType GetNewPosMovedByVector(const RealType X, const RealType Y, const RealType Z, const RealType VectorX, const RealType VectorY, const RealType VectorZ)
     {
         return { .PosX = X + VectorX, .PosY = Y + VectorY, .PosZ = Z + VectorZ };
     }
@@ -232,7 +230,7 @@ protected:
     }
 
 protected:
-    static inline bool MoveParticleByVectorIfFullAtomSpaceIsEmptyAndIsInBoundsForMPIProcessesDiffusion(Particle &ParticleObject, const ParticlesContainer<Particle>& ParticlesInSector, std::vector<ParticleToBeMovedFromOneSectorToAnotherSector>& ListOfParticlesToChangeSectors, const SignedInt* NeighbourProcessesIndexes, std::vector<ParticleSenderStructMPIMultiProcess>* VectorOfParticlesToSendToNeighbourProcesses, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam)
+    static inline bool MoveParticleByVectorIfFullAtomSpaceIsEmptyAndIsInBoundsForMPIProcessesDiffusion(Particle &ParticleObject, const ParticlesContainer<Particle>& ParticlesInSector, std::vector<ParticleToBeMovedFromOneSectorToAnotherSector>& ListOfParticlesToChangeSectors, const SignedInt* NeighbourProcessesIndexes, std::vector<ParticleSenderStructForParallelMultiTaskingExecution>* VectorOfParticlesToSendToNeighbourProcesses, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam)
     {
         try
         {
@@ -246,7 +244,7 @@ protected:
         return true;
     }
 
-    static inline bool MoveParticleByVectorIfFullAtomSpaceIsEmptyAndIsInBoundsForThreadsDiffusion(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, std::vector<ParticleToBeMovedFromOneSectorToAnotherSector>& ListOfParticlesToChangeSectors, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam, const ThreadPosType& CurrentThreadPos)
+    static inline bool MoveParticleByVectorIfFullAtomSpaceIsEmptyAndIsInBoundsForThreadsDiffusion(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, std::vector<ParticleToBeMovedFromOneSectorToAnotherSector>& ListOfParticlesToChangeSectors, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam, const ParallelTaskPosType& CurrentThreadPos)
     {
         try
         {

@@ -48,31 +48,31 @@ using vector3_16 = vector3<PositionUInt16Type>;
 using vector3_64 = vector3<uint64_t>;
 using vector3_Real32 = vector3<RealType>;
 
-struct ThreadPosType
+struct ParallelTaskPosType
 {
-    SignedInt ThreadPosX, ThreadPosY, ThreadPosZ;
+    SignedInt PosX, PosY, PosZ;
 
-    bool operator==(const ThreadPosType& CTP) const
+    bool operator==(const ParallelTaskPosType& CTP) const
     {
-        return (CTP.ThreadPosX == ThreadPosX && CTP.ThreadPosY == ThreadPosY && CTP.ThreadPosZ == ThreadPosZ);
+        return (CTP.PosX == PosX && CTP.PosY == PosY && CTP.PosZ == PosZ);
     }
 };
 
 struct SectorPosType
 {
-    SignedInt SectorPosX, SectorPosY, SectorPosZ;
+    SignedInt PosX, PosY, PosZ;
 
     bool operator==(const SectorPosType& CSP) const
     {
-        return (CSP.SectorPosX == SectorPosX && CSP.SectorPosY == SectorPosY && CSP.SectorPosZ == SectorPosZ);
+        return (CSP.PosX == PosX && CSP.PosY == PosY && CSP.PosZ == PosZ);
     }
 };
 
-struct PosType
+struct RealPosType
 {
     RealType PosX, PosY, PosZ;
 
-    bool operator==(const PosType& PT) const
+    bool operator==(const RealPosType& PT) const
     {
         return (PT.PosX == PosX && PT.PosY == PosY && PT.PosZ == PosZ);
     }
@@ -112,7 +112,7 @@ struct ParticlesContainerInternal
 {
 public:
     UnsignedInt MPIProcessIndex{ 0 };
-    ThreadPosType ThreadPos{ .ThreadPosX = 1, .ThreadPosY = 1, .ThreadPosZ = 1 };
+    ParallelTaskPosType ThreadOrProcessPos{ .PosX = 1, .PosY = 1, .PosZ = 1 };
 public:
     CellEngineParticleUniqueIdGenerator ParticleUniqueIdGenerator{};
     ParticlesDetailedContainer<Particle> Particles;
@@ -185,14 +185,14 @@ public:
         StartZPos += AddToStartZPosParam;
     }
 public:
-    SimulationSpaceSectorBounds SetParametersForParallelExecutionSectors(const ThreadPosType& CurrentThreadPos, const UnsignedInt SizeOfXInOneThreadInSimulationSpace, const UnsignedInt SizeOfYInOneThreadInSimulationSpace, const UnsignedInt SizeOfZInOneThreadInSimulationSpace)
+    SimulationSpaceSectorBounds SetParametersForParallelExecutionSectors(const ParallelTaskPosType& CurrentThreadPos, const UnsignedInt SizeOfXInOneThreadInSimulationSpace, const UnsignedInt SizeOfYInOneThreadInSimulationSpace, const UnsignedInt SizeOfZInOneThreadInSimulationSpace)
     {
-        StartXPos = static_cast<RealType>((CurrentThreadPos.ThreadPosX - 1) * SizeOfXInOneThreadInSimulationSpace);
-        EndXPos = static_cast<RealType>((CurrentThreadPos.ThreadPosX - 1) * SizeOfXInOneThreadInSimulationSpace + SizeOfXInOneThreadInSimulationSpace);
-        StartYPos = static_cast<RealType>((CurrentThreadPos.ThreadPosY - 1) * SizeOfYInOneThreadInSimulationSpace);
-        EndYPos = static_cast<RealType>((CurrentThreadPos.ThreadPosY - 1) * SizeOfYInOneThreadInSimulationSpace + SizeOfYInOneThreadInSimulationSpace);
-        StartZPos = static_cast<RealType>((CurrentThreadPos.ThreadPosZ - 1) * SizeOfZInOneThreadInSimulationSpace);
-        EndZPos = static_cast<RealType>((CurrentThreadPos.ThreadPosZ - 1) * SizeOfZInOneThreadInSimulationSpace + SizeOfZInOneThreadInSimulationSpace);
+        StartXPos = static_cast<RealType>((CurrentThreadPos.PosX - 1) * SizeOfXInOneThreadInSimulationSpace);
+        EndXPos = static_cast<RealType>((CurrentThreadPos.PosX - 1) * SizeOfXInOneThreadInSimulationSpace + SizeOfXInOneThreadInSimulationSpace);
+        StartYPos = static_cast<RealType>((CurrentThreadPos.PosY - 1) * SizeOfYInOneThreadInSimulationSpace);
+        EndYPos = static_cast<RealType>((CurrentThreadPos.PosY - 1) * SizeOfYInOneThreadInSimulationSpace + SizeOfYInOneThreadInSimulationSpace);
+        StartZPos = static_cast<RealType>((CurrentThreadPos.PosZ - 1) * SizeOfZInOneThreadInSimulationSpace);
+        EndZPos = static_cast<RealType>((CurrentThreadPos.PosZ - 1) * SizeOfZInOneThreadInSimulationSpace + SizeOfZInOneThreadInSimulationSpace);
         SizeX = EndXPos - StartXPos;
         SizeY = EndYPos - StartYPos;
         SizeZ = EndZPos - StartZPos;

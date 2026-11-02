@@ -52,13 +52,13 @@ namespace CellEngineUseful
         const SignedInt SectorPosZ = std::floor((Z + CellEngineConfigDataObject.ShiftCenterZ) / CellEngineConfigDataObject.SizeOfParticlesSectorZ);
 
         if (SectorPosX <= 0 || SectorPosX > CellEngineConfigDataObject.NumberOfParticlesSectorsInX - 1)
-            return { .SectorPosX = -1, .SectorPosY = SectorPosY, .SectorPosZ = SectorPosZ };
+            return { .PosX = -1, .PosY = SectorPosY, .PosZ = SectorPosZ };
         if (SectorPosY <= 0 || SectorPosY > CellEngineConfigDataObject.NumberOfParticlesSectorsInY - 1)
-            return { .SectorPosX = SectorPosX, .SectorPosY = -1, .SectorPosZ = SectorPosZ };
+            return { .PosX = SectorPosX, .PosY = -1, .PosZ = SectorPosZ };
         if (SectorPosZ <= 0 || SectorPosZ > CellEngineConfigDataObject.NumberOfParticlesSectorsInZ - 1)
-            return { .SectorPosX = SectorPosX, .SectorPosY = SectorPosY, .SectorPosZ = -1, };
+            return { .PosX = SectorPosX, .PosY = SectorPosY, .PosZ = -1, };
 
-        return { .SectorPosX = SectorPosX, .SectorPosY = SectorPosY, .SectorPosZ = SectorPosZ };
+        return { .PosX = SectorPosX, .PosY = SectorPosY, .PosZ = SectorPosZ };
     }
 
     template <class Particle>

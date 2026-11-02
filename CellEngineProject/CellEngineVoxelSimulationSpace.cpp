@@ -26,14 +26,14 @@ Particle& CellEngineVoxelSimulationSpace::GetParticleFromIndexForOuterClass(cons
     return static_cast<UnsignedInt>(round(CoordinateParam) / CellEngineConfigDataObject.DivisionFactorForSimulationSpace) + (CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension / 2);
 };
 
-CellEngineVoxelSimulationSpace::CellEngineVoxelSimulationSpace(ParticlesContainer<Particle>& ParticlesParam, const bool GetMemoryForVoxelSpace, const ThreadIdType ThreadIndexParam, const ThreadPosType& CurrentThreadPosParam) : Particles(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam), CellEngineChemicalReactionsInSimulationSpace(ParticlesParam), CellEngineChemicalReactionsInVoxelSimulationSpace(ParticlesParam), CellEngineSimulationSpace(ParticlesParam), CellEngineTestParticlesInVoxelSpaceGenerator(ParticlesParam), CellEngineVoxelSimulationSpaceStatistics()
+CellEngineVoxelSimulationSpace::CellEngineVoxelSimulationSpace(ParticlesContainer<Particle>& ParticlesParam, const bool GetMemoryForVoxelSpace, const ThreadIdType ThreadIndexParam, const ParallelTaskPosType& CurrentThreadPosParam) : Particles(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam), CellEngineChemicalReactionsInSimulationSpace(ParticlesParam), CellEngineChemicalReactionsInVoxelSimulationSpace(ParticlesParam), CellEngineSimulationSpace(ParticlesParam), CellEngineTestParticlesInVoxelSpaceGenerator(ParticlesParam), CellEngineVoxelSimulationSpaceStatistics()
 {
     try
     {
         CurrentThreadIndex = ThreadIndexParam;
         CurrentThreadPos = CurrentThreadPosParam;
 
-        LoggersManagerObject.Log(STREAM("CurrentThreadIndexes = " << CurrentThreadIndex << " (" << CurrentThreadPos.ThreadPosX << "," << CurrentThreadPos.ThreadPosY << "," << CurrentThreadPos.ThreadPosZ << ")" << std::endl));
+        LoggersManagerObject.Log(STREAM("CurrentThreadIndexes = " << CurrentThreadIndex << " (" << CurrentThreadPos.PosX << "," << CurrentThreadPos.PosY << "," << CurrentThreadPos.PosZ << ")" << std::endl));
 
         if (GetMemoryForVoxelSpace == true)
         {

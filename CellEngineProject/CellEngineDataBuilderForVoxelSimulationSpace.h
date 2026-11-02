@@ -3,7 +3,7 @@
 #define CELL_ENGINE_VOXEL_SIMULATION_SPACE_CIF_DATA_FILE_READER_H
 
 #include "CellEngineParticlesDataFile.h"
-#include "CellEngineSimulationParallelExecutionManager.h"
+#include "CellEngineSimulationParallelTasksExecutionManager.h"
 
 class CellEngineDataBuilderForVoxelSimulationSpace : public CellEngineParticlesDataFile
 {
@@ -12,9 +12,9 @@ protected:
     {
         GetMemoryForParticlesInSectors();
 
-        CellEngineVoxelSimulationSpaceObjectPointer = std::make_unique<CellEngineVoxelSimulationSpace>(Particles, true, 0, ThreadPosType{ 0, 0, 0 });
+        CellEngineVoxelSimulationSpaceObjectPointer = std::make_unique<CellEngineVoxelSimulationSpace>(Particles, true, 0, ParallelTaskPosType{ 0, 0, 0 });
 
-        CellEngineSimulationParallelExecutionManager::CreateSimulationSpaceForParallelExecution<CellEngineVoxelSimulationSpace>(CellEngineSimulationSpaceForThreadsObjectsPointer, Particles);
+        CellEngineSimulationParallelTasksExecutionManager::CreateSimulationSpaceForParallelExecution<CellEngineVoxelSimulationSpace>(CellEngineSimulationSpaceForThreadsObjectsPointer, Particles);
     }
 protected:
     void SetCurrentSectorPos(const SectorPosType& CurrentSectorPos) override

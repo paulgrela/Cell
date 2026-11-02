@@ -842,7 +842,7 @@ void CellEngineOpenGLVisualiser::PrintAtomDescriptionOnScreen(CellEngineAtom& Ch
 
         TextOverlayObject.Clear();
 
-        string LocalTextStr = CellEngineUseful::AtomDescriptionTextsObject.Texts[0] = string("Name = ") + ChosenAtomObject1.Name + " ResName = " + ChosenAtomObject1.ResName + "S[" + to_string(ChosenParticleObject1.ParticleSectorPos.SectorPosX) + "," + to_string(ChosenParticleObject1.ParticleSectorPos.SectorPosY) + "," + to_string(ChosenParticleObject1.ParticleSectorPos.SectorPosZ) + "]";
+        string LocalTextStr = CellEngineUseful::AtomDescriptionTextsObject.Texts[0] = string("Name = ") + ChosenAtomObject1.Name + " ResName = " + ChosenAtomObject1.ResName + "S[" + to_string(ChosenParticleObject1.ParticleSectorPos.PosX) + "," + to_string(ChosenParticleObject1.ParticleSectorPos.PosY) + "," + to_string(ChosenParticleObject1.ParticleSectorPos.PosZ) + "]";
         CellEngineUseful::AtomDescriptionTextsObject.Texts[1] = "Chain [" + string(ChosenAtomObject1.Chain) + "]" + "(" + ChosenParticleObject1.Nucleotide + ")";
         CellEngineUseful::AtomDescriptionTextsObject.Texts[1] += " SEQ = [" + ChosenParticleObject1.SequenceStr + "]";
         CellEngineUseful::AtomDescriptionTextsObject.Texts[2] = "ParticleKindId = " + to_string(ChosenParticleObject1.ParticleKindId);

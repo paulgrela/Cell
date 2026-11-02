@@ -7,9 +7,9 @@
 #include "CellEngineParticleKind.h"
 #include "CellEngineParticleUniqueIdGenerator.h"
 #include "CellEngineParticlesVoxelsOperations.h"
-#include "CellEngineBasicParallelExecutionData.h"
+#include "CellEngineBasicParallelTasksExecutionData.h"
 
-class CellEngineBasicParticlesOperations : public CellEngineBasicParallelExecutionData
+class CellEngineBasicParticlesOperations : public CellEngineBasicParallelTasksExecutionData
 {
 protected:
     CellEngineParticleUniqueIdGenerator ParticleUniqueIdGenerator{};
@@ -21,7 +21,7 @@ protected:
     inline ParticlesDetailedContainer<Particle>& GetParticles()
     {
         if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
-            return Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ].Particles;
+            return Particles[CurrentSectorPos.PosX][CurrentSectorPos.PosY][CurrentSectorPos.PosZ].Particles;
         else
         {
             if (CurrentThreadIndex == 0)
@@ -41,7 +41,7 @@ protected:
     inline UniqueIdUInt64Type GetNewParticleUniqueIdFinal()
     {
         if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
-            return Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ].ParticleUniqueIdGenerator.GetNewParticleUniqueId();
+            return Particles[CurrentSectorPos.PosX][CurrentSectorPos.PosY][CurrentSectorPos.PosZ].ParticleUniqueIdGenerator.GetNewParticleUniqueId();
         else
         {
             if (CurrentThreadIndex == 0)
@@ -54,10 +54,10 @@ protected:
     {
         if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
         {
-            UniqueIdUInt64Type NewParticleUniqueId = Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ].ParticleUniqueIdGenerator.GetNewParticleUniqueId();
+            UniqueIdUInt64Type NewParticleUniqueId = Particles[CurrentSectorPos.PosX][CurrentSectorPos.PosY][CurrentSectorPos.PosZ].ParticleUniqueIdGenerator.GetNewParticleUniqueId();
 
             while (GetParticles().contains(NewParticleUniqueId) == true)
-                NewParticleUniqueId = Particles[CurrentSectorPos.SectorPosX][CurrentSectorPos.SectorPosY][CurrentSectorPos.SectorPosZ].ParticleUniqueIdGenerator.GetNewParticleUniqueId();
+                NewParticleUniqueId = Particles[CurrentSectorPos.PosX][CurrentSectorPos.PosY][CurrentSectorPos.PosZ].ParticleUniqueIdGenerator.GetNewParticleUniqueId();
 
             return NewParticleUniqueId;
         }

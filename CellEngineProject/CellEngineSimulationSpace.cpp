@@ -116,7 +116,7 @@ void CellEngineSimulationSpace::GenerateOneStepOfElectricDiffusionForOneParticle
             const UnsignedInt RandomMoveVectorIndex = UniformDiscreteDistributionMoveParticleDirectionObject(mt64R);
 
             if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == false && CellEngineConfigDataObject.NonParallelProcessesExecution == false)
-                MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(ParticleObject, Particles, CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[CurrentThreadPos.ThreadPosX - 1][CurrentThreadPos.ThreadPosY - 1][CurrentThreadPos.ThreadPosZ - 1]->ListOfParticlesToChangeSectors, MoveVectors[RandomMoveVectorIndex].X, MoveVectors[RandomMoveVectorIndex].Y, MoveVectors[RandomMoveVectorIndex].Z, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
+                MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(ParticleObject, Particles, CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[CurrentThreadPos.PosX - 1][CurrentThreadPos.PosY - 1][CurrentThreadPos.PosZ - 1]->ListOfParticlesToChangeSectors, MoveVectors[RandomMoveVectorIndex].X, MoveVectors[RandomMoveVectorIndex].Y, MoveVectors[RandomMoveVectorIndex].Z, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
             else
                 MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(ParticleObject, Particles, ListOfParticlesToChangeSectors, MoveVectors[RandomMoveVectorIndex].X, MoveVectors[RandomMoveVectorIndex].Y, MoveVectors[RandomMoveVectorIndex].Z, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
 
@@ -231,7 +231,7 @@ bool CellEngineSimulationSpace::CancelChemicalReaction(const vector<UniqueIdUInt
             if (CellEngineConfigDataObject.GatherCancelledParticlesIndexes == true)
             {
                 if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == false && CellEngineConfigDataObject.NonParallelProcessesExecution == false)
-                    CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[CurrentThreadPos.ThreadPosX - 1][CurrentThreadPos.ThreadPosY - 1][CurrentThreadPos.ThreadPosZ - 1]->CancelledParticlesIndexes.insert(pair(CreatedParticleUniqueId, CreatedParticleUniqueId));
+                    CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[CurrentThreadPos.PosX - 1][CurrentThreadPos.PosY - 1][CurrentThreadPos.PosZ - 1]->CancelledParticlesIndexes.insert(pair(CreatedParticleUniqueId, CreatedParticleUniqueId));
                 else
                     CancelledParticlesIndexes.insert(pair(CreatedParticleUniqueId, CreatedParticleUniqueId));
             }
@@ -303,8 +303,8 @@ bool CellEngineSimulationSpace::PlaceNewProductParticleInSpaceInNewRandomPositio
                 LoggersManagerObject.LogUnconditional(STREAM("R2 = (" << RandomVectorX << " " << RandomVectorY << " " << RandomVectorZ << ") (" << SimulationSpaceSectorBoundsObject.StartXPos << "," << SimulationSpaceSectorBoundsObject.EndXPos << ") (" << SimulationSpaceSectorBoundsObject.StartYPos << "," << SimulationSpaceSectorBoundsObject.EndYPos << ") (" << SimulationSpaceSectorBoundsObject.StartZPos << "," << SimulationSpaceSectorBoundsObject.EndZPos << ")"));
 
                 const auto [SectorPosX, SectorPosY, SectorPosZ] = CellEngineUseful::GetSectorPos(RandomVectorX, RandomVectorY, RandomVectorZ);
-                if (SectorPosX != CurrentSectorPos.SectorPosX || SectorPosY != CurrentSectorPos.SectorPosY || SectorPosZ != CurrentSectorPos.SectorPosZ)
-                    LoggersManagerObject.LogUnconditional(STREAM("ERROR R4" << " Error particle not in proper sector " << " SectorPosX = " << SectorPosX << " SectorPosY = " << SectorPosY << " SectorPosZ = " << SectorPosZ << " SectorPosXS = " << CurrentSectorPos.SectorPosX << " SectorPosYS = " << CurrentSectorPos.SectorPosY << " SectorPosZS = " << CurrentSectorPos.SectorPosZ));
+                if (SectorPosX != CurrentSectorPos.PosX || SectorPosY != CurrentSectorPos.PosY || SectorPosZ != CurrentSectorPos.PosZ)
+                    LoggersManagerObject.LogUnconditional(STREAM("ERROR R4" << " Error particle not in proper sector " << " SectorPosX = " << SectorPosX << " SectorPosY = " << SectorPosY << " SectorPosZ = " << SectorPosZ << " SectorPosXS = " << CurrentSectorPos.PosX << " SectorPosYS = " << CurrentSectorPos.PosY << " SectorPosZS = " << CurrentSectorPos.PosZ));
                 #endif
 
                 FoundFreePlace = true;
@@ -313,8 +313,8 @@ bool CellEngineSimulationSpace::PlaceNewProductParticleInSpaceInNewRandomPositio
 
                 #ifdef SIMULATION_DETAILED_DEBUG_LOG_CHEMICAL_REACTION
                 auto [SectorPosX1, SectorPosY1, SectorPosZ1] = CellEngineUseful::CheckCenterForSector<Particle>(GetParticleFromUniqueId(ParticleUniqueId), Particles, "CK1");
-                if (SectorPosX1 != CurrentSectorPos.SectorPosX || SectorPosY1 != CurrentSectorPos.SectorPosY || SectorPosZ1 != CurrentSectorPos.SectorPosZ)
-                    LoggersManagerObject.LogUnconditional(STREAM("ERROR R5" << " Error particle not in proper sector " << " SectorPosX = " << SectorPosX1 << " SectorPosY = " << SectorPosY1 << " SectorPosZ = " << SectorPosZ1 << " SectorPosXS = " << CurrentSectorPos.SectorPosX << " SectorPosYS = " << CurrentSectorPos.SectorPosY << " SectorPosZS = " << CurrentSectorPos.SectorPosZ));
+                if (SectorPosX1 != CurrentSectorPos.PosX || SectorPosY1 != CurrentSectorPos.PosY || SectorPosZ1 != CurrentSectorPos.PosZ)
+                    LoggersManagerObject.LogUnconditional(STREAM("ERROR R5" << " Error particle not in proper sector " << " SectorPosX = " << SectorPosX1 << " SectorPosY = " << SectorPosY1 << " SectorPosZ = " << SectorPosZ1 << " SectorPosXS = " << CurrentSectorPos.PosX << " SectorPosYS = " << CurrentSectorPos.PosY << " SectorPosZS = " << CurrentSectorPos.PosZ));
 
                 const auto [SectorPosX11, SectorPosY11, SectorPosZ11] = CellEngineUseful::GetSectorPos(GetParticleFromUniqueId(ParticleUniqueId).Center.X, GetParticleFromUniqueId(ParticleUniqueId).Center.Y, GetParticleFromUniqueId(ParticleUniqueId).Center.Z);
 

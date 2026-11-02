@@ -8,7 +8,7 @@
 
 #define UNPAREN(...) __VA_ARGS__
 
-#define SimulationSpaceDataForThreads CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[CurrentThreadPos.ThreadPosX - 1][CurrentThreadPos.ThreadPosY - 1][CurrentThreadPos.ThreadPosZ - 1]
+#define SimulationSpaceDataForThreads CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[CurrentThreadPos.PosX - 1][CurrentThreadPos.PosY - 1][CurrentThreadPos.PosZ - 1]
 
 void CellEngineNucleicAcidsComplexOperations::Move2ParticlesNearOtherParticleIfSpaceIsEmptyOrNearSpace(vector<ParticleToBeMovedFromOneSectorToAnotherSector>& ListOfParticlesToChangeSectors, Particle &ParticleObject1, const Particle &NewPositionParticleObject1, const RealType AddX1, const RealType AddY1, const RealType AddZ1, Particle &ParticleObject2, const Particle &NewPositionParticleObject2, const RealType AddX2, const RealType AddY2, const RealType AddZ2)
 {
@@ -32,7 +32,7 @@ void CellEngineNucleicAcidsComplexOperations::SelectMPIorThreadsForMoveParticleN
     CATCH("")
 }
 
-bool CheckIfThisIsPromoter(UnsignedInt Box10Position)
+bool CheckIfThisIsPromoter(const UnsignedInt Box10Position)
 {
     return ParticlesKindsManagerObject.Promoters.contains(Box10Position);
 }

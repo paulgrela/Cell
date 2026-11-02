@@ -9,28 +9,14 @@
 #include "CellEngineTypes.h"
 #include "CellEngineParticle.h"
 
-struct __attribute__ ((packed)) ParticleSenderStructMPIMultiProcess
+struct ParticleSenderStructForParallelMultiTaskingExecution
 {
     UniqueIdUInt64Type ParticleUniqueId{ 0 };
     UniqueIdUInt32Type ParticleKindId{ 0 };
     int SenderProcessIndex{ 0 };
     int ReceiverProcessIndex{ 0 };
-    ThreadPosType SenderThreadPos{ .ThreadPosX = 0, .ThreadPosY = 0, .ThreadPosZ = 0 };
-    ThreadPosType ReceiverThreadPos{ .ThreadPosX = 0, .ThreadPosY = 0, .ThreadPosZ = 0 };
-    vector3_16 SenderSectorPos{ .X = 0, .Y = 0, .Z = 0 };
-    vector3_16 ReceiverSectorPos{ .X = 0, .Y = 0, .Z = 0 };
-    vector3_Real32 NewParticleCenter{ .X = 0, .Y = 0, .Z = 0 };
-    vector3_Real32 Vector{ .X = 0, .Y = 0, .Z = 0 };
-};
-
-struct ParticleSenderStructMultiThreaded
-{
-    UniqueIdUInt64Type ParticleUniqueId{ 0 };
-    UniqueIdUInt32Type ParticleKindId{ 0 };
-    int SenderProcessIndex{ 0 };
-    int ReceiverProcessIndex{ 0 };
-    ThreadPosType SenderThreadPos{ .ThreadPosX = 0, .ThreadPosY = 0, .ThreadPosZ = 0 };
-    ThreadPosType ReceiverThreadPos{ .ThreadPosX = 0, .ThreadPosY = 0, .ThreadPosZ = 0 };
+    ParallelTaskPosType SenderThreadPos{ .PosX = 0, .PosY = 0, .PosZ = 0 };
+    ParallelTaskPosType ReceiverThreadPos{ .PosX = 0, .PosY = 0, .PosZ = 0 };
     vector3_16 SenderSectorPos{ .X = 0, .Y = 0, .Z = 0 };
     vector3_16 ReceiverSectorPos{ .X = 0, .Y = 0, .Z = 0 };
     vector3_Real32 NewParticleCenter{ .X = 0, .Y = 0, .Z = 0 };
@@ -54,42 +40,37 @@ struct WallChannel
 
     std::condition_variable WallConditionalVariable;
 
-    std::vector<ParticleSenderStructMultiThreaded> Proposals[2];
+    std::vector<ParticleSenderStructForParallelMultiTaskingExecution> Proposals[2];
     std::vector<ConfirmationOfParticlesToRemoveToSentStruct> Verdicts[2];
     bool ProposalsReady[2]{ false, false };
     bool VerdictsReady[2]{ false, false };
 };
 
-class CellEngineBasicParallelExecutionData
+class CellEngineBasicParallelTasksExecutionData
 {
-    friend class CellEngineSimulationParallelExecutionManager;
-public:
-    UnsignedInt GetMPIProcessIndex() const
-    {
-        return MPIProcessIndex;
-    }
+    friend class CellEngineSimulationParallelTasksExecutionManager;
 protected:
     UnsignedInt MPIProcessIndex{ 0 };
+public:
+    UnsignedInt ThreadIndex{ 0 };
+    ThreadIdType CurrentThreadIndex{ 0 };
+    ParallelTaskPosType CurrentThreadPos{ .PosX = 1, .PosY = 1, .PosZ = 1 };
 protected:
     UnsignedInt ProcessGroupNumber;
     UnsignedInt NumberOfActiveNeighbors;
 public:
-    SignedInt NeighborProcessesIndexes[NumberOfAllNeighbors];
+    SignedInt NeighborParallelTasksIndexes[NumberOfAllNeighbors];
 protected:
-    SimulationSpaceSectorsRanges CurrentMPIProcessSimulationSpaceSectorsRanges;
+    SimulationSpaceSectorsRanges SimulationSpaceSectorsRangesForCurrentParallelTask;
 public:
-    ThreadIdType CurrentThreadIndex{ 0 };
-public:
-    ThreadPosType CurrentThreadPos{ .ThreadPosX = 1, .ThreadPosY = 1, .ThreadPosZ = 1 };
-public:
-    #ifdef NEIGHBOR_THREAD_INDEXES
-    ThreadPosType NeighborThreadsIndexes[NumberOfAllNeighbors];
+    #ifdef NEIGHBOR_THREADS_POSITIONS
+    ParallelTaskPosType NeighborThreadsPositions[NumberOfAllNeighbors];
     #endif
 public:
     std::vector<ParticleToBeMovedFromOneSectorToAnotherSector> ListOfParticlesToChangeSectors;
 public:
-    std::vector<ParticleSenderStructMultiThreaded> VectorOfParticlesToSendToNeighborThreads[NumberOfAllNeighbors];
-    std::vector<ParticleSenderStructMPIMultiProcess> VectorOfParticlesToSendToNeighborProcesses[NumberOfAllNeighbors];
+    std::vector<ParticleSenderStructForParallelMultiTaskingExecution> VectorOfParticlesToSendToNeighborThreads[NumberOfAllNeighbors];
+    std::vector<ParticleSenderStructForParallelMultiTaskingExecution> VectorOfParticlesToSendToNeighborProcesses[NumberOfAllNeighbors];
 protected:
     std::vector<std::unique_ptr<WallChannel>> TwoThreadsWallChannels;
     std::vector<std::unique_ptr<std::barrier<>>> TwoThreadsWallSychronizationBarriers;
@@ -97,7 +78,7 @@ protected:
 protected:
     std::vector<ConfirmationOfParticlesToRemoveToSentStruct> ConfirmationOfParticlesToRemoveToSent[NumberOfAllNeighbors];
 public:
-    SectorPosType CurrentSectorPos{ .SectorPosX = 0, .SectorPosY = 0, .SectorPosZ = 0 };
+    SectorPosType CurrentSectorPos{ .PosX = 0, .PosY = 0, .PosZ = 0 };
     SimulationSpaceSectorBounds ActualSimulationSpaceSectorBoundsObject{ .StartXPos = 0, .StartYPos = 0, .StartZPos = 0, .SizeX = 0, .SizeY = 0, .SizeZ = 0, .EndXPos = 0, .EndYPos = 0, .EndZPos = 0 };
 public:
     std::mutex MainExchangeParticlesMutexObject;

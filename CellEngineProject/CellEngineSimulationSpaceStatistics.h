@@ -34,7 +34,7 @@ public:
 class CellEngineSimulationSpaceStatistics : virtual public CellEngineBasicParticlesOperations
 {
     friend class CellEngineImGuiMenu;
-    friend class CellEngineSimulationParallelExecutionManager;
+    friend class CellEngineSimulationParallelTasksExecutionManager;
 protected:
     UnsignedInt SimulationStepNumber = 0;
     UnsignedInt ModuloStepToSaveStatistics = 10;

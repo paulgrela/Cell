@@ -38,11 +38,11 @@ protected:
     bool CheckIfSpaceIsEmptyAndIsInBoundsForParticleElementsReactions(const ParticleKind& ParticleKindObjectForProduct, ParticlesContainer<Particle>& ParticlesInSector, RealType VectorX, RealType VectorY, RealType VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam) override;
     bool CheckIfSpaceIsEmptyAndIsInBoundsForParticleElementsDiffusion(const ParticleKind& ParticleKindObjectForProduct, ParticlesContainer<Particle>& ParticlesInSector, RealType VectorX, RealType VectorY, RealType VectorZ, const SimulationSpaceSectorBounds& SimulationSpaceSectorBoundsObjectParam) override;
 protected:
-    bool CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossibleInMPIMultiProcessDiffusion(const ParticleSenderStructMPIMultiProcess& MPIParticleSenderToInsert, UniqueIdUInt64Type& UniqueIdOfNewCreatedParticle) override
+    bool CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossibleInMPIMultiProcessDiffusion(const ParticleSenderStructForParallelMultiTaskingExecution& MPIParticleSenderToInsert, UniqueIdUInt64Type& UniqueIdOfNewCreatedParticle) override
     {
         return true;
     }
-    bool CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossibleInMultiThreadedDiffusion(const ParticleSenderStructMultiThreaded& MPIParticleSenderToInsert, const Particle& Particle) override
+    bool CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossibleInMultiThreadedDiffusion(const ParticleSenderStructForParallelMultiTaskingExecution& MPIParticleSenderToInsert, const Particle& Particle) override
     {
         return true;
     }
@@ -75,7 +75,7 @@ public:
     void CheckCancelledParticlesIndexes();
     void CheckFormerExistedParticlesIndexes();
 public:
-    explicit CellEngineVoxelSimulationSpace(ParticlesContainer<Particle>& ParticlesParam, bool GetMemoryForVoxelSpace, ThreadIdType ThreadIndexParam, const ThreadPosType& CurrentThreadPos);
+    explicit CellEngineVoxelSimulationSpace(ParticlesContainer<Particle>& ParticlesParam, bool GetMemoryForVoxelSpace, ThreadIdType ThreadIndexParam, const ParallelTaskPosType& CurrentThreadPos);
     ~CellEngineVoxelSimulationSpace() override;
 };
 

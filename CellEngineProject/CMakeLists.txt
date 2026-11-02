@@ -140,7 +140,7 @@ add_executable(
 	CellEngineParticlesFullAtomOperations.h
 	CellEngineParticlesFullAtomOperations.cpp
 	CellEngineParticlesVoxelsOperations.h
-	CellEngineBasicParallelExecutionData.h
+	CellEngineBasicParallelTasksExecutionData.h
 	CellEngineBasicParticlesOperations.cpp
 	CellEngineBasicParticlesOperations.h
 	CellEngineParticlesVoxelsShapesGenerator.h
@@ -195,8 +195,8 @@ add_executable(
 	CellEngineConfigurationFileReaderWriter.cpp
 	CellEngineGenesPromotersAndStartCodonsFinder.cpp
 	CellEngineGenesPromotersAndGenesStartCodonsFinder.h
-	CellEngineSimulationParallelExecutionManager.cpp
-	CellEngineSimulationParallelExecutionManager.h
+	CellEngineSimulationParallelTasksExecutionManager.cpp
+	CellEngineSimulationParallelTasksExecutionManager.h
 	mds/CellEngineMolecularDynamicsSimulationForceField1.cpp
 	mds/CellEngineMolecularDynamicsSimulationForceField1.h
 	mds/CellEngineMolecularDynamicsSimulationForceField1Constants.h
