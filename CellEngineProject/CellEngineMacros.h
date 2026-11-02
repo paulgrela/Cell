@@ -31,6 +31,12 @@
     #define DEBUG_LOG(...)
 #endif
 
+#ifdef SIMULATION_DETAILED_DEBUG_LOG_GRAPHICS
+    #define DEBUG_LOG_GRAPHICS(...) __VA_ARGS__
+#else
+    #define DEBUG_LOG_GRAPHICS(...)
+#endif
+
 #ifdef SIMULATION_DETAILED_DEBUG_LOG_DIFFUSION
     #define DEBUG_LOG_DIFFUSION(...) __VA_ARGS__
 #else
