@@ -121,3 +121,10 @@ string GetDurationTimeInOneLineStr(const chrono::high_resolution_clock::time_poi
 
 	return GetDurationTimeInOneLine(duration_time, TextToPrint, ExceptionTextToPrint);
 }
+
+string GetDurationTimeInOneLineStr(const chrono::steady_clock::time_point start_time, const chrono::steady_clock::time_point stop_time, const char* TextToPrint, const char* ExceptionTextToPrint)
+{
+	const auto duration_time = stop_time - start_time;
+
+	return GetDurationTimeInOneLine(duration_time, TextToPrint, ExceptionTextToPrint);
+}

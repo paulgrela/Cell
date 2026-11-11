@@ -52,7 +52,6 @@ class CellEngineBasicParallelTasksExecutionData
 public:
     UnsignedInt MPIProcessIndex{ 0 };
 public:
-    UnsignedInt ThreadIndex{ 0 };
     ThreadIdType CurrentThreadIndex{ 0 };
     ParallelTaskPosType CurrentThreadPos{ .PosX = 1, .PosY = 1, .PosZ = 1 };
 protected:
@@ -83,6 +82,10 @@ public:
     std::mutex MainExchangeParticlesMutexObject;
 protected:
     ParticlesDetailedContainer<Particle> ParticlesForThreads;
+protected:
+    std::vector<int> CPUsForThreads;
+protected:
+    std::deque<std::binary_semaphore> StartGatesForThreads;
 public:
     UnsignedInt NumberOfDNAParticles;
     UnsignedInt NumberOfAllParticlesInMPISimulation;

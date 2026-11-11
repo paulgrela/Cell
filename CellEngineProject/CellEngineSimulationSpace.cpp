@@ -116,7 +116,7 @@ void CellEngineSimulationSpace::GenerateOneStepOfElectricDiffusionForOneParticle
             const UnsignedInt RandomMoveVectorIndex = UniformDiscreteDistributionMoveParticleDirectionObject(mt64R);
 
             if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == false && CellEngineConfigDataObject.NonParallelProcessesExecution == false)
-                MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(ParticleObject, Particles, CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[CurrentThreadPos.PosX - 1][CurrentThreadPos.PosY - 1][CurrentThreadPos.PosZ - 1]->ListOfParticlesToChangeSectors, MoveVectors[RandomMoveVectorIndex].X, MoveVectors[RandomMoveVectorIndex].Y, MoveVectors[RandomMoveVectorIndex].Z, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
+                MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(ParticleObject, Particles, CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[CurrentThreadPos.PosX][CurrentThreadPos.PosY][CurrentThreadPos.PosZ]->ListOfParticlesToChangeSectors, MoveVectors[RandomMoveVectorIndex].X, MoveVectors[RandomMoveVectorIndex].Y, MoveVectors[RandomMoveVectorIndex].Z, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
             else
                 MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(ParticleObject, Particles, ListOfParticlesToChangeSectors, MoveVectors[RandomMoveVectorIndex].X, MoveVectors[RandomMoveVectorIndex].Y, MoveVectors[RandomMoveVectorIndex].Z, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
 
@@ -231,7 +231,7 @@ bool CellEngineSimulationSpace::CancelChemicalReaction(const vector<UniqueIdUInt
             if (CellEngineConfigDataObject.GatherCancelledParticlesIndexes == true)
             {
                 if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == false && CellEngineConfigDataObject.NonParallelProcessesExecution == false)
-                    CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[CurrentThreadPos.PosX - 1][CurrentThreadPos.PosY - 1][CurrentThreadPos.PosZ - 1]->CancelledParticlesIndexes.insert(pair(CreatedParticleUniqueId, CreatedParticleUniqueId));
+                    CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[CurrentThreadPos.PosX][CurrentThreadPos.PosY][CurrentThreadPos.PosZ]->CancelledParticlesIndexes.insert(pair(CreatedParticleUniqueId, CreatedParticleUniqueId));
                 else
                     CancelledParticlesIndexes.insert(pair(CreatedParticleUniqueId, CreatedParticleUniqueId));
             }

@@ -473,7 +473,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
 
             vector3_Real32 CenterReadObject{};
             ParticlesDataFile.read(reinterpret_cast<char*>(&CenterReadObject), sizeof(CenterReadObject));
-            ParticleObject.Center = { static_cast<RealType>(CenterReadObject.X), static_cast<RealType>(CenterReadObject.Y), static_cast<RealType>(CenterReadObject.Z) };
+            ParticleObject.Center = { .X = static_cast<RealType>(CenterReadObject.X), .Y = static_cast<RealType>(CenterReadObject.Y), .Z = static_cast<RealType>(CenterReadObject.Z) };
 
             ParticleObject.Center.X /= CellEngineConfigDataObject.DivisionFactorForReadingPositionsOfParticles;
             ParticleObject.Center.Y /= CellEngineConfigDataObject.DivisionFactorForReadingPositionsOfParticles;

@@ -8,7 +8,7 @@
 
 #define UNPAREN(...) __VA_ARGS__
 
-#define SimulationSpaceDataForThreads CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[CurrentThreadPos.PosX - 1][CurrentThreadPos.PosY - 1][CurrentThreadPos.PosZ - 1]
+#define SimulationSpaceDataForThreads CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[CurrentThreadPos.PosX][CurrentThreadPos.PosY][CurrentThreadPos.PosZ]
 
 void CellEngineNucleicAcidsComplexOperations::Move2ParticlesNearOtherParticleIfSpaceIsEmptyOrNearSpace(vector<ParticleToBeMovedFromOneSectorToAnotherSector>& ListOfParticlesToChangeSectors, Particle &ParticleObject1, const Particle &NewPositionParticleObject1, const RealType AddX1, const RealType AddY1, const RealType AddZ1, Particle &ParticleObject2, const Particle &NewPositionParticleObject2, const RealType AddX2, const RealType AddY2, const RealType AddZ2)
 {

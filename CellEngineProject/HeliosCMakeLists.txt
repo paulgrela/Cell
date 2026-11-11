@@ -82,6 +82,7 @@ add_executable(
 	CellEngineRandomDeviceEngine.cpp
 	CellEngineRandomDeviceEngine.h
 	CellEngineParticleUniqueIdGenerator.h
+	CellEngineThreadPinningToRealCPUCore.h
 	CellEngineGraphicsExecutionMeasureTimeStatisticsData.h
 	CellEngineSimulationExecutionMeasureTimeStatisticsData.h
     CellEngineDataFile.h

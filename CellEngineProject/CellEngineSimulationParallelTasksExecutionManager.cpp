@@ -8,6 +8,7 @@
 #include "CellEngineImGuiMenu.h"
 #include "CellEngineSimulationSpace.h"
 #include "CellEngineParticlesKindsManager.h"
+#include "CellEngineThreadPinningToRealCPUCore.h"
 #include "CellEngineSimulationParallelTasksExecutionManager.h"
 
 #ifdef USE_OPENGL
@@ -80,7 +81,7 @@ void CellEngineSimulationParallelTasksExecutionManager::SetProperParallelTasksPo
     CATCH("setting proper thread index for every particles sector")
 }
 
-static UnsignedInt GetProcessGroupNumber(const UnsignedInt ThreadXIndex, const UnsignedInt ThreadYIndex, const UnsignedInt ThreadZIndex)
+static UnsignedInt GetParallelTaskGroupNumber(const UnsignedInt ThreadXIndex, const UnsignedInt ThreadYIndex, const UnsignedInt ThreadZIndex)
 {
     if (ThreadZIndex % 2 == 0)
         return ThreadXIndex % 2 != ThreadYIndex % 2;
@@ -120,9 +121,9 @@ void CellEngineSimulationParallelTasksExecutionManager::CreateDataForEveryMPIPro
 
                         LoggersManagerObject.Log(STREAM("MPIProcessIndex Bounds = " << MPIProcessDataObject.CurrentMPIProcessIndex << " (" << SimulationSpaceSectorsRangesForCurrentParallelTask.StartXPos << "," << SimulationSpaceSectorsRangesForCurrentParallelTask.StartYPos << "," << SimulationSpaceSectorsRangesForCurrentParallelTask.StartZPos << ") (" << SimulationSpaceSectorsRangesForCurrentParallelTask.EndXPos << "," << SimulationSpaceSectorsRangesForCurrentParallelTask.EndYPos << "," << SimulationSpaceSectorsRangesForCurrentParallelTask.EndZPos << ")"));
 
-                        ParallelTaskGroupNumber = GetProcessGroupNumber(MPIProcessXIndex, MPIProcessYIndex, MPIProcessZIndex);
+                        ParallelTaskGroupNumber = GetParallelTaskGroupNumber(MPIProcessXIndex, MPIProcessYIndex, MPIProcessZIndex);
 
-                        LoggersManagerObject.Log(STREAM("ProcessGroupNumber = " << ParallelTaskGroupNumber << " " << MPIProcessDataObject.CurrentMPIProcessIndex << " (" << MPIProcessXIndex << "," << MPIProcessYIndex << "," << MPIProcessZIndex << ")"));
+                        LoggersManagerObject.Log(STREAM("ParallelTaskGroupNumber = " << ParallelTaskGroupNumber << " " << MPIProcessDataObject.CurrentMPIProcessIndex << " (" << MPIProcessXIndex << "," << MPIProcessYIndex << "," << MPIProcessZIndex << ")"));
 
                         NeighborParallelTasksIndexes[0] = GetProcessPrevNeighbor(static_cast<SignedInt>(MPIProcessXIndex) - 1, static_cast<SignedInt>(MPIProcessYIndex), static_cast<SignedInt>(MPIProcessZIndex));
                         NeighborParallelTasksIndexes[1] = GetProcessPrevNeighbor(static_cast<SignedInt>(MPIProcessXIndex), static_cast<SignedInt>(MPIProcessYIndex) - 1, static_cast<SignedInt>(MPIProcessZIndex));
@@ -161,7 +162,7 @@ constexpr SignedInt NeighborOffsetZ[NumberOfAllNeighbors] = {  0,  0, -1,  0,  0
 SignedInt CellEngineSimulationParallelTasksExecutionManager::GetProcessNeighbor(const SignedInt ThreadXIndex, const SignedInt ThreadYIndex, const SignedInt ThreadZIndex) const
 {
     if (ThreadXIndex >= 0 && ThreadXIndex < static_cast<SignedInt>(CellEngineConfigDataObject.NumberOfXThreadsInSimulation) && ThreadYIndex >= 0 && ThreadYIndex < static_cast<SignedInt>(CellEngineConfigDataObject.NumberOfYThreadsInSimulation) && ThreadZIndex >= 0 && ThreadZIndex < static_cast<SignedInt>(CellEngineConfigDataObject.NumberOfZThreadsInSimulation))
-        return static_cast<SignedInt>(SimulationSpaceDataForThreads[ThreadXIndex][ThreadYIndex][ThreadZIndex]->ThreadIndex);
+        return static_cast<SignedInt>(SimulationSpaceDataForThreads[ThreadXIndex][ThreadYIndex][ThreadZIndex]->CurrentThreadIndex);
     else
         return -1;
 }
@@ -180,17 +181,15 @@ void CellEngineSimulationParallelTasksExecutionManager::CreateDataForEveryThread
 
             ThreadData->SimulationSpaceSectorsRangesForCurrentParallelTask.SetParameters(ThreadXIndex * CellEngineConfigDataObject.NumberOfXSectorsInOneThreadInSimulation, ThreadYIndex * CellEngineConfigDataObject.NumberOfYSectorsInOneThreadInSimulation, ThreadZIndex * CellEngineConfigDataObject.NumberOfZSectorsInOneThreadInSimulation, (ThreadXIndex + 1) * CellEngineConfigDataObject.NumberOfXSectorsInOneThreadInSimulation, (ThreadYIndex + 1) * CellEngineConfigDataObject.NumberOfYSectorsInOneThreadInSimulation, (ThreadZIndex + 1) * CellEngineConfigDataObject.NumberOfZSectorsInOneThreadInSimulation);
 
-            ThreadData->ParallelTaskGroupNumber = GetProcessGroupNumber(ThreadXIndex, ThreadYIndex, ThreadZIndex);
-
-            ThreadData->ThreadIndex = ThreadIndex;
+            ThreadData->ParallelTaskGroupNumber = GetParallelTaskGroupNumber(ThreadXIndex, ThreadYIndex, ThreadZIndex);
 
             for (UnsignedInt DirectionIndex = 0; DirectionIndex < NumberOfAllNeighbors; DirectionIndex++)
                 ThreadData->TwoThreadsWallSychronizationBarriersIndexes[DirectionIndex] = -1;
 
             if constexpr (PrintAdditionalInformation == true)
             {
-                LoggersManagerObject.Log(STREAM("Current Thread Index = " << ThreadData->CurrentThreadIndex << "Thread Bounds = (" << SimulationSpaceSectorsRangesForCurrentParallelTask.StartXPos << "," << SimulationSpaceSectorsRangesForCurrentParallelTask.StartYPos << "," << SimulationSpaceSectorsRangesForCurrentParallelTask.StartZPos << ") (" << SimulationSpaceSectorsRangesForCurrentParallelTask.EndXPos << "," << SimulationSpaceSectorsRangesForCurrentParallelTask.EndYPos << "," << SimulationSpaceSectorsRangesForCurrentParallelTask.EndZPos << ")"));
-                LoggersManagerObject.Log(STREAM("ProcessGroupNumber = " << ThreadData->ParallelTaskGroupNumber << " Thread Position = (" << ThreadXIndex << "," << ThreadYIndex << "," << ThreadZIndex << ")"));
+                LoggersManagerObject.Log(STREAM("Current Thread Index = " << ThreadData->CurrentThreadIndex << " Thread Bounds = (" << SimulationSpaceSectorsRangesForCurrentParallelTask.StartXPos << "," << SimulationSpaceSectorsRangesForCurrentParallelTask.StartYPos << "," << SimulationSpaceSectorsRangesForCurrentParallelTask.StartZPos << ") (" << SimulationSpaceSectorsRangesForCurrentParallelTask.EndXPos << "," << SimulationSpaceSectorsRangesForCurrentParallelTask.EndYPos << "," << SimulationSpaceSectorsRangesForCurrentParallelTask.EndZPos << ")"));
+                LoggersManagerObject.Log(STREAM("ParallelTaskGroupNumber = " << ThreadData->ParallelTaskGroupNumber << " Thread Position = (" << ThreadXIndex << "," << ThreadYIndex << "," << ThreadZIndex << ")"));
             }
 
             ThreadIndex++;
@@ -623,14 +622,14 @@ void CellEngineSimulationParallelTasksExecutionManager::GatherParticlesFromThrea
     CATCH("gathering particles from threads to particles in main thread")
 }
 
-void CellEngineSimulationParallelTasksExecutionManager::SychronizeSimulationExecutedInThreads(barrier<>* SyncPoint, const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData) const
+void CellEngineSimulationParallelTasksExecutionManager::SychronizeSimulationExecutedInThreads(barrier<>* SyncPoint, const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData)
 {
     try
     {
         switch (CellEngineConfigDataObject.TypeOfSychronizationfSimulationExecutedInThreads)
         {
             case CellEngineConfigData::TypesOfSychronizationfSimulationExecutedInThreads::SynchronizeSimulationExecutedInThreadsByOneGlobalBarrier : SyncPoint->arrive_and_wait(); break;
-            case CellEngineConfigData::TypesOfSychronizationfSimulationExecutedInThreads::SynchronizeSimulationExecutedInThreadsByLocalBarriersOnWallsBetweenThreads : SynchronizeWithNeighborByLocalBarrier(CurrentThreadLocalSimulationSpaceData); break;
+            case CellEngineConfigData::TypesOfSychronizationfSimulationExecutedInThreads::SynchronizeSimulationExecutedInThreadsByLocalBarriersOnWallsBetweenThreads : SyncPoint->arrive_and_wait(); break;
             case CellEngineConfigData::TypesOfSychronizationfSimulationExecutedInThreads::SynchronizeSimulationExecutedInThreadsByConditionalVariableWithTwoMutexes : SyncPoint->arrive_and_wait(); break;
             case CellEngineConfigData::TypesOfSychronizationfSimulationExecutedInThreads::SynchronizeSimulationExecutedInThreadsByConditionalVariableWithOneMutex : SyncPoint->arrive_and_wait(); break;
             default : break;
@@ -729,10 +728,15 @@ static inline UnsignedInt StepToChangeSimulationSpaceDivisionForThreads(const Un
     return ((StepOutside % CellEngineConfigDataObject.StepToChangeSpaceDivisionForThreads == 0) ? !StateOfSimulationSpaceDivisionForThreads : StateOfSimulationSpaceDivisionForThreads);
 }
 
-void CellEngineSimulationParallelTasksExecutionManager::GenerateNStepsOfSimulationForWholeCellSpaceInOneThread(barrier<>* SyncPoint, bool* StateOfSimulationSpaceDivisionForThreads, const UnsignedInt NumberOfStepsOutside, const UnsignedInt NumberOfStepsInside, const ThreadIdType CurrentThreadIndexParam, const UnsignedInt ThreadXIndexParam, const UnsignedInt ThreadYIndexParam, const UnsignedInt ThreadZIndexParam, const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData) const
+void CellEngineSimulationParallelTasksExecutionManager::GenerateNStepsOfSimulationForWholeCellSpaceInOneThread(barrier<>* SyncPoint, bool* StateOfSimulationSpaceDivisionForThreads, const UnsignedInt NumberOfStepsOutside, const UnsignedInt NumberOfStepsInside, const ThreadIdType CurrentThreadIndexParam, const UnsignedInt ThreadXIndexParam, const UnsignedInt ThreadYIndexParam, const UnsignedInt ThreadZIndexParam, const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, latch* AllThreadsReady)
 {
     try
     {
+        CellEngineThreadPinning::BindCurrentThreadToCPU(CPUsForThreads[(CurrentThreadIndexParam - 1) % CPUsForThreads.size()]);
+
+        AllThreadsReady->count_down();
+        StartGatesForThreads[CurrentThreadIndexParam - 1].acquire();
+
         for (UnsignedInt StepOutside = 1; StepOutside <= NumberOfStepsOutside; StepOutside++)
         {
             CurrentThreadLocalSimulationSpaceData->GenerateOneStepOfSimulationForWholeCellSpaceInOneThread(CurrentThreadLocalSimulationSpaceData, NumberOfStepsInside, StepOutside, ThreadXIndexParam, ThreadYIndexParam, ThreadZIndexParam, *StateOfSimulationSpaceDivisionForThreads, SyncPoint);
@@ -774,6 +778,8 @@ void CellEngineSimulationParallelTasksExecutionManager::GenerateNStepsOfSimulati
 {
     try
     {
+        CPUsForThreads = CellEngineThreadPinning::GetCPUsForThreads();
+
         CellEngineConfigDataObject.MultiThreaded = true;
 
         SetZeroForAllParallelExecutionVariables();
@@ -782,7 +788,7 @@ void CellEngineSimulationParallelTasksExecutionManager::GenerateNStepsOfSimulati
 
         std::barrier SyncPoint(CellEngineConfigDataObject.NumberOfXThreadsInSimulation * CellEngineConfigDataObject.NumberOfYThreadsInSimulation * CellEngineConfigDataObject.NumberOfZThreadsInSimulation);
 
-        vector<vector<vector<thread*>>> Threads(CellEngineConfigDataObject.NumberOfXThreadsInSimulation, vector<vector<thread*>>(CellEngineConfigDataObject.NumberOfYThreadsInSimulation, vector<thread*>(CellEngineConfigDataObject.NumberOfZThreadsInSimulation)));
+        vector<vector<vector<jthread*>>> Threads(CellEngineConfigDataObject.NumberOfXThreadsInSimulation, vector<vector<jthread*>>(CellEngineConfigDataObject.NumberOfYThreadsInSimulation, vector<jthread*>(CellEngineConfigDataObject.NumberOfZThreadsInSimulation)));
 
         const UnsignedInt NumberOfAllParticlesBeforeSimulation = CellEngineDataFileObjectPointer->GetNumberOfAllParticles();
         LoggersManagerObject.Log(STREAM(""));
@@ -791,29 +797,47 @@ void CellEngineSimulationParallelTasksExecutionManager::GenerateNStepsOfSimulati
         LoggersManagerObject.Log(STREAM("START SIMULATION IN THREADS"));
         LoggersManagerObject.Log(STREAM("MaxParticleUniqueId = " << MaxParticleUniqueId));
 
-        const auto start_time = chrono::high_resolution_clock::now();
-
         CellEngineUseful::SwitchOffLogs();
+
+        std::latch AllThreadsReady{ static_cast<ptrdiff_t>(CellEngineConfigDataObject.NumberOfXThreadsInSimulation * CellEngineConfigDataObject.NumberOfYThreadsInSimulation * CellEngineConfigDataObject.NumberOfZThreadsInSimulation) };
+
+        StartGatesForThreads.clear();
+        FOR_EACH_THREAD_IN_XYZ
+            StartGatesForThreads.emplace_back(0);
 
         ThreadIdType ThreadIndex = 1;
         FOR_EACH_THREAD_IN_XYZ
         {
-            Threads[ThreadXIndex][ThreadYIndex][ThreadZIndex] = new thread(&CellEngineSimulationParallelTasksExecutionManager::GenerateNStepsOfSimulationForWholeCellSpaceInOneThread, this, &SyncPoint, &StateOfSimulationSpaceDivisionForThreads, NumberOfStepsOutside, NumberOfStepsInside, ThreadIndex, ThreadXIndex, ThreadYIndex, ThreadZIndex, SimulationSpaceDataForThreads[ThreadXIndex][ThreadYIndex][ThreadZIndex]);
+            Threads[ThreadXIndex][ThreadYIndex][ThreadZIndex] = new jthread(&CellEngineSimulationParallelTasksExecutionManager::GenerateNStepsOfSimulationForWholeCellSpaceInOneThread, this, &SyncPoint, &StateOfSimulationSpaceDivisionForThreads, NumberOfStepsOutside, NumberOfStepsInside, ThreadIndex, ThreadXIndex, ThreadYIndex, ThreadZIndex, SimulationSpaceDataForThreads[ThreadXIndex][ThreadYIndex][ThreadZIndex], &AllThreadsReady);
+            ThreadIndex++;
+        }
+
+        AllThreadsReady.wait();
+
+        const auto start_time = chrono::high_resolution_clock::now();
+        const auto StartTime = std::chrono::steady_clock::now();
+
+        ThreadIndex = 0;
+        FOR_EACH_THREAD_IN_XYZ
+        {
+            StartGatesForThreads[ThreadIndex].release();
             ThreadIndex++;
         }
 
         FOR_EACH_THREAD_IN_XYZ
-        {
             Threads[ThreadXIndex][ThreadYIndex][ThreadZIndex]->join();
+
+        const auto StopTime = std::chrono::steady_clock::now();
+        const auto stop_time = chrono::high_resolution_clock::now();
+
+        FOR_EACH_THREAD_IN_XYZ
             delete Threads[ThreadXIndex][ThreadYIndex][ThreadZIndex];
-        }
 
         CellEngineUseful::SwitchOnLogs();
 
-        const auto stop_time = chrono::high_resolution_clock::now();
-
         const string ResultText = "Execution in threads for steps outside = " + to_string(NumberOfStepsOutside) + " and steps inside = " + to_string(NumberOfStepsInside) + " has taken time: ";
         LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, ResultText.c_str(),"Execution in threads")));
+        LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(StartTime, StopTime, ResultText.c_str(),"Execution in threads")));
 
         const UnsignedInt NumberOfAllParticlesAfterSimulation = CellEngineDataFileObjectPointer->GetNumberOfAllParticles();
         LoggersManagerObject.Log(STREAM("END SIMULATION IN THREADS"));
@@ -1340,17 +1364,23 @@ void CellEngineSimulationParallelTasksExecutionManager::GenerateNStepsOfSimulati
     {
         for (UnsignedInt StepOutside = 1; StepOutside <= NumberOfStepsOutside; StepOutside++)
         {
-            LoggersManagerObject.Log(STREAM("NUMBER OF STEPS OUTSIDE = " << NumberOfStepsInside << " " << StepOutside));
+            DEBUG_LOG_DIFFUSION(LoggersManagerObject.Log(STREAM("NUMBER OF STEPS OUTSIDE = " << NumberOfStepsInside << " " << StepOutside));)
 
             GenerateOneStepOfSimulationForWholeCellSpaceInMPIProcess(NumberOfStepsInside, StepOutside, ThreadXIndexParam, ThreadYIndexParam, ThreadZIndexParam);
 
             const auto start_time_exchange = chrono::high_resolution_clock::now();
 
-            ExchangeParticlesBetweenMPIProcessesVer2();
+            ExchangeParticlesBetweenMPIProcesses();
+
+                                                                                                                        ParallelTaskGroupNumber = 1 - ParallelTaskGroupNumber;
+
+                                                                                                                        MPI_Barrier(MPI_COMM_WORLD);
+
+                                                                                                                        ExchangeParticlesBetweenMPIProcesses();
 
             const auto stop_time_exchange = chrono::high_resolution_clock::now();
 
-            LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time_exchange, stop_time_exchange, "Only exchanging of particles has taken time","Execution in mpi")));
+            DEBUG_LOG_DIFFUSION(LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time_exchange, stop_time_exchange, "Only exchanging of particles has taken time","Execution in mpi")));)
         }
     }
     CATCH("generating n steps of simulation for whole cell space in one thread")
@@ -1382,13 +1412,28 @@ void CellEngineSimulationParallelTasksExecutionManager::GenerateNStepsOfSimulati
 
         LoggersManagerObject.LogUnconditional(STREAM("NUMBER OF ALL PARTICLES IN MPI SIMULATION = " << NumberOfAllParticlesInMPISimulation << " " << MPIProcessDataObject.CurrentMPIProcessIndex << " " << "START"));
 
+        MPI_Barrier(MPI_COMM_WORLD);
+        const double StartTime = MPI_Wtime();
+
         const auto start_time = chrono::high_resolution_clock::now();
 
         GenerateNStepsOfSimulationForWholeCellSpaceInMPIProcess(NumberOfStepsOutside, NumberOfStepsInside, MPIProcessDataObject.CurrentMPIProcessIndex, 0, 0, 0);
 
+        MPI_Barrier(MPI_COMM_WORLD);
+
+        const double MyTime = MPI_Wtime() - StartTime;
+
         const auto stop_time = chrono::high_resolution_clock::now();
 
+        double MaxTime = 0.0;
+        double MinTime = 0.0;
+        MPI_Reduce(&MyTime, &MaxTime, 1, MPI_DOUBLE, MPI_MAX, CellEngineConfigDataObject.MainMPIProcessNumber, MPI_COMM_WORLD);
+        MPI_Reduce(&MyTime, &MinTime, 1, MPI_DOUBLE, MPI_MIN, CellEngineConfigDataObject.MainMPIProcessNumber, MPI_COMM_WORLD);
+
         CellEngineUseful::SwitchOnLogs();
+
+        if (MPIProcessDataObject.CurrentMPIProcessIndex == CellEngineConfigDataObject.MainMPIProcessNumber)
+            LoggersManagerObject.Log(STREAM("Execution in MPI processes for steps outside -> parallel time = " << MaxTime << " s (all processes measured between " << MinTime << " s and " << MaxTime << " s)"));
 
         const string ResultText = "Execution in MPI processes for steps outside = " + to_string(NumberOfStepsOutside) + " and steps inside = " + to_string(NumberOfStepsInside) + " has taken time: ";
         LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time, stop_time, ResultText.c_str(),"Execution in mpi")));
@@ -1639,7 +1684,7 @@ void CellEngineSimulationParallelTasksExecutionManager::ExchangeParticlesBetween
     CellEngineUseful::SwitchOffLogs();
 }
 
-void CellEngineSimulationParallelTasksExecutionManager::ExchangeParticlesBetweenMPIProcessesVer2()
+void CellEngineSimulationParallelTasksExecutionManager::ExchangeParticlesBetweenMPIProcesses()
 {
     try
     {
