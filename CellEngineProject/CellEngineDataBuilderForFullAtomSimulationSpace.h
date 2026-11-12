@@ -51,6 +51,9 @@ protected:
     {
         if (CellEngineConfigDataObject.MixedFullAtomWithVoxelSpace == false)
             CellEngineFullAtomSimulationSpaceObjectPointer->PreprocessData<RealType, CellEngineAtom>(&Particle::ListOfAtoms, &ParticleKind::ListOfAtoms, Update);
+
+        if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == false)
+            CellEngineSimulationParallelTasksExecutionManager::MoveParticlesOfEveryThreadToMemoryOfItsNUMANode(Particles);
     }
 protected:
     void PrintStatistics() override

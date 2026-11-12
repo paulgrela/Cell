@@ -14,6 +14,9 @@ struct ChemicalReactionStatistics;
 class CellEngineSimulationParallelTasksExecutionManager : virtual public CellEngineBasicParticlesOperations
 {
 public:
+    static void MoveParticlesOfEveryThreadToMemoryOfItsNUMANode(ParticlesContainer<Particle>& Particles);
+
+public:
     template <class SimulationSpaceType>
     static void CreateSimulationSpaceForParallelExecution(SimulationSpaceForParallelExecutionContainer<CellEngineSimulationSpace>& CellEngineSimulationSpaceForThreadsObjectsPointer, ParticlesContainer<Particle>& Particles);
 public:
