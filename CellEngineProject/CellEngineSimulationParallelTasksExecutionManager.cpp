@@ -646,8 +646,8 @@ void CellEngineSimulationParallelTasksExecutionManager::ExchangeParticlesBetween
         {
             case CellEngineConfigData::TypesOfSychronizationfSimulationExecutedInThreads::SynchronizeSimulationExecutedInThreadsByOneGlobalBarrier : ExchangeParticlesBetweenThreadsOneGlobalBarrier(SyncPoint, CurrentThreadLocalSimulationSpaceData, CurrentThreadIndexParam, ThreadXIndexParam, ThreadYIndexParam, ThreadZIndexParam); break;
             case CellEngineConfigData::TypesOfSychronizationfSimulationExecutedInThreads::SynchronizeSimulationExecutedInThreadsByLocalBarriersOnWallsBetweenThreads : ExchangeParticlesBetweenThreadsLocalBarrier(CurrentThreadLocalSimulationSpaceData, CurrentThreadIndexParam, ThreadXIndexParam, ThreadYIndexParam, ThreadZIndexParam); break;
-            case CellEngineConfigData::TypesOfSychronizationfSimulationExecutedInThreads::SynchronizeSimulationExecutedInThreadsByConditionalVariableWithTwoMutexes : ExchangeParticlesBetweenThreadsConditionalVariableTwoMutexes(CurrentThreadLocalSimulationSpaceData); break;
-            case CellEngineConfigData::TypesOfSychronizationfSimulationExecutedInThreads::SynchronizeSimulationExecutedInThreadsByConditionalVariableWithOneMutex : ExchangeParticlesBetweenThreadsConditionalVariableOneMutex(CurrentThreadLocalSimulationSpaceData); break;
+            case CellEngineConfigData::TypesOfSychronizationfSimulationExecutedInThreads::SynchronizeSimulationExecutedInThreadsByConditionalVariableWithTwoMutexes : ExchangeParticlesBetweenThreadsConditionalVariableTwoMutexes(CurrentThreadLocalSimulationSpaceData, CurrentThreadIndexParam, ThreadXIndexParam, ThreadYIndexParam, ThreadZIndexParam); break;
+            case CellEngineConfigData::TypesOfSychronizationfSimulationExecutedInThreads::SynchronizeSimulationExecutedInThreadsByConditionalVariableWithOneMutex : ExchangeParticlesBetweenThreadsConditionalVariableOneMutex(CurrentThreadLocalSimulationSpaceData, CurrentThreadIndexParam, ThreadXIndexParam, ThreadYIndexParam, ThreadZIndexParam); break;
             default : break;
         }
     }
@@ -688,6 +688,8 @@ void CellEngineSimulationParallelTasksExecutionManager::GenerateOneStepOfSimulat
         if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
             for (UnsignedInt Step2 = 1; Step2 <= NumberOfStepsInside; Step2++)
             {
+                CurrentThreadLocalSimulationSpaceData->CurrentDiffusionStepStamp = FirstDiffusionStepStampOfCurrentRun + (StepOutside - 1) * NumberOfStepsInside + (Step2 - 1);
+
                 DEBUG_LOG_DIFFUSION_OR_CHEMICAL_REACTION(LoggersManagerObject.Log(STREAM("STEP INSIDE = " << Step2 << " ThreadX = " << ThreadXIndex << " ThreadX = " << ThreadYIndex << " ThreadX = " << ThreadZIndex));)
 
                 for (UnsignedInt ParticleSectorXIndex = CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.StartXPos; ParticleSectorXIndex < CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.EndXPos; ParticleSectorXIndex++)
@@ -830,6 +832,8 @@ void CellEngineSimulationParallelTasksExecutionManager::GenerateNStepsOfSimulati
         const auto StopTime = std::chrono::steady_clock::now();
         const auto stop_time = chrono::high_resolution_clock::now();
 
+        FirstDiffusionStepStampOfCurrentRun += NumberOfStepsOutside * NumberOfStepsInside;
+
         FOR_EACH_THREAD_IN_XYZ
             delete Threads[ThreadXIndex][ThreadYIndex][ThreadZIndex];
 
@@ -912,8 +916,7 @@ void CellEngineSimulationParallelTasksExecutionManager::ExchangeParticlesBetween
 
                                     SimulationSpaceDataForThreads[ReceivedParticleUniqueIdToInsert.SenderParallelTaskPos.PosX][ReceivedParticleUniqueIdToInsert.SenderParallelTaskPos.PosY][ReceivedParticleUniqueIdToInsert.SenderParallelTaskPos.PosZ]->ConfirmationOfParticlesToRemoveToSent[LocalNeighborProcessIndex].emplace_back(ConfirmationOfParticlesToRemoveToSentStruct{ .ParticleUniqueId = ReceivedParticleUniqueIdToInsert.ParticleUniqueId, .SenderSectorPos = { .X = ReceivedParticleUniqueIdToInsert.SenderSectorPos.X, .Y = ReceivedParticleUniqueIdToInsert.SenderSectorPos.Y, .Z = ReceivedParticleUniqueIdToInsert.SenderSectorPos.Z }});
 
-                                    CurrentThreadLocalSimulationSpaceData->NumberOfParticlesSentToAnotherParallelTaskAndMovedInDiffusion++;
-                                    CurrentThreadLocalSimulationSpaceData->NumberOfParticlesMovedInDiffusion++;
+                                    CurrentThreadLocalSimulationSpaceData->NumberOfParticlesMovedInDiffusionSentToAnotherParallelTask++;
                                 }
                                 #ifdef SIMULATION_DETAILED_DEBUG_LOG_DIFFUSION
                                 else
@@ -1079,7 +1082,7 @@ void CellEngineSimulationParallelTasksExecutionManager::ExchangeParticlesBetween
     CATCH("exchange particles threads processes")
 }
 
-void CellEngineSimulationParallelTasksExecutionManager::ExchangeParticlesBetweenThreadsGroup2ConditionalVariableTwoMutexes(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData) const
+void CellEngineSimulationParallelTasksExecutionManager::ExchangeParticlesBetweenThreadsGroup2ConditionalVariableTwoMutexes(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, const ThreadIdType CurrentThreadIndexParam, const UnsignedInt ThreadXIndexParam, const UnsignedInt ThreadYIndexParam, const UnsignedInt ThreadZIndexParam) const
 {
     try
     {
@@ -1116,7 +1119,7 @@ void CellEngineSimulationParallelTasksExecutionManager::ExchangeParticlesBetween
 
                     if (CurrentThreadLocalSimulationSpaceData->CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossibleInMultiThreadedDiffusion(ReceivedParticleUniqueIdToInsert, ReceivedParticleUniqueIdToInsert.ParticleObject) == true)
                     {
-                        // DEBUG_LOG_DIFFUSION(LoggersManagerObject.LogUnconditional(STREAM("SENDING CONFIRMATION TO NEIGHBOR = (PARTICLE_INDEX = " << ReceivedParticleUniqueIdToInsert.ParticleUniqueId << ")(" << ReceivedParticleUniqueIdToInsert.SenderProcessIndex << " " << ReceivedParticleUniqueIdToInsert.ReceiverProcessIndex << ") (" << CurrentThreadLocalSimulationSpaceData->CurrentThreadIndex << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.PosX << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.PosY << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.PosZ << ")["  << CurrentThreadLocalSimulationSpaceData->ThreadIndex << " " << ThreadXIndexParam << " " << ThreadYIndexParam << " " << ThreadZIndexParam << "] NEIGHBOR = (" << ReceivedParticleUniqueIdToInsert.ReceiverThreadPos.PosX << " " << ReceivedParticleUniqueIdToInsert.ReceiverThreadPos.PosY << " " << ReceivedParticleUniqueIdToInsert.ReceiverThreadPos.PosZ << ")"));)
+                        DEBUG_LOG_DIFFUSION(LoggersManagerObject.LogUnconditional(STREAM("SENDING CONFIRMATION TO NEIGHBOR = (PARTICLE_INDEX = " << ReceivedParticleUniqueIdToInsert.ParticleUniqueId << ")(" << ReceivedParticleUniqueIdToInsert.SenderParallelTaskIndex << " " << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskIndex << ") (" << CurrentThreadLocalSimulationSpaceData->CurrentThreadIndex << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.PosX << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.PosY << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.PosZ << ")["  << CurrentThreadLocalSimulationSpaceData->CurrentThreadIndex << " " << ThreadXIndexParam << " " << ThreadYIndexParam << " " << ThreadZIndexParam << "] NEIGHBOR = (" << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskPos.PosX << " " << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskPos.PosY << " " << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskPos.PosZ << ")"));)
 
                         auto& ParticleObject = CurrentThreadLocalSimulationSpaceData->GetParticleFromUniqueId(ReceivedParticleUniqueIdToInsert.ParticleUniqueId);
                         ParticleObject.SetCenterCoordinates(ParticleObject.Center.X + ReceivedParticleUniqueIdToInsert.Vector.X, ParticleObject.Center.Y + ReceivedParticleUniqueIdToInsert.Vector.Y, ParticleObject.Center.Z + ReceivedParticleUniqueIdToInsert.Vector.Z);
@@ -1124,16 +1127,15 @@ void CellEngineSimulationParallelTasksExecutionManager::ExchangeParticlesBetween
 
                         ConfirmationOfParticlesToRemoveToSent.emplace_back(ConfirmationOfParticlesToRemoveToSentStruct{ .ParticleUniqueId = ReceivedParticleUniqueIdToInsert.ParticleUniqueId, .SenderSectorPos = { .X = ReceivedParticleUniqueIdToInsert.SenderSectorPos.X, .Y = ReceivedParticleUniqueIdToInsert.SenderSectorPos.Y, .Z = ReceivedParticleUniqueIdToInsert.SenderSectorPos.Z }});
 
-                        // DEBUG_LOG_DIFFUSION(LoggersManagerObject.LogUnconditional(STREAM("EXPORT CONFIRMATION TO NEIGHBOR = (PARTICLE_INDEX = " << ReceivedParticleUniqueIdToInsert.ParticleUniqueId << ") (" << ReceivedParticleUniqueIdToInsert.Vector.X << "," << ReceivedParticleUniqueIdToInsert.Vector.Y << "," << ReceivedParticleUniqueIdToInsert.Vector.Z << ") P = (" << ParticleObject.Center.X << ", " << ParticleObject.Center.Y << ", " << ParticleObject.Center.Z << ") PSHIFT = (" << ParticleObject.Center.X + ReceivedParticleUniqueIdToInsert.Vector.X << ", " << ParticleObject.Center.Y + ReceivedParticleUniqueIdToInsert.Vector.Y << ", " << ParticleObject.Center.Z + ReceivedParticleUniqueIdToInsert.Vector.Z << ")" << " (" << ReceivedParticleUniqueIdToInsert.SenderProcessIndex << " " << ReceivedParticleUniqueIdToInsert.ReceiverProcessIndex << ") (" << CurrentThreadLocalSimulationSpaceData->CurrentThreadIndex << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.PosX << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.PosY << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.PosZ << ")["  << CurrentThreadIndexParam << " " << ThreadXIndexParam << " " << ThreadYIndexParam << " " << ThreadZIndexParam << "] NEIGHBOR = (" << ReceivedParticleUniqueIdToInsert.ReceiverThreadPos.PosX << " " << ReceivedParticleUniqueIdToInsert.ReceiverThreadPos.PosY << " " << ReceivedParticleUniqueIdToInsert.ReceiverThreadPos.PosZ << ")"));)
+                       DEBUG_LOG_DIFFUSION(LoggersManagerObject.LogUnconditional(STREAM("EXPORT CONFIRMATION TO NEIGHBOR = (PARTICLE_INDEX = " << ReceivedParticleUniqueIdToInsert.ParticleUniqueId << ") (" << ReceivedParticleUniqueIdToInsert.Vector.X << "," << ReceivedParticleUniqueIdToInsert.Vector.Y << "," << ReceivedParticleUniqueIdToInsert.Vector.Z << ") P = (" << ParticleObject.Center.X << ", " << ParticleObject.Center.Y << ", " << ParticleObject.Center.Z << ") PSHIFT = (" << ParticleObject.Center.X + ReceivedParticleUniqueIdToInsert.Vector.X << ", " << ParticleObject.Center.Y + ReceivedParticleUniqueIdToInsert.Vector.Y << ", " << ParticleObject.Center.Z + ReceivedParticleUniqueIdToInsert.Vector.Z << ")" << " (" << ReceivedParticleUniqueIdToInsert.SenderParallelTaskIndex << " " << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskIndex << ") (" << CurrentThreadLocalSimulationSpaceData->CurrentThreadIndex << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.PosX << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.PosY << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.PosZ << ")["  << CurrentThreadIndexParam << " " << ThreadXIndexParam << " " << ThreadYIndexParam << " " << ThreadZIndexParam << "] NEIGHBOR = (" << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskPos.PosX << " " << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskPos.PosY << " " << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskPos.PosZ << ")"));)
 
-                        CurrentThreadLocalSimulationSpaceData->NumberOfParticlesSentToAnotherParallelTaskAndMovedInDiffusion++;
-                        CurrentThreadLocalSimulationSpaceData->NumberOfParticlesMovedInDiffusion++;
+                        CurrentThreadLocalSimulationSpaceData->NumberOfParticlesMovedInDiffusionSentToAnotherParallelTask++;
                     }
                     else
                     {
                         CurrentThreadLocalSimulationSpaceData->NumberOfParticlesToBeMovedInDiffusionRejectedByAnotherParallelTask++;
 
-                        // DEBUG_LOG_DIFFUSION(LoggersManagerObject.LogUnconditional(STREAM("NOT SENDING CONFIRMATION TO NEIGHBOR = (PARTICLE_INDEX = " << ReceivedParticleUniqueIdToInsert.ParticleUniqueId << ")(" << ReceivedParticleUniqueIdToInsert.SenderParallelTaskIndex << " " << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskIndex << ") (" << CurrentThreadLocalSimulationSpaceData->CurrentThreadIndex << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.PosX << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.PosY << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.PosZ << ")["  << CurrentThreadLocalSimulationSpaceData->ThreadIndex << " " << ThreadXIndexParam << " " << ThreadYIndexParam << " " << ThreadZIndexParam << "] NEIGHBOR = (" << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskPos.PosX << " " << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskPos.PosY << " " << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskPos.PosZ << ")"));)
+                        DEBUG_LOG_DIFFUSION(LoggersManagerObject.LogUnconditional(STREAM("NOT SENDING CONFIRMATION TO NEIGHBOR = (PARTICLE_INDEX = " << ReceivedParticleUniqueIdToInsert.ParticleUniqueId << ")(" << ReceivedParticleUniqueIdToInsert.SenderParallelTaskIndex << " " << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskIndex << ") (" << CurrentThreadLocalSimulationSpaceData->CurrentThreadIndex << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.PosX << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.PosY << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.PosZ << ")["  << CurrentThreadLocalSimulationSpaceData->CurrentThreadIndex << " " << ThreadXIndexParam << " " << ThreadYIndexParam << " " << ThreadZIndexParam << "] NEIGHBOR = (" << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskPos.PosX << " " << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskPos.PosY << " " << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskPos.PosZ << ")"));)
                         DEBUG_LOG_DIFFUSION(LoggersManagerObject.LogUnconditional(STREAM("PARTCLE_INDEX TO NOT SEND CONFIRMATION = " << ReceivedParticleUniqueIdToInsert.ParticleUniqueId));)
                     }
                 }
@@ -1152,18 +1154,18 @@ void CellEngineSimulationParallelTasksExecutionManager::ExchangeParticlesBetween
     CATCH("exchange particles between threads ver 2")
 }
 
-void CellEngineSimulationParallelTasksExecutionManager::ExchangeParticlesBetweenThreadsConditionalVariableTwoMutexes(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData) const
+void CellEngineSimulationParallelTasksExecutionManager::ExchangeParticlesBetweenThreadsConditionalVariableTwoMutexes(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, const ThreadIdType CurrentThreadIndexParam, const UnsignedInt ThreadXIndexParam, const UnsignedInt ThreadYIndexParam, const UnsignedInt ThreadZIndexParam) const
 {
     try
     {
         if (CurrentThreadLocalSimulationSpaceData->ParallelTaskGroupNumber == 0)
         {
             ExchangeParticlesBetweenThreadsGroup1ConditionalVariableTwoMutexes(CurrentThreadLocalSimulationSpaceData);
-            ExchangeParticlesBetweenThreadsGroup2ConditionalVariableTwoMutexes(CurrentThreadLocalSimulationSpaceData);
+            ExchangeParticlesBetweenThreadsGroup2ConditionalVariableTwoMutexes(CurrentThreadLocalSimulationSpaceData, CurrentThreadIndexParam, ThreadXIndexParam, ThreadYIndexParam, ThreadZIndexParam);
         }
         else
         {
-            ExchangeParticlesBetweenThreadsGroup2ConditionalVariableTwoMutexes(CurrentThreadLocalSimulationSpaceData);
+            ExchangeParticlesBetweenThreadsGroup2ConditionalVariableTwoMutexes(CurrentThreadLocalSimulationSpaceData, CurrentThreadIndexParam, ThreadXIndexParam, ThreadYIndexParam, ThreadZIndexParam);
             ExchangeParticlesBetweenThreadsGroup1ConditionalVariableTwoMutexes(CurrentThreadLocalSimulationSpaceData);
         }
     }
@@ -1231,7 +1233,7 @@ void CellEngineSimulationParallelTasksExecutionManager::ExchangeParticlesBetween
     CATCH("exchange particles between threads group 1")
 }
 
-void CellEngineSimulationParallelTasksExecutionManager::ExchangeParticlesBetweenThreadsGroup2ConditionalVariableOneMutex(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData) const
+void CellEngineSimulationParallelTasksExecutionManager::ExchangeParticlesBetweenThreadsGroup2ConditionalVariableOneMutex(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, const ThreadIdType CurrentThreadIndexParam, const UnsignedInt ThreadXIndexParam, const UnsignedInt ThreadYIndexParam, const UnsignedInt ThreadZIndexParam) const
 {
     try
     {
@@ -1266,7 +1268,7 @@ void CellEngineSimulationParallelTasksExecutionManager::ExchangeParticlesBetween
 
                     if (CurrentThreadLocalSimulationSpaceData->CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossibleInMultiThreadedDiffusion(ReceivedParticleUniqueIdToInsert, ReceivedParticleUniqueIdToInsert.ParticleObject) == true)
                     {
-                        // DEBUG_LOG_DIFFUSION(LoggersManagerObject.LogUnconditional(STREAM("SENDING CONFIRMATION TO NEIGHBOR = (PARTICLE_INDEX = " << ReceivedParticleUniqueIdToInsert.ParticleUniqueId << ")(" << ReceivedParticleUniqueIdToInsert.SenderProcessIndex << " " << ReceivedParticleUniqueIdToInsert.ReceiverProcessIndex << ") (" << CurrentThreadLocalSimulationSpaceData->CurrentThreadIndex << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.PosX << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.PosY << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.PosZ << ")["  << CurrentThreadLocalSimulationSpaceData->ThreadIndex << " " << ThreadXIndexParam << " " << ThreadYIndexParam << " " << ThreadZIndexParam << "] NEIGHBOR = (" << ReceivedParticleUniqueIdToInsert.ReceiverThreadPos.PosX << " " << ReceivedParticleUniqueIdToInsert.ReceiverThreadPos.PosY << " " << ReceivedParticleUniqueIdToInsert.ReceiverThreadPos.PosZ << ")"));)
+                        DEBUG_LOG_DIFFUSION(LoggersManagerObject.LogUnconditional(STREAM("SENDING CONFIRMATION TO NEIGHBOR = (PARTICLE_INDEX = " << ReceivedParticleUniqueIdToInsert.ParticleUniqueId << ")(" << ReceivedParticleUniqueIdToInsert.SenderParallelTaskIndex << " " << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskIndex << ") (" << CurrentThreadLocalSimulationSpaceData->CurrentThreadIndex << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.PosX << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.PosY << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.PosZ << ")["  << CurrentThreadLocalSimulationSpaceData->CurrentThreadIndex << " " << ThreadXIndexParam << " " << ThreadYIndexParam << " " << ThreadZIndexParam << "] NEIGHBOR = (" << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskPos.PosX << " " << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskPos.PosY << " " << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskPos.PosZ << ")"));)
 
                         auto& ParticleObject = CurrentThreadLocalSimulationSpaceData->GetParticleFromUniqueId(ReceivedParticleUniqueIdToInsert.ParticleUniqueId);
                         ParticleObject.SetCenterCoordinates(ParticleObject.Center.X + ReceivedParticleUniqueIdToInsert.Vector.X, ParticleObject.Center.Y + ReceivedParticleUniqueIdToInsert.Vector.Y, ParticleObject.Center.Z + ReceivedParticleUniqueIdToInsert.Vector.Z);
@@ -1274,16 +1276,15 @@ void CellEngineSimulationParallelTasksExecutionManager::ExchangeParticlesBetween
 
                         ConfirmationOfParticlesToRemove.emplace_back(ConfirmationOfParticlesToRemoveToSentStruct{ .ParticleUniqueId = ReceivedParticleUniqueIdToInsert.ParticleUniqueId, .SenderSectorPos = { .X = ReceivedParticleUniqueIdToInsert.SenderSectorPos.X, .Y = ReceivedParticleUniqueIdToInsert.SenderSectorPos.Y, .Z = ReceivedParticleUniqueIdToInsert.SenderSectorPos.Z }});
 
-                        // DEBUG_LOG_DIFFUSION(LoggersManagerObject.LogUnconditional(STREAM("EXPORT CONFIRMATION TO NEIGHBOR = (PARTICLE_INDEX = " << ReceivedParticleUniqueIdToInsert.ParticleUniqueId << ") (" << ReceivedParticleUniqueIdToInsert.Vector.X << "," << ReceivedParticleUniqueIdToInsert.Vector.Y << "," << ReceivedParticleUniqueIdToInsert.Vector.Z << ") P = (" << ParticleObject.Center.X << ", " << ParticleObject.Center.Y << ", " << ParticleObject.Center.Z << ") PSHIFT = (" << ParticleObject.Center.X + ReceivedParticleUniqueIdToInsert.Vector.X << ", " << ParticleObject.Center.Y + ReceivedParticleUniqueIdToInsert.Vector.Y << ", " << ParticleObject.Center.Z + ReceivedParticleUniqueIdToInsert.Vector.Z << ")" << " (" << ReceivedParticleUniqueIdToInsert.SenderProcessIndex << " " << ReceivedParticleUniqueIdToInsert.ReceiverProcessIndex << ") (" << CurrentThreadLocalSimulationSpaceData->CurrentThreadIndex << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.ThreadPosX << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.PosY << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.PosZ << ")["  << CurrentThreadIndexParam << " " << ThreadXIndexParam << " " << ThreadYIndexParam << " " << ThreadZIndexParam << "] NEIGHBOR = (" << ReceivedParticleUniqueIdToInsert.ReceiverThreadPos.PosX << " " << ReceivedParticleUniqueIdToInsert.ReceiverThreadPos.PosY << " " << ReceivedParticleUniqueIdToInsert.ReceiverThreadPos.PosZ << ")"));)
+                        DEBUG_LOG_DIFFUSION(LoggersManagerObject.LogUnconditional(STREAM("EXPORT CONFIRMATION TO NEIGHBOR = (PARTICLE_INDEX = " << ReceivedParticleUniqueIdToInsert.ParticleUniqueId << ") (" << ReceivedParticleUniqueIdToInsert.Vector.X << "," << ReceivedParticleUniqueIdToInsert.Vector.Y << "," << ReceivedParticleUniqueIdToInsert.Vector.Z << ") P = (" << ParticleObject.Center.X << ", " << ParticleObject.Center.Y << ", " << ParticleObject.Center.Z << ") PSHIFT = (" << ParticleObject.Center.X + ReceivedParticleUniqueIdToInsert.Vector.X << ", " << ParticleObject.Center.Y + ReceivedParticleUniqueIdToInsert.Vector.Y << ", " << ParticleObject.Center.Z + ReceivedParticleUniqueIdToInsert.Vector.Z << ")" << " (" << ReceivedParticleUniqueIdToInsert.SenderParallelTaskIndex << " " << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskIndex << ") (" << CurrentThreadLocalSimulationSpaceData->CurrentThreadIndex << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.PosX << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.PosY << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.PosZ << ")["  << CurrentThreadIndexParam << " " << ThreadXIndexParam << " " << ThreadYIndexParam << " " << ThreadZIndexParam << "] NEIGHBOR = (" << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskPos.PosX << " " << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskPos.PosY << " " << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskPos.PosZ << ")"));)
 
-                        CurrentThreadLocalSimulationSpaceData->NumberOfParticlesSentToAnotherParallelTaskAndMovedInDiffusion++;
-                        CurrentThreadLocalSimulationSpaceData->NumberOfParticlesMovedInDiffusion++;
+                        CurrentThreadLocalSimulationSpaceData->NumberOfParticlesMovedInDiffusionSentToAnotherParallelTask++;
                     }
                     else
                     {
                         CurrentThreadLocalSimulationSpaceData->NumberOfParticlesToBeMovedInDiffusionRejectedByAnotherParallelTask++;
 
-                        // DEBUG_LOG_DIFFUSION(LoggersManagerObject.LogUnconditional(STREAM("NOT SENDING CONFIRMATION TO NEIGHBOR = (PARTICLE_INDEX = " << ReceivedParticleUniqueIdToInsert.ParticleUniqueId << ")(" << ReceivedParticleUniqueIdToInsert.SenderProcessIndex << " " << ReceivedParticleUniqueIdToInsert.ReceiverProcessIndex << ") (" << CurrentThreadLocalSimulationSpaceData->CurrentThreadIndex << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.ThreadPosX << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.PosY << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.PosZ << ")["  << CurrentThreadLocalSimulationSpaceData->ThreadIndex << " " << ThreadXIndexParam << " " << ThreadYIndexParam << " " << ThreadZIndexParam << "] NEIGHBOR = (" << ReceivedParticleUniqueIdToInsert.ReceiverThreadPos.PosX << " " << ReceivedParticleUniqueIdToInsert.ReceiverThreadPos.PosY << " " << ReceivedParticleUniqueIdToInsert.ReceiverThreadPos.PosZ << ")"));)
+                        DEBUG_LOG_DIFFUSION(LoggersManagerObject.LogUnconditional(STREAM("NOT SENDING CONFIRMATION TO NEIGHBOR = (PARTICLE_INDEX = " << ReceivedParticleUniqueIdToInsert.ParticleUniqueId << ")(" << ReceivedParticleUniqueIdToInsert.SenderParallelTaskIndex << " " << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskIndex << ") (" << CurrentThreadLocalSimulationSpaceData->CurrentThreadIndex << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.PosX << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.PosY << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.PosZ << ")["  << CurrentThreadLocalSimulationSpaceData->CurrentThreadIndex << " " << ThreadXIndexParam << " " << ThreadYIndexParam << " " << ThreadZIndexParam << "] NEIGHBOR = (" << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskPos.PosX << " " << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskPos.PosY << " " << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskPos.PosZ << ")"));)
                         DEBUG_LOG_DIFFUSION(LoggersManagerObject.LogUnconditional(STREAM("PARTCLE_INDEX TO NOT SEND CONFIRMATION = " << ReceivedParticleUniqueIdToInsert.ParticleUniqueId));)
                     }
                 }
@@ -1301,18 +1302,18 @@ void CellEngineSimulationParallelTasksExecutionManager::ExchangeParticlesBetween
     CATCH("exchange particles between threads group 2 ver 2")
 }
 
-void CellEngineSimulationParallelTasksExecutionManager::ExchangeParticlesBetweenThreadsConditionalVariableOneMutex(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData) const
+void CellEngineSimulationParallelTasksExecutionManager::ExchangeParticlesBetweenThreadsConditionalVariableOneMutex(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, const ThreadIdType CurrentThreadIndexParam, const UnsignedInt ThreadXIndexParam, const UnsignedInt ThreadYIndexParam, const UnsignedInt ThreadZIndexParam) const
 {
     try
     {
         if (CurrentThreadLocalSimulationSpaceData->ParallelTaskGroupNumber == 0)
         {
             ExchangeParticlesBetweenThreadsGroup1ConditionalVariableOneMutex(CurrentThreadLocalSimulationSpaceData);
-            ExchangeParticlesBetweenThreadsGroup2ConditionalVariableOneMutex(CurrentThreadLocalSimulationSpaceData);
+            ExchangeParticlesBetweenThreadsGroup2ConditionalVariableOneMutex(CurrentThreadLocalSimulationSpaceData, CurrentThreadIndexParam, ThreadXIndexParam, ThreadYIndexParam, ThreadZIndexParam);
         }
         else
         {
-            ExchangeParticlesBetweenThreadsGroup2ConditionalVariableOneMutex(CurrentThreadLocalSimulationSpaceData);
+            ExchangeParticlesBetweenThreadsGroup2ConditionalVariableOneMutex(CurrentThreadLocalSimulationSpaceData, CurrentThreadIndexParam, ThreadXIndexParam, ThreadYIndexParam, ThreadZIndexParam);
             ExchangeParticlesBetweenThreadsGroup1ConditionalVariableOneMutex(CurrentThreadLocalSimulationSpaceData);
         }
     }
@@ -1326,6 +1327,8 @@ void CellEngineSimulationParallelTasksExecutionManager::GenerateOneStepOfSimulat
         if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
             for (UnsignedInt Step2 = 1; Step2 <= NumberOfStepsInside; Step2++)
             {
+                CurrentDiffusionStepStamp = FirstDiffusionStepStampOfCurrentRun + (StepOutside - 1) * NumberOfStepsInside + (Step2 - 1);
+
                 DEBUG_LOG_DIFFUSION_OR_CHEMICAL_REACTION(LoggersManagerObject.Log(STREAM("STEP INSIDE = " << Step2 << " ThreadX = " << ThreadXIndex << " ThreadX = " << ThreadYIndex << " ThreadX = " << ThreadZIndex));)
 
                 for (UnsignedInt ParticleSectorXIndex = SimulationSpaceSectorsRangesForCurrentParallelTask.StartXPos; ParticleSectorXIndex < SimulationSpaceSectorsRangesForCurrentParallelTask.EndXPos; ParticleSectorXIndex++)
@@ -1372,13 +1375,9 @@ void CellEngineSimulationParallelTasksExecutionManager::GenerateNStepsOfSimulati
 
             ExchangeParticlesBetweenMPIProcesses();
 
-                                                                                                                        ParallelTaskGroupNumber = 1 - ParallelTaskGroupNumber;
-
-                                                                                                                        MPI_Barrier(MPI_COMM_WORLD);
-
-                                                                                                                        ExchangeParticlesBetweenMPIProcesses();
-
             const auto stop_time_exchange = chrono::high_resolution_clock::now();
+
+            ParallelTaskGroupNumber = 1 - ParallelTaskGroupNumber;
 
             DEBUG_LOG_DIFFUSION(LoggersManagerObject.Log(STREAM(GetDurationTimeInOneLineStr(start_time_exchange, stop_time_exchange, "Only exchanging of particles has taken time","Execution in mpi")));)
         }
@@ -1412,12 +1411,17 @@ void CellEngineSimulationParallelTasksExecutionManager::GenerateNStepsOfSimulati
 
         LoggersManagerObject.LogUnconditional(STREAM("NUMBER OF ALL PARTICLES IN MPI SIMULATION = " << NumberOfAllParticlesInMPISimulation << " " << MPIProcessDataObject.CurrentMPIProcessIndex << " " << "START"));
 
+        //this_thread::sleep_for(chrono::milliseconds(300));
+
         MPI_Barrier(MPI_COMM_WORLD);
+
         const double StartTime = MPI_Wtime();
 
         const auto start_time = chrono::high_resolution_clock::now();
 
         GenerateNStepsOfSimulationForWholeCellSpaceInMPIProcess(NumberOfStepsOutside, NumberOfStepsInside, MPIProcessDataObject.CurrentMPIProcessIndex, 0, 0, 0);
+
+        FirstDiffusionStepStampOfCurrentRun += NumberOfStepsOutside * NumberOfStepsInside;
 
         MPI_Barrier(MPI_COMM_WORLD);
 
@@ -1653,14 +1657,13 @@ void CellEngineSimulationParallelTasksExecutionManager::ExchangeParticlesBetween
 
                                 ConfirmationOfParticlesToRemoveToSent.emplace_back(ReceivedParticleUniqueIdToInsert.ParticleUniqueId);
 
-                                NumberOfParticlesSentToAnotherParallelTaskAndMovedInDiffusion++;
-                                NumberOfParticlesMovedInDiffusion++;
+                                NumberOfParticlesMovedInDiffusionSentToAnotherParallelTask++;
                             }
                             else
                             {
                                 NumberOfParticlesToBeMovedInDiffusionRejectedByAnotherParallelTask++;
 
-                                // DEBUG_LOG_DIFFUSION(LoggersManagerObject.LogUnconditional(STREAM("NOT SENDING CONFIRMATION TO NEIGHBOR = (PARTICLE_INDEX = " << ReceivedParticleUniqueIdToInsert.ParticleUniqueId << ")(" << ReceivedParticleUniqueIdToInsert.SenderProcessIndex << " " << ReceivedParticleUniqueIdToInsert.ReceiverProcessIndex << ") (" << CurrentThreadLocalSimulationSpaceData->CurrentThreadIndex << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.ThreadPosX << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.PosY << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.PosZ << ")["  << ThreadIndex << " " << ThreadXIndexParam << " " << ThreadYIndexParam << " " << ThreadZIndexParam << "] NEIGHBOR = (" << ReceivedParticleUniqueIdToInsert.ReceiverThreadPos.PosX << " " << ReceivedParticleUniqueIdToInsert.ReceiverThreadPos.PosY << " " << ReceivedParticleUniqueIdToInsert.ReceiverThreadPos.PosZ << ")"));)
+                                DEBUG_LOG_DIFFUSION(LoggersManagerObject.LogUnconditional(STREAM("NOT SENDING CONFIRMATION TO NEIGHBOR = (PARTICLE_INDEX = " << ReceivedParticleUniqueIdToInsert.ParticleUniqueId << ")(" << ReceivedParticleUniqueIdToInsert.SenderParallelTaskIndex << " " << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskIndex << ") (" << MPIProcessIndex << " ) NEIGHBOR = (" << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskPos.PosX << " " << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskPos.PosY << " " << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskPos.PosZ << ")"));)
                                 DEBUG_LOG_DIFFUSION(LoggersManagerObject.LogUnconditional(STREAM("PARTCLE_INDEX TO NOT SEND CONFIRMATION = " << ReceivedParticleUniqueIdToInsert.ParticleUniqueId));)
                             }
                         }
@@ -1730,9 +1733,12 @@ void CellEngineSimulationParallelTasksExecutionManager::SetZeroForAllParallelExe
         RestoredParticlesInCancelledReactions = 0;
 
         NumberOfParticlesMovedInDiffusion = 0;
-        NumberOfParticlesToBeMovedInDiffusionRejectedLocally = 0;
+        NumberOfParticlesMovedInDiffusionWithinInOneSectorWithinOneParallelTask = 0;
+        NumberOfParticlesMovedInDiffusionSentFromOneSectorToAnotherSectorWithinOneParallelTask = 0;
+        NumberOfParticlesToBeMovedInDiffusionSentFromOneSectorToAnotherSectorWithinOneParallelTaskRejected = 0;
+
+        NumberOfParticlesMovedInDiffusionSentToAnotherParallelTask = 0;
         NumberOfParticlesToBeMovedInDiffusionSentToCheckInAnotherParallelTask = 0;
-        NumberOfParticlesSentToAnotherParallelTaskAndMovedInDiffusion = 0;
         NumberOfParticlesToBeMovedInDiffusionRejectedByAnotherParallelTask  = 0;
         NumberOfParticlesToBeMovedInDiffusionConfirmedAfterSentInAnotherParallelTask = 0;
 
@@ -1750,26 +1756,35 @@ void CellEngineSimulationParallelTasksExecutionManager::SetZeroForAllParallelExe
             SimulationSpaceDataForThreads[ThreadXIndex][ThreadYIndex][ThreadZIndex]->RestoredParticlesInCancelledReactions = 0;
 
             SimulationSpaceDataForThreads[ThreadXIndex][ThreadYIndex][ThreadZIndex]->NumberOfParticlesMovedInDiffusion = 0;
-            SimulationSpaceDataForThreads[ThreadXIndex][ThreadYIndex][ThreadZIndex]->NumberOfParticlesToBeMovedInDiffusionRejectedLocally = 0;
+            SimulationSpaceDataForThreads[ThreadXIndex][ThreadYIndex][ThreadZIndex]->NumberOfParticlesMovedInDiffusionWithinInOneSectorWithinOneParallelTask = 0;
+            SimulationSpaceDataForThreads[ThreadXIndex][ThreadYIndex][ThreadZIndex]->NumberOfParticlesMovedInDiffusionSentFromOneSectorToAnotherSectorWithinOneParallelTask = 0;
+            SimulationSpaceDataForThreads[ThreadXIndex][ThreadYIndex][ThreadZIndex]->NumberOfParticlesToBeMovedInDiffusionSentFromOneSectorToAnotherSectorWithinOneParallelTaskRejected = 0;
+
+            SimulationSpaceDataForThreads[ThreadXIndex][ThreadYIndex][ThreadZIndex]->NumberOfParticlesMovedInDiffusionSentToAnotherParallelTask = 0;
             SimulationSpaceDataForThreads[ThreadXIndex][ThreadYIndex][ThreadZIndex]->NumberOfParticlesToBeMovedInDiffusionSentToCheckInAnotherParallelTask = 0;
             SimulationSpaceDataForThreads[ThreadXIndex][ThreadYIndex][ThreadZIndex]->NumberOfParticlesToBeMovedInDiffusionRejectedByAnotherParallelTask = 0;
-            SimulationSpaceDataForThreads[ThreadXIndex][ThreadYIndex][ThreadZIndex]->NumberOfParticlesSentToAnotherParallelTaskAndMovedInDiffusion = 0;
             SimulationSpaceDataForThreads[ThreadXIndex][ThreadYIndex][ThreadZIndex]->NumberOfParticlesToBeMovedInDiffusionConfirmedAfterSentInAnotherParallelTask = 0;
         }
     }
     CATCH("setting zero for all parallel execution variables")
 }
 
-void CellEngineSimulationParallelTasksExecutionManager::PrintAllExecutionVariables(const UnsignedInt PhaseId) const
+void CellEngineSimulationParallelTasksExecutionManager::PrintAllExecutionVariables(const UnsignedInt PhaseId)
 {
     try
     {
         LoggersManagerObject.Log(STREAM("DIFFUSION STATISTICS:"));
+
+        NumberOfParticlesMovedInDiffusion = NumberOfParticlesMovedInDiffusionWithinInOneSectorWithinOneParallelTask + NumberOfParticlesMovedInDiffusionSentFromOneSectorToAnotherSectorWithinOneParallelTask + NumberOfParticlesMovedInDiffusionSentToAnotherParallelTask;
+
         LoggersManagerObject.Log(STREAM("NumberOfParticlesMovedInDiffusion = " + to_string(NumberOfParticlesMovedInDiffusion) << " " << MPIProcessDataObject.CurrentMPIProcessIndex << " " << PhaseId));
-        LoggersManagerObject.Log(STREAM("NumberOfParticlesToBeMovedInDiffusionRejectedLocally = " + to_string(NumberOfParticlesToBeMovedInDiffusionRejectedLocally) << " " << MPIProcessDataObject.CurrentMPIProcessIndex << " " << PhaseId));
+        LoggersManagerObject.Log(STREAM("NumberOfParticlesMovedInDiffusionWithinInOneSectorWithinOneParallelTask = " + to_string(NumberOfParticlesMovedInDiffusionWithinInOneSectorWithinOneParallelTask) << " " << MPIProcessDataObject.CurrentMPIProcessIndex << " " << PhaseId));
+        LoggersManagerObject.Log(STREAM("NumberOfParticlesMovedInDiffusionSentFromOneSectorToAnotherSectorWithinOneParallelTask = " + to_string(NumberOfParticlesMovedInDiffusionSentFromOneSectorToAnotherSectorWithinOneParallelTask) << " " << MPIProcessDataObject.CurrentMPIProcessIndex << " " << PhaseId));
+        LoggersManagerObject.Log(STREAM("NumberOfParticlesToBeMovedInDiffusionSentFromOneSectorToAnotherSectorWithinOneParallelTaskRejected = " + to_string(NumberOfParticlesToBeMovedInDiffusionSentFromOneSectorToAnotherSectorWithinOneParallelTaskRejected) << " " << MPIProcessDataObject.CurrentMPIProcessIndex << " " << PhaseId));
+
+        LoggersManagerObject.Log(STREAM("NumberOfParticlesMovedInDiffusionSentToAnotherParallelTask = " + to_string(NumberOfParticlesMovedInDiffusionSentToAnotherParallelTask) << " " << MPIProcessDataObject.CurrentMPIProcessIndex << " " << PhaseId));
         LoggersManagerObject.Log(STREAM("NumberOfParticlesToBeMovedInDiffusionSentToCheckInAnotherParallelTask = " + to_string(NumberOfParticlesToBeMovedInDiffusionSentToCheckInAnotherParallelTask) << " " << MPIProcessDataObject.CurrentMPIProcessIndex << " " << PhaseId));
         LoggersManagerObject.Log(STREAM("NumberOfParticlesToBeMovedInDiffusionRejectedByAnotherParallelTask = " + to_string(NumberOfParticlesToBeMovedInDiffusionRejectedByAnotherParallelTask) << " " << MPIProcessDataObject.CurrentMPIProcessIndex << " " << PhaseId));
-        LoggersManagerObject.Log(STREAM("NumberOfParticlesSentToAnotherParallelTaskAndMovedInDiffusion = " + to_string(NumberOfParticlesSentToAnotherParallelTaskAndMovedInDiffusion) << " " << MPIProcessDataObject.CurrentMPIProcessIndex << " " << PhaseId));
         LoggersManagerObject.Log(STREAM("NumberOfParticlesToBeMovedInDiffusionConfirmedAfterSentInAnotherParallelTask = " + to_string(NumberOfParticlesToBeMovedInDiffusionConfirmedAfterSentInAnotherParallelTask) << " " << MPIProcessDataObject.CurrentMPIProcessIndex << " " << PhaseId));
 
         LoggersManagerObject.Log(STREAM("CHEMICAL REACTIONS STATISTICS:"));
@@ -1826,11 +1841,16 @@ void CellEngineSimulationParallelTasksExecutionManager::GatherAllParallelExecuti
             MPI_Allreduce(MPI_IN_PLACE, &RemovedParticlesInReactions, 1, MPI_UINT64_T, MPI_SUM, MPI_COMM_WORLD);
             MPI_Allreduce(MPI_IN_PLACE, &RestoredParticlesInCancelledReactions, 1, MPI_UINT64_T, MPI_SUM, MPI_COMM_WORLD);
 
+            NumberOfParticlesMovedInDiffusion = NumberOfParticlesMovedInDiffusionWithinInOneSectorWithinOneParallelTask + NumberOfParticlesMovedInDiffusionSentFromOneSectorToAnotherSectorWithinOneParallelTask + NumberOfParticlesMovedInDiffusionSentToAnotherParallelTask;
+
             MPI_Allreduce(MPI_IN_PLACE, &NumberOfParticlesMovedInDiffusion, 1, MPI_UINT64_T, MPI_SUM, MPI_COMM_WORLD);
-            MPI_Allreduce(MPI_IN_PLACE, &NumberOfParticlesToBeMovedInDiffusionRejectedLocally, 1, MPI_UINT64_T, MPI_SUM, MPI_COMM_WORLD);
+            MPI_Allreduce(MPI_IN_PLACE, &NumberOfParticlesMovedInDiffusionWithinInOneSectorWithinOneParallelTask, 1, MPI_UINT64_T, MPI_SUM, MPI_COMM_WORLD);
+            MPI_Allreduce(MPI_IN_PLACE, &NumberOfParticlesMovedInDiffusionSentFromOneSectorToAnotherSectorWithinOneParallelTask, 1, MPI_UINT64_T, MPI_SUM, MPI_COMM_WORLD);
+            MPI_Allreduce(MPI_IN_PLACE, &NumberOfParticlesToBeMovedInDiffusionSentFromOneSectorToAnotherSectorWithinOneParallelTaskRejected, 1, MPI_UINT64_T, MPI_SUM, MPI_COMM_WORLD);
+
+            MPI_Allreduce(MPI_IN_PLACE, &NumberOfParticlesMovedInDiffusionSentToAnotherParallelTask, 1, MPI_UINT64_T, MPI_SUM, MPI_COMM_WORLD);
             MPI_Allreduce(MPI_IN_PLACE, &NumberOfParticlesToBeMovedInDiffusionSentToCheckInAnotherParallelTask, 1, MPI_UINT64_T, MPI_SUM, MPI_COMM_WORLD);
             MPI_Allreduce(MPI_IN_PLACE, &NumberOfParticlesToBeMovedInDiffusionRejectedByAnotherParallelTask, 1, MPI_UINT64_T, MPI_SUM, MPI_COMM_WORLD);
-            MPI_Allreduce(MPI_IN_PLACE, &NumberOfParticlesSentToAnotherParallelTaskAndMovedInDiffusion, 1, MPI_UINT64_T, MPI_SUM, MPI_COMM_WORLD);
             MPI_Allreduce(MPI_IN_PLACE, &NumberOfParticlesToBeMovedInDiffusionConfirmedAfterSentInAnotherParallelTask, 1, MPI_UINT64_T, MPI_SUM, MPI_COMM_WORLD);
         }
         else
@@ -1848,11 +1868,13 @@ void CellEngineSimulationParallelTasksExecutionManager::GatherAllParallelExecuti
                 RemovedParticlesInReactions += SimulationSpaceDataForThreads[ThreadXIndex][ThreadYIndex][ThreadZIndex]->RemovedParticlesInReactions;
                 RestoredParticlesInCancelledReactions += SimulationSpaceDataForThreads[ThreadXIndex][ThreadYIndex][ThreadZIndex]->RestoredParticlesInCancelledReactions;
 
-                NumberOfParticlesMovedInDiffusion += SimulationSpaceDataForThreads[ThreadXIndex][ThreadYIndex][ThreadZIndex]->NumberOfParticlesMovedInDiffusion;
-                NumberOfParticlesToBeMovedInDiffusionRejectedLocally += SimulationSpaceDataForThreads[ThreadXIndex][ThreadYIndex][ThreadZIndex]->NumberOfParticlesToBeMovedInDiffusionRejectedLocally;
+                NumberOfParticlesMovedInDiffusionWithinInOneSectorWithinOneParallelTask += SimulationSpaceDataForThreads[ThreadXIndex][ThreadYIndex][ThreadZIndex]->NumberOfParticlesMovedInDiffusionWithinInOneSectorWithinOneParallelTask;
+                NumberOfParticlesMovedInDiffusionSentFromOneSectorToAnotherSectorWithinOneParallelTask += SimulationSpaceDataForThreads[ThreadXIndex][ThreadYIndex][ThreadZIndex]->NumberOfParticlesMovedInDiffusionSentFromOneSectorToAnotherSectorWithinOneParallelTask;
+                NumberOfParticlesToBeMovedInDiffusionSentFromOneSectorToAnotherSectorWithinOneParallelTaskRejected += SimulationSpaceDataForThreads[ThreadXIndex][ThreadYIndex][ThreadZIndex]->NumberOfParticlesToBeMovedInDiffusionSentFromOneSectorToAnotherSectorWithinOneParallelTaskRejected;
+
+                NumberOfParticlesMovedInDiffusionSentToAnotherParallelTask += SimulationSpaceDataForThreads[ThreadXIndex][ThreadYIndex][ThreadZIndex]->NumberOfParticlesMovedInDiffusionSentToAnotherParallelTask;
                 NumberOfParticlesToBeMovedInDiffusionSentToCheckInAnotherParallelTask += SimulationSpaceDataForThreads[ThreadXIndex][ThreadYIndex][ThreadZIndex]->NumberOfParticlesToBeMovedInDiffusionSentToCheckInAnotherParallelTask;
                 NumberOfParticlesToBeMovedInDiffusionRejectedByAnotherParallelTask  += SimulationSpaceDataForThreads[ThreadXIndex][ThreadYIndex][ThreadZIndex]->NumberOfParticlesToBeMovedInDiffusionRejectedByAnotherParallelTask;
-                NumberOfParticlesSentToAnotherParallelTaskAndMovedInDiffusion += SimulationSpaceDataForThreads[ThreadXIndex][ThreadYIndex][ThreadZIndex]->NumberOfParticlesSentToAnotherParallelTaskAndMovedInDiffusion;
                 NumberOfParticlesToBeMovedInDiffusionConfirmedAfterSentInAnotherParallelTask += SimulationSpaceDataForThreads[ThreadXIndex][ThreadYIndex][ThreadZIndex]->NumberOfParticlesToBeMovedInDiffusionConfirmedAfterSentInAnotherParallelTask;
             }
 

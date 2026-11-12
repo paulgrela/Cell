@@ -67,6 +67,8 @@ using ListOfCentersType = std::vector<vector3_Real32>;
 class Particle : public DoublyLinkedListNode<Particle, UniqueIdUInt64Type>, public PairedNucleotide<Particle>, public LinkedParticles<Particle>
 {
 public:
+    UnsignedInt DiffusionStepStamp = 0;
+public:
     bool SelectedForReaction{};
 public:
     UniqueIdUInt64Type ParticleUniqueId{};

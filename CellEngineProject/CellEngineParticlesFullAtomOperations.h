@@ -37,7 +37,7 @@ protected:
         for (const auto& ParticleInSectorObject : ParticlesInSector[SectorPosX][SectorPosY][SectorPosZ].Particles | std::views::values)
             if (ParticleInSectorObject.ParticleUniqueId != ForbiddenParticleUniqueId)
                 for (const auto &AtomParticleInSectorObject : ParticleInSectorObject.ListOfAtoms)
-                    if (DistanceOfParticleFromPoint(ParticleInSectorObject, { .X = TestedPosX, .Y = TestedPosY, .Z = TestedPosZ }) < 0.5)
+                    if (DistanceOfPoints({ .X = AtomParticleInSectorObject.X, .Y = AtomParticleInSectorObject.Y, .Z = AtomParticleInSectorObject.Z }, { .X = TestedPosX, .Y = TestedPosY, .Z = TestedPosZ }) < 0.5)
                         return false;
 
         return true;
@@ -248,7 +248,18 @@ protected:
     {
         try
         {
-            if (CheckFreeSpaceAndBoundsForParticleMovedByVectorDiffusion(ParticleObject.ListOfAtoms, ParticleObject.Radius, ParticleObject.ParticleUniqueId, ParticleObject.Center, ParticlesInSector, VectorX, VectorY, VectorZ, SimulationSpaceSectorBounds{ .StartXPos = StartXPosParam, .StartYPos = StartYPosParam, .StartZPos = StartZPosParam, .SizeX = SizeXParam, .SizeY = SizeYParam, .SizeZ = SizeZParam, .EndXPos = SizeXParam, .EndYPos = SizeYParam, .EndZPos = SizeZParam }, CellEngineConfigDataObject.CheckOnlyParticlesCenters, true) == true)
+            const auto [SectorPosX1, SectorPosY1, SectorPosZ1] = CellEngineUseful::GetSectorPos(ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z);
+            const auto [SectorPosX2, SectorPosY2, SectorPosZ2] = CellEngineUseful::GetSectorPos(ParticleObject.Center.X + VectorX, ParticleObject.Center.Y + VectorY, ParticleObject.Center.Z + VectorZ);
+
+            if (SectorPosX1 == -1 || SectorPosY1 == -1 || SectorPosZ1 == -1 || SectorPosX2 == -1 || SectorPosY2 == -1 || SectorPosZ2 == -1)
+                return false;
+
+            const bool TargetSectorIsOwn = (ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].ParallelTaskPos == ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].ParallelTaskPos);
+
+            if (TargetSectorIsOwn == false && (SectorPosX1 != SectorPosX2) + (SectorPosY1 != SectorPosY2) + (SectorPosZ1 != SectorPosZ2) > 1)
+                return false;
+
+            if (TargetSectorIsOwn == false || CheckFreeSpaceAndBoundsForParticleMovedByVectorDiffusion(ParticleObject.ListOfAtoms, ParticleObject.Radius, ParticleObject.ParticleUniqueId, ParticleObject.Center, ParticlesInSector, VectorX, VectorY, VectorZ, SimulationSpaceSectorBounds{ .StartXPos = StartXPosParam, .StartYPos = StartYPosParam, .StartZPos = StartZPosParam, .SizeX = SizeXParam, .SizeY = SizeYParam, .SizeZ = SizeZParam, .EndXPos = SizeXParam, .EndYPos = SizeYParam, .EndZPos = SizeZParam }, CellEngineConfigDataObject.CheckOnlyParticlesCenters, true) == true)
                 MoveParticleByVectorForThreads(ParticleObject, ParticlesInSector, ListOfParticlesToChangeSectors, VectorX, VectorY, VectorZ, CurrentThreadPos);
             else
                 return false;

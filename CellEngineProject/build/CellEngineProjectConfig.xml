@@ -4873,7 +4873,7 @@
 			<StepToChangeSpaceDivisionForThreads>4</StepToChangeSpaceDivisionForThreads>
 			<TypeOfExchangeOfParticlesBetweenThreads>2</TypeOfExchangeOfParticlesBetweenThreads>
 
-			<TypeOfSychronizationfSimulationExecutedInThreads>2</TypeOfSychronizationfSimulationExecutedInThreads>
+			<TypeOfSychronizationfSimulationExecutedInThreads>3</TypeOfSychronizationfSimulationExecutedInThreads>
 
 			<UseMutexBetweenMainScreenThreadAndMenuThreads>true</UseMutexBetweenMainScreenThreadAndMenuThreads>
 

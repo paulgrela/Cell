@@ -46,6 +46,8 @@ struct WallChannel
     bool VerdictsReady[2]{ false, false };
 };
 
+inline UnsignedInt FirstDiffusionStepStampOfCurrentRun = 1;
+
 class CellEngineBasicParallelTasksExecutionData
 {
     friend class CellEngineSimulationParallelTasksExecutionManager;
@@ -79,23 +81,28 @@ protected:
     std::vector<std::unique_ptr<std::barrier<>>> TwoThreadsWallSychronizationBarriers;
     SignedInt TwoThreadsWallSychronizationBarriersIndexes[NumberOfAllNeighbors]{ -1, -1, -1, -1, -1, -1 };
 public:
-    std::mutex MainExchangeParticlesMutexObject;
-protected:
-    ParticlesDetailedContainer<Particle> ParticlesForThreads;
+    UnsignedInt CurrentDiffusionStepStamp = 0;
 protected:
     std::vector<int> CPUsForThreads;
 protected:
     std::deque<std::binary_semaphore> StartGatesForThreads;
 public:
+    std::mutex MainExchangeParticlesMutexObject;
+protected:
+    ParticlesDetailedContainer<Particle> ParticlesForThreads;
+public:
     UnsignedInt NumberOfDNAParticles;
     UnsignedInt NumberOfAllParticlesInMPISimulation;
 public:
     UnsignedInt NumberOfParticlesMovedInDiffusion = 0;
-    UnsignedInt NumberOfParticlesToBeMovedInDiffusionRejectedLocally = 0;
+    UnsignedInt NumberOfParticlesMovedInDiffusionWithinInOneSectorWithinOneParallelTask = 0;
+    UnsignedInt NumberOfParticlesMovedInDiffusionSentFromOneSectorToAnotherSectorWithinOneParallelTask = 0;
+    UnsignedInt NumberOfParticlesToBeMovedInDiffusionSentFromOneSectorToAnotherSectorWithinOneParallelTaskRejected = 0;
+public:
+    UnsignedInt NumberOfParticlesMovedInDiffusionSentToAnotherParallelTask = 0;
     UnsignedInt NumberOfParticlesToBeMovedInDiffusionSentToCheckInAnotherParallelTask = 0;
     UnsignedInt NumberOfParticlesToBeMovedInDiffusionRejectedByAnotherParallelTask = 0;
     UnsignedInt NumberOfParticlesToBeMovedInDiffusionConfirmedAfterSentInAnotherParallelTask = 0;
-    UnsignedInt NumberOfParticlesSentToAnotherParallelTaskAndMovedInDiffusion = 0;
 protected:
     UnsignedInt ErrorCounter = 0;
     UnsignedInt NumberOfExecutedReactions = 0;
