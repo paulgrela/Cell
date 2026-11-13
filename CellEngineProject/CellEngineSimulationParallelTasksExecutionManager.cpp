@@ -757,7 +757,7 @@ void CellEngineSimulationParallelTasksExecutionManager::SychronizeSimulationExec
     CATCH("synchronize simulation executed in threads")
 }
 
-void CellEngineSimulationParallelTasksExecutionManager::ExchangeParticlesBetweenThreadsAndSychronizeSimulationExecutedInThreads(barrier<>* SyncPoint, const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, const ThreadIdType CurrentThreadIndexParam, const UnsignedInt ThreadXIndexParam, const UnsignedInt ThreadYIndexParam, const UnsignedInt ThreadZIndexParam) const
+void CellEngineSimulationParallelTasksExecutionManager::ExchangeParticlesBetweenThreadsAndSychronizeSimulationExecutedInThreadsInFullAtomSimulationSpace(barrier<>* SyncPoint, const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, const ThreadIdType CurrentThreadIndexParam, const UnsignedInt ThreadXIndexParam, const UnsignedInt ThreadYIndexParam, const UnsignedInt ThreadZIndexParam) const
 {
     try
     {
@@ -773,73 +773,89 @@ void CellEngineSimulationParallelTasksExecutionManager::ExchangeParticlesBetween
     CATCH("exchange particles and synchronize simulation executed in threads")
 }
 
+void CellEngineSimulationParallelTasksExecutionManager::GenerateOneStepOfSimulationForWholeCellSpaceInOneThreadInVoxelSimulationSpace(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, const UnsignedInt ThreadXIndex, const UnsignedInt ThreadYIndex, const UnsignedInt ThreadZIndex, const bool StateOfSimulationSpaceDivisionForThreads)
+{
+    try
+    {
+        DEBUG_LOG_DIFFUSION_OR_CHEMICAL_REACTION(LoggersManagerObject.Log(STREAM("STEP INSIDE = " << Step2 << " ThreadX = " << ThreadXIndex << " ThreadX = " << ThreadYIndex << " ThreadX = " << ThreadZIndex));)
+
+        SimulationSpaceSectorBounds SimulationSpaceSectorBoundsObject;
+
+        SimulationSpaceSectorBoundsObject.SetParametersForParallelExecutionSectors({ .PosX = static_cast<SignedInt>(ThreadXIndex), .PosY = static_cast<SignedInt>(ThreadYIndex), .PosZ = static_cast<SignedInt>(ThreadZIndex) }, CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfZInOneThreadInSimulationSpace);
+
+        if (StateOfSimulationSpaceDivisionForThreads == true)
+            SimulationSpaceSectorBoundsObject.AddToStartParameters(CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace / 2, CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace / 2, CellEngineConfigDataObject.SizeOfZInOneThreadInSimulationSpace / 2);
+
+        for (UnsignedInt PosX = SimulationSpaceSectorBoundsObject.StartXPos; PosX < SimulationSpaceSectorBoundsObject.EndXPos; PosX += CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace)
+            for (UnsignedInt PosY = SimulationSpaceSectorBoundsObject.StartYPos; PosY < SimulationSpaceSectorBoundsObject.EndYPos; PosY += CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace)
+                for (UnsignedInt PosZ = SimulationSpaceSectorBoundsObject.StartZPos; PosZ < SimulationSpaceSectorBoundsObject.EndZPos; PosZ += CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace)
+                {
+                    DEBUG_LOG_DIFFUSION_OR_CHEMICAL_REACTION(LoggersManagerObject.Log(STREAM("XStart = " << SimulationSpaceSectorBoundsObject.StartXPos << " YStart = " << SimulationSpaceSectorBoundsObject.StartYPos << " ZStart = " << SimulationSpaceSectorBoundsObject.StartZPos << " XEnd = " << SimulationSpaceSectorBoundsObject.EndXPos << " YEnd = " << SimulationSpaceSectorBoundsObject.EndYPos << " ZEnd = " << SimulationSpaceSectorBoundsObject.EndZPos << " PosX = " << PosX << " PosY = " << PosY << " PosZ = " << PosZ));)
+
+                    if (CellEngineUseful::IsIn(CellEngineConfigDataObject.TypeOfSimulation, { CellEngineConfigData::TypesOfSimulation::BothReactionsAndDiffusion, CellEngineConfigData::TypesOfSimulation::OnlyDiffusion }))
+                        GenerateOneStepOfDiffusionForSelectedSpaceForExecutionInThreads(CurrentThreadLocalSimulationSpaceData, true, PosX, PosY, PosZ, SimulationSpaceSectorBoundsObject.StartXPos, SimulationSpaceSectorBoundsObject.StartYPos, SimulationSpaceSectorBoundsObject.StartZPos, CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace);
+                    if (CellEngineUseful::IsIn(CellEngineConfigDataObject.TypeOfSimulation, { CellEngineConfigData::TypesOfSimulation::BothReactionsAndDiffusion }))
+                        GenerateOneRandomReactionForSelectedSpace(PosX, PosY, PosZ, CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace, false);
+                    if (CellEngineUseful::IsIn(CellEngineConfigDataObject.TypeOfSimulation, { CellEngineConfigData::TypesOfSimulation::OnlyReactions }))
+                        GenerateOneRandomReactionForSelectedSpace(PosX, PosY, PosZ, CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace, true);
+                }
+    }
+    CATCH("")
+}
+
+void CellEngineSimulationParallelTasksExecutionManager::GenerateOneStepOfSimulationForWholeCellSpaceInOneThreadInFullAtomSimulationSpace(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, const UnsignedInt NumberOfStepsInside, const UnsignedInt StepOutside, barrier<>* SyncPoint, const UnsignedInt Step2)
+{
+    try
+    {
+        CurrentThreadLocalSimulationSpaceData->CurrentDiffusionStepStamp = FirstDiffusionStepStampOfCurrentRun + (StepOutside - 1) * NumberOfStepsInside + (Step2 - 1);
+
+        DEBUG_LOG_DIFFUSION_OR_CHEMICAL_REACTION(LoggersManagerObject.Log(STREAM("STEP INSIDE = " << Step2 << " ThreadX = " << ThreadXIndex << " ThreadX = " << ThreadYIndex << " ThreadX = " << ThreadZIndex));)
+
+        if (CellEngineUseful::IsIn(CellEngineConfigDataObject.TypeOfSimulation, { CellEngineConfigData::TypesOfSimulation::BothReactionsAndDiffusion, CellEngineConfigData::TypesOfSimulation::OnlyReactions }))
+        {
+            for (UnsignedInt ParticleSectorXIndex = CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.StartXPos; ParticleSectorXIndex < CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.EndXPos; ParticleSectorXIndex++)
+                for (UnsignedInt ParticleSectorYIndex = CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.StartYPos; ParticleSectorYIndex < CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.EndYPos; ParticleSectorYIndex++)
+                    for (UnsignedInt ParticleSectorZIndex = CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.StartZPos; ParticleSectorZIndex < CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.EndZPos; ParticleSectorZIndex++)
+                    {
+                        DEBUG_LOG_CHEMICAL_REACTION(LoggersManagerObject.Log(STREAM("XStart = " << ThreadXIndex * CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace << " YStart = " << ThreadYIndex * CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace << " ZStart = " << (ThreadZIndex) * CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace << " XEnd = " << (ThreadXIndex + 1) * CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace << " YEnd = " << (ThreadZIndex + 1)  * CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace << " ZEnd = " << (ThreadZIndex + 1) * CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace << " PosX = " << ParticleSectorXIndex << " PosY = " << ParticleSectorYIndex << " PosZ = " << ParticleSectorZIndex));)
+
+                        GenerateOneRandomReactionForSelectedSpace(ParticleSectorXIndex, ParticleSectorYIndex, ParticleSectorZIndex, UnusedValueRealType, UnusedValueRealType, UnusedValueRealType, false);
+                    }
+
+            SychronizeSimulationExecutedInThreads(SyncPoint, CurrentThreadLocalSimulationSpaceData);
+        }
+
+        if (CellEngineUseful::IsIn(CellEngineConfigDataObject.TypeOfSimulation, { CellEngineConfigData::TypesOfSimulation::BothReactionsAndDiffusion, CellEngineConfigData::TypesOfSimulation::OnlyDiffusion }))
+        {
+            for (UnsignedInt ParticleSectorXIndex = CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.StartXPos; ParticleSectorXIndex < CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.EndXPos; ParticleSectorXIndex++)
+                for (UnsignedInt ParticleSectorYIndex = CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.StartYPos; ParticleSectorYIndex < CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.EndYPos; ParticleSectorYIndex++)
+                    for (UnsignedInt ParticleSectorZIndex = CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.StartZPos; ParticleSectorZIndex < CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.EndZPos; ParticleSectorZIndex++)
+                    {
+                        DEBUG_LOG_DIFFUSION(LoggersManagerObject.LogUnconditional(STREAM("RANGE1 -> START = (" << ThreadXIndex * CellEngineConfigDataObject.NumberOfXSectorsInOneThreadInSimulation * CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace - CellEngineConfigDataObject.ShiftCenterX << "," <<  ThreadYIndex * CellEngineConfigDataObject.NumberOfYSectorsInOneThreadInSimulation * CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace - CellEngineConfigDataObject.ShiftCenterY << "," <<  (ThreadZIndex) * CellEngineConfigDataObject.NumberOfZSectorsInOneThreadInSimulation * CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace - CellEngineConfigDataObject.ShiftCenterZ << ") END = (" <<  (ThreadXIndex + 1) * CellEngineConfigDataObject.NumberOfXSectorsInOneThreadInSimulation * CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace - CellEngineConfigDataObject.ShiftCenterX << "," << (ThreadYIndex + 1) * CellEngineConfigDataObject.NumberOfYSectorsInOneThreadInSimulation * CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace - CellEngineConfigDataObject.ShiftCenterY << "," << (ThreadZIndex + 1) * CellEngineConfigDataObject.NumberOfZSectorsInOneThreadInSimulation * CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace - CellEngineConfigDataObject.ShiftCenterZ << ") PosX = " << ParticleSectorXIndex << " PosY = " << ParticleSectorYIndex << " PosZ = " << ParticleSectorZIndex));)
+                        DEBUG_LOG_DIFFUSION(LoggersManagerObject.LogUnconditional(STREAM("RANGE2 -> START = (" << CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.StartXPos * CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace - CellEngineConfigDataObject.ShiftCenterX << "," << SimulationSpaceSectorsRangesForCurrentParallelTask.StartYPos * CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace - CellEngineConfigDataObject.ShiftCenterY << "," << SimulationSpaceSectorsRangesForCurrentParallelTask.StartZPos * CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace - CellEngineConfigDataObject.ShiftCenterZ << ") END = (" << SimulationSpaceSectorsRangesForCurrentParallelTask.EndXPos * CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace - CellEngineConfigDataObject.ShiftCenterX << "," << SimulationSpaceSectorsRangesForCurrentParallelTask.EndYPos * CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace - CellEngineConfigDataObject.ShiftCenterY << "," << SimulationSpaceSectorsRangesForCurrentParallelTask.EndZPos * CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace - CellEngineConfigDataObject.ShiftCenterZ << ") PosX = " << ParticleSectorXIndex << " PosY = " << ParticleSectorYIndex << " PosZ = " << ParticleSectorZIndex));)
+                        DEBUG_LOG_DIFFUSION(LoggersManagerObject.LogUnconditional(STREAM("RANGE3 -> START = (" << CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.StartXPos << "," << CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.StartYPos << "," << CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.StartZPos << ") END = (" << CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.EndXPos << "," << CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.EndYPos << "," << CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.EndZPos << ") PosX = " << ParticleSectorXIndex << " PosY = " << ParticleSectorYIndex << " PosZ = " << ParticleSectorZIndex));)
+                        DEBUG_LOG_DIFFUSION(LoggersManagerObject.LogUnconditional(STREAM("RANGE4 -> XStart = " << ThreadXIndex * CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace << " YStart = " << ThreadYIndex * CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace << " ZStart = " << (ThreadZIndex) * CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace << " XEnd = " << (ThreadXIndex + 1) * CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace << " YEnd = " << (ThreadYIndex + 1) * CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace << " ZEnd = " << (ThreadZIndex + 1) * CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace << " PosX = " << ParticleSectorXIndex << " PosY = " << ParticleSectorYIndex << " PosZ = " << ParticleSectorZIndex));)
+
+                        GenerateOneStepOfDiffusionForSelectedSpaceForExecutionInThreads(CurrentThreadLocalSimulationSpaceData, true, ParticleSectorXIndex, ParticleSectorYIndex, ParticleSectorZIndex, CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.StartXPos * CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace - CellEngineConfigDataObject.ShiftCenterX, CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.StartYPos * CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace - CellEngineConfigDataObject.ShiftCenterY, CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.StartZPos * CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace - CellEngineConfigDataObject.ShiftCenterZ, CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.EndXPos * CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace - CellEngineConfigDataObject.ShiftCenterX, CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.EndYPos * CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace - CellEngineConfigDataObject.ShiftCenterY, CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.EndZPos * CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace - CellEngineConfigDataObject.ShiftCenterZ);
+                    }
+
+            SychronizeSimulationExecutedInThreads(SyncPoint, CurrentThreadLocalSimulationSpaceData);
+        }
+    }
+    CATCH("")
+}
+
 void CellEngineSimulationParallelTasksExecutionManager::GenerateOneStepOfSimulationForWholeCellSpaceInOneThread(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, const UnsignedInt NumberOfStepsInside, const UnsignedInt StepOutside, const UnsignedInt ThreadXIndex, const UnsignedInt ThreadYIndex, const UnsignedInt ThreadZIndex, const bool StateOfSimulationSpaceDivisionForThreads, barrier<>* SyncPoint)
 {
     try
     {
         if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)
             for (UnsignedInt Step2 = 1; Step2 <= NumberOfStepsInside; Step2++)
-            {
-                DEBUG_LOG_DIFFUSION_OR_CHEMICAL_REACTION(LoggersManagerObject.Log(STREAM("STEP INSIDE = " << Step2 << " ThreadX = " << ThreadXIndex << " ThreadX = " << ThreadYIndex << " ThreadX = " << ThreadZIndex));)
-
-                SimulationSpaceSectorBounds SimulationSpaceSectorBoundsObject;
-
-                SimulationSpaceSectorBoundsObject.SetParametersForParallelExecutionSectors({ .PosX = static_cast<SignedInt>(ThreadXIndex), .PosY = static_cast<SignedInt>(ThreadYIndex), .PosZ = static_cast<SignedInt>(ThreadZIndex) }, CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfZInOneThreadInSimulationSpace);
-
-                if (StateOfSimulationSpaceDivisionForThreads == true)
-                    SimulationSpaceSectorBoundsObject.AddToStartParameters(CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace / 2, CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace / 2, CellEngineConfigDataObject.SizeOfZInOneThreadInSimulationSpace / 2);
-
-                for (UnsignedInt PosX = SimulationSpaceSectorBoundsObject.StartXPos; PosX < SimulationSpaceSectorBoundsObject.EndXPos; PosX += CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace)
-                    for (UnsignedInt PosY = SimulationSpaceSectorBoundsObject.StartYPos; PosY < SimulationSpaceSectorBoundsObject.EndYPos; PosY += CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace)
-                        for (UnsignedInt PosZ = SimulationSpaceSectorBoundsObject.StartZPos; PosZ < SimulationSpaceSectorBoundsObject.EndZPos; PosZ += CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace)
-                        {
-                            DEBUG_LOG_DIFFUSION_OR_CHEMICAL_REACTION(LoggersManagerObject.Log(STREAM("XStart = " << SimulationSpaceSectorBoundsObject.StartXPos << " YStart = " << SimulationSpaceSectorBoundsObject.StartYPos << " ZStart = " << SimulationSpaceSectorBoundsObject.StartZPos << " XEnd = " << SimulationSpaceSectorBoundsObject.EndXPos << " YEnd = " << SimulationSpaceSectorBoundsObject.EndYPos << " ZEnd = " << SimulationSpaceSectorBoundsObject.EndZPos << " PosX = " << PosX << " PosY = " << PosY << " PosZ = " << PosZ));)
-
-                            if (CellEngineUseful::IsIn(CellEngineConfigDataObject.TypeOfSimulation, { CellEngineConfigData::TypesOfSimulation::BothReactionsAndDiffusion, CellEngineConfigData::TypesOfSimulation::OnlyDiffusion }))
-                                GenerateOneStepOfDiffusionForSelectedSpaceForExecutionInThreads(CurrentThreadLocalSimulationSpaceData, true, PosX, PosY, PosZ, SimulationSpaceSectorBoundsObject.StartXPos, SimulationSpaceSectorBoundsObject.StartYPos, SimulationSpaceSectorBoundsObject.StartZPos, CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace);
-                            if (CellEngineUseful::IsIn(CellEngineConfigDataObject.TypeOfSimulation, { CellEngineConfigData::TypesOfSimulation::BothReactionsAndDiffusion }))
-                                GenerateOneRandomReactionForSelectedSpace(PosX, PosY, PosZ, CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace, false);
-                            if (CellEngineUseful::IsIn(CellEngineConfigDataObject.TypeOfSimulation, { CellEngineConfigData::TypesOfSimulation::OnlyReactions }))
-                                GenerateOneRandomReactionForSelectedSpace(PosX, PosY, PosZ, CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace, true);
-                        }
-            }
+                GenerateOneStepOfSimulationForWholeCellSpaceInOneThreadInVoxelSimulationSpace(CurrentThreadLocalSimulationSpaceData, ThreadXIndex, ThreadYIndex, ThreadZIndex, StateOfSimulationSpaceDivisionForThreads);
         else
         if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace)
             for (UnsignedInt Step2 = 1; Step2 <= NumberOfStepsInside; Step2++)
-            {
-                CurrentThreadLocalSimulationSpaceData->CurrentDiffusionStepStamp = FirstDiffusionStepStampOfCurrentRun + (StepOutside - 1) * NumberOfStepsInside + (Step2 - 1);
-
-                DEBUG_LOG_DIFFUSION_OR_CHEMICAL_REACTION(LoggersManagerObject.Log(STREAM("STEP INSIDE = " << Step2 << " ThreadX = " << ThreadXIndex << " ThreadX = " << ThreadYIndex << " ThreadX = " << ThreadZIndex));)
-
-                for (UnsignedInt ParticleSectorXIndex = CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.StartXPos; ParticleSectorXIndex < CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.EndXPos; ParticleSectorXIndex++)
-                    for (UnsignedInt ParticleSectorYIndex = CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.StartYPos; ParticleSectorYIndex < CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.EndYPos; ParticleSectorYIndex++)
-                        for (UnsignedInt ParticleSectorZIndex = CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.StartZPos; ParticleSectorZIndex < CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.EndZPos; ParticleSectorZIndex++)
-                        {
-                            DEBUG_LOG_CHEMICAL_REACTION(LoggersManagerObject.Log(STREAM("XStart = " << ThreadXIndex * CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace << " YStart = " << ThreadYIndex * CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace << " ZStart = " << (ThreadZIndex) * CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace << " XEnd = " << (ThreadXIndex + 1) * CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace << " YEnd = " << (ThreadZIndex + 1)  * CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace << " ZEnd = " << (ThreadZIndex + 1) * CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace << " PosX = " << ParticleSectorXIndex << " PosY = " << ParticleSectorYIndex << " PosZ = " << ParticleSectorZIndex));)
-
-                            if (CellEngineUseful::IsIn(CellEngineConfigDataObject.TypeOfSimulation, { CellEngineConfigData::TypesOfSimulation::BothReactionsAndDiffusion }))
-                                GenerateOneRandomReactionForSelectedSpace(ParticleSectorXIndex, ParticleSectorYIndex, ParticleSectorZIndex, UnusedValueRealType, UnusedValueRealType, UnusedValueRealType, false);
-                            if (CellEngineUseful::IsIn(CellEngineConfigDataObject.TypeOfSimulation, { CellEngineConfigData::TypesOfSimulation::OnlyReactions }))
-                                GenerateOneRandomReactionForSelectedSpace(ParticleSectorXIndex, ParticleSectorYIndex, ParticleSectorZIndex, UnusedValueRealType, UnusedValueRealType, UnusedValueRealType, true);
-                        }
-
-                SychronizeSimulationExecutedInThreads(SyncPoint, CurrentThreadLocalSimulationSpaceData);
-
-                for (UnsignedInt ParticleSectorXIndex = CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.StartXPos; ParticleSectorXIndex < CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.EndXPos; ParticleSectorXIndex++)
-                    for (UnsignedInt ParticleSectorYIndex = CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.StartYPos; ParticleSectorYIndex < CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.EndYPos; ParticleSectorYIndex++)
-                        for (UnsignedInt ParticleSectorZIndex = CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.StartZPos; ParticleSectorZIndex < CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.EndZPos; ParticleSectorZIndex++)
-                        {
-                            DEBUG_LOG_DIFFUSION(LoggersManagerObject.LogUnconditional(STREAM("RANGE1 -> START = (" << ThreadXIndex * CellEngineConfigDataObject.NumberOfXSectorsInOneThreadInSimulation * CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace - CellEngineConfigDataObject.ShiftCenterX << "," <<  ThreadYIndex * CellEngineConfigDataObject.NumberOfYSectorsInOneThreadInSimulation * CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace - CellEngineConfigDataObject.ShiftCenterY << "," <<  (ThreadZIndex) * CellEngineConfigDataObject.NumberOfZSectorsInOneThreadInSimulation * CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace - CellEngineConfigDataObject.ShiftCenterZ << ") END = (" <<  (ThreadXIndex + 1) * CellEngineConfigDataObject.NumberOfXSectorsInOneThreadInSimulation * CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace - CellEngineConfigDataObject.ShiftCenterX << "," << (ThreadYIndex + 1) * CellEngineConfigDataObject.NumberOfYSectorsInOneThreadInSimulation * CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace - CellEngineConfigDataObject.ShiftCenterY << "," << (ThreadZIndex + 1) * CellEngineConfigDataObject.NumberOfZSectorsInOneThreadInSimulation * CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace - CellEngineConfigDataObject.ShiftCenterZ << ") PosX = " << ParticleSectorXIndex << " PosY = " << ParticleSectorYIndex << " PosZ = " << ParticleSectorZIndex));)
-                            DEBUG_LOG_DIFFUSION(LoggersManagerObject.LogUnconditional(STREAM("RANGE2 -> START = (" << CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.StartXPos * CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace - CellEngineConfigDataObject.ShiftCenterX << "," << SimulationSpaceSectorsRangesForCurrentParallelTask.StartYPos * CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace - CellEngineConfigDataObject.ShiftCenterY << "," << SimulationSpaceSectorsRangesForCurrentParallelTask.StartZPos * CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace - CellEngineConfigDataObject.ShiftCenterZ << ") END = (" << SimulationSpaceSectorsRangesForCurrentParallelTask.EndXPos * CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace - CellEngineConfigDataObject.ShiftCenterX << "," << SimulationSpaceSectorsRangesForCurrentParallelTask.EndYPos * CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace - CellEngineConfigDataObject.ShiftCenterY << "," << SimulationSpaceSectorsRangesForCurrentParallelTask.EndZPos * CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace - CellEngineConfigDataObject.ShiftCenterZ << ") PosX = " << ParticleSectorXIndex << " PosY = " << ParticleSectorYIndex << " PosZ = " << ParticleSectorZIndex));)
-                            DEBUG_LOG_DIFFUSION(LoggersManagerObject.LogUnconditional(STREAM("RANGE3 -> START = (" << CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.StartXPos << "," << CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.StartYPos << "," << CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.StartZPos << ") END = (" << CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.EndXPos << "," << CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.EndYPos << "," << CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.EndZPos << ") PosX = " << ParticleSectorXIndex << " PosY = " << ParticleSectorYIndex << " PosZ = " << ParticleSectorZIndex));)
-                            DEBUG_LOG_DIFFUSION(LoggersManagerObject.LogUnconditional(STREAM("RANGE4 -> XStart = " << ThreadXIndex * CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace << " YStart = " << ThreadYIndex * CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace << " ZStart = " << (ThreadZIndex) * CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace << " XEnd = " << (ThreadXIndex + 1) * CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace << " YEnd = " << (ThreadYIndex + 1) * CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace << " ZEnd = " << (ThreadZIndex + 1) * CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace << " PosX = " << ParticleSectorXIndex << " PosY = " << ParticleSectorYIndex << " PosZ = " << ParticleSectorZIndex));)
-
-                            if (CellEngineUseful::IsIn(CellEngineConfigDataObject.TypeOfSimulation, { CellEngineConfigData::TypesOfSimulation::BothReactionsAndDiffusion, CellEngineConfigData::TypesOfSimulation::OnlyDiffusion }))
-                                GenerateOneStepOfDiffusionForSelectedSpaceForExecutionInThreads(CurrentThreadLocalSimulationSpaceData, true, ParticleSectorXIndex, ParticleSectorYIndex, ParticleSectorZIndex, CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.StartXPos * CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace - CellEngineConfigDataObject.ShiftCenterX, CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.StartYPos * CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace - CellEngineConfigDataObject.ShiftCenterY, CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.StartZPos * CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace - CellEngineConfigDataObject.ShiftCenterZ, CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.EndXPos * CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace - CellEngineConfigDataObject.ShiftCenterX, CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.EndYPos * CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace - CellEngineConfigDataObject.ShiftCenterY, CurrentThreadLocalSimulationSpaceData->SimulationSpaceSectorsRangesForCurrentParallelTask.EndZPos * CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace - CellEngineConfigDataObject.ShiftCenterZ);
-                        }
-
-                SychronizeSimulationExecutedInThreads(SyncPoint, CurrentThreadLocalSimulationSpaceData);
-            }
+                GenerateOneStepOfSimulationForWholeCellSpaceInOneThreadInFullAtomSimulationSpace(CurrentThreadLocalSimulationSpaceData, NumberOfStepsInside, StepOutside, SyncPoint, Step2);
     }
     CATCH("generating n steps simulation for whole cell space in threads")
 }
@@ -863,33 +879,9 @@ void CellEngineSimulationParallelTasksExecutionManager::GenerateNStepsOfSimulati
             CurrentThreadLocalSimulationSpaceData->GenerateOneStepOfSimulationForWholeCellSpaceInOneThread(CurrentThreadLocalSimulationSpaceData, NumberOfStepsInside, StepOutside, ThreadXIndexParam, ThreadYIndexParam, ThreadZIndexParam, *StateOfSimulationSpaceDivisionForThreads, SyncPoint);
 
             if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)
-            {
-                SyncPoint->arrive_and_wait();
-
-                if (CellEngineConfigDataObject.TypeOfExchangeOfParticlesBetweenThreads == CellEngineConfigData::TypesOfExchangeOfParticlesBetweenThreads::ParallelInsert || CellEngineConfigDataObject.TypeOfExchangeOfParticlesBetweenThreads == CellEngineConfigData::TypesOfExchangeOfParticlesBetweenThreads::ParallelExtract)
-                {
-                    if (CellEngineConfigDataObject.TypeOfExchangeOfParticlesBetweenThreads == CellEngineConfigData::TypesOfExchangeOfParticlesBetweenThreads::ParallelInsert)
-                        CurrentThreadLocalSimulationSpaceData->ExchangeParticlesBetweenThreadsParallelInsert(StepOutside, *StateOfSimulationSpaceDivisionForThreads, false);
-                    if (CellEngineConfigDataObject.TypeOfExchangeOfParticlesBetweenThreads == CellEngineConfigData::TypesOfExchangeOfParticlesBetweenThreads::ParallelExtract)
-                        CurrentThreadLocalSimulationSpaceData->ExchangeParticlesBetweenThreadsParallelExtract(StepOutside, *StateOfSimulationSpaceDivisionForThreads, false);
-
-                    SyncPoint->arrive_and_wait();
-
-                    if (CurrentThreadIndexParam == 1)
-                        *StateOfSimulationSpaceDivisionForThreads = StepToChangeSimulationSpaceDivisionForThreads(StepOutside, *StateOfSimulationSpaceDivisionForThreads);
-                }
-                else
-                if (CellEngineConfigDataObject.TypeOfExchangeOfParticlesBetweenThreads == CellEngineConfigData::TypesOfExchangeOfParticlesBetweenThreads::InMainThread && CurrentThreadIndexParam == 1)
-                {
-                    ExchangeParticlesBetweenThreads(StepOutside, *StateOfSimulationSpaceDivisionForThreads, false);
-
-                    *StateOfSimulationSpaceDivisionForThreads = StepToChangeSimulationSpaceDivisionForThreads(StepOutside, *StateOfSimulationSpaceDivisionForThreads);
-                }
-
-                SyncPoint->arrive_and_wait();
-            }
+                ExchangeParticlesBetweenThreadsAndSychronizeSimulationExecutedInThreadsInVoxelSimulationSpace(SyncPoint, StateOfSimulationSpaceDivisionForThreads, CurrentThreadIndexParam, CurrentThreadLocalSimulationSpaceData, StepOutside);
             else
-                ExchangeParticlesBetweenThreadsAndSychronizeSimulationExecutedInThreads(SyncPoint, CurrentThreadLocalSimulationSpaceData, CurrentThreadIndexParam, ThreadXIndexParam, ThreadYIndexParam, ThreadZIndexParam);
+                ExchangeParticlesBetweenThreadsAndSychronizeSimulationExecutedInThreadsInFullAtomSimulationSpace(SyncPoint, CurrentThreadLocalSimulationSpaceData, CurrentThreadIndexParam, ThreadXIndexParam, ThreadYIndexParam, ThreadZIndexParam);
         }
     }
     CATCH("generating n steps of simulation for whole cell space in one thread")
@@ -970,6 +962,37 @@ void CellEngineSimulationParallelTasksExecutionManager::GenerateNStepsOfSimulati
         GatherAllParallelExecutionVariables();
     }
     CATCH("generating n steps simulation for whole cell space in threads")
+}
+
+void CellEngineSimulationParallelTasksExecutionManager::ExchangeParticlesBetweenThreadsAndSychronizeSimulationExecutedInThreadsInVoxelSimulationSpace(barrier<>* SyncPoint, bool* StateOfSimulationSpaceDivisionForThreads, const ThreadIdType CurrentThreadIndexParam, const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, const UnsignedInt StepOutside) const
+{
+    try
+    {
+        SyncPoint->arrive_and_wait();
+
+        if (CellEngineConfigDataObject.TypeOfExchangeOfParticlesBetweenThreads == CellEngineConfigData::TypesOfExchangeOfParticlesBetweenThreads::ParallelInsert || CellEngineConfigDataObject.TypeOfExchangeOfParticlesBetweenThreads == CellEngineConfigData::TypesOfExchangeOfParticlesBetweenThreads::ParallelExtract)
+        {
+            if (CellEngineConfigDataObject.TypeOfExchangeOfParticlesBetweenThreads == CellEngineConfigData::TypesOfExchangeOfParticlesBetweenThreads::ParallelInsert)
+                CurrentThreadLocalSimulationSpaceData->ExchangeParticlesBetweenThreadsParallelInsert(StepOutside, *StateOfSimulationSpaceDivisionForThreads, false);
+            if (CellEngineConfigDataObject.TypeOfExchangeOfParticlesBetweenThreads == CellEngineConfigData::TypesOfExchangeOfParticlesBetweenThreads::ParallelExtract)
+                CurrentThreadLocalSimulationSpaceData->ExchangeParticlesBetweenThreadsParallelExtract(StepOutside, *StateOfSimulationSpaceDivisionForThreads, false);
+
+            SyncPoint->arrive_and_wait();
+
+            if (CurrentThreadIndexParam == 1)
+                *StateOfSimulationSpaceDivisionForThreads = StepToChangeSimulationSpaceDivisionForThreads(StepOutside, *StateOfSimulationSpaceDivisionForThreads);
+        }
+        else
+            if (CellEngineConfigDataObject.TypeOfExchangeOfParticlesBetweenThreads == CellEngineConfigData::TypesOfExchangeOfParticlesBetweenThreads::InMainThread && CurrentThreadIndexParam == 1)
+            {
+                ExchangeParticlesBetweenThreads(StepOutside, *StateOfSimulationSpaceDivisionForThreads, false);
+
+                *StateOfSimulationSpaceDivisionForThreads = StepToChangeSimulationSpaceDivisionForThreads(StepOutside, *StateOfSimulationSpaceDivisionForThreads);
+            }
+
+        SyncPoint->arrive_and_wait();
+    }
+    CATCH("")
 }
 
 void CellEngineSimulationParallelTasksExecutionManager::ExchangeParticlesBetweenThreadsByBarrierPhase1(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, const ThreadIdType CurrentThreadIndexParam, const UnsignedInt ThreadXIndexParam, const UnsignedInt ThreadYIndexParam, const UnsignedInt ThreadZIndexParam) const
@@ -2007,7 +2030,7 @@ void CellEngineSimulationParallelTasksExecutionManager::GenerateNStepsOfSimulati
 {
     try
     {
-        FirstSendParticlesForThreads(false, true);
+FirstSendParticlesForThreads(false, true);
         GenerateNStepsOfSimulationForWholeCellSpaceInThreads(NumberOfStepsOutside, NumberOfStepsInside);
         GatherParticlesFromThreadsToParticlesInMainThread();
     }
