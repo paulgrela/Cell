@@ -1579,6 +1579,11 @@ void CellEngineSimulationParallelTasksExecutionManager::GenerateNStepsOfSimulati
         MPI_Bcast(&NumberOfStepsOutside, 1, MPI_UINT64_T, CellEngineConfigDataObject.MainMPIProcessNumber, MPI_COMM_WORLD);
         MPI_Bcast(&NumberOfStepsInside, 1, MPI_UINT64_T, CellEngineConfigDataObject.MainMPIProcessNumber, MPI_COMM_WORLD);
 
+        UnsignedInt TypesFromMainProcess[2] = { static_cast<UnsignedInt>(CellEngineConfigDataObject.TypeOfSimulation), static_cast<UnsignedInt>(CellEngineConfigDataObject.TypeOfSychronizationfSimulationExecutedInMPIProcesses) };
+        MPI_Bcast(TypesFromMainProcess, 2, MPI_UINT64_T, CellEngineConfigDataObject.MainMPIProcessNumber, MPI_COMM_WORLD);
+        CellEngineConfigDataObject.TypeOfSimulation = static_cast<CellEngineConfigData::TypesOfSimulation>(TypesFromMainProcess[0]);
+        CellEngineConfigDataObject.TypeOfSychronizationfSimulationExecutedInMPIProcesses = static_cast<CellEngineConfigData::TypesOfSychronizationfSimulationExecutedInMPIProcesses>(TypesFromMainProcess[1]);
+
         CountAllParticlesInMPI();
 
         LoggersManagerObject.LogUnconditional(STREAM("NUMBER OF ALL PARTICLES IN MPI SIMULATION = " << NumberOfAllParticlesInMPISimulation << " " << MPIProcessDataObject.CurrentMPIProcessIndex << " " << "START"));

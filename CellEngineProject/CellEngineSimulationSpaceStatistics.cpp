@@ -102,7 +102,6 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesStatistics()
 
                 int ValueToSend = 2;
                 if (MPIProcessDataObject.CurrentMPIProcessIndex == CellEngineConfigDataObject.MainMPIProcessNumber)
-                    //MPI_Bcast(&ValueToSend, 1, MPI_INT, 0, MPI_COMM_WORLD);
                     MPI_Bcast(&ValueToSend, 1, MPI_INT, CellEngineConfigDataObject.MainMPIProcessNumber, MPI_COMM_WORLD);
 
                 LoggersManagerObject.LogStatistics(STREAM("SAVE PARTICLES ARRAYS START SIGNAL FOR MPI 2"));
@@ -160,7 +159,6 @@ void CellEngineSimulationSpaceStatistics::SaveParticlesAsCopiedMap()
                 if (MPIProcessDataObject.CurrentMPIProcessIndex == CellEngineConfigDataObject.MainMPIProcessNumber)
                     MaximumOfAllSavedParticlesSnapshotsCopiedVectorForMPILengths = *max_element(ParticlesSnapshotsCopiedVectorForMPILengths, ParticlesSnapshotsCopiedVectorForMPILengths + MPIProcessDataObject.NumberOfMPIProcesses);
 
-                //MPI_Bcast(&MaximumOfAllSavedParticlesSnapshotsCopiedVectorForMPILengths, 1, MPI_INT, 0, MPI_COMM_WORLD);
                 MPI_Bcast(&MaximumOfAllSavedParticlesSnapshotsCopiedVectorForMPILengths, 1, MPI_INT, CellEngineConfigDataObject.MainMPIProcessNumber, MPI_COMM_WORLD);
 
                 LoggersManagerObject.Log(STREAM("MaximumOfAllSavedParticlesSnapshotsCopiedVectorForMPILengths = " << MaximumOfAllSavedParticlesSnapshotsCopiedVectorForMPILengths << " " << MPIProcessDataObject.CurrentMPIProcessIndex));

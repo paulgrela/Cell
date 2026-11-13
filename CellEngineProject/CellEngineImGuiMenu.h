@@ -906,25 +906,6 @@ public:
             {
                 int IDButton = 1;
                 float Nothing;
-
-                if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true)
-                {
-                    const char *MPIProcessesSynchronizationComboBoxItems[] = { "1 Symmetrical", "2 Not Symmetrical" };
-                    static int MPIProcessesSynchronizationComboBoxItemsIndex = static_cast<int>(CellEngineConfigDataObject.TypeOfSychronizationfSimulationExecutedInMPIProcesses) - 1;
-                    ImGui::Combo(" MPI Processes Synchronization Type", &MPIProcessesSynchronizationComboBoxItemsIndex, MPIProcessesSynchronizationComboBoxItems, IM_ARRAYSIZE(MPIProcessesSynchronizationComboBoxItems));
-                    CellEngineConfigDataObject.TypeOfSychronizationfSimulationExecutedInMPIProcesses = static_cast<CellEngineConfigData::TypesOfSychronizationfSimulationExecutedInMPIProcesses>(MPIProcessesSynchronizationComboBoxItemsIndex + 1);
-
-                    if (MPIProcessDataObject.CurrentMPIProcessIndex == CellEngineConfigDataObject.MainMPIProcessNumber)
-                        MPI_Bcast(&CellEngineConfigDataObject.TypeOfSychronizationfSimulationExecutedInMPIProcesses, 1, MPI_INT, CellEngineConfigDataObject.MainMPIProcessNumber, MPI_COMM_WORLD);
-                }
-                else
-                {
-                    const char *ThreadsSynchronizationComboBoxItems[] = { "1 G", "2", "3", "4" };
-                    static int ThreadsSynchronizationComboBoxItemsIndex = static_cast<int>(CellEngineConfigDataObject.TypeOfSychronizationfSimulationExecutedInThreads) - 1;
-                    ImGui::Combo(" Threads Synchronization Type", &ThreadsSynchronizationComboBoxItemsIndex, ThreadsSynchronizationComboBoxItems, IM_ARRAYSIZE(ThreadsSynchronizationComboBoxItems));
-                    CellEngineConfigDataObject.TypeOfSychronizationfSimulationExecutedInThreads = static_cast<CellEngineConfigData::TypesOfSychronizationfSimulationExecutedInThreads>(ThreadsSynchronizationComboBoxItemsIndex + 1);
-                }
-
                 ImGui::Text("");
                 ImGui::Text("Number Of Simulation Steps Outside");
                 ImGui::DragInt("Num Of Steps Outside", &CellEngineConfigDataObject.NumberOfStepsInSimulationOutside, 1, 1, 1000, "%d", ImGuiSliderFlags_AlwaysClamp);
@@ -938,10 +919,6 @@ public:
                 ImGui::RadioButton("Only Reactions ", &TypeOfSimulation, 2);
                 ImGui::RadioButton("Only Diffusion", &TypeOfSimulation, 3);
                 CellEngineConfigDataObject.TypeOfSimulation = static_cast<CellEngineConfigData::TypesOfSimulation>(TypeOfSimulation);
-
-                if (MPIProcessDataObject.CurrentMPIProcessIndex == CellEngineConfigDataObject.MainMPIProcessNumber)
-                    MPI_Bcast(&CellEngineConfigDataObject.TypeOfSimulation, 1, MPI_INT, CellEngineConfigDataObject.MainMPIProcessNumber, MPI_COMM_WORLD);
-
                 ImGui::Text("");
 
                 ColorButton(AlignString("START N STEPS OF SIMULATION FOR WHOLE CELL SPACE IN THREADS", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
@@ -1418,12 +1395,30 @@ public:
             {
                 int IDButton = 1;
                 float Nothing;
+
+                if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true && MPIProcessDataObject.CurrentMPIProcessIndex == CellEngineConfigDataObject.MainMPIProcessNumber)
+                {
+                    const char *MPIProcessesSynchronizationComboBoxItems[] = { "1 Symmetrical", "2 Not Symmetrical" };
+                    static int MPIProcessesSynchronizationComboBoxItemsIndex = static_cast<int>(CellEngineConfigDataObject.TypeOfSychronizationfSimulationExecutedInMPIProcesses) - 1;
+                    ImGui::Combo(" MPI Processes Synchronization Type", &MPIProcessesSynchronizationComboBoxItemsIndex, MPIProcessesSynchronizationComboBoxItems, IM_ARRAYSIZE(MPIProcessesSynchronizationComboBoxItems));
+                    CellEngineConfigDataObject.TypeOfSychronizationfSimulationExecutedInMPIProcesses = static_cast<CellEngineConfigData::TypesOfSychronizationfSimulationExecutedInMPIProcesses>(MPIProcessesSynchronizationComboBoxItemsIndex + 1);
+                }
+                else
+                {
+                    const char *ThreadsSynchronizationComboBoxItems[] = { "1 Global Barrier", "2 Local Barriers", "3 Conditiona Variable Two Mutexes", "4 Conditional Variable One Mutex" };
+                    static int ThreadsSynchronizationComboBoxItemsIndex = static_cast<int>(CellEngineConfigDataObject.TypeOfSychronizationfSimulationExecutedInThreads) - 1;
+                    ImGui::Combo(" Threads Synchronization Type", &ThreadsSynchronizationComboBoxItemsIndex, ThreadsSynchronizationComboBoxItems, IM_ARRAYSIZE(ThreadsSynchronizationComboBoxItems));
+                    CellEngineConfigDataObject.TypeOfSychronizationfSimulationExecutedInThreads = static_cast<CellEngineConfigData::TypesOfSychronizationfSimulationExecutedInThreads>(ThreadsSynchronizationComboBoxItemsIndex + 1);
+                }
+
                 ImGui::Text("");
                 ImGui::Text("Number Of Simulation Steps Outside");
                 ImGui::DragInt("Num Of Steps Outside", &CellEngineConfigDataObject.NumberOfStepsInSimulationOutside, 1, 1, 1000, "%d", ImGuiSliderFlags_AlwaysClamp);
+
                 ImGui::Text("");
                 ImGui::Text("Number Of Simulation Steps Inside");
                 ImGui::DragInt("Num Of Steps Inside", &CellEngineConfigDataObject.NumberOfStepsInSimulationInside, 1, 1, 1000, "%d", ImGuiSliderFlags_AlwaysClamp);
+
                 ImGui::Text("");
                 ImGui::Text("Type Of Simulation");
                 int TypeOfSimulation = static_cast<int>(CellEngineConfigDataObject.TypeOfSimulation);
@@ -1476,10 +1471,7 @@ public:
                 {
                     ColorButton(AlignString("CLOSE SIMULATION PROGRAM ALL PROCESSES IN MPI", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)
                     {
-                        int ValueToSend = 0;
-                        MPI_Bcast(&ValueToSend, 1, MPI_INT, CellEngineConfigDataObject.MainMPIProcessNumber, MPI_COMM_WORLD);
-                        ImGuiMenuGLFShutdown();
-                        EndMPIAllProcessesForCellEngine();
+                        glfwSetWindowShouldClose(ImGuiMenuWindow, GLFW_TRUE);
                     });
                 }
             }
@@ -1910,6 +1902,13 @@ public:
 
             ImGuiMenuGLFWMainLoop();
 
+            if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true)
+            {
+                int ValueToSend = 0;
+                MPI_Bcast(&ValueToSend, 1, MPI_INT, CellEngineConfigDataObject.MainMPIProcessNumber, MPI_COMM_WORLD);
+                MPI_Barrier(MPI_COMM_WORLD);
+            }
+
             ImGuiMenuGLFShutdown();
         }
         CATCH("START GRAPHICS")
@@ -2034,7 +2033,10 @@ public:
                         int ValueToGet = 0;
                         MPI_Bcast(&ValueToGet, 1, MPI_INT, CellEngineConfigDataObject.MainMPIProcessNumber, MPI_COMM_WORLD);
                         if (ValueToGet == 0)
+                        {
+                            MPI_Barrier(MPI_COMM_WORLD);
                             break;
+                        }
                         else
                         if (ValueToGet == 1)
                             CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfSimulationForWholeCellSpaceInMPIProcess(CellEngineConfigDataObject.NumberOfStepsInSimulationOutside, CellEngineConfigDataObject.NumberOfStepsInSimulationInside);
@@ -2055,6 +2057,7 @@ public:
                 if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true)
                 {
                     MPI_Barrier(MPI_COMM_WORLD);
+
                     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->GenerateNStepsOfSimulationForWholeCellSpaceInMPIProcess(CellEngineConfigDataObject.NumberOfStepsInSimulationOutside, CellEngineConfigDataObject.NumberOfStepsInSimulationInside);
                     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SaveParticlesStatisticsOnce();
                     CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->SetIncSimulationStepNumber();
