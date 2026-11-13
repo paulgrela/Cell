@@ -135,6 +135,13 @@ public:
     };
     TypesOfSychronizationfSimulationExecutedInThreads TypeOfSychronizationfSimulationExecutedInThreads = TypesOfSychronizationfSimulationExecutedInThreads::SynchronizeSimulationExecutedInThreadsByOneGlobalBarrier;
 public:
+    enum class TypesOfSychronizationfSimulationExecutedInMPIProcesses : UnsignedInt
+    {
+        SynchronizeSimulationExecutedInMPIProcessesSymmetrical = 1,
+        SynchronizeSimulationExecutedInMPIProcessesNotSymmetrical = 2,
+    };
+    TypesOfSychronizationfSimulationExecutedInMPIProcesses TypeOfSychronizationfSimulationExecutedInMPIProcesses = TypesOfSychronizationfSimulationExecutedInMPIProcesses::SynchronizeSimulationExecutedInMPIProcessesNotSymmetrical;
+public:
     int NumberOfStepsInSimulationOutside = 1;
     int NumberOfStepsInSimulationInside = 1;
     enum class TypesOfSimulation : UnsignedInt

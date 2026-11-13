@@ -509,9 +509,9 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
             ParticlesDataFile.read(reinterpret_cast<char*>(&LocalParticleObjectPrevTemporary), sizeof(LocalParticleObjectPrevTemporary));
             ParticlesDataFile.read(reinterpret_cast<char*>(&LocalParticleObjectNextTemporary), sizeof(LocalParticleObjectNextTemporary));
             ParticlesDataFile.read(reinterpret_cast<char*>(&LocalParticleObjectPairedNucleotideTemporary), sizeof(LocalParticleObjectPairedNucleotideTemporary));
-            LocalParticleObjectPrevTemporary = ParticleObject.PrevTemporary;
-            LocalParticleObjectNextTemporary = ParticleObject.NextTemporary;
-            LocalParticleObjectPairedNucleotideTemporary = ParticleObject.PairedNucleotideTemporary;
+            ParticleObject.PrevTemporary = LocalParticleObjectPrevTemporary;
+            ParticleObject.NextTemporary = LocalParticleObjectNextTemporary;
+            ParticleObject.PairedNucleotideTemporary = LocalParticleObjectPairedNucleotideTemporary;
 
             ReadVectorFromBinaryFileTemporary<UniqueIdUInt64Type>(ParticlesDataFile, ParticleObject.LinkedParticlesPointersListTemporary);
 
@@ -524,6 +524,13 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
             if (CellEngineConfigDataObject.MixedFullAtomWithVoxelSpace == false)
             {
                 auto ParticleSectorPos = CellEngineUseful::GetSectorPos(ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z);
+
+                if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::FullAtomSimulationSpace && (ParticleSectorPos.PosX == -1 || ParticleSectorPos.PosY == -1 || ParticleSectorPos.PosZ == -1))
+                {
+                    LoggersManagerObject.Log(STREAM("Particle outside the sectors of simulation space = " << ParticleObject.ParticleUniqueId << " " << ParticleObject.Center.X << " " << ParticleObject.Center.Y << " " << ParticleObject.Center.Z));
+                    BadParticlesCenters++;
+                    continue;
+                }
 
                 if constexpr(AdditionalInfoPrinting == true)
                     LoggersManagerObject.Log(STREAM(ParticleSectorPos.PosX << " " << ParticleSectorPos.PosY << " " << ParticleSectorPos.PosZ << " " << ParticleObject.Center.X << " " << ParticleObject.Center.Y << " " << ParticleObject.Center.Z));

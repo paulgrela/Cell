@@ -69,10 +69,23 @@ public:
 private:
     static void SychronizeSimulationExecutedInThreads(barrier<>* SyncPoint, const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData);
     void ExchangeParticlesBetweenThreadsAndSychronizeSimulationExecutedInThreadsInFullAtomSimulationSpace(barrier<>* SyncPoint, const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, ThreadIdType CurrentThreadIndexParam, UnsignedInt ThreadXIndexParam, UnsignedInt ThreadYIndexParam, UnsignedInt ThreadZIndexParam) const;
-public:
-    void ExchangeParticlesBetweenMPIProcesses();
+private:
+    void ExchangeParticlesBetweenThreadsAndSychronizeSimulationExecutedInMPIProcessesInFullAtomSimulationSpace();
+private:
+    void ExchangeParticlesBetweenMPIProcessesNotSymmetrical();
     void ExchangeParticlesBetweenMPIProcessesGroup1();
     void ExchangeParticlesBetweenMPIProcessesGroup2();
+private:
+    void ExchangeParticlesBetweenMPIProcessesSymmetrical();
+    void ExchangeParticlesBetweenMPIProcessesStartReceivingParticlesFromAllNeighbors();
+    void ExchangeParticlesBetweenMPIProcessesSendParticlesToAllNeighbors();
+    void ExchangeParticlesBetweenMPIProcessesPhase1InsertReceivedParticlesAndSendAnswers();
+    void ExchangeParticlesBetweenMPIProcessesPhase2RemoveOwnParticlesInsertedByNeighbors();
+    void ExchangeParticlesBetweenMPIProcessesWaitForAllSendsAndClearParticlesToSend();
+private:
+    int PrepareParticlesToSendToNeighborMPIProcess(UnsignedInt NeighborIndex, UnsignedInt MaxNumberOfParticlesInOneMessage);
+    void InsertParticlesReceivedFromNeighborMPIProcess(UnsignedInt NeighborIndex, int NumberOfReceivedParticles);
+    void RemoveParticlesInsertedByNeighborMPIProcess(UnsignedInt NeighborIndex, int NumberOfAnswers);
 public:
     void ExchangeParticlesBetweenThreadsConditionalVariableTwoMutexes(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData, ThreadIdType CurrentThreadIndexParam, UnsignedInt ThreadXIndexParam, UnsignedInt ThreadYIndexParam, UnsignedInt ThreadZIndexParam) const;
     void ExchangeParticlesBetweenThreadsGroup1ConditionalVariableTwoMutexes(const shared_ptr<CellEngineSimulationSpace>& CurrentThreadLocalSimulationSpaceData) const;

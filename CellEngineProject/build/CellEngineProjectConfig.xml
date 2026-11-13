@@ -5078,7 +5078,7 @@
 			<CellStateFileName>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile42.dat</CellStateFileName>
 			<CellStateFileNameBackup>../../WholeCellData/Mycoplasma Genitalium/RAW/ParticlesDataFile42.dat</CellStateFileNameBackup>
 
-                        <UseNewerAutinNamesToAssociateWithIllinoisNames>false</UseNewerAutinNamesToAssociateWithIllinoisNames>
+			<UseNewerAutinNamesToAssociateWithIllinoisNames>false</UseNewerAutinNamesToAssociateWithIllinoisNames>
 
 			<DivisionFactorForSimulationSpace>4.0</DivisionFactorForSimulationSpace> <!--4 or 2 or other-->
 			<DivisionFactorForReadingPositionsOfParticles>1.0</DivisionFactorForReadingPositionsOfParticles>
@@ -5121,6 +5121,8 @@
 
 			<StepToChangeSpaceDivisionForThreads>4</StepToChangeSpaceDivisionForThreads>
 			<TypeOfExchangeOfParticlesBetweenThreads>3</TypeOfExchangeOfParticlesBetweenThreads>
+
+			<TypeOfSychronizationfSimulationExecutedInMPIProcesses>2</TypeOfSychronizationfSimulationExecutedInMPIProcesses>
 
 			<UseMutexBetweenMainScreenThreadAndMenuThreads>true</UseMutexBetweenMainScreenThreadAndMenuThreads>
 

@@ -1,6 +1,9 @@
 
 #include <mpi.h>
 #include <chrono>
+#include <cstddef>
+#include <algorithm>
+#include <type_traits>
 
 #include "DateTimeUtils.h"
 
@@ -1516,6 +1519,20 @@ void CellEngineSimulationParallelTasksExecutionManager::GenerateOneStepOfSimulat
     CATCH("generating n steps simulation for whole cell space in threads")
 }
 
+void CellEngineSimulationParallelTasksExecutionManager::ExchangeParticlesBetweenThreadsAndSychronizeSimulationExecutedInMPIProcessesInFullAtomSimulationSpace()
+{
+    try
+    {
+        switch (CellEngineConfigDataObject.TypeOfSychronizationfSimulationExecutedInMPIProcesses)
+        {
+            case CellEngineConfigData::TypesOfSychronizationfSimulationExecutedInMPIProcesses::SynchronizeSimulationExecutedInMPIProcessesSymmetrical: ExchangeParticlesBetweenMPIProcessesSymmetrical(); break;
+            case CellEngineConfigData::TypesOfSychronizationfSimulationExecutedInMPIProcesses::SynchronizeSimulationExecutedInMPIProcessesNotSymmetrical : ExchangeParticlesBetweenMPIProcessesNotSymmetrical(); break;
+            default : break;
+        }
+    }
+    CATCH("exchange particles and synchronize simulation executed in threads")
+}
+
 void CellEngineSimulationParallelTasksExecutionManager::GenerateNStepsOfSimulationForWholeCellSpaceInMPIProcess(const UnsignedInt NumberOfStepsOutside, const UnsignedInt NumberOfStepsInside, const ThreadIdType CurrentThreadIndexParam, const UnsignedInt ThreadXIndexParam, const UnsignedInt ThreadYIndexParam, const UnsignedInt ThreadZIndexParam)
 {
     try
@@ -1528,7 +1545,7 @@ void CellEngineSimulationParallelTasksExecutionManager::GenerateNStepsOfSimulati
 
             const auto start_time_exchange = chrono::high_resolution_clock::now();
 
-            ExchangeParticlesBetweenMPIProcesses();
+            ExchangeParticlesBetweenThreadsAndSychronizeSimulationExecutedInMPIProcessesInFullAtomSimulationSpace();
 
             const auto stop_time_exchange = chrono::high_resolution_clock::now();
 
@@ -1843,7 +1860,7 @@ void CellEngineSimulationParallelTasksExecutionManager::ExchangeParticlesBetween
     CellEngineUseful::SwitchOffLogs();
 }
 
-void CellEngineSimulationParallelTasksExecutionManager::ExchangeParticlesBetweenMPIProcesses()
+void CellEngineSimulationParallelTasksExecutionManager::ExchangeParticlesBetweenMPIProcessesNotSymmetrical()
 {
     try
     {
@@ -1869,6 +1886,263 @@ void CellEngineSimulationParallelTasksExecutionManager::ExchangeParticlesBetween
         }
     }
     CATCH("exchange particles between mpi processes")
+}
+
+constexpr int MPITagParticlesForNeighborMPIProcess = 1001;
+constexpr int MPITagInsertedFlagsForNeighborMPIProcess = 1002;
+
+static MPI_Datatype GetMPIDatatypeForParticleSenderStructForMPIExchange()
+{
+    static const MPI_Datatype ParticleMPIDatatype = []()
+    {
+        using StructType = ParticleSenderStructForMPIExchange;
+
+        static_assert(std::is_trivially_copyable_v<StructType> && std::is_standard_layout_v<StructType>, "ParticleSenderStructForMPIExchange must stay a plain struct");
+        static_assert(std::is_same_v<UniqueIdUInt64Type, std::uint64_t> && std::is_same_v<UniqueIdUInt32Type, std::uint32_t> && std::is_same_v<RealType, float>, "MPI types below must match the C++ types");
+        static_assert(sizeof(vector3_16) == 3 * sizeof(std::uint16_t) && sizeof(vector3_Real32) == 3 * sizeof(float), "vector3 must contain exactly X, Y, Z");
+
+        constexpr int BlockLengths[7] = { 1, 1, 1, 1, 3, 3, 3 };
+        constexpr MPI_Aint Displacements[7] = { offsetof(StructType, ParticleUniqueId), offsetof(StructType, ParticleKindId), offsetof(StructType, SenderParallelTaskIndex), offsetof(StructType, ReceiverParallelTaskIndex), offsetof(StructType, ReceiverSectorPos), offsetof(StructType, NewParticleCenter), offsetof(StructType, Vector) };
+        const MPI_Datatype Types[7] = { MPI_UINT64_T, MPI_UINT32_T, MPI_INT, MPI_INT, MPI_UINT16_T, MPI_FLOAT, MPI_FLOAT };
+
+        MPI_Datatype FieldsOnlyDatatype;
+        MPI_Datatype WholeStructDatatype;
+        MPI_Type_create_struct(7, BlockLengths, Displacements, Types, &FieldsOnlyDatatype);
+        MPI_Type_create_resized(FieldsOnlyDatatype, 0, sizeof(StructType), &WholeStructDatatype);
+        MPI_Type_commit(&WholeStructDatatype);
+        MPI_Type_free(&FieldsOnlyDatatype);
+
+        return WholeStructDatatype;
+    }();
+
+    return ParticleMPIDatatype;
+}
+
+static UnsignedInt GetMaxNumberOfParticlesInOneMPIMessage()
+{
+    return MaxMPIMessageSize / sizeof(ParticleSenderStructForMPIExchange);
+}
+
+void CellEngineSimulationParallelTasksExecutionManager::ExchangeParticlesBetweenMPIProcessesSymmetrical()
+{
+    try
+    {
+        MPIExchangeRequests.SetAllRequestsToNull();
+
+        ExchangeParticlesBetweenMPIProcessesStartReceivingParticlesFromAllNeighbors();
+        ExchangeParticlesBetweenMPIProcessesSendParticlesToAllNeighbors();
+        ExchangeParticlesBetweenMPIProcessesPhase1InsertReceivedParticlesAndSendAnswers();
+        ExchangeParticlesBetweenMPIProcessesPhase2RemoveOwnParticlesInsertedByNeighbors();
+        ExchangeParticlesBetweenMPIProcessesWaitForAllSendsAndClearParticlesToSend();
+    }
+    CATCH("exchange particles between mpi processes")
+}
+
+void CellEngineSimulationParallelTasksExecutionManager::ExchangeParticlesBetweenMPIProcessesStartReceivingParticlesFromAllNeighbors()
+{
+    try
+    {
+        const MPI_Datatype ParticleMPIDatatype = GetMPIDatatypeForParticleSenderStructForMPIExchange();
+        const UnsignedInt MaxNumberOfParticlesInOneMessage = GetMaxNumberOfParticlesInOneMPIMessage();
+
+        for (UnsignedInt NeighborIndex = 0; NeighborIndex < NumberOfAllNeighbors; NeighborIndex++)
+            if (NeighborParallelTasksIndexes[NeighborIndex] != -1)
+            {
+                auto& ReceivedParticles = MPIExchangeBuffers.ReceivedParticles[NeighborIndex];
+                if (ReceivedParticles.size() != MaxNumberOfParticlesInOneMessage)
+                    ReceivedParticles.resize(MaxNumberOfParticlesInOneMessage);
+
+                MPI_Irecv(ReceivedParticles.data(), static_cast<int>(MaxNumberOfParticlesInOneMessage), ParticleMPIDatatype, static_cast<int>(NeighborParallelTasksIndexes[NeighborIndex]), MPITagParticlesForNeighborMPIProcess, MPI_COMM_WORLD, &MPIExchangeRequests.ReceiveParticlesRequests[NeighborIndex]);
+            }
+    }
+    CATCH("starting receiving particles from all neighbor mpi processes")
+}
+
+void CellEngineSimulationParallelTasksExecutionManager::ExchangeParticlesBetweenMPIProcessesSendParticlesToAllNeighbors()
+{
+    try
+    {
+        const MPI_Datatype ParticleMPIDatatype = GetMPIDatatypeForParticleSenderStructForMPIExchange();
+        const UnsignedInt MaxNumberOfParticlesInOneMessage = GetMaxNumberOfParticlesInOneMPIMessage();
+
+        for (UnsignedInt NeighborIndex = 0; NeighborIndex < NumberOfAllNeighbors; NeighborIndex++)
+            if (NeighborParallelTasksIndexes[NeighborIndex] != -1)
+            {
+                const int NeighborRank = static_cast<int>(NeighborParallelTasksIndexes[NeighborIndex]);
+                const int NumberOfParticlesToSend = PrepareParticlesToSendToNeighborMPIProcess(NeighborIndex, MaxNumberOfParticlesInOneMessage);
+                MPIExchangeBuffers.NumberOfParticlesSent[NeighborIndex] = NumberOfParticlesToSend;
+
+                if (NumberOfParticlesToSend > 0)
+                {
+                    MPIExchangeBuffers.InsertedFlagsReceived[NeighborIndex].resize(NumberOfParticlesToSend);
+                    MPI_Irecv(MPIExchangeBuffers.InsertedFlagsReceived[NeighborIndex].data(), NumberOfParticlesToSend, MPI_UINT8_T, NeighborRank, MPITagInsertedFlagsForNeighborMPIProcess, MPI_COMM_WORLD, &MPIExchangeRequests.ReceiveInsertedFlagsRequests[NeighborIndex]);
+                }
+
+                MPI_Isend(MPIExchangeBuffers.ParticlesToSend[NeighborIndex].data(), NumberOfParticlesToSend, ParticleMPIDatatype, NeighborRank, MPITagParticlesForNeighborMPIProcess, MPI_COMM_WORLD, &MPIExchangeRequests.SendParticlesRequests[NeighborIndex]);
+            }
+    }
+    CATCH("sending particles to all neighbor mpi processes")
+}
+
+void CellEngineSimulationParallelTasksExecutionManager::ExchangeParticlesBetweenMPIProcessesPhase1InsertReceivedParticlesAndSendAnswers()
+{
+    try
+    {
+        const MPI_Datatype ParticleMPIDatatype = GetMPIDatatypeForParticleSenderStructForMPIExchange();
+
+        for (UnsignedInt NeighborIndex = 0; NeighborIndex < NumberOfAllNeighbors; NeighborIndex++)
+            if (NeighborParallelTasksIndexes[NeighborIndex] != -1)
+            {
+                MPI_Status Status;
+                MPI_Wait(&MPIExchangeRequests.ReceiveParticlesRequests[NeighborIndex], &Status);
+
+                int NumberOfReceivedParticles = 0;
+                MPI_Get_count(&Status, ParticleMPIDatatype, &NumberOfReceivedParticles);
+
+                if (NumberOfReceivedParticles > 0)
+                {
+                    InsertParticlesReceivedFromNeighborMPIProcess(NeighborIndex, NumberOfReceivedParticles);
+
+                    const auto& InsertedFlagsToSend = MPIExchangeBuffers.InsertedFlagsToSend[NeighborIndex];
+                    MPI_Isend(InsertedFlagsToSend.data(), static_cast<int>(InsertedFlagsToSend.size()), MPI_UINT8_T, static_cast<int>(NeighborParallelTasksIndexes[NeighborIndex]), MPITagInsertedFlagsForNeighborMPIProcess, MPI_COMM_WORLD, &MPIExchangeRequests.SendInsertedFlagsRequests[NeighborIndex]);
+                }
+            }
+    }
+    CATCH("phase 1 of exchange between mpi processes - inserting received particles and sending answers")
+}
+
+void CellEngineSimulationParallelTasksExecutionManager::ExchangeParticlesBetweenMPIProcessesPhase2RemoveOwnParticlesInsertedByNeighbors()
+{
+    try
+    {
+        for (UnsignedInt NeighborIndex = 0; NeighborIndex < NumberOfAllNeighbors; NeighborIndex++)
+            if (NeighborParallelTasksIndexes[NeighborIndex] != -1 && MPIExchangeBuffers.NumberOfParticlesSent[NeighborIndex] > 0)
+            {
+                MPI_Status Status;
+                MPI_Wait(&MPIExchangeRequests.ReceiveInsertedFlagsRequests[NeighborIndex], &Status);
+
+                int NumberOfAnswers = 0;
+                MPI_Get_count(&Status, MPI_UINT8_T, &NumberOfAnswers);
+
+                if (NumberOfAnswers != MPIExchangeBuffers.NumberOfParticlesSent[NeighborIndex])
+                {
+                    LoggersManagerObject.LogUnconditional(STREAM("ERROR in MPI exchange: process " << MPIProcessDataObject.CurrentMPIProcessIndex << " sent " << MPIExchangeBuffers.NumberOfParticlesSent[NeighborIndex] << " particles to process " << NeighborParallelTasksIndexes[NeighborIndex] << " but got " << NumberOfAnswers << " answers"));
+                    ErrorCounter++;
+                    NumberOfAnswers = std::clamp(NumberOfAnswers, 0, MPIExchangeBuffers.NumberOfParticlesSent[NeighborIndex]);
+                }
+
+                RemoveParticlesInsertedByNeighborMPIProcess(NeighborIndex, NumberOfAnswers);
+            }
+    }
+    CATCH("phase 2 of exchange between mpi processes - removing own particles inserted by neighbors")
+}
+
+void CellEngineSimulationParallelTasksExecutionManager::ExchangeParticlesBetweenMPIProcessesWaitForAllSendsAndClearParticlesToSend()
+{
+    try
+    {
+        MPI_Waitall(static_cast<int>(NumberOfAllNeighbors), MPIExchangeRequests.SendParticlesRequests, MPI_STATUSES_IGNORE);
+        MPI_Waitall(static_cast<int>(NumberOfAllNeighbors), MPIExchangeRequests.SendInsertedFlagsRequests, MPI_STATUSES_IGNORE);
+
+        for (auto& ParticlesToSendToNeighbor : VectorOfParticlesToSendToNeighborParallelTasks)
+            ParticlesToSendToNeighbor.clear();
+    }
+    CATCH("waiting for all sends to neighbor mpi processes and clearing particles to send")
+}
+
+int CellEngineSimulationParallelTasksExecutionManager::PrepareParticlesToSendToNeighborMPIProcess(const UnsignedInt NeighborIndex, const UnsignedInt MaxNumberOfParticlesInOneMessage)
+{
+    auto& ParticlesToSend = MPIExchangeBuffers.ParticlesToSend[NeighborIndex];
+    ParticlesToSend.clear();
+
+    try
+    {
+        const auto& ParticlesWaitingToBeSent = VectorOfParticlesToSendToNeighborParallelTasks[NeighborIndex];
+
+        UnsignedInt NumberOfParticlesToSend = ParticlesWaitingToBeSent.size();
+        if (NumberOfParticlesToSend > MaxNumberOfParticlesInOneMessage)
+        {
+            LoggersManagerObject.LogUnconditional(STREAM("ERROR in MPI exchange: process " << MPIProcessDataObject.CurrentMPIProcessIndex << " has " << NumberOfParticlesToSend << " particles for process " << NeighborParallelTasksIndexes[NeighborIndex] << " but one message holds only " << MaxNumberOfParticlesInOneMessage << " - the rest stay where they are in this step. Increase MaxMPIMessageSize."));
+            ErrorCounter++;
+            NumberOfParticlesToSend = MaxNumberOfParticlesInOneMessage;
+        }
+
+        ParticlesToSend.reserve(NumberOfParticlesToSend);
+        for (UnsignedInt ParticleIndex = 0; ParticleIndex < NumberOfParticlesToSend; ParticleIndex++)
+        {
+            const auto& ParticleWaiting = ParticlesWaitingToBeSent[ParticleIndex];
+            ParticlesToSend.emplace_back(ParticleSenderStructForMPIExchange{ .ParticleUniqueId = ParticleWaiting.ParticleUniqueId, .ParticleKindId = ParticleWaiting.ParticleKindId, .SenderParallelTaskIndex = ParticleWaiting.SenderParallelTaskIndex, .ReceiverParallelTaskIndex = ParticleWaiting.ReceiverParallelTaskIndex, .ReceiverSectorPos = ParticleWaiting.ReceiverSectorPos, .NewParticleCenter = ParticleWaiting.NewParticleCenter, .Vector = ParticleWaiting.Vector });
+        }
+    }
+    CATCH("preparing particles to send to neighbor mpi process")
+
+    return static_cast<int>(ParticlesToSend.size());
+}
+
+void CellEngineSimulationParallelTasksExecutionManager::InsertParticlesReceivedFromNeighborMPIProcess(const UnsignedInt NeighborIndex, const int NumberOfReceivedParticles)
+{
+    auto& InsertedFlags = MPIExchangeBuffers.InsertedFlagsToSend[NeighborIndex];
+    InsertedFlags.clear();
+
+    try
+    {
+        const auto& ReceivedParticles = MPIExchangeBuffers.ReceivedParticles[NeighborIndex];
+        InsertedFlags.assign(NumberOfReceivedParticles, 0);
+
+        ParticleSenderStructForParallelMultiTaskingExecution ParticleToInsert;
+
+        for (int ParticleIndex = 0; ParticleIndex < NumberOfReceivedParticles; ParticleIndex++)
+        {
+            const auto& ReceivedParticle = ReceivedParticles[ParticleIndex];
+            if (ReceivedParticle.ParticleUniqueId == 0)
+                continue;
+
+            ParticleToInsert.ParticleUniqueId = ReceivedParticle.ParticleUniqueId;
+            ParticleToInsert.ParticleKindId = ReceivedParticle.ParticleKindId;
+            ParticleToInsert.SenderParallelTaskIndex = ReceivedParticle.SenderParallelTaskIndex;
+            ParticleToInsert.ReceiverParallelTaskIndex = ReceivedParticle.ReceiverParallelTaskIndex;
+            ParticleToInsert.ReceiverSectorPos = ReceivedParticle.ReceiverSectorPos;
+            ParticleToInsert.NewParticleCenter = ReceivedParticle.NewParticleCenter;
+            ParticleToInsert.Vector = ReceivedParticle.Vector;
+
+            SetCurrentSectorPos(SectorPosType{ .PosX = static_cast<SignedInt>(ReceivedParticle.ReceiverSectorPos.X), .PosY = static_cast<SignedInt>(ReceivedParticle.ReceiverSectorPos.Y), .PosZ = static_cast<SignedInt>(ReceivedParticle.ReceiverSectorPos.Z) });
+
+            UniqueIdUInt64Type UniqueIdOfNewCreatedParticle = 0;
+            if (CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossibleInMPIMultiProcessDiffusion(ParticleToInsert, UniqueIdOfNewCreatedParticle) == true)
+            {
+                auto& ParticleObject = GetParticleFromUniqueId(UniqueIdOfNewCreatedParticle);
+                ParticleObject.SetCenterCoordinates(ParticleObject.Center.X + ReceivedParticle.Vector.X, ParticleObject.Center.Y + ReceivedParticle.Vector.Y, ParticleObject.Center.Z + ReceivedParticle.Vector.Z);
+                CellEngineUseful::MoveAllAtomsInParticleAtomsListByVector(ParticleObject, ReceivedParticle.Vector.X, ReceivedParticle.Vector.Y, ReceivedParticle.Vector.Z);
+
+                InsertedFlags[ParticleIndex] = 1;
+                NumberOfParticlesMovedInDiffusionSentToAnotherParallelTask++;
+            }
+            else
+                NumberOfParticlesToBeMovedInDiffusionRejectedByAnotherParallelTask++;
+        }
+    }
+    CATCH("inserting particles received from neighbor mpi process")
+}
+
+void CellEngineSimulationParallelTasksExecutionManager::RemoveParticlesInsertedByNeighborMPIProcess(const UnsignedInt NeighborIndex, const int NumberOfAnswers)
+{
+    try
+    {
+        const auto& ParticlesSent = VectorOfParticlesToSendToNeighborParallelTasks[NeighborIndex];
+        const auto& InsertedFlags = MPIExchangeBuffers.InsertedFlagsReceived[NeighborIndex];
+
+        for (int ParticleIndex = 0; ParticleIndex < NumberOfAnswers; ParticleIndex++)
+            if (InsertedFlags[ParticleIndex] == 1)
+            {
+                const auto& ParticleSent = ParticlesSent[ParticleIndex];
+
+                SetCurrentSectorPos(SectorPosType{ .PosX = static_cast<SignedInt>(ParticleSent.SenderSectorPos.X), .PosY = static_cast<SignedInt>(ParticleSent.SenderSectorPos.Y), .PosZ = static_cast<SignedInt>(ParticleSent.SenderSectorPos.Z) });
+                RemoveParticle(ParticleSent.ParticleUniqueId, true, false);
+
+                NumberOfParticlesToBeMovedInDiffusionConfirmedAfterSentInAnotherParallelTask++;
+            }
+    }
+    CATCH("removing particles inserted by neighbor mpi process")
 }
 
 void CellEngineSimulationParallelTasksExecutionManager::SetZeroForAllParallelExecutionVariables()
@@ -2043,7 +2317,7 @@ void CellEngineSimulationParallelTasksExecutionManager::GenerateNStepsOfSimulati
 {
     try
     {
-FirstSendParticlesForThreads(false, true);
+        FirstSendParticlesForThreads(false, true);
         GenerateNStepsOfSimulationForWholeCellSpaceInThreads(NumberOfStepsOutside, NumberOfStepsInside);
         GatherParticlesFromThreadsToParticlesInMainThread();
     }

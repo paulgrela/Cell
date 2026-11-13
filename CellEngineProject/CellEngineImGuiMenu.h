@@ -504,6 +504,7 @@ public:
             static int PrevTypesOfVisibilityComboBoxCurrentItemIndex = 0;
 
             ImGui::Combo(" Types of Visibility", &TypesOfVisibilityComboBoxCurrentItemIndex, TypesOfVisibilityComboBoxItems, IM_ARRAYSIZE(TypesOfVisibilityComboBoxItems));
+
             if (PrevTypesOfVisibilityComboBoxCurrentItemIndex != TypesOfVisibilityComboBoxCurrentItemIndex)
                 switch (TypesOfVisibilityComboBoxCurrentItemIndex)
                 {
@@ -518,23 +519,24 @@ public:
                 {
                     vector<ParticleKind> LocalParticlesKindsForImGuiSelection;
 
-                        for (const auto& ParticlesKindsMapElement : ParticlesKindsManagerObject.ParticlesKinds | views::values)
-                            if (ParticlesKindsMapElement.IdStr.starts_with(JCVISYN3APredStr) || ParticlesKindsMapElement.IdStr.starts_with("particle_") || ParticlesKindsMapElement.IdStr.starts_with("trna_") || ParticlesKindsMapElement.IdStr.starts_with("mrna_") || ParticlesKindsMapElement.IdStr.starts_with("rrna_") || ParticlesKindsMapElement.IdStr.starts_with("M_"))
-                                LocalParticlesKindsForImGuiSelection.emplace_back(ParticlesKindsMapElement);
+                    for (const auto& ParticlesKindsMapElement : ParticlesKindsManagerObject.ParticlesKinds | views::values)
+                        if (ParticlesKindsMapElement.IdStr.starts_with(JCVISYN3APredStr) || ParticlesKindsMapElement.IdStr.starts_with("particle_") || ParticlesKindsMapElement.IdStr.starts_with("trna_") || ParticlesKindsMapElement.IdStr.starts_with("mrna_") || ParticlesKindsMapElement.IdStr.starts_with("rrna_") || ParticlesKindsMapElement.IdStr.starts_with("M_"))
+                            LocalParticlesKindsForImGuiSelection.emplace_back(ParticlesKindsMapElement);
 
-                        ranges::sort(LocalParticlesKindsForImGuiSelection, ComparisonOfParticle);
+                    ranges::sort(LocalParticlesKindsForImGuiSelection, ComparisonOfParticle);
 
-                        for (auto &ParticlesKindForImGuiSelectionObject : LocalParticlesKindsForImGuiSelection)
-                        {
-                            string TypeStr = "Unknown Type ";
-                            if (ParticlesKindForImGuiSelectionObject.ParticleKindSpecialDataSector.empty() == false)
-                                TypeStr = ParticlesKindsManager::ConvertParticleTypeToString(ParticlesKindForImGuiSelectionObject.ParticleKindSpecialDataSector.back().ParticleType);
-                            ImGui::Checkbox(string(to_string(ParticlesKindForImGuiSelectionObject.ParticleKindId) + " " + "T = " + TypeStr + " " + ParticlesKindForImGuiSelectionObject.IdStr + " " + (ParticlesKindForImGuiSelectionObject.Name.starts_with("M_") ? ParticlesKindForImGuiSelectionObject.Name : "") + (ParticlesKindForImGuiSelectionObject.Formula != ParticlesKindForImGuiSelectionObject.IdStr && ParticlesKindForImGuiSelectionObject.Formula.empty() == false ? ("F = " + ParticlesKindForImGuiSelectionObject.Formula + " ") : "")).c_str(), &ParticlesKindForImGuiSelectionObject.GraphicData.Visible);
-                        }
+                    for (auto &ParticlesKindForImGuiSelectionObject : LocalParticlesKindsForImGuiSelection)
+                    {
+                        string TypeStr = "Unknown Type ";
+                        if (ParticlesKindForImGuiSelectionObject.ParticleKindSpecialDataSector.empty() == false)
+                            TypeStr = ParticlesKindsManager::ConvertParticleTypeToString(ParticlesKindForImGuiSelectionObject.ParticleKindSpecialDataSector.back().ParticleType);
+                        ImGui::Checkbox(string(to_string(ParticlesKindForImGuiSelectionObject.ParticleKindId) + " " + "T = " + TypeStr + " " + ParticlesKindForImGuiSelectionObject.IdStr + " " + (ParticlesKindForImGuiSelectionObject.Name.starts_with("M_") ? ParticlesKindForImGuiSelectionObject.Name : "") + (ParticlesKindForImGuiSelectionObject.Formula != ParticlesKindForImGuiSelectionObject.IdStr && ParticlesKindForImGuiSelectionObject.Formula.empty() == false ? ("F = " + ParticlesKindForImGuiSelectionObject.Formula + " ") : "")).c_str(), &ParticlesKindForImGuiSelectionObject.GraphicData.Visible);
+                    }
 
                     for (const auto &ParticleKindForImGuiSelectionObject: LocalParticlesKindsForImGuiSelection)
                         ParticlesKindsManagerObject.GetParticleKind(ParticleKindForImGuiSelectionObject.ParticleKindId).GraphicData.Visible = ParticleKindForImGuiSelectionObject.GraphicData.Visible;
                 }
+
             PrevTypesOfVisibilityComboBoxCurrentItemIndex = TypesOfVisibilityComboBoxCurrentItemIndex;
         }
         CATCH("executing types of visibility menu");
@@ -549,11 +551,11 @@ public:
                 if (CellEngineDataFileObjectPointer->CellEngineVoxelSimulationSpaceObjectPointer != nullptr)
                 {
                     vector<ParticleKind> LocalParticlesKindsForImGuiSelection;
-                    for (const auto& ParticlesKindsMapElement : ParticlesKindsManagerObject.ParticlesKinds)
-                        if (ParticlesKindsMapElement.second.IdStr.starts_with(JCVISYN3APredStr) || ParticlesKindsMapElement.second.IdStr.starts_with("particle_") || ParticlesKindsMapElement.second.IdStr.starts_with("trna_") || ParticlesKindsMapElement.second.IdStr.starts_with("mrna_") || ParticlesKindsMapElement.second.IdStr.starts_with("rrna_") || ParticlesKindsMapElement.second.IdStr.starts_with("M_"))
-                            LocalParticlesKindsForImGuiSelection.emplace_back(ParticlesKindsMapElement.second);
+                    for (const auto& ParticlesKindsMapElement : ParticlesKindsManagerObject.ParticlesKinds | views::values)
+                        if (ParticlesKindsMapElement.IdStr.starts_with(JCVISYN3APredStr) || ParticlesKindsMapElement.IdStr.starts_with("particle_") || ParticlesKindsMapElement.IdStr.starts_with("trna_") || ParticlesKindsMapElement.IdStr.starts_with("mrna_") || ParticlesKindsMapElement.IdStr.starts_with("rrna_") || ParticlesKindsMapElement.IdStr.starts_with("M_"))
+                            LocalParticlesKindsForImGuiSelection.emplace_back(ParticlesKindsMapElement);
 
-                    sort(LocalParticlesKindsForImGuiSelection.begin(), LocalParticlesKindsForImGuiSelection.end(), ComparisonOfParticle);
+                    ranges::sort(LocalParticlesKindsForImGuiSelection, ComparisonOfParticle);
 
                     vector<bool> LocalParticleKindSelection;
                     for (auto &ParticlesKindForImGuiSelectionObject : LocalParticlesKindsForImGuiSelection)
@@ -905,6 +907,24 @@ public:
                 int IDButton = 1;
                 float Nothing;
 
+                if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true)
+                {
+                    const char *MPIProcessesSynchronizationComboBoxItems[] = { "1 Symmetrical", "2 Not Symmetrical" };
+                    static int MPIProcessesSynchronizationComboBoxItemsIndex = static_cast<int>(CellEngineConfigDataObject.TypeOfSychronizationfSimulationExecutedInMPIProcesses) - 1;
+                    ImGui::Combo(" MPI Processes Synchronization Type", &MPIProcessesSynchronizationComboBoxItemsIndex, MPIProcessesSynchronizationComboBoxItems, IM_ARRAYSIZE(MPIProcessesSynchronizationComboBoxItems));
+                    CellEngineConfigDataObject.TypeOfSychronizationfSimulationExecutedInMPIProcesses = static_cast<CellEngineConfigData::TypesOfSychronizationfSimulationExecutedInMPIProcesses>(MPIProcessesSynchronizationComboBoxItemsIndex + 1);
+
+                    if (MPIProcessDataObject.CurrentMPIProcessIndex == CellEngineConfigDataObject.MainMPIProcessNumber)
+                        MPI_Bcast(&CellEngineConfigDataObject.TypeOfSychronizationfSimulationExecutedInMPIProcesses, 1, MPI_INT, CellEngineConfigDataObject.MainMPIProcessNumber, MPI_COMM_WORLD);
+                }
+                else
+                {
+                    const char *ThreadsSynchronizationComboBoxItems[] = { "1 G", "2", "3", "4" };
+                    static int ThreadsSynchronizationComboBoxItemsIndex = static_cast<int>(CellEngineConfigDataObject.TypeOfSychronizationfSimulationExecutedInThreads) - 1;
+                    ImGui::Combo(" Threads Synchronization Type", &ThreadsSynchronizationComboBoxItemsIndex, ThreadsSynchronizationComboBoxItems, IM_ARRAYSIZE(ThreadsSynchronizationComboBoxItems));
+                    CellEngineConfigDataObject.TypeOfSychronizationfSimulationExecutedInThreads = static_cast<CellEngineConfigData::TypesOfSychronizationfSimulationExecutedInThreads>(ThreadsSynchronizationComboBoxItemsIndex + 1);
+                }
+
                 ImGui::Text("");
                 ImGui::Text("Number Of Simulation Steps Outside");
                 ImGui::DragInt("Num Of Steps Outside", &CellEngineConfigDataObject.NumberOfStepsInSimulationOutside, 1, 1, 1000, "%d", ImGuiSliderFlags_AlwaysClamp);
@@ -918,6 +938,10 @@ public:
                 ImGui::RadioButton("Only Reactions ", &TypeOfSimulation, 2);
                 ImGui::RadioButton("Only Diffusion", &TypeOfSimulation, 3);
                 CellEngineConfigDataObject.TypeOfSimulation = static_cast<CellEngineConfigData::TypesOfSimulation>(TypeOfSimulation);
+
+                if (MPIProcessDataObject.CurrentMPIProcessIndex == CellEngineConfigDataObject.MainMPIProcessNumber)
+                    MPI_Bcast(&CellEngineConfigDataObject.TypeOfSimulation, 1, MPI_INT, CellEngineConfigDataObject.MainMPIProcessNumber, MPI_COMM_WORLD);
+
                 ImGui::Text("");
 
                 ColorButton(AlignString("START N STEPS OF SIMULATION FOR WHOLE CELL SPACE IN THREADS", StringLength).c_str(), Nothing, 0, 0, 0, 6, IDButton, [](float &VariableToChange, const float Step, const float MinValue, const float MaxValue)

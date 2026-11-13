@@ -51,11 +51,11 @@ namespace CellEngineUseful
         const SignedInt SectorPosY = std::floor((Y + CellEngineConfigDataObject.ShiftCenterY) / CellEngineConfigDataObject.SizeOfParticlesSectorY);
         const SignedInt SectorPosZ = std::floor((Z + CellEngineConfigDataObject.ShiftCenterZ) / CellEngineConfigDataObject.SizeOfParticlesSectorZ);
 
-        if (SectorPosX <= 0 || SectorPosX > CellEngineConfigDataObject.NumberOfParticlesSectorsInX - 1)
+        if (SectorPosX < 0 || SectorPosX > CellEngineConfigDataObject.NumberOfParticlesSectorsInX - 1)
             return { .PosX = -1, .PosY = SectorPosY, .PosZ = SectorPosZ };
-        if (SectorPosY <= 0 || SectorPosY > CellEngineConfigDataObject.NumberOfParticlesSectorsInY - 1)
+        if (SectorPosY < 0 || SectorPosY > CellEngineConfigDataObject.NumberOfParticlesSectorsInY - 1)
             return { .PosX = SectorPosX, .PosY = -1, .PosZ = SectorPosZ };
-        if (SectorPosZ <= 0 || SectorPosZ > CellEngineConfigDataObject.NumberOfParticlesSectorsInZ - 1)
+        if (SectorPosZ < 0 || SectorPosZ > CellEngineConfigDataObject.NumberOfParticlesSectorsInZ - 1)
             return { .PosX = SectorPosX, .PosY = SectorPosY, .PosZ = -1, };
 
         return { .PosX = SectorPosX, .PosY = SectorPosY, .PosZ = SectorPosZ };

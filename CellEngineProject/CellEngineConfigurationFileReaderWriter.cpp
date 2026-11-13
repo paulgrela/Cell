@@ -100,235 +100,238 @@ void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const ch
             }
             else
             if (MainConfigPropertyTreeElement.first == "CellsStates")
-                for (const ptree::value_type& CellStatePropertyTreeElement : MainConfigPropertyTree.get_child("Settings.CellsStates"))
-                    if (CellStatePropertyTreeElement.second.get<UnsignedInt>("<xmlattr>.id") == ExecuteCellStateId)
+                for (const auto& CellStatePropertyTreeElement : MainConfigPropertyTree.get_child("Settings.CellsStates") | views::values)
+                    if (CellStatePropertyTreeElement.get<UnsignedInt>("<xmlattr>.id") == ExecuteCellStateId)
                     {
-                        CellEngineConfigDataObject.TypeOfSpace = static_cast<CellEngineConfigData::TypesOfSpace>(CellStatePropertyTreeElement.second.get<UnsignedInt>("TypeOfSpace"));
+                        CellEngineConfigDataObject.TypeOfSpace = static_cast<CellEngineConfigData::TypesOfSpace>(CellStatePropertyTreeElement.get<UnsignedInt>("TypeOfSpace"));
 
-                        if (CellStatePropertyTreeElement.second.get_child_optional("DNAPaired"))
-                            CellEngineConfigDataObject.DNAPaired = CellStatePropertyTreeElement.second.get<bool>("DNAPaired");
+                        if (CellStatePropertyTreeElement.get_child_optional("DNAPaired"))
+                            CellEngineConfigDataObject.DNAPaired = CellStatePropertyTreeElement.get<bool>("DNAPaired");
 
-                        if (CellStatePropertyTreeElement.second.get_child_optional("ReverseReactantsAndProductsBecauseOfFormerErrorBool"))
-                            CellEngineConfigDataObject.ReverseReactantsAndProductsBecauseOfFormerErrorBool = CellStatePropertyTreeElement.second.get<bool>("ReverseReactantsAndProductsBecauseOfFormerErrorBool");
+                        if (CellStatePropertyTreeElement.get_child_optional("ReverseReactantsAndProductsBecauseOfFormerErrorBool"))
+                            CellEngineConfigDataObject.ReverseReactantsAndProductsBecauseOfFormerErrorBool = CellStatePropertyTreeElement.get<bool>("ReverseReactantsAndProductsBecauseOfFormerErrorBool");
 
-                        if (CellStatePropertyTreeElement.second.get_child_optional("Radius1ForGenerationOfParticles"))
-                            CellEngineConfigDataObject.Radius1ForGenerationOfParticles = CellStatePropertyTreeElement.second.get<UnsignedInt>("Radius1ForGenerationOfParticles");
-                        if (CellStatePropertyTreeElement.second.get_child_optional("Radius1SizeForGenerationOfParticles"))
-                            CellEngineConfigDataObject.Radius1SizeForGenerationOfParticles = CellStatePropertyTreeElement.second.get<UnsignedInt>("Radius1SizeForGenerationOfParticles");
-                        if (CellStatePropertyTreeElement.second.get_child_optional("Radius2ForGenerationOfParticles"))
-                            CellEngineConfigDataObject.Radius2ForGenerationOfParticles = CellStatePropertyTreeElement.second.get<UnsignedInt>("Radius2ForGenerationOfParticles");
-                        if (CellStatePropertyTreeElement.second.get_child_optional("Radius2SizeForGenerationOfParticles"))
-                            CellEngineConfigDataObject.Radius2SizeForGenerationOfParticles = CellStatePropertyTreeElement.second.get<UnsignedInt>("Radius2SizeForGenerationOfParticles");
+                        if (CellStatePropertyTreeElement.get_child_optional("Radius1ForGenerationOfParticles"))
+                            CellEngineConfigDataObject.Radius1ForGenerationOfParticles = CellStatePropertyTreeElement.get<UnsignedInt>("Radius1ForGenerationOfParticles");
+                        if (CellStatePropertyTreeElement.get_child_optional("Radius1SizeForGenerationOfParticles"))
+                            CellEngineConfigDataObject.Radius1SizeForGenerationOfParticles = CellStatePropertyTreeElement.get<UnsignedInt>("Radius1SizeForGenerationOfParticles");
+                        if (CellStatePropertyTreeElement.get_child_optional("Radius2ForGenerationOfParticles"))
+                            CellEngineConfigDataObject.Radius2ForGenerationOfParticles = CellStatePropertyTreeElement.get<UnsignedInt>("Radius2ForGenerationOfParticles");
+                        if (CellStatePropertyTreeElement.get_child_optional("Radius2SizeForGenerationOfParticles"))
+                            CellEngineConfigDataObject.Radius2SizeForGenerationOfParticles = CellStatePropertyTreeElement.get<UnsignedInt>("Radius2SizeForGenerationOfParticles");
 
-                        if (CellStatePropertyTreeElement.second.get_child_optional("SizeOfSimulationSpaceInEachDimension"))
-                            CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension = CellStatePropertyTreeElement.second.get<UnsignedInt>("SizeOfSimulationSpaceInEachDimension");
-                        if (CellStatePropertyTreeElement.second.get_child_optional("DivisionFactorForSimulationSpace"))
-                            CellEngineConfigDataObject.DivisionFactorForSimulationSpace = CellStatePropertyTreeElement.second.get<float>("DivisionFactorForSimulationSpace");
-                        if (CellStatePropertyTreeElement.second.get_child_optional("DivisionFactorForReadingPositionsOfParticles"))
-                            CellEngineConfigDataObject.DivisionFactorForReadingPositionsOfParticles = CellStatePropertyTreeElement.second.get<float>("DivisionFactorForReadingPositionsOfParticles");
-                        if (CellStatePropertyTreeElement.second.get_child_optional("DivisionFactorForGeneratingPositionsOfParticles"))
-                            CellEngineConfigDataObject.DivisionFactorForGeneratingPositionsOfParticles = CellStatePropertyTreeElement.second.get<float>("DivisionFactorForGeneratingPositionsOfParticles");
+                        if (CellStatePropertyTreeElement.get_child_optional("SizeOfSimulationSpaceInEachDimension"))
+                            CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension = CellStatePropertyTreeElement.get<UnsignedInt>("SizeOfSimulationSpaceInEachDimension");
+                        if (CellStatePropertyTreeElement.get_child_optional("DivisionFactorForSimulationSpace"))
+                            CellEngineConfigDataObject.DivisionFactorForSimulationSpace = CellStatePropertyTreeElement.get<float>("DivisionFactorForSimulationSpace");
+                        if (CellStatePropertyTreeElement.get_child_optional("DivisionFactorForReadingPositionsOfParticles"))
+                            CellEngineConfigDataObject.DivisionFactorForReadingPositionsOfParticles = CellStatePropertyTreeElement.get<float>("DivisionFactorForReadingPositionsOfParticles");
+                        if (CellStatePropertyTreeElement.get_child_optional("DivisionFactorForGeneratingPositionsOfParticles"))
+                            CellEngineConfigDataObject.DivisionFactorForGeneratingPositionsOfParticles = CellStatePropertyTreeElement.get<float>("DivisionFactorForGeneratingPositionsOfParticles");
 
-                        if (CellStatePropertyTreeElement.second.get_child_optional("NumberOfStepsInSimulationOutside"))
-                            CellEngineConfigDataObject.NumberOfStepsInSimulationOutside = CellStatePropertyTreeElement.second.get<int>("NumberOfStepsInSimulationOutside");
-                        if (CellStatePropertyTreeElement.second.get_child_optional("NumberOfStepsInSimulationInside"))
-                            CellEngineConfigDataObject.NumberOfStepsInSimulationInside = CellStatePropertyTreeElement.second.get<int>("NumberOfStepsInSimulationInside");
-                        if (CellStatePropertyTreeElement.second.get_child_optional("TypeOfSimulation"))
-                            CellEngineConfigDataObject.TypeOfSimulation = static_cast<CellEngineConfigData::TypesOfSimulation>(CellStatePropertyTreeElement.second.get<UnsignedInt>("TypeOfSimulation"));
+                        if (CellStatePropertyTreeElement.get_child_optional("NumberOfStepsInSimulationOutside"))
+                            CellEngineConfigDataObject.NumberOfStepsInSimulationOutside = CellStatePropertyTreeElement.get<int>("NumberOfStepsInSimulationOutside");
+                        if (CellStatePropertyTreeElement.get_child_optional("NumberOfStepsInSimulationInside"))
+                            CellEngineConfigDataObject.NumberOfStepsInSimulationInside = CellStatePropertyTreeElement.get<int>("NumberOfStepsInSimulationInside");
+                        if (CellStatePropertyTreeElement.get_child_optional("TypeOfSimulation"))
+                            CellEngineConfigDataObject.TypeOfSimulation = static_cast<CellEngineConfigData::TypesOfSimulation>(CellStatePropertyTreeElement.get<UnsignedInt>("TypeOfSimulation"));
 
-                        if (CellStatePropertyTreeElement.second.get_child_optional("NumberOfXThreadsInSimulation"))
-                            CellEngineConfigDataObject.NumberOfXThreadsInSimulation = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfXThreadsInSimulation");
-                        if (CellStatePropertyTreeElement.second.get_child_optional("NumberOfYThreadsInSimulation"))
-                            CellEngineConfigDataObject.NumberOfYThreadsInSimulation = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfYThreadsInSimulation");
-                        if (CellStatePropertyTreeElement.second.get_child_optional("NumberOfZThreadsInSimulation"))
-                            CellEngineConfigDataObject.NumberOfZThreadsInSimulation = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfZThreadsInSimulation");
+                        if (CellStatePropertyTreeElement.get_child_optional("NumberOfXThreadsInSimulation"))
+                            CellEngineConfigDataObject.NumberOfXThreadsInSimulation = CellStatePropertyTreeElement.get<UnsignedInt>("NumberOfXThreadsInSimulation");
+                        if (CellStatePropertyTreeElement.get_child_optional("NumberOfYThreadsInSimulation"))
+                            CellEngineConfigDataObject.NumberOfYThreadsInSimulation = CellStatePropertyTreeElement.get<UnsignedInt>("NumberOfYThreadsInSimulation");
+                        if (CellStatePropertyTreeElement.get_child_optional("NumberOfZThreadsInSimulation"))
+                            CellEngineConfigDataObject.NumberOfZThreadsInSimulation = CellStatePropertyTreeElement.get<UnsignedInt>("NumberOfZThreadsInSimulation");
 
-                        if (CellStatePropertyTreeElement.second.get_child_optional("NumberOfXSectorsInOneThreadInSimulation"))
-                            CellEngineConfigDataObject.NumberOfXSectorsInOneThreadInSimulation = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfXSectorsInOneThreadInSimulation");
-                        if (CellStatePropertyTreeElement.second.get_child_optional("NumberOfYSectorsInOneThreadInSimulation"))
-                            CellEngineConfigDataObject.NumberOfYSectorsInOneThreadInSimulation = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfYSectorsInOneThreadInSimulation");
-                        if (CellStatePropertyTreeElement.second.get_child_optional("NumberOfZSectorsInOneThreadInSimulation"))
-                            CellEngineConfigDataObject.NumberOfZSectorsInOneThreadInSimulation = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfZSectorsInOneThreadInSimulation");
+                        if (CellStatePropertyTreeElement.get_child_optional("NumberOfXSectorsInOneThreadInSimulation"))
+                            CellEngineConfigDataObject.NumberOfXSectorsInOneThreadInSimulation = CellStatePropertyTreeElement.get<UnsignedInt>("NumberOfXSectorsInOneThreadInSimulation");
+                        if (CellStatePropertyTreeElement.get_child_optional("NumberOfYSectorsInOneThreadInSimulation"))
+                            CellEngineConfigDataObject.NumberOfYSectorsInOneThreadInSimulation = CellStatePropertyTreeElement.get<UnsignedInt>("NumberOfYSectorsInOneThreadInSimulation");
+                        if (CellStatePropertyTreeElement.get_child_optional("NumberOfZSectorsInOneThreadInSimulation"))
+                            CellEngineConfigDataObject.NumberOfZSectorsInOneThreadInSimulation = CellStatePropertyTreeElement.get<UnsignedInt>("NumberOfZSectorsInOneThreadInSimulation");
 
-                        if (CellStatePropertyTreeElement.second.get_child_optional("SizeOfXInOneThreadInSimulationSpace"))
-                            CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace = CellStatePropertyTreeElement.second.get<UnsignedInt>("SizeOfXInOneThreadInSimulationSpace");
-                        if (CellStatePropertyTreeElement.second.get_child_optional("SizeOfYInOneThreadInSimulationSpace"))
-                            CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace = CellStatePropertyTreeElement.second.get<UnsignedInt>("SizeOfYInOneThreadInSimulationSpace");
-                        if (CellStatePropertyTreeElement.second.get_child_optional("SizeOfZInOneThreadInSimulationSpace"))
-                            CellEngineConfigDataObject.SizeOfZInOneThreadInSimulationSpace = CellStatePropertyTreeElement.second.get<UnsignedInt>("SizeOfZInOneThreadInSimulationSpace");
+                        if (CellStatePropertyTreeElement.get_child_optional("SizeOfXInOneThreadInSimulationSpace"))
+                            CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace = CellStatePropertyTreeElement.get<UnsignedInt>("SizeOfXInOneThreadInSimulationSpace");
+                        if (CellStatePropertyTreeElement.get_child_optional("SizeOfYInOneThreadInSimulationSpace"))
+                            CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace = CellStatePropertyTreeElement.get<UnsignedInt>("SizeOfYInOneThreadInSimulationSpace");
+                        if (CellStatePropertyTreeElement.get_child_optional("SizeOfZInOneThreadInSimulationSpace"))
+                            CellEngineConfigDataObject.SizeOfZInOneThreadInSimulationSpace = CellStatePropertyTreeElement.get<UnsignedInt>("SizeOfZInOneThreadInSimulationSpace");
 
-                        if (CellStatePropertyTreeElement.second.get_child_optional("SizeOfXInOneSectorInOneThreadInSimulationSpace"))
-                            CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace = CellStatePropertyTreeElement.second.get<UnsignedInt>("SizeOfXInOneSectorInOneThreadInSimulationSpace");
-                        if (CellStatePropertyTreeElement.second.get_child_optional("SizeOfYInOneSectorInOneThreadInSimulationSpace"))
-                            CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace = CellStatePropertyTreeElement.second.get<UnsignedInt>("SizeOfYInOneSectorInOneThreadInSimulationSpace");
-                        if (CellStatePropertyTreeElement.second.get_child_optional("SizeOfZInOneSectorInOneThreadInSimulationSpace"))
-                            CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace = CellStatePropertyTreeElement.second.get<UnsignedInt>("SizeOfZInOneSectorInOneThreadInSimulationSpace");
+                        if (CellStatePropertyTreeElement.get_child_optional("SizeOfXInOneSectorInOneThreadInSimulationSpace"))
+                            CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace = CellStatePropertyTreeElement.get<UnsignedInt>("SizeOfXInOneSectorInOneThreadInSimulationSpace");
+                        if (CellStatePropertyTreeElement.get_child_optional("SizeOfYInOneSectorInOneThreadInSimulationSpace"))
+                            CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace = CellStatePropertyTreeElement.get<UnsignedInt>("SizeOfYInOneSectorInOneThreadInSimulationSpace");
+                        if (CellStatePropertyTreeElement.get_child_optional("SizeOfZInOneSectorInOneThreadInSimulationSpace"))
+                            CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace = CellStatePropertyTreeElement.get<UnsignedInt>("SizeOfZInOneSectorInOneThreadInSimulationSpace");
 
-                        if (CellStatePropertyTreeElement.second.get_child_optional("StepToChangeSpaceDivisionForThreads"))
-                            CellEngineConfigDataObject.StepToChangeSpaceDivisionForThreads = CellStatePropertyTreeElement.second.get<UnsignedInt>("StepToChangeSpaceDivisionForThreads");
+                        if (CellStatePropertyTreeElement.get_child_optional("StepToChangeSpaceDivisionForThreads"))
+                            CellEngineConfigDataObject.StepToChangeSpaceDivisionForThreads = CellStatePropertyTreeElement.get<UnsignedInt>("StepToChangeSpaceDivisionForThreads");
 
-                        if (CellStatePropertyTreeElement.second.get_child_optional("TypeOfExchangeOfParticlesBetweenThreads"))
-                            CellEngineConfigDataObject.TypeOfExchangeOfParticlesBetweenThreads = static_cast<CellEngineConfigData::TypesOfExchangeOfParticlesBetweenThreads>(CellStatePropertyTreeElement.second.get<UnsignedInt>("TypeOfExchangeOfParticlesBetweenThreads"));
+                        if (CellStatePropertyTreeElement.get_child_optional("TypeOfExchangeOfParticlesBetweenThreads"))
+                            CellEngineConfigDataObject.TypeOfExchangeOfParticlesBetweenThreads = static_cast<CellEngineConfigData::TypesOfExchangeOfParticlesBetweenThreads>(CellStatePropertyTreeElement.get<UnsignedInt>("TypeOfExchangeOfParticlesBetweenThreads"));
 
-                        if (CellStatePropertyTreeElement.second.get_child_optional("TypeOfSychronizationfSimulationExecutedInThreads"))
-                            CellEngineConfigDataObject.TypeOfSychronizationfSimulationExecutedInThreads = static_cast<CellEngineConfigData::TypesOfSychronizationfSimulationExecutedInThreads>(CellStatePropertyTreeElement.second.get<UnsignedInt>("TypeOfSychronizationfSimulationExecutedInThreads"));
+                        if (CellStatePropertyTreeElement.get_child_optional("TypeOfSychronizationfSimulationExecutedInThreads"))
+                            CellEngineConfigDataObject.TypeOfSychronizationfSimulationExecutedInThreads = static_cast<CellEngineConfigData::TypesOfSychronizationfSimulationExecutedInThreads>(CellStatePropertyTreeElement.get<UnsignedInt>("TypeOfSychronizationfSimulationExecutedInThreads"));
+
+                        if (CellStatePropertyTreeElement.get_child_optional("TypeOfSychronizationfSimulationExecutedInMPIProcesses"))
+                            CellEngineConfigDataObject.TypeOfSychronizationfSimulationExecutedInMPIProcesses = static_cast<CellEngineConfigData::TypesOfSychronizationfSimulationExecutedInMPIProcesses>(CellStatePropertyTreeElement.get<UnsignedInt>("TypeOfSychronizationfSimulationExecutedInMPIProcesses"));
 
                         if (CellEngineConfigDataObject.TypeOfSpace == CellEngineConfigData::TypesOfSpace::VoxelSimulationSpace)
                         {
-                            CellEngineConfigDataObject.SimulationSpaceSelectionStartXPos = CellStatePropertyTreeElement.second.get<UnsignedInt>("SimulationSpaceSelectionStartXPos");
-                            CellEngineConfigDataObject.SimulationSpaceSelectionStartYPos = CellStatePropertyTreeElement.second.get<UnsignedInt>("SimulationSpaceSelectionStartYPos");
-                            CellEngineConfigDataObject.SimulationSpaceSelectionStartZPos = CellStatePropertyTreeElement.second.get<UnsignedInt>("SimulationSpaceSelectionStartZPos");
-                            CellEngineConfigDataObject.SimulationSpaceSelectionStepX = CellStatePropertyTreeElement.second.get<UnsignedInt>("SimulationSpaceSelectionStepX");
-                            CellEngineConfigDataObject.SimulationSpaceSelectionStepY = CellStatePropertyTreeElement.second.get<UnsignedInt>("SimulationSpaceSelectionStepY");
-                            CellEngineConfigDataObject.SimulationSpaceSelectionStepZ = CellStatePropertyTreeElement.second.get<UnsignedInt>("SimulationSpaceSelectionStepZ");
-                            CellEngineConfigDataObject.SimulationSpaceSelectionSizeX = CellStatePropertyTreeElement.second.get<UnsignedInt>("SimulationSpaceSelectionSizeX");
-                            CellEngineConfigDataObject.SimulationSpaceSelectionSizeY = CellStatePropertyTreeElement.second.get<UnsignedInt>("SimulationSpaceSelectionSizeY");
-                            CellEngineConfigDataObject.SimulationSpaceSelectionSizeZ = CellStatePropertyTreeElement.second.get<UnsignedInt>("SimulationSpaceSelectionSizeZ");
+                            CellEngineConfigDataObject.SimulationSpaceSelectionStartXPos = CellStatePropertyTreeElement.get<UnsignedInt>("SimulationSpaceSelectionStartXPos");
+                            CellEngineConfigDataObject.SimulationSpaceSelectionStartYPos = CellStatePropertyTreeElement.get<UnsignedInt>("SimulationSpaceSelectionStartYPos");
+                            CellEngineConfigDataObject.SimulationSpaceSelectionStartZPos = CellStatePropertyTreeElement.get<UnsignedInt>("SimulationSpaceSelectionStartZPos");
+                            CellEngineConfigDataObject.SimulationSpaceSelectionStepX = CellStatePropertyTreeElement.get<UnsignedInt>("SimulationSpaceSelectionStepX");
+                            CellEngineConfigDataObject.SimulationSpaceSelectionStepY = CellStatePropertyTreeElement.get<UnsignedInt>("SimulationSpaceSelectionStepY");
+                            CellEngineConfigDataObject.SimulationSpaceSelectionStepZ = CellStatePropertyTreeElement.get<UnsignedInt>("SimulationSpaceSelectionStepZ");
+                            CellEngineConfigDataObject.SimulationSpaceSelectionSizeX = CellStatePropertyTreeElement.get<UnsignedInt>("SimulationSpaceSelectionSizeX");
+                            CellEngineConfigDataObject.SimulationSpaceSelectionSizeY = CellStatePropertyTreeElement.get<UnsignedInt>("SimulationSpaceSelectionSizeY");
+                            CellEngineConfigDataObject.SimulationSpaceSelectionSizeZ = CellStatePropertyTreeElement.get<UnsignedInt>("SimulationSpaceSelectionSizeZ");
 
-                            CellEngineConfigDataObject.SizeOfBigPartOfTheCellMultiplyFactor = CellStatePropertyTreeElement.second.get<UnsignedInt>("SizeOfBigPartOfTheCellMultiplyFactor");
+                            CellEngineConfigDataObject.SizeOfBigPartOfTheCellMultiplyFactor = CellStatePropertyTreeElement.get<UnsignedInt>("SizeOfBigPartOfTheCellMultiplyFactor");
 
-                            CellEngineConfigDataObject.RadiusOfCellForDNA = CellStatePropertyTreeElement.second.get<double>("RadiusOfCellForDNA");
+                            CellEngineConfigDataObject.RadiusOfCellForDNA = CellStatePropertyTreeElement.get<double>("RadiusOfCellForDNA");
                         }
 
-                        CellEngineConfigDataObject.CellStateFileName = CellStatePropertyTreeElement.second.get<string>("CellStateFileName");
-                        CellEngineConfigDataObject.CellStateFileNameBackup = CellStatePropertyTreeElement.second.get<string>("CellStateFileNameBackup");
+                        CellEngineConfigDataObject.CellStateFileName = CellStatePropertyTreeElement.get<string>("CellStateFileName");
+                        CellEngineConfigDataObject.CellStateFileNameBackup = CellStatePropertyTreeElement.get<string>("CellStateFileNameBackup");
 
-                        if (CellStatePropertyTreeElement.second.get_child_optional("UseNewerAutinNamesToAssociateWithIllinoisNames"))
-                            CellEngineConfigDataObject.UseNewerAutinNamesToAssociateWithIllinoisNames = CellStatePropertyTreeElement.second.get<bool>("UseNewerAutinNamesToAssociateWithIllinoisNames");
+                        if (CellStatePropertyTreeElement.get_child_optional("UseNewerAutinNamesToAssociateWithIllinoisNames"))
+                            CellEngineConfigDataObject.UseNewerAutinNamesToAssociateWithIllinoisNames = CellStatePropertyTreeElement.get<bool>("UseNewerAutinNamesToAssociateWithIllinoisNames");
 
-                        if (CellStatePropertyTreeElement.second.get_child_optional("MixedFullAtomWithVoxelSpace"))
-                            CellEngineConfigDataObject.MixedFullAtomWithVoxelSpace = CellStatePropertyTreeElement.second.get<bool>("MixedFullAtomWithVoxelSpace");
+                        if (CellStatePropertyTreeElement.get_child_optional("MixedFullAtomWithVoxelSpace"))
+                            CellEngineConfigDataObject.MixedFullAtomWithVoxelSpace = CellStatePropertyTreeElement.get<bool>("MixedFullAtomWithVoxelSpace");
 
-                        if (CellStatePropertyTreeElement.second.get_child_optional("NumberOfParticlesSectorsInX"))
-                            CellEngineConfigDataObject.NumberOfParticlesSectorsInX = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfParticlesSectorsInX");
-                        if (CellStatePropertyTreeElement.second.get_child_optional("NumberOfParticlesSectorsInY"))
-                            CellEngineConfigDataObject.NumberOfParticlesSectorsInY = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfParticlesSectorsInY");
-                        if (CellStatePropertyTreeElement.second.get_child_optional("NumberOfParticlesSectorsInZ"))
-                            CellEngineConfigDataObject.NumberOfParticlesSectorsInZ = CellStatePropertyTreeElement.second.get<UnsignedInt>("NumberOfParticlesSectorsInZ");
+                        if (CellStatePropertyTreeElement.get_child_optional("NumberOfParticlesSectorsInX"))
+                            CellEngineConfigDataObject.NumberOfParticlesSectorsInX = CellStatePropertyTreeElement.get<UnsignedInt>("NumberOfParticlesSectorsInX");
+                        if (CellStatePropertyTreeElement.get_child_optional("NumberOfParticlesSectorsInY"))
+                            CellEngineConfigDataObject.NumberOfParticlesSectorsInY = CellStatePropertyTreeElement.get<UnsignedInt>("NumberOfParticlesSectorsInY");
+                        if (CellStatePropertyTreeElement.get_child_optional("NumberOfParticlesSectorsInZ"))
+                            CellEngineConfigDataObject.NumberOfParticlesSectorsInZ = CellStatePropertyTreeElement.get<UnsignedInt>("NumberOfParticlesSectorsInZ");
 
-                        if (CellStatePropertyTreeElement.second.get_child_optional("ShiftCenterX"))
-                            CellEngineConfigDataObject.ShiftCenterX = CellStatePropertyTreeElement.second.get<float>("ShiftCenterX");
-                        if (CellStatePropertyTreeElement.second.get_child_optional("ShiftCenterY"))
-                            CellEngineConfigDataObject.ShiftCenterY = CellStatePropertyTreeElement.second.get<float>("ShiftCenterY");
-                        if (CellStatePropertyTreeElement.second.get_child_optional("ShiftCenterZ"))
-                            CellEngineConfigDataObject.ShiftCenterZ = CellStatePropertyTreeElement.second.get<float>("ShiftCenterZ");
+                        if (CellStatePropertyTreeElement.get_child_optional("ShiftCenterX"))
+                            CellEngineConfigDataObject.ShiftCenterX = CellStatePropertyTreeElement.get<float>("ShiftCenterX");
+                        if (CellStatePropertyTreeElement.get_child_optional("ShiftCenterY"))
+                            CellEngineConfigDataObject.ShiftCenterY = CellStatePropertyTreeElement.get<float>("ShiftCenterY");
+                        if (CellStatePropertyTreeElement.get_child_optional("ShiftCenterZ"))
+                            CellEngineConfigDataObject.ShiftCenterZ = CellStatePropertyTreeElement.get<float>("ShiftCenterZ");
 
-                        if (CellStatePropertyTreeElement.second.get_child_optional("SizeOfParticlesSectorX"))
-                            CellEngineConfigDataObject.SizeOfParticlesSectorX = CellStatePropertyTreeElement.second.get<float>("SizeOfParticlesSectorX");
-                        if (CellStatePropertyTreeElement.second.get_child_optional("SizeOfParticlesSectorY"))
-                            CellEngineConfigDataObject.SizeOfParticlesSectorY = CellStatePropertyTreeElement.second.get<float>("SizeOfParticlesSectorY");
-                        if (CellStatePropertyTreeElement.second.get_child_optional("SizeOfParticlesSectorZ"))
-                            CellEngineConfigDataObject.SizeOfParticlesSectorZ = CellStatePropertyTreeElement.second.get<float>("SizeOfParticlesSectorZ");
+                        if (CellStatePropertyTreeElement.get_child_optional("SizeOfParticlesSectorX"))
+                            CellEngineConfigDataObject.SizeOfParticlesSectorX = CellStatePropertyTreeElement.get<float>("SizeOfParticlesSectorX");
+                        if (CellStatePropertyTreeElement.get_child_optional("SizeOfParticlesSectorY"))
+                            CellEngineConfigDataObject.SizeOfParticlesSectorY = CellStatePropertyTreeElement.get<float>("SizeOfParticlesSectorY");
+                        if (CellStatePropertyTreeElement.get_child_optional("SizeOfParticlesSectorZ"))
+                            CellEngineConfigDataObject.SizeOfParticlesSectorZ = CellStatePropertyTreeElement.get<float>("SizeOfParticlesSectorZ");
 
-                        if (CellStatePropertyTreeElement.second.get_child_optional("CellGenomePositionsFileName"))
-                            CellEngineConfigDataObject.CellGenomePositionsFileName = CellStatePropertyTreeElement.second.get<string>("CellGenomePositionsFileName");
-                        if (CellStatePropertyTreeElement.second.get_child_optional("CellGenomeSequenceFileName"))
-                            CellEngineConfigDataObject.CellGenomeSequenceFileName = CellStatePropertyTreeElement.second.get<string>("CellGenomeSequenceFileName");
-                        if (CellStatePropertyTreeElement.second.get_child_optional("CellGenomeSequenceFastaFileName"))
-                            CellEngineConfigDataObject.CellGenomeSequenceFastaFileName = CellStatePropertyTreeElement.second.get<string>("CellGenomeSequenceFastaFileName");
-                        if (CellStatePropertyTreeElement.second.get_child_optional("CellGenomeSequenceFastaOneFileName"))
-                            CellEngineConfigDataObject.CellGenomeSequenceFastaOneFileName = CellStatePropertyTreeElement.second.get<string>("CellGenomeSequenceFastaOneFileName");
+                        if (CellStatePropertyTreeElement.get_child_optional("CellGenomePositionsFileName"))
+                            CellEngineConfigDataObject.CellGenomePositionsFileName = CellStatePropertyTreeElement.get<string>("CellGenomePositionsFileName");
+                        if (CellStatePropertyTreeElement.get_child_optional("CellGenomeSequenceFileName"))
+                            CellEngineConfigDataObject.CellGenomeSequenceFileName = CellStatePropertyTreeElement.get<string>("CellGenomeSequenceFileName");
+                        if (CellStatePropertyTreeElement.get_child_optional("CellGenomeSequenceFastaFileName"))
+                            CellEngineConfigDataObject.CellGenomeSequenceFastaFileName = CellStatePropertyTreeElement.get<string>("CellGenomeSequenceFastaFileName");
+                        if (CellStatePropertyTreeElement.get_child_optional("CellGenomeSequenceFastaOneFileName"))
+                            CellEngineConfigDataObject.CellGenomeSequenceFastaOneFileName = CellStatePropertyTreeElement.get<string>("CellGenomeSequenceFastaOneFileName");
 
-                        if (CellStatePropertyTreeElement.second.get_child_optional("FullAtomMPIParallelProcessesExecution"))
-                            CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution = CellStatePropertyTreeElement.second.get<bool>("FullAtomMPIParallelProcessesExecution");
+                        if (CellStatePropertyTreeElement.get_child_optional("FullAtomMPIParallelProcessesExecution"))
+                            CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution = CellStatePropertyTreeElement.get<bool>("FullAtomMPIParallelProcessesExecution");
 
-                        if (CellStatePropertyTreeElement.second.get_child_optional("OpenGLGraphicsSwitchedOff"))
-                            CellEngineConfigDataObject.OpenGLGraphicsSwitchedOff = CellStatePropertyTreeElement.second.get<bool>("OpenGLGraphicsSwitchedOff");
+                        if (CellStatePropertyTreeElement.get_child_optional("OpenGLGraphicsSwitchedOff"))
+                            CellEngineConfigDataObject.OpenGLGraphicsSwitchedOff = CellStatePropertyTreeElement.get<bool>("OpenGLGraphicsSwitchedOff");
 
-                        CellEngineConfigDataObject.ChosenStructureIndex = CellStatePropertyTreeElement.second.get<UnsignedInt>("ChosenStructureIndex");
+                        CellEngineConfigDataObject.ChosenStructureIndex = CellStatePropertyTreeElement.get<UnsignedInt>("ChosenStructureIndex");
 
-                        CellEngineConfigDataObject.SpecularPower = CellStatePropertyTreeElement.second.get<float>("SpecularPower");
-                        CellEngineConfigDataObject.SpecularAlbedo = CellStatePropertyTreeElement.second.get<float>("SpecularAlbedo");
-                        CellEngineConfigDataObject.MakeColorsTypeObject = static_cast<CellEngineConfigData::MakeColorsType>(CellStatePropertyTreeElement.second.get<UnsignedInt>("MakeColorsType"));
+                        CellEngineConfigDataObject.SpecularPower = CellStatePropertyTreeElement.get<float>("SpecularPower");
+                        CellEngineConfigDataObject.SpecularAlbedo = CellStatePropertyTreeElement.get<float>("SpecularAlbedo");
+                        CellEngineConfigDataObject.MakeColorsTypeObject = static_cast<CellEngineConfigData::MakeColorsType>(CellStatePropertyTreeElement.get<UnsignedInt>("MakeColorsType"));
 
-                        CellEngineConfigDataObject.DrawBondsBetweenAtoms = CellStatePropertyTreeElement.second.get<bool>("DrawBondsBetweenAtoms");
+                        CellEngineConfigDataObject.DrawBondsBetweenAtoms = CellStatePropertyTreeElement.get<bool>("DrawBondsBetweenAtoms");
 
-                        CellEngineConfigDataObject.CutZ = CellStatePropertyTreeElement.second.get<float>("CutZ");
-                        CellEngineConfigDataObject.Distance = CellStatePropertyTreeElement.second.get<float>("Distance");
-                        CellEngineConfigDataObject.LoadOfAtomsStep = CellStatePropertyTreeElement.second.get<UnsignedInt>("LoadOfAtomsStep");
+                        CellEngineConfigDataObject.CutZ = CellStatePropertyTreeElement.get<float>("CutZ");
+                        CellEngineConfigDataObject.Distance = CellStatePropertyTreeElement.get<float>("Distance");
+                        CellEngineConfigDataObject.LoadOfAtomsStep = CellStatePropertyTreeElement.get<UnsignedInt>("LoadOfAtomsStep");
 
-                        CellEngineConfigDataObject.XLowToDrawInAtomScale = CellStatePropertyTreeElement.second.get<float>("XLowToDrawInAtomScale");
-                        CellEngineConfigDataObject.XHighToDrawInAtomScale = CellStatePropertyTreeElement.second.get<float>("XHighToDrawInAtomScale");
-                        CellEngineConfigDataObject.YLowToDrawInAtomScale = CellStatePropertyTreeElement.second.get<float>("YLowToDrawInAtomScale");
-                        CellEngineConfigDataObject.YHighToDrawInAtomScale = CellStatePropertyTreeElement.second.get<float>("YHighToDrawInAtomScale");
-                        CellEngineConfigDataObject.ZLowToDrawInAtomScale = CellStatePropertyTreeElement.second.get<float>("ZLowToDrawInAtomScale");
-                        CellEngineConfigDataObject.ZHighToDrawInAtomScale = CellStatePropertyTreeElement.second.get<float>("ZHighToDrawInAtomScale");
+                        CellEngineConfigDataObject.XLowToDrawInAtomScale = CellStatePropertyTreeElement.get<float>("XLowToDrawInAtomScale");
+                        CellEngineConfigDataObject.XHighToDrawInAtomScale = CellStatePropertyTreeElement.get<float>("XHighToDrawInAtomScale");
+                        CellEngineConfigDataObject.YLowToDrawInAtomScale = CellStatePropertyTreeElement.get<float>("YLowToDrawInAtomScale");
+                        CellEngineConfigDataObject.YHighToDrawInAtomScale = CellStatePropertyTreeElement.get<float>("YHighToDrawInAtomScale");
+                        CellEngineConfigDataObject.ZLowToDrawInAtomScale = CellStatePropertyTreeElement.get<float>("ZLowToDrawInAtomScale");
+                        CellEngineConfigDataObject.ZHighToDrawInAtomScale = CellStatePropertyTreeElement.get<float>("ZHighToDrawInAtomScale");
 
-                        CellEngineConfigDataObject.SizeOfAtomsDrawingTypesObject = static_cast<CellEngineConfigData::SizeOfAtomsDrawingTypes>(CellStatePropertyTreeElement.second.get<UnsignedInt>("SizeOfAtomsDrawingTypes"));
+                        CellEngineConfigDataObject.SizeOfAtomsDrawingTypesObject = static_cast<CellEngineConfigData::SizeOfAtomsDrawingTypes>(CellStatePropertyTreeElement.get<UnsignedInt>("SizeOfAtomsDrawingTypes"));
 
-                        CellEngineConfigDataObject.SizeOfAtomChangeStep = CellStatePropertyTreeElement.second.get<float>("SizeOfAtomChangeStep");
-                        CellEngineConfigDataObject.SizeOfAtomX = CellStatePropertyTreeElement.second.get<float>("SizeOfAtomX");
-                        CellEngineConfigDataObject.SizeOfAtomY = CellStatePropertyTreeElement.second.get<float>("SizeOfAtomY");
-                        CellEngineConfigDataObject.SizeOfAtomZ = CellStatePropertyTreeElement.second.get<float>("SizeOfAtomZ");
+                        CellEngineConfigDataObject.SizeOfAtomChangeStep = CellStatePropertyTreeElement.get<float>("SizeOfAtomChangeStep");
+                        CellEngineConfigDataObject.SizeOfAtomX = CellStatePropertyTreeElement.get<float>("SizeOfAtomX");
+                        CellEngineConfigDataObject.SizeOfAtomY = CellStatePropertyTreeElement.get<float>("SizeOfAtomY");
+                        CellEngineConfigDataObject.SizeOfAtomZ = CellStatePropertyTreeElement.get<float>("SizeOfAtomZ");
                         CellEngineConfigDataObject.MainSizeOfAtom = 1.0;
 
-                        CellEngineConfigDataObject.RotationAngle1 = CellStatePropertyTreeElement.second.get<float>("RotationAngle1");
-                        CellEngineConfigDataObject.RotationAngle2 = CellStatePropertyTreeElement.second.get<float>("RotationAngle2");
-                        CellEngineConfigDataObject.RotationAngle3 = CellStatePropertyTreeElement.second.get<float>("RotationAngle3");
-                        CellEngineConfigDataObject.ViewPositionX = CellStatePropertyTreeElement.second.get<float>("ViewPositionX");
-                        CellEngineConfigDataObject.ViewPositionY = CellStatePropertyTreeElement.second.get<float>("ViewPositionY");
-                        CellEngineConfigDataObject.ViewPositionZ = CellStatePropertyTreeElement.second.get<float>("ViewPositionZ");
-                        CellEngineConfigDataObject.CameraXPosition = CellStatePropertyTreeElement.second.get<float>("CameraXPosition");
-                        CellEngineConfigDataObject.CameraYPosition = CellStatePropertyTreeElement.second.get<float>("CameraYPosition");
-                        CellEngineConfigDataObject.CameraZPosition = CellStatePropertyTreeElement.second.get<float>("CameraZPosition");
-                        CellEngineConfigDataObject.CameraXMoveShortStep = CellStatePropertyTreeElement.second.get<float>("CameraXMoveShortStep");
-                        CellEngineConfigDataObject.CameraYMoveShortStep = CellStatePropertyTreeElement.second.get<float>("CameraYMoveShortStep");
-                        CellEngineConfigDataObject.CameraZMoveShortStep = CellStatePropertyTreeElement.second.get<float>("CameraZMoveShortStep");
-                        CellEngineConfigDataObject.CameraXMoveLongStep = CellStatePropertyTreeElement.second.get<float>("CameraXMoveLongStep");
-                        CellEngineConfigDataObject.CameraYMoveLongStep = CellStatePropertyTreeElement.second.get<float>("CameraYMoveLongStep");
-                        CellEngineConfigDataObject.CameraZMoveLongStep = CellStatePropertyTreeElement.second.get<float>("CameraZMoveLongStep");
-                        CellEngineConfigDataObject.ViewPositionX = CellStatePropertyTreeElement.second.get<float>("ViewPositionX");
-                        CellEngineConfigDataObject.ViewPositionY = CellStatePropertyTreeElement.second.get<float>("ViewPositionY");
-                        CellEngineConfigDataObject.ViewPositionZ = CellStatePropertyTreeElement.second.get<float>("ViewPositionZ");
-                        CellEngineConfigDataObject.ViewXMoveShortStep = CellStatePropertyTreeElement.second.get<float>("ViewXMoveShortStep");
-                        CellEngineConfigDataObject.ViewYMoveShortStep = CellStatePropertyTreeElement.second.get<float>("ViewYMoveShortStep");
-                        CellEngineConfigDataObject.ViewZMoveShortStep = CellStatePropertyTreeElement.second.get<float>("ViewZMoveShortStep");
-                        CellEngineConfigDataObject.ViewXMoveLongStep = CellStatePropertyTreeElement.second.get<float>("ViewXMoveLongStep");
-                        CellEngineConfigDataObject.ViewYMoveLongStep = CellStatePropertyTreeElement.second.get<float>("ViewYMoveLongStep");
-                        CellEngineConfigDataObject.ViewZMoveLongStep = CellStatePropertyTreeElement.second.get<float>("ViewZMoveLongStep");
+                        CellEngineConfigDataObject.RotationAngle1 = CellStatePropertyTreeElement.get<float>("RotationAngle1");
+                        CellEngineConfigDataObject.RotationAngle2 = CellStatePropertyTreeElement.get<float>("RotationAngle2");
+                        CellEngineConfigDataObject.RotationAngle3 = CellStatePropertyTreeElement.get<float>("RotationAngle3");
+                        CellEngineConfigDataObject.ViewPositionX = CellStatePropertyTreeElement.get<float>("ViewPositionX");
+                        CellEngineConfigDataObject.ViewPositionY = CellStatePropertyTreeElement.get<float>("ViewPositionY");
+                        CellEngineConfigDataObject.ViewPositionZ = CellStatePropertyTreeElement.get<float>("ViewPositionZ");
+                        CellEngineConfigDataObject.CameraXPosition = CellStatePropertyTreeElement.get<float>("CameraXPosition");
+                        CellEngineConfigDataObject.CameraYPosition = CellStatePropertyTreeElement.get<float>("CameraYPosition");
+                        CellEngineConfigDataObject.CameraZPosition = CellStatePropertyTreeElement.get<float>("CameraZPosition");
+                        CellEngineConfigDataObject.CameraXMoveShortStep = CellStatePropertyTreeElement.get<float>("CameraXMoveShortStep");
+                        CellEngineConfigDataObject.CameraYMoveShortStep = CellStatePropertyTreeElement.get<float>("CameraYMoveShortStep");
+                        CellEngineConfigDataObject.CameraZMoveShortStep = CellStatePropertyTreeElement.get<float>("CameraZMoveShortStep");
+                        CellEngineConfigDataObject.CameraXMoveLongStep = CellStatePropertyTreeElement.get<float>("CameraXMoveLongStep");
+                        CellEngineConfigDataObject.CameraYMoveLongStep = CellStatePropertyTreeElement.get<float>("CameraYMoveLongStep");
+                        CellEngineConfigDataObject.CameraZMoveLongStep = CellStatePropertyTreeElement.get<float>("CameraZMoveLongStep");
+                        CellEngineConfigDataObject.ViewPositionX = CellStatePropertyTreeElement.get<float>("ViewPositionX");
+                        CellEngineConfigDataObject.ViewPositionY = CellStatePropertyTreeElement.get<float>("ViewPositionY");
+                        CellEngineConfigDataObject.ViewPositionZ = CellStatePropertyTreeElement.get<float>("ViewPositionZ");
+                        CellEngineConfigDataObject.ViewXMoveShortStep = CellStatePropertyTreeElement.get<float>("ViewXMoveShortStep");
+                        CellEngineConfigDataObject.ViewYMoveShortStep = CellStatePropertyTreeElement.get<float>("ViewYMoveShortStep");
+                        CellEngineConfigDataObject.ViewZMoveShortStep = CellStatePropertyTreeElement.get<float>("ViewZMoveShortStep");
+                        CellEngineConfigDataObject.ViewXMoveLongStep = CellStatePropertyTreeElement.get<float>("ViewXMoveLongStep");
+                        CellEngineConfigDataObject.ViewYMoveLongStep = CellStatePropertyTreeElement.get<float>("ViewYMoveLongStep");
+                        CellEngineConfigDataObject.ViewZMoveLongStep = CellStatePropertyTreeElement.get<float>("ViewZMoveLongStep");
 
-                        CellEngineConfigDataObject.ViewChangeUsingLongStep = CellStatePropertyTreeElement.second.get<bool>("ViewChangeUsingLongStep");
-                        CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep = CellStatePropertyTreeElement.second.get<bool>("AutomaticChangeOfLoadAtomsStep");
+                        CellEngineConfigDataObject.ViewChangeUsingLongStep = CellStatePropertyTreeElement.get<bool>("ViewChangeUsingLongStep");
+                        CellEngineConfigDataObject.AutomaticChangeOfLoadAtomsStep = CellStatePropertyTreeElement.get<bool>("AutomaticChangeOfLoadAtomsStep");
 
-                        CellEngineConfigDataObject.BackgroundColors[1] = vmath::FromVec4ToVec3(sb7::GetColorVec4FromColorName(CellStatePropertyTreeElement.second.get<string>("BackgroundColor1")));
-                        CellEngineConfigDataObject.BackgroundColors[2] = vmath::FromVec4ToVec3(sb7::GetColorVec4FromColorName(CellStatePropertyTreeElement.second.get<string>("BackgroundColor2")));
-                        CellEngineConfigDataObject.BackgroundColors[3] = vmath::FromVec4ToVec3(sb7::GetColorVec4FromColorName(CellStatePropertyTreeElement.second.get<string>("BackgroundColor3")));
-                        CellEngineConfigDataObject.ChosenBackgroundColor = CellStatePropertyTreeElement.second.get<UnsignedInt>("ChosenBackgroundColor");
+                        CellEngineConfigDataObject.BackgroundColors[1] = vmath::FromVec4ToVec3(sb7::GetColorVec4FromColorName(CellStatePropertyTreeElement.get<string>("BackgroundColor1")));
+                        CellEngineConfigDataObject.BackgroundColors[2] = vmath::FromVec4ToVec3(sb7::GetColorVec4FromColorName(CellStatePropertyTreeElement.get<string>("BackgroundColor2")));
+                        CellEngineConfigDataObject.BackgroundColors[3] = vmath::FromVec4ToVec3(sb7::GetColorVec4FromColorName(CellStatePropertyTreeElement.get<string>("BackgroundColor3")));
+                        CellEngineConfigDataObject.ChosenBackgroundColor = CellStatePropertyTreeElement.get<UnsignedInt>("ChosenBackgroundColor");
 
                         ParticlesKindsManagerObject.AtomsKindsGraphicData.clear();
-                        for (const ptree::value_type& AtomKindPropertyTreeElement : CellStatePropertyTreeElement.second.get_child("Atoms"))
+                        for (const auto& AtomKindPropertyTreeElement : CellStatePropertyTreeElement.get_child("Atoms") | views::values)
                         {
                             AtomKindGraphicData AtomKindObject;
 
-                            LoggersManagerObject.Log(STREAM("Atom Kind Name = " << AtomKindPropertyTreeElement.second.get<string>("Name")));
+                            LoggersManagerObject.Log(STREAM("Atom Kind Name = " << AtomKindPropertyTreeElement.get<string>("Name")));
 
-                            AtomKindObject.Color = CellEngineUseful::GetVector3FormVMathVec3ForColor(vmath::FromVec4ToVec3(sb7::GetColorVec4FromColorName(AtomKindPropertyTreeElement.second.get<string>("Color"))));
-                            AtomKindObject.ColorVmathVec3 = vmath::FromVec4ToVec3(sb7::GetColorVec4FromColorName(AtomKindPropertyTreeElement.second.get<string>("Color")));
-                            AtomKindObject.SizeX = AtomKindPropertyTreeElement.second.get<float>("SizeX");
-                            AtomKindObject.SizeY = AtomKindPropertyTreeElement.second.get<float>("SizeY");
-                            AtomKindObject.SizeZ = AtomKindPropertyTreeElement.second.get<float>("SizeZ");
-                            AtomKindObject.Name = AtomKindPropertyTreeElement.second.get<string>("Name");
+                            AtomKindObject.Color = CellEngineUseful::GetVector3FormVMathVec3ForColor(vmath::FromVec4ToVec3(sb7::GetColorVec4FromColorName(AtomKindPropertyTreeElement.get<string>("Color"))));
+                            AtomKindObject.ColorVmathVec3 = vmath::FromVec4ToVec3(sb7::GetColorVec4FromColorName(AtomKindPropertyTreeElement.get<string>("Color")));
+                            AtomKindObject.SizeX = AtomKindPropertyTreeElement.get<float>("SizeX");
+                            AtomKindObject.SizeY = AtomKindPropertyTreeElement.get<float>("SizeY");
+                            AtomKindObject.SizeZ = AtomKindPropertyTreeElement.get<float>("SizeZ");
+                            AtomKindObject.Name = AtomKindPropertyTreeElement.get<string>("Name");
 
                             ParticlesKindsManagerObject.AtomsKindsGraphicData.emplace_back(AtomKindObject);
                         }
 
                         ParticlesKindsManagerObject.GraphicParticlesKindsFromConfigXML.clear();
-                        for (const ptree::value_type& ParticleKindPropertyTreeElement : CellStatePropertyTreeElement.second.get_child("Particles"))
+                        for (const auto& ParticleKindPropertyTreeElement : CellStatePropertyTreeElement.get_child("Particles") | views::values)
                         {
                             ParticleKindGraphicData ParticleKindGraphicObject;
 
-                            LoggersManagerObject.Log(STREAM("ParticleKind Name = " << ParticleKindPropertyTreeElement.second.get<string>("Name") << " ID = " << ParticleKindPropertyTreeElement.second.get<UnsignedInt>("<xmlattr>.id") << " COLOR = " << ParticleKindPropertyTreeElement.second.get<string>("Color")));
+                            LoggersManagerObject.Log(STREAM("ParticleKind Name = " << ParticleKindPropertyTreeElement.get<string>("Name") << " ID = " << ParticleKindPropertyTreeElement.get<UnsignedInt>("<xmlattr>.id") << " COLOR = " << ParticleKindPropertyTreeElement.get<string>("Color")));
 
-                            ParticleKindGraphicObject.NameFromXML = ParticleKindPropertyTreeElement.second.get<string>("Name");
-                            ParticleKindGraphicObject.NameFromXML == "DNA" ? CellEngineConfigDataObject.DNAIdentifier = ParticleKindPropertyTreeElement.second.get<UnsignedInt>("<xmlattr>.id") : 0;
-                            ParticleKindGraphicObject.NameFromXML == "RNA" ? CellEngineConfigDataObject.RNAIdentifier = ParticleKindPropertyTreeElement.second.get<UnsignedInt>("<xmlattr>.id") : 0;
+                            ParticleKindGraphicObject.NameFromXML = ParticleKindPropertyTreeElement.get<string>("Name");
+                            ParticleKindGraphicObject.NameFromXML == "DNA" ? CellEngineConfigDataObject.DNAIdentifier = ParticleKindPropertyTreeElement.get<UnsignedInt>("<xmlattr>.id") : 0;
+                            ParticleKindGraphicObject.NameFromXML == "RNA" ? CellEngineConfigDataObject.RNAIdentifier = ParticleKindPropertyTreeElement.get<UnsignedInt>("<xmlattr>.id") : 0;
                             CellEngineConfigDataObject.ProteinInBuildingProcessIdentifier = CellEngineConfigDataObject.RNAIdentifier + 1;
-                            ParticleKindGraphicObject.ParticleColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(vmath::FromVec4ToVec3(sb7::GetColorVec4FromColorName(ParticleKindPropertyTreeElement.second.get<string>("Color"))));
-                            ParticleKindGraphicObject.Visible = ParticleKindPropertyTreeElement.second.get<bool>("Visible");
-                            ParticleKindGraphicObject.SizeX = ParticleKindPropertyTreeElement.second.get<float>("SizeX");
-                            ParticleKindGraphicObject.SizeY = ParticleKindPropertyTreeElement.second.get<float>("SizeY");
-                            ParticleKindGraphicObject.SizeZ = ParticleKindPropertyTreeElement.second.get<float>("SizeZ");
-                            ParticlesKindsManagerObject.GraphicParticlesKindsFromConfigXML[ParticleKindPropertyTreeElement.second.get<UnsignedInt>("<xmlattr>.id")] = ParticleKindGraphicObject;
+                            ParticleKindGraphicObject.ParticleColor = CellEngineUseful::GetVector3FormVMathVec3ForColor(vmath::FromVec4ToVec3(sb7::GetColorVec4FromColorName(ParticleKindPropertyTreeElement.get<string>("Color"))));
+                            ParticleKindGraphicObject.Visible = ParticleKindPropertyTreeElement.get<bool>("Visible");
+                            ParticleKindGraphicObject.SizeX = ParticleKindPropertyTreeElement.get<float>("SizeX");
+                            ParticleKindGraphicObject.SizeY = ParticleKindPropertyTreeElement.get<float>("SizeY");
+                            ParticleKindGraphicObject.SizeZ = ParticleKindPropertyTreeElement.get<float>("SizeZ");
+                            ParticlesKindsManagerObject.GraphicParticlesKindsFromConfigXML[ParticleKindPropertyTreeElement.get<UnsignedInt>("<xmlattr>.id")] = ParticleKindGraphicObject;
                         }
                     }
         }

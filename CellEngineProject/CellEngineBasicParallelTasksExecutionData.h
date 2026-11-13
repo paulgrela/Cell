@@ -2,6 +2,7 @@
 #ifndef CELL_ENGINE_BASIC_PARALLEL_EXECUTION_DATA_H
 #define CELL_ENGINE_BASIC_PARALLEL_EXECUTION_DATA_H
 
+#include <mpi.h>
 #include <queue>
 #include <barrier>
 #include <condition_variable>
@@ -31,6 +32,50 @@ struct ConfirmationOfParticlesToRemoveToSentStruct
     vector3_16 SenderSectorPos{ .X = 0, .Y = 0, .Z = 0 };
 };
 
+struct ParticleSenderStructForMPIExchange
+{
+    UniqueIdUInt64Type ParticleUniqueId{ 0 };
+    UniqueIdUInt32Type ParticleKindId{ 0 };
+    int SenderParallelTaskIndex{ 0 };
+    int ReceiverParallelTaskIndex{ 0 };
+    vector3_16 ReceiverSectorPos{ .X = 0, .Y = 0, .Z = 0 };
+    vector3_Real32 NewParticleCenter{ .X = 0, .Y = 0, .Z = 0 };
+    vector3_Real32 Vector{ .X = 0, .Y = 0, .Z = 0 };
+};
+
+struct MPIExchangeBuffersStruct
+{
+    std::vector<ParticleSenderStructForMPIExchange> ParticlesToSend[NumberOfAllNeighbors];
+    std::vector<ParticleSenderStructForMPIExchange> ReceivedParticles[NumberOfAllNeighbors];
+    std::vector<std::uint8_t> InsertedFlagsToSend[NumberOfAllNeighbors];
+    std::vector<std::uint8_t> InsertedFlagsReceived[NumberOfAllNeighbors];
+    int NumberOfParticlesSent[NumberOfAllNeighbors]{};
+};
+
+struct MPIExchangeRequestsStruct
+{
+    MPI_Request ReceiveParticlesRequests[NumberOfAllNeighbors];
+    MPI_Request ReceiveInsertedFlagsRequests[NumberOfAllNeighbors];
+    MPI_Request SendParticlesRequests[NumberOfAllNeighbors];
+    MPI_Request SendInsertedFlagsRequests[NumberOfAllNeighbors];
+
+    MPIExchangeRequestsStruct()
+    {
+        SetAllRequestsToNull();
+    }
+
+    void SetAllRequestsToNull()
+    {
+        for (UnsignedInt NeighborIndex = 0; NeighborIndex < NumberOfAllNeighbors; NeighborIndex++)
+        {
+            ReceiveParticlesRequests[NeighborIndex] = MPI_REQUEST_NULL;
+            ReceiveInsertedFlagsRequests[NeighborIndex] = MPI_REQUEST_NULL;
+            SendParticlesRequests[NeighborIndex] = MPI_REQUEST_NULL;
+            SendInsertedFlagsRequests[NeighborIndex] = MPI_REQUEST_NULL;
+        }
+    }
+};
+
 struct WallChannel
 {
     std::mutex MutexNumber1;
@@ -51,6 +96,10 @@ inline UnsignedInt FirstDiffusionStepStampOfCurrentRun = 1;
 class CellEngineBasicParallelTasksExecutionData
 {
     friend class CellEngineSimulationParallelTasksExecutionManager;
+protected:
+        MPIExchangeBuffersStruct MPIExchangeBuffers;
+        MPIExchangeRequestsStruct MPIExchangeRequests;
+
 public:
     UnsignedInt MPIProcessIndex{ 0 };
 public:
