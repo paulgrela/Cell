@@ -148,7 +148,7 @@ void CellEngineFullAtomSimulationSpace::TransferParticlesFromOneSectorToAnotherS
     CATCH("")
 }
 
-void CellEngineFullAtomSimulationSpace::TransferParticlesFromOneSectortoAnotherSectorInOneStepOfDiffusionForSelectedSpaceForContainersNotForSpeedAndForNonParallelExecution(std::vector<ParticleToBeMovedFromOneSectorToAnotherSector>& ListOfParticlesToChangeSectors) const
+void CellEngineFullAtomSimulationSpace::TransferParticlesFromOneSectorToAnotherSectorInOneStepOfDiffusionForSelectedSpaceForContainersNotForSpeedAndForNonParallelExecution(vector<ParticleToBeMovedFromOneSectorToAnotherSector>& ListOfParticlesToChangeSectors)
 {
     try
     {
@@ -163,6 +163,8 @@ void CellEngineFullAtomSimulationSpace::TransferParticlesFromOneSectortoAnotherS
                 DEBUG_LOG_DIFFUSION(CellEngineUseful::CheckCenterForSector<Particle>(ParticleFromSourceToMoveToTargetIterator->second, Particles, "C2");)
 
                 LocalSourceParticles.erase(ParticleFromSourceToMoveToTargetIterator);
+
+                NumberOfParticlesMovedInDiffusionSentFromOneSectorToAnotherSectorWithinOneParallelTask++;
             }
             else
             {
@@ -211,7 +213,7 @@ void CellEngineFullAtomSimulationSpace::GenerateOneStepOfDiffusionForSelectedSpa
             #ifdef CONTAINERS_FOR_SPEED
             TransferParticlesFromOneSectorToAnotherSectorInOneStepOfDiffusionForSelectedSpaceForParallelExecutionOrForContainersForSpeedAndForNonParallelExecution(ListOfParticlesToChangeSectors, NumberOfParticlesMovedInDiffusionSentFromOneSectorToAnotherSectorWithinOneParallelTaskParam);
             #else
-            TransferParticlesFromOneSectorToAnotherSectorInOneStepOfDiffusionForSelectedSpaceForContainersNotForSpeedAndForNonParallelExecution(ListOfParticlesToChangeSectors, InBounds, StartSectorXPosParam, StartSectorYPosParam, StartSectorZPosParam, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, true);
+            TransferParticlesFromOneSectorToAnotherSectorInOneStepOfDiffusionForSelectedSpaceForContainersNotForSpeedAndForNonParallelExecution(ListOfParticlesToChangeSectors);
             #endif
         }
     }

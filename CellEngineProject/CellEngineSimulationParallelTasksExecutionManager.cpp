@@ -20,15 +20,11 @@ constexpr bool ColdStartMPISimulation = false;
 
 using namespace std;
 
-// CPU of simulation thread number ThreadIndex (1-based, FOR_EACH_THREAD_IN_XYZ order) - the same formula as in
-// GenerateNStepsOfSimulationForWholeCellSpaceInOneThread, so a thread always runs on the CPU where its memory was first written.
 static int GetCPUOfThread(const vector<int>& CPUsForThreads, const UnsignedInt ThreadIndex)
 {
     return CPUsForThreads[(ThreadIndex - 1) % CPUsForThreads.size()];
 }
 
-// Copies every heap buffer of the particle into new memory allocated by the calling thread (first touch -> its NUMA node).
-// The Particle object itself does not move, so all pointers to it stay valid.
 static void MoveBuffersOfParticleToMemoryOfCurrentThread(Particle& ParticleObject)
 {
     ListOfAtomsType(ParticleObject.ListOfAtoms).swap(ParticleObject.ListOfAtoms);
@@ -39,10 +35,6 @@ static void MoveBuffersOfParticleToMemoryOfCurrentThread(Particle& ParticleObjec
     string(ParticleObject.SequenceStr).swap(ParticleObject.SequenceStr);
 }
 
-// Rebuilds one sector in memory allocated by the calling (pinned) thread.
-// DNA/RNA particles and particles that another particle points to (Prev, Next, PairedNucleotidePtr, LinkedParticlesPointersList)
-// keep their node, so every pointer stays valid - only their vectors are copied. Every other particle is copied into a new node.
-// (a template only so that "reserve" is used for unordered_map and skipped for std::map - CONTAINERS_FOR_SPEED on or off)
 template <class ParticlesInSectorContainerType>
 static void MoveParticlesOfSectorToMemoryOfCurrentThread(ParticlesInSectorContainerType& ParticlesInSector, const unordered_set<const Particle*>& ParticlesPointedToByOtherParticles)
 {
@@ -66,7 +58,7 @@ static void MoveParticlesOfSectorToMemoryOfCurrentThread(ParticlesInSectorContai
         ParticleIterator = NextParticleIterator;
     }
 
-    ParticlesInSector.swap(LocalParticlesInSector);      // LocalParticlesInSector now holds the old nodes of the copied particles - freed here
+    ParticlesInSector.swap(LocalParticlesInSector);
 }
 
 CellEngineSimulationParallelTasksExecutionManager::CellEngineSimulationParallelTasksExecutionManager() : SimulationSpaceDataForThreads(CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer)
@@ -90,10 +82,8 @@ void CellEngineSimulationParallelTasksExecutionManager::CreateSimulationSpaceFor
                 ThreadLocalParticlesInProximityYPos.resize(CellEngineConfigDataObject.NumberOfZThreadsInSimulation);
         }
 
-        // Threads mode: every object is created by a thread pinned to the CPU on which this simulation thread will always run,
-        // so the object is allocated on that CPU's NUMA node. MPI mode: created here in the calling thread, as before.
         const bool CreateInPinnedThreads = (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == false);
-        const vector<int> CPUsForThreads = CellEngineThreadPinning::GetCPUsForThreads();      // called from this (not pinned) thread - the same list as in GenerateNStepsOfSimulationForWholeCellSpaceInThreads
+        const vector<int> CPUsForThreads = CellEngineThreadPinning::GetCPUsForThreads();
         mutex ConstructorMutex;
 
         vector<jthread> Threads;
@@ -107,7 +97,7 @@ void CellEngineSimulationParallelTasksExecutionManager::CreateSimulationSpaceFor
                     if (CreateInPinnedThreads == true)
                         CellEngineThreadPinning::BindCurrentThreadToCPU(GetCPUOfThread(CPUsForThreads, ThreadIndexPos + 1));
 
-                    lock_guard<mutex> LockGuardObject(ConstructorMutex);      // the constructor logs - one object at a time, each still in its own pinned thread
+                    lock_guard<mutex> LockGuardObject(ConstructorMutex);
 
                     LoggersManagerObject.Log(STREAM("THREAD INDEXES = " << ThreadIndexPos << " (" << ThreadXIndex << ", " << ThreadYIndex << ", " << ThreadZIndex << ")"));
 
@@ -124,48 +114,11 @@ void CellEngineSimulationParallelTasksExecutionManager::CreateSimulationSpaceFor
             ThreadIndexPos++;
         }
 
-        Threads.clear();      // jthread joins in its destructor
+        Threads.clear();
     }
     CATCH("creating simulation space for parallel execution")
 }
 
-// template <class SimulationSpaceType>
-// void CellEngineSimulationParallelTasksExecutionManager::CreateSimulationSpaceForParallelExecution(SimulationSpaceForParallelExecutionContainer<CellEngineSimulationSpace>& CellEngineSimulationSpaceForThreadsObjectsPointer, ParticlesContainer<Particle>& Particles)
-// {
-//     try
-//     {
-//         UnsignedInt ThreadIndexPos = 0;
-//
-//         CellEngineSimulationSpaceForThreadsObjectsPointer.clear();
-//         CellEngineSimulationSpaceForThreadsObjectsPointer.resize(CellEngineConfigDataObject.NumberOfXThreadsInSimulation);
-//         UnsignedInt ThreadXPos = 0;
-//         for (auto& ThreadLocalParticlesInProximityXPos : CellEngineSimulationSpaceForThreadsObjectsPointer)
-//         {
-//             ThreadLocalParticlesInProximityXPos.resize(CellEngineConfigDataObject.NumberOfYThreadsInSimulation);
-//             UnsignedInt ThreadYPos = 0;
-//             for (auto& ThreadLocalParticlesInProximityYPos : ThreadLocalParticlesInProximityXPos)
-//             {
-//                 ThreadLocalParticlesInProximityYPos.resize(CellEngineConfigDataObject.NumberOfZThreadsInSimulation);
-//                 UnsignedInt ThreadZPos = 0;
-//                 for (auto& ThreadLocalParticlesInProximityZPos : ThreadLocalParticlesInProximityYPos)
-//                 {
-//                     LoggersManagerObject.Log(STREAM("THREAD INDEXES = " << ThreadIndexPos << " (" << ThreadXPos << ", " << ThreadYPos << ", " << ThreadZPos << ")"));
-//
-//                     ThreadLocalParticlesInProximityZPos = make_shared<SimulationSpaceType>(Particles, false, ThreadIndexPos, ParallelTaskPosType{ .PosX = static_cast<SignedInt>(ThreadXPos), .PosY = static_cast<SignedInt>(ThreadYPos), .PosZ = static_cast<SignedInt>(ThreadZPos) });
-//                     ThreadIndexPos++;
-//                     ThreadZPos++;
-//                 }
-//                 ThreadYPos++;
-//             }
-//             ThreadXPos++;
-//         }
-//     }
-//     CATCH("creating simulation space for parallel execution")
-// }
-
-// Called once after the particles are loaded (threads mode). One thread per simulation thread, pinned to the same CPU that
-// this simulation thread uses in every run, rebuilds the particles of its own sectors in memory it allocates itself,
-// so this memory lands on that CPU's NUMA node and stays there (particles change sectors by extract/insert, nodes never move).
 void CellEngineSimulationParallelTasksExecutionManager::MoveParticlesOfEveryThreadToMemoryOfItsNUMANode(ParticlesContainer<Particle>& Particles)
 {
     try

@@ -49,6 +49,9 @@ void CellEngineParticlesFullAtomOperations::MoveParticleByVectorForThreads(Parti
             const auto [ThreadPosX, ThreadPosY, ThreadPosZ] = ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].ParallelTaskPos;
 
             CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[ThreadPosX][ThreadPosY][ThreadPosZ]->NumberOfParticlesMovedInDiffusionWithinInOneSectorWithinOneParallelTask++;
+
+            if (CellEngineConfigDataObject.MultiThreaded == false)
+                CellEngineDataFileObjectPointer->CellEngineFullAtomSimulationSpaceObjectPointer->NumberOfParticlesMovedInDiffusionWithinInOneSectorWithinOneParallelTask++;
         }
         else
         if (CellEngineConfigDataObject.MultiThreaded == true)
