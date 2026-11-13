@@ -4871,7 +4871,7 @@
 			<SizeOfZInOneSectorInOneThreadInSimulationSpace>128</SizeOfZInOneSectorInOneThreadInSimulationSpace>
 
 			<StepToChangeSpaceDivisionForThreads>4</StepToChangeSpaceDivisionForThreads>
-			<TypeOfExchangeOfParticlesBetweenThreads>2</TypeOfExchangeOfParticlesBetweenThreads>
+			<TypeOfExchangeOfParticlesBetweenThreads>1</TypeOfExchangeOfParticlesBetweenThreads>
 
 			<TypeOfSychronizationfSimulationExecutedInThreads>2</TypeOfSychronizationfSimulationExecutedInThreads>
 
