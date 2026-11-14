@@ -909,7 +909,6 @@ void CellEngineSimulationParallelTasksExecutionManager::GenerateNStepsOfSimulati
         LoggersManagerObject.Log(STREAM(""));
         LoggersManagerObject.Log(STREAM("NUMBER OF ALL PARTICLES BEFORE SIMULATION = " << NumberOfAllParticlesBeforeSimulation));
         LoggersManagerObject.Log(STREAM("START SIMULATION IN THREADS"));
-        LoggersManagerObject.Log(STREAM("MaxParticleUniqueId = " << MaxParticleUniqueId));
 
         CellEngineUseful::SwitchOffLogs();
 
@@ -1566,7 +1565,7 @@ void CellEngineSimulationParallelTasksExecutionManager::GenerateNStepsOfSimulati
         SetZeroForAllParallelExecutionVariables();
 
         LoggersManagerObject.Log(STREAM("START MPI SIMULATION"));
-        LoggersManagerObject.Log(STREAM("MaxParticleUniqueId = " << MaxParticleUniqueId));
+        LoggersManagerObject.Log(STREAM("MaxParticleUniqueId = " << MaxParticleUniqueIdGlobal << " CurrentMPIProcessIndex = " << MPIProcessDataObject.CurrentMPIProcessIndex));
 
         CellEngineUseful::SwitchOffLogs();
 
@@ -1841,7 +1840,7 @@ void CellEngineSimulationParallelTasksExecutionManager::ExchangeParticlesBetween
                             {
                                 NumberOfParticlesToBeMovedInDiffusionRejectedByAnotherParallelTask++;
 
-                                DEBUG_LOG_DIFFUSION(LoggersManagerObject.LogUnconditional(STREAM("NOT SENDING CONFIRMATION TO NEIGHBOR = (PARTICLE_INDEX = " << ReceivedParticleUniqueIdToInsert.ParticleUniqueId << ")(" << ReceivedParticleUniqueIdToInsert.SenderParallelTaskIndex << " " << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskIndex << ") (" << MPIProcessIndex << " ) NEIGHBOR = (" << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskPos.PosX << " " << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskPos.PosY << " " << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskPos.PosZ << ")"));)
+                                DEBUG_LOG_DIFFUSION(LoggersManagerObject.LogUnconditional(STREAM("NOT SENDING CONFIRMATION TO NEIGHBOR = (PARTICLE_INDEX = " << ReceivedParticleUniqueIdToInsert.ParticleUniqueId << ")(" << ReceivedParticleUniqueIdToInsert.SenderParallelTaskIndex << " " << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskIndex << ") (" << MPIProcessDataObject.CurrentMPIProcessIndex << ") NEIGHBOR = (" << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskPos.PosX << " " << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskPos.PosY << " " << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskPos.PosZ << ")"));)
                                 DEBUG_LOG_DIFFUSION(LoggersManagerObject.LogUnconditional(STREAM("PARTCLE_INDEX TO NOT SEND CONFIRMATION = " << ReceivedParticleUniqueIdToInsert.ParticleUniqueId));)
                             }
                         }

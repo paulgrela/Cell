@@ -307,7 +307,7 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfDiffusionForSelectedRangeO
     {
         uniform_int_distribution<SignedInt> UniformDistributionObjectMoveParticleDirection_int64t(-1, 1);
 
-        GetRangeOfParticlesForRandomParticles(StartParticleUniqueIdParam, EndParticleUniqueIdParam, MaxParticleUniqueId);
+        GetRangeOfParticlesForRandomParticles(StartParticleUniqueIdParam, EndParticleUniqueIdParam, MaxParticleUniqueIdGlobal);
 
         for (UniqueIdUInt64Type ParticleUniqueId = StartParticleUniqueIdParam; ParticleUniqueId <= EndParticleUniqueIdParam; ParticleUniqueId++)
             MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(GetParticleFromUniqueId(ParticleUniqueId), Particles, CellEngineUseful::AsLvalue(vector<ParticleToBeMovedFromOneSectorToAnotherSector>()), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
@@ -321,7 +321,7 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfElectricDiffusionForSelect
     {
         CellEngineUseful::SwitchOffLogs();
 
-        GetRangeOfParticlesForRandomParticles(StartParticleUniqueIdParam, EndParticleUniqueIdParam, MaxParticleUniqueId);
+        GetRangeOfParticlesForRandomParticles(StartParticleUniqueIdParam, EndParticleUniqueIdParam, MaxParticleUniqueIdGlobal);
 
         ElectricChargeType NeighbourPoints[3][3][3];
 

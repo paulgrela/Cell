@@ -54,10 +54,10 @@ struct MPIExchangeBuffersStruct
 
 struct MPIExchangeRequestsStruct
 {
-    MPI_Request ReceiveParticlesRequests[NumberOfAllNeighbors];
-    MPI_Request ReceiveInsertedFlagsRequests[NumberOfAllNeighbors];
-    MPI_Request SendParticlesRequests[NumberOfAllNeighbors];
-    MPI_Request SendInsertedFlagsRequests[NumberOfAllNeighbors];
+    MPI_Request ReceiveParticlesRequests[NumberOfAllNeighbors]{};
+    MPI_Request ReceiveInsertedFlagsRequests[NumberOfAllNeighbors]{};
+    MPI_Request SendParticlesRequests[NumberOfAllNeighbors]{};
+    MPI_Request SendInsertedFlagsRequests[NumberOfAllNeighbors]{};
 
     MPIExchangeRequestsStruct()
     {
@@ -96,10 +96,6 @@ inline UnsignedInt FirstDiffusionStepStampOfCurrentRun = 1;
 class CellEngineBasicParallelTasksExecutionData
 {
     friend class CellEngineSimulationParallelTasksExecutionManager;
-protected:
-        MPIExchangeBuffersStruct MPIExchangeBuffers;
-        MPIExchangeRequestsStruct MPIExchangeRequests;
-
 public:
     UnsignedInt MPIProcessIndex{ 0 };
 public:
@@ -125,6 +121,9 @@ public:
     std::vector<ParticleSenderStructForParallelMultiTaskingExecution> VectorOfParticlesToSendToNeighborParallelTasks[NumberOfAllNeighbors];
 protected:
     std::vector<ConfirmationOfParticlesToRemoveToSentStruct> ConfirmationOfParticlesToRemoveToSent[NumberOfAllNeighbors];
+protected:
+    MPIExchangeBuffersStruct MPIExchangeBuffers;
+    MPIExchangeRequestsStruct MPIExchangeRequests;
 protected:
     std::vector<std::unique_ptr<WallChannel>> TwoThreadsWallChannels;
     std::vector<std::unique_ptr<std::barrier<>>> TwoThreadsWallSychronizationBarriers;

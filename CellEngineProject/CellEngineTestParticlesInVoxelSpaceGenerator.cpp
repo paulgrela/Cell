@@ -15,7 +15,7 @@ void CellEngineTestParticlesInVoxelSpaceGenerator::GenerateRandomParticlesInSele
 {
     try
     {
-        LoggersManagerObject.Log(STREAM("PARTICLES RANGE = " << MaxParticleUniqueId << " " << (MaxParticleUniqueId + NumberOfRandomParticles) << " " << NumberOfRandomParticles));
+        LoggersManagerObject.Log(STREAM("PARTICLES RANGE = " << MaxParticleUniqueIdGlobal << " " << (MaxParticleUniqueIdGlobal + NumberOfRandomParticles) << " " << NumberOfRandomParticles));
 
         uniform_int_distribution<UnsignedInt> UniformDistributionObjectSizeOfParticle_Uint64t(1, 2);
         uniform_int_distribution<UnsignedInt> UniformDistributionObjectObjectOfParticle_Uint64t(0, NumberOfRandomParticles);
@@ -33,7 +33,7 @@ void CellEngineTestParticlesInVoxelSpaceGenerator::GenerateRandomParticlesInSele
 
         for (const auto& LocalNewParticleUniqueId : LocalNewParticlesIndexes)
         {
-            UnsignedInt RandomSizeOfParticles = GetRandomValue<uniform_int_distribution, UnsignedInt>(UniformDistributionObjectSizeOfParticle_Uint64t);
+            const UnsignedInt RandomSizeOfParticles = GetRandomValue<uniform_int_distribution, UnsignedInt>(UniformDistributionObjectSizeOfParticle_Uint64t);
             GenerateParticleVoxelsWhenSelectedSpaceIsFree(LocalNewParticleUniqueId, GetRandomValue<uniform_int_distribution, UnsignedInt>(UniformDistributionObjectX_Uint64t), GetRandomValue<uniform_int_distribution, UnsignedInt>(UniformDistributionObjectY_Uint64t), GetRandomValue<uniform_int_distribution, UnsignedInt>(UniformDistributionObjectZ_Uint64t), RandomSizeOfParticles, RandomSizeOfParticles, RandomSizeOfParticles, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, &CellEngineParticlesVoxelsShapesGenerator::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineParticlesVoxelsShapesGenerator::SetValueToVoxelsForCuboidSelectedSpace);
         }
     }
