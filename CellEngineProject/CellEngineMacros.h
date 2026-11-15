@@ -4,6 +4,11 @@
 
 #include "../Compilation/ConditionalCompilationConstants.h"
 
+#define FOR_RANGE_OF_SECTORS_IN_XYZ_ONLY(SimulationSpaceSectorsRanges) \
+        for (UnsignedInt ParticleSectorXIndex = (SimulationSpaceSectorsRanges).StartXPos; ParticleSectorXIndex < (SimulationSpaceSectorsRanges).EndXPos; ParticleSectorXIndex++) \
+            for (UnsignedInt ParticleSectorYIndex = (SimulationSpaceSectorsRanges).StartYPos; ParticleSectorYIndex < (SimulationSpaceSectorsRanges).EndYPos; ParticleSectorYIndex++) \
+                for (UnsignedInt ParticleSectorZIndex = (SimulationSpaceSectorsRanges).StartZPos; ParticleSectorZIndex < (SimulationSpaceSectorsRanges).EndZPos; ParticleSectorZIndex++)
+
 #define FOR_EACH_SECTOR_IN_XYZ_ONLY \
         for (UnsignedInt ParticleSectorXIndex = 0; ParticleSectorXIndex < CellEngineConfigDataObject.NumberOfParticlesSectorsInX; ParticleSectorXIndex++) \
             for (UnsignedInt ParticleSectorYIndex = 0; ParticleSectorYIndex < CellEngineConfigDataObject.NumberOfParticlesSectorsInY; ParticleSectorYIndex++) \

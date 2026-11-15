@@ -253,13 +253,14 @@ bool CellEngineRealRandomParticlesInFullAtomSpaceGenerator::TryToGenerateRandomP
 
             SetCurrentSectorPos(CellEngineUseful::GetSectorPos(PosX, PosY, PosZ));
 
+            UniqueIdUInt64Type LastParticleUniqueId;
             if (SizeX > 1)
-                TryResult = GenerateParticleAtomsWhenSelectedSpaceIsFree(Particles, AddNewParticle(Particle(GetNewFreeParticleUniqueId(), ParticleKindId, 1, -1, 1, ParticleKindObject.second.ElectricCharge, GeneSequence, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), PosX, PosY, PosZ, SizeX, SizeY, SizeZ, 0, 0, 0, 0, 0, 0, &CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceForEllipsoidSelectedSpace, &CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForEllipsoidSelectedSpace);
+                TryResult = GenerateParticleAtomsWhenSelectedSpaceIsFree(Particles, LastParticleUniqueId = AddNewParticle(Particle(GetNewFreeParticleUniqueId(), ParticleKindId, 1, -1, 1, ParticleKindObject.second.ElectricCharge, GeneSequence, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), PosX, PosY, PosZ, SizeX, SizeY, SizeZ, 0, 0, 0, 0, 0, 0, &CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceForEllipsoidSelectedSpace, &CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForEllipsoidSelectedSpace);
             else
-                TryResult = GenerateParticleAtomsWhenSelectedSpaceIsFree(Particles, AddNewParticle(Particle(GetNewFreeParticleUniqueId(), ParticleKindId, 1, -1, 1, ParticleKindObject.second.ElectricCharge, GeneSequence, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), PosX, PosY, PosZ, SizeX, SizeY, SizeZ, 0, 0, 0, 0, 0, 0, &CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForCuboidSelectedSpace);
+                TryResult = GenerateParticleAtomsWhenSelectedSpaceIsFree(Particles, LastParticleUniqueId = AddNewParticle(Particle(GetNewFreeParticleUniqueId(), ParticleKindId, 1, -1, 1, ParticleKindObject.second.ElectricCharge, GeneSequence, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor()))), PosX, PosY, PosZ, SizeX, SizeY, SizeZ, 0, 0, 0, 0, 0, 0, &CellEngineParticlesFullAtomShapesGenerator::CheckFreeSpaceInCuboidSelectedSpace, &CellEngineParticlesFullAtomShapesGenerator::SetValueToAtomsForCuboidSelectedSpace);
 
             if (TryResult == false)
-                RemoveParticle(MaxParticleUniqueIdGlobal, true, false);
+                RemoveParticle(LastParticleUniqueId, true, false);
 
             TryInsertNewParticleCounter++;
         }

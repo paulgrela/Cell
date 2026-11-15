@@ -292,22 +292,11 @@ void CellEngineVoxelSimulationSpace::GenerateNStepsOfOneChosenReactionForWholeCe
     CATCH("generating random reactions for whole cell space")
 }
 
-static inline void GetRangeOfParticlesForRandomParticles(UniqueIdUInt64Type& StartParticleUniqueIdParam, UniqueIdUInt64Type& EndParticleUniqueIdParam, UniqueIdUInt64Type MaxParticleUniqueId)
-{
-    if (EndParticleUniqueIdParam == 0)
-    {
-        StartParticleUniqueIdParam = MaxParticleUniqueId - StartParticleUniqueIdParam;
-        EndParticleUniqueIdParam = MaxParticleUniqueId;
-    }
-}
-
 void CellEngineVoxelSimulationSpace::GenerateOneStepOfDiffusionForSelectedRangeOfParticles(UniqueIdUInt64Type StartParticleUniqueIdParam, UniqueIdUInt64Type EndParticleUniqueIdParam, const UnsignedInt StartXPosParam, const UnsignedInt StartYPosParam, const UnsignedInt StartZPosParam, const UnsignedInt SizeXParam, const UnsignedInt SizeYParam, const UnsignedInt SizeZParam)
 {
     try
     {
         uniform_int_distribution<SignedInt> UniformDistributionObjectMoveParticleDirection_int64t(-1, 1);
-
-        GetRangeOfParticlesForRandomParticles(StartParticleUniqueIdParam, EndParticleUniqueIdParam, MaxParticleUniqueIdGlobal);
 
         for (UniqueIdUInt64Type ParticleUniqueId = StartParticleUniqueIdParam; ParticleUniqueId <= EndParticleUniqueIdParam; ParticleUniqueId++)
             MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(GetParticleFromUniqueId(ParticleUniqueId), Particles, CellEngineUseful::AsLvalue(vector<ParticleToBeMovedFromOneSectorToAnotherSector>()), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), GetRandomValue<uniform_int_distribution, SignedInt>(UniformDistributionObjectMoveParticleDirection_int64t), StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
@@ -320,8 +309,6 @@ void CellEngineVoxelSimulationSpace::GenerateOneStepOfElectricDiffusionForSelect
     try
     {
         CellEngineUseful::SwitchOffLogs();
-
-        GetRangeOfParticlesForRandomParticles(StartParticleUniqueIdParam, EndParticleUniqueIdParam, MaxParticleUniqueIdGlobal);
 
         ElectricChargeType NeighbourPoints[3][3][3];
 

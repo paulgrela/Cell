@@ -42,11 +42,16 @@ public:
 
     static void ReleaseParticleUniqueId(const UniqueIdUInt64Type) noexcept {}
 
-    [[nodiscard]] UniqueIdUInt64Type SaveState() const noexcept
+    [[nodiscard]] UniqueIdUInt64Type GetLastParticleUniqueId() const noexcept
+    {
+        return Prefix | LastIssuedCounter;
+    }
+
+    [[nodiscard]] UniqueIdUInt64Type GetLastCounterValue() const noexcept
     {
         return LastIssuedCounter;
     }
-    void RestoreState(const UniqueIdUInt64Type SavedLastIssuedCounter) noexcept
+    void SetLastCounterValue(const UniqueIdUInt64Type SavedLastIssuedCounter) noexcept
     {
         LastIssuedCounter = SavedLastIssuedCounter;
     }

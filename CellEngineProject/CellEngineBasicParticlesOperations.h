@@ -14,8 +14,6 @@ class CellEngineBasicParticlesOperations : public CellEngineBasicParallelTasksEx
 protected:
     CellEngineParticleUniqueIdGenerator ParticleUniqueIdGenerator{};
 protected:
-    UnsignedInt MaxParticleUniqueIdGlobal{};
-protected:
     ParticlesContainer<Particle>& Particles;
 protected:
     inline ParticlesDetailedContainer<Particle>& GetParticles()
@@ -91,11 +89,7 @@ public:
 public:
     UniqueIdUInt64Type AddNewParticle(const Particle& ParticleParam)
     {
-        if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true || (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == false && CellEngineConfigDataObject.MultiThreaded == false))
-            MaxParticleUniqueIdGlobal = ParticleParam.ParticleUniqueId;
-
         GetParticles()[ParticleParam.ParticleUniqueId] = ParticleParam;
-
         return ParticleParam.ParticleUniqueId;
     }
 protected:

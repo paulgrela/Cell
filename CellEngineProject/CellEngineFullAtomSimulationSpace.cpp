@@ -292,7 +292,7 @@ void CellEngineFullAtomSimulationSpace::GenerateNStepsOfOneRandomReactionForWhol
 {
     try
     {
-        LoggersManagerObject.Log(STREAM("MaxParticleUniqueIdGlobal = " << MaxParticleUniqueIdGlobal));
+        LoggersManagerObject.Log(STREAM("MaxParticleUniqueIdGlobal = " << ParticleUniqueIdGenerator.GetLastParticleUniqueId()));
 
         CellEngineConfigDataObject.MultiThreaded = false;
 

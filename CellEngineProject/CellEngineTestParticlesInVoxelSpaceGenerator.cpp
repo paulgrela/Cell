@@ -15,7 +15,7 @@ void CellEngineTestParticlesInVoxelSpaceGenerator::GenerateRandomParticlesInSele
 {
     try
     {
-        LoggersManagerObject.Log(STREAM("PARTICLES RANGE = " << MaxParticleUniqueIdGlobal << " " << (MaxParticleUniqueIdGlobal + NumberOfRandomParticles) << " " << NumberOfRandomParticles));
+        LoggersManagerObject.Log(STREAM("PARTICLES RANGE = " << ParticleUniqueIdGenerator.GetLastCounterValue() << " " << (ParticleUniqueIdGenerator.GetLastCounterValue() + NumberOfRandomParticles) << " " << NumberOfRandomParticles));
 
         uniform_int_distribution<UnsignedInt> UniformDistributionObjectSizeOfParticle_Uint64t(1, 2);
         uniform_int_distribution<UnsignedInt> UniformDistributionObjectObjectOfParticle_Uint64t(0, NumberOfRandomParticles);
