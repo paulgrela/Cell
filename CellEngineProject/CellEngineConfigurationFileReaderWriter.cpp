@@ -136,33 +136,33 @@ void CellEngineConfigurationFileReaderWriter::ReadCellConfigurationFile(const ch
                         if (CellStatePropertyTreeElement.get_child_optional("TypeOfSimulation"))
                             CellEngineConfigDataObject.TypeOfSimulation = static_cast<CellEngineConfigData::TypesOfSimulation>(CellStatePropertyTreeElement.get<UnsignedInt>("TypeOfSimulation"));
 
-                        if (CellStatePropertyTreeElement.get_child_optional("NumberOfXThreadsInSimulation"))
-                            CellEngineConfigDataObject.NumberOfXThreadsInSimulation = CellStatePropertyTreeElement.get<UnsignedInt>("NumberOfXThreadsInSimulation");
-                        if (CellStatePropertyTreeElement.get_child_optional("NumberOfYThreadsInSimulation"))
-                            CellEngineConfigDataObject.NumberOfYThreadsInSimulation = CellStatePropertyTreeElement.get<UnsignedInt>("NumberOfYThreadsInSimulation");
-                        if (CellStatePropertyTreeElement.get_child_optional("NumberOfZThreadsInSimulation"))
-                            CellEngineConfigDataObject.NumberOfZThreadsInSimulation = CellStatePropertyTreeElement.get<UnsignedInt>("NumberOfZThreadsInSimulation");
+                        if (CellStatePropertyTreeElement.get_child_optional("NumberOfXParallelTasksInSimulation"))
+                            CellEngineConfigDataObject.NumberOfXParallelTasksInSimulation = CellStatePropertyTreeElement.get<UnsignedInt>("NumberOfXParallelTasksInSimulation");
+                        if (CellStatePropertyTreeElement.get_child_optional("NumberOfYParallelTasksInSimulation"))
+                            CellEngineConfigDataObject.NumberOfYParallelTasksInSimulation = CellStatePropertyTreeElement.get<UnsignedInt>("NumberOfYParallelTasksInSimulation");
+                        if (CellStatePropertyTreeElement.get_child_optional("NumberOfZParallelTasksInSimulation"))
+                            CellEngineConfigDataObject.NumberOfZParallelTasksInSimulation = CellStatePropertyTreeElement.get<UnsignedInt>("NumberOfZParallelTasksInSimulation");
 
-                        if (CellStatePropertyTreeElement.get_child_optional("NumberOfXSectorsInOneThreadInSimulation"))
-                            CellEngineConfigDataObject.NumberOfXSectorsInOneThreadInSimulation = CellStatePropertyTreeElement.get<UnsignedInt>("NumberOfXSectorsInOneThreadInSimulation");
-                        if (CellStatePropertyTreeElement.get_child_optional("NumberOfYSectorsInOneThreadInSimulation"))
-                            CellEngineConfigDataObject.NumberOfYSectorsInOneThreadInSimulation = CellStatePropertyTreeElement.get<UnsignedInt>("NumberOfYSectorsInOneThreadInSimulation");
-                        if (CellStatePropertyTreeElement.get_child_optional("NumberOfZSectorsInOneThreadInSimulation"))
-                            CellEngineConfigDataObject.NumberOfZSectorsInOneThreadInSimulation = CellStatePropertyTreeElement.get<UnsignedInt>("NumberOfZSectorsInOneThreadInSimulation");
+                        if (CellStatePropertyTreeElement.get_child_optional("NumberOfXSectorsInOneParallelTaskInSimulation"))
+                            CellEngineConfigDataObject.NumberOfXSectorsInOneParallelTasksInSimulation = CellStatePropertyTreeElement.get<UnsignedInt>("NumberOfXSectorsInOneParallelTaskInSimulation");
+                        if (CellStatePropertyTreeElement.get_child_optional("NumberOfYSectorsInOneParallelTaskInSimulation"))
+                            CellEngineConfigDataObject.NumberOfYSectorsInOneParallelTasksInSimulation = CellStatePropertyTreeElement.get<UnsignedInt>("NumberOfYSectorsInOneParallelTaskInSimulation");
+                        if (CellStatePropertyTreeElement.get_child_optional("NumberOfZSectorsInOneParallelTaskInSimulation"))
+                            CellEngineConfigDataObject.NumberOfZSectorsInOneParallelTasksInSimulation = CellStatePropertyTreeElement.get<UnsignedInt>("NumberOfZSectorsInOneParallelTaskInSimulation");
 
-                        if (CellStatePropertyTreeElement.get_child_optional("SizeOfXInOneThreadInSimulationSpace"))
-                            CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace = CellStatePropertyTreeElement.get<UnsignedInt>("SizeOfXInOneThreadInSimulationSpace");
-                        if (CellStatePropertyTreeElement.get_child_optional("SizeOfYInOneThreadInSimulationSpace"))
-                            CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace = CellStatePropertyTreeElement.get<UnsignedInt>("SizeOfYInOneThreadInSimulationSpace");
-                        if (CellStatePropertyTreeElement.get_child_optional("SizeOfZInOneThreadInSimulationSpace"))
-                            CellEngineConfigDataObject.SizeOfZInOneThreadInSimulationSpace = CellStatePropertyTreeElement.get<UnsignedInt>("SizeOfZInOneThreadInSimulationSpace");
+                        if (CellStatePropertyTreeElement.get_child_optional("SizeOfXInOneParallelTaskInSimulationSpace"))
+                            CellEngineConfigDataObject.SizeOfXInOneParallelTasksInSimulationSpace = CellStatePropertyTreeElement.get<UnsignedInt>("SizeOfXInOneParallelTaskInSimulationSpace");
+                        if (CellStatePropertyTreeElement.get_child_optional("SizeOfYInOneParallelTaskInSimulationSpace"))
+                            CellEngineConfigDataObject.SizeOfYInOneParallelTasksInSimulationSpace = CellStatePropertyTreeElement.get<UnsignedInt>("SizeOfYInOneParallelTaskInSimulationSpace");
+                        if (CellStatePropertyTreeElement.get_child_optional("SizeOfZInOneParallelTaskInSimulationSpace"))
+                            CellEngineConfigDataObject.SizeOfZInOneParallelTasksInSimulationSpace = CellStatePropertyTreeElement.get<UnsignedInt>("SizeOfZInOneParallelTaskInSimulationSpace");
 
-                        if (CellStatePropertyTreeElement.get_child_optional("SizeOfXInOneSectorInOneThreadInSimulationSpace"))
-                            CellEngineConfigDataObject.SizeOfXInOneSectorInOneThreadInSimulationSpace = CellStatePropertyTreeElement.get<UnsignedInt>("SizeOfXInOneSectorInOneThreadInSimulationSpace");
-                        if (CellStatePropertyTreeElement.get_child_optional("SizeOfYInOneSectorInOneThreadInSimulationSpace"))
-                            CellEngineConfigDataObject.SizeOfYInOneSectorInOneThreadInSimulationSpace = CellStatePropertyTreeElement.get<UnsignedInt>("SizeOfYInOneSectorInOneThreadInSimulationSpace");
-                        if (CellStatePropertyTreeElement.get_child_optional("SizeOfZInOneSectorInOneThreadInSimulationSpace"))
-                            CellEngineConfigDataObject.SizeOfZInOneSectorInOneThreadInSimulationSpace = CellStatePropertyTreeElement.get<UnsignedInt>("SizeOfZInOneSectorInOneThreadInSimulationSpace");
+                        if (CellStatePropertyTreeElement.get_child_optional("SizeOfXInOneSectorInOneParallelTaskInSimulationSpace"))
+                            CellEngineConfigDataObject.SizeOfXInOneSectorInOneParallelTasksInSimulationSpace = CellStatePropertyTreeElement.get<UnsignedInt>("SizeOfXInOneSectorInOneParallelTaskInSimulationSpace");
+                        if (CellStatePropertyTreeElement.get_child_optional("SizeOfYInOneSectorInOneParallelTaskInSimulationSpace"))
+                            CellEngineConfigDataObject.SizeOfYInOneSectorInOneParallelTasksInSimulationSpace = CellStatePropertyTreeElement.get<UnsignedInt>("SizeOfYInOneSectorInOneParallelTaskInSimulationSpace");
+                        if (CellStatePropertyTreeElement.get_child_optional("SizeOfZInOneSectorInOneParallelTaskInSimulationSpace"))
+                            CellEngineConfigDataObject.SizeOfZInOneSectorInOneParallelTasksInSimulationSpace = CellStatePropertyTreeElement.get<UnsignedInt>("SizeOfZInOneSectorInOneParallelTaskInSimulationSpace");
 
                         if (CellStatePropertyTreeElement.get_child_optional("StepToChangeSpaceDivisionForThreads"))
                             CellEngineConfigDataObject.StepToChangeSpaceDivisionForThreads = CellStatePropertyTreeElement.get<UnsignedInt>("StepToChangeSpaceDivisionForThreads");

@@ -27,9 +27,9 @@
                     for (auto& ParticleObject : Particles[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].Particles)
 
 #define FOR_EACH_THREAD_IN_XYZ \
-        for (UnsignedInt ThreadXIndex = 0; ThreadXIndex < CellEngineConfigDataObject.NumberOfXThreadsInSimulation; ThreadXIndex++) \
-            for (UnsignedInt ThreadYIndex = 0; ThreadYIndex < CellEngineConfigDataObject.NumberOfYThreadsInSimulation; ThreadYIndex++) \
-                for (UnsignedInt ThreadZIndex = 0; ThreadZIndex < CellEngineConfigDataObject.NumberOfZThreadsInSimulation; ThreadZIndex++)
+        for (UnsignedInt ThreadXIndex = 0; ThreadXIndex < CellEngineConfigDataObject.NumberOfXParallelTasksInSimulation; ThreadXIndex++) \
+            for (UnsignedInt ThreadYIndex = 0; ThreadYIndex < CellEngineConfigDataObject.NumberOfYParallelTasksInSimulation; ThreadYIndex++) \
+                for (UnsignedInt ThreadZIndex = 0; ThreadZIndex < CellEngineConfigDataObject.NumberOfZParallelTasksInSimulation; ThreadZIndex++)
 
 #ifdef SIMULATION_DETAILED_DEBUG_LOG
     #define DEBUG_LOG(...) __VA_ARGS__

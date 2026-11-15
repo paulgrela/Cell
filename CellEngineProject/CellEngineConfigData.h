@@ -152,18 +152,18 @@ public:
     };
     TypesOfSimulation TypeOfSimulation = TypesOfSimulation::BothReactionsAndDiffusion;
 public:
-    UnsignedInt NumberOfXThreadsInSimulation = 1;
-    UnsignedInt NumberOfYThreadsInSimulation = 1;
-    UnsignedInt NumberOfZThreadsInSimulation = 1;
-    UnsignedInt NumberOfXSectorsInOneThreadInSimulation = 20;
-    UnsignedInt NumberOfYSectorsInOneThreadInSimulation = 20;
-    UnsignedInt NumberOfZSectorsInOneThreadInSimulation = 20;
-    UnsignedInt SizeOfXInOneThreadInSimulationSpace = 1024;
-    UnsignedInt SizeOfYInOneThreadInSimulationSpace = 1024;
-    UnsignedInt SizeOfZInOneThreadInSimulationSpace = 1024;
-    UnsignedInt SizeOfXInOneSectorInOneThreadInSimulationSpace = 32;
-    UnsignedInt SizeOfYInOneSectorInOneThreadInSimulationSpace = 32;
-    UnsignedInt SizeOfZInOneSectorInOneThreadInSimulationSpace = 32;
+    UnsignedInt NumberOfXParallelTasksInSimulation = 1;
+    UnsignedInt NumberOfYParallelTasksInSimulation = 1;
+    UnsignedInt NumberOfZParallelTasksInSimulation = 1;
+    UnsignedInt NumberOfXSectorsInOneParallelTasksInSimulation = 20;
+    UnsignedInt NumberOfYSectorsInOneParallelTasksInSimulation = 20;
+    UnsignedInt NumberOfZSectorsInOneParallelTasksInSimulation = 20;
+    UnsignedInt SizeOfXInOneParallelTasksInSimulationSpace = 1024;
+    UnsignedInt SizeOfYInOneParallelTasksInSimulationSpace = 1024;
+    UnsignedInt SizeOfZInOneParallelTasksInSimulationSpace = 1024;
+    UnsignedInt SizeOfXInOneSectorInOneParallelTasksInSimulationSpace = 32;
+    UnsignedInt SizeOfYInOneSectorInOneParallelTasksInSimulationSpace = 32;
+    UnsignedInt SizeOfZInOneSectorInOneParallelTasksInSimulationSpace = 32;
 public:
     UnsignedInt StepToChangeSpaceDivisionForThreads = 2;
 public:

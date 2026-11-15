@@ -1829,18 +1829,18 @@
 			<NumberOfStepsInSimulationInside>1</NumberOfStepsInSimulationInside>
 			<TypeOfSimulation>1</TypeOfSimulation>
 
-			<NumberOfXThreadsInSimulation>2</NumberOfXThreadsInSimulation>
-			<NumberOfYThreadsInSimulation>2</NumberOfYThreadsInSimulation>
-			<NumberOfZThreadsInSimulation>2</NumberOfZThreadsInSimulation>
-			<NumberOfXSectorsInOneThreadInSimulation>20</NumberOfXSectorsInOneThreadInSimulation>
-			<NumberOfYSectorsInOneThreadInSimulation>20</NumberOfYSectorsInOneThreadInSimulation>
-			<NumberOfZSectorsInOneThreadInSimulation>20</NumberOfZSectorsInOneThreadInSimulation>
-			<SizeOfXInOneThreadInSimulationSpace>1280</SizeOfXInOneThreadInSimulationSpace>
-			<SizeOfYInOneThreadInSimulationSpace>1280</SizeOfYInOneThreadInSimulationSpace>
-			<SizeOfZInOneThreadInSimulationSpace>1280</SizeOfZInOneThreadInSimulationSpace>
-			<SizeOfXInOneSectorInOneThreadInSimulationSpace>128</SizeOfXInOneSectorInOneThreadInSimulationSpace>
-			<SizeOfYInOneSectorInOneThreadInSimulationSpace>128</SizeOfYInOneSectorInOneThreadInSimulationSpace>
-			<SizeOfZInOneSectorInOneThreadInSimulationSpace>128</SizeOfZInOneSectorInOneThreadInSimulationSpace>
+			<NumberOfXParallelTasksInSimulation>2</NumberOfXParallelTasksInSimulation>
+			<NumberOfYParallelTasksInSimulation>2</NumberOfYParallelTasksInSimulation>
+			<NumberOfZParallelTasksInSimulation>2</NumberOfZParallelTasksInSimulation>
+			<NumberOfXSectorsInOneParallelTaskInSimulation>20</NumberOfXSectorsInOneParallelTaskInSimulation>
+			<NumberOfYSectorsInOneParallelTaskInSimulation>20</NumberOfYSectorsInOneParallelTaskInSimulation>
+			<NumberOfZSectorsInOneParallelTaskInSimulation>20</NumberOfZSectorsInOneParallelTaskInSimulation>
+			<SizeOfXInOneParallelTaskInSimulationSpace>1280</SizeOfXInOneParallelTaskInSimulationSpace>
+			<SizeOfYInOneParallelTaskInSimulationSpace>1280</SizeOfYInOneParallelTaskInSimulationSpace>
+			<SizeOfZInOneParallelTaskInSimulationSpace>1280</SizeOfZInOneParallelTaskInSimulationSpace>
+			<SizeOfXInOneSectorInOneParallelTaskInSimulationSpace>128</SizeOfXInOneSectorInOneParallelTaskInSimulationSpace>
+			<SizeOfYInOneSectorInOneParallelTaskInSimulationSpace>128</SizeOfYInOneSectorInOneParallelTaskInSimulationSpace>
+			<SizeOfZInOneSectorInOneParallelTaskInSimulationSpace>128</SizeOfZInOneSectorInOneParallelTaskInSimulationSpace>
 
 			<StepToChangeSpaceDivisionForThreads>4</StepToChangeSpaceDivisionForThreads>
 			<TypeOfExchangeOfParticlesBetweenThreads>3</TypeOfExchangeOfParticlesBetweenThreads>
@@ -3221,15 +3221,15 @@
 			<NumberOfStepsInSimulationInside>1</NumberOfStepsInSimulationInside>
 			<TypeOfSimulation>1</TypeOfSimulation>
 
-			<NumberOfXThreadsInSimulation>2</NumberOfXThreadsInSimulation>
-			<NumberOfYThreadsInSimulation>2</NumberOfYThreadsInSimulation>
-			<NumberOfZThreadsInSimulation>2</NumberOfZThreadsInSimulation>
-			<SizeOfXInOneThreadInSimulationSpace>512</SizeOfXInOneThreadInSimulationSpace>
-			<SizeOfYInOneThreadInSimulationSpace>512</SizeOfYInOneThreadInSimulationSpace>
-			<SizeOfZInOneThreadInSimulationSpace>512</SizeOfZInOneThreadInSimulationSpace>
-			<SizeOfXInOneSectorInOneThreadInSimulationSpace>32</SizeOfXInOneSectorInOneThreadInSimulationSpace>
-			<SizeOfYInOneSectorInOneThreadInSimulationSpace>32</SizeOfYInOneSectorInOneThreadInSimulationSpace>
-			<SizeOfZInOneSectorInOneThreadInSimulationSpace>32</SizeOfZInOneSectorInOneThreadInSimulationSpace>
+			<NumberOfXParallelTasksInSimulation>2</NumberOfXParallelTasksInSimulation>
+			<NumberOfYParallelTasksInSimulation>2</NumberOfYParallelTasksInSimulation>
+			<NumberOfZParallelTasksInSimulation>2</NumberOfZParallelTasksInSimulation>
+			<SizeOfXInOneParallelTaskInSimulationSpace>512</SizeOfXInOneParallelTaskInSimulationSpace>
+			<SizeOfYInOneParallelTaskInSimulationSpace>512</SizeOfYInOneParallelTaskInSimulationSpace>
+			<SizeOfZInOneParallelTaskInSimulationSpace>512</SizeOfZInOneParallelTaskInSimulationSpace>
+			<SizeOfXInOneSectorInOneParallelTaskInSimulationSpace>32</SizeOfXInOneSectorInOneParallelTaskInSimulationSpace>
+			<SizeOfYInOneSectorInOneParallelTaskInSimulationSpace>32</SizeOfYInOneSectorInOneParallelTaskInSimulationSpace>
+			<SizeOfZInOneSectorInOneParallelTaskInSimulationSpace>32</SizeOfZInOneSectorInOneParallelTaskInSimulationSpace>
 
 			<TypeOfSychronizationfSimulationExecutedInThreads>1</TypeOfSychronizationfSimulationExecutedInThreads>
 
@@ -3764,18 +3764,18 @@
 			<NumberOfStepsInSimulationInside>1</NumberOfStepsInSimulationInside>
 			<TypeOfSimulation>1</TypeOfSimulation>
 
-			<NumberOfXThreadsInSimulation>4</NumberOfXThreadsInSimulation>
-			<NumberOfYThreadsInSimulation>4</NumberOfYThreadsInSimulation>
-			<NumberOfZThreadsInSimulation>2</NumberOfZThreadsInSimulation>
-			<NumberOfXSectorsInOneThreadInSimulation>10</NumberOfXSectorsInOneThreadInSimulation>
-			<NumberOfYSectorsInOneThreadInSimulation>10</NumberOfYSectorsInOneThreadInSimulation>
-			<NumberOfZSectorsInOneThreadInSimulation>20</NumberOfZSectorsInOneThreadInSimulation>
-			<SizeOfXInOneThreadInSimulationSpace>1280</SizeOfXInOneThreadInSimulationSpace>
-			<SizeOfYInOneThreadInSimulationSpace>1280</SizeOfYInOneThreadInSimulationSpace>
-			<SizeOfZInOneThreadInSimulationSpace>1280</SizeOfZInOneThreadInSimulationSpace>
-			<SizeOfXInOneSectorInOneThreadInSimulationSpace>128</SizeOfXInOneSectorInOneThreadInSimulationSpace>
-			<SizeOfYInOneSectorInOneThreadInSimulationSpace>128</SizeOfYInOneSectorInOneThreadInSimulationSpace>
-			<SizeOfZInOneSectorInOneThreadInSimulationSpace>128</SizeOfZInOneSectorInOneThreadInSimulationSpace>
+			<NumberOfXParallelTasksInSimulation>4</NumberOfXParallelTasksInSimulation>
+			<NumberOfYParallelTasksInSimulation>4</NumberOfYParallelTasksInSimulation>
+			<NumberOfZParallelTasksInSimulation>2</NumberOfZParallelTasksInSimulation>
+			<NumberOfXSectorsInOneParallelTaskInSimulation>10</NumberOfXSectorsInOneParallelTaskInSimulation>
+			<NumberOfYSectorsInOneParallelTaskInSimulation>10</NumberOfYSectorsInOneParallelTaskInSimulation>
+			<NumberOfZSectorsInOneParallelTaskInSimulation>20</NumberOfZSectorsInOneParallelTaskInSimulation>
+			<SizeOfXInOneParallelTaskInSimulationSpace>1280</SizeOfXInOneParallelTaskInSimulationSpace>
+			<SizeOfYInOneParallelTaskInSimulationSpace>1280</SizeOfYInOneParallelTaskInSimulationSpace>
+			<SizeOfZInOneParallelTaskInSimulationSpace>1280</SizeOfZInOneParallelTaskInSimulationSpace>
+			<SizeOfXInOneSectorInOneParallelTaskInSimulationSpace>128</SizeOfXInOneSectorInOneParallelTaskInSimulationSpace>
+			<SizeOfYInOneSectorInOneParallelTaskInSimulationSpace>128</SizeOfYInOneSectorInOneParallelTaskInSimulationSpace>
+			<SizeOfZInOneSectorInOneParallelTaskInSimulationSpace>128</SizeOfZInOneSectorInOneParallelTaskInSimulationSpace>
 
 			<TypeOfSychronizationfSimulationExecutedInThreads>1</TypeOfSychronizationfSimulationExecutedInThreads>
 
@@ -4009,15 +4009,15 @@
 			<NumberOfStepsInSimulationInside>1</NumberOfStepsInSimulationInside>
 			<TypeOfSimulation>1</TypeOfSimulation>
 
-			<NumberOfXThreadsInSimulation>2</NumberOfXThreadsInSimulation>
-			<NumberOfYThreadsInSimulation>2</NumberOfYThreadsInSimulation>
-			<NumberOfZThreadsInSimulation>2</NumberOfZThreadsInSimulation>
-			<SizeOfXInOneThreadInSimulationSpace>128</SizeOfXInOneThreadInSimulationSpace>
-			<SizeOfYInOneThreadInSimulationSpace>128</SizeOfYInOneThreadInSimulationSpace>
-			<SizeOfZInOneThreadInSimulationSpace>128</SizeOfZInOneThreadInSimulationSpace>
-			<SizeOfXInOneSectorInOneThreadInSimulationSpace>16</SizeOfXInOneSectorInOneThreadInSimulationSpace>
-			<SizeOfYInOneSectorInOneThreadInSimulationSpace>16</SizeOfYInOneSectorInOneThreadInSimulationSpace>
-			<SizeOfZInOneSectorInOneThreadInSimulationSpace>16</SizeOfZInOneSectorInOneThreadInSimulationSpace>
+			<NumberOfXParallelTasksInSimulation>2</NumberOfXParallelTasksInSimulation>
+			<NumberOfYParallelTasksInSimulation>2</NumberOfYParallelTasksInSimulation>
+			<NumberOfZParallelTasksInSimulation>2</NumberOfZParallelTasksInSimulation>
+			<SizeOfXInOneParallelTaskInSimulationSpace>128</SizeOfXInOneParallelTaskInSimulationSpace>
+			<SizeOfYInOneParallelTaskInSimulationSpace>128</SizeOfYInOneParallelTaskInSimulationSpace>
+			<SizeOfZInOneParallelTaskInSimulationSpace>128</SizeOfZInOneParallelTaskInSimulationSpace>
+			<SizeOfXInOneSectorInOneParallelTaskInSimulationSpace>16</SizeOfXInOneSectorInOneParallelTaskInSimulationSpace>
+			<SizeOfYInOneSectorInOneParallelTaskInSimulationSpace>16</SizeOfYInOneSectorInOneParallelTaskInSimulationSpace>
+			<SizeOfZInOneSectorInOneParallelTaskInSimulationSpace>16</SizeOfZInOneSectorInOneParallelTaskInSimulationSpace>
 
 			<StepToChangeSpaceDivisionForThreads>4</StepToChangeSpaceDivisionForThreads>
 			<TypeOfExchangeOfParticlesBetweenThreads>1</TypeOfExchangeOfParticlesBetweenThreads>
@@ -4289,15 +4289,15 @@
 			<NumberOfStepsInSimulationInside>1</NumberOfStepsInSimulationInside>
 			<TypeOfSimulation>1</TypeOfSimulation>
 
-			<NumberOfXThreadsInSimulation>2</NumberOfXThreadsInSimulation>
-			<NumberOfYThreadsInSimulation>2</NumberOfYThreadsInSimulation>
-			<NumberOfZThreadsInSimulation>2</NumberOfZThreadsInSimulation>
-			<SizeOfXInOneThreadInSimulationSpace>128</SizeOfXInOneThreadInSimulationSpace>
-			<SizeOfYInOneThreadInSimulationSpace>128</SizeOfYInOneThreadInSimulationSpace>
-			<SizeOfZInOneThreadInSimulationSpace>128</SizeOfZInOneThreadInSimulationSpace>
-			<SizeOfXInOneSectorInOneThreadInSimulationSpace>16</SizeOfXInOneSectorInOneThreadInSimulationSpace>
-			<SizeOfYInOneSectorInOneThreadInSimulationSpace>16</SizeOfYInOneSectorInOneThreadInSimulationSpace>
-			<SizeOfZInOneSectorInOneThreadInSimulationSpace>16</SizeOfZInOneSectorInOneThreadInSimulationSpace>
+			<NumberOfXParallelTasksInSimulation>2</NumberOfXParallelTasksInSimulation>
+			<NumberOfYParallelTasksInSimulation>2</NumberOfYParallelTasksInSimulation>
+			<NumberOfZParallelTasksInSimulation>2</NumberOfZParallelTasksInSimulation>
+			<SizeOfXInOneParallelTaskInSimulationSpace>128</SizeOfXInOneParallelTaskInSimulationSpace>
+			<SizeOfYInOneParallelTaskInSimulationSpace>128</SizeOfYInOneParallelTaskInSimulationSpace>
+			<SizeOfZInOneParallelTaskInSimulationSpace>128</SizeOfZInOneParallelTaskInSimulationSpace>
+			<SizeOfXInOneSectorInOneParallelTaskInSimulationSpace>16</SizeOfXInOneSectorInOneParallelTaskInSimulationSpace>
+			<SizeOfYInOneSectorInOneParallelTaskInSimulationSpace>16</SizeOfYInOneSectorInOneParallelTaskInSimulationSpace>
+			<SizeOfZInOneSectorInOneParallelTaskInSimulationSpace>16</SizeOfZInOneSectorInOneParallelTaskInSimulationSpace>
 
 			<StepToChangeSpaceDivisionForThreads>4</StepToChangeSpaceDivisionForThreads>
 			<TypeOfExchangeOfParticlesBetweenThreads>1</TypeOfExchangeOfParticlesBetweenThreads>
@@ -4573,15 +4573,15 @@
 			<NumberOfStepsInSimulationInside>1</NumberOfStepsInSimulationInside>
 			<TypeOfSimulation>1</TypeOfSimulation>
 
-			<NumberOfXThreadsInSimulation>2</NumberOfXThreadsInSimulation>
-			<NumberOfYThreadsInSimulation>2</NumberOfYThreadsInSimulation>
-			<NumberOfZThreadsInSimulation>2</NumberOfZThreadsInSimulation>
-			<SizeOfXInOneThreadInSimulationSpace>512</SizeOfXInOneThreadInSimulationSpace>
-			<SizeOfYInOneThreadInSimulationSpace>512</SizeOfYInOneThreadInSimulationSpace>
-			<SizeOfZInOneThreadInSimulationSpace>512</SizeOfZInOneThreadInSimulationSpace>
-			<SizeOfXInOneSectorInOneThreadInSimulationSpace>32</SizeOfXInOneSectorInOneThreadInSimulationSpace>
-			<SizeOfYInOneSectorInOneThreadInSimulationSpace>32</SizeOfYInOneSectorInOneThreadInSimulationSpace>
-			<SizeOfZInOneSectorInOneThreadInSimulationSpace>32</SizeOfZInOneSectorInOneThreadInSimulationSpace>
+			<NumberOfXParallelTasksInSimulation>2</NumberOfXParallelTasksInSimulation>
+			<NumberOfYParallelTasksInSimulation>2</NumberOfYParallelTasksInSimulation>
+			<NumberOfZParallelTasksInSimulation>2</NumberOfZParallelTasksInSimulation>
+			<SizeOfXInOneParallelTaskInSimulationSpace>512</SizeOfXInOneParallelTaskInSimulationSpace>
+			<SizeOfYInOneParallelTaskInSimulationSpace>512</SizeOfYInOneParallelTaskInSimulationSpace>
+			<SizeOfZInOneParallelTaskInSimulationSpace>512</SizeOfZInOneParallelTaskInSimulationSpace>
+			<SizeOfXInOneSectorInOneParallelTaskInSimulationSpace>32</SizeOfXInOneSectorInOneParallelTaskInSimulationSpace>
+			<SizeOfYInOneSectorInOneParallelTaskInSimulationSpace>32</SizeOfYInOneSectorInOneParallelTaskInSimulationSpace>
+			<SizeOfZInOneSectorInOneParallelTaskInSimulationSpace>32</SizeOfZInOneSectorInOneParallelTaskInSimulationSpace>
 
 			<StepToChangeSpaceDivisionForThreads>4</StepToChangeSpaceDivisionForThreads>
 			<TypeOfExchangeOfParticlesBetweenThreads>1</TypeOfExchangeOfParticlesBetweenThreads>
@@ -4857,18 +4857,18 @@
 			<NumberOfStepsInSimulationInside>1</NumberOfStepsInSimulationInside>
 			<TypeOfSimulation>1</TypeOfSimulation>
 
-			<NumberOfXThreadsInSimulation>4</NumberOfXThreadsInSimulation>
-			<NumberOfYThreadsInSimulation>4</NumberOfYThreadsInSimulation>
-			<NumberOfZThreadsInSimulation>4</NumberOfZThreadsInSimulation>
-			<NumberOfXSectorsInOneThreadInSimulation>10</NumberOfXSectorsInOneThreadInSimulation>
-			<NumberOfYSectorsInOneThreadInSimulation>10</NumberOfYSectorsInOneThreadInSimulation>
-			<NumberOfZSectorsInOneThreadInSimulation>10</NumberOfZSectorsInOneThreadInSimulation>
-			<SizeOfXInOneThreadInSimulationSpace>1280</SizeOfXInOneThreadInSimulationSpace>
-			<SizeOfYInOneThreadInSimulationSpace>1280</SizeOfYInOneThreadInSimulationSpace>
-			<SizeOfZInOneThreadInSimulationSpace>1280</SizeOfZInOneThreadInSimulationSpace>
-			<SizeOfXInOneSectorInOneThreadInSimulationSpace>128</SizeOfXInOneSectorInOneThreadInSimulationSpace>
-			<SizeOfYInOneSectorInOneThreadInSimulationSpace>128</SizeOfYInOneSectorInOneThreadInSimulationSpace>
-			<SizeOfZInOneSectorInOneThreadInSimulationSpace>128</SizeOfZInOneSectorInOneThreadInSimulationSpace>
+			<NumberOfXParallelTasksInSimulation>4</NumberOfXParallelTasksInSimulation>
+			<NumberOfYParallelTasksInSimulation>4</NumberOfYParallelTasksInSimulation>
+			<NumberOfZParallelTasksInSimulation>4</NumberOfZParallelTasksInSimulation>
+			<NumberOfXSectorsInOneParallelTaskInSimulation>10</NumberOfXSectorsInOneParallelTaskInSimulation>
+			<NumberOfYSectorsInOneParallelTaskInSimulation>10</NumberOfYSectorsInOneParallelTaskInSimulation>
+			<NumberOfZSectorsInOneParallelTaskInSimulation>10</NumberOfZSectorsInOneParallelTaskInSimulation>
+			<SizeOfXInOneParallelTaskInSimulationSpace>1280</SizeOfXInOneParallelTaskInSimulationSpace>
+			<SizeOfYInOneParallelTaskInSimulationSpace>1280</SizeOfYInOneParallelTaskInSimulationSpace>
+			<SizeOfZInOneParallelTaskInSimulationSpace>1280</SizeOfZInOneParallelTaskInSimulationSpace>
+			<SizeOfXInOneSectorInOneParallelTaskInSimulationSpace>128</SizeOfXInOneSectorInOneParallelTaskInSimulationSpace>
+			<SizeOfYInOneSectorInOneParallelTaskInSimulationSpace>128</SizeOfYInOneSectorInOneParallelTaskInSimulationSpace>
+			<SizeOfZInOneSectorInOneParallelTaskInSimulationSpace>128</SizeOfZInOneSectorInOneParallelTaskInSimulationSpace>
 
 			<StepToChangeSpaceDivisionForThreads>4</StepToChangeSpaceDivisionForThreads>
 			<TypeOfExchangeOfParticlesBetweenThreads>1</TypeOfExchangeOfParticlesBetweenThreads>
@@ -5106,18 +5106,18 @@
 			<NumberOfStepsInSimulationInside>1</NumberOfStepsInSimulationInside>
 			<TypeOfSimulation>1</TypeOfSimulation>
 
-			<NumberOfXThreadsInSimulation>4</NumberOfXThreadsInSimulation>
-			<NumberOfYThreadsInSimulation>4</NumberOfYThreadsInSimulation>
-			<NumberOfZThreadsInSimulation>4</NumberOfZThreadsInSimulation>
-			<NumberOfXSectorsInOneThreadInSimulation>10</NumberOfXSectorsInOneThreadInSimulation>
-			<NumberOfYSectorsInOneThreadInSimulation>10</NumberOfYSectorsInOneThreadInSimulation>
-			<NumberOfZSectorsInOneThreadInSimulation>10</NumberOfZSectorsInOneThreadInSimulation>
-			<SizeOfXInOneThreadInSimulationSpace>1280</SizeOfXInOneThreadInSimulationSpace>
-			<SizeOfYInOneThreadInSimulationSpace>1280</SizeOfYInOneThreadInSimulationSpace>
-			<SizeOfZInOneThreadInSimulationSpace>1280</SizeOfZInOneThreadInSimulationSpace>
-			<SizeOfXInOneSectorInOneThreadInSimulationSpace>128</SizeOfXInOneSectorInOneThreadInSimulationSpace>
-			<SizeOfYInOneSectorInOneThreadInSimulationSpace>128</SizeOfYInOneSectorInOneThreadInSimulationSpace>
-			<SizeOfZInOneSectorInOneThreadInSimulationSpace>128</SizeOfZInOneSectorInOneThreadInSimulationSpace>
+			<NumberOfXParallelTasksInSimulation>4</NumberOfXParallelTasksInSimulation>
+			<NumberOfYParallelTasksInSimulation>4</NumberOfYParallelTasksInSimulation>
+			<NumberOfZParallelTasksInSimulation>4</NumberOfZParallelTasksInSimulation>
+			<NumberOfXSectorsInOneParallelTaskInSimulation>10</NumberOfXSectorsInOneParallelTaskInSimulation>
+			<NumberOfYSectorsInOneParallelTaskInSimulation>10</NumberOfYSectorsInOneParallelTaskInSimulation>
+			<NumberOfZSectorsInOneParallelTaskInSimulation>10</NumberOfZSectorsInOneParallelTaskInSimulation>
+			<SizeOfXInOneParallelTaskInSimulationSpace>1280</SizeOfXInOneParallelTaskInSimulationSpace>
+			<SizeOfYInOneParallelTaskInSimulationSpace>1280</SizeOfYInOneParallelTaskInSimulationSpace>
+			<SizeOfZInOneParallelTaskInSimulationSpace>1280</SizeOfZInOneParallelTaskInSimulationSpace>
+			<SizeOfXInOneSectorInOneParallelTaskInSimulationSpace>128</SizeOfXInOneSectorInOneParallelTaskInSimulationSpace>
+			<SizeOfYInOneSectorInOneParallelTaskInSimulationSpace>128</SizeOfYInOneSectorInOneParallelTaskInSimulationSpace>
+			<SizeOfZInOneSectorInOneParallelTaskInSimulationSpace>128</SizeOfZInOneSectorInOneParallelTaskInSimulationSpace>
 
 			<StepToChangeSpaceDivisionForThreads>4</StepToChangeSpaceDivisionForThreads>
 			<TypeOfExchangeOfParticlesBetweenThreads>3</TypeOfExchangeOfParticlesBetweenThreads>
@@ -5353,18 +5353,18 @@
 			<NumberOfStepsInSimulationInside>1</NumberOfStepsInSimulationInside>
 			<TypeOfSimulation>1</TypeOfSimulation>
 
-			<NumberOfXThreadsInSimulation>4</NumberOfXThreadsInSimulation>
-			<NumberOfYThreadsInSimulation>4</NumberOfYThreadsInSimulation>
-			<NumberOfZThreadsInSimulation>4</NumberOfZThreadsInSimulation>
-			<NumberOfXSectorsInOneThreadInSimulation>10</NumberOfXSectorsInOneThreadInSimulation>
-			<NumberOfYSectorsInOneThreadInSimulation>10</NumberOfYSectorsInOneThreadInSimulation>
-			<NumberOfZSectorsInOneThreadInSimulation>10</NumberOfZSectorsInOneThreadInSimulation>
-			<SizeOfXInOneThreadInSimulationSpace>1280</SizeOfXInOneThreadInSimulationSpace>
-			<SizeOfYInOneThreadInSimulationSpace>1280</SizeOfYInOneThreadInSimulationSpace>
-			<SizeOfZInOneThreadInSimulationSpace>1280</SizeOfZInOneThreadInSimulationSpace>
-			<SizeOfXInOneSectorInOneThreadInSimulationSpace>128</SizeOfXInOneSectorInOneThreadInSimulationSpace>
-			<SizeOfYInOneSectorInOneThreadInSimulationSpace>128</SizeOfYInOneSectorInOneThreadInSimulationSpace>
-			<SizeOfZInOneSectorInOneThreadInSimulationSpace>128</SizeOfZInOneSectorInOneThreadInSimulationSpace>
+			<NumberOfXParallelTasksInSimulation>4</NumberOfXParallelTasksInSimulation>
+			<NumberOfYParallelTasksInSimulation>4</NumberOfYParallelTasksInSimulation>
+			<NumberOfZParallelTasksInSimulation>4</NumberOfZParallelTasksInSimulation>
+			<NumberOfXSectorsInOneParallelTaskInSimulation>10</NumberOfXSectorsInOneParallelTaskInSimulation>
+			<NumberOfYSectorsInOneParallelTaskInSimulation>10</NumberOfYSectorsInOneParallelTaskInSimulation>
+			<NumberOfZSectorsInOneParallelTaskInSimulation>10</NumberOfZSectorsInOneParallelTaskInSimulation>
+			<SizeOfXInOneParallelTaskInSimulationSpace>1280</SizeOfXInOneParallelTaskInSimulationSpace>
+			<SizeOfYInOneParallelTaskInSimulationSpace>1280</SizeOfYInOneParallelTaskInSimulationSpace>
+			<SizeOfZInOneParallelTaskInSimulationSpace>1280</SizeOfZInOneParallelTaskInSimulationSpace>
+			<SizeOfXInOneSectorInOneParallelTaskInSimulationSpace>128</SizeOfXInOneSectorInOneParallelTaskInSimulationSpace>
+			<SizeOfYInOneSectorInOneParallelTaskInSimulationSpace>128</SizeOfYInOneSectorInOneParallelTaskInSimulationSpace>
+			<SizeOfZInOneSectorInOneParallelTaskInSimulationSpace>128</SizeOfZInOneSectorInOneParallelTaskInSimulationSpace>
 
 			<StepToChangeSpaceDivisionForThreads>4</StepToChangeSpaceDivisionForThreads>
 			<TypeOfExchangeOfParticlesBetweenThreads>3</TypeOfExchangeOfParticlesBetweenThreads>
@@ -5597,18 +5597,18 @@
 			<NumberOfStepsInSimulationInside>1</NumberOfStepsInSimulationInside>
 			<TypeOfSimulation>1</TypeOfSimulation>
 
-			<NumberOfXThreadsInSimulation>4</NumberOfXThreadsInSimulation>
-			<NumberOfYThreadsInSimulation>4</NumberOfYThreadsInSimulation>
-			<NumberOfZThreadsInSimulation>2</NumberOfZThreadsInSimulation>
-			<NumberOfXSectorsInOneThreadInSimulation>10</NumberOfXSectorsInOneThreadInSimulation>
-			<NumberOfYSectorsInOneThreadInSimulation>10</NumberOfYSectorsInOneThreadInSimulation>
-			<NumberOfZSectorsInOneThreadInSimulation>20</NumberOfZSectorsInOneThreadInSimulation>
-			<SizeOfXInOneThreadInSimulationSpace>1280</SizeOfXInOneThreadInSimulationSpace>
-			<SizeOfYInOneThreadInSimulationSpace>1280</SizeOfYInOneThreadInSimulationSpace>
-			<SizeOfZInOneThreadInSimulationSpace>1280</SizeOfZInOneThreadInSimulationSpace>
-			<SizeOfXInOneSectorInOneThreadInSimulationSpace>128</SizeOfXInOneSectorInOneThreadInSimulationSpace>
-			<SizeOfYInOneSectorInOneThreadInSimulationSpace>128</SizeOfYInOneSectorInOneThreadInSimulationSpace>
-			<SizeOfZInOneSectorInOneThreadInSimulationSpace>128</SizeOfZInOneSectorInOneThreadInSimulationSpace>
+			<NumberOfXParallelTasksInSimulation>4</NumberOfXParallelTasksInSimulation>
+			<NumberOfYParallelTasksInSimulation>4</NumberOfYParallelTasksInSimulation>
+			<NumberOfZParallelTasksInSimulation>2</NumberOfZParallelTasksInSimulation>
+			<NumberOfXSectorsInOneParallelTaskInSimulation>10</NumberOfXSectorsInOneParallelTaskInSimulation>
+			<NumberOfYSectorsInOneParallelTaskInSimulation>10</NumberOfYSectorsInOneParallelTaskInSimulation>
+			<NumberOfZSectorsInOneParallelTaskInSimulation>20</NumberOfZSectorsInOneParallelTaskInSimulation>
+			<SizeOfXInOneParallelTaskInSimulationSpace>1280</SizeOfXInOneParallelTaskInSimulationSpace>
+			<SizeOfYInOneParallelTaskInSimulationSpace>1280</SizeOfYInOneParallelTaskInSimulationSpace>
+			<SizeOfZInOneParallelTaskInSimulationSpace>1280</SizeOfZInOneParallelTaskInSimulationSpace>
+			<SizeOfXInOneSectorInOneParallelTaskInSimulationSpace>128</SizeOfXInOneSectorInOneParallelTaskInSimulationSpace>
+			<SizeOfYInOneSectorInOneParallelTaskInSimulationSpace>128</SizeOfYInOneSectorInOneParallelTaskInSimulationSpace>
+			<SizeOfZInOneSectorInOneParallelTaskInSimulationSpace>128</SizeOfZInOneSectorInOneParallelTaskInSimulationSpace>
 
 			<StepToChangeSpaceDivisionForThreads>4</StepToChangeSpaceDivisionForThreads>
 			<TypeOfExchangeOfParticlesBetweenThreads>3</TypeOfExchangeOfParticlesBetweenThreads>

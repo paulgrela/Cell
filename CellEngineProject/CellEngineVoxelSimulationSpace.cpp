@@ -152,7 +152,7 @@ SimulationSpaceSectorBounds CellEngineVoxelSimulationSpace::GetBoundsForThreadSe
         if (CurrentParallelTaskIndex == 0)
             SimulationSpaceSectorBoundsObject.SetParameters(0, 0, 0, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension);
         else
-            SimulationSpaceSectorBoundsObject.SetParametersForParallelExecutionSectors(CurrentParallelTaskPos, CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfZInOneThreadInSimulationSpace);
+            SimulationSpaceSectorBoundsObject.SetParametersForParallelExecutionSectors(CurrentParallelTaskPos, CellEngineConfigDataObject.SizeOfXInOneParallelTasksInSimulationSpace, CellEngineConfigDataObject.SizeOfYInOneParallelTasksInSimulationSpace, CellEngineConfigDataObject.SizeOfZInOneParallelTasksInSimulationSpace);
     }
     CATCH("getting bounds for thread sector")
 
