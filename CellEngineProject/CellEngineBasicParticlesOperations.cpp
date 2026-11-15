@@ -22,7 +22,7 @@ void CellEngineBasicParticlesOperations::InitiateFreeParticlesUniqueIdsForAllSec
 
                 if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true)
                 {
-                    if (Particles[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].MPIProcessIndex == MPIProcessDataObject.CurrentMPIProcessIndex)
+                    if (Particles[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].ParallelTaskIndex == MPIProcessDataObject.CurrentMPIProcessIndex)
                         Particles[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].ParticleUniqueIdGenerator.Initialize(CurrentSectorIndex);
                 }
                 else

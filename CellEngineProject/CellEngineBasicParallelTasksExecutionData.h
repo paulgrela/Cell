@@ -97,10 +97,8 @@ class CellEngineBasicParallelTasksExecutionData
 {
     friend class CellEngineSimulationParallelTasksExecutionManager;
 public:
-    UnsignedInt MPIProcessIndex{ 0 };
-public:
-    ThreadIdType CurrentThreadIndex{ 0 };
-    ParallelTaskPosType CurrentThreadPos{ .PosX = 1, .PosY = 1, .PosZ = 1 };
+    ThreadIdType CurrentParallelTaskIndex{ 0 };
+    ParallelTaskPosType CurrentParallelTaskPos{ .PosX = 1, .PosY = 1, .PosZ = 1 };
 protected:
     UnsignedInt ParallelTaskGroupNumber;
     UnsignedInt NumberOfActiveNeighbors;

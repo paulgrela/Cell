@@ -1405,7 +1405,7 @@ public:
                 }
                 else
                 {
-                    const char *ThreadsSynchronizationComboBoxItems[] = { "1 Global Barrier", "2 Local Barriers", "3 Conditiona Variable Two Mutexes", "4 Conditional Variable One Mutex" };
+                    const char *ThreadsSynchronizationComboBoxItems[] = { "1 Global Barrier", "2 Local Barriers", "3 Conditional Variable Two Mutexes", "4 Conditional Variable One Mutex" };
                     static int ThreadsSynchronizationComboBoxItemsIndex = static_cast<int>(CellEngineConfigDataObject.TypeOfSychronizationfSimulationExecutedInThreads) - 1;
                     ImGui::Combo(" Threads Synchronization Type", &ThreadsSynchronizationComboBoxItemsIndex, ThreadsSynchronizationComboBoxItems, IM_ARRAYSIZE(ThreadsSynchronizationComboBoxItems));
                     CellEngineConfigDataObject.TypeOfSychronizationfSimulationExecutedInThreads = static_cast<CellEngineConfigData::TypesOfSychronizationfSimulationExecutedInThreads>(ThreadsSynchronizationComboBoxItemsIndex + 1);

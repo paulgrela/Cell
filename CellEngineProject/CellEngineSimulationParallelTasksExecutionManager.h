@@ -20,7 +20,7 @@ public:
     template <class SimulationSpaceType>
     static void CreateSimulationSpaceForParallelExecution(SimulationSpaceForParallelExecutionContainer<CellEngineSimulationSpace>& CellEngineSimulationSpaceForThreadsObjectsPointer, ParticlesContainer<Particle>& Particles);
 public:
-    static void SetProperParallelTasksPositionsAndProperMPIProcessIndexesForEveryParticlesSector(ParticlesContainer<Particle>& ParticlesSectors);
+    static void SetProperParallelTasksPositionsAndProperParallelTasksIndexesForEveryParticlesSector(ParticlesContainer<Particle>& ParticlesSectors);
 protected:
     virtual bool CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossibleInMPIMultiProcessDiffusion(const ParticleSenderStructForParallelMultiTaskingExecution& ThreadsParticleSenderToInsert, UniqueIdUInt64Type& UniqueIdOfNewCreatedParticle) = 0;
     virtual bool CheckPossibilityOfInsertingParticleToCurrentSectorAndInsertIfPossibleInMultiThreadedDiffusion(const ParticleSenderStructForParallelMultiTaskingExecution& ThreadsParticleSenderToInsert, const Particle& ParticleObject) = 0;

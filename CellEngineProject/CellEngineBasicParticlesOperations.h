@@ -22,7 +22,7 @@ protected:
             return Particles[CurrentSectorPos.PosX][CurrentSectorPos.PosY][CurrentSectorPos.PosZ].Particles;
         else
         {
-            if (CurrentThreadIndex == 0)
+            if (CurrentParallelTaskIndex == 0)
                 return Particles[0][0][0].Particles;
             else
                 return ParticlesForThreads;
@@ -42,7 +42,7 @@ protected:
             return Particles[CurrentSectorPos.PosX][CurrentSectorPos.PosY][CurrentSectorPos.PosZ].ParticleUniqueIdGenerator.GetNewParticleUniqueId();
         else
         {
-            if (CurrentThreadIndex == 0)
+            if (CurrentParallelTaskIndex == 0)
                 return Particles[0][0][0].ParticleUniqueIdGenerator.GetNewParticleUniqueId();
             else
                 return ParticleUniqueIdGenerator.GetNewParticleUniqueId();
@@ -61,7 +61,7 @@ protected:
         }
         else
         {
-            if (CurrentThreadIndex == 0)
+            if (CurrentParallelTaskIndex == 0)
             {
                 UniqueIdUInt64Type NewParticleUniqueId = Particles[0][0][0].ParticleUniqueIdGenerator.GetNewParticleUniqueId();
 

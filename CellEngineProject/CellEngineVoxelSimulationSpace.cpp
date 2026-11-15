@@ -26,26 +26,26 @@ Particle& CellEngineVoxelSimulationSpace::GetParticleFromIndexForOuterClass(cons
     return static_cast<UnsignedInt>(round(CoordinateParam) / CellEngineConfigDataObject.DivisionFactorForSimulationSpace) + (CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension / 2);
 };
 
-CellEngineVoxelSimulationSpace::CellEngineVoxelSimulationSpace(ParticlesContainer<Particle>& ParticlesParam, const bool GetMemoryForVoxelSpace, const ThreadIdType ThreadIndexParam, const ParallelTaskPosType& CurrentThreadPosParam) : Particles(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam), CellEngineChemicalReactionsInSimulationSpace(ParticlesParam), CellEngineChemicalReactionsInVoxelSimulationSpace(ParticlesParam), CellEngineSimulationSpace(ParticlesParam), CellEngineTestParticlesInVoxelSpaceGenerator(ParticlesParam), CellEngineVoxelSimulationSpaceStatistics()
+CellEngineVoxelSimulationSpace::CellEngineVoxelSimulationSpace(ParticlesContainer<Particle>& ParticlesParam, const bool GetMemoryForVoxelSpace, const ThreadIdType ParallelTaskIndexParam, const ParallelTaskPosType& CurrentParallelTaskPosParam) : Particles(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam), CellEngineChemicalReactionsInSimulationSpace(ParticlesParam), CellEngineChemicalReactionsInVoxelSimulationSpace(ParticlesParam), CellEngineSimulationSpace(ParticlesParam), CellEngineTestParticlesInVoxelSpaceGenerator(ParticlesParam), CellEngineVoxelSimulationSpaceStatistics()
 {
     try
     {
-        CurrentThreadIndex = ThreadIndexParam;
-        CurrentThreadPos = CurrentThreadPosParam;
+        CurrentParallelTaskIndex = ParallelTaskIndexParam;
+        CurrentParallelTaskPos = CurrentParallelTaskPosParam;
 
-        LoggersManagerObject.Log(STREAM("CurrentThreadIndexes = " << CurrentThreadIndex << " (" << CurrentThreadPos.PosX << "," << CurrentThreadPos.PosY << "," << CurrentThreadPos.PosZ << ")" << std::endl));
+        LoggersManagerObject.Log(STREAM("CurrentThreadIndexes = " << CurrentParallelTaskIndex << " (" << CurrentParallelTaskPos.PosX << "," << CurrentParallelTaskPos.PosY << "," << CurrentParallelTaskPos.PosZ << ")" << std::endl));
 
         if (GetMemoryForVoxelSpace == true)
         {
+            Genomes.resize(2);
+            GenomesLines.resize(2);
+
             SpacePointer = malloc(sizeof(Space_2048_2048_2048));
 
             XMinGlobal = YMinGlobal = ZMinGlobal = 10000;
             XMaxGlobal = YMaxGlobal = ZMaxGlobal = 0;
 
             SetValueToVoxelsForCuboidSelectedSpace(nullptr, GetZeroSimulationSpaceVoxel(), 0, 0, 0, 1, 1, 1, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension);
-
-            Genomes.resize(2);
-            GenomesLines.resize(2);
         }
         else
         {
@@ -149,10 +149,10 @@ SimulationSpaceSectorBounds CellEngineVoxelSimulationSpace::GetBoundsForThreadSe
 
     try
     {
-        if (CurrentThreadIndex == 0)
+        if (CurrentParallelTaskIndex == 0)
             SimulationSpaceSectorBoundsObject.SetParameters(0, 0, 0, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension, CellEngineConfigDataObject.SizeOfSimulationSpaceInEachDimension);
         else
-            SimulationSpaceSectorBoundsObject.SetParametersForParallelExecutionSectors(CurrentThreadPos, CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfZInOneThreadInSimulationSpace);
+            SimulationSpaceSectorBoundsObject.SetParametersForParallelExecutionSectors(CurrentParallelTaskPos, CellEngineConfigDataObject.SizeOfXInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfYInOneThreadInSimulationSpace, CellEngineConfigDataObject.SizeOfZInOneThreadInSimulationSpace);
     }
     CATCH("getting bounds for thread sector")
 

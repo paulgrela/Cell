@@ -111,7 +111,7 @@ template <class Particle>
 struct ParticlesContainerInternal
 {
 public:
-    UnsignedInt MPIProcessIndex{ 0 };
+    UnsignedInt ParallelTaskIndex{ 0 };
     ParallelTaskPosType ParallelTaskPos{ .PosX = 1, .PosY = 1, .PosZ = 1 };
 public:
     CellEngineParticleUniqueIdGenerator ParticleUniqueIdGenerator{};

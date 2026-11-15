@@ -18,7 +18,7 @@
 #include "CellEngineOpenGLVisualiserOfVoxelSimulationSpace.h"
 #endif
 
-constexpr bool PrintAdditionalInformationAboutSectorsInMPI = true;
+constexpr bool PrintAdditionalInformationAboutSectorsInMPI = false;
 constexpr bool PrintAdditionalInformation = true;
 constexpr bool ColdStartMPISimulation = false;
 
@@ -179,8 +179,7 @@ void CellEngineSimulationParallelTasksExecutionManager::MoveParticlesOfEveryThre
     CATCH("moving particles of every thread to memory of its numa node")
 }
 
-
-void CellEngineSimulationParallelTasksExecutionManager::SetProperParallelTasksPositionsAndProperMPIProcessIndexesForEveryParticlesSector(ParticlesContainer<Particle>& ParticlesSectors)
+void CellEngineSimulationParallelTasksExecutionManager::SetProperParallelTasksPositionsAndProperParallelTasksIndexesForEveryParticlesSector(ParticlesContainer<Particle>& ParticlesSectors)
 {
     try
     {
@@ -190,11 +189,11 @@ void CellEngineSimulationParallelTasksExecutionManager::SetProperParallelTasksPo
 
             ParticlesSectors[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].ParallelTaskPos = ParallelTaskPos;
 
-            ParticlesSectors[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].MPIProcessIndex = CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[ParallelTaskPos.PosX][ParallelTaskPos.PosY][ParallelTaskPos.PosZ]->MPIProcessIndex;
+            ParticlesSectors[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].ParallelTaskIndex = CellEngineDataFileObjectPointer->CellEngineSimulationSpaceForThreadsObjectsPointer[ParallelTaskPos.PosX][ParallelTaskPos.PosY][ParallelTaskPos.PosZ]->CurrentParallelTaskIndex;
 
             #ifdef SIMULATION_DETAILED_DEBUG_LOG_DIFFUSION
             if constexpr (PrintAdditionalInformation == true)
-                LoggersManagerObject.Log(STREAM("ThreadPos = " << ParallelTaskPos.PosX << "'" << ParallelTaskPos.PosY << "'" << ParallelTaskPos.PosZ << " ProcessIndex = " << ParticlesSectors[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].MPIProcessIndex));
+                LoggersManagerObject.Log(STREAM("ThreadPos = " << ParallelTaskPos.PosX << "'" << ParallelTaskPos.PosY << "'" << ParallelTaskPos.PosZ << " ProcessIndex = " << ParticlesSectors[ParticleSectorXIndex][ParticleSectorYIndex][ParticleSectorZIndex].ParallelTaskIndex));
             #endif
         }
     }
@@ -212,7 +211,7 @@ static UnsignedInt GetParallelTaskGroupNumber(const UnsignedInt ThreadXIndex, co
 SignedInt CellEngineSimulationParallelTasksExecutionManager::GetProcessPrevNeighbor(const SignedInt ThreadXIndex, const SignedInt ThreadYIndex, const SignedInt ThreadZIndex) const
 {
     if (ThreadXIndex >= 0 && ThreadYIndex >= 0 && ThreadZIndex >= 0)
-        return SimulationSpaceDataForThreads[ThreadXIndex][ThreadYIndex][ThreadZIndex]->MPIProcessIndex;
+        return SimulationSpaceDataForThreads[ThreadXIndex][ThreadYIndex][ThreadZIndex]->CurrentParallelTaskIndex;
     else
         return -1;
 }
@@ -220,7 +219,7 @@ SignedInt CellEngineSimulationParallelTasksExecutionManager::GetProcessPrevNeigh
 SignedInt CellEngineSimulationParallelTasksExecutionManager::GetProcessNextNeighbor(const SignedInt ThreadXIndex, const SignedInt ThreadYIndex, const SignedInt ThreadZIndex) const
 {
     if (static_cast<SignedInt>(ThreadXIndex) < CellEngineConfigDataObject.NumberOfXThreadsInSimulation && static_cast<SignedInt>(ThreadYIndex) < CellEngineConfigDataObject.NumberOfYThreadsInSimulation && static_cast<SignedInt>(ThreadZIndex) < CellEngineConfigDataObject.NumberOfZThreadsInSimulation)
-        return SimulationSpaceDataForThreads[ThreadXIndex][ThreadYIndex][ThreadZIndex]->MPIProcessIndex;
+        return SimulationSpaceDataForThreads[ThreadXIndex][ThreadYIndex][ThreadZIndex]->CurrentParallelTaskIndex;
     else
         return -1;
 }
@@ -282,7 +281,7 @@ constexpr SignedInt NeighborOffsetZ[NumberOfAllNeighbors] = {  0,  0, -1,  0,  0
 SignedInt CellEngineSimulationParallelTasksExecutionManager::GetProcessNeighbor(const SignedInt ThreadXIndex, const SignedInt ThreadYIndex, const SignedInt ThreadZIndex) const
 {
     if (ThreadXIndex >= 0 && ThreadXIndex < static_cast<SignedInt>(CellEngineConfigDataObject.NumberOfXThreadsInSimulation) && ThreadYIndex >= 0 && ThreadYIndex < static_cast<SignedInt>(CellEngineConfigDataObject.NumberOfYThreadsInSimulation) && ThreadZIndex >= 0 && ThreadZIndex < static_cast<SignedInt>(CellEngineConfigDataObject.NumberOfZThreadsInSimulation))
-        return static_cast<SignedInt>(SimulationSpaceDataForThreads[ThreadXIndex][ThreadYIndex][ThreadZIndex]->CurrentThreadIndex);
+        return static_cast<SignedInt>(SimulationSpaceDataForThreads[ThreadXIndex][ThreadYIndex][ThreadZIndex]->CurrentParallelTaskIndex);
     else
         return -1;
 }
@@ -308,7 +307,7 @@ void CellEngineSimulationParallelTasksExecutionManager::CreateDataForEveryThread
 
             if constexpr (PrintAdditionalInformation == true)
             {
-                LoggersManagerObject.Log(STREAM("Current Thread Index = " << ThreadData->CurrentThreadIndex << " Thread Bounds = (" << SimulationSpaceSectorsRangesForCurrentParallelTask.StartXPos << "," << SimulationSpaceSectorsRangesForCurrentParallelTask.StartYPos << "," << SimulationSpaceSectorsRangesForCurrentParallelTask.StartZPos << ") (" << SimulationSpaceSectorsRangesForCurrentParallelTask.EndXPos << "," << SimulationSpaceSectorsRangesForCurrentParallelTask.EndYPos << "," << SimulationSpaceSectorsRangesForCurrentParallelTask.EndZPos << ")"));
+                LoggersManagerObject.Log(STREAM("Current Thread Index = " << ThreadData->CurrentParallelTaskIndex << " Thread Bounds = (" << SimulationSpaceSectorsRangesForCurrentParallelTask.StartXPos << "," << SimulationSpaceSectorsRangesForCurrentParallelTask.StartYPos << "," << SimulationSpaceSectorsRangesForCurrentParallelTask.StartZPos << ") (" << SimulationSpaceSectorsRangesForCurrentParallelTask.EndXPos << "," << SimulationSpaceSectorsRangesForCurrentParallelTask.EndYPos << "," << SimulationSpaceSectorsRangesForCurrentParallelTask.EndZPos << ")"));
                 LoggersManagerObject.Log(STREAM("ParallelTaskGroupNumber = " << ThreadData->ParallelTaskGroupNumber << " Thread Position = (" << ThreadXIndex << "," << ThreadYIndex << "," << ThreadZIndex << ")"));
             }
 
@@ -341,10 +340,10 @@ void CellEngineSimulationParallelTasksExecutionManager::CreateDataForEveryThread
             if constexpr (PrintAdditionalInformation == true)
             {
                 const auto NPI = ThreadData->NeighborParallelTasksIndexes;
-                LoggersManagerObject.Log(STREAM("Thread Neighbors = " << ThreadData->CurrentThreadIndex << " " << NPI[0] << " " << NPI[1] << " " << NPI[2] << " " << NPI[3] << " " << NPI[4] << " " << NPI[5]));
+                LoggersManagerObject.Log(STREAM("Thread Neighbors = " << ThreadData->CurrentParallelTaskIndex << " " << NPI[0] << " " << NPI[1] << " " << NPI[2] << " " << NPI[3] << " " << NPI[4] << " " << NPI[5]));
                 #ifdef NEIGHBOR_PARALLEL_TASKS_POSITIONS
                 const auto NTI = ThreadData->NeighborParallelTasksPositions;
-                LoggersManagerObject.Log(STREAM("Thread Neighbors Indexes = " << ThreadData->CurrentThreadIndex << " (" << NTI[0].PosX << " " << NTI[0].PosY << " " << NTI[0].PosZ << ") (" << NTI[1].PosX << " " << NTI[1].PosY << " " << NTI[1].PosZ << ") (" << NTI[2].PosX << " " << NTI[2].PosY << " " << NTI[2].PosZ << ") (" << NTI[3].PosX << " " << NTI[3].PosY << " " << NTI[3].PosZ << ") (" << NTI[4].PosX << " " << NTI[4].PosY << " " << NTI[4].PosZ << ") (" << NTI[5].PosX << " " << NTI[5].PosY << " " << NTI[5].PosZ << ")"));
+                LoggersManagerObject.Log(STREAM("Thread Neighbors Indexes = " << ThreadData->CurrentParallelTaskIndex << " (" << NTI[0].PosX << " " << NTI[0].PosY << " " << NTI[0].PosZ << ") (" << NTI[1].PosX << " " << NTI[1].PosY << " " << NTI[1].PosZ << ") (" << NTI[2].PosX << " " << NTI[2].PosY << " " << NTI[2].PosZ << ") (" << NTI[3].PosX << " " << NTI[3].PosY << " " << NTI[3].PosZ << ") (" << NTI[4].PosX << " " << NTI[4].PosY << " " << NTI[4].PosZ << ") (" << NTI[5].PosX << " " << NTI[5].PosY << " " << NTI[5].PosZ << ")"));
                 #endif
             }
 
@@ -498,7 +497,7 @@ void CellEngineSimulationParallelTasksExecutionManager::FirstSendParticlesForThr
 {
     try
     {
-        LoggersManagerObject.LogStatistics(STREAM("THREAD = " << CurrentThreadIndex << " X = " << CellEngineConfigDataObject.NumberOfParticlesSectorsInX << " Y = " << CellEngineConfigDataObject.NumberOfParticlesSectorsInY << " Z = " << CellEngineConfigDataObject.NumberOfParticlesSectorsInZ));
+        LoggersManagerObject.LogStatistics(STREAM("THREAD = " << CurrentParallelTaskIndex << " X = " << CellEngineConfigDataObject.NumberOfParticlesSectorsInX << " Y = " << CellEngineConfigDataObject.NumberOfParticlesSectorsInY << " Z = " << CellEngineConfigDataObject.NumberOfParticlesSectorsInZ));
 
         UnsignedInt GoodParticlesCounter = 0;
         UnsignedInt BadParticlesCounter = 0;
@@ -587,7 +586,7 @@ vector<vector<vector<ParticlesContainerInternal<Particle>>>> CellEngineSimulatio
             const UnsignedInt ThreadZIndexNew = floor((ParticleIter->second.Center.Z - SizeOfZInOneThreadInSimulationSpaceDiv2) / CellEngineConfigDataObject.SizeOfZInOneThreadInSimulationSpace);
 
             if (PrintInfo == true)
-                PrintThreadIndexes(ParticleIter->second, CurrentThreadIndex, ThreadXIndex, ThreadYIndex, ThreadZIndex, ThreadXIndexNew, ThreadYIndexNew, ThreadZIndexNew);
+                PrintThreadIndexes(ParticleIter->second, CurrentParallelTaskIndex, ThreadXIndex, ThreadYIndex, ThreadZIndex, ThreadXIndexNew, ThreadYIndexNew, ThreadZIndexNew);
 
             if ((ThreadXIndex != ThreadXIndexNew) || (ThreadYIndex != ThreadYIndexNew) || (ThreadZIndex != ThreadZIndexNew))
             {
@@ -638,9 +637,9 @@ void CellEngineSimulationParallelTasksExecutionManager::ExchangeParticlesBetween
         vector<vector<vector<ParticlesContainerInternal<Particle>>>> ParticlesToExchange;
 
         {
-            lock_guard LockGuardObject1{ SimulationSpaceDataForThreads[CurrentThreadPos.PosX][CurrentThreadPos.PosY][CurrentThreadPos.PosZ]->MainExchangeParticlesMutexObject };
+            lock_guard LockGuardObject1{ SimulationSpaceDataForThreads[CurrentParallelTaskPos.PosX][CurrentParallelTaskPos.PosY][CurrentParallelTaskPos.PosZ]->MainExchangeParticlesMutexObject };
 
-            ParticlesToExchange = GatherParticlesToExchangeBetweenThreads(1, CurrentThreadPos.PosX, CurrentThreadPos.PosY, CurrentThreadPos.PosZ, ExchangedParticleCounter, StateOfSimulationSpaceDivisionForThreads, PrintInfo);
+            ParticlesToExchange = GatherParticlesToExchangeBetweenThreads(1, CurrentParallelTaskPos.PosX, CurrentParallelTaskPos.PosY, CurrentParallelTaskPos.PosZ, ExchangedParticleCounter, StateOfSimulationSpaceDivisionForThreads, PrintInfo);
         }
 
         FOR_EACH_THREAD_IN_XYZ
@@ -670,9 +669,9 @@ void CellEngineSimulationParallelTasksExecutionManager::ExchangeParticlesBetween
         vector<vector<vector<ParticlesContainerInternal<Particle>>>> ParticlesToExchange;
 
         {
-            lock_guard LockGuardObject1{ SimulationSpaceDataForThreads[CurrentThreadPos.PosX][CurrentThreadPos.PosY][CurrentThreadPos.PosZ]->MainExchangeParticlesMutexObject };
+            lock_guard LockGuardObject1{ SimulationSpaceDataForThreads[CurrentParallelTaskPos.PosX][CurrentParallelTaskPos.PosY][CurrentParallelTaskPos.PosZ]->MainExchangeParticlesMutexObject };
 
-            ParticlesToExchange = GatherParticlesToExchangeBetweenThreads(1, CurrentThreadPos.PosX, CurrentThreadPos.PosY, CurrentThreadPos.PosZ, ExchangedParticleCounter, StateOfSimulationSpaceDivisionForThreads, PrintInfo);
+            ParticlesToExchange = GatherParticlesToExchangeBetweenThreads(1, CurrentParallelTaskPos.PosX, CurrentParallelTaskPos.PosY, CurrentParallelTaskPos.PosZ, ExchangedParticleCounter, StateOfSimulationSpaceDivisionForThreads, PrintInfo);
         }
 
         FOR_EACH_THREAD_IN_XYZ
@@ -1005,7 +1004,7 @@ void CellEngineSimulationParallelTasksExecutionManager::ExchangeParticlesBetween
             if (ReceivedParticlesToInsert.empty() == false)
                 Counter++;
 
-        LoggersManagerObject.Log(STREAM("NUMBER OF NEIGHBORS THAT SENT PARTCILES TO ACTUAL THREAD = " << Counter << " ACTUAL THREAD = " << CurrentThreadLocalSimulationSpaceData->CurrentThreadIndex));
+        LoggersManagerObject.Log(STREAM("NUMBER OF NEIGHBORS THAT SENT PARTCILES TO ACTUAL THREAD = " << Counter << " ACTUAL THREAD = " << CurrentThreadLocalSimulationSpaceData->CurrentParallelTaskIndex));
         #endif
 
         for (UnsignedInt NeighborProcessIndex = 0; NeighborProcessIndex < NumberOfAllNeighbors; NeighborProcessIndex++)
@@ -1044,7 +1043,7 @@ void CellEngineSimulationParallelTasksExecutionManager::ExchangeParticlesBetween
                                 bool FoundNeighbor = false;
                                 UnsignedInt LocalNeighborProcessIndex = 0;
                                 for (LocalNeighborProcessIndex = 0; LocalNeighborProcessIndex < NumberOfAllNeighbors; LocalNeighborProcessIndex++)
-                                    if (SimulationSpaceDataForThreads[ReceivedParticleUniqueIdToInsert.SenderParallelTaskPos.PosX][ReceivedParticleUniqueIdToInsert.SenderParallelTaskPos.PosY][ReceivedParticleUniqueIdToInsert.SenderParallelTaskPos.PosZ]->NeighborParallelTasksIndexes[LocalNeighborProcessIndex] == CurrentThreadLocalSimulationSpaceData->CurrentThreadIndex)
+                                    if (SimulationSpaceDataForThreads[ReceivedParticleUniqueIdToInsert.SenderParallelTaskPos.PosX][ReceivedParticleUniqueIdToInsert.SenderParallelTaskPos.PosY][ReceivedParticleUniqueIdToInsert.SenderParallelTaskPos.PosZ]->NeighborParallelTasksIndexes[LocalNeighborProcessIndex] == CurrentThreadLocalSimulationSpaceData->CurrentParallelTaskIndex)
                                     {
                                         FoundNeighbor = true;
                                         break;
@@ -1061,7 +1060,7 @@ void CellEngineSimulationParallelTasksExecutionManager::ExchangeParticlesBetween
                                 #ifdef SIMULATION_DETAILED_DEBUG_LOG_DIFFUSION
                                 else
                                 {
-                                    LoggersManagerObject.LogUnconditional(STREAM("ERROR SENDING CONFIRMATION TO NEIGHBOR = (PARTICLE_INDEX = " << ReceivedParticleUniqueIdToInsert.ParticleUniqueId << ")(" << ReceivedParticleUniqueIdToInsert.SenderParallelTaskIndex << " " << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskIndex << ") (" << CurrentThreadLocalSimulationSpaceData->CurrentThreadIndex << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.PosX << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.PosY << " " << CurrentThreadLocalSimulationSpaceData->CurrentThreadPos.PosZ << ")["  << CurrentThreadIndexParam << " " << ThreadXIndexParam << " " << ThreadYIndexParam << " " << ThreadZIndexParam << "] NEIGHBOR = (" << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskPos.PosX << " " << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskPos.PosY << " " << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskPos.PosZ << ")"));
+                                    LoggersManagerObject.LogUnconditional(STREAM("ERROR SENDING CONFIRMATION TO NEIGHBOR = (PARTICLE_INDEX = " << ReceivedParticleUniqueIdToInsert.ParticleUniqueId << ")(" << ReceivedParticleUniqueIdToInsert.SenderParallelTaskIndex << " " << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskIndex << ") (" << CurrentThreadLocalSimulationSpaceData->CurrentParallelTaskIndex << " " << CurrentThreadLocalSimulationSpaceData->CurrentParallelTaskPos.PosX << " " << CurrentThreadLocalSimulationSpaceData->CurrentParallelTaskPos.PosY << " " << CurrentThreadLocalSimulationSpaceData->CurrentParallelTaskPos.PosZ << ")["  << CurrentThreadIndexParam << " " << ThreadXIndexParam << " " << ThreadYIndexParam << " " << ThreadZIndexParam << "] NEIGHBOR = (" << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskPos.PosX << " " << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskPos.PosY << " " << ReceivedParticleUniqueIdToInsert.ReceiverParallelTaskPos.PosZ << ")"));
                                 }
                                 #endif
                             }
@@ -1164,7 +1163,7 @@ void CellEngineSimulationParallelTasksExecutionManager::ExchangeParticlesBetween
     {
         const UnsignedInt SlotIndex = CurrentThreadLocalSimulationSpaceData->ParallelTaskGroupNumber;
 
-        const ParallelTaskPosType& ThisThreadPos = CurrentThreadLocalSimulationSpaceData->CurrentThreadPos;
+        const ParallelTaskPosType& ThisThreadPos = CurrentThreadLocalSimulationSpaceData->CurrentParallelTaskPos;
 
         for (UnsignedInt NeighborProcessIndex = 0; NeighborProcessIndex < NumberOfAllNeighbors; NeighborProcessIndex++)
         {
@@ -1327,7 +1326,7 @@ void CellEngineSimulationParallelTasksExecutionManager::ExchangeParticlesBetween
     {
         const UnsignedInt SlotIndex = CurrentThreadLocalSimulationSpaceData->ParallelTaskGroupNumber;
 
-        const ParallelTaskPosType& ThisThreadPos = CurrentThreadLocalSimulationSpaceData->CurrentThreadPos;
+        const ParallelTaskPosType& ThisThreadPos = CurrentThreadLocalSimulationSpaceData->CurrentParallelTaskPos;
 
         for (UnsignedInt NeighborProcessIndex = 0; NeighborProcessIndex < NumberOfAllNeighbors; NeighborProcessIndex++)
         {

@@ -540,7 +540,7 @@ void CellEngineParticlesBinaryDataFileReaderWriter::ReadParticlesFromBinaryFile(
 
                 if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == true)
                 {
-                    if (Particles[ParticleSectorPos.PosX][ParticleSectorPos.PosY][ParticleSectorPos.PosZ].MPIProcessIndex == MPIProcessDataObject.CurrentMPIProcessIndex)
+                    if (Particles[ParticleSectorPos.PosX][ParticleSectorPos.PosY][ParticleSectorPos.PosZ].ParallelTaskIndex == MPIProcessDataObject.CurrentMPIProcessIndex)
                     {
                         const auto [SectorPosX, SectorPosY, SectorPosZ] = CellEngineUseful::GetSectorPos(ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z);
                         if (make_tuple(SectorPosX, SectorPosY, SectorPosZ) == make_tuple(ParticleSectorPos.PosX, ParticleSectorPos.PosY, ParticleSectorPos.PosZ))

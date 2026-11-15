@@ -75,7 +75,7 @@ public:
     void CheckCancelledParticlesIndexes();
     void CheckFormerExistedParticlesIndexes();
 public:
-    explicit CellEngineVoxelSimulationSpace(ParticlesContainer<Particle>& ParticlesParam, bool GetMemoryForVoxelSpace, ThreadIdType ThreadIndexParam, const ParallelTaskPosType& CurrentThreadPos);
+    explicit CellEngineVoxelSimulationSpace(ParticlesContainer<Particle>& ParticlesParam, bool GetMemoryForVoxelSpace, ThreadIdType ParallelTaskIndexParam, const ParallelTaskPosType& CurrentParallelTaskPosParam);
     ~CellEngineVoxelSimulationSpace() override;
 };
 

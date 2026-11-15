@@ -66,7 +66,7 @@ protected:
     std::vector<UnsignedInt> GetRandomParticlesVersion3() const;
     #endif
 public:
-    explicit CellEngineSimulationSpace(ParticlesContainer<Particle>& ParticlesParam) : CellEngineSimulationSpaceStatistics(), Particles(ParticlesParam), CellEngineSimulationParallelTasksExecutionManager()
+    explicit CellEngineSimulationSpace(ParticlesContainer<Particle>& ParticlesParam) : Particles(ParticlesParam)
     {
         SetMakeSimulationStepNumberZero();
     }

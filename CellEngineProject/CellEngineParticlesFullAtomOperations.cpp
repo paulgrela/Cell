@@ -79,7 +79,7 @@ void CellEngineParticlesFullAtomOperations::MoveParticleByVectorForThreads(Parti
                 {
                     const ThreadIdType NeighborThreadIndexFoundInSourceThreadNeighborThreadIndexes = Thread1Ptr->NeighborParallelTasksIndexes[NeighborProcessIndex];
 
-                    if (NeighborThreadIndexFoundInSourceThreadNeighborThreadIndexes == Thread2Ptr->CurrentThreadIndex)
+                    if (NeighborThreadIndexFoundInSourceThreadNeighborThreadIndexes == Thread2Ptr->CurrentParallelTaskIndex)
                     {
                         const UnsignedInt SlotInReceiver = (NeighborProcessIndex + NumberOfAllNeighbors / 2) % NumberOfAllNeighbors;
 
@@ -156,8 +156,8 @@ void CellEngineParticlesFullAtomOperations::MoveParticleByVectorForMPIProcesses(
         {
             if ((SectorPosX1 != SectorPosX2 && SectorPosY1 == SectorPosY2 && SectorPosZ1 == SectorPosZ2) || (SectorPosX1 == SectorPosX2 && SectorPosY1 != SectorPosY2 && SectorPosZ1 == SectorPosZ2) || (SectorPosX1 == SectorPosX2 && SectorPosY1 == SectorPosY2 && SectorPosZ1 != SectorPosZ2))
             {
-                const auto Process1Pos = ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].MPIProcessIndex;
-                const auto Process2Pos = ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].MPIProcessIndex;
+                const auto Process1Pos = ParticlesInSector[SectorPosX1][SectorPosY1][SectorPosZ1].ParallelTaskIndex;
+                const auto Process2Pos = ParticlesInSector[SectorPosX2][SectorPosY2][SectorPosZ2].ParallelTaskIndex;
 
                 if (Process1Pos != Process2Pos)
                 {

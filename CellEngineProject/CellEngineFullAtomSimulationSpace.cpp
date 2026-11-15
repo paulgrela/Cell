@@ -39,22 +39,20 @@ void CellEngineFullAtomSimulationSpace::CountMinMaxValuesOfBordersAtomsPositions
     CATCH("counting min max values of borders atoms positions in the cell")
 }
 
-CellEngineFullAtomSimulationSpace::CellEngineFullAtomSimulationSpace(ParticlesContainer<Particle>& ParticlesParam, const bool GetMemoryForFullAtomSpace, const ThreadIdType ThreadIndexParam, const ParallelTaskPosType& CurrentThreadPosParam) : Particles(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam), CellEngineChemicalReactionsInSimulationSpace(ParticlesParam), CellEngineChemicalReactionsInFullAtomSimulationSpace(ParticlesParam), CellEngineSimulationSpace(ParticlesParam), CellEngineGenomeNucleicAcidsParticlesInFullAtomSpaceGenerator(ParticlesParam), CellEngineVoxelSimulationSpaceStatistics()
+CellEngineFullAtomSimulationSpace::CellEngineFullAtomSimulationSpace(ParticlesContainer<Particle>& ParticlesParam, const bool GetMemoryForFullAtomSpace, const ThreadIdType ParallelTaskIndexParam, const ParallelTaskPosType& CurrentParallelTaskPosParam) : Particles(ParticlesParam), CellEngineBasicParticlesOperations(ParticlesParam), CellEngineChemicalReactionsInSimulationSpace(ParticlesParam), CellEngineChemicalReactionsInFullAtomSimulationSpace(ParticlesParam), CellEngineSimulationSpace(ParticlesParam), CellEngineGenomeNucleicAcidsParticlesInFullAtomSpaceGenerator(ParticlesParam), CellEngineVoxelSimulationSpaceStatistics()
 {
     try
     {
+        Genomes.resize(2);
+        GenomesLines.resize(2);
+
         XMinGlobal = YMinGlobal = ZMinGlobal = 10000;
         XMaxGlobal = YMaxGlobal = ZMaxGlobal = -10000;
 
-        MPIProcessIndex = ThreadIndexParam;
+        CurrentParallelTaskIndex = ParallelTaskIndexParam;
+        CurrentParallelTaskPos = CurrentParallelTaskPosParam;
 
-        CurrentThreadIndex = ThreadIndexParam;
-        CurrentThreadPos = CurrentThreadPosParam;
-
-        LoggersManagerObject.Log(STREAM("CurrentThreadIndexes = " << CurrentThreadIndex << " (" << CurrentThreadPos.PosX << "," << CurrentThreadPos.PosY << "," << CurrentThreadPos.PosZ << ")" << endl));
-
-        Genomes.resize(2);
-        GenomesLines.resize(2);
+        LoggersManagerObject.Log(STREAM("CurrentThreadIndexes = " << CurrentParallelTaskIndex << " (" << CurrentParallelTaskPos.PosX << "," << CurrentParallelTaskPos.PosY << "," << CurrentParallelTaskPos.PosZ << ")" << endl));
     }
     CATCH("execution of constructor of full atom simulation space")
 }
@@ -322,7 +320,7 @@ void CellEngineFullAtomSimulationSpace::GenerateNStepsOfOneRandomReactionForWhol
 bool CellEngineFullAtomSimulationSpace::MoveParticleByVectorIfSpaceIsEmptyAndIsInBounds(Particle &ParticleObject, ParticlesContainer<Particle>& ParticlesInSector, vector<ParticleToBeMovedFromOneSectorToAnotherSector>& ListOfParticlesToChangeSectors, const RealType VectorX, const RealType VectorY, const RealType VectorZ, const RealType StartXPosParam, const RealType StartYPosParam, const RealType StartZPosParam, const RealType SizeXParam, const RealType SizeYParam, const RealType SizeZParam)
 {
     if (CellEngineConfigDataObject.FullAtomMPIParallelProcessesExecution == false)
-        return MoveParticleByVectorIfFullAtomSpaceIsEmptyAndIsInBoundsForThreadsDiffusion(ParticleObject, ParticlesInSector, ListOfParticlesToChangeSectors, VectorX, VectorY, VectorZ, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, CurrentThreadPos);
+        return MoveParticleByVectorIfFullAtomSpaceIsEmptyAndIsInBoundsForThreadsDiffusion(ParticleObject, ParticlesInSector, ListOfParticlesToChangeSectors, VectorX, VectorY, VectorZ, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam, CurrentParallelTaskPos);
     else
         return MoveParticleByVectorIfFullAtomSpaceIsEmptyAndIsInBoundsForMPIProcessesDiffusion(ParticleObject, ParticlesInSector, ListOfParticlesToChangeSectors, NeighborParallelTasksIndexes, VectorOfParticlesToSendToNeighborParallelTasks, VectorX, VectorY, VectorZ, StartXPosParam, StartYPosParam, StartZPosParam, SizeXParam, SizeYParam, SizeZParam);
 }
@@ -368,7 +366,7 @@ bool CellEngineFullAtomSimulationSpace::CheckPossibilityOfInsertingParticleToCur
         {
             #ifdef SIMULATION_DETAILED_DEBUG_LOG_DIFFUSION
             auto [SectorPosX1, SectorPosY1, SectorPosZ1] = CellEngineUseful::GetSectorPos(ParticleObject.Center.X, ParticleObject.Center.Y, ParticleObject.Center.Z);
-            LoggersManagerObject.LogUnconditional(STREAM("Particle in thread = (" << CurrentThreadPos.PosX << "," << CurrentThreadPos.PosY << "," << CurrentThreadPos.PosZ << ") CurrentThreadIndex = " << CurrentThreadIndex << " CurrentProcessIndex = " << MPIProcessDataObject.CurrentMPIProcessIndex <<  " S1 = (" << SectorPosX1 << "," << SectorPosY1 << "," << SectorPosZ1 << ") P = (" << ParticleObject.Center.X << ", " << ParticleObject.Center.Y << ", " << ParticleObject.Center.Z << ") V = (" << ParticleSenderToInsert.NewParticleCenter.X << ", " << ParticleSenderToInsert.NewParticleCenter.Y << ", " << ParticleSenderToInsert.NewParticleCenter.Z << ") PARTCLE_INDEX = " << ParticleObject.ParticleUniqueId));
+            LoggersManagerObject.LogUnconditional(STREAM("Particle in thread = (" << CurrentParallelTaskPos.PosX << "," << CurrentParallelTaskPos.PosY << "," << CurrentParallelTaskPos.PosZ << ") CurrentThreadIndex = " << CurrentParallelTaskIndex << " CurrentProcessIndex = " << MPIProcessDataObject.CurrentMPIProcessIndex <<  " S1 = (" << SectorPosX1 << "," << SectorPosY1 << "," << SectorPosZ1 << ") P = (" << ParticleObject.Center.X << ", " << ParticleObject.Center.Y << ", " << ParticleObject.Center.Z << ") V = (" << ParticleSenderToInsert.NewParticleCenter.X << ", " << ParticleSenderToInsert.NewParticleCenter.Y << ", " << ParticleSenderToInsert.NewParticleCenter.Z << ") PARTCLE_INDEX = " << ParticleObject.ParticleUniqueId));
             #endif
 
             GetParticles().insert(std::move(make_pair(ParticleObject.ParticleUniqueId, std::move(ParticleObject))));
