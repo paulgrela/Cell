@@ -345,7 +345,16 @@ bool CellEngineFullAtomSimulationSpace::CheckPossibilityOfInsertingParticleToCur
         if (CheckIfSpaceIsEmptyAndIsInBoundsForParticleElementsDiffusion(ParticleKindToCheck, Particles, ParticleSenderToInsert.NewParticleCenter.X + ParticleSenderToInsert.Vector.X, ParticleSenderToInsert.NewParticleCenter.Y + ParticleSenderToInsert.Vector.Y, ParticleSenderToInsert.NewParticleCenter.Z + ParticleSenderToInsert.Vector.Z, SimulationSpaceSectorBoundsObject) == true)
         {
             UniqueIdOfNewCreatedParticle = AddNewParticle(Particle(GetNewFreeParticleUniqueId(), ParticleSenderToInsert.ParticleKindId, 1, -1, 1, 0, CellEngineUseful::GetVector3FormVMathVec3ForColor(CellEngineColorsObject.GetRandomColor())));
-            FillParticleElementsInSpace(UniqueIdOfNewCreatedParticle, ParticleKindToCheck, ParticleSenderToInsert.NewParticleCenter.X, ParticleSenderToInsert.NewParticleCenter.Y, ParticleSenderToInsert.NewParticleCenter.Z);
+
+            if (const auto& AtomsSentByNeighbor = ParticleSenderToInsert.ParticleObject.ListOfAtoms; AtomsSentByNeighbor.empty() == false)
+            {
+                auto& NewParticle = GetParticleFromUniqueId(UniqueIdOfNewCreatedParticle);
+                NewParticle.ListOfAtoms = AtomsSentByNeighbor;
+                NewParticle.Radius = ParticleKindToCheck.Radius;
+                NewParticle.Center = ParticleSenderToInsert.NewParticleCenter;
+            }
+            else
+                FillParticleElementsInSpace(UniqueIdOfNewCreatedParticle, ParticleKindToCheck, ParticleSenderToInsert.NewParticleCenter.X, ParticleSenderToInsert.NewParticleCenter.Y, ParticleSenderToInsert.NewParticleCenter.Z);
 
             return true;
         }

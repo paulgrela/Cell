@@ -5122,7 +5122,7 @@
 			<StepToChangeSpaceDivisionForThreads>4</StepToChangeSpaceDivisionForThreads>
 			<TypeOfExchangeOfParticlesBetweenThreads>3</TypeOfExchangeOfParticlesBetweenThreads>
 
-			<TypeOfSychronizationfSimulationExecutedInMPIProcesses>2</TypeOfSychronizationfSimulationExecutedInMPIProcesses>
+			<TypeOfSychronizationfSimulationExecutedInMPIProcesses>1</TypeOfSychronizationfSimulationExecutedInMPIProcesses>
 
 			<UseMutexBetweenMainScreenThreadAndMenuThreads>true</UseMutexBetweenMainScreenThreadAndMenuThreads>
 

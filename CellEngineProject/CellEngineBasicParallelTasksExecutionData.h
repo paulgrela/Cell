@@ -41,12 +41,18 @@ struct ParticleSenderStructForMPIExchange
     vector3_16 ReceiverSectorPos{ .X = 0, .Y = 0, .Z = 0 };
     vector3_Real32 NewParticleCenter{ .X = 0, .Y = 0, .Z = 0 };
     vector3_Real32 Vector{ .X = 0, .Y = 0, .Z = 0 };
+
+    UniqueIdUInt32Type NumberOfAtoms{ 0 };
 };
 
 struct MPIExchangeBuffersStruct
 {
     std::vector<ParticleSenderStructForMPIExchange> ParticlesToSend[NumberOfAllNeighbors];
     std::vector<ParticleSenderStructForMPIExchange> ReceivedParticles[NumberOfAllNeighbors];
+
+    std::vector<CellEngineAtom> AtomsToSend[NumberOfAllNeighbors];
+    std::vector<CellEngineAtom> ReceivedAtoms[NumberOfAllNeighbors];
+
     std::vector<std::uint8_t> InsertedFlagsToSend[NumberOfAllNeighbors];
     std::vector<std::uint8_t> InsertedFlagsReceived[NumberOfAllNeighbors];
     int NumberOfParticlesSent[NumberOfAllNeighbors]{};
@@ -58,6 +64,8 @@ struct MPIExchangeRequestsStruct
     MPI_Request ReceiveInsertedFlagsRequests[NumberOfAllNeighbors]{};
     MPI_Request SendParticlesRequests[NumberOfAllNeighbors]{};
     MPI_Request SendInsertedFlagsRequests[NumberOfAllNeighbors]{};
+
+    MPI_Request SendAtomsRequests[NumberOfAllNeighbors]{};
 
     MPIExchangeRequestsStruct()
     {
@@ -72,6 +80,8 @@ struct MPIExchangeRequestsStruct
             ReceiveInsertedFlagsRequests[NeighborIndex] = MPI_REQUEST_NULL;
             SendParticlesRequests[NeighborIndex] = MPI_REQUEST_NULL;
             SendInsertedFlagsRequests[NeighborIndex] = MPI_REQUEST_NULL;
+
+            SendAtomsRequests[NeighborIndex] = MPI_REQUEST_NULL;
         }
     }
 };
