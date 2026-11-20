@@ -17,6 +17,7 @@ class CellEngineRandomDeviceEngine
 protected:
     std::mt19937_64 mt64R{ std::random_device{}() };
 public:
+    virtual ~CellEngineRandomDeviceEngine() = default;
     void RandomGeneratorSetSeedByRandomDevice();
     void RandomGeneratorSetSeedByTime();
 public:

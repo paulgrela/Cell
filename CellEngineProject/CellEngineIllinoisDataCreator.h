@@ -3,8 +3,8 @@
 #define CELL_ENGINE_ILLINOIS_DATA_CREATOR_H
 
 #include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/xml_parser.hpp>
+#include <boost/property_tree/json_parser.hpp>
 
 #include "CellEngineConstants.h"
 #include "CellEngineParticleKind.h"

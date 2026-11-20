@@ -226,7 +226,7 @@ bool CellEngineSimulationSpace::CancelChemicalReaction(const vector<UniqueIdUInt
         {
             RemoveParticle(CreatedParticleUniqueId, true, false);
 
-            DEBUG_LOG_CHEMICAL_REACTION(LoggersManagerObject.LogOnlyToConsoleUnconditional(STREAM("Current Thread = " << CurrentThreadPos.PosX << " " << CurrentThreadPos.PosY << " "  << CurrentThreadPos.PosZ));)
+            DEBUG_LOG_CHEMICAL_REACTION(LoggersManagerObject.LogOnlyToConsoleUnconditional(STREAM("Current Thread = " << CurrentParallelTaskPos.PosX << " " << CurrentParallelTaskPos.PosY << " "  << CurrentParallelTaskPos.PosZ));)
 
             if (CellEngineConfigDataObject.GatherCancelledParticlesIndexes == true)
             {
@@ -583,23 +583,3 @@ void CellEngineSimulationSpace::SaveParticlesStatisticsOnce()
 {
     SaveParticlesStatistics();
 }
-
-#ifdef WELL_STIRRED
-std::vector<UnsignedInt> CellEngineSimulationSpace::GetRandomParticlesVersion3() const
-{
-    vector<UnsignedInt> RandomParticlesTypes;
-
-    try
-    {
-        std::uniform_int_distribution<UnsignedInt> UniformDistributionObjectUint64t(0, LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity.size() - 1);
-    }
-    CATCH("getting random particles kind")
-
-    return RandomParticlesTypes;
-}
-
-std::vector<UnsignedInt> CellEngineSimulationSpace::GetRandomParticles(const UnsignedInt NumberOfReactants, const UnsignedInt MaxNumberOfReactants)
-{
-    return GetRandomParticlesVersion3();
-}
-#endif

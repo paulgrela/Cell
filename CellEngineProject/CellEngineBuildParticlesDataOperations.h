@@ -3,8 +3,6 @@
 #ifndef CELL_ENGINE_PROJECT_BUILD_PARTICLES_DATA_OPERATIONS_H
 #define CELL_ENGINE_PROJECT_BUILD_PARTICLES_DATA_OPERATIONS_H
 
-#include "CellEngineDataFile.h"
-
 class CellEngineBuildParticlesDataOperations
 {
 protected:

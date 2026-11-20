@@ -22,13 +22,15 @@ class CellEngineWellStirredChemicalReactionsSimulation : public CellEngineChemic
 public:
     std::mt19937_64 mt64X{ std::random_device{}() };
 public:
-    std::vector<UnsignedInt> GetRandomParticles(UnsignedInt NumberOfReactants, UnsignedInt MaxNumberOfReactants) override;
+    std::vector<UnsignedInt> GetRandomParticles(UnsignedInt NumberOfReactants, UnsignedInt MaxNumberOfReactants);
+    bool TryToMakeRandomChemicalReaction(UnsignedInt NumberOfReactants, UnsignedInt MaxNumberOfReactants);
+public:
     bool IsChemicalReactionPossible(const ChemicalReaction& ReactionObject)override;
     bool MakeChemicalReaction(ChemicalReaction& ReactionObject) override;
 public:
     void Run(UnsignedInt NumberOfSteps);
 public:
-    virtual ~CellEngineWellStirredChemicalReactionsSimulation() = default;
+    ~CellEngineWellStirredChemicalReactionsSimulation() override = default;
 };
 
 #endif

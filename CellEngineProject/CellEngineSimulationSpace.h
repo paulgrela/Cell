@@ -5,9 +5,9 @@
 #include "CellEngineTypes.h"
 #include "CellEngineParticle.h"
 #include "CellEngineChemicalReaction.h"
-#include "CellEngineChemicalReactionsEngine.h"
 #include "CellEngineCompiledDataCreator.h"
 #include "CellEngineIllinoisDataCreator.h"
+#include "CellEngineChemicalReactionsEngine.h"
 #include "CellEngineChemicalReactionsInSimulationSpace.h"
 #include "CellEngineSimulationParallelTasksExecutionManager.h"
 #include "CellEngineSimulationSpaceStatistics.h"
@@ -60,11 +60,6 @@ protected:
 protected:
     bool IsChemicalReactionPossible(const ChemicalReaction& ReactionObject) override;
     bool MakeChemicalReaction(ChemicalReaction& ReactionObject) override;
-protected:
-    #ifdef WELL_STIRRED
-    std::vector<UnsignedInt> GetRandomParticles(UnsignedInt NumberOfReactants, UnsignedInt MaxNumberOfReactants) override;
-    std::vector<UnsignedInt> GetRandomParticlesVersion3() const;
-    #endif
 public:
     explicit CellEngineSimulationSpace(ParticlesContainer<Particle>& ParticlesParam) : Particles(ParticlesParam)
     {

@@ -114,7 +114,6 @@ add_executable(
 	CellEngineChemicalReaction.h
 	CellEngineChemicalReactionsManager.h
 	CellEngineChemicalReactionsEngine.h
-	CellEngineChemicalReactionsEngine.cpp
 	CellEngineRandomDeviceEngine.cpp
 	CellEngineRandomDeviceEngine.h
 	CellEngineParticleUniqueIdGenerator.h
@@ -260,7 +259,6 @@ add_executable(
 	CellEngineRandomDeviceEngine.h
 	CellEngineChemicalReaction.h
 	CellEngineChemicalReactionsEngine.h
-	CellEngineChemicalReactionsEngine.cpp
 	CellEngineWellStirredChemicalReactionsSimulation.h
 	CellEngineWellStirredChemicalReactionsSimulation.cpp
 	tests/CellEngineRunTests.cpp)

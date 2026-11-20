@@ -31,8 +31,8 @@ void CellEngineChemicalReactionsInSimulationSpace::RemoveParticle(const UniqueId
             NumberOfAllParticlesBeforeRemoval = CellEngineDataFileObjectPointer->GetNumberOfAllParticles();
         else
             NumberOfAllParticlesBeforeRemoval = CellEngineDataFileObjectPointer->GetNumberOfAllParticlesInSector(CurrentSectorPos);
-        LoggersManagerObject.LogOnlyToFilesUnconditional(STREAM("NUMBER OF ALL PARTICLES BEFORE REMOVAL = " << NumberOfAllParticlesBeforeRemoval << " Particle to be removed has index = " << ParticleObject.ParticleUniqueId << " " << ParticleUniqueId << " NOT FOUND PARTICLE = " << NotFoundParticle1 << " " << NotFoundParticle2));
-        LoggersManagerObject.LogOnlyToConsoleUnconditional(STREAM("NUMBER OF ALL PARTICLES BEFORE REMOVAL = " << NumberOfAllParticlesBeforeRemoval << " Particle to be removed has index = " << ParticleObject.ParticleUniqueId << " " << ParticleUniqueId << " NOT FOUND PARTICLE = " << NotFoundParticle1 << " " << NotFoundParticle2));
+        // LoggersManagerObject.LogOnlyToFilesUnconditional(STREAM("NUMBER OF ALL PARTICLES BEFORE REMOVAL = " << NumberOfAllParticlesBeforeRemoval << " Particle to be removed has index = " << ParticleObject.ParticleUniqueId << " " << ParticleUniqueId << " NOT FOUND PARTICLE = " << NotFoundParticle1 << " " << NotFoundParticle2));
+        // LoggersManagerObject.LogOnlyToConsoleUnconditional(STREAM("NUMBER OF ALL PARTICLES BEFORE REMOVAL = " << NumberOfAllParticlesBeforeRemoval << " Particle to be removed has index = " << ParticleObject.ParticleUniqueId << " " << ParticleUniqueId << " NOT FOUND PARTICLE = " << NotFoundParticle1 << " " << NotFoundParticle2));
         #endif
 
         CutDNAPrev(&ParticleObject);
@@ -50,8 +50,8 @@ void CellEngineChemicalReactionsInSimulationSpace::RemoveParticle(const UniqueId
         else
             NumberOfAllParticlesAfterRemoval = CellEngineDataFileObjectPointer->GetNumberOfAllParticlesInSector(CurrentSectorPos);
         const UnsignedInt DifferenceOfAllParticlesBeforeAndAfterRemoval = NumberOfAllParticlesBeforeRemoval - NumberOfAllParticlesAfterRemoval;
-        LoggersManagerObject.LogOnlyToFilesUnconditional(STREAM("NUMBER OF ALL PARTICLES AFTER REMOVAL = " << NumberOfAllParticlesBeforeRemoval << " " << NumberOfAllParticlesAfterRemoval << " DIFFERENCE = " << DifferenceOfAllParticlesBeforeAndAfterRemoval << " " << NumberOfRemovedParticelAfterErase << " Particle to be removed has index = " << ParticleObject.ParticleUniqueId << " " << ParticleUniqueId));
-        LoggersManagerObject.LogOnlyToConsoleUnconditional(STREAM("NUMBER OF ALL PARTICLES AFTER REMOVAL = " << NumberOfAllParticlesBeforeRemoval << " " << NumberOfAllParticlesAfterRemoval << " DIFFERENCE = " << DifferenceOfAllParticlesBeforeAndAfterRemoval << " " << NumberOfRemovedParticelAfterErase <<  " Particle to be removed has index = " << ParticleObject.ParticleUniqueId << " " << ParticleUniqueId));
+        // LoggersManagerObject.LogOnlyToFilesUnconditional(STREAM("NUMBER OF ALL PARTICLES AFTER REMOVAL = " << NumberOfAllParticlesBeforeRemoval << " " << NumberOfAllParticlesAfterRemoval << " DIFFERENCE = " << DifferenceOfAllParticlesBeforeAndAfterRemoval << " " << NumberOfRemovedParticelAfterErase << " Particle to be removed has index = " << ParticleObject.ParticleUniqueId << " " << ParticleUniqueId));
+        // LoggersManagerObject.LogOnlyToConsoleUnconditional(STREAM("NUMBER OF ALL PARTICLES AFTER REMOVAL = " << NumberOfAllParticlesBeforeRemoval << " " << NumberOfAllParticlesAfterRemoval << " DIFFERENCE = " << DifferenceOfAllParticlesBeforeAndAfterRemoval << " " << NumberOfRemovedParticelAfterErase <<  " Particle to be removed has index = " << ParticleObject.ParticleUniqueId << " " << ParticleUniqueId));
         #endif
     }
     CATCH("removing particle")
@@ -170,22 +170,22 @@ bool CellEngineChemicalReactionsInSimulationSpace::FindParticlesInProximityOfSim
 
         FindParticlesInProximityInSimulationSpaceForSelectedLocalSpace(FoundParticleUniqueIdes, UpdateNucleotides, StartXPosParam, StartYPosParam, StartZPosParam, UnusedValueRealType, UnusedValueRealType, UnusedValueRealType);
 
-        DEBUG_LOG(LoggersManagerObject.Log(STREAM(endl << "Number of Particles Kinds Found In Proximity = " << LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity.size()));)
+        DEBUG_LOG_CHEMICAL_REACTION(LoggersManagerObject.Log(STREAM(endl << "Number of Particles Kinds Found In Proximity = " << LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity.size()));)
 
         if (LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity.empty() == false)
         {
             if constexpr (AdditionalSortParticlesInProximityByCapacity == true)
                 ranges::sort(LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity, [this](const UnsignedInt PK1, const UnsignedInt PK2) { return GetParticleFromUniqueId(PK1).ListOfVoxels.size() > GetParticleFromUniqueId(PK2).ListOfVoxels.size(); });
 
-            DEBUG_LOG(PrintInformationAboutFoundParticlesInProximity(CurrentThreadPos);)
+            DEBUG_LOG_CHEMICAL_REACTION(PrintInformationAboutFoundParticlesInProximity(CurrentParallelTaskPos);)
         }
         else
         {
-            DEBUG_LOG(LoggersManagerObject.Log(STREAM(endl << "No particle found in proximity"));)
+            DEBUG_LOG_CHEMICAL_REACTION(LoggersManagerObject.Log(STREAM(endl << "No particle found in proximity"));)
             return false;
         }
 
-        DEBUG_LOG(LoggersManagerObject.Log(STREAM("Looking for particles in proximity done"));)
+        DEBUG_LOG_CHEMICAL_REACTION(LoggersManagerObject.Log(STREAM("Looking for particles in proximity done"));)
     }
     CATCH("finding particles in proximity of simulation space for selected space")
 
@@ -196,12 +196,12 @@ void CellEngineChemicalReactionsInSimulationSpace::PrintInformationAboutFoundPar
 {
     try
     {
-        LoggersManagerObject.Log(STREAM(endl << "ParticlesSortedByCapacityFoundInParticlesProximity List"));
+        DEBUG_LOG_CHEMICAL_REACTION(LoggersManagerObject.Log(STREAM(endl << "ParticlesSortedByCapacityFoundInParticlesProximity List"));)
         for (const auto& LocalParticleUniqueIdObjectToWrite : LocalThreadParticlesInProximityObject.ParticlesSortedByCapacityFoundInProximity)
-            LoggersManagerObject.Log(STREAM("ParticleUniqueId = " << to_string(LocalParticleUniqueIdObjectToWrite) << " ParticleKindId = " << to_string(GetParticleFromUniqueId(LocalParticleUniqueIdObjectToWrite).ParticleKindId) << " NUCLEOTIDE = " << ((CellEngineUseful::IsDNAorRNA(GetParticleFromUniqueId(LocalParticleUniqueIdObjectToWrite).ParticleKindId) == true) ? CellEngineUseful::GetLetterFromChainIdForDNAorRNA(GetParticleFromUniqueId(LocalParticleUniqueIdObjectToWrite).ChainId) : '0') << " GENOME INDEX = " << GetParticleFromUniqueId(LocalParticleUniqueIdObjectToWrite).GenomeIndex));
-        LoggersManagerObject.Log(STREAM(endl << "ParticlesKindsFoundInProximity List"));
+            DEBUG_LOG_CHEMICAL_REACTION(LoggersManagerObject.Log(STREAM("ParticleUniqueId = " << to_string(LocalParticleUniqueIdObjectToWrite) << " ParticleKindId = " << to_string(GetParticleFromUniqueId(LocalParticleUniqueIdObjectToWrite).ParticleKindId) << " NUCLEOTIDE = " << ((CellEngineUseful::IsDNAorRNA(GetParticleFromUniqueId(LocalParticleUniqueIdObjectToWrite).ParticleKindId) == true) ? CellEngineUseful::GetLetterFromChainIdForDNAorRNA(GetParticleFromUniqueId(LocalParticleUniqueIdObjectToWrite).ChainId) : '0') << " GENOME INDEX = " << GetParticleFromUniqueId(LocalParticleUniqueIdObjectToWrite).GenomeIndex));)
+        DEBUG_LOG_CHEMICAL_REACTION(LoggersManagerObject.Log(STREAM(endl << "ParticlesKindsFoundInProximity List"));)
         for (const auto& [LocalParticleKindObjectToWriteFirst, LocalParticleKindObjectToWriteSecond] : LocalThreadParticlesInProximityObject.ParticlesKindsFoundInProximity)
-            LoggersManagerObject.Log(STREAM("ParticleKind ParticleKindId = " << to_string(LocalParticleKindObjectToWriteFirst) << " in quantity = " << to_string(LocalParticleKindObjectToWriteSecond)));
+            DEBUG_LOG_CHEMICAL_REACTION(LoggersManagerObject.Log(STREAM("ParticleKind ParticleKindId = " << to_string(LocalParticleKindObjectToWriteFirst) << " in quantity = " << to_string(LocalParticleKindObjectToWriteSecond)));)
     }
     CATCH("printing information found particles in proximity")
 }
